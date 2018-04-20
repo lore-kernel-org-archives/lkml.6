@@ -1,125 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755942AbeDTQGg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:06:36 -0400
-Received: from ivanoab5.miniserver.com ([78.31.111.25]:47144 "EHLO
-        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755709AbeDTQGf (ORCPT
+        id S1751228AbeDTQIz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:08:55 -0400
+Received: from mail-ot0-f169.google.com ([74.125.82.169]:32905 "EHLO
+        mail-ot0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750715AbeDTQIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:06:35 -0400
-Subject: Re: [uml-devel] [REVIEW][PATCH 19/22] signal/um: Use force_sig_fault
- in relay_signal.
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-arch@vger.kernel.org
-Cc: Richard Weinberger <richard@nod.at>, Jeff Dike <jdike@addtoit.com>,
-        linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-        "user-mode-linux-devel@lists.sourceforge.net"
-        <user-mode-linux-devel@lists.sourceforge.net>
-References: <87604mhrnb.fsf@xmission.com>
- <20180420143811.9994-19-ebiederm@xmission.com>
-From: Anton Ivanov <anton.ivanov@kot-begemot.co.uk>
-Message-ID: <7074fe36-27c5-ee82-9659-da703cfc91fe@kot-begemot.co.uk>
-Date: Fri, 20 Apr 2018 17:06:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 20 Apr 2018 12:08:53 -0400
+X-Google-Smtp-Source: AIpwx49fGJD5e0Pjz8Ccmcuy/uY3IwGiTT3OdP/hOaN1H94D2F7btXjUW0q3nKFl2JhzPtcbpo6hLKe77vlb+2N0dyc=
 MIME-Version: 1.0
-In-Reply-To: <20180420143811.9994-19-ebiederm@xmission.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Clacks-Overhead: GNU Terry Pratchett
+In-Reply-To: <20180420180839-mutt-send-email-mst@kernel.org>
+References: <20180315183449.3102.64791.stgit@localhost.localdomain>
+ <20180315184132.3102.90947.stgit@localhost.localdomain> <20180316183042-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
+ <20180403161151-mutt-send-email-mst@kernel.org> <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com>
+ <20180403212503-mutt-send-email-mst@kernel.org> <CAKgT0Ude79FYrK4qA0OKRJ1NackyqPi-hZ8Zh3WSdLDFxoOosQ@mail.gmail.com>
+ <20180420030640-mutt-send-email-mst@kernel.org> <CAKgT0Ucpw9D1u8MYoEX5KOij6sxs-5O9gPFTmOVq=Dgt=HUJ=g@mail.gmail.com>
+ <20180420180839-mutt-send-email-mst@kernel.org>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Fri, 20 Apr 2018 09:08:51 -0700
+Message-ID: <CAKgT0UeWzK=_8m9hhWfaKyYB02WXDsuCkgowS4hgQ9GkLMcAMA@mail.gmail.com>
+Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
+ unmanaged SR-IOV on virtio_pci devices
+To: "Michael S. Tsirkin" <mst@redhat.com>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 04/20/18 15:38, Eric W. Biederman wrote:
-> Today user mode linux only works on x86 and x86_64 and this allows
-> simplifications of relay_signal.
-
-I believe someone recently fixed the ARM port. I have not had the time 
-to try the fixes though.
-
-I have added the new list we are migrating to the cc list.
-
-A.
-
-
-
+On Fri, Apr 20, 2018 at 8:28 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Fri, Apr 20, 2018 at 07:56:14AM -0700, Alexander Duyck wrote:
+>> > I think for virtio it should include the feature bit, yes.
+>> > Adding feature bit is very easy - post a patch to the virtio TC mailing
+>> > list, wait about a week to give people time to respond (two weeks if it
+>> > is around holidays and such).
+>>
+>> The problem is we are talking about hardware/FPGA, not software.
+>> Adding a feature bit means going back and updating RTL. The software
+>> side of things is easy, re-validating things after a hardware/FPGA
+>> change not so much.
+>>
+>> If this is a hard requirement I may just drop the virtio patch, push
+>> what I have, and leave it to Mark/Dan to deal with the necessary RTL
+>> and code changes needed to support Virtio as I don't expect the
+>> turnaround to be as easy as just a patch.
+>>
+>> Thanks.
+>>
+>> - Alex
 >
-> - x86 always set si_errno to 0 in fault handlers.
-> - x86 does not implement si_trapno.
-> - Only si_codes between SI_USER and SI_KERNEL have a fault address.
+> Let's focus on virtio in this thread.
+
+That is kind of what I was thinking, and why I was thinking it might
+make sense to make the virtio specific changes a separate patch set. I
+could get the PCI bits taken care of in the meantime since they effect
+genetic PCI, NVMe, and the Amazon ENA interfaces.
+
+> Involving the virtio TC in host/guest interface changes is a
+> hard requirement. It's just too easy to create conflicts otherwise.
 >
-> Therefore warn if si_errno is set (it should never be).
-> Use force_sig_info in the case where we know we have a good fault.
+> So you guys should have just sent the proposal to the TC when you
+> were doing your RTL and you would have been in the clear.
+
+Agreed. I believe I brought this up when I was originally asked to
+look into the coding for this.
+
+> Generally adding a feature bit with any extension is a good idea:
+> this way you merely reserve a feature bit for your feature through
+> the TC and are more or less sure of forward and backward compatibility.
+> It's incredibly easy.
+
+Agreed, though in this case I am not sure it makes sense since this
+isn't necessarily something that is a Virtio feature itself. It is
+just a side effect of the fact that they are adding SR-IOV support to
+a device that happens to emulate Virtio NET and apparently their PF
+has to be identical to the VF other than the PCIe extended config
+space.
+
+> But maybe it's not needed here.  I am not making the decisions myself.
+> Not too late: post to the TC list and let's see what the response is.
+> Without a feature bit you are making a change affecting all future
+> implementations without exception so the bar is a bit higher: you need
+> to actually post a spec text proposal not just a patch showing how to
+> use the feature, and TC needs to vote on it. Voting takes a week,
+> review a week or two depending on change complexity.
 >
-> For signals whose content it is not clear how to relay use plain
-> force_sig and let the signal sending code come up with an
-> appropriate generic siginfo.
+> Hope this helps,
 >
-> Cc: Jeff Dike <jdike@addtoit.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: user-mode-linux-devel@lists.sourceforge.net
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
->   arch/um/kernel/trap.c | 28 +++++++++++++---------------
->   1 file changed, 13 insertions(+), 15 deletions(-)
->
-> diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
-> index d4d38520c4c6..5f0ff17cd790 100644
-> --- a/arch/um/kernel/trap.c
-> +++ b/arch/um/kernel/trap.c
-> @@ -296,9 +296,6 @@ unsigned long segv(struct faultinfo fi, unsigned long ip, int is_user,
->   
->   void relay_signal(int sig, struct siginfo *si, struct uml_pt_regs *regs)
->   {
-> -	struct faultinfo *fi;
-> -	struct siginfo clean_si;
-> -
->   	if (!UPT_IS_USER(regs)) {
->   		if (sig == SIGBUS)
->   			printk(KERN_ERR "Bus error - the host /dev/shm or /tmp "
-> @@ -308,29 +305,30 @@ void relay_signal(int sig, struct siginfo *si, struct uml_pt_regs *regs)
->   
->   	arch_examine_signal(sig, regs);
->   
-> -	clear_siginfo(&clean_si);
-> -	clean_si.si_signo = si->si_signo;
-> -	clean_si.si_errno = si->si_errno;
-> -	clean_si.si_code = si->si_code;
-> +	if (unlikely(si->si_errno)) {
-> +		printk(KERN_ERR "Attempted to relay signal %d (si_code = %d) with errno %d\n",
-> +		       sig, si->si_code, si->si_errno);
-> +	}
->   	switch (sig) {
->   	case SIGILL:
->   	case SIGFPE:
->   	case SIGSEGV:
->   	case SIGBUS:
->   	case SIGTRAP:
-> -		fi = UPT_FAULTINFO(regs);
-> -		clean_si.si_addr = (void __user *) FAULT_ADDRESS(*fi);
-> -		current->thread.arch.faultinfo = *fi;
-> -#ifdef __ARCH_SI_TRAPNO
-> -		clean_si.si_trapno = si->si_trapno;
-> -#endif
-> -		break;
-> +		if ((si->si_code > SI_USER) && (si->si_code < SI_KERNEL)) {
-> +			struct faultinfo *fi = UPT_FAULTINFO(regs);
-> +			current->thread.arch.faultinfo = *fi;
-> +			force_sig_fault(sig, si->si_code,
-> +					(void __user *)FAULT_ADDRESS(*fi),
-> +					current);
-> +			break;
-> +		}
->   	default:
->   		printk(KERN_ERR "Attempted to relay unknown signal %d (si_code = %d)\n",
->   			sig, si->si_code);
->   	}
->   
-> -	force_sig_info(sig, &clean_si, current);
-> +	force_sig(sig, current);
->   }
->   
->   void bus_handler(int sig, struct siginfo *si, struct uml_pt_regs *regs)
+> --
+> MST
+
+I think I will leave this for Dan and Mark to handle since I am still
+not all that familiar with the hardware in use here. Once a decision
+has been made him and Mark could look at pushing either the one line
+patch or something more complex involving a feature flag.
+
+Thanks.
+
+Alex
