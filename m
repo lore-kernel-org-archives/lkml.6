@@ -1,112 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754469AbeDTJwF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:52:05 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:44439 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754263AbeDTJwD (ORCPT
+        id S1754408AbeDTJzd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 05:55:33 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54726 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754263AbeDTJzc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:52:03 -0400
-X-Google-Smtp-Source: AIpwx4/HcW/vILBZ5jjgqBh8PnuoEL9PyXX8LgtvwHJQQctxx3oP2fyEJLe0tv6pDOdtTC1GhUagFw==
-MIME-Version: 1.0
-References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com> <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
-In-Reply-To: <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Fri, 20 Apr 2018 09:51:49 +0000
-X-Gmail-Original-Message-ID: <CAAFQd5Dq4OeshtFaoxFK2357+-_=hzh0C7W=zksTWtaDuDCiGg@mail.gmail.com>
-Message-ID: <CAAFQd5Dq4OeshtFaoxFK2357+-_=hzh0C7W=zksTWtaDuDCiGg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] media: v4l: Add definitions for MPEG2 frame
- format and header metadata
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>, wens@csie.org,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Courbot <acourbot@chromium.org>
+        Fri, 20 Apr 2018 05:55:32 -0400
+Message-ID: <1524218126.3321.6.camel@HansenPartnership.com>
+Subject: Re: [PATCH] bsg referencing bus driver module
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Anatoliy Glagolev <glagolig@gmail.com>, linux-scsi@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc: axboe@kernel.dk, fujita.tomonori@lab.ntt.co.jp,
+        martin.petersen@oracle.com, jthumshirn@suse.de, hare@suse.com,
+        bblock@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+Date: Fri, 20 Apr 2018 11:55:26 +0200
+In-Reply-To: <CANFzKepRSA+VoVAvOfW6U_qHFVDZex+=hQ=QhU+7Z=unvwejJQ@mail.gmail.com>
+References: <CANFzKepsGq0EHX4GPtC0RZOWqVf2fTJ6uA2WH-SZNsBuwMJ5KA@mail.gmail.com>
+         <CANFzKer6QDaJALX3LKPF2DV6LgczTh-efQe9+zeK8BuxTWFt1A@mail.gmail.com>
+         <CANFzKepRSA+VoVAvOfW6U_qHFVDZex+=hQ=QhU+7Z=unvwejJQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-
-On Fri, Apr 20, 2018 at 12:46 AM Paul Kocialkowski <
-paul.kocialkowski@bootlin.com> wrote:
-[snip]
-> +struct v4l2_ctrl_mpeg2_frame_hdr {
-> +       __u32 slice_len;
-> +       __u32 slice_pos;
-> +       enum { MPEG1, MPEG2 } type;
-
-Is enum suitable for UAPI?
-
+On Thu, 2018-04-19 at 15:10 -0700, Anatoliy Glagolev wrote:
+> Updated: rebased on recent Linux, cc-ed maintainers per instructions
+> in MAINTAINERS file
+> 
+> From df939b80d02bf37b21efaaef8ede86cfd39b0cb8 Mon Sep 17 00:00:00
+> 2001
+> From: Anatoliy Glagolev <aglagolev@purestorage.com>
+> Date: Thu, 19 Apr 2018 15:06:06 -0600
+> Subject: [PATCH] bsg referencing parent module
+> 
+> Fixing a bug when bsg layer holds the last reference to device
+> when the device's module has been unloaded. Upon dropping the
+> reference the device's release function may touch memory of
+> the unloaded module.
+> ---
+>  block/bsg-lib.c                  | 24 ++++++++++++++++++++++--
+>  block/bsg.c                      | 29 ++++++++++++++++++++++++++---
+>  drivers/scsi/scsi_transport_fc.c |  8 ++++++--
+>  include/linux/bsg-lib.h          |  4 ++++
+>  include/linux/bsg.h              |  5 +++++
+>  5 files changed, 63 insertions(+), 7 deletions(-)
+> 
+> diff --git a/block/bsg-lib.c b/block/bsg-lib.c
+> index fc2e5ff..90c28fd 100644
+> --- a/block/bsg-lib.c
+> +++ b/block/bsg-lib.c
+> @@ -309,6 +309,25 @@ struct request_queue *bsg_setup_queue(struct
+> device *dev, const char *name,
+>   bsg_job_fn *job_fn, int dd_job_size,
+>   void (*release)(struct device *))
+>  {
+> + return bsg_setup_queue_ex(dev, name, job_fn, dd_job_size, release,
+> + NULL);
+> +}
+> +EXPORT_SYMBOL_GPL(bsg_setup_queue);
 > +
-> +       __u16 width;
-> +       __u16 height;
-> +
-> +       enum { PCT_I = 1, PCT_P, PCT_B, PCT_D } picture_coding_type;
+> +/**
+> + * bsg_setup_queue - Create and add the bsg hooks so we can receive
+> requests
+> + * @dev: device to attach bsg device to
+> + * @name: device to give bsg device
+> + * @job_fn: bsg job handler
+> + * @dd_job_size: size of LLD data needed for each job
+> + * @release: @dev release function
+> + * @dev_module: @dev's module
+> + */
+> +struct request_queue *bsg_setup_queue_ex(struct device *dev, const
+> char *name,
+> + bsg_job_fn *job_fn, int dd_job_size,
+> + void (*release)(struct device *),
+> + struct module *dev_module)
 
-Ditto.
+This patch isn't applyable because your mailer has changed all the tabs
+to spaces.
 
-> +       __u8 f_code[2][2];
-> +
-> +       __u8 intra_dc_precision;
-> +       __u8 picture_structure;
-> +       __u8 top_field_first;
-> +       __u8 frame_pred_frame_dct;
-> +       __u8 concealment_motion_vectors;
-> +       __u8 q_scale_type;
-> +       __u8 intra_vlc_format;
-> +       __u8 alternate_scan;
-> +
-> +       __u8 backward_ref_index;
-> +       __u8 forward_ref_index;
-> +};
-> +
->   #endif
-> diff --git a/include/uapi/linux/videodev2.h
-b/include/uapi/linux/videodev2.h
-> index 31b5728b56e9..4b8336f7bcf0 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -635,6 +635,7 @@ struct v4l2_pix_format {
->   #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /*
-SMPTE 421M Annex L compliant stream */
->   #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
->   #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
-> +#define V4L2_PIX_FMT_MPEG2_FRAME v4l2_fourcc('M', 'G', '2', 'F') /*
-MPEG2 frame */
+I also think there's no need to do it this way.  I think what we need
+is for fc_bsg_remove() to wait until the bsg queue is drained.  It does
+look like the author thought this happened otherwise the code wouldn't
+have the note.  If we fix it that way we can do the same thing in all
+the other transport classes that use bsg (which all have a similar
+issue).
 
->   /*  Vendor-specific formats   */
->   #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1
-YUV */
-> @@ -1586,6 +1587,7 @@ struct v4l2_ext_control {
->                  __u8 __user *p_u8;
->                  __u16 __user *p_u16;
->                  __u32 __user *p_u32;
-> +               struct v4l2_ctrl_mpeg2_frame_hdr __user
-*p_mpeg2_frame_hdr;
->                  void __user *ptr;
->          };
->   } __attribute__ ((packed));
-> @@ -1631,6 +1633,7 @@ enum v4l2_ctrl_type {
->          V4L2_CTRL_TYPE_U8            = 0x0100,
->          V4L2_CTRL_TYPE_U16           = 0x0101,
->          V4L2_CTRL_TYPE_U32           = 0x0102,
-> +       V4L2_CTRL_TYPE_MPEG2_FRAME_HDR = 0x0109,
-
-Why 0x0109?
-
-Best regards,
-Tomasz
+James
