@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754679AbeDTKri (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:47:38 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:39880 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754549AbeDTKre (ORCPT
+        id S1754701AbeDTKrx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:47:53 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:51383 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754639AbeDTKru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:47:34 -0400
-X-IronPort-AV: E=Sophos;i="5.49,301,1520899200";
-   d="scan'208";a="607906209"
-Subject: [PATCH 1/3] xen: add generic fault injection facility
+        Fri, 20 Apr 2018 06:47:50 -0400
+X-IronPort-AV: E=Sophos;i="5.49,300,1520899200";
+   d="scan'208";a="736319511"
+Subject: [PATCH 2/3] xen netback: add fault injection facility
 From: Stanislav Kinsburskii <staskins@amazon.com>
 CC: <jakub.kicinski@netronome.com>, <hpa@zytor.com>, <mcroce@redhat.com>,
         <staskins@amazon.com>, <tglx@linutronix.de>, <ggarcia@abra.uab.cat>,
@@ -22,8 +22,8 @@ CC: <jakub.kicinski@netronome.com>, <hpa@zytor.com>, <mcroce@redhat.com>,
         <wei.liu2@citrix.com>, <netdev@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <davem@davemloft.net>,
         <dwmw@amazon.co.uk>, <roger.pau@citrix.com>
-Date: Fri, 20 Apr 2018 10:47:26 +0000
-Message-ID: <20180420104726.17823.40147.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+Date: Fri, 20 Apr 2018 10:47:31 +0000
+Message-ID: <20180420104731.17823.97617.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
 In-Reply-To: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
 References: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
 User-Agent: StGit/0.17.1-dirty
@@ -34,94 +34,125 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KAlkvG016958
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KAlxbA016966
 
-The overall idea of this patch is to add a generic fault injection facility
-to Xen, which later can be used in various places by different Xen parts.
+This patch adds wrapper helpers around generic Xen fault inject facility.
+The major reason is to keep all the module fault injection directories
+in a dedicated subdirectory instead of Xen fault inject root.
 
-Core implementation ideas:
-
-- The facility build is controlled by boolean config
-  CONFIG_XEN_FAULT_INJECTION option ("N" by default).
-
-- All fault injection logic is located in an optionally compiled separated
-  file.
-
-- Fault injection attribute and control directory creation and destruction
-  are wrapped with helpers, producing and accepting a pointer to an opaque
-  object thus making all the rest of code independent on fault injection
-  engine.
-
-When enabled Xen root fault injection directory appears:
-
+IOW, when using these helpers, per-device and named by device name fault
+injection control directories will appear under the following directory:
+- /sys/kernel/debug/xen/fault_inject/xen-netback/
+instead of:
 - /sys/kernel/debug/xen/fault_inject/
 
-The falicity provides the following helpers (exported to be accessible in
-modules):
-
-- xen_fi_add(name) - adds fault injection control directory "name" to Xen
-  root fault injection directory
-
-- xen_fi_dir_create(name) - allows to create a subdirectory "name" in Xen
-  root fault injection directory.
-
-- xen_fi_dir_add(dir, name) - adds fault injection control directory "name"
-  to directory "dir"
-
-- xen_should_fail(fi) - check whether fi hav to fail.
-
 Signed-off-by: Stanislav Kinsburskii <staskins@amazon.com>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Wei Liu <wei.liu2@citrix.com>
+CC: Paul Durrant <paul.durrant@citrix.com>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: Matteo Croce <mcroce@redhat.com>
+CC: Stefan Hajnoczi <stefanha@redhat.com>
+CC: Daniel Borkmann <daniel@iogearbox.net>
+CC: Gerard Garcia <ggarcia@deic.uab.cat>
+CC: David Ahern <dsa@cumulusnetworks.com>
 CC: Juergen Gross <jgross@suse.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: x86@kernel.org
-CC: xen-devel@lists.xenproject.org
+CC: Amir Levy <amir.jer.levy@intel.com>
+CC: Jakub Kicinski <jakub.kicinski@netronome.com>
 CC: linux-kernel@vger.kernel.org
+CC: netdev@vger.kernel.org
+CC: xen-devel@lists.xenproject.org
 CC: Stanislav Kinsburskii <staskins@amazon.com>
 CC: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/xen/Kconfig        |    7 +++
- arch/x86/xen/Makefile       |    1 
- arch/x86/xen/fault_inject.c |  109 +++++++++++++++++++++++++++++++++++++++++++
- include/xen/fault_inject.h  |   45 ++++++++++++++++++
- 4 files changed, 162 insertions(+)
- create mode 100644 arch/x86/xen/fault_inject.c
- create mode 100644 include/xen/fault_inject.h
+ drivers/net/Kconfig                  |    8 ++
+ drivers/net/xen-netback/Makefile     |    1 
+ drivers/net/xen-netback/common.h     |    3 +
+ drivers/net/xen-netback/netback.c    |    3 +
+ drivers/net/xen-netback/netback_fi.c |  119 ++++++++++++++++++++++++++++++++++
+ drivers/net/xen-netback/netback_fi.h |   35 ++++++++++
+ drivers/net/xen-netback/xenbus.c     |    6 ++
+ 7 files changed, 175 insertions(+)
+ create mode 100644 drivers/net/xen-netback/netback_fi.c
+ create mode 100644 drivers/net/xen-netback/netback_fi.h
 
-diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
-index c1f98f3..483fc16 100644
---- a/arch/x86/xen/Kconfig
-+++ b/arch/x86/xen/Kconfig
-@@ -77,3 +77,10 @@ config XEN_PVH
- 	bool "Support for running as a PVH guest"
- 	depends on XEN && XEN_PVHVM && ACPI
- 	def_bool n
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index 8918466..5cc9acd 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -465,6 +465,14 @@ config XEN_NETDEV_BACKEND
+ 	  compile this driver as a module, chose M here: the module
+ 	  will be called xen-netback.
+ 
++config XEN_NETDEV_BACKEND_FAULT_INJECTION
++	  bool "Xen net-device backend driver fault injection"
++	  depends on XEN_NETDEV_BACKEND
++	  depends on XEN_FAULT_INJECTION
++	  default n
++	  help
++	    Allow to inject errors to Xen backend network driver
 +
-+config XEN_FAULT_INJECTION
-+	bool "Enable Xen fault injection"
-+	depends on FAULT_INJECTION_DEBUG_FS
-+	default n
-+	help
-+	  Enable Xen fault injection facility
-diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
-index d83cb54..3158fe1 100644
---- a/arch/x86/xen/Makefile
-+++ b/arch/x86/xen/Makefile
-@@ -34,3 +34,4 @@ obj-$(CONFIG_XEN_DOM0)		+= vga.o
- obj-$(CONFIG_SWIOTLB_XEN)	+= pci-swiotlb-xen.o
- obj-$(CONFIG_XEN_EFI)		+= efi.o
- obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
-+obj-$(CONFIG_XEN_FAULT_INJECTION)	+= fault_inject.o
-diff --git a/arch/x86/xen/fault_inject.c b/arch/x86/xen/fault_inject.c
+ config VMXNET3
+ 	tristate "VMware VMXNET3 ethernet driver"
+ 	depends on PCI && INET
+diff --git a/drivers/net/xen-netback/Makefile b/drivers/net/xen-netback/Makefile
+index d49798a..28abcdc 100644
+--- a/drivers/net/xen-netback/Makefile
++++ b/drivers/net/xen-netback/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_XEN_NETDEV_BACKEND) := xen-netback.o
+ 
+ xen-netback-y := netback.o xenbus.o interface.o hash.o rx.o
++xen-netback-$(CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION) += netback_fi.o
+diff --git a/drivers/net/xen-netback/common.h b/drivers/net/xen-netback/common.h
+index a46a1e9..30d676d 100644
+--- a/drivers/net/xen-netback/common.h
++++ b/drivers/net/xen-netback/common.h
+@@ -286,6 +286,9 @@ struct xenvif {
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry *xenvif_dbg_root;
++#ifdef CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION
++	void *fi_info;
++#endif
+ #endif
+ 
+ 	struct xen_netif_ctrl_back_ring ctrl;
+diff --git a/drivers/net/xen-netback/netback.c b/drivers/net/xen-netback/netback.c
+index a27daa2..ecc416e 100644
+--- a/drivers/net/xen-netback/netback.c
++++ b/drivers/net/xen-netback/netback.c
+@@ -33,6 +33,7 @@
+  */
+ 
+ #include "common.h"
++#include "netback_fi.h"
+ 
+ #include <linux/kthread.h>
+ #include <linux/if_vlan.h>
+@@ -1649,6 +1650,7 @@ static int __init netback_init(void)
+ 			PTR_ERR(xen_netback_dbg_root));
+ #endif /* CONFIG_DEBUG_FS */
+ 
++	(void) xen_netbk_fi_init();
+ 	return 0;
+ 
+ failed_init:
+@@ -1659,6 +1661,7 @@ module_init(netback_init);
+ 
+ static void __exit netback_fini(void)
+ {
++	xen_netbk_fi_fini();
+ #ifdef CONFIG_DEBUG_FS
+ 	if (!IS_ERR_OR_NULL(xen_netback_dbg_root))
+ 		debugfs_remove_recursive(xen_netback_dbg_root);
+diff --git a/drivers/net/xen-netback/netback_fi.c b/drivers/net/xen-netback/netback_fi.c
 new file mode 100644
-index 0000000..ecf0f7c
+index 0000000..47541d0
 --- /dev/null
-+++ b/arch/x86/xen/fault_inject.c
-@@ -0,0 +1,109 @@
++++ b/drivers/net/xen-netback/netback_fi.c
+@@ -0,0 +1,119 @@
 +/*
-+ * Fauit injection interface for Xen virtual block devices
++ * Fault injection interface for Xen backend network driver
 + *
 + * Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 + *
@@ -150,136 +181,167 @@ index 0000000..ecf0f7c
 + * IN THE SOFTWARE.
 + */
 +
-+#include <linux/slab.h>
-+#include <linux/fault-inject.h>
++#include "common.h"
++
++#include <linux/debugfs.h>
 +
 +#include <xen/fault_inject.h>
++#include "netback_fi.h"
 +
-+#include "debugfs.h"
++static struct dentry *vif_fi_dir;
 +
-+static struct dentry *d_fi_debug;
-+
-+static DECLARE_FAULT_ATTR(template_attr);
-+
-+struct xen_fi {
-+	struct dentry		*dir;
-+	struct fault_attr	attr;
++static const char *xenvif_fi_names[] = {
 +};
 +
-+struct xen_fi *xen_fi_dir_add(struct dentry *parent, const char *name)
-+{
-+	struct xen_fi *fi;
++struct xenvif_fi {
 +	struct dentry *dir;
++	struct xen_fi *faults[XENVIF_FI_MAX];
++};
 +
-+	fi = kzalloc(sizeof(*fi), GFP_KERNEL);
-+	if (!fi)
-+		return ERR_PTR(-ENOMEM);
-+
-+	memcpy(&fi->attr, &template_attr, sizeof(template_attr));
-+
-+	dir = fault_create_debugfs_attr(name, parent, &fi->attr);
-+	if (IS_ERR(dir)) {
-+		kfree(fi);
-+		return (struct xen_fi *)dir;
-+	}
-+
-+	fi->dir = dir;
-+
-+	return fi;
-+}
-+EXPORT_SYMBOL(xen_fi_dir_add);
-+
-+struct xen_fi *xen_fi_add(const char *name)
++int xen_netbk_fi_init(void)
 +{
-+	return xen_fi_dir_add(d_fi_debug, name);
-+}
-+
-+void xen_fi_del(struct xen_fi *fi)
-+{
-+	debugfs_remove_recursive(fi->dir);
-+	kfree(fi);
-+}
-+EXPORT_SYMBOL(xen_fi_del);
-+
-+bool xen_should_fail(struct xen_fi *fi)
-+{
-+	return should_fail(&fi->attr, 0);
-+}
-+EXPORT_SYMBOL(xen_should_fail);
-+
-+struct dentry *xen_fi_dir_create(const char *name)
-+{
-+	return debugfs_create_dir(name, d_fi_debug);
-+}
-+EXPORT_SYMBOL(xen_fi_dir_create);
-+
-+static int __init xen_fi_init(void)
-+{
-+	struct dentry *d_xen;
-+
-+	d_xen = xen_init_debugfs();
-+	if (!d_xen)
++	vif_fi_dir = xen_fi_dir_create("xen-netback");
++	if (!vif_fi_dir)
 +		return -ENOMEM;
-+
-+	d_fi_debug = debugfs_create_dir("fault_inject", d_xen);
-+	if (d_fi_debug == NULL)
-+		return -ENOMEM;
-+
 +	return 0;
 +}
 +
-+fs_initcall(xen_fi_init);
-diff --git a/include/xen/fault_inject.h b/include/xen/fault_inject.h
-new file mode 100644
-index 0000000..e2bf14a
---- /dev/null
-+++ b/include/xen/fault_inject.h
-@@ -0,0 +1,45 @@
-+#ifndef _XEN_FAULT_INJECT_H
-+#define _XEN_FAULT_INJECT_H
++void xen_netbk_fi_fini(void)
++{
++	debugfs_remove_recursive(vif_fi_dir);
++}
 +
-+struct dentry;
++void xenvif_fi_fini(struct xenvif *vif)
++{
++	struct xenvif_fi *vfi = vif->fi_info;
++	int fi;
++
++	if (!vif->fi_info)
++		return;
++
++	vif->fi_info = NULL;
++
++	for (fi = 0; fi < XENVIF_FI_MAX; fi++)
++		xen_fi_del(vfi->faults[fi]);
++	debugfs_remove_recursive(vfi->dir);
++	kfree(vfi);
++}
++
++int xenvif_fi_init(struct xenvif *vif)
++{
++	struct dentry *parent;
++	struct xenvif_fi *vfi;
++	int fi, err = -ENOMEM;
++
++	parent = vif_fi_dir;
++	if (!parent)
++		return -ENOMEM;
++
++	vfi = kmalloc(sizeof(*vfi), GFP_KERNEL);
++	if (!vfi)
++		return -ENOMEM;
++
++	vfi->dir = debugfs_create_dir(vif->dev->name, parent);
++	if (!vfi->dir)
++		goto err_dir;
++
++	for (fi = 0; fi < XENVIF_FI_MAX; fi++) {
++		vfi->faults[fi] = xen_fi_dir_add(vfi->dir,
++				xenvif_fi_names[fi]);
++		if (!vfi->faults[fi])
++			goto err_fault;
++	}
++
++	vif->fi_info = vfi;
++	return 0;
++
++err_fault:
++	for (; fi > 0; fi--)
++		xen_fi_del(vfi->faults[fi]);
++	debugfs_remove_recursive(vfi->dir);
++err_dir:
++	kfree(vfi);
++	return err;
++}
++
++bool xenvif_should_fail(struct xenvif *vif, xenvif_fi_t type)
++{
++	struct xenvif_fi *vfi = vif->fi_info;
++
++	return xen_should_fail(vfi->faults[type]);
++}
+diff --git a/drivers/net/xen-netback/netback_fi.h b/drivers/net/xen-netback/netback_fi.h
+new file mode 100644
+index 0000000..895c6a6
+--- /dev/null
++++ b/drivers/net/xen-netback/netback_fi.h
+@@ -0,0 +1,35 @@
++#ifndef _XEN_NETBACK_FI_H
++#define _XEN_NETBACK_FI_H
++
 +struct xen_fi;
 +
-+#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
++typedef enum {
++	XENVIF_FI_MAX
++} xenvif_fi_t;
 +
-+struct dentry *xen_fi_dir_create(const char *name);
++#ifdef CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION
 +
-+struct xen_fi *xen_fi_dir_add(struct dentry *parent, const char *name);
-+struct xen_fi *xen_fi_add(const char *name);
-+void xen_fi_del(struct xen_fi *fi);
++int xen_netbk_fi_init(void);
++void xen_netbk_fi_fini(void);
 +
-+bool xen_should_fail(struct xen_fi *fi);
++void xenvif_fi_fini(struct xenvif *vif);
++int xenvif_fi_init(struct xenvif *vif);
++
++bool xenvif_should_fail(struct xenvif *vif, xenvif_fi_t type);
 +
 +#else
 +
-+static inline struct dentry *xen_fi_dir_create(const char *name)
-+{
-+	return NULL;
-+}
++static inline int xen_netbk_fi_init(void) { return 0; }
++static inline void xen_netbk_fi_fini(void) { }
 +
-+static inline struct xen_fi *xen_fi_dir_add(struct dentry *parent, const char *name)
-+{
-+	return NULL;
-+}
++static inline void xenvif_fi_fini(struct xenvif *vif) { }
++static inline int xenvif_fi_init(struct xenvif *vif) { return 0; }
 +
-+static inline struct xen_fi *xen_fi_add(const char *name)
-+{
-+	return NULL;
-+}
-+
-+static inline void xen_fi_del(struct xen_fi *fi) { }
-+
-+static inline bool xen_should_fail(struct xen_fi *fi)
++static inline bool xenvif_should_fail(struct xenvif *vif, xenvif_fi_t type)
 +{
 +	return false;
 +}
 +
-+#endif /* CONFIG_FAULT_INJECTION_DEBUG_FS */
++#endif /* CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION */
 +
-+#endif /* _XEN_FAULT_INJECT_H */
++#endif /* _XEN_NETBACK_FI_H */
+diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
+index e1aef25..c775ee0 100644
+--- a/drivers/net/xen-netback/xenbus.c
++++ b/drivers/net/xen-netback/xenbus.c
+@@ -21,6 +21,7 @@
+ #include "common.h"
+ #include <linux/vmalloc.h>
+ #include <linux/rtnetlink.h>
++#include "netback_fi.h"
+ 
+ struct backend_info {
+ 	struct xenbus_device *dev;
+@@ -502,6 +503,7 @@ static void backend_disconnect(struct backend_info *be)
+ #ifdef CONFIG_DEBUG_FS
+ 		xenvif_debugfs_delif(vif);
+ #endif /* CONFIG_DEBUG_FS */
++		xenvif_fi_fini(vif);
+ 		xenvif_disconnect_data(vif);
+ 
+ 		/* At this point some of the handlers may still be active
+@@ -1024,6 +1026,10 @@ static void connect(struct backend_info *be)
+ 		}
+ 	}
+ 
++	err = xenvif_fi_init(be->vif);
++	if (err)
++		goto err;
 +
-+
+ #ifdef CONFIG_DEBUG_FS
+ 	xenvif_debugfs_addif(be->vif);
+ #endif /* CONFIG_DEBUG_FS */
 
 Amazon Development Center Germany GmbH
 Berlin - Dresden - Aachen
