@@ -1,250 +1,222 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755539AbeDTOzp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:55:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:50170 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755302AbeDTOzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:55:40 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: kvmarm@lists.cs.columbia.edu
-Cc: Punit Agrawal <punit.agrawal@arm.com>,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        suzuki.poulose@arm.com, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
-Date: Fri, 20 Apr 2018 15:54:09 +0100
-Message-Id: <20180420145409.24485-5-punit.agrawal@arm.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180420145409.24485-1-punit.agrawal@arm.com>
-References: <20180420145409.24485-1-punit.agrawal@arm.com>
-X-ARM-No-Footer: FoSSMail
+        id S1755568AbeDTOz5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:55:57 -0400
+Received: from p3plsmtpa11-02.prod.phx3.secureserver.net ([68.178.252.103]:60427
+        "EHLO p3plsmtpa11-02.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755529AbeDTOzz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:55:55 -0400
+Subject: Re: [Patch v4] cifs: Allocate validate negotiation request through
+ kmalloc
+To: longli@microsoft.com, Steve French <sfrench@samba.org>,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <20180419213807.3128-1-longli@linuxonhyperv.com>
+From: Tom Talpey <tom@talpey.com>
+Message-ID: <c8924b83-dfa2-a44c-a425-deb7e03d0bf1@talpey.com>
+Date: Fri, 20 Apr 2018 10:55:52 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180419213807.3128-1-longli@linuxonhyperv.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfH4C0OuKzjxz/nYQWJPNe6/W0wCdrNXuINelXL7ZGSy9GuFEbUzc46+Az+7cFhuXG/1yjI2vKLaZgvfqm0Ob+5yHmOUfjslkPHEerqOQrUJw9rghTI2g
+ rMK8NzQif/cBveCqWW5i7yIpNvUxaJJYRZ7DF+fUbO2kQ/330DPHF0B1cvhzXnsKJvINZJH4D20ZngS8i3JWl3ybdsypO4S4TdkE4ep4lDu1qVOs3KG4ea1+
+ lAIV3XGdO6VLsd+cdDT0EswIbtl813TGRzw5Zzbntx7jyf/QbTaGuE6LQq2VA33BnzRx729H8sdTcd9UsTyWTJBe+4SGEEW1dpO+99DRpNB/fMB0HotLkuKE
+ 5p7rIxhx
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
-handling to add support for PUD hugepages.
+Looks good, but I have two possibly style-related comments.
 
-Addition of pud hugepage support enables additional hugepage
-sizes (e.g., 1G with 4K granule) which can be useful on cores that
-support mapping larger block sizes in the TLB entries.
+On 4/19/2018 5:38 PM, Long Li wrote:
+> From: Long Li <longli@microsoft.com>
+> 
+> The data buffer allocated on the stack can't be DMA'ed, ib_dma_map_page will
+> return an invalid DMA address for a buffer on stack. Even worse, this
+> incorrect address can't be detected by ib_dma_mapping_error. Sending data
+> from this address to hardware will not fail, but the remote peer will get
+> junk data.
+> 
+> Fix this by allocating the request on the heap in smb3_validate_negotiate.
+> 
+> Changes in v2:
+> Removed duplicated code on freeing buffers on function exit.
+> (Thanks to Parav Pandit <parav@mellanox.com>)
+> Fixed typo in the patch title.
+> 
+> Changes in v3:
+> Added "Fixes" to the patch.
+> Changed several sizeof() to use *pointer in place of struct.
+> 
+> Changes in v4:
+> Added detailed comments on the failure through RDMA.
+> Allocate request buffer using GPF_NOFS.
+> Fixed possible memory leak.
+> 
+> Fixes: ff1c038addc4 ("Check SMB3 dialects against downgrade attacks")
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+>   fs/cifs/smb2pdu.c | 61 ++++++++++++++++++++++++++++++-------------------------
+>   1 file changed, 33 insertions(+), 28 deletions(-)
+> 
+> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+> index 0f044c4..caa2a1e 100644
+> --- a/fs/cifs/smb2pdu.c
+> +++ b/fs/cifs/smb2pdu.c
+> @@ -729,8 +729,8 @@ SMB2_negotiate(const unsigned int xid, struct cifs_ses *ses)
+>   
+>   int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+>   {
+> -	int rc = 0;
+> -	struct validate_negotiate_info_req vneg_inbuf;
+> +	int ret, rc = -EIO;
 
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- arch/arm/include/asm/kvm_mmu.h         | 19 +++++++++
- arch/arm64/include/asm/kvm_mmu.h       | 15 +++++++
- arch/arm64/include/asm/pgtable-hwdef.h |  4 ++
- arch/arm64/include/asm/pgtable.h       |  2 +
- virt/kvm/arm/mmu.c                     | 54 ++++++++++++++++++++------
- 5 files changed, 83 insertions(+), 11 deletions(-)
+Seems awkward to have "rc" and "ret", and based on the code below I
+don't see why two variables are needed. Simplify? (see later comment)
 
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index 224c22c0a69c..155916dbdd7e 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -77,8 +77,11 @@ void kvm_clear_hyp_idmap(void);
- 
- #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
- #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
-+#define kvm_pfn_pud(pfn, prot)	(__pud(0))
- 
- #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
-+/* No support for pud hugepages */
-+#define kvm_pud_mkhuge(pud)	(pud)
- 
- /*
-  * The following kvm_*pud*() functionas are provided strictly to allow
-@@ -95,6 +98,22 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
- 	return false;
- }
- 
-+static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
-+{
-+	BUG();
-+}
-+
-+static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
-+{
-+	BUG();
-+	return pud;
-+}
-+
-+static inline pud_t kvm_s2pud_mkexec(pud_t pud)
-+{
-+	BUG();
-+	return pud;
-+}
- 
- static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
- {
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index f440cf216a23..f49a68fcbf26 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -172,11 +172,14 @@ void kvm_clear_hyp_idmap(void);
- 
- #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
- #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
-+#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
- 
- #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
- #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
-+#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
- 
- #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
-+#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
- 
- static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
- {
-@@ -190,6 +193,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
- 	return pmd;
- }
- 
-+static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
-+{
-+	pud_val(pud) |= PUD_S2_RDWR;
-+	return pud;
-+}
-+
- static inline pte_t kvm_s2pte_mkexec(pte_t pte)
- {
- 	pte_val(pte) &= ~PTE_S2_XN;
-@@ -202,6 +211,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
- 	return pmd;
- }
- 
-+static inline pud_t kvm_s2pud_mkexec(pud_t pud)
-+{
-+	pud_val(pud) &= ~PUD_S2_XN;
-+	return pud;
-+}
-+
- static inline void kvm_set_s2pte_readonly(pte_t *ptep)
- {
- 	pteval_t old_pteval, pteval;
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index fd208eac9f2a..e327665e94d1 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -193,6 +193,10 @@
- #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
- #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
- 
-+#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /* HAP[2:1] */
-+#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
-+#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
-+
- /*
-  * Memory Attribute override for Stage-2 (MemAttr[3:0])
-  */
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 7e2c27e63cd8..5efb4585c879 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -386,6 +386,8 @@ static inline int pmd_protnone(pmd_t pmd)
- 
- #define pud_write(pud)		pte_write(pud_pte(pud))
- 
-+#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
-+
- #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
- #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
- #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index 5f53909da90e..7fb58dca0a83 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1036,6 +1036,26 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
- 	return 0;
- }
- 
-+static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
-+			       phys_addr_t addr, const pud_t *new_pud)
-+{
-+	pud_t *pud, old_pud;
-+
-+	pud = stage2_get_pud(kvm, cache, addr);
-+	VM_BUG_ON(!pud);
-+
-+	old_pud = *pud;
-+	if (pud_present(old_pud)) {
-+		pud_clear(pud);
-+		kvm_tlb_flush_vmid_ipa(kvm, addr);
-+	} else {
-+		get_page(virt_to_page(pud));
-+	}
-+
-+	kvm_set_pud(pud, *new_pud);
-+	return 0;
-+}
-+
- static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
- {
- 	pmd_t *pmdp;
-@@ -1452,9 +1472,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	}
- 
- 	vma_pagesize = vma_kernel_pagesize(vma);
--	if (vma_pagesize == PMD_SIZE && !logging_active) {
-+	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
-+	    !logging_active) {
-+		struct hstate *h = hstate_vma(vma);
-+
- 		hugetlb = true;
--		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
-+		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
- 	} else {
- 		/*
- 		 * Pages belonging to memslots that don't have the same
-@@ -1521,15 +1544,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	if (mmu_notifier_retry(kvm, mmu_seq))
- 		goto out_unlock;
- 
--	if (!hugetlb && !force_pte) {
--		/*
--		 * Only PMD_SIZE transparent hugepages(THP) are
--		 * currently supported. This code will need to be
--		 * updated if other THP sizes are supported.
--		 */
-+	if (!hugetlb && !force_pte)
- 		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
--		vma_pagesize = PMD_SIZE;
--	}
- 
- 	if (writable)
- 		kvm_set_pfn_dirty(pfn);
-@@ -1540,7 +1556,23 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	if (exec_fault)
- 		invalidate_icache_guest_page(pfn, vma_pagesize);
- 
--	if (hugetlb) {
-+	if (vma_pagesize == PUD_SIZE) {
-+		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
-+
-+		new_pud = kvm_pud_mkhuge(new_pud);
-+		if (writable)
-+			new_pud = kvm_s2pud_mkwrite(new_pud);
-+
-+		if (exec_fault) {
-+			new_pud = kvm_s2pud_mkexec(new_pud);
-+		} else if (fault_status == FSC_PERM) {
-+			/* Preserve execute if XN was already cleared */
-+			if (stage2_is_exec(kvm, fault_ipa))
-+				new_pud = kvm_s2pud_mkexec(new_pud);
-+		}
-+
-+		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
-+	} else if (vma_pagesize == PMD_SIZE) {
- 		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
- 
- 		new_pmd = kvm_pmd_mkhuge(new_pmd);
--- 
-2.17.0
+> +	struct validate_negotiate_info_req *pneg_inbuf;
+>   	struct validate_negotiate_info_rsp *pneg_rsp = NULL;
+>   	u32 rsplen;
+>   	u32 inbuflen; /* max of 4 dialects */
+> @@ -741,7 +741,6 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+>   	if (tcon->ses->server->rdma)
+>   		return 0;
+>   #endif
+> -
+>   	/* In SMB3.11 preauth integrity supersedes validate negotiate */
+>   	if (tcon->ses->server->dialect == SMB311_PROT_ID)
+>   		return 0;
+> @@ -764,63 +763,67 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+>   	if (tcon->ses->session_flags & SMB2_SESSION_FLAG_IS_NULL)
+>   		cifs_dbg(VFS, "Unexpected null user (anonymous) auth flag sent by server\n");
+>   
+> -	vneg_inbuf.Capabilities =
+> +	pneg_inbuf = kmalloc(sizeof(*pneg_inbuf), GFP_NOFS);
+> +	if (!pneg_inbuf)
+> +		return -ENOMEM;
+> +
+> +	pneg_inbuf->Capabilities =
+>   			cpu_to_le32(tcon->ses->server->vals->req_capabilities);
+> -	memcpy(vneg_inbuf.Guid, tcon->ses->server->client_guid,
+> +	memcpy(pneg_inbuf->Guid, tcon->ses->server->client_guid,
+>   					SMB2_CLIENT_GUID_SIZE);
+>   
+>   	if (tcon->ses->sign)
+> -		vneg_inbuf.SecurityMode =
+> +		pneg_inbuf->SecurityMode =
+>   			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_REQUIRED);
+>   	else if (global_secflags & CIFSSEC_MAY_SIGN)
+> -		vneg_inbuf.SecurityMode =
+> +		pneg_inbuf->SecurityMode =
+>   			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_ENABLED);
+>   	else
+> -		vneg_inbuf.SecurityMode = 0;
+> +		pneg_inbuf->SecurityMode = 0;
+>   
+>   
+>   	if (strcmp(tcon->ses->server->vals->version_string,
+>   		SMB3ANY_VERSION_STRING) == 0) {
+> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
+> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
+> -		vneg_inbuf.DialectCount = cpu_to_le16(2);
+> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
+> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
+> +		pneg_inbuf->DialectCount = cpu_to_le16(2);
+>   		/* structure is big enough for 3 dialects, sending only 2 */
+>   		inbuflen = sizeof(struct validate_negotiate_info_req) - 2;
+
+The "- 2" is a little confusing here. This was existing code, but I
+suggest you change this to a sizeof (u16) construct for consistency.
+It's reducing by the length of a single Dialects[n] entry.
+
+>   	} else if (strcmp(tcon->ses->server->vals->version_string,
+>   		SMBDEFAULT_VERSION_STRING) == 0) {
+> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
+> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
+> -		vneg_inbuf.Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
+> -		vneg_inbuf.DialectCount = cpu_to_le16(3);
+> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
+> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
+> +		pneg_inbuf->Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
+> +		pneg_inbuf->DialectCount = cpu_to_le16(3);
+>   		/* structure is big enough for 3 dialects */
+>   		inbuflen = sizeof(struct validate_negotiate_info_req);
+>   	} else {
+>   		/* otherwise specific dialect was requested */
+> -		vneg_inbuf.Dialects[0] =
+> +		pneg_inbuf->Dialects[0] =
+>   			cpu_to_le16(tcon->ses->server->vals->protocol_id);
+> -		vneg_inbuf.DialectCount = cpu_to_le16(1);
+> +		pneg_inbuf->DialectCount = cpu_to_le16(1);
+>   		/* structure is big enough for 3 dialects, sending only 1 */
+>   		inbuflen = sizeof(struct validate_negotiate_info_req) - 4;
+
+Ditto previous sizeof (u16) comment, with a *2 this case.
+
+>   	}
+>   
+> -	rc = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
+> +	ret = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
+>   		FSCTL_VALIDATE_NEGOTIATE_INFO, true /* is_fsctl */,
+> -		(char *)&vneg_inbuf, sizeof(struct validate_negotiate_info_req),
+> +		(char *)pneg_inbuf, sizeof(*pneg_inbuf),
+>   		(char **)&pneg_rsp, &rsplen);
+>   
+> -	if (rc != 0) {
+> -		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
+> -		return -EIO;
+> +	if (ret) {
+> +		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", ret);
+> +		goto out_free_inbuf;
+>   	}
+
+Why not leave "rc" alone, and set its value to -EIO before the goto
+if the ioctl fails? That will simplify and make the code much more
+readable IMO.
+
+>   
+> -	if (rsplen != sizeof(struct validate_negotiate_info_rsp)) {
+> +	if (rsplen != sizeof(*pneg_rsp)) {
+>   		cifs_dbg(VFS, "invalid protocol negotiate response size: %d\n",
+>   			 rsplen);
+>   
+>   		/* relax check since Mac returns max bufsize allowed on ioctl */
+>   		if ((rsplen > CIFSMaxBufSize)
+>   		     || (rsplen < sizeof(struct validate_negotiate_info_rsp)))
+> -			goto err_rsp_free;
+> +			goto out_free_rsp;
+>   	}
+
+Would need an rc = -EIO here too if above comment is accepted.
+
+Tom.
+
+>   
+>   	/* check validate negotiate info response matches what we got earlier */
+> @@ -838,14 +841,16 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+>   
+>   	/* validate negotiate successful */
+>   	cifs_dbg(FYI, "validate negotiate info successful\n");
+> -	kfree(pneg_rsp);
+> -	return 0;
+> +	rc = 0;
+> +	goto out_free_rsp;
+>   
+>   vneg_out:
+>   	cifs_dbg(VFS, "protocol revalidation - security settings mismatch\n");
+> -err_rsp_free:
+> +out_free_rsp:
+>   	kfree(pneg_rsp);
+> -	return -EIO;
+> +out_free_inbuf:
+> +	kfree(pneg_inbuf);
+> +	return rc;
+>   }
+>   
+>   enum securityEnum
+> 
