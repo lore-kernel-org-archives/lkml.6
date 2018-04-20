@@ -1,44 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752899AbeDTQyj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:54:39 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:34424 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752590AbeDTQyi (ORCPT
+        id S1753211AbeDTQzE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:55:04 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:44970 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752854AbeDTQzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:54:38 -0400
-Date: Sat, 21 Apr 2018 00:54:32 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Jan Glauber <jan.glauber@caviumnetworks.com>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mahipal Challa <mchalla@cavium.com>,
-        Balakrishna Bhamidipati <bbhamidipati@cavium.com>
-Subject: Re: [PATCH] crypto: testmgr: Allow different compression results
-Message-ID: <20180420165432.etiqksfiqsiecdgz@gondor.apana.org.au>
-References: <20180411182832.27761-1-jglauber@cavium.com>
- <20180419034210.nsmzuf3f6lmn7suc@gondor.apana.org.au>
- <20180419115840.GA14706@hc>
+        Fri, 20 Apr 2018 12:55:02 -0400
+X-Google-Smtp-Source: AIpwx4+bkZ8aG/i05AQGpMu6vuczV6CgjG/xdgu2qltuMYTWe4rh4/nMh7+xmfr1zsI8MkuLx9meMD3te1ooX5Q96KoVfBmzgYOB
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419115840.GA14706@hc>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Date: Fri, 20 Apr 2018 09:55:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000092512b056a4a8c76@google.com>
+Subject: KASAN: slab-out-of-bounds Read in build_segment_manager
+From: syzbot <syzbot+0a725420475916460f12@syzkaller.appspotmail.com>
+To: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        yuchao0@huawei.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 01:58:40PM +0200, Jan Glauber wrote:
->
-> Nice idea. Would a crypto_alloc_cipher("deflate", ...) pick the generic
-> implementation or how can we select it?
+Hello,
 
-For our ciphers we generally use the -generic suffix in the driver
-name.  The compression algorithms seem to be all over the place on
-this so we should fix them all to use the -generic suffix and then
-we can simply append the -generic suffix here before allocating it.
+syzbot hit the following crash on upstream commit
+87ef12027b9b1dd0e0b12cf311fbcb19f9d92539 (Wed Apr 18 19:48:17 2018 +0000)
+Merge tag 'ceph-for-4.17-rc2' of git://github.com/ceph/ceph-client
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=0a725420475916460f12
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4726415475867648
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5230577728880640
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=4759744422084608
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+F2FS-fs (loop0): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
+F2FS-fs (loop0): invalid crc value
+==================================================================
+BUG: KASAN: slab-out-of-bounds in build_sit_entries fs/f2fs/segment.c:3653  
+[inline]
+BUG: KASAN: slab-out-of-bounds in build_segment_manager+0xb92d/0xbf70  
+fs/f2fs/segment.c:3852
+Read of size 4 at addr ffff8801ac7b66e0 by task syzkaller806281/4519
+
+CPU: 0 PID: 4519 Comm: syzkaller806281 Not tainted 4.17.0-rc1+ #8
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  build_sit_entries fs/f2fs/segment.c:3653 [inline]
+  build_segment_manager+0xb92d/0xbf70 fs/f2fs/segment.c:3852
+  f2fs_fill_super+0x4095/0x7bf0 fs/f2fs/super.c:2803
+  mount_bdev+0x30c/0x3e0 fs/super.c:1165
+  f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
+  mount_fs+0xae/0x328 fs/super.c:1268
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2517 [inline]
+  do_mount+0x564/0x3070 fs/namespace.c:2847
+  ksys_mount+0x12d/0x140 fs/namespace.c:3063
+  __do_sys_mount fs/namespace.c:3077 [inline]
+  __se_sys_mount fs/namespace.c:3074 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4477ca
+RSP: 002b:00007fff69213888 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000b70 RCX: 00000000004477ca
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fff692138c0
+RBP: 0000000000000064 R08: 0000000020016600 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000064
+R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 2845:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  getname_flags+0xd0/0x5a0 fs/namei.c:140
+  getname+0x19/0x20 fs/namei.c:211
+  do_sys_open+0x39a/0x740 fs/open.c:1087
+  __do_sys_open fs/open.c:1111 [inline]
+  __se_sys_open fs/open.c:1106 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1106
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 2845:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+  putname+0xf2/0x130 fs/namei.c:261
+  do_sys_open+0x554/0x740 fs/open.c:1102
+  __do_sys_open fs/open.c:1111 [inline]
+  __se_sys_open fs/open.c:1106 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1106
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801ac7b69c0
+  which belongs to the cache names_cache of size 4096
+The buggy address is located 736 bytes to the left of
+  4096-byte region [ffff8801ac7b69c0, ffff8801ac7b79c0)
+The buggy address belongs to the page:
+page:ffffea0006b1ed80 count:1 mapcount:0 mapping:ffff8801ac7b69c0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801ac7b69c0 0000000000000000 0000000100000001
+raw: ffffea0006b1f7a0 ffffea0006b1eea0 ffff8801da988dc0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801ac7b6580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801ac7b6600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801ac7b6680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                                        ^
+  ffff8801ac7b6700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801ac7b6780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
