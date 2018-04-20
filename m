@@ -1,72 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753607AbeDTFpD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 01:45:03 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41518 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752106AbeDTFpB (ORCPT
+        id S1753860AbeDTFr1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 01:47:27 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:47950 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753697AbeDTFrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 01:45:01 -0400
-X-Google-Smtp-Source: AIpwx49cnSEz76+Dgnp6OREKtLdCkowqwXLBkl31fXrUWO3PV6z3Ewm3Im97dgt54cAegAb0c0deLg==
-Date: Fri, 20 Apr 2018 14:44:57 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: John Stultz <john.stultz@linaro.org>, Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock
- BOOTTIME
-Message-ID: <20180420054457.GA26393@jagdpanzerIV>
-References: <20180301163331.987775783@linutronix.de>
- <CA+55aFzV8Q20vL83xa+1UKzeQ0w-SAksCDxJD4szALRDCSUZ2w@mail.gmail.com>
- <20180313063630.zxebyb7gczeiovyf@gmail.com>
- <CALAqxLXJw-QOztJvt1sBSyxDg4NFz5KXmPv3PjF4VEChz20BGA@mail.gmail.com>
- <CANq1E4Tf27FJHTrO4ZVtWhYK=DLmwzszK=njOpgXZZXqzAOunA@mail.gmail.com>
+        Fri, 20 Apr 2018 01:47:24 -0400
+Date: Fri, 20 Apr 2018 07:47:09 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org
+Cc: alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf: update to new syscall stub naming convention
+Message-ID: <20180420054709.GB19013@light.dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANq1E4Tf27FJHTrO4ZVtWhYK=DLmwzszK=njOpgXZZXqzAOunA@mail.gmail.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/20/18 06:37), David Herrmann wrote:
->
-> I get lots of timer-errors on Arch-Linux booting current master, after
-> a suspend/resume cycle. Just a selection of errors I see on resume:
+For v4.17-rc1, the naming of syscall stubs changed. Update the
+perf scripts/utils/tests which need to be aware of the syscall
+stub naming accordingly.
 
-Hello David,
-Any chance you can revert the patches in question and test? I'm running
-ARCH (4.17.0-rc1-dbg-00042-gaa03ddd9c434) and suspend/resume cycle does
-not trigger any errors. Except for this one
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 
-	kernel: do_IRQ: 0.55 No irq handler for vector
-
-> systemd[1]: systemd-journald.service: Main process exited,
-> code=dumped, status=6/ABRT
-> rtkit-daemon[742]: The canary thread is apparently starving. Taking action.
-> systemd[1]: systemd-udevd.service: Watchdog timeout (limit 3min)!
-> systemd[1]: systemd-journald.service: Watchdog timeout (limit 3min)!
-> kernel: e1000e 0000:00:1f.6: Failed to restore TIMINCA clock rate delta: -22
-> 
-> Lots of crashes with SIGABRT due to these.
-> 
-> I did not bisect it, but it sounds related to me. Also, user-space
-> uses CLOCK_MONOTONIC for watchdog timers. That is, a process is
-> required to respond to a watchdog-request in a given MONOTONIC
-> time-frame. If this jumps during suspend/resume, watchdogs will fire
-> immediately. I don't see how this can work with the new MONOTONIC
-> behavior?
-
-	-ss
+diff --git a/tools/perf/arch/powerpc/util/sym-handling.c b/tools/perf/arch/powerpc/util/sym-handling.c
+index 53d83d7e6a09..9a970e334cea 100644
+--- a/tools/perf/arch/powerpc/util/sym-handling.c
++++ b/tools/perf/arch/powerpc/util/sym-handling.c
+@@ -32,10 +32,10 @@ int arch__choose_best_symbol(struct symbol *syma,
+ 	if (*sym == '.')
+ 		sym++;
+ 
+-	/* Avoid "SyS" kernel syscall aliases */
+-	if (strlen(sym) >= 3 && !strncmp(sym, "SyS", 3))
++	/* Avoid "__se_sys" kernel syscall aliases */
++	if (strlen(sym) >= 8 && !strncmp(sym,  "__se_sys", 8))
+ 		return SYMBOL_B;
+-	if (strlen(sym) >= 10 && !strncmp(sym, "compat_SyS", 10))
++	if (strlen(sym) >= 15 && !strncmp(sym, "__se_compat_sys", 15))
+ 		return SYMBOL_B;
+ 
+ 	return SYMBOL_A;
+diff --git a/tools/perf/tests/bpf-script-example.c b/tools/perf/tests/bpf-script-example.c
+index e4123c1b0e88..5839baa3d766 100644
+--- a/tools/perf/tests/bpf-script-example.c
++++ b/tools/perf/tests/bpf-script-example.c
+@@ -31,8 +31,8 @@ struct bpf_map_def SEC("maps") flip_table = {
+ 	.max_entries = 1,
+ };
+ 
+-SEC("func=SyS_epoll_pwait")
+-int bpf_func__SyS_epoll_pwait(void *ctx)
++SEC("func=__se_sys_epoll_pwait")
++int bpf_func____se_sys_epoll_pwait(void *ctx)
+ {
+ 	int ind =0;
+ 	int *flag = bpf_map_lookup_elem(&flip_table, &ind);
+diff --git a/tools/perf/util/c++/clang-test.cpp b/tools/perf/util/c++/clang-test.cpp
+index 7b042a5ebc68..67a39ac8626d 100644
+--- a/tools/perf/util/c++/clang-test.cpp
++++ b/tools/perf/util/c++/clang-test.cpp
+@@ -41,7 +41,7 @@ int test__clang_to_IR(void)
+ 	if (!M)
+ 		return -1;
+ 	for (llvm::Function& F : *M)
+-		if (F.getName() == "bpf_func__SyS_epoll_pwait")
++		if (F.getName() == "bpf_func____se_sys_epoll_pwait")
+ 			return 0;
+ 	return -1;
+ }
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 62b2dd2253eb..32e156992dfc 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -113,10 +113,11 @@ int __weak arch__compare_symbol_names_n(const char *namea, const char *nameb,
+ int __weak arch__choose_best_symbol(struct symbol *syma,
+ 				    struct symbol *symb __maybe_unused)
+ {
+-	/* Avoid "SyS" kernel syscall aliases */
+-	if (strlen(syma->name) >= 3 && !strncmp(syma->name, "SyS", 3))
++	/* Avoid "__se_sys" kernel syscall aliases */
++	if (strlen(syma->name) >= 8 && !strncmp(syma->name,  "__se_sys", 8))
+ 		return SYMBOL_B;
+-	if (strlen(syma->name) >= 10 && !strncmp(syma->name, "compat_SyS", 10))
++	if (strlen(syma->name) >= 15 &&
++		!strncmp(syma->name, "__se_compat_sys", 15))
+ 		return SYMBOL_B;
+ 
+ 	return SYMBOL_A;
