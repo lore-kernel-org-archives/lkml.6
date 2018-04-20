@@ -1,50 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755409AbeDTOhv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:37:51 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:42671 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755339AbeDTOhp (ORCPT
+        id S1755279AbeDTOjY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:39:24 -0400
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:38737 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755071AbeDTOjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:37:45 -0400
-X-Google-Smtp-Source: AIpwx49NTXaFAjlM2HtI23I7/xpv+8JFYZWgUS9Xhf95p2g8g5X1ZJUMLj9qr3ORsNV9zDPhiSQvLQ==
-Subject: Re: [PATCH] [net] ipv6: sr: fix NULL pointer dereference in
- seg6_do_srh_encap()- v4 pkts
-To: Ahmed Abdelsalam <amsalam20@gmail.com>, davem@davemloft.net,
-        dlebrun@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1524232685-1203-1-git-send-email-amsalam20@gmail.com>
-From: David Lebrun <dav.lebrun@gmail.com>
-Message-ID: <3627f25a-0c47-6428-aa76-5baf96993a4c@gmail.com>
-Date: Fri, 20 Apr 2018 15:38:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 20 Apr 2018 10:39:22 -0400
+X-Google-Smtp-Source: AB8JxZoFS9XI2XImDDrTrVgj4Hnz0ILsxMKfWg2md7rIhnpJ1vOGs7iaNfO8/19jenzmNoYD4DL+QGN5m+rsmygZrgE=
 MIME-Version: 1.0
-In-Reply-To: <1524232685-1203-1-git-send-email-amsalam20@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180420142533.GN5671@atomide.com>
+References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
+ <20180330171822.25896-4-sebastian.reichel@collabora.co.uk>
+ <a078d8c3-9e65-cc7b-737a-cbd5cf141f95@ti.com> <CAPj87rPeBim9NyBmMuDKKEwx2apLhdnZyEB9_sfbVQpUHA95+Q@mail.gmail.com>
+ <20180420142533.GN5671@atomide.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 20 Apr 2018 15:39:20 +0100
+Message-ID: <CAPj87rPLEEa6_13T38BQM4HXV5v17MzjGmLE2WSPJTo09qUJpQ@mail.gmail.com>
+Subject: Re: [PATCHv3 3/8] drm/omap: add support for manually updated displays
+To: Tony Lindgren <tony@atomide.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/2018 02:58 PM, Ahmed Abdelsalam wrote:
-> In case of seg6 in encap mode, seg6_do_srh_encap() calls set_tun_src()
-> in order to set the src addr of outer IPv6 header.
-> 
-> The net_device is required for set_tun_src(). However calling ip6_dst_idev()
-> on dst_entry in case of IPv4 traffic results on the following bug.
-> 
-> Using just dst->dev should fix this BUG.
-> 
+Hi Tony!
 
-Good catch, thanks for spotting this. If you actually tested your fix 
-with IPv4 and IPv6 traffic, you should mention it in the commit message. 
-Your current formulation suggests that you just guessed a fix without 
-testing.
+On 20 April 2018 at 15:25, Tony Lindgren <tony@atomide.com> wrote:
+> * Daniel Stone <daniel@fooishbar.org> [180420 10:21]:
+>> On 20 April 2018 at 08:09, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
+>> > It's actually not quite clear to me how manual update displays work with
+>> > DRM...
+>> >
+>> > As far as I see, we have essentially two cases: 1) single buffering,
+>> > where the userspace must set an area in the fb dirty, which then
+>> > triggers the update, 2) multi buffering, which doesn't need fb dirty,
+>> > but just a page flip which triggers the update.
+>> >
+>> > In the 2) case (which I think is the optimal case which all the modern
+>> > apps should use), there's no need for delayed work or any work, and the
+>> > code flow should be very similar to the auto-update model.
+>>
+>> Correct. There's been talk (and I think patches?) of adding a
+>> per-plane dirty property, so userspace can as an optimisation inform
+>> the kernel of the area changed between frames. But short of that, a
+>> pageflip needs to trigger a full-plane update, with no dirtyfb
+>> required.
+>
+> For per-plane dirty property patches, which ones do you refer to?
 
-> 
-> Fixes: 8936ef7604c11 ipv6: sr: fix NULL pointer dereference when setting encap source address
-> Signed-off-by: Ahmed Abdelsalam<amsalam20@gmail.com>
+Here's the latest iteration of that series:
+https://lists.freedesktop.org/archives/dri-devel/2018-April/171900.html
+<1522885748-67122-1-git-send-email-drawat@vmware.com>
 
-Acked-by: David Lebrun <dlebrun@google.com>
+> Then for xorg, there's my second attempt on fixing the command mode
+> rotation at [0]. Not sure if that's enough for a fix?
+>
+> It seems not very efficient to me and I don't really know where
+> the the per crtc dirty flag should be stored..
+
+I try to deny all knowledge of X11 these days, I'm afraid.
+
+Cheers,
+Daniel
