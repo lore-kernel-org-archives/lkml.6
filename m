@@ -1,116 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755779AbeDTPg3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:36:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56008 "EHLO mail.kernel.org"
+        id S1755770AbeDTPix (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:38:53 -0400
+Received: from foss.arm.com ([217.140.101.70]:50574 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755603AbeDTPg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:36:28 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABDBB20C0F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 20 Apr 2018 11:36:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        kamalesh@linux.vnet.ibm.com
-Subject: Re: [RFC] trace_events: Fix kernel crash while using empty filter
- with perf
-Message-ID: <20180420113626.54cb12de@gandalf.local.home>
-In-Reply-To: <20180420150758.19787-1-ravi.bangoria@linux.ibm.com>
-References: <20180420150758.19787-1-ravi.bangoria@linux.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1755281AbeDTPiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 11:38:52 -0400
+Date: Fri, 20 Apr 2018 16:38:47 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Andrey Konovalov <andreyknvl@google.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
+Subject: Re: Clang arm64 build is broken
+Message-ID: <20180420153846.5m5ngqcfn4v4q6wh@lakrids.cambridge.arm.com>
+References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
+ <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
+ <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 20:37:58 +0530
-Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
+Hi Andrey,
 
-> Kernel is crashing when user tries to record 'ftrace:function' event
-> with empty filter:
+On Fri, Apr 20, 2018 at 04:59:35PM +0200, Andrey Konovalov wrote:
+> On Fri, Apr 20, 2018 at 10:13 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> >> The issue is that
+> >> clang doesn't know about the "S" asm constraint. I reported this to
+> >> clang [2], and hopefully this will get fixed. In the meantime, would
+> >> it possible to work around using the "S" constraint in the kernel?
+> >
+> > I have no idea, I've never used clang to build the kernel. Clang isn't
+> > really supported to build the arm64 kernel anyway (as you mention
+> > below), and working around clang deficiencies would mean that we leave
+> > with the workaround forever. I'd rather enable clang once it is at
+> > feature parity with GCC.
 > 
->   # perf record -e ftrace:function --filter="" ls
-> 
->   # dmesg
->   BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
->   Oops: 0000 [#1] SMP PTI
->   ...
->   RIP: 0010:ftrace_profile_set_filter+0x14b/0x2d0
->   RSP: 0018:ffffa4a7c0da7d20 EFLAGS: 00010246
->   RAX: ffffa4a7c0da7d64 RBX: 0000000000000000 RCX: 0000000000000006
->   RDX: 0000000000000000 RSI: 0000000000000092 RDI: ffff8c48ffc968f0
->   ...
->   Call Trace:
->    _perf_ioctl+0x54a/0x6b0
->    ? rcu_all_qs+0x5/0x30
->   ...
-> 
-> After patch:
->   # perf record -e ftrace:function --filter="" ls
->   failed to set filter "" on event ftrace:function with 22 (Invalid argument)
-> 
-> Also, if user tries to echo "" > filter, it used to throw an error.
-> This behavior got changed by commit 80765597bc58 ("tracing: Rewrite
-> filter logic to be simpler and faster"). This patch restores the
-> behavior as a side effect:
-> 
-> Before patch:
->   # echo "" > filter
->   #
-> 
-> After patch:
->   # echo "" > filter
->   bash: echo: write error: Invalid argument
->   #
-> 
-> Fixes: 80765597bc58 ("tracing: Rewrite filter logic to be simpler and faster")
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> The fact that there are some existing issues with building arm64
+> kernel with clang doesn't sound like a good justification for adding
+> new issues :)
 
-With my initial testing, this looks like a proper fix.
+I appreciate this is somewhat frustrating, but every feature where clang
+is not at parity with GCC is effectively a functional regression for us.
 
-I'll investigate further, and if you don't hear back from me, it means
-that I took it.
+Recently, the code that clang hasn't liked happens to be security
+critical, and it is somewhat difficult to justify making that code more
+complex to cater for a compiler that we know has outstanding issues with
+features we rely upon.
 
-I'm still waiting on one other patch before I start the process of
-testing my current queue to push to Linus. Once I have that one, I'll
-start testing my queue, and if I take this, it will be part of it.
+Which is to say, I'm not sure that there's much justification either
+way. We really need clang to be at feature parity with GCC for it to be
+considered supported.
 
-Thanks!
+It would be great if some effort could be focussed on bringing clang to
+feature parity with GCC before implementing new clang-specific features.
 
--- Steve
+> However in this case I do believe that this is more of a bug in clang
+> that should be fixed.
 
+Just to check: does clang implement the rest of the AArch64 machine
+constraints [1]?
 
-> ---
->  kernel/trace/trace_events_filter.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+We're liable to use more of them in future, and we should aim for parity
+now so that we don't fall into the same trap in future.
+
+> >> While we're here, regarding the other issue with kvm [3], I didn't
+> >> receive any comments as to whether it makes sense to send the fix that
+> >> adds -fno-jump-tables flag when building kvm with clang.
+> >
+> > Is that the only thing missing? Are you sure that there is no other way
+> > for clang to generate absolute addresses that will then lead to a crash?
+> > Again, I'd rather make sure we have the full picture.
 > 
-> diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-> index 9b4716bb8bb0..1f951b3df60c 100644
-> --- a/kernel/trace/trace_events_filter.c
-> +++ b/kernel/trace/trace_events_filter.c
-> @@ -1499,14 +1499,14 @@ static int process_preds(struct trace_event_call *call,
->  		return ret;
->  	}
->  
-> -	if (!nr_preds) {
-> -		prog = NULL;
-> -	} else {
-> -		prog = predicate_parse(filter_string, nr_parens, nr_preds,
-> +	if (!nr_preds)
-> +		return -EINVAL;
-> +
-> +	prog = predicate_parse(filter_string, nr_parens, nr_preds,
->  			       parse_pred, call, pe);
-> -		if (IS_ERR(prog))
-> -			return PTR_ERR(prog);
-> -	}
-> +	if (IS_ERR(prog))
-> +		return PTR_ERR(prog);
-> +
->  	rcu_assign_pointer(filter->prog, prog);
->  	return 0;
->  }
+> Well, I have tried applying that patch and running kvm tests that I
+> could find [1], and they passed (actually I think there was an issue
+> with one of them, but I saw the same thing when I tried running them
+> on a kernel built with GCC).
+
+I think what Marc wants is a statement as to whether -fno-jump-tables is
+sufficient to ensure that clang will not try to use absolute addressing,
+based on an understanding of the AArch64 LLVM backend rather than test
+cases.
+
+For example, could any other pass result in the use of an absolute
+address? Or are jump tables the *only* reason that clang would try to
+use an absolute address.
+
+Are there other options that we might need to pass?
+
+Are there any options that we can pass to forbid absolute addressing?
+
+Thanks,
+Mark.
+
+[1] https://gcc.gnu.org/onlinedocs/gccint/Machine-Constraints.html
