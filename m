@@ -1,86 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753586AbeDTRxW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:53:22 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:32770 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753554AbeDTRxT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:53:19 -0400
-X-Google-Smtp-Source: AIpwx48B9g3pEvfdfWFkB99R2mv92Ns+A1IpMyTEINPpaYJPfzlf4vePqq56bbX0A2PIWxMdU2ij0W7LA+jqT9LgWVs=
+        id S1753624AbeDTRyM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:54:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59536 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752749AbeDTRyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 13:54:11 -0400
+Date: Fri, 20 Apr 2018 13:48:12 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>
+Subject: Re: [PATCH ghak80 V1] audit: add syscall information to
+ FEATURE_CHANGE records
+Message-ID: <20180420174812.3sczwow3wg6alrcu@madcap2.tricolour.ca>
+References: <08bd08ee9bc70f6e98b9e298ba6a2c0f4dcadb4b.1523372093.git.rgb@redhat.com>
+ <CAHC9VhSxjEKNcdE2Mm-Vwef6RvTG2ykGFFmeAtVypAaPRvddmg@mail.gmail.com>
+ <20180420134651.3badjswsokqs7hex@madcap2.tricolour.ca>
+ <CAHC9VhQzsE1x33uvGkoioXcLvcmdOUUbajnyZ1-qw4xLjLj98Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com>
-References: <1524243513-29118-1-git-send-email-chuhu@redhat.com> <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 20 Apr 2018 19:52:58 +0200
-Message-ID: <CACT4Y+ZLtpU2WK7zRyXTuMWsE-5_Tz4LYs7xtwZrYZ8zbHVOHg@mail.gmail.com>
-Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Chunyu Hu <chuhu@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQzsE1x33uvGkoioXcLvcmdOUUbajnyZ1-qw4xLjLj98Q@mail.gmail.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 7:50 PM, Catalin Marinas
-<catalin.marinas@arm.com> wrote:
-> On Sat, Apr 21, 2018 at 12:58:33AM +0800, Chunyu Hu wrote:
->> __GFP_NORETRY and  __GFP_NOFAIL are combined in gfp_kmemleak_mask now.
->> But it's a wrong combination. As __GFP_NOFAIL is blockable, but
->> __GFP_NORETY is not blockable, make it self-contradiction.
->>
->> __GFP_NOFAIL means 'The VM implementation _must_ retry infinitely'. But
->> it's not the real intention, as kmemleak allow alloc failure happen in
->> memory pressure, in that case kmemleak just disables itself.
->
-> Good point. The __GFP_NOFAIL flag was added by commit d9570ee3bd1d
-> ("kmemleak: allow to coexist with fault injection") to keep kmemleak
-> usable under fault injection.
->
->> commit 9a67f6488eca ("mm: consolidate GFP_NOFAIL checks in the allocator
->> slowpath") documented that what user wants here should use GFP_NOWAIT, and
->> the WARN in __alloc_pages_slowpath caught this weird usage.
->>
->>  <snip>
->>  WARNING: CPU: 3 PID: 64 at mm/page_alloc.c:4261 __alloc_pages_slowpath+0x1cc3/0x2780
-> [...]
->> Replace the __GFP_NOFAIL with GFP_NOWAIT in gfp_kmemleak_mask, __GFP_NORETRY
->> and GFP_NOWAIT are in the gfp_kmemleak_mask. So kmemleak object allocaion
->> is no blockable and no reclaim, making kmemleak less disruptive to user
->> processes in pressure.
->
-> It doesn't solve the fault injection problem for kmemleak (unless we
-> change __should_failslab() somehow, not sure yet). An option would be to
-> replace __GFP_NORETRY with __GFP_NOFAIL in kmemleak when fault injection
-> is enabled.
->
-> BTW, does the combination of NOWAIT and NORETRY make kmemleak
-> allocations more likely to fail?
->
-> Cc'ing Dmitry as well.
+On 2018-04-20 11:58, Paul Moore wrote:
+> On Fri, Apr 20, 2018 at 9:46 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2018-04-17 18:06, Paul Moore wrote:
+> >> On Wed, Apr 11, 2018 at 8:46 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> >> > Tie syscall information to FEATURE_CHANGE calls since it is a result of
+> >> > user action.
+> >> >
+> >> > See: https://github.com/linux-audit/audit-kernel/issues/80
+> >> >
+> >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> >> > ---
+> >> >  kernel/audit.c | 5 ++---
+> >> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> >> >
+> >> > diff --git a/kernel/audit.c b/kernel/audit.c
+> >> > index 8da24ef..23f125b 100644
+> >> > --- a/kernel/audit.c
+> >> > +++ b/kernel/audit.c
+> >> > @@ -1103,10 +1103,9 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
+> >> >  {
+> >> >         struct audit_buffer *ab;
+> >> >
+> >> > -       if (audit_enabled == AUDIT_OFF)
+> >> > +       if (!audit_enabled)
+> >>
+> >> Sooo, this is an unrelated style change, why?  Looking at the rest of
+> >> kernel/audit.c we seem to use a mix of "(!x)" and "(x == 0/CONST)" so
+> >> why are you adding noise to this patch?
+> >
+> > Ok, survey sez 25 instances of audit_enabled used as a boolean vs 7
+> > instances where it could be used as a boolean where the expression is
+> > made harder to read (in my opinion).  I thought it was worth changing to
+> > read the same way most of the other instances I've been reviewing are
+> > written.  There are only two where the non-boolean distiction with
+> > AUDIT_LOCKED is required.
+> 
+> Thanks for the explanation.
+> 
+> While I still believe this patch, and connecting records in general,
+> is the Right Thing To Do, I'm expecting there to be some hate mail on
+> this issue and I would like to keep the patch as small and as
+> straight-to-the-point as possible just so there is little confusion
+> about what is changing.
+> 
+> Please respin this without the style change and I'll merge it as soon
+> as I see it.  Alternatively, give me the "ok" and I'll merge the patch
+> now and just drop the style change; after all we're talking about one
+> line in a five line patch ;)
 
-Yes, it would be bad if there allocations fail due to fault injection.
-These are both debugging tools and ideally should not interfere.
+Go ahead and drop that style change line to simplify this patch and I'll
+submit another patch to clean them all up at the same time (probably the
+next time one of those changes).
 
->> Signed-off-by: Chunyu Hu <chuhu@redhat.com>
->> CC: Michal Hocko <mhocko@suse.com>
->> ---
->>  mm/kmemleak.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
->> index 9a085d5..4ea07e4 100644
->> --- a/mm/kmemleak.c
->> +++ b/mm/kmemleak.c
->> @@ -126,7 +126,7 @@
->>  /* GFP bitmask for kmemleak internal allocations */
->>  #define gfp_kmemleak_mask(gfp)       (((gfp) & (GFP_KERNEL | GFP_ATOMIC)) | \
->>                                __GFP_NORETRY | __GFP_NOMEMALLOC | \
->> -                              __GFP_NOWARN | __GFP_NOFAIL)
->> +                              __GFP_NOWARN | GFP_NOWAIT)
->>
->>  /* scanning area inside a memory block */
->>  struct kmemleak_scan_area {
->> --
->> 1.8.3.1
+> >> >                 return;
+> >> > -
+> >> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
+> >> > +       ab = audit_log_start(current->audit_context, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
+> >>
+> >> This is the important part, and the Right Thing To Do.
+> >>
+> >> >         if (!ab)
+> >> >                 return;
+> >> >         audit_log_task_info(ab, current);
+> 
+> -- 
+> paul moore
+> www.paul-moore.com
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
