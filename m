@@ -1,81 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755578AbeDTO5p (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:57:45 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40624 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755297AbeDTO5n (ORCPT
+        id S1755339AbeDTO7i (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:59:38 -0400
+Received: from mail-io0-f180.google.com ([209.85.223.180]:33212 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755277AbeDTO7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:57:43 -0400
-X-Google-Smtp-Source: AIpwx495LiE/YV/3EWa9/YyfUQ1UFEdtFeisnQoryQclO45wBoIFMPwoGdAE7mTkOGIy2LyW2s7wWg==
-Date: Fri, 20 Apr 2018 08:57:40 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] tpm: Add explicit endianness cast
-Message-ID: <20180420145740.GC30433@ziepe.ca>
-References: <20180412101350.210547-1-tweek@google.com>
- <20180412101350.210547-2-tweek@google.com>
- <20180417030202.GA30624@ziepe.ca>
- <CA+zpnLdU=t6eOY9GOLAyiXkZBw=NueckiejHSexd8P7MKYuRww@mail.gmail.com>
- <20180417140013.GA2029@ziepe.ca>
- <CA+zpnLePcFJQURBNZEt=mRSRb9GUYR=1t9EQn82W0+311xKZ7w@mail.gmail.com>
+        Fri, 20 Apr 2018 10:59:37 -0400
+X-Google-Smtp-Source: AIpwx48MFOo6v2G4sq2XEhwi5hZFDo+sJ5s320N/GTwO7yb3RScqbehC5MhfJbOZYVP4FYXR1EnxXFgSsKFEnb9IeMg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+zpnLePcFJQURBNZEt=mRSRb9GUYR=1t9EQn82W0+311xKZ7w@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
+References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
+ <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Fri, 20 Apr 2018 16:59:35 +0200
+Message-ID: <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
+Subject: Re: Clang arm64 build is broken
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Christoffer Dall <christoffer.dall@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 01:09:12PM +0000, Thiebaud Weksteen wrote:
-> On Tue, Apr 17, 2018 at 4:00 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> 
-> > On Tue, Apr 17, 2018 at 08:32:33AM +0000, Thiebaud Weksteen wrote:
-> > > On Tue, Apr 17, 2018 at 5:02 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > >
-> > > > On Thu, Apr 12, 2018 at 12:13:47PM +0200, Thiebaud Weksteen wrote:
-> > > > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > > > >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
-> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
-> > > b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > index 96fd5646f866..d74568d58a66 100644
-> > > > > +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
-> > > > >        * but physical tpm needs the conversion.
-> > > > >        */
-> > > > >       if (of_property_match_string(np, "compatible", "IBM,vtpm") <
-> 0) {
-> > > > > -             size = be32_to_cpup(sizep);
-> > > > > -             base = be64_to_cpup(basep);
-> > > > > +             size = be32_to_cpup((__be32 *)sizep);
-> > > > > +             base = be64_to_cpup((__be64 *)basep);
-> > >
-> > > > Er, no.. change the definitions of sizep and basep to be __be
-> > >
-> > > > Jason
-> > >
-> > > Please read the comment before the condition. sizep and
-> > > basep may contain either little endian or big endian and this block is
-> used
-> > > to adjust that. Let me know if there is a better way for handling this.
-> 
-> > Well a cast like that will throw sparse warnings, you need __force at
-> > least
-> 
-> I don't think so. Since the variable is only defined as u32*, no specific
-> warning is generated. I've used `make C=2 drivers/char/tpm/` with this
-> patch applied and no new warning is being triggered.
+On Fri, Apr 20, 2018 at 10:13 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>> The issue is that
+>> clang doesn't know about the "S" asm constraint. I reported this to
+>> clang [2], and hopefully this will get fixed. In the meantime, would
+>> it possible to work around using the "S" constraint in the kernel?
+>
+> I have no idea, I've never used clang to build the kernel. Clang isn't
+> really supported to build the arm64 kernel anyway (as you mention
+> below), and working around clang deficiencies would mean that we leave
+> with the workaround forever. I'd rather enable clang once it is at
+> feature parity with GCC.
 
-I'm surprised to hear you say that..
+The fact that there are some existing issues with building arm64
+kernel with clang doesn't sound like a good justification for adding
+new issues :)
 
-Sparse is supposed to require force on all cast that change the
-annotation, and there are many examples in the kernel that have force
-in that case.
+However in this case I do believe that this is more of a bug in clang
+that should be fixed.
 
-Jason
+>> While we're here, regarding the other issue with kvm [3], I didn't
+>> receive any comments as to whether it makes sense to send the fix that
+>> adds -fno-jump-tables flag when building kvm with clang.
+>
+> Is that the only thing missing? Are you sure that there is no other way
+> for clang to generate absolute addresses that will then lead to a crash?
+> Again, I'd rather make sure we have the full picture.
+
+Well, I have tried applying that patch and running kvm tests that I
+could find [1], and they passed (actually I think there was an issue
+with one of them, but I saw the same thing when I tried running them
+on a kernel built with GCC).
+
+[1] https://www.linux-kvm.org/page/KVM-unit-tests
