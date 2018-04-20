@@ -1,161 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752738AbeDTUm4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 16:42:56 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:52282 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751228AbeDTUmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 16:42:54 -0400
-Date: Fri, 20 Apr 2018 16:44:29 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, kernel-team@fb.com,
-        Michal Hocko <mhocko@suse.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce memory.min
-Message-ID: <20180420204429.GA24563@cmpxchg.org>
-References: <20180420163632.3978-1-guro@fb.com>
+        id S1752427AbeDTUrz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 16:47:55 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56368 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751860AbeDTUrx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 16:47:53 -0400
+Subject: Re: [pci PATCH v8 0/4] Add support for unmanaged SR-IOV
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Alexander Duyck <alexander.h.duyck@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
+ <5fc62d10-790f-2356-c2f6-fd49f542dd3c@infradead.org>
+ <CAKgT0UewuO7LWc8wkHPTv2cksF39-8+5nFfEP_DmXVRQtgOWdg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d744f4cc-9bac-ba1a-7757-ca05fd855708@infradead.org>
+Date: Fri, 20 Apr 2018 13:47:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420163632.3978-1-guro@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAKgT0UewuO7LWc8wkHPTv2cksF39-8+5nFfEP_DmXVRQtgOWdg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roman,
-
-this looks cool, and the implementation makes sense to me, so the
-feedback I have is just smaller stuff.
-
-On Fri, Apr 20, 2018 at 05:36:31PM +0100, Roman Gushchin wrote:
-> Memory controller implements the memory.low best-effort memory
-> protection mechanism, which works perfectly in many cases and
-> allows protecting working sets of important workloads from
-> sudden reclaim.
+On 04/20/18 13:01, Alexander Duyck wrote:
+> On Fri, Apr 20, 2018 at 10:23 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>> On 04/20/18 09:28, Alexander Duyck wrote:
+>>> This series is meant to add support for SR-IOV on devices when the VFs are
+>>> not managed by the kernel. Examples of recent patches attempting to do this
+>>> include:
+>>> virto - https://patchwork.kernel.org/patch/10241225/
+>>> pci-stub - https://patchwork.kernel.org/patch/10109935/
+>>> vfio - https://patchwork.kernel.org/patch/10103353/
+>>> uio - https://patchwork.kernel.org/patch/9974031/
+>>
+>> Hi,
+>>
+>> Somewhere in this patch series it would be nice to tell us what the heck
+>> a "PF" is.  :)
+>>
+>> Thanks.
 > 
-> But it's semantics has a significant limitation: it works
+> Sorry, I was kind of operating on the assumption of everyone
+> understanding SR-IOV nomenclature.
 
-its
+Yes, I understood that. :)
 
-> only until there is a supply of reclaimable memory.
+> A "PF" is a PCIe Physical Function. When you bring up a PCIe device
+> that supports SR-IOV it is the device that is there to begin with.
+> 
+> A "VF" is a PCIe Virtual Function. You could think of as a logical
+> device that is spawned from the physical function using a combination
+> of hardware configuration via the SR-IOV block in the PCIe extended
+> configuration space and kernel/driver features.
+> 
+> There are also a number of online resources you could use to research
+> SR-IOV further. Hope that helps to clarify some of this.
+> 
+> Thanks.
 
-s/until/as long as/
+Thank you.
 
-Maybe "as long as there is an unprotected supply of reclaimable memory
-from other groups"?
 
-> This makes it pretty useless against any sort of slow memory
-> leaks or memory usage increases. This is especially true
-> for swapless systems. If swap is enabled, memory soft protection
-> effectively postpones problems, allowing a leaking application
-> to fill all swap area, which makes no sense.
-> The only effective way to guarantee the memory protection
-> in this case is to invoke the OOM killer.
-
-This makes it sound like it has no purpose at all. But like with
-memory.high, the point is to avoid the kernel OOM killer, which knows
-jack about how the system is structured, and instead allow userspace
-management software to monitor MEMCG_LOW and make informed decisions.
-
-memory.min again is the fail-safe for memory.low, not the primary way
-of implementing guarantees.
-
-> @@ -297,7 +297,14 @@ static inline bool mem_cgroup_disabled(void)
->  	return !cgroup_subsys_enabled(memory_cgrp_subsys);
->  }
->  
-> -bool mem_cgroup_low(struct mem_cgroup *root, struct mem_cgroup *memcg);
-> +enum mem_cgroup_protection {
-> +	MEM_CGROUP_UNPROTECTED,
-> +	MEM_CGROUP_PROTECTED_LOW,
-> +	MEM_CGROUP_PROTECTED_MIN,
-> +};
-
-These look a bit unwieldy. How about
-
-MEMCG_PROT_NONE,
-MEMCG_PROT_LOW,
-MEMCG_PROT_HIGH,
-
-> +enum mem_cgroup_protection
-> +mem_cgroup_protected(struct mem_cgroup *root, struct mem_cgroup *memcg);
-
-Please don't wrap at the return type, wrap the parameter list instead.
-
->  int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
->  			  gfp_t gfp_mask, struct mem_cgroup **memcgp,
-> @@ -756,6 +763,12 @@ static inline void memcg_memory_event(struct mem_cgroup *memcg,
->  {
->  }
->  
-> +static inline bool mem_cgroup_min(struct mem_cgroup *root,
-> +				  struct mem_cgroup *memcg)
-> +{
-> +	return false;
-> +}
-> +
->  static inline bool mem_cgroup_low(struct mem_cgroup *root,
->  				  struct mem_cgroup *memcg)
->  {
-
-The real implementation has these merged into the single
-mem_cgroup_protected(). Probably a left-over from earlier versions?
-
-It's always a good idea to build test the !CONFIG_MEMCG case too.
-
-> @@ -5685,44 +5723,71 @@ struct cgroup_subsys memory_cgrp_subsys = {
->   * for next usage. This part is intentionally racy, but it's ok,
->   * as memory.low is a best-effort mechanism.
->   */
-> -bool mem_cgroup_low(struct mem_cgroup *root, struct mem_cgroup *memcg)
-> +enum mem_cgroup_protection
-> +mem_cgroup_protected(struct mem_cgroup *root, struct mem_cgroup *memcg)
-
-Please fix the wrapping here too.
-
-> @@ -2525,12 +2525,29 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->  			unsigned long reclaimed;
->  			unsigned long scanned;
->  
-> -			if (mem_cgroup_low(root, memcg)) {
-> +			switch (mem_cgroup_protected(root, memcg)) {
-> +			case MEM_CGROUP_PROTECTED_MIN:
-> +				/*
-> +				 * Hard protection.
-> +				 * If there is no reclaimable memory, OOM.
-> +				 */
-> +				continue;
-> +
-> +			case MEM_CGROUP_PROTECTED_LOW:
-
-Please drop that newline after continue.
-
-> +				/*
-> +				 * Soft protection.
-> +				 * Respect the protection only until there is
-> +				 * a supply of reclaimable memory.
-
-Same feedback here as in the changelog:
-
-s/until/as long as/
-
-Maybe "as long as there is an unprotected supply of reclaimable memory
-from other groups"?
-
-> +				 */
->  				if (!sc->memcg_low_reclaim) {
->  					sc->memcg_low_skipped = 1;
->  					continue;
->  				}
->  				memcg_memory_event(memcg, MEMCG_LOW);
-> +				break;
-> +
-> +			case MEM_CGROUP_UNPROTECTED:
-
-Please drop that newline after break, too.
-
-Thanks!
-Johannes
+-- 
+~Randy
