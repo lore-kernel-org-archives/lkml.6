@@ -1,68 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753454AbeDTRZL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:25:11 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:51366 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbeDTRZK (ORCPT
+        id S1752665AbeDTR3Y (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:29:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55064 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751159AbeDTR3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:25:10 -0400
-Subject: Re: [PATCH v2 0/2] memory: aemif: add support for machine code
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Kevin Hilman <khilman@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180419151252.26212-1-brgl@bgdev.pl>
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <0f2903da-b670-dc85-e61b-64cac90a6c34@oracle.com>
-Date: Fri, 20 Apr 2018 10:24:40 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Fri, 20 Apr 2018 13:29:23 -0400
+Subject: Re: [PATCH 1/2] mm: introduce memory.min
+To: Roman Gushchin <guro@fb.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, kernel-team@fb.com,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
+References: <20180420163632.3978-1-guro@fb.com>
+ <527af98a-8d7f-42ab-9ba8-71444ef7e25f@infradead.org>
+ <20180420172039.GA4965@castle.DHCP.thefacebook.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e1ffe28c-841f-1714-7460-d2a6d309176c@infradead.org>
+Date: Fri, 20 Apr 2018 10:29:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180419151252.26212-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180420172039.GA4965@castle.DHCP.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8869 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=893
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804200174
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/19/18 8:12 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 04/20/18 10:20, Roman Gushchin wrote:
 > 
-> This is a follow-up to the series that contained both changes to the
-> aemif driver and platform code. It contains only the driver changes.
+> Hi, Randy!
 > 
-> As the first step in removing duplicate support for aemif from the
-> kernel we need to add support for board files to the aemif memory
-> driver.
+> An updated version below.
 > 
-> First patch just uses a static string for the ti-aemif driver name.
-> 
-> The second adds support for board files to the aemif driver.
-> 
-> This series includes changes requested by Sekhar in his code review:
-> - made aemif the parent of each sub-device before registering it
-> - documented the new members in aemif_platform_data
-> 
-> v1 -> v2:
-> - actually iterate over abus entries instead of always accessing the
->    first one
-> 
-> Bartosz Golaszewski (2):
->    memory: aemif: don't rely on kbuild for driver's name
->    memory: aemif: add support for board files
-> 
-Applied. Should show up in next soon.
+> Thanks!
 
-Sekhar, You can use below branch.
+OK, looks good now. Thanks.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git 
-  'for_4.18/soc-drivers'
+FWIW:
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org> # for Documentation/ only.
+
+> ------------------------------------------------------------
+> 
+> 
+> From 2225fa0b3400431dd803f206b20a9344f0dfcd0a Mon Sep 17 00:00:00 2001
+> From: Roman Gushchin <guro@fb.com>
+> Date: Fri, 20 Apr 2018 15:24:44 +0100
+> Subject: [PATCH 1/2] mm: introduce memory.min
+> 
+> Memory controller implements the memory.low best-effort memory
+> protection mechanism, which works perfectly in many cases and
+> allows protecting working sets of important workloads from
+> sudden reclaim.
+> 
+> But it's semantics has a significant limitation: it works
+> only until there is a supply of reclaimable memory.
+> This makes it pretty useless against any sort of slow memory
+> leaks or memory usage increases. This is especially true
+> for swapless systems. If swap is enabled, memory soft protection
+> effectively postpones problems, allowing a leaking application
+> to fill all swap area, which makes no sense.
+> The only effective way to guarantee the memory protection
+> in this case is to invoke the OOM killer.
+> 
+> This patch introduces the memory.min interface for cgroup v2
+> memory controller. It works very similarly to memory.low
+> (sharing the same hierarchical behavior), except that it's
+> not disabled if there is no more reclaimable memory in the system.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> ---
+>  Documentation/cgroup-v2.txt  | 24 ++++++++++-
+>  include/linux/memcontrol.h   | 15 ++++++-
+>  include/linux/page_counter.h | 11 ++++-
+>  mm/memcontrol.c              | 99 ++++++++++++++++++++++++++++++++++++--------
+>  mm/page_counter.c            | 63 ++++++++++++++++++++--------
+>  mm/vmscan.c                  | 19 ++++++++-
+>  6 files changed, 191 insertions(+), 40 deletions(-)
+> 
+> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+> index 657fe1769c75..a413118b9c29 100644
+> --- a/Documentation/cgroup-v2.txt
+> +++ b/Documentation/cgroup-v2.txt
+> @@ -1002,6 +1002,26 @@ PAGE_SIZE multiple when read back.
+>  	The total amount of memory currently being used by the cgroup
+>  	and its descendants.
+>  
+> +  memory.min
+> +	A read-write single value file which exists on non-root
+> +	cgroups.  The default is "0".
+> +
+> +	Hard memory protection.  If the memory usage of a cgroup
+> +	is within its effective min boundary, the cgroup's memory
+> +	won't be reclaimed under any conditions. If there is no
+> +	unprotected reclaimable memory available, OOM killer
+> +	is invoked.
+> +
+> +	Effective low boundary is limited by memory.min values of
+> +	all ancestor cgroups. If there is memory.min overcommitment
+> +	(child cgroup or cgroups are requiring more protected memory
+> +	than parent will allow), then each child cgroup will get
+> +	the part of parent's protection proportional to its
+> +	actual memory usage below memory.min.
+> +
+> +	Putting more memory than generally available under this
+> +	protection is discouraged and may lead to constant OOMs.
+> +
+>    memory.low
+>  	A read-write single value file which exists on non-root
+>  	cgroups.  The default is "0".
+> @@ -1013,9 +1033,9 @@ PAGE_SIZE multiple when read back.
+>  
+>  	Effective low boundary is limited by memory.low values of
+>  	all ancestor cgroups. If there is memory.low overcommitment
+> -	(child cgroup or cgroups are requiring more protected memory,
+> +	(child cgroup or cgroups are requiring more protected memory
+>  	than parent will allow), then each child cgroup will get
+> -	the part of parent's protection proportional to the its
+> +	the part of parent's protection proportional to its
+>  	actual memory usage below memory.low.
+>  
+>  	Putting more memory than generally available under this
+
+
+
+-- 
+~Randy
