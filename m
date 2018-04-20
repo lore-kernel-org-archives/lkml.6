@@ -1,118 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755721AbeDTPWx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:22:53 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:43757 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755707AbeDTPWv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:22:51 -0400
-X-Google-Smtp-Source: AB8JxZqg6culLK3uoUIqF81ma4nljoI1FGaBDCzCu+z248AOTxFfQrjp/py7IsBT1UN0HG8VrUAI7sAs+b7S8ir0FLc=
+        id S1755782AbeDTPYf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:24:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54950 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755566AbeDTPYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 11:24:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7476720652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 20 Apr 2018 11:24:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Song Liu <songliubraving@fb.com>, LKML <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
+        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2] tracing: fix bad use of igrab in trace_uprobe.c
+Message-ID: <20180420112431.42762006@gandalf.local.home>
+In-Reply-To: <CAJfpegsjgK3-q00qX2A9eopDydKXxSBMwprL8XZH5w=g2BvBZQ@mail.gmail.com>
+References: <20180418174014.1592871-1-songliubraving@fb.com>
+        <CAELBmZB2XX=qEOLAdvGG4cPx4GEntcSnWQquJLUK1ongRj35cA@mail.gmail.com>
+        <CAELBmZBvt=9p8muDsRucR_06kmia9vKT6CMfZbHjQL97N4aFag@mail.gmail.com>
+        <F7C1033B-A155-4DA9-A686-AD39BA4CCC03@fb.com>
+        <CAJfpegsjgK3-q00qX2A9eopDydKXxSBMwprL8XZH5w=g2BvBZQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <0ca46228311ec615947e199def9fed62d70c1f07.1524118799.git.baolin.wang@linaro.org>
-References: <0ca46228311ec615947e199def9fed62d70c1f07.1524118799.git.baolin.wang@linaro.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 20 Apr 2018 17:22:49 +0200
-X-Google-Sender-Auth: NlqMErMg1pGBLK78KVDUmQBQgnk
-Message-ID: <CAK8P3a15stj5Yurd7rM7278cYPtM6kufs=QL2GihCOxRUCHRSQ@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Remove read_persistent_clock()
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Brown <broonie@kernel.org>, linux-m68k@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 8:22 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
-> The read_persistent_clock() uses a timespec, which is not year 2038 safe
-> on 32bit systems. Moreover on m68k architecture, we have implemented generic
-> RTC drivers that can be used to compensate the system suspend time. So
-> we can remove the obsolete read_persistent_clock().
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+On Fri, 20 Apr 2018 16:34:25 +0200
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-I'm not sure about this one: it's still possible to turn off
-CONFIG_RTC_DRV_GENERIC
-on M68KCLASSIC, and in that case we still need a read_persistent_clock64()
-implementation. Or we use your patch but make CONFIG_RTC_DRV_GENERIC
-mandatory.
+> This corner case is simply not interesting (modifying a binary while
+> it is being debugged with uprobe).  Let's just concentrate on making
+> this crash and leak free.
 
-See below for a version I did a while ago (but never submitted as I got
-distracted).
+Yes please. I'm waiting for a final patch to run my tests. I have other
+patches that need to go mainline as well, and I'll start testing all of
+them when I get the final version of this one.
 
-       Arnd
-
-commit 13ddf5a33a195e9b7a7a6ed10481363b5259c1d4
-Author: Arnd Bergmann <arnd@arndb.de>
-Date:   Thu Jan 25 15:30:50 2018 +0100
-
-    m68k: use read_persistent_clock64 consistently
-
-    We have two ways of getting the current time from a platform at boot
-    or during suspend: either using read_persistent_clock() or the rtc
-    class operation. We never need both, so I'm hiding the
-    read_persistent_clock variant when the generic RTC is enabled.
-
-    Since read_persistent_clock() and mktime() are deprecated because of
-    the y2038 overflow of time_t, we should use the time64_t based
-    replacements here.
-
-    Finally, the dependency on CONFIG_ARCH_USES_GETTIMEOFFSET looks
-    completely bogus in this case, so let's remove that. It was
-    added in commit b13b3f51ff7b ("m68k: fix inclusion of
-    arch_gettimeoffset for non-MMU 68k classic CPU types") to deal
-    with arch_gettimeoffset(), which has since been removed from
-    this file and is unrelated to the RTC functions.
-
-    The rtc accessors are only used by classic machines, while
-    coldfire uses proper RTC drivers, so we can put the old
-    ifdef back around both functions.
-
-    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/arch/m68k/kernel/time.c b/arch/m68k/kernel/time.c
-index 97dd4e26f234..edcf3855d8b0 100644
---- a/arch/m68k/kernel/time.c
-+++ b/arch/m68k/kernel/time.c
-@@ -71,7 +71,9 @@ static irqreturn_t timer_interrupt(int irq, void *dummy)
-        return IRQ_HANDLED;
- }
-
--void read_persistent_clock(struct timespec *ts)
-+#ifdef CONFIG_M68KCLASSIC
-+#if !IS_BUILTIN(CONFIG_RTC_DRV_GENERIC)
-+void read_persistent_clock64(struct timespec64 *ts)
- {
-        struct rtc_time time;
-        ts->tv_sec = 0;
-@@ -82,12 +84,13 @@ void read_persistent_clock(struct timespec *ts)
-
-                if ((time.tm_year += 1900) < 1970)
-                        time.tm_year += 100;
--               ts->tv_sec = mktime(time.tm_year, time.tm_mon, time.tm_mday,
-+               ts->tv_sec = mktime64(time.tm_year, time.tm_mon, time.tm_mday,
-                                      time.tm_hour, time.tm_min, time.tm_sec);
-        }
- }
-+#endif
-
--#if defined(CONFIG_ARCH_USES_GETTIMEOFFSET) &&
-IS_ENABLED(CONFIG_RTC_DRV_GENERIC)
-+#if IS_ENABLED(CONFIG_RTC_DRV_GENERIC)
- static int rtc_generic_get_time(struct device *dev, struct rtc_time *tm)
- {
-        mach_hwclk(0, tm);
-@@ -145,8 +148,8 @@ static int __init rtc_init(void)
- }
-
- module_init(rtc_init);
--
--#endif /* CONFIG_ARCH_USES_GETTIMEOFFSET */
-+#endif /* CONFIG_RTC_DRV_GENERIC */
-+#endif /* CONFIG M68KCLASSIC */
-
- void __init time_init(void)
- {
+-- Steve
