@@ -1,117 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752953AbeDTRYT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:24:19 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54992 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752321AbeDTRYP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752725AbeDTRYP (ORCPT <rfc822;w@1wt.eu>);
         Fri, 20 Apr 2018 13:24:15 -0400
-Subject: Re: [pci PATCH v8 0/4] Add support for unmanaged SR-IOV
-To: Alexander Duyck <alexander.h.duyck@intel.com>, bhelgaas@google.com,
-        linux-pci@vger.kernel.org
-Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        keith.busch@intel.com, netanel@amazon.com, ddutile@redhat.com,
-        mheyne@amazon.de, liang-min.wang@intel.com, mark.d.rustad@intel.com,
-        dwmw2@infradead.org, hch@lst.de, dwmw@amazon.co.uk
-References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5fc62d10-790f-2356-c2f6-fd49f542dd3c@infradead.org>
-Date: Fri, 20 Apr 2018 10:23:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47756 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751130AbeDTRYO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 13:24:14 -0400
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Nick Dyer <nick@shmanahar.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: [PATCH] Input: atmel_mxt_ts - fix reset-gpio for level based irqs
+Date: Fri, 20 Apr 2018 19:24:08 +0200
+Message-Id: <20180420172408.26164-1-sebastian.reichel@collabora.co.uk>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/18 09:28, Alexander Duyck wrote:
-> This series is meant to add support for SR-IOV on devices when the VFs are
-> not managed by the kernel. Examples of recent patches attempting to do this
-> include:
-> virto - https://patchwork.kernel.org/patch/10241225/
-> pci-stub - https://patchwork.kernel.org/patch/10109935/
-> vfio - https://patchwork.kernel.org/patch/10103353/
-> uio - https://patchwork.kernel.org/patch/9974031/
+The current reset-gpio support triggers an interrupt storm on platforms
+using the maxtouch with level based interrupt. The Motorola Droid 4,
+which I used for some of the tests is not affected, since it uses a level
+based interrupt.
 
-Hi,
+This change avoids the interrupt storm by enabling the device while
+its interrupt is disabled. The following mxt_initialize() requires,
+that the device is responsive (at least mxt224E is unresponsive for
+~22ms), so we wait some time. We don't wait for leaving bootloader
+mode anymore, since mxt_initialize() checks for it anyways.
 
-Somewhere in this patch series it would be nice to tell us what the heck
-a "PF" is.  :)
+This fixes a boot problem on GE PPD (watchdog kills device) and also
+has been tested on the Droid 4.
 
-Thanks.
+Fixes: f657b00df22e ("Input: atmel_mxt_ts - add support for reset line")
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-> Since this is quickly blowing up into a multi-driver problem it is probably
-> best to implement this solution as generically as possible.
-> 
-> This series is an attempt to do that. What we do with this patch set is
-> provide a generic framework to enable SR-IOV in the case that the PF driver
-> doesn't support managing the VFs itself.
-> 
-> I based my patch set originally on the patch by Mark Rustad but there isn't
-> much left after going through and cleaning out the bits that were no longer
-> needed, and after incorporating the feedback from David Miller. At this point
-> the only items to be fully reused was his patch description which is now
-> present in patch 3 of the set.
-> 
-> This solution is limited in scope to just adding support for devices that
-> provide no functionality for SR-IOV other than allocating the VFs by
-> calling pci_enable_sriov. Previous sets had included patches for VFIO, but
-> for now I am dropping that as the scope of that work is larger then I
-> think I can take on at this time.
-> 
-> v2: Reduced scope back to just virtio_pci and vfio-pci
->     Broke into 3 patch set from single patch
->     Changed autoprobe behavior to always set when num_vfs is set non-zero
-> v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
->     Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
-> v4: Dropped vfio-pci patch
->     Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
->     Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
-> v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
->     Added new patch that enables pci_sriov_configure_simple
->     Updated drivers to use pci_sriov_configure_simple
-> v6: Defined pci_sriov_configure_simple as NULL when SR-IOV is not enabled
->     Updated drivers to drop "#ifdef" checks for IOV
->     Added pci-pf-stub as place for PF-only drivers to add support
-> v7: Dropped pci_id table explanation from pci-pf-stub driver
->     Updated pci_sriov_configure_simple to drop need for err value
->     Fixed comment explaining why pci_sriov_configure_simple is NULL
-> v8: Dropped virtio from the set, support to be added later after TC approval
-> 
-> Cc: Mark Rustad <mark.d.rustad@intel.com>
-> Cc: Maximilian Heyne <mheyne@amazon.de>
-> Cc: Liang-Min Wang <liang-min.wang@intel.com>
-> Cc: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> ---
-> 
-> Alexander Duyck (4):
->       pci: Add pci_sriov_configure_simple for PFs that don't manage VF resources
->       ena: Migrate over to unmanaged SR-IOV support
->       nvme: Migrate over to unmanaged SR-IOV support
->       pci-pf-stub: Add PF driver stub for PFs that function only to enable VFs
-> 
-> 
->  drivers/net/ethernet/amazon/ena/ena_netdev.c |   28 -------------
->  drivers/nvme/host/pci.c                      |   20 ----------
->  drivers/pci/Kconfig                          |   12 ++++++
->  drivers/pci/Makefile                         |    2 +
->  drivers/pci/iov.c                            |   31 +++++++++++++++
->  drivers/pci/pci-pf-stub.c                    |   54 ++++++++++++++++++++++++++
->  include/linux/pci.h                          |    3 +
->  include/linux/pci_ids.h                      |    2 +
->  8 files changed, 106 insertions(+), 46 deletions(-)
->  create mode 100644 drivers/pci/pci-pf-stub.c
-> 
-> --
-> 
-
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 5d9699fe1b55..f8a9f2a47e78 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -194,6 +194,7 @@ enum t100_type {
+ 
+ /* Delay times */
+ #define MXT_BACKUP_TIME		50	/* msec */
++#define MXT_RESET_GPIO_TIME	20	/* msec */
+ #define MXT_RESET_TIME		200	/* msec */
+ #define MXT_RESET_TIMEOUT	3000	/* msec */
+ #define MXT_CRC_TIMEOUT		1000	/* msec */
+@@ -3167,20 +3168,14 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		return error;
+ 	}
+ 
++	disable_irq(client->irq);
++
+ 	if (data->reset_gpio) {
+-		data->in_bootloader = true;
+-		msleep(MXT_RESET_TIME);
+-		reinit_completion(&data->bl_completion);
++		msleep(MXT_RESET_GPIO_TIME);
+ 		gpiod_set_value(data->reset_gpio, 1);
+-		error = mxt_wait_for_completion(data, &data->bl_completion,
+-						MXT_RESET_TIMEOUT);
+-		if (error)
+-			return error;
+-		data->in_bootloader = false;
++		msleep(MXT_RESET_TIME);
+ 	}
+ 
+-	disable_irq(client->irq);
+-
+ 	error = mxt_initialize(data);
+ 	if (error)
+ 		return error;
 -- 
-~Randy
+2.17.0
