@@ -1,590 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754838AbeDTMcm convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 08:32:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43122 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754757AbeDTMck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:32:40 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <22726.1524227374@warthog.procyon.org.uk>
-References: <22726.1524227374@warthog.procyon.org.uk> <22411.1524142823@warthog.procyon.org.uk> <20180419124140.9309-21-hch@lst.de> <20180419124140.9309-1-hch@lst.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: dhowells@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-afs@lists.infradead.org, netdev@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [PATCH 02/02] afs: Implement namespacing
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <22853.1524227558.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date: Fri, 20 Apr 2018 13:32:38 +0100
-Message-ID: <22854.1524227558@warthog.procyon.org.uk>
+        id S1754796AbeDTMe2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 08:34:28 -0400
+Received: from mga12.intel.com ([192.55.52.136]:26716 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754752AbeDTMe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 08:34:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,301,1520924400";
+   d="scan'208";a="218081357"
+Message-ID: <1524227663.21176.465.camel@linux.intel.com>
+Subject: Re: sound/soc/intel/atom/sst/sst_loader.c:357:9: warning: 'fw' is
+ used uninitialized in this function
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: kbuild test robot <lkp@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Date: Fri, 20 Apr 2018 15:34:23 +0300
+In-Reply-To: <201804181935.hpD7xutn%fengguang.wu@intel.com>
+References: <201804181935.hpD7xutn%fengguang.wu@intel.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement namespacing within AFS, but don't yet let mounts occur outside
-the init namespace.  An additional patch will be required propagate the
-network namespace across automounts.
-    
-Signed-off-by: David Howells <dhowells@redhat.com>
----
- cell.c     |    4 +-
- internal.h |   39 +++++++++++++++-----------
- main.c     |   33 ++++++++++++++++++----
- proc.c     |   89 +++++++++++++++++++++++++++++++++++++++----------------------
- super.c    |   20 ++++++++-----
- 5 files changed, 121 insertions(+), 64 deletions(-)
+On Wed, 2018-04-18 at 19:42 +0800, kbuild test robot wrote:
 
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index fdf4c36cff79..a98a8a3d5544 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -528,7 +528,7 @@ static int afs_activate_cell(struct afs_net *net, struct afs_cell *cell)
- 					     NULL, 0,
- 					     cell, 0, true);
- #endif
--	ret = afs_proc_cell_setup(net, cell);
-+	ret = afs_proc_cell_setup(cell);
- 	if (ret < 0)
- 		return ret;
- 	spin_lock(&net->proc_cells_lock);
-@@ -544,7 +544,7 @@ static void afs_deactivate_cell(struct afs_net *net, struct afs_cell *cell)
- {
- 	_enter("%s", cell->name);
- 
--	afs_proc_cell_remove(net, cell);
-+	afs_proc_cell_remove(cell);
- 
- 	spin_lock(&net->proc_cells_lock);
- 	list_del_init(&cell->proc_link);
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index f8086ec95e24..9863dac6ff6a 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -22,6 +22,8 @@
- #include <linux/backing-dev.h>
- #include <linux/uuid.h>
- #include <net/net_namespace.h>
-+#include <net/netns/generic.h>
-+#include <net/sock.h>
- #include <net/af_rxrpc.h>
- 
- #include "afs.h"
-@@ -40,7 +42,8 @@ struct afs_mount_params {
- 	afs_voltype_t		type;		/* type of volume requested */
- 	int			volnamesz;	/* size of volume name */
- 	const char		*volname;	/* name of volume to mount */
--	struct afs_net		*net;		/* Network namespace in effect */
-+	struct net		*net_ns;	/* Network namespace in effect */
-+	struct afs_net		*net;		/* the AFS net namespace stuff */
- 	struct afs_cell		*cell;		/* cell in which to find volume */
- 	struct afs_volume	*volume;	/* volume record */
- 	struct key		*key;		/* key to use for secure mounting */
-@@ -189,7 +192,7 @@ struct afs_read {
-  * - there's one superblock per volume
-  */
- struct afs_super_info {
--	struct afs_net		*net;		/* Network namespace */
-+	struct net		*net_ns;	/* Network namespace */
- 	struct afs_cell		*cell;		/* The cell in which the volume resides */
- 	struct afs_volume	*volume;	/* volume record */
- 	bool			dyn_root;	/* True if dynamic root */
-@@ -218,6 +221,7 @@ struct afs_sysnames {
-  * AFS network namespace record.
-  */
- struct afs_net {
-+	struct net		*net;		/* Backpointer to the owning net namespace */
- 	struct afs_uuid		uuid;
- 	bool			live;		/* F if this namespace is being removed */
- 
-@@ -280,7 +284,6 @@ struct afs_net {
- };
- 
- extern const char afs_init_sysname[];
--extern struct afs_net __afs_net;// Dummy AFS network namespace; TODO: replace with real netns
- 
- enum afs_cell_state {
- 	AFS_CELL_UNSET,
-@@ -787,34 +790,36 @@ extern int afs_drop_inode(struct inode *);
-  * main.c
-  */
- extern struct workqueue_struct *afs_wq;
-+extern int afs_net_id;
- 
--static inline struct afs_net *afs_d2net(struct dentry *dentry)
-+static inline struct afs_net *afs_net(struct net *net)
- {
--	return &__afs_net;
-+	return net_generic(net, afs_net_id);
- }
- 
--static inline struct afs_net *afs_i2net(struct inode *inode)
-+static inline struct afs_net *afs_sb2net(struct super_block *sb)
- {
--	return &__afs_net;
-+	return afs_net(AFS_FS_S(sb)->net_ns);
- }
- 
--static inline struct afs_net *afs_v2net(struct afs_vnode *vnode)
-+static inline struct afs_net *afs_d2net(struct dentry *dentry)
- {
--	return &__afs_net;
-+	return afs_sb2net(dentry->d_sb);
- }
- 
--static inline struct afs_net *afs_sock2net(struct sock *sk)
-+static inline struct afs_net *afs_i2net(struct inode *inode)
- {
--	return &__afs_net;
-+	return afs_sb2net(inode->i_sb);
- }
- 
--static inline struct afs_net *afs_get_net(struct afs_net *net)
-+static inline struct afs_net *afs_v2net(struct afs_vnode *vnode)
- {
--	return net;
-+	return afs_i2net(&vnode->vfs_inode);
- }
- 
--static inline void afs_put_net(struct afs_net *net)
-+static inline struct afs_net *afs_sock2net(struct sock *sk)
- {
-+	return net_generic(sock_net(sk), afs_net_id);
- }
- 
- static inline void __afs_stat(atomic_t *s)
-@@ -849,8 +854,8 @@ extern int afs_get_ipv4_interfaces(struct afs_interface *, size_t, bool);
-  */
- extern int __net_init afs_proc_init(struct afs_net *);
- extern void __net_exit afs_proc_cleanup(struct afs_net *);
--extern int afs_proc_cell_setup(struct afs_net *, struct afs_cell *);
--extern void afs_proc_cell_remove(struct afs_net *, struct afs_cell *);
-+extern int afs_proc_cell_setup(struct afs_cell *);
-+extern void afs_proc_cell_remove(struct afs_cell *);
- extern void afs_put_sysnames(struct afs_sysnames *);
- 
- /*
-@@ -983,7 +988,7 @@ extern bool afs_annotate_server_list(struct afs_server_list *, struct afs_server
-  * super.c
-  */
- extern int __init afs_fs_init(void);
--extern void __exit afs_fs_exit(void);
-+extern void afs_fs_exit(void);
- 
- /*
-  * vlclient.c
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index d7560168b3bf..7d2c1354e2ca 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -15,6 +15,7 @@
- #include <linux/completion.h>
- #include <linux/sched.h>
- #include <linux/random.h>
-+#include <linux/proc_fs.h>
- #define CREATE_TRACE_POINTS
- #include "internal.h"
- 
-@@ -32,7 +33,7 @@ module_param(rootcell, charp, 0);
- MODULE_PARM_DESC(rootcell, "root AFS cell name and VL server IP addr list");
- 
- struct workqueue_struct *afs_wq;
--struct afs_net __afs_net;
-+static struct proc_dir_entry *afs_proc_symlink;
- 
- #if defined(CONFIG_ALPHA)
- const char afs_init_sysname[] = "alpha_linux26";
-@@ -67,11 +68,13 @@ const char afs_init_sysname[] = "unknown_linux26";
- /*
-  * Initialise an AFS network namespace record.
-  */
--static int __net_init afs_net_init(struct afs_net *net)
-+static int __net_init afs_net_init(struct net *net_ns)
- {
- 	struct afs_sysnames *sysnames;
-+	struct afs_net *net = afs_net(net_ns);
- 	int ret;
- 
-+	net->net = net_ns;
- 	net->live = true;
- 	generate_random_uuid((unsigned char *)&net->uuid);
- 
-@@ -142,8 +145,10 @@ static int __net_init afs_net_init(struct afs_net *net)
- /*
-  * Clean up and destroy an AFS network namespace record.
-  */
--static void __net_exit afs_net_exit(struct afs_net *net)
-+static void __net_exit afs_net_exit(struct net *net_ns)
- {
-+	struct afs_net *net = afs_net(net_ns);
-+
- 	net->live = false;
- 	afs_cell_purge(net);
- 	afs_purge_servers(net);
-@@ -152,6 +157,13 @@ static void __net_exit afs_net_exit(struct afs_net *net)
- 	afs_put_sysnames(net->sysnames);
- }
- 
-+static struct pernet_operations afs_net_ops = {
-+	.init	= afs_net_init,
-+	.exit	= afs_net_exit,
-+	.id	= &afs_net_id,
-+	.size	= sizeof(struct afs_net),
-+};
-+
- /*
-  * initialise the AFS client FS module
-  */
-@@ -178,7 +190,7 @@ static int __init afs_init(void)
- 		goto error_cache;
- #endif
- 
--	ret = afs_net_init(&__afs_net);
-+	ret = register_pernet_subsys(&afs_net_ops);
- 	if (ret < 0)
- 		goto error_net;
- 
-@@ -187,10 +199,18 @@ static int __init afs_init(void)
- 	if (ret < 0)
- 		goto error_fs;
- 
-+	afs_proc_symlink = proc_symlink("fs/afs", NULL, "../self/net/afs");
-+	if (IS_ERR(afs_proc_symlink)) {
-+		ret = PTR_ERR(afs_proc_symlink);
-+		goto error_proc;
-+	}
-+
- 	return ret;
- 
-+error_proc:
-+	afs_fs_exit();
- error_fs:
--	afs_net_exit(&__afs_net);
-+	unregister_pernet_subsys(&afs_net_ops);
- error_net:
- #ifdef CONFIG_AFS_FSCACHE
- 	fscache_unregister_netfs(&afs_cache_netfs);
-@@ -219,8 +239,9 @@ static void __exit afs_exit(void)
- {
- 	printk(KERN_INFO "kAFS: Red Hat AFS client v0.1 unregistering.\n");
- 
-+	proc_remove(afs_proc_symlink);
- 	afs_fs_exit();
--	afs_net_exit(&__afs_net);
-+	unregister_pernet_subsys(&afs_net_ops);
- #ifdef CONFIG_AFS_FSCACHE
- 	fscache_unregister_netfs(&afs_cache_netfs);
- #endif
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 839a22280606..cc7c48a5b743 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -17,14 +17,16 @@
- #include <linux/uaccess.h>
- #include "internal.h"
- 
--static inline struct afs_net *afs_proc2net(struct file *f)
-+static inline struct afs_net *afs_proc2net_get(struct file *f)
- {
--	return &__afs_net;
-+	struct net *net_ns = get_proc_net(file_inode(f));
-+
-+	return net_ns ? afs_net(net_ns) : NULL;
- }
- 
- static inline struct afs_net *afs_seq2net(struct seq_file *m)
- {
--	return &__afs_net; // TODO: use seq_file_net(m)
-+	return afs_net(seq_file_net(m));
- }
- 
- static int afs_proc_cells_open(struct inode *inode, struct file *file);
-@@ -161,7 +163,7 @@ int afs_proc_init(struct afs_net *net)
- {
- 	_enter("");
- 
--	net->proc_afs = proc_mkdir("fs/afs", NULL);
-+	net->proc_afs = proc_net_mkdir(net->net, "afs", net->net->proc_net);
- 	if (!net->proc_afs)
- 		goto error_dir;
- 
-@@ -196,16 +198,8 @@ void afs_proc_cleanup(struct afs_net *net)
-  */
- static int afs_proc_cells_open(struct inode *inode, struct file *file)
- {
--	struct seq_file *m;
--	int ret;
--
--	ret = seq_open(file, &afs_proc_cells_ops);
--	if (ret < 0)
--		return ret;
--
--	m = file->private_data;
--	m->private = PDE_DATA(inode);
--	return 0;
-+	return seq_open_net(inode, file, &afs_proc_cells_ops,
-+			    sizeof(struct seq_net_private));
- }
- 
- /*
-@@ -266,7 +260,8 @@ static int afs_proc_cells_show(struct seq_file *m, void *v)
- static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
- 				    size_t size, loff_t *_pos)
- {
--	struct afs_net *net = afs_proc2net(file);
-+	struct afs_net *net;
-+	struct net *net_ns = NULL;
- 	char *kbuf, *name, *args;
- 	int ret;
- 
-@@ -305,6 +300,12 @@ static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
- 	/* determine command to perform */
- 	_debug("cmd=%s name=%s args=%s", kbuf, name, args);
- 
-+	ret = -ESTALE;
-+	net_ns = get_proc_net(file_inode(file));
-+	if (!net_ns)
-+		goto done;
-+	net = afs_net(net_ns);
-+
- 	if (strcmp(kbuf, "add") == 0) {
- 		struct afs_cell *cell;
- 
-@@ -324,6 +325,7 @@ static ssize_t afs_proc_cells_write(struct file *file, const char __user *buf,
- 	ret = size;
- 
- done:
-+	put_net(net_ns);
- 	kfree(kbuf);
- 	_leave(" = %d", ret);
- 	return ret;
-@@ -338,15 +340,24 @@ static ssize_t afs_proc_rootcell_read(struct file *file, char __user *buf,
- 				      size_t size, loff_t *_pos)
- {
- 	struct afs_cell *cell;
--	struct afs_net *net = afs_proc2net(file);
-+	struct afs_net *net;
-+	struct net *net_ns = NULL;
- 	unsigned int seq = 0;
- 	char name[AFS_MAXCELLNAME + 1];
- 	int len;
- 
- 	if (*_pos > 0)
- 		return 0;
--	if (!net->ws_cell)
--		return 0;
-+
-+	net_ns = get_proc_net(file_inode(file));
-+	if (!net_ns)
-+		return -ESTALE;
-+	net = afs_net(net_ns);
-+
-+	if (!net->ws_cell) {
-+		len = 0;
-+		goto out;
-+	}
- 
- 	rcu_read_lock();
- 	do {
-@@ -362,14 +373,18 @@ static ssize_t afs_proc_rootcell_read(struct file *file, char __user *buf,
- 	rcu_read_unlock();
- 
- 	if (!len)
--		return 0;
-+		goto out;
- 
- 	name[len++] = '\n';
- 	if (len > size)
- 		len = size;
--	if (copy_to_user(buf, name, len) != 0)
--		return -EFAULT;
-+	if (copy_to_user(buf, name, len) != 0) {
-+		len = -EFAULT;
-+		goto out;
-+	}
- 	*_pos = 1;
-+out:
-+	put_net(net_ns);
- 	return len;
- }
- 
-@@ -381,7 +396,8 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
- 				       const char __user *buf,
- 				       size_t size, loff_t *_pos)
- {
--	struct afs_net *net = afs_proc2net(file);
-+	struct afs_net *net;
-+	struct net *net_ns = NULL;
- 	char *kbuf, *s;
- 	int ret;
- 
-@@ -407,6 +423,12 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
- 	/* determine command to perform */
- 	_debug("rootcell=%s", kbuf);
- 
-+	ret = -ESTALE;
-+	net_ns = get_proc_net(file_inode(file));
-+	if (!net_ns)
-+		goto out;
-+	net = afs_net(net_ns);
-+
- 	ret = afs_cell_init(net, kbuf);
- 	if (ret >= 0)
- 		ret = size;	/* consume everything, always */
-@@ -420,13 +442,14 @@ static ssize_t afs_proc_rootcell_write(struct file *file,
- /*
-  * initialise /proc/fs/afs/<cell>/
-  */
--int afs_proc_cell_setup(struct afs_net *net, struct afs_cell *cell)
-+int afs_proc_cell_setup(struct afs_cell *cell)
- {
- 	struct proc_dir_entry *dir;
-+	struct afs_net *net = cell->net;
- 
- 	_enter("%p{%s},%p", cell, cell->name, net->proc_afs);
- 
--	dir = proc_mkdir(cell->name, net->proc_afs);
-+	dir = proc_net_mkdir(net->net, cell->name, net->proc_afs);
- 	if (!dir)
- 		goto error_dir;
- 
-@@ -449,12 +472,12 @@ int afs_proc_cell_setup(struct afs_net *net, struct afs_cell *cell)
- /*
-  * remove /proc/fs/afs/<cell>/
-  */
--void afs_proc_cell_remove(struct afs_net *net, struct afs_cell *cell)
-+void afs_proc_cell_remove(struct afs_cell *cell)
- {
--	_enter("");
-+	struct afs_net *net = cell->net;
- 
-+	_enter("");
- 	remove_proc_subtree(cell->name, net->proc_afs);
--
- 	_leave("");
- }
- 
-@@ -471,7 +494,8 @@ static int afs_proc_cell_volumes_open(struct inode *inode, struct file *file)
- 	if (!cell)
- 		return -ENOENT;
- 
--	ret = seq_open(file, &afs_proc_cell_volumes_ops);
-+	ret = seq_open_net(inode, file, &afs_proc_cell_volumes_ops,
-+			   sizeof(struct seq_net_private));
- 	if (ret < 0)
- 		return ret;
- 
-@@ -560,7 +584,8 @@ static int afs_proc_cell_vlservers_open(struct inode *inode, struct file *file)
- 	if (!cell)
- 		return -ENOENT;
- 
--	ret = seq_open(file, &afs_proc_cell_vlservers_ops);
-+	ret = seq_open_net(inode, file, &afs_proc_cell_vlservers_ops,
-+			   sizeof(struct seq_net_private));
- 	if (ret<0)
- 		return ret;
- 
-@@ -649,7 +674,8 @@ static int afs_proc_cell_vlservers_show(struct seq_file *m, void *v)
-  */
- static int afs_proc_servers_open(struct inode *inode, struct file *file)
- {
--	return seq_open(file, &afs_proc_servers_ops);
-+	return seq_open_net(inode, file, &afs_proc_servers_ops,
-+			    sizeof(struct seq_net_private));
- }
- 
- /*
-@@ -729,7 +755,8 @@ static int afs_proc_sysname_open(struct inode *inode, struct file *file)
- 	struct seq_file *m;
- 	int ret;
- 
--	ret = seq_open(file, &afs_proc_sysname_ops);
-+	ret = seq_open_net(inode, file, &afs_proc_sysname_ops,
-+			   sizeof(struct seq_net_private));
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index 65081ec3c36e..593820372848 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -48,6 +48,8 @@ struct file_system_type afs_fs_type = {
- };
- MODULE_ALIAS_FS("afs");
- 
-+int afs_net_id;
-+
- static const struct super_operations afs_super_ops = {
- 	.statfs		= afs_statfs,
- 	.alloc_inode	= afs_alloc_inode,
-@@ -117,7 +119,7 @@ int __init afs_fs_init(void)
- /*
-  * clean up the filesystem
-  */
--void __exit afs_fs_exit(void)
-+void afs_fs_exit(void)
- {
- 	_enter("");
- 
-@@ -351,7 +353,7 @@ static int afs_test_super(struct super_block *sb, void *data)
- 	struct afs_super_info *as1 = data;
- 	struct afs_super_info *as = AFS_FS_S(sb);
- 
--	return (as->net == as1->net &&
-+	return (as->net_ns == as1->net_ns &&
- 		as->volume &&
- 		as->volume->vid == as1->volume->vid);
- }
-@@ -437,7 +439,7 @@ static struct afs_super_info *afs_alloc_sbi(struct afs_mount_params *params)
- 
- 	as = kzalloc(sizeof(struct afs_super_info), GFP_KERNEL);
- 	if (as) {
--		as->net = afs_get_net(params->net);
-+		as->net_ns = get_net(params->net_ns);
- 		if (params->dyn_root)
- 			as->dyn_root = true;
- 		else
-@@ -450,8 +452,8 @@ static void afs_destroy_sbi(struct afs_super_info *as)
- {
- 	if (as) {
- 		afs_put_volume(as->cell, as->volume);
--		afs_put_cell(as->net, as->cell);
--		afs_put_net(as->net);
-+		afs_put_cell(afs_net(as->net_ns), as->cell);
-+		put_net(as->net_ns);
- 		kfree(as);
- 	}
- }
-@@ -472,12 +474,13 @@ static struct dentry *afs_mount(struct file_system_type *fs_type,
- 	_enter(",,%s,%p", dev_name, options);
- 
- 	memset(&params, 0, sizeof(params));
--	params.net = &__afs_net;
- 
- 	ret = -EINVAL;
- 	if (current->nsproxy->net_ns != &init_net)
- 		goto error;
--
-+	params.net_ns = current->nsproxy->net_ns;
-+	params.net = afs_net(params.net_ns);
-+	
- 	/* parse the options and device name */
- 	if (options) {
- 		ret = afs_parse_options(&params, options, &dev_name);
-@@ -571,7 +574,8 @@ static void afs_kill_super(struct super_block *sb)
- 	 * deactivating the superblock.
- 	 */
- 	if (as->volume)
--		afs_clear_callback_interests(as->net, as->volume->servers);
-+		afs_clear_callback_interests(afs_net(as->net_ns),
-+					     as->volume->servers);
- 	kill_anon_super(sb);
- 	if (as->volume)
- 		afs_deactivate_volume(as->volume);
+
+>    sound/soc/intel/atom/sst/sst_loader.c: In function
+> 'sst_request_fw':
+> > > sound/soc/intel/atom/sst/sst_loader.c:357:9: warning: 'fw' is used
+> > > uninitialized in this function [-Wuninitialized]
+> 
+>      if (fw == NULL) {
+>             ^
+> 
+
+Looks like semi-false-positive.
+
+We should check retval first, then check fw. The API has to return an
+error in case when fw is not filled correctly.
+
+Otherwise it breaks a rule that input parameters are not altered on
+error path (when they are not about error itself of course).
+
+> vim +/fw +357 sound/soc/intel/atom/sst/sst_loader.c
+> 
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  344  
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  345  /*
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  346   * sst_request_fw - requests audio fw from kernel and saves a
+> copy
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  347   *
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  348   * This function requests the SST FW from the kernel, parses
+> it and
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  349   * saves a copy in the driver context
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  350   */
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  351  static int sst_request_fw(struct intel_sst_drv *sst)
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  352  {
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  353  	int retval = 0;
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  354  	const struct firmware *fw;
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  355  
+> 5794b7ec sound/soc/intel/sst/sst_loader.c Fang, Yang A 2014-10-
+> 30  356  	retval = request_firmware(&fw, sst->firmware_name,
+> sst->dev);
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-16
+> @357  	if (fw == NULL) {
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  358  		dev_err(sst->dev, "fw is returning as
+> null\n");
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  359  		return -EINVAL;
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  360  	}
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  361  	if (retval) {
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  362  		dev_err(sst->dev, "request fw failed %d\n",
+> retval);
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  363  		return retval;
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  364  	}
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  365  	mutex_lock(&sst->sst_lock);
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  366  	retval = sst_cache_and_parse_fw(sst, fw);
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  367  	mutex_unlock(&sst->sst_lock);
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  368  
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  369  	return retval;
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  370  }
+> 9012c954 sound/soc/intel/sst/sst_loader.c Vinod Koul   2014-10-
+> 16  371  
+> 
+> :::::: The code at line 357 was first introduced by commit
+> :::::: 9012c9544eeac485b2193fea721233907f0847fa ASoC: Intel: mrfld -
+> Add DSP load and management
+> 
+> :::::: TO: Vinod Koul <vinod.koul@intel.com>
+> :::::: CC: Mark Brown <broonie@kernel.org>
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology
+> Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel
+> Corporation
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
