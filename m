@@ -1,90 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755676AbeDTP1k (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:27:40 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38773 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755550AbeDTP1a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:27:30 -0400
-X-Google-Smtp-Source: AIpwx4/YkmqZfYUFXQgHcNEHS2B4xWhv4qnuhr/mSjEiGfm3oAP8aEQeGaSHEQeoYmJMAIUZmz5jTg==
-Date: Fri, 20 Apr 2018 17:27:26 +0200
-From: Juri Lelli <juri.lelli@gmail.com>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched/rt: Rework for_each_process_thread() iterations
- in tg_has_rt_tasks()
-Message-ID: <20180420152726.GJ24599@localhost.localdomain>
-References: <152415882713.2054.8734093066910722403.stgit@localhost.localdomain>
- <20180420092540.GG24599@localhost.localdomain>
- <0d7fbdab-b972-7f86-4090-b49f9315c868@virtuozzo.com>
- <854a5fb1-a9c1-023f-55ec-17fa14ad07d5@virtuozzo.com>
- <20180420141145.GI24599@localhost.localdomain>
- <5fee2cc2-e6de-6bc2-7644-778ef2185803@virtuozzo.com>
+        id S1755780AbeDTP24 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:28:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51194 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755522AbeDTP2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 11:28:54 -0400
+Date: Fri, 20 Apr 2018 18:28:50 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: "Daly, Dan" <dan.daly@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
+ unmanaged SR-IOV on virtio_pci devices
+Message-ID: <20180420180839-mutt-send-email-mst@kernel.org>
+References: <20180315183449.3102.64791.stgit@localhost.localdomain>
+ <20180315184132.3102.90947.stgit@localhost.localdomain>
+ <20180316183042-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
+ <20180403161151-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com>
+ <20180403212503-mutt-send-email-mst@kernel.org>
+ <CAKgT0Ude79FYrK4qA0OKRJ1NackyqPi-hZ8Zh3WSdLDFxoOosQ@mail.gmail.com>
+ <20180420030640-mutt-send-email-mst@kernel.org>
+ <CAKgT0Ucpw9D1u8MYoEX5KOij6sxs-5O9gPFTmOVq=Dgt=HUJ=g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5fee2cc2-e6de-6bc2-7644-778ef2185803@virtuozzo.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAKgT0Ucpw9D1u8MYoEX5KOij6sxs-5O9gPFTmOVq=Dgt=HUJ=g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/04/18 17:30, Kirill Tkhai wrote:
-> On 20.04.2018 17:11, Juri Lelli wrote:
-> > On 20/04/18 13:06, Kirill Tkhai wrote:
-> >> From: Kirill Tkhai <ktkhai@virtuozzo.com>
-> >>
-> >> tg_rt_schedulable() iterates over all child task groups,
-> >> while tg_has_rt_tasks() iterates over all linked tasks.
-> >> In case of systems with big number of tasks, this may
-> >> take a lot of time.
-> >>
-> >> I observed hard LOCKUP on machine with 20000+ processes
-> >> after write to "cpu.rt_period_us" of cpu cgroup with
-> >> 39 children. The problem occurred because of tasklist_lock
-> >> is held for a long time and other processes can't do fork().
-> >>
-> >> PID: 1036268  TASK: ffff88766c310000  CPU: 36  COMMAND: "criu"
-> >>  #0 [ffff887f7f408e48] crash_nmi_callback at ffffffff81050601
-> >>  #1 [ffff887f7f408e58] nmi_handle at ffffffff816e0cc7
-> >>  #2 [ffff887f7f408eb0] do_nmi at ffffffff816e0fb0
-> >>  #3 [ffff887f7f408ef0] end_repeat_nmi at ffffffff816e00b9
-> >>     [exception RIP: tg_rt_schedulable+463]
-> >>     RIP: ffffffff810bf49f  RSP: ffff886537ad7d50  RFLAGS: 00000202
-> >>     RAX: 0000000000000000  RBX: 000000003b9aca00  RCX: ffff883e9cb4b1b0
-> >>     RDX: ffff887d0be43608  RSI: ffff886537ad7dd8  RDI: ffff8840a6ad0000
-> >>     RBP: ffff886537ad7d68   R8: ffff887d0be431b0   R9: 00000000000e7ef0
-> >>     R10: ffff88164fc39400  R11: 0000000000023380  R12: ffffffff81ef8d00
-> >>     R13: ffffffff810bea40  R14: 0000000000000000  R15: ffff8840a6ad0000
-> >>     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
-> >> --- <NMI exception stack> ---
-> >>  #4 [ffff886537ad7d50] tg_rt_schedulable at ffffffff810bf49f
-> >>  #5 [ffff886537ad7d70] walk_tg_tree_from at ffffffff810c6c91
-> >>  #6 [ffff886537ad7dc0] tg_set_rt_bandwidth at ffffffff810c6dd0
-> >>  #7 [ffff886537ad7e28] cpu_rt_period_write_uint at ffffffff810c6eea
-> >>  #8 [ffff886537ad7e38] cgroup_file_write at ffffffff8111cfd3
-> >>  #9 [ffff886537ad7ec8] vfs_write at ffffffff8121eced
-> >> #10 [ffff886537ad7f08] sys_write at ffffffff8121faff
-> >> #11 [ffff886537ad7f50] system_call_fastpath at ffffffff816e8a7d
-> >>
-> >> The patch reworks tg_has_rt_tasks() and makes it to iterate over
-> >> task group process list instead of iteration over all tasks list.
-> >> This makes the function to scale well, and reduces its execution
-> >> time.
-> >>
-> >> Note, that since tasklist_lock doesn't protect a task against
-> >> sched_class changing, we don't introduce new races in comparison
-> >> to that we had before.
-> > 
-> > This seems to be true. However, I wonder why we are OK with current racy
-> > code (against tasks moving between groups). :/
-> > 
-> > Can't a task join the group while we are iterating and we miss that?
+On Fri, Apr 20, 2018 at 07:56:14AM -0700, Alexander Duyck wrote:
+> > I think for virtio it should include the feature bit, yes.
+> > Adding feature bit is very easy - post a patch to the virtio TC mailing
+> > list, wait about a week to give people time to respond (two weeks if it
+> > is around holidays and such).
 > 
-> Yes, it can, but I'm not sure either this should be considered as problem,
-> seeing the race design we already have. It's not a real protection, this
-> place is to warn a person, he does something wrong. We check for zero written
-> there, but really written "1" will invent the same problems.
+> The problem is we are talking about hardware/FPGA, not software.
+> Adding a feature bit means going back and updating RTL. The software
+> side of things is easy, re-validating things after a hardware/FPGA
+> change not so much.
+> 
+> If this is a hard requirement I may just drop the virtio patch, push
+> what I have, and leave it to Mark/Dan to deal with the necessary RTL
+> and code changes needed to support Virtio as I don't expect the
+> turnaround to be as easy as just a patch.
+> 
+> Thanks.
+> 
+> - Alex
 
-Mmm, right. :/
+Let's focus on virtio in this thread.
+
+Involving the virtio TC in host/guest interface changes is a
+hard requirement. It's just too easy to create conflicts otherwise.
+
+So you guys should have just sent the proposal to the TC when you
+were doing your RTL and you would have been in the clear.
+
+Generally adding a feature bit with any extension is a good idea:
+this way you merely reserve a feature bit for your feature through
+the TC and are more or less sure of forward and backward compatibility.
+It's incredibly easy.
+
+But maybe it's not needed here.  I am not making the decisions myself.
+Not too late: post to the TC list and let's see what the response is.
+Without a feature bit you are making a change affecting all future
+implementations without exception so the bar is a bit higher: you need
+to actually post a spec text proposal not just a patch showing how to
+use the feature, and TC needs to vote on it. Voting takes a week,
+review a week or two depending on change complexity.
+
+Hope this helps,
+
+-- 
+MST
