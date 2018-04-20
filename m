@@ -1,45 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754471AbeDTIGQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:06:16 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:39394 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754423AbeDTIFh (ORCPT
+        id S1754473AbeDTIG3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:06:29 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37185 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754034AbeDTIG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:05:37 -0400
-X-Google-Smtp-Source: AIpwx4+Qmz4esnDJtXvV7H49Kc5s6MTL8w8IfUK4TnrlZhzwTE+IjYUbkZ/c8fK7O8zjWQDDjmDjtg==
-Date: Fri, 20 Apr 2018 09:05:33 +0100
+        Fri, 20 Apr 2018 04:06:26 -0400
+X-Google-Smtp-Source: AIpwx4+CmkGw2NdZwhqBub1m8yKWgvyHBC1Zzw6Mz3+qmZwz30dteITHmSR5+CgkvMW6aTk/z3pO/Q==
+Date: Fri, 20 Apr 2018 09:06:23 +0100
 From: Lee Jones <lee.jones@linaro.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, Peter Korsgaard <jacmet@sunsite.dk>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+To: Mark Brown <broonie@kernel.org>
+Cc: ryang <decatf@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] i2c: i2c-ocores: move header to platform_data
-Message-ID: <20180420080533.ohryzn7wkg4525os@dell>
-References: <20180419200015.15095-1-wsa@the-dreams.de>
- <20180419200015.15095-4-wsa@the-dreams.de>
+Subject: Re: [PATCH] regulator: tps6586x: Add support for TPS658624
+Message-ID: <20180420080623.cyohf6js6evxgtmx@dell>
+References: <20180419161850.GA9144@computer>
+ <20180419164801.GI27188@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180419200015.15095-4-wsa@the-dreams.de>
+In-Reply-To: <20180419164801.GI27188@sirena.org.uk>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018, Wolfram Sang wrote:
+On Thu, 19 Apr 2018, Mark Brown wrote:
 
-> This header only contains platform_data. Move it to the proper directory.
+> On Thu, Apr 19, 2018 at 12:18:50PM -0400, ryang wrote:
+> > This version is exists in the Samsung Galaxy Tab 10.1 which is based on the
+> > Nvidia Tegra 2 board. The TPS658624 has the same SM2 voltage table as
+> > TPS658623.
 > 
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> ---
->  Documentation/i2c/busses/i2c-ocores            | 2 +-
->  drivers/i2c/busses/i2c-ocores.c                | 2 +-
->  drivers/mfd/timberdale.c                       | 2 +-
->  include/linux/{ => platform_data}/i2c-ocores.h | 0
->  4 files changed, 3 insertions(+), 3 deletions(-)
->  rename include/linux/{ => platform_data}/i2c-ocores.h (100%)
+> > Signed-off-by: ryang <decatf@gmail.com>
+> > ---
+> >  drivers/regulator/tps6586x-regulator.c | 1 +
+> >  include/linux/mfd/tps6586x.h           | 1 +
+> >  2 files changed, 2 insertions(+)
+> 
+> This also touches the MFD header for the part so should've been sent to
+> Lee, the MFD maintainer (CCed here, left the entire patch for context).  
+
+Thanks Mark.
+
+Please take it.
 
 Acked-by: Lee Jones <lee.jones@linaro.org>
 
