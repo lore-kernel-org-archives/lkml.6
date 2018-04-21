@@ -1,325 +1,397 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753205AbeDURMt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 13:12:49 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39091 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752911AbeDURMr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 13:12:47 -0400
-X-Google-Smtp-Source: AIpwx48OY9hWUl64L+Y4T5Et2Tff5m4xsmkThKxKDa0f6f0qH5ydX3II2SRD1lBpIPkRk1//MHJZbg==
-Date: Sat, 21 Apr 2018 22:44:42 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: mawilcox@microsoft.com, ross.zwisler@linux.intel.com,
-        viro@zeniv.linux.org.uk
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH v2] fs: dax: Adding new return type vm_fault_t
-Message-ID: <20180421171442.GA17919@jordon-HP-15-Notebook-PC>
+        id S1753243AbeDURYe (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 13:24:34 -0400
+Received: from mout.gmx.net ([212.227.17.20]:48391 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753077AbeDURYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 13:24:32 -0400
+Subject: Re: [REVIEW][PATCH 13/22] signal/parisc: Use force_sig_fault where
+ appropriate
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, James Bottomley <jejb@parisc-linux.org>,
+        linux-parisc@vger.kernel.org
+References: <87604mhrnb.fsf@xmission.com>
+ <20180420143811.9994-13-ebiederm@xmission.com>
+From: Helge Deller <deller@gmx.de>
+Message-ID: <0c19d397-57d2-9b39-19f3-f989b34e1580@gmx.de>
+Date: Sat, 21 Apr 2018 19:24:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180420143811.9994-13-ebiederm@xmission.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:GEpNsfYKqzJVb5/fpVWmJoPdKKlc8L4z/KNDv+owY7w8VoNdiL0
+ bykMpIzeGfxY2tO68apHw3QazBQG1SPS6AzCmTSPAfAq17Ek4UCL8Rm/YxuvUcJM0YNSlBA
+ dka7olN8P+Ko2G3wxoaSvasLX7M/Of9A156NOLElNMoshra+dqs7UWMJdCdtli6InN/DPRA
+ B8k3DC664vopZpTKfNHrA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0://QKuX/HVSM=:E4icsDoOjXZn3EHb+bkNv4
+ +4DX5Ip4lOwu1curLOIZZa/Ivx83qivGwsH8GDZTtKFlkVoJxiQyWIUaGwc6eO9Ytzm/6WAC5
+ +d3a7DzBZnRoX4Yi2TNs7ZA1CBDklm1uNlc48pv8IbHuDATwcp++Finkm9Jyk8uR4fO5i7iDn
+ iYVcxmZ5yiUHZiQCxrCww3MDTWdV8ixbl0AXjj7GgcCe8CWqqzyoJvXIdi9vhzTcRGDeIrv3R
+ hll2w1MD+DsRZ6dGwK7Pbyss9fyjsQ0pPAklCpwvkttaQCvsKbpwGynD3crpLp/V3+lMLzKO5
+ ctLiVQt6Grgbd83fvqq8kundzW8Gg0SiJhNe28qV1T7uYapp9sj40WjDNpEkAbC2DmAVuMLYa
+ sMRf+Llu2920i26RpAp5Iz0vyyv1Nk9YdN2/LIe55dNNTpYHwQWCvkDFHh+RMJJOx2MpJI5Yw
+ /5xcNe5sSmNbag4Cm8YyC4MVwT7TThqzEQuTILqf5Ksd3Px6SWivmTyE2gdYyl0cDIiQ/jzOf
+ NRogUB4h/cv4iYUcQSo3kMTuS2DxBP2xIB1rqstaPlzvbo7kh2PEghUERkzlDxhAdUocOo7nV
+ 1z3hghUBFoWl5EiFHREpdZLVWFDdVZLbT7HBaYm39PqShUtrbxlN5AI2J/aGAVHlh+J2jfR0a
+ F/r/RV0Ak6Cb4ZV5DunyNaxY3NO4qMM2LMDc3JOSItXYUuYCTgE2k1eeXnTmpA6DcAOdMJ+j2
+ Fh+TScXrA4en/T6xGYvvkTZd/i5tWLsPFQgOid15MaV+aH7h96R/3lgv1yfGKBXWOQFomfyO6
+ Wq1WGmgqEZgTTBSsaSxM/Lx7RreNFCl71Iz8HuSkbjexXLvrpBt78fAA6Yt4pedekDJ3z6vd5
+ XGEL0dvVX6REegK5KpdsKqH2ftthVR0J162ojuG+h6YeXhycrKSyj5we/DyFB5sm+cuW73kAo
+ jT/909z0MpdhMjYlSAratCdrWdJkKVtaTdqDX5srL2Ydir34Cn0QGVPbWxLA31XzC5UTyDA5Q
+ hg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On 20.04.2018 16:38, Eric W. Biederman wrote:
+> Filling in struct siginfo before calling force_sig_info a tedious and
+> error prone process, where once in a great while the wrong fields
+> are filled out, and siginfo has been inconsistently cleared.
+> 
+> Simplify this process by using the helper force_sig_fault.  Which
+> takes as a parameters all of the information it needs, ensures
+> all of the fiddly bits of filling in struct siginfo are done properly
+> and then calls force_sig_info.
+> 
+> In short about a 5 line reduction in code for every time force_sig_info
+> is called, which makes the calling function clearer.
+> 
+> Cc: James Bottomley <jejb@parisc-linux.org>
+> Cc: Helge Deller <deller@gmx.de>
+> Cc: linux-parisc@vger.kernel.org
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+I pulled this whole patch series from your git tree and 
+booted it on 32- and 64-bit parisc kernels.
+ 
+Acked-by: Helge Deller <deller@gmx.de>   # parisc
 
-There was an existing bug inside dax_load_hole()
-if vm_insert_mixed had failed to allocate a page table,
-we'd return VM_FAULT_NOPAGE instead of VM_FAULT_OOM.
-With new vmf_insert_mixed() this issue is addressed.
+Thanks!
+Helge
 
-vm_insert_mixed_mkwrite has inefficiency when it returns
-an error value, driver has to convert it to vm_fault_t
-type. With new vmf_insert_mixed_mkwrite() this limitation
-will be addressed.
-
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- fs/dax.c            | 78 +++++++++++++++++++++++++----------------------------
- include/linux/dax.h |  4 +--
- 2 files changed, 39 insertions(+), 43 deletions(-)
-
-diff --git a/fs/dax.c b/fs/dax.c
-index aaec72de..3483237 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -905,12 +905,12 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
-  * If this page is ever written to we will re-fault and change the mapping to
-  * point to real DAX storage instead.
-  */
--static int dax_load_hole(struct address_space *mapping, void *entry,
-+static vm_fault_t dax_load_hole(struct address_space *mapping, void *entry,
- 			 struct vm_fault *vmf)
- {
- 	struct inode *inode = mapping->host;
- 	unsigned long vaddr = vmf->address;
--	int ret = VM_FAULT_NOPAGE;
-+	vm_fault_t ret = VM_FAULT_NOPAGE;
- 	struct page *zero_page;
- 	void *entry2;
- 	pfn_t pfn;
-@@ -929,7 +929,7 @@ static int dax_load_hole(struct address_space *mapping, void *entry,
- 		goto out;
- 	}
- 
--	vm_insert_mixed(vmf->vma, vaddr, pfn);
-+	ret = vmf_insert_mixed(vmf->vma, vaddr, pfn);
- out:
- 	trace_dax_load_hole(inode, vmf, ret);
- 	return ret;
-@@ -1112,7 +1112,7 @@ int __dax_zero_page_range(struct block_device *bdev,
- }
- EXPORT_SYMBOL_GPL(dax_iomap_rw);
- 
--static int dax_fault_return(int error)
-+static vm_fault_t dax_fault_return(int error)
- {
- 	if (error == 0)
- 		return VM_FAULT_NOPAGE;
-@@ -1132,7 +1132,7 @@ static bool dax_fault_is_synchronous(unsigned long flags,
- 		&& (iomap->flags & IOMAP_F_DIRTY);
- }
- 
--static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
-+static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 			       int *iomap_errp, const struct iomap_ops *ops)
- {
- 	struct vm_area_struct *vma = vmf->vma;
-@@ -1145,18 +1145,18 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	int error, major = 0;
- 	bool write = vmf->flags & FAULT_FLAG_WRITE;
- 	bool sync;
--	int vmf_ret = 0;
-+	vm_fault_t ret = 0;
- 	void *entry;
- 	pfn_t pfn;
- 
--	trace_dax_pte_fault(inode, vmf, vmf_ret);
-+	trace_dax_pte_fault(inode, vmf, ret);
- 	/*
- 	 * Check whether offset isn't beyond end of file now. Caller is supposed
- 	 * to hold locks serializing us with truncate / punch hole so this is
- 	 * a reliable test.
- 	 */
- 	if (pos >= i_size_read(inode)) {
--		vmf_ret = VM_FAULT_SIGBUS;
-+		ret = VM_FAULT_SIGBUS;
- 		goto out;
- 	}
- 
-@@ -1165,7 +1165,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 
- 	entry = grab_mapping_entry(mapping, vmf->pgoff, 0);
- 	if (IS_ERR(entry)) {
--		vmf_ret = dax_fault_return(PTR_ERR(entry));
-+		ret = dax_fault_return(PTR_ERR(entry));
- 		goto out;
- 	}
- 
-@@ -1176,7 +1176,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	 * retried.
- 	 */
- 	if (pmd_trans_huge(*vmf->pmd) || pmd_devmap(*vmf->pmd)) {
--		vmf_ret = VM_FAULT_NOPAGE;
-+		ret = VM_FAULT_NOPAGE;
- 		goto unlock_entry;
- 	}
- 
-@@ -1189,7 +1189,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	if (iomap_errp)
- 		*iomap_errp = error;
- 	if (error) {
--		vmf_ret = dax_fault_return(error);
-+		ret = dax_fault_return(error);
- 		goto unlock_entry;
- 	}
- 	if (WARN_ON_ONCE(iomap.offset + iomap.length < pos + PAGE_SIZE)) {
-@@ -1219,9 +1219,9 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 			goto error_finish_iomap;
- 
- 		__SetPageUptodate(vmf->cow_page);
--		vmf_ret = finish_fault(vmf);
--		if (!vmf_ret)
--			vmf_ret = VM_FAULT_DONE_COW;
-+		ret = finish_fault(vmf);
-+		if (!ret)
-+			ret = VM_FAULT_DONE_COW;
- 		goto finish_iomap;
- 	}
- 
-@@ -1257,23 +1257,20 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 				goto error_finish_iomap;
- 			}
- 			*pfnp = pfn;
--			vmf_ret = VM_FAULT_NEEDDSYNC | major;
-+			ret = VM_FAULT_NEEDDSYNC | major;
- 			goto finish_iomap;
- 		}
- 		trace_dax_insert_mapping(inode, vmf, entry);
- 		if (write)
--			error = vm_insert_mixed_mkwrite(vma, vaddr, pfn);
-+			ret = vmf_insert_mixed_mkwrite(vma, vaddr, pfn);
- 		else
--			error = vm_insert_mixed(vma, vaddr, pfn);
-+			ret = vmf_insert_mixed(vma, vaddr, pfn);
- 
--		/* -EBUSY is fine, somebody else faulted on the same PTE */
--		if (error == -EBUSY)
--			error = 0;
--		break;
-+		goto finish_iomap;
- 	case IOMAP_UNWRITTEN:
- 	case IOMAP_HOLE:
- 		if (!write) {
--			vmf_ret = dax_load_hole(mapping, entry, vmf);
-+			ret = dax_load_hole(mapping, entry, vmf);
- 			goto finish_iomap;
- 		}
- 		/*FALLTHRU*/
-@@ -1284,12 +1281,12 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	}
- 
-  error_finish_iomap:
--	vmf_ret = dax_fault_return(error) | major;
-+	ret = dax_fault_return(error) | major;
-  finish_iomap:
- 	if (ops->iomap_end) {
- 		int copied = PAGE_SIZE;
- 
--		if (vmf_ret & VM_FAULT_ERROR)
-+		if (ret & VM_FAULT_ERROR)
- 			copied = 0;
- 		/*
- 		 * The fault is done by now and there's no way back (other
-@@ -1302,12 +1299,12 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
-  unlock_entry:
- 	put_locked_mapping_entry(mapping, vmf->pgoff);
-  out:
--	trace_dax_pte_fault_done(inode, vmf, vmf_ret);
--	return vmf_ret;
-+	trace_dax_pte_fault_done(inode, vmf, ret);
-+	return ret;
- }
- 
- #ifdef CONFIG_FS_DAX_PMD
--static int dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
-+static vm_fault_t dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
- 		void *entry)
- {
- 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
-@@ -1348,7 +1345,7 @@ static int dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
- 	return VM_FAULT_FALLBACK;
- }
- 
--static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
-+static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 			       const struct iomap_ops *ops)
- {
- 	struct vm_area_struct *vma = vmf->vma;
-@@ -1358,7 +1355,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	bool sync;
- 	unsigned int iomap_flags = (write ? IOMAP_WRITE : 0) | IOMAP_FAULT;
- 	struct inode *inode = mapping->host;
--	int result = VM_FAULT_FALLBACK;
-+	vm_fault_t result = VM_FAULT_FALLBACK;
- 	struct iomap iomap = { 0 };
- 	pgoff_t max_pgoff, pgoff;
- 	void *entry;
-@@ -1509,7 +1506,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	return result;
- }
- #else
--static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
-+static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 			       const struct iomap_ops *ops)
- {
- 	return VM_FAULT_FALLBACK;
-@@ -1529,7 +1526,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
-  * has done all the necessary locking for page fault to proceed
-  * successfully.
-  */
--int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
-+vm_fault_t dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
- 		    pfn_t *pfnp, int *iomap_errp, const struct iomap_ops *ops)
- {
- 	switch (pe_size) {
-@@ -1553,14 +1550,14 @@ int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
-  * DAX file.  It takes care of marking corresponding radix tree entry as dirty
-  * as well.
-  */
--static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
-+static vm_fault_t dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 				  enum page_entry_size pe_size,
- 				  pfn_t pfn)
- {
- 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
- 	void *entry, **slot;
- 	pgoff_t index = vmf->pgoff;
--	int vmf_ret, error;
-+	vm_fault_t ret;
- 
- 	xa_lock_irq(&mapping->i_pages);
- 	entry = get_unlocked_mapping_entry(mapping, index, &slot);
-@@ -1579,21 +1576,20 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 	xa_unlock_irq(&mapping->i_pages);
- 	switch (pe_size) {
- 	case PE_SIZE_PTE:
--		error = vm_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
--		vmf_ret = dax_fault_return(error);
-+		ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
- 		break;
- #ifdef CONFIG_FS_DAX_PMD
- 	case PE_SIZE_PMD:
--		vmf_ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
-+		ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
- 			pfn, true);
- 		break;
- #endif
- 	default:
--		vmf_ret = VM_FAULT_FALLBACK;
-+		ret = VM_FAULT_FALLBACK;
- 	}
- 	put_locked_mapping_entry(mapping, index);
--	trace_dax_insert_pfn_mkwrite(mapping->host, vmf, vmf_ret);
--	return vmf_ret;
-+	trace_dax_insert_pfn_mkwrite(mapping->host, vmf, ret);
-+	return ret;
- }
- 
- /**
-@@ -1606,8 +1602,8 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
-  * stored persistently on the media and handles inserting of appropriate page
-  * table entry.
-  */
--int dax_finish_sync_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
--			  pfn_t pfn)
-+vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
-+		enum page_entry_size pe_size, pfn_t pfn)
- {
- 	int err;
- 	loff_t start = ((loff_t)vmf->pgoff) << PAGE_SHIFT;
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index f9eb22a..7fddea8 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -124,8 +124,8 @@ ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		const struct iomap_ops *ops);
- int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
- 		    pfn_t *pfnp, int *errp, const struct iomap_ops *ops);
--int dax_finish_sync_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
--			  pfn_t pfn);
-+vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
-+		enum page_entry_size pe_size, pfn_t pfn);
- int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
- int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
- 				      pgoff_t index);
--- 
-1.9.1
+> ---
+>  arch/parisc/kernel/ptrace.c    | 11 ++------
+>  arch/parisc/kernel/traps.c     | 63 ++++++++++++++----------------------------
+>  arch/parisc/kernel/unaligned.c | 16 +++--------
+>  arch/parisc/math-emu/driver.c  |  9 ++----
+>  arch/parisc/mm/fault.c         | 25 +++++++----------
+>  5 files changed, 39 insertions(+), 85 deletions(-)
+> 
+> diff --git a/arch/parisc/kernel/ptrace.c b/arch/parisc/kernel/ptrace.c
+> index b1c12ceb1c88..7aa1d4d0d444 100644
+> --- a/arch/parisc/kernel/ptrace.c
+> +++ b/arch/parisc/kernel/ptrace.c
+> @@ -76,8 +76,6 @@ void user_enable_single_step(struct task_struct *task)
+>  	set_tsk_thread_flag(task, TIF_SINGLESTEP);
+>  
+>  	if (pa_psw(task)->n) {
+> -		struct siginfo si;
+> -
+>  		/* Nullified, just crank over the queue. */
+>  		task_regs(task)->iaoq[0] = task_regs(task)->iaoq[1];
+>  		task_regs(task)->iasq[0] = task_regs(task)->iasq[1];
+> @@ -90,12 +88,9 @@ void user_enable_single_step(struct task_struct *task)
+>  		ptrace_disable(task);
+>  		/* Don't wake up the task, but let the
+>  		   parent know something happened. */
+> -		clear_siginfo(&si);
+> -		si.si_code = TRAP_TRACE;
+> -		si.si_addr = (void __user *) (task_regs(task)->iaoq[0] & ~3);
+> -		si.si_signo = SIGTRAP;
+> -		si.si_errno = 0;
+> -		force_sig_info(SIGTRAP, &si, task);
+> +		force_sig_fault(SIGTRAP, TRAP_TRACE,
+> +				(void __user *) (task_regs(task)->iaoq[0] & ~3),
+> +				task);
+>  		/* notify_parent(task, SIGCHLD); */
+>  		return;
+>  	}
+> diff --git a/arch/parisc/kernel/traps.c b/arch/parisc/kernel/traps.c
+> index 98f9f2f85940..132b09c657ff 100644
+> --- a/arch/parisc/kernel/traps.c
+> +++ b/arch/parisc/kernel/traps.c
+> @@ -297,14 +297,8 @@ void die_if_kernel(char *str, struct pt_regs *regs, long err)
+>  #define GDB_BREAK_INSN 0x10004
+>  static void handle_gdb_break(struct pt_regs *regs, int wot)
+>  {
+> -	struct siginfo si;
+> -
+> -	clear_siginfo(&si);
+> -	si.si_signo = SIGTRAP;
+> -	si.si_errno = 0;
+> -	si.si_code = wot;
+> -	si.si_addr = (void __user *) (regs->iaoq[0] & ~3);
+> -	force_sig_info(SIGTRAP, &si, current);
+> +	force_sig_fault(SIGTRAP, wot,
+> +			(void __user *) (regs->iaoq[0] & ~3), current);
+>  }
+>  
+>  static void handle_break(struct pt_regs *regs)
+> @@ -488,9 +482,8 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
+>  {
+>  	unsigned long fault_address = 0;
+>  	unsigned long fault_space = 0;
+> -	struct siginfo si;
+> +	int si_code;
+>  
+> -	clear_siginfo(&si);
+>  	if (code == 1)
+>  	    pdc_console_restart();  /* switch back to pdc if HPMC */
+>  	else
+> @@ -573,7 +566,7 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
+>  	case  8:
+>  		/* Illegal instruction trap */
+>  		die_if_kernel("Illegal instruction", regs, code);
+> -		si.si_code = ILL_ILLOPC;
+> +		si_code = ILL_ILLOPC;
+>  		goto give_sigill;
+>  
+>  	case  9:
+> @@ -584,7 +577,7 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
+>  	case 10:
+>  		/* Privileged operation trap */
+>  		die_if_kernel("Privileged operation", regs, code);
+> -		si.si_code = ILL_PRVOPC;
+> +		si_code = ILL_PRVOPC;
+>  		goto give_sigill;
+>  
+>  	case 11:
+> @@ -607,20 +600,16 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
+>  		}
+>  
+>  		die_if_kernel("Privileged register usage", regs, code);
+> -		si.si_code = ILL_PRVREG;
+> +		si_code = ILL_PRVREG;
+>  	give_sigill:
+> -		si.si_signo = SIGILL;
+> -		si.si_errno = 0;
+> -		si.si_addr = (void __user *) regs->iaoq[0];
+> -		force_sig_info(SIGILL, &si, current);
+> +		force_sig_fault(SIGILL, si_code,
+> +				(void __user *) regs->iaoq[0], current);
+>  		return;
+>  
+>  	case 12:
+>  		/* Overflow Trap, let the userland signal handler do the cleanup */
+> -		si.si_signo = SIGFPE;
+> -		si.si_code = FPE_INTOVF;
+> -		si.si_addr = (void __user *) regs->iaoq[0];
+> -		force_sig_info(SIGFPE, &si, current);
+> +		force_sig_fault(SIGFPE, FPE_INTOVF,
+> +				(void __user *) regs->iaoq[0], current);
+>  		return;
+>  		
+>  	case 13:
+> @@ -628,13 +617,11 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
+>  		   The condition succeeds in an instruction which traps
+>  		   on condition  */
+>  		if(user_mode(regs)){
+> -			si.si_signo = SIGFPE;
+>  			/* Let userspace app figure it out from the insn pointed
+>  			 * to by si_addr.
+>  			 */
+> -			si.si_code = FPE_CONDTRAP;
+> -			si.si_addr = (void __user *) regs->iaoq[0];
+> -			force_sig_info(SIGFPE, &si, current);
+> +			force_sig_fault(SIGFPE, FPE_CONDTRAP,
+> +					(void __user *) regs->iaoq[0], current);
+>  			return;
+>  		} 
+>  		/* The kernel doesn't want to handle condition codes */
+> @@ -743,14 +730,10 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
+>  			return;
+>  
+>  		die_if_kernel("Protection id trap", regs, code);
+> -		si.si_code = SEGV_MAPERR;
+> -		si.si_signo = SIGSEGV;
+> -		si.si_errno = 0;
+> -		if (code == 7)
+> -		    si.si_addr = (void __user *) regs->iaoq[0];
+> -		else
+> -		    si.si_addr = (void __user *) regs->ior;
+> -		force_sig_info(SIGSEGV, &si, current);
+> +		force_sig_fault(SIGSEGV, SEGV_MAPERR,
+> +				(code == 7)?
+> +				((void __user *) regs->iaoq[0]) :
+> +				((void __user *) regs->ior), current);
+>  		return;
+>  
+>  	case 28: 
+> @@ -764,11 +747,8 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
+>  				"handle_interruption() pid=%d command='%s'\n",
+>  				task_pid_nr(current), current->comm);
+>  			/* SIGBUS, for lack of a better one. */
+> -			si.si_signo = SIGBUS;
+> -			si.si_code = BUS_OBJERR;
+> -			si.si_errno = 0;
+> -			si.si_addr = (void __user *) regs->ior;
+> -			force_sig_info(SIGBUS, &si, current);
+> +			force_sig_fault(SIGBUS, BUS_OBJERR,
+> +					(void __user *)regs->ior, current);
+>  			return;
+>  		}
+>  		pdc_chassis_send_status(PDC_CHASSIS_DIRECT_PANIC);
+> @@ -783,11 +763,8 @@ void notrace handle_interruption(int code, struct pt_regs *regs)
+>  				"User fault %d on space 0x%08lx, pid=%d command='%s'\n",
+>  				code, fault_space,
+>  				task_pid_nr(current), current->comm);
+> -		si.si_signo = SIGSEGV;
+> -		si.si_errno = 0;
+> -		si.si_code = SEGV_MAPERR;
+> -		si.si_addr = (void __user *) regs->ior;
+> -		force_sig_info(SIGSEGV, &si, current);
+> +		force_sig_fault(SIGSEGV, SEGV_MAPERR,
+> +				(void __user *)regs->ior, current);
+>  		return;
+>  	    }
+>  	}
+> diff --git a/arch/parisc/kernel/unaligned.c b/arch/parisc/kernel/unaligned.c
+> index 30b7c7f6c471..932bfc0b7cd8 100644
+> --- a/arch/parisc/kernel/unaligned.c
+> +++ b/arch/parisc/kernel/unaligned.c
+> @@ -452,10 +452,8 @@ void handle_unaligned(struct pt_regs *regs)
+>  	unsigned long newbase = R1(regs->iir)?regs->gr[R1(regs->iir)]:0;
+>  	int modify = 0;
+>  	int ret = ERR_NOTHANDLED;
+> -	struct siginfo si;
+>  	register int flop=0;	/* true if this is a flop */
+>  
+> -	clear_siginfo(&si);
+>  	__inc_irq_stat(irq_unaligned_count);
+>  
+>  	/* log a message with pacing */
+> @@ -691,21 +689,15 @@ void handle_unaligned(struct pt_regs *regs)
+>  
+>  		if (ret == ERR_PAGEFAULT)
+>  		{
+> -			si.si_signo = SIGSEGV;
+> -			si.si_errno = 0;
+> -			si.si_code = SEGV_MAPERR;
+> -			si.si_addr = (void __user *)regs->ior;
+> -			force_sig_info(SIGSEGV, &si, current);
+> +			force_sig_fault(SIGSEGV, SEGV_MAPERR,
+> +					(void __user *)regs->ior, current);
+>  		}
+>  		else
+>  		{
+>  force_sigbus:
+>  			/* couldn't handle it ... */
+> -			si.si_signo = SIGBUS;
+> -			si.si_errno = 0;
+> -			si.si_code = BUS_ADRALN;
+> -			si.si_addr = (void __user *)regs->ior;
+> -			force_sig_info(SIGBUS, &si, current);
+> +			force_sig_fault(SIGBUS, BUS_ADRALN,
+> +					(void __user *)regs->ior, current);
+>  		}
+>  		
+>  		return;
+> diff --git a/arch/parisc/math-emu/driver.c b/arch/parisc/math-emu/driver.c
+> index 0d10efb53361..0590e05571d1 100644
+> --- a/arch/parisc/math-emu/driver.c
+> +++ b/arch/parisc/math-emu/driver.c
+> @@ -81,7 +81,6 @@ int
+>  handle_fpe(struct pt_regs *regs)
+>  {
+>  	extern void printbinary(unsigned long x, int nbits);
+> -	struct siginfo si;
+>  	unsigned int orig_sw, sw;
+>  	int signalcode;
+>  	/* need an intermediate copy of float regs because FPU emulation
+> @@ -93,7 +92,6 @@ handle_fpe(struct pt_regs *regs)
+>  	 */
+>  	__u64 frcopy[36];
+>  
+> -	clear_siginfo(&si);
+>  	memcpy(frcopy, regs->fr, sizeof regs->fr);
+>  	frcopy[32] = 0;
+>  
+> @@ -118,11 +116,8 @@ handle_fpe(struct pt_regs *regs)
+>  
+>  	memcpy(regs->fr, frcopy, sizeof regs->fr);
+>  	if (signalcode != 0) {
+> -	    si.si_signo = signalcode >> 24;
+> -	    si.si_errno = 0;
+> -	    si.si_code = signalcode & 0xffffff;
+> -	    si.si_addr = (void __user *) regs->iaoq[0];
+> -	    force_sig_info(si.si_signo, &si, current);
+> +	    force_sig_fault(signalcode >> 24, signalcode & 0xffffff,
+> +			    (void __user *) regs->iaoq[0], current);
+>  	    return -1;
+>  	}
+>  
+> diff --git a/arch/parisc/mm/fault.c b/arch/parisc/mm/fault.c
+> index 51215b0048ef..a80117980fc2 100644
+> --- a/arch/parisc/mm/fault.c
+> +++ b/arch/parisc/mm/fault.c
+> @@ -353,23 +353,22 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
+>  	up_read(&mm->mmap_sem);
+>  
+>  	if (user_mode(regs)) {
+> -		struct siginfo si;
+> +		int signo, si_code;
+>  
+> -		clear_siginfo(&si);
+>  		switch (code) {
+>  		case 15:	/* Data TLB miss fault/Data page fault */
+>  			/* send SIGSEGV when outside of vma */
+>  			if (!vma ||
+>  			    address < vma->vm_start || address >= vma->vm_end) {
+> -				si.si_signo = SIGSEGV;
+> -				si.si_code = SEGV_MAPERR;
+> +				signo = SIGSEGV;
+> +				si_code = SEGV_MAPERR;
+>  				break;
+>  			}
+>  
+>  			/* send SIGSEGV for wrong permissions */
+>  			if ((vma->vm_flags & acc_type) != acc_type) {
+> -				si.si_signo = SIGSEGV;
+> -				si.si_code = SEGV_ACCERR;
+> +				signo = SIGSEGV;
+> +				si_code = SEGV_ACCERR;
+>  				break;
+>  			}
+>  
+> @@ -377,17 +376,16 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
+>  			/* fall through */
+>  		case 17:	/* NA data TLB miss / page fault */
+>  		case 18:	/* Unaligned access - PCXS only */
+> -			si.si_signo = SIGBUS;
+> -			si.si_code = (code == 18) ? BUS_ADRALN : BUS_ADRERR;
+> +			signo = SIGBUS;
+> +			si_code = (code == 18) ? BUS_ADRALN : BUS_ADRERR;
+>  			break;
+>  		case 16:	/* Non-access instruction TLB miss fault */
+>  		case 26:	/* PCXL: Data memory access rights trap */
+>  		default:
+> -			si.si_signo = SIGSEGV;
+> -			si.si_code = (code == 26) ? SEGV_ACCERR : SEGV_MAPERR;
+> +			signo = SIGSEGV;
+> +			si_code = (code == 26) ? SEGV_ACCERR : SEGV_MAPERR;
+>  			break;
+>  		}
+> -
+>  #ifdef CONFIG_MEMORY_FAILURE
+>  		if (fault & (VM_FAULT_HWPOISON|VM_FAULT_HWPOISON_LARGE)) {
+>  			unsigned int lsb = 0;
+> @@ -409,12 +407,9 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
+>  			return;
+>  		}
+>  #endif
+> -
+>  		show_signal_msg(regs, code, address, tsk, vma);
+>  
+> -		si.si_errno = 0;
+> -		si.si_addr = (void __user *) address;
+> -		force_sig_info(si.si_signo, &si, current);
+> +		force_sig_fault(signo, si_code, (void __user *) address, current);
+>  		return;
+>  	}
+>  
+> 
