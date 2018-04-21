@@ -1,396 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753241AbeDURoS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 13:44:18 -0400
-Received: from mout.gmx.net ([212.227.17.21]:45271 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752911AbeDURoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 13:44:13 -0400
-Subject: Re: [PATCH 22/22] parisc: use generic dma_noncoherent_ops
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180420080313.18796-1-hch@lst.de>
- <20180420080313.18796-23-hch@lst.de>
-From: Helge Deller <deller@gmx.de>
-Message-ID: <e0b4f3be-68b9-c3af-e432-fd20419e2d70@gmx.de>
-Date: Sat, 21 Apr 2018 19:43:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1753211AbeDURtY (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 13:49:24 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39904 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752911AbeDURtW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 13:49:22 -0400
+X-Google-Smtp-Source: AIpwx4/ZhBh8c+LH/6cldSliNdGu/hzS+KXb6nnllvf7GnkyvF+FZTBP+FlHkbyLLqtP4yCjCF59cg==
+Date: Sat, 21 Apr 2018 10:50:35 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: syzbot
+        <syzbot+20eb18b1ffc36152b5608d41ab3bf6bd18c23aa7@syzkaller.appspotmail.com>
+Cc: jasowang@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mst@redhat.com, syzkaller-bugs@googlegroups.com,
+        virtualization@lists.linux-foundation.org
+Subject: Re: KASAN: use-after-free Read in perf_trace_lock_acquire (2)
+Message-ID: <20180421175035.GB1098@sol.localdomain>
+References: <001a113f890e54dcd0055e90b9bf@google.com>
+ <001a113ecb5e7f5e580563fb501d@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180420080313.18796-23-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:ru/tGzmF2CfbTAiAG4zvEGzI7ebdGuQP/m/ZEQ9asHx+hC/VmSx
- jdDChQB+7NoeSyYmYdccvLcyNEtVKZ7mDFvwW/tk34KlN5SDnUde1K5eSWaTrafW7WYz6Uk
- VT6vFieNoYRMFdJtejkI5Z2Ukij8QdhtZHSpxMPlHhpTDnwoGi1E17pct317Rc7hsqGvjAA
- aGiF4eVQowPugMPW8+w7w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:aom1hrK4FWQ=:DM9tLV23QMjAGWncynBhqF
- oMRYxEwQA4ZlE7fzqtyWgw9W9s2ywcR7X7E4FCHNVXJGA8AFQjbZDZB7DHN2x1KZid5QNOxKV
- 1yvjsXIVapigYTle/YAwfetLnZrnGXIlr8k8HtgwAZfkV2zc8Z7bZwFbTUwKAv3G4oFmX82DQ
- 3onz+H2/Y6H0tSDf5ptbTUxxdnwbgPBveKwj0O+ovqgfnhkmzSu5dEBdeK3ZaiA6HLktJgg1U
- ++gjkktmrTIdr27YcdxjVPv1rtusCPwnwL6L5o+C84EfiGk+61mt0pkImeiDOjTzppeIB8wym
- PF/AAmBiYAZAMNdaKk7v58M5iR4TecCtWkUZaGVv6J1azxv58/iVCllGuxm4AEKp5JSo8pat+
- PdixteQFXFJIuaUKLYG89e5QQTfd4YyseXlLrDVUxkY8lIJwlebj0Vy7jIN+6Xq8+DxFG5jqK
- YYiTN1TNSb9OquLljaTz9GdHf3oepMUYt5yULtwNbioxGIkdwMVm5dRzcrFw762TNdtbzisCV
- PPxpWdB3YR2oe6HVARbzZ535W+tQ/AV4WtIlR+gsBXeRKBjuXdJdeH7uO1OY8cgc/z+mBbQ4V
- viA+IknP5niyYjUTX2abh+eSRLKnX+hq4sIqyULZB99cMBcaiNEIpVRtf0Osg/3vDp9pWFpTj
- 3utMgk8CkryClTldWEJMB2tYKV+wK86Tb7o5ws6KMZK2mMQLuZJ8yf4XWdvNHcQzHHTgbaLZK
- 7NZkazugsvzIdXm9h7NABK2fJcG4ExyP3lkURhD4PEG8np+dhZ1q6oxeekKyU3UYQxsjzMuJ9
- Zuk6RQHmqo6nPItoTPTqsConzscWyWaTbyGVlafXm66pjDUJ34=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <001a113ecb5e7f5e580563fb501d@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.04.2018 10:03, Christoph Hellwig wrote:
-> Switch to the generic noncoherent direct mapping implementation.
+On Tue, Jan 30, 2018 at 01:52:02AM -0800, syzbot wrote:
+> syzbot has found reproducer for the following crash on upstream commit
+> 6304672b7f0a5c010002e63a075160856dc4f88d (Tue Jan 30 03:08:02 2018 +0000)
+> Merge branch 'x86-pti-for-linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
 > 
-> Parisc previously had two different non-coherent dma ops implementation
-> that just different in the way coherent allocations were handled or not
-> handled.  The different behavior is not selected at runtime in the
-> arch_dma_alloc and arch_dma_free routines.  The non-coherent allocation
-> in the pcx cases now uses the dma_direct helpers that are a little more
-> sophisticated and used by a lot of other architectures.
+> So far this crash happened 172 times on linux-next, mmots, upstream.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
 > 
-> Fix sync_single_for_cpu to do skip the cache flush unless the transfer
-> is to the device to match the more tested unmap_single path which should
-> have the same cache coherency implications.
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by:
+> syzbot+20eb18b1ffc36152b5608d41ab3bf6bd18c23aa7@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed.
 > 
-> This also now consistenly uses flush_kernel_dcache_range for cache
-> flushing while previously some of the SG based operations used
-> flush_kernel_vmap_range instead.
+> ==================================================================
+> BUG: KASAN: use-after-free in perf_trace_lock_acquire+0x5b7/0x980
+> include/trace/events/lock.h:13
+> Read of size 8 at addr ffff8801b48e50b8 by task syzkaller241108/8081
+> 
+> CPU: 1 PID: 8081 Comm: syzkaller241108 Not tainted 4.15.0+ #286
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  print_address_description+0x73/0x250 mm/kasan/report.c:252
+>  kasan_report_error mm/kasan/report.c:351 [inline]
+>  kasan_report+0x25b/0x340 mm/kasan/report.c:409
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
+>  perf_trace_lock_acquire+0x5b7/0x980 include/trace/events/lock.h:13
+>  trace_lock_acquire include/trace/events/lock.h:13 [inline]
+>  lock_acquire+0x394/0x580 kernel/locking/lockdep.c:3914
+>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+>  remove_wait_queue+0x81/0x350 kernel/sched/wait.c:50
+>  vhost_poll_stop drivers/vhost/vhost.c:230 [inline]
+>  vhost_dev_stop+0x15c/0x2a0 drivers/vhost/vhost.c:566
+>  vhost_net_release+0x6e/0x190 drivers/vhost/net.c:998
+>  __fput+0x327/0x7e0 fs/file_table.c:210
+>  ____fput+0x15/0x20 fs/file_table.c:244
+>  task_work_run+0x199/0x270 kernel/task_work.c:113
+>  exit_task_work include/linux/task_work.h:22 [inline]
+>  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+>  do_group_exit+0x149/0x400 kernel/exit.c:968
+>  get_signal+0x73f/0x16c0 kernel/signal.c:2335
+>  do_signal+0x90/0x1eb0 arch/x86/kernel/signal.c:809
+>  exit_to_usermode_loop+0x214/0x310 arch/x86/entry/common.c:158
+>  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+>  syscall_return_slowpath+0x490/0x550 arch/x86/entry/common.c:264
+>  entry_SYSCALL_64_fastpath+0x9e/0xa0
+> RIP: 0033:0x44bff9
+> RSP: 002b:00007ff890dd4da8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+> RAX: fffffffffffffe00 RBX: 0000000000700054 RCX: 000000000044bff9
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000700054
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000700050
+> R13: 6f68762f7665642f R14: 00007ff890dd59c0 R15: 0000000000000007
+> 
+> Allocated by task 8054:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
+>  kmem_cache_alloc_trace+0x136/0x750 mm/slab.c:3610
+>  kmalloc include/linux/slab.h:499 [inline]
+>  eventfd_file_create.part.3+0x96/0x250 fs/eventfd.c:441
+>  eventfd_file_create fs/eventfd.c:483 [inline]
+>  SYSC_eventfd2 fs/eventfd.c:468 [inline]
+>  SyS_eventfd2 fs/eventfd.c:458 [inline]
+>  SYSC_eventfd fs/eventfd.c:485 [inline]
+>  SyS_eventfd+0x2c/0x80 fs/eventfd.c:483
+>  entry_SYSCALL_64_fastpath+0x29/0xa0
+> 
+> Freed by task 8081:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>  set_track mm/kasan/kasan.c:459 [inline]
+>  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
+>  __cache_free mm/slab.c:3488 [inline]
+>  kfree+0xd6/0x260 mm/slab.c:3803
+>  eventfd_free_ctx fs/eventfd.c:72 [inline]
+>  eventfd_free fs/eventfd.c:79 [inline]
+>  kref_put include/linux/kref.h:70 [inline]
+>  eventfd_ctx_put+0x26/0x30 fs/eventfd.c:104
+>  eventfd_release+0x52/0x60 fs/eventfd.c:113
+>  __fput+0x327/0x7e0 fs/file_table.c:210
+>  ____fput+0x15/0x20 fs/file_table.c:244
+>  task_work_run+0x199/0x270 kernel/task_work.c:113
+>  exit_task_work include/linux/task_work.h:22 [inline]
+>  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+>  do_group_exit+0x149/0x400 kernel/exit.c:968
+>  get_signal+0x73f/0x16c0 kernel/signal.c:2335
+>  do_signal+0x90/0x1eb0 arch/x86/kernel/signal.c:809
+>  exit_to_usermode_loop+0x214/0x310 arch/x86/entry/common.c:158
+>  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+>  syscall_return_slowpath+0x490/0x550 arch/x86/entry/common.c:264
+>  entry_SYSCALL_64_fastpath+0x9e/0xa0
+> 
+> The buggy address belongs to the object at ffff8801b48e5080
+>  which belongs to the cache kmalloc-96 of size 96
+> The buggy address is located 56 bytes inside of
+>  96-byte region [ffff8801b48e5080, ffff8801b48e50e0)
+> The buggy address belongs to the page:
+> page:ffffea0006d23940 count:1 mapcount:0 mapping:ffff8801b48e5000 index:0x0
+> flags: 0x2fffc0000000100(slab)
+> raw: 02fffc0000000100 ffff8801b48e5000 0000000000000000 0000000100000020
+> raw: ffffea0006a220e0 ffffea0006cc4320 ffff8801db0004c0 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>  ffff8801b48e4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff8801b48e5000: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+> > ffff8801b48e5080: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>                                         ^
+>  ffff8801b48e5100: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>  ffff8801b48e5180: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> ==================================================================
 
+No longer occurring, seems this was yet another report of the vhost bug fixed by
+commit 4cd879515d68:
 
-This patch breaks a 32bit kernel on a B160L machine (PA7300LC CPU, "pcxl2").
-After applying this patch series the lasi82956 network driver works unreliable. 
-NIC gets IP, but ping doesn't work.
-See drivers/net/ethernet/i825xx/lasi_82596.c, it uses dma*sync() functions.
+#syz fix: vhost_net: stop device during reset owner
 
-Helge
-
- 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/parisc/Kconfig                   |   4 +
->  arch/parisc/include/asm/dma-mapping.h |   5 -
->  arch/parisc/kernel/pci-dma.c          | 181 ++++----------------------
->  arch/parisc/kernel/setup.c            |   8 +-
->  arch/parisc/mm/init.c                 |  11 +-
->  5 files changed, 35 insertions(+), 174 deletions(-)
-> 
-> diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-> index 47047f0cbe35..80166a1cbcb7 100644
-> --- a/arch/parisc/Kconfig
-> +++ b/arch/parisc/Kconfig
-> @@ -188,6 +188,10 @@ config PA20
->  config PA11
->  	def_bool y
->  	depends on PA7000 || PA7100LC || PA7200 || PA7300LC
-> +	select ARCH_HAS_SYNC_DMA_FOR_CPU
-> +	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-> +	select DMA_NONCOHERENT_OPS
-> +	select DMA_NONCOHERENT_CACHE_SYNC
->  
->  config PREFETCH
->  	def_bool y
-> diff --git a/arch/parisc/include/asm/dma-mapping.h b/arch/parisc/include/asm/dma-mapping.h
-> index 01e1fc057c83..44a9f97194aa 100644
-> --- a/arch/parisc/include/asm/dma-mapping.h
-> +++ b/arch/parisc/include/asm/dma-mapping.h
-> @@ -21,11 +21,6 @@
->  ** flush/purge and allocate "regular" cacheable pages for everything.
->  */
->  
-> -#ifdef CONFIG_PA11
-> -extern const struct dma_map_ops pcxl_dma_ops;
-> -extern const struct dma_map_ops pcx_dma_ops;
-> -#endif
-> -
->  extern const struct dma_map_ops *hppa_dma_ops;
->  
->  static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
-> diff --git a/arch/parisc/kernel/pci-dma.c b/arch/parisc/kernel/pci-dma.c
-> index 91bc0cac03a1..235e2e53959e 100644
-> --- a/arch/parisc/kernel/pci-dma.c
-> +++ b/arch/parisc/kernel/pci-dma.c
-> @@ -21,13 +21,12 @@
->  #include <linux/init.h>
->  #include <linux/gfp.h>
->  #include <linux/mm.h>
-> -#include <linux/pci.h>
->  #include <linux/proc_fs.h>
->  #include <linux/seq_file.h>
->  #include <linux/string.h>
->  #include <linux/types.h>
-> -#include <linux/scatterlist.h>
-> -#include <linux/export.h>
-> +#include <linux/dma-direct.h>
-> +#include <linux/dma-noncoherent.h>
->  
->  #include <asm/cacheflush.h>
->  #include <asm/dma.h>    /* for DMA_CHUNK_SIZE */
-> @@ -447,178 +446,48 @@ static void pa11_dma_free(struct device *dev, size_t size, void *vaddr,
->  	free_pages((unsigned long)__va(dma_handle), order);
->  }
->  
-> -static dma_addr_t pa11_dma_map_page(struct device *dev, struct page *page,
-> -		unsigned long offset, size_t size,
-> -		enum dma_data_direction direction, unsigned long attrs)
-> +void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
-> +		size_t size, enum dma_data_direction dir)
->  {
-> -	void *addr = page_address(page) + offset;
-> -	BUG_ON(direction == DMA_NONE);
-> -
-> -	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
-> -		flush_kernel_dcache_range((unsigned long) addr, size);
-> -
-> -	return virt_to_phys(addr);
-> +	flush_kernel_dcache_range((unsigned long)phys_to_virt(paddr), size);
->  }
->  
-> -static void pa11_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
-> -		size_t size, enum dma_data_direction direction,
-> -		unsigned long attrs)
-> +void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
-> +		size_t size, enum dma_data_direction dir)
->  {
-> -	BUG_ON(direction == DMA_NONE);
-> -
-> -	if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
-> -		return;
-> -
-> -	if (direction == DMA_TO_DEVICE)
-> +	if (dir == DMA_TO_DEVICE)
->  		return;
->  
->  	/*
-> -	 * For PCI_DMA_FROMDEVICE this flush is not necessary for the
-> +	 * For DMA_FROM_DEVICE this flush is not necessary for the
->  	 * simple map/unmap case. However, it IS necessary if if
-> -	 * pci_dma_sync_single_* has been called and the buffer reused.
-> +	 * dma_sync_single_* has been called and the buffer reused.
->  	 */
->  
-> -	flush_kernel_dcache_range((unsigned long) phys_to_virt(dma_handle), size);
-> -}
-> -
-> -static int pa11_dma_map_sg(struct device *dev, struct scatterlist *sglist,
-> -		int nents, enum dma_data_direction direction,
-> -		unsigned long attrs)
-> -{
-> -	int i;
-> -	struct scatterlist *sg;
-> -
-> -	BUG_ON(direction == DMA_NONE);
-> -
-> -	for_each_sg(sglist, sg, nents, i) {
-> -		unsigned long vaddr = (unsigned long)sg_virt(sg);
-> -
-> -		sg_dma_address(sg) = (dma_addr_t) virt_to_phys(vaddr);
-> -		sg_dma_len(sg) = sg->length;
-> -
-> -		if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
-> -			continue;
-> -
-> -		flush_kernel_dcache_range(vaddr, sg->length);
-> -	}
-> -	return nents;
-> +	flush_kernel_dcache_range((unsigned long)phys_to_virt(paddr), size);
->  }
->  
-> -static void pa11_dma_unmap_sg(struct device *dev, struct scatterlist *sglist,
-> -		int nents, enum dma_data_direction direction,
-> -		unsigned long attrs)
-> -{
-> -	int i;
-> -	struct scatterlist *sg;
-> -
-> -	BUG_ON(direction == DMA_NONE);
-> -
-> -	if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
-> -		return;
-> -
-> -	if (direction == DMA_TO_DEVICE)
-> -		return;
-> -
-> -	/* once we do combining we'll need to use phys_to_virt(sg_dma_address(sglist)) */
-> -
-> -	for_each_sg(sglist, sg, nents, i)
-> -		flush_kernel_vmap_range(sg_virt(sg), sg->length);
-> -}
-> -
-> -static void pa11_dma_sync_single_for_cpu(struct device *dev,
-> -		dma_addr_t dma_handle, size_t size,
-> -		enum dma_data_direction direction)
-> -{
-> -	BUG_ON(direction == DMA_NONE);
-> -
-> -	flush_kernel_dcache_range((unsigned long) phys_to_virt(dma_handle),
-> -			size);
-> -}
-> -
-> -static void pa11_dma_sync_single_for_device(struct device *dev,
-> -		dma_addr_t dma_handle, size_t size,
-> -		enum dma_data_direction direction)
-> -{
-> -	BUG_ON(direction == DMA_NONE);
-> -
-> -	flush_kernel_dcache_range((unsigned long) phys_to_virt(dma_handle),
-> -			size);
-> -}
-> -
-> -static void pa11_dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sglist, int nents, enum dma_data_direction direction)
-> -{
-> -	int i;
-> -	struct scatterlist *sg;
-> -
-> -	/* once we do combining we'll need to use phys_to_virt(sg_dma_address(sglist)) */
-> -
-> -	for_each_sg(sglist, sg, nents, i)
-> -		flush_kernel_vmap_range(sg_virt(sg), sg->length);
-> -}
-> -
-> -static void pa11_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sglist, int nents, enum dma_data_direction direction)
-> -{
-> -	int i;
-> -	struct scatterlist *sg;
-> -
-> -	/* once we do combining we'll need to use phys_to_virt(sg_dma_address(sglist)) */
-> -
-> -	for_each_sg(sglist, sg, nents, i)
-> -		flush_kernel_vmap_range(sg_virt(sg), sg->length);
-> -}
-> -
-> -static void pa11_dma_cache_sync(struct device *dev, void *vaddr, size_t size,
-> +void arch_dma_cache_sync(struct device *dev, void *vaddr, size_t size,
->  	       enum dma_data_direction direction)
->  {
->  	flush_kernel_dcache_range((unsigned long)vaddr, size);
->  }
->  
-> -const struct dma_map_ops pcxl_dma_ops = {
-> -	.alloc =		pa11_dma_alloc,
-> -	.free =			pa11_dma_free,
-> -	.map_page =		pa11_dma_map_page,
-> -	.unmap_page =		pa11_dma_unmap_page,
-> -	.map_sg =		pa11_dma_map_sg,
-> -	.unmap_sg =		pa11_dma_unmap_sg,
-> -	.sync_single_for_cpu =	pa11_dma_sync_single_for_cpu,
-> -	.sync_single_for_device = pa11_dma_sync_single_for_device,
-> -	.sync_sg_for_cpu =	pa11_dma_sync_sg_for_cpu,
-> -	.sync_sg_for_device =	pa11_dma_sync_sg_for_device,
-> -	.cache_sync =		pa11_dma_cache_sync,
-> -};
-> -
-> -static void *pcx_dma_alloc(struct device *dev, size_t size,
-> -		dma_addr_t *dma_handle, gfp_t flag, unsigned long attrs)
-> +void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
-> +		gfp_t gfp, unsigned long attrs)
->  {
-> -	void *addr;
-> -
-> -	if ((attrs & DMA_ATTR_NON_CONSISTENT) == 0)
-> -		return NULL;
-> -
-> -	addr = (void *)__get_free_pages(flag, get_order(size));
-> -	if (addr)
-> -		*dma_handle = (dma_addr_t)virt_to_phys(addr);
-> -
-> -	return addr;
-> +	if (boot_cpu_data.cpu_type == pcxl2 || boot_cpu_data.cpu_type == pcxl)
-> +		return pa11_dma_alloc(dev, size, dma_handle, gfp, attrs);
-> +	if (attrs & DMA_ATTR_NON_CONSISTENT)
-> +		return dma_direct_alloc(dev, size, dma_handle, gfp, attrs);
-> +	return NULL;
->  }
->  
-> -static void pcx_dma_free(struct device *dev, size_t size, void *vaddr,
-> -		dma_addr_t iova, unsigned long attrs)
-> +void arch_dma_free(struct device *dev, size_t size, void *cpu_addr,
-> +		dma_addr_t dma_addr, unsigned long attrs)
->  {
-> -	free_pages((unsigned long)vaddr, get_order(size));
-> -	return;
-> +	if (boot_cpu_data.cpu_type == pcxl2 || boot_cpu_data.cpu_type == pcxl)
-> +		pa11_dma_free(dev, size, cpu_addr, dma_addr, attrs);
-> +	else
-> +		dma_direct_free(dev, size, cpu_addr, dma_addr, attrs);
->  }
-> -
-> -const struct dma_map_ops pcx_dma_ops = {
-> -	.alloc =		pcx_dma_alloc,
-> -	.free =			pcx_dma_free,
-> -	.map_page =		pa11_dma_map_page,
-> -	.unmap_page =		pa11_dma_unmap_page,
-> -	.map_sg =		pa11_dma_map_sg,
-> -	.unmap_sg =		pa11_dma_unmap_sg,
-> -	.sync_single_for_cpu =	pa11_dma_sync_single_for_cpu,
-> -	.sync_single_for_device = pa11_dma_sync_single_for_device,
-> -	.sync_sg_for_cpu =	pa11_dma_sync_sg_for_cpu,
-> -	.sync_sg_for_device =	pa11_dma_sync_sg_for_device,
-> -	.cache_sync =		pa11_dma_cache_sync,
-> -};
-> diff --git a/arch/parisc/kernel/setup.c b/arch/parisc/kernel/setup.c
-> index 8d3a7b80ac42..4e87c35c22b7 100644
-> --- a/arch/parisc/kernel/setup.c
-> +++ b/arch/parisc/kernel/setup.c
-> @@ -97,14 +97,12 @@ void __init dma_ops_init(void)
->  		panic(	"PA-RISC Linux currently only supports machines that conform to\n"
->  			"the PA-RISC 1.1 or 2.0 architecture specification.\n");
->  
-> -	case pcxs:
-> -	case pcxt:
-> -		hppa_dma_ops = &pcx_dma_ops;
-> -		break;
->  	case pcxl2:
->  		pa7300lc_init();
->  	case pcxl: /* falls through */
-> -		hppa_dma_ops = &pcxl_dma_ops;
-> +	case pcxs:
-> +	case pcxt:
-> +		hppa_dma_ops = &dma_noncoherent_ops;
->  		break;
->  	default:
->  		break;
-> diff --git a/arch/parisc/mm/init.c b/arch/parisc/mm/init.c
-> index cab32ee824d2..4ad91c28ecbe 100644
-> --- a/arch/parisc/mm/init.c
-> +++ b/arch/parisc/mm/init.c
-> @@ -19,7 +19,6 @@
->  #include <linux/gfp.h>
->  #include <linux/delay.h>
->  #include <linux/init.h>
-> -#include <linux/pci.h>		/* for hppa_dma_ops and pcxl_dma_ops */
->  #include <linux/initrd.h>
->  #include <linux/swap.h>
->  #include <linux/unistd.h>
-> @@ -616,17 +615,13 @@ void __init mem_init(void)
->  	free_all_bootmem();
->  
->  #ifdef CONFIG_PA11
-> -	if (hppa_dma_ops == &pcxl_dma_ops) {
-> +	if (boot_cpu_data.cpu_type == pcxl2 || boot_cpu_data.cpu_type == pcxl) {
->  		pcxl_dma_start = (unsigned long)SET_MAP_OFFSET(MAP_START);
->  		parisc_vmalloc_start = SET_MAP_OFFSET(pcxl_dma_start
->  						+ PCXL_DMA_MAP_SIZE);
-> -	} else {
-> -		pcxl_dma_start = 0;
-> -		parisc_vmalloc_start = SET_MAP_OFFSET(MAP_START);
-> -	}
-> -#else
-> -	parisc_vmalloc_start = SET_MAP_OFFSET(MAP_START);
-> +	} else
->  #endif
-> +		parisc_vmalloc_start = SET_MAP_OFFSET(MAP_START);
->  
->  	mem_init_print_info(NULL);
->  
-> 
+- Eric
