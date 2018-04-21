@@ -1,28 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753239AbeDUHvV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 03:51:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54365 "EHLO
+        id S1753080AbeDUHuo (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 03:50:44 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57825 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752819AbeDUHvT (ORCPT
+        with ESMTP id S1753032AbeDUHun (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 03:51:19 -0400
-Date: Sat, 21 Apr 2018 00:49:28 -0700
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-5af44ca53d019de47efe6dbc4003dd518e5197ed@git.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org, acme@redhat.com,
-        namhyung@kernel.org, andi@firstfloor.org
-Reply-To: tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, hpa@zytor.com, acme@redhat.com, namhyung@kernel.org,
-        andi@firstfloor.org
-In-Reply-To: <20180415092352.12403-2-jolsa@kernel.org>
-References: <20180415092352.12403-2-jolsa@kernel.org>
+        Sat, 21 Apr 2018 03:50:43 -0400
+Date: Sat, 21 Apr 2018 00:50:28 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-td9t5vhjltqnlzaurkkgq8cn@git.kernel.org>
+Cc: hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        namhyung@kernel.org, wangnan0@huawei.com, jolsa@kernel.org,
+        acme@redhat.com, dsahern@gmail.com, mhocko@suse.com,
+        adrian.hunter@intel.com
+Reply-To: wangnan0@huawei.com, jolsa@kernel.org, adrian.hunter@intel.com,
+        mhocko@suse.com, dsahern@gmail.com, acme@redhat.com, hpa@zytor.com,
+        tglx@linutronix.de, namhyung@kernel.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf: Fix sample_max_stack maximum check
-Git-Commit-ID: 5af44ca53d019de47efe6dbc4003dd518e5197ed
+Subject: [tip:perf/urgent] perf trace: Support MAP_FIXED_NOREPLACE
+Git-Commit-ID: 4e5c01a7c746130033eb6e7153b346b8ca61e7a5
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,93 +34,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5af44ca53d019de47efe6dbc4003dd518e5197ed
-Gitweb:     https://git.kernel.org/tip/5af44ca53d019de47efe6dbc4003dd518e5197ed
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 15 Apr 2018 11:23:51 +0200
+Commit-ID:  4e5c01a7c746130033eb6e7153b346b8ca61e7a5
+Gitweb:     https://git.kernel.org/tip/4e5c01a7c746130033eb6e7153b346b8ca61e7a5
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 16 Apr 2018 16:39:38 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 17 Apr 2018 09:47:40 -0300
+CommitDate: Wed, 18 Apr 2018 15:34:52 -0300
 
-perf: Fix sample_max_stack maximum check
+perf trace: Support MAP_FIXED_NOREPLACE
 
-The syzbot hit KASAN bug in perf_callchain_store having the entry stored
-behind the allocated bounds [1].
+Introduced in a4ff8e8620d3 ("mm: introduce MAP_FIXED_NOREPLACE"), and
+now that we have that define in the just syncronized
+tools/arch/*/include/uapi/asm/mman.h files, add support for it.
 
-We miss the sample_max_stack check for the initial event that allocates
-callchain buffers. This missing check allows to create an event with
-sample_max_stack value bigger than the global sysctl maximum:
+This should really transition to autogeneration of string tables as
+done for various other things:
 
-  # sysctl -a | grep perf_event_max_stack
-  kernel.perf_event_max_stack = 127
+  $ ls /tmp/build/perf/trace/beauty/generated/*.c
+  arch_errno_name_array.c kcmp_type_array.c madvise_behavior_array.c
+  pkey_alloc_access_rights_array.c prctl_option_array.c
+  $ head /tmp/build/perf/trace/beauty/generated/madvise_behavior_array.c
+  static const char *madvise_advices[] = {
+	[0] = "NORMAL",
+	[1] = "RANDOM",
+	[2] = "SEQUENTIAL",
+	[3] = "WILLNEED",
+	[4] = "DONTNEED",
+	[8] = "FREE",
+	[9] = "REMOVE",
+	[10] = "DONTFORK",
+	[11] = "DOFORK",
+  $
 
-  # perf record -vv -C 1 -e cycles/max-stack=256/ kill
-  ...
-  perf_event_attr:
-    size                             112
-    ...
-    sample_max_stack                 256
-  ------------------------------------------------------------
-  sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8 = 4
+Till then, add support for this the old way.
 
-Note the '-C 1', which forces perf record to create just single event.
-Otherwise it opens event for every cpu, then the sample_max_stack check
-fails on the second event and all's fine.
+Also it has to be ifdef'ed, because arches like mips still don't define
+it. The proper solution will be to have per-arch tables for these
+values to support cross-analysis.
 
-The fix is to run the sample_max_stack check also for the first event
-with callchains.
-
-[1] https://marc.info/?l=linux-kernel&m=152352732920874&w=2
-
-Reported-by: syzbot+7c449856228b63ac951e@syzkaller.appspotmail.com
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: syzkaller-bugs@googlegroups.com
-Cc: x86@kernel.org
-Fixes: 97c79a38cd45 ("perf core: Per event callchain limit")
-Link: http://lkml.kernel.org/r/20180415092352.12403-2-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-td9t5vhjltqnlzaurkkgq8cn@git.kernel.org
+Signef-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- kernel/events/callchain.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ tools/perf/trace/beauty/mmap.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-index 772a43fea825..73cc26e321de 100644
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -119,19 +119,22 @@ int get_callchain_buffers(int event_max_stack)
- 		goto exit;
- 	}
- 
-+	/*
-+	 * If requesting per event more than the global cap,
-+	 * return a different error to help userspace figure
-+	 * this out.
-+	 *
-+	 * And also do it here so that we have &callchain_mutex held.
-+	 */
-+	if (event_max_stack > sysctl_perf_event_max_stack) {
-+		err = -EOVERFLOW;
-+		goto exit;
-+	}
-+
- 	if (count > 1) {
- 		/* If the allocation failed, give up */
- 		if (!callchain_cpus_entries)
- 			err = -ENOMEM;
--		/*
--		 * If requesting per event more than the global cap,
--		 * return a different error to help userspace figure
--		 * this out.
--		 *
--		 * And also do it here so that we have &callchain_mutex held.
--		 */
--		if (event_max_stack > sysctl_perf_event_max_stack)
--			err = -EOVERFLOW;
- 		goto exit;
- 	}
- 
+diff --git a/tools/perf/trace/beauty/mmap.c b/tools/perf/trace/beauty/mmap.c
+index 417e3ecfe9d7..9f68077b241b 100644
+--- a/tools/perf/trace/beauty/mmap.c
++++ b/tools/perf/trace/beauty/mmap.c
+@@ -54,6 +54,9 @@ static size_t syscall_arg__scnprintf_mmap_flags(char *bf, size_t size,
+ 	P_MMAP_FLAG(EXECUTABLE);
+ 	P_MMAP_FLAG(FILE);
+ 	P_MMAP_FLAG(FIXED);
++#ifdef MAP_FIXED_NOREPLACE
++	P_MMAP_FLAG(FIXED_NOREPLACE);
++#endif
+ 	P_MMAP_FLAG(GROWSDOWN);
+ 	P_MMAP_FLAG(HUGETLB);
+ 	P_MMAP_FLAG(LOCKED);
