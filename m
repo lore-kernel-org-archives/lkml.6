@@ -1,111 +1,92 @@
-Return-Path: <maier@linux.ibm.com>
-X-Google-Smtp-Source: AIpwx4/oC1OPgjJpoRvd+TOu2SxwvsZpUBUcCvtlqa0F94vL7HlHadeljh6tx6OgYGglkU7HenEA
-ARC-Seal: i=1; a=rsa-sha256; t=1523624908; cv=none;
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AIpwx4+yL9SXyWWccCD+14tOmILRBkTvN1Xt/ErnmCOS/6fKf7YXpvvkMNnDQQhqvWbCQH6T4J8g
+ARC-Seal: i=1; a=rsa-sha256; t=1524322078; cv=none;
         d=google.com; s=arc-20160816;
-        b=CxADstESgdYoxYzkpOP5Z5AAdOYYkV2i6B2K79mDc6NcHN38QPe+8DLSDloZDXrqZU
-         8cLI+bLMyDLJqXOzikBH51DppTnrx//RfqrSsAxR53F4g+YOC2YhWFR6BJGxUc5qiAca
-         Aik8lWG6Rj6/77XY1Ah/8sZHcAMZzC67wEO/S73d2A478CL1yU+puuo00Tp+ttaVntN0
-         ClBHjuVWB3ccWs01zpWcpI0pIV1TTapT0YtV8sO+wRZPfrxX+b18iguIEl0V8GQdadF4
-         2sxLgc003lrnGbqKHbZiTqBJjcw69CNS8uUvTZBSK9rvFF4994a4SroQZLG1jvnZgvPD
-         uJrw==
+        b=eNeRTWzPsO36cvR3N/QVtV3kXF92luxypmvvmn+CwU3X829MPvZg0UEliDqlBPE0xi
+         1h3uh5rJN8fB7qbYhTjGYLXnzjhY/OmMZLlQwYSF/t7fAcBpNwxdifZvEvZVPuRgBSwZ
+         V8HWROAWBNOmQDuadBMYLr0fqqjIKb20awmAagnApOzWIowIUpmtnV3ygdu6rHTykWTp
+         XSPcBmf64yOmnOCUySgpTNRsLxXlUreWXHpSOR4JtpF+H6pPWVcGmncGCmdcZOHHYeUB
+         xWicEFZv890OXBjpkcLU+jUMqDf93tncfaPJONKbG+ZjXQjSytCu6Z4TJsqmG7nsIgT5
+         NN2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:references:in-reply-to:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=/Xlp0dSKYL31UAA+zQ2pP7XxsImooCp0UQZjGJZK9VU=;
-        b=MaDjVOK5XoK1UcVfpzB4vfVHxtBP2mPg/XacrHNlUohyW2w/VMIP0kAieVPhrcfREd
-         AXmq1RGL9VrnhTZkh1JQNpJGIKBZOxEcdOS8tV/XDWT+sdtvawPBGO5ApiBEznmtoYpk
-         WLgn2LYGkyVLQaQSFgt4RPSyKlywpIvw7C6jKIbmRw2rRlOFclLjXHbhs/O38tvVKOYt
-         SZ+dzxxhkATvEm++r28+JmijcDYfEvQ+cnEtw8l0b0JQ70uA8wB+8L4L/UbTEPbUuf7N
-         bjRC7Q1vJFUA7e17uE/eUj3jInW5IYACxQGdvyKJD7OW1qMluubh88swvpwdX7UNV6tO
-         sNQA==
+        h=list-id:precedence:sender:cc:to:subject:message-id:date:from
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=hLSsNOLmQ0+l0PMRhAo8IPKxviI98wovDO1wg8vb6bw=;
+        b=KhkBu5/Fu37o+0p5BLzBdACO2GoeMwKEfw23p5tyz1acF1+kPwyVhmV+6G97MjSD+G
+         YqBNzpW1YRK0Fx81TTMlhCbtHP0mW99OieKC5LWlGvsGw8KpmX9in7U1yMYCfjR5zQTu
+         I1L8422zUwPo5UAxh5bFAgvqPipsGtzeuqWz/YYjJORE2Seo9PyYHOSeLBP80vdl83x0
+         fnzYlzQp10yQ4lVxlKqS3aLQMybDahkTkF/K8SojTUUf85a/kAqHeGK/9PrrT7yQ9Y2H
+         9QViZjjPPJQl0ndanpYTXnWQ5YXfpzPSliMOsZNs+nc/nab3XRVPn2jfUOMu9Ni9+or9
+         g8kw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       dkim=neutral (body hash did not verify) header.i=@rajagiritech-edu-in.20150623.gappssmtp.com header.s=20150623 header.b=iKKmZfsI;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-From: Steffen Maier <maier@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizf@cn.fujitsu.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Steffen Maier <maier@linux.ibm.com>
-Subject: [RFC] tracing/events: block: also try to get dev_t via driver core for some events
-Date: Fri, 13 Apr 2018 15:07:19 +0200
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180413130719.22921-1-maier@linux.ibm.com>
-References: <20180413130719.22921-1-maier@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18041313-0044-0000-0000-00000546EEAA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041313-0045-0000-0000-000028872E79
-Message-Id: <20180413130719.22921-4-maier@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804130122
+       dkim=neutral (body hash did not verify) header.i=@rajagiritech-edu-in.20150623.gappssmtp.com header.s=20150623 header.b=iKKmZfsI;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752785AbeDUOr5 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Sat, 21 Apr 2018 10:47:57 -0400
+Received: from mail-qk0-f170.google.com ([209.85.220.170]:34898 "EHLO
+        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752775AbeDUOr4 (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Sat, 21 Apr 2018 10:47:56 -0400
+MIME-Version: 1.0
+From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date: Sat, 21 Apr 2018 20:17:55 +0530
+Message-ID: <CAG=yYwmQb-zuq3V9muu=xXsRGa3s1A=fFgz-XJchCiFd+GYUYQ@mail.gmail.com>
+Subject: possible BUG: selftest about raw_skew failed
+To: shuah@kernel.org, keescook@chromium.org, anton@enomsg.org,
+        ccross@android.com, tony.luck@intel.com, john.stultz@linaro.org,
+        tglx@linutronix.de, sboyd@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597636512361952197?=
-X-GMAIL-MSGID: =?utf-8?q?1597636512361952197?=
+X-GMAIL-THRID: =?utf-8?q?1598367547498408284?=
+X-GMAIL-MSGID: =?utf-8?q?1598367547498408284?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Complements v2.6.31 commit 55782138e47d ("tracing/events: convert block
-trace points to TRACE_EVENT()") for cases where rq->rq_disk == NULL:
-  block_rq_requeue, block_rq_insert, block_rq_issue;
-and for cases where bio == NULL:
-  block_getrq, block_sleeprq.
+hello,
 
-NB: The NULL pointer check for q->kobj.parent is certainly racy and
-I don't have enough experience if it's good enough for a trace event.
+failure of a test in selftest:timers
 
-Since I don't know when above cases would occur,
-I'm not sure this is worth it.
+selftests: raw_skew
+========================================
+WARNING: ADJ_OFFSET in progress, this will cause inaccurate results
+Estimating clock drift: 17.910(est) 16.820(act) [FAILED]
+Bail out!
+Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..0
+not ok 1..7 selftests:  raw_skew [FAIL]
 
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
----
- include/trace/events/block.h | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/include/trace/events/block.h b/include/trace/events/block.h
-index cffedc26e8a3..c476b7af404b 100644
---- a/include/trace/events/block.h
-+++ b/include/trace/events/block.h
-@@ -86,7 +86,9 @@ TRACE_EVENT(block_rq_requeue,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) : 0;
-+		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) :
-+		(q->kobj.parent ?
-+		 container_of(q->kobj.parent, struct device, kobj)->devt : 0);
- 		__entry->sector    = blk_rq_trace_sector(rq);
- 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
- 
-@@ -162,7 +164,9 @@ DECLARE_EVENT_CLASS(block_rq,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) : 0;
-+		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) :
-+		(q->kobj.parent ?
-+		 container_of(q->kobj.parent, struct device, kobj)->devt : 0);
- 		__entry->sector    = blk_rq_trace_sector(rq);
- 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
- 		__entry->bytes     = blk_rq_bytes(rq);
-@@ -397,7 +401,9 @@ DECLARE_EVENT_CLASS(block_get_rq,
-         ),
- 
- 	TP_fast_assign(
--		__entry->dev		= bio ? bio_dev(bio) : 0;
-+		__entry->dev		= bio ? bio_dev(bio) :
-+		(q->kobj.parent ?
-+		 container_of(q->kobj.parent, struct device, kobj)->devt : 0);
- 		__entry->sector		= bio ? bio->bi_iter.bi_sector : 0;
- 		__entry->nr_sector	= bio ? bio_sectors(bio) : 0;
- 		blk_fill_rwbs(__entry->rwbs,
+To reproduce :
+
+make -C tools/testing/selftests/timers/ run_tests
+
+
+
+
+Linux debian 4.17.0-rc1+ #3 SMP Sat Apr 21 03:41:44 IST 2018 x86_64 GNU/Linux
+
+GNU Make            4.2.1
+Binutils            2.30
+Util-linux          2.31.1
+Mount                2.31.1
+Linux C Library      2.27
+Dynamic linker (ldd) 2.27
+readlink: missing operand
+Try 'readlink --help' for more information.
+Procps              3.3.14
+Kbd                  2.0.4
+Console-tools        2.0.4
+Sh-utils            8.28
+Udev                238
+
 -- 
-2.13.5
+software engineer
+rajagiri school of engineering and technology
