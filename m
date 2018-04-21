@@ -1,262 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeDUHyx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 03:54:53 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56947 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751436AbeDUHyw (ORCPT
+        id S1752722AbeDUITx (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 04:19:53 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59592 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751364AbeDUITu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 03:54:52 -0400
-Date: Sat, 21 Apr 2018 00:54:22 -0700
-From: tip-bot for Mathieu Poirier <tipbot@zytor.com>
-Message-ID: <tip-8a9fd8323087e794f1d3cd4850b393ced048bc73@git.kernel.org>
-Cc: mingo@kernel.org, jolsa@redhat.com, mathieu.poirier@linaro.org,
-        tglx@linutronix.de, namhyung@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        acme@redhat.com, alexander.shishkin@linux.intel.com, hpa@zytor.com
-Reply-To: mathieu.poirier@linaro.org, jolsa@redhat.com, mingo@kernel.org,
-        namhyung@kernel.org, tglx@linutronix.de, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com, acme@redhat.com,
-        gregkh@linuxfoundation.org
-In-Reply-To: <1524089118-27595-1-git-send-email-mathieu.poirier@linaro.org>
-References: <1524089118-27595-1-git-send-email-mathieu.poirier@linaro.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] coresight: Move to SPDX identifier
-Git-Commit-ID: 8a9fd8323087e794f1d3cd4850b393ced048bc73
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 21 Apr 2018 04:19:50 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/7] Add tda998x (HDMI) support to atmel-hlcdc
+Date: Sat, 21 Apr 2018 11:20:00 +0300
+Message-ID: <1980444.sF26are89T@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180420112204.GK4235@w540>
+References: <20180419162751.25223-1-peda@axentia.se> <6354350.l8DgUyNhLT@avalon> <20180420112204.GK4235@w540>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8a9fd8323087e794f1d3cd4850b393ced048bc73
-Gitweb:     https://git.kernel.org/tip/8a9fd8323087e794f1d3cd4850b393ced048bc73
-Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
-AuthorDate: Wed, 18 Apr 2018 16:05:18 -0600
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 19 Apr 2018 12:29:41 -0300
+Hi Jacopo,
 
-coresight: Move to SPDX identifier
+On Friday, 20 April 2018 14:22:04 EEST jacopo mondi wrote:
+> On Fri, Apr 20, 2018 at 01:18:13PM +0300, Laurent Pinchart wrote:
+> > On Friday, 20 April 2018 11:52:35 EEST jacopo mondi wrote:
+> > > Hi Peter,
+> > > 
+> > > I've been a bit a pain in the arse for you recently, but please
+> > > bear with me a bit more, and sorry for jumping late on the band wagon.
+> > > 
+> > > On Thu, Apr 19, 2018 at 06:27:44PM +0200, Peter Rosin wrote:
+> > > > Hi!
+> > > > 
+> > > > I naively thought that since there was support for both nxp,tda19988
+> > > > (in the tda998x driver) and the atmel-hlcdc, things would be a smooth
+> > > > ride. But it wasn't, so I started looking around and realized I had to
+> > > > fix things.
+> > > > 
+> > > > In v1 and v2 I fixed things by making the atmel-hlcdc driver a master
+> > > > component, but now in v3 I fix things by making the tda998x driver
+> > > > a bridge instead. This was after a suggestion from Boris Brezillion
+> > > > (the atmel-hlcdc maintainer), so there was some risk of bias ... but
+> > > > after comparing what was needed, I too find the bridge approach
+> > > > better.
+> > > > 
+> > > > In addition to the above, our PCB interface between the SAMA5D3 and
+> > > > the HDMI encoder is only using 16 bits, and this has to be described
+> > > > somewhere, or the atmel-hlcdc driver have no chance of selecting the
+> > > > correct output mode. Since I have similar problems with a ds90c185
+> > > > lvds encoder I added patches to override the atmel-hlcdc output format
+> > > > via DT properties compatible with the media video-interface binding
+> > > > and things start to play together.
+> > > > 
+> > > > Since this series superseeds the bridge series [1], I have included
+> > > > the leftover bindings patch for the ti,ds90c185 here.
+> > > 
+> > > I feel like this series would look better if it would make use of the
+> > > proposed bridge media bus format support I have recently sent out [1]
+> > > (and which was not there when you first sent v1).
+> > > 
+> > > I understand your fundamental problem here is that the bus format
+> > > that should be reported by your bridge is different from the ones
+> > > actually supported by the TDA19988 chip, as the wirings ground some
+> > > of the input pins.
+> > > 
+> > > Although this is defintely something that could be described in the
+> > > bridge's own OF node with the 'bus_width' property, and what I would do,
+> > > now that you have made a bridge out from the tda19988 driver, is:
+> > > 
+> > > 1) Set the bridge accepted input bus_format parsing its pin
+> > > configuration, or default it if that's not implemented yet.
+> > > This will likely be rgb888. You can do that using the trivial
+> > > support for bridge input image formats implemented by my series.
+> > > 2) Specify in the bridge endpoint a 'bus_width' of <16>
+> > > 3) In your atmel-hlcd get both the image format of the bridge (rgb888)
+> > > and parse the remote endpoint property 'bus_width' and get the <16>
+> > > value back.
+> > 
+> > Parsing properties of remote nodes should be avoided as much as possible,
+> > as they need to be interpreted in the context of the DT bindings related
+> > to the compatible string applicable to that node. I'd rather have the
+> > bus_width property in the local endpoint node.
+> 
+> Right, I see...
+> Well, in Peter's case, the bus width, being a consequence of
+> wirings, can be described safely in both endpoints, right?
 
-Move CoreSight headers to the SPDX identifier.
+If we look at it from the endpoints' point of view, the display controller has 
+to output a 16-bit format, and the HDMI encoder receives a 24-bit format. The 
+conversion is due to PCB wiring so there's no DT node to describe that. I thus 
+believe the right description to be bus-width = <16> on the display controller 
+side, and bus-width = <24> on the HDMI encoder side.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1524089118-27595-1-git-send-email-mathieu.poirier@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- include/linux/coresight-pmu.h                   | 13 +------------
- tools/include/linux/coresight-pmu.h             | 13 +------------
- tools/perf/arch/arm/util/auxtrace.c             | 13 +------------
- tools/perf/arch/arm/util/cs-etm.c               | 13 +------------
- tools/perf/arch/arm/util/cs-etm.h               | 13 +------------
- tools/perf/arch/arm/util/pmu.c                  | 13 +------------
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c |  3 +--
- tools/perf/util/cs-etm.c                        |  3 +--
- tools/perf/util/cs-etm.h                        | 13 +------------
- 9 files changed, 9 insertions(+), 88 deletions(-)
+This being said, even if the bus-width property was set to 16 on both sides, 
+what I frown upon is parsing a property of the HDMI encoder DT node in the 
+display controller driver.
 
-diff --git a/include/linux/coresight-pmu.h b/include/linux/coresight-pmu.h
-index edfeaba95429..a1a959ba24ff 100644
---- a/include/linux/coresight-pmu.h
-+++ b/include/linux/coresight-pmu.h
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef _LINUX_CORESIGHT_PMU_H
-diff --git a/tools/include/linux/coresight-pmu.h b/tools/include/linux/coresight-pmu.h
-index edfeaba95429..a1a959ba24ff 100644
---- a/tools/include/linux/coresight-pmu.h
-+++ b/tools/include/linux/coresight-pmu.h
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef _LINUX_CORESIGHT_PMU_H
-diff --git a/tools/perf/arch/arm/util/auxtrace.c b/tools/perf/arch/arm/util/auxtrace.c
-index fa639e3e52ac..1ce6bdbda561 100644
---- a/tools/perf/arch/arm/util/auxtrace.c
-+++ b/tools/perf/arch/arm/util/auxtrace.c
-@@ -1,18 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <stdbool.h>
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index 5c655ad4621e..2f595cd73da6 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -1,18 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <api/fs/fs.h>
-diff --git a/tools/perf/arch/arm/util/cs-etm.h b/tools/perf/arch/arm/util/cs-etm.h
-index 5256741be549..1a12e64f5127 100644
---- a/tools/perf/arch/arm/util/cs-etm.h
-+++ b/tools/perf/arch/arm/util/cs-etm.h
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef INCLUDE__PERF_CS_ETM_H__
-diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
-index ac4dffc807b8..e047571e6080 100644
---- a/tools/perf/arch/arm/util/pmu.c
-+++ b/tools/perf/arch/arm/util/pmu.c
-@@ -1,18 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <string.h>
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index 640af88331b4..c8b98fa22997 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -1,6 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * SPDX-License-Identifier: GPL-2.0
-- *
-  * Copyright(C) 2015-2018 Linaro Limited.
-  *
-  * Author: Tor Jeremiassen <tor@ti.com>
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 1b0d422373be..40020b1ca54f 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1,6 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * SPDX-License-Identifier: GPL-2.0
-- *
-  * Copyright(C) 2015-2018 Linaro Limited.
-  *
-  * Author: Tor Jeremiassen <tor@ti.com>
-diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
-index 5864d5dca616..37f8d48179ca 100644
---- a/tools/perf/util/cs-etm.h
-+++ b/tools/perf/util/cs-etm.h
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef INCLUDE__UTIL_PERF_CS_ETM_H__
+> > > 4) Set the correct format in the atmel hlcd driver to accommodate a
+> > > bridge that wants rgb888 on a 16 bit wide bus (that would be rgb565,
+> > > or are there other possible combinations I am missing?)
+> > > 
+> > > I would consider this better mostly because in this series you are
+> > > creating a semantic for the whole DRM subsystem on the 'bus_width'
+> > > property, where numerical values as '12', '16' etc are arbitrary tied
+> > > to the selection of a media bus format. At least you should use a
+> > > common set of defines [1] between the device tree and the driver,
+> > > but this looks anyway fragile imho.
+> > 
+> > This I agree with though. Combining the remote bus format with the local
+> > bus width should fix the problem without having to parse remote
+> > properties.
+> > 
+> > > Have I maybe missed some parts of the problem you are trying to solve
+> > > here?
+> > > 
+> > > [1] drm: bridge: Add support for static image formats
+> > > 
+> > >     https://lwn.net/Articles/752296/
+> > > 
+> > > [2] include/uapi/linux/media-bus-format.h
+> > > 
+> > > > Anyway, this series solves some real issues for my HW.
+> > > > 
+> > > > Changes since v2   https://lkml.org/lkml/2018/4/17/385
+> > > > - patch 2/7 fixed spelling and added an example
+> > > > - patch 4/7 parse the DT up front and store the result indexed by
+> > > > encoder
+> > > > - old patch 5/6 and 6/6 dropped
+> > > > - patch 5-7/7 are new and makes the tda998x driver a drm_bridge
+> > > > 
+> > > > Changes since v1   https://lkml.org/lkml/2018/4/9/294
+> > > > - added reviewed-by from Rob to patch 1/6
+> > > > - patch 2/6 changed so that the bus format override is in the endpoint
+> > > > 
+> > > >   DT node, and follows the binding of media video-interfaces.
+> > > > 
+> > > > - patch 3/6 is new, it adds drm_of_media_bus_fmt which parses above
+> > > > 
+> > > >   media video-interface binding (partially).
+> > > > 
+> > > > - patch 4/6 now makes use of the above helper (and also fixes problems
+> > > > 
+> > > >   with the 3/5 patch from v1 when no override was specified).
+> > > > 
+> > > > - do not mention unrelated connector display_info details in the cover
+> > > > 
+> > > >   letter and commit messages.
+> > > > 
+> > > > [1]
+> > > > "Bridge" series v2   https://lkml.org/lkml/2018/3/26/610
+> > > > "Bridge" series v1   https://lkml.org/lkml/2018/3/17/221
+> > > > 
+> > > > Peter Rosin (7):
+> > > >   dt-bindings: display: bridge: lvds-transmitter: add ti,ds90c185
+> > > >   dt-bindings: display: atmel: optional video-interface of endpoints
+> > > >   drm: of: introduce drm_of_media_bus_fmt
+> > > >   drm/atmel-hlcdc: support bus-width (12/16/18/24) in endpoint nodes
+> > > >   drm/i2c: tda998x: find the drm_device via the drm_connector
+> > > >   drm/i2c: tda998x: split encoder and component functions from the
+> > > >   work
+> > > >   drm/i2c: tda998x: register as a drm bridge
+> > > >  
+> > > >  .../devicetree/bindings/display/atmel/hlcdc-dc.txt |  26 +++
+> > > >  .../bindings/display/bridge/lvds-transmitter.txt   |   8 +-
+> > > >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c     |  71 ++++++--
+> > > >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h       |   2 +
+> > > >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c   |  40 +++-
+> > > >  drivers/gpu/drm/drm_of.c                           |  38 ++++
+> > > >  drivers/gpu/drm/i2c/tda998x_drv.c                  | 201 ++++++++++--
+> > > >  include/drm/drm_of.h                               |   7 +
+> > > >  8 files changed, 342 insertions(+), 51 deletions(-)
+
+-- 
+Regards,
+
+Laurent Pinchart
