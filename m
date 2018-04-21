@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-364443-1524327839-2-12370761160824656850
+X-Cyrus-Session-Id: sloti22d1t05-2946400-1524271343-2-9785714847929809137
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,75 +13,69 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524327839; b=YYRt97WwPFcNuA10K1fxVC1CCAQr79d308MU/NKtle13ZMhjAg
-    UVHkhdjLd9wToQI0rgAgeKx/YfEF8/EyRev+RRlzQrnh2Ir3Tsi8mfpSSiRAuE0+
-    MlZnxuRqSAxRtxFZo8yJNEG5rKoiid64HcJThLsuaovFTeK03/OtUSs7uAAx0kUn
-    rNl+/y3vpzTj7o5gumA6bQxMOGEyI0/mxdyUBDyJ/1JCdLfvTT9LWzJ0K9JFIh5D
-    BTPAfxWIZh9pXzZBS56T8tbzxaMf1cjscoGL5sfqCPfiwEfIJ2KvQfTuC1+jNABq
-    3bpx8aijgpgNMs06qKLgr/xWAqndxq1+XTpw==
+    1524271342; b=dwiumFPR7/6/wsz3OSQjI8Ar5pT8bK/iG1OeSAvR+HKKB4jwV8
+    wGZGYVT2JkPKSCbB1O49piZ16oA+CRzESiwtCIWfu5aszRroNP6o5kEHj+c13QVh
+    Pw7vzA5D1wi7xWxfKMlvMvHEeEmP3YNJNobcqte/DCoEnR6c46W9jw+ZGVe6I/E1
+    NEhnYPD3MzT0OggDix80vu319FyQ2HUtG8Nhp3NWClWQZz3NsPlWrixsg1Z3LsNx
+    jXiXRaUAgX4+8sYfhQwcYRgRFlFTv0T6qP4CvaUndtmE/GnTO41ZsAmkFOKlm5Gj
+    mL6RBjax9QU1XAB6PoqzYNWoa9b9gllmGCUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524327839; bh=t1JJz
-    dLdVt8xSaTSzGaZmyT1osBo0ItIv4wvUkSxaWI=; b=kRZidwgD2rCP2KSvFnF18
-    0Evw0xSXpOvwKARpJmfuO4JsOooBiOybIUZ6RuUiQpCSzniD7cI1EaYngB01EtJF
-    N5JIsh+TxEySjuczNYW2+MVTILhRKibKzbWSIRpsbg09FODLVDJ/MAHA2u8COTvb
-    DSW4KOSdjObjHUB+Eu/g0ckIYXt36eRwllc1w9DfFmLUR+izeV6+GpHFJewwE8uA
-    x/5QOwHH/5j/fDT6/kj1XGyA8561aprvh5dc6wvwyxS9+oYck1+DkK0Y1VXU7WEn
-    gh3F5y91zkIq0R7ERVwaAYVnukiT+eOIieikQab0duy0A5FCt/o8nh0O9VyknROG
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524271342; bh=E5TiG
+    qCvCwrMTkE4ou/26C715BTeqDoD9vxWmeXHCk0=; b=r8KG36I5CiovZJiU7Zflu
+    DKke8SiK2Md5/w4uDlmIhdlErxnM+IfQT26Ilof9BrbZBcNYGXdyWIs2IN9I8gkR
+    flGVk4CiTPmdu+WXqtZ4yvWvG0fyyUMnDg4CjPB67qoIVAN3Scs/BIA9O483tC6z
+    QzmPZrtsI7mgdbTy8426hg3eMWiWF/nJEx0ZHXDABE4ef6cfrmMZKsAkdxU0plGG
+    DqH4dIVCagdKJw3wEAA8lt81wGBalpeSFRJ20CCLgBIBzd7h+ijaww7aKx/VSJDe
+    UuqDKvX//NKI+AKAnCjXsLwCpk6fABQ4COgY5HuZgqp+wavYsntuhdsTyvZwtvxN
     w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=UieUIFXD x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=onstation.org header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=UieUIFXD x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=onstation.org header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMpuYlWXaRP0k4ZktKkt/lNjA0tL18lS7ehTcP2obwmHkD6U+itJrzvQz8W5993dTC7kuZolSvruv1VCwXuawuX5T/AubjXr9Jd4G1vXDpEJfGnebmtG
-    g+FqMev2q1KRss/40yLDbFqLhe4RDK4BgT9aR5mbz6N1A6a+Tm6nQI8xhXojw9SijNCzzBIDhJn7v2Bh5SJ0BCXYmv0i3Wh2rrLQfjImKUsWXGKLBkd4fAnv
-    xLcNORq2rsv/2ZU3LHFTVw==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+X-CM-Envelope: MS4wfJDdvwMDAVttlmG5aK7dlAfub1vricIuvuvlaS53WMM6nxbqkRLTsoAPFzHj8lCCAYpohzBm9clUqts5Gx4p3t4yPZwtP03xP9wYLnn52lxUjDP7nRH/
+    3TYOFbsK4Gb7FX3oRFL68QESVgQLUJqAn+a58Eq/F75ngOdV/1wernUrc2K80bv4SgqG3GnF48+mVCLsmHg4EjdX0HCB+qmlYjZrucrkZSUX6zRHLp6cVKFx
+    apRbewYOciTLV3zS0xasNg==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
     a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tvE6cUz2AAAA:8 a=DDOyTI_5AAAA:8
-    a=QMfWv8vFp5p0oPFkFAcA:9 a=CjuIK1q_8ugA:10 a=sFRLSohfApMN8RASoVBY:22
+    a=WXoUAGpt5n4LM7SFY0oA:9 a=CjuIK1q_8ugA:10 a=sFRLSohfApMN8RASoVBY:22
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A13D720C0F
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 21 Apr 2018 17:23:45 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH 05/13] staging: iio: tsl2x7x: remove unnecessary chip
- status checks in suspend/resume
-Message-ID: <20180421172345.4c0e17a6@archlinux>
-In-Reply-To: <20180421004153.19073-6-masneyb@onstation.org>
+From: Brian Masney <masneyb@onstation.org>
+To: jic23@kernel.org,
+	linux-iio@vger.kernel.org
+Subject: [PATCH 04/13] staging: iio: tsl2x7x: simplify
+ tsl2x7x_clear_interrupts function
+Date: Fri, 20 Apr 2018 20:41:44 -0400
+Message-Id: <20180421004153.19073-5-masneyb@onstation.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180421004153.19073-1-masneyb@onstation.org>
 References: <20180421004153.19073-1-masneyb@onstation.org>
- <20180421004153.19073-6-masneyb@onstation.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -92,9 +86,10 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, lars@metafoo.de, linux-iio@vger.kernel.org,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, Jon.Brenner@ams.com,
- pmeerw@pmeerw.net, knaack.h@gmx.de
+Cc: devel@driverdev.osuosl.org, lars@metafoo.de, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, Jon.Brenner@ams.com, pmeerw@pmeerw.net,
+ knaack.h@gmx.de
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -103,63 +98,79 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 20 Apr 2018 20:41:45 -0400
-Brian Masney <masneyb@onstation.org> wrote:
+tsl2x7x_clear_interrupts() takes a reg argument but there are only
+two callers to this function and both callers pass the same value.
+Since this function was introduced, interrupts are now working
+properly for this driver, and several unnecessary calls to
+tsl2x7x_clear_interrupts() were removed. This patch removes the
+tsl2x7x_clear_interrupts() function and replaces the two callers
+with the i2c_smbus_write_byte() call instead.
 
-> tsl2x7x_suspend() and tsl2x7x_resume() both check to see what the
-> current chip status is. These checks are not necessary so this patch
-> removes those checks.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-This description could have been clearer... The key point is we
-can always know what state we are in when we hit these functions anyway
-(I think).
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+---
+ drivers/staging/iio/light/tsl2x7x.c | 32 +++++++++++++++-----------------
+ 1 file changed, 15 insertions(+), 17 deletions(-)
 
-Anyhow applied as is to the togreg branch of iio.git and pushed out
-as testing for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/staging/iio/light/tsl2x7x.c | 16 ++--------------
->  1 file changed, 2 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/light/tsl2x7x.c b/drivers/staging/iio/light/tsl2x7x.c
-> index f37fc74b8fbc..8d8af0cf9768 100644
-> --- a/drivers/staging/iio/light/tsl2x7x.c
-> +++ b/drivers/staging/iio/light/tsl2x7x.c
-> @@ -1682,27 +1682,15 @@ static int tsl2x7x_probe(struct i2c_client *clientp,
->  static int tsl2x7x_suspend(struct device *dev)
->  {
->  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> -	struct tsl2X7X_chip *chip = iio_priv(indio_dev);
-> -	int ret = 0;
-> -
-> -	if (chip->tsl2x7x_chip_status == TSL2X7X_CHIP_WORKING) {
-> -		ret = tsl2x7x_chip_off(indio_dev);
-> -		chip->tsl2x7x_chip_status = TSL2X7X_CHIP_SUSPENDED;
-> -	}
->  
-> -	return ret;
-> +	return tsl2x7x_chip_off(indio_dev);
->  }
->  
->  static int tsl2x7x_resume(struct device *dev)
->  {
->  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> -	struct tsl2X7X_chip *chip = iio_priv(indio_dev);
-> -	int ret = 0;
->  
-> -	if (chip->tsl2x7x_chip_status == TSL2X7X_CHIP_SUSPENDED)
-> -		ret = tsl2x7x_chip_on(indio_dev);
-> -
-> -	return ret;
-> +	return tsl2x7x_chip_on(indio_dev);
->  }
->  
->  static int tsl2x7x_remove(struct i2c_client *client)
+diff --git a/drivers/staging/iio/light/tsl2x7x.c b/drivers/staging/iio/light/tsl2x7x.c
+index 95a00b965c5e..f37fc74b8fbc 100644
+--- a/drivers/staging/iio/light/tsl2x7x.c
++++ b/drivers/staging/iio/light/tsl2x7x.c
+@@ -271,20 +271,6 @@ static const u8 device_channel_config[] = {
+ 	ALSPRX2
+ };
+ 
+-static int tsl2x7x_clear_interrupts(struct tsl2X7X_chip *chip, int reg)
+-{
+-	int ret;
+-
+-	ret = i2c_smbus_write_byte(chip->client,
+-				   TSL2X7X_CMD_REG | TSL2X7X_CMD_SPL_FN | reg);
+-	if (ret < 0)
+-		dev_err(&chip->client->dev,
+-			"%s: failed to clear interrupt status %x: %d\n",
+-			__func__, reg, ret);
+-
+-	return ret;
+-}
+-
+ static int tsl2x7x_read_status(struct tsl2X7X_chip *chip)
+ {
+ 	int ret;
+@@ -714,9 +700,15 @@ static int tsl2x7x_chip_on(struct iio_dev *indio_dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = tsl2x7x_clear_interrupts(chip, TSL2X7X_CMD_PROXALS_INT_CLR);
+-	if (ret < 0)
++	ret = i2c_smbus_write_byte(chip->client,
++				   TSL2X7X_CMD_REG | TSL2X7X_CMD_SPL_FN |
++				   TSL2X7X_CMD_PROXALS_INT_CLR);
++	if (ret < 0) {
++		dev_err(&chip->client->dev,
++			"%s: failed to clear interrupt status: %d\n",
++			__func__, ret);
+ 		return ret;
++	}
+ 
+ 	chip->tsl2x7x_chip_status = TSL2X7X_CHIP_WORKING;
+ 
+@@ -1341,7 +1333,13 @@ static irqreturn_t tsl2x7x_event_handler(int irq, void *private)
+ 			       timestamp);
+ 	}
+ 
+-	tsl2x7x_clear_interrupts(chip, TSL2X7X_CMD_PROXALS_INT_CLR);
++	ret = i2c_smbus_write_byte(chip->client,
++				   TSL2X7X_CMD_REG | TSL2X7X_CMD_SPL_FN |
++				   TSL2X7X_CMD_PROXALS_INT_CLR);
++	if (ret < 0)
++		dev_err(&chip->client->dev,
++			"%s: failed to clear interrupt status: %d\n",
++			__func__, ret);
+ 
+ 	return IRQ_HANDLED;
+ }
+-- 
+2.14.3
 
 _______________________________________________
 devel mailing list
