@@ -1,27 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753080AbeDUHuo (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 03:50:44 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57825 "EHLO
+        id S1753251AbeDUHwD (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 03:52:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35631 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753032AbeDUHun (ORCPT
+        with ESMTP id S1751457AbeDUHwC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 03:50:43 -0400
-Date: Sat, 21 Apr 2018 00:50:28 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-td9t5vhjltqnlzaurkkgq8cn@git.kernel.org>
-Cc: hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        namhyung@kernel.org, wangnan0@huawei.com, jolsa@kernel.org,
-        acme@redhat.com, dsahern@gmail.com, mhocko@suse.com,
-        adrian.hunter@intel.com
-Reply-To: wangnan0@huawei.com, jolsa@kernel.org, adrian.hunter@intel.com,
-        mhocko@suse.com, dsahern@gmail.com, acme@redhat.com, hpa@zytor.com,
-        tglx@linutronix.de, namhyung@kernel.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+        Sat, 21 Apr 2018 03:52:02 -0400
+Date: Sat, 21 Apr 2018 00:51:55 -0700
+From: tip-bot for Andi Kleen <tipbot@zytor.com>
+Message-ID: <tip-ec3948451e0ba317e66873b48d6cc51d701d4eb0@git.kernel.org>
+Cc: acme@redhat.com, jolsa@kernel.org, hpa@zytor.com, ak@linux.intel.com,
+        mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org
+Reply-To: jolsa@kernel.org, acme@redhat.com, hpa@zytor.com, mingo@kernel.org,
+        tglx@linutronix.de, ak@linux.intel.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180406203812.3087-4-andi@firstfloor.org>
+References: <20180406203812.3087-4-andi@firstfloor.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf trace: Support MAP_FIXED_NOREPLACE
-Git-Commit-ID: 4e5c01a7c746130033eb6e7153b346b8ca61e7a5
+Subject: [tip:perf/urgent] perf record: Remove misleading error suggestion
+Git-Commit-ID: ec3948451e0ba317e66873b48d6cc51d701d4eb0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,68 +31,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4e5c01a7c746130033eb6e7153b346b8ca61e7a5
-Gitweb:     https://git.kernel.org/tip/4e5c01a7c746130033eb6e7153b346b8ca61e7a5
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 16 Apr 2018 16:39:38 -0300
+Commit-ID:  ec3948451e0ba317e66873b48d6cc51d701d4eb0
+Gitweb:     https://git.kernel.org/tip/ec3948451e0ba317e66873b48d6cc51d701d4eb0
+Author:     Andi Kleen <ak@linux.intel.com>
+AuthorDate: Fri, 6 Apr 2018 13:38:11 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 18 Apr 2018 15:34:52 -0300
+CommitDate: Wed, 18 Apr 2018 15:35:49 -0300
 
-perf trace: Support MAP_FIXED_NOREPLACE
+perf record: Remove misleading error suggestion
 
-Introduced in a4ff8e8620d3 ("mm: introduce MAP_FIXED_NOREPLACE"), and
-now that we have that define in the just syncronized
-tools/arch/*/include/uapi/asm/mman.h files, add support for it.
+When perf record encounters an error setting up an event it suggests
+to enable CONFIG_PERF_EVENTS. This is misleading because:
 
-This should really transition to autogeneration of string tables as
-done for various other things:
+- Usually it is enabled (it is really hard to disable on x86)
 
-  $ ls /tmp/build/perf/trace/beauty/generated/*.c
-  arch_errno_name_array.c kcmp_type_array.c madvise_behavior_array.c
-  pkey_alloc_access_rights_array.c prctl_option_array.c
-  $ head /tmp/build/perf/trace/beauty/generated/madvise_behavior_array.c
-  static const char *madvise_advices[] = {
-	[0] = "NORMAL",
-	[1] = "RANDOM",
-	[2] = "SEQUENTIAL",
-	[3] = "WILLNEED",
-	[4] = "DONTNEED",
-	[8] = "FREE",
-	[9] = "REMOVE",
-	[10] = "DONTFORK",
-	[11] = "DOFORK",
-  $
+- The problem is usually somewhere else, e.g. the CPU is not supported
+or an invalid configuration has been used.
 
-Till then, add support for this the old way.
+Remove the misleading suggestion.
 
-Also it has to be ifdef'ed, because arches like mips still don't define
-it. The proper solution will be to have per-arch tables for these
-values to support cross-analysis.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-td9t5vhjltqnlzaurkkgq8cn@git.kernel.org
-Signef-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20180406203812.3087-4-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/trace/beauty/mmap.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/evsel.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/perf/trace/beauty/mmap.c b/tools/perf/trace/beauty/mmap.c
-index 417e3ecfe9d7..9f68077b241b 100644
---- a/tools/perf/trace/beauty/mmap.c
-+++ b/tools/perf/trace/beauty/mmap.c
-@@ -54,6 +54,9 @@ static size_t syscall_arg__scnprintf_mmap_flags(char *bf, size_t size,
- 	P_MMAP_FLAG(EXECUTABLE);
- 	P_MMAP_FLAG(FILE);
- 	P_MMAP_FLAG(FIXED);
-+#ifdef MAP_FIXED_NOREPLACE
-+	P_MMAP_FLAG(FIXED_NOREPLACE);
-+#endif
- 	P_MMAP_FLAG(GROWSDOWN);
- 	P_MMAP_FLAG(HUGETLB);
- 	P_MMAP_FLAG(LOCKED);
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 1ac8d9236efd..66b62570c855 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2894,8 +2894,7 @@ int perf_evsel__open_strerror(struct perf_evsel *evsel, struct target *target,
+ 
+ 	return scnprintf(msg, size,
+ 	"The sys_perf_event_open() syscall returned with %d (%s) for event (%s).\n"
+-	"/bin/dmesg may provide additional information.\n"
+-	"No CONFIG_PERF_EVENTS=y kernel support configured?",
++	"/bin/dmesg | grep -i perf may provide additional information.\n",
+ 			 err, str_error_r(err, sbuf, sizeof(sbuf)),
+ 			 perf_evsel__name(evsel));
+ }
