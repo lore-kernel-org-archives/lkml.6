@@ -1,88 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752900AbeDUDtE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 23:49:04 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:42345 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752558AbeDUDtC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 23:49:02 -0400
-X-Google-Smtp-Source: AIpwx48nnAS86ZkuqhMIy6sEkRwYWieLiK7EbKzdMLAEmpQViSM1h3g5uuAHxPKvk2R1Y/wvomIbxttFqSt70/zjLsnN20APHsIJ
-MIME-Version: 1.0
-Date: Fri, 20 Apr 2018 20:49:01 -0700
-In-Reply-To: <001a11426eae20adb5056655e0f1@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000073c90c056a53af7c@google.com>
-Subject: Re: general protection fault in smc_setsockopt
-From: syzbot <syzbot+9045fc589fcd196ef522@syzkaller.appspotmail.com>
-To: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com,
-        ubraun@linux.vnet.ibm.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        id S1750903AbeDUEIa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 00:08:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47098 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750740AbeDUEI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 00:08:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9FE21742
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] Revert "f2fs: introduce f2fs_set_page_dirty_nobuffer"
+Date: Fri, 20 Apr 2018 21:08:25 -0700
+Message-Id: <20180421040825.77660-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found reproducer for the following crash on upstream commit
-83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
-Merge branch 'fixes' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=9045fc589fcd196ef522
+This patch reverts copied f2fs_set_page_dirty_nobuffer to use generic function
+for stability.
 
-So far this crash happened 124 times on net-next, upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6522155797839872
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5566093930266624
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6661555940753408
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+This reverts commit fe76b796fc5194cc3d57265002e3a748566d073f.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9045fc589fcd196ef522@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/data.c       | 33 +--------------------------------
+ fs/f2fs/f2fs.h       |  1 -
+ fs/f2fs/node.c       |  2 +-
+ 4 files changed, 3 insertions(+), 35 deletions(-)
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4520 Comm: syzkaller696326 Not tainted 4.17.0-rc1+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:smc_setsockopt+0x8b/0x120 net/smc/af_smc.c:1287
-RSP: 0018:ffff8801b433fcc8 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000020000000
-RDX: 0000000000000005 RSI: ffffffff873e3bf6 RDI: 0000000000000028
-RBP: ffff8801b433fcf8 R08: 0000000000000000 R09: ffffed00359a3780
-R10: ffffed00359a3780 R11: ffff8801acd1bc03 R12: ffff8801b433fd40
-R13: 0000000000000021 R14: 000000000000000d R15: 0000000020000000
-FS:  0000000000b01880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000562e1fa410d0 CR3: 00000001acf1e000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
-  __do_sys_setsockopt net/socket.c:1914 [inline]
-  __se_sys_setsockopt net/socket.c:1911 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43fd19
-RSP: 002b:00007ffccc4960f8 EFLAGS: 00000217 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd19
-RDX: 000000000000000d RSI: 0000000000000021 RDI: 0000000000000004
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000020000000 R11: 0000000000000217 R12: 0000000000401640
-R13: 00000000004016d0 R14: 0000000000000000 R15: 0000000000000000
-Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 93 00 00 00 48 8b 9b 50 04 00 00 48  
-b8 00 00 00 00 00 fc ff df 48 8d 7b 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
-75 62 48 b8 00 00 00 00 00 fc ff df 4c 8b 63 28 49
-RIP: smc_setsockopt+0x8b/0x120 net/smc/af_smc.c:1287 RSP: ffff8801b433fcc8
----[ end trace 3858d0cd9ce5e4d4 ]---
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 2e23b953d304..8fc55d42ba25 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -384,7 +384,7 @@ static int f2fs_set_meta_page_dirty(struct page *page)
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+ 	if (!PageDirty(page)) {
+-		f2fs_set_page_dirty_nobuffers(page);
++		__set_page_dirty_nobuffers(page);
+ 		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_META);
+ 		SetPagePrivate(page);
+ 		f2fs_trace_pid(page);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d32bf363cb60..5477fc09c3cd 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -19,8 +19,6 @@
+ #include <linux/bio.h>
+ #include <linux/prefetch.h>
+ #include <linux/uio.h>
+-#include <linux/mm.h>
+-#include <linux/memcontrol.h>
+ #include <linux/cleancache.h>
+ #include <linux/sched/signal.h>
+ 
+@@ -2471,35 +2469,6 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+ 	return 1;
+ }
+ 
+-/*
+- * This was copied from __set_page_dirty_buffers which gives higher performance
+- * in very high speed storages. (e.g., pmem)
+- */
+-void f2fs_set_page_dirty_nobuffers(struct page *page)
+-{
+-	struct address_space *mapping = page->mapping;
+-	unsigned long flags;
+-
+-	if (unlikely(!mapping))
+-		return;
+-
+-	spin_lock(&mapping->private_lock);
+-	lock_page_memcg(page);
+-	SetPageDirty(page);
+-	spin_unlock(&mapping->private_lock);
+-
+-	xa_lock_irqsave(&mapping->i_pages, flags);
+-	WARN_ON_ONCE(!PageUptodate(page));
+-	account_page_dirtied(page, mapping);
+-	radix_tree_tag_set(&mapping->i_pages,
+-			page_index(page), PAGECACHE_TAG_DIRTY);
+-	xa_unlock_irqrestore(&mapping->i_pages, flags);
+-	unlock_page_memcg(page);
+-
+-	__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+-	return;
+-}
+-
+ static int f2fs_set_data_page_dirty(struct page *page)
+ {
+ 	struct address_space *mapping = page->mapping;
+@@ -2523,7 +2492,7 @@ static int f2fs_set_data_page_dirty(struct page *page)
+ 	}
+ 
+ 	if (!PageDirty(page)) {
+-		f2fs_set_page_dirty_nobuffers(page);
++		__set_page_dirty_nobuffers(page);
+ 		update_dirty_page(inode, page);
+ 		return 1;
+ 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0c72908f3185..9f2bc78a9f5b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2939,7 +2939,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 			u64 start, u64 len);
+ bool should_update_inplace(struct inode *inode, struct f2fs_io_info *fio);
+ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio);
+-void f2fs_set_page_dirty_nobuffers(struct page *page);
+ int __f2fs_write_data_pages(struct address_space *mapping,
+ 						struct writeback_control *wbc,
+ 						enum iostat_type io_type);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index f202398e20ea..ae83ca9d2d31 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1753,7 +1753,7 @@ static int f2fs_set_node_page_dirty(struct page *page)
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+ 	if (!PageDirty(page)) {
+-		f2fs_set_page_dirty_nobuffers(page);
++		__set_page_dirty_nobuffers(page);
+ 		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
+ 		SetPagePrivate(page);
+ 		f2fs_trace_pid(page);
+-- 
+2.17.0.484.g0c8726318c-goog
