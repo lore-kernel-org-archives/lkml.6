@@ -1,74 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeDUIUE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 04:20:04 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:57138 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752743AbeDUIUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 04:20:00 -0400
-From: Borislav Petkov <bp@alien8.de>
-To: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] x86/microcode: Do not exit early from __reload_late()
-Date: Sat, 21 Apr 2018 10:19:30 +0200
-Message-Id: <20180421081930.15741-2-bp@alien8.de>
-X-Mailer: git-send-email 2.13.0
-In-Reply-To: <20180421081930.15741-1-bp@alien8.de>
-References: <20180421081930.15741-1-bp@alien8.de>
+        id S1752703AbeDUIYw (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 04:24:52 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44795 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751223AbeDUIYt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 04:24:49 -0400
+X-Google-Smtp-Source: AIpwx4+EPOL/OMbCXjQYsoTob+Cm4UeYEGN71HqYVCJgQE7YtFJk+yXKxuUil9ijcZnBvuygqS4WnQ==
+Date: Fri, 20 Apr 2018 22:24:44 -1000
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        luciano.coelho@intel.com, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org
+Subject: Re: New sparse warning from min_t(): expression using sizeof(void)
+Message-ID: <20180421082444.i4eyw2zxl6tipt6i@gmail.com>
+References: <87a7txf15w.fsf@kamboji.qca.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mn2mculu7u6ifheg"
+Content-Disposition: inline
+In-Reply-To: <87a7txf15w.fsf@kamboji.qca.qualcomm.com>
+User-Agent: NeoMutt/20180323-62-378db9
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
 
-Vitezslav reported a case where the
+--mn2mculu7u6ifheg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  "Timeout during microcode update!"
+On Sat, Apr 21, 2018 at 10:50:51AM +0300, Kalle Valo wrote:
+> Is there any way to fix it? With ath10k I use sparse a lot and because
+> of these warnings sparse is now very annoying to use.
 
-panic would hit. After a deeper look, it turned out that his .config had
-CONFIG_HOTPLUG_CPU disabled which practically made save_mc_for_early() a
-no-op.
+I submitted a sparse patch [1] for this not too long ago, but in the
+meantime you can still curl the patch [2] and apply it directly to
+the v0.5.2 release to suppress the deluge of warnings (-Wpointer-arith
+is off by defaultl so no need to change any of you configurations).
 
-When that happened, the discovered microcode patch wasn't saved into our
-cache and the late loading path wouldn't find any.
+[1] https://lkml.org/lkml/2018/4/10/923
+[2] https://patchwork.kernel.org/patch/10334353/raw/
 
-This, then, lead to early exit from __reload_late() and thus CPUs
-waiting until the timeout is reached, leading to the panic.
+--=20
+Cheers,
+Joey Pabalinas
 
-In hindsight, I should've made that function not return before the
-post-synchronization. Oh well, I know better now...
+--mn2mculu7u6ifheg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reported-by: Vitezslav Samel <vitezslav@samel.cz>
-Tested-by: Vitezslav Samel <vitezslav@samel.cz>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: <stable@vger.kernel.org>
-Fixes: bb8c13d61a62 ("x86/microcode: Fix CPU synchronization routine")
-Link: http://lkml.kernel.org/r/20180418081140.GA2439@pc11.op.pod.cz
----
- arch/x86/kernel/cpu/microcode/core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 10c4fc2c91f8..77e201301528 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -564,14 +564,12 @@ static int __reload_late(void *info)
- 	apply_microcode_local(&err);
- 	spin_unlock(&update_lock);
- 
-+	/* siblings return UCODE_OK because their engine got updated already */
- 	if (err > UCODE_NFOUND) {
- 		pr_warn("Error reloading microcode on CPU %d\n", cpu);
--		return -1;
--	/* siblings return UCODE_OK because their engine got updated already */
-+		ret = -1;
- 	} else if (err == UCODE_UPDATED || err == UCODE_OK) {
- 		ret = 1;
--	} else {
--		return ret;
- 	}
- 
- 	/*
--- 
-2.13.0
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlra9UwACgkQruvLfWhy
+VBla9w/9Eg2FL9Pe3W4Lub378queMq4m0wcO9elSFFRDLYI1TCkxC0eDFerZaPOl
+dllZu/hbw8vBWu7XjGECQrboGzykeCyoqpFYsNtz7A5FvbKKRY0bP3rO2Ntj0qi6
+CH88xINF9lp2CYhLGBsHKWnbfAy+vVAv2//rwxo71Nn/kcc++ViRgbbFEKKMEaSm
+GIfb7pyRkZEOaSnm15NtNzJpQ9DRQTxAczKRTCsCCnAdw+/CgQzUbT/YYwIIHGBz
+d1SDaUFTe4liugnxQXxMBC6HlxUKv7g6Pc9jQ0gqSWqnADHOggcHC9GcsDnEbO+n
+B8aJUJmwjyDL6VU5AXmOyspm2+zq8PSeTwox4myTP50SNdiG3ta+rEcSzeOiLgWU
+nE1oL7jlmW4x4WZMCoQMi68OtgF8ZxHlLbh9xt999rO1gS+mYHocATTwaVGAyABS
+hLb/KhbaV6vPVh3An3XpkZl9PyfpkZ0cRJaPCwybvBiY6paB18bwYIwKC+Jzr0ck
+A18FtwfpqPbyFeOqtjfeIttpql0XH8z/wr+Ggf9rhMNen4TaJI+F+7/a10gDr5eX
+X+1h8x0jgQspjP4m2ZygRT9bSyenxCque2rNV+R1Oiz7iLS6+dH6XbSdRRaFKHdL
+5IhTcriF6Ac85MOs6TR6ohMLnXSzez7xXcjZk7E2nnziZ/WDnAU=
+=Qo91
+-----END PGP SIGNATURE-----
+
+--mn2mculu7u6ifheg--
