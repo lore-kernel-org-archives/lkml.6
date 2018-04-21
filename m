@@ -1,88 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751904AbeDULzF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 07:55:05 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:45256 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752241AbeDULzC (ORCPT
+        id S1752754AbeDUNCD (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 09:02:03 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:44407 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752600AbeDUNCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 07:55:02 -0400
-X-Google-Smtp-Source: AIpwx48HzjsKDcwAyY9kluELhyeRhAJyLiS6gyylAqi1lzINJJDXeSg9M2FsziVRToOInP8cM3W45Q1t++PtpA/BGDKGghdDqv8I
+        Sat, 21 Apr 2018 09:02:02 -0400
+X-Google-Smtp-Source: AB8JxZpLn2an2Tw7lRjZEMyYCC4N2m42DUvgjf3XLjG1KO7lv6TWDYEpB3TBt9SwObaAo15do8W7RiQHlJpz/NaziFMlX2jOuwXh
 MIME-Version: 1.0
-Date: Sat, 21 Apr 2018 04:55:01 -0700
-In-Reply-To: <001a1145ecc48d1438056655dcd9@google.com>
+Date: Sat, 21 Apr 2018 06:02:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000862602056a5a7937@google.com>
-Subject: Re: general protection fault in smc_getname
-From: syzbot <syzbot+9605e6cace1b5efd4a0a@syzkaller.appspotmail.com>
-To: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com,
-        ubraun@linux.vnet.ibm.com
+Message-ID: <0000000000001a6aa2056a5b695c@google.com>
+Subject: kernel BUG at fs/f2fs/node.c:LINE!
+From: syzbot <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com>
+To: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        yuchao0@huawei.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found reproducer for the following crash on upstream commit
+Hello,
+
+syzbot hit the following crash on upstream commit
 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
 Merge branch 'fixes' of  
 git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=9605e6cace1b5efd4a0a
+https://syzkaller.appspot.com/bug?extid=d154ec99402c6f628887
 
-So far this crash happened 6 times on net-next, upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4803108223844352
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5414336294027264
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6277384739225600
+https://syzkaller.appspot.com/x/repro.syz?id=5471683234234368
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5836548759093248
+https://syzkaller.appspot.com/x/log.txt?id=5436660795834368
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=1808800213120130118
 compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9605e6cace1b5efd4a0a@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
+Reported-by: syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
+F2FS-fs (loop0): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
+F2FS-fs (loop0): invalid crc value
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/node.c:1185!
+invalid opcode: 0000 [#1] SMP KASAN
 Dumping ftrace buffer:
     (ftrace buffer empty)
 Modules linked in:
-CPU: 0 PID: 4548 Comm: syzkaller769662 Not tainted 4.17.0-rc1+ #10
+CPU: 1 PID: 4549 Comm: syzkaller704305 Not tainted 4.17.0-rc1+ #10
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:smc_getname+0x124/0x1c0 net/smc/af_smc.c:1089
-RSP: 0018:ffff8801ad1d7c20 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff873e3a58
-RDX: 0000000000000005 RSI: ffffffff873e3af6 RDI: 0000000000000028
-RBP: ffff8801ad1d7c48 R08: ffff8801b10ae280 R09: ffffed0036321370
-R10: ffffed0036321370 R11: ffff8801b1909b83 R12: 0000000000000000
-R13: ffff8801ad1d7d10 R14: ffff8801a866e0c0 R15: dffffc0000000000
-FS:  0000000001a42880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+RIP: 0010:__get_node_page+0xb68/0x16e0 fs/f2fs/node.c:1185
+RSP: 0018:ffff8801d960e820 EFLAGS: 00010293
+RAX: ffff8801d88205c0 RBX: 0000000000000003 RCX: ffffffff82f6cc06
+RDX: 0000000000000000 RSI: ffffffff82f6d5e8 RDI: 0000000000000004
+RBP: ffff8801d960ec30 R08: ffff8801d88205c0 R09: ffffed003b5e46c2
+R10: 0000000000000003 R11: 0000000000000003 R12: ffff8801a86e00c0
+R13: 0000000000000001 R14: ffff8801a86e0530 R15: ffff8801d9745240
+FS:  000000000072c880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000080 CR3: 00000001ac8b3000 CR4: 00000000001406f0
+CR2: 00007f3d403209b8 CR3: 00000001d8f3f000 CR4: 00000000001406e0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __sys_getsockname+0x184/0x380 net/socket.c:1699
-  __do_sys_getsockname net/socket.c:1714 [inline]
-  __se_sys_getsockname net/socket.c:1711 [inline]
-  __x64_sys_getsockname+0x73/0xb0 net/socket.c:1711
+  get_node_page fs/f2fs/node.c:1237 [inline]
+  truncate_xattr_node+0x152/0x2e0 fs/f2fs/node.c:1014
+  remove_inode_page+0x200/0xaf0 fs/f2fs/node.c:1039
+  f2fs_evict_inode+0xe86/0x1710 fs/f2fs/inode.c:547
+  evict+0x4a6/0x960 fs/inode.c:557
+  iput_final fs/inode.c:1519 [inline]
+  iput+0x62d/0xa80 fs/inode.c:1545
+  f2fs_fill_super+0x5f4e/0x7bf0 fs/f2fs/super.c:2849
+  mount_bdev+0x30c/0x3e0 fs/super.c:1164
+  f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
+  mount_fs+0xae/0x328 fs/super.c:1267
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2518 [inline]
+  do_mount+0x564/0x3070 fs/namespace.c:2848
+  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+  __do_sys_mount fs/namespace.c:3078 [inline]
+  __se_sys_mount fs/namespace.c:3075 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
   do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43fce9
-RSP: 002b:00007fff2eba2418 EFLAGS: 00000217 ORIG_RAX: 0000000000000033
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fce9
-RDX: 0000000020000080 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000217 R12: 0000000000401610
-R13: 00000000004016a0 R14: 0000000000000000 R15: 0000000000000000
-Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 99 00 00 00 48 8b 9b 50 04 00 00 48  
-b8 00 00 00 00 00 fc ff df 48 8d 7b 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
-75 70 48 b8 00 00 00 00 00 fc ff df 4c 8b 73 28 49
-RIP: smc_getname+0x124/0x1c0 net/smc/af_smc.c:1089 RSP: ffff8801ad1d7c20
----[ end trace 9f5c3169466d9443 ]---
+RIP: 0033:0x443dea
+RSP: 002b:00007ffcc7882368 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000c00 RCX: 0000000000443dea
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffcc7882370
+RBP: 0000000000000003 R08: 0000000020016a00 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000004
+R13: 0000000000402ce0 R14: 0000000000000000 R15: 0000000000000000
+Code: ff e9 4f fa ff ff e8 58 5a 82 fe 48 89 df e8 70 ee 9d fe e9 73 f8 ff  
+ff e8 46 5a 82 fe 4d 8d 66 ff e9 5a f9 ff ff e8 38 5a 82 fe <0f> 0b 41 bc  
+b6 ff ff ff e9 e2 fc ff ff 48 89 95 08 fc ff ff e8
+RIP: __get_node_page+0xb68/0x16e0 fs/f2fs/node.c:1185 RSP: ffff8801d960e820
+---[ end trace 4edbeb71f002bb76 ]---
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
