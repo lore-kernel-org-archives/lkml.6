@@ -1,126 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753355AbeDUXMy (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 19:12:54 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:30827 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753208AbeDUXMw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 19:12:52 -0400
-From: "Andrew F. Davis" <afd@ti.com>
-To: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH] power: supply: bq27xxx: Add support for BQ27426
-Date: Sat, 21 Apr 2018 18:12:49 -0500
-Message-ID: <20180421231249.9517-1-afd@ti.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753426AbeDUXPo (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 19:15:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46415 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753208AbeDUXPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 19:15:41 -0400
+Subject: Re: [PATCH] SLUB: Do not fallback to mininum order if __GFP_NORETRY
+ is set
+To: Christopher Lameter <cl@linux.com>, Michal Hocko <mhocko@kernel.org>
+Cc: Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
+        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <alpine.DEB.2.20.1804180944180.1062@nuc-kabylake>
+ <20180419110051.GB16083@dhcp22.suse.cz>
+ <alpine.DEB.2.20.1804200952230.18006@nuc-kabylake>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <26580de4-70b5-90f7-b3b9-22f57ba38843@suse.cz>
+Date: Sat, 21 Apr 2018 19:02:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <alpine.DEB.2.20.1804200952230.18006@nuc-kabylake>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This device is software similar to the BQ27426 except it has
-different data memory offsets. Add support here.
+On 04/20/2018 04:53 PM, Christopher Lameter wrote:
+> On Thu, 19 Apr 2018, Michal Hocko wrote:
+> 
+>> Overriding __GFP_NORETRY is just a bad idea. It will make the semantic
+>> of the flag just more confusing. Note there are users who use
+>> __GFP_NORETRY as a way to suppress heavy memory pressure and/or the OOM
+>> killer. You do not want to change the semantic for them.
+> 
+> Redoing the allocation after failing a large order alloc is a retry. I
+> would say its confusing right now because a retry occurs despite
+> specifying GFP_NORETRY,
+> 
+>> Besides that the changelog is less than optimal. What is the actual
+>> problem? Why somebody doesn't want a fallback? Is there a configuration
+>> that could prevent the same?
+> 
+> The problem is that SLUB does not honor GFP_NORETRY. The semantics of
+> GFP_NORETRY are not followed.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- .../devicetree/bindings/power/supply/bq27xxx.txt         | 1 +
- drivers/power/supply/bq27xxx_battery.c                   | 9 +++++++++
- drivers/power/supply/bq27xxx_battery_i2c.c               | 2 ++
- include/linux/power/bq27xxx_battery.h                    | 3 ++-
- 4 files changed, 14 insertions(+), 1 deletion(-)
+The caller might want SLUB to try hard to get that high-order page that
+will minimize memory waste (e.g. 2MB page for 3 640k objects), and
+__GFP_NORETRY will kill the effort on allocating that high-order page.
 
-diff --git a/Documentation/devicetree/bindings/power/supply/bq27xxx.txt b/Documentation/devicetree/bindings/power/supply/bq27xxx.txt
-index 615c1cb6889f..37994fdb18ca 100644
---- a/Documentation/devicetree/bindings/power/supply/bq27xxx.txt
-+++ b/Documentation/devicetree/bindings/power/supply/bq27xxx.txt
-@@ -25,6 +25,7 @@ Required properties:
-  * "ti,bq27545" - BQ27545
-  * "ti,bq27421" - BQ27421
-  * "ti,bq27425" - BQ27425
-+ * "ti,bq27426" - BQ27426
-  * "ti,bq27441" - BQ27441
-  * "ti,bq27621" - BQ27621
- - reg: integer, I2C address of the fuel gauge.
-diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-index 7ce60519b1bc..d44ed8e17c47 100644
---- a/drivers/power/supply/bq27xxx_battery.c
-+++ b/drivers/power/supply/bq27xxx_battery.c
-@@ -432,6 +432,7 @@ static u8
- 		BQ27XXX_DM_REG_ROWS,
- 	};
- #define bq27425_regs bq27421_regs
-+#define bq27426_regs bq27421_regs
- #define bq27441_regs bq27421_regs
- #define bq27621_regs bq27421_regs
- 
-@@ -664,6 +665,7 @@ static enum power_supply_property bq27421_props[] = {
- 	POWER_SUPPLY_PROP_MANUFACTURER,
- };
- #define bq27425_props bq27421_props
-+#define bq27426_props bq27421_props
- #define bq27441_props bq27421_props
- #define bq27621_props bq27421_props
- 
-@@ -734,6 +736,12 @@ static struct bq27xxx_dm_reg bq27425_dm_regs[] = {
- 	[BQ27XXX_DM_TERMINATE_VOLTAGE] = { 82, 18, 2, 2800,  3700 },
- };
- 
-+static struct bq27xxx_dm_reg bq27426_dm_regs[] = {
-+	[BQ27XXX_DM_DESIGN_CAPACITY]   = { 82,  6, 2,    0,  8000 },
-+	[BQ27XXX_DM_DESIGN_ENERGY]     = { 82,  8, 2,    0, 32767 },
-+	[BQ27XXX_DM_TERMINATE_VOLTAGE] = { 82, 10, 2, 2500,  3700 },
-+};
-+
- #if 0 /* not yet tested */
- #define bq27441_dm_regs bq27421_dm_regs
- #else
-@@ -795,6 +803,7 @@ static struct {
- 	[BQ27545]   = BQ27XXX_DATA(bq27545,   0x04143672, BQ27XXX_O_OTDC),
- 	[BQ27421]   = BQ27XXX_DATA(bq27421,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
- 	[BQ27425]   = BQ27XXX_DATA(bq27425,   0x04143672, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP),
-+	[BQ27426]   = BQ27XXX_DATA(bq27426,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
- 	[BQ27441]   = BQ27XXX_DATA(bq27441,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
- 	[BQ27621]   = BQ27XXX_DATA(bq27621,   0x80008000, BQ27XXX_O_UTOT | BQ27XXX_O_CFGUP | BQ27XXX_O_RAM),
- };
-diff --git a/drivers/power/supply/bq27xxx_battery_i2c.c b/drivers/power/supply/bq27xxx_battery_i2c.c
-index 6b25e5f2337e..40069128ad44 100644
---- a/drivers/power/supply/bq27xxx_battery_i2c.c
-+++ b/drivers/power/supply/bq27xxx_battery_i2c.c
-@@ -249,6 +249,7 @@ static const struct i2c_device_id bq27xxx_i2c_id_table[] = {
- 	{ "bq27545", BQ27545 },
- 	{ "bq27421", BQ27421 },
- 	{ "bq27425", BQ27425 },
-+	{ "bq27426", BQ27426 },
- 	{ "bq27441", BQ27441 },
- 	{ "bq27621", BQ27621 },
- 	{},
-@@ -280,6 +281,7 @@ static const struct of_device_id bq27xxx_battery_i2c_of_match_table[] = {
- 	{ .compatible = "ti,bq27545" },
- 	{ .compatible = "ti,bq27421" },
- 	{ .compatible = "ti,bq27425" },
-+	{ .compatible = "ti,bq27426" },
- 	{ .compatible = "ti,bq27441" },
- 	{ .compatible = "ti,bq27621" },
- 	{},
-diff --git a/include/linux/power/bq27xxx_battery.h b/include/linux/power/bq27xxx_battery.h
-index 01fbf1b16258..d6355f49fbae 100644
---- a/include/linux/power/bq27xxx_battery.h
-+++ b/include/linux/power/bq27xxx_battery.h
-@@ -24,8 +24,9 @@ enum bq27xxx_chip {
- 	BQ27546,
- 	BQ27742,
- 	BQ27545, /* bq27545 */
--	BQ27421, /* bq27421, bq27425, bq27441, bq27621 */
-+	BQ27421, /* bq27421, bq27441, bq27621 */
- 	BQ27425,
-+	BQ27426,
- 	BQ27441,
- 	BQ27621,
- };
--- 
-2.17.0
+Thus, using __GPF_NORETRY for "please give me a space-optimized object,
+or nothing (because I have a fallback that's better than wasting memory,
+e.g. by using 1MB page for 640kb object)" is not ideal.
+
+Maybe __GFP_RETRY_MAYFAIL is a better fit? Or perhaps indicate this
+situation to SLUB with e.g. __GFP_COMP, although that's rather ugly?
