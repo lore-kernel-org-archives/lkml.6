@@ -1,68 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753231AbeDUQzM (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 12:55:12 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34354 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753092AbeDUQzK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 12:55:10 -0400
-X-Google-Smtp-Source: AIpwx494IPqCTqauD0h1Cmapjb27rb0TX3Zp5A17MGovk9+my8GG07iSK/vHI5MMRVFXPXbMm/oVMQ==
-Subject: Re: [PATCH net-next 0/4] mm,tcp: provide mmap_hook to solve lockdep
- issue
-To: Christoph Hellwig <hch@infradead.org>,
-        Eric Dumazet <edumazet@google.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Soheil Hassas Yeganeh <soheil@google.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20180420155542.122183-1-edumazet@google.com>
- <20180421090722.GA11998@infradead.org>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <f9d07a33-4fad-62a8-898a-ebf6ed47a721@gmail.com>
-Date: Sat, 21 Apr 2018 09:55:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753271AbeDUQzV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 12:55:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753092AbeDUQzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 12:55:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3218F217D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AIpwx49xL5ufWRevjMzJjkOjV+ikQhr0Aofeb9whvLio80LGcyDsi2LglOJq1I3aH/gv48CI6woYY+IFfurx6gCpzBE=
 MIME-Version: 1.0
-In-Reply-To: <20180421090722.GA11998@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1524241936-10295-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+References: <1524241936-10295-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <1524241936-10295-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Sat, 21 Apr 2018 18:55:17 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcv2A8po8-8ZVic8KX2xURPZsRBkS6My3qMhefRQk-fRQ@mail.gmail.com>
+Message-ID: <CAJKOXPcv2A8po8-8ZVic8KX2xURPZsRBkS6My3qMhefRQk-fRQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/exynos: fimd: Add support for S5PV210 FIMD variant
+To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com,
+        Seung Woo Kim <sw0312.kim@samsung.com>, kyungmin.park@samsung.com,
+        airlied@linux.ie, kgene@kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Apr 20, 2018 at 6:32 PM, Paweł Chmiel
+<pawel.mikolaj.chmiel@gmail.com> wrote:
+> From: Tomasz Figa <tomasz.figa@gmail.com>
+>
+> This patch adds support for FIMD variant found on S5PV210 SoC.
+> Except CLKSEL bit availability, it is identical to Exynos4210.
+>
+> Tested-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
+You need to add your Signed-off-by here as well. It is necessary every
+time you touch a patch (and sending it is also a "touch" action).
 
-On 04/21/2018 02:07 AM, Christoph Hellwig wrote:
-> On Fri, Apr 20, 2018 at 08:55:38AM -0700, Eric Dumazet wrote:
->> This patch series provide a new mmap_hook to fs willing to grab
->> a mutex before mm->mmap_sem is taken, to ensure lockdep sanity.
->>
->> This hook allows us to shorten tcp_mmap() execution time (while mmap_sem
->> is held), and improve multi-threading scalability. 
-> 
-> Missing CC to linu-fsdevel and linux-mm that will have to decide.
-> 
-> We've rejected this approach multiple times before, so you better
-> make a really good argument for it.
-> 
+Best regards,
+Krzysztof
 
-Well, tcp code needs to hold socket lock before mm->mmap_sem, so current
-mmap hook can not fit. Or we need to revisit all code doing copyin/copyout while
-holding a socket lock. (Not feasible really)
-
-
-> introducing a multiplexer that overloads a single method certainly
-> doesn't help making that case.
-
-Well, if you refer to multiple hooks instead of a single one, I basically
-thought that since only TCP needs this hook at the moment,
-it was not worth adding extra 8-bytes loads for all other mmap() users.
-
-I have no issue adding more hooks and more memory pressure if this is the blocking factor.
-
-We need two actions at this moment, (to lock the socket or release it)
-and a third one would allow us to build the array of pages
-before grabbing mmap_sem (as I mentioned in the last patch changelog)
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index d42ae2bc3e56..01b1570d0c3a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -121,6 +121,12 @@ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+>         .has_limited_fmt = 1,
+>  };
+>
+> +static struct fimd_driver_data s5pv210_fimd_driver_data = {
+> +       .timing_base = 0x0,
+> +       .has_shadowcon = 1,
+> +       .has_clksel = 1,
+> +};
+> +
+>  static struct fimd_driver_data exynos3_fimd_driver_data = {
+>         .timing_base = 0x20000,
+>         .lcdblk_offset = 0x210,
+> @@ -193,6 +199,8 @@ struct fimd_context {
+>  static const struct of_device_id fimd_driver_dt_match[] = {
+>         { .compatible = "samsung,s3c6400-fimd",
+>           .data = &s3c64xx_fimd_driver_data },
+> +       { .compatible = "samsung,s5pv210-fimd",
+> +         .data = &s5pv210_fimd_driver_data },
+>         { .compatible = "samsung,exynos3250-fimd",
+>           .data = &exynos3_fimd_driver_data },
+>         { .compatible = "samsung,exynos4210-fimd",
+> --
+> 2.7.4
+>
