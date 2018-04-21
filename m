@@ -1,51 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752814AbeDUIyi (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 04:54:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33576 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751052AbeDUIyg (ORCPT
+        id S1752807AbeDUJH2 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 05:07:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52980 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751816AbeDUJH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 04:54:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5CD9960264
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        luciano.coelho@intel.com, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org
-Subject: Re: New sparse warning from min_t(): expression using sizeof(void)
-References: <87a7txf15w.fsf@kamboji.qca.qualcomm.com>
-        <20180421082444.i4eyw2zxl6tipt6i@gmail.com>
-Date: Sat, 21 Apr 2018 11:54:30 +0300
-In-Reply-To: <20180421082444.i4eyw2zxl6tipt6i@gmail.com> (Joey Pabalinas's
-        message of "Fri, 20 Apr 2018 22:24:44 -1000")
-Message-ID: <87604ley7t.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Sat, 21 Apr 2018 05:07:26 -0400
+Date: Sat, 21 Apr 2018 02:07:22 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/4] mm,tcp: provide mmap_hook to solve lockdep
+ issue
+Message-ID: <20180421090722.GA11998@infradead.org>
+References: <20180420155542.122183-1-edumazet@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180420155542.122183-1-edumazet@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joey Pabalinas <joeypabalinas@gmail.com> writes:
+On Fri, Apr 20, 2018 at 08:55:38AM -0700, Eric Dumazet wrote:
+> This patch series provide a new mmap_hook to fs willing to grab
+> a mutex before mm->mmap_sem is taken, to ensure lockdep sanity.
+> 
+> This hook allows us to shorten tcp_mmap() execution time (while mmap_sem
+> is held), and improve multi-threading scalability. 
 
-> On Sat, Apr 21, 2018 at 10:50:51AM +0300, Kalle Valo wrote:
->> Is there any way to fix it? With ath10k I use sparse a lot and because
->> of these warnings sparse is now very annoying to use.
->
-> I submitted a sparse patch [1] for this not too long ago, but in the
-> meantime you can still curl the patch [2] and apply it directly to
-> the v0.5.2 release to suppress the deluge of warnings (-Wpointer-arith
-> is off by defaultl so no need to change any of you configurations).
->
-> [1] https://lkml.org/lkml/2018/4/10/923
-> [2] https://patchwork.kernel.org/patch/10334353/raw/
+Missing CC to linu-fsdevel and linux-mm that will have to decide.
 
-Perfect, thanks. Unfortunatelly I need to catch a boat and I can't test
-it right now, but I'll do that on Monday.
+We've rejected this approach multiple times before, so you better
+make a really good argument for it.
 
--- 
-Kalle Valo
+introducing a multiplexer that overloads a single method certainly
+doesn't help making that case.
