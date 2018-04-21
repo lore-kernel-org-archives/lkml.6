@@ -1,150 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753241AbeDURG6 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 13:06:58 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:30752 "EHLO
-        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752947AbeDURG4 (ORCPT
+        id S1753148AbeDURLO (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 13:11:14 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42792 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752911AbeDURLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 13:06:56 -0400
-From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-To: netdev@vger.kernel.org, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        stephen@networkplumber.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
-        nirranjan@chelsio.com, indranil@chelsio.com,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Subject: [PATCH net-next v5 0/3] kernel: add support to collect hardware logs in crash recovery kernel
-Date: Sat, 21 Apr 2018 22:35:52 +0530
-Message-Id: <cover.1524329561.git.rahul.lakkireddy@chelsio.com>
-X-Mailer: git-send-email 2.5.3
+        Sat, 21 Apr 2018 13:11:12 -0400
+X-Google-Smtp-Source: AIpwx4/DoH4gMhRHEBd3xkNF1ZQlFMt5jvAVjgVn9RHddNEm+sNsxbI4O6Wfv9kXO0hEvV1rn4D8fQ==
+Date: Sat, 21 Apr 2018 10:12:25 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        syzbot
+        <syzbot+c9695f0404c72c8f0b7abbac660d986af9008fc5@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: possible deadlock in perf_trace_destroy (2)
+Message-ID: <20180421171225.GA1098@sol.localdomain>
+References: <001a114aa95c553065055d6307e2@google.com>
+ <001a1141f35af49ace056363ab69@google.com>
+ <20180122172013.01841063@gandalf.local.home>
+ <20180122231934.GH2228@hirez.programming.kicks-ass.net>
+ <CACT4Y+bJ7U_ehBFEVWpvo6rwnT8-oto3c4b=VSyZyv92Y0E=tw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+bJ7U_ehBFEVWpvo6rwnT8-oto3c4b=VSyZyv92Y0E=tw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On production servers running variety of workloads over time, kernel
-panic can happen sporadically after days or even months. It is
-important to collect as much debug logs as possible to root cause
-and fix the problem, that may not be easy to reproduce. Snapshot of
-underlying hardware/firmware state (like register dump, firmware
-logs, adapter memory, etc.), at the time of kernel panic will be very
-helpful while debugging the culprit device driver.
+On Tue, Jan 23, 2018 at 08:37:49AM +0100, 'Dmitry Vyukov' via syzkaller-bugs wrote:
+> On Tue, Jan 23, 2018 at 12:19 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Mon, Jan 22, 2018 at 05:20:13PM -0500, Steven Rostedt wrote:
+> >>
+> >> Peter,
+> >>
+> >> Isn't this the same as what you mentioned (and had a hack patch for)
+> >> before?
+> >>
+> >>  http://lkml.kernel.org/r/20180109133651.GB2369@hirez.programming.kicks-ass.net
+> >>
+> >
+> > Looks like it. Just haven't managed to get those patches merged. I'll
+> > try and get that sorted tomorrow. Thanks for the reminder.
+> 
 
-This series of patches add new generic framework that enable device
-drivers to collect device specific snapshot of the hardware/firmware
-state of the underlying device in the crash recovery kernel. In crash
-recovery kernel, the collected logs are added as elf notes to
-/proc/vmcore, which is copied by user space scripts for post-analysis.
+No longer occurring, fix was commit 82d94856fa22:
 
-The sequence of actions done by device drivers to append their device
-specific hardware/firmware logs to /proc/vmcore are as follows:
+#syz fix: perf/core: Fix lock inversion between perf,trace,cpuhp
 
-1. During probe (before hardware is initialized), device drivers
-register to the vmcore module (via vmcore_add_device_dump()), with
-callback function, along with buffer size and log name needed for
-firmware/hardware log collection.
-
-2. vmcore module allocates the buffer with requested size. It adds
-an elf note and invokes the device driver's registered callback
-function.
-
-3. Device driver collects all hardware/firmware logs into the buffer
-and returns control back to vmcore module.
-
-The device specific hardware/firmware logs can be seen as elf notes:
-
-# readelf -n /proc/vmcore
-
-Displaying notes found at file offset 0x00001000 with length 0x04003288:
-  Owner                 Data size	Description
-  VMCOREDD_cxgb4_0000:02:00.4 0x02000fd8	Unknown note type: (0x00000700)
-  VMCOREDD_cxgb4_0000:04:00.4 0x02000fd8	Unknown note type: (0x00000700)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  VMCOREINFO           0x0000074f	Unknown note type: (0x00000000)
-
-Patch 1 adds API to vmcore module to allow drivers to register callback
-to collect the device specific hardware/firmware logs.  The logs will
-be added to /proc/vmcore as elf notes.
-
-Patch 2 updates read and mmap logic to append device specific hardware/
-firmware logs as elf notes.
-
-Patch 3 shows a cxgb4 driver example using the API to collect
-hardware/firmware logs in crash recovery kernel, before hardware is
-initialized.
-
-Thanks,
-Rahul
-
----
-v5:
-- Removed enabling CONFIG_PROC_VMCORE_DEVICE_DUMP by default and
-  updated help message.
-
-v4:
-- Made __vmcore_add_device_dump() static.
-- Moved compile check to define vmcore_add_device_dump() to
-  crash_dump.h to fix compilation when vmcore.c is not compiled in.
-- Convert ---help--- to help in Kconfig as indicated by checkpatch.
-- Rebased to tip.
-
-v3:
-- Dropped sysfs crashdd module.
-- Exported dumps as elf notes. Suggested by Eric Biederman
-  <ebiederm@xmission.com>.  Added as patch 2 in this version.
-- Added CONFIG_PROC_VMCORE_DEVICE_DUMP to allow configuring device
-  dump support.
-- Moved logic related to adding dumps from crashdd to vmcore module.
-- Rename all crashdd* to vmcoredd*.
-- Updated comments.
-
-v2:
-- Added ABI Documentation for crashdd.
-- Directly use octal permission instead of macro.
-
-Changes since rfc v2:
-- Moved exporting crashdd from procfs to sysfs. Suggested by
-  Stephen Hemminger <stephen@networkplumber.org>
-- Moved code from fs/proc/crashdd.c to fs/crashdd/ directory.
-- Replaced all proc API with sysfs API and updated comments.
-- Calling driver callback before creating the binary file under
-  crashdd sysfs.
-- Changed binary dump file permission from S_IRUSR to S_IRUGO.
-- Changed module name from CRASH_DRIVER_DUMP to CRASH_DEVICE_DUMP.
-
-rfc v2:
-- Collecting logs in 2nd kernel instead of during kernel panic.
-  Suggested by Eric Biederman <ebiederm@xmission.com>.
-- Added new crashdd module that exports /proc/crashdd/ containing
-  driver's registered hardware/firmware logs in patch 1.
-- Replaced the API to allow drivers to register their hardware/firmware
-  log collect routine in crash recovery kernel in patch 1.
-- Updated patch 2 to use the new API in patch 1.
-
-Rahul Lakkireddy (3):
-  vmcore: add API to collect hardware dump in second kernel
-  vmcore: append device dumps to vmcore as elf notes
-  cxgb4: collect hardware dump in second kernel
-
- drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |   4 +
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c |  25 ++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |   3 +
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |  10 +
- fs/proc/Kconfig                                  |  15 +
- fs/proc/vmcore.c                                 | 399 ++++++++++++++++++++++-
- include/linux/crash_core.h                       |   4 +
- include/linux/crash_dump.h                       |  17 +
- include/linux/kcore.h                            |   6 +
- include/uapi/linux/elf.h                         |   1 +
- 10 files changed, 471 insertions(+), 13 deletions(-)
-
--- 
-2.14.1
+- Eric
