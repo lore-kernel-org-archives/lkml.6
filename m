@@ -1,133 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750903AbeDUEIa (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 00:08:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47098 "EHLO mail.kernel.org"
+        id S1751131AbeDUFA2 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 01:00:28 -0400
+Received: from vps.xff.cz ([195.181.215.36]:46516 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750740AbeDUEI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 00:08:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9FE21742
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] Revert "f2fs: introduce f2fs_set_page_dirty_nobuffer"
-Date: Fri, 20 Apr 2018 21:08:25 -0700
-Message-Id: <20180421040825.77660-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+        id S1750805AbeDUFA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 01:00:27 -0400
+From: megous@megous.com
+To: dev@linux-sunxi.org
+Cc: Ondrej Jirman <megous@megous.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
+        A10),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
+        sunXi SoC support),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] Revert "drm/sun4i: add lvds mode_valid function"
+Date: Sat, 21 Apr 2018 06:51:55 +0200
+Message-Id: <20180421045155.15332-1-megous@megous.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch reverts copied f2fs_set_page_dirty_nobuffer to use generic function
-for stability.
+From: Ondrej Jirman <megous@megous.com>
 
-This reverts commit fe76b796fc5194cc3d57265002e3a748566d073f.
+The reverted commit broke LVDS output on TBS A711 Tablet. That tablet
+has simple-panel node that has fixed pixel clock-frequency that A83T
+SoC used in the tablet can't generate exactly.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Requested rate is 52000000 and rounded_rate is calculated as 51857142.
+It's close enough for it to work in practice, but with strict check
+in the reverted commit, the mode is rejected needlessly in this case.
+
+DT allows to specify a range of values for simple-panel/clock-frequency,
+but driver doesn't respect that ATM. Given that TBS A711 is the single
+user of sun4i-lvds driver, let's revert that commit for now, until
+a better solution for the problem is found.
+
+Also see: https://patchwork.kernel.org/patch/9446385/ for relevant
+discussion (or search for "[RFC] drm/sun4i: rgb: Add 5% tolerance
+to dot clock frequency check").
+
+Fixes: e4e4b7ad50cf ("drm/sun4i: add lvds mode_valid function")
+Reported-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Ondrej Jirman <megous@megous.com>
 ---
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/data.c       | 33 +--------------------------------
- fs/f2fs/f2fs.h       |  1 -
- fs/f2fs/node.c       |  2 +-
- 4 files changed, 3 insertions(+), 35 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_lvds.c | 55 ------------------------------
+ 1 file changed, 55 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 2e23b953d304..8fc55d42ba25 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -384,7 +384,7 @@ static int f2fs_set_meta_page_dirty(struct page *page)
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
- 	if (!PageDirty(page)) {
--		f2fs_set_page_dirty_nobuffers(page);
-+		__set_page_dirty_nobuffers(page);
- 		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_META);
- 		SetPagePrivate(page);
- 		f2fs_trace_pid(page);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d32bf363cb60..5477fc09c3cd 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -19,8 +19,6 @@
- #include <linux/bio.h>
- #include <linux/prefetch.h>
- #include <linux/uio.h>
--#include <linux/mm.h>
--#include <linux/memcontrol.h>
- #include <linux/cleancache.h>
- #include <linux/sched/signal.h>
- 
-@@ -2471,35 +2469,6 @@ int f2fs_release_page(struct page *page, gfp_t wait)
- 	return 1;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_lvds.c b/drivers/gpu/drm/sun4i/sun4i_lvds.c
+index bffff4c9fbf5..be3f14d7746d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_lvds.c
++++ b/drivers/gpu/drm/sun4i/sun4i_lvds.c
+@@ -94,64 +94,9 @@ static void sun4i_lvds_encoder_disable(struct drm_encoder *encoder)
+ 	}
  }
  
--/*
-- * This was copied from __set_page_dirty_buffers which gives higher performance
-- * in very high speed storages. (e.g., pmem)
-- */
--void f2fs_set_page_dirty_nobuffers(struct page *page)
+-static enum drm_mode_status sun4i_lvds_encoder_mode_valid(struct drm_encoder *crtc,
+-							  const struct drm_display_mode *mode)
 -{
--	struct address_space *mapping = page->mapping;
--	unsigned long flags;
+-	struct sun4i_lvds *lvds = drm_encoder_to_sun4i_lvds(crtc);
+-	struct sun4i_tcon *tcon = lvds->tcon;
+-	u32 hsync = mode->hsync_end - mode->hsync_start;
+-	u32 vsync = mode->vsync_end - mode->vsync_start;
+-	unsigned long rate = mode->clock * 1000;
+-	long rounded_rate;
 -
--	if (unlikely(!mapping))
--		return;
+-	DRM_DEBUG_DRIVER("Validating modes...\n");
 -
--	spin_lock(&mapping->private_lock);
--	lock_page_memcg(page);
--	SetPageDirty(page);
--	spin_unlock(&mapping->private_lock);
+-	if (hsync < 1)
+-		return MODE_HSYNC_NARROW;
 -
--	xa_lock_irqsave(&mapping->i_pages, flags);
--	WARN_ON_ONCE(!PageUptodate(page));
--	account_page_dirtied(page, mapping);
--	radix_tree_tag_set(&mapping->i_pages,
--			page_index(page), PAGECACHE_TAG_DIRTY);
--	xa_unlock_irqrestore(&mapping->i_pages, flags);
--	unlock_page_memcg(page);
+-	if (hsync > 0x3ff)
+-		return MODE_HSYNC_WIDE;
 -
--	__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
--	return;
+-	if ((mode->hdisplay < 1) || (mode->htotal < 1))
+-		return MODE_H_ILLEGAL;
+-
+-	if ((mode->hdisplay > 0x7ff) || (mode->htotal > 0xfff))
+-		return MODE_BAD_HVALUE;
+-
+-	DRM_DEBUG_DRIVER("Horizontal parameters OK\n");
+-
+-	if (vsync < 1)
+-		return MODE_VSYNC_NARROW;
+-
+-	if (vsync > 0x3ff)
+-		return MODE_VSYNC_WIDE;
+-
+-	if ((mode->vdisplay < 1) || (mode->vtotal < 1))
+-		return MODE_V_ILLEGAL;
+-
+-	if ((mode->vdisplay > 0x7ff) || (mode->vtotal > 0xfff))
+-		return MODE_BAD_VVALUE;
+-
+-	DRM_DEBUG_DRIVER("Vertical parameters OK\n");
+-
+-	tcon->dclk_min_div = 7;
+-	tcon->dclk_max_div = 7;
+-	rounded_rate = clk_round_rate(tcon->dclk, rate);
+-	if (rounded_rate < rate)
+-		return MODE_CLOCK_LOW;
+-
+-	if (rounded_rate > rate)
+-		return MODE_CLOCK_HIGH;
+-
+-	DRM_DEBUG_DRIVER("Clock rate OK\n");
+-
+-	return MODE_OK;
 -}
 -
- static int f2fs_set_data_page_dirty(struct page *page)
- {
- 	struct address_space *mapping = page->mapping;
-@@ -2523,7 +2492,7 @@ static int f2fs_set_data_page_dirty(struct page *page)
- 	}
+ static const struct drm_encoder_helper_funcs sun4i_lvds_enc_helper_funcs = {
+ 	.disable	= sun4i_lvds_encoder_disable,
+ 	.enable		= sun4i_lvds_encoder_enable,
+-	.mode_valid	= sun4i_lvds_encoder_mode_valid,
+ };
  
- 	if (!PageDirty(page)) {
--		f2fs_set_page_dirty_nobuffers(page);
-+		__set_page_dirty_nobuffers(page);
- 		update_dirty_page(inode, page);
- 		return 1;
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0c72908f3185..9f2bc78a9f5b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2939,7 +2939,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 			u64 start, u64 len);
- bool should_update_inplace(struct inode *inode, struct f2fs_io_info *fio);
- bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio);
--void f2fs_set_page_dirty_nobuffers(struct page *page);
- int __f2fs_write_data_pages(struct address_space *mapping,
- 						struct writeback_control *wbc,
- 						enum iostat_type io_type);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f202398e20ea..ae83ca9d2d31 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1753,7 +1753,7 @@ static int f2fs_set_node_page_dirty(struct page *page)
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
- 	if (!PageDirty(page)) {
--		f2fs_set_page_dirty_nobuffers(page);
-+		__set_page_dirty_nobuffers(page);
- 		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
- 		SetPagePrivate(page);
- 		f2fs_trace_pid(page);
+ static const struct drm_encoder_funcs sun4i_lvds_enc_funcs = {
 -- 
-2.17.0.484.g0c8726318c-goog
+2.17.0
