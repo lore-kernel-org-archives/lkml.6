@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751619AbeDUHrP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 03:47:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:32931 "EHLO
+        id S1752605AbeDUHro (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 03:47:44 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53181 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751052AbeDUHrN (ORCPT
+        with ESMTP id S1751333AbeDUHrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 03:47:13 -0400
-Date: Sat, 21 Apr 2018 00:46:44 -0700
+        Sat, 21 Apr 2018 03:47:43 -0400
+Date: Sat, 21 Apr 2018 00:47:21 -0700
 From: tip-bot for Alexey Budankov <tipbot@zytor.com>
-Message-ID: <tip-101592b4904ecf6b8ed2a4784d41d180319d95a1@git.kernel.org>
-Cc: jolsa@redhat.com, hpa@zytor.com, peterz@infradead.org,
-        alexey.budankov@linux.intel.com, alexander.shishkin@linux.intel.com,
-        linux-kernel@vger.kernel.org, ak@linux.intel.com, namhyung@kernel.org,
-        tglx@linutronix.de, acme@redhat.com, mingo@kernel.org
-Reply-To: alexey.budankov@linux.intel.com, alexander.shishkin@linux.intel.com,
-        tglx@linutronix.de, acme@redhat.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org, ak@linux.intel.com,
-        hpa@zytor.com, jolsa@redhat.com, peterz@infradead.org
-In-Reply-To: <9ff84e83-a0ca-dd82-a6d0-cb951689be74@linux.intel.com>
-References: <9ff84e83-a0ca-dd82-a6d0-cb951689be74@linux.intel.com>
+Message-ID: <tip-b3f35b5d5d36fba9311d1a965fcce2dd35614f2e@git.kernel.org>
+Cc: tglx@linutronix.de, alexey.budankov@linux.intel.com, acme@redhat.com,
+        peterz@infradead.org, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, namhyung@kernel.org, jolsa@redhat.com,
+        ak@linux.intel.com
+Reply-To: tglx@linutronix.de, alexey.budankov@linux.intel.com, acme@redhat.com,
+        hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, ak@linux.intel.com
+In-Reply-To: <6f5aebb9-b96c-f304-f08f-8f046d38de4f@linux.intel.com>
+References: <6f5aebb9-b96c-f304-f08f-8f046d38de4f@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/core: Store context switch out type in
- PERF_RECORD_SWITCH[_CPU_WIDE]
-Git-Commit-ID: 101592b4904ecf6b8ed2a4784d41d180319d95a1
+Subject: [tip:perf/urgent] perf report: Extend raw dump (-D) out with switch
+ out event type
+Git-Commit-ID: b3f35b5d5d36fba9311d1a965fcce2dd35614f2e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,115 +37,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  101592b4904ecf6b8ed2a4784d41d180319d95a1
-Gitweb:     https://git.kernel.org/tip/101592b4904ecf6b8ed2a4784d41d180319d95a1
+Commit-ID:  b3f35b5d5d36fba9311d1a965fcce2dd35614f2e
+Gitweb:     https://git.kernel.org/tip/b3f35b5d5d36fba9311d1a965fcce2dd35614f2e
 Author:     Alexey Budankov <alexey.budankov@linux.intel.com>
-AuthorDate: Mon, 9 Apr 2018 10:25:32 +0300
+AuthorDate: Mon, 9 Apr 2018 10:26:05 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 17 Apr 2018 09:47:39 -0300
 
-perf/core: Store context switch out type in PERF_RECORD_SWITCH[_CPU_WIDE]
+perf report: Extend raw dump (-D) out with switch out event type
 
-Store preempting context switch out event into Perf trace as a part of
-PERF_RECORD_SWITCH[_CPU_WIDE] record.
+Print additional 'preempt' tag for PERF_RECORD_SWITCH[_CPU_WIDE] OUT records when
+event header misc field contains PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit set
+designating preemption context switch out event:
 
-Percentage of preempting and non-preempting context switches help
-understanding the nature of workloads (CPU or IO bound) that are running
-on a machine;
+tools/perf/perf report -D -i perf.data | grep _SWITCH
 
-The event is treated as preemption one when task->state value of the
-thread being switched out is TASK_RUNNING. Event type encoding is
-implemented using PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit;
+0 768361415226 0x27f076 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     8/8
+4 768362216813 0x28f45e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0
+4 768362217824 0x28f486 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073
+0 768362414027 0x27f0ce [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:     8/8
+0 768362414367 0x27f0f6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/9ff84e83-a0ca-dd82-a6d0-cb951689be74@linux.intel.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/6f5aebb9-b96c-f304-f08f-8f046d38de4f@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- include/uapi/linux/perf_event.h       | 18 +++++++++++++++---
- kernel/events/core.c                  |  4 ++++
- tools/include/uapi/linux/perf_event.h | 18 +++++++++++++++---
- 3 files changed, 34 insertions(+), 6 deletions(-)
+ tools/perf/util/event.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 912b85b52344..b8e288a1f740 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -650,11 +650,23 @@ struct perf_event_mmap_page {
- #define PERF_RECORD_MISC_COMM_EXEC		(1 << 13)
- #define PERF_RECORD_MISC_SWITCH_OUT		(1 << 13)
- /*
-- * Indicates that the content of PERF_SAMPLE_IP points to
-- * the actual instruction that triggered the event. See also
-- * perf_event_attr::precise_ip.
-+ * These PERF_RECORD_MISC_* flags below are safely reused
-+ * for the following events:
-+ *
-+ *   PERF_RECORD_MISC_EXACT_IP           - PERF_RECORD_SAMPLE of precise events
-+ *   PERF_RECORD_MISC_SWITCH_OUT_PREEMPT - PERF_RECORD_SWITCH* events
-+ *
-+ *
-+ * PERF_RECORD_MISC_EXACT_IP:
-+ *   Indicates that the content of PERF_SAMPLE_IP points to
-+ *   the actual instruction that triggered the event. See also
-+ *   perf_event_attr::precise_ip.
-+ *
-+ * PERF_RECORD_MISC_SWITCH_OUT_PREEMPT:
-+ *   Indicates that thread was preempted in TASK_RUNNING state.
-  */
- #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
-+#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
- /*
-  * Reserve the last bit to indicate some extended misc field
-  */
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 2d5fe26551f8..1bae80aaabfb 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7587,6 +7587,10 @@ static void perf_event_switch(struct task_struct *task,
- 		},
- 	};
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index f0a6cbd033cc..98ff3a6a3d50 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1421,7 +1421,9 @@ size_t perf_event__fprintf_itrace_start(union perf_event *event, FILE *fp)
+ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp)
+ {
+ 	bool out = event->header.misc & PERF_RECORD_MISC_SWITCH_OUT;
+-	const char *in_out = out ? "OUT" : "IN ";
++	const char *in_out = !out ? "IN         " :
++		!(event->header.misc & PERF_RECORD_MISC_SWITCH_OUT_PREEMPT) ?
++				    "OUT        " : "OUT preempt";
  
-+	if (!sched_in && task->state == TASK_RUNNING)
-+		switch_event.event_id.header.misc |=
-+				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
-+
- 	perf_iterate_sb(perf_event_switch_output,
- 		       &switch_event,
- 		       NULL);
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 912b85b52344..b8e288a1f740 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -650,11 +650,23 @@ struct perf_event_mmap_page {
- #define PERF_RECORD_MISC_COMM_EXEC		(1 << 13)
- #define PERF_RECORD_MISC_SWITCH_OUT		(1 << 13)
- /*
-- * Indicates that the content of PERF_SAMPLE_IP points to
-- * the actual instruction that triggered the event. See also
-- * perf_event_attr::precise_ip.
-+ * These PERF_RECORD_MISC_* flags below are safely reused
-+ * for the following events:
-+ *
-+ *   PERF_RECORD_MISC_EXACT_IP           - PERF_RECORD_SAMPLE of precise events
-+ *   PERF_RECORD_MISC_SWITCH_OUT_PREEMPT - PERF_RECORD_SWITCH* events
-+ *
-+ *
-+ * PERF_RECORD_MISC_EXACT_IP:
-+ *   Indicates that the content of PERF_SAMPLE_IP points to
-+ *   the actual instruction that triggered the event. See also
-+ *   perf_event_attr::precise_ip.
-+ *
-+ * PERF_RECORD_MISC_SWITCH_OUT_PREEMPT:
-+ *   Indicates that thread was preempted in TASK_RUNNING state.
-  */
- #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
-+#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
- /*
-  * Reserve the last bit to indicate some extended misc field
-  */
+ 	if (event->header.type == PERF_RECORD_SWITCH)
+ 		return fprintf(fp, " %s\n", in_out);
