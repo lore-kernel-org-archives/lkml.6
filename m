@@ -1,156 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753211AbeDURtY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 13:49:24 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:39904 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752911AbeDURtW (ORCPT
+        id S1753306AbeDUSRR (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 14:17:17 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:44340 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753231AbeDUSRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 13:49:22 -0400
-X-Google-Smtp-Source: AIpwx4/ZhBh8c+LH/6cldSliNdGu/hzS+KXb6nnllvf7GnkyvF+FZTBP+FlHkbyLLqtP4yCjCF59cg==
-Date: Sat, 21 Apr 2018 10:50:35 -0700
+        Sat, 21 Apr 2018 14:17:15 -0400
+X-Google-Smtp-Source: AIpwx4+y8Un/0IhsUCTxMLEJz1p8RgrFOitnxOjDdAZGb5KCxU6pSaH/JzRB6oW0TRNUvzCV11pmVw==
+Date: Sat, 21 Apr 2018 11:18:27 -0700
 From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot
-        <syzbot+20eb18b1ffc36152b5608d41ab3bf6bd18c23aa7@syzkaller.appspotmail.com>
-Cc: jasowang@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mst@redhat.com, syzkaller-bugs@googlegroups.com,
-        virtualization@lists.linux-foundation.org
-Subject: Re: KASAN: use-after-free Read in perf_trace_lock_acquire (2)
-Message-ID: <20180421175035.GB1098@sol.localdomain>
-References: <001a113f890e54dcd0055e90b9bf@google.com>
- <001a113ecb5e7f5e580563fb501d@google.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: syzbot <syzbot+5705ba91388d7bc30828@syzkaller.appspotmail.com>,
+        bridge@lists.linux-foundation.org, coreteam@netfilter.org,
+        davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        stephen@networkplumber.org, syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: unable to handle kernel paging request in
+ compat_copy_entries
+Message-ID: <20180421181827.GC1098@sol.localdomain>
+References: <001a113f1b64a3c4ab0566a60182@google.com>
+ <1520263080.5898.7.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <001a113ecb5e7f5e580563fb501d@google.com>
+In-Reply-To: <1520263080.5898.7.camel@redhat.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 30, 2018 at 01:52:02AM -0800, syzbot wrote:
-> syzbot has found reproducer for the following crash on upstream commit
-> 6304672b7f0a5c010002e63a075160856dc4f88d (Tue Jan 30 03:08:02 2018 +0000)
-> Merge branch 'x86-pti-for-linus' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+On Mon, Mar 05, 2018 at 04:18:00PM +0100, Paolo Abeni wrote:
+> On Mon, 2018-03-05 at 00:21 -0800, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot hit the following crash on upstream commit
+> > 5fbdefcf685defd8bc5a8f37b17538d25c58d77a (Fri Mar 2 21:05:20 2018 +0000)
+> > Merge branch 'parisc-4.16-1' of  
+> > git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
+> > 
+> > So far this crash happened 5 times on upstream.
+> > syzkaller reproducer is attached.
+> > Raw console output is attached.
+> > compiler: gcc (GCC) 7.1.1 20170620
+> > .config is attached.
+> > user-space arch: i386
+> > 
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+5705ba91388d7bc30828@syzkaller.appspotmail.com
+> > It will help syzbot understand when the bug is fixed. See footer for  
+> > details.
+> > If you forward the report, please keep this part and the footer.
+> > 
+> > audit: type=1400 audit(1520098078.492:8): avc:  denied  { map } for   
+> > pid=4239 comm="syz-execprog" path="/root/syzkaller-shm255959590" dev="sda1"  
+> > ino=16482 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+> > tcontext=unconfined_u:object_r:file_t:s0 tclass=file permissive=1
+> > IPVS: ftp: loaded support on port[0] = 21
+> > BUG: unable to handle kernel paging request at ffffc90001819e4f
+> > IP: ebt_size_mwt net/bridge/netfilter/ebtables.c:2037 [inline]
+> > IP: size_entry_mwt net/bridge/netfilter/ebtables.c:2122 [inline]
+> > IP: compat_copy_entries+0x49f/0x1050 net/bridge/netfilter/ebtables.c:2160
+> > PGD 1dad2f067 P4D 1dad2f067 PUD 1dad30067 PMD 1b2408067 PTE 0
+> > Oops: 0000 [#1] SMP KASAN
+> > Dumping ftrace buffer:
+> >     (ftrace buffer empty)
+> > Modules linked in:
+> > CPU: 1 PID: 4249 Comm: syz-executor0 Not tainted 4.16.0-rc3+ #248
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> > Google 01/01/2011
+> > RIP: 0010:ebt_size_mwt net/bridge/netfilter/ebtables.c:2037 [inline]
+> > RIP: 0010:size_entry_mwt net/bridge/netfilter/ebtables.c:2122 [inline]
+> > RIP: 0010:compat_copy_entries+0x49f/0x1050  
+> > net/bridge/netfilter/ebtables.c:2160
+> > RSP: 0018:ffff8801b34bf7e8 EFLAGS: 00010246
+> > RAX: 000000000000000a RBX: ffff8801b34bf9d4 RCX: ffffc90001819e4f
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8801b34bf9d8
+> > RBP: ffff8801b34bf968 R08: 0000000000000000 R09: 0000000000000000
+> > R10: ffffffff88613340 R11: 0000000000000001 R12: 000000000000ee5f
+> > R13: dffffc0000000000 R14: ffff8801b34bf9c8 R15: ffffc90001819e2f
+> > FS:  0000000000000000(0000) GS:ffff8801db300000(0063) knlGS:00000000085b9900
+> > CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> > CR2: ffffc90001819e4f CR3: 00000001b2bd7003 CR4: 00000000001606e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >   compat_do_replace+0x398/0x7c0 net/bridge/netfilter/ebtables.c:2249
+> >   compat_do_ebt_set_ctl+0x22a/0x2d0 net/bridge/netfilter/ebtables.c:2330
+> >   compat_nf_sockopt net/netfilter/nf_sockopt.c:144 [inline]
+> >   compat_nf_setsockopt+0x88/0x130 net/netfilter/nf_sockopt.c:156
+> >   compat_ip_setsockopt+0x8b/0xd0 net/ipv4/ip_sockglue.c:1285
+> >   inet_csk_compat_setsockopt+0x95/0x120 net/ipv4/inet_connection_sock.c:1041
+> >   compat_tcp_setsockopt+0x3d/0x70 net/ipv4/tcp.c:2916
+> >   compat_sock_common_setsockopt+0xb2/0x140 net/core/sock.c:2986
+> >   C_SYSC_setsockopt net/compat.c:403 [inline]
+> >   compat_SyS_setsockopt+0x17c/0x410 net/compat.c:386
+> >   do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
+> >   do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
+> >   entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+> > RIP: 0023:0xf7fbbc99
+> > RSP: 002b:00000000ffd5ab8c EFLAGS: 00000286 ORIG_RAX: 000000000000016e
+> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000000000
+> > RDX: 0000000000000080 RSI: 0000000020000280 RDI: 0000000000000208
+> > RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> > Code: 8d 4f 20 48 89 c8 48 89 8d c8 fe ff ff 48 c1 e8 03 42 0f b6 14 28 48  
+> > 89 c8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 b2 0a 00 00 <45> 8b 67 20  
+> > 44 39 a5 04 ff ff ff 0f 82 bd 08 00 00 e8 cb 52 56
+> > RIP: ebt_size_mwt net/bridge/netfilter/ebtables.c:2037 [inline] RSP:  
+> > ffff8801b34bf7e8
+> > RIP: size_entry_mwt net/bridge/netfilter/ebtables.c:2122 [inline] RSP:  
+> > ffff8801b34bf7e8
+> > RIP: compat_copy_entries+0x49f/0x1050 net/bridge/netfilter/ebtables.c:2160  
+> > RSP: ffff8801b34bf7e8
+> > CR2: ffffc90001819e4f
+> > ---[ end trace cf111332eb971f16 ]---
+> > 
+> > 
+> > ---
+> > This bug is generated by a dumb bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for details.
+> > Direct all questions to syzkaller@googlegroups.com.
+> > 
+> > syzbot will keep track of this bug report.
+> > If you forgot to add the Reported-by tag, once the fix for this bug is  
+> > merged
+> > into any tree, please reply to this email with:
+> > #syz fix: exact-commit-title
+> > If you want to test a patch for this bug, please reply with:
+> > #syz test: git://repo/address.git branch
+> > and provide the patch inline or as an attachment.
+> > To mark this as a duplicate of another syzbot report, please reply with:
+> > #syz dup: exact-subject-of-another-report
+> > If it's a one-off invalid bug report, please reply with:
+> > #syz invalid
+> > Note: if the crash happens again, it will cause creation of a new bug  
+> > report.
+> > Note: all commands must start from beginning of the line in the email body.
 > 
-> So far this crash happened 172 times on linux-next, mmots, upstream.
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by:
-> syzbot+20eb18b1ffc36152b5608d41ab3bf6bd18c23aa7@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed.
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in perf_trace_lock_acquire+0x5b7/0x980
-> include/trace/events/lock.h:13
-> Read of size 8 at addr ffff8801b48e50b8 by task syzkaller241108/8081
-> 
-> CPU: 1 PID: 8081 Comm: syzkaller241108 Not tainted 4.15.0+ #286
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  print_address_description+0x73/0x250 mm/kasan/report.c:252
->  kasan_report_error mm/kasan/report.c:351 [inline]
->  kasan_report+0x25b/0x340 mm/kasan/report.c:409
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
->  perf_trace_lock_acquire+0x5b7/0x980 include/trace/events/lock.h:13
->  trace_lock_acquire include/trace/events/lock.h:13 [inline]
->  lock_acquire+0x394/0x580 kernel/locking/lockdep.c:3914
->  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->  remove_wait_queue+0x81/0x350 kernel/sched/wait.c:50
->  vhost_poll_stop drivers/vhost/vhost.c:230 [inline]
->  vhost_dev_stop+0x15c/0x2a0 drivers/vhost/vhost.c:566
->  vhost_net_release+0x6e/0x190 drivers/vhost/net.c:998
->  __fput+0x327/0x7e0 fs/file_table.c:210
->  ____fput+0x15/0x20 fs/file_table.c:244
->  task_work_run+0x199/0x270 kernel/task_work.c:113
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
->  do_group_exit+0x149/0x400 kernel/exit.c:968
->  get_signal+0x73f/0x16c0 kernel/signal.c:2335
->  do_signal+0x90/0x1eb0 arch/x86/kernel/signal.c:809
->  exit_to_usermode_loop+0x214/0x310 arch/x86/entry/common.c:158
->  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
->  syscall_return_slowpath+0x490/0x550 arch/x86/entry/common.c:264
->  entry_SYSCALL_64_fastpath+0x9e/0xa0
-> RIP: 0033:0x44bff9
-> RSP: 002b:00007ff890dd4da8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-> RAX: fffffffffffffe00 RBX: 0000000000700054 RCX: 000000000044bff9
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000700054
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000700050
-> R13: 6f68762f7665642f R14: 00007ff890dd59c0 R15: 0000000000000007
-> 
-> Allocated by task 8054:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
->  kmem_cache_alloc_trace+0x136/0x750 mm/slab.c:3610
->  kmalloc include/linux/slab.h:499 [inline]
->  eventfd_file_create.part.3+0x96/0x250 fs/eventfd.c:441
->  eventfd_file_create fs/eventfd.c:483 [inline]
->  SYSC_eventfd2 fs/eventfd.c:468 [inline]
->  SyS_eventfd2 fs/eventfd.c:458 [inline]
->  SYSC_eventfd fs/eventfd.c:485 [inline]
->  SyS_eventfd+0x2c/0x80 fs/eventfd.c:483
->  entry_SYSCALL_64_fastpath+0x29/0xa0
-> 
-> Freed by task 8081:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
->  __cache_free mm/slab.c:3488 [inline]
->  kfree+0xd6/0x260 mm/slab.c:3803
->  eventfd_free_ctx fs/eventfd.c:72 [inline]
->  eventfd_free fs/eventfd.c:79 [inline]
->  kref_put include/linux/kref.h:70 [inline]
->  eventfd_ctx_put+0x26/0x30 fs/eventfd.c:104
->  eventfd_release+0x52/0x60 fs/eventfd.c:113
->  __fput+0x327/0x7e0 fs/file_table.c:210
->  ____fput+0x15/0x20 fs/file_table.c:244
->  task_work_run+0x199/0x270 kernel/task_work.c:113
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
->  do_group_exit+0x149/0x400 kernel/exit.c:968
->  get_signal+0x73f/0x16c0 kernel/signal.c:2335
->  do_signal+0x90/0x1eb0 arch/x86/kernel/signal.c:809
->  exit_to_usermode_loop+0x214/0x310 arch/x86/entry/common.c:158
->  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
->  syscall_return_slowpath+0x490/0x550 arch/x86/entry/common.c:264
->  entry_SYSCALL_64_fastpath+0x9e/0xa0
-> 
-> The buggy address belongs to the object at ffff8801b48e5080
->  which belongs to the cache kmalloc-96 of size 96
-> The buggy address is located 56 bytes inside of
->  96-byte region [ffff8801b48e5080, ffff8801b48e50e0)
-> The buggy address belongs to the page:
-> page:ffffea0006d23940 count:1 mapcount:0 mapping:ffff8801b48e5000 index:0x0
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffff8801b48e5000 0000000000000000 0000000100000020
-> raw: ffffea0006a220e0 ffffea0006cc4320 ffff8801db0004c0 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8801b48e4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8801b48e5000: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
-> > ffff8801b48e5080: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->                                         ^
->  ffff8801b48e5100: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->  ffff8801b48e5180: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> ==================================================================
+> #syz fix: netfilter: ebtables: add CONFIG_COMPAT support
+>
 
-No longer occurring, seems this was yet another report of the vhost bug fixed by
-commit 4cd879515d68:
+Wrong commit title.  The fix for this actually was:
 
-#syz fix: vhost_net: stop device during reset owner
+#syz fix: netfilter: ebtables: CONFIG_COMPAT: don't trust userland offsets
 
 - Eric
