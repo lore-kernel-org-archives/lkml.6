@@ -1,231 +1,88 @@
-Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AIpwx48op/Fo4ePJ0ivvvLSwFsrh8Qciu2WPJ55TEYvisTcnVZPFAJr3XWLhUUf3PkxCZkISCplC
-ARC-Seal: i=1; a=rsa-sha256; t=1524248660; cv=none;
+Return-Path: <deller@gmx.de>
+X-Google-Smtp-Source: AB8JxZrckEKbNu2Z0gm6NQ5NuukaUXblPd9I3JlLlZ2PU9HJ+BZ6B953S5vONJ6bVU1y6q0CO/fE
+ARC-Seal: i=1; a=rsa-sha256; t=1524331765; cv=none;
         d=google.com; s=arc-20160816;
-        b=BG8Wbf0YWpmRXWcS7OgI2Yq6F0hfRG9M4/k08IIn6SiBHbehGSeCi+oKUQs7eBPWul
-         iCacOrXUR0/IHZatWUoYqqNuqc3x/yS/EVBW3H+0QvtGV8U5rXH0sJtNaZO+4c/nNFsG
-         tAhVFoDeAniUxLFZ0jXBaTxsTIdelDZ6dRVFU5/ceysupCbKoU8iz5puMCZTATAZ4C5k
-         KM8RPMdvr+jWnEUQcGhRBsYGPNjz2Q8M063aWV8ez3Dp+Ide47NsZIZyIZTPwsJOhjyF
-         TGzn0s0ZzlTyKoHpXtkslfQglq2AYXdVVLSicbad/EwlKMTDKf+F7fHKIgzmkGo6DwBW
-         4+Fg==
+        b=YvVE355D96dA7wVeoPHsQIzC+MkKTh6OljEsXY9xGuujPT09JhQkAjfQM9BhfDcFTA
+         VnVaZWEMyF6ouiQAp6OC70uu/+C2F/26C4XnXjZJcMv8fctbVyxtzhh0FSWA/lhwZ5Ml
+         anilqzWbEe6SUrmhU+AxJvrul8Df+MpH5yM9CribKcMrkkqqeGHIw2OI8Iohkscxn3m5
+         3xo4oe1QH2j+ZzhrZalUhNnbFs6PMvYB50nFIdJn/mD+qxmBsqMh9KrUaYUlw3yzi01M
+         9+jQHPzakbpZGKHNK4diRuoIC0OlayPlUQ7waIw4TV2RFAJGrY+yPfU4+exO/0ILJnhS
+         5lrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:references:in-reply-to:message-id:date:cc:to:from
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=0aPNmVOCajMBDKDWWIB6AsVmB3FOMsqD2NU9g2A9maA=;
-        b=uWwHJ2ZMYuFjgaf/uYDDuWCfbrHMA2fm5Xi4+JEn+N/h1bTFTvtipIk9fTNei3aAiU
-         7Y0UWNvktQc9O6lGfU8hzQJSbeoxrGm98+kzuASkf0TrOwgOLJr+wvRhdPq9OMyIl7jh
-         vqBkaKThTcIJ5h1I+xXQvDM+TPUfkxNym3Z/PaZu9hLM6dNvCtULN5hiVi7cG7iKP4si
-         qJVY6JMhpfmxya3Tyf3T2ZGUu+cFR0gj8fMHx2OKBP+aLBXPgTv6Zn7Ele2AcZ/SZjpY
-         pzpN8tacXABXTWT/wDzFai4h+VjYoR6YnB6ZppzWr73adRyB+HjQBC2PI+6nQ7hM24VS
-         QxyQ==
+        bh=MbUdC+NUUbbW8L1fpHtz2x7a9lZcqdrSLW58rvbQw3U=;
+        b=n0Jw9TfBcTMt6jjtRckucNG/GlF6MnhlOBd7fwH92WmlGUfRr5YDvYSzlkBVyzrQk3
+         Y2x7LNR+Tx4Qf7RJdCgSWydETZxvejUHrTqzR6dKE9QhWmkbO4zlNeMbUALgPZ5HNw8Y
+         SO8ZZqqXBNcaqZfjWU/lsl3FRBPRh7qcgWqM0fbmd2a1JBzht2VQXSnjxfE3LOUHlLbE
+         rC2PbZLuivoyXHpQGRkTKQCsEgfSvkJXJ8xDL327kHgC+1GJVsSOMfveEXO1IAVtKOto
+         Kq0H5Dp9z7eTK47nk+IacormdLhsNFFYbnc5EIv9IAcgcCCQCEOYJzGcUOS1v3fx4rpS
+         dgYg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
+       spf=pass (google.com: domain of deller@gmx.de designates 212.227.17.20 as permitted sender) smtp.mailfrom=deller@gmx.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-ntb@googlegroups.com,
-	linux-crypto@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
+       spf=pass (google.com: domain of deller@gmx.de designates 212.227.17.20 as permitted sender) smtp.mailfrom=deller@gmx.de
+Subject: Re: [PATCH v16 2/7] parisc: iomap: introduce io{read|write}64
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-ntb@googlegroups.com,
+ linux-crypto@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	"James E.J. Bottomley" <jejb@parisc-linux.org>,
-	Helge Deller <deller@gmx.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Date: Fri, 20 Apr 2018 12:23:58 -0600
-Message-Id: <20180420182403.9691-3-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180420182403.9691-1-logang@deltatee.com>
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>,
+ =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
+ "James E.J. Bottomley" <jejb@parisc-linux.org>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>
 References: <20180420182403.9691-1-logang@deltatee.com>
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, jejb@parisc-linux.org, deller@gmx.de, pombredanne@nexb.com, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, tglx@linutronix.de
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v16 2/7] parisc: iomap: introduce io{read|write}64
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+ <20180420182403.9691-3-logang@deltatee.com>
+From: Helge Deller <deller@gmx.de>
+Message-ID: <4cf30fbf-4972-2b1d-f327-99c20f07e84e@gmx.de>
+Date: Sat, 21 Apr 2018 19:29:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180420182403.9691-3-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:1P3JdxeM9adZQ+6fAF8ZgFXHgZq20NyIkPfh5g5VIhgNOa9++0O
+ kAciezjNUcFlRuWl9cadcWKx4R9BT0AjnEDaxGiOXAyW9NJOc8Y1XMyiUnkD71FknWejnxF
+ EszrXOPvWBxVyS5R6+g+qG5NFij65t0pYJspd/vg7ZIWlifLm8oQ5KtiZTo+4D4+aJQK+I/
+ /C8f7XuH7KtGRo/4MFkvw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zc1Mqf3lKC0=:LUtow1XgpFLOcLgOqdga4Q
+ TpY/qpNJhczgZAXjF/8gwjT648EnJ0rfGbyKBD3eGq6+y/cZhnrz8XUIGFYAj8j1Zyl5+A126
+ eQ45ygndIGFfpyE5LANOIGql9L6OG/2LtyEuY3/8oE4vpRWbNrzT7tJFB6c5SCErmIe4wr0Cn
+ NESmJTAiqkDGrCXEQxvC+CpXZMZ3ULBnl69hdNWeHNNnwqo+2U5M2qDgITS8w9hHQZmak+kOb
+ 4uLvHYlywJ/K/ItqSilC6QNlfIsOoSalrAbuPXr/W0xXgNxwrq6n7MUmfnN49DwEY4R53FidK
+ 1PbedpgSNTolqo6dQd6ub81PJWAQ/ftoKZ+6Yety6e9pX2YGBypXJ7LCFboU0Wl8eMnE2CGYw
+ 7n6nDc+L+/as9KuQyAujukuvTdpI8vt2rYV6MAss7rQZRb21YQJbH2nXbzsIEi2DxhL0cVCVe
+ c6wqNWxyuvoM+8ziezUnUynFOkZlUhGRLZweDcuGb2Di41m1YQUhgyUEFme65D4GD1UlqNzpG
+ w7vh65xQbR4eTknTx3b44NAgL9Fz7poVSKTvqQGlMmbohqkPNRjLpWEuljLwDXb7ZK7Kx3aDI
+ Vc5cNSuuXX0tiZHrQojCNN2PDXETVMmRUWu3Ww19SowJpmVn1309g4ISkIylR+a6oN8rQWjSq
+ U+a2pOMHlgqxcQvGROQP0rlQpBh0q0MSEeciLl9Sk8dWEN2JyE9e8eo01U5R1GNHAJvhjiRF9
+ Tz/r/OJRrv+g9wf/pdandt5HOWJUN5MH8y7vH5SP1pxy77h/tgM3dtboYhgRWcjHfWMk0qqGc
+ eqQnn/B5jbGukkYza8R76VnEfcgO8qOxbeQL7QDWx4wa7+vPBs=
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598290563713613159?=
-X-GMAIL-MSGID: =?utf-8?q?1598290563713613159?=
+X-GMAIL-MSGID: =?utf-8?q?1598377705433134067?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add support for io{read|write}64() functions in parisc architecture.
-These are pretty straightforward copies of similar functions which
-make use of readq and writeq.
+On 20.04.2018 20:23, Logan Gunthorpe wrote:
+> Add support for io{read|write}64() functions in parisc architecture.
+> These are pretty straightforward copies of similar functions which
+> make use of readq and writeq.
+> 
+> Also, indicate that the lo_hi and hi_lo variants of these functions
+> are not provided by this architecture.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
+> Cc: Helge Deller <deller@gmx.de>
 
-Also, indicate that the lo_hi and hi_lo variants of these functions
-are not provided by this architecture.
+Acked-by: Helge Deller <deller@gmx.de> # parisc
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
-Cc: Helge Deller <deller@gmx.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
- arch/parisc/include/asm/io.h |  9 +++++++
- arch/parisc/lib/iomap.c      | 64 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 73 insertions(+)
-
-diff --git a/arch/parisc/include/asm/io.h b/arch/parisc/include/asm/io.h
-index afe493b23d04..30a8315d5c07 100644
---- a/arch/parisc/include/asm/io.h
-+++ b/arch/parisc/include/asm/io.h
-@@ -311,6 +311,15 @@ extern void outsl (unsigned long port, const void *src, unsigned long count);
-  * value for either 32 or 64 bit mode */
- #define F_EXTEND(x) ((unsigned long)((x) | (0xffffffff00000000ULL)))
- 
-+#define ioread64 ioread64
-+#define ioread64be ioread64be
-+#define iowrite64 iowrite64
-+#define iowrite64be iowrite64be
-+extern u64 ioread64(void __iomem *addr);
-+extern u64 ioread64be(void __iomem *addr);
-+extern void iowrite64(u64 val, void __iomem *addr);
-+extern void iowrite64be(u64 val, void __iomem *addr);
-+
- #include <asm-generic/iomap.h>
- 
- /*
-diff --git a/arch/parisc/lib/iomap.c b/arch/parisc/lib/iomap.c
-index 4b19e6e64fb7..0195aec657e2 100644
---- a/arch/parisc/lib/iomap.c
-+++ b/arch/parisc/lib/iomap.c
-@@ -48,11 +48,15 @@ struct iomap_ops {
- 	unsigned int (*read16be)(void __iomem *);
- 	unsigned int (*read32)(void __iomem *);
- 	unsigned int (*read32be)(void __iomem *);
-+	u64 (*read64)(void __iomem *);
-+	u64 (*read64be)(void __iomem *);
- 	void (*write8)(u8, void __iomem *);
- 	void (*write16)(u16, void __iomem *);
- 	void (*write16be)(u16, void __iomem *);
- 	void (*write32)(u32, void __iomem *);
- 	void (*write32be)(u32, void __iomem *);
-+	void (*write64)(u64, void __iomem *);
-+	void (*write64be)(u64, void __iomem *);
- 	void (*read8r)(void __iomem *, void *, unsigned long);
- 	void (*read16r)(void __iomem *, void *, unsigned long);
- 	void (*read32r)(void __iomem *, void *, unsigned long);
-@@ -171,6 +175,16 @@ static unsigned int iomem_read32be(void __iomem *addr)
- 	return __raw_readl(addr);
- }
- 
-+static u64 iomem_read64(void __iomem *addr)
-+{
-+	return readq(addr);
-+}
-+
-+static u64 iomem_read64be(void __iomem *addr)
-+{
-+	return __raw_readq(addr);
-+}
-+
- static void iomem_write8(u8 datum, void __iomem *addr)
- {
- 	writeb(datum, addr);
-@@ -196,6 +210,16 @@ static void iomem_write32be(u32 datum, void __iomem *addr)
- 	__raw_writel(datum, addr);
- }
- 
-+static void iomem_write64(u64 datum, void __iomem *addr)
-+{
-+	writel(datum, addr);
-+}
-+
-+static void iomem_write64be(u64 datum, void __iomem *addr)
-+{
-+	__raw_writel(datum, addr);
-+}
-+
- static void iomem_read8r(void __iomem *addr, void *dst, unsigned long count)
- {
- 	while (count--) {
-@@ -250,11 +274,15 @@ static const struct iomap_ops iomem_ops = {
- 	.read16be = iomem_read16be,
- 	.read32 = iomem_read32,
- 	.read32be = iomem_read32be,
-+	.read64 = iomem_read64,
-+	.read64be = iomem_read64be,
- 	.write8 = iomem_write8,
- 	.write16 = iomem_write16,
- 	.write16be = iomem_write16be,
- 	.write32 = iomem_write32,
- 	.write32be = iomem_write32be,
-+	.write64 = iomem_write64,
-+	.write64be = iomem_write64be,
- 	.read8r = iomem_read8r,
- 	.read16r = iomem_read16r,
- 	.read32r = iomem_read32r,
-@@ -304,6 +332,20 @@ unsigned int ioread32be(void __iomem *addr)
- 	return *((u32 *)addr);
- }
- 
-+u64 ioread64(void __iomem *addr)
-+{
-+	if (unlikely(INDIRECT_ADDR(addr)))
-+		return iomap_ops[ADDR_TO_REGION(addr)]->read64(addr);
-+	return le64_to_cpup((u64 *)addr);
-+}
-+
-+u64 ioread64be(void __iomem *addr)
-+{
-+	if (unlikely(INDIRECT_ADDR(addr)))
-+		return iomap_ops[ADDR_TO_REGION(addr)]->read64be(addr);
-+	return *((u64 *)addr);
-+}
-+
- void iowrite8(u8 datum, void __iomem *addr)
- {
- 	if (unlikely(INDIRECT_ADDR(addr))) {
-@@ -349,6 +391,24 @@ void iowrite32be(u32 datum, void __iomem *addr)
- 	}
- }
- 
-+void iowrite64(u64 datum, void __iomem *addr)
-+{
-+	if (unlikely(INDIRECT_ADDR(addr))) {
-+		iomap_ops[ADDR_TO_REGION(addr)]->write64(datum, addr);
-+	} else {
-+		*((u64 *)addr) = cpu_to_le64(datum);
-+	}
-+}
-+
-+void iowrite64be(u64 datum, void __iomem *addr)
-+{
-+	if (unlikely(INDIRECT_ADDR(addr))) {
-+		iomap_ops[ADDR_TO_REGION(addr)]->write64be(datum, addr);
-+	} else {
-+		*((u64 *)addr) = datum;
-+	}
-+}
-+
- /* Repeating interfaces */
- 
- void ioread8_rep(void __iomem *addr, void *dst, unsigned long count)
-@@ -449,11 +509,15 @@ EXPORT_SYMBOL(ioread16);
- EXPORT_SYMBOL(ioread16be);
- EXPORT_SYMBOL(ioread32);
- EXPORT_SYMBOL(ioread32be);
-+EXPORT_SYMBOL(ioread64);
-+EXPORT_SYMBOL(ioread64be);
- EXPORT_SYMBOL(iowrite8);
- EXPORT_SYMBOL(iowrite16);
- EXPORT_SYMBOL(iowrite16be);
- EXPORT_SYMBOL(iowrite32);
- EXPORT_SYMBOL(iowrite32be);
-+EXPORT_SYMBOL(iowrite64);
-+EXPORT_SYMBOL(iowrite64be);
- EXPORT_SYMBOL(ioread8_rep);
- EXPORT_SYMBOL(ioread16_rep);
- EXPORT_SYMBOL(ioread32_rep);
--- 
-2.11.0
+Helge
