@@ -1,66 +1,105 @@
-Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
-X-Google-Smtp-Source: AIpwx495ZZ74q0akiy6KAJYy88P8F0ERiZCA6mbpD9o0fOD3Ytyx0UqTDFV9tpaDjvXk4nk3eKL0
-ARC-Seal: i=1; a=rsa-sha256; t=1524362721; cv=none;
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AIpwx4/A6zm9U5ORo92cmgFu71K7qGDRQ4lFnWewYXwSFHfIM+e4AMidl26voEYtmj9SNlw3AlIR
+ARC-Seal: i=1; a=rsa-sha256; t=1524343268; cv=none;
         d=google.com; s=arc-20160816;
-        b=OqFG3FflSxQ8sxDhPSFF4S1mkVU06L5zMTBy0p5zCXk5ccQGj2jauVBNCMEeRIYMiP
-         3/E6AAMDk/lJ7lJRfLxrO+OC1I5je8Gs3jqKokw8jIq7XQMoDWXV3uWiVEqZFD9nUMXy
-         c65Y6iXkr3lRLhGrt2Sk326ghDEPrwSLVC9jZM4rKcX0qUc8hzUTLBf0obZCoDA5GD5j
-         YxcKk3KV5Wn3/mQyyHtm8i1Vxkm7h2yDQ7AJuG5Q3GboYtBYml9xZc1yWUiSDaFLbr1B
-         uiSv3K2wZjtTaIm+rzh+1LoRwUnCg3bmk75QXSe+BZ/MA6fjRlAT1q4IAwB/uNVccLOn
-         knLA==
+        b=Z+OKDYVtfzSANtrFyBaGQbhvKj9r4qx6VptAzVfJySUbHOiE+b5vjvCU4izqMTqoLh
+         SP88PBIWkqAkP45lAH6ZbUGfWhmOP3rArcRl+4/yBXrvo7kqXzCHrL2m66gzyc8uQAJh
+         Ay91cRvWORTR4e0yXVuESVaZZJ+yQILwSp43gwW5xZ5J8JgSqdnfrQVJt1jmrtaxEvHA
+         efHJHRsJwOYudRGMcnvM2AtMXtE+BCaoHoNF3wQHvcstJWVHN8M9Uaj4hqhjOpWy+wuR
+         spK8tFkTuAVvB5tD5y+n6oAMQy7HNcgIrfA6dXM8aWseEFhzaDf3X6zEppXR+mL5/L19
+         yE1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:cc:references:to:subject
-         :arc-authentication-results;
-        bh=ERYaOdOyT6xPG/Bw0VWiLO6cTkJQ8tPhdROS/b5P9GE=;
-        b=YAFPv9WJont2JW/Sq4DXqGO5f6rQ2ZuHLNJxlCr92GJerx+iWf0pOMvb6J3oYnK7Jn
-         c/EBGqmUg6blINdAoupvuoTJqDGFduqZjrJC5+SmGKNJuwUbLDpAUo3eNrjFBhzwAaJ3
-         KxBpxtcGjvlULdLOVKn/5rDz3f9lHjWRrRwed7zN0JOigOy/EMPoZY9aOR9ZU07+02Sq
-         eOE1QDH0ZHkebhWKnuSGum0PvtrBwb79i3znKJr5hiZdqe8zRkDw2ovw3gB9ajk37SM0
-         PKvGoIs/hRD+G/RKDiQ2rJbkRHDMsRs9l1J13TsA+q+PzDUfoEFmcEm3grYBDYmpAEb2
-         nWcg==
+        h=list-id:precedence:sender:cc:to:subject:message-id:date:from
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=mST2aiBk0WSHGAQpc5NF7NtYs/mJs04CdGZV5pU/7fw=;
+        b=NrOg0eseJrdrQQnbg7JBEQT6I4bgm9Vw6zGJXetPHihisXcs4YlEOsJ8ESLDYvvQAY
+         0dXEVunauSGuclkpDuJJbn+mznn+ZFOt632krqh4M+dY710RTCPhXY0p9Xm7fUuBqKe6
+         yClfzp9wQMR1+cIOeDpKNqhyKQ4MxSbuwPuJu3hT99lDLA1XHEy1kR4/xo8umfohMSIp
+         G2hRtBl0vNDUKxCwYCtPCPiZKM+RRh7sCSOcsUVjijSdlttppqA2UmP5JKV7gs9Qk/48
+         hr4noWr6tNxQYNgeEhyOaN6PQ3yYqYR3Nym0ehsdL4UeVnksvpyRu2DAIN4ACT1R2VDP
+         IrmA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
+       dkim=neutral (body hash did not verify) header.i=@rajagiritech-edu-in.20150623.gappssmtp.com header.s=20150623 header.b=mcCODtcN;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
-Subject: Re: INFO: rcu detected stall in __process_echoes
-To: syzbot <syzbot+108696293d7a21ab688f@syzkaller.appspotmail.com>,
-        dvyukov@google.com, gregkh@linuxfoundation.org,
-        syzkaller-bugs@googlegroups.com
-References: <001a1140e920eb829905687391d6@google.com>
-Cc: akpm@linux-foundation.org, aryabinin@virtuozzo.com,
-        linux-kernel@vger.kernel.org, tchibo@google.com, tglx@linutronix.de
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <9b7f3efc-cfde-df21-1071-a566c970f81e@I-love.SAKURA.ne.jp>
-Date: Sun, 22 Apr 2018 11:04:49 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       dkim=neutral (body hash did not verify) header.i=@rajagiritech-edu-in.20150623.gappssmtp.com header.s=20150623 header.b=mcCODtcN;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753221AbeDUUlH (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Sat, 21 Apr 2018 16:41:07 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36521 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753150AbeDUUlG (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Sat, 21 Apr 2018 16:41:06 -0400
 MIME-Version: 1.0
-In-Reply-To: <001a1140e920eb829905687391d6@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date: Sun, 22 Apr 2018 02:11:05 +0530
+Message-ID: <CAG=yYwnsP5w6hKqsp0Q3_DZO3JZmtStGwnXNZN9zjPuFe8fOeA@mail.gmail.com>
+Subject: Re: possible BUG: selftests: proc-loadavg-001 failed during kernel testing
+To: shuah@kernel.org, Kees Cook <keescook@chromium.org>,
+        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
+        viro@zeniv.linux.org.uk
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596163843273194959?=
-X-GMAIL-MSGID: =?utf-8?q?1598410165346350178?=
+X-GMAIL-THRID: =?utf-8?q?1598389767027919605?=
+X-GMAIL-MSGID: =?utf-8?q?1598389767027919605?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018/03/28 16:01, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on upstream commit
-> 3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
-> Linux 4.16-rc7
-> syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=108696293d7a21ab688f
-> 
-> So far this crash happened 10 times on upstream.
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4941573204738048
-> syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5314352743710720
-> Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5561943247028224
-> Kernel config: https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
-> compiler: gcc (GCC) 7.1.1 20170620
+This problem is fixed now.
 
-Reproducer and result are essentially same with another report. Thus,
+$sudo make -C tools/testing/selftests/proc run_tests
+[sudo] password for jeffrin:
+make: Entering directory
+'/home/jeffrin/upstream-kernel/linux/tools/testing/selftests/proc'
+TAP version 13
+selftests: proc-loadavg-001
+========================================
+ok 1..1 selftests: proc-loadavg-001 [PASS]
 
-#syz dup: INFO: rcu detected stall in n_tty_receive_char_special
+Please add me in changelog if i was useful.
+
+
+
+On Sat, Apr 21, 2018 at 8:41 PM, Jeffrin Thalakkottoor
+<jeffrin@rajagiritech.edu.in> wrote:
+> hello,
+>
+> selftests: proc-loadavg-001
+> ========================================
+> not ok 1..1 selftests:  proc-loadavg-001 [FAIL]
+>
+> To reproduce :
+> make -C tools/testing/selftests/proc run_tests
+>
+> Linux debian 4.17.0-rc1+ #3 SMP Sat Apr 21 03:41:44 IST 2018 x86_64 GNU/Linux
+>
+> GNU Make            4.2.1
+> Binutils            2.30
+> Util-linux          2.31.1
+> Mount                2.31.1
+> Linux C Library      2.27
+> Dynamic linker (ldd) 2.27
+> readlink: missing operand
+> Try 'readlink --help' for more information.
+> Procps              3.3.14
+> Kbd                  2.0.4
+> Console-tools        2.0.4
+> Sh-utils            8.28
+> Udev                238
+>
+>
+>
+> --
+> software engineer
+> rajagiri school of engineering and technology
+
+
+
+-- 
+software engineer
+rajagiri school of engineering and technology
