@@ -1,37 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753355AbeDUTeP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 15:34:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42880 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753179AbeDUTeO (ORCPT
+        id S1753395AbeDUTf3 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 15:35:29 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:46174 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753158AbeDUTf1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 15:34:14 -0400
-Date: Sat, 21 Apr 2018 12:34:09 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: hughd@google.com, minchan@kernel.org, ying.huang@intel.com,
-        ross.zwisler@linux.intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: memory: Introduce new vmf_insert_mixed_mkwrite
-Message-ID: <20180421193409.GD14610@bombadil.infradead.org>
-References: <20180421170540.GA17849@jordon-HP-15-Notebook-PC>
+        Sat, 21 Apr 2018 15:35:27 -0400
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Sat, 21 Apr 2018 21:35:26 +0200
+X-ME-IP: 90.55.212.125
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH 29/61] mtd: devices: simplify getting .drvdata
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
+X-URL: http://belgarath.falguerolles.org/
+Date: Sat, 21 Apr 2018 21:35:21 +0200
+In-Reply-To: <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
+        (Wolfram Sang's message of "Thu, 19 Apr 2018 16:05:59 +0200")
+Message-ID: <87o9icxshy.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180421170540.GA17849@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 21, 2018 at 10:35:40PM +0530, Souptick Joarder wrote:
-> As of now vm_insert_mixed_mkwrite() is only getting
-> invoked from fs/dax.c, so this change has to go first
-> in linus tree before changes in dax.
+Wolfram Sang <wsa+renesas@sang-engineering.com> writes:
 
-No.  One patch which changes both at the same time.  The history should
-be bisectable so that it compiles and works at every point.
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-The rest of the patch looks good.
+Cheers.
+
+--
+Robert
