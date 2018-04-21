@@ -1,78 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753336AbeDUURP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 16:17:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51506 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753192AbeDUURN (ORCPT
+        id S1753325AbeDUUcz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 16:32:55 -0400
+Received: from mail-ot0-f178.google.com ([74.125.82.178]:36657 "EHLO
+        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753223AbeDUUcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 16:17:13 -0400
-Date: Sat, 21 Apr 2018 13:17:11 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: mawilcox@microsoft.com, ross.zwisler@linux.intel.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2] fs: dax: Adding new return type vm_fault_t
-Message-ID: <20180421201711.GE14610@bombadil.infradead.org>
-References: <20180421171442.GA17919@jordon-HP-15-Notebook-PC>
+        Sat, 21 Apr 2018 16:32:53 -0400
+X-Google-Smtp-Source: AIpwx48hiVQCFv2qQF08kn2EQsPMAUykWvdueP31GK8zpExR/afiOB0IEROUUnCHxO6a3qN8hKCJYg==
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: False memory leak in iwlmvm
+To: Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Message-ID: <b785238b-9d20-0297-382c-65f41be00ea3@lwfinger.net>
+Date: Sat, 21 Apr 2018 15:32:51 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180421171442.GA17919@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 21, 2018 at 10:44:42PM +0530, Souptick Joarder wrote:
-> @@ -1112,7 +1112,7 @@ int __dax_zero_page_range(struct block_device *bdev,
->  }
->  EXPORT_SYMBOL_GPL(dax_iomap_rw);
->  
-> -static int dax_fault_return(int error)
-> +static vm_fault_t dax_fault_return(int error)
->  {
->  	if (error == 0)
->  		return VM_FAULT_NOPAGE;
+Gentlemen,
 
-At some point, we'll want to get rid of dax_fault_return, but that can be
-a follow-on patch after vmf_error is in.
+I was checking a scan of /sys/kernel/debug/kmemleak with 4.17.0-rc1 and came 
+across this leak message arising from iwlwifi. It is a false message as 
+unloading iwlmvm has it disappearing from the scan.
 
->  		if (write)
-> -			error = vm_insert_mixed_mkwrite(vma, vaddr, pfn);
-> +			ret = vmf_insert_mixed_mkwrite(vma, vaddr, pfn);
->  		else
-> -			error = vm_insert_mixed(vma, vaddr, pfn);
-> +			ret = vmf_insert_mixed(vma, vaddr, pfn);
->  
-> -		/* -EBUSY is fine, somebody else faulted on the same PTE */
-> -		if (error == -EBUSY)
-> -			error = 0;
-> -		break;
-> +		goto finish_iomap;
+Thanks,
+Larry
 
-> @@ -1284,12 +1281,12 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	}
->  
->   error_finish_iomap:
-> -	vmf_ret = dax_fault_return(error) | major;
-> +	ret = dax_fault_return(error) | major;
->   finish_iomap:
-
-I think we lose VM_FAULT_MAJOR with this change.
-
-I would suggest fixing this with ...
-
-  error_finish_iomap:
--	vmf_ret = dax_fault_return(error) | major;
-+	ret = dax_fault_return(error);
-  finish_iomap:
-
-[...]
-
-  out:
--	trace_dax_pte_fault_done(inode, vmf, vmf_ret);
--	return vmf_ret;
-+	trace_dax_pte_fault_done(inode, vmf, ret);
-+	return ret | major;
+unreferenced object 0xffff88021da6c580 (size 128):
+   comm "softirq", pid 0, jiffies 4298748784 (age 7844.956s)
+   hex dump (first 32 bytes):
+     00 c4 a6 1d 02 88 ff ff 00 00 00 00 00 00 00 00  ................
+     00 00 00 00 20 00 00 00 00 38 49 15 ca 55 00 00  .... ....8I..U..
+   backtrace:
+     [<00000000599c704b>] nf_ct_ext_add+0x9e/0x180 [nf_conntrack]
+     [<00000000e323b857>] init_conntrack+0x206/0x5b0 [nf_conntrack]
+     [<00000000639e3725>] nf_conntrack_in+0x3c8/0x4e0 [nf_conntrack]
+     [<00000000795b6382>] nf_hook_slow+0x43/0xc0
+     [<000000005e335478>] ip_rcv+0x2e3/0x3a0
+     [<0000000063a4cdd5>] __netif_receive_skb_core+0x3f5/0xb70
+     [<00000000cb885815>] netif_receive_skb_internal+0x2c/0xf0
+     [<00000000976d864f>] napi_gro_receive+0xd1/0xf0
+     [<00000000ea233b08>] ieee80211_deliver_skb+0xe7/0x250 [mac80211]
+     [<00000000b29f1d1e>] ieee80211_rx_handlers+0xd30/0x1e40 [mac80211]
+     [<000000004f15ea1a>] ieee80211_prepare_and_rx_handle+0x534/0x11c0 [mac80211]
+     [<0000000088d8e9fc>] ieee80211_rx_napi+0x328/0x9c0 [mac80211]
+     [<000000008360ee9e>] iwl_mvm_rx_rx_mpdu+0x501/0x960 [iwlmvm]
+     [<00000000b977d096>] iwl_pcie_rx_handle+0x21d/0x870 [iwlwifi]
+     [<000000005ccb7965>] iwl_pcie_irq_handler+0x6b5/0xa00 [iwlwifi]
+     [<0000000010a165b6>] irq_thread_fn+0x21/0x50
