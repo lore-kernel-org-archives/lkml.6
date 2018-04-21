@@ -1,60 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752880AbeDUNk3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 09:40:29 -0400
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:32961 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752633AbeDUNk1 (ORCPT
+        id S1753074AbeDUOsH (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 10:48:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58564 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752892AbeDUOsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 09:40:27 -0400
-X-Google-Smtp-Source: AB8JxZpl52NJ6JRMdX+xmqm2K0oRGR9OAPfJCQmvWfjdH5YouY/Z4n5rO3xgacE96f0sdLLcq4RqsjIbjz3g9PlFjJk=
+        Sat, 21 Apr 2018 10:48:05 -0400
+Date: Sat, 21 Apr 2018 07:47:57 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>, David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, bhutchings@solarflare.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
+        jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        dm-devel@redhat.com, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+Message-ID: <20180421144757.GC14610@bombadil.infradead.org>
+References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
+ <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
+ <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180418.134651.2225112489265654270.davem@davemloft.net>
+ <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180420130852.GC16083@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180420210200.GH10788@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date: Sat, 21 Apr 2018 19:10:26 +0530
-Message-ID: <CAG=yYwnnVissybfqmJHgzGccMYDUnxtK+6OT_CRo6Yu1TzoGSg@mail.gmail.com>
-Subject: POSSIBLE BUG: boot gets stuck and loads initramfs shell
-To: linux@dominikbrodowski.net, arnd@arndb.de, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hello,
+On Fri, Apr 20, 2018 at 05:21:26PM -0400, Mikulas Patocka wrote:
+> On Fri, 20 Apr 2018, Matthew Wilcox wrote:
+> > On Fri, Apr 20, 2018 at 04:54:53PM -0400, Mikulas Patocka wrote:
+> > > On Fri, 20 Apr 2018, Michal Hocko wrote:
+> > > > No way. This is just wrong! First of all, you will explode most likely
+> > > > on many allocations of small sizes. Second, CONFIG_DEBUG_VM tends to be
+> > > > enabled quite often.
+> > > 
+> > > You're an evil person who doesn't want to fix bugs.
+> > 
+> > Steady on.  There's no need for that.  Michal isn't evil.  Please
+> > apologise.
+> 
+> I see this attitude from Michal again and again.
 
-i did a new git pull on my mainline linux kernel repository
-i did "make localmodconfig" and compiled
-i got a boot failure related. i got message about not able to mount
-filesystem. it then loaded the initramfs shell.
+Fine; then *say that*.  I also see Michal saying "No" a lot.  Sometimes
+I agree with him, sometimes I don't.  I think he genuinely wants the best
+code in the kernel, and saying "No" is part of it.
 
-i recompiled the kernel with ext4 file system inbuilt (i mean not as a module )
-then the system did not have that problem.
+> He didn't want to fix vmalloc(GFP_NOIO)
 
-but i think the problem did not exist before even when the ext4 was compiled
-as a module. i think the problem occurred after i compiled using "make
-localmodconfig"
+I don't remember that conversation, so I don't know whether I agree with
+his reasoning or not.  But we are supposed to be moving away from GFP_NOIO
+towards marking regions with memalloc_noio_save() / restore.  If you do
+that, you won't need vmalloc(GFP_NOIO).
 
+> he didn't want to fix alloc_pages sleeping when __GFP_NORETRY is used.
 
-Linux debian 4.17.0-rc1+ #3 SMP Sat Apr 21 03:41:44 IST 2018 x86_64 GNU/Linux
+The GFP flags are a mess, still.
 
-GNU Make            4.2.1
-Binutils            2.30
-Util-linux          2.31.1
-Mount                2.31.1
-Linux C Library      2.27
-Dynamic linker (ldd) 2.27
-readlink: missing operand
-Try 'readlink --help' for more information.
-Procps              3.3.14
-Kbd                  2.0.4
-Console-tools        2.0.4
-Sh-utils            8.28
-Udev                238
+> So what should I say? Fix them and 
+> you won't be evil :-)
 
+No, you should reserve calling somebody evil for truly evil things.
 
+> (he could also fix the oom killer, so that it is triggered when 
+> free_memory+cache+free_swap goes beyond a threshold and not when you loop 
+> too long in the allocator)
 
+... that also doesn't make somebody evil.
 
+> I already said that we can change it from CONFIG_DEBUG_VM to 
+> CONFIG_DEBUG_SG - or to whatever other option you may want, just to make 
+> sure that it is enabled in distro debug kernels by default.
 
--- 
-software engineer
-rajagiri school of engineering and technology
+Yes, and I think that's the right idea.  So send a v2 and ignore the
+replies that are clearly relating to an earlier version of the patch.
+Not everybody reads every mail in the thread before responding to one they
+find interesting.  Yes, ideally, one would, but sometimes one doesn't.
