@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752804AbeDUHsU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 03:48:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45451 "EHLO
+        id S1752881AbeDUHsl (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 03:48:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49253 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751223AbeDUHsQ (ORCPT
+        with ESMTP id S1751223AbeDUHsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 03:48:16 -0400
-Date: Sat, 21 Apr 2018 00:47:54 -0700
-From: tip-bot for Alexey Budankov <tipbot@zytor.com>
-Message-ID: <tip-bf30cc1882d2c65aaf92842cc9bcf06565eab73c@git.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, alexey.budankov@linux.intel.com,
-        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, acme@redhat.com,
-        jolsa@redhat.com, ak@linux.intel.com, mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org, jolsa@redhat.com,
-        ak@linux.intel.com, mingo@kernel.org, acme@redhat.com,
-        alexey.budankov@linux.intel.com, namhyung@kernel.org,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <5fc65ce7-8ca5-53ae-8858-8ddd27290575@linux.intel.com>
-References: <5fc65ce7-8ca5-53ae-8858-8ddd27290575@linux.intel.com>
+        Sat, 21 Apr 2018 03:48:40 -0400
+Date: Sat, 21 Apr 2018 00:48:28 -0700
+From: tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-038586c34301578e538f6c5aa79ca82bce1b9152@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        heiko.carstens@de.ibm.com, hpa@zytor.com, brueckner@linux.vnet.ibm.com,
+        tmricht@linux.vnet.ibm.com, mingo@kernel.org, tglx@linutronix.de,
+        acme@redhat.com, schwidefsky@de.ibm.com
+Reply-To: acme@redhat.com, schwidefsky@de.ibm.com, mingo@kernel.org,
+        tmricht@linux.vnet.ibm.com, brueckner@linux.vnet.ibm.com,
+        tglx@linutronix.de, hpa@zytor.com, heiko.carstens@de.ibm.com,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com
+In-Reply-To: <20180416132314.33249-1-tmricht@linux.ibm.com>
+References: <20180416132314.33249-1-tmricht@linux.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf script: Extend misc field decoding with
- switch out event type
-Git-Commit-ID: bf30cc1882d2c65aaf92842cc9bcf06565eab73c
+Subject: [tip:perf/urgent] perf list: Add s390 support for detailed/verbose
+ PMU event description
+Git-Commit-ID: 038586c34301578e538f6c5aa79ca82bce1b9152
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,88 +36,145 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bf30cc1882d2c65aaf92842cc9bcf06565eab73c
-Gitweb:     https://git.kernel.org/tip/bf30cc1882d2c65aaf92842cc9bcf06565eab73c
-Author:     Alexey Budankov <alexey.budankov@linux.intel.com>
-AuthorDate: Mon, 9 Apr 2018 10:26:46 +0300
+Commit-ID:  038586c34301578e538f6c5aa79ca82bce1b9152
+Gitweb:     https://git.kernel.org/tip/038586c34301578e538f6c5aa79ca82bce1b9152
+Author:     Thomas Richter <tmricht@linux.vnet.ibm.com>
+AuthorDate: Mon, 16 Apr 2018 15:23:14 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 17 Apr 2018 09:47:39 -0300
 
-perf script: Extend misc field decoding with switch out event type
+perf list: Add s390 support for detailed/verbose PMU event description
 
-Append 'p' sign to 'S' tag designating the type of context switch out event so
-'Sp' means preemption context switch. Documentation is extended to cover
-new presentation changes.
+'perf list' with flags -d and -v print a description (-d) or a very
+verbose explanation (-v) of CPU specific counter events.  These
+descriptions are provided with the json files in directory
+pmu-events/arch/s390/*.json.
 
-  $ perf script --show-switch-events -F +misc -I -i perf.data:
+Display of these descriptions on s390 requires the corresponding json
+files.
 
-          hdparm 4073 [004] U  762.198265:     380194 cycles:ppp:      7faf727f5a23 strchr (/usr/lib64/ld-2.26.so)
-          hdparm 4073 [004] K  762.198366:     441572 cycles:ppp:  ffffffffb9218435 alloc_set_pte (/lib/modules/4.16.0-rc6+/build/vmlinux)
-          hdparm 4073 [004] S  762.198391: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:    0/0
-         swapper    0 [004]    762.198392: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid: 4073/4073
-         swapper    0 [004] Sp 762.198477: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid: 4073/4073
-          hdparm 4073 [004]    762.198478: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:    0/0
-         swapper    0 [007] K  762.198514:    2303073 cycles:ppp:  ffffffffb98b0c66 intel_idle (/lib/modules/4.16.0-rc6+/build/vmlinux)
-         swapper    0 [007] Sp 762.198561: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid: 1134/1134
-  kworker/u16:18 1134 [007]    762.198562: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:    0/0
-  kworker/u16:18 1134 [007] S  762.198567: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:    0/0
+On s390 this does not work because function is_pmu_core() does not
+detect the s390 directory name where the CPU specific events are listed.
+On x86 it is:
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/5fc65ce7-8ca5-53ae-8858-8ddd27290575@linux.intel.com
+  /sys/bus/event_source/devices/cpu
+
+whereas on s390 it is:
+
+  /sys/bus/event_source/devices/cpum_cf
+  /sys/bus/event_source/devices/cpum_sf
+
+Fix this by adding s390 directory name testing to function
+is_pmu_core(). This is the same approach as taken for the ARM platform.
+
+Output before:
+
+[root@s35lp76 perf]# ./perf list -d pmu
+List of pre-defined events (to be used in -e):
+
+  cpum_cf/AES_BLOCKED_CYCLES/      [Kernel PMU event]
+  cpum_cf/AES_BLOCKED_FUNCTIONS/   [Kernel PMU event]
+  cpum_cf/AES_CYCLES/              [Kernel PMU event]
+  cpum_cf/AES_FUNCTIONS/           [Kernel PMU event]
+  ....
+  cpum_cf/TX_NC_TEND/              [Kernel PMU event]
+  cpum_cf/VX_BCD_EXECUTION_SLOTS/  [Kernel PMU event]
+  cpum_sf/SF_CYCLES_BASIC/         [Kernel PMU event]
+
+Output after:
+
+[root@s35lp76 perf]# ./perf list -d pmu
+List of pre-defined events (to be used in -e):
+
+  cpum_cf/AES_BLOCKED_CYCLES/      [Kernel PMU event]
+  cpum_cf/AES_BLOCKED_FUNCTIONS/   [Kernel PMU event]
+  cpum_cf/AES_CYCLES/              [Kernel PMU event]
+  cpum_cf/AES_FUNCTIONS/           [Kernel PMU event]
+  ....
+  cpum_cf/TX_NC_TEND/              [Kernel PMU event]
+  cpum_cf/VX_BCD_EXECUTION_SLOTS/  [Kernel PMU event]
+  cpum_sf/SF_CYCLES_BASIC/         [Kernel PMU event]
+
+3906:
+  bcd_dfp_execution_slots
+       [BCD DFP Execution Slots]
+  decimal_instructions
+       [Decimal Instructions]
+  dtlb2_gpage_writes
+       [DTLB2 GPAGE Writes]
+  dtlb2_hpage_writes
+       [DTLB2 HPAGE Writes]
+  dtlb2_misses
+       [DTLB2 Misses]
+  dtlb2_writes
+       [DTLB2 Writes]
+  itlb2_misses
+       [ITLB2 Misses]
+  itlb2_writes
+       [ITLB2 Writes]
+  l1c_tlb2_misses
+       [L1C TLB2 Misses]
+  .....
+
+cfvn 3:
+  cpu_cycles
+       [CPU Cycles]
+  instructions
+       [Instructions]
+  l1d_dir_writes
+       [L1D Directory Writes]
+  l1d_penalty_cycles
+       [L1D Penalty Cycles]
+  l1i_dir_writes
+       [L1I Directory Writes]
+  l1i_penalty_cycles
+       [L1I Penalty Cycles]
+  problem_state_cpu_cycles
+       [Problem State CPU Cycles]
+  problem_state_instructions
+       [Problem State Instructions]
+  ....
+
+csvn generic:
+  aes_blocked_cycles
+       [AES Blocked Cycles]
+  aes_blocked_functions
+       [AES Blocked Functions]
+  aes_cycles
+       [AES Cycles]
+  aes_functions
+       [AES Functions]
+  dea_blocked_cycles
+       [DEA Blocked Cycles]
+  dea_blocked_functions
+       [DEA Blocked Functions]
+  ....
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180416132314.33249-1-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
- tools/perf/builtin-script.c              |  5 ++++-
- 2 files changed, 13 insertions(+), 9 deletions(-)
+ tools/perf/util/pmu.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 36ec0257f8d3..afdafe2110a1 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -228,14 +228,15 @@ OPTIONS
- 	For sample events it's possible to display misc field with -F +misc option,
- 	following letters are displayed for each bit:
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 064bdcb7bd78..61a5e5027338 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -562,6 +562,12 @@ static int is_pmu_core(const char *name)
+ 	if (stat(path, &st) == 0)
+ 		return 1;
  
--	  PERF_RECORD_MISC_KERNEL        K
--	  PERF_RECORD_MISC_USER          U
--	  PERF_RECORD_MISC_HYPERVISOR    H
--	  PERF_RECORD_MISC_GUEST_KERNEL  G
--	  PERF_RECORD_MISC_GUEST_USER    g
--	  PERF_RECORD_MISC_MMAP_DATA*    M
--	  PERF_RECORD_MISC_COMM_EXEC     E
--	  PERF_RECORD_MISC_SWITCH_OUT    S
-+	  PERF_RECORD_MISC_KERNEL               K
-+	  PERF_RECORD_MISC_USER                 U
-+	  PERF_RECORD_MISC_HYPERVISOR           H
-+	  PERF_RECORD_MISC_GUEST_KERNEL         G
-+	  PERF_RECORD_MISC_GUEST_USER           g
-+	  PERF_RECORD_MISC_MMAP_DATA*           M
-+	  PERF_RECORD_MISC_COMM_EXEC            E
-+	  PERF_RECORD_MISC_SWITCH_OUT           S
-+	  PERF_RECORD_MISC_SWITCH_OUT_PREEMPT   Sp
++	/* Look for cpu sysfs (specific to s390) */
++	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/%s",
++		  sysfs, name);
++	if (stat(path, &st) == 0 && !strncmp(name, "cpum_", 5))
++		return 1;
++
+ 	return 0;
+ }
  
- 	  $ perf script -F +misc ...
- 	   sched-messaging  1414 K     28690.636582:       4590 cycles ...
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index b17edbcd98cc..e0a9845b6cbc 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -657,8 +657,11 @@ static int perf_sample__fprintf_start(struct perf_sample *sample,
- 			break;
- 		case PERF_RECORD_SWITCH:
- 		case PERF_RECORD_SWITCH_CPU_WIDE:
--			if (has(SWITCH_OUT))
-+			if (has(SWITCH_OUT)) {
- 				ret += fprintf(fp, "S");
-+				if (sample->misc & PERF_RECORD_MISC_SWITCH_OUT_PREEMPT)
-+					ret += fprintf(fp, "p");
-+			}
- 		default:
- 			break;
- 		}
