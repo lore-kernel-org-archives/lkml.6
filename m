@@ -1,48 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeDUTf3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 15:35:29 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:46174 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753158AbeDUTf1 (ORCPT
+        id S1753432AbeDUTfv (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 15:35:51 -0400
+Received: from mail-pg0-f48.google.com ([74.125.83.48]:35262 "EHLO
+        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753252AbeDUTft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 15:35:27 -0400
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sat, 21 Apr 2018 21:35:26 +0200
-X-ME-IP: 90.55.212.125
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 29/61] mtd: devices: simplify getting .drvdata
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-        <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
-X-URL: http://belgarath.falguerolles.org/
-Date: Sat, 21 Apr 2018 21:35:21 +0200
-In-Reply-To: <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
-        (Wolfram Sang's message of "Thu, 19 Apr 2018 16:05:59 +0200")
-Message-ID: <87o9icxshy.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
+        Sat, 21 Apr 2018 15:35:49 -0400
+X-Google-Smtp-Source: AIpwx4/XRpjFiHkHA8laBvNVXNRwsa9v+R/aBwER0E8nNXIAVQLCxIw5yCjXQoNTpUd/TNn3RcOrXQ==
+Date: Sat, 21 Apr 2018 12:37:01 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com, netdev@vger.kernel.org,
+        syzbot
+        <bot+a9dbb3c3e64b62536a4bc5ee7bbd4ca627566188@syzkaller.appspotmail.com>
+Subject: Re: WARNING in perf_trace_buf_alloc (2)
+Message-ID: <20180421193701.GE1098@sol.localdomain>
+References: <001a11404e22634fb0055d4f2346@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <001a11404e22634fb0055d4f2346@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wolfram Sang <wsa+renesas@sang-engineering.com> writes:
+[+bpf maintainers and netdev]
 
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+On Mon, Nov 06, 2017 at 03:56:01AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzkaller hit the following crash on
+> 5cb0512c02ecd7e6214e912e4c150f4219ac78e0
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> C reproducer is attached
+> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> for information about syzkaller reproducers
+> 
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 3008 at kernel/trace/trace_event_perf.c:274
+> perf_trace_buf_alloc+0x12d/0x160 kernel/trace/trace_event_perf.c:273
+> Kernel panic - not syncing: panic_on_warn set ...
+> 
+> CPU: 0 PID: 3008 Comm: syzkaller609027 Not tainted 4.14.0-rc7+ #159
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  panic+0x1e4/0x417 kernel/panic.c:181
+>  __warn+0x1c4/0x1d9 kernel/panic.c:542
+>  report_bug+0x211/0x2d0 lib/bug.c:184
+>  fixup_bug+0x40/0x90 arch/x86/kernel/traps.c:178
+>  do_trap_no_signal arch/x86/kernel/traps.c:212 [inline]
+>  do_trap+0x260/0x390 arch/x86/kernel/traps.c:261
+>  do_error_trap+0x120/0x390 arch/x86/kernel/traps.c:298
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:311
+>  invalid_op+0x18/0x20 arch/x86/entry/entry_64.S:906
+> RIP: 0010:perf_trace_buf_alloc+0x12d/0x160
+> kernel/trace/trace_event_perf.c:273
+> RSP: 0018:ffff8801c0fdf760 EFLAGS: 00010286
+> RAX: 000000000000001c RBX: 1ffff100381fbefe RCX: 0000000000000000
+> RDX: 000000000000001c RSI: 1ffff100381fbeac RDI: ffffed00381fbee0
+> RBP: ffff8801c0fdf780 R08: 0000000000000001 R09: 0000000000000000
+> R10: ffff8801c0fdf7a0 R11: 0000000000000000 R12: 000000000000082c
+> R13: ffff8801c0fdf810 R14: ffff8801c0fdf890 R15: ffff8801d8b34b40
+>  perf_trace_bpf_map_keyval+0x260/0xbd0 include/trace/events/bpf.h:228
+>  trace_bpf_map_update_elem include/trace/events/bpf.h:274 [inline]
+>  map_update_elem kernel/bpf/syscall.c:597 [inline]
+>  SYSC_bpf kernel/bpf/syscall.c:1478 [inline]
+>  SyS_bpf+0x33eb/0x46a0 kernel/bpf/syscall.c:1453
+>  entry_SYSCALL_64_fastpath+0x1f/0xbe
+> RIP: 0033:0x445c29
+> RSP: 002b:00000000007eff68 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+> RAX: ffffffffffffffda RBX: 00007ffe66adb340 RCX: 0000000000445c29
+> RDX: 0000000000000020 RSI: 000000002053dfe0 RDI: 0000000000000002
+> RBP: 0000000000000082 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000403280
+> R13: 0000000000403310 R14: 0000000000000000 R15: 0000000000000000
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+> 
+> 
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
+> 
+> syzbot will keep track of this bug report.
+> Once a fix for this bug is committed, please reply to this email with:
+> #syz fix: exact-commit-title
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line.
 
-Cheers.
+This still happens on Linus' tree.  It seems one of the BPF tracepoints is
+trying to pass a buffer that is too long.  Here's a simplified reproducer that
+works on Linus' tree (commit 5e7c7806111ade5).  Note: it's not 100% reliable for
+some reason; you may have to run it a couple times.  Daniel or Alexei, can one
+of you please look into this more?  Thanks!
 
---
-Robert
+#include <linux/bpf.h>
+#include <linux/perf_event.h>
+#include <stdio.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+
+int main()
+{
+        int tracepoint_id;
+        FILE *f;
+
+        f = fopen("/sys/kernel/debug/tracing/events/bpf/bpf_map_update_elem/id",
+                  "r");
+        fscanf(f, "%d", &tracepoint_id);
+
+        struct perf_event_attr perf_attr = {
+                .type = PERF_TYPE_TRACEPOINT,
+                .size = sizeof(perf_attr),
+                .config = tracepoint_id,
+        };
+        syscall(__NR_perf_event_open, &perf_attr, 0, 0, -1, 0);
+
+        for (;;) {
+                union bpf_attr create_attr = {
+                        .map_type = BPF_MAP_TYPE_HASH,
+                        .key_size = 4,
+                        .value_size = 2048,
+                        .max_entries = 1,
+                };
+                int fd = syscall(__NR_bpf, BPF_MAP_CREATE,
+                                 &create_attr, sizeof(create_attr));
+
+                char key[4] = { 0 };
+                char value[2048] = { 0 };
+                union bpf_attr update_attr = {
+                        .map_fd = fd,
+                        .key = (unsigned long)key,
+                        .value = (unsigned long)value,
+                };
+                syscall(__NR_bpf, BPF_MAP_UPDATE_ELEM,
+                        &update_attr, sizeof(update_attr));
+                close(fd);
+        }
+}
