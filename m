@@ -1,70 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753312AbeDUVnn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 17:43:43 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37292 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753208AbeDUVnk (ORCPT
+        id S1753293AbeDUVyl (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 17:54:41 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33317 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753208AbeDUVyj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 17:43:40 -0400
-Message-ID: <1524346967.3335.9.camel@HansenPartnership.com>
-Subject: Re: [PATCH 22/22] parisc: use generic dma_noncoherent_ops
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20180420080313.18796-23-hch@lst.de>
-References: <20180420080313.18796-1-hch@lst.de>
-         <20180420080313.18796-23-hch@lst.de>
+        Sat, 21 Apr 2018 17:54:39 -0400
+X-Google-Smtp-Source: AB8JxZqiBl9Ivm/zIOMJMXlHtWVhVJQtFmWA13DHdB1q3MImUgM6dLuyw0OnSTPgQHNr/2FCCiirw6CNVLOm/BSHIGI=
+MIME-Version: 1.0
+In-Reply-To: <20180421213401.GF14610@bombadil.infradead.org>
+References: <20180421210529.GA27238@jordon-HP-15-Notebook-PC> <20180421213401.GF14610@bombadil.infradead.org>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Sun, 22 Apr 2018 03:24:37 +0530
+Message-ID: <CAFqt6zZoU0O_w6stq+47ndBUY+yqk950nsyP_1ShTArQfxsSeQ@mail.gmail.com>
+Subject: Re: [PATCH v3] fs: dax: Adding new return type vm_fault_t
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, mawilcox@microsoft.com,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@suse.com>, jack@suse.cz,
+        kirill.shutemov@linux.intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Date: Sat, 21 Apr 2018 22:42:47 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.22.6 
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-20 at 10:03 +0200, Christoph Hellwig wrote:
-> diff --git a/arch/parisc/kernel/setup.c b/arch/parisc/kernel/setup.c
-> index 8d3a7b80ac42..4e87c35c22b7 100644
-> --- a/arch/parisc/kernel/setup.c
-> +++ b/arch/parisc/kernel/setup.c
-> @@ -97,14 +97,12 @@ void __init dma_ops_init(void)
->  		panic(	"PA-RISC Linux currently only supports
-> machines that conform to\n"
->  			"the PA-RISC 1.1 or 2.0 architecture
-> specification.\n");
->  
-> -	case pcxs:
-> -	case pcxt:
-> -		hppa_dma_ops = &pcx_dma_ops;
-> -		break;
->  	case pcxl2:
->  		pa7300lc_init();
->  	case pcxl: /* falls through */
-> -		hppa_dma_ops = &pcxl_dma_ops;
-> +	case pcxs:
-> +	case pcxt:
-> +		hppa_dma_ops = &dma_noncoherent_ops;
->  		break;
->  	default:
->  		break;
+On Sun, Apr 22, 2018 at 3:04 AM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Sun, Apr 22, 2018 at 02:35:29AM +0530, Souptick Joarder wrote:
+>> Use new return type vm_fault_t for fault handler. For
+>> now, this is just documenting that the function returns
+>> a VM_FAULT value rather than an errno. Once all instances
+>> are converted, vm_fault_t will become a distinct type.
+>>
+>> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>>
+>> There was an existing bug inside dax_load_hole()
+>> if vm_insert_mixed had failed to allocate a page table,
+>> we'd return VM_FAULT_NOPAGE instead of VM_FAULT_OOM.
+>> With new vmf_insert_mixed() this issue is addressed.
+>>
+>> vm_insert_mixed_mkwrite has inefficiency when it returns
+>> an error value, driver has to convert it to vm_fault_t
+>> type. With new vmf_insert_mixed_mkwrite() this limitation
+>> will be addressed.
+>>
+>> As new function vmf_insert_mixed_mkwrite() only called
+>> from fs/dax.c, so keeping both the changes in a single
+>> patch.
+>>
+>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>
+> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>
+> There's a couple of minor things which could be tidied up, but not worth
+> doing them as a revision to this patch.
 
-Well, this is wrong: you just made every 32 bit parisc system
-unnecessarily use non-coherent.  We actually only have a small small
-set of non-coherent systems.  The pxcs and pcxt systems (which are
-about 99% of the user base) can use coherent dma ops.  The problem
-seems to be in your new world you only have one dma_noncoherent_ops
-pointer ... we definitely need two on parisc, so whether
-arch_dma_cache_sync is present or not needs to be dynamic not config
-defined.
-
-James
+Which tree this patch will go through ? mm or fsdevel ?
