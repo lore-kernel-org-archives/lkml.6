@@ -1,105 +1,143 @@
-Return-Path: <kvalo@codeaurora.org>
-X-Google-Smtp-Source: AIpwx4/m/At5FVV58ePfHzr2MnpoqKP/+29yFF4sRGYw1MGobhdmd0iqM0fZkItGTYMy89smXcb1
-ARC-Seal: i=1; a=rsa-sha256; t=1524220008; cv=none;
+Return-Path: <arend.vanspriel@broadcom.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524297899; cv=none;
         d=google.com; s=arc-20160816;
-        b=YVF+MUZOf9BkkqkOWIJfd8FZWF1dAQ5oXk4lusnbMIMdEZVZv+tiwI6IHNAKarE+fr
-         doa0OUNeooAUJgvA68pKemioO486nA3JXTYUvi++HDW8s1AtNDDTaN3cdyAVZQ2oEX3V
-         JAeYO1AQ4FnFcFPoAmXgNzJKh744YzB73NZwOgDLRbjzP9+tcDUAw+4YGqBhs/OJTzUc
-         aS/eG9RZr3PNczqLQiJAH3A5Sg8ztE4Y5rQEujAGUanljrFWGnf4j1xFbuau3qBKZMVs
-         EJQG/JMRN6puLcn0ZFfTMHS63Wavbh7JkNBA+a6OxZakVT0AJ7zF1Z4vFykaISrxPNsF
-         u9cQ==
+        b=n1pPZgK9oR5oO31YAP/iDv4yXr5vvi2fsJ7iP5ADnJalMRVd7TwLNwFJy4zveEg/0g
+         3IVxFAaGY8OsCzz2f+ndfk91eLDy2rwu9sz7hCyLHwYUyHuk7bg71IVlmIw3tmJwKCXB
+         1Joc0hCYJJEQnTkh9O250IyGj/WGIY9C1hqmuwxOWM5Su7rkAiK7z5XccBbQg9BoTscw
+         CPPGfC7iLCwBANMCTAZ72lxhvrLgV3sO/zb5GRhhAeRWhZE0wjUASex41cT6ioGHmBKa
+         Wmp5DiRHGOUSvM6iDUELCnVODP5BIBrvL9/6UfAcK11j2K4sgbuFRrHqna41fMTB4AqM
+         MeRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:message-id:in-reply-to:date:references
-         :subject:cc:to:from:dmarc-filter:dkim-signature:dkim-signature
+        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :message-id:from:cc:references:to:subject:dkim-signature
          :arc-authentication-results;
-        bh=xg2KITv3vuhf3KFubv5sSA6mLV9cP2xCjrHxZ4jfEJE=;
-        b=AMeZRq68dpKJ5UGcCMdwjULlkwP76CgWM+DmuuoUwRRhFktZ8uEWBzJEYUWA5Qldcx
-         vGmuyjpYTw0R9QrBESRzkSpx3DDyZpLkQKwVKRUJHFJW7UNi7p5MayLoTg6I4602WdsE
-         Egqc7NrrsHRHl7Q2gjarfilbKob5mipjbMqUJ5zo2AlsYaZSEKmqFE+kAFmTw3lKHjGE
-         Og3rOetredyjLpJWTmKdSfvhUgm3jd3YDK98lFSdjhj29mq2RiohQsMN8+5BTAQvzBPX
-         q6QXY5dTVjbiVyg9ijeI3zU/2ZMdBPzt5dOHKf5p5+3PQ/XyXCv15umU8pCVteESbsip
-         CAGw==
+        bh=GOBIa1ZjC0A/HuIRJLE98quRQqZiJVWyqxoolQMu0Bs=;
+        b=y0cRXr1o6P77vLrGX07nWdFYGz5DBj89DlUjpjgywwEE26PxEUlMbi8ble9wVd5+f3
+         Gh5M8h1MV8ZfoVsCC9Mb1ZUi/MtNjn2hF56VAj7WupUkOd/hXfSj23tQ4zm9fpDFMX3w
+         5I63BTCkLxuDA52yd4gFKnxtBMn/nAPp1zX3w/pzaSXBb0miT/pbNj5sWReeMOByC9je
+         d8QhtrLuNTpJ5M1H5tGRngMdYzNCsD/NdN03dkH+BLIz3NFNUg1iTcPV03l0H1Q7/lLQ
+         PADzUSJL2GACPi6N0pGQVcWj3PQaoeMk/8rnFETJYWyPjIrbcvd3dviju+YoZ2D15B0H
+         NPbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cvcltHLt;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cvcltHLt;
-       spf=pass (google.com: domain of kvalo@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=kvalo@codeaurora.org
+       dkim=pass header.i=@broadcom.com header.s=google header.b=LFY7ce5R;
+       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=broadcom.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cvcltHLt;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cvcltHLt;
-       spf=pass (google.com: domain of kvalo@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=kvalo@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2769660264
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Andres Rodriguez <andresx7@gmail.com>
-Cc: linux-kernel@vger.kernel.org,  gregkh@linuxfoundation.org,  mcgrof@kernel.org,  alexdeucher@gmail.com,  ckoenig.leichtzumerken@gmail.com,  arend.vanspriel@broadcom.com, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH 9/9] brcmfmac: use request_firmware_nowait2 to load firmware without warnings
+       dkim=pass header.i=@broadcom.com header.s=google header.b=LFY7ce5R;
+       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=broadcom.com
+X-Google-Smtp-Source: AIpwx4/EBZlsRRq0DBM5kEqKF6jHcrro6liGvbdxcYPuBl4DpvnsCt4vik3qY3YmCcUruHJ2Hmwkbg==
+Subject: Re: [PATCH 9/9] brcmfmac: use request_firmware_nowait2 to load
+ firmware without warnings
+To: Kalle Valo <kvalo@codeaurora.org>, Andres Rodriguez <andresx7@gmail.com>
 References: <20180417153307.3693-1-andresx7@gmail.com>
-	<20180417153307.3693-10-andresx7@gmail.com>
-Date: Fri, 20 Apr 2018 13:26:42 +0300
-In-Reply-To: <20180417153307.3693-10-andresx7@gmail.com> (Andres Rodriguez's
-	message of "Tue, 17 Apr 2018 11:33:07 -0400")
-Message-ID: <87h8o6i36l.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+ <20180417153307.3693-10-andresx7@gmail.com>
+ <87h8o6i36l.fsf@kamboji.qca.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+ mcgrof@kernel.org, alexdeucher@gmail.com, ckoenig.leichtzumerken@gmail.com,
+ linux-wireless@vger.kernel.org
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5ADAF0A9.2090604@broadcom.com>
+Date: Sat, 21 Apr 2018 10:04:57 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <87h8o6i36l.fsf@kamboji.qca.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598008020626065507?=
-X-GMAIL-MSGID: =?utf-8?q?1598260519291132381?=
+X-GMAIL-MSGID: =?utf-8?q?1598342194347032649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Andres Rodriguez <andresx7@gmail.com> writes:
-
-> This reduces the unnecessary spew when trying to load optional firmware:
-> "Direct firmware load for ... failed with error -2"
+On 4/20/2018 12:26 PM, Kalle Valo wrote:
+> Andres Rodriguez <andresx7@gmail.com> writes:
 >
-> Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
-> ---
->  drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+>> This reduces the unnecessary spew when trying to load optional firmware:
+>> "Direct firmware load for ... failed with error -2"
 
-With wireless patches always CC linux-wireless list, please. Adding it
-now.
+So what happened with the request_firmware_nowarn() api (discussed in 
+another thread). Did it get lost with your kidney stones ;-) ? It seems 
+we start having the same discussion about the asynchronous variant as 
+well here which is a bit counter productive.
 
-> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
-> index 091b52979e03..26db3ebd52dc 100644
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
-> @@ -503,8 +503,9 @@ static void brcmf_fw_request_code_done(const struct firmware *fw, void *ctx)
->  		goto done;
->  
->  	fwctx->code = fw;
-> -	ret = request_firmware_nowait(THIS_MODULE, true, fwctx->nvram_name,
-> -				      fwctx->dev, GFP_KERNEL, fwctx,
-> +	ret = request_firmware_nowait(THIS_MODULE, true, false,
+Let's get back to the issue of the message above. So when is the message 
+unnecessary. To me there are actually to cases in which the message can 
+confuse people searching the log for hints on a issue they have with a 
+device. 1) when the driver requests a sequence of files and only needs 
+one, and 2) when the driver request can be handled by fallback. Why not 
+only issue the error message when the device driver uses 
+request_firmware_direct() or when there is no fallback.
 
-A perfect example why enums should be in function calls instead of
-booleans, that "true, false" tells nothing to me and it would be time
-consuming to check from headers files what it means. If you had proper
-enums, for example "FIRMWARE_MODE_FOO, FIRMWARE_STATE_BAR", it would be
-immediately obvious for the reader what the parameters are. Of course
-the first boolean was already there before, but maybe change the new
-boolean to an enum?
+Also this patch does not seem to be made against latest code as I did a 
+major rework that went in v4.17-rc1.
 
-> +				      fwctx->nvram_name, fwctx->dev,
-> +				      GFP_KERNEL, fwctx,
->  				      brcmf_fw_request_nvram_done);
->  
->  	/* pass NULL to nvram callback for bcm47xx fallback */
-> @@ -547,7 +548,7 @@ int brcmf_fw_get_firmwares_pcie(struct device *dev, u16 flags,
->  	fwctx->domain_nr = domain_nr;
->  	fwctx->bus_nr = bus_nr;
->  
-> -	return request_firmware_nowait(THIS_MODULE, true, code, dev,
-> +	return request_firmware_nowait2(THIS_MODULE, true, false, code, dev,
->  				       GFP_KERNEL, fwctx,
->  				       brcmf_fw_request_code_done);
->  }
+>> Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
+>> ---
+>>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c | 7 ++++---
+>>   1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> With wireless patches always CC linux-wireless list, please. Adding it
+> now.
+>
+>> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
+>> index 091b52979e03..26db3ebd52dc 100644
+>> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
+>> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
+>> @@ -503,8 +503,9 @@ static void brcmf_fw_request_code_done(const struct firmware *fw, void *ctx)
+>>   		goto done;
+>>
+>>   	fwctx->code = fw;
+>> -	ret = request_firmware_nowait(THIS_MODULE, true, fwctx->nvram_name,
+>> -				      fwctx->dev, GFP_KERNEL, fwctx,
+>> +	ret = request_firmware_nowait(THIS_MODULE, true, false,
+>
+> A perfect example why enums should be in function calls instead of
+> booleans, that "true, false" tells nothing to me and it would be time
+> consuming to check from headers files what it means. If you had proper
+> enums, for example "FIRMWARE_MODE_FOO, FIRMWARE_STATE_BAR", it would be
+> immediately obvious for the reader what the parameters are. Of course
+> the first boolean was already there before, but maybe change the new
+> boolean to an enum?
 
-Also the number two in the function name is not really telling anything.
-I think that something like request_firmware_nowait_nowarn() would be
-better, even if it's so ugly.
+I can not fully agree here. While being a bit more descriptive even with 
+enums wrong enum values can be used due to copy-paste errors for 
+instance. Also when reviewing code, sometime looking up function 
+prototypes and type definitions are part of the fun. Tools like ctags or 
+elixir website make it pretty easy.
 
--- 
-Kalle Valo
+Now regarding this part of the patch the driver is requesting nvram 
+file, which is not always optional. For SDIO devices it is required and 
+for PCIe it is optional so firmware.c module is instructed about this 
+with a flag. So here that flag should be used to pass the proper 
+boolean/call the appropriate function. Actually in the latest code the 
+nvram is request synchronously.
+
+>> +				      fwctx->nvram_name, fwctx->dev,
+>> +				      GFP_KERNEL, fwctx,
+>>   				      brcmf_fw_request_nvram_done);
+>>
+>>   	/* pass NULL to nvram callback for bcm47xx fallback */
+>> @@ -547,7 +548,7 @@ int brcmf_fw_get_firmwares_pcie(struct device *dev, u16 flags,
+>>   	fwctx->domain_nr = domain_nr;
+>>   	fwctx->bus_nr = bus_nr;
+>>
+>> -	return request_firmware_nowait(THIS_MODULE, true, code, dev,
+>> +	return request_firmware_nowait2(THIS_MODULE, true, false, code, dev,
+>>   				       GFP_KERNEL, fwctx,
+>>   				       brcmf_fw_request_code_done);
+>>   }
+>
+> Also the number two in the function name is not really telling anything.
+> I think that something like request_firmware_nowait_nowarn() would be
+> better, even if it's so ugly.
+
+This is requesting the actual firmware that is run by the cpu on the 
+chip so it is not optional.
+
+Again, the firmware.c module has been reworked quite a bit in v4.17-rc1 
+so this patch is outdated.
+
+Regards,
+Arend
