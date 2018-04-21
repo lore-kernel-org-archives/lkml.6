@@ -1,102 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753333AbeDUXvD (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 19:51:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48524 "EHLO mx2.suse.de"
+        id S1753404AbeDUXxa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 19:53:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48590 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753280AbeDUXvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 19:51:02 -0400
-Date: Sun, 22 Apr 2018 01:50:57 +0200
+        id S1753340AbeDUXx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 19:53:28 -0400
+Date: Sun, 22 Apr 2018 01:53:23 +0200
 From: Jan Kara <jack@suse.cz>
-To: Wang Long <wanglong19@meituan.com>
-Cc: hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        aryabinin@virtuozzo.com, akpm@linux-foundation.org,
-        khlebnikov@yandex-team.ru, xboe@kernel.dk, jack@suse.cz,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org, gthelen@google.com,
-        tj@kernel.org
-Subject: Re: [PATCH] memcg: writeback: use memcg->cgwb_list directly
-Message-ID: <20180421235057.iyl4sipppfx3qp3m@quack2.suse.cz>
-References: <1524317381-236318-1-git-send-email-wanglong19@meituan.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk,
+        bart.vanassche@wdc.com, ming.lei@redhat.com, tytso@mit.edu,
+        darrick.wong@oracle.com, jikos@kernel.org, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com, linux-fsdevel@vger.kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        todd.e.brandt@linux.intel.com, nborisov@suse.com,
+        martin.petersen@oracle.com, ONeukum@suse.com, oleksandr@natalenko.name,
+        oleg.b.antonyan@gmail.com, yu.chen.surf@gmail.com,
+        dan.j.williams@intel.com, linux-pm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jlayton@redhat.com
+Subject: Re: [PATCH 03/11] fs: add frozen sb state helpers
+Message-ID: <20180421235323.ndj3gx65n7kmv5ta@quack2.suse.cz>
+References: <20171129232356.28296-1-mcgrof@kernel.org>
+ <20171129232356.28296-4-mcgrof@kernel.org>
+ <20171130171310.GG28180@quack2.suse.cz>
+ <20171130190548.GJ729@wotan.suse.de>
+ <20171201114724.GC8365@quack2.suse.cz>
+ <20171201211327.GQ729@wotan.suse.de>
+ <20171221110329.GG31584@quack2.suse.cz>
+ <20180418005936.j3fa5rogfm353clf@garbanzo.do-not-panic.com>
+ <20180420184932.57as7jup75nx463v@garbanzo.do-not-panic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1524317381-236318-1-git-send-email-wanglong19@meituan.com>
+In-Reply-To: <20180420184932.57as7jup75nx463v@garbanzo.do-not-panic.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 21-04-18 21:29:41, Wang Long wrote:
-> Signed-off-by: Wang Long <wanglong19@meituan.com>
+On Fri 20-04-18 11:49:32, Luis R. Rodriguez wrote:
+> On Tue, Apr 17, 2018 at 05:59:36PM -0700, Luis R. Rodriguez wrote:
+> > On Thu, Dec 21, 2017 at 12:03:29PM +0100, Jan Kara wrote:
+> > > Hello,
+> > > 
+> > > I think I owe you a reply here... Sorry that it took so long.
+> > 
+> > Took me just as long :)
+> > 
+> > > On Fri 01-12-17 22:13:27, Luis R. Rodriguez wrote:
+> > > > 
+> > > > I'll note that its still not perfectly clear if really the semantics behind
+> > > > freeze_bdev() match what I described above fully. That still needs to be
+> > > > vetted for. For instance, does thaw_bdev() keep a superblock frozen if we
+> > > > an ioctl initiated freeze had occurred before? If so then great. Otherwise
+> > > > I think we'll need to distinguish the ioctl interface. Worst possible case
+> > > > is that bdev semantics and in-kernel semantics differ somehow, then that
+> > > > will really create a holy fucking mess.
+> > > 
+> > > I believe nobody really thought about mixing those two interfaces to fs
+> > > freezing and so the behavior is basically defined by the implementation.
+> > > That is:
+> > > 
+> > > freeze_bdev() on sb frozen by ioctl_fsfreeze() -> EBUSY
+> > > freeze_bdev() on sb frozen by freeze_bdev() -> success
+> > > ioctl_fsfreeze() on sb frozen by freeze_bdev() -> EBUSY
+> > > ioctl_fsfreeze() on sb frozen by ioctl_fsfreeze() -> EBUSY
+> > > 
+> > > thaw_bdev() on sb frozen by ioctl_fsfreeze() -> EINVAL
+> > 
+> > Phew, so this is what we want for the in-kernel freezing so we're good
+> > and *can* combine these then.
+> 
+> I double checked, and I don't see where you get EINVAL for this case.
+> We *do* keep the sb frozen though, which is good, and the worst fear
+> I had was that we did not. However we return 0 if there was already
+> a prior freeze_bdev() or ioctl_fsfreeze() other than the context that
+> started the prior freeze (--bdev->bd_fsfreeze_count > 0).
+> 
+> The -EINVAL is only returned currently if there were no freezers.
+> 
+> int thaw_bdev(struct block_device *bdev, struct super_block *sb)
+> {
+> 	int error = -EINVAL;
+> 
+> 	mutex_lock(&bdev->bd_fsfreeze_mutex);
+> 	if (!bdev->bd_fsfreeze_count)
+> 		goto out;
 
-Yeah, looks good. I guess it was originally intended to avoid compilation
-errors if CONFIG_CGROUP_WRITEBACK was disabled. But it doesn't seem likely
-we'll ever need that list outside of code under CONFIG_CGROUP_WRITEBACK. So
-you can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
+But this is precisely where we'd bail if we freeze sb by ioctl_fsfreeze()
+but try to thaw by thaw_bdev(). ioctl_fsfreeze() does not touch
+bd_fsfreeze_count...
 
 								Honza
 
-> ---
->  include/linux/memcontrol.h | 1 -
->  mm/backing-dev.c           | 4 ++--
->  mm/memcontrol.c            | 5 -----
->  3 files changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index d99b71b..c0056e0 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1093,7 +1093,6 @@ static inline void dec_lruvec_page_state(struct page *page,
->  
->  #ifdef CONFIG_CGROUP_WRITEBACK
->  
-> -struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg);
->  struct wb_domain *mem_cgroup_wb_domain(struct bdi_writeback *wb);
->  void mem_cgroup_wb_stats(struct bdi_writeback *wb, unsigned long *pfilepages,
->  			 unsigned long *pheadroom, unsigned long *pdirty,
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 023190c..0a48e05 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -555,7 +555,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
->  	memcg = mem_cgroup_from_css(memcg_css);
->  	blkcg_css = cgroup_get_e_css(memcg_css->cgroup, &io_cgrp_subsys);
->  	blkcg = css_to_blkcg(blkcg_css);
-> -	memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
-> +	memcg_cgwb_list = &memcg->cgwb_list;
->  	blkcg_cgwb_list = &blkcg->cgwb_list;
->  
->  	/* look up again under lock and discard on blkcg mismatch */
-> @@ -734,7 +734,7 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
->   */
->  void wb_memcg_offline(struct mem_cgroup *memcg)
->  {
-> -	struct list_head *memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
-> +	struct list_head *memcg_cgwb_list = &memcg->cgwb_list;
->  	struct bdi_writeback *wb, *next;
->  
->  	spin_lock_irq(&cgwb_lock);
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e074f7c..d1adb9c 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3562,11 +3562,6 @@ static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
->  
->  #ifdef CONFIG_CGROUP_WRITEBACK
->  
-> -struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg)
-> -{
-> -	return &memcg->cgwb_list;
-> -}
-> -
->  static int memcg_wb_domain_init(struct mem_cgroup *memcg, gfp_t gfp)
->  {
->  	return wb_domain_init(&memcg->cgwb_domain, gfp);
-> -- 
-> 1.8.3.1
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
