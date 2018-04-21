@@ -1,135 +1,93 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1443453-1524500532-2-1808486545562132942
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enroda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524500532; b=lPje7r5K7OsO6qbffTpSQ6rtwT4Ga0GAFO4ynYRsCOxEVXIJk/
-    2SPy2LZt54RFl8MdZ3L0wjDnsr6B7M2i85egt59CtIOs0xhKeAaebdvxn/nQ9pmB
-    7Jo8EksGR2akts31xOZLhX+jMDNF09V2kWZxu7oMfr056up/rrbO8+OJ0D8iTAdD
-    qN/KX9KJhmyONJSSqQw9rX9i+uN89LQ1FG53C1fJOOaGnQeHHFBrFYHTT4qS79L0
-    2pxijzA2YyGYuLgx3TR6/+V/6jNSUMzBHMuXmsoF0e/soLS4FecNKRFVZy0AK7f6
-    k5CD+I3g4VxF0dTQThB4Op7s8Ur64UB3Z9xQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524500532; bh=dlolB
-    RLt9AxDK6M5yzE+7OOViNOnyXj7z6CjDDe6rtQ=; b=tQtD4Z3fmDSx5XT9MbyRP
-    hmcpLtH8Jtx32IrwzhUx3J3IbhiQL4QbXJtPovBF9fbGviq8sF3CzpeQ0njtoq8k
-    BPuRlVtK6ntuBY0FC3XzJf+dxWajRXnpw34JrSlojXNrwZhLkJ7kFO67Ukq5WeBc
-    JrS+ltT6Z41KI/wH3yX6YFu1f3aZO+7UKJbvGXFZTUR71NPo4rYel75AJC/iLGIG
-    w5jjpINTHNnMKzsUyfP1vIP/VwSKIOyEYPPBnBTF1gQwj4xIHeVwFLWvAbGOab+X
-    G+sfV422xO+zx/r3GXtlUBJh1n1gTdjBdzClu3kXEr4Y6jtY4Odnx8GQkTRIuFkn
-    w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KdfBywc3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mA1ZTufS;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KdfBywc3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mA1ZTufS;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGV3H2nlV1lrMum6HixxzDLlJfBtMAucTIwYwPiqrQzCojgCcvLYwOrXlE7MsTLgznL2dlcsWbLQnk8wPU0cZ1bpa15YsrV5vthHGenpsmyEyfSuFRzb
-    QanQw/hcp1GD7UE0uSD0fiA2LVOVTfUEsePWtwF/u0Gn9sqk2DnLuNL+HqO9KjPBM5ITnfw71rqXyAp2JSVqFFWUchyfVXWJ1P69S03VyTVCXo52GzLnAfSq
-    79kJEXp/QrV5I9krdZ42ww==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=TjV95GAluLwA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=8zPXO_9SzBPc6EREmFcA:9 a=CjuIK1q_8ugA:10
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AIpwx492mvk/VdCXckjIDn8I93rpo4F1TiWhcRG+GJz+HAwG85Tv50fg7b1SAOLMbHcaeGe+j6kD3g==
-Date: Mon, 23 Apr 2018 21:54:00 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
- maco@android.com, willy@infradead.org
-Subject: [PATCH v2] android: binder: Change return type to vm_fault_t
-Message-ID: <20180423162400.GA4018@jordon-HP-15-Notebook-PC>
+Return-Path: <>
+X-Google-Smtp-Source: AB8JxZrmeGMdpXMKzwD8BFgkr7ZwPkg3akTD6CA2HFlfpj+7HdsSReD8ROa3kKI3aEHSrs+MHkV2
+ARC-Seal: i=1; a=rsa-sha256; t=1524354930; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SwdY3xl38/Mrzj7yKDaxPUp1VYu8Sayj555OqgViKsDX3oIdBoyNuoKgVluJOx86LD
+         YQ3bBUDFMYAVvXMsivM0bmHb9AzWNuZaWCNephsGKG9rNgdWGf7Iiyb1RsZuu2w2k02K
+         t83tQIzDtOKNV6IQEBRNU6cayUOpkPk1It3fKy7XC5d30N+rlx8TM7GJvP3shzsYSe6E
+         aBectDg/CLg44Y72sFiUJYnP7yS9mLZNOD57XHmeiBMpmPCr3h5VVa8vOLhlXgrc0o4C
+         SV6LZVQcYQWiry1kZ0j2SV4a8kMi2B3zjDa5bBaZgAIK62WgJ55P8kxs986nSRuo0ZRJ
+         y5wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=sIOAfUp+ar7ZwiaRVKK2YplBnKtdEikdu0ez8sBeK+E=;
+        b=tcqDwY22ErI+fPtONMDUGV4xwLlZGaQQhhXOTel4Ll4sxGGWxJGuNMNc9onGXHIe2p
+         bimmdqMwjx2papP5EDvqEN61OuzzL7n/4RXDUn351KE1kdChIit6Zm3CBkMBnJcLyIQT
+         +BkmDukGzIlWhvZK5XcdvY7eqrMeEx89EZBN5bp0D13ATukX7CXKM2ZztozduLz5rDaW
+         Hgdes1Sz7BPUK1efey3UVmS67okG90aHjmTIbug4i+C9HH3oq9BreoOdjTGiTCvbePwd
+         QOTInM6KZF5GOR/wTkZxv8NjsOLZGyV3gs74xaRUp2jVjEsbsgFzQdJgVVnenghPMY6B
+         ce+w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=SpFmZ07V;
+       spf=pass (google.com: best guess record for domain of postmaster@lelnx194.ext.ti.com designates 198.47.27.80 as permitted sender) smtp.helo=lelnx194.ext.ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=SpFmZ07V;
+       spf=pass (google.com: best guess record for domain of postmaster@lelnx194.ext.ti.com designates 198.47.27.80 as permitted sender) smtp.helo=lelnx194.ext.ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+From: "Andrew F. Davis" <afd@ti.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, "Andrew F . Davis" <afd@ti.com>
+Subject: [PATCH] rpmsg: Correct support for MODULE_DEVICE_TABLE()
+Date: Sat, 21 Apr 2018 18:55:29 -0500
+Message-ID: <20180421235529.17243-1-afd@ti.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598401995374666421?=
+X-GMAIL-MSGID: =?utf-8?q?1598401995374666421?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use new return type vm_fault_t for fault handler in
-struct vm_operations_struct. For now, this is just
-documenting that the function returns a VM_FAULT
-value rather than an errno.  Once all instances are
-converted, vm_fault_t will become a distinct type.
+Due to missing a missing entry in file2alias.c MODULE_DEVICE_TABLE() are
+not generating the proper module aliases. Add the needed entry here.
 
-Reference id -> 1c8f422059ae ("mm: change return type
-to vm_fault_t")
-
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Fixes: bcabbccabffe ("rpmsg: add virtio-based remote processor messaging bus")
+Reported-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/android/binder.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/mod/devicetable-offsets.c |  3 +++
+ scripts/mod/file2alias.c          | 11 +++++++++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 15e3d3c..65be4ec 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -4671,7 +4671,7 @@ static void binder_vma_close(struct vm_area_struct *vma)
- 	binder_defer_work(proc, BINDER_DEFERRED_PUT_FILES);
+diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
+index 9fad6afe4c41..6667f7b491d6 100644
+--- a/scripts/mod/devicetable-offsets.c
++++ b/scripts/mod/devicetable-offsets.c
+@@ -139,6 +139,9 @@ int main(void)
+ 	DEVID(hv_vmbus_device_id);
+ 	DEVID_FIELD(hv_vmbus_device_id, guid);
+ 
++	DEVID(rpmsg_device_id);
++	DEVID_FIELD(rpmsg_device_id, name);
++
+ 	DEVID(i2c_device_id);
+ 	DEVID_FIELD(i2c_device_id, name);
+ 
+diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+index b9beeaa4695b..52fd54a8fe39 100644
+--- a/scripts/mod/file2alias.c
++++ b/scripts/mod/file2alias.c
+@@ -944,6 +944,17 @@ static int do_vmbus_entry(const char *filename, void *symval,
  }
-
--static int binder_vm_fault(struct vm_fault *vmf)
-+static vm_fault_t binder_vm_fault(struct vm_fault *vmf)
- {
- 	return VM_FAULT_SIGBUS;
- }
---
-1.9.1
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+ ADD_TO_DEVTABLE("vmbus", hv_vmbus_device_id, do_vmbus_entry);
+ 
++/* Looks like: rpmsg:S */
++static int do_rpmsg_entry(const char *filename, void *symval,
++			  char *alias)
++{
++	DEF_FIELD_ADDR(symval, rpmsg_device_id, name);
++	sprintf(alias, RPMSG_DEVICE_MODALIAS_FMT, *name);
++
++	return 1;
++}
++ADD_TO_DEVTABLE("rpmsg", rpmsg_device_id, do_rpmsg_entry);
++
+ /* Looks like: i2c:S */
+ static int do_i2c_entry(const char *filename, void *symval,
+ 			char *alias)
+-- 
+2.17.0
