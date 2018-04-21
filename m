@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeDUHwb (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 03:52:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47827 "EHLO
+        id S1753274AbeDUHwl (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 03:52:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58425 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751366AbeDUHwa (ORCPT
+        with ESMTP id S1751333AbeDUHwj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 03:52:30 -0400
-Date: Sat, 21 Apr 2018 00:52:24 -0700
+        Sat, 21 Apr 2018 03:52:39 -0400
+Date: Sat, 21 Apr 2018 00:51:27 -0700
 From: tip-bot for Andi Kleen <tipbot@zytor.com>
-Message-ID: <tip-ccbb6afe0890b09cc828373a9a5fffab40ec85df@git.kernel.org>
-Cc: ak@linux.intel.com, jolsa@kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org,
-        hpa@zytor.com
-Reply-To: jolsa@kernel.org, ak@linux.intel.com, hpa@zytor.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
-        tglx@linutronix.de
-In-Reply-To: <20180406203812.3087-5-andi@firstfloor.org>
-References: <20180406203812.3087-5-andi@firstfloor.org>
+Message-ID: <tip-6a02f06edea5a5910c787fd6c49b0552e8080e5d@git.kernel.org>
+Cc: tglx@linutronix.de, mingo@kernel.org, acme@redhat.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
+        ak@linux.intel.com
+Reply-To: ak@linux.intel.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        acme@redhat.com, tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com
+In-Reply-To: <20180406203812.3087-3-andi@firstfloor.org>
+References: <20180406203812.3087-3-andi@firstfloor.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf record: Remove suggestion to enable APIC
-Git-Commit-ID: ccbb6afe0890b09cc828373a9a5fffab40ec85df
+Subject: [tip:perf/urgent] perf hists browser: Clarify top/report browser
+ help
+Git-Commit-ID: 6a02f06edea5a5910c787fd6c49b0552e8080e5d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,41 +33,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ccbb6afe0890b09cc828373a9a5fffab40ec85df
-Gitweb:     https://git.kernel.org/tip/ccbb6afe0890b09cc828373a9a5fffab40ec85df
+Commit-ID:  6a02f06edea5a5910c787fd6c49b0552e8080e5d
+Gitweb:     https://git.kernel.org/tip/6a02f06edea5a5910c787fd6c49b0552e8080e5d
 Author:     Andi Kleen <ak@linux.intel.com>
-AuthorDate: Fri, 6 Apr 2018 13:38:12 -0700
+AuthorDate: Fri, 6 Apr 2018 13:38:10 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 18 Apr 2018 15:35:50 -0300
+CommitDate: Wed, 18 Apr 2018 15:35:49 -0300
 
-perf record: Remove suggestion to enable APIC
+perf hists browser: Clarify top/report browser help
 
-'perf record' suggests to enable the APIC on errors.
-
-APIC is practically always used today and the problem is usually
-somewhere else.
-
-Just remove the outdated suggestion.
+Clarify in the browser help that ESC in tui mode may go back to the
+previous screen instead of just exiting (was not clear to me)
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20180406203812.3087-5-andi@firstfloor.org
+Link: http://lkml.kernel.org/r/20180406203812.3087-3-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evsel.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ tools/perf/ui/browsers/hists.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 66b62570c855..3e87486c28fe 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -2870,8 +2870,7 @@ int perf_evsel__open_strerror(struct perf_evsel *evsel, struct target *target,
- #if defined(__i386__) || defined(__x86_64__)
- 		if (evsel->attr.type == PERF_TYPE_HARDWARE)
- 			return scnprintf(msg, size, "%s",
--	"No hardware sampling interrupt available.\n"
--	"No APIC? If so then you can boot the kernel with the \"lapic\" boot parameter to force-enable it.");
-+	"No hardware sampling interrupt available.\n");
- #endif
- 		break;
- 	case EBUSY:
+diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+index 0eec06c105c6..e5f247247daa 100644
+--- a/tools/perf/ui/browsers/hists.c
++++ b/tools/perf/ui/browsers/hists.c
+@@ -2714,7 +2714,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
+ 	"h/?/F1        Show this window\n"				\
+ 	"UP/DOWN/PGUP\n"						\
+ 	"PGDN/SPACE    Navigate\n"					\
+-	"q/ESC/CTRL+C  Exit browser\n\n"				\
++	"q/ESC/CTRL+C  Exit browser or go back to previous screen\n\n"	\
+ 	"For multiple event sessions:\n\n"				\
+ 	"TAB/UNTAB     Switch events\n\n"				\
+ 	"For symbolic views (--sort has sym):\n\n"			\
