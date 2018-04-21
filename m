@@ -1,122 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751131AbeDUFA2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 01:00:28 -0400
-Received: from vps.xff.cz ([195.181.215.36]:46516 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750805AbeDUFA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 01:00:27 -0400
-From: megous@megous.com
-To: dev@linux-sunxi.org
-Cc: Ondrej Jirman <megous@megous.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
-        A10),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] Revert "drm/sun4i: add lvds mode_valid function"
-Date: Sat, 21 Apr 2018 06:51:55 +0200
-Message-Id: <20180421045155.15332-1-megous@megous.com>
+        id S1751500AbeDUGkE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 02:40:04 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:47069 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751048AbeDUGkC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 02:40:02 -0400
+X-Google-Smtp-Source: AIpwx4/1J3q5rgTqAKUGD4TKSQJ8cUWzIKyPOIph7GLrP9cc7wlW+BF55LXpUqj4Kwohrgjr3YFTHZAaN/Dqof7oMRaJ2kaQ+XK6
+MIME-Version: 1.0
+Date: Fri, 20 Apr 2018 23:40:01 -0700
+In-Reply-To: <94eb2c030cc4d2be530566a62109@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fbb72c056a5612fc@google.com>
+Subject: Re: general protection fault in smc_getsockopt
+From: syzbot <syzbot+28a2c86cf19c81d871fa@syzkaller.appspotmail.com>
+To: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com,
+        ubraun@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Jirman <megous@megous.com>
+syzbot has found reproducer for the following crash on upstream commit
+83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
+Merge branch 'fixes' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=28a2c86cf19c81d871fa
 
-The reverted commit broke LVDS output on TBS A711 Tablet. That tablet
-has simple-panel node that has fixed pixel clock-frequency that A83T
-SoC used in the tablet can't generate exactly.
+So far this crash happened 59 times on net-next, upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6375334488309760
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=6112997885870080
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5942131738804224
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-Requested rate is 52000000 and rounded_rate is calculated as 51857142.
-It's close enough for it to work in practice, but with strict check
-in the reverted commit, the mode is rejected needlessly in this case.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+28a2c86cf19c81d871fa@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed.
 
-DT allows to specify a range of values for simple-panel/clock-frequency,
-but driver doesn't respect that ATM. Given that TBS A711 is the single
-user of sun4i-lvds driver, let's revert that commit for now, until
-a better solution for the problem is found.
-
-Also see: https://patchwork.kernel.org/patch/9446385/ for relevant
-discussion (or search for "[RFC] drm/sun4i: rgb: Add 5% tolerance
-to dot clock frequency check").
-
-Fixes: e4e4b7ad50cf ("drm/sun4i: add lvds mode_valid function")
-Reported-by: Ondrej Jirman <megous@megous.com>
-Signed-off-by: Ondrej Jirman <megous@megous.com>
----
- drivers/gpu/drm/sun4i/sun4i_lvds.c | 55 ------------------------------
- 1 file changed, 55 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_lvds.c b/drivers/gpu/drm/sun4i/sun4i_lvds.c
-index bffff4c9fbf5..be3f14d7746d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_lvds.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_lvds.c
-@@ -94,64 +94,9 @@ static void sun4i_lvds_encoder_disable(struct drm_encoder *encoder)
- 	}
- }
- 
--static enum drm_mode_status sun4i_lvds_encoder_mode_valid(struct drm_encoder *crtc,
--							  const struct drm_display_mode *mode)
--{
--	struct sun4i_lvds *lvds = drm_encoder_to_sun4i_lvds(crtc);
--	struct sun4i_tcon *tcon = lvds->tcon;
--	u32 hsync = mode->hsync_end - mode->hsync_start;
--	u32 vsync = mode->vsync_end - mode->vsync_start;
--	unsigned long rate = mode->clock * 1000;
--	long rounded_rate;
--
--	DRM_DEBUG_DRIVER("Validating modes...\n");
--
--	if (hsync < 1)
--		return MODE_HSYNC_NARROW;
--
--	if (hsync > 0x3ff)
--		return MODE_HSYNC_WIDE;
--
--	if ((mode->hdisplay < 1) || (mode->htotal < 1))
--		return MODE_H_ILLEGAL;
--
--	if ((mode->hdisplay > 0x7ff) || (mode->htotal > 0xfff))
--		return MODE_BAD_HVALUE;
--
--	DRM_DEBUG_DRIVER("Horizontal parameters OK\n");
--
--	if (vsync < 1)
--		return MODE_VSYNC_NARROW;
--
--	if (vsync > 0x3ff)
--		return MODE_VSYNC_WIDE;
--
--	if ((mode->vdisplay < 1) || (mode->vtotal < 1))
--		return MODE_V_ILLEGAL;
--
--	if ((mode->vdisplay > 0x7ff) || (mode->vtotal > 0xfff))
--		return MODE_BAD_VVALUE;
--
--	DRM_DEBUG_DRIVER("Vertical parameters OK\n");
--
--	tcon->dclk_min_div = 7;
--	tcon->dclk_max_div = 7;
--	rounded_rate = clk_round_rate(tcon->dclk, rate);
--	if (rounded_rate < rate)
--		return MODE_CLOCK_LOW;
--
--	if (rounded_rate > rate)
--		return MODE_CLOCK_HIGH;
--
--	DRM_DEBUG_DRIVER("Clock rate OK\n");
--
--	return MODE_OK;
--}
--
- static const struct drm_encoder_helper_funcs sun4i_lvds_enc_helper_funcs = {
- 	.disable	= sun4i_lvds_encoder_disable,
- 	.enable		= sun4i_lvds_encoder_enable,
--	.mode_valid	= sun4i_lvds_encoder_mode_valid,
- };
- 
- static const struct drm_encoder_funcs sun4i_lvds_enc_funcs = {
--- 
-2.17.0
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4492 Comm: syzkaller771634 Not tainted 4.17.0-rc1+ #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:smc_getsockopt+0x8b/0x120 net/smc/af_smc.c:1298
+RSP: 0018:ffff8801d90b7cc0 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000020000000
+RDX: 0000000000000005 RSI: ffffffff873e3d16 RDI: 0000000000000028
+RBP: ffff8801d90b7cf0 R08: 0000000020000040 R09: ffffed0036a05800
+R10: ffffed0036a05800 R11: ffff8801b502c003 R12: ffff8801d90b7d40
+R13: 0000000000000000 R14: 0000000000000008 R15: 0000000020000000
+FS:  0000000002017880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000040 CR3: 00000001ac552000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __sys_getsockopt+0x1a5/0x370 net/socket.c:1940
+  __do_sys_getsockopt net/socket.c:1951 [inline]
+  __se_sys_getsockopt net/socket.c:1948 [inline]
+  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1948
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x43fcf9
+RSP: 002b:00007ffcb16b9c58 EFLAGS: 00000217 ORIG_RAX: 0000000000000037
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fcf9
+RDX: 0000000000000008 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000020000040 R09: 00000000004002c8
+R10: 0000000020000000 R11: 0000000000000217 R12: 0000000000401620
+R13: 00000000004016b0 R14: 0000000000000000 R15: 0000000000000000
+Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 93 00 00 00 48 8b 9b 50 04 00 00 48  
+b8 00 00 00 00 00 fc ff df 48 8d 7b 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
+75 62 48 b8 00 00 00 00 00 fc ff df 4c 8b 63 28 49
+RIP: smc_getsockopt+0x8b/0x120 net/smc/af_smc.c:1298 RSP: ffff8801d90b7cc0
+---[ end trace 7e67761582d7c7ee ]---
