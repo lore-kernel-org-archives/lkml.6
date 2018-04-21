@@ -1,100 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeDUXxa (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 19:53:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48590 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753340AbeDUXx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 19:53:28 -0400
-Date: Sun, 22 Apr 2018 01:53:23 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk,
-        bart.vanassche@wdc.com, ming.lei@redhat.com, tytso@mit.edu,
-        darrick.wong@oracle.com, jikos@kernel.org, rjw@rjwysocki.net,
-        pavel@ucw.cz, len.brown@intel.com, linux-fsdevel@vger.kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        todd.e.brandt@linux.intel.com, nborisov@suse.com,
-        martin.petersen@oracle.com, ONeukum@suse.com, oleksandr@natalenko.name,
-        oleg.b.antonyan@gmail.com, yu.chen.surf@gmail.com,
-        dan.j.williams@intel.com, linux-pm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jlayton@redhat.com
-Subject: Re: [PATCH 03/11] fs: add frozen sb state helpers
-Message-ID: <20180421235323.ndj3gx65n7kmv5ta@quack2.suse.cz>
-References: <20171129232356.28296-1-mcgrof@kernel.org>
- <20171129232356.28296-4-mcgrof@kernel.org>
- <20171130171310.GG28180@quack2.suse.cz>
- <20171130190548.GJ729@wotan.suse.de>
- <20171201114724.GC8365@quack2.suse.cz>
- <20171201211327.GQ729@wotan.suse.de>
- <20171221110329.GG31584@quack2.suse.cz>
- <20180418005936.j3fa5rogfm353clf@garbanzo.do-not-panic.com>
- <20180420184932.57as7jup75nx463v@garbanzo.do-not-panic.com>
+        id S1753428AbeDUX47 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 19:56:59 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:40411 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753293AbeDUX45 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 19:56:57 -0400
+X-Google-Smtp-Source: AIpwx4/545MKdQTDvjqyb4tv3CF8yuR889zA3Q98m0yKpY7aaq2EYyc6blWND+0zRq8IwONQvYOx8czMWTe3Gl5fBFE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420184932.57as7jup75nx463v@garbanzo.do-not-panic.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CAFqt6zZoU0O_w6stq+47ndBUY+yqk950nsyP_1ShTArQfxsSeQ@mail.gmail.com>
+References: <20180421210529.GA27238@jordon-HP-15-Notebook-PC>
+ <20180421213401.GF14610@bombadil.infradead.org> <CAFqt6zZoU0O_w6stq+47ndBUY+yqk950nsyP_1ShTArQfxsSeQ@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Sat, 21 Apr 2018 16:56:56 -0700
+Message-ID: <CAPcyv4jzyofOTrymiQchXyRdNPZ+BXn3-W3hjCJ4mvtpDD2g4w@mail.gmail.com>
+Subject: Re: [PATCH v3] fs: dax: Adding new return type vm_fault_t
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 20-04-18 11:49:32, Luis R. Rodriguez wrote:
-> On Tue, Apr 17, 2018 at 05:59:36PM -0700, Luis R. Rodriguez wrote:
-> > On Thu, Dec 21, 2017 at 12:03:29PM +0100, Jan Kara wrote:
-> > > Hello,
-> > > 
-> > > I think I owe you a reply here... Sorry that it took so long.
-> > 
-> > Took me just as long :)
-> > 
-> > > On Fri 01-12-17 22:13:27, Luis R. Rodriguez wrote:
-> > > > 
-> > > > I'll note that its still not perfectly clear if really the semantics behind
-> > > > freeze_bdev() match what I described above fully. That still needs to be
-> > > > vetted for. For instance, does thaw_bdev() keep a superblock frozen if we
-> > > > an ioctl initiated freeze had occurred before? If so then great. Otherwise
-> > > > I think we'll need to distinguish the ioctl interface. Worst possible case
-> > > > is that bdev semantics and in-kernel semantics differ somehow, then that
-> > > > will really create a holy fucking mess.
-> > > 
-> > > I believe nobody really thought about mixing those two interfaces to fs
-> > > freezing and so the behavior is basically defined by the implementation.
-> > > That is:
-> > > 
-> > > freeze_bdev() on sb frozen by ioctl_fsfreeze() -> EBUSY
-> > > freeze_bdev() on sb frozen by freeze_bdev() -> success
-> > > ioctl_fsfreeze() on sb frozen by freeze_bdev() -> EBUSY
-> > > ioctl_fsfreeze() on sb frozen by ioctl_fsfreeze() -> EBUSY
-> > > 
-> > > thaw_bdev() on sb frozen by ioctl_fsfreeze() -> EINVAL
-> > 
-> > Phew, so this is what we want for the in-kernel freezing so we're good
-> > and *can* combine these then.
-> 
-> I double checked, and I don't see where you get EINVAL for this case.
-> We *do* keep the sb frozen though, which is good, and the worst fear
-> I had was that we did not. However we return 0 if there was already
-> a prior freeze_bdev() or ioctl_fsfreeze() other than the context that
-> started the prior freeze (--bdev->bd_fsfreeze_count > 0).
-> 
-> The -EINVAL is only returned currently if there were no freezers.
-> 
-> int thaw_bdev(struct block_device *bdev, struct super_block *sb)
-> {
-> 	int error = -EINVAL;
-> 
-> 	mutex_lock(&bdev->bd_fsfreeze_mutex);
-> 	if (!bdev->bd_fsfreeze_count)
-> 		goto out;
+On Sat, Apr 21, 2018 at 2:54 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> On Sun, Apr 22, 2018 at 3:04 AM, Matthew Wilcox <willy@infradead.org> wrote:
+>> On Sun, Apr 22, 2018 at 02:35:29AM +0530, Souptick Joarder wrote:
+>>> Use new return type vm_fault_t for fault handler. For
+>>> now, this is just documenting that the function returns
+>>> a VM_FAULT value rather than an errno. Once all instances
+>>> are converted, vm_fault_t will become a distinct type.
+>>>
+>>> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>>>
+>>> There was an existing bug inside dax_load_hole()
+>>> if vm_insert_mixed had failed to allocate a page table,
+>>> we'd return VM_FAULT_NOPAGE instead of VM_FAULT_OOM.
+>>> With new vmf_insert_mixed() this issue is addressed.
+>>>
+>>> vm_insert_mixed_mkwrite has inefficiency when it returns
+>>> an error value, driver has to convert it to vm_fault_t
+>>> type. With new vmf_insert_mixed_mkwrite() this limitation
+>>> will be addressed.
+>>>
+>>> As new function vmf_insert_mixed_mkwrite() only called
+>>> from fs/dax.c, so keeping both the changes in a single
+>>> patch.
+>>>
+>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>>
+>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>>
+>> There's a couple of minor things which could be tidied up, but not worth
+>> doing them as a revision to this patch.
+>
+> Which tree this patch will go through ? mm or fsdevel ?
 
-But this is precisely where we'd bail if we freeze sb by ioctl_fsfreeze()
-but try to thaw by thaw_bdev(). ioctl_fsfreeze() does not touch
-bd_fsfreeze_count...
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+nvdimm, since that tree has some pending reworks for dax-vs-truncate.
