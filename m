@@ -1,47 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752738AbeDUHEQ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 03:04:16 -0400
-Received: from verein.lst.de ([213.95.11.211]:45063 "EHLO newverein.lst.de"
+        id S1752804AbeDUHEj (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 03:04:39 -0400
+Received: from verein.lst.de ([213.95.11.211]:45073 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751258AbeDUHEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 03:04:14 -0400
-Date: Sat, 21 Apr 2018 09:05:16 +0200
+        id S1751258AbeDUHEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 03:04:37 -0400
+Date: Sat, 21 Apr 2018 09:05:40 +0200
 From: Christoph Hellwig <hch@lst.de>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Alexander Duyck <alexander.duyck@gmail.com>,
-        "Daly, Dan" <dan.daly@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
-        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk
-Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
-        unmanaged SR-IOV on virtio_pci devices
-Message-ID: <20180421070516.GA24431@lst.de>
-References: <20180315184132.3102.90947.stgit@localhost.localdomain> <20180316183042-mutt-send-email-mst@kernel.org> <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com> <20180403161151-mutt-send-email-mst@kernel.org> <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com> <20180403212503-mutt-send-email-mst@kernel.org> <CAKgT0Ude79FYrK4qA0OKRJ1NackyqPi-hZ8Zh3WSdLDFxoOosQ@mail.gmail.com> <20180420030640-mutt-send-email-mst@kernel.org> <CAKgT0Ucpw9D1u8MYoEX5KOij6sxs-5O9gPFTmOVq=Dgt=HUJ=g@mail.gmail.com> <20180420180839-mutt-send-email-mst@kernel.org>
+To: Alexander Duyck <alexander.h.duyck@intel.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, netanel@amazon.com, ddutile@redhat.com,
+        mheyne@amazon.de, liang-min.wang@intel.com, mark.d.rustad@intel.com,
+        dwmw2@infradead.org, hch@lst.de, dwmw@amazon.co.uk
+Subject: Re: [pci PATCH v8 1/4] pci: Add pci_sriov_configure_simple for PFs
+        that don't manage VF resources
+Message-ID: <20180421070540.GB24431@lst.de>
+References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com> <20180420162814.46077.11939.stgit@ahduyck-green-test.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180420180839-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180420162814.46077.11939.stgit@ahduyck-green-test.jf.intel.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 06:28:50PM +0300, Michael S. Tsirkin wrote:
-> But maybe it's not needed here.  I am not making the decisions myself.
-> Not too late: post to the TC list and let's see what the response is.
-> Without a feature bit you are making a change affecting all future
-> implementations without exception so the bar is a bit higher: you need
-> to actually post a spec text proposal not just a patch showing how to
-> use the feature, and TC needs to vote on it. Voting takes a week,
-> review a week or two depending on change complexity.
+Looks good,
 
-Also IFF the hardware already is out we can quirk it in the PCI ID
-table to manually set the feature in the driver as a workaround.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
