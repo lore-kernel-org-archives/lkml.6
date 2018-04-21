@@ -1,87 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752722AbeDUK1f (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 06:27:35 -0400
-Received: from gofer.mess.org ([88.97.38.141]:56589 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752478AbeDUK1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 06:27:33 -0400
-Date: Sat, 21 Apr 2018 11:27:32 +0100
-From: Sean Young <sean@mess.org>
-To: Vladislav Zhurba <vzhurba@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org,
-        linux-media@vger.kernel.org, Daniel Fu <danifu@nvidia.com>
-Subject: Re: [PATCH 1/1] media: nec-decoder: remove trailer_space state
-Message-ID: <20180421102732.5sbi6nzfu33b435m@gofer.mess.org>
-References: <20180420185139.29238-1-vzhurba@nvidia.com>
+        id S1752809AbeDUKac (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 06:30:32 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:48305 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751868AbeDUKa3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 06:30:29 -0400
+Date: Sat, 21 Apr 2018 12:30:02 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Matheus Castello <matheus@castello.eng.br>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh@kernel.org, eric@anholt.net
+Message-ID: <1775241593.21185.1524306602836@email.1und1.de>
+In-Reply-To: <1523422726-7910-3-git-send-email-matheus@castello.eng.br>
+References: <f500b25c-eea0-9f01-7d7b-5a9dd90c50fa@castello.eng.br>
+ <1523422726-7910-1-git-send-email-matheus@castello.eng.br>
+ <1523422726-7910-3-git-send-email-matheus@castello.eng.br>
+Subject: Re: [PATCH v5 2/3] pinctrl: bcm2835: Add support for generic
+ pinctrl binding
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420185139.29238-1-vzhurba@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:mVVvY1LOcV8/rMypa8Fu+CplGA2+O0n+8FZJpf+vbXE2p3DGSZ9
+ /Mdyxz2OU9D+dARJpiJWLvyRfTRS8nUKa5u126eOL9aNu9sYDtJjN2rDaQhXEzTwV8VztO6
+ Zb8d6Kq2q+3rA5BjZB/5SZSuEgItETf3W2kgfbYUM1c7tFBqtHDmeef54xJfzbNMyQuJfk8
+ 9/FLHMZzjdSaHBZRx0T/Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zmM8L9Z7XEw=:gpFZpU+J9kv7Gk/rwmhG+F
+ j203izkHwspkQCZT3gbnNFe9xc/XxwbD/eGqOuYf3F7iwyYk1cjgGYw2IrjVd+f3VUoiiobq9
+ MiAsJMJemcsICJmtFsMLoihutmwabKQdY8n2OxSOY3AfDrAGdvifk42/Dl8c54Mo5ZmTmvCUn
+ ZsGz7+Ym6CCMIa5rfm7gZUGHTUSFh4QkKWLN3NEiXml96Neh2AVwJ/eIw1IQ4X5jb1Iejv+v6
+ 25/ecDSzSAZ3pBM1CxkO+LqUn5IfsTkAv0lhjR4hdk1KT5TolEhp8ciePVT3LrjcN6HRSXkW2
+ +/MIy1EbmC7AHjPIq8dE/pgrAMWzgRi31BZ/sdTq/KO7O/fF/dqPe4pJDTVFt1KpzjXMlLV5L
+ ttpsWieqxU10TMVvh8IFhARXubuipn13jMku2TSifGbOI2KDmQvY6Z7M6JNUpPxZL4VFSK/oX
+ gjdmeRttVgW1aZiPfjruc0S0y/4RZkkyvwnsPgZQ+kcAPDvej2UnJTQdVmzhlFhxJ0NAeg7ZH
+ vRmNdyfLsyAlILaOT1KzUjvd4tOW4+ZkfcbMwylm9YSwc4Hwf+Z+JZlfUBoTr/It/iBl8LpGX
+ +oJf2k9p9OxopdJjEMvumaYwQScrvUFcswEXPPH1dSUmYUNDzo6shw79qfdwYrU9/RwSs16Na
+ lZwmPEpD7tlDGYqkinelvy0Ci8CkA7OHUdoO0uGjShPve6HvEOJvUNXMN/ZXxe2tf1yprRx+F
+ sVo/FuCUaXqE4O6jlgPEKQs7d6fuV3aSIU2rxef69kKnkpmvtorRurt1H2o=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 11:51:39AM -0700, Vladislav Zhurba wrote:
-> From: Daniel Fu <danifu@nvidia.com>
+Hi Matheus,
+
+> Matheus Castello <matheus@castello.eng.br> hat am 11. April 2018 um 06:58 geschrieben:
 > 
-> Remove STATE_TRAILER_SPACE from state machine.
-> Causing 2 issue:
-> - can not decode the keycode, if it didn't following with
->   another keycode/repeat code
-> - will generate one more code in current logic.
->   i.e. key_right + repeat code + key_left + repeat code.
->   expect: key_right, key_left.
->   Result: key_right, key_right, key_right.
->   Reason: when receive repeat code of key_right, state machine will
->   stay in STATE_TRAILER_SPACE state, then wait for a new interrupt,
->   if an interrupt came after keyup_timer, then will generate another
->   fake key.
-
-This behaviour is symptomatic of rc driver which does not generate
-ir timeouts. If an rc driver does not do this, then it won't be just the
-nec protocol which is not parsed correctly. For example, rc-6 in mode 6a
-can have 16, 24 or 32 bits and we rely on the ir timeout to demarcate the
-end of the IR message -- else we are stuck with the behaviour as you
-describe above.
-
-> According to the NEC protocol, it don't need a trailer space. Remove it.
-
-This isn't the right solution, so NAK I'm afraid. 
-
-Please let us know what rc driver you are using, I'm happy to help fix it.
-
-
-Sean
-
 > 
-> Signed-off-by: Daniel Fu <danifu@nvidia.com>
-> Signed-off-by: Vladislav Zhurba <vzhurba@nvidia.com>
+> To keep driver up to date we add generic pinctrl binding support, which covers
+> the features used in this driver and has additional node properties that this
+> SoC has compatibility, so enabling future implementations of these properties
+> without the need to create new node properties in the device trees.
+> 
+> The logic of this change maintain the old brcm legacy binding support in order
+> to keep the ABI stable.
+> 
+> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
 > ---
->  drivers/media/rc/ir-nec-decoder.c | 10 ----------
->  1 file changed, 10 deletions(-)
 > 
-> diff --git a/drivers/media/rc/ir-nec-decoder.c b/drivers/media/rc/ir-nec-decoder.c
-> index 21647b809e6f..760b66affd1a 100644
-> --- a/drivers/media/rc/ir-nec-decoder.c
-> +++ b/drivers/media/rc/ir-nec-decoder.c
-> @@ -128,16 +128,6 @@ static int ir_nec_decode(struct rc_dev *dev, struct ir_raw_event ev)
->  		if (!eq_margin(ev.duration, NEC_TRAILER_PULSE, NEC_UNIT / 2))
->  			break;
->  
-> -		data->state = STATE_TRAILER_SPACE;
-> -		return 0;
-> -
-> -	case STATE_TRAILER_SPACE:
-> -		if (ev.pulse)
-> -			break;
-> -
-> -		if (!geq_margin(ev.duration, NEC_TRAILER_SPACE, NEC_UNIT / 2))
-> -			break;
-> -
->  		if (data->count == NEC_NBITS) {
->  			address     = bitrev8((data->bits >> 24) & 0xff);
->  			not_address = bitrev8((data->bits >> 16) & 0xff);
-> -- 
-> 2.16.2
+> A brief explanation of what I did:
+> 
+> Add pinconf-generic header for use the defines and pinctrl-generic API.
+> 
+> Add dt-bindings pinctrl bcm2835 header to use functions selections and
+> pulls definitions, which functions definitions where duplicated in the
+> enum bcm2835_fsel, I removed the duplicate defines from enum.
+> 
+> In the bcm2835_pctl_dt_node_to_map_pull I used the generic macro for
+> pack the legacy param and arguments, since it will be unpacked along with
+> generic properties that is packed with this same macro.
+> 
+> In bcm2835_pctl_dt_node_to_map I thougt it was better, and simpler, to use
+> pinctrl-generic parse code instead of parsing it inside the driver, so code
+> first check for generic binding parse, if something is parsed then it is
+> assumed that are using the new generic style, and when nothing is found then
+> parse continues to search for legacy properties.
+> 
+> In the bcm2835_pinconf_set was changed the unpack legacy by the generic, and
+> was added a switch for the parameter tests, since pinctrl generic uses 3
+> properties to define the states of the pull instead of one with arguments, that
+> was the reason too that bcm2835_pull_config_set function was added, for reuse
+> the code that set state of pull.
+> 
+>  drivers/pinctrl/bcm/Kconfig           |  1 +
+>  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 87 ++++++++++++++++++++++-------------
+>  2 files changed, 55 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
+> index e8c4e4f..0f38d51 100644
+> --- a/drivers/pinctrl/bcm/Kconfig
+> +++ b/drivers/pinctrl/bcm/Kconfig
+> @@ -20,6 +20,7 @@ config PINCTRL_BCM2835
+>  	bool
+>  	select PINMUX
+>  	select PINCONF
+> +	select GENERIC_PINCONF
+>  	select GPIOLIB_IRQCHIP
+> 
+>  config PINCTRL_IPROC_GPIO
+> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> index 785c366..010c565 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> @@ -36,11 +36,13 @@
+>  #include <linux/pinctrl/pinconf.h>
+>  #include <linux/pinctrl/pinctrl.h>
+>  #include <linux/pinctrl/pinmux.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/types.h>
+> +#include <dt-bindings/pinctrl/bcm2835.h>
+> 
+>  #define MODULE_NAME "pinctrl-bcm2835"
+>  #define BCM2835_NUM_GPIOS 54
+> @@ -75,10 +77,6 @@ enum bcm2835_pinconf_param {
+>  	BCM2835_PINCONF_PARAM_PULL,
+
+Since we use bcm2835_pinconf_param and pin_config_param in bcm2835_pinconf_set, there are potential conflicts. According to include/linux/pinctrl/pinconf-generic.h:
+
+ * @PIN_CONFIG_END: this is the last enumerator for pin configurations, if
+ *	you need to pass in custom configurations to the pin controller, use
+ *	PIN_CONFIG_END+1 as the base offset.
+
+Please adjust BCM2835_PINCONF_PARAM_PULL accordingly.
+
+Sorry for not notice this before.
+
+Stefan
