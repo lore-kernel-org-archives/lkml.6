@@ -1,24 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753207AbeDUHvG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 03:51:06 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51849 "EHLO
+        id S1753239AbeDUHvV (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 03:51:21 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54365 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753179AbeDUHvE (ORCPT
+        with ESMTP id S1752819AbeDUHvT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 03:51:04 -0400
-Date: Sat, 21 Apr 2018 00:50:58 -0700
-From: tip-bot for Andi Kleen <tipbot@zytor.com>
-Message-ID: <tip-a7e9eab3dbd35268c16244557a4155a2d9a641c3@git.kernel.org>
-Cc: ak@linux.intel.com, tglx@linutronix.de, hpa@zytor.com, acme@redhat.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org
-Reply-To: ak@linux.intel.com, mingo@kernel.org, acme@redhat.com, hpa@zytor.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, jolsa@kernel.org
-In-Reply-To: <20180406203812.3087-2-andi@firstfloor.org>
-References: <20180406203812.3087-2-andi@firstfloor.org>
+        Sat, 21 Apr 2018 03:51:19 -0400
+Date: Sat, 21 Apr 2018 00:49:28 -0700
+From: tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-5af44ca53d019de47efe6dbc4003dd518e5197ed@git.kernel.org>
+Cc: alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, acme@redhat.com,
+        namhyung@kernel.org, andi@firstfloor.org
+Reply-To: tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, hpa@zytor.com, acme@redhat.com, namhyung@kernel.org,
+        andi@firstfloor.org
+In-Reply-To: <20180415092352.12403-2-jolsa@kernel.org>
+References: <20180415092352.12403-2-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf mem: Allow all record/report options
-Git-Commit-ID: a7e9eab3dbd35268c16244557a4155a2d9a641c3
+Subject: [tip:perf/urgent] perf: Fix sample_max_stack maximum check
+Git-Commit-ID: 5af44ca53d019de47efe6dbc4003dd518e5197ed
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -31,65 +35,93 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a7e9eab3dbd35268c16244557a4155a2d9a641c3
-Gitweb:     https://git.kernel.org/tip/a7e9eab3dbd35268c16244557a4155a2d9a641c3
-Author:     Andi Kleen <ak@linux.intel.com>
-AuthorDate: Fri, 6 Apr 2018 13:38:09 -0700
+Commit-ID:  5af44ca53d019de47efe6dbc4003dd518e5197ed
+Gitweb:     https://git.kernel.org/tip/5af44ca53d019de47efe6dbc4003dd518e5197ed
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 15 Apr 2018 11:23:51 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 18 Apr 2018 15:35:48 -0300
+CommitDate: Tue, 17 Apr 2018 09:47:40 -0300
 
-perf mem: Allow all record/report options
+perf: Fix sample_max_stack maximum check
 
-For perf mem report / perf mem record, pass all unknown options
-through to the underlying report/record commands. This makes things
-like
+The syzbot hit KASAN bug in perf_callchain_store having the entry stored
+behind the allocated bounds [1].
 
-perf mem record -a sleep 1
+We miss the sample_max_stack check for the initial event that allocates
+callchain buffers. This missing check allows to create an event with
+sample_max_stack value bigger than the global sysctl maximum:
 
-work. Matches how c2c and other tools work.
+  # sysctl -a | grep perf_event_max_stack
+  kernel.perf_event_max_stack = 127
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20180406203812.3087-2-andi@firstfloor.org
+  # perf record -vv -C 1 -e cycles/max-stack=256/ kill
+  ...
+  perf_event_attr:
+    size                             112
+    ...
+    sample_max_stack                 256
+  ------------------------------------------------------------
+  sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8 = 4
+
+Note the '-C 1', which forces perf record to create just single event.
+Otherwise it opens event for every cpu, then the sample_max_stack check
+fails on the second event and all's fine.
+
+The fix is to run the sample_max_stack check also for the first event
+with callchains.
+
+[1] https://marc.info/?l=linux-kernel&m=152352732920874&w=2
+
+Reported-by: syzbot+7c449856228b63ac951e@syzkaller.appspotmail.com
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: syzkaller-bugs@googlegroups.com
+Cc: x86@kernel.org
+Fixes: 97c79a38cd45 ("perf core: Per event callchain limit")
+Link: http://lkml.kernel.org/r/20180415092352.12403-2-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-mem.txt | 3 +++
- tools/perf/builtin-mem.c              | 4 ++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ kernel/events/callchain.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
-index b0211410969b..8806ed5f3802 100644
---- a/tools/perf/Documentation/perf-mem.txt
-+++ b/tools/perf/Documentation/perf-mem.txt
-@@ -67,6 +67,9 @@ OPTIONS
- --phys-data::
- 	Record/Report sample physical addresses
- 
-+In addition, for report all perf report options are valid, and for record
-+all perf record options.
-+
- SEE ALSO
- --------
- linkperf:perf-record[1], linkperf:perf-report[1]
-diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
-index 506564651cda..57393e94d156 100644
---- a/tools/perf/builtin-mem.c
-+++ b/tools/perf/builtin-mem.c
-@@ -83,7 +83,7 @@ static int __cmd_record(int argc, const char **argv, struct perf_mem *mem)
- 	};
- 
- 	argc = parse_options(argc, argv, options, record_mem_usage,
--			     PARSE_OPT_STOP_AT_NON_OPTION);
-+			     PARSE_OPT_KEEP_UNKNOWN);
- 
- 	rec_argc = argc + 9; /* max number of arguments */
- 	rec_argv = calloc(rec_argc + 1, sizeof(char *));
-@@ -436,7 +436,7 @@ int cmd_mem(int argc, const char **argv)
+diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+index 772a43fea825..73cc26e321de 100644
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -119,19 +119,22 @@ int get_callchain_buffers(int event_max_stack)
+ 		goto exit;
  	}
  
- 	argc = parse_options_subcommand(argc, argv, mem_options, mem_subcommands,
--					mem_usage, PARSE_OPT_STOP_AT_NON_OPTION);
-+					mem_usage, PARSE_OPT_KEEP_UNKNOWN);
++	/*
++	 * If requesting per event more than the global cap,
++	 * return a different error to help userspace figure
++	 * this out.
++	 *
++	 * And also do it here so that we have &callchain_mutex held.
++	 */
++	if (event_max_stack > sysctl_perf_event_max_stack) {
++		err = -EOVERFLOW;
++		goto exit;
++	}
++
+ 	if (count > 1) {
+ 		/* If the allocation failed, give up */
+ 		if (!callchain_cpus_entries)
+ 			err = -ENOMEM;
+-		/*
+-		 * If requesting per event more than the global cap,
+-		 * return a different error to help userspace figure
+-		 * this out.
+-		 *
+-		 * And also do it here so that we have &callchain_mutex held.
+-		 */
+-		if (event_max_stack > sysctl_perf_event_max_stack)
+-			err = -EOVERFLOW;
+ 		goto exit;
+ 	}
  
- 	if (!argc || !(strncmp(argv[0], "rec", 3) || mem.operation))
- 		usage_with_options(mem_usage, mem_options);
