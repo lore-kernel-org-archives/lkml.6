@@ -1,83 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753271AbeDUQzV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 12:55:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753092AbeDUQzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 12:55:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3218F217D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-X-Google-Smtp-Source: AIpwx49xL5ufWRevjMzJjkOjV+ikQhr0Aofeb9whvLio80LGcyDsi2LglOJq1I3aH/gv48CI6woYY+IFfurx6gCpzBE=
+        id S1753192AbeDURDs (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 13:03:48 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:42760 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753088AbeDURDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 13:03:47 -0400
+X-Google-Smtp-Source: AIpwx48fkX2/p0yepXkyhOdnSqy51rIR3j5sXGPVAOA3Kc453lPSKa0cKgtRQXaxJW7aOOyxZp9+uA==
+Date: Sat, 21 Apr 2018 22:35:40 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: hughd@google.com, minchan@kernel.org, ying.huang@intel.com,
+        ross.zwisler@linux.intel.com, willy@infradead.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] mm: memory: Introduce new vmf_insert_mixed_mkwrite
+Message-ID: <20180421170540.GA17849@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <1524241936-10295-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-References: <1524241936-10295-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <1524241936-10295-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Sat, 21 Apr 2018 18:55:17 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcv2A8po8-8ZVic8KX2xURPZsRBkS6My3qMhefRQk-fRQ@mail.gmail.com>
-Message-ID: <CAJKOXPcv2A8po8-8ZVic8KX2xURPZsRBkS6My3qMhefRQk-fRQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/exynos: fimd: Add support for S5PV210 FIMD variant
-To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com,
-        Seung Woo Kim <sw0312.kim@samsung.com>, kyungmin.park@samsung.com,
-        airlied@linux.ie, kgene@kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 6:32 PM, Paweł Chmiel
-<pawel.mikolaj.chmiel@gmail.com> wrote:
-> From: Tomasz Figa <tomasz.figa@gmail.com>
->
-> This patch adds support for FIMD variant found on S5PV210 SoC.
-> Except CLKSEL bit availability, it is identical to Exynos4210.
->
-> Tested-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+vm_insert_mixed_mkwrite() has inefficiency when it
+returns err, driver has to convert err to vm_fault_t
+type. With new vmf_insert_mixed_mkwrite we can handle
+this limitation.
 
-You need to add your Signed-off-by here as well. It is necessary every
-time you touch a patch (and sending it is also a "touch" action).
+As of now vm_insert_mixed_mkwrite() is only getting
+invoked from fs/dax.c, so this change has to go first
+in linus tree before changes in dax.
 
-Best regards,
-Krzysztof
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ include/linux/mm.h |  4 ++--
+ mm/memory.c        | 15 +++++++++++----
+ 2 files changed, 13 insertions(+), 6 deletions(-)
 
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index d42ae2bc3e56..01b1570d0c3a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -121,6 +121,12 @@ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
->         .has_limited_fmt = 1,
->  };
->
-> +static struct fimd_driver_data s5pv210_fimd_driver_data = {
-> +       .timing_base = 0x0,
-> +       .has_shadowcon = 1,
-> +       .has_clksel = 1,
-> +};
-> +
->  static struct fimd_driver_data exynos3_fimd_driver_data = {
->         .timing_base = 0x20000,
->         .lcdblk_offset = 0x210,
-> @@ -193,6 +199,8 @@ struct fimd_context {
->  static const struct of_device_id fimd_driver_dt_match[] = {
->         { .compatible = "samsung,s3c6400-fimd",
->           .data = &s3c64xx_fimd_driver_data },
-> +       { .compatible = "samsung,s5pv210-fimd",
-> +         .data = &s5pv210_fimd_driver_data },
->         { .compatible = "samsung,exynos3250-fimd",
->           .data = &exynos3_fimd_driver_data },
->         { .compatible = "samsung,exynos4210-fimd",
-> --
-> 2.7.4
->
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1ac1f06..9fe441c 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2423,8 +2423,8 @@ int vm_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
+ 			unsigned long pfn, pgprot_t pgprot);
+ int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
+ 			pfn_t pfn);
+-int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
+-			pfn_t pfn);
++vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
++		unsigned long addr, pfn_t pfn);
+ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long len);
+ 
+ static inline vm_fault_t vmf_insert_page(struct vm_area_struct *vma,
+diff --git a/mm/memory.c b/mm/memory.c
+index 01f5464..721cfd5 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1955,12 +1955,19 @@ int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
+ }
+ EXPORT_SYMBOL(vm_insert_mixed);
+ 
+-int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
+-			pfn_t pfn)
++vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
++		unsigned long addr, pfn_t pfn)
+ {
+-	return __vm_insert_mixed(vma, addr, pfn, true);
++	int err;
++
++	err =  __vm_insert_mixed(vma, addr, pfn, true);
++	if (err == -ENOMEM)
++		return VM_FAULT_OOM;
++	if (err < 0 && err != -EBUSY)
++		return VM_FAULT_SIGBUS;
++	return VM_FAULT_NOPAGE;
+ }
+-EXPORT_SYMBOL(vm_insert_mixed_mkwrite);
++EXPORT_SYMBOL(vmf_insert_mixed_mkwrite);
+ 
+ /*
+  * maps a range of physical memory into the requested pages. the old
+-- 
+1.9.1
