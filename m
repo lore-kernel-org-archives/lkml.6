@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/bhI/i901Zlr5PzGun37Vpc2RClmbEHbEWmDMsaol2PugzeyrPnVYBYE5Xs06dkC0R9OEI
-ARC-Seal: i=1; a=rsa-sha256; t=1524406932; cv=none;
+X-Google-Smtp-Source: AIpwx49dUuAY+HKlOkUY0SHcmZLz8mEW9p1Y6w0jhUNXGOAtBI/nIKzOlasIYyfH5Izc7OFEDwO4
+ARC-Seal: i=1; a=rsa-sha256; t=1524406930; cv=none;
         d=google.com; s=arc-20160816;
-        b=ELwWrYCCk/AAiBxr1vv9IF++VGrmHUYMibD1Ic0FuJViBuukMmYiyJEegGR1tb29w+
-         S3cSf1bRTQ6VnvnPk3E1/Z4AwBwcDFA1jLDVNruSZyi5VF0QBOkDcSWhhr7EH7GIzG6s
-         oyOtHv/GUwjBtAB79wQoMx9QkF9RO+7DLWJv4SftTgtZzEgmZnjl4EgxADO+xF4waUZq
-         Vq1Ax4zEuSzx46TRhU8k1J9fq7z95EKUTDDB/5b2wIWOK1hwA8WXGB8RO6ITTK1TtQYC
-         ALRaZUbXr6BVV9PDywYbqEZY0b4B7O9sR58XObSeAWPGHr+cs7S5/GLHZMZnvQS5e52J
-         wR6A==
+        b=v0ki7cwU66SCTAn3neVv8HaGxocBn3kmZFwfcgr6FX+dtAqOw5EGM2FCzBlOI59oV5
+         aFe0Qh3eYzhR6NcwL9LmPaCkrnGwBhKgkdzBOct7u0zqIt54EYIfRj6SPZpoh0odUSu0
+         ItLy554JgUmgJGTeOxtqiEx6qVw8vUUqZ7Rd5iG5blycxTCegkQfpzIaz1XEwJ3fYfz0
+         Hqn9h0+gGCuxfK76An8PBz59Ah4YefU9uXUWH1XQ9+3WvRoDotza360T8mtLbKOSwMay
+         3gVcB0b+hQ22wTR9kVhavGV7+GKMjENR5Cu4wx+QCKpiMeu5Uo5WeKegawbPctaioaxN
+         TbBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2Z9F8fuRHYm8G7KbhzM7naaPUNWLKuHDI3ZnyO6+FVo=;
-        b=SIF66z7tvTLp5SWsLpVmtQFmbutqfzLyeBdoIq2+m+qxnKtdZ0E5/NY87MOPINZ7yn
-         KaR8/kOHX3M/XVtePsMNC+Fp4018AAxLuDt/Da31wUcyU4uuDtrjnIKwVl2iRfvzWa5n
-         DtnUb7xZJxnTXAT3gTybgXLr6nDHzrnsFswg3A/CElrPn6v6cp6aBU5AE4hbMigFEyxm
-         AcffM/E7/A3eIAadqbxX1VCWMJF7tklycvluuUY/VqcxlSFp5iBnRlvhup9Iwbfay4QW
-         TEErqw7MTxdLExwVrKlknMzXHLww4GnBI+LA7YAKxeb2EpgnBJSCFJRZWPHK+f05CN2P
-         OQzw==
+        bh=nCuFeWJBF0laPcvG64yDeZKXytajFkatZ6ZjEiUnrW8=;
+        b=mUjxsXl4//e36/aJikgJQ7XYPKEo3MErDekfqMtZIWVs7yiU30YkhCtA2/cD4J1YMK
+         xWQMJYal2KR0I05QtFzN09IeQpX0RJlgJdzLcuHvo1GolWvbubGYjTpKvx3dom14x+Lk
+         mBXQv+XxuR/KWP6PK+N+ho9ixVFQj3L96XhM8qSRm4C6hI5kj79irHw4+7ocmlHaKDqp
+         0bnLaUoi9o4aEV5QOdm1ebZb09aRmE/9EyoqKWuBHgsRI5aGB9hL/ZTuLOdCJwiTe/ok
+         61XQALcGfI3vanUrz3IfQg1aR8twZhwugPGbxgLXkpuZb8NIUkctSTGTLhGTfIe5z6w6
+         Lfbg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mathieu Malaterre <malat@debian.org>,
-	Alex Smith <alex.smith@imgtec.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 3.18 26/52] mmc: jz4740: Fix race condition in IRQ mask update
-Date: Sun, 22 Apr 2018 15:53:59 +0200
-Message-Id: <20180422135316.672332055@linuxfoundation.org>
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 3.18 25/52] jbd2: if the journal is aborted then dont allow update of the log tail
+Date: Sun, 22 Apr 2018 15:53:58 +0200
+Message-Id: <20180422135316.591595948@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455143804605814?=
-X-GMAIL-MSGID: =?utf-8?q?1598456523953611760?=
+X-GMAIL-THRID: =?utf-8?q?1598455083413047816?=
+X-GMAIL-MSGID: =?utf-8?q?1598456520972553604?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,52 +48,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alex Smith <alex.smith@imgtec.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit a04f0017c22453613d5f423326b190c61e3b4f98 upstream.
+commit 85e0c4e89c1b864e763c4e3bb15d0b6d501ad5d9 upstream.
 
-A spinlock is held while updating the internal copy of the IRQ mask,
-but not while writing it to the actual IMASK register. After the lock
-is released, an IRQ can occur before the IMASK register is written.
-If handling this IRQ causes the mask to be changed, when the handler
-returns back to the middle of the first mask update, a stale value
-will be written to the mask register.
+This updates the jbd2 superblock unnecessarily, and on an abort we
+shouldn't truncate the log.
 
-If this causes an IRQ to become unmasked that cannot have its status
-cleared by writing a 1 to it in the IREG register, e.g. the SDIO IRQ,
-then we can end up stuck with the same IRQ repeatedly being fired but
-not handled. Normally the MMC IRQ handler attempts to clear any
-unexpected IRQs by writing IREG, but for those that cannot be cleared
-in this way then the IRQ will just repeatedly fire.
-
-This was resulting in lockups after a while of using Wi-Fi on the
-CI20 (GitHub issue #19).
-
-Resolve by holding the spinlock until after the IMASK register has
-been updated.
-
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
-Link: https://github.com/MIPS/CI20_linux/issues/19
-Fixes: 61bfbdb85687 ("MMC: Add support for the controller on JZ4740 SoCs.")
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Alex Smith <alex.smith@imgtec.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/jz4740_mmc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/jbd2/journal.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/mmc/host/jz4740_mmc.c
-+++ b/drivers/mmc/host/jz4740_mmc.c
-@@ -368,9 +368,9 @@ static void jz4740_mmc_set_irq_enabled(s
- 		host->irq_mask &= ~irq;
- 	else
- 		host->irq_mask |= irq;
--	spin_unlock_irqrestore(&host->lock, flags);
- 
- 	writew(host->irq_mask, host->base + JZ_REG_MMC_IMASK);
-+	spin_unlock_irqrestore(&host->lock, flags);
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -923,7 +923,7 @@ out:
  }
  
- static void jz4740_mmc_clock_enable(struct jz4740_mmc_host *host,
+ /*
+- * This is a variaon of __jbd2_update_log_tail which checks for validity of
++ * This is a variation of __jbd2_update_log_tail which checks for validity of
+  * provided log tail and locks j_checkpoint_mutex. So it is safe against races
+  * with other threads updating log tail.
+  */
+@@ -1399,6 +1399,9 @@ int jbd2_journal_update_sb_log_tail(jour
+ 	journal_superblock_t *sb = journal->j_superblock;
+ 	int ret;
+ 
++	if (is_journal_aborted(journal))
++		return -EIO;
++
+ 	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
+ 	jbd_debug(1, "JBD2: updating superblock (start %lu, seq %u)\n",
+ 		  tail_block, tail_tid);
