@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+5Jn04bNwXpLsiI887GOR/RalcdIvNNPNFjWAArsKaVZHJ0zq538WWGwrnfu5ejMPwC3WF
-ARC-Seal: i=1; a=rsa-sha256; t=1524406724; cv=none;
+X-Google-Smtp-Source: AIpwx4/GI7jTHNNqdyeNeIyu3zXaW3Z8pqxC2H54ciLxNhAHDv30+wMltFNE1ndwnx1OG/I2EVvy
+ARC-Seal: i=1; a=rsa-sha256; t=1524406721; cv=none;
         d=google.com; s=arc-20160816;
-        b=m091PI/r+h7ph98shTBSPjeM+JTI+2Z3CKtqV3WJkWj6wT3ynHo/700MI0VkUPRvLX
-         okpzmpJYy34a8Ibvmid6sQAT04MAjucwu88ij4KXztDInxTmWg3O8O8qDhEU306Usqx9
-         AKOgs2E9Oi0gCrcwhydqXHlzajTayXRugTXV+TyjgNodTby2rttCouFA1u9Eolv8fdQ7
-         I3bunzuklsn/d9hgkkUqk6YNshU2ga6IgftE+BrVbuZgUZLvBZDGhMttG3qiuqmq2Is8
-         B/s12ghTCHxxNao+apaZyTRDY5fG4rK96Xo5nuYo/DAzAR/NiFO0sKF8elAiU5v2QPnm
-         h+hg==
+        b=vJ3XAncUHAdRqTIXI/RL3xvGGpAQsN0APQSRlRALqo3V5WO7EOMLsx5JGKzS6fArn0
+         Dxbnw1X9ydfY/DmK+RmTEs4S8ALrPJslNrulymg6Lc8MGrqICnNzOyNuinuSZOE8P3RA
+         9UNrSII3j60q0flhVJm4mVP9PXYakMFpDTguD4W9We06qlyueUAFPsPRRO8b6Viae4QQ
+         08m6vnymMb7GXApYaPdc5S3jnqWEXPXjRJ7dmLVdF7cvRGgLgnoHe/1E+E+i4XVjfDJ2
+         NS0lhscu5g43nE9Jqxh1sip2dGrYgjciK4PAE3bquorAZySUQwIKB4766Ht0sTejilQY
+         n2qQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kvxKr8ClEQgx20UWqYp9E/gpYHW1bkkG/5DdzZuDcfU=;
-        b=x6sUGSpRaqtQCWYk+eI3jHgZiEOvUqiE7eTlsqxNc40Eb6SnW5iKWACaXf2uVedMV/
-         pErG+ROuYpKKhTUOnWc815A6d3RMYL3wESDuk0R2+yGwDoW92UL5GJ6XO4quoL2nKgV9
-         +N4JkPNTubjXIVjyaR9D3jzdAMMb8lYe6TX+I5d4gW00tyuAxsdbNipyeXXZWYZEhh3I
-         49tLLUGG0bhdh0e9mUE/hSsjySxYKqaBL7yxZfUckGExg104Fi6rjFpLsTW6p3QBaFmD
-         g4ftyh4x21X3TqOmnI+D8mrjukfYquPH2hPbMWMfMckQJ4/aHjGQZqcfkxoHbnpHqHxO
-         zFnQ==
+        bh=XM2IfrgxVPzqzeM7H+D7DDdn97FLGkknUncHTuq8NKk=;
+        b=bYCIuwjxgHc9oVvKtK8vj1iqdeWHRPw0SjdcuFA1XNyVeBWPjZZwAO+yXdAcnjfAri
+         1KaQX57DLffJ5m+XCwObYBaMxwJKSNTzWLru2+25YVDGzb1NHEyEapp1L+fo/OtPRZIj
+         aJAnPyGr8zLVjEfN8fOW0Jk6uzDg00LwTfBuTDtZeLOpt3lW2zP9Mrm10C6RzYfODVt7
+         0M1fqyATN1s0Z2xACjHRPOCU6jrLvJzRo09DkAurY2IDqLygsqH5oXK4cwTCzyG4dWjy
+         5ohalG6KxnsHnJlHXQOU+z5xU3JXfe40eu+7fmktkEt/dMTar1/n0YaKuxpWzLTxu/U7
+         ujXw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
-	Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.4 81/97] HID: hidraw: Fix crash on HIDIOCGFEATURE with a destroyed device
-Date: Sun, 22 Apr 2018 15:53:59 +0200
-Message-Id: <20180422135309.635020694@linuxfoundation.org>
+	David Wang <davidwang@zhaoxin.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 80/97] ALSA: hda - New VIA controller suppor no-snoop path
+Date: Sun, 22 Apr 2018 15:53:58 +0200
+Message-Id: <20180422135309.591024273@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455251173047528?=
-X-GMAIL-MSGID: =?utf-8?q?1598456305210329990?=
+X-GMAIL-THRID: =?utf-8?q?1598455325045223483?=
+X-GMAIL-MSGID: =?utf-8?q?1598456302588779417?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+From: David Wang <davidwang@zhaoxin.com>
 
-commit a955358d54695e4ad9f7d6489a7ac4d69a8fc711 upstream.
+commit af52f9982e410edac21ca4b49563053ffc9da1eb upstream.
 
-Doing `ioctl(HIDIOCGFEATURE)` in a tight loop on a hidraw device
-and then disconnecting the device, or unloading the driver, can
-cause a NULL pointer dereference.
+This patch is used to tell kernel that new VIA HDAC controller also
+support no-snoop path.
 
-When a hidraw device is destroyed it sets 0 to `dev->exist`.
-Most functions check 'dev->exist' before doing its work, but
-`hidraw_get_report()` was missing that check.
+[ minor coding style fix by tiwai ]
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hidraw.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ sound/pci/hda/hda_intel.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/hid/hidraw.c
-+++ b/drivers/hid/hidraw.c
-@@ -197,6 +197,11 @@ static ssize_t hidraw_get_report(struct
- 	int ret = 0, len;
- 	unsigned char report_number;
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1549,7 +1549,8 @@ static void azx_check_snoop_available(st
+ 		 */
+ 		u8 val;
+ 		pci_read_config_byte(chip->pci, 0x42, &val);
+-		if (!(val & 0x80) && chip->pci->revision == 0x30)
++		if (!(val & 0x80) && (chip->pci->revision == 0x30 ||
++				      chip->pci->revision == 0x20))
+ 			snoop = false;
+ 	}
  
-+	if (!hidraw_table[minor] || !hidraw_table[minor]->exist) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
- 	dev = hidraw_table[minor]->hid;
- 
- 	if (!dev->ll_driver->raw_request) {
