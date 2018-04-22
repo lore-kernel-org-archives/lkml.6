@@ -1,78 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405567-2-5509891308268151860
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524405567; b=bIgSiCKr4OoZrhVZ6Yl9YP65lkL/DnsjyKHhNPip8F5eRpAxKg
-    heN8p9N4EwzOS4Xe3+QDgs3dqaI6xMB2VDQSY5YljjsedsM75d0Z72drc4R0xbV8
-    kDgF9Lw6O3eVMc2wHows6YCvjWiKaUpBPngGh0++zLT7wV3aoOZBA5y6LM/ERl3c
-    reu0OTRQv5NEpOhtr3lMig26Bf+Fazrfz6hGhE9esDcFXu8yjhPj31G+CauS+LYv
-    BD+SP9LiJy/L0LSftPBv2jfXJoNSJYBcUDe3rFtoxR5EADywp0S6tTQ1FkewqmAS
-    gqwfaZKwVhgSCQdOXb6i0ThXzXJRrty4B1gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524405567; bh=Q0jCdDJYGiM+mN8kylYOVjEBKL1FZf
-    hSiN4oWGCy87o=; b=P9kZHAgVovjW1Ov7lJNwaTvUtlqnWcqy7Kg7ALqMR5BMzx
-    5QM1R1CVVzgw20XeJ0UEgBZfgUk0+fX1eWbWdxA6/LqsLpL5Ew8NBweXXouyPDLs
-    /Wc6whVWO3vpsEmGTbXefS+h0U7pe/9upqGvM3o0/HE1q6RM3Nn3FH3T4Ffeuqx4
-    D/EBJkOUjjTFrOTtI1WWRyWASuuttQbaygRq/8hn36PGZXGASqJ7bQtpZeJK7HFx
-    hJNMS2WFds1t/mrKrH85T4hJE4s8sYvzVky0IdIYIRr74hWv2NFu5cD5y2dRhk/q
-    la/ddOFNyllGLHQ9aLlZV1hAY5ORwtcX5rowtveA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOlGha/TzCzq2pPVKUyLECZ+DXcgT/H8ekCW6XBjfT68v1sAKP0lM3EL/rdjDh9NBaYEghimHwLJRKNSQRphCUfu+hAvUf91QO17Q1RkvWVXbSiCglwc
-    NBQSpFUM9H6rha0HifCgHLV7U+4OU/SznJItUPyxGtHgtKmGU5CGCFvwNneERLDyb3vcjysInSYDBfOEWtvbkVAn8u4ANal9nlVd0XG9oM/k7An2pmE4WdrG
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=HsDDrbOFvXNNo7OG3RkA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754321AbeDVN7V (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 09:59:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46812 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753979AbeDVN7T (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:59:19 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/OdOWGAEJVoUzAKCt5vTipz4sANjHOSFLSsFOE2hF3zx2lalo7QPDEKJebEac1EnAC4FuA
+ARC-Seal: i=1; a=rsa-sha256; t=1524405564; cv=none;
+        d=google.com; s=arc-20160816;
+        b=XoYVh6uyYYhDJRSsCdRiMkAP9uKi68ClzUE1sGW1v4wRYFn/34hrMdGPG4xytzlm10
+         0Zxwis7xvViPgS0tyrOuSMD6l0rdwfSKrRwUyCssnoXiV4suqAxetdbrsPO/XJgWzXMG
+         lH0vV+nM/EH3jKQ5gZgmfCakQgF3WwT7EHMn3WtJCC88Lli4bAvFa3N85w9yxsZGiu0s
+         OZOd8A7Vm9W7hl6HtDcRVpjSP8IokpevRxhc54n9s7QMxBtvIiEHlGYuYlBtnJgj+zCF
+         AUuFy+jYNbWFNcbBkGAGnVM2WUcRWtNpiiEsSpFYVgrSftTf173nhryoKFctuvXVsgxw
+         WjzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=1xXTowv0GVTbTuRSpKRtaTedE2ZQUrEYPFfD64lL6FU=;
+        b=uJbvAi6CbVnZkti7cD59K/cUIkt+RRInJnWWXC3Jw0eyjMNsgiYjqOs73yHhoJghF2
+         dIWU7+k3yIPB7CJdy3/L+oLJtpqmxrzeP440H5PApZgnE9+OI2M5VnbMYTkYhlm+OnWi
+         BtBKtEKaBJVj38KBpQLzGmip8WAJMalQNWCaElmfTa9ufPHkK8KLkHK8YxbqPsleOtPQ
+         ZNjzeBWed2Wuh0w9qINq566ImZemkYFOveRE7VsXg9Gvgvo3GKn2EBTB39mrmrZs5NXS
+         qIEtHqOD5PmFZm4W4oDDMMWZgwuLQJj/Xd0ygW1PjPYGIwn4MkmX6kuiLiMdaKc+WvFI
+         EMRg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.16 084/196] jbd2: if the journal is aborted then dont allow update of the log tail
-Date: Sun, 22 Apr 2018 15:51:44 +0200
-Message-Id: <20180422135108.643842521@linuxfoundation.org>
+	stable@vger.kernel.org,
+	syzbot+150189c103427d31a053@syzkaller.appspotmail.com,
+	syzbot+7e3f31a52646f939c052@syzkaller.appspotmail.com,
+	syzbot+4f2016cf5185da7759dc@syzkaller.appspotmail.com,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 112/196] ALSA: pcm: Fix endless loop for XRUN recovery in OSS emulation
+Date: Sun, 22 Apr 2018 15:52:12 +0200
+Message-Id: <20180422135110.065203129@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -80,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455089227122133?=
+X-GMAIL-MSGID: =?utf-8?q?1598455089227122133?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -90,39 +51,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 85e0c4e89c1b864e763c4e3bb15d0b6d501ad5d9 upstream.
+commit e15dc99dbb9cf99f6432e8e3c0b3a8f7a3403a86 upstream.
 
-This updates the jbd2 superblock unnecessarily, and on an abort we
-shouldn't truncate the log.
+The commit 02a5d6925cd3 ("ALSA: pcm: Avoid potential races between OSS
+ioctls and read/write") split the PCM preparation code to a locked
+version, and it added a sanity check of runtime->oss.prepare flag
+along with the change.  This leaded to an endless loop when the stream
+gets XRUN: namely, snd_pcm_oss_write3() and co call
+snd_pcm_oss_prepare() without setting runtime->oss.prepare flag and
+the loop continues until the PCM state reaches to another one.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+As the function is supposed to execute the preparation
+unconditionally, drop the invalid state check there.
+
+The bug was triggered by syzkaller.
+
+Fixes: 02a5d6925cd3 ("ALSA: pcm: Avoid potential races between OSS ioctls and read/write")
+Reported-by: syzbot+150189c103427d31a053@syzkaller.appspotmail.com
+Reported-by: syzbot+7e3f31a52646f939c052@syzkaller.appspotmail.com
+Reported-by: syzbot+4f2016cf5185da7759dc@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/journal.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/core/oss/pcm_oss.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -974,7 +974,7 @@ out:
+--- a/sound/core/oss/pcm_oss.c
++++ b/sound/core/oss/pcm_oss.c
+@@ -1128,13 +1128,14 @@ static int snd_pcm_oss_get_active_substr
  }
  
- /*
-- * This is a variaon of __jbd2_update_log_tail which checks for validity of
-+ * This is a variation of __jbd2_update_log_tail which checks for validity of
-  * provided log tail and locks j_checkpoint_mutex. So it is safe against races
-  * with other threads updating log tail.
-  */
-@@ -1417,6 +1417,9 @@ int jbd2_journal_update_sb_log_tail(jour
- 	journal_superblock_t *sb = journal->j_superblock;
- 	int ret;
+ /* call with params_lock held */
++/* NOTE: this always call PREPARE unconditionally no matter whether
++ * runtime->oss.prepare is set or not
++ */
+ static int snd_pcm_oss_prepare(struct snd_pcm_substream *substream)
+ {
+ 	int err;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
  
-+	if (is_journal_aborted(journal))
-+		return -EIO;
-+
- 	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
- 	jbd_debug(1, "JBD2: updating superblock (start %lu, seq %u)\n",
- 		  tail_block, tail_tid);
+-	if (!runtime->oss.prepare)
+-		return 0;
+ 	err = snd_pcm_kernel_ioctl(substream, SNDRV_PCM_IOCTL_PREPARE, NULL);
+ 	if (err < 0) {
+ 		pcm_dbg(substream->pcm,
