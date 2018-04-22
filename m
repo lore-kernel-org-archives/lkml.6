@@ -1,79 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2630128-1524406164-2-2844840344653045408
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524406164; b=ac4oTEwoFyJCTpM08AShCpEx8rhQzTXK/jS8OJgGkSqwy4TizI
-    EQ2jstL8pSizdMBZOlXKMTSZM2lsSSt3yYYRFyTIlVxiGsrdnmfl4ZCrxT8qHQQU
-    E1L+3vY8R5P5xPLpX9umcePVN7mqKrQeu1GuNyrAiaRiVpaZVqNDSL7C2m4TnS3t
-    MAzBBDu4ophbexbj14mvbr7008o3GPdLnHDGWAUx8SBeWaoAr28RQJwAva5yN7lU
-    yMX0sAwGpzWgqfEHYBLkvjdFfEkoFMBsJEn4C4erxYjmOXCLhIsd2zwT7I0iicgu
-    DoGYLYXwdt+rlPh3NmsJv8NRgWS58XD58aSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524406164; bh=1U0Y1Yy1pYE/7d8MXg2hUG5g8X+jk9
-    fiV4zJPKLxqCs=; b=fA+FE/l4+6OI565Qn0mJj46f7eBiVvPRRihmaU31DKraYC
-    18LCHoUkFWqZX6sNb/8cGmViBEOx6BnsXbTpZjo7m8c5qU3qX1koMubdhcRJ5h38
-    Jkd6IGODJN9joRfWzXQQvAADDjR6oXg2w0pltBfz8pwI2yC0Yy3MQ8rhoDtnWCLs
-    E8bE7qN1yUNCB2eaQviXvW/IiAVmTRoFd3fpU3/Jy6M1qi5l2N0IYFxsG0qjthFp
-    7pn7HrC/IhkdfpDn2gBddnMiowaIZglpJub2eqa0Or2sgO6OWpk/jcQqVI186aWQ
-    WEZabaSo1xzYi5e6IpDSB7+7S8QxNf1XwYH2Cbzg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIdjvl7o1qsMM494YAbJsExxYDBjGGs5iBWDTpBmuuwptcZhxf/ubhjgtpERn2XnOx7IqT7iNd4jOygKRLOAs0PHzvwURzGkYFF+ws/Gns1RHyo1jGgQ
-    LWlELtzwMQceTgVSOVrZHxADLGeW3VXzmfKxch+8/Y5WEnB8TBmU1vh4y9ZiOIUmqkaX0AnHb4y/3/rnVNXL9bADjfxawGWXxHe9F8L35VwjYKvR0cSmX65k
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=4y9B8vKwVsSXWozFvOgA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755843AbeDVOJT (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:09:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53052 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756094AbeDVOJQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:09:16 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx48eAMaSHkNgr2H8cNVqS0MQHwKzG41rNK3E7vqrZOLP2Yq7cpdA0kvMLUOYuFaSXbKuIb6j
+ARC-Seal: i=1; a=rsa-sha256; t=1524406161; cv=none;
+        d=google.com; s=arc-20160816;
+        b=kcdYDp8xB8dpn5YqDLynIRQebjqAbURx2qQ2kNOHvu3HNMWPzm59sGH1neHm9Lem0m
+         htWI/B4rnvlfRlKTk9EIQ6wra2GGLw8wNYkt1aKI/hthnYg/nZri0Rtwo8/jvkQPJKNB
+         y33qkXntRInX/EV534rQL4RC+DOWIj2xYg/TcfynaLm1x7JjNTMhW8eHu4GIMYcx0CoX
+         wlstCQHHxYpThEwBxbezrEwXJ1/UxON1Obw02DegsnNSUkUe0b1xYsEW5gA7WW0OvTyx
+         4fN+wIWGIdzrXOcisZfU1KKciBsDowbTF2k3aqiGvxmV4q/I8qvkMkxzrolXRmn5vxkt
+         ZBfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=7B/fMvBLbAlMCXj5zWsuE7hIfk2cZN8fi6dYC/C5G2k=;
+        b=0kNEF5dEBlwNCObHc+7wuuVCn1FKsmOn3dIrydEy5hs6FAdORfAdXVU4ZxOzLDdut9
+         9t+I33SRCF+sZsKStFcrl5B3XETOENN0yIYRvEjmD0/acHa5mj5TzSOxu4+sLvhbvbah
+         WNL4dB7++z+qLwJKqXrXITbLt+E2dwndnHVaBOMFWaTh9A7eFovsxoCWotDMnwzoQO2C
+         6/96DjYDWgJBQ2DJGaiUTEGmNwaeLfkf7IzalWNh6pQ6GwDBlP2QPt1SpgCiPhNQsMRj
+         YBsEtlaxeTt8nAnnNSrPkz/8befwcq8v5g8rOOz+5l+S0X76Ym6MNSJagSE2+AD5wfWq
+         lVPQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 133/164] random: fix crng_ready() test
-Date: Sun, 22 Apr 2018 15:53:20 +0200
-Message-Id: <20180422135140.827983704@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Sean Wang <sean.wang@mediatek.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.14 108/164] clk: mediatek: fix PWM clock source by adding a fixed-factor clock
+Date: Sun, 22 Apr 2018 15:52:55 +0200
+Message-Id: <20180422135139.846908715@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -81,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455171327314319?=
+X-GMAIL-MSGID: =?utf-8?q?1598455714606850746?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -91,76 +49,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Sean Wang <sean.wang@mediatek.com>
 
-commit 43838a23a05fbd13e47d750d3dfd77001536dd33 upstream.
+commit 89cd7aec21af26fd0c117bfc4bfc781724f201de upstream.
 
-The crng_init variable has three states:
+The clock for which all PWM devices on MT7623 or MT2701 actually depending
+on has to be divided by four from its parent clock axi_sel in the clock
+path prior to PWM devices.
 
-0: The CRNG is not initialized at all
-1: The CRNG has a small amount of entropy, hopefully good enough for
-   early-boot, non-cryptographical use cases
-2: The CRNG is fully initialized and we are sure it is safe for
-   cryptographic use cases.
+Consequently, adding a fixed-factor clock axisel_d4 as one-fourth of
+clock axi_sel allows that PWM devices can have the correct resolution
+calculation.
 
-The crng_ready() function should only return true once we are in the
-last state.  This addresses CVE-2018-1108.
-
-Reported-by: Jann Horn <jannh@google.com>
-Fixes: e192be9d9a30 ("random: replace non-blocking pool...")
-Cc: stable@kernel.org # 4.8+
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jann Horn <jannh@google.com>
+Cc: stable@vger.kernel.org
+Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/random.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/mediatek/clk-mt2701.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -427,7 +427,7 @@ struct crng_state primary_crng = {
-  * its value (from 0->1->2).
-  */
- static int crng_init = 0;
--#define crng_ready() (likely(crng_init > 0))
-+#define crng_ready() (likely(crng_init > 1))
- static int crng_init_cnt = 0;
- #define CRNG_INIT_CNT_THRESH (2*CHACHA20_KEY_SIZE)
- static void _extract_crng(struct crng_state *crng,
-@@ -793,7 +793,7 @@ static int crng_fast_load(const char *cp
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -148,6 +148,7 @@ static const struct mtk_fixed_factor top
+ 	FACTOR(CLK_TOP_CLK26M_D8, "clk26m_d8", "clk26m", 1, 8),
+ 	FACTOR(CLK_TOP_32K_INTERNAL, "32k_internal", "clk26m", 1, 793),
+ 	FACTOR(CLK_TOP_32K_EXTERNAL, "32k_external", "rtc32k", 1, 1),
++	FACTOR(CLK_TOP_AXISEL_D4, "axisel_d4", "axi_sel", 1, 4),
+ };
  
- 	if (!spin_trylock_irqsave(&primary_crng.lock, flags))
- 		return 0;
--	if (crng_ready()) {
-+	if (crng_init != 0) {
- 		spin_unlock_irqrestore(&primary_crng.lock, flags);
- 		return 0;
- 	}
-@@ -855,7 +855,7 @@ static void _extract_crng(struct crng_st
- {
- 	unsigned long v, flags;
+ static const char * const axi_parents[] = {
+@@ -857,13 +858,13 @@ static const struct mtk_gate peri_clks[]
+ 	GATE_PERI0(CLK_PERI_USB1, "usb1_ck", "usb20_sel", 11),
+ 	GATE_PERI0(CLK_PERI_USB0, "usb0_ck", "usb20_sel", 10),
+ 	GATE_PERI0(CLK_PERI_PWM, "pwm_ck", "axi_sel", 9),
+-	GATE_PERI0(CLK_PERI_PWM7, "pwm7_ck", "axi_sel", 8),
+-	GATE_PERI0(CLK_PERI_PWM6, "pwm6_ck", "axi_sel", 7),
+-	GATE_PERI0(CLK_PERI_PWM5, "pwm5_ck", "axi_sel", 6),
+-	GATE_PERI0(CLK_PERI_PWM4, "pwm4_ck", "axi_sel", 5),
+-	GATE_PERI0(CLK_PERI_PWM3, "pwm3_ck", "axi_sel", 4),
+-	GATE_PERI0(CLK_PERI_PWM2, "pwm2_ck", "axi_sel", 3),
+-	GATE_PERI0(CLK_PERI_PWM1, "pwm1_ck", "axi_sel", 2),
++	GATE_PERI0(CLK_PERI_PWM7, "pwm7_ck", "axisel_d4", 8),
++	GATE_PERI0(CLK_PERI_PWM6, "pwm6_ck", "axisel_d4", 7),
++	GATE_PERI0(CLK_PERI_PWM5, "pwm5_ck", "axisel_d4", 6),
++	GATE_PERI0(CLK_PERI_PWM4, "pwm4_ck", "axisel_d4", 5),
++	GATE_PERI0(CLK_PERI_PWM3, "pwm3_ck", "axisel_d4", 4),
++	GATE_PERI0(CLK_PERI_PWM2, "pwm2_ck", "axisel_d4", 3),
++	GATE_PERI0(CLK_PERI_PWM1, "pwm1_ck", "axisel_d4", 2),
+ 	GATE_PERI0(CLK_PERI_THERM, "therm_ck", "axi_sel", 1),
+ 	GATE_PERI0(CLK_PERI_NFI, "nfi_ck", "nfi2x_sel", 0),
  
--	if (crng_init > 1 &&
-+	if (crng_ready() &&
- 	    time_after(jiffies, crng->init_time + CRNG_RESEED_INTERVAL))
- 		crng_reseed(crng, crng == &primary_crng ? &input_pool : NULL);
- 	spin_lock_irqsave(&crng->lock, flags);
-@@ -1141,7 +1141,7 @@ void add_interrupt_randomness(int irq, i
- 	fast_mix(fast_pool);
- 	add_interrupt_bench(cycles);
- 
--	if (!crng_ready()) {
-+	if (unlikely(crng_init == 0)) {
- 		if ((fast_pool->count >= 64) &&
- 		    crng_fast_load((char *) fast_pool->pool,
- 				   sizeof(fast_pool->pool))) {
-@@ -2214,7 +2214,7 @@ void add_hwgenerator_randomness(const ch
- {
- 	struct entropy_store *poolp = &input_pool;
- 
--	if (!crng_ready()) {
-+	if (unlikely(crng_init == 0)) {
- 		crng_fast_load(buffer, count);
- 		return;
- 	}
