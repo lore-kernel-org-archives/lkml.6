@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx484+ZIwKanD/qu2bBYadzzXo00e8enX57CwOG9akiJyGknltHGFYRDz328z6rnnWDzI2O3Y
-ARC-Seal: i=1; a=rsa-sha256; t=1524405713; cv=none;
+X-Google-Smtp-Source: AIpwx49gis9TdwpUvgxCe2xMdgdkzZsw7ay15ZI8xhauMtSkdfgnBLioaUxwIQj6Ztu463XRt5fN
+ARC-Seal: i=1; a=rsa-sha256; t=1524405710; cv=none;
         d=google.com; s=arc-20160816;
-        b=kWH3rD+uc6sO6i3e/M0iu1Kbnq7q6ZiMXNHAX2wXdfEje2j5cG54aw6ZFlrbJ5KNDE
-         y+c5hoZjrO3MZol7Xq3n2jQ0CL/0cNIy5gbdENuCC041206SGOCOC6Qv4iHLCHZVf6hZ
-         SuzoNZ2exxDd50Nx6pFsGhJcy/ye097t6WuEbhdsfE8GkNBWvysdQt+GuAJfUXCmvt/U
-         EwmgN0uZ96qJqvu4QzVdo0UrUur7KNeS6EgIHti2QywGxySZPIcXaLQs9fyYwn4dcej4
-         QZbuXlRns3KA0fldFQ4rMorDDI3A42oHQYe+iZb15JzonlrIZfXT8X+/qeHaTNbhNM9u
-         nlBQ==
+        b=w6YBdyxeIk1nY8/xUWGar9InfdGri9SG3zxGzM4oDjEsw79dfb8X7FE3fWPqjNerf4
+         kVkTh/uKvMoIK2ppOXk0X0j7x1jKinLq9h1zjGflSp7P9zoMO8fS4Fg5kmp2S9vbNSXj
+         m+OUf0o6VSv13ltrWPQ1y7SKln8SWsDKoIQQGpszVV4UyuuttSWBk1vnJMkKZfiv7dKB
+         nYXnhl9OqaCmq6QtNPt6+PiDmypgjNtOVKsGOpZ3Grlb64dHxFX680/7fv7t/O9gcgL/
+         co0S6ykbYD7Vx7TyWRbEHqTnH6fIRrykJGfpQ9lqY0Q4Lg3a6XYxwLX4g7Hkh/qSCnH6
+         CvQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=p0D1rjqOJRZZ+ApmpcVTNalcGcCH5oaw2wc2ettG4hU=;
-        b=PVwxjHHW1vujDUfI9zqYqnhoH7Qh1tpmL6rYKCwbfZIH83er1kQmpl4GGZh18QkJVo
-         SWcbx5PQzHhTupquVptnaTJnBaqJaAcF5IWa8m7vc1hEX55NQKzcXYQU4b+OkaAQNprY
-         WleboOD42/dWNgYbaEr2JMjmjNxDJcZFDuxu2dA4OH/D0SQHNU2VSgndpJTaQTHuwRCZ
-         4qSKRzl540ZS7fad2ZxEQKS41H6D0BjfS/kze1PdkVaHoKGbyJMZ+dxGjSyZj6dNgs5V
-         YkXEVQBfIFZEbr5y8YS6lhK9xA6zePILSQAJHyPsm5g3/WY1ELMSKWfnFu9RrhPxQ8IL
-         FYMg==
+        bh=JuLqsD3mi/Qdx9ms1u8YNTn6Qrr3o+mH1wT/j6y38wo=;
+        b=qjCEDVAlqgvW4ZGvXIneGMrMI2ZPq6ql+HdisdCa692SqiJzJLTk34pE3+2MRdCKPh
+         cXtPtTPwRQ1i6atWPeNGGtoSOAefsyoZOzjsCdJhDTNilH0FoDpS7j2ZDtKLN5HabVKQ
+         7o/Om0a460g6kP6QTfy1eyhHKrHPHMGEwhA+ACdpzocDqlV6LMhVpqJaZQQaP7mGiwUC
+         59tnfaBhMcFPsD70SjCwC+ONwTkT3gNDkzPj8+2g7GYzGN9H+jGO0sWOozCw6Nn7RQNj
+         Cyz4Er6RPvQpJERTwTxZmrS2Vb9Ipde7S83IdO8KsIo+/220JVjz3WHVlu2j1K7hpDYA
+         VmKg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Aaron Ma <aaron.ma@canonical.com>,
-	Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.16 168/196] HID: i2c-hid: Fix resume issue on Raydium touchscreen device
-Date: Sun, 22 Apr 2018 15:53:08 +0200
-Message-Id: <20180422135112.959254195@linuxfoundation.org>
+	Theodore Tso <tytso@mit.edu>,
+	stable@kernel.org
+Subject: [PATCH 4.16 167/196] random: add new ioctl RNDRESEEDCRNG
+Date: Sun, 22 Apr 2018 15:53:07 +0200
+Message-Id: <20180422135112.909205877@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455245586597242?=
-X-GMAIL-MSGID: =?utf-8?q?1598455245586597242?=
+X-GMAIL-THRID: =?utf-8?q?1598455242261165889?=
+X-GMAIL-MSGID: =?utf-8?q?1598455242261165889?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,73 +49,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 3e83eda467050f13fa69d888993458b76e733de9 upstream.
+commit d848e5f8e1ebdb227d045db55fe4f825e82965fa upstream.
 
-When Rayd touchscreen resumed from S3, it issues too many errors like:
-i2c_hid i2c-RAYD0001:00: i2c_hid_get_input: incomplete report (58/5442)
+Add a new ioctl which forces the the crng to be reseeded.
 
-And all the report data are corrupted, touchscreen is unresponsive.
-
-Fix this by re-sending report description command after resume.
-Add device ID as a quirk.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-ids.h         |    3 +++
- drivers/hid/i2c-hid/i2c-hid.c |   13 +++++++++++++
- 2 files changed, 16 insertions(+)
+ drivers/char/random.c       |   13 ++++++++++++-
+ include/uapi/linux/random.h |    3 +++
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -519,6 +519,9 @@
- #define I2C_VENDOR_ID_HANTICK		0x0911
- #define I2C_PRODUCT_ID_HANTICK_5288	0x5288
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -429,6 +429,7 @@ struct crng_state primary_crng = {
+ static int crng_init = 0;
+ #define crng_ready() (likely(crng_init > 1))
+ static int crng_init_cnt = 0;
++static unsigned long crng_global_init_time = 0;
+ #define CRNG_INIT_CNT_THRESH (2*CHACHA20_KEY_SIZE)
+ static void _extract_crng(struct crng_state *crng,
+ 			  __u32 out[CHACHA20_BLOCK_WORDS]);
+@@ -932,7 +933,8 @@ static void _extract_crng(struct crng_st
+ 	unsigned long v, flags;
  
-+#define I2C_VENDOR_ID_RAYD		0x2386
-+#define I2C_PRODUCT_ID_RAYD_3118	0x3118
+ 	if (crng_ready() &&
+-	    time_after(jiffies, crng->init_time + CRNG_RESEED_INTERVAL))
++	    (time_after(crng_global_init_time, crng->init_time) ||
++	     time_after(jiffies, crng->init_time + CRNG_RESEED_INTERVAL)))
+ 		crng_reseed(crng, crng == &primary_crng ? &input_pool : NULL);
+ 	spin_lock_irqsave(&crng->lock, flags);
+ 	if (arch_get_random_long(&v))
+@@ -1759,6 +1761,7 @@ static int rand_initialize(void)
+ 	init_std_data(&input_pool);
+ 	init_std_data(&blocking_pool);
+ 	crng_initialize(&primary_crng);
++	crng_global_init_time = jiffies;
+ 	return 0;
+ }
+ early_initcall(rand_initialize);
+@@ -1932,6 +1935,14 @@ static long random_ioctl(struct file *f,
+ 		input_pool.entropy_count = 0;
+ 		blocking_pool.entropy_count = 0;
+ 		return 0;
++	case RNDRESEEDCRNG:
++		if (!capable(CAP_SYS_ADMIN))
++			return -EPERM;
++		if (crng_init < 2)
++			return -ENODATA;
++		crng_reseed(&primary_crng, NULL);
++		crng_global_init_time = jiffies - 1;
++		return 0;
+ 	default:
+ 		return -EINVAL;
+ 	}
+--- a/include/uapi/linux/random.h
++++ b/include/uapi/linux/random.h
+@@ -35,6 +35,9 @@
+ /* Clear the entropy pool and associated counters.  (Superuser only.) */
+ #define RNDCLEARPOOL	_IO( 'R', 0x06 )
+ 
++/* Reseed CRNG.  (Superuser only.) */
++#define RNDRESEEDCRNG	_IO( 'R', 0x07 )
 +
- #define USB_VENDOR_ID_HANWANG		0x0b57
- #define USB_DEVICE_ID_HANWANG_TABLET_FIRST	0x5000
- #define USB_DEVICE_ID_HANWANG_TABLET_LAST	0x8fff
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -47,6 +47,7 @@
- /* quirks to control the device */
- #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
- #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
-+#define I2C_HID_QUIRK_RESEND_REPORT_DESCR	BIT(2)
- 
- /* flags */
- #define I2C_HID_STARTED		0
-@@ -171,6 +172,8 @@ static const struct i2c_hid_quirks {
- 		I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV },
- 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
- 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
-+	{ I2C_VENDOR_ID_RAYD, I2C_PRODUCT_ID_RAYD_3118,
-+		I2C_HID_QUIRK_RESEND_REPORT_DESCR },
- 	{ 0, 0 }
- };
- 
-@@ -1220,6 +1223,16 @@ static int i2c_hid_resume(struct device
- 	if (ret)
- 		return ret;
- 
-+	/* RAYDIUM device (2386:3118) need to re-send report descr cmd
-+	 * after resume, after this it will be back normal.
-+	 * otherwise it issues too many incomplete reports.
-+	 */
-+	if (ihid->quirks & I2C_HID_QUIRK_RESEND_REPORT_DESCR) {
-+		ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
-+		if (!ret)
-+			return ret;
-+	}
-+
- 	if (hid->driver && hid->driver->reset_resume) {
- 		ret = hid->driver->reset_resume(hid);
- 		return ret;
+ struct rand_pool_info {
+ 	int	entropy_count;
+ 	int	buf_size;
