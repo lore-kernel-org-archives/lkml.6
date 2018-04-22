@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48DeFdIZ0H2AkeANPJUTHXuUFfY5NR0R+I8vzNxWFI0DUzNInvvUnPbYJQqE3zpIMAjIGy7
-ARC-Seal: i=1; a=rsa-sha256; t=1524405616; cv=none;
+X-Google-Smtp-Source: AIpwx49iTHRibFvxVQThuv8VFuqLWcH92c+VtO8D2lMoWzxn55MzVnn4Yc+c8IF+Eg2HK3QFrMGl
+ARC-Seal: i=1; a=rsa-sha256; t=1524405613; cv=none;
         d=google.com; s=arc-20160816;
-        b=RC/atUqqX8nATnK1Q1+KZxV/QBAZu4Finkd5pZXTQvnMopDUCYlhSOgy4LU0vA+Iep
-         IzRuXLVrxJaiCmXKBUdrBeDhPdWYUKWTNw/dKaNiQgbx6DhZAcRSiO1qEuM8BemEoU91
-         iRfp+xvmxjkrdK5y0Q2Yym5ihIbHUC5Nd1NiubW9zY4S43JicIKGJUbIBMsrwfBhffCG
-         /7lRQSpvo3YEyszrk/ERCqmaGX+WoO0I9h/KWwkn5k3C10cQ2C0pX0xi/8i1SfT6An79
-         yej5jT4qpB0hLK0aVJYXd8TU4t8BMqivc7JnzhDcQ/PqrW9Gt8h1yDOsSZ3gtOF+H6SV
-         Sang==
+        b=xtJdJB1spbh7Pgs1+0zoaQjoJv5btQxrg4BD+h64u7C1DyJeCstHHGgF4kk9OZLkTv
+         fmFW1Sz89HfO4dnZFy0WlN6DrZC8R1APYhb8luWXDB13sbklZO5ykNOq4do3VDIIfULT
+         Cxx8eT0/AsxB0YXlj0S70kPEuJiFUJD2UNAo1mZD5ZXX5bVb/5itHtmqcoIWaA4w/+Ef
+         52sZxIY52DqbIEpQv96rdvSCvcYGSgHo+ZVM4iRSi7/nZD+Gvki5N27/dEDUQmrVsc5C
+         KZMxf4D32uU3Ahdn7apqXxd3NPI33W5Jsh9oIh4tANaZkcdIOubV4w/K+SmrFLTcaK2y
+         sOBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=p4FT/Q9voJtHr89/ZzKLFICjWsGq6YUUDh59Pyv7AYA=;
-        b=cv7c0f/ddonSDKuBvW6PdC4PI0Z80U9pMRD3KN5YiB1QPGRniDtIo92zKS5z6PKSzF
-         c4yN19ZgnGO4vnBASLQIyOrZRrdq7RJ+lxHZSQoj3SBFUXBqyOY4PAv0muEySdYLPc00
-         ekUBwc7LjNLwt6cvx5kB5AvDbnlDq8qFYbioeKhdkzggLAHwMvdnOTwxYZmxZXWKz9p7
-         pru22wQ0L9KeUJVz2j1XrOWBe6nkoIorL3Z182YTnGVqdCExFZlHBSvUrHfLIDieRXit
-         XYoqxf1PbwMFttMNSc/LKu6zcEYZMJ1fzeEtat3/+OydL1iRHepHWA8zPs4zQL87j/kL
-         oYcQ==
+        bh=RaQvu7DFlGkCtD1HrItopWGMlzCTXz+o+2eYw3vvYQ0=;
+        b=STd+nI9YBex86ik4X7bF21h7wGPK2zZGE/zVee/YNJpLuaKtcn4Iwxyjxrj+DxsRyn
+         yrean6/n9LsLFBJ7z5+2uC5gjpQI3QzV7LRaCFDW9aL+61OG2sryJcckGKJ5IJCchvWK
+         ByAJc+bGpynzNtFSKu/ET1y235f+D0T1ZAnFr1lO09XjP2D07o6SAwzs8dChcDOMW52B
+         T/UCEH47etSVyE+ubhB3MlxH+BHXHC6w1DZdFRb4ahJh6QxWoachIwV9Cf4ePJzzaKBD
+         qVJP9oGre3+PiwsPhHrV1wVZuiOGx6EjyTT2WHmUVWuB/uRk5bsszCH+nS6b4Ytjh3BE
+         5myQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mathieu Malaterre <malat@debian.org>,
-	Alex Smith <alex.smith@imgtec.com>,
+	Alexander Kappner <agk@godking.net>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
 	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.16 132/196] mmc: jz4740: Fix race condition in IRQ mask update
-Date: Sun, 22 Apr 2018 15:52:32 +0200
-Message-Id: <20180422135111.076017437@linuxfoundation.org>
+Subject: [PATCH 4.16 131/196] mmc: core: Prevent bus reference leak in mmc_blk_init()
+Date: Sun, 22 Apr 2018 15:52:31 +0200
+Message-Id: <20180422135111.021365153@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455143804605814?=
-X-GMAIL-MSGID: =?utf-8?q?1598455143804605814?=
+X-GMAIL-THRID: =?utf-8?q?1598455140484496141?=
+X-GMAIL-MSGID: =?utf-8?q?1598455140484496141?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,52 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alex Smith <alex.smith@imgtec.com>
+From: Alexander Kappner <agk@godking.net>
 
-commit a04f0017c22453613d5f423326b190c61e3b4f98 upstream.
+commit d0a0852b9f81cf5f793bf2eae7336ed40a1a1815 upstream.
 
-A spinlock is held while updating the internal copy of the IRQ mask,
-but not while writing it to the actual IMASK register. After the lock
-is released, an IRQ can occur before the IMASK register is written.
-If handling this IRQ causes the mask to be changed, when the handler
-returns back to the middle of the first mask update, a stale value
-will be written to the mask register.
+Upon module load, mmc_block allocates a bus with bus_registeri() in
+mmc_blk_init(). This reference never gets freed during module unload, which
+leads to subsequent re-insertions of the module fails and a WARN() splat is
+triggered.
 
-If this causes an IRQ to become unmasked that cannot have its status
-cleared by writing a 1 to it in the IREG register, e.g. the SDIO IRQ,
-then we can end up stuck with the same IRQ repeatedly being fired but
-not handled. Normally the MMC IRQ handler attempts to clear any
-unexpected IRQs by writing IREG, but for those that cannot be cleared
-in this way then the IRQ will just repeatedly fire.
+Fix the bug by dropping the reference for the bus in mmc_blk_exit().
 
-This was resulting in lockups after a while of using Wi-Fi on the
-CI20 (GitHub issue #19).
-
-Resolve by holding the spinlock until after the IMASK register has
-been updated.
-
-Cc: stable@vger.kernel.org
-Link: https://github.com/MIPS/CI20_linux/issues/19
-Fixes: 61bfbdb85687 ("MMC: Add support for the controller on JZ4740 SoCs.")
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Alex Smith <alex.smith@imgtec.com>
+Signed-off-by: Alexander Kappner <agk@godking.net>
+Fixes: 97548575bef3 ("mmc: block: Convert RPMB to a character device")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/jz4740_mmc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/core/block.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/host/jz4740_mmc.c
-+++ b/drivers/mmc/host/jz4740_mmc.c
-@@ -362,9 +362,9 @@ static void jz4740_mmc_set_irq_enabled(s
- 		host->irq_mask &= ~irq;
- 	else
- 		host->irq_mask |= irq;
--	spin_unlock_irqrestore(&host->lock, flags);
- 
- 	writew(host->irq_mask, host->base + JZ_REG_MMC_IMASK);
-+	spin_unlock_irqrestore(&host->lock, flags);
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -3087,6 +3087,7 @@ static void __exit mmc_blk_exit(void)
+ 	mmc_unregister_driver(&mmc_driver);
+ 	unregister_blkdev(MMC_BLOCK_MAJOR, "mmc");
+ 	unregister_chrdev_region(mmc_rpmb_devt, MAX_DEVICES);
++	bus_unregister(&mmc_rpmb_bus_type);
  }
  
- static void jz4740_mmc_clock_enable(struct jz4740_mmc_host *host,
+ module_init(mmc_blk_init);
