@@ -1,79 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2630128-1524405986-2-13244778505857305478
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524405986; b=ie1m1fZ3BSVrd2w7W43Rzld/rJgXAtiK/lEbCfkOytabw9TBFe
-    ikYVlaag77crdNtq6oNyMHFs+78k5uywDpTLyaTwo9+9nMYo7ZFQqg/cNqMGphaZ
-    J3DlP+umUjacQda3ISP4IYgE2AOANNBzEm9rFN6eiDM+GFF9Uq6dgPinGkxi0pGE
-    soCbvrM/SvRguwbAgC2d+K1qZtI6WI654KLLRQ5U4ACYplw0RZPl7FPHL3usuLfZ
-    pN4fqR/eRw1GvBS2JLYrshCIzHiOJm0cmDr7+VTbX1Egh+2wjvLuJWgmDIajz6zw
-    hvRszEmCBJ2WwtGYA1yuWmgKgNbtl0HI07Og==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524405986; bh=gvH8iUyIr0I05u2F2Cy97z0CEmgt3Q
-    W6MhZcM3ZimW4=; b=JV57JgINOj41G6lct1TZUoDnWVrxUUUpDj0C463Vb5HMaC
-    W6pQDCwwXT1VsZwh5+ygw2yIah6bcftU9/qYITuwOsk3KF8KvY5WDJx+6wLVg20J
-    B/5NW1XZZ7GMhB4Pw6G4ORyD9yNdzhVQAV+/hfNn+NDUwKzLsEI3eMmBLEeEN09s
-    Ak07qNnvDe6wF9niLE9C28bDDyWc9q+iugvrljtDdvShTKexBoHw60TeyMNnYlqY
-    c3Nj9fxE/JfVUnUjgklO0C5H+sxawtTDuF1U8X4Vfi/kvAdmbzJzTvnwM45e6bXF
-    9K0H1Tqrqxw/DUtk6BeHO26JlmOPVUEaMK82nw4g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAwvLDTT4HmVS7S8IweEO6vbHQk4hb4cITDLMhIjaigr2owebEu5HnV9tG2G0sJwe4XQy5fcAvn+kWO/js3n+sXMnntsyCBFETSbc2dFgTjcSFww2Ctx
-    RDP327mxB+lpO7J0nBuc1HP6WYrLWlQgE+XBpiuaf5EQ0CUkxOLtDjPo1pnSSi/KCNzWDdSIRc+2XIIu5CGRLONeF6OG/524S+DrDtgHMutV2T7IQ9QRFgyt
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=woTECNfuSRCmFN8eG-YA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755114AbeDVOGX (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:06:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51264 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755527AbeDVOGU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:06:20 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/IEQF/FmYsL+jQZzqSn1BYIdgt7LRCFyGHI8Cp15KsBfsKg6mWU+6Cnz5RDGN3HAHAHs70
+ARC-Seal: i=1; a=rsa-sha256; t=1524405985; cv=none;
+        d=google.com; s=arc-20160816;
+        b=OTO7uEsksZB6ND9oChMmJRmLmuTcge1jEBXXSpLuVSWMadh+UmxgazYAyTkitYc2Iw
+         l11lQYY1IV7ty4KEDo1MIytLtlkE35FF1Dl9KxxsVMHMHwI5+sHGWoiuB22myMcUFn/R
+         T4aXKDUSMe2lBMOForSpQFVc9wZ+1p8U767A//bvhRE5M8PjoRQVAyoGmWhUWodc2gb7
+         rSV6bx1pgc5OAWizpAfuyFrS5j+cvLngNNIETt2v0QtG/mBWZHGG2suAwytIdlXnGRSC
+         /2iyE7sI7jGJe7UDt7ubX3GEB6XnlDtEcJwim4awgL6Aax3dJSKpA4D/MC/7dJOURdtg
+         OORA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=MU3wz3v/h8jpbbiVlACOTQ1czPgfYHUyBt0soGTUfUg=;
+        b=ezCEMIjHSypmGT/wyO3uvL0bQX8Z+qow8dBSUKRhIXpuZSVSPw73tyhSXp7shCExpc
+         esescehKjGDG+j+tTuTLmyyt7NlHzsgk6szIUexS1M8iuKR/b+bi+wskv+cNDgsMB3a/
+         EAKYFca7wHRLav+VYsbxN+Pdb4Ssx+XUrKmiosyKqQuln9cGiLezbhc/eLKnyYtniqCn
+         AjjDl88f6H0usKQDcvpkkcj/SMP/X1q7lw1QrJL3E2ZXvFai2/z8Alo6PpAbh7J90lwu
+         tmEgbyWopaWoUXAn+GOt2oMC8koWlQzwVoxLYd2cYP1Qduxcn/1i4rHLHapq1NgvA9eD
+         WImQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 034/164] regmap: Fix reversed bounds check in regmap_raw_write()
-Date: Sun, 22 Apr 2018 15:51:41 +0200
-Message-Id: <20180422135136.807527237@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Mike Lothian <mike@fireburn.co.uk>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 036/164] ACPI / hotplug / PCI: Check presence of slot itself in get_slot_status()
+Date: Sun, 22 Apr 2018 15:51:43 +0200
+Message-Id: <20180422135136.887068387@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -81,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598454879280610087?=
+X-GMAIL-MSGID: =?utf-8?q?1598455530651438113?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -91,37 +51,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit f00e71091ab92eba52122332586c6ecaa9cd1a56 upstream.
+commit 13d3047c81505cc0fb9bdae7810676e70523c8bf upstream.
 
-We're supposed to be checking that "val_len" is not too large but
-instead we check if it is smaller than the max.
+Mike Lothian reported that plugging in a USB-C device does not work
+properly in his Dell Alienware system.  This system has an Intel Alpine
+Ridge Thunderbolt controller providing USB-C functionality.  In these
+systems the USB controller (xHCI) is hotplugged whenever a device is
+connected to the port using ACPI-based hotplug.
 
-The only function affected would be regmap_i2c_smbus_i2c_write() in
-drivers/base/regmap/regmap-i2c.c.  Strangely that function has its own
-limit check which returns an error if (count >= I2C_SMBUS_BLOCK_MAX) so
-it doesn't look like it has ever been able to do anything except return
-an error.
+The ACPI description of the root port in question is as follows:
 
-Fixes: c335931ed9d2 ("regmap: Add raw_write/read checks for max_raw_write/read sizes")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+  Device (RP01)
+  {
+      Name (_ADR, 0x001C0000)
+
+      Device (PXSX)
+      {
+          Name (_ADR, 0x02)
+
+          Method (_RMV, 0, NotSerialized)
+          {
+              // ...
+          }
+      }
+
+Here _ADR 0x02 means device 0, function 2 on the bus under root port (RP01)
+but that seems to be incorrect because device 0 is the upstream port of the
+Alpine Ridge PCIe switch and it has no functions other than 0 (the bridge
+itself).  When we get ACPI Notify() to the root port resulting from
+connecting a USB-C device, Linux tries to read PCI_VENDOR_ID from device 0,
+function 2 which of course always returns 0xffffffff because there is no
+such function and we never find the device.
+
+In Windows this works fine.
+
+Now, since we get ACPI Notify() to the root port and not to the PXSX device
+we should actually start our scan from there as well and not from the
+non-existent PXSX device.  Fix this by checking presence of the slot itself
+(function 0) if we fail to do that otherwise.
+
+While there use pci_bus_read_dev_vendor_id() in get_slot_status(), which is
+the recommended way to read Device and Vendor IDs of devices on PCI buses.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=198557
+Reported-by: Mike Lothian <mike@fireburn.co.uk>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/regmap/regmap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/hotplug/acpiphp_glue.c |   23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1739,7 +1739,7 @@ int regmap_raw_write(struct regmap *map,
- 		return -EINVAL;
- 	if (val_len % map->format.val_bytes)
- 		return -EINVAL;
--	if (map->max_raw_write && map->max_raw_write > val_len)
-+	if (map->max_raw_write && map->max_raw_write < val_len)
- 		return -E2BIG;
+--- a/drivers/pci/hotplug/acpiphp_glue.c
++++ b/drivers/pci/hotplug/acpiphp_glue.c
+@@ -558,6 +558,7 @@ static unsigned int get_slot_status(stru
+ {
+ 	unsigned long long sta = 0;
+ 	struct acpiphp_func *func;
++	u32 dvid;
  
- 	map->lock(map->lock_arg);
+ 	list_for_each_entry(func, &slot->funcs, sibling) {
+ 		if (func->flags & FUNC_HAS_STA) {
+@@ -568,19 +569,27 @@ static unsigned int get_slot_status(stru
+ 			if (ACPI_SUCCESS(status) && sta)
+ 				break;
+ 		} else {
+-			u32 dvid;
+-
+-			pci_bus_read_config_dword(slot->bus,
+-						  PCI_DEVFN(slot->device,
+-							    func->function),
+-						  PCI_VENDOR_ID, &dvid);
+-			if (dvid != 0xffffffff) {
++			if (pci_bus_read_dev_vendor_id(slot->bus,
++					PCI_DEVFN(slot->device, func->function),
++					&dvid, 0)) {
+ 				sta = ACPI_STA_ALL;
+ 				break;
+ 			}
+ 		}
+ 	}
+ 
++	if (!sta) {
++		/*
++		 * Check for the slot itself since it may be that the
++		 * ACPI slot is a device below PCIe upstream port so in
++		 * that case it may not even be reachable yet.
++		 */
++		if (pci_bus_read_dev_vendor_id(slot->bus,
++				PCI_DEVFN(slot->device, 0), &dvid, 0)) {
++			sta = ACPI_STA_ALL;
++		}
++	}
++
+ 	return (unsigned int)sta;
+ }
+ 
