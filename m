@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+WwID+r4BUvUO8VnfNPYN8fGfK+ykXxg69aHb8xDQzkb+7oirqKjJBfDBF1HKYSBQjuW2C
-ARC-Seal: i=1; a=rsa-sha256; t=1524405497; cv=none;
+X-Google-Smtp-Source: AIpwx48t+fKRa1I5dAOIdRRrNXujEpMRdb/n8uZ7Ehk+Vet4YT7eZKPf/ijrNgjSPdT+8Iz5rkcY
+ARC-Seal: i=1; a=rsa-sha256; t=1524405494; cv=none;
         d=google.com; s=arc-20160816;
-        b=phL7zlLWHK0msdd0+C1CoS2u2dxBo6vtzg1tI8aAhyWaYG59UDM4SRiAFg/IInOpHh
-         7UOvibMrT4sgalVkdrz15xA5Q9wHQcZRTjR91comyW9yTm0wU0iMzvUmcZxPw1Y4erL5
-         Tvrcpne/HEop08uNwfpdTtmQLfNX6Su6eQuYLSFfamMP9rJ3yZZdj7KmewjXZyWFg02w
-         23hREsLYloPui/Sr+zqVElyIS8AZY/eM55ag1wn5ahD4Z+Q7NA9O7NMjQcRkYZKSV3V8
-         DG/pEZGwJHPQfHiNGiwf3EyrHPhvS6KfYwaPTXfqVEIsblnTHaNzhgmDYbb9wV8MbKcM
-         JTtw==
+        b=nHuFQq6ek9pEgdjpkjNLAkEfzpKNSjP8qq5dgZbi1bplBBCVs60tLdGvJoGt9mIbel
+         IjCTHTpdwRGHGpAFaKb+pOMI6Z3j+mq+T8qSQOfHl0ZwRnsrifcFkBOpkaIkjCsXMKRD
+         v9yl09EkE9sFRpH/oFT/tZeLuDoyh+LnEjHmVos5h+Dob7T3QiYP92J85QfYfOcPSDmx
+         AXao24OcrtVafI2C/oH3eVvcF/nEMq6JlJW1LYGRJB3NMcjnfADDI5mWejjWCHW5hRQO
+         0M9b9VI/AxRXTAhMfgdFigv5VOAA8Tz31H3nlBHK292PQzoFZHm+3ddVwcPyKEpYVveR
+         9Yng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=THwanSNOX8vsaN52sCQ3OJUhZ8iv/+SjORYG7eLXLOo=;
-        b=pv4FnxuFRv4GeuLNFEcrEfcgq7VvgdUxgP2B0V4BNCawMwC6lRHp/v8T3c+rVmonng
-         Tr6l/x0YPFnSJEJM1zoCGEMUAk/2Gs5bIvufWjFFp2r84VAGAEx0scM+JM7H4Jt06j29
-         muCwiYrIGBJ0NB5GAnBuIxuLpvqQ8tFuE6rpZu5tDe6UmgTipnBFdw1oKstPzTTgrRxk
-         uXO4ILuVK8QglLFJrGpoOAdN7CTgkks7HxkhK1NseIEbdkWyVJ4sHJJetJlwxW5EpIis
-         R4Y6b7/4uRHs9/DHyczVwzeBvRtPFYFwgdA/GwHjIUUjcZUMItBB8FClWFdlOcz2K6c3
-         QPgw==
+        bh=CzgWlsbsBe+VO8BesllvL+k2csf/pEUfnPCaRVwN9MU=;
+        b=skKD7DZCw8A+xyjbMSOnJkXn6y+H2ha0DvOzmV1XGEMKoqkiIVvL+vEGagYuS6ItGy
+         dpzGlWWxdrhl3RYTXzjfx5n0Q2EFWZVkbU2YjnhYbuKlOy9oeqIckA2bYs/EYeDYrCue
+         QqNzGhbDSMFyPPGA6RKvBP+DJbEdSQTTxdmFM+40QZYWVIbcxYDpXFJjsxCp4kdrh9ZV
+         f2Yr9AtW+9VOf7CpNDOcODFX6ZAwW5aKtALnhcMQD5yK33bWOg7+oABLxpeokdHcHMHD
+         QjlyZhj0v2O2pstbDC7Nqob/mpArJwsXkacat3kJ3dLDmZ3wjioVQ56Bc004SzAqYUsA
+         WCbw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Roger Quadros <rogerq@ti.com>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.16 042/196] usb: dwc3: prevent setting PRTCAP to OTG from debugfs
-Date: Sun, 22 Apr 2018 15:51:02 +0200
-Message-Id: <20180422135106.250936337@linuxfoundation.org>
+	Aaron Ma <aaron.ma@canonical.com>,
+	Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.16 051/196] HID: i2c-hid: fix size check and type usage
+Date: Sun, 22 Apr 2018 15:51:11 +0200
+Message-Id: <20180422135106.727958516@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455019200720449?=
-X-GMAIL-MSGID: =?utf-8?q?1598455019200720449?=
+X-GMAIL-THRID: =?utf-8?q?1598455016186220261?=
+X-GMAIL-MSGID: =?utf-8?q?1598455016186220261?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,32 +49,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Roger Quadros <rogerq@ti.com>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit daaecc6541d014dca073473ec8a4120c0babbeb4 upstream.
+commit ac75a041048b8c1f7418e27621ca5efda8571043 upstream.
 
-We don't support PRTCAP == OTG yet, so prevent user from
-setting it via debugfs.
+When convert char array with signed int, if the inbuf[x] is negative then
+upper bits will be set to 1. Fix this by using u8 instead of char.
 
-Fixes: 41ce1456e1db ("usb: dwc3: core: make dwc3_set_mode() work properly")
-Cc: <stable@vger.kernel.org> # v4.12+
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+ret_size has to be at least 3, hid_input_report use it after minus 2 bytes.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/core.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hid/i2c-hid/i2c-hid.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -119,6 +119,9 @@ static void __dwc3_set_mode(struct work_
- 	if (dwc->dr_mode != USB_DR_MODE_OTG)
- 		return;
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -144,10 +144,10 @@ struct i2c_hid {
+ 						   * register of the HID
+ 						   * descriptor. */
+ 	unsigned int		bufsize;	/* i2c buffer size */
+-	char			*inbuf;		/* Input buffer */
+-	char			*rawbuf;	/* Raw Input buffer */
+-	char			*cmdbuf;	/* Command buffer */
+-	char			*argsbuf;	/* Command arguments buffer */
++	u8			*inbuf;		/* Input buffer */
++	u8			*rawbuf;	/* Raw Input buffer */
++	u8			*cmdbuf;	/* Command buffer */
++	u8			*argsbuf;	/* Command arguments buffer */
  
-+	if (dwc->desired_dr_role == DWC3_GCTL_PRTCAP_OTG)
-+		return;
-+
- 	switch (dwc->current_dr_role) {
- 	case DWC3_GCTL_PRTCAP_HOST:
- 		dwc3_host_exit(dwc);
+ 	unsigned long		flags;		/* device flags */
+ 	unsigned long		quirks;		/* Various quirks */
+@@ -455,7 +455,8 @@ out_unlock:
+ 
+ static void i2c_hid_get_input(struct i2c_hid *ihid)
+ {
+-	int ret, ret_size;
++	int ret;
++	u32 ret_size;
+ 	int size = le16_to_cpu(ihid->hdesc.wMaxInputLength);
+ 
+ 	if (size > ihid->bufsize)
+@@ -480,7 +481,7 @@ static void i2c_hid_get_input(struct i2c
+ 		return;
+ 	}
+ 
+-	if (ret_size > size) {
++	if ((ret_size > size) || (ret_size <= 2)) {
+ 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
+ 			__func__, size, ret_size);
+ 		return;
