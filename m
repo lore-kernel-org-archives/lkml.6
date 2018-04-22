@@ -1,36 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/wDMJOih2jnU7fkMx7saWxzro6QE1GBVw728HMdKGq/9SMeSBTwto0UVbFOJKq/TuiiMA+
-ARC-Seal: i=1; a=rsa-sha256; t=1524405334; cv=none;
-        d=google.com; s=arc-20160816;
-        b=szIROOV/2PYQfF7Zf/FlTlcSioTOPGPSgFkfMjAowx6dTGheRJRdGChSY/MlGEuOZG
-         FWnDPthIeS9SF8N+C+a9Ihgh65qWQnsSc1uooPFdpwbZIIttRtqGSAEE5mxVsdU3Uryk
-         EmqWmvt4l8JhcAr+dTg/jh82VkE7l8IGUM13FvOWevAQvq9iBv87wSiCbw6Jl6Zqb8pD
-         edFadtpenxbH1Y5cDSbvCSBw914K8Z4wAdirJXb3xGsXyIbDy4mUD7psndayyn72c8lM
-         6ic4rvOl7cRoEmVwUt6vvzDCyKEytLGmovGOdzkoEX9HLfljIKLvTDt9qIsvt+biPA9V
-         rGkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=A5YpgiGzMFTrcHNQ07lOFbSk8oB5LNOHs2swNqlmlNI=;
-        b=HBlHuvL+wPBxKN11Kcx6ZYqiuboPG/2N2i5vBGVbcx25Rx1HiBhRHOfBJfnm7PtPt9
-         rRIUe6MSas9t6Y+iShcKdoOhEquEVT2Y2bvPhCQiPAuMI0doJe4fZsUT020UdHFCdTZV
-         vQETnZE1/z91H3iNABqGNlQoDKHGuN6AX86x/WHsEodcnN9uUKUdMPGkWFxwZKK5eTz5
-         VuTE3TssofuUPujLdpJ6GU++kIc8vqj88+wfvmBh+CR0kqrw6nT2JZknE+DebLfJrWkZ
-         DlalDBB1B52aBdGhDHZWPZVUi5z3iReT6IGtk8RUiBo+FxR7trAbAPb4JJ/YgFWlbEOe
-         6PpQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405332-2-14509368264972580608
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524405331; b=Mq9ePYoViKTIpFRCw9O+DipudLiEcFDRvtlFNyvLgBia2itPot
+    smyM8pFVWqoc8cluZehUMuck6vS2JCXOwAJmbDhmB36Sq8QCTrJVYhGnrYURXmK3
+    NaWyNJ7iFVqhoSW3b0NvlGHgbI2LJjrShbsJuquPUbHAEWcLe9qDs/6tsSWvk1Vy
+    OfF/g+4van+It1RtXp783g20UUg8u8+DtTwlyMJCzWpI6th5+Lp3dm22FB/wMZBX
+    GuQS9AD62UzUDVJcI5a0wKrTVF/2v/joXSPTeWPZGtY0LcTl1VpSKCfd3afqG7ap
+    +fMgTcPq5GE6Gf0HD7crnQdthoy9ptEc40Dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524405331; bh=IwlJvrm5pYm5LcyxLpgT2EoSy8uGxU
+    NqdmyToIbcXTg=; b=TFDuF2qnAbr46tYmlNs+TqBGGovjMMvEHjJHpDie8CEo/x
+    0BToC++ZAat60pasuwcQ4yXb+nR7wbpdh5go/6avsn98eTTd03Hhmr3eGrYACsG9
+    tprJOKUoxu7BJOsJRwzdk27oZJPiLMMLBRpuIoUyuaDneBeJ+CtXDp2FVoRNH9kJ
+    yEilmw1Fklrr2DFeOCUcA1N5U0rJJsD4z81NQ42AhKBbGH7w9lqdnS5nehVGIomx
+    C1eHGC0wq8MJdiKVlU7lDnUhBv0KwDb2jaiDpNwKV6E7XK+E8lBq4s95G8UdIXFR
+    3VOB2j2lVFA3O4/2joO7p1z7LeelfePHOt8aSCAQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJtx2OtBpI1TgmIuDS1VuxDaWu8oed3vg5N1qSeD3OLAX2KzF3fmn9Or/bTm8Gc/aAQyer3BuNSuJ1xUMbeccuwagHPv9JehlmT+fish01TjbDrSBcAY
+    zns+ZzYlFpyuPS4llCQxHZ3fMlW6odesUdc+21DCuF+WDn5as7RzOe4R7FI/M/FdLCAY1koTyY1S4aHyJwyxltOLyAHMoLXk1iXeUEkgnJKVODgv7VlYcJWk
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=P-IC7800AAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8
+    a=dt7MVP1FYSxYmmJaYfUA:9 a=5LgQCEaYo7feUAXL:21 a=gpNlxYgn0wZoR4ZA:21
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=d3PnA9EDa4IxuAV0gXij:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753514AbeDVNz2 (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 09:55:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44602 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753508AbeDVNzY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:55:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.16 028/196] spi: Fix scatterlist elements size in spi_map_buf
-Date: Sun, 22 Apr 2018 15:50:48 +0200
-Message-Id: <20180422135105.580069686@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>
+Subject: [PATCH 4.16 007/196] ubi: Reject MLC NAND
+Date: Sun, 22 Apr 2018 15:50:27 +0200
+Message-Id: <20180422135104.594604614@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -38,10 +84,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454848086177539?=
-X-GMAIL-MSGID: =?utf-8?q?1598454848086177539?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,48 +94,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit ce99319a182fe766be67f96338386f3ec73e321c upstream.
+commit b5094b7f135be34630e3ea8a98fa215715d0f29d upstream.
 
-When SPI transfers can be offloaded using DMA, the SPI core need to
-build a scatterlist to make sure that the buffer to be transferred is
-dma-able.
+While UBI and UBIFS seem to work at first sight with MLC NAND, you will
+most likely lose all your data upon a power-cut or due to read/write
+disturb.
+In order to protect users from bad surprises, refuse to attach to MLC
+NAND.
 
-This patch fixes the scatterlist entry size computation in the case
-where the maximum acceptable scatterlist entry supported by the DMA
-controller is less than PAGE_SIZE, when the buffer is vmalloced.
-
-For each entry, the actual size is given by the minimum between the
-desc_len (which is the max buffer size supported by the DMA controller)
-and the remaining buffer length until we cross a page boundary.
-
-Fixes: 65598c13fd66 ("spi: Fix per-page mapping of unaligned vmalloc-ed buffer")
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Artem Bityutskiy <dedekind1@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/mtd/ubi/build.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -779,8 +779,14 @@ static int spi_map_buf(struct spi_contro
- 	for (i = 0; i < sgs; i++) {
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -854,6 +854,17 @@ int ubi_attach_mtd_dev(struct mtd_info *
+ 		return -EINVAL;
+ 	}
  
- 		if (vmalloced_buf || kmap_buf) {
--			min = min_t(size_t,
--				    len, desc_len - offset_in_page(buf));
-+			/*
-+			 * Next scatterlist entry size is the minimum between
-+			 * the desc_len and the remaining buffer length that
-+			 * fits in a page.
-+			 */
-+			min = min_t(size_t, desc_len,
-+				    min_t(size_t, len,
-+					  PAGE_SIZE - offset_in_page(buf)));
- 			if (vmalloced_buf)
- 				vm_page = vmalloc_to_page(buf);
- 			else
++	/*
++	 * Both UBI and UBIFS have been designed for SLC NAND and NOR flashes.
++	 * MLC NAND is different and needs special care, otherwise UBI or UBIFS
++	 * will die soon and you will lose all your data.
++	 */
++	if (mtd->type == MTD_MLCNANDFLASH) {
++		pr_err("ubi: refuse attaching mtd%d - MLC NAND is not supported\n",
++			mtd->index);
++		return -EINVAL;
++	}
++
+ 	if (ubi_num == UBI_DEV_NUM_AUTO) {
+ 		/* Search for an empty slot in the @ubi_devices array */
+ 		for (ubi_num = 0; ubi_num < UBI_MAX_DEVICES; ubi_num++)
