@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx488NT1cxOvhqqOHc2jY9VRbKbwTUYsYdcfS5NEawjZUQz5hlHZ+4WqmSPIdYi94XzB4I+58
-ARC-Seal: i=1; a=rsa-sha256; t=1524406832; cv=none;
+X-Google-Smtp-Source: AIpwx49Ia14IuQEf3jNWVDsB8ePb3w8o0koqibB/WOyPH7gFPl3UqomM0QQWsYmStyEHimV9z6I6
+ARC-Seal: i=1; a=rsa-sha256; t=1524406829; cv=none;
         d=google.com; s=arc-20160816;
-        b=nyjmbdmyLNVyzTDLGZNijKAgXVjHGquBu3x+16sjBF0pBXQHIywjxin3nq2tBKuUds
-         tHj6U+yt+paAyN/v1g2fxmH1FkKDcjqZON1xX8FJLiDDnU/YanUeVTdzFQlp7p8JwKB8
-         wpMXfYoiuIfS1G+6Cntq5QOEJzGsX7fiPvydwKaSGlLW8IxpqYoB5s3MHj4FjfmNf0pQ
-         K758H9bGAd9qxBAsvJKUWlrMJv8keIqB00IVPcXhg26E9RC0NRccINRs224/CN0ZgCsa
-         5kRGfZPAGt3aHzwuPqb8y7E0ySWYPC3btZBOmpvtooE1To0MHdU32Dogrp8qgNqvJb+I
-         l/2g==
+        b=UXQdKdzKRz94G+/0i5lEDzdBgFp3gcDXGWI5biLjFbJ2gy4eP6npJMIwJJC47cvgP/
+         chhT14wHwoRo/RkMuJRkOk+pFQaxax8LGnxn5i3UVvzoSrYThPwL8Dw3M88u1nCtNaUd
+         afdeR/aNaJjSI8B0SpBfqhfjYKEn/rm9yrvwBwYR0HV7NlQefCMk+BA45gLaQnNQXopy
+         JPETTILHAHqlOXjy4uTIC8cdLK/Ye6F16JbQyg4CabuF/asXv06bG2gw+zn0MwKbQqOc
+         E7At+MWdCbFGfqZebIyeHn+95miTBxscHOn4Ln1fSqZGeMNeW4vgHpFMmZaNq+tBSvZC
+         XCvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=U8G01TGY6rvvSvad/OJYNmSdfNgdgZw3bzzEXyskFpc=;
-        b=lqYRBtmUkvr5dv5xXeYT6k9WrIocAjfDFovnCBTD7pwjka/SZr+VGyBSLCJuPDIQAR
-         bpfrKG7qK/Kn3YH7CO3esAZGCcTExNLCjboxb6PxTmMWee32HLg+GzbP8ogbXK+6LgnR
-         Hiq5qqRWueJy+tG5fmiS7lcNlgpn0lSZqucyh4Vji/GI5sS5lutGR4vHW+7GbHfbZ7bW
-         ROsuQa9SRS7Qpbbsjc+KNB1eLN4PeTTBFA/KktNIqjebUTCIP+EcVSno5Ep64YAE8FAF
-         0ReWST/1fKg+hG3/t1GivcQ1mJCEC9S/4VYpdqW9PfXknnTr8pvDu9rO9nHSRsbmwjmN
-         FCPw==
+        bh=3pRLtpnAS+ip4ceHmxLjyzTF9MICVwCMc2IM98r0SJw=;
+        b=JaXH7iqF0OKlOzSrLk8TFlH8ukoYLRdhzb5/ZSu45UbJPW2Fo+HWMpMlQ71uqWP9QO
+         A7iIOEy4dAy6DDmpIROrQlYqy/Hs7yfCMDn5PKFW6bh1AJnUhGVMDpk03ElIkb7/0lA9
+         nwEs6TfzmROJCL2FOKCGq1vjEiHvogrH3HbXpaVTlmtLBBZbYt3KDibMO0YfVEcDcIzf
+         K1NjoKD4x/xB67WfAuF40KkVE9GJs1CMYI5GnXlD2HcVpEU+D3Cl0Zx90PCjuAcejVyN
+         KSVm/cGjzjvQ+egapXB8u/s9oFlmODDeLj5MkgJ0aNUNIsvg7rux6KENRX2NFt8flcBA
+         AtSQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,12 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-	Ursula Braun <ubraun@linux.vnet.ibm.com>,
 	Benjamin Block <bblock@linux.vnet.ibm.com>,
 	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 3.18 04/52] s390/qdio: dont merge ERROR output buffers
-Date: Sun, 22 Apr 2018 15:53:37 +0200
-Message-Id: <20180422135315.430171671@linuxfoundation.org>
+Subject: [PATCH 3.18 03/52] s390/qdio: dont retry EQBS after CCQ 96
+Date: Sun, 22 Apr 2018 15:53:36 +0200
+Message-Id: <20180422135315.386662468@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598456104559684533?=
-X-GMAIL-MSGID: =?utf-8?q?1598456418678206255?=
+X-GMAIL-THRID: =?utf-8?q?1598456102184429648?=
+X-GMAIL-MSGID: =?utf-8?q?1598456415301662814?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,89 +52,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
-commit 0cf1e05157b9e5530dcc3ca9fec9bf617fc93375 upstream.
+commit dae55b6fef58530c13df074bcc182c096609339e upstream.
 
-On an Output queue, both EMPTY and PENDING buffer states imply that the
-buffer is ready for completion-processing by the upper-layer drivers.
+Immediate retry of EQBS after CCQ 96 means that we potentially misreport
+the state of buffers inspected during the first EQBS call.
 
-So for a non-QEBSM Output queue, get_buf_states() merges mixed
-batches of PENDING and EMPTY buffers into one large batch of EMPTY
-buffers. The upper-layer driver (ie. qeth) later distuingishes PENDING
-from EMPTY by inspecting the slsb_state for
-QDIO_OUTBUF_STATE_FLAG_PENDING.
+This occurs when
+1. the first EQBS finds all inspected buffers still in the initial state
+   set by the driver (ie INPUT EMPTY or OUTPUT PRIMED),
+2. the EQBS terminates early with CCQ 96, and
+3. by the time that the second EQBS comes around, the state of those
+   previously inspected buffers has changed.
 
-But the merge logic in get_buf_states() contains a bug that causes us to
-erronously also merge ERROR buffers into such a batch of EMPTY buffers
-(ERROR is 0xaf, EMPTY is 0xa1; so ERROR & EMPTY == EMPTY).
-Effectively, most outbound ERROR buffers are currently discarded
-silently and processed as if they had succeeded.
+If the state reported by the second EQBS is 'driver-owned', all we know
+is that the previous buffers are driver-owned now as well. But we can't
+tell if they all have the same state. So for instance
+- the second EQBS reports OUTPUT EMPTY, but any number of the previous
+  buffers could be OUTPUT ERROR by now,
+- the second EQBS reports OUTPUT ERROR, but any number of the previous
+  buffers could be OUTPUT EMPTY by now.
 
-Note that this affects _all_ non-QEBSM device types, not just IQD with CQ.
+Effectively, this can result in both over- and underreporting of errors.
 
-Fix it by explicitly spelling out the exact conditions for merging.
+If the state reported by the second EQBS is 'HW-owned', that doesn't
+guarantee that the previous buffers have not been switched to
+driver-owned in the mean time. So for instance
+- the second EQBS reports INPUT EMPTY, but any number of the previous
+  buffers could be INPUT PRIMED (or INPUT ERROR) by now.
 
-For extracting the "get initial state" part out of the loop, this relies
-on the fact that get_buf_states() is never called with a count of 0. The
-QEBSM path already strictly requires this, and the two callers with
-variable 'count' make sure of it.
+This would result in failure to process pending work on the queue. If
+it's the final check before yielding initiative, this can cause
+a (temporary) queue stall due to IRQ avoidance.
 
-Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
+Fixes: 25f269f17316 ("[S390] qdio: EQBS retry after CCQ 96")
 Cc: <stable@vger.kernel.org> #v3.2+
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Reviewed-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
 Reviewed-by: Benjamin Block <bblock@linux.vnet.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/qdio_main.c |   31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
+ drivers/s390/cio/qdio_main.c |   11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
 --- a/drivers/s390/cio/qdio_main.c
 +++ b/drivers/s390/cio/qdio_main.c
-@@ -205,7 +205,10 @@ again:
- 	return 0;
- }
+@@ -126,7 +126,7 @@ static inline int qdio_check_ccq(struct
+ static int qdio_do_eqbs(struct qdio_q *q, unsigned char *state,
+ 			int start, int count, int auto_ack)
+ {
+-	int rc, tmp_count = count, tmp_start = start, nr = q->nr, retried = 0;
++	int rc, tmp_count = count, tmp_start = start, nr = q->nr;
+ 	unsigned int ccq = 0;
  
--/* returns number of examined buffers and their common state in *state */
-+/*
-+ * Returns number of examined buffers and their common state in *state.
-+ * Requested number of buffers-to-examine must be > 0.
-+ */
- static inline int get_buf_states(struct qdio_q *q, unsigned int bufnr,
- 				 unsigned char *state, unsigned int count,
- 				 int auto_ack, int merge_pending)
-@@ -216,17 +219,23 @@ static inline int get_buf_states(struct
- 	if (is_qebsm(q))
- 		return qdio_do_eqbs(q, state, bufnr, count, auto_ack);
- 
--	for (i = 0; i < count; i++) {
--		if (!__state) {
--			__state = q->slsb.val[bufnr];
--			if (merge_pending && __state == SLSB_P_OUTPUT_PENDING)
--				__state = SLSB_P_OUTPUT_EMPTY;
--		} else if (merge_pending) {
--			if ((q->slsb.val[bufnr] & __state) != __state)
--				break;
--		} else if (q->slsb.val[bufnr] != __state)
--			break;
-+	/* get initial state: */
-+	__state = q->slsb.val[bufnr];
-+	if (merge_pending && __state == SLSB_P_OUTPUT_PENDING)
-+		__state = SLSB_P_OUTPUT_EMPTY;
-+
-+	for (i = 1; i < count; i++) {
- 		bufnr = next_buf(bufnr);
-+
-+		/* merge PENDING into EMPTY: */
-+		if (merge_pending &&
-+		    q->slsb.val[bufnr] == SLSB_P_OUTPUT_PENDING &&
-+		    __state == SLSB_P_OUTPUT_EMPTY)
-+			continue;
-+
-+		/* stop if next state differs from initial state: */
-+		if (q->slsb.val[bufnr] != __state)
-+			break;
+ 	qperf_inc(q, eqbs);
+@@ -149,14 +149,7 @@ again:
+ 		qperf_inc(q, eqbs_partial);
+ 		DBF_DEV_EVENT(DBF_WARN, q->irq_ptr, "EQBS part:%02x",
+ 			tmp_count);
+-		/*
+-		 * Retry once, if that fails bail out and process the
+-		 * extracted buffers before trying again.
+-		 */
+-		if (!retried++)
+-			goto again;
+-		else
+-			return count - tmp_count;
++		return count - tmp_count;
  	}
- 	*state = __state;
- 	return i;
+ 
+ 	DBF_ERROR("%4x EQBS ERROR", SCH_NO(q));
