@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+fGo2cE37IbcKZkmeaFQnzzJBIfi3+ezjMC3wiVWDn7Q7hMA0SMfH8oFaEM4vQfPLrUdqa
-ARC-Seal: i=1; a=rsa-sha256; t=1524406645; cv=none;
+X-Google-Smtp-Source: AIpwx4+ebupAGGwX0LIP+S4dj7nvXLCvCqZNMJx2U59QzhXozhskiX2wtckfz7L5dRuQJbBSuKQg
+ARC-Seal: i=1; a=rsa-sha256; t=1524406640; cv=none;
         d=google.com; s=arc-20160816;
-        b=taFvilvOZSk97+s6rIFAPKI4Dcsz7oMdPNubYmOUwgoQdbly5ari3VpMiCBjWWkXR5
-         T/JhYPJO3ONorBXvYnn2pyC9GXc7LSS2ZhR8lIlTpcYLjVgh59Qx4QjdlvDmaJmenr8m
-         RAWTya7Py3hy7Ck4btKL3QxfGbO3S/YrP6KBOq5AviiOQjONcWK+67/aPvr9/dc+qKYX
-         rUTxbB1+LjkB0i9N118qtl00pVPLbEUdar/+QSjBe5H86RLnNeQZFmD0E9ZY+DdMB8KA
-         8OAscm8/AStZjpfpLJ4EbLaUg+8Qe81aTmVhMHYGuOKehwhDHGYglzp5vLOOZakYJDlS
-         WD3w==
+        b=GUYyTQkk3Y8yUtqqyP4H+rv9SruccnPgqbY6uj0WoJb5vDDnuv5euqpj/mwaK9EQOL
+         rE8BXY0fUdD38YwT+gDSz2UxAW7eidRNs8d864MkS1VPsmRK2oHMCofreFZi1UEaZQSC
+         Q3DY2jbaiY1FGkoQ6jcLADiEe246pHzdbPJIWwPL+khb+4zQT5XNfGVeaa150raQxFWQ
+         syEV+cMCcQ+/2hws9EVbGavvMJ1XQhVU2y6qpvx+l8ZvjdQJiwW3tb95kyQOv8H9Jv33
+         zECoE+tiX+qDi8HQVegk4pgqjWhOq66Sh05DzTKqlcRjfkuxJT3qWogosMWGURg8FBzc
+         MQ3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/XWvsGxuoFNoAai+Kg3VzLuu4Zklwxib8NhDfFg3Mpk=;
-        b=dH/1Q40IerJBZP2+qNbJ5q0Yf4560mrorjGliJA5Xh+1/NftAp2wzeJl8xTiu537Xl
-         KGQC/TarAgiWwkMa4S5YOPfR4QLq8YLP5FoI3AQhL2tPydVXvGUF7Hdfg2t9RyyFObhB
-         K7UtkFAi/inwRzlVOU1Yf923yAnpEkDQGSOndS4itumzQco8jcCcYvdmtQInqNg8S1/q
-         arGDJBRQYJxhbNa91OU/6oWVLVIkhq1uLpntFiuWWgU/xS9hYV5bb0cf9lLCrP1iNuAp
-         OKtISOJCG1Ip2H2h0OrugQ9ZbP4hGYj3UXuD/abnxnatsHVWl+XmU6hyFkxwy0VgWFiq
-         B42A==
+        bh=w/tf157b0gTpuqhfAolz4S0P5YusbdCyg+S4CUc5uVM=;
+        b=ojjNd2GYXiBYGVs5RCfskjpTVNmFe8uaiiaDoYC25CMOZc4YHoG826F/6+3Eypzt/e
+         cqqMKlYUZhG/YUlLMKGkwBVcwNEEm660IWPjenRJnyZTLWLgbEP/ieKVFN3L6GcCew6g
+         1cJZEUHaz8yWeO3L1CgwU9IcBT1gnmUGgjQOyNnexCnhSt3bKMeJRj+0NhgE/YBGFgij
+         p+Om9ogUH9BkUQL5wnGTz3gAKZZ9+CuSWJe1w4ZW6Cw8p6cZWSCZTbmOzCKqJIT+ZmVp
+         7unpb0+fi5LFSlHAoMhYFcFF5JNI0UJQDdXio5EU4VddfvUjjJ3C//aXm7cVLKwzVeCy
+         8jIg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.4 34/97] regmap: Fix reversed bounds check in regmap_raw_write()
-Date: Sun, 22 Apr 2018 15:53:12 +0200
-Message-Id: <20180422135307.247294276@linuxfoundation.org>
+	Wen Xu <wen.xu@gatech.edu>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.4 50/97] ext4: add validity checks for bitmap block numbers
+Date: Sun, 22 Apr 2018 15:53:28 +0200
+Message-Id: <20180422135308.084667867@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454873954222137?=
-X-GMAIL-MSGID: =?utf-8?q?1598456222823117730?=
+X-GMAIL-THRID: =?utf-8?q?1598455024318699724?=
+X-GMAIL-MSGID: =?utf-8?q?1598456217188700974?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +49,99 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit f00e71091ab92eba52122332586c6ecaa9cd1a56 upstream.
+commit 7dac4a1726a9c64a517d595c40e95e2d0d135f6f upstream.
 
-We're supposed to be checking that "val_len" is not too large but
-instead we check if it is smaller than the max.
+An privileged attacker can cause a crash by mounting a crafted ext4
+image which triggers a out-of-bounds read in the function
+ext4_valid_block_bitmap() in fs/ext4/balloc.c.
 
-The only function affected would be regmap_i2c_smbus_i2c_write() in
-drivers/base/regmap/regmap-i2c.c.  Strangely that function has its own
-limit check which returns an error if (count >= I2C_SMBUS_BLOCK_MAX) so
-it doesn't look like it has ever been able to do anything except return
-an error.
+This issue has been assigned CVE-2018-1093.
 
-Fixes: c335931ed9d2 ("regmap: Add raw_write/read checks for max_raw_write/read sizes")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=199181
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1560782
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/regmap/regmap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/balloc.c |   16 ++++++++++++++--
+ fs/ext4/ialloc.c |    7 +++++++
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1582,7 +1582,7 @@ int regmap_raw_write(struct regmap *map,
- 		return -EINVAL;
- 	if (val_len % map->format.val_bytes)
- 		return -EINVAL;
--	if (map->max_raw_write && map->max_raw_write > val_len)
-+	if (map->max_raw_write && map->max_raw_write < val_len)
- 		return -E2BIG;
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -337,20 +337,25 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether block bitmap block number is set */
+ 	blk = ext4_block_bitmap(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		return blk;
  
- 	map->lock(map->lock_arg);
+ 	/* check whether the inode bitmap block number is set */
+ 	blk = ext4_inode_bitmap(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		return blk;
+ 
+ 	/* check whether the inode table block number is set */
+ 	blk = ext4_inode_table(sb, desc);
+ 	offset = blk - group_first_block;
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= sb->s_blocksize)
++		return blk;
+ 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
+ 			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
+ 			EXT4_B2C(sbi, offset));
+@@ -416,6 +421,7 @@ struct buffer_head *
+ ext4_read_block_bitmap_nowait(struct super_block *sb, ext4_group_t block_group)
+ {
+ 	struct ext4_group_desc *desc;
++	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	struct buffer_head *bh;
+ 	ext4_fsblk_t bitmap_blk;
+ 	int err;
+@@ -424,6 +430,12 @@ ext4_read_block_bitmap_nowait(struct sup
+ 	if (!desc)
+ 		return ERR_PTR(-EFSCORRUPTED);
+ 	bitmap_blk = ext4_block_bitmap(sb, desc);
++	if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
++	    (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
++		ext4_error(sb, "Invalid block bitmap block %llu in "
++			   "block_group %u", bitmap_blk, block_group);
++		return ERR_PTR(-EFSCORRUPTED);
++	}
+ 	bh = sb_getblk(sb, bitmap_blk);
+ 	if (unlikely(!bh)) {
+ 		ext4_error(sb, "Cannot get buffer for block bitmap - "
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -119,6 +119,7 @@ static struct buffer_head *
+ ext4_read_inode_bitmap(struct super_block *sb, ext4_group_t block_group)
+ {
+ 	struct ext4_group_desc *desc;
++	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	struct buffer_head *bh = NULL;
+ 	ext4_fsblk_t bitmap_blk;
+ 	int err;
+@@ -128,6 +129,12 @@ ext4_read_inode_bitmap(struct super_bloc
+ 		return ERR_PTR(-EFSCORRUPTED);
+ 
+ 	bitmap_blk = ext4_inode_bitmap(sb, desc);
++	if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
++	    (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
++		ext4_error(sb, "Invalid inode bitmap blk %llu in "
++			   "block_group %u", bitmap_blk, block_group);
++		return ERR_PTR(-EFSCORRUPTED);
++	}
+ 	bh = sb_getblk(sb, bitmap_blk);
+ 	if (unlikely(!bh)) {
+ 		ext4_error(sb, "Cannot read inode bitmap - "
