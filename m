@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48gadbalXx4B35ZetRzznXKw6oyDP+WOe4CuFha/mx2kQsM5svyjwyhS56ExmMtAps3bbIb
-ARC-Seal: i=1; a=rsa-sha256; t=1524406861; cv=none;
+X-Google-Smtp-Source: AIpwx485LrKM982q+FCW8KrpVmBATc+OP7odaBk7SNN80Q+kEWA0TF4nhiFpaELmAj4+0D96V3ko
+ARC-Seal: i=1; a=rsa-sha256; t=1524406859; cv=none;
         d=google.com; s=arc-20160816;
-        b=oPtqYgjYXkDml9zkFm5TiAbqKEpxToFqs3Vw/y0+5pRwj4ft9hbvGNRC7OXwxEnDt+
-         JQr4EhaaFhl/3zIhbsDojEjGGpLc/hxAkUsFzDGH8ODHWcNI/4WkKCCUlqGhCxDduQNt
-         o45xAyGwC3XdINZ3e8q5T0akAhLazx2QQIyr6u/5GM4zsP5cI73EgKZTUU3mNOVhihnS
-         Jws29Be61B1UVk0Sqzm8zxWAhQumJG7mUVCAd0it3t2A6bR6mhOTGobvBxbpTWLCJBi9
-         xtN91VYvo8IMsnr/sj3yClBAAXxPsmeL8fgOhAEMDOnBla3kASZEeMSnNAPWLbKlPrAF
-         4M6A==
+        b=uAAiTON87IxDThOP8q+0bq1Ro3VtfIGRPEqnRUdzyIhbv1KQHDPt2E3X+gHr8CuavO
+         RfdSMWBNEi+nV2Cqlg17SwXCN4y58M7F9GyV+RIIwFvqfshDxFrbMxi4W4cw0krT3NyO
+         zr7WGMBORdrfDy6DSJCNOLpkT1kKs9JVBGBcVNLanHPV5J8TSEkRtYP1EDJPrIs0rnn1
+         FogYXCEC6RF1hPfW8GsljxPMUrEG3eYkPS7ioRzLTJnn15EbDf8aac7Qwp8Bbz4i6kt7
+         mtacWH3WmQqpotNw7IISllvQah3HG/34SwFfVNAkNoNENY25TsLx+N8PPqBjbjOwrQSE
+         KAWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1VdJmTvK27YOgZZOMDS4+89iEcpn+AgQQY/9uqeLBL4=;
-        b=v1cwKxwi9D4yqTntXjRcYNP8BOrar1bubLjNbwvZ5MA139J3qtxJz9r65ULGwKbyfM
-         AK6UqNujFUzL6Q+/hMzByJG9W3oGd2gEOwFMxbxbmzqaewZE6SoSbLbnCa6QM3qIuUoI
-         wAUeFKsuYWEdxb1dTsoLBnDS0jI5Fu/XQ9/XmclHMyIOnTcCj17B5umGa/pkc+InRZOM
-         PBTGlGaWHM41s9HtiwRNIHuPwYs9gwLAs9DkSsQwaGYoheEOWoilIS1vCi+85tQQkiRb
-         Sfunq7oLD9a2dFjdNIxmGW3F5uk4FxW9iHiJRE7o4KMnLL7oWEN2lI9+jyrZq++HTsMC
-         2LYg==
+        bh=AK3T54C6H7fsiu2Q5bpmfbnaIeExZZaldEzcvaX4y5Y=;
+        b=IXAE+D3wtnmoTavX0nxxMEYEf+QViRFJAVOBxURs96FoalmiF7Cz/Yjq4WrdkYz9n7
+         VoLZwWG4L1L7TrgZGQLojETIbBFe2wntuywOYV6u1mCLRG+n8ROQxEzEIjynOmDJ9GTz
+         um7G6AElmsXf0q+k8l10L9tJ8s8EKjbKyk0h/gF8iiDUepavGnX02b9Lf5+Ff4/knxpJ
+         QznPKCRlFLMv8RHGdWQKRqO+zwzmXmOgDRuo10aMMnkiKqI23RZn7olD6yfU9hJvGXlS
+         YmiigbXxBnueuWtlXCWepeShLk0X7deyL8ERzT6DPyU9yGTyqAo19Qa7bgYAIyXkisBp
+         KgVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Nicholas Mc Guire <hofrat@osadl.org>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 32/52] ALSA: pcm: Use ERESTARTSYS instead of EINTR in OSS emulation
-Date: Sun, 22 Apr 2018 15:54:05 +0200
-Message-Id: <20180422135316.925818616@linuxfoundation.org>
+Subject: [PATCH 3.18 31/52] ALSA: oss: consolidate kmalloc/memset 0 call to kzalloc
+Date: Sun, 22 Apr 2018 15:54:04 +0200
+Message-Id: <20180422135316.882635597@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455655750027723?=
-X-GMAIL-MSGID: =?utf-8?q?1598456449702319822?=
+X-GMAIL-THRID: =?utf-8?q?1598456265424903999?=
+X-GMAIL-MSGID: =?utf-8?q?1598456446360732750?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,28 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-commit c64ed5dd9feba193c76eb460b451225ac2a0d87b upstream.
+commit 46325371b230cc66c743925c930a17e7d0b8211e upstream.
 
-Fix the last standing EINTR in the whole subsystem.  Use more correct
-ERESTARTSYS for pending signals.
+This is an API consolidation only. The use of kmalloc + memset to 0
+is equivalent to kzalloc.
 
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_oss.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/core/oss/pcm_oss.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 --- a/sound/core/oss/pcm_oss.c
 +++ b/sound/core/oss/pcm_oss.c
-@@ -852,7 +852,7 @@ static int snd_pcm_oss_change_params(str
- 		if (!(mutex_trylock(&runtime->oss.params_lock)))
+@@ -853,7 +853,7 @@ static int snd_pcm_oss_change_params(str
  			return -EAGAIN;
  	} else if (mutex_lock_interruptible(&runtime->oss.params_lock))
--		return -EINTR;
-+		return -ERESTARTSYS;
- 	sw_params = kzalloc(sizeof(*sw_params), GFP_KERNEL);
+ 		return -EINTR;
+-	sw_params = kmalloc(sizeof(*sw_params), GFP_KERNEL);
++	sw_params = kzalloc(sizeof(*sw_params), GFP_KERNEL);
  	params = kmalloc(sizeof(*params), GFP_KERNEL);
  	sparams = kmalloc(sizeof(*sparams), GFP_KERNEL);
+ 	if (!sw_params || !params || !sparams) {
+@@ -992,7 +992,6 @@ static int snd_pcm_oss_change_params(str
+ 		goto failure;
+ 	}
+ 
+-	memset(sw_params, 0, sizeof(*sw_params));
+ 	if (runtime->oss.trigger) {
+ 		sw_params->start_threshold = 1;
+ 	} else {
