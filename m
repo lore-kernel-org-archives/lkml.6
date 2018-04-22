@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/ZEIfavoNYQ6NvqB6WQWR6bhvexIWlnbJbEkQ7hybbzrHfJh9bG0Vb+z2wft2OALg4npjy
-ARC-Seal: i=1; a=rsa-sha256; t=1524405938; cv=none;
+X-Google-Smtp-Source: AIpwx49q8UBXups55T4uzZItqofxEr64vy5f29HsC2kbUO7b3VLANHHHVz7CHVRVqS+iUPW7SDrL
+ARC-Seal: i=1; a=rsa-sha256; t=1524405936; cv=none;
         d=google.com; s=arc-20160816;
-        b=0e6M+K3T7pGiQjq9JR3PvDB99iBKAl5rnrkoar0oykXS+/7d/r/jGLx7MwByXDa27G
-         JBeqrS8ngeyzw74jrLTNUZjMmos1UOToJcTgNUlGA+SyOYVuIDbOCBqPc5u+TffTeJT5
-         X9Z7yAGNs7s6t206a7tzxjf/bcdy0Hm2XvUZc9dtInw5KPKBakWFhlI/W+CYeaihTmvY
-         pF/bxE2QuVRCORpC1BrAfpzu2RvjL9I++ZYNXMPLkG9flS/Go/DUGNYVy7+oI+EHMw07
-         xquMky+ashp075IhBLfZbmrtFoaoWuP+lgZJx1sobLct9B4jo7WE84AH6bvo/QramD0Y
-         6h4w==
+        b=L0t+/mYJtpBSHPEQ2go3n+Ze9OEMU/0k6ZunO+gJVGgYhW5/jdOy6/9BSdeun6E/3s
+         tLU7aUQNDW9/maTzCS4a06+f3uof4fmGBve0j3jkbnQR2Ob++vK28+Aj9CYCXGe1sarf
+         +cKc70Ve1KjQUhBv7COD7Va/SeTAfHW6zpbwcn3nyXCA2vv9cri6Uueg8RGPfAZqJTnw
+         qQUHfCeRs5a2NWA41ExjBHX7NjyrolOSUh/F5jVJQIzpVyzVp33qs4pkc67VSL4jdY+t
+         /X3HJ9vc5qRQKMz4SFpCNJgFAW9bkib1wuxx+fa+dXufvaYMC1Fuk+JfwDajTH/D5/x3
+         /u0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=24p6OvASXz+pStflKNFXh02q3jAHrMVLjhcQepOoG2c=;
-        b=okmN3bJWBXCTPb57OLgTEsv8X3BAVdY6Wt0ejg3xF1CiDdLq9A2IHoiMWEQewhNzaV
-         cXawxrUHrP4AOWrdM1DBq6X0gfIs4xV61vJp69ygkZsdfgtzhF7sNZRriNvmm/mCKrJK
-         hIGUv8P24a2/Gd5bIzsgERByj/APmQcFIvl4FM37ljNNLoN3MSdX8f2jHoKdfzYKhZmx
-         Bgxjkq8hd3+OzQtytIqg17b8kfu1vGFMsO/4Ynk+1F4eSYhJ+O71h8d9cxs5GvfKNkba
-         0z/z64cxckIdq1F+bwC04/rO6jfSKMxynci1+31jSND0mUOz4pDYGVrJDnI5z8ap/to7
-         urHA==
+        bh=ANHME8/GwPnCUj7/Qmn4AFWPKfCAV9wzaiKgoSt45VY=;
+        b=eoRyxuMg+xWmG3hfYohYEEdvuWo+gxpOiexsBWp9D5vm9oa3AN/DTK9qko1cEx1g07
+         jUxQwPU5na/RZ4JOfVCXDdBPyWefyqyhVCkbgbIwRROaCb9CPI1Wrtca+Gz5LLJSflPJ
+         i5ZDWhqM766MOiuHkHpe2IFDz98JtLvWL5NVmI7UVTTC0J2c0pToRJ53ry9giAI1FQqN
+         wtP8pj1cMknA2Wl3yfXY6eBTajv2C3UHHIrWPmeCU30bea+fW9RZmGjKEsKKI6AyLyWt
+         uTyjzCtZXuEcFy1cVFBliK7L/dF1XNKlJJEcxpCkCUK0a38r/qPEFcIgNtFxDHzMzDWR
+         vSEg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paul Mackerras <paulus@ozlabs.org>,
-	Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 053/164] powerpc/64: Call H_REGISTER_PROC_TBL when running as a HPT guest on POWER9
-Date: Sun, 22 Apr 2018 15:52:00 +0200
-Message-Id: <20180422135137.582827602@linuxfoundation.org>
+Subject: [PATCH 4.14 052/164] powerpc/64s: Fix dt_cpu_ftrs to have restore_cpu clear unwanted LPCR bits
+Date: Sun, 22 Apr 2018 15:51:59 +0200
+Message-Id: <20180422135137.540366717@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454948033894940?=
-X-GMAIL-MSGID: =?utf-8?q?1598455481699601459?=
+X-GMAIL-THRID: =?utf-8?q?1598454945020240029?=
+X-GMAIL-MSGID: =?utf-8?q?1598455478587593867?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,82 +49,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit dbfcf3cb9c681aa0c5d0bb46068f98d5b1823dd3 upstream.
+commit a57ac411832384eb93df4bfed2bf644c4089720e upstream.
 
-On POWER9, since commit cc3d2940133d ("powerpc/64: Enable use of radix
-MMU under hypervisor on POWER9", 2017-01-30), we set both the radix and
-HPT bits in the client-architecture-support (CAS) vector, which tells
-the hypervisor that we can do either radix or HPT.  According to PAPR,
-if we use this combination we are promising to do a H_REGISTER_PROC_TBL
-hcall later on to let the hypervisor know whether we are doing radix
-or HPT.  We currently do this call if we are doing radix but not if
-we are doing HPT.  If the hypervisor is able to support both radix
-and HPT guests, it would be entitled to defer allocation of the HPT
-until the H_REGISTER_PROC_TBL call, and to fail any attempts to create
-HPTEs until the H_REGISTER_PROC_TBL call.  Thus we need to do a
-H_REGISTER_PROC_TBL call when we are doing HPT; otherwise we may
-crash at boot time.
+Presently the dt_cpu_ftrs restore_cpu will only add bits to the LPCR
+for secondaries, but some bits must be removed (e.g., UPRT for HPT).
+Not clearing these bits on secondaries causes checkstops when booting
+with disable_radix.
 
-This adds the code to call H_REGISTER_PROC_TBL in this case, before
-we attempt to create any HPT entries using H_ENTER.
+restore_cpu can not just set LPCR, because it is also called by the
+idle wakeup code which relies on opal_slw_set_reg to restore the value
+of LPCR, at least on P8 which does not save LPCR to stack in the idle
+code.
 
-Fixes: cc3d2940133d ("powerpc/64: Enable use of radix MMU under hypervisor on POWER9")
-Cc: stable@vger.kernel.org # v4.11+
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
-Reviewed-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
+Fix this by including a mask of bits to clear from LPCR as well, which
+is used by restore_cpu.
+
+This is a little messy now, but it's a minimal fix that can be
+backported.  Longer term, the idle SPR save/restore code can be
+reworked to completely avoid calls to restore_cpu, then restore_cpu
+would be able to unconditionally set LPCR to match boot processor
+environment.
+
+Fixes: 5a61ef74f269f ("powerpc/64s: Support new device tree binding for discovering CPU features")
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/mm/hash_utils_64.c       |    6 ++++++
- arch/powerpc/platforms/pseries/lpar.c |    8 ++++++--
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/dt_cpu_ftrs.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/mm/hash_utils_64.c
-+++ b/arch/powerpc/mm/hash_utils_64.c
-@@ -872,6 +872,12 @@ static void __init htab_initialize(void)
- 		/* Using a hypervisor which owns the htab */
- 		htab_address = NULL;
- 		_SDR1 = 0; 
-+		/*
-+		 * On POWER9, we need to do a H_REGISTER_PROC_TBL hcall
-+		 * to inform the hypervisor that we wish to use the HPT.
-+		 */
-+		if (cpu_has_feature(CPU_FTR_ARCH_300))
-+			register_process_table(0, 0, 0);
- #ifdef CONFIG_FA_DUMP
- 		/*
- 		 * If firmware assisted dump is active firmware preserves
---- a/arch/powerpc/platforms/pseries/lpar.c
-+++ b/arch/powerpc/platforms/pseries/lpar.c
-@@ -726,15 +726,18 @@ static int pseries_lpar_resize_hpt(unsig
- 	return 0;
- }
+--- a/arch/powerpc/kernel/dt_cpu_ftrs.c
++++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
+@@ -86,6 +86,7 @@ static int hv_mode;
  
--/* Actually only used for radix, so far */
- static int pseries_lpar_register_process_table(unsigned long base,
- 			unsigned long page_size, unsigned long table_size)
+ static struct {
+ 	u64	lpcr;
++	u64	lpcr_clear;
+ 	u64	hfscr;
+ 	u64	fscr;
+ } system_registers;
+@@ -115,6 +116,8 @@ static void cpufeatures_flush_tlb(void)
+ 
+ static void __restore_cpu_cpufeatures(void)
  {
- 	long rc;
--	unsigned long flags = PROC_TABLE_NEW;
-+	unsigned long flags = 0;
++	u64 lpcr;
++
+ 	/*
+ 	 * LPCR is restored by the power on engine already. It can be changed
+ 	 * after early init e.g., by radix enable, and we have no unified API
+@@ -127,8 +130,10 @@ static void __restore_cpu_cpufeatures(vo
+ 	 * The best we can do to accommodate secondary boot and idle restore
+ 	 * for now is "or" LPCR with existing.
+ 	 */
+-
+-	mtspr(SPRN_LPCR, system_registers.lpcr | mfspr(SPRN_LPCR));
++	lpcr = mfspr(SPRN_LPCR);
++	lpcr |= system_registers.lpcr;
++	lpcr &= ~system_registers.lpcr_clear;
++	mtspr(SPRN_LPCR, lpcr);
+ 	if (hv_mode) {
+ 		mtspr(SPRN_LPID, 0);
+ 		mtspr(SPRN_HFSCR, system_registers.hfscr);
+@@ -351,8 +356,9 @@ static int __init feat_enable_mmu_hash_v
+ {
+ 	u64 lpcr;
  
-+	if (table_size)
-+		flags |= PROC_TABLE_NEW;
- 	if (radix_enabled())
- 		flags |= PROC_TABLE_RADIX | PROC_TABLE_GTSE;
-+	else
-+		flags |= PROC_TABLE_HPT_SLB;
- 	for (;;) {
- 		rc = plpar_hcall_norets(H_REGISTER_PROC_TBL, flags, base,
- 					page_size, table_size);
-@@ -760,6 +763,7 @@ void __init hpte_init_pseries(void)
- 	mmu_hash_ops.flush_hash_range	 = pSeries_lpar_flush_hash_range;
- 	mmu_hash_ops.hpte_clear_all      = pseries_hpte_clear_all;
- 	mmu_hash_ops.hugepage_invalidate = pSeries_lpar_hugepage_invalidate;
-+	register_process_table		 = pseries_lpar_register_process_table;
++	system_registers.lpcr_clear |= (LPCR_ISL | LPCR_UPRT | LPCR_HR);
+ 	lpcr = mfspr(SPRN_LPCR);
+-	lpcr &= ~LPCR_ISL;
++	lpcr &= ~(LPCR_ISL | LPCR_UPRT | LPCR_HR);
+ 	mtspr(SPRN_LPCR, lpcr);
  
- 	if (firmware_has_feature(FW_FEATURE_HPT_RESIZE))
- 		mmu_hash_ops.resize_hpt = pseries_lpar_resize_hpt;
+ 	cur_cpu_spec->mmu_features |= MMU_FTRS_HASH_BASE;
