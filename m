@@ -1,78 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753403AbeDVCxx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 22:53:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55809 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753025AbeDVCxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 22:53:52 -0400
-Date: Sat, 21 Apr 2018 19:39:35 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de,
-        mingo@kernel.org, longman@redhat.com, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbues@suse.de>
-Subject: Re: [PATCH 2/2] rtmutex: Reduce top-waiter blocking on a lock
-Message-ID: <20180422023935.twybmkfj3kdtwfuo@linux-n805>
-References: <20180410162750.8290-1-dave@stgolabs.net>
- <20180410162750.8290-2-dave@stgolabs.net>
- <20180420155028.GO4064@hirez.programming.kicks-ass.net>
- <1524242934.5239.1.camel@gmx.de>
+        id S1753450AbeDVCyC (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 22:54:02 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33814 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753025AbeDVCx6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 22:53:58 -0400
+X-Google-Smtp-Source: AIpwx49PuojWsHGK6PA+7Z4qITwezDBmNuFAWDSA9c8vbtdjhD86QPS5Qap4SugozEIwwymZg/txkA==
+Date: Sat, 21 Apr 2018 19:53:52 -0700
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
+        bart.vanassche@wdc.com, ming.lei@redhat.com, tytso@mit.edu,
+        darrick.wong@oracle.com, jikos@kernel.org, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com, linux-fsdevel@vger.kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        todd.e.brandt@linux.intel.com, nborisov@suse.com,
+        martin.petersen@oracle.com, ONeukum@suse.com, oleksandr@natalenko.name,
+        oleg.b.antonyan@gmail.com, yu.chen.surf@gmail.com,
+        dan.j.williams@intel.com, linux-pm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/11] fs: add frozen sb state helpers
+Message-ID: <20180422025352.a5vcgdcdatjvxft2@garbanzo.do-not-panic.com>
+References: <20171129232356.28296-1-mcgrof@kernel.org>
+ <20171129232356.28296-4-mcgrof@kernel.org>
+ <20171130171310.GG28180@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1524242934.5239.1.camel@gmx.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20171130171310.GG28180@quack2.suse.cz>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018, Mike Galbraith wrote:
+On Thu, Nov 30, 2017 at 06:13:10PM +0100, Jan Kara wrote:
+> On Wed 29-11-17 15:23:48, Luis R. Rodriguez wrote:
+> > The question of whether or not a superblock is frozen needs to be
+> > augmented in the future to account for differences between a user
+> > initiated freeze and a kernel initiated freeze done automatically
+> > on behalf of the kernel.
+> > 
+> > Provide helpers so that these can be used instead so that we don't
+> > have to expand checks later in these same call sites as we expand
+> > the definition of a frozen superblock.
+> > 
+> > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+> 
+> So helpers are fine but...
+> 
+> > +/**
+> > + * sb_is_frozen_by_user - is superblock frozen by a user call
+> > + * @sb: the super to check
+> > + *
+> > + * Returns true if the super freeze was initiated by userspace, for instance,
+> > + * an ioctl call.
+> > + */
+> > +static inline bool sb_is_frozen_by_user(struct super_block *sb)
+> > +{
+> > +	return sb->s_writers.frozen == SB_FREEZE_COMPLETE;
+> > +}
+> 
+> ... I dislike the _by_user() suffix as there may be different places that
+> call freeze_super() (e.g. device mapper does this during some operations).
+> Clearly we need to distinguish "by system suspend" and "the other" cases.
+> So please make this clear in the naming.
+> 
+> In fact, what might be a cleaner solution is to introduce a 'freeze_count'
+> for superblock freezing (we already do have this for block devices). Then
+> you don't need to differentiate these two cases - but you'd still need to
+> properly handle cleanup if freezing of all superblocks fails in the middle.
+> So I'm not 100% this works out nicely in the end. But it's certainly worth
+> a consideration.
 
->On Fri, 2018-04-20 at 17:50 +0200, Peter Zijlstra wrote:
->> Is this similar to what we have in RT (which, IIRC, has an optimistic
->> spinning implementation as well)?
->
->For the RT spinlock replacement, the top waiter can spin.
+Seems reasonable.
 
-Yeah and the difference with the rt-spinlock and this patch are points
-(1) and (3). Probably worth mentioning and, at least at first thought,
-the rt version might benefit from these breaking out of the spin loop;
-lateral or normal, I doubt the rt-spinlock wants to adaptive_wait() if
-the top_waiter changed.
-
->
->> ISTR there being some contention over the exact semantics of (3) many
->> years ago. IIRC the question was if an equal priority task was allowed
->> to steal; because lock stealing can lead to fairness issues. One would
->> expect two FIFO-50 tasks to be 'fair' wrt lock acquisition and not
->> starve one another.
-
-Indeed.
-
->>
->> Therefore I think we only allowed higher prio tasks to steal and kept
->> FIFO order for equal prioty tasks.
-
-Right. In fact this patch is a very limited version of optimistic spinning
-because we have little room too break fairness and rt constraints (ie no
-osq, etc).
-
-So say waiter task A is spinning for the rtmutex when task B (with equal
-prio) comes in and tries to take it as well. Because when B is being
-enqueued we don't comply with rt_mutex_waiter_less(A, B), so we go rb_right.
-As such the top-waiter pointer is not updated and therefore B blocks while
-A keeps spinning and take the lock hopefully without blocking. And if we
-do block we're still top-waiter so fifo wrt waiter B all the way.
-
->
->Yup, lateral steal is expressly forbidden for RT classes.
-
-Only rt-spinlocks allow lateral stealing, this patch uses the same normal
-stealing semantics as what rtmutex already provide. And either way I don't
-see how rt_mutex_spin_on_owner() will influence on current rtmutex semantics
-as all that changes is not calling schedule(), and we are already accounted
-for and queued in the waiter tree.
-
-Thanks,
-Davidlohr
+  Luis
