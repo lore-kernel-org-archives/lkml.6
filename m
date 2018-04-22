@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2707851-1524408223-2-12935608238764263505
+X-Cyrus-Session-Id: sloti22d1t05-2669103-1524408217-2-2398292745943608270
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524408223; b=JS5fk4lnyvApCdV8FHpvQ9mLJt0kMD5Lnd72NqZVTftuzuVhHt
-    Rebm3kT+8X+F7iNRNuWvsffBZzC0IgmfGxKWqV8fuOhD+utuOTlHdEaxI9Af7plu
-    HsPms23cEx0L0MOui7U6sM3rtuwK5cU82hTEIvjabmxiaTOL7NZQsvsi2p/N7d3a
-    clp7phu1ZUJC7mdDRkd/y99o/YZaRJdy6ivmkjM3xVf5XkTu880lu3fKgpQlmgf8
-    HRR+wfa7ZDFRkOcUKjqC44gnUbRBH1eBlSAwlG4PXLDAkyFsAfyrSFvMjexwu2iI
-    wMFWHE2eXoJBopC9eTjsb23P1KpqtckI44zQ==
+    1524408217; b=V3Q1gLkbR3fOyACIcWNESSWVdCnUpdMReZkmpApA8Ni04Bkktf
+    1EpJADSXjpc6Ms4zL+EhklaGZe3d8ZdPLjG/frUS9mW78Y9cRCNp7XDbPV3SfR9R
+    42iGM8g00qPPjlUMY0y5My5Iu/G6Gki11m4iHx/09+wnGX2amXK6pnVChsJ0EHY6
+    97+XC4dpQb8Yxs/Ak8WtEjXVf9TAhquBe653Ro01ifu8tR0jH5tTdn5KBR3lkvp3
+    zpxgu3vTP7WCWxT96xSKPKmuzagCgxyz59cXDhPLbSqRBriq/lKIZfXxbkhnQe1G
+    zQ+hu++iI8L+X90JZInvVol/5ika4Wr52vOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524408223; bh=Gr52KhL0B6/h2oUOTRfj7MKQnetlIg
-    1itW08YmlxQ0M=; b=hn39MVE6TtQNv1AphzrbK1XSgPWCXjG58GapNUimxZE79/
-    JH51dmzD6uP69juiXVAP/wAETevF8J2UsTXosAhTxE/AuOd7qQkjnr/vQIbiZIBw
-    0GOHMSblGTaCkdoNZsCkIvJQt2abEMoY/2yRYCzXuIFTWngWOEPEu2BD0nFfXaZc
-    RpxuPaIDavjDv6hV/R5zC3s3e2j6cvsXUPKvayncpRnusx4SfsPhgMJfInZgI/IU
-    BmLHTyd2EwBBzbQ5IKQvErPTr+B+Ujt6sL6lV1LQDtPfw4RH7wU9cmOPOlg8lgMy
-    VstK4o+x/J6t1Da1msSicaz51lmhzo2uKMJJ5h7w==
+    :list-id; s=fm2; t=1524408217; bh=8yduKWd0EI0Yr42teKAQstwzXWz8/6
+    AQoLJG9z27XrE=; b=Vpu/iTd7ukJKWPF5bY4nhVCVsRYjDTTGQ1Uglr3IFDSqGG
+    gxcdOJRBSM9fVzApXocquPk/CKw3JpvcogdtggAgtMm2o/raLVtKcjciOFoRn9df
+    RjQvbYlwivLE2bNdgvnhgXKTZ0sNp4BLRnNZzgrDjDEjHA6PrGrBgHq6ZVfp0h1/
+    TPorvin1Co/BPkNooXPV4uwEglXhK8wv8FzcpLCsIGPfHNNaInqZDMK493ZEZvYa
+    U+fMZtPGytw9yFWknEAVE95jtrfNArtOgBoiFIVtWH4nerXAZFLuTJLvFL0WbmUI
+    kKhm9szfpY0/iidoVk7WDzMGnyZCMt5SCuey5wWg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,30 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBXL7RfBWWAK8X1JnoI1zlnC8d4OlzHquEH7VYJKh1i4ZTJb7SAp3y7dy9E8kYeuirMMZYY0MCAYgNYlXQNXD3If3KNqAnBLzzKJ/8Ahk/eyBNdlJb6L
-    /GAu/NmHkGUMaLQMeCjU2lP8Kd8oIrow2T+wj5vnoE60DJ7IROk9RZvkecBeZ6xhiDyPbeuEMdYK10GYpSoGKMG6RHboHahgHYjSmGNUjgepECkWQYBBGCrL
+X-CM-Envelope: MS4wfC087axgs8Fx8qcKgrYqLYfJd+FRIQt13gzRrh0UrWZJ8Re4JpQtzeyUzT8w9H9zGfEudd0rEHodKsGE/ooF6fKkisQi8Z80nq2pQmVNEqa13le04QW7
+    B30aKzlRneZKS2rsXYM3RjdPps7xp4hG6FrzwxAy7jC20zp9vJx02q3Zt3EmKS+47DcraGb5wWwgiNadWCUopafBL1te/gIQRC1drbHrhrQx9ekuwORgSHyf
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
-    a=b-S21-GUswmE4nkRrQ8A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=BTeA3XvPAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=HQYL0dNX9r2gA2wembEA:9
+    a=QEXdDO2ut3YA:10 a=tafbbOV3vt1XuEhzTjGK:22 a=AjGcO6oz07-iQ99wixmX:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932408AbeDVORP (ORCPT <rfc822;greg@kroah.com>);
+        id S932418AbeDVORP (ORCPT <rfc822;greg@kroah.com>);
         Sun, 22 Apr 2018 10:17:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58002 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58046 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932405AbeDVORJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:17:09 -0400
+        with ESMTP id S932380AbeDVORM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:17:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH 4.4 46/97] thunderbolt: Resume control channel after hibernation image is created
-Date: Sun, 22 Apr 2018 15:53:24 +0200
-Message-Id: <20180422135307.880943911@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Chen Feng <puck.chen@hisilicon.com>
+Subject: [PATCH 4.4 47/97] random: use a tighter cap in credit_entropy_bits_safe()
+Date: Sun, 22 Apr 2018 15:53:25 +0200
+Message-Id: <20180422135307.931591836@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -93,36 +92,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit f2a659f7d8d5da803836583aa16df06bdf324252 upstream.
+commit 9f886f4d1d292442b2f22a0a33321eae821bde40 upstream.
 
-The driver misses implementation of PM hook that undoes what
-->freeze_noirq() does after the hibernation image is created. This means
-the control channel is not resumed properly and the Thunderbolt bus
-becomes useless in later stages of hibernation (when the image is stored
-or if the operation fails).
+This fixes a harmless UBSAN where root could potentially end up
+causing an overflow while bumping the entropy_total field (which is
+ignored once the entropy pool has been initialized, and this generally
+is completed during the boot sequence).
 
-Fix this by pointing ->thaw_noirq to driver nhi_resume_noirq(). This
-makes sure the control channel is resumed properly.
+This is marginal for the stable kernel series, but it's a really
+trivial patch, and it fixes UBSAN warning that might cause security
+folks to get overly excited for no reason.
 
-Fixes: 23dd5bb49d98 ("thunderbolt: Add suspend/hibernate support")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported-by: Chen Feng <puck.chen@hisilicon.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thunderbolt/nhi.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/char/random.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/thunderbolt/nhi.c
-+++ b/drivers/thunderbolt/nhi.c
-@@ -627,6 +627,7 @@ static const struct dev_pm_ops nhi_pm_op
- 					    * we just disable hotplug, the
- 					    * pci-tunnels stay alive.
- 					    */
-+	.thaw_noirq = nhi_resume_noirq,
- 	.restore_noirq = nhi_resume_noirq,
- };
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -724,7 +724,7 @@ retry:
  
+ static int credit_entropy_bits_safe(struct entropy_store *r, int nbits)
+ {
+-	const int nbits_max = (int)(~0U >> (ENTROPY_SHIFT + 1));
++	const int nbits_max = r->poolinfo->poolwords * 32;
+ 
+ 	if (nbits < 0)
+ 		return -EINVAL;
