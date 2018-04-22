@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+qNeeuZ12Ky9vB6OWM2Y4tAECO3DPeKpSOooYPfrG1AeMC4Z6Ufw0Let7uOK6qGXjTbWDh
-ARC-Seal: i=1; a=rsa-sha256; t=1524406607; cv=none;
+X-Google-Smtp-Source: AIpwx49R+I93CK/1QTtYfxChVK/33j3sSA9QRUpcnJdGK9It4iSLvevKFrx4JQlOSPs8ufZPpVU3
+ARC-Seal: i=1; a=rsa-sha256; t=1524406604; cv=none;
         d=google.com; s=arc-20160816;
-        b=KiCHvXUck3Tq7m8PwQXArUnhQ4EcqWEN0xAcp2OnTklGzEokaPlTt/QzCu691xDaC8
-         ywP6S7ALtf1O0jUbrtkIMySNmeOatqlRNqCcuyUms3QX9zSevKkmKkzvLn/LNIWwsRps
-         tRlg1nLMXTBo/i8U56tbsJ/DifRzIt6206nA6iLH79ycvSwKu2G6mW0s7IK2R1ak9s57
-         miIdM68yzVPq1ugOk8szDmvZZyHP4E4zXkN9z+hO41aPlJe5T4Jiy6LJ572OK5Bsxf36
-         ZMohN6jtHxkxd0vTSgJHR37W6fCDVljB7+EoSlui7WpiwCid9TQIXpUZmkyHNg0qTYAU
-         Y3KA==
+        b=Wg+fEhMCkG8V6FFQ6M33J6MCYceBQv5N1C8OA2cAlo2S2/5DvnSrDuTt60YUJOT4jq
+         U4z0a+YQ06aYv7UlPB/cQ9IodE3WKRmW0m2+6J/BnSsSqTTubHakH0KyUlmuPiUDRjMI
+         +kdO3mHfrZLX4HIiW90dwskUs3a9UV66H5sJwD+hAXZ0S379Qz1VKzngfRfodC2cLYnl
+         dyRckFcYVD/Zj6SOHh9KXmT9DnoYFaDWmTzzmBx+eycIvn0xZKfBTkLX5aYwpzPYuMM0
+         jOsKWfyWpz+bFDqKsXdbuAyJ9KxV6r6OBGN39j2pjRGH+XqdTtB8u4N8ko24wwrNARcF
+         d/iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4GsVPi3Vm9NY8AX6aR5z9FOx3fKfsS7C7bBkLDRZxHI=;
-        b=iHCUuUs4VXc25xyASI3CoHY0Ci1777bMRIu6UEVXQTfkcEfpfcZcXaQpW+PH1UZnjH
-         JdqGEl7ufLnJ2MD2qqNbzrC24iAlDEHOlTmsqT3gcVXRmwgGwQsloLHedUjxrHCyZ5ql
-         J2YR2GLrQZiCFAGJUCiWwYOM+/ly5t9rOFMv5mwaA+3zJKLFYUbgjOYtwdWi20rBsRDH
-         3GTGcyJn3fQUGdtzLWZ68tU+IIxeTrmqxQwqK9AreZIgBVtg5f24aegnzRQyxdO2q2XP
-         7/NSugKwqXUIER4UcUODFt/r7C+lKeJDAyVvrB2pUufZNPTfVeT2wwdI4IlagMjNl4di
-         EkTQ==
+        bh=GkcB3CXYS6B4QqRuCnP3qS6DgB4FCh+M+B17H0tDqUQ=;
+        b=YT15n2HTLt74bHqZBhuNqAqfZvzTfr2isskSPFHuFTbPg1TJNaw9D6Yq9BhFbHs5sE
+         MjgefzQm//UAMGw5PjLzBYvQbzfLYdYqL/hmVIWd+puDYzFI/7JUMZsKO4nhsv7odNV8
+         jIwRYPJvd34iNpCOx26hirc16BxPH4UsR5OOKH6rHi4eWF5cQNpf0DkDew1Tgk7QECc3
+         uMWtlBfU8kKZQDtsbvIYstg5IrQwvUDcTpGJd6nGo+NZikLUbSgn+EfwQ+eX0kkTLkHu
+         YnUt6BSEDgUvp7oL2BOi1vqV4tflsWQLLJ8N/7N7Ozeq7YjEQg6us6Tz1M43snzuNXtW
+         1YRw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pavlos Parissis <pavlos.parissis@gmail.com>,
-	Lei Chen <chenl.lei@gmail.com>,
-	Maxime Hadjinlian <maxime.hadjinlian@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	David Ahern <dsahern@gmail.com>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	Wang Nan <wangnan0@huawei.com>,
-	kernel-team@lge.com,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 08/97] Revert "perf tests: Decompress kernel module before objdump"
-Date: Sun, 22 Apr 2018 15:52:46 +0200
-Message-Id: <20180422135305.110944943@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.4 07/97] radeon: hide pointless #warning when compile testing
+Date: Sun, 22 Apr 2018 15:52:45 +0200
+Message-Id: <20180422135305.049009498@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -50,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598456183194462886?=
-X-GMAIL-MSGID: =?utf-8?q?1598456183194462886?=
+X-GMAIL-THRID: =?utf-8?q?1598456179535450107?=
+X-GMAIL-MSGID: =?utf-8?q?1598456179535450107?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,65 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-This reverts commit b0761b57e0bf11ada4c45e68f4cba1370363d90d which is
-commit 94df1040b1e6aacd8dec0ba3c61d7e77cd695f26 upstream.
+commit c02216acf4177c4411d33735c81cad687790fa59 upstream.
 
-It breaks the build of perf on 4.4.y, so I'm dropping it.
+In randconfig testing, we sometimes get this warning:
 
-Reported-by: Pavlos Parissis <pavlos.parissis@gmail.com>
-Reported-by: Lei Chen <chenl.lei@gmail.com>
-Reported-by: Maxime Hadjinlian <maxime.hadjinlian@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: kernel-team@lge.com
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Sasha Levin <alexander.levin@microsoft.com>
+drivers/gpu/drm/radeon/radeon_object.c: In function 'radeon_bo_create':
+drivers/gpu/drm/radeon/radeon_object.c:242:2: error: #warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance thanks to write-combining [-Werror=cpp]
+ #warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
+
+This is rather annoying since almost all other code produces no build-time
+output unless we have found a real bug. We already fixed this in the
+amdgpu driver in commit 31bb90f1cd08 ("drm/amdgpu: shut up #warning for
+compile testing") by adding a CONFIG_COMPILE_TEST check last year and
+agreed to do the same here, but both Michel and I then forgot about it
+until I came across the issue again now.
+
+For stable kernels, as this is one of very few remaining randconfig
+warnings in 4.14.
+
+Cc: stable@vger.kernel.org
+Link: https://patchwork.kernel.org/patch/9550009/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/perf/tests/code-reading.c |   20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
 
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -182,8 +182,6 @@ static int read_object_code(u64 addr, si
- 	unsigned char buf2[BUFSZ];
- 	size_t ret_len;
- 	u64 objdump_addr;
--	const char *objdump_name;
--	char decomp_name[KMOD_DECOMP_LEN];
- 	int ret;
+---
+ drivers/gpu/drm/radeon/radeon_object.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/gpu/drm/radeon/radeon_object.c
++++ b/drivers/gpu/drm/radeon/radeon_object.c
+@@ -238,9 +238,10 @@ int radeon_bo_create(struct radeon_devic
+ 	 * may be slow
+ 	 * See https://bugs.freedesktop.org/show_bug.cgi?id=88758
+ 	 */
+-
++#ifndef CONFIG_COMPILE_TEST
+ #warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
+ 	 thanks to write-combining
++#endif
  
- 	pr_debug("Reading object code for memory address: %#"PRIx64"\n", addr);
-@@ -244,25 +242,9 @@ static int read_object_code(u64 addr, si
- 		state->done[state->done_cnt++] = al.map->start;
- 	}
- 
--	objdump_name = al.map->dso->long_name;
--	if (dso__needs_decompress(al.map->dso)) {
--		if (dso__decompress_kmodule_path(al.map->dso, objdump_name,
--						 decomp_name,
--						 sizeof(decomp_name)) < 0) {
--			pr_debug("decompression failed\n");
--			return -1;
--		}
--
--		objdump_name = decomp_name;
--	}
--
- 	/* Read the object code using objdump */
- 	objdump_addr = map__rip_2objdump(al.map, al.addr);
--	ret = read_via_objdump(objdump_name, objdump_addr, buf2, len);
--
--	if (dso__needs_decompress(al.map->dso))
--		unlink(objdump_name);
--
-+	ret = read_via_objdump(al.map->dso->long_name, objdump_addr, buf2, len);
- 	if (ret > 0) {
- 		/*
- 		 * The kernel maps are inaccurate - assume objdump is right in
+ 	if (bo->flags & RADEON_GEM_GTT_WC)
+ 		DRM_INFO_ONCE("Please enable CONFIG_MTRR and CONFIG_X86_PAT for "
