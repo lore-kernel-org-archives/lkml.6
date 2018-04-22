@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48EO6HtjFG0KcaICnsZUAUOclMweXBahRQTikusCZpc66n2PiIgyFxH3uMp+d5YGpd9LF9r
-ARC-Seal: i=1; a=rsa-sha256; t=1524405990; cv=none;
+X-Google-Smtp-Source: AIpwx49VMojklkqmW/PFqgH7RHhrmomHdO6lyU7e19xX8W0vAIpuUv3CQKMbwbuoJ12YepSBWtlb
+ARC-Seal: i=1; a=rsa-sha256; t=1524405988; cv=none;
         d=google.com; s=arc-20160816;
-        b=pQZ5TCrP4KWIhzzXrFCNhtRjzXS2/dc7l2oPr6+leHccsnDR1318U+9WjZ8QendlG0
-         XV8TcAoQ37/n8l4+yRYyla/9hb/b1ff0uhibSZeZLWkTZRIuigtbL6y6vKzzDVpB6s3s
-         SMxBnJh95JD86lNWcN9PHlncdMiSWfuWsccOlpdTsd271xRKM5osS7qiDprT5ZIoZCre
-         vlsXKSVjnwWdwOrUysZ892UOTE+kokAs4XwLF6b/QdCtze87D+lx6hj0i9423sFYxDUA
-         xumuMUt2H0qiy5BRDLLTws8Jv/8rEADXQZB6O06977Heh7cX9GAb0XupkSOHbplsdp8o
-         0Q2A==
+        b=xHja87v6PY/nyajQXHB1EOM+6GrjkP952V1trY4qxzooBtvVWHcK08RqFLHB0j4CUf
+         5jvQhaVJZ8i+Sw8Cihxwww+NRhqE4OQ5k6qtD76djlXEfyOdYQFyhI2Qo40t7yDLfliV
+         JhHuQbUly4l7d5XFBHV+s6Ue4jmqqyqqiUZnOlEylJkEmYf4C+htlIdKNGfbyhnxtiW5
+         QoitiRgdHr5OTKauQdQOojRD+J8IPU6DBq2Y2F+3Ud6nr+oiNMDqMKLuHH2PargxqJHv
+         3wMkwweHzG/wuuswogk11ug5GjigJKV7svWUty9TYh3f0jZ68SNjJUNM9v0R5E3ttQRn
+         oeNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sLy+KfP0dNoHunrnlPSKMFAzPgspgTMfR+EH+W7gvCo=;
-        b=iLR073Hd7KrxiL4wDI+f9v94zhibJMQWVwRw18cnVnxCgrnfAmmj51C+T8KDvEFZb9
-         rU9qThJv9qcE8ueKn8aqJL7appQzBRxUHJrlQg/tqtbG8SifX5QISt0YD9+1Sgy87sYZ
-         32Kp82tTUWwPDphx2O+QRu7/8zkez5Atq+sQGzKivtpFOBRJAKeD3Q45JDXo/HpW3iC3
-         NnRb4MXeIdBcULVtOp0kOZU9EeZaYlaCm0jHE/HxZNbLoM8nHDpQ6UPSiTD82gCysDRF
-         0k/7MVadjnyj2m76pluNQ7kv7fC0ki58D5oI+T7E4VhpHTvi5E5SN0KK8NmJXXbYH/nk
-         kXgQ==
+        bh=RmYeOGssPHvGnrmuAsTKeSrUP6Rf18UMezwVtHQhZz4=;
+        b=pEyYbPt7c7rJrnWu2qIXtfUi35mY5dGd+D0V5VVwr5cw7iXPWQypi+8VzapkxJ+WNV
+         vofrcoAVGAsib8LSJxQBCkm4pp/jDQJONpqjE24YphIQ2RPiZ2bOS7eD3vR4f+0iWmLO
+         xnx9Eb27BDfFqAkDYX+5eFmp9yblUD1/wQZagpcLDBTxnp2z20Xk29KjM7WElOihwx7D
+         RYNaOw3I8Hk8RgFT9oJVWmvdALj3t/htg5LnywTeIiL8SfPd0DzQblnyVtSv2D3zmn7P
+         cH1a1JWSQYYAcUf82JtlVYRoTcUQ0J0huWco8kWrF7YuJLtAeNPyTHRDwRY4QhI2qXRe
+         fyWA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zhengjun Xing <zhengjun.xing@linux.intel.com>
-Subject: [PATCH 4.14 038/164] USB:fix USB3 devices behind USB3 hubs not resuming at hibernate thaw
-Date: Sun, 22 Apr 2018 15:51:45 +0200
-Message-Id: <20180422135136.964518200@linuxfoundation.org>
+	Tuba Yavuz <tuba@ece.ufl.edu>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 037/164] USB: gadget: f_midi: fixing a possible double-free in f_midi
+Date: Sun, 22 Apr 2018 15:51:44 +0200
+Message-Id: <20180422135136.927335276@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454888478547425?=
-X-GMAIL-MSGID: =?utf-8?q?1598455535843170597?=
+X-GMAIL-THRID: =?utf-8?q?1598454885662324670?=
+X-GMAIL-MSGID: =?utf-8?q?1598455533331182675?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,55 +49,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+From: Yavuz, Tuba <tuba@ece.ufl.edu>
 
-commit 64627388b50158fd24d6ad88132525b95a5ef573 upstream.
+commit 7fafcfdf6377b18b2a726ea554d6e593ba44349f upstream.
 
-USB3 hubs don't support global suspend.
+It looks like there is a possibility of a double-free vulnerability on an
+error path of the f_midi_set_alt function in the f_midi driver. If the
+path is feasible then free_ep_req gets called twice:
 
-USB3 specification 10.10, Enhanced SuperSpeed hubs only support selective
-suspend and resume, they do not support global suspend/resume where the
-hub downstream facing ports states are not affected.
+         req->complete = f_midi_complete;
+         err = usb_ep_queue(midi->out_ep, req, GFP_ATOMIC);
+            => ...
+             usb_gadget_giveback_request
+               =>
+                 f_midi_complete (CALLBACK)
+                   (inside f_midi_complete, for various cases of status)
+                   free_ep_req(ep, req); // first kfree
+         if (err) {
+                 ERROR(midi, "%s: couldn't enqueue request: %d\n",
+                             midi->out_ep->name, err);
+                 free_ep_req(midi->out_ep, req); // second kfree
+                 return err;
+         }
 
-When system enters hibernation it first enters freeze process where only
-the root hub enters suspend, usb_port_suspend() is not called for other
-devices, and suspend status flags are not set for them. Other devices are
-expected to suspend globally. Some external USB3 hubs will suspend the
-downstream facing port at global suspend. These devices won't be resumed
-at thaw as the suspend status flag is not set.
+The double-free possibility was introduced with commit ad0d1a058eac
+("usb: gadget: f_midi: fix leak on failed to enqueue out requests").
 
-A USB3 removable hard disk connected through a USB3 hub that won't resume
-at thaw will fail to synchronize SCSI cache, return “cmd cmplt err -71”
-error, and needs a 60 seconds timeout which causing system hang for 60s
-before the USB host reset the port for the USB3 removable hard disk to
-recover.
+Found by MOXCAFE tool.
 
-Fix this by always calling usb_port_suspend() during freeze for USB3
-devices.
-
-Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+Signed-off-by: Tuba Yavuz <tuba@ece.ufl.edu>
+Fixes: ad0d1a058eac ("usb: gadget: f_midi: fix leak on failed to enqueue out requests")
+Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/generic.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/function/f_midi.c |    3 ++-
+ drivers/usb/gadget/u_f.h             |    2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/core/generic.c
-+++ b/drivers/usb/core/generic.c
-@@ -210,8 +210,13 @@ static int generic_suspend(struct usb_de
- 	if (!udev->parent)
- 		rc = hcd_bus_suspend(udev, msg);
+--- a/drivers/usb/gadget/function/f_midi.c
++++ b/drivers/usb/gadget/function/f_midi.c
+@@ -405,7 +405,8 @@ static int f_midi_set_alt(struct usb_fun
+ 		if (err) {
+ 			ERROR(midi, "%s: couldn't enqueue request: %d\n",
+ 				    midi->out_ep->name, err);
+-			free_ep_req(midi->out_ep, req);
++			if (req->buf != NULL)
++				free_ep_req(midi->out_ep, req);
+ 			return err;
+ 		}
+ 	}
+--- a/drivers/usb/gadget/u_f.h
++++ b/drivers/usb/gadget/u_f.h
+@@ -64,7 +64,9 @@ struct usb_request *alloc_ep_req(struct
+ /* Frees a usb_request previously allocated by alloc_ep_req() */
+ static inline void free_ep_req(struct usb_ep *ep, struct usb_request *req)
+ {
++	WARN_ON(req->buf == NULL);
+ 	kfree(req->buf);
++	req->buf = NULL;
+ 	usb_ep_free_request(ep, req);
+ }
  
--	/* Non-root devices don't need to do anything for FREEZE or PRETHAW */
--	else if (msg.event == PM_EVENT_FREEZE || msg.event == PM_EVENT_PRETHAW)
-+	/*
-+	 * Non-root USB2 devices don't need to do anything for FREEZE
-+	 * or PRETHAW. USB3 devices don't support global suspend and
-+	 * needs to be selectively suspended.
-+	 */
-+	else if ((msg.event == PM_EVENT_FREEZE || msg.event == PM_EVENT_PRETHAW)
-+		 && (udev->speed < USB_SPEED_SUPER))
- 		rc = 0;
- 	else
- 		rc = usb_port_suspend(udev, msg);
