@@ -1,47 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753367AbeDVJOb (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 05:14:31 -0400
-Received: from m12-11.163.com ([220.181.12.11]:51931 "EHLO m12-11.163.com"
+        id S1753411AbeDVJOq (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 05:14:46 -0400
+Received: from sauhun.de ([88.99.104.3]:37630 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752661AbeDVJO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 05:14:29 -0400
-From: Chen Lin <chen45464546@163.com>
-To: john.stultz@linaro.org
-Cc: tglx@linutronix.de, sboyd@kernel.org, linux-kernel@vger.kernel.org,
-        Chen Lin <chen45464546@163.com>
-Subject: [PATCH] time: remove blank space
-Date: Sun, 22 Apr 2018 17:13:57 +0800
-Message-Id: <1524388437-10992-1-git-send-email-chen45464546@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: C8CowAAHgatYUtxakBMyQQ--.62959S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzPEfDUUUU
-X-Originating-IP: [171.213.12.57]
-X-CM-SenderInfo: hfkh0kqvuwkkiuw6il2tof0z/1tbiXQQwnlWBY1IlRAACsx
+        id S1751313AbeDVJOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 05:14:45 -0400
+Date: Sun, 22 Apr 2018 11:14:43 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Dan Williams <dan.j.williams@intel.com>, Li Yang <leoyang.li@nxp.com>,
+        Zhang Wei <zw@zh-kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 07/61] dma: simplify getting .drvdata
+Message-ID: <20180422091443.ryfdum5nhjc2b7qw@ninjato>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-8-wsa+renesas@sang-engineering.com>
+ <20180422061733.GU6014@localhost>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6f5sacsuvgjsenls"
+Content-Disposition: inline
+In-Reply-To: <20180422061733.GU6014@localhost>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-remove blank space
 
-Signed-off-by: Chen Lin <chen45464546@163.com>
----
- include/linux/time64.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--6f5sacsuvgjsenls
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/time64.h b/include/linux/time64.h
-index 93d3949..35ce4aa 100644
---- a/include/linux/time64.h
-+++ b/include/linux/time64.h
-@@ -10,7 +10,7 @@ typedef __u64 timeu64_t;
- 
- #if __BITS_PER_LONG == 64
- /* this trick allows us to optimize out timespec64_to_timespec */
--# define timespec64 timespec
-+#define timespec64 timespec
- #define itimerspec64 itimerspec
- #else
- struct timespec64 {
--- 
-2.7.4
+On Sun, Apr 22, 2018 at 11:47:33AM +0530, Vinod Koul wrote:
+> On Thu, Apr 19, 2018 at 04:05:37PM +0200, Wolfram Sang wrote:
+> > We should get drvdata from struct device directly. Going via
+> > platform_device is an unneeded step back and forth.
+>=20
+> Do you mind splitting this per driver please, that makes it easy to manage
+> for me :)
+
+No problem, done.
+
+
+--6f5sacsuvgjsenls
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrcUn8ACgkQFA3kzBSg
+KbaGng//WtrP6nLPSP/nblFu9au/lhvSwqTePV4MjjB8spMOB7tG6nOJqt8Lc+Um
+yc1h61Lnh3O/rIwu6R7785FF0yWG9cA1ALk7LOvB/80RbjBDM8X8lOHQ72gEONGs
+1lFo5JqKi/FUsvCbu8OYQjgtzo5Y7YkOVw4yW6Q0H34FzaUwWQNz2d+/adjklEpj
+6tfZrydqy9ell/nwp+0vCj+8TeqexpvgJOvGA2IPAizo8/0xQozcc7gjr5dfzn7j
+fTgqP5cUMrscXRbl0tbZBp4csvPzKZQSgsuu4uu1YAlJGGZkXYARf732i0weVt6F
+zkPKku38zY7uWoti9e5NfX8P6aVgXZpRc+0iuvs7phK0dI/BUQnlnNLztp2gKZRq
+klo7ozG8EEoy+RdzgrEtfvahJPPrf0D8EtIqR3GsDiYKdnDCQenqB9IwuBtpnhji
+IB3NODOOxrCgRvzKM5hUj2lRm3bP4I56SVt+TOQNO7x09ejO2b6lC5Iz2rxqxVHh
+WqIoCjAj1xICqojQLw9Oo7Ow+6PMvMjwqyI2s194LJ8u+R2yPnTy3DVTohZczuw6
+V26zfaxwGQj3sKJ+fDpvwBB4gQ/omcglJVAOrSb0oZXsuiV6jpEQ0xlUh0dTDlUB
+a3md/tXGaYBLn34WOcFKJbwXeOVPVsu/MQIKI6HJUUwBS+BoO9k=
+=hOmb
+-----END PGP SIGNATURE-----
+
+--6f5sacsuvgjsenls--
