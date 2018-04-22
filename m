@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2707851-1524408567-2-8123429195060516181
+X-Cyrus-Session-Id: sloti22d1t05-2707851-1524408555-2-7982826846021062726
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524408566; b=bHuLpf2awHImhoyJ7KLWZhn7gJvA7X2kY5I7smk7YD4OT+4TY+
-    wDIE3JwiyIfTy2ZIyHnpULP5gRrRFXih8+nrwfrC+syWi/o28vbuSljKjssTHptj
-    Rkx3AROYG6bYWhX7rhs4DQUfMsM3+w7kGYjjEOJGnA41aDxgiNwVTqJOOihSowJO
-    joSqg2LKaYXYZueR8LcCJEPRs3W0kJWcbxieVMCRzUIYfex34cwbN5j1X1vIyOWv
-    NJNlJKs6ILXZygx5p24mPG3CDtL9ymAv6Up+hP4R15E+MoQJSt/1XtGo9m9ayO84
-    fIV/g3PMMv4MDlMiZZb+BKcAUuHEYRK6BcKA==
+    1524408554; b=NNYREtmhT1d11em+Yw/bwyG1rtyxVINl9slNPf5ZFv8+WvAr9Y
+    ZHlgS1xawSLADzpCyff3Fxcs+SJFOv+JUti4+CsOnlPuHESZdqbHdyfGiE3yK6V1
+    X7Og1/sPqG8U6G4RuWsU1EyAcDpG49ePAZwtVhe+YRSwVqrjeGASyeX6oO/cuJ7n
+    bmyJRJtIexwatr9jRgcXk/FK1W90B0tkLxhNknqoS9yAiAKguWEMcp2Q4LnbzJiN
+    /wMaSW3caTz4x39IRhstQ8HDFAEG7VE7Wt7PnRH0OdnFdSLqP/GrSRbV3WPoKOD4
+    vvCPD06mVPhWZ8FTgxsEQqwzFdqSoLWgTJLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524408566; bh=iUNr/JLEc8wB7SJbtakl2Sh3i338ko
-    dDQMiBIqressM=; b=ZklhlWwmNIwzQL7rFZoGd8MWNEp5bM7weAsATdL2Rwl6DG
-    8Fsy56Gn5t2gjobFQynmzMkIubi2aUf/GFxv96OnUm9YT9QM+9netYY9huclU1Xw
-    Q4Uysez/gNuLr0ooqR6yr+Rrdo7aQOPuXaUB8PQL/NjicLUadqHmWaTDDQetrw/V
-    fLtThMa0pDiQ2Dqo6ktNKYko6CkFKfM7fy9GaK8r+WwOq8uYa0FElvKKZdL8j2wU
-    hJMQvv3vJIccrntD62CM73YGH9fPsISUI8lwpELRedDoeyXsGfHyNYl8DHVfYyHI
-    R+Sd1DFVW9iy1UX+AYVcdSLVVWJg6KJofOgO9fcA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524408554; bh=F21zh+C/L90jsD7LgUwwiPP/Z62a+H
+    rZEW9kLFEL268=; b=Ru/RJOXsfxF69ifsjYx50xOKROY8S+hgLiS1AlmaoLJAW+
+    rs5BmDsL5AxzjaYfz62J6Lsh5OvAfDSo7HKdHkGJ+XE4sCuMtUEDL1P0JDkU9ibn
+    IyqQqoM2Wc9hpQVagMA1/B/BcD8iV2WyFUd5EMM1j9o0e3nt/V3s78C0q2Ls4HSC
+    zDFGY2c67ZEYcFWu940z8bcyIOHkcmEWg+gTDfO8lQpciPYD8+87bYBAmEIbX9Nw
+    gtpMFyNikHj5ATa1G8xDrTEYQyHVT6RuC4NAIQQYz6bhMuUW8DsbkRiPVd1h7sjM
+    /PVfXYrDPjNIoK8Q2Piin4OmL1IEbvhvkpfaTDEA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,31 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOU+AJfXCK2fXFvHmQheFRF13PCku0DP2TqH5Uy3C6/5Ar6Krnqdxof1mrJdY/y35k+hXF/jXcJM9cYJ9gVccItk7eYR/1j/q2hYrz6vt18tCrKBUuDo
-    Zg+Kb6zp4P3WyIS+Y8kNIZ/Mi+2qktvov4yfsJqMRJWBcM/2NYzia+vUo5kThteh14nYIu1fb0KVdsPPznExzntpkmMqPSyo8qECYTU5YWHqKoqKTLZLgdyn
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKrrKkDzKu9VOoeu1crP3XsooYuJYXKMpj/RLgW4UPfXQPdC7aMkgEARDTTEewDs0bZWLH1vRcUbt/Eja9IclV92rYXHdiPf/UjnLT2Ng7QyyokN1Twe
+    ru+C+EqtbF3BHP5RdZggmAsx6MAdOEdnQ6gg0wZYcBm6pQiJImjo9w3e+T95yE68mUw6QwnEt7ysyYG5czyzFNCqIj5ISAEC4nzcYJzyRndXl47Qe8AmCH0R
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=fk1lIlRQAAAA:8 a=VwQbUJbxAAAA:8 a=LpQP-O61AAAA:8 a=ag1SF4gXAAAA:8
-    a=dvAl-2Suf6oiNL_zVn0A:9 a=QEXdDO2ut3YA:10 a=U75ogvRika4pmaD_UPO0:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=pioyyrs4ZptJ924tMmac:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=iox4zFpeAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=PyAcsGnoYPOmBCnezHkA:9
+    a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932094AbeDVOPr (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:15:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56948 "EHLO
+        id S932176AbeDVOPt (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:15:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56988 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756709AbeDVOPl (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:15:41 -0400
+        with ESMTP id S1757007AbeDVOPr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:15:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sudhir Sreedharan <ssreedharan@mvista.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.4 14/97] rtl8187: Fix NULL pointer dereference in priv->conf_mutex
-Date: Sun, 22 Apr 2018 15:52:52 +0200
-Message-Id: <20180422135305.425164589@linuxfoundation.org>
+        stable@vger.kernel.org, Bassem Boubaker <bassem.boubaker@actia.fr>,
+        Oliver Neukum <oneukum@suse.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 16/97] cdc_ether: flag the Cinterion AHS8 modem by gemalto as WWAN
+Date: Sun, 22 Apr 2018 15:52:54 +0200
+Message-Id: <20180422135305.522935434@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -92,72 +93,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sudhir Sreedharan <ssreedharan@mvista.com>
+From: Bassem Boubaker <bassem.boubaker@actia.fr>
 
-commit 7972326a26b5bf8dc2adac575c4e03ee7e9d193a upstream.
 
-This can be reproduced by bind/unbind the driver multiple times
-in AM3517 board.
+[ Upstream commit 53765341ee821c0a0f1dec41adc89c9096ad694c ]
 
-Analysis revealed that rtl8187_start() was invoked before probe
-finishes(ie. before the mutex is initialized).
+The Cinterion AHS8 is a 3G device with one embedded WWAN interface
+using cdc_ether as a driver.
 
- INFO: trying to register non-static key.
- the code is fine but needs lockdep annotation.
- turning off the locking correctness validator.
- CPU: 0 PID: 821 Comm: wpa_supplicant Not tainted 4.9.80-dirty #250
- Hardware name: Generic AM3517 (Flattened Device Tree)
- [<c010e0d8>] (unwind_backtrace) from [<c010beac>] (show_stack+0x10/0x14)
- [<c010beac>] (show_stack) from [<c017401c>] (register_lock_class+0x4f4/0x55c)
- [<c017401c>] (register_lock_class) from [<c0176fe0>] (__lock_acquire+0x74/0x1938)
- [<c0176fe0>] (__lock_acquire) from [<c0178cfc>] (lock_acquire+0xfc/0x23c)
- [<c0178cfc>] (lock_acquire) from [<c08aa2f8>] (mutex_lock_nested+0x50/0x3b0)
- [<c08aa2f8>] (mutex_lock_nested) from [<c05f5bf8>] (rtl8187_start+0x2c/0xd54)
- [<c05f5bf8>] (rtl8187_start) from [<c082dea0>] (drv_start+0xa8/0x320)
- [<c082dea0>] (drv_start) from [<c084d1d4>] (ieee80211_do_open+0x2bc/0x8e4)
- [<c084d1d4>] (ieee80211_do_open) from [<c069be94>] (__dev_open+0xb8/0x120)
- [<c069be94>] (__dev_open) from [<c069c11c>] (__dev_change_flags+0x88/0x14c)
- [<c069c11c>] (__dev_change_flags) from [<c069c1f8>] (dev_change_flags+0x18/0x48)
- [<c069c1f8>] (dev_change_flags) from [<c0710b08>] (devinet_ioctl+0x738/0x840)
- [<c0710b08>] (devinet_ioctl) from [<c067925c>] (sock_ioctl+0x164/0x2f4)
- [<c067925c>] (sock_ioctl) from [<c02883f8>] (do_vfs_ioctl+0x8c/0x9d0)
- [<c02883f8>] (do_vfs_ioctl) from [<c0288da8>] (SyS_ioctl+0x6c/0x7c)
- [<c0288da8>] (SyS_ioctl) from [<c0107760>] (ret_fast_syscall+0x0/0x1c)
- Unable to handle kernel NULL pointer dereference at virtual address 00000000
- pgd = cd1ec000
- [00000000] *pgd=8d1de831, *pte=00000000, *ppte=00000000
- Internal error: Oops: 817 [#1] PREEMPT ARM
- Modules linked in:
- CPU: 0 PID: 821 Comm: wpa_supplicant Not tainted 4.9.80-dirty #250
- Hardware name: Generic AM3517 (Flattened Device Tree)
- task: ce73eec0 task.stack: cd1ea000
- PC is at mutex_lock_nested+0xe8/0x3b0
- LR is at mutex_lock_nested+0xd0/0x3b0
+The modem is controlled via AT commands through the exposed TTYs.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Sudhir Sreedharan <ssreedharan@mvista.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+AT+CGDCONT write command can be used to activate or deactivate a WWAN
+connection for a PDP context defined with the same command. UE
+supports one WWAN adapter.
+
+Signed-off-by: Bassem Boubaker <bassem.boubaker@actia.fr>
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/cdc_ether.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
-+++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
-@@ -1454,6 +1454,7 @@ static int rtl8187_probe(struct usb_inte
- 		goto err_free_dev;
- 	}
- 	mutex_init(&priv->io_mutex);
-+	mutex_init(&priv->conf_mutex);
- 
- 	SET_IEEE80211_DEV(dev, &intf->dev);
- 	usb_set_intfdata(intf, dev);
-@@ -1627,7 +1628,6 @@ static int rtl8187_probe(struct usb_inte
- 		printk(KERN_ERR "rtl8187: Cannot register device\n");
- 		goto err_free_dmabuf;
- 	}
--	mutex_init(&priv->conf_mutex);
- 	skb_queue_head_init(&priv->b_tx_status.queue);
- 
- 	wiphy_info(dev->wiphy, "hwaddr %pM, %s V%d + %s, rfkill mask %d\n",
+--- a/drivers/net/usb/cdc_ether.c
++++ b/drivers/net/usb/cdc_ether.c
+@@ -705,6 +705,12 @@ static const struct usb_device_id	produc
+ 				      USB_CDC_PROTO_NONE),
+ 	.driver_info = (unsigned long)&wwan_info,
+ }, {
++	/* Cinterion AHS3 modem by GEMALTO */
++	USB_DEVICE_AND_INTERFACE_INFO(0x1e2d, 0x0055, USB_CLASS_COMM,
++				      USB_CDC_SUBCLASS_ETHERNET,
++				      USB_CDC_PROTO_NONE),
++	.driver_info = (unsigned long)&wwan_info,
++}, {
+ 	/* Telit modules */
+ 	USB_VENDOR_AND_INTERFACE_INFO(0x1bc7, USB_CLASS_COMM,
+ 			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
