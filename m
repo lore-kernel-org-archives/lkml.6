@@ -1,81 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405478-2-9386121450085900523
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524405477; b=fgVmBaJwticNjEm4QtwV+Umj3iL67e97azib+mOWMDPrO0DKue
-    NrthGbHmt5n29SliFgakYzkFEaIcR+lnICb1ZDnEqDyLXL2aUsxtM77MbQpkPMQA
-    28ScFivjWOlT98OPIagUMhjP2ac9jy3MGPWUnA3TywlUSH9kY27QUEv3Xbjs+Ba9
-    5p2EezrOtMVacwAD/LxALdFxEB51NS0c1VUhe5coCc4q+6UPTcFD1cutR++SHW5j
-    +MUR9D39AWaYFGHhPenBXkxgv3yUJNfsEFra8qXXoy0B7QWSQvNfcUw/kxpZJ67x
-    wFKnabbBJ5br4bSXGA4S520lTAPYhzBUC7jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524405477; bh=Dk2n9829aY/ZduMsVa3mhlcokTfjSA
-    MKX13BvUvFsYs=; b=WGbc8ZN6y8cAJtrvnw8YK4JslSN2d3+fqCTiqbnpvEa3Cm
-    sHF9FupWNEGSrgcIYt06mZ7BQ2j0AUD9CMOysGNGjWqq8muPI1AuRHyyVLMXf5v9
-    yS37ZFM5O8qGK5LEO0f4fANQ0dPwtcVC3Bm3BmBM4MP82UXe8/klgqBGwwMC4zWV
-    VzCsrD4YxetqKbU/qSpmP/qXpYLihjKtACCLoo0zmGz2iEa0c8Too02///hSD7R8
-    A2Y9aHbtirnohEqhf0SZBh9qT0grZGcHtdYALq51MlT5qMVRGG6nL0bz1gMmtcsE
-    jwiDsGRu3qu19tQFJOhmiZMfKHCK0O4Fp+4FlDdw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDCb8zfDIuDZ46stPnC2b8ru+aNw6ZKmshNjs2N6HBGARzhaf3J/LjWEkTA51/r3by/mtqhbVrBWtkBIRF6EdX2CdJuFQt1KVDk9RxnT3yJuEPnvxI5g
-    uPI1X80K7Wvw4mCihmJCUpV44iRrefq7s+Vc7fCYO8jx+C6YWoBy59ZRZ7vo/mANdpZlwdP8wWNW6KYUiokFEGDHDLTOxJ1/MNb2d4cWXofWhuU3nx1MLDlG
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
-    a=ThD-YMbD28sxt9sY-_0A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754051AbeDVN5y (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 09:57:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45976 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751301AbeDVN5w (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:57:52 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49mhbLRYyqf84OkAc6riQXE2sePnpD/RqHTm+q6BdynVIBVxVOLma7E0qY60kHLgZqUvj/Y
+ARC-Seal: i=1; a=rsa-sha256; t=1524405475; cv=none;
+        d=google.com; s=arc-20160816;
+        b=HjarDWWFXgxpxut9NiqLz4MgHnZrrUU5sFjL4hI/Ff6G6z8Wm92vtvhwX//IQTe6bY
+         36GSuJfsOVaC2oKOhWhi0XL3BERr4akB9j6EiHcyHvn7Xr6bsGCGk09DwYRtTGPfq5OE
+         Oq2Zn6pBEMDuvePzkkXaMO4zGv5T6+wHLSfC/o2owaNfXVh2IoTDRbmPiw138MPH4sbr
+         xJ2QJy+mzNz8mWTXKe+E7USmvjuJaw5NXsygKknImWr4IT2tMIiYo9AVozs1QjOu7N9x
+         oacOjBzQAg+l680ZITPDo66StOKxD7PYoC0+WUkGC+s+8nclS3bCOdoSnYUNCaLr9lPx
+         5S3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=zG0zLxCVwtMSzOXDDStKZvzga7myATr7BsYO0l1RvaM=;
+        b=t/tIKcfC6eFg6t0l4m2eRGTiFyrYdW/Q/W3Rt17ubEi1KZ9Z66RY1+BZQ0p0AHm75P
+         AJP0Mdc7BmG2fVRreN//7StOhQCa//bwGp6tTuul1yBlt8Zd3FBdA2rWBOsEnBIliNRw
+         a1Wd80ezlrqQrG9sc19EsiYPisbgVGcp4c0fDESHC/6ItTxIp3LeWhwDLMm4rQYOVlDQ
+         Rwq6IlbgT6FM2HYR/vOC9f1/rNSQvO0UuhJvGNkx8gosw/hanixNKL2hQjPpS79UeGh6
+         /KQQpO2lsXA5IbFnN5mgu0tACVo9wflWgOQN+XeDbrBpstl1Xugv2wrykLX5uPSv/w2R
+         7/nQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH 4.16 078/196] thunderbolt: Handle connecting device in place of host properly
-Date: Sun, 22 Apr 2018 15:51:38 +0200
-Message-Id: <20180422135108.274849570@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Jordan Glover <Golden_Miller83@protonmail.ch>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Yehezkel Bernat <yehezkel.bernat@intel.com>
+Subject: [PATCH 4.16 079/196] thunderbolt: Prevent crash when ICM firmware is not running
+Date: Sun, 22 Apr 2018 15:51:39 +0200
+Message-Id: <20180422135108.378667088@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -83,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598454995914765276?=
+X-GMAIL-MSGID: =?utf-8?q?1598454995914765276?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -95,79 +52,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit 79fae987518a3aa6c3c7b2e3ad5fe1e4080c12bc upstream.
+commit ea9d7bb798900096f26c585957d6ad9c532417e6 upstream.
 
-If the system is suspended and user disconnects cable to another host
-and connects it to a Thunderbolt device instead we get a warning from
-driver core about adding duplicate sysfs attribute and adding the new
-device fails.
+On Lenovo ThinkPad Yoga 370 (and possibly some other Lenovo models as
+well) the Thunderbolt host controller sometimes comes up in such way
+that the ICM firmware is not running properly. This is most likely an
+issue in BIOS/firmware but as side-effect driver crashes the kernel due
+to NULL pointer dereference:
 
-Handle this properly so that we first remove the existing XDomain
-connection before adding new devices.
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000980
+  IP: pci_write_config_dword+0x5/0x20
+  Call Trace:
+   pcie2cio_write+0x3b/0x70 [thunderbolt]
+   icm_driver_ready+0x168/0x260 [thunderbolt]
+   ? tb_ctl_start+0x50/0x70 [thunderbolt]
+   tb_domain_add+0x73/0xf0 [thunderbolt]
+   nhi_probe+0x182/0x300 [thunderbolt]
+   local_pci_probe+0x42/0xa0
+   ? pci_match_device+0xd9/0x100
+   pci_device_probe+0x146/0x1b0
+   driver_probe_device+0x315/0x480
+   ...
 
-Fixes: d1ff70241a27 ("thunderbolt: Add support for XDomain discovery protocol")
+Instead of crashing update the driver to bail out gracefully if we
+encounter such situation.
+
+Fixes: f67cf491175a ("thunderbolt: Add support for Internal Connection Manager (ICM)")
+Reported-by: Jordan Glover <Golden_Miller83@protonmail.ch>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Yehezkel Bernat <yehezkel.bernat@intel.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thunderbolt/icm.c |   26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ drivers/thunderbolt/icm.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
 --- a/drivers/thunderbolt/icm.c
 +++ b/drivers/thunderbolt/icm.c
-@@ -383,6 +383,15 @@ static void remove_switch(struct tb_swit
- 	tb_switch_remove(sw);
- }
- 
-+static void remove_xdomain(struct tb_xdomain *xd)
-+{
-+	struct tb_switch *sw;
-+
-+	sw = tb_to_switch(xd->dev.parent);
-+	tb_port_at(xd->route, sw)->xdomain = NULL;
-+	tb_xdomain_remove(xd);
-+}
-+
- static void
- icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
- {
-@@ -391,6 +400,7 @@ icm_fr_device_connected(struct tb *tb, c
- 	struct tb_switch *sw, *parent_sw;
+@@ -923,6 +923,9 @@ static int icm_firmware_reset(struct tb
  	struct icm *icm = tb_priv(tb);
- 	bool authorized = false;
-+	struct tb_xdomain *xd;
- 	u8 link, depth;
- 	u64 route;
- 	int ret;
-@@ -467,6 +477,13 @@ icm_fr_device_connected(struct tb *tb, c
- 		tb_switch_put(sw);
- 	}
+ 	u32 val;
  
-+	/* Remove existing XDomain connection if found */
-+	xd = tb_xdomain_find_by_link_depth(tb, link, depth);
-+	if (xd) {
-+		remove_xdomain(xd);
-+		tb_xdomain_put(xd);
-+	}
++	if (!icm->upstream_port)
++		return -ENODEV;
 +
- 	parent_sw = tb_switch_find_by_link_depth(tb, link, depth - 1);
- 	if (!parent_sw) {
- 		tb_err(tb, "failed to find parent switch for %u.%u\n",
-@@ -529,15 +546,6 @@ icm_fr_device_disconnected(struct tb *tb
- 	tb_switch_put(sw);
- }
- 
--static void remove_xdomain(struct tb_xdomain *xd)
--{
--	struct tb_switch *sw;
--
--	sw = tb_to_switch(xd->dev.parent);
--	tb_port_at(xd->route, sw)->xdomain = NULL;
--	tb_xdomain_remove(xd);
--}
--
- static void
- icm_fr_xdomain_connected(struct tb *tb, const struct icm_pkg_header *hdr)
- {
+ 	/* Put ARC to wait for CIO reset event to happen */
+ 	val = ioread32(nhi->iobase + REG_FW_STS);
+ 	val |= REG_FW_STS_CIO_RESET_REQ;
