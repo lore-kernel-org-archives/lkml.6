@@ -1,46 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/SUmoKU4zecmhWwFfDJ/1jnCTl19vgKTYTh/mLxTL8aCaK6qnDF86kGNcj/HC0wGFdNZgH
-ARC-Seal: i=1; a=rsa-sha256; t=1524406585; cv=none;
-        d=google.com; s=arc-20160816;
-        b=qH0BQCsFwwiLQ6f3AvyXDWtPHS+cGTSJW5tdMk33d3EP29z2QvasOhabckhtdWKi44
-         FFfxBng0TQOb4G7hc0Opj6ltSOFQmga5e4/ncMIpZ8C1E/xDX0JJavb8Qy+TKGNFhopc
-         nuuDB8jeTYrF1k+8kw5moLL1QRF2FmYafSFNH0GQlDsMS0/oxfIUq4SeMNMqNJThFK3A
-         55DQEJDhip5zkyCDfYekE0BM8rY0SbhBrAwCyA4rPDpwDuUnVa+9+llXARSbZMGDLXzw
-         LPILvOHMZ0pkHG+/lhXb1ks9sXCtNCuYyErcbjeWCkLQ3tRWC/PRVdHDUDWlNe5v6zIe
-         skUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=RUhLSXNPGIWE3r3p7AHGfz7jzVYaf6qwXWTKMdMgC8w=;
-        b=c8ISE1BMrijDdzxCzihS8E2sBNoS7f78G45gFqAx2zLpMZpgYHcQMlQW1x75K6hDJR
-         +hqaZOawFjs38Pv7VjcRGS0tjjVLPpsKGu/4xgV8HSvONPzMkLDjlMAf4Eq8H8aQ3ES5
-         tjtLFkh6sLQbBvHi7bjBQSKrtUU4Numecoae9TRPasy+R71+WIC91RGx6Hv6SkLdM4iG
-         AOZodEK6m8t7V5y1OcHChfDXxAaZ8mnwHwwMM/25dQR3n6mJzPI82F0IJo2/c7UWlwYo
-         LfOz23GeQX5IJHsXBXra17hJ8fSrNNg9UN+vEVbGXIvUJuFFSQYaEOSMsuDjkgDEoHEP
-         a0ug==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2630128-1524406585-2-15335946302928302372
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524406584; b=IyKUV/sn8FdGp4KjBtOOh+TEF/RY5JS60RWCIvTozpEoOkqWGC
+    BNq0AFQoTAEHP3h8k0TukvdDG74h79lNzSCh47F27HmfcL928V7+oiJO2B1GoQTM
+    sMNDslBZG6aeg7hFuZq8Pu1+ccCxSW2ZuUNxqXns2LGoJH8HyMIY3oJ0w+fyw0/1
+    BTpt5988+mj5qO5FXa1+Ih6mKMlQLNAnXySFNrBOsCM7+ZjUOnDCHQdA3HBFa+w8
+    jRGqb+j+BdZtCmPmdgOF+SjbqfuZJtL+Ei5nOkkCPwyfDwtJIez+cLKENPxwFh9L
+    DhXPNIGHa1KHKn0nZXmRP88E/V3Bt4WEbW8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524406584; bh=Fseu/ebQ7Tok2feFjRNapdWABtR8ly
+    hTIclm5UTyllo=; b=bhJARqfwoz83hXeMTVcUWHVBMx4USZ7x4I+XrL+D5yqc9y
+    zcR+ZVTsUMzJsna19usBE/pqzILaxL/M53VtLwVbBX9PUs2fx4BBiM2KNNqCPk9B
+    rt7C3csX5iWckJhFam+nS/L777F7q1okxcqcFE/xySJVnh0TxYqUvlgiqH5F3IJt
+    7Jn+7A/Rjx/ZVHxqiSCXef37x0Plltk9oLaBg6tVHJ9a/8XZdXGT7LljgZ6QbNar
+    InynCCAZRnE7w6V0/A0hyEd/FSL3/KORUtHgbQzidCey4FGpy2kjpr5FSG5FFcch
+    v9qey7MAoNK9WovsBi4vWTpWTkc7iIRhXdo9dyuQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfF1OKG08d1ALMRdgPnPITaWSZ0DDNGsYd+matDP3stUi/Hy1jOdVhcCisB16K2Ywi/r9AvX+rLT5GFh1Ay9ztU7z2WM/BuCEjsbm9mPc/Who+p7Alk6J
+    UJquzgVVBNiouRbcGB8Fh9EsA/BCX7j+NbpMdKG7GLtZg59AmEb4R1ES+b+GQE+59CWacv5ElpQUL2ZvzfOSLTJInGrTF0pefTqTyB2ggmmZVXbnG8vYfLqE
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=P-IC7800AAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8
+    a=dt7MVP1FYSxYmmJaYfUA:9 a=PZxxQsycSmwCV1kr:21 a=gpNlxYgn0wZoR4ZA:21
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=d3PnA9EDa4IxuAV0gXij:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932209AbeDVOQQ (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:16:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57324 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932105AbeDVOQO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:16:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Pekka Enberg <penberg@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	David Rientjes <rientjes@google.com>,
-	Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	John Stultz <john.stultz@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 29/97] mm, slab: reschedule cache_reap() on the same CPU
-Date: Sun, 22 Apr 2018 15:53:07 +0200
-Message-Id: <20180422135306.823977541@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>
+Subject: [PATCH 4.4 25/97] ubi: Reject MLC NAND
+Date: Sun, 22 Apr 2018 15:53:03 +0200
+Message-Id: <20180422135306.451761209@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -48,10 +84,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454810628611405?=
-X-GMAIL-MSGID: =?utf-8?q?1598456160092324740?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,55 +94,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Richard Weinberger <richard@nod.at>
 
-commit a9f2a846f0503e7d729f552e3ccfe2279010fe94 upstream.
+commit b5094b7f135be34630e3ea8a98fa215715d0f29d upstream.
 
-cache_reap() is initially scheduled in start_cpu_timer() via
-schedule_delayed_work_on(). But then the next iterations are scheduled
-via schedule_delayed_work(), i.e. using WORK_CPU_UNBOUND.
+While UBI and UBIFS seem to work at first sight with MLC NAND, you will
+most likely lose all your data upon a power-cut or due to read/write
+disturb.
+In order to protect users from bad surprises, refuse to attach to MLC
+NAND.
 
-Thus since commit ef557180447f ("workqueue: schedule WORK_CPU_UNBOUND
-work on wq_unbound_cpumask CPUs") there is no guarantee the future
-iterations will run on the originally intended cpu, although it's still
-preferred.  I was able to demonstrate this with
-/sys/module/workqueue/parameters/debug_force_rr_cpu.  IIUC, it may also
-happen due to migrating timers in nohz context.  As a result, some cpu's
-would be calling cache_reap() more frequently and others never.
-
-This patch uses schedule_delayed_work_on() with the current cpu when
-scheduling the next iteration.
-
-Link: http://lkml.kernel.org/r/20180411070007.32225-1-vbabka@suse.cz
-Fixes: ef557180447f ("workqueue: schedule WORK_CPU_UNBOUND work on wq_unbound_cpumask CPUs")
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Pekka Enberg <penberg@kernel.org>
-Acked-by: Christoph Lameter <cl@linux.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Artem Bityutskiy <dedekind1@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/slab.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mtd/ubi/build.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -3915,7 +3915,8 @@ next:
- 	next_reap_node();
- out:
- 	/* Set up the next iteration */
--	schedule_delayed_work(work, round_jiffies_relative(REAPTIMEOUT_AC));
-+	schedule_delayed_work_on(smp_processor_id(), work,
-+				round_jiffies_relative(REAPTIMEOUT_AC));
- }
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -889,6 +889,17 @@ int ubi_attach_mtd_dev(struct mtd_info *
+ 		return -EINVAL;
+ 	}
  
- #ifdef CONFIG_SLABINFO
++	/*
++	 * Both UBI and UBIFS have been designed for SLC NAND and NOR flashes.
++	 * MLC NAND is different and needs special care, otherwise UBI or UBIFS
++	 * will die soon and you will lose all your data.
++	 */
++	if (mtd->type == MTD_MLCNANDFLASH) {
++		pr_err("ubi: refuse attaching mtd%d - MLC NAND is not supported\n",
++			mtd->index);
++		return -EINVAL;
++	}
++
+ 	if (ubi_num == UBI_DEV_NUM_AUTO) {
+ 		/* Search for an empty slot in the @ubi_devices array */
+ 		for (ubi_num = 0; ubi_num < UBI_MAX_DEVICES; ubi_num++)
