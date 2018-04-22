@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+u7qhOYpPtAYXsAeAOOm5g5gf5R+VGCu/MLMuLoCnqvIjKUnqEsDsu5QUEckQ+TQiKUiPo
-ARC-Seal: i=1; a=rsa-sha256; t=1524405589; cv=none;
+X-Google-Smtp-Source: AIpwx4++0kWaVgzzWgSsi+SrUwCHH1/pJi0oFosd8QIBwMuirPBeOluh1tFTATM+ohlAhlTS3C+u
+ARC-Seal: i=1; a=rsa-sha256; t=1524405586; cv=none;
         d=google.com; s=arc-20160816;
-        b=puPBFfViTepu0sXaEW7V1rtlHp2vO46OQvu/r66XJjx+9djyNizV6UvhDdQ/BTWCmM
-         SsouEtF9z5IQhjuCDxxrf49Nk/qvRpo7ymkPhETwNGfMnYBhJKeiwIa+Ww//UrJBWQGD
-         4/eXTPav4RwS4pylm7z70tADtub011kdh/MI3huLuLT5zAxHNt1UdeqbAjEAwhoL+1N0
-         SAqlA/U7dIAWh2HAOQmI/3Z1IcEFy/8MmrxRBiVwGYzsE/UiI4MdVmu4htsyi5htDDHg
-         PpRbSCcFn3pnd6aMaCDu2oaeH8Bc0uQQOMp4BuRWbw9RJ/OA2N3k3zm7yjHHtNxXf+Id
-         u7Xw==
+        b=i2G5ObtbKH8HVd2/gHKRxA5eqxgPkWZ53HmGHO4j/6m8iqMTDbOcoNSqzjtwh6D/la
+         /XZ4pa1ELDxjeS5onaAVlfcnnX+ogAO6Bait4vdrrL7wpto8of/mkf9R9MM0RcSeGdBx
+         jiuOJZkJ64Y+8JoLCc7qpnTxUfUBmsr2zG+oRMHlZQigqwpVoExtMdFrAJyr+IG6BMAy
+         zIvjtu9zO3Ap+X7VS5DP9KsbZeZDM/CogPTNyKekRgJJZDf6VtD1LLaOZF9+ygpklpnO
+         oooL7JSw44P7d70AuD3tIvrQGO1tkFDUEe3ZaWwRrSaqT1CtLosfX21Y2onMNjYY9wrX
+         /a0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Cn46ughWcd/ISU+jZCCYM2x+Dm0uAWqAO4uYHtusQQw=;
-        b=y0vJ3dFPsiDMDReDYYMKUw8ehgJ24RtFpV+IzXj3xzWLJ+MLRgaXnb5PmooPGPMlCk
-         sT9kPHCbQcXRu8GqojPPP0B+arUmzLg8PkEpSZjqKaVqgTqdXjrCM6g2Dh9P2dgGBm+7
-         B+qtnpwDz26W6p5KQ8JPhxH3aMbL1smUl6D/j1uKLeRpVvdVt0pZUxyEKG5kTl9AfXZ+
-         ghErYTB55r9T1PRj4/++/te6L/UYvGRRPJeKr/McWiPI+pSMXp12hkmW4N2VljgmuHG6
-         OhczYm9BzrFNmisRkXt89ajAHpdoHeN6kS5HtfMxRiJH0ULrd8yFdT7ddnNeWTGkglJ8
-         cVrA==
+        bh=OgLnToqJiVTVqIU7BtDmWY7Gs5W+Gs9vJDS5E8PdEzE=;
+        b=BxLiVNIFnIE+GB4Pn/jjsHrs8THXmNxHuc39gcJveVBKBkbgVX7KfqvUdEi8Lfh3D3
+         09UgeatkXJbUvSFNiW4FLFKghFAFioXuE7z7A3BydjniXgXHocD3tyY5KHF0IOzuAKhB
+         F5C5wdqtZBcy5o2dsVYT5Lzf6aj6xv7KroU7wq/GjkrD3c6BgTVb3a1Zjr09Uf8jvPKe
+         O0onB3MEmYFcDg+5kOMHjF2KR5NlF8ngpYcpaRWkMX53vl30DduxXNUjolv51oj/khv9
+         hu9XSIC5bNzsaiZiY0rPMrNEkBK7OLBDPdBMz1mcdBnTUakh7e5foUi9CRTgA+QB0f2X
+         0W7A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,9 +27,9 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.16 088/196] ext4: dont update checksum of new initialized bitmaps
-Date: Sun, 22 Apr 2018 15:51:48 +0200
-Message-Id: <20180422135108.852046489@linuxfoundation.org>
+Subject: [PATCH 4.16 087/196] ext4: pass -ESHUTDOWN code to jbd2 layer
+Date: Sun, 22 Apr 2018 15:51:47 +0200
+Message-Id: <20180422135108.795592768@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455115172049976?=
-X-GMAIL-MSGID: =?utf-8?q?1598455115172049976?=
+X-GMAIL-THRID: =?utf-8?q?1598455112345101489?=
+X-GMAIL-MSGID: =?utf-8?q?1598455112345101489?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,111 +50,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 044e6e3d74a3d7103a0c8a9305dfd94d64000660 upstream.
+commit fb7c02445c497943e7296cd3deee04422b63acb8 upstream.
 
-When reading the inode or block allocation bitmap, if the bitmap needs
-to be initialized, do not update the checksum in the block group
-descriptor.  That's because we're not set up to journal those changes.
-Instead, just set the verified bit on the bitmap block, so that it's
-not necessary to validate the checksum.
+Previously the jbd2 layer assumed that a file system check would be
+required after a journal abort.  In the case of the deliberate file
+system shutdown, this should not be necessary.  Allow the jbd2 layer
+to distinguish between these two cases by using the ESHUTDOWN errno.
 
-When a block or inode allocation actually happens, at that point the
-checksum will be calculated, and update of the bg descriptor block
-will be properly journalled.
+Also add proper locking to __journal_abort_soft().
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/balloc.c |    3 +--
- fs/ext4/ialloc.c |   47 +++--------------------------------------------
- 2 files changed, 4 insertions(+), 46 deletions(-)
+ fs/ext4/ioctl.c   |    4 ++--
+ fs/jbd2/journal.c |   25 +++++++++++++++++++------
+ 2 files changed, 21 insertions(+), 8 deletions(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -243,8 +243,6 @@ static int ext4_init_block_bitmap(struct
- 	 */
- 	ext4_mark_bitmap_end(num_clusters_in_group(sb, block_group),
- 			     sb->s_blocksize * 8, bh->b_data);
--	ext4_block_bitmap_csum_set(sb, block_group, gdp, bh);
--	ext4_group_desc_csum_set(sb, block_group, gdp);
- 	return 0;
- }
- 
-@@ -448,6 +446,7 @@ ext4_read_block_bitmap_nowait(struct sup
- 		err = ext4_init_block_bitmap(sb, bh, block_group, desc);
- 		set_bitmap_uptodate(bh);
- 		set_buffer_uptodate(bh);
-+		set_buffer_verified(bh);
- 		ext4_unlock_group(sb, block_group);
- 		unlock_buffer(bh);
- 		if (err) {
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -66,44 +66,6 @@ void ext4_mark_bitmap_end(int start_bit,
- 		memset(bitmap + (i >> 3), 0xff, (end_bit - i) >> 3);
- }
- 
--/* Initializes an uninitialized inode bitmap */
--static int ext4_init_inode_bitmap(struct super_block *sb,
--				       struct buffer_head *bh,
--				       ext4_group_t block_group,
--				       struct ext4_group_desc *gdp)
--{
--	struct ext4_group_info *grp;
--	struct ext4_sb_info *sbi = EXT4_SB(sb);
--	J_ASSERT_BH(bh, buffer_locked(bh));
--
--	/* If checksum is bad mark all blocks and inodes use to prevent
--	 * allocation, essentially implementing a per-group read-only flag. */
--	if (!ext4_group_desc_csum_verify(sb, block_group, gdp)) {
--		grp = ext4_get_group_info(sb, block_group);
--		if (!EXT4_MB_GRP_BBITMAP_CORRUPT(grp))
--			percpu_counter_sub(&sbi->s_freeclusters_counter,
--					   grp->bb_free);
--		set_bit(EXT4_GROUP_INFO_BBITMAP_CORRUPT_BIT, &grp->bb_state);
--		if (!EXT4_MB_GRP_IBITMAP_CORRUPT(grp)) {
--			int count;
--			count = ext4_free_inodes_count(sb, gdp);
--			percpu_counter_sub(&sbi->s_freeinodes_counter,
--					   count);
--		}
--		set_bit(EXT4_GROUP_INFO_IBITMAP_CORRUPT_BIT, &grp->bb_state);
--		return -EFSBADCRC;
--	}
--
--	memset(bh->b_data, 0, (EXT4_INODES_PER_GROUP(sb) + 7) / 8);
--	ext4_mark_bitmap_end(EXT4_INODES_PER_GROUP(sb), sb->s_blocksize * 8,
--			bh->b_data);
--	ext4_inode_bitmap_csum_set(sb, block_group, gdp, bh,
--				   EXT4_INODES_PER_GROUP(sb) / 8);
--	ext4_group_desc_csum_set(sb, block_group, gdp);
--
--	return 0;
--}
--
- void ext4_end_bitmap_read(struct buffer_head *bh, int uptodate)
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -492,13 +492,13 @@ static int ext4_shutdown(struct super_bl
+ 		set_bit(EXT4_FLAGS_SHUTDOWN, &sbi->s_ext4_flags);
+ 		if (sbi->s_journal && !is_journal_aborted(sbi->s_journal)) {
+ 			(void) ext4_force_commit(sb);
+-			jbd2_journal_abort(sbi->s_journal, 0);
++			jbd2_journal_abort(sbi->s_journal, -ESHUTDOWN);
+ 		}
+ 		break;
+ 	case EXT4_GOING_FLAGS_NOLOGFLUSH:
+ 		set_bit(EXT4_FLAGS_SHUTDOWN, &sbi->s_ext4_flags);
+ 		if (sbi->s_journal && !is_journal_aborted(sbi->s_journal))
+-			jbd2_journal_abort(sbi->s_journal, 0);
++			jbd2_journal_abort(sbi->s_journal, -ESHUTDOWN);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -1486,12 +1486,15 @@ static void jbd2_mark_journal_empty(jour
+ void jbd2_journal_update_sb_errno(journal_t *journal)
  {
- 	if (uptodate) {
-@@ -187,17 +149,14 @@ ext4_read_inode_bitmap(struct super_bloc
+ 	journal_superblock_t *sb = journal->j_superblock;
++	int errcode;
  
- 	ext4_lock_group(sb, block_group);
- 	if (desc->bg_flags & cpu_to_le16(EXT4_BG_INODE_UNINIT)) {
--		err = ext4_init_inode_bitmap(sb, bh, block_group, desc);
-+		memset(bh->b_data, 0, (EXT4_INODES_PER_GROUP(sb) + 7) / 8);
-+		ext4_mark_bitmap_end(EXT4_INODES_PER_GROUP(sb),
-+				     sb->s_blocksize * 8, bh->b_data);
- 		set_bitmap_uptodate(bh);
- 		set_buffer_uptodate(bh);
- 		set_buffer_verified(bh);
- 		ext4_unlock_group(sb, block_group);
- 		unlock_buffer(bh);
--		if (err) {
--			ext4_error(sb, "Failed to init inode bitmap for group "
--				   "%u: %d", block_group, err);
--			goto out;
--		}
- 		return bh;
- 	}
- 	ext4_unlock_group(sb, block_group);
+ 	read_lock(&journal->j_state_lock);
+-	jbd_debug(1, "JBD2: updating superblock error (errno %d)\n",
+-		  journal->j_errno);
+-	sb->s_errno    = cpu_to_be32(journal->j_errno);
++	errcode = journal->j_errno;
+ 	read_unlock(&journal->j_state_lock);
++	if (errcode == -ESHUTDOWN)
++		errcode = 0;
++	jbd_debug(1, "JBD2: updating superblock error (errno %d)\n", errcode);
++	sb->s_errno    = cpu_to_be32(errcode);
+ 
+ 	jbd2_write_superblock(journal, REQ_SYNC | REQ_FUA);
+ }
+@@ -2108,12 +2111,22 @@ void __jbd2_journal_abort_hard(journal_t
+  * but don't do any other IO. */
+ static void __journal_abort_soft (journal_t *journal, int errno)
+ {
+-	if (journal->j_flags & JBD2_ABORT)
+-		return;
++	int old_errno;
+ 
+-	if (!journal->j_errno)
++	write_lock(&journal->j_state_lock);
++	old_errno = journal->j_errno;
++	if (!journal->j_errno || errno == -ESHUTDOWN)
+ 		journal->j_errno = errno;
+ 
++	if (journal->j_flags & JBD2_ABORT) {
++		write_unlock(&journal->j_state_lock);
++		if (!old_errno && old_errno != -ESHUTDOWN &&
++		    errno == -ESHUTDOWN)
++			jbd2_journal_update_sb_errno(journal);
++		return;
++	}
++	write_unlock(&journal->j_state_lock);
++
+ 	__jbd2_journal_abort_hard(journal);
+ 
+ 	if (errno) {
