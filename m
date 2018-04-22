@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48ccSkSpndTHvKX3dLUwfm6dD31F3yCwFOqQo3cr3e80791XU7UsqxTBhr6dvCHf2QcLCgs
-ARC-Seal: i=1; a=rsa-sha256; t=1524406378; cv=none;
+X-Google-Smtp-Source: AIpwx48oNlLcQWLsequOtq08Xwrf8aTpSr7D3PxTwc9Y8FAjK0jFRqcgT58kaiJjM5+uVSGKhWuz
+ARC-Seal: i=1; a=rsa-sha256; t=1524406375; cv=none;
         d=google.com; s=arc-20160816;
-        b=ES8SiMxqA06Colvw4Cdb+a2MeXMmfhdhVbZbkvBRk9y8QJoy9dTKp28DTQvfYp1haF
-         dx2SDMKK73uHpMwD+8yOUGEZSXHSJ5MnT5t/dJAoCkuvjjMOlXlO/F/zmUEsGmmi3YVy
-         3b95lc72JnNRhTybZgDXlwTrK0IGbMlCWejOkkoCq9rJjONp+6MEwbatAP1BVkgLAFLk
-         vKGtklTio+gvdHNVv9b9uFAjpDxr6LPGbzea0r0f6Wfr55V51zZ1/q9GhaBwhMVlUagF
-         2o8ytdO7zyuYfKargyaqIb2grqxzxiYYHlzSDTr96PdSLMkA1y74mgdkjaqxY5ciCP89
-         ASPg==
+        b=mr9lQ5YruITZTt2TRDLZ81wTkR1AaRe+Qo8nzrZ5C94npVDd/llytZEgWN9Vi2pZdS
+         m1+yFdog9sgIZSYBLWgN/UBp62cPctRT92UIHmEVJv74LQymLp9l6CviinRIU5gA7Clb
+         NzUHHhWDevKyJgkd88+hKuWImw/EP6CvAm/l0WcLKSQajX6FRZWZBWCxi/KwFgoa2L/i
+         Oa56KjpUhpyy0qXRe7rekH8mJkzpXHzucBlkt7lmzgJ5V5cGlDM5zOuWB/RosAy9pwW/
+         uQ8bgb+Ew31GtAFa1dGgdEtR3uW/snCGjaqaNmprJVw4Pvgcw0CbVORj2A3c62vSPiwf
+         bUPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NAmjKsgDjyiJgsVpxTK7M89+WJ4hfekd3KycCqbHd+g=;
-        b=T6vrZj6PJ6ZhTZJf3gVa2LooyGwwf9Nmgyriybcf1Ob9bRhAUzUngMjh9kJA9ppK+M
-         j5LuzwFtngJ9Ns30vQP0wAanzrLWcUFYYq72SrAyFSWg6w5d9bi49qouxTkUbRPdV0K4
-         CQIrgbqc9a4e4S8Q2vNOEnNqJtiT4jOH/MOBZsZpc5VjlhSg/KmPSLnP4TuU+nIsE9Lx
-         opX8PRF4Vs2BMVcLHtRoFMeEsBj1P2aesnW2Mf9vmKu//Sv7/DaNfoEgbJywfxB58PQO
-         fS5XGWjssNkFQ3XunsXYvckyWv/+LST5zPP3HzUECiB41b5rGvXWXlpl6E2vEgn08Vfi
-         xg9A==
+        bh=RICGOdPvWtxwr4P4VTkJWlTG69q48Ey/qKFiWYZCngw=;
+        b=bdSEaH6A62q4hVC4oRy9ZkSxyinWP8ZTKso7ej4J9zlR9/rJeswvd2jlkOj2qj6MTc
+         6Zo7IbCdTWwo7/BwTeh0mAI8UQj16NbN1lHuUduqrAXatMFigyHcXpKUqQgpYeeeBZvY
+         Py4BhKRY+U3l7UNBSTXiw9k8Sxf+KN8BjUwr6EjoT0zUwjCoWEZcEO9oPO5lxXMmVTWX
+         g7CaWV6TrNL6O5fnTzjiaMzVTqtia82RuDmebqdS8nQi/viAE2Z5eFT+gWwRpQhhRpxH
+         DcSvSTpYEiEbSHBqEd+JArhQpbSmFfQMnAEBv+hnKvlyhnNTrQwi7U3KJo/Bg9cMvMHV
+         DB7g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ashok Raj <ashok.raj@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.9 49/95] iommu/vt-d: Fix a potential memory leak
-Date: Sun, 22 Apr 2018 15:53:18 +0200
-Message-Id: <20180422135212.418543419@linuxfoundation.org>
+	Krzysztof Mazur <krzysiek@podlesie.net>,
+	Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.9 48/95] um: Use POSIX ucontext_t instead of struct ucontext
+Date: Sun, 22 Apr 2018 15:53:17 +0200
+Message-Id: <20180422135212.380177212@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455137609680426?=
-X-GMAIL-MSGID: =?utf-8?q?1598455943135802557?=
+X-GMAIL-THRID: =?utf-8?q?1598455135109265878?=
+X-GMAIL-MSGID: =?utf-8?q?1598455939712374780?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +49,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lu Baolu <baolu.lu@linux.intel.com>
+From: Krzysztof Mazur <krzysiek@podlesie.net>
 
-commit bbe4b3af9d9e3172fb9aa1f8dcdfaedcb381fc64 upstream.
+commit 4d1a535b8ec5e74b42dfd9dc809142653b2597f6 upstream.
 
-A memory block was allocated in intel_svm_bind_mm() but never freed
-in a failure path. This patch fixes this by free it to avoid memory
-leakage.
+glibc 2.26 removed the 'struct ucontext' to "improve" POSIX compliance
+and break programs, including User Mode Linux. Fix User Mode Linux
+by using POSIX ucontext_t.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v4.4+
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Fixes: 2f26e0a9c9860 ('iommu/vt-d: Add basic SVM PASID support')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+This fixes:
+
+arch/um/os-Linux/signal.c: In function 'hard_handler':
+arch/um/os-Linux/signal.c:163:22: error: dereferencing pointer to incomplete type 'struct ucontext'
+  mcontext_t *mc = &uc->uc_mcontext;
+arch/x86/um/stub_segv.c: In function 'stub_segv_handler':
+arch/x86/um/stub_segv.c:16:13: error: dereferencing pointer to incomplete type 'struct ucontext'
+          &uc->uc_mcontext);
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Krzysztof Mazur <krzysiek@podlesie.net>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-svm.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/um/os-Linux/signal.c |    2 +-
+ arch/x86/um/stub_segv.c   |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -389,6 +389,7 @@ int intel_svm_bind_mm(struct device *dev
- 				pasid_max - 1, GFP_KERNEL);
- 		if (ret < 0) {
- 			kfree(svm);
-+			kfree(sdev);
- 			goto out;
- 		}
- 		svm->pasid = ret;
+--- a/arch/um/os-Linux/signal.c
++++ b/arch/um/os-Linux/signal.c
+@@ -160,7 +160,7 @@ static void (*handlers[_NSIG])(int sig,
+ 
+ static void hard_handler(int sig, siginfo_t *si, void *p)
+ {
+-	struct ucontext *uc = p;
++	ucontext_t *uc = p;
+ 	mcontext_t *mc = &uc->uc_mcontext;
+ 	unsigned long pending = 1UL << sig;
+ 
+--- a/arch/x86/um/stub_segv.c
++++ b/arch/x86/um/stub_segv.c
+@@ -11,7 +11,7 @@
+ void __attribute__ ((__section__ (".__syscall_stub")))
+ stub_segv_handler(int sig, siginfo_t *info, void *p)
+ {
+-	struct ucontext *uc = p;
++	ucontext_t *uc = p;
+ 
+ 	GET_FAULTINFO_FROM_MC(*((struct faultinfo *) STUB_DATA),
+ 			      &uc->uc_mcontext);
