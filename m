@@ -1,81 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2630128-1524406074-2-4937658072613441197
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524406073; b=cQfZRagmsCBwSFpTBz45FegrRLyhHKOGBdgI5vTu5SOkJnpdoT
-    iuCzg+vg185Za6g5te3tflwo7cuFSGNKfRzIrNtung8BDWsiq5C32+Q3bf4AI8He
-    12XhSLhHkqhOeCJJc8MOWP697Ytq+5kPUB7qB4LwGhLb9b8lrviBQjzhhG0JXSwS
-    iIph42Ab1c/aUB6u+Xl75QYNsM4Jmtf2X95mIlvCLSRQ2HyUKGwdnETDOHTglcTc
-    YLD6YWcPJVDGOE3UMQj9yXd5BANxgYZRrjhQ09vUNroLr0x7mAqP8l2Ixgh8tmAI
-    xMH7xvXzcxlhBKwD9Iv+k9Hhs+LBuK3Os1yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524406073; bh=BLtzvs839yJUBnnVGTm2Mvl7oqWUrQ
-    vpu6/dV/IWk0k=; b=CtYnhl6/WCBx1zJelKEfdTHVdIasCge1WiXtWoCD8WbvBz
-    p1KEYlMwBjlyJZuHyJG+E5GM8r9wSjp3D7LIGu4kmoCOgyN0MnFcLNseuPPMnzgR
-    2Sopmob/Vmnvlh5SSew/r2pJkvfkRwhRhpfrVGH5djG/tETPALlJt3bdQWWCoLuv
-    VRIvhKiir53mbZTF9O9V6YBhj3qk5MzA714gtWIGoGN9OAiid8op9sAKvl6Tabg5
-    Q/xkFbqvXd5ByXaieFO1R2B/YxzDF80KxP/kUVEAPDsAtWLZfCjWICh37GWed1bS
-    wzYaHKlLzf8oriBxQlvSe6oChGyBGrfX7hDW3QOQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfE5NM97ZkfcY94V/b5q4l8TZg1P2dQhn0cK8f66mjDv7+YJhyMSf97wjw/OkD5sN/MajlUqyejAs3kfkVvogsJm9fF+69WoFG58eWxj9iDvk4KK18zXL
-    tn7lAc0Cwp6IJ2tMFskzOTv3bZu7h59ShnEMrUrS3loDC75RKinWlz+sSTxroElkmBKuicmqP5rFO+v6qOaRsx/dZkZq+L9FIm80FUOJN56jd+yfIQxT+mTf
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=MvuuwTCpAAAA:8 a=ag1SF4gXAAAA:8
-    a=YvqfFwD5_RFpRMaw3JwA:9 a=2m6rng-JJC1-PvOC:21 a=CiGoPWG6XneuAviE:21
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=dVHiktpip_riXrfdqayU:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755845AbeDVOHq (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:07:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52040 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755840AbeDVOHo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:07:44 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49kMctuFJWr8RZcPVxLsnE4QfxYe6PDC2KbbRiOh22W7kUMHA0HjayOX5bobhWm3nG0llhI
+ARC-Seal: i=1; a=rsa-sha256; t=1524406072; cv=none;
+        d=google.com; s=arc-20160816;
+        b=igbuAmEA3+/GOJd0nAO1YjlrpJUgUG8zuZl6YtriYR4T61T0pwJtQDF98FRTdtEkK4
+         bj6Sp2Goju9DfhVwOG7DAvaDXsVU8EkmVko2I1ESiLHWCiU6WNHsq7d9d3wCDFuKqwaf
+         7uQ8GQvl3qr3byJPueWAV++kRwP3tY+IxmeIrXrM9TAB1ECDv1ojAc/9JVjQD5uK29cv
+         azGlNzW0b4Orf9LRSGzN5O6UG+6OQogFkTxgRKANmWtIUZ1io7ZyVRCo02x4DfjGygUp
+         s9IhbaQvJx3O2yHBYlvWZ6UY6fCzbTrp3IchNmYelMuHvejKc1t2Dhxfo9yQ4WnVtaGx
+         BEEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=b6iE/JF0n9xxA5FknfAx5YkCnJ0zgwNZyT1LitDErbU=;
+        b=eA0ND97CL0lCm00IU1aXbmExAIYkpriV8KBXpr9r/exUq7L7+keqz5/xK/mMHgg9+T
+         d5/70CbTGcFbwAK5emECjVy3nJft9oRnKZGfSJ94CAQs0H6tMPILNPp5xTy38mPA0F+3
+         o4rgbNwY2yAB4313ejm9byXNqSciiJZs7F+5tDaVFYS6ZyIR4DlP9/oVDCuB41GN+W/1
+         Ho7CTACmbIBr2X3t82Ay3C5udWsKYgVi4M5hMZKe5YxM8t9AZ8mSiNUjtTjM67cYNZdd
+         9+2cJCcF3X+g9AFRXLgW+fgt+rC/9+D8eg2+uPjwIuQganFES5N14/G982+5YPygldpy
+         mYPw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Toshi Kani <toshi.kani@hpe.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.14 098/164] nfit: skip region registration for incomplete control regions
-Date: Sun, 22 Apr 2018 15:52:45 +0200
-Message-Id: <20180422135139.424378947@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Krzysztof Mazur <krzysiek@podlesie.net>,
+	Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.14 101/164] um: Use POSIX ucontext_t instead of struct ucontext
+Date: Sun, 22 Apr 2018 15:52:48 +0200
+Message-Id: <20180422135139.541352733@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -83,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455135109265878?=
+X-GMAIL-MSGID: =?utf-8?q?1598455621712350370?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -93,56 +49,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Krzysztof Mazur <krzysiek@podlesie.net>
 
-commit 0731de476a37c33485af82d64041c9d193208df8 upstream.
+commit 4d1a535b8ec5e74b42dfd9dc809142653b2597f6 upstream.
 
-Per the ACPI specification the only functional purpose for a DIMM
-Control Region to be mapped into the system physical address space, from
-an OSPM perspective, is to support block-apertures. However, there are
-some BIOSen that publish DIMM Control Region SPA entries for pre-boot
-environment consumption.  Undo the kernel policy of generating disabled
-'ndblk' regions when this configuration is detected.
+glibc 2.26 removed the 'struct ucontext' to "improve" POSIX compliance
+and break programs, including User Mode Linux. Fix User Mode Linux
+by using POSIX ucontext_t.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 1f7df6f88b92 ("libnvdimm, nfit: regions (block-data-window...)")
-Reviewed-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+This fixes:
+
+arch/um/os-Linux/signal.c: In function 'hard_handler':
+arch/um/os-Linux/signal.c:163:22: error: dereferencing pointer to incomplete type 'struct ucontext'
+  mcontext_t *mc = &uc->uc_mcontext;
+arch/x86/um/stub_segv.c: In function 'stub_segv_handler':
+arch/x86/um/stub_segv.c:16:13: error: dereferencing pointer to incomplete type 'struct ucontext'
+          &uc->uc_mcontext);
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Krzysztof Mazur <krzysiek@podlesie.net>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/nfit/core.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ arch/um/os-Linux/signal.c |    2 +-
+ arch/x86/um/stub_segv.c   |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -2316,7 +2316,7 @@ static int acpi_nfit_init_mapping(struct
- 	struct acpi_nfit_system_address *spa = nfit_spa->spa;
- 	struct nd_blk_region_desc *ndbr_desc;
- 	struct nfit_mem *nfit_mem;
--	int blk_valid = 0, rc;
-+	int rc;
+--- a/arch/um/os-Linux/signal.c
++++ b/arch/um/os-Linux/signal.c
+@@ -160,7 +160,7 @@ static void (*handlers[_NSIG])(int sig,
  
- 	if (!nvdimm) {
- 		dev_err(acpi_desc->dev, "spa%d dimm: %#x not found\n",
-@@ -2336,15 +2336,14 @@ static int acpi_nfit_init_mapping(struct
- 		if (!nfit_mem || !nfit_mem->bdw) {
- 			dev_dbg(acpi_desc->dev, "spa%d %s missing bdw\n",
- 					spa->range_index, nvdimm_name(nvdimm));
--		} else {
--			mapping->size = nfit_mem->bdw->capacity;
--			mapping->start = nfit_mem->bdw->start_address;
--			ndr_desc->num_lanes = nfit_mem->bdw->windows;
--			blk_valid = 1;
-+			break;
- 		}
+ static void hard_handler(int sig, siginfo_t *si, void *p)
+ {
+-	struct ucontext *uc = p;
++	ucontext_t *uc = p;
+ 	mcontext_t *mc = &uc->uc_mcontext;
+ 	unsigned long pending = 1UL << sig;
  
-+		mapping->size = nfit_mem->bdw->capacity;
-+		mapping->start = nfit_mem->bdw->start_address;
-+		ndr_desc->num_lanes = nfit_mem->bdw->windows;
- 		ndr_desc->mapping = mapping;
--		ndr_desc->num_mappings = blk_valid;
-+		ndr_desc->num_mappings = 1;
- 		ndbr_desc = to_blk_region_desc(ndr_desc);
- 		ndbr_desc->enable = acpi_nfit_blk_region_enable;
- 		ndbr_desc->do_io = acpi_desc->blk_do_io;
+--- a/arch/x86/um/stub_segv.c
++++ b/arch/x86/um/stub_segv.c
+@@ -11,7 +11,7 @@
+ void __attribute__ ((__section__ (".__syscall_stub")))
+ stub_segv_handler(int sig, siginfo_t *info, void *p)
+ {
+-	struct ucontext *uc = p;
++	ucontext_t *uc = p;
+ 
+ 	GET_FAULTINFO_FROM_MC(*((struct faultinfo *) STUB_DATA),
+ 			      &uc->uc_mcontext);
