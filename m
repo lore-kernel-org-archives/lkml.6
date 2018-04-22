@@ -1,80 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2630128-1524406660-2-9930786698749101352
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524406659; b=QpqOXYgIwWuy+JLUEpLtYgc03NLQw/8ypER1XCO55REIISNpSw
-    f3bevYJ1ODSLem+sqlHiXWcBYKtj6qLWLlFtleB9naMysLJNfW7c4Ef6pLawl7WK
-    5RsTiCOZaa9+85wQSrjuBijLjzcIJMa+R2e7FlkpxhnJkoTJpLt7hAvEmqPIRjHf
-    mCaY39nen2S9DinybAs1OMMkppAePHfz9xOHbTrWbnpfFVuZSjsZAthfha2dIcRU
-    rdrqt7m2gey7eqLdTWMluCPfzrrhLyepUn1tnThDHKYKazV3QTWZsT+iuAHg9yFz
-    5VZDKfnWHu2aPDUUU2FXsTkawFp4c3jIKQNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524406659; bh=fsoV7jrnLZk4oag43FQdZK9PBueLu0
-    7b2zcOv6Pnt2M=; b=j8rUsDVD2NJ69QrI3doIWLkHA+ie5CZ5dwTPkEbp+8/GTR
-    9L6lZpX8IdEm3u8cQ47d9OWRALpjlHP2EeEDpFR+UcLxMX0OzmnVNps4AeN/yb+f
-    wBTLWVeQQIt3DVCuvsEvMdXJYwLvdn3kcwiAUb9d8zISNxxmLYzQiGmIzNGeftK2
-    t1xBeJaWpfA8/47MU9qu8solkb03d1hlcGo/C9rpbewumcgmqopbqCUQ7WbnJabj
-    cZNJeto8m7ir3kzZsqxFClFDRQVyLNiqUe0wt9tatFpg5uCn5IOe4kpLoI4ASrNJ
-    qtJkXKDHHz77TH2rw58iKpUpd9AmFvzqLG/YPZAw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNryx4hHwl4v0xanrjtL1M9/M8SwLKG2PMFR8AS2LPnE5H25eXqLU93MGFNs42pixUCU086d0n0nYNIFaE6P6JGbjJT0Rvuzn+7OkRLHL5TnwmNGyJ+y
-    2cqDAK3bmt0uDAX45PV5sdtHtyoPgOzrlc8lOMK22INpkGtE//sfDT31qNGB0LIUZkvDmCJHiBfCdmFcdy5FRsWcAUbtU2zwMAJofjMgtA9FfojmOYNIsayN
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=JF9118EUAAAA:8 a=VwQbUJbxAAAA:8 a=CbDCq_QkAAAA:8 a=ag1SF4gXAAAA:8
-    a=HpVCBnNoGEzVIHtxbwsA:9 a=QEXdDO2ut3YA:10 a=xVlTc564ipvMDusKsbsT:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=1qrBK16LubpBFNPVNq2M:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932448AbeDVORi (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:17:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58412 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932477AbeDVORe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:17:34 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49EGQfWvrfkACQSpnIY+3AtU7ebsNv+cL8m+Z8Y6bynS5mTFlJ6mAEPPohgPRRkIBnOvjXD
+ARC-Seal: i=1; a=rsa-sha256; t=1524406659; cv=none;
+        d=google.com; s=arc-20160816;
+        b=cgPESJjZpKWQ+dWXRZc888v/I9S9yHylJdpNDMSyL5A5W4lGC3wJAdM0eUavjwyVGJ
+         SExxK34ugly/az7uOc6Xhy7um84ZDeDp7LcHM0QWnHrBYQSXLfatFZoihyGy2GnHaC53
+         jNp7byrCyUfO3IyhUIXOiroI0T4wKDznqWqGD+VSKM61c2Vg3dTMITwYg+VKd7Wzp6eh
+         VClYLyaTeO+kyTGS/bYZqFxwMlUxK8PM0unvZQhWk2W7tePWDBwELUOo2ScY949Dpl40
+         Ly9kz/BdfAVCX7GxBE4Bgr19b+L2iK3N7md35IV1GebVRTCguyGGKXQgY4Kxn9B2+rnA
+         CSFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=MiMaMVSpPk9nVeebmqlytEG/j9TrDTNF+LipFp7GFfI=;
+        b=XYaSjVcPm2qbh8CL8x5V5M73SzDNLtEJFUTXsMevQB+g+m5BaPL362Jx3nti1CgDTh
+         LprMWIsHmJkOyNB1FdQJ+zo2R6z0sqoHUf1aPFMrYGfQn0lcK7FaGZaVnYvQG1BSvqcH
+         HAVc0vvz0+cZYYYoV5CK3arzZCh0Ei2VReXACWp7yLXYfbznD+iPcjHIHyL5JZU5Vfcd
+         Tezp1AGtzAU5Sh4AjYT7lYqVloDueAr8nV82v9CgiVtpDbanpZID67gY+QQu/uOcFQqt
+         vQr+o1tR69wzyTHlZH1h9wIyPt54xyfGe67vn1tI99aY+WE55nWaho4eylOzt41tiRzt
+         6MEg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.4 54/97] IB/srp: Fix srp_abort()
-Date: Sun, 22 Apr 2018 15:53:32 +0200
-Message-Id: <20180422135308.306965851@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Maxime Jayat <maxime.jayat@mobile-devices.fr>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Vinod Koul <vinod.koul@intel.com>
+Subject: [PATCH 4.4 56/97] dmaengine: at_xdmac: fix rare residue corruption
+Date: Sun, 22 Apr 2018 15:53:34 +0200
+Message-Id: <20180422135308.405196681@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -82,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455126397049965?=
+X-GMAIL-MSGID: =?utf-8?q?1598456237001472268?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,39 +50,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Maxime Jayat <maxime.jayat@mobile-devices.fr>
 
-commit e68088e78d82920632eba112b968e49d588d02a2 upstream.
+commit c5637476bbf9bb86c7f0413b8f4822a73d8d2d07 upstream.
 
-Before commit e494f6a72839 ("[SCSI] improved eh timeout handler") it
-did not really matter whether or not abort handlers like srp_abort()
-called .scsi_done() when returning another value than SUCCESS. Since
-that commit however this matters. Hence only call .scsi_done() when
-returning SUCCESS.
+Despite the efforts made to correctly read the NDA and CUBC registers,
+the order in which the registers are read could sometimes lead to an
+inconsistent state.
 
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Re-using the timeline from the comments, this following timing of
+registers reads could lead to reading NDA with value "@desc2" and
+CUBC with value "MAX desc1":
+
+ INITD --------                    ------------
+              |____________________|
+       _______________________  _______________
+ NDA       @desc2             \/   @desc3
+       _______________________/\_______________
+       __________  ___________  _______________
+ CUBC       0    \/ MAX desc1 \/  MAX desc2
+       __________/\___________/\_______________
+        |  |          |  |
+Events:(1)(2)        (3)(4)
+
+(1) check_nda = @desc2
+(2) initd = 1
+(3) cur_ubc = MAX desc1
+(4) cur_nda = @desc2
+
+This is allowed by the condition ((check_nda == cur_nda) && initd),
+despite cur_ubc and cur_nda being in the precise state we don't want.
+
+This error leads to incorrect residue computation.
+
+Fix it by inversing the order in which CUBC and INITD are read. This
+makes sure that NDA and CUBC are always read together either _before_
+INITD goes to 0 or _after_ it is back at 1.
+The case where NDA is read before INITD is at 0 and CUBC is read after
+INITD is back at 1 will be rejected by check_nda and cur_nda being
+different.
+
+Fixes: 53398f488821 ("dmaengine: at_xdmac: fix residue corruption")
 Cc: stable@vger.kernel.org
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Maxime Jayat <maxime.jayat@mobile-devices.fr>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srp/ib_srp.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/dma/at_xdmac.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -2581,9 +2581,11 @@ static int srp_abort(struct scsi_cmnd *s
- 		ret = FAST_IO_FAIL;
- 	else
- 		ret = FAILED;
--	srp_free_req(ch, req, scmnd, 0);
--	scmnd->result = DID_ABORT << 16;
--	scmnd->scsi_done(scmnd);
-+	if (ret == SUCCESS) {
-+		srp_free_req(ch, req, scmnd, 0);
-+		scmnd->result = DID_ABORT << 16;
-+		scmnd->scsi_done(scmnd);
-+	}
+--- a/drivers/dma/at_xdmac.c
++++ b/drivers/dma/at_xdmac.c
+@@ -1473,10 +1473,10 @@ at_xdmac_tx_status(struct dma_chan *chan
+ 	for (retry = 0; retry < AT_XDMAC_RESIDUE_MAX_RETRIES; retry++) {
+ 		check_nda = at_xdmac_chan_read(atchan, AT_XDMAC_CNDA) & 0xfffffffc;
+ 		rmb();
+-		initd = !!(at_xdmac_chan_read(atchan, AT_XDMAC_CC) & AT_XDMAC_CC_INITD);
+-		rmb();
+ 		cur_ubc = at_xdmac_chan_read(atchan, AT_XDMAC_CUBC);
+ 		rmb();
++		initd = !!(at_xdmac_chan_read(atchan, AT_XDMAC_CC) & AT_XDMAC_CC_INITD);
++		rmb();
+ 		cur_nda = at_xdmac_chan_read(atchan, AT_XDMAC_CNDA) & 0xfffffffc;
+ 		rmb();
  
- 	return ret;
- }
