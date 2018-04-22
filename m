@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49aKTdLcRoEvsjWRR+tBi/Eie5gsVUVLlQfyFcZmdof67tcOugCSyYNXBBwpAd6jr/aE2Sh
-ARC-Seal: i=1; a=rsa-sha256; t=1524405508; cv=none;
+X-Google-Smtp-Source: AIpwx49dEz35C8WCmhGvimintdYWGJWHhC/pnpSGIr9dSZqe8xhdb7XlPxCJzpYKI3FcSS3CODNB
+ARC-Seal: i=1; a=rsa-sha256; t=1524405505; cv=none;
         d=google.com; s=arc-20160816;
-        b=FLZJBUENpg/xeTxPQMUHs5NpcuecTFyDifPX5rM/tz7X1FUpvEuRk1Rf8OoUIdT7cZ
-         hSx8Cav1dgEbNW/a5MhcZJnkl5u8K64zmRDuYPG9T4yF93c0jH0VohTy+Xr6bcYZTZw+
-         M+qo/j4bUYUjCx7dWLOUDgWSzEj8dihSP0fXYHR5mAGkaZzsfLXUYYAfWssJEmR3ZfIZ
-         8s94beP0s30TFfZjYyLb4W/41T/TGZ6dm6MhAoy70220JlevLbreBTvt+qiBPYHI3aae
-         xztwa1T4bBO24sD42a6JX3kiRv6WgVuA+gLrB/SiWKokhgvyyG5IjeVCQf28sMfHxsku
-         Fd0g==
+        b=h7bBmWOXsRgR5Hqqiroq3b7T2jbXgxshVYbrFSuqjX1VXlfoML+nzf2s2Rh3pvOjhK
+         arcTZHslPw2UgBzB7ChpicsQAORXyFsc8W4Bv4EkP/5o8x0QIcbJCwbGu6J0ttPpitlP
+         dF98hRFTqjwM3eXFyjoab5ZV6mYai0uTj/7e4MOuzk5ayX6hYTLmjL1IBsAtl6rG6GS4
+         BJyMsoMlFk0CYeFqWOlSlrFXyASCL5Hom9HkwCuMRNglHyFTUDJTJ4KjiltrBExH4U46
+         /uF4jeSExwQvZTFgjAngFrBXMZwXqWVbXSzj7EXCIsrxQ/rJBwZ+odGg/FzRn6tlMM1v
+         ddzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LEl8P8sUqe22G8a80HgYz/zpCiDrIr8kL96L1HVyU50=;
-        b=v+ziFMO+zxpkbl48YS7JXqCQMU7rMhdMnRJUBAAf1a6EMu6wKm4GQGoYhx9i9nI8RV
-         SNhDGNjiQ13v0GkOr8X0N9S0LAxYTImUTOPeiapSuBg0IZgJAUCbjPDndidJxVtT3nb1
-         NLSVtxcTMq1BP+CVEu8hF/7WQp45iJEdKYf1BR7vKTahSr2eqnhcZwcKk0AsWv+dRFqQ
-         IcIKGN9fA+usTGPrp9xu5hfmfRPw8m227lz/h+n+g3H+4ESy+Q1+vkT8hPBRDHOvNeog
-         736ZiSA1OMZj2sy99g3hPyMhtmxjCuiIVRQOQGYk4cTKTpBOsBZPnrxmDupfaGJS3lBg
-         1hWA==
+        bh=WLn3kjtOvwRmPu6jGwKDhLD8Wl7vN1RHEKiOAGANfLY=;
+        b=pOYAL7q5dkZGjOruWaOgkhnk+0MRIdkslD2W3XNJFVfmlsJ9PIxMxC/TCs3DjPxgxd
+         yED6Rwf0Qqu1S2OmFczABauW7fICeqH75Fq624SHxng+6Z3nm3qbVK0YHj32U/8jPmb7
+         GXq0RA98ViwdmcMg5v1MnZUfqFRW1WtdNuQ97XCAESlQPgd6OaZLvW+DXLcNFViU51iW
+         whfu5ZXIhYvnWJ+u7G6jmSRTK3Y6lAu2j+Pz/aXaUSCEwLP4KQFcLWENCu804OVi9LlY
+         +vJVc8jxD12VsL+I8649ocjiluoJ+x741sHFhz5v4KH2iJ+xk9uG5mhnBp+FjlhYhI8q
+         axvA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Wen Xu <wen.xu@gatech.edu>,
+	Eric Biggers <ebiggers@google.com>,
 	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.16 093/196] ext4: fail ext4_iget for root directory if unallocated
-Date: Sun, 22 Apr 2018 15:51:53 +0200
-Message-Id: <20180422135109.102374209@linuxfoundation.org>
+Subject: [PATCH 4.16 092/196] ext4: limit xattr size to INT_MAX
+Date: Sun, 22 Apr 2018 15:51:52 +0200
+Message-Id: <20180422135109.046443853@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455030517761315?=
-X-GMAIL-MSGID: =?utf-8?q?1598455030517761315?=
+X-GMAIL-THRID: =?utf-8?q?1598455027376066510?=
+X-GMAIL-MSGID: =?utf-8?q?1598455027376066510?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,43 +50,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 8e4b5eae5decd9dfe5a4ee369c22028f90ab4c44 upstream.
+commit ce3fd194fcc6fbdc00ce095a852f22df97baa401 upstream.
 
-If the root directory has an i_links_count of zero, then when the file
-system is mounted, then when ext4_fill_super() notices the problem and
-tries to call iput() the root directory in the error return path,
-ext4_evict_inode() will try to free the inode on disk, before all of
-the file system structures are set up, and this will result in an OOPS
-caused by a NULL pointer dereference.
+ext4 isn't validating the sizes of xattrs where the value of the xattr
+is stored in an external inode.  This is problematic because
+->e_value_size is a u32, but ext4_xattr_get() returns an int.  A very
+large size is misinterpreted as an error code, which ext4_get_acl()
+translates into a bogus ERR_PTR() for which IS_ERR() returns false,
+causing a crash.
 
-This issue has been assigned CVE-2018-1092.
+Fix this by validating that all xattrs are <= INT_MAX bytes.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=199179
-https://bugzilla.redhat.com/show_bug.cgi?id=1560777
+This issue has been assigned CVE-2018-1095.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199185
+https://bugzilla.redhat.com/show_bug.cgi?id=1560793
 
 Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
+Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/ext4/xattr.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4745,6 +4745,12 @@ struct inode *ext4_iget(struct super_blo
- 		goto bad_inode;
- 	raw_inode = ext4_raw_inode(&iloc);
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -195,10 +195,13 @@ ext4_xattr_check_entries(struct ext4_xat
  
-+	if ((ino == EXT4_ROOT_INO) && (raw_inode->i_links_count == 0)) {
-+		EXT4_ERROR_INODE(inode, "root inode unallocated");
-+		ret = -EFSCORRUPTED;
-+		goto bad_inode;
-+	}
+ 	/* Check the values */
+ 	while (!IS_LAST_ENTRY(entry)) {
+-		if (entry->e_value_size != 0 &&
+-		    entry->e_value_inum == 0) {
++		u32 size = le32_to_cpu(entry->e_value_size);
 +
- 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
- 		ei->i_extra_isize = le16_to_cpu(raw_inode->i_extra_isize);
- 		if (EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize >
++		if (size > INT_MAX)
++			return -EFSCORRUPTED;
++
++		if (size != 0 && entry->e_value_inum == 0) {
+ 			u16 offs = le16_to_cpu(entry->e_value_offs);
+-			u32 size = le32_to_cpu(entry->e_value_size);
+ 			void *value;
+ 
+ 			/*
