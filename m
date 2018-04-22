@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/lgucCNi2nPcF71nX8eBvczAQDgQYLVez0gIX9iJ4zUhsN4YZG3wzu0OADEf8i185HiOFc
-ARC-Seal: i=1; a=rsa-sha256; t=1524406492; cv=none;
+X-Google-Smtp-Source: AIpwx48MDJYYMnTzbvogKgmYTINQFtEyBmj8Ob0afn2vdQRCQPVS5C25Le+lH35NNTnwiMTD2yrX
+ARC-Seal: i=1; a=rsa-sha256; t=1524406489; cv=none;
         d=google.com; s=arc-20160816;
-        b=oZSMOM2fjm7pn8nO6Jv3z5gE+VHOpDqHTyz8W4ne1gJwrgz+f/61fIkntKthS5QeN1
-         rVKHvKC5J8aMZxoq5UrynXQD9Ax0nIxUQLC0Lh/s/LAPVmpsasZG8E+gnJLTcYkNsjEX
-         JVQh+66PzUcn94HkQRZB4f5psK01TDOjZQTAETGLADdqaGJADC7JHIvbl3I9S9jy9z2s
-         DinglLxaYyLbdHZo5xGFdXQomSmExguqPcRjLFvQSHxxhm1UA30nipwvyaMlAxe4Mx5R
-         SwJpGHPmS6uOV59X78HgG4aguttG07LPeyg/u1JlocZu2BUSzb6OqOlmYSRG4L9q55h9
-         QNDg==
+        b=he33zVx8/NREcuxtYpHScn8BgXE236UVByNVHQcEM2w2kh1kaJWyQwnumAQap+Y1ee
+         2HkHo58yTigI7Uo97iEP30EJOkA0GdLNTgRz4l3OUmO+PMUXZbA1aCejg0+jNbaWJb1Y
+         l0sU8JgJN8NwCecu2ymR2mA4/Bb+unSdWsb5tsmleVd+QQrikHYOJPkR9x2nBTeWTwQ2
+         /z4dsFrj676ON5xdOpjHJETNxdvhk+2OBsv9Mmt6pmV0pbulKhLDK4HZxNRyjAt769pH
+         14rljK2qJfrxPu9d/+fknKdZtnHUOxeMNcIk9kQPzDawXMaKRTSDlQrhhzoWIVyMrM/I
+         Qfgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AZ3EAJ+mm4Slf4PGRtHY7aNvemc3f4zK53iVPXnfeYc=;
-        b=AJMftENFritGT2wOZ15URfrWSnBDTKO5OwwQmX3Di/tU+3aKX/uqlHYz0+hOK7/VEK
-         sGC5rumBVfahDISDcvXuxI/zBE6ya180v3MYiVpfdyH/HbqQ8Aq0atQyTX5wC61u2rq1
-         NMPvA64QYSl6OdUGMco2gRGo5czVb+DvwNxY8JPhL+jSiUsY3V0iA3lGlPzKsZNoWq70
-         8hDR5N5B/dLnkgqjJeW69K2xu2Cacue6hDgg6PloUIn31WA/crbNKBtueqpdRNwg01oS
-         C/QhDVZG2kpZ7fhlb/sc0DndBtuhDPYFpaRw20c437I11AGuiSrzvdwU1zjwHehU50nV
-         gTrw==
+        bh=Czj8SMdKL4OV0WUXIT6eVVsHDtJOgUljPlh/okAlfTE=;
+        b=EE70N39MRmflPYjtpudx0yZKYGShI04QxkumORiTaI36V/ploBMQ5BRkKq1XZy8c/2
+         jbH4bUCHudGERYdvxRnd+bQ8tqc87Vnet0KFm6khtiOMiOAquN9D7YovYCYf5/dgHLEB
+         wNDzFsykoEMUIGWFUXsXdUwdLsn0/BARGHz5L0lIWGYf8K+zfxEJWzZKYfNxMk6KbOkR
+         946WsAXrMaRKKTcZZ8goZalmpthQ8K29Oe5s9/8Blk/qfsLQnAHl1n1RAX2+zqx7vfyJ
+         wcAyDGvfnRa9WdzDeVM1z3syxtwl1ezOALw84WcxmXTcVX2IDHk/i+PVuMKURTuL8GuS
+         fAGg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,12 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	stable@kernel.org,
-	Alexander Aring <aring@mojatatu.com>,
-	Kirill Tkhai <ktkhai@virtuozzo.com>,
 	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 90/95] Dont leak MNT_INTERNAL away from internal mounts
-Date: Sun, 22 Apr 2018 15:53:59 +0200
-Message-Id: <20180422135214.109430105@linuxfoundation.org>
+Subject: [PATCH 4.9 89/95] rpc_pipefs: fix double-dput()
+Date: Sun, 22 Apr 2018 15:53:58 +0200
+Message-Id: <20180422135214.068435004@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455310413463225?=
-X-GMAIL-MSGID: =?utf-8?q?1598456062250619075?=
+X-GMAIL-THRID: =?utf-8?q?1598455307537426185?=
+X-GMAIL-MSGID: =?utf-8?q?1598456059294324755?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,33 +51,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 16a34adb9392b2fe4195267475ab5b472e55292c upstream.
+commit 4a3877c4cedd95543f8726b0a98743ed8db0c0fb upstream.
 
-We want it only for the stuff created by SB_KERNMOUNT mounts, *not* for
-their copies.  As it is, creating a deep stack of bindings of /proc/*/ns/*
-somewhere in a new namespace and exiting yields a stack overflow.
+if we ever hit rpc_gssd_dummy_depopulate() dentry passed to
+it has refcount equal to 1.  __rpc_rmpipe() drops it and
+dput() done after that hits an already freed dentry.
 
 Cc: stable@kernel.org
-Reported-by: Alexander Aring <aring@mojatatu.com>
-Bisected-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Tested-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Tested-by: Alexander Aring <aring@mojatatu.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namespace.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/sunrpc/rpc_pipe.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1033,7 +1033,8 @@ static struct mount *clone_mnt(struct mo
- 			goto out_free;
- 	}
+--- a/net/sunrpc/rpc_pipe.c
++++ b/net/sunrpc/rpc_pipe.c
+@@ -1375,6 +1375,7 @@ rpc_gssd_dummy_depopulate(struct dentry
+ 	struct dentry *clnt_dir = pipe_dentry->d_parent;
+ 	struct dentry *gssd_dir = clnt_dir->d_parent;
  
--	mnt->mnt.mnt_flags = old->mnt.mnt_flags & ~(MNT_WRITE_HOLD|MNT_MARKED);
-+	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
-+	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
- 	/* Don't allow unprivileged users to change mount flags */
- 	if (flag & CL_UNPRIVILEGED) {
- 		mnt->mnt.mnt_flags |= MNT_LOCK_ATIME;
++	dget(pipe_dentry);
+ 	__rpc_rmpipe(d_inode(clnt_dir), pipe_dentry);
+ 	__rpc_depopulate(clnt_dir, gssd_dummy_info_file, 0, 1);
+ 	__rpc_depopulate(gssd_dir, gssd_dummy_clnt_dir, 0, 1);
