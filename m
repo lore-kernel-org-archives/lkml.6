@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2669103-1524408250-2-6882616081138651908
+X-Cyrus-Session-Id: sloti22d1t05-2669103-1524408226-2-11523836534660731748
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524408250; b=XOoflNvmbJ8JMAFCIUzKKPSH0yLUaNLstIcR5LMJ0fxJsAfpTD
-    P9/BcXBL3dzdr114f3x5ic62uB6X7h7Xz1d+9z5FkPDaH47UwgyCkLiwxqzxwqji
-    hdE7uX/cpLuLHdmNxliCcN2OlEaQc/XFfKthV5lcUtkt6+G6Mr605iJvfPQ3+6Xh
-    5aRRdIMFI2UcpJTb0XdTBGGb8527lsb/tRPq7JMcPUJgg3I+QipZc+NWlMNULVJR
-    9wKdDjSBZcHCav09Rx0x2YQDCw3XB2mwsEr3zzASxRbEBWjYbnKjy+uKgdjO7J/N
-    DY2+1FOKMQYOnbK5mX7uGVsdgKy++0elDL/g==
+    1524408225; b=wZajn7fm4CBZbJg4C8PEfF4Lei/jEg0UUolO6GOnrqbWH000nT
+    loGwj6Vgb8yrdymkabxO8Fgf2uIhNP7CjoE/Ilb70Bg1tHaaSvLrXoXc+mYUqG2N
+    mbhR+ReBmzSkNFi+ZUIS3dpDxwZWPJ/jJIBQvjRRsMJMEv/3zmjUinE3Btpz123e
+    YkU7bWdXgITCRIpZDMqiDW7SLqJOzaGo7/hegkJPS7EUTWcxjqzQtwLNcvpFJYYb
+    iRq9Hx1c4/pDq3MA3lRKBXphk60uH3+Bp1VY+HXELYQ0uiahuQZYNTYzhWXKl1bl
+    ckgWvuuokbkcvsrJZgHMufNxaa3w/GkeIXuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524408250; bh=6V9oIoVEU8kII0EYWD7c4TED5vo1AL
-    457VrkuJM0DDk=; b=S9NKYUGhjHQCcz4B90fDmiANvXu/d7Up3ztWFxkU/pQSwU
-    yQ4CXJeAnuuG9k+9iGkZtJx5cujJwgMF5FlPzRNYb08cClVTMPn8c7dlwM1BxCxb
-    w76X19N91EpZRewHtitc2eGBGn2XmexFg2Sj8iDyug+X1TzfZxC+houCAckYWnbt
-    XHiG+W4IbXbYYJHBhC3dM3+3+Up5C9J1gDOwcKFttxvaorxAyGgePKRYH1i32qZ2
-    er/zyJ1Eecagp+6rTLi7MTKSQMgCrZdirZ45ynYaWuFDOOzKF8VEt1/4m1JKYtfD
-    QtpkgWRZi7JZVIjAYydoaeJf9kF+gUf01QzXeQrg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524408225; bh=sP9WY3k1tMPU4vT74SrqTJs8mryuTe
+    Z4JH6e3G3HxT0=; b=GtXxBfsalvQWtoxnwNWI89LHOpx1sp0n7fbQoGmPINW5FD
+    mlduPdjNoJHQY6IGOvQcJ7iBG8AkHdTx5kNHW1vDAjelyzI5mPDxw3BakN16Qi/o
+    kHLKWbo8jyOmQW+On9IkEhgbkrb8D5BfaelDwmcYG6sPv7R+NBLm8+Z1Pr4rYdi3
+    1vHHEwY+Ze5f/WXKChYvAIhG/1FXIoh8JMrVmxAbwY5ErSk1AZHNVefS/Xq4FIfc
+    qpfnKVHNtkCzpB310Kk7VUujfBERZgBdDLg6EHOL3VxcfSihK1EdXTz9WcLhkuJq
+    5wc+GBEleKPc/mdHsww6krFZSpSJbmlXosj5IsCA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,28 +51,30 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGXgDj6ca9auTvDmMJzNj4+MdottO95gg29omKBbMbLJ4yaCjdq3c5IRr5EnLatwO1hSBHevi11Eqo9wQodlqfnd/QUttLDzqBC/X6g4g3rdwg+3rZcC
-    LdlYbhGfvaAfBCPhZ4KvNfscIHaTIeJbwSNzjDoqJtrQ6d3Wpd/Q/j2ZIIEBKcmA/U/p+MFQSwIJXp9czP2ei414cjBUrnjGgKsXtDNLVmypK8UZTO+QHzzV
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBfgNXHHpC4OLu5LCQUzR/2DRCb6u8CTqu/CjgzQ+7XYz8s741kB1iv2Z0vTY4ow+oC4AX7JGbVt2FgzMjy4HMaTHiG/EDvlSktK6/8i2XQ8/G2JkzBd
+    wzKZU5dQQxhTlL8bKFoI28zMj28sPNRfyZlT4DpGgSEaOg8UqZDcHjZ/aaDCJEbBcbWZR6QVcgf6e3bpyqZq5vnlBBz4dZHoccSbF8WfAsuPrVQPSDbqbtO9
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=HsDDrbOFvXNNo7OG3RkA:9 a=QEXdDO2ut3YA:10
+    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=Vs2_iBweCjJHQ4vTY8MA:9
+    a=ylfJgOWwrFvA9psi:21 a=tB_c9X-3SSGUN93M:21 a=QEXdDO2ut3YA:10
     a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757112AbeDVOnn (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:43:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58094 "EHLO
+        id S1757193AbeDVOno (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:43:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57976 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932406AbeDVORO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:17:14 -0400
+        with ESMTP id S932397AbeDVORG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:17:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.4 48/97] jbd2: if the journal is aborted then dont allow update of the log tail
-Date: Sun, 22 Apr 2018 15:53:26 +0200
-Message-Id: <20180422135307.983602115@linuxfoundation.org>
+        stable@vger.kernel.org, James Kelly <jamespeterkelly@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 45/97] ASoC: ssm2602: Replace reg_default_raw with reg_default
+Date: Sun, 22 Apr 2018 15:53:23 +0200
+Message-Id: <20180422135307.825480085@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -90,39 +92,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: James Kelly <jamespeterkelly@gmail.com>
 
-commit 85e0c4e89c1b864e763c4e3bb15d0b6d501ad5d9 upstream.
+commit a01df75ce737951ad13a08d101306e88c3f57cb2 upstream.
 
-This updates the jbd2 superblock unnecessarily, and on an abort we
-shouldn't truncate the log.
+SSM2602 driver is broken on recent kernels (at least
+since 4.9). User space applications such as amixer or
+alsamixer get EIO when attempting to access codec
+controls via the relevant IOCTLs.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Root cause of these failures is the regcache_hw_init
+function in drivers/base/regmap/regcache.c, which
+prevents regmap cache initalization from the
+reg_defaults_raw element of the regmap_config structure
+when registers are write only. It also disables the
+regmap cache entirely when all registers are write only
+or volatile as is the case for the SSM2602 driver.
+
+Using the reg_defaults element of the regmap_config
+structure rather than the reg_defaults_raw element to
+initalize the regmap cache avoids the logic in the
+regcache_hw_init function entirely. It also makes this
+driver consistent with other ASoC codec drivers, as
+this driver was the ONLY codec driver that used the
+reg_defaults_raw element to initalize the cache.
+
+Tested on Digilent Zybo Z7 development board which has
+a SSM2603 codec chip connected to a Xilinx Zynq SoC.
+
+Signed-off-by: James Kelly <jamespeterkelly@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/journal.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/soc/codecs/ssm2602.c |   19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -914,7 +914,7 @@ out:
- }
- 
- /*
-- * This is a variaon of __jbd2_update_log_tail which checks for validity of
-+ * This is a variation of __jbd2_update_log_tail which checks for validity of
-  * provided log tail and locks j_checkpoint_mutex. So it is safe against races
-  * with other threads updating log tail.
+--- a/sound/soc/codecs/ssm2602.c
++++ b/sound/soc/codecs/ssm2602.c
+@@ -54,10 +54,17 @@ struct ssm2602_priv {
+  * using 2 wire for device control, so we cache them instead.
+  * There is no point in caching the reset register
   */
-@@ -1384,6 +1384,9 @@ int jbd2_journal_update_sb_log_tail(jour
- 	journal_superblock_t *sb = journal->j_superblock;
- 	int ret;
+-static const u16 ssm2602_reg[SSM2602_CACHEREGNUM] = {
+-	0x0097, 0x0097, 0x0079, 0x0079,
+-	0x000a, 0x0008, 0x009f, 0x000a,
+-	0x0000, 0x0000
++static const struct reg_default ssm2602_reg[SSM2602_CACHEREGNUM] = {
++	{ .reg = 0x00, .def = 0x0097 },
++	{ .reg = 0x01, .def = 0x0097 },
++	{ .reg = 0x02, .def = 0x0079 },
++	{ .reg = 0x03, .def = 0x0079 },
++	{ .reg = 0x04, .def = 0x000a },
++	{ .reg = 0x05, .def = 0x0008 },
++	{ .reg = 0x06, .def = 0x009f },
++	{ .reg = 0x07, .def = 0x000a },
++	{ .reg = 0x08, .def = 0x0000 },
++	{ .reg = 0x09, .def = 0x0000 }
+ };
  
-+	if (is_journal_aborted(journal))
-+		return -EIO;
-+
- 	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
- 	jbd_debug(1, "JBD2: updating superblock (start %lu, seq %u)\n",
- 		  tail_block, tail_tid);
+ 
+@@ -618,8 +625,8 @@ const struct regmap_config ssm2602_regma
+ 	.volatile_reg = ssm2602_register_volatile,
+ 
+ 	.cache_type = REGCACHE_RBTREE,
+-	.reg_defaults_raw = ssm2602_reg,
+-	.num_reg_defaults_raw = ARRAY_SIZE(ssm2602_reg),
++	.reg_defaults = ssm2602_reg,
++	.num_reg_defaults = ARRAY_SIZE(ssm2602_reg),
+ };
+ EXPORT_SYMBOL_GPL(ssm2602_regmap_config);
+ 
