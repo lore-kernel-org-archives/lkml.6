@@ -1,100 +1,95 @@
-Return-Path: <kernel-hardening-return-13074-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx48fPOYoKmcaWoeWfJOjmnTvVF5nMgo63O8NOO3LDHg8Xuc40r3wcK6xkZHziz3GZA6misDX
-ARC-Seal: i=1; a=rsa-sha256; t=1524384343; cv=none;
+Return-Path: <kernel-hardening-return-13075-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AB8JxZpZkqEe2JS0Uy8zsfA+B4eCJbzqORBUR7kUNDa3TbbwHWzelnZqn/345xAtHGAN/FrxsQRY
+ARC-Seal: i=1; a=rsa-sha256; t=1524386876; cv=none;
         d=google.com; s=arc-20160816;
-        b=xpEuGeDP1lAR9OY9VbmOnVoSOevL45GefgNWLDS+XOXB9jDEUNMkibf6Bk03FmpIlj
-         qjEo6FW2BJTluBchW7Aknfao+WfZsm8CCiYwGcfcef1NuTNBK1o/fBKv2mdFcr4vgXXh
-         gzNges94/cnPJbk/pzVEi5YuGfoT3iL+kHCI47sYo8EiFkbNy0r0gqXg2kZ2AE0Ny5H4
-         kCKzdlMTy0IqMLyiprxkTspQ+wvx0ne/zEQHrJg7pBK3UuBn/cf2Am6VP5SExaG79PJO
-         Ee+rIrBnAkgO6/1AhVu/cHnOmNz1Sr9kwwJnk5B7wZSIcDp7vKlTPUAFPpMFZHv8o7WD
-         dXwg==
+        b=uS7pmfAiQeIfqAFLh6MsHaB/aMf3g7sMeKdtIIL0mA/yDEco2e7dGirsJ5u3MyfAPB
+         P/1BRrfZxaxNp4zWMtABQr1ImCVHLD3hM9G3ceGT3Taz2cSbROGeuL02IVbvZFIYD248
+         vGIEywrykK5EDJ3IfAUsVG6wuRXry5cc2uXffJbQ5Lv8Ki1m0k7M5+GbCiu3QEsg9GyQ
+         X6OQ6Zanoo5nSLx+6G8dDc/1F4qM8ECPhHaZb/IIQs7DDyc2ah3GBJQF2PUZmgqgASBh
+         hV97yzaBvaC/RPGrJ74/jIKpIhVa4dCZlNLaNUgdu1vMSKNzyVFZm9cQIPus6DRXPzja
+         G/2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=rweEv+YlnyoBQxSoGC7+QSnS18h18Y54x/KaM+ZK12U=;
-        b=W0BxNAirQSj2vKCMKAvN0TMngxDVcGp66gacyyFyZ29kDY6oaC5peTPFMSj8RD3iWD
-         4OftSmeK9oghgJGLslnhNUWO7VwHcivlF96Tg1IA0Q4B91iXB0f/vNTozxtV2Jw52Hup
-         bOfQYHr+LZ0lVMGptzIfG5UsJUHVrwm6H1gdz+S71lvmY193SnaOjWuYb2CjwITQIfIo
-         /eVxIRna97sstpYaIoA4a2MXsuC/q1RCo4EUOk8rldhUNEY2nxjnlLIgsJHqNcsBq6ea
-         6ML3HgxocnMcCZOINe7qjDl9wTvAaQVJzGWwEvs6E5NUeHrswKJlYSlE1r/zxQHnz6JV
-         9I3A==
+        h=mime-version:organization:user-agent:references:in-reply-to:subject
+         :cc:to:from:message-id:date:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=S6Al9DGOaqU8iCE7Vcpl3yxVAtKJ48vCdYWc0RFixe8=;
+        b=x1WgJtUD2GVOF2mkPrmu40KNLv3gjrGh4pxgP/NVa8Ml3DL784rE5d7V7scNbdlp5M
+         R1Fkzr1sEosqqtn/zm38r/6cGREbmb98G5vbYl3Vgeg+s/W4iVW67U58MjIeNJsJoDgj
+         wZ547BOOApZCk9rwf7Mv6OlbUOs24aVsxtz1Wl5W50KqBsX9cwAUz7IRDzR3zsvY9Yp+
+         45Jdj2IzgPf1PGtEiudIfTcX+6OPgySq9U4Q0mM4Z3r8FPfVqU8ystcWdmHKVYRWDmA4
+         nvc4PyM4mqhYx65AbGB+76kZFTdnS+NWSlT6rdmD9qjHBcGAbCkDblrT0pkIB1bIFMyT
+         5BFw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13074-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13074-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13075-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13075-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13074-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13074-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13075-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13075-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Sun, 22 Apr 2018 10:05:21 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
-	catalin.marinas@arm.com, cdall@kernel.org, drjones@redhat.com,
-	kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
-	marc.zyngier@arm.com, ramana.radhakrishnan@arm.com,
-	suzuki.poulose@arm.com, will.deacon@arm.com,
-	linux-kernel@vger.kernel.org, awallis@codeaurora.org,
-	kernel-hardening@lists.openwall.com
+Date: Sun, 22 Apr 2018 09:47:29 +0100
+Message-ID: <86h8o3r5jy.wl-marc.zyngier@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<arnd@arndb.de>,
+	<catalin.marinas@arm.com>,
+	<cdall@kernel.org>,
+	<drjones@redhat.com>,
+	<kvmarm@lists.cs.columbia.edu>,
+	<linux-arch@vger.kernel.org>,
+	<ramana.radhakrishnan@arm.com>,
+	<suzuki.poulose@arm.com>,
+	<will.deacon@arm.com>,
+	<linux-kernel@vger.kernel.org>,
+	<awallis@codeaurora.org>,
+	<kernel-hardening@lists.openwall.com>
 Subject: Re: [PATCHv3 11/11] arm64: docs: document pointer authentication
-Message-ID: <20180422080520.GC17875@amd>
+In-Reply-To: <20180422080520.GC17875@amd>
 References: <20180417183735.56985-1-mark.rutland@arm.com>
- <20180417183735.56985-12-mark.rutland@arm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="V88s5gaDVPzZ0KCq"
-Content-Disposition: inline
-In-Reply-To: <20180417183735.56985-12-mark.rutland@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+	<20180417183735.56985-12-mark.rutland@arm.com>
+	<20180422080520.GC17875@amd>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598019791270913018?=
-X-GMAIL-MSGID: =?utf-8?q?1598432836939710312?=
+X-GMAIL-MSGID: =?utf-8?q?1598435493287374887?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Sun, 22 Apr 2018 09:05:21 +0100,
+Pavel Machek wrote:
+> 
+> Hi!
+> 
+> > @@ -205,6 +205,14 @@ Before jumping into the kernel, the following conditions must be met:
+> >      ICC_SRE_EL2.SRE (bit 0) must be initialised to 0b0.
+> >    - The DT or ACPI tables must describe a GICv2 interrupt controller.
+> >  
+> > +  For CPUs with pointer authentication functionality:
+> > +  - If EL3 is present:
+> > +    SCR_EL3.APK (bit 16) must be initialised to 0b1
+> > +    SCR_EL3.API (bit 17) must be initialised to 0b1
+> > +  - If the kernel is entered at EL1:
+> > +    HCR_EL2.APK (bit 40) must be initialised to 0b1
+> > +    HCR_EL2.API (bit 41) must be initialised to 0b1
+> > +
+> 
+> 0b1 is quite confusing way to write 1.
 
---V88s5gaDVPzZ0KCq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Do you find 0x1 equally confusing?
 
-Hi!
+0bx is a pretty common way of describing bit-fields of a hardware
+register. It is also consistent with the rest of this document.
 
-> @@ -205,6 +205,14 @@ Before jumping into the kernel, the following condit=
-ions must be met:
->      ICC_SRE_EL2.SRE (bit 0) must be initialised to 0b0.
->    - The DT or ACPI tables must describe a GICv2 interrupt controller.
-> =20
-> +  For CPUs with pointer authentication functionality:
-> +  - If EL3 is present:
-> +    SCR_EL3.APK (bit 16) must be initialised to 0b1
-> +    SCR_EL3.API (bit 17) must be initialised to 0b1
-> +  - If the kernel is entered at EL1:
-> +    HCR_EL2.APK (bit 40) must be initialised to 0b1
-> +    HCR_EL2.API (bit 41) must be initialised to 0b1
-> +
+	M.
 
-0b1 is quite confusing way to write 1.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---V88s5gaDVPzZ0KCq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrcQkAACgkQMOfwapXb+vKlSQCeNU0RERVJm4ZqVsCIP89svUq/
-RK0AnR1nYiaJQ9ICHmunce6TL5rFZM0O
-=7Aq9
------END PGP SIGNATURE-----
-
---V88s5gaDVPzZ0KCq--
+-- 
+Jazz is not dead, it just smell funny.
