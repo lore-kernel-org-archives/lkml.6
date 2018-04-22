@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/xa6M31W7vO4Fed0pKLxsfmgCPpwEJyNjkacV3CzBBYokyjclqR1bX6cJjIw76Y0t6paxF
-ARC-Seal: i=1; a=rsa-sha256; t=1524406441; cv=none;
+X-Google-Smtp-Source: AIpwx49k+wnLpO8QjbqvJpRAJGH8HLI84eW4p7srYE7M0giVmODXHj68Tg6f9IxCvGf4SeeXYpvi
+ARC-Seal: i=1; a=rsa-sha256; t=1524406435; cv=none;
         d=google.com; s=arc-20160816;
-        b=LRt8binJEeOlID2Y3OKx5XwRDYyiYP+NJmiFVSM65nzQC47M0m+IQg56QCqaLLIZQB
-         7pAPbBLgDaD22o5f2E8SCnjukBXSwu1GE5/aoSFdlbA6fN5s5a6ihaqDoEL2N9O4ly/R
-         4dQ2zR35g+9RK7rsRPDR18qp5gApKjs67D/iu0kregifILwECoK4svvbLiCzUNTzWmtO
-         AFFuF+ZF+f+ZoQM8kLFTNpRw6p4hbl7Teu5q8x/dw7BnYgCxvYunSiN4jGBOd5nYaOnY
-         e8VunYEJxToNS52+LYBIaBEnHXAXb1VetdOt3obQVR5Z5iha7tK9IwiqMRMfy2gVcEmF
-         Dfnw==
+        b=o9HWv20GoWNV0v5IOZBIp+3T/SPDi7tAxUtrCJUh3t+3VCq3gXRR8xImEqNn30cyjA
+         BV8lEuzoDrinwBD9OmhjfaN8XjbWHEFPRcTwWC63o/2HFiAcTzphTiqCGRihdtsqJUGq
+         +IxAvTG0lsiNk4pgW436EOdwQELbtMhRcqpdK+JL6D9t8tcJ3SIyBVG7m99DED3aczgD
+         r8l1xcHoc82yZpGCgsrtc5vfznxb8dxlsQ30zB9Qzv3r9A+ZJyI+oBh0qFtn0aoNiy4B
+         H4yC8U78HOpPKUYiGxSaA9swxGk3Zf9SNJYD5nNCZremt9IrlMr2SxdahjXwmzvttUmC
+         DloA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ginU0lqF7ed0hzAj0JTtR9HtDpDT7MTJdSGzo9dbxm0=;
-        b=hUfS8zN4F6oKHzq31FG55EHas8/hkt+umQ9mVqnYWDJsWFrpEAFnwjkiwdt1LxDI19
-         9Kqf1nPruEk6iYNVU9/aoTJA31Gy4MHfboGPyt2CJtX2NEH1hnr6OoYH5B+TNCDcAdj1
-         N5AD+BxvCcKkNjfZsgi8/Gq2A5pj/05N7Ed4mQnIviZo4MkG6Es93llWjmcab6fist4Z
-         DrtIWeKm3ctUqlPgIr/j2w2Ry1aUHgBtKWIawNwWfRSmfKMLZzxpuxmBNTF/sZ0nkWjf
-         OuZaj1qmCOpIhZ+zx0hwSi5b+HzOlwvfYu/ynnOWIzkd/CT9uGtCG9OAlwL8ZY1PSuyf
-         oTeg==
+        bh=CQfTuh3ZMgAro7RTYOrqu1ZU8j0K8DnicKRROroeMEk=;
+        b=UtrlRIaX2SQ6oyun6q8hgW8jgdzgNVnaDt7S+YgxF6nbJtfj9QDv2AcS6Xr5BwevfY
+         S1GM3Tm9KoTQ3pSYv5deg2oMcKy9QMv4U+3c1YJFTg8bKCmzcaGrOL6NjLyXke9pKeyE
+         Klug39z78ZoeLDCzOF7iIiuBMZ7LGMQPDskMYo+q4G8kcW7YBjwx3cqov4QTqda3M4Jv
+         N6m+ptCIcWyNzEA7dHe6bjYFVRvmhYk1t4cov8MXo9br/sm5PImePtvNgh2C4AIBRQpS
+         sY1Pru1FsPPAP/3yMt8G6fphqdOVeAJ8QbPfT0v3fsEWUc604CoLvr5nAjJpeXTwvJg8
+         /hwA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Wang <davidwang@zhaoxin.com>,
+	=?UTF-8?q?Fabi=C3=A1n=20Inostroza?= <fabianinostroza@udec.cl>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 73/95] ALSA: hda - New VIA controller suppor no-snoop path
-Date: Sun, 22 Apr 2018 15:53:42 +0200
-Message-Id: <20180422135213.414667899@linuxfoundation.org>
+Subject: [PATCH 4.9 71/95] ALSA: line6: Use correct endpoint type for midi output
+Date: Sun, 22 Apr 2018 15:53:40 +0200
+Message-Id: <20180422135213.335563003@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455325045223483?=
-X-GMAIL-MSGID: =?utf-8?q?1598456008405042391?=
+X-GMAIL-THRID: =?utf-8?q?1598455267717959842?=
+X-GMAIL-MSGID: =?utf-8?q?1598456002405763078?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,33 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Wang <davidwang@zhaoxin.com>
+From: Fabián Inostroza <soulsonceonfire@gmail.com>
 
-commit af52f9982e410edac21ca4b49563053ffc9da1eb upstream.
+commit 7ecb46e9ee9af18e304eb9e7d6804c59a408e846 upstream.
 
-This patch is used to tell kernel that new VIA HDAC controller also
-support no-snoop path.
+Sending MIDI messages to a PODxt through the USB connection shows
+"usb_submit_urb failed" in dmesg and the message is not received by
+the POD.
 
-[ minor coding style fix by tiwai ]
+The error is caused because in the funcion send_midi_async() in midi.c
+there is a call to usb_sndbulkpipe() for endpoint 3 OUT, but the PODxt
+USB descriptor shows that this endpoint it's an interrupt endpoint.
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
+Patch tested with PODxt only.
+
+[ The bug has been present from the very beginning in the staging
+  driver time, but Fixes below points to the commit moving to sound/
+  directory so that the fix can be cleanly applied -- tiwai ]
+
+Fixes: 61864d844c29 ("ALSA: move line6 usb driver into sound/usb")
+Signed-off-by: Fabián Inostroza <fabianinostroza@udec.cl>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_intel.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/usb/line6/midi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -1514,7 +1514,8 @@ static void azx_check_snoop_available(st
- 		 */
- 		u8 val;
- 		pci_read_config_byte(chip->pci, 0x42, &val);
--		if (!(val & 0x80) && chip->pci->revision == 0x30)
-+		if (!(val & 0x80) && (chip->pci->revision == 0x30 ||
-+				      chip->pci->revision == 0x20))
- 			snoop = false;
+--- a/sound/usb/line6/midi.c
++++ b/sound/usb/line6/midi.c
+@@ -125,7 +125,7 @@ static int send_midi_async(struct usb_li
  	}
  
+ 	usb_fill_int_urb(urb, line6->usbdev,
+-			 usb_sndbulkpipe(line6->usbdev,
++			 usb_sndintpipe(line6->usbdev,
+ 					 line6->properties->ep_ctrl_w),
+ 			 transfer_buffer, length, midi_sent, line6,
+ 			 line6->interval);
