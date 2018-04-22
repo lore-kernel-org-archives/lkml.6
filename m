@@ -1,201 +1,349 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751709AbeDVK6S (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 06:58:18 -0400
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:39383 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751163AbeDVK6Q (ORCPT
+        id S1751567AbeDVLEZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 07:04:25 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51427 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750910AbeDVLEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 06:58:16 -0400
-X-Google-Smtp-Source: AIpwx48ptxoiqwIFTNrEvdZsE+7eMWt3Qj6isFi/IBY+lZM0FHPsW6IblIqTmwbiEPwIk/ij9AmPdVCaeHW6N5OKNc0=
+        Sun, 22 Apr 2018 07:04:22 -0400
+Date: Sun, 22 Apr 2018 13:04:19 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [GIT pull] x86 fixes for 4.17
+Message-ID: <alpine.DEB.2.21.1804221251260.6136@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <000000000000116485056a369609@google.com>
-References: <000000000000116485056a369609@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sun, 22 Apr 2018 12:57:54 +0200
-Message-ID: <CACT4Y+Z+739yCrxUxU0PcA5A8w9t0h=R=aUic6Y-tGNJju_yEQ@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in __udp4_lib_rcv
-To: syzbot <syzbot+493bccc5b8cfe9d5035e@syzkaller.appspotmail.com>
-Cc: David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
-X-ccpol: medium
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 7:06 PM, syzbot
-<syzbot+493bccc5b8cfe9d5035e@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot hit the following crash on https://github.com/google/kmsan.git/master
-> commit
-> 35ff515e4bda2646f6c881d33951c306ea9c282a (Tue Apr 10 08:59:43 2018 +0000)
-> Merge pull request #11 from parkerduckworth/readme
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=493bccc5b8cfe9d5035e
->
-> So far this crash happened 11 times on
-> https://github.com/google/kmsan.git/master.
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4935004320694272
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=5133260011077632
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=5329144879513600
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=6627248707860932248
-> compiler: clang version 7.0.0 (trunk 329391)
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+493bccc5b8cfe9d5035e@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
+Linus,
+
+please pull the latest x86-urgent-for-linus git tree from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+
+A small set of fixes for x86:
+
+ - Prevent X2APIC ID 0xFFFFFFFF from being treated as valid, which causes
+   the possible CPU count to be wrong.
+
+ - Prevent 32bit truncation in calc_hpet_ref() which causes the TSC
+   calibration to fail
+
+ - Fix the page table setup for temporary text mappings in the resume code
+   which causes resume failures
+
+ - Make the page table dump code handle HIGHPTE correctly instead of
+   oopsing
+
+ - Support for topologies where NUMA nodes share an LLC to prevent a
+   invalid topology warning and further malfunction on such systems.
+
+ - Remove the now unused pci-nommu code
+
+ - Remove stale function declarations
+
+Thanks,
+
+	tglx
+
+------------------>
+Alison Schofield (1):
+      x86,sched: Allow topologies where NUMA nodes share an LLC
+
+Christoph Hellwig (1):
+      x86: Remove pci-nommu.c
+
+Dou Liyang (2):
+      x86/acpi: Prevent X2APIC id 0xffffffff from being accounted
+      x86/processor: Remove two unused function declarations
+
+Joerg Roedel (2):
+      x86/mm: Prevent kernel Oops in PTDUMP code with HIGHPTE=y
+      x86/power/64: Fix page-table setup for temporary text mapping
+
+Xiaoming Gao (1):
+      x86/tsc: Prevent 32bit truncation in calc_hpet_ref()
 
 
-This does not reproduce after:
-https://github.com/google/kmsan/commit/a7f95e9c8a95e9fbb388c3999b61a17667cd3bbe
-so let's consider this as false positive related to checksums:
+ arch/x86/include/asm/processor.h |  2 -
+ arch/x86/kernel/acpi/boot.c      |  4 ++
+ arch/x86/kernel/pci-nommu.c      | 90 ----------------------------------------
+ arch/x86/kernel/smpboot.c        | 45 +++++++++++++++++---
+ arch/x86/kernel/tsc.c            |  2 +-
+ arch/x86/mm/dump_pagetables.c    | 11 ++---
+ arch/x86/power/hibernate_64.c    |  2 +-
+ 7 files changed, 52 insertions(+), 104 deletions(-)
+ delete mode 100644 arch/x86/kernel/pci-nommu.c
 
-#syz invalid
-
-
-
-> ==================================================================
-> BUG: KMSAN: uninit-value in __udp4_lib_rcv+0x628/0x4740 net/ipv4/udp.c:2066
-> CPU: 1 PID: 3573 Comm: syzkaller192717 Not tainted 4.16.0+ #83
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
->  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
->  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
->  __udp4_lib_rcv+0x628/0x4740 net/ipv4/udp.c:2066
->  udp_rcv+0x5c/0x70 net/ipv4/udp.c:2287
->  ip_local_deliver_finish+0x6ed/0xd40 net/ipv4/ip_input.c:216
->  NF_HOOK include/linux/netfilter.h:288 [inline]
->  ip_local_deliver+0x43c/0x4e0 net/ipv4/ip_input.c:257
->  dst_input include/net/dst.h:449 [inline]
->  ip_rcv_finish+0x1253/0x16d0 net/ipv4/ip_input.c:397
->  NF_HOOK include/linux/netfilter.h:288 [inline]
->  ip_rcv+0x119d/0x16f0 net/ipv4/ip_input.c:493
->  __netif_receive_skb_core+0x47cf/0x4a80 net/core/dev.c:4562
->  __netif_receive_skb net/core/dev.c:4627 [inline]
->  process_backlog+0x62d/0xe20 net/core/dev.c:5307
->  napi_poll net/core/dev.c:5705 [inline]
->  net_rx_action+0x7c1/0x1a70 net/core/dev.c:5771
->  __do_softirq+0x56d/0x93d kernel/softirq.c:285
->  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1040
->  </IRQ>
->  do_softirq kernel/softirq.c:329 [inline]
->  __local_bh_enable_ip+0x114/0x140 kernel/softirq.c:182
->  local_bh_enable+0x36/0x40 include/linux/bottom_half.h:32
->  rcu_read_unlock_bh include/linux/rcupdate.h:726 [inline]
->  ip_finish_output2+0x124e/0x1380 net/ipv4/ip_output.c:231
->  ip_finish_output+0xcb0/0xff0 net/ipv4/ip_output.c:317
->  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
->  ip_output+0x502/0x5c0 net/ipv4/ip_output.c:405
->  dst_output include/net/dst.h:443 [inline]
->  ip_local_out net/ipv4/ip_output.c:124 [inline]
->  ip_send_skb+0x5f3/0x820 net/ipv4/ip_output.c:1414
->  ip_push_pending_frames+0x105/0x170 net/ipv4/ip_output.c:1434
->  raw_sendmsg+0x2960/0x3ed0 net/ipv4/raw.c:684
->  inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
->  sock_sendmsg_nosec net/socket.c:630 [inline]
->  sock_sendmsg net/socket.c:640 [inline]
->  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
->  __sys_sendmsg net/socket.c:2080 [inline]
->  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
->  SyS_sendmsg+0x54/0x80 net/socket.c:2087
->  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> RIP: 0033:0x43fe99
-> RSP: 002b:00007ffca5bf5be8 EFLAGS: 00000217 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fe99
-> RDX: 0000000000000000 RSI: 00000000200002c0 RDI: 0000000000000003
-> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-> R10: 00000000004002c8 R11: 0000000000000217 R12: 00000000004017c0
-> R13: 0000000000401850 R14: 0000000000000000 R15: 0000000000000000
->
-> Uninit was stored to memory at:
->  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
->  kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
->  kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
->  kmsan_memcpy_origins+0x11d/0x170 mm/kmsan/kmsan.c:526
->  __msan_memcpy+0x19f/0x1f0 mm/kmsan/kmsan_instr.c:470
->  skb_copy_bits+0x63a/0xdb0 net/core/skbuff.c:2046
->  __pskb_pull_tail+0x483/0x22e0 net/core/skbuff.c:1883
->  pskb_may_pull include/linux/skbuff.h:2112 [inline]
->  __udp4_lib_rcv+0x55f/0x4740 net/ipv4/udp.c:2058
->  udp_rcv+0x5c/0x70 net/ipv4/udp.c:2287
->  ip_local_deliver_finish+0x6ed/0xd40 net/ipv4/ip_input.c:216
->  NF_HOOK include/linux/netfilter.h:288 [inline]
->  ip_local_deliver+0x43c/0x4e0 net/ipv4/ip_input.c:257
->  dst_input include/net/dst.h:449 [inline]
->  ip_rcv_finish+0x1253/0x16d0 net/ipv4/ip_input.c:397
->  NF_HOOK include/linux/netfilter.h:288 [inline]
->  ip_rcv+0x119d/0x16f0 net/ipv4/ip_input.c:493
->  __netif_receive_skb_core+0x47cf/0x4a80 net/core/dev.c:4562
->  __netif_receive_skb net/core/dev.c:4627 [inline]
->  process_backlog+0x62d/0xe20 net/core/dev.c:5307
->  napi_poll net/core/dev.c:5705 [inline]
->  net_rx_action+0x7c1/0x1a70 net/core/dev.c:5771
->  __do_softirq+0x56d/0x93d kernel/softirq.c:285
-> Uninit was created at:
->  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
->  kmsan_alloc_meta_for_pages+0x161/0x3a0 mm/kmsan/kmsan.c:814
->  kmsan_alloc_page+0x82/0xe0 mm/kmsan/kmsan.c:868
->  __alloc_pages_nodemask+0xf5b/0x5dc0 mm/page_alloc.c:4283
->  alloc_pages_current+0x6b5/0x970 mm/mempolicy.c:2055
->  alloc_pages include/linux/gfp.h:494 [inline]
->  skb_page_frag_refill+0x3ba/0x5e0 net/core/sock.c:2208
->  sk_page_frag_refill+0xa4/0x340 net/core/sock.c:2228
->  __ip_append_data+0x107e/0x3d10 net/ipv4/ip_output.c:1057
->  ip_append_data+0x2fb/0x440 net/ipv4/ip_output.c:1170
->  raw_sendmsg+0x287b/0x3ed0 net/ipv4/raw.c:678
->  inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
->  sock_sendmsg_nosec net/socket.c:630 [inline]
->  sock_sendmsg net/socket.c:640 [inline]
->  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
->  __sys_sendmsg net/socket.c:2080 [inline]
->  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
->  SyS_sendmsg+0x54/0x80 net/socket.c:2087
->  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> ==================================================================
->
->
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000116485056a369609%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 4fa4206029e3..21a114914ba4 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -749,13 +749,11 @@ enum idle_boot_override {IDLE_NO_OVERRIDE=0, IDLE_HALT, IDLE_NOMWAIT,
+ extern void enable_sep_cpu(void);
+ extern int sysenter_setup(void);
+ 
+-extern void early_trap_init(void);
+ void early_trap_pf_init(void);
+ 
+ /* Defined in head.S */
+ extern struct desc_ptr		early_gdt_descr;
+ 
+-extern void cpu_set_gdt(int);
+ extern void switch_to_new_gdt(int);
+ extern void load_direct_gdt(int);
+ extern void load_fixmap_gdt(int);
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index dde444f932c1..3b20607d581b 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -215,6 +215,10 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
+ 	apic_id = processor->local_apic_id;
+ 	enabled = processor->lapic_flags & ACPI_MADT_ENABLED;
+ 
++	/* Ignore invalid ID */
++	if (apic_id == 0xffffffff)
++		return 0;
++
+ 	/*
+ 	 * We need to register disabled CPU as well to permit
+ 	 * counting disabled CPUs. This allows us to size
+diff --git a/arch/x86/kernel/pci-nommu.c b/arch/x86/kernel/pci-nommu.c
+deleted file mode 100644
+index ac7ea3a8242f..000000000000
+--- a/arch/x86/kernel/pci-nommu.c
++++ /dev/null
+@@ -1,90 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/* Fallback functions when the main IOMMU code is not compiled in. This
+-   code is roughly equivalent to i386. */
+-#include <linux/dma-direct.h>
+-#include <linux/scatterlist.h>
+-#include <linux/string.h>
+-#include <linux/gfp.h>
+-#include <linux/pci.h>
+-#include <linux/mm.h>
+-
+-#include <asm/processor.h>
+-#include <asm/iommu.h>
+-#include <asm/dma.h>
+-
+-#define NOMMU_MAPPING_ERROR		0
+-
+-static int
+-check_addr(char *name, struct device *hwdev, dma_addr_t bus, size_t size)
+-{
+-	if (hwdev && !dma_capable(hwdev, bus, size)) {
+-		if (*hwdev->dma_mask >= DMA_BIT_MASK(32))
+-			printk(KERN_ERR
+-			    "nommu_%s: overflow %Lx+%zu of device mask %Lx\n",
+-				name, (long long)bus, size,
+-				(long long)*hwdev->dma_mask);
+-		return 0;
+-	}
+-	return 1;
+-}
+-
+-static dma_addr_t nommu_map_page(struct device *dev, struct page *page,
+-				 unsigned long offset, size_t size,
+-				 enum dma_data_direction dir,
+-				 unsigned long attrs)
+-{
+-	dma_addr_t bus = phys_to_dma(dev, page_to_phys(page)) + offset;
+-	WARN_ON(size == 0);
+-	if (!check_addr("map_single", dev, bus, size))
+-		return NOMMU_MAPPING_ERROR;
+-	return bus;
+-}
+-
+-/* Map a set of buffers described by scatterlist in streaming
+- * mode for DMA.  This is the scatter-gather version of the
+- * above pci_map_single interface.  Here the scatter gather list
+- * elements are each tagged with the appropriate dma address
+- * and length.  They are obtained via sg_dma_{address,length}(SG).
+- *
+- * NOTE: An implementation may be able to use a smaller number of
+- *       DMA address/length pairs than there are SG table elements.
+- *       (for example via virtual mapping capabilities)
+- *       The routine returns the number of addr/length pairs actually
+- *       used, at most nents.
+- *
+- * Device ownership issues as mentioned above for pci_map_single are
+- * the same here.
+- */
+-static int nommu_map_sg(struct device *hwdev, struct scatterlist *sg,
+-			int nents, enum dma_data_direction dir,
+-			unsigned long attrs)
+-{
+-	struct scatterlist *s;
+-	int i;
+-
+-	WARN_ON(nents == 0 || sg[0].length == 0);
+-
+-	for_each_sg(sg, s, nents, i) {
+-		BUG_ON(!sg_page(s));
+-		s->dma_address = sg_phys(s);
+-		if (!check_addr("map_sg", hwdev, s->dma_address, s->length))
+-			return 0;
+-		s->dma_length = s->length;
+-	}
+-	return nents;
+-}
+-
+-static int nommu_mapping_error(struct device *dev, dma_addr_t dma_addr)
+-{
+-	return dma_addr == NOMMU_MAPPING_ERROR;
+-}
+-
+-const struct dma_map_ops nommu_dma_ops = {
+-	.alloc			= dma_generic_alloc_coherent,
+-	.free			= dma_generic_free_coherent,
+-	.map_sg			= nommu_map_sg,
+-	.map_page		= nommu_map_page,
+-	.is_phys		= 1,
+-	.mapping_error		= nommu_mapping_error,
+-	.dma_supported		= x86_dma_supported,
+-};
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index ff99e2b6fc54..45175b81dd5b 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -77,6 +77,8 @@
+ #include <asm/i8259.h>
+ #include <asm/misc.h>
+ #include <asm/qspinlock.h>
++#include <asm/intel-family.h>
++#include <asm/cpu_device_id.h>
+ 
+ /* Number of siblings per CPU package */
+ int smp_num_siblings = 1;
+@@ -390,15 +392,47 @@ static bool match_smt(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+ 	return false;
+ }
+ 
++/*
++ * Define snc_cpu[] for SNC (Sub-NUMA Cluster) CPUs.
++ *
++ * These are Intel CPUs that enumerate an LLC that is shared by
++ * multiple NUMA nodes. The LLC on these systems is shared for
++ * off-package data access but private to the NUMA node (half
++ * of the package) for on-package access.
++ *
++ * CPUID (the source of the information about the LLC) can only
++ * enumerate the cache as being shared *or* unshared, but not
++ * this particular configuration. The CPU in this case enumerates
++ * the cache to be shared across the entire package (spanning both
++ * NUMA nodes).
++ */
++
++static const struct x86_cpu_id snc_cpu[] = {
++	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_SKYLAKE_X },
++	{}
++};
++
+ static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+ {
+ 	int cpu1 = c->cpu_index, cpu2 = o->cpu_index;
+ 
+-	if (per_cpu(cpu_llc_id, cpu1) != BAD_APICID &&
+-	    per_cpu(cpu_llc_id, cpu1) == per_cpu(cpu_llc_id, cpu2))
+-		return topology_sane(c, o, "llc");
++	/* Do not match if we do not have a valid APICID for cpu: */
++	if (per_cpu(cpu_llc_id, cpu1) == BAD_APICID)
++		return false;
+ 
+-	return false;
++	/* Do not match if LLC id does not match: */
++	if (per_cpu(cpu_llc_id, cpu1) != per_cpu(cpu_llc_id, cpu2))
++		return false;
++
++	/*
++	 * Allow the SNC topology without warning. Return of false
++	 * means 'c' does not share the LLC of 'o'. This will be
++	 * reflected to userspace.
++	 */
++	if (!topology_same_node(c, o) && x86_match_cpu(snc_cpu))
++		return false;
++
++	return topology_sane(c, o, "llc");
+ }
+ 
+ /*
+@@ -456,7 +490,8 @@ static struct sched_domain_topology_level x86_topology[] = {
+ 
+ /*
+  * Set if a package/die has multiple NUMA nodes inside.
+- * AMD Magny-Cours and Intel Cluster-on-Die have this.
++ * AMD Magny-Cours, Intel Cluster-on-Die, and Intel
++ * Sub-NUMA Clustering have this.
+  */
+ static bool x86_has_numa_in_package;
+ 
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index ef32297ff17e..91e6da48cbb6 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -317,7 +317,7 @@ static unsigned long calc_hpet_ref(u64 deltatsc, u64 hpet1, u64 hpet2)
+ 	hpet2 -= hpet1;
+ 	tmp = ((u64)hpet2 * hpet_readl(HPET_PERIOD));
+ 	do_div(tmp, 1000000);
+-	do_div(deltatsc, tmp);
++	deltatsc = div64_u64(deltatsc, tmp);
+ 
+ 	return (unsigned long) deltatsc;
+ }
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 62a7e9f65dec..cc7ff5957194 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -18,6 +18,7 @@
+ #include <linux/init.h>
+ #include <linux/sched.h>
+ #include <linux/seq_file.h>
++#include <linux/highmem.h>
+ 
+ #include <asm/pgtable.h>
+ 
+@@ -334,16 +335,16 @@ static void walk_pte_level(struct seq_file *m, struct pg_state *st, pmd_t addr,
+ 			   pgprotval_t eff_in, unsigned long P)
+ {
+ 	int i;
+-	pte_t *start;
++	pte_t *pte;
+ 	pgprotval_t prot, eff;
+ 
+-	start = (pte_t *)pmd_page_vaddr(addr);
+ 	for (i = 0; i < PTRS_PER_PTE; i++) {
+-		prot = pte_flags(*start);
+-		eff = effective_prot(eff_in, prot);
+ 		st->current_address = normalize_addr(P + i * PTE_LEVEL_MULT);
++		pte = pte_offset_map(&addr, st->current_address);
++		prot = pte_flags(*pte);
++		eff = effective_prot(eff_in, prot);
+ 		note_page(m, st, __pgprot(prot), eff, 5);
+-		start++;
++		pte_unmap(pte);
+ 	}
+ }
+ #ifdef CONFIG_KASAN
+diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+index 48b14b534897..ccf4a49bb065 100644
+--- a/arch/x86/power/hibernate_64.c
++++ b/arch/x86/power/hibernate_64.c
+@@ -98,7 +98,7 @@ static int set_up_temporary_text_mapping(pgd_t *pgd)
+ 		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
+ 	} else {
+ 		/* No p4d for 4-level paging: point the pgd to the pud page table */
+-		pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
++		pgd_t new_pgd = __pgd(__pa(pud) | pgprot_val(pgtable_prot));
+ 		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
+ 	}
+ 
