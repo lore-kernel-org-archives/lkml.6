@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4953VrrfXToSd310UyudtmCgoK8VGthtZnBZ77xM7U0JTbH0Wx9ANR/57BJIVplJBHb2dHm
-ARC-Seal: i=1; a=rsa-sha256; t=1524405524; cv=none;
+X-Google-Smtp-Source: AIpwx4/KDHwPL9KGgbS7krvV1IgaAcp/ie0DKK7Lg8/oUw24krgtgCku8lOmyOPM8gRW6+H+E4F+
+ARC-Seal: i=1; a=rsa-sha256; t=1524405521; cv=none;
         d=google.com; s=arc-20160816;
-        b=fdncWoxjQBCaCjdc1ahEEexe+mJ5ZhKKAYoCTE/NF00kZEgfshRNF8zzRQ/lb72obg
-         7hYkm9ca1qO5zx+QxbDYONHO9RqcSgea0qCViSMPHkkKRgbVhSekv2vB5X7f2Pmb5BA8
-         Yv6fue6X0Rr1le2dAgrDRuNxTa9ZI1IMXDe8dZ1AHVsD22nZg/xQ2/B8gtvQ4oZb4472
-         4SO0UUSPPZWgXNsfHBwzMZre87WI7QhpHsqNf1wSaQU/Ez1Qneaa5ibI42ODOtOAqNPF
-         Fa1oTisgpu3fodtEZ9lewHd9LHxG6tTVNE1mNh40cHqF99clZ5awr1KstajDbabq3h6r
-         kyAA==
+        b=oHtqcaTmf7z790XFe6kHKAV6WQxYprfq0GG/IoR4UZRM/8U5UdzVLUm/9BsEYJfHtX
+         OVw+tM9PA4F72TAn9zY1oXzsImFYoG/sJiL6WnyJGMf9g5yDrMSVkczWfPpjpxsss+Sy
+         51TSEVICKVcv47/LqF5D21sQjktZ9GTGPCRv3EjYXUPkVQrZbj8p41fn1Le+rIEZEWlp
+         Wr8JArJEbU1zhogfFXJLyxAwxxI1Lsg/QzKnAu/jZ8IHrMR81H8/KdehkENK5MicY3Kd
+         0tCD6AHwIWviXxlLRdVPnXM8Pb8WJk/S80jXGoDYM22qaZW4PgOGCNjYEckfMiIgotRw
+         xBuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BOMvre4Y2L+CrBehM12w019hXVq7C5NuYeRO1FTy23M=;
-        b=kd0L285j3RHJgSayyOC72glKsGuLTB2+T5TxebnXWlEU1Z/3oMHbbT197S5CS+4lLj
-         50ezqhtr7HoyPnQJOzuWJJ2nu/9H4RfRw/Q0Qi8xiKF1Go6jgVOT86Hq4eIpPuONMPf3
-         Ne+OP/lAGli1q64GvFoHLHyQ1IsrH3Ah2t7OHZfWc/k90/Z5am56B651LTnt77HQBkUW
-         mUKPHi8oKitu1XjFSjumGdeMAh/bdd0dLh2PFXnECXniI5DYW7RdJRM/445RnQdNg1cx
-         V19lgsxs32mQZNCY0Q6sfYR5NxfQ95eGHqEbJQMeeotBGxj16ypsOuwCKayLobaNntDP
-         OLJw==
+        bh=mSkKBCwbQsR4cxJ3wE5vv4Fn1C6LQunQQ2579c4Kirk=;
+        b=u/rvvFRHi/Zyg8DumMd6DP5UFc3cuW/VTRZl8vxzfLCZh+Alh3wfQeacpQ9vHoq2d7
+         sY9FLUQGpMCS8H4uUydi52KuubJSB2JqKvwwX6PpBu/ZAph2Cc8dGASWiLFhuZygx5xd
+         X/x41J/JDp+TYfFJCwUciAz+HpMTnyuAgXTGSkDRSvNQ2TyohfBtOmtA+S685NOktlZ+
+         eRF/Y/lMQ9b15b+MeEJ3YAQB30xaDy3hQlAcqDsE5sQYEIgKM2T7r6TD1V8O38Mllscy
+         Uge99WgLr5z1un1uGamyQh/GzFI80Ffjr5BI99zg/vvr+4FqSlM6mliXMYVbMiLp1gMc
+         4vpw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+1236ce66f79263e8a862@syzkaller.appspotmail.com,
-	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.16 099/196] ext4: force revalidation of directory pointer after seekdir(2)
-Date: Sun, 22 Apr 2018 15:51:59 +0200
-Message-Id: <20180422135109.375117801@linuxfoundation.org>
+	Theodore Tso <tytso@mit.edu>,
+	stable@kernel.org
+Subject: [PATCH 4.16 098/196] ext4: add extra checks to ext4_xattr_block_get()
+Date: Sun, 22 Apr 2018 15:51:58 +0200
+Message-Id: <20180422135109.331429279@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455047206955441?=
-X-GMAIL-MSGID: =?utf-8?q?1598455047206955441?=
+X-GMAIL-THRID: =?utf-8?q?1598455044329858347?=
+X-GMAIL-MSGID: =?utf-8?q?1598455044329858347?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,40 +51,104 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit e40ff213898502d299351cc2fe1e350cd186f0d3 upstream.
+commit 54dd0e0a1b255f115f8647fc6fb93273251b01b9 upstream.
 
-A malicious user could force the directory pointer to be in an invalid
-spot by using seekdir(2).  Use the mechanism we already have to notice
-if the directory has changed since the last time we called
-ext4_readdir() to force a revalidation of the pointer.
+Add explicit checks in ext4_xattr_block_get() just in case the
+e_value_offs and e_value_size fields in the the xattr block are
+corrupted in memory after the buffer_verified bit is set on the xattr
+block.
 
-Reported-by: syzbot+1236ce66f79263e8a862@syzkaller.appspotmail.com
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/dir.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/ext4/xattr.c |   26 +++++++++++++++++++-------
+ fs/ext4/xattr.h |   11 +++++++++++
+ 2 files changed, 30 insertions(+), 7 deletions(-)
 
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -365,13 +365,15 @@ static loff_t ext4_dir_llseek(struct fil
- {
- 	struct inode *inode = file->f_mapping->host;
- 	int dx_dir = is_dx_dir(inode);
--	loff_t htree_max = ext4_get_htree_eof(file);
-+	loff_t ret, htree_max = ext4_get_htree_eof(file);
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -197,7 +197,7 @@ ext4_xattr_check_entries(struct ext4_xat
+ 	while (!IS_LAST_ENTRY(entry)) {
+ 		u32 size = le32_to_cpu(entry->e_value_size);
  
- 	if (likely(dx_dir))
--		return generic_file_llseek_size(file, offset, whence,
-+		ret = generic_file_llseek_size(file, offset, whence,
- 						    htree_max, htree_max);
- 	else
--		return ext4_llseek(file, offset, whence);
-+		ret = ext4_llseek(file, offset, whence);
-+	file->f_version = inode_peek_iversion(inode) - 1;
-+	return ret;
- }
+-		if (size > INT_MAX)
++		if (size > EXT4_XATTR_SIZE_MAX)
+ 			return -EFSCORRUPTED;
+ 
+ 		if (size != 0 && entry->e_value_inum == 0) {
+@@ -540,8 +540,10 @@ ext4_xattr_block_get(struct inode *inode
+ 	if (error)
+ 		goto cleanup;
+ 	size = le32_to_cpu(entry->e_value_size);
++	error = -ERANGE;
++	if (unlikely(size > EXT4_XATTR_SIZE_MAX))
++		goto cleanup;
+ 	if (buffer) {
+-		error = -ERANGE;
+ 		if (size > buffer_size)
+ 			goto cleanup;
+ 		if (entry->e_value_inum) {
+@@ -550,8 +552,12 @@ ext4_xattr_block_get(struct inode *inode
+ 			if (error)
+ 				goto cleanup;
+ 		} else {
+-			memcpy(buffer, bh->b_data +
+-			       le16_to_cpu(entry->e_value_offs), size);
++			u16 offset = le16_to_cpu(entry->e_value_offs);
++			void *p = bh->b_data + offset;
++
++			if (unlikely(p + size > end))
++				goto cleanup;
++			memcpy(buffer, p, size);
+ 		}
+ 	}
+ 	error = size;
+@@ -589,8 +595,10 @@ ext4_xattr_ibody_get(struct inode *inode
+ 	if (error)
+ 		goto cleanup;
+ 	size = le32_to_cpu(entry->e_value_size);
++	error = -ERANGE;
++	if (unlikely(size > EXT4_XATTR_SIZE_MAX))
++		goto cleanup;
+ 	if (buffer) {
+-		error = -ERANGE;
+ 		if (size > buffer_size)
+ 			goto cleanup;
+ 		if (entry->e_value_inum) {
+@@ -599,8 +607,12 @@ ext4_xattr_ibody_get(struct inode *inode
+ 			if (error)
+ 				goto cleanup;
+ 		} else {
+-			memcpy(buffer, (void *)IFIRST(header) +
+-			       le16_to_cpu(entry->e_value_offs), size);
++			u16 offset = le16_to_cpu(entry->e_value_offs);
++			void *p = (void *)IFIRST(header) + offset;
++
++			if (unlikely(p + size > end))
++				goto cleanup;
++			memcpy(buffer, p, size);
+ 		}
+ 	}
+ 	error = size;
+--- a/fs/ext4/xattr.h
++++ b/fs/ext4/xattr.h
+@@ -71,6 +71,17 @@ struct ext4_xattr_entry {
+ #define IFIRST(hdr) ((struct ext4_xattr_entry *)((hdr)+1))
  
  /*
++ * XATTR_SIZE_MAX is currently 64k, but for the purposes of checking
++ * for file system consistency errors, we use a somewhat bigger value.
++ * This allows XATTR_SIZE_MAX to grow in the future, but by using this
++ * instead of INT_MAX for certain consistency checks, we don't need to
++ * worry about arithmetic overflows.  (Actually XATTR_SIZE_MAX is
++ * defined in include/uapi/linux/limits.h, so changing it is going
++ * not going to be trivial....)
++ */
++#define EXT4_XATTR_SIZE_MAX (1 << 24)
++
++/*
+  * The minimum size of EA value when you start storing it in an external inode
+  * size of block - size of header - size of 1 entry - 4 null bytes
+ */
