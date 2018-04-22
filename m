@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/AkiaP/NBPUc7maBGi7ikIibEgcSknX/Bof6fBTJCSTcv4TptnQ1TRjRT2ykHLY8DItWBK
-ARC-Seal: i=1; a=rsa-sha256; t=1524406300; cv=none;
+X-Google-Smtp-Source: AIpwx4/Li63y4PVEGRyxS8XfJDRFEDdozLn9Kd8QlhI+iBtAkjlA/QSvgG6WP8zi/Sn9JoyPjvyj
+ARC-Seal: i=1; a=rsa-sha256; t=1524406297; cv=none;
         d=google.com; s=arc-20160816;
-        b=0fLV8MujfQEu3ExNnzXbqYJWboOP1d8/m07FEaEcEaEVOxelC0L+YeFRq7LLPCl+ju
-         22xN978pQAEZRb3T4mL4k8O1364BZCUHGifoGMXOyERvJ3vta2WZYftrSq/0yKImwL4d
-         XbmTQ1mMMsrCm/lX8/R5/9uWrgWI2K/Z7MSO8afN9IIoGXE4f1tx+QWrniNorynEyMQb
-         jl1k0rljIHPVB9qEFW/W7g7DzLQHvPM9INL6QmJnort7z5HLO0wltJo6k0saIo6cTKHE
-         NcY61uLLPLAJwmqdhKR8qOzg5H0cqBZ3OaQTo4a8ArvWYgKHdfIZ6K3vtGSLH6dbKeOX
-         wz+w==
+        b=TqF2N2PcYCgQ9LM92+BfSOEDIA5FONma5kINHJwc6p87QLvKvA1ZJbOHvHpUFllvCi
+         2lysLSwi6Fw97R4IRfxKjaAB28D/IkzxuUx381lZx8lZrWaB21KNPvtMVugN+WKx+2ne
+         qUNghFWBV6uN2Wl5qkfLoDHGBsw3LlrNry69ezOJX722QHJW/9t8u0k78/rmn+EYO9C0
+         jccALKLs2n6/hMX2TnH0K3V2QzuoUiwwUTOAMuMJFnsceFOREaMzHp6MYEJkhqMj6F4S
+         3x8VfnjUwy6BwFkdTxjWaytQJqY0jHmTzSIjNUglLiq7AwJ0BceTeZYc0zXSuF/ekwZM
+         vjxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JR7DsSgJe2xwe1v58mQHtYb4i1g8aGgMjBfCIOiuykI=;
-        b=N8E0PibTZDCgXg6zldCVDtguZX/9N5R+EiMAhMCj1ciHPA7bi4+eR8cbNbkv2CeO4r
-         kYZqFI4UY3QquP8W5Vvrd3ph5tFsF6Kl6arT7xO1sX7IurlEKk6GANQaNtt19EaM7n2A
-         f0/KZhbSUDywxG+NRR3Ow8b7supqHSj8UBZfJ3R8H15f1vgQChVOXHtx6L5R40X1n17Y
-         BF6mL66MjG5o489eTnJDDERGri9ydS/IRyLp2Ob3tq/GcyHJHqlFu5q2wT0fOEtULex4
-         IVFES1D0Uwr/QgNm4vIjZbXpVJsgAqk2H7K5MsSPo9hMiehHmOndIEQvRnbO5c4tgflm
-         M0XA==
+        bh=Ga5nb4czOgGcogKvQxNDmoRaY5uqUCJLEmf4u4b/x0I=;
+        b=n0VQbftBIFXfcRXNwK/s05kafprydkRse5JvtyHxgPWTWnZCDN806CbnJfU0lAY1dr
+         SQc47m4oKw4t2ZqIaaw4htSPdZVkxielD5wejy+gcOVXy5gQwrGKPNAFT7qEN8epgTdi
+         5XzfaxlIFJZ98gXvstXgZEOAt+MgYCRUD5N0EoYitsi4GKO1QRDFrgJDkyiyMNwu9r3c
+         +9fxPpSqSL0HOBSZH7JosmMVbwQaiyUBLv7Mzzg7Mdc4n8nrH2Cj4T89M5N788i+Qrah
+         T8E5e+t3Ss13i6z2hAo1No5sql3QIPkEBFHli0VHjQz3mSfJB1OM9rRffMsD9EkR8cqw
+         JUQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tuba Yavuz <tuba@ece.ufl.edu>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.9 20/95] USB: gadget: f_midi: fixing a possible double-free in f_midi
-Date: Sun, 22 Apr 2018 15:52:49 +0200
-Message-Id: <20180422135211.266586357@linuxfoundation.org>
+	Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.9 02/95] ubifs: Check ubifs_wbuf_sync() return code
+Date: Sun, 22 Apr 2018 15:52:31 +0200
+Message-Id: <20180422135210.535012308@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454885662324670?=
-X-GMAIL-MSGID: =?utf-8?q?1598455860869216067?=
+X-GMAIL-THRID: =?utf-8?q?1598454799330179437?=
+X-GMAIL-MSGID: =?utf-8?q?1598455858217402571?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,66 +48,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yavuz, Tuba <tuba@ece.ufl.edu>
+From: Richard Weinberger <richard@nod.at>
 
-commit 7fafcfdf6377b18b2a726ea554d6e593ba44349f upstream.
+commit aac17948a7ce01fb60b9ee6cf902967a47b3ce26 upstream.
 
-It looks like there is a possibility of a double-free vulnerability on an
-error path of the f_midi_set_alt function in the f_midi driver. If the
-path is feasible then free_ep_req gets called twice:
+If ubifs_wbuf_sync() fails we must not write a master node with the
+dirty marker cleared.
+Otherwise it is possible that in case of an IO error while syncing we
+mark the filesystem as clean and UBIFS refuses to recover upon next
+mount.
 
-         req->complete = f_midi_complete;
-         err = usb_ep_queue(midi->out_ep, req, GFP_ATOMIC);
-            => ...
-             usb_gadget_giveback_request
-               =>
-                 f_midi_complete (CALLBACK)
-                   (inside f_midi_complete, for various cases of status)
-                   free_ep_req(ep, req); // first kfree
-         if (err) {
-                 ERROR(midi, "%s: couldn't enqueue request: %d\n",
-                             midi->out_ep->name, err);
-                 free_ep_req(midi->out_ep, req); // second kfree
-                 return err;
-         }
-
-The double-free possibility was introduced with commit ad0d1a058eac
-("usb: gadget: f_midi: fix leak on failed to enqueue out requests").
-
-Found by MOXCAFE tool.
-
-Signed-off-by: Tuba Yavuz <tuba@ece.ufl.edu>
-Fixes: ad0d1a058eac ("usb: gadget: f_midi: fix leak on failed to enqueue out requests")
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 1e51764a3c2a ("UBIFS: add new flash file system")
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/function/f_midi.c |    3 ++-
- drivers/usb/gadget/u_f.h             |    2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ fs/ubifs/super.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/gadget/function/f_midi.c
-+++ b/drivers/usb/gadget/function/f_midi.c
-@@ -389,7 +389,8 @@ static int f_midi_set_alt(struct usb_fun
- 		if (err) {
- 			ERROR(midi, "%s: couldn't enqueue request: %d\n",
- 				    midi->out_ep->name, err);
--			free_ep_req(midi->out_ep, req);
-+			if (req->buf != NULL)
-+				free_ep_req(midi->out_ep, req);
- 			return err;
- 		}
- 	}
---- a/drivers/usb/gadget/u_f.h
-+++ b/drivers/usb/gadget/u_f.h
-@@ -64,7 +64,9 @@ struct usb_request *alloc_ep_req(struct
- /* Frees a usb_request previously allocated by alloc_ep_req() */
- static inline void free_ep_req(struct usb_ep *ep, struct usb_request *req)
- {
-+	WARN_ON(req->buf == NULL);
- 	kfree(req->buf);
-+	req->buf = NULL;
- 	usb_ep_free_request(ep, req);
- }
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -1728,8 +1728,11 @@ static void ubifs_remount_ro(struct ubif
  
+ 	dbg_save_space_info(c);
+ 
+-	for (i = 0; i < c->jhead_cnt; i++)
+-		ubifs_wbuf_sync(&c->jheads[i].wbuf);
++	for (i = 0; i < c->jhead_cnt; i++) {
++		err = ubifs_wbuf_sync(&c->jheads[i].wbuf);
++		if (err)
++			ubifs_ro_mode(c, err);
++	}
+ 
+ 	c->mst_node->flags &= ~cpu_to_le32(UBIFS_MST_DIRTY);
+ 	c->mst_node->flags |= cpu_to_le32(UBIFS_MST_NO_ORPHS);
+@@ -1795,8 +1798,11 @@ static void ubifs_put_super(struct super
+ 			int err;
+ 
+ 			/* Synchronize write-buffers */
+-			for (i = 0; i < c->jhead_cnt; i++)
+-				ubifs_wbuf_sync(&c->jheads[i].wbuf);
++			for (i = 0; i < c->jhead_cnt; i++) {
++				err = ubifs_wbuf_sync(&c->jheads[i].wbuf);
++				if (err)
++					ubifs_ro_mode(c, err);
++			}
+ 
+ 			/*
+ 			 * We are being cleanly unmounted which means the
