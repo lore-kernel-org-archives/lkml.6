@@ -1,118 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752538AbeDVKtR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 06:49:17 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40446 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752158AbeDVKtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 06:49:15 -0400
-Date: Sun, 22 Apr 2018 12:48:49 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Alex G." <mr.nuke.me@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
-        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
-        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
-        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
-        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com,
-        Yazen Ghannam <yazen.ghannam@amd.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [RFC PATCH v2 3/4] acpi: apei: Do not panic() when correctable
- errors are marked as fatal.
-Message-ID: <20180422104849.GA32754@pd.tnic>
-References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
- <20180416215903.7318-4-mr.nuke.me@gmail.com>
- <20180418175415.GJ4795@pd.tnic>
- <bdc1d19b-3cc1-3f90-d276-414aaacdbd3a@gmail.com>
- <20180419154006.GE3600@pd.tnic>
- <977608e6-9f5d-c523-a78a-993ac5bfd55f@gmail.com>
- <20180419164528.GD5635@pd.tnic>
- <ffe6b459-c80a-d3c0-451d-0d21ae63da54@gmail.com>
- <20180419190323.GF5635@pd.tnic>
- <dba07329-2f85-2bde-85ea-5bdf26fb8df2@gmail.com>
+        id S1751685AbeDVKva (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 06:51:30 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51409 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751234AbeDVKvZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 06:51:25 -0400
+Date: Sun, 22 Apr 2018 12:51:23 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [GIT pull] timer fixes for 4.17
+Message-ID: <alpine.DEB.2.21.1804221248320.6136@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <dba07329-2f85-2bde-85ea-5bdf26fb8df2@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 05:55:08PM -0500, Alex G. wrote:
-> > How does such an error look like, in detail?
-> 
-> It's green on the soft side, with lots of red accents, as well as some
-> textured white shades:
-> 
-> [   51.414616] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down
-> [   51.414634] pciehp 0000:b0:05.0:pcie204: Slot(179): Link Down
-> [   52.703343] FIRMWARE BUG: Firmware sent fatal error that we were able
-> to correct
-> [   52.703345] BROKEN FIRMWARE: Complain to your hardware vendor
-> [   52.703347] {1}[Hardware Error]: Hardware error from APEI Generic
-> Hardware Error Source: 1
-> [   52.703358] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Up
-> [   52.711616] {1}[Hardware Error]: event severity: fatal
-> [   52.716754] {1}[Hardware Error]:  Error 0, type: fatal
-> [   52.721891] {1}[Hardware Error]:   section_type: PCIe error
-> [   52.727463] {1}[Hardware Error]:   port_type: 6, downstream switch port
-> [   52.734075] {1}[Hardware Error]:   version: 3.0
-> [   52.738607] {1}[Hardware Error]:   command: 0x0407, status: 0x0010
-> [   52.744786] {1}[Hardware Error]:   device_id: 0000:b0:06.0
-> [   52.750271] {1}[Hardware Error]:   slot: 4
-> [   52.754371] {1}[Hardware Error]:   secondary_bus: 0xb3
-> [   52.759509] {1}[Hardware Error]:   vendor_id: 0x10b5, device_id: 0x9733
-> [   52.766123] {1}[Hardware Error]:   class_code: 000406
-> [   52.771182] {1}[Hardware Error]:   bridge: secondary_status: 0x0000,
-> control: 0x0003
-> [   52.779038] pcieport 0000:b0:06.0: aer_status: 0x00100000, aer_mask:
-> 0x01a10000
-> [   52.782303] nvme0n1: detected capacity change from 3200631791616 to 0
-> [   52.786348] pcieport 0000:b0:06.0:    [20] Unsupported Request
-> [   52.786349] pcieport 0000:b0:06.0: aer_layer=Transaction Layer,
-> aer_agent=Requester ID
-> [   52.786350] pcieport 0000:b0:06.0: aer_uncor_severity: 0x004eb030
-> [   52.786352] pcieport 0000:b0:06.0:   TLP Header: 40000001 0000020f
-> e12023bc 01000000
-> [   52.786357] pcieport 0000:b0:06.0: broadcast error_detected message
-> [   52.883895] pci 0000:b3:00.0: device has no driver
-> [   52.883976] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down
-> [   52.884184] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down event
-> queued; currently getting powered on
-> [   52.967175] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Up
+Linus,
 
-Btw, from another discussion we're having with Yazen:
+please pull the latest timers-urgent-for-linus git tree from:
 
-@Yazen, do you see how this error record is worth shit?
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
 
- class_code: 000406
- command: 0x0407, status: 0x0010
- bridge: secondary_status: 0x0000, control: 0x0003
- aer_status: 0x00100000, aer_mask: 0x01a10000
- aer_uncor_severity: 0x004eb030
+A small set of timer fixes:
 
-those above are only some of the fields which are purely useless
-undecoded. Makes me wonder what's worse for the user: dump the
-half-decoded error or not dump an error at all...
+ - Evaluate the -ETIME condition correctly in the imx tpm driver
 
-Anyway, Alex, I see this in the logs:
+ - Fix the evaluation order of a condition in posix cpu timers
 
-[   66.581121] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down
-[   66.591939] pciehp 0000:b0:05.0:pcie204: Slot(179): Card not present
-[   66.592102] pciehp 0000:b0:06.0:pcie204: Slot(176): Card not present
+ - Use pr_cont() in the clockevents code to prevent ugly message splitting
 
-and that comes from that pciehp_isr() interrupt handler AFAICT.
+ - Remove __current_kernel_time() which is now unused to prevent that new
+   users show up.
 
-So there *is* a way to know that the card is not present anymore. So,
-theoretically, and ignoring the code layering for now, we can connect
-that error to the card not present event and then ignore the error...
+ - Remove a stale forward declaration
 
-Hmmm.
+Thanks,
 
--- 
-Regards/Gruss,
-    Boris.
+	tglx
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+------------------>
+Anson Huang (1):
+      clocksource/imx-tpm: Correct -ETIME return condition check
+
+Baolin Wang (1):
+      timekeeping: Remove __current_kernel_time()
+
+Geert Uytterhoeven (1):
+      clockevents: Fix kernel messages split across multiple lines
+
+Laura Abbott (1):
+      posix-cpu-timers: Ensure set_process_cpu_timer is always evaluated
+
+Liu, Changcheng (1):
+      timers: Remove stale struct tvec_base forward declaration
+
+
+ drivers/clocksource/timer-imx-tpm.c |  2 +-
+ include/linux/timekeeping32.h       |  3 ---
+ include/linux/timer.h               |  2 --
+ kernel/time/posix-cpu-timers.c      |  4 +++-
+ kernel/time/tick-oneshot.c          | 11 +++++------
+ kernel/time/timekeeping.c           |  7 -------
+ 6 files changed, 9 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
+index 05d97a6871d8..6c8318470b48 100644
+--- a/drivers/clocksource/timer-imx-tpm.c
++++ b/drivers/clocksource/timer-imx-tpm.c
+@@ -114,7 +114,7 @@ static int tpm_set_next_event(unsigned long delta,
+ 	 * of writing CNT registers which may cause the min_delta event got
+ 	 * missed, so we need add a ETIME check here in case it happened.
+ 	 */
+-	return (int)((next - now) <= 0) ? -ETIME : 0;
++	return (int)(next - now) <= 0 ? -ETIME : 0;
+ }
+ 
+ static int tpm_set_state_oneshot(struct clock_event_device *evt)
+diff --git a/include/linux/timekeeping32.h b/include/linux/timekeeping32.h
+index af4114d5dc17..3616b4becb59 100644
+--- a/include/linux/timekeeping32.h
++++ b/include/linux/timekeeping32.h
+@@ -9,9 +9,6 @@
+ extern void do_gettimeofday(struct timeval *tv);
+ unsigned long get_seconds(void);
+ 
+-/* does not take xtime_lock */
+-struct timespec __current_kernel_time(void);
+-
+ static inline struct timespec current_kernel_time(void)
+ {
+ 	struct timespec64 now = current_kernel_time64();
+diff --git a/include/linux/timer.h b/include/linux/timer.h
+index 2448f9cc48a3..7b066fd38248 100644
+--- a/include/linux/timer.h
++++ b/include/linux/timer.h
+@@ -8,8 +8,6 @@
+ #include <linux/debugobjects.h>
+ #include <linux/stringify.h>
+ 
+-struct tvec_base;
+-
+ struct timer_list {
+ 	/*
+ 	 * All fields that change during normal runtime grouped to the
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index 2541bd89f20e..5a6251ac6f7a 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -1205,10 +1205,12 @@ void set_process_cpu_timer(struct task_struct *tsk, unsigned int clock_idx,
+ 			   u64 *newval, u64 *oldval)
+ {
+ 	u64 now;
++	int ret;
+ 
+ 	WARN_ON_ONCE(clock_idx == CPUCLOCK_SCHED);
++	ret = cpu_timer_sample_group(clock_idx, tsk, &now);
+ 
+-	if (oldval && cpu_timer_sample_group(clock_idx, tsk, &now) != -EINVAL) {
++	if (oldval && ret != -EINVAL) {
+ 		/*
+ 		 * We are setting itimer. The *oldval is absolute and we update
+ 		 * it to be relative, *newval argument is relative and we update
+diff --git a/kernel/time/tick-oneshot.c b/kernel/time/tick-oneshot.c
+index c1f518e7aa80..6fe615d57ebb 100644
+--- a/kernel/time/tick-oneshot.c
++++ b/kernel/time/tick-oneshot.c
+@@ -82,16 +82,15 @@ int tick_switch_to_oneshot(void (*handler)(struct clock_event_device *))
+ 	if (!dev || !(dev->features & CLOCK_EVT_FEAT_ONESHOT) ||
+ 		    !tick_device_is_functional(dev)) {
+ 
+-		printk(KERN_INFO "Clockevents: "
+-		       "could not switch to one-shot mode:");
++		pr_info("Clockevents: could not switch to one-shot mode:");
+ 		if (!dev) {
+-			printk(" no tick device\n");
++			pr_cont(" no tick device\n");
+ 		} else {
+ 			if (!tick_device_is_functional(dev))
+-				printk(" %s is not functional.\n", dev->name);
++				pr_cont(" %s is not functional.\n", dev->name);
+ 			else
+-				printk(" %s does not support one-shot mode.\n",
+-				       dev->name);
++				pr_cont(" %s does not support one-shot mode.\n",
++					dev->name);
+ 		}
+ 		return -EINVAL;
+ 	}
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index ca90219a1e73..dcf7f20fcd12 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -2139,13 +2139,6 @@ unsigned long get_seconds(void)
+ }
+ EXPORT_SYMBOL(get_seconds);
+ 
+-struct timespec __current_kernel_time(void)
+-{
+-	struct timekeeper *tk = &tk_core.timekeeper;
+-
+-	return timespec64_to_timespec(tk_xtime(tk));
+-}
+-
+ struct timespec64 current_kernel_time64(void)
+ {
+ 	struct timekeeper *tk = &tk_core.timekeeper;
