@@ -1,64 +1,66 @@
-Return-Path: <vinod.koul@intel.com>
-X-Google-Smtp-Source: AIpwx48VtgMhLHwRjZJokz0rLjDxvaENj3jnCYTibzNGYioVJu9g1MH92PJYJaptyiyvdV2bDlYo
-ARC-Seal: i=1; a=rsa-sha256; t=1524378479; cv=none;
+Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
+X-Google-Smtp-Source: AIpwx495ZZ74q0akiy6KAJYy88P8F0ERiZCA6mbpD9o0fOD3Ytyx0UqTDFV9tpaDjvXk4nk3eKL0
+ARC-Seal: i=1; a=rsa-sha256; t=1524362721; cv=none;
         d=google.com; s=arc-20160816;
-        b=lUQctnz29gwtnlyClwHU4gqA0BeicBthjjkPCRhbMX4nwhMwgDfvKh0Skre5yNFphL
-         rl8n9cDroA1yaGYBUrwAoayMQmVJ/MQPJF3c9yemg8e9vqwGNQSAb62XE3c+gIDmgrSe
-         i371Lz0auhPKjqNwczr1ueqaQqxztUK2ehIb2d6J3Bhyc3IdknJTq0LN8oGAINvFd40U
-         ZGvZDtPULZOAOdBlP290DkuS2s9MlbrT3K4XKKhWjqP/BjvnfJPK7B8/3BVW2ioUmuyo
-         r9hbh1fmfq9Hbric52stqX+WKTWN80zYNTp/tXtubUa24O1B+7z6DTQmgMFVtp1+iiCb
-         IYKA==
+        b=OqFG3FflSxQ8sxDhPSFF4S1mkVU06L5zMTBy0p5zCXk5ccQGj2jauVBNCMEeRIYMiP
+         3/E6AAMDk/lJ7lJRfLxrO+OC1I5je8Gs3jqKokw8jIq7XQMoDWXV3uWiVEqZFD9nUMXy
+         c65Y6iXkr3lRLhGrt2Sk326ghDEPrwSLVC9jZM4rKcX0qUc8hzUTLBf0obZCoDA5GD5j
+         YxcKk3KV5Wn3/mQyyHtm8i1Vxkm7h2yDQ7AJuG5Q3GboYtBYml9xZc1yWUiSDaFLbr1B
+         uiSv3K2wZjtTaIm+rzh+1LoRwUnCg3bmk75QXSe+BZ/MA6fjRlAT1q4IAwB/uNVccLOn
+         knLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=TC4I+weZYI7EE5f0pU80VlI7ygSHpRiU0HvhZJZv+TM=;
-        b=IztvUfS+J5v384Y6j7UA92Y139uwl9fsSdL6fCjabEi/4VGy1+eipNtINIJsHI2I8D
-         h/ij6yYVXPqybUNyhdsZCP6RUOucp7ZD+um9kwT8zGVPSnX1vVHyAfHF3KoWdeRytPCU
-         Uxyj08Wk9n3tmbb5N+z+3Al1kHLoo20p+pxptnrPbxsSzNGx3IOT0iK9PRVtu4NQejVN
-         9iRWQby2XV7kNv6iu9bfqnwUOFW0Fp2L2cuUpeWsiBYeH0XDHBWDT3dAKSgR3lIv7sEc
-         Xk/WiFva4MgDssFfIFuiad9m1i91unr0ISrG50g0Sqi0e+hbf90rOASfATb6QEcY7S6/
-         4ATA==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:cc:references:to:subject
+         :arc-authentication-results;
+        bh=ERYaOdOyT6xPG/Bw0VWiLO6cTkJQ8tPhdROS/b5P9GE=;
+        b=YAFPv9WJont2JW/Sq4DXqGO5f6rQ2ZuHLNJxlCr92GJerx+iWf0pOMvb6J3oYnK7Jn
+         c/EBGqmUg6blINdAoupvuoTJqDGFduqZjrJC5+SmGKNJuwUbLDpAUo3eNrjFBhzwAaJ3
+         KxBpxtcGjvlULdLOVKn/5rDz3f9lHjWRrRwed7zN0JOigOy/EMPoZY9aOR9ZU07+02Sq
+         eOE1QDH0ZHkebhWKnuSGum0PvtrBwb79i3znKJr5hiZdqe8zRkDw2ovw3gB9ajk37SM0
+         PKvGoIs/hRD+G/RKDiQ2rJbkRHDMsRs9l1J13TsA+q+PzDUfoEFmcEm3grYBDYmpAEb2
+         nWcg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of vinod.koul@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=vinod.koul@intel.com
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of vinod.koul@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=vinod.koul@intel.com
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,310,1520924400";
-   d="scan'208";a="45110498"
-Date: Sun, 22 Apr 2018 12:02:32 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: dmaengine@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: add maintainer for Qualcomm HIDMA drivers
-Message-ID: <20180422063232.GX6014@localhost>
-References: <1524151261-13461-1-git-send-email-okaya@codeaurora.org>
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
+Subject: Re: INFO: rcu detected stall in __process_echoes
+To: syzbot <syzbot+108696293d7a21ab688f@syzkaller.appspotmail.com>,
+        dvyukov@google.com, gregkh@linuxfoundation.org,
+        syzkaller-bugs@googlegroups.com
+References: <001a1140e920eb829905687391d6@google.com>
+Cc: akpm@linux-foundation.org, aryabinin@virtuozzo.com,
+        linux-kernel@vger.kernel.org, tchibo@google.com, tglx@linutronix.de
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <9b7f3efc-cfde-df21-1071-a566c970f81e@I-love.SAKURA.ne.jp>
+Date: Sun, 22 Apr 2018 11:04:49 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524151261-13461-1-git-send-email-okaya@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <001a1140e920eb829905687391d6@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598188443339699993?=
-X-GMAIL-MSGID: =?utf-8?q?1598426688139080329?=
+X-GMAIL-THRID: =?utf-8?q?1596163843273194959?=
+X-GMAIL-MSGID: =?utf-8?q?1598410165346350178?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 11:20:32AM -0400, Sinan Kaya wrote:
-> drivers/dma/qcom directory is being shared by multiple QCOM dmaengine
-> drivers. Separate ownership by filenames.
+On 2018/03/28 16:01, syzbot wrote:
+> Hello,
+> 
+> syzbot hit the following crash on upstream commit
+> 3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
+> Linux 4.16-rc7
+> syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=108696293d7a21ab688f
+> 
+> So far this crash happened 10 times on upstream.
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4941573204738048
+> syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5314352743710720
+> Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5561943247028224
+> Kernel config: https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
+> compiler: gcc (GCC) 7.1.1 20170620
 
-Applied, thanks
+Reproducer and result are essentially same with another report. Thus,
 
--- 
-~Vinod
+#syz dup: INFO: rcu detected stall in n_tty_receive_char_special
