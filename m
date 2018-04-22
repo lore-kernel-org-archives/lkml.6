@@ -1,73 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752300AbeDVMeV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 08:34:21 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52983 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751760AbeDVMeS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 08:34:18 -0400
-X-Google-Smtp-Source: AB8JxZr5VLoagYz39cC8X7serEYG1SoSjR3cQeVkDYkzk8NFo7lMUJWeDvdiema4/lE4JhQqZ+XqOvZz466+Pg5zpYM=
+        id S1752071AbeDVMnd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 08:43:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51509 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751281AbeDVMna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 08:43:30 -0400
+Date: Sun, 22 Apr 2018 06:43:24 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: Wang Long <wanglong19@meituan.com>
+Cc: Jan Kara <jack@suse.cz>, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        aryabinin@virtuozzo.com, akpm@linux-foundation.org,
+        khlebnikov@yandex-team.ru, xboe@kernel.dk, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, gthelen@google.com, tj@kernel.org
+Subject: Re: [PATCH] memcg: writeback: use memcg->cgwb_list directly
+Message-ID: <20180422124324.GC17484@dhcp22.suse.cz>
+References: <1524317381-236318-1-git-send-email-wanglong19@meituan.com>
+ <20180421235057.iyl4sipppfx3qp3m@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8xY-RvJKTKfv-e0qonL4oECDBK+ppxztvh9BgdpG8CUg@mail.gmail.com>
-References: <20180419165825.13008-1-ard.biesheuvel@linaro.org>
- <CAJZ5v0jE4Ler2OWeKEWuHwEwM4RHYC5r8BwgcPrT6XBxFjnSNw@mail.gmail.com> <CAKv+Gu8xY-RvJKTKfv-e0qonL4oECDBK+ppxztvh9BgdpG8CUg@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sun, 22 Apr 2018 14:34:17 +0200
-Message-ID: <CAKv+Gu8PmKe+X5b0P_KuWfB6U-P-EngJw04JdJUkEkwrqNK97g@mail.gmail.com>
-Subject: Re: [PATCH] ACPI / bus: ignore rather than fail bus driver
- registrations on non-ACPI boot
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bill Fletcher <bill.fletcher@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180421235057.iyl4sipppfx3qp3m@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22 April 2018 at 11:57, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> On 22 April 2018 at 11:27, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> On Thu, Apr 19, 2018 at 6:58 PM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> When building ACPI bus drivers such as button.ko into the core kernel,
->>> other drivers that depend on its symbols are loadable even when booting
->>> with ACPI disabled. For instance, nouveau.ko has a link time dependency
->>> on acpi_lid_open() on ACPI capable kernels, and calls it regardless of
->>> whether the system booted via ACPI.
->>>
->>> However, when building button.ko as a module, it will refuse to load if
->>> the system did not boot in ACPI mode, which subsequently prevents the
->>> nouveau driver from loading as well, resulting in broken graphics.
->>>
->>> Given that returning an error from an initcall() is ignored for drivers
->>> that are built into the kernel,
->>
->> Which makes sense, because they are present in the kernel anyway.
->>
->>> let's align the module case with this,
->>> and not return an error when registering an ACPI bus driver on a system
->>> that did not boot via ACPI.
->>
->> But why is loading a module that's never going to be used actually OK?
->>
->> Isn't this a problem with the assumptions made by the nouveau driver
->> that need not be met depending on what configuration the kernel is run
->> in?
->>
->> Honestly, it doesn't appear quite right to try to change the rest of
->> the kernel to follow the nouveau's expectations.
->>
->
-> I don't disagree here, I am just unsure whether other options are any better.
->
-> I think the alternative is to make acpi_lid_open() a non-modular
-> function of the ACPI core that invokes the button ACPI bus driver if
-> it was loaded, and always returns false otherwise. Would that work for
-> you?
+On Sun 22-04-18 01:50:57, Jan Kara wrote:
+> On Sat 21-04-18 21:29:41, Wang Long wrote:
+> > Signed-off-by: Wang Long <wanglong19@meituan.com>
+> 
+> Yeah, looks good. I guess it was originally intended to avoid compilation
+> errors if CONFIG_CGROUP_WRITEBACK was disabled. But it doesn't seem likely
+> we'll ever need that list outside of code under CONFIG_CGROUP_WRITEBACK. So
+> you can add:
 
-BTW not only nouveau invokes acpi_lid_open(), i915 does it as well.
+Yeah. Trivial wrappers like these are usualy more harm than goot.  But
+please add _some_ words in the changelog.
+
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
+> 
+> > ---
+> >  include/linux/memcontrol.h | 1 -
+> >  mm/backing-dev.c           | 4 ++--
+> >  mm/memcontrol.c            | 5 -----
+> >  3 files changed, 2 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index d99b71b..c0056e0 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -1093,7 +1093,6 @@ static inline void dec_lruvec_page_state(struct page *page,
+> >  
+> >  #ifdef CONFIG_CGROUP_WRITEBACK
+> >  
+> > -struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg);
+> >  struct wb_domain *mem_cgroup_wb_domain(struct bdi_writeback *wb);
+> >  void mem_cgroup_wb_stats(struct bdi_writeback *wb, unsigned long *pfilepages,
+> >  			 unsigned long *pheadroom, unsigned long *pdirty,
+> > diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+> > index 023190c..0a48e05 100644
+> > --- a/mm/backing-dev.c
+> > +++ b/mm/backing-dev.c
+> > @@ -555,7 +555,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
+> >  	memcg = mem_cgroup_from_css(memcg_css);
+> >  	blkcg_css = cgroup_get_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+> >  	blkcg = css_to_blkcg(blkcg_css);
+> > -	memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
+> > +	memcg_cgwb_list = &memcg->cgwb_list;
+> >  	blkcg_cgwb_list = &blkcg->cgwb_list;
+> >  
+> >  	/* look up again under lock and discard on blkcg mismatch */
+> > @@ -734,7 +734,7 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
+> >   */
+> >  void wb_memcg_offline(struct mem_cgroup *memcg)
+> >  {
+> > -	struct list_head *memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
+> > +	struct list_head *memcg_cgwb_list = &memcg->cgwb_list;
+> >  	struct bdi_writeback *wb, *next;
+> >  
+> >  	spin_lock_irq(&cgwb_lock);
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index e074f7c..d1adb9c 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -3562,11 +3562,6 @@ static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
+> >  
+> >  #ifdef CONFIG_CGROUP_WRITEBACK
+> >  
+> > -struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg)
+> > -{
+> > -	return &memcg->cgwb_list;
+> > -}
+> > -
+> >  static int memcg_wb_domain_init(struct mem_cgroup *memcg, gfp_t gfp)
+> >  {
+> >  	return wb_domain_init(&memcg->cgwb_domain, gfp);
+> > -- 
+> > 1.8.3.1
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
+-- 
+Michal Hocko
+SUSE Labs
