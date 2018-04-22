@@ -1,47 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754044AbeDVQGk (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 12:06:40 -0400
-Received: from mga18.intel.com ([134.134.136.126]:44756 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754054AbeDVQGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 12:06:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,313,1520924400";
-   d="scan'208";a="222407196"
-Date: Sun, 22 Apr 2018 21:41:11 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 0/6] tree-wide: simplify getting .drvdata
-Message-ID: <20180422161111.GY6014@localhost>
-References: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
+        id S1753365AbeDVQS2 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 12:18:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44128 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751283AbeDVQS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 12:18:27 -0400
+Date: Sun, 22 Apr 2018 18:18:24 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Sangwon Hong <qpakzk@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Taeung Song <treeze.taeung@gmail.com>
+Subject: Re: [PATCH] perf mem: Document uncorrect and missing options
+Message-ID: <20180422161824.GA2123@krava>
+References: <1524382146-19609-1-git-send-email-qpakzk@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1524382146-19609-1-git-send-email-qpakzk@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 22, 2018 at 11:14:08AM +0200, Wolfram Sang wrote:
-> I got tired of fixing this in Renesas drivers manually, so I took the big
-> hammer. Remove this cumbersome code pattern which got copy-pasted too much
-> already:
-> 
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-> +	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
-> 
-> I send this out as one patch per directory per subsystem. I think they should
-> be applied individually. If you prefer a broken out series per subsystem, I can
-> provide this as well. Just mail me.
+On Sun, Apr 22, 2018 at 04:29:06PM +0900, Sangwon Hong wrote:
 
-Applied all, thanks
+SNIP
 
--- 
-~Vinod
+>  -C::
+> ---cpu-list::
+> -	Restrict dump of raw samples to those provided via this option. Note that the same
+> -	option can be passed in record mode. It will be interpreted the same way as perf
+> -	record.
+> +--cpu=<cpu>::
+> +	Monitor only on the list of CPUs provided. Multiple CPUs can be provided as a
+> +        comma-separated list with no space: 0,1. Ranges of CPUs are specified with -: 0-2. Default
+> +        is to monitor all CPUS.
+> +-U::
+> +--hide-unresolved::
+> +	Only display entries resolved to a symbol.
+> +
+> +-p::
+> +--phys-data::
+> +	Record/Report sample physical addresses
+> +
+> +RECORD OPTIONS
+> +--------------
+> +-e::
+> +--event <event>::
+> +	Event selector. Use 'perf mem record -e list' to list available events.		
+
+extra white space at the end of above line.. 
+other than that it looks ok, thanks for doing this
+
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
