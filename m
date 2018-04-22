@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+GVr4Uxt89NNr7kvkt1eCPCdJQWtJrtK+leF7IeNunvSXbRnB6o3/EEFKpRlFxXCE+Jhc/
-ARC-Seal: i=1; a=rsa-sha256; t=1524405778; cv=none;
+X-Google-Smtp-Source: AIpwx4+12WhJCK96PKrWNUY3wys3AuiLpU7HdHNAfHWTU7Qlwkh07mVU9Dd0HpqEexLSM2tHQJHz
+ARC-Seal: i=1; a=rsa-sha256; t=1524405775; cv=none;
         d=google.com; s=arc-20160816;
-        b=H1bEfibsdfjDPPkeNYnDr6MV1HuGCfHVryhboFsFcqd1oebkliF6iI34aLAI5UdzYm
-         67COfZ5aOE27dIVNa0AZk2EWgbrcUVvleoJKoDmXnaqtJSNxw4e5odWiodWY8fvMopTN
-         U2LcOYIz6yM/ut54qIS3jUSZcrEXCuggsIX6G7cS5nfhSbu2y3tSkJsvPRHpDUhjXhSp
-         MDPyeD2ZMfIQ4IJAbiHgAPxBip92+r1iaga7vij/f5BoAKaBn/1vPM6o+sJSM/3FUuVw
-         jwJVzhPj3h+9ICW0J/KqLTGzKneQugnAhgfGQr5XjXJKN8QtwN5AdaYq04c8+gBPvlnP
-         4iPw==
+        b=g5SrB5HFIioAgKOfmpHedhcAJMcuhoNUU7O4owlyWh9Ea+hPxHXC+Dvi5aksOd4Fdb
+         0KGM7kO/hBcIgki1OGN54+njxHWaIJ7ZanDa3TanY2XQZfVx4e5iH6ia1C8hpt10nVhr
+         SXml3kMdlraOhzqGmBjVeuCEGGco8fzYplEn51cc//+zB/nojDaNgNd7CLzmTZd3AZWB
+         5awBdW+hRTP83gYRCGqceOZ/Ln7rCl8qxLXtZ2cAnZT/tjj+TCQGmxTf4XWCnx9f6W9S
+         dwZ48AdXjfszl3rm/85u0xzCSKrwXW9ZFHBI5YKHhodDuInXQS6vhXjqzQux0m3/IsZg
+         e9Fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3uJAgX7/ziS39aN2VtDuQkJeN1XilkDPym0bQn+KUmI=;
-        b=A7+eKZfA0V+7aJr1DHB1GaYo93W1Zh3sBQzxnGduTUm4XlmOrfMXkoH63LqZ9Lpfkv
-         xf8SKbFtFqo1HpBvTMh6I4nPq9yMkU7hxQRhkS6lXmpx6XbwgWdlO5ylOsLl3xdAYdtG
-         d4KCsTdWLwrzfyB/ZCz0hT1NNPZUvVsPLeAvmtrZhLXn3MLidwc/O7+SnyUxQkK4Mwfg
-         AsIRULCMejEAGvxmfo2nyBH1ey9hn/FU1YnoaaibvjQ1yfm6GhSUh9hkeWFq2wEMomln
-         qdw0u1MnOe9gKj51sI+OsIJF33f8moRvmBtxy4SFHbL3KYwZNGSk9XZrAp7IsBHrJLww
-         OjNg==
+        bh=9zAQwv+nFxvjEHIaSbVRSBKbaUya/XWV8JrCJVjfmcI=;
+        b=f6s/6qsBlexJ61zDtAmArf/EK9kfmxV50g2lo2yQfzsun8q3PVThq/4w1nPhUKfSTx
+         4SoL84gJBlG99OrFCvIbWAV7wlqihDM101839Pp/DS5Ps8rkftosDQSATYH+WOHPpUiS
+         RZx0lTsyKhoBARQSxTAqrwpMx4o4afASYkQ6qCJFOExv1GpuVBOay0Qrl+D1QrY8Rw49
+         ojc9y7BWKgJmVdAJsTHlmM3eEaXodLOF+jr7gmr1KJOlvxY29jTM8TOWhJYzYzC8NEdk
+         j83GAnATc+UFUeh+gCJcKPHtq9QyidDqPuO8RK/sLdtWWMz2aHEy01VYzCJYu2o9HmEh
+         hfIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.16 190/196] libnvdimm, dimm: handle EACCES failures from label reads
-Date: Sun, 22 Apr 2018 15:53:30 +0200
-Message-Id: <20180422135114.075241881@linuxfoundation.org>
+	stable@kernel.org,
+	Alexander Aring <aring@mojatatu.com>,
+	Kirill Tkhai <ktkhai@virtuozzo.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.16 189/196] Dont leak MNT_INTERNAL away from internal mounts
+Date: Sun, 22 Apr 2018 15:53:29 +0200
+Message-Id: <20180422135114.027763644@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455313027068006?=
-X-GMAIL-MSGID: =?utf-8?q?1598455313027068006?=
+X-GMAIL-THRID: =?utf-8?q?1598455310413463225?=
+X-GMAIL-MSGID: =?utf-8?q?1598455310413463225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,92 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit e7c5a571a8d6a266aee9ca3f3f26e5afe3717eca upstream.
+commit 16a34adb9392b2fe4195267475ab5b472e55292c upstream.
 
-The new support for the standard _LSR and _LSW methods neglected to also
-update the nvdimm_init_config_data() and nvdimm_set_config_data() to
-return the translated error code from failed commands. This precision is
-necessary because the locked status that was previously returned on
-ND_CMD_GET_CONFIG_SIZE commands is now returned on
-ND_CMD_{GET,SET}_CONFIG_DATA commands.
+We want it only for the stuff created by SB_KERNMOUNT mounts, *not* for
+their copies.  As it is, creating a deep stack of bindings of /proc/*/ns/*
+somewhere in a new namespace and exiting yields a stack overflow.
 
-If the kernel misses this indication it can inadvertently fall back to
-label-less mode when it should otherwise avoid all access to locked
-regions.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 4b27db7e26cd ("acpi, nfit: add support for the _LSI, _LSR, and...")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: stable@kernel.org
+Reported-by: Alexander Aring <aring@mojatatu.com>
+Bisected-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Tested-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Tested-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/dimm_devs.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ fs/namespace.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/nvdimm/dimm_devs.c
-+++ b/drivers/nvdimm/dimm_devs.c
-@@ -88,9 +88,9 @@ int nvdimm_init_nsarea(struct nvdimm_drv
- int nvdimm_init_config_data(struct nvdimm_drvdata *ndd)
- {
- 	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(ndd->dev);
-+	int rc = validate_dimm(ndd), cmd_rc = 0;
- 	struct nd_cmd_get_config_data_hdr *cmd;
- 	struct nvdimm_bus_descriptor *nd_desc;
--	int rc = validate_dimm(ndd);
- 	u32 max_cmd_size, config_size;
- 	size_t offset;
- 
-@@ -124,9 +124,11 @@ int nvdimm_init_config_data(struct nvdim
- 		cmd->in_offset = offset;
- 		rc = nd_desc->ndctl(nd_desc, to_nvdimm(ndd->dev),
- 				ND_CMD_GET_CONFIG_DATA, cmd,
--				cmd->in_length + sizeof(*cmd), NULL);
--		if (rc || cmd->status) {
--			rc = -ENXIO;
-+				cmd->in_length + sizeof(*cmd), &cmd_rc);
-+		if (rc < 0)
-+			break;
-+		if (cmd_rc < 0) {
-+			rc = cmd_rc;
- 			break;
- 		}
- 		memcpy(ndd->data + offset, cmd->out_buf, cmd->in_length);
-@@ -140,9 +142,9 @@ int nvdimm_init_config_data(struct nvdim
- int nvdimm_set_config_data(struct nvdimm_drvdata *ndd, size_t offset,
- 		void *buf, size_t len)
- {
--	int rc = validate_dimm(ndd);
- 	size_t max_cmd_size, buf_offset;
- 	struct nd_cmd_set_config_hdr *cmd;
-+	int rc = validate_dimm(ndd), cmd_rc = 0;
- 	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(ndd->dev);
- 	struct nvdimm_bus_descriptor *nd_desc = nvdimm_bus->nd_desc;
- 
-@@ -164,7 +166,6 @@ int nvdimm_set_config_data(struct nvdimm
- 	for (buf_offset = 0; len; len -= cmd->in_length,
- 			buf_offset += cmd->in_length) {
- 		size_t cmd_size;
--		u32 *status;
- 
- 		cmd->in_offset = offset + buf_offset;
- 		cmd->in_length = min(max_cmd_size, len);
-@@ -172,12 +173,13 @@ int nvdimm_set_config_data(struct nvdimm
- 
- 		/* status is output in the last 4-bytes of the command buffer */
- 		cmd_size = sizeof(*cmd) + cmd->in_length + sizeof(u32);
--		status = ((void *) cmd) + cmd_size - sizeof(u32);
- 
- 		rc = nd_desc->ndctl(nd_desc, to_nvdimm(ndd->dev),
--				ND_CMD_SET_CONFIG_DATA, cmd, cmd_size, NULL);
--		if (rc || *status) {
--			rc = rc ? rc : -ENXIO;
-+				ND_CMD_SET_CONFIG_DATA, cmd, cmd_size, &cmd_rc);
-+		if (rc < 0)
-+			break;
-+		if (cmd_rc < 0) {
-+			rc = cmd_rc;
- 			break;
- 		}
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1089,7 +1089,8 @@ static struct mount *clone_mnt(struct mo
+ 			goto out_free;
  	}
+ 
+-	mnt->mnt.mnt_flags = old->mnt.mnt_flags & ~(MNT_WRITE_HOLD|MNT_MARKED);
++	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
++	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
+ 	/* Don't allow unprivileged users to change mount flags */
+ 	if (flag & CL_UNPRIVILEGED) {
+ 		mnt->mnt.mnt_flags |= MNT_LOCK_ATIME;
