@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/Aa9ZVfXB3BCfLbYP6ukwt1lspqMXQOlQcNLKSGd2Qd6GWunVkcyd2vyvNvp8QGeMmN0HD
-ARC-Seal: i=1; a=rsa-sha256; t=1524406432; cv=none;
+X-Google-Smtp-Source: AIpwx48AO6SD0DZeVxg4x3H1n3pHD4Fcudzx6P1n/BFfoS6uZWQ975oNMZltDtKFPM0lOauTWA+I
+ARC-Seal: i=1; a=rsa-sha256; t=1524406430; cv=none;
         d=google.com; s=arc-20160816;
-        b=V+qcRANJmBmk6udgxiAiIYkhUlQc0iuzic7nyBxGDse/IVKYoH6qKxKzUSmC5BPXKQ
-         7FAHbXdPXGya4DLOrNB7ZsFtVL89SCeo0+9ZWVryfgE6S1wvVouUv2oXbqE6fMMgw2nb
-         PngmxeGSn5dNeTUGeE7l9w1j1JSg1a0a1Lruv/5EoRco/3ZTeNPWed47Y+pRORQulJlG
-         BdBEl2tJu9S6TGTNo7c0HnAwTCetHYzboijP9uhw2Av0xXv42snuOqKnwPz3YTjnTHrR
-         trBhxYoNbSVOTvY3vv+TWIw6U5XVyeeusUsFaP+EDNTFIBw264tsoiBntOpWo1QcG07a
-         y1xQ==
+        b=ybT7wInxpxqh08DcX9hojYAYCKc6LXTBYV2Ms5Y8F7/nP5gkGlq3x19/Z4ehurIRcs
+         NiVOU5xXsLMsTjs0duioht2Ia7+/D/hOYLcxVByHjS93QqBLfgKturU2qBb2Cj7KkvYM
+         h1T0cc8NNAibqijaF94ZNSq72SdPfb3Shb4yKmVwxA3yn9E1rq1xg1iiLWbdoYQxbfkJ
+         lnoMlHzh2WvKtfP8nnh2bktagKSfCvBvZhgajAC6enI9pY+WT/h2xB399BckKx4wn75c
+         p4wz665dcCO9Z6ePCXjio28CTdN6BaRx/mMbKiuTCP7jRRxQjp/xWKPv1ZzBkeRwKZzx
+         qSEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ayopnuq90BIAuNTbmMas2dIOTACGTG5NPywlIyoXWkI=;
-        b=Khie/7vt6i8a+3KECnRVtnAgnp4mox+flOAN/0E4uxrI5gTONgdlXo6psFE2smy5h2
-         IpKBWVtyyEz12foFNsKF1aBb+VDXzjs+OpTW5h6Fz84qOHSdU4oeIWZ4p2mfaaljNs1z
-         k0XopqC83EbhZPlhquw2AD8VC2ceqqISka4tbrW8IAEICvlhURm+rjz94iPSJpNDSINd
-         aIqC2P1L6aAPFeueBMzLSu43gJOabf3oHLD6PT9eLjXa/c520INe1tC2bA0ArPHpGFLM
-         ExKro7D5JWFpzXOsravzO03JsFd9L5NGVxFQB6zSaBqHzUICTOUVoCedzOSvYsr2ahkx
-         gWyg==
+        bh=qIs3j+CF5P3e+m3AgUjQzhuPUDEc/RCksAvRwdh62as=;
+        b=LAXoDcMajnIQWFF6ud2q7iG1JPfRwOXgK4q8WwcEfszfNCR+9rEdH//iOWGAbwEV4z
+         FkIFdcK2HDGLRmORA+Ss+2IDn/uvImDhmuGDSA6RxnIpcSA0ZORid0f49qgqlh4FJYVM
+         acqz/owtI5GJapw0bMKOhmFWN/r3DQQaRv8REByBNcZaZjrvgOeLT87T2tJakOX7vJpb
+         8yZxSfDgQ370FIHBK2c0gKKRd8aUw3bwTE1E7gpYIW9Cb3G1YgxXkZUnzR6NdqGp5K1C
+         wEvXekZjlHxscJy4yWPEgCnANXxr33wPUn+4sMk8/zj1QHo/adcxunqxUpnmAvsHFxE2
+         4lFA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Chunming Zhou <david1.zhou@amd.com>,
-	Paul Parsons <lost.distance@yahoo.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.9 70/95] drm/radeon: Fix PCIe lane width calculation
-Date: Sun, 22 Apr 2018 15:53:39 +0200
-Message-Id: <20180422135213.294307081@linuxfoundation.org>
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.9 69/95] drm/rockchip: Clear all interrupts before requesting the IRQ
+Date: Sun, 22 Apr 2018 15:53:38 +0200
+Message-Id: <20180422135213.252429672@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455237200582440?=
-X-GMAIL-MSGID: =?utf-8?q?1598455999877807459?=
+X-GMAIL-THRID: =?utf-8?q?1598455213348332797?=
+X-GMAIL-MSGID: =?utf-8?q?1598455996964518523?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,42 +49,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Parsons <lost.distance@yahoo.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 85e290d92b4b794d0c758c53007eb4248d385386 upstream.
+commit 5f9e93fed4d45e9a8f84728aff1a8f2ab8922902 upstream.
 
-Two years ago I tried an AMD Radeon E8860 embedded GPU with the drm driver.
-The dmesg output included driver warnings about an invalid PCIe lane width.
-Tracking the problem back led to si_set_pcie_lane_width_in_smc().
-The calculation of the lane widths via ATOM_PPLIB_PCIE_LINK_WIDTH_MASK and
-ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT macros did not increment the resulting
-value, per the comment in pptable.h ("lanes - 1"), and per usage elsewhere.
-Applying the increment silenced the warnings.
-The code has not changed since, so either my analysis was incorrect or the
-bug has gone unnoticed. Hence submitting this as an RFC.
+Calling request_irq() followed by disable_irq() is usually a bad idea,
+specially if the interrupt can be pending, and you're not yet in a
+position to handle it.
 
-Acked-by: Christian König <christian.koenig@amd.com>
-Acked-by: Chunming Zhou <david1.zhou@amd.com>
-Signed-off-by: Paul Parsons <lost.distance@yahoo.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+This is exactly what happens on my kevin system when rebooting in a
+second kernel using kexec: Some interrupt is left pending from
+the previous kernel, and we take it too early, before disable_irq()
+could do anything.
+
+Let's clear the pending interrupts as we initialize the HW, and move
+the interrupt request after that point. This ensures that we're in
+a sane state when the interrupt is requested.
+
 Cc: stable@vger.kernel.org
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+[adapted to recent rockchip-drm changes]
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180220130120.5254-2-marc.zyngier@arm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/radeon/si_dpm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/drivers/gpu/drm/radeon/si_dpm.c
-+++ b/drivers/gpu/drm/radeon/si_dpm.c
-@@ -5969,9 +5969,9 @@ static void si_set_pcie_lane_width_in_sm
- {
- 	u32 lane_width;
- 	u32 new_lane_width =
--		(radeon_new_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT;
-+		((radeon_new_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT) + 1;
- 	u32 current_lane_width =
--		(radeon_current_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT;
-+		((radeon_current_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT) + 1;
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -1386,6 +1386,9 @@ static int vop_initial(struct vop *vop)
+ 	usleep_range(10, 20);
+ 	reset_control_deassert(ahb_rst);
  
- 	if (new_lane_width != current_lane_width) {
- 		radeon_set_pcie_lanes(rdev, new_lane_width);
++	VOP_INTR_SET_TYPE(vop, clear, INTR_MASK, 1);
++	VOP_INTR_SET_TYPE(vop, enable, INTR_MASK, 0);
++
+ 	memcpy(vop->regsbak, vop->regs, vop->len);
+ 
+ 	for (i = 0; i < vop_data->table_size; i++)
+@@ -1541,17 +1544,9 @@ static int vop_bind(struct device *dev,
+ 
+ 	mutex_init(&vop->vsync_mutex);
+ 
+-	ret = devm_request_irq(dev, vop->irq, vop_isr,
+-			       IRQF_SHARED, dev_name(dev), vop);
+-	if (ret)
+-		return ret;
+-
+-	/* IRQ is initially disabled; it gets enabled in power_on */
+-	disable_irq(vop->irq);
+-
+ 	ret = vop_create_crtc(vop);
+ 	if (ret)
+-		goto err_enable_irq;
++		return ret;
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
+@@ -1561,13 +1556,19 @@ static int vop_bind(struct device *dev,
+ 		goto err_disable_pm_runtime;
+ 	}
+ 
++	ret = devm_request_irq(dev, vop->irq, vop_isr,
++			       IRQF_SHARED, dev_name(dev), vop);
++	if (ret)
++		goto err_disable_pm_runtime;
++
++	/* IRQ is initially disabled; it gets enabled in power_on */
++	disable_irq(vop->irq);
++
+ 	return 0;
+ 
+ err_disable_pm_runtime:
+ 	pm_runtime_disable(&pdev->dev);
+ 	vop_destroy_crtc(vop);
+-err_enable_irq:
+-	enable_irq(vop->irq); /* To balance out the disable_irq above */
+ 	return ret;
+ }
+ 
