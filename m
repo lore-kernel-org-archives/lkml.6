@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+5Du/KknY0XNZHu4qDLINFViK0jeZ0YYdCp7flpiJNfBFzKgYuhKdamThGjcaTSvde7XQK
-ARC-Seal: i=1; a=rsa-sha256; t=1524406042; cv=none;
+X-Google-Smtp-Source: AIpwx49N3BKbcY6aC3a6cNTyP3q0+1ZNYvYLXoYV2na7aC/t7+QR196rymPKTsdpaVioLMiX3AUo
+ARC-Seal: i=1; a=rsa-sha256; t=1524406039; cv=none;
         d=google.com; s=arc-20160816;
-        b=wC/K0g5LtydqIg8nTS+FPJDW1yMLYNYSutD5fvdGqd9v1jR5SAjnYdfjinqZ1GcRlH
-         VZPuT42Llk9+xuQAXmLcONwbbN4WNHfgMvD5EFVhgawPnp8ACMaGGPmfW9iDaNNcEgN7
-         4gmmrri666sl4dCVctKbDn51/L6WtRmmJGFECXAQr77Xft709/VA7RGahTbfGFCYP89s
-         J/a6U2A252itS7/bYa8gaEPfZKDz6jWb0CbBl28EiBizP/9LkUxTJUVPUnMdQB9/FMOZ
-         bJDqgp/UI3KpOpEhnBbeze3ixfkgZE93PLivFFN/8KN88mH7D3JwLin1eA0+LfA/ss2z
-         iHgw==
+        b=i66LCadF1AVTH8Rio+I6olRQWvVXFHbv57vRC+ZM3EQdRva3vIf1PrSHaSrqN+xJB8
+         bzjje41PNii6IfX6zcC/I/YVodPdWoa+AgdAViScwce4OkYO3yZANoHPYdpUBFEachA5
+         i3mtJ7qu7gzwKYpu0UpsmFLQ8joDx79841r/Bh8jLkLgzAn1AImc2kUFTJCifqTSKthc
+         7gSV4fsQrmmFj2bo1tQIyhESfXuvE8rKPeVctN3obYfZdPyLw3oMd0DqiRsIeyK8kBVd
+         jQN0ATiTue788oNoTYyoHzRvQEkp/eMgFyL9AzaH+I/Ju0dC6xiyI/ROBQOM4fr5R1xi
+         xvmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oNQhO1lfr1LkFdAZ8RhgnIF68l6JVgGMnAIRCApCFnc=;
-        b=G7CCQIwZ/AZsZq6dFCwYn/X0FrmABRTu4x3ga2p5uPc45DlkhfeveeKCovLId0+vpR
-         naO/KAxsJ2jYXii8237Z3bWwh/6m4EkjqCO1QnFihgVlldO+68boBeBZ8cN/dtZbyYhP
-         FCH4l9QGcRZzwZpxN/2kDoNJzeG6Ce69JL4oFi4pg/NB3o4y4vHkquTtOyYvZkRDcg2+
-         +TfrpYvVf5wDiere4d65qMs5r1HWexeZArMX7s3tm6+eMagEneKwgIabNIjkSnBvvSrY
-         2/JqLE84yTD/kI1iHQWLd9HZ2Ab+Ny1HQwcPxdMX1inZTXq9dYCBcK9PnwqzrWXGSOrf
-         Fisw==
+        bh=DBkNWWjL69Lvwqhzi9+gZgyX4AAS+/wn8AcOl4vzRws=;
+        b=urzZf4Z4GEXSCXRTAT6E4oturE9IRrfooX0Ep8zeIRcu/crICxk2c951H1Emki5ZC2
+         oCn3shUEefQfBfLIBpfC8EKG5WhtT8WeK3pzBiuGfEBY1bHJe+GDUhvokE5og45W8RzM
+         6HTi6cQrrKe5B87FYRE4Ahvbsh/cJA4IKkTYNo2GakjgtnpcSO6OGPnO0YrN0H21Bqm+
+         XvnYxbt/OQ+qGksJHD2TmhCq9S9eiwxAVjISASNtcm1wMDBwpArbX3jdMQfTE2fyFFlV
+         2QDTzHboEAT3hXEHd++hRDT2Q+GJ8cdNUJtV7GWHpesTkBNZrchy2im6lg5D6RRxvn6X
+         Le1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Schmid <alex@modula-shop-systems.de>,
 	Bart Van Assche <bart.vanassche@wdc.com>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 091/164] IB/srp: Fix completion vector assignment algorithm
-Date: Sun, 22 Apr 2018 15:52:38 +0200
-Message-Id: <20180422135139.153369113@linuxfoundation.org>
+Subject: [PATCH 4.14 090/164] IB/srp: Fix srp_abort()
+Date: Sun, 22 Apr 2018 15:52:37 +0200
+Message-Id: <20180422135139.111808231@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455094734674658?=
-X-GMAIL-MSGID: =?utf-8?q?1598455590458126795?=
+X-GMAIL-THRID: =?utf-8?q?1598455092179886788?=
+X-GMAIL-MSGID: =?utf-8?q?1598455587287735520?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,45 +51,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit 3a148896b24adf8688dc0c59af54531931677a40 upstream.
+commit e68088e78d82920632eba112b968e49d588d02a2 upstream.
 
-Ensure that cv_end is equal to ibdev->num_comp_vectors for the
-NUMA node with the highest index. This patch improves spreading
-of RDMA channels over completion vectors and thereby improves
-performance, especially on systems with only a single NUMA node.
-This patch drops support for the comp_vector login parameter by
-ignoring the value of that parameter since I have not found a
-good way to combine support for that parameter and automatic
-spreading of RDMA channels over completion vectors.
+Before commit e494f6a72839 ("[SCSI] improved eh timeout handler") it
+did not really matter whether or not abort handlers like srp_abort()
+called .scsi_done() when returning another value than SUCCESS. Since
+that commit however this matters. Hence only call .scsi_done() when
+returning SUCCESS.
 
-Fixes: d92c0da71a35 ("IB/srp: Add multichannel support")
-Reported-by: Alexander Schmid <alex@modula-shop-systems.de>
 Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Alexander Schmid <alex@modula-shop-systems.de>
 Cc: stable@vger.kernel.org
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srp/ib_srp.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/infiniband/ulp/srp/ib_srp.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 --- a/drivers/infiniband/ulp/srp/ib_srp.c
 +++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -3430,12 +3430,10 @@ static ssize_t srp_create_target(struct
- 				      num_online_nodes());
- 		const int ch_end = ((node_idx + 1) * target->ch_count /
- 				    num_online_nodes());
--		const int cv_start = (node_idx * ibdev->num_comp_vectors /
--				      num_online_nodes() + target->comp_vector)
--				     % ibdev->num_comp_vectors;
--		const int cv_end = ((node_idx + 1) * ibdev->num_comp_vectors /
--				    num_online_nodes() + target->comp_vector)
--				   % ibdev->num_comp_vectors;
-+		const int cv_start = node_idx * ibdev->num_comp_vectors /
-+				     num_online_nodes();
-+		const int cv_end = (node_idx + 1) * ibdev->num_comp_vectors /
-+				   num_online_nodes();
- 		int cpu_idx = 0;
+@@ -2656,9 +2656,11 @@ static int srp_abort(struct scsi_cmnd *s
+ 		ret = FAST_IO_FAIL;
+ 	else
+ 		ret = FAILED;
+-	srp_free_req(ch, req, scmnd, 0);
+-	scmnd->result = DID_ABORT << 16;
+-	scmnd->scsi_done(scmnd);
++	if (ret == SUCCESS) {
++		srp_free_req(ch, req, scmnd, 0);
++		scmnd->result = DID_ABORT << 16;
++		scmnd->scsi_done(scmnd);
++	}
  
- 		for_each_online_cpu(cpu) {
+ 	return ret;
+ }
