@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48w+sZMegb1rGAeWju8sKo7DiMrueq2CDioDQOXT7LaaJMeRQ0SBYw9nSDoJO7jAzOqQy1M
-ARC-Seal: i=1; a=rsa-sha256; t=1524405618; cv=none;
+X-Google-Smtp-Source: AIpwx48DeFdIZ0H2AkeANPJUTHXuUFfY5NR0R+I8vzNxWFI0DUzNInvvUnPbYJQqE3zpIMAjIGy7
+ARC-Seal: i=1; a=rsa-sha256; t=1524405616; cv=none;
         d=google.com; s=arc-20160816;
-        b=WNRSr8BvVST/US9L2zsQPppgYlV8QOwexoIhan8Hn49+ZkqPkM8YtKctvn+CDeNVAs
-         DToRiWupd8HXwCwlOK06PUuHOa9iRxeRApWCklJlfWHy+lPWl8FDqsAlVm+fAmL2PKZG
-         sSUL9ySFypCMez43CV4esnCFFZQ6SW9P0XNIB+FfE6txWhrQyGVkxeflNsgmg78+RjJ1
-         KaeYDacSaWGh0yCdVPWiuA5qGvtGIV5ffGGJCUIlTfRvnbpqxMW2tE++LGybidfq2Sd4
-         TOyINbRKNyD7CcKm7wDaLtQARVLXXb0AuHTevblRsTDyNjOC4pQ4kYRb+n/KrTDYdZVz
-         cLow==
+        b=RC/atUqqX8nATnK1Q1+KZxV/QBAZu4Finkd5pZXTQvnMopDUCYlhSOgy4LU0vA+Iep
+         IzRuXLVrxJaiCmXKBUdrBeDhPdWYUKWTNw/dKaNiQgbx6DhZAcRSiO1qEuM8BemEoU91
+         iRfp+xvmxjkrdK5y0Q2Yym5ihIbHUC5Nd1NiubW9zY4S43JicIKGJUbIBMsrwfBhffCG
+         /7lRQSpvo3YEyszrk/ERCqmaGX+WoO0I9h/KWwkn5k3C10cQ2C0pX0xi/8i1SfT6An79
+         yej5jT4qpB0hLK0aVJYXd8TU4t8BMqivc7JnzhDcQ/PqrW9Gt8h1yDOsSZ3gtOF+H6SV
+         Sang==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qzVDK7GtqX66QAnJCUtjjVKNCxnyX/LCKoFlqL/GLcc=;
-        b=qIHk9j/BRUNVHzYK95NqrCM3X8KFEP1+rUI/OvbnIDDt02dZoEsQqKKKYaMrsw4/Np
-         c5Vl8t5xU8nvDbt32miD6khCYLpJdqJsR7o+TVBjJcZ1BAmcM+ya5b6yn6NLnQjqweKQ
-         3I5KyZBId849wiPUHCUzIrWet1WX1RkFTiS6E84dF53tvMcrfFEAn/gx+vXQEye33wzc
-         zaqqS5BgYlp0V+51dQJfWBxKw+XsVULiTKjH+APCMIrAEa9200oiPocrsV2ONDkHVLOu
-         BdQWD6zs4ekU4SOVxZuPD1kBm0PYohI/zUaNDTxPMD6+UZ67hy47ePru1Zz0l0dFW9ev
-         tITQ==
+        bh=p4FT/Q9voJtHr89/ZzKLFICjWsGq6YUUDh59Pyv7AYA=;
+        b=cv7c0f/ddonSDKuBvW6PdC4PI0Z80U9pMRD3KN5YiB1QPGRniDtIo92zKS5z6PKSzF
+         c4yN19ZgnGO4vnBASLQIyOrZRrdq7RJ+lxHZSQoj3SBFUXBqyOY4PAv0muEySdYLPc00
+         ekUBwc7LjNLwt6cvx5kB5AvDbnlDq8qFYbioeKhdkzggLAHwMvdnOTwxYZmxZXWKz9p7
+         pru22wQ0L9KeUJVz2j1XrOWBe6nkoIorL3Z182YTnGVqdCExFZlHBSvUrHfLIDieRXit
+         XYoqxf1PbwMFttMNSc/LKu6zcEYZMJ1fzeEtat3/+OydL1iRHepHWA8zPs4zQL87j/kL
+         oYcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Mathieu Malaterre <malat@debian.org>,
+	Alex Smith <alex.smith@imgtec.com>,
 	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.16 133/196] mmc: tmio: Fix error handling when issuing CMD23
-Date: Sun, 22 Apr 2018 15:52:33 +0200
-Message-Id: <20180422135111.124030175@linuxfoundation.org>
+Subject: [PATCH 4.16 132/196] mmc: jz4740: Fix race condition in IRQ mask update
+Date: Sun, 22 Apr 2018 15:52:32 +0200
+Message-Id: <20180422135111.076017437@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455146148762701?=
-X-GMAIL-MSGID: =?utf-8?q?1598455146148762701?=
+X-GMAIL-THRID: =?utf-8?q?1598455143804605814?=
+X-GMAIL-MSGID: =?utf-8?q?1598455143804605814?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,32 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+From: Alex Smith <alex.smith@imgtec.com>
 
-commit fc167daff581c01ebce8695e9618231cae3561a1 upstream.
+commit a04f0017c22453613d5f423326b190c61e3b4f98 upstream.
 
-If an error was detected when CMD23 was issued, command sequence should
-be terminated with errors and CMD23 should be issued after retuning.
+A spinlock is held while updating the internal copy of the IRQ mask,
+but not while writing it to the actual IMASK register. After the lock
+is released, an IRQ can occur before the IMASK register is written.
+If handling this IRQ causes the mask to be changed, when the handler
+returns back to the middle of the first mask update, a stale value
+will be written to the mask register.
 
-Fixes: 8b22c3c18be5 ("mmc: tmio: add CMD23 support")
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: <stable@vger.kernel.org> # 4.13+
+If this causes an IRQ to become unmasked that cannot have its status
+cleared by writing a 1 to it in the IREG register, e.g. the SDIO IRQ,
+then we can end up stuck with the same IRQ repeatedly being fired but
+not handled. Normally the MMC IRQ handler attempts to clear any
+unexpected IRQs by writing IREG, but for those that cannot be cleared
+in this way then the IRQ will just repeatedly fire.
+
+This was resulting in lockups after a while of using Wi-Fi on the
+CI20 (GitHub issue #19).
+
+Resolve by holding the spinlock until after the IMASK register has
+been updated.
+
+Cc: stable@vger.kernel.org
+Link: https://github.com/MIPS/CI20_linux/issues/19
+Fixes: 61bfbdb85687 ("MMC: Add support for the controller on JZ4740 SoCs.")
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Alex Smith <alex.smith@imgtec.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/tmio_mmc_core.c |    2 +-
+ drivers/mmc/host/jz4740_mmc.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -911,7 +911,7 @@ static void tmio_mmc_finish_request(stru
- 		host->check_scc_error(host);
+--- a/drivers/mmc/host/jz4740_mmc.c
++++ b/drivers/mmc/host/jz4740_mmc.c
+@@ -362,9 +362,9 @@ static void jz4740_mmc_set_irq_enabled(s
+ 		host->irq_mask &= ~irq;
+ 	else
+ 		host->irq_mask |= irq;
+-	spin_unlock_irqrestore(&host->lock, flags);
  
- 	/* If SET_BLOCK_COUNT, continue with main command */
--	if (host->mrq) {
-+	if (host->mrq && !mrq->cmd->error) {
- 		tmio_process_mrq(host, mrq);
- 		return;
- 	}
+ 	writew(host->irq_mask, host->base + JZ_REG_MMC_IMASK);
++	spin_unlock_irqrestore(&host->lock, flags);
+ }
+ 
+ static void jz4740_mmc_clock_enable(struct jz4740_mmc_host *host,
