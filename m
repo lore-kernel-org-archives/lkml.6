@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+eE3YQ9cmj2GAcOS/GAgfMVMboA9PkOLS+5eLf7e4EuA3oC63Gi2JX8Mzsr0C5YnOIq4AZ
-ARC-Seal: i=1; a=rsa-sha256; t=1524406484; cv=none;
+X-Google-Smtp-Source: AIpwx493oofapoHQgaY9kn+SV/pL+d3pearYVSYxOIuTiKAc5gZcVqYkt5iyySiClYbAVY2Rk7/B
+ARC-Seal: i=1; a=rsa-sha256; t=1524406481; cv=none;
         d=google.com; s=arc-20160816;
-        b=dXiJrD3Fhu8vQfRKZU28uv/22Z18dG+boPNkR7us6HbMXYt5fs0y0oJUyE9h8QO4GK
-         wmt6pELnnB+rmRCSMrXrLnIUa6rmvoLD+b/X1AyWqFfJuMjt3dkXKHVu4fKmKL4NfODQ
-         6aREgY5dorqkO9AxBY21FdXxwrCYDkVi2AWQ8WEbIg3ymsRMXRCpDYbn2IoV8A5hELHk
-         JKcU1a4UHUKIUDSe3Iq9cjsoRYaQdQ1jV3/5aWEmhj5QhsnGcdkNsFJpgNEM6YH+Tke0
-         jioj5NG0MTRdavKelqskzGKQOG9BDWj9+Xed/EROqgv7/9vA2PiNv1T7dnkQeaGWrv/2
-         tZ2Q==
+        b=fLInrwMCyCE63ePydMdK1zj9CMR6GizRNaU5BESmCPl4UWLsr3uNKtXGL3BLHtPWZE
+         VUZi7X2gvaqA+eGHUJIO8YXU2+TeEzvZGfLDb51vTLD+X9NDKSlROWkgWfHytP4hsikQ
+         9UTjVqBI8DCTjQQ3i7ANMs2B2nWJbOocFt321cDh+mCDIDDgTqurRiL+BeArrIrfe3mX
+         FEOhQqk/x9h8Vwj0SeU2/EKUOAERTlqL0jbjOq6SjKnDQolUaNhga4pqIYWrC74Tw7mx
+         WWRcClNTSw+W2vTGoYzl+rlUNd7V9+GpTTrckaz1DwzDCsZEAynvJ8vCUdR64K3q8NTo
+         eS8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MQN15W2D1Aty2AY9piK6SMLSxj/2DZuYB1iDaJ4Wgvc=;
-        b=x8cZNzsOTXdgkSbPHKDfDqSW69GOVoNZj7t1Si5JpTJ1A/tMQ2TadWhkfaSMbaBf3r
-         ZRwg69AMtohmp3loWRC16ta17ccidXwH+FEcNxVsNdHuMNLlvM4dMHGg9rx3/AYcNR4b
-         3K39oSLRlddB/60yQqxi0VduIPTarGUbN5q5dxdtS+BuAQ2yD05mc0PVVjbAMXBSvfK9
-         CNmnGmAqVSqGm/SAjoSsO5pOz8szJdwFX5cxDBGv2Hj9Fy99SgvKPw1rQeKgTzvcUBm0
-         eRQndcvaAe4ySCQdW1CYmAxizpo3RHiz8cKc8fi6nACimKWkuvuuxo1n8NPiMa+KFUsr
-         m9Tg==
+        bh=pchBYdmlN/OU/58Vd2kRogWXiNB2roeVaDqh7bCPgw0=;
+        b=VZHrXyDzhXN6IP2H/U1466PXgDCZSEedrVCoUKG425wxIC5k/3YtUeseveglJwOaWf
+         R7zCAyP7DMbvM53aSkb1FiPbG35TGBz8LlSkZmS2wy3J9bxhxiz4Ee83ojzlrbyB/YP2
+         CSQKQPkKRKSudQIlysS044o3Ub1icn+ZbEqnlHUGW4+gShCr8aG0/gFASBQDX9PXuR8Y
+         /Ca5A6mr/jnuMWVqNQSjE/9yq4VZTOwBSxb31UECRFDSW4YsF2QUzqSzCb4U8kGL03pX
+         yBGPqhTx91Cs9xzRjLRFMnvcktJA5JVZ5vTZiKyq2zRK3VJj643L0CheF0ekrtHrzIxX
+         w4bw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	stable@kernel.org,
 	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 88/95] orangefs_kill_sb(): deal with allocation failures
-Date: Sun, 22 Apr 2018 15:53:57 +0200
-Message-Id: <20180422135214.031110159@linuxfoundation.org>
+Subject: [PATCH 4.9 87/95] hypfs_kill_super(): deal with failed allocations
+Date: Sun, 22 Apr 2018 15:53:56 +0200
+Message-Id: <20180422135213.992770641@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455304867595864?=
-X-GMAIL-MSGID: =?utf-8?q?1598456053421924248?=
+X-GMAIL-THRID: =?utf-8?q?1598455302039543864?=
+X-GMAIL-MSGID: =?utf-8?q?1598456051134325113?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,30 +50,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 659038428cb43a66e3eff71e2c845c9de3611a98 upstream.
+commit a24cd490739586a7d2da3549a1844e1d7c4f4fc4 upstream.
 
-orangefs_fill_sb() might've failed to allocate ORANGEFS_SB(s); don't
-oops in that case.
+hypfs_fill_super() might fail to allocate sbi; hypfs_kill_super()
+should not oops on that.
 
-Cc: stable@kernel.org
+Cc: stable@vger.kernel.org
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/orangefs/super.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/s390/hypfs/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/orangefs/super.c
-+++ b/fs/orangefs/super.c
-@@ -559,6 +559,11 @@ void orangefs_kill_sb(struct super_block
- 	/* provided sb cleanup */
- 	kill_anon_super(sb);
+--- a/arch/s390/hypfs/inode.c
++++ b/arch/s390/hypfs/inode.c
+@@ -318,7 +318,7 @@ static void hypfs_kill_super(struct supe
  
-+	if (!ORANGEFS_SB(sb)) {
-+		mutex_lock(&orangefs_request_mutex);
-+		mutex_unlock(&orangefs_request_mutex);
-+		return;
-+	}
- 	/*
- 	 * issue the unmount to userspace to tell it to remove the
- 	 * dynamic mount info it has for this superblock
+ 	if (sb->s_root)
+ 		hypfs_delete_tree(sb->s_root);
+-	if (sb_info->update_file)
++	if (sb_info && sb_info->update_file)
+ 		hypfs_remove(sb_info->update_file);
+ 	kfree(sb->s_fs_info);
+ 	sb->s_fs_info = NULL;
