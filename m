@@ -1,72 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753411AbeDVJOq (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 05:14:46 -0400
-Received: from sauhun.de ([88.99.104.3]:37630 "EHLO pokefinder.org"
+        id S1753428AbeDVJPM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 05:15:12 -0400
+Received: from sauhun.de ([88.99.104.3]:37614 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751313AbeDVJOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 05:14:45 -0400
-Date: Sun, 22 Apr 2018 11:14:43 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Vinod Koul <vinod.koul@intel.com>
+        id S1751723AbeDVJOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 05:14:20 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: dmaengine@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Dan Williams <dan.j.williams@intel.com>, Li Yang <leoyang.li@nxp.com>,
-        Zhang Wei <zw@zh-kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 07/61] dma: simplify getting .drvdata
-Message-ID: <20180422091443.ryfdum5nhjc2b7qw@ninjato>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-8-wsa+renesas@sang-engineering.com>
- <20180422061733.GU6014@localhost>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6f5sacsuvgjsenls"
-Content-Disposition: inline
-In-Reply-To: <20180422061733.GU6014@localhost>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] dmaengine: ste_dma40: simplify getting .drvdata
+Date: Sun, 22 Apr 2018 11:14:13 +0200
+Message-Id: <20180422091415.7587-6-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
+References: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
---6f5sacsuvgjsenls
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On Sun, Apr 22, 2018 at 11:47:33AM +0530, Vinod Koul wrote:
-> On Thu, Apr 19, 2018 at 04:05:37PM +0200, Wolfram Sang wrote:
-> > We should get drvdata from struct device directly. Going via
-> > platform_device is an unneeded step back and forth.
->=20
-> Do you mind splitting this per driver please, that makes it easy to manage
-> for me :)
+Build tested only. buildbot is happy. Please apply to your tree directly.
 
-No problem, done.
+ drivers/dma/ste_dma40.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-
---6f5sacsuvgjsenls
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrcUn8ACgkQFA3kzBSg
-KbaGng//WtrP6nLPSP/nblFu9au/lhvSwqTePV4MjjB8spMOB7tG6nOJqt8Lc+Um
-yc1h61Lnh3O/rIwu6R7785FF0yWG9cA1ALk7LOvB/80RbjBDM8X8lOHQ72gEONGs
-1lFo5JqKi/FUsvCbu8OYQjgtzo5Y7YkOVw4yW6Q0H34FzaUwWQNz2d+/adjklEpj
-6tfZrydqy9ell/nwp+0vCj+8TeqexpvgJOvGA2IPAizo8/0xQozcc7gjr5dfzn7j
-fTgqP5cUMrscXRbl0tbZBp4csvPzKZQSgsuu4uu1YAlJGGZkXYARf732i0weVt6F
-zkPKku38zY7uWoti9e5NfX8P6aVgXZpRc+0iuvs7phK0dI/BUQnlnNLztp2gKZRq
-klo7ozG8EEoy+RdzgrEtfvahJPPrf0D8EtIqR3GsDiYKdnDCQenqB9IwuBtpnhji
-IB3NODOOxrCgRvzKM5hUj2lRm3bP4I56SVt+TOQNO7x09ejO2b6lC5Iz2rxqxVHh
-WqIoCjAj1xICqojQLw9Oo7Ow+6PMvMjwqyI2s194LJ8u+R2yPnTy3DVTohZczuw6
-V26zfaxwGQj3sKJ+fDpvwBB4gQ/omcglJVAOrSb0oZXsuiV6jpEQ0xlUh0dTDlUB
-a3md/tXGaYBLn34WOcFKJbwXeOVPVsu/MQIKI6HJUUwBS+BoO9k=
-=hOmb
------END PGP SIGNATURE-----
-
---6f5sacsuvgjsenls--
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index c2b089af0420..1bc149af990e 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -2889,8 +2889,7 @@ static int __init d40_dmaengine_init(struct d40_base *base,
+ #ifdef CONFIG_PM_SLEEP
+ static int dma40_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	ret = pm_runtime_force_suspend(dev);
+@@ -2904,8 +2903,7 @@ static int dma40_suspend(struct device *dev)
+ 
+ static int dma40_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 	int ret = 0;
+ 
+ 	if (base->lcpa_regulator) {
+@@ -2970,8 +2968,7 @@ static void d40_save_restore_registers(struct d40_base *base, bool save)
+ 
+ static int dma40_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 
+ 	d40_save_restore_registers(base, true);
+ 
+@@ -2985,8 +2982,7 @@ static int dma40_runtime_suspend(struct device *dev)
+ 
+ static int dma40_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 
+ 	d40_save_restore_registers(base, false);
+ 
+-- 
+2.11.0
