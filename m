@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754079AbeDVXMX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 19:12:23 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43747 "EHLO
+        id S1753828AbeDVXKB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 19:10:01 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43723 "EHLO
         mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753655AbeDVXKP (ORCPT
+        with ESMTP id S1753670AbeDVXJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 19:10:15 -0400
-X-Google-Smtp-Source: AB8JxZp4PQVZn1ryzqkN2wYWRaXyxPWWb31+nI6kNq27qt+FK7tFKBU8b+dXOyrvWVHzsfoi+MI7VQ==
+        Sun, 22 Apr 2018 19:09:56 -0400
+X-Google-Smtp-Source: AB8JxZrLbBBrOzMyKQqTJeYrL3HRrz1jKIR7HC1rtWGfQteATBWZ1uNfvI1rkfv8rFs+YGQrP5cMXw==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 10/18 v2] regulator: s2mps11: Pass descriptor instead of GPIO number
-Date: Mon, 23 Apr 2018 01:07:34 +0200
-Message-Id: <20180422230742.3729-10-linus.walleij@linaro.org>
+        Philipp Zabel <philipp.zabel@gmail.com>
+Subject: [PATCH 02/18 v2] regulator: gpio: Get enable GPIO using GPIO descriptor
+Date: Mon, 23 Apr 2018 01:07:26 +0200
+Message-Id: <20180422230742.3729-2-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180422230742.3729-1-linus.walleij@linaro.org>
 References: <20180422230742.3729-1-linus.walleij@linaro.org>
@@ -24,146 +22,190 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of passing a global GPIO number for the enable GPIO, pass
-a descriptor looked up with the standard devm_gpiod_get_optional()
-call.
+We augment the GPIO regulator to get the *enable* regulator
+GPIO line (not the other lines) using a descriptor rather than
+a global number.
 
-This regulator supports passing platform data, but enable/sleep
-regulators are looked up from the device tree exclusively, so
-we can need not touch other files.
+We then pass this into the regulator core which has been
+prepared to hande enable descriptors in a separate patch.
 
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Switch over the two boardfiles using this facility and clean
+up so we only pass descriptors around.
+
+Cc: Philipp Zabel <philipp.zabel@gmail.com> # HX4700/Magician maintainer
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 ChangeLog v1->v2:
 - Rebase the patch on the other changes.
 ---
- drivers/regulator/s2mps11.c | 46 ++++++++++++++++++++++-----------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ arch/arm/mach-pxa/hx4700.c               | 12 +++++++++++-
+ arch/arm/mach-pxa/magician.c             | 11 ++++++++++-
+ drivers/regulator/gpio-regulator.c       | 23 +++++++++++------------
+ include/linux/regulator/gpio-regulator.h |  3 ---
+ 4 files changed, 32 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 7726b874e539..9a1dca26362e 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -18,7 +18,7 @@
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index e2e7f247a645..6717a10180eb 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -20,6 +20,7 @@
+ #include <linux/delay.h>
+ #include <linux/fb.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/machine.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/input.h>
+ #include <linux/input/navpoint.h>
+@@ -711,7 +712,6 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name = "bq24022",
  
- #include <linux/bug.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -27,7 +27,6 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
--#include <linux/of_gpio.h>
- #include <linux/mfd/samsung/core.h>
- #include <linux/mfd/samsung/s2mps11.h>
- #include <linux/mfd/samsung/s2mps13.h>
-@@ -57,7 +56,7 @@ struct s2mps11_info {
- 	 * Array (size: number of regulators) with GPIO-s for external
- 	 * sleep control.
- 	 */
--	int *ext_control_gpio;
-+	struct gpio_desc **ext_control_gpiod;
+-	.enable_gpio = GPIO72_HX4700_BQ24022_nCHARGE_EN,
+ 	.enable_high = 0,
+ 	.enabled_at_boot = 0,
+ 
+@@ -733,6 +733,15 @@ static struct platform_device bq24022 = {
+ 	},
  };
  
- static int get_ramp_delay(int ramp_delay)
-@@ -524,7 +523,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
- 	case S2MPS14X:
- 		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
- 			val = S2MPS14_ENABLE_SUSPEND;
--		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
-+		else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
- 			val = S2MPS14_ENABLE_EXT_CONTROL;
- 		else
- 			val = rdev->desc->enable_mask;
-@@ -818,7 +817,7 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
- static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
- {
--	int *gpio = s2mps11->ext_control_gpio;
-+	struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
- 	unsigned int i;
- 	unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
- 		S2MPS14_LDO12 };
-@@ -829,11 +828,20 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (!rdata[reg].init_data || !rdata[reg].of_node)
- 			continue;
++static struct gpiod_lookup_table bq24022_gpiod_table = {
++	.dev_id = "gpio-regulator",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa", GPIO72_HX4700_BQ24022_nCHARGE_EN,
++			    "enable", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ /*
+  * StrataFlash
+  */
+@@ -875,6 +884,7 @@ static void __init hx4700_init(void)
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
  
--		gpio[reg] = of_get_named_gpio(rdata[reg].of_node,
--				"samsung,ext-control-gpios", 0);
--		if (gpio_is_valid(gpio[reg]))
--			dev_dbg(&pdev->dev, "Using GPIO %d for ext-control over %d/%s\n",
--					gpio[reg], reg, rdata[reg].name);
-+		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
-+							rdata[reg].of_node,
-+							"samsung,ext-control-gpios",
-+							0,
-+							GPIOD_OUT_HIGH,
-+							"s2mps11-LDO");
-+		if (IS_ERR(gpio[reg])) {
-+			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
-+				reg, rdata[reg].name);
-+			continue;
-+		}
-+		if (gpio[reg])
-+			dev_dbg(&pdev->dev, "Using GPIO for ext-control over %d/%s\n",
-+				reg, rdata[reg].name);
- 	}
++	gpiod_add_lookup_table(&bq24022_gpiod_table);
+ 	platform_add_devices(devices, ARRAY_SIZE(devices));
+ 	pwm_add_table(hx4700_pwm_lookup, ARRAY_SIZE(hx4700_pwm_lookup));
+ 
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index 14c0f80bc9e7..9a5bda3ea194 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -657,7 +657,6 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name		= "bq24022",
+ 
+-	.enable_gpio		= GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
+ 	.enable_high		= 0,
+ 	.enabled_at_boot	= 1,
+ 
+@@ -679,6 +678,15 @@ static struct platform_device bq24022 = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table bq24022_gpiod_table = {
++	.dev_id = "gpio-regulator",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa", GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
++			    "enable", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ /*
+  * fixed regulator for ads7846
+  */
+@@ -1007,6 +1015,7 @@ static void __init magician_init(void)
+ 	regulator_register_always_on(0, "power", pwm_backlight_supply,
+ 		ARRAY_SIZE(pwm_backlight_supply), 5000000);
+ 
++	gpiod_add_lookup_table(&bq24022_gpiod_table);
+ 	platform_add_devices(ARRAY_AND_SIZE(devices));
  }
  
-@@ -1139,17 +1147,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		return -EINVAL;
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index a86b8997bb54..9d6094c4d71c 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -31,6 +31,7 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/regulator/gpio-regulator.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+@@ -161,10 +162,6 @@ of_get_gpio_regulator_config(struct device *dev, struct device_node *np,
+ 
+ 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
+ 
+-	config->enable_gpio = of_get_named_gpio(np, "enable-gpio", 0);
+-	if (config->enable_gpio < 0 && config->enable_gpio != -ENOENT)
+-		return ERR_PTR(config->enable_gpio);
+-
+ 	/* Fetch GPIOs. - optional property*/
+ 	ret = of_gpio_count(np);
+ 	if ((ret < 0) && (ret != -ENOENT))
+@@ -255,6 +252,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct gpio_regulator_data *drvdata;
+ 	struct regulator_config cfg = { };
++	enum gpiod_flags gflags;
+ 	int ptr, ret, state;
+ 
+ 	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_regulator_data),
+@@ -340,21 +338,22 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = np;
+ 
+-	if (gpio_is_valid(config->enable_gpio)) {
+-		cfg.ena_gpio = config->enable_gpio;
+-		cfg.ena_gpio_initialized = true;
+-	}
+ 	cfg.ena_gpio_invert = !config->enable_high;
+ 	if (config->enabled_at_boot) {
+ 		if (config->enable_high)
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
++			gflags = GPIOD_OUT_HIGH;
+ 		else
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
++			gflags = GPIOD_OUT_LOW;
+ 	} else {
+ 		if (config->enable_high)
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
++			gflags = GPIOD_OUT_LOW;
+ 		else
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
++			gflags = GPIOD_OUT_HIGH;
++	}
++	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "enable", gflags);
++	if (IS_ERR(cfg.ena_gpiod)) {
++		ret = PTR_ERR(cfg.ena_gpiod);
++		goto err_stategpio;
  	}
  
--	s2mps11->ext_control_gpio = devm_kmalloc(&pdev->dev,
--			sizeof(*s2mps11->ext_control_gpio) * rdev_num,
-+	s2mps11->ext_control_gpiod = devm_kmalloc(&pdev->dev,
-+			sizeof(*s2mps11->ext_control_gpiod) * rdev_num,
- 			GFP_KERNEL);
--	if (!s2mps11->ext_control_gpio)
-+	if (!s2mps11->ext_control_gpiod)
- 		return -ENOMEM;
--	/*
--	 * 0 is a valid GPIO so initialize all GPIO-s to negative value
--	 * to indicate that external control won't be used for this regulator.
--	 */
--	for (i = 0; i < rdev_num; i++)
--		s2mps11->ext_control_gpio[i] = -EINVAL;
+ 	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
+diff --git a/include/linux/regulator/gpio-regulator.h b/include/linux/regulator/gpio-regulator.h
+index 19fbd267406d..536cab86f2d5 100644
+--- a/include/linux/regulator/gpio-regulator.h
++++ b/include/linux/regulator/gpio-regulator.h
+@@ -44,8 +44,6 @@ struct gpio_regulator_state {
+ /**
+  * struct gpio_regulator_config - config structure
+  * @supply_name:	Name of the regulator supply
+- * @enable_gpio:	GPIO to use for enable control
+- *			set to -EINVAL if not used
+  * @enable_high:	Polarity of enable GPIO
+  *			1 = Active high, 0 = Active low
+  * @enabled_at_boot:	Whether regulator has been enabled at
+@@ -69,7 +67,6 @@ struct gpio_regulator_state {
+ struct gpio_regulator_config {
+ 	const char *supply_name;
  
- 	if (!iodev->dev->of_node) {
- 		if (iodev->pdata) {
-@@ -1179,8 +1181,6 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 	config.dev = &pdev->dev;
- 	config.regmap = iodev->regmap_pmic;
- 	config.driver_data = s2mps11;
--	config.ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
--	config.ena_gpio_initialized = true;
- 	for (i = 0; i < rdev_num; i++) {
- 		struct regulator_dev *regulator;
- 
-@@ -1191,7 +1191,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 			config.init_data = rdata[i].init_data;
- 			config.of_node = rdata[i].of_node;
- 		}
--		config.ena_gpio = s2mps11->ext_control_gpio[i];
-+		config.ena_gpiod = s2mps11->ext_control_gpiod[i];
- 
- 		regulator = devm_regulator_register(&pdev->dev,
- 						&regulators[i], &config);
-@@ -1202,7 +1202,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 			goto out;
- 		}
- 
--		if (gpio_is_valid(s2mps11->ext_control_gpio[i])) {
-+		if (s2mps11->ext_control_gpiod[i]) {
- 			ret = s2mps14_pmic_enable_ext_control(s2mps11,
- 					regulator);
- 			if (ret < 0) {
+-	int enable_gpio;
+ 	unsigned enable_high:1;
+ 	unsigned enabled_at_boot:1;
+ 	unsigned startup_delay;
 -- 
 2.14.3
