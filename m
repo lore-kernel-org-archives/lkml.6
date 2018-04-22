@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48VbJQloBsKO5V+A9/W6wD8gJQXiN0rzEMg8RXx2c4IrS7TJtwp750f9s58wUZ4ecLFiBrj
-ARC-Seal: i=1; a=rsa-sha256; t=1524406648; cv=none;
+X-Google-Smtp-Source: AIpwx4+fGo2cE37IbcKZkmeaFQnzzJBIfi3+ezjMC3wiVWDn7Q7hMA0SMfH8oFaEM4vQfPLrUdqa
+ARC-Seal: i=1; a=rsa-sha256; t=1524406645; cv=none;
         d=google.com; s=arc-20160816;
-        b=yt6cGfI8kGjWJ9tBC+UBYzXhMl8w1CQMlcx8Uk3L7WvyJmo2ZYl5DsahvNjHr4VkNY
-         LZ9LgAgq8lOc8kbtYcfKPM9v4bH0DV/95jzFZAFPov+tljFshVh7Xr2mOYp9wgX7yDjY
-         faoSg21huSDTwJNepyk19Cjticzwbd3yn9W4sTokRy9BrIDG1pKHfuGn84DfeHXwMylR
-         2qhTlr0VRbmbUOSMpLzLI4hRGC5/f5zP3b+r/5bbEH880IbiPP/Cw6HyDlHtKSuw2dNo
-         HCn20GtIiiYGZMud1YTd4dnPa0aHIWCzRwLDkTXXG+ytDt7/covs9XBZHlMZvIM6axWz
-         7emQ==
+        b=taFvilvOZSk97+s6rIFAPKI4Dcsz7oMdPNubYmOUwgoQdbly5ari3VpMiCBjWWkXR5
+         T/JhYPJO3ONorBXvYnn2pyC9GXc7LSS2ZhR8lIlTpcYLjVgh59Qx4QjdlvDmaJmenr8m
+         RAWTya7Py3hy7Ck4btKL3QxfGbO3S/YrP6KBOq5AviiOQjONcWK+67/aPvr9/dc+qKYX
+         rUTxbB1+LjkB0i9N118qtl00pVPLbEUdar/+QSjBe5H86RLnNeQZFmD0E9ZY+DdMB8KA
+         8OAscm8/AStZjpfpLJ4EbLaUg+8Qe81aTmVhMHYGuOKehwhDHGYglzp5vLOOZakYJDlS
+         WD3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wp5E47IF98bLYNRCMPVcSvMZpvUFVuoPZWCjufXTzkI=;
-        b=qlUcYl7navc+zWArzwZ9ycvKQFonZWGDJ/6cUPjbHnPRFnAbpKcWHlrF+Kn73jLCrQ
-         ifhj9CAGQhcGrC1EIk3LXcFU7LjRDnicDL12Amw5uEcfEy0A5O7Lkntf7bYXNRy9SiYn
-         /xGSuC9ZBd55NSf7lXsyYO5IfyaSrKYf+jLCkxFuLbTBq3QYGZpum8hTxDH3t7T8b0aU
-         UZJVxSL5j+sbM6qJ/UcfB4o6BUjjKiMm8AiL1QCWow/rRidV6FneWOUPXUs2wQABaMOS
-         ylAg72pW4EfgT/31vFTKoTdz0vCR68aBqap8Kka+/ecRb6qG2sZPALkDhkUUdTPOfKm5
-         Zqdw==
+        bh=/XWvsGxuoFNoAai+Kg3VzLuu4Zklwxib8NhDfFg3Mpk=;
+        b=dH/1Q40IerJBZP2+qNbJ5q0Yf4560mrorjGliJA5Xh+1/NftAp2wzeJl8xTiu537Xl
+         KGQC/TarAgiWwkMa4S5YOPfR4QLq8YLP5FoI3AQhL2tPydVXvGUF7Hdfg2t9RyyFObhB
+         K7UtkFAi/inwRzlVOU1Yf923yAnpEkDQGSOndS4itumzQco8jcCcYvdmtQInqNg8S1/q
+         arGDJBRQYJxhbNa91OU/6oWVLVIkhq1uLpntFiuWWgU/xS9hYV5bb0cf9lLCrP1iNuAp
+         OKtISOJCG1Ip2H2h0OrugQ9ZbP4hGYj3UXuD/abnxnatsHVWl+XmU6hyFkxwy0VgWFiq
+         B42A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+a67bc93e14682d92fc2f@syzkaller.appspotmail.com,
-	Roland Dreier <roland@purestorage.com>,
-	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.4 52/97] RDMA/ucma: Dont allow setting RDMA_OPTION_IB_PATH without an RDMA device
-Date: Sun, 22 Apr 2018 15:53:30 +0200
-Message-Id: <20180422135308.188699684@linuxfoundation.org>
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 34/97] regmap: Fix reversed bounds check in regmap_raw_write()
+Date: Sun, 22 Apr 2018 15:53:12 +0200
+Message-Id: <20180422135307.247294276@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455058285314563?=
-X-GMAIL-MSGID: =?utf-8?q?1598456225288960977?=
+X-GMAIL-THRID: =?utf-8?q?1598454873954222137?=
+X-GMAIL-MSGID: =?utf-8?q?1598456222823117730?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Roland Dreier <roland@purestorage.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 8435168d50e66fa5eae01852769d20a36f9e5e83 upstream.
+commit f00e71091ab92eba52122332586c6ecaa9cd1a56 upstream.
 
-Check to make sure that ctx->cm_id->device is set before we use it.
-Otherwise userspace can trigger a NULL dereference by doing
-RDMA_USER_CM_CMD_SET_OPTION on an ID that is not bound to a device.
+We're supposed to be checking that "val_len" is not too large but
+instead we check if it is smaller than the max.
 
-Cc: <stable@vger.kernel.org>
-Reported-by: <syzbot+a67bc93e14682d92fc2f@syzkaller.appspotmail.com>
-Signed-off-by: Roland Dreier <roland@purestorage.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+The only function affected would be regmap_i2c_smbus_i2c_write() in
+drivers/base/regmap/regmap-i2c.c.  Strangely that function has its own
+limit check which returns an error if (count >= I2C_SMBUS_BLOCK_MAX) so
+it doesn't look like it has ever been able to do anything except return
+an error.
+
+Fixes: c335931ed9d2 ("regmap: Add raw_write/read checks for max_raw_write/read sizes")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/base/regmap/regmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1230,6 +1230,9 @@ static int ucma_set_ib_path(struct ucma_
- 	if (!optlen)
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1582,7 +1582,7 @@ int regmap_raw_write(struct regmap *map,
  		return -EINVAL;
+ 	if (val_len % map->format.val_bytes)
+ 		return -EINVAL;
+-	if (map->max_raw_write && map->max_raw_write > val_len)
++	if (map->max_raw_write && map->max_raw_write < val_len)
+ 		return -E2BIG;
  
-+	if (!ctx->cm_id->device)
-+		return -EINVAL;
-+
- 	memset(&sa_path, 0, sizeof(sa_path));
- 
- 	ib_sa_unpack_path(path_data->path_rec, &sa_path);
+ 	map->lock(map->lock_arg);
