@@ -1,80 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753450AbeDVCyC (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 22:54:02 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33814 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753025AbeDVCx6 (ORCPT
+        id S1753406AbeDVDXA (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 23:23:00 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34048 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753025AbeDVDW6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 22:53:58 -0400
-X-Google-Smtp-Source: AIpwx49PuojWsHGK6PA+7Z4qITwezDBmNuFAWDSA9c8vbtdjhD86QPS5Qap4SugozEIwwymZg/txkA==
-Date: Sat, 21 Apr 2018 19:53:52 -0700
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
-        bart.vanassche@wdc.com, ming.lei@redhat.com, tytso@mit.edu,
-        darrick.wong@oracle.com, jikos@kernel.org, rjw@rjwysocki.net,
-        pavel@ucw.cz, len.brown@intel.com, linux-fsdevel@vger.kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        todd.e.brandt@linux.intel.com, nborisov@suse.com,
-        martin.petersen@oracle.com, ONeukum@suse.com, oleksandr@natalenko.name,
-        oleg.b.antonyan@gmail.com, yu.chen.surf@gmail.com,
-        dan.j.williams@intel.com, linux-pm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/11] fs: add frozen sb state helpers
-Message-ID: <20180422025352.a5vcgdcdatjvxft2@garbanzo.do-not-panic.com>
-References: <20171129232356.28296-1-mcgrof@kernel.org>
- <20171129232356.28296-4-mcgrof@kernel.org>
- <20171130171310.GG28180@quack2.suse.cz>
+        Sat, 21 Apr 2018 23:22:58 -0400
+X-Google-Smtp-Source: AIpwx49/ujG9Lu952Yurng5nhfOxiVXNlIhD0xp7SsVNW0VI0E0wt9fXQwb8/shN6dXjnCMKuS5ROg==
+Date: Sat, 21 Apr 2018 20:22:56 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrea Arcangeli <aarcange@redhat.com>, Roman Gushchin <guro@fb.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper
+ unmap
+In-Reply-To: <20180420124044.GA17484@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1804212019400.84222@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1804171545460.53786@chino.kir.corp.google.com> <201804180057.w3I0vieV034949@www262.sakura.ne.jp> <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com> <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
+ <20180418075051.GO17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804181159020.227784@chino.kir.corp.google.com> <20180419063556.GK17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com> <20180420082349.GW17484@dhcp22.suse.cz>
+ <20180420124044.GA17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171130171310.GG28180@quack2.suse.cz>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 30, 2017 at 06:13:10PM +0100, Jan Kara wrote:
-> On Wed 29-11-17 15:23:48, Luis R. Rodriguez wrote:
-> > The question of whether or not a superblock is frozen needs to be
-> > augmented in the future to account for differences between a user
-> > initiated freeze and a kernel initiated freeze done automatically
-> > on behalf of the kernel.
-> > 
-> > Provide helpers so that these can be used instead so that we don't
-> > have to expand checks later in these same call sites as we expand
-> > the definition of a frozen superblock.
-> > 
-> > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> 
-> So helpers are fine but...
-> 
-> > +/**
-> > + * sb_is_frozen_by_user - is superblock frozen by a user call
-> > + * @sb: the super to check
-> > + *
-> > + * Returns true if the super freeze was initiated by userspace, for instance,
-> > + * an ioctl call.
-> > + */
-> > +static inline bool sb_is_frozen_by_user(struct super_block *sb)
-> > +{
-> > +	return sb->s_writers.frozen == SB_FREEZE_COMPLETE;
-> > +}
-> 
-> ... I dislike the _by_user() suffix as there may be different places that
-> call freeze_super() (e.g. device mapper does this during some operations).
-> Clearly we need to distinguish "by system suspend" and "the other" cases.
-> So please make this clear in the naming.
-> 
-> In fact, what might be a cleaner solution is to introduce a 'freeze_count'
-> for superblock freezing (we already do have this for block devices). Then
-> you don't need to differentiate these two cases - but you'd still need to
-> properly handle cleanup if freezing of all superblocks fails in the middle.
-> So I'm not 100% this works out nicely in the end. But it's certainly worth
-> a consideration.
+On Fri, 20 Apr 2018, Michal Hocko wrote:
 
-Seems reasonable.
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index faf85699f1a1..216efa6d9f61 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -3004,10 +3004,21 @@ void exit_mmap(struct mm_struct *mm)
+>  	struct mmu_gather tlb;
+>  	struct vm_area_struct *vma;
+>  	unsigned long nr_accounted = 0;
+> +	bool locked = false;
+>  
+>  	/* mm's last user has gone, and its about to be pulled down */
+>  	mmu_notifier_release(mm);
+>  
+> +	/*
+> +	 * The mm is not accessible for anybody except for the oom reaper
+> +	 * which cannot race with munlocking so make sure we exclude the
+> +	 * two.
+> +	 */
+> +	if (unlikely(mm_is_oom_victim(mm))) {
+> +		down_write(&mm->mmap_sem);
+> +		locked = true;
+> +	}
+> +
+>  	if (mm->locked_vm) {
+>  		vma = mm->mmap;
+>  		while (vma) {
+> @@ -3021,7 +3032,7 @@ void exit_mmap(struct mm_struct *mm)
+>  
+>  	vma = mm->mmap;
+>  	if (!vma)	/* Can happen if dup_mmap() received an OOM */
+> -		return;
+> +		goto out_unlock;
+>  
+>  	lru_add_drain();
+>  	flush_cache_mm(mm);
+> @@ -3030,23 +3041,6 @@ void exit_mmap(struct mm_struct *mm)
+>  	/* Use -1 here to ensure all VMAs in the mm are unmapped */
+>  	unmap_vmas(&tlb, vma, 0, -1);
+>  
+> -	if (unlikely(mm_is_oom_victim(mm))) {
+> -		/*
+> -		 * Wait for oom_reap_task() to stop working on this
+> -		 * mm. Because MMF_OOM_SKIP is already set before
+> -		 * calling down_read(), oom_reap_task() will not run
+> -		 * on this "mm" post up_write().
+> -		 *
+> -		 * mm_is_oom_victim() cannot be set from under us
+> -		 * either because victim->mm is already set to NULL
+> -		 * under task_lock before calling mmput and oom_mm is
+> -		 * set not NULL by the OOM killer only if victim->mm
+> -		 * is found not NULL while holding the task_lock.
+> -		 */
+> -		set_bit(MMF_OOM_SKIP, &mm->flags);
+> -		down_write(&mm->mmap_sem);
+> -		up_write(&mm->mmap_sem);
+> -	}
+>  	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+>  	tlb_finish_mmu(&tlb, 0, -1);
+>  
+> @@ -3060,6 +3054,12 @@ void exit_mmap(struct mm_struct *mm)
+>  		vma = remove_vma(vma);
+>  	}
+>  	vm_unacct_memory(nr_accounted);
+> +
+> +out_unlock:
+> +	if (unlikely(locked)) {
+> +		set_bit(MMF_OOM_SKIP, &mm->flags);
+> +		up_write(&mm->mmap_sem);
+> +	}
+>  }
+>  
+>  /* Insert vm structure into process list sorted by address
 
-  Luis
+How have you tested this?
+
+I'm wondering why you do not see oom killing of many processes if the 
+victim is a very large process that takes a long time to free memory in 
+exit_mmap() as I do because the oom reaper gives up trying to acquire 
+mm->mmap_sem and just sets MMF_OOM_SKIP itself.
