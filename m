@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49BfxDXcN7M9aIOi1Ptzn4trLlw9Jwt8j7g1zn1/Y7rqZaM0ZENPmYzDvBo/9wfn1IoD+xF
-ARC-Seal: i=1; a=rsa-sha256; t=1524405753; cv=none;
+X-Google-Smtp-Source: AIpwx48alRzNjd4ENoYljy4zhN8g4dHHbDQu2QYKXq11q2fFKef+OPh+NUPCCBNg/N2WGYD0ZM8O
+ARC-Seal: i=1; a=rsa-sha256; t=1524405751; cv=none;
         d=google.com; s=arc-20160816;
-        b=esZejgn9DWR5JjgB63qoIEXpaFTKa2F92ndlsgZIQXC6S8qKLvVY+VJqVDGx0droMC
-         K2n2KQi6lsO9NxChp5UR+i1/yySp834XNsdZFiP4izE7Qvd0QPCW+4CIO1DuGKvwh66I
-         3L/LVWE2tmDTfCVsverS5gWx2w2Dk5vGjnNLmj72jaPXia1MedY28Z+9jjDhvhdnj22i
-         0vZrLbJax5qp9tiDERUdVlrDe0/SUSxdtHFMMeoplkFzA2N6tPWhjwbzS1z13+v1XzO/
-         VVtd0mxsdBW1iaCWFWNxWJLM1QPzTOs4LpICI3bRoKx4qUTwK5939yr6IxUhG8ko0f5K
-         N1hQ==
+        b=msgEJNy+TSlenJVuVRtEVRCGDLkwvdFvASBTqoYPm9bXQUXH2BSniaPZDRkT4wyVm1
+         1It17so32UeYojXcyeQiSmQcRB2kXajIM8EiFGn4pxS3O/HXhOa1TnE2qVwuCwNj//Xf
+         hIX3/39AVGvMx2BfwMwZpeoBTNndACftr/ixGnZnX5afGVQ4d37zaqt0y7/n6T/gcvtr
+         Wd6xuMz6smTUeRhUXzdP0jnk/y+04VoLHq6IxjJ+/ytlTXzieo15yICiEpDIo8iUdd7x
+         hjbLYEslKojcbqiDy8oyNsS4uMGfIKFZuf/JjSqJlgVVKK0AYMvXGjq1cUCDTAJpAafK
+         DxBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1x1blfnDkg3u3q91wGVgF0E085xnGj3KLoSCVcPZnZM=;
-        b=OTxfN5xAiYvnKtQeDb/9LzfueHiAVnmG28tkjbcTKOPoAAf/W44YPoP2N260hJufYk
-         XLrSNx6FDZqQOewwwEq4LVCPnDI8uCGYR9B/UFzOCVBU5CDrdT254QPRKhcEZJ4pktvz
-         KGdk98kbzVRAozmoPz6YfpjTC2FxhRPPaoTCfVP/UfxfVPo1AbN9V1b1iBUJypud9LEX
-         qoVEI92dxh79rhUMX9ck7ECjPJ3VCwErwRfCMWln9sV6MBFW2pYTRweBkVaaO14QFiyS
-         YxX/d1U768gZZhoyuGqRNwlPVadsYhapCJ9O/InO5Cu0O9UCqP3RuYOrSA54XK8tMbvC
-         KITA==
+        bh=9z0Fb46gAYhk4lq7HLnCyIT1qGAEILVQP2frDk/noIg=;
+        b=hoeIcqxWo6g5CTa4BBfyT4PYs+USM+q6zjdSfnmV5I1iFKEFg0MUuA2Fosja0qFIgN
+         wtZNPcpCEXIXx2QFHnLH5WSDFytIq4HeoEQ2WEMu2s+sZqpd3WP0cUeEmCsYcCbp34pm
+         RPoW214GPnrspIqkohQa1j/vwz8vHRqy8o4MdDNV3qBSgCK18LtnDV863m0ckxQvl/FI
+         I4HIEXvVl7w3rfpMBICgbVdqUh/Lt8e5ZEd+IuPSEBaIyUoInx9Fuu+uFy80JlqKTkc8
+         N6kIpLdNoGvljQWgfoMglUaRXFHgxCLGdYTm2fnylyjh6ncLAh3RFdmliysf2CouQMc+
+         t4Ng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.16 182/196] mmc: sdhci-pci: Only do AMD tuning for HS200
-Date: Sun, 22 Apr 2018 15:53:22 +0200
-Message-Id: <20180422135113.670412371@linuxfoundation.org>
+	Amir Goldstein <amir73il@gmail.com>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.16 181/196] fanotify: fix logic of events on child
+Date: Sun, 22 Apr 2018 15:53:21 +0200
+Message-Id: <20180422135113.619785651@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455287957314545?=
-X-GMAIL-MSGID: =?utf-8?q?1598455287957314545?=
+X-GMAIL-THRID: =?utf-8?q?1598455284731037282?=
+X-GMAIL-MSGID: =?utf-8?q?1598455284731037282?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,84 +49,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Kurtz <djkurtz@chromium.org>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 300ad8992913025b4294d4fc37b6bfff4a8b7ad1 upstream.
+commit 54a307ba8d3cd00a3902337ffaae28f436eeb1a4 upstream.
 
-Commit c31165d7400b ("mmc: sdhci-pci: Add support for HS200 tuning mode
-on AMD, eMMC-4.5.1") added a HS200 tuning method for use with AMD SDHCI
-controllers.  As described in the commit subject, this tuning is specific
-for HS200.  However, as implemented, this method is used for all host
-timings, because platform_execute_tuning, if it exists, is called
-unconditionally by sdhci_execute_tuning().  This breaks tuning when using
-the AMD controller with, for example, a DDR50 SD card.
+When event on child inodes are sent to the parent inode mark and
+parent inode mark was not marked with FAN_EVENT_ON_CHILD, the event
+will not be delivered to the listener process. However, if the same
+process also has a mount mark, the event to the parent inode will be
+delivered regadless of the mount mark mask.
 
-Instead, we can implement an amd execute_tuning wrapper callback, and
-then conditionally do the HS200 specific tuning for HS200, and otherwise
-call back to the standard sdhci_execute_tuning().
+This behavior is incorrect in the case where the mount mark mask does
+not contain the specific event type. For example, the process adds
+a mark on a directory with mask FAN_MODIFY (without FAN_EVENT_ON_CHILD)
+and a mount mark with mask FAN_CLOSE_NOWRITE (without FAN_ONDIR).
 
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Fixes: c31165d7400b ("mmc: sdhci-pci: Add support for HS200 tuning mode on AMD, eMMC-4.5.1")
-Cc: stable@vger.kernel.org # v4.11+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+A modify event on a file inside that directory (and inside that mount)
+should not create a FAN_MODIFY event, because neither of the marks
+requested to get that event on the file.
+
+Fixes: 1968f5eed54c ("fanotify: use both marks when possible")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-pci-core.c |   25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+ fs/notify/fanotify/fanotify.c |   34 +++++++++++++++-------------------
+ 1 file changed, 15 insertions(+), 19 deletions(-)
 
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -1318,7 +1318,7 @@ static void amd_enable_manual_tuning(str
- 	pci_write_config_dword(pdev, AMD_SD_MISC_CONTROL, val);
- }
- 
--static int amd_execute_tuning(struct sdhci_host *host, u32 opcode)
-+static int amd_execute_tuning_hs200(struct sdhci_host *host, u32 opcode)
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -92,7 +92,7 @@ static bool fanotify_should_send_event(s
+ 				       u32 event_mask,
+ 				       const void *data, int data_type)
  {
- 	struct sdhci_pci_slot *slot = sdhci_priv(host);
- 	struct pci_dev *pdev = slot->chip->pdev;
-@@ -1357,6 +1357,27 @@ static int amd_execute_tuning(struct sdh
- 	return 0;
- }
+-	__u32 marks_mask, marks_ignored_mask;
++	__u32 marks_mask = 0, marks_ignored_mask = 0;
+ 	const struct path *path = data;
  
-+static int amd_execute_tuning(struct mmc_host *mmc, u32 opcode)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+
-+	/* AMD requires custom HS200 tuning */
-+	if (host->timing == MMC_TIMING_MMC_HS200)
-+		return amd_execute_tuning_hs200(host, opcode);
-+
-+	/* Otherwise perform standard SDHCI tuning */
-+	return sdhci_execute_tuning(mmc, opcode);
-+}
-+
-+static int amd_probe_slot(struct sdhci_pci_slot *slot)
-+{
-+	struct mmc_host_ops *ops = &slot->host->mmc_host_ops;
-+
-+	ops->execute_tuning = amd_execute_tuning;
-+
-+	return 0;
-+}
-+
- static int amd_probe(struct sdhci_pci_chip *chip)
- {
- 	struct pci_dev	*smbus_dev;
-@@ -1391,12 +1412,12 @@ static const struct sdhci_ops amd_sdhci_
- 	.set_bus_width			= sdhci_set_bus_width,
- 	.reset				= sdhci_reset,
- 	.set_uhs_signaling		= sdhci_set_uhs_signaling,
--	.platform_execute_tuning	= amd_execute_tuning,
- };
+ 	pr_debug("%s: inode_mark=%p vfsmnt_mark=%p mask=%x data=%p"
+@@ -108,24 +108,20 @@ static bool fanotify_should_send_event(s
+ 	    !d_can_lookup(path->dentry))
+ 		return false;
  
- static const struct sdhci_pci_fixes sdhci_amd = {
- 	.probe		= amd_probe,
- 	.ops		= &amd_sdhci_pci_ops,
-+	.probe_slot	= amd_probe_slot,
- };
+-	if (inode_mark && vfsmnt_mark) {
+-		marks_mask = (vfsmnt_mark->mask | inode_mark->mask);
+-		marks_ignored_mask = (vfsmnt_mark->ignored_mask | inode_mark->ignored_mask);
+-	} else if (inode_mark) {
+-		/*
+-		 * if the event is for a child and this inode doesn't care about
+-		 * events on the child, don't send it!
+-		 */
+-		if ((event_mask & FS_EVENT_ON_CHILD) &&
+-		    !(inode_mark->mask & FS_EVENT_ON_CHILD))
+-			return false;
+-		marks_mask = inode_mark->mask;
+-		marks_ignored_mask = inode_mark->ignored_mask;
+-	} else if (vfsmnt_mark) {
+-		marks_mask = vfsmnt_mark->mask;
+-		marks_ignored_mask = vfsmnt_mark->ignored_mask;
+-	} else {
+-		BUG();
++	/*
++	 * if the event is for a child and this inode doesn't care about
++	 * events on the child, don't send it!
++	 */
++	if (inode_mark &&
++	    (!(event_mask & FS_EVENT_ON_CHILD) ||
++	     (inode_mark->mask & FS_EVENT_ON_CHILD))) {
++		marks_mask |= inode_mark->mask;
++		marks_ignored_mask |= inode_mark->ignored_mask;
++	}
++
++	if (vfsmnt_mark) {
++		marks_mask |= vfsmnt_mark->mask;
++		marks_ignored_mask |= vfsmnt_mark->ignored_mask;
+ 	}
  
- static const struct pci_device_id pci_ids[] = {
+ 	if (d_is_dir(path->dentry) &&
