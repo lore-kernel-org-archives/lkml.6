@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49Zc25uAoKiH89c7pz93UaptcGe5tSeiLCxmMsYuj3zP7/YEenfxZkl3uRRG837XffBJPOW
-ARC-Seal: i=1; a=rsa-sha256; t=1524406014; cv=none;
+X-Google-Smtp-Source: AIpwx487mCRyiMty1n0/0+JYwRsYmP1Hpxh3ePvDVkfnfrOeKQaKaRn+i7sW5zGzfMdfcyxFzVKP
+ARC-Seal: i=1; a=rsa-sha256; t=1524406012; cv=none;
         d=google.com; s=arc-20160816;
-        b=LO/g8hNG1erdOpQnC1OwGHVQ98hrDgexiakbAtygkRULiqEUoGe8brR29CCj8Pb0N3
-         5AsAmUB3bQz1dpVCZ3A+hB1LgSvkJsuYm5GL2TkTUMkEeskSF+yeP0cWZGWr29PwBFi/
-         Tbp0/EAJe6qOId5n/GpXGUXzejKOIPReQhJoyciv9Y8joNNzjhZeCxOp7OXFg7Tt9E6G
-         hvDIN5iGT2HPIZA9SVk9xWPgDjPVWEiyNGdNrAMsiWAaUQZVq5s+bCPyLdRMfiEG/31u
-         si1LVFi+Yer1vVLGn+cbwCLuh6j+oHVFMKkjJT2S0wSdhPW318W/oCDdApYTZVs4sON5
-         kH+Q==
+        b=DPe00fD8B/RbLfkBx3BsT5c83XyDmfObGXVeh4Ex8zKS7YCwZhhknUxvScG74Sj0qZ
+         B5J+J8xgIcCCi+52+Oq/hFZLZJTuuvIVlkwC2wej02anUQN4gQOCGAr0ji43Zq9GoDbX
+         U3EbhPJPXd7b0P4LBL2O57xcwpzY5dwiG2PdNfWynjRhuhiN+RaXMRyFxviIOxDp/FAs
+         Go1bSN272EiqOKfhlq12eycuPcYnkgc8Hrm6RbAk+yYcElHKsG5qfSH13Jljz/hLsiYJ
+         QK3S0Uhl5WH+fU1likGUM3LnK/XCq85gKFefijUHVMckhC2I6K5hOqh9oYmFCFu0vLm8
+         PCYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zwUGF4YHqX6mms+i7NZNkj/LHw/xxE0//ldagwgjx4I=;
-        b=z7KXmF8IO5oCy/LXMYjk284LCGbdNFRIrOuiSQCSEO2llhKBHNXHlbtNW0qazX9UZq
-         9smMA0ujtGqpPIq9umblLC++Tvpl6JNVUEMC2vr/K8K+DvaYvM2kyjkRmy4EuJTJ/T5h
-         sKzfVNrnHe23ReNjlNQBNWkvXmjBaURUYZpHjnYd1T51CYhtsCzejd08GqYlKTG986ua
-         euPpR7yyoUb12hR3s/FPlcIXxP0u5KgTjEwX2tCw4m6n8ZVCFgR8rgcqe5Ja2KczpaJ/
-         kjh2NwFwH+9vZUuf1t2uWFR6ANm8GsC4h34dsWaySLjIpjcJuiGB0cNuFrY9HggpgPss
-         b6Hg==
+        bh=BYjOxy6Cl3YAhDQ7CgmOf+sGk4wo9toSiH7b1ZBOZxc=;
+        b=ZfcjRRCEdADJWOOfu2osidJry8PUFJdfJNkvqxru6yH4OniIkXBiVoShSbqQuZyfGD
+         h3IgJ18KyIkcqKop8jLFzDInVjBZdHOW9z8kKbDX7ftD6GiQAzQ+E32yCJ6gvN//CfVe
+         lz5nNb0S7ERf/ydczAOlhSpNtTlZu8yiUR2aL7gcPkTjLvwkgOMdzMnS3a0RGZpTHTvS
+         nQJfZZYnnU3zxjxxteNue9mg3/m96sQT1MCUxXR4AaFe2hDUbtKc6hyDI/nImgztHShj
+         XzITHJFc5QQjj+vx9OrywekZ85FkMDZxRVaAeMESo5/JcVKc03benmxq+uJ0rDdluEU2
+         IuGw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,9 +27,9 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.14 082/164] ext4: move call to ext4_error() into ext4_xattr_check_block()
-Date: Sun, 22 Apr 2018 15:52:29 +0200
-Message-Id: <20180422135138.796671031@linuxfoundation.org>
+Subject: [PATCH 4.14 081/164] ext4: dont allow r/w mounts if metadata blocks overlap the superblock
+Date: Sun, 22 Apr 2018 15:52:28 +0200
+Message-Id: <20180422135138.758813202@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455038749394333?=
-X-GMAIL-MSGID: =?utf-8?q?1598455561478419397?=
+X-GMAIL-THRID: =?utf-8?q?1598455035769736899?=
+X-GMAIL-MSGID: =?utf-8?q?1598455558690199926?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,149 +50,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit de05ca8526796c7e9f7c7282b7f89a818af19818 upstream.
+commit 18db4b4e6fc31eda838dd1c1296d67dbcb3dc957 upstream.
 
-Refactor the call to EXT4_ERROR_INODE() into ext4_xattr_check_block().
-This simplifies the code, and fixes a problem where not all callers of
-ext4_xattr_check_block() were not resulting in ext4_error() getting
-called when the xattr block is corrupted.
+If some metadata block, such as an allocation bitmap, overlaps the
+superblock, it's very likely that if the file system is mounted
+read/write, the results will not be pretty.  So disallow r/w mounts
+for file systems corrupted in this particular way.
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/xattr.c |   60 +++++++++++++++++++++++++-------------------------------
- 1 file changed, 27 insertions(+), 33 deletions(-)
+ fs/ext4/super.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -224,25 +224,36 @@ ext4_xattr_check_entries(struct ext4_xat
- }
- 
- static inline int
--ext4_xattr_check_block(struct inode *inode, struct buffer_head *bh)
-+__ext4_xattr_check_block(struct inode *inode, struct buffer_head *bh,
-+			 const char *function, unsigned int line)
- {
--	int error;
-+	int error = -EFSCORRUPTED;
- 
- 	if (buffer_verified(bh))
- 		return 0;
- 
- 	if (BHDR(bh)->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
- 	    BHDR(bh)->h_blocks != cpu_to_le32(1))
--		return -EFSCORRUPTED;
-+		goto errout;
-+	error = -EFSBADCRC;
- 	if (!ext4_xattr_block_csum_verify(inode, bh))
--		return -EFSBADCRC;
-+		goto errout;
- 	error = ext4_xattr_check_entries(BFIRST(bh), bh->b_data + bh->b_size,
- 					 bh->b_data);
--	if (!error)
-+errout:
-+	if (error)
-+		__ext4_error_inode(inode, function, line, 0,
-+				   "corrupted xattr block %llu",
-+				   (unsigned long long) bh->b_blocknr);
-+	else
- 		set_buffer_verified(bh);
- 	return error;
- }
- 
-+#define ext4_xattr_check_block(inode, bh) \
-+	__ext4_xattr_check_block((inode), (bh),  __func__, __LINE__)
-+
-+
- static int
- __xattr_check_inode(struct inode *inode, struct ext4_xattr_ibody_header *header,
- 			 void *end, const char *function, unsigned int line)
-@@ -513,12 +524,9 @@ ext4_xattr_block_get(struct inode *inode
- 		goto cleanup;
- 	ea_bdebug(bh, "b_count=%d, refcount=%d",
- 		atomic_read(&(bh->b_count)), le32_to_cpu(BHDR(bh)->h_refcount));
--	if (ext4_xattr_check_block(inode, bh)) {
--		EXT4_ERROR_INODE(inode, "bad block %llu",
--				 EXT4_I(inode)->i_file_acl);
--		error = -EFSCORRUPTED;
-+	error = ext4_xattr_check_block(inode, bh);
-+	if (error)
- 		goto cleanup;
--	}
- 	ext4_xattr_block_cache_insert(ea_block_cache, bh);
- 	entry = BFIRST(bh);
- 	error = ext4_xattr_find_entry(&entry, name_index, name, 1);
-@@ -678,12 +686,9 @@ ext4_xattr_block_list(struct dentry *den
- 		goto cleanup;
- 	ea_bdebug(bh, "b_count=%d, refcount=%d",
- 		atomic_read(&(bh->b_count)), le32_to_cpu(BHDR(bh)->h_refcount));
--	if (ext4_xattr_check_block(inode, bh)) {
--		EXT4_ERROR_INODE(inode, "bad block %llu",
--				 EXT4_I(inode)->i_file_acl);
--		error = -EFSCORRUPTED;
-+	error = ext4_xattr_check_block(inode, bh);
-+	if (error)
- 		goto cleanup;
--	}
- 	ext4_xattr_block_cache_insert(EA_BLOCK_CACHE(inode), bh);
- 	error = ext4_xattr_list_entries(dentry, BFIRST(bh), buffer, buffer_size);
- 
-@@ -810,10 +815,9 @@ int ext4_get_inode_usage(struct inode *i
- 			goto out;
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2330,6 +2330,8 @@ static int ext4_check_descriptors(struct
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+ 				 "Block bitmap for group %u overlaps "
+ 				 "superblock", i);
++			if (!sb_rdonly(sb))
++				return 0;
  		}
- 
--		if (ext4_xattr_check_block(inode, bh)) {
--			ret = -EFSCORRUPTED;
-+		ret = ext4_xattr_check_block(inode, bh);
-+		if (ret)
- 			goto out;
--		}
- 
- 		for (entry = BFIRST(bh); !IS_LAST_ENTRY(entry);
- 		     entry = EXT4_XATTR_NEXT(entry))
-@@ -1795,12 +1799,9 @@ ext4_xattr_block_find(struct inode *inod
- 		ea_bdebug(bs->bh, "b_count=%d, refcount=%d",
- 			atomic_read(&(bs->bh->b_count)),
- 			le32_to_cpu(BHDR(bs->bh)->h_refcount));
--		if (ext4_xattr_check_block(inode, bs->bh)) {
--			EXT4_ERROR_INODE(inode, "bad block %llu",
--					 EXT4_I(inode)->i_file_acl);
--			error = -EFSCORRUPTED;
-+		error = ext4_xattr_check_block(inode, bs->bh);
-+		if (error)
- 			goto cleanup;
--		}
- 		/* Find the named attribute. */
- 		bs->s.base = BHDR(bs->bh);
- 		bs->s.first = BFIRST(bs->bh);
-@@ -2723,13 +2724,9 @@ retry:
- 		error = -EIO;
- 		if (!bh)
- 			goto cleanup;
--		if (ext4_xattr_check_block(inode, bh)) {
--			EXT4_ERROR_INODE(inode, "bad block %llu",
--					 EXT4_I(inode)->i_file_acl);
--			error = -EFSCORRUPTED;
--			brelse(bh);
-+		error = ext4_xattr_check_block(inode, bh);
-+		if (error)
- 			goto cleanup;
--		}
- 		base = BHDR(bh);
- 		end = bh->b_data + bh->b_size;
- 		min_offs = end - base;
-@@ -2886,11 +2883,8 @@ int ext4_xattr_delete_inode(handle_t *ha
- 			goto cleanup;
+ 		if (block_bitmap < first_block || block_bitmap > last_block) {
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+@@ -2342,6 +2344,8 @@ static int ext4_check_descriptors(struct
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+ 				 "Inode bitmap for group %u overlaps "
+ 				 "superblock", i);
++			if (!sb_rdonly(sb))
++				return 0;
  		}
- 		error = ext4_xattr_check_block(inode, bh);
--		if (error) {
--			EXT4_ERROR_INODE(inode, "bad block %llu (error %d)",
--					 EXT4_I(inode)->i_file_acl, error);
-+		if (error)
- 			goto cleanup;
--		}
- 
- 		if (ext4_has_feature_ea_inode(inode->i_sb)) {
- 			for (entry = BFIRST(bh); !IS_LAST_ENTRY(entry);
+ 		if (inode_bitmap < first_block || inode_bitmap > last_block) {
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+@@ -2354,6 +2358,8 @@ static int ext4_check_descriptors(struct
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+ 				 "Inode table for group %u overlaps "
+ 				 "superblock", i);
++			if (!sb_rdonly(sb))
++				return 0;
+ 		}
+ 		if (inode_table < first_block ||
+ 		    inode_table + sbi->s_itb_per_group - 1 > last_block) {
