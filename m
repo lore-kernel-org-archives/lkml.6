@@ -1,122 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeDVRWZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 13:22:25 -0400
-Received: from vpn-0-22.aquilenet.fr ([185.233.101.22]:42832 "EHLO
-        leonov.paulk.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751296AbeDVRWY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 13:22:24 -0400
-Message-ID: <8012696a7bf0132dd2361a896bf0abfbe8a3084e.camel@paulk.fr>
-Subject: Re: [PATCH] ARM: dts: imx6qdl-cubox-i: Move card-detect GPIO to 1.5
- SOM devices only
-From: Paul Kocialkowski <contact@paulk.fr>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Date: Sun, 22 Apr 2018 19:22:14 +0200
-In-Reply-To: <20180422143911.GB16141@n2100.armlinux.org.uk>
-References: <20180422142151.17910-1-contact@paulk.fr>
-         <20180422143911.GB16141@n2100.armlinux.org.uk>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-cv3H+KZnNuNMpz0d3X7i"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S1753474AbeDVRW4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 13:22:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46464 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753406AbeDVRWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 13:22:52 -0400
+Date: Sun, 22 Apr 2018 19:22:39 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: NeilBrown <neil@brown.name>
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] mtd: spi-nor: clear Winbond Extended Address Reg on
+ switch to 3-byte addressing.
+Message-ID: <20180422192239.4972500f@bbrezillon>
+In-Reply-To: <87o9ido5e7.fsf@notabene.neil.brown.name>
+References: <874lkmw54j.fsf@notabene.neil.brown.name>
+        <87sh7wrq8p.fsf@notabene.neil.brown.name>
+        <20180420215440.7b078f6c@bbrezillon>
+        <87h8o5po1h.fsf@notabene.neil.brown.name>
+        <967de310-3b9a-1853-3377-71f71fd8ac27@gmail.com>
+        <87o9ido5e7.fsf@notabene.neil.brown.name>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 21 Apr 2018 08:54:40 +1000
+NeilBrown <neil@brown.name> wrote:
 
---=-cv3H+KZnNuNMpz0d3X7i
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> Winbond spi-nor flash 32MB and larger have an 'Extended Address
+> Register' as one option for addressing beyond 16MB (Macronix
+> has the same concept, Spansion has EXTADD bits in the Bank Address
+> Register).
+> 
+> According to section
+>    8.2.7 Write Extended Address Register (C5h)
+> 
+> of the Winbond W25Q256FV data sheet (256M-BIT SPI flash)
+> 
+>    The Extended Address Register is only effective when the device is
+>    in the 3-Byte Address Mode.  When the device operates in the 4-Byte
+>    Address Mode (ADS=1), any command with address input of A31-A24
+>    will replace the Extended Address Register values. It is
+>    recommended to check and update the Extended Address Register if
+>    necessary when the device is switched from 4-Byte to 3-Byte Address
+>    Mode.
+> 
+> So the documentation suggests clearing the EAR after switching to
+> 3-byte mode.  Experimentation shows that the EAR is *always* one after
+> the switch to 3-byte mode, so clearing the EAR is mandatory at
+> shutdown for a subsequent 3-byte-addressed reboot to work.
+> 
+> Note that some SOCs (e.g. MT7621) do not assert a reset line at normal
+> reboot, so we cannot rely on hardware reset.  The MT7621 does assert a
+> reset line at watchdog-reset.
+> 
+> Acked-by: Marek Vasut <marek.vasut@gmail.com>
+> Signed-off-by: NeilBrown <neil@brown.name>
 
-Hi,
+Applied to spi-nor/next.
 
-Le dimanche 22 avril 2018 =C3=A0 15:39 +0100, Russell King - ARM Linux a
-=C3=A9crit :
-> On Sun, Apr 22, 2018 at 04:21:51PM +0200, Paul Kocialkowski wrote:
-> > The Solid-Run CuBox-i lower board used in the first generation of
-> > CuBox-i devices feature a hinged micro SD card slot, that does not
-> > have
-> > card-detect capability. Since the card-detect GPIO was specified in
-> > the
-> > common cubox-i dtsi, it is moved to each device using the 1.5 SOM
-> > and is
-> > thus removed from the imx6q-cubox-i dts.
->=20
-> This seems incorrect.
->=20
-> The 1.5 SOM is a relatively recent thing, and I have one of the first
-> Cubox-i's that were produced which is not hinged, and does not have a
-> 1.5 SOM.  There is _no_ correlation between the 1.5 SOM and the SD
-> card slot.
->=20
-> Talking to folk at SolidRun, we're all confused about your assertions.
+Thanks,
 
-It appears that I was also confused about the different models in the
-CuBox-i line. I had assumed that the models had been updated to a new
-revision (carrying that 1.5 SOM) since the time I bought mine (which was
-thus some sort of first generation). With this scenario in mind, it made
-sense to me that a CD GPIO required only for the second generation would
-have been applied by mistake to all the cubox-i devices by having it in
-the common dtsi.
+Boris
 
-I checked on the leaflet inside the box and models did not change, only
-the 4x4 model was added in the meantime.=20
-
-> We're also confused about "hinged micro SD card slot" - Cubox-i's
-> come with either a push-push slot or a static (push-in, pull-out)
-> slot.
-> (Prototypes were the latter.)
-
-The one I have definitely does not have a spring-loaded mechanism, so I
-would call it a push/pull static slot. I mentioned a hinged slot because
-that's the term used to describe the layout in the CuBox-i-Lower
-schematics, SD/MMC Connector part: "U3 is an internal hinged micro SD".
-Looking at pictures of what hinged slots look like, that's definitely
-not what I have here.
-
-Are all CuBox-i units that have ever been sold supposed to have a
-connector with a CD line? I find it hard to believe that it's broken
-specifically on mine.
-
-If that's really needed, I could open up the device, check whether the
-R8 pull is in place and check the voltage there.
-
-Cheers,
-
---=20
-Paul Kocialkowski,
-
-developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-cv3H+KZnNuNMpz0d3X7i
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlrcxMYACgkQhP3B6o/u
-lQxfog//Qc0HFoAUIFHU4DV6ZaHUTPKCpiYB44sqt7VQp0GXLKBa73lOGH6zipqR
-guG2Ytsjn9+/Tx7jHSOlpKP7RodtXPGk1DAH1i+BP4mKsIDLGd+bPnoI4Zz0Si7J
-EW5Hhz5zb3GfPpbj30oy1bQ/G2bq9N/gubtNMNMHSZzlBXXnLPGcqZYm1maNnDkj
-rg/AnRTQJpr4Ko2f0wDuaYzZMVqWNzO4mqsMVgAAsmeAPHj3Rdew588efQ6TE7Ck
-Qywx5+ZuDKdhXNHpyhiICW+FitHJyreZ7VLlOmk4g8vCP+ZgW2P9Yc8M4Z5f1Cm7
-InrTQ6p6ldTL5Nc23Ky+XY+JJ+C5geXLlFg/vsMGZf6pwMyt8fO99wvcOjcbWSm5
-LSrKbTwJ9x+c3sKklSu/ZnLa9KesNgcdUpUsvuxj11UM5SfhMl8E34PN5hF9HhxO
-h56m4XS3WjnXALYq6sH9dMAwwsqa91xYxR4Cacu/DdOEnv5VcYYdGexsD5clVG4C
-YzJsMhKGM0akfbhqqDtYk9IWharhQKQcBya+p4wwuLt90M3ezeFRdzMbVidHoHDg
-RJDL8eMhdPt9eXjgtglC1/X9UNZuaPsmaAfu+g+bGFCgPNqpadTftfZwarTdOKbR
-EGkFH4KsHmZ5rnASRnqzw5jd6BI1KL88zKiMFFlYccrCsblOums=
-=3oIn
------END PGP SIGNATURE-----
-
---=-cv3H+KZnNuNMpz0d3X7i--
+> ---
+> 
+> Changes since v3:
+>  Removed Fixes/stable tags. Added Acked-by from Marek.
+> Changes sinc3 v2:
+>   Fixed comment style.
+> 
+> 
+>  drivers/mtd/spi-nor/spi-nor.c | 14 ++++++++++++++
+>  include/linux/mtd/spi-nor.h   |  2 ++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 5bfa36e95f35..42ae9a1529bb 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -284,6 +284,20 @@ static inline int set_4byte(struct spi_nor *nor, const struct flash_info *info,
+>  		if (need_wren)
+>  			write_disable(nor);
+>  
+> +		if (!status && !enable &&
+> +		    JEDEC_MFR(info) == SNOR_MFR_WINBOND) {
+> +			/*
+> +			 * On Winbond W25Q256FV, leaving 4byte mode causes
+> +			 * the Extended Address Register to be set to 1, so all
+> +			 * 3-byte-address reads come from the second 16M.
+> +			 * We must clear the register to enable normal behavior.
+> +			 */
+> +			write_enable(nor);
+> +			nor->cmd_buf[0] = 0;
+> +			nor->write_reg(nor, SPINOR_OP_WREAR, nor->cmd_buf, 1);
+> +			write_disable(nor);
+> +		}
+> +
+>  		return status;
+>  	default:
+>  		/* Spansion style */
+> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+> index de36969eb359..e60da0d34cc1 100644
+> --- a/include/linux/mtd/spi-nor.h
+> +++ b/include/linux/mtd/spi-nor.h
+> @@ -62,6 +62,8 @@
+>  #define SPINOR_OP_RDCR		0x35	/* Read configuration register */
+>  #define SPINOR_OP_RDFSR		0x70	/* Read flag status register */
+>  #define SPINOR_OP_CLFSR		0x50	/* Clear flag status register */
+> +#define SPINOR_OP_RDEAR		0xc8	/* Read Extended Address Register */
+> +#define SPINOR_OP_WREAR		0xc5	/* Write Extended Address Register */
+>  
+>  /* 4-byte address opcodes - used on Spansion and some Macronix flashes. */
+>  #define SPINOR_OP_READ_4B	0x13	/* Read data bytes (low frequency) */
