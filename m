@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4894NkUnQNB7hYZ7QFe00/4s6i0qify6t+9BSR9AL8s3f9NWv1DsjCiY2AYSpy0A3D7gmdH
-ARC-Seal: i=1; a=rsa-sha256; t=1524405724; cv=none;
+X-Google-Smtp-Source: AIpwx4/EVOQXwk3YA4sSTulQq4Z1kpoXSrcsgZFj/VzWZ39qMnuLP7wmh3cu+trNFu7mcftHMYtX
+ARC-Seal: i=1; a=rsa-sha256; t=1524405721; cv=none;
         d=google.com; s=arc-20160816;
-        b=PksAmSccZ8H7ZYpMNWwrMNrvvrWkaHmlQf+qxhGCJAgqME10WqX7/0+Q1a6nsvUdPx
-         F2E+i43IvAs4SEZ2I/Z1eynCsVQ9QjxdP78rRZk8TObAf7bymzOjUKTSZNA1osIMa4gZ
-         HbZwS9dt9vdH7KIoaX9Ti6v3OPhvo9PLzVOCXFAt2GFA17wKRp1JegeGXTDGOzoX370r
-         Sd9sQMK6CiuT6UPNxOa8DVvLBJ+6/egRlml8CBrix0W5zO1U0sLRxullwfjcGVJyC8bh
-         UrpDqe08PgVL2KS4gznohJV/tapgSl2t/dpLddflpzI8Q1eLnCGknz7CCA1HCxyW/yUW
-         /W5w==
+        b=ehyZSiKlYWs2p17b4mTGen45DgsbjYkZAnqRGMQMwC589epQbJcgtgjphn0Uu5wfma
+         elPQtMYlFYxKVjJ+FaeZFDPeNK7jLtBoO9eAU2MFvTUG8lmt39wkaQe89D4CZnA74Zyt
+         05xr0hoiRdvcvmd3YT2TjldIvp6oxwlxA1bwK4X+Mhd9WntF+7bonbOPPtrunVMw7V06
+         MkRcm/hzFUqU9QbmhYrHmGYFJbHXAZYPWoxPdeyw1f6YMbejey82SmPyRFEkUYDIVzwg
+         qvZaMolspaP7uhoxfkAwpjeL551JwXZMzB+nl49qc+JXEHcVsA1Ye0BH11EpFmVoTTwY
+         /FXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SvxqD1FThD+ZRGz+dMtCS2OQ19OUuBpYrxAeF4IJ44Q=;
-        b=reCxyIjBsO52Gw8dXkV6a76MariHHYrdrrkRiB2TmybmHOuZcxWkB1409WP4smh9q0
-         T18qbaz0yMb2g4fLbBI7TjHojuL9abbmLFQvZkQqx3AmFRdFOZ+ybnNuTr9kIQaJgXo2
-         gfRVsYtNgKmrSnKV78a9dlc5+MVdGxH9Um/3XyBAU7LC3LRLp6ELsR3t0cfRr9bjsfXF
-         rYGAHyyxBnmDgekwLoiTumqv6ViYrRh9BNiEokzbDAbnnNFt0E0bQsHblYu4Q9yo2FHf
-         K6QVEJSluohESmMj1YmUHtLt84EZNQ9wqGhdEnnmZ5P/VdNY5qfmCm9uZCY6rBu163Jq
-         n0WQ==
+        bh=txbRmqX7XuHhb1cJ5rAzPnb/OyZe91EIkTddocRnvp8=;
+        b=JGJx/h/GLHLy4FJKC5J50I7xlleFzRhXDicH9VXN+eWgVTMCMayRI9O+xRCPsU2AMd
+         LOdld9mAUztpksto0R7N7A+K4lEZeuQWcW+f56Mzxcw6pqt/+X98vwKjOhNmxmStW8se
+         QWlaIdKTAJcq+5ACIRHzJLXtb5nRkKXTufA3t9o+0TIOmiRzicMuiSAO/eHYeUdk8Opq
+         /rWUUkarVNjpmFUwdW5mG6eF5RxZHV3VTlv9RzdLUIPfGsfCFIIXDq31Mb9JVecOctQl
+         LC6n86Ypqh/G4rgd7iZa/91wiOZdkKfZtgZzjKmbz770bLLI93A9kIlmYkg3kvyllKYo
+         NIbA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Heiko Carstens <heiko.carstens@de.ibm.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.16 172/196] s390: add support for IBM z14 Model ZR1
-Date: Sun, 22 Apr 2018 15:53:12 +0200
-Message-Id: <20180422135113.146185113@linuxfoundation.org>
+	Aaron Armstrong Skomra <aaron.skomra@wacom.com>,
+	Ping Cheng <ping.cheng@wacom.com>,
+	Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.16 171/196] HID: wacom: bluetooth: send exit report for recent Bluetooth devices
+Date: Sun, 22 Apr 2018 15:53:11 +0200
+Message-Id: <20180422135113.095020360@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455256824125672?=
-X-GMAIL-MSGID: =?utf-8?q?1598455256824125672?=
+X-GMAIL-THRID: =?utf-8?q?1598455253524097699?=
+X-GMAIL-MSGID: =?utf-8?q?1598455253524097699?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,59 +50,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
+From: Aaron Armstrong Skomra <skomra@gmail.com>
 
-commit 451239eb3d397bd197a79cc3aab943da41ba0905 upstream.
+commit 619d3a2922ce623ca2eca443cc936810d328317c upstream.
 
-Just add the new machine type number to the two places that matter.
+The code path for recent Bluetooth devices omits an exit report which
+resets all the values of the device.
 
-Cc: <stable@vger.kernel.org> # v4.14+
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 4922cd26f0 ("HID: wacom: Support 2nd-gen Intuos Pro's Bluetooth classic interface")
+Cc: <stable@vger.kernel.org> # 4.11
+Signed-off-by: Aaron Armstrong Skomra <aaron.skomra@wacom.com>
+Reviewed-by: Ping Cheng <ping.cheng@wacom.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/Kconfig                      |    8 ++++----
- arch/s390/kernel/perf_cpum_cf_events.c |    1 +
- arch/s390/kernel/setup.c               |    1 +
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/hid/wacom_wac.c |   76 +++++++++++++++++++++++++++++-------------------
+ 1 file changed, 46 insertions(+), 30 deletions(-)
 
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -289,12 +289,12 @@ config MARCH_Z13
- 	  older machines.
+--- a/drivers/hid/wacom_wac.c
++++ b/drivers/hid/wacom_wac.c
+@@ -689,6 +689,45 @@ static int wacom_intuos_get_tool_type(in
+ 	return tool_type;
+ }
  
- config MARCH_Z14
--	bool "IBM z14"
-+	bool "IBM z14 ZR1 and z14"
- 	select HAVE_MARCH_Z14_FEATURES
- 	help
--	  Select this to enable optimizations for IBM z14 (3906 series).
--	  The kernel will be slightly faster but will not work on older
--	  machines.
-+	  Select this to enable optimizations for IBM z14 ZR1 and z14 (3907
-+	  and 3906 series). The kernel will be slightly faster but will not
-+	  work on older machines.
++static void wacom_exit_report(struct wacom_wac *wacom)
++{
++	struct input_dev *input = wacom->pen_input;
++	struct wacom_features *features = &wacom->features;
++	unsigned char *data = wacom->data;
++	int idx = (features->type == INTUOS) ? (data[1] & 0x01) : 0;
++
++	/*
++	 * Reset all states otherwise we lose the initial states
++	 * when in-prox next time
++	 */
++	input_report_abs(input, ABS_X, 0);
++	input_report_abs(input, ABS_Y, 0);
++	input_report_abs(input, ABS_DISTANCE, 0);
++	input_report_abs(input, ABS_TILT_X, 0);
++	input_report_abs(input, ABS_TILT_Y, 0);
++	if (wacom->tool[idx] >= BTN_TOOL_MOUSE) {
++		input_report_key(input, BTN_LEFT, 0);
++		input_report_key(input, BTN_MIDDLE, 0);
++		input_report_key(input, BTN_RIGHT, 0);
++		input_report_key(input, BTN_SIDE, 0);
++		input_report_key(input, BTN_EXTRA, 0);
++		input_report_abs(input, ABS_THROTTLE, 0);
++		input_report_abs(input, ABS_RZ, 0);
++	} else {
++		input_report_abs(input, ABS_PRESSURE, 0);
++		input_report_key(input, BTN_STYLUS, 0);
++		input_report_key(input, BTN_STYLUS2, 0);
++		input_report_key(input, BTN_TOUCH, 0);
++		input_report_abs(input, ABS_WHEEL, 0);
++		if (features->type >= INTUOS3S)
++			input_report_abs(input, ABS_Z, 0);
++	}
++	input_report_key(input, wacom->tool[idx], 0);
++	input_report_abs(input, ABS_MISC, 0); /* reset tool id */
++	input_event(input, EV_MSC, MSC_SERIAL, wacom->serial[idx]);
++	wacom->id[idx] = 0;
++}
++
+ static int wacom_intuos_inout(struct wacom_wac *wacom)
+ {
+ 	struct wacom_features *features = &wacom->features;
+@@ -741,36 +780,7 @@ static int wacom_intuos_inout(struct wac
+ 		if (!wacom->id[idx])
+ 			return 1;
  
- endchoice
- 
---- a/arch/s390/kernel/perf_cpum_cf_events.c
-+++ b/arch/s390/kernel/perf_cpum_cf_events.c
-@@ -583,6 +583,7 @@ __init const struct attribute_group **cp
- 		model = cpumcf_z13_pmu_event_attr;
- 		break;
- 	case 0x3906:
-+	case 0x3907:
- 		model = cpumcf_z14_pmu_event_attr;
- 		break;
- 	default:
---- a/arch/s390/kernel/setup.c
-+++ b/arch/s390/kernel/setup.c
-@@ -819,6 +819,7 @@ static int __init setup_hwcaps(void)
- 		strcpy(elf_platform, "z13");
- 		break;
- 	case 0x3906:
-+	case 0x3907:
- 		strcpy(elf_platform, "z14");
- 		break;
+-		/*
+-		 * Reset all states otherwise we lose the initial states
+-		 * when in-prox next time
+-		 */
+-		input_report_abs(input, ABS_X, 0);
+-		input_report_abs(input, ABS_Y, 0);
+-		input_report_abs(input, ABS_DISTANCE, 0);
+-		input_report_abs(input, ABS_TILT_X, 0);
+-		input_report_abs(input, ABS_TILT_Y, 0);
+-		if (wacom->tool[idx] >= BTN_TOOL_MOUSE) {
+-			input_report_key(input, BTN_LEFT, 0);
+-			input_report_key(input, BTN_MIDDLE, 0);
+-			input_report_key(input, BTN_RIGHT, 0);
+-			input_report_key(input, BTN_SIDE, 0);
+-			input_report_key(input, BTN_EXTRA, 0);
+-			input_report_abs(input, ABS_THROTTLE, 0);
+-			input_report_abs(input, ABS_RZ, 0);
+-		} else {
+-			input_report_abs(input, ABS_PRESSURE, 0);
+-			input_report_key(input, BTN_STYLUS, 0);
+-			input_report_key(input, BTN_STYLUS2, 0);
+-			input_report_key(input, BTN_TOUCH, 0);
+-			input_report_abs(input, ABS_WHEEL, 0);
+-			if (features->type >= INTUOS3S)
+-				input_report_abs(input, ABS_Z, 0);
+-		}
+-		input_report_key(input, wacom->tool[idx], 0);
+-		input_report_abs(input, ABS_MISC, 0); /* reset tool id */
+-		input_event(input, EV_MSC, MSC_SERIAL, wacom->serial[idx]);
+-		wacom->id[idx] = 0;
++		wacom_exit_report(wacom);
+ 		return 2;
  	}
+ 
+@@ -1226,6 +1236,12 @@ static void wacom_intuos_pro2_bt_pen(str
+ 		if (!valid)
+ 			continue;
+ 
++		if (!prox) {
++			wacom->shared->stylus_in_proximity = false;
++			wacom_exit_report(wacom);
++			input_sync(pen_input);
++			return;
++		}
+ 		if (range) {
+ 			/* Fix rotation alignment: userspace expects zero at left */
+ 			int16_t rotation = (int16_t)get_unaligned_le16(&frame[9]);
