@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/ir+tNAUdaLdWmT6Hyn41zAeaWC6efGlOUP92a5slSZTELXwUSgjQ0SUblf/TRqig5T+wj
-ARC-Seal: i=1; a=rsa-sha256; t=1524406818; cv=none;
+X-Google-Smtp-Source: AIpwx4+VZn2gdLDKWdpVFGXA6eoYUACkRr4vbaVwvt1/5l43F8q3zib28yub6s7I2EiveMXmIywD
+ARC-Seal: i=1; a=rsa-sha256; t=1524406816; cv=none;
         d=google.com; s=arc-20160816;
-        b=kh8MfnWHB76WBYIvU9blFRSLFdH1+XEMolPAqhukFOD7M8HwFNyl/OJoQmiw/wfS2P
-         19gky86aV9Wx/zxzw3dG16X4U4pVb2kIbXPwOb8G+mpHoAmYqmXp1SSe0VtQ9/EcoT3T
-         pldold+7lKte63qTTKk0N4Sdvyz0TKHHZO5lMh58QUoGgXi7E/IZCYzT1qzBEhWgVCqh
-         J+u/+EatJDCzU/kmgRd5c61+ECkd280orj+5AlT/UgeCo4gr1P+sR2lidC45oCSlNNsn
-         w+1koOtDUBSjY1JhMTGrTMdKYd6010ArFeL+s7OLqbnc1UUXDnDEQ1aa5WRoDzZpoYKo
-         As6w==
+        b=ggd83siMfOVc4SPSX6cAO9haUE+TeeZW9q/AlotP+5EPfJ7bI3hdTTb0ugqgwJgK8J
+         8w910cMD0UyBUAzlMeuwoYezDjCYQefcxBgfzRru9AjhtfTnq+hF32cBWYqqS0YMRx5b
+         /gFeoCtf4ouyFNbC/QIoiuFCzbxZ2bTttfWQJ7dU6sfhht1lG5WhjVNIQF8CfU+OcViT
+         FFBQdkWFGQ1h01mCoyb8QXGebzuL3uASyEB/cbxwKApnnlAg/QC+KMiCSzsmFa/3ccBK
+         bkvxR0KGVe5PfJMh1s7Xm0MqLexY3hkCzqaYbrOwX19JY2xK3co3SZBFWiB3A/U9eBef
+         BYjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pRf9gyIS2t7770zuzp8U0VIUM5oAVhhmu0MEdzqnPjE=;
-        b=xKjbzwcW1i+WXi3KSvlrvjLT/s6/KYqxk5+1xMPW6XWfJtt6AZCQYiOPpoF5VwhDcf
-         3nt0+fHgIBDHKKoGJg4HK9ly/Vx0d1YqoFSoVAhWbPQTbkTWIgyym4UTrswWJJaHx7Bj
-         SUqNKpS2+qp31Em8KV/Ccxd+I0K8+Yv5VKU1WxcPZ109eh5+jsVN3tAyrvWoll/Mbe9X
-         zDdZWa0+q7MLsAgZ5y0rIj/6OEPwd7Wi0dQszWYhQK+Z0ee4lXQTK16rOuTmfQea8sUZ
-         e/nfI/dyrttOiC1bmEBQYLAspDP9pQK7xX1VrDHWQDUDlxJ33B7vmb25rJr3sSdQdoaw
-         a3CA==
+        bh=OXTu5mkA6J31VgBUWPlriYyr5ZNflF8iOlSLSkr9v3M=;
+        b=Eosh+wSegK+TnHyWiDOycSMBrQF9elvtlKDAMFsu74xY8CeLXklE//VpHnaJdP4uDz
+         a2wWI4sDI560KjUXT5vSw+AnrgUevlxchQlkNhQ8hb7oj5yAAkiVW3r9kvUSk9vY+0vp
+         iXSryBH8s4XF6vilYT5YXguwj2S0vIlXLhbEgFyRw0e3f9UgjSTVveMSnqQWkTftKIwa
+         E9Zm+knswA752KFTuugMrfJsnPNhF8ohBU3cbAO1yA5v9qnO6Jv4/Z1mno7I6ZtvgOGs
+         YxaWIvPbjkPSlzUZDg3A4pV55bYMtY9Ac9TttKHoWN2vNtkiGmvFQXq8BsFXw+Y4zSiu
+         O2yw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zhengjun Xing <zhengjun.xing@linux.intel.com>
-Subject: [PATCH 3.18 16/52] USB:fix USB3 devices behind USB3 hubs not resuming at hibernate thaw
-Date: Sun, 22 Apr 2018 15:53:49 +0200
-Message-Id: <20180422135316.022911216@linuxfoundation.org>
+	Mike Lothian <mike@fireburn.co.uk>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 3.18 15/52] ACPI / hotplug / PCI: Check presence of slot itself in get_slot_status()
+Date: Sun, 22 Apr 2018 15:53:48 +0200
+Message-Id: <20180422135315.975852768@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454888478547425?=
-X-GMAIL-MSGID: =?utf-8?q?1598456404101648519?=
+X-GMAIL-THRID: =?utf-8?q?1598454879280610087?=
+X-GMAIL-MSGID: =?utf-8?q?1598456401749489715?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,55 +51,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit 64627388b50158fd24d6ad88132525b95a5ef573 upstream.
+commit 13d3047c81505cc0fb9bdae7810676e70523c8bf upstream.
 
-USB3 hubs don't support global suspend.
+Mike Lothian reported that plugging in a USB-C device does not work
+properly in his Dell Alienware system.  This system has an Intel Alpine
+Ridge Thunderbolt controller providing USB-C functionality.  In these
+systems the USB controller (xHCI) is hotplugged whenever a device is
+connected to the port using ACPI-based hotplug.
 
-USB3 specification 10.10, Enhanced SuperSpeed hubs only support selective
-suspend and resume, they do not support global suspend/resume where the
-hub downstream facing ports states are not affected.
+The ACPI description of the root port in question is as follows:
 
-When system enters hibernation it first enters freeze process where only
-the root hub enters suspend, usb_port_suspend() is not called for other
-devices, and suspend status flags are not set for them. Other devices are
-expected to suspend globally. Some external USB3 hubs will suspend the
-downstream facing port at global suspend. These devices won't be resumed
-at thaw as the suspend status flag is not set.
+  Device (RP01)
+  {
+      Name (_ADR, 0x001C0000)
 
-A USB3 removable hard disk connected through a USB3 hub that won't resume
-at thaw will fail to synchronize SCSI cache, return “cmd cmplt err -71”
-error, and needs a 60 seconds timeout which causing system hang for 60s
-before the USB host reset the port for the USB3 removable hard disk to
-recover.
+      Device (PXSX)
+      {
+          Name (_ADR, 0x02)
 
-Fix this by always calling usb_port_suspend() during freeze for USB3
-devices.
+          Method (_RMV, 0, NotSerialized)
+          {
+              // ...
+          }
+      }
 
-Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
+Here _ADR 0x02 means device 0, function 2 on the bus under root port (RP01)
+but that seems to be incorrect because device 0 is the upstream port of the
+Alpine Ridge PCIe switch and it has no functions other than 0 (the bridge
+itself).  When we get ACPI Notify() to the root port resulting from
+connecting a USB-C device, Linux tries to read PCI_VENDOR_ID from device 0,
+function 2 which of course always returns 0xffffffff because there is no
+such function and we never find the device.
+
+In Windows this works fine.
+
+Now, since we get ACPI Notify() to the root port and not to the PXSX device
+we should actually start our scan from there as well and not from the
+non-existent PXSX device.  Fix this by checking presence of the slot itself
+(function 0) if we fail to do that otherwise.
+
+While there use pci_bus_read_dev_vendor_id() in get_slot_status(), which is
+the recommended way to read Device and Vendor IDs of devices on PCI buses.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=198557
+Reported-by: Mike Lothian <mike@fireburn.co.uk>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/generic.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/pci/hotplug/acpiphp_glue.c |   23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
---- a/drivers/usb/core/generic.c
-+++ b/drivers/usb/core/generic.c
-@@ -208,8 +208,13 @@ static int generic_suspend(struct usb_de
- 	if (!udev->parent)
- 		rc = hcd_bus_suspend(udev, msg);
+--- a/drivers/pci/hotplug/acpiphp_glue.c
++++ b/drivers/pci/hotplug/acpiphp_glue.c
+@@ -587,6 +587,7 @@ static unsigned int get_slot_status(stru
+ {
+ 	unsigned long long sta = 0;
+ 	struct acpiphp_func *func;
++	u32 dvid;
  
--	/* Non-root devices don't need to do anything for FREEZE or PRETHAW */
--	else if (msg.event == PM_EVENT_FREEZE || msg.event == PM_EVENT_PRETHAW)
-+	/*
-+	 * Non-root USB2 devices don't need to do anything for FREEZE
-+	 * or PRETHAW. USB3 devices don't support global suspend and
-+	 * needs to be selectively suspended.
-+	 */
-+	else if ((msg.event == PM_EVENT_FREEZE || msg.event == PM_EVENT_PRETHAW)
-+		 && (udev->speed < USB_SPEED_SUPER))
- 		rc = 0;
- 	else
- 		rc = usb_port_suspend(udev, msg);
+ 	list_for_each_entry(func, &slot->funcs, sibling) {
+ 		if (func->flags & FUNC_HAS_STA) {
+@@ -597,19 +598,27 @@ static unsigned int get_slot_status(stru
+ 			if (ACPI_SUCCESS(status) && sta)
+ 				break;
+ 		} else {
+-			u32 dvid;
+-
+-			pci_bus_read_config_dword(slot->bus,
+-						  PCI_DEVFN(slot->device,
+-							    func->function),
+-						  PCI_VENDOR_ID, &dvid);
+-			if (dvid != 0xffffffff) {
++			if (pci_bus_read_dev_vendor_id(slot->bus,
++					PCI_DEVFN(slot->device, func->function),
++					&dvid, 0)) {
+ 				sta = ACPI_STA_ALL;
+ 				break;
+ 			}
+ 		}
+ 	}
+ 
++	if (!sta) {
++		/*
++		 * Check for the slot itself since it may be that the
++		 * ACPI slot is a device below PCIe upstream port so in
++		 * that case it may not even be reachable yet.
++		 */
++		if (pci_bus_read_dev_vendor_id(slot->bus,
++				PCI_DEVFN(slot->device, 0), &dvid, 0)) {
++			sta = ACPI_STA_ALL;
++		}
++	}
++
+ 	return (unsigned int)sta;
+ }
+ 
