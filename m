@@ -1,37 +1,30 @@
-Return-Path: <kernel-hardening-return-13079-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/nXdMW3gA4ZM+pQCPe7Ro5wVJzwpa4VCHtomVP+bUedTleyr230dGh5sEHBjq5LAGbne02
-ARC-Seal: i=1; a=rsa-sha256; t=1524414734; cv=none;
+Return-Path: <tglx@linutronix.de>
+X-Google-Smtp-Source: AIpwx489KOkFGVjtm4ijxqqixLmV0b6sv7C0KIaYuhiHBp7jj/OhW7+5frGNjKSfvzz1G3uTu/Px
+ARC-Seal: i=1; a=rsa-sha256; t=1524414705; cv=none;
         d=google.com; s=arc-20160816;
-        b=MGgXN2pDkuvAwzE60QEPDczz1DsH/rqWscxkTWp/jq0aYwbyNYelCsamWkck3OP2yx
-         33wmcfD8i4RHOjiRbrlmSXg6Ds8+/d6GOD6U4ekgo2bgt2eo8Uz+kQKmw+ry/ZmLqlS+
-         9Gz4AKZA1haZNr1bFjrm4DBxAa0PDCJRztzcA/54kTH1d08OF+tRiSU47ivLAjuA03Jw
-         S9XWfwrAWqzzigfXIgw8o1YOLg4zcwkWIEZQObjI9TFOIUO5qihGdzve8cug//NKQQeW
-         mfxh3kXiMIBQ4IowwUsK1L4jbWLjXmiJrvqk2Qo/mQeTWLddZYMZxZz+gT2l6hQob3+U
-         9FBQ==
+        b=DKUBnemQi4ZlZtqndZ0D7LoSHBKnFDFBBq9QK94Q/Yvh4uaAEA0awQ8qyUEJ6JwvA3
+         FzVu+JDfehBailQMenXlePRCT3+k7aEk5T1OI2p8hvR4IZsizYCTKKEBni1Rxm9h/vtj
+         kE7bFMpGrlPvbWNiMLD4U1D8f69fa2iuMfiXfFwonfMH8VxaX2OwXwjFhZZ8GeNPqMNm
+         +sP/PTixf1yUmKOkSjNOLX3b+OX+WtTxiea6klYPQKQQkMSdQkb+1LJoJLinmFJdhXW4
+         tkqCjDjU5XJjRF+xW4k3/ySm0QFiU7CzVRJ0bfXm5BTlMvlC5QXLgfwZhaoj3RpqGjmf
+         x2mA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-disposition:mime-version:references:subject:cc:to:from:date
-         :user-agent:message-id:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=Cy9MD03RuMqWof3u+bKFBFKZhDQM76wcsiQ8Z+xhdWA=;
-        b=H4dAjJoJV1ds7ZyBfKvXJf1OcUe5aQZBchJKDVdUNqNBsu5kQrtdfpI5OpKs3wAJU2
-         G+iWxsfslYDKCONVHDQphhUcy1vpqX9bXUpFV9H9ELPTZTUaTDJquIzGVAviAql3rW1A
-         6GpI6xC6cOHD4iANoaYMMZp4A+z/ZsSm9UxGfGq2XGwKm+JdRwgDtrw23QyU/4fTU2T5
-         bRaakSQZWISDCQdWF3yL2Vas2hH2vC0awv1YBsbj7fzMZtTUBresohjRXp9ha6L/4PcZ
-         M1NKsUx4UkXtpkaob9+VYlczJD7oF9Y1XKX4L3NwJU7U+ANB0PA+15kYuAWLkInZmHg7
-         kbCw==
+         :user-agent:message-id:arc-authentication-results;
+        bh=B7uL6YMbG2W8BglyZc4KoCaLyYyz1MXXksP9MxRYVf4=;
+        b=ovI+YDJJlQ43ZmW03nmVs0bF0dnGxCXxbjP7l81nVyQNAv4rNEycptWm41G1g89Dsp
+         ua93sKWJ5Sk/rXcXaBgcrooB9Be+IO2Mx/ExqVdGxP+eJomz5HT5BYTIq2kEBpmjCzbj
+         /U9+s+1ndpNBRjKbybmF/EBxzB49YYSU58ajfbruRbCCmyPJpDBKoQndx4+32fURCPfA
+         FLTqXAH+csRuNVox52Jp8TEVlpgq6VRyKk/JW+IdJ0UlegLTEhyKOKcE5xrbBDhgvPrT
+         9n1DwVVzYtBfdf5mdiRtLj7TUuFmBYeKjxcBsqAQZj55OzNf5pvZApV/1ADVI93Zsdzm
+         J9+w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13079-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13079-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13079-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13079-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Message-Id: <20180422162512.555421729@linutronix.de>
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+Message-Id: <20180422162512.830901256@linutronix.de>
 User-Agent: quilt/0.63-1
-Date: Sun, 22 Apr 2018 18:23:48 +0200
+Date: Sun, 22 Apr 2018 18:23:51 +0200
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Kees Cook <keescook@chromium.org>,
@@ -42,24 +35,30 @@ Cc: Kees Cook <keescook@chromium.org>,
  Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
  Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
  Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
- Tony Luck <tony.luck@intel.com>
-Subject: [patch V3 03/10] rslib: Cleanup whitespace damage
+ Tony Luck <tony.luck@intel.com>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [patch V3 06/10] rslib: Remove GPL boilerplate
 References: <20180422162345.004292133@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=rslib--Cleanup_whitespace_damage.patch
+Content-Disposition: inline; filename=rslib--Remove_GPL_boilerplate.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598464704735712819?=
-X-GMAIL-MSGID: =?utf-8?q?1598464704735712819?=
+X-GMAIL-THRID: =?utf-8?q?1598464674469569625?=
+X-GMAIL-MSGID: =?utf-8?q?1598464674469569625?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-Instead of mixing the whitespace cleanup into functional changes, mop it up
-first.
+Now that SPDX identifiers are in place, remove the GPL boiler plate
+text. Leave the notices which document that Phil Karn granted permission in
+place (encode/decode source code). The modified files are code written for
+the kernel by me.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Kate Stewart <kstewart@linuxfoundation.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
@@ -74,79 +73,35 @@ Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Alasdair Kergon <agk@redhat.com>
 
 ---
- include/linux/rslib.h           |   12 ++++++------
- lib/reed_solomon/reed_solomon.c |   12 ++++++------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ include/linux/rslib.h           |    5 -----
+ lib/reed_solomon/reed_solomon.c |    4 ----
+ 2 files changed, 9 deletions(-)
 
 --- a/include/linux/rslib.h
 +++ b/include/linux/rslib.h
-@@ -39,15 +39,15 @@
-  * @list:	List entry for the rs control list
- */
- struct rs_control {
--	int 		mm;
--	int 		nn;
-+	int		mm;
-+	int		nn;
- 	uint16_t	*alpha_to;
- 	uint16_t	*index_of;
- 	uint16_t	*genpoly;
--	int 		nroots;
--	int 		fcr;
--	int 		prim;
--	int 		iprim;
-+	int		nroots;
-+	int		fcr;
-+	int		prim;
-+	int		iprim;
- 	int		gfpoly;
- 	int		(*gffunc)(int);
- 	int		users;
+@@ -6,12 +6,7 @@
+  *
+  * RS code lifted from reed solomon library written by Phil Karn
+  * Copyright 2002 Phil Karn, KA9Q
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+-
+ #ifndef _RSLIB_H_
+ #define _RSLIB_H_
+ 
 --- a/lib/reed_solomon/reed_solomon.c
 +++ b/lib/reed_solomon/reed_solomon.c
-@@ -192,7 +192,7 @@ void free_rs(struct rs_control *rs)
-  *  @gffunc:	pointer to function to generate the next field element,
-  *		or the multiplicative identity element if given 0.  Used
-  *		instead of gfpoly if gfpoly is 0
-- *  @fcr:  	the first consecutive root of the rs code generator polynomial
-+ *  @fcr:	the first consecutive root of the rs code generator polynomial
-  *		in index form
-  *  @prim:	primitive element to generate polynomial roots
-  *  @nroots:	RS code generator polynomial degree (number of roots)
-@@ -209,9 +209,9 @@ static struct rs_control *init_rs_intern
- 	if (symsize < 1)
- 		return NULL;
- 	if (fcr < 0 || fcr >= (1<<symsize))
--    		return NULL;
-+		return NULL;
- 	if (prim <= 0 || prim >= (1<<symsize))
--    		return NULL;
-+		return NULL;
- 	if (nroots < 0 || nroots >= (1<<symsize))
- 		return NULL;
- 
-@@ -254,7 +254,7 @@ static struct rs_control *init_rs_intern
-  *  @gfpoly:	the extended Galois field generator polynomial coefficients,
-  *		with the 0th coefficient in the low order bit. The polynomial
-  *		must be primitive;
-- *  @fcr:  	the first consecutive root of the rs code generator polynomial
-+ *  @fcr:	the first consecutive root of the rs code generator polynomial
-  *		in index form
-  *  @prim:	primitive element to generate polynomial roots
-  *  @nroots:	RS code generator polynomial degree (number of roots)
-@@ -274,13 +274,13 @@ struct rs_control *init_rs_gfp(int symsi
-  *  @gffunc:	pointer to function to generate the next field element,
-  *		or the multiplicative identity element if given 0.  Used
-  *		instead of gfpoly if gfpoly is 0
-- *  @fcr:  	the first consecutive root of the rs code generator polynomial
-+ *  @fcr:	the first consecutive root of the rs code generator polynomial
-  *		in index form
-  *  @prim:	primitive element to generate polynomial roots
-  *  @nroots:	RS code generator polynomial degree (number of roots)
-  */
- struct rs_control *init_rs_non_canonical(int symsize, int (*gffunc)(int),
--                                         int fcr, int prim, int nroots)
-+					 int fcr, int prim, int nroots)
- {
- 	return init_rs_internal(symsize, 0, gffunc, fcr, prim, nroots,
- 				GFP_KERNEL);
+@@ -7,10 +7,6 @@
+  * Reed Solomon code lifted from reed solomon library written by Phil Karn
+  * Copyright 2002 Phil Karn, KA9Q
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Description:
+  *
+  * The generic Reed Solomon library provides runtime configurable
