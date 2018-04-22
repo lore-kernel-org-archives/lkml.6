@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48WpEqvWti6Ey8Nr1+oxRP1epluVe4JPcxiILD28Zr6YqHeFOeGQAtdw4PhA7VyjPAecpjd
-ARC-Seal: i=1; a=rsa-sha256; t=1524406769; cv=none;
+X-Google-Smtp-Source: AIpwx49NaHRUsOfpGw9yJktfc/vh0wVRidb1nXG0Mt8eR3eK0Xgfqi6bMyGz7uQ5vLoOuHmWke8q
+ARC-Seal: i=1; a=rsa-sha256; t=1524406765; cv=none;
         d=google.com; s=arc-20160816;
-        b=PatvmfXFKc604ddTKZSxbTdLjrVG8+eq9i0QAMdd2GxRx73BnHs7rlnmH+nngKBFil
-         HyUzGTQr1JJ3aWV600Jw0vK7EpaasmF7P+a2ItSh0qDG4HbWlfeTXyDxtIszAdPO+H0I
-         DbNRETFKYiMJDR2hUBX5axIEtkHisH5ccEleb0kREcMMIj/B8FFhQg0IIFC1/xie0AxJ
-         XxpexxCoJtzjeYab0WiUAEXWfb+MguCEszJe/X2Y/DVRlNd/7oKwoA2dsNGWVupvSrhV
-         fqW/ZeTol7RSV7U+pm9QQ6O3htdcu5Szcgd4lQJzAKblBw3FmHwaSGjEnAN4vuUP5Jgh
-         ATCQ==
+        b=1JyALIXCtTz00s5xfmXIuPzD1ytFIBZIF3+te+Rs+zQl0wXeDn1Ir2R+obhn+BZJEP
+         nfNGL1fcPgevsiRs/4toJUyK4eDXYWnejFLDEWtQt0CMYR+soNFr0I0/z425GASBkU56
+         2hTbCSdJJe21O7iYMm/OY3JFMh+VtQIje0iWF6dZPL3IwJFg2gSxoEkW86a9EHHznEE6
+         hriYcdwcruhOs2JCNTaF9efHlHKDpU0rstor+3oY60fUiodeBTB5WvHPObvfL4e28M52
+         bO/U3AXv/GESXatrBQw4tNiPssCfshk3stPlVU3SXnaThTJdZtmHrGIdLmlwJ4P36Dp7
+         ULug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zeRuldEkw94Vs0DgG2Y8LBnQzNLttMfAzimYoYishXQ=;
-        b=DXFiqjW3QVHxYXd9fGJuXkQH4wyivV65ayuZZukJsndM0ZsExjlJLV+U2W43s8Q6qZ
-         Xo7dCAinlbQ/oFCogQgcCIPY/UkaV3MDMJuTxOgDsdA+ZMlkTKxCtK6MDwIUJDxu9cPx
-         2nhnaexOl9x1cRw/Jof520OAxAuYC9DxS4O/6IC0GaJj8DRcxZv9q19P82c3XKGcx7V/
-         0+HBssgDO+KiMsPed8tYqmka/htcQ/CxpHQnB86Of7lub+0ap7kbDBgeG7rMQCUMPFm4
-         VoF23zLGJqBBgi6s8GYNZzTPGskIgJ8IKeJ9m8+k1uLN/9CMq/59s6Yh/lEnDfZijiqy
-         WcXQ==
+        bh=0bHJMxHrOdfJJHUQq5ppWSbgyqtfDOqCS/mtQz0wB3Y=;
+        b=gwPHyUeYQM0uG1cP08a2wGEhQUkCUW2qzQ5Z4yVO+l9S0uB9lhvcQ153PIA/i8TssO
+         vZeBqiHxO7FHH7ptXGQC+wrc/udX2h2kW5WVIer0sa4MAHBIgeLzRVk6bJWE81uaag/6
+         BB3JeOVC2LOUr0675BxUs8jwUlBVJJUyA2/Qbnheh8FZaf7fG9l1fFKxj/+Jf6gYUVjb
+         mhaa66E7Q7lcPnehF1cz5SRoaheUOBMx+50F3n9XKnmRRrd5haAHINz7SHNIIS3fqRcY
+         RBL+3nB7IjbCeSvei0AQ+SrV5JAWgOTuMKWla4qseQgIzuwtCRBXNarr8W6Lv5niA68U
+         Jf0g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jan Kara <jack@suse.cz>,
+	wangguang <wangguang03@zte.com>,
+	Theodore Tso <tytso@mit.edu>,
 	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 96/97] fanotify: fix logic of events on child
-Date: Sun, 22 Apr 2018 15:54:14 +0200
-Message-Id: <20180422135310.409300529@linuxfoundation.org>
+Subject: [PATCH 4.4 95/97] ext4: bugfix for mmaped pages in mpage_release_unused_pages()
+Date: Sun, 22 Apr 2018 15:54:13 +0200
+Message-Id: <20180422135310.354979867@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455284731037282?=
-X-GMAIL-MSGID: =?utf-8?q?1598456352379777013?=
+X-GMAIL-THRID: =?utf-8?q?1598456348546351551?=
+X-GMAIL-MSGID: =?utf-8?q?1598456348546351551?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,83 +50,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: wangguang <wang.guang55@zte.com.cn>
 
-commit 54a307ba8d3cd00a3902337ffaae28f436eeb1a4 upstream.
+commit 4e800c0359d9a53e6bf0ab216954971b2515247f upstream.
 
-When event on child inodes are sent to the parent inode mark and
-parent inode mark was not marked with FAN_EVENT_ON_CHILD, the event
-will not be delivered to the listener process. However, if the same
-process also has a mount mark, the event to the parent inode will be
-delivered regadless of the mount mark mask.
+Pages clear buffers after ext4 delayed block allocation failed,
+However, it does not clean its pte_dirty flag.
+if the pages unmap ,in cording to the pte_dirty ,
+unmap_page_range may try to call __set_page_dirty,
 
-This behavior is incorrect in the case where the mount mark mask does
-not contain the specific event type. For example, the process adds
-a mark on a directory with mask FAN_MODIFY (without FAN_EVENT_ON_CHILD)
-and a mount mark with mask FAN_CLOSE_NOWRITE (without FAN_ONDIR).
+which may lead to the bugon at
+mpage_prepare_extent_to_map:head = page_buffers(page);.
 
-A modify event on a file inside that directory (and inside that mount)
-should not create a FAN_MODIFY event, because neither of the marks
-requested to get that event on the file.
+This patch just call clear_page_dirty_for_io to clean pte_dirty
+at mpage_release_unused_pages for pages mmaped.
 
-Fixes: 1968f5eed54c ("fanotify: use both marks when possible")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-[natechancellor: Fix small conflict due to lack of 3cd5eca8d7a2f]
+Steps to reproduce the bug:
+
+（1） mmap a file in ext4
+	addr = (char *)mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED,
+	       	            fd, 0);
+	memset(addr, 'i', 4096);
+
+（2） return EIO at
+
+	ext4_writepages->mpage_map_and_submit_extent->mpage_map_one_extent
+
+which causes this log message to be print:
+
+                ext4_msg(sb, KERN_CRIT,
+                        "Delayed block allocation failed for "
+                        "inode %lu at logical offset %llu with"
+                        " max blocks %u with error %d",
+                        inode->i_ino,
+                        (unsigned long long)map->m_lblk,
+                        (unsigned)map->m_len, -err);
+
+(3）Unmap the addr cause warning at
+
+	__set_page_dirty:WARN_ON_ONCE(warn && !PageUptodate(page));
+
+(4) wait for a minute,then bugon happen.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: wangguang <wangguang03@zte.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+[@nathanchance: Resolved conflict from lack of 09cbfeaf1a5a6]
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/notify/fanotify/fanotify.c |   34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
 
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -92,7 +92,7 @@ static bool fanotify_should_send_event(s
- 				       u32 event_mask,
- 				       void *data, int data_type)
- {
--	__u32 marks_mask, marks_ignored_mask;
-+	__u32 marks_mask = 0, marks_ignored_mask = 0;
- 	struct path *path = data;
- 
- 	pr_debug("%s: inode_mark=%p vfsmnt_mark=%p mask=%x data=%p"
-@@ -108,24 +108,20 @@ static bool fanotify_should_send_event(s
- 	    !d_can_lookup(path->dentry))
- 		return false;
- 
--	if (inode_mark && vfsmnt_mark) {
--		marks_mask = (vfsmnt_mark->mask | inode_mark->mask);
--		marks_ignored_mask = (vfsmnt_mark->ignored_mask | inode_mark->ignored_mask);
--	} else if (inode_mark) {
--		/*
--		 * if the event is for a child and this inode doesn't care about
--		 * events on the child, don't send it!
--		 */
--		if ((event_mask & FS_EVENT_ON_CHILD) &&
--		    !(inode_mark->mask & FS_EVENT_ON_CHILD))
--			return false;
--		marks_mask = inode_mark->mask;
--		marks_ignored_mask = inode_mark->ignored_mask;
--	} else if (vfsmnt_mark) {
--		marks_mask = vfsmnt_mark->mask;
--		marks_ignored_mask = vfsmnt_mark->ignored_mask;
--	} else {
--		BUG();
-+	/*
-+	 * if the event is for a child and this inode doesn't care about
-+	 * events on the child, don't send it!
-+	 */
-+	if (inode_mark &&
-+	    (!(event_mask & FS_EVENT_ON_CHILD) ||
-+	     (inode_mark->mask & FS_EVENT_ON_CHILD))) {
-+		marks_mask |= inode_mark->mask;
-+		marks_ignored_mask |= inode_mark->ignored_mask;
-+	}
-+
-+	if (vfsmnt_mark) {
-+		marks_mask |= vfsmnt_mark->mask;
-+		marks_ignored_mask |= vfsmnt_mark->ignored_mask;
- 	}
- 
- 	if (d_is_dir(path->dentry) &&
+---
+ fs/ext4/inode.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1515,6 +1515,8 @@ static void mpage_release_unused_pages(s
+ 			BUG_ON(!PageLocked(page));
+ 			BUG_ON(PageWriteback(page));
+ 			if (invalidate) {
++				if (page_mapped(page))
++					clear_page_dirty_for_io(page);
+ 				block_invalidatepage(page, 0, PAGE_CACHE_SIZE);
+ 				ClearPageUptodate(page);
+ 			}
