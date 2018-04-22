@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49XEcr9n7ixxw98K6bkJJhXEANKxUu3WIOwaAqU1uBsor/YXJwxjS5lguZ6p2nxLWgVEvUO
-ARC-Seal: i=1; a=rsa-sha256; t=1524405922; cv=none;
+X-Google-Smtp-Source: AIpwx48emg4sXpawX9xkFwTcJUKuuJVKTwITZ9iMGoyidSj6uxVbji6YtnqgbGYODXuWYtUUWMNR
+ARC-Seal: i=1; a=rsa-sha256; t=1524405920; cv=none;
         d=google.com; s=arc-20160816;
-        b=gmr8O/rf0M9DTIHuyoCQna3ELyt6/W0U6r8qxJO1jfZyQ6UccQRyQ5UahnjXy23PwN
-         yaSemKXjgkTM7YLTLuHY40S+PddwDBW35S7AnzOHm93RlXuqBRkK9ZDlAmICYAayb2HU
-         N5qkVf0q+1l8XGqAjFXwNesSy0KArewCXyB3eeuhp7JwRn/TCFK0pjg29P0/pruhxqUa
-         Vv4+Y98NL8vyZh9b/binSh+fTDtD7FbOdQ/wQaui1T9bIPySWtgB8WoFErAXd1pWe3tv
-         4F1F6AaCqzrvx7C//Z07NhsJEeqO9x6MvONZHa1NHBRzUrC3NCGUdkuGYLOhh6+Wv7FP
-         2lrQ==
+        b=v2tQCtIqKX2L2rXA1E1LvrLgEcb412LYDs276d5NBfEpLZCBx43geXVQlgeV42zPD7
+         RKuBcVoSOCBbEgyNNl09Br2FR4pPNV5I4/7GCtyWLqplMRiArcWzfMlhpalObWzi3V0H
+         nj5OmXKxhz58ugEc0IPfULXx0kmvKIWH9YIeFKMgomtA0khizuzRKqsJ5rsT9VVCNunX
+         it1varCyTyDjom0OcvwdNvsQydODOIyknkhNqhR359EE2Sz0YPQ2APAMW/ZqitdP776Y
+         PtUDq3cWF9qvhCwZKCJ+7TV4PZvIjdseTA50WP5qRs26wLIex5zkZfOIh3p8cTkPE7EW
+         ziGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7ruX35x8DDyXhvbGKrorctgrq7+beb/aoJU9A/629l0=;
-        b=Lqr8oMF02TWr31GV/V24Dhu2lL++kqDhsFqT9ZZIvG7j1DQxBQuG9ORJINiXGagu0Z
-         kOsgzMsNZJ+cvfRjFTHZd0RLVb/V1cB7iTOVADkCT43XBdmsmbcBZBadLPNrfcrftqK6
-         T72EmDxt/AhOCDbbC0V04aeIGCBkEO7nnx/CXevzDM9C6IwkUwd/NcOnsTWx3TIOLx2R
-         M3NkXNs0nJAGjeDLigPrJ+Kp/WtkcZpE0TI8VNwDOsRBjLxS/DXHQx5+7K8mbtfcV3Ox
-         WAsOo33oegT/UwihJCHJyVmC85RI3d4buEZQY0S7ODcRb6SbMGsvDgvQCg+HIP+LwXjc
-         AsUQ==
+        bh=EV8i2OsW1Gs7sQymFcVs9H7ZAj9gVYzFpVCh03C/o8M=;
+        b=bGgSeBibsfPK3IOH40vwH4Qy/aTO9EykAQePP36+RkoJsX2zuA0kIGHzAXydtFuG9L
+         8RODDGI9cYncPuLtqh06UW3wirhUryJ2XyE0y39UqiIpH3QE93tt7v50mrOBH+NLcAp6
+         CTK3lypvz1WAF5uvuvciJu5vdP8IEFmn5+RIxU9XZb/DbnJZzFftq85oYzj3TGu74GPP
+         QRN0kiZa1QkYAZ6U5VETmx1SqqyJEZUbi4n+ZfaXYZiXm2R9zN9N0bFR5R34u498QU4v
+         UDyPedWGBUk/Hsl6QvBAIhMu/ZxMvFa4U9WJmd5Sw8r/aV2Tl9Lsc0S2SqpBfHlfD2OX
+         b2sQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Aurelien Aptel <aaptel@suse.com>,
-	Steve French <smfrench@gmail.com>,
-	Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.14 048/164] CIFS: refactor crypto shash/sdesc allocation&free
-Date: Sun, 22 Apr 2018 15:51:55 +0200
-Message-Id: <20180422135137.372351239@linuxfoundation.org>
+	Jean Delvare <jdelvare@suse.de>,
+	Jason Andryuk <jandryuk@gmail.com>,
+	Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.14 047/164] i2c: i801: Restore configuration at shutdown
+Date: Sun, 22 Apr 2018 15:51:54 +0200
+Message-Id: <20180422135137.328084383@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454919580988985?=
-X-GMAIL-MSGID: =?utf-8?q?1598455464413356370?=
+X-GMAIL-THRID: =?utf-8?q?1598454917246307724?=
+X-GMAIL-MSGID: =?utf-8?q?1598455461825990779?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,395 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aurelien Aptel <aaptel@suse.com>
+From: Jean Delvare <jdelvare@suse.de>
 
-commit 82fb82be05585426405667dd5f0510aa953ba439 upstream.
+commit f7f6d915a10f7f2bce17e3b1b7d3376562395a28 upstream.
 
-shash and sdesc and always allocated and freed together.
-* abstract this in new functions cifs_alloc_hash() and cifs_free_hash().
-* make smb2/3 crypto allocation independent from each other.
+On some systems, the BIOS expects certain SMBus register values to
+match the hardware defaults. Restore these configuration registers at
+shutdown time to avoid confusing the BIOS. This avoids hard-locking
+such systems upon reboot.
 
-Signed-off-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Tested-by: Jason Andryuk <jandryuk@gmail.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsencrypt.c   |   78 ++++--------------------------------------------
- fs/cifs/cifsproto.h     |    5 +++
- fs/cifs/link.c          |   25 +++------------
- fs/cifs/misc.c          |   54 +++++++++++++++++++++++++++++++++
- fs/cifs/smb2transport.c |   75 +++++++++-------------------------------------
- fs/cifs/smbencrypt.c    |   25 +++------------
- 6 files changed, 91 insertions(+), 171 deletions(-)
+ drivers/i2c/busses/i2c-i801.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/fs/cifs/cifsencrypt.c
-+++ b/fs/cifs/cifsencrypt.c
-@@ -36,37 +36,6 @@
- #include <crypto/skcipher.h>
- #include <crypto/aead.h>
- 
--static int
--cifs_crypto_shash_md5_allocate(struct TCP_Server_Info *server)
--{
--	int rc;
--	unsigned int size;
--
--	if (server->secmech.sdescmd5 != NULL)
--		return 0; /* already allocated */
--
--	server->secmech.md5 = crypto_alloc_shash("md5", 0, 0);
--	if (IS_ERR(server->secmech.md5)) {
--		cifs_dbg(VFS, "could not allocate crypto md5\n");
--		rc = PTR_ERR(server->secmech.md5);
--		server->secmech.md5 = NULL;
--		return rc;
--	}
--
--	size = sizeof(struct shash_desc) +
--			crypto_shash_descsize(server->secmech.md5);
--	server->secmech.sdescmd5 = kmalloc(size, GFP_KERNEL);
--	if (!server->secmech.sdescmd5) {
--		crypto_free_shash(server->secmech.md5);
--		server->secmech.md5 = NULL;
--		return -ENOMEM;
--	}
--	server->secmech.sdescmd5->shash.tfm = server->secmech.md5;
--	server->secmech.sdescmd5->shash.flags = 0x0;
--
--	return 0;
--}
--
- int __cifs_calc_signature(struct smb_rqst *rqst,
- 			struct TCP_Server_Info *server, char *signature,
- 			struct shash_desc *shash)
-@@ -132,13 +101,10 @@ static int cifs_calc_signature(struct sm
- 	if (!rqst->rq_iov || !signature || !server)
- 		return -EINVAL;
- 
--	if (!server->secmech.sdescmd5) {
--		rc = cifs_crypto_shash_md5_allocate(server);
--		if (rc) {
--			cifs_dbg(VFS, "%s: Can't alloc md5 crypto\n", __func__);
--			return -1;
--		}
--	}
-+	rc = cifs_alloc_hash("md5", &server->secmech.md5,
-+			     &server->secmech.sdescmd5);
-+	if (rc)
-+		return -1;
- 
- 	rc = crypto_shash_init(&server->secmech.sdescmd5->shash);
- 	if (rc) {
-@@ -663,37 +629,6 @@ CalcNTLMv2_response(const struct cifs_se
- 	return rc;
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1700,6 +1700,15 @@ static void i801_remove(struct pci_dev *
+ 	 */
  }
  
--static int crypto_hmacmd5_alloc(struct TCP_Server_Info *server)
--{
--	int rc;
--	unsigned int size;
--
--	/* check if already allocated */
--	if (server->secmech.sdeschmacmd5)
--		return 0;
--
--	server->secmech.hmacmd5 = crypto_alloc_shash("hmac(md5)", 0, 0);
--	if (IS_ERR(server->secmech.hmacmd5)) {
--		cifs_dbg(VFS, "could not allocate crypto hmacmd5\n");
--		rc = PTR_ERR(server->secmech.hmacmd5);
--		server->secmech.hmacmd5 = NULL;
--		return rc;
--	}
--
--	size = sizeof(struct shash_desc) +
--			crypto_shash_descsize(server->secmech.hmacmd5);
--	server->secmech.sdeschmacmd5 = kmalloc(size, GFP_KERNEL);
--	if (!server->secmech.sdeschmacmd5) {
--		crypto_free_shash(server->secmech.hmacmd5);
--		server->secmech.hmacmd5 = NULL;
--		return -ENOMEM;
--	}
--	server->secmech.sdeschmacmd5->shash.tfm = server->secmech.hmacmd5;
--	server->secmech.sdeschmacmd5->shash.flags = 0x0;
--
--	return 0;
--}
--
- int
- setup_ntlmv2_rsp(struct cifs_ses *ses, const struct nls_table *nls_cp)
- {
-@@ -757,9 +692,10 @@ setup_ntlmv2_rsp(struct cifs_ses *ses, c
- 
- 	mutex_lock(&ses->server->srv_mutex);
- 
--	rc = crypto_hmacmd5_alloc(ses->server);
-+	rc = cifs_alloc_hash("hmac(md5)",
-+			     &ses->server->secmech.hmacmd5,
-+			     &ses->server->secmech.sdeschmacmd5);
- 	if (rc) {
--		cifs_dbg(VFS, "could not crypto alloc hmacmd5 rc %d\n", rc);
- 		goto unlock;
- 	}
- 
---- a/fs/cifs/cifsproto.h
-+++ b/fs/cifs/cifsproto.h
-@@ -538,4 +538,9 @@ enum securityEnum cifs_select_sectype(st
- struct cifs_aio_ctx *cifs_aio_ctx_alloc(void);
- void cifs_aio_ctx_release(struct kref *refcount);
- int setup_aio_ctx_iter(struct cifs_aio_ctx *ctx, struct iov_iter *iter, int rw);
-+
-+int cifs_alloc_hash(const char *name, struct crypto_shash **shash,
-+		    struct sdesc **sdesc);
-+void cifs_free_hash(struct crypto_shash **shash, struct sdesc **sdesc);
-+
- #endif			/* _CIFSPROTO_H */
---- a/fs/cifs/link.c
-+++ b/fs/cifs/link.c
-@@ -50,25 +50,12 @@ static int
- symlink_hash(unsigned int link_len, const char *link_str, u8 *md5_hash)
- {
- 	int rc;
--	unsigned int size;
--	struct crypto_shash *md5;
--	struct sdesc *sdescmd5;
-+	struct crypto_shash *md5 = NULL;
-+	struct sdesc *sdescmd5 = NULL;
- 
--	md5 = crypto_alloc_shash("md5", 0, 0);
--	if (IS_ERR(md5)) {
--		rc = PTR_ERR(md5);
--		cifs_dbg(VFS, "%s: Crypto md5 allocation error %d\n",
--			 __func__, rc);
--		return rc;
--	}
--	size = sizeof(struct shash_desc) + crypto_shash_descsize(md5);
--	sdescmd5 = kmalloc(size, GFP_KERNEL);
--	if (!sdescmd5) {
--		rc = -ENOMEM;
-+	rc = cifs_alloc_hash("md5", &md5, &sdescmd5);
-+	if (rc)
- 		goto symlink_hash_err;
--	}
--	sdescmd5->shash.tfm = md5;
--	sdescmd5->shash.flags = 0x0;
- 
- 	rc = crypto_shash_init(&sdescmd5->shash);
- 	if (rc) {
-@@ -85,9 +72,7 @@ symlink_hash(unsigned int link_len, cons
- 		cifs_dbg(VFS, "%s: Could not generate md5 hash\n", __func__);
- 
- symlink_hash_err:
--	crypto_free_shash(md5);
--	kfree(sdescmd5);
--
-+	cifs_free_hash(&md5, &sdescmd5);
- 	return rc;
- }
- 
---- a/fs/cifs/misc.c
-+++ b/fs/cifs/misc.c
-@@ -848,3 +848,57 @@ setup_aio_ctx_iter(struct cifs_aio_ctx *
- 	iov_iter_bvec(&ctx->iter, ITER_BVEC | rw, ctx->bv, npages, ctx->len);
- 	return 0;
- }
-+
-+/**
-+ * cifs_alloc_hash - allocate hash and hash context together
-+ *
-+ * The caller has to make sure @sdesc is initialized to either NULL or
-+ * a valid context. Both can be freed via cifs_free_hash().
-+ */
-+int
-+cifs_alloc_hash(const char *name,
-+		struct crypto_shash **shash, struct sdesc **sdesc)
++static void i801_shutdown(struct pci_dev *dev)
 +{
-+	int rc = 0;
-+	size_t size;
++	struct i801_priv *priv = pci_get_drvdata(dev);
 +
-+	if (*sdesc != NULL)
-+		return 0;
-+
-+	*shash = crypto_alloc_shash(name, 0, 0);
-+	if (IS_ERR(*shash)) {
-+		cifs_dbg(VFS, "could not allocate crypto %s\n", name);
-+		rc = PTR_ERR(*shash);
-+		*shash = NULL;
-+		*sdesc = NULL;
-+		return rc;
-+	}
-+
-+	size = sizeof(struct shash_desc) + crypto_shash_descsize(*shash);
-+	*sdesc = kmalloc(size, GFP_KERNEL);
-+	if (*sdesc == NULL) {
-+		cifs_dbg(VFS, "no memory left to allocate crypto %s\n", name);
-+		crypto_free_shash(*shash);
-+		*shash = NULL;
-+		return -ENOMEM;
-+	}
-+
-+	(*sdesc)->shash.tfm = *shash;
-+	(*sdesc)->shash.flags = 0x0;
-+	return 0;
++	/* Restore config registers to avoid hard hang on some systems */
++	i801_disable_host_notify(priv);
++	pci_write_config_byte(dev, SMBHSTCFG, priv->original_hstcfg);
 +}
 +
-+/**
-+ * cifs_free_hash - free hash and hash context together
-+ *
-+ * Freeing a NULL hash or context is safe.
-+ */
-+void
-+cifs_free_hash(struct crypto_shash **shash, struct sdesc **sdesc)
-+{
-+	kfree(*sdesc);
-+	*sdesc = NULL;
-+	if (*shash)
-+		crypto_free_shash(*shash);
-+	*shash = NULL;
-+}
---- a/fs/cifs/smb2transport.c
-+++ b/fs/cifs/smb2transport.c
-@@ -43,76 +43,31 @@
- static int
- smb2_crypto_shash_allocate(struct TCP_Server_Info *server)
+ #ifdef CONFIG_PM
+ static int i801_suspend(struct device *dev)
  {
--	int rc;
--	unsigned int size;
--
--	if (server->secmech.sdeschmacsha256 != NULL)
--		return 0; /* already allocated */
--
--	server->secmech.hmacsha256 = crypto_alloc_shash("hmac(sha256)", 0, 0);
--	if (IS_ERR(server->secmech.hmacsha256)) {
--		cifs_dbg(VFS, "could not allocate crypto hmacsha256\n");
--		rc = PTR_ERR(server->secmech.hmacsha256);
--		server->secmech.hmacsha256 = NULL;
--		return rc;
--	}
--
--	size = sizeof(struct shash_desc) +
--			crypto_shash_descsize(server->secmech.hmacsha256);
--	server->secmech.sdeschmacsha256 = kmalloc(size, GFP_KERNEL);
--	if (!server->secmech.sdeschmacsha256) {
--		crypto_free_shash(server->secmech.hmacsha256);
--		server->secmech.hmacsha256 = NULL;
--		return -ENOMEM;
--	}
--	server->secmech.sdeschmacsha256->shash.tfm = server->secmech.hmacsha256;
--	server->secmech.sdeschmacsha256->shash.flags = 0x0;
--
--	return 0;
-+	return cifs_alloc_hash("hmac(sha256)",
-+			       &server->secmech.hmacsha256,
-+			       &server->secmech.sdeschmacsha256);
- }
- 
- static int
- smb3_crypto_shash_allocate(struct TCP_Server_Info *server)
- {
--	unsigned int size;
-+	struct cifs_secmech *p = &server->secmech;
- 	int rc;
- 
--	if (server->secmech.sdesccmacaes != NULL)
--		return 0;  /* already allocated */
--
--	rc = smb2_crypto_shash_allocate(server);
-+	rc = cifs_alloc_hash("hmac(sha256)",
-+			     &p->hmacsha256,
-+			     &p->sdeschmacsha256);
- 	if (rc)
--		return rc;
--
--	server->secmech.cmacaes = crypto_alloc_shash("cmac(aes)", 0, 0);
--	if (IS_ERR(server->secmech.cmacaes)) {
--		cifs_dbg(VFS, "could not allocate crypto cmac-aes");
--		kfree(server->secmech.sdeschmacsha256);
--		server->secmech.sdeschmacsha256 = NULL;
--		crypto_free_shash(server->secmech.hmacsha256);
--		server->secmech.hmacsha256 = NULL;
--		rc = PTR_ERR(server->secmech.cmacaes);
--		server->secmech.cmacaes = NULL;
--		return rc;
--	}
-+		goto err;
- 
--	size = sizeof(struct shash_desc) +
--			crypto_shash_descsize(server->secmech.cmacaes);
--	server->secmech.sdesccmacaes = kmalloc(size, GFP_KERNEL);
--	if (!server->secmech.sdesccmacaes) {
--		cifs_dbg(VFS, "%s: Can't alloc cmacaes\n", __func__);
--		kfree(server->secmech.sdeschmacsha256);
--		server->secmech.sdeschmacsha256 = NULL;
--		crypto_free_shash(server->secmech.hmacsha256);
--		crypto_free_shash(server->secmech.cmacaes);
--		server->secmech.hmacsha256 = NULL;
--		server->secmech.cmacaes = NULL;
--		return -ENOMEM;
--	}
--	server->secmech.sdesccmacaes->shash.tfm = server->secmech.cmacaes;
--	server->secmech.sdesccmacaes->shash.flags = 0x0;
-+	rc = cifs_alloc_hash("cmac(aes)", &p->cmacaes, &p->sdesccmacaes);
-+	if (rc)
-+		goto err;
- 
- 	return 0;
-+err:
-+	cifs_free_hash(&p->hmacsha256, &p->sdeschmacsha256);
-+	return rc;
- }
- 
- static struct cifs_ses *
-@@ -457,7 +412,7 @@ smb3_calc_signature(struct smb_rqst *rqs
- 		cifs_dbg(VFS, "%s: Could not init cmac aes\n", __func__);
- 		return rc;
- 	}
--	
-+
- 	rc = __cifs_calc_signature(rqst, server, sigptr,
- 				   &server->secmech.sdesccmacaes->shash);
- 
---- a/fs/cifs/smbencrypt.c
-+++ b/fs/cifs/smbencrypt.c
-@@ -121,25 +121,12 @@ int
- mdfour(unsigned char *md4_hash, unsigned char *link_str, int link_len)
- {
- 	int rc;
--	unsigned int size;
--	struct crypto_shash *md4;
--	struct sdesc *sdescmd4;
-+	struct crypto_shash *md4 = NULL;
-+	struct sdesc *sdescmd4 = NULL;
- 
--	md4 = crypto_alloc_shash("md4", 0, 0);
--	if (IS_ERR(md4)) {
--		rc = PTR_ERR(md4);
--		cifs_dbg(VFS, "%s: Crypto md4 allocation error %d\n",
--			 __func__, rc);
--		return rc;
--	}
--	size = sizeof(struct shash_desc) + crypto_shash_descsize(md4);
--	sdescmd4 = kmalloc(size, GFP_KERNEL);
--	if (!sdescmd4) {
--		rc = -ENOMEM;
-+	rc = cifs_alloc_hash("md4", &md4, &sdescmd4);
-+	if (rc)
- 		goto mdfour_err;
--	}
--	sdescmd4->shash.tfm = md4;
--	sdescmd4->shash.flags = 0x0;
- 
- 	rc = crypto_shash_init(&sdescmd4->shash);
- 	if (rc) {
-@@ -156,9 +143,7 @@ mdfour(unsigned char *md4_hash, unsigned
- 		cifs_dbg(VFS, "%s: Could not generate md4 hash\n", __func__);
- 
- mdfour_err:
--	crypto_free_shash(md4);
--	kfree(sdescmd4);
--
-+	cifs_free_hash(&md4, &sdescmd4);
- 	return rc;
- }
- 
+@@ -1729,6 +1738,7 @@ static struct pci_driver i801_driver = {
+ 	.id_table	= i801_ids,
+ 	.probe		= i801_probe,
+ 	.remove		= i801_remove,
++	.shutdown	= i801_shutdown,
+ 	.driver		= {
+ 		.pm	= &i801_pm_ops,
+ 	},
