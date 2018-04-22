@@ -1,36 +1,79 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48/RjGFfxrUAxSGppy271Ojl/6ErmdcXb1AiBqaDz9LqJW1WwtVVb2uFnBkskaBA6eDnqqz
-ARC-Seal: i=1; a=rsa-sha256; t=1524406023; cv=none;
-        d=google.com; s=arc-20160816;
-        b=FqN69ajE3BT4mdDXQnnHnDhsVSDk5Id3rhk03SoMzM+61IhA4BfOxOcNm/fdNs9LkR
-         g7cN26AFGrkFPGO6ZliWlFZAhhXonhU4eXrDDE5tOtyuAIj0OK8oJHYV+4+FiFuXQvxz
-         8HnN6BLxoLfeNOx2GplMyIXLh3pDJCaGwAnAPQsQOPLSZ7xi6MTIyRY1N4WLI7vhCXe4
-         YdI+GJEGuG98o7kU0IbroD435X4B3oDavRXJd5QLzqE1RhSCydJtrp0iumzfQgctLoyK
-         pRP+AzzNSAGWfPuLl4ZkNApisFAjWZFMri3Erl57H+PbWk4oOFNnIMrNJBdFUmfgaFCr
-         5XIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=493UxNzBq9Ob7hIdI6j3ZX40I/FVDF8kmOS2URa7yDQ=;
-        b=L22Pst23HORkp6KawnVtPXjWWzs+4qWUtty9xwrjxWRaukfwEv3az9UssxbfWnrRZP
-         fWTd94bU72Un6uXeBrd0YnY/ntiVWlalTWyZQzjeogRxdXGw2Z+sxAuRbmzYKrL1Qm3p
-         8hbHE3C4cfom0x4ry6f8oVQ4AxNEiqn2BilljFQzCw3zXYUrHmoSrfBGMzR2ZqdB++lt
-         p35DNEKhrV8Gq/X82Sg4MaI2U3xEPI6EMACFnz5JyOyFX4FOQtSvEPzhdWGa1ZoNkkWl
-         CqwOuQjiCsJxjYXRrRjQtOvZHBdxDct7u64TSOw1IzT1wqObpeJe0iUgDfzaMN00YbZr
-         4VVQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2630128-1524406022-5-8365078868221903696
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524406022; b=FPCVa4BRohvIPmZiqlLhh9mJkqcKH3zq/J+UtaP3IeV+u9n5KH
+    2q3p8OxGSxNihha7BPOmsulZboxIezjZhswEuczK1mF59Ak+Gcv/K8C9rq1MYUHu
+    zeJ5DOYYJ8gZlBm/vegVrQMXdgwlxyhvc5Q9D+pqnWC+PPvFWIGfBvChZd52U6i7
+    XgFzWxGlR3DJ8p+Lu209zZZfIwLOIXbWiZXINozrhNN4Cq157Lw/5SO7VkKNgJAT
+    YWLUOZYsFcy3JtCDoK3EsptUYAEinRGbnTHJmy79K59j+T5CBzNsR5xPzp3cMOnn
+    TrOc/MPJUYeRo5v+KBS3g1kYL+46MEn2QZZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524406022; bh=ro4iizLPQD3tPARuJn8EeMuN2944N6
+    L6ez+Qge3/ou0=; b=U/L0aa55vW/0J1cJuG6oz0kR6c0SB3beDpO7DJx43ks26N
+    0ooiTbQ+8QVPNMdPpfFR6oShikmBZFux2sOFH5dze3if7/YqPd5dil5wUW+25cxh
+    KCvz0zdcAqrEZhIoD6sC0RKv1JpB5Jw6vPFdQPaLbLLqofELVA/Dpv8+BOzhgUHM
+    oaP0Wo5B60pMHm1XiUk+FKw61ISs1XFivPma8pfip1Z9VvN5RpkOR5JU40D4qcLB
+    qOB4rX98T+2Gc97+IwlZzy9cST9E+9ilNqfSRMX2X/so1Zcid9B3P9zpweNjK2dr
+    Yk8aD2BNcvTRzn3OXb7HfqIUqDPd/4nRHwCHMvMw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBnw6PANXCD7Xg7Fsqnr9YufK/4pMM51JZdNawro35+tCM+NEtLn2SIdimMLke8Ey1bbZTHjMpVv//286GykuO+hOrcMCXS9WiZpANSMKqBfiVvnmxwo
+    +5YVfxphg3oB4OIaxSMIaUQaX2+jJRJH8NQPrkSAKKpdYJ7dHLreiM/i8r2V7PexfdlOyZTiqBul03q59Z1RKuKOJzznuy0N+f+xsP70eYkTGuVGqLPghV5i
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=ag1SF4gXAAAA:8 a=tvyFtlzUmmTVg9JsgHoA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755655AbeDVOGz (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:06:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51544 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755633AbeDVOGq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:06:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.14 085/164] dm crypt: limit the number of allocated pages
-Date: Sun, 22 Apr 2018 15:52:32 +0200
-Message-Id: <20180422135138.908144029@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Xu <wen.xu@gatech.edu>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.14 079/164] ext4: fail ext4_iget for root directory if unallocated
+Date: Sun, 22 Apr 2018 15:52:26 +0200
+Message-Id: <20180422135138.681699655@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -38,10 +81,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455055708179128?=
-X-GMAIL-MSGID: =?utf-8?q?1598455570576233758?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,149 +91,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 5059353df86e2573ccd9d43fd9d9396dcec47ca2 upstream.
+commit 8e4b5eae5decd9dfe5a4ee369c22028f90ab4c44 upstream.
 
-dm-crypt consumes an excessive amount memory when the user attempts to
-zero a dm-crypt device with "blkdiscard -z". The command "blkdiscard -z"
-calls the BLKZEROOUT ioctl, it goes to the function __blkdev_issue_zeroout,
-__blkdev_issue_zeroout sends a large amount of write bios that contain
-the zero page as their payload.
+If the root directory has an i_links_count of zero, then when the file
+system is mounted, then when ext4_fill_super() notices the problem and
+tries to call iput() the root directory in the error return path,
+ext4_evict_inode() will try to free the inode on disk, before all of
+the file system structures are set up, and this will result in an OOPS
+caused by a NULL pointer dereference.
 
-For each incoming page, dm-crypt allocates another page that holds the
-encrypted data, so when processing "blkdiscard -z", dm-crypt tries to
-allocate the amount of memory that is equal to the size of the device.
-This can trigger OOM killer or cause system crash.
+This issue has been assigned CVE-2018-1092.
 
-Fix this by limiting the amount of memory that dm-crypt allocates to 2%
-of total system memory. This limit is system-wide and is divided by the
-number of active dm-crypt devices and each device receives an equal
-share.
+https://bugzilla.kernel.org/show_bug.cgi?id=199179
+https://bugzilla.redhat.com/show_bug.cgi?id=1560777
 
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-crypt.c |   66 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 65 insertions(+), 1 deletion(-)
+ fs/ext4/inode.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -148,6 +148,8 @@ struct crypt_config {
- 	mempool_t *tag_pool;
- 	unsigned tag_pool_max_sectors;
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4685,6 +4685,12 @@ struct inode *ext4_iget(struct super_blo
+ 		goto bad_inode;
+ 	raw_inode = ext4_raw_inode(&iloc);
  
-+	struct percpu_counter n_allocated_pages;
++	if ((ino == EXT4_ROOT_INO) && (raw_inode->i_links_count == 0)) {
++		EXT4_ERROR_INODE(inode, "root inode unallocated");
++		ret = -EFSCORRUPTED;
++		goto bad_inode;
++	}
 +
- 	struct bio_set *bs;
- 	struct mutex bio_alloc_lock;
- 
-@@ -219,6 +221,12 @@ struct crypt_config {
- #define MAX_TAG_SIZE	480
- #define POOL_ENTRY_SIZE	512
- 
-+static DEFINE_SPINLOCK(dm_crypt_clients_lock);
-+static unsigned dm_crypt_clients_n = 0;
-+static volatile unsigned long dm_crypt_pages_per_client;
-+#define DM_CRYPT_MEMORY_PERCENT			2
-+#define DM_CRYPT_MIN_PAGES_PER_CLIENT		(BIO_MAX_PAGES * 16)
-+
- static void clone_init(struct dm_crypt_io *, struct bio *);
- static void kcryptd_queue_crypt(struct dm_crypt_io *io);
- static struct scatterlist *crypt_get_sg_data(struct crypt_config *cc,
-@@ -2156,6 +2164,43 @@ static int crypt_wipe_key(struct crypt_c
- 	return r;
- }
- 
-+static void crypt_calculate_pages_per_client(void)
-+{
-+	unsigned long pages = (totalram_pages - totalhigh_pages) * DM_CRYPT_MEMORY_PERCENT / 100;
-+
-+	if (!dm_crypt_clients_n)
-+		return;
-+
-+	pages /= dm_crypt_clients_n;
-+	if (pages < DM_CRYPT_MIN_PAGES_PER_CLIENT)
-+		pages = DM_CRYPT_MIN_PAGES_PER_CLIENT;
-+	dm_crypt_pages_per_client = pages;
-+}
-+
-+static void *crypt_page_alloc(gfp_t gfp_mask, void *pool_data)
-+{
-+	struct crypt_config *cc = pool_data;
-+	struct page *page;
-+
-+	if (unlikely(percpu_counter_compare(&cc->n_allocated_pages, dm_crypt_pages_per_client) >= 0) &&
-+	    likely(gfp_mask & __GFP_NORETRY))
-+		return NULL;
-+
-+	page = alloc_page(gfp_mask);
-+	if (likely(page != NULL))
-+		percpu_counter_add(&cc->n_allocated_pages, 1);
-+
-+	return page;
-+}
-+
-+static void crypt_page_free(void *page, void *pool_data)
-+{
-+	struct crypt_config *cc = pool_data;
-+
-+	__free_page(page);
-+	percpu_counter_sub(&cc->n_allocated_pages, 1);
-+}
-+
- static void crypt_dtr(struct dm_target *ti)
- {
- 	struct crypt_config *cc = ti->private;
-@@ -2182,6 +2227,10 @@ static void crypt_dtr(struct dm_target *
- 	mempool_destroy(cc->req_pool);
- 	mempool_destroy(cc->tag_pool);
- 
-+	if (cc->page_pool)
-+		WARN_ON(percpu_counter_sum(&cc->n_allocated_pages) != 0);
-+	percpu_counter_destroy(&cc->n_allocated_pages);
-+
- 	if (cc->iv_gen_ops && cc->iv_gen_ops->dtr)
- 		cc->iv_gen_ops->dtr(cc);
- 
-@@ -2196,6 +2245,12 @@ static void crypt_dtr(struct dm_target *
- 
- 	/* Must zero key material before freeing */
- 	kzfree(cc);
-+
-+	spin_lock(&dm_crypt_clients_lock);
-+	WARN_ON(!dm_crypt_clients_n);
-+	dm_crypt_clients_n--;
-+	crypt_calculate_pages_per_client();
-+	spin_unlock(&dm_crypt_clients_lock);
- }
- 
- static int crypt_ctr_ivmode(struct dm_target *ti, const char *ivmode)
-@@ -2643,6 +2698,15 @@ static int crypt_ctr(struct dm_target *t
- 
- 	ti->private = cc;
- 
-+	spin_lock(&dm_crypt_clients_lock);
-+	dm_crypt_clients_n++;
-+	crypt_calculate_pages_per_client();
-+	spin_unlock(&dm_crypt_clients_lock);
-+
-+	ret = percpu_counter_init(&cc->n_allocated_pages, 0, GFP_KERNEL);
-+	if (ret < 0)
-+		goto bad;
-+
- 	/* Optional parameters need to be read before cipher constructor */
- 	if (argc > 5) {
- 		ret = crypt_ctr_optional(ti, argc - 5, &argv[5]);
-@@ -2697,7 +2761,7 @@ static int crypt_ctr(struct dm_target *t
- 		ALIGN(sizeof(struct dm_crypt_io) + cc->dmreq_start + additional_req_size,
- 		      ARCH_KMALLOC_MINALIGN);
- 
--	cc->page_pool = mempool_create_page_pool(BIO_MAX_PAGES, 0);
-+	cc->page_pool = mempool_create(BIO_MAX_PAGES, crypt_page_alloc, crypt_page_free, cc);
- 	if (!cc->page_pool) {
- 		ti->error = "Cannot allocate page mempool";
- 		goto bad;
+ 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
+ 		ei->i_extra_isize = le16_to_cpu(raw_inode->i_extra_isize);
+ 		if (EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize >
