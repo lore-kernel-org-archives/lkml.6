@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+9zsbK4eMF3PAj9TqmuHnOW5M4yS2b4k1qCH3u9qCFP7KP0+liCaAF8t9NE/dHHrtw1S38
-ARC-Seal: i=1; a=rsa-sha256; t=1524405963; cv=none;
+X-Google-Smtp-Source: AIpwx4+9zmCLF9BDihYU9iCIExMEaMXwT4CN9535nH5rxMnRuJIj4UK5bXXRgD7RMjuRhbk+ef8Q
+ARC-Seal: i=1; a=rsa-sha256; t=1524405960; cv=none;
         d=google.com; s=arc-20160816;
-        b=MLv8OU4LbrDLRTdUMp1l0BCkdVN4jdKi/6c7aryEZcOhDThFDbmSqiUjsSaO8MnLwf
-         1D9dPPVnvPerwKMrBmk9BqpXlsQm1v9EbNcsQyddFkQZGK076HTvVFVWxAvOVAs8QCA+
-         NLG3cYn1IQe8CLc23z3O7rHRttBwqk4pjjDIHDd/zdHi/KPOwClbDT+xOqCMl8iNsZVi
-         yFIdBDPznqYkf9aZrb0fgAL6Obt+XZMNjpC4MydSwWwxDuqwL62O6XzBUDxUFpTj+sIJ
-         A7WDNFAVuSavHB4kdW7XEVWmUuriK1tRaQFPD96+VfjouZcyPmYREX4yHsDRAfEkWqu6
-         59Gw==
+        b=UtSsWOrP8Ob3Mgu52eSBC1E8dKuBtqGq/zkEHrSiRVNr6ao7l999Ar1NCyT4mJWGS8
+         qkZDSoQzW7g6Lq7ylm6IwTo0CzFccLFH0XF5KUpo38tcMMqDIoJ4bNRazNw5IASAjlgM
+         2PtuzCDoJaCTPgDYOqfVmOc7HN6tRhEomvvDaXbpPgMS4dS3JuaRbA9NUYMoFZOi9KSo
+         mjDh7nX82eyScyejiRtvEyuY52Xm/NIOU/oCVBuPpTnwmCdnFcrk/+sE+aCfxhebLByP
+         JwMZkC/zamzzHx/mPOED0fRKlIXDk/RQZI6jzkJQfIYD9/05j8mxEo5wziUBPOwikUpn
+         INpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IOizuCN8F9Qy08srNR6W4Z/d8WzzWs7Xbb4binWh6h4=;
-        b=kD5IsDRZwknjQACRLnoLlkpBcj+VSDUThVu0FObwTLuktmxftg6bJ+S4ngHsxYiRcY
-         2GX1ppnktVaVIt0DL/GIBUW0ZA+z0S88sAd1xBRtjFIH9o0wOsZG28Emu2xAmHAfsL5U
-         /hda61gzu29AfWpga/op5yx6aKuXdtqj/nrE1EzwVkJsIRHgnZkIm++crAHQDeRg4sZM
-         q/iin5oumesCgxvY3OkfzQ1FLXmkgmFWARrqqkQVEQnBvraKQlO3lQJak44ij4ueBiXC
-         33SePMdbMzxVAJ8tQNCbZycqQMYwQ7eH/dLQUfNa+UGdBxwHEX/716uCR0sQjXCtFZT1
-         9H2w==
+        bh=xC+Ai9v9sSgKZg4/WW9P/K+m2br8JMxEQXHSmh1kpC0=;
+        b=iM6XKCnNP0yqsnYvQpK2Wx/YqLuVX0LYQy3XBaFNN0brzxNpKIlDOh2n8Krm8Q0pRi
+         Vy223LzRTsjRIphrQ0UT5yefBrvxaJkoIe1pjyzake5+cBLozWzNRBDVMJO6DOpTWLO3
+         Sas5D9sWvVX+GLASfsQC+N9SFHcwFuo6NkjIFCYZ8wgJq8YANlJXb+m1FLrdzvqX4YZz
+         2Orf5G1uuQG0F8ed5cRupIsrYm2JFaS3va/okMx/lAZdgfk6tixXjSVwby15GrjYtf39
+         dkyrWFUoIzjxN989F1aMdPnwM+gIyQ6L/el3k7sh0JPETjU5MXijjEe3i/txqK/LAJXs
+         Omtg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Kelly <jamespeterkelly@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 061/164] ASoC: ssm2602: Replace reg_default_raw with reg_default
-Date: Sun, 22 Apr 2018 15:52:08 +0200
-Message-Id: <20180422135137.949620503@linuxfoundation.org>
+	Weiyi Lu <weiyi.lu@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Subject: [PATCH 4.14 060/164] soc: mediatek: fix the mistaken pointer accessed when subdomains are added
+Date: Sun, 22 Apr 2018 15:52:07 +0200
+Message-Id: <20180422135137.905383183@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454978890490474?=
-X-GMAIL-MSGID: =?utf-8?q?1598455506922306133?=
+X-GMAIL-THRID: =?utf-8?q?1598454976334056522?=
+X-GMAIL-MSGID: =?utf-8?q?1598455504465659258?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,75 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Kelly <jamespeterkelly@gmail.com>
+From: Sean Wang <sean.wang@mediatek.com>
 
-commit a01df75ce737951ad13a08d101306e88c3f57cb2 upstream.
+commit 73ce2ce129783813e1ebc37d2c757fe5e0fab1ef upstream.
 
-SSM2602 driver is broken on recent kernels (at least
-since 4.9). User space applications such as amixer or
-alsamixer get EIO when attempting to access codec
-controls via the relevant IOCTLs.
+Fix the pointer to struct scp_subdomian not being moved forward
+when each sub-domain is expected to be iteratively added through
+pm_genpd_add_subdomain call.
 
-Root cause of these failures is the regcache_hw_init
-function in drivers/base/regmap/regcache.c, which
-prevents regmap cache initalization from the
-reg_defaults_raw element of the regmap_config structure
-when registers are write only. It also disables the
-regmap cache entirely when all registers are write only
-or volatile as is the case for the SSM2602 driver.
-
-Using the reg_defaults element of the regmap_config
-structure rather than the reg_defaults_raw element to
-initalize the regmap cache avoids the logic in the
-regcache_hw_init function entirely. It also makes this
-driver consistent with other ASoC codec drivers, as
-this driver was the ONLY codec driver that used the
-reg_defaults_raw element to initalize the cache.
-
-Tested on Digilent Zybo Z7 development board which has
-a SSM2603 codec chip connected to a Xilinx Zynq SoC.
-
-Signed-off-by: James Kelly <jamespeterkelly@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
+Fixes: 53fddb1a66dd ("soc: mediatek: reduce code duplication of scpsys_probe across all SoCs")
+Reported-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/ssm2602.c |   19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/soc/mediatek/mtk-scpsys.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/codecs/ssm2602.c
-+++ b/sound/soc/codecs/ssm2602.c
-@@ -54,10 +54,17 @@ struct ssm2602_priv {
-  * using 2 wire for device control, so we cache them instead.
-  * There is no point in caching the reset register
-  */
--static const u16 ssm2602_reg[SSM2602_CACHEREGNUM] = {
--	0x0097, 0x0097, 0x0079, 0x0079,
--	0x000a, 0x0008, 0x009f, 0x000a,
--	0x0000, 0x0000
-+static const struct reg_default ssm2602_reg[SSM2602_CACHEREGNUM] = {
-+	{ .reg = 0x00, .def = 0x0097 },
-+	{ .reg = 0x01, .def = 0x0097 },
-+	{ .reg = 0x02, .def = 0x0079 },
-+	{ .reg = 0x03, .def = 0x0079 },
-+	{ .reg = 0x04, .def = 0x000a },
-+	{ .reg = 0x05, .def = 0x0008 },
-+	{ .reg = 0x06, .def = 0x009f },
-+	{ .reg = 0x07, .def = 0x000a },
-+	{ .reg = 0x08, .def = 0x0000 },
-+	{ .reg = 0x09, .def = 0x0000 }
- };
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -892,7 +892,7 @@ static int scpsys_probe(struct platform_
  
+ 	pd_data = &scp->pd_data;
  
-@@ -620,8 +627,8 @@ const struct regmap_config ssm2602_regma
- 	.volatile_reg = ssm2602_register_volatile,
- 
- 	.cache_type = REGCACHE_RBTREE,
--	.reg_defaults_raw = ssm2602_reg,
--	.num_reg_defaults_raw = ARRAY_SIZE(ssm2602_reg),
-+	.reg_defaults = ssm2602_reg,
-+	.num_reg_defaults = ARRAY_SIZE(ssm2602_reg),
- };
- EXPORT_SYMBOL_GPL(ssm2602_regmap_config);
- 
+-	for (i = 0, sd = soc->subdomains ; i < soc->num_subdomains ; i++) {
++	for (i = 0, sd = soc->subdomains; i < soc->num_subdomains; i++, sd++) {
+ 		ret = pm_genpd_add_subdomain(pd_data->domains[sd->origin],
+ 					     pd_data->domains[sd->subdomain]);
+ 		if (ret && IS_ENABLED(CONFIG_PM))
