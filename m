@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49Va6aJUJtDFdQPtMnSLhAjINKvPEZ1ZVM6y2aHj/i2+Nvz0tzaqLB7WuwtOcq45PYRcyb3
-ARC-Seal: i=1; a=rsa-sha256; t=1524405759; cv=none;
+X-Google-Smtp-Source: AIpwx48wZDtxHkjMnCCUMwffxM7xVm3k0v40iXKoyKNVvwVhCJ+2t/MMYf1QS80YcN7pSjSEC8LU
+ARC-Seal: i=1; a=rsa-sha256; t=1524405756; cv=none;
         d=google.com; s=arc-20160816;
-        b=iVj3hwTIRoIUbpwK9hOo8iHJpcwpYtnjpw9JTFxHR0KFQti7ZjSJwuSEOCeEkmc02a
-         ZaEisXKcCgS7T9fNy13hlmVeYoRQMqtebqD4joHmyQSUkBnxtMXyLjZPj4CJ0mEr0LJD
-         vcfsDvDvZV2eXHtcB/IY8fIWsYALSwBTirAwhaIistJi9vil4dElJyEe0ow7U+LFMJja
-         Nwb24hpZkacKVB2JmbqvGZ6rW3DjVUj8Pcf6/pR/kGOvCjsDipsdpgIuzgf77do9L82h
-         isqdyId4KEDKipTlYJKmedywjRJDZL0Wq30SwjGI9+xOMzEGyQ6oJy2AJ7DzxW/ZoCVW
-         Hm3w==
+        b=cKDGs289EbtHa0vEMVp8ZJyTYw7sTZ4kkXdo/OfpOc1DVHRLLHIOFqK4WCfZgns41E
+         U+9K08RxtoVzh2Lw0sKNlAukl0iGsnq0gmZ8n7dPDRm7PMXpGiPBCUaEhYYM5xFtKkbU
+         cTnVWn53hpsDg+F3wlne0a3FTnc3GKuCf97c+ach30FKily5vtnuHuk2l/V/8nMUOMH4
+         qRIc/SvAvfBMJ5DXbYE5vfIgiD4oq+FtHac2Z9OVHrajOa8sT7WLJwJNydXP2Yc6+Gh7
+         MWYG89eQqdPdvTTQ4kuuPhHWftY9nVvB7PWKmgQLFhL3QOPlxN3mWWEvsO2vjl+KXj9Q
+         1ejg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DzBFg040HkWkVm/tF2/YE8ee5VFNwht6SH8WHqweF3s=;
-        b=C+KHDaiVY3i6R0qiaVFF3KRktov50q4+STYmvY0z0vX0vm/sUCaNxXRSOjDa3gna7Z
-         nkX1QIPh5Ckmt4Wtx8lygH+j7WPe1qk1kZKDLa/TCtnw0yQN37anWN2ldThRWWC+tZoU
-         nl5Bi1pMAkgZfgylwr49Mvxicx55cPaOP8w7QDudHLtx9f/Vfy4L+ZgeiL0ZXkDoLzBV
-         f+tpJTcykYFTiQO03ZSmQNsS2IGCl4n0jlVRBneK37BIsenLxL5yyAO1q80eUydhxDMx
-         pItq0ciCRpuFvwiSixlCRn7+qevqzjZMVrAjqc68MPn2Pb4raAYtTtGYzD8g0iM/uwqY
-         9WJQ==
+        bh=Khay+P5O36Ke2CsKpH4OI5q0ZtOoKEW6QtmdellJNP0=;
+        b=xorM1QEp8iL2VNzIiXgkp8BqnibWqndxn36QWvORXqpniqcjvX6LQxRRDBAKXEwJ+3
+         IZsT9Oil0JYLB/JauhQfI2/2FxlYRsFW9RgKMT/wtliNwKxQb0fyGqpa/9b3i/mXnss2
+         OGXO87z1Hk1R1HI7KyhX6SUx2x/TEGMrUVHkycReutT5ABpZU4VvFJWwm/q0izXm8VMr
+         DQL9YF21F18oHyKJFGFFmJIdbJK1iWgygVlBclLAtYWmkyq3tbulz4OkFUBs1c8FbRUP
+         V6KE2zLVnxpTsca2vEvrZRTEv5Ys/PMg6C2E0IyWnvLzYi9mbTmxHtq/qKuiHChBoGSl
+         qA9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Harry Wentland <harry.wentland@amd.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Ilia Mirkin <imirkin@alum.mit.edu>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Shashank Sharma <shashank.sharma@intel.com>,
-	Uma Shankar <uma.shankar@intel.com>,
-	Jyri Sarha <jsarha@ti.com>,
-	"Tang, Jun" <jun.tang@intel.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
-Subject: [PATCH 4.16 184/196] drm/i915: Correctly handle limited range YCbCr data on VLV/CHV
-Date: Sun, 22 Apr 2018 15:53:24 +0200
-Message-Id: <20180422135113.770583587@linuxfoundation.org>
+	amn-bas@hotmail.com,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Imre Deak <imre.deak@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 4.16 183/196] drm/i915: Fix hibernation with ACPI S0 target state
+Date: Sun, 22 Apr 2018 15:53:23 +0200
+Message-Id: <20180422135113.713805818@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -49,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455293611521894?=
-X-GMAIL-MSGID: =?utf-8?q?1598455293611521894?=
+X-GMAIL-THRID: =?utf-8?q?1598455290923924834?=
+X-GMAIL-MSGID: =?utf-8?q?1598455290923924834?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,208 +51,149 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Imre Deak <imre.deak@intel.com>
 
-commit 5deae9191130db6b617c94fb261804597cf9b508 upstream.
+commit 300efa9eea451bdcf3b5a1eb292222e06e85bb2c upstream.
 
-Turns out the VLV/CHV fixed function sprite CSC expects full range
-data as input. We've been feeding it limited range data to it all
-along. To expand the data out to full range we'll use the color
-correction registers (brightness, contrast, and saturation).
+After
 
-On CHV pipe B we were actually doing the right thing already because we
-progammed the custom CSC matrix to do expect limited range input. Now
-that well pre-expand the data out with the color correction unit, we
-need to change the CSC matrix to operate with full range input instead.
+commit dd9f31c7a3887950cbd0d49eb9d43f7a1518a356
+Author: Imre Deak <imre.deak@intel.com>
+Date:   Wed Aug 16 17:46:07 2017 +0300
 
-This should make the sprite output of the other pipes match the sprite
-output of pipe B reasonably well. Looking at the resulting pipe CRCs,
-there can be a slight difference in the output, but as I don't know
-the formula used by the fixed function CSC of the other pipes, I don't
-think it's worth the effort to try to match the output exactly. It
-might not even be possible due to difference in internal precision etc.
+    drm/i915/gen9+: Set same power state before hibernation image
+    save/restore
 
-One slight caveat here is that the color correction registers are single
-bufferred, so we should really be updating them during vblank, but we
-still don't have a mechanism for that, so just toss in another FIXME.
+during hibernation/suspend the power domain functionality got disabled,
+after which resume could leave it incorrectly disabled if the ACPI
+target state was S0 during suspend and i915 was not loaded by the loader
+kernel.
 
-v2: Rebase
-v3: s/bri/brightness/ s/con/contrast/ (Shashank)
-v4: Clarify the constants and math (Shashank)
+This was caused by not considering if we resumed from hibernation as the
+condition for power domains reiniting.
 
-Cc: Harry Wentland <harry.wentland@amd.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Daniel Stone <daniel@fooishbar.org>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Ilia Mirkin <imirkin@alum.mit.edu>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Shashank Sharma <shashank.sharma@intel.com>
-Cc: Uma Shankar <uma.shankar@intel.com>
-Cc: Jyri Sarha <jsarha@ti.com>
-Cc: "Tang, Jun" <jun.tang@intel.com>
-Reported-by: "Tang, Jun" <jun.tang@intel.com>
-Cc: stable@vger.kernel.org
-Fixes: 7f1f3851feb0 ("drm/i915: sprite support for ValleyView v4")
-Reviewed-by: Shashank Sharma <shashank.sharma@intel.com>
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180214192327.3250-5-ville.syrjala@linux.intel.com
+Fix this by simply tracking if we suspended power domains during system
+suspend and reinit power domains accordingly during resume. This will
+result in reiniting power domains always when resuming from hibernation,
+regardless of the platform and whether or not i915 is loaded by the
+loader kernel.
+
+The reason we didn't catch this earlier is that the enabled/disabled
+state of power domains during PMSG_FREEZE/PMSG_QUIESCE is platform
+and kernel config dependent: on my SKL the target state is S4
+during PMSG_FREEZE and (with the driver loaded in the loader kernel)
+S0 during PMSG_QUIESCE. On the reporter's machine it's S0 during
+PMSG_FREEZE but (contrary to this) power domains are not initialized
+during PMSG_QUIESCE since i915 is not loaded in the loader kernel, or
+it's loaded but without the DMC firmware being available.
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105196
+Reported-and-tested-by: amn-bas@hotmail.com
+Fixes: dd9f31c7a388 ("drm/i915/gen9+: Set same power state before hibernation image save/restore")
+Cc: amn-bas@hotmail.com
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Imre Deak <imre.deak@intel.com>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180322143642.26883-1-imre.deak@intel.com
+(cherry picked from commit 0f90603c33bdf6575cfdc81edd53f3f13ba166fb)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_reg.h     |   10 ++++
- drivers/gpu/drm/i915/intel_sprite.c |   83 +++++++++++++++++++++++++++---------
- 2 files changed, 74 insertions(+), 19 deletions(-)
+ drivers/gpu/drm/i915/i915_drv.c |   22 ++++++++++------------
+ drivers/gpu/drm/i915/i915_drv.h |    2 +-
+ 2 files changed, 11 insertions(+), 13 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_reg.h
-+++ b/drivers/gpu/drm/i915/i915_reg.h
-@@ -6236,6 +6236,12 @@ enum {
- #define _SPATILEOFF		(VLV_DISPLAY_BASE + 0x721a4)
- #define _SPACONSTALPHA		(VLV_DISPLAY_BASE + 0x721a8)
- #define   SP_CONST_ALPHA_ENABLE		(1<<31)
-+#define _SPACLRC0		(VLV_DISPLAY_BASE + 0x721d0)
-+#define   SP_CONTRAST(x)		((x) << 18) /* u3.6 */
-+#define   SP_BRIGHTNESS(x)		((x) & 0xff) /* s8 */
-+#define _SPACLRC1		(VLV_DISPLAY_BASE + 0x721d4)
-+#define   SP_SH_SIN(x)			(((x) & 0x7ff) << 16) /* s4.7 */
-+#define   SP_SH_COS(x)			(x) /* u3.7 */
- #define _SPAGAMC		(VLV_DISPLAY_BASE + 0x721f4)
- 
- #define _SPBCNTR		(VLV_DISPLAY_BASE + 0x72280)
-@@ -6249,6 +6255,8 @@ enum {
- #define _SPBKEYMAXVAL		(VLV_DISPLAY_BASE + 0x722a0)
- #define _SPBTILEOFF		(VLV_DISPLAY_BASE + 0x722a4)
- #define _SPBCONSTALPHA		(VLV_DISPLAY_BASE + 0x722a8)
-+#define _SPBCLRC0		(VLV_DISPLAY_BASE + 0x722d0)
-+#define _SPBCLRC1		(VLV_DISPLAY_BASE + 0x722d4)
- #define _SPBGAMC		(VLV_DISPLAY_BASE + 0x722f4)
- 
- #define _MMIO_VLV_SPR(pipe, plane_id, reg_a, reg_b) \
-@@ -6265,6 +6273,8 @@ enum {
- #define SPKEYMAXVAL(pipe, plane_id)	_MMIO_VLV_SPR((pipe), (plane_id), _SPAKEYMAXVAL, _SPBKEYMAXVAL)
- #define SPTILEOFF(pipe, plane_id)	_MMIO_VLV_SPR((pipe), (plane_id), _SPATILEOFF, _SPBTILEOFF)
- #define SPCONSTALPHA(pipe, plane_id)	_MMIO_VLV_SPR((pipe), (plane_id), _SPACONSTALPHA, _SPBCONSTALPHA)
-+#define SPCLRC0(pipe, plane_id)		_MMIO_VLV_SPR((pipe), (plane_id), _SPACLRC0, _SPBCLRC0)
-+#define SPCLRC1(pipe, plane_id)		_MMIO_VLV_SPR((pipe), (plane_id), _SPACLRC1, _SPBCLRC1)
- #define SPGAMC(pipe, plane_id)		_MMIO_VLV_SPR((pipe), (plane_id), _SPAGAMC, _SPBGAMC)
- 
- /*
---- a/drivers/gpu/drm/i915/intel_sprite.c
-+++ b/drivers/gpu/drm/i915/intel_sprite.c
-@@ -346,44 +346,87 @@ skl_plane_get_hw_state(struct intel_plan
- }
- 
- static void
--chv_update_csc(struct intel_plane *plane, uint32_t format)
-+chv_update_csc(const struct intel_plane_state *plane_state)
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -1599,15 +1599,12 @@ static int i915_drm_suspend_late(struct
  {
-+	struct intel_plane *plane = to_intel_plane(plane_state->base.plane);
- 	struct drm_i915_private *dev_priv = to_i915(plane->base.dev);
-+	const struct drm_framebuffer *fb = plane_state->base.fb;
- 	enum plane_id plane_id = plane->id;
+ 	struct drm_i915_private *dev_priv = to_i915(dev);
+ 	struct pci_dev *pdev = dev_priv->drm.pdev;
+-	bool fw_csr;
+ 	int ret;
  
- 	/* Seems RGB data bypasses the CSC always */
--	if (!format_is_yuv(format))
-+	if (!format_is_yuv(fb->format->format))
- 		return;
+ 	disable_rpm_wakeref_asserts(dev_priv);
  
+ 	intel_display_set_init_power(dev_priv, false);
+ 
+-	fw_csr = !IS_GEN9_LP(dev_priv) && !hibernation &&
+-		suspend_to_idle(dev_priv) && dev_priv->csr.dmc_payload;
  	/*
--	 * BT.601 limited range YCbCr -> full range RGB
-+	 * BT.601 full range YCbCr -> full range RGB
- 	 *
--	 * |r|   | 6537 4769     0|   |cr  |
--	 * |g| = |-3330 4769 -1605| x |y-64|
--	 * |b|   |    0 4769  8263|   |cb  |
-+	 * |r|   | 5743 4096     0|   |cr|
-+	 * |g| = |-2925 4096 -1410| x |y |
-+	 * |b|   |    0 4096  7258|   |cb|
- 	 *
--	 * Cb and Cr apparently come in as signed already, so no
--	 * need for any offset. For Y we need to remove the offset.
-+	 * Cb and Cr apparently come in as signed already,
-+	 * and we get full range data in on account of CLRC0/1
+ 	 * In case of firmware assisted context save/restore don't manually
+ 	 * deinit the power domains. This also means the CSR/DMC firmware will
+@@ -1615,8 +1612,11 @@ static int i915_drm_suspend_late(struct
+ 	 * also enable deeper system power states that would be blocked if the
+ 	 * firmware was inactive.
  	 */
--	I915_WRITE_FW(SPCSCYGOFF(plane_id), SPCSC_OOFF(0) | SPCSC_IOFF(-64));
-+	I915_WRITE_FW(SPCSCYGOFF(plane_id), SPCSC_OOFF(0) | SPCSC_IOFF(0));
- 	I915_WRITE_FW(SPCSCCBOFF(plane_id), SPCSC_OOFF(0) | SPCSC_IOFF(0));
- 	I915_WRITE_FW(SPCSCCROFF(plane_id), SPCSC_OOFF(0) | SPCSC_IOFF(0));
- 
--	I915_WRITE_FW(SPCSCC01(plane_id), SPCSC_C1(4769) | SPCSC_C0(6537));
--	I915_WRITE_FW(SPCSCC23(plane_id), SPCSC_C1(-3330) | SPCSC_C0(0));
--	I915_WRITE_FW(SPCSCC45(plane_id), SPCSC_C1(-1605) | SPCSC_C0(4769));
--	I915_WRITE_FW(SPCSCC67(plane_id), SPCSC_C1(4769) | SPCSC_C0(0));
--	I915_WRITE_FW(SPCSCC8(plane_id), SPCSC_C0(8263));
--
--	I915_WRITE_FW(SPCSCYGICLAMP(plane_id), SPCSC_IMAX(940) | SPCSC_IMIN(64));
--	I915_WRITE_FW(SPCSCCBICLAMP(plane_id), SPCSC_IMAX(448) | SPCSC_IMIN(-448));
--	I915_WRITE_FW(SPCSCCRICLAMP(plane_id), SPCSC_IMAX(448) | SPCSC_IMIN(-448));
-+	I915_WRITE_FW(SPCSCC01(plane_id), SPCSC_C1(4096) | SPCSC_C0(5743));
-+	I915_WRITE_FW(SPCSCC23(plane_id), SPCSC_C1(-2925) | SPCSC_C0(0));
-+	I915_WRITE_FW(SPCSCC45(plane_id), SPCSC_C1(-1410) | SPCSC_C0(4096));
-+	I915_WRITE_FW(SPCSCC67(plane_id), SPCSC_C1(4096) | SPCSC_C0(0));
-+	I915_WRITE_FW(SPCSCC8(plane_id), SPCSC_C0(7258));
-+
-+	I915_WRITE_FW(SPCSCYGICLAMP(plane_id), SPCSC_IMAX(1023) | SPCSC_IMIN(0));
-+	I915_WRITE_FW(SPCSCCBICLAMP(plane_id), SPCSC_IMAX(512) | SPCSC_IMIN(-512));
-+	I915_WRITE_FW(SPCSCCRICLAMP(plane_id), SPCSC_IMAX(512) | SPCSC_IMIN(-512));
- 
- 	I915_WRITE_FW(SPCSCYGOCLAMP(plane_id), SPCSC_OMAX(1023) | SPCSC_OMIN(0));
- 	I915_WRITE_FW(SPCSCCBOCLAMP(plane_id), SPCSC_OMAX(1023) | SPCSC_OMIN(0));
- 	I915_WRITE_FW(SPCSCCROCLAMP(plane_id), SPCSC_OMAX(1023) | SPCSC_OMIN(0));
- }
- 
-+#define SIN_0 0
-+#define COS_0 1
-+
-+static void
-+vlv_update_clrc(const struct intel_plane_state *plane_state)
-+{
-+	struct intel_plane *plane = to_intel_plane(plane_state->base.plane);
-+	struct drm_i915_private *dev_priv = to_i915(plane->base.dev);
-+	const struct drm_framebuffer *fb = plane_state->base.fb;
-+	enum pipe pipe = plane->pipe;
-+	enum plane_id plane_id = plane->id;
-+	int contrast, brightness, sh_scale, sh_sin, sh_cos;
-+
-+	if (format_is_yuv(fb->format->format)) {
-+		/*
-+		 * Expand limited range to full range:
-+		 * Contrast is applied first and is used to expand Y range.
-+		 * Brightness is applied second and is used to remove the
-+		 * offset from Y. Saturation/hue is used to expand CbCr range.
-+		 */
-+		contrast = DIV_ROUND_CLOSEST(255 << 6, 235 - 16);
-+		brightness = -DIV_ROUND_CLOSEST(16 * 255, 235 - 16);
-+		sh_scale = DIV_ROUND_CLOSEST(128 << 7, 240 - 128);
-+		sh_sin = SIN_0 * sh_scale;
-+		sh_cos = COS_0 * sh_scale;
-+	} else {
-+		/* Pass-through everything. */
-+		contrast = 1 << 6;
-+		brightness = 0;
-+		sh_scale = 1 << 7;
-+		sh_sin = SIN_0 * sh_scale;
-+		sh_cos = COS_0 * sh_scale;
+-	if (!fw_csr)
++	if (IS_GEN9_LP(dev_priv) || hibernation || !suspend_to_idle(dev_priv) ||
++	    dev_priv->csr.dmc_payload == NULL) {
+ 		intel_power_domains_suspend(dev_priv);
++		dev_priv->power_domains_suspended = true;
 +	}
-+
-+	/* FIXME these register are single buffered :( */
-+	I915_WRITE_FW(SPCLRC0(pipe, plane_id),
-+		      SP_CONTRAST(contrast) | SP_BRIGHTNESS(brightness));
-+	I915_WRITE_FW(SPCLRC1(pipe, plane_id),
-+		      SP_SH_SIN(sh_sin) | SP_SH_COS(sh_cos));
-+}
-+
- static u32 vlv_sprite_ctl(const struct intel_crtc_state *crtc_state,
- 			  const struct intel_plane_state *plane_state)
- {
-@@ -477,8 +520,10 @@ vlv_update_plane(struct intel_plane *pla
  
- 	spin_lock_irqsave(&dev_priv->uncore.lock, irqflags);
+ 	ret = 0;
+ 	if (IS_GEN9_LP(dev_priv))
+@@ -1628,8 +1628,10 @@ static int i915_drm_suspend_late(struct
  
-+	vlv_update_clrc(plane_state);
-+
- 	if (IS_CHERRYVIEW(dev_priv) && pipe == PIPE_B)
--		chv_update_csc(plane, fb->format->format);
-+		chv_update_csc(plane_state);
+ 	if (ret) {
+ 		DRM_ERROR("Suspend complete failed: %d\n", ret);
+-		if (!fw_csr)
++		if (dev_priv->power_domains_suspended) {
+ 			intel_power_domains_init_hw(dev_priv, true);
++			dev_priv->power_domains_suspended = false;
++		}
  
- 	if (key->flags) {
- 		I915_WRITE_FW(SPKEYMINVAL(pipe, plane_id), key->min_value);
+ 		goto out;
+ 	}
+@@ -1650,8 +1652,6 @@ static int i915_drm_suspend_late(struct
+ 	if (!(hibernation && INTEL_GEN(dev_priv) < 6))
+ 		pci_set_power_state(pdev, PCI_D3hot);
+ 
+-	dev_priv->suspended_to_idle = suspend_to_idle(dev_priv);
+-
+ out:
+ 	enable_rpm_wakeref_asserts(dev_priv);
+ 
+@@ -1818,8 +1818,7 @@ static int i915_drm_resume_early(struct
+ 	intel_uncore_resume_early(dev_priv);
+ 
+ 	if (IS_GEN9_LP(dev_priv)) {
+-		if (!dev_priv->suspended_to_idle)
+-			gen9_sanitize_dc_state(dev_priv);
++		gen9_sanitize_dc_state(dev_priv);
+ 		bxt_disable_dc9(dev_priv);
+ 	} else if (IS_HASWELL(dev_priv) || IS_BROADWELL(dev_priv)) {
+ 		hsw_disable_pc8(dev_priv);
+@@ -1827,8 +1826,7 @@ static int i915_drm_resume_early(struct
+ 
+ 	intel_uncore_sanitize(dev_priv);
+ 
+-	if (IS_GEN9_LP(dev_priv) ||
+-	    !(dev_priv->suspended_to_idle && dev_priv->csr.dmc_payload))
++	if (dev_priv->power_domains_suspended)
+ 		intel_power_domains_init_hw(dev_priv, true);
+ 	else
+ 		intel_display_set_init_power(dev_priv, true);
+@@ -1838,7 +1836,7 @@ static int i915_drm_resume_early(struct
+ 	enable_rpm_wakeref_asserts(dev_priv);
+ 
+ out:
+-	dev_priv->suspended_to_idle = false;
++	dev_priv->power_domains_suspended = false;
+ 
+ 	return ret;
+ }
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -2099,7 +2099,7 @@ struct drm_i915_private {
+ 	u32 bxt_phy_grc;
+ 
+ 	u32 suspend_count;
+-	bool suspended_to_idle;
++	bool power_domains_suspended;
+ 	struct i915_suspend_saved_registers regfile;
+ 	struct vlv_s0ix_state vlv_s0ix_state;
+ 
