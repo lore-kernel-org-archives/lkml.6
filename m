@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/cjJUpnTn5PhTk29zrzfRoFjzwa0ajnXo9J8TWaeijMwPZceHgbCsDnRsKppTlicmsvh0t
-ARC-Seal: i=1; a=rsa-sha256; t=1524406789; cv=none;
+X-Google-Smtp-Source: AIpwx4/g8bIiP1Dmi6lRCifxs5ktULd4OcFisJw79T5wK8ktclm2/FPHuWxJy1CNt7yJoabYneoU
+ARC-Seal: i=1; a=rsa-sha256; t=1524406786; cv=none;
         d=google.com; s=arc-20160816;
-        b=QF3r0FfZ1NTIJ/jtRxdLNX+fQk9gqqqfWmDfR/ih4XQKPbpbXn1eyJSoM1j6wKuthy
-         2Kng/btSB6KB/9FbnkOzuh4YDpHyECCDO0J/XflptfFOcYp2ACaJCJRfIpEQLUnaCG6v
-         gsvaXs1k1x9jXEUKt1QtdWR1wxtXLFZSHEjS/SzLEPzFEoi2b1FsyxuA4wIAMALBOp5N
-         yXAxZgSmKz0NqQ5Ld60LHeWD7snbGj9l1bZMEMyvJmD/GiBOgoydoajT6KzeZW8Oxs2H
-         cKSnOfk6H8kG+zTdWJw1gZDiMvnL5XlhlVVc6RQDFdqk+pgXziA7RDFBOzfT/o3D2ksp
-         XipA==
+        b=VuC5y/03BISVEee673JsZpHK/xZYd50v3w4XuGLnapPIukEaYvr+HDx44g2b6mUpuo
+         V086FBupHcmtvqaEhiWM5yZWw9h3KoZsY3ncrQT3G4qh2PJvlB09sr8WlzOOoAbQqllC
+         PLwTR58kdyvQ5o+nJ7RIo5yjAb/rkFflTBV8JcdFK03isjexw3nlsEFJANXi0dRs3Idf
+         1khMl65Og6v6xqIyPSMdMUugwlBrKGigmL78XZp9D+eHNmpwjHdvo5Q0n9DIZa9t5Xua
+         vrEmUedm+mwG83erFH4PtS7KaK8d1I3SPvBbHKSb8kLn9YaHSH7z3py7zH7pmf80B/AO
+         pSSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5olQsZl5pmXQ5EDUjh3dB4/r70bnBdgIXYWaHhUcnd0=;
-        b=tebxm5WCnFywZ6aje9WzNH/FnV5CIRNDpfBPavWThAeDBaFokke98zEz3E6TI9Mw01
-         6MHlhuG5q/sEfosmCJvPDnR48LhZiaOklPCLEK6bEBwshejPHktPU3QBYKdVkYt1pfWf
-         rSfuwiJY4NY0AEqgo/WnKN1TAl4IfACeNVKKkYZlIQt0AeV7TY5EuNPNHG1SAIrMMG5A
-         7CaTaHJsilFeyRaqjkQ/062E9gYb/2neh5V1brYxKtgQGkbZmOCnswIBVhi6zgo3oXRj
-         RU8xonUWRbpepTeKNcTZx+0lbye7C8BkXCIrv88x6l8jQ6bvKPA+lp/PdcipfgCu74jL
-         s+Bg==
+        bh=Hqm32Dpr3Ua7JJhVKU+9DRcexzcQHly8TYEsGQEBkmo=;
+        b=bUxB6arCohMUSpVWIxS1gtcXBI7nWcGUSuYEYgb87CuGU5psIj6hOofzyXAZmkCIPF
+         LTlIJhoHrlkVGabKJeof8T5FyFm4qk/E6fvwOtbLjPK9wEbzuZey+pO81FRw/cvwin0I
+         GMOAzTc982JCTMIso/nzKx5JQwj7cwFt1M+bmtuPLdSK7eSTzTj5s1+yE6cGTJQLCiOb
+         xzI4NmqbxCdR/iJxjkTOxQzH3JsWb+XRKN8urcaVFIDKt9BZp5LChYqMfHy8kmWPyFTj
+         aLdhrQN4mYfuWStuwwy5KdkttDjowB7iAs1mgsY5Mu22IlTb1tPJzZy2P7vRyJAoc8wf
+         44bQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Fabi=C3=A1n=20Inostroza?= <fabianinostroza@udec.cl>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 78/97] ALSA: line6: Use correct endpoint type for midi output
-Date: Sun, 22 Apr 2018 15:53:56 +0200
-Message-Id: <20180422135309.485150340@linuxfoundation.org>
+	George Spelvin <linux@sciencehorizons.net>,
+	Theodore Tso <tytso@mit.edu>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.4 77/97] ext4: fix deadlock between inline_data and ext4_expand_extra_isize_ea()
+Date: Sun, 22 Apr 2018 15:53:55 +0200
+Message-Id: <20180422135309.440912356@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455267717959842?=
-X-GMAIL-MSGID: =?utf-8?q?1598456373291056315?=
+X-GMAIL-THRID: =?utf-8?q?1598456370369608086?=
+X-GMAIL-MSGID: =?utf-8?q?1598456370369608086?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +50,473 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabián Inostroza <soulsonceonfire@gmail.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 7ecb46e9ee9af18e304eb9e7d6804c59a408e846 upstream.
+commit c755e251357a0cee0679081f08c3f4ba797a8009 upstream.
 
-Sending MIDI messages to a PODxt through the USB connection shows
-"usb_submit_urb failed" in dmesg and the message is not received by
-the POD.
+The xattr_sem deadlock problems fixed in commit 2e81a4eeedca: "ext4:
+avoid deadlock when expanding inode size" didn't include the use of
+xattr_sem in fs/ext4/inline.c.  With the addition of project quota
+which added a new extra inode field, this exposed deadlocks in the
+inline_data code similar to the ones fixed by 2e81a4eeedca.
 
-The error is caused because in the funcion send_midi_async() in midi.c
-there is a call to usb_sndbulkpipe() for endpoint 3 OUT, but the PODxt
-USB descriptor shows that this endpoint it's an interrupt endpoint.
+The deadlock can be reproduced via:
 
-Patch tested with PODxt only.
+   dmesg -n 7
+   mke2fs -t ext4 -O inline_data -Fq -I 256 /dev/vdc 32768
+   mount -t ext4 -o debug_want_extra_isize=24 /dev/vdc /vdc
+   mkdir /vdc/a
+   umount /vdc
+   mount -t ext4 /dev/vdc /vdc
+   echo foo > /vdc/a/foo
 
-[ The bug has been present from the very beginning in the staging
-  driver time, but Fixes below points to the commit moving to sound/
-  directory so that the fix can be cleanly applied -- tiwai ]
+and looks like this:
 
-Fixes: 61864d844c29 ("ALSA: move line6 usb driver into sound/usb")
-Signed-off-by: Fabián Inostroza <fabianinostroza@udec.cl>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[   11.158815]
+[   11.160276] =============================================
+[   11.161960] [ INFO: possible recursive locking detected ]
+[   11.161960] 4.10.0-rc3-00015-g011b30a8a3cf #160 Tainted: G        W
+[   11.161960] ---------------------------------------------
+[   11.161960] bash/2519 is trying to acquire lock:
+[   11.161960]  (&ei->xattr_sem){++++..}, at: [<c1225a4b>] ext4_expand_extra_isize_ea+0x3d/0x4cd
+[   11.161960]
+[   11.161960] but task is already holding lock:
+[   11.161960]  (&ei->xattr_sem){++++..}, at: [<c1227941>] ext4_try_add_inline_entry+0x3a/0x152
+[   11.161960]
+[   11.161960] other info that might help us debug this:
+[   11.161960]  Possible unsafe locking scenario:
+[   11.161960]
+[   11.161960]        CPU0
+[   11.161960]        ----
+[   11.161960]   lock(&ei->xattr_sem);
+[   11.161960]   lock(&ei->xattr_sem);
+[   11.161960]
+[   11.161960]  *** DEADLOCK ***
+[   11.161960]
+[   11.161960]  May be due to missing lock nesting notation
+[   11.161960]
+[   11.161960] 4 locks held by bash/2519:
+[   11.161960]  #0:  (sb_writers#3){.+.+.+}, at: [<c11a2414>] mnt_want_write+0x1e/0x3e
+[   11.161960]  #1:  (&type->i_mutex_dir_key){++++++}, at: [<c119508b>] path_openat+0x338/0x67a
+[   11.161960]  #2:  (jbd2_handle){++++..}, at: [<c123314a>] start_this_handle+0x582/0x622
+[   11.161960]  #3:  (&ei->xattr_sem){++++..}, at: [<c1227941>] ext4_try_add_inline_entry+0x3a/0x152
+[   11.161960]
+[   11.161960] stack backtrace:
+[   11.161960] CPU: 0 PID: 2519 Comm: bash Tainted: G        W       4.10.0-rc3-00015-g011b30a8a3cf #160
+[   11.161960] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.1-1 04/01/2014
+[   11.161960] Call Trace:
+[   11.161960]  dump_stack+0x72/0xa3
+[   11.161960]  __lock_acquire+0xb7c/0xcb9
+[   11.161960]  ? kvm_clock_read+0x1f/0x29
+[   11.161960]  ? __lock_is_held+0x36/0x66
+[   11.161960]  ? __lock_is_held+0x36/0x66
+[   11.161960]  lock_acquire+0x106/0x18a
+[   11.161960]  ? ext4_expand_extra_isize_ea+0x3d/0x4cd
+[   11.161960]  down_write+0x39/0x72
+[   11.161960]  ? ext4_expand_extra_isize_ea+0x3d/0x4cd
+[   11.161960]  ext4_expand_extra_isize_ea+0x3d/0x4cd
+[   11.161960]  ? _raw_read_unlock+0x22/0x2c
+[   11.161960]  ? jbd2_journal_extend+0x1e2/0x262
+[   11.161960]  ? __ext4_journal_get_write_access+0x3d/0x60
+[   11.161960]  ext4_mark_inode_dirty+0x17d/0x26d
+[   11.161960]  ? ext4_add_dirent_to_inline.isra.12+0xa5/0xb2
+[   11.161960]  ext4_add_dirent_to_inline.isra.12+0xa5/0xb2
+[   11.161960]  ext4_try_add_inline_entry+0x69/0x152
+[   11.161960]  ext4_add_entry+0xa3/0x848
+[   11.161960]  ? __brelse+0x14/0x2f
+[   11.161960]  ? _raw_spin_unlock_irqrestore+0x44/0x4f
+[   11.161960]  ext4_add_nondir+0x17/0x5b
+[   11.161960]  ext4_create+0xcf/0x133
+[   11.161960]  ? ext4_mknod+0x12f/0x12f
+[   11.161960]  lookup_open+0x39e/0x3fb
+[   11.161960]  ? __wake_up+0x1a/0x40
+[   11.161960]  ? lock_acquire+0x11e/0x18a
+[   11.161960]  path_openat+0x35c/0x67a
+[   11.161960]  ? sched_clock_cpu+0xd7/0xf2
+[   11.161960]  do_filp_open+0x36/0x7c
+[   11.161960]  ? _raw_spin_unlock+0x22/0x2c
+[   11.161960]  ? __alloc_fd+0x169/0x173
+[   11.161960]  do_sys_open+0x59/0xcc
+[   11.161960]  SyS_open+0x1d/0x1f
+[   11.161960]  do_int80_syscall_32+0x4f/0x61
+[   11.161960]  entry_INT80_32+0x2f/0x2f
+[   11.161960] EIP: 0xb76ad469
+[   11.161960] EFLAGS: 00000286 CPU: 0
+[   11.161960] EAX: ffffffda EBX: 08168ac8 ECX: 00008241 EDX: 000001b6
+[   11.161960] ESI: b75e46bc EDI: b7755000 EBP: bfbdb108 ESP: bfbdafc0
+[   11.161960]  DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b
+
+Cc: stable@vger.kernel.org # 3.10 (requires 2e81a4eeedca as a prereq)
+Reported-by: George Spelvin <linux@sciencehorizons.net>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/usb/line6/midi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/inline.c |   66 +++++++++++++++++++++++++------------------------------
+ fs/ext4/xattr.c  |   30 ++++++++++---------------
+ fs/ext4/xattr.h  |   32 ++++++++++++++++++++++++++
+ 3 files changed, 74 insertions(+), 54 deletions(-)
 
---- a/sound/usb/line6/midi.c
-+++ b/sound/usb/line6/midi.c
-@@ -125,7 +125,7 @@ static int send_midi_async(struct usb_li
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -376,7 +376,7 @@ out:
+ static int ext4_prepare_inline_data(handle_t *handle, struct inode *inode,
+ 				    unsigned int len)
+ {
+-	int ret, size;
++	int ret, size, no_expand;
+ 	struct ext4_inode_info *ei = EXT4_I(inode);
+ 
+ 	if (!ext4_test_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA))
+@@ -386,15 +386,14 @@ static int ext4_prepare_inline_data(hand
+ 	if (size < len)
+ 		return -ENOSPC;
+ 
+-	down_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_lock_xattr(inode, &no_expand);
+ 
+ 	if (ei->i_inline_off)
+ 		ret = ext4_update_inline_data(handle, inode, len);
+ 	else
+ 		ret = ext4_create_inline_data(handle, inode, len);
+ 
+-	up_write(&EXT4_I(inode)->xattr_sem);
+-
++	ext4_write_unlock_xattr(inode, &no_expand);
+ 	return ret;
+ }
+ 
+@@ -523,7 +522,7 @@ static int ext4_convert_inline_data_to_e
+ 					      struct inode *inode,
+ 					      unsigned flags)
+ {
+-	int ret, needed_blocks;
++	int ret, needed_blocks, no_expand;
+ 	handle_t *handle = NULL;
+ 	int retries = 0, sem_held = 0;
+ 	struct page *page = NULL;
+@@ -563,7 +562,7 @@ retry:
+ 		goto out;
  	}
  
- 	usb_fill_int_urb(urb, line6->usbdev,
--			 usb_sndbulkpipe(line6->usbdev,
-+			 usb_sndintpipe(line6->usbdev,
- 					 line6->properties->ep_ctrl_w),
- 			 transfer_buffer, length, midi_sent, line6,
- 			 line6->interval);
+-	down_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_lock_xattr(inode, &no_expand);
+ 	sem_held = 1;
+ 	/* If some one has already done this for us, just exit. */
+ 	if (!ext4_has_inline_data(inode)) {
+@@ -599,7 +598,7 @@ retry:
+ 		page_cache_release(page);
+ 		page = NULL;
+ 		ext4_orphan_add(handle, inode);
+-		up_write(&EXT4_I(inode)->xattr_sem);
++		ext4_write_unlock_xattr(inode, &no_expand);
+ 		sem_held = 0;
+ 		ext4_journal_stop(handle);
+ 		handle = NULL;
+@@ -625,7 +624,7 @@ out:
+ 		page_cache_release(page);
+ 	}
+ 	if (sem_held)
+-		up_write(&EXT4_I(inode)->xattr_sem);
++		ext4_write_unlock_xattr(inode, &no_expand);
+ 	if (handle)
+ 		ext4_journal_stop(handle);
+ 	brelse(iloc.bh);
+@@ -718,7 +717,7 @@ convert:
+ int ext4_write_inline_data_end(struct inode *inode, loff_t pos, unsigned len,
+ 			       unsigned copied, struct page *page)
+ {
+-	int ret;
++	int ret, no_expand;
+ 	void *kaddr;
+ 	struct ext4_iloc iloc;
+ 
+@@ -736,7 +735,7 @@ int ext4_write_inline_data_end(struct in
+ 		goto out;
+ 	}
+ 
+-	down_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_lock_xattr(inode, &no_expand);
+ 	BUG_ON(!ext4_has_inline_data(inode));
+ 
+ 	kaddr = kmap_atomic(page);
+@@ -746,7 +745,7 @@ int ext4_write_inline_data_end(struct in
+ 	/* clear page dirty so that writepages wouldn't work for us. */
+ 	ClearPageDirty(page);
+ 
+-	up_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_unlock_xattr(inode, &no_expand);
+ 	brelse(iloc.bh);
+ out:
+ 	return copied;
+@@ -757,7 +756,7 @@ ext4_journalled_write_inline_data(struct
+ 				  unsigned len,
+ 				  struct page *page)
+ {
+-	int ret;
++	int ret, no_expand;
+ 	void *kaddr;
+ 	struct ext4_iloc iloc;
+ 
+@@ -767,11 +766,11 @@ ext4_journalled_write_inline_data(struct
+ 		return NULL;
+ 	}
+ 
+-	down_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_lock_xattr(inode, &no_expand);
+ 	kaddr = kmap_atomic(page);
+ 	ext4_write_inline_data(inode, &iloc, kaddr, 0, len);
+ 	kunmap_atomic(kaddr);
+-	up_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_unlock_xattr(inode, &no_expand);
+ 
+ 	return iloc.bh;
+ }
+@@ -1255,7 +1254,7 @@ out:
+ int ext4_try_add_inline_entry(handle_t *handle, struct ext4_filename *fname,
+ 			      struct dentry *dentry, struct inode *inode)
+ {
+-	int ret, inline_size;
++	int ret, inline_size, no_expand;
+ 	void *inline_start;
+ 	struct ext4_iloc iloc;
+ 	struct inode *dir = d_inode(dentry->d_parent);
+@@ -1264,7 +1263,7 @@ int ext4_try_add_inline_entry(handle_t *
+ 	if (ret)
+ 		return ret;
+ 
+-	down_write(&EXT4_I(dir)->xattr_sem);
++	ext4_write_lock_xattr(dir, &no_expand);
+ 	if (!ext4_has_inline_data(dir))
+ 		goto out;
+ 
+@@ -1310,7 +1309,7 @@ int ext4_try_add_inline_entry(handle_t *
+ 
+ out:
+ 	ext4_mark_inode_dirty(handle, dir);
+-	up_write(&EXT4_I(dir)->xattr_sem);
++	ext4_write_unlock_xattr(dir, &no_expand);
+ 	brelse(iloc.bh);
+ 	return ret;
+ }
+@@ -1670,7 +1669,7 @@ int ext4_delete_inline_entry(handle_t *h
+ 			     struct buffer_head *bh,
+ 			     int *has_inline_data)
+ {
+-	int err, inline_size;
++	int err, inline_size, no_expand;
+ 	struct ext4_iloc iloc;
+ 	void *inline_start;
+ 
+@@ -1678,7 +1677,7 @@ int ext4_delete_inline_entry(handle_t *h
+ 	if (err)
+ 		return err;
+ 
+-	down_write(&EXT4_I(dir)->xattr_sem);
++	ext4_write_lock_xattr(dir, &no_expand);
+ 	if (!ext4_has_inline_data(dir)) {
+ 		*has_inline_data = 0;
+ 		goto out;
+@@ -1713,7 +1712,7 @@ int ext4_delete_inline_entry(handle_t *h
+ 
+ 	ext4_show_inline_dir(dir, iloc.bh, inline_start, inline_size);
+ out:
+-	up_write(&EXT4_I(dir)->xattr_sem);
++	ext4_write_unlock_xattr(dir, &no_expand);
+ 	brelse(iloc.bh);
+ 	if (err != -ENOENT)
+ 		ext4_std_error(dir->i_sb, err);
+@@ -1812,11 +1811,11 @@ out:
+ 
+ int ext4_destroy_inline_data(handle_t *handle, struct inode *inode)
+ {
+-	int ret;
++	int ret, no_expand;
+ 
+-	down_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_lock_xattr(inode, &no_expand);
+ 	ret = ext4_destroy_inline_data_nolock(handle, inode);
+-	up_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_unlock_xattr(inode, &no_expand);
+ 
+ 	return ret;
+ }
+@@ -1901,7 +1900,7 @@ out:
+ void ext4_inline_data_truncate(struct inode *inode, int *has_inline)
+ {
+ 	handle_t *handle;
+-	int inline_size, value_len, needed_blocks;
++	int inline_size, value_len, needed_blocks, no_expand;
+ 	size_t i_size;
+ 	void *value = NULL;
+ 	struct ext4_xattr_ibody_find is = {
+@@ -1918,7 +1917,7 @@ void ext4_inline_data_truncate(struct in
+ 	if (IS_ERR(handle))
+ 		return;
+ 
+-	down_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_lock_xattr(inode, &no_expand);
+ 	if (!ext4_has_inline_data(inode)) {
+ 		*has_inline = 0;
+ 		ext4_journal_stop(handle);
+@@ -1976,7 +1975,7 @@ out_error:
+ 	up_write(&EXT4_I(inode)->i_data_sem);
+ out:
+ 	brelse(is.iloc.bh);
+-	up_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_unlock_xattr(inode, &no_expand);
+ 	kfree(value);
+ 	if (inode->i_nlink)
+ 		ext4_orphan_del(handle, inode);
+@@ -1992,7 +1991,7 @@ out:
+ 
+ int ext4_convert_inline_data(struct inode *inode)
+ {
+-	int error, needed_blocks;
++	int error, needed_blocks, no_expand;
+ 	handle_t *handle;
+ 	struct ext4_iloc iloc;
+ 
+@@ -2014,15 +2013,10 @@ int ext4_convert_inline_data(struct inod
+ 		goto out_free;
+ 	}
+ 
+-	down_write(&EXT4_I(inode)->xattr_sem);
+-	if (!ext4_has_inline_data(inode)) {
+-		up_write(&EXT4_I(inode)->xattr_sem);
+-		goto out;
+-	}
+-
+-	error = ext4_convert_inline_data_nolock(handle, inode, &iloc);
+-	up_write(&EXT4_I(inode)->xattr_sem);
+-out:
++	ext4_write_lock_xattr(inode, &no_expand);
++	if (ext4_has_inline_data(inode))
++		error = ext4_convert_inline_data_nolock(handle, inode, &iloc);
++	ext4_write_unlock_xattr(inode, &no_expand);
+ 	ext4_journal_stop(handle);
+ out_free:
+ 	brelse(iloc.bh);
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1117,16 +1117,14 @@ ext4_xattr_set_handle(handle_t *handle,
+ 	struct ext4_xattr_block_find bs = {
+ 		.s = { .not_found = -ENODATA, },
+ 	};
+-	unsigned long no_expand;
++	int no_expand;
+ 	int error;
+ 
+ 	if (!name)
+ 		return -EINVAL;
+ 	if (strlen(name) > 255)
+ 		return -ERANGE;
+-	down_write(&EXT4_I(inode)->xattr_sem);
+-	no_expand = ext4_test_inode_state(inode, EXT4_STATE_NO_EXPAND);
+-	ext4_set_inode_state(inode, EXT4_STATE_NO_EXPAND);
++	ext4_write_lock_xattr(inode, &no_expand);
+ 
+ 	error = ext4_reserve_inode_write(handle, inode, &is.iloc);
+ 	if (error)
+@@ -1187,7 +1185,7 @@ ext4_xattr_set_handle(handle_t *handle,
+ 		ext4_xattr_update_super_block(handle, inode->i_sb);
+ 		inode->i_ctime = ext4_current_time(inode);
+ 		if (!value)
+-			ext4_clear_inode_state(inode, EXT4_STATE_NO_EXPAND);
++			no_expand = 0;
+ 		error = ext4_mark_iloc_dirty(handle, inode, &is.iloc);
+ 		/*
+ 		 * The bh is consumed by ext4_mark_iloc_dirty, even with
+@@ -1201,9 +1199,7 @@ ext4_xattr_set_handle(handle_t *handle,
+ cleanup:
+ 	brelse(is.iloc.bh);
+ 	brelse(bs.bh);
+-	if (no_expand == 0)
+-		ext4_clear_inode_state(inode, EXT4_STATE_NO_EXPAND);
+-	up_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_unlock_xattr(inode, &no_expand);
+ 	return error;
+ }
+ 
+@@ -1287,12 +1283,11 @@ int ext4_expand_extra_isize_ea(struct in
+ 	int error = 0, tried_min_extra_isize = 0;
+ 	int s_min_extra_isize = le16_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_min_extra_isize);
+ 	int isize_diff;	/* How much do we need to grow i_extra_isize */
++	int no_expand;
++
++	if (ext4_write_trylock_xattr(inode, &no_expand) == 0)
++		return 0;
+ 
+-	down_write(&EXT4_I(inode)->xattr_sem);
+-	/*
+-	 * Set EXT4_STATE_NO_EXPAND to avoid recursion when marking inode dirty
+-	 */
+-	ext4_set_inode_state(inode, EXT4_STATE_NO_EXPAND);
+ retry:
+ 	isize_diff = new_extra_isize - EXT4_I(inode)->i_extra_isize;
+ 	if (EXT4_I(inode)->i_extra_isize >= new_extra_isize)
+@@ -1486,8 +1481,7 @@ retry:
+ 	}
+ 	brelse(bh);
+ out:
+-	ext4_clear_inode_state(inode, EXT4_STATE_NO_EXPAND);
+-	up_write(&EXT4_I(inode)->xattr_sem);
++	ext4_write_unlock_xattr(inode, &no_expand);
+ 	return 0;
+ 
+ cleanup:
+@@ -1499,10 +1493,10 @@ cleanup:
+ 	kfree(bs);
+ 	brelse(bh);
+ 	/*
+-	 * We deliberately leave EXT4_STATE_NO_EXPAND set here since inode
+-	 * size expansion failed.
++	 * Inode size expansion failed; don't try again
+ 	 */
+-	up_write(&EXT4_I(inode)->xattr_sem);
++	no_expand = 1;
++	ext4_write_unlock_xattr(inode, &no_expand);
+ 	return error;
+ }
+ 
+--- a/fs/ext4/xattr.h
++++ b/fs/ext4/xattr.h
+@@ -101,6 +101,38 @@ extern const struct xattr_handler ext4_x
+ 
+ #define EXT4_XATTR_NAME_ENCRYPTION_CONTEXT "c"
+ 
++/*
++ * The EXT4_STATE_NO_EXPAND is overloaded and used for two purposes.
++ * The first is to signal that there the inline xattrs and data are
++ * taking up so much space that we might as well not keep trying to
++ * expand it.  The second is that xattr_sem is taken for writing, so
++ * we shouldn't try to recurse into the inode expansion.  For this
++ * second case, we need to make sure that we take save and restore the
++ * NO_EXPAND state flag appropriately.
++ */
++static inline void ext4_write_lock_xattr(struct inode *inode, int *save)
++{
++	down_write(&EXT4_I(inode)->xattr_sem);
++	*save = ext4_test_inode_state(inode, EXT4_STATE_NO_EXPAND);
++	ext4_set_inode_state(inode, EXT4_STATE_NO_EXPAND);
++}
++
++static inline int ext4_write_trylock_xattr(struct inode *inode, int *save)
++{
++	if (down_write_trylock(&EXT4_I(inode)->xattr_sem) == 0)
++		return 0;
++	*save = ext4_test_inode_state(inode, EXT4_STATE_NO_EXPAND);
++	ext4_set_inode_state(inode, EXT4_STATE_NO_EXPAND);
++	return 1;
++}
++
++static inline void ext4_write_unlock_xattr(struct inode *inode, int *save)
++{
++	if (*save == 0)
++		ext4_clear_inode_state(inode, EXT4_STATE_NO_EXPAND);
++	up_write(&EXT4_I(inode)->xattr_sem);
++}
++
+ extern ssize_t ext4_listxattr(struct dentry *, char *, size_t);
+ 
+ extern int ext4_xattr_get(struct inode *, int, const char *, void *, size_t);
