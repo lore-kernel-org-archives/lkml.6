@@ -1,43 +1,84 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49esWHtGKjxaMp9iBguxMTEcBU1vl2FPE8N9mnTZlTzvO0NNiuzofm/ogRped7+rBM0qJKw
-ARC-Seal: i=1; a=rsa-sha256; t=1524406759; cv=none;
-        d=google.com; s=arc-20160816;
-        b=xeaFkZaMj4irLfIoSVfiFshFn5nm+qp+ze9beHNJUjMIuDJ7m1R01G3MpwA7bmCen2
-         CP/YJtg8Fcv95Uym/4dsosRKpJWVD45/REUvALR3stDrDm5YeBY2nPcIJdzezOQ88Ehg
-         YeV9WH0Z3mdmJY0l8eAIKE8ncq4ksluGwAmLK5d6k5ju0l7kw4qesjdaao2Hw4F69CPa
-         oJ8ElbJeQ2JlCP71AhonxyG7zZfUnJ2NhtXiYtwQbyLyAGHrjxtW4emHGTk9GTiIXMNI
-         NrVCaJdEhWbf3JpxuYXGkf2Wj/qeLzkBnloVEZEHQuP56ciWXsZrcwz/Yfz3NWDP4WgU
-         bULw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=KgAzRg6u1ZPzjM110wG+hWVTQKcLxEsrNHKJliB/lZo=;
-        b=v6c3fVgbPkAFSDTrv+eXDAJwC77JBtCzTP11Mvq5M24au+oAhIjJfqTxta64jsL94V
-         Ogh77kC3pi7+Ynw9OYbo5EVKxE4QT2VnrBI+Cl3mFR0O6Fn/PnWCPltAqHgNl9fH+pSY
-         SbbCHDLmcAghoQoNW5RbfhPMV2iBs8YJxA+bMiKTE4EjRWM1kPyunl+uqRie1LJppQCK
-         ib/7rUz9/OHPtPNhRRN+MIwP+WVMiYmscvOfsOrOAf6DCBUD782hSfJtxs5QBrzc1GG4
-         LkLWSdRyYa8bPS8u3utaBFN7dfueopXJk+K9LZKVQToO0ckzG03GKTIpA4jyNtnANJdh
-         /iFg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2630128-1524406758-2-7177399468132568503
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524406758; b=eEI7gfrsaaBHuwz/uX7xpgZrBytSOT/MXfoPfOM6pvJ9k4CE7s
+    jEmXpgoeJJZj4sHUBSIVDfKpAxUzOL10vt5S01NKcfRNyh/oUdUxlyRGsxO1XjtU
+    NT/fjWw61kjPidh8UCo9as90fwjdwqfWA6nfN7r4YvUZw3pnMU4dZyYglTL0R7xd
+    iY7RAcvk52PpHFYIROgUgJ1WxTCnfr2GeO0KL4+a+0Ek7/scU2GKyipOGZPaAsDu
+    mhLWr2rvLLVFZs38kPUvGPXyt78LuBcRj6FE3rUiZerhFldeGghNjYr4hJebWcqI
+    xIUJ8nKPLF2cxWLZd6pWFsotBWd5foNEXKcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524406758; bh=x2cbkc7NXgOTuxBRXMsloOdbBoV35L
+    /Za+jGuv43ByE=; b=YXX/LS8O05ynM/APOKcfTZxJ8F6WGq5cl3GAeclUtyUF/F
+    PiA7wE1L9iU2hK8OVPpoBKeRXK6TTZqURzYmlNg9GVTPJM1dxyNCxlTngQiw4KUj
+    ZUB8MDkfVlNjoq27K6gZvL4iJqWYhPe4No/tH3i/wWSSDGYgOA8gtuO+DXSh6N8E
+    +zMCpVgJOZwZgtICNFEuGg0OL9hxmgZRgNT67Kw6Mphb4TFf+W/v8bTK3rOqqw4r
+    merhHm+nrvh6fMRMtcmjVm3MYL20M6z/e4PJMuQQ9cqpkSp4oLRqlBbrS6DHSAhY
+    //HgfEjE9tUFqSErTL/3pxMK8NxlQ1e8phk1M/kA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLTzNNOt5EqrpRkkgr4wsUdojcDi3pKKlKfdY0FZ3kHbWqioK6xvDpFWlA7cmGy5+EQRSgWEGEJlHMVRzw/sTGaZUuT4jALQATK9Xetnim2+S4QwOdDS
+    M9RXN+CGK+gFSVg2xl+xGy9GlyLbyb3dFzQGpNLfN4wTPx6SUH1uAXNejFqlNKwxS2ctqEK/Em6/9nSFT1+NPiKcp4LIrqDmafzJLf/I8lV11KrdmuhdnvZw
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=drOt6m5kAAAA:8 a=VwQbUJbxAAAA:8 a=A7XncKjpAAAA:8 a=TYBLyS7eAAAA:8
+    a=ag1SF4gXAAAA:8 a=Du6AnkkK2Z0IdjBWBUIA:9 a=uxtRrTXxqyUH_Nr5:21
+    a=yJOkEybd1VyLY26t:21 a=QEXdDO2ut3YA:10 a=RMMjzBEyIzXRtoq5n5K6:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=R9rPLQDAdC6-Ub70kJmZ:22 a=zvYvwCWiE4KgVXXeO06c:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932548AbeDVOTQ (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:19:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59526 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932584AbeDVOTO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:19:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Jan Kara <jack@suse.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mel Gorman <mgorman@suse.de>,
-	Dave Chinner <david@fromorbit.com>,
-	Mark Fasheh <mfasheh@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 93/97] mm: allow GFP_{FS,IO} for page_cache_read page cache allocation
-Date: Sun, 22 Apr 2018 15:54:11 +0200
-Message-Id: <20180422135310.256979609@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Alexander Aring <aring@mojatatu.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 91/97] Dont leak MNT_INTERNAL away from internal mounts
+Date: Sun, 22 Apr 2018 15:54:09 +0200
+Message-Id: <20180422135310.157855356@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -45,10 +86,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598456343231195050?=
-X-GMAIL-MSGID: =?utf-8?q?1598456343231195050?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,160 +96,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit c20cd45eb01748f0fba77a504f956b000df4ea73 upstream.
+commit 16a34adb9392b2fe4195267475ab5b472e55292c upstream.
 
-page_cache_read has been historically using page_cache_alloc_cold to
-allocate a new page.  This means that mapping_gfp_mask is used as the
-base for the gfp_mask.  Many filesystems are setting this mask to
-GFP_NOFS to prevent from fs recursion issues.  page_cache_read is called
-from the vm_operations_struct::fault() context during the page fault.
-This context doesn't need the reclaim protection normally.
+We want it only for the stuff created by SB_KERNMOUNT mounts, *not* for
+their copies.  As it is, creating a deep stack of bindings of /proc/*/ns/*
+somewhere in a new namespace and exiting yields a stack overflow.
 
-ceph and ocfs2 which call filemap_fault from their fault handlers seem
-to be OK because they are not taking any fs lock before invoking generic
-implementation.  xfs which takes XFS_MMAPLOCK_SHARED is safe from the
-reclaim recursion POV because this lock serializes truncate and punch
-hole with the page faults and it doesn't get involved in the reclaim.
-
-There is simply no reason to deliberately use a weaker allocation
-context when a __GFP_FS | __GFP_IO can be used.  The GFP_NOFS protection
-might be even harmful.  There is a push to fail GFP_NOFS allocations
-rather than loop within allocator indefinitely with a very limited
-reclaim ability.  Once we start failing those requests the OOM killer
-might be triggered prematurely because the page cache allocation failure
-is propagated up the page fault path and end up in
-pagefault_out_of_memory.
-
-We cannot play with mapping_gfp_mask directly because that would be racy
-wrt.  parallel page faults and it might interfere with other users who
-really rely on NOFS semantic from the stored gfp_mask.  The mask is also
-inode proper so it would even be a layering violation.  What we can do
-instead is to push the gfp_mask into struct vm_fault and allow fs layer
-to overwrite it should the callback need to be called with a different
-allocation context.
-
-Initialize the default to (mapping_gfp_mask | __GFP_FS | __GFP_IO)
-because this should be safe from the page fault path normally.  Why do
-we care about mapping_gfp_mask at all then? Because this doesn't hold
-only reclaim protection flags but it also might contain zone and
-movability restrictions (GFP_DMA32, __GFP_MOVABLE and others) so we have
-to respect those.
-
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Jan Kara <jack@suse.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Mark Fasheh <mfasheh@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@kernel.org
+Reported-by: Alexander Aring <aring@mojatatu.com>
+Bisected-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Tested-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Tested-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/mm.h |    4 ++++
- mm/filemap.c       |    9 ++++-----
- mm/memory.c        |   17 +++++++++++++++++
- 3 files changed, 25 insertions(+), 5 deletions(-)
+ fs/namespace.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -225,10 +225,14 @@ extern pgprot_t protection_map[16];
-  * ->fault function. The vma's ->fault is responsible for returning a bitmask
-  * of VM_FAULT_xxx flags that give details about how the fault was handled.
-  *
-+ * MM layer fills up gfp_mask for page allocations but fault handler might
-+ * alter it if its implementation requires a different allocation context.
-+ *
-  * pgoff should be used in favour of virtual_address, if possible.
-  */
- struct vm_fault {
- 	unsigned int flags;		/* FAULT_FLAG_xxx flags */
-+	gfp_t gfp_mask;			/* gfp mask to be used for allocations */
- 	pgoff_t pgoff;			/* Logical page offset based on vma */
- 	void __user *virtual_address;	/* Faulting virtual address */
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1018,7 +1018,8 @@ static struct mount *clone_mnt(struct mo
+ 			goto out_free;
+ 	}
  
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1827,19 +1827,18 @@ EXPORT_SYMBOL(generic_file_read_iter);
-  * This adds the requested page to the page cache if it isn't already there,
-  * and schedules an I/O to read in its contents from disk.
-  */
--static int page_cache_read(struct file *file, pgoff_t offset)
-+static int page_cache_read(struct file *file, pgoff_t offset, gfp_t gfp_mask)
- {
- 	struct address_space *mapping = file->f_mapping;
- 	struct page *page;
- 	int ret;
- 
- 	do {
--		page = page_cache_alloc_cold(mapping);
-+		page = __page_cache_alloc(gfp_mask|__GFP_COLD);
- 		if (!page)
- 			return -ENOMEM;
- 
--		ret = add_to_page_cache_lru(page, mapping, offset,
--				mapping_gfp_constraint(mapping, GFP_KERNEL));
-+		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask & GFP_KERNEL);
- 		if (ret == 0)
- 			ret = mapping->a_ops->readpage(file, page);
- 		else if (ret == -EEXIST)
-@@ -2020,7 +2019,7 @@ no_cached_page:
- 	 * We're only likely to ever get here if MADV_RANDOM is in
- 	 * effect.
- 	 */
--	error = page_cache_read(file, offset);
-+	error = page_cache_read(file, offset, vmf->gfp_mask);
- 
- 	/*
- 	 * The page we want has now been added to the page cache.
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1990,6 +1990,20 @@ static inline void cow_user_page(struct
- 		copy_user_highpage(dst, src, va, vma);
- }
- 
-+static gfp_t __get_fault_gfp_mask(struct vm_area_struct *vma)
-+{
-+	struct file *vm_file = vma->vm_file;
-+
-+	if (vm_file)
-+		return mapping_gfp_mask(vm_file->f_mapping) | __GFP_FS | __GFP_IO;
-+
-+	/*
-+	 * Special mappings (e.g. VDSO) do not have any file so fake
-+	 * a default GFP_KERNEL for them.
-+	 */
-+	return GFP_KERNEL;
-+}
-+
- /*
-  * Notify the address space that the page is about to become writable so that
-  * it can prohibit this or wait for the page to get into an appropriate state.
-@@ -2005,6 +2019,7 @@ static int do_page_mkwrite(struct vm_are
- 	vmf.virtual_address = (void __user *)(address & PAGE_MASK);
- 	vmf.pgoff = page->index;
- 	vmf.flags = FAULT_FLAG_WRITE|FAULT_FLAG_MKWRITE;
-+	vmf.gfp_mask = __get_fault_gfp_mask(vma);
- 	vmf.page = page;
- 	vmf.cow_page = NULL;
- 
-@@ -2770,6 +2785,7 @@ static int __do_fault(struct vm_area_str
- 	vmf.pgoff = pgoff;
- 	vmf.flags = flags;
- 	vmf.page = NULL;
-+	vmf.gfp_mask = __get_fault_gfp_mask(vma);
- 	vmf.cow_page = cow_page;
- 
- 	ret = vma->vm_ops->fault(vma, &vmf);
-@@ -2936,6 +2952,7 @@ static void do_fault_around(struct vm_ar
- 	vmf.pgoff = pgoff;
- 	vmf.max_pgoff = max_pgoff;
- 	vmf.flags = flags;
-+	vmf.gfp_mask = __get_fault_gfp_mask(vma);
- 	vma->vm_ops->map_pages(vma, &vmf);
- }
- 
+-	mnt->mnt.mnt_flags = old->mnt.mnt_flags & ~(MNT_WRITE_HOLD|MNT_MARKED);
++	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
++	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
+ 	/* Don't allow unprivileged users to change mount flags */
+ 	if (flag & CL_UNPRIVILEGED) {
+ 		mnt->mnt.mnt_flags |= MNT_LOCK_ATIME;
