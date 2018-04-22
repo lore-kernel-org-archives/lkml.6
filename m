@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+2vpsI3WRsifb96JI9iwF+D88/iJixLiZwHRP/iNYxFV5WlegbVf8EGF5CFY818OjHt5dn
-ARC-Seal: i=1; a=rsa-sha256; t=1524405764; cv=none;
+X-Google-Smtp-Source: AIpwx498Zz8iTm0t2j5Ryk/Ucp1ZriB5Syv3CfEOsvyg8TzfozXao9/dazOR6Lth2YIp/tW9LTAA
+ARC-Seal: i=1; a=rsa-sha256; t=1524405761; cv=none;
         d=google.com; s=arc-20160816;
-        b=xt/WFhYETcC0jwJMC63aqJwsRGmV7woisLiF0wc0MtwiMvcnUI8U7K2BksyL1fHzUR
-         bVdkcgPj1KDDZc2UzBlUsunzowDUQFlGMp/g+5hF1geQymwgAOjyydZ2q6/0N01tOt9/
-         DiJSH0qpZALDocsP2fnH33u6WFpDwLSAqIr/fH6p4CY/lPn0ED3nE1AUNv5/bVBPGkdm
-         QKk6IBK9OmQEKQ1f5YidRCEws+anzkr8wA3ym6vLc8GpiyMnXXZEmv3x3rxsIYYgLZI7
-         LuYoJ9WUaIjc5LHAOsSgYyyx3vUm6LWKBH6px9yipTDLvBUdBLP0Kn2ygp6/UbwcxjR8
-         Jryg==
+        b=eL12bARwIVCyYwBO1FphBTeJSNpTjeQq6cNk7qmH/rwva8allbOk8u51tbE6RxJzLm
+         G22w6k8FpnubcqlPc0TLNdm4ilslN82Dwj5FB5JPz4/Af2gXv29yCZxLFBUZlHn13gmg
+         OJP9yf90yaO8v8yNMgcSX+s41888z2XAPe1/LTZ1gRF6HRkJ4FRw2sAYMnFUOC0g9xbW
+         40UrkxmTqbuTlq5Dz7Y3uawgt2V53Bsytfki7egwLOTvQ0dIKqM+fP7IHwn3yFY3stEK
+         pa+UQ9S1jMFScJE0PSCBW6SVsB3djJz9Y5VLlKdTdW32ilvuKJnoTB8YRZXoGr0uaLBf
+         KH1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=siAf5KS0T4fwZs+5oru9ZTawofAvK8vL/TiLqMDkFFk=;
-        b=lHOFmiEBDr8eRKoTuQeEicF8W+iRKhE5h4TqRHqGV5fpr3dva0vlqMsDzmpqgM+JZR
-         Yfk+nk3Ug/dD06aZxOEPDSZK1XqOywMx5B6OUiMFIpQyDDh5Zbob5xByPQS+1X8/sZGb
-         HlfVjYP41h4rrHOfoWErOYgkA8qYl6LXjhNaNikvhMuKWgBy498ENeiMjoSEPK42yrbr
-         uqohmKS6VUyWqzDcqdGk7/gW7Ev2IeMYGp7IUQJf7ePOQWcJ+GNKjQNg5lgcj8yGWIQX
-         hCZU71CBtokmPeXrobQCDrrjRdl9OdJ6oq9jFA7AEY36kDdd2q1BbE9Sm9K5eqSuhXdK
-         M+rg==
+        bh=WS+oh46CvW2kNK4bIOpc888d2+72QT7bPutoCKgpqVc=;
+        b=iiPB95scFq28/otSVHVbUo5hEbaCXfmLUZCMKznYdcKvCZr0nn0V5e8X0H/yJCWqfz
+         M+0yPVhW5i0TkIuZCo4y8MzQbdVLOrb/nxjaW46iPqWlM1334VE0UgBD2tCsPoA1zo0b
+         4IRnVJEQ4IO3PEhhspMtnjfCzPdgctEpWYBXt72fxqny12xb/L5CZIojiRxJ3vdkP8tV
+         ZMbgqq+BIAvAnv4V9zllT/rEus07T5E7k4XnSpLAV11cfZlNXP5BDo8Z15i4pT565f30
+         ImpFaOUMzyMgR6NZ9mkPeL/w4Y8PAerKQFdrNF3sbqihTnd91e/0Lhv9l0egjXBn/4bq
+         DPQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+f7a0348affc3b67bc617@syzkaller.appspotmail.com,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 159/196] ALSA: rawmidi: Fix missing input substream checks in compat ioctls
-Date: Sun, 22 Apr 2018 15:52:59 +0200
-Message-Id: <20180422135112.444371628@linuxfoundation.org>
+	stable@kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.16 185/196] jffs2_kill_sb(): deal with failed allocations
+Date: Sun, 22 Apr 2018 15:53:25 +0200
+Message-Id: <20180422135113.819883661@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455298881914693?=
-X-GMAIL-MSGID: =?utf-8?q?1598455298881914693?=
+X-GMAIL-THRID: =?utf-8?q?1598455296001564501?=
+X-GMAIL-MSGID: =?utf-8?q?1598455296001564501?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,91 +49,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 8a56ef4f3ffba9ebf4967b61ef600b0a7ba10f11 upstream.
+commit c66b23c2840446a82c389e4cb1a12eb2a71fa2e4 upstream.
 
-Some rawmidi compat ioctls lack of the input substream checks
-(although they do check only for rfile->output).  This many eventually
-lead to an Oops as NULL substream is passed to the rawmidi core
-functions.
+jffs2_fill_super() might fail to allocate jffs2_sb_info;
+jffs2_kill_sb() must survive that.
 
-Fix it by adding the proper checks before each function call.
-
-The bug was spotted by syzkaller.
-
-Reported-by: syzbot+f7a0348affc3b67bc617@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: stable@kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/rawmidi_compat.c |   18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ fs/jffs2/super.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/rawmidi_compat.c
-+++ b/sound/core/rawmidi_compat.c
-@@ -36,8 +36,6 @@ static int snd_rawmidi_ioctl_params_comp
- 	struct snd_rawmidi_params params;
- 	unsigned int val;
- 
--	if (rfile->output == NULL)
--		return -EINVAL;
- 	if (get_user(params.stream, &src->stream) ||
- 	    get_user(params.buffer_size, &src->buffer_size) ||
- 	    get_user(params.avail_min, &src->avail_min) ||
-@@ -46,8 +44,12 @@ static int snd_rawmidi_ioctl_params_comp
- 	params.no_active_sensing = val;
- 	switch (params.stream) {
- 	case SNDRV_RAWMIDI_STREAM_OUTPUT:
-+		if (!rfile->output)
-+			return -EINVAL;
- 		return snd_rawmidi_output_params(rfile->output, &params);
- 	case SNDRV_RAWMIDI_STREAM_INPUT:
-+		if (!rfile->input)
-+			return -EINVAL;
- 		return snd_rawmidi_input_params(rfile->input, &params);
- 	}
- 	return -EINVAL;
-@@ -67,16 +69,18 @@ static int snd_rawmidi_ioctl_status_comp
- 	int err;
- 	struct snd_rawmidi_status status;
- 
--	if (rfile->output == NULL)
--		return -EINVAL;
- 	if (get_user(status.stream, &src->stream))
- 		return -EFAULT;
- 
- 	switch (status.stream) {
- 	case SNDRV_RAWMIDI_STREAM_OUTPUT:
-+		if (!rfile->output)
-+			return -EINVAL;
- 		err = snd_rawmidi_output_status(rfile->output, &status);
- 		break;
- 	case SNDRV_RAWMIDI_STREAM_INPUT:
-+		if (!rfile->input)
-+			return -EINVAL;
- 		err = snd_rawmidi_input_status(rfile->input, &status);
- 		break;
- 	default:
-@@ -112,16 +116,18 @@ static int snd_rawmidi_ioctl_status_x32(
- 	int err;
- 	struct snd_rawmidi_status status;
- 
--	if (rfile->output == NULL)
--		return -EINVAL;
- 	if (get_user(status.stream, &src->stream))
- 		return -EFAULT;
- 
- 	switch (status.stream) {
- 	case SNDRV_RAWMIDI_STREAM_OUTPUT:
-+		if (!rfile->output)
-+			return -EINVAL;
- 		err = snd_rawmidi_output_status(rfile->output, &status);
- 		break;
- 	case SNDRV_RAWMIDI_STREAM_INPUT:
-+		if (!rfile->input)
-+			return -EINVAL;
- 		err = snd_rawmidi_input_status(rfile->input, &status);
- 		break;
- 	default:
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -342,7 +342,7 @@ static void jffs2_put_super (struct supe
+ static void jffs2_kill_sb(struct super_block *sb)
+ {
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+-	if (!sb_rdonly(sb))
++	if (c && !sb_rdonly(sb))
+ 		jffs2_stop_garbage_collect_thread(c);
+ 	kill_mtd_super(sb);
+ 	kfree(c);
