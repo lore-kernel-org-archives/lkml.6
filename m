@@ -1,36 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49Befqg3rqHdLCewYZFVIufkokWABSRgXEwg/ST1GtcmoAT9MLMzdM3WODaRLKDZznHl5Nb
-ARC-Seal: i=1; a=rsa-sha256; t=1524405454; cv=none;
-        d=google.com; s=arc-20160816;
-        b=uQIjq5l+9rcABrT+I4I6fhWS5KraoDWGyyFw4D+Mu2dTzKxYDsHOfzU3UPcnO4WmyC
-         W0skL/zR7s5PyRzP3ZOWf/f7LnDB83qrUE21EKXNSshStHA5NQmPpBuVT/3HXWcdhWsH
-         ITcp1QCgUX2mykEbkaUfdCxk/O4o0JMzV9YcHGLF4ZreMkVmrpr/Lwlx1QuAMDhoXmW0
-         0sTym/lFVL4kyp0x3pRB7b/PjEr2/siAAplI5y11/2szmT0gxzk7yBiO24SGp3q0pQEz
-         OOtBBT3QiGEME+qKVPR6IDuBpLM0mgcoObMQx8mDPCQeOimhmo2QNtQtCsIPOGY3un0r
-         oWNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=LLqXmouqxpvj8iM+L7Mt1wVHFlw+eTc5zTdkFhPdb74=;
-        b=rPV1hbAKYdmHA22MNJxoF0NF+MTuUaYz+py441iZEtQ9kwn52G+Vuu5CzbVqFrTMko
-         fP8PNc6bjRvbUJfbl+TQY6sRV+jKG99xc2K6fs3VPSc2UBwV8WBMvDeoMjQ17D6VNGR3
-         XK3M2bQbeNJEIkcXPy6y7SwC8KTyDPODgcZmwcE65Pk2d5RuU4K049EDvmYNwJW7ZJpd
-         xHeSDJ6gT6kl2XgEcPI6iMevS3a206FHMGJIbrXSiDTX3YxjB94j9Nj/m5BGFIMD+gFZ
-         sX+SinW3qOGLYT5glOWQZeEJXS/mgYrH8N+xqPnAM4dYRL2AmwGP/pd5khquVHY4Ddx4
-         OCIQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405450-2-13122668817195149600
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524405450; b=UhRCf56VNrh0so1fD2JZyrWAIfSgw3Mmd+A5kcg3SJb3VhxnqH
+    4fGooP4PIJu/lJaz3hH82rPI21WypVsVMdtvLElfVcEyQ+5ehZ9Azs4j0k5eMwfu
+    eTzrEIAVULhTkPRyc1mVZwLrGK0VFd2Nx4H52PZOvCaE9wacgGSyKjuVT9obZ/dd
+    QcW9U3AchZ5E7cBgWMPNH+mmqAIFdja3wPwFSlVJk2/x+V5rv3ppu2UuwbYwd7jK
+    3P24YevDop3t4Bq/aWy0dD1fQH8jJus1ErKMK8z9aYkJpaNgb+4852RvVjW3FXzQ
+    Z1g4wazAhJ5BtPekHeNOuHGI60n19nuq82zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524405450; bh=7DYaZdesBcOMZkI0Zxr/B/5lbzF0u6
+    Pcew4Kti7ReRA=; b=naG5uO5Av5a7BtzUxPbYFAmyQMZvFeDi1a0UTVgHYJfAJi
+    8Gg9EabMbcm5iVY2zFbbwyzuYymcnki4+oIGImhA6ufo0U8g0NBusiWskjmfBaiv
+    9xWcjvEvvBZgm0UFg44szZMZPysjao/pVaFqy0ujkZBLA6VfCsBajAAXxPUXwqAw
+    VkrF6ZSrva19iH+Y/7kbiZIq6a9JKekZlAZyQ1r+pFh9NLwuwKuGWmjyQ1WL8yvz
+    2ktXGjcHixi9me2OlEE1peR/16EOiYCeVBZGMKKRCMltr8jgkWkDNcCFrdCWqHQf
+    ReEO+13j+X9KbshdJ/5ANRYpgZTQpMS1wSpXpoGA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEsrg2z/KSgQoa/oyrTGolwylYflt8nTqAfwq+CIB21xg4ZA5TlRbS1Yue8OlhJw1KVGZhw/MLzpWvR/EZ1SbOEZnhLC9hWI2JhwpeuEKij+k93yNv5h
+    646cqs04giSZsFMeXqQf1ma/qpCoTExXPBT05jG7RDwvQ987DRxidYP5hKKunC1HEqdvKzynxGnwak3mzoBGHaDO9DL92luJVbnZn3Lp7XBpm2Sh0mhjBUWq
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8 a=HxyOmEZR8sH4CBheeFQA:9
+    a=gtzk5QBKHHw1mnVw:21 a=UznQaf1r5Qw8h7KT:21 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753450AbeDVN51 (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 09:57:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45690 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753964AbeDVN5X (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:57:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Ronnie Sahlberg <lsahlber@redhat.com>,
-	Steve French <smfrench@gmail.com>
-Subject: [PATCH 4.16 045/196] cifs: fix memory leak in SMB2_open()
-Date: Sun, 22 Apr 2018 15:51:05 +0200
-Message-Id: <20180422135106.402766447@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: [PATCH 4.16 068/196] powerpc/mm/radix: Fix checkstops caused by invalid tlbiel
+Date: Sun, 22 Apr 2018 15:51:28 +0200
+Message-Id: <20180422135107.777570520@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -38,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454973486249608?=
-X-GMAIL-MSGID: =?utf-8?q?1598454973486249608?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +92,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit b7a73c84eb96dabd6bb8e9d7c56f796d83efee8e upstream.
+commit 2675c13b293a007b7b7f8229514126bd23df09a7 upstream.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
-CC: Stable <stable@vger.kernel.org>
+In tlbiel_radix_set_isa300() we use the PPC_TLBIEL() macro to
+construct tlbiel instructions. The instruction takes 5 fields, two of
+which are registers, and the others are constants. But because it's
+constructed with inline asm the compiler doesn't know that.
+
+We got the constraint wrong on the 'r' field, using "r" tells the
+compiler to put the value in a register. The value we then get in the
+macro is the *register number*, not the value of the field.
+
+That means when we mask the register number with 0x1 we get 0 or 1
+depending on which register the compiler happens to put the constant
+in, eg:
+
+  li      r10,1
+  tlbiel  r8,r9,2,0,0
+
+  li      r7,1
+  tlbiel  r10,r6,0,0,1
+
+If we're unlucky we might generate an invalid instruction form, for
+example RIC=0, PRS=1 and R=0, tlbiel r8,r7,0,1,0, this has been
+observed to cause machine checks:
+
+  Oops: Machine check, sig: 7 [#1]
+  CPU: 24 PID: 0 Comm: swapper
+  NIP:  00000000000385f4 LR: 000000000100ed00 CTR: 000000000000007f
+  REGS: c00000000110bb40 TRAP: 0200
+  MSR:  9000000000201003 <SF,HV,ME,RI,LE>  CR: 48002222  XER: 20040000
+  CFAR: 00000000000385d0 DAR: 0000000000001c00 DSISR: 00000200 SOFTE: 1
+
+If the machine check happens early in boot while we have MSR_ME=0 it
+will escalate into a checkstop and kill the box entirely.
+
+To fix it we could change the inline asm constraint to "i" which
+tells the compiler the value is a constant. But a better fix is to just
+pass a literal 1 into the macro, which bypasses any problems with inline
+asm constraints.
+
+Fixes: d4748276ae14 ("powerpc/64s: Improve local TLB flush for boot and MCE on POWER9")
+Cc: stable@vger.kernel.org # v4.16+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2pdu.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/powerpc/mm/tlb-radix.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -1738,8 +1738,10 @@ SMB2_open(const unsigned int xid, struct
- 		rc = alloc_path_with_tree_prefix(&copy_path, &copy_size,
- 						 &name_len,
- 						 tcon->treeName, path);
--		if (rc)
-+		if (rc) {
-+			cifs_small_buf_release(req);
- 			return rc;
-+		}
- 		req->NameLength = cpu_to_le16(name_len * 2);
- 		uni_path_len = copy_size;
- 		path = copy_path;
-@@ -1750,8 +1752,10 @@ SMB2_open(const unsigned int xid, struct
- 		if (uni_path_len % 8 != 0) {
- 			copy_size = roundup(uni_path_len, 8);
- 			copy_path = kzalloc(copy_size, GFP_KERNEL);
--			if (!copy_path)
-+			if (!copy_path) {
-+				cifs_small_buf_release(req);
- 				return -ENOMEM;
-+			}
- 			memcpy((char *)copy_path, (const char *)path,
- 			       uni_path_len);
- 			uni_path_len = copy_size;
+--- a/arch/powerpc/mm/tlb-radix.c
++++ b/arch/powerpc/mm/tlb-radix.c
+@@ -33,13 +33,12 @@ static inline void tlbiel_radix_set_isa3
+ {
+ 	unsigned long rb;
+ 	unsigned long rs;
+-	unsigned int r = 1; /* radix format */
+ 
+ 	rb = (set << PPC_BITLSHIFT(51)) | (is << PPC_BITLSHIFT(53));
+ 	rs = ((unsigned long)pid << PPC_BITLSHIFT(31));
+ 
+-	asm volatile(PPC_TLBIEL(%0, %1, %2, %3, %4)
+-		     : : "r"(rb), "r"(rs), "i"(ric), "i"(prs), "r"(r)
++	asm volatile(PPC_TLBIEL(%0, %1, %2, %3, 1)
++		     : : "r"(rb), "r"(rs), "i"(ric), "i"(prs)
+ 		     : "memory");
+ }
+ 
