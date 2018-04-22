@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48MADH0Iy/7NCiikusWC+2CxmiEJ4fQbJoVEhhlo7LZjRph8zZHzYv46P6mNPN2SgMc2Yyp
-ARC-Seal: i=1; a=rsa-sha256; t=1524406208; cv=none;
+X-Google-Smtp-Source: AIpwx4/kNLq6u0W2sJCAOXPXjEWkgbarZ8p4TnjCcivzZ35/MjIU5wwvc8y/FblBTb+HALmfMFpG
+ARC-Seal: i=1; a=rsa-sha256; t=1524406205; cv=none;
         d=google.com; s=arc-20160816;
-        b=mHlMjn63VrR14Up9VP5rW7c3O5VW9+7szVZ0OdUOHwcOVQl7Ya4E7Autg47zBg4JIR
-         EAQ2jlsM7OKgwvu8niUdg/g2Sqj018gk0MO9YjzGigXAEmTSpxJ02+HQBFR/w/gQ5lXv
-         2GZ0od37/+Wj1AhypqAqtIwvhXXiYM/pdsBl9CpzVU7VsZp7KCM+j1DrzOI8uTEdmn/b
-         TTrcDSdMg6KYwG/mZkIZCQYLS5pMDTznMD7o/wDNasPoaJGdqu70HnxZk75wE2sFuVcK
-         a/z0JsoqdfKq4cojTXjM9Ss+Fx4/774eWu8XlIrbFxUp8WX+bqMylO51svudOzMvLFjO
-         ykQg==
+        b=FLE6CLV44iha2fhnMJyZu+cmtGYKcPMtGvaN0KfmwU8aWstaX5RQYlU9j3lbbcBTPn
+         qSBW/wAWnQ91pg8LqEoMjioa7G2qniFFCiKle7f7dC8BNAbmKXZ5UlG0jzNAK4hnKF/2
+         o4cDkkN+y0UlkDyhVZAsavusKQIju6EFcki8P8zAdjBye1V09JhJAL36W8inY7exHt3N
+         s+YXMCtduigiOdW65y1K1N4/Aj5DMzjlhIUcyJtsu2aPEM314Mxnuqb8eMiAssIoxhWG
+         wjWQ+Mr4YnFqdka4EcyqElCVh9D9/4vKL5DwNxxs//3zEvOe2udBAblNOASKehyo/wMF
+         F01Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qSeqefD5js1q+og+jJXiLL7fECCZeEUqpvB4FGcxbmg=;
-        b=0e4xxrT8/Rtk2YvxgVAaF1SR3XeFcB64dSJ+5bkEOtcMkezvrZbdXG/6YgNwJgep1u
-         BHqklBEw/iC2wLmstt6IbPbncLyYzQHWA3kLP4gFlgOoBxUFo74bpaIeimCEMHDFMNaA
-         FoYedsMWtCGoRxOOX1vlbckMJA+9d+IfMU5w3mhAgNAKpLy0uX2XIZ8A82xTX2/eOQR6
-         owlNqt2PLUl0PGojkaTBGdWj46kqRAliq52GTSDmxEyH1O004RdWf8eU2BPzY/SMAWHP
-         EjjmIjTMiLgEP7CAQgYz+gSIA35zBVozkP1Kq9kmxXIRcvKAVpUg9fvBHOvB9nPd20fr
-         RwXw==
+        bh=jt6rUgTkyI+H72sTO1botcg9pLMvxvauIH1WlpX/NPo=;
+        b=wI0/DB/ftoTZqT9Pbm7rf19knUsGij6aX7Wd8qAKLV3q2+6g24bCUdHEf/1yjpZqQS
+         yiFsrwLwl5MM3la2xUPNGpVyG4g7P7yhIYr0EYxs2FWNXjW5QTFCEMpfo7M4kGRBhePC
+         f/Sb6TSoeZYYkIDl954QojuTJtYLBVkxU/3aI7UFSFmSlq1AWBnWEXuQXhY7ZFQ6R0ge
+         X0ovbn+6qHy/chdfGB2smsgwkjBkaxUOHE4bfzMW1ySp9yfd1y3sOagqRVaw30cISvz0
+         YHkWVZMg+UTxHgbQ79Z/pozktinKrN0ZJAL8W0bv3pdhAaF2EOFXNkEV3bHBhb94AeMV
+         75Rg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Matt Redfearn <matt.redfearn@mips.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org
-Subject: [PATCH 4.14 144/164] MIPS: memset.S: Fix clobber of v1 in last_fixup
-Date: Sun, 22 Apr 2018 15:53:31 +0200
-Message-Id: <20180422135141.371839514@linuxfoundation.org>
+	Sinan Kaya <okaya@codeaurora.org>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Subject: [PATCH 4.14 105/164] PCI: Mark Broadcom HT1100 and HT2000 Root Port Extended Tags as broken
+Date: Sun, 22 Apr 2018 15:52:52 +0200
+Message-Id: <20180422135139.713936276@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455270804661651?=
-X-GMAIL-MSGID: =?utf-8?q?1598455764175508039?=
+X-GMAIL-THRID: =?utf-8?q?1598455163035819770?=
+X-GMAIL-MSGID: =?utf-8?q?1598455760747764324?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,75 +49,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matt Redfearn <matt.redfearn@mips.com>
+From: Sinan Kaya <okaya@codeaurora.org>
 
-commit c96eebf07692e53bf4dd5987510d8b550e793598 upstream.
+commit 1b30dfd376e28e7f37eda5e2033f6823cdda222b upstream.
 
-The label .Llast_fixup\@ is jumped to on page fault within the final
-byte set loop of memset (on < MIPSR6 architectures). For some reason, in
-this fault handler, the v1 register is randomly set to a2 & STORMASK.
-This clobbers v1 for the calling function. This can be observed with the
-following test code:
+Per PCIe r3.1, sec 2.2.6.2 and 7.8.4, a Requester may not use 8-bit Tags
+unless its Extended Tag Field Enable is set, but all Receivers/Completers
+must handle 8-bit Tags correctly regardless of their Extended Tag Field
+Enable.
 
-static int __init __attribute__((optimize("O0"))) test_clear_user(void)
-{
-  register int t asm("v1");
-  char *test;
-  int j, k;
+Some devices do not handle 8-bit Tags as Completers, so add a quirk for
+them.  If we find such a device, we disable Extended Tags for the entire
+hierarchy to make peer-to-peer DMA possible.
 
-  pr_info("\n\n\nTesting clear_user\n");
-  test = vmalloc(PAGE_SIZE);
+The Broadcom HT1100/HT2000/HT2100 seems to have issues with handling 8-bit
+tags.  Mark it as broken.
 
-  for (j = 256; j < 512; j++) {
-    t = 0xa5a5a5a5;
-    if ((k = clear_user(test + PAGE_SIZE - 256, j)) != j - 256) {
-        pr_err("clear_user (%px %d) returned %d\n", test + PAGE_SIZE - 256, j, k);
-    }
-    if (t != 0xa5a5a5a5) {
-       pr_err("v1 was clobbered to 0x%x!\n", t);
-    }
-  }
+This fixes Xorg hangs and unresponsive keyboards with errors like this:
 
-  return 0;
-}
-late_initcall(test_clear_user);
+  radeon 0000:06:00.0: GPU lockup (current fence id 0x000000000000000e last fence id 0x0000000000000
+  [drm:r600_ring_test [radeon]] *ERROR* radeon: ring 0 test failed (scratch(0x8504)=0xCAFEDEAD)
+  [drm:r600_resume [radeon]] *ERROR* r600 startup failed on resume
 
-Which demonstrates that v1 is indeed clobbered (MIPS64):
-
-Testing clear_user
-v1 was clobbered to 0x1!
-v1 was clobbered to 0x2!
-v1 was clobbered to 0x3!
-v1 was clobbered to 0x4!
-v1 was clobbered to 0x5!
-v1 was clobbered to 0x6!
-v1 was clobbered to 0x7!
-
-Since the number of bytes that could not be set is already contained in
-a2, the andi placing a value in v1 is not necessary and actively
-harmful in clobbering v1.
-
-Reported-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/19109/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=196197
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
+CC: stable@vger.kernel.org	# v4.11: 62ce94a7a5a5 PCI: Mark Broadcom HT2100 Root Port Extended Tags as broken
+CC: stable@vger.kernel.org	# v4.11
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/lib/memset.S |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -258,7 +258,7 @@
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4806,9 +4806,13 @@ static void quirk_no_ext_tags(struct pci
  
- .Llast_fixup\@:
- 	jr		ra
--	andi		v1, a2, STORMASK
-+	 nop
+ 	pci_walk_bus(bridge->bus, pci_configure_extended_tags, NULL);
+ }
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0132, quirk_no_ext_tags);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0140, quirk_no_ext_tags);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0141, quirk_no_ext_tags);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0142, quirk_no_ext_tags);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0144, quirk_no_ext_tags);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0420, quirk_no_ext_tags);
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0422, quirk_no_ext_tags);
  
- .Lsmall_fixup\@:
- 	PTR_SUBU	a2, t1, a0
+ #ifdef CONFIG_PCI_ATS
+ /*
