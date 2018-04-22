@@ -1,164 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753543AbeDVRZZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 13:25:25 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39880 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751683AbeDVRZU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 13:25:20 -0400
-X-Google-Smtp-Source: AIpwx4/rfuk5DyMlGc6Achm9Eoxc31NQUpjE/o3/UBP8ZiHtjIpOHKLD8OgG/F+6KgO+8J9rqrHMpQ==
-Date: Sun, 22 Apr 2018 10:26:23 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Vijay Viswanath <vviswana@codeaurora.org>
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com, riteshh@codeaurora.org,
-        vbadigan@codeaurora.org, Krishna Konda <kkonda@codeaurora.org>
-Subject: Re: [PATCH V5 2/2] mmc: sdhci-msm: support voltage pad switching
-Message-ID: <20180422172623.GB2052@tuxbook-pro>
-References: <1524226529-30100-1-git-send-email-vviswana@codeaurora.org>
- <1524226529-30100-3-git-send-email-vviswana@codeaurora.org>
+        id S1753401AbeDVR1E (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 13:27:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46656 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751564AbeDVR1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 13:27:03 -0400
+Date: Sun, 22 Apr 2018 19:26:50 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: boris.brezillon@free-electrons.com, richard@nod.at,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: nand: diskonchip: Replace mdelay with usleep_range
+ in doc_probe
+Message-ID: <20180422192650.45fcfa4e@bbrezillon>
+In-Reply-To: <1523415477-2850-1-git-send-email-baijiaju1990@gmail.com>
+References: <1523415477-2850-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524226529-30100-3-git-send-email-vviswana@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 20 Apr 05:15 PDT 2018, Vijay Viswanath wrote:
+On Wed, 11 Apr 2018 10:57:57 +0800
+Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 
-> The PADs for SD card are dual-voltage that support 3v/1.8v. Those PADs
-> have a control signal  (io_pad_pwr_switch/mode18 ) that indicates
-> whether the PAD works in 3v or 1.8v.
+> doc_probe() is never called in atomic context.
 > 
-> SDHC core on msm platforms should have IO_PAD_PWR_SWITCH bit set/unset
-> based on actual voltage used for IO lines. So when power irq is
-> triggered for io high or io low, the driver should check the voltages
-> supported and set the pad accordingly.
+> doc_probe() is only called by init_nanddoc(), which is only set as 
+> a parameter of module_init().
+> This function is not called in atomic context.
 > 
-> Signed-off-by: Krishna Konda <kkonda@codeaurora.org>
-> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
-> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
+> Despite never getting called from atomic context, doc_probe()
+> calls mdelay() to busily wait.
+> This is not necessary and can be replaced with usleep_range() to
+> avoid busy waiting.
+> 
+> This is found by a static analysis tool named DCNS written by myself.
+> And I also manually check it.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 > ---
->  drivers/mmc/host/sdhci-msm.c | 57 ++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 55 insertions(+), 2 deletions(-)
+>  drivers/mtd/nand/diskonchip.c | 4 ++--
+
+Applied to nand/next after fixing the subject prefix and the file path.
+
+Thanks,
+
+Boris
+
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index edd30a2..bb11916 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -78,12 +78,15 @@
->  #define CORE_HC_MCLK_SEL_DFLT	(2 << 8)
->  #define CORE_HC_MCLK_SEL_HS400	(3 << 8)
->  #define CORE_HC_MCLK_SEL_MASK	(3 << 8)
-> +#define CORE_IO_PAD_PWR_SWITCH_EN	(1 << 15)
-> +#define CORE_IO_PAD_PWR_SWITCH  (1 << 16)
->  #define CORE_HC_SELECT_IN_EN	BIT(18)
->  #define CORE_HC_SELECT_IN_HS400	(6 << 19)
->  #define CORE_HC_SELECT_IN_MASK	(7 << 19)
+> diff --git a/drivers/mtd/nand/diskonchip.c b/drivers/mtd/nand/diskonchip.c
+> index c3aa53c..2679bc4 100644
+> --- a/drivers/mtd/nand/diskonchip.c
+> +++ b/drivers/mtd/nand/diskonchip.c
+> @@ -1482,12 +1482,12 @@ static int __init doc_probe(unsigned long physadr)
+>  		WriteDOC(tmp, virtadr, Mplus_DOCControl);
+>  		WriteDOC(~tmp, virtadr, Mplus_CtrlConfirm);
 >  
->  #define CORE_3_0V_SUPPORT	(1 << 25)
->  #define CORE_1_8V_SUPPORT	(1 << 26)
-> +#define CORE_VOLT_SUPPORT	(CORE_3_0V_SUPPORT | CORE_1_8V_SUPPORT)
+> -		mdelay(1);
+> +		usleep_range(1000, 2000);
+>  		/* Enable the Millennium Plus ASIC */
+>  		tmp = DOC_MODE_NORMAL | DOC_MODE_MDWREN | DOC_MODE_RST_LAT | DOC_MODE_BDECT;
+>  		WriteDOC(tmp, virtadr, Mplus_DOCControl);
+>  		WriteDOC(~tmp, virtadr, Mplus_CtrlConfirm);
+> -		mdelay(1);
+> +		usleep_range(1000, 2000);
 >  
->  #define CORE_CSR_CDC_CTLR_CFG0		0x130
->  #define CORE_SW_TRIG_FULL_CALIB		BIT(16)
-> @@ -1109,7 +1112,7 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->  	u32 irq_status, irq_ack = 0;
->  	int retry = 10;
->  	u32 pwr_state = 0, io_level = 0;
-> -
-> +	u32 config;
+>  		ChipID = ReadDOC(virtadr, ChipID);
 >  
->  	irq_status = readl_relaxed(msm_host->core_mem + CORE_PWRCTL_STATUS);
->  	irq_status &= INT_MASK;
-> @@ -1166,6 +1169,38 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->  	 */
->  	writel_relaxed(irq_ack, msm_host->core_mem + CORE_PWRCTL_CTL);
->  
-> +	/*
-> +	 * If we don't have info regarding the voltage levels supported by
-> +	 * regulators, don't change the IO PAD PWR SWITCH.
-> +	 */
-> +	if (msm_host->caps_0 & CORE_VOLT_SUPPORT) {
-> +		u32 new_config;
-> +		/*
-> +		 * We should unset IO PAD PWR switch only if the register write
-> +		 * can set IO lines high and the regulator also switches to 3 V.
-> +		 * Else, we should keep the IO PAD PWR switch set.
-> +		 * This is applicable to certain targets where eMMC vccq supply
-> +		 * is only 1.8V. In such targets, even during REQ_IO_HIGH, the
-> +		 * IO PAD PWR switch must be kept set to reflect actual
-> +		 * regulator voltage. This way, during initialization of
-> +		 * controllers with only 1.8V, we will set the IO PAD bit
-> +		 * without waiting for a REQ_IO_LOW.
-> +		 */
-> +		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-> +		new_config = config;
-> +
-> +		if ((io_level & REQ_IO_HIGH) &&
-> +				(msm_host->caps_0 & CORE_3_0V_SUPPORT))
-> +			new_config &= ~CORE_IO_PAD_PWR_SWITCH;
-> +		else if ((io_level & REQ_IO_LOW) ||
-> +				(msm_host->caps_0 & CORE_1_8V_SUPPORT))
-> +			new_config |= CORE_IO_PAD_PWR_SWITCH;
-> +
-> +		if (config ^ new_config)
-> +			writel_relaxed(new_config,
-> +					host->ioaddr + CORE_VENDOR_SPEC);
-> +	}
-> +
->  	if (pwr_state)
->  		msm_host->curr_pwr_state = pwr_state;
->  	if (io_level)
-> @@ -1322,7 +1357,8 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
->  {
->  	struct mmc_host *mmc = msm_host->mmc;
->  	struct regulator *supply = mmc->supply.vqmmc;
-> -	u32 caps = 0;
-> +	u32 caps = 0, config;
-> +	struct sdhci_host *host = mmc_priv(mmc);
->  
->  	if (!IS_ERR(mmc->supply.vqmmc)) {
->  		if (regulator_is_supported_voltage(supply, 1700000, 1950000))
-> @@ -1335,6 +1371,23 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
->  					mmc_hostname(mmc));
->  	}
->  
-> +	if (caps) {
-> +		/*
-> +		 * Set the PAD_PWR_SWITCH_EN bit so that the PAD_PWR_SWITCH
-> +		 * bit can be used as required later on.
-> +		 */
-> +		u32 io_level = msm_host->curr_io_level;
-> +
-> +		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-> +		config |= CORE_IO_PAD_PWR_SWITCH_EN;
-> +
-> +		if ((io_level & REQ_IO_HIGH) && (caps &	CORE_3_0V_SUPPORT))
-> +			config &= ~CORE_IO_PAD_PWR_SWITCH;
-> +		else if ((io_level & REQ_IO_LOW) || (caps & CORE_1_8V_SUPPORT))
-> +			config |= CORE_IO_PAD_PWR_SWITCH;
-> +
-> +		writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-> +	}
->  	msm_host->caps_0 |= caps;
->  	pr_debug("%s: supported caps: 0x%08x\n", mmc_hostname(mmc), caps);
->  }
-> -- 
->  Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-> 
