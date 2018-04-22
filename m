@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49NaHRUsOfpGw9yJktfc/vh0wVRidb1nXG0Mt8eR3eK0Xgfqi6bMyGz7uQ5vLoOuHmWke8q
-ARC-Seal: i=1; a=rsa-sha256; t=1524406765; cv=none;
+X-Google-Smtp-Source: AIpwx4+PZ9KLbzekzQ6uxWqEbQXFvStd99xosVX5dNVyWgYIMdL1UAjPYWhEbcGjbblNYqLq8erq
+ARC-Seal: i=1; a=rsa-sha256; t=1524406762; cv=none;
         d=google.com; s=arc-20160816;
-        b=1JyALIXCtTz00s5xfmXIuPzD1ytFIBZIF3+te+Rs+zQl0wXeDn1Ir2R+obhn+BZJEP
-         nfNGL1fcPgevsiRs/4toJUyK4eDXYWnejFLDEWtQt0CMYR+soNFr0I0/z425GASBkU56
-         2hTbCSdJJe21O7iYMm/OY3JFMh+VtQIje0iWF6dZPL3IwJFg2gSxoEkW86a9EHHznEE6
-         hriYcdwcruhOs2JCNTaF9efHlHKDpU0rstor+3oY60fUiodeBTB5WvHPObvfL4e28M52
-         bO/U3AXv/GESXatrBQw4tNiPssCfshk3stPlVU3SXnaThTJdZtmHrGIdLmlwJ4P36Dp7
-         ULug==
+        b=M6W0Wk0Lhjjbo+i4a6EIkcCQipMuNLGNS8TtEgA+itrHUsoyjLh3uI9AmvdHfs7HDl
+         uhsERW74aCZ6KrPStqcj9gMAyYjz7cQqTpzWnAMph4S9EcZb8KHbYpln/iJD2b8bp9iW
+         83w4hnJoRd06vYupNPP+lIA5Vwa7X81xJof6wMEV6A4LwT49ccvk++jN2jgcKbFtDW2Y
+         vYdA9hbbjadTnPKP8ou7jlCTvl00f1QtcPT4gjtNi7dhnhMdzrhY94W4m69kPTxEgJkl
+         ZQRBzyR41iaqiKfKTWoT47Ibz8ilD7eKO4d+Yr+GC4+ZviBSCJVVX0WGnkJYHuQ2XmrK
+         a90g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0bHJMxHrOdfJJHUQq5ppWSbgyqtfDOqCS/mtQz0wB3Y=;
-        b=gwPHyUeYQM0uG1cP08a2wGEhQUkCUW2qzQ5Z4yVO+l9S0uB9lhvcQ153PIA/i8TssO
-         vZeBqiHxO7FHH7ptXGQC+wrc/udX2h2kW5WVIer0sa4MAHBIgeLzRVk6bJWE81uaag/6
-         BB3JeOVC2LOUr0675BxUs8jwUlBVJJUyA2/Qbnheh8FZaf7fG9l1fFKxj/+Jf6gYUVjb
-         mhaa66E7Q7lcPnehF1cz5SRoaheUOBMx+50F3n9XKnmRRrd5haAHINz7SHNIIS3fqRcY
-         RBL+3nB7IjbCeSvei0AQ+SrV5JAWgOTuMKWla4qseQgIzuwtCRBXNarr8W6Lv5niA68U
-         Jf0g==
+        bh=DU42CsYFyGDRRoAoJw4vT91oOr7RqlMjuglxWR4fUlE=;
+        b=KOp3mu0IM34s5yZCmvZ7/dj6GG65bqGx+kZ0eRg8MVPEk7KA9ph/Yna5LTBN1j9mhT
+         4+n/2IwhXL0N/x+f2wHpq3/Ro3ea6Ua+pcawP6D435lGiDF8yBWaEPVTQJs39rxJLpwO
+         WBoNmKT9B1unhRvw3kBwSKuGB2zOhOEri3FmAtKegyburnDRy5nhJMNglPl8tMuBqvkX
+         w7ZvhJKc0sOqZJzl4ND+TqJM7rNv7al7DxJTkIVAjW2Sb8MNtSNQ57tbX447UL6z1LDz
+         IqrlOQHh2V8MaYpJL+gLGVw+hUrgXVm9KstV2MqCXsofqf4tqqKzkCA04dphYU0ML5qy
+         Ku1w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	wangguang <wangguang03@zte.com>,
-	Theodore Tso <tytso@mit.edu>,
-	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 95/97] ext4: bugfix for mmaped pages in mpage_release_unused_pages()
-Date: Sun, 22 Apr 2018 15:54:13 +0200
-Message-Id: <20180422135310.354979867@linuxfoundation.org>
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Chris Fries <cfries@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 94/97] mm/filemap.c: fix NULL pointer in page_cache_tree_insert()
+Date: Sun, 22 Apr 2018 15:54:12 +0200
+Message-Id: <20180422135310.303660182@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598456348546351551?=
-X-GMAIL-MSGID: =?utf-8?q?1598456348546351551?=
+X-GMAIL-THRID: =?utf-8?q?1598455322200106051?=
+X-GMAIL-MSGID: =?utf-8?q?1598456345617919735?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,67 +54,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: wangguang <wang.guang55@zte.com.cn>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-commit 4e800c0359d9a53e6bf0ab216954971b2515247f upstream.
+commit abc1be13fd113ddef5e2d807a466286b864caed3 upstream.
 
-Pages clear buffers after ext4 delayed block allocation failed,
-However, it does not clean its pte_dirty flag.
-if the pages unmap ,in cording to the pte_dirty ,
-unmap_page_range may try to call __set_page_dirty,
+f2fs specifies the __GFP_ZERO flag for allocating some of its pages.
+Unfortunately, the page cache also uses the mapping's GFP flags for
+allocating radix tree nodes.  It always masked off the __GFP_HIGHMEM
+flag, and masks off __GFP_ZERO in some paths, but not all.  That causes
+radix tree nodes to be allocated with a NULL list_head, which causes
+backtraces like:
 
-which may lead to the bugon at
-mpage_prepare_extent_to_map:head = page_buffers(page);.
+  __list_del_entry+0x30/0xd0
+  list_lru_del+0xac/0x1ac
+  page_cache_tree_insert+0xd8/0x110
 
-This patch just call clear_page_dirty_for_io to clean pte_dirty
-at mpage_release_unused_pages for pages mmaped.
+The __GFP_DMA and __GFP_DMA32 flags would also be able to sneak through
+if they are ever used.  Fix them all by using GFP_RECLAIM_MASK at the
+innermost location, and remove it from earlier in the callchain.
 
-Steps to reproduce the bug:
-
-（1） mmap a file in ext4
-	addr = (char *)mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED,
-	       	            fd, 0);
-	memset(addr, 'i', 4096);
-
-（2） return EIO at
-
-	ext4_writepages->mpage_map_and_submit_extent->mpage_map_one_extent
-
-which causes this log message to be print:
-
-                ext4_msg(sb, KERN_CRIT,
-                        "Delayed block allocation failed for "
-                        "inode %lu at logical offset %llu with"
-                        " max blocks %u with error %d",
-                        inode->i_ino,
-                        (unsigned long long)map->m_lblk,
-                        (unsigned)map->m_len, -err);
-
-(3）Unmap the addr cause warning at
-
-	__set_page_dirty:WARN_ON_ONCE(warn && !PageUptodate(page));
-
-(4) wait for a minute,then bugon happen.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: wangguang <wangguang03@zte.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-[@nathanchance: Resolved conflict from lack of 09cbfeaf1a5a6]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: http://lkml.kernel.org/r/20180411060320.14458-2-willy@infradead.org
+Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Reported-by: Chris Fries <cfries@google.com>
+Debugged-by: Minchan Kim <minchan@kernel.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |    2 ++
- 1 file changed, 2 insertions(+)
+ mm/filemap.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1515,6 +1515,8 @@ static void mpage_release_unused_pages(s
- 			BUG_ON(!PageLocked(page));
- 			BUG_ON(PageWriteback(page));
- 			if (invalidate) {
-+				if (page_mapped(page))
-+					clear_page_dirty_for_io(page);
- 				block_invalidatepage(page, 0, PAGE_CACHE_SIZE);
- 				ClearPageUptodate(page);
- 			}
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -571,7 +571,7 @@ int replace_page_cache_page(struct page
+ 	VM_BUG_ON_PAGE(!PageLocked(new), new);
+ 	VM_BUG_ON_PAGE(new->mapping, new);
+ 
+-	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+ 	if (!error) {
+ 		struct address_space *mapping = old->mapping;
+ 		void (*freepage)(struct page *);
+@@ -630,7 +630,7 @@ static int __add_to_page_cache_locked(st
+ 			return error;
+ 	}
+ 
+-	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
+ 	if (error) {
+ 		if (!huge)
+ 			mem_cgroup_cancel_charge(page, memcg);
+@@ -1192,8 +1192,7 @@ no_page:
+ 		if (fgp_flags & FGP_ACCESSED)
+ 			__SetPageReferenced(page);
+ 
+-		err = add_to_page_cache_lru(page, mapping, offset,
+-				gfp_mask & GFP_RECLAIM_MASK);
++		err = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
+ 		if (unlikely(err)) {
+ 			page_cache_release(page);
+ 			page = NULL;
+@@ -1838,7 +1837,7 @@ static int page_cache_read(struct file *
+ 		if (!page)
+ 			return -ENOMEM;
+ 
+-		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask & GFP_KERNEL);
++		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
+ 		if (ret == 0)
+ 			ret = mapping->a_ops->readpage(file, page);
+ 		else if (ret == -EEXIST)
