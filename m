@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49mhbLRYyqf84OkAc6riQXE2sePnpD/RqHTm+q6BdynVIBVxVOLma7E0qY60kHLgZqUvj/Y
-ARC-Seal: i=1; a=rsa-sha256; t=1524405475; cv=none;
+X-Google-Smtp-Source: AIpwx4/5KBQpC0P5QAVotMQir8JGU3T0phdAL/AqH1vH9uAHvi9O4Ez++5+/7P883rJBkMYQP8sM
+ARC-Seal: i=1; a=rsa-sha256; t=1524405470; cv=none;
         d=google.com; s=arc-20160816;
-        b=HjarDWWFXgxpxut9NiqLz4MgHnZrrUU5sFjL4hI/Ff6G6z8Wm92vtvhwX//IQTe6bY
-         36GSuJfsOVaC2oKOhWhi0XL3BERr4akB9j6EiHcyHvn7Xr6bsGCGk09DwYRtTGPfq5OE
-         Oq2Zn6pBEMDuvePzkkXaMO4zGv5T6+wHLSfC/o2owaNfXVh2IoTDRbmPiw138MPH4sbr
-         xJ2QJy+mzNz8mWTXKe+E7USmvjuJaw5NXsygKknImWr4IT2tMIiYo9AVozs1QjOu7N9x
-         oacOjBzQAg+l680ZITPDo66StOKxD7PYoC0+WUkGC+s+8nclS3bCOdoSnYUNCaLr9lPx
-         5S3g==
+        b=ULthK4zDBhxuTrnVh9Ie/BvdL/9dYMjbWeNafExs/KLkWpHfWhyYm9wIPqAHLQkUGq
+         5+5k1cywjctJjc6VvkFrPGo4vST1X2bM/mUeh6WYOzQJvSKRE2yDjEc4cEaefFdD0lLR
+         aiQfCqG4dqfqo4e7dxjlj41hm/a/6AKB8+qHsqpOCdPkLf71gel5j4aXeu0jxOAVVQn5
+         yW3FLrqQjk/deTwUdOZOT5C+IeUf11XzgSilkWnLqofXAXB5Dqws/0YHoCQ93+TQoiFJ
+         I/IGkGGT5IUIK/Ty9T4/XKYteVb7LLFHXR4C+dLyCPNUnsgYRkbT4HAI0a/hugtTXwpW
+         yECQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zG0zLxCVwtMSzOXDDStKZvzga7myATr7BsYO0l1RvaM=;
-        b=t/tIKcfC6eFg6t0l4m2eRGTiFyrYdW/Q/W3Rt17ubEi1KZ9Z66RY1+BZQ0p0AHm75P
-         AJP0Mdc7BmG2fVRreN//7StOhQCa//bwGp6tTuul1yBlt8Zd3FBdA2rWBOsEnBIliNRw
-         a1Wd80ezlrqQrG9sc19EsiYPisbgVGcp4c0fDESHC/6ItTxIp3LeWhwDLMm4rQYOVlDQ
-         Rwq6IlbgT6FM2HYR/vOC9f1/rNSQvO0UuhJvGNkx8gosw/hanixNKL2hQjPpS79UeGh6
-         /KQQpO2lsXA5IbFnN5mgu0tACVo9wflWgOQN+XeDbrBpstl1Xugv2wrykLX5uPSv/w2R
-         7/nQ==
+        bh=0qPIxFxMAB/cr3SeCdsxBH+bysnBboWJomLFIhARBHw=;
+        b=ZiteA6tviXwqu+3iy3oL6371APpHSYiSea5krW7P/ozO47tp9ZfyuIADHHBbaC25Ab
+         vFI6tahtWalBr2M8Kx9BCUJXIFnuvk/SvQ4Hx4oP9FXbW6s4JwLQD/nayCp5pOP9wNqf
+         RIrheOl8UA+h144L2ZMEvyrkYYCyIZWhJ6EtpcYkGdDEz66PpEsJMUuppoDjFV9+Pqpt
+         z+P6fhNxhyFXJiaZVc7lx8e/mj+/kuGidQn7i4Ktp0i/8QOMPLAtUkom0i9KVGAZmsEZ
+         UngvsmLaaW/aWaltOoYUie753ngV8IOYPvUWmdIhwVdiySg+2VHwtry3OwmUfM8g28fv
+         2Lwg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jordan Glover <Golden_Miller83@protonmail.ch>,
 	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Yehezkel Bernat <yehezkel.bernat@intel.com>
-Subject: [PATCH 4.16 079/196] thunderbolt: Prevent crash when ICM firmware is not running
-Date: Sun, 22 Apr 2018 15:51:39 +0200
-Message-Id: <20180422135108.378667088@linuxfoundation.org>
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH 4.16 077/196] thunderbolt: Resume control channel after hibernation image is created
+Date: Sun, 22 Apr 2018 15:51:37 +0200
+Message-Id: <20180422135108.224384580@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454995914765276?=
-X-GMAIL-MSGID: =?utf-8?q?1598454995914765276?=
+X-GMAIL-THRID: =?utf-8?q?1598454990022490536?=
+X-GMAIL-MSGID: =?utf-8?q?1598454990022490536?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,51 +51,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit ea9d7bb798900096f26c585957d6ad9c532417e6 upstream.
+commit f2a659f7d8d5da803836583aa16df06bdf324252 upstream.
 
-On Lenovo ThinkPad Yoga 370 (and possibly some other Lenovo models as
-well) the Thunderbolt host controller sometimes comes up in such way
-that the ICM firmware is not running properly. This is most likely an
-issue in BIOS/firmware but as side-effect driver crashes the kernel due
-to NULL pointer dereference:
+The driver misses implementation of PM hook that undoes what
+->freeze_noirq() does after the hibernation image is created. This means
+the control channel is not resumed properly and the Thunderbolt bus
+becomes useless in later stages of hibernation (when the image is stored
+or if the operation fails).
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000980
-  IP: pci_write_config_dword+0x5/0x20
-  Call Trace:
-   pcie2cio_write+0x3b/0x70 [thunderbolt]
-   icm_driver_ready+0x168/0x260 [thunderbolt]
-   ? tb_ctl_start+0x50/0x70 [thunderbolt]
-   tb_domain_add+0x73/0xf0 [thunderbolt]
-   nhi_probe+0x182/0x300 [thunderbolt]
-   local_pci_probe+0x42/0xa0
-   ? pci_match_device+0xd9/0x100
-   pci_device_probe+0x146/0x1b0
-   driver_probe_device+0x315/0x480
-   ...
+Fix this by pointing ->thaw_noirq to driver nhi_resume_noirq(). This
+makes sure the control channel is resumed properly.
 
-Instead of crashing update the driver to bail out gracefully if we
-encounter such situation.
-
-Fixes: f67cf491175a ("thunderbolt: Add support for Internal Connection Manager (ICM)")
-Reported-by: Jordan Glover <Golden_Miller83@protonmail.ch>
+Fixes: 23dd5bb49d98 ("thunderbolt: Add suspend/hibernate support")
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: Yehezkel Bernat <yehezkel.bernat@intel.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thunderbolt/icm.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/thunderbolt/nhi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/thunderbolt/icm.c
-+++ b/drivers/thunderbolt/icm.c
-@@ -923,6 +923,9 @@ static int icm_firmware_reset(struct tb
- 	struct icm *icm = tb_priv(tb);
- 	u32 val;
- 
-+	if (!icm->upstream_port)
-+		return -ENODEV;
-+
- 	/* Put ARC to wait for CIO reset event to happen */
- 	val = ioread32(nhi->iobase + REG_FW_STS);
- 	val |= REG_FW_STS_CIO_RESET_REQ;
+--- a/drivers/thunderbolt/nhi.c
++++ b/drivers/thunderbolt/nhi.c
+@@ -1064,6 +1064,7 @@ static const struct dev_pm_ops nhi_pm_op
+ 					    * we just disable hotplug, the
+ 					    * pci-tunnels stay alive.
+ 					    */
++	.thaw_noirq = nhi_resume_noirq,
+ 	.restore_noirq = nhi_resume_noirq,
+ 	.suspend = nhi_suspend,
+ 	.freeze = nhi_suspend,
