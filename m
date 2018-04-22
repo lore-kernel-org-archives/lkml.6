@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/rzU+xJNS/wDkz9EJMNSpac9MaAOHpl1NEvnAJ8NXkLX3JrZNzcyRYQ4m6ZIhN5czvqmV4
-ARC-Seal: i=1; a=rsa-sha256; t=1524406908; cv=none;
+X-Google-Smtp-Source: AIpwx4897y9GZ6Ng4rbGpKUXLXmrvl9jZbP3f0EVhCfUa/4WfoscaPSpgDp0NFdagYzMwEhY5Lsa
+ARC-Seal: i=1; a=rsa-sha256; t=1524406897; cv=none;
         d=google.com; s=arc-20160816;
-        b=efLSoOfPFhyIjhFzekhMc6x8Pxh44urgQyF32ASiD83RMlUcthgqTYsFNA/XbjabvN
-         2W1E03Dn8MOCfnjiCNTmN7gYRCgc+iuM4JRmSGy/gmDhzJ5NPkcvIpIOA+usi5X3j8U2
-         xKAypc4x8/7cS6oeThc/joGRQ0MuYl4y4Iz7TEgRISI7ElHe6pq8rkeeuQ4FZKqquaML
-         ldLlPMU43NC4xA5GUeCLDKO++owXWseonrnvrRPsrjymGiKtum5XNtsyPIquwYWLNZyn
-         DXZOgcJlakajAV8/cbzHA3obC/GrkP8I/QY7iGMBzs2O42sKzxqzW2kOPjusGo209ztG
-         QATA==
+        b=mQiZ7yh6ZlBkcexrON3v9L+cWgNV7Cx6UlPdWMl7DKYcwccTm1BLBJVcC4FETIM3ZI
+         A4D8oaoxTxBltyGBLZYO4shqU3EE6XDBKCRmvpRwcUugR7H/So+ZEMVI5vlrXrFL42pq
+         TB7T7hd8bn+Nu9L1rXxxboRJoYMHIw3H83uYnv5+cGeSnRqEyO595cdp01n/XAdTob9d
+         usHUxBHmY3qn77iX0XTceF2HCstMM1wg8FFPvMbNtMqGp94W4bKOUGovn4MRqJXYTwUC
+         YJwc+GDZzfaFcN1oOzTg71kU6lcVdMqzOMsvdeMR6ixqEEHzQd8RtPKD78cvkt8wLguv
+         LznA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=a/8OH5sWdgySRpzqDrCaGicZkblPrBqirTLHKU2vRMY=;
-        b=HcpvlPBrAYI9sdWWZdGRsTFz8anJmFzIBa2vsHj6y3feza2rbR5F/yn9rp60abs38y
-         iv0dJhkV65RVRZWDZ7PqyAsBzMcZMqvYUiII2lhAA5j/s1dASEVtMI/VY1Jb2rz/UBS0
-         BYHE5p86+KiYxTjGI2odKATU5PgupPMPb9i1ESQlSAuZsqX9AiadRcDs/cqbA5WTjeu0
-         IPLZz5zl14ZPUVhQm+ecwYGb4etnwr+gf/k3aNILXvNZxxQq1obh6Kulx8G+mb2S8HzV
-         9zZ/RZb1s6jZMfDuMtUoR/U3Q8QpHg+2loTcYoRRTZRIcwX0squyhDYlh20udGPXXnwY
-         PE0A==
+        bh=lIxakWpIuY6813CrwEr1fHpso4qOlKBmYtNyoC359qg=;
+        b=04y7uq7jwFZbb6aKjQyH6bIl10lDoePG6GfFPOYLJN/6x7QQHtuIm9MP9vaOiFScOc
+         BLkmb6tczFsT2uVPDDApC7xtTF3OmClAF3khPuJRXxKvA6wMkqvITeQpqy9xPkvUAIvI
+         86V03Ocfg39uDOZgGhHi2e9sRcWaSrxCxQUozYd91nlcSyPrKAVNjzrdRXjgxTwyd6Go
+         pb5uC4bfoCakkdUrFz6bPX7UEswdszsDBRzO8AUcQkasA0nt5VxIJkwPYFMbEqgiwkSU
+         opoAx42Mhmh05qQsTawHq22EQzPjufy+5hLNiQQlEjzU0H79k3pnjaXJXqbWxodmx6n7
+         lRcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 3.18 48/52] hypfs_kill_super(): deal with failed allocations
-Date: Sun, 22 Apr 2018 15:54:21 +0200
-Message-Id: <20180422135317.558902601@linuxfoundation.org>
+	James Hogan <jhogan@kernel.org>,
+	Matt Redfearn <matt.redfearn@mips.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org
+Subject: [PATCH 3.18 44/52] MIPS: memset.S: Fix return of __clear_user from Lpartial_fixup
+Date: Sun, 22 Apr 2018 15:54:17 +0200
+Message-Id: <20180422135317.399275218@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455302039543864?=
-X-GMAIL-MSGID: =?utf-8?q?1598456497931168157?=
+X-GMAIL-THRID: =?utf-8?q?1598455264978774304?=
+X-GMAIL-MSGID: =?utf-8?q?1598456486784308452?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,29 +51,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Matt Redfearn <matt.redfearn@mips.com>
 
-commit a24cd490739586a7d2da3549a1844e1d7c4f4fc4 upstream.
+commit daf70d89f80c6e1772233da9e020114b1254e7e0 upstream.
 
-hypfs_fill_super() might fail to allocate sbi; hypfs_kill_super()
-should not oops on that.
+The __clear_user function is defined to return the number of bytes that
+could not be cleared. From the underlying memset / bzero implementation
+this means setting register a2 to that number on return. Currently if a
+page fault is triggered within the memset_partial block, the value
+loaded into a2 on return is meaningless.
 
+The label .Lpartial_fixup\@ is jumped to on page fault. In order to work
+out how many bytes failed to copy, the exception handler should find how
+many bytes left in the partial block (andi a2, STORMASK), add that to
+the partial block end address (a2), and subtract the faulting address to
+get the remainder. Currently it incorrectly subtracts the partial block
+start address (t1), which has additionally been clobbered to generate a
+jump target in memset_partial. Fix this by adding the block end address
+instead.
+
+This issue was found with the following test code:
+      int j, k;
+      for (j = 0; j < 512; j++) {
+        if ((k = clear_user(NULL, j)) != j) {
+           pr_err("clear_user (NULL %d) returned %d\n", j, k);
+        }
+      }
+Which now passes on Creator Ci40 (MIPS32) and Cavium Octeon II (MIPS64).
+
+Suggested-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
 Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Patchwork: https://patchwork.linux-mips.org/patch/19108/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/hypfs/inode.c |    2 +-
+ arch/mips/lib/memset.S |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/hypfs/inode.c
-+++ b/arch/s390/hypfs/inode.c
-@@ -326,7 +326,7 @@ static void hypfs_kill_super(struct supe
+--- a/arch/mips/lib/memset.S
++++ b/arch/mips/lib/memset.S
+@@ -204,7 +204,7 @@
+ 	PTR_L		t0, TI_TASK($28)
+ 	andi		a2, STORMASK
+ 	LONG_L		t0, THREAD_BUADDR(t0)
+-	LONG_ADDU	a2, t1
++	LONG_ADDU	a2, a0
+ 	jr		ra
+ 	LONG_SUBU	a2, t0
  
- 	if (sb->s_root)
- 		hypfs_delete_tree(sb->s_root);
--	if (sb_info->update_file)
-+	if (sb_info && sb_info->update_file)
- 		hypfs_remove(sb_info->update_file);
- 	kfree(sb->s_fs_info);
- 	sb->s_fs_info = NULL;
