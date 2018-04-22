@@ -1,96 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753354AbeDVARa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 20:17:30 -0400
-Received: from mga09.intel.com ([134.134.136.24]:22035 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753280AbeDVAR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 20:17:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,308,1520924400";
-   d="scan'208";a="33682791"
-From: "Williams, Dan J" <dan.j.williams@intel.com>
-To: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: [GIT PULL] libnvdimm fixes for 4.17-rc2
-Thread-Topic: [GIT PULL] libnvdimm fixes for 4.17-rc2
-Thread-Index: AQHT2c9K+WXJ8X2m5kSEW8QU81zYwg==
-Date: Sun, 22 Apr 2018 00:17:25 +0000
-Message-ID: <1524356236.26036.13.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.254.112.51]
-Content-Type: text/plain; charset="utf-7"
-Content-ID: <07665B705A136D459F8F248D670F4E73@intel.com>
-Content-Transfer-Encoding: 8BIT
+        id S1753401AbeDVAWa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 20:22:30 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:33244 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753310AbeDVAW2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Apr 2018 20:22:28 -0400
+X-Google-Smtp-Source: AIpwx4/A01nfBJyj+5gcEJhOHkbqrwOnzQUmmRPkE3OYado4xk08dRrdJ/96V1SOyz+L6pLVuiG+UNg8yOJgpy5UDoI=
 MIME-Version: 1.0
+In-Reply-To: <20180421203437.GW28657@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com> <20180421203437.GW28657@bhelgaas-glaptop.roam.corp.google.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Sat, 21 Apr 2018 17:22:27 -0700
+Message-ID: <CAKgT0Ufcq6aQW5zPzBUePO4R_BCa2B_aZ8U2=meOQeOvshZ=Mw@mail.gmail.com>
+Subject: Re: [pci PATCH v8 0/4] Add support for unmanaged SR-IOV
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Alexander Duyck <alexander.h.duyck@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus, please pull from
+On Sat, Apr 21, 2018 at 1:34 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> On Fri, Apr 20, 2018 at 12:28:08PM -0400, Alexander Duyck wrote:
+>> This series is meant to add support for SR-IOV on devices when the VFs are
+>> not managed by the kernel. Examples of recent patches attempting to do this
+>> include:
+>> virto - https://patchwork.kernel.org/patch/10241225/
+>> pci-stub - https://patchwork.kernel.org/patch/10109935/
+>> vfio - https://patchwork.kernel.org/patch/10103353/
+>> uio - https://patchwork.kernel.org/patch/9974031/
+>>
+>> Since this is quickly blowing up into a multi-driver problem it is probably
+>> best to implement this solution as generically as possible.
+>>
+>> This series is an attempt to do that. What we do with this patch set is
+>> provide a generic framework to enable SR-IOV in the case that the PF driver
+>> doesn't support managing the VFs itself.
+>>
+>> I based my patch set originally on the patch by Mark Rustad but there isn't
+>> much left after going through and cleaning out the bits that were no longer
+>> needed, and after incorporating the feedback from David Miller. At this point
+>> the only items to be fully reused was his patch description which is now
+>> present in patch 3 of the set.
+>>
+>> This solution is limited in scope to just adding support for devices that
+>> provide no functionality for SR-IOV other than allocating the VFs by
+>> calling pci_enable_sriov. Previous sets had included patches for VFIO, but
+>> for now I am dropping that as the scope of that work is larger then I
+>> think I can take on at this time.
+>>
+>> v2: Reduced scope back to just virtio_pci and vfio-pci
+>>     Broke into 3 patch set from single patch
+>>     Changed autoprobe behavior to always set when num_vfs is set non-zero
+>> v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
+>>     Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
+>> v4: Dropped vfio-pci patch
+>>     Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
+>>     Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
+>> v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
+>>     Added new patch that enables pci_sriov_configure_simple
+>>     Updated drivers to use pci_sriov_configure_simple
+>> v6: Defined pci_sriov_configure_simple as NULL when SR-IOV is not enabled
+>>     Updated drivers to drop "#ifdef" checks for IOV
+>>     Added pci-pf-stub as place for PF-only drivers to add support
+>> v7: Dropped pci_id table explanation from pci-pf-stub driver
+>>     Updated pci_sriov_configure_simple to drop need for err value
+>>     Fixed comment explaining why pci_sriov_configure_simple is NULL
+>> v8: Dropped virtio from the set, support to be added later after TC approval
+>>
+>> Cc: Mark Rustad <mark.d.rustad@intel.com>
+>> Cc: Maximilian Heyne <mheyne@amazon.de>
+>> Cc: Liang-Min Wang <liang-min.wang@intel.com>
+>> Cc: David Woodhouse <dwmw@amazon.co.uk>
+>>
+>> ---
+>>
+>> Alexander Duyck (4):
+>>       pci: Add pci_sriov_configure_simple for PFs that don't manage VF resources
+>>       ena: Migrate over to unmanaged SR-IOV support
+>>       nvme: Migrate over to unmanaged SR-IOV support
+>>       pci-pf-stub: Add PF driver stub for PFs that function only to enable VFs
+>>
+>>
+>>  drivers/net/ethernet/amazon/ena/ena_netdev.c |   28 -------------
+>>  drivers/nvme/host/pci.c                      |   20 ----------
+>>  drivers/pci/Kconfig                          |   12 ++++++
+>>  drivers/pci/Makefile                         |    2 +
+>>  drivers/pci/iov.c                            |   31 +++++++++++++++
+>>  drivers/pci/pci-pf-stub.c                    |   54 ++++++++++++++++++++++++++
+>>  include/linux/pci.h                          |    3 +
+>>  include/linux/pci_ids.h                      |    2 +
+>>  8 files changed, 106 insertions(+), 46 deletions(-)
+>>  create mode 100644 drivers/pci/pci-pf-stub.c
+>
+> I tentatively applied these to pci/virtualization-review.
+>
+> The code changes look fine, but I want to flesh out the changelogs a
+> little bit before merging them.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm libnvdimm-fixes
+Thanks.
 
-...to receive, a regression fix, new unit test infrastructure and a
-build fix.
+> For example, I'm not sure what you mean by "devices where the PF is
+> not capable of managing VF resources."
+>
+> It *sounds* like you're saying the hardware works differently on some
+> devices, but I don't think that's what you mean.  I think you're
+> saying something about which drivers are used for the PF and the VF.
 
-+ACo- The regression fix addresses support for the new NVDIMM label storage
-area access commands (+AF8-LSI, +AF8-LSR, and +AF8-LSW). The Intel specific version
-of these commands communicated the +ACI-Device Locked+ACI- status on the label-
-storage-information command. However, these new commands (standardized
-in ACPI 6.2) communicate the +ACI-Device Locked+ACI- status on the label-
-storage-read command, and the driver was missing the indication.
-Reading from locked persistent memory is similar to reading unmapped
-PCI memory space, returns all 1's.
+That is sort of what I am saying.
 
-+ACo- Unit test infrastructure is added to regression test the +ACI-Device
-Locked+ACI- detection failure.
+So for example with ixgbe there is functionality which is controlled
+in the MMIO space of the PF that affects the functionality of the VFs
+that are generated on the device. The PF has to rearrange the
+resources such as queues and interrupts on the device before it can
+enable SR-IOV, and it could alter those later to limit what the VF is
+capable of doing.
 
-+ACo- A build fix is included to allow the +ACI-of+AF8-pmem+ACI- driver to be built as
-a module and translate an Open Firmware described device to its local
-numa node.
+The model I am dealing with via this patch set has a PF that is not
+much different than the VFs other than the fact that it has some
+extended configuration space bits in place for SR-IOV, ARI, ACS, and
+whatever other bits are needed in order to support spawning isolated
+VFs.
 
----
+> I think a trivial example of how this will be used might help.  I
+> assume this involves a virtualization scenario where the host uses the
+> PF to enable several VFs, but the host doesn't use the PF for much
+> else.  Then you assign the VFs to guests, and drivers in the guest
+> OSes use the VFs.
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+So this description would work for the pci-pf-stub driver. Basically
+the idea here is that you have a device that is nothing more than a
+function there to spawn VFs.
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+The other scenario that I am supporting are the ena and nvme models.
+They match what I have described above where the PF is really just
+another VF with some extra configuration space bits that add support
+for spawning what amount to peer VFs to the already present PF.
 
-are available in the git repository at:
+> Since .sriov_configure() is only used by sriov_numvfs_store(), I
+> assume the usage model involves writing to the sysfs sriov_numvfs
+> attribute to enable the VFs, then assigning them to guests?
+>
+> Bjorn
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm libnvdimm-fixes
+Yes. The assumption for this function is that we are only supporting
+the sysfs approach for spawning VFs.
 
-for you to fetch changes up to c5794510d7b5f210f05531ff9e82432cf7244367:
-
-  MAINTAINERS: Add backup maintainers for libnvdimm and DAX (2018-04-19 15:22:50 -0700)
-
-----------------------------------------------------------------
-Dan Williams (6):
-      libnvdimm, dimm: handle EACCES failures from label reads
-      tools/testing/nvdimm: allow custom error code injection
-      tools/testing/nvdimm: support nfit+AF8-test+AF8-dimm attributes under nfit+AF8-test.1
-      tools/testing/nvdimm: fix missing newline in nfit+AF8-test+AF8-dimm 'handle' attribute
-      tools/testing/nvdimm: enable labels for nfit+AF8-test.1 dimms
-      Revert +ACI-libnvdimm, of+AF8-pmem: workaround OF+AF8-NUMA+AD0-n build error+ACI-
-
-Dave Jiang (2):
-      device-dax: allow MAP+AF8-SYNC to succeed
-      MAINTAINERS: Add backup maintainers for libnvdimm and DAX
-
-Rob Herring (1):
-      libnvdimm, of+AF8-pmem: use dev+AF8-to+AF8-node() instead of of+AF8-node+AF8-to+AF8-nid()
-
- MAINTAINERS                      +AHw- 15 +-+-+-+-+-+-+-
- drivers/dax/device.c             +AHw-  2 +-
- drivers/nvdimm/Kconfig           +AHw-  3 +--
- drivers/nvdimm/dimm+AF8-devs.c       +AHw- 22 +-+-+-+-+-+------
- drivers/nvdimm/of+AF8-pmem.c         +AHw-  2 +--
- tools/testing/nvdimm/test/nfit.c +AHw- 84 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+----------
- 6 files changed, 96 insertions(+-), 32 deletions(-)
+- Alex
