@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/cNSJ1gAL+M2pmtEFk4R4GZRwTQqulUXgrQDyw+0drBsQV15Bac0OK//CdDOjdkPVHxPNc
-ARC-Seal: i=1; a=rsa-sha256; t=1524405532; cv=none;
+X-Google-Smtp-Source: AIpwx48IPj+njz+tmC4V1c9gtc9B+Vou4SkXfoMhX9Om2Vpvx0uFPzB27EEPWRqJ9ZqoB/3ZwtlN
+ARC-Seal: i=1; a=rsa-sha256; t=1524405529; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ley1MgsIjVoc7VV9gNARW8wzlsJ7gGjBgkCuPCe5CBG2urM7dsvdZnGQM3tUDzJZyW
-         R5h3s2Eb9SMYSm6syFXU2WZ9Op1N5p91Xh1RCkDt6KmmroaKATXgq8+zmFuwpxY1jMOO
-         BRFF+mfjUu83kGiqOs6p/aqKjPGVf1+VygTYxj2R3bFkD0ZNdUndxeaGKe7m8Sm7g3E+
-         CdVYVr2ogIIDo3la1Sqjv/r5mXWRC55opMgxMOpiU5f/4iRfPnVhBmcMEuK7oZl3qiZK
-         fwixd7lo9dooa83KbucXSZh7w8gXR856vAmiihIb8U5RvXgOZqRDiLGFh+7LIaGeKwjI
-         oCLw==
+        b=SYG6a1nbE4Kbgl9nzSVel/QlB29T/YLtHJuLEgrxl4j+Z1VwV0hT/rmor2wcPq43V6
+         8F/mqW+U5tGEXbijTMRkI0UmOa/q88tmvenkuyttXhNiXxqUx+apL7E0OMX29rw0z213
+         c5oxYnfyeWxLm43/e9hZKU/HJjVhjgAucIbNR+wUDB1N6x0fafU8jgnU/L1SEMRtQPIl
+         1fTJuUzF7nH4d6JeGRCXtdpr8P3k+3hah7unFtE9KdiL0ujbGfwwgXMyaeMi6Q2PjNXC
+         giUVxw00k8+45hCGnUC7ejHXmsKndygiyd1lB5NCoV77K0xLg8S9CHdm91gcBVBAbYi1
+         1sOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AA6uwBp9vVc71gJiKAEAOYog4D+WV+sql+FD6A45MYo=;
-        b=G0e7HC98dXhPKZWSezcT9eHcOf9hhjwE+fGOzHZsCIpxqOrGwY0g+gZYe1us2GmpKj
-         5bh6NgbMEcbYBnRcBwkdKDSKuyxt1cIwgrXMrPXeOXv654SqbUsjRW/gcfYpJx8Ey1LJ
-         ChDQwQ7rXVsga+zpm6W5v7Uq8/vZI/lLhkeD248onTwnhUhS20J2UbCQyunc15fkJcqR
-         VVruwQ3HrkK1hpW3xpRw+R/IIBAi+mugZliBJ/9beiZP6TBk2CXQ3ixjMyZ+eAz6mx/T
-         2vW+wO0uIhnAjrTLA0JzFeqh7tRWyDv+GVHzT7TmpipdCduNt4vnrIA/FSkAWftJklJL
-         A+kw==
+        bh=AOQWTYw8WA/8vLPc0pt7VCchKVMlO+B/DE8V941Jsv4=;
+        b=pOjZza+RCD/vLqp7nVgd7CdzDNUBvYhCCTcV+1eqgd2GCgzV7TEDGxq3kzTfxb5XO1
+         yxcR77bIG8gC7VXelnBONNR/gzwKBaDttdqyQoHOiWtVMA9ooruOL5dCflpFYyrGw4Bq
+         SbxGSCrMQKcnA8sbnTpPeX/5dmi2PM2+cbbtgmtuwe/nuMqgZkRX2mNVk+4UlLab+9lT
+         yKTqUlWS9DGCkcePL6RdMK56Ddpwz2AfLRtxa5YoFoYruYGrRDokdfxepw2BK2kOwg+s
+         rcjzxqeuzYDBaV4zm64hDs1eEuz8MPjk/PYwPwLfzpw7zgezA30B7vVv9uwzv2p5U3sR
+         kabA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Mikulas Patocka <mpatocka@redhat.com>,
-	Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.16 101/196] dm crypt: limit the number of allocated pages
-Date: Sun, 22 Apr 2018 15:52:01 +0200
-Message-Id: <20180422135109.475620745@linuxfoundation.org>
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.16 083/196] block: use 32-bit blk_status_t on Alpha
+Date: Sun, 22 Apr 2018 15:51:43 +0200
+Message-Id: <20180422135108.598605082@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455055708179128?=
-X-GMAIL-MSGID: =?utf-8?q?1598455055708179128?=
+X-GMAIL-THRID: =?utf-8?q?1598455052659939248?=
+X-GMAIL-MSGID: =?utf-8?q?1598455052659939248?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,147 +51,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 5059353df86e2573ccd9d43fd9d9396dcec47ca2 upstream.
+commit 6e2fb22103b99c26ae30a46512abe75526d8e4c9 upstream.
 
-dm-crypt consumes an excessive amount memory when the user attempts to
-zero a dm-crypt device with "blkdiscard -z". The command "blkdiscard -z"
-calls the BLKZEROOUT ioctl, it goes to the function __blkdev_issue_zeroout,
-__blkdev_issue_zeroout sends a large amount of write bios that contain
-the zero page as their payload.
+Early alpha processors cannot write a single byte or word; they read 8
+bytes, modify the value in registers and write back 8 bytes.
 
-For each incoming page, dm-crypt allocates another page that holds the
-encrypted data, so when processing "blkdiscard -z", dm-crypt tries to
-allocate the amount of memory that is equal to the size of the device.
-This can trigger OOM killer or cause system crash.
+The type blk_status_t is defined as one byte, it is often written
+asynchronously by I/O completion routines, this asynchronous modification
+can corrupt content of nearby bytes if these nearby bytes can be written
+simultaneously by another CPU.
 
-Fix this by limiting the amount of memory that dm-crypt allocates to 2%
-of total system memory. This limit is system-wide and is divided by the
-number of active dm-crypt devices and each device receives an equal
-share.
+- one example of such corruption is the structure dm_io where
+  "blk_status_t status" is written by an asynchronous completion routine
+  and "atomic_t io_count" is modified synchronously
+- another example is the structure dm_buffer where "unsigned hold_count"
+  is modified synchronously from process context and "blk_status_t
+  write_error" is modified asynchronously from bio completion routine
 
-Cc: stable@vger.kernel.org
+This patch fixes the bug by changing the type blk_status_t to 32 bits if
+we are on Alpha and if we are compiling for a processor that doesn't have
+the byte-word-extension.
+
 Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Cc: stable@vger.kernel.org	# 4.13+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-crypt.c |   66 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 65 insertions(+), 1 deletion(-)
+ include/linux/blk_types.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -148,6 +148,8 @@ struct crypt_config {
- 	mempool_t *tag_pool;
- 	unsigned tag_pool_max_sectors;
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -20,8 +20,13 @@ typedef void (bio_end_io_t) (struct bio
  
-+	struct percpu_counter n_allocated_pages;
-+
- 	struct bio_set *bs;
- 	struct mutex bio_alloc_lock;
- 
-@@ -219,6 +221,12 @@ struct crypt_config {
- #define MAX_TAG_SIZE	480
- #define POOL_ENTRY_SIZE	512
- 
-+static DEFINE_SPINLOCK(dm_crypt_clients_lock);
-+static unsigned dm_crypt_clients_n = 0;
-+static volatile unsigned long dm_crypt_pages_per_client;
-+#define DM_CRYPT_MEMORY_PERCENT			2
-+#define DM_CRYPT_MIN_PAGES_PER_CLIENT		(BIO_MAX_PAGES * 16)
-+
- static void clone_init(struct dm_crypt_io *, struct bio *);
- static void kcryptd_queue_crypt(struct dm_crypt_io *io);
- static struct scatterlist *crypt_get_sg_data(struct crypt_config *cc,
-@@ -2155,6 +2163,43 @@ static int crypt_wipe_key(struct crypt_c
- 	return r;
- }
- 
-+static void crypt_calculate_pages_per_client(void)
-+{
-+	unsigned long pages = (totalram_pages - totalhigh_pages) * DM_CRYPT_MEMORY_PERCENT / 100;
-+
-+	if (!dm_crypt_clients_n)
-+		return;
-+
-+	pages /= dm_crypt_clients_n;
-+	if (pages < DM_CRYPT_MIN_PAGES_PER_CLIENT)
-+		pages = DM_CRYPT_MIN_PAGES_PER_CLIENT;
-+	dm_crypt_pages_per_client = pages;
-+}
-+
-+static void *crypt_page_alloc(gfp_t gfp_mask, void *pool_data)
-+{
-+	struct crypt_config *cc = pool_data;
-+	struct page *page;
-+
-+	if (unlikely(percpu_counter_compare(&cc->n_allocated_pages, dm_crypt_pages_per_client) >= 0) &&
-+	    likely(gfp_mask & __GFP_NORETRY))
-+		return NULL;
-+
-+	page = alloc_page(gfp_mask);
-+	if (likely(page != NULL))
-+		percpu_counter_add(&cc->n_allocated_pages, 1);
-+
-+	return page;
-+}
-+
-+static void crypt_page_free(void *page, void *pool_data)
-+{
-+	struct crypt_config *cc = pool_data;
-+
-+	__free_page(page);
-+	percpu_counter_sub(&cc->n_allocated_pages, 1);
-+}
-+
- static void crypt_dtr(struct dm_target *ti)
- {
- 	struct crypt_config *cc = ti->private;
-@@ -2181,6 +2226,10 @@ static void crypt_dtr(struct dm_target *
- 	mempool_destroy(cc->req_pool);
- 	mempool_destroy(cc->tag_pool);
- 
-+	if (cc->page_pool)
-+		WARN_ON(percpu_counter_sum(&cc->n_allocated_pages) != 0);
-+	percpu_counter_destroy(&cc->n_allocated_pages);
-+
- 	if (cc->iv_gen_ops && cc->iv_gen_ops->dtr)
- 		cc->iv_gen_ops->dtr(cc);
- 
-@@ -2197,6 +2246,12 @@ static void crypt_dtr(struct dm_target *
- 
- 	/* Must zero key material before freeing */
- 	kzfree(cc);
-+
-+	spin_lock(&dm_crypt_clients_lock);
-+	WARN_ON(!dm_crypt_clients_n);
-+	dm_crypt_clients_n--;
-+	crypt_calculate_pages_per_client();
-+	spin_unlock(&dm_crypt_clients_lock);
- }
- 
- static int crypt_ctr_ivmode(struct dm_target *ti, const char *ivmode)
-@@ -2644,6 +2699,15 @@ static int crypt_ctr(struct dm_target *t
- 
- 	ti->private = cc;
- 
-+	spin_lock(&dm_crypt_clients_lock);
-+	dm_crypt_clients_n++;
-+	crypt_calculate_pages_per_client();
-+	spin_unlock(&dm_crypt_clients_lock);
-+
-+	ret = percpu_counter_init(&cc->n_allocated_pages, 0, GFP_KERNEL);
-+	if (ret < 0)
-+		goto bad;
-+
- 	/* Optional parameters need to be read before cipher constructor */
- 	if (argc > 5) {
- 		ret = crypt_ctr_optional(ti, argc - 5, &argv[5]);
-@@ -2698,7 +2762,7 @@ static int crypt_ctr(struct dm_target *t
- 		ALIGN(sizeof(struct dm_crypt_io) + cc->dmreq_start + additional_req_size,
- 		      ARCH_KMALLOC_MINALIGN);
- 
--	cc->page_pool = mempool_create_page_pool(BIO_MAX_PAGES, 0);
-+	cc->page_pool = mempool_create(BIO_MAX_PAGES, crypt_page_alloc, crypt_page_free, cc);
- 	if (!cc->page_pool) {
- 		ti->error = "Cannot allocate page mempool";
- 		goto bad;
+ /*
+  * Block error status values.  See block/blk-core:blk_errors for the details.
++ * Alpha cannot write a byte atomically, so we need to use 32-bit value.
+  */
++#if defined(CONFIG_ALPHA) && !defined(__alpha_bwx__)
++typedef u32 __bitwise blk_status_t;
++#else
+ typedef u8 __bitwise blk_status_t;
++#endif
+ #define	BLK_STS_OK 0
+ #define BLK_STS_NOTSUPP		((__force blk_status_t)1)
+ #define BLK_STS_TIMEOUT		((__force blk_status_t)2)
