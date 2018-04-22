@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49iEifc1bXySQlU7kZwozmF+/iLeRJCxTV2xc7E0IyecmkmpaV6Onu1Dx85VCidKnTjl8ih
-ARC-Seal: i=1; a=rsa-sha256; t=1524406506; cv=none;
+X-Google-Smtp-Source: AIpwx4/e8lbpIrJ640jh2W90YUWIWiBauc8N+K7u71HDE1j6qxUresOJ3DrHE+Smh8Kew/tDmGfP
+ARC-Seal: i=1; a=rsa-sha256; t=1524406503; cv=none;
         d=google.com; s=arc-20160816;
-        b=GCxlo0kxPfDqa7CjCseTE1dNeHHPcS/RlSu+G3KcjVwER51ANYluiqbF9Ps3M9HG74
-         4TNeXIQ2buOdliFB4IODhJMyQEmMxia1kid04ZiDebLuc+NIlrsIuhnQ6b71uNmofBfd
-         tqXKOkLhswX/ggof7woB5/HO5MhTVTVj9UUDaEc0/j/JFT7umk6GN81y62Dg/VIASWvY
-         IFx8Y39wslyN8tt9RawCe4oyJA8yGnWTForhwYmkiWXeggrW0U+ifidyRRPQ+EJLrNiN
-         R7/c+vOr6b0SI9bXw3n6GQuoijkxsCg/3OnYBC44/ODwEFKD5FQKmpfrImV1cJqnw81B
-         vnpA==
+        b=FCArA/yW6Gb2+6J0hNB6TRb+lbd8WHH+3FlAz4J08RMdoWAm3agSQFWUh7bgFi5pLT
+         VzGa9/qmamCDm9XcjbXH96KxKo8gTJAbAtKmVHfMPSex0LsL8LshVHTI8lZuDOiYQ+/E
+         1WOUq81EazwZd5JvoT5t1gJz0/Ac1QQxlnOhtMCUbzRE5oCGgWBVIFykgV2l4EcIxW7p
+         3SZ76BU6jHSmccj9ncTDlJJMR7K9du9P+TFILuFvtsw/qEFml3FWOpyN3isNChNpGt29
+         RniQpQMpboEfv39aS5uMY90lPS3mZzekTZpUcWl6tuNrH7TsMKqtltg2x1MUQXLNEOCt
+         nn1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tmFjeXqPC/L9/uwA6oG5Ze8sf51ZXMHHldVaj2XM5l0=;
-        b=X+qVc89NA5ThUKf1x6H1hlAPrDmSfX98x2K/t4e1QGiU8Z9izHYua9COUOHeJfInWc
-         3KHxv77+vf+Hq3O9pIhJjVdkLq108aJ1LHkZZ1522JmlDqJHAd/VckxxfrPPBXLw+Rx+
-         rVzeUzqQAZzskV/RWKDv3DMPilMsKq24zmgBcDuvemzNTIK1faTNTptIhSOv9+1E6zHh
-         XoxL5RbbVxAi3RgkEVhCh4xVmBO7ntDIj3VQgOwQJqf/SLZa35FV5LRkDL7T0BDocfbi
-         2SLn9P8+dfiZTGQ6mY04/z6YSuK6u8PpbU0rj9CmITVYyLRABXNOFNN87ryQ5Wc4gM22
-         Dm3A==
+        bh=nhKpxgPZu7JCDn6QVlI2n+nneFA85hj536zuNKH2NSU=;
+        b=c/1NV3MfXWAwcCmDF8Er4hSBPF7mOx063Jt1SFGz5PxxANIEN3YiKnYK5yd8CHPuLf
+         Ow+HNaVKCuSDVxYqhYW2+Nb2hrSzM1zxQauVbSkyxwaLQ5TykI0vGi1+h1j5Pka89wQL
+         cty/wW2YPpVxOjHxr8B0JlQFpZ1/rWgWw9hgFUQYPg8GcN//7zweHdFNfzPp+8DPU142
+         yHjdhOmGGaLC4e82NCLYqY6rLaIETD/UeoY+P6jL9QJCZvlXubwev0YflmVakD/1ES7c
+         5Xz5jK69u0WNc7IuJ1GV21Z8vRtVqv9rOWwv+s22mFgPLhaLraOdgxwQS+gkAg7EaG0j
+         h5nw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	Jens Axboe <axboe@fb.com>,
-	Thierry Escande <thierry.escande@linaro.org>
-Subject: [PATCH 4.9 95/95] block/mq: fix potential deadlock during cpu hotplug
-Date: Sun, 22 Apr 2018 15:54:04 +0200
-Message-Id: <20180422135214.306911977@linuxfoundation.org>
+	Greg Thelen <gthelen@google.com>,
+	Wang Long <wanglong19@meituan.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Tejun Heo <tj@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.9 94/95] writeback: safer lock nesting
+Date: Sun, 22 Apr 2018 15:54:03 +0200
+Message-Id: <20180422135214.268025179@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -44,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598456076621805727?=
-X-GMAIL-MSGID: =?utf-8?q?1598456076621805727?=
+X-GMAIL-THRID: =?utf-8?q?1598455348272651439?=
+X-GMAIL-MSGID: =?utf-8?q?1598456073926265635?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,168 +56,278 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wanpeng Li <wanpeng.li@hotmail.com>
+From: Greg Thelen <gthelen@google.com>
 
-commit 51d638b1f56a0bfd9219800620994794a1a2b219 upstream.
+commit 2e898e4c0a3897ccd434adac5abb8330194f527b upstream.
 
-This can be triggered by hot-unplug one cpu.
+lock_page_memcg()/unlock_page_memcg() use spin_lock_irqsave/restore() if
+the page's memcg is undergoing move accounting, which occurs when a
+process leaves its memcg for a new one that has
+memory.move_charge_at_immigrate set.
 
-======================================================
- [ INFO: possible circular locking dependency detected ]
- 4.11.0+ #17 Not tainted
- -------------------------------------------------------
- step_after_susp/2640 is trying to acquire lock:
-  (all_q_mutex){+.+...}, at: [<ffffffffb33f95b8>] blk_mq_queue_reinit_work+0x18/0x110
+unlocked_inode_to_wb_begin,end() use spin_lock_irq/spin_unlock_irq() if
+the given inode is switching writeback domains.  Switches occur when
+enough writes are issued from a new domain.
 
- but task is already holding lock:
-  (cpu_hotplug.lock){+.+.+.}, at: [<ffffffffb306d04f>] cpu_hotplug_begin+0x7f/0xe0
+This existing pattern is thus suspicious:
+    lock_page_memcg(page);
+    unlocked_inode_to_wb_begin(inode, &locked);
+    ...
+    unlocked_inode_to_wb_end(inode, locked);
+    unlock_page_memcg(page);
 
- which lock already depends on the new lock.
+If both inode switch and process memcg migration are both in-flight then
+unlocked_inode_to_wb_end() will unconditionally enable interrupts while
+still holding the lock_page_memcg() irq spinlock.  This suggests the
+possibility of deadlock if an interrupt occurs before unlock_page_memcg().
 
- the existing dependency chain (in reverse order) is:
+    truncate
+    __cancel_dirty_page
+    lock_page_memcg
+    unlocked_inode_to_wb_begin
+    unlocked_inode_to_wb_end
+    <interrupts mistakenly enabled>
+                                    <interrupt>
+                                    end_page_writeback
+                                    test_clear_page_writeback
+                                    lock_page_memcg
+                                    <deadlock>
+    unlock_page_memcg
 
- -> #1 (cpu_hotplug.lock){+.+.+.}:
-        lock_acquire+0x11c/0x230
-        __mutex_lock+0x92/0x990
-        mutex_lock_nested+0x1b/0x20
-        get_online_cpus+0x64/0x80
-        blk_mq_init_allocated_queue+0x3a0/0x4e0
-        blk_mq_init_queue+0x3a/0x60
-        loop_add+0xe5/0x280
-        loop_init+0x124/0x177
-        do_one_initcall+0x53/0x1c0
-        kernel_init_freeable+0x1e3/0x27f
-        kernel_init+0xe/0x100
-        ret_from_fork+0x31/0x40
+Due to configuration limitations this deadlock is not currently possible
+because we don't mix cgroup writeback (a cgroupv2 feature) and
+memory.move_charge_at_immigrate (a cgroupv1 feature).
 
- -> #0 (all_q_mutex){+.+...}:
-        __lock_acquire+0x189a/0x18a0
-        lock_acquire+0x11c/0x230
-        __mutex_lock+0x92/0x990
-        mutex_lock_nested+0x1b/0x20
-        blk_mq_queue_reinit_work+0x18/0x110
-        blk_mq_queue_reinit_dead+0x1c/0x20
-        cpuhp_invoke_callback+0x1f2/0x810
-        cpuhp_down_callbacks+0x42/0x80
-        _cpu_down+0xb2/0xe0
-        freeze_secondary_cpus+0xb6/0x390
-        suspend_devices_and_enter+0x3b3/0xa40
-        pm_suspend+0x129/0x490
-        state_store+0x82/0xf0
-        kobj_attr_store+0xf/0x20
-        sysfs_kf_write+0x45/0x60
-        kernfs_fop_write+0x135/0x1c0
-        __vfs_write+0x37/0x160
-        vfs_write+0xcd/0x1d0
-        SyS_write+0x58/0xc0
-        do_syscall_64+0x8f/0x710
-        return_from_SYSCALL_64+0x0/0x7a
+If the kernel is hacked to always claim inode switching and memcg
+moving_account, then this script triggers lockup in less than a minute:
 
- other info that might help us debug this:
+  cd /mnt/cgroup/memory
+  mkdir a b
+  echo 1 > a/memory.move_charge_at_immigrate
+  echo 1 > b/memory.move_charge_at_immigrate
+  (
+    echo $BASHPID > a/cgroup.procs
+    while true; do
+      dd if=/dev/zero of=/mnt/big bs=1M count=256
+    done
+  ) &
+  while true; do
+    sync
+  done &
+  sleep 1h &
+  SLEEP=$!
+  while true; do
+    echo $SLEEP > a/cgroup.procs
+    echo $SLEEP > b/cgroup.procs
+  done
 
-  Possible unsafe locking scenario:
+The deadlock does not seem possible, so it's debatable if there's any
+reason to modify the kernel.  I suggest we should to prevent future
+surprises.  And Wang Long said "this deadlock occurs three times in our
+environment", so there's more reason to apply this, even to stable.
+Stable 4.4 has minor conflicts applying this patch.  For a clean 4.4 patch
+see "[PATCH for-4.4] writeback: safer lock nesting"
+https://lkml.org/lkml/2018/4/11/146
 
-        CPU0                    CPU1
-        ----                    ----
-   lock(cpu_hotplug.lock);
-                                lock(all_q_mutex);
-                                lock(cpu_hotplug.lock);
-   lock(all_q_mutex);
+Wang Long said "this deadlock occurs three times in our environment"
 
-  *** DEADLOCK ***
-
- 8 locks held by step_after_susp/2640:
-  #0:  (sb_writers#6){.+.+.+}, at: [<ffffffffb3244aed>] vfs_write+0x1ad/0x1d0
-  #1:  (&of->mutex){+.+.+.}, at: [<ffffffffb32d3a51>] kernfs_fop_write+0x101/0x1c0
-  #2:  (s_active#166){.+.+.+}, at: [<ffffffffb32d3a59>] kernfs_fop_write+0x109/0x1c0
-  #3:  (pm_mutex){+.+...}, at: [<ffffffffb30d2ecd>] pm_suspend+0x21d/0x490
-  #4:  (acpi_scan_lock){+.+.+.}, at: [<ffffffffb34dc3d7>] acpi_scan_lock_acquire+0x17/0x20
-  #5:  (cpu_add_remove_lock){+.+.+.}, at: [<ffffffffb306d6d7>] freeze_secondary_cpus+0x27/0x390
-  #6:  (cpu_hotplug.dep_map){++++++}, at: [<ffffffffb306cfd5>] cpu_hotplug_begin+0x5/0xe0
-  #7:  (cpu_hotplug.lock){+.+.+.}, at: [<ffffffffb306d04f>] cpu_hotplug_begin+0x7f/0xe0
-
- stack backtrace:
- CPU: 3 PID: 2640 Comm: step_after_susp Not tainted 4.11.0+ #17
- Hardware name: Dell Inc. OptiPlex 7040/0JCTF8, BIOS 1.4.9 09/12/2016
- Call Trace:
-  dump_stack+0x99/0xce
-  print_circular_bug+0x1fa/0x270
-  __lock_acquire+0x189a/0x18a0
-  lock_acquire+0x11c/0x230
-  ? lock_acquire+0x11c/0x230
-  ? blk_mq_queue_reinit_work+0x18/0x110
-  ? blk_mq_queue_reinit_work+0x18/0x110
-  __mutex_lock+0x92/0x990
-  ? blk_mq_queue_reinit_work+0x18/0x110
-  ? kmem_cache_free+0x2cb/0x330
-  ? anon_transport_class_unregister+0x20/0x20
-  ? blk_mq_queue_reinit_work+0x110/0x110
-  mutex_lock_nested+0x1b/0x20
-  ? mutex_lock_nested+0x1b/0x20
-  blk_mq_queue_reinit_work+0x18/0x110
-  blk_mq_queue_reinit_dead+0x1c/0x20
-  cpuhp_invoke_callback+0x1f2/0x810
-  ? __flow_cache_shrink+0x160/0x160
-  cpuhp_down_callbacks+0x42/0x80
-  _cpu_down+0xb2/0xe0
-  freeze_secondary_cpus+0xb6/0x390
-  suspend_devices_and_enter+0x3b3/0xa40
-  ? rcu_read_lock_sched_held+0x79/0x80
-  pm_suspend+0x129/0x490
-  state_store+0x82/0xf0
-  kobj_attr_store+0xf/0x20
-  sysfs_kf_write+0x45/0x60
-  kernfs_fop_write+0x135/0x1c0
-  __vfs_write+0x37/0x160
-  ? rcu_read_lock_sched_held+0x79/0x80
-  ? rcu_sync_lockdep_assert+0x2f/0x60
-  ? __sb_start_write+0xd9/0x1c0
-  ? vfs_write+0x1ad/0x1d0
-  vfs_write+0xcd/0x1d0
-  SyS_write+0x58/0xc0
-  ? rcu_read_lock_sched_held+0x79/0x80
-  do_syscall_64+0x8f/0x710
-  ? trace_hardirqs_on_thunk+0x1a/0x1c
-  entry_SYSCALL64_slow_path+0x25/0x25
-
-The cpu hotplug path will hold cpu_hotplug.lock and then reinit all exiting
-queues for blk mq w/ all_q_mutex, however, blk_mq_init_allocated_queue() will
-contend these two locks in the inversion order. This is due to commit eabe06595d62
-(blk/mq: Cure cpu hotplug lock inversion), it fixes a cpu hotplug lock inversion
-issue because of hotplug rework, however the hotplug rework is still work-in-progress
-and lives in a -tip branch and mainline cannot yet trigger that splat. The commit
-breaks the linus's tree in the merge window, so this patch reverts the lock order
-and avoids to splat linus's tree.
-
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Signed-off-by: Jens Axboe <axboe@fb.com>
-Cc: Thierry Escande <thierry.escande@linaro.org>
+[gthelen@google.com: v4]
+  Link: http://lkml.kernel.org/r/20180411084653.254724-1-gthelen@google.com
+[akpm@linux-foundation.org: comment tweaks, struct initialization simplification]
+Change-Id: Ibb773e8045852978f6207074491d262f1b3fb613
+Link: http://lkml.kernel.org/r/20180410005908.167976-1-gthelen@google.com
+Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
+Signed-off-by: Greg Thelen <gthelen@google.com>
+Reported-by: Wang Long <wanglong19@meituan.com>
+Acked-by: Wang Long <wanglong19@meituan.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: <stable@vger.kernel.org>	[v4.2+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[natechancellor: Adjust context due to lack of b93b016313b3b]
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/blk-mq.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/fs-writeback.c                |    7 ++++---
+ include/linux/backing-dev-defs.h |    5 +++++
+ include/linux/backing-dev.h      |   30 ++++++++++++++++--------------
+ mm/page-writeback.c              |   18 +++++++++---------
+ 4 files changed, 34 insertions(+), 26 deletions(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2019,15 +2019,15 @@ struct request_queue *blk_mq_init_alloca
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -745,11 +745,12 @@ int inode_congested(struct inode *inode,
+ 	 */
+ 	if (inode && inode_to_wb_is_valid(inode)) {
+ 		struct bdi_writeback *wb;
+-		bool locked, congested;
++		struct wb_lock_cookie lock_cookie = {};
++		bool congested;
  
- 	blk_mq_init_cpu_queues(q, set->nr_hw_queues);
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &lock_cookie);
+ 		congested = wb_congested(wb, cong_bits);
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &lock_cookie);
+ 		return congested;
+ 	}
  
--	mutex_lock(&all_q_mutex);
- 	get_online_cpus();
-+	mutex_lock(&all_q_mutex);
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -191,6 +191,11 @@ static inline void set_bdi_congested(str
+ 	set_wb_congested(bdi->wb.congested, sync);
+ }
  
- 	list_add_tail(&q->all_q_node, &all_q_list);
- 	blk_mq_add_queue_tag_set(set, q);
- 	blk_mq_map_swqueue(q, cpu_online_mask);
++struct wb_lock_cookie {
++	bool locked;
++	unsigned long flags;
++};
++
+ #ifdef CONFIG_CGROUP_WRITEBACK
  
--	put_online_cpus();
- 	mutex_unlock(&all_q_mutex);
-+	put_online_cpus();
+ /**
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -366,7 +366,7 @@ static inline struct bdi_writeback *inod
+ /**
+  * unlocked_inode_to_wb_begin - begin unlocked inode wb access transaction
+  * @inode: target inode
+- * @lockedp: temp bool output param, to be passed to the end function
++ * @cookie: output param, to be passed to the end function
+  *
+  * The caller wants to access the wb associated with @inode but isn't
+  * holding inode->i_lock, mapping->tree_lock or wb->list_lock.  This
+@@ -374,12 +374,12 @@ static inline struct bdi_writeback *inod
+  * association doesn't change until the transaction is finished with
+  * unlocked_inode_to_wb_end().
+  *
+- * The caller must call unlocked_inode_to_wb_end() with *@lockdep
+- * afterwards and can't sleep during transaction.  IRQ may or may not be
+- * disabled on return.
++ * The caller must call unlocked_inode_to_wb_end() with *@cookie afterwards and
++ * can't sleep during the transaction.  IRQs may or may not be disabled on
++ * return.
+  */
+ static inline struct bdi_writeback *
+-unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
++unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+ {
+ 	rcu_read_lock();
  
- 	return q;
+@@ -387,10 +387,10 @@ unlocked_inode_to_wb_begin(struct inode
+ 	 * Paired with store_release in inode_switch_wb_work_fn() and
+ 	 * ensures that we see the new wb if we see cleared I_WB_SWITCH.
+ 	 */
+-	*lockedp = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
++	cookie->locked = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
  
+-	if (unlikely(*lockedp))
+-		spin_lock_irq(&inode->i_mapping->tree_lock);
++	if (unlikely(cookie->locked))
++		spin_lock_irqsave(&inode->i_mapping->tree_lock, cookie->flags);
+ 
+ 	/*
+ 	 * Protected by either !I_WB_SWITCH + rcu_read_lock() or tree_lock.
+@@ -402,12 +402,13 @@ unlocked_inode_to_wb_begin(struct inode
+ /**
+  * unlocked_inode_to_wb_end - end inode wb access transaction
+  * @inode: target inode
+- * @locked: *@lockedp from unlocked_inode_to_wb_begin()
++ * @cookie: @cookie from unlocked_inode_to_wb_begin()
+  */
+-static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
++static inline void unlocked_inode_to_wb_end(struct inode *inode,
++					    struct wb_lock_cookie *cookie)
+ {
+-	if (unlikely(locked))
+-		spin_unlock_irq(&inode->i_mapping->tree_lock);
++	if (unlikely(cookie->locked))
++		spin_unlock_irqrestore(&inode->i_mapping->tree_lock, cookie->flags);
+ 
+ 	rcu_read_unlock();
+ }
+@@ -454,12 +455,13 @@ static inline struct bdi_writeback *inod
+ }
+ 
+ static inline struct bdi_writeback *
+-unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
++unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+ {
+ 	return inode_to_wb(inode);
+ }
+ 
+-static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
++static inline void unlocked_inode_to_wb_end(struct inode *inode,
++					    struct wb_lock_cookie *cookie)
+ {
+ }
+ 
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2506,13 +2506,13 @@ void account_page_redirty(struct page *p
+ 	if (mapping && mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct bdi_writeback *wb;
+-		bool locked;
++		struct wb_lock_cookie cookie = {};
+ 
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 		current->nr_dirtied--;
+ 		dec_node_page_state(page, NR_DIRTIED);
+ 		dec_wb_stat(wb, WB_DIRTIED);
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &cookie);
+ 	}
+ }
+ EXPORT_SYMBOL(account_page_redirty);
+@@ -2618,15 +2618,15 @@ void cancel_dirty_page(struct page *page
+ 	if (mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct bdi_writeback *wb;
+-		bool locked;
++		struct wb_lock_cookie cookie = {};
+ 
+ 		lock_page_memcg(page);
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 
+ 		if (TestClearPageDirty(page))
+ 			account_page_cleaned(page, mapping, wb);
+ 
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &cookie);
+ 		unlock_page_memcg(page);
+ 	} else {
+ 		ClearPageDirty(page);
+@@ -2658,7 +2658,7 @@ int clear_page_dirty_for_io(struct page
+ 	if (mapping && mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct bdi_writeback *wb;
+-		bool locked;
++		struct wb_lock_cookie cookie = {};
+ 
+ 		/*
+ 		 * Yes, Virginia, this is indeed insane.
+@@ -2695,7 +2695,7 @@ int clear_page_dirty_for_io(struct page
+ 		 * always locked coming in here, so we get the desired
+ 		 * exclusion.
+ 		 */
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 		if (TestClearPageDirty(page)) {
+ 			mem_cgroup_dec_page_stat(page, MEM_CGROUP_STAT_DIRTY);
+ 			dec_node_page_state(page, NR_FILE_DIRTY);
+@@ -2703,7 +2703,7 @@ int clear_page_dirty_for_io(struct page
+ 			dec_wb_stat(wb, WB_RECLAIMABLE);
+ 			ret = 1;
+ 		}
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &cookie);
+ 		return ret;
+ 	}
+ 	return TestClearPageDirty(page);
