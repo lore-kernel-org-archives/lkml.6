@@ -1,36 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49hd6qOZdX0kVrjkVGbJ5/S+7TLV8wq7Qq/y0xbvZnhQa7PhuW6rKeUOlPb1yc4rD84d8IB
-ARC-Seal: i=1; a=rsa-sha256; t=1524406911; cv=none;
-        d=google.com; s=arc-20160816;
-        b=NByQGIgyASipQ6WW0pHH1boPzuP1TSmO5UOYhJsYSf5xHqwn8WCZWSh4T3bLoVLeFo
-         8+NE9IvNKGbtD/yiJuJFNu6D2dbZ43GZAfTTzXq3Gj518k+29NT9+BAx74Xlz1oRxVvA
-         4MCMSQMBkeXtPScsrrmAlRNWDfkB6Bu3easxiBGJGJx/iDstAXOKfhExhy+lc1Q2z5Nm
-         BoKIwliRs/Ahe8VPIVEfcE0DjDyoMXWvJn29lulOVQ8feinQWqxHMzqA+cAbE9N6nx1i
-         cNYcAAqwCOW0wN50Gled4n/oWdJ4yq3jc2w45sI8E7sSq2lvXYTkTPBJVmfILrvNlbWn
-         UJng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=7kTnDUQawUkUl3qARt9NYIH1mfe/lAgS/IAwCcDPKRE=;
-        b=hVM6npb3CMe7KR1nLZVjEJix0gAydfqze/IveWIUuhyeXmTVRrpfhDRdNmNCBR+bu1
-         g4k93n4Vjx4D6gEu+tJrPmWvpkZ8wtiB53ompeEig0/Aoo2yyOEIph71RpIiwtlUdb9t
-         4cGwLNLRIzaRPTzBKAqVqAYSHMk9CAyyB9q3f/U3OTbHxnIrC8JnOYHwQuQroTEgT/v8
-         nMBj8X5zOSPwkLYLDiSTruXKpo69Sfa0pLzrK/gLwNCRAZD6QCz45xrfZO5iuqBAnxAj
-         kw6o3A7bI9LkEyPVvFNU6yJKRQ//bcwoEyCNyCz/VaF0z9BjqerXbqN7sh8kQpwuLDjN
-         UgMA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2651967-1524406910-8-5261846103764434825
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enfrro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524406910; b=AVmvNYfi6KJtYeQA9yvToK9biMUZdDlN/zy7QrIfMNl4YGWreB
+    i3bvDs4SV8IMQe7EZQEtHoxS0TfVz9JvJBfr1fu4RSmvkJzzkO0YqnKFHdAXltgv
+    ePxG43wSZc0V2Nc2FU7jZwv+YTGiSKZye2OBHQBxwTtmxOmagSX3D6beQuEBzYyB
+    QqsgT39sqqM7tAz4pzvEF1mnYjgZOEpjA7xCsMihpfUKgWh1Deg2ofsXe5t92GB5
+    /RMYZENwI/CoOnyvK2/pI0P8Z3OENXMqRYFr2q+O2fcAJzKN9seR5mdCbeGAlWM7
+    9xDOXRe75VEHOsGUUdAY6NKmskxxcVSm2ASA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524406910; bh=2q/eBLDsTKLT76xBZm3K9VuJj/7wUN
+    lTXB9EtiYK5WU=; b=YtiZbCyYzilTjZuxMStfg73NyjQD5u0N/0UsniQP8ThRzv
+    0d7/A8PlPoLiN/vDcqmxuomjw0pIdM+zK0Uyq442ZldzhAAschRG4lav6p8ngdhE
+    kAuPxUFgw6qGTIE9WpTi16CvMMehjI9kNbx2PH69fU93qNf6mHz748x3u0w81Wfb
+    Brp5edcaLkN8ic6DsYkDhkN9uDdTom3dE03qgrLMMclDI4cHVF/v5zaSt0D6hJiX
+    8Op/zux2Y96KJsh14Ztg16k2gyyHH+y+7u05xDbNDSozOBfnjbvNGv28bDwYhFst
+    tCs0MIvmUYQaLw8DlyqtTibFPlyih8w3yHOzHhIg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBcOLZqjADmh/jHVYxBKa4cbH2+MS/mXag48AWhx0YsNpQtcAYKV/wRFIzEVgyc0h0jJqq9vTeJCPjZO+H+kOkcug7+MC5U+XL+akmEP/RJOWlouWQ7b
+    a1iJfssX/eKR90WAV3VBlJN3qD0/uJKZ6SlRRzmgLUfVsxbE7pvrOurMeJMvXWNn1tIIQZt8mmteBcmWpsgMeHcdZgWawwKYErs0la9y8GNBx02tV/I9HtzL
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=drOt6m5kAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=SGWSbA6nldhbN5OcOtoA:9
+    a=glA3qBdtw17n8kDT:21 a=xAZLZ00CKbJvsoW8:21 a=QEXdDO2ut3YA:10
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1757444AbeDVOVs (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:21:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33038 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756330AbeDVOVp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:21:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	James Kelly <jamespeterkelly@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 3.18 22/52] ASoC: ssm2602: Replace reg_default_raw with reg_default
-Date: Sun, 22 Apr 2018 15:53:55 +0200
-Message-Id: <20180422135316.306919125@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 3.18 47/52] jffs2_kill_sb(): deal with failed allocations
+Date: Sun, 22 Apr 2018 15:54:20 +0200
+Message-Id: <20180422135317.515847428@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -38,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454978890490474?=
-X-GMAIL-MSGID: =?utf-8?q?1598456501238850220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,75 +92,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Kelly <jamespeterkelly@gmail.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit a01df75ce737951ad13a08d101306e88c3f57cb2 upstream.
+commit c66b23c2840446a82c389e4cb1a12eb2a71fa2e4 upstream.
 
-SSM2602 driver is broken on recent kernels (at least
-since 4.9). User space applications such as amixer or
-alsamixer get EIO when attempting to access codec
-controls via the relevant IOCTLs.
+jffs2_fill_super() might fail to allocate jffs2_sb_info;
+jffs2_kill_sb() must survive that.
 
-Root cause of these failures is the regcache_hw_init
-function in drivers/base/regmap/regcache.c, which
-prevents regmap cache initalization from the
-reg_defaults_raw element of the regmap_config structure
-when registers are write only. It also disables the
-regmap cache entirely when all registers are write only
-or volatile as is the case for the SSM2602 driver.
-
-Using the reg_defaults element of the regmap_config
-structure rather than the reg_defaults_raw element to
-initalize the regmap cache avoids the logic in the
-regcache_hw_init function entirely. It also makes this
-driver consistent with other ASoC codec drivers, as
-this driver was the ONLY codec driver that used the
-reg_defaults_raw element to initalize the cache.
-
-Tested on Digilent Zybo Z7 development board which has
-a SSM2603 codec chip connected to a Xilinx Zynq SoC.
-
-Signed-off-by: James Kelly <jamespeterkelly@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Cc: stable@kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/ssm2602.c |   19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ fs/jffs2/super.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/codecs/ssm2602.c
-+++ b/sound/soc/codecs/ssm2602.c
-@@ -54,10 +54,17 @@ struct ssm2602_priv {
-  * using 2 wire for device control, so we cache them instead.
-  * There is no point in caching the reset register
-  */
--static const u16 ssm2602_reg[SSM2602_CACHEREGNUM] = {
--	0x0097, 0x0097, 0x0079, 0x0079,
--	0x000a, 0x0008, 0x009f, 0x000a,
--	0x0000, 0x0000
-+static const struct reg_default ssm2602_reg[SSM2602_CACHEREGNUM] = {
-+	{ .reg = 0x00, .def = 0x0097 },
-+	{ .reg = 0x01, .def = 0x0097 },
-+	{ .reg = 0x02, .def = 0x0079 },
-+	{ .reg = 0x03, .def = 0x0079 },
-+	{ .reg = 0x04, .def = 0x000a },
-+	{ .reg = 0x05, .def = 0x0008 },
-+	{ .reg = 0x06, .def = 0x009f },
-+	{ .reg = 0x07, .def = 0x000a },
-+	{ .reg = 0x08, .def = 0x0000 },
-+	{ .reg = 0x09, .def = 0x0000 }
- };
- 
- 
-@@ -620,8 +627,8 @@ const struct regmap_config ssm2602_regma
- 	.volatile_reg = ssm2602_register_volatile,
- 
- 	.cache_type = REGCACHE_RBTREE,
--	.reg_defaults_raw = ssm2602_reg,
--	.num_reg_defaults_raw = ARRAY_SIZE(ssm2602_reg),
-+	.reg_defaults = ssm2602_reg,
-+	.num_reg_defaults = ARRAY_SIZE(ssm2602_reg),
- };
- EXPORT_SYMBOL_GPL(ssm2602_regmap_config);
- 
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -345,7 +345,7 @@ static void jffs2_put_super (struct supe
+ static void jffs2_kill_sb(struct super_block *sb)
+ {
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+-	if (!(sb->s_flags & MS_RDONLY))
++	if (c && !(sb->s_flags & MS_RDONLY))
+ 		jffs2_stop_garbage_collect_thread(c);
+ 	kill_mtd_super(sb);
+ 	kfree(c);
