@@ -1,36 +1,37 @@
-Return-Path: <kernel-hardening-return-13081-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AB8JxZqIQ9aK4NK1W+Jgwf8ZetkmcArljBkNj2YjZ+ARX3NagdMa0I0KX+ObzF9EkIJQmlpjv/iG
-ARC-Seal: i=1; a=rsa-sha256; t=1524414752; cv=none;
+Return-Path: <kernel-hardening-return-13083-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AB8JxZqIbCJpEXH+xG6vXffcLmRmPASdRPTUZv0laa2ngFX4n8NznQgj00ZZoCH4+fLw6X9bnJVj
+ARC-Seal: i=1; a=rsa-sha256; t=1524414761; cv=none;
         d=google.com; s=arc-20160816;
-        b=c0ov+K0nqvXuiaOk9LEbOKeML5mje+YaDi379a6T0vy0hHyDM7lpR6u2xPLCTzZqwL
-         fOLPDujvdJpJE6G5rEIxu+uIHdkOQ1t2OaB/cexYbj5zasgBsjxlkQ2BsGfCErIz1DBi
-         ecGctAC2ib0XjnK1gWYAeYx7kDf4G6ds5fUYDykep4zvOyOfZmQpMW6gf3b4HhJrKiyF
-         UrxRUqB1AOVy2urFI5mdj62MqVBvB9pdny7qLeeegcw2ZgnNpRixGDwlpCvXVrQls5R2
-         ZF8QL67U1Jq5MEvMlXdLsu5OvnhzDI8o5rpznH3b3jwzn3tuV2ZNK54C21RcBorkdMHI
-         pQ9A==
+        b=cS+0W/EU6JHFRZfAMP0l67CzZg9cvlKHbqZ/rKQQ+4wWyVCVVyKqLgEC8hKFkt9PiU
+         q1mkmlmdksUr4VUsK9R6J05tGqGPCUK6YU2n37zTfNvutCM97M9Uo+OorRUiWRjNTYOM
+         /dg6lYmnP42gWlzcFgMQN0X4wy0v/VuYdYAvefMsuMlXk4YcRx+XHhyq17fyLBqNuF7R
+         JhFsM59XU7aJRDekzy/PW/z1OvAys+WJp6nsXKVe35P5vPQTtjySYgDobKGxWPsOv7Gu
+         ma1+BoGJLSECJC7w4G2j/Lv4UXVxrB0Qo8kFj5uYY3mqB4VRawYdLLCvCEbUBnme7+O3
+         OXfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:cc:to:from:date:user-agent:message-id:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=Krv/D7SloV2cYwVf2ix4WpJsC7yVJXf32Y28QHwQ1ig=;
-        b=03viKnbOS+tNRdgFdbDdchXIa2mdhnJOaGjy7n11Vd4gvGkwKwhU+pD7hAFJYPHl39
-         ZsNlnaX/nXtxQE26yHsFkMiT3SLzfshb7kxQICsMomwX7cr8wSC6OvhgFJMk7no5JdXw
-         i4xGNQg73LxL9xULiKV6gvm/ksmxW7RfgaPlVmjOzfF/SaOZzKxN5rzNVDyqnW/Rwsht
-         uT7zkuh03vopjuEErrbOrWPJwZUV/Nbaaf9admncTnzeKQrifBoCAV4nKnD5qY74Zs6w
-         tC1jX9BxmNSd/ha/YJk6AJYY4PL8sd6SjFsjMJJ9ywoyMu8URtzZKid8DDffPympJYtu
-         4prQ==
+        h=content-disposition:mime-version:references:subject:cc:to:from:date
+         :user-agent:message-id:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=P0WZPMRwWKi0MHdD27L8D1kXkXgibnXtggFnWAIlEnw=;
+        b=q6RLqgL/ndDXlwZaJqF4C9QAZ3HNPY/zkaUCSvI9XLHwNOBeyYisoYs5GVvzcJ3vfP
+         DoFUh84XSa/K0ZBaJT1FGG3ooBFdoldFjUwVu0vGZVtLYcnsYV+CCVSfoyv3MhDjFfv1
+         5fsUFyQ7siFW3xy51HLB+5R5EvYCnaX70U2+369ZfGuvMMiC6d7+Ajl5FqT9N0gYGQG+
+         Li+Vcc5nr1cdaqF1KOoOCT6MA9Epr6RQczu0GjGJLlenkwyE8ApRJahfCBpuBPgBJ8mk
+         R34TfXm7uuZyOVniJLDqRQa9oV0r6YgYJm0kxfm2gS81Pvm8XcO6xZxhqUqMDWEFNxkY
+         1hQg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13081-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13081-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13083-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13083-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13081-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13081-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13083-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13083-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Message-Id: <20180422162345.004292133@linutronix.de>
+Message-Id: <20180422162512.363154748@linutronix.de>
 User-Agent: quilt/0.63-1
-Date: Sun, 22 Apr 2018 18:23:45 +0200
+Date: Sun, 22 Apr 2018 18:23:46 +0200
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Kees Cook <keescook@chromium.org>,
@@ -41,57 +42,174 @@ Cc: Kees Cook <keescook@chromium.org>,
  Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
  Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
  Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
- Tony Luck <tony.luck@intel.com>
-Subject: [patch V3 00/10] rslib: Cleanup and VLA removal
+ Tony Luck <tony.luck@intel.com>, Neil Brown <neilb@suse.com>
+Subject: [patch V3 01/10] rslib: Add GFP aware init function
+References: <20180422162345.004292133@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=rslib--Add-GFP-aware-init-function.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598464722856567628?=
-X-GMAIL-MSGID: =?utf-8?q?1598464722856567628?=
+X-GMAIL-THRID: =?utf-8?q?1598464733406749436?=
+X-GMAIL-MSGID: =?utf-8?q?1598464733406749436?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Kees tried to get rid of the Variable Length Arrays in the Reed-Solomon
-library by replacing them with fixed length arrays on stack. Though they
-are rather large and Andrew did not fall in love with that solution.
+The rslib usage in dm/verity_fec is broken because init_rs() can nest in
+GFP_NOIO mempool allocations as init_rs() is invoked from the mempool alloc
+callback.
 
-This series addresses that in a different way by splitting the rs control
-structure up, so that each invocation of rs_init() returns a new instance
-in which the decoder buffers are allocated. The polynom tables which build
-the base for the RS codecs are still shareable between the instances to
-avoid large allocations and initializations of the same data over and over.
+Provide a variant which takes gfp_t flags as argument.
 
-The usage sites have been audited and fixed up where necessary to
-accomodate the decoder change which forbids parallel decoder invocation for
-a particular rs control instance to prevent buffer corruption.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Neil Brown <neilb@suse.com>
+---
+ include/linux/rslib.h           |   26 +++++++++++++++++++++++---
+ lib/reed_solomon/reed_solomon.c |   36 ++++++++++++++++++++----------------
+ 2 files changed, 43 insertions(+), 19 deletions(-)
 
-While at it the patch set tidies up the code and converts the related files
-over to use SPDX license identifiers.
-
-Changes since V2:
-
-   Provide a gfp aware variant of init_rs and use it in the alloc callback
-   of the dm/verity_fec rs_pool mempool allocations
-
-   Picked up Reviewed/Acked-by tags and fixed the subject line for the MTD
-   specific patch.
-
-Changes since V1:
-
-   Simplify error path in the diskonchip code and use the proper
-   function to free the decoder.
-
-As this spawns multiple subsystems it should either go through Andrews tree
-or Kees can route it with his other hardening stuff.
-
-Thanks,
-
-        tglx
-
-8<---------------
- drivers/md/dm-verity-fec.c        |    2 
- drivers/mtd/nand/raw/cafe_nand.c  |    7 -
- drivers/mtd/nand/raw/diskonchip.c |   67 +++++-----
- include/linux/rslib.h             |   71 +++++++----
- lib/reed_solomon/decode_rs.c      |   34 ++---
- lib/reed_solomon/encode_rs.c      |   15 --
- lib/reed_solomon/reed_solomon.c   |  233 ++++++++++++++++++++++----------------
- 7 files changed, 237 insertions(+), 192 deletions(-)
+--- a/include/linux/rslib.h
++++ b/include/linux/rslib.h
+@@ -77,10 +77,30 @@ int decode_rs16(struct rs_control *rs, u
+ #endif
+ 
+ /* Create or get a matching rs control structure */
+-struct rs_control *init_rs(int symsize, int gfpoly, int fcr, int prim,
+-			   int nroots);
++struct rs_control *init_rs_gfp(int symsize, int gfpoly, int fcr, int prim,
++			       int nroots, gfp_t gfp);
++
++/**
++ * init_rs - Create a RS control struct and initialize it
++ *  @symsize:	the symbol size (number of bits)
++ *  @gfpoly:	the extended Galois field generator polynomial coefficients,
++ *		with the 0th coefficient in the low order bit. The polynomial
++ *		must be primitive;
++ *  @fcr:	the first consecutive root of the rs code generator polynomial
++ *		in index form
++ *  @prim:	primitive element to generate polynomial roots
++ *  @nroots:	RS code generator polynomial degree (number of roots)
++ *
++ * Allocations use GFP_KERNEL.
++ */
++static inline struct rs_control *init_rs(int symsize, int gfpoly, int fcr,
++					 int prim, int nroots)
++{
++	return init_rs_gfp(symsize, gfpoly, fcr, prim, nroots, GFP_KERNEL);
++}
++
+ struct rs_control *init_rs_non_canonical(int symsize, int (*func)(int),
+-                                         int fcr, int prim, int nroots);
++					 int fcr, int prim, int nroots);
+ 
+ /* Release a rs control structure */
+ void free_rs(struct rs_control *rs);
+--- a/lib/reed_solomon/reed_solomon.c
++++ b/lib/reed_solomon/reed_solomon.c
+@@ -59,19 +59,20 @@ static DEFINE_MUTEX(rslistlock);
+  * @fcr:	first root of RS code generator polynomial, index form
+  * @prim:	primitive element to generate polynomial roots
+  * @nroots:	RS code generator polynomial degree (number of roots)
++ * @gfp:	GFP_ flags for allocations
+  *
+  * Allocate a control structure and the polynom arrays for faster
+  * en/decoding. Fill the arrays according to the given parameters.
+  */
+ static struct rs_control *rs_init(int symsize, int gfpoly, int (*gffunc)(int),
+-                                  int fcr, int prim, int nroots)
++				  int fcr, int prim, int nroots, gfp_t gfp)
+ {
+ 	struct rs_control *rs;
+ 	int i, j, sr, root, iprim;
+ 
+ 	/* Allocate the control structure */
+-	rs = kmalloc(sizeof (struct rs_control), GFP_KERNEL);
+-	if (rs == NULL)
++	rs = kmalloc(sizeof(*rs), gfp);
++	if (!rs)
+ 		return NULL;
+ 
+ 	INIT_LIST_HEAD(&rs->list);
+@@ -85,15 +86,15 @@ static struct rs_control *rs_init(int sy
+ 	rs->gffunc = gffunc;
+ 
+ 	/* Allocate the arrays */
+-	rs->alpha_to = kmalloc(sizeof(uint16_t) * (rs->nn + 1), GFP_KERNEL);
++	rs->alpha_to = kmalloc(sizeof(uint16_t) * (rs->nn + 1), gfp);
+ 	if (rs->alpha_to == NULL)
+ 		goto errrs;
+ 
+-	rs->index_of = kmalloc(sizeof(uint16_t) * (rs->nn + 1), GFP_KERNEL);
++	rs->index_of = kmalloc(sizeof(uint16_t) * (rs->nn + 1), gfp);
+ 	if (rs->index_of == NULL)
+ 		goto erralp;
+ 
+-	rs->genpoly = kmalloc(sizeof(uint16_t) * (rs->nroots + 1), GFP_KERNEL);
++	rs->genpoly = kmalloc(sizeof(uint16_t) * (rs->nroots + 1), gfp);
+ 	if(rs->genpoly == NULL)
+ 		goto erridx;
+ 
+@@ -195,13 +196,14 @@ void free_rs(struct rs_control *rs)
+  *		in index form
+  *  @prim:	primitive element to generate polynomial roots
+  *  @nroots:	RS code generator polynomial degree (number of roots)
++ *  @gfp:	GFP_ flags for allocations
+  */
+ static struct rs_control *init_rs_internal(int symsize, int gfpoly,
+-                                           int (*gffunc)(int), int fcr,
+-                                           int prim, int nroots)
++					   int (*gffunc)(int), int fcr,
++					   int prim, int nroots, gfp_t gfp)
+ {
+-	struct list_head	*tmp;
+-	struct rs_control	*rs;
++	struct list_head *tmp;
++	struct rs_control *rs;
+ 
+ 	/* Sanity checks */
+ 	if (symsize < 1)
+@@ -236,7 +238,7 @@ static struct rs_control *init_rs_intern
+ 	}
+ 
+ 	/* Create a new one */
+-	rs = rs_init(symsize, gfpoly, gffunc, fcr, prim, nroots);
++	rs = rs_init(symsize, gfpoly, gffunc, fcr, prim, nroots, gfp);
+ 	if (rs) {
+ 		rs->users = 1;
+ 		list_add(&rs->list, &rslist);
+@@ -247,7 +249,7 @@ static struct rs_control *init_rs_intern
+ }
+ 
+ /**
+- * init_rs - Find a matching or allocate a new rs control structure
++ * init_rs_gfp - Find a matching or allocate a new rs control structure
+  *  @symsize:	the symbol size (number of bits)
+  *  @gfpoly:	the extended Galois field generator polynomial coefficients,
+  *		with the 0th coefficient in the low order bit. The polynomial
+@@ -256,11 +258,12 @@ static struct rs_control *init_rs_intern
+  *		in index form
+  *  @prim:	primitive element to generate polynomial roots
+  *  @nroots:	RS code generator polynomial degree (number of roots)
++ *  @gfp:	GFP_ flags for allocations
+  */
+-struct rs_control *init_rs(int symsize, int gfpoly, int fcr, int prim,
+-                           int nroots)
++struct rs_control *init_rs_gfp(int symsize, int gfpoly, int fcr, int prim,
++			       int nroots, gfp_t gfp)
+ {
+-	return init_rs_internal(symsize, gfpoly, NULL, fcr, prim, nroots);
++	return init_rs_internal(symsize, gfpoly, NULL, fcr, prim, nroots, gfp);
+ }
+ 
+ /**
+@@ -279,7 +282,8 @@ struct rs_control *init_rs(int symsize,
+ struct rs_control *init_rs_non_canonical(int symsize, int (*gffunc)(int),
+                                          int fcr, int prim, int nroots)
+ {
+-	return init_rs_internal(symsize, 0, gffunc, fcr, prim, nroots);
++	return init_rs_internal(symsize, 0, gffunc, fcr, prim, nroots,
++				GFP_KERNEL);
+ }
+ 
+ #ifdef CONFIG_REED_SOLOMON_ENC8
