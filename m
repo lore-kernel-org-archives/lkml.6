@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/KaSt/xtbrZGAafl6kFbcBd8uCxYhfnCGRfgsoLJRLudDww/XK7h0jfq3m9/ci1J7R6ONh
-ARC-Seal: i=1; a=rsa-sha256; t=1524405931; cv=none;
+X-Google-Smtp-Source: AIpwx49bMV34bbbvnSjzJpK1FsCVZkwwyz3rCmEH4ZRCzkCWoKhbjnvumHfTgDP2FOOFvAAHWipW
+ARC-Seal: i=1; a=rsa-sha256; t=1524405927; cv=none;
         d=google.com; s=arc-20160816;
-        b=C2veHEUVbK1Ih9nXuVqiMiTHEORN3YveAPh4VKPGmrbCzo44S0V2TURRqpnicrwi+D
-         DR8vnVAmASQ/Ygo4TWtPyRBTjA4/T4COaY9C7MwfhEJRRzQOcDWM1DA3CP55ncAzi+yL
-         fqWYYtL7oyKFBJ/AcWr/bo0ipsGYYuvCsGCa7MKmRjSIKHEzObtp/esGQP+ZT8cRUnwX
-         tJGrQCdhSMf91JsRetdIab4oEOiyDbEBcJlKYfXuYMRqtrMtc2h0b0IVe4/7L0kONjZ0
-         JPfEpOLKoYXzgkkMm9UgNRAdFUtS9Np4z8QH0t4H43lT4TXekQKC0o4/nMzwwSnIysyy
-         JdAQ==
+        b=BEqsHJCL6mpG1i0W+/18meU7ggxr5eNKuRw+FMVW5mB+LuW2GRhol/6t6rmQ35Xjl7
+         //zZFSrdQAWZFzMxGY+Sgt129UMLY5QkijzeLRGTd+ONhHZY0wCyp3WCM1g6FFfMEjea
+         qFzPThC8QIMHM48j+GvvVu7JqVRuNCh+Pi5nHR1MjtUqDlQi64QAAr3YWj0ywfY6r9jP
+         pBpAvk7G76P9f6XUKmsBKzxcnb8N+aVnD1jQ6G6Z6YfGAyIePQrMTTRTmI9AD+/NdAxC
+         Ibkl2xmkW+1SO534Cr82b164dCb/B9K9ydD/Orx8JlGg7cT80lRslUw8W2FETuKgpRNq
+         5iTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=N+0eJ9HhbG61JuC+M7G5bTV/4TguFqbYVJsDxCt5uUI=;
-        b=PGj1ab50sspdxYumeRlkFPGs9Es1t5eOQOMv6yb4zN6jaeb91TGqdVqCAE3b2MPM8W
-         oxCzjvBEmjNnp91p7q1m1dfweyzn3gzhnTX8o3WPpCrKsdrfUZKhLiWYWQY9v/RxxIm8
-         +ilIanP6xbzCvb8wNtqcau4Ksdk3Y55ygBO5WqdW8mXKC/5ED02kzGQkVTVSmoEZ36zM
-         CM5v8h1SB32q0nMI1TbGaoRk4D9CktJdZ/Lxv03spvv8T123SPK5ophcIOmaVVFhOyJt
-         gsq+DelEUvlw4pF5BON8suSBMXIql1zX5u6CaAVDkU+kUO6ityXYfjqPj5TqUq2nJtBF
-         eIEQ==
+        bh=RPcKIMkoMkRWGF1Mw1PUwfAfuIqUni5Jm1oNH+ilwPI=;
+        b=1JGKBPGChT50jflEnQ2uYn5mVk4SZnQsqeEkyQznDQSUsLpyX3q2rwviZQ49DelIyR
+         2TCdIw7zBLU8opGeEuylSys9GNFPkBt74i5rjgGSEULrQ0JUVO03bOtOilCRIHMLBHQh
+         GyDN8jP/UYkFGjDgMXX0r/pYXWso3ChFK9FVXd7O+7M7xtvYAV5RflumDqwVHCLBMchA
+         DCar90iScKLiiGeRJE1KwQnYSzSWjJG+vbr2MmZraSP9nmc/ZhNwiJehjIDqm4ajJQJh
+         jKBnomog3QnAE2dFABaDIsvFpr2Uq6fUsfJ2AQef6zcXTmOAzl/W+3mXU/QK7hT14frm
+         d76A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Aurelien Aptel <aaptel@suse.com>,
-	Steve French <smfrench@gmail.com>
-Subject: [PATCH 4.14 050/164] CIFS: fix sha512 check in cifs_crypto_secmech_release
-Date: Sun, 22 Apr 2018 15:51:57 +0200
-Message-Id: <20180422135137.450850423@linuxfoundation.org>
+	Jason Andryuk <jandryuk@gmail.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.14 032/164] x86/xen: Delay get_cpu_cap until stack canary is established
+Date: Sun, 22 Apr 2018 15:51:39 +0200
+Message-Id: <20180422135136.725024392@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454928419788198?=
-X-GMAIL-MSGID: =?utf-8?q?1598455473983525517?=
+X-GMAIL-THRID: =?utf-8?q?1598454870775215893?=
+X-GMAIL-MSGID: =?utf-8?q?1598455470643856106?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +49,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Jason Andryuk <jandryuk@gmail.com>
 
-commit 70e80655f58e17a2e38e577e1b4fa7a8c99619a0 upstream.
+commit 36104cb9012a82e73c32a3b709257766b16bcd1d upstream.
 
-It seems this is a copy-paste error and that the proper variable to use
-in this particular case is _sha512_ instead of _md5_.
+Commit 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings") introduced a
+call to get_cpu_cap, which is fstack-protected.  This is works on x86-64
+as commit 4f277295e54c ("x86/xen: init %gs very early to avoid page
+faults with stack protector") ensures the stack protector is configured,
+but it it did not cover x86-32.
 
-Addresses-Coverity-ID: 1465358 ("Copy-paste error")
-Fixes: 1c6614d229e7 ("CIFS: add sha512 secmech")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Steve French <smfrench@gmail.com>
+Delay calling get_cpu_cap until after xen_setup_gdt has initialized the
+stack canary.  Without this, a 32bit PV machine crashes early
+in boot.
+(XEN) Domain 0 (vcpu#0) crashed on cpu#0:
+(XEN) ----[ Xen-4.6.6-xc  x86_64  debug=n  Tainted:    C ]----
+(XEN) CPU:    0
+(XEN) RIP:    e019:[<00000000c10362f8>]
+
+And the PV kernel IP corresponds to init_scattered_cpuid_features
+   0xc10362f8 <+24>:    mov    %gs:0x14,%eax
+
+Fixes 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsencrypt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/xen/enlighten_pv.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/cifs/cifsencrypt.c
-+++ b/fs/cifs/cifsencrypt.c
-@@ -829,7 +829,7 @@ cifs_crypto_secmech_release(struct TCP_S
- 		server->secmech.md5 = NULL;
- 	}
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -1258,10 +1258,6 @@ asmlinkage __visible void __init xen_sta
+ 	 */
+ 	__userpte_alloc_gfp &= ~__GFP_HIGHMEM;
  
--	if (server->secmech.md5) {
-+	if (server->secmech.sha512) {
- 		crypto_free_shash(server->secmech.sha512);
- 		server->secmech.sha512 = NULL;
- 	}
+-	/* Work out if we support NX */
+-	get_cpu_cap(&boot_cpu_data);
+-	x86_configure_nx();
+-
+ 	/* Get mfn list */
+ 	xen_build_dynamic_phys_to_machine();
+ 
+@@ -1271,6 +1267,10 @@ asmlinkage __visible void __init xen_sta
+ 	 */
+ 	xen_setup_gdt(0);
+ 
++	/* Work out if we support NX */
++	get_cpu_cap(&boot_cpu_data);
++	x86_configure_nx();
++
+ 	xen_init_irq_ops();
+ 
+ 	/* Let's presume PV guests always boot on vCPU with id 0. */
