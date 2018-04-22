@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/NNxzE7kgjTyCofxS0+IDO/v45y6dm+kph8iuXIxD2y9ZcI9CPRwa7jt+sKE2yhIpISd8L
-ARC-Seal: i=1; a=rsa-sha256; t=1524405814; cv=none;
+X-Google-Smtp-Source: AIpwx4+tJumZgSNItPfgAVXUfTDbxNVED/ZBvkLiAQLoC/Rk+u+c4VJuoJTM99pwQNyTFq5bN/P2
+ARC-Seal: i=1; a=rsa-sha256; t=1524405811; cv=none;
         d=google.com; s=arc-20160816;
-        b=gwMCFZDet8FCeCYEt6/0yYyTpgzXTJqrAautnd0bTWCD+ldlXlH4ukM/Bl5ThJbh/T
-         pNqa0BOnTV7oFWQGLOW9aJQg2OPTcxoCjUsNlmPa20/KtVFRHFfsOpTws0fy2RNLc7Sx
-         KIqhaWmSQNEZyne59Ly12h6FHsqvcECVdb/k9jYlM9TavBMCZveFOZcWIhCU/ZG+Jmvf
-         V8oBt1lm8+FC9lutA9FmJ9ehjW+Kt4XeGCQRtllj+p1fbDSXVqp3WG1LZQXKmfXsE2Rz
-         03SkCqESkns8hUMEeiBvGVV1EyceLNtA65LY9uAW1DJmMvJdgGAG0YQLMj3HvN/nfggW
-         4Iiw==
+        b=R2YKY6R8T3zb+XCzu9oBEQfgTs+mp52e47L5Z0lxNdjduhbU24RU91tkCtk6aycmUM
+         doDX8KJj5+Kv3n77BCeMRPzXzF4mdMYpKqu2EvvKrwnakWyjt1IbWXEHHztMp6yRz0+s
+         L8b6J3BIhy/IWB/SdMA9d5fhYXY22DDBQer4l0e+3L764/xaTl/5AFgSLxd4CK/CLR5B
+         WKapn90lbXvPJP2AcEUMRCll58T/Jtz17JtVOzU1sOwqZUchAvuuINBZjFCDQchlrkj8
+         qUmWN0RIZ9eeM0/5CK5RTV90GfyPLT1eyQEkF1FeZc/Gomcw5zDggjApdbXQXs2Nvtyv
+         WWxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JtqXluE0scFF6Gv6cyWEt724nngoK8tJOhmPR/vEAm4=;
-        b=RXmr8YITUUEKVHGoUDOSrdl8wQwDpaxQTGCQLa610VvGIV9fpvWsHwWXqCQ52QZwHM
-         +3NVC2roXJG7GpDzjUdPaBiOUonTvIy+YkS9Z7y1GrN/Ybct4u9hZrl2lWlFcZmM950v
-         QxkmTQtUmT1Vv8wHKAoP64Ca+tfROg8gjD88EjLA8HWpzv5tylfcUZHWSu/svAlbYTk+
-         IPY1U8eUHKOM3SwprMOntJq/8vEUzZdq/ZAf+MQq9IMgNRJbauiVYvA4v8CLCX+0XMOv
-         j2o6snseAB+fRBpetAz28QHYi+NzamaITQessyysNmF1eErjcO/PcC9q4OQaztP23LbK
-         koJw==
+        bh=LCPLmLYCiiXU0ahOpI0P+lkW2NRca5K4/eF7Ldwwirg=;
+        b=mqXpV8Hwlhb6fytvKdhSCp9q9r6jg4TMFSXjl1tb8fl//HPxRgzqYwGTTZNQ13gOV9
+         7353E7qzUQUumwzVzfLoB7Td6Hcmy4fC8kwJMLo+897szZPLz2kNdYHwLcTRcdPRuwG4
+         /l4gnPHuOsNc2mAUe4nTRugqC3wmL3gh434hMMhf7G0q6GSNlQhOaAOP6envgLv8MbWj
+         IKuUCcwVqFeLly1d8IuPqW/6gfT6w7bNCSuVaL6EnVDegqO/HkTo4ifMO/cnApP76ZUZ
+         Dl1Myq3hpMEVCFuzEHyQLC3NB0x2E7JkxKHvAm/SCeRM0AjZ8ZdCfqYLEO8I5DoKgEgG
+         VXjQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kevin Tian <kevin.tian@intel.com>,
-	Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Weinan Li <weinan.z.li@intel.com>,
-	Changbin Du <changbin.du@intel.com>
-Subject: [PATCH 4.16 194/196] drm/i915/gvt: init mmio by lri command in vgpu inhibit context
-Date: Sun, 22 Apr 2018 15:53:34 +0200
-Message-Id: <20180422135114.320584004@linuxfoundation.org>
+	Greg Thelen <gthelen@google.com>,
+	Wang Long <wanglong19@meituan.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Tejun Heo <tj@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.16 196/196] writeback: safer lock nesting
+Date: Sun, 22 Apr 2018 15:53:36 +0200
+Message-Id: <20180422135114.425056798@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -42,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455351642618540?=
-X-GMAIL-MSGID: =?utf-8?q?1598455351642618540?=
+X-GMAIL-THRID: =?utf-8?q?1598455348272651439?=
+X-GMAIL-MSGID: =?utf-8?q?1598455348272651439?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,388 +56,277 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Weinan Li <weinan.z.li@intel.com>
+From: Greg Thelen <gthelen@google.com>
 
-commit cd7e61b93d068a80bfe6cb55bf00f17332d831a1 upstream.
+commit 2e898e4c0a3897ccd434adac5abb8330194f527b upstream.
 
-There is one issue relates to Coarse Power Gating(CPG) on KBL NUC in GVT-g,
-vgpu can't get the correct default context by updating the registers before
-inhibit context submission. It always get back the hardware default value
-unless the inhibit context submission happened before the 1st time
-forcewake put. With this wrong default context, vgpu will run with
-incorrect state and meet unknown issues.
+lock_page_memcg()/unlock_page_memcg() use spin_lock_irqsave/restore() if
+the page's memcg is undergoing move accounting, which occurs when a
+process leaves its memcg for a new one that has
+memory.move_charge_at_immigrate set.
 
-The solution is initialize these mmios by adding lri command in ring buffer
-of the inhibit context, then gpu hardware has no chance to go down RC6 when
-lri commands are right being executed, and then vgpu can get correct
-default context for further use.
+unlocked_inode_to_wb_begin,end() use spin_lock_irq/spin_unlock_irq() if
+the given inode is switching writeback domains.  Switches occur when
+enough writes are issued from a new domain.
 
-v3:
-- fix code fault, use 'for' to loop through mmio render list(Zhenyu)
+This existing pattern is thus suspicious:
+    lock_page_memcg(page);
+    unlocked_inode_to_wb_begin(inode, &locked);
+    ...
+    unlocked_inode_to_wb_end(inode, locked);
+    unlock_page_memcg(page);
 
-v4:
-- save the count of engine mmio need to be restored for inhibit context and
-  refine some comments. (Kevin)
+If both inode switch and process memcg migration are both in-flight then
+unlocked_inode_to_wb_end() will unconditionally enable interrupts while
+still holding the lock_page_memcg() irq spinlock.  This suggests the
+possibility of deadlock if an interrupt occurs before unlock_page_memcg().
 
-v5:
-- code rebase
+    truncate
+    __cancel_dirty_page
+    lock_page_memcg
+    unlocked_inode_to_wb_begin
+    unlocked_inode_to_wb_end
+    <interrupts mistakenly enabled>
+                                    <interrupt>
+                                    end_page_writeback
+                                    test_clear_page_writeback
+                                    lock_page_memcg
+                                    <deadlock>
+    unlock_page_memcg
 
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Weinan Li <weinan.z.li@intel.com>
-Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Changbin Du <changbin.du@intel.com>
+Due to configuration limitations this deadlock is not currently possible
+because we don't mix cgroup writeback (a cgroupv2 feature) and
+memory.move_charge_at_immigrate (a cgroupv1 feature).
+
+If the kernel is hacked to always claim inode switching and memcg
+moving_account, then this script triggers lockup in less than a minute:
+
+  cd /mnt/cgroup/memory
+  mkdir a b
+  echo 1 > a/memory.move_charge_at_immigrate
+  echo 1 > b/memory.move_charge_at_immigrate
+  (
+    echo $BASHPID > a/cgroup.procs
+    while true; do
+      dd if=/dev/zero of=/mnt/big bs=1M count=256
+    done
+  ) &
+  while true; do
+    sync
+  done &
+  sleep 1h &
+  SLEEP=$!
+  while true; do
+    echo $SLEEP > a/cgroup.procs
+    echo $SLEEP > b/cgroup.procs
+  done
+
+The deadlock does not seem possible, so it's debatable if there's any
+reason to modify the kernel.  I suggest we should to prevent future
+surprises.  And Wang Long said "this deadlock occurs three times in our
+environment", so there's more reason to apply this, even to stable.
+Stable 4.4 has minor conflicts applying this patch.  For a clean 4.4 patch
+see "[PATCH for-4.4] writeback: safer lock nesting"
+https://lkml.org/lkml/2018/4/11/146
+
+Wang Long said "this deadlock occurs three times in our environment"
+
+[gthelen@google.com: v4]
+  Link: http://lkml.kernel.org/r/20180411084653.254724-1-gthelen@google.com
+[akpm@linux-foundation.org: comment tweaks, struct initialization simplification]
+Change-Id: Ibb773e8045852978f6207074491d262f1b3fb613
+Link: http://lkml.kernel.org/r/20180410005908.167976-1-gthelen@google.com
+Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
+Signed-off-by: Greg Thelen <gthelen@google.com>
+Reported-by: Wang Long <wanglong19@meituan.com>
+Acked-by: Wang Long <wanglong19@meituan.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: <stable@vger.kernel.org>	[v4.2+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[natechancellor: Adjust context due to lack of b93b016313b3b]
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/i915/gvt/gvt.h          |    5 
- drivers/gpu/drm/i915/gvt/mmio_context.c |  210 +++++++++++++++++++++++++++++---
- drivers/gpu/drm/i915/gvt/mmio_context.h |    5 
- drivers/gpu/drm/i915/gvt/scheduler.c    |    5 
- 4 files changed, 205 insertions(+), 20 deletions(-)
+ fs/fs-writeback.c                |    7 ++++---
+ include/linux/backing-dev-defs.h |    5 +++++
+ include/linux/backing-dev.h      |   30 ++++++++++++++++--------------
+ mm/page-writeback.c              |   18 +++++++++---------
+ 4 files changed, 34 insertions(+), 26 deletions(-)
 
---- a/drivers/gpu/drm/i915/gvt/gvt.h
-+++ b/drivers/gpu/drm/i915/gvt/gvt.h
-@@ -308,7 +308,10 @@ struct intel_gvt {
- 	wait_queue_head_t service_thread_wq;
- 	unsigned long service_request;
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -745,11 +745,12 @@ int inode_congested(struct inode *inode,
+ 	 */
+ 	if (inode && inode_to_wb_is_valid(inode)) {
+ 		struct bdi_writeback *wb;
+-		bool locked, congested;
++		struct wb_lock_cookie lock_cookie = {};
++		bool congested;
  
--	struct engine_mmio *engine_mmio_list;
-+	struct {
-+		struct engine_mmio *mmio;
-+		int ctx_mmio_count[I915_NUM_ENGINES];
-+	} engine_mmio_list;
- 
- 	struct dentry *debugfs_root;
- };
---- a/drivers/gpu/drm/i915/gvt/mmio_context.c
-+++ b/drivers/gpu/drm/i915/gvt/mmio_context.c
-@@ -50,6 +50,8 @@
- #define RING_GFX_MODE(base)	_MMIO((base) + 0x29c)
- #define VF_GUARDBAND		_MMIO(0x83a4)
- 
-+#define GEN9_MOCS_SIZE		64
-+
- /* Raw offset is appened to each line for convenience. */
- static struct engine_mmio gen8_engine_mmio_list[] __cacheline_aligned = {
- 	{RCS, GFX_MODE_GEN7, 0xffff, false}, /* 0x229c */
-@@ -152,8 +154,8 @@ static struct engine_mmio gen9_engine_mm
- 
- static struct {
- 	bool initialized;
--	u32 control_table[I915_NUM_ENGINES][64];
--	u32 l3cc_table[32];
-+	u32 control_table[I915_NUM_ENGINES][GEN9_MOCS_SIZE];
-+	u32 l3cc_table[GEN9_MOCS_SIZE / 2];
- } gen9_render_mocs;
- 
- static void load_render_mocs(struct drm_i915_private *dev_priv)
-@@ -170,7 +172,7 @@ static void load_render_mocs(struct drm_
- 
- 	for (ring_id = 0; ring_id < ARRAY_SIZE(regs); ring_id++) {
- 		offset.reg = regs[ring_id];
--		for (i = 0; i < 64; i++) {
-+		for (i = 0; i < GEN9_MOCS_SIZE; i++) {
- 			gen9_render_mocs.control_table[ring_id][i] =
- 				I915_READ_FW(offset);
- 			offset.reg += 4;
-@@ -178,7 +180,7 @@ static void load_render_mocs(struct drm_
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &lock_cookie);
+ 		congested = wb_congested(wb, cong_bits);
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &lock_cookie);
+ 		return congested;
  	}
  
- 	offset.reg = 0xb020;
--	for (i = 0; i < 32; i++) {
-+	for (i = 0; i < GEN9_MOCS_SIZE / 2; i++) {
- 		gen9_render_mocs.l3cc_table[i] =
- 			I915_READ_FW(offset);
- 		offset.reg += 4;
-@@ -186,6 +188,153 @@ static void load_render_mocs(struct drm_
- 	gen9_render_mocs.initialized = true;
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -223,6 +223,11 @@ static inline void set_bdi_congested(str
+ 	set_wb_congested(bdi->wb.congested, sync);
  }
  
-+static int
-+restore_context_mmio_for_inhibit(struct intel_vgpu *vgpu,
-+				 struct drm_i915_gem_request *req)
-+{
-+	u32 *cs;
-+	int ret;
-+	struct engine_mmio *mmio;
-+	struct intel_gvt *gvt = vgpu->gvt;
-+	int ring_id = req->engine->id;
-+	int count = gvt->engine_mmio_list.ctx_mmio_count[ring_id];
++struct wb_lock_cookie {
++	bool locked;
++	unsigned long flags;
++};
 +
-+	if (count == 0)
-+		return 0;
-+
-+	ret = req->engine->emit_flush(req, EMIT_BARRIER);
-+	if (ret)
-+		return ret;
-+
-+	cs = intel_ring_begin(req, count * 2 + 2);
-+	if (IS_ERR(cs))
-+		return PTR_ERR(cs);
-+
-+	*cs++ = MI_LOAD_REGISTER_IMM(count);
-+	for (mmio = gvt->engine_mmio_list.mmio;
-+	     i915_mmio_reg_valid(mmio->reg); mmio++) {
-+		if (mmio->ring_id != ring_id ||
-+		    !mmio->in_context)
-+			continue;
-+
-+		*cs++ = i915_mmio_reg_offset(mmio->reg);
-+		*cs++ = vgpu_vreg_t(vgpu, mmio->reg) |
-+				(mmio->mask << 16);
-+		gvt_dbg_core("add lri reg pair 0x%x:0x%x in inhibit ctx, vgpu:%d, rind_id:%d\n",
-+			      *(cs-2), *(cs-1), vgpu->id, ring_id);
-+	}
-+
-+	*cs++ = MI_NOOP;
-+	intel_ring_advance(req, cs);
-+
-+	ret = req->engine->emit_flush(req, EMIT_BARRIER);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int
-+restore_render_mocs_control_for_inhibit(struct intel_vgpu *vgpu,
-+					struct drm_i915_gem_request *req)
-+{
-+	unsigned int index;
-+	u32 *cs;
-+
-+	cs = intel_ring_begin(req, 2 * GEN9_MOCS_SIZE + 2);
-+	if (IS_ERR(cs))
-+		return PTR_ERR(cs);
-+
-+	*cs++ = MI_LOAD_REGISTER_IMM(GEN9_MOCS_SIZE);
-+
-+	for (index = 0; index < GEN9_MOCS_SIZE; index++) {
-+		*cs++ = i915_mmio_reg_offset(GEN9_GFX_MOCS(index));
-+		*cs++ = vgpu_vreg_t(vgpu, GEN9_GFX_MOCS(index));
-+		gvt_dbg_core("add lri reg pair 0x%x:0x%x in inhibit ctx, vgpu:%d, rind_id:%d\n",
-+			      *(cs-2), *(cs-1), vgpu->id, req->engine->id);
-+
-+	}
-+
-+	*cs++ = MI_NOOP;
-+	intel_ring_advance(req, cs);
-+
-+	return 0;
-+}
-+
-+static int
-+restore_render_mocs_l3cc_for_inhibit(struct intel_vgpu *vgpu,
-+				     struct drm_i915_gem_request *req)
-+{
-+	unsigned int index;
-+	u32 *cs;
-+
-+	cs = intel_ring_begin(req, 2 * GEN9_MOCS_SIZE / 2 + 2);
-+	if (IS_ERR(cs))
-+		return PTR_ERR(cs);
-+
-+	*cs++ = MI_LOAD_REGISTER_IMM(GEN9_MOCS_SIZE / 2);
-+
-+	for (index = 0; index < GEN9_MOCS_SIZE / 2; index++) {
-+		*cs++ = i915_mmio_reg_offset(GEN9_LNCFCMOCS(index));
-+		*cs++ = vgpu_vreg_t(vgpu, GEN9_LNCFCMOCS(index));
-+		gvt_dbg_core("add lri reg pair 0x%x:0x%x in inhibit ctx, vgpu:%d, rind_id:%d\n",
-+			      *(cs-2), *(cs-1), vgpu->id, req->engine->id);
-+
-+	}
-+
-+	*cs++ = MI_NOOP;
-+	intel_ring_advance(req, cs);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Use lri command to initialize the mmio which is in context state image for
-+ * inhibit context, it contains tracked engine mmio, render_mocs and
-+ * render_mocs_l3cc.
-+ */
-+int intel_vgpu_restore_inhibit_context(struct intel_vgpu *vgpu,
-+				       struct drm_i915_gem_request *req)
-+{
-+	int ret;
-+	u32 *cs;
-+
-+	cs = intel_ring_begin(req, 2);
-+	if (IS_ERR(cs))
-+		return PTR_ERR(cs);
-+
-+	*cs++ = MI_ARB_ON_OFF | MI_ARB_DISABLE;
-+	*cs++ = MI_NOOP;
-+	intel_ring_advance(req, cs);
-+
-+	ret = restore_context_mmio_for_inhibit(vgpu, req);
-+	if (ret)
-+		goto out;
-+
-+	/* no MOCS register in context except render engine */
-+	if (req->engine->id != RCS)
-+		goto out;
-+
-+	ret = restore_render_mocs_control_for_inhibit(vgpu, req);
-+	if (ret)
-+		goto out;
-+
-+	ret = restore_render_mocs_l3cc_for_inhibit(vgpu, req);
-+	if (ret)
-+		goto out;
-+
-+out:
-+	cs = intel_ring_begin(req, 2);
-+	if (IS_ERR(cs))
-+		return PTR_ERR(cs);
-+
-+	*cs++ = MI_ARB_ON_OFF | MI_ARB_ENABLE;
-+	*cs++ = MI_NOOP;
-+	intel_ring_advance(req, cs);
-+
-+	return ret;
-+}
-+
- static void handle_tlb_pending_event(struct intel_vgpu *vgpu, int ring_id)
- {
- 	struct drm_i915_private *dev_priv = vgpu->gvt->dev_priv;
-@@ -252,11 +401,14 @@ static void switch_mocs(struct intel_vgp
- 	if (WARN_ON(ring_id >= ARRAY_SIZE(regs)))
- 		return;
+ #ifdef CONFIG_CGROUP_WRITEBACK
  
-+	if (IS_KABYLAKE(dev_priv) && ring_id == RCS)
-+		return;
-+
- 	if (!pre && !gen9_render_mocs.initialized)
- 		load_render_mocs(dev_priv);
- 
- 	offset.reg = regs[ring_id];
--	for (i = 0; i < 64; i++) {
-+	for (i = 0; i < GEN9_MOCS_SIZE; i++) {
- 		if (pre)
- 			old_v = vgpu_vreg_t(pre, offset);
- 		else
-@@ -274,7 +426,7 @@ static void switch_mocs(struct intel_vgp
- 
- 	if (ring_id == RCS) {
- 		l3_offset.reg = 0xb020;
--		for (i = 0; i < 32; i++) {
-+		for (i = 0; i < GEN9_MOCS_SIZE / 2; i++) {
- 			if (pre)
- 				old_v = vgpu_vreg_t(pre, l3_offset);
- 			else
-@@ -294,6 +446,16 @@ static void switch_mocs(struct intel_vgp
- 
- #define CTX_CONTEXT_CONTROL_VAL	0x03
- 
-+bool is_inhibit_context(struct i915_gem_context *ctx, int ring_id)
-+{
-+	u32 *reg_state = ctx->engine[ring_id].lrc_reg_state;
-+	u32 inhibit_mask =
-+		_MASKED_BIT_ENABLE(CTX_CTRL_ENGINE_CTX_RESTORE_INHIBIT);
-+
-+	return inhibit_mask ==
-+		(reg_state[CTX_CONTEXT_CONTROL_VAL] & inhibit_mask);
-+}
-+
- /* Switch ring mmio values (context). */
- static void switch_mmio(struct intel_vgpu *pre,
- 			struct intel_vgpu *next,
-@@ -301,9 +463,6 @@ static void switch_mmio(struct intel_vgp
- {
- 	struct drm_i915_private *dev_priv;
- 	struct intel_vgpu_submission *s;
--	u32 *reg_state, ctx_ctrl;
--	u32 inhibit_mask =
--		_MASKED_BIT_ENABLE(CTX_CTRL_ENGINE_CTX_RESTORE_INHIBIT);
- 	struct engine_mmio *mmio;
- 	u32 old_v, new_v;
- 
-@@ -311,10 +470,18 @@ static void switch_mmio(struct intel_vgp
- 	if (IS_SKYLAKE(dev_priv) || IS_KABYLAKE(dev_priv))
- 		switch_mocs(pre, next, ring_id);
- 
--	for (mmio = dev_priv->gvt->engine_mmio_list;
-+	for (mmio = dev_priv->gvt->engine_mmio_list.mmio;
- 	     i915_mmio_reg_valid(mmio->reg); mmio++) {
- 		if (mmio->ring_id != ring_id)
- 			continue;
-+		/*
-+		 * No need to do save or restore of the mmio which is in context
-+		 * state image on kabylake, it's initialized by lri command and
-+		 * save or restore with context together.
-+		 */
-+		if (IS_KABYLAKE(dev_priv) && mmio->in_context)
-+			continue;
-+
- 		// save
- 		if (pre) {
- 			vgpu_vreg_t(pre, mmio->reg) = I915_READ_FW(mmio->reg);
-@@ -328,16 +495,13 @@ static void switch_mmio(struct intel_vgp
- 		// restore
- 		if (next) {
- 			s = &next->submission;
--			reg_state =
--				s->shadow_ctx->engine[ring_id].lrc_reg_state;
--			ctx_ctrl = reg_state[CTX_CONTEXT_CONTROL_VAL];
- 			/*
--			 * if it is an inhibit context, load in_context mmio
--			 * into HW by mmio write. If it is not, skip this mmio
--			 * write.
-+			 * No need to restore the mmio which is in context state
-+			 * image if it's not inhibit context, it will restore
-+			 * itself.
- 			 */
- 			if (mmio->in_context &&
--			    (ctx_ctrl & inhibit_mask) != inhibit_mask)
-+			    !is_inhibit_context(s->shadow_ctx, ring_id))
- 				continue;
- 
- 			if (mmio->mask)
-@@ -408,8 +572,16 @@ void intel_gvt_switch_mmio(struct intel_
+ /**
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -346,7 +346,7 @@ static inline struct bdi_writeback *inod
+ /**
+  * unlocked_inode_to_wb_begin - begin unlocked inode wb access transaction
+  * @inode: target inode
+- * @lockedp: temp bool output param, to be passed to the end function
++ * @cookie: output param, to be passed to the end function
+  *
+  * The caller wants to access the wb associated with @inode but isn't
+  * holding inode->i_lock, mapping->tree_lock or wb->list_lock.  This
+@@ -354,12 +354,12 @@ static inline struct bdi_writeback *inod
+  * association doesn't change until the transaction is finished with
+  * unlocked_inode_to_wb_end().
+  *
+- * The caller must call unlocked_inode_to_wb_end() with *@lockdep
+- * afterwards and can't sleep during transaction.  IRQ may or may not be
+- * disabled on return.
++ * The caller must call unlocked_inode_to_wb_end() with *@cookie afterwards and
++ * can't sleep during the transaction.  IRQs may or may not be disabled on
++ * return.
   */
- void intel_gvt_init_engine_mmio_context(struct intel_gvt *gvt)
+ static inline struct bdi_writeback *
+-unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
++unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
  {
-+	struct engine_mmio *mmio;
-+
- 	if (IS_SKYLAKE(gvt->dev_priv) || IS_KABYLAKE(gvt->dev_priv))
--		gvt->engine_mmio_list = gen9_engine_mmio_list;
-+		gvt->engine_mmio_list.mmio = gen9_engine_mmio_list;
- 	else
--		gvt->engine_mmio_list = gen8_engine_mmio_list;
-+		gvt->engine_mmio_list.mmio = gen8_engine_mmio_list;
-+
-+	for (mmio = gvt->engine_mmio_list.mmio;
-+	     i915_mmio_reg_valid(mmio->reg); mmio++) {
-+		if (mmio->in_context)
-+			gvt->engine_mmio_list.ctx_mmio_count[mmio->ring_id]++;
-+	}
+ 	rcu_read_lock();
+ 
+@@ -367,10 +367,10 @@ unlocked_inode_to_wb_begin(struct inode
+ 	 * Paired with store_release in inode_switch_wb_work_fn() and
+ 	 * ensures that we see the new wb if we see cleared I_WB_SWITCH.
+ 	 */
+-	*lockedp = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
++	cookie->locked = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
+ 
+-	if (unlikely(*lockedp))
+-		spin_lock_irq(&inode->i_mapping->tree_lock);
++	if (unlikely(cookie->locked))
++		spin_lock_irqsave(&inode->i_mapping->tree_lock, cookie->flags);
+ 
+ 	/*
+ 	 * Protected by either !I_WB_SWITCH + rcu_read_lock() or tree_lock.
+@@ -382,12 +382,13 @@ unlocked_inode_to_wb_begin(struct inode
+ /**
+  * unlocked_inode_to_wb_end - end inode wb access transaction
+  * @inode: target inode
+- * @locked: *@lockedp from unlocked_inode_to_wb_begin()
++ * @cookie: @cookie from unlocked_inode_to_wb_begin()
+  */
+-static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
++static inline void unlocked_inode_to_wb_end(struct inode *inode,
++					    struct wb_lock_cookie *cookie)
+ {
+-	if (unlikely(locked))
+-		spin_unlock_irq(&inode->i_mapping->tree_lock);
++	if (unlikely(cookie->locked))
++		spin_unlock_irqrestore(&inode->i_mapping->tree_lock, cookie->flags);
+ 
+ 	rcu_read_unlock();
  }
---- a/drivers/gpu/drm/i915/gvt/mmio_context.h
-+++ b/drivers/gpu/drm/i915/gvt/mmio_context.h
-@@ -49,4 +49,9 @@ void intel_gvt_switch_mmio(struct intel_
+@@ -434,12 +435,13 @@ static inline struct bdi_writeback *inod
+ }
  
- void intel_gvt_init_engine_mmio_context(struct intel_gvt *gvt);
+ static inline struct bdi_writeback *
+-unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
++unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+ {
+ 	return inode_to_wb(inode);
+ }
  
-+bool is_inhibit_context(struct i915_gem_context *ctx, int ring_id);
-+
-+int intel_vgpu_restore_inhibit_context(struct intel_vgpu *vgpu,
-+				       struct drm_i915_gem_request *req);
-+
- #endif
---- a/drivers/gpu/drm/i915/gvt/scheduler.c
-+++ b/drivers/gpu/drm/i915/gvt/scheduler.c
-@@ -275,6 +275,11 @@ static int copy_workload_to_ring_buffer(
- 	struct intel_vgpu *vgpu = workload->vgpu;
- 	void *shadow_ring_buffer_va;
- 	u32 *cs;
-+	struct drm_i915_gem_request *req = workload->req;
-+
-+	if (IS_KABYLAKE(req->i915) &&
-+	    is_inhibit_context(req->ctx, req->engine->id))
-+		intel_vgpu_restore_inhibit_context(vgpu, req);
+-static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
++static inline void unlocked_inode_to_wb_end(struct inode *inode,
++					    struct wb_lock_cookie *cookie)
+ {
+ }
  
- 	/* allocate shadow ring buffer */
- 	cs = intel_ring_begin(workload->req, workload->rb_len / sizeof(u32));
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2501,13 +2501,13 @@ void account_page_redirty(struct page *p
+ 	if (mapping && mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct bdi_writeback *wb;
+-		bool locked;
++		struct wb_lock_cookie cookie = {};
+ 
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 		current->nr_dirtied--;
+ 		dec_node_page_state(page, NR_DIRTIED);
+ 		dec_wb_stat(wb, WB_DIRTIED);
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &cookie);
+ 	}
+ }
+ EXPORT_SYMBOL(account_page_redirty);
+@@ -2613,15 +2613,15 @@ void __cancel_dirty_page(struct page *pa
+ 	if (mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct bdi_writeback *wb;
+-		bool locked;
++		struct wb_lock_cookie cookie = {};
+ 
+ 		lock_page_memcg(page);
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 
+ 		if (TestClearPageDirty(page))
+ 			account_page_cleaned(page, mapping, wb);
+ 
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &cookie);
+ 		unlock_page_memcg(page);
+ 	} else {
+ 		ClearPageDirty(page);
+@@ -2653,7 +2653,7 @@ int clear_page_dirty_for_io(struct page
+ 	if (mapping && mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct bdi_writeback *wb;
+-		bool locked;
++		struct wb_lock_cookie cookie = {};
+ 
+ 		/*
+ 		 * Yes, Virginia, this is indeed insane.
+@@ -2690,14 +2690,14 @@ int clear_page_dirty_for_io(struct page
+ 		 * always locked coming in here, so we get the desired
+ 		 * exclusion.
+ 		 */
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 		if (TestClearPageDirty(page)) {
+ 			dec_lruvec_page_state(page, NR_FILE_DIRTY);
+ 			dec_zone_page_state(page, NR_ZONE_WRITE_PENDING);
+ 			dec_wb_stat(wb, WB_RECLAIMABLE);
+ 			ret = 1;
+ 		}
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &cookie);
+ 		return ret;
+ 	}
+ 	return TestClearPageDirty(page);
