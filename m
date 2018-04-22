@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49PZFMfcZwVbN9h42eVYTjT+WlyJYgvOY31pN/Ph2eDnTJbsNMOKOWUFi6BonUxwveJgs6C
-ARC-Seal: i=1; a=rsa-sha256; t=1524406237; cv=none;
+X-Google-Smtp-Source: AIpwx4/q5JsXQqRD3XqArALNNl5XS/fYO16TEFXC9AqekVJSHprAnGlIiOElOw9zsrSXN6bZhZYl
+ARC-Seal: i=1; a=rsa-sha256; t=1524406235; cv=none;
         d=google.com; s=arc-20160816;
-        b=lLj3/lVe+1h5fOrQc9sCLgZtvUo081vyZlSwagaLioo0Kdodr6ldAfxjap3TpXF8Yw
-         tD/yqXlTp0cQDR5G0TLzQ4k4JV/bGwDzBgBntRdAlBgc9Hi43fQ0JItwjAxpNYJxo2kP
-         PM/3b5vQ2Je2K0qr5NTqs1/tjzppoSsdVJec59CYXHkpBEr9BQsyOr4kLhqi761BKOmS
-         KC7iS9neRznRsZ0cP9njgg51ZiU12wSbEo32rwjC/63oIVrd1MyB54/iVj4P9O3l4zoo
-         fpzQgvXSX9+NtmKiN+x5ozJtRT7kA/dvr42lnLurE+GNTakhrgccfS7TdO9ptTqgudQk
-         tedw==
+        b=ZKfKc1Vezh4KDz4KtWhavXPem+TSjTQD1QoTQHSF5qbg7H9XT6q+tzbv/rouqdp9Gr
+         UBIVgnWj4Bteax64Zc6RXHUzYxBtX6CwETneR6KhR0g+x0dzhCo5C2FHAaYjioJBBSN1
+         21ghJNRRQ+LAVwoY5x7KC0C3bZbndpG2W0Jlk3pClm74qqLvcz9pvUhQS+ge6TL4qAqg
+         XHaJVpUg30FiqDg53xbbn81OqQLsA2eSNJnzBLheEgMcYbK15YLsZFyJEzeRUmZ1pO/P
+         EtWuukchOR/t5xpIEVRJx/Bq3V575rDvYvw9Yof4LEggavjja5i53TpiIH2k0W/avB75
+         GTbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sAfXsVkf8Kbz0+B99AWYeksgxbRR7CLJa6YLiNXiOC4=;
-        b=ltfXJOwk/5CrflFoP/iBbmG0cI+HKrOZxA29N+2Ai0+MYUJHbF7EyeObWlDv7xSHXU
-         r0QF2DET4eNGQANR5JlpaVVjX1c+EhnBeCQfZx9UKyXwqViPK9I3BVlPZXfGDirYZWay
-         4D/2iqNXys8n6D096E4bJ2wiiJe0uiOuBrndO/RlzX7tCqNm1S/gjFtNEVtAYwyZWO5T
-         OQ3kqz9wchYPt1ZVO7H7HRmJ+OBFOzyOm56NlLCUMXURYxRIazse82CSxLJVKPh731+A
-         fLyM/5XaS3hh54/hs0GNLJCXPEu+S2pidzMDgRt8Fi7hGWdQpEnDf1wHgMDFeyzaBD0a
-         mrSw==
+        bh=F42ommjKoubOTKRHrSQPWINBcsfK+sMPI0nxNnBJDXk=;
+        b=0259rF5OT2PA3zcUZ0FmvqkY9xn9vktJJQF4GvmzcBW0cdZKWOYnLtvUMq4jGb3hgQ
+         U5nVPScXag1sY+oEIPujtn6vsGU3cJS8B2CMVnJHFi33Ak48py6Cqu0+6cSS8xNrmUyQ
+         bLzHMgl8uqBjT77+0Xuwtuvt4bRzX19Py9RFxXDjcW/jQ8Uzow1lGVhluayzXoQH7IdJ
+         noydHlLlP1dGReO8TmyVofRYt7FXpMziZXEgl3tDaviqyL5eUEgMV5wHBj3WMHOdx1XC
+         HQ6z/ta8ZpWq2+IWkqiS/7P9jVcmaJHYpiIMAPqMbUxQTSA9R3cUlI7VFwUWcf0xnLT3
+         /UPw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>,
-	Michael Neuling <mikey@neuling.org>,
-	Russell Currey <ruscur@russell.cc>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 145/164] powerpc/eeh: Fix enabling bridge MMIO windows
-Date: Sun, 22 Apr 2018 15:53:32 +0200
-Message-Id: <20180422135141.416466498@linuxfoundation.org>
+	Warren Sturm <warren.sturm@gmail.com>,
+	Sean Young <sean@mess.org>
+Subject: [PATCH 4.14 162/164] Revert "media: lirc_zilog: driver only sends LIRCCODE"
+Date: Sun, 22 Apr 2018 15:53:49 +0200
+Message-Id: <20180422135142.250357476@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455273756324131?=
-X-GMAIL-MSGID: =?utf-8?q?1598455795452337397?=
+X-GMAIL-THRID: =?utf-8?q?1598455792446088014?=
+X-GMAIL-MSGID: =?utf-8?q?1598455792446088014?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,54 +49,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Sean Young <sean@mess.org>
 
-commit 13a83eac373c49c0a081cbcd137e79210fe78acd upstream.
+[not upstream as the driver is deleted in 4.16 - gregkh]
 
-On boot we save the configuration space of PCIe bridges. We do this so
-when we get an EEH event and everything gets reset that we can restore
-them.
+The lirc config documented here
+https://www.blushingpenguin.com/mark/blog/?p=24 uses raw_codes for sending
+IR. Each key only has one pulse, which in fact is an index into the
+haup-ir-blaster.bin file. Changing the driver to LIRCCODE (although more
+accurate) breaks this configuration.
 
-Unfortunately we save this state before we've enabled the MMIO space
-on the bridges. Hence if we have to reset the bridge when we come back
-MMIO is not enabled and we end up taking an PE freeze when the driver
-starts accessing again.
+This code has been replaced completely in kernel v4.16 by a new driver,
+see commit acaa34bf06e9 ("media: rc: implement zilog transmitter"), and
+commit f95367a7b758 ("media: staging: remove lirc_zilog driver").
 
-This patch forces the memory/MMIO and bus mastering on when restoring
-bridges on EEH. Ideally we'd do this correctly by saving the
-configuration space writes later, but that will have to come later in
-a larger EEH rewrite. For now we have this simple fix.
+This reverts commit 89d8a2cc51d1f29ea24a0b44dde13253141190a0.
 
-The original bug can be triggered on a boston machine by doing:
-  echo 0x8000000000000000 > /sys/kernel/debug/powerpc/PCI0001/err_injct_outbound
-On boston, this PHB has a PCIe switch on it.  Without this patch,
-you'll see two EEH events, 1 expected and 1 the failure we are fixing
-here. The second EEH event causes the anything under the PHB to
-disappear (i.e. the i40e eth).
+Fixes: 615cd3fe6ccc ("[media] media: lirc_dev: make better use of file->private_data")
 
-With this patch, only 1 EEH event occurs and devices properly recover.
-
-Fixes: 652defed4875 ("powerpc/eeh: Check PCIe link after reset")
-Cc: stable@vger.kernel.org # v3.11+
-Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Acked-by: Russell Currey <ruscur@russell.cc>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: stable@vger.kernel.org # v4.14-v4.15
+Reported-by: Warren Sturm <warren.sturm@gmail.com>
+Tested-by: Warren Sturm <warren.sturm@gmail.com>
+Signed-off-by: Sean Young <sean@mess.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/kernel/eeh_pe.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/media/lirc/lirc_zilog.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/powerpc/kernel/eeh_pe.c
-+++ b/arch/powerpc/kernel/eeh_pe.c
-@@ -807,7 +807,8 @@ static void eeh_restore_bridge_bars(stru
- 	eeh_ops->write_config(pdn, 15*4, 4, edev->config_space[15]);
+--- a/drivers/staging/media/lirc/lirc_zilog.c
++++ b/drivers/staging/media/lirc/lirc_zilog.c
+@@ -288,7 +288,7 @@ static void release_ir_tx(struct kref *r
+ 	struct IR_tx *tx = container_of(ref, struct IR_tx, ref);
+ 	struct IR *ir = tx->ir;
  
- 	/* PCI Command: 0x4 */
--	eeh_ops->write_config(pdn, PCI_COMMAND, 4, edev->config_space[1]);
-+	eeh_ops->write_config(pdn, PCI_COMMAND, 4, edev->config_space[1] |
-+			      PCI_COMMAND_MEMORY | PCI_COMMAND_MASTER);
+-	ir->l.features &= ~LIRC_CAN_SEND_LIRCCODE;
++	ir->l.features &= ~LIRC_CAN_SEND_PULSE;
+ 	/* Don't put_ir_device(tx->ir) here, so our lock doesn't get freed */
+ 	ir->tx = NULL;
+ 	kfree(tx);
+@@ -1267,14 +1267,14 @@ static long ioctl(struct file *filep, un
+ 		if (!(features & LIRC_CAN_SEND_MASK))
+ 			return -ENOTTY;
  
- 	/* Check the PCIe link is ready */
- 	eeh_bridge_check_link(edev);
+-		result = put_user(LIRC_MODE_LIRCCODE, uptr);
++		result = put_user(LIRC_MODE_PULSE, uptr);
+ 		break;
+ 	case LIRC_SET_SEND_MODE:
+ 		if (!(features & LIRC_CAN_SEND_MASK))
+ 			return -ENOTTY;
+ 
+ 		result = get_user(mode, uptr);
+-		if (!result && mode != LIRC_MODE_LIRCCODE)
++		if (!result && mode != LIRC_MODE_PULSE)
+ 			return -EINVAL;
+ 		break;
+ 	default:
+@@ -1512,7 +1512,7 @@ static int ir_probe(struct i2c_client *c
+ 		kref_init(&tx->ref);
+ 		ir->tx = tx;
+ 
+-		ir->l.features |= LIRC_CAN_SEND_LIRCCODE;
++		ir->l.features |= LIRC_CAN_SEND_PULSE;
+ 		mutex_init(&tx->client_lock);
+ 		tx->c = client;
+ 		tx->need_boot = 1;
