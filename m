@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49cMw6QMgAMesf9umdcsRgErygNLPMVAY0kGkWaX9Aw2Wwm/z56U/IjyR7S6W4kvEJBDp7U
-ARC-Seal: i=1; a=rsa-sha256; t=1524405597; cv=none;
+X-Google-Smtp-Source: AIpwx4/kMn6MZZMq0JjUaxtFTRk8xyM0InF52+WcCEKEhVYUijCzUjx/83cDOGksYvCsyMGXaMJ1
+ARC-Seal: i=1; a=rsa-sha256; t=1524405594; cv=none;
         d=google.com; s=arc-20160816;
-        b=yZWd6VJ3X904ELLnswf/eKu5+XmW5CIgY69zhXET7odKjhcjnB9Xb3UlByncfd+4Gr
-         8LW5E924NOr4g2WWFplPAEeDoKVHsihX2NKdg77J7mUfgEwPAb5soanrCM3ICaBXRFRL
-         U12sS46T+o5KhCU2VD/0pTGhp4jZPGglTSK9Ftg9l43I+6JWMSPz3yCzj4MSBnZ9w2l9
-         9wnMNejNW61U4OYDO7iGqD0ZpSyCRzRzHb4x5dg6VlqIlcRQ2cakWNyVSeK6cNGjNntY
-         Tz0hOlRwLSQPCgceuUofeR6PlTScdf3x6ou1MMNvggA7HewLSYDBO4NlyIN2bjDxeXLo
-         bD7Q==
+        b=cNjoFpyLBzgG4BDeVG1woa1e2sx5UTYnDuI2HmrRTsyQnpiEzqyz1u0sT08J6faOlE
+         K1x+XH4CKrhUX3YtlKTPx/RQhiPf1JqV+CxSWktfgGcYbrC5++vk159py5gerIO8DVJz
+         yakvYqyl+uBsX4IyxUBamHHsh7P2G2mKNccsAgpoOC0Oug6vEPt9CZV9B6avmh34R5S3
+         SfPFpTGQiz0RxL90xGwbGjrkJLzwQVMTf1k5VrrmLG/OMnm96KLGMz73C6AfQaU++I5n
+         dy23WEEX1H6FsuUZJSjlIpoCR01nePSN8iyfNy3SekiRgQ+a82w4q/UUMTFpXrnGJgVy
+         K+4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GD1lhrV3Q9scGgWu4kpDs8syjfrptmAASjaLhE7vLhk=;
-        b=V/d1ruQ+nQT1qAAUuW+Ht9gyS7K6aN5dprxBzP6+kOFR4umGJCSaLIVPbY8kA+MR3f
-         NlPvArdm+vWoDw7mqm+J2YH5PIx908LlZHqSU9VqZILRuyNRq++w0O+7C1CtTiHmYQo2
-         e02OeUDS+Qo76EjczvWl265YDVFNL/c02qzk5K7ncvm16/26qEaXqPBSV1wm88O/mYXE
-         OR1J51VHby7i8qq6okmZA4r0iUm4Yifl6jNQ2BD+F88tgUZXqjTgjD4+lp7hc6bM+umo
-         jUMVbkmmFB0MbkZkfA9X2nM5tnLTYIcDpxJ9lM6PLtKReAVLCImtceddBErX5+tqntQB
-         /s+g==
+        bh=lFxBRI7IDNFcRNQ1iM4NvYcuPinLTWpPoUpHUAjMsPo=;
+        b=DSFqOhRBXrgt/Gq+olmZ0Hutf153jn9CGqaFjvOfnqYap5JqtvVFU+1uEk+01BU3Zw
+         7E/T8Fa2GgdhoT1Zbdy2+Wq8wo/10O8mDvGZ7eERopTHbGfSJ+JkTngckrnEcAGXKUZY
+         JlMMhsbJtTIKWZg3P3Sask9GypOHMLPWLc+6/Hy4/ZOCh9iWf1VXvcbez1BnxtBVp+HH
+         HYAk1h/ppymYdyBs376cVTpYoMnOKldaQDsWRisZZ+PhhSTYEO5ZfGRRKHcvIy97Zi62
+         3D1YRsAycTlo8xAsTHxPzbgHhwpFMt1brALNVe+cPHr+DPwDhOoQWHGGi2+y93pf+xlK
+         6FRg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Theodore Tso <tytso@mit.edu>,
-	Chen Feng <puck.chen@hisilicon.com>
-Subject: [PATCH 4.16 081/196] random: use a tighter cap in credit_entropy_bits_safe()
-Date: Sun, 22 Apr 2018 15:51:41 +0200
-Message-Id: <20180422135108.495597846@linuxfoundation.org>
+	Jiri Slaby <jslaby@suse.cz>,
+	Jan Kara <jack@suse.cz>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.16 090/196] ext4: fix offset overflow on 32-bit archs in ext4_iomap_begin()
+Date: Sun, 22 Apr 2018 15:51:50 +0200
+Message-Id: <20180422135108.945904552@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455123510525294?=
-X-GMAIL-MSGID: =?utf-8?q?1598455123510525294?=
+X-GMAIL-THRID: =?utf-8?q?1598455121041638059?=
+X-GMAIL-MSGID: =?utf-8?q?1598455121041638059?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit 9f886f4d1d292442b2f22a0a33321eae821bde40 upstream.
+commit fe23cb65c2c394ea306f3714a17d46ab2e6a0af1 upstream.
 
-This fixes a harmless UBSAN where root could potentially end up
-causing an overflow while bumping the entropy_total field (which is
-ignored once the entropy pool has been initialized, and this generally
-is completed during the boot sequence).
+ext4_iomap_begin() has a bug where offset returned in the iomap
+structure will be truncated to unsigned long size. On 64-bit
+architectures this is fine but on 32-bit architectures obviously not.
+Not many places actually use the offset stored in the iomap structure
+but one of visible failures is in SEEK_HOLE / SEEK_DATA implementation.
+If we create a file like:
 
-This is marginal for the stable kernel series, but it's a really
-trivial patch, and it fixes UBSAN warning that might cause security
-folks to get overly excited for no reason.
+dd if=/dev/urandom of=file bs=1k seek=8m count=1
 
+then
+
+lseek64("file", 0x100000000ULL, SEEK_DATA)
+
+wrongly returns 0x100000000 on unfixed kernel while it should return
+0x200000000. Avoid the overflow by proper type cast.
+
+Fixes: 545052e9e35a ("ext4: Switch to iomap for SEEK_HOLE / SEEK_DATA")
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported-by: Chen Feng <puck.chen@hisilicon.com>
-Cc: stable@vger.kernel.org
+Cc: stable@vger.kernel.org # v4.15
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/random.c |    2 +-
+ fs/ext4/inode.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -732,7 +732,7 @@ retry:
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3524,7 +3524,7 @@ retry:
+ 		iomap->flags |= IOMAP_F_DIRTY;
+ 	iomap->bdev = inode->i_sb->s_bdev;
+ 	iomap->dax_dev = sbi->s_daxdev;
+-	iomap->offset = first_block << blkbits;
++	iomap->offset = (u64)first_block << blkbits;
+ 	iomap->length = (u64)map.m_len << blkbits;
  
- static int credit_entropy_bits_safe(struct entropy_store *r, int nbits)
- {
--	const int nbits_max = (int)(~0U >> (ENTROPY_SHIFT + 1));
-+	const int nbits_max = r->poolinfo->poolwords * 32;
- 
- 	if (nbits < 0)
- 		return -EINVAL;
+ 	if (ret == 0) {
