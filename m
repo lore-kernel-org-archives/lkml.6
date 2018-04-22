@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/5Ev0NLa1OGsEknldQooiT95DkeSqo6R+HYLoCPg+6lLtnC9yshsesV/r76ACoQNJtrKNu
-ARC-Seal: i=1; a=rsa-sha256; t=1524406727; cv=none;
+X-Google-Smtp-Source: AIpwx4+5Jn04bNwXpLsiI887GOR/RalcdIvNNPNFjWAArsKaVZHJ0zq538WWGwrnfu5ejMPwC3WF
+ARC-Seal: i=1; a=rsa-sha256; t=1524406724; cv=none;
         d=google.com; s=arc-20160816;
-        b=F2bfKXE17wxI4H8ngS4XjkEQbOAASf4MLDvTpm58OhMlj3Q4u3dFqbEZr/jJQyP01A
-         B/VYBCAJIT1lYO3/tcxNqQA6Pb1f1iC/nIXYre2/vKgMyZ1CcnLNHzslHKuNZw+9/Gaf
-         PzVsTlnyDOnNEM+BZ0Lj4TKsiW6VBw7LI2Vj3djURsxCyNpp6hS7xMWAKOOqV1fwvNQx
-         mBlLLGUJL9ZD0nV4tXPbOItdg6ZJK96Y0XUBVdIHwg528vBj8yDxNtdnad4avBVbAUUs
-         i21Mu+qq61su8KKK+IZxNDDTCBf7vLXCuWFzg/c2dmMP1Cx5Fgq+DgNcZeOA868It9jC
-         iTeg==
+        b=m091PI/r+h7ph98shTBSPjeM+JTI+2Z3CKtqV3WJkWj6wT3ynHo/700MI0VkUPRvLX
+         okpzmpJYy34a8Ibvmid6sQAT04MAjucwu88ij4KXztDInxTmWg3O8O8qDhEU306Usqx9
+         AKOgs2E9Oi0gCrcwhydqXHlzajTayXRugTXV+TyjgNodTby2rttCouFA1u9Eolv8fdQ7
+         I3bunzuklsn/d9hgkkUqk6YNshU2ga6IgftE+BrVbuZgUZLvBZDGhMttG3qiuqmq2Is8
+         B/s12ghTCHxxNao+apaZyTRDY5fG4rK96Xo5nuYo/DAzAR/NiFO0sKF8elAiU5v2QPnm
+         h+hg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MHm1/xchah81mEFay9oWCNm30KXyi7SAzdU0xTZCI9k=;
-        b=QR0/zuxBN+gvQDtas+YAkYhzA7xWY9J5PzHfQ7KKboxz1Dx+WUtYnnmWHAhIdRSJ8p
-         u+9vg3nFDnkpNVNn8jwsrWpIosMnDiOd//VRux/1zm6Dd8TviOumzeldaud0fhcRZ5v+
-         RMf4N0evIj1jV8nMNttk5+e7tmWziu/v1Lln9VuC5PVtK6HnYlz2+7AXGTWQbepvBuYc
-         6F0xO1Q/qeDwvE9agfPS6dXkaV/PcrLkOV6pNxxJC/NnhgYEwLDSgh2IkKeHxDKpv92t
-         zWappV9reP44cRNwTgpbeqbTRsXdHNH2BNmRZA2qCM6YGVRGniMfRIZVUSc1FK6HyNe8
-         RNsw==
+        bh=kvxKr8ClEQgx20UWqYp9E/gpYHW1bkkG/5DdzZuDcfU=;
+        b=x6sUGSpRaqtQCWYk+eI3jHgZiEOvUqiE7eTlsqxNc40Eb6SnW5iKWACaXf2uVedMV/
+         pErG+ROuYpKKhTUOnWc815A6d3RMYL3wESDuk0R2+yGwDoW92UL5GJ6XO4quoL2nKgV9
+         +N4JkPNTubjXIVjyaR9D3jzdAMMb8lYe6TX+I5d4gW00tyuAxsdbNipyeXXZWYZEhh3I
+         49tLLUGG0bhdh0e9mUE/hSsjySxYKqaBL7yxZfUckGExg104Fi6rjFpLsTW6p3QBaFmD
+         g4ftyh4x21X3TqOmnI+D8mrjukfYquPH2hPbMWMfMckQJ4/aHjGQZqcfkxoHbnpHqHxO
+         zFnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Matt Redfearn <matt.redfearn@mips.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org
-Subject: [PATCH 4.4 82/97] MIPS: uaccess: Add micromips clobbers to bzero invocation
-Date: Sun, 22 Apr 2018 15:54:00 +0200
-Message-Id: <20180422135309.683857392@linuxfoundation.org>
+	Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
+	Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.4 81/97] HID: hidraw: Fix crash on HIDIOCGFEATURE with a destroyed device
+Date: Sun, 22 Apr 2018 15:53:59 +0200
+Message-Id: <20180422135309.635020694@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455259602480989?=
-X-GMAIL-MSGID: =?utf-8?q?1598456307847051244?=
+X-GMAIL-THRID: =?utf-8?q?1598455251173047528?=
+X-GMAIL-MSGID: =?utf-8?q?1598456305210329990?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,58 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matt Redfearn <matt.redfearn@mips.com>
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
 
-commit b3d7e55c3f886493235bfee08e1e5a4a27cbcce8 upstream.
+commit a955358d54695e4ad9f7d6489a7ac4d69a8fc711 upstream.
 
-The micromips implementation of bzero additionally clobbers registers t7
-& t8. Specify this in the clobbers list when invoking bzero.
+Doing `ioctl(HIDIOCGFEATURE)` in a tight loop on a hidraw device
+and then disconnecting the device, or unloading the driver, can
+cause a NULL pointer dereference.
 
-Fixes: 26c5e07d1478 ("MIPS: microMIPS: Optimise 'memset' core library function.")
-Reported-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.10+
-Patchwork: https://patchwork.linux-mips.org/patch/19110/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+When a hidraw device is destroyed it sets 0 to `dev->exist`.
+Most functions check 'dev->exist' before doing its work, but
+`hidraw_get_report()` was missing that check.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/uaccess.h |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/hid/hidraw.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/mips/include/asm/uaccess.h
-+++ b/arch/mips/include/asm/uaccess.h
-@@ -1238,6 +1238,13 @@ __clear_user(void __user *addr, __kernel
- {
- 	__kernel_size_t res;
+--- a/drivers/hid/hidraw.c
++++ b/drivers/hid/hidraw.c
+@@ -197,6 +197,11 @@ static ssize_t hidraw_get_report(struct
+ 	int ret = 0, len;
+ 	unsigned char report_number;
  
-+#ifdef CONFIG_CPU_MICROMIPS
-+/* micromips memset / bzero also clobbers t7 & t8 */
-+#define bzero_clobbers "$4", "$5", "$6", __UA_t0, __UA_t1, "$15", "$24", "$31"
-+#else
-+#define bzero_clobbers "$4", "$5", "$6", __UA_t0, __UA_t1, "$31"
-+#endif /* CONFIG_CPU_MICROMIPS */
++	if (!hidraw_table[minor] || !hidraw_table[minor]->exist) {
++		ret = -ENODEV;
++		goto out;
++	}
 +
- 	if (eva_kernel_access()) {
- 		__asm__ __volatile__(
- 			"move\t$4, %1\n\t"
-@@ -1247,7 +1254,7 @@ __clear_user(void __user *addr, __kernel
- 			"move\t%0, $6"
- 			: "=r" (res)
- 			: "r" (addr), "r" (size)
--			: "$4", "$5", "$6", __UA_t0, __UA_t1, "$31");
-+			: bzero_clobbers);
- 	} else {
- 		might_fault();
- 		__asm__ __volatile__(
-@@ -1258,7 +1265,7 @@ __clear_user(void __user *addr, __kernel
- 			"move\t%0, $6"
- 			: "=r" (res)
- 			: "r" (addr), "r" (size)
--			: "$4", "$5", "$6", __UA_t0, __UA_t1, "$31");
-+			: bzero_clobbers);
- 	}
+ 	dev = hidraw_table[minor]->hid;
  
- 	return res;
+ 	if (!dev->ll_driver->raw_request) {
