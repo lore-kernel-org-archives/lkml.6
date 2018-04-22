@@ -1,89 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2651967-1524406590-2-5117813643844212195
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524406589; b=ajjSJNBq4RGwYN2GdJ2G2LwkWeKHHoNwUNgyXBc3AM8vU3onFJ
-    3Hz+Z0f4YRQkACKd7euQkivGySxwhUPKiNPW7DKZlePA/OqFdk6dtZ3RTSgyQr4j
-    k9JBK6a8m7ASVJzZxSLQ9dTVw3VPuzPtkgEgGdt2PJAPHyUFqPUXyeLgQuOGcLbu
-    HzfIPm59SoPmQdFC1c9/+Y7fjat+jiQxxWpbI/YGJ4vXedCe2wC0bL6x5gAvO8zE
-    cOA2m55oEw4BTdvlOmAEqCWTmALrc/NviqQeX1UyehHHHCl5bqLpv+TLcI/8wuoO
-    kaBA84J07R6j8+AUueP8LQLRsBDVExGj4zFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524406589; bh=Z+9mXbR8hHaQbdKGgVLEzeZYjSInkI
-    F2C0HwgB8gj1Y=; b=QgZmcY0zbu1RFtLR0kLZM7JgHh/ZwClUpDmLcmjh7HO6QS
-    p6L2qGxPvsENb4C5DXdizHMafCaT2j/8Xd6ROEttYUlLoFTVrE+F+rBw/z5s7XcK
-    Ze2kcf9dSmiodPjPjqBR9xs+nKG3O54yVYAruYrk1KWswE2472xHNW1y1ZNG+2PU
-    VxwGybZuudjRPQgi7n2XR5OStXgJO67ZB8na9eRyQ4XbwR5I27mCJJiMglIHk/Kl
-    xr8Li4zy/vD46reSPXfDurp/9B7vFQ5Rc6tQ+oJuchG1XOHim8Llpv69e6iFep5h
-    ztH/oxhtYpIJ8Xt2dvc8+vUoDThKjTmwuDoKWfHg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNO2Lq8Axyo7txcriPOEyhwLRWUpl5rLj8dGJHrrPgkMUnA6w/FgmJDGno5To4w1WVNlgJ4hRxoxbYDnrqPU5Tl/yYsl+s8X6wny9kI89+yRxQZLiYmE
-    pYADXLdfBixFdv5iJbrKxg6MeIQbdm6VvtdB3gBJe3sEnB/O4U2JfuJ3s3BkfDc3qhZGjFqvaXNBSKKa6P+HPBEF77T6WsdUfbwZyg3dzyVDgKUVCYmvwsZ7
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=hSkVLCK3AAAA:8
-    a=QyXUC8HyAAAA:8 a=MqK6kde1AAAA:8 a=PtDNVHqPAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=ag1SF4gXAAAA:8 a=7hGXG0wdR98EPOhUFxUA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=cQPPKAXgyycSBL8etih5:22 a=9aqP8kKXEzZd0rnup5AB:22
-    a=BpimnaHY1jUKGyF_4-AF:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756709AbeDVOQZ (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:16:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57430 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932105AbeDVOQW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:16:22 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx48+JxcdQl4RrOyXTTUNy9iDG1piMhl+FkHraT+TjyygvpmD1biQ6bulsFQiKhJJPnaQbwNG
+ARC-Seal: i=1; a=rsa-sha256; t=1524406588; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ZmRwe8SR8JnQKOpPkDOn15JP+QSe4oDiE2UAK/TwrRX8rDoDwKO+nTRYtknoInZjva
+         EJYzGvdsSSNF0J1h49l+lrFZ6c3FmSxpr0k7142xOctqX3yGkHUC3t7Tdrj8S0rbHLnX
+         OVw0UYxyhPbTYM1c3aEDrTGDqxJYUb+gEq3z27ktJbPER5dXj7HemUPpn3BKb7qIKYm7
+         9HXCZbnbqv2i6dkKVjciyEgyjBrIHbgQOVYa5PkgaIZ1/U9Q88G4Y9WrcT4bMzNlqhEt
+         LddcvzJY+M1vmDwDEdXzqzIEx5J12QLHt2Cn6zItkbJ7YXwVKRk5zIzcg20gNZCTBXDb
+         SWqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=DG2M5Fh3V8QWkzjTw1FUJnzgaLRUALh7fGFPsGcXjQQ=;
+        b=r4SgM73z1yfkyCsWAq92p7abDUj9Gm19dqCsQdsEECsOCGsawo4W7dWv++9CAj/Gqt
+         mHpyPb5WVZOTa7SQ+qNHPfh6rWnvafFVTTIoZ+X1hyw43Cu+S1shx43nnAfYddqZIb6U
+         KFX31sjFVftwBe9fa+exbMxiBkBtYiKODi5rw1rlSNpZGN89gmcB9C1IoWz3Kcv0G8pb
+         VTarE+3abxio9ie7XJ18KS51smluQjvjJzko0/jrDE6XD/NDLYvLjSEEjYj6hXDl7R30
+         u/jYMxLdOCQQiXcTtZaaYUuOL2xHUUZJt+/j50+kx67ZH/+XjV7WvEeqykGpNoSnP+iH
+         dQMQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+d11f321e7f1923157eac80aa990b446596f46439@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 28/97] ipc/shm: fix use-after-free of shm file via remap_file_pages()
-Date: Sun, 22 Apr 2018 15:53:06 +0200
-Message-Id: <20180422135306.721342962@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.4 03/97] perf intel-pt: Fix overlap detection to identify consecutive buffers correctly
+Date: Sun, 22 Apr 2018 15:52:41 +0200
+Message-Id: <20180422135304.810849211@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -91,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598456162843507751?=
+X-GMAIL-MSGID: =?utf-8?q?1598456162843507751?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -101,156 +50,218 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 3f05317d9889ab75c7190dcd39491d2a97921984 upstream.
+commit 117db4b27bf08dba412faf3924ba55fe970c57b8 upstream.
 
-syzbot reported a use-after-free of shm_file_data(file)->file->f_op in
-shm_get_unmapped_area(), called via sys_remap_file_pages().
+Overlap detection was not not updating the buffer's 'consecutive' flag.
+Marking buffers consecutive has the advantage that decoding begins from
+the start of the buffer instead of the first PSB. Fix overlap detection
+to identify consecutive buffers correctly.
 
-Unfortunately it couldn't generate a reproducer, but I found a bug which
-I think caused it.  When remap_file_pages() is passed a full System V
-shared memory segment, the memory is first unmapped, then a new map is
-created using the ->vm_file.  Between these steps, the shm ID can be
-removed and reused for a new shm segment.  But, shm_mmap() only checks
-whether the ID is currently valid before calling the underlying file's
-->mmap(); it doesn't check whether it was reused.  Thus it can use the
-wrong underlying file, one that was already freed.
-
-Fix this by making the "outer" shm file (the one that gets put in
-->vm_file) hold a reference to the real shm file, and by making
-__shm_open() require that the file associated with the shm ID matches
-the one associated with the "outer" file.
-
-Taking the reference to the real shm file is needed to fully solve the
-problem, since otherwise sfd->file could point to a freed file, which
-then could be reallocated for the reused shm ID, causing the wrong shm
-segment to be mapped (and without the required permission checks).
-
-Commit 1ac0b6dec656 ("ipc/shm: handle removed segments gracefully in
-shm_mmap()") almost fixed this bug, but it didn't go far enough because
-it didn't consider the case where the shm ID is reused.
-
-The following program usually reproduces this bug:
-
-	#include <stdlib.h>
-	#include <sys/shm.h>
-	#include <sys/syscall.h>
-	#include <unistd.h>
-
-	int main()
-	{
-		int is_parent = (fork() != 0);
-		srand(getpid());
-		for (;;) {
-			int id = shmget(0xF00F, 4096, IPC_CREAT|0700);
-			if (is_parent) {
-				void *addr = shmat(id, NULL, 0);
-				usleep(rand() % 50);
-				while (!syscall(__NR_remap_file_pages, addr, 4096, 0, 0, 0));
-			} else {
-				usleep(rand() % 50);
-				shmctl(id, IPC_RMID, NULL);
-			}
-		}
-	}
-
-It causes the following NULL pointer dereference due to a 'struct file'
-being used while it's being freed.  (I couldn't actually get a KASAN
-use-after-free splat like in the syzbot report.  But I think it's
-possible with this bug; it would just take a more extraordinary race...)
-
-	BUG: unable to handle kernel NULL pointer dereference at 0000000000000058
-	PGD 0 P4D 0
-	Oops: 0000 [#1] SMP NOPTI
-	CPU: 9 PID: 258 Comm: syz_ipc Not tainted 4.16.0-05140-gf8cf2f16a7c95 #189
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-	RIP: 0010:d_inode include/linux/dcache.h:519 [inline]
-	RIP: 0010:touch_atime+0x25/0xd0 fs/inode.c:1724
-	[...]
-	Call Trace:
-	 file_accessed include/linux/fs.h:2063 [inline]
-	 shmem_mmap+0x25/0x40 mm/shmem.c:2149
-	 call_mmap include/linux/fs.h:1789 [inline]
-	 shm_mmap+0x34/0x80 ipc/shm.c:465
-	 call_mmap include/linux/fs.h:1789 [inline]
-	 mmap_region+0x309/0x5b0 mm/mmap.c:1712
-	 do_mmap+0x294/0x4a0 mm/mmap.c:1483
-	 do_mmap_pgoff include/linux/mm.h:2235 [inline]
-	 SYSC_remap_file_pages mm/mmap.c:2853 [inline]
-	 SyS_remap_file_pages+0x232/0x310 mm/mmap.c:2769
-	 do_syscall_64+0x64/0x1a0 arch/x86/entry/common.c:287
-	 entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[ebiggers@google.com: add comment]
-  Link: http://lkml.kernel.org/r/20180410192850.235835-1-ebiggers3@gmail.com
-Link: http://lkml.kernel.org/r/20180409043039.28915-1-ebiggers3@gmail.com
-Reported-by: syzbot+d11f321e7f1923157eac80aa990b446596f46439@syzkaller.appspotmail.com
-Fixes: c8d78c1823f4 ("mm: replace remap_file_pages() syscall with emulation")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Davidlohr Bueso <dbueso@suse.de>
-Cc: Manfred Spraul <manfred@colorfullife.com>
-Cc: "Eric W . Biederman" <ebiederm@xmission.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1520431349-30689-2-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- ipc/shm.c |   23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   62 +++++++++-----------
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.h |    2 
+ tools/perf/util/intel-pt.c                          |    5 +
+ 3 files changed, 34 insertions(+), 35 deletions(-)
 
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -198,6 +198,12 @@ static int __shm_open(struct vm_area_str
- 	if (IS_ERR(shp))
- 		return PTR_ERR(shp);
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -2152,14 +2152,6 @@ const struct intel_pt_state *intel_pt_de
+ 	return &decoder->state;
+ }
  
-+	if (shp->shm_file != sfd->file) {
-+		/* ID was reused */
-+		shm_unlock(shp);
-+		return -EINVAL;
-+	}
-+
- 	shp->shm_atim = get_seconds();
- 	shp->shm_lprid = task_tgid_vnr(current);
- 	shp->shm_nattch++;
-@@ -414,8 +420,9 @@ static int shm_mmap(struct file *file, s
+-static bool intel_pt_at_psb(unsigned char *buf, size_t len)
+-{
+-	if (len < INTEL_PT_PSB_LEN)
+-		return false;
+-	return memmem(buf, INTEL_PT_PSB_LEN, INTEL_PT_PSB_STR,
+-		      INTEL_PT_PSB_LEN);
+-}
+-
+ /**
+  * intel_pt_next_psb - move buffer pointer to the start of the next PSB packet.
+  * @buf: pointer to buffer pointer
+@@ -2248,6 +2240,7 @@ static unsigned char *intel_pt_last_psb(
+  * @buf: buffer
+  * @len: size of buffer
+  * @tsc: TSC value returned
++ * @rem: returns remaining size when TSC is found
+  *
+  * Find a TSC packet in @buf and return the TSC value.  This function assumes
+  * that @buf starts at a PSB and that PSB+ will contain TSC and so stops if a
+@@ -2255,7 +2248,8 @@ static unsigned char *intel_pt_last_psb(
+  *
+  * Return: %true if TSC is found, false otherwise.
+  */
+-static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc)
++static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc,
++			      size_t *rem)
+ {
+ 	struct intel_pt_pkt packet;
  	int ret;
+@@ -2266,6 +2260,7 @@ static bool intel_pt_next_tsc(unsigned c
+ 			return false;
+ 		if (packet.type == INTEL_PT_TSC) {
+ 			*tsc = packet.payload;
++			*rem = len;
+ 			return true;
+ 		}
+ 		if (packet.type == INTEL_PT_PSBEND)
+@@ -2316,6 +2311,8 @@ static int intel_pt_tsc_cmp(uint64_t tsc
+  * @len_a: size of first buffer
+  * @buf_b: second buffer
+  * @len_b: size of second buffer
++ * @consecutive: returns true if there is data in buf_b that is consecutive
++ *               to buf_a
+  *
+  * If the trace contains TSC we can look at the last TSC of @buf_a and the
+  * first TSC of @buf_b in order to determine if the buffers overlap, and then
+@@ -2328,33 +2325,41 @@ static int intel_pt_tsc_cmp(uint64_t tsc
+ static unsigned char *intel_pt_find_overlap_tsc(unsigned char *buf_a,
+ 						size_t len_a,
+ 						unsigned char *buf_b,
+-						size_t len_b)
++						size_t len_b, bool *consecutive)
+ {
+ 	uint64_t tsc_a, tsc_b;
+ 	unsigned char *p;
+-	size_t len;
++	size_t len, rem_a, rem_b;
  
- 	/*
--	 * In case of remap_file_pages() emulation, the file can represent
--	 * removed IPC ID: propogate shm_lock() error to caller.
-+	 * In case of remap_file_pages() emulation, the file can represent an
-+	 * IPC ID that was removed, and possibly even reused by another shm
-+	 * segment already.  Propagate this case as an error to caller.
- 	 */
- 	ret =__shm_open(vma);
- 	if (ret)
-@@ -439,6 +446,7 @@ static int shm_release(struct inode *ino
- 	struct shm_file_data *sfd = shm_file_data(file);
+ 	p = intel_pt_last_psb(buf_a, len_a);
+ 	if (!p)
+ 		return buf_b; /* No PSB in buf_a => no overlap */
  
- 	put_ipc_ns(sfd->ns);
-+	fput(sfd->file);
- 	shm_file_data(file) = NULL;
- 	kfree(sfd);
+ 	len = len_a - (p - buf_a);
+-	if (!intel_pt_next_tsc(p, len, &tsc_a)) {
++	if (!intel_pt_next_tsc(p, len, &tsc_a, &rem_a)) {
+ 		/* The last PSB+ in buf_a is incomplete, so go back one more */
+ 		len_a -= len;
+ 		p = intel_pt_last_psb(buf_a, len_a);
+ 		if (!p)
+ 			return buf_b; /* No full PSB+ => assume no overlap */
+ 		len = len_a - (p - buf_a);
+-		if (!intel_pt_next_tsc(p, len, &tsc_a))
++		if (!intel_pt_next_tsc(p, len, &tsc_a, &rem_a))
+ 			return buf_b; /* No TSC in buf_a => assume no overlap */
+ 	}
+ 
+ 	while (1) {
+ 		/* Ignore PSB+ with no TSC */
+-		if (intel_pt_next_tsc(buf_b, len_b, &tsc_b) &&
+-		    intel_pt_tsc_cmp(tsc_a, tsc_b) < 0)
+-			return buf_b; /* tsc_a < tsc_b => no overlap */
++		if (intel_pt_next_tsc(buf_b, len_b, &tsc_b, &rem_b)) {
++			int cmp = intel_pt_tsc_cmp(tsc_a, tsc_b);
++
++			/* Same TSC, so buffers are consecutive */
++			if (!cmp && rem_b >= rem_a) {
++				*consecutive = true;
++				return buf_b + len_b - (rem_b - rem_a);
++			}
++			if (cmp < 0)
++				return buf_b; /* tsc_a < tsc_b => no overlap */
++		}
+ 
+ 		if (!intel_pt_step_psb(&buf_b, &len_b))
+ 			return buf_b + len_b; /* No PSB in buf_b => no data */
+@@ -2368,6 +2373,8 @@ static unsigned char *intel_pt_find_over
+  * @buf_b: second buffer
+  * @len_b: size of second buffer
+  * @have_tsc: can use TSC packets to detect overlap
++ * @consecutive: returns true if there is data in buf_b that is consecutive
++ *               to buf_a
+  *
+  * When trace samples or snapshots are recorded there is the possibility that
+  * the data overlaps.  Note that, for the purposes of decoding, data is only
+@@ -2378,7 +2385,7 @@ static unsigned char *intel_pt_find_over
+  */
+ unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
+ 				     unsigned char *buf_b, size_t len_b,
+-				     bool have_tsc)
++				     bool have_tsc, bool *consecutive)
+ {
+ 	unsigned char *found;
+ 
+@@ -2390,7 +2397,8 @@ unsigned char *intel_pt_find_overlap(uns
+ 		return buf_b; /* No overlap */
+ 
+ 	if (have_tsc) {
+-		found = intel_pt_find_overlap_tsc(buf_a, len_a, buf_b, len_b);
++		found = intel_pt_find_overlap_tsc(buf_a, len_a, buf_b, len_b,
++						  consecutive);
+ 		if (found)
+ 			return found;
+ 	}
+@@ -2405,28 +2413,16 @@ unsigned char *intel_pt_find_overlap(uns
+ 	}
+ 
+ 	/* Now len_b >= len_a */
+-	if (len_b > len_a) {
+-		/* The leftover buffer 'b' must start at a PSB */
+-		while (!intel_pt_at_psb(buf_b + len_a, len_b - len_a)) {
+-			if (!intel_pt_step_psb(&buf_a, &len_a))
+-				return buf_b; /* No overlap */
+-		}
+-	}
+-
+ 	while (1) {
+ 		/* Potential overlap so check the bytes */
+ 		found = memmem(buf_a, len_a, buf_b, len_a);
+-		if (found)
++		if (found) {
++			*consecutive = true;
+ 			return buf_b + len_a;
++		}
+ 
+ 		/* Try again at next PSB in buffer 'a' */
+ 		if (!intel_pt_step_psb(&buf_a, &len_a))
+ 			return buf_b; /* No overlap */
+-
+-		/* The leftover buffer 'b' must start at a PSB */
+-		while (!intel_pt_at_psb(buf_b + len_a, len_b - len_a)) {
+-			if (!intel_pt_step_psb(&buf_a, &len_a))
+-				return buf_b; /* No overlap */
+-		}
+ 	}
+ }
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
+@@ -102,7 +102,7 @@ const struct intel_pt_state *intel_pt_de
+ 
+ unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
+ 				     unsigned char *buf_b, size_t len_b,
+-				     bool have_tsc);
++				     bool have_tsc, bool *consecutive);
+ 
+ int intel_pt__strerror(int code, char *buf, size_t buflen);
+ 
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -188,14 +188,17 @@ static void intel_pt_dump_event(struct i
+ static int intel_pt_do_fix_overlap(struct intel_pt *pt, struct auxtrace_buffer *a,
+ 				   struct auxtrace_buffer *b)
+ {
++	bool consecutive = false;
+ 	void *start;
+ 
+ 	start = intel_pt_find_overlap(a->data, a->size, b->data, b->size,
+-				      pt->have_tsc);
++				      pt->have_tsc, &consecutive);
+ 	if (!start)
+ 		return -EINVAL;
+ 	b->use_size = b->data + b->size - start;
+ 	b->use_data = start;
++	if (b->use_size && consecutive)
++		b->consecutive = true;
  	return 0;
-@@ -1198,7 +1206,16 @@ long do_shmat(int shmid, char __user *sh
- 	file->f_mapping = shp->shm_file->f_mapping;
- 	sfd->id = shp->shm_perm.id;
- 	sfd->ns = get_ipc_ns(ns);
--	sfd->file = shp->shm_file;
-+	/*
-+	 * We need to take a reference to the real shm file to prevent the
-+	 * pointer from becoming stale in cases where the lifetime of the outer
-+	 * file extends beyond that of the shm segment.  It's not usually
-+	 * possible, but it can happen during remap_file_pages() emulation as
-+	 * that unmaps the memory, then does ->mmap() via file reference only.
-+	 * We'll deny the ->mmap() if the shm segment was since removed, but to
-+	 * detect shm ID reuse we need to compare the file pointers.
-+	 */
-+	sfd->file = get_file(shp->shm_file);
- 	sfd->vm_ops = NULL;
+ }
  
- 	err = security_mmap_file(file, prot, flags);
