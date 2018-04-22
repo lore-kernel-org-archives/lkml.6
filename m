@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49q8UBXups55T4uzZItqofxEr64vy5f29HsC2kbUO7b3VLANHHHVz7CHVRVqS+iUPW7SDrL
-ARC-Seal: i=1; a=rsa-sha256; t=1524405936; cv=none;
+X-Google-Smtp-Source: AIpwx4/KaSt/xtbrZGAafl6kFbcBd8uCxYhfnCGRfgsoLJRLudDww/XK7h0jfq3m9/ci1J7R6ONh
+ARC-Seal: i=1; a=rsa-sha256; t=1524405931; cv=none;
         d=google.com; s=arc-20160816;
-        b=L0t+/mYJtpBSHPEQ2go3n+Ze9OEMU/0k6ZunO+gJVGgYhW5/jdOy6/9BSdeun6E/3s
-         tLU7aUQNDW9/maTzCS4a06+f3uof4fmGBve0j3jkbnQR2Ob++vK28+Aj9CYCXGe1sarf
-         +cKc70Ve1KjQUhBv7COD7Va/SeTAfHW6zpbwcn3nyXCA2vv9cri6Uueg8RGPfAZqJTnw
-         qQUHfCeRs5a2NWA41ExjBHX7NjyrolOSUh/F5jVJQIzpVyzVp33qs4pkc67VSL4jdY+t
-         /X3HJ9vc5qRQKMz4SFpCNJgFAW9bkib1wuxx+fa+dXufvaYMC1Fuk+JfwDajTH/D5/x3
-         /u0g==
+        b=C2veHEUVbK1Ih9nXuVqiMiTHEORN3YveAPh4VKPGmrbCzo44S0V2TURRqpnicrwi+D
+         DR8vnVAmASQ/Ygo4TWtPyRBTjA4/T4COaY9C7MwfhEJRRzQOcDWM1DA3CP55ncAzi+yL
+         fqWYYtL7oyKFBJ/AcWr/bo0ipsGYYuvCsGCa7MKmRjSIKHEzObtp/esGQP+ZT8cRUnwX
+         tJGrQCdhSMf91JsRetdIab4oEOiyDbEBcJlKYfXuYMRqtrMtc2h0b0IVe4/7L0kONjZ0
+         JPfEpOLKoYXzgkkMm9UgNRAdFUtS9Np4z8QH0t4H43lT4TXekQKC0o4/nMzwwSnIysyy
+         JdAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ANHME8/GwPnCUj7/Qmn4AFWPKfCAV9wzaiKgoSt45VY=;
-        b=eoRyxuMg+xWmG3hfYohYEEdvuWo+gxpOiexsBWp9D5vm9oa3AN/DTK9qko1cEx1g07
-         jUxQwPU5na/RZ4JOfVCXDdBPyWefyqyhVCkbgbIwRROaCb9CPI1Wrtca+Gz5LLJSflPJ
-         i5ZDWhqM766MOiuHkHpe2IFDz98JtLvWL5NVmI7UVTTC0J2c0pToRJ53ry9giAI1FQqN
-         wtP8pj1cMknA2Wl3yfXY6eBTajv2C3UHHIrWPmeCU30bea+fW9RZmGjKEsKKI6AyLyWt
-         uTyjzCtZXuEcFy1cVFBliK7L/dF1XNKlJJEcxpCkCUK0a38r/qPEFcIgNtFxDHzMzDWR
-         vSEg==
+        bh=N+0eJ9HhbG61JuC+M7G5bTV/4TguFqbYVJsDxCt5uUI=;
+        b=PGj1ab50sspdxYumeRlkFPGs9Es1t5eOQOMv6yb4zN6jaeb91TGqdVqCAE3b2MPM8W
+         oxCzjvBEmjNnp91p7q1m1dfweyzn3gzhnTX8o3WPpCrKsdrfUZKhLiWYWQY9v/RxxIm8
+         +ilIanP6xbzCvb8wNtqcau4Ksdk3Y55ygBO5WqdW8mXKC/5ED02kzGQkVTVSmoEZ36zM
+         CM5v8h1SB32q0nMI1TbGaoRk4D9CktJdZ/Lxv03spvv8T123SPK5ophcIOmaVVFhOyJt
+         gsq+DelEUvlw4pF5BON8suSBMXIql1zX5u6CaAVDkU+kUO6ityXYfjqPj5TqUq2nJtBF
+         eIEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 052/164] powerpc/64s: Fix dt_cpu_ftrs to have restore_cpu clear unwanted LPCR bits
-Date: Sun, 22 Apr 2018 15:51:59 +0200
-Message-Id: <20180422135137.540366717@linuxfoundation.org>
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Aurelien Aptel <aaptel@suse.com>,
+	Steve French <smfrench@gmail.com>
+Subject: [PATCH 4.14 050/164] CIFS: fix sha512 check in cifs_crypto_secmech_release
+Date: Sun, 22 Apr 2018 15:51:57 +0200
+Message-Id: <20180422135137.450850423@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454945020240029?=
-X-GMAIL-MSGID: =?utf-8?q?1598455478587593867?=
+X-GMAIL-THRID: =?utf-8?q?1598454928419788198?=
+X-GMAIL-MSGID: =?utf-8?q?1598455473983525517?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,79 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit a57ac411832384eb93df4bfed2bf644c4089720e upstream.
+commit 70e80655f58e17a2e38e577e1b4fa7a8c99619a0 upstream.
 
-Presently the dt_cpu_ftrs restore_cpu will only add bits to the LPCR
-for secondaries, but some bits must be removed (e.g., UPRT for HPT).
-Not clearing these bits on secondaries causes checkstops when booting
-with disable_radix.
+It seems this is a copy-paste error and that the proper variable to use
+in this particular case is _sha512_ instead of _md5_.
 
-restore_cpu can not just set LPCR, because it is also called by the
-idle wakeup code which relies on opal_slw_set_reg to restore the value
-of LPCR, at least on P8 which does not save LPCR to stack in the idle
-code.
-
-Fix this by including a mask of bits to clear from LPCR as well, which
-is used by restore_cpu.
-
-This is a little messy now, but it's a minimal fix that can be
-backported.  Longer term, the idle SPR save/restore code can be
-reworked to completely avoid calls to restore_cpu, then restore_cpu
-would be able to unconditionally set LPCR to match boot processor
-environment.
-
-Fixes: 5a61ef74f269f ("powerpc/64s: Support new device tree binding for discovering CPU features")
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Addresses-Coverity-ID: 1465358 ("Copy-paste error")
+Fixes: 1c6614d229e7 ("CIFS: add sha512 secmech")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Steve French <smfrench@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/dt_cpu_ftrs.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/cifs/cifsencrypt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/dt_cpu_ftrs.c
-+++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
-@@ -86,6 +86,7 @@ static int hv_mode;
+--- a/fs/cifs/cifsencrypt.c
++++ b/fs/cifs/cifsencrypt.c
+@@ -829,7 +829,7 @@ cifs_crypto_secmech_release(struct TCP_S
+ 		server->secmech.md5 = NULL;
+ 	}
  
- static struct {
- 	u64	lpcr;
-+	u64	lpcr_clear;
- 	u64	hfscr;
- 	u64	fscr;
- } system_registers;
-@@ -115,6 +116,8 @@ static void cpufeatures_flush_tlb(void)
- 
- static void __restore_cpu_cpufeatures(void)
- {
-+	u64 lpcr;
-+
- 	/*
- 	 * LPCR is restored by the power on engine already. It can be changed
- 	 * after early init e.g., by radix enable, and we have no unified API
-@@ -127,8 +130,10 @@ static void __restore_cpu_cpufeatures(vo
- 	 * The best we can do to accommodate secondary boot and idle restore
- 	 * for now is "or" LPCR with existing.
- 	 */
--
--	mtspr(SPRN_LPCR, system_registers.lpcr | mfspr(SPRN_LPCR));
-+	lpcr = mfspr(SPRN_LPCR);
-+	lpcr |= system_registers.lpcr;
-+	lpcr &= ~system_registers.lpcr_clear;
-+	mtspr(SPRN_LPCR, lpcr);
- 	if (hv_mode) {
- 		mtspr(SPRN_LPID, 0);
- 		mtspr(SPRN_HFSCR, system_registers.hfscr);
-@@ -351,8 +356,9 @@ static int __init feat_enable_mmu_hash_v
- {
- 	u64 lpcr;
- 
-+	system_registers.lpcr_clear |= (LPCR_ISL | LPCR_UPRT | LPCR_HR);
- 	lpcr = mfspr(SPRN_LPCR);
--	lpcr &= ~LPCR_ISL;
-+	lpcr &= ~(LPCR_ISL | LPCR_UPRT | LPCR_HR);
- 	mtspr(SPRN_LPCR, lpcr);
- 
- 	cur_cpu_spec->mmu_features |= MMU_FTRS_HASH_BASE;
+-	if (server->secmech.md5) {
++	if (server->secmech.sha512) {
+ 		crypto_free_shash(server->secmech.sha512);
+ 		server->secmech.sha512 = NULL;
+ 	}
