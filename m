@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48kPtlH/2FqGdTVQ+d7ZeaNzdx9Chie0Br/9QV54tPokxlodezj4ES3H/peEryddzulP/Bz
-ARC-Seal: i=1; a=rsa-sha256; t=1524405686; cv=none;
+X-Google-Smtp-Source: AIpwx49P/xorA4wuc1bLmjtRX14FmXOIZuU1POy/FFfZvj+EN7xUPD7/Ml5dag89zeoYIIL1S9tH
+ARC-Seal: i=1; a=rsa-sha256; t=1524405683; cv=none;
         d=google.com; s=arc-20160816;
-        b=ohRs26tKeCctr3b7p2KbTt+jSOxW96y776AddMmqmDK5NP6d0DlDnnxCAj+qgUKeF5
-         a2FthLt+bB/jdVBovLT5frUvAe1LmNRd+C4fSeIhKO3yV3t6cqAHMkdbw67YhrmN8S8P
-         UJjpTvK5a9Zq5yAFTGUjlud4LKm/ygKjzVK2ZiPzNVjChzDCRMpiL7+6U2ODguiF2tx1
-         LjeDDaKzkGm/rR9LiRFwi20RlXD6UkdTKgsWl8gNZXMvl/TMHyp1SS2OPiMnqPg73gLy
-         SDxnRw/QueZ9wxdLI8BrKPqTg4o7SSzlGaVMPvZaekAbZHQmq1In1QwFyLljJ/D+0rST
-         VZbA==
+        b=p8xTJpF308X9hno9HsbhrZZNAIDbb0lhvdplUTra9RHonrnqvBZ2OAI4wNAjOSVsd5
+         2sIRBFdb6FC72TuXLWQ/ACImyYvVxnkKgQKYpT0T1qpg9t/3N1raHGPJFhzYnG5ZVfP4
+         wdnep7YgtKvqn2eB0H7R1k7BR4GcjHfSVblAM36ILUExYwQXBB+I85UMQl+DVDmkDO9D
+         gJfzVZf7UwCkSVzQWLo7T8fq+Lw/GPqf5+Tda7xFbnbkEOXAS3vgZ+4m61CLCA+IZz9K
+         KrGKwXecL54CISlgGlCJzvigcqiBlIFE57KL4u6qX4UI7lSFGgTUdpAOBuRCG8DFr1F1
+         IzJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=T2dv/fGe84mSUwMuGrO5PaR0JlUHjuesn5uhZNitj6s=;
-        b=lhdKV2yityD4G8YUtD4EwcgaoW2qdJItVbktQv6SDgirCz5IaozsakI/o+yeU//70k
-         21cMkH72nEqE0rEci6Gk52MPqpzJY80Jd0is8GIiMGVNRWE7NQFwmHNngimZmVDfZsPp
-         OMPwwubkf8Y/9J+QQqovU45OHTZEUSvrJSzr2wJ5HqvRomAOWBT1w1oDKvOf9skuBuEq
-         plJHUwCyd/U+RoPCyHL0B9DygiN/VTu3N8IFnWJvfL1qrfc20tbxZVvhTWgxy5kFZrjy
-         XkU3cW+rtxxoLPzf9FHYtSguLFRGjuw5MJd9A/QSBZ9V61hEPTKJOM5E0c2WLK8WbvMO
-         RFpQ==
+        bh=c3SxseKodBxeBRJTg2u3EM2kV1Y0q6CD+uAkMnBF1f4=;
+        b=Ut0SSGC63tiaoX2WHMcyvttv3XvWwA80eYJNnTJ0WWOxL4OZDfhTufvJ+qXP/H1rIr
+         2E9QEMajqYKlmCAoSTvRej7K2wDYjN44YekKBBtXkT3OQdqc95IJ/5+cuLfUx/l0+ZW6
+         hCs6K/22WJAgi7Z+QL2Y0AzkBRbVYpvhoXHZHh6aMRoc82i8OXxTdEXJZjzhv5SJw4o7
+         tXhhXkxpObRdUUY9/CI9lo231QhIvMiq0qn7UX6gk3doIGwg6heCLrolKwxDjONjApVq
+         ivdfN92iKNBDZ4LpulfjuI67BrV3rvb7BAUz1xiJOnkUVMCsWLAw9sBcD/No/MmEjQJr
+         scjw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Krzysztof Rusocki <krzysztof.rusocki@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.16 122/196] libnvdimm, dimm: fix dpa reservation vs uninitialized label area
-Date: Sun, 22 Apr 2018 15:52:22 +0200
-Message-Id: <20180422135110.562601461@linuxfoundation.org>
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.16 155/196] drm/rockchip: Clear all interrupts before requesting the IRQ
+Date: Sun, 22 Apr 2018 15:52:55 +0200
+Message-Id: <20180422135112.236961163@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455217087202947?=
-X-GMAIL-MSGID: =?utf-8?q?1598455217087202947?=
+X-GMAIL-THRID: =?utf-8?q?1598455213348332797?=
+X-GMAIL-MSGID: =?utf-8?q?1598455213348332797?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,49 +49,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit c31898c8c711f2bbbcaebe802a55827e288d875a upstream.
+commit 5f9e93fed4d45e9a8f84728aff1a8f2ab8922902 upstream.
 
-At initialization time the 'dimm' driver caches a copy of the memory
-device's label area and reserves address space for each of the
-namespaces defined.
+Calling request_irq() followed by disable_irq() is usually a bad idea,
+specially if the interrupt can be pending, and you're not yet in a
+position to handle it.
 
-However, as can be seen below, the reservation occurs even when the
-index blocks are invalid:
+This is exactly what happens on my kevin system when rebooting in a
+second kernel using kexec: Some interrupt is left pending from
+the previous kernel, and we take it too early, before disable_irq()
+could do anything.
 
- nvdimm nmem0: nvdimm_init_config_data: len: 131072 rc: 0
- nvdimm nmem0: config data size: 131072
- nvdimm nmem0: __nd_label_validate: nsindex0 labelsize 1 invalid
- nvdimm nmem0: __nd_label_validate: nsindex1 labelsize 1 invalid
- nvdimm nmem0: : pmem-6025e505: 0x1000000000 @ 0xf50000000 reserve <-- bad
+Let's clear the pending interrupts as we initialize the HW, and move
+the interrupt request after that point. This ensures that we're in
+a sane state when the interrupt is requested.
 
-Gate dpa reservation on the presence of valid index blocks.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 4a826c83db4e ("libnvdimm: namespace indices: read and validate")
-Reported-by: Krzysztof Rusocki <krzysztof.rusocki@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+[adapted to recent rockchip-drm changes]
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180220130120.5254-2-marc.zyngier@arm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/dimm.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/drivers/nvdimm/dimm.c
-+++ b/drivers/nvdimm/dimm.c
-@@ -67,9 +67,11 @@ static int nvdimm_probe(struct device *d
- 	ndd->ns_next = nd_label_next_nsindex(ndd->ns_current);
- 	nd_label_copy(ndd, to_next_namespace_index(ndd),
- 			to_current_namespace_index(ndd));
--	rc = nd_label_reserve_dpa(ndd);
--	if (ndd->ns_current >= 0)
--		nvdimm_set_aliasing(dev);
-+	if (ndd->ns_current >= 0) {
-+		rc = nd_label_reserve_dpa(ndd);
-+		if (rc == 0)
-+			nvdimm_set_aliasing(dev);
-+	}
- 	nvdimm_clear_locked(dev);
- 	nvdimm_bus_unlock(dev);
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -1414,6 +1414,9 @@ static int vop_initial(struct vop *vop)
+ 	usleep_range(10, 20);
+ 	reset_control_deassert(ahb_rst);
+ 
++	VOP_INTR_SET_TYPE(vop, clear, INTR_MASK, 1);
++	VOP_INTR_SET_TYPE(vop, enable, INTR_MASK, 0);
++
+ 	memcpy(vop->regsbak, vop->regs, vop->len);
+ 
+ 	VOP_REG_SET(vop, misc, global_regdone_en, 1);
+@@ -1569,17 +1572,9 @@ static int vop_bind(struct device *dev,
+ 
+ 	mutex_init(&vop->vsync_mutex);
+ 
+-	ret = devm_request_irq(dev, vop->irq, vop_isr,
+-			       IRQF_SHARED, dev_name(dev), vop);
+-	if (ret)
+-		return ret;
+-
+-	/* IRQ is initially disabled; it gets enabled in power_on */
+-	disable_irq(vop->irq);
+-
+ 	ret = vop_create_crtc(vop);
+ 	if (ret)
+-		goto err_enable_irq;
++		return ret;
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
+@@ -1590,13 +1585,19 @@ static int vop_bind(struct device *dev,
+ 		goto err_disable_pm_runtime;
+ 	}
+ 
++	ret = devm_request_irq(dev, vop->irq, vop_isr,
++			       IRQF_SHARED, dev_name(dev), vop);
++	if (ret)
++		goto err_disable_pm_runtime;
++
++	/* IRQ is initially disabled; it gets enabled in power_on */
++	disable_irq(vop->irq);
++
+ 	return 0;
+ 
+ err_disable_pm_runtime:
+ 	pm_runtime_disable(&pdev->dev);
+ 	vop_destroy_crtc(vop);
+-err_enable_irq:
+-	enable_irq(vop->irq); /* To balance out the disable_irq above */
+ 	return ret;
+ }
  
