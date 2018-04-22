@@ -1,161 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753815AbeDVXIm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 19:08:42 -0400
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:38086 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753678AbeDVXIl (ORCPT
+        id S1753855AbeDVXKE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 19:10:04 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:40592 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753707AbeDVXJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 19:08:41 -0400
-X-Google-Smtp-Source: AB8JxZp+s9n8BZhrjcnJm4flNvJqf+xVG55GbgpbVv9vs7sG//arHuqk5pJ3l8TsN3llKSEdVzRONEKCiaaJwm5UgGw=
-MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Mon, 23 Apr 2018 09:08:38 +1000
-Message-ID: <CAPM=9tw_rAFUd=sdS09QZO2urDU+SRu7PV_oTP4nX-GoXCQ5OA@mail.gmail.com>
-Subject: [git pull] drm fixes for rc2 (or rc3)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 22 Apr 2018 19:09:58 -0400
+X-Google-Smtp-Source: AB8JxZoAKwoBtEl9Eycd/Q8XwAxOm9GEtOcPzcqUVFj/ZrQlqKEoSRGNd4S1oPee//lPw87lnqnjaA==
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        patches@opensource.cirrus.com,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: [PATCH 03/18 v2] regulator: arizona-ldo1: Look up a descriptor and pass to the core
+Date: Mon, 23 Apr 2018 01:07:27 +0200
+Message-Id: <20180422230742.3729-3-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180422230742.3729-1-linus.walleij@linaro.org>
+References: <20180422230742.3729-1-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Instead of passing a global GPIO number, pass a descriptor looked
+up with the standard devm_gpiod_get_optional() call.
 
-Just back at work today, I've pulled all the rc2 fixes pulls that were
-outstanding, and pushed them out. If I missed rc2, no worries they
-should all be fine for rc3.
+We have augmented the GPIO core to look up the regulator special
+GPIO "wlf,ldoena" in commit 6a537d48461d
+"gpio: of: Support regulator nonstandard GPIO properties".
 
-i915 has an oops fix, and two race fixes, along with some gvt fixes
-amdgpu has a dark screen fix, clk/voltage fix and vega12 smu fix
-exynos just drops some code.
+Cc: patches@opensource.cirrus.com
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Rebase the patch on the other changes.
+- Make sure to update some s3c64xx platform data properly.
+---
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c | 28 ++++++++++++++++++++++------
+ drivers/regulator/arizona-ldo1.c             | 19 ++++++-------------
+ include/linux/regulator/arizona-ldo1.h       |  3 ---
+ 3 files changed, 28 insertions(+), 22 deletions(-)
 
-There is also a backmerge in here due to some unfortunate drm-misc
-timing, but should be all fine.
-
-Thanks,
-Dave.
-
-The following changes since commit a10beabba213924d876f2d10ca9351aeab93f58a:
-
-  Merge branch 'drm-next-4.17' of
-git://people.freedesktop.org/~agd5f/linux into drm-next (2018-04-13
-09:25:21 +1000)
-
-are available in the Git repository at:
-
-  git://people.freedesktop.org/~airlied/linux tags/drm-fixes-for-v4.17-rc2
-
-for you to fetch changes up to 221bda4b5f1abfd74159d7bf3703affa62468030:
-
-  Merge branch 'drm-next-4.17' of
-git://people.freedesktop.org/~agd5f/linux into drm-next (2018-04-23
-08:54:06 +1000)
-
-----------------------------------------------------------------
-exynos, i915, vc4, amdgpu fixes
-
-----------------------------------------------------------------
-Changbin Du (2):
-      drm/i915/gvt: Missed to cancel dma map for ggtt entries
-      drm/i915/gvt: Cancel dma map when resetting ggtt entries
-
-Chris Wilson (2):
-      drm/i915/execlists: Clear user-active flag on preemption completion
-      drm/i915: Call i915_perf_fini() on init_hw error unwind
-
-Daniel J Blueman (1):
-      drm/vc4: Fix memory leak during BO teardown
-
-Daniel Stone (3):
-      drm/exynos: Move GEM BOs to drm_framebuffer
-      drm/exynos: Move dma_addr out of exynos_drm_fb
-      drm/exynos: exynos_drm_fb -> drm_framebuffer
-
-Dave Airlie (4):
-      Merge tag 'drm-misc-fixes-2018-04-18-1' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-next
-      Merge tag 'drm-intel-next-fixes-2018-04-19' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-next
-      Merge tag 'exynos-drm-fixes-for-v4.17-rc2' of
-git://git.kernel.org/.../daeinki/drm-exynos into drm-next
-      Merge branch 'drm-next-4.17' of
-git://people.freedesktop.org/~agd5f/linux into drm-next
-
-Gaurav K Singh (1):
-      drm/i915/audio: Fix audio detection issue on GLK
-
-Gerd Hoffmann (1):
-      drm/i915/gvt: throw error on unhandled vfio ioctls
-
-Gustavo A. R. Silva (1):
-      drm/i915/gvt: Mark expected switch fall-through in handle_g2v_notification
-
-Harry Wentland (1):
-      drm/amd/display: Don't program bypass on linear regamma LUT
-
-Imre Deak (1):
-      drm/i915: Fix LSPCON TMDS output buffer enabling from low-power state
-
-Jani Nikula (1):
-      drm/i915/bios: filter out invalid DDC pins from VBT child devices
-
-Joonas Lahtinen (1):
-      Merge tag 'gvt-fixes-2018-04-03' of
-https://github.com/intel/gvt-linux into drm-intel-next-fixes
-
-Kenneth Feng (1):
-      drm/amd/powerplay: header file interface to SMU update
-
-Ramalingam C (1):
-      drm: Fix HDCP downstream dev count read
-
-Rex Zhu (1):
-      drm/amd/pp: Fix bug voltage can't be OD separately on VI
-
-Sean Paul (1):
-      Merge airlied/drm-next into drm-misc-fixes
-
-Tina Zhang (1):
-      drm/i915/gvt: Add drm_format_mod update
-
-Tvrtko Ursulin (1):
-      drm/i915/pmu: Inspect runtime PM state more carefully while estimating RC6
-
-Xidong Wang (1):
-      drm/i915: Do no use kfree() to free a kmem_cache_alloc() return value
-
-Xiong Zhang (2):
-      drm/i915/gvt: Delete redundant error message in fb_decode.c
-      drm/i915/gvt: Disable primary/sprite/cursor plane at virtual
-display initialization
-
-Zhipeng Gong (1):
-      drm/i915/gvt: Make MI_USER_INTERRUPT nop in cmd parser
-
- .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.c  | 20 ++++--
- drivers/gpu/drm/amd/amdkfd/kfd_packet_manager.c    |  3 +-
- .../drm/amd/display/amdgpu_dm/amdgpu_dm_color.c    |  7 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c   | 16 +++--
- .../drm/amd/powerplay/inc/vega12/smu9_driver_if.h  |  4 +-
- drivers/gpu/drm/drm_dp_dual_mode_helper.c          | 39 +++++++++---
- drivers/gpu/drm/exynos/exynos_drm_fb.c             | 73 +++++-----------------
- drivers/gpu/drm/i915/gvt/cmd_parser.c              |  1 +
- drivers/gpu/drm/i915/gvt/display.c                 | 10 +++
- drivers/gpu/drm/i915/gvt/dmabuf.c                  |  1 +
- drivers/gpu/drm/i915/gvt/fb_decoder.c              | 27 +++-----
- drivers/gpu/drm/i915/gvt/gtt.c                     | 52 ++++++++++++---
- drivers/gpu/drm/i915/gvt/gtt.h                     |  2 +-
- drivers/gpu/drm/i915/gvt/handlers.c                |  1 +
- drivers/gpu/drm/i915/gvt/kvmgt.c                   |  2 +-
- drivers/gpu/drm/i915/i915_drv.c                    | 27 ++++----
- drivers/gpu/drm/i915/i915_gem_execbuffer.c         |  2 +-
- drivers/gpu/drm/i915/i915_pmu.c                    | 37 ++++++++---
- drivers/gpu/drm/i915/intel_audio.c                 |  2 +-
- drivers/gpu/drm/i915/intel_bios.c                  | 13 ++--
- drivers/gpu/drm/i915/intel_lrc.c                   |  9 +++
- drivers/gpu/drm/vc4/vc4_bo.c                       |  2 +
- drivers/gpu/drm/vc4/vc4_validate_shaders.c         |  1 +
- include/drm/drm_hdcp.h                             |  2 +-
- 24 files changed, 209 insertions(+), 144 deletions(-)
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index f00988705408..5da041edd3b4 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -9,6 +9,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/i2c.h>
+ #include <linux/spi/spi.h>
++#include <linux/gpio/machine.h>
+ 
+ #include <linux/mfd/wm831x/irq.h>
+ #include <linux/mfd/wm831x/gpio.h>
+@@ -206,9 +207,6 @@ static const struct i2c_board_info wm1277_devs[] = {
+ };
+ 
+ static struct arizona_pdata wm5102_reva_pdata = {
+-	.ldo1 = {
+-		.ldoena = S3C64XX_GPN(7),
+-	},
+ 	.gpio_base = CODEC_GPIO_BASE,
+ 	.irq_flags = IRQF_TRIGGER_HIGH,
+ 	.micd_pol_gpio = CODEC_GPIO_BASE + 4,
+@@ -237,10 +235,16 @@ static struct spi_board_info wm5102_reva_spi_devs[] = {
+ 	},
+ };
+ 
+-static struct arizona_pdata wm5102_pdata = {
+-	.ldo1 = {
+-		.ldoena = S3C64XX_GPN(7),
++static struct gpiod_lookup_table wm5102_reva_gpiod_table = {
++	.dev_id = "spi0.1", /* SPI device name */
++	.table = {
++		GPIO_LOOKUP("GPION", 7,
++			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
++		{ },
+ 	},
++};
++
++static struct arizona_pdata wm5102_pdata = {
+ 	.gpio_base = CODEC_GPIO_BASE,
+ 	.irq_flags = IRQF_TRIGGER_HIGH,
+ 	.micd_pol_gpio = CODEC_GPIO_BASE + 2,
+@@ -264,6 +268,15 @@ static struct spi_board_info wm5102_spi_devs[] = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table wm5102_gpiod_table = {
++	.dev_id = "spi0.1", /* SPI device name */
++	.table = {
++		GPIO_LOOKUP("GPION", 7,
++			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ static struct spi_board_info wm5110_spi_devs[] = {
+ 	[0] = {
+ 		.modalias	= "wm5110",
+@@ -366,6 +379,9 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
+ 					    rev == gf_mods[i].rev))
+ 			break;
+ 
++	gpiod_add_lookup_table(&wm5102_reva_gpiod_table);
++	gpiod_add_lookup_table(&wm5102_gpiod_table);
++
+ 	if (i < ARRAY_SIZE(gf_mods)) {
+ 		dev_info(&i2c->dev, "%s revision %d\n",
+ 			 gf_mods[i].name, rev + 1);
+diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
+index 96fddfff5dc4..f6d6a4ad9e8a 100644
+--- a/drivers/regulator/arizona-ldo1.c
++++ b/drivers/regulator/arizona-ldo1.c
+@@ -17,12 +17,11 @@
+ #include <linux/bitops.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/of_regulator.h>
+-#include <linux/gpio.h>
+ #include <linux/slab.h>
+ 
+ #include <linux/regulator/arizona-ldo1.h>
+@@ -198,16 +197,6 @@ static int arizona_ldo1_of_get_pdata(struct arizona_ldo1_pdata *pdata,
+ 	struct device_node *init_node, *dcvdd_node;
+ 	struct regulator_init_data *init_data;
+ 
+-	pdata->ldoena = of_get_named_gpio(np, "wlf,ldoena", 0);
+-	if (pdata->ldoena < 0) {
+-		dev_warn(config->dev,
+-			 "LDOENA GPIO property missing/malformed: %d\n",
+-			 pdata->ldoena);
+-		pdata->ldoena = 0;
+-	} else {
+-		config->ena_gpio_initialized = true;
+-	}
+-
+ 	init_node = of_get_child_by_name(np, "ldo1");
+ 	dcvdd_node = of_parse_phandle(np, "DCVDD-supply", 0);
+ 
+@@ -264,7 +253,11 @@ static int arizona_ldo1_common_init(struct platform_device *pdev,
+ 		}
+ 	}
+ 
+-	config.ena_gpio = pdata->ldoena;
++	/* We assume that high output = regulator off */
++	config.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "wlf,ldoena",
++						   GPIOD_OUT_HIGH);
++	if (IS_ERR(config.ena_gpiod))
++		return PTR_ERR(config.ena_gpiod);
+ 
+ 	if (pdata->init_data)
+ 		config.init_data = pdata->init_data;
+diff --git a/include/linux/regulator/arizona-ldo1.h b/include/linux/regulator/arizona-ldo1.h
+index c685f1277c63..fe74ab9990e6 100644
+--- a/include/linux/regulator/arizona-ldo1.h
++++ b/include/linux/regulator/arizona-ldo1.h
+@@ -14,9 +14,6 @@
+ struct regulator_init_data;
+ 
+ struct arizona_ldo1_pdata {
+-	/** GPIO controlling LDOENA, if any */
+-	int ldoena;
+-
+ 	/** Regulator configuration for LDO1 */
+ 	const struct regulator_init_data *init_data;
+ };
+-- 
+2.14.3
