@@ -1,69 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751377AbeDVJ5z (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 05:57:55 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:38396 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751028AbeDVJ5w (ORCPT
+        id S1751564AbeDVKQ6 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 06:16:58 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58907 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751028AbeDVKQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 05:57:52 -0400
-X-Google-Smtp-Source: AB8JxZqyz/yz/tfa4mJ+DanjhEIm8Jg3KAbzaxCdjJIUbu0T5BuMyfQ8Esk2RiIpCfKwxwbza4nOf5Kbaz3TMcNamh0=
+        Sun, 22 Apr 2018 06:16:55 -0400
+Date: Sun, 22 Apr 2018 12:16:54 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Ferry Toth <ftoth@telfort.nl>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: DOS by unprivileged user
+Message-ID: <20180422101654.GA26243@amd>
+References: <9023506.UBh6vynRGa@delfion>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0jE4Ler2OWeKEWuHwEwM4RHYC5r8BwgcPrT6XBxFjnSNw@mail.gmail.com>
-References: <20180419165825.13008-1-ard.biesheuvel@linaro.org> <CAJZ5v0jE4Ler2OWeKEWuHwEwM4RHYC5r8BwgcPrT6XBxFjnSNw@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sun, 22 Apr 2018 11:57:51 +0200
-Message-ID: <CAKv+Gu8xY-RvJKTKfv-e0qonL4oECDBK+ppxztvh9BgdpG8CUg@mail.gmail.com>
-Subject: Re: [PATCH] ACPI / bus: ignore rather than fail bus driver
- registrations on non-ACPI boot
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bill Fletcher <bill.fletcher@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
+Content-Disposition: inline
+In-Reply-To: <9023506.UBh6vynRGa@delfion>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22 April 2018 at 11:27, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Thu, Apr 19, 2018 at 6:58 PM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> When building ACPI bus drivers such as button.ko into the core kernel,
->> other drivers that depend on its symbols are loadable even when booting
->> with ACPI disabled. For instance, nouveau.ko has a link time dependency
->> on acpi_lid_open() on ACPI capable kernels, and calls it regardless of
->> whether the system booted via ACPI.
->>
->> However, when building button.ko as a module, it will refuse to load if
->> the system did not boot in ACPI mode, which subsequently prevents the
->> nouveau driver from loading as well, resulting in broken graphics.
->>
->> Given that returning an error from an initcall() is ignored for drivers
->> that are built into the kernel,
->
-> Which makes sense, because they are present in the kernel anyway.
->
->> let's align the module case with this,
->> and not return an error when registering an ACPI bus driver on a system
->> that did not boot via ACPI.
->
-> But why is loading a module that's never going to be used actually OK?
->
-> Isn't this a problem with the assumptions made by the nouveau driver
-> that need not be met depending on what configuration the kernel is run
-> in?
->
-> Honestly, it doesn't appear quite right to try to change the rest of
-> the kernel to follow the nouveau's expectations.
->
 
-I don't disagree here, I am just unsure whether other options are any better.
+--FL5UXtIhxfXey3p5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think the alternative is to make acpi_lid_open() a non-modular
-function of the ACPI core that invokes the button ACPI bus driver if
-it was loaded, and always returns false otherwise. Would that work for
-you?
+On Thu 2018-04-19 21:13:35, Ferry Toth wrote:
+> It appears any ordinary user can easily create a DOS on linux.
+>=20
+> One sure way to reproduce this is to open gitk on the linux kernel repo=
+=20
+> (SIC) on a machine with 8GB RAM 16 GB swap on a HDD with btrfs and quad c=
+ore=20
+> + hyperthreading. But I will be easy enough to get the same effect with m=
+ore=20
+> RAM, other fs etc.
+
+You may want to disable swap.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--FL5UXtIhxfXey3p5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrcYRYACgkQMOfwapXb+vKvCQCgrIY4oOaVe/XaxV5FCpC/YXrQ
+gqAAnitD+zjsSI4yOHEunLo9kK/1Wqgm
+=o7QQ
+-----END PGP SIGNATURE-----
+
+--FL5UXtIhxfXey3p5--
