@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/RRQ+XpdWHPoja8oiDE+489mudh5xsNW1HtujtSjbJfZnFz5a5r0L+GtYCR8QBLMv76a74
-ARC-Seal: i=1; a=rsa-sha256; t=1524406411; cv=none;
+X-Google-Smtp-Source: AIpwx4+tPBQqfbwHA1YKkTYlTzX0LtgQHXOKTkRuw2WlvViZSnFGyBxyTB/VE7ketcSHnF6hrMTY
+ARC-Seal: i=1; a=rsa-sha256; t=1524406408; cv=none;
         d=google.com; s=arc-20160816;
-        b=03CAqk8tfHBhRbFl2ELh0LHVwYGP+knwwAxNMu3DB2Lby2BJA2O/oJdJH5lBf+R7r+
-         BmoCupWkXxTNt91wPQwDljZmLMVJ2kSCKl1Rp21b9M6YxUP4qtdv8ZkjU0MoF89F/VJL
-         fiT80DEsF5F8WdTLGxgJ6J4mbsKFAf11RM8ibgEkX20IxF4Z0qREpe7XyaHpSW9OrqD3
-         x543DBUGvEwHCka79ElFxDk3Bv22nwHVGIOrqKiMZ/qxoBsXuQ97e4Tq+TeTnFnTvSi/
-         8kpW3QGoJtkWNO3CX1Yw/+lz5ZamM+8hcskF+tSPP76tteRjuW8dlEe1Zv1R0+5EKq+1
-         KEvg==
+        b=sw2uY9aGDDdAFIFNCLD2NqQxiEP/Gy/CIr5gQV9AgVfVYTDGzBmqHbBwXy0eLHRRJT
+         uSKsqMJ7AkYK/Lki1VhClsBRH1nxkfa1K+GcZF9Wdh4iM3uoTsIfwK4lSzvfcw593Rg2
+         LpVfAZ8gSX2cH45qtITUflaPMT+IvOmOV6kc6p9ilwpE6oI4GCtxxzgj2rEKmT8Rvdja
+         ddcXWfs3113RWjRMedXg/WYVhlXV6LMdtIG0y70Yn1vXrWHSdMtWCERsufuZLn3CuwJ/
+         sZkBfdKiqfI98T2j2swcMq55qjdj9kYawIFkC2lizOfk8qNydIWGlFGWQ92bJHnhdcu7
+         iozQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=D+4Ifjgw4oxW7jAkaTC9ojofva/Jq0tHleAX7iO0EIA=;
-        b=f0uy5sporqE7jafU3JcjdNmac/B8Lravhst5RI3UakoNhgJ8FWyd/DmpLatETxb79g
-         YSatrBCBkuWyUXjrSzPZ7ze18HyJEb+dQVMcQBvkZtQiVVcWNFaZjL+2x1I1MGEaMIjb
-         oOPwLMRi40nTzDBdxIuwcXuSrq1U96KCghZruqvHld+gWNVi4axOYcm4E/CVbrEbEeqc
-         fRDkM06jqKSLzLE0/hydrRMYqXDLn1s3yDUciWEwBfwBmrxSy4oBZmuc4oLveTct/1kB
-         tA1zKceB8B0Zvty1phzwORtfVQfwDCpHdhfnqzVKK5gnybPY3eJVUfNv3NCU6IHjtFSW
-         GbyQ==
+        bh=QH/e4IU4k7dDJe0R7GDdzzFRTdyyFHeOnc2LNEyvINk=;
+        b=Vhx3seY/EAo7eLTA0ZIJckv73cceDcck55Nbl51lVZY0cji89ph0vcOSCk9/hUO1E2
+         dzpNA92ITExPZ/OlWNrkLO9FecClbjBmczQqZKlzOvFeZMMGoh1yaTZmtc81AWPtk/0j
+         Yw5po7xPg50V5NcguNLXzsGWAS4gtP3kUgl2r1Ge0Ws2xEzMb+5bIBzBtkh6Rw+euKVU
+         6qhYg/5/7qF9kKPVeUusl6b4H5jq/Y9evOaAIOzWj3dYhyMUYARvWBpOOLFOG8zMEfCy
+         LzeFtSxTJdcqOSMAJzewBg7tAHwmvr5alpyOyBtkis1mTWHyF7rFM73FQdtn9v4RdsMi
+         Q1Ag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,12 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Nicholas Piggin <npiggin@gmail.com>,
+	Vasant Hegde <hegdevasant@linux.vnet.ibm.com>,
+	Stewart Smith <stewart@linux.ibm.com>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 26/95] powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
-Date: Sun, 22 Apr 2018 15:52:55 +0200
-Message-Id: <20180422135211.500937731@linuxfoundation.org>
+Subject: [PATCH 4.9 25/95] powerpc/powernv: Handle unknown OPAL errors in opal_nvram_write()
+Date: Sun, 22 Apr 2018 15:52:54 +0200
+Message-Id: <20180422135211.462498031@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454950836257463?=
-X-GMAIL-MSGID: =?utf-8?q?1598455977018619767?=
+X-GMAIL-THRID: =?utf-8?q?1598454937101435263?=
+X-GMAIL-MSGID: =?utf-8?q?1598455973943873783?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,49 +53,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 0bfdf598900fd62869659f360d3387ed80eb71cf upstream.
+commit 741de617661794246f84a21a02fc5e327bffc9ad upstream.
 
-asm/barrier.h is not always included after asm/synch.h, which meant
-it was missing __SUBARCH_HAS_LWSYNC, so in some files smp_wmb() would
-be eieio when it should be lwsync. kernel/time/hrtimer.c is one case.
+opal_nvram_write currently just assumes success if it encounters an
+error other than OPAL_BUSY or OPAL_BUSY_EVENT. Have it return -EIO
+on other errors instead.
 
-__SUBARCH_HAS_LWSYNC is only used in one place, so just fold it in
-to where it's used. Previously with my small simulator config, 377
-instances of eieio in the tree. After this patch there are 55.
-
-Fixes: 46d075be585e ("powerpc: Optimise smp_wmb")
-Cc: stable@vger.kernel.org # v2.6.29+
+Fixes: 628daa8d5abf ("powerpc/powernv: Add RTC and NVRAM support plus RTAS fallbacks")
+Cc: stable@vger.kernel.org # v3.2+
 Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Reviewed-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Acked-by: Stewart Smith <stewart@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/barrier.h |    3 ++-
- arch/powerpc/include/asm/synch.h   |    4 ----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ arch/powerpc/platforms/powernv/opal-nvram.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/powerpc/include/asm/barrier.h
-+++ b/arch/powerpc/include/asm/barrier.h
-@@ -34,7 +34,8 @@
- #define rmb()  __asm__ __volatile__ ("sync" : : : "memory")
- #define wmb()  __asm__ __volatile__ ("sync" : : : "memory")
- 
--#ifdef __SUBARCH_HAS_LWSYNC
-+/* The sub-arch has lwsync */
-+#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
- #    define SMPWMB      LWSYNC
- #else
- #    define SMPWMB      eieio
---- a/arch/powerpc/include/asm/synch.h
-+++ b/arch/powerpc/include/asm/synch.h
-@@ -5,10 +5,6 @@
- #include <linux/stringify.h>
- #include <asm/feature-fixups.h>
- 
--#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
--#define __SUBARCH_HAS_LWSYNC
--#endif
--
- #ifndef __ASSEMBLY__
- extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
- extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
+--- a/arch/powerpc/platforms/powernv/opal-nvram.c
++++ b/arch/powerpc/platforms/powernv/opal-nvram.c
+@@ -59,6 +59,10 @@ static ssize_t opal_nvram_write(char *bu
+ 		if (rc == OPAL_BUSY_EVENT)
+ 			opal_poll_events(NULL);
+ 	}
++
++	if (rc)
++		return -EIO;
++
+ 	*index += count;
+ 	return count;
+ }
