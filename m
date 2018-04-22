@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48qvQ2YBPfD/GJCpOsSqEGgUldFa9DHi6CUnMUf6qK/e45U+tPWhGsQZMFVY01l2HEIT+mi
-ARC-Seal: i=1; a=rsa-sha256; t=1524406716; cv=none;
+X-Google-Smtp-Source: AIpwx4/S4PihLuDd97LlHXXXh3O0OSlKRJLK+w1SqeF533tE9mjVkcY6Kbo05NVPoa8tBxrjnhkn
+ARC-Seal: i=1; a=rsa-sha256; t=1524406713; cv=none;
         d=google.com; s=arc-20160816;
-        b=X/fmZBNiPFxtzlPN3qRyNRISIZv51GTyxcqGnXzRAf/bzMxFR2NUMnUo01dXlax3/7
-         Aq9wTfV9enGa181cR5dS8P36Ia1AugPCgbYEUOZFKvlXA6AoPQzJ/QEeqlQ7l7yOzum0
-         kj/JdODMgCWk/D+RbF5WdUjfRIsXRhotnTz7sfYhWS5XFDqQhzLbQhoFtf6S2ljjxHgn
-         eEmIIRTvP2VWYxppR0ivJo5LBDIOH5WlzccIrMuaVXzK3APr1L0g4EkAjvU+TV+xU6lb
-         86uPlgFlcfL2QtiPVLWs83pjnMy1YHTVlLP6aOK4d2UNAbN89YQEV8ItXX7eHql7m9ht
-         Ek2Q==
+        b=lkhO0YhZyYoq8UflT4yYLqzArqxA7nCo8EM/PORxTmV4ncRIdsijNA9MzD1jbmHMKw
+         atfMUYrW3XfSVHCwo3JD0uzN131znfJA6QIkQI/7YgtFHp1tVa6C5IW0HXkZeqMuTlyy
+         +o/kFPbw58aULT+HBcT6wMbCDJsbpLT9T7VAs24XpALT1Ntv1Zbn9i4kYkYxZMuAP9Uw
+         KsGAdLzalFW9ml1QdAWezeFldi2T4redwBbqnEK3rkfkg2xGTEpdq4o1wzXxlxzw8wVR
+         F4Srxa4lGVNWFDJ0yHSsGIUX+E4ocmdxPr6vfcAbnbLmOFsiKmU9cf9OBYKqf13oX8Zm
+         8Xcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=onFDc88X60ur1MgkP+D4j4/dmuKMdj5ldxLLltylqbY=;
-        b=YWWsoI6x27pWzl3Sj3AeBxTJ8P/9JEojDQbgXTGGaWTHTlHn5UpwX/eipFo9qLMHeD
-         uv6HQr/fS1fSRpapOWgTmh6WTo9+v+4Dw5+6RcNosXQKSJ3/p0l/nyjiCQr5+cK5t1cr
-         dWz730RFgfiFM+GfecapUt96J9RPtpbdp7wqTki9KwnNKd2gk+eUzCTEar/8ZHnZ9WcI
-         rG/ZRikm0vswdW7Q/Kft2X2LMD1leb1dEM4Je1HWVg1DU5SfjXq3QyjwREdxAX1S9UqF
-         xFIaVM6M0GrudpqLGXCij3LPCXlRAMmy9GOi042guAd+uMizwQcwe0jyx+F60JymVPku
-         g1ag==
+        bh=J9XwCNV0nUgeO4et8QU0JGO0kiD+z107b/OlwIxorbA=;
+        b=tZM8kdecC2l8ma3Z3mdYxSjkVguR3BY6h7wNLQYNstd9B3vK/qRknK5Ti4cJKah4EY
+         lqG8rk4pVMANAc+7dqocM2BHGem1DnmbeFKn/StIvokvNT36FefxDAPpTr7wII3B5dTl
+         w5xGNtqHH52WdjWxRYXw4xDjI4GYCWIuAAygUrisfqCDMHRmhC56je5YdlMZm72XlIKJ
+         SosATKBdaa3drNUqed1BrRruWj8NYT0YlM7ZMcLQwZZtpkJatXlVXRhFXhbLD5o6ESgZ
+         iGF+BDEAMRxqhEhv87EO7z7gKfohQ/1FVRipyZ76usldZWWAKV5MDSY5nM48SHP90eJY
+         fbCA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Santiago Esteban <Santiago.Esteban@microchip.com>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 4.4 32/97] ARM: dts: at91: sama5d4: fix pinctrl compatible string
-Date: Sun, 22 Apr 2018 15:53:10 +0200
-Message-Id: <20180422135307.140538907@linuxfoundation.org>
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 41/97] powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
+Date: Sun, 22 Apr 2018 15:53:19 +0200
+Message-Id: <20180422135307.618429646@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454842841403828?=
-X-GMAIL-MSGID: =?utf-8?q?1598456296912579719?=
+X-GMAIL-THRID: =?utf-8?q?1598454950836257463?=
+X-GMAIL-MSGID: =?utf-8?q?1598456294347566296?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +49,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Santiago Esteban <Santiago.Esteban@microchip.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 9a06757dcc8509c162ac00488c8c82fc98e04227 upstream.
+commit 0bfdf598900fd62869659f360d3387ed80eb71cf upstream.
 
-The compatible string is incorrect. Add atmel,sama5d3-pinctrl since
-it's the appropriate compatible string. Remove the
-atmel,at91rm9200-pinctrl compatible string, this fallback is
-useless, there are too many changes.
+asm/barrier.h is not always included after asm/synch.h, which meant
+it was missing __SUBARCH_HAS_LWSYNC, so in some files smp_wmb() would
+be eieio when it should be lwsync. kernel/time/hrtimer.c is one case.
 
-Signed-off-by: Santiago Esteban <Santiago.Esteban@microchip.com>
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: stable@vger.kernel.org #v3.18
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+__SUBARCH_HAS_LWSYNC is only used in one place, so just fold it in
+to where it's used. Previously with my small simulator config, 377
+instances of eieio in the tree. After this patch there are 55.
+
+Fixes: 46d075be585e ("powerpc: Optimise smp_wmb")
+Cc: stable@vger.kernel.org # v2.6.29+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/sama5d4.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/include/asm/barrier.h |    3 ++-
+ arch/powerpc/include/asm/synch.h   |    4 ----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
---- a/arch/arm/boot/dts/sama5d4.dtsi
-+++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -1354,7 +1354,7 @@
- 			pinctrl@fc06a000 {
- 				#address-cells = <1>;
- 				#size-cells = <1>;
--				compatible = "atmel,at91sam9x5-pinctrl", "atmel,at91rm9200-pinctrl", "simple-bus";
-+				compatible = "atmel,sama5d3-pinctrl", "atmel,at91sam9x5-pinctrl", "simple-bus";
- 				ranges = <0xfc068000 0xfc068000 0x100
- 					  0xfc06a000 0xfc06a000 0x4000>;
- 				/* WARNING: revisit as pin spec has changed */
+--- a/arch/powerpc/include/asm/barrier.h
++++ b/arch/powerpc/include/asm/barrier.h
+@@ -36,7 +36,8 @@
+ 
+ #define smp_store_mb(var, value)	do { WRITE_ONCE(var, value); mb(); } while (0)
+ 
+-#ifdef __SUBARCH_HAS_LWSYNC
++/* The sub-arch has lwsync */
++#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
+ #    define SMPWMB      LWSYNC
+ #else
+ #    define SMPWMB      eieio
+--- a/arch/powerpc/include/asm/synch.h
++++ b/arch/powerpc/include/asm/synch.h
+@@ -5,10 +5,6 @@
+ #include <linux/stringify.h>
+ #include <asm/feature-fixups.h>
+ 
+-#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
+-#define __SUBARCH_HAS_LWSYNC
+-#endif
+-
+ #ifndef __ASSEMBLY__
+ extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
+ extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
