@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49k+wnLpO8QjbqvJpRAJGH8HLI84eW4p7srYE7M0giVmODXHj68Tg6f9IxCvGf4SeeXYpvi
-ARC-Seal: i=1; a=rsa-sha256; t=1524406435; cv=none;
+X-Google-Smtp-Source: AIpwx4/Aa9ZVfXB3BCfLbYP6ukwt1lspqMXQOlQcNLKSGd2Qd6GWunVkcyd2vyvNvp8QGeMmN0HD
+ARC-Seal: i=1; a=rsa-sha256; t=1524406432; cv=none;
         d=google.com; s=arc-20160816;
-        b=o9HWv20GoWNV0v5IOZBIp+3T/SPDi7tAxUtrCJUh3t+3VCq3gXRR8xImEqNn30cyjA
-         BV8lEuzoDrinwBD9OmhjfaN8XjbWHEFPRcTwWC63o/2HFiAcTzphTiqCGRihdtsqJUGq
-         +IxAvTG0lsiNk4pgW436EOdwQELbtMhRcqpdK+JL6D9t8tcJ3SIyBVG7m99DED3aczgD
-         r8l1xcHoc82yZpGCgsrtc5vfznxb8dxlsQ30zB9Qzv3r9A+ZJyI+oBh0qFtn0aoNiy4B
-         H4yC8U78HOpPKUYiGxSaA9swxGk3Zf9SNJYD5nNCZremt9IrlMr2SxdahjXwmzvttUmC
-         DloA==
+        b=V+qcRANJmBmk6udgxiAiIYkhUlQc0iuzic7nyBxGDse/IVKYoH6qKxKzUSmC5BPXKQ
+         7FAHbXdPXGya4DLOrNB7ZsFtVL89SCeo0+9ZWVryfgE6S1wvVouUv2oXbqE6fMMgw2nb
+         PngmxeGSn5dNeTUGeE7l9w1j1JSg1a0a1Lruv/5EoRco/3ZTeNPWed47Y+pRORQulJlG
+         BdBEl2tJu9S6TGTNo7c0HnAwTCetHYzboijP9uhw2Av0xXv42snuOqKnwPz3YTjnTHrR
+         trBhxYoNbSVOTvY3vv+TWIw6U5XVyeeusUsFaP+EDNTFIBw264tsoiBntOpWo1QcG07a
+         y1xQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CQfTuh3ZMgAro7RTYOrqu1ZU8j0K8DnicKRROroeMEk=;
-        b=UtrlRIaX2SQ6oyun6q8hgW8jgdzgNVnaDt7S+YgxF6nbJtfj9QDv2AcS6Xr5BwevfY
-         S1GM3Tm9KoTQ3pSYv5deg2oMcKy9QMv4U+3c1YJFTg8bKCmzcaGrOL6NjLyXke9pKeyE
-         Klug39z78ZoeLDCzOF7iIiuBMZ7LGMQPDskMYo+q4G8kcW7YBjwx3cqov4QTqda3M4Jv
-         N6m+ptCIcWyNzEA7dHe6bjYFVRvmhYk1t4cov8MXo9br/sm5PImePtvNgh2C4AIBRQpS
-         sY1Pru1FsPPAP/3yMt8G6fphqdOVeAJ8QbPfT0v3fsEWUc604CoLvr5nAjJpeXTwvJg8
-         /hwA==
+        bh=Ayopnuq90BIAuNTbmMas2dIOTACGTG5NPywlIyoXWkI=;
+        b=Khie/7vt6i8a+3KECnRVtnAgnp4mox+flOAN/0E4uxrI5gTONgdlXo6psFE2smy5h2
+         IpKBWVtyyEz12foFNsKF1aBb+VDXzjs+OpTW5h6Fz84qOHSdU4oeIWZ4p2mfaaljNs1z
+         k0XopqC83EbhZPlhquw2AD8VC2ceqqISka4tbrW8IAEICvlhURm+rjz94iPSJpNDSINd
+         aIqC2P1L6aAPFeueBMzLSu43gJOabf3oHLD6PT9eLjXa/c520INe1tC2bA0ArPHpGFLM
+         ExKro7D5JWFpzXOsravzO03JsFd9L5NGVxFQB6zSaBqHzUICTOUVoCedzOSvYsr2ahkx
+         gWyg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Fabi=C3=A1n=20Inostroza?= <fabianinostroza@udec.cl>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 71/95] ALSA: line6: Use correct endpoint type for midi output
-Date: Sun, 22 Apr 2018 15:53:40 +0200
-Message-Id: <20180422135213.335563003@linuxfoundation.org>
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Chunming Zhou <david1.zhou@amd.com>,
+	Paul Parsons <lost.distance@yahoo.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.9 70/95] drm/radeon: Fix PCIe lane width calculation
+Date: Sun, 22 Apr 2018 15:53:39 +0200
+Message-Id: <20180422135213.294307081@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455267717959842?=
-X-GMAIL-MSGID: =?utf-8?q?1598456002405763078?=
+X-GMAIL-THRID: =?utf-8?q?1598455237200582440?=
+X-GMAIL-MSGID: =?utf-8?q?1598455999877807459?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +51,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabián Inostroza <soulsonceonfire@gmail.com>
+From: Paul Parsons <lost.distance@yahoo.com>
 
-commit 7ecb46e9ee9af18e304eb9e7d6804c59a408e846 upstream.
+commit 85e290d92b4b794d0c758c53007eb4248d385386 upstream.
 
-Sending MIDI messages to a PODxt through the USB connection shows
-"usb_submit_urb failed" in dmesg and the message is not received by
-the POD.
+Two years ago I tried an AMD Radeon E8860 embedded GPU with the drm driver.
+The dmesg output included driver warnings about an invalid PCIe lane width.
+Tracking the problem back led to si_set_pcie_lane_width_in_smc().
+The calculation of the lane widths via ATOM_PPLIB_PCIE_LINK_WIDTH_MASK and
+ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT macros did not increment the resulting
+value, per the comment in pptable.h ("lanes - 1"), and per usage elsewhere.
+Applying the increment silenced the warnings.
+The code has not changed since, so either my analysis was incorrect or the
+bug has gone unnoticed. Hence submitting this as an RFC.
 
-The error is caused because in the funcion send_midi_async() in midi.c
-there is a call to usb_sndbulkpipe() for endpoint 3 OUT, but the PODxt
-USB descriptor shows that this endpoint it's an interrupt endpoint.
-
-Patch tested with PODxt only.
-
-[ The bug has been present from the very beginning in the staging
-  driver time, but Fixes below points to the commit moving to sound/
-  directory so that the fix can be cleanly applied -- tiwai ]
-
-Fixes: 61864d844c29 ("ALSA: move line6 usb driver into sound/usb")
-Signed-off-by: Fabián Inostroza <fabianinostroza@udec.cl>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Christian König <christian.koenig@amd.com>
+Acked-by: Chunming Zhou <david1.zhou@amd.com>
+Signed-off-by: Paul Parsons <lost.distance@yahoo.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/line6/midi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/radeon/si_dpm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/usb/line6/midi.c
-+++ b/sound/usb/line6/midi.c
-@@ -125,7 +125,7 @@ static int send_midi_async(struct usb_li
- 	}
+--- a/drivers/gpu/drm/radeon/si_dpm.c
++++ b/drivers/gpu/drm/radeon/si_dpm.c
+@@ -5969,9 +5969,9 @@ static void si_set_pcie_lane_width_in_sm
+ {
+ 	u32 lane_width;
+ 	u32 new_lane_width =
+-		(radeon_new_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT;
++		((radeon_new_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT) + 1;
+ 	u32 current_lane_width =
+-		(radeon_current_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT;
++		((radeon_current_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT) + 1;
  
- 	usb_fill_int_urb(urb, line6->usbdev,
--			 usb_sndbulkpipe(line6->usbdev,
-+			 usb_sndintpipe(line6->usbdev,
- 					 line6->properties->ep_ctrl_w),
- 			 transfer_buffer, length, midi_sent, line6,
- 			 line6->interval);
+ 	if (new_lane_width != current_lane_width) {
+ 		radeon_set_pcie_lanes(rdev, new_lane_width);
