@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx486FlU+p+3ONyc+2N1mIArT7UzPtos/Tv06/Wl0rB2W80PPNcrQXxgNU+w6sRcH69yrtbFY
-ARC-Seal: i=1; a=rsa-sha256; t=1524406150; cv=none;
+X-Google-Smtp-Source: AIpwx48TUzfzD3Y+CFHAdbquQCqWDbjC1/D6qFLBZl8oe7RJRgYxUbVxZgScNXrUd5C6DhJK8SJ5
+ARC-Seal: i=1; a=rsa-sha256; t=1524406147; cv=none;
         d=google.com; s=arc-20160816;
-        b=xvC1MVHYAAWE2ZDyjsLhcgG7pPR7KJq6LUGMdbG4UdRCoZFeRU+paaD3038Ghu6WM4
-         XG4FwswPVkXbTDj3iGotYmaU1GIbC142KoiYy0gqVVb3VKjRckb39jBfpkXd+1xrM9EM
-         QZkGvMVhjVx7IY8mkzYKxpCFNqYMlRbNagcSiZhiRH0QdYw+cOFbe8CwKlMkGOTU43KX
-         qU/Wr0ZPBskdxZ50DUw8uCLY5kENZ9g3RwJ0OJm1l64hLC865oVJstKCMU25LBu0ra2U
-         mn9mvMZZpGCqR75nzf6S11ptQZZUjEZtnwJJh6TYfnXTC90z6ydCkhc+9J6rdk7ptoU8
-         SeRg==
+        b=Qlo2I3OTSekORs7EjNXbqvLliEuhIv2rab6wRbNex7LOndK//ywgFFQz/08VKJNMa0
+         lo9puEqvYpuNtAFPgH19qTZJ3417D9MnwRT2b6KS3KCSZ1bEOUagoERhmOwAKo8u9IOh
+         6TzUOKS1GZP/Q+SLn7bAS6TVHfZhhgJA9ZeFRUnVlvGgVxhG97VekmECIfS2gOvdcOMu
+         4P/gyo57Q13eBmT84LbjRTMiJJ9Vd3+i6ALb1cy2wQNDcS2ppYTcOnPpSsBf+b+OvQZm
+         lFFpyf4xm1R65/EeN3NayWW7ZJLvZ9f/CKM/+GMxMr8HXeKQ7dfCU8P8bpLq9N+FwhKJ
+         tn5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RL0KByFdYUyS8Gd/6OT7OaJW30u7ZU0LPn/CCSDgwuw=;
-        b=PXDdwn3FUsmEA1WmNxkmvUMWfN9jUJE6Hd5yg5XOXKRgPeX6rvp3ymglfW8N9OkggG
-         w1/PN/6ZnMj5Q0IHZzaFb75NioqsGRsuAQFrnnwgEbwEGWoY9fxzXJCplML1IKK8xipg
-         58vxljOHt7y/s4YZfv8CGn2gKHcHpPV179DQo370D3l+SR4vKJ9dyOiMZMdQowWEKaZY
-         1xcCL6VJgnT391GCayvflsP+QEYJmin5ustkKtzLnn0R+HF6Lm3UTMayfpIdOG0X269G
-         97RsKZO0gTwmFSlBwBk4hPmR9+lFENr6K6ypXegTBtTNYFpnToxiR4z76TWeU0Vz7ssJ
-         aX3w==
+        bh=Q9CKoizeBhz5RgMnX2riaCR66cgVhYLrM1XE8hicQ1k=;
+        b=BracPzEDeBcNysXywIyrVyafOe5VvjvwkiCgMbtlHeN7m2E7sKG+sVAdjY/UO3suaH
+         IhPHQjrsEpqcbPG/fDnhjUAS+dXocknhCVM5pYt++qqT2Jgl49vz6iaKlRk4GkhWQ0cw
+         T/0wa/tW5YYS44wwtnwD9j1AJyGCa7BdQli1UIuLFFBfNYSe2TAHFbHbs+ayL8jZRV3o
+         vltW9g2N+7N5a3XRNfy4rd/9W3GpdODoR8bfijLnVaj8ggzDmCvDGlIR98cASjtKnXRM
+         nGBTQhk4Z42YEPGU8PUGJPxo7D1zyEJXeRqbKhnGcU4B6cmtDyCZS656kC8ENNSlIvlj
+         dZuw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hui Wang <hui.wang@canonical.com>,
+	David Wang <davidwang@zhaoxin.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 131/164] ALSA: hda/realtek - set PINCFG_HEADSET_MIC to parse_flags
-Date: Sun, 22 Apr 2018 15:53:18 +0200
-Message-Id: <20180422135140.747717518@linuxfoundation.org>
+Subject: [PATCH 4.14 130/164] ALSA: hda - New VIA controller suppor no-snoop path
+Date: Sun, 22 Apr 2018 15:53:17 +0200
+Message-Id: <20180422135140.706569463@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455328273632207?=
-X-GMAIL-MSGID: =?utf-8?q?1598455703525310133?=
+X-GMAIL-THRID: =?utf-8?q?1598455325045223483?=
+X-GMAIL-MSGID: =?utf-8?q?1598455700930361849?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hui Wang <hui.wang@canonical.com>
+From: David Wang <davidwang@zhaoxin.com>
 
-commit 3ce0d5aa265bcc0a4b281cb0cabf92491276101b upstream.
+commit af52f9982e410edac21ca4b49563053ffc9da1eb upstream.
 
-Otherwise, the pin will be regarded as microphone, and the jack name
-is "Mic Phantom", it is always on in the pulseaudio even nothing is
-plugged into the jack. So the UI is confusing to users since the
-microphone always shows up in the UI even there is no microphone
-plugged.
+This patch is used to tell kernel that new VIA HDAC controller also
+support no-snoop path.
 
-After adding this flag, the jack name is "Headset Mic Phantom", then
-the pulseaudio can handle its detection correctly.
+[ minor coding style fix by tiwai ]
 
-Fixes: f0ba9d699e5c ("ALSA: hda/realtek - Fix Dell headset Mic can't record")
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/hda/hda_intel.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6225,6 +6225,8 @@ static const struct hda_fixup alc269_fix
- 			{ 0x19, 0x01a1913c }, /* use as headset mic, without its own jack detect */
- 			{ }
- 		},
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_HEADSET_MIC
- 	},
- };
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1645,7 +1645,8 @@ static void azx_check_snoop_available(st
+ 		 */
+ 		u8 val;
+ 		pci_read_config_byte(chip->pci, 0x42, &val);
+-		if (!(val & 0x80) && chip->pci->revision == 0x30)
++		if (!(val & 0x80) && (chip->pci->revision == 0x30 ||
++				      chip->pci->revision == 0x20))
+ 			snoop = false;
+ 	}
  
