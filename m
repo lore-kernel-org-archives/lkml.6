@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48wZDtxHkjMnCCUMwffxM7xVm3k0v40iXKoyKNVvwVhCJ+2t/MMYf1QS80YcN7pSjSEC8LU
-ARC-Seal: i=1; a=rsa-sha256; t=1524405756; cv=none;
+X-Google-Smtp-Source: AIpwx49BfxDXcN7M9aIOi1Ptzn4trLlw9Jwt8j7g1zn1/Y7rqZaM0ZENPmYzDvBo/9wfn1IoD+xF
+ARC-Seal: i=1; a=rsa-sha256; t=1524405753; cv=none;
         d=google.com; s=arc-20160816;
-        b=cKDGs289EbtHa0vEMVp8ZJyTYw7sTZ4kkXdo/OfpOc1DVHRLLHIOFqK4WCfZgns41E
-         U+9K08RxtoVzh2Lw0sKNlAukl0iGsnq0gmZ8n7dPDRm7PMXpGiPBCUaEhYYM5xFtKkbU
-         cTnVWn53hpsDg+F3wlne0a3FTnc3GKuCf97c+ach30FKily5vtnuHuk2l/V/8nMUOMH4
-         qRIc/SvAvfBMJ5DXbYE5vfIgiD4oq+FtHac2Z9OVHrajOa8sT7WLJwJNydXP2Yc6+Gh7
-         MWYG89eQqdPdvTTQ4kuuPhHWftY9nVvB7PWKmgQLFhL3QOPlxN3mWWEvsO2vjl+KXj9Q
-         1ejg==
+        b=esZejgn9DWR5JjgB63qoIEXpaFTKa2F92ndlsgZIQXC6S8qKLvVY+VJqVDGx0droMC
+         K2n2KQi6lsO9NxChp5UR+i1/yySp834XNsdZFiP4izE7Qvd0QPCW+4CIO1DuGKvwh66I
+         3L/LVWE2tmDTfCVsverS5gWx2w2Dk5vGjnNLmj72jaPXia1MedY28Z+9jjDhvhdnj22i
+         0vZrLbJax5qp9tiDERUdVlrDe0/SUSxdtHFMMeoplkFzA2N6tPWhjwbzS1z13+v1XzO/
+         VVtd0mxsdBW1iaCWFWNxWJLM1QPzTOs4LpICI3bRoKx4qUTwK5939yr6IxUhG8ko0f5K
+         N1hQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Khay+P5O36Ke2CsKpH4OI5q0ZtOoKEW6QtmdellJNP0=;
-        b=xorM1QEp8iL2VNzIiXgkp8BqnibWqndxn36QWvORXqpniqcjvX6LQxRRDBAKXEwJ+3
-         IZsT9Oil0JYLB/JauhQfI2/2FxlYRsFW9RgKMT/wtliNwKxQb0fyGqpa/9b3i/mXnss2
-         OGXO87z1Hk1R1HI7KyhX6SUx2x/TEGMrUVHkycReutT5ABpZU4VvFJWwm/q0izXm8VMr
-         DQL9YF21F18oHyKJFGFFmJIdbJK1iWgygVlBclLAtYWmkyq3tbulz4OkFUBs1c8FbRUP
-         V6KE2zLVnxpTsca2vEvrZRTEv5Ys/PMg6C2E0IyWnvLzYi9mbTmxHtq/qKuiHChBoGSl
-         qA9A==
+        bh=1x1blfnDkg3u3q91wGVgF0E085xnGj3KLoSCVcPZnZM=;
+        b=OTxfN5xAiYvnKtQeDb/9LzfueHiAVnmG28tkjbcTKOPoAAf/W44YPoP2N260hJufYk
+         XLrSNx6FDZqQOewwwEq4LVCPnDI8uCGYR9B/UFzOCVBU5CDrdT254QPRKhcEZJ4pktvz
+         KGdk98kbzVRAozmoPz6YfpjTC2FxhRPPaoTCfVP/UfxfVPo1AbN9V1b1iBUJypud9LEX
+         qoVEI92dxh79rhUMX9ck7ECjPJ3VCwErwRfCMWln9sV6MBFW2pYTRweBkVaaO14QFiyS
+         YxX/d1U768gZZhoyuGqRNwlPVadsYhapCJ9O/InO5Cu0O9UCqP3RuYOrSA54XK8tMbvC
+         KITA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	amn-bas@hotmail.com,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Imre Deak <imre.deak@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.16 183/196] drm/i915: Fix hibernation with ACPI S0 target state
-Date: Sun, 22 Apr 2018 15:53:23 +0200
-Message-Id: <20180422135113.713805818@linuxfoundation.org>
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.16 182/196] mmc: sdhci-pci: Only do AMD tuning for HS200
+Date: Sun, 22 Apr 2018 15:53:22 +0200
+Message-Id: <20180422135113.670412371@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455290923924834?=
-X-GMAIL-MSGID: =?utf-8?q?1598455290923924834?=
+X-GMAIL-THRID: =?utf-8?q?1598455287957314545?=
+X-GMAIL-MSGID: =?utf-8?q?1598455287957314545?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,149 +51,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Imre Deak <imre.deak@intel.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
 
-commit 300efa9eea451bdcf3b5a1eb292222e06e85bb2c upstream.
+commit 300ad8992913025b4294d4fc37b6bfff4a8b7ad1 upstream.
 
-After
+Commit c31165d7400b ("mmc: sdhci-pci: Add support for HS200 tuning mode
+on AMD, eMMC-4.5.1") added a HS200 tuning method for use with AMD SDHCI
+controllers.  As described in the commit subject, this tuning is specific
+for HS200.  However, as implemented, this method is used for all host
+timings, because platform_execute_tuning, if it exists, is called
+unconditionally by sdhci_execute_tuning().  This breaks tuning when using
+the AMD controller with, for example, a DDR50 SD card.
 
-commit dd9f31c7a3887950cbd0d49eb9d43f7a1518a356
-Author: Imre Deak <imre.deak@intel.com>
-Date:   Wed Aug 16 17:46:07 2017 +0300
+Instead, we can implement an amd execute_tuning wrapper callback, and
+then conditionally do the HS200 specific tuning for HS200, and otherwise
+call back to the standard sdhci_execute_tuning().
 
-    drm/i915/gen9+: Set same power state before hibernation image
-    save/restore
-
-during hibernation/suspend the power domain functionality got disabled,
-after which resume could leave it incorrectly disabled if the ACPI
-target state was S0 during suspend and i915 was not loaded by the loader
-kernel.
-
-This was caused by not considering if we resumed from hibernation as the
-condition for power domains reiniting.
-
-Fix this by simply tracking if we suspended power domains during system
-suspend and reinit power domains accordingly during resume. This will
-result in reiniting power domains always when resuming from hibernation,
-regardless of the platform and whether or not i915 is loaded by the
-loader kernel.
-
-The reason we didn't catch this earlier is that the enabled/disabled
-state of power domains during PMSG_FREEZE/PMSG_QUIESCE is platform
-and kernel config dependent: on my SKL the target state is S4
-during PMSG_FREEZE and (with the driver loaded in the loader kernel)
-S0 during PMSG_QUIESCE. On the reporter's machine it's S0 during
-PMSG_FREEZE but (contrary to this) power domains are not initialized
-during PMSG_QUIESCE since i915 is not loaded in the loader kernel, or
-it's loaded but without the DMC firmware being available.
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105196
-Reported-and-tested-by: amn-bas@hotmail.com
-Fixes: dd9f31c7a388 ("drm/i915/gen9+: Set same power state before hibernation image save/restore")
-Cc: amn-bas@hotmail.com
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180322143642.26883-1-imre.deak@intel.com
-(cherry picked from commit 0f90603c33bdf6575cfdc81edd53f3f13ba166fb)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Fixes: c31165d7400b ("mmc: sdhci-pci: Add support for HS200 tuning mode on AMD, eMMC-4.5.1")
+Cc: stable@vger.kernel.org # v4.11+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_drv.c |   22 ++++++++++------------
- drivers/gpu/drm/i915/i915_drv.h |    2 +-
- 2 files changed, 11 insertions(+), 13 deletions(-)
+ drivers/mmc/host/sdhci-pci-core.c |   25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_drv.c
-+++ b/drivers/gpu/drm/i915/i915_drv.c
-@@ -1599,15 +1599,12 @@ static int i915_drm_suspend_late(struct
- {
- 	struct drm_i915_private *dev_priv = to_i915(dev);
- 	struct pci_dev *pdev = dev_priv->drm.pdev;
--	bool fw_csr;
- 	int ret;
- 
- 	disable_rpm_wakeref_asserts(dev_priv);
- 
- 	intel_display_set_init_power(dev_priv, false);
- 
--	fw_csr = !IS_GEN9_LP(dev_priv) && !hibernation &&
--		suspend_to_idle(dev_priv) && dev_priv->csr.dmc_payload;
- 	/*
- 	 * In case of firmware assisted context save/restore don't manually
- 	 * deinit the power domains. This also means the CSR/DMC firmware will
-@@ -1615,8 +1612,11 @@ static int i915_drm_suspend_late(struct
- 	 * also enable deeper system power states that would be blocked if the
- 	 * firmware was inactive.
- 	 */
--	if (!fw_csr)
-+	if (IS_GEN9_LP(dev_priv) || hibernation || !suspend_to_idle(dev_priv) ||
-+	    dev_priv->csr.dmc_payload == NULL) {
- 		intel_power_domains_suspend(dev_priv);
-+		dev_priv->power_domains_suspended = true;
-+	}
- 
- 	ret = 0;
- 	if (IS_GEN9_LP(dev_priv))
-@@ -1628,8 +1628,10 @@ static int i915_drm_suspend_late(struct
- 
- 	if (ret) {
- 		DRM_ERROR("Suspend complete failed: %d\n", ret);
--		if (!fw_csr)
-+		if (dev_priv->power_domains_suspended) {
- 			intel_power_domains_init_hw(dev_priv, true);
-+			dev_priv->power_domains_suspended = false;
-+		}
- 
- 		goto out;
- 	}
-@@ -1650,8 +1652,6 @@ static int i915_drm_suspend_late(struct
- 	if (!(hibernation && INTEL_GEN(dev_priv) < 6))
- 		pci_set_power_state(pdev, PCI_D3hot);
- 
--	dev_priv->suspended_to_idle = suspend_to_idle(dev_priv);
--
- out:
- 	enable_rpm_wakeref_asserts(dev_priv);
- 
-@@ -1818,8 +1818,7 @@ static int i915_drm_resume_early(struct
- 	intel_uncore_resume_early(dev_priv);
- 
- 	if (IS_GEN9_LP(dev_priv)) {
--		if (!dev_priv->suspended_to_idle)
--			gen9_sanitize_dc_state(dev_priv);
-+		gen9_sanitize_dc_state(dev_priv);
- 		bxt_disable_dc9(dev_priv);
- 	} else if (IS_HASWELL(dev_priv) || IS_BROADWELL(dev_priv)) {
- 		hsw_disable_pc8(dev_priv);
-@@ -1827,8 +1826,7 @@ static int i915_drm_resume_early(struct
- 
- 	intel_uncore_sanitize(dev_priv);
- 
--	if (IS_GEN9_LP(dev_priv) ||
--	    !(dev_priv->suspended_to_idle && dev_priv->csr.dmc_payload))
-+	if (dev_priv->power_domains_suspended)
- 		intel_power_domains_init_hw(dev_priv, true);
- 	else
- 		intel_display_set_init_power(dev_priv, true);
-@@ -1838,7 +1836,7 @@ static int i915_drm_resume_early(struct
- 	enable_rpm_wakeref_asserts(dev_priv);
- 
- out:
--	dev_priv->suspended_to_idle = false;
-+	dev_priv->power_domains_suspended = false;
- 
- 	return ret;
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1318,7 +1318,7 @@ static void amd_enable_manual_tuning(str
+ 	pci_write_config_dword(pdev, AMD_SD_MISC_CONTROL, val);
  }
---- a/drivers/gpu/drm/i915/i915_drv.h
-+++ b/drivers/gpu/drm/i915/i915_drv.h
-@@ -2099,7 +2099,7 @@ struct drm_i915_private {
- 	u32 bxt_phy_grc;
  
- 	u32 suspend_count;
--	bool suspended_to_idle;
-+	bool power_domains_suspended;
- 	struct i915_suspend_saved_registers regfile;
- 	struct vlv_s0ix_state vlv_s0ix_state;
+-static int amd_execute_tuning(struct sdhci_host *host, u32 opcode)
++static int amd_execute_tuning_hs200(struct sdhci_host *host, u32 opcode)
+ {
+ 	struct sdhci_pci_slot *slot = sdhci_priv(host);
+ 	struct pci_dev *pdev = slot->chip->pdev;
+@@ -1357,6 +1357,27 @@ static int amd_execute_tuning(struct sdh
+ 	return 0;
+ }
  
++static int amd_execute_tuning(struct mmc_host *mmc, u32 opcode)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++
++	/* AMD requires custom HS200 tuning */
++	if (host->timing == MMC_TIMING_MMC_HS200)
++		return amd_execute_tuning_hs200(host, opcode);
++
++	/* Otherwise perform standard SDHCI tuning */
++	return sdhci_execute_tuning(mmc, opcode);
++}
++
++static int amd_probe_slot(struct sdhci_pci_slot *slot)
++{
++	struct mmc_host_ops *ops = &slot->host->mmc_host_ops;
++
++	ops->execute_tuning = amd_execute_tuning;
++
++	return 0;
++}
++
+ static int amd_probe(struct sdhci_pci_chip *chip)
+ {
+ 	struct pci_dev	*smbus_dev;
+@@ -1391,12 +1412,12 @@ static const struct sdhci_ops amd_sdhci_
+ 	.set_bus_width			= sdhci_set_bus_width,
+ 	.reset				= sdhci_reset,
+ 	.set_uhs_signaling		= sdhci_set_uhs_signaling,
+-	.platform_execute_tuning	= amd_execute_tuning,
+ };
+ 
+ static const struct sdhci_pci_fixes sdhci_amd = {
+ 	.probe		= amd_probe,
+ 	.ops		= &amd_sdhci_pci_ops,
++	.probe_slot	= amd_probe_slot,
+ };
+ 
+ static const struct pci_device_id pci_ids[] = {
