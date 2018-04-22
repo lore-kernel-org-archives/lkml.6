@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49Z4Qb31EMCGi9UnYKGEWt8TgOBAySvcj8kUbBCVp4nG0DKpZGh2kDU9MReXQTyei8bpw8b
-ARC-Seal: i=1; a=rsa-sha256; t=1524405835; cv=none;
+X-Google-Smtp-Source: AIpwx48GpR9MiApiRO21JcOeUwwb5YrIxV7Uu7a2EWZh5ibi4SLrzafx0/QfV8oufeJmgoyPVUic
+ARC-Seal: i=1; a=rsa-sha256; t=1524405832; cv=none;
         d=google.com; s=arc-20160816;
-        b=HDl+KrZEEegv28OZvw7ujSLiqwLkGGWbUrye92PSIqrD8p5gg3BDJw17S0ZUOOsO7n
-         Q2tynUi5zO00j+4PbG1J1SqvgkjUjTl+UYHV9aGHPt4udSMNsNDqfjtBpKwNMuTT9amY
-         ZMF3UD1YBYY36JbwyiGwUkFsvBVbhAKirtba9YHevKufcGavCwC3jDNyiR1yOck1d+TX
-         H4pDBezG2j7g+/XO9z7at53NiEh6IyfNcddctH++CDNWq9iB2cBVr5wDqBMnVCBIqM0t
-         c9Y1n67E4FPNIbA4cZ2O9BjjPa9VggnDrqz2dmVo4kIhOqySQBf3yOzO2YLbeowUyhdu
-         w+rw==
+        b=g0HcI7PSf8HFFzolSOksa5GLq3evw5KX4ggCKUJ2yoUVZCyzzHrU0BKd7QEyyGy4No
+         +C+koN/3HAmBGij3cATebTcOXA8I0frBhJxNZvNX2r/7/HyIJjUvKmZoJ3W/L9FncPgW
+         g1Gb6rXBNojICqxwMKIFyyNndPJusRWwfmCs1VRdfPqk2vbNk1kZVyCOa3zkOEDYJXm8
+         eUX+FDoec1DJNNIEzIhg5c7fizNgJt/HfQUSkWqQKq6f9ukXHhrYV7xZRymM0Eem5zr0
+         cEpvuTVQlir9oIrtnX9LSpsfcN8yeHp+ZTUgYgI3HZ8CO45urF9CZFfpeDN/IaegTqvb
+         07zA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IPuJMZoMu4LBnROlmJyu0ICnevrJhJv4LEGnfkjXxgk=;
-        b=K4qXB9/XzQjbiVTQV4tvgzGUtIco4tx+27MTX+iyfAhPExpkg6yaM4MDFAg3hystP2
-         9scSoZ9vp9y7TsGXqnHUGIqerNYZI8Kmy5rAUk+Nz0+Ou1NF6yBXZ6PC+sqosi8mPBDE
-         gITIrwa9lY+e4yN8JaKq/qjG1dU8LB+vH5vdsO+KatMu6uQXXuHGVmKEuMFg9yj3T0Ut
-         XRM4gX32Mlq/1LbVkjeugX5mRFivTQFXHWMEpDEHbwMtbcwKMOszUSlqj6mIc42vP8dm
-         b2UUrPNxDAcPEh3ejHSjqUkj6rUshiE1eWMYBQynSYLeOaMV5bDKu5bsip51QW/pnDQh
-         /6gA==
+        bh=IngYanPIZJJreNcPiD6Aie9bxcTHpAuuDHylUXbCldE=;
+        b=NmKDimFSq4XzFMt4LuprY5Lv4eFo1GGRNpAUE5hC7ocd8bvz35SBXX1BuRMmPSDd+9
+         2fvhMKYVdpJ4ZELPh0tQqo9R1VwuIsMT0xZYEo3UdPxHJCivwrWRjWId+/S9xZoJVHSR
+         sjRhzT1r/FIphRWBD01qmf6iJLZzbxEcc2PY+QTwZfYueTJSxVCSinP5UryTp23IoccU
+         XCKlts4cqhLgosbiE04NPmcMpCS4XctaSr4a0dch0FSxMNFhFZ/J5m8f5/7xiGmc3P3R
+         CmYz9DUQOEmELVo2mqAAfLwBIKOJnESmnAIx4Fkx7nkfihe24WMu/Y6loZIAK8RwQGvO
+         ayVw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 4.14 016/164] phy: allwinner: sun4i-usb: poll vbus changes on A23/A33 when driving VBUS
-Date: Sun, 22 Apr 2018 15:51:23 +0200
-Message-Id: <20180422135136.056538738@linuxfoundation.org>
+	Heinrich Schuchardt <xypron.glpk@gmx.de>,
+	Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.14 015/164] usb: musb: gadget: misplaced out of bounds check
+Date: Sun, 22 Apr 2018 15:51:22 +0200
+Message-Id: <20180422135136.013445808@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454816491806607?=
-X-GMAIL-MSGID: =?utf-8?q?1598455373554496553?=
+X-GMAIL-THRID: =?utf-8?q?1598454813951848255?=
+X-GMAIL-MSGID: =?utf-8?q?1598455370587918778?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,76 +49,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Heinrich Schuchardt <xypron.glpk@gmx.de>
 
-commit d7119224bfe6e8efbf821a52db7da9530d790f07 upstream.
+commit af6f8529098aeb0e56a68671b450cf74e7a64fcd upstream.
 
-The AXP223 PMIC, like the AXP221, does not generate VBUS change
-interrupts when N_VBUSEN is used to drive VBUS for the OTG port
-on the board.
+musb->endpoints[] has array size MUSB_C_NUM_EPS.
+We must check array bounds before accessing the array and not afterwards.
 
-This was not noticed until recently, as most A23/A33 boards use
-a GPIO pin that does not support interrupts for OTG ID detection.
-This forces the driver to use polling. However the A33-OlinuXino
-uses a pin that does support interrupts, so the driver uses them.
-However the VBUS interrupt never fires, and the driver never gets
-to update the VBUS status. This results in musb timing out waiting
-for VBUS to rise.
-
-This was worked around for the AXP221 by resorting to polling
-changes in commit 91d96f06a760 ("phy-sun4i-usb: Add workaround for
-missing Vbus det interrupts on A31"). This patch adds the A23 and
-A33 to the list of SoCs that need the workaround.
-
-Fixes: fc1f45ed3043 ("phy-sun4i-usb: Add support for the usb-phys on the
-		      sun8i-a33 SoC")
-Fixes: 123dfdbcfaf5 ("phy-sun4i-usb: Add support for the usb-phys on the
-		      sun8i-a23 SoC")
-Cc: <stable@vger.kernel.org> # 4.3.x: 68dbc2ce77bb phy-sun4i-usb:
-		Use of_match_node to get model specific config data
-Cc: <stable@vger.kernel.org> # 4.3.x: 5cf700ac9d50 phy: phy-sun4i-usb:
-		Fix optional gpios failing probe
-Cc: <stable@vger.kernel.org> # 4.3.x: 04e59a0211ff phy-sun4i-usb:
-		Fix irq free conditions to match request conditions
-Cc: <stable@vger.kernel.org> # 4.3.x: 91d96f06a760 phy-sun4i-usb:
-		Add workaround for missing Vbus det interrupts on A31
-Cc: <stable@vger.kernel.org> # 4.3.x
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-
 ---
- drivers/phy/allwinner/phy-sun4i-usb.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/usb/musb/musb_gadget_ep0.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/phy/allwinner/phy-sun4i-usb.c
-+++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-@@ -410,11 +410,13 @@ static bool sun4i_usb_phy0_poll(struct s
- 		return true;
+--- a/drivers/usb/musb/musb_gadget_ep0.c
++++ b/drivers/usb/musb/musb_gadget_ep0.c
+@@ -114,15 +114,19 @@ static int service_tx_status_request(
+ 		}
  
- 	/*
--	 * The A31 companion pmic (axp221) does not generate vbus change
--	 * interrupts when the board is driving vbus, so we must poll
-+	 * The A31/A23/A33 companion pmics (AXP221/AXP223) do not
-+	 * generate vbus change interrupts when the board is driving
-+	 * vbus using the N_VBUSEN pin on the pmic, so we must poll
- 	 * when using the pmic for vbus-det _and_ we're driving vbus.
- 	 */
--	if (data->cfg->type == sun6i_a31_phy &&
-+	if ((data->cfg->type == sun6i_a31_phy ||
-+	     data->cfg->type == sun8i_a33_phy) &&
- 	    data->vbus_power_supply && data->phys[0].regulator_on)
- 		return true;
+ 		is_in = epnum & USB_DIR_IN;
+-		if (is_in) {
+-			epnum &= 0x0f;
++		epnum &= 0x0f;
++		if (epnum >= MUSB_C_NUM_EPS) {
++			handled = -EINVAL;
++			break;
++		}
++
++		if (is_in)
+ 			ep = &musb->endpoints[epnum].ep_in;
+-		} else {
++		else
+ 			ep = &musb->endpoints[epnum].ep_out;
+-		}
+ 		regs = musb->endpoints[epnum].regs;
  
-@@ -885,7 +887,7 @@ static const struct sun4i_usb_phy_cfg su
- 
- static const struct sun4i_usb_phy_cfg sun8i_a23_cfg = {
- 	.num_phys = 2,
--	.type = sun4i_a10_phy,
-+	.type = sun6i_a31_phy,
- 	.disc_thresh = 3,
- 	.phyctl_offset = REG_PHYCTL_A10,
- 	.dedicated_clocks = true,
+-		if (epnum >= MUSB_C_NUM_EPS || !ep->desc) {
++		if (!ep->desc) {
+ 			handled = -EINVAL;
+ 			break;
+ 		}
