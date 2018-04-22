@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49dWVn5Nr5WLhcRfxfW+WfRzFmW12+pik8x2IiE3clLVFBc1N4MhuZziDCynB99caulPfSU
-ARC-Seal: i=1; a=rsa-sha256; t=1524406729; cv=none;
+X-Google-Smtp-Source: AIpwx4/5Ev0NLa1OGsEknldQooiT95DkeSqo6R+HYLoCPg+6lLtnC9yshsesV/r76ACoQNJtrKNu
+ARC-Seal: i=1; a=rsa-sha256; t=1524406727; cv=none;
         d=google.com; s=arc-20160816;
-        b=P0eDIbMTozlK9VxF4B3liFMwzCp2uzacwQBjoRbrBMdZe5TmybHDzsO1ooZ8AcIJ5r
-         5WSbsffcLYzi0ZJi7u3Fef4eWC1PUTSBTDT/P8eHG86JNEt/v43NCBH7nK3Uc/z7/7Hv
-         OfdR5s5PI4Fo5WIj5bDX2AupzhCDCez6T2kzf+swpqQSJt2cb+C6Y+0ErG94et1hA4MV
-         TTAmUZcMW7iGaNS85iHKgMsK5fb6teDJ5hVkhjPgm+LkTBTIC7c80Z8yDS4jfoADu0fv
-         mj3OJhVbosWBvqiSwd9JCxBCGGI9szEQCa1LdDB47ClFtDuYzgmx7lwrfMfpjsXm5HMs
-         eiJg==
+        b=F2bfKXE17wxI4H8ngS4XjkEQbOAASf4MLDvTpm58OhMlj3Q4u3dFqbEZr/jJQyP01A
+         B/VYBCAJIT1lYO3/tcxNqQA6Pb1f1iC/nIXYre2/vKgMyZ1CcnLNHzslHKuNZw+9/Gaf
+         PzVsTlnyDOnNEM+BZ0Lj4TKsiW6VBw7LI2Vj3djURsxCyNpp6hS7xMWAKOOqV1fwvNQx
+         mBlLLGUJL9ZD0nV4tXPbOItdg6ZJK96Y0XUBVdIHwg528vBj8yDxNtdnad4avBVbAUUs
+         i21Mu+qq61su8KKK+IZxNDDTCBf7vLXCuWFzg/c2dmMP1Cx5Fgq+DgNcZeOA868It9jC
+         iTeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FkDGTBAH+qmI2/CNExZhtHx7eU28WWQKUFJOk6h3W+k=;
-        b=ubq/BI28BGnbQM3PQ1UzpIbftf51e5oZDrtk7wUdD/m6+8uIIWn/xBE0SCTgWRdXmF
-         PeBfhPt/iYEkwVgE+umDrwzzoaF1c5FRuAppubq5jnRLszXODylIl8YtMwWK7M7BiscJ
-         3kegzQ/D3yodoYqSGcaiCa05u83/xzD8V6MfL+E2iJsngv1EWW8KZ/LJ6f03gDiHRoGo
-         bZUz5MMIwiWMmv4lCXVCK+seirf7dLOuA+NVYPOVPbloPOTARLyOY6attBTP9bvYeX0t
-         Dakik6ZFOOyt7WDogD2qIz3ndUJouSeXTddwRYCctc93tsmWMhFZypXRndtlbh8Xm5HA
-         zNcQ==
+        bh=MHm1/xchah81mEFay9oWCNm30KXyi7SAzdU0xTZCI9k=;
+        b=QR0/zuxBN+gvQDtas+YAkYhzA7xWY9J5PzHfQ7KKboxz1Dx+WUtYnnmWHAhIdRSJ8p
+         u+9vg3nFDnkpNVNn8jwsrWpIosMnDiOd//VRux/1zm6Dd8TviOumzeldaud0fhcRZ5v+
+         RMf4N0evIj1jV8nMNttk5+e7tmWziu/v1Lln9VuC5PVtK6HnYlz2+7AXGTWQbepvBuYc
+         6F0xO1Q/qeDwvE9agfPS6dXkaV/PcrLkOV6pNxxJC/NnhgYEwLDSgh2IkKeHxDKpv92t
+         zWappV9reP44cRNwTgpbeqbTRsXdHNH2BNmRZA2qCM6YGVRGniMfRIZVUSc1FK6HyNe8
+         RNsw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chuanhua Lei <chuanhua.lei@intel.com>,
+	James Hogan <jhogan@kernel.org>,
 	Matt Redfearn <matt.redfearn@mips.com>,
 	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org,
-	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.4 83/97] MIPS: memset.S: EVA & fault support for small_memset
-Date: Sun, 22 Apr 2018 15:54:01 +0200
-Message-Id: <20180422135309.737913486@linuxfoundation.org>
+	linux-mips@linux-mips.org
+Subject: [PATCH 4.4 82/97] MIPS: uaccess: Add micromips clobbers to bzero invocation
+Date: Sun, 22 Apr 2018 15:54:00 +0200
+Message-Id: <20180422135309.683857392@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455262967185714?=
-X-GMAIL-MSGID: =?utf-8?q?1598456311535423229?=
+X-GMAIL-THRID: =?utf-8?q?1598455259602480989?=
+X-GMAIL-MSGID: =?utf-8?q?1598456307847051244?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,61 +53,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Matt Redfearn <matt.redfearn@mips.com>
 
-commit 8a8158c85e1e774a44fbe81106fa41138580dfd1 upstream.
+commit b3d7e55c3f886493235bfee08e1e5a4a27cbcce8 upstream.
 
-The MIPS kernel memset / bzero implementation includes a small_memset
-branch which is used when the region to be set is smaller than a long (4
-bytes on 32bit, 8 bytes on 64bit). The current small_memset
-implementation uses a simple store byte loop to write the destination.
-There are 2 issues with this implementation:
+The micromips implementation of bzero additionally clobbers registers t7
+& t8. Specify this in the clobbers list when invoking bzero.
 
-1. When EVA mode is active, user and kernel address spaces may overlap.
-Currently the use of the sb instruction means kernel mode addressing is
-always used and an intended write to userspace may actually overwrite
-some critical kernel data.
-
-2. If the write triggers a page fault, for example by calling
-__clear_user(NULL, 2), instead of gracefully handling the fault, an OOPS
-is triggered.
-
-Fix these issues by replacing the sb instruction with the EX() macro,
-which will emit EVA compatible instuctions as required. Additionally
-implement a fault fixup for small_memset which sets a2 to the number of
-bytes that could not be cleared (as defined by __clear_user).
-
-Reported-by: Chuanhua Lei <chuanhua.lei@intel.com>
+Fixes: 26c5e07d1478 ("MIPS: microMIPS: Optimise 'memset' core library function.")
+Reported-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/18975/
+Cc: <stable@vger.kernel.org> # 3.10+
+Patchwork: https://patchwork.linux-mips.org/patch/19110/
 Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/lib/memset.S |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/mips/include/asm/uaccess.h |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -218,7 +218,7 @@
- 1:	PTR_ADDIU	a0, 1			/* fill bytewise */
- 	R10KCBARRIER(0(ra))
- 	bne		t1, a0, 1b
--	sb		a1, -1(a0)
-+	 EX(sb, a1, -1(a0), .Lsmall_fixup\@)
+--- a/arch/mips/include/asm/uaccess.h
++++ b/arch/mips/include/asm/uaccess.h
+@@ -1238,6 +1238,13 @@ __clear_user(void __user *addr, __kernel
+ {
+ 	__kernel_size_t res;
  
- 2:	jr		ra			/* done */
- 	move		a2, zero
-@@ -257,6 +257,11 @@
- 	jr		ra
- 	andi		v1, a2, STORMASK
- 
-+.Lsmall_fixup\@:
-+	PTR_SUBU	a2, t1, a0
-+	jr		ra
-+	 PTR_ADDIU	a2, 1
++#ifdef CONFIG_CPU_MICROMIPS
++/* micromips memset / bzero also clobbers t7 & t8 */
++#define bzero_clobbers "$4", "$5", "$6", __UA_t0, __UA_t1, "$15", "$24", "$31"
++#else
++#define bzero_clobbers "$4", "$5", "$6", __UA_t0, __UA_t1, "$31"
++#endif /* CONFIG_CPU_MICROMIPS */
 +
- 	.endm
+ 	if (eva_kernel_access()) {
+ 		__asm__ __volatile__(
+ 			"move\t$4, %1\n\t"
+@@ -1247,7 +1254,7 @@ __clear_user(void __user *addr, __kernel
+ 			"move\t%0, $6"
+ 			: "=r" (res)
+ 			: "r" (addr), "r" (size)
+-			: "$4", "$5", "$6", __UA_t0, __UA_t1, "$31");
++			: bzero_clobbers);
+ 	} else {
+ 		might_fault();
+ 		__asm__ __volatile__(
+@@ -1258,7 +1265,7 @@ __clear_user(void __user *addr, __kernel
+ 			"move\t%0, $6"
+ 			: "=r" (res)
+ 			: "r" (addr), "r" (size)
+-			: "$4", "$5", "$6", __UA_t0, __UA_t1, "$31");
++			: bzero_clobbers);
+ 	}
  
- /*
+ 	return res;
