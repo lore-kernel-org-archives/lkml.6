@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+tA/Ttyq5OzJd5GmzpRdlNj9K7kSO4W7fFkIHuMeTIay3MEDOcvkVip0GJZ8GkGZEt0TW9
-ARC-Seal: i=1; a=rsa-sha256; t=1524406265; cv=none;
+X-Google-Smtp-Source: AIpwx4+bHPf29+mHzQK9Fuh4EJhhjP58j1nWvZCPKbDz2+3j99dZHTjEzT1KQEg0hfKqbNyJsWNd
+ARC-Seal: i=1; a=rsa-sha256; t=1524406262; cv=none;
         d=google.com; s=arc-20160816;
-        b=Gz27BDaI6ntMmbzK80a7wlHP8vP1evtnw1PlXZd84M5zd9tppUB9Mhhnljpd4sg0Oj
-         +sMuHSGi8sof2vFfRZDPxdRSsSmzp5rL8/FKnp6K6WmIQYPFOzL872+d+q18zmcy8P2R
-         2ovKtm8FEWkd6pPUE7E+KTzgwy7KgJlWUOmUOuVeonLR81SRUz25AB8Cuw/gs59tHQCu
-         EImElulWJKfrME2C6qvxVkdwFDlQhZmYwWsaAm+S6ut27piHQ0+XFVufcj2JjA3MS0uJ
-         v+gg4DNaz1YbU07akPLASvbkO2ROX8EZpi75XGPAIsMp4vTIbgONkDMXXRF+g1FZ/RL3
-         b2jw==
+        b=i3sv+cAnHP1JLfAyZjvfy1DhfURi/tJpky0IjW4nsD9jLUzKeG8yvcmf6lIM/Ia/A2
+         bzDu+FYsmAKhMlI9wPJjMFVEGCKjjOQV+AJI5GJngBGfiW7pDlQ3FsMKF1kFgqaO6PWo
+         qBlXD9i8mnb30KhTE0vwWuq6g7YM2ovzsUQRfzDIKerhjxuQFVN+59RHl5rqKCr1Q4oB
+         NtcHwJW6IynNiyt7/fsxGfV4quHwYOgQDqSqSlS+X7M+M5RnAFXn+oHczlSHv6+qKVqk
+         b4PaQuaALovWDXtS+0yNbsgPn1A4b80RmgHJKSfHM5AZL8oV4o5InLRJMPhySjxytxso
+         KY2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=p5ge4z9a0vH6Lv1G+TJy6t6sU5pGD1OpAZTN15SITTQ=;
-        b=Kzc8pnvaWbfdsjxC3EwGaQg/XkWC0x5nTWYE2o53m4qCt+yuOlgB1Zi+tA1IuG3Lfx
-         mq86bXFvV/x74D0BivebINHrFgAOp4yLnYcufD9OKEmC4Hm+kH9stOvjdaHBZ7vRdFEj
-         lfUDIxU0rbB3+L7+htnXd951sjxX9WFWWptQ+AKo/YFyjma4P6/gFlWHxTxvk9lJWFhI
-         hlbNKd7esaACsgBmvqlpmnXJOEDZqRHZ5mkk0Mmj/lczs18EbCylYafdzZbq/hWJFd46
-         oqWRe6snsIa3gzws1Y7qt3MQLBSXvTgAYoA+7BoNLDZ5myg4/PsTZLQ851sT29+5+kBf
-         XPJw==
+        bh=SPgPOEtQYJEUlciZCf+BCJekdOcNTLYmdPsRy4GZPvE=;
+        b=eYokL2eoiQBrV8V9F3qwkJQ3twxahiYfIeDHU5VXEV5jJmHHfGoacPEO4MQvD4O3SY
+         yIevdhodmoiWoMZsiD5XbYZq1AA0ipuwXHpMwewBx9bwOzBTJbqSXhmTul/Q8n2TJi65
+         Z3GG8+CE+u/dOFsgCw7fgmi5bBD4WRWhHRto+l5uc+CVl8rwDkf07iqexAeAQ1QeLRd/
+         VXJcybehmeQr+k1PnttWaO60kW1vGzGYI4k3ZweJ8OaW2PoYDx50Rk3EfPUQ5EJE4gvV
+         xjz8RKc7ZGsESmWkjMsIsPJm4lqm4SGXtX+UEoPqFL6OZfk0AeOHp9XNO6XGJtuFQWF3
+         W0KA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Matt Redfearn <matt.redfearn@mips.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org
-Subject: [PATCH 4.14 143/164] MIPS: memset.S: Fix return of __clear_user from Lpartial_fixup
-Date: Sun, 22 Apr 2018 15:53:30 +0200
-Message-Id: <20180422135141.322987742@linuxfoundation.org>
+	stable@kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.14 152/164] jffs2_kill_sb(): deal with failed allocations
+Date: Sun, 22 Apr 2018 15:53:39 +0200
+Message-Id: <20180422135141.786393380@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455264978774304?=
-X-GMAIL-MSGID: =?utf-8?q?1598455824091199660?=
+X-GMAIL-THRID: =?utf-8?q?1598455296001564501?=
+X-GMAIL-MSGID: =?utf-8?q?1598455821026131573?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,55 +49,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matt Redfearn <matt.redfearn@mips.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit daf70d89f80c6e1772233da9e020114b1254e7e0 upstream.
+commit c66b23c2840446a82c389e4cb1a12eb2a71fa2e4 upstream.
 
-The __clear_user function is defined to return the number of bytes that
-could not be cleared. From the underlying memset / bzero implementation
-this means setting register a2 to that number on return. Currently if a
-page fault is triggered within the memset_partial block, the value
-loaded into a2 on return is meaningless.
+jffs2_fill_super() might fail to allocate jffs2_sb_info;
+jffs2_kill_sb() must survive that.
 
-The label .Lpartial_fixup\@ is jumped to on page fault. In order to work
-out how many bytes failed to copy, the exception handler should find how
-many bytes left in the partial block (andi a2, STORMASK), add that to
-the partial block end address (a2), and subtract the faulting address to
-get the remainder. Currently it incorrectly subtracts the partial block
-start address (t1), which has additionally been clobbered to generate a
-jump target in memset_partial. Fix this by adding the block end address
-instead.
-
-This issue was found with the following test code:
-      int j, k;
-      for (j = 0; j < 512; j++) {
-        if ((k = clear_user(NULL, j)) != j) {
-           pr_err("clear_user (NULL %d) returned %d\n", j, k);
-        }
-      }
-Which now passes on Creator Ci40 (MIPS32) and Cavium Octeon II (MIPS64).
-
-Suggested-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/19108/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Cc: stable@kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/lib/memset.S |    2 +-
+ fs/jffs2/super.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -252,7 +252,7 @@
- 	PTR_L		t0, TI_TASK($28)
- 	andi		a2, STORMASK
- 	LONG_L		t0, THREAD_BUADDR(t0)
--	LONG_ADDU	a2, t1
-+	LONG_ADDU	a2, a0
- 	jr		ra
- 	LONG_SUBU	a2, t0
- 
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -342,7 +342,7 @@ static void jffs2_put_super (struct supe
+ static void jffs2_kill_sb(struct super_block *sb)
+ {
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+-	if (!sb_rdonly(sb))
++	if (c && !sb_rdonly(sb))
+ 		jffs2_stop_garbage_collect_thread(c);
+ 	kill_mtd_super(sb);
+ 	kfree(c);
