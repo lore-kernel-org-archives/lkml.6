@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48IPj+njz+tmC4V1c9gtc9B+Vou4SkXfoMhX9Om2Vpvx0uFPzB27EEPWRqJ9ZqoB/3ZwtlN
-ARC-Seal: i=1; a=rsa-sha256; t=1524405529; cv=none;
+X-Google-Smtp-Source: AIpwx48nkPrDq3uEVka/AEsHRfTtI7QuIhPS0OI2n1FiywQgPvdZP20+g2rJk298aqlJvu+Iao3d
+ARC-Seal: i=1; a=rsa-sha256; t=1524405526; cv=none;
         d=google.com; s=arc-20160816;
-        b=SYG6a1nbE4Kbgl9nzSVel/QlB29T/YLtHJuLEgrxl4j+Z1VwV0hT/rmor2wcPq43V6
-         8F/mqW+U5tGEXbijTMRkI0UmOa/q88tmvenkuyttXhNiXxqUx+apL7E0OMX29rw0z213
-         c5oxYnfyeWxLm43/e9hZKU/HJjVhjgAucIbNR+wUDB1N6x0fafU8jgnU/L1SEMRtQPIl
-         1fTJuUzF7nH4d6JeGRCXtdpr8P3k+3hah7unFtE9KdiL0ujbGfwwgXMyaeMi6Q2PjNXC
-         giUVxw00k8+45hCGnUC7ejHXmsKndygiyd1lB5NCoV77K0xLg8S9CHdm91gcBVBAbYi1
-         1sOw==
+        b=Hjq44fUqZCPCL4FidAwvFhPCm0CkAerRvQtVVm8yEi7ucit0Eph7pZ9UUNgLEQYKG6
+         NEN5RbLOc0aPHvXH9hPIvQQsTL1PuVlc1wU95Vxa/k8Lw/CNaQSbj+p0hIcl8JTDcosI
+         rk7TfJEEPRq7KCmYKhFap98NPztxJMD/SkY2byv4P3+oa9KSJSvJV+ZlUBkCUuHM/hpJ
+         o3yKpgchRa4rF5FoL0qhDT3TiE5Wl3Wg4YCIXf5ICZHc1wxOBPaC6Rplwj3qzhkoDmZq
+         vnH0BPNzF16tzLFPasOcyKo81E7cruCMIRNb2n4Tkmt+LIwlYWNP7Rn0lSMG2eCUr2f6
+         EySQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AOQWTYw8WA/8vLPc0pt7VCchKVMlO+B/DE8V941Jsv4=;
-        b=pOjZza+RCD/vLqp7nVgd7CdzDNUBvYhCCTcV+1eqgd2GCgzV7TEDGxq3kzTfxb5XO1
-         yxcR77bIG8gC7VXelnBONNR/gzwKBaDttdqyQoHOiWtVMA9ooruOL5dCflpFYyrGw4Bq
-         SbxGSCrMQKcnA8sbnTpPeX/5dmi2PM2+cbbtgmtuwe/nuMqgZkRX2mNVk+4UlLab+9lT
-         yKTqUlWS9DGCkcePL6RdMK56Ddpwz2AfLRtxa5YoFoYruYGrRDokdfxepw2BK2kOwg+s
-         rcjzxqeuzYDBaV4zm64hDs1eEuz8MPjk/PYwPwLfzpw7zgezA30B7vVv9uwzv2p5U3sR
-         kabA==
+        bh=8++761NPdX7XpMt6d46q5KoV+anPNz2XB6TJvTpXXEM=;
+        b=S0cpN/7cMhiMyD3wG+MY9Mp5PO9RhL8RE5n6LHS0KQ3VKvQn9VIX3ppQrgWPj2FIAm
+         R4UAaFkRUo8bnEkc/MXCb+I49JFd/URWMIWf+A06CuJ0mmrDpcFPr165BugHsRBeJS4u
+         15qGCDySx9XF1dEO0P1wIJlKbI4BFdXjvASruRRhjD3MsLFgbPIM7uICD0hXZSOPCx6M
+         +xYHtt7hWvjAHTwNgMbykQjpDF39mP4YVidLiNAdclXcetEkAGeCFH5ejCk+Fohm0wd/
+         n2yrlhr1pC84UfUUZn5x9QnMECgmOmMzAu51cGUiaPoHZKXwdKgfV7feSFlapyjJpefA
+         G9ug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.16 083/196] block: use 32-bit blk_status_t on Alpha
-Date: Sun, 22 Apr 2018 15:51:43 +0200
-Message-Id: <20180422135108.598605082@linuxfoundation.org>
+	Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.16 100/196] dm: backfill abnormal IO support to non-splitting IO submission
+Date: Sun, 22 Apr 2018 15:52:00 +0200
+Message-Id: <20180422135109.425346976@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455052659939248?=
-X-GMAIL-MSGID: =?utf-8?q?1598455052659939248?=
+X-GMAIL-THRID: =?utf-8?q?1598455049644718673?=
+X-GMAIL-MSGID: =?utf-8?q?1598455049644718673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,51 +48,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 6e2fb22103b99c26ae30a46512abe75526d8e4c9 upstream.
+commit 0519c71e8d461ac3ef9a555bb7339243c9128d37 upstream.
 
-Early alpha processors cannot write a single byte or word; they read 8
-bytes, modify the value in registers and write back 8 bytes.
+Otherwise, these abnormal IOs would be sent to the DM target
+regardless of whether the target advertised support for them.
 
-The type blk_status_t is defined as one byte, it is often written
-asynchronously by I/O completion routines, this asynchronous modification
-can corrupt content of nearby bytes if these nearby bytes can be written
-simultaneously by another CPU.
+Factor out __process_abnormal_io() from __split_and_process_non_flush()
+so that discards, write same, etc may be conditionally processed.
 
-- one example of such corruption is the structure dm_io where
-  "blk_status_t status" is written by an asynchronous completion routine
-  and "atomic_t io_count" is modified synchronously
-- another example is the structure dm_buffer where "unsigned hold_count"
-  is modified synchronously from process context and "blk_status_t
-  write_error" is modified asynchronously from bio completion routine
-
-This patch fixes the bug by changing the type blk_status_t to 32 bits if
-we are on Alpha and if we are compiling for a processor that doesn't have
-the byte-word-extension.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org	# 4.13+
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 978e51ba3 ("dm: optimize bio-based NVMe IO submission")
+Cc: stable@vger.kernel.org # 4.16
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/blk_types.h |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/md/dm.c |   30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -20,8 +20,13 @@ typedef void (bio_end_io_t) (struct bio
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1477,6 +1477,23 @@ static int __send_write_zeroes(struct cl
+ 	return __send_changing_extent_only(ci, ti, get_num_write_zeroes_bios, NULL);
+ }
  
++static bool __process_abnormal_io(struct clone_info *ci, struct dm_target *ti,
++				  int *result)
++{
++	struct bio *bio = ci->bio;
++
++	if (bio_op(bio) == REQ_OP_DISCARD)
++		*result = __send_discard(ci, ti);
++	else if (bio_op(bio) == REQ_OP_WRITE_SAME)
++		*result = __send_write_same(ci, ti);
++	else if (bio_op(bio) == REQ_OP_WRITE_ZEROES)
++		*result = __send_write_zeroes(ci, ti);
++	else
++		return false;
++
++	return true;
++}
++
  /*
-  * Block error status values.  See block/blk-core:blk_errors for the details.
-+ * Alpha cannot write a byte atomically, so we need to use 32-bit value.
+  * Select the correct strategy for processing a non-flush bio.
   */
-+#if defined(CONFIG_ALPHA) && !defined(__alpha_bwx__)
-+typedef u32 __bitwise blk_status_t;
-+#else
- typedef u8 __bitwise blk_status_t;
-+#endif
- #define	BLK_STS_OK 0
- #define BLK_STS_NOTSUPP		((__force blk_status_t)1)
- #define BLK_STS_TIMEOUT		((__force blk_status_t)2)
+@@ -1491,12 +1508,8 @@ static int __split_and_process_non_flush
+ 	if (!dm_target_is_valid(ti))
+ 		return -EIO;
+ 
+-	if (unlikely(bio_op(bio) == REQ_OP_DISCARD))
+-		return __send_discard(ci, ti);
+-	else if (unlikely(bio_op(bio) == REQ_OP_WRITE_SAME))
+-		return __send_write_same(ci, ti);
+-	else if (unlikely(bio_op(bio) == REQ_OP_WRITE_ZEROES))
+-		return __send_write_zeroes(ci, ti);
++	if (unlikely(__process_abnormal_io(ci, ti, &r)))
++		return r;
+ 
+ 	if (bio_op(bio) == REQ_OP_ZONE_REPORT)
+ 		len = ci->sector_count;
+@@ -1617,9 +1630,12 @@ static blk_qc_t __process_bio(struct map
+ 			goto out;
+ 		}
+ 
+-		tio = alloc_tio(&ci, ti, 0, GFP_NOIO);
+ 		ci.bio = bio;
+ 		ci.sector_count = bio_sectors(bio);
++		if (unlikely(__process_abnormal_io(&ci, ti, &error)))
++			goto out;
++
++		tio = alloc_tio(&ci, ti, 0, GFP_NOIO);
+ 		ret = __clone_and_map_simple_bio(&ci, tio, NULL);
+ 	}
+ out:
