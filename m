@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48NKRejEWkMEfInsaeMnA6Nd5ZDNxb5UGp+F0uW5wQOb+8spgxnA7oV3iVkPwCLRv9OJ0bJ
-ARC-Seal: i=1; a=rsa-sha256; t=1524406354; cv=none;
+X-Google-Smtp-Source: AIpwx49iFiy1AdkEoL39TP1hIxcYs8sHVSAAG5/MnyK1Wb26ydQf4pxtILWYuZYQRSoRDH+YVDBs
+ARC-Seal: i=1; a=rsa-sha256; t=1524406351; cv=none;
         d=google.com; s=arc-20160816;
-        b=cTJh+/X3YiykQKYjcZPudkrH4rm9zKniO96yy+89WwNa5NszgCbGnq4S8FE4V7QVgv
-         9qEjnJVNlJSCxS/0BiyHzFEEYUeSpReXQr0tLSmozoND+kbPdy/E+Tv8Ct+M62e3IMGk
-         cSdcnugKTvRqd8VLa7nVe0jxnaH1+X7tSi4mTzO6iJfYZWecRGGcObePg4whGhg+nLvK
-         TVXaNrjFWp0ByD2ioSwYJtdnKTOtXZbJumekjxeiklzWVK7ZQTvW6fCMPIN00s7Ex1NG
-         uATipSDpkvPntB7WgrrGD6irH1KVawxnODPM1IlzAR4oSJIXwdsKL51JtjtjHzHi0ipC
-         nHQA==
+        b=hc2QXagg41iC2HPEYDOqajJ1iaKTHltVNMPb1vOe1N/itZh2bSIIvtJSmLwehrBSBn
+         iPlkwQ3oP02t0OBqFTzb8bnwLzLZMyOQSBiUvR2flKB9KKMT5//neO0k7xL0ASCyfpN8
+         P0CPf753BC1xF/lKswY2tvVaQfbHn0VWn6TdBtCVagVjeq+/byyFCfmmBk1ezG+/VPgF
+         kXkpB3ZyqnXs8G3KhJ1Cw/ZzQj88jwpXcGE5+lwUOCrxNYgkts6yxcisE0/pc1LHiBEq
+         L6mmeg3feTOLKC/GYtnuCi42x6+ghKstuXx240n4Pa3FK7SjQlV5U6RpsFDYXK+4eLb8
+         gI7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fnCS6fKF6zpqy6wW8y9iP93qzhumWVJL69bww14oHhQ=;
-        b=mTb8ZIhu/yItwBKeLKukE9XTRrENbfU7gFTWinHc/gRcP91pECOasfnFKpMYiQvd9k
-         yV2BxPHt1n1LHNpEmFx457RAB+0ctsvIJrYaPMdYNO816m3yuuJq/KDFlEQvcpnM3Ica
-         FPv1kKhGWGcDnFTto5lkRhblUzqt41A20dlOXAQG2Dow1NoPajFGaGKc1jAwafrEzW0t
-         zjEII7dv6q51iBnYwT5yxFb/x659l1jYZmRjsxilWNGn0XHqFqNfBrbaLHVAfSw9yUl2
-         VLqEyJO5x0ZVufN+VI+v6M7MmJLJOjByQiS60JbNt+KVa65Sf7iwSkphB2DkuMzOf0Bf
-         pBvw==
+        bh=KPPjpkGaF5uhXN4k/fO90ky+OVQA/lF6e1+NGpj8rpA=;
+        b=WMSqD0jfIAV5k2kjbzhyaxKDXLVuipJG3ENG6tCRFKxUHQTlvJZ1AwfyxGP6DlePk8
+         o6ypgtrjdGrGNrCbR3cQ5UDP/ht5inb0AMX3HhAxa6peqsw5uXbWjAciqSbSpY1TJNdA
+         N8LRRykgkcnQeEtVdnkCrVXTLp4Pb+djLnXuThgs+MAyfddQPz8e2KzAorOGhUrFNUPC
+         JG7bv+5PXJRaJ4GTviUW0o3DNwBz2WAqDSR0x8Vj7/QC89J0aobINZQgPb/pOUZpsS5z
+         nX311VYnUi8AEnGHz6+h8svGgI5LrZvUHzXU6xOEE/ltlX+0kcFC9lKnTah7VHlXpk+h
+         2x+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Steve French <smfrench@gmail.com>,
-	Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.9 23/95] smb3: Fix root directory when server returns inode number of zero
-Date: Sun, 22 Apr 2018 15:52:52 +0200
-Message-Id: <20180422135211.388104900@linuxfoundation.org>
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	Moni Shoua <monis@mellanox.com>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 40/95] RDMA/rxe: Fix an out-of-bounds read
+Date: Sun, 22 Apr 2018 15:53:09 +0200
+Message-Id: <20180422135212.060555766@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455013219213358?=
-X-GMAIL-MSGID: =?utf-8?q?1598455916990829323?=
+X-GMAIL-THRID: =?utf-8?q?1598455063438272649?=
+X-GMAIL-MSGID: =?utf-8?q?1598455914344197861?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,96 +50,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit 7ea884c77e5c97f1e0a1a422d961d27f78ca2745 upstream.
+commit a6544a624c3ff92a64e4aca3931fa064607bd3da upstream.
 
-Some servers return inode number zero for the root directory, which
-causes ls to display incorrect data (missing "." and "..").
+This patch avoids that KASAN reports the following when the SRP initiator
+calls srp_post_send():
 
-If the server returns zero for the inode number of the root directory,
-fake an inode number for it.
+==================================================================
+BUG: KASAN: stack-out-of-bounds in rxe_post_send+0x5c4/0x980 [rdma_rxe]
+Read of size 8 at addr ffff880066606e30 by task 02-mq/1074
 
-Signed-off-by: Steve French <smfrench@gmail.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+CPU: 2 PID: 1074 Comm: 02-mq Not tainted 4.16.0-rc3-dbg+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+Call Trace:
+dump_stack+0x85/0xc7
+print_address_description+0x65/0x270
+kasan_report+0x231/0x350
+rxe_post_send+0x5c4/0x980 [rdma_rxe]
+srp_post_send.isra.16+0x149/0x190 [ib_srp]
+srp_queuecommand+0x94d/0x1670 [ib_srp]
+scsi_dispatch_cmd+0x1c2/0x550 [scsi_mod]
+scsi_queue_rq+0x843/0xa70 [scsi_mod]
+blk_mq_dispatch_rq_list+0x143/0xac0
+blk_mq_do_dispatch_ctx+0x1c5/0x260
+blk_mq_sched_dispatch_requests+0x2bf/0x2f0
+__blk_mq_run_hw_queue+0xdb/0x160
+__blk_mq_delay_run_hw_queue+0xba/0x100
+blk_mq_run_hw_queue+0xf2/0x190
+blk_mq_sched_insert_request+0x163/0x2f0
+blk_execute_rq+0xb0/0x130
+scsi_execute+0x14e/0x260 [scsi_mod]
+scsi_probe_and_add_lun+0x366/0x13d0 [scsi_mod]
+__scsi_scan_target+0x18a/0x810 [scsi_mod]
+scsi_scan_target+0x11e/0x130 [scsi_mod]
+srp_create_target+0x1522/0x19e0 [ib_srp]
+kernfs_fop_write+0x180/0x210
+__vfs_write+0xb1/0x2e0
+vfs_write+0xf6/0x250
+SyS_write+0x99/0x110
+do_syscall_64+0xee/0x2b0
+entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+The buggy address belongs to the page:
+page:ffffea0001998180 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x4000000000000000()
+raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: dead000000000100 dead000000000200 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ffff880066606d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
+ffff880066606d80: f1 00 f2 f2 f2 f2 f2 f2 f2 00 00 f2 f2 f2 f2 f2
+>ffff880066606e00: f2 00 00 00 00 00 f2 f2 f2 f3 f3 f3 f3 00 00 00
+                                    ^
+ffff880066606e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ffff880066606f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+Fixes: 8700e3e7c485 ("Soft RoCE driver")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Moni Shoua <monis@mellanox.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsglob.h |    1 +
- fs/cifs/inode.c    |   33 +++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_verbs.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/cifsglob.h
-+++ b/fs/cifs/cifsglob.h
-@@ -1412,6 +1412,7 @@ struct dfs_info3_param {
- #define CIFS_FATTR_NEED_REVAL		0x4
- #define CIFS_FATTR_INO_COLLISION	0x8
- #define CIFS_FATTR_UNKNOWN_NLINK	0x10
-+#define CIFS_FATTR_FAKE_ROOT_INO	0x20
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.c
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.c
+@@ -747,9 +747,8 @@ static int init_send_wqe(struct rxe_qp *
+ 		memcpy(wqe->dma.sge, ibwr->sg_list,
+ 		       num_sge * sizeof(struct ib_sge));
  
- struct cifs_fattr {
- 	u32		cf_flags;
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -701,6 +701,18 @@ cgfi_exit:
- 	return rc;
- }
- 
-+/* Simple function to return a 64 bit hash of string.  Rarely called */
-+static __u64 simple_hashstr(const char *str)
-+{
-+	const __u64 hash_mult =  1125899906842597L; /* a big enough prime */
-+	__u64 hash = 0;
-+
-+	while (*str)
-+		hash = (hash + (__u64) *str++) * hash_mult;
-+
-+	return hash;
-+}
-+
- int
- cifs_get_inode_info(struct inode **inode, const char *full_path,
- 		    FILE_ALL_INFO *data, struct super_block *sb, int xid,
-@@ -810,6 +822,14 @@ cifs_get_inode_info(struct inode **inode
- 						 tmprc);
- 					fattr.cf_uniqueid = iunique(sb, ROOT_I);
- 					cifs_autodisable_serverino(cifs_sb);
-+				} else if ((fattr.cf_uniqueid == 0) &&
-+						strlen(full_path) == 0) {
-+					/* some servers ret bad root ino ie 0 */
-+					cifs_dbg(FYI, "Invalid (0) inodenum\n");
-+					fattr.cf_flags |=
-+						CIFS_FATTR_FAKE_ROOT_INO;
-+					fattr.cf_uniqueid =
-+						simple_hashstr(tcon->treeName);
- 				}
- 			}
- 		} else
-@@ -826,6 +846,16 @@ cifs_get_inode_info(struct inode **inode
- 				&fattr.cf_uniqueid, data);
- 			if (tmprc)
- 				fattr.cf_uniqueid = CIFS_I(*inode)->uniqueid;
-+			else if ((fattr.cf_uniqueid == 0) &&
-+					strlen(full_path) == 0) {
-+				/*
-+				 * Reuse existing root inode num since
-+				 * inum zero for root causes ls of . and .. to
-+				 * not be returned
-+				 */
-+				cifs_dbg(FYI, "Srv ret 0 inode num for root\n");
-+				fattr.cf_uniqueid = CIFS_I(*inode)->uniqueid;
-+			}
- 		} else
- 			fattr.cf_uniqueid = CIFS_I(*inode)->uniqueid;
- 	}
-@@ -887,6 +917,9 @@ cifs_get_inode_info(struct inode **inode
- 	}
- 
- cgii_exit:
-+	if ((*inode) && ((*inode)->i_ino == 0))
-+		cifs_dbg(FYI, "inode number of zero returned\n");
-+
- 	kfree(buf);
- 	cifs_put_tlink(tlink);
- 	return rc;
+-	wqe->iova		= (mask & WR_ATOMIC_MASK) ?
+-					atomic_wr(ibwr)->remote_addr :
+-					rdma_wr(ibwr)->remote_addr;
++	wqe->iova = mask & WR_ATOMIC_MASK ? atomic_wr(ibwr)->remote_addr :
++		mask & WR_READ_OR_WRITE_MASK ? rdma_wr(ibwr)->remote_addr : 0;
+ 	wqe->mask		= mask;
+ 	wqe->dma.length		= length;
+ 	wqe->dma.resid		= length;
