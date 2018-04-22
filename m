@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2669103-1524408260-2-16523101425517992542
+X-Cyrus-Session-Id: sloti22d1t05-2669103-1524408250-2-6882616081138651908
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enroda, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524408259; b=A5Gmgd8raX81rJEpfmPWDTLHjgl2KjBUew8rHOKyN9ewkQ7udt
-    56myaMaEqJebmDQjoPnJE5I0b8Fhj9dec2JDOl0mvDMzIsjIGOkREBmdArvjzhrI
-    5x0MSpWiXnx2ZN/aH5V74p8q5pd35Kzk4F7GyWZr+sWRyiBuQQnMJbjYjQo5oHIz
-    k+2Cnw/sojJ8+OgmZZb0AbymUGljlDbZwgtqGYgI+Go8aKfNwcGWI4H210h8hd+J
-    DRzJcMqAHpS+y0mx52+l2SJdFuhw5TRDn70x9K1D9K1aeoVCWKV2My8W68/NH/Di
-    dIuf4vf8NDeM3t8tGMjoO9JVM4YzztZbRqGA==
+    1524408250; b=XOoflNvmbJ8JMAFCIUzKKPSH0yLUaNLstIcR5LMJ0fxJsAfpTD
+    P9/BcXBL3dzdr114f3x5ic62uB6X7h7Xz1d+9z5FkPDaH47UwgyCkLiwxqzxwqji
+    hdE7uX/cpLuLHdmNxliCcN2OlEaQc/XFfKthV5lcUtkt6+G6Mr605iJvfPQ3+6Xh
+    5aRRdIMFI2UcpJTb0XdTBGGb8527lsb/tRPq7JMcPUJgg3I+QipZc+NWlMNULVJR
+    9wKdDjSBZcHCav09Rx0x2YQDCw3XB2mwsEr3zzASxRbEBWjYbnKjy+uKgdjO7J/N
+    DY2+1FOKMQYOnbK5mX7uGVsdgKy++0elDL/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524408259; bh=nqBNOqoQhFUBvRmjJvPCSM1qO5pn2o
-    hT1Itoe3QU89I=; b=BOjlq5VUCIw/TBl+b82cpV7D0WJAC0+4ZYl1njjB1jzKC5
-    6BmIY0xGYmFHAwaRFQUbJy92//kgy3sdmqvPvtLm2Rt787Nn83DMq2MVxXR1+WeZ
-    4MlUdcykUFmHrADw6f8yIzF+Hjoe93bHCW/dEAi/yd2EgjgEQjIzRZo4SzOFUrKt
-    xcGcn/iyAaAyyDAEQRaCOeI/AO0NIMx0ZTL7sx5A1cmMztLH+e/kpKuzpPc/kEjl
-    j1sTQw/l8tXfy7hUXXhYStM+b7ps7/e490TQxsAaIU9Nd0WXlkOVW88+usYdTfAl
-    ZzWcHXBqNxQo5xEDZOYC9fWFRhJzCErO8hQB6NYg==
+    :list-id; s=fm2; t=1524408250; bh=6V9oIoVEU8kII0EYWD7c4TED5vo1AL
+    457VrkuJM0DDk=; b=S9NKYUGhjHQCcz4B90fDmiANvXu/d7Up3ztWFxkU/pQSwU
+    yQ4CXJeAnuuG9k+9iGkZtJx5cujJwgMF5FlPzRNYb08cClVTMPn8c7dlwM1BxCxb
+    w76X19N91EpZRewHtitc2eGBGn2XmexFg2Sj8iDyug+X1TzfZxC+houCAckYWnbt
+    XHiG+W4IbXbYYJHBhC3dM3+3+Up5C9J1gDOwcKFttxvaorxAyGgePKRYH1i32qZ2
+    er/zyJ1Eecagp+6rTLi7MTKSQMgCrZdirZ45ynYaWuFDOOzKF8VEt1/4m1JKYtfD
+    QtpkgWRZi7JZVIjAYydoaeJf9kF+gUf01QzXeQrg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,28 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJcDL/35mGyBX7TX9SxM5Nc4qngTW5ywUVo8dNyGpZ+hJLfE6Qp7pvuPzE26yx4k8eMnj0kvfpNbuhKEcMWlxUG2MxqqsgOPe6suW5B717SHhTKjVFvU
-    nYmU0j+jlT3gE4pG2RBbaZiwibv1A44ul7GEKVjM6GtNiNbZT8YXdEH98w4WLPPl1890UJZ0STOV599ddYphv/rS5K5qlGID6A0+FG1MjIv03TdA0iA48eGm
+X-CM-Envelope: MS4wfGXgDj6ca9auTvDmMJzNj4+MdottO95gg29omKBbMbLJ4yaCjdq3c5IRr5EnLatwO1hSBHevi11Eqo9wQodlqfnd/QUttLDzqBC/X6g4g3rdwg+3rZcC
+    LdlYbhGfvaAfBCPhZ4KvNfscIHaTIeJbwSNzjDoqJtrQ6d3Wpd/Q/j2ZIIEBKcmA/U/p+MFQSwIJXp9czP2ei414cjBUrnjGgKsXtDNLVmypK8UZTO+QHzzV
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=DfNHnWVPAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=Gyl36tz_ZFhzQlB0iyQA:9
-    a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=HsDDrbOFvXNNo7OG3RkA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932385AbeDVORD (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:17:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57892 "EHLO
+        id S1757112AbeDVOnn (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:43:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58094 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932380AbeDVORB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:17:01 -0400
+        with ESMTP id S932406AbeDVORO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:17:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.4 43/97] HID: Fix hid_report_len usage
-Date: Sun, 22 Apr 2018 15:53:21 +0200
-Message-Id: <20180422135307.717270442@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.4 48/97] jbd2: if the journal is aborted then dont allow update of the log tail
+Date: Sun, 22 Apr 2018 15:53:26 +0200
+Message-Id: <20180422135307.983602115@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -92,68 +90,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 3064a03b94e60388f0955fcc29f3e8a978d28f75 upstream.
+commit 85e0c4e89c1b864e763c4e3bb15d0b6d501ad5d9 upstream.
 
-Follow the change of return type u32 of hid_report_len,
-fix all the types of variables those get the return value of
-hid_report_len to u32, and all other code already uses u32.
+This updates the jbd2 superblock unnecessarily, and on an abort we
+shouldn't truncate the log.
 
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-input.c      |    3 ++-
- drivers/hid/hid-multitouch.c |    5 +++--
- drivers/hid/hid-rmi.c        |    4 ++--
- 3 files changed, 7 insertions(+), 5 deletions(-)
+ fs/jbd2/journal.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1258,7 +1258,8 @@ static void hidinput_led_worker(struct w
- 					      led_work);
- 	struct hid_field *field;
- 	struct hid_report *report;
--	int len, ret;
-+	int ret;
-+	u32 len;
- 	__u8 *buf;
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -914,7 +914,7 @@ out:
+ }
  
- 	field = hidinput_get_led_field(hid);
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -314,7 +314,8 @@ static struct attribute_group mt_attribu
- static void mt_get_feature(struct hid_device *hdev, struct hid_report *report)
- {
- 	struct mt_device *td = hid_get_drvdata(hdev);
--	int ret, size = hid_report_len(report);
-+	int ret;
-+	u32 size = hid_report_len(report);
- 	u8 *buf;
+ /*
+- * This is a variaon of __jbd2_update_log_tail which checks for validity of
++ * This is a variation of __jbd2_update_log_tail which checks for validity of
+  * provided log tail and locks j_checkpoint_mutex. So it is safe against races
+  * with other threads updating log tail.
+  */
+@@ -1384,6 +1384,9 @@ int jbd2_journal_update_sb_log_tail(jour
+ 	journal_superblock_t *sb = journal->j_superblock;
+ 	int ret;
  
- 	/*
-@@ -919,7 +920,7 @@ static void mt_set_input_mode(struct hid
- 	struct hid_report_enum *re;
- 	struct mt_class *cls = &td->mtclass;
- 	char *buf;
--	int report_len;
-+	u32 report_len;
- 
- 	if (td->inputmode < 0)
- 		return;
---- a/drivers/hid/hid-rmi.c
-+++ b/drivers/hid/hid-rmi.c
-@@ -110,8 +110,8 @@ struct rmi_data {
- 	u8 *writeReport;
- 	u8 *readReport;
- 
--	int input_report_size;
--	int output_report_size;
-+	u32 input_report_size;
-+	u32 output_report_size;
- 
- 	unsigned long flags;
- 
++	if (is_journal_aborted(journal))
++		return -EIO;
++
+ 	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
+ 	jbd_debug(1, "JBD2: updating superblock (start %lu, seq %u)\n",
+ 		  tail_block, tail_tid);
