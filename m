@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49JV7CtLXkE2dYPL1OaOIGO/QeVRemjwuQUNB9hdkTfvtV8FRJy07njz3YnrtuE89dgmyEl
-ARC-Seal: i=1; a=rsa-sha256; t=1524406131; cv=none;
+X-Google-Smtp-Source: AIpwx49BUDAgg4Hs4HoTAMyR3QyCspOggLP/E4iVDU9w7zsPebWsYUIik2TJq74iUYGVUs+WxfBy
+ARC-Seal: i=1; a=rsa-sha256; t=1524406128; cv=none;
         d=google.com; s=arc-20160816;
-        b=FEOzzT8IWGYoqSy3pT/p9mvoTBM6DM7iW+0oMlShb9kCkAyEv9KsucFmwg1DDZaOUy
-         6Zie3DX+259wyTLqOMVhGEkppEp7mKtFdzeJnOfqUQ/77V9MxGEDyTdS0ROwYUlpvV99
-         t1Bnv17ZBP2hRjWQE+xoDZIxb4mPnbDX5ekYEGwDFNAnv0/HAm9XjjrGoo9I/fR3/t+T
-         DsVLBQP35AohzJ2rIPR27CVAWxWeDNZY/5zS67tQu4aF6jJtcjJzk6qcnYh1pcgE39s3
-         qq2FZlC1PLS20H855+mG/vIBEFfxhuXEQi6HZ1h0nuiPchXhxtMysdfZMsF5MLK600ev
-         pNVg==
+        b=UM/XdRwuPQ/QygDDgUVqzeqc9ZhE5j++R1cpQgHXoDi96bH8wXM8uZESLYCxsEDcKt
+         4z+dkV5mBBpMhvZLsUaAreoqkeuVSLYJOdvm3ps8fXqtEvu7kMjBh3GBVOvbBKLFDEv8
+         A0QCjsMeOk3xbMIx8Qowcqbg2rwo20PXzSgrVGhVyi4+GVlSFx2bn81zYHfORVw8JyhT
+         Iuoe6vgz6wBESkXvm2s5068mPNPoXCQMqesRvJsA8ZFAU7/Mp1eC/O0ro0KT7LW/tH4H
+         yL+tJ/S+QiydiJOlw8GR9qfz2rDh02AOuaHKRawFqjF0r6Pb8m2kcjmk3fSruJAliLUI
+         WzTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Wxm9rKNBgqbju1mj0B5+5k7HT98e6JESTezPE9VawgI=;
-        b=gMelUXHmwPigAAjPs0JEp2iupSthBGDD/8jJOrnJDq0eFSuuC7csdrKdsODq+G2dRL
-         FLo5hQzWq8Eot9nfcI4tleyabauzmKRyBV1H+8c0PXWGXv/ZPOAAeUAcodiOveEuCnvs
-         URL5a6b4U7FUPWKIhuK30XFwPWkXrJ83FMPrsWRKNqDfToieZzTvUMyrYnsxvS6m/W5u
-         ld8Iw1X3/6WJwZMPAnAa1A5FcezyU32OSWzSj+jYdPnrnArVsuWaaWBsL3Pbpe5cIzth
-         6MqnG8dyz3kfhr0IMMAOxlES537fDsg97C04fyzOaFRywBSqC5IYizmvncJl3Pot73y8
-         hMpw==
+        bh=OGYcsD01jUn1luQ32ciIF9HIAsfUlU0suq3MJbKTh3I=;
+        b=KNCMgfPJg7mDrJHWLnW2Kto9Zc5l6eTyxIVKM1AXF0V/p220zeozhflylOZMpAyZel
+         gfdteiF8+iHaTjsuiyHUVAK7g2yUP58ufzoVHcVNgHdZeLQc3nfHykeSeqoChlNrDkup
+         MPBvDY9ynvJmpWN9o/Jy26/kSEhX+LmucHD02gZ5BRM66ETY1d4ag+YBJUnHfFeJfqpe
+         qLeCtLyQKaAjxBDcXzKLG5vXD8eTwoSmAwh0Yy41Hb6h4l6lYli6qxJi8RRDZ/bV359l
+         pA6v8BwjGCIB730gUgFuNiTa/Zx97VBQac/AT4Cu1TU7nDyc+PTr8waFRKx7f84RQjJf
+         eS8g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andi Kleen <ak@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.14 107/164] clk: fix false-positive Wmaybe-uninitialized warning
-Date: Sun, 22 Apr 2018 15:52:54 +0200
-Message-Id: <20180422135139.797232331@linuxfoundation.org>
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Abel Garcia Dorta <mercuriete@yahoo.es>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 124/164] drm/amdgpu/si: implement get/set pcie_lanes asic callback
+Date: Sun, 22 Apr 2018 15:53:11 +0200
+Message-Id: <20180422135140.478804164@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455168511704983?=
-X-GMAIL-MSGID: =?utf-8?q?1598455683516765937?=
+X-GMAIL-THRID: =?utf-8?q?1598455210813140585?=
+X-GMAIL-MSGID: =?utf-8?q?1598455681194509239?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,69 +50,104 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit ce33f284935e08229046b30635e6aadcbab02b53 upstream.
+commit 20ca25e86c56f5490bdc80318f4fc06466e4c21b upstream.
 
-When we build this driver with on x86-32, gcc produces a false-positive warning:
+Required for dpm setup on some asics. Fixes a NULL dereference
+on asics that require it.
 
-drivers/clk/renesas/clk-sh73a0.c: In function 'sh73a0_cpg_clocks_init':
-drivers/clk/renesas/clk-sh73a0.c:155:10: error: 'parent_name' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-   return clk_register_fixed_factor(NULL, name, parent_name, 0,
-
-We can work around that warning by adding a fake initialization, I tried
-and failed to come up with any better workaround. This is currently one
-of few remaining warnings for a 4.14.y randconfig build, so it would be
-good to also have it backported at least to that version. Older versions
-have more randconfig warnings, so we might not care.
-
-I had not noticed this earlier, because one patch in my randconfig test
-tree removes the '-ffreestanding' option on x86-32, and that avoids
-the warning. The -ffreestanding flag was originally global but moved
-into arch/i386 by Andi Kleen in commit 6edfba1b33c7 ("[PATCH] x86_64:
-Don't define string functions to builtin") as a 'temporary workaround'.
-
-Like many temporary hacks, this turned out to be rather long-lived, from
-all I can tell we still need a simple fix to asm/string_32.h before it
-can be removed, but I'm not sure about how to best do that.
-
+Acked-by: Christian König <christian.koenig@amd.com>
+Bug: https://bugs.freedesktop.org/show_bug.cgi?id=102553
+Tested-by: Abel Garcia Dorta <mercuriete@yahoo.es>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
-Cc: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/renesas/clk-sh73a0.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/si.c |   67 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
---- a/drivers/clk/renesas/clk-sh73a0.c
-+++ b/drivers/clk/renesas/clk-sh73a0.c
-@@ -46,7 +46,7 @@ struct div4_clk {
- 	unsigned int shift;
+--- a/drivers/gpu/drm/amd/amdgpu/si.c
++++ b/drivers/gpu/drm/amd/amdgpu/si.c
+@@ -1231,6 +1231,71 @@ static void si_detect_hw_virtualization(
+ 		adev->virt.caps |= AMDGPU_PASSTHROUGH_MODE;
+ }
+ 
++static int si_get_pcie_lanes(struct amdgpu_device *adev)
++{
++	u32 link_width_cntl;
++
++	if (adev->flags & AMD_IS_APU)
++		return 0;
++
++	link_width_cntl = RREG32_PCIE_PORT(PCIE_LC_LINK_WIDTH_CNTL);
++
++	switch ((link_width_cntl & LC_LINK_WIDTH_RD_MASK) >> LC_LINK_WIDTH_RD_SHIFT) {
++	case LC_LINK_WIDTH_X1:
++		return 1;
++	case LC_LINK_WIDTH_X2:
++		return 2;
++	case LC_LINK_WIDTH_X4:
++		return 4;
++	case LC_LINK_WIDTH_X8:
++		return 8;
++	case LC_LINK_WIDTH_X0:
++	case LC_LINK_WIDTH_X16:
++	default:
++		return 16;
++	}
++}
++
++static void si_set_pcie_lanes(struct amdgpu_device *adev, int lanes)
++{
++	u32 link_width_cntl, mask;
++
++	if (adev->flags & AMD_IS_APU)
++		return;
++
++	switch (lanes) {
++	case 0:
++		mask = LC_LINK_WIDTH_X0;
++		break;
++	case 1:
++		mask = LC_LINK_WIDTH_X1;
++		break;
++	case 2:
++		mask = LC_LINK_WIDTH_X2;
++		break;
++	case 4:
++		mask = LC_LINK_WIDTH_X4;
++		break;
++	case 8:
++		mask = LC_LINK_WIDTH_X8;
++		break;
++	case 16:
++		mask = LC_LINK_WIDTH_X16;
++		break;
++	default:
++		DRM_ERROR("invalid pcie lane request: %d\n", lanes);
++		return;
++	}
++
++	link_width_cntl = RREG32_PCIE_PORT(PCIE_LC_LINK_WIDTH_CNTL);
++	link_width_cntl &= ~LC_LINK_WIDTH_MASK;
++	link_width_cntl |= mask << LC_LINK_WIDTH_SHIFT;
++	link_width_cntl |= (LC_RECONFIG_NOW |
++			    LC_RECONFIG_ARC_MISSING_ESCAPE);
++
++	WREG32_PCIE_PORT(PCIE_LC_LINK_WIDTH_CNTL, link_width_cntl);
++}
++
+ static const struct amdgpu_asic_funcs si_asic_funcs =
+ {
+ 	.read_disabled_bios = &si_read_disabled_bios,
+@@ -1241,6 +1306,8 @@ static const struct amdgpu_asic_funcs si
+ 	.get_xclk = &si_get_xclk,
+ 	.set_uvd_clocks = &si_set_uvd_clocks,
+ 	.set_vce_clocks = NULL,
++	.get_pcie_lanes = &si_get_pcie_lanes,
++	.set_pcie_lanes = &si_set_pcie_lanes,
+ 	.get_config_memsize = &si_get_config_memsize,
  };
  
--static struct div4_clk div4_clks[] = {
-+static const struct div4_clk div4_clks[] = {
- 	{ "zg", "pll0", CPG_FRQCRA, 16 },
- 	{ "m3", "pll1", CPG_FRQCRA, 12 },
- 	{ "b",  "pll1", CPG_FRQCRA,  8 },
-@@ -79,7 +79,7 @@ sh73a0_cpg_register_clock(struct device_
- {
- 	const struct clk_div_table *table = NULL;
- 	unsigned int shift, reg, width;
--	const char *parent_name;
-+	const char *parent_name = NULL;
- 	unsigned int mult = 1;
- 	unsigned int div = 1;
- 
-@@ -135,7 +135,7 @@ sh73a0_cpg_register_clock(struct device_
- 		shift = 24;
- 		width = 5;
- 	} else {
--		struct div4_clk *c;
-+		const struct div4_clk *c;
- 
- 		for (c = div4_clks; c->name; c++) {
- 			if (!strcmp(name, c->name)) {
