@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48TUzfzD3Y+CFHAdbquQCqWDbjC1/D6qFLBZl8oe7RJRgYxUbVxZgScNXrUd5C6DhJK8SJ5
-ARC-Seal: i=1; a=rsa-sha256; t=1524406147; cv=none;
+X-Google-Smtp-Source: AIpwx49/3lEhrHLgdUuFgetf5S6ZlwJE6OLQrvAdkFvqcattdsybdKqYm8WtqAIk4QgKSR3k1u1w
+ARC-Seal: i=1; a=rsa-sha256; t=1524406144; cv=none;
         d=google.com; s=arc-20160816;
-        b=Qlo2I3OTSekORs7EjNXbqvLliEuhIv2rab6wRbNex7LOndK//ywgFFQz/08VKJNMa0
-         lo9puEqvYpuNtAFPgH19qTZJ3417D9MnwRT2b6KS3KCSZ1bEOUagoERhmOwAKo8u9IOh
-         6TzUOKS1GZP/Q+SLn7bAS6TVHfZhhgJA9ZeFRUnVlvGgVxhG97VekmECIfS2gOvdcOMu
-         4P/gyo57Q13eBmT84LbjRTMiJJ9Vd3+i6ALb1cy2wQNDcS2ppYTcOnPpSsBf+b+OvQZm
-         lFFpyf4xm1R65/EeN3NayWW7ZJLvZ9f/CKM/+GMxMr8HXeKQ7dfCU8P8bpLq9N+FwhKJ
-         tn5Q==
+        b=t3CLBNsoyR4ysnOMu9b/fCyZ9q88zaCDDckTp7vQTzEwcp34S5Mx+cHHIUhrUr9ILm
+         zGRcwxpr7fzQvMt8x6WSSgyC+Y4K3WnbHetOHezD4AdpgTBKwnXAl8jCHdpi+JLjlB+Z
+         srpvT7/TbE8DX7qTtpt1b8V4v1nqCs8JlOBejmT1W5JHpK5ILtJen9APAubtTcY8ovXu
+         AMCt5FTRsp79ocMkcqeqxutYZa8w915Qbi7fiQ7LrBYWpbNci/4tmTvhQucKwJVhj6k7
+         ZIg/r7eBMp9fGhS54/JapwolAVnJTRs9lspH4JFdssn8ydLyYgqIC+cYZhk6Jm7O+ISs
+         IQgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Q9CKoizeBhz5RgMnX2riaCR66cgVhYLrM1XE8hicQ1k=;
-        b=BracPzEDeBcNysXywIyrVyafOe5VvjvwkiCgMbtlHeN7m2E7sKG+sVAdjY/UO3suaH
-         IhPHQjrsEpqcbPG/fDnhjUAS+dXocknhCVM5pYt++qqT2Jgl49vz6iaKlRk4GkhWQ0cw
-         T/0wa/tW5YYS44wwtnwD9j1AJyGCa7BdQli1UIuLFFBfNYSe2TAHFbHbs+ayL8jZRV3o
-         vltW9g2N+7N5a3XRNfy4rd/9W3GpdODoR8bfijLnVaj8ggzDmCvDGlIR98cASjtKnXRM
-         nGBTQhk4Z42YEPGU8PUGJPxo7D1zyEJXeRqbKhnGcU4B6cmtDyCZS656kC8ENNSlIvlj
-         dZuw==
+        bh=diTy4rfLGBSGDEkMrWnNDY4gmav7t9IuUGutUuGcPdM=;
+        b=hwODV4bTArKE57/+ms48rNoc1NxyYmo+rCEJrMXPR0MnRWpBpDXco82w1nXQ22iRT8
+         EUMbR8ZEgzBxqJshzxQvw0asqcjDIzS0ceaMy3vWrAgrgKNnVDF7zHsKuMMIQOycT8G+
+         RA5rUcaHz4Al6MPfr+2goQgodUbmIXWPqstW7pOV+D9sObIoK3hgXdkusM9Noxko0I9B
+         lZYH0tV4nBmS2i4REi6AH8/bPN2DTFJJcKY5YthgfBtcbd1CdooijYJD4XXycqcRVNYz
+         KQOJB8IfbrPOSOkNteFiRO0tzZJGXu9n3hV6bmrb50Yp9Clo3R60PVz9vOqeZ+8beExG
+         N9+w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Wang <davidwang@zhaoxin.com>,
+	syzbot+f7a0348affc3b67bc617@syzkaller.appspotmail.com,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 130/164] ALSA: hda - New VIA controller suppor no-snoop path
-Date: Sun, 22 Apr 2018 15:53:17 +0200
-Message-Id: <20180422135140.706569463@linuxfoundation.org>
+Subject: [PATCH 4.14 129/164] ALSA: rawmidi: Fix missing input substream checks in compat ioctls
+Date: Sun, 22 Apr 2018 15:53:16 +0200
+Message-Id: <20180422135140.670059060@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455325045223483?=
-X-GMAIL-MSGID: =?utf-8?q?1598455700930361849?=
+X-GMAIL-THRID: =?utf-8?q?1598455298881914693?=
+X-GMAIL-MSGID: =?utf-8?q?1598455697713189594?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,33 +49,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Wang <davidwang@zhaoxin.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit af52f9982e410edac21ca4b49563053ffc9da1eb upstream.
+commit 8a56ef4f3ffba9ebf4967b61ef600b0a7ba10f11 upstream.
 
-This patch is used to tell kernel that new VIA HDAC controller also
-support no-snoop path.
+Some rawmidi compat ioctls lack of the input substream checks
+(although they do check only for rfile->output).  This many eventually
+lead to an Oops as NULL substream is passed to the rawmidi core
+functions.
 
-[ minor coding style fix by tiwai ]
+Fix it by adding the proper checks before each function call.
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
+The bug was spotted by syzkaller.
+
+Reported-by: syzbot+f7a0348affc3b67bc617@syzkaller.appspotmail.com
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_intel.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/core/rawmidi_compat.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -1645,7 +1645,8 @@ static void azx_check_snoop_available(st
- 		 */
- 		u8 val;
- 		pci_read_config_byte(chip->pci, 0x42, &val);
--		if (!(val & 0x80) && chip->pci->revision == 0x30)
-+		if (!(val & 0x80) && (chip->pci->revision == 0x30 ||
-+				      chip->pci->revision == 0x20))
- 			snoop = false;
- 	}
+--- a/sound/core/rawmidi_compat.c
++++ b/sound/core/rawmidi_compat.c
+@@ -36,8 +36,6 @@ static int snd_rawmidi_ioctl_params_comp
+ 	struct snd_rawmidi_params params;
+ 	unsigned int val;
  
+-	if (rfile->output == NULL)
+-		return -EINVAL;
+ 	if (get_user(params.stream, &src->stream) ||
+ 	    get_user(params.buffer_size, &src->buffer_size) ||
+ 	    get_user(params.avail_min, &src->avail_min) ||
+@@ -46,8 +44,12 @@ static int snd_rawmidi_ioctl_params_comp
+ 	params.no_active_sensing = val;
+ 	switch (params.stream) {
+ 	case SNDRV_RAWMIDI_STREAM_OUTPUT:
++		if (!rfile->output)
++			return -EINVAL;
+ 		return snd_rawmidi_output_params(rfile->output, &params);
+ 	case SNDRV_RAWMIDI_STREAM_INPUT:
++		if (!rfile->input)
++			return -EINVAL;
+ 		return snd_rawmidi_input_params(rfile->input, &params);
+ 	}
+ 	return -EINVAL;
+@@ -67,16 +69,18 @@ static int snd_rawmidi_ioctl_status_comp
+ 	int err;
+ 	struct snd_rawmidi_status status;
+ 
+-	if (rfile->output == NULL)
+-		return -EINVAL;
+ 	if (get_user(status.stream, &src->stream))
+ 		return -EFAULT;
+ 
+ 	switch (status.stream) {
+ 	case SNDRV_RAWMIDI_STREAM_OUTPUT:
++		if (!rfile->output)
++			return -EINVAL;
+ 		err = snd_rawmidi_output_status(rfile->output, &status);
+ 		break;
+ 	case SNDRV_RAWMIDI_STREAM_INPUT:
++		if (!rfile->input)
++			return -EINVAL;
+ 		err = snd_rawmidi_input_status(rfile->input, &status);
+ 		break;
+ 	default:
+@@ -112,16 +116,18 @@ static int snd_rawmidi_ioctl_status_x32(
+ 	int err;
+ 	struct snd_rawmidi_status status;
+ 
+-	if (rfile->output == NULL)
+-		return -EINVAL;
+ 	if (get_user(status.stream, &src->stream))
+ 		return -EFAULT;
+ 
+ 	switch (status.stream) {
+ 	case SNDRV_RAWMIDI_STREAM_OUTPUT:
++		if (!rfile->output)
++			return -EINVAL;
+ 		err = snd_rawmidi_output_status(rfile->output, &status);
+ 		break;
+ 	case SNDRV_RAWMIDI_STREAM_INPUT:
++		if (!rfile->input)
++			return -EINVAL;
+ 		err = snd_rawmidi_input_status(rfile->input, &status);
+ 		break;
+ 	default:
