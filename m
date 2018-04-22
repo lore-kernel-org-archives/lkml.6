@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48emg4sXpawX9xkFwTcJUKuuJVKTwITZ9iMGoyidSj6uxVbji6YtnqgbGYODXuWYtUUWMNR
-ARC-Seal: i=1; a=rsa-sha256; t=1524405920; cv=none;
+X-Google-Smtp-Source: AIpwx4/vX+90WB77EtnLkjtL2newJyUOkvLaCnX5jV0UZuIMmv1FLqFB/chKQkgodMAWf4SsZ4hj
+ARC-Seal: i=1; a=rsa-sha256; t=1524405914; cv=none;
         d=google.com; s=arc-20160816;
-        b=v2tQCtIqKX2L2rXA1E1LvrLgEcb412LYDs276d5NBfEpLZCBx43geXVQlgeV42zPD7
-         RKuBcVoSOCBbEgyNNl09Br2FR4pPNV5I4/7GCtyWLqplMRiArcWzfMlhpalObWzi3V0H
-         nj5OmXKxhz58ugEc0IPfULXx0kmvKIWH9YIeFKMgomtA0khizuzRKqsJ5rsT9VVCNunX
-         it1varCyTyDjom0OcvwdNvsQydODOIyknkhNqhR359EE2Sz0YPQ2APAMW/ZqitdP776Y
-         PtUDq3cWF9qvhCwZKCJ+7TV4PZvIjdseTA50WP5qRs26wLIex5zkZfOIh3p8cTkPE7EW
-         ziGA==
+        b=CafFrdMJV0dpx4A+xfNocudtPagm+9KWF/kr+HNcsT5BJ0H+/DgvbUlxOP7M8J0cs6
+         WDnMjcEJsO6Wsxey/P5FBp+8kbLpL6SdeOTPH80X+Ji9w5yqGNJcCRG63oLo/AX8m3JO
+         92lF5Hkav+jEgrG+7mglyU/+LmdK0hZzX1UXM9w9BNK0epAFzq6Y5pwCQUySoZ/aWoU1
+         RdaXIgZMrJlImi+FNlBjjYLstjOmG3plGYKO/mEofWRCmc0hqu6rYOffwq3XnXI2GJ43
+         rgRGF6igNJ3stn40MrsXEotRV9s01fwU1o0dNOJ+aTTlmWlAFf/Ji8cjZ67lFPJqal5q
+         xYvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EV8i2OsW1Gs7sQymFcVs9H7ZAj9gVYzFpVCh03C/o8M=;
-        b=bGgSeBibsfPK3IOH40vwH4Qy/aTO9EykAQePP36+RkoJsX2zuA0kIGHzAXydtFuG9L
-         8RODDGI9cYncPuLtqh06UW3wirhUryJ2XyE0y39UqiIpH3QE93tt7v50mrOBH+NLcAp6
-         CTK3lypvz1WAF5uvuvciJu5vdP8IEFmn5+RIxU9XZb/DbnJZzFftq85oYzj3TGu74GPP
-         QRN0kiZa1QkYAZ6U5VETmx1SqqyJEZUbi4n+ZfaXYZiXm2R9zN9N0bFR5R34u498QU4v
-         UDyPedWGBUk/Hsl6QvBAIhMu/ZxMvFa4U9WJmd5Sw8r/aV2Tl9Lsc0S2SqpBfHlfD2OX
-         b2sQ==
+        bh=SQk8viL2Vww3A76wd2UGFhOLh/ulYLA2vX2FVtQOkE4=;
+        b=YjGD+3HAWUJROZy9u0KnL8iHOOUGrJbWLStE2MOTTtYVBQbUKssc5DCYkPHX6w4lae
+         8hdokoWsbINZWRZezRZOyFXTmQngS+vaZRJDNt44S76irrjOMha+X1KJzxdTBpI/LnZx
+         fI6NuSwxI/tSjVu5RMtP8Lmiesew+JxVFsXYjdojepZQ5Iw45+5NG+hGRV/ZKr9LBDjc
+         TMdH/wJs4B84vcQSD9DAqDd6327vReW8uI+FRgdf7nlSs95ohL+/F5SSNVNwtUXyT+1b
+         FBS4GFQ5w1iwcXf7k91WuyanphhHM5HgZ8W/Csb26cAOKzzhYU4OAeEqzdFI4Mna2z9G
+         3QIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jean Delvare <jdelvare@suse.de>,
-	Jason Andryuk <jandryuk@gmail.com>,
-	Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.14 047/164] i2c: i801: Restore configuration at shutdown
-Date: Sun, 22 Apr 2018 15:51:54 +0200
-Message-Id: <20180422135137.328084383@linuxfoundation.org>
+	Aaron Ma <aaron.ma@canonical.com>,
+	Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.14 045/164] HID: i2c-hid: fix size check and type usage
+Date: Sun, 22 Apr 2018 15:51:52 +0200
+Message-Id: <20180422135137.253698698@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454917246307724?=
-X-GMAIL-MSGID: =?utf-8?q?1598455461825990779?=
+X-GMAIL-THRID: =?utf-8?q?1598455016186220261?=
+X-GMAIL-MSGID: =?utf-8?q?1598455456799803177?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +49,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jean Delvare <jdelvare@suse.de>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit f7f6d915a10f7f2bce17e3b1b7d3376562395a28 upstream.
+commit ac75a041048b8c1f7418e27621ca5efda8571043 upstream.
 
-On some systems, the BIOS expects certain SMBus register values to
-match the hardware defaults. Restore these configuration registers at
-shutdown time to avoid confusing the BIOS. This avoids hard-locking
-such systems upon reboot.
+When convert char array with signed int, if the inbuf[x] is negative then
+upper bits will be set to 1. Fix this by using u8 instead of char.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Tested-by: Jason Andryuk <jandryuk@gmail.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+ret_size has to be at least 3, hid_input_report use it after minus 2 bytes.
+
 Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-i801.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/hid/i2c-hid/i2c-hid.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -1700,6 +1700,15 @@ static void i801_remove(struct pci_dev *
- 	 */
- }
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -143,10 +143,10 @@ struct i2c_hid {
+ 						   * register of the HID
+ 						   * descriptor. */
+ 	unsigned int		bufsize;	/* i2c buffer size */
+-	char			*inbuf;		/* Input buffer */
+-	char			*rawbuf;	/* Raw Input buffer */
+-	char			*cmdbuf;	/* Command buffer */
+-	char			*argsbuf;	/* Command arguments buffer */
++	u8			*inbuf;		/* Input buffer */
++	u8			*rawbuf;	/* Raw Input buffer */
++	u8			*cmdbuf;	/* Command buffer */
++	u8			*argsbuf;	/* Command arguments buffer */
  
-+static void i801_shutdown(struct pci_dev *dev)
-+{
-+	struct i801_priv *priv = pci_get_drvdata(dev);
-+
-+	/* Restore config registers to avoid hard hang on some systems */
-+	i801_disable_host_notify(priv);
-+	pci_write_config_byte(dev, SMBHSTCFG, priv->original_hstcfg);
-+}
-+
- #ifdef CONFIG_PM
- static int i801_suspend(struct device *dev)
+ 	unsigned long		flags;		/* device flags */
+ 	unsigned long		quirks;		/* Various quirks */
+@@ -450,7 +450,8 @@ out_unlock:
+ 
+ static void i2c_hid_get_input(struct i2c_hid *ihid)
  {
-@@ -1729,6 +1738,7 @@ static struct pci_driver i801_driver = {
- 	.id_table	= i801_ids,
- 	.probe		= i801_probe,
- 	.remove		= i801_remove,
-+	.shutdown	= i801_shutdown,
- 	.driver		= {
- 		.pm	= &i801_pm_ops,
- 	},
+-	int ret, ret_size;
++	int ret;
++	u32 ret_size;
+ 	int size = le16_to_cpu(ihid->hdesc.wMaxInputLength);
+ 
+ 	if (size > ihid->bufsize)
+@@ -475,7 +476,7 @@ static void i2c_hid_get_input(struct i2c
+ 		return;
+ 	}
+ 
+-	if (ret_size > size) {
++	if ((ret_size > size) || (ret_size <= 2)) {
+ 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
+ 			__func__, size, ret_size);
+ 		return;
