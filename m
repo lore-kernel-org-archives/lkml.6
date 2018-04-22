@@ -1,37 +1,78 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+Nkce5jrHMVhNbsFAs3m1csBcGskkYPSLleUW5wbDSgz9/zp0kVvyIqMsbbNYqvKlkw/8F
-ARC-Seal: i=1; a=rsa-sha256; t=1524405304; cv=none;
-        d=google.com; s=arc-20160816;
-        b=iE9ENpy51pwsSiDXQSRrx/wi57aquMV0OKYmpu0D4eIWi1Wsri35zYSXuZG6hE8ZiW
-         lmCiRTIvtOjfpEUhtO/muYW1XakA1gbQarv3v9Tw1MTFfIJD90QoPpjeQGqTqfIdIx/k
-         BJRCeuwGfSvk9WXtg+q8KdFO0LJj96n6N+TPOu0P4euInggMp/3fdwWc2CdbKBRVCiV6
-         oVrqA7gMPrYvd54f1QUgM322tbSmGP7Rzmz3CjcOCMmDxdbM5lwDp5vO4YGSaZzcewIo
-         Ps3vAf+LcGXthRCp8BKeKRDGNpJ2FmFnmLjnMCF99RqCC9aHrZoeuEvkJByBbFhhqiB8
-         EQfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=6ctqpjEm3KkhLDUdfOg6nfsIzRErv6ljpf08M8d+OXo=;
-        b=NvYkVvo+7Bz7lKVk5qfGmzN8F9hC2GZbbByBCdsDxGpAe32ndGg7x8hiPoOricDE4x
-         O8b/ZGbjv6KZyPwUpTmlgbH8mWDz9zlEvMlrk5pRBb7BBoOe6iYWOQ27x5F9sISC/k5C
-         +ZQsq+M+/AmchCiHWxkYHn9MmP7Ez5g/ltga25qkbL/1Q6pKLZXZ439Nm6CGlWe61fZ2
-         8W8G99sN5DFBqCxduhpNftW9WascOKJjbqq4Y/f9HbsgMgvu9eXRfMp0amTRjfAJTOz+
-         sben7QPx8bxoXrEWIoC7xTs2f58Qypldmn9n5t8a+GRg/IbP1XJvTxb0PnLYzYc0XMO8
-         AQAQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405303-2-15039579102740585622
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524405303; b=K16MOvV4Io+yj1aOoKP0jkGseOEpU9HcY3j3Ojb80UdE+R09I7
+    sR9VM0sivT2WswlPy2TXIbaDA3xsxS6UcItMpsVEDqoCqACojEiF8rEdaju402Ch
+    L2b2q4v00TJmUlp31SlPkG4/8ZfE2xfGUiVHNFnm5sYQSukFXZWuY0E4VU0u7QYG
+    +qBx4i7nR+3AzVlveIeVcUIopUYK2xzhhmW1N9JS8ofdXkzxq5cWT7AKHtuM6Hh6
+    QEG7y2PKJJikRCJSNjTdugT/IXyiYpmkimh1aWTXOaW/Ayb6spWY1AZVlT5sm74m
+    tcbPuSJKdM9GistlPw8FcEzhneEbaRxEGkkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524405303; bh=ARX8y2tGvar0WtTMFt71ufjkoVpWB0
+    qK9wdtJLchgQY=; b=d0EF4GbRzp0tShiKUiWDbwTdzZSNMVUcpuRc02JF2/NMvl
+    xwmJhlnwdX25tq8KOSWEhYwnHqzeugfbP7HxVQP72OGCRTuSZ2YnbljPmlu7BBT4
+    2LTDHO6CsNLh6bWRi4bIqqAlqjeQrdvta/8H9ETnxjK8/UeIKBjCHvt8/jf22BhJ
+    y6pijyn0UzWb4+6uBwEQ003jDUc/4gwUS9X+0gODd1OVcCD/2S3AB1n6ypoBPmNu
+    +MWQ+PWAkmBryHNXqza6G6a3c8NDjibZTv3eaylghUFE+X7E7QqoDAozltO+YQcH
+    qh+5EPkfa1tT+O4mcW7FhHAIoEMZKqCq6E5VbzQA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfCgBLk4Ema2537VZpNbCMVyUDR2OTwBmWlROkSON8t7u8szNRec7cjuupEFVcKxWddVkjrvtazAwEG3acoRj3+aq8Qwp2Ic/vUXpLqAiQ75AqcZ/V+G0
+    vVtEbb0aMIqlcsFZetQ9O1JyoRc0jf9l3zyu9Qzh19kmdWjwa2AXoVQGQmtKV/7KIC3QtcQ8yqf0yvmr2sXIblazBEusKw3Z23Xdb1j6iZlYpp9ImZ1OCxQb
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=cA917tEuKh2QAOatFzUA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753386AbeDVNy5 (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 09:54:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44296 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752550AbeDVNys (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:54:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 4.16 018/196] phy: allwinner: sun4i-usb: poll vbus changes on A23/A33 when driving VBUS
-Date: Sun, 22 Apr 2018 15:50:38 +0200
-Message-Id: <20180422135105.065588730@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.16 004/196] ubifs: Check ubifs_wbuf_sync() return code
+Date: Sun, 22 Apr 2018 15:50:24 +0200
+Message-Id: <20180422135104.464853640@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -39,10 +80,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454816491806607?=
-X-GMAIL-MSGID: =?utf-8?q?1598454816491806607?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,76 +90,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Richard Weinberger <richard@nod.at>
 
-commit d7119224bfe6e8efbf821a52db7da9530d790f07 upstream.
+commit aac17948a7ce01fb60b9ee6cf902967a47b3ce26 upstream.
 
-The AXP223 PMIC, like the AXP221, does not generate VBUS change
-interrupts when N_VBUSEN is used to drive VBUS for the OTG port
-on the board.
+If ubifs_wbuf_sync() fails we must not write a master node with the
+dirty marker cleared.
+Otherwise it is possible that in case of an IO error while syncing we
+mark the filesystem as clean and UBIFS refuses to recover upon next
+mount.
 
-This was not noticed until recently, as most A23/A33 boards use
-a GPIO pin that does not support interrupts for OTG ID detection.
-This forces the driver to use polling. However the A33-OlinuXino
-uses a pin that does support interrupts, so the driver uses them.
-However the VBUS interrupt never fires, and the driver never gets
-to update the VBUS status. This results in musb timing out waiting
-for VBUS to rise.
-
-This was worked around for the AXP221 by resorting to polling
-changes in commit 91d96f06a760 ("phy-sun4i-usb: Add workaround for
-missing Vbus det interrupts on A31"). This patch adds the A23 and
-A33 to the list of SoCs that need the workaround.
-
-Fixes: fc1f45ed3043 ("phy-sun4i-usb: Add support for the usb-phys on the
-		      sun8i-a33 SoC")
-Fixes: 123dfdbcfaf5 ("phy-sun4i-usb: Add support for the usb-phys on the
-		      sun8i-a23 SoC")
-Cc: <stable@vger.kernel.org> # 4.3.x: 68dbc2ce77bb phy-sun4i-usb:
-		Use of_match_node to get model specific config data
-Cc: <stable@vger.kernel.org> # 4.3.x: 5cf700ac9d50 phy: phy-sun4i-usb:
-		Fix optional gpios failing probe
-Cc: <stable@vger.kernel.org> # 4.3.x: 04e59a0211ff phy-sun4i-usb:
-		Fix irq free conditions to match request conditions
-Cc: <stable@vger.kernel.org> # 4.3.x: 91d96f06a760 phy-sun4i-usb:
-		Add workaround for missing Vbus det interrupts on A31
-Cc: <stable@vger.kernel.org> # 4.3.x
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 1e51764a3c2a ("UBIFS: add new flash file system")
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-
 ---
- drivers/phy/allwinner/phy-sun4i-usb.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ fs/ubifs/super.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/drivers/phy/allwinner/phy-sun4i-usb.c
-+++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-@@ -410,11 +410,13 @@ static bool sun4i_usb_phy0_poll(struct s
- 		return true;
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -1737,8 +1737,11 @@ static void ubifs_remount_ro(struct ubif
  
- 	/*
--	 * The A31 companion pmic (axp221) does not generate vbus change
--	 * interrupts when the board is driving vbus, so we must poll
-+	 * The A31/A23/A33 companion pmics (AXP221/AXP223) do not
-+	 * generate vbus change interrupts when the board is driving
-+	 * vbus using the N_VBUSEN pin on the pmic, so we must poll
- 	 * when using the pmic for vbus-det _and_ we're driving vbus.
- 	 */
--	if (data->cfg->type == sun6i_a31_phy &&
-+	if ((data->cfg->type == sun6i_a31_phy ||
-+	     data->cfg->type == sun8i_a33_phy) &&
- 	    data->vbus_power_supply && data->phys[0].regulator_on)
- 		return true;
+ 	dbg_save_space_info(c);
  
-@@ -885,7 +887,7 @@ static const struct sun4i_usb_phy_cfg su
+-	for (i = 0; i < c->jhead_cnt; i++)
+-		ubifs_wbuf_sync(&c->jheads[i].wbuf);
++	for (i = 0; i < c->jhead_cnt; i++) {
++		err = ubifs_wbuf_sync(&c->jheads[i].wbuf);
++		if (err)
++			ubifs_ro_mode(c, err);
++	}
  
- static const struct sun4i_usb_phy_cfg sun8i_a23_cfg = {
- 	.num_phys = 2,
--	.type = sun4i_a10_phy,
-+	.type = sun6i_a31_phy,
- 	.disc_thresh = 3,
- 	.phyctl_offset = REG_PHYCTL_A10,
- 	.dedicated_clocks = true,
+ 	c->mst_node->flags &= ~cpu_to_le32(UBIFS_MST_DIRTY);
+ 	c->mst_node->flags |= cpu_to_le32(UBIFS_MST_NO_ORPHS);
+@@ -1804,8 +1807,11 @@ static void ubifs_put_super(struct super
+ 			int err;
+ 
+ 			/* Synchronize write-buffers */
+-			for (i = 0; i < c->jhead_cnt; i++)
+-				ubifs_wbuf_sync(&c->jheads[i].wbuf);
++			for (i = 0; i < c->jhead_cnt; i++) {
++				err = ubifs_wbuf_sync(&c->jheads[i].wbuf);
++				if (err)
++					ubifs_ro_mode(c, err);
++			}
+ 
+ 			/*
+ 			 * We are being cleanly unmounted which means the
