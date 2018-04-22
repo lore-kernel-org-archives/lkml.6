@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48phIA7Ers7cZ5O3FT990P2l443c1G3JyvhfpRi3fwWIUmXK6ibyQ1KJ80n4s1Rlz14Z2me
-ARC-Seal: i=1; a=rsa-sha256; t=1524406413; cv=none;
+X-Google-Smtp-Source: AIpwx4/RRQ+XpdWHPoja8oiDE+489mudh5xsNW1HtujtSjbJfZnFz5a5r0L+GtYCR8QBLMv76a74
+ARC-Seal: i=1; a=rsa-sha256; t=1524406411; cv=none;
         d=google.com; s=arc-20160816;
-        b=ahmeOjJg8MHAIxyay+HXTTUZUD8B02jIpzNoCtrxjbB5zIJU5ZdFiQAZZ27RfBEwhR
-         Im8oh1iMXbhMwkoFe8bHkb1CFjBnq3/MSG7XLcNl2RmLyqAZg0IeM8xqhzyKbZtOw4LL
-         qQLE2zXJ5aDpxB+C7HX/r03C+m/p9SR5kLNL22KwSYomYp/lbvOhTL2PgCN3XWtDyl/B
-         Z93tCTuamD7e4DYm2UYyM+ltTuJe1xnIu0bHWuz5YT/KGRCTaz2I5DL1mzEzGBztlwbL
-         Fx+8xIVKZ406IKpCdjMecHzTD9J7y+7SPuiM/OJCBuWOGsDPHUKXb09tcFIgDHgIcDil
-         SCzw==
+        b=03CAqk8tfHBhRbFl2ELh0LHVwYGP+knwwAxNMu3DB2Lby2BJA2O/oJdJH5lBf+R7r+
+         BmoCupWkXxTNt91wPQwDljZmLMVJ2kSCKl1Rp21b9M6YxUP4qtdv8ZkjU0MoF89F/VJL
+         fiT80DEsF5F8WdTLGxgJ6J4mbsKFAf11RM8ibgEkX20IxF4Z0qREpe7XyaHpSW9OrqD3
+         x543DBUGvEwHCka79ElFxDk3Bv22nwHVGIOrqKiMZ/qxoBsXuQ97e4Tq+TeTnFnTvSi/
+         8kpW3QGoJtkWNO3CX1Yw/+lz5ZamM+8hcskF+tSPP76tteRjuW8dlEe1Zv1R0+5EKq+1
+         KEvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IVSwu8RR8cWuefbsO5Ynb5b0uX5uxV4w2uDzW74ojhQ=;
-        b=QX0/MS1EmCi8xJaAX8ZwFyMkSHu3K6Oj4u2o6UVC5DBhLxxe3LeHxOMV7JZWXDqn75
-         GjB7CwXeNORXNUgr67Oueuvs+MqQNe91cVYPH0TMpu9Lzr3DpWG0QcaJYWUJiIZaKkZ8
-         GVTSZMPNK2Mby9ah7uUiaAStC6x0NBvusUVCh/WjH+/46TW+9SEREh/SQJWpH1Hl6xSB
-         22CkV5+NaxGIjqL+iHu1Vf156H0/w1UmO9TsHpkJBC4ETw2u4fQR+ORQBzYlF2BBoFJ0
-         a7IG+ZXG3KgGqWDGHDrTMb1aJyUme7aPqKycyM6+PLUUtFyqwwWl/m+8LcpfNfZaCo3k
-         EFnA==
+        bh=D+4Ifjgw4oxW7jAkaTC9ojofva/Jq0tHleAX7iO0EIA=;
+        b=f0uy5sporqE7jafU3JcjdNmac/B8Lravhst5RI3UakoNhgJ8FWyd/DmpLatETxb79g
+         YSatrBCBkuWyUXjrSzPZ7ze18HyJEb+dQVMcQBvkZtQiVVcWNFaZjL+2x1I1MGEaMIjb
+         oOPwLMRi40nTzDBdxIuwcXuSrq1U96KCghZruqvHld+gWNVi4axOYcm4E/CVbrEbEeqc
+         fRDkM06jqKSLzLE0/hydrRMYqXDLn1s3yDUciWEwBfwBmrxSy4oBZmuc4oLveTct/1kB
+         tA1zKceB8B0Zvty1phzwORtfVQfwDCpHdhfnqzVKK5gnybPY3eJVUfNv3NCU6IHjtFSW
+         GbyQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Nicholas Piggin <npiggin@gmail.com>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 27/95] powerpc/powernv: Fix OPAL NVRAM driver OPAL_BUSY loops
-Date: Sun, 22 Apr 2018 15:52:56 +0200
-Message-Id: <20180422135211.547774444@linuxfoundation.org>
+Subject: [PATCH 4.9 26/95] powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
+Date: Sun, 22 Apr 2018 15:52:55 +0200
+Message-Id: <20180422135211.500937731@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454959303912084?=
-X-GMAIL-MSGID: =?utf-8?q?1598455979788646097?=
+X-GMAIL-THRID: =?utf-8?q?1598454950836257463?=
+X-GMAIL-MSGID: =?utf-8?q?1598455977018619767?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,48 +51,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 3b8070335f751aac9f1526ae2e012e6f5b8b0f21 upstream.
+commit 0bfdf598900fd62869659f360d3387ed80eb71cf upstream.
 
-The OPAL NVRAM driver does not sleep in case it gets OPAL_BUSY or
-OPAL_BUSY_EVENT from firmware, which causes large scheduling
-latencies, and various lockup errors to trigger (again, BMC reboot
-can cause it).
+asm/barrier.h is not always included after asm/synch.h, which meant
+it was missing __SUBARCH_HAS_LWSYNC, so in some files smp_wmb() would
+be eieio when it should be lwsync. kernel/time/hrtimer.c is one case.
 
-Fix this by converting it to the standard form OPAL_BUSY loop that
-sleeps.
+__SUBARCH_HAS_LWSYNC is only used in one place, so just fold it in
+to where it's used. Previously with my small simulator config, 377
+instances of eieio in the tree. After this patch there are 55.
 
-Fixes: 628daa8d5abf ("powerpc/powernv: Add RTC and NVRAM support plus RTAS fallbacks")
-Depends-on: 34dd25de9fe3 ("powerpc/powernv: define a standard delay for OPAL_BUSY type retry loops")
-Cc: stable@vger.kernel.org # v3.2+
+Fixes: 46d075be585e ("powerpc: Optimise smp_wmb")
+Cc: stable@vger.kernel.org # v2.6.29+
 Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/opal-nvram.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/powerpc/include/asm/barrier.h |    3 ++-
+ arch/powerpc/include/asm/synch.h   |    4 ----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/opal-nvram.c
-+++ b/arch/powerpc/platforms/powernv/opal-nvram.c
-@@ -11,6 +11,7 @@
+--- a/arch/powerpc/include/asm/barrier.h
++++ b/arch/powerpc/include/asm/barrier.h
+@@ -34,7 +34,8 @@
+ #define rmb()  __asm__ __volatile__ ("sync" : : : "memory")
+ #define wmb()  __asm__ __volatile__ ("sync" : : : "memory")
  
- #define DEBUG
+-#ifdef __SUBARCH_HAS_LWSYNC
++/* The sub-arch has lwsync */
++#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
+ #    define SMPWMB      LWSYNC
+ #else
+ #    define SMPWMB      eieio
+--- a/arch/powerpc/include/asm/synch.h
++++ b/arch/powerpc/include/asm/synch.h
+@@ -5,10 +5,6 @@
+ #include <linux/stringify.h>
+ #include <asm/feature-fixups.h>
  
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/of.h>
-@@ -56,8 +57,12 @@ static ssize_t opal_nvram_write(char *bu
- 
- 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
- 		rc = opal_write_nvram(__pa(buf), count, off);
--		if (rc == OPAL_BUSY_EVENT)
-+		if (rc == OPAL_BUSY_EVENT) {
-+			msleep(OPAL_BUSY_DELAY_MS);
- 			opal_poll_events(NULL);
-+		} else if (rc == OPAL_BUSY) {
-+			msleep(OPAL_BUSY_DELAY_MS);
-+		}
- 	}
- 
- 	if (rc)
+-#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
+-#define __SUBARCH_HAS_LWSYNC
+-#endif
+-
+ #ifndef __ASSEMBLY__
+ extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
+ extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
