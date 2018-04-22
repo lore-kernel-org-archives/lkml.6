@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49KpVFhJXVHVbVjcM+RdmC9jKQ/VyI30Jatyv5wTGZCiuMzKmEbAHukt2tJrVTFUUJBHO7W
-ARC-Seal: i=1; a=rsa-sha256; t=1524406153; cv=none;
+X-Google-Smtp-Source: AIpwx486FlU+p+3ONyc+2N1mIArT7UzPtos/Tv06/Wl0rB2W80PPNcrQXxgNU+w6sRcH69yrtbFY
+ARC-Seal: i=1; a=rsa-sha256; t=1524406150; cv=none;
         d=google.com; s=arc-20160816;
-        b=R3ZF5Cz0h/2aJu6IHfumkqVQn4FaXagT/r33HdKWZgDgDNYaAI747MzzG1AWxG/6fb
-         6REi0+2sVVA0z0juSvMb22DexhT3at4eGyouilP8aJ8UUfaCvp8iUqjZ6WeaAq5xd5jy
-         tkrV6j4auvocYBsQyj1R5pLS3Mp0cCc3g9MIWDXk4Si12tNcAGaXIBo++gjf3eAQgAkt
-         LzZdBtVQMCz87D6D4kqgVud956GF7UbzthpR2GPeH23qxrI8yMYihN+VT9x8wOW7NC5y
-         rvVvagPujF2s2Lw+JDctIEVLqJGTXVWMwjUcQ1bswxDtjNXuwg22jdDYoHd3A+qreMYS
-         RWmg==
+        b=xvC1MVHYAAWE2ZDyjsLhcgG7pPR7KJq6LUGMdbG4UdRCoZFeRU+paaD3038Ghu6WM4
+         XG4FwswPVkXbTDj3iGotYmaU1GIbC142KoiYy0gqVVb3VKjRckb39jBfpkXd+1xrM9EM
+         QZkGvMVhjVx7IY8mkzYKxpCFNqYMlRbNagcSiZhiRH0QdYw+cOFbe8CwKlMkGOTU43KX
+         qU/Wr0ZPBskdxZ50DUw8uCLY5kENZ9g3RwJ0OJm1l64hLC865oVJstKCMU25LBu0ra2U
+         mn9mvMZZpGCqR75nzf6S11ptQZZUjEZtnwJJh6TYfnXTC90z6ydCkhc+9J6rdk7ptoU8
+         SeRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=R0k3C0mu+LHtcJ89ayJMz99SGJM2B2imhPzJfK3wINY=;
-        b=t2Q4PHCzp6XEWeMrGZiNW7GwMDjqin64zhDBiqVgRRtFBf+YtaaJcQFnZI2Yzy+9fL
-         eXLYQriMz44RTHUK9zJBs/qmyAG+jzBGR4OCmWy0maeIPejAIJ+F38WKnmhTvXir/EFW
-         Lvcdr85ke3uDKhfWV2jrsK3V2GIbPdm8dW0bfNZC1cfVUCIhjqFvO/r0aqLjjizwSfTt
-         ajurL8noE3fFIO6pyTPar5Clhv0UJMUA5I0EJr3+pYTIuyIMi05AUiC1l8QwN5ThCnVA
-         u3bIY6kpCry0+Hdj7+qqC9G8zQpdgbgZ1EKZ4MXgQyNYUeMszMtAAHyFKyNCbpKja8j1
-         7eIw==
+        bh=RL0KByFdYUyS8Gd/6OT7OaJW30u7ZU0LPn/CCSDgwuw=;
+        b=PXDdwn3FUsmEA1WmNxkmvUMWfN9jUJE6Hd5yg5XOXKRgPeX6rvp3ymglfW8N9OkggG
+         w1/PN/6ZnMj5Q0IHZzaFb75NioqsGRsuAQFrnnwgEbwEGWoY9fxzXJCplML1IKK8xipg
+         58vxljOHt7y/s4YZfv8CGn2gKHcHpPV179DQo370D3l+SR4vKJ9dyOiMZMdQowWEKaZY
+         1xcCL6VJgnT391GCayvflsP+QEYJmin5ustkKtzLnn0R+HF6Lm3UTMayfpIdOG0X269G
+         97RsKZO0gTwmFSlBwBk4hPmR9+lFENr6K6ypXegTBtTNYFpnToxiR4z76TWeU0Vz7ssJ
+         aX3w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Hui Wang <hui.wang@canonical.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 132/164] ALSA: hda/realtek - adjust the location of one mic
-Date: Sun, 22 Apr 2018 15:53:19 +0200
-Message-Id: <20180422135140.786960825@linuxfoundation.org>
+Subject: [PATCH 4.14 131/164] ALSA: hda/realtek - set PINCFG_HEADSET_MIC to parse_flags
+Date: Sun, 22 Apr 2018 15:53:18 +0200
+Message-Id: <20180422135140.747717518@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455330886007697?=
-X-GMAIL-MSGID: =?utf-8?q?1598455706612055150?=
+X-GMAIL-THRID: =?utf-8?q?1598455328273632207?=
+X-GMAIL-MSGID: =?utf-8?q?1598455703525310133?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,31 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hui Wang <hui.wang@canonical.com>
 
-commit a3dafb2200bf3c13905a088e82ae11f1eb275a83 upstream.
+commit 3ce0d5aa265bcc0a4b281cb0cabf92491276101b upstream.
 
-There are two front mics on this machine, if we don't adjust the
-location for one of them, they will have the same mixer name,
-pulseaudio can't handle this situation.
+Otherwise, the pin will be regarded as microphone, and the jack name
+is "Mic Phantom", it is always on in the pulseaudio even nothing is
+plugged into the jack. So the UI is confusing to users since the
+microphone always shows up in the UI even there is no microphone
+plugged.
 
-After applying this FIXUP, they will have different mixer name,
-then pulseaudio can handle them correctly.
+After adding this flag, the jack name is "Headset Mic Phantom", then
+the pulseaudio can handle its detection correctly.
 
+Fixes: f0ba9d699e5c ("ALSA: hda/realtek - Fix Dell headset Mic can't record")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Hui Wang <hui.wang@canonical.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -6430,6 +6430,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
-+	SND_PCI_QUIRK(0x17aa, 0x3138, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
- 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
- 	SND_PCI_QUIRK(0x17aa, 0x3112, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+@@ -6225,6 +6225,8 @@ static const struct hda_fixup alc269_fix
+ 			{ 0x19, 0x01a1913c }, /* use as headset mic, without its own jack detect */
+ 			{ }
+ 		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MIC
+ 	},
+ };
+ 
