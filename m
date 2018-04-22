@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+pFkLNezDZCsBzNpEeREnz402FCwhpmuiUWc58Ne6gn8BBo7d+5nTJSr27d/zGVfqmUTTX
-ARC-Seal: i=1; a=rsa-sha256; t=1524406794; cv=none;
+X-Google-Smtp-Source: AIpwx4/cjJUpnTn5PhTk29zrzfRoFjzwa0ajnXo9J8TWaeijMwPZceHgbCsDnRsKppTlicmsvh0t
+ARC-Seal: i=1; a=rsa-sha256; t=1524406789; cv=none;
         d=google.com; s=arc-20160816;
-        b=zdJNujpZ5xQmficy8dr/qUOJ68wG0+fr3N2QCEKWuiwA36di08siZKKIy1MGQ/CzWe
-         TemUAbbixeiotTi+hh/Cek9QciVeWuVHo/jjvc2CABt75jflk/qld1kN1bA1/+e4IggS
-         Z0sHcofyWecWnlyBu4x8edtCXCLC7Q3ay3rxuquKR00nzeF1dGLXC/hRjSkMwkGEwW6Z
-         xtrFRGIxg/RTIaNRHFEn5762SPGV79f/+xDatgBajX4k4IN8F8h6btEH1vNoX4kpFytF
-         xtT1ZS0zKZssXJJ7ERmMXKwILF9DggXGwDB2kdSdd7HJQ857FjoB5Rr2MwVFaaY8UiAH
-         kW0A==
+        b=QF3r0FfZ1NTIJ/jtRxdLNX+fQk9gqqqfWmDfR/ih4XQKPbpbXn1eyJSoM1j6wKuthy
+         2Kng/btSB6KB/9FbnkOzuh4YDpHyECCDO0J/XflptfFOcYp2ACaJCJRfIpEQLUnaCG6v
+         gsvaXs1k1x9jXEUKt1QtdWR1wxtXLFZSHEjS/SzLEPzFEoi2b1FsyxuA4wIAMALBOp5N
+         yXAxZgSmKz0NqQ5Ld60LHeWD7snbGj9l1bZMEMyvJmD/GiBOgoydoajT6KzeZW8Oxs2H
+         cKSnOfk6H8kG+zTdWJw1gZDiMvnL5XlhlVVc6RQDFdqk+pgXziA7RDFBOzfT/o3D2ksp
+         XipA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OhTD0/Ug0W6QiUDFSfY0tJVKI6hLGBD7KxFcxKV6UEg=;
-        b=sRoZYKO6pLkDm0EHM/xSWZatoDRIhNZytilyXCYUraFdUprmgUvmt3DpWkh2unnrrd
-         F5tle8DysvdZeMaUV/DrXkjjRHMSFGMjqcFqKGGMjJN6pg2hMAsv8rhl4y7yZxTffi6a
-         dlSgg07Jx6m/jntIbyojettsWc+HYjuTOTnhedCNBLRc/QMMZ9O27hDBx/dayYsIJwUC
-         1MwHl3BSE7ZkZgkF1BtuZijv0xsrjvRPVv1ryjO1V0m670LhwLgEEJBDEbF4wNWagDm9
-         0hucyN7njRa/ArBlr2Rp9RmGhrK1IRcmseNOjh6GeVNctbrYalJeq8PCTtj+OddKk54D
-         Dtgw==
+        bh=5olQsZl5pmXQ5EDUjh3dB4/r70bnBdgIXYWaHhUcnd0=;
+        b=tebxm5WCnFywZ6aje9WzNH/FnV5CIRNDpfBPavWThAeDBaFokke98zEz3E6TI9Mw01
+         6MHlhuG5q/sEfosmCJvPDnR48LhZiaOklPCLEK6bEBwshejPHktPU3QBYKdVkYt1pfWf
+         rSfuwiJY4NY0AEqgo/WnKN1TAl4IfACeNVKKkYZlIQt0AeV7TY5EuNPNHG1SAIrMMG5A
+         7CaTaHJsilFeyRaqjkQ/062E9gYb/2neh5V1brYxKtgQGkbZmOCnswIBVhi6zgo3oXRj
+         RU8xonUWRbpepTeKNcTZx+0lbye7C8BkXCIrv88x6l8jQ6bvKPA+lp/PdcipfgCu74jL
+         s+Bg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+150189c103427d31a053@syzkaller.appspotmail.com,
-	syzbot+7e3f31a52646f939c052@syzkaller.appspotmail.com,
-	syzbot+4f2016cf5185da7759dc@syzkaller.appspotmail.com,
+	=?UTF-8?q?Fabi=C3=A1n=20Inostroza?= <fabianinostroza@udec.cl>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 70/97] ALSA: pcm: Fix endless loop for XRUN recovery in OSS emulation
-Date: Sun, 22 Apr 2018 15:53:48 +0200
-Message-Id: <20180422135309.086919953@linuxfoundation.org>
+Subject: [PATCH 4.4 78/97] ALSA: line6: Use correct endpoint type for midi output
+Date: Sun, 22 Apr 2018 15:53:56 +0200
+Message-Id: <20180422135309.485150340@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455089227122133?=
-X-GMAIL-MSGID: =?utf-8?q?1598456379178714339?=
+X-GMAIL-THRID: =?utf-8?q?1598455267717959842?=
+X-GMAIL-MSGID: =?utf-8?q?1598456373291056315?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,51 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Fabián Inostroza <soulsonceonfire@gmail.com>
 
-commit e15dc99dbb9cf99f6432e8e3c0b3a8f7a3403a86 upstream.
+commit 7ecb46e9ee9af18e304eb9e7d6804c59a408e846 upstream.
 
-The commit 02a5d6925cd3 ("ALSA: pcm: Avoid potential races between OSS
-ioctls and read/write") split the PCM preparation code to a locked
-version, and it added a sanity check of runtime->oss.prepare flag
-along with the change.  This leaded to an endless loop when the stream
-gets XRUN: namely, snd_pcm_oss_write3() and co call
-snd_pcm_oss_prepare() without setting runtime->oss.prepare flag and
-the loop continues until the PCM state reaches to another one.
+Sending MIDI messages to a PODxt through the USB connection shows
+"usb_submit_urb failed" in dmesg and the message is not received by
+the POD.
 
-As the function is supposed to execute the preparation
-unconditionally, drop the invalid state check there.
+The error is caused because in the funcion send_midi_async() in midi.c
+there is a call to usb_sndbulkpipe() for endpoint 3 OUT, but the PODxt
+USB descriptor shows that this endpoint it's an interrupt endpoint.
 
-The bug was triggered by syzkaller.
+Patch tested with PODxt only.
 
-Fixes: 02a5d6925cd3 ("ALSA: pcm: Avoid potential races between OSS ioctls and read/write")
-Reported-by: syzbot+150189c103427d31a053@syzkaller.appspotmail.com
-Reported-by: syzbot+7e3f31a52646f939c052@syzkaller.appspotmail.com
-Reported-by: syzbot+4f2016cf5185da7759dc@syzkaller.appspotmail.com
+[ The bug has been present from the very beginning in the staging
+  driver time, but Fixes below points to the commit moving to sound/
+  directory so that the fix can be cleanly applied -- tiwai ]
+
+Fixes: 61864d844c29 ("ALSA: move line6 usb driver into sound/usb")
+Signed-off-by: Fabián Inostroza <fabianinostroza@udec.cl>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_oss.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/usb/line6/midi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -1138,13 +1138,14 @@ static int snd_pcm_oss_get_active_substr
- }
+--- a/sound/usb/line6/midi.c
++++ b/sound/usb/line6/midi.c
+@@ -125,7 +125,7 @@ static int send_midi_async(struct usb_li
+ 	}
  
- /* call with params_lock held */
-+/* NOTE: this always call PREPARE unconditionally no matter whether
-+ * runtime->oss.prepare is set or not
-+ */
- static int snd_pcm_oss_prepare(struct snd_pcm_substream *substream)
- {
- 	int err;
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 
--	if (!runtime->oss.prepare)
--		return 0;
- 	err = snd_pcm_kernel_ioctl(substream, SNDRV_PCM_IOCTL_PREPARE, NULL);
- 	if (err < 0) {
- 		pcm_dbg(substream->pcm,
+ 	usb_fill_int_urb(urb, line6->usbdev,
+-			 usb_sndbulkpipe(line6->usbdev,
++			 usb_sndintpipe(line6->usbdev,
+ 					 line6->properties->ep_ctrl_w),
+ 			 transfer_buffer, length, midi_sent, line6,
+ 			 line6->interval);
