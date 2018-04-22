@@ -1,36 +1,78 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49MVhtzBQMZgWvJCJNQGAZTk6UbifNaZrZNC6cnKATwtl4K5aAWMXzheYgUML9x9R9YdMHb
-ARC-Seal: i=1; a=rsa-sha256; t=1524405846; cv=none;
-        d=google.com; s=arc-20160816;
-        b=yme2s5RN5f/lm+Zq+diM3plcHBpk70c8zzqZpxwQJNbeGx+003tybeiKG1Vn9wfUGV
-         RbI2ZyrfzHv7Cv6Z9xejnW/IRk0lrmLC9WBuM+2rWVqMytwNfQfqinbJ7zg9ODDUMxqC
-         n2UhNvHqqaSh+pvhAWEZ3zCqEJf4O+ItYeYbLpuk73YNqILWnwaAtTzK9gMqGqV1CIq0
-         rb2DPMSY4BCoNgdaaL++6OyJCVCi2yJ4whMFvkWCcZOgtKR/7Bmcp5MEfe9ohiHsqa+d
-         7Qpj5RCVP/WwHV9O+8Pw18BYcePiq/A8d2DAKPDVdmyXuIxr0CnhpoOqG2CdRYbtQnIH
-         Js8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=miGI1P0kMCv650DXD4+8BN0CrbGTA1f0Or0vT4U+9g0=;
-        b=jCMtXRPYeRhM80Om1juLD7/kksnOAhJJ3yWKTDDy31HRu872d0c+G1X92SzrWJ7Rsr
-         9C/Np8xzT+rVD0eu3n+EMWcFQpfe9+p/WrjU54WJi7OxezgN2VvCNd8q1ntHEhklESkQ
-         ChhB1Mk7s1hwYr+Wj9cN1d+aZmXjMpzQ4M2uXg5gqfNJ5Y5KGFbcR2KdQm8WzFY5CSJf
-         1uUBI37xI58b11Ua/lx9S35CK4jjHyDxx3kpHJj6a917QaHj9rq7MXqlZMggVvg8gqiX
-         SOb+xntsFnx9kB6bq35tFr+zjTh7xAXA6H/DkHKiC7AUXjI2suZGiB0M7JymbtSHGWOn
-         pCbA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2630128-1524405846-2-4589439953610746429
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524405846; b=QTSg2t36hd+NxHapyuJpUvxxi5Or0G+j+fVx+YnUfC0SYTVHuj
+    3SpDf8mGIcB70INkxfhJrdx4SzHwM6ClnveLXtzkYkXHHwaFrVkCSoW7lIJPmc8k
+    xPOo81IRiEOYasKed/S0zfWTOQCXxTNekrLigqrldyzlU7SO9dCnMg0ZqYDHO6lW
+    jXe3SFs0+Zk0dktVMGdmhiOPCwcRiRdrFHHDPxpHsXX/Gr8LBHkCkCWS4HvuK+op
+    pby9D2rKmVj31XaGsS6wnK1kBQEtt9AB9BW+/+H6BVbuRmxTuaidOb4P3jdWNzQP
+    BwgRXq1NKzQJquqqP8DHmXdHfSNgPZwBBL7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524405846; bh=QSGZW9gy2eCoIm/S1kwLfHIEd/7tt3
+    WraBC2ACdNlnI=; b=XvJXSZaDcm7nZg6hJJDpvW8qDbJyi3a/EYeyo4f2Y28J0S
+    clVFGvsX6ihrP8SWW4MP2arb2p6GkEv4tNSEBgE0ZuV9YQkjc+KPgS9mjULcsZjJ
+    pQc+yz6b/S2CsPaXfraEoIv+UMFQnn3b7g0TyCxho8TLcs7fNnuTLL6hOHDiUD8C
+    BDLM9Olf34eWSB5JbdJkBvonbvq1glK4cdgkfFlEcu5Kg9Z812ofipUvF2YhbiHN
+    eNLkECwkiSkpuakapM01QcAHK8X6Cg3C7cxcXYYEknh8108N76Zm5Jv8xM6QvSqK
+    6uoTZt54NEpi0aD5YUb/LnNBoGEx1ulTxgvA/JKw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfCYbQF/Uef4r9ivDnYcZhchZV0bG+1pDJgJZLhK8nMQS7MlZDRH8W+hnYkLy0pN2u4NGuzgq17DeuBFvIWnk14gsG8anXhX5W2rHKUjktWspOI7agXkL
+    y+Kq6dgKEBv4mqfiGAjbMZ0AW0pu67j2/1F+jznXF9n/NmhVXznZT7BQPlgYwJ5Q4Ccovspuree41YyS8TmsgoiG8+ASdIcndSQSdwm8TOO709WBUBr5iswh
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=0eQPppVNLSDi1aVsPeUA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754916AbeDVOEB (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:04:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49634 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754486AbeDVOD6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:03:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	George Cherian <george.cherian@cavium.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 002/164] cpufreq: CPPC: Use transition_delay_us depending transition_latency
-Date: Sun, 22 Apr 2018 15:51:09 +0200
-Message-Id: <20180422135135.501274430@linuxfoundation.org>
+        stable@vger.kernel.org, Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 017/164] usb: gadget: udc: core: update usb_ep_queue() documentation
+Date: Sun, 22 Apr 2018 15:51:24 +0200
+Message-Id: <20180422135136.094442050@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -38,10 +80,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454793510382547?=
-X-GMAIL-MSGID: =?utf-8?q?1598455384852053712?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,49 +90,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: George Cherian <george.cherian@cavium.com>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
 
-commit 3d41386d556db9f720e00de3e11e45f39cb5071c upstream.
+commit eaa358c7790338d83bb6a31258bdc077de120414 upstream.
 
-With commit e948bc8fbee0 (cpufreq: Cap the default transition delay
-value to 10 ms)  the cpufreq was not honouring the delay passed via
-ACPI (PCCT). Due to which on ARM based platforms using CPPC the
-cpufreq governor tries to change the frequency of CPUs faster than
-expected.
+Mention that ->complete() should never be called from within
+usb_ep_queue().
 
-This leads to continuous error messages like the following.
-" ACPI CPPC: PCC check channel failed. Status=0 "
-
-Earlier (without above commit) the default transition delay was
-taken form the value passed from PCCT. Use the same value provided
-by PCCT to set the transition_delay_us.
-
-Fixes: e948bc8fbee0 (cpufreq: Cap the default transition delay value to 10 ms)
-Signed-off-by: George Cherian <george.cherian@cavium.com>
-Cc: 4.14+ <stable@vger.kernel.org> # 4.14+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/cppc_cpufreq.c |    3 +++
+ drivers/usb/gadget/udc/core.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -20,6 +20,7 @@
- #include <linux/cpu.h>
- #include <linux/cpufreq.h>
- #include <linux/dmi.h>
-+#include <linux/time.h>
- #include <linux/vmalloc.h>
- 
- #include <asm/unaligned.h>
-@@ -162,6 +163,8 @@ static int cppc_cpufreq_cpu_init(struct
- 	policy->cpuinfo.max_freq = cppc_dmi_max_khz;
- 
- 	policy->cpuinfo.transition_latency = cppc_get_transition_latency(cpu_num);
-+	policy->transition_delay_us = cppc_get_transition_latency(cpu_num) /
-+		NSEC_PER_USEC;
- 	policy->shared_type = cpu->shared_type;
- 
- 	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -249,6 +249,9 @@ EXPORT_SYMBOL_GPL(usb_ep_free_request);
+  * arranges to poll once per interval, and the gadget driver usually will
+  * have queued some data to transfer at that time.
+  *
++ * Note that @req's ->complete() callback must never be called from
++ * within usb_ep_queue() as that can create deadlock situations.
++ *
+  * Returns zero, or a negative error code.  Endpoints that are not enabled
+  * report errors; errors will also be
+  * reported when the usb peripheral is disconnected.
