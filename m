@@ -1,36 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48HYXZDL5jecO6bsKYskGAXqWwH3pOLta6rRL4TgoW4GwuUp0AGQU6PGQRIw3C7b+rzcfpx
-ARC-Seal: i=1; a=rsa-sha256; t=1524405556; cv=none;
-        d=google.com; s=arc-20160816;
-        b=QeANcrBOpwLgnfHFzg/fVIPtnssEN0AKVD6eohiSa2yGuBR9TbEI0D/wRbkKA98Tru
-         d/1uXzQAJygxa3U8IH8mRtQoEKG6TS6BZAu6r+deOAPPPUFGKneUhCZzt86SnQbUYvG1
-         LJKjQOt67/QMQpx90EcXPIgXery4TefKBOZ/re2Po0CTTpnFEgHn1undHH+7YfOODJE4
-         T66OZY/F2Don6ufFa0IX3sNdjnVgmfwyVuXETfcqkY1IBN19HXB3TPEq7LAwmJm9fmu3
-         Arv2fGHEALyVUKoA1gpXAgpTTpNHHHLF8jOOmnKlmXObZosAPhBVxRwdo8NGU0ULs9bA
-         mh7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=CUhj1xW2/rn8GEQFhMtkpvsJwRwsuhBeMi7S9dhZ8HM=;
-        b=Aj3Jsdj4WkmbgHKBJ825B1sca3MEi3JFUUd4Wz6D9GFTKC0aJFwEuG9ZL6npQuOK82
-         NrTGgAAV52AInA0Y8gkCt9KAxc5bKDZKJRPW1MSuDxjnBDdDUfHCZeiDEON60FXdsKyk
-         VbfCBYLBXpjPeO3UZKDKSKGgd+vvoeOUAwm+Za8XzARckUUQsLC9cCGqAkXV2Zs20JCU
-         LeevwFcSZ2lbdA74bNO7zYqYDSfIan3Q+KWdzPVUvOULTJwONUEvxkr3kJd1erCvBNQk
-         MKqIBo4kpwITb1EDlo4mv6ZU0n6JF2WKym1IFQ2xxsrawW9BTrgeHxlynMQLhq1Bjxte
-         W+eA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405554-2-3974520786842800856
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524405553; b=ab4WpzZc5OOpK682WBta1q549rj2kkMHi8aRci8fCr9ObJrRFJ
+    VhNZKYtyAT8Kqf4Nbag2rIbut1+4zx7WCFtTi5nWo3o5FxqkVUpBUeWARZIQpxYW
+    xOTVS93IWiCnqVHj1ve9KYRUDfUsinUqBIiXdvaU0QfEbJH7NR+3T1P8GWN7hnzo
+    rVwyptk74RuHBz5SoMmlQhi1cTgXlSwFTz/s5Zod9K/jO+pj5v5CREnJCTlOyv9x
+    65Yb++gTwruDxbYDo00rCVAzOYKn3c5s0tm62DEL1l5hFs/cEThWA8aGzniaM2bI
+    n7JYj4I7wp2fIAl+urzQpuNnuQb0YeZrbHBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524405553; bh=ug9tgYqi/3tBbBJhWPGitoeKTfWZpN
+    KGOLJFVZoUedc=; b=dfx3Q0de2uOYkeSjJ+b0W1L/bfTRfNBfDIKVObq57d5Yc4
+    VecWf9mugmgFt1eyN3QBap60ifKTbBQYFrrHxjvJ5zr9b0Silu7Ncfdskdy4Evux
+    9QJOIFftmPPn6zv2SCoYZ9i5X1Xvf986MRLPks8e+mC8AIty4yzPabQbdqgG5c5K
+    69YbdKH5CcXTPUdy4jbqj8lXawsfBSJAmLxj8OAAbK0aXX7/EW/U/CxgnHhQqJ11
+    cngX3De/C7oGCpy2eVyYg3sc7kILo4P4sGhQg4oBj8vlVjO1nd/Yfbz8ncz8wVeX
+    k5jUGVjy8VH4eEZTAkRJA8RUaiw3ZMIYoh3BCIlQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfAd0DCbQ58b+mZ62WPoUr1ShIJOxCkc8y5bWngybgcMZAoy4TG25mKsuLDBlqsRziRxOQqN8GuNFNmH9e4HLwzrwY+iGaoR4OgGsKy0dOYn1z6mFdNym
+    TpoAAMMIITy5lsYX/tUMcRzi8DuCDp8aYKx5f6KXLYl2nzv5Kc9Ku45Dl7iBHXuHuPH/pprtgrRnc6zudiwyUWCCIZYxYa9OjMEi2Z+SAse9qkPmxTzVYd8o
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=JDjsHSkAAAAA:8 a=ag1SF4gXAAAA:8
+    a=gou60wet8BXYU8b9vqAA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=dseMxAR1CDlncBZeV_se:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753960AbeDVN7K (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 09:59:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46546 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754257AbeDVN7G (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:59:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 110/196] ALSA: pcm: Fix mutex unbalance in OSS emulation ioctls
-Date: Sun, 22 Apr 2018 15:52:10 +0200
-Message-Id: <20180422135109.961924781@linuxfoundation.org>
+        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.16 106/196] xprtrdma: Fix latency regression on NUMA NFS/RDMA clients
+Date: Sun, 22 Apr 2018 15:52:06 +0200
+Message-Id: <20180422135109.726959401@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -38,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455080797885449?=
-X-GMAIL-MSGID: =?utf-8?q?1598455080797885449?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,167 +92,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-commit f6d297df4dd47ef949540e4a201230d0c5308325 upstream.
+commit 6720a89933739cb8dec748cd253f7c8df2c0ae4d upstream.
 
-The previous fix 40cab6e88cb0 ("ALSA: pcm: Return -EBUSY for OSS
-ioctls changing busy streams") introduced some mutex unbalance; the
-check of runtime->oss.rw_ref was inserted in a wrong place after the
-mutex lock.
+With v4.15, on one of my NFS/RDMA clients I measured a nearly
+doubling in the latency of small read and write system calls. There
+was no change in server round trip time. The extra latency appears
+in the whole RPC execution path.
 
-This patch fixes the inconsistency by rewriting with the helper
-functions to lock/unlock parameters with the stream check.
+"git bisect" settled on commit ccede7598588 ("xprtrdma: Spread reply
+processing over more CPUs") .
 
-Fixes: 40cab6e88cb0 ("ALSA: pcm: Return -EBUSY for OSS ioctls changing busy streams")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+After some experimentation, I found that leaving the WQ bound and
+allowing the scheduler to pick the dispatch CPU seems to eliminate
+the long latencies, and it does not introduce any new regressions.
+
+The fix is implemented by reverting only the part of
+commit ccede7598588 ("xprtrdma: Spread reply processing over more
+CPUs") that dispatches RPC replies specifically on the CPU where the
+matching RPC call was made.
+
+Interestingly, saving the CPU number and later queuing reply
+processing there was effective _only_ for a NFS READ and WRITE
+request. On my NUMA client, in-kernel RPC reply processing for
+asynchronous RPCs was dispatched on the same CPU where the RPC call
+was made, as expected. However synchronous RPCs seem to get their
+reply dispatched on some other CPU than where the call was placed,
+every time.
+
+Fixes: ccede7598588 ("xprtrdma: Spread reply processing over ... ")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@vger.kernel.org # v4.15+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_oss.c |   67 +++++++++++++++++++++++++++++------------------
- 1 file changed, 42 insertions(+), 25 deletions(-)
+ net/sunrpc/xprtrdma/rpc_rdma.c  |    2 +-
+ net/sunrpc/xprtrdma/transport.c |    2 --
+ net/sunrpc/xprtrdma/xprt_rdma.h |    1 -
+ 3 files changed, 1 insertion(+), 4 deletions(-)
 
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -823,6 +823,23 @@ static int choose_rate(struct snd_pcm_su
- 	return snd_pcm_hw_param_near(substream, params, SNDRV_PCM_HW_PARAM_RATE, best_rate, NULL);
- }
+--- a/net/sunrpc/xprtrdma/rpc_rdma.c
++++ b/net/sunrpc/xprtrdma/rpc_rdma.c
+@@ -1366,7 +1366,7 @@ void rpcrdma_reply_handler(struct rpcrdm
  
-+/* parameter locking: returns immediately if tried during streaming */
-+static int lock_params(struct snd_pcm_runtime *runtime)
-+{
-+	if (mutex_lock_interruptible(&runtime->oss.params_lock))
-+		return -ERESTARTSYS;
-+	if (atomic_read(&runtime->oss.rw_ref)) {
-+		mutex_unlock(&runtime->oss.params_lock);
-+		return -EBUSY;
-+	}
-+	return 0;
-+}
-+
-+static void unlock_params(struct snd_pcm_runtime *runtime)
-+{
-+	mutex_unlock(&runtime->oss.params_lock);
-+}
-+
- /* call with params_lock held */
- static int snd_pcm_oss_change_params_locked(struct snd_pcm_substream *substream)
- {
-@@ -1721,6 +1738,8 @@ static int snd_pcm_oss_set_rate(struct s
- 	for (idx = 1; idx >= 0; --idx) {
- 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
- 		struct snd_pcm_runtime *runtime;
-+		int err;
-+
- 		if (substream == NULL)
- 			continue;
- 		runtime = substream->runtime;
-@@ -1728,15 +1747,14 @@ static int snd_pcm_oss_set_rate(struct s
- 			rate = 1000;
- 		else if (rate > 192000)
- 			rate = 192000;
--		if (mutex_lock_interruptible(&runtime->oss.params_lock))
--			return -ERESTARTSYS;
--		if (atomic_read(&runtime->oss.rw_ref))
--			return -EBUSY;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
- 		if (runtime->oss.rate != rate) {
- 			runtime->oss.params = 1;
- 			runtime->oss.rate = rate;
- 		}
--		mutex_unlock(&runtime->oss.params_lock);
-+		unlock_params(runtime);
- 	}
- 	return snd_pcm_oss_get_rate(pcm_oss_file);
- }
-@@ -1761,18 +1779,19 @@ static int snd_pcm_oss_set_channels(stru
- 	for (idx = 1; idx >= 0; --idx) {
- 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
- 		struct snd_pcm_runtime *runtime;
-+		int err;
-+
- 		if (substream == NULL)
- 			continue;
- 		runtime = substream->runtime;
--		if (mutex_lock_interruptible(&runtime->oss.params_lock))
--			return -ERESTARTSYS;
--		if (atomic_read(&runtime->oss.rw_ref))
--			return -EBUSY;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
- 		if (runtime->oss.channels != channels) {
- 			runtime->oss.params = 1;
- 			runtime->oss.channels = channels;
- 		}
--		mutex_unlock(&runtime->oss.params_lock);
-+		unlock_params(runtime);
- 	}
- 	return snd_pcm_oss_get_channels(pcm_oss_file);
- }
-@@ -1845,6 +1864,7 @@ static int snd_pcm_oss_get_formats(struc
- static int snd_pcm_oss_set_format(struct snd_pcm_oss_file *pcm_oss_file, int format)
- {
- 	int formats, idx;
-+	int err;
- 	
- 	if (format != AFMT_QUERY) {
- 		formats = snd_pcm_oss_get_formats(pcm_oss_file);
-@@ -1858,15 +1878,14 @@ static int snd_pcm_oss_set_format(struct
- 			if (substream == NULL)
- 				continue;
- 			runtime = substream->runtime;
--			if (atomic_read(&runtime->oss.rw_ref))
--				return -EBUSY;
--			if (mutex_lock_interruptible(&runtime->oss.params_lock))
--				return -ERESTARTSYS;
-+			err = lock_params(runtime);
-+			if (err < 0)
-+				return err;
- 			if (runtime->oss.format != format) {
- 				runtime->oss.params = 1;
- 				runtime->oss.format = format;
- 			}
--			mutex_unlock(&runtime->oss.params_lock);
-+			unlock_params(runtime);
- 		}
- 	}
- 	return snd_pcm_oss_get_format(pcm_oss_file);
-@@ -1914,12 +1933,11 @@ static int snd_pcm_oss_set_subdivide(str
- 		if (substream == NULL)
- 			continue;
- 		runtime = substream->runtime;
--		if (atomic_read(&runtime->oss.rw_ref))
--			return -EBUSY;
--		if (mutex_lock_interruptible(&runtime->oss.params_lock))
--			return -ERESTARTSYS;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
- 		err = snd_pcm_oss_set_subdivide1(substream, subdivide);
--		mutex_unlock(&runtime->oss.params_lock);
-+		unlock_params(runtime);
- 		if (err < 0)
- 			return err;
- 	}
-@@ -1954,12 +1972,11 @@ static int snd_pcm_oss_set_fragment(stru
- 		if (substream == NULL)
- 			continue;
- 		runtime = substream->runtime;
--		if (atomic_read(&runtime->oss.rw_ref))
--			return -EBUSY;
--		if (mutex_lock_interruptible(&runtime->oss.params_lock))
--			return -ERESTARTSYS;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
- 		err = snd_pcm_oss_set_fragment1(substream, val);
--		mutex_unlock(&runtime->oss.params_lock);
-+		unlock_params(runtime);
- 		if (err < 0)
- 			return err;
- 	}
+ 	trace_xprtrdma_reply(rqst->rq_task, rep, req, credits);
+ 
+-	queue_work_on(req->rl_cpu, rpcrdma_receive_wq, &rep->rr_work);
++	queue_work(rpcrdma_receive_wq, &rep->rr_work);
+ 	return;
+ 
+ out_badstatus:
+--- a/net/sunrpc/xprtrdma/transport.c
++++ b/net/sunrpc/xprtrdma/transport.c
+@@ -52,7 +52,6 @@
+ #include <linux/slab.h>
+ #include <linux/seq_file.h>
+ #include <linux/sunrpc/addr.h>
+-#include <linux/smp.h>
+ 
+ #include "xprt_rdma.h"
+ 
+@@ -651,7 +650,6 @@ xprt_rdma_allocate(struct rpc_task *task
+ 	if (!rpcrdma_get_recvbuf(r_xprt, req, rqst->rq_rcvsize, flags))
+ 		goto out_fail;
+ 
+-	req->rl_cpu = smp_processor_id();
+ 	req->rl_connect_cookie = 0;	/* our reserved value */
+ 	rpcrdma_set_xprtdata(rqst, req);
+ 	rqst->rq_buffer = req->rl_sendbuf->rg_base;
+--- a/net/sunrpc/xprtrdma/xprt_rdma.h
++++ b/net/sunrpc/xprtrdma/xprt_rdma.h
+@@ -334,7 +334,6 @@ enum {
+ struct rpcrdma_buffer;
+ struct rpcrdma_req {
+ 	struct list_head	rl_list;
+-	int			rl_cpu;
+ 	unsigned int		rl_connect_cookie;
+ 	struct rpcrdma_buffer	*rl_buffer;
+ 	struct rpcrdma_rep	*rl_reply;
