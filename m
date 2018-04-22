@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx484NStTEMPJz7qNhg8kmFuOcPCGi5B/6aJlUIoQbfnfak7FyXqboZWtSjXgwi4DTJsRFPC2
-ARC-Seal: i=1; a=rsa-sha256; t=1524406099; cv=none;
+X-Google-Smtp-Source: AIpwx4/8Np6d/kw2irqg2paFtQo06MtgpA8dqTa+1IwLvoBVJzC4PQ8hMwgwnxagPnT5I5G6nUVr
+ARC-Seal: i=1; a=rsa-sha256; t=1524406096; cv=none;
         d=google.com; s=arc-20160816;
-        b=0JdLYngYw//gD6PHZByI0HrE+GCzuhoBHeYN2Wa8eq8zIVRNbCD8uTrTX/A2i9pzG1
-         NUTUwNuSGuaTURlP8JX1nbkh5WWWtrF5/QG0yFoL9LFTueh881I3CZhoafxIKPl+kmdV
-         dXsP3Nfb8HsSUeKe+7qCD56by3M1I+u/QnEhVogbHCG9jUhD/gZu2C1M9PZcbffuCp4+
-         xExfgQwknnsrNwRfJOXp0lL3Cqoktfb3p4HSxUHMcCxTfYi6NkERcOBTiyHNYjBws52e
-         5BjJgxDkSb0wSJAjE5ZvzZbMHHQXVMYjs/7B13aaP7naJ/hXqCsI1Gj9SlGEm2KnRyRM
-         xaqQ==
+        b=Yy6BqDZyRlje7eXWZ4dnuTNXdynVlbUWEYjx8P+32QAO4tJaAexzUK4SkyoPBF/VH5
+         ZODRa+vQkIMQHjfpC04bg2TYUpdf9ahwYSuvGz5vsOLuuplBqcbkARFP0Do+M1bWyeTF
+         5hAR4vrhi2bfqLM7PDSOYNQd5Y7FnbevqIr37Ks/NFUgHkpZtO1C1OAvD8GwTGItz/QV
+         QvK5dTqSlCHRDi5S6Xc/2LVasr9WiMdox/LU+C5yOcGS/TWb7bxUe6OUYhf/cNiLRWS6
+         xtBFTOkEubiBg1Zb2JXOlqgcTLFKBKBmCT9TxOFjO83HhqJ+bHesKoCx024+wVfoaM8s
+         NtwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EwE70KAKWaxYF5bWEOdYAwHpRvAq/J0/vPAIZSlrjXw=;
-        b=NvBfWfWHJQXXFllrVJzI5Oa8bcfo/n1c77dQCBP+7ISM/YGGIHzSEi86IbI2IZ+48F
-         Ql6abjlFBUZA+ngB6navHeYZcfLlbtgYkMQc9cDO7EeGFSvrc6JjTWzfHYphERMhRUxy
-         yNtfN4nbFDiqSFSK3xtVoo2Nu66bqcJhYOYtJg3qTysQBZpnV3A6u5DQB+2jAaEKrhQH
-         WpxaV1rY52k+3J/ib2DqDM2F/fOSMPtIdUeQ0uobN+y6KGz/2ER2y+H1fkJKXMSv5o7i
-         /ywHtICo+vVeO6hxCPSHN9Z+0BVu6awG/jI5jFudbLOtQcfcY8Ev3RJCRdAqLke3Mm9e
-         uIQw==
+        bh=KLt6BUTBXKuQZcSMvvE5X5K1NY0i0fLheCndGxIkWzk=;
+        b=bWPLlWraUJQ0DddmiEgus2Gl67SFiG9UFoiiAWIGZoaQluLtqmNLWuXFCAoF2zcQi4
+         rpVVXFd5YIwrGtwhloEGgoJQVK1os0qeExJC757MbgxyZA2dMZyrkvrW2s+E0D1ihSCv
+         ROlbda+Vr/Qr55IM+OqW153XlIYeRMGdXm5e51pf9ciGx4+hFgH8a/eW7+D2thvo2swz
+         Fl/uagMVtirnCm9xsBYnPn4DlfWgEbqZdSblSa/VE7Fw3SPP3ESwGJ1TJIFwmyOnBPAM
+         8K5IhJSP4FUNIje4QecNQrzYkdu13xxEJQvUQhZcA+4rpZNa3d4Rpxp0J2xITjvbHt6Z
+         ANmA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Aniruddha Banerjee <aniruddhab@nvidia.com>,
-	Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.14 067/164] irqchip/gic: Take lock when updating irq type
-Date: Sun, 22 Apr 2018 15:52:14 +0200
-Message-Id: <20180422135138.210487806@linuxfoundation.org>
+	Jan Kara <jack@suse.cz>,
+	Eryu Guan <guaneryu@gmail.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.14 076/164] ext4: protect i_disksize update by i_data_sem in direct write path
+Date: Sun, 22 Apr 2018 15:52:23 +0200
+Message-Id: <20180422135138.566678732@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454998846603091?=
-X-GMAIL-MSGID: =?utf-8?q?1598455650584080904?=
+X-GMAIL-THRID: =?utf-8?q?1598455118464446356?=
+X-GMAIL-MSGID: =?utf-8?q?1598455647382870217?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,75 +50,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aniruddha Banerjee <aniruddhab@nvidia.com>
+From: Eryu Guan <guaneryu@gmail.com>
 
-commit aa08192a254d362a4d5317647a81de6996961aef upstream.
+commit 73fdad00b208b139cf43f3163fbc0f67e4c6047c upstream.
 
-Most MMIO GIC register accesses use a 1-hot bit scheme that
-avoids requiring any form of locking. This isn't true for the
-GICD_ICFGRn registers, which require a RMW sequence.
+i_disksize update should be protected by i_data_sem, by either taking
+the lock explicitly or by using ext4_update_i_disksize() helper. But the
+i_disksize updates in ext4_direct_IO_write() are not protected at all,
+which may be racing with i_disksize updates in writeback path in
+delalloc buffer write path.
 
-Unfortunately, we seem to be missing a lock for these particular
-accesses, which could result in a race condition if changing the
-trigger type on any two interrupts within the same set of 16
-interrupts (and thus controlled by the same CFGR register).
+This is found by code inspection, and I didn't hit any i_disksize
+corruption due to this bug. Thanks to Jan Kara for catching this bug and
+suggesting the fix!
 
-Introduce a private lock in the GIC common comde for this
-particular case, making it cover both GIC implementations
-in one go.
-
+Reported-by: Jan Kara <jack@suse.cz>
+Suggested-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Eryu Guan <guaneryu@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
-Signed-off-by: Aniruddha Banerjee <aniruddhab@nvidia.com>
-[maz: updated changelog]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/irqchip/irq-gic-common.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ fs/ext4/inode.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/irqchip/irq-gic-common.c
-+++ b/drivers/irqchip/irq-gic-common.c
-@@ -21,6 +21,8 @@
- 
- #include "irq-gic-common.h"
- 
-+static DEFINE_RAW_SPINLOCK(irq_controller_lock);
-+
- static const struct gic_kvm_info *gic_kvm_info;
- 
- const struct gic_kvm_info *gic_get_kvm_info(void)
-@@ -52,11 +54,13 @@ int gic_configure_irq(unsigned int irq,
- 	u32 confoff = (irq / 16) * 4;
- 	u32 val, oldval;
- 	int ret = 0;
-+	unsigned long flags;
- 
- 	/*
- 	 * Read current configuration register, and insert the config
- 	 * for "irq", depending on "type".
- 	 */
-+	raw_spin_lock_irqsave(&irq_controller_lock, flags);
- 	val = oldval = readl_relaxed(base + GIC_DIST_CONFIG + confoff);
- 	if (type & IRQ_TYPE_LEVEL_MASK)
- 		val &= ~confmask;
-@@ -64,8 +68,10 @@ int gic_configure_irq(unsigned int irq,
- 		val |= confmask;
- 
- 	/* If the current configuration is the same, then we are done */
--	if (val == oldval)
-+	if (val == oldval) {
-+		raw_spin_unlock_irqrestore(&irq_controller_lock, flags);
- 		return 0;
-+	}
- 
- 	/*
- 	 * Write back the new configuration, and possibly re-enable
-@@ -83,6 +89,7 @@ int gic_configure_irq(unsigned int irq,
- 			pr_warn("GIC: PPI%d is secure or misconfigured\n",
- 				irq - 16);
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3614,7 +3614,6 @@ static ssize_t ext4_direct_IO_write(stru
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file->f_mapping->host;
+-	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	ssize_t ret;
+ 	loff_t offset = iocb->ki_pos;
+ 	size_t count = iov_iter_count(iter);
+@@ -3638,7 +3637,7 @@ static ssize_t ext4_direct_IO_write(stru
+ 			goto out;
+ 		}
+ 		orphan = 1;
+-		ei->i_disksize = inode->i_size;
++		ext4_update_i_disksize(inode, inode->i_size);
+ 		ext4_journal_stop(handle);
  	}
-+	raw_spin_unlock_irqrestore(&irq_controller_lock, flags);
  
- 	if (sync_access)
- 		sync_access();
+@@ -3746,7 +3745,7 @@ static ssize_t ext4_direct_IO_write(stru
+ 		if (ret > 0) {
+ 			loff_t end = offset + ret;
+ 			if (end > inode->i_size) {
+-				ei->i_disksize = end;
++				ext4_update_i_disksize(inode, end);
+ 				i_size_write(inode, end);
+ 				/*
+ 				 * We're going to return a positive `ret'
