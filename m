@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+yxClmEgeq12Yj+5LCuiO9uNsOaUCFHDZT9cvhraeq3tLUdTD/A/hshQq8kGTTPxChvYlw
-ARC-Seal: i=1; a=rsa-sha256; t=1524405998; cv=none;
+X-Google-Smtp-Source: AIpwx4+C6S+HdkzQ9VAGxxcM5D0ui4rvKklxjrmuwFMoRmhpkvwcvGecJMjc5zSgSVsuKuv5Xui1
+ARC-Seal: i=1; a=rsa-sha256; t=1524405993; cv=none;
         d=google.com; s=arc-20160816;
-        b=tTkTLXDL5GNan5voXeqMVpgJynXxsqZrCy0tCACLT3dTUEpScskMFP1H9UtR4EK0cv
-         zh6cTBPlllqK+Y7k0wDuegiusCYIVb8XZXEK3POFuSog3IaqcPY2MMaHEkhDH0B+BHkO
-         jDpEe/Vc7okFvgQL8BGR8a7tg5Q6BmUwufsE46z8CChWJud5CJLVG4Z16aA2zM2oZ9BD
-         7lL2a9hxMUHa3Sby04cmqugUdtF2hrQfAGPQ2pXq8o60hBgZWK1PdzRrlGYp4hCpugET
-         02AfEwjmRjNq3H6VfIT4TvmrN42UeVbZnqZwR4ZQLvOikCrUyKRCeqN9VH9R4w98LMJS
-         3drA==
+        b=JycNPX4kjPlfTTs1Xt+BX3FySGzp6elalWXzjKKwl2ttTAU24ZLvJAUyq1ctY+sXlR
+         Z7VL4m5jSd6pzHDIUcP+j8NbgTW8adFYRbsNT1ea26uYH+KoXB3XQJ87Sa6EfxZpwlmh
+         NM0EumeElVxtlf1HBggNLroh4eIPuYG6W9L5TobHmVs6DBE76m6tJKCai93eAJfCRdOD
+         iZjJzxcuv/13Hq+AGoH7804uLw4sl7KiqmRBGTQpLVCOsZy2X8E904Icu7FIlnMN2Of7
+         ccDRTEqknfNxTozzIc3di3cqKNh5K/seDaZ7ks4ZxYwotdXA+cboI8Aem+OjbX+U6kRt
+         xLAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LsGV9MTYlhG60O5kLUd1JhNKF8Q5kW7E7L+WCHQx8Rc=;
-        b=EiYOquxEVNVcWh1GNruVYQA9+vcz+mr9mZW9IGGgdeNmW6Wqw3wUUKuemsZe+UMNoZ
-         YahEs8NmVNVLTCagq0DShhSY/HqJTZ72VT7uAQvYcO6tLKrzbfrwLDLz1dgbOdK77CSy
-         3+VpUEACgYy3n8d4HFjr0GU/f0jAKI99/ZcTMtMvebWR8nD+iikOv431ZZhHE/ofGfMx
-         SOkeUsLlh+w4CV/Np1OIBJS7QUwUEE6uwu/RyzFiMyqLza+cT/ivA05RfktEqEyipw+r
-         jPZ+L0Nz+LOpPNrvMlRKVlHWljqngm6JeHnzpwquK4Zp2Bh61+dGVycoHPS17OO00a8m
-         Wxvw==
+        bh=RXcD1OMU0Lzmch6hvHrpw9Ew7HRRvy+14no/m+Qzaw8=;
+        b=UO8BsFjKW1fcj4dKy6UsbV2QsI/SKh6yZ9T9SGyyeEluCqbb67LDS4xLRHpUk7FXlP
+         JYBuFUhL2SqirNdVAMW23zxVfJ7aRMBI0icLvqN4npVsJs7eqYjCxPbNbgQZHCMDWem5
+         qIGcqHyFEJBc96rrJCIXTV6yNTT9yGqIFUS8IRfXLw8/r7sveMeZj1T1iAlFs9euYgD3
+         I3blcjXIsoGjGqjBwIbo2R3BO/LTW495aDI6EnYgQgVVEOwnYMyKYvV7jFPMstnJlF/M
+         6x8NXAeDgD5UDnPtuvRX9beBeOs5UIJshcO4JCCyVQSu6mFezUwzCdXzeJ/LzIacD5o2
+         3dZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Theodore Tso <tytso@mit.edu>,
-	Chen Feng <puck.chen@hisilicon.com>
-Subject: [PATCH 4.14 068/164] random: use a tighter cap in credit_entropy_bits_safe()
-Date: Sun, 22 Apr 2018 15:52:15 +0200
-Message-Id: <20180422135138.249450379@linuxfoundation.org>
+	Roger Quadros <rogerq@ti.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 039/164] usb: dwc3: prevent setting PRTCAP to OTG from debugfs
+Date: Sun, 22 Apr 2018 15:51:46 +0200
+Message-Id: <20180422135137.003707753@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455123510525294?=
-X-GMAIL-MSGID: =?utf-8?q?1598455544474091599?=
+X-GMAIL-THRID: =?utf-8?q?1598455019200720449?=
+X-GMAIL-MSGID: =?utf-8?q?1598455539036773895?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +49,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Roger Quadros <rogerq@ti.com>
 
-commit 9f886f4d1d292442b2f22a0a33321eae821bde40 upstream.
+commit daaecc6541d014dca073473ec8a4120c0babbeb4 upstream.
 
-This fixes a harmless UBSAN where root could potentially end up
-causing an overflow while bumping the entropy_total field (which is
-ignored once the entropy pool has been initialized, and this generally
-is completed during the boot sequence).
+We don't support PRTCAP == OTG yet, so prevent user from
+setting it via debugfs.
 
-This is marginal for the stable kernel series, but it's a really
-trivial patch, and it fixes UBSAN warning that might cause security
-folks to get overly excited for no reason.
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported-by: Chen Feng <puck.chen@hisilicon.com>
-Cc: stable@vger.kernel.org
+Fixes: 41ce1456e1db ("usb: dwc3: core: make dwc3_set_mode() work properly")
+Cc: <stable@vger.kernel.org> # v4.12+
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/random.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/dwc3/core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -732,7 +732,7 @@ retry:
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -128,6 +128,9 @@ static void __dwc3_set_mode(struct work_
+ 	if (dwc->dr_mode != USB_DR_MODE_OTG)
+ 		return;
  
- static int credit_entropy_bits_safe(struct entropy_store *r, int nbits)
- {
--	const int nbits_max = (int)(~0U >> (ENTROPY_SHIFT + 1));
-+	const int nbits_max = r->poolinfo->poolwords * 32;
- 
- 	if (nbits < 0)
- 		return -EINVAL;
++	if (dwc->desired_dr_role == DWC3_GCTL_PRTCAP_OTG)
++		return;
++
+ 	switch (dwc->current_dr_role) {
+ 	case DWC3_GCTL_PRTCAP_HOST:
+ 		dwc3_host_exit(dwc);
