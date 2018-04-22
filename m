@@ -1,73 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeDVIgn (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 04:36:43 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56282 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751513AbeDVIgm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 04:36:42 -0400
-Date: Sun, 22 Apr 2018 10:36:40 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: FM radio on Droid 4 (in v4.17-rc1)
-Message-ID: <20180422083640.GA23303@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1752353AbeDVJOV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 05:14:21 -0400
+Received: from sauhun.de ([88.99.104.3]:37538 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751564AbeDVJOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 05:14:19 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: dmaengine@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 0/6] tree-wide: simplify getting .drvdata
+Date: Sun, 22 Apr 2018 11:14:08 +0200
+Message-Id: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
-Hi!
+I send this out as one patch per directory per subsystem. I think they should
+be applied individually. If you prefer a broken out series per subsystem, I can
+provide this as well. Just mail me.
 
-This is my first attempt at setting up FM radio on Droid
-4. Unfortunately I get:
+A branch (tested by buildbot; only with all commits squashed into one commit
+before) can be found here:
 
-[   29.614959] power_supply usb: uevent: failed to send synthetic
-uevent
-[   32.678100] (stc): gdata/new_proto/recv or reg_complete_cb not
-ready
-[   32.678222] fmdrv: Failed to get ST write func pointer
-[   32.703948] (stc):  chnl_id 8 not supported
-[   32.703948] fmdrv: st_unregister failed -93
-[   32.724578] fmdrv: Unable to prepare FM CORE
-[   33.382476] Requested mode 2
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
 
-=2E..so I guess it is not going to work. I use configuration with all
-drivers built in.
+Open for other comments, suggestions, too, of course.
 
-FM radio is not a priority for me, but if you know how to get it to
-work, I'll try...
+Here is the cocci-script I created:
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
 
-iEYEARECAAYFAlrcSZgACgkQMOfwapXb+vI1/gCfZ1a7zIhGo2Pnqsxc/lce2Jdz
-6+wAoIFHfFaZjI44LWlcvc4N1eGEVv1w
-=uLU3
------END PGP SIGNATURE-----
+Kind regards,
 
---a8Wt8u1KmwUX3Y2C--
+   Wolfram
+
+
+Wolfram Sang (6):
+  dmaengine: at_hdmac: simplify getting .drvdata
+  dmaengine: at_xdmac: simplify getting .drvdata
+  dmaengine: fsldma: simplify getting .drvdata
+  dmaengine: idma64: simplify getting .drvdata
+  dmaengine: ste_dma40: simplify getting .drvdata
+  dmaengine: txx9dmac: simplify getting .drvdata
+
+ drivers/dma/at_hdmac.c  |  9 +++------
+ drivers/dma/at_xdmac.c  |  9 +++------
+ drivers/dma/fsldma.c    |  6 ++----
+ drivers/dma/idma64.c    |  6 ++----
+ drivers/dma/ste_dma40.c | 12 ++++--------
+ drivers/dma/txx9dmac.c  |  8 +++-----
+ 6 files changed, 17 insertions(+), 33 deletions(-)
+
+-- 
+2.11.0
