@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/YVVJWE+g/svq8LaY9+g8u+edp/ohV9KXBwO1w1bDa5FDnORWfeeVzO8yb3ARfFAuZp32N
-ARC-Seal: i=1; a=rsa-sha256; t=1524406569; cv=none;
+X-Google-Smtp-Source: AIpwx481oQ7srgJDTzBUTJ2/vEDSNHuZzevknw/RneMj8z9zUJKjrblGfFi4Ddc61FTzEbPsBV55
+ARC-Seal: i=1; a=rsa-sha256; t=1524406560; cv=none;
         d=google.com; s=arc-20160816;
-        b=mCYi0D/kf2/Dddhorde1egeaIvGUw1qenWFqn+hugaZLAST4Egi9C4DZk3WWyPJt7T
-         FESlbGPMjsE78ZmkYtQZLQ5eB+yAHlkz2Mu+5Vf0fHDTr/mEPefzEpikECTTRsIiikAU
-         gOwXFduWTLXmLhUKLDLmdCUeX9UMs2yGkskcqnFuSiqnlrXE4v5gg93ui8sE9iDKw4ar
-         hzoMjV/f50O8HsRrKgMeKX5axqMcTLJ8ZaNFBprO2ip2VIodQTZ5fYSovheJ3d7pt9/c
-         bSVtWpXpf988iczPTcHl1BcBJ7LSJNPbxZpSiuub9jDLUGAAHWFcG4kpINp9rYNN4WTt
-         zM+Q==
+        b=HGH/0NVpbGFJddRaX2ZqcBpTdeP9Ki4xCBuxKHtbD4vJP0UdImlXj2n2EBfHcy4Ggt
+         9fEwqtjFa6vTqPX3P5zksmVz2+3kRvS7K4w/HJouiH1yVWOB8BB1FSWasrPEx45+XgBK
+         v1lUmU8EKdxk5897JcYg/psOePvBgkrKor/u0x3wwCN4k8EZzR/SdfE06Z0L+4SZ2YWI
+         Jd6XzpzUfxdBQ+nRhWL6wuP9XuMzX6S013zOeS5JKapgy8KO2oK/40smx7AJ/mo91Lof
+         UfiEN6eE8E6j0m6mm/4DC5IareXOQI/5X17vfCBA7AynzcQddcPAtlQ0QHRB11VQCgew
+         ECPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3ROy6VOEZJeJ33r+H0/FN3Fr5M93MFPAjG/Md/aNYN4=;
-        b=qzzjNWBX1dbhsrtCbhQ9sYIWWEnkWiBE3Lkw6P3AbPFDQ1cKujBmezRYXHzcKDYCHk
-         1opEPxItjZ6LWgFiHcY+TLeJf+X9WGVpoHjLNt5RKtb5aOWwDU8+9qE+G5d+EakK4ZEy
-         /FcQ/ZLi4a+0gSBJS0e4x4CB6ouEc5o/fUi3RoEvY0km+ZBBizhHWKPEgGVu8rJRAs9g
-         6xtSu1gFaSur2H42fJEBtN49cMPIdCD7ITHGs0eWFkULiIq6PVkANXcJaApCCIOCYC/v
-         ojxGSPJsIvGtli66/VLPCwkdJxtz/aAsEaJce0zItgpBrFMCKis+c87AUxSUSxEUCHvo
-         GMDw==
+        bh=dlWtLH3d6vG8kpGhQ2HTDEry2BDJFFy3tP4ln2dsN1g=;
+        b=Tl9YIcmaeLmpdopMYknoaefHu6FeqIHUscSkRAxxf3GLQ2V06P+XiOfDZsJX5lphye
+         YZ6VoG4qKUM77YvGNHdjEznUQGHuP8m18nEc3jZBnkeapWMS8akLqKXdbBeAKkGGVsVl
+         VlNxxtud6NuRsudCrY/6cUd/pBE3qYyMrPOphXQR2hgdbX5Rr4k06qd1tqL+/ooCVm1/
+         JhUnKR1vWsu49WhMwfLf7loBdugUWXoaPdPaZoeL0Pz1IBuOyT4KXz28XASDFLQhf+Ju
+         6YMKVPz2luB++h0oxVDAcyLbMbaAF9pEMYxccLi2IfURSk/qUs0BaS5NwzjisfKwqtlZ
+         N1BA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Martin Townsend <mtownsend1973@gmail.com>,
-	Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.4 23/97] ubi: fastmap: Dont flush fastmap work on detach
-Date: Sun, 22 Apr 2018 15:53:01 +0200
-Message-Id: <20180422135306.338619311@linuxfoundation.org>
+	Borislav Petkov <bp@suse.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 4.4 20/97] x86/hweight: Dont clobber %rdi
+Date: Sun, 22 Apr 2018 15:52:58 +0200
+Message-Id: <20180422135305.826568007@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -40,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454908575503165?=
-X-GMAIL-MSGID: =?utf-8?q?1598456142546087431?=
+X-GMAIL-THRID: =?utf-8?q?1598456133757218371?=
+X-GMAIL-MSGID: =?utf-8?q?1598456133757218371?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +58,100 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit 29b7a6fa1ec07e8480b0d9caf635a4498a438bf4 upstream.
+commit 65ea11ec6a82b1d44aba62b59e9eb20247e57c6e upstream.
 
-At this point UBI volumes have already been free()'ed and fastmap can no
-longer access these data structures.
+The caller expects %rdi to remain intact, push+pop it make that happen.
 
-Reported-by: Martin Townsend <mtownsend1973@gmail.com>
-Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
-Cc: stable@vger.kernel.org
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Fixes the following kind of explosions on my core2duo machine when
+trying to reboot or shut down:
+
+  general protection fault: 0000 [#1] PREEMPT SMP
+  Modules linked in: i915 i2c_algo_bit drm_kms_helper cfbfillrect syscopyarea cfbimgblt sysfillrect sysimgblt fb_sys_fops cfbcopyarea drm netconsole configfs binfmt_misc iTCO_wdt psmouse pcspkr snd_hda_codec_idt e100 coretemp hwmon snd_hda_codec_generic i2c_i801 mii i2c_smbus lpc_ich mfd_core snd_hda_intel uhci_hcd snd_hda_codec snd_hwdep snd_hda_core ehci_pci 8250 ehci_hcd snd_pcm 8250_base usbcore evdev serial_core usb_common parport_pc parport snd_timer snd soundcore
+  CPU: 0 PID: 3070 Comm: reboot Not tainted 4.8.0-rc1-perf-dirty #69
+  Hardware name:                  /D946GZIS, BIOS TS94610J.86A.0087.2007.1107.1049 11/07/2007
+  task: ffff88012a0b4080 task.stack: ffff880123850000
+  RIP: 0010:[<ffffffff81003c92>]  [<ffffffff81003c92>] x86_perf_event_update+0x52/0xc0
+  RSP: 0018:ffff880123853b60  EFLAGS: 00010087
+  RAX: 0000000000000001 RBX: ffff88012fc0a3c0 RCX: 000000000000001e
+  RDX: 0000000000000000 RSI: 0000000040000000 RDI: ffff88012b014800
+  RBP: ffff880123853b88 R08: ffffffffffffffff R09: 0000000000000000
+  R10: ffffea0004a012c0 R11: ffffea0004acedc0 R12: ffffffff80000001
+  R13: ffff88012b0149c0 R14: ffff88012b014800 R15: 0000000000000018
+  FS:  00007f8b155cd700(0000) GS:ffff88012fc00000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 00007f8b155f5000 CR3: 000000012a2d7000 CR4: 00000000000006f0
+  Stack:
+   ffff88012fc0a3c0 ffff88012b014800 0000000000000004 0000000000000001
+   ffff88012fc1b750 ffff880123853bb0 ffffffff81003d59 ffff88012b014800
+   ffff88012fc0a3c0 ffff88012b014800 ffff880123853bd8 ffffffff81003e13
+  Call Trace:
+   [<ffffffff81003d59>] x86_pmu_stop+0x59/0xd0
+   [<ffffffff81003e13>] x86_pmu_del+0x43/0x140
+   [<ffffffff8111705d>] event_sched_out.isra.105+0xbd/0x260
+   [<ffffffff8111738d>] __perf_remove_from_context+0x2d/0xb0
+   [<ffffffff8111745d>] __perf_event_exit_context+0x4d/0x70
+   [<ffffffff810c8826>] generic_exec_single+0xb6/0x140
+   [<ffffffff81117410>] ? __perf_remove_from_context+0xb0/0xb0
+   [<ffffffff81117410>] ? __perf_remove_from_context+0xb0/0xb0
+   [<ffffffff810c898f>] smp_call_function_single+0xdf/0x140
+   [<ffffffff81113d27>] perf_event_exit_cpu_context+0x87/0xc0
+   [<ffffffff81113d73>] perf_reboot+0x13/0x40
+   [<ffffffff8107578a>] notifier_call_chain+0x4a/0x70
+   [<ffffffff81075ad7>] __blocking_notifier_call_chain+0x47/0x60
+   [<ffffffff81075b06>] blocking_notifier_call_chain+0x16/0x20
+   [<ffffffff81076a1d>] kernel_restart_prepare+0x1d/0x40
+   [<ffffffff81076ae2>] kernel_restart+0x12/0x60
+   [<ffffffff81076d56>] SYSC_reboot+0xf6/0x1b0
+   [<ffffffff811a823c>] ? mntput_no_expire+0x2c/0x1b0
+   [<ffffffff811a83e4>] ? mntput+0x24/0x40
+   [<ffffffff811894fc>] ? __fput+0x16c/0x1e0
+   [<ffffffff811895ae>] ? ____fput+0xe/0x10
+   [<ffffffff81072fc3>] ? task_work_run+0x83/0xa0
+   [<ffffffff81001623>] ? exit_to_usermode_loop+0x53/0xc0
+   [<ffffffff8100105a>] ? trace_hardirqs_on_thunk+0x1a/0x1c
+   [<ffffffff81076e6e>] SyS_reboot+0xe/0x10
+   [<ffffffff814c4ba5>] entry_SYSCALL_64_fastpath+0x18/0xa3
+  Code: 7c 4c 8d af c0 01 00 00 49 89 fe eb 10 48 09 c2 4c 89 e0 49 0f b1 55 00 4c 39 e0 74 35 4d 8b a6 c0 01 00 00 41 8b 8e 60 01 00 00 <0f> 33 8b 35 6e 02 8c 00 48 c1 e2 20 85 f6 7e d2 48 89 d3 89 cf
+  RIP  [<ffffffff81003c92>] x86_perf_event_update+0x52/0xc0
+   RSP <ffff880123853b60>
+  ---[ end trace 7ec95181faf211be ]---
+  note: reboot[3070] exited with preempt_count 2
+
+Cc: Borislav Petkov <bp@suse.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Fixes: f5967101e9de ("x86/hweight: Get rid of the special calling convention")
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/fastmap-wl.c |    1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/lib/hweight.S |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/mtd/ubi/fastmap-wl.c
-+++ b/drivers/mtd/ubi/fastmap-wl.c
-@@ -360,7 +360,6 @@ static void ubi_fastmap_close(struct ubi
- {
- 	int i;
+--- a/arch/x86/lib/hweight.S
++++ b/arch/x86/lib/hweight.S
+@@ -35,6 +35,7 @@ ENDPROC(__sw_hweight32)
  
--	flush_work(&ubi->fm_work);
- 	return_unused_pool_pebs(ubi, &ubi->fm_pool);
- 	return_unused_pool_pebs(ubi, &ubi->fm_wl_pool);
+ ENTRY(__sw_hweight64)
+ #ifdef CONFIG_X86_64
++	pushq   %rdi
+ 	pushq   %rdx
  
+ 	movq    %rdi, %rdx                      # w -> t
+@@ -60,6 +61,7 @@ ENTRY(__sw_hweight64)
+ 	shrq    $56, %rax                       # w = w_tmp >> 56
+ 
+ 	popq    %rdx
++	popq    %rdi
+ 	ret
+ #else /* CONFIG_X86_32 */
+ 	/* We're getting an u64 arg in (%eax,%edx): unsigned long hweight64(__u64 w) */
