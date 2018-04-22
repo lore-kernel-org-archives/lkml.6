@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48HLDu3C7i5+ltkNxYsxJ7vmud49oIvOl8ZvxW8fDQb4nXUeqJ8kuRrip6QsrOz+ji+dmCK
-ARC-Seal: i=1; a=rsa-sha256; t=1524405580; cv=none;
+X-Google-Smtp-Source: AIpwx4/VjrS7zh0U9I+L7KXwQUy1+6pS8F0ZoMQK/pE/J+1AcABl1i5ttbhnOkHFrwhvpUHzSpdl
+ARC-Seal: i=1; a=rsa-sha256; t=1524405577; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q6Z4HAYKHF44GjiMQWxDFjUAZhnZbPQK15TVSClu+1JLzuWrJMixG0Prcpe3DZ9Yeb
-         j0cQO97O4ppsrIqtUFit4Ng446I6lhctpRup6oCVcfmpjVA328DKqghLeYD8bVqVBnMU
-         zPwlYpfN/UGspKeRAuPUsqNLouyVizkYLTErcVQ/IXsbaFzSa2noJ3iCz/kPRxfFPhHu
-         NYXYHTxLlO1GQbCFo5sXJRwOTl/bqNWwQSjsudDTNQYejV6jd3N9ufj2e59Uj7OZ332k
-         WqDG5Oe8nKzOY9ILHOkFuDUeyW52sP/uuJMKp9Jnj/jGO1B5WEmvErPgotl7B0PVvtOC
-         XiXA==
+        b=B/HctLzFHu8fH/dzXSmgY/6s1g9fDY0A6liu+tCoFn/KzfX1+jb2TzVp9AnJMbLslJ
+         mET/uF2w8jda1ovKcJIgHIFVTKKpRlK9R8tImjOeeJG+7IrcfC3jvwEjfVjpCN8VYNqV
+         yTWx8vUKhyYTXmX2KcI0w+KOuazoOeEpmFVlYTr42uP/zpvMr4kAWlOE35D3IoQ7D94I
+         hQHCNqhfoiAWm7OxwdXKc1T0qcYEoCvvhzNj3jUMus+T4AF5kzP+ok4zNBvEjyJkQtrP
+         oPAo+yFtGzoyCXjYx9mzR+/zFbnumBph2PnH9WwtO24vOwV2E+MnBwKn2SMsIo/Ur3GB
+         B6gw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bAYEbdYHNYkitnewWG8HRRVOktfikV8ahWqqku6kpaQ=;
-        b=OTtCBwKDO/X43Vx0FHkADmb5Hu4U4Hm/rryk1VorJXbqNT60V3HmB9r99Gkcq9fo1h
-         W3tz2ynnNW1W31WXCpHj+csWbaKHp4olkthUyuGVa5KJQWeWKmHw+7FB5Pu1KYL43VYR
-         MjjGuWRH1fGh6iwpTABL7gaJwRp2AKHn+KJARvb2HAf/kctw04tLawxd765mDpuMldjb
-         U/bkuUSVAL/gqBbyydRiWm2r49ri7Q8QoScFPVVeVWwqObvPe+XQ2DwPL+YEu5q2NCyj
-         rfF/YcVB1iHJ1WZaATuXJFxoGGnXP4UPFf1fRYOHxR179X5xUftm0GjNHjko9zf8vMbC
-         fj7g==
+        bh=3kDRmMcU9DzvgKMFeFK4kkQQO7AuynrwZJWf6IMGyt4=;
+        b=useJZMiwBOawiNb+6m1ji2N2+l7b4v1YNIuWWHllb+gw+e4eWxIZhMxwtASpmReR1r
+         OB64+5vGoox0JkGwm76BaHOfxgQHh7UP2LDdvRdUWLZMgd+pX7wQLpUP3LkR3Hmr2R2e
+         2PxGv61FNV98EvdmR+pQdrE9LMTpCif6hBFfhCF/EpqHEnvAAhBWAyR4slmIZL02VYE2
+         3aEg2yUnZ7hU+qyUrycZ9UzeLVS1SfjGx5pqlNGWQ+Suc3xrzeMEQzqcL6sOPyloco5m
+         IdmmNWAlq4+NNkv+B1t2jX7Fw9U3uKMZLYYm9X53mBjGz/iRtaOPNlGu8fuhBclF+m5T
+         N56w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.16 085/196] ext4: shutdown should not prevent get_write_access
-Date: Sun, 22 Apr 2018 15:51:45 +0200
-Message-Id: <20180422135108.697946198@linuxfoundation.org>
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Jason Gunthorpe <jgg@mellanox.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.16 117/196] drivers/infiniband/ulp/srpt/ib_srpt.c: fix build with gcc-4.4.4
+Date: Sun, 22 Apr 2018 15:52:17 +0200
+Message-Id: <20180422135110.298687910@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -39,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455105865825935?=
-X-GMAIL-MSGID: =?utf-8?q?1598455105865825935?=
+X-GMAIL-THRID: =?utf-8?q?1598455103090453749?=
+X-GMAIL-MSGID: =?utf-8?q?1598455103090453749?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,36 +52,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Andrew Morton <akpm@linux-foundation.org>
 
-commit 576d18ed60f5465110087c5e0eb1010de13e374d upstream.
+commit 06892cc190550807d332c95a0114c7e175584012 upstream.
 
-The ext4 forced shutdown flag needs to prevent new handles from being
-started, but it needs to allow existing handles to complete.  So the
-forced shutdown flag should not force ext4_journal_get_write_access to
-fail.
+gcc-4.4.4 has issues with initialization of anonymous unions:
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+drivers/infiniband/ulp/srpt/ib_srpt.c: In function 'srpt_zerolength_write':
+drivers/infiniband/ulp/srpt/ib_srpt.c:854: error: unknown field 'wr_cqe' specified in initializer
+drivers/infiniband/ulp/srpt/ib_srpt.c:854: warning: initialization makes integer from pointer without a cast
+
+Work aound this.
+
+Fixes: 2a78cb4db487 ("IB/srpt: Fix an out-of-bounds stack access in srpt_zerolength_write()")
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ext4_jbd2.c |    7 -------
- 1 file changed, 7 deletions(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/ext4_jbd2.c
-+++ b/fs/ext4/ext4_jbd2.c
-@@ -166,13 +166,6 @@ int __ext4_journal_get_write_access(cons
- 	might_sleep();
- 
- 	if (ext4_handle_valid(handle)) {
--		struct super_block *sb;
--
--		sb = handle->h_transaction->t_journal->j_private;
--		if (unlikely(ext4_forced_shutdown(EXT4_SB(sb)))) {
--			jbd2_journal_abort_handle(handle);
--			return -EIO;
--		}
- 		err = jbd2_journal_get_write_access(handle, bh);
- 		if (err)
- 			ext4_journal_abort_handle(where, line, __func__, bh,
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -841,8 +841,9 @@ static int srpt_zerolength_write(struct
+ 	struct ib_send_wr *bad_wr;
+ 	struct ib_rdma_wr wr = {
+ 		.wr = {
++			.next		= NULL,
++			{ .wr_cqe	= &ch->zw_cqe, },
+ 			.opcode		= IB_WR_RDMA_WRITE,
+-			.wr_cqe		= &ch->zw_cqe,
+ 			.send_flags	= IB_SEND_SIGNALED,
+ 		}
+ 	};
