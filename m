@@ -1,203 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757414AbeDVOyS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 10:54:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45346 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756903AbeDVOyP (ORCPT
+        id S1754327AbeDVPAr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 11:00:47 -0400
+Received: from mail-pf0-f174.google.com ([209.85.192.174]:37684 "EHLO
+        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753830AbeDVPAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 10:54:15 -0400
-Subject: Re: [PATCH v4 13/15] KVM: s390: configure the guest's AP devices
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-14-git-send-email-akrowiak@linux.vnet.ibm.com>
- <ff5c43bc-f000-8911-2273-a15c3533657c@linux.vnet.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Sun, 22 Apr 2018 10:54:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Sun, 22 Apr 2018 11:00:39 -0400
+X-Google-Smtp-Source: AIpwx48CbmPJWZC/bXhub3lTstkPJ7C1xTBh0K/gVnmVdVwa/bew+lrBLbXYuq3CG5zKgFRv3K9DbAzb8qyrBwKpf/8=
 MIME-Version: 1.0
-In-Reply-To: <ff5c43bc-f000-8911-2273-a15c3533657c@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18042214-0024-0000-0000-0000034C82CF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008900; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01021655; UDB=6.00521396; IPR=6.00800890;
- MB=3.00020714; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-22 14:54:09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042214-0025-0000-0000-000047C179FE
-Message-Id: <933d29fd-748e-5782-57fc-19e60fbebdd1@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-22_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804220169
+In-Reply-To: <20180422125141.GF17484@dhcp22.suse.cz>
+References: <1524243513-29118-1-git-send-email-chuhu@redhat.com>
+ <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com> <20180422125141.GF17484@dhcp22.suse.cz>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Sun, 22 Apr 2018 17:00:18 +0200
+Message-ID: <CACT4Y+YWUgyzCBadg+Oe8wDkFCaBzmcKDgu3rKjQxim7NXNLpg@mail.gmail.com>
+Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Chunyu Hu <chuhu@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/18/2018 07:56 AM, Pierre Morel wrote:
-> On 15/04/2018 23:22, Tony Krowiak wrote:
->> Registers a group notifier during the open of the mediated
->> matrix device to get information on KVM presence through the
->> VFIO_GROUP_NOTIFY_SET_KVM event. When notified, the pointer
->> to the kvm structure is saved inside the mediated matrix
->> device. Once the VFIO AP device driver has access to KVM,
->> access to the APs can be configured for the guest.
+On Sun, Apr 22, 2018 at 2:51 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Fri 20-04-18 18:50:24, Catalin Marinas wrote:
+>> On Sat, Apr 21, 2018 at 12:58:33AM +0800, Chunyu Hu wrote:
+>> > __GFP_NORETRY and  __GFP_NOFAIL are combined in gfp_kmemleak_mask now.
+>> > But it's a wrong combination. As __GFP_NOFAIL is blockable, but
+>> > __GFP_NORETY is not blockable, make it self-contradiction.
+>> >
+>> > __GFP_NOFAIL means 'The VM implementation _must_ retry infinitely'. But
+>> > it's not the real intention, as kmemleak allow alloc failure happen in
+>> > memory pressure, in that case kmemleak just disables itself.
 >>
->> Access to APs is configured when the file descriptor for the
->> mediated matrix device is opened by userspace. The items to be
->> configured are:
+>> Good point. The __GFP_NOFAIL flag was added by commit d9570ee3bd1d
+>> ("kmemleak: allow to coexist with fault injection") to keep kmemleak
+>> usable under fault injection.
 >>
->> 1. The ECA.28 bit in the SIE state description determines whether
->>     AP instructions are interpreted by the hardware or intercepted.
->>     The VFIO AP device driver relies interpretive execution of
->>     AP instructions so the ECA.28 bit will be set
+>> > commit 9a67f6488eca ("mm: consolidate GFP_NOFAIL checks in the allocator
+>> > slowpath") documented that what user wants here should use GFP_NOWAIT, and
+>> > the WARN in __alloc_pages_slowpath caught this weird usage.
+>> >
+>> >  <snip>
+>> >  WARNING: CPU: 3 PID: 64 at mm/page_alloc.c:4261 __alloc_pages_slowpath+0x1cc3/0x2780
+>> [...]
+>> > Replace the __GFP_NOFAIL with GFP_NOWAIT in gfp_kmemleak_mask, __GFP_NORETRY
+>> > and GFP_NOWAIT are in the gfp_kmemleak_mask. So kmemleak object allocaion
+>> > is no blockable and no reclaim, making kmemleak less disruptive to user
+>> > processes in pressure.
 >>
->> 2. Guest access to AP adapters, usage domains and control domains
->>     is controlled by three bit masks referenced from the
->>     Crypto Control Block (CRYCB) referenced from the guest's SIE state
->>     description:
->>
->>     * The AP Mask (APM) controls access to the AP adapters. Each bit
->>       in the APM represents an adapter number - from most significant
->>       to least significant bit - from 0 to 255. The bits in the APM
->>       are set according to the adapter numbers assigned to the mediated
->>       matrix device via its 'assign_adapter' sysfs attribute file.
->>
->>     * The AP Queue (AQM) controls access to the AP queues. Each bit
->>       in the AQM represents an AP queue index - from most significant
->>       to least significant bit - from 0 to 255. A queue index references
->>       a specific domain and is synonymous with the domian number. The
->>       bits in the AQM are set according to the domain numbers assigned
->>       to the mediated matrix device via its 'assign_domain' sysfs
->>       attribute file.
->>
->>     * The AP Domain Mask (ADM) controls access to the AP control 
->> domains.
->>       Each bit in the ADM represents a control domain - from most
->>       significant to least significant bit - from 0-255. The
->>       bits in the ADM are set according to the domain numbers assigned
->>       to the mediated matrix device via its 'assign_control_domain'
->>       sysfs attribute file.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_ops.c     |   50 
->> +++++++++++++++++++++++++++++++++
->>   drivers/s390/crypto/vfio_ap_private.h |    2 +
->>   2 files changed, 52 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
->> b/drivers/s390/crypto/vfio_ap_ops.c
->> index bc2b05e..e3ff5ab 100644
->> --- a/drivers/s390/crypto/vfio_ap_ops.c
->> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->> @@ -53,6 +53,54 @@ static int vfio_ap_mdev_remove(struct mdev_device 
->> *mdev)
->>       return 0;
->>   }
->>
->> +static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
->> +                       unsigned long action, void *data)
->> +{
->> +    struct ap_matrix_mdev *matrix_mdev;
->> +
->> +    if (action == VFIO_GROUP_NOTIFY_SET_KVM) {
->> +        matrix_mdev = container_of(nb, struct ap_matrix_mdev,
->> +                       group_notifier);
->> +        matrix_mdev->kvm = data;
->> +    }
->> +
->> +    return NOTIFY_OK;
->> +}
->> +
->> +static int vfio_ap_mdev_open(struct mdev_device *mdev)
->> +{
->> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
->> +    unsigned long events;
->> +    int ret;
->> +
->> +    matrix_mdev->group_notifier.notifier_call = 
->> vfio_ap_mdev_group_notifier;
->> +    events = VFIO_GROUP_NOTIFY_SET_KVM;
->> +
->> +    ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->> +                     &events, &matrix_mdev->group_notifier);
->> +    if (ret)
->> +        return ret;
->> +
->> +    ret = kvm_ap_interpret_instructions(matrix_mdev->kvm, true);
->> +    if (ret)
->> +        return ret;
->> +
->> +    ret = kvm_ap_configure_matrix(matrix_mdev->kvm,
->> +                      matrix_mdev->matrix);
+>> It doesn't solve the fault injection problem for kmemleak (unless we
+>> change __should_failslab() somehow, not sure yet). An option would be to
+>> replace __GFP_NORETRY with __GFP_NOFAIL in kmemleak when fault injection
+>> is enabled.
 >
-> If all went OK, you may want to increase the module reference count
-> to avoid removing the module while in use by QEMU.
-Sounds reasonable.
+> Cannot we simply have a disable_fault_injection knob around the
+> allocation rather than playing this dirty tricks with gfp flags which do
+> not make any sense?
 >
+>> BTW, does the combination of NOWAIT and NORETRY make kmemleak
+>> allocations more likely to fail?
 >
->> +
->> +    return ret;
->> +}
->> +
->> +static void vfio_ap_mdev_release(struct mdev_device *mdev)
->> +{
->> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
->> +
->> +    kvm_ap_deconfigure_matrix(matrix_mdev->kvm);
->> +    kvm_ap_interpret_instructions(matrix_mdev->kvm, false);
->> +    vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->> +                 &matrix_mdev->group_notifier);
->
-> ... and also decrease the reference count.
-Ditto.
->
->
->> +}
->> +
->>   static ssize_t name_show(struct kobject *kobj, struct device *dev, 
->> char *buf)
->>   {
->>       return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
->> @@ -754,6 +802,8 @@ static ssize_t matrix_show(struct device *dev, 
->> struct device_attribute *attr,
->>       .mdev_attr_groups    = vfio_ap_mdev_attr_groups,
->>       .create            = vfio_ap_mdev_create,
->>       .remove            = vfio_ap_mdev_remove,
->> +    .open            = vfio_ap_mdev_open,
->> +    .release        = vfio_ap_mdev_release,
->>   };
->>
->>   int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
->> diff --git a/drivers/s390/crypto/vfio_ap_private.h 
->> b/drivers/s390/crypto/vfio_ap_private.h
->> index f248faf..48e2806 100644
->> --- a/drivers/s390/crypto/vfio_ap_private.h
->> +++ b/drivers/s390/crypto/vfio_ap_private.h
->> @@ -31,6 +31,8 @@ struct ap_matrix {
->>
->>   struct ap_matrix_mdev {
->>       struct kvm_ap_matrix *matrix;
->> +    struct notifier_block group_notifier;
->> +    struct kvm *kvm;
->>   };
->>
->>   static inline struct ap_matrix *to_ap_matrix(struct device *dev)
->
->
+> NOWAIT + NORETRY simply doesn't make much sesne. It is equivalent to
+> NOWAIT.
+
+Specifying a flag that says "don't do fault injection for this
+allocation" looks like a reasonable solution. Fewer lines of code and
+no need to switch on interrupts. __GFP_NOFAIL seems to mean more than
+that, so perhaps we need a separate flag that affects only fault
+injection and should be used only in debugging code (no-op without
+fault injection anyway).
