@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/5KBQpC0P5QAVotMQir8JGU3T0phdAL/AqH1vH9uAHvi9O4Ez++5+/7P883rJBkMYQP8sM
-ARC-Seal: i=1; a=rsa-sha256; t=1524405470; cv=none;
+X-Google-Smtp-Source: AIpwx495kR3bGQU1nlPLrZ6fmlWkKEUaNiVDZFIzhGj99325SUI0hiQIg/RUbW5kpeiwAWlIpliD
+ARC-Seal: i=1; a=rsa-sha256; t=1524405467; cv=none;
         d=google.com; s=arc-20160816;
-        b=ULthK4zDBhxuTrnVh9Ie/BvdL/9dYMjbWeNafExs/KLkWpHfWhyYm9wIPqAHLQkUGq
-         5+5k1cywjctJjc6VvkFrPGo4vST1X2bM/mUeh6WYOzQJvSKRE2yDjEc4cEaefFdD0lLR
-         aiQfCqG4dqfqo4e7dxjlj41hm/a/6AKB8+qHsqpOCdPkLf71gel5j4aXeu0jxOAVVQn5
-         yW3FLrqQjk/deTwUdOZOT5C+IeUf11XzgSilkWnLqofXAXB5Dqws/0YHoCQ93+TQoiFJ
-         I/IGkGGT5IUIK/Ty9T4/XKYteVb7LLFHXR4C+dLyCPNUnsgYRkbT4HAI0a/hugtTXwpW
-         yECQ==
+        b=uNOpSBzjfb0zx0LLX/Ug6n4CBinChX3rx+IcwQc1p6eAI6tyHeWN+MNF2b/i+uIHQI
+         MU0KXCCTwEW9BjSClkp4GIcU4KpSwkG5FDUIGqhubp1q9pAicWRvPvvEE8h5aC9oGUFR
+         1/Cwt99ciyVi9B5kkI85NfrzmpCFVWlyVXXLlFRqc83etSNFOksS37GC8u+470cZwh0v
+         bNG7uKNJ0nAdKL2GiDRayy5Or4BeBjSuwupWJSu03WrTyiZfVsQlJRVAr/N4rBK8Ci8a
+         ISO0/08PJNHBaw5wnqPnnqlaFBNamaJryio2WOugxl1gKykCbM/m3n2CFwSW7UXcn7nI
+         sJiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0qPIxFxMAB/cr3SeCdsxBH+bysnBboWJomLFIhARBHw=;
-        b=ZiteA6tviXwqu+3iy3oL6371APpHSYiSea5krW7P/ozO47tp9ZfyuIADHHBbaC25Ab
-         vFI6tahtWalBr2M8Kx9BCUJXIFnuvk/SvQ4Hx4oP9FXbW6s4JwLQD/nayCp5pOP9wNqf
-         RIrheOl8UA+h144L2ZMEvyrkYYCyIZWhJ6EtpcYkGdDEz66PpEsJMUuppoDjFV9+Pqpt
-         z+P6fhNxhyFXJiaZVc7lx8e/mj+/kuGidQn7i4Ktp0i/8QOMPLAtUkom0i9KVGAZmsEZ
-         UngvsmLaaW/aWaltOoYUie753ngV8IOYPvUWmdIhwVdiySg+2VHwtry3OwmUfM8g28fv
-         2Lwg==
+        bh=jESWZSwxqujIGmDOjD+Nm9l4zcf4sK9Na5k+WOURsew=;
+        b=OFmMoVSQmB3xbZbYlXjKbTECvZTR0MUsXyysx06eSdVW9z8v8OrP12JXKZUir+HP1e
+         zjjHVuQzoCCKUiS/Soz3zWe936ZCdCOxVEJ2Ie90kfo/kpFz4tj2akPN75AWqkIu5kCH
+         2jLZKyBHml3R/7G7U+03XVn5IcUN8wM7okiNsv2cTw42ZQpocgVmNDqw+/3xcuBhY/Jv
+         kY4E0DnBxKAAG99L1XJ9Bt++4rGicImPCvREYH0i3K0kycta8yXGOWJk1DtoE+ViqVO1
+         AzdJQeKW6hJ2uCKdba3mDy09vi+AgPkDlqC8TvctDKJi3FQiULuwpbuKJ69KVrYduGjq
+         eEdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH 4.16 077/196] thunderbolt: Resume control channel after hibernation image is created
-Date: Sun, 22 Apr 2018 15:51:37 +0200
-Message-Id: <20180422135108.224384580@linuxfoundation.org>
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.16 076/196] thunderbolt: Serialize PCIe tunnel creation with PCI rescan
+Date: Sun, 22 Apr 2018 15:51:36 +0200
+Message-Id: <20180422135108.176958731@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454990022490536?=
-X-GMAIL-MSGID: =?utf-8?q?1598454990022490536?=
+X-GMAIL-THRID: =?utf-8?q?1598454987127577540?=
+X-GMAIL-MSGID: =?utf-8?q?1598454987127577540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,34 +52,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit f2a659f7d8d5da803836583aa16df06bdf324252 upstream.
+commit a03e828915c00ed0ea5aa40647c81472cfa7a984 upstream.
 
-The driver misses implementation of PM hook that undoes what
-->freeze_noirq() does after the hibernation image is created. This means
-the control channel is not resumed properly and the Thunderbolt bus
-becomes useless in later stages of hibernation (when the image is stored
-or if the operation fails).
+We need to make sure a new PCIe tunnel is not created in a middle of
+previous PCI rescan because otherwise the rescan code might find too
+much and fail to reconfigure devices properly. This is important when
+native PCIe hotplug is used. In BIOS assisted hotplug there should be no
+such issue.
 
-Fix this by pointing ->thaw_noirq to driver nhi_resume_noirq(). This
-makes sure the control channel is resumed properly.
-
-Fixes: 23dd5bb49d98 ("thunderbolt: Add suspend/hibernate support")
+Fixes: f67cf491175a ("thunderbolt: Add support for Internal Connection Manager (ICM)")
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thunderbolt/nhi.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/thunderbolt/switch.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/thunderbolt/nhi.c
-+++ b/drivers/thunderbolt/nhi.c
-@@ -1064,6 +1064,7 @@ static const struct dev_pm_ops nhi_pm_op
- 					    * we just disable hotplug, the
- 					    * pci-tunnels stay alive.
- 					    */
-+	.thaw_noirq = nhi_resume_noirq,
- 	.restore_noirq = nhi_resume_noirq,
- 	.suspend = nhi_suspend,
- 	.freeze = nhi_suspend,
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -716,6 +716,13 @@ static int tb_switch_set_authorized(stru
+ 	if (sw->authorized)
+ 		goto unlock;
+ 
++	/*
++	 * Make sure there is no PCIe rescan ongoing when a new PCIe
++	 * tunnel is created. Otherwise the PCIe rescan code might find
++	 * the new tunnel too early.
++	 */
++	pci_lock_rescan_remove();
++
+ 	switch (val) {
+ 	/* Approve switch */
+ 	case 1:
+@@ -735,6 +742,8 @@ static int tb_switch_set_authorized(stru
+ 		break;
+ 	}
+ 
++	pci_unlock_rescan_remove();
++
+ 	if (!ret) {
+ 		sw->authorized = val;
+ 		/* Notify status change to the userspace */
