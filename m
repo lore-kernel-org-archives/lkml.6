@@ -1,77 +1,87 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4/rFEOs+DwM+PvB//chiEbSB9cNmNZ7K7ieRnRYRUHfHzILZZQQbVJwGjXmLeSsUFAIG6yQ
-ARC-Seal: i=1; a=rsa-sha256; t=1524301497; cv=none;
+Return-Path: <tom.hromatka@oracle.com>
+X-Google-Smtp-Source: AIpwx4/CBMKPWrI4g4/4HERc2TaP8SPAhVhEVx+Gr6buJxSwMB9bChuBcUlkzopiH3w5yoXGi1Gt
+ARC-Seal: i=1; a=rsa-sha256; t=1524433981; cv=none;
         d=google.com; s=arc-20160816;
-        b=ulydTNPmg+dTbrzhRDX9+Ws3kSy+X7uQ/+5Hz2egEVqy1e8b1wnbNc91p6tqmY1oG0
-         KPOb6qM+AkB6AMR0DAF9c5DFMo5n2K/3XNxjqfj+CXsxuMf0YjtFMtDDDRBPFJZSQfX+
-         yMr3QxA67FmdN0j4AgcKji6ZQevVa38DBRXmqRY2IPKTa7ZjPjeAFfyFppdNDPtm4kaf
-         +wpkic0PA+0DLjsH1kTBcBUC/jQJm24/GxH36sD5X6bJ5Ak55gmOCgkN5lM6TlaV19b+
-         17hp0os01FmnTGa35jV+Iae1A77txjKNynwSZEK6QuOTjGP0WPwrKenPlyHLlfmgTN/l
-         isxA==
+        b=k8XyywmCwGUU2ClTAnlZi3jfnatyBq5WCenIQZH1dHAofP2RbFPoVri49mdUOjPLZ+
+         pQu5QdnH9IOVKGRgyse+kdsK1tTdCyqOdRyZfL+/iGVu/PIqkwDJTgGEWoUnZYdpK8Cz
+         sozB7WjPaRaJ52U9iluxeQycU8ELeXABU1YGGVyi8+TIIus6/gVGcEv0DeZnireUx1f+
+         5y9RlOMFva1aF7j3pv8Kf5dFdMMyL5FH1ZGFI0VTpriHuqP4Gtnph9kwlgPwFMpovFp0
+         ffodxnPv1Sr5JiuvO6iPZeRnONpQOJvnAe+3jouPcXf49F9pMIq568IAUU32WNN956k3
+         Shqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:user-agent:in-reply-to
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=OI1OugHEGr0TiNJ3QW2E149pjk10RqQoKyXpCb+p1nQ=;
-        b=Qi1OfHdGt/rXSbuHzRJmWleWQGi7Th3Z2Lk9mIeQE9ZsaiJKKvwGda7UFSIjODyHBQ
-         Tkwa29hig8YjIWgcd9omlbCnCpFlCxrQCYrYLRdd6T4G6CJvhm6BQY+he3aUU80op1B+
-         41tggCefBSICf/2QJD+VHiwt3sUElbTJEUrWdiAl7buACOx/cShlbmcpln7+bBZFWXeM
-         +nZGWU0pYNmYnhToV9r6Oi835ZUbC0spS0J6m8VVSn1Kt0A+qMlXWevE8hGHGnjPLR1n
-         2MBoQLvwQd/AkTuWu+RXVHXPtCzTP2C1WUqxAzNwSSlOangu2bwC4mv88igFGtDSm/jf
-         TX1w==
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=WUoLKBqSbt/sssOayc+07qPT0ezVfZSwyNJ2pc4McU8=;
+        b=nnRSqWt0FdEGqBAh/cVeGIjx0NN78rbS0k44h1oT9747q3FY2wRf2QjQA9WkCCkMnf
+         9qD/E+UtnDkVDOgYAXROxJSz8i1McmOZJ7NDG/I2+EjhZL/9gb4t2fN91hf4oGuZ35Pj
+         vPTLYxhfU4PvIE6THmlvfcFjI0nACDPk9K1+JD4hw+gJI828B6fWUvp3+oqWyxYVcCGR
+         eNZS4aOvS6EAl/CuBKna+rOpOLaAEYPuhqwlK0RegS/5w1UPo+zerbR87A0rk2ev9K7W
+         TEikGJRO9ho7Tw/Z8bLYP2ZfufI6KXisIV6dGEbRk4uLSCakS8imd4oIuWI04y0Z3cA8
+         OOUA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=alNhwFhg;
+       spf=pass (google.com: domain of tom.hromatka@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=tom.hromatka@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751457AbeDUJE5 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Sat, 21 Apr 2018 05:04:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42374 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751366AbeDUJE4 (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Sat, 21 Apr 2018 05:04:56 -0400
-Date: Sat, 21 Apr 2018 11:04:49 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Tom Hromatka <tom.hromatka@oracle.com>
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=alNhwFhg;
+       spf=pass (google.com: domain of tom.hromatka@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=tom.hromatka@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Subject: Re: [PATCH v4 1/2] char: sparc64: Add privileged ADI driver
+To: Greg KH <gregkh@linuxfoundation.org>
 Cc: davem@davemloft.net, sparclinux@vger.kernel.org, arnd@arndb.de,
         linux-kernel@vger.kernel.org, shuah@kernel.org,
         linux-kselftest@vger.kernel.org, allen.pais@oracle.com,
         khalid.aziz@oracle.com, shannon.nelson@oracle.com,
         anthony.yznaga@oracle.com
-Subject: Re: [PATCH v4 1/2] char: sparc64: Add privileged ADI driver
-Message-ID: <20180421090449.GA8194@kroah.com>
 References: <20180420205221.488589-1-tom.hromatka@oracle.com>
  <20180420205221.488589-2-tom.hromatka@oracle.com>
+ <20180421090449.GA8194@kroah.com>
+From: Tom Hromatka <tom.hromatka@oracle.com>
+Message-ID: <7241fc77-c38c-abdb-d8dc-4b22dac36895@oracle.com>
+Date: Sun, 22 Apr 2018 15:52:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420205221.488589-2-tom.hromatka@oracle.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+In-Reply-To: <20180421090449.GA8194@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8871 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=814
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804220243
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
 X-GMAIL-THRID: =?utf-8?q?1598287411994032224?=
-X-GMAIL-MSGID: =?utf-8?q?1598345967306800400?=
+X-GMAIL-MSGID: =?utf-8?q?1598484886942394051?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 20, 2018 at 02:52:20PM -0600, Tom Hromatka wrote:
-> --- /dev/null
-> +++ b/drivers/char/adi.c
-> @@ -0,0 +1,240 @@
-> +// SPDX-License-Identifier: GPL-2.0
 
-Good, but:
 
-> +MODULE_LICENSE("GPL");
+On 04/21/2018 03:04 AM, Greg KH wrote:
+> On Fri, Apr 20, 2018 at 02:52:20PM -0600, Tom Hromatka wrote:
+>> --- /dev/null
+>> +++ b/drivers/char/adi.c
+>> @@ -0,0 +1,240 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+> Good, but:
+>
+>> +MODULE_LICENSE("GPL");
+> That's the wrong line :(
+>
+> Read include/linux/module.h for the correct string to put here for a
+> GPL version 2 only module.
+>
 
-That's the wrong line :(
+<Tom hangs his head in shame>
 
-Read include/linux/module.h for the correct string to put here for a
-GPL version 2 only module.
+My sincerest apologies, Greg.  I'll follow the guidance from
+the aforementioned file and re-re-submit the patch tomorrow :(.
 
-thanks,
+Thanks so much for your patience.
 
-greg k-h
+Regards,
+
+Tom
