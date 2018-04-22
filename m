@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+U9RZxDZtDjhdJ3SKuwIn2qNQ7ZANXIB8LKfANiToC/jNB2KzhT5FcP5IkXyhYh1C0SJJG
-ARC-Seal: i=1; a=rsa-sha256; t=1524405413; cv=none;
+X-Google-Smtp-Source: AIpwx4/JP8N6Cwu0UAjsGvVddkpvCwFcIWIQcLdxis0QIheGhYGTZx4mwvmGpSAfQzmoNd+/UmGk
+ARC-Seal: i=1; a=rsa-sha256; t=1524405411; cv=none;
         d=google.com; s=arc-20160816;
-        b=lhMO1y1iix7S4u/RAyaLaPcFsxNkO1sMARwXQU5g8nBoUAvX0J8LejKFA496Hnu8kI
-         BHlP5Ptqb8/s9gL7xUNDlGz6Dw1vI8ioywclqaHSSy2iQham9/QM/TyWTDreQfgvxF8U
-         mL8x+oaDLu2ecwpolMtTFPyKBdKG8JibVJFxjgCX4s69Z4GMC9Efyx4WfSgAOKmyvbMs
-         tkZzUUa/21KkewVmQTwdlh3vJiHcf3McJvadUXTkbS7CEA7q7JGyGaeHXaZ78VsCLxGl
-         s0RKfjK4CFo575VxUfc0CLn9JKH2rAbbi5ZdI5tu6PXb51dVNImzYU2nmIbK5qLwbu48
-         kL9w==
+        b=dHBavlHum20lDUY1be6vG0ytgdLpkae1PFTDtreWBti1/X7ZeeHgArhONRTzCp03Mm
+         G180gG0SVGZ9u60qbTrSlv0E4Ops1IsWorVZXCt3jLhrBabmotJ49a4yRfVDXhmh6ZbP
+         TQvifBahHRpFVG54prZ+j9MP9p7/PoZgu1fF3LH/caGJUa+SQPbn7An0KSC2PqkyOQbx
+         2nWTfOWSHRXHwnXwSvajwY/zDDYYKMrFUaeBue23doGaOAaM3kfmySxxS7GiF0SpJsm6
+         hBr3jDHBHrUqo/pqcMTtln1aQeuSHgR6+9CgfW5t5m9fQ/OUmR1e6EREaA0gHmA2DH7o
+         g0Sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/61b+6Y52gSAIDyrFrh/xs5F5Zef5NOIaJkRbdoXHf4=;
-        b=sf8lzcMotCD2rwha+26TsaaSzfMOO1wGOoe3pUKmSChw89Y0nFtLuvSL2ON/MeJrch
-         2tbBdWl+TGjtzQhnFKxLoF6cFlnZ9EK5mahnMZE8EfrGWT6h3QLzw/xdPySWw4JizrO5
-         FKcm65nL8E7gCcP+lrfZKwZyr86uav5NXBcenKBiFfsuP1dk/5OJ2ypfyG+1sa5FWoFi
-         rBd28juA+kPcNYtsg7F6vc2Nc7ALQ0siBo1wGkiy4ADDfH30Q/U66zjzSMjljcu7mdMf
-         fb0s5FTicdoRZvCMR8B1i99HtBk/SMIxEXlB/CjMfyiTjjBj5FBXH8mW250sfa9upzY2
-         l7uw==
+        bh=OD2wnv0Mi5QoqLn3dhe5/Fl/OjS5xmT7+2hzFwAV3nI=;
+        b=Wa/c2CBgDbBXiIvkqihDMHOHdGKR10HeV2uuTHv+g9IC3xkhVOHzz2upZQpzwEzasR
+         ZoVGxbRvrZIBjOlnVEqwCATNDWjHVRInRlhRHfmWAU85RS33ekh2956/WMwK67kREUpH
+         c7vI3CvGJL5RcY+UxSdGcB8VHPbleIUC425hQsIv0gRIWUcxKrl/XkBVm20H66jH6uoj
+         gKaOFeQ0I0jezQc5QOlNLUXO/KY3WKK66Ppn6wwrPD/C7qhO+7RJ6ydolybmo0Al2XuC
+         P/Js0d7c6Mo1ayHO2qp9JhieK/YDgncD9CpZbg5+Nhz9K9qjAqctnQ14V4nnAbVytv3r
+         /b7w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>,
-	Christoph Hellwig <hch@lst.de>,
-	Jean Delvare <jdelvare@suse.de>
-Subject: [PATCH 4.16 058/196] swiotlb: fix unexpected swiotlb_alloc_coherent failures
-Date: Sun, 22 Apr 2018 15:51:18 +0200
-Message-Id: <20180422135107.210672134@linuxfoundation.org>
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Aurelien Aptel <aaptel@suse.com>,
+	Steve French <smfrench@gmail.com>
+Subject: [PATCH 4.16 057/196] CIFS: fix sha512 check in cifs_crypto_secmech_release
+Date: Sun, 22 Apr 2018 15:51:17 +0200
+Message-Id: <20180422135107.162407950@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454931004625825?=
-X-GMAIL-MSGID: =?utf-8?q?1598454931004625825?=
+X-GMAIL-THRID: =?utf-8?q?1598454928419788198?=
+X-GMAIL-MSGID: =?utf-8?q?1598454928419788198?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 9e7f06c8beee304ee21b791653fefcd713f48b9a upstream.
+commit 70e80655f58e17a2e38e577e1b4fa7a8c99619a0 upstream.
 
-The code refactoring by commit 0176adb00406 ("swiotlb: refactor coherent
-buffer allocation") made swiotlb_alloc_buffer almost always failing due
-to a thinko: namely, the function evaluates the dma_coherent_ok call
-incorrectly and dealing as if it's invalid. This ends up with weird
-errors like iwlwifi probe failure or amdgpu screen flickering.
+It seems this is a copy-paste error and that the proper variable to use
+in this particular case is _sha512_ instead of _md5_.
 
-This patch corrects the logic error.
-
-Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1088658
-Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1088902
-Fixes: 0176adb00406 ("swiotlb: refactor coherent buffer allocation")
-Cc: <stable@vger.kernel.org> # v4.16+
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Cc: Jean Delvare <jdelvare@suse.de>
+Addresses-Coverity-ID: 1465358 ("Copy-paste error")
+Fixes: 1c6614d229e7 ("CIFS: add sha512 secmech")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Steve French <smfrench@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/swiotlb.c |    2 +-
+ fs/cifs/cifsencrypt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -732,7 +732,7 @@ swiotlb_alloc_buffer(struct device *dev,
- 		goto out_warn;
+--- a/fs/cifs/cifsencrypt.c
++++ b/fs/cifs/cifsencrypt.c
+@@ -829,7 +829,7 @@ cifs_crypto_secmech_release(struct TCP_S
+ 		server->secmech.md5 = NULL;
+ 	}
  
- 	*dma_handle = swiotlb_phys_to_dma(dev, phys_addr);
--	if (dma_coherent_ok(dev, *dma_handle, size))
-+	if (!dma_coherent_ok(dev, *dma_handle, size))
- 		goto out_unmap;
- 
- 	memset(phys_to_virt(phys_addr), 0, size);
+-	if (server->secmech.md5) {
++	if (server->secmech.sha512) {
+ 		crypto_free_shash(server->secmech.sha512);
+ 		server->secmech.sha512 = NULL;
+ 	}
