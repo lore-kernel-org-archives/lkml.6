@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49CO6BT4j0fqiyoKzwNPucLy0w7qkDO8Sjx3qd35B7+fFw5dKrco96Cl9nJjVQCjO9RsPPZ
-ARC-Seal: i=1; a=rsa-sha256; t=1524405630; cv=none;
+X-Google-Smtp-Source: AIpwx4/zP4XkgD+WP69pqvOcke6YOK5OewUl+fps+NHcUEp5QUiaU2KunrdOMkhYKTmheqkQD907
+ARC-Seal: i=1; a=rsa-sha256; t=1524405626; cv=none;
         d=google.com; s=arc-20160816;
-        b=bNdkwZAEjc4XZUdDa1nX/qePqkvZ8l7y88ZQGIVd2OhJJXDmK9r+zrkMZ0NrNTS/9+
-         bWK6vth8a/Tq4yuieATlHGcPak5SCqiaQ3nT3Gg2zMgNRVTMkWj2gSW7WvYVycEzlBqT
-         vdP2sk2KzinqRZFuShfBlRc63mJa497YMF+b9E8d6pELHQsZtUevrGxOtgvH3HWnXfYW
-         xlDafoln26qyhrKWXXtf8NQEnJpz7m+5uEwyfhIZotbDKHekypeMwRHlzlpAZQJDBrN/
-         dABVccCqRJGJ2vRFUhFYVQeWF2GWNMeRsPH/EaTx0q7kdctAwDHUvEqss6WfWcPpYGGX
-         iggw==
+        b=Wr3o7LdQlcsKbxZfqPKGLJeXgj5Sv8sqzYsW+6WeyhcEKEtmx9R7Xju1c+0AsQVhoi
+         WSKkzAKcK5nWZLVeYBqh7Khh57bYt9tifXclc//8K7pycQbcl4yCCOyFtiAxjUeMZsv6
+         4u7aGsI6Y6JlUVKFJX6KQ8AHaTqraNvo6X8/wvQyS9CiX+7j/4yhvB9ayzO4J6Lghthe
+         zEC1dhCKVd8lx7kQYoeNcn8Qn5HMwQOzkJEWfctPgxoYABvoqdiozJRsOtmQbCXaillT
+         TFnpiKWuM4aTr4BZwaXkXGgsqH5Vbc/SOHltQeManQCgTKB7pozWRuxtuEP5Y3kf4kUs
+         446w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5vAWAiX4FUOEqOTEUagqTnlCqrUTmia4QeUMrmiRiAI=;
-        b=ry7MagxrEqOw/FYcHLZWk/gI6GVyBbkAXFZsYgaMhgG8CgeL2uJbUkHPVGbbq/R00o
-         fBQroPKApafyMI6Rf/W9FQ8upnMXywqVFLJuNlSpit3NH5RZPnUG0B7wbs0WyQFF0hYy
-         cMDnx3VoLb0a4qCmocM9nhMk/5qR8xK2AnZFwF+bVoVkSvajjigNrsptdnT7tgIGPjBs
-         auYJX6ILCL1EeERWtiF/0VmTDZGCMC7iLHlviWaJhMyyb98GO+F+Nw5EnihT5oQRayYu
-         rYP6isgOWVWgoIoXUADdcnxBzp19KP+lwpjMn7j1oxBaoTgtu1AeyydPd5IM7CdqwFcM
-         B8Bw==
+        bh=Rang+NjCxvE6irwpVRfV5x4oUZkZBuP8wFs5vzyp9WM=;
+        b=RiMoHkqLhihD5+JKYeoAoSENL1VsMWtXE6Ohzpd8o4mdARiXDSVG6j0mAthZbTgeRB
+         1jDTfeKZEuD78cNFlrAFxsOwAXvHZ5uthoJnV7D7QqrgilsfISwPB8xrZsYXLw52bHoi
+         92Ln8CAQK455aVebjSTn+n6nAcLOsgF64irA4tZM5nzsU/8yTAOzD96xCMr8q9/aeQnV
+         AGEGxOiXoU/sTbOxVcTtUJAkvPuMZrruHlUZU2K0kJddoYxwjrXhW3iI5RFOlxsBh8OW
+         gmoYSQcy9Id/dfXCJ2QFXDDKvlqm0RbeFwc0eyLffp4Vazi5mO1pkCJgOzL1FgVgfPw2
+         u23g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.16 137/196] trace_uprobe: Use %lx to display offset
-Date: Sun, 22 Apr 2018 15:52:37 +0200
-Message-Id: <20180422135111.330525700@linuxfoundation.org>
+	Charlene Liu <charlene.liu@amd.com>,
+	Krunoslav Kovac <Krunoslav.Kovac@amd.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.16 136/196] drm/amd/display: HDMI has no sound after Panel power off/on
+Date: Sun, 22 Apr 2018 15:52:36 +0200
+Message-Id: <20180422135111.284793502@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455157680430617?=
-X-GMAIL-MSGID: =?utf-8?q?1598455157680430617?=
+X-GMAIL-THRID: =?utf-8?q?1598455154608042358?=
+X-GMAIL-MSGID: =?utf-8?q?1598455154608042358?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +51,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+From: Charlene Liu <charlene.liu@amd.com>
 
-commit 18d45b11d96e6f9b3814960a1394083a3d6b7f74 upstream.
+commit af2ac326087da632e9580f65205f4cc4205caf85 upstream.
 
-tu->offset is unsigned long, not a pointer, thus %lx should
-be used to print it, not the %px.
-
-Link: http://lkml.kernel.org/r/20180315082756.9050-1-ravi.bangoria@linux.vnet.ibm.com
-
+Signed-off-by: Charlene Liu <charlene.liu@amd.com>
+Reviewed-by: Krunoslav Kovac <Krunoslav.Kovac@amd.com>
+Acked-by: Harry Wentland <harry.wentland@amd.com>
 Cc: stable@vger.kernel.org
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Fixes: 0e4d819d0893 ("trace_uprobe: Display correct offset in uprobe_events")
-Suggested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_uprobe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/dce/dce_stream_encoder.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -608,7 +608,7 @@ static int probes_seq_show(struct seq_fi
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_stream_encoder.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_stream_encoder.c
+@@ -736,6 +736,8 @@ static void dce110_stream_encoder_update
+ 		if (info_frame->avi.valid) {
+ 			const uint32_t *content =
+ 				(const uint32_t *) &info_frame->avi.sb[0];
++			/*we need turn on clock before programming AFMT block*/
++			REG_UPDATE(AFMT_CNTL, AFMT_AUDIO_CLOCK_EN, 1);
  
- 	/* Don't print "0x  (null)" when offset is 0 */
- 	if (tu->offset) {
--		seq_printf(m, "0x%px", (void *)tu->offset);
-+		seq_printf(m, "0x%0*lx", (int)(sizeof(void *) * 2), tu->offset);
- 	} else {
- 		switch (sizeof(void *)) {
- 		case 4:
+ 			REG_WRITE(AFMT_AVI_INFO0, content[0]);
+ 
