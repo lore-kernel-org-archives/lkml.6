@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49bMV34bbbvnSjzJpK1FsCVZkwwyz3rCmEH4ZRCzkCWoKhbjnvumHfTgDP2FOOFvAAHWipW
-ARC-Seal: i=1; a=rsa-sha256; t=1524405927; cv=none;
+X-Google-Smtp-Source: AIpwx4929oiybnSTM9cquiRegq2pzioIYUcMUtf978MmDhfZ9D6HhZZUagFK5gZtnP2J/X614cfN
+ARC-Seal: i=1; a=rsa-sha256; t=1524405925; cv=none;
         d=google.com; s=arc-20160816;
-        b=BEqsHJCL6mpG1i0W+/18meU7ggxr5eNKuRw+FMVW5mB+LuW2GRhol/6t6rmQ35Xjl7
-         //zZFSrdQAWZFzMxGY+Sgt129UMLY5QkijzeLRGTd+ONhHZY0wCyp3WCM1g6FFfMEjea
-         qFzPThC8QIMHM48j+GvvVu7JqVRuNCh+Pi5nHR1MjtUqDlQi64QAAr3YWj0ywfY6r9jP
-         pBpAvk7G76P9f6XUKmsBKzxcnb8N+aVnD1jQ6G6Z6YfGAyIePQrMTTRTmI9AD+/NdAxC
-         Ibkl2xmkW+1SO534Cr82b164dCb/B9K9ydD/Orx8JlGg7cT80lRslUw8W2FETuKgpRNq
-         5iTw==
+        b=Mk/IwHP4BqMmcyiwID+3jsfvqXsPFdLDfR1iJXVO/rHq/jcRv7/JSyAKrGFPUwBeL9
+         7yZfJXfpZfkpfitqsvs4GaMh2jgUcSJzuUk72fwzb2VFxCZD5nJ9drhMtfyhcgiicagY
+         nu/LMsGbw/933sy1MCONffL7knKOteKXidWuj9aFbucZ+ElmD3McojW4krRUPgAfCUR3
+         bN5A1P+VMT6BN3JS94Pn/LnarUsTJrzwdaxpnzPqSFyX2+ljM2qp0zutwdW1B4uk9PWv
+         r7LUdbMvggrCjlyy6Y9GMcLwxt7mEBGxCoXlaLjCmB/O5c94kJFCGvxL+DKsHIBEaO3t
+         vbLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RPcKIMkoMkRWGF1Mw1PUwfAfuIqUni5Jm1oNH+ilwPI=;
-        b=1JGKBPGChT50jflEnQ2uYn5mVk4SZnQsqeEkyQznDQSUsLpyX3q2rwviZQ49DelIyR
-         2TCdIw7zBLU8opGeEuylSys9GNFPkBt74i5rjgGSEULrQ0JUVO03bOtOilCRIHMLBHQh
-         GyDN8jP/UYkFGjDgMXX0r/pYXWso3ChFK9FVXd7O+7M7xtvYAV5RflumDqwVHCLBMchA
-         DCar90iScKLiiGeRJE1KwQnYSzSWjJG+vbr2MmZraSP9nmc/ZhNwiJehjIDqm4ajJQJh
-         jKBnomog3QnAE2dFABaDIsvFpr2Uq6fUsfJ2AQef6zcXTmOAzl/W+3mXU/QK7hT14frm
-         d76A==
+        bh=BuGxgKR0KxYx6mCx67gKTFcXcD6cQiq+Ob/92Sngrdg=;
+        b=f8qZ8gU7KMPmOqD1vQPpIyA0aP/IfWWMh2Tiv12/CycZeBMi3tvZED7eX9KfuwxxS5
+         AGULCRMqRL7xsyiIxoEeLNIsurT/a0ObURXuPa0x3uWUU3Q6832Ccd8fTYCx6GZ7yhiV
+         Z0FSRMrcO4AWEo3CJRec0v323mRkJ69MeTYRq1Atu75qUgwwnESlB2ZBHUgdV4BjPeA7
+         QMEdKjkV5iky79wbEs3PJy13S+jEjxkChGqhUY8Ud1mzJL5XyvfFV9Q0o2ndZjAvelGr
+         fWLe7pjZeGJUujLbHpFz/uKKfLcAI9LK1URA1Ugw7JeQUK0UujFXAi5TeWOklL2Kul3r
+         nKMQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jason Andryuk <jandryuk@gmail.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.14 032/164] x86/xen: Delay get_cpu_cap until stack canary is established
-Date: Sun, 22 Apr 2018 15:51:39 +0200
-Message-Id: <20180422135136.725024392@linuxfoundation.org>
+	Aurelien Aptel <aaptel@suse.com>,
+	Steve French <smfrench@gmail.com>,
+	Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.14 049/164] CIFS: add sha512 secmech
+Date: Sun, 22 Apr 2018 15:51:56 +0200
+Message-Id: <20180422135137.410100381@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454870775215893?=
-X-GMAIL-MSGID: =?utf-8?q?1598455470643856106?=
+X-GMAIL-THRID: =?utf-8?q?1598454922231390535?=
+X-GMAIL-MSGID: =?utf-8?q?1598455467528470392?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,59 +50,131 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Andryuk <jandryuk@gmail.com>
+From: Aurelien Aptel <aaptel@suse.com>
 
-commit 36104cb9012a82e73c32a3b709257766b16bcd1d upstream.
+commit 5fcd7f3f966f37f3f9a215af4cc1597fe338d0d5 upstream.
 
-Commit 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings") introduced a
-call to get_cpu_cap, which is fstack-protected.  This is works on x86-64
-as commit 4f277295e54c ("x86/xen: init %gs very early to avoid page
-faults with stack protector") ensures the stack protector is configured,
-but it it did not cover x86-32.
+* prepare for SMB3.11 pre-auth integrity
+* enable sha512 when SMB311 is enabled in Kconfig
+* add sha512 as a soft dependency
 
-Delay calling get_cpu_cap until after xen_setup_gdt has initialized the
-stack canary.  Without this, a 32bit PV machine crashes early
-in boot.
-(XEN) Domain 0 (vcpu#0) crashed on cpu#0:
-(XEN) ----[ Xen-4.6.6-xc  x86_64  debug=n  Tainted:    C ]----
-(XEN) CPU:    0
-(XEN) RIP:    e019:[<00000000c10362f8>]
-
-And the PV kernel IP corresponds to init_scattered_cpuid_features
-   0xc10362f8 <+24>:    mov    %gs:0x14,%eax
-
-Fixes 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
-
-Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
+CC: Stable <stable@vger.kernel.org>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/enlighten_pv.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/cifs/Kconfig         |    1 +
+ fs/cifs/cifsencrypt.c   |    7 +++++++
+ fs/cifs/cifsfs.c        |    1 +
+ fs/cifs/cifsglob.h      |    2 ++
+ fs/cifs/smb2proto.h     |    3 +++
+ fs/cifs/smb2transport.c |   30 ++++++++++++++++++++++++++++++
+ 6 files changed, 44 insertions(+)
 
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1258,10 +1258,6 @@ asmlinkage __visible void __init xen_sta
- 	 */
- 	__userpte_alloc_gfp &= ~__GFP_HIGHMEM;
+--- a/fs/cifs/Kconfig
++++ b/fs/cifs/Kconfig
+@@ -190,6 +190,7 @@ config CIFS_NFSD_EXPORT
+ config CIFS_SMB311
+ 	bool "SMB3.1.1 network file system support (Experimental)"
+ 	depends on CIFS
++	select CRYPTO_SHA512
  
--	/* Work out if we support NX */
--	get_cpu_cap(&boot_cpu_data);
--	x86_configure_nx();
--
- 	/* Get mfn list */
- 	xen_build_dynamic_phys_to_machine();
+ 	help
+ 	  This enables experimental support for the newest, SMB3.1.1, dialect.
+--- a/fs/cifs/cifsencrypt.c
++++ b/fs/cifs/cifsencrypt.c
+@@ -829,6 +829,11 @@ cifs_crypto_secmech_release(struct TCP_S
+ 		server->secmech.md5 = NULL;
+ 	}
  
-@@ -1271,6 +1267,10 @@ asmlinkage __visible void __init xen_sta
- 	 */
- 	xen_setup_gdt(0);
- 
-+	/* Work out if we support NX */
-+	get_cpu_cap(&boot_cpu_data);
-+	x86_configure_nx();
++	if (server->secmech.md5) {
++		crypto_free_shash(server->secmech.sha512);
++		server->secmech.sha512 = NULL;
++	}
 +
- 	xen_init_irq_ops();
+ 	if (server->secmech.hmacmd5) {
+ 		crypto_free_shash(server->secmech.hmacmd5);
+ 		server->secmech.hmacmd5 = NULL;
+@@ -852,4 +857,6 @@ cifs_crypto_secmech_release(struct TCP_S
+ 	server->secmech.sdeschmacmd5 = NULL;
+ 	kfree(server->secmech.sdescmd5);
+ 	server->secmech.sdescmd5 = NULL;
++	kfree(server->secmech.sdescsha512);
++	server->secmech.sdescsha512 = NULL;
+ }
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1476,6 +1476,7 @@ MODULE_SOFTDEP("pre: nls");
+ MODULE_SOFTDEP("pre: aes");
+ MODULE_SOFTDEP("pre: cmac");
+ MODULE_SOFTDEP("pre: sha256");
++MODULE_SOFTDEP("pre: sha512");
+ MODULE_SOFTDEP("pre: aead2");
+ MODULE_SOFTDEP("pre: ccm");
+ module_init(init_cifs)
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -130,10 +130,12 @@ struct cifs_secmech {
+ 	struct crypto_shash *md5; /* md5 hash function */
+ 	struct crypto_shash *hmacsha256; /* hmac-sha256 hash function */
+ 	struct crypto_shash *cmacaes; /* block-cipher based MAC function */
++	struct crypto_shash *sha512; /* sha512 hash function */
+ 	struct sdesc *sdeschmacmd5;  /* ctxt to generate ntlmv2 hash, CR1 */
+ 	struct sdesc *sdescmd5; /* ctxt to generate cifs/smb signature */
+ 	struct sdesc *sdeschmacsha256;  /* ctxt to generate smb2 signature */
+ 	struct sdesc *sdesccmacaes;  /* ctxt to generate smb3 signature */
++	struct sdesc *sdescsha512; /* ctxt to generate smb3.11 signing key */
+ 	struct crypto_aead *ccmaesencrypt; /* smb3 encryption aead */
+ 	struct crypto_aead *ccmaesdecrypt; /* smb3 decryption aead */
+ };
+--- a/fs/cifs/smb2proto.h
++++ b/fs/cifs/smb2proto.h
+@@ -203,4 +203,7 @@ extern int smb3_validate_negotiate(const
  
- 	/* Let's presume PV guests always boot on vCPU with id 0. */
+ extern enum securityEnum smb2_select_sectype(struct TCP_Server_Info *,
+ 					enum securityEnum);
++#ifdef CONFIG_CIFS_SMB311
++extern int smb311_crypto_shash_allocate(struct TCP_Server_Info *server);
++#endif
+ #endif			/* _SMB2PROTO_H */
+--- a/fs/cifs/smb2transport.c
++++ b/fs/cifs/smb2transport.c
+@@ -70,6 +70,36 @@ err:
+ 	return rc;
+ }
+ 
++#ifdef CONFIG_CIFS_SMB311
++int
++smb311_crypto_shash_allocate(struct TCP_Server_Info *server)
++{
++	struct cifs_secmech *p = &server->secmech;
++	int rc = 0;
++
++	rc = cifs_alloc_hash("hmac(sha256)",
++			     &p->hmacsha256,
++			     &p->sdeschmacsha256);
++	if (rc)
++		return rc;
++
++	rc = cifs_alloc_hash("cmac(aes)", &p->cmacaes, &p->sdesccmacaes);
++	if (rc)
++		goto err;
++
++	rc = cifs_alloc_hash("sha512", &p->sha512, &p->sdescsha512);
++	if (rc)
++		goto err;
++
++	return 0;
++
++err:
++	cifs_free_hash(&p->cmacaes, &p->sdesccmacaes);
++	cifs_free_hash(&p->hmacsha256, &p->sdeschmacsha256);
++	return rc;
++}
++#endif
++
+ static struct cifs_ses *
+ smb2_find_smb_ses_unlocked(struct TCP_Server_Info *server, __u64 ses_id)
+ {
