@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49PZpzqUpBVYvcfMkSWra6RoF8nWqnhq+mtNUiH+oOe/yzS9plnphC3hr7gbP6+8NpIR+0X
-ARC-Seal: i=1; a=rsa-sha256; t=1524405432; cv=none;
+X-Google-Smtp-Source: AIpwx4+cm1JN79MthJdz6FZIdUl9Rlds95rv3gBzaBLnwim0tXoAEkGpfjdt+RpYtO6173kzC6ai
+ARC-Seal: i=1; a=rsa-sha256; t=1524405429; cv=none;
         d=google.com; s=arc-20160816;
-        b=HDkWU9sh4QyZm2/z8S8nLPEBCPkEBKs8Uop4/rFsYAnaccbRvOeGTrj1fJLLbSkqzr
-         la4AaS2fjWlgw0j1zpvyoyskK8Th6WRm5031QCeKfFomiorccrAtWgx4uqw4XQf40QYe
-         rrO7x85yRx/euelaaWkLpAqRpzyLnCc6TZbq2pZeJi2orIbZZG47UkAGIqT1MdjiSd17
-         Gi5vbuwVLn8rFFE5pU9UyDT3Gl7MPC/j1lDmb1Rhy3HwHLRfBPcO1g/bDu1Ou4B4fMvJ
-         iGLXhdMblD0HXJZ3P/ZWv2hQX5FNdexqYBoSL54IGysoBKnhbsJhSyeTnI56T8tKhHls
-         zY5g==
+        b=ems8c7qjgz8THiBhh2AHA6IYQqPe6iB84mWTTmk9TJyhxczHJNuHND01z6vPkbehbH
+         pehTCfttP+hKLa1agvDpZe3JuQfGTlwHmYYQx8IMPKkczEK6txWGqCdWAVGY1hLMVvA2
+         VXaQIboXimKQA/b2KruONUWS6Kr4YTpDkKkwytkAXo1Z41Q3TSxWkZWQobYGh4xbEgj7
+         bCD9rTCSCmskJ7LHYA1Imb3pPIYgebor6M6TnZrNjZfNw5XmtN2qtx9Fvacjefljl0IV
+         rueAfAnvTG1GuG40YVnM8Q3jV49KoM7km+XIRYCN6fnJ7eacIz9I6+gy2CJfZZn2zt+c
+         bNMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QwyF3ewVRaa+jeW1fDfAXPRRvGtRpQF9o8IBzszL85c=;
-        b=BHzOXbMmWUxNdGqmv4lV3GNAmoKd+msGJcYXzuat/ZzRxFm38DI0MVMe1/SDUioUrF
-         aZeJPk7bVzPsjsKj8flAHMS7arxojjr5cABvT5/bj+pQUCsDQ1z5pF3eG3c/Tjz4vUMb
-         GAarEGLEocyzYLK7ImI9maYt2HfOvk/MSiAgdoaRWw2QMxeIKHqLKD34ePP8nJsgva3z
-         JreEGlh5yzUs0YK0LL8ccmkGICshrGme2HjgA38wVGoi/gF05u/rP9a5aYsgpMTWOBwi
-         Kz7LMBq8MmhIwxVvjvKTuIFX8kYaRPjA9aiyZSmdT4lK9ZjF1Zl3TbOgY7Ici9SXhYYR
-         gxbQ==
+        bh=LB8SN6CG2e0YxE3TpvEAOPnOA93FSzpyjR/I8ZloOaY=;
+        b=mYzpjcDP0QSS19ZwHC7NBRosd0PObX9sAQsKKR4WUhemuHjtYmUwx3SfUJb49QOdNS
+         J15uF2GO3Xv/2jghsn14KIFDM0nud4OvZarpVBsPREptK+xk8QpW+mk04pVLnlsHLy/L
+         ESCy9Acr2JJ/IQFyoTcnOvp6mXwaePRqdb6iD6Q+JGApkIjkOctcChgK5Hr/Hka/k5oC
+         B9IEyYWEsmw4/iFbKlAAYnuQBLbHCwBPTAISx/8vYSo13Wutjymgt1uNcyjA0x1G0b2h
+         KhhYCtdzkNyuoOka2PB6ucqoo/vfRqP6HcByLhDAWhMe5bQPI9Y4FKQNmBeT6fw5DDn9
+         nuFg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
+	Paul Mackerras <paulus@ozlabs.org>,
+	Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.16 064/196] powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
-Date: Sun, 22 Apr 2018 15:51:24 +0200
-Message-Id: <20180422135107.564389226@linuxfoundation.org>
+Subject: [PATCH 4.16 063/196] powerpc/64: Call H_REGISTER_PROC_TBL when running as a HPT guest on POWER9
+Date: Sun, 22 Apr 2018 15:51:23 +0200
+Message-Id: <20180422135107.505266885@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454950836257463?=
-X-GMAIL-MSGID: =?utf-8?q?1598454950836257463?=
+X-GMAIL-THRID: =?utf-8?q?1598454948033894940?=
+X-GMAIL-MSGID: =?utf-8?q?1598454948033894940?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,51 +50,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-commit 0bfdf598900fd62869659f360d3387ed80eb71cf upstream.
+commit dbfcf3cb9c681aa0c5d0bb46068f98d5b1823dd3 upstream.
 
-asm/barrier.h is not always included after asm/synch.h, which meant
-it was missing __SUBARCH_HAS_LWSYNC, so in some files smp_wmb() would
-be eieio when it should be lwsync. kernel/time/hrtimer.c is one case.
+On POWER9, since commit cc3d2940133d ("powerpc/64: Enable use of radix
+MMU under hypervisor on POWER9", 2017-01-30), we set both the radix and
+HPT bits in the client-architecture-support (CAS) vector, which tells
+the hypervisor that we can do either radix or HPT.  According to PAPR,
+if we use this combination we are promising to do a H_REGISTER_PROC_TBL
+hcall later on to let the hypervisor know whether we are doing radix
+or HPT.  We currently do this call if we are doing radix but not if
+we are doing HPT.  If the hypervisor is able to support both radix
+and HPT guests, it would be entitled to defer allocation of the HPT
+until the H_REGISTER_PROC_TBL call, and to fail any attempts to create
+HPTEs until the H_REGISTER_PROC_TBL call.  Thus we need to do a
+H_REGISTER_PROC_TBL call when we are doing HPT; otherwise we may
+crash at boot time.
 
-__SUBARCH_HAS_LWSYNC is only used in one place, so just fold it in
-to where it's used. Previously with my small simulator config, 377
-instances of eieio in the tree. After this patch there are 55.
+This adds the code to call H_REGISTER_PROC_TBL in this case, before
+we attempt to create any HPT entries using H_ENTER.
 
-Fixes: 46d075be585e ("powerpc: Optimise smp_wmb")
-Cc: stable@vger.kernel.org # v2.6.29+
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Fixes: cc3d2940133d ("powerpc/64: Enable use of radix MMU under hypervisor on POWER9")
+Cc: stable@vger.kernel.org # v4.11+
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Reviewed-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/barrier.h |    3 ++-
- arch/powerpc/include/asm/synch.h   |    4 ----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ arch/powerpc/mm/hash_utils_64.c       |    6 ++++++
+ arch/powerpc/platforms/pseries/lpar.c |    8 ++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/include/asm/barrier.h
-+++ b/arch/powerpc/include/asm/barrier.h
-@@ -35,7 +35,8 @@
- #define rmb()  __asm__ __volatile__ ("sync" : : : "memory")
- #define wmb()  __asm__ __volatile__ ("sync" : : : "memory")
+--- a/arch/powerpc/mm/hash_utils_64.c
++++ b/arch/powerpc/mm/hash_utils_64.c
+@@ -875,6 +875,12 @@ static void __init htab_initialize(void)
+ 		/* Using a hypervisor which owns the htab */
+ 		htab_address = NULL;
+ 		_SDR1 = 0; 
++		/*
++		 * On POWER9, we need to do a H_REGISTER_PROC_TBL hcall
++		 * to inform the hypervisor that we wish to use the HPT.
++		 */
++		if (cpu_has_feature(CPU_FTR_ARCH_300))
++			register_process_table(0, 0, 0);
+ #ifdef CONFIG_FA_DUMP
+ 		/*
+ 		 * If firmware assisted dump is active firmware preserves
+--- a/arch/powerpc/platforms/pseries/lpar.c
++++ b/arch/powerpc/platforms/pseries/lpar.c
+@@ -726,15 +726,18 @@ static int pseries_lpar_resize_hpt(unsig
+ 	return 0;
+ }
  
--#ifdef __SUBARCH_HAS_LWSYNC
-+/* The sub-arch has lwsync */
-+#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
- #    define SMPWMB      LWSYNC
- #else
- #    define SMPWMB      eieio
---- a/arch/powerpc/include/asm/synch.h
-+++ b/arch/powerpc/include/asm/synch.h
-@@ -6,10 +6,6 @@
- #include <linux/stringify.h>
- #include <asm/feature-fixups.h>
+-/* Actually only used for radix, so far */
+ static int pseries_lpar_register_process_table(unsigned long base,
+ 			unsigned long page_size, unsigned long table_size)
+ {
+ 	long rc;
+-	unsigned long flags = PROC_TABLE_NEW;
++	unsigned long flags = 0;
  
--#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
--#define __SUBARCH_HAS_LWSYNC
--#endif
--
- #ifndef __ASSEMBLY__
- extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
- extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
++	if (table_size)
++		flags |= PROC_TABLE_NEW;
+ 	if (radix_enabled())
+ 		flags |= PROC_TABLE_RADIX | PROC_TABLE_GTSE;
++	else
++		flags |= PROC_TABLE_HPT_SLB;
+ 	for (;;) {
+ 		rc = plpar_hcall_norets(H_REGISTER_PROC_TBL, flags, base,
+ 					page_size, table_size);
+@@ -760,6 +763,7 @@ void __init hpte_init_pseries(void)
+ 	mmu_hash_ops.flush_hash_range	 = pSeries_lpar_flush_hash_range;
+ 	mmu_hash_ops.hpte_clear_all      = pseries_hpte_clear_all;
+ 	mmu_hash_ops.hugepage_invalidate = pSeries_lpar_hugepage_invalidate;
++	register_process_table		 = pseries_lpar_register_process_table;
+ 
+ 	if (firmware_has_feature(FW_FEATURE_HPT_RESIZE))
+ 		mmu_hash_ops.resize_hpt = pseries_lpar_resize_hpt;
