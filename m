@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/jTv0WOb1u+qg6tSsvhQtF4mHH1RZjZJN3P+Q913fcRKIl270EKeAUcvLFsHd9u9cudqVJ
-ARC-Seal: i=1; a=rsa-sha256; t=1524406473; cv=none;
+X-Google-Smtp-Source: AIpwx4/UCDWJJl7urkKMwYXI82xSkmLeaqxEj+9XTaNFYjmk772OkcG7v9fGIwoSHvtMVChjRgDL
+ARC-Seal: i=1; a=rsa-sha256; t=1524406470; cv=none;
         d=google.com; s=arc-20160816;
-        b=BpUqAhiIzH8DVwYr8qHGfgCKnE0+oOFqIC8WztzXcCIh96MwkFNX5uxbqnGUuLNQs3
-         AcfjJDk1LRrz2opjHrkrNCMko+f/T3109scx1///8zC81X6UBtqZHsRYll4yZfgVOaa3
-         W3rZLSc8vUwlIifR2bjb19jwRBuwaGYH+UHV+WzcI9okyPHR8QtsMcnYx3Yg2CMUm8kB
-         s3m3fB1E4yz3DonABE1vADVW9Q1grIbNzA6t20+rt0jtKFlNNvDcHZMY1LnD1OrMTMFN
-         CfzE9GVHsdISe9YxTimhxRBx+OsT25fIChz3GfVx5wy7I8bmm+cN7TWLKmdalX/OHoEo
-         I93w==
+        b=ptQ9CEPpVbqietz2e09RUtG8GyB6y4Rff3q99m9v9n09emeLm0aUsnproWGWUEWmTR
+         b+HIPxvElxm/MrDZYGHfUCZYfACw+24v0fjVHthssNpSJt6dU+ONI5wXWZPanxB43lJT
+         zrZSMHGnoFEi96Uhgumf4YZQJ2DoN1TprzQw+WohEo9RNN6QoeekfymOxnJ6saT/kvIc
+         GufG8TZ+AbZsnserjtRawWzu89h8VYSJlF4pyYY+NtYZpZtPBn3QBEO/5Sw0cRsscLTZ
+         y7hScZO0NxgTfbJAM5dpwziPQHLRo/1QaWcJCGgvcNIJMvfNXqEYg6jCVvZPNayDk8J6
+         9Y/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fdqLhY9Tp4vcGSAQdbnAkC0+pcCIb9I5nPJapxITq1I=;
-        b=gZs2ExKPuqYODSKK1+g0T7NqtxXsE/20hbzo8oTwHflieWRr+toHG8/ahRx3lQk9tu
-         f7Iow5hOX4R6P8PfuTMSm7zFJAk0XUPv5SjiIP14XzD+FuQ/Yegk6fV2UkLTr6b4/46D
-         dVHYu2lhDMlxLkRNqqGQnf9Vwk13pk9CpJdgCt0Mleivlnr23iUFRS9a8XYkMQ2/J1O4
-         B/+bPHw3xm8gxaE9bnkv/msCXljwY2ff+eR29xCKyPmgOJBo7FYWU8d0GN6ktzuuu863
-         bq58DmWXqAwZjng9MqnQswUmZ8BAac1+EupWk8OTimn/yv9m5hR5E8G+tTIPsXcUBVfL
-         cXfw==
+        bh=+ktORAUJD4TwgaA8UxKq4T+d/Os065gv5Q8cISQwI64=;
+        b=vj7rUR3GlWzoqQTMH4t2r+jspuoZsxcKtOKNp5TDcEg+b7euHw9OQsoAtkufr2/c+3
+         aGnYGz1iGNKhcfr88YzoKIBQgjLZqSunE9Zio0Z53YH04XL7VoIp2IeHZG/ZVXV8JZsH
+         JQbsuuTm5A7/y6QmXEpAdImP/gi4KZENwN/fUkiAjUnr1ksivfdl/1sIq8N+tVzH1kYI
+         dgB2GEs1A4/F48UgeT4YNU4/XRqtupNkGAfe70mEVfpjMkkhMg81sww3U/xcJIrrmBHl
+         0/T0e7T2Lx7QFHBs/nyGbCZIuB39ALqfQRTALEAeL0snNV3YfLdAgETd8xxh6iWEVMn9
+         Bbbw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>,
+	Michael Neuling <mikey@neuling.org>,
+	Russell Currey <ruscur@russell.cc>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 84/95] powerpc/lib: Fix off-by-one in alternate feature patching
-Date: Sun, 22 Apr 2018 15:53:53 +0200
-Message-Id: <20180422135213.862996430@linuxfoundation.org>
+Subject: [PATCH 4.9 83/95] powerpc/eeh: Fix enabling bridge MMIO windows
+Date: Sun, 22 Apr 2018 15:53:52 +0200
+Message-Id: <20180422135213.820559868@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455279697433577?=
-X-GMAIL-MSGID: =?utf-8?q?1598456042124387236?=
+X-GMAIL-THRID: =?utf-8?q?1598455273756324131?=
+X-GMAIL-MSGID: =?utf-8?q?1598456039581949859?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,51 +51,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Michael Neuling <mikey@neuling.org>
 
-commit b8858581febb050688e276b956796bc4a78299ed upstream.
+commit 13a83eac373c49c0a081cbcd137e79210fe78acd upstream.
 
-When we patch an alternate feature section, we have to adjust any
-relative branches that branch out of the alternate section.
+On boot we save the configuration space of PCIe bridges. We do this so
+when we get an EEH event and everything gets reset that we can restore
+them.
 
-But currently we have a bug if we have a branch that points to past
-the last instruction of the alternate section, eg:
+Unfortunately we save this state before we've enabled the MMIO space
+on the bridges. Hence if we have to reset the bridge when we come back
+MMIO is not enabled and we end up taking an PE freeze when the driver
+starts accessing again.
 
-  FTR_SECTION_ELSE
-  1:     b       2f
-         or      6,6,6
-  2:
-  ALT_FTR_SECTION_END(...)
-         nop
+This patch forces the memory/MMIO and bus mastering on when restoring
+bridges on EEH. Ideally we'd do this correctly by saving the
+configuration space writes later, but that will have to come later in
+a larger EEH rewrite. For now we have this simple fix.
 
-This will result in a relative branch at 1 with a target that equals
-the end of the alternate section.
+The original bug can be triggered on a boston machine by doing:
+  echo 0x8000000000000000 > /sys/kernel/debug/powerpc/PCI0001/err_injct_outbound
+On boston, this PHB has a PCIe switch on it.  Without this patch,
+you'll see two EEH events, 1 expected and 1 the failure we are fixing
+here. The second EEH event causes the anything under the PHB to
+disappear (i.e. the i40e eth).
 
-That branch does not need adjusting when it's moved to the non-else
-location. Currently we do adjust it, resulting in a branch that goes
-off into the link-time location of the else section, which is junk.
+With this patch, only 1 EEH event occurs and devices properly recover.
 
-The fix is to not patch branches that have a target == end of the
-alternate section.
-
-Fixes: d20fe50a7b3c ("KVM: PPC: Book3S HV: Branch inside feature section")
-Fixes: 9b1a735de64c ("powerpc: Add logic to patch alternative feature sections")
-Cc: stable@vger.kernel.org # v2.6.27+
+Fixes: 652defed4875 ("powerpc/eeh: Check PCIe link after reset")
+Cc: stable@vger.kernel.org # v3.11+
+Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Acked-by: Russell Currey <ruscur@russell.cc>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/lib/feature-fixups.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/eeh_pe.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/lib/feature-fixups.c
-+++ b/arch/powerpc/lib/feature-fixups.c
-@@ -55,7 +55,7 @@ static int patch_alt_instruction(unsigne
- 		unsigned int *target = (unsigned int *)branch_target(src);
+--- a/arch/powerpc/kernel/eeh_pe.c
++++ b/arch/powerpc/kernel/eeh_pe.c
+@@ -795,7 +795,8 @@ static void eeh_restore_bridge_bars(stru
+ 	eeh_ops->write_config(pdn, 15*4, 4, edev->config_space[15]);
  
- 		/* Branch within the section doesn't need translating */
--		if (target < alt_start || target >= alt_end) {
-+		if (target < alt_start || target > alt_end) {
- 			instr = translate_branch(dest, src);
- 			if (!instr)
- 				return 1;
+ 	/* PCI Command: 0x4 */
+-	eeh_ops->write_config(pdn, PCI_COMMAND, 4, edev->config_space[1]);
++	eeh_ops->write_config(pdn, PCI_COMMAND, 4, edev->config_space[1] |
++			      PCI_COMMAND_MEMORY | PCI_COMMAND_MASTER);
+ 
+ 	/* Check the PCIe link is ready */
+ 	eeh_bridge_check_link(edev);
