@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49yQoQPO5hxC3VAIhT9Mho2i0BjRiwPYxgtvfoERcvg1KZsG/ymflQM54WPbBnNJQAG0qyX
-ARC-Seal: i=1; a=rsa-sha256; t=1524406221; cv=none;
+X-Google-Smtp-Source: AIpwx48tZ5iBQKF94REo2z6R7OC1UDBGswCHreYJTD76wgzYjTGw6qtbyz7TnfmLbcelrK2IVrGn
+ARC-Seal: i=1; a=rsa-sha256; t=1524406218; cv=none;
         d=google.com; s=arc-20160816;
-        b=uQyrBXiM3djY55kskF/hDTRrnt2O/P652PRxrQYVhahX8AfpYLjvsi1urUWRcys7fa
-         6pdP/wo0GJivIAM5ABYTsg1Q1kO8tUnq2W/GxrTfxz47jaOlQjyAJQnW2e3kpppsmq0o
-         dfaKcv0Np1kqlO2a8puJ+Oe3ZvTNLN9KlNzlXosjSSgbwfkqugD58lC70JSDA9vZ+jil
-         w/+COEePj6TSoQDuxjMtJlF/0HSKaPhf1CQLulMtcfjCFLcFccN6euhVPdMOtQVbqbwW
-         Mwtf8Fab2eSiPR4xubFOu7Kw668PZjuaJo9PFGsZdGiqEk7+lyOIYQP7h1bN20quIyxs
-         3fEw==
+        b=bVNAxvlKLYOeMd/Us3pm/Lzrr8FmM3vpaorw6rWSe2uUlcDXyVOKyVpruYQ/VT5q6i
+         RqQ8op0rIH/icJ2TYuhD6FiIKLga0AWwA+186Io0hoKWsMN9iL1LzBbJ8z3/vDM6E5LF
+         4TB7RMCnsZ7Q3rN2yr/aSLNrSb9xHvQ3YrMhjDbCN6Hwy/kXVlF5xuNAK95Hj+y1uWHl
+         Q7q9zsv0FLV8ooPAZ2W7rdA2cLI3BNzOYfeNTcXpc9Gm0d6dl+0aCgKJGHlqBZTzQwNc
+         /tQriufjau6e5+myRjYCfpTysKB0bR3Zp4FO2xUh9sGFUN6igoUHGAJHro3Gg4JVbflR
+         3Lqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7w2afgKWmBqlJNRH9eUUR4hSEDA4yjRAEvkghhfiHiU=;
-        b=s5eJPnR1SUcR1/54+EVx/4gCITNUUIXK7hu/0mAbubpDKskkrjXCPJIrTDY/i6QF0i
-         zpngQrAjHaU5Qbb9Yp+AU/ojCIKDO/vgVnPTYZ41yjAjuhkfAevEr70NtG47Ih4tL+zv
-         OB4Czo4iNz+lnx/zQRJ2yxU055UAV90ls18EW47IBesg3kR5wmAngeqPvZVwWh+mYtwB
-         aKSDpJW4VVolzKBgsvKew9yf3AUQvjK+tRyXD9qqYIIeb0+N0uqmzGQYKW+If1qf3Kt7
-         6IL6SIcVwGu8Un2NIL07pL0eR7lL1+TnJTg4BRQZDpxmNK48S2RUqu56imjTPbIQOlse
-         1big==
+        bh=uosptS5cu2EkhvvFv1jvObVHqltthFjnyPwra6Mh9ts=;
+        b=Zk/mMuadoT21m8fFquJUuIN1gKTTGYCLBccuNmczjT6Oo06HlbCjh6lR028N8Xdo+R
+         8125BzKYMIQFN8p0AwEygnlFmzZxx7re9qLdtK3Q6HTHLgdWSgHyAoaUzvaIkbEKXOa+
+         V2kd6mA3Wf90JOffTVVDNVEkv+WXN+xQL3kLeWAPq74+B031uYwUlJkW3gtpBzb9bra6
+         nJUuhsDkWUji9X7jjDnIQrq3f4Yk8zFWbqP8zZNf+kVZ2sQkQ4rvwIEaNzr7a3g3ftkm
+         dTkIKCYD+YeanzdU1RsdShFjZN9lfjdtSrlfLNywzU2zNlBUFmkNbDWrjKUgEwft+ZJ4
+         QudQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ian Kent <raven@themaw.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 157/164] autofs: mount point create should honour passed in mode
-Date: Sun, 22 Apr 2018 15:53:44 +0200
-Message-Id: <20180422135142.022131370@linuxfoundation.org>
+	stable@kernel.org,
+	Alexander Aring <aring@mojatatu.com>,
+	Kirill Tkhai <ktkhai@virtuozzo.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.14 156/164] Dont leak MNT_INTERNAL away from internal mounts
+Date: Sun, 22 Apr 2018 15:53:43 +0200
+Message-Id: <20180422135141.968549701@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455319452829195?=
-X-GMAIL-MSGID: =?utf-8?q?1598455778424542129?=
+X-GMAIL-THRID: =?utf-8?q?1598455310413463225?=
+X-GMAIL-MSGID: =?utf-8?q?1598455775682451365?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ian Kent <raven@themaw.net>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 1e6306652ba18723015d1b4967fe9de55f042499 upstream.
+commit 16a34adb9392b2fe4195267475ab5b472e55292c upstream.
 
-The autofs file system mkdir inode operation blindly sets the created
-directory mode to S_IFDIR | 0555, ingoring the passed in mode, which can
-cause selinux dac_override denials.
+We want it only for the stuff created by SB_KERNMOUNT mounts, *not* for
+their copies.  As it is, creating a deep stack of bindings of /proc/*/ns/*
+somewhere in a new namespace and exiting yields a stack overflow.
 
-But the function also checks if the caller is the daemon (as no-one else
-should be able to do anything here) so there's no point in not honouring
-the passed in mode, allowing the daemon to set appropriate mode when
-required.
-
-Link: http://lkml.kernel.org/r/152361593601.8051.14014139124905996173.stgit@pluto.themaw.net
-Signed-off-by: Ian Kent <raven@themaw.net>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@kernel.org
+Reported-by: Alexander Aring <aring@mojatatu.com>
+Bisected-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Tested-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Tested-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/autofs4/root.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/namespace.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/autofs4/root.c
-+++ b/fs/autofs4/root.c
-@@ -749,7 +749,7 @@ static int autofs4_dir_mkdir(struct inod
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1089,7 +1089,8 @@ static struct mount *clone_mnt(struct mo
+ 			goto out_free;
+ 	}
  
- 	autofs4_del_active(dentry);
- 
--	inode = autofs4_get_inode(dir->i_sb, S_IFDIR | 0555);
-+	inode = autofs4_get_inode(dir->i_sb, S_IFDIR | mode);
- 	if (!inode)
- 		return -ENOMEM;
- 	d_add(dentry, inode);
+-	mnt->mnt.mnt_flags = old->mnt.mnt_flags & ~(MNT_WRITE_HOLD|MNT_MARKED);
++	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
++	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
+ 	/* Don't allow unprivileged users to change mount flags */
+ 	if (flag & CL_UNPRIVILEGED) {
+ 		mnt->mnt.mnt_flags |= MNT_LOCK_ATIME;
