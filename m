@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49/F179InF9zz3ZyZTCymrqAGBZ7MGRxDNxPedaDAhLhGJG875MurSWnz2atZO9nVA/1ySo
-ARC-Seal: i=1; a=rsa-sha256; t=1524405949; cv=none;
+X-Google-Smtp-Source: AIpwx49m8toRBC26VpbolZVcMaP9yYm5F9KGSHVMd+z52LqHZNvI+CQ2VpK9SxXTsMsEq38KsrCC
+ARC-Seal: i=1; a=rsa-sha256; t=1524405946; cv=none;
         d=google.com; s=arc-20160816;
-        b=rA6q2Li5zwqbfVCTOk2Zvvfjr5K0Ky1zRMyT2PFnAa3ewteool8YYRyp9okzjIETxC
-         v+IFW5+6fVLrdAJWUDT/iKhPSt5VraZYmDdq0o/Rgam9LLMIARhP0NclXrWfQLl3UFDZ
-         UFdkqCAZop3/5yglW5e7FB7K6qkv9NfsHk1xww8ByuzPipLQ1Ot3L0wT7SuUU9orzIfe
-         6LfQ3jhguLaahn9/jiVsKmm4sQOK4GNbcxapmrUQ4jbOUmXS9N7AmNNnyKgxkRBXXSSv
-         yHc2zW62MmOc8h3RbzrS+9k528unrgRYfl5kZ3F7WD2ia9/CCTgHROb6bW5mVagDztSi
-         Tt+Q==
+        b=V133bimudShAU6cSNxOx25CEbU40aA83IYZQ8cWyAZbdGbTOC+TXimgYRfzJ6tG45y
+         MYPm/pb0yxSrLX3OPJNGAn5DNP/TEQB4U2MDiy8M85qhls7ej528HQ+5nz5SYQBTV2rP
+         ZuL1udj1jhgHwb6lRwdNjQ32MxK95yueaAs7erciHCkr5JanEtuwOh04zb7VhAhINrNK
+         tqGW/5kLUUQrtJK84xMT8cMLoFYoi431JaRKXzPRFPpNCq2Fkbrfuj8Qz7bwJV7LGKLl
+         zcaFSa+3OiSYpPIybs3c/qVGDivyH5jW7bYnCAi1+nFkePhG8NW+TyBSP9h4Ue8zLpxy
+         tYSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WrNMpaabPKD8W3DLv6cmhZHuVC5giMKTxqNCyfuJ5NA=;
-        b=Jeb4ZKyxg5yXqTvosItC/U8jWdG3OUivdjVvPTnrkyVrief9yRgEstlEyWRAguI0uz
-         YdsKUYxT9Rtx6NH+N/oUoZhD2jsvsYfvbcCPXPQJD3PtJ1W4QNOXghUJ1cNXqty8fAYu
-         1XgSnEOQQbakY466maEZE7nyFzHra7CdtZtpdIdyqBjusb1OUYpok/6DfAMp8tAg/5ZI
-         w2xYHZEA54Itejqfz9V4T+ygFTg9SyfrAGkDdRT4QTOKwTx59sjZYdQtN2iTBaNKTjmW
-         PrZjUmOFKGX6P4mAj5has9T3BWxYc/WLgpHGKxrMdvMtwTrMasEfcUsIOLClRQ0UbF/V
-         j3ig==
+        bh=LTRzoCWnheiBz+N7Lvn7RFx7cLEHJVW35ZrmqNs5EV4=;
+        b=db/iDsbGbEXhCQZaTgAKNJtZ/x5lUWD6+z8OAmOP+4R2zcRwIuwKLxBhMfi5PmLp2X
+         p1FXrdTuFdYOttTUq7OOWSlR8aeaWMnMv46ys1hj4KvxLlpA3O2kroGfbZJUk6AupL2o
+         Co6fJFUpX79Z0UDpw4cq+WNOxksn9Un4l3LMQDZ/WdjYO9sSOV+7sUkNsxm05I6Kri2y
+         xFMVsOHlV5aixYmzwZf3egdkOuQbjfay1V1kXYoY+gi2mrg3Tf8kB0tmMWnzKH6kZLfy
+         oM9IzZjAmMpkRmclTKabDS96aPI28MT88rd/8Atq6QCDCgqwXt13jl5rIeToda6aGby6
+         UVqA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
+	Dave Young <dyoung@redhat.com>,
+	Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+	Simon Horman <horms@verge.net.au>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 057/164] powerpc/powernv: Fix OPAL NVRAM driver OPAL_BUSY loops
-Date: Sun, 22 Apr 2018 15:52:04 +0200
-Message-Id: <20180422135137.776144260@linuxfoundation.org>
+Subject: [PATCH 4.14 056/164] powerpc/kexec_file: Fix error code when trying to load kdump kernel
+Date: Sun, 22 Apr 2018 15:52:03 +0200
+Message-Id: <20180422135137.730596274@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454959303912084?=
-X-GMAIL-MSGID: =?utf-8?q?1598455493165389538?=
+X-GMAIL-THRID: =?utf-8?q?1598454956801762645?=
+X-GMAIL-MSGID: =?utf-8?q?1598455489862415624?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,50 +51,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 
-commit 3b8070335f751aac9f1526ae2e012e6f5b8b0f21 upstream.
+commit bf8a1abc3ddbd6e9a8312ea7d96e5dd89c140f18 upstream.
 
-The OPAL NVRAM driver does not sleep in case it gets OPAL_BUSY or
-OPAL_BUSY_EVENT from firmware, which causes large scheduling
-latencies, and various lockup errors to trigger (again, BMC reboot
-can cause it).
+kexec_file_load() on powerpc doesn't support kdump kernels yet, so it
+returns -ENOTSUPP in that case.
 
-Fix this by converting it to the standard form OPAL_BUSY loop that
-sleeps.
+I've recently learned that this errno is internal to the kernel and
+isn't supposed to be exposed to userspace. Therefore, change to
+-EOPNOTSUPP which is defined in an uapi header.
 
-Fixes: 628daa8d5abf ("powerpc/powernv: Add RTC and NVRAM support plus RTAS fallbacks")
-Depends-on: 34dd25de9fe3 ("powerpc/powernv: define a standard delay for OPAL_BUSY type retry loops")
-Cc: stable@vger.kernel.org # v3.2+
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+This does indeed make kexec-tools happier. Before the patch, on
+ppc64le:
+
+  # ~bauermann/src/kexec-tools/build/sbin/kexec -s -p /boot/vmlinuz
+  kexec_file_load failed: Unknown error 524
+
+After the patch:
+
+  # ~bauermann/src/kexec-tools/build/sbin/kexec -s -p /boot/vmlinuz
+  kexec_file_load failed: Operation not supported
+
+Fixes: a0458284f062 ("powerpc: Add support code for kexec_file_load()")
+Cc: stable@vger.kernel.org # v4.10+
+Reported-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Reviewed-by: Simon Horman <horms@verge.net.au>
+Reviewed-by: Dave Young <dyoung@redhat.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/opal-nvram.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/machine_kexec_file_64.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/opal-nvram.c
-+++ b/arch/powerpc/platforms/powernv/opal-nvram.c
-@@ -11,6 +11,7 @@
+--- a/arch/powerpc/kernel/machine_kexec_file_64.c
++++ b/arch/powerpc/kernel/machine_kexec_file_64.c
+@@ -43,7 +43,7 @@ int arch_kexec_kernel_image_probe(struct
  
- #define DEBUG
+ 	/* We don't support crash kernels yet. */
+ 	if (image->type == KEXEC_TYPE_CRASH)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
  
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/of.h>
-@@ -56,8 +57,12 @@ static ssize_t opal_nvram_write(char *bu
- 
- 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
- 		rc = opal_write_nvram(__pa(buf), count, off);
--		if (rc == OPAL_BUSY_EVENT)
-+		if (rc == OPAL_BUSY_EVENT) {
-+			msleep(OPAL_BUSY_DELAY_MS);
- 			opal_poll_events(NULL);
-+		} else if (rc == OPAL_BUSY) {
-+			msleep(OPAL_BUSY_DELAY_MS);
-+		}
- 	}
- 
- 	if (rc)
+ 	for (i = 0; i < ARRAY_SIZE(kexec_file_loaders); i++) {
+ 		fops = kexec_file_loaders[i];
