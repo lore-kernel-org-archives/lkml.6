@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+9Hb6rvAUB21+NvP6SAVple7v6MgnYVajBt1lgESzHPf6n0Zt0rCpTaHmS/cPz1rzsmRJH
-ARC-Seal: i=1; a=rsa-sha256; t=1524405824; cv=none;
+X-Google-Smtp-Source: AIpwx4/q3i3a3smBh5ZbkGUcFKM0ZY3m21W+BGYDjySFsES7foiGRSg3rl2MQxkU6QVQH1aPvN1u
+ARC-Seal: i=1; a=rsa-sha256; t=1524405822; cv=none;
         d=google.com; s=arc-20160816;
-        b=lxUvq20vW4jkSiyYaxqTb0JE08mJZs3Vwu4whRiEs+Dly663rQlVG3/cERmzpt3szy
-         2D1qA21Apqg7D1qTJ0bABEJsBSEHH35J1XK9xg4EUHXZOkCgXvVDCgeLluAXRQNYawrW
-         hQwPh8KAaGQjhOvsS83iHOUQTWDUwap1hazEkIzxizvvor0jfD5k3ra8Ok+lZvu9ieVe
-         K6g8LNBjvPAajcagPTkR5249CfsgjPfFVUkqZVncUqojuYkxqy2Zc5zSS622Zg7r41ro
-         lYfYZU/gv6csD43Lu32emfbY+f75dHTPdSVsof3hRN89SeDv7aqqM/1mUog68vMk0HQ1
-         WenQ==
+        b=BTj+ktA1H0nwTP14+ftC+eqxqMEtjmAI8Q68c9OwGVSAUS10oMJZOnNXtnrdtcD7TC
+         OeK/meJw8pN1c3lz5lFQTK2PdziWCCnRu8kl7BdvGJmcgdv+RkeSOLGZge5w0jJ8QH2t
+         IQkyvyScVXg+JMeCCrU1GxvacyTbPZL/O+bY1pKXEo59FFhwFwdMSPF9iFkW4ia4fWgd
+         8gWNdOHMmHX8PAcm+pgZL+cv+U4QU2JSYS0RwwVcPG1c2uddOZOpOOlWhiZ+dCuOO77P
+         rP7WYJu2qlEFHiAHHTaBpbppCJXEk8MBs0CazavXfp9nncPQNXbvgPOWCN1Y5vxJkwKC
+         lriQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7Ejw4516tt/1XWe9tGEjQqqnN2pwefUwZA9nzuZcwJM=;
-        b=XTT8ZttSMRlCZ47wqWB9GHoh8otHpKhkAUoFZmnosufDEZ7Rmt0kQx24n11vYmoOAS
-         ZyjW/zvImxB3V4eFHY/GA3a/JJuwoPHJf1B/18mS653RQMM7Q4JJLptglB2kwrON+j2a
-         nOYTqBsdy9RSh2CpZdJLIT52yWCAb1YwzmaFLLVNaIljwcdp6fvH/OjDcdEelFeV1B8F
-         eBPIDm62Nxjega/qtsSMfCuds7Jxia4pGoeKCh35zgyVdVpUXwuWmuOLryf0JXLuNgvY
-         nphgZOYsm0X8pI24GD9VFTWWWF9sQ4vCniLKuDnQbg+2MrOPLh8XJCB5dEZzS58Jnn24
-         xd2w==
+        bh=46Zpm+jbQtaUn+sM4YO0b3FUNAbzvYdNKu0PR9G3kZc=;
+        b=mMe2vqhJyaN+BqJ1isjEl6L/cwW9BEXxveaDh2B3g9sqU3udx/HuOD0hAQICgS9J7l
+         tpPxVozSV81RAQiHOOce22vYL+CQTaAwITh+J+7W3oWUgIvHS6qw050icxN6XLYpKO6k
+         i9Tr2NiKPlaG1SocmI8wXlJcmnzlVs20ACrirC5m8ftyPDYCNqpeTT+l4ZioUAz9JDfJ
+         ESYVV/JibeKbMwRaXVSFhz69HQDDyu9KPfTg9ZHJF6Zy+4/RfcJtu3VmwKhTKdP5lQTe
+         OXIpvb/lUqdk5lxdVNQ1LrfVDYiF4D2nKpt6xkXpOs0gZL7aDCMTouBLSbC27PenjqG0
+         eQoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>,
-	Michael Henders <hendersm@shaw.ca>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com,
+	Jeff Mahoney <jeffm@suse.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Ram Pai <linuxram@us.ibm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 012/164] resource: fix integer overflow at reallocation
-Date: Sun, 22 Apr 2018 15:51:19 +0200
-Message-Id: <20180422135135.894415451@linuxfoundation.org>
+Subject: [PATCH 4.14 011/164] fs/reiserfs/journal.c: add missing resierfs_warning() arg
+Date: Sun, 22 Apr 2018 15:51:18 +0200
+Message-Id: <20180422135135.855395349@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -44,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454905898680700?=
-X-GMAIL-MSGID: =?utf-8?q?1598455362352412286?=
+X-GMAIL-THRID: =?utf-8?q?1598454902575626953?=
+X-GMAIL-MSGID: =?utf-8?q?1598455359233624634?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,53 +54,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Andrew Morton <akpm@linux-foundation.org>
 
-commit 60bb83b81169820c691fbfa33a6a4aef32aa4b0b upstream.
+commit 9ad553abe66f8be3f4755e9fa0a6ba137ce76341 upstream.
 
-We've got a bug report indicating a kernel panic at booting on an x86-32
-system, and it turned out to be the invalid PCI resource assigned after
-reallocation.  __find_resource() first aligns the resource start address
-and resets the end address with start+size-1 accordingly, then checks
-whether it's contained.  Here the end address may overflow the integer,
-although resource_contains() still returns true because the function
-validates only start and end address.  So this ends up with returning an
-invalid resource (start > end).
+One use of the reiserfs_warning() macro in journal_init_dev() is missing
+a parameter, causing the following warning:
 
-There was already an attempt to cover such a problem in the commit
-47ea91b4052d ("Resource: fix wrong resource window calculation"), but
-this case is an overseen one.
+  REISERFS warning (device loop0): journal_init_dev: Cannot open '%s': %i journal_init_dev:
 
-This patch adds the validity check of the newly calculated resource for
-avoiding the integer overflow problem.
+This also causes a WARN_ONCE() warning in the vsprintf code, and then a
+panic if panic_on_warn is set.
 
-Bugzilla: http://bugzilla.opensuse.org/show_bug.cgi?id=1086739
-Link: http://lkml.kernel.org/r/s5hpo37d5l8.wl-tiwai@suse.de
-Fixes: 23c570a67448 ("resource: ability to resize an allocated resource")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Reported-by: Michael Henders <hendersm@shaw.ca>
-Tested-by: Michael Henders <hendersm@shaw.ca>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
+  Please remove unsupported %/ in format string
+  WARNING: CPU: 1 PID: 4480 at lib/vsprintf.c:2138 format_decode+0x77f/0x830 lib/vsprintf.c:2138
+  Kernel panic - not syncing: panic_on_warn set ...
+
+Just add another string argument to the macro invocation.
+
+Addresses https://syzkaller.appspot.com/bug?id=0627d4551fdc39bf1ef5d82cd9eef587047f7718
+
+Link: http://lkml.kernel.org/r/d678ebe1-6f54-8090-df4c-b9affad62293@infradead.org
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: <syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/resource.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/reiserfs/journal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -633,7 +633,8 @@ static int __find_resource(struct resour
- 			alloc.start = constraint->alignf(constraint->alignf_data, &avail,
- 					size, constraint->align);
- 			alloc.end = alloc.start + size - 1;
--			if (resource_contains(&avail, &alloc)) {
-+			if (alloc.start <= alloc.end &&
-+			    resource_contains(&avail, &alloc)) {
- 				new->start = alloc.start;
- 				new->end = alloc.end;
- 				return 0;
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2643,7 +2643,7 @@ static int journal_init_dev(struct super
+ 	if (IS_ERR(journal->j_dev_bd)) {
+ 		result = PTR_ERR(journal->j_dev_bd);
+ 		journal->j_dev_bd = NULL;
+-		reiserfs_warning(super,
++		reiserfs_warning(super, "sh-457",
+ 				 "journal_init_dev: Cannot open '%s': %i",
+ 				 jdev_name, result);
+ 		return result;
