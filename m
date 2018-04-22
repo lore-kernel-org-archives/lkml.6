@@ -1,167 +1,883 @@
-Return-Path: <ktkhai@virtuozzo.com>
-X-Google-Smtp-Source: AIpwx4/iwPSqbN871FdSIecYdvLlcIRc2BfXI0yg4MoaPzXPR130JA9TIHvoQG/MnR2jbjV6uSBR
-ARC-Seal: i=1; a=rsa-sha256; t=1523980407; cv=none;
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+JFAocgEvbNpdO23t7hDtrN6wGrZSxpD1gOcjXqzTxdMMJ3oLiUAicJnlddI9ZuhwDBBnW
+ARC-Seal: i=1; a=rsa-sha256; t=1524405291; cv=none;
         d=google.com; s=arc-20160816;
-        b=IOd9aI9c9J4sPdQXfMDKn87m7hEq9UooqBj21W2BoKKP9Kut27DyO33g2sM76DMM/V
-         YE3KjBB1iOqi/ua6pUXa/d297fV2mhhB69ipB3ZMAOtkppRhJ0pn2UmqIo5KPahiu7QD
-         Oty0E+ialA2o0kubSR+/ZUXn0nKembui10NtldF3lblxsGfAB0fUOaYHsOzv+8rrD+pE
-         E/tZOGZZAD5DYNSlvE4MJ5Q7M9nLXpZMJbiJq8RMOVLC5bpFBRmG4JCUedNM2ON0JsuH
-         28N4A5bu4VTjit2v31pcGIgr4/PxGvIsUJBwfpRpa2ee/MPr+B1M1/ncODgFtAI7/Va8
-         eE5A==
+        b=isY4zMNbd2ymX9P2CFUXJjHc0lxfypo17Qb0zTcoEzyTjCzCbnRqzh0PNIJcqrWOt6
+         myVC2UDc6BEB1qiXpFTNTv97rCDrnKMLK8Fj99n2frQlLNMtVtPYlPY3IUOqB1P0/t73
+         0qVzj7MdV9+1vUJLyHnh1AufEbNQIHnaClTblImmVAxoaC71ChvmRrCyc2poHr5Fg2pD
+         5BcPnAEI0BbSrFpzlVkTMfXa4/7UbaOoZc4b/wkm+8Gr0Mr3sTJ90cSXJGssR+U1Zwhv
+         0SL6tA3e1rhDkDMSYRVe+TdSBkl5jXnXs02LzLx0APTKKIrTcrEYDGE2RcoE4b9ihKFb
+         D8lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=spamdiagnosticmetadata:spamdiagnosticoutput
-         :content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:message-id:date:to:from:subject:dkim-signature
-         :arc-authentication-results;
-        bh=o6WUavMMLUatrDLSAkC9oMKGUkC8bW5fSjvcvMbRVRQ=;
-        b=l+xrq9U8y8HETnzMMr5xzZWrOudAliyv9wPshiweypGeSdiB8l1tHKNmOMZ5Oz7qM/
-         JU6VvN3gqovDbSVMmZ59O7hg1tvf1taWPQeULW+VUUDf5pahn+1lNeLnxAojk7NZnim0
-         7EWS10jytVt+wwGBqpxoHkxvTZNtCGcSMQcXN3Ur6f/rvWPw2ljoG7CY4j+6O+RupiNl
-         KfC7INlU82hGcWgU4LdqmGzhM4PfRMNM7R5wulYijYJfwpe9LmkpMVRQB1uBcxDvJku9
-         hhhN515b9HOoZ4l4LyEgEbkM2XxgHW+5TqKuNMrTdvc3oOPUT0c4s2XyOMxM4KAfVnLC
-         WCsg==
+        h=content-transfer-encoding:user-agent:mime-version:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=5HsVdP1MI4ykR+JRz3VDOf0ft59jfgLJf3F3xAmSVeQ=;
+        b=NXudyEs0GaWmXYv5cKlS/cljMrOqvYgJXGmxttAqdCbK38Jzwu+h8fENwjmwfHX657
+         FDRz/d3wFvV9QCc4LTKngmY/6RfF0AyfggM2oej2vU1amq2oO3zjX30EUXyFPu/ZWMJm
+         fUy3KeLPXREiK6E3OGbHDjnCoyHTNGuIz5B4ErD/PQR/aLDtlPizzXnjF9wOeKcJoJse
+         FxlLJO8Y0WzcMwMsi3uKJn92penmMgzATBvPXs63QM7qOPFe9NYK737iWlEH7WRf6HWt
+         n48GqcuItjPudpDrq2JdOq6tyxtktbNgBu28Rwk6aYzwYUBpBBMtDx5NiN1RJJFOwhnA
+         j7lw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=X0MmQw+w;
-       spf=pass (google.com: domain of ktkhai@virtuozzo.com designates 104.47.2.133 as permitted sender) smtp.mailfrom=ktkhai@virtuozzo.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=X0MmQw+w;
-       spf=pass (google.com: domain of ktkhai@virtuozzo.com designates 104.47.2.133 as permitted sender) smtp.mailfrom=ktkhai@virtuozzo.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
-Subject: [PATCH v2 02/12] memcg: Refactoring in mem_cgroup_alloc()
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
-To: akpm@linux-foundation.org, vdavydov.dev@gmail.com, shakeelb@google.com,
- viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
- ktkhai@virtuozzo.com, tglx@linutronix.de, pombredanne@nexb.com,
- stummala@codeaurora.org, gregkh@linuxfoundation.org, sfr@canb.auug.org.au,
- guro@fb.com, mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
- chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
- hillf.zj@alibaba-inc.com, ying.huang@intel.com, mgorman@techsingularity.net,
- jbacik@fb.com, linux@roeck-us.net, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, lirongqing@baidu.com,
- aryabinin@virtuozzo.com
-Date: Tue, 17 Apr 2018 21:53:11 +0300
-Message-ID: <152399119121.3456.11227643824792399905.stgit@localhost.localdomain>
-In-Reply-To: <152397794111.3456.1281420602140818725.stgit@localhost.localdomain>
-References: <152397794111.3456.1281420602140818725.stgit@localhost.localdomain>
-User-Agent: StGit/0.18
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	ben.hutchings@codethink.co.uk,
+	lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
+Subject: [PATCH 4.16 000/196] 4.16.4-stable review
+Date: Sun, 22 Apr 2018 15:50:20 +0200
+Message-Id: <20180422135104.278511750@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: HE1P189CA0030.EURP189.PROD.OUTLOOK.COM (2603:10a6:7:53::43)
- To AM5PR0801MB1332.eurprd08.prod.outlook.com (2603:10a6:203:1f::10)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB1332;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1332;3:nLKaqvEGDDfsSPKtnCuHxobXXfEX3Xrt0TLC1h6CtXzIBcb7yEgsSjOKlO8amISiHJVFBdVLeWXIS9RGZP9Fo/6iQmKMdZkcOOWJ8fWiawXa3rYHT/MzQPsTF0P5X/WSnzzhI9waL9vB2fgBUckKuwIe0FgJblAlKfkFZOQ/Gz+MLxGrC/k0JOPPaxNTlcN/WdVloa6stRw/wZ4e9YYtPl+5rrUVlTD5TO04o4au4loWgwvc05VlJLFoH2i4RCZp;25:oJabwgYadzTxb28RaoB++iNx7PS3P91V5j1rIp4Dz3UImNe/rZn2yOqZVxr9IdAxQSDX+N2RMl110IB4JbW5lFew1gsr7qf9QU7BdgD18nJ814N+Yy/1G8qSZYcFh2A50L8b3yZyxZIWuQbPgd77SeXDEYrfOLTGYkcsVr4b6hSb4idH1n+HEOPD7w20MEonFFATCx+ciLquI23sGULpNZKqF9FOLyW2UKIVy/b0AIJ6nlYNqNZRV4LhhdNe+eJzOVFfdayWvj9mp6dV51aftxCgx4ZxfMmc8hpbpXqrN1DeVyMVSq7zahtEi6e07cBYjADf00lGu29PpK14BiWEpQ==;31:KKdtvcjovIn6vf41KK6UXo9hlAgWxtObcTluFRQA/D0/WYTvtzSG9xXwa+2kRW3CuaA6If7ytI/KZ+9xzlSsuuOTS2R1jKF5e1hzNCItq2mLMADR2TSBLsYiAvHS8XT+YTXPIgPIkGH7oJtkD7yJD/otiDIyhJZyfxseYRCXtNT/Uw/Cb+DV8zH22Xt8FX9gqk08EJwi8EKGMEoLkfNoGLzZ/BqoQ0rLcrOlKVstu0A=
-X-MS-TrafficTypeDiagnostic: AM5PR0801MB1332:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1332;20:NVmQGegpu/vOsyFNeddpIYL44CEsohkMjJDvqH2OjzrozwSff0BNDIp+DKADa3P5OC3BjyCnC41ST/NU/cD0d/al0driNExIW3Q9uwouHbJQlz8wZQMNVm17a0nP9tN0zLNRUANfJE2MXzIdPGa7VTUcPQbrlsYfn4+lN6pGiBY5egwiSt7Fh14cA0VEhxLvHWE/CJoBriohgFRN85CObdtacCHjdrH4nr0DdGZa1pdB6mm2j8HUtgslFXzOS7QcQKpRQSa4qrlFhZCiVqab14piL25NvVEs4RZpG1Tnm66SeodewcDbNw+IC1RH66mSrnSLg10vz7SvSwOXPjnQN7lD6EKseRMFVnk53eMucTrQfkTM0o85PKYWfnbIgrvhXoWOMTYlnFKE1kIAVXe2iSgNMlsHgwr0CjwhgjCTK0Gcj9DWB+vtxIm0St3VdF6o1mMFq4zQEWHk/5DDyYsj/q3lHF7qBA0MqWU2xgf3txER+1sVFbs2G09phwvxjlk7;4:rf+g/FHp9mnfUOdP0P2ykhtt8ewzxJdFQL/OF1IOGMAtCztLgOlovwGouWF+2yvB4DihStyN2bYgfvstlSraMtGtTZI5nkHbFkHq/zHpPm4t1sFVXiZJCNTMy0l4zF5pgPueiNHaDI1HvRYUgooyyn9+L28lhUB1qLboLXZQuQsuZpYWLx/4mhmTNF6mD0xK0pb+ITZgqn+kJsmqfyBfGQp4s2oUm7nW5LnvRc5TEA0shJNxYSdpCjwf7/rgfIsNbamYTltUHFqgq5M97mPdEg==
-X-Microsoft-Antispam-PRVS: <AM5PR0801MB1332E793CE2756B9D567AE34CDB70@AM5PR0801MB1332.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501359)(52105095)(93006095)(93001095)(10201501046)(3002001)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:AM5PR0801MB1332;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB1332;
-X-Forefront-PRVS: 0645BEB7AA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(376002)(366004)(396003)(346002)(39380400002)(39850400004)(199004)(189003)(2486003)(81166006)(81156014)(8676002)(11346002)(47776003)(956004)(58126008)(476003)(55236004)(9686003)(50466002)(53936002)(55016002)(68736007)(2906002)(86362001)(446003)(8936002)(6116002)(7696005)(3846002)(76176011)(186003)(16526019)(26005)(486006)(39060400002)(23676004)(66066001)(316002)(33896004)(6506007)(59450400001)(386003)(52116002)(105586002)(6666003)(6636002)(106356001)(230700001)(25786009)(103116003)(478600001)(97736004)(7416002)(7736002)(5660300001)(305945005)(61506002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0801MB1332;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA4MDFNQjEzMzI7MjM6RzFuNWZSK3VGN0tWNWFGeTNNRUY3cStG?=
- =?utf-8?B?a1p1M2hFeFo1SFQzWHZudXU5NGwyd3JEbjJzZFpXSzJXdTMyOE1ldG4wWDhU?=
- =?utf-8?B?czVJN3hvZXJCTEZYODZheUR4dGVBSVFhdlo3blAraDJ6TzcyR2ZuN0VMTU80?=
- =?utf-8?B?dGZUcUlQNGNGYzBiZkhFaEg2UlNOV0xjZ2xDaVEvV1YvRmJxNUpFK1ZvaWNa?=
- =?utf-8?B?eUt0TmdNNWxJYkREQTdiS0E1Z1J3N3BKZzlGTGx4MCtvV0UyMHBMNW9wT0Iz?=
- =?utf-8?B?ZDJaRFNyVGJSTE1ocXJyOWdhbEZOKzFZOTI1bzZNL0kzWkliS2ZWOSs0S0I4?=
- =?utf-8?B?TEF1eGpYd0pOdDJqSzcrRW9iSXp3NFh4ZXBSd0lPR1lBeVNweElXTkljK0Zr?=
- =?utf-8?B?Y1BKMjRFWkp6UDBkQnpDNzZNa0xLdVpzWG5JWm1aUUtVdVR5QU9zbWFpcDJL?=
- =?utf-8?B?OEwxMnRSNE9HdWpjNXA1ZGZXS0EySGpTUElnbGEwM0lieVl1T0lVSFYrQnlW?=
- =?utf-8?B?eHNxRGtETFFsMHR1cjJxankwc1FWSWtzWTB0NVRzcmVzVWtaRTRkR29VSHRO?=
- =?utf-8?B?SG52TnlDVnhxbmFRS2ZxcWRobVZpd3JRdlJka2ZVU0ZQN1h6UjlzMHV0N0tS?=
- =?utf-8?B?aGhLWVc1YS9NalhqdmtLcFUyNW9SNmVjcStueXNOazNSaWNIcEJ0YUJiRWd6?=
- =?utf-8?B?bU5aUEJtbHh6Y0N6OGJmdFR4elB2b3hHbXF2REh2YWRhL1E0VmJwQ1JCQzdN?=
- =?utf-8?B?b3dvV1dVbzM2aHRaTW01ZnB6azZLOHVNQmJJZERQMGhSOWpHQVdwRkF4MEVZ?=
- =?utf-8?B?WUFLc0VTeUM4Vk1BeGFwQWdUS3Rkbjk5aCsxWGt2bjQvVDV0d0oxeUlOQnM0?=
- =?utf-8?B?UkJ4NE84VUptcEo4cGRnRXdsK2lDbHo4bzlKMzZHMm8rbU96WnpJRXhyaWVU?=
- =?utf-8?B?VUNWTzlJN1ZsTXE5OW9NM0FZZEgxSG5PbU9QaVBlRlVMUjJwYS9mRlBJS1JU?=
- =?utf-8?B?TitVZmtMcVcxaC9MY1RUTkFsSEcvMHRZT25xTTBORm9ORGF0Rng4ZzBEUlU0?=
- =?utf-8?B?SCs5VVNPenpDTFdidVNrak1vdGZOZ2M0amNjanU1cG4zWTJwUWhYbk1VMWxq?=
- =?utf-8?B?VVp2SEVjUEFwQnhyZE5nSzJ4U05ReUk3OGVVNkU3amJqK01kRG83NmFNOUg3?=
- =?utf-8?B?TVB4bE56Tkp3enB6MkV0bjRkUjY5QU1ldm40Y21INlpJTnBUeWYvcUpYdU8v?=
- =?utf-8?B?VDNvcDd2RHJyQmdnWlg3cE1RS0Q1bTZhREZHSWxTNlBhUVhuaWZhTmVVRkV2?=
- =?utf-8?B?TXgzVGlkNmx4ZUNKNUFnb21keEgwQ1gzOFpBdVp1aVU4eEZlRm9NTHJvT3k5?=
- =?utf-8?B?L3U3VTBMRDkzZUliVW1rZmtDTWp0NHhidGZxMmRVa1Z6VVBUY2IrbTR1ZXdn?=
- =?utf-8?B?cUZjUlRmeFBXNGZldEMwOElBWEcyM2QwaHJlQ0dIbmtUQ01CSUJJUC81R3ZD?=
- =?utf-8?B?aGNEcWFBYk96dm4xNERXc0t4NjJNMDU5YlpMQnpPWU1HOUMvU1d6a1BFSkFC?=
- =?utf-8?B?QW8yMW5wSGlRR3Q4MlF2aUNOV1RIT3FWcitCK2dCamxFN0RyeS8xRHh4WGZO?=
- =?utf-8?B?Ry9sblo2bjdpSGNDQWFzcUFRRWlvQjhxSmc0Ymx1aXdleWVHOGQxUWpNc3Y5?=
- =?utf-8?B?eEFlOWZFRllJWklPS2xaNlM2S05rbTk3MEJzRmpDaDhRUmJ3bVozTHgwL05P?=
- =?utf-8?B?ZWRpYkJuVWp2TlFKMmQrOURGSGszMWJ1QVpucEJYeERmSmV2VG9XMFE0ZmlM?=
- =?utf-8?B?VGxTSWNuZmJNTTZzQ1pXeWRIVm9FeUR0TlVWMzRoTldZY2FvUT09?=
-X-Microsoft-Antispam-Message-Info: +/VudCJmfNxcdlhDLml7ME6l1FajUT8CAzCLOaYbbxwZbTISXKozQBLYC8T6KpY/qy7gppMV1qkPMjYTn5l4Tnw1lfHL8/lTniikfAhJvvogGgSoC+tjilaNrzC4601v8qAP09YAbKpnKU7PgS3W6VlzCQMKF0eSDo/MMj3TOUaEpqf8WfIA68HOL/GvnvUa
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1332;6:x2zfrufLdHaukBL0lUbEvyeGdD21mxV0Ae2QjWo+umy+IZ3TYZ2MM6/685ET1tmofrBydsis1LP+cUqu7giEMaqKxqgd/+GwYxY5xXVesFaPyXxlDgKsYzSR+JgF1PeREX8niAIy7uUQ9/SQGtiXct/HpQK/T0M7eprP4/IYjWtgbO4Ay6a6wgy7bBMUIh6fnXwk9kGoVP8gW2AL/43n8RktDTe6gP6eF4kRuRvyuQkWSWm/hcvZPd5vGfHeAogp9zXC4q2Ef5ML5sbmw9NmaRSVP8DX+3wZZWuwUpf/XQjc05sevhB2ckC4eaFYZn+1a+/VWPrxdzysdV6ragrK+ATiox2uCy07SetfyZwX5aeLLlFVhcdlwyqp6mQmecS14r6tx6Wph2BcBkiDK3Ew+T5534mBUOrSdQ3JAH5jyiDEy3EI6YMjpgTciWp414Zi0DH03vzk7almeEKJ18MmUA==;5:nr+pw9zLIjDw8gtr9dsqEESgSE0ClOQMKZcm32SvYg4R66JP5aEh30mDipep1W5PHxnbs8vBQc/C0j3VHBt1IeKpAahJZtWEAARL0Qg2jrLANOeUpL3rGioKGkdhXO7zkvzha8FCfDIMaUKxOT5R405zmHNFVhdUM2HeaodaFrA=;24:iJG/frsO5ps4NlXSttohn/ZYWMCoIOlt5pRxmfViCt+8S0j3cH5pi50SwvA/BJOI1XdbKLGHn/DM/FO7McnU7XVdxmREnbrAu8rTMamk7lQ=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1332;7:3M9RsGxCIxOhYdYIlJFZB5riQgpaa+moE+d0Bw1AyGATLKIOxmOSG4CJIgnH0uTlweFFyCDfUfentF7XRuaTQk4EMA6rapEvlH3RwJ5cPjnoIVH8Pme/DrqvPLcgT6VTY5NweWX7gpR2acjFZjYaI5yVusAVb0CYr1p7JLREyh2Tu5yA66g1Nf75hjdEOcvKZhZh7jLsUcxMgDgndEwvfGSNaqYwUjjOHPDzLllA2+v5BKaV/2xtV3Vzt1WoRcTf;20:ouH5m9Y34Nw6/yzubbPZDdziigfAmMOqsynTosp+8jmvF4em9le2LHthsDpVcqT6OQ0WbMYtHlLUFUJB8u3/I6HN9MbQC19bNoxnHwBdxPwgOz2HH/yWuhdu54tgBQ+sPrR4MnqN/8i1LJxiOz3KoyI7fRPXXrGAoM09JugKH3I=
-X-MS-Office365-Filtering-Correlation-Id: 9872b1af-9140-4177-4f79-08d5a47b5980
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 15:53:21.5151 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9872b1af-9140-4177-4f79-08d5a47b5980
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB1332
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.4-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.16.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.16.4-rc1
+X-KernelTest-Deadline: 2018-04-24T13:51+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598009280028553845?=
-X-GMAIL-MSGID: =?utf-8?q?1598009280028553845?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598454802503426017?=
+X-GMAIL-MSGID: =?utf-8?q?1598454802503426017?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Call alloc_mem_cgroup_per_node_info() and IDR allocation later.
-This is preparation for next patches, which will require this
-two actions are made nearby (they will be done under read lock,
-and here we place them together to minimize the time, it's held).
+This is the start of the stable review cycle for the 4.16.4 release.
+There are 196 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
- mm/memcontrol.c |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+Responses should be made by Tue Apr 24 13:50:16 UTC 2018.
+Anything received after that time might be too late.
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 448db08d97a0..d99ea5680ffe 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4383,20 +4383,10 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
- 	if (!memcg)
- 		return NULL;
- 
--	memcg->id.id = idr_alloc(&mem_cgroup_idr, NULL,
--				 1, MEM_CGROUP_ID_MAX,
--				 GFP_KERNEL);
--	if (memcg->id.id < 0)
--		goto fail;
--
- 	memcg->stat_cpu = alloc_percpu(struct mem_cgroup_stat_cpu);
- 	if (!memcg->stat_cpu)
- 		goto fail;
- 
--	for_each_node(node)
--		if (alloc_mem_cgroup_per_node_info(memcg, node))
--			goto fail;
--
- 	if (memcg_wb_domain_init(memcg, GFP_KERNEL))
- 		goto fail;
- 
-@@ -4415,7 +4405,16 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	INIT_LIST_HEAD(&memcg->cgwb_list);
- #endif
--	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
-+	for_each_node(node)
-+		if (alloc_mem_cgroup_per_node_info(memcg, node))
-+			goto fail;
-+
-+	memcg->id.id = idr_alloc(&mem_cgroup_idr, memcg,
-+				 1, MEM_CGROUP_ID_MAX,
-+				 GFP_KERNEL);
-+	if (memcg->id.id < 0)
-+		goto fail;
-+
- 	return memcg;
- fail:
- 	mem_cgroup_id_remove(memcg);
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.4-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.16.4-rc1
+
+Greg Thelen <gthelen@google.com>
+    writeback: safer lock nesting
+
+Jiri Kosina <jkosina@suse.cz>
+    HID: i2c-hid: fix inverted return value from i2c_hid_command()
+
+Weinan Li <weinan.z.li@intel.com>
+    drm/i915/gvt: init mmio by lri command in vgpu inhibit context
+
+Matthew Wilcox <mawilcox@microsoft.com>
+    mm/filemap.c: fix NULL pointer in page_cache_tree_insert()
+
+Ian Kent <raven@themaw.net>
+    autofs: mount point create should honour passed in mode
+
+Dave Jiang <dave.jiang@intel.com>
+    device-dax: allow MAP_SYNC to succeed
+
+Dan Williams <dan.j.williams@intel.com>
+    libnvdimm, dimm: handle EACCES failures from label reads
+
+Al Viro <viro@zeniv.linux.org.uk>
+    Don't leak MNT_INTERNAL away from internal mounts
+
+Al Viro <viro@zeniv.linux.org.uk>
+    rpc_pipefs: fix double-dput()
+
+Al Viro <viro@zeniv.linux.org.uk>
+    orangefs_kill_sb(): deal with allocation failures
+
+Al Viro <viro@zeniv.linux.org.uk>
+    hypfs_kill_super(): deal with failed allocations
+
+Al Viro <viro@zeniv.linux.org.uk>
+    jffs2_kill_sb(): deal with failed allocations
+
+Ville Syrjälä <ville.syrjala@linux.intel.com>
+    drm/i915: Correctly handle limited range YCbCr data on VLV/CHV
+
+Imre Deak <imre.deak@intel.com>
+    drm/i915: Fix hibernation with ACPI S0 target state
+
+Daniel Kurtz <djkurtz@chromium.org>
+    mmc: sdhci-pci: Only do AMD tuning for HS200
+
+Amir Goldstein <amir73il@gmail.com>
+    fanotify: fix logic of events on child
+
+Jan Kara <jack@suse.cz>
+    udf: Fix leak of UTF-16 surrogates into encoded strings
+
+Michael Ellerman <mpe@ellerman.id.au>
+    powerpc/lib: Fix off-by-one in alternate feature patching
+
+Benjamin Herrenschmidt <benh@kernel.crashing.org>
+    powerpc/xive: Fix trying to "push" an already active pool VP
+
+Michael Neuling <mikey@neuling.org>
+    powerpc/eeh: Fix enabling bridge MMIO windows
+
+Matt Redfearn <matt.redfearn@mips.com>
+    MIPS: memset.S: Fix clobber of v1 in last_fixup
+
+Matt Redfearn <matt.redfearn@mips.com>
+    MIPS: memset.S: Fix return of __clear_user from Lpartial_fixup
+
+Matt Redfearn <matt.redfearn@mips.com>
+    MIPS: memset.S: EVA & fault support for small_memset
+
+Matt Redfearn <matt.redfearn@mips.com>
+    MIPS: uaccess: Add micromips clobbers to bzero invocation
+
+Heiko Carstens <heiko.carstens@de.ibm.com>
+    s390: add support for IBM z14 Model ZR1
+
+Aaron Armstrong Skomra <skomra@gmail.com>
+    HID: wacom: bluetooth: send exit report for recent Bluetooth devices
+
+Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+    HID: hidraw: Fix crash on HIDIOCGFEATURE with a destroyed device
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    HID: input: fix battery level reporting on BT mice
+
+Aaron Ma <aaron.ma@canonical.com>
+    HID: i2c-hid: Fix resume issue on Raydium touchscreen device
+
+Theodore Ts'o <tytso@mit.edu>
+    random: add new ioctl RNDRESEEDCRNG
+
+Theodore Ts'o <tytso@mit.edu>
+    random: crng_reseed() should lock the crng instance that it is modifying
+
+Theodore Ts'o <tytso@mit.edu>
+    random: set up the NUMA crng instances after the CRNG is fully initialized
+
+Theodore Ts'o <tytso@mit.edu>
+    random: use a different mixing algorithm for add_device_randomness()
+
+Theodore Ts'o <tytso@mit.edu>
+    random: fix crng_ready() test
+
+Hui Wang <hui.wang@canonical.com>
+    ALSA: hda/realtek - adjust the location of one mic
+
+Hui Wang <hui.wang@canonical.com>
+    ALSA: hda/realtek - set PINCFG_HEADSET_MIC to parse_flags
+
+David Wang <davidwang@zhaoxin.com>
+    ALSA: hda - New VIA controller suppor no-snoop path
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: rawmidi: Fix missing input substream checks in compat ioctls
+
+Fabián Inostroza <soulsonceonfire@gmail.com>
+    ALSA: line6: Use correct endpoint type for midi output
+
+Paul Parsons <lost.distance@yahoo.com>
+    drm/radeon: Fix PCIe lane width calculation
+
+Nico Sneck <nicosneck@hotmail.com>
+    drm/radeon: add PX quirk for Asus K73TK
+
+Marc Zyngier <marc.zyngier@arm.com>
+    drm/rockchip: Clear all interrupts before requesting the IRQ
+
+Alex Deucher <alexander.deucher@amd.com>
+    drm/amdgpu/si: implement get/set pcie_lanes asic callback
+
+Alex Deucher <alexander.deucher@amd.com>
+    drm/amdgpu: Fix PCIe lane width calculation
+
+Alex Deucher <alexander.deucher@amd.com>
+    drm/amdgpu/sdma: fix mask in emit_pipeline_sync
+
+Bas Nieuwenhuizen <basni@chromium.org>
+    drm/amdgpu: Fix always_valid bos multiple LRU insertions.
+
+Alex Deucher <alexander.deucher@amd.com>
+    drm/amdgpu: Add an ATPX quirk for hybrid laptop
+
+Igor Pylypiv <igor.pylypiv@gmail.com>
+    watchdog: f71808e_wdt: Fix WD_EN register read
+
+Sean Wang <sean.wang@mediatek.com>
+    dt-bindings: clock: mediatek: add binding for fixed-factor clock axisel_d4
+
+Mikhail Lappo <mikhail.lappo@esrlabs.com>
+    thermal: imx: Fix race condition in imx_thermal_probe()
+
+Sean Wang <sean.wang@mediatek.com>
+    pwm: mediatek: Improve precision in rate calculation
+
+Sean Wang <sean.wang@mediatek.com>
+    pwm: mediatek: Fix up PWM4 and PWM5 malfunction on MT7623
+
+Ryo Kodama <ryo.kodama.vz@renesas.com>
+    pwm: rcar: Fix a condition to prevent mismatch value setting to duty
+
+Dmitry Osipenko <digetx@gmail.com>
+    clk: tegra: Mark HCLK, SCLK and EMC as critical
+
+Boris Brezillon <boris.brezillon@bootlin.com>
+    clk: bcm2835: De-assert/assert PLL reset signal when appropriate
+
+Sean Wang <sean.wang@mediatek.com>
+    clk: mediatek: fix PWM clock source by adding a fixed-factor clock
+
+Arnd Bergmann <arnd@arndb.de>
+    clk: fix false-positive Wmaybe-uninitialized warning
+
+Richard Genoud <richard.genoud@gmail.com>
+    clk: mvebu: armada-38x: add support for missing clocks
+
+Sinan Kaya <okaya@codeaurora.org>
+    PCI: Mark Broadcom HT1100 and HT2000 Root Port Extended Tags as broken
+
+Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+    trace_uprobe: Use %lx to display offset
+
+Charlene Liu <charlene.liu@amd.com>
+    drm/amd/display: HDMI has no sound after Panel power off/on
+
+Harry Wentland <harry.wentland@amd.com>
+    Revert "drm/amd/display: disable CRTCs with NULL FB on their primary plane (V2)"
+
+Harry Wentland <harry.wentland@amd.com>
+    Revert "drm/amd/display: fix dereferencing possible ERR_PTR()"
+
+Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+    mmc: tmio: Fix error handling when issuing CMD23
+
+Alex Smith <alex.smith@imgtec.com>
+    mmc: jz4740: Fix race condition in IRQ mask update
+
+Alexander Kappner <agk@godking.net>
+    mmc: core: Prevent bus reference leak in mmc_blk_init()
+
+Lu Baolu <baolu.lu@linux.intel.com>
+    iommu/vt-d: Fix a potential memory leak
+
+Krzysztof Mazur <krzysiek@podlesie.net>
+    um: Use POSIX ucontext_t instead of struct ucontext
+
+Jason A. Donenfeld <Jason@zx2c4.com>
+    um: Compile with modern headers
+
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    ring-buffer: Check if memory is available before allocation
+
+Dan Williams <dan.j.williams@intel.com>
+    nfit: skip region registration for incomplete control regions
+
+Dan Williams <dan.j.williams@intel.com>
+    nfit, address-range-scrub: fix scrub in-progress reporting
+
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    vsprintf: Do not preprocess non-dereferenced pointers for bprintf (%px and %pK)
+
+Dan Williams <dan.j.williams@intel.com>
+    libnvdimm, namespace: use a safe lookup for dimm device name
+
+Dan Williams <dan.j.williams@intel.com>
+    libnvdimm, dimm: fix dpa reservation vs uninitialized label area
+
+Chris Chiu <chiu@endlessm.com>
+    tpm: self test failure should not cause suspend to fail
+
+Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+    cxl: Fix possible deadlock when processing page faults from cxllib
+
+Maxime Jayat <maxime.jayat@mobile-devices.fr>
+    dmaengine: at_xdmac: fix rare residue corruption
+
+Heinz Mauelshagen <heinzm@redhat.com>
+    dm raid: fix nosync status
+
+Andrew Morton <akpm@linux-foundation.org>
+    drivers/infiniband/ulp/srpt/ib_srpt.c: fix build with gcc-4.4.4
+
+Andrew Morton <akpm@linux-foundation.org>
+    drivers/infiniband/core/verbs.c: fix build with gcc-4.4.4
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    IB/srpt: Fix an out-of-bounds stack access in srpt_zerolength_write()
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    IB/srp: Fix completion vector assignment algorithm
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    IB/srp: Fix srp_abort()
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Fix endless loop for XRUN recovery in OSS emulation
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Fix UAF at PCM release via PCM timer access
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Fix mutex unbalance in OSS emulation ioctls
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Return -EBUSY for OSS ioctls changing busy streams
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Avoid potential races between OSS ioctls and read/write
+
+Chuck Lever <chuck.lever@oracle.com>
+    xprtrdma: Fix corner cases when handling device removal
+
+Chuck Lever <chuck.lever@oracle.com>
+    xprtrdma: Fix latency regression on NUMA NFS/RDMA clients
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    RDMA/core: Avoid that ib_drain_qp() triggers an out-of-bounds stack access
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    RDMA/rxe: Fix an out-of-bounds read
+
+Leon Romanovsky <leonro@mellanox.com>
+    RDMA/mlx5: Protect from NULL pointer derefence
+
+Roland Dreier <roland@purestorage.com>
+    RDMA/ucma: Don't allow setting RDMA_OPTION_IB_PATH without an RDMA device
+
+Mikulas Patocka <mpatocka@redhat.com>
+    dm crypt: limit the number of allocated pages
+
+Mike Snitzer <snitzer@redhat.com>
+    dm: backfill abnormal IO support to non-splitting IO submission
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: force revalidation of directory pointer after seekdir(2)
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: add extra checks to ext4_xattr_block_get()
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: add bounds checking to ext4_xattr_find_entry()
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: move call to ext4_error() into ext4_xattr_check_block()
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: don't allow r/w mounts if metadata blocks overlap the superblock
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: always initialize the crc32c checksum driver
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: fail ext4_iget for root directory if unallocated
+
+Eric Biggers <ebiggers@google.com>
+    ext4: limit xattr size to INT_MAX
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: add validity checks for bitmap block numbers
+
+Jiri Slaby <jslaby@suse.cz>
+    ext4: fix offset overflow on 32-bit archs in ext4_iomap_begin()
+
+Eryu Guan <guaneryu@gmail.com>
+    ext4: protect i_disksize update by i_data_sem in direct write path
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: don't update checksum of new initialized bitmaps
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: pass -ESHUTDOWN code to jbd2 layer
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: eliminate sleep from shutdown ioctl
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: shutdown should not prevent get_write_access
+
+Theodore Ts'o <tytso@mit.edu>
+    jbd2: if the journal is aborted then don't allow update of the log tail
+
+Mikulas Patocka <mpatocka@redhat.com>
+    block: use 32-bit blk_status_t on Alpha
+
+Hans de Goede <hdegoede@redhat.com>
+    extcon: intel-cht-wc: Set direction and drv flags for V5 boost GPIO
+
+Theodore Ts'o <tytso@mit.edu>
+    random: use a tighter cap in credit_entropy_bits_safe()
+
+Aniruddha Banerjee <aniruddhab@nvidia.com>
+    irqchip/gic: Take lock when updating irq type
+
+Mika Westerberg <mika.westerberg@linux.intel.com>
+    thunderbolt: Prevent crash when ICM firmware is not running
+
+Mika Westerberg <mika.westerberg@linux.intel.com>
+    thunderbolt: Handle connecting device in place of host properly
+
+Mika Westerberg <mika.westerberg@linux.intel.com>
+    thunderbolt: Resume control channel after hibernation image is created
+
+Mika Westerberg <mika.westerberg@linux.intel.com>
+    thunderbolt: Serialize PCIe tunnel creation with PCI rescan
+
+Mika Westerberg <mika.westerberg@linux.intel.com>
+    thunderbolt: Wait a bit longer for ICM to authenticate the active NVM
+
+Liam Girdwood <liam.r.girdwood@linux.intel.com>
+    ASoC: topology: Fix kcontrol name string handling
+
+James Kelly <jamespeterkelly@gmail.com>
+    ASoC: ssm2602: Replace reg_default_raw with reg_default
+
+Sean Wang <sean.wang@mediatek.com>
+    soc: mediatek: fix the mistaken pointer accessed when subdomains are added
+
+Aaron Ma <aaron.ma@canonical.com>
+    HID: core: Fix size as type u32
+
+Aaron Ma <aaron.ma@canonical.com>
+    HID: Fix hid_report_len usage
+
+Yan, Zheng <zyan@redhat.com>
+    ceph: always update atime/mtime/ctime for new inode
+
+Michael Ellerman <mpe@ellerman.id.au>
+    powerpc/mm/radix: Fix checkstops caused by invalid tlbiel
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/powernv: Fix OPAL NVRAM driver OPAL_BUSY loops
+
+Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+    powerpc/kexec_file: Fix error code when trying to load kdump kernel
+
+Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+    powerpc/kprobes: Fix call trace due to incorrect preempt count
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
+
+Paul Mackerras <paulus@ozlabs.org>
+    powerpc/64: Call H_REGISTER_PROC_TBL when running as a HPT guest on POWER9
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/64s: Fix dt_cpu_ftrs to have restore_cpu clear unwanted LPCR bits
+
+Michael Neuling <mikey@neuling.org>
+    powerpc/eeh: Fix race with driver un/bind
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/powernv: Handle unknown OPAL errors in opal_nvram_write()
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/64s: Fix pkey support in dt_cpu_ftrs, add CPU_FTR_PKEY bit
+
+Takashi Iwai <tiwai@suse.de>
+    swiotlb: fix unexpected swiotlb_alloc_coherent failures
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    CIFS: fix sha512 check in cifs_crypto_secmech_release
+
+Aurelien Aptel <aaptel@suse.com>
+    CIFS: implement v3.11 preauth integrity
+
+Aurelien Aptel <aaptel@suse.com>
+    CIFS: add sha512 secmech
+
+Aurelien Aptel <aaptel@suse.com>
+    CIFS: refactor crypto shash/sdesc allocation&free
+
+Jean Delvare <jdelvare@suse.de>
+    i2c: i801: Restore configuration at shutdown
+
+Jean Delvare <jdelvare@suse.de>
+    i2c: i801: Save register SMBSLVCMD value only once
+
+Aaron Ma <aaron.ma@canonical.com>
+    HID: i2c-hid: fix size check and type usage
+
+Steve French <stfrench@microsoft.com>
+    smb3: Fix root directory when server returns inode number of zero
+
+Long Li <longli@microsoft.com>
+    cifs: smbd: disconnect transport on RDMA errors
+
+Long Li <longli@microsoft.com>
+    cifs: smbd: avoid reconnect lockup
+
+Steve French <smfrench@gmail.com>
+    Tree connect for SMB3.1.1 must be signed for non-encrypted shares
+
+Ronnie Sahlberg <lsahlber@redhat.com>
+    fix smb3-encryption breakage when CONFIG_DEBUG_SG=y
+
+Ronnie Sahlberg <lsahlber@redhat.com>
+    cifs: fix memory leak in SMB2_open()
+
+Felipe Balbi <felipe.balbi@linux.intel.com>
+    usb: dwc3: gadget: never call ->complete() from ->ep_queue()
+
+Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+    usb: dwc3: pci: Properly cleanup resource
+
+Roger Quadros <rogerq@ti.com>
+    usb: dwc3: prevent setting PRTCAP to OTG from debugfs
+
+Zhengjun Xing <zhengjun.xing@linux.intel.com>
+    USB:fix USB3 devices behind USB3 hubs not resuming at hibernate thaw
+
+Yavuz, Tuba <tuba@ece.ufl.edu>
+    USB: gadget: f_midi: fixing a possible double-free in f_midi
+
+Dan Williams <dan.j.williams@intel.com>
+    acpi, nfit: rework NVDIMM leaf method detection
+
+Mika Westerberg <mika.westerberg@linux.intel.com>
+    ACPI / hotplug / PCI: Check presence of slot itself in get_slot_status()
+
+Hans de Goede <hdegoede@redhat.com>
+    ACPI / video: Add quirk to force acpi-video backlight on Samsung 670Z5E
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    regmap: Fix reversed bounds check in regmap_raw_write()
+
+Jason Andryuk <jandryuk@gmail.com>
+    x86/xen: Delay get_cpu_cap until stack canary is established
+
+Kieran Bingham <kieran.bingham@ideasonboard.com>
+    media: vsp1: Fix BRx conditional path in WPF
+
+Sakari Ailus <sakari.ailus@linux.intel.com>
+    media: vb2: core: Finish buffers at the end of the stream
+
+Hans Verkuil <hverkuil@xs4all.nl>
+    media: vivid: check if the cec_adapter is valid
+
+Hans Verkuil <hverkuil@xs4all.nl>
+    media: atomisp_fops.c: disable atomisp_compat_ioctl32
+
+Sean Young <sean@mess.org>
+    media: rc: oops in ir_timer_keyup after device unplug
+
+Jarkko Nikula <jarkko.nikula@linux.intel.com>
+    spi: Fix unregistration of controller with fixed SPI bus number
+
+Maxime Chevallier <maxime.chevallier@bootlin.com>
+    spi: Fix scatterlist elements size in spi_map_buf
+
+Eugen Hristev <eugen.hristev@microchip.com>
+    spi: atmel: init FIFOs before spi enable
+
+Santiago Esteban <Santiago.Esteban@microchip.com>
+    ARM: dts: at91: sama5d4: fix pinctrl compatible string
+
+Marek Szyprowski <m.szyprowski@samsung.com>
+    ARM: dts: exynos: Fix IOMMU support for GScaler devices on Exynos5250
+
+Nicolas Ferre <nicolas.ferre@microchip.com>
+    ARM: dts: at91: at91sam9g25: fix mux-mask pinctrl property
+
+Sean Wang <sean.wang@mediatek.com>
+    arm: dts: mt7623: fix USB initialization fails on bananapi-r2
+
+Marek Szyprowski <m.szyprowski@samsung.com>
+    ARM: EXYNOS: Fix coupled CPU idle freeze on Exynos4210
+
+Marc Zyngier <marc.zyngier@arm.com>
+    KVM: arm/arm64: vgic-its: Fix potential overrun in vgic_copy_lpi_list
+
+Jerome Brunet <jbrunet@baylibre.com>
+    ARM64: dts: meson: reduce odroid-c2 eMMC maximum rate
+
+Felipe Balbi <felipe.balbi@linux.intel.com>
+    usb: gadget: udc: core: update usb_ep_queue() documentation
+
+Chen-Yu Tsai <wens@csie.org>
+    phy: allwinner: sun4i-usb: poll vbus changes on A23/A33 when driving VBUS
+
+Heinrich Schuchardt <xypron.glpk@gmx.de>
+    usb: musb: gadget: misplaced out of bounds check
+
+Vlastimil Babka <vbabka@suse.cz>
+    mm, slab: reschedule cache_reap() on the same CPU
+
+Eric Biggers <ebiggers@google.com>
+    ipc/shm: fix use-after-free of shm file via remap_file_pages()
+
+Takashi Iwai <tiwai@suse.de>
+    resource: fix integer overflow at reallocation
+
+Andrew Morton <akpm@linux-foundation.org>
+    fs/reiserfs/journal.c: add missing resierfs_warning() arg
+
+Kees Cook <keescook@chromium.org>
+    task_struct: only use anon struct under randstruct plugin
+
+Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+    mm: hwpoison: disable memory error handling on 1GB hugepage
+
+Jérôme Glisse <jglisse@redhat.com>
+    mm/hmm: hmm_pfns_bad() was accessing wrong struct
+
+Jérôme Glisse <jglisse@redhat.com>
+    mm/hmm: fix header file if/else/endif maze
+
+Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+    mm/ksm.c: fix inconsistent accounting of zero pages
+
+Richard Weinberger <richard@nod.at>
+    ubi: Reject MLC NAND
+
+Romain Izard <romain.izard.pro@gmail.com>
+    ubi: Fix error for write access
+
+Richard Weinberger <richard@nod.at>
+    ubi: fastmap: Don't flush fastmap work on detach
+
+Richard Weinberger <richard@nod.at>
+    ubifs: Check ubifs_wbuf_sync() return code
+
+Gregory CLEMENT <gregory.clement@bootlin.com>
+    cpufreq: armada-37xx: Fix clock leak
+
+George Cherian <george.cherian@cavium.com>
+    cpufreq: CPPC: Use transition_delay_us depending transition_latency
+
+Hans de Goede <hdegoede@redhat.com>
+    Bluetooth: hci_bcm: Add irq_polarity module option
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm/boot/dts/at91sam9g25.dtsi                 |   2 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  |   8 +-
+ arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts      |  24 ++-
+ arch/arm/boot/dts/sama5d4.dtsi                     |   2 +-
+ arch/arm/mach-exynos/pm.c                          |   6 +-
+ .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts |   2 +-
+ arch/mips/include/asm/uaccess.h                    |  11 +-
+ arch/mips/lib/memset.S                             |  11 +-
+ arch/powerpc/include/asm/barrier.h                 |   3 +-
+ arch/powerpc/include/asm/synch.h                   |   4 -
+ arch/powerpc/kernel/dt_cpu_ftrs.c                  |  19 +-
+ arch/powerpc/kernel/eeh_driver.c                   |  68 ++++---
+ arch/powerpc/kernel/eeh_pe.c                       |   3 +-
+ arch/powerpc/kernel/kprobes.c                      |  30 +--
+ arch/powerpc/kernel/machine_kexec_file_64.c        |   2 +-
+ arch/powerpc/lib/feature-fixups.c                  |   2 +-
+ arch/powerpc/mm/hash_utils_64.c                    |   6 +
+ arch/powerpc/mm/tlb-radix.c                        |   5 +-
+ arch/powerpc/platforms/powernv/opal-nvram.c        |  11 +-
+ arch/powerpc/platforms/pseries/lpar.c              |   8 +-
+ arch/powerpc/sysdev/xive/native.c                  |   4 +
+ arch/s390/Kconfig                                  |   8 +-
+ arch/s390/hypfs/inode.c                            |   2 +-
+ arch/s390/kernel/perf_cpum_cf_events.c             |   1 +
+ arch/s390/kernel/setup.c                           |   1 +
+ arch/um/os-Linux/file.c                            |   1 +
+ arch/um/os-Linux/signal.c                          |   3 +-
+ arch/x86/um/stub_segv.c                            |   3 +-
+ arch/x86/xen/enlighten_pv.c                        |   8 +-
+ drivers/acpi/nfit/core.c                           |  59 +++---
+ drivers/acpi/nfit/nfit.h                           |   5 +-
+ drivers/acpi/video_detect.c                        |   9 +
+ drivers/base/regmap/regmap.c                       |   2 +-
+ drivers/bluetooth/hci_bcm.c                        |  20 +-
+ drivers/char/random.c                              | 130 +++++++++----
+ drivers/char/tpm/tpm-interface.c                   |   4 +
+ drivers/clk/bcm/clk-bcm2835.c                      |   8 +-
+ drivers/clk/mediatek/clk-mt2701.c                  |  15 +-
+ drivers/clk/mvebu/armada-38x.c                     |  14 +-
+ drivers/clk/renesas/clk-sh73a0.c                   |   6 +-
+ drivers/clk/tegra/clk-emc.c                        |   2 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |   2 +-
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |   8 +-
+ drivers/clk/tegra/clk-tegra114.c                   |   3 +-
+ drivers/clk/tegra/clk-tegra124.c                   |   7 +-
+ drivers/clk/tegra/clk-tegra20.c                    |  23 +--
+ drivers/clk/tegra/clk-tegra210.c                   |   3 +-
+ drivers/clk/tegra/clk-tegra30.c                    |  14 +-
+ drivers/cpufreq/armada-37xx-cpufreq.c              |   2 +
+ drivers/cpufreq/cppc_cpufreq.c                     |   3 +
+ drivers/dax/device.c                               |   2 +
+ drivers/dma/at_xdmac.c                             |   4 +-
+ drivers/extcon/extcon-intel-cht-wc.c               |  11 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c   |   1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c        |   6 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             |   2 +-
+ drivers/gpu/drm/amd/amdgpu/cik_sdma.c              |   2 +-
+ drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c             |   2 +-
+ drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c             |   2 +-
+ drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c             |   2 +-
+ drivers/gpu/drm/amd/amdgpu/si.c                    |  67 +++++++
+ drivers/gpu/drm/amd/amdgpu/si_dpm.c                |   4 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  31 ---
+ .../drm/amd/display/dc/dce/dce_stream_encoder.c    |   2 +
+ drivers/gpu/drm/i915/gvt/gvt.h                     |   5 +-
+ drivers/gpu/drm/i915/gvt/mmio_context.c            | 210 +++++++++++++++++++--
+ drivers/gpu/drm/i915/gvt/mmio_context.h            |   5 +
+ drivers/gpu/drm/i915/gvt/scheduler.c               |   5 +
+ drivers/gpu/drm/i915/i915_drv.c                    |  22 +--
+ drivers/gpu/drm/i915/i915_drv.h                    |   2 +-
+ drivers/gpu/drm/i915/i915_reg.h                    |  10 +
+ drivers/gpu/drm/i915/intel_sprite.c                |  81 ++++++--
+ drivers/gpu/drm/radeon/radeon_device.c             |   4 +
+ drivers/gpu/drm/radeon/si_dpm.c                    |   4 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  23 +--
+ drivers/hid/hid-core.c                             |  10 +-
+ drivers/hid/hid-ids.h                              |   3 +
+ drivers/hid/hid-input.c                            |  27 ++-
+ drivers/hid/hid-multitouch.c                       |   5 +-
+ drivers/hid/hid-rmi.c                              |   4 +-
+ drivers/hid/hidraw.c                               |   5 +
+ drivers/hid/i2c-hid/i2c-hid.c                      |  26 ++-
+ drivers/hid/wacom_sys.c                            |   4 +-
+ drivers/hid/wacom_wac.c                            |  76 +++++---
+ drivers/i2c/busses/i2c-i801.c                      |  16 +-
+ drivers/infiniband/core/ucma.c                     |   3 +
+ drivers/infiniband/core/verbs.c                    |  12 +-
+ drivers/infiniband/hw/mlx5/mr.c                    |   2 +
+ drivers/infiniband/sw/rxe/rxe_verbs.c              |   5 +-
+ drivers/infiniband/ulp/srp/ib_srp.c                |  18 +-
+ drivers/infiniband/ulp/srpt/ib_srpt.c              |  16 +-
+ drivers/iommu/intel-svm.c                          |   1 +
+ drivers/irqchip/irq-gic-common.c                   |   9 +-
+ drivers/md/dm-crypt.c                              |  66 ++++++-
+ drivers/md/dm-raid.c                               |   3 +-
+ drivers/md/dm.c                                    |  30 ++-
+ drivers/media/common/videobuf2/videobuf2-core.c    |   9 +
+ drivers/media/platform/vivid/vivid-vid-common.c    |   3 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c             |   2 +-
+ drivers/media/rc/rc-main.c                         |   6 +-
+ drivers/misc/cxl/cxllib.c                          |  85 ++++++---
+ drivers/mmc/core/block.c                           |   1 +
+ drivers/mmc/host/jz4740_mmc.c                      |   2 +-
+ drivers/mmc/host/sdhci-pci-core.c                  |  25 ++-
+ drivers/mmc/host/tmio_mmc_core.c                   |   2 +-
+ drivers/mtd/ubi/block.c                            |   2 +-
+ drivers/mtd/ubi/build.c                            |  11 ++
+ drivers/mtd/ubi/fastmap-wl.c                       |   1 -
+ drivers/nvdimm/dimm.c                              |   8 +-
+ drivers/nvdimm/dimm_devs.c                         |  22 ++-
+ drivers/nvdimm/namespace_devs.c                    |   4 +-
+ drivers/pci/hotplug/acpiphp_glue.c                 |  23 ++-
+ drivers/pci/quirks.c                               |   4 +
+ drivers/phy/allwinner/phy-sun4i-usb.c              |  10 +-
+ drivers/pwm/pwm-mediatek.c                         |  35 +++-
+ drivers/pwm/pwm-rcar.c                             |   8 +-
+ drivers/soc/mediatek/mtk-scpsys.c                  |   2 +-
+ drivers/spi/spi-atmel.c                            |   8 +-
+ drivers/spi/spi.c                                  |  19 +-
+ .../media/atomisp/pci/atomisp2/atomisp_fops.c      |   6 +
+ drivers/thermal/imx_thermal.c                      |   6 +-
+ drivers/thunderbolt/icm.c                          |  36 ++--
+ drivers/thunderbolt/nhi.c                          |   1 +
+ drivers/thunderbolt/switch.c                       |   9 +
+ drivers/usb/core/generic.c                         |   9 +-
+ drivers/usb/dwc3/core.c                            |   3 +
+ drivers/usb/dwc3/dwc3-pci.c                        |   2 +-
+ drivers/usb/dwc3/gadget.c                          |  43 +++--
+ drivers/usb/gadget/function/f_midi.c               |   3 +-
+ drivers/usb/gadget/u_f.h                           |   2 +
+ drivers/usb/gadget/udc/core.c                      |   3 +
+ drivers/usb/musb/musb_gadget_ep0.c                 |  14 +-
+ drivers/watchdog/f71808e_wdt.c                     |   2 +-
+ fs/autofs4/root.c                                  |   2 +-
+ fs/ceph/inode.c                                    |  10 +-
+ fs/cifs/Kconfig                                    |   1 +
+ fs/cifs/cifsencrypt.c                              |  85 ++-------
+ fs/cifs/cifsfs.c                                   |   1 +
+ fs/cifs/cifsglob.h                                 |   8 +-
+ fs/cifs/cifsproto.h                                |   5 +
+ fs/cifs/inode.c                                    |  33 ++++
+ fs/cifs/link.c                                     |  27 +--
+ fs/cifs/misc.c                                     |  54 ++++++
+ fs/cifs/smb2misc.c                                 |  64 +++++++
+ fs/cifs/smb2ops.c                                  |  15 +-
+ fs/cifs/smb2pdu.c                                  |  38 +++-
+ fs/cifs/smb2pdu.h                                  |   1 +
+ fs/cifs/smb2proto.h                                |   5 +
+ fs/cifs/smb2transport.c                            |  97 ++++------
+ fs/cifs/smbdirect.c                                |  19 +-
+ fs/cifs/smbencrypt.c                               |  27 +--
+ fs/cifs/transport.c                                |  17 ++
+ fs/ext4/balloc.c                                   |  19 +-
+ fs/ext4/dir.c                                      |   8 +-
+ fs/ext4/ext4_jbd2.c                                |   7 -
+ fs/ext4/ialloc.c                                   |  54 +-----
+ fs/ext4/inode.c                                    |  13 +-
+ fs/ext4/ioctl.c                                    |   8 +-
+ fs/ext4/super.c                                    |  21 ++-
+ fs/ext4/xattr.c                                    | 121 ++++++------
+ fs/ext4/xattr.h                                    |  11 ++
+ fs/fs-writeback.c                                  |   7 +-
+ fs/jbd2/journal.c                                  |  30 ++-
+ fs/jffs2/super.c                                   |   2 +-
+ fs/namespace.c                                     |   3 +-
+ fs/notify/fanotify/fanotify.c                      |  34 ++--
+ fs/orangefs/super.c                                |   5 +
+ fs/reiserfs/journal.c                              |   2 +-
+ fs/ubifs/super.c                                   |  14 +-
+ fs/udf/unicode.c                                   |   6 +
+ include/dt-bindings/clock/mt2701-clk.h             |   3 +-
+ include/linux/backing-dev-defs.h                   |   5 +
+ include/linux/backing-dev.h                        |  30 +--
+ include/linux/blk_types.h                          |   5 +
+ include/linux/compiler-clang.h                     |   3 -
+ include/linux/compiler-gcc.h                       |  12 +-
+ include/linux/hid.h                                |  15 +-
+ include/linux/hmm.h                                |   9 +-
+ include/linux/mm.h                                 |   1 +
+ include/sound/pcm_oss.h                            |   1 +
+ include/uapi/linux/random.h                        |   3 +
+ ipc/shm.c                                          |  23 ++-
+ kernel/resource.c                                  |   3 +-
+ kernel/trace/ring_buffer.c                         |   5 +
+ kernel/trace/trace_uprobe.c                        |   2 +-
+ lib/swiotlb.c                                      |   2 +-
+ lib/vsprintf.c                                     |   4 +
+ mm/filemap.c                                       |   9 +-
+ mm/hmm.c                                           |   3 +-
+ mm/ksm.c                                           |   7 +
+ mm/memory-failure.c                                |  16 ++
+ mm/page-writeback.c                                |  18 +-
+ mm/slab.c                                          |   3 +-
+ net/sunrpc/rpc_pipe.c                              |   1 +
+ net/sunrpc/xprtrdma/rpc_rdma.c                     |   2 +-
+ net/sunrpc/xprtrdma/transport.c                    |   2 -
+ net/sunrpc/xprtrdma/verbs.c                        |  13 +-
+ net/sunrpc/xprtrdma/xprt_rdma.h                    |   1 -
+ sound/core/oss/pcm_oss.c                           | 186 ++++++++++++++----
+ sound/core/pcm.c                                   |   8 +-
+ sound/core/rawmidi_compat.c                        |  18 +-
+ sound/pci/hda/hda_intel.c                          |   3 +-
+ sound/pci/hda/patch_realtek.c                      |   3 +
+ sound/soc/codecs/ssm2602.c                         |  19 +-
+ sound/soc/soc-topology.c                           |  23 ++-
+ sound/usb/line6/midi.c                             |   2 +-
+ virt/kvm/arm/vgic/vgic-its.c                       |  15 +-
+ 208 files changed, 2213 insertions(+), 1021 deletions(-)
