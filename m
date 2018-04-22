@@ -1,83 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2630128-1524406034-2-14637089678867099089
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524406033; b=de8iiPbaSob/aKIVftPLH0TeQI/9L/nHHcWeEzTZ6C6MsOp0lh
-    u0yvDlcZ5/KTZlfKBHCFk5wmkcGFCW9WAOKmjI9VynrDOYq6fVItiYvsU5wOUc5D
-    5tvM4fAY9LjUiCEGM8y4/3z5MTS0hz3BT0ghD3PFQ+Ah/AuXJguQguemJXPNWNVJ
-    FEWGJWKVbBAyt69gEJpoPbcVdB6BuNHq9ozg0N1rpVJLf7U37AvqOkyoJCCkUIzJ
-    QvZ2ijzzBtE+juOOsMwkBwUw1MtIrmvq1vcbqpg+q/yTJORWLZnUW/5lgulpZV3v
-    TqyEytNXo1aHCU6Y7KmDwWzqisnO5JThKWuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524406033; bh=r0I1JtfBFzUlGqwVsA8sVzawZYel5b
-    3PcvGfgXRTq1Q=; b=ItRZtcaKfAFhfCi1iwVe8ZNAlyVkgmlPNe2QiT3IhD9vfk
-    mW9yoVw3z0e/5oo5eJPYhOF1O7vH9xz8xYdQNCgDDFwjU0ghTu6eBOO3YzhNtNVc
-    EAbhL0Wmf4xMmwCmh5Ohf/onVKJhtOhHyRzab0Kbh7O4JAwzZCtQhryL9m1kqWut
-    NkDMcDZ2NOh22hqEmEas0pY/Bzq4WMd49HBwO3OBqselp34iJ09QX8CvsMoqJ6lZ
-    aTFuG0MI+oPWP0q96DOFlzs1I1IQHbSfKH6vogWtwYDOcxsLhBZwHREPl8wNtwDP
-    CWZZLCL4KLM0hOlEdzkgVT1lYw+vUiohUWx1OwnA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEPrZ9POi16+YlYYkxNAHfzLTihqdxAIv2Ts/BhLTKzu2VyXbQTrmaEOqZrrYlNngLMoSXAA77PrlZHyNWSlFJAB+d4DgQT/MxSRejc5CMZHhGaPlxyL
-    q5QxnIAxmqYslWH74HPJ94qxMYI1U9aFnGfo4OpLS0KXJ2E0Bytn7y6ckxcpGafoAykL90dWOjmuZe9m5e13DBT6lsxc77kIGJVA4mk4YWcC1/SWCjcZmIZW
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=WTJdmG3rAAAA:8 a=VwQbUJbxAAAA:8 a=hSkVLCK3AAAA:8 a=CbDCq_QkAAAA:8
-    a=ag1SF4gXAAAA:8 a=pRKBuYtNHWmjaJ5dfTQA:9 a=QEXdDO2ut3YA:10
-    a=q3NGepEMMmKWaCv8Sx90:22 a=AjGcO6oz07-iQ99wixmX:22 a=cQPPKAXgyycSBL8etih5:22
-    a=1qrBK16LubpBFNPVNq2M:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755720AbeDVOHJ (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:07:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51712 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755617AbeDVOHG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:07:06 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4893k7LZsSMnTRF6iyZYjFB/XyM5YGvSasQCCuWcNMnCC86RBWnpOSGp8wURJrSQvdZr9iV
+ARC-Seal: i=1; a=rsa-sha256; t=1524406031; cv=none;
+        d=google.com; s=arc-20160816;
+        b=AGq4xKtLXjqIqfee4mqPPe+bLnB9wv/AWFftAKWFjBfmTRUVbfFers+blOszRSO/oQ
+         76xdjMdu9F3Se3bLqO5kyBVGTL8eiHT2ToS4bps6UHAGML7GCAoC0+6Pb1aNAZAfx1rf
+         0KEZsXj89fZZ3fMRxrFAVfbNwoFZ3V0yj6Z4W21HHOjC0fwEeFEyCD+lX85IfyDmRFer
+         bRtBau3AkVhAe5m/lpYfZeMrPSm1NNvWr1/4FeWVGsyaXVkdx35wK7/lmUjOf1Eim2jz
+         JOk7CCiEd+aR9NZmswakmRb9lblYLLXrzCSpYW5OyVzart1ZSMPya11i1J/cRTcbhnHH
+         AEkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=wXD1Pfao/6F4AwY6qR3NnjkD/aDRFEbMTdKKvK9VbPs=;
+        b=m1zWWGxNGJgDW1kzicnOMK3SpOww+VtYJCMkWk3m0eFjRqPK5cWZoYuE2HwMbVy4Gf
+         GNN+tDDeV6FOta2k/tqLTivY2Cu8nG0JJms8l67csRqtmPeTJg1V6RQm8ifLYTRuDjqz
+         wKPQgxinb/S+OSKkSL5J1imwN9wJ7uqIxbdNjG6woNvYHXMgJduQ+905dONhUxX5bXOe
+         453atUOW0IZZShZkSD7TN2IXdf0yrOmF9sVJoYNY4jvzlE4AYKy+yhOuJ4FySpIPhuc0
+         07/+dGnH/+GYajk9ZQYgqJAkO1ieSqhSm4OTSDBWZgolrR6idXpjVU43Jjbyj7AiEtbA
+         BNSQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a67bc93e14682d92fc2f@syzkaller.appspotmail.com,
-        Roland Dreier <roland@purestorage.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 086/164] RDMA/ucma: Dont allow setting RDMA_OPTION_IB_PATH without an RDMA device
-Date: Sun, 22 Apr 2018 15:52:33 +0200
-Message-Id: <20180422135138.947598551@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Noa Osherovich <noaos@mellanox.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.14 087/164] RDMA/mlx5: Protect from NULL pointer derefence
+Date: Sun, 22 Apr 2018 15:52:34 +0200
+Message-Id: <20180422135138.989701109@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -85,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455061180454798?=
+X-GMAIL-MSGID: =?utf-8?q?1598455578835777368?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -95,33 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Roland Dreier <roland@purestorage.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 8435168d50e66fa5eae01852769d20a36f9e5e83 upstream.
+commit 4289861d88d6c7b5e4c8cc7fe2ad6cdf0cdfc366 upstream.
 
-Check to make sure that ctx->cm_id->device is set before we use it.
-Otherwise userspace can trigger a NULL dereference by doing
-RDMA_USER_CM_CMD_SET_OPTION on an ID that is not bound to a device.
+The mlx5_ib_alloc_implicit_mr() can fail to acquire pages
+and the returned mr pointer won't be valid. Ensure that it
+is not error prior to access.
 
-Cc: <stable@vger.kernel.org>
-Reported-by: <syzbot+a67bc93e14682d92fc2f@syzkaller.appspotmail.com>
-Signed-off-by: Roland Dreier <roland@purestorage.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: <stable@vger.kernel.org> # 4.10
+Fixes: 81713d3788d2 ("IB/mlx5: Add implicit MR support")
+Reported-by: Noa Osherovich <noaos@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/infiniband/hw/mlx5/mr.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1241,6 +1241,9 @@ static int ucma_set_ib_path(struct ucma_
- 	if (!optlen)
- 		return -EINVAL;
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -1220,6 +1220,8 @@ struct ib_mr *mlx5_ib_reg_user_mr(struct
+ 			return ERR_PTR(-EINVAL);
  
-+	if (!ctx->cm_id->device)
-+		return -EINVAL;
-+
- 	memset(&sa_path, 0, sizeof(sa_path));
- 
- 	sa_path.rec_type = SA_PATH_REC_TYPE_IB;
+ 		mr = mlx5_ib_alloc_implicit_mr(to_mpd(pd), access_flags);
++		if (IS_ERR(mr))
++			return ERR_CAST(mr);
+ 		return &mr->ibmr;
+ 	}
+ #endif
