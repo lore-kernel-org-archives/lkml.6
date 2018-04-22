@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754071AbeDVXMF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 19:12:05 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:40614 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753754AbeDVXKR (ORCPT
+        id S1754098AbeDVXMZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 19:12:25 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45818 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753707AbeDVXKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 19:10:17 -0400
-X-Google-Smtp-Source: AIpwx4//2Nwytxow2Z81siUaPZSO/2sAa5kws+fgTwMrVgwzKP7H4qV7B6rTzXma4TN09R4kH7uSxg==
+        Sun, 22 Apr 2018 19:10:07 -0400
+X-Google-Smtp-Source: AB8JxZpPMjjnLUuGkyfZ5wQmK05otOQl6gKiZs3t8ZiBEvGvhTPNz3CQUF1hfXaBKy5l7sm55Dx/Dg==
 From: Linus Walleij <linus.walleij@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 11/18 v2] regulator: s5m8767: Pass descriptor instead of GPIO number
-Date: Mon, 23 Apr 2018 01:07:35 +0200
-Message-Id: <20180422230742.3729-11-linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Milo Kim <milo.kim@ti.com>
+Subject: [PATCH 07/18 v2] regulator: lp8788-ldo: Pass descriptor instead of GPIO number
+Date: Mon, 23 Apr 2018 01:07:31 +0200
+Message-Id: <20180422230742.3729-7-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180422230742.3729-1-linus.walleij@linaro.org>
 References: <20180422230742.3729-1-linus.walleij@linaro.org>
@@ -21,116 +22,155 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of passing a global GPIO number for the enable GPIO, pass
-a descriptor looked up from the device tree node for the
-regulator.
+Instead of passing a global GPIO number, pass a descriptor looked
+up with the standard devm_gpiod_get_index_optional() call.
 
-This regulator supports passing platform data, but enable/sleep
-regulators are looked up from the device tree exclusively, so
-we can need not touch other files.
+This driver has supported passing a LDO enable GPIO for years,
+yet this facility has never been put to use in the upstream kernel.
+If someone desires to put in place GPIO control for the LDOs,
+this can be done by adding a GPIO descriptor table in the MFD
+nexus in drivers/mfd/lp8788.c for the LDO device when spawning the
+MFD children, or using a board file.
 
+Cc: Milo Kim <milo.kim@ti.com>
 Acked-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 ChangeLog v1->v2:
-- Rebase the patch on the other changes
+- Rebase the patch on the other changes.
 - Collect Lee's ACK.
 ---
- drivers/regulator/s5m8767.c      | 26 +++++++++++++++-----------
- include/linux/mfd/samsung/core.h |  4 +++-
- 2 files changed, 18 insertions(+), 12 deletions(-)
+ drivers/regulator/lp8788-ldo.c | 32 ++++++++++++++++----------------
+ include/linux/mfd/lp8788.h     | 16 ----------------
+ 2 files changed, 16 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 4836947e1521..b8443a360646 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -13,6 +13,7 @@
- 
+diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
+index cbfd35873575..f2347474a106 100644
+--- a/drivers/regulator/lp8788-ldo.c
++++ b/drivers/regulator/lp8788-ldo.c
+@@ -16,7 +16,7 @@
  #include <linux/err.h>
- #include <linux/of_gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
  #include <linux/platform_device.h>
  #include <linux/regulator/driver.h>
-@@ -459,15 +460,14 @@ static void s5m8767_regulator_config_ext_control(struct s5m8767_info *s5m8767,
- 		return;
- 	}
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/mfd/lp8788.h>
  
--	if (!gpio_is_valid(rdata->ext_control_gpio)) {
-+	if (!rdata->ext_control_gpiod) {
- 		dev_warn(s5m8767->dev,
- 				"ext-control for %s: GPIO not valid, ignoring\n",
--				rdata->reg_node->name);
-+			 rdata->reg_node->name);
- 		return;
- 	}
+ /* register address */
+@@ -85,8 +85,6 @@
+ #define LP8788_STARTUP_TIME_S		3
  
--	config->ena_gpio = rdata->ext_control_gpio;
--	config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
-+	config->ena_gpiod = rdata->ext_control_gpiod;
- }
+ #define ENABLE_TIME_USEC		32
+-#define ENABLE				GPIOF_OUT_INIT_HIGH
+-#define DISABLE				GPIOF_OUT_INIT_LOW
  
- /*
-@@ -577,8 +577,14 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
- 			continue;
- 		}
- 
--		rdata->ext_control_gpio = of_get_named_gpio(reg_np,
--			"s5m8767,pmic-ext-control-gpios", 0);
-+		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
-+								       reg_np,
-+								       "s5m8767,pmic-ext-control-gpios",
-+								       0,
-+								       GPIOD_OUT_HIGH,
-+								       "s5m8767");
-+		if (IS_ERR(rdata->ext_control_gpiod))
-+			return PTR_ERR(rdata->ext_control_gpiod);
- 
- 		rdata->id = i;
- 		rdata->initdata = of_get_regulator_init_data(
-@@ -954,10 +960,8 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
- 		config.driver_data = s5m8767;
- 		config.regmap = iodev->regmap_pmic;
- 		config.of_node = pdata->regulators[i].reg_node;
--		config.ena_gpio = -EINVAL;
--		config.ena_gpio_flags = 0;
--		config.ena_gpio_initialized = true;
--		if (gpio_is_valid(pdata->regulators[i].ext_control_gpio))
-+		config.ena_gpiod = NULL;
-+		if (pdata->regulators[i].ext_control_gpiod)
- 			s5m8767_regulator_config_ext_control(s5m8767,
- 					&pdata->regulators[i], &config);
- 
-@@ -970,7 +974,7 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
- 			return ret;
- 		}
- 
--		if (gpio_is_valid(pdata->regulators[i].ext_control_gpio)) {
-+		if (pdata->regulators[i].ext_control_gpiod) {
- 			ret = s5m8767_enable_ext_control(s5m8767, rdev);
- 			if (ret < 0) {
- 				dev_err(s5m8767->dev,
-diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-index 5a23dd4df432..28f4ae76271d 100644
---- a/include/linux/mfd/samsung/core.h
-+++ b/include/linux/mfd/samsung/core.h
-@@ -39,6 +39,8 @@
- #define STEP_12_5_MV		12500
- #define STEP_6_25_MV		6250
- 
-+struct gpio_desc;
-+
- enum sec_device_type {
- 	S5M8751X,
- 	S5M8763X,
-@@ -151,7 +153,7 @@ struct sec_regulator_data {
- 	int				id;
- 	struct regulator_init_data	*initdata;
- 	struct device_node		*reg_node;
--	int				ext_control_gpio;
-+	struct gpio_desc		*ext_control_gpiod;
+ enum lp8788_ldo_id {
+ 	DLDO1,
+@@ -117,7 +115,7 @@ struct lp8788_ldo {
+ 	struct lp8788 *lp;
+ 	struct regulator_desc *desc;
+ 	struct regulator_dev *regulator;
+-	struct lp8788_ldo_enable_pin *en_pin;
++	struct gpio_desc *ena_gpiod;
  };
  
+ /* DLDO 1, 2, 3, 9 voltage table */
+@@ -469,7 +467,6 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
+ 					enum lp8788_ldo_id id)
+ {
+ 	struct lp8788 *lp = ldo->lp;
+-	struct lp8788_platform_data *pdata = lp->pdata;
+ 	enum lp8788_ext_ldo_en_id enable_id;
+ 	u8 en_mask[] = {
+ 		[EN_ALDO1]   = LP8788_EN_SEL_ALDO1_M,
+@@ -504,11 +501,18 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
+ 		return 0;
+ 	}
+ 
+-	/* if no platform data for ldo pin, then set default enable mode */
+-	if (!pdata || !pdata->ldo_pin || !pdata->ldo_pin[enable_id])
++	/* FIXME: check default mode for GPIO here: high or low? */
++	ldo->ena_gpiod = devm_gpiod_get_index_optional(&pdev->dev,
++						       "enable",
++						       enable_id,
++						       GPIOD_OUT_HIGH);
++	if (IS_ERR(ldo->ena_gpiod))
++		return PTR_ERR(ldo->ena_gpiod);
++
++	/* if no GPIO for ldo pin, then set default enable mode */
++	if (!ldo->ena_gpiod)
+ 		goto set_default_ldo_enable_mode;
+ 
+-	ldo->en_pin = pdata->ldo_pin[enable_id];
+ 	return 0;
+ 
+ set_default_ldo_enable_mode:
+@@ -533,10 +537,8 @@ static int lp8788_dldo_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (ldo->en_pin) {
+-		cfg.ena_gpio = ldo->en_pin->gpio;
+-		cfg.ena_gpio_flags = ldo->en_pin->init_state;
+-	}
++	if (ldo->ena_gpiod)
++		cfg.ena_gpiod = ldo->ena_gpiod;
+ 
+ 	cfg.dev = pdev->dev.parent;
+ 	cfg.init_data = lp->pdata ? lp->pdata->dldo_data[id] : NULL;
+@@ -582,10 +584,8 @@ static int lp8788_aldo_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (ldo->en_pin) {
+-		cfg.ena_gpio = ldo->en_pin->gpio;
+-		cfg.ena_gpio_flags = ldo->en_pin->init_state;
+-	}
++	if (ldo->ena_gpiod)
++		cfg.ena_gpiod = ldo->ena_gpiod;
+ 
+ 	cfg.dev = pdev->dev.parent;
+ 	cfg.init_data = lp->pdata ? lp->pdata->aldo_data[id] : NULL;
+diff --git a/include/linux/mfd/lp8788.h b/include/linux/mfd/lp8788.h
+index 786bf6679a28..2010e0de3e34 100644
+--- a/include/linux/mfd/lp8788.h
++++ b/include/linux/mfd/lp8788.h
+@@ -181,20 +181,6 @@ struct lp8788_buck2_dvs {
+ 	enum lp8788_dvs_sel vsel;
+ };
+ 
+-/*
+- * struct lp8788_ldo_enable_pin
+- *
+- *   Basically, all LDOs are enabled through the I2C commands.
+- *   But ALDO 1 ~ 5, 7, DLDO 7, 9, 11 can be enabled by external gpio pins.
+- *
+- * @gpio         : gpio number which is used for enabling ldos
+- * @init_state   : initial gpio state (ex. GPIOF_OUT_INIT_LOW)
+- */
+-struct lp8788_ldo_enable_pin {
+-	int gpio;
+-	int init_state;
+-};
+-
  /*
+  * struct lp8788_chg_param
+  * @addr         : charging control register address (range : 0x11 ~ 0x1C)
+@@ -288,7 +274,6 @@ struct lp8788_vib_platform_data {
+  * @aldo_data    : regulator initial data for analog ldo
+  * @buck1_dvs    : gpio configurations for buck1 dvs
+  * @buck2_dvs    : gpio configurations for buck2 dvs
+- * @ldo_pin      : gpio configurations for enabling LDOs
+  * @chg_pdata    : platform data for charger driver
+  * @alarm_sel    : rtc alarm selection (1 or 2)
+  * @bl_pdata     : configurable data for backlight driver
+@@ -306,7 +291,6 @@ struct lp8788_platform_data {
+ 	struct regulator_init_data *aldo_data[LP8788_NUM_ALDOS];
+ 	struct lp8788_buck1_dvs *buck1_dvs;
+ 	struct lp8788_buck2_dvs *buck2_dvs;
+-	struct lp8788_ldo_enable_pin *ldo_pin[EN_LDOS_MAX];
+ 
+ 	/* charger */
+ 	struct lp8788_charger_platform_data *chg_pdata;
 -- 
 2.14.3
