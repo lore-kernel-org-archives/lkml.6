@@ -1,105 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753646AbeDVUwO (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 16:52:14 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45747 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753537AbeDVUwK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 16:52:10 -0400
-Date: Sun, 22 Apr 2018 22:52:08 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Paul Menzel <pmenzel+linux-kernel@molgen.mpg.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: How to disable Linux =?utf-8?Q?kernel_?=
- =?utf-8?Q?self-extraction_=28KERNEL=5FGZIP=2C_KERNEL=5FBZIP2=2C_=E2=80=A6?=
- =?utf-8?B?KT8=?=
-Message-ID: <20180422205208.GA8672@amd>
-References: <9468be0e-5eb9-246c-e60e-3d8019a42fd1@molgen.mpg.de>
- <20180422102033.GB26243@amd>
- <b22efb58-b63e-7130-f2d7-a9d28225ef9b@molgen.mpg.de>
+        id S1753665AbeDVUzt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 16:55:49 -0400
+Received: from mga07.intel.com ([134.134.136.100]:49961 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753537AbeDVUzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 16:55:44 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,314,1520924400";
+   d="scan'208";a="43798639"
+Date: Mon, 23 Apr 2018 04:55:12 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Cc: kbuild-all@01.org, tiwai@suse.com, alsa-devel@alsa-project.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Subject: Re: [PATCH 4/4] ALSA: usb-audio: UAC3 Add support for connector
+ insertion.
+Message-ID: <201804230459.2dXlPwHY%fengguang.wu@intel.com>
+References: <20180420170327.31569-5-jorge.sanjuan@codethink.co.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b22efb58-b63e-7130-f2d7-a9d28225ef9b@molgen.mpg.de>
+In-Reply-To: <20180420170327.31569-5-jorge.sanjuan@codethink.co.uk>
 User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jorge,
 
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch! Perhaps something to improve:
 
-Hi!
+[auto build test WARNING on sound/for-next]
+[also build test WARNING on v4.17-rc1 next-20180420]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> >>I try to decrease boot time, and my system has an SSD and enough space,=
- so
-> >>loading 18 instead of 12 MB doesn=E2=80=99t make a difference, but the
-> >>self-extraction is noticeable. So, I like to disable it.
-> >
-> >How long does GZIP extraction take on your hardware?
->=20
-> It=E2=80=99s hard to measure =E2=80=93 at least I didn=E2=80=99t find a w=
-ay to do so =E2=80=93, but counting
-> from the last GRUB message to the first message of Linux (with `quiet`
-> removed from the the command line), it takes roughly *two* seconds.
->=20
-> ```
-> $ ls -l /boot/vmlinuz-4.15.0-3-686-pae
-> -rw-r--r-- 1 root root  3987200 Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686-p=
-ae
-> $ ls -lh /boot/vmlinuz-4.15.0-3-686-pae
-> -rw-r--r-- 1 root root 3,9M Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686-pae
-> $ time scripts/extract-vmlinux vmlinuz-4.15.0-3-686-pae > bla.txt
->=20
-> real    0m1,204s
-> user    0m1,041s
-> sys     0m0,245s
-> ```
+url:    https://github.com/0day-ci/linux/commits/Jorge-Sanjuan/ALSA-usb-UAC3-new-features/20180423-015726
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-Interesting; looks like I have faster machine (thinkpad X220).
 
-pavel@duo:/data/l/linux$ time scripts/extract-vmlinux /tmp/vmlinux.bin
-> /tmp/delme
-0.21user 0.15system 0.66 (0m0.660s) elapsed 56.36%CPU
-pavel@duo:/data/l/linux$ ls -al /tmp/delme
--rw-r--r-- 1 pavel pavel 18275356 Apr 22 22:44 /tmp/delme
-pavel@duo:/data/l/linux$ gzip /tmp/delme
-pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
-0.21user 0.02system 0.23 (0m0.232s) elapsed 100.03%CPU
-pavel@duo:/data/l/linux$ gzip -1 /tmp/delme
-pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
-0.22user 0.03system 0.25 (0m0.257s) elapsed 100.11%CPU
-pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
+sparse warnings: (new ones prefixed by >>)
 
-=2E.and it also looks like extract-kernel is significantly slower than
-gzip -9, because it is not using all the CPU. Strange.
+   sound/usb/mixer.c:899:59: sparse: cast to restricted __le16
+   sound/usb/mixer.c:1923:33: sparse: cast to restricted __le16
+>> sound/usb/mixer.c:1975:24: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] bmctls @@    got restrunsigned int [unsigned] bmctls @@
+   sound/usb/mixer.c:1975:24:    expected unsigned int [unsigned] bmctls
+   sound/usb/mixer.c:1975:24:    got restricted __le16 [usertype] bmControls
+   sound/usb/mixer.c:1981:24: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] bmctls @@    got restrunsigned int [unsigned] bmctls @@
+   sound/usb/mixer.c:1981:24:    expected unsigned int [unsigned] bmctls
+   sound/usb/mixer.c:1981:24:    got restricted __le32 [usertype] bmControls
+   sound/usb/mixer.c:2008:33: sparse: cast to restricted __le16
+   sound/usb/mixer.c:2697:62: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned int [unsigned] [usertype] bmControls @@    got ed int [unsigned] [usertype] bmControls @@
+   sound/usb/mixer.c:2697:62:    expected unsigned int [unsigned] [usertype] bmControls
+   sound/usb/mixer.c:2697:62:    got restricted __le16 [usertype] bmControls
+   sound/usb/mixer.c:2724:62: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned int [unsigned] [usertype] bmControls @@    got ed int [unsigned] [usertype] bmControls @@
+   sound/usb/mixer.c:2724:62:    expected unsigned int [unsigned] [usertype] bmControls
+   sound/usb/mixer.c:2724:62:    got restricted __le32 [usertype] bmControls
+   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
+   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
+   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
+   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
+   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
+   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
+   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
 
-Interesting. I somehow assumed gzip -d would be faster than that on
-modern machines.
+vim +1975 sound/usb/mixer.c
 
-So yes, looks like uncompressed kernel image may be good idea.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+  1964	
+  1965	static int parse_audio_input_terminal(struct mixer_build *state, int unitid,
+  1966					      void *raw_desc)
+  1967	{
+  1968		struct usb_audio_term iterm;
+  1969		unsigned int control, bmctls, term_id;
+  1970	
+  1971		if (state->mixer->protocol == UAC_VERSION_2) {
+  1972			struct uac2_input_terminal_descriptor *d_v2 = raw_desc;
+  1973			control = UAC2_TE_CONNECTOR;
+  1974			term_id = d_v2->bTerminalID;
+> 1975			bmctls = d_v2->bmControls;
+  1976		}
+  1977		else if (state->mixer->protocol == UAC_VERSION_3) {
+  1978			struct uac3_input_terminal_descriptor *d_v3 = raw_desc;
+  1979			control = UAC3_TE_INSERTION;
+  1980			term_id = d_v3->bTerminalID;
+  1981			bmctls = d_v3->bmControls;
+  1982		}
+  1983		else /* UAC1. No Insertion control */
+  1984			return 0;
+  1985	
+  1986		check_input_term(state, term_id, &iterm);
+  1987	
+  1988		/* Check for jack detection. */
+  1989		if (uac_v2v3_control_is_readable(bmctls, control))
+  1990			build_connector_control(state, &iterm, true);
+  1991	
+  1992		return 0;
+  1993	}
+  1994	
 
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrc9fgACgkQMOfwapXb+vIQMACfWKL7S7CGpnJHs0CZePLCUqx1
-XtQAoKIsOW38Rxqj0S7UFG5FBrEGHQux
-=sfCt
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
