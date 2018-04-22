@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48GpR9MiApiRO21JcOeUwwb5YrIxV7Uu7a2EWZh5ibi4SLrzafx0/QfV8oufeJmgoyPVUic
-ARC-Seal: i=1; a=rsa-sha256; t=1524405832; cv=none;
+X-Google-Smtp-Source: AIpwx49en6Pz/57WD1VqafSuqap4yN/oxk8HhVjsO5vLiV9CGE/xUmx0K7eTvrZIEGPIAmWNv3k3
+ARC-Seal: i=1; a=rsa-sha256; t=1524405830; cv=none;
         d=google.com; s=arc-20160816;
-        b=g0HcI7PSf8HFFzolSOksa5GLq3evw5KX4ggCKUJ2yoUVZCyzzHrU0BKd7QEyyGy4No
-         +C+koN/3HAmBGij3cATebTcOXA8I0frBhJxNZvNX2r/7/HyIJjUvKmZoJ3W/L9FncPgW
-         g1Gb6rXBNojICqxwMKIFyyNndPJusRWwfmCs1VRdfPqk2vbNk1kZVyCOa3zkOEDYJXm8
-         eUX+FDoec1DJNNIEzIhg5c7fizNgJt/HfQUSkWqQKq6f9ukXHhrYV7xZRymM0Eem5zr0
-         cEpvuTVQlir9oIrtnX9LSpsfcN8yeHp+ZTUgYgI3HZ8CO45urF9CZFfpeDN/IaegTqvb
-         07zA==
+        b=smHLL8UPbKJ0AqNolU1+hnpVkob9tA4itxWmsU2OVW6VhM6dIbbkmqqDOIuKUUK1Lh
+         ujcsnRVkDxn8pqyFE0sWcKkLtlr3IXBc9gH3uYOVsU/+ykzONlzcr2Pt7NPyMMcqdNjL
+         1SitZOwwJTXud0hIEzYMXzbNx1N26qxn5nCsMmjIjrFfAbgRi2zB7a1RPvcSwzTJrgvJ
+         FOVAX0VRphUrxsfq1TYdXS/Pf0gBXYsnK7cp8zBBVNAGf7POR/7E3464zpx3YrdmtC8/
+         cFMCIrdjzWc+4a3DTmWOaQgqNPGzkVdib6VlRVU/P4tSpAIsM14AATSo0ZWy4+1wrc0f
+         MlVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IngYanPIZJJreNcPiD6Aie9bxcTHpAuuDHylUXbCldE=;
-        b=NmKDimFSq4XzFMt4LuprY5Lv4eFo1GGRNpAUE5hC7ocd8bvz35SBXX1BuRMmPSDd+9
-         2fvhMKYVdpJ4ZELPh0tQqo9R1VwuIsMT0xZYEo3UdPxHJCivwrWRjWId+/S9xZoJVHSR
-         sjRhzT1r/FIphRWBD01qmf6iJLZzbxEcc2PY+QTwZfYueTJSxVCSinP5UryTp23IoccU
-         XCKlts4cqhLgosbiE04NPmcMpCS4XctaSr4a0dch0FSxMNFhFZ/J5m8f5/7xiGmc3P3R
-         CmYz9DUQOEmELVo2mqAAfLwBIKOJnESmnAIx4Fkx7nkfihe24WMu/Y6loZIAK8RwQGvO
-         ayVw==
+        bh=o6MAk6s2FZR08bXSYaF4tAM0uYdvXUEkNpVCrEP3e44=;
+        b=w0VoNwhzyYX+RlhSn3855x8RWK27ioisO5pOWoOvnY962vOyK99lqAJfvc6SF35ZQL
+         u98wsgvKMADQqIImzwXgZhqmyxrf+i0Od/Y7TkSMfmZuEDtFzLWS/lSIZm6BSFBzqRzB
+         3lMV1CXnFnuOJuCw7vNTUZ1IXlutoT0Qqcm50bcDmFP81K9cBSLAYqoKH5tjo7fpKBaD
+         YIovjKHFuAJwuZ58/rEOZ2aGv6O7FPceAfgkgT6qfCLZM1COI40E22ERBQ4+JSvskj/i
+         i3O9dphOOx7HfS53KyrnKGLdEsxTdY/wCfmvEa8gPiAw2IN+W0JnY/xYcZhO7Mcnd2fK
+         Cvlg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Heinrich Schuchardt <xypron.glpk@gmx.de>,
-	Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.14 015/164] usb: musb: gadget: misplaced out of bounds check
-Date: Sun, 22 Apr 2018 15:51:22 +0200
-Message-Id: <20180422135136.013445808@linuxfoundation.org>
+	Vlastimil Babka <vbabka@suse.cz>,
+	Pekka Enberg <penberg@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	David Rientjes <rientjes@google.com>,
+	Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	John Stultz <john.stultz@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 014/164] mm, slab: reschedule cache_reap() on the same CPU
+Date: Sun, 22 Apr 2018 15:51:21 +0200
+Message-Id: <20180422135135.973461780@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454813951848255?=
-X-GMAIL-MSGID: =?utf-8?q?1598455370587918778?=
+X-GMAIL-THRID: =?utf-8?q?1598454810628611405?=
+X-GMAIL-MSGID: =?utf-8?q?1598455368132944395?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,46 +59,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heinrich Schuchardt <xypron.glpk@gmx.de>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit af6f8529098aeb0e56a68671b450cf74e7a64fcd upstream.
+commit a9f2a846f0503e7d729f552e3ccfe2279010fe94 upstream.
 
-musb->endpoints[] has array size MUSB_C_NUM_EPS.
-We must check array bounds before accessing the array and not afterwards.
+cache_reap() is initially scheduled in start_cpu_timer() via
+schedule_delayed_work_on(). But then the next iterations are scheduled
+via schedule_delayed_work(), i.e. using WORK_CPU_UNBOUND.
 
-Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Cc: stable <stable@vger.kernel.org>
+Thus since commit ef557180447f ("workqueue: schedule WORK_CPU_UNBOUND
+work on wq_unbound_cpumask CPUs") there is no guarantee the future
+iterations will run on the originally intended cpu, although it's still
+preferred.  I was able to demonstrate this with
+/sys/module/workqueue/parameters/debug_force_rr_cpu.  IIUC, it may also
+happen due to migrating timers in nohz context.  As a result, some cpu's
+would be calling cache_reap() more frequently and others never.
+
+This patch uses schedule_delayed_work_on() with the current cpu when
+scheduling the next iteration.
+
+Link: http://lkml.kernel.org/r/20180411070007.32225-1-vbabka@suse.cz
+Fixes: ef557180447f ("workqueue: schedule WORK_CPU_UNBOUND work on wq_unbound_cpumask CPUs")
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Pekka Enberg <penberg@kernel.org>
+Acked-by: Christoph Lameter <cl@linux.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_gadget_ep0.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ mm/slab.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/musb/musb_gadget_ep0.c
-+++ b/drivers/usb/musb/musb_gadget_ep0.c
-@@ -114,15 +114,19 @@ static int service_tx_status_request(
- 		}
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -4080,7 +4080,8 @@ next:
+ 	next_reap_node();
+ out:
+ 	/* Set up the next iteration */
+-	schedule_delayed_work(work, round_jiffies_relative(REAPTIMEOUT_AC));
++	schedule_delayed_work_on(smp_processor_id(), work,
++				round_jiffies_relative(REAPTIMEOUT_AC));
+ }
  
- 		is_in = epnum & USB_DIR_IN;
--		if (is_in) {
--			epnum &= 0x0f;
-+		epnum &= 0x0f;
-+		if (epnum >= MUSB_C_NUM_EPS) {
-+			handled = -EINVAL;
-+			break;
-+		}
-+
-+		if (is_in)
- 			ep = &musb->endpoints[epnum].ep_in;
--		} else {
-+		else
- 			ep = &musb->endpoints[epnum].ep_out;
--		}
- 		regs = musb->endpoints[epnum].regs;
- 
--		if (epnum >= MUSB_C_NUM_EPS || !ep->desc) {
-+		if (!ep->desc) {
- 			handled = -EINVAL;
- 			break;
- 		}
+ #ifdef CONFIG_SLABINFO
