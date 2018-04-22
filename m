@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+iT2z2jnIgaN5Qi+jSwMtUJjFIQfZi5W78c7u3n8V5ja4+gMPbMqwOz4b5iHZcGr5aHNQs
-ARC-Seal: i=1; a=rsa-sha256; t=1524405849; cv=none;
+X-Google-Smtp-Source: AIpwx49MVhtzBQMZgWvJCJNQGAZTk6UbifNaZrZNC6cnKATwtl4K5aAWMXzheYgUML9x9R9YdMHb
+ARC-Seal: i=1; a=rsa-sha256; t=1524405846; cv=none;
         d=google.com; s=arc-20160816;
-        b=QeYFSY0Tpwm1MJC13SMomVlSpaxRCCB2VkjI4dCy9RCn4IPOSZZ1PSTHRrWOe46Emd
-         KebIsEIEH/59x5gMBRna3xmc57KhzuY7cwJDHYGfti1aDUGAACLw9rxljmSMflzDooUT
-         i7+7R9ZMbkFmdw0iEIsA+E+WxzZRxxgTHFf1LFGQLYbJYRaRyvLmGBYx/Np1I9YKrKAD
-         2o9TgQLST4pDktc2kf2RQ6smdW5xIEa2exTOGMV+2EOvQ5tt/UoTuHgLD28nlWvnaXzl
-         eutItk8+p7c0nJxkmgFsRPsK3PA0p9TzDoIAzCVEYFg6bggq/5xF1BD02anJseGGKnXr
-         TDtw==
+        b=yme2s5RN5f/lm+Zq+diM3plcHBpk70c8zzqZpxwQJNbeGx+003tybeiKG1Vn9wfUGV
+         RbI2ZyrfzHv7Cv6Z9xejnW/IRk0lrmLC9WBuM+2rWVqMytwNfQfqinbJ7zg9ODDUMxqC
+         n2UhNvHqqaSh+pvhAWEZ3zCqEJf4O+ItYeYbLpuk73YNqILWnwaAtTzK9gMqGqV1CIq0
+         rb2DPMSY4BCoNgdaaL++6OyJCVCi2yJ4whMFvkWCcZOgtKR/7Bmcp5MEfe9ohiHsqa+d
+         7Qpj5RCVP/WwHV9O+8Pw18BYcePiq/A8d2DAKPDVdmyXuIxr0CnhpoOqG2CdRYbtQnIH
+         Js8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=d7PKBzPTYwDreiliOcA38ht/lyS5/IAOX+nzHQ+xBnY=;
-        b=GVN52xCug44OwGb/lbEe+S8QCq4Bcj6N+2ONz1zBkRWci6B/muxUkPor9224SIuKVT
-         6dm/Uhff0z37V+B1tRlM1t8ANHAimuEkXn95DJ/Lw3z8u1gwz+sVRR1L7WvD3+rkeD71
-         9BphbxuSAJ/n8fPvV1X0dOBLy6wKTBLVW0SeSX0OeRWIhsm2OkcDsEjCesLe3B/PzlLR
-         FQeAxp/dFP4vf1PGuBUU8YZNwbaRQga5mROVYhovjIPaUenaAJb8r89fIXBUUB32AnDF
-         MZztLDh9EWxLr97U0G/kV9AKxOtUg+NeBcYgAOwNTWy/oz8H3WdMidyKWXdXyycoBrJR
-         aGYA==
+        bh=miGI1P0kMCv650DXD4+8BN0CrbGTA1f0Or0vT4U+9g0=;
+        b=jCMtXRPYeRhM80Om1juLD7/kksnOAhJJ3yWKTDDy31HRu872d0c+G1X92SzrWJ7Rsr
+         9C/Np8xzT+rVD0eu3n+EMWcFQpfe9+p/WrjU54WJi7OxezgN2VvCNd8q1ntHEhklESkQ
+         ChhB1Mk7s1hwYr+Wj9cN1d+aZmXjMpzQ4M2uXg5gqfNJ5Y5KGFbcR2KdQm8WzFY5CSJf
+         1uUBI37xI58b11Ua/lx9S35CK4jjHyDxx3kpHJj6a917QaHj9rq7MXqlZMggVvg8gqiX
+         SOb+xntsFnx9kB6bq35tFr+zjTh7xAXA6H/DkHKiC7AUXjI2suZGiB0M7JymbtSHGWOn
+         pCbA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Lechner <david@lechnology.com>,
-	Sekhar Nori <nsekhar@ti.com>
-Subject: [PATCH 4.14 020/164] ARM: dts: da850-lego-ev3: Fix battery voltage gpio
-Date: Sun, 22 Apr 2018 15:51:27 +0200
-Message-Id: <20180422135136.219605166@linuxfoundation.org>
+	George Cherian <george.cherian@cavium.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 002/164] cpufreq: CPPC: Use transition_delay_us depending transition_latency
+Date: Sun, 22 Apr 2018 15:51:09 +0200
+Message-Id: <20180422135135.501274430@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455387797992514?=
-X-GMAIL-MSGID: =?utf-8?q?1598455387797992514?=
+X-GMAIL-THRID: =?utf-8?q?1598454793510382547?=
+X-GMAIL-MSGID: =?utf-8?q?1598455384852053712?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,43 +49,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Lechner <david@lechnology.com>
+From: George Cherian <george.cherian@cavium.com>
 
-commit c5a88cd2e1c508868922bafa0a5c3365986b98e5 upstream.
+commit 3d41386d556db9f720e00de3e11e45f39cb5071c upstream.
 
-This fixes the battery voltage monitoring gpio-hog settings.
+With commit e948bc8fbee0 (cpufreq: Cap the default transition delay
+value to 10 ms)  the cpufreq was not honouring the delay passed via
+ACPI (PCCT). Due to which on ARM based platforms using CPPC the
+cpufreq governor tries to change the frequency of CPUs faster than
+expected.
 
-When the gpio is low, it turns off the battery voltage to the ADC chip.
-However, this needs to be on all of the time so that we can monitor
-battery voltage.
+This leads to continuous error messages like the following.
+" ACPI CPPC: PCC check channel failed. Status=0 "
 
-Also, there was a typo that prevented pinmuxing from working correctly.
+Earlier (without above commit) the default transition delay was
+taken form the value passed from PCCT. Use the same value provided
+by PCCT to set the transition_delay_us.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Fixes: e948bc8fbee0 (cpufreq: Cap the default transition delay value to 10 ms)
+Signed-off-by: George Cherian <george.cherian@cavium.com>
+Cc: 4.14+ <stable@vger.kernel.org> # 4.14+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/da850-lego-ev3.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/cpufreq/cppc_cpufreq.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/arm/boot/dts/da850-lego-ev3.dts
-+++ b/arch/arm/boot/dts/da850-lego-ev3.dts
-@@ -178,7 +178,7 @@
- 	 */
- 	battery {
- 		pinctrl-names = "default";
--		pintctrl-0 = <&battery_pins>;
-+		pinctrl-0 = <&battery_pins>;
- 		compatible = "lego,ev3-battery";
- 		io-channels = <&adc 4>, <&adc 3>;
- 		io-channel-names = "voltage", "current";
-@@ -392,7 +392,7 @@
- 	batt_volt_en {
- 		gpio-hog;
- 		gpios = <6 GPIO_ACTIVE_HIGH>;
--		output-low;
-+		output-high;
- 	};
- };
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -20,6 +20,7 @@
+ #include <linux/cpu.h>
+ #include <linux/cpufreq.h>
+ #include <linux/dmi.h>
++#include <linux/time.h>
+ #include <linux/vmalloc.h>
  
+ #include <asm/unaligned.h>
+@@ -162,6 +163,8 @@ static int cppc_cpufreq_cpu_init(struct
+ 	policy->cpuinfo.max_freq = cppc_dmi_max_khz;
+ 
+ 	policy->cpuinfo.transition_latency = cppc_get_transition_latency(cpu_num);
++	policy->transition_delay_us = cppc_get_transition_latency(cpu_num) /
++		NSEC_PER_USEC;
+ 	policy->shared_type = cpu->shared_type;
+ 
+ 	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
