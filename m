@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+dlaFLapRfXymSYjjWp0RQi1DEeffuNbHBWGgg1FdRFdOd+SNWAJF2dBEkhK20PoUYVKT9
-ARC-Seal: i=1; a=rsa-sha256; t=1524405716; cv=none;
+X-Google-Smtp-Source: AIpwx484+ZIwKanD/qu2bBYadzzXo00e8enX57CwOG9akiJyGknltHGFYRDz328z6rnnWDzI2O3Y
+ARC-Seal: i=1; a=rsa-sha256; t=1524405713; cv=none;
         d=google.com; s=arc-20160816;
-        b=FxvSBgqrnKq+XYLn6HRn1c1udfRKuQP4sIOe/XTlqbosWsmgubS1pTbTdE+SudVqHj
-         gFZGCX+vjeQsROsKTfVDvthLEGafVmfcRiT7wqwGQGwMSvURg5XRHsdv65vK1R+yr0Ka
-         sxxXavORAYZmCyYGPhNFYX9xp3iq/6L3+LvxC6tHwPehtPUf2AQiEyJoYVSgHUY1darg
-         EVbYVAYx6uhHID56AJMIZypcEVkCEmkcBCVKWEHACgUZ3hDJ/aTCHLM/d4f3UbsniQ3u
-         mUD4snQZ4slKRAqbUdOqNTIkqOfQZ28zJnP1rt6WT+48v5o57uPo0cMZs/Bp+5DbI21x
-         Szqw==
+        b=kWH3rD+uc6sO6i3e/M0iu1Kbnq7q6ZiMXNHAX2wXdfEje2j5cG54aw6ZFlrbJ5KNDE
+         y+c5hoZjrO3MZol7Xq3n2jQ0CL/0cNIy5gbdENuCC041206SGOCOC6Qv4iHLCHZVf6hZ
+         SuzoNZ2exxDd50Nx6pFsGhJcy/ye097t6WuEbhdsfE8GkNBWvysdQt+GuAJfUXCmvt/U
+         EwmgN0uZ96qJqvu4QzVdo0UrUur7KNeS6EgIHti2QywGxySZPIcXaLQs9fyYwn4dcej4
+         QZbuXlRns3KA0fldFQ4rMorDDI3A42oHQYe+iZb15JzonlrIZfXT8X+/qeHaTNbhNM9u
+         nlBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8etDOnFHcjB3Elo7wVER7gy6lklEh3/rmLIiSVtA+e8=;
-        b=mPUHOIeTv8wl8/dclKfcMeGcR1HxOY7LnEvZD5ddVuym+lnpucJzXJPNGkzzKGJDsD
-         TtGupin4X5T8ccQfKB1wAJ41xSJAp+4a0m6pzslbGfkJGTu4aIp9UeUXymTcYjCamhvu
-         LESKqTbcO6KXHZZEc6JPKpmOcwGYc3Mc4E9lnkxYiEPZEGYmm+zfiW3LIaHRCRPKMGAo
-         ManHmUTIk1N9arNWnEvzUrulVCmmYHwLqpPHlnlvBsYkYQx9KYIURbIeyVTV/TA5MCt7
-         aI3b5u8u9s/3Gud5mrvJdqKOLFutMD/ZLBddhKkEkrv3lq3hsBbRe8mIjDCHOg3TO0Xx
-         bukQ==
+        bh=p0D1rjqOJRZZ+ApmpcVTNalcGcCH5oaw2wc2ettG4hU=;
+        b=PVwxjHHW1vujDUfI9zqYqnhoH7Qh1tpmL6rYKCwbfZIH83er1kQmpl4GGZh18QkJVo
+         SWcbx5PQzHhTupquVptnaTJnBaqJaAcF5IWa8m7vc1hEX55NQKzcXYQU4b+OkaAQNprY
+         WleboOD42/dWNgYbaEr2JMjmjNxDJcZFDuxu2dA4OH/D0SQHNU2VSgndpJTaQTHuwRCZ
+         4qSKRzl540ZS7fad2ZxEQKS41H6D0BjfS/kze1PdkVaHoKGbyJMZ+dxGjSyZj6dNgs5V
+         YkXEVQBfIFZEbr5y8YS6lhK9xA6zePILSQAJHyPsm5g3/WY1ELMSKWfnFu9RrhPxQ8IL
+         FYMg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Aaron Ma <aaron.ma@canonical.com>,
 	Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.16 169/196] HID: input: fix battery level reporting on BT mice
-Date: Sun, 22 Apr 2018 15:53:09 +0200
-Message-Id: <20180422135113.006362287@linuxfoundation.org>
+Subject: [PATCH 4.16 168/196] HID: i2c-hid: Fix resume issue on Raydium touchscreen device
+Date: Sun, 22 Apr 2018 15:53:08 +0200
+Message-Id: <20180422135112.959254195@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455248353149624?=
-X-GMAIL-MSGID: =?utf-8?q?1598455248353149624?=
+X-GMAIL-THRID: =?utf-8?q?1598455245586597242?=
+X-GMAIL-MSGID: =?utf-8?q?1598455245586597242?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,125 +49,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit 2e210bbb7429cdcf1a1a3ad00c1bf98bd9bf2452 upstream.
+commit 3e83eda467050f13fa69d888993458b76e733de9 upstream.
 
-The commit 581c4484769e ("HID: input: map digitizer battery usage")
-assumed that devices having input (qas opposed to feature) report for
-battery strength would report the data on their own, without the need to
-be polled by the kernel; unfortunately it is not so. Many wireless mice
-do not send unsolicited reports with battery strength data and have to
-be polled explicitly. As a complication, stylus devices on digitizers
-are not normally connected to the base and thus can not be polled - the
-base can only determine battery strength in the stylus when it is in
-proximity.
+When Rayd touchscreen resumed from S3, it issues too many errors like:
+i2c_hid i2c-RAYD0001:00: i2c_hid_get_input: incomplete report (58/5442)
 
-To solve this issue, we add a special flag that tells the kernel
-to avoid polling the device (and expect unsolicited reports) and set it
-when report field with physical usage of digitizer stylus (HID_DG_STYLUS).
-Unless this flag is set, and we have not seen the unsolicited reports,
-the kernel will attempt to poll the device when userspace attempts to
-read "capacity" and "state" attributes of power_supply object
-corresponding to the devices battery.
+And all the report data are corrupted, touchscreen is unresponsive.
 
-Fixes: 581c4484769e ("HID: input: map digitizer battery usage")
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198095
+Fix this by re-sending report description command after resume.
+Add device ID as a quirk.
+
 Cc: stable@vger.kernel.org
-Reported-and-tested-by: Martin van Es <martin@mrvanes.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-input.c |   24 +++++++++++++++++-------
- include/linux/hid.h     |    9 ++++++++-
- 2 files changed, 25 insertions(+), 8 deletions(-)
+ drivers/hid/hid-ids.h         |    3 +++
+ drivers/hid/i2c-hid/i2c-hid.c |   13 +++++++++++++
+ 2 files changed, 16 insertions(+)
 
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -387,7 +387,8 @@ static int hidinput_get_battery_property
- 		break;
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -519,6 +519,9 @@
+ #define I2C_VENDOR_ID_HANTICK		0x0911
+ #define I2C_PRODUCT_ID_HANTICK_5288	0x5288
  
- 	case POWER_SUPPLY_PROP_CAPACITY:
--		if (dev->battery_report_type == HID_FEATURE_REPORT) {
-+		if (dev->battery_status != HID_BATTERY_REPORTED &&
-+		    !dev->battery_avoid_query) {
- 			value = hidinput_query_battery_capacity(dev);
- 			if (value < 0)
- 				return value;
-@@ -403,17 +404,17 @@ static int hidinput_get_battery_property
- 		break;
- 
- 	case POWER_SUPPLY_PROP_STATUS:
--		if (!dev->battery_reported &&
--		    dev->battery_report_type == HID_FEATURE_REPORT) {
-+		if (dev->battery_status != HID_BATTERY_REPORTED &&
-+		    !dev->battery_avoid_query) {
- 			value = hidinput_query_battery_capacity(dev);
- 			if (value < 0)
- 				return value;
- 
- 			dev->battery_capacity = value;
--			dev->battery_reported = true;
-+			dev->battery_status = HID_BATTERY_QUERIED;
- 		}
- 
--		if (!dev->battery_reported)
-+		if (dev->battery_status == HID_BATTERY_UNKNOWN)
- 			val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
- 		else if (dev->battery_capacity == 100)
- 			val->intval = POWER_SUPPLY_STATUS_FULL;
-@@ -486,6 +487,14 @@ static int hidinput_setup_battery(struct
- 	dev->battery_report_type = report_type;
- 	dev->battery_report_id = field->report->id;
- 
-+	/*
-+	 * Stylus is normally not connected to the device and thus we
-+	 * can't query the device and get meaningful battery strength.
-+	 * We have to wait for the device to report it on its own.
-+	 */
-+	dev->battery_avoid_query = report_type == HID_INPUT_REPORT &&
-+				   field->physical == HID_DG_STYLUS;
++#define I2C_VENDOR_ID_RAYD		0x2386
++#define I2C_PRODUCT_ID_RAYD_3118	0x3118
 +
- 	dev->battery = power_supply_register(&dev->dev, psy_desc, &psy_cfg);
- 	if (IS_ERR(dev->battery)) {
- 		error = PTR_ERR(dev->battery);
-@@ -530,9 +539,10 @@ static void hidinput_update_battery(stru
+ #define USB_VENDOR_ID_HANWANG		0x0b57
+ #define USB_DEVICE_ID_HANWANG_TABLET_FIRST	0x5000
+ #define USB_DEVICE_ID_HANWANG_TABLET_LAST	0x8fff
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -47,6 +47,7 @@
+ /* quirks to control the device */
+ #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
+ #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
++#define I2C_HID_QUIRK_RESEND_REPORT_DESCR	BIT(2)
  
- 	capacity = hidinput_scale_battery_capacity(dev, value);
- 
--	if (!dev->battery_reported || capacity != dev->battery_capacity) {
-+	if (dev->battery_status != HID_BATTERY_REPORTED ||
-+	    capacity != dev->battery_capacity) {
- 		dev->battery_capacity = capacity;
--		dev->battery_reported = true;
-+		dev->battery_status = HID_BATTERY_REPORTED;
- 		power_supply_changed(dev->battery);
- 	}
- }
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -515,6 +515,12 @@ enum hid_type {
- 	HID_TYPE_USBNONE
+ /* flags */
+ #define I2C_HID_STARTED		0
+@@ -171,6 +172,8 @@ static const struct i2c_hid_quirks {
+ 		I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV },
+ 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
+ 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
++	{ I2C_VENDOR_ID_RAYD, I2C_PRODUCT_ID_RAYD_3118,
++		I2C_HID_QUIRK_RESEND_REPORT_DESCR },
+ 	{ 0, 0 }
  };
  
-+enum hid_battery_status {
-+	HID_BATTERY_UNKNOWN = 0,
-+	HID_BATTERY_QUERIED,		/* Kernel explicitly queried battery strength */
-+	HID_BATTERY_REPORTED,		/* Device sent unsolicited battery strength report */
-+};
+@@ -1220,6 +1223,16 @@ static int i2c_hid_resume(struct device
+ 	if (ret)
+ 		return ret;
+ 
++	/* RAYDIUM device (2386:3118) need to re-send report descr cmd
++	 * after resume, after this it will be back normal.
++	 * otherwise it issues too many incomplete reports.
++	 */
++	if (ihid->quirks & I2C_HID_QUIRK_RESEND_REPORT_DESCR) {
++		ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
++		if (!ret)
++			return ret;
++	}
 +
- struct hid_driver;
- struct hid_ll_driver;
- 
-@@ -557,7 +563,8 @@ struct hid_device {							/* device repo
- 	__s32 battery_max;
- 	__s32 battery_report_type;
- 	__s32 battery_report_id;
--	bool battery_reported;
-+	enum hid_battery_status battery_status;
-+	bool battery_avoid_query;
- #endif
- 
- 	unsigned int status;						/* see STAT flags above */
+ 	if (hid->driver && hid->driver->reset_resume) {
+ 		ret = hid->driver->reset_resume(hid);
+ 		return ret;
