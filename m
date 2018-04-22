@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49m5R9aVbhaxstgbgNTR2UPIvxpIoUSX0a48JLhKhYb0MCfdv/VZpi9+l6Pv782drlZ7lN3
-ARC-Seal: i=1; a=rsa-sha256; t=1524406476; cv=none;
+X-Google-Smtp-Source: AIpwx4/jTv0WOb1u+qg6tSsvhQtF4mHH1RZjZJN3P+Q913fcRKIl270EKeAUcvLFsHd9u9cudqVJ
+ARC-Seal: i=1; a=rsa-sha256; t=1524406473; cv=none;
         d=google.com; s=arc-20160816;
-        b=h+h7M+lMMp9/c4cFXJbqDizZzKAge7qvoG/Bm3/C6JQ+4HoHztV5QEgIrPVk6/LnZx
-         YMyK9s9d+Z+AmBoiXHxGGFXVig1OH5o8ze+BfIpwAyM+rE9yreA1j4NiWdZ5jgGqk6cW
-         dPwqOBWu9qGRg/yyVCJ4p1wg01sDT37zvDlxY1rKT/2s+MmMUO6IzQRHFPEe5HaphfYk
-         78ZIYMciNEvd/75RFPly6D1FWJXxSHod+xgC3erQQtP04Xbug6IdHvndM5DziNRl/wBE
-         Bep/j8FX8kM1vXY00x8Cwp+M5anXnfbuxwLUWxqYFLLZxICa8LpzVWKK5eguW//LLzq3
-         VulA==
+        b=BpUqAhiIzH8DVwYr8qHGfgCKnE0+oOFqIC8WztzXcCIh96MwkFNX5uxbqnGUuLNQs3
+         AcfjJDk1LRrz2opjHrkrNCMko+f/T3109scx1///8zC81X6UBtqZHsRYll4yZfgVOaa3
+         W3rZLSc8vUwlIifR2bjb19jwRBuwaGYH+UHV+WzcI9okyPHR8QtsMcnYx3Yg2CMUm8kB
+         s3m3fB1E4yz3DonABE1vADVW9Q1grIbNzA6t20+rt0jtKFlNNvDcHZMY1LnD1OrMTMFN
+         CfzE9GVHsdISe9YxTimhxRBx+OsT25fIChz3GfVx5wy7I8bmm+cN7TWLKmdalX/OHoEo
+         I93w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HUhHDrPmtuv41farWj3p8rpSy4CGdS/6182KY6pe4Cs=;
-        b=zdfqlKDlvimJt2zKQdaddodQo5jFblb5kZeSKCDJVFA9Duke0GwBj1N++Ot0cwbhXQ
-         CvX9R8xvatFNce9nSUy72o9FXw29v45W2L14PWRAHUaBRU4MPWW34uk934+d49DN2/45
-         95LHusQIeAbfr4Y3HzcPGQUePX4PAUNrVJ4bll+zsu9LgdWbfBD+uaAx3kuLMwSOqdrm
-         DcOJUEmnLQRX3GLQFSOpvOtkR1ud0xT+gXS3xTS8Z4O8AJDnEv1srlyoOXXf1NlQ9yRF
-         oC/vjrzwZvvcxXje1GmezlX1yQrP+wh5iSWIiglc36CaRc9w9J/g8lkARg0OkmglPXx/
-         qMUw==
+        bh=fdqLhY9Tp4vcGSAQdbnAkC0+pcCIb9I5nPJapxITq1I=;
+        b=gZs2ExKPuqYODSKK1+g0T7NqtxXsE/20hbzo8oTwHflieWRr+toHG8/ahRx3lQk9tu
+         f7Iow5hOX4R6P8PfuTMSm7zFJAk0XUPv5SjiIP14XzD+FuQ/Yegk6fV2UkLTr6b4/46D
+         dVHYu2lhDMlxLkRNqqGQnf9Vwk13pk9CpJdgCt0Mleivlnr23iUFRS9a8XYkMQ2/J1O4
+         B/+bPHw3xm8gxaE9bnkv/msCXljwY2ff+eR29xCKyPmgOJBo7FYWU8d0GN6ktzuuu863
+         bq58DmWXqAwZjng9MqnQswUmZ8BAac1+EupWk8OTimn/yv9m5hR5E8G+tTIPsXcUBVfL
+         cXfw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mingye Wang <arthur200126@gmail.com>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.9 85/95] udf: Fix leak of UTF-16 surrogates into encoded strings
-Date: Sun, 22 Apr 2018 15:53:54 +0200
-Message-Id: <20180422135213.907799808@linuxfoundation.org>
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 84/95] powerpc/lib: Fix off-by-one in alternate feature patching
+Date: Sun, 22 Apr 2018 15:53:53 +0200
+Message-Id: <20180422135213.862996430@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455282047443898?=
-X-GMAIL-MSGID: =?utf-8?q?1598456045022625496?=
+X-GMAIL-THRID: =?utf-8?q?1598455279697433577?=
+X-GMAIL-MSGID: =?utf-8?q?1598456042124387236?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,48 +48,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 44f06ba8297c7e9dfd0e49b40cbe119113cca094 upstream.
+commit b8858581febb050688e276b956796bc4a78299ed upstream.
 
-OSTA UDF specification does not mention whether the CS0 charset in case
-of two bytes per character encoding should be treated in UTF-16 or
-UCS-2. The sample code in the standard does not treat UTF-16 surrogates
-in any special way but on systems such as Windows which work in UTF-16
-internally, filenames would be treated as being in UTF-16 effectively.
-In Linux it is more difficult to handle characters outside of Base
-Multilingual plane (beyond 0xffff) as NLS framework works with 2-byte
-characters only. Just make sure we don't leak UTF-16 surrogates into the
-resulting string when loading names from the filesystem for now.
+When we patch an alternate feature section, we have to adjust any
+relative branches that branch out of the alternate section.
 
-CC: stable@vger.kernel.org # >= v4.6
-Reported-by: Mingye Wang <arthur200126@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+But currently we have a bug if we have a branch that points to past
+the last instruction of the alternate section, eg:
+
+  FTR_SECTION_ELSE
+  1:     b       2f
+         or      6,6,6
+  2:
+  ALT_FTR_SECTION_END(...)
+         nop
+
+This will result in a relative branch at 1 with a target that equals
+the end of the alternate section.
+
+That branch does not need adjusting when it's moved to the non-else
+location. Currently we do adjust it, resulting in a branch that goes
+off into the link-time location of the else section, which is junk.
+
+The fix is to not patch branches that have a target == end of the
+alternate section.
+
+Fixes: d20fe50a7b3c ("KVM: PPC: Book3S HV: Branch inside feature section")
+Fixes: 9b1a735de64c ("powerpc: Add logic to patch alternative feature sections")
+Cc: stable@vger.kernel.org # v2.6.27+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/udf/unicode.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/powerpc/lib/feature-fixups.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/udf/unicode.c
-+++ b/fs/udf/unicode.c
-@@ -28,6 +28,9 @@
+--- a/arch/powerpc/lib/feature-fixups.c
++++ b/arch/powerpc/lib/feature-fixups.c
+@@ -55,7 +55,7 @@ static int patch_alt_instruction(unsigne
+ 		unsigned int *target = (unsigned int *)branch_target(src);
  
- #include "udf_sb.h"
- 
-+#define SURROGATE_MASK 0xfffff800
-+#define SURROGATE_PAIR 0x0000d800
-+
- static int udf_uni2char_utf8(wchar_t uni,
- 			     unsigned char *out,
- 			     int boundlen)
-@@ -37,6 +40,9 @@ static int udf_uni2char_utf8(wchar_t uni
- 	if (boundlen <= 0)
- 		return -ENAMETOOLONG;
- 
-+	if ((uni & SURROGATE_MASK) == SURROGATE_PAIR)
-+		return -EINVAL;
-+
- 	if (uni < 0x80) {
- 		out[u_len++] = (unsigned char)uni;
- 	} else if (uni < 0x800) {
+ 		/* Branch within the section doesn't need translating */
+-		if (target < alt_start || target >= alt_end) {
++		if (target < alt_start || target > alt_end) {
+ 			instr = translate_branch(dest, src);
+ 			if (!instr)
+ 				return 1;
