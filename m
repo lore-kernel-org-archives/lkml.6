@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48p+DEYe0XKDKx0JMLAMM+9lTqMzjdOLaGQRojxSjtsgdvLDLl/w0wJMnLjVIfLHpQevf5Z
-ARC-Seal: i=1; a=rsa-sha256; t=1524406853; cv=none;
+X-Google-Smtp-Source: AIpwx4/eywxLHQjs386Z6+lYyxFkGcU2M7LNJiYu2GN+9i05Bgck44XxohCU/Pao4ehKbkkW0WJp
+ARC-Seal: i=1; a=rsa-sha256; t=1524406851; cv=none;
         d=google.com; s=arc-20160816;
-        b=re+zydXoFcpVuJjd4NRwSizsGmnOihFqjKnho3ae/UXHLB4r85HmRLUpHl1bZbRAIO
-         +KVWCb+Uv3NHJkVImD0zi8tcf1MD8bw7ujOR7z0GssOoSpBuBS5wHdMUrof3chdQw7tl
-         w5LZ154sPjqjampEQ3biMJTaVyTlCDriyA8eep5c1/x5YkfWx/gNSp47KRblXkp/3kUT
-         BTaoHmB/+54ikjU3IKOlnmeJn1h8q1vtaX3XQ0Eu+qAp+gvkpCbViKfc3S+3oJxWxZ6b
-         O505yFln9aMPd8pdx3IqaGT3LdkdcHGvgrzTf6v+YAc7iGZ6HZhy/VvNvAvUnT8CY+00
-         5uVQ==
+        b=cDQyKIIkxY9YTmeWnWIP0ymjSFpqA+ptr3YNmIPYALBM9R9AKsJxKFN3vr6RJ5XEXj
+         YndUTjvFm/2zpbZQBvjSaR20lzRa6eDSbufRXpdfM28Iht281vOxcZMYKG4sxbMFrL9y
+         uiGXtvUEUAHZ9h1osdxfU5werHKtqerlIBkBz1TPf4vw77t8QvL4vHir9XONzovYGTHp
+         OArcs07lV7JX6sRt/aIbKMOgegN5Pe883DytLIu3gdeyusWwqjvEeJ3vHpgzVyfeonV1
+         kZW2iV7w0d1/KLNfOGYmer/lXszHLPGM5fV/6lKBtMPno8tKHH+fQXueYeHReLLjjTEX
+         XI9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=flSyDaNxi1YtA8hUv/DmPHTePSWNr2fUQ6y7tPQCRuY=;
-        b=LhJbZCrrzchSG0YGPJmwLYYNQ9saE9aWBtrPXvfMmTG5KEJMXbXtgrNxckcoeeXrfh
-         k+9JW70zQ+2ZoG8jMWwJHu0ywlqdaz+uqD2a2AKlh+Q9ZRCMKw6g2GzhLuaXTd0RiZqk
-         jo9uS9Gc49pGSdNn6FbaRhNqY7e2DVqxWHkP0L3yz9BcXbMV/qG/tOvJf+hfDgycsyFA
-         jhSlcIFpyH7qfeyqNXR2Z/LpXio5DspYQHn4/jON1NjXseRuJMtam+wm+/mEJ/p6odM2
-         Mww9ij1qIjhYcDnBKOFwyZkbOjgYN8blO3CYWlG/1aG6+ET2YkHqR46LnQUG+ndgNKzN
-         z9Bw==
+        bh=yrGaBNdCqMvhhnQY11f2fuOM85E56wZkGXrW/v1/pno=;
+        b=P0tlYTWyUQgDmqlSWgc+LUIz749KaodZ5+y2/uxDaVD/cjWzopchM3MvWiZsBsob3i
+         heUN3oRxuBSDDucJlVo6LIfmdgjz9GHyvoMWtkcB+MldxUajfzlqcdiB8BuHKS3VytSO
+         U8Avv8mcposhXPluYSxz6Eqp81zFkK6+6d8dQd3H/oMoWRAMDeD4oGVtEZbP66P4nH3b
+         wnD6gLYiW7HPLvciiv1HG60vtL657iFgD7zsLFNVVRouRa1Liyx/uX6SoKxokEgewQUV
+         ix3ZDcaMbb1DYCKXRFB6Qck2dw5/2JYCRMeB46IEzHW8or2B8hnWJuU0y7dSdci/8WQu
+         HgYw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mikhail Lappo <mikhail.lappo@esrlabs.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH 3.18 29/52] thermal: imx: Fix race condition in imx_thermal_probe()
-Date: Sun, 22 Apr 2018 15:54:02 +0200
-Message-Id: <20180422135316.792329610@linuxfoundation.org>
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 3.18 20/52] powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
+Date: Sun, 22 Apr 2018 15:53:53 +0200
+Message-Id: <20180422135316.202528017@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455189066394572?=
-X-GMAIL-MSGID: =?utf-8?q?1598456441437950425?=
+X-GMAIL-THRID: =?utf-8?q?1598454950836257463?=
+X-GMAIL-MSGID: =?utf-8?q?1598456437798073868?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,53 +49,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikhail Lappo <mikhail.lappo@esrlabs.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit cf1ba1d73a33944d8c1a75370a35434bf146b8a7 upstream.
+commit 0bfdf598900fd62869659f360d3387ed80eb71cf upstream.
 
-When device boots with T > T_trip_1 and requests interrupt,
-the race condition takes place. The interrupt comes before
-THERMAL_DEVICE_ENABLED is set. This leads to an attempt to
-reading sensor value from irq and disabling the sensor, based on
-the data->mode field, which expected to be THERMAL_DEVICE_ENABLED,
-but still stays as THERMAL_DEVICE_DISABLED. Afher this issue
-sensor is never re-enabled, as the driver state is wrong.
+asm/barrier.h is not always included after asm/synch.h, which meant
+it was missing __SUBARCH_HAS_LWSYNC, so in some files smp_wmb() would
+be eieio when it should be lwsync. kernel/time/hrtimer.c is one case.
 
-Fix this problem by setting the 'data' members prior to
-requesting the interrupts.
+__SUBARCH_HAS_LWSYNC is only used in one place, so just fold it in
+to where it's used. Previously with my small simulator config, 377
+instances of eieio in the tree. After this patch there are 55.
 
-Fixes: 37713a1e8e4c ("thermal: imx: implement thermal alarm interrupt handling")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Mikhail Lappo <mikhail.lappo@esrlabs.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Fixes: 46d075be585e ("powerpc: Optimise smp_wmb")
+Cc: stable@vger.kernel.org # v2.6.29+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thermal/imx_thermal.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/include/asm/barrier.h |    3 ++-
+ arch/powerpc/include/asm/synch.h   |    4 ----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -493,6 +493,9 @@ static int imx_thermal_probe(struct plat
- 	if (data->irq < 0)
- 		return data->irq;
+--- a/arch/powerpc/include/asm/barrier.h
++++ b/arch/powerpc/include/asm/barrier.h
+@@ -39,7 +39,8 @@
  
-+	data->irq_enabled = true;
-+	data->mode = THERMAL_DEVICE_ENABLED;
-+
- 	ret = devm_request_threaded_irq(&pdev->dev, data->irq,
- 			imx_thermal_alarm_irq, imx_thermal_alarm_irq_thread,
- 			0, "imx_thermal", data);
-@@ -576,9 +579,6 @@ static int imx_thermal_probe(struct plat
- 	regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_POWER_DOWN);
- 	regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_MEASURE_TEMP);
+ #ifdef CONFIG_SMP
  
--	data->irq_enabled = true;
--	data->mode = THERMAL_DEVICE_ENABLED;
+-#ifdef __SUBARCH_HAS_LWSYNC
++/* The sub-arch has lwsync */
++#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
+ #    define SMPWMB      LWSYNC
+ #else
+ #    define SMPWMB      eieio
+--- a/arch/powerpc/include/asm/synch.h
++++ b/arch/powerpc/include/asm/synch.h
+@@ -5,10 +5,6 @@
+ #include <linux/stringify.h>
+ #include <asm/feature-fixups.h>
+ 
+-#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
+-#define __SUBARCH_HAS_LWSYNC
+-#endif
 -
- 	return 0;
- }
- 
+ #ifndef __ASSEMBLY__
+ extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
+ extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
