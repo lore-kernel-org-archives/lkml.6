@@ -1,131 +1,121 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524421410; cv=none;
-        d=google.com; s=arc-20160816;
-        b=TEdNfURzj895sOSZBIBUcAIgYiYwOTywnK/Np9zexVNckBKQTNUS+4rZkywUqYwvrV
-         WoTwNxlglrQibBZeDBqsq00UgQPT+T1Ab+mDoIJc9LULR+pAKmX1NeYzKHqPHHde9+YD
-         WiRYto+/p4k5DLItEfgeXkzZu49pjEKyW70h15hiKt74AhnXbifW9w/CefqLBsrU+VA6
-         G2PxaT6ytUv6+DeC0kL/e7zzCmE3sYT+jhyLzdGA6vdkzhTE/57tk3/htX7zWNE080M0
-         QFhJME5IDv72hJn/MU3MqCxR2IrTNahtFocYzZwAdL4S95HwQ8BNZDrQp9bKvKObPV0M
-         Lpxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=w+eLaFkBX1XRayTTdayiDCJ3xb33z3F7dW0BGLLT5Kw=;
-        b=eyYOC9isuaJ6wUETcWFngjjyIa+nPpYcG9nNxuwAL+Uw3O5+XAqI1aHPUACWQMBYe8
-         pPFTwzrgHQJKHInfmwfVFQyp3s4RzW+9InboHHIzAvZWVRW7hj8mrsxlNO64Acm3dbVm
-         VlkT5dPacGrM29nX/LezEs9WMGggzvcaf9EWPUGSU2HPyX8JqJ4oJeREDPN194Vghs0D
-         xscY5zVYp/2weQWVoH9fTz7kG8FF0IHzrGeKe8B/ayWYenAa4hjgJTXX7SseTak38uxU
-         VJE2JZda7hJFYGBfRctHnlhobU2Y70nrPujnp5Un7QP01Xw3zxOR+lGv7FM92YHM6svQ
-         sU4Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AIpwx4+pN3hodDXuKbr1np2iuUx6HERYYP7j8Ds0AqOBrYI3pSRSaVu/oRSrwdAi4yihCy8QgjgmyA==
-Message-ID: <5adcd321.1c69fb81.78f2.876d@mx.google.com>
-Date: Sun, 22 Apr 2018 11:23:29 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.4.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.4.128-98-g7f61d298acbc
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2707851-1524408586-2-10276181831472341490
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enroda, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524408586; b=qugAclS0u4eZwLToELenoo7G2sQysUovj6zmOqH1rJTj0yu6nF
+    kz5rgl11XRNO2ytfFmR2Ym2134KMVOKXxKjZkP75rroyXYC3XwP6BX6LAab4G8Cr
+    ATrvVXNuZtadyTzRad83p5tv1YAYq9juMGAn9z1F920xgyocLCZGp9LOUjFjv3RI
+    iiSQBSVTiiIcHRn0zUq0Fhj9cSSw82s+WyZrfdfqsRiBCEAdf5grbYBnt+EOC3u3
+    oFlUg9eSK8ZRrMffHbxEJaMiAkcupqWLSok+gRBdI9vrkkwqZ/zD83Z+jPzRwAAk
+    ciL3Bi9A90K0yMSXQK94HNkocdzjOKM2DBNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524408586; bh=GLHU7wMnj27i068U9c8uUZsH/5EhJw
+    Ru04vtIqFgrHo=; b=iX2G3doaN+m7NuywryGojkpGvKQUvfrLCejqL4PCJ/2QfA
+    TNFagqnmXAepbSNcSQtIolCrqq303QKvKfiwgLAG28q6rBBaOg5gYJhjahCWQKLp
+    UVYQwOCRamOWN0Wlj3u2KZSolCmm7me6KQ/y5330V6t6j6ltnIbmIJLleglnj85d
+    dx/Y2ZxceOPti8nE/NiqolH0ZmpTKZBGDVfSxxUSQp8IfdjSIWtSk0XuTaGdjKfs
+    1WSnmVTU5gCpIlQnXdUy+ZLwhIDnOrLq6oZZ7AZYDPBZm3GrPQKVkE+tVT8DX2GS
+    D1H6baktJExrdktf+oKIZavFqSVFBvq9adnkBi0w==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEtkfy8mLl1d969mQQ/gzOU18Wsckx7NXvgYGP0FBzoCihVe3zkAkidJF1jf2E1KgUB1wcK1P53/+bizgGL0ukKor4IcLKWjULP4fdz2gnypt0otfm27
+    24Sge7fAVmHXE5wou+ppywk6LDciRZGChC2uxT8oWqpQW5hpjeUOEEd3MObyqCEwTNXvfoU5M4B7PCZ89G4KozFBh6v7JbSMQ4bSp04OYDCOo29/lsYKZ0lz
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=drOt6m5kAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=2mOOifH8u5EECxIMPxYA:9
+    a=5bir02ALjLtcsYgS:21 a=0mWPGmnHVDgINNCZ:21 a=QEXdDO2ut3YA:10
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1757015AbeDVOtc (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:49:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56934 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757074AbeDVOPi (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:15:38 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 13/97] getname_kernel() needs to make sure that ->name != ->iname in long case
+Date: Sun, 22 Apr 2018 15:52:51 +0200
+Message-Id: <20180422135305.377409538@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 00/97] 4.4.129-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598456189119404560?=
-X-GMAIL-MSGID: =?utf-8?q?1598471704440342219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.4.y boot: 121 boots: 1 failed, 106 passed with 9 offline,=
- 3 untried/unknown, 2 conflicts (v4.4.128-98-g7f61d298acbc)
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.4.y/kernel/v4.4.128-98-g7f61d298acbc/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
-/kernel/v4.4.128-98-g7f61d298acbc/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.4.y
-Git Describe: v4.4.128-98-g7f61d298acbc
-Git Commit: 7f61d298acbc397846d74572c39fd4920cb317af
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 59 unique boards, 20 SoC families, 16 builds out of 176
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Boot Regressions Detected:
+commit 30ce4d1903e1d8a7ccd110860a5eef3c638ed8be upstream.
 
-arm:
+missed it in "kill struct filename.separate" several years ago.
 
-    multi_v7_defconfig:
-        at91-sama5d4_xplained:
-            lab-free-electrons: new failure (last pass: v4.4.128-19-ga168d2=
-8608b3)
-
-    sama5_defconfig:
-        at91-sama5d4_xplained:
-            lab-free-electrons: new failure (last pass: v4.4.128-19-ga168d2=
-8608b3)
-        sama5d36ek:
-            lab-free-electrons: new failure (last pass: v4.4.128-19-ga168d2=
-8608b3)
-
-Boot Failure Detected:
-
-arm:
-
-    sama5_defconfig
-        sama5d36ek: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    sunxi_defconfig:
-        sun5i-r8-chip: 1 offline lab
-
-    multi_v7_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-        sun5i-r8-chip: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-    tegra_defconfig:
-        tegra20-iris-512: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-
-Conflicting Boot Failures Detected: (These likely are not failures as other=
- labs are reporting PASS. Needs review.)
-
-arm:
-
-    sama5_defconfig:
-        at91-sama5d4_xplained:
-            lab-free-electrons: FAIL
-            lab-baylibre-seattle: PASS
-
-    multi_v7_defconfig:
-        at91-sama5d4_xplained:
-            lab-free-electrons: FAIL
-            lab-baylibre-seattle: PASS
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ fs/namei.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -219,9 +219,10 @@ getname_kernel(const char * filename)
+ 	if (len <= EMBEDDED_NAME_MAX) {
+ 		result->name = (char *)result->iname;
+ 	} else if (len <= PATH_MAX) {
++		const size_t size = offsetof(struct filename, iname[1]);
+ 		struct filename *tmp;
+ 
+-		tmp = kmalloc(sizeof(*tmp), GFP_KERNEL);
++		tmp = kmalloc(size, GFP_KERNEL);
+ 		if (unlikely(!tmp)) {
+ 			__putname(result);
+ 			return ERR_PTR(-ENOMEM);
