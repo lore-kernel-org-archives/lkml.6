@@ -1,90 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753664AbeDVXJy (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 19:09:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39565 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753489AbeDVXJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 19:09:53 -0400
-Date: Mon, 23 Apr 2018 01:09:48 +0200
-From: Jan Kara <jack@suse.cz>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: viro@zeniv.linux.org.uk, mawilcox@microsoft.com,
-        ross.zwisler@linux.intel.com, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, mhocko@suse.com, jack@suse.cz,
-        kirill.shutemov@linux.intel.com, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] fs: dax: Adding new return type vm_fault_t
-Message-ID: <20180422230948.2mvimlf3zspry4ji@quack2.suse.cz>
-References: <20180421210529.GA27238@jordon-HP-15-Notebook-PC>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180421210529.GA27238@jordon-HP-15-Notebook-PC>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1753937AbeDVXK0 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 19:10:26 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35070 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753915AbeDVXKV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 19:10:21 -0400
+X-Google-Smtp-Source: AIpwx48//W9DcGEoHEQYprs8yJTIeWy4r04FGf6fnx2RIwQ3ZkTilZpaFv2pWCaJGrq+hxnsbLKKVg==
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        patches@opensource.cirrus.com,
+        Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: [PATCH 13/18 v2] regulator: wm8994: Pass descriptor instead of GPIO number
+Date: Mon, 23 Apr 2018 01:07:37 +0200
+Message-Id: <20180422230742.3729-13-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180422230742.3729-1-linus.walleij@linaro.org>
+References: <20180422230742.3729-1-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 22-04-18 02:35:29, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler. For
-> now, this is just documenting that the function returns
-> a VM_FAULT value rather than an errno. Once all instances
-> are converted, vm_fault_t will become a distinct type.
-> 
-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
-> 
-> There was an existing bug inside dax_load_hole()
-> if vm_insert_mixed had failed to allocate a page table,
-> we'd return VM_FAULT_NOPAGE instead of VM_FAULT_OOM.
-> With new vmf_insert_mixed() this issue is addressed.
-> 
-> vm_insert_mixed_mkwrite has inefficiency when it returns
-> an error value, driver has to convert it to vm_fault_t
-> type. With new vmf_insert_mixed_mkwrite() this limitation
-> will be addressed.
-> 
-> As new function vmf_insert_mixed_mkwrite() only called
-> from fs/dax.c, so keeping both the changes in a single
-> patch.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Instead of passing a global GPIO number for the enable GPIO, pass
+a descriptor looked up from the device tree node or the board file
+decriptor table for the regulator.
 
-The patch looks good to me. Just one question:
+There is a single board file passing the GPIOs for LDO1 and LDO2
+through platform data, so augment this to pass descriptors
+associated with the i2c device as well.
 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 01f5464..721cfd5 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1955,12 +1955,19 @@ int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
->  }
->  EXPORT_SYMBOL(vm_insert_mixed);
->  
-> -int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
-> -			pfn_t pfn)
-> +vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
-> +		unsigned long addr, pfn_t pfn)
->  {
-> -	return __vm_insert_mixed(vma, addr, pfn, true);
-> +	int err;
-> +
-> +	err =  __vm_insert_mixed(vma, addr, pfn, true);
-> +	if (err == -ENOMEM)
-> +		return VM_FAULT_OOM;
-> +	if (err < 0 && err != -EBUSY)
-> +		return VM_FAULT_SIGBUS;
-> +	return VM_FAULT_NOPAGE;
->  }
-> -EXPORT_SYMBOL(vm_insert_mixed_mkwrite);
-> +EXPORT_SYMBOL(vmf_insert_mixed_mkwrite);
+The special GPIO enable DT property for the enable GPIO is
+nonstandard but this was accomodated in
+commit 6a537d48461deacc57c07ed86d9915e5aa4b3539
+"gpio: of: Support regulator nonstandard GPIO properties".
 
-So are we sure that all the callers of this function (and also of
-vmf_insert_mixed()) are OK with EBUSY? Because especially in the
-vmf_insert_mixed() case other page than the caller provided is in page
-tables and thus possibly the caller needs to do some error recovery (such
-as drop page refcount) in such case...
+Cc: patches@opensource.cirrus.com
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Rebase the patch on the other changes.
+- Collect Lee's ACK.
+---
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c | 17 +++++++++++++++--
+ drivers/mfd/wm8994-core.c                    |  9 ---------
+ drivers/regulator/wm8994-regulator.c         | 19 +++++++++++--------
+ include/linux/mfd/wm8994/pdata.h             |  3 ---
+ 4 files changed, 26 insertions(+), 22 deletions(-)
 
-								Honza
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index 5da041edd3b4..efdb2fcb1c3c 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -194,8 +194,8 @@ static struct wm8994_pdata wm8994_pdata = {
+ 		0x3,          /* IRQ out, active high, CMOS */
+ 	},
+ 	.ldo = {
+-		 { .enable = S3C64XX_GPN(6), .init_data = &wm8994_ldo1, },
+-		 { .enable = S3C64XX_GPN(4), .init_data = &wm8994_ldo2, },
++		 { .init_data = &wm8994_ldo1, },
++		 { .init_data = &wm8994_ldo2, },
+ 	},
+ };
+ 
+@@ -203,6 +203,18 @@ static const struct i2c_board_info wm1277_devs[] = {
+ 	{ I2C_BOARD_INFO("wm8958", 0x1a),  /* WM8958 is the superset */
+ 	  .platform_data = &wm8994_pdata,
+ 	  .irq = GLENFARCLAS_PMIC_IRQ_BASE + WM831X_IRQ_GPIO_2,
++	  .dev_name = "wm8958",
++	},
++};
++
++static struct gpiod_lookup_table wm8994_gpiod_table = {
++	.dev_id = "i2c-wm8958", /* I2C device name */
++	.table = {
++		GPIO_LOOKUP("GPION", 6,
++			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("GPION", 4,
++			    "wlf,ldo2ena", GPIO_ACTIVE_HIGH),
++		{ },
+ 	},
+ };
+ 
+@@ -381,6 +393,7 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
+ 
+ 	gpiod_add_lookup_table(&wm5102_reva_gpiod_table);
+ 	gpiod_add_lookup_table(&wm5102_gpiod_table);
++	gpiod_add_lookup_table(&wm8994_gpiod_table);
+ 
+ 	if (i < ARRAY_SIZE(gf_mods)) {
+ 		dev_info(&i2c->dev, "%s revision %d\n",
+diff --git a/drivers/mfd/wm8994-core.c b/drivers/mfd/wm8994-core.c
+index 953d0790ffd5..c409464231f6 100644
+--- a/drivers/mfd/wm8994-core.c
++++ b/drivers/mfd/wm8994-core.c
+@@ -21,7 +21,6 @@
+ #include <linux/mfd/core.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_gpio.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+@@ -302,14 +301,6 @@ static int wm8994_set_pdata_from_of(struct wm8994 *wm8994)
+ 	if (of_find_property(np, "wlf,ldoena-always-driven", NULL))
+ 		pdata->lineout2fb = true;
+ 
+-	pdata->ldo[0].enable = of_get_named_gpio(np, "wlf,ldo1ena", 0);
+-	if (pdata->ldo[0].enable < 0)
+-		pdata->ldo[0].enable = 0;
+-
+-	pdata->ldo[1].enable = of_get_named_gpio(np, "wlf,ldo2ena", 0);
+-	if (pdata->ldo[1].enable < 0)
+-		pdata->ldo[1].enable = 0;
+-
+ 	return 0;
+ }
+ #else
+diff --git a/drivers/regulator/wm8994-regulator.c b/drivers/regulator/wm8994-regulator.c
+index 7a4ce6df4f22..d3a5f48119c2 100644
+--- a/drivers/regulator/wm8994-regulator.c
++++ b/drivers/regulator/wm8994-regulator.c
+@@ -19,7 +19,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ 
+ #include <linux/mfd/wm8994/core.h>
+@@ -129,6 +129,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+ 	int id = pdev->id % ARRAY_SIZE(pdata->ldo);
+ 	struct regulator_config config = { };
+ 	struct wm8994_ldo *ldo;
++	struct gpio_desc *gpiod;
+ 	int ret;
+ 
+ 	dev_dbg(&pdev->dev, "Probing LDO%d\n", id + 1);
+@@ -145,12 +146,14 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+ 	config.driver_data = ldo;
+ 	config.regmap = wm8994->regmap;
+ 	config.init_data = &ldo->init_data;
+-	if (pdata) {
+-		config.ena_gpio = pdata->ldo[id].enable;
+-	} else if (wm8994->dev->of_node) {
+-		config.ena_gpio = wm8994->pdata.ldo[id].enable;
+-		config.ena_gpio_initialized = true;
+-	}
++
++	/* Look up LDO enable GPIO from the parent device node */
++	gpiod = devm_gpiod_get_optional(pdev->dev.parent,
++					id ? "wlf,ldo2ena" : "wlf,ldo1ena",
++					GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod))
++		return PTR_ERR(gpiod);
++	config.ena_gpiod = gpiod;
+ 
+ 	/* Use default constraints if none set up */
+ 	if (!pdata || !pdata->ldo[id].init_data || wm8994->dev->of_node) {
+@@ -159,7 +162,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+ 
+ 		ldo->init_data = wm8994_ldo_default[id];
+ 		ldo->init_data.consumer_supplies = &ldo->supply;
+-		if (!config.ena_gpio)
++		if (!gpiod)
+ 			ldo->init_data.constraints.valid_ops_mask = 0;
+ 	} else {
+ 		ldo->init_data = *pdata->ldo[id].init_data;
+diff --git a/include/linux/mfd/wm8994/pdata.h b/include/linux/mfd/wm8994/pdata.h
+index 90c60524a496..fca67bd194e2 100644
+--- a/include/linux/mfd/wm8994/pdata.h
++++ b/include/linux/mfd/wm8994/pdata.h
+@@ -20,9 +20,6 @@
+ #define WM8994_NUM_AIF   3
+ 
+ struct wm8994_ldo_pdata {
+-	/** GPIOs to enable regulator, 0 or less if not available */
+-	int enable;
+-
+ 	const struct regulator_init_data *init_data;
+ };
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.14.3
