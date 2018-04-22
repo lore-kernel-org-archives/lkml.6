@@ -1,78 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2630128-1524406346-2-7627229673699453547
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524406346; b=Zk3NlYtF+rcNkci2mVXC2z2imzObgnf0mHfhjpFhMWmhh77KgL
-    KrmCv9Llw3FOBqVsiUD2YfH3WJxV6sf8YFViYhXV/9RgLwO07B7yyxXESV74rixt
-    G+Bb4yLBMQSoPSmqKPLjt1ol22z+IQyYd07N8NM0K9QJ5t6tGHhMenm0v+odCqwZ
-    MrThbc4+sCr9zDfnsXk8L8Z8rxYyoiKk946KIdOUhE7xUuROHT9NRiYTYYIiw4wi
-    g2QOp3+tN4YZNmOmdJKz0nqzKQKNPaDKf9m8tYqaRXJYI/rGjxWRFJsvfLuqxWJk
-    4uHmE1oHHjPx6gNsPBRVkMRL43pLGtRzveTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524406346; bh=83eHG4a+TiPB44+Imus61DTK/DEyjL
-    Al0ZlpUOtZTgo=; b=ANwMHZe92F8IUzJZ+abJyu71ScmZmDT60mX9V64/zp3Lkg
-    1eUDIOKaZjjQaJrB0e3xoDSmpo4kNrhZfhuoGKFdGyLZmrCDQ5tEBuNWrtQAM4cF
-    e8QfOMMM7E2MrbIh5VtEa/CSmoEQ4S/JFnT8J+BtX4QoaVIPOfNp4K/YOtRbfZDI
-    TJdUK3usf265HZvGCu2oJA2p7rmMBWnFV92s+looErJCWLKay0gOOTyMzzUqvhH3
-    F81I30ZwT0PnlwODmDbRQzZI4epJGtZQYtECbNMrW+R9og2P5dhJxm1rYXWLPqkN
-    IVkj3IyZwsVz7GhiKjU62Fg1mGnJdoYVg3px8+xg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKfn8JD/QrzIqzmiTO7cIf4dOCKRKR0fS+cr+EDGDLKRy22yQHg6zISW3lOTnEcz4z7gJWBjGgeDVSUU5QIN0OwNLaMXriffH6GpoK6T2XzQMY6+kPm7
-    UVpWzjZxJQN0adxfz+Ulden2E4KTjmstfQ4Cp2iUq60G7A/Jm10HN2u/wjX9U+/ztELeokisJKp3ACAIGNZViNbXxJmuh6IWyhMw2S7yidDk0TKP9OZp383D
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=HsDDrbOFvXNNo7OG3RkA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756655AbeDVOMT (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:12:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54936 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755657AbeDVOMP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:12:15 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+R0pJbKNT3n45E0TJguJenpq+0ZWqgYRmIdNtVD04iJqBwQXB0HO9GWFE04C/KnDHR4VgZ
+ARC-Seal: i=1; a=rsa-sha256; t=1524406340; cv=none;
+        d=google.com; s=arc-20160816;
+        b=WBGfidw6MEjHwQBKUDQy1kmUWHxqqDsVLY7Olysz87i5mdXOxmTcVDgl8nrk3r2eEC
+         He5WNGbNQ0zQyarZ3cKF5O64kydtvSFv/C05omWOt5GOTgQoVxSFEcGoRuNRnLcLoESc
+         rKUJ/TUB2iZYFByfWsCAp2A4Ly5PInnjFgMxF8+1/UdcWFfPVW3Op+wO17WJCNoblTWW
+         KpQw14KQ1nI1sNnHs7lPEhXbzm/v9nUQrM9/njZ9c+nzkxX1mdAiBQv735aXJ4HHdM0i
+         gY+lge6rcKml1d/bwV3r216VTaXYtrapDcUsmROcTmPqdZ1bIY3Qy7gebpm71OAi3pWH
+         sAVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=GVYRq4++jxyZ6OJmAv4CQvgZ+w4lPS4hk7lgBZ3DBu8=;
+        b=h0HmCq2mdQB494IMDxyHmi79Agyb8TCl42yGUm+1dkBommQt2MMmee6jI6w1NmUj4M
+         HLj9ZznsYNDFg6tF3jc2jTJkU+3ZkZAqHYazGLmu81N9Izh9Qui/N+a9ndNh6PyU0plG
+         /5qJ2FsLFGzd1oHr8NOhwwN7W7TZ6FHXY8r1XGTQrbc33ffDhbh4L1a3y4P9IhSvWv9c
+         /CyLsfqmDybkCsZ2sZ53WM+sUW+7guZEaVEViFZEjUegK5c1VhUdHgTNeLtxeHDPtgCW
+         ZsiEc2yqaf0qT/zc87i1+14u1+LSqvmLje+LjjZJqG0ZSu0nzvHhav4HmjKzKReD8Mvt
+         bs7w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.9 34/95] jbd2: if the journal is aborted then dont allow update of the log tail
-Date: Sun, 22 Apr 2018 15:53:03 +0200
-Message-Id: <20180422135211.826438494@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Jan Kara <jack@suse.cz>,
+	Eryu Guan <guaneryu@gmail.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.9 36/95] ext4: protect i_disksize update by i_data_sem in direct write path
+Date: Sun, 22 Apr 2018 15:53:05 +0200
+Message-Id: <20180422135211.902450766@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -80,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455118464446356?=
+X-GMAIL-MSGID: =?utf-8?q?1598455903468384705?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -90,39 +50,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Eryu Guan <guaneryu@gmail.com>
 
-commit 85e0c4e89c1b864e763c4e3bb15d0b6d501ad5d9 upstream.
+commit 73fdad00b208b139cf43f3163fbc0f67e4c6047c upstream.
 
-This updates the jbd2 superblock unnecessarily, and on an abort we
-shouldn't truncate the log.
+i_disksize update should be protected by i_data_sem, by either taking
+the lock explicitly or by using ext4_update_i_disksize() helper. But the
+i_disksize updates in ext4_direct_IO_write() are not protected at all,
+which may be racing with i_disksize updates in writeback path in
+delalloc buffer write path.
 
+This is found by code inspection, and I didn't hit any i_disksize
+corruption due to this bug. Thanks to Jan Kara for catching this bug and
+suggesting the fix!
+
+Reported-by: Jan Kara <jack@suse.cz>
+Suggested-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Eryu Guan <guaneryu@gmail.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/journal.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/ext4/inode.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -951,7 +951,7 @@ out:
- }
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3396,7 +3396,6 @@ static ssize_t ext4_direct_IO_write(stru
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file->f_mapping->host;
+-	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	ssize_t ret;
+ 	loff_t offset = iocb->ki_pos;
+ 	size_t count = iov_iter_count(iter);
+@@ -3420,7 +3419,7 @@ static ssize_t ext4_direct_IO_write(stru
+ 			goto out;
+ 		}
+ 		orphan = 1;
+-		ei->i_disksize = inode->i_size;
++		ext4_update_i_disksize(inode, inode->i_size);
+ 		ext4_journal_stop(handle);
+ 	}
  
- /*
-- * This is a variaon of __jbd2_update_log_tail which checks for validity of
-+ * This is a variation of __jbd2_update_log_tail which checks for validity of
-  * provided log tail and locks j_checkpoint_mutex. So it is safe against races
-  * with other threads updating log tail.
-  */
-@@ -1394,6 +1394,9 @@ int jbd2_journal_update_sb_log_tail(jour
- 	journal_superblock_t *sb = journal->j_superblock;
- 	int ret;
- 
-+	if (is_journal_aborted(journal))
-+		return -EIO;
-+
- 	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
- 	jbd_debug(1, "JBD2: updating superblock (start %lu, seq %u)\n",
- 		  tail_block, tail_tid);
+@@ -3548,7 +3547,7 @@ static ssize_t ext4_direct_IO_write(stru
+ 		if (ret > 0) {
+ 			loff_t end = offset + ret;
+ 			if (end > inode->i_size) {
+-				ei->i_disksize = end;
++				ext4_update_i_disksize(inode, end);
+ 				i_size_write(inode, end);
+ 				/*
+ 				 * We're going to return a positive `ret'
