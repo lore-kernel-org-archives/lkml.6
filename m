@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48y9RSxgfJaTjJIhi0dxerWIwRbTh8PcsWx1+CjzPV03yQ8xWj9pLyjzK/AxXXjRv6pJ3zl
-ARC-Seal: i=1; a=rsa-sha256; t=1524405737; cv=none;
+X-Google-Smtp-Source: AIpwx4/49Q9jGXk2kIv0rV+ozpRlEenNIyaEQG63sfiVvYVYTfdFYe5gCu277taZnSvDN3s9m4gV
+ARC-Seal: i=1; a=rsa-sha256; t=1524405734; cv=none;
         d=google.com; s=arc-20160816;
-        b=EaIzed9XrX5u/i2nQHkvmqaEVg23OQi19VyjH8oTPsHsqxD4f4YweoQX/g/KFivKTy
-         rBjVErcrc1YGh3+LGiQt9pSN4XbELdBkI+43EZ8K+Tf1vy2ftkz26fQwid8a7e4ug5gS
-         AiQ+YzQZp8KPWPESqO55JaIqOAA25wl7SOdsCp9QxSJt+O3iha8LwClr2452JbhPNJgq
-         AaYo2O68U2DayAq2yZfe7+Cc87jdftviV/RdgrjpVz0Xtzd1amchB4VNIdjRKEQYyi0d
-         wqJFwFgs8PvZvPe7Ytq++TlSc4tj3hdTBKD6fXdD1WbxaBXzA+nJzyXNeFjEbd4OEU1O
-         8GKA==
+        b=bDu96zALqAv8pYmIwEI0gpX3eSeq7L4pifrfrB64fMMpaa+Ttc5C2tJgZCmmDFyfV1
+         C2eaIxdHiK/GU6QqfkmgqQbObZBE6nqEGFdQuTcsHcRfiIVRhARmrVc6TN7IYC0uNhwo
+         9ZMFhKpCVHxyYeYyaitBukRpEuv0nA97CZZgD4Sk7VACz3Wecy5rvbO58Eu2VHNZ4YjP
+         zTosJJ46un9wbCUdTMddodv6tLNsSjaRp+eLyLaezXjL0ZvPuOh67rDbav8QTwml4lBU
+         k4B6wE4x48saZBP5OR/81Sz/I3vd+yt9g5Vg4GOIH+wHvQ5RpAE5a7yrZCEdo39gD7sp
+         Pnuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XIWpio5y3QSzVEFHbzePsMAfFjAbhbu3sbyRgIMsZtA=;
-        b=nUwW50ILDj1U2QdInbn8kS8ZsvQrlo1Gh6DIM40S7OoM03HW2eBS/ZZJTpXhHou/BS
-         5fvZtZ1w9LxyEWwix9agxiLXpRuMK5ypqLPxsO1a3MctNJeabUM38CtifTjKj7fqXZu/
-         7A/LWo2hNHKaOtZgYQ37OZJWvNhiGGKBrgdrM40pjj+0nQMHxaIWMaYKvYHyUhbfD3Gq
-         ayBxJREmzm/DFNgD9q/H4a3AZrmG6IeHFPfPND3Xi2slTu7JMt/y3bC0Udy8d8K8r/YE
-         XWEyUqm5SfhFQbveo5yC6xhdl4jidJr9wH7T25ORRLk+Nf8Lmco73NrArmq2lL4+w886
-         JlYg==
+        bh=B0Fxj6Nk09kPH+w974GmPuFqi/JZP2bwlk1bu/LNCAw=;
+        b=RJR7qlm58ywN5hxaRkVGjw+KfbZSop5Ic+BjIQZQSUXvSA9sJf/SdgLgKj+NOCab9l
+         YI285fxhBBLWuuZv8uRzYV/S8+M39Zym1tQu4EhieL0A1nJuQJvQ/+8D4hP8qx0L3kzM
+         YXaajpjuR077szxV15IdD1xl6244oDvc+r/zbpNqzmTI17tbox93IUlYUfK8zH32epUU
+         w/jsEJ8av21O0Qw0Y+PArm9uU+YghZ1PqIPLknmmKboY4GqfxN+ACez+TB9y/N7O2+3I
+         foDpdl4AmkXOYT5fADIEuW5Hv7UyQ5k2Gs9hPZRFAa1sR06m/kUuY7PiBr5/8b1qZUuV
+         rQBA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Matt Redfearn <matt.redfearn@mips.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org
-Subject: [PATCH 4.16 176/196] MIPS: memset.S: Fix clobber of v1 in last_fixup
-Date: Sun, 22 Apr 2018 15:53:16 +0200
-Message-Id: <20180422135113.353179384@linuxfoundation.org>
+	=?UTF-8?q?Fabi=C3=A1n=20Inostroza?= <fabianinostroza@udec.cl>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 158/196] ALSA: line6: Use correct endpoint type for midi output
+Date: Sun, 22 Apr 2018 15:52:58 +0200
+Message-Id: <20180422135112.394068094@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455270804661651?=
-X-GMAIL-MSGID: =?utf-8?q?1598455270804661651?=
+X-GMAIL-THRID: =?utf-8?q?1598455267717959842?=
+X-GMAIL-MSGID: =?utf-8?q?1598455267717959842?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,75 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matt Redfearn <matt.redfearn@mips.com>
+From: Fabián Inostroza <soulsonceonfire@gmail.com>
 
-commit c96eebf07692e53bf4dd5987510d8b550e793598 upstream.
+commit 7ecb46e9ee9af18e304eb9e7d6804c59a408e846 upstream.
 
-The label .Llast_fixup\@ is jumped to on page fault within the final
-byte set loop of memset (on < MIPSR6 architectures). For some reason, in
-this fault handler, the v1 register is randomly set to a2 & STORMASK.
-This clobbers v1 for the calling function. This can be observed with the
-following test code:
+Sending MIDI messages to a PODxt through the USB connection shows
+"usb_submit_urb failed" in dmesg and the message is not received by
+the POD.
 
-static int __init __attribute__((optimize("O0"))) test_clear_user(void)
-{
-  register int t asm("v1");
-  char *test;
-  int j, k;
+The error is caused because in the funcion send_midi_async() in midi.c
+there is a call to usb_sndbulkpipe() for endpoint 3 OUT, but the PODxt
+USB descriptor shows that this endpoint it's an interrupt endpoint.
 
-  pr_info("\n\n\nTesting clear_user\n");
-  test = vmalloc(PAGE_SIZE);
+Patch tested with PODxt only.
 
-  for (j = 256; j < 512; j++) {
-    t = 0xa5a5a5a5;
-    if ((k = clear_user(test + PAGE_SIZE - 256, j)) != j - 256) {
-        pr_err("clear_user (%px %d) returned %d\n", test + PAGE_SIZE - 256, j, k);
-    }
-    if (t != 0xa5a5a5a5) {
-       pr_err("v1 was clobbered to 0x%x!\n", t);
-    }
-  }
+[ The bug has been present from the very beginning in the staging
+  driver time, but Fixes below points to the commit moving to sound/
+  directory so that the fix can be cleanly applied -- tiwai ]
 
-  return 0;
-}
-late_initcall(test_clear_user);
-
-Which demonstrates that v1 is indeed clobbered (MIPS64):
-
-Testing clear_user
-v1 was clobbered to 0x1!
-v1 was clobbered to 0x2!
-v1 was clobbered to 0x3!
-v1 was clobbered to 0x4!
-v1 was clobbered to 0x5!
-v1 was clobbered to 0x6!
-v1 was clobbered to 0x7!
-
-Since the number of bytes that could not be set is already contained in
-a2, the andi placing a value in v1 is not necessary and actively
-harmful in clobbering v1.
-
-Reported-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/19109/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Fixes: 61864d844c29 ("ALSA: move line6 usb driver into sound/usb")
+Signed-off-by: Fabián Inostroza <fabianinostroza@udec.cl>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/lib/memset.S |    2 +-
+ sound/usb/line6/midi.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -258,7 +258,7 @@
+--- a/sound/usb/line6/midi.c
++++ b/sound/usb/line6/midi.c
+@@ -125,7 +125,7 @@ static int send_midi_async(struct usb_li
+ 	}
  
- .Llast_fixup\@:
- 	jr		ra
--	andi		v1, a2, STORMASK
-+	 nop
- 
- .Lsmall_fixup\@:
- 	PTR_SUBU	a2, t1, a0
+ 	usb_fill_int_urb(urb, line6->usbdev,
+-			 usb_sndbulkpipe(line6->usbdev,
++			 usb_sndintpipe(line6->usbdev,
+ 					 line6->properties->ep_ctrl_w),
+ 			 transfer_buffer, length, midi_sent, line6,
+ 			 line6->interval);
