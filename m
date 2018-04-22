@@ -1,124 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753608AbeDVUan (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 16:30:43 -0400
-Received: from mga01.intel.com ([192.55.52.88]:45531 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753495AbeDVUam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 16:30:42 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,314,1520924400";
-   d="scan'208";a="218518931"
-Date: Mon, 23 Apr 2018 04:30:00 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-Cc: kbuild-all@01.org, tiwai@suse.com, gregkh@linuxfoundation.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-Subject: Re: [alsa-devel] [PATCH 3/4] ALSA: usb-audio: Use Class Specific EP
- for UAC3 devices.
-Message-ID: <201804230447.jd3wJQ96%fengguang.wu@intel.com>
-References: <20180420170327.31569-4-jorge.sanjuan@codethink.co.uk>
+        id S1753646AbeDVUwO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 16:52:14 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45747 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753537AbeDVUwK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 16:52:10 -0400
+Date: Sun, 22 Apr 2018 22:52:08 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Paul Menzel <pmenzel+linux-kernel@molgen.mpg.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: How to disable Linux =?utf-8?Q?kernel_?=
+ =?utf-8?Q?self-extraction_=28KERNEL=5FGZIP=2C_KERNEL=5FBZIP2=2C_=E2=80=A6?=
+ =?utf-8?B?KT8=?=
+Message-ID: <20180422205208.GA8672@amd>
+References: <9468be0e-5eb9-246c-e60e-3d8019a42fd1@molgen.mpg.de>
+ <20180422102033.GB26243@amd>
+ <b22efb58-b63e-7130-f2d7-a9d28225ef9b@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
 Content-Disposition: inline
-In-Reply-To: <20180420170327.31569-4-jorge.sanjuan@codethink.co.uk>
+In-Reply-To: <b22efb58-b63e-7130-f2d7-a9d28225ef9b@molgen.mpg.de>
 User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jorge,
 
-Thank you for the patch! Perhaps something to improve:
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[auto build test WARNING on sound/for-next]
-[also build test WARNING on v4.17-rc1 next-20180420]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Hi!
 
-url:    https://github.com/0day-ci/linux/commits/Jorge-Sanjuan/ALSA-usb-UAC3-new-features/20180423-015726
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+> >>I try to decrease boot time, and my system has an SSD and enough space,=
+ so
+> >>loading 18 instead of 12 MB doesn=E2=80=99t make a difference, but the
+> >>self-extraction is noticeable. So, I like to disable it.
+> >
+> >How long does GZIP extraction take on your hardware?
+>=20
+> It=E2=80=99s hard to measure =E2=80=93 at least I didn=E2=80=99t find a w=
+ay to do so =E2=80=93, but counting
+> from the last GRUB message to the first message of Linux (with `quiet`
+> removed from the the command line), it takes roughly *two* seconds.
+>=20
+> ```
+> $ ls -l /boot/vmlinuz-4.15.0-3-686-pae
+> -rw-r--r-- 1 root root  3987200 Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686-p=
+ae
+> $ ls -lh /boot/vmlinuz-4.15.0-3-686-pae
+> -rw-r--r-- 1 root root 3,9M Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686-pae
+> $ time scripts/extract-vmlinux vmlinuz-4.15.0-3-686-pae > bla.txt
+>=20
+> real    0m1,204s
+> user    0m1,041s
+> sys     0m0,245s
+> ```
 
+Interesting; looks like I have faster machine (thinkpad X220).
 
-sparse warnings: (new ones prefixed by >>)
+pavel@duo:/data/l/linux$ time scripts/extract-vmlinux /tmp/vmlinux.bin
+> /tmp/delme
+0.21user 0.15system 0.66 (0m0.660s) elapsed 56.36%CPU
+pavel@duo:/data/l/linux$ ls -al /tmp/delme
+-rw-r--r-- 1 pavel pavel 18275356 Apr 22 22:44 /tmp/delme
+pavel@duo:/data/l/linux$ gzip /tmp/delme
+pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
+0.21user 0.02system 0.23 (0m0.232s) elapsed 100.03%CPU
+pavel@duo:/data/l/linux$ gzip -1 /tmp/delme
+pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
+0.22user 0.03system 0.25 (0m0.257s) elapsed 100.11%CPU
+pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
 
->> sound/usb/stream.c:597:26: sparse: restricted __le32 degrades to integer
+=2E.and it also looks like extract-kernel is significantly slower than
+gzip -9, because it is not using all the CPU. Strange.
 
-vim +597 sound/usb/stream.c
+Interesting. I somehow assumed gzip -d would be faster than that on
+modern machines.
 
-   544	
-   545	static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
-   546						 struct usb_host_interface *alts,
-   547						 int protocol, int iface_no)
-   548	{
-   549		/* parsed with a v1 header here. that's ok as we only look at the
-   550		 * header first which is the same for both versions */
-   551		struct uac_iso_endpoint_descriptor *csep;
-   552		struct usb_interface_descriptor *altsd = get_iface_desc(alts);
-   553		int attributes = 0;
-   554	
-   555		csep = snd_usb_find_desc(alts->endpoint[0].extra, alts->endpoint[0].extralen, NULL, USB_DT_CS_ENDPOINT);
-   556	
-   557		/* Creamware Noah has this descriptor after the 2nd endpoint */
-   558		if (!csep && altsd->bNumEndpoints >= 2)
-   559			csep = snd_usb_find_desc(alts->endpoint[1].extra, alts->endpoint[1].extralen, NULL, USB_DT_CS_ENDPOINT);
-   560	
-   561		/*
-   562		 * If we can't locate the USB_DT_CS_ENDPOINT descriptor in the extra
-   563		 * bytes after the first endpoint, go search the entire interface.
-   564		 * Some devices have it directly *before* the standard endpoint.
-   565		 */
-   566		if (!csep)
-   567			csep = snd_usb_find_desc(alts->extra, alts->extralen, NULL, USB_DT_CS_ENDPOINT);
-   568	
-   569		if (!csep || csep->bLength < 7 ||
-   570		    csep->bDescriptorSubtype != UAC_EP_GENERAL) {
-   571			usb_audio_warn(chip,
-   572				       "%u:%d : no or invalid class specific endpoint descriptor\n",
-   573				       iface_no, altsd->bAlternateSetting);
-   574			return 0;
-   575		}
-   576	
-   577		switch (protocol) {
-   578		case UAC_VERSION_1:
-   579			attributes = csep->bmAttributes;
-   580			break;
-   581		case UAC_VERSION_2: {
-   582			struct uac2_iso_endpoint_descriptor *csep2 =
-   583				(struct uac2_iso_endpoint_descriptor *) csep;
-   584	
-   585			attributes = csep->bmAttributes & UAC_EP_CS_ATTR_FILL_MAX;
-   586	
-   587			/* emulate the endpoint attributes of a v1 device */
-   588			if (csep2->bmControls & UAC2_CONTROL_PITCH)
-   589				attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
-   590			break;
-   591		}
-   592		case UAC_VERSION_3: {
-   593			struct uac3_iso_endpoint_descriptor *csep3 =
-   594				(struct uac3_iso_endpoint_descriptor *) csep;
-   595	
-   596			/* emulate the endpoint attributes of a v1 device */
- > 597			if (csep3->bmControls & UAC2_CONTROL_PITCH)
-   598				attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
-   599			break;
-   600		}
-   601		}
-   602	
-   603		return attributes;
-   604	}
-   605	
+So yes, looks like uncompressed kernel image may be good idea.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrc9fgACgkQMOfwapXb+vIQMACfWKL7S7CGpnJHs0CZePLCUqx1
+XtQAoKIsOW38Rxqj0S7UFG5FBrEGHQux
+=sfCt
+-----END PGP SIGNATURE-----
+
+--wRRV7LY7NUeQGEoC--
