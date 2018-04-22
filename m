@@ -1,114 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752300AbeDVLGo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 07:06:44 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:39277 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751244AbeDVLGk (ORCPT
+        id S1751592AbeDVMTV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 08:19:21 -0400
+Received: from mail-it0-f54.google.com ([209.85.214.54]:52899 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750916AbeDVMTS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 07:06:40 -0400
-Subject: Re: [PATCH 04/15] media: pxa_camera: remove the dmaengine compat need
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <20180402142656.26815-1-robert.jarzmik@free.fr>
- <20180402142656.26815-5-robert.jarzmik@free.fr>
- <871sf8z7f4.fsf@belgarion.home>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <dcd81a87-ca7a-3bc8-c457-320d4ce60a83@xs4all.nl>
-Date: Sun, 22 Apr 2018 13:06:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Sun, 22 Apr 2018 08:19:18 -0400
+X-Google-Smtp-Source: AIpwx4+J+A5L0wInqe8chlTXETlAeLZXcpudg/4Ak0kHHL1pJZ9JMgq/+Vyal//HDWw3UjU+oW1haA==
+Subject: Re: linux-next on x60: network manager often complains "network is
+ disabled" after resume
+To: Pavel Machek <pavel@ucw.cz>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        Netdev list <netdev@vger.kernel.org>
+References: <20180318104023.GA10392@amd>
+ <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com> <20180319092106.GA5683@amd>
+ <6e43123a-5227-96c4-a1f5-4416bdb5b0db@gmail.com>
+ <c7d96582-e2e6-d9c8-1140-3f1dab836132@gmail.com> <20180415161551.GF10802@amd>
+From: Woody Suwalski <terraluna977@gmail.com>
+Message-ID: <01331018-8c62-30b2-673c-11b0bcd38c0e@gmail.com>
+Date: Sun, 22 Apr 2018 08:19:14 -0400
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0
+ SeaMonkey/2.49.2
 MIME-Version: 1.0
-In-Reply-To: <871sf8z7f4.fsf@belgarion.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfAKaeKkpKw3iIH4UV7k/3izQn4hsJR/pmtokwt9jXAMI/rFsG0deRKvDDivVJwTZ3do98bhhkU4ECrzMctQRP8D75wLtJGK7ZCnTTga3ds+iimDol33I
- yNe3TthDtmy2hC/SQLhX2Y9wXZzMAKcnqaJNv/Pz3sGxCBrHx4NXTb9VVrN5I6zqw+9S6Oop68avBwkLKNC42Q/yxo3ax994j8jKhIVWHFmlpbb6G/I3zgVd
- kMvO4/Op6Yowjy8tcwSLkxpdYlnfaAguL0HNWT7WWxJPmHH043KGG7A+pgZrlrPOF/lJ3QdMoU0lH8kb1BJLxQ==
+In-Reply-To: <20180415161551.GF10802@amd>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/21/2018 09:27 PM, Robert Jarzmik wrote:
-> Robert Jarzmik <robert.jarzmik@free.fr> writes:
-> 
->> From: Robert Jarzmik <robert.jarzmik@renault.com>
+Pavel Machek wrote:
+> On Tue 2018-03-20 21:11:54, Woody Suwalski wrote:
+>> Woody Suwalski wrote:
+>>> Pavel Machek wrote:
+>>>> On Mon 2018-03-19 05:17:45, Woody Suwalski wrote:
+>>>>> Pavel Machek wrote:
+>>>>>> Hi!
+>>>>>>
+>>>>>> With recent linux-next, after resume networkmanager often claims that
+>>>>>> "network is disabled". Sometimes suspend/resume clears that.
+>>>>>>
+>>>>>> Any ideas? Does it work for you?
+>>>>>>                                      Pavel
+>>>>> Tried the 4.16-rc6 with nm 1.4.4 - I do not see the issue.
+>>>> Thanks for testing... but yes, 4.16 should be ok. If not fixed,
+>>>> problem will appear in 4.17-rc1.
+>>>>
+>>> Works here OK. Tried ~10 suspends, all restarted OK.
+>>> kernel next-20180320
+>>> nmcli shows that Wifi always connects OK
+>>>
+>>> Woody
+>>>
+>> Contrary, it just happened to me on a 64-bit build 4.16-rc5 on T440.
+>> I think that Dan's suspicion is correct - it is a snafu in the PM: trying to
+>> hibernate results in a message:
+>> Failed to hibernate system via logind: There's already a shutdown or sleep
+>> operation in progress.
 >>
->> As the pxa architecture switched towards the dmaengine slave map, the
->> old compatibility mechanism to acquire the dma requestor line number and
->> priority are not needed anymore.
->>
->> This patch simplifies the dma resource acquisition, using the more
->> generic function dma_request_slave_channel().
->>
->> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
->> ---
->>  drivers/media/platform/pxa_camera.c | 22 +++-------------------
->>  1 file changed, 3 insertions(+), 19 deletions(-)
-> Hans, could I have your ack please ?
+>> And ps shows "Ds /lib/systemd/systemd-sleep suspend"...
+> Problem now seems to be in the mainline.
+>
+> But no, I don't see systemd-sleep in my process list :-(.
+>
+> I guess you can't reproduce it easily? I tried bisecting, but while it
+> happens often enough to make v4.17 hard to use, it does not permit
+> reliable bisect.
+>
+> These should be bad according to my notes
+>
+> b04240a33b99b32cf6fbdf5c943c04e505a0cb07
+>   ed80dc19e4dd395c951f745acd1484d61c4cfb20
+>   52113a0d3889d6e2738cf09bf79bc9cac7b5e1c6
+>   4fc97ef94bbfa185d16b3e44199b7559d0668747
+>   14ebdb2c814f508936fe178a2abc906a16a3ab48
+>   639adbeef5ae1bb8eeebbb0cde0b885397bde192
+>
+> bisection claimed
+>
+> c16add24522547bf52c189b3c0d1ab6f5c2b4375
+>
+> is first bad commit, but I'm not sure if I trust that.
+> 									Pavel
+It has not happen on any of my systems in the last month. Good, but bad 
+for getting more info :-(
 
-Done.
-
-	Hans
-
-> 
-> Cheers.
-> 
-> --
-> Robert
-> 
-> PS: The submitted patch
->>
->> diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
->> index c71a00736541..4c82d1880753 100644
->> --- a/drivers/media/platform/pxa_camera.c
->> +++ b/drivers/media/platform/pxa_camera.c
->> @@ -2357,8 +2357,6 @@ static int pxa_camera_probe(struct platform_device *pdev)
->>  		.src_maxburst = 8,
->>  		.direction = DMA_DEV_TO_MEM,
->>  	};
->> -	dma_cap_mask_t mask;
->> -	struct pxad_param params;
->>  	char clk_name[V4L2_CLK_NAME_SIZE];
->>  	int irq;
->>  	int err = 0, i;
->> @@ -2432,34 +2430,20 @@ static int pxa_camera_probe(struct platform_device *pdev)
->>  	pcdev->base = base;
->>  
->>  	/* request dma */
->> -	dma_cap_zero(mask);
->> -	dma_cap_set(DMA_SLAVE, mask);
->> -	dma_cap_set(DMA_PRIVATE, mask);
->> -
->> -	params.prio = 0;
->> -	params.drcmr = 68;
->> -	pcdev->dma_chans[0] =
->> -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
->> -						 &params, &pdev->dev, "CI_Y");
->> +	pcdev->dma_chans[0] = dma_request_slave_channel(&pdev->dev, "CI_Y");
->>  	if (!pcdev->dma_chans[0]) {
->>  		dev_err(&pdev->dev, "Can't request DMA for Y\n");
->>  		return -ENODEV;
->>  	}
->>  
->> -	params.drcmr = 69;
->> -	pcdev->dma_chans[1] =
->> -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
->> -						 &params, &pdev->dev, "CI_U");
->> +	pcdev->dma_chans[1] = dma_request_slave_channel(&pdev->dev, "CI_U");
->>  	if (!pcdev->dma_chans[1]) {
->>  		dev_err(&pdev->dev, "Can't request DMA for Y\n");
->>  		err = -ENODEV;
->>  		goto exit_free_dma_y;
->>  	}
->>  
->> -	params.drcmr = 70;
->> -	pcdev->dma_chans[2] =
->> -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
->> -						 &params, &pdev->dev, "CI_V");
->> +	pcdev->dma_chans[2] = dma_request_slave_channel(&pdev->dev, "CI_V");
->>  	if (!pcdev->dma_chans[2]) {
->>  		dev_err(&pdev->dev, "Can't request DMA for V\n");
->>  		err = -ENODEV;
+Woody
