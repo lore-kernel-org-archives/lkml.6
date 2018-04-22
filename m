@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+Ed3Dwjjzpyk0ZhGZZ85yNpwDYSJwjUUzTpMndDbfAZKdkxVzCIfYUA+0Q2x22QquGMAhn
-ARC-Seal: i=1; a=rsa-sha256; t=1524405659; cv=none;
+X-Google-Smtp-Source: AIpwx4+1CtlzC/HHEdYo3MgQ0EV22Q+LgjtfD1H7mnlGQKB3kxqKeW6zEmFFw0afodU8tkzjcFn8
+ARC-Seal: i=1; a=rsa-sha256; t=1524405656; cv=none;
         d=google.com; s=arc-20160816;
-        b=a+upbcPSxA4JuxbF5ljT8eJuXJwu1qVJEUvd//wSDjzRRHxArgrFmLUc8UkS973B+8
-         9vVU+0qI2p8A9BhxEAUXMporcxRNnD+VAE3sXFH0inwYoV4U0XrxGdP366dd8yEhQlC+
-         FIHxa0MennAcWwh22dSSsTjnc2Sz9+dXHZ6xrlbv5NCL7YDOsRAwwCyMnrcWeLa2IXyD
-         C0QBWxasGmh5c0nvIxU00Sqggm6quCq1QbMAep7pKt/BsarAH+h/BQZDP2r+Wjj3L0zr
-         rmO72BF8KiaJ/n0bG6vGnaTpkg7BZrubmRMTM/rdOzoCpJrPVMfKm94htU7x1iZn7iFW
-         JShQ==
+        b=cS+cdwIl1MW/zcuNM5puKhw0HvykVCP0f4/QU5o3UjqQxTixMpCgRx1QKRY6a7z4a7
+         whl+yVIZNt55J+M3jhv/oRig32quL2WJJYAIV5ec7OqfLCoP9DjpyzFRA1bMlIOB23tT
+         1FCkeMvGViyjmgt9Qm3YAfgb55vrujlIcCcs8cXNCxCuPvGIbwKRo9+5+9Wbj9sifVcE
+         GITARWSpUhq03GHWTt7Mz8DCEiAMfKsLZ3hnMIW1zI76fv/cw+PWOIZ6gziq29LTeFn1
+         CAH46hZLuhDhLMe35ELQkbCVIzHkztEjJuKX5Zife3vYfWxJEZjCR7yhUWaZwlQYadL2
+         Po5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oWWJJ2vC+pHbaTNDtt33Y7OC7o2JKQJ5aDo8iKuBIg0=;
-        b=yret5soUnBuA0si0HVEneNjlkBDV7OLBIUkvBPBrLBDfngQyHktzdyXbmvQRdjiqDM
-         8r2OnV9Hrz2m4n/Rd7SrQyDNgBN9KLat2lfO+SDHJoMs/rPBFsB37whSXHdf7utAMASz
-         3rxW50/IqDxjOtX43Vs/pfnMiUEewQbEzfejpR/y6qnXGIBSZyT9jhS9vRh5e+D2OHS6
-         kTimcmtEgW3lQ1uaHQYVnejn2aKowOCk3tTbO0fO2ZoDw0m/gAQRVwzigZhX7sus9oUB
-         YRoflTOVg0VduQxFFa8gBi7iykOvEpmupjDd/apNfPG/QZAwY9+WmKZdakN376B/PJAw
-         Aazg==
+        bh=AbautvUU74UxODa7A3zVABbtAlQ9YQ41gV1GKoszBs8=;
+        b=ClDxU6zx1gTwOrhzuMVOH2My/dSvrSMG1pvTqKJobN0onUQNtH9qnegALVYhuBqgAN
+         CILSiDoUeph5p84Zto1aJ9WglQUYFbnevaRVsYXmOkgQjVX1aeEdM9b8Qdg0dAdR+DZd
+         NF9LIhSW+GokBzm+/rMipURXmkfipdgbmKLJBlUe9K6qkvTZJto4EhIFZbJ0HE8K4jiX
+         JKc2+bVM97SpI++PK7N4N5qdojKQjwii4UiXFLIW1tpsU7+fdqyh4gE/d2GsHRIkvGws
+         woBzAk+WS8APXzhIahnRzjvIC+vvtx5H74EoU6BpxeK9wbTOqvGn+EiDxCIwpnxdqhyQ
+         stWw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mikhail Lappo <mikhail.lappo@esrlabs.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH 4.16 147/196] thermal: imx: Fix race condition in imx_thermal_probe()
-Date: Sun, 22 Apr 2018 15:52:47 +0200
-Message-Id: <20180422135111.846062645@linuxfoundation.org>
+	Sean Wang <sean.wang@mediatek.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 4.16 146/196] pwm: mediatek: Improve precision in rate calculation
+Date: Sun, 22 Apr 2018 15:52:46 +0200
+Message-Id: <20180422135111.777676708@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455189066394572?=
-X-GMAIL-MSGID: =?utf-8?q?1598455189066394572?=
+X-GMAIL-THRID: =?utf-8?q?1598455186062560771?=
+X-GMAIL-MSGID: =?utf-8?q?1598455186062560771?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,53 +49,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikhail Lappo <mikhail.lappo@esrlabs.com>
+From: Sean Wang <sean.wang@mediatek.com>
 
-commit cf1ba1d73a33944d8c1a75370a35434bf146b8a7 upstream.
+commit 04c0a4e00dc11fedc0b0a8593adcf0f4310505d4 upstream.
 
-When device boots with T > T_trip_1 and requests interrupt,
-the race condition takes place. The interrupt comes before
-THERMAL_DEVICE_ENABLED is set. This leads to an attempt to
-reading sensor value from irq and disabling the sensor, based on
-the data->mode field, which expected to be THERMAL_DEVICE_ENABLED,
-but still stays as THERMAL_DEVICE_DISABLED. Afher this issue
-sensor is never re-enabled, as the driver state is wrong.
+Add a way that turning resolution from in nanosecond into in picosecond
+to improve noticeably almost 4.5% precision.
 
-Fix this problem by setting the 'data' members prior to
-requesting the interrupts.
+It's necessary to hold the new resolution with type u64 and thus related
+operations on u64 are applied instead in those rate calculations.
 
-Fixes: 37713a1e8e4c ("thermal: imx: implement thermal alarm interrupt handling")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Mikhail Lappo <mikhail.lappo@esrlabs.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+And the patch has a dependency on [1].
+
+[1] http://lists.infradead.org/pipermail/linux-mediatek/2018-March/012225.html
+
+Cc: stable@vger.kernel.org
+Fixes: caf065f8fd58 ("pwm: Add MediaTek PWM support")
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thermal/imx_thermal.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pwm/pwm-mediatek.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -637,6 +637,9 @@ static int imx_thermal_probe(struct plat
- 	regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_POWER_DOWN);
- 	regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_MEASURE_TEMP);
+--- a/drivers/pwm/pwm-mediatek.c
++++ b/drivers/pwm/pwm-mediatek.c
+@@ -135,19 +135,25 @@ static int mtk_pwm_config(struct pwm_chi
+ {
+ 	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
+ 	struct clk *clk = pc->clks[MTK_CLK_PWM1 + pwm->hwpwm];
+-	u32 resolution, clkdiv = 0, reg_width = PWMDWIDTH,
++	u32 clkdiv = 0, cnt_period, cnt_duty, reg_width = PWMDWIDTH,
+ 	    reg_thres = PWMTHRES;
++	u64 resolution;
+ 	int ret;
  
-+	data->irq_enabled = true;
-+	data->mode = THERMAL_DEVICE_ENABLED;
-+
- 	ret = devm_request_threaded_irq(&pdev->dev, data->irq,
- 			imx_thermal_alarm_irq, imx_thermal_alarm_irq_thread,
- 			0, "imx_thermal", data);
-@@ -649,9 +652,6 @@ static int imx_thermal_probe(struct plat
+ 	ret = mtk_pwm_clk_enable(chip, pwm);
+ 	if (ret < 0)
  		return ret;
+ 
+-	resolution = NSEC_PER_SEC / clk_get_rate(clk);
++	/* Using resolution in picosecond gets accuracy higher */
++	resolution = (u64)NSEC_PER_SEC * 1000;
++	do_div(resolution, clk_get_rate(clk));
+ 
+-	while (period_ns / resolution > 8191) {
++	cnt_period = DIV_ROUND_CLOSEST_ULL((u64)period_ns * 1000, resolution);
++	while (cnt_period > 8191) {
+ 		resolution *= 2;
+ 		clkdiv++;
++		cnt_period = DIV_ROUND_CLOSEST_ULL((u64)period_ns * 1000,
++						   resolution);
  	}
  
--	data->irq_enabled = true;
--	data->mode = THERMAL_DEVICE_ENABLED;
--
- 	return 0;
- }
+ 	if (clkdiv > PWM_CLK_DIV_MAX) {
+@@ -165,9 +171,10 @@ static int mtk_pwm_config(struct pwm_chi
+ 		reg_thres = PWM45THRES_FIXUP;
+ 	}
+ 
++	cnt_duty = DIV_ROUND_CLOSEST_ULL((u64)duty_ns * 1000, resolution);
+ 	mtk_pwm_writel(pc, pwm->hwpwm, PWMCON, BIT(15) | clkdiv);
+-	mtk_pwm_writel(pc, pwm->hwpwm, reg_width, period_ns / resolution);
+-	mtk_pwm_writel(pc, pwm->hwpwm, reg_thres, duty_ns / resolution);
++	mtk_pwm_writel(pc, pwm->hwpwm, reg_width, cnt_period);
++	mtk_pwm_writel(pc, pwm->hwpwm, reg_thres, cnt_duty);
+ 
+ 	mtk_pwm_clk_disable(chip, pwm);
  
