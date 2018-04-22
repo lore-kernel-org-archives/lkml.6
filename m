@@ -1,91 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752353AbeDVJOV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 05:14:21 -0400
-Received: from sauhun.de ([88.99.104.3]:37538 "EHLO pokefinder.org"
+        id S1752582AbeDVJOZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 05:14:25 -0400
+Received: from sauhun.de ([88.99.104.3]:37624 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751564AbeDVJOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 05:14:19 -0400
+        id S1751212AbeDVJOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 05:14:21 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: dmaengine@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 0/6] tree-wide: simplify getting .drvdata
-Date: Sun, 22 Apr 2018 11:14:08 +0200
-Message-Id: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/6] dmaengine: txx9dmac: simplify getting .drvdata
+Date: Sun, 22 Apr 2018 11:14:14 +0200
+Message-Id: <20180422091415.7587-7-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
+References: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+
+Build tested only. buildbot is happy. Please apply to your tree directly.
+
+ drivers/dma/txx9dmac.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/dma/txx9dmac.c b/drivers/dma/txx9dmac.c
+index 4d8c7b9078fd..eb45af71d3a3 100644
+--- a/drivers/dma/txx9dmac.c
++++ b/drivers/dma/txx9dmac.c
+@@ -1244,8 +1244,7 @@ static void txx9dmac_shutdown(struct platform_device *pdev)
+ 
+ static int txx9dmac_suspend_noirq(struct device *dev)
+ {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
-
-I send this out as one patch per directory per subsystem. I think they should
-be applied individually. If you prefer a broken out series per subsystem, I can
-provide this as well. Just mail me.
-
-A branch (tested by buildbot; only with all commits squashed into one commit
-before) can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
-
-Open for other comments, suggestions, too, of course.
-
-Here is the cocci-script I created:
-
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (6):
-  dmaengine: at_hdmac: simplify getting .drvdata
-  dmaengine: at_xdmac: simplify getting .drvdata
-  dmaengine: fsldma: simplify getting .drvdata
-  dmaengine: idma64: simplify getting .drvdata
-  dmaengine: ste_dma40: simplify getting .drvdata
-  dmaengine: txx9dmac: simplify getting .drvdata
-
- drivers/dma/at_hdmac.c  |  9 +++------
- drivers/dma/at_xdmac.c  |  9 +++------
- drivers/dma/fsldma.c    |  6 ++----
- drivers/dma/idma64.c    |  6 ++----
- drivers/dma/ste_dma40.c | 12 ++++--------
- drivers/dma/txx9dmac.c  |  8 +++-----
- 6 files changed, 17 insertions(+), 33 deletions(-)
-
+-	struct txx9dmac_dev *ddev = platform_get_drvdata(pdev);
++	struct txx9dmac_dev *ddev = dev_get_drvdata(dev);
+ 
+ 	txx9dmac_off(ddev);
+ 	return 0;
+@@ -1253,9 +1252,8 @@ static int txx9dmac_suspend_noirq(struct device *dev)
+ 
+ static int txx9dmac_resume_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct txx9dmac_dev *ddev = platform_get_drvdata(pdev);
+-	struct txx9dmac_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	struct txx9dmac_dev *ddev = dev_get_drvdata(dev);
++	struct txx9dmac_platform_data *pdata = dev_get_platdata(dev);
+ 	u32 mcr;
+ 
+ 	mcr = TXX9_DMA_MCR_MSTEN | MCR_LE;
 -- 
 2.11.0
