@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48ndNJTXegTMQGI9eFm/kauZ+RSWnnIdUspjyKJoyLUSh0+xQo82NKfnIiCv8RJpi3Nsdw6
-ARC-Seal: i=1; a=rsa-sha256; t=1524405865; cv=none;
+X-Google-Smtp-Source: AIpwx4/cUuGU3DtiXt9PR9H9RT7rhbID+jwArfbA0uIDywFT+51ekt+/bdPBeezfoPGFc7spQbgk
+ARC-Seal: i=1; a=rsa-sha256; t=1524405862; cv=none;
         d=google.com; s=arc-20160816;
-        b=zSBBz3uE9m2QkSMPdwMpjMsAipxJujb0uK/H8kice3QYWQ8HHclIE9ExHjuhFVR3OW
-         xIucMxjR0tKYsg+9yhtYImLg9Y5IQYeFCKwa9UQJxi4ql1C+M9NKrYEPB6S4412Y/SWO
-         DQzSyZS9SFT8eYeMTINT+pamsrSoiR27r1H/ADnMWUHbaxdwbWcjONnRc/2wjuUJjrG1
-         b+4BULBKTSw4uSFylXLYjsDSC/LLoPykSyy43BTtvKn2yZWkRmlaXP3ZlnluXhJbK+X6
-         bYBREqCYQxpnldAMLuiCnxhlWjZY2HJn0uA8KPxhFUrwYMZOTGVNJq21+RtYiACpeVEP
-         lXPw==
+        b=xNrtVWO/DzlLgHSpfojopzk6gvw2eqW+sNOW4ViUW0zlb4np6589qngZBHBJFNkCIA
+         OU/HVvqGH8dBi1pmrM1BqfOP6FbKqn2j7iACq4BDoqZJ7fZKDg9R6h79FPg47ZwerJ+F
+         gbArYddb28ycN2o3IEpVxq5s63lAxUY8egdFEKSQJPSn3sULZa64MC//aILsD88VFE44
+         4Q81FNSkYKboQBaIPWyU8OkYRl2mj8UHwcOtM2RPqsTFV+Qi+qM3Krin/x745dZ7vW+r
+         uJ+RxZFUL6fHdtt1o9Df4AVx9VwVNCWjliYr3nxLNLEn7xbzEOjyBo5qfYmY79nBa8iR
+         lp+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BQUEU4J5uNdXTkmiTwPGU1yY2j1UFt8DQW5vg6u3bU8=;
-        b=ryIuQEBFoRZor4EpknJHJyueBeJlU1ubdRBFa6zVoFLRpvmoXJBOhA0IvGF2WGYzTX
-         Q7zcYvh5uskmxbNgcVkZlN+kaNbRurVBEr5v8Zdg2Gr+2K2wO/vZoHY5uaHOU3HI5aRl
-         VJpvZvE4v2imwOCGnoYxInqnunZKBdd5fN6d7s9u/11lO/dy/U1yzGL9JtvmZg7BrfNv
-         dtLoRafwe1kN5MpjSV6VNVmCcgd6bt9Y68TgZXb9UA5645f19tTV8txTYmpRKS9SGcqb
-         cX2tR53AJY5VY50kU0ElgJtf5juawzJGJ4dRAEtE80qHRQq1GWOqdUudMEXpEPNRQzqL
-         gYUg==
+        bh=DgDR6/0QeOorZ81VWE5At1gFpQQKIavmagYDSontd+M=;
+        b=WcejcpY8+YhVmpLCulqCln1fzAKuhxc618PRs+Bc3CqAgNpaQA7e36FlIJtSDkZINo
+         KXKEveilaD3dvqcZniGHaQ9ypCU/9uCnk0KPZ+O0CWfluP72mIdBHJR7exz4PTTKzkzF
+         SVYy5vtgwTznCpEZJtkCVnvYtfSu60Gyld7TNMwSAvgtlTsQY+7N52k5XIZOCiyBSpii
+         s486HA7AAX3e9OhN82SWIZgLV2QY7QeZwhpU5hdrFIevzWef1qkha+vu4XkLckfIILGX
+         c51kfEXHOR7SX4mvojdR1Iolc7wsbLud9Qpdz0dJHSP5g+FAtRgAw7GQZCxsEaxJib+n
+         9kGQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eugen Hristev <eugen.hristev@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 026/164] spi: atmel: init FIFOs before spi enable
-Date: Sun, 22 Apr 2018 15:51:33 +0200
-Message-Id: <20180422135136.473088617@linuxfoundation.org>
+	Santiago Esteban <Santiago.Esteban@microchip.com>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.14 025/164] ARM: dts: at91: sama5d4: fix pinctrl compatible string
+Date: Sun, 22 Apr 2018 15:51:32 +0200
+Message-Id: <20180422135136.426791082@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454845634881024?=
-X-GMAIL-MSGID: =?utf-8?q?1598455405231275694?=
+X-GMAIL-THRID: =?utf-8?q?1598454842841403828?=
+X-GMAIL-MSGID: =?utf-8?q?1598455401999180194?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,47 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Santiago Esteban <Santiago.Esteban@microchip.com>
 
-commit 9581329eff9db72ab4fbb46a594fd7fdda3c51b0 upstream.
+commit 9a06757dcc8509c162ac00488c8c82fc98e04227 upstream.
 
-The datasheet recommends initializing FIFOs before
-SPI enable. If we do not do it like this, there may be
-a strange behavior. We noticed that DMA does not work properly
-with FIFOs if we do not clear them beforehand or enable them
-before SPIEN.
+The compatible string is incorrect. Add atmel,sama5d3-pinctrl since
+it's the appropriate compatible string. Remove the
+atmel,at91rm9200-pinctrl compatible string, this fallback is
+useless, there are too many changes.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Santiago Esteban <Santiago.Esteban@microchip.com>
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: stable@vger.kernel.org #v3.18
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-atmel.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/sama5d4.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -1489,6 +1489,11 @@ static void atmel_spi_init(struct atmel_
- {
- 	spi_writel(as, CR, SPI_BIT(SWRST));
- 	spi_writel(as, CR, SPI_BIT(SWRST)); /* AT91SAM9263 Rev B workaround */
-+
-+	/* It is recommended to enable FIFOs first thing after reset */
-+	if (as->fifo_size)
-+		spi_writel(as, CR, SPI_BIT(FIFOEN));
-+
- 	if (as->caps.has_wdrbt) {
- 		spi_writel(as, MR, SPI_BIT(WDRBT) | SPI_BIT(MODFDIS)
- 				| SPI_BIT(MSTR));
-@@ -1499,9 +1504,6 @@ static void atmel_spi_init(struct atmel_
- 	if (as->use_pdc)
- 		spi_writel(as, PTCR, SPI_BIT(RXTDIS) | SPI_BIT(TXTDIS));
- 	spi_writel(as, CR, SPI_BIT(SPIEN));
--
--	if (as->fifo_size)
--		spi_writel(as, CR, SPI_BIT(FIFOEN));
- }
- 
- static int atmel_spi_probe(struct platform_device *pdev)
+--- a/arch/arm/boot/dts/sama5d4.dtsi
++++ b/arch/arm/boot/dts/sama5d4.dtsi
+@@ -1365,7 +1365,7 @@
+ 			pinctrl@fc06a000 {
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+-				compatible = "atmel,at91sam9x5-pinctrl", "atmel,at91rm9200-pinctrl", "simple-bus";
++				compatible = "atmel,sama5d3-pinctrl", "atmel,at91sam9x5-pinctrl", "simple-bus";
+ 				ranges = <0xfc068000 0xfc068000 0x100
+ 					  0xfc06a000 0xfc06a000 0x4000>;
+ 				/* WARNING: revisit as pin spec has changed */
