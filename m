@@ -1,113 +1,125 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-775307-1524467640-2-16362036692704460889
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524467639; b=dO+e+8hcCY+J6XxhrvLrgYj7ysayHlFeMl76URa5jqIspgSsvN
-    ZqgM7mdZl3ymAOc8Vl4c1sZ/hUPcqgI+tXTbdgKUnAnZhQDwVO1UNGm+HBZ0kanP
-    +/Mqmq9KVzsiYjbm4TqOo2W47kT+PbY93Ftr2W1S/QgbgAMB0lH6G7eD5bIIYaCQ
-    guXMM66m6cKhe74KT6ORVXC+x9TiDWBHGFPFqASEKWJy+1PyV5CfahHrmuVpemZ/
-    lJc3SbDYRqEugvR+6hMFrjSd4v5n4kxYFLlCL6PxXsfvwc2IEMAkI4zpTzFtC0W8
-    bQcSwDfWmstryEFqU/LN3aHd/pjMCLJO6GLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524467639; bh=b/S0NMraUH4O9eCdKIDMtlDmHkUeTy
-    7X5LxKSlirtvU=; b=phtQjyF8kZlGRqm93fE6ZlOpeN3/9RuN7QjzqPrx8R/7u2
-    kNI34KdK/SHFigmUWpShm4AFJAoSf1gsXDlX1+Ub2A/JHTg/vPIlMee5zQ3C+1bM
-    Z0bewkJO0lez2rT8IMcWzvOvGhpVfghSP9L2ISaIeFXGH2bBAbF1l5/1yZ33/nx1
-    s3ZNd9TZd/wnvK663CB/wkDjzof2U/RHe34tfWdeRQgGxS9oe4IafvCuh8ljQjpW
-    cqmdOrCpdciRcqDvvyI6oObDI2xqVYoB93hXaoY40+1SrpVO323o09B1mtvci3dJ
-    okbQQoJLlR55jw/XOdoWu9S9ddSS5it8TJnvYtcA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPtS7bm57eFO1Jcn9bQaeQ0vWYnSkEq6QVthqzFF2UtTRqBL+WRuzHuPGSLAq6Q5onNtIaHZRQx9gzx2dsI6J2g4oB5lbsuXslrFU0gFIArjLjrUOplh
-    tDr3w1qBkLUf4Shs6oUOYLnPlEPZq5lTrwCnZqtblUPVHH32fygsHp4UAnhznUUBhlBj6pSl6VLjKM02PCjo08vewYhnZD2zchrPaVISP/nYwbykB+z0DEvo
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=KxrDYYeofMLKJ3l61cEA:9 a=CjuIK1q_8ugA:10
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752991AbeDWHN4 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 23 Apr 2018 03:13:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60110 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752787AbeDWHN4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 23 Apr 2018 03:13:56 -0400
-Date: Mon, 23 Apr 2018 09:13:50 +0200
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+6k/7GvQLP63Lc5oZkPcLJrSPfugUEcAhRCB7psqGIc5kMPqRH/WgIsvg7wPUI20UzeDVp
+ARC-Seal: i=1; a=rsa-sha256; t=1524406524; cv=none;
+        d=google.com; s=arc-20160816;
+        b=OrBOSormJeUFBCS2N/OsqVBfTbGEBLncvPtY2k+nhd8FNVczMf6bzB12bVUPyIBgZ6
+         cut+uWokdymBjZhqpiz3ym0hGEyRiay1pWCAT5B/pRCBgL4LIZTm/1bkvnRjiPWPTmD+
+         UVpAIE1vnUYgJDx1ka4aIL+aOf3+DYZQe0yKB7SgffF7DuqdLGYSQq+T9ClULMJqY6xy
+         9V37RVrQh+GRncaJUm4MzZEUKssdTKJyao391s4ANoivo6AUhcTs3yioIHmyb17Ycapq
+         07yvBk04jliJ0MwJK3StOLqzHvgqg8Tf2K1VwurY13UOV6Xkq0XH2MV3N6Dy6LeC9BHu
+         qAXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=54HABwodHcGn2nXlQ/XgFb1/GGQjS4mwA3xkBvfZO+A=;
+        b=0k7UVAwRoV3+1llIrBRv40nIODLfKURdVqnQu+HY9+/VuCNalvCDgbKY5Bqq0VNLZ8
+         3A//Zv0kfL8D3yhK+u1c+C21yuVmlxk3TmSZ46ms/eMU/bmynqXdppah7+gyOONYFpla
+         Vp0T6Ni46aR/X3pu9LlYGDLK6BH6kK9GbkO+72X9uGWXQYJ/oqZ+3kp44+naVRJuGwOw
+         CA0ouNa9FD53pwaY8Ia1PtuCgGpnehmr9cI9/1ooFvpNgJNK6WXDz44JZ/jFaRenzsQx
+         C3KtOuI97xLgDTb7YdcZkFOw+SfE0afNemShvPQOT+Nq9u0Pv/RBgs48i5v/tgvCQFOT
+         mbOw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ben Hutchings <ben@decadent.org.uk>, stable@vger.kernel.org,
-        Wen Xu <wen.xu@gatech.edu>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4.9 37/95] ext4: add validity checks for bitmap block
- numbers
-Message-ID: <20180423071350.GB28186@kroah.com>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH 4.9 59/95] vfio/pci: Virtualize Maximum Read Request Size
+Date: Sun, 22 Apr 2018 15:53:28 +0200
+Message-Id: <20180422135212.838753130@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
- <20180422135211.941652389@linuxfoundation.org>
- <30c688b5783a5779811ce68893b7001390b9e200.camel@decadent.org.uk>
- <20180423060352.GA8194@thunk.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423060352.GA8194@thunk.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455756318310028?=
+X-GMAIL-MSGID: =?utf-8?q?1598456096335476292?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 02:03:52AM -0400, Theodore Y. Ts'o wrote:
-> On Sun, Apr 22, 2018 at 10:54:23PM +0100, Ben Hutchings wrote:
-> > >  	offset = blk - group_first_block;
-> > > -	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
-> > > +	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-> > > +	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
-> > 
-> > Isn't sb->s_blocksize a count of bytes?  If so, doesn't that mean that
-> > we should be comparing with sb->s_blocksize * 8?
-> 
-> Yes, nice catch, Ben!  Can we temporarily drop this patch from the
-> stable queue until I can get a fix in?
-> 
-> In practice this shouldn't be a problem because of the default ext4
-> layout with flex_bg.  But we should definitely get this fixed before
-> we let this flow into the stable kernel.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Now dropped from all queues.  When you submit the fix, can you also tag
-it for stable so I know to pick this one back up?
+------------------
 
-thanks,
+From: Alex Williamson <alex.williamson@redhat.com>
 
-greg k-h
+commit cf0d53ba4947aad6e471491d5b20a567cbe92e56 upstream.
+
+MRRS defines the maximum read request size a device is allowed to
+make.  Drivers will often increase this to allow more data transfer
+with a single request.  Completions to this request are bound by the
+MPS setting for the bus.  Aside from device quirks (none known), it
+doesn't seem to make sense to set an MRRS value less than MPS, yet
+this is a likely scenario given that user drivers do not have a
+system-wide view of the PCI topology.  Virtualize MRRS such that the
+user can set MRRS >= MPS, but use MPS as the floor value that we'll
+write to hardware.
+
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/vfio/pci/vfio_pci_config.c |   29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
+
+--- a/drivers/vfio/pci/vfio_pci_config.c
++++ b/drivers/vfio/pci/vfio_pci_config.c
+@@ -810,6 +810,7 @@ static int vfio_exp_config_write(struct
+ {
+ 	__le16 *ctrl = (__le16 *)(vdev->vconfig + pos -
+ 				  offset + PCI_EXP_DEVCTL);
++	int readrq = le16_to_cpu(*ctrl) & PCI_EXP_DEVCTL_READRQ;
+ 
+ 	count = vfio_default_config_write(vdev, pos, count, perm, offset, val);
+ 	if (count < 0)
+@@ -835,6 +836,27 @@ static int vfio_exp_config_write(struct
+ 			pci_try_reset_function(vdev->pdev);
+ 	}
+ 
++	/*
++	 * MPS is virtualized to the user, writes do not change the physical
++	 * register since determining a proper MPS value requires a system wide
++	 * device view.  The MRRS is largely independent of MPS, but since the
++	 * user does not have that system-wide view, they might set a safe, but
++	 * inefficiently low value.  Here we allow writes through to hardware,
++	 * but we set the floor to the physical device MPS setting, so that
++	 * we can at least use full TLPs, as defined by the MPS value.
++	 *
++	 * NB, if any devices actually depend on an artificially low MRRS
++	 * setting, this will need to be revisited, perhaps with a quirk
++	 * though pcie_set_readrq().
++	 */
++	if (readrq != (le16_to_cpu(*ctrl) & PCI_EXP_DEVCTL_READRQ)) {
++		readrq = 128 <<
++			((le16_to_cpu(*ctrl) & PCI_EXP_DEVCTL_READRQ) >> 12);
++		readrq = max(readrq, pcie_get_mps(vdev->pdev));
++
++		pcie_set_readrq(vdev->pdev, readrq);
++	}
++
+ 	return count;
+ }
+ 
+@@ -853,11 +875,12 @@ static int __init init_pci_cap_exp_perm(
+ 	 * Allow writes to device control fields, except devctl_phantom,
+ 	 * which could confuse IOMMU, MPS, which can break communication
+ 	 * with other physical devices, and the ARI bit in devctl2, which
+-	 * is set at probe time.  FLR gets virtualized via our writefn.
++	 * is set at probe time.  FLR and MRRS get virtualized via our
++	 * writefn.
+ 	 */
+ 	p_setw(perm, PCI_EXP_DEVCTL,
+-	       PCI_EXP_DEVCTL_BCR_FLR | PCI_EXP_DEVCTL_PAYLOAD,
+-	       ~PCI_EXP_DEVCTL_PHANTOM);
++	       PCI_EXP_DEVCTL_BCR_FLR | PCI_EXP_DEVCTL_PAYLOAD |
++	       PCI_EXP_DEVCTL_READRQ, ~PCI_EXP_DEVCTL_PHANTOM);
+ 	p_setw(perm, PCI_EXP_DEVCTL2, NO_VIRT, ~PCI_EXP_DEVCTL2_ARI);
+ 	return 0;
+ }
