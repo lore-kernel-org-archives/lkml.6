@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48wvrdmh0/3w7puGf6H4c/oEplI0e6pRutdadKscLpU28uOKwXgmnXa+DU4kiYpr0liVxvZ
-ARC-Seal: i=1; a=rsa-sha256; t=1524405726; cv=none;
+X-Google-Smtp-Source: AIpwx4894NkUnQNB7hYZ7QFe00/4s6i0qify6t+9BSR9AL8s3f9NWv1DsjCiY2AYSpy0A3D7gmdH
+ARC-Seal: i=1; a=rsa-sha256; t=1524405724; cv=none;
         d=google.com; s=arc-20160816;
-        b=nNYjysQdv5Vx3oUgyPSvuCKjyEDqKRgNY7AqZug5MuedgqIDsjzSU2uDaimQNFVdFB
-         +4uJjFJWHL0D3zrNT8in00YglehBaEdNhc9NeGHGJbh9QRTX73TLHyT1cPkDKHEjcqNx
-         9xRhTP2kd+rtF1YOElpys+AOzSaFVG2M+dvu1/n8BJ+v7h0l1SLsyRdqDsB2iceLS+NR
-         0V3WxkNXyRCXsvGpSUz37NPgGVM2LZl3FTQqEvrHu5StPRjz6OTzd64vgIOWTRfTPbuu
-         Aa+IF7+idynqKTIcdB0PdHJFr6dblIFa4WckxwdXEZBQRFjCaut/g/lSxNrpVcObjMaG
-         U/bA==
+        b=PksAmSccZ8H7ZYpMNWwrMNrvvrWkaHmlQf+qxhGCJAgqME10WqX7/0+Q1a6nsvUdPx
+         F2E+i43IvAs4SEZ2I/Z1eynCsVQ9QjxdP78rRZk8TObAf7bymzOjUKTSZNA1osIMa4gZ
+         HbZwS9dt9vdH7KIoaX9Ti6v3OPhvo9PLzVOCXFAt2GFA17wKRp1JegeGXTDGOzoX370r
+         Sd9sQMK6CiuT6UPNxOa8DVvLBJ+6/egRlml8CBrix0W5zO1U0sLRxullwfjcGVJyC8bh
+         UrpDqe08PgVL2KS4gznohJV/tapgSl2t/dpLddflpzI8Q1eLnCGknz7CCA1HCxyW/yUW
+         /W5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=B2Z6jrr50MzBKxwv/fg2uBFq4mfctJ/WGXGXBzI3P4M=;
-        b=hRkkkrj2m5OJEk8bUk0ZomIfkYDX/Tbrz4S21mt4kNEecPhkVrsjIjEba/Wow+coUo
-         QuSxPXLrkCqSgi+CU6mfKdOm6kA5iVj4FtYfuhOnVg2C5sD2JDbvnlAf8PNlZ00QjWry
-         JlE1+xQlBOgZNp1XugliAXlDh3Nr6z/t+NJB4tEJY6SOW6ZLzoZt9QHOffeqpoLZK3LM
-         9XaLx+OOiG4+RQwoqUVFASFWbM4UNC8ONIJVZmZlWCYEzKa8ArsknfchMj+DAaImL05Z
-         MzJUuOWQUQgneLs74rvAaRy9yjI40ga55BtR/m+n+AzwYzk8t7Ok7pyYhWyKGIqZqUt0
-         LFuw==
+        bh=SvxqD1FThD+ZRGz+dMtCS2OQ19OUuBpYrxAeF4IJ44Q=;
+        b=reCxyIjBsO52Gw8dXkV6a76MariHHYrdrrkRiB2TmybmHOuZcxWkB1409WP4smh9q0
+         T18qbaz0yMb2g4fLbBI7TjHojuL9abbmLFQvZkQqx3AmFRdFOZ+ybnNuTr9kIQaJgXo2
+         gfRVsYtNgKmrSnKV78a9dlc5+MVdGxH9Um/3XyBAU7LC3LRLp6ELsR3t0cfRr9bjsfXF
+         rYGAHyyxBnmDgekwLoiTumqv6ViYrRh9BNiEokzbDAbnnNFt0E0bQsHblYu4Q9yo2FHf
+         K6QVEJSluohESmMj1YmUHtLt84EZNQ9wqGhdEnnmZ5P/VdNY5qfmCm9uZCY6rBu163Jq
+         n0WQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Matt Redfearn <matt.redfearn@mips.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org
-Subject: [PATCH 4.16 173/196] MIPS: uaccess: Add micromips clobbers to bzero invocation
-Date: Sun, 22 Apr 2018 15:53:13 +0200
-Message-Id: <20180422135113.201192144@linuxfoundation.org>
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.16 172/196] s390: add support for IBM z14 Model ZR1
+Date: Sun, 22 Apr 2018 15:53:12 +0200
+Message-Id: <20180422135113.146185113@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455259602480989?=
-X-GMAIL-MSGID: =?utf-8?q?1598455259602480989?=
+X-GMAIL-THRID: =?utf-8?q?1598455256824125672?=
+X-GMAIL-MSGID: =?utf-8?q?1598455256824125672?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,58 +49,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matt Redfearn <matt.redfearn@mips.com>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-commit b3d7e55c3f886493235bfee08e1e5a4a27cbcce8 upstream.
+commit 451239eb3d397bd197a79cc3aab943da41ba0905 upstream.
 
-The micromips implementation of bzero additionally clobbers registers t7
-& t8. Specify this in the clobbers list when invoking bzero.
+Just add the new machine type number to the two places that matter.
 
-Fixes: 26c5e07d1478 ("MIPS: microMIPS: Optimise 'memset' core library function.")
-Reported-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.10+
-Patchwork: https://patchwork.linux-mips.org/patch/19110/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Cc: <stable@vger.kernel.org> # v4.14+
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/uaccess.h |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ arch/s390/Kconfig                      |    8 ++++----
+ arch/s390/kernel/perf_cpum_cf_events.c |    1 +
+ arch/s390/kernel/setup.c               |    1 +
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
---- a/arch/mips/include/asm/uaccess.h
-+++ b/arch/mips/include/asm/uaccess.h
-@@ -654,6 +654,13 @@ __clear_user(void __user *addr, __kernel
- {
- 	__kernel_size_t res;
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -289,12 +289,12 @@ config MARCH_Z13
+ 	  older machines.
  
-+#ifdef CONFIG_CPU_MICROMIPS
-+/* micromips memset / bzero also clobbers t7 & t8 */
-+#define bzero_clobbers "$4", "$5", "$6", __UA_t0, __UA_t1, "$15", "$24", "$31"
-+#else
-+#define bzero_clobbers "$4", "$5", "$6", __UA_t0, __UA_t1, "$31"
-+#endif /* CONFIG_CPU_MICROMIPS */
-+
- 	if (eva_kernel_access()) {
- 		__asm__ __volatile__(
- 			"move\t$4, %1\n\t"
-@@ -663,7 +670,7 @@ __clear_user(void __user *addr, __kernel
- 			"move\t%0, $6"
- 			: "=r" (res)
- 			: "r" (addr), "r" (size)
--			: "$4", "$5", "$6", __UA_t0, __UA_t1, "$31");
-+			: bzero_clobbers);
- 	} else {
- 		might_fault();
- 		__asm__ __volatile__(
-@@ -674,7 +681,7 @@ __clear_user(void __user *addr, __kernel
- 			"move\t%0, $6"
- 			: "=r" (res)
- 			: "r" (addr), "r" (size)
--			: "$4", "$5", "$6", __UA_t0, __UA_t1, "$31");
-+			: bzero_clobbers);
+ config MARCH_Z14
+-	bool "IBM z14"
++	bool "IBM z14 ZR1 and z14"
+ 	select HAVE_MARCH_Z14_FEATURES
+ 	help
+-	  Select this to enable optimizations for IBM z14 (3906 series).
+-	  The kernel will be slightly faster but will not work on older
+-	  machines.
++	  Select this to enable optimizations for IBM z14 ZR1 and z14 (3907
++	  and 3906 series). The kernel will be slightly faster but will not
++	  work on older machines.
+ 
+ endchoice
+ 
+--- a/arch/s390/kernel/perf_cpum_cf_events.c
++++ b/arch/s390/kernel/perf_cpum_cf_events.c
+@@ -583,6 +583,7 @@ __init const struct attribute_group **cp
+ 		model = cpumcf_z13_pmu_event_attr;
+ 		break;
+ 	case 0x3906:
++	case 0x3907:
+ 		model = cpumcf_z14_pmu_event_attr;
+ 		break;
+ 	default:
+--- a/arch/s390/kernel/setup.c
++++ b/arch/s390/kernel/setup.c
+@@ -819,6 +819,7 @@ static int __init setup_hwcaps(void)
+ 		strcpy(elf_platform, "z13");
+ 		break;
+ 	case 0x3906:
++	case 0x3907:
+ 		strcpy(elf_platform, "z14");
+ 		break;
  	}
- 
- 	return res;
