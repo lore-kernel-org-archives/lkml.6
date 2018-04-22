@@ -1,88 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753502AbeDVTW5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 15:22:57 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43947 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750855AbeDVTWz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 15:22:55 -0400
-Date: Sun, 22 Apr 2018 21:22:53 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Woody Suwalski <terraluna977@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        Netdev list <netdev@vger.kernel.org>
-Subject: Re: linux-next on x60: network manager often complains "network is
- disabled" after resume
-Message-ID: <20180422192253.GA5174@amd>
-References: <20180318104023.GA10392@amd>
- <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com>
- <20180319092106.GA5683@amd>
- <6e43123a-5227-96c4-a1f5-4416bdb5b0db@gmail.com>
- <c7d96582-e2e6-d9c8-1140-3f1dab836132@gmail.com>
- <20180415161551.GF10802@amd>
- <01331018-8c62-30b2-673c-11b0bcd38c0e@gmail.com>
+        id S1753502AbeDVTz4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 15:55:56 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:45967 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753417AbeDVTzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 15:55:55 -0400
+Subject: =?UTF-8?Q?Re:_How_to_disable_Linux_kernel_self-extraction_=28KERNEL?=
+ =?UTF-8?B?X0daSVAsIEtFUk5FTF9CWklQMiwg4oCmKT8=?=
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+References: <9468be0e-5eb9-246c-e60e-3d8019a42fd1@molgen.mpg.de>
+ <20180422102033.GB26243@amd>
+From: Paul Menzel <pmenzel+linux-kernel@molgen.mpg.de>
+Message-ID: <b22efb58-b63e-7130-f2d7-a9d28225ef9b@molgen.mpg.de>
+Date: Sun, 22 Apr 2018 21:55:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
-Content-Disposition: inline
-In-Reply-To: <01331018-8c62-30b2-673c-11b0bcd38c0e@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180422102033.GB26243@amd>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Pavel,
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+Am 22.04.2018 um 12:20 schrieb Pavel Machek:
+> On Fri 2018-04-20 16:36:00, Paul Menzel wrote:
 
-> >I guess you can't reproduce it easily? I tried bisecting, but while it
-> >happens often enough to make v4.17 hard to use, it does not permit
-> >reliable bisect.
-> >
-> >These should be bad according to my notes
-> >
-> >b04240a33b99b32cf6fbdf5c943c04e505a0cb07
-> >  ed80dc19e4dd395c951f745acd1484d61c4cfb20
-> >  52113a0d3889d6e2738cf09bf79bc9cac7b5e1c6
-> >  4fc97ef94bbfa185d16b3e44199b7559d0668747
-> >  14ebdb2c814f508936fe178a2abc906a16a3ab48
-> >  639adbeef5ae1bb8eeebbb0cde0b885397bde192
-> >
-> >bisection claimed
-> >
-> >c16add24522547bf52c189b3c0d1ab6f5c2b4375
-> >
-> >is first bad commit, but I'm not sure if I trust that.
-> >									Pavel
-> It has not happen on any of my systems in the last month. Good, but bad f=
-or
-> getting more info :-(
+>> I try to decrease boot time, and my system has an SSD and enough space, so
+>> loading 18 instead of 12 MB doesn’t make a difference, but the
+>> self-extraction is noticeable. So, I like to disable it.
+> 
+> How long does GZIP extraction take on your hardware?
 
-My current theory is that it only happens if you suspend your machine
-for > ten minutes, or something like that.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+It’s hard to measure – at least I didn’t find a way to do so –, but 
+counting from the last GRUB message to the first message of Linux (with 
+`quiet` removed from the the command line), it takes roughly *two* seconds.
 
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+```
+$ ls -l /boot/vmlinuz-4.15.0-3-686-pae
+-rw-r--r-- 1 root root  3987200 Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686-pae
+$ ls -lh /boot/vmlinuz-4.15.0-3-686-pae
+-rw-r--r-- 1 root root 3,9M Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686-pae
+$ time scripts/extract-vmlinux vmlinuz-4.15.0-3-686-pae > bla.txt
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+real    0m1,204s
+user    0m1,041s
+sys     0m0,245s
+```
 
-iEYEARECAAYFAlrc4Q0ACgkQMOfwapXb+vIQpwCgpM8nPkG3H+uI0ljZDTsEtrUj
-CvMAnjGGSsz404huS0NVvFl7eeQxj2/U
-=ylki
------END PGP SIGNATURE-----
+As another data point, my self-built (*bigger*) image with XZ used for 
+compression.
 
---UlVJffcvxoiEqYs2--
+```
+$ ls -lh /boot/vmlinuz-4.16.0+
+-rw-r--r-- 1 root root 6,1M Apr 14 10:48 /boot/vmlinuz-4.16.0+
+$ time /usr/src/linux-headers-4.17.0-rc1+/scripts/extract-vmlinux 
+vmlinuz-4.16.0+ > bla.txt
+
+real    0m2,190s
+user    0m1,792s
+sys     0m0,500s
+```
+
+So, it’s really noticeable if the rest of the system starts in less then 
+five seconds to a login prompt, or you are trying to achieve to display 
+the LUKS passphrase dialog more or less instantly.
+
+
+Kind regards,
+
+Paul
