@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/eywxLHQjs386Z6+lYyxFkGcU2M7LNJiYu2GN+9i05Bgck44XxohCU/Pao4ehKbkkW0WJp
-ARC-Seal: i=1; a=rsa-sha256; t=1524406851; cv=none;
+X-Google-Smtp-Source: AIpwx4+RxzOKKRi4pnUuWnsI0CE/G2VXXont9yH7VFUMHMp6uor7oGp9/zLTscP+T5s36ynXmfkG
+ARC-Seal: i=1; a=rsa-sha256; t=1524406846; cv=none;
         d=google.com; s=arc-20160816;
-        b=cDQyKIIkxY9YTmeWnWIP0ymjSFpqA+ptr3YNmIPYALBM9R9AKsJxKFN3vr6RJ5XEXj
-         YndUTjvFm/2zpbZQBvjSaR20lzRa6eDSbufRXpdfM28Iht281vOxcZMYKG4sxbMFrL9y
-         uiGXtvUEUAHZ9h1osdxfU5werHKtqerlIBkBz1TPf4vw77t8QvL4vHir9XONzovYGTHp
-         OArcs07lV7JX6sRt/aIbKMOgegN5Pe883DytLIu3gdeyusWwqjvEeJ3vHpgzVyfeonV1
-         kZW2iV7w0d1/KLNfOGYmer/lXszHLPGM5fV/6lKBtMPno8tKHH+fQXueYeHReLLjjTEX
-         XI9g==
+        b=eqw0zdc/oMdeFT3haOZia1Qkic0kheDIisa+Ew0wS5+6TDOhuIGIsiJ32Ipy2goUsN
+         hkIngs5vjHoDdA5kVOuebhY/mti0T9S+l6GU3o+jldGBfVJLAAkAZ9J/OOsHngEpA3m4
+         5gk013PMBTzbr5F5YX9XAqVl8KaTPdPQRadQF5HH1Mri5wR5gfK9P9H186oWtKWVg6Xz
+         DXhAm0rQeYS3Rmmk9cVYY9C/6fnGedcnqIexklo0uWav6UuLiVgCYTpV5dCorR+ORUpZ
+         ptMCOiuHYuvEwCFmPLSlYkYv4L3rpW/c0X6y6C5N4nCiakPNoD7kS6yJHlOsGwBlQr/7
+         8ZAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yrGaBNdCqMvhhnQY11f2fuOM85E56wZkGXrW/v1/pno=;
-        b=P0tlYTWyUQgDmqlSWgc+LUIz749KaodZ5+y2/uxDaVD/cjWzopchM3MvWiZsBsob3i
-         heUN3oRxuBSDDucJlVo6LIfmdgjz9GHyvoMWtkcB+MldxUajfzlqcdiB8BuHKS3VytSO
-         U8Avv8mcposhXPluYSxz6Eqp81zFkK6+6d8dQd3H/oMoWRAMDeD4oGVtEZbP66P4nH3b
-         wnD6gLYiW7HPLvciiv1HG60vtL657iFgD7zsLFNVVRouRa1Liyx/uX6SoKxokEgewQUV
-         ix3ZDcaMbb1DYCKXRFB6Qck2dw5/2JYCRMeB46IEzHW8or2B8hnWJuU0y7dSdci/8WQu
-         HgYw==
+        bh=7wqedEjkYCrrG+V02z37RdSpxjm9JHmnK3VsOTXZ5Qc=;
+        b=xhEMnNd82tPDt/sYVNau1jBpNckGtFgHuE+RZYrrypnP1ZKCaBxMQHcwRWH6OoVMBA
+         IGZkmPIGQ/MWUMEpNOpOQbPNj4xddl/irUJzHuuMjzQcvpg0RDQYoVtduIJKkCYZ0qA3
+         LrrPkIx6DVKy7LH00CgfQlhX0QSCg/bcmRV6iZumKnt4uHinET1axv0tIo5nZ7XlM2Re
+         SceR7gJFJK1/bM1TpeI6h9mi7Gn6BLzEhMXeh0AjInk+BHtLrY/LI0e3dx8vRsise3Oj
+         9i8/GA/pAcarOiFBcXrE+EU4sKux5sB+0zivEraA5Ls6EwyTMW2rY3lTVzAUAutsxG2S
+         4y1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 3.18 20/52] powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
-Date: Sun, 22 Apr 2018 15:53:53 +0200
-Message-Id: <20180422135316.202528017@linuxfoundation.org>
+	Richard Weinberger <richard@nod.at>,
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Artem Bityutskiy <dedekind1@gmail.com>
+Subject: [PATCH 3.18 09/52] ubi: Reject MLC NAND
+Date: Sun, 22 Apr 2018 15:53:42 +0200
+Message-Id: <20180422135315.675774120@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454950836257463?=
-X-GMAIL-MSGID: =?utf-8?q?1598456437798073868?=
+X-GMAIL-THRID: =?utf-8?q?1598454837068211980?=
+X-GMAIL-MSGID: =?utf-8?q?1598456433062355882?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,51 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit 0bfdf598900fd62869659f360d3387ed80eb71cf upstream.
+commit b5094b7f135be34630e3ea8a98fa215715d0f29d upstream.
 
-asm/barrier.h is not always included after asm/synch.h, which meant
-it was missing __SUBARCH_HAS_LWSYNC, so in some files smp_wmb() would
-be eieio when it should be lwsync. kernel/time/hrtimer.c is one case.
+While UBI and UBIFS seem to work at first sight with MLC NAND, you will
+most likely lose all your data upon a power-cut or due to read/write
+disturb.
+In order to protect users from bad surprises, refuse to attach to MLC
+NAND.
 
-__SUBARCH_HAS_LWSYNC is only used in one place, so just fold it in
-to where it's used. Previously with my small simulator config, 377
-instances of eieio in the tree. After this patch there are 55.
-
-Fixes: 46d075be585e ("powerpc: Optimise smp_wmb")
-Cc: stable@vger.kernel.org # v2.6.29+
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: stable@vger.kernel.org
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Artem Bityutskiy <dedekind1@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/barrier.h |    3 ++-
- arch/powerpc/include/asm/synch.h   |    4 ----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ drivers/mtd/ubi/build.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/arch/powerpc/include/asm/barrier.h
-+++ b/arch/powerpc/include/asm/barrier.h
-@@ -39,7 +39,8 @@
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -905,6 +905,17 @@ int ubi_attach_mtd_dev(struct mtd_info *
+ 		return -EINVAL;
+ 	}
  
- #ifdef CONFIG_SMP
- 
--#ifdef __SUBARCH_HAS_LWSYNC
-+/* The sub-arch has lwsync */
-+#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
- #    define SMPWMB      LWSYNC
- #else
- #    define SMPWMB      eieio
---- a/arch/powerpc/include/asm/synch.h
-+++ b/arch/powerpc/include/asm/synch.h
-@@ -5,10 +5,6 @@
- #include <linux/stringify.h>
- #include <asm/feature-fixups.h>
- 
--#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
--#define __SUBARCH_HAS_LWSYNC
--#endif
--
- #ifndef __ASSEMBLY__
- extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
- extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
++	/*
++	 * Both UBI and UBIFS have been designed for SLC NAND and NOR flashes.
++	 * MLC NAND is different and needs special care, otherwise UBI or UBIFS
++	 * will die soon and you will lose all your data.
++	 */
++	if (mtd->type == MTD_MLCNANDFLASH) {
++		pr_err("ubi: refuse attaching mtd%d - MLC NAND is not supported\n",
++			mtd->index);
++		return -EINVAL;
++	}
++
+ 	if (ubi_num == UBI_DEV_NUM_AUTO) {
+ 		/* Search for an empty slot in the @ubi_devices array */
+ 		for (ubi_num = 0; ubi_num < UBI_MAX_DEVICES; ubi_num++)
