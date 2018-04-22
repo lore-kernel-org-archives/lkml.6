@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2651967-1524406521-2-157277918410629848
+X-Cyrus-Session-Id: sloti22d1t05-2651967-1524406520-2-14660124398019339424
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES ro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524406520; b=sHrdNaPaJyUoNqiJwdCBRJwdZaxyRW3tkRbOPu9psD/8a5vjp6
-    m7TeeIdHnUmW3Ud7Ae9aai2KF5iR6ymmBTwllv3m3QQ8X7ouJHfD1c/H9ma3R2OW
-    CGKs8KnBfA8CalGny6cjk7IrZDTACZ0C3BedZsnsZI4N6UKbilWxb4oBzwl/y4jK
-    keLcVL7QCElcSmI6jtZbHtgZ9lhKbMtcPCzh85Te6UrMf6HjxuCKzoivZN3iYxvF
-    QGB3j5if5BJpkKuTq5nCRCygf1uPeO3uKhI43/BRMvGZgv3HQrkrsl87pP+KT9EU
-    l/+m1spjY6bU/ksodabDkDx/7P7bsENF1Z5A==
+    1524406519; b=ACqRDKHxuiPC+q+UhMMoxuu1rWip7EQzJtXFpI+4KAWs7OHFF9
+    GwUd/ViamzRDHNx5d3+VyliQBPpYvf+jtEVhb7aH34mGiNWrzC7/merFMt1YSrDq
+    8HA1shtkgTuy4P4Ut1UIX1EfEUnN/ZCmIBWTTZ1qCGo3svjS7giPu+xpuesWYLot
+    3I4cSCtS7a4VmCVVa9ikeG7jWKq1kZLoE1ZlWmdkZUY55jognFTdrXtNt0KTl8hL
+    2YAMkgEf3FpmFnMy1YZ6SteLTqQsPKnoBcq9gfdkJkXcEWJeiB3BKxgusQrBQMT4
+    12EeESajhYvR1YUmgYnmVgFcOXeaFy/ZyZVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524406520; bh=eoSEkcdEJJONseMU/zKWy19e7iRC6l
-    9LjJINUJhaWO0=; b=sfIkscjmUrP9S0i0E6NW6kB5k0PMFzC+9OrKJF69eh+JDB
-    uhFVyfgwx6LYT4uUSN0FUeEGTcIMo6LDNC6cN5M1Gk3fLni2CcnN4D4O3RClUIs0
-    ZlQsT2cGydWb8JV6RQNNM1YIUhX6f6QinxKTmUGTFfuMI6JQm26myXkN+B9GnpGC
-    BelWAtyyQL5pTon7xWllkXKkXsvlUq5wtMT2YSWMlXi4VgP7IK5Hk9MzBGphVJ3U
-    fYnUCVX0C3RQzKb7e5P1zY5MKX4xXTH4X3hfGQtZKzIucD4hD60Mjv3ykcHrCN/A
-    z/JtgX5zqnkKr7E5AC6oUf1Qh0+VR9Gfz/ytgzzQ==
+    :list-id; s=fm2; t=1524406519; bh=3jezXGxzLPoVvsz354sKx1QU6rTOr8
+    opMNyYEf7qyEY=; b=ieCxIFAoUyem4c/KQQ2oTheRANsqgmGiJvwHyJaeo6c+QY
+    hOQ38t1b1ui6ZwJJuOg2ymDnBTO8wReun60/ITxsckIu6O3DcmwqGrX5IyNCpgOR
+    zdJ1FN4ewPRJYZIFEswJwvn4zzoSGW3E86a7aIcqBXim+BLcKA6qmNjZP830wx/o
+    VSv0ySP53SUTs3oCHm9PlppETnDih4GLQFrqCILnMS+B2ErtGoWq6Hy+5lAEmQV9
+    raNrtkA6VhgqrkBrr0IOo3m0tP4rgpvHWz7ofaH4yvFypajQh8iqtVEWYHc8RffE
+    nBGw3W7Sx7X+JQbA4M2XDUF/XFAY+V+3XF+LolxQ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,29 +51,29 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMYhY0Nwfgyr3k1Sbw/JXpNTo/9zuJzPssfKVWsOQ6EJtbjICnXIaTukck68WAbW1GNNV38YOxhn8XZr5UK7KkRpLZaaYNu/oiOMDkR/MJxoVy2STWI4
-    O6GZ8ke49nu4TEAJJWDnYFgxKUcqIhkV/BYn45IgnMFqkm4/8ltNH0RoEY83z9N8shXWS96i5RKPjk6KN+g2pF15JCg6xJspVUXcFVj7IvzieD/ejVQ5HotB
+X-CM-Envelope: MS4wfFtepgjoVXcT51xRngqKzffXRdTgwoWWu8nyYWUacoqBgApEb/yL+znTko0hKQ9UumEljR+7bF9ZiUjZ0M7WQhBtKG0VyOA0NLoWN3HzmGs9At0xMCBE
+    2eH/lUnSCTHZ8iE1oWvbpiB8Txrvy8h/khuGkcMoTL/h0DAX/8yQPgkzTbLrHuupL4yku238ZOKlPvJVc9TImE2AZaLvHSlAIrhfjFOEzwolD9OXrRmlBuSw
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=kAG1-qF7eOe9gh-2ky8A:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=aLJ7TmNuWhDDgIU_xPUA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932144AbeDVOPQ (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:15:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56760 "EHLO
+        id S932129AbeDVOPL (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:15:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56710 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932094AbeDVOPO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:15:14 -0400
+        with ESMTP id S932094AbeDVOPI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:15:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        Harsh Shandilya <harsh@prjkt.io>
-Subject: [PATCH 4.9 65/95] ext4: dont allow r/w mounts if metadata blocks overlap the superblock
-Date: Sun, 22 Apr 2018 15:53:34 +0200
-Message-Id: <20180422135213.085862274@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 63/95] ALSA: pcm: Fix mutex unbalance in OSS emulation ioctls
+Date: Sun, 22 Apr 2018 15:53:32 +0200
+Message-Id: <20180422135213.002616201@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -91,55 +91,167 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 18db4b4e6fc31eda838dd1c1296d67dbcb3dc957 upstream.
+commit f6d297df4dd47ef949540e4a201230d0c5308325 upstream.
 
-If some metadata block, such as an allocation bitmap, overlaps the
-superblock, it's very likely that if the file system is mounted
-read/write, the results will not be pretty.  So disallow r/w mounts
-for file systems corrupted in this particular way.
+The previous fix 40cab6e88cb0 ("ALSA: pcm: Return -EBUSY for OSS
+ioctls changing busy streams") introduced some mutex unbalance; the
+check of runtime->oss.rw_ref was inserted in a wrong place after the
+mutex lock.
 
-Backport notes:
-3.18.y is missing bc98a42c1f7d ("VFS: Convert sb->s_flags & MS_RDONLY to sb_rdonly(sb)")
-and e462ec50cb5f ("VFS: Differentiate mount flags (MS_*) from internal superblock flags")
-so we simply use the sb MS_RDONLY check from pre bc98a42c1f7d in place of the sb_rdonly
-function used in the upstream variant of the patch.
+This patch fixes the inconsistency by rewriting with the helper
+functions to lock/unlock parameters with the stream check.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
-Signed-off-by: Harsh Shandilya <harsh@prjkt.io>
+Fixes: 40cab6e88cb0 ("ALSA: pcm: Return -EBUSY for OSS ioctls changing busy streams")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/ext4/super.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2260,6 +2260,8 @@ static int ext4_check_descriptors(struct
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 				 "Block bitmap for group %u overlaps "
- 				 "superblock", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
+---
+ sound/core/oss/pcm_oss.c |   67 +++++++++++++++++++++++++++++------------------
+ 1 file changed, 42 insertions(+), 25 deletions(-)
+
+--- a/sound/core/oss/pcm_oss.c
++++ b/sound/core/oss/pcm_oss.c
+@@ -834,6 +834,23 @@ static int choose_rate(struct snd_pcm_su
+ 	return snd_pcm_hw_param_near(substream, params, SNDRV_PCM_HW_PARAM_RATE, best_rate, NULL);
+ }
+ 
++/* parameter locking: returns immediately if tried during streaming */
++static int lock_params(struct snd_pcm_runtime *runtime)
++{
++	if (mutex_lock_interruptible(&runtime->oss.params_lock))
++		return -ERESTARTSYS;
++	if (atomic_read(&runtime->oss.rw_ref)) {
++		mutex_unlock(&runtime->oss.params_lock);
++		return -EBUSY;
++	}
++	return 0;
++}
++
++static void unlock_params(struct snd_pcm_runtime *runtime)
++{
++	mutex_unlock(&runtime->oss.params_lock);
++}
++
+ /* call with params_lock held */
+ static int snd_pcm_oss_change_params_locked(struct snd_pcm_substream *substream)
+ {
+@@ -1773,6 +1790,8 @@ static int snd_pcm_oss_set_rate(struct s
+ 	for (idx = 1; idx >= 0; --idx) {
+ 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
+ 		struct snd_pcm_runtime *runtime;
++		int err;
++
+ 		if (substream == NULL)
+ 			continue;
+ 		runtime = substream->runtime;
+@@ -1780,15 +1799,14 @@ static int snd_pcm_oss_set_rate(struct s
+ 			rate = 1000;
+ 		else if (rate > 192000)
+ 			rate = 192000;
+-		if (mutex_lock_interruptible(&runtime->oss.params_lock))
+-			return -ERESTARTSYS;
+-		if (atomic_read(&runtime->oss.rw_ref))
+-			return -EBUSY;
++		err = lock_params(runtime);
++		if (err < 0)
++			return err;
+ 		if (runtime->oss.rate != rate) {
+ 			runtime->oss.params = 1;
+ 			runtime->oss.rate = rate;
  		}
- 		if (block_bitmap < first_block || block_bitmap > last_block) {
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
-@@ -2272,6 +2274,8 @@ static int ext4_check_descriptors(struct
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 				 "Inode bitmap for group %u overlaps "
- 				 "superblock", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
+-		mutex_unlock(&runtime->oss.params_lock);
++		unlock_params(runtime);
+ 	}
+ 	return snd_pcm_oss_get_rate(pcm_oss_file);
+ }
+@@ -1813,18 +1831,19 @@ static int snd_pcm_oss_set_channels(stru
+ 	for (idx = 1; idx >= 0; --idx) {
+ 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
+ 		struct snd_pcm_runtime *runtime;
++		int err;
++
+ 		if (substream == NULL)
+ 			continue;
+ 		runtime = substream->runtime;
+-		if (mutex_lock_interruptible(&runtime->oss.params_lock))
+-			return -ERESTARTSYS;
+-		if (atomic_read(&runtime->oss.rw_ref))
+-			return -EBUSY;
++		err = lock_params(runtime);
++		if (err < 0)
++			return err;
+ 		if (runtime->oss.channels != channels) {
+ 			runtime->oss.params = 1;
+ 			runtime->oss.channels = channels;
  		}
- 		if (inode_bitmap < first_block || inode_bitmap > last_block) {
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
-@@ -2284,6 +2288,8 @@ static int ext4_check_descriptors(struct
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 				 "Inode table for group %u overlaps "
- 				 "superblock", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
+-		mutex_unlock(&runtime->oss.params_lock);
++		unlock_params(runtime);
+ 	}
+ 	return snd_pcm_oss_get_channels(pcm_oss_file);
+ }
+@@ -1897,6 +1916,7 @@ static int snd_pcm_oss_get_formats(struc
+ static int snd_pcm_oss_set_format(struct snd_pcm_oss_file *pcm_oss_file, int format)
+ {
+ 	int formats, idx;
++	int err;
+ 	
+ 	if (format != AFMT_QUERY) {
+ 		formats = snd_pcm_oss_get_formats(pcm_oss_file);
+@@ -1910,15 +1930,14 @@ static int snd_pcm_oss_set_format(struct
+ 			if (substream == NULL)
+ 				continue;
+ 			runtime = substream->runtime;
+-			if (atomic_read(&runtime->oss.rw_ref))
+-				return -EBUSY;
+-			if (mutex_lock_interruptible(&runtime->oss.params_lock))
+-				return -ERESTARTSYS;
++			err = lock_params(runtime);
++			if (err < 0)
++				return err;
+ 			if (runtime->oss.format != format) {
+ 				runtime->oss.params = 1;
+ 				runtime->oss.format = format;
+ 			}
+-			mutex_unlock(&runtime->oss.params_lock);
++			unlock_params(runtime);
  		}
- 		if (inode_table < first_block ||
- 		    inode_table + sbi->s_itb_per_group - 1 > last_block) {
+ 	}
+ 	return snd_pcm_oss_get_format(pcm_oss_file);
+@@ -1966,12 +1985,11 @@ static int snd_pcm_oss_set_subdivide(str
+ 		if (substream == NULL)
+ 			continue;
+ 		runtime = substream->runtime;
+-		if (atomic_read(&runtime->oss.rw_ref))
+-			return -EBUSY;
+-		if (mutex_lock_interruptible(&runtime->oss.params_lock))
+-			return -ERESTARTSYS;
++		err = lock_params(runtime);
++		if (err < 0)
++			return err;
+ 		err = snd_pcm_oss_set_subdivide1(substream, subdivide);
+-		mutex_unlock(&runtime->oss.params_lock);
++		unlock_params(runtime);
+ 		if (err < 0)
+ 			return err;
+ 	}
+@@ -2006,12 +2024,11 @@ static int snd_pcm_oss_set_fragment(stru
+ 		if (substream == NULL)
+ 			continue;
+ 		runtime = substream->runtime;
+-		if (atomic_read(&runtime->oss.rw_ref))
+-			return -EBUSY;
+-		if (mutex_lock_interruptible(&runtime->oss.params_lock))
+-			return -ERESTARTSYS;
++		err = lock_params(runtime);
++		if (err < 0)
++			return err;
+ 		err = snd_pcm_oss_set_fragment1(substream, val);
+-		mutex_unlock(&runtime->oss.params_lock);
++		unlock_params(runtime);
+ 		if (err < 0)
+ 			return err;
+ 	}
