@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+mH1ish1NUV6VJ+M+U8/V6M6MAulA725IY1WAYPYKrN1xhpDmXoVDEnI0kzhjHlQfrKPAh
-ARC-Seal: i=1; a=rsa-sha256; t=1524406497; cv=none;
+X-Google-Smtp-Source: AIpwx4/SC48wrL3v+0IMoYDselPfF3jotb37I57VVe5F/1BL4FYXbmAODz3l8AdTVTYsz4l+W4Jd
+ARC-Seal: i=1; a=rsa-sha256; t=1524406495; cv=none;
         d=google.com; s=arc-20160816;
-        b=tS/epmJwFLH8qvuCwMQAWStwCMKRYU/0omVWsUXHBSpDJJDnj3AsfkQBPV/Jojd8b2
-         F3C1Rjkm4bCLJ9UJvsH1WuSWYzpI88sEv+Mq9kN90grZfLbCqksdCItClfO8erZjVl2d
-         hxvTN2aK7AVTzEN2YrYPwII9WVa1zM6+xtBe22BHwJ5AXcr7UHrd2JFjVusrOyCtJ2nH
-         HeyJXQCx+o7pQSqMdYT2veBOTLw262s0cRjsRDGFQtPEDSnucsqjho3OV4bbtjTY6lV2
-         cphXRJrEHGtSP+P9VR9qB6bkDUJ42jAMvYETyArBuOI5fG0tlTOvFksNLph84xJqk0Xf
-         cB6g==
+        b=nspZpkiqmUwGX+7JRWWtlUxVTddstXxn0p47x+ufYKo37hbEK2cn2DUQt/I158I4NE
+         sr+Yeb9rV/V4cLQjld8klAy4IFsl8u+S6MGUu8tGr9LiXJp1VJlxs5q7G5FXOlQE6v2N
+         ebouf63fQf7Iy9uLTzzG0PRswg64apcEcOZADkEyORz47VusvbN1C+2fiyzGBl9Z3PmQ
+         2CO5m0vYtlAKawUNrX5+N1Lt+0zui8DFYs3+Of2Syk5FBa6slja/V9Yg0Q+EFFwzT12X
+         6IdRLqpCzV8KHEILPM1xafZHGnOsYfb/WiLk0f2aQg/hY41Z1fPitzSGDzvcHDFt3J/b
+         wvFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=D5P3XLiQRbSTWX79wk5qi60oaUnuF4OlWhp7Ecd0yYs=;
-        b=dYYy3LetX4iX0WSt+S+0tSCc+0iqgPhXj2nJ2qNc9ptXrz7sKYhW5W8vAm+xqBHP4i
-         fcktVkBz8LkYZFEA7pDJutBqO3k7MhQKLif977FWMMQlqmWrkRpNVtkFTUh1LHJQwJYe
-         OgkzJIWJCMNTiPgODNYZ4WcT5o8KCDgWxz7VtPsyzp8rdJVzxMm2kdpVnbxxUfh3VB7Y
-         iO+XNptmK8yknMH+i3A3oadoSauvXF27udPQrWb9MvzKB+dxcXoDVtZ8993GyL1ngb4C
-         BkqiCCXKDDJsy2TK42ib93SdQv/hE0w4GBIaMl78W0arpxzMEZuHxHIeH8Frt/3d4iiq
-         BoYQ==
+        bh=upzuxZzo7QRNgqgw9UwmoXMkA9K4FKkNO2RFb4FpwZY=;
+        b=gn6KnGytIiAmsSLu74Wl630LFLap4HaTDEHlNcKWSWGlEqZvUU8xwe05e8yCIaYmR7
+         JjrxYiGAC59KVFFcTq5/NUuGeYCYMSTqwHLqyh8QOm0457fuefwjXthHj5uspj/yUAk3
+         zJzx+1fHr5PwbYl3jykJFUwtys3wJxeSDQx/jq4ZoePVCZJe+cT5D8kEjMZCz/eSCXlL
+         ZM3Vr3qWO0U9tvkMXNcsC7oOxEsqC0EOPUdu5SwXdNRNem5bCnwlogE6I/KvSVr3shdd
+         M3km4VnY7791XGQ1iKd+L+sgeM+Lh63aERKBhg66ncJsaHyM7uvgMWHIWp0oMBhHe5ro
+         BTow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Matthew Wilcox <mawilcox@microsoft.com>,
-	Chris Fries <cfries@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Jan Kara <jack@suse.cz>,
+	Ian Kent <raven@themaw.net>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 92/95] mm/filemap.c: fix NULL pointer in page_cache_tree_insert()
-Date: Sun, 22 Apr 2018 15:54:01 +0200
-Message-Id: <20180422135214.183266218@linuxfoundation.org>
+Subject: [PATCH 4.9 91/95] autofs: mount point create should honour passed in mode
+Date: Sun, 22 Apr 2018 15:54:00 +0200
+Message-Id: <20180422135214.147188186@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455322200106051?=
-X-GMAIL-MSGID: =?utf-8?q?1598456067648681014?=
+X-GMAIL-THRID: =?utf-8?q?1598455319452829195?=
+X-GMAIL-MSGID: =?utf-8?q?1598456064879034568?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,78 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Ian Kent <raven@themaw.net>
 
-commit abc1be13fd113ddef5e2d807a466286b864caed3 upstream.
+commit 1e6306652ba18723015d1b4967fe9de55f042499 upstream.
 
-f2fs specifies the __GFP_ZERO flag for allocating some of its pages.
-Unfortunately, the page cache also uses the mapping's GFP flags for
-allocating radix tree nodes.  It always masked off the __GFP_HIGHMEM
-flag, and masks off __GFP_ZERO in some paths, but not all.  That causes
-radix tree nodes to be allocated with a NULL list_head, which causes
-backtraces like:
+The autofs file system mkdir inode operation blindly sets the created
+directory mode to S_IFDIR | 0555, ingoring the passed in mode, which can
+cause selinux dac_override denials.
 
-  __list_del_entry+0x30/0xd0
-  list_lru_del+0xac/0x1ac
-  page_cache_tree_insert+0xd8/0x110
+But the function also checks if the caller is the daemon (as no-one else
+should be able to do anything here) so there's no point in not honouring
+the passed in mode, allowing the daemon to set appropriate mode when
+required.
 
-The __GFP_DMA and __GFP_DMA32 flags would also be able to sneak through
-if they are ever used.  Fix them all by using GFP_RECLAIM_MASK at the
-innermost location, and remove it from earlier in the callchain.
-
-Link: http://lkml.kernel.org/r/20180411060320.14458-2-willy@infradead.org
-Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Reported-by: Chris Fries <cfries@google.com>
-Debugged-by: Minchan Kim <minchan@kernel.org>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Link: http://lkml.kernel.org/r/152361593601.8051.14014139124905996173.stgit@pluto.themaw.net
+Signed-off-by: Ian Kent <raven@themaw.net>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/filemap.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/autofs4/root.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -616,7 +616,7 @@ int replace_page_cache_page(struct page
- 	VM_BUG_ON_PAGE(!PageLocked(new), new);
- 	VM_BUG_ON_PAGE(new->mapping, new);
+--- a/fs/autofs4/root.c
++++ b/fs/autofs4/root.c
+@@ -746,7 +746,7 @@ static int autofs4_dir_mkdir(struct inod
  
--	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
-+	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
- 	if (!error) {
- 		struct address_space *mapping = old->mapping;
- 		void (*freepage)(struct page *);
-@@ -672,7 +672,7 @@ static int __add_to_page_cache_locked(st
- 			return error;
- 	}
+ 	autofs4_del_active(dentry);
  
--	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
-+	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
- 	if (error) {
- 		if (!huge)
- 			mem_cgroup_cancel_charge(page, memcg, false);
-@@ -1247,8 +1247,7 @@ no_page:
- 		if (fgp_flags & FGP_ACCESSED)
- 			__SetPageReferenced(page);
- 
--		err = add_to_page_cache_lru(page, mapping, offset,
--				gfp_mask & GFP_RECLAIM_MASK);
-+		err = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
- 		if (unlikely(err)) {
- 			put_page(page);
- 			page = NULL;
-@@ -1996,7 +1995,7 @@ static int page_cache_read(struct file *
- 		if (!page)
- 			return -ENOMEM;
- 
--		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask & GFP_KERNEL);
-+		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
- 		if (ret == 0)
- 			ret = mapping->a_ops->readpage(file, page);
- 		else if (ret == -EEXIST)
+-	inode = autofs4_get_inode(dir->i_sb, S_IFDIR | 0555);
++	inode = autofs4_get_inode(dir->i_sb, S_IFDIR | mode);
+ 	if (!inode)
+ 		return -ENOMEM;
+ 	d_add(dentry, inode);
