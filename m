@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/eL3094N2f1WSIP+XGnd2afFArEzwZlts9ERSgd2qT4BHHET1S/AlmhxEksSR2U1cbt7Dw
-ARC-Seal: i=1; a=rsa-sha256; t=1524405897; cv=none;
+X-Google-Smtp-Source: AIpwx4+ZC1MI4B3v1zvtiJdwZymreLj7hoVoedX7L1q6xne/nr9tOqVb5OL6wybQaNV1RfDJib7C
+ARC-Seal: i=1; a=rsa-sha256; t=1524405892; cv=none;
         d=google.com; s=arc-20160816;
-        b=RkSq6tsCZdSD6pvhXHfzzbfjhxGTndWwrSeNUjFOsHWX5s6Pkcx+ouIi93sxiH4Irv
-         HbW8bKw5m1q4N1cbHBu+5ZYh1dWEaRisaiK5Dwo7mtxCVHJ1lnOWPzTXM7oXZILt2God
-         tKsB9rEzG4GPB7FHGB37eXjQyiRko5segHPhKb1pXjwu7XgXElJPp0WUr02hcNKB8Dlq
-         W8Elt5YZJdnB9XlWsc+HVWvYJVHo8MlGW7EVb1/SIf8+ffb/5Zt1ZWRrj+L3BdKJC+WJ
-         xiuu7owCIPTkFb3bt1WVpZRd5Ts7HMQPy6OjYVH6dJKlwUaJuJQaAmrH456tRII1QY93
-         XtaQ==
+        b=Q17TyYDshtPtrV4N6q+lMnqSa+qbiG26T2iCqfQD2eJ8GdxNOe0dDUR+A+ITBdbhrF
+         mK2ZwSHTojMfbUGq+qAY8pEoHdCEDUG5LJ66FUc/B/srbT4tfmYrAcaccmWDyM8AA04E
+         IAj0Ccrkm/wFNbilC1KyZ3Q3p+7Fhk4WHCOCpl88gJQ+JGq41jVA27PW6BXB/uw6ksmY
+         OBtJEbF1M1ZUSXf6+lH2N9cia2uTqfBl7ir5D7EnXwDpr3aOkO49K+sGOLmesBDlqG6n
+         NbwMtCNfnFqC87xZd7sg/PIQYGP1fPHdp9BDCIf/ti9ytoatvcyM03TWKNh1gpcc8ndY
+         64rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/+1tNgfVWXYHgKPZ2Y3vOrmf4j/HKKRWCeiam7Xg0qc=;
-        b=O1pE/09J9SNFSf8cAAjs4eBQK/Y2gT/Q1DOI6aWheY2Z8jfH1HDqzebO2CcwtJAME+
-         +uLrWWpXC7si95l9Gusks/510upJZCyPetvWomddUR2lvvTg79OEMWpc1mL7ZPoEQ0QC
-         9Ndz2lGC5KW2tu93LZzKxOuBm/J8xqyRd5ocx7/a019AqwyzeHpvwNH7K/yswyPMOrSN
-         NLL639mkAiRZyGs+JkBxM9HUKi+B209IlSWlSm7syAvRiv8Kx3yVz5CV40osl1tN0KSC
-         dh+mNYBRyqAm0GNGsIqfnAQEHyLVIzPan+X2ft8l6REAqG76viwuFiAD7QuUziSawCS4
-         dFdw==
+        bh=DMIykGJ+2Lohdd0u4II/C7Ohu2IwwU9YcA1oz/YEoEI=;
+        b=lJDlLHLzgOHGQt2m6yRqnTW12PTi8tp/AFg9cHz7upQmOdzzmFHgkuJa7cLo1UQkg/
+         DyF79iSpSGdCiK1wdF7WHxi3+br/n+wbnZ7hw8WS2s5P+I+VaiCYT7q0YNP47mT0GDJ5
+         xklWBpxL74kFPLveFhRNNHK0N8fjFaL6unZDpbIQdlNpIzyphUbK+XvFp165lvIa45aB
+         GMc+wt3CROZJN1TlwnVpR0T00CoIwyahYwls0sMkIPynxfL88mp5uGTQbTWR2wDEC2qI
+         +8vE0pCI39gWkoSdh7oodlM3XKlz7S6T8cundUe6JjObqk5HQzl6OpCTgfboXVCG1nQm
+         P7Wg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 4.14 031/164] media: vsp1: Fix BRx conditional path in WPF
-Date: Sun, 22 Apr 2018 15:51:38 +0200
-Message-Id: <20180422135136.683314245@linuxfoundation.org>
+	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+	Evgeny Baskakov <ebaskakov@nvidia.com>,
+	Ralph Campbell <rcampbell@nvidia.com>,
+	Mark Hairgrove <mhairgrove@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 009/164] mm/hmm: hmm_pfns_bad() was accessing wrong struct
+Date: Sun, 22 Apr 2018 15:51:16 +0200
+Message-Id: <20180422135135.774796494@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454865520411391?=
-X-GMAIL-MSGID: =?utf-8?q?1598455438179977248?=
+X-GMAIL-THRID: =?utf-8?q?1598454894526944837?=
+X-GMAIL-MSGID: =?utf-8?q?1598455432916805707?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,46 +54,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+From: Jérôme Glisse <jglisse@redhat.com>
 
-commit 639fa43d59e5a41ca8c55592cd5c1021fea2ab83 upstream.
+commit c719547f032d4610c7a20900baacae26d0b1ff3e upstream.
 
-When a BRx is provided by a pipeline, the WPF must determine the master
-layer. Currently the condition to check this identifies pipe->bru ||
-pipe->num_inputs > 1.
+The private field of mm_walk struct point to an hmm_vma_walk struct and
+not to the hmm_range struct desired.  Fix to get proper struct pointer.
 
-The code then moves on to dereference pipe->bru, thus the check fails
-static analysers on the possibility that pipe->num_inputs could be
-greater than 1 without pipe->bru being set.
-
-The reality is that the pipeline must have a BRx to support more than
-one input, thus this could never cause a fault - however it also
-identifies that the num_inputs > 1 check is redundant.
-
-Remove the redundant check - and always configure the master layer
-appropriately when we have a BRx configured in our pipeline.
-
-Fixes: 6134148f6098 ("v4l: vsp1: Add support for the BRS entity")
-
-Cc: stable@vger.kernel.org
-Suggested-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Link: http://lkml.kernel.org/r/20180323005527.758-6-jglisse@redhat.com
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Mark Hairgrove <mhairgrove@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vsp1/vsp1_wpf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/hmm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -452,7 +452,7 @@ static void wpf_configure(struct vsp1_en
- 			: VI6_WPF_SRCRPF_RPF_ACT_SUB(input->entity.index);
- 	}
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -277,7 +277,8 @@ static int hmm_pfns_bad(unsigned long ad
+ 			unsigned long end,
+ 			struct mm_walk *walk)
+ {
+-	struct hmm_range *range = walk->private;
++	struct hmm_vma_walk *hmm_vma_walk = walk->private;
++	struct hmm_range *range = hmm_vma_walk->range;
+ 	hmm_pfn_t *pfns = range->pfns;
+ 	unsigned long i;
  
--	if (pipe->bru || pipe->num_inputs > 1)
-+	if (pipe->bru)
- 		srcrpf |= pipe->bru->type == VSP1_ENTITY_BRU
- 			? VI6_WPF_SRCRPF_VIRACT_MST
- 			: VI6_WPF_SRCRPF_VIRACT2_MST;
