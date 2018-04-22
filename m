@@ -1,62 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752582AbeDVJOZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 05:14:25 -0400
-Received: from sauhun.de ([88.99.104.3]:37624 "EHLO pokefinder.org"
+        id S1753367AbeDVJOb (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 05:14:31 -0400
+Received: from m12-11.163.com ([220.181.12.11]:51931 "EHLO m12-11.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751212AbeDVJOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 05:14:21 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: dmaengine@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] dmaengine: txx9dmac: simplify getting .drvdata
-Date: Sun, 22 Apr 2018 11:14:14 +0200
-Message-Id: <20180422091415.7587-7-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
-References: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
+        id S1752661AbeDVJO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 05:14:29 -0400
+From: Chen Lin <chen45464546@163.com>
+To: john.stultz@linaro.org
+Cc: tglx@linutronix.de, sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        Chen Lin <chen45464546@163.com>
+Subject: [PATCH] time: remove blank space
+Date: Sun, 22 Apr 2018 17:13:57 +0800
+Message-Id: <1524388437-10992-1-git-send-email-chen45464546@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: C8CowAAHgatYUtxakBMyQQ--.62959S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzPEfDUUUU
+X-Originating-IP: [171.213.12.57]
+X-CM-SenderInfo: hfkh0kqvuwkkiuw6il2tof0z/1tbiXQQwnlWBY1IlRAACsx
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+remove blank space
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Chen Lin <chen45464546@163.com>
 ---
+ include/linux/time64.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Build tested only. buildbot is happy. Please apply to your tree directly.
-
- drivers/dma/txx9dmac.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/dma/txx9dmac.c b/drivers/dma/txx9dmac.c
-index 4d8c7b9078fd..eb45af71d3a3 100644
---- a/drivers/dma/txx9dmac.c
-+++ b/drivers/dma/txx9dmac.c
-@@ -1244,8 +1244,7 @@ static void txx9dmac_shutdown(struct platform_device *pdev)
+diff --git a/include/linux/time64.h b/include/linux/time64.h
+index 93d3949..35ce4aa 100644
+--- a/include/linux/time64.h
++++ b/include/linux/time64.h
+@@ -10,7 +10,7 @@ typedef __u64 timeu64_t;
  
- static int txx9dmac_suspend_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct txx9dmac_dev *ddev = platform_get_drvdata(pdev);
-+	struct txx9dmac_dev *ddev = dev_get_drvdata(dev);
- 
- 	txx9dmac_off(ddev);
- 	return 0;
-@@ -1253,9 +1252,8 @@ static int txx9dmac_suspend_noirq(struct device *dev)
- 
- static int txx9dmac_resume_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct txx9dmac_dev *ddev = platform_get_drvdata(pdev);
--	struct txx9dmac_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	struct txx9dmac_dev *ddev = dev_get_drvdata(dev);
-+	struct txx9dmac_platform_data *pdata = dev_get_platdata(dev);
- 	u32 mcr;
- 
- 	mcr = TXX9_DMA_MCR_MSTEN | MCR_LE;
+ #if __BITS_PER_LONG == 64
+ /* this trick allows us to optimize out timespec64_to_timespec */
+-# define timespec64 timespec
++#define timespec64 timespec
+ #define itimerspec64 itimerspec
+ #else
+ struct timespec64 {
 -- 
-2.11.0
+2.7.4
