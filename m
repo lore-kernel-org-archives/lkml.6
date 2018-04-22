@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+Qii31cm5bWDbevy3XfeMPfXs/0A6riGc0fOXDObliSrs1jDb05WfmlAGC2/xNzIDvketL
-ARC-Seal: i=1; a=rsa-sha256; t=1524405340; cv=none;
+X-Google-Smtp-Source: AIpwx4/wDMJOih2jnU7fkMx7saWxzro6QE1GBVw728HMdKGq/9SMeSBTwto0UVbFOJKq/TuiiMA+
+ARC-Seal: i=1; a=rsa-sha256; t=1524405334; cv=none;
         d=google.com; s=arc-20160816;
-        b=dt/Rq7NY6fZZktrajGRKNBfE+Oz7AigqGU+YghvyVgzhFkZjbSMFzC00dM88tgpk7x
-         P9+M4EDNFpXPObu+S6Ggk1yJREabkt073Hux6/Wym3a303DnxYN1L7bFPeAAyBii5DQo
-         2WFMdqn3TJYj4HhPHh7sZWXunFfDfSHLa2PhczPGtHH9FZMVZiiF9n2YfFvQSs8OOpks
-         TmDafPqjghehSyFvrUm22zo2dgQ4MQdBdcGiqpDrXFfonTYl9OnjLYRYU/F/XqQ8qn72
-         b+f221774tU1PaFVKGjYyFCTXjUNkkbW344i/YAvclpcPRONKJvrW/V48WRDs0HotriQ
-         7TrQ==
+        b=szIROOV/2PYQfF7Zf/FlTlcSioTOPGPSgFkfMjAowx6dTGheRJRdGChSY/MlGEuOZG
+         FWnDPthIeS9SF8N+C+a9Ihgh65qWQnsSc1uooPFdpwbZIIttRtqGSAEE5mxVsdU3Uryk
+         EmqWmvt4l8JhcAr+dTg/jh82VkE7l8IGUM13FvOWevAQvq9iBv87wSiCbw6Jl6Zqb8pD
+         edFadtpenxbH1Y5cDSbvCSBw914K8Z4wAdirJXb3xGsXyIbDy4mUD7psndayyn72c8lM
+         6ic4rvOl7cRoEmVwUt6vvzDCyKEytLGmovGOdzkoEX9HLfljIKLvTDt9qIsvt+biPA9V
+         rGkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PgoeZu5KTFaLkfuw99stq/5vwoK9D6ixjdSkQkq2H5k=;
-        b=UAHXEVYpmTf9ONeeaa34iP7XJOR+B3pNRNN9hwbSDek9lpabdn62T6JKtR1kDnnlGv
-         cYyDYGa8idtV+GKm+VWir1oPjo0mrrOGoBSN90wY1n6XwQVq7Ue2caOuUBRLbgdAuSTo
-         nNLwM0emGNGk9q5QXBqAax9HoFRF+xH2TpJ6lmCOjITKLbicKBAWeH+KP/u1USjV3rR/
-         qQNvXN5V92IWrpHELFxLFEUoTrKE5OVP+/V4DL7uqCr+9XWQwTzWzC6bbncbO+jYojFj
-         ZUk1kgPX0COH6cle0US9Q7PS0IBXduZRPKBvhScYmIeMMKRUXPVVpWm/WU0918xCASUM
-         Nx7w==
+        bh=A5YpgiGzMFTrcHNQ07lOFbSk8oB5LNOHs2swNqlmlNI=;
+        b=HBlHuvL+wPBxKN11Kcx6ZYqiuboPG/2N2i5vBGVbcx25Rx1HiBhRHOfBJfnm7PtPt9
+         rRIUe6MSas9t6Y+iShcKdoOhEquEVT2Y2bvPhCQiPAuMI0doJe4fZsUT020UdHFCdTZV
+         vQETnZE1/z91H3iNABqGNlQoDKHGuN6AX86x/WHsEodcnN9uUKUdMPGkWFxwZKK5eTz5
+         VuTE3TssofuUPujLdpJ6GU++kIc8vqj88+wfvmBh+CR0kqrw6nT2JZknE+DebLfJrWkZ
+         DlalDBB1B52aBdGhDHZWPZVUi5z3iReT6IGtk8RUiBo+FxR7trAbAPb4JJ/YgFWlbEOe
+         6PpQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sean Young <sean@mess.org>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.16 030/196] media: rc: oops in ir_timer_keyup after device unplug
-Date: Sun, 22 Apr 2018 15:50:50 +0200
-Message-Id: <20180422135105.663230626@linuxfoundation.org>
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.16 028/196] spi: Fix scatterlist elements size in spi_map_buf
+Date: Sun, 22 Apr 2018 15:50:48 +0200
+Message-Id: <20180422135105.580069686@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454854474207024?=
-X-GMAIL-MSGID: =?utf-8?q?1598454854474207024?=
+X-GMAIL-THRID: =?utf-8?q?1598454848086177539?=
+X-GMAIL-MSGID: =?utf-8?q?1598454848086177539?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,39 +49,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sean Young <sean@mess.org>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-commit 8d4068810d9926250dd2435719a080b889eb44c3 upstream.
+commit ce99319a182fe766be67f96338386f3ec73e321c upstream.
 
-If there is IR in the raw kfifo when ir_raw_event_unregister() is called,
-then kthread_stop() causes ir_raw_event_thread to be scheduled, decode
-some scancodes and re-arm timer_keyup. The timer_keyup then fires when
-the rc device is long gone.
+When SPI transfers can be offloaded using DMA, the SPI core need to
+build a scatterlist to make sure that the buffer to be transferred is
+dma-able.
 
+This patch fixes the scatterlist entry size computation in the case
+where the maximum acceptable scatterlist entry supported by the DMA
+controller is less than PAGE_SIZE, when the buffer is vmalloced.
+
+For each entry, the actual size is given by the minimum between the
+desc_len (which is the max buffer size supported by the DMA controller)
+and the remaining buffer length until we cross a page boundary.
+
+Fixes: 65598c13fd66 ("spi: Fix per-page mapping of unaligned vmalloc-ed buffer")
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/rc/rc-main.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/spi/spi.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/media/rc/rc-main.c
-+++ b/drivers/media/rc/rc-main.c
-@@ -1929,12 +1929,12 @@ void rc_unregister_device(struct rc_dev
- 	if (!dev)
- 		return;
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -779,8 +779,14 @@ static int spi_map_buf(struct spi_contro
+ 	for (i = 0; i < sgs; i++) {
  
--	del_timer_sync(&dev->timer_keyup);
--	del_timer_sync(&dev->timer_repeat);
--
- 	if (dev->driver_type == RC_DRIVER_IR_RAW)
- 		ir_raw_event_unregister(dev);
- 
-+	del_timer_sync(&dev->timer_keyup);
-+	del_timer_sync(&dev->timer_repeat);
-+
- 	rc_free_rx_device(dev);
- 
- 	mutex_lock(&dev->lock);
+ 		if (vmalloced_buf || kmap_buf) {
+-			min = min_t(size_t,
+-				    len, desc_len - offset_in_page(buf));
++			/*
++			 * Next scatterlist entry size is the minimum between
++			 * the desc_len and the remaining buffer length that
++			 * fits in a page.
++			 */
++			min = min_t(size_t, desc_len,
++				    min_t(size_t, len,
++					  PAGE_SIZE - offset_in_page(buf)));
+ 			if (vmalloced_buf)
+ 				vm_page = vmalloc_to_page(buf);
+ 			else
