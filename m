@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+g0dweUjuQTryDlTE26RA+li1aDMfgJ56GshZbIvn9GWB+e4rEeISA6MPYXgeFwtsuWL3Z
-ARC-Seal: i=1; a=rsa-sha256; t=1524406077; cv=none;
+X-Google-Smtp-Source: AIpwx4+HaMbbEBdcpb5Rlb7lfcvCcy5WI4B00W3EaU/OXNB64WD8vcocS544X1UpsmiezYryKi+O
+ARC-Seal: i=1; a=rsa-sha256; t=1524406075; cv=none;
         d=google.com; s=arc-20160816;
-        b=BhFubMc64RGKZ3qpxSgZmQnQJA/gt1nznS0z+xLIbXlJHjA7t7CqD9f1t5DV6ptZLU
-         XOSK2ZbOQ0LL5TW2RGmNUuMNHC6ZDwMO3ZpEgB97m+Az6ZxP+4GWjh0m2X3xQoLbZGeD
-         xcmpBPsnEU9DblN55BTxF/r/YZi99Er4SG+EjG6W702q1fg8fEgugHvCwarehV34yYvz
-         iCOilM9pPxciqqkQExnjSL6e/Qfq7epqKA3d/o+UYMEDmSHYiAdN3Bv0uq7xZEiAkHaq
-         Wv/ilSYVqutFWy2JKUoeSYpweRYVylkY4K8vMgmhQvxj9ZYEEjKYgKMPskTnapEac04k
-         +Vdg==
+        b=DRQcDNJeybWRh4LNomHSLbPdNKCAN5tCHTdsPhaIt/CtHrP/NDhcl6/S5JgAvkRhfH
+         VnxOxmu+pfLnXvxzn5mVKruS6GXq81v5zU9AhO+7EdllcH4n7ISHAWmVVBfb3wDElhKw
+         SJOA7S1Ufs5SuR9n+vPSJdcwdjDBoRRb1a+z2q/pI9o34zx1tD7ylr7Fr9K/HBFpAd5v
+         vl8RyriN/UBMUdUfwj1JRd1VK0A351t+qdlz3zQjxWkbSHD1YZIBx45IkJxiEqbK4Kxo
+         8uMEGyI6YDjCAGH2RPK6svTJjiXDEb76hEszMon84nyA8dSYPqbTA87qkcUdXKnjfjnt
+         jquA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LJWqSfOPDlPPaVj50HMV5r1yOiXNM3GibMI8JrA+n5k=;
-        b=dTFX3T6LOx5yRvsEXu46GywRlaSFdX2U7NU3GJgpnVuve3oDFJCfTCQ0APiP+wvYbK
-         UUWaSt0+4G6yMBniG02WFChl0LBs8oXgLiq8Q7tnhk7yaiYCJHTKLj1z5SqA4r8OX4g3
-         Ogfr8ahsOCuElTl7LfUHB8WkBBRc+wDlnmVYI9Q060Wubn3vkGC5q/jtWprRK0kiW8GK
-         31jCed5rgY6d8vtClRbPWUE8b0OFFM+FO0orNZstbBNSbEsgBA9OixDJnJq9KbtB1F5j
-         mMwx4fXOJsIv2PbnV3QMPkdlzot6VVeA5AZKHuZsYvYh/q61UtBZZGVZJ5gQtWZJXCGe
-         FWzQ==
+        bh=wzzfRSYo7rFML6llWJGTQPYQcIKuqJ/qVAVHD5Cq1vg=;
+        b=PspSC3XTCSZXo/gVue8ggcAGAf8DHFUwDjptr+6yuLN3agyk4x3vLPirt8lk9ie/aT
+         riv4wy8YPwIHw18D1a/99GptyWZtSpDs0Nw2bUYSdUNBDifmkPQFm37cOIHg3KSPm3Up
+         SAPMwSwoWZ7C7szD2tVdG2lL0bKnpUnDnWt2MVXznrcDR1zfx7JAgPwVgGsvRdytn2eH
+         cRk3yUL2//v54BKrEkv1NqEmZ+tCTB23nOt1pRXhTNiWWH/nVZzedz1i257R6ZKFyAvV
+         A6Ij/EpPJM13yXt+jIAvmxhceGMV3lGGkMsbaIC+qSO00wBPrCzpNjk6QQWw2wGz7Kyw
+         w65A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mathieu Malaterre <malat@debian.org>,
-	Alex Smith <alex.smith@imgtec.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.14 103/164] mmc: jz4740: Fix race condition in IRQ mask update
-Date: Sun, 22 Apr 2018 15:52:50 +0200
-Message-Id: <20180422135139.621177123@linuxfoundation.org>
+	Ashok Raj <ashok.raj@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.14 102/164] iommu/vt-d: Fix a potential memory leak
+Date: Sun, 22 Apr 2018 15:52:49 +0200
+Message-Id: <20180422135139.579271245@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455143804605814?=
-X-GMAIL-MSGID: =?utf-8?q?1598455627182941118?=
+X-GMAIL-THRID: =?utf-8?q?1598455137609680426?=
+X-GMAIL-MSGID: =?utf-8?q?1598455624519067309?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,52 +51,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alex Smith <alex.smith@imgtec.com>
+From: Lu Baolu <baolu.lu@linux.intel.com>
 
-commit a04f0017c22453613d5f423326b190c61e3b4f98 upstream.
+commit bbe4b3af9d9e3172fb9aa1f8dcdfaedcb381fc64 upstream.
 
-A spinlock is held while updating the internal copy of the IRQ mask,
-but not while writing it to the actual IMASK register. After the lock
-is released, an IRQ can occur before the IMASK register is written.
-If handling this IRQ causes the mask to be changed, when the handler
-returns back to the middle of the first mask update, a stale value
-will be written to the mask register.
+A memory block was allocated in intel_svm_bind_mm() but never freed
+in a failure path. This patch fixes this by free it to avoid memory
+leakage.
 
-If this causes an IRQ to become unmasked that cannot have its status
-cleared by writing a 1 to it in the IREG register, e.g. the SDIO IRQ,
-then we can end up stuck with the same IRQ repeatedly being fired but
-not handled. Normally the MMC IRQ handler attempts to clear any
-unexpected IRQs by writing IREG, but for those that cannot be cleared
-in this way then the IRQ will just repeatedly fire.
-
-This was resulting in lockups after a while of using Wi-Fi on the
-CI20 (GitHub issue #19).
-
-Resolve by holding the spinlock until after the IMASK register has
-been updated.
-
-Cc: stable@vger.kernel.org
-Link: https://github.com/MIPS/CI20_linux/issues/19
-Fixes: 61bfbdb85687 ("MMC: Add support for the controller on JZ4740 SoCs.")
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Alex Smith <alex.smith@imgtec.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Fixes: 2f26e0a9c9860 ('iommu/vt-d: Add basic SVM PASID support')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/jz4740_mmc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/intel-svm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/host/jz4740_mmc.c
-+++ b/drivers/mmc/host/jz4740_mmc.c
-@@ -362,9 +362,9 @@ static void jz4740_mmc_set_irq_enabled(s
- 		host->irq_mask &= ~irq;
- 	else
- 		host->irq_mask |= irq;
--	spin_unlock_irqrestore(&host->lock, flags);
- 
- 	writew(host->irq_mask, host->base + JZ_REG_MMC_IMASK);
-+	spin_unlock_irqrestore(&host->lock, flags);
- }
- 
- static void jz4740_mmc_clock_enable(struct jz4740_mmc_host *host,
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -382,6 +382,7 @@ int intel_svm_bind_mm(struct device *dev
+ 				pasid_max - 1, GFP_KERNEL);
+ 		if (ret < 0) {
+ 			kfree(svm);
++			kfree(sdev);
+ 			goto out;
+ 		}
+ 		svm->pasid = ret;
