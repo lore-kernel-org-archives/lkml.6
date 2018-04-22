@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/QdH8+fHW7hz1/IPZae1Pt8tI196vLbKau5UEaoYJLR5h3dDAbfm2eOwN/paisZTUerX8r
-ARC-Seal: i=1; a=rsa-sha256; t=1524406373; cv=none;
+X-Google-Smtp-Source: AIpwx48SzZlV6ztYE9sugdR6Ml0Ruwv7Kcbck7KhlDbt9pjE2ZMB6o1TU2/VZ5AjcVse+ETrPUzA
+ARC-Seal: i=1; a=rsa-sha256; t=1524406370; cv=none;
         d=google.com; s=arc-20160816;
-        b=dgLYIavGAdjaYEx4GLAmMBC66vfC576N2U74co2Hv77vi9tivl2dvMeLZTDIvwNFRA
-         jeaolnbTq6jFlpAGcfHpYPGyUe++TyoMFDQR5fc6LaHOWSpGh4j8vBMuy8j9qolEx323
-         UGpuU4dw3THtaG8HCiWf5Ro/+RzqXHbe7C/+oikVDR0bf29uD9YCyvza6hd5TZryQ5iE
-         NsGJBF42fTFzeX6diAGGNvnwjW5/9ey2V1pnrHHvvdwchVf5ivSH3MV0VipfMAHUAAt9
-         jj8bK0H+5a8KJfPhbiPZNDhh6aicW6uF3deZzrlxZQVzj/jldofQFjCP4CTMdKyvduNE
-         pGwg==
+        b=W8E295H2KM/Dj1n2bAdRoSevYvgI09Jvdva2EDfI0k8zGBZp2elw7gIqtVRjeNCRo7
+         viY05n6/3Xp/ZEm7TfWpLvnIYORJphosLWB8sC/wOJVVfj9v83kATeT/sBViCAJWqykb
+         aahGuGlozVKGiW+ORUJj8E3XX5FfF0Xlbf2az8+0+qZcQBC+Sw0yaDEEtIonulvDmLtl
+         48ElgG6es1RQ+yTCwgXoeSebxkarj1bPOW/RGyN3eZ9olZB5Z2BrjMDyvicDSX6qtFs/
+         wO9Qn4usY0GivfgUq66+AgahDnFKLXm3aqwU6Hn0XTZd2ZRuQXfY+/jzRpA/IrG3wyL5
+         5XSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3ErvBPokaK/X39YheVW+hF5zwDnHKJzXrQLygIpdzW4=;
-        b=gUNrFsW+yR9mt/eJYu12GfCGPhFNxM7KCMQmqL4iCFZo2cYSo1rilkznhGhTF3BYMp
-         aEgTT8zzmuu6uS0FfbYcaCkGJOONX3fTAJyQJaabLZvM0sbMJtAtsg95Xc/00pAw1f8X
-         jLP0EygRnW7ZAozFSoC3SEztp8UnM7RN+RoHtA43dzKZ1oNmhlBnrDps8lq5aIS50osz
-         tHcabliGp7EntrjtG8hBOtuQJLTyvdfUyNcMeV8bRAIFz2jYR/oZ2fSCCMt3nJWvk686
-         T3cb6vzNrR8jWD0yx3496R1WP7JSxUzwnp4LCy20YV8m/J1Pw13GOn672RmpXeeU9LI7
-         fxrg==
+        bh=o3u3S0WNkzGvqwFqYaZE3f8mvbkwHB3h7kDRXwZtK5E=;
+        b=Me1JDzLRo7ZVVrP3sYaeGyLi1kRDMVCIbrKQvCk+8Axh1edmHgUmhU2B0mSAxedZXw
+         SqTiDVllZawxTzTBcmJCCb6hTNKH1eaX5mnTvMVwpET18+w2VXImm5SjVfNVt9mx+mfN
+         YkLFYEiEawKGo3Yd90ekJ9QMrzxAjxLpLjIsS5gFEuKg26E/HrArs/B+g37RxLJ7IHmo
+         diWJyyvnPmtbrUKAvIuHY14BZpx2LRZRRsAg3AQEb3uJwLkMblbWIYuWLsRNaBvmj/zn
+         CXB03YVsO3vNLDASlg+7aLDA4Afjs8LuBhctKa8HLO9uXqFnybcfi7v5e03P5bY2HyCX
+         bKUA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.9 47/95] um: Compile with modern headers
-Date: Sun, 22 Apr 2018 15:53:16 +0200
-Message-Id: <20180422135212.338598092@linuxfoundation.org>
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.9 46/95] nfit, address-range-scrub: fix scrub in-progress reporting
+Date: Sun, 22 Apr 2018 15:53:15 +0200
+Message-Id: <20180422135212.303990436@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455132138531431?=
-X-GMAIL-MSGID: =?utf-8?q?1598455937157149907?=
+X-GMAIL-THRID: =?utf-8?q?1598455224806694139?=
+X-GMAIL-MSGID: =?utf-8?q?1598455934298224182?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,52 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason A. Donenfeld <Jason@zx2c4.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 530ba6c7cb3c22435a4d26de47037bb6f86a5329 upstream.
+commit 78727137fdf49edf9f731bde79d7189067b4047a upstream.
 
-Recent libcs have gotten a bit more strict, so we actually need to
-include the right headers and use the right types. This enables UML to
-compile again.
+There is a small window whereby ARS scan requests can schedule work that
+userspace will miss when polling scrub_show. Hold the init_mutex lock
+over calls to report the status to close this potential escape. Also,
+make sure that requests to cancel the ARS workqueue are treated as an
+idle event.
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Cc: <stable@vger.kernel.org>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Fixes: 37b137ff8c83 ("nfit, libnvdimm: allow an ARS scrub...")
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/um/os-Linux/file.c   |    1 +
- arch/um/os-Linux/signal.c |    1 +
- arch/x86/um/stub_segv.c   |    1 +
- 3 files changed, 3 insertions(+)
+ drivers/acpi/nfit/core.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/um/os-Linux/file.c
-+++ b/arch/um/os-Linux/file.c
-@@ -12,6 +12,7 @@
- #include <sys/mount.h>
- #include <sys/socket.h>
- #include <sys/stat.h>
-+#include <sys/sysmacros.h>
- #include <sys/un.h>
- #include <sys/types.h>
- #include <os.h>
---- a/arch/um/os-Linux/signal.c
-+++ b/arch/um/os-Linux/signal.c
-@@ -16,6 +16,7 @@
- #include <os.h>
- #include <sysdep/mcontext.h>
- #include <um_malloc.h>
-+#include <sys/ucontext.h>
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -967,8 +967,11 @@ static ssize_t scrub_show(struct device
+ 	if (nd_desc) {
+ 		struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
  
- void (*sig_info[NSIG])(int, struct siginfo *, struct uml_pt_regs *) = {
- 	[SIGTRAP]	= relay_signal,
---- a/arch/x86/um/stub_segv.c
-+++ b/arch/x86/um/stub_segv.c
-@@ -6,6 +6,7 @@
- #include <sysdep/stub.h>
- #include <sysdep/faultinfo.h>
- #include <sysdep/mcontext.h>
-+#include <sys/ucontext.h>
- 
- void __attribute__ ((__section__ (".__syscall_stub")))
- stub_segv_handler(int sig, siginfo_t *info, void *p)
++		mutex_lock(&acpi_desc->init_mutex);
+ 		rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
+-				(work_busy(&acpi_desc->work)) ? "+\n" : "\n");
++				work_busy(&acpi_desc->work)
++				&& !acpi_desc->cancel ? "+\n" : "\n");
++		mutex_unlock(&acpi_desc->init_mutex);
+ 	}
+ 	device_unlock(dev);
+ 	return rc;
