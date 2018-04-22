@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/UCDWJJl7urkKMwYXI82xSkmLeaqxEj+9XTaNFYjmk772OkcG7v9fGIwoSHvtMVChjRgDL
-ARC-Seal: i=1; a=rsa-sha256; t=1524406470; cv=none;
+X-Google-Smtp-Source: AIpwx4+Cji5rLkCw3X+CjCpGKcrmGicaRBnlmXvNTTPw4LTEZizAP04Yhe6TURWW/MhoScyKIeKO
+ARC-Seal: i=1; a=rsa-sha256; t=1524406468; cv=none;
         d=google.com; s=arc-20160816;
-        b=ptQ9CEPpVbqietz2e09RUtG8GyB6y4Rff3q99m9v9n09emeLm0aUsnproWGWUEWmTR
-         b+HIPxvElxm/MrDZYGHfUCZYfACw+24v0fjVHthssNpSJt6dU+ONI5wXWZPanxB43lJT
-         zrZSMHGnoFEi96Uhgumf4YZQJ2DoN1TprzQw+WohEo9RNN6QoeekfymOxnJ6saT/kvIc
-         GufG8TZ+AbZsnserjtRawWzu89h8VYSJlF4pyYY+NtYZpZtPBn3QBEO/5Sw0cRsscLTZ
-         y7hScZO0NxgTfbJAM5dpwziPQHLRo/1QaWcJCGgvcNIJMvfNXqEYg6jCVvZPNayDk8J6
-         9Y/Q==
+        b=MSWmNzVkNIgVjlapwG2rVrCFCIeNyFx+4AVXLLIo80wxpD+HfFO/7K0aCzYWusLKjt
+         +AHEi3rEQERxYCO3L2dTwOxK3Y/eMRLs/Y0B5dpvJ/pfMXf6CuCLfUIyZkAce8fEmMBw
+         3P6wNZjR+BX+A49tSZMW6lV/vu+2Kb31cPebsXr7JaaEopflCdHAwaWOlJRIAvyRJi+i
+         NWbT2JtX0TAurfgU95bgWffdLv0YB0dKNj+KIH/+4uoYJTOMtyRbbRREytfYeu+PGy1B
+         TXK2vk6h7KlyVz1BbDCKeSQpTvob4zUHdaSWzbulaCUJ4zeu0xQ7TKYL9wG+dq8QuVxX
+         2rIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+ktORAUJD4TwgaA8UxKq4T+d/Os065gv5Q8cISQwI64=;
-        b=vj7rUR3GlWzoqQTMH4t2r+jspuoZsxcKtOKNp5TDcEg+b7euHw9OQsoAtkufr2/c+3
-         aGnYGz1iGNKhcfr88YzoKIBQgjLZqSunE9Zio0Z53YH04XL7VoIp2IeHZG/ZVXV8JZsH
-         JQbsuuTm5A7/y6QmXEpAdImP/gi4KZENwN/fUkiAjUnr1ksivfdl/1sIq8N+tVzH1kYI
-         dgB2GEs1A4/F48UgeT4YNU4/XRqtupNkGAfe70mEVfpjMkkhMg81sww3U/xcJIrrmBHl
-         0/T0e7T2Lx7QFHBs/nyGbCZIuB39ALqfQRTALEAeL0snNV3YfLdAgETd8xxh6iWEVMn9
-         Bbbw==
+        bh=kn6k1H9w+aEWWdLgItIZGHu2+znAnCYtrqhrKy6AKQU=;
+        b=JixOtvYocdaUnJW/tCFvO0HjgfvIDrJgpTUpvDFanXvn1+5Wr3AmaKqZNLEcFmJssi
+         Qcd/01Kjvjf4eOHmzwRu0drwS2xp83SWTr00yZlcB8LiPLVPvdUEZKFBixYyfs7H00Lk
+         scgEk/aU1yGHoQS/pjz4jlWMUv3j6UH6Tix6oU4XmUCego+xluPbHhofE9H7lNJClArU
+         tOZkJYh+DL6PDciPWzcARLdblt4SaJju0ufAiekItRAmmeJUd7Fa7lSP+bYsjN/xqSe/
+         pEYMM+eQkTNnTT2xUwH1vkVN/+ujPBB5UMRHKFmofi7VeiYoFQftj7dprSO/qL/obkJ8
+         ZrZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>,
-	Michael Neuling <mikey@neuling.org>,
-	Russell Currey <ruscur@russell.cc>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 83/95] powerpc/eeh: Fix enabling bridge MMIO windows
-Date: Sun, 22 Apr 2018 15:53:52 +0200
-Message-Id: <20180422135213.820559868@linuxfoundation.org>
+	James Hogan <jhogan@kernel.org>,
+	Matt Redfearn <matt.redfearn@mips.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org
+Subject: [PATCH 4.9 82/95] MIPS: memset.S: Fix clobber of v1 in last_fixup
+Date: Sun, 22 Apr 2018 15:53:51 +0200
+Message-Id: <20180422135213.782881483@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455273756324131?=
-X-GMAIL-MSGID: =?utf-8?q?1598456039581949859?=
+X-GMAIL-THRID: =?utf-8?q?1598455270804661651?=
+X-GMAIL-MSGID: =?utf-8?q?1598456036394721045?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,54 +51,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Matt Redfearn <matt.redfearn@mips.com>
 
-commit 13a83eac373c49c0a081cbcd137e79210fe78acd upstream.
+commit c96eebf07692e53bf4dd5987510d8b550e793598 upstream.
 
-On boot we save the configuration space of PCIe bridges. We do this so
-when we get an EEH event and everything gets reset that we can restore
-them.
+The label .Llast_fixup\@ is jumped to on page fault within the final
+byte set loop of memset (on < MIPSR6 architectures). For some reason, in
+this fault handler, the v1 register is randomly set to a2 & STORMASK.
+This clobbers v1 for the calling function. This can be observed with the
+following test code:
 
-Unfortunately we save this state before we've enabled the MMIO space
-on the bridges. Hence if we have to reset the bridge when we come back
-MMIO is not enabled and we end up taking an PE freeze when the driver
-starts accessing again.
+static int __init __attribute__((optimize("O0"))) test_clear_user(void)
+{
+  register int t asm("v1");
+  char *test;
+  int j, k;
 
-This patch forces the memory/MMIO and bus mastering on when restoring
-bridges on EEH. Ideally we'd do this correctly by saving the
-configuration space writes later, but that will have to come later in
-a larger EEH rewrite. For now we have this simple fix.
+  pr_info("\n\n\nTesting clear_user\n");
+  test = vmalloc(PAGE_SIZE);
 
-The original bug can be triggered on a boston machine by doing:
-  echo 0x8000000000000000 > /sys/kernel/debug/powerpc/PCI0001/err_injct_outbound
-On boston, this PHB has a PCIe switch on it.  Without this patch,
-you'll see two EEH events, 1 expected and 1 the failure we are fixing
-here. The second EEH event causes the anything under the PHB to
-disappear (i.e. the i40e eth).
+  for (j = 256; j < 512; j++) {
+    t = 0xa5a5a5a5;
+    if ((k = clear_user(test + PAGE_SIZE - 256, j)) != j - 256) {
+        pr_err("clear_user (%px %d) returned %d\n", test + PAGE_SIZE - 256, j, k);
+    }
+    if (t != 0xa5a5a5a5) {
+       pr_err("v1 was clobbered to 0x%x!\n", t);
+    }
+  }
 
-With this patch, only 1 EEH event occurs and devices properly recover.
+  return 0;
+}
+late_initcall(test_clear_user);
 
-Fixes: 652defed4875 ("powerpc/eeh: Check PCIe link after reset")
-Cc: stable@vger.kernel.org # v3.11+
-Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Acked-by: Russell Currey <ruscur@russell.cc>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Which demonstrates that v1 is indeed clobbered (MIPS64):
+
+Testing clear_user
+v1 was clobbered to 0x1!
+v1 was clobbered to 0x2!
+v1 was clobbered to 0x3!
+v1 was clobbered to 0x4!
+v1 was clobbered to 0x5!
+v1 was clobbered to 0x6!
+v1 was clobbered to 0x7!
+
+Since the number of bytes that could not be set is already contained in
+a2, the andi placing a value in v1 is not necessary and actively
+harmful in clobbering v1.
+
+Reported-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/19109/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/eeh_pe.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/lib/memset.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/eeh_pe.c
-+++ b/arch/powerpc/kernel/eeh_pe.c
-@@ -795,7 +795,8 @@ static void eeh_restore_bridge_bars(stru
- 	eeh_ops->write_config(pdn, 15*4, 4, edev->config_space[15]);
+--- a/arch/mips/lib/memset.S
++++ b/arch/mips/lib/memset.S
+@@ -257,7 +257,7 @@
  
- 	/* PCI Command: 0x4 */
--	eeh_ops->write_config(pdn, PCI_COMMAND, 4, edev->config_space[1]);
-+	eeh_ops->write_config(pdn, PCI_COMMAND, 4, edev->config_space[1] |
-+			      PCI_COMMAND_MEMORY | PCI_COMMAND_MASTER);
+ .Llast_fixup\@:
+ 	jr		ra
+-	andi		v1, a2, STORMASK
++	 nop
  
- 	/* Check the PCIe link is ready */
- 	eeh_bridge_check_link(edev);
+ .Lsmall_fixup\@:
+ 	PTR_SUBU	a2, t1, a0
