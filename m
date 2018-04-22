@@ -1,66 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750919AbeDVEKi (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 00:10:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38050 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeDVEKg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 00:10:36 -0400
-To: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] netfilter: fix nf_tables filter chain type build
-Cc: coreteam@netfilter.org, netfilter-devel@vger.kernel.org,
-        Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        kbuild test robot <lkp@intel.com>
-Message-ID: <c8e42e35-ccff-471c-8c45-61f44855e21a@infradead.org>
-Date: Sat, 21 Apr 2018 21:10:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1750916AbeDVGJm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 02:09:42 -0400
+Received: from mga03.intel.com ([134.134.136.65]:29798 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750758AbeDVGJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 02:09:41 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,310,1520924400";
+   d="scan'208";a="45108627"
+Date: Sun, 22 Apr 2018 11:43:28 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+Subject: Re: [PATCH 01/15] dmaengine: pxa: use a dma slave map
+Message-ID: <20180422061328.GT6014@localhost>
+References: <20180402142656.26815-1-robert.jarzmik@free.fr>
+ <20180402142656.26815-2-robert.jarzmik@free.fr>
+ <87604kz7mu.fsf@belgarion.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87604kz7mu.fsf@belgarion.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Sat, Apr 21, 2018 at 09:23:05PM +0200, Robert Jarzmik wrote:
+> Robert Jarzmik <robert.jarzmik@free.fr> writes:
+> 
+> > In order to remove the specific knowledge of the dma mapping from PXA
+> > drivers, add a default slave map for pxa architectures.
+> >
+> > This won't impact MMP architecture, but is aimed only at all PXA boards.
+> >
+> > This is the first step, and once all drivers are converted,
+> > pxad_filter_fn() will be made static, and the DMA resources removed from
+> > device.c.
+> >
+> > Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> > Reported-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Vinod, could I have your ack please ?
 
-Fix build errors due to a missing Kconfig dependency term.
-Fixes these build errors:
+Sure thing:
 
-net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_nat_do_chain':
-net/ipv6/netfilter/nft_chain_nat_ipv6.c:37: undefined reference to `nft_do_chain'
-net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_chain_nat_ipv6_exit':
-net/ipv6/netfilter/nft_chain_nat_ipv6.c:94: undefined reference to `nft_unregister_chain_type'
-net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_chain_nat_ipv6_init':
-net/ipv6/netfilter/nft_chain_nat_ipv6.c:87: undefined reference to `nft_register_chain_type'
+Acked-By: Vinod Koul <vkoul@kernel.org>
 
-Fixes: 02c7b25e5f54 ("netfilter: nf_tables: build-in filter chain type")
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: netfilter-devel@vger.kernel.org
-Cc: coreteam@netfilter.org
----
- net/ipv6/netfilter/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20180419.orig/net/ipv6/netfilter/Kconfig
-+++ linux-next-20180419/net/ipv6/netfilter/Kconfig
-@@ -108,7 +108,7 @@ config NF_NAT_IPV6
- if NF_NAT_IPV6
- 
- config NFT_CHAIN_NAT_IPV6
--	depends on NF_TABLES_IPV6
-+	depends on NF_TABLES_IPV6 && NF_TABLES
- 	tristate "IPv6 nf_tables nat chain support"
- 	help
- 	  This option enables the "nat" chain for IPv6 in nf_tables. This
+-- 
+~Vinod
