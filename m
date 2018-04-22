@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48L6s5ijH1CIoRu1HajMynrIq8hgUDMEnDmNmbL2gIzVrTj6H8pPsx6jjROgLu/YH6uBKsq
-ARC-Seal: i=1; a=rsa-sha256; t=1524405320; cv=none;
+X-Google-Smtp-Source: AIpwx48OSp1n0DpBco5ZJ3alCQrBIlIexA2+cPn5e64PiaNJftPbNEjKCzM2fFOa88hIPIvWUJt+
+ARC-Seal: i=1; a=rsa-sha256; t=1524405317; cv=none;
         d=google.com; s=arc-20160816;
-        b=FCijIj9n2BgRNVn7NUZt0qtuvXlo2ea3FZ6G0F2M3RwdooYhBswPcPQgztpaiA8d6j
-         tQihZwxrhqr51OMu+GtP4hmKGb4LZ115lvADbySfQm+zb3oPpaobd9jOjIik9LLOTvJt
-         SBhc6+1Atg9Qnz9evQ0Bren+BDX5c8aWNlOCG2usTmSRMfbeycuZjN6Rog1L2+NOjpGD
-         ZHh13jauFJ8XCWF+30i4ZDXX+Thr9OMk6Z6Bbq4TS0QArhNto5nu9hOtx1iRHTQ3v/uF
-         7Z8/RCa8LGImi0VqVRwFyD/o6yiUHTOqxH/6SCUwjjFBoUzBjFIEI0so5u+tHviByXaK
-         bQnQ==
+        b=E9yt1AqCiFyFsoe+bHlqU1P5iGjeIXLOMtukVibFALTdaSdIOlBLtFp2acuzCM5jON
+         BTecTcUsDsFNiG7G6tZqlSEQv3dJEoiN7QHa9V+ChOrwjcyoXs5qO2OUJAjJB/Se7U1W
+         yUI6tZUExot5PCPYZy5XP67VxC/PQG4UACBOKNmzmKXAxhCpCpNKwd22Lpdi7O1lt6Rc
+         7ayfcrdEt8bRvEAb1d4Q1O7sNvdf3zDThlPId2g8+FaYLWypHFPCU25cNiN6uBcMDAp7
+         g1Oiw5eQS53Gttfji21iuqem0Mocjf+myI9uhqkHLzFKIK8pRLZN9jUjSKZ9+umRaz3R
+         zpqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=eHSmVFK89ImrOm3JcC8BDYeTHGA0yE30mMrx/S0oD50=;
-        b=dFm7tfYUvhwO87/uTF9tadmHIzPGOyML+HQ0+qm/cprZEtQ8b5z2Ol/5o6T6VR61Vd
-         CSzZYTXiIhN1n3O5dUTzvysv/Jo9TMbPINgXsOORHbbCLj1zMeppJ29x0iRBefA04lUo
-         mkCzc0NvmHJg7ENqbXADKGWSwSI6RC23hxSaN1qsEsL/7EJ8+9bfRc4Z+vYwwfWBYKvR
-         h9s4yTH/VwXxnRsP6EvbZHPDtSh7iv3Ac1ZqcMTmKDFNGxtQj+r1zrM/84RB8KCB3eI2
-         2bV53ewOYS/1t/QiQWuoHSJS0jLgun4Vne1Vlqx/krDCuCgUbGiHic/v269S9OZoRry9
-         gF3Q==
+        bh=7ZFOE+i2pjUmMNws9bWcRughFqZsDujMtoODYV/+GWk=;
+        b=xlzrtn9PZPgU/Vq7lpRBIt/yXYoV3ZxTKcI1qx7/wYBIveWvhw4muMgoofWGO1G6W0
+         CUJJzUGlJOq79D6AgLpAF4N0KhUW/INKyCwOsNMjEFHiTwq29E+Cj6htlnwJGYe5w25p
+         5src7wsDCr/yZV8++S1yiI7gcYZCUuORuV31fkVhI+Jz85JpUggaNVIGNZD/cSmaJAaz
+         ByriDNQ16ede7f//I2Vr69ifM8+KcC25TP1hZGKxuhbkcPhypx7bHYQjWQ8G7XoGLf+f
+         HfbkyTz5ZeqtZ54P9PdD8Oppqxx6aAs7ve2WZKBIj7murPawfqIpBwF03aTjhnfOPJ8E
+         0q0w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marek Sieranski <marek.sieranski@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 4.16 024/196] ARM: dts: at91: at91sam9g25: fix mux-mask pinctrl property
-Date: Sun, 22 Apr 2018 15:50:44 +0200
-Message-Id: <20180422135105.361042929@linuxfoundation.org>
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Subject: [PATCH 4.16 023/196] arm: dts: mt7623: fix USB initialization fails on bananapi-r2
+Date: Sun, 22 Apr 2018 15:50:43 +0200
+Message-Id: <20180422135105.313050375@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454833728898463?=
-X-GMAIL-MSGID: =?utf-8?q?1598454833728898463?=
+X-GMAIL-THRID: =?utf-8?q?1598454830471039483?=
+X-GMAIL-MSGID: =?utf-8?q?1598454830471039483?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,32 +49,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+From: Sean Wang <sean.wang@mediatek.com>
 
-commit e8fd0adf105e132fd84545997bbef3d5edc2c9c1 upstream.
+commit 0629a01920c0f8a3f825361b24863d760610884a upstream.
 
-There are only 19 PIOB pins having primary names PB0-PB18. Not all of them
-have a 'C' function. So the pinctrl property mask ends up being the same as the
-other SoC of the at91sam9x5 series.
+Fix that USB initialization fails as below runtime log is present during
+booting on bananapi-r2 board by adding missing regulators the USB device
+requires. Current regulators USB device uses are being updated with the
+correct ones to reflect real configurations which are all from fixed
+regulators rather than MT6323 one's output.
 
-Reported-by: Marek Sieranski <marek.sieranski@microchip.com>
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: <stable@vger.kernel.org> # v3.8+
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+xhci-mtk 1a1c0000.usb: 1a1c0000.usb supply vbus not found, using dummy regulator
+xhci-mtk 1a240000.usb: 1a240000.usb supply vbus not found, using dummy regulator
+
+Cc: stable@vger.kernel.org
+Fixes: f4ff257cd160 ("arm: dts: mt7623: add support for Bananapi R2 (BPI-R2) board")
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+[mb: update kernel log in commit message]
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/at91sam9g25.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |   24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/at91sam9g25.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g25.dtsi
-@@ -21,7 +21,7 @@
- 				atmel,mux-mask = <
- 				      /*    A         B          C     */
- 				       0xffffffff 0xffe0399f 0xc000001c  /* pioA */
--				       0x0007ffff 0x8000fe3f 0x00000000  /* pioB */
-+				       0x0007ffff 0x00047e3f 0x00000000  /* pioB */
- 				       0x80000000 0x07c0ffff 0xb83fffff  /* pioC */
- 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
- 				      >;
+--- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
++++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+@@ -39,6 +39,24 @@
+ 		};
+ 	};
+ 
++	reg_3p3v: regulator-3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	reg_5v: regulator-5v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	gpio_keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-names = "default";
+@@ -468,12 +486,14 @@
+ };
+ 
+ &usb1 {
+-	vusb33-supply = <&mt6323_vusb_reg>;
++	vusb33-supply = <&reg_3p3v>;
++	vbus-supply = <&reg_5v>;
+ 	status = "okay";
+ };
+ 
+ &usb2 {
+-	vusb33-supply = <&mt6323_vusb_reg>;
++	vusb33-supply = <&reg_3p3v>;
++	vbus-supply = <&reg_5v>;
+ 	status = "okay";
+ };
+ 
