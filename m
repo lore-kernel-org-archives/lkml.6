@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/1XQ7GN69YTQGmWEt4damhO9x/PNhV78wO+dk/KB3Vb+CF3jlx2JgNpNS9iXmCvNC94eKU
-ARC-Seal: i=1; a=rsa-sha256; t=1524405889; cv=none;
+X-Google-Smtp-Source: AIpwx4/Zz3HylDmqI8s2AhQGia4UiLS5ITSVUri8YYU9d+rZuUBIpOASrJPGNQLoYp4gv5YxRZv/
+ARC-Seal: i=1; a=rsa-sha256; t=1524405886; cv=none;
         d=google.com; s=arc-20160816;
-        b=gzSBGvKimTSb1hNbDg/sB4oHrZzN2ym9Oa+SiDVyWIyWO3OHtUh1Dpb8Z21umSDIbI
-         x4svSSiq/nNkVghbPrF5D9QhYx2V97nOcAk4Rxcj/uvLySpBRkWmPlh0hDhHaumzSweI
-         c9jM1syDLPh4VIjGM8s8vLeuXKUoSE2Hrxd2iKJITgcNOt2lLCQllQJjw5E4bEk6bihO
-         wPzmsb9q6yOX1FKrx/utMY2p4IGq9Ik89/Uz3fiROanncBznIrs+PNtxUOfDh4iOlr6n
-         MpWUFB4B/GA4x7FJMqzbyOGEmNLidbdhwP0nMFgvkBsM9lKsXsN+89tSV917ZIR/9U/B
-         B4wQ==
+        b=oyexrzIsTRVjhWlCxeRNSPJcu6Mg6kd8F4yfLcoWsDBQg5V9lQiYBUdYY92lJcINKT
+         3fSOm01DUhNl9GWQuW4BKEq3NYWKTTKLHazWGe78URr9IfAHoOUsFtIkcUhWBmwx2Zd3
+         Js+4FPyfyBzZd/37P9u5sGbZLyGQHVtySMAyVW/2rlOv0sN47kPNuYu8O7eG1UwtU1QQ
+         eoNbrWa1yPWxc+4jz84s3Ubo7u0/zdlyf8lXuIC2/mKDUGePNlg2l+Y3r/5TfvLa+jXG
+         0DjsXhGJaeZ9UcVsihXglOJowSjK4gbAoRS4pOzPF9kFVHUtPhM8Adb4u8+NbGtZepdc
+         QTjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=85U65jFoCYn+56MLwCfzzrDOnf2VBpEaRCZDMcoc118=;
-        b=gv1BSHLmkMyUuEIAkRwArm4oo1C/YFcvlufB6Eo5f5isHBJyL/jJUFWPU9D7A+mVrU
-         siUud67ci0MjzHJgWnpOXyrDqdGtNgMHoifM7LFFUHG+DTj/tXc58O2HPPTyr8rMmqi0
-         Y5eWy9vs1FY/GReUxv93+mxDoaVr3KqIg8dGQ4nPZ8qvvWYn2njGRQvUEKBF0CX35bfL
-         sU9CeP5su/T+v00tFiGUMaudew0zDCvF5U1TVtRud1TWQfD+GVQwORHJfAvugqB8+918
-         8AaejONJ+bjMmF/eyCluCA23+QzCU/pm6mF+c3v2my9JI9JUvZhvOkfYRbQ9jBeE+RHw
-         v1mw==
+        bh=PGm6GeLm10yOnNPBWWCth9DWHhEUdzbCLyvCAFby6JU=;
+        b=Zz/DxCAfFGfWBevUE231lkuG4UZNXl1JSIe97xF5oO7CqwWc7ACRXwsfz98zu+evWf
+         /tyRCOrDBGH22K3J2wTXaVPOkPXQAeeBiu4FWl++7hLGNU1zAVh9gPoC1pMqeQHaEQ/+
+         aFJTQcjtUkSNF864EsheDLRy7Pelzd+vaUeYemdXO16Mglwo5OxowxIhgCq7Z+aOwZl8
+         /q40v/zqIUpwT2d9Jp9oOSFF58x1ygaL/IvGbPYHUzg73tdAIGvXO33+GrZnqXwbFshD
+         hs1bhzX8ArRmeVVpZg3etx02XJWrklr/QrQPFtyInYE1bRixmzvoVGcZV8yrgeubngkq
+         tt4Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Balbir Singh <bsingharora@gmail.com>,
+	Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Ralph Campbell <rcampbell@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Evgeny Baskakov <ebaskakov@nvidia.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Minchan Kim <minchan@kernel.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Hugh Dickins <hughd@google.com>,
+	Christian Borntraeger <borntraeger@de.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@de.ibm.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 008/164] mm/hmm: fix header file if/else/endif maze
-Date: Sun, 22 Apr 2018 15:51:15 +0200
-Message-Id: <20180422135135.736647459@linuxfoundation.org>
+Subject: [PATCH 4.14 007/164] mm/ksm.c: fix inconsistent accounting of zero pages
+Date: Sun, 22 Apr 2018 15:51:14 +0200
+Message-Id: <20180422135135.700220495@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -45,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454891463634432?=
-X-GMAIL-MSGID: =?utf-8?q?1598455429872593729?=
+X-GMAIL-THRID: =?utf-8?q?1598454868442656984?=
+X-GMAIL-MSGID: =?utf-8?q?1598455427161148247?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,55 +56,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jérôme Glisse <jglisse@redhat.com>
+From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
 
-commit b28b08de436a638c82d0cf3dcdbdbad055baf1fc upstream.
+commit a38c015f3156895b07e71d4e4414289f8a3b2745 upstream.
 
-The #if/#else/#endif for IS_ENABLED(CONFIG_HMM) were wrong.  Because of
-this after multiple include there was multiple definition of both
-hmm_mm_init() and hmm_mm_destroy() leading to build failure if HMM was
-enabled (CONFIG_HMM set).
+When using KSM with use_zero_pages, we replace anonymous pages
+containing only zeroes with actual zero pages, which are not anonymous.
+We need to do proper accounting of the mm counters, otherwise we will
+get wrong values in /proc and a BUG message in dmesg when tearing down
+the mm.
 
-Link: http://lkml.kernel.org/r/20180323005527.758-3-jglisse@redhat.com
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+Link: http://lkml.kernel.org/r/1522931274-15552-1-git-send-email-imbrenda@linux.vnet.ibm.com
+Fixes: e86c59b1b1 ("mm/ksm: improve deduplication of zero pages with colouring")
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/hmm.h |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ mm/ksm.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -498,23 +498,16 @@ struct hmm_device {
- struct hmm_device *hmm_device_new(void *drvdata);
- void hmm_device_put(struct hmm_device *hmm_device);
- #endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
--#endif /* IS_ENABLED(CONFIG_HMM) */
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -1133,6 +1133,13 @@ static int replace_page(struct vm_area_s
+ 	} else {
+ 		newpte = pte_mkspecial(pfn_pte(page_to_pfn(kpage),
+ 					       vma->vm_page_prot));
++		/*
++		 * We're replacing an anonymous page with a zero page, which is
++		 * not anonymous. We need to do proper accounting otherwise we
++		 * will get wrong values in /proc, and a BUG message in dmesg
++		 * when tearing down the mm.
++		 */
++		dec_mm_counter(mm, MM_ANONPAGES);
+ 	}
  
- /* Below are for HMM internal use only! Not to be used by device driver! */
--#if IS_ENABLED(CONFIG_HMM_MIRROR)
- void hmm_mm_destroy(struct mm_struct *mm);
- 
- static inline void hmm_mm_init(struct mm_struct *mm)
- {
- 	mm->hmm = NULL;
- }
--#else /* IS_ENABLED(CONFIG_HMM_MIRROR) */
--static inline void hmm_mm_destroy(struct mm_struct *mm) {}
--static inline void hmm_mm_init(struct mm_struct *mm) {}
--#endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
--
--
- #else /* IS_ENABLED(CONFIG_HMM) */
- static inline void hmm_mm_destroy(struct mm_struct *mm) {}
- static inline void hmm_mm_init(struct mm_struct *mm) {}
-+#endif /* IS_ENABLED(CONFIG_HMM) */
- #endif /* LINUX_HMM_H */
+ 	flush_cache_page(vma, addr, pte_pfn(*ptep));
