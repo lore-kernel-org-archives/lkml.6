@@ -1,78 +1,43 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2630128-1524406244-2-15113016920057597818
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524406243; b=PihCz7xFwSPkRwCl1HVQS7JiNciSZNIx2kpz8+X/tFVCSq3hq6
-    VIwy7t9XKUO6t8Wtdiro1CiX16bh5fepey7B/cCBUp0/BICNhcOnepfrdFxwA5Cz
-    PI+1FBqOezEqg39wctT8MlmbMhqR5FrlCMJIgcHyPp5fIfwT22Y6mmtyAmTh6THP
-    RIDcP6Bwh6rYHpPj1DvR4CmDWffPD5q7vXzreErOko8LyoqvLfyM9QkLYQ+dxJcn
-    iMl8RKMY0ee4hcPkfjN/Wi9CGvJ4bo1cO/4y2wYUCg1nbr9gI+I2m0YA51fQmYNw
-    y4DsyReqZRrEqVxQMvLnISGtaldJpYT5bwMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524406243; bh=70KE4hO1BS7t3OkrW0VrxfPaHhM0+j
-    5a4ALmFuHKQHI=; b=nH4eUHopj8Of2L6fZV0Fc5MMWD5vggo8NWvFu0bG4dDm7d
-    9tOcSbTAbJudIf7EtklFOWHADDVsqy2IDqIm1KvuuHVjhXAzgu0zGcA9VY+Yxu3u
-    xpI5zfvwHybIx/ZJTDxV16vAlwDMMJMuDk+XxPthsEzu5gxwFejHvZK0MvV8SIqV
-    gcmr3fykZlO3/55R6AladuWy87NKpzHJVFLH+krTqwh9VgBS09g0jzkIdzzo/+lm
-    V7JhwF/cdgFrscMQ5QQVu0K5w5+VXxdpi6Lh8vXWyJfJVN3bhHXqFwqyrd9ZnVAe
-    9mHspjn/K0Ndacr/kq+/qtepor/7u2g8fxtdGgsQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBva7SPGM6QabO1xtCiBaUNjexmKZy+77f+uUkUb+1nckhxeXf7YzV8Xm7Ar8ruq4gPzuqh7P8jGpdXzo9v04aQ2n378Ph21w0/CPuMNCgxaGXv5AqcX
-    HoO2ef1lN/yl6PMkPdOCKAVzBNkb3vUFrjhgkbsR6OMTGMb2NSvAe/TWAy5Xgi/iAvAXbQQ+MGW8n4Knphbck4wV4n1WgnyHRfImm8uZlkD2vBlYbgtvTvyE
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=u2zLLAFrw9WH8eSvI3wA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756330AbeDVOKg (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:10:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53786 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755881AbeDVOKc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:10:32 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/M0te4pGo/4vJplsM5EWZ5x0Iu0nrROjmiLgw31hdoxv8LBX6C+OyQ13pqaOp+pwba9x04
+ARC-Seal: i=1; a=rsa-sha256; t=1524406243; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Z0hTEGBJTC5JnyNV1NtMJJxUJhlIF62v0ogVWsczyq7eS5vSQhFQPdYKlAFRsAqAFF
+         dkKeiZ0b06GrikAFjrcLFTk1nFP+c1J6G4VuJAYNeF/4RpNBlfIht6Ma2Uqf8h0uaV74
+         h7IcOwz2b21nwtYwSU2CmYxFQk9f5xP4h4P8YlQDp5s0TRWFP2Z47J64qEO31mPTdXYZ
+         V0xIK+mPrS0VFHY1ejEotBHgCWy+1TKm7aHEUgDi8NfIbN9Xpxuu43ifkX8dOE9OPir8
+         dRsnLXTfxcHj/SFSkxN05NCWcCOxB6IiHiZYoABNdHuVZoPehhAbp+ZBct8ZyIu16rf6
+         eruA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=3pG2duf7GA40FDaZJ/bs542+w2AOc8MhinTM2QyHphg=;
+        b=aaShBCgn3UHVlj+ri457Ib9ODaGFKyAwMkmhas8bvkE9Ke+SNy4TBTEyYqIK9sBWxy
+         FbcpH9RrAbJikeOFVDaToTRcfG6hZ5MlANojyAj+kUwRyiGAOWuz5HdCJTu3YVhZXtU5
+         z4RShAYzcIs4e+5jSrqTLqteEOPJzLjH5P7I2oWUndHk0YNK7Oqn3DvDBde0xsJ404fS
+         K91bERwpS7cr8CAmmCa+QtwAZJeK/EJD2naowquYcBdUBoSsaPWLow2Br14d88yeBNCV
+         rpXlBZ/gBSkEkCQ6bHzS388sruMNWAqvn2KWI4mJQfXuhZ9REZjilBHAmFYV/rOcsFNe
+         g6sw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 4.14 161/164] iwlwifi: add a bunch of new 9000 PCI IDs
-Date: Sun, 22 Apr 2018 15:53:48 +0200
-Message-Id: <20180422135142.210187981@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Greg Thelen <gthelen@google.com>,
+	Wang Long <wanglong19@meituan.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Tejun Heo <tj@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.14 164/164] writeback: safer lock nesting
+Date: Sun, 22 Apr 2018 15:53:51 +0200
+Message-Id: <20180422135142.353521053@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -80,9 +45,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455348272651439?=
+X-GMAIL-MSGID: =?utf-8?q?1598455801319682519?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -90,265 +56,277 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Greg Thelen <gthelen@google.com>
 
-commit 9e5053ad9d590e095829a8bb07adbbdbd893f0f9 upstream.
+commit 2e898e4c0a3897ccd434adac5abb8330194f527b upstream.
 
-A lot of new PCI IDs were added for the 9000 series.  Add them to the
-list of supported PCI IDs.
+lock_page_memcg()/unlock_page_memcg() use spin_lock_irqsave/restore() if
+the page's memcg is undergoing move accounting, which occurs when a
+process leaves its memcg for a new one that has
+memory.move_charge_at_immigrate set.
 
-Cc: stable@vger.kernel.org # 4.13+
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+unlocked_inode_to_wb_begin,end() use spin_lock_irq/spin_unlock_irq() if
+the given inode is switching writeback domains.  Switches occur when
+enough writes are issued from a new domain.
+
+This existing pattern is thus suspicious:
+    lock_page_memcg(page);
+    unlocked_inode_to_wb_begin(inode, &locked);
+    ...
+    unlocked_inode_to_wb_end(inode, locked);
+    unlock_page_memcg(page);
+
+If both inode switch and process memcg migration are both in-flight then
+unlocked_inode_to_wb_end() will unconditionally enable interrupts while
+still holding the lock_page_memcg() irq spinlock.  This suggests the
+possibility of deadlock if an interrupt occurs before unlock_page_memcg().
+
+    truncate
+    __cancel_dirty_page
+    lock_page_memcg
+    unlocked_inode_to_wb_begin
+    unlocked_inode_to_wb_end
+    <interrupts mistakenly enabled>
+                                    <interrupt>
+                                    end_page_writeback
+                                    test_clear_page_writeback
+                                    lock_page_memcg
+                                    <deadlock>
+    unlock_page_memcg
+
+Due to configuration limitations this deadlock is not currently possible
+because we don't mix cgroup writeback (a cgroupv2 feature) and
+memory.move_charge_at_immigrate (a cgroupv1 feature).
+
+If the kernel is hacked to always claim inode switching and memcg
+moving_account, then this script triggers lockup in less than a minute:
+
+  cd /mnt/cgroup/memory
+  mkdir a b
+  echo 1 > a/memory.move_charge_at_immigrate
+  echo 1 > b/memory.move_charge_at_immigrate
+  (
+    echo $BASHPID > a/cgroup.procs
+    while true; do
+      dd if=/dev/zero of=/mnt/big bs=1M count=256
+    done
+  ) &
+  while true; do
+    sync
+  done &
+  sleep 1h &
+  SLEEP=$!
+  while true; do
+    echo $SLEEP > a/cgroup.procs
+    echo $SLEEP > b/cgroup.procs
+  done
+
+The deadlock does not seem possible, so it's debatable if there's any
+reason to modify the kernel.  I suggest we should to prevent future
+surprises.  And Wang Long said "this deadlock occurs three times in our
+environment", so there's more reason to apply this, even to stable.
+Stable 4.4 has minor conflicts applying this patch.  For a clean 4.4 patch
+see "[PATCH for-4.4] writeback: safer lock nesting"
+https://lkml.org/lkml/2018/4/11/146
+
+Wang Long said "this deadlock occurs three times in our environment"
+
+[gthelen@google.com: v4]
+  Link: http://lkml.kernel.org/r/20180411084653.254724-1-gthelen@google.com
+[akpm@linux-foundation.org: comment tweaks, struct initialization simplification]
+Change-Id: Ibb773e8045852978f6207074491d262f1b3fb613
+Link: http://lkml.kernel.org/r/20180410005908.167976-1-gthelen@google.com
+Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
+Signed-off-by: Greg Thelen <gthelen@google.com>
+Reported-by: Wang Long <wanglong19@meituan.com>
+Acked-by: Wang Long <wanglong19@meituan.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: <stable@vger.kernel.org>	[v4.2+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[natechancellor: Adjust context due to lack of b93b016313b3b]
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c |  157 +++++++++++++++++++++++++-
- 1 file changed, 155 insertions(+), 2 deletions(-)
+ fs/fs-writeback.c                |    7 ++++---
+ include/linux/backing-dev-defs.h |    5 +++++
+ include/linux/backing-dev.h      |   30 ++++++++++++++++--------------
+ mm/page-writeback.c              |   18 +++++++++---------
+ 4 files changed, 34 insertions(+), 26 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@ -8,6 +8,7 @@
-  * Copyright(c) 2007 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2016-2017 Intel Deutschland GmbH
-+ * Copyright(c) 2018        Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of version 2 of the GNU General Public License as
-@@ -36,6 +37,7 @@
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * All rights reserved.
-  * Copyright(c) 2017 Intel Deutschland GmbH
-+ * Copyright(c) 2018        Intel Corporation
-  *
-  * Redistribution and use in source and binary forms, with or without
-  * modification, are permitted provided that the following conditions
-@@ -515,9 +517,9 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x24FD, 0x9074, iwl8265_2ac_cfg)},
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -745,11 +745,12 @@ int inode_congested(struct inode *inode,
+ 	 */
+ 	if (inode && inode_to_wb_is_valid(inode)) {
+ 		struct bdi_writeback *wb;
+-		bool locked, congested;
++		struct wb_lock_cookie lock_cookie = {};
++		bool congested;
  
- /* 9000 Series */
--	{IWL_PCI_DEVICE(0x2526, 0x0000, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0014, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2526, 0x0018, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0030, iwl9560_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0034, iwl9560_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0038, iwl9560_2ac_cfg)},
-@@ -542,11 +544,15 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x2526, 0x1410, iwl9270_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x1420, iwl9460_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x1610, iwl9270_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2526, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2526, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x4010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x4030, iwl9560_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2526, 0x4034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x40A4, iwl9460_2ac_cfg)},
--	{IWL_PCI_DEVICE(0x2526, 0xA014, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2526, 0x4234, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x42A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2526, 0xA014, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x271B, 0x0010, iwl9160_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x271B, 0x0014, iwl9160_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x271B, 0x0210, iwl9160_2ac_cfg)},
-@@ -567,16 +573,42 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x2720, 0x0264, iwl9461_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x02A0, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2720, 0x1010, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2720, 0x1030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2720, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2720, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2720, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x4030, iwl9560_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x2720, 0x4034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2720, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2720, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x2720, 0x42A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x0030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x0034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x0038, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x003C, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x0060, iwl9460_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x0064, iwl9461_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x00A0, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x00A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x0230, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x0234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x0238, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x023C, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x0260, iwl9461_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x0264, iwl9461_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x02A0, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x30DC, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x1010, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x1030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x2034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x4030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x4034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x30DC, 0x42A4, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x0030, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x0034, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x0038, iwl9560_2ac_cfg_shared_clk)},
-@@ -593,12 +625,94 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x31DC, 0x0264, iwl9461_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x02A0, iwl9462_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x02A4, iwl9462_2ac_cfg_shared_clk)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x1010, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x1030, iwl9560_2ac_cfg_shared_clk)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x2030, iwl9560_2ac_cfg_shared_clk)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x2034, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x4030, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x4034, iwl9560_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x31DC, 0x40A4, iwl9462_2ac_cfg_shared_clk)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x4234, iwl9560_2ac_cfg_shared_clk)},
-+	{IWL_PCI_DEVICE(0x31DC, 0x42A4, iwl9462_2ac_cfg_shared_clk)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x0030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x0034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x0038, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x003C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x0060, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x0064, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x00A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x00A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x0230, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x0234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x0238, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x023C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x0260, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x0264, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x02A0, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x34F0, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x1010, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x1030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x2034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x4030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x4034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x34F0, 0x42A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0038, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x003C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0060, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0064, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x00A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x00A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0230, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0238, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x023C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0260, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x0264, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x02A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x1010, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x1030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x2034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x4030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x4034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x3DF0, 0x42A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0038, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x003C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0060, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0064, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x00A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x00A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0230, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0238, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x023C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0260, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x0264, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x02A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x1010, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x1030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x2034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x4030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x4034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x43F0, 0x42A4, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x0000, iwl9460_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x0010, iwl9460_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x0030, iwl9560_2ac_cfg_soc)},
-@@ -624,11 +738,44 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x9DF0, 0x0610, iwl9460_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x0710, iwl9460_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x0A10, iwl9460_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x1010, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x1030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x1210, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x2010, iwl9460_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x2A10, iwl9460_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x4030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x4034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x9DF0, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x9DF0, 0x42A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0038, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x003C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0060, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0064, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x00A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x00A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0230, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0238, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x023C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0260, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x0264, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x02A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x1010, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x1030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x2034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x4030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x4034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA0F0, 0x42A4, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x0030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x0034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x0038, iwl9560_2ac_cfg_soc)},
-@@ -645,10 +792,16 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0xA370, 0x0264, iwl9461_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x02A0, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA370, 0x1010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0xA370, 0x1030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA370, 0x1210, iwl9260_2ac_cfg)},
-+	{IWL_PCI_DEVICE(0xA370, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA370, 0x2034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x4030, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x4034, iwl9560_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0xA370, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA370, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0xA370, 0x42A4, iwl9462_2ac_cfg_soc)},
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &lock_cookie);
+ 		congested = wb_congested(wb, cong_bits);
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &lock_cookie);
+ 		return congested;
+ 	}
  
- /* a000 Series */
- 	{IWL_PCI_DEVICE(0x2720, 0x0A10, iwla000_2ac_cfg_hr_cdb)},
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -199,6 +199,11 @@ static inline void set_bdi_congested(str
+ 	set_wb_congested(bdi->wb.congested, sync);
+ }
+ 
++struct wb_lock_cookie {
++	bool locked;
++	unsigned long flags;
++};
++
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 
+ /**
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -342,7 +342,7 @@ static inline struct bdi_writeback *inod
+ /**
+  * unlocked_inode_to_wb_begin - begin unlocked inode wb access transaction
+  * @inode: target inode
+- * @lockedp: temp bool output param, to be passed to the end function
++ * @cookie: output param, to be passed to the end function
+  *
+  * The caller wants to access the wb associated with @inode but isn't
+  * holding inode->i_lock, mapping->tree_lock or wb->list_lock.  This
+@@ -350,12 +350,12 @@ static inline struct bdi_writeback *inod
+  * association doesn't change until the transaction is finished with
+  * unlocked_inode_to_wb_end().
+  *
+- * The caller must call unlocked_inode_to_wb_end() with *@lockdep
+- * afterwards and can't sleep during transaction.  IRQ may or may not be
+- * disabled on return.
++ * The caller must call unlocked_inode_to_wb_end() with *@cookie afterwards and
++ * can't sleep during the transaction.  IRQs may or may not be disabled on
++ * return.
+  */
+ static inline struct bdi_writeback *
+-unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
++unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+ {
+ 	rcu_read_lock();
+ 
+@@ -363,10 +363,10 @@ unlocked_inode_to_wb_begin(struct inode
+ 	 * Paired with store_release in inode_switch_wb_work_fn() and
+ 	 * ensures that we see the new wb if we see cleared I_WB_SWITCH.
+ 	 */
+-	*lockedp = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
++	cookie->locked = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
+ 
+-	if (unlikely(*lockedp))
+-		spin_lock_irq(&inode->i_mapping->tree_lock);
++	if (unlikely(cookie->locked))
++		spin_lock_irqsave(&inode->i_mapping->tree_lock, cookie->flags);
+ 
+ 	/*
+ 	 * Protected by either !I_WB_SWITCH + rcu_read_lock() or tree_lock.
+@@ -378,12 +378,13 @@ unlocked_inode_to_wb_begin(struct inode
+ /**
+  * unlocked_inode_to_wb_end - end inode wb access transaction
+  * @inode: target inode
+- * @locked: *@lockedp from unlocked_inode_to_wb_begin()
++ * @cookie: @cookie from unlocked_inode_to_wb_begin()
+  */
+-static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
++static inline void unlocked_inode_to_wb_end(struct inode *inode,
++					    struct wb_lock_cookie *cookie)
+ {
+-	if (unlikely(locked))
+-		spin_unlock_irq(&inode->i_mapping->tree_lock);
++	if (unlikely(cookie->locked))
++		spin_unlock_irqrestore(&inode->i_mapping->tree_lock, cookie->flags);
+ 
+ 	rcu_read_unlock();
+ }
+@@ -430,12 +431,13 @@ static inline struct bdi_writeback *inod
+ }
+ 
+ static inline struct bdi_writeback *
+-unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
++unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+ {
+ 	return inode_to_wb(inode);
+ }
+ 
+-static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
++static inline void unlocked_inode_to_wb_end(struct inode *inode,
++					    struct wb_lock_cookie *cookie)
+ {
+ }
+ 
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2518,13 +2518,13 @@ void account_page_redirty(struct page *p
+ 	if (mapping && mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct bdi_writeback *wb;
+-		bool locked;
++		struct wb_lock_cookie cookie = {};
+ 
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 		current->nr_dirtied--;
+ 		dec_node_page_state(page, NR_DIRTIED);
+ 		dec_wb_stat(wb, WB_DIRTIED);
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &cookie);
+ 	}
+ }
+ EXPORT_SYMBOL(account_page_redirty);
+@@ -2630,15 +2630,15 @@ void cancel_dirty_page(struct page *page
+ 	if (mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct bdi_writeback *wb;
+-		bool locked;
++		struct wb_lock_cookie cookie = {};
+ 
+ 		lock_page_memcg(page);
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 
+ 		if (TestClearPageDirty(page))
+ 			account_page_cleaned(page, mapping, wb);
+ 
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &cookie);
+ 		unlock_page_memcg(page);
+ 	} else {
+ 		ClearPageDirty(page);
+@@ -2670,7 +2670,7 @@ int clear_page_dirty_for_io(struct page
+ 	if (mapping && mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
+ 		struct bdi_writeback *wb;
+-		bool locked;
++		struct wb_lock_cookie cookie = {};
+ 
+ 		/*
+ 		 * Yes, Virginia, this is indeed insane.
+@@ -2707,14 +2707,14 @@ int clear_page_dirty_for_io(struct page
+ 		 * always locked coming in here, so we get the desired
+ 		 * exclusion.
+ 		 */
+-		wb = unlocked_inode_to_wb_begin(inode, &locked);
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+ 		if (TestClearPageDirty(page)) {
+ 			dec_lruvec_page_state(page, NR_FILE_DIRTY);
+ 			dec_zone_page_state(page, NR_ZONE_WRITE_PENDING);
+ 			dec_wb_stat(wb, WB_RECLAIMABLE);
+ 			ret = 1;
+ 		}
+-		unlocked_inode_to_wb_end(inode, locked);
++		unlocked_inode_to_wb_end(inode, &cookie);
+ 		return ret;
+ 	}
+ 	return TestClearPageDirty(page);
