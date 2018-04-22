@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/QUO5Eumw9g77jy77TPZjT8G6ebe1BVOcn7isnoSeEajFshYIFPikb0pFi7A6a9+ZhPufn
-ARC-Seal: i=1; a=rsa-sha256; t=1524405688; cv=none;
+X-Google-Smtp-Source: AIpwx48kPtlH/2FqGdTVQ+d7ZeaNzdx9Chie0Br/9QV54tPokxlodezj4ES3H/peEryddzulP/Bz
+ARC-Seal: i=1; a=rsa-sha256; t=1524405686; cv=none;
         d=google.com; s=arc-20160816;
-        b=ozFWJHPQnsEqItNDvURkJTqumZngCTFEi5Pz2mouvAS6vjFUbQxTOQXExhicPxmp6s
-         ZnQsmCH8vramH+Y2EWgnFXTHRSk1PGuCbDcLK4tFCP0Kl+X48kR9GiqHUb74JoJYV/br
-         /1aiSEn41s6a1mb8Wp3pX6hnCA/i449QeLEzC3lQzopNKiF7+aQxUMvCq862B2O5lzIt
-         b6+zs5sZYn4GibytsCVTlovhFvJ9gkmSKWMe9Cz8hFYJdmPeqNSiFGZ+CP8gmdVV6nkq
-         a9gYChKPmtkUSHsqHJnl4rfl79sOQ+6NjoLGSqBF34kIfh3v04+WJ0RobwD2smAn6Bt2
-         +ShQ==
+        b=ohRs26tKeCctr3b7p2KbTt+jSOxW96y776AddMmqmDK5NP6d0DlDnnxCAj+qgUKeF5
+         a2FthLt+bB/jdVBovLT5frUvAe1LmNRd+C4fSeIhKO3yV3t6cqAHMkdbw67YhrmN8S8P
+         UJjpTvK5a9Zq5yAFTGUjlud4LKm/ygKjzVK2ZiPzNVjChzDCRMpiL7+6U2ODguiF2tx1
+         LjeDDaKzkGm/rR9LiRFwi20RlXD6UkdTKgsWl8gNZXMvl/TMHyp1SS2OPiMnqPg73gLy
+         SDxnRw/QueZ9wxdLI8BrKPqTg4o7SSzlGaVMPvZaekAbZHQmq1In1QwFyLljJ/D+0rST
+         VZbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=t9t7HSfXuEQ7nZOme7R/qdGuF+sEx8nnB1beu8+Y/8U=;
-        b=TFqlHJbK3ysmZML0kfoQi/3CM1lU6+JQ/89ryvXRJsbdYnX7hPC99NwneuOq8QCRlb
-         EAXPS/vHX1PDA8PE5gUxHnDKbRRvsw9JOVCZroXlXPWXNFqdfVL4uAcwe5U3hB0GnMYP
-         mOXYiHgbBvqHvPEomHLprBHL45NQKCkhJgnHIFpoi3fhcnV/5RoM355V2mdVDRkouS1E
-         fIQ97nd/CNwOAApR619tHkggPc+oiAJ9zWo4NIU8aC5o3tIuiacjDckeSz90xZgAJirM
-         WKfodFx/QAZTbDjPqPnzQqYjpQqG+U/bpB1AboIbwiAQD42eGZYk8mFDhYu+hJ4+m2lM
-         bPgg==
+        bh=T2dv/fGe84mSUwMuGrO5PaR0JlUHjuesn5uhZNitj6s=;
+        b=lhdKV2yityD4G8YUtD4EwcgaoW2qdJItVbktQv6SDgirCz5IaozsakI/o+yeU//70k
+         21cMkH72nEqE0rEci6Gk52MPqpzJY80Jd0is8GIiMGVNRWE7NQFwmHNngimZmVDfZsPp
+         OMPwwubkf8Y/9J+QQqovU45OHTZEUSvrJSzr2wJ5HqvRomAOWBT1w1oDKvOf9skuBuEq
+         plJHUwCyd/U+RoPCyHL0B9DygiN/VTu3N8IFnWJvfL1qrfc20tbxZVvhTWgxy5kFZrjy
+         XkU3cW+rtxxoLPzf9FHYtSguLFRGjuw5MJd9A/QSBZ9V61hEPTKJOM5E0c2WLK8WbvMO
+         RFpQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dave Jiang <dave.jiang@intel.com>,
+	Krzysztof Rusocki <krzysztof.rusocki@intel.com>,
 	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.16 123/196] libnvdimm, namespace: use a safe lookup for dimm device name
-Date: Sun, 22 Apr 2018 15:52:23 +0200
-Message-Id: <20180422135110.617420376@linuxfoundation.org>
+Subject: [PATCH 4.16 122/196] libnvdimm, dimm: fix dpa reservation vs uninitialized label area
+Date: Sun, 22 Apr 2018 15:52:22 +0200
+Message-Id: <20180422135110.562601461@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455219044935426?=
-X-GMAIL-MSGID: =?utf-8?q?1598455219044935426?=
+X-GMAIL-THRID: =?utf-8?q?1598455217087202947?=
+X-GMAIL-MSGID: =?utf-8?q?1598455217087202947?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,66 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-commit 4f8672201b7e7ed4f5f6c3cf6dcd080648580582 upstream.
+commit c31898c8c711f2bbbcaebe802a55827e288d875a upstream.
 
-The following NULL dereference results from incorrectly assuming that
-ndd is valid in this print:
+At initialization time the 'dimm' driver caches a copy of the memory
+device's label area and reserves address space for each of the
+namespaces defined.
 
-  struct nvdimm_drvdata *ndd = to_ndd(&nd_region->mapping[i]);
+However, as can be seen below, the reservation occurs even when the
+index blocks are invalid:
 
-  /*
-   * Give up if we don't find an instance of a uuid at each
-   * position (from 0 to nd_region->ndr_mappings - 1), or if we
-   * find a dimm with two instances of the same uuid.
-   */
-  dev_err(&nd_region->dev, "%s missing label for %pUb\n",
-                  dev_name(ndd->dev), nd_label->uuid);
+ nvdimm nmem0: nvdimm_init_config_data: len: 131072 rc: 0
+ nvdimm nmem0: config data size: 131072
+ nvdimm nmem0: __nd_label_validate: nsindex0 labelsize 1 invalid
+ nvdimm nmem0: __nd_label_validate: nsindex1 labelsize 1 invalid
+ nvdimm nmem0: : pmem-6025e505: 0x1000000000 @ 0xf50000000 reserve <-- bad
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
- IP: nd_region_register_namespaces+0xd67/0x13c0 [libnvdimm]
- PGD 0 P4D 0
- Oops: 0000 [#1] SMP PTI
- CPU: 43 PID: 673 Comm: kworker/u609:10 Not tainted 4.16.0-rc4+ #1
- [..]
- RIP: 0010:nd_region_register_namespaces+0xd67/0x13c0 [libnvdimm]
- [..]
- Call Trace:
-  ? devres_add+0x2f/0x40
-  ? devm_kmalloc+0x52/0x60
-  ? nd_region_activate+0x9c/0x320 [libnvdimm]
-  nd_region_probe+0x94/0x260 [libnvdimm]
-  ? kernfs_add_one+0xe4/0x130
-  nvdimm_bus_probe+0x63/0x100 [libnvdimm]
+Gate dpa reservation on the presence of valid index blocks.
 
-Switch to using the nvdimm device directly.
-
-Fixes: 0e3b0d123c8f ("libnvdimm, namespace: allow multiple pmem...")
 Cc: <stable@vger.kernel.org>
-Reported-by: Dave Jiang <dave.jiang@intel.com>
+Fixes: 4a826c83db4e ("libnvdimm: namespace indices: read and validate")
+Reported-by: Krzysztof Rusocki <krzysztof.rusocki@intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/namespace_devs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/nvdimm/dimm.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/nvdimm/namespace_devs.c
-+++ b/drivers/nvdimm/namespace_devs.c
-@@ -1926,7 +1926,7 @@ static struct device *create_namespace_p
- 	}
+--- a/drivers/nvdimm/dimm.c
++++ b/drivers/nvdimm/dimm.c
+@@ -67,9 +67,11 @@ static int nvdimm_probe(struct device *d
+ 	ndd->ns_next = nd_label_next_nsindex(ndd->ns_current);
+ 	nd_label_copy(ndd, to_next_namespace_index(ndd),
+ 			to_current_namespace_index(ndd));
+-	rc = nd_label_reserve_dpa(ndd);
+-	if (ndd->ns_current >= 0)
+-		nvdimm_set_aliasing(dev);
++	if (ndd->ns_current >= 0) {
++		rc = nd_label_reserve_dpa(ndd);
++		if (rc == 0)
++			nvdimm_set_aliasing(dev);
++	}
+ 	nvdimm_clear_locked(dev);
+ 	nvdimm_bus_unlock(dev);
  
- 	if (i < nd_region->ndr_mappings) {
--		struct nvdimm_drvdata *ndd = to_ndd(&nd_region->mapping[i]);
-+		struct nvdimm *nvdimm = nd_region->mapping[i].nvdimm;
- 
- 		/*
- 		 * Give up if we don't find an instance of a uuid at each
-@@ -1934,7 +1934,7 @@ static struct device *create_namespace_p
- 		 * find a dimm with two instances of the same uuid.
- 		 */
- 		dev_err(&nd_region->dev, "%s missing label for %pUb\n",
--				dev_name(ndd->dev), nd_label->uuid);
-+				nvdimm_name(nvdimm), nd_label->uuid);
- 		rc = -EINVAL;
- 		goto err;
- 	}
