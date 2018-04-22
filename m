@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/hOdXMZzEw58JsOd1dhcN7bgLSM1JLng1Uv4rojfmreUnJmnZzkNassQ/1r/tH76E3PEem
-ARC-Seal: i=1; a=rsa-sha256; t=1524406708; cv=none;
+X-Google-Smtp-Source: AIpwx4/CwfSGR/SnxuDx9dpkhbp8ACK4rRRDE7ekFCzUx8YcinDDDV4xeoXeHGot+dL2faSCvQiS
+ARC-Seal: i=1; a=rsa-sha256; t=1524406705; cv=none;
         d=google.com; s=arc-20160816;
-        b=F6r6+N65IIblB1PAfGlPmaCY1YLY5iv4FurZdPZQ5PwRdJpIWstRaQsqwB6YZJUnkT
-         lNIJgoXClHUdcVMdrxezJ0+SOttTbpUExMQBHOZ8RRqf7mXwh+O7g86wu+OlstCb3pRr
-         URqQw295tlEDGf0VAowUGYt4EdVC5caGZ7gsNN1qxYpdRKvLrIRWPUco3S7zSWuHLD3y
-         9z7kEUNWeC0ckNLWb+E08NX4pzaxiYJb7o1GJYtfpbdbMmQR/VzazxXNleRyUNLhEQYM
-         DAMAhM7lVovtrPCzEx0ZS7JQQc/k/DEwgF1Q6OAVLjnajFhh4/Soy+JxTt1XG55C56Wi
-         sImw==
+        b=Svyo/m9KBj2bLYOudC6Va7Wtc9eWwvReOsrYWx7DsLyQyqPGyrUeLMoLhE96qT6elE
+         QWK5KOYh8pHOlJba8o3Wp9f5Ou+o6rkjPiB7rUpcHBIKhB1vtK81eRvQkcemoL8TBm0s
+         kiHYjFMtHd16Y5nx2jWanH4oAwQ3rLp1v+RjjVJga8PJ51pwa45bN1GvSbl8e/Jx/bGn
+         tbvfcXFgz7WAaUbjkydQMzUsH19Ha/TcqADOiwR9ZOYVEtRsGPx3I5MHYv6ZRZ4+sn2B
+         i6yv/6rT+OZhl+WXUz8lrbRTyr/GzyHEx0/k40szOOE6lMxye7Y+tiihqv/A38pUhWki
+         XBBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nwng4XIU3iYB1lhyWlrGZaSquqD8ORxucyTZXIJa8/k=;
-        b=odIZAWCJiSsXFec/BhLNKWLIojtb462sqT30XnelGO+g57kAlylAKbpP6ACwd96A55
-         sFDAq8QJZhxGqiAfKfrDon8P5SHqDeMl6wr57IUUl5vkhe7DDefewwYbi3erz6t4Aiwr
-         toxInDk7ldlh6JpuN4/7n/AkzM26bsxekos/Q/gyt3Yxle0DRpG3BdMykVNK1QQy4oA9
-         cDKm4xNA8fXTJIJp0GKWT91bnR5aZ3xNBrD26DB3otO/CFi2oiX0lqYrtVJilqvQzmVN
-         wpuaAI7a5/i5pVyoeZGGNXkc698EXd53byDxGwU9u8BR3aoe2ZSvcVLeNn0d6EIuCz92
-         Ju4w==
+        bh=lfG+RacQBLUxbaS9cXZvPo9u4jttmcZr1h7FATCGn0Q=;
+        b=rUw90OfYfTJFrGGaHLGafaEiPSkpMHZ35LahyRr9YaQkyoBYNRQPG4eRwJksTlYkC7
+         d2QgSnuadaTkLPQYWcX2MQ4gE43dptNBTLVa2qatbl3p5/JqDcQLi6qXimv/GyD+BNuW
+         5eQdGbVoUE4TDm4eC5onBHiUUUNndi1Fu0P211W5UiEWCOiWQIJPDGJII44zWgiBvIAZ
+         NfEvXvj1gz8vjL4jn9y7923vRgy9hM60oInhCMqRISIJWcLyi47hD7B1c87HJNdPk67G
+         SmgIUEVMDBO/9T1ObCCfEVnyMGPvY72wYScq0T8wrTSrHCZaSIzbbYZsfzVGQdBaUKyC
+         XlGg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Aaron Ma <aaron.ma@canonical.com>,
-	Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.4 39/97] HID: i2c-hid: fix size check and type usage
-Date: Sun, 22 Apr 2018 15:53:17 +0200
-Message-Id: <20180422135307.503753820@linuxfoundation.org>
+	Thinh Nguyen <thinhn@synopsys.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.4 38/97] usb: dwc3: pci: Properly cleanup resource
+Date: Sun, 22 Apr 2018 15:53:16 +0200
+Message-Id: <20180422135307.458166318@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455016186220261?=
-X-GMAIL-MSGID: =?utf-8?q?1598456288878019015?=
+X-GMAIL-THRID: =?utf-8?q?1598454910876862386?=
+X-GMAIL-MSGID: =?utf-8?q?1598456285375540605?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,57 +49,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-commit ac75a041048b8c1f7418e27621ca5efda8571043 upstream.
+commit cabdf83dadfb3d83eec31e0f0638a92dbd716435 upstream.
 
-When convert char array with signed int, if the inbuf[x] is negative then
-upper bits will be set to 1. Fix this by using u8 instead of char.
+Platform device is allocated before adding resources. Make sure to
+properly cleanup on error case.
 
-ret_size has to be at least 3, hid_input_report use it after minus 2 bytes.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Cc: <stable@vger.kernel.org>
+Fixes: f1c7e7108109 ("usb: dwc3: convert to pcim_enable_device()")
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/i2c-hid/i2c-hid.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/usb/dwc3/dwc3-pci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -137,10 +137,10 @@ struct i2c_hid {
- 						   * register of the HID
- 						   * descriptor. */
- 	unsigned int		bufsize;	/* i2c buffer size */
--	char			*inbuf;		/* Input buffer */
--	char			*rawbuf;	/* Raw Input buffer */
--	char			*cmdbuf;	/* Command buffer */
--	char			*argsbuf;	/* Command arguments buffer */
-+	u8			*inbuf;		/* Input buffer */
-+	u8			*rawbuf;	/* Raw Input buffer */
-+	u8			*cmdbuf;	/* Command buffer */
-+	u8			*argsbuf;	/* Command arguments buffer */
- 
- 	unsigned long		flags;		/* device flags */
- 
-@@ -387,7 +387,8 @@ static int i2c_hid_hwreset(struct i2c_cl
- 
- static void i2c_hid_get_input(struct i2c_hid *ihid)
- {
--	int ret, ret_size;
-+	int ret;
-+	u32 ret_size;
- 	int size = le16_to_cpu(ihid->hdesc.wMaxInputLength);
- 
- 	if (size > ihid->bufsize)
-@@ -412,7 +413,7 @@ static void i2c_hid_get_input(struct i2c
- 		return;
+--- a/drivers/usb/dwc3/dwc3-pci.c
++++ b/drivers/usb/dwc3/dwc3-pci.c
+@@ -167,7 +167,7 @@ static int dwc3_pci_probe(struct pci_dev
+ 	ret = platform_device_add_resources(dwc3, res, ARRAY_SIZE(res));
+ 	if (ret) {
+ 		dev_err(dev, "couldn't add resources to dwc3 device\n");
+-		return ret;
++		goto err;
  	}
  
--	if (ret_size > size) {
-+	if ((ret_size > size) || (ret_size <= 2)) {
- 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
- 			__func__, size, ret_size);
- 		return;
+ 	pci_set_drvdata(pci, dwc3);
