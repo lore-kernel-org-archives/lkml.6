@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49UoEdigZ9ZXxaCHSMDt6c48xg2MlQ9L13vUpUeGKn7OfF3pRMMCexyU9HJiGUEWSzBuHqH
-ARC-Seal: i=1; a=rsa-sha256; t=1524405464; cv=none;
+X-Google-Smtp-Source: AIpwx48zJHaVI3m1jexye9tFsgkInxRkfWqdHiBI59GQt6jdsOIhzrmQ1AvubJA4ahuYKBEbUUTU
+ARC-Seal: i=1; a=rsa-sha256; t=1524405462; cv=none;
         d=google.com; s=arc-20160816;
-        b=tNPPNcmkQ0bSCbcs5z00jTwrKOSgPGS4m3SOKI27XjewvMeA22PixAE+K8SMBxHQ67
-         t47cnj8es6/HK9H110/cCsk7nXN7RQBxkvZDwv8Cyzclu8BjyMI9vFoTMxxd4nv3YaND
-         CI1KwHR6i6uS/C6IyGyYJBWuRIMwtx5UYMZfYJObE52aOu74rB8J7NS+rSs0M7by9cEV
-         CFqRDBjapOBVNUoXgjvNnTWszXv6rmQTcRm+zlAFAsRmI62ObsN8jB/u24LFKmj6ZZda
-         V/4jztt9y9NhMx+8V2OqSToj2VQht/vX8v5IpkrUjht1HqpFxKkonQF4C+qAnhcKlR72
-         bYkQ==
+        b=H/qkaUsuSn5mTpZPZlpSbnKCYWP1zQ1mo/+KAyv8EdjBFvDTNVonEM2xgwHyqFSmy0
+         CYqsGqU9LgEhuGGSbJkgmhIAqTTc5WRjrOGMFI1pLh1k2Z64E8gavGM2Bc85/NvSLqQ1
+         mlDUsuXsDMP2ii42FTGW0l8vD1tRaK8Aakau14mWwnLLk/BlKpmHqtIOmtiO4OoE6Ljc
+         6bWGy158Fws3pYqvAKmHTe/OeoOUWOuy0totPVT8OvQIWYP1e+rTN2ft7hWIyg2fNXpp
+         ypZUiUZoaNerDX0CuKRM9fkXZ1XKdEj5poFQ41lyxcO41CUsyrNRuDxRbrtWPAoc6UlE
+         zt8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=t/6oF9ZmS1T5Osqox1sOc0sVcon1epQbt7ayWDZgJQ8=;
-        b=wiPhXMmlHzSXdTl0WCNE9SSSdPIKur1yX3Xn5NRQKPDBLMzyOi11QUBVJafVzMxj7H
-         3w6HuZ6llisOs2keMAGZrV/jYTl4jA0m6oDPlorQves2FBwxGaqH7W/D2xqqCgBiRZ0d
-         UBizTjHPzhMUR7VItnjaD+HSMoY0/IxiKifFEX+iAvtgK+N501YlWqqJLMekMMJu4gKu
-         dLmbQZmeOG+z4W2TsdKC6z6o7oYF3JZ+fK9MrhJL3qH3KDJIn6hslImTbJh2j76KRhNY
-         LeEolb2eYmdzbA4CdGpdDwMD4I2KrLSune6b4T97XGMqF+uZNV5cKp16xobxRik+uaaf
-         wC7g==
+        bh=DCOJNu7Pjq1adpFZn2KVgv34ZYj7blhekA491N/TXL8=;
+        b=ZMkwsZM4ASJ/aBpblhJV6mocHuq8lstyqlJn+w1fxzCTm0AWax2kzwq0tQ9OQLPXhn
+         zs9efNQTZVPCE2YAg9PQpNVJSRkwMaga2+GVCbcoEiTYe0JSnajFwiMEJiqDfzwfTwBW
+         nzJkl5VB+ZMwE4JAIDwMEXuPjI05xkDIE6trcYRVnuSl7M0Hz05l90Cln5FV9NV6gOtZ
+         6jXUmOAwJjRZer6Wo0qJ5+xlWh2/QykuTTnBW5IwZrXVk5KC7luS9QdZpW/gYeIdyRk+
+         oaqf38Hsr8nTn56cts0XlTlEx5xHy1QVYMDxwZ2blAPjulWa5U9zN51jDDBmjNMchr+u
+         W5Xg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH 4.16 075/196] thunderbolt: Wait a bit longer for ICM to authenticate the active NVM
-Date: Sun, 22 Apr 2018 15:51:35 +0200
-Message-Id: <20180422135108.112426632@linuxfoundation.org>
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.16 074/196] ASoC: topology: Fix kcontrol name string handling
+Date: Sun, 22 Apr 2018 15:51:34 +0200
+Message-Id: <20180422135108.065623981@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454984602080437?=
-X-GMAIL-MSGID: =?utf-8?q?1598454984602080437?=
+X-GMAIL-THRID: =?utf-8?q?1598454981902494157?=
+X-GMAIL-MSGID: =?utf-8?q?1598454981902494157?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,53 +49,104 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Liam Girdwood <liam.r.girdwood@linux.intel.com>
 
-commit e4be8c9b6a512e274cb6bbac4ac869d73880a8b3 upstream.
+commit 267e2c6fd7ca3d4076d20f9d52d49dc91addfe9d upstream.
 
-Sometimes during cold boot ICM has not yet authenticated the active NVM
-image leading to timeout and failing the driver probe. Allow ICM to take
-some more time and increase the timeout to 3 seconds before we give up.
+Fix the topology kcontrol string handling so that string pointer
+references are strdup()ed instead of being copied. This fixes issues
+with kcontrol templates on the stack or ones that are freed. Remember
+and free the strings too when topology is unloaded.
 
-While there fix icm_firmware_init() to return the real error code
-without overwriting it with -ENODEV.
-
-Fixes: f67cf491175a ("thunderbolt: Add support for Internal Connection Manager (ICM)")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thunderbolt/icm.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ sound/soc/soc-topology.c |   23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
---- a/drivers/thunderbolt/icm.c
-+++ b/drivers/thunderbolt/icm.c
-@@ -728,14 +728,14 @@ static bool icm_ar_is_supported(struct t
- static int icm_ar_get_mode(struct tb *tb)
- {
- 	struct tb_nhi *nhi = tb->nhi;
--	int retries = 5;
-+	int retries = 60;
- 	u32 val;
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -523,6 +523,7 @@ static void remove_widget(struct snd_soc
+ 				kfree(se->dobj.control.dtexts[j]);
  
- 	do {
- 		val = ioread32(nhi->iobase + REG_FW_STS);
- 		if (val & REG_FW_STS_NVM_AUTH_DONE)
- 			break;
--		msleep(30);
-+		msleep(50);
- 	} while (--retries);
- 
- 	if (!retries) {
-@@ -1054,6 +1054,9 @@ static int icm_firmware_init(struct tb *
- 			break;
- 
- 		default:
-+			if (ret < 0)
-+				return ret;
-+
- 			tb_err(tb, "ICM firmware is in wrong mode: %u\n", ret);
- 			return -ENODEV;
+ 			kfree(se);
++			kfree(w->kcontrol_news[i].name);
  		}
+ 		kfree(w->kcontrol_news);
+ 	} else {
+@@ -540,6 +541,7 @@ static void remove_widget(struct snd_soc
+ 			 */
+ 			kfree((void *)kcontrol->private_value);
+ 			snd_ctl_remove(card, kcontrol);
++			kfree(w->kcontrol_news[i].name);
+ 		}
+ 		kfree(w->kcontrol_news);
+ 	}
+@@ -1233,7 +1235,9 @@ static struct snd_kcontrol_new *soc_tplg
+ 		dev_dbg(tplg->dev, " adding DAPM widget mixer control %s at %d\n",
+ 			mc->hdr.name, i);
+ 
+-		kc[i].name = mc->hdr.name;
++		kc[i].name = kstrdup(mc->hdr.name, GFP_KERNEL);
++		if (kc[i].name == NULL)
++			goto err_str;
+ 		kc[i].private_value = (long)sm;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 		kc[i].access = mc->hdr.access;
+@@ -1278,8 +1282,10 @@ static struct snd_kcontrol_new *soc_tplg
+ err_str:
+ 	kfree(sm);
+ err:
+-	for (--i; i >= 0; i--)
++	for (--i; i >= 0; i--) {
+ 		kfree((void *)kc[i].private_value);
++		kfree(kc[i].name);
++	}
+ 	kfree(kc);
+ 	return NULL;
+ }
+@@ -1310,7 +1316,9 @@ static struct snd_kcontrol_new *soc_tplg
+ 		dev_dbg(tplg->dev, " adding DAPM widget enum control %s\n",
+ 			ec->hdr.name);
+ 
+-		kc[i].name = ec->hdr.name;
++		kc[i].name = kstrdup(ec->hdr.name, GFP_KERNEL);
++		if (kc[i].name == NULL)
++			goto err_se;
+ 		kc[i].private_value = (long)se;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 		kc[i].access = ec->hdr.access;
+@@ -1386,6 +1394,7 @@ err_se:
+ 			kfree(se->dobj.control.dtexts[j]);
+ 
+ 		kfree(se);
++		kfree(kc[i].name);
+ 	}
+ err:
+ 	kfree(kc);
+@@ -1424,7 +1433,9 @@ static struct snd_kcontrol_new *soc_tplg
+ 			"ASoC: adding bytes kcontrol %s with access 0x%x\n",
+ 			be->hdr.name, be->hdr.access);
+ 
+-		kc[i].name = be->hdr.name;
++		kc[i].name = kstrdup(be->hdr.name, GFP_KERNEL);
++		if (kc[i].name == NULL)
++			goto err;
+ 		kc[i].private_value = (long)sbe;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 		kc[i].access = be->hdr.access;
+@@ -1454,8 +1465,10 @@ static struct snd_kcontrol_new *soc_tplg
+ 	return kc;
+ 
+ err:
+-	for (--i; i >= 0; i--)
++	for (--i; i >= 0; i--) {
+ 		kfree((void *)kc[i].private_value);
++		kfree(kc[i].name);
++	}
+ 
+ 	kfree(kc);
+ 	return NULL;
