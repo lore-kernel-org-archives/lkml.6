@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48oNlLcQWLsequOtq08Xwrf8aTpSr7D3PxTwc9Y8FAjK0jFRqcgT58kaiJjM5+uVSGKhWuz
-ARC-Seal: i=1; a=rsa-sha256; t=1524406375; cv=none;
+X-Google-Smtp-Source: AIpwx4/QdH8+fHW7hz1/IPZae1Pt8tI196vLbKau5UEaoYJLR5h3dDAbfm2eOwN/paisZTUerX8r
+ARC-Seal: i=1; a=rsa-sha256; t=1524406373; cv=none;
         d=google.com; s=arc-20160816;
-        b=mr9lQ5YruITZTt2TRDLZ81wTkR1AaRe+Qo8nzrZ5C94npVDd/llytZEgWN9Vi2pZdS
-         m1+yFdog9sgIZSYBLWgN/UBp62cPctRT92UIHmEVJv74LQymLp9l6CviinRIU5gA7Clb
-         NzUHHhWDevKyJgkd88+hKuWImw/EP6CvAm/l0WcLKSQajX6FRZWZBWCxi/KwFgoa2L/i
-         Oa56KjpUhpyy0qXRe7rekH8mJkzpXHzucBlkt7lmzgJ5V5cGlDM5zOuWB/RosAy9pwW/
-         uQ8bgb+Ew31GtAFa1dGgdEtR3uW/snCGjaqaNmprJVw4Pvgcw0CbVORj2A3c62vSPiwf
-         bUPA==
+        b=dgLYIavGAdjaYEx4GLAmMBC66vfC576N2U74co2Hv77vi9tivl2dvMeLZTDIvwNFRA
+         jeaolnbTq6jFlpAGcfHpYPGyUe++TyoMFDQR5fc6LaHOWSpGh4j8vBMuy8j9qolEx323
+         UGpuU4dw3THtaG8HCiWf5Ro/+RzqXHbe7C/+oikVDR0bf29uD9YCyvza6hd5TZryQ5iE
+         NsGJBF42fTFzeX6diAGGNvnwjW5/9ey2V1pnrHHvvdwchVf5ivSH3MV0VipfMAHUAAt9
+         jj8bK0H+5a8KJfPhbiPZNDhh6aicW6uF3deZzrlxZQVzj/jldofQFjCP4CTMdKyvduNE
+         pGwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RICGOdPvWtxwr4P4VTkJWlTG69q48Ey/qKFiWYZCngw=;
-        b=bdSEaH6A62q4hVC4oRy9ZkSxyinWP8ZTKso7ej4J9zlR9/rJeswvd2jlkOj2qj6MTc
-         6Zo7IbCdTWwo7/BwTeh0mAI8UQj16NbN1lHuUduqrAXatMFigyHcXpKUqQgpYeeeBZvY
-         Py4BhKRY+U3l7UNBSTXiw9k8Sxf+KN8BjUwr6EjoT0zUwjCoWEZcEO9oPO5lxXMmVTWX
-         g7CaWV6TrNL6O5fnTzjiaMzVTqtia82RuDmebqdS8nQi/viAE2Z5eFT+gWwRpQhhRpxH
-         DcSvSTpYEiEbSHBqEd+JArhQpbSmFfQMnAEBv+hnKvlyhnNTrQwi7U3KJo/Bg9cMvMHV
-         DB7g==
+        bh=3ErvBPokaK/X39YheVW+hF5zwDnHKJzXrQLygIpdzW4=;
+        b=gUNrFsW+yR9mt/eJYu12GfCGPhFNxM7KCMQmqL4iCFZo2cYSo1rilkznhGhTF3BYMp
+         aEgTT8zzmuu6uS0FfbYcaCkGJOONX3fTAJyQJaabLZvM0sbMJtAtsg95Xc/00pAw1f8X
+         jLP0EygRnW7ZAozFSoC3SEztp8UnM7RN+RoHtA43dzKZ1oNmhlBnrDps8lq5aIS50osz
+         tHcabliGp7EntrjtG8hBOtuQJLTyvdfUyNcMeV8bRAIFz2jYR/oZ2fSCCMt3nJWvk686
+         T3cb6vzNrR8jWD0yx3496R1WP7JSxUzwnp4LCy20YV8m/J1Pw13GOn672RmpXeeU9LI7
+         fxrg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Krzysztof Mazur <krzysiek@podlesie.net>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
 	Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.9 48/95] um: Use POSIX ucontext_t instead of struct ucontext
-Date: Sun, 22 Apr 2018 15:53:17 +0200
-Message-Id: <20180422135212.380177212@linuxfoundation.org>
+Subject: [PATCH 4.9 47/95] um: Compile with modern headers
+Date: Sun, 22 Apr 2018 15:53:16 +0200
+Message-Id: <20180422135212.338598092@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455135109265878?=
-X-GMAIL-MSGID: =?utf-8?q?1598455939712374780?=
+X-GMAIL-THRID: =?utf-8?q?1598455132138531431?=
+X-GMAIL-MSGID: =?utf-8?q?1598455937157149907?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,52 +49,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Krzysztof Mazur <krzysiek@podlesie.net>
+From: Jason A. Donenfeld <Jason@zx2c4.com>
 
-commit 4d1a535b8ec5e74b42dfd9dc809142653b2597f6 upstream.
+commit 530ba6c7cb3c22435a4d26de47037bb6f86a5329 upstream.
 
-glibc 2.26 removed the 'struct ucontext' to "improve" POSIX compliance
-and break programs, including User Mode Linux. Fix User Mode Linux
-by using POSIX ucontext_t.
+Recent libcs have gotten a bit more strict, so we actually need to
+include the right headers and use the right types. This enables UML to
+compile again.
 
-This fixes:
-
-arch/um/os-Linux/signal.c: In function 'hard_handler':
-arch/um/os-Linux/signal.c:163:22: error: dereferencing pointer to incomplete type 'struct ucontext'
-  mcontext_t *mc = &uc->uc_mcontext;
-arch/x86/um/stub_segv.c: In function 'stub_segv_handler':
-arch/x86/um/stub_segv.c:16:13: error: dereferencing pointer to incomplete type 'struct ucontext'
-          &uc->uc_mcontext);
-
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Krzysztof Mazur <krzysiek@podlesie.net>
 Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/um/os-Linux/signal.c |    2 +-
- arch/x86/um/stub_segv.c   |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/um/os-Linux/file.c   |    1 +
+ arch/um/os-Linux/signal.c |    1 +
+ arch/x86/um/stub_segv.c   |    1 +
+ 3 files changed, 3 insertions(+)
 
+--- a/arch/um/os-Linux/file.c
++++ b/arch/um/os-Linux/file.c
+@@ -12,6 +12,7 @@
+ #include <sys/mount.h>
+ #include <sys/socket.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <sys/un.h>
+ #include <sys/types.h>
+ #include <os.h>
 --- a/arch/um/os-Linux/signal.c
 +++ b/arch/um/os-Linux/signal.c
-@@ -160,7 +160,7 @@ static void (*handlers[_NSIG])(int sig,
+@@ -16,6 +16,7 @@
+ #include <os.h>
+ #include <sysdep/mcontext.h>
+ #include <um_malloc.h>
++#include <sys/ucontext.h>
  
- static void hard_handler(int sig, siginfo_t *si, void *p)
- {
--	struct ucontext *uc = p;
-+	ucontext_t *uc = p;
- 	mcontext_t *mc = &uc->uc_mcontext;
- 	unsigned long pending = 1UL << sig;
- 
+ void (*sig_info[NSIG])(int, struct siginfo *, struct uml_pt_regs *) = {
+ 	[SIGTRAP]	= relay_signal,
 --- a/arch/x86/um/stub_segv.c
 +++ b/arch/x86/um/stub_segv.c
-@@ -11,7 +11,7 @@
+@@ -6,6 +6,7 @@
+ #include <sysdep/stub.h>
+ #include <sysdep/faultinfo.h>
+ #include <sysdep/mcontext.h>
++#include <sys/ucontext.h>
+ 
  void __attribute__ ((__section__ (".__syscall_stub")))
  stub_segv_handler(int sig, siginfo_t *info, void *p)
- {
--	struct ucontext *uc = p;
-+	ucontext_t *uc = p;
- 
- 	GET_FAULTINFO_FROM_MC(*((struct faultinfo *) STUB_DATA),
- 			      &uc->uc_mcontext);
