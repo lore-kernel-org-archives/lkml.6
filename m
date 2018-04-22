@@ -1,87 +1,64 @@
-Return-Path: <okaya@codeaurora.org>
-X-Google-Smtp-Source: AIpwx4+QQC+nwyWx77cVNmH5qF9YTRHHySffLnNZHrPQywLyc/K17rq2eWSoqO2j2WZxme0P59TV
-ARC-Seal: i=1; a=rsa-sha256; t=1524151270; cv=none;
+Return-Path: <vinod.koul@intel.com>
+X-Google-Smtp-Source: AIpwx48VtgMhLHwRjZJokz0rLjDxvaENj3jnCYTibzNGYioVJu9g1MH92PJYJaptyiyvdV2bDlYo
+ARC-Seal: i=1; a=rsa-sha256; t=1524378479; cv=none;
         d=google.com; s=arc-20160816;
-        b=YiX+6h8ccoMCF2tMZS7ZPIQGlGsqOq+HG0IYnPx5jngiLScjN/U2N1FUANuwq3znxR
-         fIfRjVhKOwnPGH+k4v/ejrEuLxF3Cv8zZhw3rhwdueKagbj58n8LRnkOlPxBhX4CFeBI
-         HjVT6niN4smnRm4STxN3kKdwSrGesLQMVhN3UFQMNY1iCMzhiBS+/mxRqMl34DAW88LK
-         Ai/J85L/n5JH8ke7pYAe72BlJxALx6JCWJ3rOpSqoGqpYdIVeRG4xzVJSBvooWPxcceN
-         QdiWWABphjsq404ujpndW02ngsXXfkogWBMKL8EdvGtgh52dcwxrJ3PqQusY2m8yGzH5
-         q85g==
+        b=lUQctnz29gwtnlyClwHU4gqA0BeicBthjjkPCRhbMX4nwhMwgDfvKh0Skre5yNFphL
+         rl8n9cDroA1yaGYBUrwAoayMQmVJ/MQPJF3c9yemg8e9vqwGNQSAb62XE3c+gIDmgrSe
+         i371Lz0auhPKjqNwczr1ueqaQqxztUK2ehIb2d6J3Bhyc3IdknJTq0LN8oGAINvFd40U
+         ZGvZDtPULZOAOdBlP290DkuS2s9MlbrT3K4XKKhWjqP/BjvnfJPK7B8/3BVW2ioUmuyo
+         r9hbh1fmfq9Hbric52stqX+WKTWN80zYNTp/tXtubUa24O1B+7z6DTQmgMFVtp1+iiCb
+         IYKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=UMLigqAxBeanJOmY+w6m2DrM+2kYI8rP5egVbJZ7ZFs=;
-        b=YajAljnafa9iHxinyDUYan7xjO+cgevP/j5XJ+JZritKqpZeaQzxwaM+w4142A3a7v
-         qOQs0nnWEiDqXbXyD5zS4/0yk/eGOND4ZFenPm8IdBcIO+/gDHePb2JBjHLl7O/YVvpM
-         82O2sDdHhJP8kXCXOfWnvX6693Xv7/lEyJbzGfy2FOyD/kFIHIaoNd3dSRDJMWZevS3I
-         gG1y0ujDx7o0LoUd1TL2br2paENdLM1PX3Hz/VpRSsh4n3PR4EWnqVmCyrHFFtkoQfAD
-         LvK2VGhyvRiTaMJN9026SsNbihw2k5y3HvXCHhYN1sD/CS9hzvpMI/YFIhOlqdRYXmx9
-         gRBw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=TC4I+weZYI7EE5f0pU80VlI7ygSHpRiU0HvhZJZv+TM=;
+        b=IztvUfS+J5v384Y6j7UA92Y139uwl9fsSdL6fCjabEi/4VGy1+eipNtINIJsHI2I8D
+         h/ij6yYVXPqybUNyhdsZCP6RUOucp7ZD+um9kwT8zGVPSnX1vVHyAfHF3KoWdeRytPCU
+         Uxyj08Wk9n3tmbb5N+z+3Al1kHLoo20p+pxptnrPbxsSzNGx3IOT0iK9PRVtu4NQejVN
+         9iRWQby2XV7kNv6iu9bfqnwUOFW0Fp2L2cuUpeWsiBYeH0XDHBWDT3dAKSgR3lIv7sEc
+         Xk/WiFva4MgDssFfIFuiad9m1i91unr0ISrG50g0Sqi0e+hbf90rOASfATb6QEcY7S6/
+         4ATA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=S/iNTAPS;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=b0SNtZYq;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+       spf=pass (google.com: domain of vinod.koul@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=vinod.koul@intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=S/iNTAPS;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=b0SNtZYq;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88C71602B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: dmaengine@vger.kernel.org,
-	timur@codeaurora.org,
-	sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sinan Kaya <okaya@codeaurora.org>,
+       spf=pass (google.com: domain of vinod.koul@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=vinod.koul@intel.com
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,310,1520924400";
+   d="scan'208";a="45110498"
+Date: Sun, 22 Apr 2018 12:02:32 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: dmaengine@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	"David S. Miller" <davem@davemloft.net>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Randy Dunlap <rdunlap@infradead.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] MAINTAINERS: add maintainer for Qualcomm HIDMA drivers
-Date: Thu, 19 Apr 2018 11:20:32 -0400
-Message-Id: <1524151261-13461-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: add maintainer for Qualcomm HIDMA drivers
+Message-ID: <20180422063232.GX6014@localhost>
+References: <1524151261-13461-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524151261-13461-1-git-send-email-okaya@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598188443339699993?=
-X-GMAIL-MSGID: =?utf-8?q?1598188443339699993?=
+X-GMAIL-MSGID: =?utf-8?q?1598426688139080329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-drivers/dma/qcom directory is being shared by multiple QCOM dmaengine
-drivers. Separate ownership by filenames.
+On Thu, Apr 19, 2018 at 11:20:32AM -0400, Sinan Kaya wrote:
+> drivers/dma/qcom directory is being shared by multiple QCOM dmaengine
+> drivers. Separate ownership by filenames.
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Applied, thanks
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ff14894..111dd8d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11669,6 +11669,14 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rkuo/linux-hexagon-kernel.g
- S:	Supported
- F:	arch/hexagon/
- 
-+QUALCOMM HIDMA DRIVER
-+M:	Sinan Kaya <okaya@codeaurora.org>
-+L:	linux-arm-kernel@lists.infradead.org
-+L:	linux-arm-msm@vger.kernel.org
-+L:	dmaengine@vger.kernel.org
-+S:	Supported
-+F:	drivers/dma/qcom/hidma*
-+
- QUALCOMM IOMMU
- M:	Rob Clark <robdclark@gmail.com>
- L:	iommu@lists.linux-foundation.org
 -- 
-2.7.4
+~Vinod
