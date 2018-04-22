@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48vvZiYHGivDVuZWot3wjgSOMYYlQJJKRsswIjRSJvrIh2i3DcTgpdzv7/HkvB7sb/y09+4
-ARC-Seal: i=1; a=rsa-sha256; t=1524406254; cv=none;
+X-Google-Smtp-Source: AIpwx4+CqRFAzQWhymyG+2hDmmMpYIefO4IeGMmkKEj3WK5QKwPTPbpOu8XcfFeE7qT1qOa1qcKS
+ARC-Seal: i=1; a=rsa-sha256; t=1524406251; cv=none;
         d=google.com; s=arc-20160816;
-        b=G6zlnXQteRFlCGrj6x8RKDg4vpWqc8LaBTxaOBmD4TAgY36scjW+YOwMDlfshlwPyI
-         Ojierxp87Sh3pxSTbpfHJ8Up38t+blFFM17Hp/hHvlOMR07kVIEOQl4bLMWLcSw33dPV
-         J+mTrCOEYKIoA3AUhiBLng47DbBYOuhrs7QMlTEtpU/A1P0BQjt6ySkFmHHA0DDtJ/4z
-         JDlAtojkJH5bJjTxcFrvLVRzzS6IiukMU8Or5+GmDseWuDHnXpbu6i1nLi9YeZ0pwXVX
-         5XRS1j1snny3WRUCxkCP3gxvGZ9cXc4curRlVy2x2hzhdyiejQEej3DcKHiujy9ptzi9
-         zTMw==
+        b=zus44juEtYPPIogkmoVsCLV4AFiw64Gu8FNy+jaf7VeywSyM2P7rJrGe9vBGCEe5H+
+         GDbWSxHFNTxRU9ja68V5LyVGDPftnghHQHNcdhBBv2X9Iq7KXsiec7LKCYS1tUzeOzi2
+         KI9/cRqQ82q9UQWpYAmN7mrsqtuRAPfTY2HBpOs77x3Y/BKBDIqRbySMdyyzA4rNe7ro
+         Z5JMpYlu3u5epy4PHAefFeyI3cTRtbexZNvKOaw79JvnxKYAECDfFkn89C1fzelRp/Vz
+         rB6ufGPDZZNF5LtIst/0WeunV3bB8X/SZBxiqpFW6KcgV4PHEfRcxk4wFd8y1enMvjR1
+         8Jaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=26pcYz//oEs3ynPOxBNlbgb3LdbhnzRYIE8oc39CfIM=;
-        b=Y2CFYgkczy3rhT0r2dyhT86rERnAfPYwwgkjMutPhZpdiYyhKVUn0BzHzGoYM5cXpg
-         xuSZm+ygBj6xiC2t7OwFbWR96xYwxTmNUbPlWzd8HPJvGojVzradIX099pz697tw7gFK
-         fWEQlMEJAi7PvmRENZwfyTM4IPvCJfkU7mVSmsgErgKkEknlwX55ySVoYe3Bd3AZQBKR
-         Td2keBHV0qiXuX4KkCG3IGBqnSezUASwOBuUYMyVn4UJLptRml8DysG2Ckn2KBceSLi3
-         gkk6hI5IZ72DslPg9ahxjAFQ9laDAMH4X8yqjEgsZvhAAsmmdzzSM293eX0gJzzN/lTp
-         ZG+A==
+        bh=V0PZt0VGuklk/XXIVuerEppIRzlYdPb74X3S2oktJfg=;
+        b=UopqERb9HFVEEqWn2SZG5vaHGhcDIKo8GxRcVf1mFwBraFeEReoxgffRWHeuk3RMMD
+         9tgF6qF9qn967TrjrIO1xiDoE/iann4KycqZEyJqdK7pTBTBm6IIQ87UvKIF2bGRdMoh
+         ZThpfyFjM3rY3Y8C3+4XwRXoik2dfRHp7Ehd2ANwwOlEXoWoo9p0wZS5SLKRZVH3N8M9
+         02Yctszh7Xgj6iItxE/fs+n54sKrd6pvUyufMz6s159RHqBY63rj7froM9Hbt6tVaGPa
+         2e2OtGtoZYJ+/zx9wLxyFgkQ3UtHpW0Tfq0V9IOGAIQ9dS0NARU5PZL8wHfS2c5x9qTT
+         4SMw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>,
+	Mingye Wang <arthur200126@gmail.com>,
 	Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.14 149/164] fanotify: fix logic of events on child
-Date: Sun, 22 Apr 2018 15:53:36 +0200
-Message-Id: <20180422135141.634333814@linuxfoundation.org>
+Subject: [PATCH 4.14 148/164] udf: Fix leak of UTF-16 surrogates into encoded strings
+Date: Sun, 22 Apr 2018 15:53:35 +0200
+Message-Id: <20180422135141.575253048@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455284731037282?=
-X-GMAIL-MSGID: =?utf-8?q?1598455813200389377?=
+X-GMAIL-THRID: =?utf-8?q?1598455282047443898?=
+X-GMAIL-MSGID: =?utf-8?q?1598455809685599761?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,82 +49,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 54a307ba8d3cd00a3902337ffaae28f436eeb1a4 upstream.
+commit 44f06ba8297c7e9dfd0e49b40cbe119113cca094 upstream.
 
-When event on child inodes are sent to the parent inode mark and
-parent inode mark was not marked with FAN_EVENT_ON_CHILD, the event
-will not be delivered to the listener process. However, if the same
-process also has a mount mark, the event to the parent inode will be
-delivered regadless of the mount mark mask.
+OSTA UDF specification does not mention whether the CS0 charset in case
+of two bytes per character encoding should be treated in UTF-16 or
+UCS-2. The sample code in the standard does not treat UTF-16 surrogates
+in any special way but on systems such as Windows which work in UTF-16
+internally, filenames would be treated as being in UTF-16 effectively.
+In Linux it is more difficult to handle characters outside of Base
+Multilingual plane (beyond 0xffff) as NLS framework works with 2-byte
+characters only. Just make sure we don't leak UTF-16 surrogates into the
+resulting string when loading names from the filesystem for now.
 
-This behavior is incorrect in the case where the mount mark mask does
-not contain the specific event type. For example, the process adds
-a mark on a directory with mask FAN_MODIFY (without FAN_EVENT_ON_CHILD)
-and a mount mark with mask FAN_CLOSE_NOWRITE (without FAN_ONDIR).
-
-A modify event on a file inside that directory (and inside that mount)
-should not create a FAN_MODIFY event, because neither of the marks
-requested to get that event on the file.
-
-Fixes: 1968f5eed54c ("fanotify: use both marks when possible")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+CC: stable@vger.kernel.org # >= v4.6
+Reported-by: Mingye Wang <arthur200126@gmail.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/notify/fanotify/fanotify.c |   34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
+ fs/udf/unicode.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -90,7 +90,7 @@ static bool fanotify_should_send_event(s
- 				       u32 event_mask,
- 				       const void *data, int data_type)
- {
--	__u32 marks_mask, marks_ignored_mask;
-+	__u32 marks_mask = 0, marks_ignored_mask = 0;
- 	const struct path *path = data;
+--- a/fs/udf/unicode.c
++++ b/fs/udf/unicode.c
+@@ -28,6 +28,9 @@
  
- 	pr_debug("%s: inode_mark=%p vfsmnt_mark=%p mask=%x data=%p"
-@@ -106,24 +106,20 @@ static bool fanotify_should_send_event(s
- 	    !d_can_lookup(path->dentry))
- 		return false;
+ #include "udf_sb.h"
  
--	if (inode_mark && vfsmnt_mark) {
--		marks_mask = (vfsmnt_mark->mask | inode_mark->mask);
--		marks_ignored_mask = (vfsmnt_mark->ignored_mask | inode_mark->ignored_mask);
--	} else if (inode_mark) {
--		/*
--		 * if the event is for a child and this inode doesn't care about
--		 * events on the child, don't send it!
--		 */
--		if ((event_mask & FS_EVENT_ON_CHILD) &&
--		    !(inode_mark->mask & FS_EVENT_ON_CHILD))
--			return false;
--		marks_mask = inode_mark->mask;
--		marks_ignored_mask = inode_mark->ignored_mask;
--	} else if (vfsmnt_mark) {
--		marks_mask = vfsmnt_mark->mask;
--		marks_ignored_mask = vfsmnt_mark->ignored_mask;
--	} else {
--		BUG();
-+	/*
-+	 * if the event is for a child and this inode doesn't care about
-+	 * events on the child, don't send it!
-+	 */
-+	if (inode_mark &&
-+	    (!(event_mask & FS_EVENT_ON_CHILD) ||
-+	     (inode_mark->mask & FS_EVENT_ON_CHILD))) {
-+		marks_mask |= inode_mark->mask;
-+		marks_ignored_mask |= inode_mark->ignored_mask;
-+	}
++#define SURROGATE_MASK 0xfffff800
++#define SURROGATE_PAIR 0x0000d800
 +
-+	if (vfsmnt_mark) {
-+		marks_mask |= vfsmnt_mark->mask;
-+		marks_ignored_mask |= vfsmnt_mark->ignored_mask;
- 	}
+ static int udf_uni2char_utf8(wchar_t uni,
+ 			     unsigned char *out,
+ 			     int boundlen)
+@@ -37,6 +40,9 @@ static int udf_uni2char_utf8(wchar_t uni
+ 	if (boundlen <= 0)
+ 		return -ENAMETOOLONG;
  
- 	if (d_is_dir(path->dentry) &&
++	if ((uni & SURROGATE_MASK) == SURROGATE_PAIR)
++		return -EINVAL;
++
+ 	if (uni < 0x80) {
+ 		out[u_len++] = (unsigned char)uni;
+ 	} else if (uni < 0x800) {
