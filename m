@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+GxOqO9yDXvphH3gbrdwsErpv9zUd0teK59d5YABb7zgeG+wMGK6Y433YBzSApnP5noVTN
-ARC-Seal: i=1; a=rsa-sha256; t=1524405456; cv=none;
+X-Google-Smtp-Source: AIpwx49Befqg3rqHdLCewYZFVIufkokWABSRgXEwg/ST1GtcmoAT9MLMzdM3WODaRLKDZznHl5Nb
+ARC-Seal: i=1; a=rsa-sha256; t=1524405454; cv=none;
         d=google.com; s=arc-20160816;
-        b=u26mwf5EGWxKBypTYpSsGrhHToszHjCVVRdQ5PXyyygQVa+BaF3FY9sMFv1Cir9CYv
-         a3eNDDpSIP8a98VaWHdmtpPPvEfjyDdyUEZQIb3aQ8u1MFDqlBwo31Hv/Yr0qjKTEy5M
-         7QFyGOG4LmBr3vEHSTH1vrcQeZtgd33NoXfjimRjetm3xG954zSC6WYUy44T7EQd8zFF
-         rNWCkMr11xCVW13nRJTChvwRqjtiy+wZpM54lFe/wEiKZYDDEs+PWQnOHJNXPLiknLCT
-         f5vKHDvr8vwKlSWk0WDFP0DMmeE9f+B4EOwRy22vUVv3PoQk1ZGO6ZdutiOmZ/qEODKS
-         5G1Q==
+        b=uQIjq5l+9rcABrT+I4I6fhWS5KraoDWGyyFw4D+Mu2dTzKxYDsHOfzU3UPcnO4WmyC
+         W0skL/zR7s5PyRzP3ZOWf/f7LnDB83qrUE21EKXNSshStHA5NQmPpBuVT/3HXWcdhWsH
+         ITcp1QCgUX2mykEbkaUfdCxk/O4o0JMzV9YcHGLF4ZreMkVmrpr/Lwlx1QuAMDhoXmW0
+         0sTym/lFVL4kyp0x3pRB7b/PjEr2/siAAplI5y11/2szmT0gxzk7yBiO24SGp3q0pQEz
+         OOtBBT3QiGEME+qKVPR6IDuBpLM0mgcoObMQx8mDPCQeOimhmo2QNtQtCsIPOGY3un0r
+         oWNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=31SyK8DStvKR3/refgMSlnF+EiAj30YG2mex8/ZiAzo=;
-        b=wOL3kjJvfa3//w64DCqSegu8J4vnZjDlhwUc9KIrD0MZmpsTuApM+CQWAr/hp2hjXi
-         xY+G9RzoaWfVFZPJMXomF0h3ipns/cH4NrUGZvgn8WXqxEA7Pkn2WvATi2oML8ZUYjBx
-         039w0kuMHFQiEr6Gb8edmCOBzCmnS8OSJjRiC7Jb3P/xdZlt89nszIBKomIFEQZOZ5nf
-         s19CtA0ILZNjZhS4NGiAiT5Q1zGZon8Trhvi6ISjosh9MHG7hVEIs672c6yuCFrBPJgZ
-         KbkSCR4dca59WW2uIn1mCzeimBMBswPLTLY+ekihfPgn/xEnd7Nk000UAL2b0CNMuB63
-         ttdQ==
+        bh=LLqXmouqxpvj8iM+L7Mt1wVHFlw+eTc5zTdkFhPdb74=;
+        b=rPV1hbAKYdmHA22MNJxoF0NF+MTuUaYz+py441iZEtQ9kwn52G+Vuu5CzbVqFrTMko
+         fP8PNc6bjRvbUJfbl+TQY6sRV+jKG99xc2K6fs3VPSc2UBwV8WBMvDeoMjQ17D6VNGR3
+         XK3M2bQbeNJEIkcXPy6y7SwC8KTyDPODgcZmwcE65Pk2d5RuU4K049EDvmYNwJW7ZJpd
+         xHeSDJ6gT6kl2XgEcPI6iMevS3a206FHMGJIbrXSiDTX3YxjB94j9Nj/m5BGFIMD+gFZ
+         sX+SinW3qOGLYT5glOWQZeEJXS/mgYrH8N+xqPnAM4dYRL2AmwGP/pd5khquVHY4Ddx4
+         OCIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Weiyi Lu <weiyi.lu@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>
-Subject: [PATCH 4.16 072/196] soc: mediatek: fix the mistaken pointer accessed when subdomains are added
-Date: Sun, 22 Apr 2018 15:51:32 +0200
-Message-Id: <20180422135107.975343300@linuxfoundation.org>
+	Ronnie Sahlberg <lsahlber@redhat.com>,
+	Steve French <smfrench@gmail.com>
+Subject: [PATCH 4.16 045/196] cifs: fix memory leak in SMB2_open()
+Date: Sun, 22 Apr 2018 15:51:05 +0200
+Message-Id: <20180422135106.402766447@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454976334056522?=
-X-GMAIL-MSGID: =?utf-8?q?1598454976334056522?=
+X-GMAIL-THRID: =?utf-8?q?1598454973486249608?=
+X-GMAIL-MSGID: =?utf-8?q?1598454973486249608?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sean Wang <sean.wang@mediatek.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-commit 73ce2ce129783813e1ebc37d2c757fe5e0fab1ef upstream.
+commit b7a73c84eb96dabd6bb8e9d7c56f796d83efee8e upstream.
 
-Fix the pointer to struct scp_subdomian not being moved forward
-when each sub-domain is expected to be iteratively added through
-pm_genpd_add_subdomain call.
-
-Cc: stable@vger.kernel.org
-Fixes: 53fddb1a66dd ("soc: mediatek: reduce code duplication of scpsys_probe across all SoCs")
-Reported-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/soc/mediatek/mtk-scpsys.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/smb2pdu.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -992,7 +992,7 @@ static int scpsys_probe(struct platform_
- 
- 	pd_data = &scp->pd_data;
- 
--	for (i = 0, sd = soc->subdomains ; i < soc->num_subdomains ; i++) {
-+	for (i = 0, sd = soc->subdomains; i < soc->num_subdomains; i++, sd++) {
- 		ret = pm_genpd_add_subdomain(pd_data->domains[sd->origin],
- 					     pd_data->domains[sd->subdomain]);
- 		if (ret && IS_ENABLED(CONFIG_PM))
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1738,8 +1738,10 @@ SMB2_open(const unsigned int xid, struct
+ 		rc = alloc_path_with_tree_prefix(&copy_path, &copy_size,
+ 						 &name_len,
+ 						 tcon->treeName, path);
+-		if (rc)
++		if (rc) {
++			cifs_small_buf_release(req);
+ 			return rc;
++		}
+ 		req->NameLength = cpu_to_le16(name_len * 2);
+ 		uni_path_len = copy_size;
+ 		path = copy_path;
+@@ -1750,8 +1752,10 @@ SMB2_open(const unsigned int xid, struct
+ 		if (uni_path_len % 8 != 0) {
+ 			copy_size = roundup(uni_path_len, 8);
+ 			copy_path = kzalloc(copy_size, GFP_KERNEL);
+-			if (!copy_path)
++			if (!copy_path) {
++				cifs_small_buf_release(req);
+ 				return -ENOMEM;
++			}
+ 			memcpy((char *)copy_path, (const char *)path,
+ 			       uni_path_len);
+ 			uni_path_len = copy_size;
