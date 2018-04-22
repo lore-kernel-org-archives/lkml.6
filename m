@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+bxGj+qR8HwxqVrEnm4n/sVZCYBe1ZyweEHLg6a4jnIT8/YpjCJBLu+bQOaL6Z7RMCI+fL
-ARC-Seal: i=1; a=rsa-sha256; t=1524406174; cv=none;
+X-Google-Smtp-Source: AIpwx4/MMtrlRZ2tywe+chtGAHYDt9dglb9W5x7CNY3DYBA9PnCIoxQA2Gxg4At1wkm9OKeZoDfH
+ARC-Seal: i=1; a=rsa-sha256; t=1524406169; cv=none;
         d=google.com; s=arc-20160816;
-        b=geLkdLyKI1dp9+dfXkl+dNnuhu7gc+1u7KYMEToo8khuqshWIVGGbjujBlqe3sI5mg
-         2WB9V+mMVxacp2d9i8Grg7ZUsN5DJpLSbjI9iTwLhpD3bYjo/DUwiu+xfmvNiXAqbhuJ
-         Fa2F0vaEfbpAJ1sxLxuFtitC+OwEbvc42kiyxPtvVrIFcS3Dpn3aCYYw8ScdwVz0ep2m
-         I/HhYDAssosZHsUARot93zSxw3yftQZs/8E6NEDNXXuHtPiuml1L+ZbnQarCIPFIMuDA
-         PcLpaXhyF26BWZEJiHYU52hErdyCOoXDYylx751o0UFix9h0vSws8mw3WjDto0eooJOc
-         xk3w==
+        b=Lct3aXFxq+MNmPLZqceR+1mCZnrFa7R+FZhFTFNwxrRG1ER7BM7HXsS3xBV3FNNnna
+         r6WuCuZtOFTs0N+S6sDlVmpKUKsNfcE/g6JhReyer91DAVswYVHfyt11thegskJMEFp5
+         UZSNhNhAQCsw7cmYGSKYxIebhFlyWiBLD7lE3RKdJP7H49GvV0arAA9XrDXvnqahPuE6
+         h2UWOoxTQdTkfTCy6zonCD9axt95ufm5XpUx76RBSLesUlFRnAIJMQfYMazMTUFRqmUh
+         i9+hJuHcZJnYlxep9JSOLLVp2S/KNknB4kFPgIuxeg9aD4bVTbEfZFYp9HvaOadLvoLD
+         TSgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7/g1f+p6RzqQ4lpyzsPB1HYWDkUsVn3/luKEG6LsoKs=;
-        b=bK+HWooNXeelUYmUKCE14Xg0gRu5DXDA7WyfbWsIkd1wTzyNQgun5+KAhk/cpzr3ZF
-         bWLiXwvlbAULy848asNMUOH1k67GdLNG96VrEUS8Is5R7EXneXafCZ1a5dlTEDji6wnt
-         Xy+dbmVhvACekBUs/4azVexShF3z84eH8xFcpZZKcPv/YYXxS67uBuqKDKmZm1d+x49b
-         42oaO/ugIS0emt0A9MJYY7CDSVQ2VhekxL3RAqU0K6u8bxG48H516SM49CYKEzMOwaqY
-         PfaF94d+2PWk4TT3XVJ0ZV09LFbW21NZF5eEilFkTWolYydRlwtSAWIm2FDS9uVb5Gvj
-         Ht1w==
+        bh=EUCIY5HvI1IFD6J/03OTvxvzmRqocPMqOzZK5Qpt8Pw=;
+        b=P2DzbYw8c7/OafpgqJCWcRxU954ypg+p/0Tj/0IT9Zl5WhyKXV5pUGvaXYypWwXDSr
+         VUgE9Qx75imQqdCpSgjGWAB76ImsXigIh2WC9T2dSTe4A571XodmS3WsEIqwId55nuQb
+         USHkAiS3EY3/rV55bLHeXd1chk61eOl9GANLQHNVBsPH7bqS8FU+5fwttbr1/x3SQRcs
+         fwsAllB9ACYN7qo66WyruB3AO1Z0cAnM8vmJ8kXrGh5tSkYFXmtmynGDTofLi10zBZP6
+         3wzvQDDPJIt6qScQVI7JpEp6ypYFW7iT+yOEW0O0lLjPMi/wH//czyYaSNx41t7F7Flc
+         posQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
-	Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 139/164] HID: hidraw: Fix crash on HIDIOCGFEATURE with a destroyed device
-Date: Sun, 22 Apr 2018 15:53:26 +0200
-Message-Id: <20180422135141.122064841@linuxfoundation.org>
+	Theodore Tso <tytso@mit.edu>,
+	stable@kernel.org
+Subject: [PATCH 4.14 137/164] random: add new ioctl RNDRESEEDCRNG
+Date: Sun, 22 Apr 2018 15:53:24 +0200
+Message-Id: <20180422135141.013769558@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455251173047528?=
-X-GMAIL-MSGID: =?utf-8?q?1598455729183185780?=
+X-GMAIL-THRID: =?utf-8?q?1598455242261165889?=
+X-GMAIL-MSGID: =?utf-8?q?1598455723245221714?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +49,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit a955358d54695e4ad9f7d6489a7ac4d69a8fc711 upstream.
+commit d848e5f8e1ebdb227d045db55fe4f825e82965fa upstream.
 
-Doing `ioctl(HIDIOCGFEATURE)` in a tight loop on a hidraw device
-and then disconnecting the device, or unloading the driver, can
-cause a NULL pointer dereference.
+Add a new ioctl which forces the the crng to be reseeded.
 
-When a hidraw device is destroyed it sets 0 to `dev->exist`.
-Most functions check 'dev->exist' before doing its work, but
-`hidraw_get_report()` was missing that check.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hidraw.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/char/random.c       |   13 ++++++++++++-
+ include/uapi/linux/random.h |    3 +++
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
---- a/drivers/hid/hidraw.c
-+++ b/drivers/hid/hidraw.c
-@@ -192,6 +192,11 @@ static ssize_t hidraw_get_report(struct
- 	int ret = 0, len;
- 	unsigned char report_number;
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -429,6 +429,7 @@ struct crng_state primary_crng = {
+ static int crng_init = 0;
+ #define crng_ready() (likely(crng_init > 1))
+ static int crng_init_cnt = 0;
++static unsigned long crng_global_init_time = 0;
+ #define CRNG_INIT_CNT_THRESH (2*CHACHA20_KEY_SIZE)
+ static void _extract_crng(struct crng_state *crng,
+ 			  __u8 out[CHACHA20_BLOCK_SIZE]);
+@@ -932,7 +933,8 @@ static void _extract_crng(struct crng_st
+ 	unsigned long v, flags;
  
-+	if (!hidraw_table[minor] || !hidraw_table[minor]->exist) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
+ 	if (crng_ready() &&
+-	    time_after(jiffies, crng->init_time + CRNG_RESEED_INTERVAL))
++	    (time_after(crng_global_init_time, crng->init_time) ||
++	     time_after(jiffies, crng->init_time + CRNG_RESEED_INTERVAL)))
+ 		crng_reseed(crng, crng == &primary_crng ? &input_pool : NULL);
+ 	spin_lock_irqsave(&crng->lock, flags);
+ 	if (arch_get_random_long(&v))
+@@ -1759,6 +1761,7 @@ static int rand_initialize(void)
+ 	init_std_data(&input_pool);
+ 	init_std_data(&blocking_pool);
+ 	crng_initialize(&primary_crng);
++	crng_global_init_time = jiffies;
+ 	return 0;
+ }
+ early_initcall(rand_initialize);
+@@ -1932,6 +1935,14 @@ static long random_ioctl(struct file *f,
+ 		input_pool.entropy_count = 0;
+ 		blocking_pool.entropy_count = 0;
+ 		return 0;
++	case RNDRESEEDCRNG:
++		if (!capable(CAP_SYS_ADMIN))
++			return -EPERM;
++		if (crng_init < 2)
++			return -ENODATA;
++		crng_reseed(&primary_crng, NULL);
++		crng_global_init_time = jiffies - 1;
++		return 0;
+ 	default:
+ 		return -EINVAL;
+ 	}
+--- a/include/uapi/linux/random.h
++++ b/include/uapi/linux/random.h
+@@ -35,6 +35,9 @@
+ /* Clear the entropy pool and associated counters.  (Superuser only.) */
+ #define RNDCLEARPOOL	_IO( 'R', 0x06 )
+ 
++/* Reseed CRNG.  (Superuser only.) */
++#define RNDRESEEDCRNG	_IO( 'R', 0x07 )
 +
- 	dev = hidraw_table[minor]->hid;
- 
- 	if (!dev->ll_driver->raw_request) {
+ struct rand_pool_info {
+ 	int	entropy_count;
+ 	int	buf_size;
