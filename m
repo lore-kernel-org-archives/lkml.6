@@ -1,87 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405802-2-10950602451143630241
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524405801; b=Lnw0bOZv3hoT4IAVgT9Cw6DkhAqer/9YC83hn/Dcw4FJQ5ViXl
-    yhxEPPi1owOhpSXMhrPsdscVWsMi5bL7zyHJ9OoyFkn+7//biP4FXvAnc99L1d3k
-    AjyJoh8CQ4YxQYNTipiWOXtQI0LRLpCYCvGLPvFBBL+RYiao1FHv9Zm9xLwUvj7S
-    AbWRCXUamqsJZeOz86PSg6I4N8a5m6CDYRke6JF77lPvmvmu2oKFKlCDDPu3qlnb
-    X+2k1LoYloAB3OXijVkoVjXAPB0dZcODBD4RM5UWTAfQtxNisdpCXMClXF1s2HNE
-    YV157FGMXBY/zbww8EufbZZeVxPbxrv/qiqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524405801; bh=czyq5tsiOhp1IR6VOgnCJyi7X5hnnr
-    PQE09TQMstQts=; b=OHzj8YTrgtWpnMbrvktrhgInegBG2MfqDvHeqYg+Uc6Y5M
-    iHOYni5+6wZA9zm3tRK/+BHc5MFDswb7+ipgU01ToeuVZ/KxE/MPSvSUq6Hem72A
-    +/89o5tb/Gg/ucXKej27TpXT5VCW6Nry1M8nwY1qe7tHOmA7EUY7s2FtorLlbkbE
-    P9A0rb29XF0rI55M5K38kAGo/hR0I8vBmws1F+opCWGDkdIu+yWbyGFwxjcArj5v
-    ic/215NhZCND47W1RHZUR91yXDzdz3pE26gve47uY9kfpkJccXbvt0DFWlz1j9Po
-    j3zKntI6nHOXFtpsT5g+qMmy3gx4vX8a2FXWEUcA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCpf25bBswaxF9BBe2SGZSgonqL0nLyeQpH2KwQHsme3VB2sOHUKDMwv7BU9/nPMD032sGXeDhqXnU4iy5XFXg3rfMH102+UAQwjgiLUWDGAhSqYOR84
-    sCJGj7CmUSFY0hjTiEoBu5c7w+KrAO+1u3o4qR6HB6cThONpMrsbQpXmENnloJ7plUoorAicmEoc+Q7lIQGewwlmLCk7XKQXO8E58xZbQaPVKU5kQ4jlMTMe
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=1XWaLZrsAAAA:8
-    a=ufHFDILaAAAA:8 a=iox4zFpeAAAA:8 a=Z4Rwk6OoAAAA:8 a=ag1SF4gXAAAA:8
-    a=RAu74iQbZOYIzub1VMsA:9 a=pU91lvWdBSU1PCEG:21 a=ftz2M-u5kwRwzFf1:21
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=ZmIg1sZ3JBWsdXgziEIF:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=HkZW87K1Qel5hWWM3VKY:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755002AbeDVODL (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:03:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49044 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754956AbeDVODH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:03:07 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+k8zfKkrppC9Yrd2iLMuBX/CDSOSxhFPvlWAH6nY5b1/ZYiW+UuGVqUEW4bcKr5UZp+Ozv
+ARC-Seal: i=1; a=rsa-sha256; t=1524405800; cv=none;
+        d=google.com; s=arc-20160816;
+        b=oBfsjyjHEveVdQTj40GgGgIBNmpWHptQ3fEQFMXQGzEaQ7GWLWO0SWegOD2l9SdfWO
+         YtOO6zPbCtGJfjTbbwcoARKCtmXe2kQLbqcf98AoHodgLcUtFzFwlU1Wd2eS3pL+/IkH
+         mMrf3X+POzgD2YuHsEjGOOf/yhXls47LpUmyG9Lwdf7a+3nBSjTAtlUkmWY3mgPSQkBY
+         YfXsNSrsc5RB1TCRkI5NCVt27Vnhr+m+ojUv3g+lVdRNmfSGMPi4E4ETesTSqCKjgdde
+         LwNQ2ezYRQgcWa0fnVBzMm0+GCA9c3f1YJiCvoqMV/K+R36o4pTAMMOfZE7jgiA6+Uh4
+         iFhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=9rN2lu/tiiKWYhfLQi4k3qph+GV1gtjVTUrWkwtc8Xg=;
+        b=QjOdR5F49XfqBnPkMxeG+r07A+tz4B3g/0GnrtHTKIcQd9l5GDYktys2qZDgjT0SrG
+         ZM3riSQkOnIqenjPsfRrg+NLLCyXOYPuMT7lnLon3BKWVJxq1iJagFFqCGDVsw05nFIO
+         bY3v6fF+ghEJsoSr2pxmZbgV1DvlH1U5+M1T5KmfLjWMbog38jakCqv7nCLe2DAhuO3X
+         ttXngHc+DY//iC1d+MeOC4Ves03R9M+wOge3dPJu3U3tywPf/jXopTMjSsYE0SO3LNsA
+         5YEaHl2cCLPU4BqBbyxIsW6EirLM1fVNuH5P3Kx7KemQks9Y0sDCkIJ96CGaPZU7CNYv
+         +6Yw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        Chris Fries <cfries@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 193/196] mm/filemap.c: fix NULL pointer in page_cache_tree_insert()
-Date: Sun, 22 Apr 2018 15:53:33 +0200
-Message-Id: <20180422135114.264827978@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Jann Horn <jannh@google.com>,
+	Theodore Tso <tytso@mit.edu>,
+	stable@kernel.org
+Subject: [PATCH 4.16 164/196] random: use a different mixing algorithm for add_device_randomness()
+Date: Sun, 22 Apr 2018 15:53:04 +0200
+Message-Id: <20180422135112.744932103@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -89,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455336747684985?=
+X-GMAIL-MSGID: =?utf-8?q?1598455336747684985?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -99,78 +50,111 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit abc1be13fd113ddef5e2d807a466286b864caed3 upstream.
+commit dc12baacb95f205948f64dc936a47d89ee110117 upstream.
 
-f2fs specifies the __GFP_ZERO flag for allocating some of its pages.
-Unfortunately, the page cache also uses the mapping's GFP flags for
-allocating radix tree nodes.  It always masked off the __GFP_HIGHMEM
-flag, and masks off __GFP_ZERO in some paths, but not all.  That causes
-radix tree nodes to be allocated with a NULL list_head, which causes
-backtraces like:
+add_device_randomness() use of crng_fast_load() was highly
+problematic.  Some callers of add_device_randomness() can pass in a
+large amount of static information.  This would immediately promote
+the crng_init state from 0 to 1, without really doing much to
+initialize the primary_crng's internal state with something even
+vaguely unpredictable.
 
-  __list_del_entry+0x30/0xd0
-  list_lru_del+0xac/0x1ac
-  page_cache_tree_insert+0xd8/0x110
+Since we don't have the speed constraints of add_interrupt_randomness(),
+we can do a better job mixing in the what unpredictability a device
+driver or architecture maintainer might see fit to give us, and do it
+in a way which does not bump the crng_init_cnt variable.
 
-The __GFP_DMA and __GFP_DMA32 flags would also be able to sneak through
-if they are ever used.  Fix them all by using GFP_RECLAIM_MASK at the
-innermost location, and remove it from earlier in the callchain.
+Also, since add_device_randomness() doesn't bump any entropy
+accounting in crng_init state 0, mix the device randomness into the
+input_pool entropy pool as well.  This is related to CVE-2018-1108.
 
-Link: http://lkml.kernel.org/r/20180411060320.14458-2-willy@infradead.org
-Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Reported-by: Chris Fries <cfries@google.com>
-Debugged-by: Minchan Kim <minchan@kernel.org>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Jann Horn <jannh@google.com>
+Fixes: ee7998c50c26 ("random: do not ignore early device randomness")
+Cc: stable@kernel.org # 4.13+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/filemap.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/char/random.c |   55 ++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 51 insertions(+), 4 deletions(-)
 
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -785,7 +785,7 @@ int replace_page_cache_page(struct page
- 	VM_BUG_ON_PAGE(!PageLocked(new), new);
- 	VM_BUG_ON_PAGE(new->mapping, new);
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -786,6 +786,10 @@ static void crng_initialize(struct crng_
+ 	crng->init_time = jiffies - CRNG_RESEED_INTERVAL - 1;
+ }
  
--	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
-+	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
- 	if (!error) {
- 		struct address_space *mapping = old->mapping;
- 		void (*freepage)(struct page *);
-@@ -841,7 +841,7 @@ static int __add_to_page_cache_locked(st
- 			return error;
- 	}
++/*
++ * crng_fast_load() can be called by code in the interrupt service
++ * path.  So we can't afford to dilly-dally.
++ */
+ static int crng_fast_load(const char *cp, size_t len)
+ {
+ 	unsigned long flags;
+@@ -812,6 +816,51 @@ static int crng_fast_load(const char *cp
+ 	return 1;
+ }
  
--	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
-+	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
- 	if (error) {
- 		if (!huge)
- 			mem_cgroup_cancel_charge(page, memcg, false);
-@@ -1584,8 +1584,7 @@ no_page:
- 		if (fgp_flags & FGP_ACCESSED)
- 			__SetPageReferenced(page);
++/*
++ * crng_slow_load() is called by add_device_randomness, which has two
++ * attributes.  (1) We can't trust the buffer passed to it is
++ * guaranteed to be unpredictable (so it might not have any entropy at
++ * all), and (2) it doesn't have the performance constraints of
++ * crng_fast_load().
++ *
++ * So we do something more comprehensive which is guaranteed to touch
++ * all of the primary_crng's state, and which uses a LFSR with a
++ * period of 255 as part of the mixing algorithm.  Finally, we do
++ * *not* advance crng_init_cnt since buffer we may get may be something
++ * like a fixed DMI table (for example), which might very well be
++ * unique to the machine, but is otherwise unvarying.
++ */
++static int crng_slow_load(const char *cp, size_t len)
++{
++	unsigned long		flags;
++	static unsigned char	lfsr = 1;
++	unsigned char		tmp;
++	unsigned		i, max = CHACHA20_KEY_SIZE;
++	const char *		src_buf = cp;
++	char *			dest_buf = (char *) &primary_crng.state[4];
++
++	if (!spin_trylock_irqsave(&primary_crng.lock, flags))
++		return 0;
++	if (crng_init != 0) {
++		spin_unlock_irqrestore(&primary_crng.lock, flags);
++		return 0;
++	}
++	if (len > max)
++		max = len;
++
++	for (i = 0; i < max ; i++) {
++		tmp = lfsr;
++		lfsr >>= 1;
++		if (tmp & 1)
++			lfsr ^= 0xE1;
++		tmp = dest_buf[i % CHACHA20_KEY_SIZE];
++		dest_buf[i % CHACHA20_KEY_SIZE] ^= src_buf[i % len] ^ lfsr;
++		lfsr += (tmp << 3) | (tmp >> 5);
++	}
++	spin_unlock_irqrestore(&primary_crng.lock, flags);
++	return 1;
++}
++
+ static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
+ {
+ 	unsigned long	flags;
+@@ -981,10 +1030,8 @@ void add_device_randomness(const void *b
+ 	unsigned long time = random_get_entropy() ^ jiffies;
+ 	unsigned long flags;
  
--		err = add_to_page_cache_lru(page, mapping, offset,
--				gfp_mask & GFP_RECLAIM_MASK);
-+		err = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
- 		if (unlikely(err)) {
- 			put_page(page);
- 			page = NULL;
-@@ -2388,7 +2387,7 @@ static int page_cache_read(struct file *
- 		if (!page)
- 			return -ENOMEM;
+-	if (!crng_ready()) {
+-		crng_fast_load(buf, size);
+-		return;
+-	}
++	if (!crng_ready() && size)
++		crng_slow_load(buf, size);
  
--		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask & GFP_KERNEL);
-+		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
- 		if (ret == 0)
- 			ret = mapping->a_ops->readpage(file, page);
- 		else if (ret == -EEXIST)
+ 	trace_add_device_randomness(size, _RET_IP_);
+ 	spin_lock_irqsave(&input_pool.lock, flags);
