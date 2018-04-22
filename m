@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+DZPUU0Pjek41BexTnJgubUiJ0jKRIT8vJWCqyiAN4r5ojhmRLRb4tOABxoF06Co5MlHuB
-ARC-Seal: i=1; a=rsa-sha256; t=1524405965; cv=none;
+X-Google-Smtp-Source: AIpwx4+9zsbK4eMF3PAj9TqmuHnOW5M4yS2b4k1qCH3u9qCFP7KP0+liCaAF8t9NE/dHHrtw1S38
+ARC-Seal: i=1; a=rsa-sha256; t=1524405963; cv=none;
         d=google.com; s=arc-20160816;
-        b=MJXMg7VR6e5yGOxn/I4VSxvRadWIczahSncKcnuskU4I5kQhyF1e7XxbsdwDQ3JZT3
-         i9l/OS6hvMoDP2LtHVrApL7fZsruqtvoiXbCPG4Kesy+R87PN+VBt70czYqtkO8U1F11
-         r0hoKpwWkxBtGKCtEIYhoPVTd3yAvODw5WOcf+fB0OI4v5+ZD8epY56GsaVUYicWmbHT
-         LgGfRiOaCG8+PosYTRerpjw7r/Hm7x8GhJb8i7JiWMoitisXMO/6mIvXxknS78x7Hl2n
-         W3DCJLhHao1M0EOZpLTIU6v1OKH/p02vdB/aUlcMPw1gfCGXPrPpYIi72bkTAFazfeLG
-         S5mw==
+        b=MLv8OU4LbrDLRTdUMp1l0BCkdVN4jdKi/6c7aryEZcOhDThFDbmSqiUjsSaO8MnLwf
+         1D9dPPVnvPerwKMrBmk9BqpXlsQm1v9EbNcsQyddFkQZGK076HTvVFVWxAvOVAs8QCA+
+         NLG3cYn1IQe8CLc23z3O7rHRttBwqk4pjjDIHDd/zdHi/KPOwClbDT+xOqCMl8iNsZVi
+         yFIdBDPznqYkf9aZrb0fgAL6Obt+XZMNjpC4MydSwWwxDuqwL62O6XzBUDxUFpTj+sIJ
+         A7WDNFAVuSavHB4kdW7XEVWmUuriK1tRaQFPD96+VfjouZcyPmYREX4yHsDRAfEkWqu6
+         59Gw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JOpf24ZMsig7SSoTCHq0oFRMoNh78HOrY6rnmHjcFGY=;
-        b=qZK4/WkkAquBjQ1PJhlzU+QWHbF/0hUHTa4Ht3OdNeq9bRtYzLacVLqm4lqXNaPm51
-         rtoZdBtSnetl2T22tL7ggFW2Ldi0jIwmt8+lbIPnMQASEMfR4WTd29xZjgluXb3eshY8
-         yoxe6bWviXP6IuQNMwOIFXiF4ODF1EI6kOq7hZdR7RGQQKbvvLvoudrO7662v+EfFCXR
-         WZBbdw9E/YqIv7Am99NVLWFFLNYSCna5UQAxp9+8aRydp2X7/kirSvNtzsEY9CP4WiMF
-         QXNHo39uANo5wp8CjZuPeiU6Cuvup/BnGAZvBp9tTGF8hta8xluMlbcpM1uHHurBB10u
-         Nl+w==
+        bh=IOizuCN8F9Qy08srNR6W4Z/d8WzzWs7Xbb4binWh6h4=;
+        b=kD5IsDRZwknjQACRLnoLlkpBcj+VSDUThVu0FObwTLuktmxftg6bJ+S4ngHsxYiRcY
+         2GX1ppnktVaVIt0DL/GIBUW0ZA+z0S88sAd1xBRtjFIH9o0wOsZG28Emu2xAmHAfsL5U
+         /hda61gzu29AfWpga/op5yx6aKuXdtqj/nrE1EzwVkJsIRHgnZkIm++crAHQDeRg4sZM
+         q/iin5oumesCgxvY3OkfzQ1FLXmkgmFWARrqqkQVEQnBvraKQlO3lQJak44ij4ueBiXC
+         33SePMdbMzxVAJ8tQNCbZycqQMYwQ7eH/dLQUfNa+UGdBxwHEX/716uCR0sQjXCtFZT1
+         9H2w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	James Kelly <jamespeterkelly@gmail.com>,
 	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 062/164] ASoC: topology: Fix kcontrol name string handling
-Date: Sun, 22 Apr 2018 15:52:09 +0200
-Message-Id: <20180422135137.987789996@linuxfoundation.org>
+Subject: [PATCH 4.14 061/164] ASoC: ssm2602: Replace reg_default_raw with reg_default
+Date: Sun, 22 Apr 2018 15:52:08 +0200
+Message-Id: <20180422135137.949620503@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454981902494157?=
-X-GMAIL-MSGID: =?utf-8?q?1598455510478461333?=
+X-GMAIL-THRID: =?utf-8?q?1598454978890490474?=
+X-GMAIL-MSGID: =?utf-8?q?1598455506922306133?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,104 +49,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+From: James Kelly <jamespeterkelly@gmail.com>
 
-commit 267e2c6fd7ca3d4076d20f9d52d49dc91addfe9d upstream.
+commit a01df75ce737951ad13a08d101306e88c3f57cb2 upstream.
 
-Fix the topology kcontrol string handling so that string pointer
-references are strdup()ed instead of being copied. This fixes issues
-with kcontrol templates on the stack or ones that are freed. Remember
-and free the strings too when topology is unloaded.
+SSM2602 driver is broken on recent kernels (at least
+since 4.9). User space applications such as amixer or
+alsamixer get EIO when attempting to access codec
+controls via the relevant IOCTLs.
 
-Signed-off-by: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Root cause of these failures is the regcache_hw_init
+function in drivers/base/regmap/regcache.c, which
+prevents regmap cache initalization from the
+reg_defaults_raw element of the regmap_config structure
+when registers are write only. It also disables the
+regmap cache entirely when all registers are write only
+or volatile as is the case for the SSM2602 driver.
+
+Using the reg_defaults element of the regmap_config
+structure rather than the reg_defaults_raw element to
+initalize the regmap cache avoids the logic in the
+regcache_hw_init function entirely. It also makes this
+driver consistent with other ASoC codec drivers, as
+this driver was the ONLY codec driver that used the
+reg_defaults_raw element to initalize the cache.
+
+Tested on Digilent Zybo Z7 development board which has
+a SSM2603 codec chip connected to a Xilinx Zynq SoC.
+
+Signed-off-by: James Kelly <jamespeterkelly@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-topology.c |   23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ sound/soc/codecs/ssm2602.c |   19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -523,6 +523,7 @@ static void remove_widget(struct snd_soc
- 				kfree(se->dobj.control.dtexts[j]);
+--- a/sound/soc/codecs/ssm2602.c
++++ b/sound/soc/codecs/ssm2602.c
+@@ -54,10 +54,17 @@ struct ssm2602_priv {
+  * using 2 wire for device control, so we cache them instead.
+  * There is no point in caching the reset register
+  */
+-static const u16 ssm2602_reg[SSM2602_CACHEREGNUM] = {
+-	0x0097, 0x0097, 0x0079, 0x0079,
+-	0x000a, 0x0008, 0x009f, 0x000a,
+-	0x0000, 0x0000
++static const struct reg_default ssm2602_reg[SSM2602_CACHEREGNUM] = {
++	{ .reg = 0x00, .def = 0x0097 },
++	{ .reg = 0x01, .def = 0x0097 },
++	{ .reg = 0x02, .def = 0x0079 },
++	{ .reg = 0x03, .def = 0x0079 },
++	{ .reg = 0x04, .def = 0x000a },
++	{ .reg = 0x05, .def = 0x0008 },
++	{ .reg = 0x06, .def = 0x009f },
++	{ .reg = 0x07, .def = 0x000a },
++	{ .reg = 0x08, .def = 0x0000 },
++	{ .reg = 0x09, .def = 0x0000 }
+ };
  
- 			kfree(se);
-+			kfree(w->kcontrol_news[i].name);
- 		}
- 		kfree(w->kcontrol_news);
- 	} else {
-@@ -540,6 +541,7 @@ static void remove_widget(struct snd_soc
- 			 */
- 			kfree((void *)kcontrol->private_value);
- 			snd_ctl_remove(card, kcontrol);
-+			kfree(w->kcontrol_news[i].name);
- 		}
- 		kfree(w->kcontrol_news);
- 	}
-@@ -1233,7 +1235,9 @@ static struct snd_kcontrol_new *soc_tplg
- 		dev_dbg(tplg->dev, " adding DAPM widget mixer control %s at %d\n",
- 			mc->hdr.name, i);
  
--		kc[i].name = mc->hdr.name;
-+		kc[i].name = kstrdup(mc->hdr.name, GFP_KERNEL);
-+		if (kc[i].name == NULL)
-+			goto err_str;
- 		kc[i].private_value = (long)sm;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = mc->hdr.access;
-@@ -1278,8 +1282,10 @@ static struct snd_kcontrol_new *soc_tplg
- err_str:
- 	kfree(sm);
- err:
--	for (--i; i >= 0; i--)
-+	for (--i; i >= 0; i--) {
- 		kfree((void *)kc[i].private_value);
-+		kfree(kc[i].name);
-+	}
- 	kfree(kc);
- 	return NULL;
- }
-@@ -1310,7 +1316,9 @@ static struct snd_kcontrol_new *soc_tplg
- 		dev_dbg(tplg->dev, " adding DAPM widget enum control %s\n",
- 			ec->hdr.name);
+@@ -620,8 +627,8 @@ const struct regmap_config ssm2602_regma
+ 	.volatile_reg = ssm2602_register_volatile,
  
--		kc[i].name = ec->hdr.name;
-+		kc[i].name = kstrdup(ec->hdr.name, GFP_KERNEL);
-+		if (kc[i].name == NULL)
-+			goto err_se;
- 		kc[i].private_value = (long)se;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = ec->hdr.access;
-@@ -1386,6 +1394,7 @@ err_se:
- 			kfree(se->dobj.control.dtexts[j]);
+ 	.cache_type = REGCACHE_RBTREE,
+-	.reg_defaults_raw = ssm2602_reg,
+-	.num_reg_defaults_raw = ARRAY_SIZE(ssm2602_reg),
++	.reg_defaults = ssm2602_reg,
++	.num_reg_defaults = ARRAY_SIZE(ssm2602_reg),
+ };
+ EXPORT_SYMBOL_GPL(ssm2602_regmap_config);
  
- 		kfree(se);
-+		kfree(kc[i].name);
- 	}
- err:
- 	kfree(kc);
-@@ -1424,7 +1433,9 @@ static struct snd_kcontrol_new *soc_tplg
- 			"ASoC: adding bytes kcontrol %s with access 0x%x\n",
- 			be->hdr.name, be->hdr.access);
- 
--		kc[i].name = be->hdr.name;
-+		kc[i].name = kstrdup(be->hdr.name, GFP_KERNEL);
-+		if (kc[i].name == NULL)
-+			goto err;
- 		kc[i].private_value = (long)sbe;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = be->hdr.access;
-@@ -1454,8 +1465,10 @@ static struct snd_kcontrol_new *soc_tplg
- 	return kc;
- 
- err:
--	for (--i; i >= 0; i--)
-+	for (--i; i >= 0; i--) {
- 		kfree((void *)kc[i].private_value);
-+		kfree(kc[i].name);
-+	}
- 
- 	kfree(kc);
- 	return NULL;
