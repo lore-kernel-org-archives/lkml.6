@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48AO6SD0DZeVxg4x3H1n3pHD4Fcudzx6P1n/BFfoS6uZWQ975oNMZltDtKFPM0lOauTWA+I
-ARC-Seal: i=1; a=rsa-sha256; t=1524406430; cv=none;
+X-Google-Smtp-Source: AIpwx48dUW3k5RO23e+rcsgg3OnXxp3oA/S7O1ju2oXP1vggTLdgYKT5sLzBRzSaY3v9qpAzBjsH
+ARC-Seal: i=1; a=rsa-sha256; t=1524406427; cv=none;
         d=google.com; s=arc-20160816;
-        b=ybT7wInxpxqh08DcX9hojYAYCKc6LXTBYV2Ms5Y8F7/nP5gkGlq3x19/Z4ehurIRcs
-         NiVOU5xXsLMsTjs0duioht2Ia7+/D/hOYLcxVByHjS93QqBLfgKturU2qBb2Cj7KkvYM
-         h1T0cc8NNAibqijaF94ZNSq72SdPfb3Shb4yKmVwxA3yn9E1rq1xg1iiLWbdoYQxbfkJ
-         lnoMlHzh2WvKtfP8nnh2bktagKSfCvBvZhgajAC6enI9pY+WT/h2xB399BckKx4wn75c
-         p4wz665dcCO9Z6ePCXjio28CTdN6BaRx/mMbKiuTCP7jRRxQjp/xWKPv1ZzBkeRwKZzx
-         qSEg==
+        b=cocW22HUxEvIZLf3uSoKuWWKX5y8PePhU6W6Q9p5gla1oBvy7GdibFtNqoQ1PEiu3M
+         45iGMf2XVPGwqUBB5RQAilIqKaCaYEx+cM4kmoo9kkY3gBNiPf8ceAE+i5IsIe6yA/sB
+         76F6n7dVrHfSOTrBH7pBZu8odJzQaSDlErgxZrCkFEo/ym9SWzpGdC4KbX+/p+IPBhvG
+         zeQc7wf9Sohu7WTXSsv7dNXVbXIknA82DpLfSXYPwg98ISZ0fjpQ7osO03+/WGGazLAF
+         1y5SI422GLJSs904p/eG4fzADBpt0WLdH23aya5Bj/qgzvwe6MuPF4n+9LYLrO0OOp1r
+         oEBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qIs3j+CF5P3e+m3AgUjQzhuPUDEc/RCksAvRwdh62as=;
-        b=LAXoDcMajnIQWFF6ud2q7iG1JPfRwOXgK4q8WwcEfszfNCR+9rEdH//iOWGAbwEV4z
-         FkIFdcK2HDGLRmORA+Ss+2IDn/uvImDhmuGDSA6RxnIpcSA0ZORid0f49qgqlh4FJYVM
-         acqz/owtI5GJapw0bMKOhmFWN/r3DQQaRv8REByBNcZaZjrvgOeLT87T2tJakOX7vJpb
-         8yZxSfDgQ370FIHBK2c0gKKRd8aUw3bwTE1E7gpYIW9Cb3G1YgxXkZUnzR6NdqGp5K1C
-         wEvXekZjlHxscJy4yWPEgCnANXxr33wPUn+4sMk8/zj1QHo/adcxunqxUpnmAvsHFxE2
-         4lFA==
+        bh=Zxbk11wdCoC0UCyTYNEFxDkUekoO6+l8UvDxDBeBRUk=;
+        b=yNrfvZawL+J5DmiZIeF1f7y53xeDksRcAQoIHhuRw25XwkEkOG+5AkHeib0NcBHazw
+         aPdN9N4qF8qw2x8+hPR5k/ABOEc6whzdVyiVRxoWa1SkHvG2Df5L8He3SEwPNSH3n0ac
+         yn6uP0wBpK6s9dnyCP7q7eygBTUedMTGFUSyZ29fBsn7LePQ1IphGyegBcvo//7E+WGp
+         9J1zbX1dTek5o6l+8Pogx6drU9QEA0KqkIokywPk+l5jIERqv1x0ky0UIaEFvY3G5aZ/
+         Jf6UXk3/NJQ5D/2XIssZjny3agdSexI/GFbM02IQbaxDpGmbP2brBFAGhyo+nQDnZdJZ
+         YRUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.9 69/95] drm/rockchip: Clear all interrupts before requesting the IRQ
-Date: Sun, 22 Apr 2018 15:53:38 +0200
-Message-Id: <20180422135213.252429672@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 60/95] ALSA: pcm: Use ERESTARTSYS instead of EINTR in OSS emulation
+Date: Sun, 22 Apr 2018 15:53:29 +0200
+Message-Id: <20180422135212.878841961@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455213348332797?=
-X-GMAIL-MSGID: =?utf-8?q?1598455996964518523?=
+X-GMAIL-THRID: =?utf-8?q?1598455655750027723?=
+X-GMAIL-MSGID: =?utf-8?q?1598455993807868574?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,84 +48,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 5f9e93fed4d45e9a8f84728aff1a8f2ab8922902 upstream.
+commit c64ed5dd9feba193c76eb460b451225ac2a0d87b upstream.
 
-Calling request_irq() followed by disable_irq() is usually a bad idea,
-specially if the interrupt can be pending, and you're not yet in a
-position to handle it.
+Fix the last standing EINTR in the whole subsystem.  Use more correct
+ERESTARTSYS for pending signals.
 
-This is exactly what happens on my kevin system when rebooting in a
-second kernel using kexec: Some interrupt is left pending from
-the previous kernel, and we take it too early, before disable_irq()
-could do anything.
-
-Let's clear the pending interrupts as we initialize the HW, and move
-the interrupt request after that point. This ensures that we're in
-a sane state when the interrupt is requested.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-[adapted to recent rockchip-drm changes]
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180220130120.5254-2-marc.zyngier@arm.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c |   23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ sound/core/oss/pcm_oss.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -1386,6 +1386,9 @@ static int vop_initial(struct vop *vop)
- 	usleep_range(10, 20);
- 	reset_control_deassert(ahb_rst);
- 
-+	VOP_INTR_SET_TYPE(vop, clear, INTR_MASK, 1);
-+	VOP_INTR_SET_TYPE(vop, enable, INTR_MASK, 0);
-+
- 	memcpy(vop->regsbak, vop->regs, vop->len);
- 
- 	for (i = 0; i < vop_data->table_size; i++)
-@@ -1541,17 +1544,9 @@ static int vop_bind(struct device *dev,
- 
- 	mutex_init(&vop->vsync_mutex);
- 
--	ret = devm_request_irq(dev, vop->irq, vop_isr,
--			       IRQF_SHARED, dev_name(dev), vop);
--	if (ret)
--		return ret;
--
--	/* IRQ is initially disabled; it gets enabled in power_on */
--	disable_irq(vop->irq);
--
- 	ret = vop_create_crtc(vop);
- 	if (ret)
--		goto err_enable_irq;
-+		return ret;
- 
- 	pm_runtime_enable(&pdev->dev);
- 
-@@ -1561,13 +1556,19 @@ static int vop_bind(struct device *dev,
- 		goto err_disable_pm_runtime;
- 	}
- 
-+	ret = devm_request_irq(dev, vop->irq, vop_isr,
-+			       IRQF_SHARED, dev_name(dev), vop);
-+	if (ret)
-+		goto err_disable_pm_runtime;
-+
-+	/* IRQ is initially disabled; it gets enabled in power_on */
-+	disable_irq(vop->irq);
-+
- 	return 0;
- 
- err_disable_pm_runtime:
- 	pm_runtime_disable(&pdev->dev);
- 	vop_destroy_crtc(vop);
--err_enable_irq:
--	enable_irq(vop->irq); /* To balance out the disable_irq above */
- 	return ret;
- }
- 
+--- a/sound/core/oss/pcm_oss.c
++++ b/sound/core/oss/pcm_oss.c
+@@ -853,7 +853,7 @@ static int snd_pcm_oss_change_params(str
+ 		if (!(mutex_trylock(&runtime->oss.params_lock)))
+ 			return -EAGAIN;
+ 	} else if (mutex_lock_interruptible(&runtime->oss.params_lock))
+-		return -EINTR;
++		return -ERESTARTSYS;
+ 	sw_params = kzalloc(sizeof(*sw_params), GFP_KERNEL);
+ 	params = kmalloc(sizeof(*params), GFP_KERNEL);
+ 	sparams = kmalloc(sizeof(*sparams), GFP_KERNEL);
