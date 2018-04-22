@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753401AbeDVR1E (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 13:27:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46656 "EHLO mail.bootlin.com"
+        id S1753455AbeDVR2E (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 13:28:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46693 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751564AbeDVR1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 13:27:03 -0400
-Date: Sun, 22 Apr 2018 19:26:50 +0200
+        id S1752545AbeDVR2A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 13:28:00 -0400
+Date: Sun, 22 Apr 2018 19:27:48 +0200
 From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: boris.brezillon@free-electrons.com, richard@nod.at,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: nand: diskonchip: Replace mdelay with usleep_range
- in doc_probe
-Message-ID: <20180422192650.45fcfa4e@bbrezillon>
-In-Reply-To: <1523415477-2850-1-git-send-email-baijiaju1990@gmail.com>
-References: <1523415477-2850-1-git-send-email-baijiaju1990@gmail.com>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-mtd@lists.infradead.org, Xiaolei Li <xiaolei.li@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: nand: mtk: use of_device_get_match_data()
+Message-ID: <20180422192748.42fc6b6f@bbrezillon>
+In-Reply-To: <c3af6d5035e43b53b5cc7ee68f9f1a853ce2a8f9.1523347340.git.ryder.lee@mediatek.com>
+References: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
+        <c3af6d5035e43b53b5cc7ee68f9f1a853ce2a8f9.1523347340.git.ryder.lee@mediatek.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -26,51 +26,84 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Apr 2018 10:57:57 +0800
-Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+On Mon, 16 Apr 2018 10:33:54 +0800
+Ryder Lee <ryder.lee@mediatek.com> wrote:
 
-> doc_probe() is never called in atomic context.
+> The usage of of_device_get_match_data() reduce the code size a bit.
 > 
-> doc_probe() is only called by init_nanddoc(), which is only set as 
-> a parameter of module_init().
-> This function is not called in atomic context.
+> Also, the only way to call .probe() is to match an entry in
+> .of_match_table[], so of_device_id cannot be NULL.
 > 
-> Despite never getting called from atomic context, doc_probe()
-> calls mdelay() to busily wait.
-> This is not necessary and can be replaced with usleep_range() to
-> avoid busy waiting.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> And I also manually check it.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 > ---
->  drivers/mtd/nand/diskonchip.c | 4 ++--
+>  drivers/mtd/nand/raw/mtk_ecc.c  |  7 +------
+>  drivers/mtd/nand/raw/mtk_nand.c | 10 +---------
 
-Applied to nand/next after fixing the subject prefix and the file path.
+Applied to nand/next after fixing the subject prefix.
 
 Thanks,
 
 Boris
 
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  2 files changed, 2 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/mtd/nand/diskonchip.c b/drivers/mtd/nand/diskonchip.c
-> index c3aa53c..2679bc4 100644
-> --- a/drivers/mtd/nand/diskonchip.c
-> +++ b/drivers/mtd/nand/diskonchip.c
-> @@ -1482,12 +1482,12 @@ static int __init doc_probe(unsigned long physadr)
->  		WriteDOC(tmp, virtadr, Mplus_DOCControl);
->  		WriteDOC(~tmp, virtadr, Mplus_CtrlConfirm);
+> diff --git a/drivers/mtd/nand/mtk_ecc.c b/drivers/mtd/nand/mtk_ecc.c
+> index 40d86a8..6432bd7 100644
+> --- a/drivers/mtd/nand/raw/mtk_ecc.c
+> +++ b/drivers/mtd/nand/raw/mtk_ecc.c
+> @@ -500,7 +500,6 @@ static int mtk_ecc_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct mtk_ecc *ecc;
+>  	struct resource *res;
+> -	const struct of_device_id *of_ecc_id = NULL;
+>  	u32 max_eccdata_size;
+>  	int irq, ret;
 >  
-> -		mdelay(1);
-> +		usleep_range(1000, 2000);
->  		/* Enable the Millennium Plus ASIC */
->  		tmp = DOC_MODE_NORMAL | DOC_MODE_MDWREN | DOC_MODE_RST_LAT | DOC_MODE_BDECT;
->  		WriteDOC(tmp, virtadr, Mplus_DOCControl);
->  		WriteDOC(~tmp, virtadr, Mplus_CtrlConfirm);
-> -		mdelay(1);
-> +		usleep_range(1000, 2000);
+> @@ -508,11 +507,7 @@ static int mtk_ecc_probe(struct platform_device *pdev)
+>  	if (!ecc)
+>  		return -ENOMEM;
 >  
->  		ChipID = ReadDOC(virtadr, ChipID);
+> -	of_ecc_id = of_match_device(mtk_ecc_dt_match, &pdev->dev);
+> -	if (!of_ecc_id)
+> -		return -ENODEV;
+> -
+> -	ecc->caps = of_ecc_id->data;
+> +	ecc->caps = of_device_get_match_data(dev);
 >  
+>  	max_eccdata_size = ecc->caps->num_ecc_strength - 1;
+>  	max_eccdata_size = ecc->caps->ecc_strength[max_eccdata_size];
+> diff --git a/drivers/mtd/nand/mtk_nand.c b/drivers/mtd/nand/mtk_nand.c
+> index 6977da3..75c845a 100644
+> --- a/drivers/mtd/nand/raw/mtk_nand.c
+> +++ b/drivers/mtd/nand/raw/mtk_nand.c
+> @@ -1434,7 +1434,6 @@ static int mtk_nfc_probe(struct platform_device *pdev)
+>  	struct device_node *np = dev->of_node;
+>  	struct mtk_nfc *nfc;
+>  	struct resource *res;
+> -	const struct of_device_id *of_nfc_id = NULL;
+>  	int ret, irq;
+>  
+>  	nfc = devm_kzalloc(dev, sizeof(*nfc), GFP_KERNEL);
+> @@ -1452,6 +1451,7 @@ static int mtk_nfc_probe(struct platform_device *pdev)
+>  	else if (!nfc->ecc)
+>  		return -ENODEV;
+>  
+> +	nfc->caps = of_device_get_match_data(dev);
+>  	nfc->dev = dev;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> @@ -1498,14 +1498,6 @@ static int mtk_nfc_probe(struct platform_device *pdev)
+>  		goto clk_disable;
+>  	}
+>  
+> -	of_nfc_id = of_match_device(mtk_nfc_id_table, &pdev->dev);
+> -	if (!of_nfc_id) {
+> -		ret = -ENODEV;
+> -		goto clk_disable;
+> -	}
+> -
+> -	nfc->caps = of_nfc_id->data;
+> -
+>  	platform_set_drvdata(pdev, nfc);
+>  
+>  	ret = mtk_nfc_nand_chips_init(dev, nfc);
