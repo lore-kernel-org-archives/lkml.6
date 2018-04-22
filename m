@@ -1,79 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405397-2-18160785267394915541
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524405397; b=rnhi80vMfgBU6VtILw/wpZUb9Vj2+Pe/aoh3u/XpsrwukLjV9u
-    /VQNSHIa34mZPUKPEKJ3bdsBmuJVz1DxzVA46MR80hFmG64UQV1DIht+VbIPVjwE
-    YCoKBi0ONpv+m551Hp8vSkyuaZ5tfXDgVrV970f761jERVyJx6K7Yjgx8432//Nm
-    eMMkcalUF1tK6ZSiJcsQnczyqbBCckRmWmGILW8cGxXN0nRT/wot7ASstcnu9DuG
-    HTdyfp4gwsxcehnyJTy9VFmzfzXgcWHsis6Za6UaubhfYQdDns96OBztssTe0B++
-    CaB2gSOhz3ArlqMgT42aKCCEjnb63nsvh+4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524405397; bh=g2P7h1fbhq9iE5Exg8DAx3tntHnkiu
-    r14yEIWi2J2ek=; b=J7o12R4dbWN9p8ZWxJ0wYzPKMoEUrcSkV/FDaaj2o5UCdw
-    EfqSoT3ImE7FCGWO3By1f+h+ixYrUOc8s8yqcUYt3P0s+wFHq5Saq98bqiyrJ8+9
-    YotOF3Nc10wSw36GXcwFsrOACsJmUtRtdoZUK8qYwmVAw9EeVYy0zQlWa//8P0sW
-    Mcaa1x03lNhI0cwYmMIiT/83scsMjfl6Wtx7MGUfsBxD8araP36BC4Az/7dzCKDN
-    jhgFVbsKCdP1SK9lS9woic90W4EnTxgypsuBnFdA+BC62jAE8as2bkZrf+FkIsUc
-    spFUdqy3bufyT7IYNNKMnkAB+Vgba6Ti1I+h+4Ew==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOmFjsBDEX5ySkulCy+P0kAo8NHZ1nDEDCpND997Z9dojl3RYKgOqzUpiT0lOBFNzeklFgJ3k/eufwJ/30DzOQ4HOqwJCz22gQY7qvKIAFO26M9eM5dC
-    RBC/WHbdI557P3YjL2UmSR11CzOeebWOgboZVtCqttJWevwaLFMfbIp8xrXrg48AWM3fRQbLHg/2z0zApmLt3lNQgqfVjw/8m4l0FQye1NcciXdlSv1fXc/r
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=09mQ8c4dSRLCMc1kKzkA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753435AbeDVN4f (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 09:56:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45218 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753802AbeDVN4c (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:56:32 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+3tB40DYnWYddw3A14bpwdjm+xwWu+dVmBYvCWz1sjwR5Zn1gVhAyLH/A/1JiponGxj33z
+ARC-Seal: i=1; a=rsa-sha256; t=1524405397; cv=none;
+        d=google.com; s=arc-20160816;
+        b=L2/47F7YXSWfvAvgnbZwsGoUNCrtQpsf4i6/32tuXh6WPeJp6x5ZetvaBKZ3N2/swL
+         kAN2mpaUBDkvPU0ztgDrom9EypffCjyrQ1qkRa/1gzWDXZPKH3WISt4llN1jkZhJ/3Cp
+         aooY2SFZFaBCBcudQaEJKR0JDYcqZMMcrYGhOkW9pEstoc+6b7BOp/3WSw7FXRGOf18i
+         FNA/Z0kZ7223JQe2iw1ma37zzrtTqibGww8AieDkb/Xc+tDtDpOIbs5HhW9dUKxnLiqH
+         cpfInV0Zabv04gf6wT8KsI5DaE+4dUeEwDvoQQ2UIKuJD0XwjX7xHGdLCVvd36wRWbJ7
+         drwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=4J4Ne2YKCfvKzEupCinaEz/oSYn5aNLBcDgzBYtJtYI=;
+        b=n1SRlIS0nz6z2nDfEID7A8EDFrbl3+434vu9PzdY/xrgNc3gnVQYNwH6ph62564/Fc
+         2b6PBfKcUHhUNnSTTbvBvL2W9CqW2sT50N6kANKgxD3wsnvvw0oVN9HPXnoS6uK2bSt/
+         uR6FHZ3Sd0LCQada8Gs92fT9ho2vujdY0VGr6zDghPoikl2/WxtKRGKG/61FQXT5+e9Z
+         PcJkbZe1oRuvmG2Ys9RCmV6c4hVyzUJAWXsWi+CqW3TonyiIZIDk8N3mtnWxa9vGoSwv
+         lbBfA9R+8AoDhitRZc9wB93bHVkb/QWmnJoLP8BkMu0ppLoc1jDqvkcatztke0rR9FVS
+         AS+Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Townsend <mtownsend1973@gmail.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.16 005/196] ubi: fastmap: Dont flush fastmap work on detach
-Date: Sun, 22 Apr 2018 15:50:25 +0200
-Message-Id: <20180422135104.511311996@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Jean Delvare <jdelvare@suse.de>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	Jason Andryuk <jandryuk@gmail.com>,
+	Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.16 052/196] i2c: i801: Save register SMBSLVCMD value only once
+Date: Sun, 22 Apr 2018 15:51:12 +0200
+Message-Id: <20180422135106.789178651@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -81,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598454913621900566?=
+X-GMAIL-MSGID: =?utf-8?q?1598454913621900566?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -91,30 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Jean Delvare <jdelvare@suse.de>
 
-commit 29b7a6fa1ec07e8480b0d9caf635a4498a438bf4 upstream.
+commit a086bb8317303dd74725dca933b9b29575159382 upstream.
 
-At this point UBI volumes have already been free()'ed and fastmap can no
-longer access these data structures.
+Saving the original value of register SMBSLVCMD in
+i801_enable_host_notify() doesn't work, because this function is
+called not only at probe time but also at resume time. Do it in
+i801_probe() instead, so that the saved value is not overwritten at
+resume time.
 
-Reported-by: Martin Townsend <mtownsend1973@gmail.com>
-Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
-Cc: stable@vger.kernel.org
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: 22e94bd6779e ("i2c: i801: store and restore the SLVCMD register at load and unload")
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Tested-by: Jason Andryuk <jandryuk@gmail.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@vger.kernel.org	# v4.10+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/fastmap-wl.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/i2c/busses/i2c-i801.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/mtd/ubi/fastmap-wl.c
-+++ b/drivers/mtd/ubi/fastmap-wl.c
-@@ -362,7 +362,6 @@ static void ubi_fastmap_close(struct ubi
- {
- 	int i;
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -966,8 +966,6 @@ static void i801_enable_host_notify(stru
+ 	if (!(priv->features & FEATURE_HOST_NOTIFY))
+ 		return;
  
--	flush_work(&ubi->fm_work);
- 	return_unused_pool_pebs(ubi, &ubi->fm_pool);
- 	return_unused_pool_pebs(ubi, &ubi->fm_wl_pool);
+-	priv->original_slvcmd = inb_p(SMBSLVCMD(priv));
+-
+ 	if (!(SMBSLVCMD_HST_NTFY_INTREN & priv->original_slvcmd))
+ 		outb_p(SMBSLVCMD_HST_NTFY_INTREN | priv->original_slvcmd,
+ 		       SMBSLVCMD(priv));
+@@ -1615,6 +1613,10 @@ static int i801_probe(struct pci_dev *de
+ 		outb_p(inb_p(SMBAUXCTL(priv)) &
+ 		       ~(SMBAUXCTL_CRC | SMBAUXCTL_E32B), SMBAUXCTL(priv));
+ 
++	/* Remember original Host Notify setting */
++	if (priv->features & FEATURE_HOST_NOTIFY)
++		priv->original_slvcmd = inb_p(SMBSLVCMD(priv));
++
+ 	/* Default timeout in interrupt mode: 200 ms */
+ 	priv->adapter.timeout = HZ / 5;
  
