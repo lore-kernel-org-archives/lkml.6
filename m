@@ -1,155 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753441AbeDVQe6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 12:34:58 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45943 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751560AbeDVQex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 12:34:53 -0400
-Date: Sun, 22 Apr 2018 18:34:40 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
- parameter
-Message-ID: <20180422183440.3ce7e7aa@xps13>
-In-Reply-To: <c1cb40d0d24e50657308a40bb8398d35@codeaurora.org>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
-        <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
-        <20180406143133.67f33d33@xps13>
-        <23c8330d00d4d9b62c4c1ab597cbb22b@codeaurora.org>
-        <20180410094657.63ac7ec9@xps13>
-        <20180410095558.34c4d91f@xps13>
-        <20180410100745.625d66f8@bbrezillon>
-        <c1cb40d0d24e50657308a40bb8398d35@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753404AbeDVQmM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 12:42:12 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54224 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751296AbeDVQmK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 12:42:10 -0400
+Subject: Re: [PATCH] KVM: s390: reset crypto attributes for all vcpus
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        borntraeger@de.ibm.com, cohuck@redhat.com, pmorel@linux.vnet.ibm.com,
+        pasic@linux.vnet.ibm.com, pbonzini@redhat.com, rkrcmar@redhat.com
+References: <1524172432-26211-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <201804210852.eaNyyLPe%fengguang.wu@intel.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Sun, 22 Apr 2018 12:42:04 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <201804210852.eaNyyLPe%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18042216-0056-0000-0000-000004433049
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008900; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01021691; UDB=6.00521418; IPR=6.00800927;
+ MB=3.00020715; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-22 16:42:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042216-0057-0000-0000-00000887392C
+Message-Id: <559056f8-2c89-0fbd-5b18-0e792d220180@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-22_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804220188
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+On 04/20/2018 08:11 PM, kbuild test robot wrote:
+> Hi Tony,
+>
+> Thank you for the patch! Yet something to improve:
 
-On Thu, 12 Apr 2018 15:29:48 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
+Sorry about this, I must have missed the warnings. It should all be good 
+to do with v2 of
+the patch.
 
-> On 2018-04-10 13:37, Boris Brezillon wrote:
-> > On Tue, 10 Apr 2018 09:55:58 +0200
-> > Miquel Raynal <miquel.raynal@bootlin.com> wrote:  
-> > >> > Hi Abhishek,  
-> >> >
-> >> > On Tue, 10 Apr 2018 11:39:35 +0530, Abhishek Sahu
-> >> > <absahu@codeaurora.org> wrote:
-> >> >  
-> >> > > On 2018-04-06 18:01, Miquel Raynal wrote:  
-> >> > > > Hi Abhishek,
-> >> > > >
-> >> > > > On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
-> >> > > > <absahu@codeaurora.org> wrote:
-> >> > > >  
-> >> > > >> Currently the driver uses the ECC strength specified in
-> >> > > >> device tree. The ONFI or JEDEC device parameter page
-> >> > > >> contains the ‘ECC correctability’ field which indicates the
-> >> > > >> number of bits that the host should be able to correct per
-> >> > > >> 512 bytes of data.  
-> >> > > >
-> >> > > > This is misleading. This field is not about the controller but rather
-> >> > > > the chip requirements in terms of minimal strength for nominal use.
-> >> > > >  
-> >> > >
-> >> > >   Thanks Miquel.
-> >> > >
-> >> > >   Yes. Its NAND chip requirement. I have used the description for
-> >> > >   NAND ONFI param page
-> >> > >
-> >> > >   5.6.1.24. Byte 112: Number of bits ECC correctability
-> >> > >   This field indicates the number of bits that the host should be
-> >> > >   able to correct per 512 bytes of data.
-> >> > >  
-> >> > > >> The ecc correctability is assigned in
-> >> > > >> chip parameter during device probe time. QPIC/EBI2 NAND
-> >> > > >> supports 4/8-bit ecc correction. The Same kind of board
-> >> > > >> can have different NAND parts so use the ecc strength
-> >> > > >> from device parameter (if its non zero) instead of
-> >> > > >> device tree.  
-> >> > > >
-> >> > > > That is not what you do.
-> >> > > >
-> >> > > > What you do is forcing the strength to be 8-bit per ECC chunk if the
-> >> > > > NAND chip requires at least 8-bit/chunk strength.
-> >> > > >
-> >> > > > The DT property is here to force a strength. Otherwise, Linux will
-> >> > > > propose to the NAND controller to use the minimum strength required by
-> >> > > > the chip (from either the ONFI/JEDEC parameter page or from a static
-> >> > > > table).
-> >> > > >  
-> >> > >
-> >> > >   The main problem is that the same kind of boards can have different
-> >> > >   NAND parts.
-> >> > >
-> >> > >   Lets assume, we have following 2 cases.
-> >> > >
-> >> > >   1. Non ONFI/JEDEC device for which chip->ecc_strength_ds
-> >> > >      will be zero. In this case, the ecc->strength from DT
-> >> > >      will be used  
-> >> >
-> >> > No, the strength from DT will always be used if the property is
-> >> > present, no matter the type of chip.
-> >> >  
-> >> > >   2. ONFI/JEDEC device for which chip->ecc_strength_ds > 8.
-> >> > >      Since QCOM nand controller can not support
-> >> > >      ECC correction greater than 8 bits so we can use 8 bit ECC
-> >> > >      itself instead of failing NAND boot completely.  
-> >> >
-> >> > I understand that. But this is still not what you do.
-> >> >  
-> >> > >  
-> >> > > > IMHO, you have two solutions:
-> >> > > > 1/ Remove these properties from the board DT (breaks DT backward
-> >> > > > compatibility though);  
-> >> > >
-> >> > >   - nand-ecc-strength: This is optional property in nand.txt and
-> >> > >     Required property in qcom_nandc.txt.  
-> >> >
-> >> > Well, this property is not controller specific but chip specific. The
-> >> > controller driver does not rely on it, so this property should not be
-> >> > required.
-> >> >  
-> >> > > We can't remove since
-> >> > >     if the device is Non ONFI/JEDEC, then ecc strength will come
-> >> > >     from DT only.  
-> >> >
-> >> > We can remove it and let the core handle this (as this is generic to
-> >> > all raw NANDs and not specific to this controller driver). Try it out!  
-> 
->   Thanks Boris and Miquel for your inputs.
-> 
->   Just want to confirm if already its implemented in core layer
->   or shall I explore regrading this option.
-> 
->   I checked by removing this property alone from dtsi and it was
->   failing with
-> 
->   "Driver must set ecc.strength when using hardware ECC"
-> 
->   I checked the code in nand_base.c also but couldn't get
->   anything related with this.
-
-I don't know exactly what you did but you should have a look at what
-lead you to this path:
-https://elixir.bootlin.com/linux/v4.17-rc1/source/drivers/mtd/nand/raw/nand_base.c#L6421
-
-Thanks,
-Miquèl
+>
+> [auto build test ERROR on s390/features]
+> [also build test ERROR on v4.17-rc1 next-20180420]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Tony-Krowiak/KVM-s390-reset-crypto-attributes-for-all-vcpus/20180421-050734
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
+> config: s390-allyesconfig (attached as .config)
+> compiler: s390x-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>          chmod +x ~/bin/make.cross
+>          # save the attached .config to linux build tree
+>          make.cross ARCH=s390
+>
+> All error/warnings (new ones prefixed by >>):
+>
+>     arch/s390/kvm/kvm-s390.c: In function 'kvm_s390_vcpu_crypto_reset_all':
+>>> arch/s390/kvm/kvm-s390.c:800:10: error: implicit declaration of function 'kvm_s390_vcpu_crypto_setup'; did you mean 'kvm_s390_vcpu_crypto_reset_all'? [-Werror=implicit-function-declaration]
+>               kvm_s390_vcpu_crypto_setup(vcpu);
+>               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>               kvm_s390_vcpu_crypto_reset_all
+>     arch/s390/kvm/kvm-s390.c: At top level:
+>>> arch/s390/kvm/kvm-s390.c:805:13: warning: conflicting types for 'kvm_s390_vcpu_crypto_setup'
+>      static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu);
+>                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>>> arch/s390/kvm/kvm-s390.c:805:13: error: static declaration of 'kvm_s390_vcpu_crypto_setup' follows non-static declaration
+>     arch/s390/kvm/kvm-s390.c:800:10: note: previous implicit declaration of 'kvm_s390_vcpu_crypto_setup' was here
+>               kvm_s390_vcpu_crypto_setup(vcpu);
+>               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>     arch/s390/kvm/kvm-s390.c: In function 'kvm_s390_vm_set_crypto':
+>     arch/s390/kvm/kvm-s390.c:810:6: warning: unused variable 'i' [-Wunused-variable]
+>       int i;
+>           ^
+>     arch/s390/kvm/kvm-s390.c:809:19: warning: unused variable 'vcpu' [-Wunused-variable]
+>       struct kvm_vcpu *vcpu;
+>                        ^~~~
+>     cc1: some warnings being treated as errors
+>
+> vim +800 arch/s390/kvm/kvm-s390.c
+>
+>     791	
+>     792	void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
+>     793	 {
+>     794		int i;
+>     795		struct kvm_vcpu *vcpu;
+>     796	
+>     797		kvm_s390_vcpu_block_all(kvm);
+>     798	
+>     799		kvm_for_each_vcpu(i, vcpu, kvm)
+>   > 800		        kvm_s390_vcpu_crypto_setup(vcpu);
+>     801	
+>     802		kvm_s390_vcpu_unblock_all(kvm);
+>     803	}
+>     804	
+>   > 805	static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu);
+>     806	
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
