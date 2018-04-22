@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/Q74/aqcNMVVKX3SLO9jh89rn/KNHkhjsv1at2xYG8FZ/Q1JkB35BYXiMMse5y/drIpsmQ
-ARC-Seal: i=1; a=rsa-sha256; t=1524406656; cv=none;
+X-Google-Smtp-Source: AIpwx4+ud0hCc3jyg7/6ZfFnTyCqlXRVafnQ7tYHmU/74l6SSQQ9/oO48ktQGzI/CKaUuw/WFYei
+ARC-Seal: i=1; a=rsa-sha256; t=1524406651; cv=none;
         d=google.com; s=arc-20160816;
-        b=RryIMi9fz+3i+1BySCftZ0tVNoRzNWfR9C00Kr8onxksNUKK3jSjWgaK8HRynx2NHY
-         IqmJn2Xe00SfBlELNlKzliR6qZVxSxiD5Us1v3qvM/yTLvwDRSECPvBuM7MZXQBmqRp9
-         kzhEXoZbT8fFMMaUZeRxEbsnh8hpaIE7rZMzm6v94g0T7Vs6jWCsS6KSthjAZbMTqkaA
-         nYmSWSh5BxENyukg4hBaYv7FinsQ/pL/y9+69IDYEGACJMFOz1iPS9mVSJj7KZOfU7Kr
-         C58vFRB2UpKFseNUODdPN8i9MR1OmPHa7LiQ8Pdv6Xzat+1tkwRPBV7OhJQSkxhLk6n7
-         +xYA==
+        b=FTEq6WVsUQ+NtE9geCwXRYo1Pscf1fpRawVOanpEwXPsWQiAHTv4/g2xw4AgNXxcUJ
+         S/HmhmCvfoJ839E+r6a9DaQmsacYQnNFVm/aL078G6gjbwtb3LOV5cpQN/tqQQQe/uHY
+         G9CM+jjxDW2xw1zdCHDTPuUnRIrGDpIppPif/mwfVuzvsLnCs7OVSTe0gYlDjaSyJ8cD
+         YCXfOjn+SHQS4DDPgd5eqBGtKuSIZd3o+2Ek29Y3bzKGUK5KGEertfragAwWfJDpCyJw
+         8U7YMp/QmOT3LmhTS9ZUO3bTqDPa/+DK2eMYg5q+TRjCalgvKL2ElFVgz/n560b5oR3A
+         vssA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9bQR1odaMQ/SRU2bzBERgf284pcQJXNkiy56f3PK/ug=;
-        b=vuOzicCssJKqcgIxBPPufjNy/90aT8JYpsmTVbo153ge7LwnSImaERjZsa2KNVmhK1
-         0YF50Xr3Uv03YIDIJlLLqflmim9onrLJTS5fCr3TGVu8rOkOooeMK0Hst3mQE3g7nYPq
-         5CKeIKwJi6icrLbR9NLJ3x0L/avwjdhttNyQwnINyMUzhMglgXnnePPA/Bb2ArJf2rzw
-         yefltnnhkxIXUiUadXyCZfdrYz34V25lJnwo4RZTSYiCAuJR3JZouFn6OJXpWzryZdl9
-         5pO1sN2IIcu7eV0spRNQ2C8lTdvwzx9YDuYUTP4YljAC9RMpQnaB7v9nR+RD0O+7s1bb
-         N02Q==
+        bh=+1gFRu5/i6QktzYS6h7fY0nE4lXtm2NbZVO6Ttcl3aQ=;
+        b=fe+hzJHztZ6AefQvHF21Fb3L2VmG33Xg49WbVXlbet3gLdcMmQAqHIKSo1AabDtJga
+         E85cI8dW5AIrUnQXwra5LVe6KUegIqbZ6Iz1ZG2wuPw7OTSoDlnyL8Mbw/Ewq7phB/1d
+         8lWf/HpzWsn01Pg/1w3BAK2a9PJGVrY3mNEwbzXH/0XfXuNMvKDEotsAuGXu6eid1ytE
+         v6zssjE/UBYYzcnwuU8dfZCMpqrAvK8t+eSIXEkZ5p/1tb5uRd27+bvqMRvr9ognvKCK
+         A1HFRM93f8tR/zXyaCQL0f19NXkJRGNkDB8Q6l54tzWu9TDULgNA/ZAvGTVxLrNZB3YX
+         Cylg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Schmid <alex@modula-shop-systems.de>,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.4 55/97] IB/srp: Fix completion vector assignment algorithm
-Date: Sun, 22 Apr 2018 15:53:33 +0200
-Message-Id: <20180422135308.352834384@linuxfoundation.org>
+	syzbot+8e62ff4e07aa2ce87826@syzkaller.appspotmail.com,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 53/97] ALSA: pcm: Fix UAF at PCM release via PCM timer access
+Date: Sun, 22 Apr 2018 15:53:31 +0200
+Message-Id: <20180422135308.244077643@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455094734674658?=
-X-GMAIL-MSGID: =?utf-8?q?1598456233992122277?=
+X-GMAIL-THRID: =?utf-8?q?1598455086390291327?=
+X-GMAIL-MSGID: =?utf-8?q?1598456228883679387?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,47 +49,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 3a148896b24adf8688dc0c59af54531931677a40 upstream.
+commit a820ccbe21e8ce8e86c39cd1d3bc8c7d1cbb949b upstream.
 
-Ensure that cv_end is equal to ibdev->num_comp_vectors for the
-NUMA node with the highest index. This patch improves spreading
-of RDMA channels over completion vectors and thereby improves
-performance, especially on systems with only a single NUMA node.
-This patch drops support for the comp_vector login parameter by
-ignoring the value of that parameter since I have not found a
-good way to combine support for that parameter and automatic
-spreading of RDMA channels over completion vectors.
+The PCM runtime object is created and freed dynamically at PCM stream
+open / close time.  This is tracked via substream->runtime, and it's
+cleared at snd_pcm_detach_substream().
 
-Fixes: d92c0da71a35 ("IB/srp: Add multichannel support")
-Reported-by: Alexander Schmid <alex@modula-shop-systems.de>
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Alexander Schmid <alex@modula-shop-systems.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+The runtime object assignment is protected by PCM open_mutex, so for
+all PCM operations, it's safely handled.  However, each PCM substream
+provides also an ALSA timer interface, and user-space can access to
+this while closing a PCM substream.  This may eventually lead to a
+UAF, as snd_pcm_timer_resolution() tries to access the runtime while
+clearing it in other side.
+
+Fortunately, it's the only concurrent access from the PCM timer, and
+it merely reads runtime->timer_resolution field.  So, we can avoid the
+race by reordering kfree() and wrapping the substream->runtime
+clearance with the corresponding timer lock.
+
+Reported-by: syzbot+8e62ff4e07aa2ce87826@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srp/ib_srp.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ sound/core/pcm.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -3311,12 +3311,10 @@ static ssize_t srp_create_target(struct
- 				      num_online_nodes());
- 		const int ch_end = ((node_idx + 1) * target->ch_count /
- 				    num_online_nodes());
--		const int cv_start = (node_idx * ibdev->num_comp_vectors /
--				      num_online_nodes() + target->comp_vector)
--				     % ibdev->num_comp_vectors;
--		const int cv_end = ((node_idx + 1) * ibdev->num_comp_vectors /
--				    num_online_nodes() + target->comp_vector)
--				   % ibdev->num_comp_vectors;
-+		const int cv_start = node_idx * ibdev->num_comp_vectors /
-+				     num_online_nodes();
-+		const int cv_end = (node_idx + 1) * ibdev->num_comp_vectors /
-+				   num_online_nodes();
- 		int cpu_idx = 0;
+--- a/sound/core/pcm.c
++++ b/sound/core/pcm.c
+@@ -28,6 +28,7 @@
+ #include <sound/core.h>
+ #include <sound/minors.h>
+ #include <sound/pcm.h>
++#include <sound/timer.h>
+ #include <sound/control.h>
+ #include <sound/info.h>
  
- 		for_each_online_cpu(cpu) {
+@@ -1025,8 +1026,13 @@ void snd_pcm_detach_substream(struct snd
+ 	snd_free_pages((void*)runtime->control,
+ 		       PAGE_ALIGN(sizeof(struct snd_pcm_mmap_control)));
+ 	kfree(runtime->hw_constraints.rules);
+-	kfree(runtime);
++	/* Avoid concurrent access to runtime via PCM timer interface */
++	if (substream->timer)
++		spin_lock_irq(&substream->timer->lock);
+ 	substream->runtime = NULL;
++	if (substream->timer)
++		spin_unlock_irq(&substream->timer->lock);
++	kfree(runtime);
+ 	put_pid(substream->pid);
+ 	substream->pid = NULL;
+ 	substream->pstr->substream_opened--;
