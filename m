@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48zxRRKb9HXFQ+l+mLiKzxk0UBtgg1SCTJA63nFpWcwTsLCOuhvZpcvqp8XImrsWFGvyKdC
-ARC-Seal: i=1; a=rsa-sha256; t=1524405359; cv=none;
+X-Google-Smtp-Source: AIpwx49RUc6raIbKeXBpoMw8J3PI4BncDLY0MSldKCKzIO2ljD/RuJLq08wc2TsUOR+rd68CYuLC
+ARC-Seal: i=1; a=rsa-sha256; t=1524405356; cv=none;
         d=google.com; s=arc-20160816;
-        b=mtXG0M46RsHLyts42HlR3fPE/EOEMGGQ6kL20xqRPPMqoWdccUh8LHujpXqcpNoKpE
-         iZZUK6ANIOgEpkJM3jIspkVagzvgBhu3y2rCf/vaMoSpmUnt15F+/uaPL2dgQbXaMhvu
-         WkaSJamJnEhd9yxGEcANfxdZUMo8OQqx/bUbiNqHhPxcUlhOoiNhy1PYSQanWbb+d2yN
-         cW2fVrYYErPAq18uU3qsm2qV0uSYbn8V55SWVarLEAhDNO2Gd8RNkgOeVM5z7mOCcxrm
-         fnRk31mldE2s97EUsUDxd5Ank/nTpu/JEhLV5UvrqCFFPBOyNAgJOJr7Fgv2yj7rOg1m
-         wIrw==
+        b=fsDqTkgShKuFZ9nosRGNeAaMTNJjCkcTzjO61VjJKZPm0E1S3aS3IqDFgggKoHdbxQ
+         TyZvhLg4/dqPPlKEgU+QWgGehdXCwgVarLRBbyQ3THJ6KogTzdSou+8DtDpbDQz3CpHV
+         SNn6WxE2ojfQabvDC3Mmi4NzAfeb7OR1iya1JargpQoQagw+v/JyNn1s83rHhpCoFL4w
+         fjOzVFLWjKN4MuYQyk10T0swnxCZRW6FHWVHPLN48LIfFL0kOnDczXLMYpXMnRMq9jr9
+         8ZPxAaV/uW6cAryq3wHlgI2UbK70JJVT2rAQG1W98tjvOWsPA3SpMUi58hQxczX0FO7z
+         zlHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UQQsLldgQDJTvyJF5ZX2HgcsJTLGMC12aMzg8Lb1SOw=;
-        b=KoxqtQa1BMJc8ADwhIwoRwg3xcOvSCDQdwV7JUhowfe8wTWI1zW6MHJAl+HPch7GZ9
-         nKW7TbL8X9ohLBCUf8A73HgW81/qX/h51kO9Fs0ZVeveD2jox+WF6AZVNS3YG/Z/96i6
-         0Z/GYO0qLq5Elv8f2q3cDEU3iDKdPg756q2KoICk4oIukyOsedJo9VwfGaorJf5uPdOi
-         PZ4RJYDoZMd3O+d7GnSt3xB71mP9Yl4pifA+zywNanllKU3asJMsHW2I0wxZgdT/Sc2g
-         yqH2AgbSeEkGSmfFfc62EywgO8d5BWSA1mYYunWIo8BI13KrFPOVWfVaAdl8gA/CmSy8
-         er0g==
+        bh=apUiSRUhgX74oVquj8GUOU4eGKQGuw6VwojoVz+m+ZU=;
+        b=HH5VEa/6V7bjZXmX8ykMkVIpMP5t3UZ0BddtxYTJEvrM+6VAB4EAXi87ZjQ7CEZdhX
+         m97hp6GJrY7F3woRtgei1J5q/7W6n8rGVJLlSrF2GtfEU0VNQ0TpKzOFpOPA9zzMKt+4
+         YcS5d+iHO8WSiudBTCmiaRQE/0IlKfKaD6lgCQ9fa1NdmazZGWHzwr9FgQp0j7NzlzkT
+         zxjz+z6nf/cqA/9Pnvhc96LbLhCkiCRyRaDAdsGuRsRni3mikmaj7LK3t4PGIjXppSg0
+         dHBrBpOgx6XsVu7bH5J3s0PFBha9nG6OBtj/82bsUuth9gdDNQ3gZ2jUGN3A6k5naCfR
+         +b3g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.16 036/196] regmap: Fix reversed bounds check in regmap_raw_write()
-Date: Sun, 22 Apr 2018 15:50:56 +0200
-Message-Id: <20180422135105.964617622@linuxfoundation.org>
+	Jason Andryuk <jandryuk@gmail.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.16 035/196] x86/xen: Delay get_cpu_cap until stack canary is established
+Date: Sun, 22 Apr 2018 15:50:55 +0200
+Message-Id: <20180422135105.924554029@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454873954222137?=
-X-GMAIL-MSGID: =?utf-8?q?1598454873954222137?=
+X-GMAIL-THRID: =?utf-8?q?1598454870775215893?=
+X-GMAIL-MSGID: =?utf-8?q?1598454870775215893?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,37 +49,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jason Andryuk <jandryuk@gmail.com>
 
-commit f00e71091ab92eba52122332586c6ecaa9cd1a56 upstream.
+commit 36104cb9012a82e73c32a3b709257766b16bcd1d upstream.
 
-We're supposed to be checking that "val_len" is not too large but
-instead we check if it is smaller than the max.
+Commit 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings") introduced a
+call to get_cpu_cap, which is fstack-protected.  This is works on x86-64
+as commit 4f277295e54c ("x86/xen: init %gs very early to avoid page
+faults with stack protector") ensures the stack protector is configured,
+but it it did not cover x86-32.
 
-The only function affected would be regmap_i2c_smbus_i2c_write() in
-drivers/base/regmap/regmap-i2c.c.  Strangely that function has its own
-limit check which returns an error if (count >= I2C_SMBUS_BLOCK_MAX) so
-it doesn't look like it has ever been able to do anything except return
-an error.
+Delay calling get_cpu_cap until after xen_setup_gdt has initialized the
+stack canary.  Without this, a 32bit PV machine crashes early
+in boot.
+(XEN) Domain 0 (vcpu#0) crashed on cpu#0:
+(XEN) ----[ Xen-4.6.6-xc  x86_64  debug=n  Tainted:    C ]----
+(XEN) CPU:    0
+(XEN) RIP:    e019:[<00000000c10362f8>]
 
-Fixes: c335931ed9d2 ("regmap: Add raw_write/read checks for max_raw_write/read sizes")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+And the PV kernel IP corresponds to init_scattered_cpuid_features
+   0xc10362f8 <+24>:    mov    %gs:0x14,%eax
+
+Fixes 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/regmap/regmap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/xen/enlighten_pv.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1831,7 +1831,7 @@ int regmap_raw_write(struct regmap *map,
- 		return -EINVAL;
- 	if (val_len % map->format.val_bytes)
- 		return -EINVAL;
--	if (map->max_raw_write && map->max_raw_write > val_len)
-+	if (map->max_raw_write && map->max_raw_write < val_len)
- 		return -E2BIG;
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -1259,10 +1259,6 @@ asmlinkage __visible void __init xen_sta
+ 	 */
+ 	__userpte_alloc_gfp &= ~__GFP_HIGHMEM;
  
- 	map->lock(map->lock_arg);
+-	/* Work out if we support NX */
+-	get_cpu_cap(&boot_cpu_data);
+-	x86_configure_nx();
+-
+ 	/* Get mfn list */
+ 	xen_build_dynamic_phys_to_machine();
+ 
+@@ -1272,6 +1268,10 @@ asmlinkage __visible void __init xen_sta
+ 	 */
+ 	xen_setup_gdt(0);
+ 
++	/* Work out if we support NX */
++	get_cpu_cap(&boot_cpu_data);
++	x86_configure_nx();
++
+ 	xen_init_irq_ops();
+ 
+ 	/* Let's presume PV guests always boot on vCPU with id 0. */
