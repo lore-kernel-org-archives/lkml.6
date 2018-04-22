@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+sZ/yVTo4HZsvpVQ4lvQYoX9gYLlpz6vvR2UU0aI+cu0fiSisSq5HpT33F9olKKHtRr3ZD
-ARC-Seal: i=1; a=rsa-sha256; t=1524405424; cv=none;
+X-Google-Smtp-Source: AIpwx4/Nz630ay60G2f6oG+nDKvuI1P/9DPYC93LWaDYeexfC9koD2nF5ImPzPdeoy/KFp0+1FC2
+ARC-Seal: i=1; a=rsa-sha256; t=1524405421; cv=none;
         d=google.com; s=arc-20160816;
-        b=VzT9SmbSVonTe07ZaR94OWl2LPGwGmGqr2FJ11oNZXTH7B772K8juQqBsvwrxGIESE
-         pWZmxFxwm7UFcgbU7yRFQBz5vXwHKfYLLyH6Yg7DIEaWs520TQ6xJgxkRyfavVnJf/7e
-         hZlgam9Vm7jDzQEPsoNv3gA0tACzNUFFdfECrbAUd29UJYEyhH+onscH5TLw/P9Dqbst
-         BKXVS8JHm/jPnaQE8IdA7/ZBURg4JseuoWR8vaU0SWWDfG+7jfbIB4kVxk6m0TelVMrC
-         xsW1RFQ+tcRx9HgK5vLnKPGQaN5Nldx96M8m2qr6ibMSXrGn37Z+zCcpXQ2ftIEFp/SV
-         P42w==
+        b=zELOjquet/tOUwvpr7FqhDNzkWSvRXjp1pi5nz15A+CVZirfB6Ei4R2VJdP51RuJLs
+         Q7iuTap4pHyzCTM4l0/CdJw6vlW8fQKhnnpHkc4v8T+1EFE/pYS6YtqO30QFAPooeGSW
+         rU4sbtgZzwEg6YfO9i6zPVvUxq04tAw1QEDSYIYdiTyVQstkhJDkdGGHBfBrxSJGAm99
+         gpNYpHWGKjzDd800VfEdNvY5Ff8uZp6hmt7LOTCzzB25RX3uQQ1NJs6tUbcHCHlgotn1
+         rGVBJAOv56Y60IE8SAOfKBESTxg8m813T2SvrHnRxYRTEnLPs+fDdxwZqFRMSwvs0yL0
+         m6yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8/GZbm7aH3ZYkgC3ocCdNkmDiH7XVh6P4ZvrDHXr75Q=;
-        b=UCzgp6cU6ojuhnAXsZ+8gV+6JWBawtDNVtptmInBeF5kT0j+3TTDNK4943PerL3Dbz
-         5lWNvEjDqtzTdKK7qjGxXwZbQoFUiFguS1CpcTCabfl0GsI3bLHYv5b087V7FtlHbpuK
-         CK9fZaMqhm7ySckZ5zSZea4sv/BU25ZMQFsWWohTdXJxqM2usqcWPewxlQeyJlsULnba
-         hTahAbjHYeRC5gLNW56MLbPO3p8aaJLP9fkLhGDXWcjWgirLr0kCUyrIPp+ts6V/cfkc
-         fOTrgFLzgymka7nVctZtdd9GvT4SwCHJImMHkx+ecDX6JU5HXdo/5pUYOef3bNLyyCOW
-         ZCoA==
+        bh=MpAMq85ktJo9TVQzi1I1AHw4Y/QER6Pc8X1Z1bzeNfI=;
+        b=DHDAp8corXGu33aXIFZONaLAHq5qklSL0yiU6gnL6HrKwErWWmzLq7vCEirQUyJrfr
+         GmZfM40Bo46e0gOtGrDgmuGRRzvix3E2TvXSqhWlg5mQno5f7APJbhoo+GPFF1saLifA
+         ugcQ3fKvQlPAibSMlMw576cTLCWyvNeJbIPg4afSVVOXGsVJ56Btv5zA0nbT5dPpjtWU
+         61TyigZ5l/97kEC6PQ0UrX/FRrZPQg9OyfMA82lHeKditXIsQe8NsHOoJt1qkMKrdYIZ
+         M5FlvjV7WD0uMFVqhgeGn/pcs72FDzySNO60bOU6ssCMBFL/zp871UWZM14l6N3JtG0W
+         O/Ag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tuba Yavuz <tuba@ece.ufl.edu>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.16 044/196] usb: dwc3: gadget: never call ->complete() from ->ep_queue()
-Date: Sun, 22 Apr 2018 15:51:04 +0200
-Message-Id: <20180422135106.353321075@linuxfoundation.org>
+	Michael Neuling <mikey@neuling.org>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.16 061/196] powerpc/eeh: Fix race with driver un/bind
+Date: Sun, 22 Apr 2018 15:51:21 +0200
+Message-Id: <20180422135107.407375306@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454942163672502?=
-X-GMAIL-MSGID: =?utf-8?q?1598454942163672502?=
+X-GMAIL-THRID: =?utf-8?q?1598454939829310013?=
+X-GMAIL-MSGID: =?utf-8?q?1598454939829310013?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,121 +50,256 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
+From: Michael Neuling <mikey@neuling.org>
 
-commit c91815b596245fd7da349ecc43c8def670d2269e upstream.
+commit f0295e047fcf52ccb42561fb7de6942f5201b676 upstream.
 
-This is a requirement which has always existed but, somehow, wasn't
-reflected in the documentation and problems weren't found until now
-when Tuba Yavuz found a possible deadlock happening between dwc3 and
-f_hid. She described the situation as follows:
+The current EEH callbacks can race with a driver unbind. This can
+result in a backtraces like this:
 
-spin_lock_irqsave(&hidg->write_spinlock, flags); // first acquire
-/* we our function has been disabled by host */
-if (!hidg->req) {
-	free_ep_req(hidg->in_ep, hidg->req);
-	goto try_again;
-}
+  EEH: Frozen PHB#0-PE#1fc detected
+  EEH: PE location: S000009, PHB location: N/A
+  CPU: 2 PID: 2312 Comm: kworker/u258:3 Not tainted 4.15.6-openpower1 #2
+  Workqueue: nvme-wq nvme_reset_work [nvme]
+  Call Trace:
+    dump_stack+0x9c/0xd0 (unreliable)
+    eeh_dev_check_failure+0x420/0x470
+    eeh_check_failure+0xa0/0xa4
+    nvme_reset_work+0x138/0x1414 [nvme]
+    process_one_work+0x1ec/0x328
+    worker_thread+0x2e4/0x3a8
+    kthread+0x14c/0x154
+    ret_from_kernel_thread+0x5c/0xc8
+  nvme nvme1: Removing after probe failure status: -19
+  <snip>
+  cpu 0x23: Vector: 300 (Data Access) at [c000000ff50f3800]
+      pc: c0080000089a0eb0: nvme_error_detected+0x4c/0x90 [nvme]
+      lr: c000000000026564: eeh_report_error+0xe0/0x110
+      sp: c000000ff50f3a80
+     msr: 9000000000009033
+     dar: 400
+   dsisr: 40000000
+    current = 0xc000000ff507c000
+    paca    = 0xc00000000fdc9d80   softe: 0        irq_happened: 0x01
+      pid   = 782, comm = eehd
+  Linux version 4.15.6-openpower1 (smc@smc-desktop) (gcc version 6.4.0 (Buildroot 2017.11.2-00008-g4b6188e)) #2 SM                                             P Tue Feb 27 12:33:27 PST 2018
+  enter ? for help
+    eeh_report_error+0xe0/0x110
+    eeh_pe_dev_traverse+0xc0/0xdc
+    eeh_handle_normal_event+0x184/0x4c4
+    eeh_handle_event+0x30/0x288
+    eeh_event_handler+0x124/0x170
+    kthread+0x14c/0x154
+    ret_from_kernel_thread+0x5c/0xc8
 
-[...]
+The first part is an EEH (on boot), the second half is the resulting
+crash. nvme probe starts the nvme_reset_work() worker thread. This
+worker thread starts touching the device which see a device error
+(EEH) and hence queues up an event in the powerpc EEH worker
+thread. nvme_reset_work() then continues and runs
+nvme_remove_dead_ctrl_work() which results in unbinding the driver
+from the device and hence releases all resources. At the same time,
+the EEH worker thread starts doing the EEH .error_detected() driver
+callback, which no longer works since the resources have been freed.
 
-status = usb_ep_queue(hidg->in_ep, hidg->req, GFP_ATOMIC);
-=>
-	[...]
-	=> usb_gadget_giveback_request
-		=>
-		f_hidg_req_complete
-			=>
-			spin_lock_irqsave(&hidg->write_spinlock, flags); // second acquire
+This fixes the problem in the same way the generic PCIe AER code (in
+drivers/pci/pcie/aer/aerdrv_core.c) does. It makes the EEH code hold
+the device_lock() while performing the driver EEH callbacks and
+associated code. This ensures either the callbacks are no longer
+register, or if they are registered the driver will not be removed
+from underneath us.
 
-Note that this happens because dwc3 would call ->complete() on a
-failed usb_ep_queue() due to failed Start Transfer command. This is,
-anyway, a theoretical situation because dwc3 currently uses "No
-Response Update Transfer" command for Bulk and Interrupt endpoints.
+This has been broken forever. The EEH call backs were first introduced
+in 2005 (in 77bd7415610) but it's not clear if a lock was needed back
+then.
 
-It's still good to make this case impossible to happen even if the "No
-Reponse Update Transfer" command is changed.
-
-Reported-by: Tuba Yavuz <tuba@ece.ufl.edu>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 77bd74156101 ("[PATCH] powerpc: PCI Error Recovery: PPC64 core recovery routines")
+Cc: stable@vger.kernel.org # v2.6.16+
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |   43 +++++++++++++++++++++++++------------------
- 1 file changed, 25 insertions(+), 18 deletions(-)
+ arch/powerpc/kernel/eeh_driver.c |   68 ++++++++++++++++++++++++---------------
+ 1 file changed, 42 insertions(+), 26 deletions(-)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -166,18 +166,8 @@ static void dwc3_ep_inc_deq(struct dwc3_
- 	dwc3_ep_inc_trb(&dep->trb_dequeue);
+--- a/arch/powerpc/kernel/eeh_driver.c
++++ b/arch/powerpc/kernel/eeh_driver.c
+@@ -207,18 +207,18 @@ static void *eeh_report_error(void *data
+ 
+ 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
+ 		return NULL;
++
++	device_lock(&dev->dev);
+ 	dev->error_state = pci_channel_io_frozen;
+ 
+ 	driver = eeh_pcid_get(dev);
+-	if (!driver) return NULL;
++	if (!driver) goto out_no_dev;
+ 
+ 	eeh_disable_irq(dev);
+ 
+ 	if (!driver->err_handler ||
+-	    !driver->err_handler->error_detected) {
+-		eeh_pcid_put(dev);
+-		return NULL;
+-	}
++	    !driver->err_handler->error_detected)
++		goto out;
+ 
+ 	rc = driver->err_handler->error_detected(dev, pci_channel_io_frozen);
+ 
+@@ -227,8 +227,12 @@ static void *eeh_report_error(void *data
+ 	if (*res == PCI_ERS_RESULT_NONE) *res = rc;
+ 
+ 	edev->in_error = true;
+-	eeh_pcid_put(dev);
+ 	pci_uevent_ers(dev, PCI_ERS_RESULT_NONE);
++
++out:
++	eeh_pcid_put(dev);
++out_no_dev:
++	device_unlock(&dev->dev);
+ 	return NULL;
  }
  
--/**
-- * dwc3_gadget_giveback - call struct usb_request's ->complete callback
-- * @dep: The endpoint to whom the request belongs to
-- * @req: The request we're giving back
-- * @status: completion code for the request
-- *
-- * Must be called with controller's lock held and interrupts disabled. This
-- * function will unmap @req and call its ->complete() callback to notify upper
-- * layers that it has completed.
-- */
--void dwc3_gadget_giveback(struct dwc3_ep *dep, struct dwc3_request *req,
--		int status)
-+void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
-+		struct dwc3_request *req, int status)
- {
- 	struct dwc3			*dwc = dep->dwc;
+@@ -251,15 +255,14 @@ static void *eeh_report_mmio_enabled(voi
+ 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
+ 		return NULL;
  
-@@ -190,18 +180,35 @@ void dwc3_gadget_giveback(struct dwc3_ep
++	device_lock(&dev->dev);
+ 	driver = eeh_pcid_get(dev);
+-	if (!driver) return NULL;
++	if (!driver) goto out_no_dev;
  
- 	if (req->trb)
- 		usb_gadget_unmap_request_by_dev(dwc->sysdev,
--						&req->request, req->direction);
-+				&req->request, req->direction);
+ 	if (!driver->err_handler ||
+ 	    !driver->err_handler->mmio_enabled ||
+-	    (edev->mode & EEH_DEV_NO_HANDLER)) {
+-		eeh_pcid_put(dev);
+-		return NULL;
+-	}
++	    (edev->mode & EEH_DEV_NO_HANDLER))
++		goto out;
  
- 	req->trb = NULL;
--
- 	trace_dwc3_gadget_giveback(req);
+ 	rc = driver->err_handler->mmio_enabled(dev);
  
-+	if (dep->number > 1)
-+		pm_runtime_put(dwc->dev);
-+}
-+
-+/**
-+ * dwc3_gadget_giveback - call struct usb_request's ->complete callback
-+ * @dep: The endpoint to whom the request belongs to
-+ * @req: The request we're giving back
-+ * @status: completion code for the request
-+ *
-+ * Must be called with controller's lock held and interrupts disabled. This
-+ * function will unmap @req and call its ->complete() callback to notify upper
-+ * layers that it has completed.
-+ */
-+void dwc3_gadget_giveback(struct dwc3_ep *dep, struct dwc3_request *req,
-+		int status)
-+{
-+	struct dwc3			*dwc = dep->dwc;
-+
-+	dwc3_gadget_del_and_unmap_request(dep, req, status);
-+
- 	spin_unlock(&dwc->lock);
- 	usb_gadget_giveback_request(&dep->endpoint, &req->request);
- 	spin_lock(&dwc->lock);
--
--	if (dep->number > 1)
--		pm_runtime_put(dwc->dev);
+@@ -267,7 +270,10 @@ static void *eeh_report_mmio_enabled(voi
+ 	if (rc == PCI_ERS_RESULT_NEED_RESET) *res = rc;
+ 	if (*res == PCI_ERS_RESULT_NONE) *res = rc;
+ 
++out:
+ 	eeh_pcid_put(dev);
++out_no_dev:
++	device_unlock(&dev->dev);
+ 	return NULL;
  }
  
- /**
-@@ -1227,7 +1234,7 @@ static int __dwc3_gadget_kick_transfer(s
- 		if (req->trb)
- 			memset(req->trb, 0, sizeof(struct dwc3_trb));
- 		dep->queued_requests--;
--		dwc3_gadget_giveback(dep, req, ret);
-+		dwc3_gadget_del_and_unmap_request(dep, req, ret);
- 		return ret;
+@@ -290,20 +296,20 @@ static void *eeh_report_reset(void *data
+ 
+ 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
+ 		return NULL;
++
++	device_lock(&dev->dev);
+ 	dev->error_state = pci_channel_io_normal;
+ 
+ 	driver = eeh_pcid_get(dev);
+-	if (!driver) return NULL;
++	if (!driver) goto out_no_dev;
+ 
+ 	eeh_enable_irq(dev);
+ 
+ 	if (!driver->err_handler ||
+ 	    !driver->err_handler->slot_reset ||
+ 	    (edev->mode & EEH_DEV_NO_HANDLER) ||
+-	    (!edev->in_error)) {
+-		eeh_pcid_put(dev);
+-		return NULL;
+-	}
++	    (!edev->in_error))
++		goto out;
+ 
+ 	rc = driver->err_handler->slot_reset(dev);
+ 	if ((*res == PCI_ERS_RESULT_NONE) ||
+@@ -311,7 +317,10 @@ static void *eeh_report_reset(void *data
+ 	if (*res == PCI_ERS_RESULT_DISCONNECT &&
+ 	     rc == PCI_ERS_RESULT_NEED_RESET) *res = rc;
+ 
++out:
+ 	eeh_pcid_put(dev);
++out_no_dev:
++	device_unlock(&dev->dev);
+ 	return NULL;
+ }
+ 
+@@ -362,10 +371,12 @@ static void *eeh_report_resume(void *dat
+ 
+ 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
+ 		return NULL;
++
++	device_lock(&dev->dev);
+ 	dev->error_state = pci_channel_io_normal;
+ 
+ 	driver = eeh_pcid_get(dev);
+-	if (!driver) return NULL;
++	if (!driver) goto out_no_dev;
+ 
+ 	was_in_error = edev->in_error;
+ 	edev->in_error = false;
+@@ -375,18 +386,20 @@ static void *eeh_report_resume(void *dat
+ 	    !driver->err_handler->resume ||
+ 	    (edev->mode & EEH_DEV_NO_HANDLER) || !was_in_error) {
+ 		edev->mode &= ~EEH_DEV_NO_HANDLER;
+-		eeh_pcid_put(dev);
+-		return NULL;
++		goto out;
  	}
+ 
+ 	driver->err_handler->resume(dev);
+ 
+-	eeh_pcid_put(dev);
+ 	pci_uevent_ers(dev, PCI_ERS_RESULT_RECOVERED);
++out:
++	eeh_pcid_put(dev);
+ #ifdef CONFIG_PCI_IOV
+ 	if (eeh_ops->notify_resume && eeh_dev_to_pdn(edev))
+ 		eeh_ops->notify_resume(eeh_dev_to_pdn(edev));
+ #endif
++out_no_dev:
++	device_unlock(&dev->dev);
+ 	return NULL;
+ }
+ 
+@@ -406,23 +419,26 @@ static void *eeh_report_failure(void *da
+ 
+ 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
+ 		return NULL;
++
++	device_lock(&dev->dev);
+ 	dev->error_state = pci_channel_io_perm_failure;
+ 
+ 	driver = eeh_pcid_get(dev);
+-	if (!driver) return NULL;
++	if (!driver) goto out_no_dev;
+ 
+ 	eeh_disable_irq(dev);
+ 
+ 	if (!driver->err_handler ||
+-	    !driver->err_handler->error_detected) {
+-		eeh_pcid_put(dev);
+-		return NULL;
+-	}
++	    !driver->err_handler->error_detected)
++		goto out;
+ 
+ 	driver->err_handler->error_detected(dev, pci_channel_io_perm_failure);
+ 
+-	eeh_pcid_put(dev);
+ 	pci_uevent_ers(dev, PCI_ERS_RESULT_DISCONNECT);
++out:
++	eeh_pcid_put(dev);
++out_no_dev:
++	device_unlock(&dev->dev);
+ 	return NULL;
+ }
  
