@@ -1,115 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753472AbeDVRYl (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 13:24:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46509 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751564AbeDVRYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 13:24:38 -0400
-Date: Sun, 22 Apr 2018 19:24:25 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: han.xu@nxp.com, boris.brezillon@free-electrons.com,
-        marek.vasut@gmail.com, richard@nod.at, dwmw2@infradead.org,
-        cyrille.pitchen@wedev4u.fr, max.oss.09@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mtd: rawnand: gpmi: add support for specific ECC
- strength
-Message-ID: <20180422192425.7cc090f4@bbrezillon>
-In-Reply-To: <20180304200602.11475-1-stefan@agner.ch>
-References: <20180304200602.11475-1-stefan@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753532AbeDVRZE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 13:25:04 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39201 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753390AbeDVRZB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 13:25:01 -0400
+X-Google-Smtp-Source: AIpwx4+bgJBK8z4NHILv9fLg4ISv3a4usH+tj6ANDLK7ZdrJiA4/9ANxnfKMspHKn7qQ7Q+wJQ8bEw==
+Date: Sun, 22 Apr 2018 10:26:04 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Vijay Viswanath <vviswana@codeaurora.org>
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com, riteshh@codeaurora.org,
+        vbadigan@codeaurora.org
+Subject: Re: [PATCH V5 1/2] mmc: sdhci-msm: Add support to store supported
+ vdd-io voltages
+Message-ID: <20180422172604.GA2052@tuxbook-pro>
+References: <1524226529-30100-1-git-send-email-vviswana@codeaurora.org>
+ <1524226529-30100-2-git-send-email-vviswana@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524226529-30100-2-git-send-email-vviswana@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  4 Mar 2018 21:06:01 +0100
-Stefan Agner <stefan@agner.ch> wrote:
+On Fri 20 Apr 05:15 PDT 2018, Vijay Viswanath wrote:
 
-> Add support for specified ECC strength/size using device tree
-> properties nand-ecc-strength/nand-ecc-step-size.
+> During probe check whether the vdd-io regulator of sdhc platform device
+> can support 1.8V and 3V and store this information as a capability of
+> platform device.
 > 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Applied to nand/next.
+Sorry for the delay, I've boot tested this on 8974 and 8916 now and eMMC
+still works. 
 
-Thanks,
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Boris
+Regards,
+Bjorn
 
 > ---
->  drivers/mtd/nand/gpmi-nand/gpmi-nand.c | 30 ++++++++++++++++++++----------
->  1 file changed, 20 insertions(+), 10 deletions(-)
+>  drivers/mmc/host/sdhci-msm.c | 29 ++++++++++++++++++++++++++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> index 61fdd733492f..d04754289c03 100644
-> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> @@ -198,17 +198,16 @@ static inline bool gpmi_check_ecc(struct gpmi_nand_data *this)
->   *
->   * We may have available oob space in this case.
->   */
-> -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
-> +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
-> +				    unsigned int ecc_strength,
-> +				    unsigned int ecc_step)
->  {
->  	struct bch_geometry *geo = &this->bch_geometry;
->  	struct nand_chip *chip = &this->nand;
->  	struct mtd_info *mtd = nand_to_mtd(chip);
->  	unsigned int block_mark_bit_offset;
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index c283291..edd30a2 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/slab.h>
+>  #include <linux/iopoll.h>
+> +#include <linux/regulator/consumer.h>
 >  
-> -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> -		return -EINVAL;
-> -
-> -	switch (chip->ecc_step_ds) {
-> +	switch (ecc_step) {
->  	case SZ_512:
->  		geo->gf_len = 13;
->  		break;
-> @@ -221,8 +220,8 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->  			chip->ecc_strength_ds, chip->ecc_step_ds);
->  		return -EINVAL;
->  	}
-> -	geo->ecc_chunk_size = chip->ecc_step_ds;
-> -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
-> +	geo->ecc_chunk_size = ecc_step;
-> +	geo->ecc_strength = round_up(ecc_strength, 2);
->  	if (!gpmi_check_ecc(this))
->  		return -EINVAL;
+>  #include "sdhci-pltfm.h"
 >  
-> @@ -230,7 +229,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->  	if (geo->ecc_chunk_size < mtd->oobsize) {
->  		dev_err(this->dev,
->  			"unsupported nand chip. ecc size: %d, oob size : %d\n",
-> -			chip->ecc_step_ds, mtd->oobsize);
-> +			ecc_step, mtd->oobsize);
->  		return -EINVAL;
->  	}
+> @@ -81,6 +82,9 @@
+>  #define CORE_HC_SELECT_IN_HS400	(6 << 19)
+>  #define CORE_HC_SELECT_IN_MASK	(7 << 19)
 >  
-> @@ -423,9 +422,20 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
->  
->  int common_nfc_set_geometry(struct gpmi_nand_data *this)
->  {
-> +	struct nand_chip *chip = &this->nand;
+> +#define CORE_3_0V_SUPPORT	(1 << 25)
+> +#define CORE_1_8V_SUPPORT	(1 << 26)
 > +
-> +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
-> +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
-> +						chip->ecc.size);
-> +
->  	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
-> -				|| legacy_set_geometry(this))
-> -		return set_geometry_by_ecc_info(this);
-> +				|| legacy_set_geometry(this)) {
-> +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> +			return -EINVAL;
-> +
-> +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
-> +						chip->ecc_step_ds);
-> +	}
+>  #define CORE_CSR_CDC_CTLR_CFG0		0x130
+>  #define CORE_SW_TRIG_FULL_CALIB		BIT(16)
+>  #define CORE_HW_AUTOCAL_ENA		BIT(17)
+> @@ -148,6 +152,7 @@ struct sdhci_msm_host {
+>  	u32 curr_io_level;
+>  	wait_queue_head_t pwr_irq_wait;
+>  	bool pwr_irq_flag;
+> +	u32 caps_0;
+>  };
 >  
->  	return 0;
+>  static unsigned int msm_get_clock_rate_for_bus_mode(struct sdhci_host *host,
+> @@ -1103,7 +1108,7 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
+>  	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>  	u32 irq_status, irq_ack = 0;
+>  	int retry = 10;
+> -	int pwr_state = 0, io_level = 0;
+> +	u32 pwr_state = 0, io_level = 0;
+>  
+>  
+>  	irq_status = readl_relaxed(msm_host->core_mem + CORE_PWRCTL_STATUS);
+> @@ -1313,6 +1318,27 @@ static void sdhci_msm_writeb(struct sdhci_host *host, u8 val, int reg)
+>  		sdhci_msm_check_power_status(host, req_type);
 >  }
+>  
+> +static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
+> +{
+> +	struct mmc_host *mmc = msm_host->mmc;
+> +	struct regulator *supply = mmc->supply.vqmmc;
+> +	u32 caps = 0;
+> +
+> +	if (!IS_ERR(mmc->supply.vqmmc)) {
+> +		if (regulator_is_supported_voltage(supply, 1700000, 1950000))
+> +			caps |= CORE_1_8V_SUPPORT;
+> +		if (regulator_is_supported_voltage(supply, 2700000, 3600000))
+> +			caps |= CORE_3_0V_SUPPORT;
+> +
+> +		if (!caps)
+> +			pr_warn("%s: 1.8/3V not supported for vqmmc\n",
+> +					mmc_hostname(mmc));
+> +	}
+> +
+> +	msm_host->caps_0 |= caps;
+> +	pr_debug("%s: supported caps: 0x%08x\n", mmc_hostname(mmc), caps);
+> +}
+> +
+>  static const struct of_device_id sdhci_msm_dt_match[] = {
+>  	{ .compatible = "qcom,sdhci-msm-v4" },
+>  	{},
+> @@ -1530,6 +1556,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>  	ret = sdhci_add_host(host);
+>  	if (ret)
+>  		goto pm_runtime_disable;
+> +	sdhci_msm_set_regulator_caps(msm_host);
+>  
+>  	pm_runtime_mark_last_busy(&pdev->dev);
+>  	pm_runtime_put_autosuspend(&pdev->dev);
+> -- 
+>  Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> 
