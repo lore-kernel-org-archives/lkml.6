@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49Ia14IuQEf3jNWVDsB8ePb3w8o0koqibB/WOyPH7gFPl3UqomM0QQWsYmStyEHimV9z6I6
-ARC-Seal: i=1; a=rsa-sha256; t=1524406829; cv=none;
+X-Google-Smtp-Source: AIpwx48UKwjuiyMZH7IHbpUY4LFr2G9XvGcd3odzuUWhVLRcPw5MwdsYsjKrP5PUJ2JYpSqKPFa3
+ARC-Seal: i=1; a=rsa-sha256; t=1524406826; cv=none;
         d=google.com; s=arc-20160816;
-        b=UXQdKdzKRz94G+/0i5lEDzdBgFp3gcDXGWI5biLjFbJ2gy4eP6npJMIwJJC47cvgP/
-         chhT14wHwoRo/RkMuJRkOk+pFQaxax8LGnxn5i3UVvzoSrYThPwL8Dw3M88u1nCtNaUd
-         afdeR/aNaJjSI8B0SpBfqhfjYKEn/rm9yrvwBwYR0HV7NlQefCMk+BA45gLaQnNQXopy
-         JPETTILHAHqlOXjy4uTIC8cdLK/Ye6F16JbQyg4CabuF/asXv06bG2gw+zn0MwKbQqOc
-         E7At+MWdCbFGfqZebIyeHn+95miTBxscHOn4Ln1fSqZGeMNeW4vgHpFMmZaNq+tBSvZC
-         XCvg==
+        b=My7yBiGswe7ij2GDaPX8kfUtmsEBbuEe1Iu0DywwcUAF/m+Hs4qRWa3OqNi+6hYrdg
+         sbhw3sPlVyi7ORfMwKTZ3Kf8d1RTmZs9GsXWQ1luJeFzdgKd4++YhPQByOYAglqYiZIR
+         7iaZDbfPb8cH2K3XdSbaWWGM31CZml3/Sn01YF67d0tKVZS0wf2XS1jLqlPj+QGn2whH
+         0HHfnQErIFwikhT/SlKz34XFwTyuUT0QPWT9GicTppAq3oqtRYK49Ben+FZEDjZ8NVF8
+         cpFW9dC7SuhZt5+LKxhg6/o+ArOZJtrE7TTZYQk9F4F4Un9AGq+KR6ePT8qefLWOVr+6
+         Gsaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3pRLtpnAS+ip4ceHmxLjyzTF9MICVwCMc2IM98r0SJw=;
-        b=JaXH7iqF0OKlOzSrLk8TFlH8ukoYLRdhzb5/ZSu45UbJPW2Fo+HWMpMlQ71uqWP9QO
-         A7iIOEy4dAy6DDmpIROrQlYqy/Hs7yfCMDn5PKFW6bh1AJnUhGVMDpk03ElIkb7/0lA9
-         nwEs6TfzmROJCL2FOKCGq1vjEiHvogrH3HbXpaVTlmtLBBZbYt3KDibMO0YfVEcDcIzf
-         K1NjoKD4x/xB67WfAuF40KkVE9GJs1CMYI5GnXlD2HcVpEU+D3Cl0Zx90PCjuAcejVyN
-         KSVm/cGjzjvQ+egapXB8u/s9oFlmODDeLj5MkgJ0aNUNIsvg7rux6KENRX2NFt8flcBA
-         AtSQ==
+        bh=BxINKcR3zGoqj9mJZapRY+lHoHLANBnwJXwJyRycszw=;
+        b=tRTUL0ejsCgzYhfhX2ETk0WEQfiyuf27dNDFarA1I579pICmGcEPj/WDoVNHn9dnmc
+         usI9XnGNZ2OcsNonxZhcckqVZNbsFRx3EBnvl+qUD1LWm3XUgOcGrRjrDCsR2/FC+7cx
+         fETIQSFvLnQnDx+1x/tdleJATtDBRH5faUbxEvBh1LDPi3BK0Rd+xxWWpM49o6R+3SMG
+         6wS+02kAItM1bSn7t+h0dq+Ixn7FzOChONXJ8sapoAuzX9B8H1aGmrMk557iXUgLsNeD
+         NcnikC8rAXWsNpR7FMD51B91/mLRwRm3cfrmKETxZ2ZA9/VaU1JibLy417h1GlBYUEv8
+         TlPw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-	Benjamin Block <bblock@linux.vnet.ibm.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 3.18 03/52] s390/qdio: dont retry EQBS after CCQ 96
-Date: Sun, 22 Apr 2018 15:53:36 +0200
-Message-Id: <20180422135315.386662468@linuxfoundation.org>
+	Helge Deller <deller@gmx.de>
+Subject: [PATCH 3.18 02/52] parisc: Fix out of array access in match_pci_device()
+Date: Sun, 22 Apr 2018 15:53:35 +0200
+Message-Id: <20180422135315.350623373@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598456102184429648?=
-X-GMAIL-MSGID: =?utf-8?q?1598456415301662814?=
+X-GMAIL-THRID: =?utf-8?q?1598456131034526081?=
+X-GMAIL-MSGID: =?utf-8?q?1598456412943850394?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,75 +48,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: Helge Deller <deller@gmx.de>
 
-commit dae55b6fef58530c13df074bcc182c096609339e upstream.
+commit 615b2665fd20c327b631ff1e79426775de748094 upstream.
 
-Immediate retry of EQBS after CCQ 96 means that we potentially misreport
-the state of buffers inspected during the first EQBS call.
+As found by the ubsan checker, the value of the 'index' variable can be
+out of range for the bc[] array:
 
-This occurs when
-1. the first EQBS finds all inspected buffers still in the initial state
-   set by the driver (ie INPUT EMPTY or OUTPUT PRIMED),
-2. the EQBS terminates early with CCQ 96, and
-3. by the time that the second EQBS comes around, the state of those
-   previously inspected buffers has changed.
+UBSAN: Undefined behaviour in arch/parisc/kernel/drivers.c:655:21
+index 6 is out of range for type 'char [6]'
+Backtrace:
+ [<104fa850>] __ubsan_handle_out_of_bounds+0x68/0x80
+ [<1019d83c>] check_parent+0xc0/0x170
+ [<1019d91c>] descend_children+0x30/0x6c
+ [<1059e164>] device_for_each_child+0x60/0x98
+ [<1019cd54>] parse_tree_node+0x40/0x54
+ [<1019d86c>] check_parent+0xf0/0x170
+ [<1019d91c>] descend_children+0x30/0x6c
+ [<1059e164>] device_for_each_child+0x60/0x98
+ [<1019d938>] descend_children+0x4c/0x6c
+ [<1059e164>] device_for_each_child+0x60/0x98
+ [<1019cd54>] parse_tree_node+0x40/0x54
+ [<1019cffc>] hwpath_to_device+0xa4/0xc4
 
-If the state reported by the second EQBS is 'driver-owned', all we know
-is that the previous buffers are driver-owned now as well. But we can't
-tell if they all have the same state. So for instance
-- the second EQBS reports OUTPUT EMPTY, but any number of the previous
-  buffers could be OUTPUT ERROR by now,
-- the second EQBS reports OUTPUT ERROR, but any number of the previous
-  buffers could be OUTPUT EMPTY by now.
-
-Effectively, this can result in both over- and underreporting of errors.
-
-If the state reported by the second EQBS is 'HW-owned', that doesn't
-guarantee that the previous buffers have not been switched to
-driver-owned in the mean time. So for instance
-- the second EQBS reports INPUT EMPTY, but any number of the previous
-  buffers could be INPUT PRIMED (or INPUT ERROR) by now.
-
-This would result in failure to process pending work on the queue. If
-it's the final check before yielding initiative, this can cause
-a (temporary) queue stall due to IRQ avoidance.
-
-Fixes: 25f269f17316 ("[S390] qdio: EQBS retry after CCQ 96")
-Cc: <stable@vger.kernel.org> #v3.2+
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Reviewed-by: Benjamin Block <bblock@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Helge Deller <deller@gmx.de>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/qdio_main.c |   11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ arch/parisc/kernel/drivers.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/s390/cio/qdio_main.c
-+++ b/drivers/s390/cio/qdio_main.c
-@@ -126,7 +126,7 @@ static inline int qdio_check_ccq(struct
- static int qdio_do_eqbs(struct qdio_q *q, unsigned char *state,
- 			int start, int count, int auto_ack)
- {
--	int rc, tmp_count = count, tmp_start = start, nr = q->nr, retried = 0;
-+	int rc, tmp_count = count, tmp_start = start, nr = q->nr;
- 	unsigned int ccq = 0;
- 
- 	qperf_inc(q, eqbs);
-@@ -149,14 +149,7 @@ again:
- 		qperf_inc(q, eqbs_partial);
- 		DBF_DEV_EVENT(DBF_WARN, q->irq_ptr, "EQBS part:%02x",
- 			tmp_count);
--		/*
--		 * Retry once, if that fails bail out and process the
--		 * extracted buffers before trying again.
--		 */
--		if (!retried++)
--			goto again;
--		else
--			return count - tmp_count;
-+		return count - tmp_count;
+--- a/arch/parisc/kernel/drivers.c
++++ b/arch/parisc/kernel/drivers.c
+@@ -648,6 +648,10 @@ static int match_pci_device(struct devic
+ 					(modpath->mod == PCI_FUNC(devfn)));
  	}
  
- 	DBF_ERROR("%4x EQBS ERROR", SCH_NO(q));
++	/* index might be out of bounds for bc[] */
++	if (index >= 6)
++		return 0;
++
+ 	id = PCI_SLOT(pdev->devfn) | (PCI_FUNC(pdev->devfn) << 5);
+ 	return (modpath->bc[index] == id);
+ }
