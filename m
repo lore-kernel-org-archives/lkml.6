@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48PhVtAFYajmI/9lFlTxdS9iatrS+qgsgPEWPeddI2kM2HXInULdYyIywChd9phWgIa/+Hs
-ARC-Seal: i=1; a=rsa-sha256; t=1524406577; cv=none;
+X-Google-Smtp-Source: AIpwx48px1CKkaGjeTkPjOfp5E+/1axQq/z4vo8rtYWYIqwL1KhHQgbRgM5LMXGZIE86AP+0xjvO
+ARC-Seal: i=1; a=rsa-sha256; t=1524406571; cv=none;
         d=google.com; s=arc-20160816;
-        b=Le/B60jzujxbhW4ASejrtzzNW6qDH7joBKe1AcmFI6pvrswxnAQxOn1eNw8cXQgs78
-         znbJ7mRS+s2ydQzl6iIBSuKBRpZjjaSRc8GnG5n8lVmr6NwxFcp/NLvEyd6SQFshgN5L
-         nKmHssJpr+AzLRJ5HpnoP3EXxltDvVPXxK74v+PVnkI++BlbX1mcp3ogdiJQXDvuXncb
-         3qZJVl9b1SL4e3u8JNfK4CePTsigkIUrBRU8AEaydUj0QZyhnGpI98Zyn6UyJVHxfR7j
-         jYE7WAcDEEtLEJaOon8dU0dFFHq8BSmYcWfzCJlzVLnzVC4yBa7nzRsBqK0ni8bYrpll
-         aBww==
+        b=NqjS7XqOHWfAnmI1yRENEy3ZKde5UllIt1xtRsEx5e2PkD9RBTlMNRHWqcU7JUqI23
+         lrZlkNlGRWwSv1Ymk3lD90p7ziyCF36qDGpslyU3qWKIxeP7Q0RzQDb/UMHKi7lKKFSB
+         q0mPaBH0blWu3+PhuA2iqQgv9Ey9UBkIbyAtT08xIMxUnJzoEFxN6CUpdJgIclKI14GO
+         V8rjR4v5mBard/yWRlxpdy2rPl67o48qpRVPfdfw8D9rCl03KsTuhn7ESKdbA8rZIpXX
+         m4FNCRzHkcmeiKI1+hfZrSwdhruY1mjF9JVX1welyw7+pac59CWrwtt0X4hSj4wwKQfo
+         cj9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UnHAu07qYem37YxfX0+1wCI/TknblgRnXFkmStIA/lc=;
-        b=Coir10/A5Hid9zkZEzc7ahQeERx+FquJSRlgZvbglS3PBPz/5RF4rGnXDEsmvc+I8l
-         PRpQMhEHnRkl3Aeb6iUtVXAj3PSW+z89rDo5Iyd902keoJHLRJZBdbKEW5u3t5HZmquR
-         /fZHJmNIn/VFdsJV2KKmU/4jQ/p6XVOMY/o/MXk/XmmJvGyj3rwxKkYrdTlPA1zmO3NR
-         OBHq5RkLdhTduY4ZG/Iax9t3ggO8WhMNPFlIyeYGouJVQIcITvxc+fny3vo8umIjI0XI
-         8ZJ/5teImGHwhYd8EJJ5baKfWS2xqE21zrkSeaoAkcoVFbwibM4BI5K3IZjLGvSnhupf
-         7Ibw==
+        bh=XRdIZNSF4BbMuyqNeiZx2vKwkieNkFXHSRmSuHll2DU=;
+        b=dQ3K2tBKdsmeO6AglZA1T+7Ctuc8qrl+ksQbh45Rw7X4EWVhylJhI9tHVW9xovOZAo
+         e0Y0v/o2GzjvNpl0dNYqdXJ8O6pac3IEDY0rZaOYPFaU8u3dcXUIE9tWSi9C/PDXgiro
+         xIUCBvU7F+CBK8bodQLuGHKxrVhJaStlzkHoWRYAHuD7zjqfkxBk8wlY2r8w8ouTJ3oN
+         tUD0xUFkJXNf+6MIhRslXCw6ZnrpQDbF/k7Hs8nLYrJLi+o0juU8SXYMILNausm8aTxT
+         2ftbS1l53dtcU99HEQ9K1oqOKI4jSYyco8wum7Upj9AboZCE0b4CAA+Yr+iMIU6XoKmV
+         rf8w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com,
-	Jeff Mahoney <jeffm@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 26/97] fs/reiserfs/journal.c: add missing resierfs_warning() arg
-Date: Sun, 22 Apr 2018 15:53:04 +0200
-Message-Id: <20180422135306.500192204@linuxfoundation.org>
+	Romain Izard <romain.izard.pro@gmail.com>,
+	Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.4 24/97] ubi: Fix error for write access
+Date: Sun, 22 Apr 2018 15:53:02 +0200
+Message-Id: <20180422135306.394815210@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -45,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454902575626953?=
-X-GMAIL-MSGID: =?utf-8?q?1598456150749704210?=
+X-GMAIL-THRID: =?utf-8?q?1598454805116980751?=
+X-GMAIL-MSGID: =?utf-8?q?1598456145300256283?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,50 +49,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Romain Izard <romain.izard.pro@gmail.com>
 
-commit 9ad553abe66f8be3f4755e9fa0a6ba137ce76341 upstream.
+commit 78a8dfbabbece22bee58ac4cb26cab10e7a19c5d upstream.
 
-One use of the reiserfs_warning() macro in journal_init_dev() is missing
-a parameter, causing the following warning:
+When opening a device with write access, ubiblock_open returns an error
+code. Currently, this error code is -EPERM, but this is not the right
+value.
 
-  REISERFS warning (device loop0): journal_init_dev: Cannot open '%s': %i journal_init_dev:
+The open function for other block devices returns -EROFS when opening
+read-only devices with FMODE_WRITE set. When used with dm-verity, the
+veritysetup userspace tool is expecting EROFS, and refuses to use the
+ubiblock device.
 
-This also causes a WARN_ONCE() warning in the vsprintf code, and then a
-panic if panic_on_warn is set.
+Use -EROFS for ubiblock as well. As a result, veritysetup accepts the
+ubiblock device as valid.
 
-  Please remove unsupported %/ in format string
-  WARNING: CPU: 1 PID: 4480 at lib/vsprintf.c:2138 format_decode+0x77f/0x830 lib/vsprintf.c:2138
-  Kernel panic - not syncing: panic_on_warn set ...
-
-Just add another string argument to the macro invocation.
-
-Addresses https://syzkaller.appspot.com/bug?id=0627d4551fdc39bf1ef5d82cd9eef587047f7718
-
-Link: http://lkml.kernel.org/r/d678ebe1-6f54-8090-df4c-b9affad62293@infradead.org
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: <syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Jeff Mahoney <jeffm@suse.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Fixes: 9d54c8a33eec (UBI: R/O block driver on top of UBI volumes)
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/reiserfs/journal.c |    2 +-
+ drivers/mtd/ubi/block.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -2643,7 +2643,7 @@ static int journal_init_dev(struct super
- 	if (IS_ERR(journal->j_dev_bd)) {
- 		result = PTR_ERR(journal->j_dev_bd);
- 		journal->j_dev_bd = NULL;
--		reiserfs_warning(super,
-+		reiserfs_warning(super, "sh-457",
- 				 "journal_init_dev: Cannot open '%s': %i",
- 				 jdev_name, result);
- 		return result;
+--- a/drivers/mtd/ubi/block.c
++++ b/drivers/mtd/ubi/block.c
+@@ -244,7 +244,7 @@ static int ubiblock_open(struct block_de
+ 	 * in any case.
+ 	 */
+ 	if (mode & FMODE_WRITE) {
+-		ret = -EPERM;
++		ret = -EROFS;
+ 		goto out_unlock;
+ 	}
+ 
