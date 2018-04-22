@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+/AMFdptlpNAsdY5mYjUuHZmQb4HvWqlzV5vNZoUMNQTgCSYBzKgy9QyvKg5W2DtjdpEOQ
-ARC-Seal: i=1; a=rsa-sha256; t=1524405907; cv=none;
+X-Google-Smtp-Source: AIpwx4/ZHdBUwavr6bgDNYAzf+tzcyn13NwYcXnvdUwTFsA6ngZ98M2YXi1oXc+LqtBAcpr2PlgQ
+ARC-Seal: i=1; a=rsa-sha256; t=1524405903; cv=none;
         d=google.com; s=arc-20160816;
-        b=xx7QnHlMBITDrAkbcaNhuKmpC3hhtuhOKaYOAWjX9L2u5ZrzJFbydG5Mwm105g8KPi
-         6KLJZiAdISizMTQx6+a+LmJxxXIbGBM6am0F6QXY/2TJ43V/zVkq2h3NyiSSN+ztP3NC
-         Jv7UxajIrIGuJnDW1pgFhoSTN58ErHh97PluNLuInWkZKpSi9sppGm7ddEikS1ZltV+0
-         OgcYP9cM8huZBYfLvI3r/ZWRu+t0KKYat+fry6aUhi3U+VIeOsM2LwJH5OCaYkHIQPac
-         pfJ5+mcRNaU3z15lUC8EsUTozhgwvMv0vwVg5AZJ+toGo/cNHNY8A/wqSo+sx0i2MBQl
-         k3nw==
+        b=kcZJEdM0j62n/zEbLDNX1IN1oMcnjfa6ginjc4LmrJ+WXNPh73I1ToDRAefRDOTuOg
+         W3D5XgGrdm1hKlPyJA+w256TvkyMnMtexsCcxcqd/4BSKVarSgTBx1tFbw1S3Ran3nlr
+         9mI1LSNa52b3ebvjQQRdT4uJvxI4ZMHvWS6Qp2NY/1WaLFCFvBcx9YjMbMX+0iMlA8Ur
+         pQALKkZLvIeDIoZ7dADfQi283Nc3Zaqd5nzFx+57sO+SEyRAH6NcoYCGCujsby91L7eb
+         j4znhDyNV/RdCVUMbCbkb7h6bcDTt9eYcTJ0lx5DStlAH5Ln6R9kyuawpuTQi3Wdh283
+         XaoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1l5lx4cEaIJ9QIaqZs9oMqEJQBHCd/KPbEutIoDnDJE=;
-        b=hzPwxFo5xynRKj99RMZO9Rea50Vcn4zaWwqlzrPdXc2ps6yxlwlHwqMxPcYHofS/AH
-         TWDNPLn1xXU21jvnmLkHVYT6jgrv8OfQ5mLTMrQ79dUXoZVbbnCV7ert9b/2QmL+CrU7
-         g7FLhTZOFRCBkmkn/FjvBUnI6984VF+QgA/W4fcWPm7m0XUe7pSeBKBcSG+IKrnPdrzD
-         G7uxxVxW9L3myErqGoKmuJ7HTrErHRvoOo6gAqLTy9LqBpJV78A/I8izON2Qi5XsV47H
-         blZ4voMgZIW507A5TKPXv9tttk4MZ3umWQDMiZ1AQSBnK+Ji1c7xrLuD4SAVjE2b+fQt
-         OeGg==
+        bh=2WMG5zgstKWbGCqSyDml1cnb1dfbCbVOMSWA9cYwE8I=;
+        b=rN/FOoKGX9hvnxHCyIqTS60KnnLJ2mHIZAp0JeRDKuGh+3spjAJ6YQooIKNRbiEJUV
+         Mw8ZUwu1MH0N8P+gTPUU4VpoBsh3NnMcLH93SsEtN9VfBACjXkoXlwhoTeJ7O3EsTC+d
+         Ci5FtI0//Wt6W2X786nSiV9ePFO4H4rXFe5l5LZTmmfLvur1MjyKzHiiOpQtDfiSoz8C
+         0RAZWy4dZnwZLAYStBeEuZIZC9sgj7JpAluRil/3y4ZPPqN38+bHjNQVzdGMl2+7/uqC
+         WtiyCdz09ZIFnM82q0el6nc2SRvLG9ynaBzX6CUhzUY2yqvwTKtVAD2yAZya4GysY120
+         QZoA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ronnie Sahlberg <lsahlber@redhat.com>,
-	Steve French <smfrench@gmail.com>
-Subject: [PATCH 4.14 042/164] cifs: fix memory leak in SMB2_open()
-Date: Sun, 22 Apr 2018 15:51:49 +0200
-Message-Id: <20180422135137.134591398@linuxfoundation.org>
+	Tuba Yavuz <tuba@ece.ufl.edu>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 041/164] usb: dwc3: gadget: never call ->complete() from ->ep_queue()
+Date: Sun, 22 Apr 2018 15:51:48 +0200
+Message-Id: <20180422135137.093321163@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454973486249608?=
-X-GMAIL-MSGID: =?utf-8?q?1598455448634916331?=
+X-GMAIL-THRID: =?utf-8?q?1598454942163672502?=
+X-GMAIL-MSGID: =?utf-8?q?1598455445418606060?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +49,121 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
 
-commit b7a73c84eb96dabd6bb8e9d7c56f796d83efee8e upstream.
+commit c91815b596245fd7da349ecc43c8def670d2269e upstream.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
-CC: Stable <stable@vger.kernel.org>
+This is a requirement which has always existed but, somehow, wasn't
+reflected in the documentation and problems weren't found until now
+when Tuba Yavuz found a possible deadlock happening between dwc3 and
+f_hid. She described the situation as follows:
+
+spin_lock_irqsave(&hidg->write_spinlock, flags); // first acquire
+/* we our function has been disabled by host */
+if (!hidg->req) {
+	free_ep_req(hidg->in_ep, hidg->req);
+	goto try_again;
+}
+
+[...]
+
+status = usb_ep_queue(hidg->in_ep, hidg->req, GFP_ATOMIC);
+=>
+	[...]
+	=> usb_gadget_giveback_request
+		=>
+		f_hidg_req_complete
+			=>
+			spin_lock_irqsave(&hidg->write_spinlock, flags); // second acquire
+
+Note that this happens because dwc3 would call ->complete() on a
+failed usb_ep_queue() due to failed Start Transfer command. This is,
+anyway, a theoretical situation because dwc3 currently uses "No
+Response Update Transfer" command for Bulk and Interrupt endpoints.
+
+It's still good to make this case impossible to happen even if the "No
+Reponse Update Transfer" command is changed.
+
+Reported-by: Tuba Yavuz <tuba@ece.ufl.edu>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2pdu.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/usb/dwc3/gadget.c |   43 +++++++++++++++++++++++++------------------
+ 1 file changed, 25 insertions(+), 18 deletions(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -1773,8 +1773,10 @@ SMB2_open(const unsigned int xid, struct
- 		rc = alloc_path_with_tree_prefix(&copy_path, &copy_size,
- 						 &name_len,
- 						 tcon->treeName, path);
--		if (rc)
-+		if (rc) {
-+			cifs_small_buf_release(req);
- 			return rc;
-+		}
- 		req->NameLength = cpu_to_le16(name_len * 2);
- 		uni_path_len = copy_size;
- 		path = copy_path;
-@@ -1785,8 +1787,10 @@ SMB2_open(const unsigned int xid, struct
- 		if (uni_path_len % 8 != 0) {
- 			copy_size = roundup(uni_path_len, 8);
- 			copy_path = kzalloc(copy_size, GFP_KERNEL);
--			if (!copy_path)
-+			if (!copy_path) {
-+				cifs_small_buf_release(req);
- 				return -ENOMEM;
-+			}
- 			memcpy((char *)copy_path, (const char *)path,
- 			       uni_path_len);
- 			uni_path_len = copy_size;
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -174,18 +174,8 @@ static void dwc3_ep_inc_deq(struct dwc3_
+ 	dwc3_ep_inc_trb(&dep->trb_dequeue);
+ }
+ 
+-/**
+- * dwc3_gadget_giveback - call struct usb_request's ->complete callback
+- * @dep: The endpoint to whom the request belongs to
+- * @req: The request we're giving back
+- * @status: completion code for the request
+- *
+- * Must be called with controller's lock held and interrupts disabled. This
+- * function will unmap @req and call its ->complete() callback to notify upper
+- * layers that it has completed.
+- */
+-void dwc3_gadget_giveback(struct dwc3_ep *dep, struct dwc3_request *req,
+-		int status)
++void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
++		struct dwc3_request *req, int status)
+ {
+ 	struct dwc3			*dwc = dep->dwc;
+ 
+@@ -198,18 +188,35 @@ void dwc3_gadget_giveback(struct dwc3_ep
+ 
+ 	if (req->trb)
+ 		usb_gadget_unmap_request_by_dev(dwc->sysdev,
+-						&req->request, req->direction);
++				&req->request, req->direction);
+ 
+ 	req->trb = NULL;
+-
+ 	trace_dwc3_gadget_giveback(req);
+ 
++	if (dep->number > 1)
++		pm_runtime_put(dwc->dev);
++}
++
++/**
++ * dwc3_gadget_giveback - call struct usb_request's ->complete callback
++ * @dep: The endpoint to whom the request belongs to
++ * @req: The request we're giving back
++ * @status: completion code for the request
++ *
++ * Must be called with controller's lock held and interrupts disabled. This
++ * function will unmap @req and call its ->complete() callback to notify upper
++ * layers that it has completed.
++ */
++void dwc3_gadget_giveback(struct dwc3_ep *dep, struct dwc3_request *req,
++		int status)
++{
++	struct dwc3			*dwc = dep->dwc;
++
++	dwc3_gadget_del_and_unmap_request(dep, req, status);
++
+ 	spin_unlock(&dwc->lock);
+ 	usb_gadget_giveback_request(&dep->endpoint, &req->request);
+ 	spin_lock(&dwc->lock);
+-
+-	if (dep->number > 1)
+-		pm_runtime_put(dwc->dev);
+ }
+ 
+ /**
+@@ -1233,7 +1240,7 @@ static int __dwc3_gadget_kick_transfer(s
+ 		if (req->trb)
+ 			memset(req->trb, 0, sizeof(struct dwc3_trb));
+ 		dep->queued_requests--;
+-		dwc3_gadget_giveback(dep, req, ret);
++		dwc3_gadget_del_and_unmap_request(dep, req, ret);
+ 		return ret;
+ 	}
+ 
