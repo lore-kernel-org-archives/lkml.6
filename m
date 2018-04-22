@@ -1,113 +1,385 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753665AbeDVUzt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 16:55:49 -0400
-Received: from mga07.intel.com ([134.134.136.100]:49961 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753537AbeDVUzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 16:55:44 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,314,1520924400";
-   d="scan'208";a="43798639"
-Date: Mon, 23 Apr 2018 04:55:12 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-Cc: kbuild-all@01.org, tiwai@suse.com, alsa-devel@alsa-project.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-Subject: Re: [PATCH 4/4] ALSA: usb-audio: UAC3 Add support for connector
- insertion.
-Message-ID: <201804230459.2dXlPwHY%fengguang.wu@intel.com>
-References: <20180420170327.31569-5-jorge.sanjuan@codethink.co.uk>
+        id S1753737AbeDVVLS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 17:11:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42338 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753581AbeDVVLP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 17:11:15 -0400
+Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
+ <f9327dfe-a7c2-340d-12c7-6cf76a8c1b0d@linux.vnet.ibm.com>
+ <23c37409-2abf-82c2-4f7e-d4defdca6902@linux.vnet.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Sun, 22 Apr 2018 17:11:07 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420170327.31569-5-jorge.sanjuan@codethink.co.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <23c37409-2abf-82c2-4f7e-d4defdca6902@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18042221-0052-0000-0000-000002E07549
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008901; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01021781; UDB=6.00521472; IPR=6.00801016;
+ MB=3.00020717; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-22 21:11:12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042221-0053-0000-0000-00005C6CCFA1
+Message-Id: <d56d5c55-2e46-67b3-4351-015218a39810@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-22_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804220236
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jorge,
+On 04/17/2018 11:52 AM, Pierre Morel wrote:
+> On 17/04/2018 16:15, Tony Krowiak wrote:
+>> On 04/16/2018 04:56 AM, Pierre Morel wrote:
+>>> On 15/04/2018 23:22, Tony Krowiak wrote:
+>>>> This patch refactors the code that initializes the crypto
+>>>> configuration for a guest. The crypto configuration is contained in
+>>>> a crypto control block (CRYCB) which is a satellite control block to
+>>>> our main hardware virtualization control block. The CRYCB is
+>>>> attached to the main virtualization control block via a CRYCB
+>>>> designation (CRYCBD) designation field containing the address of
+>>>> the CRYCB as well as its format.
+>>>>
+>>>> Prior to the introduction of AP device virtualization, there was
+>>>> no need to provide access to or specify the format of the CRYCB for
+>>>> a guest unless the MSA extension 3 (MSAX3) facility was installed
+>>>> on the host system. With the introduction of AP device virtualization,
+>>>> the CRYCB and its format must be made accessible to the guest
+>>>> regardless of the presence of the MSAX3 facility.
+>>>>
+>>>> The crypto initialization code is restructured as follows:
+>>>>
+>>>> * A new compilation unit is introduced to contain all interfaces
+>>>>    and data structures related to configuring a guest's CRYCB for
+>>>>    both the refactoring of crypto initialization as well as all
+>>>>    subsequent patches introducing AP virtualization support.
+>>>>
+>>>> * Currently, the asm code for querying the AP configuration is
+>>>>    duplicated in the AP bus as well as in KVM. Since the KVM
+>>>>    code was introduced, the AP bus has externalized the interface
+>>>>    for querying the AP configuration. The KVM interface will be
+>>>>    replaced with a call to the AP bus interface. Of course, this
+>>>>    will be moved to the new compilation unit mentioned above.
+>>>>
+>>>> * An interface to format the CRYCBD field will be provided via
+>>>>    the new compilation unit and called from the KVM vm
+>>>>    initialization.
+>>>>
+>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>>> ---
+>>>>   arch/s390/include/asm/kvm-ap.h   |   15 +++++++++
+>>>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>>>   arch/s390/kvm/kvm-ap.c           |   39 ++++++++++++++++++++++++
+>>>>   arch/s390/kvm/kvm-s390.c         |   60 
+>>>> ++++----------------------------------
+>>>>   4 files changed, 61 insertions(+), 54 deletions(-)
+>>>>
+>>>> diff --git a/arch/s390/include/asm/kvm-ap.h 
+>>>> b/arch/s390/include/asm/kvm-ap.h
+>>>> index 84412a9..736e93e 100644
+>>>> --- a/arch/s390/include/asm/kvm-ap.h
+>>>> +++ b/arch/s390/include/asm/kvm-ap.h
+>>>> @@ -10,6 +10,9 @@
+>>>>   #ifndef _ASM_KVM_AP
+>>>>   #define _ASM_KVM_AP
+>>>>
+>>>> +#include <linux/types.h>
+>>>> +#include <linux/kvm_host.h>
+>>>> +
+>>>>   /**
+>>>>    * kvm_ap_instructions_installed()
+>>>>    *
+>>>> @@ -20,4 +23,16 @@
+>>>>    */
+>>>>   int kvm_ap_instructions_installed(void);
+>>>>
+>>>> +/**
+>>>> + * kvm_ap_build_crycbd
+>>>> + *
+>>>> + * The crypto control block designation (CRYCBD) is a 32-bit field 
+>>>> that
+>>>> + * designates both the host real address and format of the CRYCB. 
+>>>> This function
+>>>> + * builds the CRYCBD field for use by the KVM guest.
+>>>> + *
+>>>> + * @kvm:    the KVM guest
+>>>> + * @crycbd:    reference to the CRYCBD
+>>>> + */
+>>>> +void kvm_ap_build_crycbd(struct kvm *kvm);
+>>>> +
+>>>>   #endif /* _ASM_KVM_AP */
+>>>> diff --git a/arch/s390/include/asm/kvm_host.h 
+>>>> b/arch/s390/include/asm/kvm_host.h
+>>>> index 81cdb6b..c990a1d 100644
+>>>> --- a/arch/s390/include/asm/kvm_host.h
+>>>> +++ b/arch/s390/include/asm/kvm_host.h
+>>>> @@ -257,6 +257,7 @@ struct kvm_s390_sie_block {
+>>>>       __u8    reservedf0[12];        /* 0x00f0 */
+>>>>   #define CRYCB_FORMAT1 0x00000001
+>>>>   #define CRYCB_FORMAT2 0x00000003
+>>>> +#define CRYCB_FORMAT_MASK 0x00000003
+>>>>       __u32    crycbd;            /* 0x00fc */
+>>>>       __u64    gcr[16];        /* 0x0100 */
+>>>>       __u64    gbea;            /* 0x0180 */
+>>>> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+>>>> index 1267588..991bae4 100644
+>>>> --- a/arch/s390/kvm/kvm-ap.c
+>>>> +++ b/arch/s390/kvm/kvm-ap.c
+>>>> @@ -10,6 +10,8 @@
+>>>>   #include <asm/kvm-ap.h>
+>>>>   #include <asm/ap.h>
+>>>>
+>>>> +#include "kvm-s390.h"
+>>>> +
+>>>>   int kvm_ap_instructions_installed(void)
+>>>>   {
+>>>>   #ifdef CONFIG_ZCRYPT
+>>>> @@ -19,3 +21,40 @@ int kvm_ap_instructions_installed(void)
+>>>>   #endif
+>>>>   }
+>>>>   EXPORT_SYMBOL(kvm_ap_instructions_installed);
+>>>> +
+>>>> +static inline int kvm_ap_query_config(struct ap_config_info *config)
+>>>> +{
+>>>> +    memset(config, 0, sizeof(*config));
+>>>> +
+>>>> +#ifdef CONFIG_ZCRYPT
+>>>
+>>> I would prefer that you define the interface in an include file
+>>> with stubs for the case ZCRYPT is not set.
+>>
+>> This is a static function only called internally, but I suppose there is
+>> no harm in defining it as an interface in kvm-ap.h ... it may come
+>> in handy down the road.
+>>
+>>>
+>>>
+>>>> +    if (kvm_ap_instructions_installed())
+>>>> +        return ap_query_configuration(config);
+>>>> +#endif
+>>>> +
+>>>> +    return -EOPNOTSUPP;
+>>>> +}
+>>>> +
+>>>> +static int kvm_ap_apxa_installed(void)
+>>>> +{
+>>>> +    struct ap_config_info config;
+>>>> +
+>>>> +    if (kvm_ap_query_config(&config) == 0)
+>>>> +        return (config.apxa == 1);
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +void kvm_ap_build_crycbd(struct kvm *kvm)
+>>>> +{
+>>>> +    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
+>>>> kvm->arch.crypto.crycb;
+>>>> +    kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK);
+>>>> +
+>>>> +    /* check whether MSAX3 is installed */
+>>>
+>>> It means we do not support AP virtualization without MSA3.
+>>> It follows we do not support CRYCB_FORMAT0
+>>
+>> If MSAX3 is not installed, that means there is no key wrapping support,
+>> hence CRYCB_FORMAT0. The CRYCB_FORMAT1 and CRYCB_FORMAT2 CRYCBs
+>> both include wrapping key masks. I don't follow your logic here.
+>>
+>>>
+>>>
+>>> It is different from what you explain in the comment.
+>>
+>> How is it different? Above, we are setting the CRYCBD value regardless
+>> of whether MSAX3 is installed or not. Previously, the CRYCBD value
+>> was set only if MSAX3 is installed (see comments below)
+>>
+>>>
+>>>
+>>>> +    if (kvm_ap_instructions_installed() && test_kvm_facility(kvm, 
+>>>> 76)) {
+>>>> +        if (kvm_ap_apxa_installed())
+>>>> +            kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
+>>>> +        else
+>>>> +            kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
+>>>> +    }
+>
+> sorry, I was fooled by the test on kvm_instructions_installed() and 
+> that CRYCB_FORMAT0 = 0.
+> since you cleared the format above it is 0 by default.
+>
+> Since we can not use CRYCB_FORMAT0 if we have no AP instructions, the 
+> logic of the test
+> seems false even the result is right.
 
-Thank you for the patch! Perhaps something to improve:
+The logic needs to be changed:
 
-[auto build test WARNING on sound/for-next]
-[also build test WARNING on v4.17-rc1 next-20180420]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+If neither the AP instructions nor MSAX3 is installed
+     return
+Set the address of the CRYCB into the CRYCBD
+Clear the format mask in the CRYCBD - i.e., set to format 0 by default
+If MSAX3 is installed
+     If APXA is installed
+         Set format 2
+     Else
+         Set format 1
+     Set up protected key support (i.e., key wrapping)
 
-url:    https://github.com/0day-ci/linux/commits/Jorge-Sanjuan/ALSA-usb-UAC3-new-features/20180423-015726
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
 
+>
+>
+> I think you can make it more readable if you put all the crycb 
+> initialization together
+> inside the kvm_s390_crypto_init() function instead of exporting part 
+> of it inside
+> kvm_ap_build_crycbd()
 
-sparse warnings: (new ones prefixed by >>)
+I agree, I am going to do that.
 
-   sound/usb/mixer.c:899:59: sparse: cast to restricted __le16
-   sound/usb/mixer.c:1923:33: sparse: cast to restricted __le16
->> sound/usb/mixer.c:1975:24: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] bmctls @@    got restrunsigned int [unsigned] bmctls @@
-   sound/usb/mixer.c:1975:24:    expected unsigned int [unsigned] bmctls
-   sound/usb/mixer.c:1975:24:    got restricted __le16 [usertype] bmControls
-   sound/usb/mixer.c:1981:24: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] bmctls @@    got restrunsigned int [unsigned] bmctls @@
-   sound/usb/mixer.c:1981:24:    expected unsigned int [unsigned] bmctls
-   sound/usb/mixer.c:1981:24:    got restricted __le32 [usertype] bmControls
-   sound/usb/mixer.c:2008:33: sparse: cast to restricted __le16
-   sound/usb/mixer.c:2697:62: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned int [unsigned] [usertype] bmControls @@    got ed int [unsigned] [usertype] bmControls @@
-   sound/usb/mixer.c:2697:62:    expected unsigned int [unsigned] [usertype] bmControls
-   sound/usb/mixer.c:2697:62:    got restricted __le16 [usertype] bmControls
-   sound/usb/mixer.c:2724:62: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned int [unsigned] [usertype] bmControls @@    got ed int [unsigned] [usertype] bmControls @@
-   sound/usb/mixer.c:2724:62:    expected unsigned int [unsigned] [usertype] bmControls
-   sound/usb/mixer.c:2724:62:    got restricted __le32 [usertype] bmControls
-   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
-   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
-   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
-   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
-   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
-   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
-   include/linux/usb.h:1676:28: sparse: expression using sizeof(void)
-
-vim +1975 sound/usb/mixer.c
-
-  1964	
-  1965	static int parse_audio_input_terminal(struct mixer_build *state, int unitid,
-  1966					      void *raw_desc)
-  1967	{
-  1968		struct usb_audio_term iterm;
-  1969		unsigned int control, bmctls, term_id;
-  1970	
-  1971		if (state->mixer->protocol == UAC_VERSION_2) {
-  1972			struct uac2_input_terminal_descriptor *d_v2 = raw_desc;
-  1973			control = UAC2_TE_CONNECTOR;
-  1974			term_id = d_v2->bTerminalID;
-> 1975			bmctls = d_v2->bmControls;
-  1976		}
-  1977		else if (state->mixer->protocol == UAC_VERSION_3) {
-  1978			struct uac3_input_terminal_descriptor *d_v3 = raw_desc;
-  1979			control = UAC3_TE_INSERTION;
-  1980			term_id = d_v3->bTerminalID;
-  1981			bmctls = d_v3->bmControls;
-  1982		}
-  1983		else /* UAC1. No Insertion control */
-  1984			return 0;
-  1985	
-  1986		check_input_term(state, term_id, &iterm);
-  1987	
-  1988		/* Check for jack detection. */
-  1989		if (uac_v2v3_control_is_readable(bmctls, control))
-  1990			build_connector_control(state, &iterm, true);
-  1991	
-  1992		return 0;
-  1993	}
-  1994	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>
+>
+> Regards,
+>
+> Pierre
+>
+>>>> +}
+>>>> +EXPORT_SYMBOL(kvm_ap_build_crycbd);
+>>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>>>> index d0c3518..b47ff11 100644
+>>>> --- a/arch/s390/kvm/kvm-s390.c
+>>>> +++ b/arch/s390/kvm/kvm-s390.c
+>>>> @@ -40,6 +40,7 @@
+>>>>   #include <asm/sclp.h>
+>>>>   #include <asm/cpacf.h>
+>>>>   #include <asm/timex.h>
+>>>> +#include <asm/kvm-ap.h>
+>>>>   #include "kvm-s390.h"
+>>>>   #include "gaccess.h"
+>>>>
+>>>> @@ -1881,55 +1882,6 @@ long kvm_arch_vm_ioctl(struct file *filp,
+>>>>       return r;
+>>>>   }
+>>>>
+>>>> -static int kvm_s390_query_ap_config(u8 *config)
+>>>> -{
+>>>> -    u32 fcn_code = 0x04000000UL;
+>>>> -    u32 cc = 0;
+>>>> -
+>>>> -    memset(config, 0, 128);
+>>>> -    asm volatile(
+>>>> -        "lgr 0,%1\n"
+>>>> -        "lgr 2,%2\n"
+>>>> -        ".long 0xb2af0000\n"        /* PQAP(QCI) */
+>>>> -        "0: ipm %0\n"
+>>>> -        "srl %0,28\n"
+>>>> -        "1:\n"
+>>>> -        EX_TABLE(0b, 1b)
+>>>> -        : "+r" (cc)
+>>>> -        : "r" (fcn_code), "r" (config)
+>>>> -        : "cc", "0", "2", "memory"
+>>>> -    );
+>>>> -
+>>>> -    return cc;
+>>>> -}
+>>>> -
+>>>> -static int kvm_s390_apxa_installed(void)
+>>>> -{
+>>>> -    u8 config[128];
+>>>> -    int cc;
+>>>> -
+>>>> -    if (test_facility(12)) {
+>>>> -        cc = kvm_s390_query_ap_config(config);
+>>>> -
+>>>> -        if (cc)
+>>>> -            pr_err("PQAP(QCI) failed with cc=%d", cc);
+>>>> -        else
+>>>> -            return config[0] & 0x40;
+>>>> -    }
+>>>> -
+>>>> -    return 0;
+>>>> -}
+>>>> -
+>>>> -static void kvm_s390_set_crycb_format(struct kvm *kvm)
+>>>> -{
+>>>> -    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
+>>>> kvm->arch.crypto.crycb;
+>>>> -
+>>>> -    if (kvm_s390_apxa_installed())
+>>>> -        kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
+>>>> -    else
+>>>> -        kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
+>>>> -}
+>>>> -
+>>>>   static u64 kvm_s390_get_initial_cpuid(void)
+>>>>   {
+>>>>       struct cpuid cpuid;
+>>>> @@ -1941,12 +1893,12 @@ static u64 kvm_s390_get_initial_cpuid(void)
+>>>>
+>>>>   static void kvm_s390_crypto_init(struct kvm *kvm)
+>>>>   {
+>>>> +    kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
+>>>> +    kvm_ap_build_crycbd(kvm);
+>>>> +
+>>
+>> Notice the call to kvm_ap_build_crycbd(kvm) above was added, so
+>> the CRYCBD is being set regardless of the presence of MSAX3.
+>>
+>>>>       if (!test_kvm_facility(kvm, 76))
+>>>>           return;
+>>>>
+>>>> -    kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
+>>>> -    kvm_s390_set_crycb_format(kvm);
+>> Notice that this code that was removed to set the CRYCBD is called
+>> only if MSAX3 is not installed - i.e., see the if statement
+>> immediately preceding the two statements above.
+>>>> -
+>>>>       /* Enable AES/DEA protected key functions by default */
+>>>>       kvm->arch.crypto.aes_kw = 1;
+>>>>       kvm->arch.crypto.dea_kw = 1;
+>>>> @@ -2475,6 +2427,8 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu 
+>>>> *vcpu)
+>>>>
+>>>>   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
+>>>>   {
+>>>> +    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
+>>>> +
+>>>>       if (!test_kvm_facility(vcpu->kvm, 76))
+>>>>           return;
+>>>>
+>>>> @@ -2484,8 +2438,6 @@ static void kvm_s390_vcpu_crypto_setup(struct 
+>>>> kvm_vcpu *vcpu)
+>>>>           vcpu->arch.sie_block->ecb3 |= ECB3_AES;
+>>>>       if (vcpu->kvm->arch.crypto.dea_kw)
+>>>>           vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
+>>>> -
+>>>> -    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
+>>>>   }
+>>>>
+>>>>   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
+>>>
+>>>
+>>
+>
