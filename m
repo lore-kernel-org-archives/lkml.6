@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49y/0QQo14sW5aSO/U7hQ7oVnLX8EygXorORE2w/BWftKpBEXMmBz1Be+RWIhL2BOQVnSN2
-ARC-Seal: i=1; a=rsa-sha256; t=1524406777; cv=none;
+X-Google-Smtp-Source: AIpwx48pYCzLZ2OkfAhDAkc54u0RAKiq1iq6fWcWQdPcoarabvDat7bQYA+caaD6K88X62Y4KOAa
+ARC-Seal: i=1; a=rsa-sha256; t=1524406774; cv=none;
         d=google.com; s=arc-20160816;
-        b=tFiIm4PD05cmCltEVgzqOo4+l9U/7UaBkLZ5qysIhSVa7DtWDpPXNTIg1TBkH5/Mbc
-         xPtGnKD5Xt1+IG/sZi7GxF+QyOpdQjW3vKHmrk9r69PRekzHLrR7K7oJr8yDNQpldSWM
-         CFxg8eR+9dWFHbGQBumyYMcg+NjPAmVD1iDuuJUY5GEX5wy5SpD6Q/2OdjNmgCdPCWPM
-         JraRDUZttn6fqziLfbEEST9qiXJqUQXgYstdMXVq1A/tzYsDoU7Fjsy5mUM3tIeC5XaS
-         O3I+7YhXL9KfL5EZNX23vaFv8xxRoKL1gblH291DwTrbo3ZNfuXydKv/XOTYYX0268IS
-         ozXA==
+        b=lRYeL9SIBTpJ8ICVy6wUvBlJ0gkgBBZxuFCbU6uKxAIHQvvUx7QKW6+3mdbG5Mne2U
+         PEyPGfdEYbWJAc1lnFZEHJH4DxXr+CzAsW0SlqPO/W61Q7EjTU62Jo+2OtZbVOZzX1y8
+         vZtC6oSNN2/peu85lbT5rNSVpIRmFz3zODFUjWZ6ttCQhN73yWd+uG+WyDQVshR8jYyh
+         04GsQAzN4mo4v/7W8xqg0DMgL0NzcHlwKy8HyuklYeienrD/lVtsy6Y+RCeV3uIaR8C8
+         mXVoPQM74posqhOmrTCOs9FH9uqZ50j5PkP1JewKxgooENsvmjkc1cvy2sBKCtnZg/om
+         /7xA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LothE92tO+Atq3UzzkUMNzspeA1nMmb1r6vOr7Q2ElA=;
-        b=ijKFvGyODctO2UK/7qv6GkB5hAXktEnX1bRf+MuUyMcRcEFkWDlFiclP+jf3gjWSag
-         6Ua6QKp9J4uuV/RUp9j6C9wzAK5CQW/QLaKyaGd/Z7+w5mG5lOJqLtGlVAmoZ8dsm8zc
-         PaVHJ2l8Ip+B+V1qQxv3GtIoe9dn2yjywT+12Puw6UtCuvEm5S63ByyXf1jshnbsDkyg
-         JjAGlpIKI7/LGU+i1MDp5cfN6zm/6Bh9Q45A6xnK095HWgRnf5F1NYb7OM0Gy6ktfW5O
-         oOKyBX4rUJCvSW0HKZAL8wRVnDlk8Snly5tYlUW1qesn+4t/NLj0vYehO9fgdv2ggHzb
-         rqOw==
+        bh=P1pav3ZJGCYZ5yhGSMd0DjMe2abob3Pnlffi0Wbi8uo=;
+        b=00p9DXTdFhGGsYTmnLLG+/jYQDebX9rNuxM3mHG2jpx/v6L2JEwppCGIroz1huSCFN
+         P2+nvbAgaI8VQk5rLtzaQa3YKUOfikxSz0sZfgspbAqPdz8i5qbPZXQq/cNSoifrCKdQ
+         VKTh8SeTV4uOPrHdR74Sc+ZYutDcIsBx2Dulp+vdW6qBfc5DN3Z2bL9u+KYkSOVGMmqR
+         KA7z1Jj6S0OEI15o7aUx8NpPNF1eeBWcFnkxQskrG0/S2RR+BqUYgPtXFSdBIb0NGaAR
+         HLpPRSh9s8i1qm/JPPfkZKbU+R0zVXo/tjlB4fIW0ODFoe+qoFe9mPkV5AGtPS5w7FUZ
+         /Vsg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Theodore Tso <tytso@mit.edu>,
-	Harsh Shandilya <harsh@prjkt.io>
-Subject: [PATCH 4.4 74/97] ext4: dont allow r/w mounts if metadata blocks overlap the superblock
-Date: Sun, 22 Apr 2018 15:53:52 +0200
-Message-Id: <20180422135309.287086064@linuxfoundation.org>
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH 4.4 73/97] vfio/pci: Virtualize Maximum Read Request Size
+Date: Sun, 22 Apr 2018 15:53:51 +0200
+Message-Id: <20180422135309.234572729@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455035769736899?=
-X-GMAIL-MSGID: =?utf-8?q?1598456360571440200?=
+X-GMAIL-THRID: =?utf-8?q?1598455756318310028?=
+X-GMAIL-MSGID: =?utf-8?q?1598456357800884041?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,55 +48,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Alex Williamson <alex.williamson@redhat.com>
 
-commit 18db4b4e6fc31eda838dd1c1296d67dbcb3dc957 upstream.
+commit cf0d53ba4947aad6e471491d5b20a567cbe92e56 upstream.
 
-If some metadata block, such as an allocation bitmap, overlaps the
-superblock, it's very likely that if the file system is mounted
-read/write, the results will not be pretty.  So disallow r/w mounts
-for file systems corrupted in this particular way.
+MRRS defines the maximum read request size a device is allowed to
+make.  Drivers will often increase this to allow more data transfer
+with a single request.  Completions to this request are bound by the
+MPS setting for the bus.  Aside from device quirks (none known), it
+doesn't seem to make sense to set an MRRS value less than MPS, yet
+this is a likely scenario given that user drivers do not have a
+system-wide view of the PCI topology.  Virtualize MRRS such that the
+user can set MRRS >= MPS, but use MPS as the floor value that we'll
+write to hardware.
 
-Backport notes:
-3.18.y is missing bc98a42c1f7d ("VFS: Convert sb->s_flags & MS_RDONLY to sb_rdonly(sb)")
-and e462ec50cb5f ("VFS: Differentiate mount flags (MS_*) from internal superblock flags")
-so we simply use the sb MS_RDONLY check from pre bc98a42c1f7d in place of the sb_rdonly
-function used in the upstream variant of the patch.
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
-Signed-off-by: Harsh Shandilya <harsh@prjkt.io>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/ext4/super.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2131,6 +2131,8 @@ static int ext4_check_descriptors(struct
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 				 "Block bitmap for group %u overlaps "
- 				 "superblock", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
- 		}
- 		if (block_bitmap < first_block || block_bitmap > last_block) {
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
-@@ -2143,6 +2145,8 @@ static int ext4_check_descriptors(struct
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 				 "Inode bitmap for group %u overlaps "
- 				 "superblock", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
- 		}
- 		if (inode_bitmap < first_block || inode_bitmap > last_block) {
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
-@@ -2155,6 +2159,8 @@ static int ext4_check_descriptors(struct
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 				 "Inode table for group %u overlaps "
- 				 "superblock", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
- 		}
- 		if (inode_table < first_block ||
- 		    inode_table + sbi->s_itb_per_group - 1 > last_block) {
+---
+ drivers/vfio/pci/vfio_pci_config.c |   29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
+
+--- a/drivers/vfio/pci/vfio_pci_config.c
++++ b/drivers/vfio/pci/vfio_pci_config.c
+@@ -758,6 +758,7 @@ static int vfio_exp_config_write(struct
+ {
+ 	__le16 *ctrl = (__le16 *)(vdev->vconfig + pos -
+ 				  offset + PCI_EXP_DEVCTL);
++	int readrq = le16_to_cpu(*ctrl) & PCI_EXP_DEVCTL_READRQ;
+ 
+ 	count = vfio_default_config_write(vdev, pos, count, perm, offset, val);
+ 	if (count < 0)
+@@ -783,6 +784,27 @@ static int vfio_exp_config_write(struct
+ 			pci_try_reset_function(vdev->pdev);
+ 	}
+ 
++	/*
++	 * MPS is virtualized to the user, writes do not change the physical
++	 * register since determining a proper MPS value requires a system wide
++	 * device view.  The MRRS is largely independent of MPS, but since the
++	 * user does not have that system-wide view, they might set a safe, but
++	 * inefficiently low value.  Here we allow writes through to hardware,
++	 * but we set the floor to the physical device MPS setting, so that
++	 * we can at least use full TLPs, as defined by the MPS value.
++	 *
++	 * NB, if any devices actually depend on an artificially low MRRS
++	 * setting, this will need to be revisited, perhaps with a quirk
++	 * though pcie_set_readrq().
++	 */
++	if (readrq != (le16_to_cpu(*ctrl) & PCI_EXP_DEVCTL_READRQ)) {
++		readrq = 128 <<
++			((le16_to_cpu(*ctrl) & PCI_EXP_DEVCTL_READRQ) >> 12);
++		readrq = max(readrq, pcie_get_mps(vdev->pdev));
++
++		pcie_set_readrq(vdev->pdev, readrq);
++	}
++
+ 	return count;
+ }
+ 
+@@ -801,11 +823,12 @@ static int __init init_pci_cap_exp_perm(
+ 	 * Allow writes to device control fields, except devctl_phantom,
+ 	 * which could confuse IOMMU, MPS, which can break communication
+ 	 * with other physical devices, and the ARI bit in devctl2, which
+-	 * is set at probe time.  FLR gets virtualized via our writefn.
++	 * is set at probe time.  FLR and MRRS get virtualized via our
++	 * writefn.
+ 	 */
+ 	p_setw(perm, PCI_EXP_DEVCTL,
+-	       PCI_EXP_DEVCTL_BCR_FLR | PCI_EXP_DEVCTL_PAYLOAD,
+-	       ~PCI_EXP_DEVCTL_PHANTOM);
++	       PCI_EXP_DEVCTL_BCR_FLR | PCI_EXP_DEVCTL_PAYLOAD |
++	       PCI_EXP_DEVCTL_READRQ, ~PCI_EXP_DEVCTL_PHANTOM);
+ 	p_setw(perm, PCI_EXP_DEVCTL2, NO_VIRT, ~PCI_EXP_DEVCTL2_ARI);
+ 	return 0;
+ }
