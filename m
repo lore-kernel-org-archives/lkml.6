@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/VwR5xdkPwPAGeOLuz4JPc6CdSjfFCynIIj8mN4emEU6hSozEUPfnznhaLcO+J7KHAPaFz
-ARC-Seal: i=1; a=rsa-sha256; t=1524406922; cv=none;
+X-Google-Smtp-Source: AIpwx48X/Hfotaw1h7JiMyQhKGRlP1Bu0PviKvpquMDFMEwGRPQq1x9vVDqa0O857jL7zDi7jYp+
+ARC-Seal: i=1; a=rsa-sha256; t=1524406919; cv=none;
         d=google.com; s=arc-20160816;
-        b=QKULIDCxgZK9EsE+s7udzB7FKI8DbctofA84x1wxj0KyyL14xjZolqFDxNZC5RyIlY
-         sx3QNwSL3TPErXzw6pj1sY+wkE4ZiQlHnXFVexZ0cvsU8F61rdNABqNTHGFYTOkOs683
-         q/uTnz1YCkkdxE7+CENzHE+oCiHLyAPij/BvK3RdUAT5jRX3ZWH0mBkq1tSQ2LviOrlF
-         3mG+X3VC7A82blkw48E06oK3jC+Qk8IP2SMw3uUwBkOJWTDGztFk6GZ6IdaMyFIMXEzH
-         dkoq1XTqwnk3n5vEGwnuoVCB0DPQOyQf0c0h6VxMTvYSkRNrUnbYvUNsJVN9HHWhZ96p
-         DmGw==
+        b=lJc5wwB+l7OICY5i4vYA4mhfnTOligc5zF9OMM04lpZ4Hj3w93k1RJmtOZ+rzjsFd0
+         THOChI9oC+UYJvbBAkvM1T9DquDAZQ2qjIvwrQy7I2sjBNuPCPrNSOmC2ThCpQDQoLxA
+         Bsfccn8RSetBvD5ubhUrL0jl7lAF9s37cSLA13IAMOxmRrlQMzDYxz4WLIIs0F/Fhb2L
+         FlQkbhVJVdmDpCwaW0KThV6kx9HyZBPbZVK8wMjJSwovs2vd3aJl1g82jE8XKsc3HwmI
+         woXWgWaAU11olAD9l3bzjJ6RFfi9TfKVqq/TSzgmx22x64ECZVi2nL5wUI0QRYARNHnq
+         zyhw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GKLbf7CsfiNtXrXbXXo3u+4T+jlrdo4RQWiFxPWf7qw=;
-        b=OPePNuiBHpiEVWZT0sgca7f+6vx4F315ZhnxUbP5gYcgPVOm7dUOBksL7TjEBtezux
-         Qy431T5hX6c4Cw6EJj37Xf0byOBVEF00G0FzR8mk540VAnldgUOBp3HqOHlFAgC9FfFF
-         latyKoOEiBLFUrv/E7jNwqIHc99tqCG5X3JAMyeMzGghiA+1b48nO9rgjBF4X4WhyW0T
-         oEUWanaTCrW/+mVmkfMSDNtlOfgo/ES5Y5ILaEmAj4g9FE/1hXMzCcHsAinLi4sSmE4z
-         pfAmdMaxBijadcfc3qat8cekkTJOpbPtO9R/hoWIvekOuprFyWzrZ4lA7hUlHDnXk/2O
-         7PmQ==
+        bh=Fmt+AE5cj9F3CbvXQ50Ez0UnGa7KlYYhspBVWGgGkUI=;
+        b=bMaM5A5OtJAsKfGmWODV9mIvcBmYXiaz/7astzNX+iErp0Up+MIxJ1XRCM0f6MkUg3
+         rIGzn2MPbVYR6Bw7buaQaDdYFzwzyDoC9iKHBtzHzmtdnAPZSuVofePEkXm/3VSZmq6F
+         Wu34KAhL1PpUh4qGqaer1pBfx3YOT5bnkSalnyoYvJK9rgrMBHYGPei9ompRqCAlTkM1
+         HUjf65rDXurnp5dDkBpiZWdHEWphdnIaWLIyWPgxw9z0S70cAoEPnne++1CxdXIfVYId
+         fNx253bIIreXxxz2Pdmkmw10Talk95K88EpFlFrY0K9akJzJjGDh/qD6LrYIN3Ld16ni
+         fZPQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jan Kara <jack@suse.cz>,
-	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 3.18 52/52] fanotify: fix logic of events on child
-Date: Sun, 22 Apr 2018 15:54:25 +0200
-Message-Id: <20180422135317.721399577@linuxfoundation.org>
+	Ian Kent <raven@themaw.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 51/52] autofs: mount point create should honour passed in mode
+Date: Sun, 22 Apr 2018 15:54:24 +0200
+Message-Id: <20180422135317.677923694@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
 References: <20180422135315.254787616@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455284731037282?=
-X-GMAIL-MSGID: =?utf-8?q?1598456512546188948?=
+X-GMAIL-THRID: =?utf-8?q?1598455319452829195?=
+X-GMAIL-MSGID: =?utf-8?q?1598456509923808357?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,83 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Ian Kent <raven@themaw.net>
 
-commit 54a307ba8d3cd00a3902337ffaae28f436eeb1a4 upstream.
+commit 1e6306652ba18723015d1b4967fe9de55f042499 upstream.
 
-When event on child inodes are sent to the parent inode mark and
-parent inode mark was not marked with FAN_EVENT_ON_CHILD, the event
-will not be delivered to the listener process. However, if the same
-process also has a mount mark, the event to the parent inode will be
-delivered regadless of the mount mark mask.
+The autofs file system mkdir inode operation blindly sets the created
+directory mode to S_IFDIR | 0555, ingoring the passed in mode, which can
+cause selinux dac_override denials.
 
-This behavior is incorrect in the case where the mount mark mask does
-not contain the specific event type. For example, the process adds
-a mark on a directory with mask FAN_MODIFY (without FAN_EVENT_ON_CHILD)
-and a mount mark with mask FAN_CLOSE_NOWRITE (without FAN_ONDIR).
+But the function also checks if the caller is the daemon (as no-one else
+should be able to do anything here) so there's no point in not honouring
+the passed in mode, allowing the daemon to set appropriate mode when
+required.
 
-A modify event on a file inside that directory (and inside that mount)
-should not create a FAN_MODIFY event, because neither of the marks
-requested to get that event on the file.
-
-Fixes: 1968f5eed54c ("fanotify: use both marks when possible")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-[natechancellor: Fix small conflict due to lack of 3cd5eca8d7a2f]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: http://lkml.kernel.org/r/152361593601.8051.14014139124905996173.stgit@pluto.themaw.net
+Signed-off-by: Ian Kent <raven@themaw.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/notify/fanotify/fanotify.c |   34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
 
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -92,7 +92,7 @@ static bool fanotify_should_send_event(s
- 				       u32 event_mask,
- 				       void *data, int data_type)
- {
--	__u32 marks_mask, marks_ignored_mask;
-+	__u32 marks_mask = 0, marks_ignored_mask = 0;
- 	struct path *path = data;
+---
+ fs/autofs4/root.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/autofs4/root.c
++++ b/fs/autofs4/root.c
+@@ -753,7 +753,7 @@ static int autofs4_dir_mkdir(struct inod
  
- 	pr_debug("%s: inode_mark=%p vfsmnt_mark=%p mask=%x data=%p"
-@@ -108,24 +108,20 @@ static bool fanotify_should_send_event(s
- 	    !S_ISDIR(path->dentry->d_inode->i_mode))
- 		return false;
+ 	autofs4_del_active(dentry);
  
--	if (inode_mark && vfsmnt_mark) {
--		marks_mask = (vfsmnt_mark->mask | inode_mark->mask);
--		marks_ignored_mask = (vfsmnt_mark->ignored_mask | inode_mark->ignored_mask);
--	} else if (inode_mark) {
--		/*
--		 * if the event is for a child and this inode doesn't care about
--		 * events on the child, don't send it!
--		 */
--		if ((event_mask & FS_EVENT_ON_CHILD) &&
--		    !(inode_mark->mask & FS_EVENT_ON_CHILD))
--			return false;
--		marks_mask = inode_mark->mask;
--		marks_ignored_mask = inode_mark->ignored_mask;
--	} else if (vfsmnt_mark) {
--		marks_mask = vfsmnt_mark->mask;
--		marks_ignored_mask = vfsmnt_mark->ignored_mask;
--	} else {
--		BUG();
-+	/*
-+	 * if the event is for a child and this inode doesn't care about
-+	 * events on the child, don't send it!
-+	 */
-+	if (inode_mark &&
-+	    (!(event_mask & FS_EVENT_ON_CHILD) ||
-+	     (inode_mark->mask & FS_EVENT_ON_CHILD))) {
-+		marks_mask |= inode_mark->mask;
-+		marks_ignored_mask |= inode_mark->ignored_mask;
-+	}
-+
-+	if (vfsmnt_mark) {
-+		marks_mask |= vfsmnt_mark->mask;
-+		marks_ignored_mask |= vfsmnt_mark->ignored_mask;
- 	}
- 
- 	if (S_ISDIR(path->dentry->d_inode->i_mode) &&
+-	inode = autofs4_get_inode(dir->i_sb, S_IFDIR | 0555);
++	inode = autofs4_get_inode(dir->i_sb, S_IFDIR | mode);
+ 	if (!inode)
+ 		return -ENOMEM;
+ 	d_add(dentry, inode);
