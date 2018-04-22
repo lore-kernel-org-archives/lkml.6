@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49cnhZxX3tWUacTROr1TeuPOcOONCihZW9642SWA4vB06topdjt466PaJy1KePXvEsbvz6D
-ARC-Seal: i=1; a=rsa-sha256; t=1524405841; cv=none;
+X-Google-Smtp-Source: AIpwx49Z4Qb31EMCGi9UnYKGEWt8TgOBAySvcj8kUbBCVp4nG0DKpZGh2kDU9MReXQTyei8bpw8b
+ARC-Seal: i=1; a=rsa-sha256; t=1524405835; cv=none;
         d=google.com; s=arc-20160816;
-        b=MMlVtZ/GU7IjVl41kmiBTDuFsfw09OTwXVbZZ68gYxvAS1c0xtL5acY/WEE6sYIWyV
-         Yfko+s3UHEF729UAQcJSYVo8hnOgikyuNbjq492N3p04SsHSFJ3fuM3UkFrtB7D9Em11
-         iQ9iG1m6v8ZhhDEwK66s67+C0YUHo5h1qzK47o2QxPwud2dFgPAJZts/y3EXAFxPqhIY
-         7Aadsk+jMbqmO2YJ/OgheitqVOvjLH3EEbe6tH+p8OJeiKaLYvtyB6KiZ5wZsiFqIzCQ
-         y9cYzMiPKqiTS3N6S3ECblQpNannL8EuG3uW61MobyQMqzDitIMDa75PlZkz8brO3mnX
-         wS8A==
+        b=HDl+KrZEEegv28OZvw7ujSLiqwLkGGWbUrye92PSIqrD8p5gg3BDJw17S0ZUOOsO7n
+         Q2tynUi5zO00j+4PbG1J1SqvgkjUjTl+UYHV9aGHPt4udSMNsNDqfjtBpKwNMuTT9amY
+         ZMF3UD1YBYY36JbwyiGwUkFsvBVbhAKirtba9YHevKufcGavCwC3jDNyiR1yOck1d+TX
+         H4pDBezG2j7g+/XO9z7at53NiEh6IyfNcddctH++CDNWq9iB2cBVr5wDqBMnVCBIqM0t
+         c9Y1n67E4FPNIbA4cZ2O9BjjPa9VggnDrqz2dmVo4kIhOqySQBf3yOzO2YLbeowUyhdu
+         w+rw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bb3xV8Y81LkGvoYRg110q7jLL2cTjj/uoi3K6uNUQDc=;
-        b=PJsGz6pWYgCpVK22icfXBI+DQG/VwmuIokThcYe+/DVLQUtdHCW/2BT3s5ovMjoT1g
-         g+II/E8GW7gwnisiNxkpuUMZE5Dck0RpNQf12jM0pMXj0OqBRbgYksyoRWkFhgRAasYT
-         m5vYWcMY7bGCwhi/5O5Ha2aKNaiy3C785QM/SN3T7UzY8CGCIsT4NyhfY+FV6aidLFkh
-         0+ScO2LhfZdvq5RQ4upxTAS/ogl+2F1w17DJxncrvCMwXMbe1eTwtClDp/SFFq5AdzXr
-         pQ/C+auoFYyRZVnz3+6typAnv/y2HzxB3fDulv/qzy8wh1jvOI8AL0QX75CJjbolDA5D
-         m8vw==
+        bh=IPuJMZoMu4LBnROlmJyu0ICnevrJhJv4LEGnfkjXxgk=;
+        b=K4qXB9/XzQjbiVTQV4tvgzGUtIco4tx+27MTX+iyfAhPExpkg6yaM4MDFAg3hystP2
+         9scSoZ9vp9y7TsGXqnHUGIqerNYZI8Kmy5rAUk+Nz0+Ou1NF6yBXZ6PC+sqosi8mPBDE
+         gITIrwa9lY+e4yN8JaKq/qjG1dU8LB+vH5vdsO+KatMu6uQXXuHGVmKEuMFg9yj3T0Ut
+         XRM4gX32Mlq/1LbVkjeugX5mRFivTQFXHWMEpDEHbwMtbcwKMOszUSlqj6mIc42vP8dm
+         b2UUrPNxDAcPEh3ejHSjqUkj6rUshiE1eWMYBQynSYLeOaMV5bDKu5bsip51QW/pnDQh
+         /6gA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ellie Reeves <ellierevves@gmail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 4.14 018/164] ARM64: dts: meson: reduce odroid-c2 eMMC maximum rate
-Date: Sun, 22 Apr 2018 15:51:25 +0200
-Message-Id: <20180422135136.136774559@linuxfoundation.org>
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 4.14 016/164] phy: allwinner: sun4i-usb: poll vbus changes on A23/A33 when driving VBUS
+Date: Sun, 22 Apr 2018 15:51:23 +0200
+Message-Id: <20180422135136.056538738@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454822136270258?=
-X-GMAIL-MSGID: =?utf-8?q?1598455379232921907?=
+X-GMAIL-THRID: =?utf-8?q?1598454816491806607?=
+X-GMAIL-MSGID: =?utf-8?q?1598455373554496553?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,41 +50,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-commit c04ffa71ff491220cac28f55237c9aad379a8656 upstream.
+commit d7119224bfe6e8efbf821a52db7da9530d790f07 upstream.
 
-Different modules maybe installed by the user on the eMMC connector
-of the odroid-c2. While the red modules are working without an issue,
-it seems some black modules (apparently Samsung based) are having
-issue at 200MHz
+The AXP223 PMIC, like the AXP221, does not generate VBUS change
+interrupts when N_VBUSEN is used to drive VBUS for the OTG port
+on the board.
 
-While the tuning algorithm introduced in v4.14 enables high speed modes
-on every other tested designs, it seems a problem remains for this
-particular combination of board and eMMC module.
+This was not noticed until recently, as most A23/A33 boards use
+a GPIO pin that does not support interrupts for OTG ID detection.
+This forces the driver to use polling. However the A33-OlinuXino
+uses a pin that does support interrupts, so the driver uses them.
+However the VBUS interrupt never fires, and the driver never gets
+to update the VBUS status. This results in musb timing out waiting
+for VBUS to rise.
 
-Lowering the maximum frequency of the eMMC on this board until we can
-figure out a better solution.
+This was worked around for the AXP221 by resorting to polling
+changes in commit 91d96f06a760 ("phy-sun4i-usb: Add workaround for
+missing Vbus det interrupts on A31"). This patch adds the A23 and
+A33 to the list of SoCs that need the workaround.
 
-Fixes: d341ca88eead ("mmc: meson-gx: rework tuning function")
-Suggested-by: Ellie Reeves <ellierevves@gmail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Fixes: fc1f45ed3043 ("phy-sun4i-usb: Add support for the usb-phys on the
+		      sun8i-a33 SoC")
+Fixes: 123dfdbcfaf5 ("phy-sun4i-usb: Add support for the usb-phys on the
+		      sun8i-a23 SoC")
+Cc: <stable@vger.kernel.org> # 4.3.x: 68dbc2ce77bb phy-sun4i-usb:
+		Use of_match_node to get model specific config data
+Cc: <stable@vger.kernel.org> # 4.3.x: 5cf700ac9d50 phy: phy-sun4i-usb:
+		Fix optional gpios failing probe
+Cc: <stable@vger.kernel.org> # 4.3.x: 04e59a0211ff phy-sun4i-usb:
+		Fix irq free conditions to match request conditions
+Cc: <stable@vger.kernel.org> # 4.3.x: 91d96f06a760 phy-sun4i-usb:
+		Add workaround for missing Vbus det interrupts on A31
+Cc: <stable@vger.kernel.org> # 4.3.x
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-@@ -276,7 +276,7 @@
- 	pinctrl-names = "default", "clk-gate";
+---
+ drivers/phy/allwinner/phy-sun4i-usb.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+--- a/drivers/phy/allwinner/phy-sun4i-usb.c
++++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+@@ -410,11 +410,13 @@ static bool sun4i_usb_phy0_poll(struct s
+ 		return true;
  
- 	bus-width = <8>;
--	max-frequency = <200000000>;
-+	max-frequency = <100000000>;
- 	non-removable;
- 	disable-wp;
- 	cap-mmc-highspeed;
+ 	/*
+-	 * The A31 companion pmic (axp221) does not generate vbus change
+-	 * interrupts when the board is driving vbus, so we must poll
++	 * The A31/A23/A33 companion pmics (AXP221/AXP223) do not
++	 * generate vbus change interrupts when the board is driving
++	 * vbus using the N_VBUSEN pin on the pmic, so we must poll
+ 	 * when using the pmic for vbus-det _and_ we're driving vbus.
+ 	 */
+-	if (data->cfg->type == sun6i_a31_phy &&
++	if ((data->cfg->type == sun6i_a31_phy ||
++	     data->cfg->type == sun8i_a33_phy) &&
+ 	    data->vbus_power_supply && data->phys[0].regulator_on)
+ 		return true;
+ 
+@@ -885,7 +887,7 @@ static const struct sun4i_usb_phy_cfg su
+ 
+ static const struct sun4i_usb_phy_cfg sun8i_a23_cfg = {
+ 	.num_phys = 2,
+-	.type = sun4i_a10_phy,
++	.type = sun6i_a31_phy,
+ 	.disc_thresh = 3,
+ 	.phyctl_offset = REG_PHYCTL_A10,
+ 	.dedicated_clocks = true,
