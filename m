@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+tPBQqfbwHA1YKkTYlTzX0LtgQHXOKTkRuw2WlvViZSnFGyBxyTB/VE7ketcSHnF6hrMTY
-ARC-Seal: i=1; a=rsa-sha256; t=1524406408; cv=none;
+X-Google-Smtp-Source: AIpwx49EJ1KLbIBjX+ffE/iU6Wpiix1y9n7C4wYGUUNVCH+jPoVRJf79mhAPFW6weQMlJ8lKamUM
+ARC-Seal: i=1; a=rsa-sha256; t=1524406405; cv=none;
         d=google.com; s=arc-20160816;
-        b=sw2uY9aGDDdAFIFNCLD2NqQxiEP/Gy/CIr5gQV9AgVfVYTDGzBmqHbBwXy0eLHRRJT
-         uSKsqMJ7AkYK/Lki1VhClsBRH1nxkfa1K+GcZF9Wdh4iM3uoTsIfwK4lSzvfcw593Rg2
-         LpVfAZ8gSX2cH45qtITUflaPMT+IvOmOV6kc6p9ilwpE6oI4GCtxxzgj2rEKmT8Rvdja
-         ddcXWfs3113RWjRMedXg/WYVhlXV6LMdtIG0y70Yn1vXrWHSdMtWCERsufuZLn3CuwJ/
-         sZkBfdKiqfI98T2j2swcMq55qjdj9kYawIFkC2lizOfk8qNydIWGlFGWQ92bJHnhdcu7
-         iozQ==
+        b=eYyb4wiZJU1kqn58worOHmX//SLvDDox9GRPpbBeICGeVUtKIHuu9uNiK645sTIxGH
+         Rr82bdUkSA3ijUF1gETtUSdGHvvaPV/e8H0pquEINMSw9785oKiY0+Qdou23WN6p8JOZ
+         IaSQVtjkDA40NfWRZXsY3+qSHrUrX0zseg6I4wbFKxlBdnbMURsp1YYX4b5KdACufQ5H
+         Ve5CJqc/n2yjVVMa1b9J5DDXh5S5/OLN2JewdQAzXKiDd0EcmIkhzCbxJgPXf6p+09u1
+         UROFkSVZ4PgfUkySdSgjyMhKShnHYfHqMs6oIV+f7s4B5eSudayXPl92DDvnPYLq2c5C
+         aRkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QH/e4IU4k7dDJe0R7GDdzzFRTdyyFHeOnc2LNEyvINk=;
-        b=Vhx3seY/EAo7eLTA0ZIJckv73cceDcck55Nbl51lVZY0cji89ph0vcOSCk9/hUO1E2
-         dzpNA92ITExPZ/OlWNrkLO9FecClbjBmczQqZKlzOvFeZMMGoh1yaTZmtc81AWPtk/0j
-         Yw5po7xPg50V5NcguNLXzsGWAS4gtP3kUgl2r1Ge0Ws2xEzMb+5bIBzBtkh6Rw+euKVU
-         6qhYg/5/7qF9kKPVeUusl6b4H5jq/Y9evOaAIOzWj3dYhyMUYARvWBpOOLFOG8zMEfCy
-         LzeFtSxTJdcqOSMAJzewBg7tAHwmvr5alpyOyBtkis1mTWHyF7rFM73FQdtn9v4RdsMi
-         Q1Ag==
+        bh=rGtqrp2d5bZMu0IRUkdJSoOcPczil1MMAC9KqE5BbSg=;
+        b=rOSURbfBGKEEZkT8bLwGjb2anCIEX01EErAyN0sD6b1Ty60IN90i/fph5oESLz9/67
+         lezrQwt1hBDRR6RKKcTjtaOlDrNULsp5KNiCK20G98V+xTnyu8Gj2B5nfUW5+nPmmqVJ
+         OS7f/b5XzdqouubkGfE/jA5209wb+JVmB9DJLtTEMydfsDgOUeUD7s//zf8ob38mH4C/
+         IVc2s89rqkpuDUzlXB31NEsBHGkDiKouY2DNyeyh+b2dMlttU/sDT03pF+ykbMTleCNE
+         BvpF6dm+SPHC22+zQAHNciOEO9/itLFQ3MeEhHt9U9F2OZ5jW8kY1WNzNcaFWTtE+6hL
+         +Xeg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Vasant Hegde <hegdevasant@linux.vnet.ibm.com>,
-	Stewart Smith <stewart@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 25/95] powerpc/powernv: Handle unknown OPAL errors in opal_nvram_write()
-Date: Sun, 22 Apr 2018 15:52:54 +0200
-Message-Id: <20180422135211.462498031@linuxfoundation.org>
+	Igor Pylypiv <igor.pylypiv@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@iguana.be>
+Subject: [PATCH 4.9 58/95] watchdog: f71808e_wdt: Fix WD_EN register read
+Date: Sun, 22 Apr 2018 15:53:27 +0200
+Message-Id: <20180422135212.796176952@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454937101435263?=
-X-GMAIL-MSGID: =?utf-8?q?1598455973943873783?=
+X-GMAIL-THRID: =?utf-8?q?1598455198087406463?=
+X-GMAIL-MSGID: =?utf-8?q?1598455971272829135?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Igor Pylypiv <igor.pylypiv@gmail.com>
 
-commit 741de617661794246f84a21a02fc5e327bffc9ad upstream.
+commit 977f6f68331f94bb72ad84ee96b7b87ce737d89d upstream.
 
-opal_nvram_write currently just assumes success if it encounters an
-error other than OPAL_BUSY or OPAL_BUSY_EVENT. Have it return -EIO
-on other errors instead.
+F71808FG_FLAG_WD_EN defines bit position, not a bitmask
 
-Fixes: 628daa8d5abf ("powerpc/powernv: Add RTC and NVRAM support plus RTAS fallbacks")
-Cc: stable@vger.kernel.org # v3.2+
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Reviewed-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Acked-by: Stewart Smith <stewart@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Igor Pylypiv <igor.pylypiv@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/opal-nvram.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/watchdog/f71808e_wdt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/opal-nvram.c
-+++ b/arch/powerpc/platforms/powernv/opal-nvram.c
-@@ -59,6 +59,10 @@ static ssize_t opal_nvram_write(char *bu
- 		if (rc == OPAL_BUSY_EVENT)
- 			opal_poll_events(NULL);
- 	}
-+
-+	if (rc)
-+		return -EIO;
-+
- 	*index += count;
- 	return count;
- }
+--- a/drivers/watchdog/f71808e_wdt.c
++++ b/drivers/watchdog/f71808e_wdt.c
+@@ -496,7 +496,7 @@ static bool watchdog_is_running(void)
+ 
+ 	is_running = (superio_inb(watchdog.sioaddr, SIO_REG_ENABLE) & BIT(0))
+ 		&& (superio_inb(watchdog.sioaddr, F71808FG_REG_WDT_CONF)
+-			& F71808FG_FLAG_WD_EN);
++			& BIT(F71808FG_FLAG_WD_EN));
+ 
+ 	superio_exit(watchdog.sioaddr);
+ 
