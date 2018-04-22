@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-766844-1524467270-2-11244730021767795138
+X-Cyrus-Session-Id: sloti22d1t05-2630128-1524405816-2-820031469095890779
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,28 +8,28 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MUL
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524467270; b=pfeNotG4iHt/3tgabYB2vAJA5eY7olWU0ipngj/Sr7lA1VIgHa
-    XeLJILh9yWB8bmpFBOVFfSQcNn/u53XuxqXTrz3HHTNFrvROneienUKK2dDiLs7n
-    TxGbon+dxrAnLkGReQ+IljCXneTvp39JTfjemJ3hlQaYB1O76ToNmTPEfcPJyjLG
-    oxj98NKRKmZs902yFlKSYDznQ8Vi+46D0ygl7iJYMkuNvzVIF692bP0NxwLUe3X+
-    TkON7c3yyDOz4WBma+waf0nqzxFEr7LeXDh2PNCn2mUAoHLtFe2RNsiU2beSKx2P
-    5Hf1u27dBT+7hfgJR6Gp8dq19gv7x1z4ToAw==
+    1524405816; b=qvDJuMI3v5Oxw33KWve3zRIvPm65Q3Y7uYfIrd6YFPShdx5KJF
+    PFE/Fgdr9uW7COJlj1ZlZF6gkklpp9ztFj4EWHjP+Zf/HW0lPfyqQWM+Fs5kgWkM
+    7t9UZ2tpndIhRQWKQO7vsY+AyE1N692TGB4+X0jhbGum2uf5yy7N/nSabTLrqwmP
+    X89z0NbSVbcu03ftwLV7+/zOjdJCuJ/+EGvnXeIAnEofYHkW9Jo8iUn1nnBFgPCL
+    GN6g55YJE2OrqVc/peZOu1ogeKJQ9+BG1LQkIm+osaEaXJ1sNgaRpAyadwXbjbWz
+    g2SXUstMZylOAuqhoC4ktWU9blTdJqWkDV+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524467270; bh=PnWUMfQ6klZjh3Z9Ziikv2qTDWdyR6
-    YSp8O+8jwdZ8U=; b=ZbygZqmGbGesdd9Vb9ZJ0Kv4bqbEA+GbyZERAOk6xKKdpl
-    I7nMnHYSIZxD9C67GwUlRrfS3C1j59LKeH3k+VL8tW5whliDwKAfO5KsDzzZz3WL
-    SaxHrnFNg1kPfxDl9VGN9ZvUbEfGcw/be8alaGPcZRsNuf1K7oUaGwvZu0L+H/DC
-    m8OZT3rdMWnSTlhzt3C6XN+hM0SgMEAbxNzeMSom9wx6wa70UANYGWxdnDd6o+zm
-    VwcFeVNxN6RNUZLw4wAR17crsmaSQITdjj+iYER+bNKA0WGWWX5L9W2bFX3Oy3ES
-    xqsC+Od9qXgopijqG+K+5fRRzxPozaZUyoftkFwA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524405816; bh=Amkv8cOyDhSaaIhEivNK9zXgQPUTky
+    n55YfIJpfEoNA=; b=HVIxHgS3Nf9+daMEBDdSEUsZFo0vg6vHwx49gdBqzSBa2C
+    UH8ZqCyDvQZouRk90Blu2u2vWGsYwgbomev6YOfJpuEDVAi5TzJKiT4sP1v9+sy1
+    EOwzxKS35d+HP8CE3KoZ5/XUfN440ex0+HmvDZOVUeBN2CNBt78eYV4G+ChO4VaM
+    zgXpUy6v3bmMZTVfRa5425bld/mtLgUnkKFc+wfRT1L8YqD1LSM0/tc5VNG/n6YP
+    x98NLZbprQF8SDN30Dhu93teg8mRWpN0fSFEVOrG51v6NnjySsTUw3yb/Ya/uwxn
+    X9sbahin2s2PIUmexn0ehX4zkb8QPnPizj+EXTZQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,84 +51,73 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKMtv+DewZ9jIO1jOKm92ext8WbTwpdHc+Fo1YZ4V4FGn9eTacfNg1s0DmRaXp5OKMCgPsTzy4Ji6gzsoT89m7q2UnC1z7iajdR1vHoqzdAVyk4A8sll
-    7EOeisKgTdT70aTZmpdqSlA/IhsQv9lJ6TIPMvcdyiezKYvImMtM9tn97GlTQS+jWNm+5yB3wY58MZwKwh6nKXVFg6fML6ENnBE0wVqCEwX52iYzUmHk/fM/
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=xRDiy12qv0EA:10
-    a=Kd1tUaAdevIA:10 a=oZLSOeXGZXE7TXH0mp8A:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfC+VQqDmDmwg3TJnkrsHmAbojzh3Kp6RVOHnGh2HgOiAQktdXakFH+TJHWo1lKdCDK1fDqZcgpWEJPFWMAHpcttxdk58kH0Zi7vohSrFsGkRWkXEPe/M
+    lqMkxBkyqeeMsLzaWMWYb/M/vZEykvr9R8axy4inWFNNH4ciB7qVkV20l70AYevPXummTYwd+/AQ1FkPNnAFTZnjZ3rTHPVv+lRc3s8CVI8ozCafiaZ5fsJ+
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=yPCof4ZbAAAA:8 a=DfNHnWVPAAAA:8 a=ag1SF4gXAAAA:8 a=ujiIzIQcLBR78X1VuDkA:9
+    a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753121AbeDWHHt (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 23 Apr 2018 03:07:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58934 "EHLO
+        id S1755096AbeDVODd (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:03:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49274 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753007AbeDWHHs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 23 Apr 2018 03:07:48 -0400
-Date: Mon, 23 Apr 2018 09:07:42 +0200
+        with ESMTP id S1755067AbeDVOD2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:03:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.16 000/196] 4.16.4-stable review
-Message-ID: <20180423070742.GA28186@kroah.com>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Aaron Ma <aaron.ma@canonical.com>
+Subject: [PATCH 4.16 195/196] HID: i2c-hid: fix inverted return value from i2c_hid_command()
+Date: Sun, 22 Apr 2018 15:53:35 +0200
+Message-Id: <20180422135114.373083685@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
- <9fcfb52c-bac2-bce5-f84d-929f1045b054@roeck-us.net>
- <20180422202501.GA2319@flashbox>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180422202501.GA2319@flashbox>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Apr 22, 2018 at 01:25:01PM -0700, Nathan Chancellor wrote:
-> On Sun, Apr 22, 2018 at 01:13:53PM -0700, Guenter Roeck wrote:
-> > On 04/22/2018 06:50 AM, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 4.16.4 release.
-> > > There are 196 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Tue Apr 24 13:50:16 UTC 2018.
-> > > Anything received after that time might be too late.
-> > > 
-> > 
-> > 
-> > Build results:
-> > 	total: 143 pass: 141 fail: 2
-> > Failed builds:
-> > 	powerpc:defconfig
-> > 	powerpc:allmodconfig
-> > Qemu test results:
-> > 	total: 139 pass: 133 fail: 6
-> > Failed tests:
-> > 	powerpc:mac99:ppc64_book3s_defconfig:initrd:nosmp
-> > 	powerpc:mac99:ppc64_book3s_defconfig:initrd:smp4
-> > 	powerpc:mac99:ppc64_book3s_defconfig:rootfs:smp4
-> > 	powerpc:pseries:pseries_defconfig:initrd
-> > 	powerpc:pseries:pseries_defconfig:rootfs
-> > 	powerpc:powernv:powernv_defconfig:initrd
-> > 
-> > arch/powerpc/platforms/powernv/opal-nvram.c: In function 'opal_nvram_write':
-> > arch/powerpc/platforms/powernv/opal-nvram.c:61:11: error: 'OPAL_BUSY_DELAY_MS'
-> > 
-> > This problem affects _all_ pending releases.
-> > 
-> > Guenter
-> 
-> Looks like 3b8070335f75 ("powerpc/powernv: Fix OPAL NVRAM driver
-> OPAL_BUSY loops") has a dependency commit that was missed: 34dd25de9fe3
-> ("powerpc/powernv: define a standard delay for OPAL_BUSY type retry
-> loops").
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Thanks, I've now queued this up everywhere to resolve this issue.
+------------------
 
-greg k-h
+From: Jiri Kosina <jkosina@suse.cz>
+
+commit b658912cb023cd6f8e46963d29779903d3c10538 upstream.
+
+i2c_hid_command() returns non-zero in error cases (the actual
+errno). Error handling in for I2C_HID_QUIRK_RESEND_REPORT_DESCR
+case in i2c_hid_resume() had the check inverted; fix that.
+
+Fixes: 3e83eda467 ("HID: i2c-hid: Fix resume issue on Raydium touchscreen device")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Cc: Aaron Ma <aaron.ma@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/hid/i2c-hid/i2c-hid.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -1229,7 +1229,7 @@ static int i2c_hid_resume(struct device
+ 	 */
+ 	if (ihid->quirks & I2C_HID_QUIRK_RESEND_REPORT_DESCR) {
+ 		ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
+-		if (!ret)
++		if (ret)
+ 			return ret;
+ 	}
+ 
