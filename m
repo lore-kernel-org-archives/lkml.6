@@ -1,136 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756395AbeDVPKz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 11:10:55 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50884 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756312AbeDVPKu (ORCPT
+        id S1756463AbeDVPMf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 11:12:35 -0400
+Received: from mx-fe5-210.meituan.com ([103.37.138.210]:44817 "EHLO
+        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756266AbeDVOKV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 11:10:50 -0400
-Subject: Re: [PATCH] KVM: s390: reset crypto attributes for all vcpus
-To: Janosch Frank <frankja@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: borntraeger@de.ibm.com, cohuck@redhat.com, pmorel@linux.vnet.ibm.com,
-        pasic@linux.vnet.ibm.com, pbonzini@redhat.com, rkrcmar@redhat.com
-References: <1524172432-26211-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <870459b4-228d-0be3-5dd3-48ab480b46de@linux.ibm.com>
- <ac56c3e5-bbf5-5083-9988-eb8a337e0bb0@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Sun, 22 Apr 2018 11:10:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <ac56c3e5-bbf5-5083-9988-eb8a337e0bb0@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18042215-0056-0000-0000-000004432C1F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008900; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01021661; UDB=6.00521400; IPR=6.00800896;
- MB=3.00020714; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-22 15:10:48
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042215-0057-0000-0000-0000088734F2
-Message-Id: <b7f76d7e-c7e1-ba7f-fc7a-abb7affc6a93@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-22_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804220172
+        Sun, 22 Apr 2018 10:10:21 -0400
+DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com 04A962975BCB
+From: Wang Long <wanglong19@meituan.com>
+To: hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com
+Cc: aryabinin@virtuozzo.com, akpm@linux-foundation.org,
+        wanglong19@meituan.com, khlebnikov@yandex-team.ru, xboe@kernel.dk,
+        jack@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        gthelen@google.com, tj@kernel.org
+Subject: [PATCH v2] memcg: writeback: use memcg->cgwb_list directly
+Date: Sun, 22 Apr 2018 22:09:33 +0800
+Message-Id: <1524406173-212182-1-git-send-email-wanglong19@meituan.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/2018 08:15 AM, Janosch Frank wrote:
-> On 20.04.2018 13:59, Janosch Frank wrote:
->> Thanks, applied.
->>
-> Well this does not compile, as you use kvm_s390_vcpu_crypto_setup before
-> declaration. Please fix, then I'll take the patch.
+mem_cgroup_cgwb_list is a very simple wrapper and it will
+never be used outside of code under CONFIG_CGROUP_WRITEBACK.
+so use memcg->cgwb_list directly.
 
-Stupid mistake. I'll fix it.
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Wang Long <wanglong19@meituan.com>
+---
+ include/linux/memcontrol.h | 1 -
+ mm/backing-dev.c           | 4 ++--
+ mm/memcontrol.c            | 5 -----
+ 3 files changed, 2 insertions(+), 8 deletions(-)
 
->
->
->> On 19.04.2018 23:13, Tony Krowiak wrote:
->>> Introduces a new function to reset the crypto attributes for all
->>> vcpus whether they are running or not. Each vcpu in KVM will
->>> be removed from SIE prior to resetting the crypto attributes in its
->>> SIE state description. After all vcpus have had their crypto attributes
->>> reset the vcpus will be restored to SIE.
->>>
->>> This function is incorporated into the kvm_s390_vm_set_crypto(kvm)
->>> function to fix a reported issue whereby the crypto key wrapping
->>> attributes could potentially get out of synch for running vcpus.
->>>
->>> Reported-by: Halil Pasic <pasic@linux.vnet.ibm.com>
->>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>> ---
->>>   arch/s390/kvm/kvm-s390.c |   18 ++++++++++++++----
->>>   arch/s390/kvm/kvm-s390.h |   13 +++++++++++++
->>>   2 files changed, 27 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->>> index fa355a6..4fa3037 100644
->>> --- a/arch/s390/kvm/kvm-s390.c
->>> +++ b/arch/s390/kvm/kvm-s390.c
->>> @@ -789,6 +789,19 @@ static int kvm_s390_set_mem_control(struct kvm *kvm, struct kvm_device_attr *att
->>>   	return ret;
->>>   }
->>>
->>> +void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
->>> + {
->>> +	int i;
->>> +	struct kvm_vcpu *vcpu;
->>> +
->>> +	kvm_s390_vcpu_block_all(kvm);
->>> +
->>> +	kvm_for_each_vcpu(i, vcpu, kvm)
->>> +	        kvm_s390_vcpu_crypto_setup(vcpu);
->>> +
->>> +	kvm_s390_vcpu_unblock_all(kvm);
->>> +}
->>> +
->>>   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu);
->>>
->>>   static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
->>> @@ -832,10 +845,7 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
->>>   		return -ENXIO;
->>>   	}
->>>
->>> -	kvm_for_each_vcpu(i, vcpu, kvm) {
->>> -		kvm_s390_vcpu_crypto_setup(vcpu);
->>> -		exit_sie(vcpu);
->>> -	}
->>> +	kvm_s390_vcpu_crypto_reset_all(kvm);
->>>   	mutex_unlock(&kvm->lock);
->>>   	return 0;
->>>   }
->>> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
->>> index 1b5621f..981e3ba 100644
->>> --- a/arch/s390/kvm/kvm-s390.h
->>> +++ b/arch/s390/kvm/kvm-s390.h
->>> @@ -410,4 +410,17 @@ static inline int kvm_s390_use_sca_entries(void)
->>>   }
->>>   void kvm_s390_reinject_machine_check(struct kvm_vcpu *vcpu,
->>>   				     struct mcck_volatile_info *mcck_info);
->>> +
->>> +/**
->>> + * kvm_s390_vcpu_crypto_reset_all
->>> + *
->>> + * Reset the crypto attributes for each vcpu. This can be done while the vcpus
->>> + * are running as each vcpu will be removed from SIE before resetting the crypt
->>> + * attributes and restored to SIE afterward.
->>> + *
->>> + * Note: The kvm->lock must be held while calling this function
->>> + *
->>> + * @kvm: the KVM guest
->>> + */
->>> +void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm);
->>>   #endif
->>>
->>
->
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index d99b71b..c0056e0 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1093,7 +1093,6 @@ static inline void dec_lruvec_page_state(struct page *page,
+ 
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 
+-struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg);
+ struct wb_domain *mem_cgroup_wb_domain(struct bdi_writeback *wb);
+ void mem_cgroup_wb_stats(struct bdi_writeback *wb, unsigned long *pfilepages,
+ 			 unsigned long *pheadroom, unsigned long *pdirty,
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 023190c..0a48e05 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -555,7 +555,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
+ 	memcg = mem_cgroup_from_css(memcg_css);
+ 	blkcg_css = cgroup_get_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+ 	blkcg = css_to_blkcg(blkcg_css);
+-	memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
++	memcg_cgwb_list = &memcg->cgwb_list;
+ 	blkcg_cgwb_list = &blkcg->cgwb_list;
+ 
+ 	/* look up again under lock and discard on blkcg mismatch */
+@@ -734,7 +734,7 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
+  */
+ void wb_memcg_offline(struct mem_cgroup *memcg)
+ {
+-	struct list_head *memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
++	struct list_head *memcg_cgwb_list = &memcg->cgwb_list;
+ 	struct bdi_writeback *wb, *next;
+ 
+ 	spin_lock_irq(&cgwb_lock);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e074f7c..d1adb9c 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3562,11 +3562,6 @@ static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
+ 
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 
+-struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg)
+-{
+-	return &memcg->cgwb_list;
+-}
+-
+ static int memcg_wb_domain_init(struct mem_cgroup *memcg, gfp_t gfp)
+ {
+ 	return wb_domain_init(&memcg->cgwb_domain, gfp);
+-- 
+1.8.3.1
