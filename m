@@ -1,161 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753401AbeDVAWa (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 20:22:30 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33244 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753310AbeDVAW2 (ORCPT
+        id S1753399AbeDVBaO (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 21:30:14 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:43060 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753330AbeDVBaL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 20:22:28 -0400
-X-Google-Smtp-Source: AIpwx4/A01nfBJyj+5gcEJhOHkbqrwOnzQUmmRPkE3OYado4xk08dRrdJ/96V1SOyz+L6pLVuiG+UNg8yOJgpy5UDoI=
+        Sat, 21 Apr 2018 21:30:11 -0400
+X-Google-Smtp-Source: AIpwx48qeVjtjN4eRoyyTNsW6u7BM+qLd2xRmuW9tzHVCPxTIEzUtij+fx7SFD7KATyLZjV3HIRtjQ==
+Date: Sat, 21 Apr 2018 18:22:59 -0700
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
+        bart.vanassche@wdc.com, ming.lei@redhat.com, tytso@mit.edu,
+        darrick.wong@oracle.com, jikos@kernel.org, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com, linux-fsdevel@vger.kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        todd.e.brandt@linux.intel.com, nborisov@suse.com,
+        martin.petersen@oracle.com, ONeukum@suse.com, oleksandr@natalenko.name,
+        oleg.b.antonyan@gmail.com, yu.chen.surf@gmail.com,
+        dan.j.williams@intel.com, linux-pm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jlayton@redhat.com
+Subject: Re: [PATCH 03/11] fs: add frozen sb state helpers
+Message-ID: <20180422012259.v2s6z2p7q53k5xyp@garbanzo.do-not-panic.com>
+References: <20171129232356.28296-1-mcgrof@kernel.org>
+ <20171129232356.28296-4-mcgrof@kernel.org>
+ <20171130171310.GG28180@quack2.suse.cz>
+ <20171130190548.GJ729@wotan.suse.de>
+ <20171201114724.GC8365@quack2.suse.cz>
+ <20171201211327.GQ729@wotan.suse.de>
+ <20171221110329.GG31584@quack2.suse.cz>
+ <20180418005936.j3fa5rogfm353clf@garbanzo.do-not-panic.com>
+ <20180420184932.57as7jup75nx463v@garbanzo.do-not-panic.com>
+ <20180421235323.ndj3gx65n7kmv5ta@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180421203437.GW28657@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com> <20180421203437.GW28657@bhelgaas-glaptop.roam.corp.google.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Sat, 21 Apr 2018 17:22:27 -0700
-Message-ID: <CAKgT0Ufcq6aQW5zPzBUePO4R_BCa2B_aZ8U2=meOQeOvshZ=Mw@mail.gmail.com>
-Subject: Re: [pci PATCH v8 0/4] Add support for unmanaged SR-IOV
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Alexander Duyck <alexander.h.duyck@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
-        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180421235323.ndj3gx65n7kmv5ta@quack2.suse.cz>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 21, 2018 at 1:34 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Fri, Apr 20, 2018 at 12:28:08PM -0400, Alexander Duyck wrote:
->> This series is meant to add support for SR-IOV on devices when the VFs are
->> not managed by the kernel. Examples of recent patches attempting to do this
->> include:
->> virto - https://patchwork.kernel.org/patch/10241225/
->> pci-stub - https://patchwork.kernel.org/patch/10109935/
->> vfio - https://patchwork.kernel.org/patch/10103353/
->> uio - https://patchwork.kernel.org/patch/9974031/
->>
->> Since this is quickly blowing up into a multi-driver problem it is probably
->> best to implement this solution as generically as possible.
->>
->> This series is an attempt to do that. What we do with this patch set is
->> provide a generic framework to enable SR-IOV in the case that the PF driver
->> doesn't support managing the VFs itself.
->>
->> I based my patch set originally on the patch by Mark Rustad but there isn't
->> much left after going through and cleaning out the bits that were no longer
->> needed, and after incorporating the feedback from David Miller. At this point
->> the only items to be fully reused was his patch description which is now
->> present in patch 3 of the set.
->>
->> This solution is limited in scope to just adding support for devices that
->> provide no functionality for SR-IOV other than allocating the VFs by
->> calling pci_enable_sriov. Previous sets had included patches for VFIO, but
->> for now I am dropping that as the scope of that work is larger then I
->> think I can take on at this time.
->>
->> v2: Reduced scope back to just virtio_pci and vfio-pci
->>     Broke into 3 patch set from single patch
->>     Changed autoprobe behavior to always set when num_vfs is set non-zero
->> v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
->>     Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
->> v4: Dropped vfio-pci patch
->>     Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
->>     Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
->> v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
->>     Added new patch that enables pci_sriov_configure_simple
->>     Updated drivers to use pci_sriov_configure_simple
->> v6: Defined pci_sriov_configure_simple as NULL when SR-IOV is not enabled
->>     Updated drivers to drop "#ifdef" checks for IOV
->>     Added pci-pf-stub as place for PF-only drivers to add support
->> v7: Dropped pci_id table explanation from pci-pf-stub driver
->>     Updated pci_sriov_configure_simple to drop need for err value
->>     Fixed comment explaining why pci_sriov_configure_simple is NULL
->> v8: Dropped virtio from the set, support to be added later after TC approval
->>
->> Cc: Mark Rustad <mark.d.rustad@intel.com>
->> Cc: Maximilian Heyne <mheyne@amazon.de>
->> Cc: Liang-Min Wang <liang-min.wang@intel.com>
->> Cc: David Woodhouse <dwmw@amazon.co.uk>
->>
->> ---
->>
->> Alexander Duyck (4):
->>       pci: Add pci_sriov_configure_simple for PFs that don't manage VF resources
->>       ena: Migrate over to unmanaged SR-IOV support
->>       nvme: Migrate over to unmanaged SR-IOV support
->>       pci-pf-stub: Add PF driver stub for PFs that function only to enable VFs
->>
->>
->>  drivers/net/ethernet/amazon/ena/ena_netdev.c |   28 -------------
->>  drivers/nvme/host/pci.c                      |   20 ----------
->>  drivers/pci/Kconfig                          |   12 ++++++
->>  drivers/pci/Makefile                         |    2 +
->>  drivers/pci/iov.c                            |   31 +++++++++++++++
->>  drivers/pci/pci-pf-stub.c                    |   54 ++++++++++++++++++++++++++
->>  include/linux/pci.h                          |    3 +
->>  include/linux/pci_ids.h                      |    2 +
->>  8 files changed, 106 insertions(+), 46 deletions(-)
->>  create mode 100644 drivers/pci/pci-pf-stub.c
->
-> I tentatively applied these to pci/virtualization-review.
->
-> The code changes look fine, but I want to flesh out the changelogs a
-> little bit before merging them.
+On Sun, Apr 22, 2018 at 01:53:23AM +0200, Jan Kara wrote:
+> On Fri 20-04-18 11:49:32, Luis R. Rodriguez wrote:
+> > On Tue, Apr 17, 2018 at 05:59:36PM -0700, Luis R. Rodriguez wrote:
+> > > On Thu, Dec 21, 2017 at 12:03:29PM +0100, Jan Kara wrote:
+> > > > Hello,
+> > > > 
+> > > > I think I owe you a reply here... Sorry that it took so long.
+> > > 
+> > > Took me just as long :)
+> > > 
+> > > > On Fri 01-12-17 22:13:27, Luis R. Rodriguez wrote:
+> > > > > 
+> > > > > I'll note that its still not perfectly clear if really the semantics behind
+> > > > > freeze_bdev() match what I described above fully. That still needs to be
+> > > > > vetted for. For instance, does thaw_bdev() keep a superblock frozen if we
+> > > > > an ioctl initiated freeze had occurred before? If so then great. Otherwise
+> > > > > I think we'll need to distinguish the ioctl interface. Worst possible case
+> > > > > is that bdev semantics and in-kernel semantics differ somehow, then that
+> > > > > will really create a holy fucking mess.
+> > > > 
+> > > > I believe nobody really thought about mixing those two interfaces to fs
+> > > > freezing and so the behavior is basically defined by the implementation.
+> > > > That is:
+> > > > 
+> > > > freeze_bdev() on sb frozen by ioctl_fsfreeze() -> EBUSY
+> > > > freeze_bdev() on sb frozen by freeze_bdev() -> success
+> > > > ioctl_fsfreeze() on sb frozen by freeze_bdev() -> EBUSY
+> > > > ioctl_fsfreeze() on sb frozen by ioctl_fsfreeze() -> EBUSY
+> > > > 
+> > > > thaw_bdev() on sb frozen by ioctl_fsfreeze() -> EINVAL
+> > > 
+> > > Phew, so this is what we want for the in-kernel freezing so we're good
+> > > and *can* combine these then.
+> > 
+> > I double checked, and I don't see where you get EINVAL for this case.
+> > We *do* keep the sb frozen though, which is good, and the worst fear
+> > I had was that we did not. However we return 0 if there was already
+> > a prior freeze_bdev() or ioctl_fsfreeze() other than the context that
+> > started the prior freeze (--bdev->bd_fsfreeze_count > 0).
+> > 
+> > The -EINVAL is only returned currently if there were no freezers.
+> > 
+> > int thaw_bdev(struct block_device *bdev, struct super_block *sb)
+> > {
+> > 	int error = -EINVAL;
+> > 
+> > 	mutex_lock(&bdev->bd_fsfreeze_mutex);
+> > 	if (!bdev->bd_fsfreeze_count)
+> > 		goto out;
+> 
+> But this is precisely where we'd bail if we freeze sb by ioctl_fsfreeze()
+> but try to thaw by thaw_bdev(). ioctl_fsfreeze() does not touch
+> bd_fsfreeze_count...
 
-Thanks.
+Ah, yes, I see that now, thanks!
 
-> For example, I'm not sure what you mean by "devices where the PF is
-> not capable of managing VF resources."
->
-> It *sounds* like you're saying the hardware works differently on some
-> devices, but I don't think that's what you mean.  I think you're
-> saying something about which drivers are used for the PF and the VF.
-
-That is sort of what I am saying.
-
-So for example with ixgbe there is functionality which is controlled
-in the MMIO space of the PF that affects the functionality of the VFs
-that are generated on the device. The PF has to rearrange the
-resources such as queues and interrupts on the device before it can
-enable SR-IOV, and it could alter those later to limit what the VF is
-capable of doing.
-
-The model I am dealing with via this patch set has a PF that is not
-much different than the VFs other than the fact that it has some
-extended configuration space bits in place for SR-IOV, ARI, ACS, and
-whatever other bits are needed in order to support spawning isolated
-VFs.
-
-> I think a trivial example of how this will be used might help.  I
-> assume this involves a virtualization scenario where the host uses the
-> PF to enable several VFs, but the host doesn't use the PF for much
-> else.  Then you assign the VFs to guests, and drivers in the guest
-> OSes use the VFs.
-
-So this description would work for the pci-pf-stub driver. Basically
-the idea here is that you have a device that is nothing more than a
-function there to spawn VFs.
-
-The other scenario that I am supporting are the ena and nvme models.
-They match what I have described above where the PF is really just
-another VF with some extra configuration space bits that add support
-for spawning what amount to peer VFs to the already present PF.
-
-> Since .sriov_configure() is only used by sriov_numvfs_store(), I
-> assume the usage model involves writing to the sysfs sriov_numvfs
-> attribute to enable the VFs, then assigning them to guests?
->
-> Bjorn
-
-Yes. The assumption for this function is that we are only supporting
-the sysfs approach for spawning VFs.
-
-- Alex
+  Luis
