@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/9UFIFzJxuPVZODUiToEHl92+iTSf3BHXy8Zk6tZ4XeNQDqmPHgrSa5GxRZI21+pyglKae
-ARC-Seal: i=1; a=rsa-sha256; t=1524405827; cv=none;
+X-Google-Smtp-Source: AIpwx4+9Hb6rvAUB21+NvP6SAVple7v6MgnYVajBt1lgESzHPf6n0Zt0rCpTaHmS/cPz1rzsmRJH
+ARC-Seal: i=1; a=rsa-sha256; t=1524405824; cv=none;
         d=google.com; s=arc-20160816;
-        b=oIgrjEeuF36W6ovi8QdkajieNr1FssjC/urhgZf14hVAZrr4cL1S8joTaVrZbLJqEu
-         L7j1PmKZ5qQHSFUe4uN3MfkrGHbm7ZEHYd7LkHMKecbrtHWkIA5IWX3sPg+z+B4bVH3y
-         RjzNE4D+T93ZNQZa7Fq9ywwwYvwihZs8CKRIwQjPzvir9VIUswdc+zQw5qIOv9dmzz8W
-         dHdMv2H+9od0Ysdkydg91ZYt222sDljqALd2g+0BjJmmm8NcD1nykqyFAVbxSTVVr0p6
-         WXUNtwQyVAX8IIJXof82HKzv1WhKcQ99NzbNQ39nrXJFZPwtcwzBscBpnSi/roCMckDU
-         LxXg==
+        b=lxUvq20vW4jkSiyYaxqTb0JE08mJZs3Vwu4whRiEs+Dly663rQlVG3/cERmzpt3szy
+         2D1qA21Apqg7D1qTJ0bABEJsBSEHH35J1XK9xg4EUHXZOkCgXvVDCgeLluAXRQNYawrW
+         hQwPh8KAaGQjhOvsS83iHOUQTWDUwap1hazEkIzxizvvor0jfD5k3ra8Ok+lZvu9ieVe
+         K6g8LNBjvPAajcagPTkR5249CfsgjPfFVUkqZVncUqojuYkxqy2Zc5zSS622Zg7r41ro
+         lYfYZU/gv6csD43Lu32emfbY+f75dHTPdSVsof3hRN89SeDv7aqqM/1mUog68vMk0HQ1
+         WenQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FHvHcDfai1SJyawgwmRTcmCFqEmFHDry0lqP4HbG0oA=;
-        b=zcvtx2tTwEG2x+KZOqer6qAXfty7/HrV2BqR59sPgF8ma/nXlPizmik0Fk8OtLOMsy
-         rKv8GkUwbR0vNshK1rtPmWpEXHlHk7pK//+dpi6Mym3i/Y9f6aOb1gVYzwk9xEJHzaQw
-         ubcJh1zOwVCu02H8uSRP0KIZ/x1+aJ75MTNbBthyEqS1MjRHUjSm0PosATTwdDZnjn1k
-         FKRSvASMO1/fJn7Ox/ykfBj+h20Dj8L488Ks8bk9SPdJYWNiBQQ4lzqiz4Y4qYo0JPWl
-         SdjgbM9Kod2SN1AA1aTKRsP5U9QOiDhhRgoqdKRLp2UvrXUDnNv9ZMnND2yVRcooGnvG
-         CPag==
+        bh=7Ejw4516tt/1XWe9tGEjQqqnN2pwefUwZA9nzuZcwJM=;
+        b=XTT8ZttSMRlCZ47wqWB9GHoh8otHpKhkAUoFZmnosufDEZ7Rmt0kQx24n11vYmoOAS
+         ZyjW/zvImxB3V4eFHY/GA3a/JJuwoPHJf1B/18mS653RQMM7Q4JJLptglB2kwrON+j2a
+         nOYTqBsdy9RSh2CpZdJLIT52yWCAb1YwzmaFLLVNaIljwcdp6fvH/OjDcdEelFeV1B8F
+         eBPIDm62Nxjega/qtsSMfCuds7Jxia4pGoeKCh35zgyVdVpUXwuWmuOLryf0JXLuNgvY
+         nphgZOYsm0X8pI24GD9VFTWWWF9sQ4vCniLKuDnQbg+2MrOPLh8XJCB5dEZzS58Jnn24
+         xd2w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+d11f321e7f1923157eac80aa990b446596f46439@syzkaller.appspotmail.com,
-	Eric Biggers <ebiggers@google.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Davidlohr Bueso <dbueso@suse.de>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Michael Henders <hendersm@shaw.ca>,
 	Andrew Morton <akpm@linux-foundation.org>,
+	Ram Pai <linuxram@us.ibm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 013/164] ipc/shm: fix use-after-free of shm file via remap_file_pages()
-Date: Sun, 22 Apr 2018 15:51:20 +0200
-Message-Id: <20180422135135.935996762@linuxfoundation.org>
+Subject: [PATCH 4.14 012/164] resource: fix integer overflow at reallocation
+Date: Sun, 22 Apr 2018 15:51:19 +0200
+Message-Id: <20180422135135.894415451@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454808019159880?=
-X-GMAIL-MSGID: =?utf-8?q?1598455365407233663?=
+X-GMAIL-THRID: =?utf-8?q?1598454905898680700?=
+X-GMAIL-MSGID: =?utf-8?q?1598455362352412286?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,156 +53,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 3f05317d9889ab75c7190dcd39491d2a97921984 upstream.
+commit 60bb83b81169820c691fbfa33a6a4aef32aa4b0b upstream.
 
-syzbot reported a use-after-free of shm_file_data(file)->file->f_op in
-shm_get_unmapped_area(), called via sys_remap_file_pages().
+We've got a bug report indicating a kernel panic at booting on an x86-32
+system, and it turned out to be the invalid PCI resource assigned after
+reallocation.  __find_resource() first aligns the resource start address
+and resets the end address with start+size-1 accordingly, then checks
+whether it's contained.  Here the end address may overflow the integer,
+although resource_contains() still returns true because the function
+validates only start and end address.  So this ends up with returning an
+invalid resource (start > end).
 
-Unfortunately it couldn't generate a reproducer, but I found a bug which
-I think caused it.  When remap_file_pages() is passed a full System V
-shared memory segment, the memory is first unmapped, then a new map is
-created using the ->vm_file.  Between these steps, the shm ID can be
-removed and reused for a new shm segment.  But, shm_mmap() only checks
-whether the ID is currently valid before calling the underlying file's
-->mmap(); it doesn't check whether it was reused.  Thus it can use the
-wrong underlying file, one that was already freed.
+There was already an attempt to cover such a problem in the commit
+47ea91b4052d ("Resource: fix wrong resource window calculation"), but
+this case is an overseen one.
 
-Fix this by making the "outer" shm file (the one that gets put in
-->vm_file) hold a reference to the real shm file, and by making
-__shm_open() require that the file associated with the shm ID matches
-the one associated with the "outer" file.
+This patch adds the validity check of the newly calculated resource for
+avoiding the integer overflow problem.
 
-Taking the reference to the real shm file is needed to fully solve the
-problem, since otherwise sfd->file could point to a freed file, which
-then could be reallocated for the reused shm ID, causing the wrong shm
-segment to be mapped (and without the required permission checks).
-
-Commit 1ac0b6dec656 ("ipc/shm: handle removed segments gracefully in
-shm_mmap()") almost fixed this bug, but it didn't go far enough because
-it didn't consider the case where the shm ID is reused.
-
-The following program usually reproduces this bug:
-
-	#include <stdlib.h>
-	#include <sys/shm.h>
-	#include <sys/syscall.h>
-	#include <unistd.h>
-
-	int main()
-	{
-		int is_parent = (fork() != 0);
-		srand(getpid());
-		for (;;) {
-			int id = shmget(0xF00F, 4096, IPC_CREAT|0700);
-			if (is_parent) {
-				void *addr = shmat(id, NULL, 0);
-				usleep(rand() % 50);
-				while (!syscall(__NR_remap_file_pages, addr, 4096, 0, 0, 0));
-			} else {
-				usleep(rand() % 50);
-				shmctl(id, IPC_RMID, NULL);
-			}
-		}
-	}
-
-It causes the following NULL pointer dereference due to a 'struct file'
-being used while it's being freed.  (I couldn't actually get a KASAN
-use-after-free splat like in the syzbot report.  But I think it's
-possible with this bug; it would just take a more extraordinary race...)
-
-	BUG: unable to handle kernel NULL pointer dereference at 0000000000000058
-	PGD 0 P4D 0
-	Oops: 0000 [#1] SMP NOPTI
-	CPU: 9 PID: 258 Comm: syz_ipc Not tainted 4.16.0-05140-gf8cf2f16a7c95 #189
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-	RIP: 0010:d_inode include/linux/dcache.h:519 [inline]
-	RIP: 0010:touch_atime+0x25/0xd0 fs/inode.c:1724
-	[...]
-	Call Trace:
-	 file_accessed include/linux/fs.h:2063 [inline]
-	 shmem_mmap+0x25/0x40 mm/shmem.c:2149
-	 call_mmap include/linux/fs.h:1789 [inline]
-	 shm_mmap+0x34/0x80 ipc/shm.c:465
-	 call_mmap include/linux/fs.h:1789 [inline]
-	 mmap_region+0x309/0x5b0 mm/mmap.c:1712
-	 do_mmap+0x294/0x4a0 mm/mmap.c:1483
-	 do_mmap_pgoff include/linux/mm.h:2235 [inline]
-	 SYSC_remap_file_pages mm/mmap.c:2853 [inline]
-	 SyS_remap_file_pages+0x232/0x310 mm/mmap.c:2769
-	 do_syscall_64+0x64/0x1a0 arch/x86/entry/common.c:287
-	 entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[ebiggers@google.com: add comment]
-  Link: http://lkml.kernel.org/r/20180410192850.235835-1-ebiggers3@gmail.com
-Link: http://lkml.kernel.org/r/20180409043039.28915-1-ebiggers3@gmail.com
-Reported-by: syzbot+d11f321e7f1923157eac80aa990b446596f46439@syzkaller.appspotmail.com
-Fixes: c8d78c1823f4 ("mm: replace remap_file_pages() syscall with emulation")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Davidlohr Bueso <dbueso@suse.de>
-Cc: Manfred Spraul <manfred@colorfullife.com>
-Cc: "Eric W . Biederman" <ebiederm@xmission.com>
+Bugzilla: http://bugzilla.opensuse.org/show_bug.cgi?id=1086739
+Link: http://lkml.kernel.org/r/s5hpo37d5l8.wl-tiwai@suse.de
+Fixes: 23c570a67448 ("resource: ability to resize an allocated resource")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: Michael Henders <hendersm@shaw.ca>
+Tested-by: Michael Henders <hendersm@shaw.ca>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- ipc/shm.c |   23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ kernel/resource.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -203,6 +203,12 @@ static int __shm_open(struct vm_area_str
- 	if (IS_ERR(shp))
- 		return PTR_ERR(shp);
- 
-+	if (shp->shm_file != sfd->file) {
-+		/* ID was reused */
-+		shm_unlock(shp);
-+		return -EINVAL;
-+	}
-+
- 	shp->shm_atim = ktime_get_real_seconds();
- 	shp->shm_lprid = task_tgid_vnr(current);
- 	shp->shm_nattch++;
-@@ -431,8 +437,9 @@ static int shm_mmap(struct file *file, s
- 	int ret;
- 
- 	/*
--	 * In case of remap_file_pages() emulation, the file can represent
--	 * removed IPC ID: propogate shm_lock() error to caller.
-+	 * In case of remap_file_pages() emulation, the file can represent an
-+	 * IPC ID that was removed, and possibly even reused by another shm
-+	 * segment already.  Propagate this case as an error to caller.
- 	 */
- 	ret = __shm_open(vma);
- 	if (ret)
-@@ -456,6 +463,7 @@ static int shm_release(struct inode *ino
- 	struct shm_file_data *sfd = shm_file_data(file);
- 
- 	put_ipc_ns(sfd->ns);
-+	fput(sfd->file);
- 	shm_file_data(file) = NULL;
- 	kfree(sfd);
- 	return 0;
-@@ -1391,7 +1399,16 @@ long do_shmat(int shmid, char __user *sh
- 	file->f_mapping = shp->shm_file->f_mapping;
- 	sfd->id = shp->shm_perm.id;
- 	sfd->ns = get_ipc_ns(ns);
--	sfd->file = shp->shm_file;
-+	/*
-+	 * We need to take a reference to the real shm file to prevent the
-+	 * pointer from becoming stale in cases where the lifetime of the outer
-+	 * file extends beyond that of the shm segment.  It's not usually
-+	 * possible, but it can happen during remap_file_pages() emulation as
-+	 * that unmaps the memory, then does ->mmap() via file reference only.
-+	 * We'll deny the ->mmap() if the shm segment was since removed, but to
-+	 * detect shm ID reuse we need to compare the file pointers.
-+	 */
-+	sfd->file = get_file(shp->shm_file);
- 	sfd->vm_ops = NULL;
- 
- 	err = security_mmap_file(file, prot, flags);
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -633,7 +633,8 @@ static int __find_resource(struct resour
+ 			alloc.start = constraint->alignf(constraint->alignf_data, &avail,
+ 					size, constraint->align);
+ 			alloc.end = alloc.start + size - 1;
+-			if (resource_contains(&avail, &alloc)) {
++			if (alloc.start <= alloc.end &&
++			    resource_contains(&avail, &alloc)) {
+ 				new->start = alloc.start;
+ 				new->end = alloc.end;
+ 				return 0;
