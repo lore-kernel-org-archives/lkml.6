@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+A7cCH0O0zjeXTM0mpyB7UdzA7TbClNxNDlGMEgQFbmfoVd3EQsYx/eo/dAtAysnGGMXzI
-ARC-Seal: i=1; a=rsa-sha256; t=1524406050; cv=none;
+X-Google-Smtp-Source: AIpwx4/wendw60A80AbCry6+xeP1AwGXkzuLhs/BPRb6jFpjKC8FDzTSKiQaJtTAOFKdLjwfx1xM
+ARC-Seal: i=1; a=rsa-sha256; t=1524406047; cv=none;
         d=google.com; s=arc-20160816;
-        b=vkCpG/a/fCXzBThfx0KL+Vjrvk2RP0acg81j64Gt4hVPDNzzxJTxtwMjfboF6y1nM4
-         B6VUrStmufa9ow6MS0zGTMeYvzPSL73L1D/C+98nglPxP6Nw7EjkaORoF5MMVWRFWnzD
-         H0VBVGWy1yRKl9lRMLV0gOcjWWQf0IEMrpjcG8B5tJika3r9+j227ZahPq1X9nYoBHVt
-         YSig+c50YsUAT9CVm3+Wc7gsXDk/MIIh4/CI+CjRzM+0cESS4tf/hcFDnCRc4QFZa5XX
-         Lo37VJYTNpqd37re/3ao71+DyHeaUE9L8MA7HGuQKWP3eVfw7nKuIBMsBKKCNahqTlHm
-         SdEw==
+        b=WtH8x5ibEgoeqQFUteANeRwQ1gFiVvejteZq1zMfXySYC4NTKdbAXLqMqNgLRw+c3w
+         ctOjG+EDQwvlbNLTf2UQhEzn5EJKq/DHG2IdIUD87zdYLi6p8BStDLrUTxtOo4gjbzaM
+         OkQ3hjS3eLZB+G3lFduOz47cibDd5yAaiLDrLWZlxH2yyC6vOzKSDuXZF1OESPrsZg+5
+         NWksy2HRf7xiD4DhV3WbmUGbhuaeVNHuni7onsPt6qkk7d/eVaNv+XqAXW60Qi6fQzgC
+         sgrqZ9dk6KlhZB5wpKvnQcPhYHvRv2wGoDlkosuY8SrBFTEjXoRrOPjBDTmPBWgZZZ8t
+         GP0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F01zkYkwAZHkPjuPM1c62Cn/yQEkeq95km6OI896wtA=;
-        b=ujHXwNR9VZr7L1JUOJq4M5SeqjlBGS1zAzBu7ViKixWn1UYzTS2dz1kk6PJZEE/yCH
-         EzvnPR8MeDjLNluWvREEk2iDkXqNF0KfRItAft3pon8sQJpDleoqNmSaGnKfkXqhYDww
-         DXzJNEgM66DG9o5/BOL2oLIfEszV1jhvFPbAFLczzFfqI5OmQkE9xMg3RC6Cjn2ep7KI
-         byhc6oqDwlLDofOAl0/j+FjSKRlKiil1O9zylHlavuJL+zaqI6y4105DrIxWpWGDFJx8
-         iVGg9qmiIOZXBRdBZbDDA2VXYGb9aSOukdtKjexDr4yz4Ew/c342KBuvYGjjtjmZCYaL
-         4SUA==
+        bh=sx3CW29v4SZ2Q25IFIJIrhm35sNXZvdsva9qgGgPmlo=;
+        b=tRpjcCcJWCLLBLmTUoQL+rddNjAjceO2UCTrvv/RWUUgOquDYeDSDxZFMZpVd0x3uv
+         Z4HQRVkpCLoUXW/5LOXOU2H6VfVsUzVv9TYWcwHgc5wXDrPcCZUIyvSAIpgi/V2g0ej8
+         vcyNkoyjXo7AWc5Lznx/8W4odsHaYgBosSxdJ92X2RUebIT8IEPunxfn5r9m7+qCq9ll
+         cxfkK/oruGHaNbfyvnX0eE26wZx2rrtwowdu5uDK2SHT1ZX/hmA+zC88670cgHB29lwo
+         HhdNGRf/iqMCScwNu0CrlBkheFXOhsRzJrUTky4LbDgnACocYYzpNIEDTsJ2Ya9XOchY
+         7iGg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chris Chiu <chiu@endlessm.com>,
-	Daniel Drake <drake@endlessm.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.14 094/164] tpm: self test failure should not cause suspend to fail
-Date: Sun, 22 Apr 2018 15:52:41 +0200
-Message-Id: <20180422135139.269456088@linuxfoundation.org>
+	Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 093/164] cxl: Fix possible deadlock when processing page faults from cxllib
+Date: Sun, 22 Apr 2018 15:52:40 +0200
+Message-Id: <20180422135139.231261060@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455191050669337?=
-X-GMAIL-MSGID: =?utf-8?q?1598455598761917389?=
+X-GMAIL-THRID: =?utf-8?q?1598455160282165247?=
+X-GMAIL-MSGID: =?utf-8?q?1598455595719151823?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,58 +49,152 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chris Chiu <chiu@endlessm.com>
+From: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
 
-commit 0803d7befa15cab5717d667a97a66214d2a4c083 upstream.
+commit ad7b4e8022b9864c075fe71e1328b1d25cad82f6 upstream.
 
-The Acer Acer Veriton X4110G has a TPM device detected as:
-  tpm_tis 00:0b: 1.2 TPM (device-id 0xFE, rev-id 71)
+cxllib_handle_fault() is called by an external driver when it needs to
+have the host resolve page faults for a buffer. The buffer can cover
+several pages and VMAs. The function iterates over all the pages used
+by the buffer, based on the page size of the VMA.
 
-After the first S3 suspend, the following error appears during resume:
-  tpm tpm0: A TPM error(38) occurred continue selftest
+To ensure some stability while processing the faults, the thread T1
+grabs the mm->mmap_sem semaphore with read access (R1). However, when
+processing a page fault for a single page, one of the underlying
+functions, copro_handle_mm_fault(), also grabs the same semaphore with
+read access (R2). So the thread T1 takes the semaphore twice.
 
-Any following S3 suspend attempts will now fail with this error:
-  tpm tpm0: Error (38) sending savestate before suspend
-  PM: Device 00:0b failed to suspend: error 38
+If another thread T2 tries to access the semaphore in write mode W1
+(say, because it wants to allocate memory and calls 'brk'), then that
+thread T2 will have to wait because there's a reader (R1). If the
+thread T1 is processing a new page at that time, it won't get an
+automatic grant at R2, because there's now a writer thread
+waiting (T2). And we have a deadlock.
 
-Error 38 is TPM_ERR_INVALID_POSTINIT which means the TPM is
-not in the correct state. This indicates that the platform BIOS
-is not sending the usual TPM_Startup command during S3 resume.
->From this point onwards, all TPM commands will fail.
+The timeline is:
+1. thread T1 owns the semaphore with read access R1
+2. thread T2 requests write access W1 and waits
+3. thread T1 requests read access R2 and waits
 
-The same issue was previously reported on Foxconn 6150BK8MC and
-Sony Vaio TX3.
+The fix is for the thread T1 to release the semaphore R1 once it got
+the information it needs from the current VMA. The address space/VMAs
+could evolve while T1 iterates over the full buffer, but in the
+unlikely case where T1 misses a page, the external driver will raise a
+new page fault when retrying the memory access.
 
-The platform behaviour seems broken here, but we should not break
-suspend/resume because of this.
-
-When the unexpected TPM state is encountered, set a flag to skip the
-affected TPM_SaveState command on later suspends.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Chris Chiu <chiu@endlessm.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Link: http://lkml.kernel.org/r/CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com
-Link: https://lkml.org/lkml/2011/3/28/192
-Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=591031
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: 3ced8d730063 ("cxl: Export library to support IBM XSL")
+Cc: stable@vger.kernel.org # 4.13+
+Signed-off-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm-interface.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/misc/cxl/cxllib.c |   83 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 54 insertions(+), 29 deletions(-)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -971,6 +971,10 @@ int tpm_do_selftest(struct tpm_chip *chi
- 	loops = jiffies_to_msecs(duration) / delay_msec;
+--- a/drivers/misc/cxl/cxllib.c
++++ b/drivers/misc/cxl/cxllib.c
+@@ -207,49 +207,74 @@ int cxllib_get_PE_attributes(struct task
+ }
+ EXPORT_SYMBOL_GPL(cxllib_get_PE_attributes);
  
- 	rc = tpm_continue_selftest(chip);
-+	if (rc == TPM_ERR_INVALID_POSTINIT) {
-+		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
-+		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
-+	}
- 	/* This may fail if there was no TPM driver during a suspend/resume
- 	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
- 	 */
+-int cxllib_handle_fault(struct mm_struct *mm, u64 addr, u64 size, u64 flags)
++static int get_vma_info(struct mm_struct *mm, u64 addr,
++			u64 *vma_start, u64 *vma_end,
++			unsigned long *page_size)
+ {
+-	int rc;
+-	u64 dar;
+ 	struct vm_area_struct *vma = NULL;
+-	unsigned long page_size;
+-
+-	if (mm == NULL)
+-		return -EFAULT;
++	int rc = 0;
+ 
+ 	down_read(&mm->mmap_sem);
+ 
+ 	vma = find_vma(mm, addr);
+ 	if (!vma) {
+-		pr_err("Can't find vma for addr %016llx\n", addr);
+ 		rc = -EFAULT;
+ 		goto out;
+ 	}
+-	/* get the size of the pages allocated */
+-	page_size = vma_kernel_pagesize(vma);
++	*page_size = vma_kernel_pagesize(vma);
++	*vma_start = vma->vm_start;
++	*vma_end = vma->vm_end;
++out:
++	up_read(&mm->mmap_sem);
++	return rc;
++}
++
++int cxllib_handle_fault(struct mm_struct *mm, u64 addr, u64 size, u64 flags)
++{
++	int rc;
++	u64 dar, vma_start, vma_end;
++	unsigned long page_size;
+ 
+-	for (dar = (addr & ~(page_size - 1)); dar < (addr + size); dar += page_size) {
+-		if (dar < vma->vm_start || dar >= vma->vm_end) {
+-			vma = find_vma(mm, addr);
+-			if (!vma) {
+-				pr_err("Can't find vma for addr %016llx\n", addr);
+-				rc = -EFAULT;
+-				goto out;
+-			}
+-			/* get the size of the pages allocated */
+-			page_size = vma_kernel_pagesize(vma);
++	if (mm == NULL)
++		return -EFAULT;
++
++	/*
++	 * The buffer we have to process can extend over several pages
++	 * and may also cover several VMAs.
++	 * We iterate over all the pages. The page size could vary
++	 * between VMAs.
++	 */
++	rc = get_vma_info(mm, addr, &vma_start, &vma_end, &page_size);
++	if (rc)
++		return rc;
++
++	for (dar = (addr & ~(page_size - 1)); dar < (addr + size);
++	     dar += page_size) {
++		if (dar < vma_start || dar >= vma_end) {
++			/*
++			 * We don't hold the mm->mmap_sem semaphore
++			 * while iterating, since the semaphore is
++			 * required by one of the lower-level page
++			 * fault processing functions and it could
++			 * create a deadlock.
++			 *
++			 * It means the VMAs can be altered between 2
++			 * loop iterations and we could theoretically
++			 * miss a page (however unlikely). But that's
++			 * not really a problem, as the driver will
++			 * retry access, get another page fault on the
++			 * missing page and call us again.
++			 */
++			rc = get_vma_info(mm, dar, &vma_start, &vma_end,
++					&page_size);
++			if (rc)
++				return rc;
+ 		}
+ 
+ 		rc = cxl_handle_mm_fault(mm, flags, dar);
+-		if (rc) {
+-			pr_err("cxl_handle_mm_fault failed %d", rc);
+-			rc = -EFAULT;
+-			goto out;
+-		}
++		if (rc)
++			return -EFAULT;
+ 	}
+-	rc = 0;
+-out:
+-	up_read(&mm->mmap_sem);
+-	return rc;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(cxllib_handle_fault);
