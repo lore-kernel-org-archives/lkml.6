@@ -1,37 +1,83 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+jF87ZLnvyxPG2wm8/2dUVBm2GN8oj6p/X0qSVWqyRveJz8puzTbx8UWRDHmDXwLTYpbL6
-ARC-Seal: i=1; a=rsa-sha256; t=1524405672; cv=none;
-        d=google.com; s=arc-20160816;
-        b=kGHhSBqyWpzbtEUm1nEaG599yaSbtvD3qQGPf3nddv2VDxU/M16IlUXEeN7tYRcKxl
-         GsHr/1yCDJdQk0/yhKbGQdnmMnvBn/SfiFPP6g2TOZfrfA8P3rVRsNHLz3LYMzUooUl/
-         9Zh2gTnuknI8dJ/HUPP0WL30k00q5NHJRWcGR+fxYJmnEFrWjiOTiq7ld+jAoru0f1yA
-         tjXPvorkm2ZLHWs6j3BFGr2C4qLA/+cUWOmbewU/q+edvDrL/qOPCmU7qY5D2xJ+35Z0
-         oNYr08RLR4c9w9A6+suQKsL1opTZX0nvhiT+799VDp4zOfeqjdGEKTLMS4kiQknjrUpZ
-         YOUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=Uz5QCxbXWPpOWBgEbUDNWClhltcayp1djXTTc1Sxt+8=;
-        b=XlTrxO68NHRqq2NAF1J+1XOE3tDO8ktoB2EcXqpvZWfvW05P3asr0IxgQqPKBn9zh4
-         cAILGM6mKBkOU6VIJb6iUU4p98s11Z9/66mZMi1NArRpAQSMim8ia+hO2PR/kZKKWH15
-         Dp/UkLgGDhEMjJeGqTFJOTgz/Qf/R7hLwQtjp67lnPrvGFbHOf241ZOBQsVA+fTvXLVF
-         BsLDVxjXcj+JpyLFUo+eA4TYIn7iJaX7ZVN5mpVAFafRwCMAMhRO3PaaLrQ2HS1fpLuB
-         LBH2xzfgmhiFVuYngymsOLK2bA+XZTAwIj4wibha5+iFgmtqKVtUof4hyK6Ou0Q633Gg
-         lbbQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2630128-1524405671-2-7854723560190142598
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES daen, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524405670; b=cMxL+YT6dKGjNOuSEgIxOxlmS6RMvKU1hqM/2USVFE0CCopbC9
+    w/konYJda+irFbgY35hs1ljZfON2Id40ApPUoIfc9p5TDP2dahPlt8VvN2wxunbC
+    V4eaVy2j9b4NDiuZM25kcZxXy+nUki6QLyIf53k8wEX5VMg3toDbgVjzL9zAL/I4
+    LMtBiUFc3GOAGkFb8ghGFqrOX6uzJINFpFItJwJ3E70qAPQtEtLliypDYZxReqxe
+    Kooz0Zcuu6kfLjxBqnjLj6x1v6tGlnPifKCPYK6wyTNLqgKj75pdwHifwJE/apbJ
+    4O80PPhouYSHo8fd5LNDD/i2Ml/e19ASPe4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524405670; bh=aw7w4GjIMudzkSQtFjUalvdn7eq2fN
+    H9e3UN0iEI45E=; b=gyQba03KxnvTSWHFSeH95fZFHN/mPVWPC8wzIEiX2fHgjy
+    hi+bw5Y5A8au/WqlHv8f4wUiNlJYeUH3GJznbrJ8aOwr3Ao8a7ZYDYefm8Ssu82d
+    pJ0fadcukSOJDyPxGl3N8Tus95rvq3MdTyoUbDwWGK3tNW/htxaW/8PcLn5QU0KR
+    Ae9oGjv+poKmqgljoveUR+7+gSG4UpjkxnYo0/4MXSeBXiBC2t7DHP69wsS0fjrr
+    W5bK1iW9LHcE+sw7Ey94zd8liPIhZM/QtXRh8cSrqPEZzid5y3FIPbk9AdRbsqrp
+    4dNHQ77R6hhtqOqNC8YMjW1EIYkOH26BeVDhkLUA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfCGQjZQjQuPSDNf5CHnAzwA/aJUX0SGLxU+YLGVfUUDZY4UqFy+5vm3m1X+43QtXQ2SQMK6JeXICusLbeEHsAu2VXp/vvZjvGmCifaoCZ3AcMKokbtuE
+    YPoZV0RViLr1gIN6UI/Y1TueGV+K3jzPTNtf1RT8ncOribZASuS9aj+qkNEfuZPsvu6W/TE4X1NRIG6VEUHoL9AIx6cab6XNFehVxCxc1M40O4fLmnQHBF5s
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=mpaa-ttXAAAA:8 a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=ag1SF4gXAAAA:8
+    a=ALTnucOfrOSWVTradHsA:9 a=305Ezi1rW_i1A3II:21 a=a1gN9-G8JxdQImrz:21
+    a=QEXdDO2ut3YA:10 a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754620AbeDVOBH (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 10:01:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47766 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754646AbeDVOBE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:01:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Bas Nieuwenhuizen <basni@chromium.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.16 151/196] drm/amdgpu: Fix always_valid bos multiple LRU insertions.
-Date: Sun, 22 Apr 2018 15:52:51 +0200
-Message-Id: <20180422135112.043477422@linuxfoundation.org>
+        stable@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.16 148/196] dt-bindings: clock: mediatek: add binding for fixed-factor clock axisel_d4
+Date: Sun, 22 Apr 2018 15:52:48 +0200
+Message-Id: <20180422135111.890281754@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -39,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455202380225514?=
-X-GMAIL-MSGID: =?utf-8?q?1598455202380225514?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,55 +95,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bas Nieuwenhuizen <basni@chromium.org>
+From: Sean Wang <sean.wang@mediatek.com>
 
-commit a20ee0b1f8b42e2568f3a4408003d22b2dfcc706 upstream.
+commit 55a5fcafe3a94e8a0777bb993d09107d362258d2 upstream.
 
-If these bos are evicted and are in the validated list
-things blow up, so do not put them in there. Notably,
-that tries to add the bo to the LRU twice, which results
-in a BUG_ON in ttm_bo.c.
+Just add binding for a fixed-factor clock axisel_d4, which would be
+referenced by PWM devices on MT7623 or MT2701 SoC.
 
-While for the bo_list an alternative would be to not allow
-always valid bos in there, that does not work for the user
-fence.
-
-v2: Fixed whitespace issue pointed out by checkpatch.pl
-
-Signed-off-by: Bas Nieuwenhuizen <basni@chromium.org>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
+Fixes: 1de9b21633d6 ("clk: mediatek: Add dt-bindings for MT2701 clocks")
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c |    6 ++++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c      |    2 +-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ include/dt-bindings/clock/mt2701-clk.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-@@ -233,8 +233,10 @@ void amdgpu_bo_list_get_list(struct amdg
- 	for (i = 0; i < list->num_entries; i++) {
- 		unsigned priority = list->array[i].priority;
+--- a/include/dt-bindings/clock/mt2701-clk.h
++++ b/include/dt-bindings/clock/mt2701-clk.h
+@@ -176,7 +176,8 @@
+ #define CLK_TOP_AUD_EXT1			156
+ #define CLK_TOP_AUD_EXT2			157
+ #define CLK_TOP_NFI1X_PAD			158
+-#define CLK_TOP_NR				159
++#define CLK_TOP_AXISEL_D4			159
++#define CLK_TOP_NR				160
  
--		list_add_tail(&list->array[i].tv.head,
--			      &bucket[priority]);
-+		if (!list->array[i].robj->parent)
-+			list_add_tail(&list->array[i].tv.head,
-+				      &bucket[priority]);
-+
- 		list->array[i].user_pages = NULL;
- 	}
+ /* APMIXEDSYS */
  
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-@@ -542,7 +542,7 @@ static int amdgpu_cs_parser_bos(struct a
- 	INIT_LIST_HEAD(&duplicates);
- 	amdgpu_vm_get_pd_bo(&fpriv->vm, &p->validated, &p->vm_pd);
- 
--	if (p->uf_entry.robj)
-+	if (p->uf_entry.robj && !p->uf_entry.robj->parent)
- 		list_add(&p->uf_entry.tv.head, &p->validated);
- 
- 	while (1) {
