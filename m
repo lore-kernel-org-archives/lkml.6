@@ -1,85 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeDVNu0 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 09:50:26 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34047 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751053AbeDVNuX (ORCPT
+        id S1757699AbeDVOWO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 10:22:14 -0400
+Received: from vpn-0-22.aquilenet.fr ([185.233.101.22]:36024 "EHLO
+        leonov.paulk.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755522AbeDVOWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 09:50:23 -0400
-X-Google-Smtp-Source: AIpwx4+zOi5lmPqSGpSmmrCsPMS2eJs8DBsamxlURMAME0MV6q8NDIUGcPnfVfWAMUiNDX0oVUy/GQ==
-From: Yafang Shao <laoar.shao@gmail.com>
-To: eric.dumazet@gmail.com, alexei.starovoitov@gmail.com,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH net-next] net: init sk_cookie for inet socket
-Date: Sun, 22 Apr 2018 21:50:04 +0800
-Message-Id: <1524405004-10960-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sun, 22 Apr 2018 10:22:07 -0400
+From: Paul Kocialkowski <contact@paulk.fr>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Paul Kocialkowski <contact@paulk.fr>
+Subject: [PATCH] ARM: dts: imx6qdl-cubox-i: Move card-detect GPIO to 1.5 SOM devices only
+Date: Sun, 22 Apr 2018 16:21:51 +0200
+Message-Id: <20180422142151.17910-1-contact@paulk.fr>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With sk_cookie we can identify a socket, that is very helpful for
-traceing and statistic, i.e. tcp tracepiont and ebpf.
-So we'd better init it by default for inet socket.
-When using it, we just need call atomic64_read(&sk->sk_cookie).
+The Solid-Run CuBox-i lower board used in the first generation of
+CuBox-i devices feature a hinged micro SD card slot, that does not have
+card-detect capability. Since the card-detect GPIO was specified in the
+common cubox-i dtsi, it is moved to each device using the 1.5 SOM and is
+thus removed from the imx6q-cubox-i dts.
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Enabling the card-detect GPIO on the first generation CuBox-i devices
+results in waiting for a card-detect event (that never occurs) and thus
+not detecting the mmc card.
+
+Since the CD pin is still dedicated to the purpose on the SOM board even
+on the first generation CuBox-i devices, the pin control properties are
+kept untouched regardless of the slot capability.
+
+Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
 ---
- include/linux/sock_diag.h | 9 +++++++++
- net/ipv4/tcp_input.c      | 8 +++++++-
- 2 files changed, 16 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dts | 4 ++++
+ arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dts      | 4 ++++
+ arch/arm/boot/dts/imx6q-cubox-i-emmc-som-v15.dts  | 4 ++++
+ arch/arm/boot/dts/imx6q-cubox-i-som-v15.dts       | 4 ++++
+ arch/arm/boot/dts/imx6qdl-cubox-i.dtsi            | 1 -
+ 5 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/sock_diag.h b/include/linux/sock_diag.h
-index 15fe980..5c916e6 100644
---- a/include/linux/sock_diag.h
-+++ b/include/linux/sock_diag.h
-@@ -25,6 +25,15 @@ struct sock_diag_handler {
- void sock_diag_register_inet_compat(int (*fn)(struct sk_buff *skb, struct nlmsghdr *nlh));
- void sock_diag_unregister_inet_compat(int (*fn)(struct sk_buff *skb, struct nlmsghdr *nlh));
- 
-+static inline
-+void sock_init_cookie(struct sock *sk)
-+{
-+	u64 res;
+diff --git a/arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dts b/arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dts
+index 2b2fc360b865..90a15f3b4fc0 100644
+--- a/arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dts
++++ b/arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dts
+@@ -50,3 +50,7 @@
+ 	model = "SolidRun Cubox-i Solo/DualLite (1.5som+emmc)";
+ 	compatible = "solidrun,cubox-i/dl", "fsl,imx6dl";
+ };
 +
-+	res = atomic64_inc_return(&sock_net(sk)->cookie_gen);
-+	atomic64_set(&sk->sk_cookie, res);
-+}
++&usdhc2 {
++	cd-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
++};
+diff --git a/arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dts b/arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dts
+index e09c565d1d1f..9bdec07fefe3 100644
+--- a/arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dts
++++ b/arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dts
+@@ -49,3 +49,7 @@
+ 	model = "SolidRun Cubox-i Solo/DualLite (1.5som)";
+ 	compatible = "solidrun,cubox-i/dl", "fsl,imx6dl";
+ };
 +
- u64 sock_gen_cookie(struct sock *sk);
- int sock_diag_check_cookie(struct sock *sk, const __u32 *cookie);
- void sock_diag_save_cookie(struct sock *sk, __u32 *cookie);
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 0396fb9..e6a64a3 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -78,6 +78,7 @@
- #include <linux/errqueue.h>
- #include <trace/events/tcp.h>
- #include <linux/static_key.h>
-+#include <linux/sock_diag.h>
- 
- int sysctl_tcp_max_orphans __read_mostly = NR_FILE;
- 
-@@ -6188,10 +6189,15 @@ struct request_sock *inet_reqsk_alloc(const struct request_sock_ops *ops,
- #if IS_ENABLED(CONFIG_IPV6)
- 		ireq->pktopts = NULL;
- #endif
--		atomic64_set(&ireq->ir_cookie, 0);
- 		ireq->ireq_state = TCP_NEW_SYN_RECV;
- 		write_pnet(&ireq->ireq_net, sock_net(sk_listener));
- 		ireq->ireq_family = sk_listener->sk_family;
++&usdhc2 {
++	cd-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
++};
+diff --git a/arch/arm/boot/dts/imx6q-cubox-i-emmc-som-v15.dts b/arch/arm/boot/dts/imx6q-cubox-i-emmc-som-v15.dts
+index 3e59ebbb3608..679a5431cbdb 100644
+--- a/arch/arm/boot/dts/imx6q-cubox-i-emmc-som-v15.dts
++++ b/arch/arm/boot/dts/imx6q-cubox-i-emmc-som-v15.dts
+@@ -58,3 +58,7 @@
+ 	fsl,transmit-atten-16ths = <9>;
+ 	fsl,no-spread-spectrum;
+ };
 +
-+		BUILD_BUG_ON(offsetof(struct inet_request_sock, ir_cookie) !=
-+					offsetof(struct sock, sk_cookie));
-+		BUILD_BUG_ON(offsetof(struct inet_request_sock, ireq_net) !=
-+					offsetof(struct sock, sk_net));
-+		sock_init_cookie((struct sock *)ireq);
- 	}
++&usdhc2 {
++	cd-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
++};
+diff --git a/arch/arm/boot/dts/imx6q-cubox-i-som-v15.dts b/arch/arm/boot/dts/imx6q-cubox-i-som-v15.dts
+index dab70d1230a2..b9b8733f13c3 100644
+--- a/arch/arm/boot/dts/imx6q-cubox-i-som-v15.dts
++++ b/arch/arm/boot/dts/imx6q-cubox-i-som-v15.dts
+@@ -57,3 +57,7 @@
+ 	fsl,transmit-atten-16ths = <9>;
+ 	fsl,no-spread-spectrum;
+ };
++
++&usdhc2 {
++	cd-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
++};
+diff --git a/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi b/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi
+index d1cfdc264126..170b3d27f875 100644
+--- a/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi
+@@ -254,7 +254,6 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_cubox_i_usdhc2_aux &pinctrl_cubox_i_usdhc2>;
+ 	vmmc-supply = <&vcc_3v3>;
+-	cd-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ };
  
- 	return req;
 -- 
-1.8.3.1
+2.17.0
