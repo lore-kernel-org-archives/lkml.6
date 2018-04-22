@@ -1,116 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeDVQmM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 12:42:12 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54224 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751296AbeDVQmK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 12:42:10 -0400
-Subject: Re: [PATCH] KVM: s390: reset crypto attributes for all vcpus
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        borntraeger@de.ibm.com, cohuck@redhat.com, pmorel@linux.vnet.ibm.com,
-        pasic@linux.vnet.ibm.com, pbonzini@redhat.com, rkrcmar@redhat.com
-References: <1524172432-26211-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <201804210852.eaNyyLPe%fengguang.wu@intel.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Sun, 22 Apr 2018 12:42:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1753412AbeDVROI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 13:14:08 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46273 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751564AbeDVROG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 13:14:06 -0400
+Date: Sun, 22 Apr 2018 19:13:34 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH 29/61] mtd: devices: simplify getting .drvdata
+Message-ID: <20180422191334.784f7723@bbrezillon>
+In-Reply-To: <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <201804210852.eaNyyLPe%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18042216-0056-0000-0000-000004433049
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008900; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01021691; UDB=6.00521418; IPR=6.00800927;
- MB=3.00020715; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-22 16:42:08
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042216-0057-0000-0000-00000887392C
-Message-Id: <559056f8-2c89-0fbd-5b18-0e792d220180@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-22_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804220188
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/2018 08:11 PM, kbuild test robot wrote:
-> Hi Tony,
->
-> Thank you for the patch! Yet something to improve:
+On Thu, 19 Apr 2018 16:05:59 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-Sorry about this, I must have missed the warnings. It should all be good 
-to do with v2 of
-the patch.
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
->
-> [auto build test ERROR on s390/features]
-> [also build test ERROR on v4.17-rc1 next-20180420]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Tony-Krowiak/KVM-s390-reset-crypto-attributes-for-all-vcpus/20180421-050734
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
-> config: s390-allyesconfig (attached as .config)
-> compiler: s390x-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # save the attached .config to linux build tree
->          make.cross ARCH=s390
->
-> All error/warnings (new ones prefixed by >>):
->
->     arch/s390/kvm/kvm-s390.c: In function 'kvm_s390_vcpu_crypto_reset_all':
->>> arch/s390/kvm/kvm-s390.c:800:10: error: implicit declaration of function 'kvm_s390_vcpu_crypto_setup'; did you mean 'kvm_s390_vcpu_crypto_reset_all'? [-Werror=implicit-function-declaration]
->               kvm_s390_vcpu_crypto_setup(vcpu);
->               ^~~~~~~~~~~~~~~~~~~~~~~~~~
->               kvm_s390_vcpu_crypto_reset_all
->     arch/s390/kvm/kvm-s390.c: At top level:
->>> arch/s390/kvm/kvm-s390.c:805:13: warning: conflicting types for 'kvm_s390_vcpu_crypto_setup'
->      static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu);
->                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>> arch/s390/kvm/kvm-s390.c:805:13: error: static declaration of 'kvm_s390_vcpu_crypto_setup' follows non-static declaration
->     arch/s390/kvm/kvm-s390.c:800:10: note: previous implicit declaration of 'kvm_s390_vcpu_crypto_setup' was here
->               kvm_s390_vcpu_crypto_setup(vcpu);
->               ^~~~~~~~~~~~~~~~~~~~~~~~~~
->     arch/s390/kvm/kvm-s390.c: In function 'kvm_s390_vm_set_crypto':
->     arch/s390/kvm/kvm-s390.c:810:6: warning: unused variable 'i' [-Wunused-variable]
->       int i;
->           ^
->     arch/s390/kvm/kvm-s390.c:809:19: warning: unused variable 'vcpu' [-Wunused-variable]
->       struct kvm_vcpu *vcpu;
->                        ^~~~
->     cc1: some warnings being treated as errors
->
-> vim +800 arch/s390/kvm/kvm-s390.c
->
->     791	
->     792	void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
->     793	 {
->     794		int i;
->     795		struct kvm_vcpu *vcpu;
->     796	
->     797		kvm_s390_vcpu_block_all(kvm);
->     798	
->     799		kvm_for_each_vcpu(i, vcpu, kvm)
->   > 800		        kvm_s390_vcpu_crypto_setup(vcpu);
->     801	
->     802		kvm_s390_vcpu_unblock_all(kvm);
->     803	}
->     804	
->   > 805	static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu);
->     806	
->
+Applied to mtd/next.
+
+Thanks,
+
+Boris
+
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/mtd/devices/docg3.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+> index c594fe5eac08..802d8f159e90 100644
+> --- a/drivers/mtd/devices/docg3.c
+> +++ b/drivers/mtd/devices/docg3.c
+> @@ -1470,8 +1470,7 @@ static struct docg3 *sysfs_dev2docg3(struct device *dev,
+>  				     struct device_attribute *attr)
+>  {
+>  	int floor;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct mtd_info **docg3_floors = platform_get_drvdata(pdev);
+> +	struct mtd_info **docg3_floors = dev_get_drvdata(dev);
+>  
+>  	floor = attr->attr.name[1] - '0';
+>  	if (floor < 0 || floor >= DOC_MAX_NBFLOORS)
