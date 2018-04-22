@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/1ULUE5WbFPNdA863aZhR9XbjpOHteT/SKyRLw/2pqZHe9WWtv1J5s2Vx+1FSCSMlAiSpt
-ARC-Seal: i=1; a=rsa-sha256; t=1524406697; cv=none;
+X-Google-Smtp-Source: AIpwx48hBQld88EoogdrhwHFUZYOj22fey/+/Lphh8VRjzX5tN7wKs+H72vJfZ88pZi97AvviepY
+ARC-Seal: i=1; a=rsa-sha256; t=1524406694; cv=none;
         d=google.com; s=arc-20160816;
-        b=r676xRhspJinXzbp5aR3oTwJm1CA+/tQA+FczX67na1SgsnxcQQ2cjbFXnteSrMJe5
-         r1zx+btig8604gg0F/JLnhK2xBGmAUKhYWBsvnvq91rp0yPzPoNbDp5sFZlPbH0/svJf
-         Z1wLQbPibgw8v59WphjGEaeK4E5/wyV+VRrMzx1VGqecUMmEjzxif9pILx+fFXvztI8q
-         csBxKuTPVBB/IY/7DTvYJnTmtDzHehn3YEH9Yj1momB6tdazCcByzxeSuphQ91SY7Rx9
-         /Kq094pphUTYVV5jUIs9sBdkimt2tt6rSY4Ii6mTuXeJeCkjFsimgkxI5h0AO52t4nTj
-         SkUw==
+        b=UUpKJoRPwemIXBALPsTsX5FtOCkv6t6LpSnmBlgctOXPUIvnCplsuPMxcsrcEf2jY7
+         6zrR6hO5QMw3tpp1cfqda6Vc1O1wQu4Dv7c50pmC/heoJc7foxw54uPmJcT79jcbwp5R
+         l6/gJe7GjQ8wXCIxCGczYP2pDfjQdh3V6OS75Tn3AshX1vT9Wn7HWjMEFGG7Hj+ptNAo
+         +PruVLsop9KWFq3i5Ma4fdEWOdPQdoS67yhzUnkPSctMv2mJ32v5AjJhZmyXNKDKA3wu
+         uok0XRlP1RlUuvnrFNmQQb1+LqkoKUQrtCbhb6O8RPJvJGsV9mgQvAXBpwO/nwXGFFUo
+         7Ohg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=X2javRJ8o8QTOw1+YowDTfD4IIDTKG12ED7mEnJabIw=;
-        b=d4Ei4QtEPMCQl1Qm1eiNx8xh/eBRUCJLtgR/usRhM704wWiq5PSlGdGAPoF2PphIRS
-         4Itq/U6jWpsxl+vSS2nSH767RSl/agyt7Zsjc/4T7prof5X+BQWikzCR6qwTQf9rYmLs
-         55DmgGhnh5W0VCz6PH0734TS0xElHdpmfN/DHyfjT3AFpkuqNrXKnMiakN4hpnh0K+mQ
-         HTyal1FrmHgUvzAekYaUWw3cbqeJyH1MB8v2Aasdi7aVXobo+GuZiqdFhwzcWj4lRNIn
-         d3Ji8Tdd6Rh3U5AJOOSjxO/1NrEVR7KrtF/H27BrkIlsO7QS45+iW4Jb+QNvTNmG1Arn
-         5atQ==
+        bh=G/n0qjoOvdwpyY4hLRjhExuWIqdXNCNvzGTpZJKPJSA=;
+        b=fRmcw+za5DLmhcg+zd+5E1n8XgnAdjfZ29en1QU7qHvR/RK0O3Te35gNMVytrrdNF4
+         tJR+QH3d/jCFTLP7E4agEcMqsCcuybzgZ5MvtmMAHb5a81T8eIGv8T9dZ24gzHwnfmg3
+         dpkm5DTlKilEmhiYDfEAFGjgfQMMSGWFXCB0b9aIqmhm+e7lc6ZcDxJyPLYhj3IpiFeF
+         pMr9iZIhdDwnKGfEFfLalStMtkenZ8tQfdwRVBa1V7FfZ/sXgJfJ9I9p/WTMTgZfFc70
+         NEM6VhkJIJE8qf6MCmwN8NtOyRYpee2ce+lvTmyLC9HAHRJdy1yvudFnBttvsvIE/Syp
+         yENg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 69/97] ALSA: pcm: Fix mutex unbalance in OSS emulation ioctls
-Date: Sun, 22 Apr 2018 15:53:47 +0200
-Message-Id: <20180422135309.040716197@linuxfoundation.org>
+Subject: [PATCH 4.4 68/97] ALSA: pcm: Return -EBUSY for OSS ioctls changing busy streams
+Date: Sun, 22 Apr 2018 15:53:46 +0200
+Message-Id: <20180422135308.991252429@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455080797885449?=
-X-GMAIL-MSGID: =?utf-8?q?1598456277478275542?=
+X-GMAIL-THRID: =?utf-8?q?1598455078261500157?=
+X-GMAIL-MSGID: =?utf-8?q?1598456274435466012?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,165 +50,178 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit f6d297df4dd47ef949540e4a201230d0c5308325 upstream.
+commit 40cab6e88cb0b6c56d3f30b7491a20e803f948f6 upstream.
 
-The previous fix 40cab6e88cb0 ("ALSA: pcm: Return -EBUSY for OSS
-ioctls changing busy streams") introduced some mutex unbalance; the
-check of runtime->oss.rw_ref was inserted in a wrong place after the
-mutex lock.
+OSS PCM stream management isn't modal but it allows ioctls issued at
+any time for changing the parameters.  In the previous hardening
+patch ("ALSA: pcm: Avoid potential races between OSS ioctls and
+read/write"), we covered these races and prevent the corruption by
+protecting the concurrent accesses via params_lock mutex.  However,
+this means that some ioctls that try to change the stream parameter
+(e.g. channels or format) would be blocked until the read/write
+finishes, and it may take really long.
 
-This patch fixes the inconsistency by rewriting with the helper
-functions to lock/unlock parameters with the stream check.
+Basically changing the parameter while reading/writing is an invalid
+operation, hence it's even more user-friendly from the API POV if it
+returns -EBUSY in such a situation.
 
-Fixes: 40cab6e88cb0 ("ALSA: pcm: Return -EBUSY for OSS ioctls changing busy streams")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+This patch adds such checks in the relevant ioctls with the addition
+of read/write access refcount.
+
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_oss.c |   67 +++++++++++++++++++++++++++++------------------
- 1 file changed, 42 insertions(+), 25 deletions(-)
+ include/sound/pcm_oss.h  |    1 +
+ sound/core/oss/pcm_oss.c |   36 +++++++++++++++++++++++++++---------
+ 2 files changed, 28 insertions(+), 9 deletions(-)
 
+--- a/include/sound/pcm_oss.h
++++ b/include/sound/pcm_oss.h
+@@ -57,6 +57,7 @@ struct snd_pcm_oss_runtime {
+ 	char *buffer;				/* vmallocated period */
+ 	size_t buffer_used;			/* used length from period buffer */
+ 	struct mutex params_lock;
++	atomic_t rw_ref;		/* concurrent read/write accesses */
+ #ifdef CONFIG_SND_PCM_OSS_PLUGINS
+ 	struct snd_pcm_plugin *plugin_first;
+ 	struct snd_pcm_plugin *plugin_last;
 --- a/sound/core/oss/pcm_oss.c
 +++ b/sound/core/oss/pcm_oss.c
-@@ -833,6 +833,23 @@ static int choose_rate(struct snd_pcm_su
- 	return snd_pcm_hw_param_near(substream, params, SNDRV_PCM_HW_PARAM_RATE, best_rate, NULL);
+@@ -1404,6 +1404,7 @@ static ssize_t snd_pcm_oss_write1(struct
+ 	if (atomic_read(&substream->mmap_count))
+ 		return -ENXIO;
+ 
++	atomic_inc(&runtime->oss.rw_ref);
+ 	while (bytes > 0) {
+ 		if (mutex_lock_interruptible(&runtime->oss.params_lock)) {
+ 			tmp = -ERESTARTSYS;
+@@ -1467,6 +1468,7 @@ static ssize_t snd_pcm_oss_write1(struct
+ 		}
+ 		tmp = 0;
+ 	}
++	atomic_dec(&runtime->oss.rw_ref);
+ 	return xfer > 0 ? (snd_pcm_sframes_t)xfer : tmp;
  }
  
-+/* parameter locking: returns immediately if tried during streaming */
-+static int lock_params(struct snd_pcm_runtime *runtime)
-+{
-+	if (mutex_lock_interruptible(&runtime->oss.params_lock))
-+		return -ERESTARTSYS;
-+	if (atomic_read(&runtime->oss.rw_ref)) {
-+		mutex_unlock(&runtime->oss.params_lock);
-+		return -EBUSY;
-+	}
-+	return 0;
-+}
-+
-+static void unlock_params(struct snd_pcm_runtime *runtime)
-+{
-+	mutex_unlock(&runtime->oss.params_lock);
-+}
-+
- /* call with params_lock held */
- static int snd_pcm_oss_change_params_locked(struct snd_pcm_substream *substream)
- {
-@@ -1772,6 +1789,8 @@ static int snd_pcm_oss_set_rate(struct s
- 	for (idx = 1; idx >= 0; --idx) {
- 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
- 		struct snd_pcm_runtime *runtime;
-+		int err;
-+
- 		if (substream == NULL)
- 			continue;
- 		runtime = substream->runtime;
-@@ -1779,15 +1798,14 @@ static int snd_pcm_oss_set_rate(struct s
- 			rate = 1000;
- 		else if (rate > 192000)
- 			rate = 192000;
+@@ -1512,6 +1514,7 @@ static ssize_t snd_pcm_oss_read1(struct
+ 	if (atomic_read(&substream->mmap_count))
+ 		return -ENXIO;
+ 
++	atomic_inc(&runtime->oss.rw_ref);
+ 	while (bytes > 0) {
+ 		if (mutex_lock_interruptible(&runtime->oss.params_lock)) {
+ 			tmp = -ERESTARTSYS;
+@@ -1560,6 +1563,7 @@ static ssize_t snd_pcm_oss_read1(struct
+ 		}
+ 		tmp = 0;
+ 	}
++	atomic_dec(&runtime->oss.rw_ref);
+ 	return xfer > 0 ? (snd_pcm_sframes_t)xfer : tmp;
+ }
+ 
+@@ -1666,8 +1670,11 @@ static int snd_pcm_oss_sync(struct snd_p
+ 			goto __direct;
+ 		if ((err = snd_pcm_oss_make_ready(substream)) < 0)
+ 			return err;
 -		if (mutex_lock_interruptible(&runtime->oss.params_lock))
--			return -ERESTARTSYS;
--		if (atomic_read(&runtime->oss.rw_ref))
--			return -EBUSY;
-+		err = lock_params(runtime);
++		atomic_inc(&runtime->oss.rw_ref);
++		if (mutex_lock_interruptible(&runtime->oss.params_lock)) {
++			atomic_dec(&runtime->oss.rw_ref);
+ 			return -ERESTARTSYS;
++		}
+ 		format = snd_pcm_oss_format_from(runtime->oss.format);
+ 		width = snd_pcm_format_physical_width(format);
+ 		if (runtime->oss.buffer_used > 0) {
+@@ -1679,10 +1686,8 @@ static int snd_pcm_oss_sync(struct snd_p
+ 						   runtime->oss.buffer + runtime->oss.buffer_used,
+ 						   size);
+ 			err = snd_pcm_oss_sync1(substream, runtime->oss.period_bytes);
+-			if (err < 0) {
+-				mutex_unlock(&runtime->oss.params_lock);
+-				return err;
+-			}
++			if (err < 0)
++				goto unlock;
+ 		} else if (runtime->oss.period_ptr > 0) {
+ #ifdef OSS_DEBUG
+ 			pcm_dbg(substream->pcm, "sync: period_ptr\n");
+@@ -1692,10 +1697,8 @@ static int snd_pcm_oss_sync(struct snd_p
+ 						   runtime->oss.buffer,
+ 						   size * 8 / width);
+ 			err = snd_pcm_oss_sync1(substream, size);
+-			if (err < 0) {
+-				mutex_unlock(&runtime->oss.params_lock);
+-				return err;
+-			}
++			if (err < 0)
++				goto unlock;
+ 		}
+ 		/*
+ 		 * The ALSA's period might be a bit large than OSS one.
+@@ -1726,7 +1729,11 @@ static int snd_pcm_oss_sync(struct snd_p
+ 				snd_pcm_lib_writev(substream, buffers, size);
+ 			}
+ 		}
++unlock:
+ 		mutex_unlock(&runtime->oss.params_lock);
++		atomic_dec(&runtime->oss.rw_ref);
 +		if (err < 0)
 +			return err;
+ 		/*
+ 		 * finish sync: drain the buffer
+ 		 */
+@@ -1774,6 +1781,8 @@ static int snd_pcm_oss_set_rate(struct s
+ 			rate = 192000;
+ 		if (mutex_lock_interruptible(&runtime->oss.params_lock))
+ 			return -ERESTARTSYS;
++		if (atomic_read(&runtime->oss.rw_ref))
++			return -EBUSY;
  		if (runtime->oss.rate != rate) {
  			runtime->oss.params = 1;
  			runtime->oss.rate = rate;
- 		}
--		mutex_unlock(&runtime->oss.params_lock);
-+		unlock_params(runtime);
- 	}
- 	return snd_pcm_oss_get_rate(pcm_oss_file);
- }
-@@ -1812,18 +1830,19 @@ static int snd_pcm_oss_set_channels(stru
- 	for (idx = 1; idx >= 0; --idx) {
- 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
- 		struct snd_pcm_runtime *runtime;
-+		int err;
-+
- 		if (substream == NULL)
- 			continue;
+@@ -1808,6 +1817,8 @@ static int snd_pcm_oss_set_channels(stru
  		runtime = substream->runtime;
--		if (mutex_lock_interruptible(&runtime->oss.params_lock))
--			return -ERESTARTSYS;
--		if (atomic_read(&runtime->oss.rw_ref))
--			return -EBUSY;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
+ 		if (mutex_lock_interruptible(&runtime->oss.params_lock))
+ 			return -ERESTARTSYS;
++		if (atomic_read(&runtime->oss.rw_ref))
++			return -EBUSY;
  		if (runtime->oss.channels != channels) {
  			runtime->oss.params = 1;
  			runtime->oss.channels = channels;
- 		}
--		mutex_unlock(&runtime->oss.params_lock);
-+		unlock_params(runtime);
- 	}
- 	return snd_pcm_oss_get_channels(pcm_oss_file);
- }
-@@ -1896,6 +1915,7 @@ static int snd_pcm_oss_get_formats(struc
- static int snd_pcm_oss_set_format(struct snd_pcm_oss_file *pcm_oss_file, int format)
- {
- 	int formats, idx;
-+	int err;
- 	
- 	if (format != AFMT_QUERY) {
- 		formats = snd_pcm_oss_get_formats(pcm_oss_file);
-@@ -1909,15 +1929,14 @@ static int snd_pcm_oss_set_format(struct
+@@ -1898,6 +1909,8 @@ static int snd_pcm_oss_set_format(struct
  			if (substream == NULL)
  				continue;
  			runtime = substream->runtime;
--			if (atomic_read(&runtime->oss.rw_ref))
--				return -EBUSY;
--			if (mutex_lock_interruptible(&runtime->oss.params_lock))
--				return -ERESTARTSYS;
-+			err = lock_params(runtime);
-+			if (err < 0)
-+				return err;
++			if (atomic_read(&runtime->oss.rw_ref))
++				return -EBUSY;
+ 			if (mutex_lock_interruptible(&runtime->oss.params_lock))
+ 				return -ERESTARTSYS;
  			if (runtime->oss.format != format) {
- 				runtime->oss.params = 1;
- 				runtime->oss.format = format;
- 			}
--			mutex_unlock(&runtime->oss.params_lock);
-+			unlock_params(runtime);
- 		}
- 	}
- 	return snd_pcm_oss_get_format(pcm_oss_file);
-@@ -1965,12 +1984,11 @@ static int snd_pcm_oss_set_subdivide(str
+@@ -1952,6 +1965,8 @@ static int snd_pcm_oss_set_subdivide(str
  		if (substream == NULL)
  			continue;
  		runtime = substream->runtime;
--		if (atomic_read(&runtime->oss.rw_ref))
--			return -EBUSY;
--		if (mutex_lock_interruptible(&runtime->oss.params_lock))
--			return -ERESTARTSYS;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
++		if (atomic_read(&runtime->oss.rw_ref))
++			return -EBUSY;
+ 		if (mutex_lock_interruptible(&runtime->oss.params_lock))
+ 			return -ERESTARTSYS;
  		err = snd_pcm_oss_set_subdivide1(substream, subdivide);
--		mutex_unlock(&runtime->oss.params_lock);
-+		unlock_params(runtime);
- 		if (err < 0)
- 			return err;
- 	}
-@@ -2005,12 +2023,11 @@ static int snd_pcm_oss_set_fragment(stru
+@@ -1990,6 +2005,8 @@ static int snd_pcm_oss_set_fragment(stru
  		if (substream == NULL)
  			continue;
  		runtime = substream->runtime;
--		if (atomic_read(&runtime->oss.rw_ref))
--			return -EBUSY;
--		if (mutex_lock_interruptible(&runtime->oss.params_lock))
--			return -ERESTARTSYS;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
++		if (atomic_read(&runtime->oss.rw_ref))
++			return -EBUSY;
+ 		if (mutex_lock_interruptible(&runtime->oss.params_lock))
+ 			return -ERESTARTSYS;
  		err = snd_pcm_oss_set_fragment1(substream, val);
--		mutex_unlock(&runtime->oss.params_lock);
-+		unlock_params(runtime);
- 		if (err < 0)
- 			return err;
- 	}
+@@ -2384,6 +2401,7 @@ static void snd_pcm_oss_init_substream(s
+ 	runtime->oss.maxfrags = 0;
+ 	runtime->oss.subdivision = 0;
+ 	substream->pcm_release = snd_pcm_oss_release_substream;
++	atomic_set(&runtime->oss.rw_ref, 0);
+ }
+ 
+ static int snd_pcm_oss_release_file(struct snd_pcm_oss_file *pcm_oss_file)
