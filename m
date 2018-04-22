@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48mxfTA72G99dAy6UkGR4hQ3C++Xz+iVXugn4sGl2RcpQKQjQkvO2bN02fV/+MDJUpcsKqK
-ARC-Seal: i=1; a=rsa-sha256; t=1524405900; cv=none;
+X-Google-Smtp-Source: AIpwx4/eL3094N2f1WSIP+XGnd2afFArEzwZlts9ERSgd2qT4BHHET1S/AlmhxEksSR2U1cbt7Dw
+ARC-Seal: i=1; a=rsa-sha256; t=1524405897; cv=none;
         d=google.com; s=arc-20160816;
-        b=o5FnAQeqfT7pz/KswyWBiuFyHKi3mArGsjLEcNNIpDbwK9Nc5bNGmZac6eI8gkUCG/
-         lBruz2DjKyL+TIdQLXLMCHyYqohatEgWe7+S0gHpRHZaoiMwezl55+ky6HirIFE3u9Oo
-         iyuCRTZebA5n8jtqWXLgr/uW5xlQO+ekEUg8aTk03ya7AyEHalMq8OOwEAqz/lZoaguP
-         UoCBKUzDA/kCA0X9OMgOi1Uuh2LYLTcgjSSEuV03yrxffrfQ35cJktAKkEGAqcsc0Z4F
-         hFbGogcOjzuX2TkINuUD4l3DHw3dWT7CER74RC7Aocbh07ZIQ/X7B5rQ5svwZsDqcg9b
-         GFiw==
+        b=RkSq6tsCZdSD6pvhXHfzzbfjhxGTndWwrSeNUjFOsHWX5s6Pkcx+ouIi93sxiH4Irv
+         HbW8bKw5m1q4N1cbHBu+5ZYh1dWEaRisaiK5Dwo7mtxCVHJ1lnOWPzTXM7oXZILt2God
+         tKsB9rEzG4GPB7FHGB37eXjQyiRko5segHPhKb1pXjwu7XgXElJPp0WUr02hcNKB8Dlq
+         W8Elt5YZJdnB9XlWsc+HVWvYJVHo8MlGW7EVb1/SIf8+ffb/5Zt1ZWRrj+L3BdKJC+WJ
+         xiuu7owCIPTkFb3bt1WVpZRd5Ts7HMQPy6OjYVH6dJKlwUaJuJQaAmrH456tRII1QY93
+         XtaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9bdoWNWKNucVDzb/IdeuM9E3UxP1etpj8m4ezJqKocU=;
-        b=LuEsT3ewP0o5K9/7OXDKqmJ24aYkWFZjqg1ABa40X9I+eA3lV1Rn1CQ4ANEBe5MLsy
-         ntBNdotiE8Hyt2EnVDpitdKdRUOTiyOR4/DvTGy5oW6Gx1gyIDswE9tuGjXG1uw25xOv
-         2dLLJl3cNRyqLBmP5WFuWAFdz4DMeCMn2UgSopJQY/T1KlPXRYJEWMQhjxMFKX32ulAA
-         7zKjuB8+C5TVQmKmOC9ZP3l0X7TO2AnzYCj0JlBynKO75x6lnup7ZkjpLnXTU1N6dRQx
-         WU5ulg3ylQTKOVC6qbUuiOq1YRlRXZSjbemrfReFaXSS05vJqLTOZiFVgCPDFZdiwW3u
-         phlQ==
+        bh=/+1tNgfVWXYHgKPZ2Y3vOrmf4j/HKKRWCeiam7Xg0qc=;
+        b=O1pE/09J9SNFSf8cAAjs4eBQK/Y2gT/Q1DOI6aWheY2Z8jfH1HDqzebO2CcwtJAME+
+         +uLrWWpXC7si95l9Gusks/510upJZCyPetvWomddUR2lvvTg79OEMWpc1mL7ZPoEQ0QC
+         9Ndz2lGC5KW2tu93LZzKxOuBm/J8xqyRd5ocx7/a019AqwyzeHpvwNH7K/yswyPMOrSN
+         NLL639mkAiRZyGs+JkBxM9HUKi+B209IlSWlSm7syAvRiv8Kx3yVz5CV40osl1tN0KSC
+         dh+mNYBRyqAm0GNGsIqfnAQEHyLVIzPan+X2ft8l6REAqG76viwuFiAD7QuUziSawCS4
+         dFdw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thinh Nguyen <thinhn@synopsys.com>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.14 040/164] usb: dwc3: pci: Properly cleanup resource
-Date: Sun, 22 Apr 2018 15:51:47 +0200
-Message-Id: <20180422135137.047201042@linuxfoundation.org>
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH 4.14 031/164] media: vsp1: Fix BRx conditional path in WPF
+Date: Sun, 22 Apr 2018 15:51:38 +0200
+Message-Id: <20180422135136.683314245@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454910876862386?=
-X-GMAIL-MSGID: =?utf-8?q?1598455441742410333?=
+X-GMAIL-THRID: =?utf-8?q?1598454865520411391?=
+X-GMAIL-MSGID: =?utf-8?q?1598455438179977248?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,31 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-commit cabdf83dadfb3d83eec31e0f0638a92dbd716435 upstream.
+commit 639fa43d59e5a41ca8c55592cd5c1021fea2ab83 upstream.
 
-Platform device is allocated before adding resources. Make sure to
-properly cleanup on error case.
+When a BRx is provided by a pipeline, the WPF must determine the master
+layer. Currently the condition to check this identifies pipe->bru ||
+pipe->num_inputs > 1.
 
-Cc: <stable@vger.kernel.org>
-Fixes: f1c7e7108109 ("usb: dwc3: convert to pcim_enable_device()")
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+The code then moves on to dereference pipe->bru, thus the check fails
+static analysers on the possibility that pipe->num_inputs could be
+greater than 1 without pipe->bru being set.
+
+The reality is that the pipeline must have a BRx to support more than
+one input, thus this could never cause a fault - however it also
+identifies that the num_inputs > 1 check is redundant.
+
+Remove the redundant check - and always configure the master layer
+appropriately when we have a BRx configured in our pipeline.
+
+Fixes: 6134148f6098 ("v4l: vsp1: Add support for the BRS entity")
+
+Cc: stable@vger.kernel.org
+Suggested-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/dwc3-pci.c |    2 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/dwc3/dwc3-pci.c
-+++ b/drivers/usb/dwc3/dwc3-pci.c
-@@ -212,7 +212,7 @@ static int dwc3_pci_probe(struct pci_dev
- 	ret = platform_device_add_resources(dwc->dwc3, res, ARRAY_SIZE(res));
- 	if (ret) {
- 		dev_err(dev, "couldn't add resources to dwc3 device\n");
--		return ret;
-+		goto err;
+--- a/drivers/media/platform/vsp1/vsp1_wpf.c
++++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+@@ -452,7 +452,7 @@ static void wpf_configure(struct vsp1_en
+ 			: VI6_WPF_SRCRPF_RPF_ACT_SUB(input->entity.index);
  	}
  
- 	dwc->pci = pci;
+-	if (pipe->bru || pipe->num_inputs > 1)
++	if (pipe->bru)
+ 		srcrpf |= pipe->bru->type == VSP1_ENTITY_BRU
+ 			? VI6_WPF_SRCRPF_VIRACT_MST
+ 			: VI6_WPF_SRCRPF_VIRACT2_MST;
