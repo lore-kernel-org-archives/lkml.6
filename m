@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/LUN1tKkbE5stSOq6/WNTPl///KBNectz5F9HfxcvK7nS0f5llkQvkngE9sL1f0NI4IZpQ
-ARC-Seal: i=1; a=rsa-sha256; t=1524405353; cv=none;
+X-Google-Smtp-Source: AIpwx48YU5PqPfjTyp8cfnpPUETbQAqwXI2WwRASBexoDZTAeQR68JBUHV8gp2oepYDbYv7H2QNv
+ARC-Seal: i=1; a=rsa-sha256; t=1524405351; cv=none;
         d=google.com; s=arc-20160816;
-        b=XPOdbSiLzi7YK7zcZ33kXa1Ln4lUB7Wrgcgg7Qvq8QhkqX3bi35wORv7DvN5FU+K7E
-         /TjNgZsG5PLEUHgT+bM13cKT7OuNxEBPy012pqzhw56cTOEpBBd64JaQFbyU2tbhgVBb
-         91tyg3N8ZOONElEyor3geH6c7Wv4IGV2aQRMt0YRgAoGSkbxFI1fysG8GNrhjVr2+ddh
-         XPdZ/Kg2/9oXkTtLpPLu4V1qa9m70MGp+u+wNTGSApklnh/eibCTQKk6TovGZAgohHzP
-         aAh9bpL1ThlZHPf3nsrmvdBR0v7+ochfe7Z6LHanq4/MlWyrK4MuTUuyQFm5JYJGkMOH
-         rmFQ==
+        b=J8ge6xUqvuwXz0j8j1W3wgOFgl/jzwXdoIrRBZE75ddRC6PwoCsNK+bDL1oxC+oiA5
+         QVZkT0J/1mvJUIwPPkLf9PJiwU/hTaS4Ld/Xi07IVxQLk0Fi74Pa5CQPBBHKltvy/k6I
+         gSaqPBimA3M+7y0SbPFMpqR0A0I1DOC8uK37SwGJBgIViECfZ+NhOAY4QbG3OGNfjafb
+         SFS8S6mzpzaxmdIsiziZxRisiWkpMc8sJ0giCf+T0BXatC3dhGH9m8njSv4leppT+lG5
+         5fcpHDXkkWRQrjluVxU/spMDi4PGP2a31iPLWnefrZAuxN/Ixl/aoLefM9F+65w31Bod
+         35jg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jLEs9OF0b2oyXvGVJtJjxOLz+8IlltuKuaib9B4xrbI=;
-        b=aklMEcX9ud+G1+nrFr2M6G4pdoTYc50MA6RPzJglwrosy/6xp2ZJPTLNTnempR2PIX
-         Myhxw8CcizDxqWZcBf4BOUQO6MMrQdkCeX1JoCuVli01NWpCTfN7Lw4tNTeXc4twatul
-         W3w+An5h3QipAOTvOEwiW6XpcZdyzQrAYPtISbSwOF5/auyPUWjn4twWqAf/pTCPfY7u
-         yGH86WdSzP6E3hhhbLiq7Onni6gNIaRbBiRbCSb3i/GMpjH+4hdbNTEXQfAonrw1NLx8
-         KPnWjiYt+phPU6bxV5lhbVGruckIjaVHzlrxLF8geT6DrNjethXUgO0B5OAozigxRhcZ
-         yT2w==
+        bh=r9nKFUQVhSGBcToAjREZVwHuy9rWfgurWXHUwPLhzuU=;
+        b=d/uPKl92NhoWffTFBVBFNGqotHNrUdo3dazUd7ZDxp3szWOv5f5vVEoF+hpuLS2fsE
+         i21gYaaml6FyoXdg8XnHSuOlxx947Yr6fX7tCt3kW5YWyjTYzigrBasoR2leBc73utfv
+         No1+PjeT2MYqHQUv0VlFL7pgAcgEUzudDjuNA7ewSgnKw1W9yICts6PtS1SXtGayjmgu
+         pHjmflb85zzWy6XEp4KzII978g3/osp2NlrA8YEpdYqFD23I1X2D4gDK2huwbl2yjVFd
+         3lLneZldT2i1poND68VPx2awVujQ0apxUs7SZf4PLotc6eFAHShsLDeo4aaOl5+Z4Ds4
+         czTw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Minchan Kim <minchan@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Hugh Dickins <hughd@google.com>,
-	Christian Borntraeger <borntraeger@de.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 008/196] mm/ksm.c: fix inconsistent accounting of zero pages
-Date: Sun, 22 Apr 2018 15:50:28 +0200
-Message-Id: <20180422135104.636269827@linuxfoundation.org>
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH 4.16 034/196] media: vsp1: Fix BRx conditional path in WPF
+Date: Sun, 22 Apr 2018 15:50:54 +0200
+Message-Id: <20180422135105.866270090@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -47,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454868442656984?=
-X-GMAIL-MSGID: =?utf-8?q?1598454868442656984?=
+X-GMAIL-THRID: =?utf-8?q?1598454865520411391?=
+X-GMAIL-MSGID: =?utf-8?q?1598454865520411391?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,48 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-commit a38c015f3156895b07e71d4e4414289f8a3b2745 upstream.
+commit 639fa43d59e5a41ca8c55592cd5c1021fea2ab83 upstream.
 
-When using KSM with use_zero_pages, we replace anonymous pages
-containing only zeroes with actual zero pages, which are not anonymous.
-We need to do proper accounting of the mm counters, otherwise we will
-get wrong values in /proc and a BUG message in dmesg when tearing down
-the mm.
+When a BRx is provided by a pipeline, the WPF must determine the master
+layer. Currently the condition to check this identifies pipe->bru ||
+pipe->num_inputs > 1.
 
-Link: http://lkml.kernel.org/r/1522931274-15552-1-git-send-email-imbrenda@linux.vnet.ibm.com
-Fixes: e86c59b1b1 ("mm/ksm: improve deduplication of zero pages with colouring")
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+The code then moves on to dereference pipe->bru, thus the check fails
+static analysers on the possibility that pipe->num_inputs could be
+greater than 1 without pipe->bru being set.
+
+The reality is that the pipeline must have a BRx to support more than
+one input, thus this could never cause a fault - however it also
+identifies that the num_inputs > 1 check is redundant.
+
+Remove the redundant check - and always configure the master layer
+appropriately when we have a BRx configured in our pipeline.
+
+Fixes: 6134148f6098 ("v4l: vsp1: Add support for the BRS entity")
+
+Cc: stable@vger.kernel.org
+Suggested-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/ksm.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/media/platform/vsp1/vsp1_wpf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -1131,6 +1131,13 @@ static int replace_page(struct vm_area_s
- 	} else {
- 		newpte = pte_mkspecial(pfn_pte(page_to_pfn(kpage),
- 					       vma->vm_page_prot));
-+		/*
-+		 * We're replacing an anonymous page with a zero page, which is
-+		 * not anonymous. We need to do proper accounting otherwise we
-+		 * will get wrong values in /proc, and a BUG message in dmesg
-+		 * when tearing down the mm.
-+		 */
-+		dec_mm_counter(mm, MM_ANONPAGES);
+--- a/drivers/media/platform/vsp1/vsp1_wpf.c
++++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+@@ -452,7 +452,7 @@ static void wpf_configure(struct vsp1_en
+ 			: VI6_WPF_SRCRPF_RPF_ACT_SUB(input->entity.index);
  	}
  
- 	flush_cache_page(vma, addr, pte_pfn(*ptep));
+-	if (pipe->bru || pipe->num_inputs > 1)
++	if (pipe->bru)
+ 		srcrpf |= pipe->bru->type == VSP1_ENTITY_BRU
+ 			? VI6_WPF_SRCRPF_VIRACT_MST
+ 			: VI6_WPF_SRCRPF_VIRACT2_MST;
