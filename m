@@ -1,37 +1,79 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48M95IEWegr8ooPCftWyZ2n7xNz0L6L2jDfTnyzGJs6YQ88HsITrWEdXGtWUtVkkz/HKpCE
-ARC-Seal: i=1; a=rsa-sha256; t=1524405400; cv=none;
-        d=google.com; s=arc-20160816;
-        b=NTp6zzZT3AGwUM3vAY1Qf+U2HYZGnpuiEnOS42Mix4AE1TaxhrppbERKVaU5GV7IrF
-         IugSctssHegWIGabfrVPoh+OhAYj649vg0hDfyYy0qcWm6B7o/Ix/W783FNB0kdqOBFT
-         XFoZJRm4i3aCIuEZYIX/WZr3fjpcGHWVRgs3xnGwtuRXqbWX1UA9JbuJg6bfHAmKyHfB
-         olQvqxyudz6sx2jdxy3tpIQFyl8Wrg2JRikMhNWODZ8gttBiNgADgud2RW8WIs7RAlkl
-         idWZXJuRrR+gn2Uc/4/KdFJNwWPc1puqNNGMgT1NJQ2zQgG7RTl6rCCfFpUYoRdH+qkU
-         mGYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=BFtS0v8XuSMskWdU1hMtdEG7sDdYMCOZDNCkFCzYkyA=;
-        b=usy1zimIswrknPVE0AXmYNu1WPQd7oMc7GCzr7tjQv9u/c7Ro/KqX8oy1KRoM25Y1l
-         k5UP2Sg2HHnOxeHg1IMS0sOj/ecFtm4beYgZR/dIgkPVv6B42nbCmKB9UixmKM17wBHO
-         R+IlxXxlOBpATrmnXo9oeRO4R51Dt94PQ5jLH+sBcOk80cClLRpHCYeLiziJvtgpLVST
-         h9YNChbQUa3LKILBnHeHu3DpdTLC+W/NRifrNhMasD+4GJ71tnDaloDnZobvqBUlj9cs
-         2cFwNvZRwdANASbcL0dSPKS9o+hiiMH5eAvkSd6pL76y3hE89iU+3gAgEseY+7oCzkpo
-         b0HA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405397-2-18160785267394915541
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524405397; b=rnhi80vMfgBU6VtILw/wpZUb9Vj2+Pe/aoh3u/XpsrwukLjV9u
+    /VQNSHIa34mZPUKPEKJ3bdsBmuJVz1DxzVA46MR80hFmG64UQV1DIht+VbIPVjwE
+    YCoKBi0ONpv+m551Hp8vSkyuaZ5tfXDgVrV970f761jERVyJx6K7Yjgx8432//Nm
+    eMMkcalUF1tK6ZSiJcsQnczyqbBCckRmWmGILW8cGxXN0nRT/wot7ASstcnu9DuG
+    HTdyfp4gwsxcehnyJTy9VFmzfzXgcWHsis6Za6UaubhfYQdDns96OBztssTe0B++
+    CaB2gSOhz3ArlqMgT42aKCCEjnb63nsvh+4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524405397; bh=g2P7h1fbhq9iE5Exg8DAx3tntHnkiu
+    r14yEIWi2J2ek=; b=J7o12R4dbWN9p8ZWxJ0wYzPKMoEUrcSkV/FDaaj2o5UCdw
+    EfqSoT3ImE7FCGWO3By1f+h+ixYrUOc8s8yqcUYt3P0s+wFHq5Saq98bqiyrJ8+9
+    YotOF3Nc10wSw36GXcwFsrOACsJmUtRtdoZUK8qYwmVAw9EeVYy0zQlWa//8P0sW
+    Mcaa1x03lNhI0cwYmMIiT/83scsMjfl6Wtx7MGUfsBxD8araP36BC4Az/7dzCKDN
+    jhgFVbsKCdP1SK9lS9woic90W4EnTxgypsuBnFdA+BC62jAE8as2bkZrf+FkIsUc
+    spFUdqy3bufyT7IYNNKMnkAB+Vgba6Ti1I+h+4Ew==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfOmFjsBDEX5ySkulCy+P0kAo8NHZ1nDEDCpND997Z9dojl3RYKgOqzUpiT0lOBFNzeklFgJ3k/eufwJ/30DzOQ4HOqwJCz22gQY7qvKIAFO26M9eM5dC
+    RBC/WHbdI557P3YjL2UmSR11CzOeebWOgboZVtCqttJWevwaLFMfbIp8xrXrg48AWM3fRQbLHg/2z0zApmLt3lNQgqfVjw/8m4l0FQye1NcciXdlSv1fXc/r
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=09mQ8c4dSRLCMc1kKzkA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753435AbeDVN4f (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 22 Apr 2018 09:56:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45218 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753802AbeDVN4c (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:56:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jean Delvare <jdelvare@suse.de>,
-	Jason Andryuk <jandryuk@gmail.com>,
-	Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.16 053/196] i2c: i801: Restore configuration at shutdown
-Date: Sun, 22 Apr 2018 15:51:13 +0200
-Message-Id: <20180422135106.851144563@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Townsend <mtownsend1973@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.16 005/196] ubi: fastmap: Dont flush fastmap work on detach
+Date: Sun, 22 Apr 2018 15:50:25 +0200
+Message-Id: <20180422135104.511311996@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -39,10 +81,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454917246307724?=
-X-GMAIL-MSGID: =?utf-8?q?1598454917246307724?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +91,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jean Delvare <jdelvare@suse.de>
+From: Richard Weinberger <richard@nod.at>
 
-commit f7f6d915a10f7f2bce17e3b1b7d3376562395a28 upstream.
+commit 29b7a6fa1ec07e8480b0d9caf635a4498a438bf4 upstream.
 
-On some systems, the BIOS expects certain SMBus register values to
-match the hardware defaults. Restore these configuration registers at
-shutdown time to avoid confusing the BIOS. This avoids hard-locking
-such systems upon reboot.
+At this point UBI volumes have already been free()'ed and fastmap can no
+longer access these data structures.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Tested-by: Jason Andryuk <jandryuk@gmail.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Reported-by: Martin Townsend <mtownsend1973@gmail.com>
+Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
 Cc: stable@vger.kernel.org
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-i801.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/mtd/ubi/fastmap-wl.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -1701,6 +1701,15 @@ static void i801_remove(struct pci_dev *
- 	 */
- }
- 
-+static void i801_shutdown(struct pci_dev *dev)
-+{
-+	struct i801_priv *priv = pci_get_drvdata(dev);
-+
-+	/* Restore config registers to avoid hard hang on some systems */
-+	i801_disable_host_notify(priv);
-+	pci_write_config_byte(dev, SMBHSTCFG, priv->original_hstcfg);
-+}
-+
- #ifdef CONFIG_PM
- static int i801_suspend(struct device *dev)
+--- a/drivers/mtd/ubi/fastmap-wl.c
++++ b/drivers/mtd/ubi/fastmap-wl.c
+@@ -362,7 +362,6 @@ static void ubi_fastmap_close(struct ubi
  {
-@@ -1730,6 +1739,7 @@ static struct pci_driver i801_driver = {
- 	.id_table	= i801_ids,
- 	.probe		= i801_probe,
- 	.remove		= i801_remove,
-+	.shutdown	= i801_shutdown,
- 	.driver		= {
- 		.pm	= &i801_pm_ops,
- 	},
+ 	int i;
+ 
+-	flush_work(&ubi->fm_work);
+ 	return_unused_pool_pebs(ubi, &ubi->fm_pool);
+ 	return_unused_pool_pebs(ubi, &ubi->fm_wl_pool);
+ 
