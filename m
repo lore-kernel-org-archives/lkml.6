@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49aION+5k5xw1x97e+FHOLzH8nhCFAoh9FnMSmBNyK3cz2EAMPAx9bJjMNP0HhrH8tUIENA
-ARC-Seal: i=1; a=rsa-sha256; t=1524405691; cv=none;
+X-Google-Smtp-Source: AIpwx4/QUO5Eumw9g77jy77TPZjT8G6ebe1BVOcn7isnoSeEajFshYIFPikb0pFi7A6a9+ZhPufn
+ARC-Seal: i=1; a=rsa-sha256; t=1524405688; cv=none;
         d=google.com; s=arc-20160816;
-        b=st+T2Jr7BXXe3CtM279Ul+sKYPxMjR4trWlGKWcZNS2o6sZf5Ddnk1EEgUuPAj+zIU
-         ZWDCgKK0+EU9BAlvAAlTbk8EkgTx9vNPPqFuTUqqV//2BrJU80AFwNhl3Jl2Dp4r7aCX
-         MQ1mSmmgYB18v/dbVH24iuTOB4e0BXF6vHYOtSKeFG09QTDRIxdDMTdFuxKrxa0GE2/6
-         B/wYUcWp+x4b1xYksURkKf3woYSAOLAF5DHcJZTZ8zG5XTXO7aFCsc3pYajw8yI2eE/6
-         TyvQ8nR43Qa25zGx47T9Lx3FmB/1MpBiVBlSLDcUXl2LXb2MNBshxummtLbQ1tLeBvbO
-         vOIg==
+        b=ozFWJHPQnsEqItNDvURkJTqumZngCTFEi5Pz2mouvAS6vjFUbQxTOQXExhicPxmp6s
+         ZnQsmCH8vramH+Y2EWgnFXTHRSk1PGuCbDcLK4tFCP0Kl+X48kR9GiqHUb74JoJYV/br
+         /1aiSEn41s6a1mb8Wp3pX6hnCA/i449QeLEzC3lQzopNKiF7+aQxUMvCq862B2O5lzIt
+         b6+zs5sZYn4GibytsCVTlovhFvJ9gkmSKWMe9Cz8hFYJdmPeqNSiFGZ+CP8gmdVV6nkq
+         a9gYChKPmtkUSHsqHJnl4rfl79sOQ+6NjoLGSqBF34kIfh3v04+WJ0RobwD2smAn6Bt2
+         +ShQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MBU9fwTyuVzJdHbi0EYpvR7aGrTUf8AaIBhuBA3mu+g=;
-        b=NA/TP3oJFQi/RyaofMMDPVXUDYI5A9JxgJwaTGgGoEOoLKuLPMy3VH+aEUNuxTUfek
-         qIHLHEOvQCgZo00XDiTLuJMf7M4I7xncH4rCHRBvfWoH0L/cf4d9cvLX6y5YhnInrlGA
-         eOUfEIS6TBhRjQ5BgJjFT9dR+URVAsqSJqsCPcBSNmaa7SusSgCE5PNO1hlfv8IBmGp4
-         JU7ZOyxbEnlpEUI6T18KMMTvp4U7P7b+cKywLWSUZi6jV9chmt8d9Xd2uMtWxw/vBIhL
-         CeuISDLgy9Kb2146mB1M1idBswu4Ocds9eMp9LFl7daOq3l+9rWa22jCpyAhhYXj1wfM
-         Xyag==
+        bh=t9t7HSfXuEQ7nZOme7R/qdGuF+sEx8nnB1beu8+Y/8U=;
+        b=TFqlHJbK3ysmZML0kfoQi/3CM1lU6+JQ/89ryvXRJsbdYnX7hPC99NwneuOq8QCRlb
+         EAXPS/vHX1PDA8PE5gUxHnDKbRRvsw9JOVCZroXlXPWXNFqdfVL4uAcwe5U3hB0GnMYP
+         mOXYiHgbBvqHvPEomHLprBHL45NQKCkhJgnHIFpoi3fhcnV/5RoM355V2mdVDRkouS1E
+         fIQ97nd/CNwOAApR619tHkggPc+oiAJ9zWo4NIU8aC5o3tIuiacjDckeSz90xZgAJirM
+         WKfodFx/QAZTbDjPqPnzQqYjpQqG+U/bpB1AboIbwiAQD42eGZYk8mFDhYu+hJ4+m2lM
+         bPgg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.16 124/196] vsprintf: Do not preprocess non-dereferenced pointers for bprintf (%px and %pK)
-Date: Sun, 22 Apr 2018 15:52:24 +0200
-Message-Id: <20180422135110.669892022@linuxfoundation.org>
+	Dave Jiang <dave.jiang@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.16 123/196] libnvdimm, namespace: use a safe lookup for dimm device name
+Date: Sun, 22 Apr 2018 15:52:23 +0200
+Message-Id: <20180422135110.617420376@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455222246087159?=
-X-GMAIL-MSGID: =?utf-8?q?1598455222246087159?=
+X-GMAIL-THRID: =?utf-8?q?1598455219044935426?=
+X-GMAIL-MSGID: =?utf-8?q?1598455219044935426?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,43 +49,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 1e6338cfb50e244c445ad7d891b35385bd0ee757 upstream.
+commit 4f8672201b7e7ed4f5f6c3cf6dcd080648580582 upstream.
 
-Commit 841a915d20c7b2 ("printf: Do not have bprintf dereference pointers")
-would preprocess various pointers that are dereferenced in the bprintf()
-because the recording and printing are done at two different times. Some
-pointers stayed dereferenced in the ring buffer because user space could
-handle them (namely "%pS" and friends). Pointers that are not dereferenced
-should not be processed immediately but instead just saved directly.
+The following NULL dereference results from incorrectly assuming that
+ndd is valid in this print:
 
-Cc: stable@vger.kernel.org
-Fixes: 841a915d20c7b2 ("printf: Do not have bprintf dereference pointers")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+  struct nvdimm_drvdata *ndd = to_ndd(&nd_region->mapping[i]);
+
+  /*
+   * Give up if we don't find an instance of a uuid at each
+   * position (from 0 to nd_region->ndr_mappings - 1), or if we
+   * find a dimm with two instances of the same uuid.
+   */
+  dev_err(&nd_region->dev, "%s missing label for %pUb\n",
+                  dev_name(ndd->dev), nd_label->uuid);
+
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+ IP: nd_region_register_namespaces+0xd67/0x13c0 [libnvdimm]
+ PGD 0 P4D 0
+ Oops: 0000 [#1] SMP PTI
+ CPU: 43 PID: 673 Comm: kworker/u609:10 Not tainted 4.16.0-rc4+ #1
+ [..]
+ RIP: 0010:nd_region_register_namespaces+0xd67/0x13c0 [libnvdimm]
+ [..]
+ Call Trace:
+  ? devres_add+0x2f/0x40
+  ? devm_kmalloc+0x52/0x60
+  ? nd_region_activate+0x9c/0x320 [libnvdimm]
+  nd_region_probe+0x94/0x260 [libnvdimm]
+  ? kernfs_add_one+0xe4/0x130
+  nvdimm_bus_probe+0x63/0x100 [libnvdimm]
+
+Switch to using the nvdimm device directly.
+
+Fixes: 0e3b0d123c8f ("libnvdimm, namespace: allow multiple pmem...")
+Cc: <stable@vger.kernel.org>
+Reported-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/vsprintf.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/nvdimm/namespace_devs.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -2591,6 +2591,8 @@ int vbin_printf(u32 *bin_buf, size_t siz
- 			case 's':
- 			case 'F':
- 			case 'f':
-+			case 'x':
-+			case 'K':
- 				save_arg(void *);
- 				break;
- 			default:
-@@ -2765,6 +2767,8 @@ int bstr_printf(char *buf, size_t size,
- 			case 's':
- 			case 'F':
- 			case 'f':
-+			case 'x':
-+			case 'K':
- 				process = true;
- 				break;
- 			default:
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -1926,7 +1926,7 @@ static struct device *create_namespace_p
+ 	}
+ 
+ 	if (i < nd_region->ndr_mappings) {
+-		struct nvdimm_drvdata *ndd = to_ndd(&nd_region->mapping[i]);
++		struct nvdimm *nvdimm = nd_region->mapping[i].nvdimm;
+ 
+ 		/*
+ 		 * Give up if we don't find an instance of a uuid at each
+@@ -1934,7 +1934,7 @@ static struct device *create_namespace_p
+ 		 * find a dimm with two instances of the same uuid.
+ 		 */
+ 		dev_err(&nd_region->dev, "%s missing label for %pUb\n",
+-				dev_name(ndd->dev), nd_label->uuid);
++				nvdimm_name(nvdimm), nd_label->uuid);
+ 		rc = -EINVAL;
+ 		goto err;
+ 	}
