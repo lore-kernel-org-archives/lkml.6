@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48te5FGrjM7mPdMMP7viXKzq5N7q7Ifn7aadO27AEnSU9X4lgUZC2Zt1mALgaBbedNfsh4v
-ARC-Seal: i=1; a=rsa-sha256; t=1524406751; cv=none;
+X-Google-Smtp-Source: AIpwx4+NsMLOY0h5klNChzROIsK3WvgYXYGCszqMMw7q5UxKDDLern65iu61tZ35gXylixN0TyFB
+ARC-Seal: i=1; a=rsa-sha256; t=1524406746; cv=none;
         d=google.com; s=arc-20160816;
-        b=0xJ35oho41RQos10K23GUOgYOj7BJJGBKUtwERqtmEbgGfsVlbTOCDR71jxVGFPgyl
-         jsmN8qO01SQaKuLunchCSf8QvgpYPTpLVX4tcNOyeobKgGVu9m8Zj97MNdPhpyTjHq5d
-         M6wb3Wo5e/34CbEwKqSlLPPlYPYkeR//Lz7I0HvO+83KJzdo/Fg1obnBtaUDCqqYnxlq
-         61S/rZ15Jp1rcQE5oHyWOvFnsBKzmKSYqlhgdbmpF64yFoa5QhVdZhoBcKhh3V6ihclY
-         R00gd7PVN4+QQZ9PMNiIgPQTnSpbfdkEK9jZrp/2YZA3BMJjThxS6R/N8CPOISgDR+xB
-         NXbA==
+        b=H9H7kdbjvHbhyOEviTf5qg6CgoVC3Q1XiUPBSNbFbXCzoJJjl2P9KnXosVc3OMFD1P
+         VfuVj7pQ5JAEKXFEUWybxFJBf9PMkpg8A3kS0P9hZqoYdUQP8ADYVY0RIC33/a7ilWvC
+         cFYK3TRpqXJa5uPBb9j4rIqR5zxTh+4CXutf+ow2SQu89bbC6IV0fu70w/2vKSIz6DwA
+         isgAcZvaM5BgJOtNzyjXD+EwAxS5edzUJhUs0LbNzm00ifP238ft0HxNK43nRgCf2b1V
+         UiRlyPxEfMW8psXxiR5fHbGwQQgCOYgdNvVjiyn/4ope+Wy+P9wJdikaarByypb16k2c
+         rYlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VCYO+twLtiVRwHhrlCIs/FyM1XB0BHYXwGb+gyQDKKM=;
-        b=WIzq4tGANOjAyLa7LEu/yGPApILi8sHS4EClp9UWWxXMpTUUVsI30SqNYnwIoxC8N4
-         Ch7ql3xaH/y5R7ZwLaDT5qqtSjnz6E+uFFlD6kIqLQd9IyHkA0p25mcIpXS46Rvi876K
-         yEF9vBFFGv+xfUfKPtix8sYmDJQw152RhdCBVjFRupCPrebwBZ8Cr1eQOECaNyDUSrrm
-         jaDsRwV5BE4/2HvwQnMu4zStESq6a/T1QjsEUGDBmubRWygt6ROVTGRuqvE0TvKBdChE
-         n0eAZpDhZb0T5uPkJshhUML4YjcGBbz7gxktOwOYklTPTydanOyrfE968RRJ+EMPZbBj
-         h3oQ==
+        bh=Y0EUWVkC2+vewSGBSNybENDg7fBEQLLSwCsL1c07giI=;
+        b=Y4ZyWxdzDGNHkU7YK6KIyA/ecwFFP3CXQNLONV6Tptps8UNxHvAAuqidGzMc8ZOD8l
+         CGhOovKkOpWQjaH7jLlqtTZmzrOq5/6rNQjQGvdnnDUPQ6kCL4UL357jHtNIT+KpeWWi
+         x6/5CBknj5sy7zPi+7uEnHIadm2xD8wCimq0UHGaCLWF6U8cTM338mZbYDSv5Lf50Ejw
+         MqWB0Qg//6AhP6LnOhjsnOTl34JT2AdgKR7I66PvI1c92TjJ3nK2Fl42utfRfK63XZvX
+         KhdinO05mRTsKFhsxdHt7v/VwE8iCnRPFgIEshl+BPZCyU9OVzRC+b07Mci9kKhnf46k
+         /NwA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	stable@kernel.org,
 	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.4 90/97] rpc_pipefs: fix double-dput()
-Date: Sun, 22 Apr 2018 15:54:08 +0200
-Message-Id: <20180422135310.105770191@linuxfoundation.org>
+Subject: [PATCH 4.4 89/97] hypfs_kill_super(): deal with failed allocations
+Date: Sun, 22 Apr 2018 15:54:07 +0200
+Message-Id: <20180422135310.057928574@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455307537426185?=
-X-GMAIL-MSGID: =?utf-8?q?1598456334148810265?=
+X-GMAIL-THRID: =?utf-8?q?1598455302039543864?=
+X-GMAIL-MSGID: =?utf-8?q?1598456328699148150?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,27 +50,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 4a3877c4cedd95543f8726b0a98743ed8db0c0fb upstream.
+commit a24cd490739586a7d2da3549a1844e1d7c4f4fc4 upstream.
 
-if we ever hit rpc_gssd_dummy_depopulate() dentry passed to
-it has refcount equal to 1.  __rpc_rmpipe() drops it and
-dput() done after that hits an already freed dentry.
+hypfs_fill_super() might fail to allocate sbi; hypfs_kill_super()
+should not oops on that.
 
-Cc: stable@kernel.org
+Cc: stable@vger.kernel.org
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/rpc_pipe.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/s390/hypfs/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sunrpc/rpc_pipe.c
-+++ b/net/sunrpc/rpc_pipe.c
-@@ -1375,6 +1375,7 @@ rpc_gssd_dummy_depopulate(struct dentry
- 	struct dentry *clnt_dir = pipe_dentry->d_parent;
- 	struct dentry *gssd_dir = clnt_dir->d_parent;
+--- a/arch/s390/hypfs/inode.c
++++ b/arch/s390/hypfs/inode.c
+@@ -318,7 +318,7 @@ static void hypfs_kill_super(struct supe
  
-+	dget(pipe_dentry);
- 	__rpc_rmpipe(d_inode(clnt_dir), pipe_dentry);
- 	__rpc_depopulate(clnt_dir, gssd_dummy_info_file, 0, 1);
- 	__rpc_depopulate(gssd_dir, gssd_dummy_clnt_dir, 0, 1);
+ 	if (sb->s_root)
+ 		hypfs_delete_tree(sb->s_root);
+-	if (sb_info->update_file)
++	if (sb_info && sb_info->update_file)
+ 		hypfs_remove(sb_info->update_file);
+ 	kfree(sb->s_fs_info);
+ 	sb->s_fs_info = NULL;
