@@ -1,80 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2630128-1524405816-2-820031469095890779
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524405816; b=qvDJuMI3v5Oxw33KWve3zRIvPm65Q3Y7uYfIrd6YFPShdx5KJF
-    PFE/Fgdr9uW7COJlj1ZlZF6gkklpp9ztFj4EWHjP+Zf/HW0lPfyqQWM+Fs5kgWkM
-    7t9UZ2tpndIhRQWKQO7vsY+AyE1N692TGB4+X0jhbGum2uf5yy7N/nSabTLrqwmP
-    X89z0NbSVbcu03ftwLV7+/zOjdJCuJ/+EGvnXeIAnEofYHkW9Jo8iUn1nnBFgPCL
-    GN6g55YJE2OrqVc/peZOu1ogeKJQ9+BG1LQkIm+osaEaXJ1sNgaRpAyadwXbjbWz
-    g2SXUstMZylOAuqhoC4ktWU9blTdJqWkDV+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524405816; bh=Amkv8cOyDhSaaIhEivNK9zXgQPUTky
-    n55YfIJpfEoNA=; b=HVIxHgS3Nf9+daMEBDdSEUsZFo0vg6vHwx49gdBqzSBa2C
-    UH8ZqCyDvQZouRk90Blu2u2vWGsYwgbomev6YOfJpuEDVAi5TzJKiT4sP1v9+sy1
-    EOwzxKS35d+HP8CE3KoZ5/XUfN440ex0+HmvDZOVUeBN2CNBt78eYV4G+ChO4VaM
-    zgXpUy6v3bmMZTVfRa5425bld/mtLgUnkKFc+wfRT1L8YqD1LSM0/tc5VNG/n6YP
-    x98NLZbprQF8SDN30Dhu93teg8mRWpN0fSFEVOrG51v6NnjySsTUw3yb/Ya/uwxn
-    X9sbahin2s2PIUmexn0ehX4zkb8QPnPizj+EXTZQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfC+VQqDmDmwg3TJnkrsHmAbojzh3Kp6RVOHnGh2HgOiAQktdXakFH+TJHWo1lKdCDK1fDqZcgpWEJPFWMAHpcttxdk58kH0Zi7vohSrFsGkRWkXEPe/M
-    lqMkxBkyqeeMsLzaWMWYb/M/vZEykvr9R8axy4inWFNNH4ciB7qVkV20l70AYevPXummTYwd+/AQ1FkPNnAFTZnjZ3rTHPVv+lRc3s8CVI8ozCafiaZ5fsJ+
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yPCof4ZbAAAA:8 a=DfNHnWVPAAAA:8 a=ag1SF4gXAAAA:8 a=ujiIzIQcLBR78X1VuDkA:9
-    a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755096AbeDVODd (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 10:03:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49274 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755067AbeDVOD2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 10:03:28 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/NNxzE7kgjTyCofxS0+IDO/v45y6dm+kph8iuXIxD2y9ZcI9CPRwa7jt+sKE2yhIpISd8L
+ARC-Seal: i=1; a=rsa-sha256; t=1524405814; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gwMCFZDet8FCeCYEt6/0yYyTpgzXTJqrAautnd0bTWCD+ldlXlH4ukM/Bl5ThJbh/T
+         pNqa0BOnTV7oFWQGLOW9aJQg2OPTcxoCjUsNlmPa20/KtVFRHFfsOpTws0fy2RNLc7Sx
+         KIqhaWmSQNEZyne59Ly12h6FHsqvcECVdb/k9jYlM9TavBMCZveFOZcWIhCU/ZG+Jmvf
+         V8oBt1lm8+FC9lutA9FmJ9ehjW+Kt4XeGCQRtllj+p1fbDSXVqp3WG1LZQXKmfXsE2Rz
+         03SkCqESkns8hUMEeiBvGVV1EyceLNtA65LY9uAW1DJmMvJdgGAG0YQLMj3HvN/nfggW
+         4Iiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=JtqXluE0scFF6Gv6cyWEt724nngoK8tJOhmPR/vEAm4=;
+        b=RXmr8YITUUEKVHGoUDOSrdl8wQwDpaxQTGCQLa610VvGIV9fpvWsHwWXqCQ52QZwHM
+         +3NVC2roXJG7GpDzjUdPaBiOUonTvIy+YkS9Z7y1GrN/Ybct4u9hZrl2lWlFcZmM950v
+         QxkmTQtUmT1Vv8wHKAoP64Ca+tfROg8gjD88EjLA8HWpzv5tylfcUZHWSu/svAlbYTk+
+         IPY1U8eUHKOM3SwprMOntJq/8vEUzZdq/ZAf+MQq9IMgNRJbauiVYvA4v8CLCX+0XMOv
+         j2o6snseAB+fRBpetAz28QHYi+NzamaITQessyysNmF1eErjcO/PcC9q4OQaztP23LbK
+         koJw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Aaron Ma <aaron.ma@canonical.com>
-Subject: [PATCH 4.16 195/196] HID: i2c-hid: fix inverted return value from i2c_hid_command()
-Date: Sun, 22 Apr 2018 15:53:35 +0200
-Message-Id: <20180422135114.373083685@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Kevin Tian <kevin.tian@intel.com>,
+	Zhenyu Wang <zhenyuw@linux.intel.com>,
+	Weinan Li <weinan.z.li@intel.com>,
+	Changbin Du <changbin.du@intel.com>
+Subject: [PATCH 4.16 194/196] drm/i915/gvt: init mmio by lri command in vgpu inhibit context
+Date: Sun, 22 Apr 2018 15:53:34 +0200
+Message-Id: <20180422135114.320584004@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -82,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455351642618540?=
+X-GMAIL-MSGID: =?utf-8?q?1598455351642618540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,32 +51,388 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Weinan Li <weinan.z.li@intel.com>
 
-commit b658912cb023cd6f8e46963d29779903d3c10538 upstream.
+commit cd7e61b93d068a80bfe6cb55bf00f17332d831a1 upstream.
 
-i2c_hid_command() returns non-zero in error cases (the actual
-errno). Error handling in for I2C_HID_QUIRK_RESEND_REPORT_DESCR
-case in i2c_hid_resume() had the check inverted; fix that.
+There is one issue relates to Coarse Power Gating(CPG) on KBL NUC in GVT-g,
+vgpu can't get the correct default context by updating the registers before
+inhibit context submission. It always get back the hardware default value
+unless the inhibit context submission happened before the 1st time
+forcewake put. With this wrong default context, vgpu will run with
+incorrect state and meet unknown issues.
 
-Fixes: 3e83eda467 ("HID: i2c-hid: Fix resume issue on Raydium touchscreen device")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Cc: Aaron Ma <aaron.ma@canonical.com>
+The solution is initialize these mmios by adding lri command in ring buffer
+of the inhibit context, then gpu hardware has no chance to go down RC6 when
+lri commands are right being executed, and then vgpu can get correct
+default context for further use.
+
+v3:
+- fix code fault, use 'for' to loop through mmio render list(Zhenyu)
+
+v4:
+- save the count of engine mmio need to be restored for inhibit context and
+  refine some comments. (Kevin)
+
+v5:
+- code rebase
+
+Cc: Kevin Tian <kevin.tian@intel.com>
+Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
+Signed-off-by: Weinan Li <weinan.z.li@intel.com>
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Signed-off-by: Changbin Du <changbin.du@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hid/i2c-hid/i2c-hid.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/i915/gvt/gvt.h          |    5 
+ drivers/gpu/drm/i915/gvt/mmio_context.c |  210 +++++++++++++++++++++++++++++---
+ drivers/gpu/drm/i915/gvt/mmio_context.h |    5 
+ drivers/gpu/drm/i915/gvt/scheduler.c    |    5 
+ 4 files changed, 205 insertions(+), 20 deletions(-)
 
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -1229,7 +1229,7 @@ static int i2c_hid_resume(struct device
- 	 */
- 	if (ihid->quirks & I2C_HID_QUIRK_RESEND_REPORT_DESCR) {
- 		ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
--		if (!ret)
-+		if (ret)
- 			return ret;
+--- a/drivers/gpu/drm/i915/gvt/gvt.h
++++ b/drivers/gpu/drm/i915/gvt/gvt.h
+@@ -308,7 +308,10 @@ struct intel_gvt {
+ 	wait_queue_head_t service_thread_wq;
+ 	unsigned long service_request;
+ 
+-	struct engine_mmio *engine_mmio_list;
++	struct {
++		struct engine_mmio *mmio;
++		int ctx_mmio_count[I915_NUM_ENGINES];
++	} engine_mmio_list;
+ 
+ 	struct dentry *debugfs_root;
+ };
+--- a/drivers/gpu/drm/i915/gvt/mmio_context.c
++++ b/drivers/gpu/drm/i915/gvt/mmio_context.c
+@@ -50,6 +50,8 @@
+ #define RING_GFX_MODE(base)	_MMIO((base) + 0x29c)
+ #define VF_GUARDBAND		_MMIO(0x83a4)
+ 
++#define GEN9_MOCS_SIZE		64
++
+ /* Raw offset is appened to each line for convenience. */
+ static struct engine_mmio gen8_engine_mmio_list[] __cacheline_aligned = {
+ 	{RCS, GFX_MODE_GEN7, 0xffff, false}, /* 0x229c */
+@@ -152,8 +154,8 @@ static struct engine_mmio gen9_engine_mm
+ 
+ static struct {
+ 	bool initialized;
+-	u32 control_table[I915_NUM_ENGINES][64];
+-	u32 l3cc_table[32];
++	u32 control_table[I915_NUM_ENGINES][GEN9_MOCS_SIZE];
++	u32 l3cc_table[GEN9_MOCS_SIZE / 2];
+ } gen9_render_mocs;
+ 
+ static void load_render_mocs(struct drm_i915_private *dev_priv)
+@@ -170,7 +172,7 @@ static void load_render_mocs(struct drm_
+ 
+ 	for (ring_id = 0; ring_id < ARRAY_SIZE(regs); ring_id++) {
+ 		offset.reg = regs[ring_id];
+-		for (i = 0; i < 64; i++) {
++		for (i = 0; i < GEN9_MOCS_SIZE; i++) {
+ 			gen9_render_mocs.control_table[ring_id][i] =
+ 				I915_READ_FW(offset);
+ 			offset.reg += 4;
+@@ -178,7 +180,7 @@ static void load_render_mocs(struct drm_
  	}
  
+ 	offset.reg = 0xb020;
+-	for (i = 0; i < 32; i++) {
++	for (i = 0; i < GEN9_MOCS_SIZE / 2; i++) {
+ 		gen9_render_mocs.l3cc_table[i] =
+ 			I915_READ_FW(offset);
+ 		offset.reg += 4;
+@@ -186,6 +188,153 @@ static void load_render_mocs(struct drm_
+ 	gen9_render_mocs.initialized = true;
+ }
+ 
++static int
++restore_context_mmio_for_inhibit(struct intel_vgpu *vgpu,
++				 struct drm_i915_gem_request *req)
++{
++	u32 *cs;
++	int ret;
++	struct engine_mmio *mmio;
++	struct intel_gvt *gvt = vgpu->gvt;
++	int ring_id = req->engine->id;
++	int count = gvt->engine_mmio_list.ctx_mmio_count[ring_id];
++
++	if (count == 0)
++		return 0;
++
++	ret = req->engine->emit_flush(req, EMIT_BARRIER);
++	if (ret)
++		return ret;
++
++	cs = intel_ring_begin(req, count * 2 + 2);
++	if (IS_ERR(cs))
++		return PTR_ERR(cs);
++
++	*cs++ = MI_LOAD_REGISTER_IMM(count);
++	for (mmio = gvt->engine_mmio_list.mmio;
++	     i915_mmio_reg_valid(mmio->reg); mmio++) {
++		if (mmio->ring_id != ring_id ||
++		    !mmio->in_context)
++			continue;
++
++		*cs++ = i915_mmio_reg_offset(mmio->reg);
++		*cs++ = vgpu_vreg_t(vgpu, mmio->reg) |
++				(mmio->mask << 16);
++		gvt_dbg_core("add lri reg pair 0x%x:0x%x in inhibit ctx, vgpu:%d, rind_id:%d\n",
++			      *(cs-2), *(cs-1), vgpu->id, ring_id);
++	}
++
++	*cs++ = MI_NOOP;
++	intel_ring_advance(req, cs);
++
++	ret = req->engine->emit_flush(req, EMIT_BARRIER);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static int
++restore_render_mocs_control_for_inhibit(struct intel_vgpu *vgpu,
++					struct drm_i915_gem_request *req)
++{
++	unsigned int index;
++	u32 *cs;
++
++	cs = intel_ring_begin(req, 2 * GEN9_MOCS_SIZE + 2);
++	if (IS_ERR(cs))
++		return PTR_ERR(cs);
++
++	*cs++ = MI_LOAD_REGISTER_IMM(GEN9_MOCS_SIZE);
++
++	for (index = 0; index < GEN9_MOCS_SIZE; index++) {
++		*cs++ = i915_mmio_reg_offset(GEN9_GFX_MOCS(index));
++		*cs++ = vgpu_vreg_t(vgpu, GEN9_GFX_MOCS(index));
++		gvt_dbg_core("add lri reg pair 0x%x:0x%x in inhibit ctx, vgpu:%d, rind_id:%d\n",
++			      *(cs-2), *(cs-1), vgpu->id, req->engine->id);
++
++	}
++
++	*cs++ = MI_NOOP;
++	intel_ring_advance(req, cs);
++
++	return 0;
++}
++
++static int
++restore_render_mocs_l3cc_for_inhibit(struct intel_vgpu *vgpu,
++				     struct drm_i915_gem_request *req)
++{
++	unsigned int index;
++	u32 *cs;
++
++	cs = intel_ring_begin(req, 2 * GEN9_MOCS_SIZE / 2 + 2);
++	if (IS_ERR(cs))
++		return PTR_ERR(cs);
++
++	*cs++ = MI_LOAD_REGISTER_IMM(GEN9_MOCS_SIZE / 2);
++
++	for (index = 0; index < GEN9_MOCS_SIZE / 2; index++) {
++		*cs++ = i915_mmio_reg_offset(GEN9_LNCFCMOCS(index));
++		*cs++ = vgpu_vreg_t(vgpu, GEN9_LNCFCMOCS(index));
++		gvt_dbg_core("add lri reg pair 0x%x:0x%x in inhibit ctx, vgpu:%d, rind_id:%d\n",
++			      *(cs-2), *(cs-1), vgpu->id, req->engine->id);
++
++	}
++
++	*cs++ = MI_NOOP;
++	intel_ring_advance(req, cs);
++
++	return 0;
++}
++
++/*
++ * Use lri command to initialize the mmio which is in context state image for
++ * inhibit context, it contains tracked engine mmio, render_mocs and
++ * render_mocs_l3cc.
++ */
++int intel_vgpu_restore_inhibit_context(struct intel_vgpu *vgpu,
++				       struct drm_i915_gem_request *req)
++{
++	int ret;
++	u32 *cs;
++
++	cs = intel_ring_begin(req, 2);
++	if (IS_ERR(cs))
++		return PTR_ERR(cs);
++
++	*cs++ = MI_ARB_ON_OFF | MI_ARB_DISABLE;
++	*cs++ = MI_NOOP;
++	intel_ring_advance(req, cs);
++
++	ret = restore_context_mmio_for_inhibit(vgpu, req);
++	if (ret)
++		goto out;
++
++	/* no MOCS register in context except render engine */
++	if (req->engine->id != RCS)
++		goto out;
++
++	ret = restore_render_mocs_control_for_inhibit(vgpu, req);
++	if (ret)
++		goto out;
++
++	ret = restore_render_mocs_l3cc_for_inhibit(vgpu, req);
++	if (ret)
++		goto out;
++
++out:
++	cs = intel_ring_begin(req, 2);
++	if (IS_ERR(cs))
++		return PTR_ERR(cs);
++
++	*cs++ = MI_ARB_ON_OFF | MI_ARB_ENABLE;
++	*cs++ = MI_NOOP;
++	intel_ring_advance(req, cs);
++
++	return ret;
++}
++
+ static void handle_tlb_pending_event(struct intel_vgpu *vgpu, int ring_id)
+ {
+ 	struct drm_i915_private *dev_priv = vgpu->gvt->dev_priv;
+@@ -252,11 +401,14 @@ static void switch_mocs(struct intel_vgp
+ 	if (WARN_ON(ring_id >= ARRAY_SIZE(regs)))
+ 		return;
+ 
++	if (IS_KABYLAKE(dev_priv) && ring_id == RCS)
++		return;
++
+ 	if (!pre && !gen9_render_mocs.initialized)
+ 		load_render_mocs(dev_priv);
+ 
+ 	offset.reg = regs[ring_id];
+-	for (i = 0; i < 64; i++) {
++	for (i = 0; i < GEN9_MOCS_SIZE; i++) {
+ 		if (pre)
+ 			old_v = vgpu_vreg_t(pre, offset);
+ 		else
+@@ -274,7 +426,7 @@ static void switch_mocs(struct intel_vgp
+ 
+ 	if (ring_id == RCS) {
+ 		l3_offset.reg = 0xb020;
+-		for (i = 0; i < 32; i++) {
++		for (i = 0; i < GEN9_MOCS_SIZE / 2; i++) {
+ 			if (pre)
+ 				old_v = vgpu_vreg_t(pre, l3_offset);
+ 			else
+@@ -294,6 +446,16 @@ static void switch_mocs(struct intel_vgp
+ 
+ #define CTX_CONTEXT_CONTROL_VAL	0x03
+ 
++bool is_inhibit_context(struct i915_gem_context *ctx, int ring_id)
++{
++	u32 *reg_state = ctx->engine[ring_id].lrc_reg_state;
++	u32 inhibit_mask =
++		_MASKED_BIT_ENABLE(CTX_CTRL_ENGINE_CTX_RESTORE_INHIBIT);
++
++	return inhibit_mask ==
++		(reg_state[CTX_CONTEXT_CONTROL_VAL] & inhibit_mask);
++}
++
+ /* Switch ring mmio values (context). */
+ static void switch_mmio(struct intel_vgpu *pre,
+ 			struct intel_vgpu *next,
+@@ -301,9 +463,6 @@ static void switch_mmio(struct intel_vgp
+ {
+ 	struct drm_i915_private *dev_priv;
+ 	struct intel_vgpu_submission *s;
+-	u32 *reg_state, ctx_ctrl;
+-	u32 inhibit_mask =
+-		_MASKED_BIT_ENABLE(CTX_CTRL_ENGINE_CTX_RESTORE_INHIBIT);
+ 	struct engine_mmio *mmio;
+ 	u32 old_v, new_v;
+ 
+@@ -311,10 +470,18 @@ static void switch_mmio(struct intel_vgp
+ 	if (IS_SKYLAKE(dev_priv) || IS_KABYLAKE(dev_priv))
+ 		switch_mocs(pre, next, ring_id);
+ 
+-	for (mmio = dev_priv->gvt->engine_mmio_list;
++	for (mmio = dev_priv->gvt->engine_mmio_list.mmio;
+ 	     i915_mmio_reg_valid(mmio->reg); mmio++) {
+ 		if (mmio->ring_id != ring_id)
+ 			continue;
++		/*
++		 * No need to do save or restore of the mmio which is in context
++		 * state image on kabylake, it's initialized by lri command and
++		 * save or restore with context together.
++		 */
++		if (IS_KABYLAKE(dev_priv) && mmio->in_context)
++			continue;
++
+ 		// save
+ 		if (pre) {
+ 			vgpu_vreg_t(pre, mmio->reg) = I915_READ_FW(mmio->reg);
+@@ -328,16 +495,13 @@ static void switch_mmio(struct intel_vgp
+ 		// restore
+ 		if (next) {
+ 			s = &next->submission;
+-			reg_state =
+-				s->shadow_ctx->engine[ring_id].lrc_reg_state;
+-			ctx_ctrl = reg_state[CTX_CONTEXT_CONTROL_VAL];
+ 			/*
+-			 * if it is an inhibit context, load in_context mmio
+-			 * into HW by mmio write. If it is not, skip this mmio
+-			 * write.
++			 * No need to restore the mmio which is in context state
++			 * image if it's not inhibit context, it will restore
++			 * itself.
+ 			 */
+ 			if (mmio->in_context &&
+-			    (ctx_ctrl & inhibit_mask) != inhibit_mask)
++			    !is_inhibit_context(s->shadow_ctx, ring_id))
+ 				continue;
+ 
+ 			if (mmio->mask)
+@@ -408,8 +572,16 @@ void intel_gvt_switch_mmio(struct intel_
+  */
+ void intel_gvt_init_engine_mmio_context(struct intel_gvt *gvt)
+ {
++	struct engine_mmio *mmio;
++
+ 	if (IS_SKYLAKE(gvt->dev_priv) || IS_KABYLAKE(gvt->dev_priv))
+-		gvt->engine_mmio_list = gen9_engine_mmio_list;
++		gvt->engine_mmio_list.mmio = gen9_engine_mmio_list;
+ 	else
+-		gvt->engine_mmio_list = gen8_engine_mmio_list;
++		gvt->engine_mmio_list.mmio = gen8_engine_mmio_list;
++
++	for (mmio = gvt->engine_mmio_list.mmio;
++	     i915_mmio_reg_valid(mmio->reg); mmio++) {
++		if (mmio->in_context)
++			gvt->engine_mmio_list.ctx_mmio_count[mmio->ring_id]++;
++	}
+ }
+--- a/drivers/gpu/drm/i915/gvt/mmio_context.h
++++ b/drivers/gpu/drm/i915/gvt/mmio_context.h
+@@ -49,4 +49,9 @@ void intel_gvt_switch_mmio(struct intel_
+ 
+ void intel_gvt_init_engine_mmio_context(struct intel_gvt *gvt);
+ 
++bool is_inhibit_context(struct i915_gem_context *ctx, int ring_id);
++
++int intel_vgpu_restore_inhibit_context(struct intel_vgpu *vgpu,
++				       struct drm_i915_gem_request *req);
++
+ #endif
+--- a/drivers/gpu/drm/i915/gvt/scheduler.c
++++ b/drivers/gpu/drm/i915/gvt/scheduler.c
+@@ -275,6 +275,11 @@ static int copy_workload_to_ring_buffer(
+ 	struct intel_vgpu *vgpu = workload->vgpu;
+ 	void *shadow_ring_buffer_va;
+ 	u32 *cs;
++	struct drm_i915_gem_request *req = workload->req;
++
++	if (IS_KABYLAKE(req->i915) &&
++	    is_inhibit_context(req->ctx, req->engine->id))
++		intel_vgpu_restore_inhibit_context(vgpu, req);
+ 
+ 	/* allocate shadow ring buffer */
+ 	cs = intel_ring_begin(workload->req, workload->rb_len / sizeof(u32));
