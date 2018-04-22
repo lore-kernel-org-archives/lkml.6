@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/Nz630ay60G2f6oG+nDKvuI1P/9DPYC93LWaDYeexfC9koD2nF5ImPzPdeoy/KFp0+1FC2
-ARC-Seal: i=1; a=rsa-sha256; t=1524405421; cv=none;
+X-Google-Smtp-Source: AIpwx4/D24IYZSZ7OPYKToGtlvQ69Up53T2DIX1iQUoFGhLga11pN+7ZWjDZxGwdVGX05P7jQpDb
+ARC-Seal: i=1; a=rsa-sha256; t=1524405419; cv=none;
         d=google.com; s=arc-20160816;
-        b=zELOjquet/tOUwvpr7FqhDNzkWSvRXjp1pi5nz15A+CVZirfB6Ei4R2VJdP51RuJLs
-         Q7iuTap4pHyzCTM4l0/CdJw6vlW8fQKhnnpHkc4v8T+1EFE/pYS6YtqO30QFAPooeGSW
-         rU4sbtgZzwEg6YfO9i6zPVvUxq04tAw1QEDSYIYdiTyVQstkhJDkdGGHBfBrxSJGAm99
-         gpNYpHWGKjzDd800VfEdNvY5Ff8uZp6hmt7LOTCzzB25RX3uQQ1NJs6tUbcHCHlgotn1
-         rGVBJAOv56Y60IE8SAOfKBESTxg8m813T2SvrHnRxYRTEnLPs+fDdxwZqFRMSwvs0yL0
-         m6yg==
+        b=Xa4d61jN63hFEgqoadDfcIUgjjojx5o1V8KVF1N/kTa5W5rHFexpawoczLhovqRu/M
+         4GwfC12snc8D1Ah9zDvVmLoJ/MKLKmo/Fs42CfaIdMf9nifZan/Q/xaVVMcRULqn2EtD
+         qfR/fMijV7SItunPb6AYxCqnR3LHGG+9yvpzqrMK+V2TsVZvLKylf0ArxaA+CMjltG5A
+         V5iDrQpsdUAlrRMxysw24YtZ4p1Yt8pjDgQS8ZrJU8sLpJEyWfWG9lyUkoSOhuy+Ckbt
+         PSwRafsL/KWC+9Fj0jzzSfliSpER3f/t2wnfjmICSJgub2jhsbj3ZpLI0j+u2Prz8QVo
+         MC2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MpAMq85ktJo9TVQzi1I1AHw4Y/QER6Pc8X1Z1bzeNfI=;
-        b=DHDAp8corXGu33aXIFZONaLAHq5qklSL0yiU6gnL6HrKwErWWmzLq7vCEirQUyJrfr
-         GmZfM40Bo46e0gOtGrDgmuGRRzvix3E2TvXSqhWlg5mQno5f7APJbhoo+GPFF1saLifA
-         ugcQ3fKvQlPAibSMlMw576cTLCWyvNeJbIPg4afSVVOXGsVJ56Btv5zA0nbT5dPpjtWU
-         61TyigZ5l/97kEC6PQ0UrX/FRrZPQg9OyfMA82lHeKditXIsQe8NsHOoJt1qkMKrdYIZ
-         M5FlvjV7WD0uMFVqhgeGn/pcs72FDzySNO60bOU6ssCMBFL/zp871UWZM14l6N3JtG0W
-         O/Ag==
+        bh=6jgVBpImNg0eIp8i1PB/v7XxBBuItkg8Jep67odsNnU=;
+        b=I4+WgcHoRsMNXvb43SOm1fk/Lp/BoF9HqAU4wSfEPbQ/EjlAAyjHAtJT0L7hXqi3u9
+         3KUc/Kt4+1L3m4oavc+ReYMVWHTZrzlEhT7OnHeEWxabXITNNtoKz3hf+ax1DZVKeFrA
+         CWgHaXQVVf6uExwEBafYN8jv19qW+SVCXt2FmfgSOVsFF1Ctrmcoh0UPeHeaKA66Ocv2
+         /80uLV6KamAqLiRSXjhewQin+xTJNHUidweAq4hT7OxTpcBNkGpqXLBaDNC7tOskCt40
+         kCNfpeMzCLXlnvoTI8nC6JSkV0aLaAvjdnfIoF9T93N0Y8yE8tWBOhoTEpULy90Ms3jt
+         Vq1w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Neuling <mikey@neuling.org>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Vasant Hegde <hegdevasant@linux.vnet.ibm.com>,
+	Stewart Smith <stewart@linux.ibm.com>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.16 061/196] powerpc/eeh: Fix race with driver un/bind
-Date: Sun, 22 Apr 2018 15:51:21 +0200
-Message-Id: <20180422135107.407375306@linuxfoundation.org>
+Subject: [PATCH 4.16 060/196] powerpc/powernv: Handle unknown OPAL errors in opal_nvram_write()
+Date: Sun, 22 Apr 2018 15:51:20 +0200
+Message-Id: <20180422135107.330955155@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454939829310013?=
-X-GMAIL-MSGID: =?utf-8?q?1598454939829310013?=
+X-GMAIL-THRID: =?utf-8?q?1598454937101435263?=
+X-GMAIL-MSGID: =?utf-8?q?1598454937101435263?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,256 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit f0295e047fcf52ccb42561fb7de6942f5201b676 upstream.
+commit 741de617661794246f84a21a02fc5e327bffc9ad upstream.
 
-The current EEH callbacks can race with a driver unbind. This can
-result in a backtraces like this:
+opal_nvram_write currently just assumes success if it encounters an
+error other than OPAL_BUSY or OPAL_BUSY_EVENT. Have it return -EIO
+on other errors instead.
 
-  EEH: Frozen PHB#0-PE#1fc detected
-  EEH: PE location: S000009, PHB location: N/A
-  CPU: 2 PID: 2312 Comm: kworker/u258:3 Not tainted 4.15.6-openpower1 #2
-  Workqueue: nvme-wq nvme_reset_work [nvme]
-  Call Trace:
-    dump_stack+0x9c/0xd0 (unreliable)
-    eeh_dev_check_failure+0x420/0x470
-    eeh_check_failure+0xa0/0xa4
-    nvme_reset_work+0x138/0x1414 [nvme]
-    process_one_work+0x1ec/0x328
-    worker_thread+0x2e4/0x3a8
-    kthread+0x14c/0x154
-    ret_from_kernel_thread+0x5c/0xc8
-  nvme nvme1: Removing after probe failure status: -19
-  <snip>
-  cpu 0x23: Vector: 300 (Data Access) at [c000000ff50f3800]
-      pc: c0080000089a0eb0: nvme_error_detected+0x4c/0x90 [nvme]
-      lr: c000000000026564: eeh_report_error+0xe0/0x110
-      sp: c000000ff50f3a80
-     msr: 9000000000009033
-     dar: 400
-   dsisr: 40000000
-    current = 0xc000000ff507c000
-    paca    = 0xc00000000fdc9d80   softe: 0        irq_happened: 0x01
-      pid   = 782, comm = eehd
-  Linux version 4.15.6-openpower1 (smc@smc-desktop) (gcc version 6.4.0 (Buildroot 2017.11.2-00008-g4b6188e)) #2 SM                                             P Tue Feb 27 12:33:27 PST 2018
-  enter ? for help
-    eeh_report_error+0xe0/0x110
-    eeh_pe_dev_traverse+0xc0/0xdc
-    eeh_handle_normal_event+0x184/0x4c4
-    eeh_handle_event+0x30/0x288
-    eeh_event_handler+0x124/0x170
-    kthread+0x14c/0x154
-    ret_from_kernel_thread+0x5c/0xc8
-
-The first part is an EEH (on boot), the second half is the resulting
-crash. nvme probe starts the nvme_reset_work() worker thread. This
-worker thread starts touching the device which see a device error
-(EEH) and hence queues up an event in the powerpc EEH worker
-thread. nvme_reset_work() then continues and runs
-nvme_remove_dead_ctrl_work() which results in unbinding the driver
-from the device and hence releases all resources. At the same time,
-the EEH worker thread starts doing the EEH .error_detected() driver
-callback, which no longer works since the resources have been freed.
-
-This fixes the problem in the same way the generic PCIe AER code (in
-drivers/pci/pcie/aer/aerdrv_core.c) does. It makes the EEH code hold
-the device_lock() while performing the driver EEH callbacks and
-associated code. This ensures either the callbacks are no longer
-register, or if they are registered the driver will not be removed
-from underneath us.
-
-This has been broken forever. The EEH call backs were first introduced
-in 2005 (in 77bd7415610) but it's not clear if a lock was needed back
-then.
-
-Fixes: 77bd74156101 ("[PATCH] powerpc: PCI Error Recovery: PPC64 core recovery routines")
-Cc: stable@vger.kernel.org # v2.6.16+
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Fixes: 628daa8d5abf ("powerpc/powernv: Add RTC and NVRAM support plus RTAS fallbacks")
+Cc: stable@vger.kernel.org # v3.2+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Reviewed-by: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Acked-by: Stewart Smith <stewart@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/eeh_driver.c |   68 ++++++++++++++++++++++++---------------
- 1 file changed, 42 insertions(+), 26 deletions(-)
+ arch/powerpc/platforms/powernv/opal-nvram.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/powerpc/kernel/eeh_driver.c
-+++ b/arch/powerpc/kernel/eeh_driver.c
-@@ -207,18 +207,18 @@ static void *eeh_report_error(void *data
- 
- 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
- 		return NULL;
-+
-+	device_lock(&dev->dev);
- 	dev->error_state = pci_channel_io_frozen;
- 
- 	driver = eeh_pcid_get(dev);
--	if (!driver) return NULL;
-+	if (!driver) goto out_no_dev;
- 
- 	eeh_disable_irq(dev);
- 
- 	if (!driver->err_handler ||
--	    !driver->err_handler->error_detected) {
--		eeh_pcid_put(dev);
--		return NULL;
--	}
-+	    !driver->err_handler->error_detected)
-+		goto out;
- 
- 	rc = driver->err_handler->error_detected(dev, pci_channel_io_frozen);
- 
-@@ -227,8 +227,12 @@ static void *eeh_report_error(void *data
- 	if (*res == PCI_ERS_RESULT_NONE) *res = rc;
- 
- 	edev->in_error = true;
--	eeh_pcid_put(dev);
- 	pci_uevent_ers(dev, PCI_ERS_RESULT_NONE);
-+
-+out:
-+	eeh_pcid_put(dev);
-+out_no_dev:
-+	device_unlock(&dev->dev);
- 	return NULL;
- }
- 
-@@ -251,15 +255,14 @@ static void *eeh_report_mmio_enabled(voi
- 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
- 		return NULL;
- 
-+	device_lock(&dev->dev);
- 	driver = eeh_pcid_get(dev);
--	if (!driver) return NULL;
-+	if (!driver) goto out_no_dev;
- 
- 	if (!driver->err_handler ||
- 	    !driver->err_handler->mmio_enabled ||
--	    (edev->mode & EEH_DEV_NO_HANDLER)) {
--		eeh_pcid_put(dev);
--		return NULL;
--	}
-+	    (edev->mode & EEH_DEV_NO_HANDLER))
-+		goto out;
- 
- 	rc = driver->err_handler->mmio_enabled(dev);
- 
-@@ -267,7 +270,10 @@ static void *eeh_report_mmio_enabled(voi
- 	if (rc == PCI_ERS_RESULT_NEED_RESET) *res = rc;
- 	if (*res == PCI_ERS_RESULT_NONE) *res = rc;
- 
-+out:
- 	eeh_pcid_put(dev);
-+out_no_dev:
-+	device_unlock(&dev->dev);
- 	return NULL;
- }
- 
-@@ -290,20 +296,20 @@ static void *eeh_report_reset(void *data
- 
- 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
- 		return NULL;
-+
-+	device_lock(&dev->dev);
- 	dev->error_state = pci_channel_io_normal;
- 
- 	driver = eeh_pcid_get(dev);
--	if (!driver) return NULL;
-+	if (!driver) goto out_no_dev;
- 
- 	eeh_enable_irq(dev);
- 
- 	if (!driver->err_handler ||
- 	    !driver->err_handler->slot_reset ||
- 	    (edev->mode & EEH_DEV_NO_HANDLER) ||
--	    (!edev->in_error)) {
--		eeh_pcid_put(dev);
--		return NULL;
--	}
-+	    (!edev->in_error))
-+		goto out;
- 
- 	rc = driver->err_handler->slot_reset(dev);
- 	if ((*res == PCI_ERS_RESULT_NONE) ||
-@@ -311,7 +317,10 @@ static void *eeh_report_reset(void *data
- 	if (*res == PCI_ERS_RESULT_DISCONNECT &&
- 	     rc == PCI_ERS_RESULT_NEED_RESET) *res = rc;
- 
-+out:
- 	eeh_pcid_put(dev);
-+out_no_dev:
-+	device_unlock(&dev->dev);
- 	return NULL;
- }
- 
-@@ -362,10 +371,12 @@ static void *eeh_report_resume(void *dat
- 
- 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
- 		return NULL;
-+
-+	device_lock(&dev->dev);
- 	dev->error_state = pci_channel_io_normal;
- 
- 	driver = eeh_pcid_get(dev);
--	if (!driver) return NULL;
-+	if (!driver) goto out_no_dev;
- 
- 	was_in_error = edev->in_error;
- 	edev->in_error = false;
-@@ -375,18 +386,20 @@ static void *eeh_report_resume(void *dat
- 	    !driver->err_handler->resume ||
- 	    (edev->mode & EEH_DEV_NO_HANDLER) || !was_in_error) {
- 		edev->mode &= ~EEH_DEV_NO_HANDLER;
--		eeh_pcid_put(dev);
--		return NULL;
-+		goto out;
+--- a/arch/powerpc/platforms/powernv/opal-nvram.c
++++ b/arch/powerpc/platforms/powernv/opal-nvram.c
+@@ -59,6 +59,10 @@ static ssize_t opal_nvram_write(char *bu
+ 		if (rc == OPAL_BUSY_EVENT)
+ 			opal_poll_events(NULL);
  	}
- 
- 	driver->err_handler->resume(dev);
- 
--	eeh_pcid_put(dev);
- 	pci_uevent_ers(dev, PCI_ERS_RESULT_RECOVERED);
-+out:
-+	eeh_pcid_put(dev);
- #ifdef CONFIG_PCI_IOV
- 	if (eeh_ops->notify_resume && eeh_dev_to_pdn(edev))
- 		eeh_ops->notify_resume(eeh_dev_to_pdn(edev));
- #endif
-+out_no_dev:
-+	device_unlock(&dev->dev);
- 	return NULL;
- }
- 
-@@ -406,23 +419,26 @@ static void *eeh_report_failure(void *da
- 
- 	if (!dev || eeh_dev_removed(edev) || eeh_pe_passed(edev->pe))
- 		return NULL;
 +
-+	device_lock(&dev->dev);
- 	dev->error_state = pci_channel_io_perm_failure;
- 
- 	driver = eeh_pcid_get(dev);
--	if (!driver) return NULL;
-+	if (!driver) goto out_no_dev;
- 
- 	eeh_disable_irq(dev);
- 
- 	if (!driver->err_handler ||
--	    !driver->err_handler->error_detected) {
--		eeh_pcid_put(dev);
--		return NULL;
--	}
-+	    !driver->err_handler->error_detected)
-+		goto out;
- 
- 	driver->err_handler->error_detected(dev, pci_channel_io_perm_failure);
- 
--	eeh_pcid_put(dev);
- 	pci_uevent_ers(dev, PCI_ERS_RESULT_DISCONNECT);
-+out:
-+	eeh_pcid_put(dev);
-+out_no_dev:
-+	device_unlock(&dev->dev);
- 	return NULL;
++	if (rc)
++		return -EIO;
++
+ 	*index += count;
+ 	return count;
  }
- 
