@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49iFiy1AdkEoL39TP1hIxcYs8sHVSAAG5/MnyK1Wb26ydQf4pxtILWYuZYQRSoRDH+YVDBs
-ARC-Seal: i=1; a=rsa-sha256; t=1524406351; cv=none;
+X-Google-Smtp-Source: AIpwx483yg6p7e15JZjbdC7+3yAC8zGC4t4Ib1NykGew9G+c25vi5Gm+cxu8oHOVkBA5kCqohaNl
+ARC-Seal: i=1; a=rsa-sha256; t=1524406348; cv=none;
         d=google.com; s=arc-20160816;
-        b=hc2QXagg41iC2HPEYDOqajJ1iaKTHltVNMPb1vOe1N/itZh2bSIIvtJSmLwehrBSBn
-         iPlkwQ3oP02t0OBqFTzb8bnwLzLZMyOQSBiUvR2flKB9KKMT5//neO0k7xL0ASCyfpN8
-         P0CPf753BC1xF/lKswY2tvVaQfbHn0VWn6TdBtCVagVjeq+/byyFCfmmBk1ezG+/VPgF
-         kXkpB3ZyqnXs8G3KhJ1Cw/ZzQj88jwpXcGE5+lwUOCrxNYgkts6yxcisE0/pc1LHiBEq
-         L6mmeg3feTOLKC/GYtnuCi42x6+ghKstuXx240n4Pa3FK7SjQlV5U6RpsFDYXK+4eLb8
-         gI7g==
+        b=g2cEh3PRBrv53VZ3V8WVutOwgW1L0C2FhxpwwIFcN6Drhtp4Y/AbkO5Y9o2IiU+1Wh
+         rZKinWbwU0Sd1ECItoBVEB6IU55jpXsBQ3o5G/TGaoW7IjGNAP+YI+qsLZumYm42MxhO
+         INJcqZU5Yxy+CYhIirlOoekG+y18zM6SjNlHBjYRJmcL54DjjaJefQmJQFY2VacTsvCB
+         kE0cuCfOsHp5Ql7EaCDmAYTBpbgkmYWH5EBimWWS/YD4K7vTu8eVF4bgXnQZqdKzbjOf
+         nu9Kufq5Kx6DbbohbpNIjUvwVsIQ8+cjU/xEwUfMOr3UsCkG0V2lUhgZ50uhd6hjtCZT
+         vwsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KPPjpkGaF5uhXN4k/fO90ky+OVQA/lF6e1+NGpj8rpA=;
-        b=WMSqD0jfIAV5k2kjbzhyaxKDXLVuipJG3ENG6tCRFKxUHQTlvJZ1AwfyxGP6DlePk8
-         o6ypgtrjdGrGNrCbR3cQ5UDP/ht5inb0AMX3HhAxa6peqsw5uXbWjAciqSbSpY1TJNdA
-         N8LRRykgkcnQeEtVdnkCrVXTLp4Pb+djLnXuThgs+MAyfddQPz8e2KzAorOGhUrFNUPC
-         JG7bv+5PXJRaJ4GTviUW0o3DNwBz2WAqDSR0x8Vj7/QC89J0aobINZQgPb/pOUZpsS5z
-         nX311VYnUi8AEnGHz6+h8svGgI5LrZvUHzXU6xOEE/ltlX+0kcFC9lKnTah7VHlXpk+h
-         2x+g==
+        bh=qntEC4cb7zfUZJOhA05wuTxwikFDajWdQ22pU6EutaE=;
+        b=FhxQKp1WX3X4UvqhhvDLpIFX8NjRgfWE7DBOm+q65Faw9+UcE2RFz1nuX0goxx3XW4
+         ZMaTzUdBA2o7f9YJBG2ns2Zca2Lcw4VT9JWVh9RZN9YVQjuFbhNZbZT898Q6KW6HIlxN
+         0EccyrumiaB8vQ4CFfjpqYPZwU0HhTizWgpZ5HqG80WHDtXStl2xwJng8L9yW2YvMDIk
+         ANlo5LJYyJ6G+modP0t+GR95Z0dfdsCJ0XJdnnELNw04pR+m0Fgme0KGPmLQwugemsga
+         aDTSTsqeD6NYlbk5vbhk3CjTicqM4mU6YkCvIXee3WcJLMT6wOJv7WbZRErFrRznND8y
+         Hb1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Moni Shoua <monis@mellanox.com>,
+	syzbot+a67bc93e14682d92fc2f@syzkaller.appspotmail.com,
+	Roland Dreier <roland@purestorage.com>,
 	Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 40/95] RDMA/rxe: Fix an out-of-bounds read
-Date: Sun, 22 Apr 2018 15:53:09 +0200
-Message-Id: <20180422135212.060555766@linuxfoundation.org>
+Subject: [PATCH 4.9 39/95] RDMA/ucma: Dont allow setting RDMA_OPTION_IB_PATH without an RDMA device
+Date: Sun, 22 Apr 2018 15:53:08 +0200
+Message-Id: <20180422135212.021833780@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455063438272649?=
-X-GMAIL-MSGID: =?utf-8?q?1598455914344197861?=
+X-GMAIL-THRID: =?utf-8?q?1598455058285314563?=
+X-GMAIL-MSGID: =?utf-8?q?1598455912027383826?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,86 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Roland Dreier <roland@purestorage.com>
 
-commit a6544a624c3ff92a64e4aca3931fa064607bd3da upstream.
+commit 8435168d50e66fa5eae01852769d20a36f9e5e83 upstream.
 
-This patch avoids that KASAN reports the following when the SRP initiator
-calls srp_post_send():
+Check to make sure that ctx->cm_id->device is set before we use it.
+Otherwise userspace can trigger a NULL dereference by doing
+RDMA_USER_CM_CMD_SET_OPTION on an ID that is not bound to a device.
 
-==================================================================
-BUG: KASAN: stack-out-of-bounds in rxe_post_send+0x5c4/0x980 [rdma_rxe]
-Read of size 8 at addr ffff880066606e30 by task 02-mq/1074
-
-CPU: 2 PID: 1074 Comm: 02-mq Not tainted 4.16.0-rc3-dbg+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-Call Trace:
-dump_stack+0x85/0xc7
-print_address_description+0x65/0x270
-kasan_report+0x231/0x350
-rxe_post_send+0x5c4/0x980 [rdma_rxe]
-srp_post_send.isra.16+0x149/0x190 [ib_srp]
-srp_queuecommand+0x94d/0x1670 [ib_srp]
-scsi_dispatch_cmd+0x1c2/0x550 [scsi_mod]
-scsi_queue_rq+0x843/0xa70 [scsi_mod]
-blk_mq_dispatch_rq_list+0x143/0xac0
-blk_mq_do_dispatch_ctx+0x1c5/0x260
-blk_mq_sched_dispatch_requests+0x2bf/0x2f0
-__blk_mq_run_hw_queue+0xdb/0x160
-__blk_mq_delay_run_hw_queue+0xba/0x100
-blk_mq_run_hw_queue+0xf2/0x190
-blk_mq_sched_insert_request+0x163/0x2f0
-blk_execute_rq+0xb0/0x130
-scsi_execute+0x14e/0x260 [scsi_mod]
-scsi_probe_and_add_lun+0x366/0x13d0 [scsi_mod]
-__scsi_scan_target+0x18a/0x810 [scsi_mod]
-scsi_scan_target+0x11e/0x130 [scsi_mod]
-srp_create_target+0x1522/0x19e0 [ib_srp]
-kernfs_fop_write+0x180/0x210
-__vfs_write+0xb1/0x2e0
-vfs_write+0xf6/0x250
-SyS_write+0x99/0x110
-do_syscall_64+0xee/0x2b0
-entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-The buggy address belongs to the page:
-page:ffffea0001998180 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x4000000000000000()
-raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: dead000000000100 dead000000000200 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-ffff880066606d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
-ffff880066606d80: f1 00 f2 f2 f2 f2 f2 f2 f2 00 00 f2 f2 f2 f2 f2
->ffff880066606e00: f2 00 00 00 00 00 f2 f2 f2 f3 f3 f3 f3 00 00 00
-                                    ^
-ffff880066606e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-ffff880066606f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-Fixes: 8700e3e7c485 ("Soft RoCE driver")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Moni Shoua <monis@mellanox.com>
-Cc: stable@vger.kernel.org
+Cc: <stable@vger.kernel.org>
+Reported-by: <syzbot+a67bc93e14682d92fc2f@syzkaller.appspotmail.com>
+Signed-off-by: Roland Dreier <roland@purestorage.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/sw/rxe/rxe_verbs.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/infiniband/core/ucma.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/infiniband/sw/rxe/rxe_verbs.c
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.c
-@@ -747,9 +747,8 @@ static int init_send_wqe(struct rxe_qp *
- 		memcpy(wqe->dma.sge, ibwr->sg_list,
- 		       num_sge * sizeof(struct ib_sge));
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1231,6 +1231,9 @@ static int ucma_set_ib_path(struct ucma_
+ 	if (!optlen)
+ 		return -EINVAL;
  
--	wqe->iova		= (mask & WR_ATOMIC_MASK) ?
--					atomic_wr(ibwr)->remote_addr :
--					rdma_wr(ibwr)->remote_addr;
-+	wqe->iova = mask & WR_ATOMIC_MASK ? atomic_wr(ibwr)->remote_addr :
-+		mask & WR_READ_OR_WRITE_MASK ? rdma_wr(ibwr)->remote_addr : 0;
- 	wqe->mask		= mask;
- 	wqe->dma.length		= length;
- 	wqe->dma.resid		= length;
++	if (!ctx->cm_id->device)
++		return -EINVAL;
++
+ 	memset(&sa_path, 0, sizeof(sa_path));
+ 
+ 	ib_sa_unpack_path(path_data->path_rec, &sa_path);
