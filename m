@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+06RXz5xaCv1GcZpissOM7Lrgl4Ejn2/VUa10EEoWnyCumvYwBUfBF6RyJT4UKalo4en7d
-ARC-Seal: i=1; a=rsa-sha256; t=1524405909; cv=none;
+X-Google-Smtp-Source: AIpwx4+/AMFdptlpNAsdY5mYjUuHZmQb4HvWqlzV5vNZoUMNQTgCSYBzKgy9QyvKg5W2DtjdpEOQ
+ARC-Seal: i=1; a=rsa-sha256; t=1524405907; cv=none;
         d=google.com; s=arc-20160816;
-        b=V9cI536ZYlDDHv7wN4PYzCS+U8QrQWJ0MyCYHr8lPpxBdxceqejBCSJrhBbDN5Ypux
-         NqeepWsIzMu1vzEeVr09W9osi5Mw3OYfSkngaK1o/4L+H4ZZvYTgiUuYkx4uVu6DsMvL
-         zkeh9FdMqSdGA+vethWx7jQHOtI4kmerj7zrPfnHsN/qoUFtxW/TRk4XQotGOUuim6wk
-         eGAgs4motLgrtOUV+XpUFbiUGZ/GZlxL6kx4FvkXo8bK3/0Bd+b/2WKg31MR9PDaOYrB
-         XusU3nb+byZtb+Gbw9oRNkb8wr7OMrw7zaxjUTA1RDuwCv9Fjq4+U1Oq+U2IXCX4cGtm
-         TpsA==
+        b=xx7QnHlMBITDrAkbcaNhuKmpC3hhtuhOKaYOAWjX9L2u5ZrzJFbydG5Mwm105g8KPi
+         6KLJZiAdISizMTQx6+a+LmJxxXIbGBM6am0F6QXY/2TJ43V/zVkq2h3NyiSSN+ztP3NC
+         Jv7UxajIrIGuJnDW1pgFhoSTN58ErHh97PluNLuInWkZKpSi9sppGm7ddEikS1ZltV+0
+         OgcYP9cM8huZBYfLvI3r/ZWRu+t0KKYat+fry6aUhi3U+VIeOsM2LwJH5OCaYkHIQPac
+         pfJ5+mcRNaU3z15lUC8EsUTozhgwvMv0vwVg5AZJ+toGo/cNHNY8A/wqSo+sx0i2MBQl
+         k3nw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PIYNv8bDmydS7UxA3W94HU7QSBAF5j9x2xlvq29NvvY=;
-        b=bLKzfQgUwWSvlmAA+OJnWms2NDV3MLAYo0Jc376Q8b4FNluOoA62vhTc5Gb7XrsPrn
-         ijYPfq833uoB1U+GFCB/hEflmXf+MCjxIuZLQA0yP2etS9Xm6pcDSdpS6KJwYk6p3X+K
-         kSZakjAWGUSXrLlbjPfXlRAsleqxzOWGgxJMZ05DOS6BakWbIwtTSmWkIp8qUpLiMu29
-         YsQfSOamMf/q/uO1krYi/oZNOhTe+EWyR9G46Zfz6s8gJKY1iVhlFkgM+lN8XdRiZR8a
-         42XRelNVw2Jel/mDrf8EDNUTE7sWukoP7ba4BUduE0jquLb+VomajQgze4AkhR/bAc8z
-         DYKA==
+        bh=1l5lx4cEaIJ9QIaqZs9oMqEJQBHCd/KPbEutIoDnDJE=;
+        b=hzPwxFo5xynRKj99RMZO9Rea50Vcn4zaWwqlzrPdXc2ps6yxlwlHwqMxPcYHofS/AH
+         TWDNPLn1xXU21jvnmLkHVYT6jgrv8OfQ5mLTMrQ79dUXoZVbbnCV7ert9b/2QmL+CrU7
+         g7FLhTZOFRCBkmkn/FjvBUnI6984VF+QgA/W4fcWPm7m0XUe7pSeBKBcSG+IKrnPdrzD
+         G7uxxVxW9L3myErqGoKmuJ7HTrErHRvoOo6gAqLTy9LqBpJV78A/I8izON2Qi5XsV47H
+         blZ4voMgZIW507A5TKPXv9tttk4MZ3umWQDMiZ1AQSBnK+Ji1c7xrLuD4SAVjE2b+fQt
+         OeGg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Ronnie Sahlberg <lsahlber@redhat.com>,
 	Steve French <smfrench@gmail.com>
-Subject: [PATCH 4.14 043/164] fix smb3-encryption breakage when CONFIG_DEBUG_SG=y
-Date: Sun, 22 Apr 2018 15:51:50 +0200
-Message-Id: <20180422135137.175002018@linuxfoundation.org>
+Subject: [PATCH 4.14 042/164] cifs: fix memory leak in SMB2_open()
+Date: Sun, 22 Apr 2018 15:51:49 +0200
+Message-Id: <20180422135137.134591398@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455002136448051?=
-X-GMAIL-MSGID: =?utf-8?q?1598455450888982865?=
+X-GMAIL-THRID: =?utf-8?q?1598454973486249608?=
+X-GMAIL-MSGID: =?utf-8?q?1598455448634916331?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,14 +51,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-commit 262916bc69faf90104aa784d55e10760a4199594 upstream.
-
-We can not use the standard sg_set_buf() fucntion since when
-CONFIG_DEBUG_SG=y this adds a check that will BUG_ON for cifs.ko
-when we pass it an object from the stack.
-
-Create a new wrapper smb2_sg_set_buf() which avoids doing that particular check
-and use it for smb3 encryption instead.
+commit b7a73c84eb96dabd6bb8e9d7c56f796d83efee8e upstream.
 
 Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Steve French <smfrench@gmail.com>
@@ -66,44 +59,32 @@ CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2ops.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ fs/cifs/smb2pdu.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -2060,6 +2060,15 @@ fill_transform_hdr(struct smb2_transform
- 	inc_rfc1001_len(tr_hdr, orig_len);
- }
- 
-+/* We can not use the normal sg_set_buf() as we will sometimes pass a
-+ * stack object as buf.
-+ */
-+static inline void smb2_sg_set_buf(struct scatterlist *sg, const void *buf,
-+				   unsigned int buflen)
-+{
-+	sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
-+}
-+
- static struct scatterlist *
- init_sg(struct smb_rqst *rqst, u8 *sign)
- {
-@@ -2074,16 +2083,16 @@ init_sg(struct smb_rqst *rqst, u8 *sign)
- 		return NULL;
- 
- 	sg_init_table(sg, sg_len);
--	sg_set_buf(&sg[0], rqst->rq_iov[0].iov_base + 24, assoc_data_len);
-+	smb2_sg_set_buf(&sg[0], rqst->rq_iov[0].iov_base + 24, assoc_data_len);
- 	for (i = 1; i < rqst->rq_nvec; i++)
--		sg_set_buf(&sg[i], rqst->rq_iov[i].iov_base,
-+		smb2_sg_set_buf(&sg[i], rqst->rq_iov[i].iov_base,
- 						rqst->rq_iov[i].iov_len);
- 	for (j = 0; i < sg_len - 1; i++, j++) {
- 		unsigned int len = (j < rqst->rq_npages - 1) ? rqst->rq_pagesz
- 							: rqst->rq_tailsz;
- 		sg_set_page(&sg[i], rqst->rq_pages[j], len, 0);
- 	}
--	sg_set_buf(&sg[sg_len - 1], sign, SMB2_SIGNATURE_SIZE);
-+	smb2_sg_set_buf(&sg[sg_len - 1], sign, SMB2_SIGNATURE_SIZE);
- 	return sg;
- }
- 
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1773,8 +1773,10 @@ SMB2_open(const unsigned int xid, struct
+ 		rc = alloc_path_with_tree_prefix(&copy_path, &copy_size,
+ 						 &name_len,
+ 						 tcon->treeName, path);
+-		if (rc)
++		if (rc) {
++			cifs_small_buf_release(req);
+ 			return rc;
++		}
+ 		req->NameLength = cpu_to_le16(name_len * 2);
+ 		uni_path_len = copy_size;
+ 		path = copy_path;
+@@ -1785,8 +1787,10 @@ SMB2_open(const unsigned int xid, struct
+ 		if (uni_path_len % 8 != 0) {
+ 			copy_size = roundup(uni_path_len, 8);
+ 			copy_path = kzalloc(copy_size, GFP_KERNEL);
+-			if (!copy_path)
++			if (!copy_path) {
++				cifs_small_buf_release(req);
+ 				return -ENOMEM;
++			}
+ 			memcpy((char *)copy_path, (const char *)path,
+ 			       uni_path_len);
+ 			uni_path_len = copy_size;
