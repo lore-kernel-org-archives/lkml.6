@@ -1,80 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405575-2-2933955785571157414
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524405573; b=B4jfybp5rUf5degAk0bsxlu5m6H0yWTlDg1m1F3w1jPeyRIa2h
-    dI6s/YOT50g8Q/fuADoVy3A1iuKJ6RXfyqmuCZ1U+S8plhovKSiSJmTqwECAiRod
-    x29GBMg1iaHia0dfb5ifAoA+qehbghY+3xg6K9C/xOwRif6+c7PjAU7sp5NnKTlz
-    ZR4uo+PUXnSU4sl9cseUedgEt11XCxwynHQpSO5U0P+FjZZe/ODrkVyB0KCu6f4m
-    q9joNhRrnSKmrt57h23B1RfiZU5kERn7jRXgD1s8qGPUoeLQ40gCKNYzaBeMcz/l
-    ARq6kUas6DmVwPG9Eeopegak44zKvtYjJoAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524405573; bh=nfw1fMbLDOeST5dys4jC/1PCmHx2L5
-    /p/4Li9GjCxIE=; b=WMehWnU5jT5NGZdvUtU8X4j9wRYn6dUsai7pbHNzLKiEw3
-    QmoWuiPIYNlaU0bIgbLdQnxNE4qZSGvJC/JefacQYa8NB8cBFv/2Y24+dZzuZB2/
-    i6Lv+TnbaiIFKzTDIhUYMXiBw9Z16RJnmFr4EA94nJGW+3dQe8OFBoP85ILKCgXp
-    aBvS1gFW4zCnougDQ3dQtNOYn16oTe4hxbZYPEP5u4PBp5nUJYFLlBBpxJUlN8/+
-    ZGU+d/I1P8f92ZV7E3vt/As6USXN+d9X2WidYMbOw2DKYVxgxn+ubsFslBFOoT0Q
-    Q5VFPmTG8pTSAURiZGZN+8zofNP+KTu73ikrymtg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDJFjCY545zfJ82t7LyHsLa1UIKxDRFC+Yb9WMuwPxhs82JjE4SM503bRge4fG9K2gD4CrCF+PlubTT97AMcJ6HMbaQ1DRIGqlaIrlJkI3WZ4MxdHQ0d
-    S1DvNZGHpMk3sH4B/ZgTXsSBTElNDIU7/5rKKU/wxjD/zABKmelVaasWV8lDi3Xl7snBfIq+YXGFlIo4eRfoA0e+0+YIv09cS0qsxyhRCpt66DmidHA/EFzo
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=JF9118EUAAAA:8 a=VwQbUJbxAAAA:8 a=CbDCq_QkAAAA:8 a=ag1SF4gXAAAA:8
-    a=HpVCBnNoGEzVIHtxbwsA:9 a=QEXdDO2ut3YA:10 a=xVlTc564ipvMDusKsbsT:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=1qrBK16LubpBFNPVNq2M:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754284AbeDVN73 (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 09:59:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46870 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754011AbeDVN71 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:59:27 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+ogPNFAPGPI35bERRevhd2/j1dG3NNGlJ5LLslKl3LG4rzSLBYEOVjOhhOLX7zNKZhN/R2
+ARC-Seal: i=1; a=rsa-sha256; t=1524405572; cv=none;
+        d=google.com; s=arc-20160816;
+        b=lZ2nloz7ONobzFN5R7dOsggQnRhQ69CWLOVYRXhMLdJnV8cNguMaLCUmwXvGGNiSKx
+         GLFsLk5qNczqaP8MjaZD69O8SPvwnWrQcvb2w/X+jgB4fetloQ4zyehSPKNdlOpLd4Nu
+         0tIQM+2dMHN342JhfE5yFKgbdg7qNgFrNCs58jLPIo1Wny/Q1QKEmDYQrEFSg6vyd+A/
+         0XszzSfT5RzVnqJN1KvnQEXui36Oh1bnL2OTucIXDuUQeCbNZOEJPUqbveOd24cz5JOO
+         j2Pi74wzqLs23bJsxRXTzhk6fiM89j01SIWb2pKR/UStvDKCg+ut1hgbLZGLUvUjEcKd
+         BOVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=mAPnNuH3+5SCX3L4yChw/Iu0jQ8+KYI9P4QXmFfyO5s=;
+        b=WgUZJChxkn9DY3bcEvej6rPH9Z3DpDJhRwQQJA35tm///Jp7foFWx1XuLlqAqQAXYq
+         gyi9xVx9aXcOGnXk3cW53c2yk42E/HlcVz/2NTbDe7PWs0fDziAFm9G82WKifOFBJe8R
+         XCFxMqV6IeVvAEJGMT6WPUYq3edks1//MO8ZCkIJI86SWnsn+yKfWHuIxYgHCU3ICIEh
+         +hKp1gT7TeMjYzuSKgnbxsDXY5Wx4cg9SuQeXtGPWfB4/wdu8Gm2z6gInl6LcMwFtoTY
+         7e2aNWO29jNeSTOtavFeSd9P0ojmiWoZsz6zf2zhOf5pLT2voCz8qCds7tkFDrVK3wi4
+         0j3g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.16 113/196] IB/srp: Fix srp_abort()
-Date: Sun, 22 Apr 2018 15:52:13 +0200
-Message-Id: <20180422135110.111237232@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.16 115/196] IB/srpt: Fix an out-of-bounds stack access in srpt_zerolength_write()
+Date: Sun, 22 Apr 2018 15:52:15 +0200
+Message-Id: <20180422135110.211098751@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -82,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598455097373735122?=
+X-GMAIL-MSGID: =?utf-8?q?1598455097373735122?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -94,37 +52,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit e68088e78d82920632eba112b968e49d588d02a2 upstream.
+commit 2a78cb4db487372152bed2055c038f9634d595e8 upstream.
 
-Before commit e494f6a72839 ("[SCSI] improved eh timeout handler") it
-did not really matter whether or not abort handlers like srp_abort()
-called .scsi_done() when returning another value than SUCCESS. Since
-that commit however this matters. Hence only call .scsi_done() when
-returning SUCCESS.
+Avoid triggering an out-of-bounds stack access by changing the type
+of 'wr' from ib_send_wr into ib_rdma_wr.
 
+This patch fixes the following KASAN bug report:
+
+BUG: KASAN: stack-out-of-bounds in rxe_post_send+0x7a9/0x9a0 [rdma_rxe]
+Read of size 8 at addr ffff880068197a48 by task kworker/2:1/44
+
+Workqueue: ib_cm cm_work_handler [ib_cm]
+Call Trace:
+ dump_stack+0x8e/0xcd
+ print_address_description+0x6f/0x280
+ kasan_report+0x25a/0x380
+ __asan_load8+0x54/0x90
+ rxe_post_send+0x7a9/0x9a0 [rdma_rxe]
+ srpt_zerolength_write+0xf0/0x180 [ib_srpt]
+ srpt_cm_rtu_recv+0x68/0x110 [ib_srpt]
+ srpt_rdma_cm_handler+0xbb/0x15b [ib_srpt]
+ cma_ib_handler+0x1aa/0x4a0 [rdma_cm]
+ cm_process_work+0x30/0x100 [ib_cm]
+ cm_work_handler+0xa86/0x351b [ib_cm]
+ process_one_work+0x475/0x9f0
+ worker_thread+0x69/0x690
+ kthread+0x1ad/0x1d0
+ ret_from_fork+0x3a/0x50
+
+Fixes: aaf45bd83eba ("IB/srpt: Detect session shutdown reliably")
 Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
 Cc: stable@vger.kernel.org
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srp/ib_srp.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -2974,9 +2974,11 @@ static int srp_abort(struct scsi_cmnd *s
- 		ret = FAST_IO_FAIL;
- 	else
- 		ret = FAILED;
--	srp_free_req(ch, req, scmnd, 0);
--	scmnd->result = DID_ABORT << 16;
--	scmnd->scsi_done(scmnd);
-+	if (ret == SUCCESS) {
-+		srp_free_req(ch, req, scmnd, 0);
-+		scmnd->result = DID_ABORT << 16;
-+		scmnd->scsi_done(scmnd);
-+	}
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -838,16 +838,19 @@ static int srpt_post_recv(struct srpt_de
+  */
+ static int srpt_zerolength_write(struct srpt_rdma_ch *ch)
+ {
+-	struct ib_send_wr wr, *bad_wr;
++	struct ib_send_wr *bad_wr;
++	struct ib_rdma_wr wr = {
++		.wr = {
++			.opcode		= IB_WR_RDMA_WRITE,
++			.wr_cqe		= &ch->zw_cqe,
++			.send_flags	= IB_SEND_SIGNALED,
++		}
++	};
  
- 	return ret;
+ 	pr_debug("%s-%d: queued zerolength write\n", ch->sess_name,
+ 		 ch->qp->qp_num);
+ 
+-	memset(&wr, 0, sizeof(wr));
+-	wr.opcode = IB_WR_RDMA_WRITE;
+-	wr.wr_cqe = &ch->zw_cqe;
+-	wr.send_flags = IB_SEND_SIGNALED;
+-	return ib_post_send(ch->qp, &wr, &bad_wr);
++	return ib_post_send(ch->qp, &wr.wr, &bad_wr);
  }
+ 
+ static void srpt_zerolength_write_done(struct ib_cq *cq, struct ib_wc *wc)
