@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49RUc6raIbKeXBpoMw8J3PI4BncDLY0MSldKCKzIO2ljD/RuJLq08wc2TsUOR+rd68CYuLC
-ARC-Seal: i=1; a=rsa-sha256; t=1524405356; cv=none;
+X-Google-Smtp-Source: AIpwx4/LUN1tKkbE5stSOq6/WNTPl///KBNectz5F9HfxcvK7nS0f5llkQvkngE9sL1f0NI4IZpQ
+ARC-Seal: i=1; a=rsa-sha256; t=1524405353; cv=none;
         d=google.com; s=arc-20160816;
-        b=fsDqTkgShKuFZ9nosRGNeAaMTNJjCkcTzjO61VjJKZPm0E1S3aS3IqDFgggKoHdbxQ
-         TyZvhLg4/dqPPlKEgU+QWgGehdXCwgVarLRBbyQ3THJ6KogTzdSou+8DtDpbDQz3CpHV
-         SNn6WxE2ojfQabvDC3Mmi4NzAfeb7OR1iya1JargpQoQagw+v/JyNn1s83rHhpCoFL4w
-         fjOzVFLWjKN4MuYQyk10T0swnxCZRW6FHWVHPLN48LIfFL0kOnDczXLMYpXMnRMq9jr9
-         8ZPxAaV/uW6cAryq3wHlgI2UbK70JJVT2rAQG1W98tjvOWsPA3SpMUi58hQxczX0FO7z
-         zlHQ==
+        b=XPOdbSiLzi7YK7zcZ33kXa1Ln4lUB7Wrgcgg7Qvq8QhkqX3bi35wORv7DvN5FU+K7E
+         /TjNgZsG5PLEUHgT+bM13cKT7OuNxEBPy012pqzhw56cTOEpBBd64JaQFbyU2tbhgVBb
+         91tyg3N8ZOONElEyor3geH6c7Wv4IGV2aQRMt0YRgAoGSkbxFI1fysG8GNrhjVr2+ddh
+         XPdZ/Kg2/9oXkTtLpPLu4V1qa9m70MGp+u+wNTGSApklnh/eibCTQKk6TovGZAgohHzP
+         aAh9bpL1ThlZHPf3nsrmvdBR0v7+ochfe7Z6LHanq4/MlWyrK4MuTUuyQFm5JYJGkMOH
+         rmFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=apUiSRUhgX74oVquj8GUOU4eGKQGuw6VwojoVz+m+ZU=;
-        b=HH5VEa/6V7bjZXmX8ykMkVIpMP5t3UZ0BddtxYTJEvrM+6VAB4EAXi87ZjQ7CEZdhX
-         m97hp6GJrY7F3woRtgei1J5q/7W6n8rGVJLlSrF2GtfEU0VNQ0TpKzOFpOPA9zzMKt+4
-         YcS5d+iHO8WSiudBTCmiaRQE/0IlKfKaD6lgCQ9fa1NdmazZGWHzwr9FgQp0j7NzlzkT
-         zxjz+z6nf/cqA/9Pnvhc96LbLhCkiCRyRaDAdsGuRsRni3mikmaj7LK3t4PGIjXppSg0
-         dHBrBpOgx6XsVu7bH5J3s0PFBha9nG6OBtj/82bsUuth9gdDNQ3gZ2jUGN3A6k5naCfR
-         +b3g==
+        bh=jLEs9OF0b2oyXvGVJtJjxOLz+8IlltuKuaib9B4xrbI=;
+        b=aklMEcX9ud+G1+nrFr2M6G4pdoTYc50MA6RPzJglwrosy/6xp2ZJPTLNTnempR2PIX
+         Myhxw8CcizDxqWZcBf4BOUQO6MMrQdkCeX1JoCuVli01NWpCTfN7Lw4tNTeXc4twatul
+         W3w+An5h3QipAOTvOEwiW6XpcZdyzQrAYPtISbSwOF5/auyPUWjn4twWqAf/pTCPfY7u
+         yGH86WdSzP6E3hhhbLiq7Onni6gNIaRbBiRbCSb3i/GMpjH+4hdbNTEXQfAonrw1NLx8
+         KPnWjiYt+phPU6bxV5lhbVGruckIjaVHzlrxLF8geT6DrNjethXUgO0B5OAozigxRhcZ
+         yT2w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jason Andryuk <jandryuk@gmail.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.16 035/196] x86/xen: Delay get_cpu_cap until stack canary is established
-Date: Sun, 22 Apr 2018 15:50:55 +0200
-Message-Id: <20180422135105.924554029@linuxfoundation.org>
+	Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Minchan Kim <minchan@kernel.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Hugh Dickins <hughd@google.com>,
+	Christian Borntraeger <borntraeger@de.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 008/196] mm/ksm.c: fix inconsistent accounting of zero pages
+Date: Sun, 22 Apr 2018 15:50:28 +0200
+Message-Id: <20180422135104.636269827@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -40,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454870775215893?=
-X-GMAIL-MSGID: =?utf-8?q?1598454870775215893?=
+X-GMAIL-THRID: =?utf-8?q?1598454868442656984?=
+X-GMAIL-MSGID: =?utf-8?q?1598454868442656984?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,59 +56,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Andryuk <jandryuk@gmail.com>
+From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
 
-commit 36104cb9012a82e73c32a3b709257766b16bcd1d upstream.
+commit a38c015f3156895b07e71d4e4414289f8a3b2745 upstream.
 
-Commit 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings") introduced a
-call to get_cpu_cap, which is fstack-protected.  This is works on x86-64
-as commit 4f277295e54c ("x86/xen: init %gs very early to avoid page
-faults with stack protector") ensures the stack protector is configured,
-but it it did not cover x86-32.
+When using KSM with use_zero_pages, we replace anonymous pages
+containing only zeroes with actual zero pages, which are not anonymous.
+We need to do proper accounting of the mm counters, otherwise we will
+get wrong values in /proc and a BUG message in dmesg when tearing down
+the mm.
 
-Delay calling get_cpu_cap until after xen_setup_gdt has initialized the
-stack canary.  Without this, a 32bit PV machine crashes early
-in boot.
-(XEN) Domain 0 (vcpu#0) crashed on cpu#0:
-(XEN) ----[ Xen-4.6.6-xc  x86_64  debug=n  Tainted:    C ]----
-(XEN) CPU:    0
-(XEN) RIP:    e019:[<00000000c10362f8>]
-
-And the PV kernel IP corresponds to init_scattered_cpuid_features
-   0xc10362f8 <+24>:    mov    %gs:0x14,%eax
-
-Fixes 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
-
-Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Link: http://lkml.kernel.org/r/1522931274-15552-1-git-send-email-imbrenda@linux.vnet.ibm.com
+Fixes: e86c59b1b1 ("mm/ksm: improve deduplication of zero pages with colouring")
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/enlighten_pv.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ mm/ksm.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1259,10 +1259,6 @@ asmlinkage __visible void __init xen_sta
- 	 */
- 	__userpte_alloc_gfp &= ~__GFP_HIGHMEM;
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -1131,6 +1131,13 @@ static int replace_page(struct vm_area_s
+ 	} else {
+ 		newpte = pte_mkspecial(pfn_pte(page_to_pfn(kpage),
+ 					       vma->vm_page_prot));
++		/*
++		 * We're replacing an anonymous page with a zero page, which is
++		 * not anonymous. We need to do proper accounting otherwise we
++		 * will get wrong values in /proc, and a BUG message in dmesg
++		 * when tearing down the mm.
++		 */
++		dec_mm_counter(mm, MM_ANONPAGES);
+ 	}
  
--	/* Work out if we support NX */
--	get_cpu_cap(&boot_cpu_data);
--	x86_configure_nx();
--
- 	/* Get mfn list */
- 	xen_build_dynamic_phys_to_machine();
- 
-@@ -1272,6 +1268,10 @@ asmlinkage __visible void __init xen_sta
- 	 */
- 	xen_setup_gdt(0);
- 
-+	/* Work out if we support NX */
-+	get_cpu_cap(&boot_cpu_data);
-+	x86_configure_nx();
-+
- 	xen_init_irq_ops();
- 
- 	/* Let's presume PV guests always boot on vCPU with id 0. */
+ 	flush_cache_page(vma, addr, pte_pfn(*ptep));
