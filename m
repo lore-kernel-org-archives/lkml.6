@@ -1,81 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2591571-1524405343-2-11195798078940463068
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524405342; b=kmYeKAWqOkKzRc8hUOg7H7HqmTfupd91YEq4J6hV9AEAf+2Evg
-    TzCimvPFWByk4oshuryMWLyzYqfAWMOFlxg74oeGauIyBFLjTzj74gS0Qrz7XJsc
-    hoGiM4nwNsJH5gMPAN/mH9/m2CEPLhS67lRYKEIElLZyYcRfsIhsINb6CfAyG7o4
-    Lu+JByhZwtI4fiahTOgAOiLqdlyy8NKse5bdQJSFhoLCmEZQKw+WcQXfmMGnb9yj
-    LjhRz5HBcFm+3mNEEYIB8ywQRJpbFJ2NKjqX0FxZWRFnPQZcuJm6K8K2OVKcpyVp
-    OAcuJw+qN7a/5t75wCTYNiQ3KOFM8+Fvg9Fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524405342; bh=nQYFjkjhNyk4fk2HJZYQpJJhLbx/y4
-    2X9sRiiZomof0=; b=n/xlwjXreqFbexakN2unTWsYrlpWB0wnQTvRLUFuwnpEqL
-    SGzOBQw7OgRsrPefqX7t1G0Uuz/Cr70jgP+SfcCkCfjoVM4lNM1kTTCZnY79u9Hm
-    A1a2NWQvRwrG3MGJThXsIEVUg9Gp/hKci0EMbvRgyJyEOu9yFlNyMIKJNuuO8/rM
-    rfpAMEG5VaJ7nW6UlQ2tcZ7FjWZ1q70T2eUKo6v64+M/DxumNpdawgvKR1KAJMny
-    iJpgqR6KqrC8Kx8V6TvF5ZpbepykPpM+hH+HzUtNbEh0ymLfMKAJfz7UFjbWqOUk
-    w/TymT2lOvRaJ+dOtdkJnqeyxb4Qnp44Q/mD9WEQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOL/LkliZExbJ5Q1LD8xyB5qLdvlnkSQjnfXYvSz6HSipm/pbpd98Sa30b+y38T8PzxlXOxTEHe9G5+aJyzgAB+VeHgiTK1iT9OkS2mcTewIFA5arjFq
-    6glkpHeAFaMa2WxkhMC/ydHEO/zBoKZlMC5f8jjdzlZYFbMgNlK3FkDZ/2oxi7AokxNN2WO38aEwbS5vV5aGhi+bTZSMp5z0Jj4iORPXpqWFU6lWV2iQRqF0
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=3Rq6X1I58VWYUlHXiHkA:9
-    a=q22Hyeykh7eSAdnf:21 a=lYtg8cpXjCE3KycZ:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753572AbeDVNzk (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 22 Apr 2018 09:55:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44734 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753569AbeDVNzi (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 22 Apr 2018 09:55:38 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+Qii31cm5bWDbevy3XfeMPfXs/0A6riGc0fOXDObliSrs1jDb05WfmlAGC2/xNzIDvketL
+ARC-Seal: i=1; a=rsa-sha256; t=1524405340; cv=none;
+        d=google.com; s=arc-20160816;
+        b=dt/Rq7NY6fZZktrajGRKNBfE+Oz7AigqGU+YghvyVgzhFkZjbSMFzC00dM88tgpk7x
+         P9+M4EDNFpXPObu+S6Ggk1yJREabkt073Hux6/Wym3a303DnxYN1L7bFPeAAyBii5DQo
+         2WFMdqn3TJYj4HhPHh7sZWXunFfDfSHLa2PhczPGtHH9FZMVZiiF9n2YfFvQSs8OOpks
+         TmDafPqjghehSyFvrUm22zo2dgQ4MQdBdcGiqpDrXFfonTYl9OnjLYRYU/F/XqQ8qn72
+         b+f221774tU1PaFVKGjYyFCTXjUNkkbW344i/YAvclpcPRONKJvrW/V48WRDs0HotriQ
+         7TrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=PgoeZu5KTFaLkfuw99stq/5vwoK9D6ixjdSkQkq2H5k=;
+        b=UAHXEVYpmTf9ONeeaa34iP7XJOR+B3pNRNN9hwbSDek9lpabdn62T6JKtR1kDnnlGv
+         cYyDYGa8idtV+GKm+VWir1oPjo0mrrOGoBSN90wY1n6XwQVq7Ue2caOuUBRLbgdAuSTo
+         nNLwM0emGNGk9q5QXBqAax9HoFRF+xH2TpJ6lmCOjITKLbicKBAWeH+KP/u1USjV3rR/
+         qQNvXN5V92IWrpHELFxLFEUoTrKE5OVP+/V4DL7uqCr+9XWQwTzWzC6bbncbO+jYojFj
+         ZUk1kgPX0COH6cle0US9Q7PS0IBXduZRPKBvhScYmIeMMKRUXPVVpWm/WU0918xCASUM
+         Nx7w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.16 029/196] spi: Fix unregistration of controller with fixed SPI bus number
-Date: Sun, 22 Apr 2018 15:50:49 +0200
-Message-Id: <20180422135105.625734408@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Sean Young <sean@mess.org>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.16 030/196] media: rc: oops in ir_timer_keyup after device unplug
+Date: Sun, 22 Apr 2018 15:50:50 +0200
+Message-Id: <20180422135105.663230626@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 References: <20180422135104.278511750@linuxfoundation.org>
@@ -83,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598454854474207024?=
+X-GMAIL-MSGID: =?utf-8?q?1598454854474207024?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -93,67 +49,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+From: Sean Young <sean@mess.org>
 
-commit 613bd1ea387bb48b7c9a71a0bb451ac15cfbbc01 upstream.
+commit 8d4068810d9926250dd2435719a080b889eb44c3 upstream.
 
-Commit 9b61e302210e (spi: Pick spi bus number from Linux idr or spi alias)
-ceased to unregister SPI buses with fixed bus numbers. Moreover this is
-visible only if CONFIG_SPI_DEBUG=y is set or when trying to re-register
-the same SPI controller.
+If there is IR in the raw kfifo when ir_raw_event_unregister() is called,
+then kthread_stop() causes ir_raw_event_thread to be scheduled, decode
+some scancodes and re-arm timer_keyup. The timer_keyup then fires when
+the rc device is long gone.
 
-rmmod spi_pxa2xx_platform (with CONFIG_SPI_DEBUG=y):
-[   26.788362] spi_master spi1: attempting to delete unregistered controller [spi1]
-
-modprobe spi_pxa2xx_platform:
-[   37.883137] sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:19.0/pxa2xx-spi.12/spi_master/spi1'
-[   37.894984] CPU: 1 PID: 1467 Comm: modprobe Not tainted 4.16.0-rc4+ #21
-[   37.902384] Call Trace:
-...
-[   38.122680] kobject_add_internal failed for spi1 with -EEXIST, don't try to register things with the same name in the same directory.
-[   38.136154] WARNING: CPU: 1 PID: 1467 at lib/kobject.c:238 kobject_add_internal+0x2a5/0x2f0
-...
-[   38.513817] pxa2xx-spi pxa2xx-spi.12: problem registering spi master
-[   38.521036] pxa2xx-spi: probe of pxa2xx-spi.12 failed with error -17
-
-Fix this by not returning immediately from spi_unregister_controller() if
-idr_find() doesn't find controller with given ID/bus number. It finds
-only those controllers that were registered with dynamic SPI bus
-numbers. Only conditional cleanup between dynamic and fixed bus numbers
-is to remove allocated IDR.
-
-Fixes: 9b61e302210e (spi: Pick spi bus number from Linux idr or spi alias)
 Cc: stable@vger.kernel.org
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/media/rc/rc-main.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2260,12 +2260,6 @@ void spi_unregister_controller(struct sp
- 	mutex_lock(&board_lock);
- 	found = idr_find(&spi_master_idr, id);
- 	mutex_unlock(&board_lock);
--	if (found != ctlr) {
--		dev_dbg(&ctlr->dev,
--			"attempting to delete unregistered controller [%s]\n",
--			dev_name(&ctlr->dev));
--		return;
--	}
- 	if (ctlr->queued) {
- 		if (spi_destroy_queue(ctlr))
- 			dev_err(&ctlr->dev, "queue remove failed\n");
-@@ -2278,7 +2272,8 @@ void spi_unregister_controller(struct sp
- 	device_unregister(&ctlr->dev);
- 	/* free bus id */
- 	mutex_lock(&board_lock);
--	idr_remove(&spi_master_idr, id);
-+	if (found == ctlr)
-+		idr_remove(&spi_master_idr, id);
- 	mutex_unlock(&board_lock);
- }
- EXPORT_SYMBOL_GPL(spi_unregister_controller);
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -1929,12 +1929,12 @@ void rc_unregister_device(struct rc_dev
+ 	if (!dev)
+ 		return;
+ 
+-	del_timer_sync(&dev->timer_keyup);
+-	del_timer_sync(&dev->timer_repeat);
+-
+ 	if (dev->driver_type == RC_DRIVER_IR_RAW)
+ 		ir_raw_event_unregister(dev);
+ 
++	del_timer_sync(&dev->timer_keyup);
++	del_timer_sync(&dev->timer_repeat);
++
+ 	rc_free_rx_device(dev);
+ 
+ 	mutex_lock(&dev->lock);
