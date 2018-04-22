@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/bU9q50lEXJhUwFipOYgez5hlkgUCMMo0kD4wAwOm0EAvN/H6CE1ReZvjAN6He2y8jKhCr
-ARC-Seal: i=1; a=rsa-sha256; t=1524406478; cv=none;
+X-Google-Smtp-Source: AIpwx49m5R9aVbhaxstgbgNTR2UPIvxpIoUSX0a48JLhKhYb0MCfdv/VZpi9+l6Pv782drlZ7lN3
+ARC-Seal: i=1; a=rsa-sha256; t=1524406476; cv=none;
         d=google.com; s=arc-20160816;
-        b=JXWcy7wZTR17n+eCycI1Q0SGvGr4ovCX2rM1QRdRPt/YCimY2oQOcQlJDIsNnAm7h5
-         Rwp1vHBX4Z0c9OE/g9PHECvV2PkPPDbOw/mp0Sdv2mpE7L2c7XwwqfAbeQwsWZdK73fF
-         kZK8ZS2Bcl6X4nYr4hBUSdlpCbkkN8sydNVrOmj2N8oHoyv2lWmb+hxdOyj9tttui5S2
-         q1DmaylKq0umjvWpmIDfVtX1QslLXQ4Fy6WVWjPD9/KooSfLf9V22OMXaaEBQ1BbWCd3
-         OC5+y/+Zo8dBVAt17Z2SRlv5WUCA7wMtObSf+87TzOVsRNT9RWN2f9f7sYh7nPRNF1yO
-         zqIg==
+        b=h+h7M+lMMp9/c4cFXJbqDizZzKAge7qvoG/Bm3/C6JQ+4HoHztV5QEgIrPVk6/LnZx
+         YMyK9s9d+Z+AmBoiXHxGGFXVig1OH5o8ze+BfIpwAyM+rE9yreA1j4NiWdZ5jgGqk6cW
+         dPwqOBWu9qGRg/yyVCJ4p1wg01sDT37zvDlxY1rKT/2s+MmMUO6IzQRHFPEe5HaphfYk
+         78ZIYMciNEvd/75RFPly6D1FWJXxSHod+xgC3erQQtP04Xbug6IdHvndM5DziNRl/wBE
+         Bep/j8FX8kM1vXY00x8Cwp+M5anXnfbuxwLUWxqYFLLZxICa8LpzVWKK5eguW//LLzq3
+         VulA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RsXLrIoYCQPZMCfT3e/SV1v62+BpsP6n2gfmX/eXiow=;
-        b=xit3h15ZDATRzSaptsX0R4gb8FF/JAnnvPCijIJHd7oqbh4SgpRIzTx+shVEcLs4Af
-         3Z/iWMz2uWaCkSXMtiAgrTu7dRAZcQf+6Ki7LaQqedXqkrdSqfexKC+5UuB2YoPYz/+g
-         cITrOXZCTp9LqZO2tdvJSELAYB5pK1WLVOJkUb54NLCuFo87MoKkwqNw5I/Mn2H4k1UU
-         NsTAgdQM8bQJafYn/zuR4RW+P0uOmiXV2bb5Hi4pwIy1jKaF0C6oouC6ZSpq9Muztpfb
-         T47VlFbbZUALE5Yu3AeJ+d86LllvHImnGDsXMCAoEysLOUEvcQlfo4/VaKeiTb3WO0Ie
-         D9jQ==
+        bh=HUhHDrPmtuv41farWj3p8rpSy4CGdS/6182KY6pe4Cs=;
+        b=zdfqlKDlvimJt2zKQdaddodQo5jFblb5kZeSKCDJVFA9Duke0GwBj1N++Ot0cwbhXQ
+         CvX9R8xvatFNce9nSUy72o9FXw29v45W2L14PWRAHUaBRU4MPWW34uk934+d49DN2/45
+         95LHusQIeAbfr4Y3HzcPGQUePX4PAUNrVJ4bll+zsu9LgdWbfBD+uaAx3kuLMwSOqdrm
+         DcOJUEmnLQRX3GLQFSOpvOtkR1ud0xT+gXS3xTS8Z4O8AJDnEv1srlyoOXXf1NlQ9yRF
+         oC/vjrzwZvvcxXje1GmezlX1yQrP+wh5iSWIiglc36CaRc9w9J/g8lkARg0OkmglPXx/
+         qMUw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	stable@kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 86/95] jffs2_kill_sb(): deal with failed allocations
-Date: Sun, 22 Apr 2018 15:53:55 +0200
-Message-Id: <20180422135213.954335057@linuxfoundation.org>
+	Mingye Wang <arthur200126@gmail.com>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.9 85/95] udf: Fix leak of UTF-16 surrogates into encoded strings
+Date: Sun, 22 Apr 2018 15:53:54 +0200
+Message-Id: <20180422135213.907799808@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
 References: <20180422135210.432103639@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455296001564501?=
-X-GMAIL-MSGID: =?utf-8?q?1598456048078903710?=
+X-GMAIL-THRID: =?utf-8?q?1598455282047443898?=
+X-GMAIL-MSGID: =?utf-8?q?1598456045022625496?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,29 +49,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Jan Kara <jack@suse.cz>
 
-commit c66b23c2840446a82c389e4cb1a12eb2a71fa2e4 upstream.
+commit 44f06ba8297c7e9dfd0e49b40cbe119113cca094 upstream.
 
-jffs2_fill_super() might fail to allocate jffs2_sb_info;
-jffs2_kill_sb() must survive that.
+OSTA UDF specification does not mention whether the CS0 charset in case
+of two bytes per character encoding should be treated in UTF-16 or
+UCS-2. The sample code in the standard does not treat UTF-16 surrogates
+in any special way but on systems such as Windows which work in UTF-16
+internally, filenames would be treated as being in UTF-16 effectively.
+In Linux it is more difficult to handle characters outside of Base
+Multilingual plane (beyond 0xffff) as NLS framework works with 2-byte
+characters only. Just make sure we don't leak UTF-16 surrogates into the
+resulting string when loading names from the filesystem for now.
 
-Cc: stable@kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+CC: stable@vger.kernel.org # >= v4.6
+Reported-by: Mingye Wang <arthur200126@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jffs2/super.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/udf/unicode.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -342,7 +342,7 @@ static void jffs2_put_super (struct supe
- static void jffs2_kill_sb(struct super_block *sb)
- {
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
--	if (!(sb->s_flags & MS_RDONLY))
-+	if (c && !(sb->s_flags & MS_RDONLY))
- 		jffs2_stop_garbage_collect_thread(c);
- 	kill_mtd_super(sb);
- 	kfree(c);
+--- a/fs/udf/unicode.c
++++ b/fs/udf/unicode.c
+@@ -28,6 +28,9 @@
+ 
+ #include "udf_sb.h"
+ 
++#define SURROGATE_MASK 0xfffff800
++#define SURROGATE_PAIR 0x0000d800
++
+ static int udf_uni2char_utf8(wchar_t uni,
+ 			     unsigned char *out,
+ 			     int boundlen)
+@@ -37,6 +40,9 @@ static int udf_uni2char_utf8(wchar_t uni
+ 	if (boundlen <= 0)
+ 		return -ENAMETOOLONG;
+ 
++	if ((uni & SURROGATE_MASK) == SURROGATE_PAIR)
++		return -EINVAL;
++
+ 	if (uni < 0x80) {
+ 		out[u_len++] = (unsigned char)uni;
+ 	} else if (uni < 0x800) {
