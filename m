@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/q3i3a3smBh5ZbkGUcFKM0ZY3m21W+BGYDjySFsES7foiGRSg3rl2MQxkU6QVQH1aPvN1u
-ARC-Seal: i=1; a=rsa-sha256; t=1524405822; cv=none;
+X-Google-Smtp-Source: AIpwx48/fhY1+3To2CsTWotNl4RWZ0pcLlq4gB1Of1+1/yX1HlJgyEmknbzZ690VAivnIsGA18sj
+ARC-Seal: i=1; a=rsa-sha256; t=1524405819; cv=none;
         d=google.com; s=arc-20160816;
-        b=BTj+ktA1H0nwTP14+ftC+eqxqMEtjmAI8Q68c9OwGVSAUS10oMJZOnNXtnrdtcD7TC
-         OeK/meJw8pN1c3lz5lFQTK2PdziWCCnRu8kl7BdvGJmcgdv+RkeSOLGZge5w0jJ8QH2t
-         IQkyvyScVXg+JMeCCrU1GxvacyTbPZL/O+bY1pKXEo59FFhwFwdMSPF9iFkW4ia4fWgd
-         8gWNdOHMmHX8PAcm+pgZL+cv+U4QU2JSYS0RwwVcPG1c2uddOZOpOOlWhiZ+dCuOO77P
-         rP7WYJu2qlEFHiAHHTaBpbppCJXEk8MBs0CazavXfp9nncPQNXbvgPOWCN1Y5vxJkwKC
-         lriQ==
+        b=TiMKj/sC36DnlQCd53glRPmew+m7osdAT38v4KY2+V0J96MhwwiaT1VwCgajYlBoFC
+         NukdXvLntLyXt2iMrG+MHs1Wajs05AuK6hB9ul0EzlOD96OUEv/imLSpu/7BfK16e6TJ
+         /oVXRqRS22nJdCHbiGQM2nj9u0mdJ0sDASDimSnySO2qavzpNBmaZTUXGl949UJrJZI2
+         4wILnHrduIgWj5QRBXSXoOA1qmyacsZPL/k5Sy3NCpI4dep2Oi+Qdj3HIWokoqMb94qA
+         nbu5dH6DohD/oEbX6EAvVgRIxNlf58gLmZNLI3zzqi8bGpsX4kLLNu90J5EQUOImS9A7
+         AGmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=46Zpm+jbQtaUn+sM4YO0b3FUNAbzvYdNKu0PR9G3kZc=;
-        b=mMe2vqhJyaN+BqJ1isjEl6L/cwW9BEXxveaDh2B3g9sqU3udx/HuOD0hAQICgS9J7l
-         tpPxVozSV81RAQiHOOce22vYL+CQTaAwITh+J+7W3oWUgIvHS6qw050icxN6XLYpKO6k
-         i9Tr2NiKPlaG1SocmI8wXlJcmnzlVs20ACrirC5m8ftyPDYCNqpeTT+l4ZioUAz9JDfJ
-         ESYVV/JibeKbMwRaXVSFhz69HQDDyu9KPfTg9ZHJF6Zy+4/RfcJtu3VmwKhTKdP5lQTe
-         OXIpvb/lUqdk5lxdVNQ1LrfVDYiF4D2nKpt6xkXpOs0gZL7aDCMTouBLSbC27PenjqG0
-         eQoQ==
+        bh=0jYbEBF7edRbxLhCb0ISkX9QE6A1deTflSmTdmk9NHg=;
+        b=jQyRR2E+lJCc3s3YMngoysmqgYTaaxn0mj863WqLoMYGbeseWrkgVD9r5UJQ49ZynV
+         S155Js6X73Ktz/dpeY6SQPTYLugIHB/7GL/TiC1u5Z8nbF+gmiPBmo+rtJAfqnsLm4BP
+         tnFX0Ymw0uCgUGMDxEe5JatBcXB+2RVGVM/Pob8pFWUoMiOV2wg9/TVI4Q/g9dSoP2/3
+         rlGlt2Rkxe/BQEKp71se7NHli9itIAg2BUt/yplMELneNhpdIQHaO3Gd2FGNUUIL5Ekg
+         2pYULda2QL26bRXtU8H0dJYSzXg4kqDucvjNxwJSDAL2OF0RuRpjzECjAS2XO/pR0kNR
+         dN7A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com,
-	Jeff Mahoney <jeffm@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.com>,
+	Kees Cook <keescook@chromium.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 011/164] fs/reiserfs/journal.c: add missing resierfs_warning() arg
-Date: Sun, 22 Apr 2018 15:51:18 +0200
-Message-Id: <20180422135135.855395349@linuxfoundation.org>
+Subject: [PATCH 4.14 010/164] task_struct: only use anon struct under randstruct plugin
+Date: Sun, 22 Apr 2018 15:51:17 +0200
+Message-Id: <20180422135135.818096236@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135135.400265110@linuxfoundation.org>
 References: <20180422135135.400265110@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598454902575626953?=
-X-GMAIL-MSGID: =?utf-8?q?1598455359233624634?=
+X-GMAIL-THRID: =?utf-8?q?1598454899762743687?=
+X-GMAIL-MSGID: =?utf-8?q?1598455356670564211?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,50 +52,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Kees Cook <keescook@chromium.org>
 
-commit 9ad553abe66f8be3f4755e9fa0a6ba137ce76341 upstream.
+commit 2cfe0d3009418a132b93d78642a8059a38fe5944 upstream.
 
-One use of the reiserfs_warning() macro in journal_init_dev() is missing
-a parameter, causing the following warning:
+The original intent for always adding the anonymous struct in
+task_struct was to make sure we had compiler coverage.
 
-  REISERFS warning (device loop0): journal_init_dev: Cannot open '%s': %i journal_init_dev:
+However, this caused pathological padding of 40 bytes at the start of
+task_struct.  Instead, move the anonymous struct to being only used when
+struct layout randomization is enabled.
 
-This also causes a WARN_ONCE() warning in the vsprintf code, and then a
-panic if panic_on_warn is set.
-
-  Please remove unsupported %/ in format string
-  WARNING: CPU: 1 PID: 4480 at lib/vsprintf.c:2138 format_decode+0x77f/0x830 lib/vsprintf.c:2138
-  Kernel panic - not syncing: panic_on_warn set ...
-
-Just add another string argument to the macro invocation.
-
-Addresses https://syzkaller.appspot.com/bug?id=0627d4551fdc39bf1ef5d82cd9eef587047f7718
-
-Link: http://lkml.kernel.org/r/d678ebe1-6f54-8090-df4c-b9affad62293@infradead.org
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: <syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Jeff Mahoney <jeffm@suse.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.com>
+Link: http://lkml.kernel.org/r/20180327213609.GA2964@beast
+Fixes: 29e48ce87f1e ("task_struct: Allow randomized")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/reiserfs/journal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/compiler-clang.h |    3 ---
+ include/linux/compiler-gcc.h   |   12 +++---------
+ 2 files changed, 3 insertions(+), 12 deletions(-)
 
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -2643,7 +2643,7 @@ static int journal_init_dev(struct super
- 	if (IS_ERR(journal->j_dev_bd)) {
- 		result = PTR_ERR(journal->j_dev_bd);
- 		journal->j_dev_bd = NULL;
--		reiserfs_warning(super,
-+		reiserfs_warning(super, "sh-457",
- 				 "journal_init_dev: Cannot open '%s': %i",
- 				 jdev_name, result);
- 		return result;
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -17,9 +17,6 @@
+  */
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+ 
+-#define randomized_struct_fields_start	struct {
+-#define randomized_struct_fields_end	};
+-
+ /* Clang doesn't have a way to turn it off per-function, yet. */
+ #ifdef __noretpoline
+ #undef __noretpoline
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -229,6 +229,9 @@
+ #ifdef RANDSTRUCT_PLUGIN
+ #define __randomize_layout __attribute__((randomize_layout))
+ #define __no_randomize_layout __attribute__((no_randomize_layout))
++/* This anon struct can add padding, so only enable it under randstruct. */
++#define randomized_struct_fields_start	struct {
++#define randomized_struct_fields_end	} __randomize_layout;
+ #endif
+ 
+ #endif /* GCC_VERSION >= 40500 */
+@@ -243,15 +246,6 @@
+  */
+ #define __visible	__attribute__((externally_visible))
+ 
+-/*
+- * RANDSTRUCT_PLUGIN wants to use an anonymous struct, but it is only
+- * possible since GCC 4.6. To provide as much build testing coverage
+- * as possible, this is used for all GCC 4.6+ builds, and not just on
+- * RANDSTRUCT_PLUGIN builds.
+- */
+-#define randomized_struct_fields_start	struct {
+-#define randomized_struct_fields_end	} __randomize_layout;
+-
+ #endif /* GCC_VERSION >= 40600 */
+ 
+ 
