@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+G+tMVOJjKngPNiG/MLpPWNDkwofNGvzVFaCvJGw+13FfZQNnatGO6EAz+SQwFvmownW+A
-ARC-Seal: i=1; a=rsa-sha256; t=1524406743; cv=none;
+X-Google-Smtp-Source: AIpwx48c4FLZbbZTU7FaDzpniZvcjBB51hWTZ1f6cN9VIGrbOcTpIhSqPX+kBOSAVd9UG/+nWxAQ
+ARC-Seal: i=1; a=rsa-sha256; t=1524406737; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZeVkvZkgY7PMIhTkkotvP3axuc0moxRfS7wYEhNtm3wUB4BXVDZBeHmXrrVetdjGpz
-         UYb/vhRPON1cFbjnZQUA/NVlQ7edaIiYvR7vqsMkUsIPDtO6Bx4MmmGFBDm00KQG3roi
-         iYBHkj0HNRNwGOrITTqR0atyvHdGhnY6V+MpYPb8AQbL2/5QWHxL4xsCQwmUNtYxiu5+
-         MH976kZb9p+rho/qZR8aDzy4B5MrzYupkmuo9+6ZKg5FUgFRmEVZHCFPUgRs8tBrwnOO
-         9aCrwVcKJLwxGDbfS8ktB93LxPRJ3eG9MNS+sHQ7kOh9b3X+DdZSZxW35WX98kWZjb7y
-         sF1Q==
+        b=aL4hANLZ1XszaSrUXvi3C1f1Bw6sdotKNA2aMTW2n17H5kax5dUWT40hamUuUGebDA
+         LRt/0ajfujfRjUakied80WiEX60G4bYdihq1TyMnfoqub5MLEXSoKqZtySpZUlV6DnnE
+         C0gVjU6/RSQkBVFWLV29TW/+PK/VrI2kFePVXVf6j7kSLnPfHZjnRN6r9ykBHFghjgyC
+         a/Rh8UENGzLmNzmLj4REaPW5YFi1sNecn3+SsTOX01H/QGbedlq9SCEpfP5zz/irSUKu
+         ynVwJeLZ3qjimiTDjFSeGJWn2jfMSek/GxG3lNlHDOVOvcpzGAw3Z026L3tEChcZxjWs
+         UNgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hBQ+ZQUD2QSp1XU14UWyeq3O3IZSGeYaE0oJzy8aa4Q=;
-        b=gXjiC2bZDUPoqAcy728urB/ybejgBxbO1Xx+atgG3MGj4luShCfhgJFv9UnwLo4/ls
-         UDC0RwML824V4zHml4rm0zRTFB+GAydKe11T4EfWcFSXxatpvdE+wr1bNrkH/UFJ8OBo
-         rNfJizbrcRMUkajpGADYS9qYUMPrXRDeQd9kRRwz8dgNGd9GZbuMeNeelRiCo/T3l1tW
-         gyQhpro+cqeOfvF6hIIPDVnyTVqz4ou2MFd3ZW/aKRe1VH7nOBq33fobJ9BAJdDQEHej
-         U1e0thPIenJAD8et4Hnbpkbi0hnjt72gE2ux3yCGoGQJfmwVZvHabUGDDkVoLY8kv4uH
-         rL8A==
+        bh=XQGUV30mWhGlzQRHnhmdsOpo5TZuyxucWgwd4s8/RfI=;
+        b=H++W2VbjmW/nSiQkxHMqKVB8Sx6+aAQd4pfI/qDGGAY+0xzvSd8LNjzVzgPA9wgbRu
+         p/FPrlu5e5+K+kYjhEVmETTpbNlAonXWHqj8KoqaU5zEnWpa3NHIHKRzGPjFl95l/Ljb
+         OULK0/v9ebjfQcBsLpcRIZXKCuK34ukeo6bh5sHuWjm4G0REgg0UV9up4BetPUDC1jDt
+         a2tLbsR6E9EBSSSFbxeB5b/P5sRNYmkvMziXjBMj0AqX56erNnHVsni6GWZs0AW+dRqY
+         +voxstoRCCyIDzO2TNgjIOw1Nk5ReS/ZL/6sTCkeYB8gSudYnLNlh1Mx+HvTGN1P4iyj
+         +s5g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	stable@kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.4 88/97] jffs2_kill_sb(): deal with failed allocations
-Date: Sun, 22 Apr 2018 15:54:06 +0200
-Message-Id: <20180422135310.002516046@linuxfoundation.org>
+	Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>,
+	Michael Neuling <mikey@neuling.org>,
+	Russell Currey <ruscur@russell.cc>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 86/97] powerpc/eeh: Fix enabling bridge MMIO windows
+Date: Sun, 22 Apr 2018 15:54:04 +0200
+Message-Id: <20180422135309.888967753@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180422135304.577223025@linuxfoundation.org>
 References: <20180422135304.577223025@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455296001564501?=
-X-GMAIL-MSGID: =?utf-8?q?1598456325930570604?=
+X-GMAIL-THRID: =?utf-8?q?1598455273756324131?=
+X-GMAIL-MSGID: =?utf-8?q?1598456319605735999?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,29 +51,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Michael Neuling <mikey@neuling.org>
 
-commit c66b23c2840446a82c389e4cb1a12eb2a71fa2e4 upstream.
+commit 13a83eac373c49c0a081cbcd137e79210fe78acd upstream.
 
-jffs2_fill_super() might fail to allocate jffs2_sb_info;
-jffs2_kill_sb() must survive that.
+On boot we save the configuration space of PCIe bridges. We do this so
+when we get an EEH event and everything gets reset that we can restore
+them.
 
-Cc: stable@kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Unfortunately we save this state before we've enabled the MMIO space
+on the bridges. Hence if we have to reset the bridge when we come back
+MMIO is not enabled and we end up taking an PE freeze when the driver
+starts accessing again.
+
+This patch forces the memory/MMIO and bus mastering on when restoring
+bridges on EEH. Ideally we'd do this correctly by saving the
+configuration space writes later, but that will have to come later in
+a larger EEH rewrite. For now we have this simple fix.
+
+The original bug can be triggered on a boston machine by doing:
+  echo 0x8000000000000000 > /sys/kernel/debug/powerpc/PCI0001/err_injct_outbound
+On boston, this PHB has a PCIe switch on it.  Without this patch,
+you'll see two EEH events, 1 expected and 1 the failure we are fixing
+here. The second EEH event causes the anything under the PHB to
+disappear (i.e. the i40e eth).
+
+With this patch, only 1 EEH event occurs and devices properly recover.
+
+Fixes: 652defed4875 ("powerpc/eeh: Check PCIe link after reset")
+Cc: stable@vger.kernel.org # v3.11+
+Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Acked-by: Russell Currey <ruscur@russell.cc>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jffs2/super.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/eeh_pe.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -345,7 +345,7 @@ static void jffs2_put_super (struct supe
- static void jffs2_kill_sb(struct super_block *sb)
- {
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
--	if (!(sb->s_flags & MS_RDONLY))
-+	if (c && !(sb->s_flags & MS_RDONLY))
- 		jffs2_stop_garbage_collect_thread(c);
- 	kill_mtd_super(sb);
- 	kfree(c);
+--- a/arch/powerpc/kernel/eeh_pe.c
++++ b/arch/powerpc/kernel/eeh_pe.c
+@@ -788,7 +788,8 @@ static void eeh_restore_bridge_bars(stru
+ 	eeh_ops->write_config(pdn, 15*4, 4, edev->config_space[15]);
+ 
+ 	/* PCI Command: 0x4 */
+-	eeh_ops->write_config(pdn, PCI_COMMAND, 4, edev->config_space[1]);
++	eeh_ops->write_config(pdn, PCI_COMMAND, 4, edev->config_space[1] |
++			      PCI_COMMAND_MEMORY | PCI_COMMAND_MASTER);
+ 
+ 	/* Check the PCIe link is ready */
+ 	eeh_bridge_check_link(edev);
