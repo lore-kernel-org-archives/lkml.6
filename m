@@ -1,102 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753399AbeDVBaO (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 21 Apr 2018 21:30:14 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:43060 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753330AbeDVBaL (ORCPT
+        id S1753395AbeDVCT6 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 21 Apr 2018 22:19:58 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:42241 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753025AbeDVCT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Apr 2018 21:30:11 -0400
-X-Google-Smtp-Source: AIpwx48qeVjtjN4eRoyyTNsW6u7BM+qLd2xRmuW9tzHVCPxTIEzUtij+fx7SFD7KATyLZjV3HIRtjQ==
-Date: Sat, 21 Apr 2018 18:22:59 -0700
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
-        bart.vanassche@wdc.com, ming.lei@redhat.com, tytso@mit.edu,
-        darrick.wong@oracle.com, jikos@kernel.org, rjw@rjwysocki.net,
-        pavel@ucw.cz, len.brown@intel.com, linux-fsdevel@vger.kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        todd.e.brandt@linux.intel.com, nborisov@suse.com,
-        martin.petersen@oracle.com, ONeukum@suse.com, oleksandr@natalenko.name,
-        oleg.b.antonyan@gmail.com, yu.chen.surf@gmail.com,
-        dan.j.williams@intel.com, linux-pm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jlayton@redhat.com
-Subject: Re: [PATCH 03/11] fs: add frozen sb state helpers
-Message-ID: <20180422012259.v2s6z2p7q53k5xyp@garbanzo.do-not-panic.com>
-References: <20171129232356.28296-1-mcgrof@kernel.org>
- <20171129232356.28296-4-mcgrof@kernel.org>
- <20171130171310.GG28180@quack2.suse.cz>
- <20171130190548.GJ729@wotan.suse.de>
- <20171201114724.GC8365@quack2.suse.cz>
- <20171201211327.GQ729@wotan.suse.de>
- <20171221110329.GG31584@quack2.suse.cz>
- <20180418005936.j3fa5rogfm353clf@garbanzo.do-not-panic.com>
- <20180420184932.57as7jup75nx463v@garbanzo.do-not-panic.com>
- <20180421235323.ndj3gx65n7kmv5ta@quack2.suse.cz>
+        Sat, 21 Apr 2018 22:19:56 -0400
+X-Google-Smtp-Source: AIpwx49lAUghhrZCeaCGVQS9aJwfAjWKftgv4W7xlQ/2nF41A0fwmBUP8n33gMlCKlWzCURHG78HjhwpPcasKLD/Tvg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180421235323.ndj3gx65n7kmv5ta@quack2.suse.cz>
-User-Agent: NeoMutt/20170609 (1.8.3)
+From: Diego Viola <diego.viola@gmail.com>
+Date: Sat, 21 Apr 2018 23:19:55 -0300
+Message-ID: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com>
+Subject: Experiencing freezes with kernel 4.16.3 on a desktop with E5500 CPU
+ (bisect included)
+To: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        len.brown@intel.com, rui.zhang@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 22, 2018 at 01:53:23AM +0200, Jan Kara wrote:
-> On Fri 20-04-18 11:49:32, Luis R. Rodriguez wrote:
-> > On Tue, Apr 17, 2018 at 05:59:36PM -0700, Luis R. Rodriguez wrote:
-> > > On Thu, Dec 21, 2017 at 12:03:29PM +0100, Jan Kara wrote:
-> > > > Hello,
-> > > > 
-> > > > I think I owe you a reply here... Sorry that it took so long.
-> > > 
-> > > Took me just as long :)
-> > > 
-> > > > On Fri 01-12-17 22:13:27, Luis R. Rodriguez wrote:
-> > > > > 
-> > > > > I'll note that its still not perfectly clear if really the semantics behind
-> > > > > freeze_bdev() match what I described above fully. That still needs to be
-> > > > > vetted for. For instance, does thaw_bdev() keep a superblock frozen if we
-> > > > > an ioctl initiated freeze had occurred before? If so then great. Otherwise
-> > > > > I think we'll need to distinguish the ioctl interface. Worst possible case
-> > > > > is that bdev semantics and in-kernel semantics differ somehow, then that
-> > > > > will really create a holy fucking mess.
-> > > > 
-> > > > I believe nobody really thought about mixing those two interfaces to fs
-> > > > freezing and so the behavior is basically defined by the implementation.
-> > > > That is:
-> > > > 
-> > > > freeze_bdev() on sb frozen by ioctl_fsfreeze() -> EBUSY
-> > > > freeze_bdev() on sb frozen by freeze_bdev() -> success
-> > > > ioctl_fsfreeze() on sb frozen by freeze_bdev() -> EBUSY
-> > > > ioctl_fsfreeze() on sb frozen by ioctl_fsfreeze() -> EBUSY
-> > > > 
-> > > > thaw_bdev() on sb frozen by ioctl_fsfreeze() -> EINVAL
-> > > 
-> > > Phew, so this is what we want for the in-kernel freezing so we're good
-> > > and *can* combine these then.
-> > 
-> > I double checked, and I don't see where you get EINVAL for this case.
-> > We *do* keep the sb frozen though, which is good, and the worst fear
-> > I had was that we did not. However we return 0 if there was already
-> > a prior freeze_bdev() or ioctl_fsfreeze() other than the context that
-> > started the prior freeze (--bdev->bd_fsfreeze_count > 0).
-> > 
-> > The -EINVAL is only returned currently if there were no freezers.
-> > 
-> > int thaw_bdev(struct block_device *bdev, struct super_block *sb)
-> > {
-> > 	int error = -EINVAL;
-> > 
-> > 	mutex_lock(&bdev->bd_fsfreeze_mutex);
-> > 	if (!bdev->bd_fsfreeze_count)
-> > 		goto out;
-> 
-> But this is precisely where we'd bail if we freeze sb by ioctl_fsfreeze()
-> but try to thaw by thaw_bdev(). ioctl_fsfreeze() does not touch
-> bd_fsfreeze_count...
+Hi,
 
-Ah, yes, I see that now, thanks!
+I'm currently experiencing freezes after resuming from suspend when
+using various applications on my desktop.
 
-  Luis
+For example, when using Firefox and switching between tabs the screen
+would freeze, allowing me to only move the mouse pointer but focusing
+the mouse pointer on a application won't have any effect.
+
+The keyboard would still work and the only way to make the issue go
+away would be to switch to a virtual desktop and then switch back,
+then I'd be able to use the mouse again until the same problem
+re-occurs.
+
+This never happened before upgrading to 4.16.3 and 4.15.18 is unaffected.
+
+The problem only happens *after* resuming from suspend, in normal S0
+state it never happens.
+
+My machine is a desktop and has a dual core E5500 CPU with 2GB of RAM,
+I run Arch Linux and I use the i3wm.
+
+I don't think it's a problem with user space because I run exactly the
+same Arch Linux setup on my T450 and the issue can't be reproduced on
+that machine.
+
+I did a bisect and the cause of the bug seems to be this commit:
+
+aa83c45762a242acce9b35020363225a7b59d7c9 is the first bad commit
+
+Here is the bisect log:
+
+git bisect start
+# bad: [0adb32858b0bddf4ada5f364a84ed60b196dbcda] Linux 4.16
+git bisect bad 0adb32858b0bddf4ada5f364a84ed60b196dbcda
+# good: [d8a5b80568a9cb66810e75b182018e9edb68e8ff] Linux 4.15
+git bisect good d8a5b80568a9cb66810e75b182018e9edb68e8ff
+# bad: [c14376de3a1befa70d9811ca2872d47367b48767] printk: Wake klogd
+when passing console_lock owner
+git bisect bad c14376de3a1befa70d9811ca2872d47367b48767
+# bad: [a103950e0dd2058df5e8a8d4a915707bdcf205f0] Merge branch 'linus'
+of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6
+git bisect bad a103950e0dd2058df5e8a8d4a915707bdcf205f0
+# bad: [d8b91dde38f4c43bd0bbbf17a90f735b16aaff2c] Merge branch
+'perf-core-for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect bad d8b91dde38f4c43bd0bbbf17a90f735b16aaff2c
+# good: [9697e9da84299d0d715d515dd2cc48f1eceb277d] Merge tag
+'edac_for_4.16' of git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp
+git bisect good 9697e9da84299d0d715d515dd2cc48f1eceb277d
+# good: [d0bd31dc5c0b46b9c778112900cf8f910ac26e1b] Merge tag
+'xtensa-20180129' of git://github.com/jcmvbkbc/linux-xtensa
+git bisect good d0bd31dc5c0b46b9c778112900cf8f910ac26e1b
+# good: [0337cf74ccf2a43437bff2e23b278e4f2dc4c6e2] perf util:
+Introduce architecture specific errno/name mapping
+git bisect good 0337cf74ccf2a43437bff2e23b278e4f2dc4c6e2
+# bad: [6304672b7f0a5c010002e63a075160856dc4f88d] Merge branch
+'x86-pti-for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect bad 6304672b7f0a5c010002e63a075160856dc4f88d
+# good: [a46d3f9b1c9888a244ed1ce8da0eca98c3f378e2] Merge branch
+'timers-core-for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect good a46d3f9b1c9888a244ed1ce8da0eca98c3f378e2
+# good: [669c0f762ed19bd9ec128ebc97ae8641b6e1a4a3] Merge branch
+'x86-platform-for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect good 669c0f762ed19bd9ec128ebc97ae8641b6e1a4a3
+# good: [7a32fc51ca938e67974cbb9db31e1a43f98345a9] x86/nospec: Fix
+header guards names
+git bisect good 7a32fc51ca938e67974cbb9db31e1a43f98345a9
+# bad: [942633523cde99c5bfa0329996dd839ca66a87aa] Merge branch
+'x86-mm-for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect bad 942633523cde99c5bfa0329996dd839ca66a87aa
+# bad: [aa83c45762a242acce9b35020363225a7b59d7c9] x86/tsc: Introduce
+early tsc clocksource
+git bisect bad aa83c45762a242acce9b35020363225a7b59d7c9
+# good: [6d671e1b85c63e7a337ba76c1a154c091545cff8] x86/time:
+Unconditionally register legacy timer interrupt
+git bisect good 6d671e1b85c63e7a337ba76c1a154c091545cff8
+# first bad commit: [aa83c45762a242acce9b35020363225a7b59d7c9]
+x86/tsc: Introduce early tsc clocksource
+
+Current git HEAD is also affected.
+
+I already tried HEAD with that commit reverted and the problem can't
+be reproduced anymore.
+
+Please let me know if I can include more info, thanks in advance.
+
+Diego
