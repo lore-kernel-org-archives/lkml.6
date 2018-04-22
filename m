@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+eySJ/CxmDPzF6p8g4ESdJcX3RCLXw7Jq38B5M5HW9rWdEoOoM98mSDRL+4EF5MYkRWybS
-ARC-Seal: i=1; a=rsa-sha256; t=1524406797; cv=none;
+X-Google-Smtp-Source: AIpwx4+q/1uMmRKIkorm0+ifdWlKU/+09ygaBVDcH0XWE26Vlr98gKQEpdWQTIqitqEXINsidvDp
+ARC-Seal: i=1; a=rsa-sha256; t=1524406613; cv=none;
         d=google.com; s=arc-20160816;
-        b=f60eFxKUJHWDytZ0gjSjFphxAdU0g1z1+6HTlnpakYrFw+2Ibe1l1JOtkdyoQ2cYn9
-         POr4w1+ijOwme8+W9LlC97zZDcuUuvepzj630B53YQrHY1TvbMUlOQESErpR/8TzPE7p
-         5T/q/RbJUl57SFofHzlKzOTT/zwJsb2p1nXXdXIqvGFLIbxRbgK7K/uTJw0SCnyIPVOy
-         /8ZcwcbwZsGQYn6bEGDC/X8xuWlbXQU1O03J66igleW8pq8xb4NMYlgpXU0E0QcxmsKX
-         +8KEwxYRvrQocAp5lJYaQuCwwp8BfXg4lILaGYFAe6Ep9ZE++iEWdiCTDuUGqpR27ARB
-         sARQ==
+        b=s1PVpJCRIRUQ5PeoqNlK9n/9O/DAIMT7GP4VhdB+BFxcM7VgQo7cqrMGEllQp7lOB+
+         BSEXRQ0FCG+Avk3Qcip5z1lRjmhTa8+2AkG8sMkI+YZSq5G7cpZnk0toYA5mJyAC0Fyo
+         jM0YKT5zwOohilrLtflQC71ecxBg6liJpXRcC6wh3Dj9QFAR0/wilGTChbUCVltnH/XI
+         TNxjm0AUZKCYPgHjHqGbTR9tNovfiz6AGGztW9FKU1y4H7XXIgvL77gQBFc1cbzbFbF8
+         1wCMaccFx3ES/9G8rcfRSAorf0k2nIyCq2OtuA7uCAyZbg0tGaONiRgZrGw/Ab8JczGF
+         fWeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
+        h=content-transfer-encoding:user-agent:mime-version:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8SeqvKFUATahCHaDN5mPvjJI/55hxRltPyAa0FQsqpg=;
-        b=KyNi4UlSbOgj4cbzo1Id1C/4uSe0sy7kT3+kBuaCyW0OTQbAkxgTD9lZNAA3Vxq5T7
-         U5mA1J03mRzp6xt9x1VwPT5UzRb8F5L7T6rrfLUQasF6/GqQIiWAqZ3RMHVHZybF/Y9S
-         C1RV9ZIMb65UDQ9B32a7qKkWloz+mDQYbTzJ+2loZEpv179Jq9VvErzLVnBpW/s6asR6
-         CN0rnZZEQnGOxv07moqM07uyj7S6WCTyJmoRVF/OIH4AJxRiyAcmLHjFzTlI9KmXFt2E
-         XyfWXn+TKqqWNv3AWSefRxo84FidPZXlIzEJWOmbRJCj6RLRWdOkZ7ewfRBbS+3+5hLM
-         virg==
+        bh=xn03cDTi3rQsN8lHxubAcmNoBy4uFuF0qLUw78zfi0w=;
+        b=k0J8X9dlg2Ihv81dYHXbflwmu9Slt4SaN3CXh+QkyEiH7h/CjVFwn3XBjtxiwWvvTj
+         qQcS64f1asJRsQNfQZ/nQhmMxH+ODTiPkTUB8iMbbN3iNXoEBOOuu1smV98DfwfKBAxJ
+         gmlXE2H4jeLJYvkPySih9BZmQ0RBmVTnDS13R8CDTwFCQjXRx440rP0bee0qWnSSGqei
+         ouXF3UYaW6S1aq229ZDr9zvedbC9tXyqSQ9nnoVxckSpD09yZbMGcriqqyLJsRNK39Qu
+         bjEC1r9z/IIJWSXtjx4J3wUbpXLqCuHqUyKLMBQejmBmKqB1F8yWTOBokr1Tu6IcWYPf
+         78wQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -25,152 +25,457 @@ Authentication-Results: mx.google.com;
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>
-Subject: [PATCH 3.18 01/52] media: v4l2-compat-ioctl32: dont oops on overlay
-Date: Sun, 22 Apr 2018 15:53:34 +0200
-Message-Id: <20180422135315.310707035@linuxfoundation.org>
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	ben.hutchings@codethink.co.uk,
+	lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
+Subject: [PATCH 4.4 00/97] 4.4.129-stable review
+Date: Sun, 22 Apr 2018 15:52:38 +0200
+Message-Id: <20180422135304.577223025@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180422135315.254787616@linuxfoundation.org>
-References: <20180422135315.254787616@linuxfoundation.org>
-User-Agent: quilt/0.65
 MIME-Version: 1.0
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.129-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.129-rc1
+X-KernelTest-Deadline: 2018-04-24T13:53+00:00
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598456099405763885?=
-X-GMAIL-MSGID: =?utf-8?q?1598456381541744629?=
+X-GMAIL-THRID: =?utf-8?q?1598456189119404560?=
+X-GMAIL-MSGID: =?utf-8?q?1598456189119404560?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.4.129 release.
+There are 97 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Tue Apr 24 13:52:47 UTC 2018.
+Anything received after that time might be too late.
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.129-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-commit 85ea29f19eab56ec16ec6b92bc67305998706afa upstream.
+thanks,
 
-At put_v4l2_window32(), it tries to access kp->clips. However,
-kp points to an userspace pointer. So, it should be obtained
-via get_user(), otherwise it can OOPS:
+greg k-h
 
- vivid-000: ==================  END STATUS  ==================
- BUG: unable to handle kernel paging request at 00000000fffb18e0
- IP: [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
- PGD 3f5776067 PUD 3f576f067 PMD 3f5769067 PTE 800000042548f067
- Oops: 0001 [#1] SMP
- Modules linked in: vivid videobuf2_vmalloc videobuf2_memops v4l2_dv_timings videobuf2_core v4l2_common videodev media xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill binfmt_misc snd_hda_codec_hdmi i915 snd_hda_intel snd_hda_controller snd_hda_codec intel_rapl x86_pkg_temp_thermal snd_hwdep intel_powerclamp snd_pcm coretemp snd_seq_midi kvm_intel kvm snd_seq_midi_event snd_rawmidi i2c_algo_bit drm_kms_helper snd_seq drm crct10dif_pclmul e1000e snd_seq_device crc32_pclmul snd_timer ghash_clmulni_intel snd mei_me mei ptp pps_core soundcore lpc_ich video crc32c_intel [last unloaded: media]
- CPU: 2 PID: 28332 Comm: v4l2-compliance Not tainted 3.18.102+ #107
- Hardware name:                  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
- task: ffff8804293f8000 ti: ffff8803f5640000 task.ti: ffff8803f5640000
- RIP: 0010:[<ffffffffc05468d9>]  [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
- RSP: 0018:ffff8803f5643e28  EFLAGS: 00010246
- RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00000000fffb1ab4
- RDX: 00000000fffb1a68 RSI: 00000000fffb18d8 RDI: 00000000fffb1aa8
- RBP: ffff8803f5643e48 R08: 0000000000000001 R09: ffff8803f54b0378
- R10: 0000000000000000 R11: 0000000000000168 R12: 00000000fffb18c0
- R13: 00000000fffb1a94 R14: 00000000fffb18c8 R15: 0000000000000000
- FS:  0000000000000000(0000) GS:ffff880456d00000(0063) knlGS:00000000f7100980
- CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
- CR2: 00000000fffb18e0 CR3: 00000003f552b000 CR4: 00000000003407e0
- Stack:
-  00000000fffb1a94 00000000c0cc5640 0000000000000056 ffff8804274f3600
-  ffff8803f5643ed0 ffffffffc0547e16 0000000000000003 ffff8803f5643eb0
-  ffffffff81301460 ffff88009db44b01 ffff880441942520 ffff8800c0d05640
- Call Trace:
-  [<ffffffffc0547e16>] v4l2_compat_ioctl32+0x12d6/0x1b1d [videodev]
-  [<ffffffff81301460>] ? file_has_perm+0x70/0xc0
-  [<ffffffff81252a2c>] compat_SyS_ioctl+0xec/0x1200
-  [<ffffffff8173241a>] sysenter_dispatch+0x7/0x21
- Code: 00 00 48 8b 80 48 c0 ff ff 48 83 e8 38 49 39 c6 0f 87 2b ff ff ff 49 8d 45 1c e8 a3 ce e3 c0 85 c0 0f 85 1a ff ff ff 41 8d 40 ff <4d> 8b 64 24 20 41 89 d5 48 8d 44 40 03 4d 8d 34 c4 eb 15 0f 1f
- RIP  [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
- RSP <ffff8803f5643e28>
- CR2: 00000000fffb18e0
+-------------
+Pseudo-Shortlog of commits:
 
-Tested with vivid driver on Kernel v3.18.102.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.129-rc1
 
-Same bug happens upstream too:
+Greg Thelen <gthelen@google.com>
+    writeback: safer lock nesting
 
- BUG: KASAN: user-memory-access in __put_v4l2_format32+0x98/0x4d0 [videodev]
- Read of size 8 at addr 00000000ffe48400 by task v4l2-compliance/8713
+Amir Goldstein <amir73il@gmail.com>
+    fanotify: fix logic of events on child
 
- CPU: 0 PID: 8713 Comm: v4l2-compliance Not tainted 4.16.0-rc4+ #108
- Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
- Call Trace:
-  dump_stack+0x5c/0x7c
-  kasan_report+0x164/0x380
-  ? __put_v4l2_format32+0x98/0x4d0 [videodev]
-  __put_v4l2_format32+0x98/0x4d0 [videodev]
-  v4l2_compat_ioctl32+0x1aec/0x27a0 [videodev]
-  ? __fsnotify_inode_delete+0x20/0x20
-  ? __put_v4l2_format32+0x4d0/0x4d0 [videodev]
-  compat_SyS_ioctl+0x646/0x14d0
-  ? do_ioctl+0x30/0x30
-  do_fast_syscall_32+0x191/0x3f4
-  entry_SYSENTER_compat+0x6b/0x7a
- ==================================================================
- Disabling lock debugging due to kernel taint
- BUG: unable to handle kernel paging request at 00000000ffe48400
- IP: __put_v4l2_format32+0x98/0x4d0 [videodev]
- PGD 3a22fb067 P4D 3a22fb067 PUD 39b6f0067 PMD 39b6f1067 PTE 80000003256af067
- Oops: 0001 [#1] SMP KASAN
- Modules linked in: vivid videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops v4l2_tpg v4l2_dv_timings videobuf2_v4l2 videobuf2_common v4l2_common videodev xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack libcrc32c tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill ecdh_generic binfmt_misc snd_hda_codec_hdmi intel_rapl x86_pkg_temp_thermal intel_powerclamp i915 coretemp snd_hda_intel snd_hda_codec kvm_intel snd_hwdep snd_hda_core kvm snd_pcm irqbypass crct10dif_pclmul crc32_pclmul snd_seq_midi ghash_clmulni_intel snd_seq_midi_event i2c_algo_bit intel_cstate snd_rawmidi intel_uncore snd_seq drm_kms_helper e1000e snd_seq_device snd_timer intel_rapl_perf
-  drm ptp snd mei_me mei lpc_ich pps_core soundcore video crc32c_intel
- CPU: 0 PID: 8713 Comm: v4l2-compliance Tainted: G    B            4.16.0-rc4+ #108
- Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
- RIP: 0010:__put_v4l2_format32+0x98/0x4d0 [videodev]
- RSP: 0018:ffff8803b9be7d30 EFLAGS: 00010282
- RAX: 0000000000000000 RBX: ffff8803ac983e80 RCX: ffffffff8cd929f2
- RDX: 1ffffffff1d0a149 RSI: 0000000000000297 RDI: 0000000000000297
- RBP: 00000000ffe485c0 R08: fffffbfff1cf5123 R09: ffffffff8e7a8948
- R10: 0000000000000001 R11: fffffbfff1cf5122 R12: 00000000ffe483e0
- R13: 00000000ffe485c4 R14: ffff8803ac985918 R15: 00000000ffe483e8
- FS:  0000000000000000(0000) GS:ffff880407400000(0063) knlGS:00000000f7a46980
- CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
- CR2: 00000000ffe48400 CR3: 00000003a83f2003 CR4: 00000000003606f0
- Call Trace:
-  v4l2_compat_ioctl32+0x1aec/0x27a0 [videodev]
-  ? __fsnotify_inode_delete+0x20/0x20
-  ? __put_v4l2_format32+0x4d0/0x4d0 [videodev]
-  compat_SyS_ioctl+0x646/0x14d0
-  ? do_ioctl+0x30/0x30
-  do_fast_syscall_32+0x191/0x3f4
-  entry_SYSENTER_compat+0x6b/0x7a
- Code: 4c 89 f7 4d 8d 7c 24 08 e8 e6 a4 69 cb 48 8b 83 98 1a 00 00 48 83 e8 10 49 39 c7 0f 87 9d 01 00 00 49 8d 7c 24 20 e8 c8 a4 69 cb <4d> 8b 74 24 20 4c 89 ef 4c 89 fe ba 10 00 00 00 e8 23 d9 08 cc
- RIP: __put_v4l2_format32+0x98/0x4d0 [videodev] RSP: ffff8803b9be7d30
- CR2: 00000000ffe48400
+wangguang <wang.guang55@zte.com.cn>
+    ext4: bugfix for mmaped pages in mpage_release_unused_pages()
 
-cc: stable@vger.kernel.org
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Matthew Wilcox <mawilcox@microsoft.com>
+    mm/filemap.c: fix NULL pointer in page_cache_tree_insert()
 
----
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Michal Hocko <mhocko@suse.com>
+    mm: allow GFP_{FS,IO} for page_cache_read page cache allocation
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -101,7 +101,7 @@ static int get_v4l2_window32(struct v4l2
- static int put_v4l2_window32(struct v4l2_window __user *kp,
- 			     struct v4l2_window32 __user *up)
- {
--	struct v4l2_clip __user *kclips = kp->clips;
-+	struct v4l2_clip __user *kclips;
- 	struct v4l2_clip32 __user *uclips;
- 	compat_caddr_t p;
- 	u32 clipcount;
-@@ -116,6 +116,8 @@ static int put_v4l2_window32(struct v4l2
- 	if (!clipcount)
- 		return 0;
- 
-+	if (get_user(kclips, &kp->clips))
-+		return -EFAULT;
- 	if (get_user(p, &up->clips))
- 		return -EFAULT;
- 	uclips = compat_ptr(p);
+Ian Kent <raven@themaw.net>
+    autofs: mount point create should honour passed in mode
+
+Al Viro <viro@zeniv.linux.org.uk>
+    Don't leak MNT_INTERNAL away from internal mounts
+
+Al Viro <viro@zeniv.linux.org.uk>
+    rpc_pipefs: fix double-dput()
+
+Al Viro <viro@zeniv.linux.org.uk>
+    hypfs_kill_super(): deal with failed allocations
+
+Al Viro <viro@zeniv.linux.org.uk>
+    jffs2_kill_sb(): deal with failed allocations
+
+Michael Ellerman <mpe@ellerman.id.au>
+    powerpc/lib: Fix off-by-one in alternate feature patching
+
+Michael Neuling <mikey@neuling.org>
+    powerpc/eeh: Fix enabling bridge MMIO windows
+
+Matt Redfearn <matt.redfearn@mips.com>
+    MIPS: memset.S: Fix clobber of v1 in last_fixup
+
+Matt Redfearn <matt.redfearn@mips.com>
+    MIPS: memset.S: Fix return of __clear_user from Lpartial_fixup
+
+Matt Redfearn <matt.redfearn@mips.com>
+    MIPS: memset.S: EVA & fault support for small_memset
+
+Matt Redfearn <matt.redfearn@mips.com>
+    MIPS: uaccess: Add micromips clobbers to bzero invocation
+
+Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+    HID: hidraw: Fix crash on HIDIOCGFEATURE with a destroyed device
+
+David Wang <davidwang@zhaoxin.com>
+    ALSA: hda - New VIA controller suppor no-snoop path
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: rawmidi: Fix missing input substream checks in compat ioctls
+
+Fabián Inostroza <soulsonceonfire@gmail.com>
+    ALSA: line6: Use correct endpoint type for midi output
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: fix deadlock between inline_data and ext4_expand_extra_isize_ea()
+
+Jan Kara <jack@suse.cz>
+    ext4: fix crashes in dioread_nolock mode
+
+Paul Parsons <lost.distance@yahoo.com>
+    drm/radeon: Fix PCIe lane width calculation
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: don't allow r/w mounts if metadata blocks overlap the superblock
+
+Alex Williamson <alex.williamson@redhat.com>
+    vfio/pci: Virtualize Maximum Read Request Size
+
+Alex Williamson <alex.williamson@redhat.com>
+    vfio/pci: Virtualize Maximum Payload Size
+
+Alex Williamson <alex.williamson@redhat.com>
+    vfio-pci: Virtualize PCIe & AF FLR
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Fix endless loop for XRUN recovery in OSS emulation
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Fix mutex unbalance in OSS emulation ioctls
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Return -EBUSY for OSS ioctls changing busy streams
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Avoid potential races between OSS ioctls and read/write
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Use ERESTARTSYS instead of EINTR in OSS emulation
+
+Nicholas Mc Guire <hofrat@osadl.org>
+    ALSA: oss: consolidate kmalloc/memset 0 call to kzalloc
+
+Igor Pylypiv <igor.pylypiv@gmail.com>
+    watchdog: f71808e_wdt: Fix WD_EN register read
+
+Mikhail Lappo <mikhail.lappo@esrlabs.com>
+    thermal: imx: Fix race condition in imx_thermal_probe()
+
+Boris Brezillon <boris.brezillon@bootlin.com>
+    clk: bcm2835: De-assert/assert PLL reset signal when appropriate
+
+Richard Genoud <richard.genoud@gmail.com>
+    clk: mvebu: armada-38x: add support for missing clocks
+
+Ralph Sennhauser <ralph.sennhauser@gmail.com>
+    clk: mvebu: armada-38x: add support for 1866MHz variants
+
+Alex Smith <alex.smith@imgtec.com>
+    mmc: jz4740: Fix race condition in IRQ mask update
+
+Lu Baolu <baolu.lu@linux.intel.com>
+    iommu/vt-d: Fix a potential memory leak
+
+Krzysztof Mazur <krzysiek@podlesie.net>
+    um: Use POSIX ucontext_t instead of struct ucontext
+
+Maxime Jayat <maxime.jayat@mobile-devices.fr>
+    dmaengine: at_xdmac: fix rare residue corruption
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    IB/srp: Fix completion vector assignment algorithm
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    IB/srp: Fix srp_abort()
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Fix UAF at PCM release via PCM timer access
+
+Roland Dreier <roland@purestorage.com>
+    RDMA/ucma: Don't allow setting RDMA_OPTION_IB_PATH without an RDMA device
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: fail ext4_iget for root directory if unallocated
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: add validity checks for bitmap block numbers
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: don't update checksum of new initialized bitmaps
+
+Theodore Ts'o <tytso@mit.edu>
+    jbd2: if the journal is aborted then don't allow update of the log tail
+
+Theodore Ts'o <tytso@mit.edu>
+    random: use a tighter cap in credit_entropy_bits_safe()
+
+Mika Westerberg <mika.westerberg@linux.intel.com>
+    thunderbolt: Resume control channel after hibernation image is created
+
+James Kelly <jamespeterkelly@gmail.com>
+    ASoC: ssm2602: Replace reg_default_raw with reg_default
+
+Aaron Ma <aaron.ma@canonical.com>
+    HID: core: Fix size as type u32
+
+Aaron Ma <aaron.ma@canonical.com>
+    HID: Fix hid_report_len usage
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/powernv: Fix OPAL NVRAM driver OPAL_BUSY loops
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/powernv: Handle unknown OPAL errors in opal_nvram_write()
+
+Aaron Ma <aaron.ma@canonical.com>
+    HID: i2c-hid: fix size check and type usage
+
+Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+    usb: dwc3: pci: Properly cleanup resource
+
+Zhengjun Xing <zhengjun.xing@linux.intel.com>
+    USB:fix USB3 devices behind USB3 hubs not resuming at hibernate thaw
+
+Mika Westerberg <mika.westerberg@linux.intel.com>
+    ACPI / hotplug / PCI: Check presence of slot itself in get_slot_status()
+
+Hans de Goede <hdegoede@redhat.com>
+    ACPI / video: Add quirk to force acpi-video backlight on Samsung 670Z5E
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    regmap: Fix reversed bounds check in regmap_raw_write()
+
+Jason Andryuk <jandryuk@gmail.com>
+    xen-netfront: Fix hang on device removal
+
+Santiago Esteban <Santiago.Esteban@microchip.com>
+    ARM: dts: at91: sama5d4: fix pinctrl compatible string
+
+Nicolas Ferre <nicolas.ferre@microchip.com>
+    ARM: dts: at91: at91sam9g25: fix mux-mask pinctrl property
+
+Heinrich Schuchardt <xypron.glpk@gmx.de>
+    usb: musb: gadget: misplaced out of bounds check
+
+Vlastimil Babka <vbabka@suse.cz>
+    mm, slab: reschedule cache_reap() on the same CPU
+
+Eric Biggers <ebiggers@google.com>
+    ipc/shm: fix use-after-free of shm file via remap_file_pages()
+
+Takashi Iwai <tiwai@suse.de>
+    resource: fix integer overflow at reallocation
+
+Andrew Morton <akpm@linux-foundation.org>
+    fs/reiserfs/journal.c: add missing resierfs_warning() arg
+
+Richard Weinberger <richard@nod.at>
+    ubi: Reject MLC NAND
+
+Romain Izard <romain.izard.pro@gmail.com>
+    ubi: Fix error for write access
+
+Richard Weinberger <richard@nod.at>
+    ubi: fastmap: Don't flush fastmap work on detach
+
+Richard Weinberger <richard@nod.at>
+    ubifs: Check ubifs_wbuf_sync() return code
+
+Tejun Heo <tj@kernel.org>
+    tty: make n_tty_read() always abort if hangup is in progress
+
+Ville Syrjälä <ville.syrjala@linux.intel.com>
+    x86/hweight: Don't clobber %rdi
+
+Borislav Petkov <bp@suse.de>
+    x86/hweight: Get rid of the special calling convention
+
+Phil Elwell <phil@raspberrypi.org>
+    lan78xx: Correctly indicate invalid OTP
+
+Tejaswi Tanikella <tejaswit@codeaurora.org>
+    slip: Check if rstate is initialized before uncompressing
+
+Bassem Boubaker <bassem.boubaker@actia.fr>
+    cdc_ether: flag the Cinterion AHS8 modem by gemalto as WWAN
+
+Marek Szyprowski <m.szyprowski@samsung.com>
+    hwmon: (ina2xx) Fix access to uninitialized mutex
+
+Sudhir Sreedharan <ssreedharan@mvista.com>
+    rtl8187: Fix NULL pointer dereference in priv->conf_mutex
+
+Al Viro <viro@zeniv.linux.org.uk>
+    getname_kernel() needs to make sure that ->name != ->iname in long case
+
+Vasily Gorbik <gor@linux.ibm.com>
+    s390/ipl: ensure loadparm valid flag is set
+
+Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    s390/qdio: don't merge ERROR output buffers
+
+Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    s390/qdio: don't retry EQBS after CCQ 96
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    block/loop: fix deadlock after loop_set_status
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Revert "perf tests: Decompress kernel module before objdump"
+
+Arnd Bergmann <arnd@arndb.de>
+    radeon: hide pointless #warning when compile testing
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf intel-pt: Fix timestamp following overflow
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf intel-pt: Fix error recovery from missing TIP packet
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf intel-pt: Fix sync_switch
+
+Adrian Hunter <adrian.hunter@intel.com>
+    perf intel-pt: Fix overlap detection to identify consecutive buffers correctly
+
+Helge Deller <deller@gmx.de>
+    parisc: Fix out of array access in match_pci_device()
+
+Mauro Carvalho Chehab <mchehab@s-opensource.com>
+    media: v4l2-compat-ioctl32: don't oops on overlay
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm/boot/dts/at91sam9g25.dtsi                 |   2 +-
+ arch/arm/boot/dts/sama5d4.dtsi                     |   2 +-
+ arch/mips/include/asm/uaccess.h                    |  11 +-
+ arch/mips/lib/memset.S                             |  11 +-
+ arch/parisc/kernel/drivers.c                       |   4 +
+ arch/powerpc/include/asm/barrier.h                 |   3 +-
+ arch/powerpc/include/asm/synch.h                   |   4 -
+ arch/powerpc/kernel/eeh_pe.c                       |   3 +-
+ arch/powerpc/lib/feature-fixups.c                  |   2 +-
+ arch/powerpc/platforms/powernv/opal-nvram.c        |  11 +-
+ arch/s390/hypfs/inode.c                            |   2 +-
+ arch/s390/kernel/ipl.c                             |   1 +
+ arch/um/os-Linux/signal.c                          |   2 +-
+ arch/x86/Kconfig                                   |   5 -
+ arch/x86/include/asm/arch_hweight.h                |  24 ++-
+ arch/x86/kernel/i386_ksyms_32.c                    |   2 +
+ arch/x86/kernel/x8664_ksyms_64.c                   |   3 +
+ arch/x86/lib/Makefile                              |   2 +-
+ arch/x86/lib/hweight.S                             |  79 +++++++++
+ arch/x86/um/stub_segv.c                            |   2 +-
+ drivers/acpi/video_detect.c                        |   9 +
+ drivers/base/regmap/regmap.c                       |   2 +-
+ drivers/block/loop.c                               |  12 +-
+ drivers/char/random.c                              |   2 +-
+ drivers/clk/bcm/clk-bcm2835.c                      |   8 +-
+ drivers/clk/mvebu/armada-38x.c                     |  15 +-
+ drivers/dma/at_xdmac.c                             |   4 +-
+ drivers/gpu/drm/radeon/radeon_object.c             |   3 +-
+ drivers/gpu/drm/radeon/si_dpm.c                    |   4 +-
+ drivers/hid/hid-core.c                             |  10 +-
+ drivers/hid/hid-input.c                            |   3 +-
+ drivers/hid/hid-multitouch.c                       |   5 +-
+ drivers/hid/hid-rmi.c                              |   4 +-
+ drivers/hid/hidraw.c                               |   5 +
+ drivers/hid/i2c-hid/i2c-hid.c                      |  13 +-
+ drivers/hwmon/ina2xx.c                             |   3 +-
+ drivers/infiniband/core/ucma.c                     |   3 +
+ drivers/infiniband/ulp/srp/ib_srp.c                |  18 +-
+ drivers/iommu/intel-svm.c                          |   1 +
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c      |   4 +-
+ drivers/mmc/host/jz4740_mmc.c                      |   2 +-
+ drivers/mtd/ubi/block.c                            |   2 +-
+ drivers/mtd/ubi/build.c                            |  11 ++
+ drivers/mtd/ubi/fastmap-wl.c                       |   1 -
+ drivers/net/slip/slhc.c                            |   5 +
+ drivers/net/usb/cdc_ether.c                        |   6 +
+ drivers/net/usb/lan78xx.c                          |   3 +-
+ drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c |   2 +-
+ drivers/net/xen-netfront.c                         |   7 +-
+ drivers/pci/hotplug/acpiphp_glue.c                 |  23 ++-
+ drivers/s390/cio/qdio_main.c                       |  42 ++---
+ drivers/thermal/imx_thermal.c                      |   6 +-
+ drivers/thunderbolt/nhi.c                          |   1 +
+ drivers/tty/n_tty.c                                |   6 +
+ drivers/tty/tty_io.c                               |   9 +
+ drivers/usb/core/generic.c                         |   9 +-
+ drivers/usb/dwc3/dwc3-pci.c                        |   2 +-
+ drivers/usb/musb/musb_gadget_ep0.c                 |  14 +-
+ drivers/vfio/pci/vfio_pci_config.c                 | 107 +++++++++++-
+ drivers/watchdog/f71808e_wdt.c                     |   2 +-
+ fs/autofs4/root.c                                  |   2 +-
+ fs/ext4/balloc.c                                   |  19 ++-
+ fs/ext4/ialloc.c                                   |  54 ++----
+ fs/ext4/inline.c                                   |  66 ++++---
+ fs/ext4/inode.c                                    |  48 +++---
+ fs/ext4/super.c                                    |   6 +
+ fs/ext4/xattr.c                                    |  30 ++--
+ fs/ext4/xattr.h                                    |  32 ++++
+ fs/fs-writeback.c                                  |   7 +-
+ fs/jbd2/journal.c                                  |   5 +-
+ fs/jffs2/super.c                                   |   2 +-
+ fs/namei.c                                         |   3 +-
+ fs/namespace.c                                     |   3 +-
+ fs/notify/fanotify/fanotify.c                      |  34 ++--
+ fs/reiserfs/journal.c                              |   2 +-
+ fs/ubifs/super.c                                   |  14 +-
+ include/linux/backing-dev-defs.h                   |   5 +
+ include/linux/backing-dev.h                        |  31 ++--
+ include/linux/hid.h                                |   6 +-
+ include/linux/mm.h                                 |   4 +
+ include/linux/tty.h                                |   1 +
+ include/net/slhc_vj.h                              |   1 +
+ include/sound/pcm_oss.h                            |   1 +
+ ipc/shm.c                                          |  23 ++-
+ kernel/resource.c                                  |   3 +-
+ lib/Makefile                                       |   2 -
+ lib/hweight.c                                      |   4 +
+ mm/filemap.c                                       |  16 +-
+ mm/memory.c                                        |  17 ++
+ mm/page-writeback.c                                |  18 +-
+ mm/slab.c                                          |   3 +-
+ net/sunrpc/rpc_pipe.c                              |   1 +
+ sound/core/oss/pcm_oss.c                           | 189 ++++++++++++++++-----
+ sound/core/pcm.c                                   |   8 +-
+ sound/core/rawmidi_compat.c                        |  18 +-
+ sound/pci/hda/hda_intel.c                          |   3 +-
+ sound/soc/codecs/ssm2602.c                         |  19 ++-
+ sound/usb/line6/midi.c                             |   2 +-
+ tools/perf/tests/code-reading.c                    |  20 +--
+ .../perf/util/intel-pt-decoder/intel-pt-decoder.c  |  64 ++++---
+ .../perf/util/intel-pt-decoder/intel-pt-decoder.h  |   2 +-
+ tools/perf/util/intel-pt.c                         |  37 +++-
+ 103 files changed, 943 insertions(+), 449 deletions(-)
