@@ -1,104 +1,88 @@
-Return-Path: <simon@nikanor.nu>
-ARC-Seal: i=1; a=rsa-sha256; t=1524505498; cv=none;
+Return-Path: <marc.zyngier@arm.com>
+X-Google-Smtp-Source: AB8JxZom0REBGs/xAGl8izTrapwwbEvgTADXdGq0hNFOhb5gQpNpfCLQm28ByDdjvD9LMQKkJzFE
+ARC-Seal: i=1; a=rsa-sha256; t=1524400446; cv=none;
         d=google.com; s=arc-20160816;
-        b=AB0wWHfguFqJg5tCWXLjFA7mggeAlEZ8ZcTSyn+9bOGzaD7dKbyE8iah1O5dGLGylN
-         xKgUB/WXdc+dKgyaZ2GGMHyQ+xrd/9nsXKg1QDg3xGgipkeiwyZ6xMu+B4pHcZK/quc1
-         eUF8kJyy6t89CQ2w9/MrFVS1DzO6eOwmnRLL1Mfw7+XJ0LAZ+uL1ZidtBA7bvZwg3aNY
-         3olwGuz0FcSFVfZ21oMOytJeS1eu845KFAoOTpgatm/FAafBpol+duouMSuid8vlhUGl
-         3hPIwGKvUBum/7QzHSf/mj5xzPX2MnBCOYHJ1ih29GgrCGsJKhuXRNWSfU7L6AZt78hQ
-         wkRg==
+        b=BvxiuZSGRQaM7GUgJ/76ZExNHIFCWzosmYGIPOpWo77PUQQdR/q4GNbJMCuuPgLTvz
+         5+Qi6EqXImW/2tagDwattomRX2URqY/tcL35iHgNfmy703ac+ikp3aEf9p0XVjzC/1cp
+         rQWIU/XwZ//vEtA5U3G+ldUqdYgyZEcHbdVAZRzCEBK+tInxhH18BmvakwaitXBuGH1m
+         z4TK77ZjJcB5xx+urxPFtkX39yQB19Fxq59otup8105WRN7lVm9qG0oYHltt1i3rD7l1
+         oYeCvDw4w/aGcW8Ea69Ly2NYk8HjnpMh6dd9vgQC6hK0uP0Eqf9Q/NqnM+EV8cPfV9GE
+         CPJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:arc-authentication-results;
-        bh=/LZvLPgfz3BuXz/6mKsg8kqRk24BL5+KlYiSpsX0VMs=;
-        b=O8HoaYlMTzvNWpOT/m0wW1Bk0NJ3+FJChR5N54RJwbjDCWMKHOm+4zGWTj5EUvWg/1
-         iT4TTDuGg9ie8HMwg2bubZQIK5wBx23fQiWcDRaF1dv/pbmpGbZN2iTsvOxmZzO1eDsE
-         hWc0gh0a736VLfA1I4Qv9dh8UWCdn+BGVdPX8nYrdow4vRNWb85s0DNSs4R0xFSJ8Aqz
-         fHb5iSm00cXz+nnJ3/3oTsvi/XW437Y4C8C5qrGxem0zaUgiqpSnr/q5DPRIXTFMnF7O
-         yCdBFXiT0y7hP73VHXr2ekfrOGUCJjqUqhW6WGevMYDavFHzXLZfU7HrFe37Jwiwp2rq
-         4UAg==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=68553pEvc0KVKtrfaMaATr88xrJQZ36PMjpEqcjbBKk=;
+        b=ssFx9eLyyNQoEo3HWbvH0H6FxvWAu8H/x5A4oKda+8D5ED/om+ydYY2ITJfpsd20cT
+         EkCpGrUl5MEcVf9xV12ly4KF2RTxv4VlqBkM4pjS11GrM+jJvpHNLr4e9qszrocwdFb3
+         WE6zVdIzNkgitRUvEd97a9zNgdex08zyBZYTgRKn+vw71vOqbQPAMne9YmRe5iA1/p/n
+         dzL93fyUtW07rrd+KY4jf4geHEMN8DuPdD0AADz2TEVwD+d7+6zlUxq56UP6fdtlLoG9
+         gVHXllsYhDdVZI3H8JEW7/lkbo0ff7zb9513vFdikwnuKoZV5kVOIH71JOahZSBPt9Rj
+         Z1Fg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nikanor-nu.20150623.gappssmtp.com header.s=20150623 header.b=hjn0CZLa;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of simon@nikanor.nu) smtp.mailfrom=simon@nikanor.nu
+       spf=pass (google.com: domain of marc.zyngier@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=marc.zyngier@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nikanor-nu.20150623.gappssmtp.com header.s=20150623 header.b=hjn0CZLa;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of simon@nikanor.nu) smtp.mailfrom=simon@nikanor.nu
-X-Google-Smtp-Source: AIpwx4/wURCb5aLC35jyNpIMHk/ItXBVLMLH1a2JhOX8VVTOnX2cPMjdab8XMcPBhKVdQkQwbavGNA==
-From: =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-To: gregkh@linuxfoundation.org
-Cc: Valentin.Vidic@CARNet.hr,
-	linux@wolf-entwicklungen.de,
-	minhnpq16@gmail.com,
-	viro@zeniv.linux.org.uk,
-	srishtishar@gmail.com,
-	devel@driverdev.osuosl.org,
+       spf=pass (google.com: domain of marc.zyngier@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=marc.zyngier@arm.com
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] staging: pi433: break long lines in pi433_if.c
-Date: Mon, 23 Apr 2018 19:44:56 +0200
-Message-Id: <20180423174456.27309-1-simon@nikanor.nu>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc: Allen Yan <yanwei@marvell.com>,
+	Miquel Raynal <miquel.raynal@free-electrons.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] serial: mvebu-uart: Fix local flags handling on termios update
+Date: Sun, 22 Apr 2018 13:33:46 +0100
+Message-Id: <20180422123346.15538-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598559877910340227?=
-X-GMAIL-MSGID: =?utf-8?q?1598559877910340227?=
+X-GMAIL-THRID: =?utf-8?q?1598449722207347809?=
+X-GMAIL-MSGID: =?utf-8?q?1598449722207347809?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Breaks long lines in pi433_if.c, fixing checkpatch.pl warnings:
-"WARNING: line over 80 characters"
+Commit 68a0db1d7da2 reworked the baud rate selection, but also added
+a (not so) subtle change in the way the local flags (c_lflag in the
+termios structure) are handled, forcing the new flags to always be the
+same as the old ones.
 
-Signed-off-by: Simon Sandström <simon@nikanor.nu>
+The reason for that particular change is both obscure and undocumented.
+It also completely breaks userspace. Something as trivial as getty is
+unusable:
+
+<example>
+	Debian GNU/Linux 9 sy-borg ttyMV0
+
+	sy-borg login: root
+	root
+	[timeout]
+
+	Debian GNU/Linux 9 sy-borg ttyMV0
+</example>
+
+which is quite obvious in retrospect: getty cannot get in control of
+the echo mode, is stuck in canonical mode, and times out without ever
+seeing anything valid. It also begs the question of how this change was
+ever tested.
+
+The fix is pretty obvious: stop messing with c_lflag, and the world
+will be a happier place.
+
+Cc: stable@vger.kernel.org # 4.15+
+Fixes: 68a0db1d7da2 ("serial: mvebu-uart: add function to change baudrate")
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/staging/pi433/pi433_if.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/tty/serial/mvebu-uart.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index 2a05eff88469..b061f77dda41 100644
---- a/drivers/staging/pi433/pi433_if.c
-+++ b/drivers/staging/pi433/pi433_if.c
-@@ -591,13 +591,17 @@ pi433_tx_thread(void *data)
- 		 */
- 		retval = kfifo_out(&device->tx_fifo, &tx_cfg, sizeof(tx_cfg));
- 		if (retval != sizeof(tx_cfg)) {
--			dev_dbg(device->dev, "reading tx_cfg from fifo failed: got %d byte(s), expected %d", retval, (unsigned int)sizeof(tx_cfg));
-+			dev_dbg(device->dev,
-+				"reading tx_cfg from fifo failed: got %d byte(s), expected %d",
-+				retval, (unsigned int)sizeof(tx_cfg));
- 			continue;
- 		}
+diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
+index 750e5645dc85..f503fab1e268 100644
+--- a/drivers/tty/serial/mvebu-uart.c
++++ b/drivers/tty/serial/mvebu-uart.c
+@@ -495,7 +495,6 @@ static void mvebu_uart_set_termios(struct uart_port *port,
+ 		termios->c_iflag |= old->c_iflag & ~(INPCK | IGNPAR);
+ 		termios->c_cflag &= CREAD | CBAUD;
+ 		termios->c_cflag |= old->c_cflag & ~(CREAD | CBAUD);
+-		termios->c_lflag = old->c_lflag;
+ 	}
  
- 		retval = kfifo_out(&device->tx_fifo, &size, sizeof(size_t));
- 		if (retval != sizeof(size_t)) {
--			dev_dbg(device->dev, "reading msg size from fifo failed: got %d, expected %d", retval, (unsigned int)sizeof(size_t));
-+			dev_dbg(device->dev,
-+				"reading msg size from fifo failed: got %d, expected %d",
-+				retval, (unsigned int)sizeof(size_t));
- 			continue;
- 		}
- 
-@@ -619,7 +623,11 @@ pi433_tx_thread(void *data)
- 
- 		/* add length byte, if requested */
- 		if (tx_cfg.enable_length_byte  == OPTION_ON)
--			device->buffer[position++] = size - 1; /* according to spec length byte itself must be excluded from the length calculation */
-+			/*
-+			 * according to spec, length byte itself must be
-+			 * excluded from the length calculation
-+			 */
-+			device->buffer[position++] = size - 1;
- 
- 		/* add adr byte, if requested */
- 		if (tx_cfg.enable_address_byte == OPTION_ON)
-@@ -1047,7 +1055,7 @@ static int setup_gpio(struct pi433_device *device)
- 		/* configure irq */
- 		device->irq_num[i] = gpiod_to_irq(device->gpiod[i]);
- 		if (device->irq_num[i] < 0) {
--			device->gpiod[i] = ERR_PTR(-EINVAL);//(struct gpio_desc *)device->irq_num[i];
-+			device->gpiod[i] = ERR_PTR(-EINVAL);
- 			return device->irq_num[i];
- 		}
- 		retval = request_irq(device->irq_num[i],
+ 	spin_unlock_irqrestore(&port->lock, flags);
 -- 
-2.11.0
+2.14.2
