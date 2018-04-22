@@ -1,106 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753916AbeDVXKU (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 19:10:20 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:45823 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753814AbeDVXKL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 19:10:11 -0400
-X-Google-Smtp-Source: AB8JxZoOGgcPz1mxI+7RzUdj5hvvNgBRwDctALzKMnpf6slHpEer0JBYHeAPfwoITMXzxnwTTIzSHA==
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH 08/18 v2] regulator: max8952: Pass descriptor instead of GPIO number
-Date: Mon, 23 Apr 2018 01:07:32 +0200
-Message-Id: <20180422230742.3729-8-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180422230742.3729-1-linus.walleij@linaro.org>
-References: <20180422230742.3729-1-linus.walleij@linaro.org>
+        id S1753664AbeDVXJy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 19:09:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39565 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753489AbeDVXJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 19:09:53 -0400
+Date: Mon, 23 Apr 2018 01:09:48 +0200
+From: Jan Kara <jack@suse.cz>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: viro@zeniv.linux.org.uk, mawilcox@microsoft.com,
+        ross.zwisler@linux.intel.com, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, mhocko@suse.com, jack@suse.cz,
+        kirill.shutemov@linux.intel.com, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] fs: dax: Adding new return type vm_fault_t
+Message-ID: <20180422230948.2mvimlf3zspry4ji@quack2.suse.cz>
+References: <20180421210529.GA27238@jordon-HP-15-Notebook-PC>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180421210529.GA27238@jordon-HP-15-Notebook-PC>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of passing a global GPIO number for the enable GPIO, pass
-a descriptor looked up with the standard devm_gpiod_get_optional()
-call.
+On Sun 22-04-18 02:35:29, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+> 
+> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> 
+> There was an existing bug inside dax_load_hole()
+> if vm_insert_mixed had failed to allocate a page table,
+> we'd return VM_FAULT_NOPAGE instead of VM_FAULT_OOM.
+> With new vmf_insert_mixed() this issue is addressed.
+> 
+> vm_insert_mixed_mkwrite has inefficiency when it returns
+> an error value, driver has to convert it to vm_fault_t
+> type. With new vmf_insert_mixed_mkwrite() this limitation
+> will be addressed.
+> 
+> As new function vmf_insert_mixed_mkwrite() only called
+> from fs/dax.c, so keeping both the changes in a single
+> patch.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-All users of this regulator use device tree so the transition is
-pretty smooth.
+The patch looks good to me. Just one question:
 
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Rebase the patch on the other changes.
----
- drivers/regulator/max8952.c       | 18 +++++++++++++-----
- include/linux/regulator/max8952.h |  1 -
- 2 files changed, 13 insertions(+), 6 deletions(-)
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 01f5464..721cfd5 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1955,12 +1955,19 @@ int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
+>  }
+>  EXPORT_SYMBOL(vm_insert_mixed);
+>  
+> -int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
+> -			pfn_t pfn)
+> +vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
+> +		unsigned long addr, pfn_t pfn)
+>  {
+> -	return __vm_insert_mixed(vma, addr, pfn, true);
+> +	int err;
+> +
+> +	err =  __vm_insert_mixed(vma, addr, pfn, true);
+> +	if (err == -ENOMEM)
+> +		return VM_FAULT_OOM;
+> +	if (err < 0 && err != -EBUSY)
+> +		return VM_FAULT_SIGBUS;
+> +	return VM_FAULT_NOPAGE;
+>  }
+> -EXPORT_SYMBOL(vm_insert_mixed_mkwrite);
+> +EXPORT_SYMBOL(vmf_insert_mixed_mkwrite);
 
-diff --git a/drivers/regulator/max8952.c b/drivers/regulator/max8952.c
-index 1096546c05e9..f1e77ed5dfec 100644
---- a/drivers/regulator/max8952.c
-+++ b/drivers/regulator/max8952.c
-@@ -27,6 +27,7 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/max8952.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-@@ -148,7 +149,6 @@ static struct max8952_platform_data *max8952_parse_dt(struct device *dev)
- 
- 	pd->gpio_vid0 = of_get_named_gpio(np, "max8952,vid-gpios", 0);
- 	pd->gpio_vid1 = of_get_named_gpio(np, "max8952,vid-gpios", 1);
--	pd->gpio_en = of_get_named_gpio(np, "max8952,en-gpio", 0);
- 
- 	if (of_property_read_u32(np, "max8952,default-mode", &pd->default_mode))
- 		dev_warn(dev, "Default mode not specified, assuming 0\n");
-@@ -197,6 +197,8 @@ static int max8952_pmic_probe(struct i2c_client *client,
- 	struct regulator_config config = { };
- 	struct max8952_data *max8952;
- 	struct regulator_dev *rdev;
-+	struct gpio_desc *gpiod;
-+	enum gpiod_flags gflags;
- 
- 	int ret = 0, err = 0;
- 
-@@ -224,11 +226,17 @@ static int max8952_pmic_probe(struct i2c_client *client,
- 	config.driver_data = max8952;
- 	config.of_node = client->dev.of_node;
- 
--	config.ena_gpio = pdata->gpio_en;
--	if (client->dev.of_node)
--		config.ena_gpio_initialized = true;
- 	if (pdata->reg_data->constraints.boot_on)
--		config.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
-+		gflags = GPIOD_OUT_HIGH;
-+	else
-+		gflags = GPIOD_OUT_LOW;
-+	gpiod = devm_gpiod_get_optional(&client->dev,
-+					"max8952,en",
-+					gflags);
-+	if (IS_ERR(gpiod))
-+		return PTR_ERR(gpiod);
-+	if (gpiod)
-+		config.ena_gpiod = gpiod;
- 
- 	rdev = devm_regulator_register(&client->dev, &regulator, &config);
- 	if (IS_ERR(rdev)) {
-diff --git a/include/linux/regulator/max8952.h b/include/linux/regulator/max8952.h
-index 4dbb63a1d4ab..686c42c041b5 100644
---- a/include/linux/regulator/max8952.h
-+++ b/include/linux/regulator/max8952.h
-@@ -120,7 +120,6 @@ enum {
- struct max8952_platform_data {
- 	int gpio_vid0;
- 	int gpio_vid1;
--	int gpio_en;
- 
- 	u32 default_mode;
- 	u32 dvs_mode[MAX8952_NUM_DVS_MODE]; /* MAX8952_DVS_MODEx_XXXXmV */
+So are we sure that all the callers of this function (and also of
+vmf_insert_mixed()) are OK with EBUSY? Because especially in the
+vmf_insert_mixed() case other page than the caller provided is in page
+tables and thus possibly the caller needs to do some error recovery (such
+as drop page refcount) in such case...
+
+								Honza
 -- 
-2.14.3
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
