@@ -1,5 +1,5 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-650525-1524660711-2-3447870010237491582
+X-Cyrus-Session-Id: sloti22d1t05-1194855-1524489711-2-14368563214483785818
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,101 +7,145 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MUL
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524660711; b=HVKH8SWDHlvTQGjexlOa9DiCBITROqHtJ9k1aQLs4TCz0kXh37
-    /JGcDSW3T4sVlA0g8APmnkClmh7RnCDhoJ6AnHwYbP8KyFWStnWqF5KtOoc40YKf
-    +SJfNnFsy1H1cC/aPptBGXxlRfh6KsUnAfH/zH+gaUXmyGOFIFrdid9Io+Gkntnu
-    3h1MXvpK/I3kJ3rwf241DUdgFBqM6gMadd742rNUSHr2Cvt4r3RwYC6K9wX3H/WK
-    RymADT0C416U4bpW5OLumXExDXYnukq4/Wzpe9DuwDslqoi5Ui0WvGTe96Q4wcxU
-    /is864jVZ2jRhwRIfEKVHUDoUsmhWwjcyJsg==
+    1524489710; b=g7rxzg0TdBvNWgBlzbjyImGiS25Kwqk29uTvBQm8aUpdiFIBsY
+    DCKdOXh2QvztY3sx8YwWorLaIfNrn6xkD3vXfLjK/SuXa53arNAGs8M99WV9gMec
+    WnAaOpIF5sfrAQoEmR1otsgYAaHTY6HJIpmfnyPthBbOlAAwgyrtjUj5Rzq0D4Tu
+    oJNGtqHMi/iAgLzifHudZb8JTgjjBDCs1dIkSmwN0THnF5svUp1W8XzodkXnNC4p
+    niFFVOQzrgwBPIklfSu/rv54xzZUKBrH76K2b8L6vT7jVJVb9EZ0yecrhZbgjcc8
+    KtRwZwcS3gKTMSIFNNs9uPT8XkC4p6WZIsjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524660711; bh=n0sQqowXZq41lq5C9NNIJWMfGkNlyE
-    +TPwDCnhM7X2U=; b=UTT3KPmxepRrr3OSpuPZVLFWTVYn4ZRU+dhmiwUz8ZL8nK
-    1vnXgkcpKtM9b6+CiO5GR68M4ncy7ML0GcXbcbbfflZVwUmMaPTPX+YYBc9Efq0k
-    smNoPn9re41J1uHunoF9V9YSuv57p1DNs4l05n1iz/GMEEk2bd3OihTXCh0pSx5z
-    FJxaTGVtGhXE1Nlwo8mx2wTz5EkP+rVmWAtyxpdHQFS6d/QzIMsLPpbECZ8DCbR/
-    mPxFUG/UB7fW6u6VkHk6S9KykHdp6F7f90lHF7se/B2fQx49X7Vm1v0PBBvrL9lh
-    IiJPvRj5IqPk5xZB/ux2nNaw89xw2bpI7gc2aZkw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524489710;
+    bh=4QVPbKMwEPtzxSReQqu0KLfXDJHnve6OA6s0hw+W/+E=; b=AMF9i+tS6Uas
+    Sl8gPatik0NfzlcfmWW/xf6NSbI5gZorWRFupfrdE2JNYFpHrKE3Ta2yp2IfIXsj
+    1asiLC50l6MmhRv7Y98e/rk3QkXZk3zAdMNWd/r4xZf4LXrn2COqu40ea2FOhWHR
+    4dtazTa/lbZZVuWbQ0yzvXQ0yIaPoXbYCel3ZVP2aQ7epS0toyLGUl4diGAcfqHG
+    YNtpMukR0fevGasLZfyCOqung1GbWbP2KqVctjbtG2z+cBT0xaPu2gG0jeSsiz/K
+    WkNtdnvUi4LGkdEnImtzu73Jxi0MVxamjb/s5eLEA9GUZGH5F1rDFTeEJ1ASHXuJ
+    MVfLxqGr8A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIoL/UKldQEFTGZSmILeVeW6snUrbzEnlj6FMsHcotzUz86wRuMXyIsuVF5cBF/USVNY8KDDakDiKXKTPAMtcy5p0g7uYTauc0Mu6eNatRzwlDNoL2lr
-    kqa0uuDRtU5hLVY82hfhxeihTxU/PcKIpdz8fiFbXI1NifGA4+7KZmCH/HVI86yJs6AI99OQYbL5msVrqFa1JN/vi3uDdViV5g6lS+LJaeybDXnpfukGddOh
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=WKGNTzToUg2xAN-aeHMA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfHuLWM3Q57hBAeovR6iN3JnnZqo86Xlu0KZGdGVvPP5hUQmqAmrzysF2nRyqn/0QCEXdW8xP7KsmvtcMmZJJ6ORcjs4aUFu7ZyZuuTo1b1I99DirkM5o
+    uxGcxAZjqCg+krsipv/bUXbUxxiGU+MTxvwDTpYuD7vtN3lirndZ3mrxkCpMVATSsO5e5EbuzTF4ki/Zupl6fJMEZysVmcwA42Iaj9XpNSFoRHkNVTz2VDWy
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IhDdiLrqHVMA:10 a=IkcTkHD0fZMA:10
+    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=Am4ss40yAAAA:8 a=AFQiphXAfxcKlUOB4MwA:9
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=lf-hbUz_c89dky27wAWH:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753435AbeDYMvs (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 08:51:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34848 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751525AbeDYMvq (ORCPT
+        id S1754985AbeDWNVr (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 23 Apr 2018 09:21:47 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:47882 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754786AbeDWNVq (ORCPT
         <rfc822;linux-serial@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:51:46 -0400
-Date: Wed, 25 Apr 2018 14:51:37 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        stable <stable@vger.kernel.org>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-serial@vger.kernel.org,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
+        Mon, 23 Apr 2018 09:21:46 -0400
 Subject: Re: [PATCH] serial: 8250_early: Setup divider when uartclk is passed
-Message-ID: <20180425125137.GA30021@kroah.com>
+To: Michal Simek <michal.simek@xilinx.com>,
+        <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>
+CC: stable <stable@vger.kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        <linux-serial@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>
 References: <93a7871c8654a6273b1ab35a8071e9f830e2a0c8.1524475087.git.michal.simek@xilinx.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <f8c69fee-8889-f0aa-1235-b7a65068238b@mips.com>
+Date: Mon, 23 Apr 2018 14:21:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <93a7871c8654a6273b1ab35a8071e9f830e2a0c8.1524475087.git.michal.simek@xilinx.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.155.41]
+X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
+ mipsdag02.mipstec.com (10.20.40.47)
+X-BESS-ID: 1524489696-637139-30706-96196-1
+X-BESS-VER: 2018.5-r1804181636
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192287
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-serial-owner@vger.kernel.org
 X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 11:18:11AM +0200, Michal Simek wrote:
+Hi Michal
+
+On 23/04/18 10:18, Michal Simek wrote:
 > device->baud is always non zero value because it is checked already in
 > early_serial8250_setup() before init_port is called.
+
+True, currently init_port is only called from the one location and so 
+the test is a little redundant, though I don't see the harm in testing 
+both inputs to the divisor calculation immediately before use such that 
+any future call path avoids setting a bad divisor.
+
 > 
 > Fixes: 0ff3ab701963 ("serial: 8250_early: Only set divisor if valid clk & baud")
 > Cc: stable <stable@vger.kernel.org>
 
-This isn't "fixing" anything, as the logic is identical before, or
-after, this patch is committed.  So I'll apply this, but will drop these
-two tags.
+Even if the test is dropped going forward, I wouldn't consider it's 
+presence a "bug" such that a fix needs to be backported.
 
-thanks,
+Thanks,
+Matt
 
-greg k-h
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+> 
+>   drivers/tty/serial/8250/8250_early.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_early.c b/drivers/tty/serial/8250/8250_early.c
+> index ae6a256524d8..5cd8c36c8fcc 100644
+> --- a/drivers/tty/serial/8250/8250_early.c
+> +++ b/drivers/tty/serial/8250/8250_early.c
+> @@ -122,7 +122,7 @@ static void __init init_port(struct earlycon_device *device)
+>   	serial8250_early_out(port, UART_FCR, 0);	/* no fifo */
+>   	serial8250_early_out(port, UART_MCR, 0x3);	/* DTR + RTS */
+>   
+> -	if (port->uartclk && device->baud) {
+> +	if (port->uartclk) {
+>   		divisor = DIV_ROUND_CLOSEST(port->uartclk, 16 * device->baud);
+>   		c = serial8250_early_in(port, UART_LCR);
+>   		serial8250_early_out(port, UART_LCR, c | UART_LCR_DLAB);
+> 
