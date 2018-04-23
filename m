@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932736AbeDWXbT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 19:31:19 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:41956 "EHLO ale.deltatee.com"
+        id S932722AbeDWXbS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 19:31:18 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:41922 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932624AbeDWXbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932617AbeDWXbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Apr 2018 19:31:05 -0400
 From: Logan Gunthorpe <logang@deltatee.com>
 To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
@@ -20,222 +20,202 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Alex Williamson <alex.williamson@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 23 Apr 2018 17:30:32 -0600
-Message-Id: <20180423233046.21476-1-logang@deltatee.com>
+Date: Mon, 23 Apr 2018 17:30:41 -0600
+Message-Id: <20180423233046.21476-10-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180423233046.21476-1-logang@deltatee.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, axboe@kernel.dk, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Subject: [PATCH v4 09/14] nvme-pci: Use PCI p2pmem subsystem to manage the CMB
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Everyone,
+Register the CMB buffer as p2pmem and use the appropriate allocation
+functions to create and destroy the IO submission queues.
 
-Here's v4 of our series to introduce P2P based copy offload to NVMe
-fabrics. This version has been rebased onto v4.17-rc2. A git repo
-is here:
+If the CMB supports WDS and RDS, publish it for use as P2P memory
+by other devices.
 
-https://github.com/sbates130272/linux-p2pmem pci-p2p-v4
+We can now drop the __iomem safety on the buffer seeing that, by
+convention, devm_memremap_pages() allocates regular memory without
+side effects that's accessible without the iomem accessors.
 
-Thanks,
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+---
+ drivers/nvme/host/pci.c | 75 +++++++++++++++++++++++++++----------------------
+ 1 file changed, 41 insertions(+), 34 deletions(-)
 
-Logan
-
-Changes in v4:
-
-* Change the original upstream_bridges_match() function to
-  upstream_bridge_distance() which calculates the distance between two
-  devices as long as they are behind the same root port. This should
-  address Bjorn's concerns that the code was to focused on
-  being behind a single switch.
-
-* The disable ACS function now disables ACS for all bridge ports instead
-  of switch ports (ie. those that had two upstream_bridge ports).
-
-* Change the pci_p2pmem_alloc_sgl() and pci_p2pmem_free_sgl()
-  API to be more like sgl_alloc() in that the alloc function returns
-  the allocated scatterlist and nents is not required bythe free
-  function.
-
-* Moved the new documentation into the driver-api tree as requested
-  by Jonathan
-
-* Add SGL alloc and free helpers in the nvmet code so that the
-  individual drivers can share the code that allocates P2P memory.
-  As requested by Christoph.
-
-* Cleanup the nvmet_p2pmem_store() function as Christoph
-  thought my first attempt was ugly.
-
-* Numerous commit message and comment fix-ups
-
-Changes in v3:
-
-* Many more fixes and minor cleanups that were spotted by Bjorn
-
-* Additional explanation of the ACS change in both the commit message
-  and Kconfig doc. Also, the code that disables the ACS bits is surrounded
-  explicitly by an #ifdef
-
-* Removed the flag we added to rdma_rw_ctx() in favour of using
-  is_pci_p2pdma_page(), as suggested by Sagi.
-
-* Adjust pci_p2pmem_find() so that it prefers P2P providers that
-  are closest to (or the same as) the clients using them. In cases
-  of ties, the provider is randomly chosen.
-
-* Modify the NVMe Target code so that the PCI device name of the provider
-  may be explicitly specified, bypassing the logic in pci_p2pmem_find().
-  (Note: it's still enforced that the provider must be behind the
-   same switch as the clients).
-
-* As requested by Bjorn, added documentation for driver writers.
-
-
-Changes in v2:
-
-* Renamed everything to 'p2pdma' per the suggestion from Bjorn as well
-  as a bunch of cleanup and spelling fixes he pointed out in the last
-  series.
-
-* To address Alex's ACS concerns, we change to a simpler method of
-  just disabling ACS behind switches for any kernel that has
-  CONFIG_PCI_P2PDMA.
-
-* We also reject using devices that employ 'dma_virt_ops' which should
-  fairly simply handle Jason's concerns that this work might break with
-  the HFI, QIB and rxe drivers that use the virtual ops to implement
-  their own special DMA operations.
-
---
-
-This is a continuation of our work to enable using Peer-to-Peer PCI
-memory in the kernel with initial support for the NVMe fabrics target
-subsystem. Many thanks go to Christoph Hellwig who provided valuable
-feedback to get these patches to where they are today.
-
-The concept here is to use memory that's exposed on a PCI BAR as
-data buffers in the NVMe target code such that data can be transferred
-from an RDMA NIC to the special memory and then directly to an NVMe
-device avoiding system memory entirely. The upside of this is better
-QoS for applications running on the CPU utilizing memory and lower
-PCI bandwidth required to the CPU (such that systems could be designed
-with fewer lanes connected to the CPU).
-
-Due to these trade-offs we've designed the system to only enable using
-the PCI memory in cases where the NIC, NVMe devices and memory are all
-behind the same PCI switch hierarchy. This will mean many setups that
-could likely work well will not be supported so that we can be more
-confident it will work and not place any responsibility on the user to
-understand their topology. (We chose to go this route based on feedback
-we received at the last LSF). Future work may enable these transfers
-using a white list of known good root complexes. However, at this time,
-there is no reliable way to ensure that Peer-to-Peer transactions are
-permitted between PCI Root Ports.
-
-In order to enable this functionality, we introduce a few new PCI
-functions such that a driver can register P2P memory with the system.
-Struct pages are created for this memory using devm_memremap_pages()
-and the PCI bus offset is stored in the corresponding pagemap structure.
-
-When the PCI P2PDMA config option is selected the ACS bits in every
-bridge port in the system are turned off to allow traffic to
-pass freely behind the root port. At this time, the bit must be disabled
-at boot so the IOMMU subsystem can correctly create the groups, though
-this could be addressed in the future. There is no way to dynamically
-disable the bit and alter the groups.
-
-Another set of functions allow a client driver to create a list of
-client devices that will be used in a given P2P transactions and then
-use that list to find any P2P memory that is supported by all the
-client devices.
-
-In the block layer, we also introduce a P2P request flag to indicate a
-given request targets P2P memory as well as a flag for a request queue
-to indicate a given queue supports targeting P2P memory. P2P requests
-will only be accepted by queues that support it. Also, P2P requests
-are marked to not be merged seeing a non-homogenous request would
-complicate the DMA mapping requirements.
-
-In the PCI NVMe driver, we modify the existing CMB support to utilize
-the new PCI P2P memory infrastructure and also add support for P2P
-memory in its request queue. When a P2P request is received it uses the
-pci_p2pmem_map_sg() function which applies the necessary transformation
-to get the corrent pci_bus_addr_t for the DMA transactions.
-
-In the RDMA core, we also adjust rdma_rw_ctx_init() and
-rdma_rw_ctx_destroy() to take a flags argument which indicates whether
-to use the PCI P2P mapping functions or not. To avoid odd RDMA devices
-that don't use the proper DMA infrastructure this code rejects using
-any device that employs the virt_dma_ops implementation.
-
-Finally, in the NVMe fabrics target port we introduce a new
-configuration boolean: 'allow_p2pmem'. When set, the port will attempt
-to find P2P memory supported by the RDMA NIC and all namespaces. If
-supported memory is found, it will be used in all IO transfers. And if
-a port is using P2P memory, adding new namespaces that are not supported
-by that memory will fail.
-
-These patches have been tested on a number of Intel based systems and
-for a variety of RDMA NICs (Mellanox, Broadcomm, Chelsio) and NVMe
-SSDs (Intel, Seagate, Samsung) and p2pdma devices (Eideticom,
-Microsemi, Chelsio and Everspin) using switches from both Microsemi
-and Broadcomm.
-
-Logan Gunthorpe (14):
-  PCI/P2PDMA: Support peer-to-peer memory
-  PCI/P2PDMA: Add sysfs group to display p2pmem stats
-  PCI/P2PDMA: Add PCI p2pmem dma mappings to adjust the bus offset
-  PCI/P2PDMA: Clear ACS P2P flags for all devices behind switches
-  docs-rst: Add a new directory for PCI documentation
-  PCI/P2PDMA: Add P2P DMA driver writer's documentation
-  block: Introduce PCI P2P flags for request and request queue
-  IB/core: Ensure we map P2P memory correctly in
-    rdma_rw_ctx_[init|destroy]()
-  nvme-pci: Use PCI p2pmem subsystem to manage the CMB
-  nvme-pci: Add support for P2P memory in requests
-  nvme-pci: Add a quirk for a pseudo CMB
-  nvmet: Introduce helper functions to allocate and free request SGLs
-  nvmet-rdma: Use new SGL alloc/free helper for requests
-  nvmet: Optionally use PCI P2P memory
-
- Documentation/ABI/testing/sysfs-bus-pci    |  25 +
- Documentation/PCI/index.rst                |  14 +
- Documentation/driver-api/index.rst         |   2 +-
- Documentation/driver-api/pci/index.rst     |  20 +
- Documentation/driver-api/pci/p2pdma.rst    | 166 ++++++
- Documentation/driver-api/{ => pci}/pci.rst |   0
- Documentation/index.rst                    |   3 +-
- block/blk-core.c                           |   3 +
- drivers/infiniband/core/rw.c               |  13 +-
- drivers/nvme/host/core.c                   |   4 +
- drivers/nvme/host/nvme.h                   |   8 +
- drivers/nvme/host/pci.c                    | 118 +++--
- drivers/nvme/target/configfs.c             |  67 +++
- drivers/nvme/target/core.c                 | 143 ++++-
- drivers/nvme/target/io-cmd.c               |   3 +
- drivers/nvme/target/nvmet.h                |  15 +
- drivers/nvme/target/rdma.c                 |  22 +-
- drivers/pci/Kconfig                        |  26 +
- drivers/pci/Makefile                       |   1 +
- drivers/pci/p2pdma.c                       | 814 +++++++++++++++++++++++++++++
- drivers/pci/pci.c                          |   6 +
- include/linux/blk_types.h                  |  18 +-
- include/linux/blkdev.h                     |   3 +
- include/linux/memremap.h                   |  19 +
- include/linux/pci-p2pdma.h                 | 118 +++++
- include/linux/pci.h                        |   4 +
- 26 files changed, 1579 insertions(+), 56 deletions(-)
- create mode 100644 Documentation/PCI/index.rst
- create mode 100644 Documentation/driver-api/pci/index.rst
- create mode 100644 Documentation/driver-api/pci/p2pdma.rst
- rename Documentation/driver-api/{ => pci}/pci.rst (100%)
- create mode 100644 drivers/pci/p2pdma.c
- create mode 100644 include/linux/pci-p2pdma.h
-
---
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index fbc71fac6f1e..514da4de3c85 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -29,6 +29,7 @@
+ #include <linux/types.h>
+ #include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/sed-opal.h>
++#include <linux/pci-p2pdma.h>
+ 
+ #include "nvme.h"
+ 
+@@ -92,9 +93,8 @@ struct nvme_dev {
+ 	struct work_struct remove_work;
+ 	struct mutex shutdown_lock;
+ 	bool subsystem;
+-	void __iomem *cmb;
+-	pci_bus_addr_t cmb_bus_addr;
+ 	u64 cmb_size;
++	bool cmb_use_sqes;
+ 	u32 cmbsz;
+ 	u32 cmbloc;
+ 	struct nvme_ctrl ctrl;
+@@ -149,7 +149,7 @@ struct nvme_queue {
+ 	struct nvme_dev *dev;
+ 	spinlock_t q_lock;
+ 	struct nvme_command *sq_cmds;
+-	struct nvme_command __iomem *sq_cmds_io;
++	bool sq_cmds_is_io;
+ 	volatile struct nvme_completion *cqes;
+ 	struct blk_mq_tags **tags;
+ 	dma_addr_t sq_dma_addr;
+@@ -431,10 +431,7 @@ static void __nvme_submit_cmd(struct nvme_queue *nvmeq,
+ {
+ 	u16 tail = nvmeq->sq_tail;
+ 
+-	if (nvmeq->sq_cmds_io)
+-		memcpy_toio(&nvmeq->sq_cmds_io[tail], cmd, sizeof(*cmd));
+-	else
+-		memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
++	memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
+ 
+ 	if (++tail == nvmeq->q_depth)
+ 		tail = 0;
+@@ -1289,9 +1286,18 @@ static void nvme_free_queue(struct nvme_queue *nvmeq)
+ {
+ 	dma_free_coherent(nvmeq->q_dmadev, CQ_SIZE(nvmeq->q_depth),
+ 				(void *)nvmeq->cqes, nvmeq->cq_dma_addr);
+-	if (nvmeq->sq_cmds)
+-		dma_free_coherent(nvmeq->q_dmadev, SQ_SIZE(nvmeq->q_depth),
+-					nvmeq->sq_cmds, nvmeq->sq_dma_addr);
++
++	if (nvmeq->sq_cmds) {
++		if (nvmeq->sq_cmds_is_io)
++			pci_free_p2pmem(to_pci_dev(nvmeq->q_dmadev),
++					nvmeq->sq_cmds,
++					SQ_SIZE(nvmeq->q_depth));
++		else
++			dma_free_coherent(nvmeq->q_dmadev,
++					  SQ_SIZE(nvmeq->q_depth),
++					  nvmeq->sq_cmds,
++					  nvmeq->sq_dma_addr);
++	}
+ }
+ 
+ static void nvme_free_queues(struct nvme_dev *dev, int lowest)
+@@ -1371,12 +1377,21 @@ static int nvme_cmb_qdepth(struct nvme_dev *dev, int nr_io_queues,
+ static int nvme_alloc_sq_cmds(struct nvme_dev *dev, struct nvme_queue *nvmeq,
+ 				int qid, int depth)
+ {
+-	/* CMB SQEs will be mapped before creation */
+-	if (qid && dev->cmb && use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS))
+-		return 0;
++	struct pci_dev *pdev = to_pci_dev(dev->dev);
++
++	if (qid && dev->cmb_use_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
++		nvmeq->sq_cmds = pci_alloc_p2pmem(pdev, SQ_SIZE(depth));
++		nvmeq->sq_dma_addr = pci_p2pmem_virt_to_bus(pdev,
++						nvmeq->sq_cmds);
++		nvmeq->sq_cmds_is_io = true;
++	}
++
++	if (!nvmeq->sq_cmds) {
++		nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
++					&nvmeq->sq_dma_addr, GFP_KERNEL);
++		nvmeq->sq_cmds_is_io = false;
++	}
+ 
+-	nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
+-					    &nvmeq->sq_dma_addr, GFP_KERNEL);
+ 	if (!nvmeq->sq_cmds)
+ 		return -ENOMEM;
+ 	return 0;
+@@ -1451,13 +1466,6 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+ 	struct nvme_dev *dev = nvmeq->dev;
+ 	int result;
+ 
+-	if (dev->cmb && use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
+-		unsigned offset = (qid - 1) * roundup(SQ_SIZE(nvmeq->q_depth),
+-						      dev->ctrl.page_size);
+-		nvmeq->sq_dma_addr = dev->cmb_bus_addr + offset;
+-		nvmeq->sq_cmds_io = dev->cmb + offset;
+-	}
+-
+ 	/*
+ 	 * A queue's vector matches the queue identifier unless the controller
+ 	 * has only one vector available.
+@@ -1691,9 +1699,6 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+ 		return;
+ 	dev->cmbloc = readl(dev->bar + NVME_REG_CMBLOC);
+ 
+-	if (!use_cmb_sqes)
+-		return;
+-
+ 	size = nvme_cmb_size_unit(dev) * nvme_cmb_size(dev);
+ 	offset = nvme_cmb_size_unit(dev) * NVME_CMB_OFST(dev->cmbloc);
+ 	bar = NVME_CMB_BIR(dev->cmbloc);
+@@ -1710,11 +1715,15 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+ 	if (size > bar_size - offset)
+ 		size = bar_size - offset;
+ 
+-	dev->cmb = ioremap_wc(pci_resource_start(pdev, bar) + offset, size);
+-	if (!dev->cmb)
++	if (pci_p2pdma_add_resource(pdev, bar, size, offset))
+ 		return;
+-	dev->cmb_bus_addr = pci_bus_address(pdev, bar) + offset;
++
+ 	dev->cmb_size = size;
++	dev->cmb_use_sqes = use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS);
++
++	if ((dev->cmbsz & (NVME_CMBSZ_WDS | NVME_CMBSZ_RDS)) ==
++			(NVME_CMBSZ_WDS | NVME_CMBSZ_RDS))
++		pci_p2pmem_publish(pdev, true);
+ 
+ 	if (sysfs_add_file_to_group(&dev->ctrl.device->kobj,
+ 				    &dev_attr_cmb.attr, NULL))
+@@ -1724,12 +1733,10 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+ 
+ static inline void nvme_release_cmb(struct nvme_dev *dev)
+ {
+-	if (dev->cmb) {
+-		iounmap(dev->cmb);
+-		dev->cmb = NULL;
++	if (dev->cmb_size) {
+ 		sysfs_remove_file_from_group(&dev->ctrl.device->kobj,
+ 					     &dev_attr_cmb.attr, NULL);
+-		dev->cmbsz = 0;
++		dev->cmb_size = 0;
+ 	}
+ }
+ 
+@@ -1928,13 +1935,13 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ 	if (nr_io_queues == 0)
+ 		return 0;
+ 
+-	if (dev->cmb && (dev->cmbsz & NVME_CMBSZ_SQS)) {
++	if (dev->cmb_use_sqes) {
+ 		result = nvme_cmb_qdepth(dev, nr_io_queues,
+ 				sizeof(struct nvme_command));
+ 		if (result > 0)
+ 			dev->q_depth = result;
+ 		else
+-			nvme_release_cmb(dev);
++			dev->cmb_use_sqes = false;
+ 	}
+ 
+ 	do {
+-- 
 2.11.0
