@@ -1,138 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932275AbeDWUzZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 16:55:25 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:43970 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752086AbeDWUzW (ORCPT
+        id S932349AbeDWU5f (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 16:57:35 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:35013 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932163AbeDWU5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 16:55:22 -0400
-X-Google-Smtp-Source: AIpwx48k4mnvHLCYA7LdNhH3vg7bwwLvpNffQILECNUm13lMDjMPwG/R45+Q4dpJAEo4MdIV5Vm+9Q==
-Date: Mon, 23 Apr 2018 22:55:14 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] locking/rwsem: Synchronize task state & waiter->task of
- readers
-Message-ID: <20180423205514.GA5876@andrea>
-References: <1523380938-19462-1-git-send-email-longman@redhat.com>
- <6c112ecb-d662-b1fc-152a-32060ec46dae@redhat.com>
+        Mon, 23 Apr 2018 16:57:32 -0400
+X-ME-Sender: <xms:u0jeWq42P5nufRjixjT5jLxQF29wOaB8BfouTklbH0Oh7DC2HO9kNg>
+Date: Mon, 23 Apr 2018 13:57:30 -0700
+From: Andres Freund <andres@anarazel.de>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Always report a writeback error once
+Message-ID: <20180423205730.34wvykqhefbkrtfw@alap3.anarazel.de>
+References: <20180423204208.GG13383@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6c112ecb-d662-b1fc-152a-32060ec46dae@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180423204208.GG13383@bombadil.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Waiman,
+Hi,
 
-On Mon, Apr 23, 2018 at 12:46:12PM -0400, Waiman Long wrote:
-> On 04/10/2018 01:22 PM, Waiman Long wrote:
-> > It was observed occasionally in PowerPC systems that there was reader
-> > who had not been woken up but that its waiter->task had been cleared.
-
-Can you provide more details about these observations?  (links to LKML
-posts, traces, applications used/micro-benchmarks, ...)
-
-
-> >
-> > One probable cause of this missed wakeup may be the fact that the
-> > waiter->task and the task state have not been properly synchronized as
-> > the lock release-acquire pair of different locks in the wakeup code path
-> > does not provide a full memory barrier guarantee.
-
-I guess that by the "pair of different locks" you mean (sem->wait_lock,
-p->pi_lock), right?  BTW, __rwsem_down_write_failed_common() is calling
-wake_up_q() _before_ releasing the wait_lock: did you intend to exclude
-this callsite? (why?)
-
-
-> So smp_store_mb()
-> > is now used to set waiter->task to NULL to provide a proper memory
-> > barrier for synchronization.
-
-Mmh; the patch is not introducing an smp_store_mb()... My guess is that
-you are thinking at the sequence:
-
-	smp_store_release(&waiter->task, NULL);
-	[...]
-	smp_mb(); /* added with your patch */
-
-or what am I missing?
-
-
-> >
-> > Signed-off-by: Waiman Long <longman@redhat.com>
-> > ---
-> >  kernel/locking/rwsem-xadd.c | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> >
-> > diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-> > index e795908..b3c588c 100644
-> > --- a/kernel/locking/rwsem-xadd.c
-> > +++ b/kernel/locking/rwsem-xadd.c
-> > @@ -209,6 +209,23 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
-> >  		smp_store_release(&waiter->task, NULL);
-> >  	}
-> >  
-> > +	/*
-> > +	 * To avoid missed wakeup of reader, we need to make sure
-> > +	 * that task state and waiter->task are properly synchronized.
-> > +	 *
-> > +	 *     wakeup		      sleep
-> > +	 *     ------		      -----
-> > +	 * __rwsem_mark_wake:	rwsem_down_read_failed*:
-> > +	 *   [S] waiter->task	  [S] set_current_state(state)
-> > +	 *	 MB		      MB
-> > +	 * try_to_wake_up:
-> > +	 *   [L] state		  [L] waiter->task
-> > +	 *
-> > +	 * For the wakeup path, the original lock release-acquire pair
-> > +	 * does not provide enough guarantee of proper synchronization.
-> > +	 */
-> > +	smp_mb();
-> > +
-> >  	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
-> >  	if (list_empty(&sem->wait_list)) {
-> >  		/* hit end of list above */
+On 2018-04-23 13:42:08 -0700, Matthew Wilcox wrote:
+> The errseq_t infrastructure assumes that errors which occurred before
+> the file descriptor was opened are of no interest to the application.
+> This turns out to be a regression for some applications, notably Postgres.
 > 
-> Ping!
+> Before errseq_t, a writeback error would be reported exactly once (as
+> long as the inode remained in memory), so Postgres could open a file,
+> call fsync() and find out whether there had been a writeback error on
+> that file from another process.
 > 
-> Any thought on this patch?
+> This patch restores that behaviour by reporting errors to file descriptors
+> which are opened after the error occurred, but before it was reported
+> to any file descriptor.
 > 
-> I am wondering if there is a cheaper way to apply the memory barrier
-> just on architectures that need it.
-
-try_to_wake_up() does:
-
-	raw_spin_lock_irqsave(&p->pi_lock, flags);
-	smp_mb__after_spinlock();
-	if (!(p->state & state))
-
-My understanding is that this smp_mb__after_spinlock() provides us with
-the guarantee you described above.  The smp_mb__after_spinlock() should
-represent a 'cheaper way' to provide such a guarantee.
-
-If this understanding is correct, the remaining question would be about
-whether you want to rely on (and document) the smp_mb__after_spinlock()
-in the callsite in question (the comment in wake_up_q()
-
-   /*
-    * wake_up_process() implies a wmb() to pair with the queueing
-    * in wake_q_add() so as not to miss wakeups.
-    */
-
-does not appear to be suffient...).
-
-  Andrea
-
-
+> Cc: stable@vger.kernel.org
+> Fixes: 5660e13d2fd6 ("fs: new infrastructure for writeback error handling and reporting")
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 > 
-> Cheers,
-> Longman
-> 
+> diff --git a/lib/errseq.c b/lib/errseq.c
+> index df782418b333..093f1fba4ee0 100644
+> --- a/lib/errseq.c
+> +++ b/lib/errseq.c
+> @@ -119,19 +119,11 @@ EXPORT_SYMBOL(errseq_set);
+>  errseq_t errseq_sample(errseq_t *eseq)
+>  {
+
+There's a comment above this:
+ *
+ * This function allows callers to sample an errseq_t value, marking it as
+ * "seen" if required.
+
+>  	errseq_t old = READ_ONCE(*eseq);
+> -	errseq_t new = old;
+>  
+> -	/*
+> -	 * For the common case of no errors ever having been set, we can skip
+> -	 * marking the SEEN bit. Once an error has been set, the value will
+> -	 * never go back to zero.
+> -	 */
+> -	if (old != 0) {
+> -		new |= ERRSEQ_SEEN;
+> -		if (old != new)
+> -			cmpxchg(eseq, old, new);
+> -	}
+> -	return new;
+
+Which seems not to be true anymore after this hunk.
+
+
+> +	/* If nobody has seen this error yet, then we can be the first. */
+> +	if (!(old & ERRSEQ_SEEN))
+> +		old = 0;
+> +	return old;
+>  }
+>  EXPORT_SYMBOL(errseq_sample);
+
+I've never really looked at this code in any depth before, but won't
+this potentially lead to the same error being reported on multiple FDs?
+Imagine two fds (potentially in different processes) getting the 0
+returned by errseq_sample() because it's not ERRSEQ_SEEN. Afaict
+file_check_and_advance_wb_err() will return an error that's always
+unlike 0 in that case, and thus the error will returned on both fds?
+
+I'm personally perfectly fine with that, but it's not necessarily what's
+described as desired in your email?.
+
+Greetings,
+
+Andres Freund
