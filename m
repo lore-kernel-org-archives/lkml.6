@@ -1,103 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932111AbeDWRM1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:12:27 -0400
-Received: from mail.efficios.com ([167.114.142.138]:49816 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755473AbeDWRMX (ORCPT
+        id S1755761AbeDWRVn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:21:43 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41174 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755460AbeDWRVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:12:23 -0400
-Date: Mon, 23 Apr 2018 13:12:21 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: rostedt <rostedt@goodmis.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Joel Fernandes <joelaf@google.com>, Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        baohong liu <baohong.liu@intel.com>,
-        vedang patel <vedang.patel@intel.com>,
-        kernel-team <kernel-team@lge.com>
-Message-ID: <1212130312.14753.1524503541789.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180423121800.47b173af@gandalf.local.home>
-References: <20180417040748.212236-1-joelaf@google.com> <CAJWu+ooK5jETwB-L37=8PX+A4ercM8BrVb6g23t7F_xYhH4BSw@mail.gmail.com> <CAJWu+opGN5+h4=ggKcQGnqG8h1LvtMjD_XQywU7=ULjjyS-v6w@mail.gmail.com> <20180423031926.GF26088@linux.vnet.ibm.com> <409016827.14587.1524493888181.JavaMail.zimbra@efficios.com> <20180423105325.7d5d245b@gandalf.local.home> <1045420715.14686.1524495583859.JavaMail.zimbra@efficios.com> <20180423121800.47b173af@gandalf.local.home>
-Subject: Re: [RFC v4 3/4] irqflags: Avoid unnecessary calls to trace_ if you
- can
+        Mon, 23 Apr 2018 13:21:41 -0400
+Smtp-Origin-Hostprefix: devbig
+From: Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig102.frc2.facebook.com
+To: <linux-kernel@vger.kernel.org>
+CC: <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Smtp-Origin-Cluster: frc2c02
+Subject: [PATCH v5 1/2] tracing: fix bad use of igrab in trace_uprobe.c
+Date: Mon, 23 Apr 2018 10:21:34 -0700
+Message-ID: <20180423172135.4050588-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.9.5
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.7_GA_1964 (ZimbraWebClient - FF52 (Linux)/8.8.7_GA_1964)
-Thread-Topic: irqflags: Avoid unnecessary calls to trace_ if you can
-Thread-Index: 965wGiXknyW8a1ei7m4UbIFl4p0t/w==
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_06:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Apr 23, 2018, at 12:18 PM, rostedt rostedt@goodmis.org wrote:
+As Miklos reported and suggested:
 
-> On Mon, 23 Apr 2018 10:59:43 -0400 (EDT)
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> 
->> The main open question here is whether we want one SRCU grace period
->> domain per SRCU tracepoint definition, or just one SRCU domain for all
->> SRCU tracepoints would be fine.
->> 
->> I'm not sure what we would gain by having the extra granularity provided
->> by one SRCU grace period domain per tracepoint, and having a single SRCU
->> domain for all SRCU tracepoints makes it easy to batch grace period after
->> bulk tracepoint modifications.
->> 
->> Thoughts ?
-> 
-> I didn't think too much depth in this. It was more of just a brain
-> storming idea. Yeah, one singe RCU domain may be good enough. I was
-> thinking more of how to know when a tracepoint required the SRCU domain
-> as supposed to a preempt disabled domain, and wanted to just suggest
-> the linker script approach.
-> 
-> This is how I detect if trace_printk() is used anywhere in the kernel
-> (and do that big warning if it is). That way the trace events don't
-> need to be created any special way. You just use the trace_##event##_X
-> flavor and it automatically detects what to do. But we need to make
-> sure the same event isn't used for multiple flavors (SRCU vs schedule),
-> or maybe we can, and any change would have to do both synchronizations.
+  This pattern repeats two times in trace_uprobe.c and in
+  kernel/events/core.c as well:
 
-The approach I used for synchronize rcu a few years ago when I did a srcu
-tracepoint prototype [1] was simply this:
+      ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+      if (ret)
+          goto fail_address_parse;
 
- static inline void tracepoint_synchronize_unregister(void)
+      inode = igrab(d_inode(path.dentry));
+      path_put(&path);
+
+  And it's wrong.  You can only hold a reference to the inode if you
+  have an active ref to the superblock as well (which is normally
+  through path.mnt) or holding s_umount.
+
+  This way unmounting the containing filesystem while the tracepoint is
+  active will give you the "VFS: Busy inodes after unmount..." message
+  and a crash when the inode is finally put.
+
+  Solution: store path instead of inode.
+
+This patch fixes two instances in trace_uprobe.c. struct path is added to
+struct trace_uprobe to keep the inode and containing mount point
+referenced.
+
+Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
+Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Howard McLauchlan <hmclauchlan@fb.com>
+Cc: Josef Bacik <jbacik@fb.com>
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Reported-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ kernel/trace/trace_uprobe.c | 35 ++++++++++++++---------------------
+ 1 file changed, 14 insertions(+), 21 deletions(-)
+
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index 34fd0e0..ac89287 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -55,6 +55,7 @@ struct trace_uprobe {
+ 	struct list_head		list;
+ 	struct trace_uprobe_filter	filter;
+ 	struct uprobe_consumer		consumer;
++	struct path			path;
+ 	struct inode			*inode;
+ 	char				*filename;
+ 	unsigned long			offset;
+@@ -289,7 +290,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
+ 	for (i = 0; i < tu->tp.nr_args; i++)
+ 		traceprobe_free_probe_arg(&tu->tp.args[i]);
+ 
+-	iput(tu->inode);
++	path_put(&tu->path);
+ 	kfree(tu->tp.call.class->system);
+ 	kfree(tu->tp.call.name);
+ 	kfree(tu->filename);
+@@ -363,7 +364,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
+ static int create_trace_uprobe(int argc, char **argv)
  {
-+	synchronize_srcu(&tracepoint_srcu);
- 	synchronize_sched();
- }
-
-So whenever we synchronize after tracepoint unregistration, the tracepoint
-code always issue both synchronize_sched() and SRCU synchronize. This way,
-tracepoint API users don't have to care about the kind of tracepoint they
-are updating.
-
-I'm inclined to explicitly declare the tracepoints with their given
-synchronization method. Tracepoint probe callback functions for currently
-existing tracepoints expect to have preemption disabled when invoked.
-This assumption will not be true anymore for srcu-tracepoints.
-
-Thanks,
-
-Mathieu
-
-[1] https://github.com/compudj/linux-dev/commits/tracepoint-srcu
-
-> 
-> -- Steve
-
+ 	struct trace_uprobe *tu;
+-	struct inode *inode;
+ 	char *arg, *event, *group, *filename;
+ 	char buf[MAX_EVENT_NAME_LEN];
+ 	struct path path;
+@@ -371,7 +371,6 @@ static int create_trace_uprobe(int argc, char **argv)
+ 	bool is_delete, is_return;
+ 	int i, ret;
+ 
+-	inode = NULL;
+ 	ret = 0;
+ 	is_delete = false;
+ 	is_return = false;
+@@ -437,21 +436,16 @@ static int create_trace_uprobe(int argc, char **argv)
+ 	}
+ 	/* Find the last occurrence, in case the path contains ':' too. */
+ 	arg = strrchr(argv[1], ':');
+-	if (!arg) {
+-		ret = -EINVAL;
+-		goto fail_address_parse;
+-	}
++	if (!arg)
++		return -EINVAL;
+ 
+ 	*arg++ = '\0';
+ 	filename = argv[1];
+ 	ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+ 	if (ret)
+-		goto fail_address_parse;
+-
+-	inode = igrab(d_real_inode(path.dentry));
+-	path_put(&path);
++		return ret;
+ 
+-	if (!inode || !S_ISREG(inode->i_mode)) {
++	if (!d_is_reg(path.dentry)) {
+ 		ret = -EINVAL;
+ 		goto fail_address_parse;
+ 	}
+@@ -490,7 +484,7 @@ static int create_trace_uprobe(int argc, char **argv)
+ 		goto fail_address_parse;
+ 	}
+ 	tu->offset = offset;
+-	tu->inode = inode;
++	tu->path = path;
+ 	tu->filename = kstrdup(filename, GFP_KERNEL);
+ 
+ 	if (!tu->filename) {
+@@ -558,7 +552,7 @@ static int create_trace_uprobe(int argc, char **argv)
+ 	return ret;
+ 
+ fail_address_parse:
+-	iput(inode);
++	path_put(&path);
+ 
+ 	pr_info("Failed to parse address or file.\n");
+ 
+@@ -922,6 +916,7 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
+ 		goto err_flags;
+ 
+ 	tu->consumer.filter = filter;
++	tu->inode = d_real_inode(tu->path.dentry);
+ 	ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
+ 	if (ret)
+ 		goto err_buffer;
+@@ -967,6 +962,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
+ 	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
+ 
+ 	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
++	tu->inode = NULL;
+ 	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
+ 
+ 	uprobe_buffer_disable();
+@@ -1337,7 +1333,6 @@ struct trace_event_call *
+ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+ {
+ 	struct trace_uprobe *tu;
+-	struct inode *inode;
+ 	struct path path;
+ 	int ret;
+ 
+@@ -1345,11 +1340,8 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+-	inode = igrab(d_inode(path.dentry));
+-	path_put(&path);
+-
+-	if (!inode || !S_ISREG(inode->i_mode)) {
+-		iput(inode);
++	if (!d_is_reg(path.dentry)) {
++		path_put(&path);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+@@ -1364,11 +1356,12 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+ 	if (IS_ERR(tu)) {
+ 		pr_info("Failed to allocate trace_uprobe.(%d)\n",
+ 			(int)PTR_ERR(tu));
++		path_put(&path);
+ 		return ERR_CAST(tu);
+ 	}
+ 
+ 	tu->offset = offs;
+-	tu->inode = inode;
++	tu->path = path;
+ 	tu->filename = kstrdup(name, GFP_KERNEL);
+ 	init_trace_event_call(tu, &tu->tp.call);
+ 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.9.5
