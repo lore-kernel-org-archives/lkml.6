@@ -1,102 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754780AbeDWK7z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:59:55 -0400
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:39058 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754671AbeDWK7v (ORCPT
+        id S1754756AbeDWLB2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 07:01:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54712 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754651AbeDWLBY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:59:51 -0400
-X-Google-Smtp-Source: AIpwx49lHJqRH5ai7isRsDubZtRhXGgdRSp7d+uDe+PNeCEETqlrQikqQlvGjx9DqwyiD6fSrI76X86/0QapslHsqTk=
-MIME-Version: 1.0
-In-Reply-To: <000000000000af09f3056a813d2d@google.com>
-References: <000000000000af09f3056a813d2d@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 23 Apr 2018 12:59:30 +0200
-Message-ID: <CACT4Y+Zmx647NnNVV0=9OOt8jWQt8VKfYuLCSU_fnbOvkN09MA@mail.gmail.com>
-Subject: Re: WARNING: kernel stack regs at (ptrval) in syzkaller has bad 'bp'
- value (ptrval)
-To: syzbot <syzbot+e073e4740cfbb3ae200b@syzkaller.appspotmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        Eric Biggers <ebiggers3@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 23 Apr 2018 07:01:24 -0400
+From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: cohuck@redhat.com, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
+        pasic@linux.ibm.com, pmorel@linux.ibm.com,
+        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Subject: [PATCH v2 0/5] vfio: ccw: error handling fixes and improvements
+Date: Mon, 23 Apr 2018 13:01:08 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18042311-0028-0000-0000-0000097C2816
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008905; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01022058; UDB=6.00521638; IPR=6.00801293;
+ MB=3.00020722; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 11:01:21
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042311-0029-0000-0000-00003A7DD04B
+Message-Id: <20180423110113.59385-1-bjsdjshi@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804230116
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 12:10 PM, syzbot
-<syzbot+e073e4740cfbb3ae200b@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot hit the following crash on upstream commit
-> 5ec83b22a2dd13180762c89698e4e2c2881a423c (Sun Apr 22 19:13:04 2018 +0000)
-> Merge tag '4.17-rc1-SMB3-CIFS' of git://git.samba.org/sfrench/cifs-2.6
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=e073e4740cfbb3ae200b
->
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6509307940044800
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=6027105183727616
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=4763013630394368
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+Dear Reviewers,
 
-There are 2 similar bugs reported:
+Here is a new version for this patch series.
 
-https://syzkaller.appspot.com/bug?id=4fcc07e4e85fc6c1d5472fcc8ab5a35db01972dc
-https://syzkaller.appspot.com/bug?id=bed7a7acabe08fe69a89a4225572911a32598651
+We didn't get agreement on patch #5 (#4 in v1) in the former cycle though,
+I made it based on my understanding. We can continue discussing on it.
 
-They all seem to point to crypto/SHA3/K512_4.
-+crypto maintainers
+Changelog:
+v1->v2:
+ - #1. Reworded commit message and comment, plus some typo fixes.
+ - #2. New patch.
+ - #3. Added the missing suggested-by Pierre.
+       Fixed typos.
+       Added sanity check on pa->pa_iova_pfn and updated comments accordingly.
+ - #4. Removed unused idaw_nr.
+ - #5. Replaced leading white spaces with TABs.
+       Traced the function in anycase.
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+e073e4740cfbb3ae200b@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
->
->         (ptrval): 0000000000445649 (0x445649)
->         (ptrval): 0000000000000033 (0x33)
->         (ptrval): 0000000000000216 (0x216)
->         (ptrval): 00007f155536eda8 (0x7f155536eda8)
->         (ptrval): 000000000000002b (0x2b)
-> WARNING: kernel stack regs at         (ptrval) in syzkaller547737:4493 has
-> bad 'bp' value         (ptrval)
-> WARNING: kernel stack frame pointer at         (ptrval) in
-> syzkaller547737:4496 has bad value         (ptrval)
->
->
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000af09f3056a813d2d%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+Dong Jia Shi (3):
+  vfio: ccw: shorten kernel doc description for pfn_array_pin()
+  vfio: ccw: refactor and improve pfn_array_alloc_pin()
+  vfio: ccw: set ccw->cda to NULL defensively
+
+Halil Pasic (2):
+  vfio: ccw: fix cleanup if cp_prefetch fails
+  vfio: ccw: add traceponits for interesting error paths
+
+ drivers/s390/cio/Makefile         |   1 +
+ drivers/s390/cio/vfio_ccw_cp.c    | 134 ++++++++++++++++++++------------------
+ drivers/s390/cio/vfio_ccw_fsm.c   |  16 ++++-
+ drivers/s390/cio/vfio_ccw_trace.h |  77 ++++++++++++++++++++++
+ 4 files changed, 164 insertions(+), 64 deletions(-)
+ create mode 100644 drivers/s390/cio/vfio_ccw_trace.h
+
+-- 
+2.13.5
