@@ -1,67 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932084AbeDWOMF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:12:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46344 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755579AbeDWOLY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:11:24 -0400
-Date: Mon, 23 Apr 2018 16:10:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel.opensrc@gmail.com
-Subject: Re: [PATCH tip/core/rcu 01/22] sched: Make non-production PREEMPT
- cond_resched() help Tasks RCU
-Message-ID: <20180423141038.GA4064@hirez.programming.kicks-ass.net>
-References: <20180423023150.GA21533@linux.vnet.ibm.com>
- <1524450747-22778-1-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180423085127.GR4064@hirez.programming.kicks-ass.net>
- <20180423124000.GL26088@linux.vnet.ibm.com>
- <20180423094742.6582e19d@gandalf.local.home>
+        id S1755286AbeDWOMO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:12:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36840 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755579AbeDWOMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 10:12:07 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6FC217D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 23 Apr 2018 11:12:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Thomas Richter <tmricht@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH v2] perf test: Adapt test case
+ record+probe_libc_inet_pton.sh for s390
+Message-ID: <20180423141204.GA30324@kernel.org>
+References: <20180423082428.7930-1-tmricht@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180423094742.6582e19d@gandalf.local.home>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180423082428.7930-1-tmricht@linux.ibm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 09:47:42AM -0400, Steven Rostedt wrote:
-> On Mon, 23 Apr 2018 05:40:00 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+Em Mon, Apr 23, 2018 at 10:24:28AM +0200, Thomas Richter escreveu:
+> perf test case 58 (record+probe_libc_inet_pton.sh)
+> executed on s390x using kernel 4.16.0rc3
+> displays this result:
+>  # ./perf trace --no-syscalls
+>            -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+>      probe_libc:inet_pton: (3ffa0240448)
+> 	      __GI___inet_pton (/usr/lib64/libc-2.26.so)
+> 	      gaih_inet (inlined)
+> 	      __GI_getaddrinfo (inlined)
+> 	      main (/usr/bin/ping)
+> 	      __libc_start_main (/usr/lib64/libc-2.26.so)
+> 	     _start (/usr/bin/ping)
 > 
-> > > I'm confused.. why is having this conditional on TRACEPOINT_BENCHMARK a
-> > > sane idea?  
-> > 
-> > Because the TRACEPOINT_BENCHMARK tests are insane, so a similar
-> > level of insanity is required to make things work.  Plus having this
-> > be unconditional would not be good for performance, as 0day has been
-> > telling me frequently over the past couple of years.
+> After I installed kernel 4.16.0 the same tests uses
+> commands
+>  # perf record -e probe_libc:inet_pton/call-graph=dwarf/
+>       -o /tmp/perf.data.abc ping -6 -c 1 ::1
+>  # perf script -i /tmp/perf.data.abc
+> and displays:
+>  ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
+> 	       140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+> 	       fbde1 gaih_inet (inlined)
+> 	       fe2b9 __GI_getaddrinfo (inlined)
+> 	        398d main (/usr/bin/ping)
 > 
-> Just for some context. The tracepoint benchmark (which should never be
-> enabled in any production machine), will start a thread when the
-> benchmark trace event is enabled. This thread will never exit (until
-> the trace event is disabled), and does a benchmark loop and constantly
-> calls "cond_resched()" to allow other tasks to run. The point is, this
-> thread will never have a quiescent state for task_rcu, unless we tell
-> rcu that cond_resched() is a quiescent state. But this is only required
-> because the tracepoint benchmark has this nasty thread, that is only
-> used for debugging and benchmarking the tracepoint (during development).
+> Nothing else changed including glibc elfutils and other libraries
+> picked up by the build.
+> The entries for __libc_start_main and _start are missing.
 > 
-> I also suggested having a direct call into RCU from the thread to tell
-> RCU that it entered a quiescent state, but Paul didn't like that idea
-> as it caused the tracepoint benchmark to call too deep into RCU
-> internals.
+> I bisected missing __libc_start_main and _start to commit
+> 3d20c6246690219881786de10d2dda93f616d0ac
+> ("perf unwind: Unwind with libdw doesn't take symfs into account")
 > 
->  http://lkml.kernel.org/r/20180227153646.GD3777@linux.vnet.ibm.com
+> When I undo this commit I get this call stack on s390:
+>  [root@s35lp76 perf]# ./perf script  -i /tmp/perf.data.abc
+>  ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
+> 	140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+> 	 fbde1 gaih_inet (inlined)
+> 	 fe2b9 __GI_getaddrinfo (inlined)
+> 	  398d main (/usr/bin/ping)
+> 	 22fbd __libc_start_main (/usr/lib64/libc-2.26.so)
+> 	  457b _start (/usr/bin/ping)
+> 
+> Looks like dwarf functions dwfl_xxx  create different call back
+> stack trace when using file
+> /usr/lib/debug/usr/bin/ping-20161105-7.fc27.s390x.debug instead of
+> file /usr/bin/ping.
+> 
+> Fix this test case on s390 and do not expect any call back stack
+> entry after the main() function. Also be more robust and accept a
+> leading __GI_ prefix in front of getaddrinfo.
+> 
+> On x86 this test case shows the same call stack using
+> both kernel versions 4.16.0rc3 and 4.16.0 and also
+> stops at main:
 
-That thread using cond_resched_task_rcu_qs() seems like a _lot_ better
-than having cond_resched() semantics change depending on random
-!scheduler config parameters.
+Thanks, applied.
