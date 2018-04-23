@@ -1,200 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932590AbeDWWiZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 18:38:25 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:39083 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932514AbeDWWiV (ORCPT
+        id S932634AbeDWWkM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 18:40:12 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34674 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932558AbeDWWkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 18:38:21 -0400
-X-Google-Smtp-Source: AIpwx4/TnaqR9Y9QwC1eNWxF/m1diVZ0pdjOIEaWrxEn/yPJnmEamuHwazo70SuuLpEkg3FrX4G9/A==
-Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
- unflattened to FDT
-To: Jan Kiszka <jan.kiszka@web.de>, Rob Herring <robh+dt@kernel.org>,
-        Alan Tull <atull@kernel.org>
-Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jailhouse <jailhouse-dev@googlegroups.com>
-References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
- <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
- <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
- <7bbf615b-3cdd-6bb4-6918-33e48de4225d@gmail.com>
- <a21dbee8-6e4e-9ceb-c798-dda43c2eae2d@web.de>
- <d7e94a45-5d46-0491-e5dc-2b098a11c5b1@gmail.com>
- <CAL_Jsq+MmUTMrd+jNqUB2=A-q3cCy7+QWOKG0iF6zM0hjCy3PQ@mail.gmail.com>
- <e508f3de-f21b-2510-2c6a-b810073ba1a7@web.de>
- <e06d1c0f-f60d-fc23-cd74-82f557dbc432@web.de>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <7bbb9472-9c96-6012-68e6-4ec2773c7732@gmail.com>
-Date: Mon, 23 Apr 2018 15:38:17 -0700
+        Mon, 23 Apr 2018 18:40:08 -0400
+Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        Wei Liu <wei.liu2@citrix.com>
+Cc: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        jgross@suse.com, Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        xen-devel@lists.xenproject.org, daniel.vetter@intel.com
+References: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
+ <20180416192905.GA18096@downor-Z87X-UD5H>
+ <20180417075928.GT31310@phenom.ffwll.local>
+ <20180417205744.GA15930@downor-Z87X-UD5H>
+ <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
+ <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
+ <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+ <20180420071914.GG31310@phenom.ffwll.local>
+ <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
+ <20180423115242.ywdwqblj2aseu3fr@citrix.com>
+ <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <ce2ebb5b-fa13-0475-b0fd-6c330277d151@oracle.com>
+Date: Mon, 23 Apr 2018 18:41:41 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <e06d1c0f-f60d-fc23-cd74-82f557dbc432@web.de>
+In-Reply-To: <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8872 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804230222
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan,
-
-+ Alan Tull for fpga perspective
-
-On 04/22/18 03:30, Jan Kiszka wrote:
-> On 2018-04-11 07:42, Jan Kiszka wrote:
->> On 2018-04-05 23:12, Rob Herring wrote:
->>> On Thu, Apr 5, 2018 at 2:28 PM, Frank Rowand <frowand.list@gmail.com> wrote:
->>>> On 04/05/18 12:13, Jan Kiszka wrote:
->>>>> On 2018-04-05 20:59, Frank Rowand wrote:
->>>>>> Hi Jan,
->>>>>>
->>>>>> On 04/04/18 15:35, Jan Kiszka wrote:
->>>>>>> Hi Frank,
->>>>>>>
->>>>>>> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
->>>>>>>> From: Frank Rowand <frank.rowand@sony.com>
->>>>>>>>
->>>>>>>> Move duplicating and unflattening of an overlay flattened devicetree
->>>>>>>> (FDT) into the overlay application code.  To accomplish this,
->>>>>>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
->>>>>>>>
->>>>>>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
->>>>>>>> code, which is thus responsible for freeing the duplicate FDT.  The
->>>>>>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
->>>>>>>> original FDT.
->>>>>>>>
->>>>>>>> The unflattened devicetree now belongs to devicetree code, which is
->>>>>>>> thus responsible for freeing the unflattened devicetree.
->>>>>>>>
->>>>>>>> These ownership changes prevent early freeing of the duplicated FDT
->>>>>>>> or the unflattened devicetree, which could result in use after free
->>>>>>>> errors.
->>>>>>>>
->>>>>>>> of_overlay_fdt_apply() is a private function for the anticipated
->>>>>>>> overlay loader.
->>>>>>>
->>>>>>> We are using of_fdt_unflatten_tree + of_overlay_apply in the
->>>>>>> (out-of-tree) Jailhouse loader driver in order to register a virtual
->>>>>>> device during hypervisor activation with Linux. The DT overlay is
->>>>>>> created from a a template but modified prior to application to account
->>>>>>> for runtime-specific parameters. See [1] for the current implementation.
->>>>>>>
->>>>>>> I'm now wondering how to model that scenario best with the new API.
->>>>>>> Given that the loader lost ownership of the unflattened tree but the
->>>>>>> modification API exist only for the that DT state, I'm not yet seeing a
->>>>>>> clear solution. Should we apply the template in disabled form (status =
->>>>>>> "disabled"), modify it, and then activate it while it is already applied?
->>>>>>
->>>>>> Thank you for the pointer to the driver - that makes it much easier to
->>>>>> understand the use case and consider solutions.
->>>>>>
->>>>>> If you can make the changes directly on the FDT instead of on the
->>>>>> expanded devicetree, then you could move to the new API.
+On 04/23/2018 08:10 AM, Oleksandr Andrushchenko wrote:
+> On 04/23/2018 02:52 PM, Wei Liu wrote:
+>> On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko wrote:
+>>>>>      the gntdev.
 >>>>>
->>>>> Are there some examples/references on how to edit FDTs in-place in the
->>>>> kernel? I'd like to avoid writing the n-th FDT parser/generator.
->>>>
->>>> I don't know of any existing in-kernel edits of the FDT (but they might
->>>> exist).  The functions to access an FDT are in libfdt, which is in
->>>> scripts/dtc/libfdt/.
+>>>>> I think this is generic enough that it could be implemented by a
+>>>>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
+>>>>> something similar to this.
+>>>> You can't just wrap random userspace memory into a dma-buf. We've
+>>>> just had
+>>>> this discussion with kvm/qemu folks, who proposed just that, and
+>>>> after a
+>>>> bit of discussion they'll now try to have a driver which just wraps a
+>>>> memfd into a dma-buf.
+>>> So, we have to decide either we introduce a new driver
+>>> (say, under drivers/xen/xen-dma-buf) or extend the existing
+>>> gntdev/balloon to support dma-buf use-cases.
 >>>
->>> Let's please not go down that route of doing FDT modifications. There
->>> is little reason to other than for early boot changes. And it is much
->>> easier to work on unflattened trees.
+>>> Can anybody from Xen community express their preference here?
+>>>
+>> Oleksandr talked to me on IRC about this, he said a few IOCTLs need to
+>> be added to either existing drivers or a new driver.
 >>
->> I just briefly looked into libfdt, and it would have meant building it
->> into the module as there are no library functions exported by the kernel
->> either. Another reason to drop that.
+>> I went through this thread twice and skimmed through the relevant
+>> documents, but I couldn't see any obvious pros and cons for either
+>> approach. So I don't really have an opinion on this.
 >>
->> What's apparently working now is the pattern I initially suggested:
->> Register template with status = "disabled" as overlay, then prepare and
->> apply changeset that contains all needed modifications and sets the
->> status to "ok". I might be leaking additional resources, but to find
->> that out, I will now finally have to resolve clean unbinding of the
->> generic PCI host controller [1] first.
-> 
-> static void free_overlay_changeset(struct overlay_changeset *ovcs)
-> {
-> 	[...]
-> 	/*
-> 	 * TODO
-> 	 *
-> 	 * would like to: kfree(ovcs->overlay_tree);
-> 	 * but can not since drivers may have pointers into this data
-> 	 *
-> 	 * would like to: kfree(ovcs->fdt);
-> 	 * but can not since drivers may have pointers into this data
-> 	 */
-> 
-> 	kfree(ovcs);
-> }
-> 
-> What's this? I have kmemleak now jumping at me over this. Who is suppose
-> to plug these leaks? The caller of of_overlay_fdt_apply has no pointers
-> to those objects. I would say that's a regression of the new API.
+>> But, assuming if implemented in existing drivers, those IOCTLs need to
+>> be added to different drivers, which means userspace program needs to
+>> write more code and get more handles, it would be slightly better to
+>> implement a new driver from that perspective.
+> If gntdev/balloon extension is still considered:
+>
+> All the IOCTLs will be in gntdev driver (in current xen-zcopy
+> terminology):
+>  - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
+>  - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
+>  - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
+>
+> Balloon driver extension, which is needed for contiguous/DMA
+> buffers, will be to provide new *kernel API*, no UAPI is needed.
+>
 
-The problem already existed but it was hidden.  We have never been able to
-kfree() these object because we do not know if there are any pointers into
-these objects.  The new API makes the problem visible to kmemleak.
 
-The reason that we do not know if there are any pointers into these objects
-is that devicetree access APIs return pointers into the devicetree internal
-data structures (that is, into the overlay unflattened devicetree).  If we
-want to be able to do the kfree()s, we could change the devicetree access
-APIs.
+So I am obviously a bit late to this thread, but why do you need to add
+new ioctls to gntdev and balloon? Doesn't this driver manage to do what
+you want without any extensions?
 
-The reason that pointers into the overlay flattened tree (ovcs->fdt) are
-also exposed is that the overlay unflattened devicetree property values
-are pointers into the overlay fdt.
-
-** This paragraph becomes academic (and not needed) if the fix in the next
-paragraph can be implemented. **
-I _think_ that the fdt issue __for overlays__ can be fixed somewhat easily.
-(I would want to read through the code again to make sure I'm not missing
-any issues.)  If the of_fdt_unflatten_tree() called by of_overlay_fdt_apply()
-was modified so that property values were copied into newly allocated memory
-and the live tree property pointers were set to the copy instead of to
-the value in the fdt, then I _think_ the fdt could be freed in
-of_overlay_fdt_apply() after calling of_overlay_apply().  The code that
-frees a devicetree would also have to be aware of this change -- I'm not
-sure if that leads to ugly complications or if it is easy.  The other
-question to consider is whether to make the same change to
-of_fdt_unflatten_tree() when it is called in early boot to unflatten
-the base devicetree.  Doing so would increase the memory usage of the
-live tree (we would not be able to free the base fdt after unflattening
-it because we make the fdt visible in /sys/firmware/fdt -- though
-_maybe_ that could be conditioned on CONFIG_KEXEC).
-
-But all of the complexity of that fix is _only_ because of_overlay_apply()
-and of_overlay_remove() call overlay_notify(), passing in the overlay
-unflattened devicetree (which has pointers into the overlay fdt). Pointers
-into the overlay unflattened devicetree are then passed to the notifiers.
-(Again, I may be missing some other place that the overlay unflattened
-devicetree is made visible to other code -- a more thorough reading of
-the code is needed.) If the notifiers could be modified to accept the
-changeset list instead of of pointers to the fragments in the overlay
-unflattened devicetree then there would be no possibility of the notifiers
-keeping a pointer into the overlay fdt. I do not know if this is a
-practical change for the notifiers -- there are no callers of
-of_overlay_notifier_register() in the mainline kernel source. My
-recollection is that the overlay notifiers were added for the fpga
-subsystem.
-
-Why is overlay_notify() the only issue related to unknown users having
-pointers into the overlay fdt?  The answer is that the overlay code
-does not directly expose the overlay unflattened devicetree (and thus
-indirectly the overlay fdt) to the live devicetree -- when the
-overlay code creates the overlay changeset, it copies from the
-overlay unflattened devicetree and overlay fdt and only exposes
-pointers to the copies.
-
-And hopefully the issues with the overlay unflattened devicetree can
-be resolved in the same way as for the overlay fdt.
-
--Frank
+-boris
