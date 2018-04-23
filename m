@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754591AbeDWJ1a (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:27:30 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50572 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754518AbeDWJ12 (ORCPT
+        id S1754617AbeDWJ1u (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 05:27:50 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46635 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754542AbeDWJ1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:27:28 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
-        daniel@ffwll.ch, peda@axentia.se, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] drm: bridge: Add support for static image formats
-Date: Mon, 23 Apr 2018 12:27:39 +0300
-Message-ID: <3108314.q4SV6s3NXE@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1524130269-32688-2-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org> <1524130269-32688-2-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 23 Apr 2018 05:27:46 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Diego Viola <diego.viola@gmail.com>, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, len.brown@intel.com, rui.zhang@intel.com,
+        linux-pm@vger.kernel.org
+Subject: Re: Experiencing freezes with kernel 4.16.3 on a desktop with E5500 CPU (bisect included)
+Date: Mon, 23 Apr 2018 11:27:36 +0200
+Message-ID: <2120072.1825pzNyX4@aspire.rjw.lan>
+In-Reply-To: <20180423091633.GU4064@hirez.programming.kicks-ass.net>
+References: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com> <20180423091633.GU4064@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -26,108 +24,23 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
-
-Thank you for the patch.
-
-On Thursday, 19 April 2018 12:31:02 EEST Jacopo Mondi wrote:
-> Add support for storing image format information in DRM bridges with
-> associated helper function.
+On Monday, April 23, 2018 11:16:33 AM CEST Peter Zijlstra wrote:
+> On Sat, Apr 21, 2018 at 11:19:55PM -0300, Diego Viola wrote:
 > 
-> This patch replicates for bridges what 'drm_display_info_set_bus_formats()'
-> is for connectors.
+> > The problem only happens *after* resuming from suspend, in normal S0
+> > state it never happens.
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/gpu/drm/drm_bridge.c | 30 ++++++++++++++++++++++++++++++
->  include/drm/drm_bridge.h     |  8 ++++++++
->  2 files changed, 38 insertions(+)
+> What kind of suspend are you doing? s2disk, s2ram ?
 > 
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index 1638bfe..e2ad098 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -157,6 +157,36 @@ void drm_bridge_detach(struct drm_bridge *bridge)
->  }
+> > My machine is a desktop and has a dual core E5500 CPU with 2GB of RAM,
+> > I run Arch Linux and I use the i3wm.
 > 
->  /**
-> + * drm_bridge_set_bus_formats() - set bridge supported image formats
-> + * @bridge: the bridge to set image formats in
-> + * @formats: array of MEDIA_BUS_FMT\_ supported image formats
-
-Why the \ (here and below) ?
-
-> + * @num_formats: number of elements in the @formats array
-> + *
-> + * Store a list of supported image formats in a bridge.
-> + * See MEDIA_BUS_FMT_* definitions in include/uapi/linux/media-bus-format.h
-> for
-> + * a full list of available formats.
-> + */
-> +int drm_bridge_set_bus_formats(struct drm_bridge *bridge, const u32
-> *formats,
-> +			       unsigned int num_formats)
-> +{
-> +	u32 *fmts;
-> +
-> +	if (!formats || !num_formats)
-> +		return -EINVAL;
-> +
-> +	fmts = kmemdup(formats, sizeof(*formats) * num_formats, GFP_KERNEL);
-
-This memory will be leaked when the bridge is destroyed.
-
-> +	if (!fmts)
-> +		return -ENOMEM;
-> +
-> +	kfree(bridge->bus_formats);
-> +	bridge->bus_formats = fmts;
-> +	bridge->num_bus_formats = num_formats;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(drm_bridge_set_bus_formats);
-> +
-> +/**
->   * DOC: bridge callbacks
->   *
->   * The &drm_bridge_funcs ops are populated by the bridge driver. The DRM
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index 3270fec..6b3648c 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -258,6 +258,9 @@ struct drm_bridge_timings {
->   * @encoder: encoder to which this bridge is connected
->   * @next: the next bridge in the encoder chain
->   * @of_node: device node pointer to the bridge
-> + * @bus_formats: wire image formats. Array of @num_bus_formats
-> MEDIA_BUS_FMT\_
-> + * elements
-> + * @num_bus_formats: size of @bus_formats array
->   * @list: to keep track of all added bridges
->   * @timings: the timing specification for the bridge, if any (may
->   * be NULL)
-> @@ -271,6 +274,9 @@ struct drm_bridge {
->  #ifdef CONFIG_OF
->  	struct device_node *of_node;
->  #endif
-> +	const u32 *bus_formats;
-> +	unsigned int num_bus_formats;
-> +
->  	struct list_head list;
->  	const struct drm_bridge_timings *timings;
+> That's a Core2 era chip; does it actually have stable TSC ?
 > 
-> @@ -296,6 +302,8 @@ void drm_bridge_mode_set(struct drm_bridge *bridge,
->  			struct drm_display_mode *adjusted_mode);
->  void drm_bridge_pre_enable(struct drm_bridge *bridge);
->  void drm_bridge_enable(struct drm_bridge *bridge);
-> +int drm_bridge_set_bus_formats(struct drm_bridge *bridge, const u32 *fmts,
-> +			       unsigned int num_fmts);
+> > aa83c45762a242acce9b35020363225a7b59d7c9 is the first bad commit
 > 
->  #ifdef CONFIG_DRM_PANEL_BRIDGE
->  struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
+> That is most curious; that was supposed to only affect early boot. I'll
+> try and figure out of there's some intersection with suspend.
 
--- 
-Regards,
-
-Laurent Pinchart
+Well, FWIW, I wonder if the flags that were set in init_tsc_clocksource() for
+unstable TSC before the above commit may be involved in this somehow.
