@@ -1,116 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752869AbeDWGmj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:42:39 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:57736 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751353AbeDWGmh (ORCPT
+        id S1754009AbeDWGmy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:42:54 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:24703 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753018AbeDWGmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:42:37 -0400
-Subject: Re: [PATCH v2] phy: core: Allow phy_pm_runtime_xxx API calls with
- NULL phy
-To: Manu Gautam <mgautam@codeaurora.org>
-References: <1521525707-23927-1-git-send-email-mgautam@codeaurora.org>
-CC: <linux-arm-msm@vger.kernel.org>,
-        "open list:GENERIC PHY FRAMEWORK" <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <c8edb158-9286-6877-ce6e-36a421571d8c@ti.com>
-Date: Mon, 23 Apr 2018 12:12:31 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Mon, 23 Apr 2018 02:42:52 -0400
+X-UUID: db282b8663f5420796379f406801dee8-20180423
+From: <sean.wang@mediatek.com>
+To: <matthias.bgg@gmail.com>, <rjw@rjwysocki.net>, <khilman@baylibre.com>
+CC: <ulf.hansson@linaro.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 1/2] regmap: include <linux/ktime.h> from include/linux/regmap.h
+Date: Mon, 23 Apr 2018 14:42:44 +0800
+Message-ID: <ccea364eeb830b2092987d271c8308b97fe59d8f.1524465345.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <1521525707-23927-1-git-send-email-mgautam@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Sean Wang <sean.wang@mediatek.com>
 
+Similar to the readx_poll_timeout() macro calling ktime_* and using
+ktime_t type, which is declared in <linux/ktime.h>. So, make
+include/linux/regmap.h explicitly include <linux/ktime.h>, like
+include/linux/iopoll.h does.  Otherwise, users of the macro will see
+below errors.
 
-On Tuesday 20 March 2018 11:31 AM, Manu Gautam wrote:
-> phy_init() and phy_exit() calls, and phy_power_on() and
-> phy_power_off() already accept NULL as valid PHY reference
-> and act as NOP. Extend same concept to phy runtime_pm APIs
-> to keep drivers (e.g. dwc3) code simple while dealing with
-> optional PHYs.
-> 
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+error: implicit declaration of function ‘ktime_add_us’
+[-Werror=implicit-function-declaration]
 
-merged, thanks!
+error: implicit declaration of function ‘ktime_get’
+[-Werror=implicit-function-declaration]
 
--Kishon
+error: implicit declaration of function ‘ktime_compare’
+[-Werror=implicit-function-declaration]
 
-> ---
-> Changes for v2:
->  - Fixed compilation warning
-> 
->  drivers/phy/phy-core.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index 3c31ce5..1fda576 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -153,6 +153,9 @@ int phy_pm_runtime_get(struct phy *phy)
->  {
->  	int ret;
->  
-> +	if (!phy)
-> +		return 0;
-> +
->  	if (!pm_runtime_enabled(&phy->dev))
->  		return -ENOTSUPP;
->  
-> @@ -168,6 +171,9 @@ int phy_pm_runtime_get_sync(struct phy *phy)
->  {
->  	int ret;
->  
-> +	if (!phy)
-> +		return 0;
-> +
->  	if (!pm_runtime_enabled(&phy->dev))
->  		return -ENOTSUPP;
->  
-> @@ -181,6 +187,9 @@ int phy_pm_runtime_get_sync(struct phy *phy)
->  
->  int phy_pm_runtime_put(struct phy *phy)
->  {
-> +	if (!phy)
-> +		return 0;
-> +
->  	if (!pm_runtime_enabled(&phy->dev))
->  		return -ENOTSUPP;
->  
-> @@ -190,6 +199,9 @@ int phy_pm_runtime_put(struct phy *phy)
->  
->  int phy_pm_runtime_put_sync(struct phy *phy)
->  {
-> +	if (!phy)
-> +		return 0;
-> +
->  	if (!pm_runtime_enabled(&phy->dev))
->  		return -ENOTSUPP;
->  
-> @@ -199,6 +211,9 @@ int phy_pm_runtime_put_sync(struct phy *phy)
->  
->  void phy_pm_runtime_allow(struct phy *phy)
->  {
-> +	if (!phy)
-> +		return;
-> +
->  	if (!pm_runtime_enabled(&phy->dev))
->  		return;
->  
-> @@ -208,6 +223,9 @@ void phy_pm_runtime_allow(struct phy *phy)
->  
->  void phy_pm_runtime_forbid(struct phy *phy)
->  {
-> +	if (!phy)
-> +		return;
-> +
->  	if (!pm_runtime_enabled(&phy->dev))
->  		return;
->  
-> 
+include/linux/regmap.h:128:2: error: unknown type name ‘ktime_t’
+  ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
+
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ include/linux/regmap.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 5f7ad05..b6865f0 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -15,6 +15,7 @@
+ 
+ #include <linux/list.h>
+ #include <linux/rbtree.h>
++#include <linux/ktime.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/bug.h>
+-- 
+2.7.4
