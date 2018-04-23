@@ -1,65 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755354AbeDWNwd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:52:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754981AbeDWNw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:52:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20ACB217A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 23 Apr 2018 10:52:21 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
-Subject: Re: [PATCH] perf tools: set kernel end address properly
-Message-ID: <20180423135221.GC3254@kernel.org>
-References: <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
- <20180416165800.GD3202@kernel.org>
- <20180416122407.0d90863b69fed80166384850@arm.com>
- <20180416174811.1aca9106364effe435f363c8@arm.com>
- <20180417022726.GA31947@sejong>
- <20180418193759.b63912fe5e5b8a9023ec80a8@arm.com>
- <20180419023712.GB13370@sejong>
- <20180419182024.5d3bc71deef99551cc19fc55@arm.com>
- <20180419235915.GA19067@sejong>
- <20180420182358.c3dad0f06100d41aa16a2104@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420182358.c3dad0f06100d41aa16a2104@arm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1755433AbeDWNwx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:52:53 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:48672 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754981AbeDWNwv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 09:52:51 -0400
+Date: Mon, 23 Apr 2018 09:52:49 -0400 (EDT)
+Message-Id: <20180423.095249.1008800065389287269.davem@davemloft.net>
+To: jannh@google.com
+Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] tcp: don't read out-of-bounds opsize
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180420135730.44921-1-jannh@google.com>
+References: <20180420135730.44921-1-jannh@google.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Apr 20, 2018 at 06:23:58PM -0500, Kim Phillips escreveu:
-> On Fri, 20 Apr 2018 08:59:15 +0900
-> Namhyung Kim <namhyung@kernel.org> wrote:
-> 
-> > The map_groups__fixup_end() was called to set end addresses of kernel
-> > map and module maps.  But now machine__create_modules() is set the end
-> > address of modules properly, the only remaining piece is the kernel map.
-> > We can set it with adjacent module's address directly instead of calling
-> > the map_groups__fixup_end().  If there's no module after the kernel map,
-> > the end address will be ~0ULL.
-> > 
-> > Since it also changes the start address of the kernel map, it needs to
-> > re-insert the map to the kmaps in order to keep a correct ordering.  Kim
-> > reported that it caused problems on ARM64.
-> > 
-> > Reported-by: Kim Phillips <kim.phillips@arm.com>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> 
-> Acked-by: Kim Phillips <kim.phillips@arm.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 20 Apr 2018 15:57:30 +0200
 
-So as you actually seem to have tested this, I'm taking this as a
-Tested-by instead, to better reflect what you did, ok?
+> The old code reads the "opsize" variable from out-of-bounds memory (first
+> byte behind the segment) if a broken TCP segment ends directly after an
+> opcode that is neither EOL nor NOP.
+> 
+> The result of the read isn't used for anything, so the worst thing that
+> could theoretically happen is a pagefault; and since the physmap is usually
+> mostly contiguous, even that seems pretty unlikely.
+> 
+> The following C reproducer triggers the uninitialized read - however, you
+> can't actually see anything happen unless you put something like a
+> pr_warn() in tcp_parse_md5sig_option() to print the opsize.
+ ...
+> Fixes: cfb6eeb4c860 ("[TCP]: MD5 Signature Option (RFC2385) support.")
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-- Arnaldo
+Applied and queued up for -stable, thank you.
