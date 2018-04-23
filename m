@@ -1,90 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754351AbeDWIHU convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:07:20 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49645 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754078AbeDWIHS (ORCPT
+        id S1754413AbeDWIH6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:07:58 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:39388 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754162AbeDWIHy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:07:18 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org
-Subject: Re: [PATCH RFC] ACPI: disable extra P_LVLx access on KVM
-Date: Mon, 23 Apr 2018 10:07:10 +0200
-Message-ID: <1969294.enFTGV94N4@aspire.rjw.lan>
-In-Reply-To: <1522431741-4678-1-git-send-email-mst@redhat.com>
-References: <1522431741-4678-1-git-send-email-mst@redhat.com>
+        Mon, 23 Apr 2018 04:07:54 -0400
+Date: Mon, 23 Apr 2018 16:07:49 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: NeilBrown <neilb@suse.com>
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] rhashtable: add rhashtable_walk_prev()
+Message-ID: <20180423080749.qw4tpeqvzjjin4dv@gondor.apana.org.au>
+References: <152403346237.16895.8767189357062722046.stgit2@noble>
+ <152403402206.16895.14563720960374849428.stgit2@noble>
+ <20180418143501.kzvknyvgnjo7v75k@gondor.apana.org.au>
+ <87bmegqfjc.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87bmegqfjc.fsf@notabene.neil.brown.name>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, March 30, 2018 7:43:58 PM CEST Michael S. Tsirkin wrote:
-> As documented by commit b488f021 "ACPI: restore comment justifying
-> 'extra' P_LVLx access", Linux does an extra IO read after entering idle
-> because on (some) chipsets STPCLK# doesn't get asserted in time
-> to prevent further instruction processing.
+On Thu, Apr 19, 2018 at 09:08:07AM +1000, NeilBrown wrote:
 > 
-> This can never be the case on KVM, and a timer read causes an expensive
-> VM exit in turn causing useless load on host system. Detect KVM and skip
-> the read.  TODO: whitelist more hypervisors?
+> The need is essentially the same as the need for
+> rhashtable_walk_peek().  The difference is that the actual behaviour can
+> be documented briefly (and so understood easily) without enumerating
+> multiple special cases.
+> rhashtable_walk_peek() is much the same as
+>  rhashtable_walk_prev() ?: rhashtable_walk_next()
 > 
-> Note: very lightly tested.  Pls don't apply this yet, I am working on a
-> _CST implementation for KVM and will repost this without the RFC tag
-> when it's been tested properly.
-> 
-> Posting now for early flames/feedback.
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: kvm@vger.kernel.org
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->  drivers/acpi/processor_idle.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-> index abb559c..8ae28dc 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -33,6 +33,7 @@
->  #include <linux/cpuidle.h>
->  #include <linux/cpu.h>
->  #include <acpi/processor.h>
-> +#include <linux/kvm_para.h>
->  
->  /*
->   * Include the apic definitions for x86 to have the APIC timer related defines
-> @@ -665,7 +666,8 @@ static void __cpuidle acpi_idle_do_entry(struct acpi_processor_cx *cx)
->  		/* Dummy wait op - must do something useless after P_LVL2 read
->  		   because chipsets cannot guarantee that STPCLK# signal
->  		   gets asserted in time to freeze execution properly. */
-> -		inl(acpi_gbl_FADT.xpm_timer_block.address);
-> +		if (!kvm_para_available())
-> +			inl(acpi_gbl_FADT.xpm_timer_block.address);
->  	}
->  }
->  
-> @@ -687,7 +689,8 @@ static int acpi_idle_play_dead(struct cpuidle_device *dev, int index)
->  		else if (cx->entry_method == ACPI_CSTATE_SYSTEMIO) {
->  			inb(cx->address);
->  			/* See comment in acpi_idle_do_entry() */
-> -			inl(acpi_gbl_FADT.xpm_timer_block.address);
-> +			if (!kvm_para_available())
-> +				inl(acpi_gbl_FADT.xpm_timer_block.address);
->  		} else
->  			return -ENODEV;
->  	}
-> 
+> The need arises when you need to "stop" a walk and then restart at the
+> same object, not the next one. i.e. the last object returned before the
+> "stop" wasn't acted on.
+> This happens with seq_file if the buffer space for ->show() is not
+> sufficient to format an object.  In the case, seq_file will stop() the
+> iteration, make more space available (either by flushing or by
+> reallocing) and will start again at the same location.
+> If the seq_file client stored the rhashtable_iter in the seq_file
+> private data, it can use rhasthable_walk_prev() to recover its position
+> if that object is still in the hash table.  If it isn't still present,
+> rhashtable_walk_next() can be used to get the next one.  In some cases
+> it can be useful for the client to know whether it got the previous one
+> or not.
 
-While I have no objections to this change from the ACPI side, I'd like someone
-from the KVM land to comment on this.
+I see.  I'm OK with this provided that you will also remove/convert
+users of rhashtable_walk_peek.
+
+I don't think we need two functions that do almost the same thing.
 
 Thanks,
-Rafael
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
