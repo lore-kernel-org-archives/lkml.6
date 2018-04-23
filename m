@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx4+pDDQD7SjSANXfZGbGoVViTLOSgLOi8kPIM6OwewqUdlDQPxYzsdpDPaUQRjeRDHBJrclw
-ARC-Seal: i=1; a=rsa-sha256; t=1524498474; cv=none;
+X-Google-Smtp-Source: AIpwx481PRe0eo4D8+OAVwocYcRrwbH6SBrnju+EsQF1oWs36SA8p8TQZFI9d9tpbUs0m3Pg9XQB
+ARC-Seal: i=1; a=rsa-sha256; t=1524498479; cv=none;
         d=google.com; s=arc-20160816;
-        b=rj6ziwOehLP+EKTrctgWGGwIZRKpyRjX/nj4l0yJHuSdRFVs5F8ISOHe1mZqC3RcVI
-         8dTIolfzmTSkNL+azHsAAt7siY8Er7DR65cqHXzNllM13zIFhrLGFDSy8ZCGwvDrZdmd
-         ZmOimLp10md1pAuo0SVPm7gdBsKTBNnKCdE3Ys14NBknvEuIbR0W/GPzotljFtYx/2k7
-         LgVDgzXpxYdHgxdZyVYtxJNSBqUaXx4NXVf1+lRW57LvY57p39PDcV3Tzc1TjE7Nq01i
-         N57UguYQnx+AvJbWwYB9EQ3JFQXv+8HM7xGyKiN33CrUffRYQyk+eYHvSswZMkhZznIH
-         iLGw==
+        b=WxJxS0M7nAC9Cqy+JqvU6tLRzFXgRTfCXRv9LhRck2zYi/DtxFB3N/UA32tDDY4Ydy
+         jJ+TfSh0NXbAYcQUpUWdR12lCEGthSpMFm4v1/aIkswANoVsCJkeAx/vnzebBy5sfKwo
+         QsEtLxMkSDUhijgH8PUrNez1ZYEBx3lRPDxPnCanJRGbIMd51bujIXOF6Xhz6lxlQEPn
+         5ATfqhb8HMsdKKu2XH60R5UP6U3A0XD44SAsab9HiYEMQxRdqr0HhVplt4qkwtPWGGoV
+         RXoXFnl4D9sqrdyGUv4hkF3t0cOfdZkJO0+LgaWbI+ZZAtyjwJFk59TzyQaR9uzBLL6L
+         Gh4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=YQx9cZdEuHeJE+gwrrn8Afu/0pGPh6Q3W4RpoMicy/s=;
-        b=nBsZcld8IJLX0nyFP695St0rGaQ5z36K2BMDoybcPUblqVuab3Z4eMnQ4489cE93KJ
-         H9nUPa2lhCo7Df8aYFKwWapqaDHR3WewFnoK4V4zx1dT0gUQAS53utpfaUNKm177Owmb
-         REotdiWVxGTLQeicfWAE3Vuwo0yD8Do8gZZuFedfRJTrVGNZNBF3rxosBXCoI0NeiIQD
-         SqP4jMhQxFgDXH1IYv0nryOCfnxu3/RSBk10lN9MlYOHSp/EM7SWCX80MXl5/LVVgWci
-         Qt3EQz3kx7J3bl+bKqx+Ob/u2P7UCRnmi6FO3ByeVJTJMh+DiDD3WT31xmYkxFRfRSBw
-         FSnw==
+        bh=bUtTC/Dyg5FNIa6JGw1gxi9rGbbo2QORoEfBK8fKEY8=;
+        b=GtKeIjmOOQF5n6l0tULA+TGHNU6mfQ7r7OdOj4sj+C2imIduNZbTIsIYCwkj0wnLsh
+         ri/TmP5gFdRtzjyytTfmZd/7hN1VS78cQy7xWG/wHSaaumZXSx9HRl83deT+cuitbc6o
+         CcnjrCktfTB3bZi12oIxoNYnpqCYYYH0ksyXM+ZevRPJ1yUMAau5r6wpP9vbEDLul4kc
+         BLjdQpEbgl6s3B5I1su3mPdqJ/MCmDA/Gq+9roDvpB6lBhgQDr75cl642foLdasn8PAo
+         YyA4OUzFkgdqWK6dJy+1fhm3cYx+2+hhbtGHrQnLWoj81rr41vm9MO/T2E6lDIWWIXKt
+         gqCg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Q/jOhaaL;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GHYcm26q;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Q/jOhaaL;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GHYcm26q;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,52 +58,223 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 22/37] x86/mm/pae: Populate the user page-table with user pgd's
-Date: Mon, 23 Apr 2018 17:47:25 +0200
-Message-Id: <1524498460-25530-23-git-send-email-joro@8bytes.org>
+Subject: [PATCH 30/37] x86/pgtable/pae: Use separate kernel PMDs for user page-table
+Date: Mon, 23 Apr 2018 17:47:33 +0200
+Message-Id: <1524498460-25530-31-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552512391072402?=
-X-GMAIL-MSGID: =?utf-8?q?1598552512391072402?=
+X-GMAIL-THRID: =?utf-8?q?1598552517312608879?=
+X-GMAIL-MSGID: =?utf-8?q?1598552517312608879?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-When we populate a PGD entry, make sure we populate it in
-the user page-table too.
+We need separate kernel PMDs in the user page-table when PTI
+is enabled to map the per-process LDT for user-space.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable-3level.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/mm/pgtable.c | 100 ++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 81 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable-3level.h b/arch/x86/include/asm/pgtable-3level.h
-index f24df59..f2ca313 100644
---- a/arch/x86/include/asm/pgtable-3level.h
-+++ b/arch/x86/include/asm/pgtable-3level.h
-@@ -98,6 +98,9 @@ static inline void native_set_pmd(pmd_t *pmdp, pmd_t pmd)
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index f4211d2..ae98d4c 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -178,6 +178,14 @@ static void pgd_dtor(pgd_t *pgd)
+  */
+ #define PREALLOCATED_PMDS	UNSHARED_PTRS_PER_PGD
  
- static inline void native_set_pud(pud_t *pudp, pud_t pud)
++/*
++ * We allocate separate PMDs for the kernel part of the user page-table
++ * when PTI is enabled. We need them to map the per-process LDT into the
++ * user-space page-table.
++ */
++#define PREALLOCATED_USER_PMDS	 (static_cpu_has(X86_FEATURE_PTI) ? \
++					KERNEL_PGD_PTRS : 0)
++
+ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
  {
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	pud.p4d.pgd = pti_set_user_pgtbl(&pudp->p4d.pgd, pud.p4d.pgd);
-+#endif
- 	set_64bit((unsigned long long *)(pudp), native_pud_val(pud));
+ 	paravirt_alloc_pmd(mm, __pa(pmd) >> PAGE_SHIFT);
+@@ -198,14 +206,14 @@ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
+ 
+ /* No need to prepopulate any pagetable entries in non-PAE modes. */
+ #define PREALLOCATED_PMDS	0
+-
++#define PREALLOCATED_USER_PMDS	 0
+ #endif	/* CONFIG_X86_PAE */
+ 
+-static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
++static void free_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
+ {
+ 	int i;
+ 
+-	for(i = 0; i < PREALLOCATED_PMDS; i++)
++	for(i = 0; i < count; i++)
+ 		if (pmds[i]) {
+ 			pgtable_pmd_page_dtor(virt_to_page(pmds[i]));
+ 			free_page((unsigned long)pmds[i]);
+@@ -213,7 +221,7 @@ static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
+ 		}
  }
  
-@@ -229,6 +232,10 @@ static inline pud_t native_pudp_get_and_clear(pud_t *pudp)
+-static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
++static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
  {
- 	union split_pud res, *orig = (union split_pud *)pudp;
+ 	int i;
+ 	bool failed = false;
+@@ -222,7 +230,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
+ 	if (mm == &init_mm)
+ 		gfp &= ~__GFP_ACCOUNT;
+ 
+-	for(i = 0; i < PREALLOCATED_PMDS; i++) {
++	for(i = 0; i < count; i++) {
+ 		pmd_t *pmd = (pmd_t *)__get_free_page(gfp);
+ 		if (!pmd)
+ 			failed = true;
+@@ -237,7 +245,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
+ 	}
+ 
+ 	if (failed) {
+-		free_pmds(mm, pmds);
++		free_pmds(mm, pmds, count);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -250,23 +258,38 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
+  * preallocate which never got a corresponding vma will need to be
+  * freed manually.
+  */
++static void mop_up_one_pmd(struct mm_struct *mm, pgd_t *pgdp)
++{
++	pgd_t pgd = *pgdp;
++
++	if (pgd_val(pgd) != 0) {
++		pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
++
++		*pgdp = native_make_pgd(0);
++
++		paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
++		pmd_free(mm, pmd);
++		mm_dec_nr_pmds(mm);
++	}
++}
++
+ static void pgd_mop_up_pmds(struct mm_struct *mm, pgd_t *pgdp)
+ {
+ 	int i;
+ 
+-	for(i = 0; i < PREALLOCATED_PMDS; i++) {
+-		pgd_t pgd = pgdp[i];
++	for(i = 0; i < PREALLOCATED_PMDS; i++)
++		mop_up_one_pmd(mm, &pgdp[i]);
+ 
+-		if (pgd_val(pgd) != 0) {
+-			pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 
+-			pgdp[i] = native_make_pgd(0);
++	if (!static_cpu_has(X86_FEATURE_PTI))
++		return;
+ 
+-			paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
+-			pmd_free(mm, pmd);
+-			mm_dec_nr_pmds(mm);
+-		}
+-	}
++	pgdp = kernel_to_user_pgdp(pgdp);
++
++	for (i = 0; i < PREALLOCATED_USER_PMDS; i++)
++		mop_up_one_pmd(mm, &pgdp[i + KERNEL_PGD_BOUNDARY]);
++#endif
+ }
+ 
+ static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
+@@ -292,6 +315,38 @@ static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
+ 	}
+ }
  
 +#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	pti_set_user_pgtbl(&pudp->p4d.pgd, __pgd(0));
-+#endif
++static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
++				     pgd_t *k_pgd, pmd_t *pmds[])
++{
++	pgd_t *s_pgd = kernel_to_user_pgdp(swapper_pg_dir);
++	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
++	p4d_t *u_p4d;
++	pud_t *u_pud;
++	int i;
 +
- 	/* xchg acts as a barrier before setting of the high bits */
- 	res.pud_low = xchg(&orig->pud_low, 0);
- 	res.pud_high = orig->pud_high;
++	u_p4d = p4d_offset(u_pgd, 0);
++	u_pud = pud_offset(u_p4d, 0);
++
++	s_pgd += KERNEL_PGD_BOUNDARY;
++	u_pud += KERNEL_PGD_BOUNDARY;
++
++	for (i = 0; i < PREALLOCATED_USER_PMDS; i++, u_pud++, s_pgd++) {
++		pmd_t *pmd = pmds[i];
++
++		memcpy(pmd, (pmd_t *)pgd_page_vaddr(*s_pgd),
++		       sizeof(pmd_t) * PTRS_PER_PMD);
++
++		pud_populate(mm, u_pud, pmd);
++	}
++
++}
++#else
++static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
++				     pgd_t *k_pgd, pmd_t *pmds[])
++{
++}
++#endif
+ /*
+  * Xen paravirt assumes pgd table should be in one page. 64 bit kernel also
+  * assumes that pgd should be in one page.
+@@ -372,6 +427,7 @@ static inline void _pgd_free(pgd_t *pgd)
+ pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+ 	pgd_t *pgd;
++	pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
+ 	pmd_t *pmds[PREALLOCATED_PMDS];
+ 
+ 	pgd = _pgd_alloc();
+@@ -381,12 +437,15 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+ 
+ 	mm->pgd = pgd;
+ 
+-	if (preallocate_pmds(mm, pmds) != 0)
++	if (preallocate_pmds(mm, pmds, PREALLOCATED_PMDS) != 0)
+ 		goto out_free_pgd;
+ 
+-	if (paravirt_pgd_alloc(mm) != 0)
++	if (preallocate_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS) != 0)
+ 		goto out_free_pmds;
+ 
++	if (paravirt_pgd_alloc(mm) != 0)
++		goto out_free_user_pmds;
++
+ 	/*
+ 	 * Make sure that pre-populating the pmds is atomic with
+ 	 * respect to anything walking the pgd_list, so that they
+@@ -396,13 +455,16 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+ 
+ 	pgd_ctor(mm, pgd);
+ 	pgd_prepopulate_pmd(mm, pgd, pmds);
++	pgd_prepopulate_user_pmd(mm, pgd, u_pmds);
+ 
+ 	spin_unlock(&pgd_lock);
+ 
+ 	return pgd;
+ 
++out_free_user_pmds:
++	free_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS);
+ out_free_pmds:
+-	free_pmds(mm, pmds);
++	free_pmds(mm, pmds, PREALLOCATED_PMDS);
+ out_free_pgd:
+ 	_pgd_free(pgd);
+ out:
 -- 
 2.7.4
