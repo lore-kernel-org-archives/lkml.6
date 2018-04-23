@@ -1,138 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754846AbeDWMIe (ORCPT <rfc822;w@1wt.eu>);
+        id S1754880AbeDWMIj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:08:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36596 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754837AbeDWMIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Apr 2018 08:08:34 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53024 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754756AbeDWMI2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:08:28 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
-        daniel@ffwll.ch, peda@axentia.se, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] drm: bridge: thc63lvd1024: Add support for LVDS mode map
-Date: Mon, 23 Apr 2018 15:08:39 +0300
-Message-ID: <11465771.5tI9t3u2ch@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1524130269-32688-4-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org> <1524130269-32688-4-git-send-email-jacopo+renesas@jmondi.org>
+Date: Mon, 23 Apr 2018 14:08:21 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Quentin Schulz <quentin.schulz@bootlin.com>
+Cc: dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH 2/2] ubi: introduce ubi.nocheck parameter to skip CRC
+ check when attaching ubi vol
+Message-ID: <20180423140821.3992df89@bbrezillon>
+In-Reply-To: <20180423094009.5cjvg7jxvwiegq2g@qschulz>
+References: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com>
+        <6551534f88b3aa77cc377c4270c4ddf7fe92cdf4.1524214122.git-series.quentin.schulz@bootlin.com>
+        <20180420191924.18b81e96@bbrezillon>
+        <20180423094009.5cjvg7jxvwiegq2g@qschulz>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On Mon, 23 Apr 2018 11:40:09 +0200
+Quentin Schulz <quentin.schulz@bootlin.com> wrote:
 
-Thank you for the patch.
-
-On Thursday, 19 April 2018 12:31:04 EEST Jacopo Mondi wrote:
-> The THC63LVD1024 LVDS to RGB bridge supports two different LVDS mapping
-> modes, selectable by means of an external pin.
+> Hi Boris,
 > 
-> Add support for configurable LVDS input mapping modes, using the newly
-> introduced support for bridge input image formats.
+> On Fri, Apr 20, 2018 at 07:19:24PM +0200, Boris Brezillon wrote:
+> > On Fri, 20 Apr 2018 10:52:41 +0200
+> > Quentin Schulz <quentin.schulz@bootlin.com> wrote:
+> >   
+> > > There's already ECC on NAND pages so there may be no need for one to
+> > > check the CRC of a UBI volume.  
+> > 
+> > That's true that ECC can help detecting corruptions, but I don't think
+> > this is the actual reason for disabling CRC check at volume open time.
+> > The actual reason for doing that is when the UBI volume user (in our
+> > case the squashfs FS) is also checking data consistency on its own
+> > (which is the case for squashfs).
+> >   
+> > > 
+> > > Let's introduce a ubi.nocheck parameter that let one skip the CRC check
+> > > when attaching a UBI volume.
+> > > 
+> > > This also drastically speeds kernel boot by removing a potentially
+> > > useless check, e.g. I gained 3.2s on boot time of a SPEAr600-based board
+> > > for a ~20MB UBI volume used as rootfs.  
+> > 
+> > Can you give the old and new open/mount time instead of telling how
+> > much you gained on the whole boot-time?  
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
-> drivers/gpu/drm/bridge/thc63lvd1024.c | 41 +++++++++++++++++++++++++++++++++
-> 1 file changed, 41 insertions(+)
+> # grabserial -v -d /dev/ttyUSB0 -t "Starting kernel"
 > 
-> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c
-> b/drivers/gpu/drm/bridge/thc63lvd1024.c index 48527f8..a3071a1 100644
-> --- a/drivers/gpu/drm/bridge/thc63lvd1024.c
-> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> @@ -10,9 +10,15 @@
->  #include <drm/drm_panel.h>
+> Kernel command line is:
+> rootfstype=squashfs root=/dev/ubiblock0_0 ubi.mtd=ubi ubi.block=0,rootfs mtdparts=nand:92M@36M(ubi)
 > 
->  #include <linux/gpio/consumer.h>
-> +#include <linux/of.h>
->  #include <linux/of_graph.h>
->  #include <linux/regulator/consumer.h>
+> Current behaviour (CRC checking):
+> [2.335558 0.017867] ubi0: attaching mtd7
+> [2.504021 0.168463] ubi0: scanning is finished
+> [2.519824 0.015803] ubi0: attached mtd7 (name "ubi", size 92 MiB)
+> [2.523987 0.004163] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 129024 bytes
+> [2.530447 0.006460] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size 512
+> [2.535836 0.005389] ubi0: VID header offset: 512 (aligned 512), data offset: 2048
+> [2.541601 0.005765] ubi0: good PEBs: 736, bad PEBs: 0, corrupted PEBs: 0
+> [2.547923 0.006322] ubi0: user volume: 3, internal volumes: 1, max. volumes count: 128
+> [2.554223 0.006300] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, image sequence number: 463835917
+> [2.562460 0.008237] ubi0: available PEBs: 0, total reserved PEBs: 736, PEBs reserved for bad PEB handling: 20
+> [2.569779 0.007319] ubi0: background thread "ubi_bgt0d" started, PID 546
+> [4.550142 1.980363] block ubiblock0_0: created from ubi0:0(rootfs)
 > 
-> +enum thc63_lvds_mapping_mode {
-> +	THC63_LVDS_MAP_MODE2,
-> +	THC63_LVDS_MAP_MODE1,
-> +};
-> +
->  enum thc63_ports {
->  	THC63_LVDS_IN0,
->  	THC63_LVDS_IN1,
-> @@ -116,6 +122,37 @@ static int thc63_parse_dt(struct thc63_dev *thc63)
->  	return 0;
->  }
+> Skipping CRC check (ubi.nocheck=0,rootfs):
+> [2.349903 0.019126] ubi0: attaching mtd7
+> [2.516995 0.167092] ubi0: scanning is finished
+> [2.527101 0.010106] ubi0: skipping CRC check for volume rootfs
+> [2.536719 0.009618] ubi0: attached mtd7 (name "ubi", size 92 MiB)
+> [2.541859 0.005140] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 129024 bytes
+> [2.547744 0.005885] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size 512
+> [2.552990 0.005246] ubi0: VID header offset: 512 (aligned 512), data offset: 2048
+> [2.560497 0.007507] ubi0: good PEBs: 736, bad PEBs: 0, corrupted PEBs: 0
+> [2.568010 0.007513] ubi0: user volume: 3, internal volumes: 1, max. volumes count: 128
+> [2.574723 0.006713] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, image sequence number: 463835917
+> [2.586223 0.011500] ubi0: available PEBs: 0, total reserved PEBs: 736, PEBs reserved for bad PEB handling: 20
+> [2.592365 0.006142] ubi0: background thread "ubi_bgt0d" started, PID 545
+> [2.595960 0.003595] block ubiblock0_0: created from ubi0:0(rootfs)
 > 
-> +static int thc63_set_bus_fmt(struct thc63_dev *thc63)
-> +{
-> +	u32 bus_fmt;
-> +	u32 map;
-> +	int ret;
-> +
-> +	ret = of_property_read_u32(thc63->dev->of_node, "thine,map", &map);
-> +	if (ret) {
-> +		dev_err(thc63->dev,
-> +			"Unable to parse property \"thine,map\": %d\n", ret);
-> +		return ret;
+> It seems like it's more in the magnitude of 2s rather than 3, but still.
 
-Given that the property is currently not defined, I think you should select a 
-default instead of returning an error to preserve backward compatibility. You 
-can print a warning message to get the DT updated, maybe something like
-
-	u32 map = 0;
-	...
-
-	ret = of_property_read_u32(thc63->dev->of_node, "thine,map", &map);
-	if (ret)
-		dev_warn(thc63->dev,
-			 "Unable to parse thine,map property (%d), defaulting to 0\n",
-			 ret);
-
-> +	}
-> +
-> +	switch (map) {
-> +	case THC63_LVDS_MAP_MODE1:
-> +		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
-> +		break;
-> +	case THC63_LVDS_MAP_MODE2:
-> +		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
-> +		break;
-> +	default:
-> +		dev_err(thc63->dev,
-> +			"Invalid value for property \"thine,map\": %u\n", map);
-> +		return -EINVAL;
-
-This is fin as invalid property values should be rejected.
-
-> +	}
-> +
-> +	drm_bridge_set_bus_formats(&thc63->bridge, &bus_fmt, 1);
-> +
-> +	return 0;
-> +}
-> +
->  static int thc63_gpio_init(struct thc63_dev *thc63)
->  {
->  	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
-> @@ -166,6 +203,10 @@ static int thc63_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
-> 
-> +	ret = thc63_set_bus_fmt(thc63);
-> +	if (ret)
-> +		return ret;
-> +
-
-Or you could move the code to thc63_parse_dt() as you're parsing DT.
-
->  	thc63->bridge.driver_private = thc63;
->  	thc63->bridge.of_node = pdev->dev.of_node;
->  	thc63->bridge.funcs = &thc63_bridge_func;
-
--- 
-Regards,
-
-Laurent Pinchart
+No, I meant add this information to the commit message since telling
+how many seconds are saved on the absolute boot-time does not give any
+information on the before vs after ratio.
