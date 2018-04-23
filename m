@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755711AbeDWPU5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:20:57 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:7155 "EHLO
+        id S1755762AbeDWPVA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:21:00 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:16799 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755509AbeDWPUy (ORCPT
+        by vger.kernel.org with ESMTP id S1755525AbeDWPUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Apr 2018 11:20:54 -0400
 From: Lionel Debieve <lionel.debieve@st.com>
@@ -14,9 +14,9 @@ To: Alexandre Torgue <alexandre.torgue@st.com>,
         Russell King <linux@armlinux.org.uk>
 CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/4] ARM: dts: stm32: Add CRYP support on stm32mp157c
-Date: Mon, 23 Apr 2018 17:19:46 +0200
-Message-ID: <20180423151947.2526-4-lionel.debieve@st.com>
+Subject: [PATCH 1/4] ARM: dts: stm32: Add RNG support on stm32mp157c
+Date: Mon, 23 Apr 2018 17:19:44 +0200
+Message-ID: <20180423151947.2526-2-lionel.debieve@st.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180423151947.2526-1-lionel.debieve@st.com>
 References: <20180423151947.2526-1-lionel.debieve@st.com>
@@ -29,7 +29,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add CRYP instance of the stm32mp157c SoC
+This patch add RNG instance of the stm32mp157c SoC
 
 Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
 ---
@@ -37,24 +37,31 @@ Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
  1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index bf00885971b3..5ce7d28f8a1f 100644
+index bc3eddc3eda6..bf00885971b3 100644
 --- a/arch/arm/boot/dts/stm32mp157c.dtsi
 +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -168,6 +168,15 @@
+@@ -5,6 +5,7 @@
+  */
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/stm32mp1-clks.h>
++#include <dt-bindings/reset/stm32mp1-resets.h>
+ 
+ / {
+ 	#address-cells = <1>;
+@@ -167,6 +168,14 @@
  			#reset-cells = <1>;
  		};
  
-+		cryp1: cryp@54001000 {
-+			compatible = "st,stm32mp1-cryp";
-+			reg = <0x54001000 0x400>;
-+			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&rcc CRYP1>;
-+			resets = <&rcc CRYP1_R>;
++		rng1: rng@54003000 {
++			compatible = "st,stm32-rng";
++			reg = <0x54003000 0x400>;
++			clocks = <&rcc RNG1_K>;
++			resets = <&rcc RNG1_R>;
 +			status = "disabled";
 +		};
 +
- 		rng1: rng@54003000 {
- 			compatible = "st,stm32-rng";
- 			reg = <0x54003000 0x400>;
+ 		usart1: serial@5c000000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x5c000000 0x400>;
 -- 
 2.15.1
