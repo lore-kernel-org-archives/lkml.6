@@ -1,56 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755464AbeDWOKu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:10:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52294 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754962AbeDWOKp (ORCPT
+        id S1755492AbeDWOLB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:11:01 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:18114 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754962AbeDWOK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:10:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3351360264
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        luciano.coelho@intel.com, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org
-Subject: Re: New sparse warning from min_t(): expression using sizeof(void)
-References: <87a7txf15w.fsf@kamboji.qca.qualcomm.com>
-        <20180421082444.i4eyw2zxl6tipt6i@gmail.com>
-        <87604ley7t.fsf@kamboji.qca.qualcomm.com>
-Date: Mon, 23 Apr 2018 17:10:39 +0300
-In-Reply-To: <87604ley7t.fsf@kamboji.qca.qualcomm.com> (Kalle Valo's message
-        of "Sat, 21 Apr 2018 11:54:30 +0300")
-Message-ID: <87d0yqdnds.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 23 Apr 2018 10:10:57 -0400
+X-IronPort-AV: E=Sophos;i="5.49,318,1520899200";
+   d="scan'208";a="52449256"
+Date: Mon, 23 Apr 2018 15:09:11 +0100
+From: Wei Liu <wei.liu2@citrix.com>
+To: Dongli Zhang <dongli.zhang@oracle.com>
+CC: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
+        <boris.ostrovsky@oracle.com>, <jgross@suse.com>,
+        <ian.jackson@eu.citrix.com>, <wei.liu2@citrix.com>,
+        <srinivas.eeda@oracle.com>
+Subject: Re: [RFC 0/2] To introduce xenwatch multithreading (xen mtwatch)
+Message-ID: <20180423140911.bihiwfwtlneobgzd@citrix.com>
+References: <1523100355-27647-1-git-send-email-dongli.zhang@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1523100355-27647-1-git-send-email-dongli.zhang@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kalle Valo <kvalo@codeaurora.org> writes:
+On Sat, Apr 07, 2018 at 07:25:53PM +0800, Dongli Zhang wrote:
+> About per-domU xenwatch thread create/destroy, a new type of xenstore node is
+> introduced: '/local/domain/0/mtwatch/<domid>'.
+> 
+> Suppose the new domid id 7. During the domU (domid=7) creation, the xen
+> toolstack writes '/local/domain/0/mtwatch/7' to xenstore before the insertion
+> of '/local/domain/7'. When the domid=7 is destroyed, the last xenstore
+> operation by xen toolstack is to remove '/local/domain/0/mtwatch/7'.
+> 
+> The dom0 kernel subscribes a watch at node '/local/domain/0/mtwatch'.  Kernel
+> thread [xen-mtwatch-7] is created when '/local/domain/0/mtwatch/7' is inserted,
+> while this kernel thread is destroyed when the corresponding xenstore node is
+> removed.
 
-> Joey Pabalinas <joeypabalinas@gmail.com> writes:
->
->> On Sat, Apr 21, 2018 at 10:50:51AM +0300, Kalle Valo wrote:
->>> Is there any way to fix it? With ath10k I use sparse a lot and because
->>> of these warnings sparse is now very annoying to use.
->>
->> I submitted a sparse patch [1] for this not too long ago, but in the
->> meantime you can still curl the patch [2] and apply it directly to
->> the v0.5.2 release to suppress the deluge of warnings (-Wpointer-arith
->> is off by defaultl so no need to change any of you configurations).
->>
->> [1] https://lkml.org/lkml/2018/4/10/923
->> [2] https://patchwork.kernel.org/patch/10334353/raw/
->
-> Perfect, thanks. Unfortunatelly I need to catch a boat and I can't test
-> it right now, but I'll do that on Monday.
+Instead of inventing yet another node, can you not watch /local/domain
+directly?
 
-Yes, this fixed my warnings. Thanks!
-
--- 
-Kalle Valo
+Wei.
