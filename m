@@ -1,73 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751406AbeDWFov (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 01:44:51 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60670 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751216AbeDWFos (ORCPT
+        id S1751376AbeDWFq5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 01:46:57 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:6287 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeDWFqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 01:44:48 -0400
-Date: Mon, 23 Apr 2018 07:44:37 +0200
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org
-Subject: Re: [REVIEW][PATCH 15/22] signal/s390: Use force_sig_fault where
- appropriate
-In-Reply-To: <20180420143811.9994-15-ebiederm@xmission.com>
-References: <87604mhrnb.fsf@xmission.com>
-        <20180420143811.9994-15-ebiederm@xmission.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Mon, 23 Apr 2018 01:46:54 -0400
+X-IronPort-AV: E=Sophos;i="5.49,316,1520924400";
+   d="scan'208";a="13526267"
+Date: Mon, 23 Apr 2018 07:46:12 +0200
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC: <dmaengine@vger.kernel.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] dmaengine: at_hdmac: simplify getting .drvdata
+Message-ID: <20180423054612.GE13305@rfolt0960.corp.atmel.com>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180422091415.7587-1-wsa+renesas@sang-engineering.com>
+ <20180422091415.7587-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18042305-0040-0000-0000-00000431D182
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042305-0041-0000-0000-00002635F561
-Message-Id: <20180423074437.1203f39f@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804230061
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180422091415.7587-2-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 09:38:04 -0500
-"Eric W. Biederman" <ebiederm@xmission.com> wrote:
+On Sun, Apr 22, 2018 at 11:14:09AM +0200, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com> 
 
-> Filling in struct siginfo before calling force_sig_info a tedious and
-> error prone process, where once in a great while the wrong fields
-> are filled out, and siginfo has been inconsistently cleared.
-> 
-> Simplify this process by using the helper force_sig_fault.  Which
-> takes as a parameters all of the information it needs, ensures
-> all of the fiddly bits of filling in struct siginfo are done properly
-> and then calls force_sig_info.
-> 
-> In short about a 5 line reduction in code for every time force_sig_info
-> is called, which makes the calling function clearer.
-> 
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: linux-s390@vger.kernel.org
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Thanks
 > ---
->  arch/s390/kernel/traps.c | 32 ++++++--------------------------
->  arch/s390/mm/fault.c     | 23 ++++++-----------------
->  2 files changed, 12 insertions(+), 43 deletions(-)
- 
-Compiles & boots. Comparing old vs. new the same values are
-set in siginfo. Looks good.
-
-Acked-by: Martin Schwidefsky >schwidefsky@de.ibm.com>
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+> 
+> Build tested only. buildbot is happy. Please apply to your tree directly.
+> 
+>  drivers/dma/at_hdmac.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
+> index a861b5b4d443..75f38d19fcbe 100644
+> --- a/drivers/dma/at_hdmac.c
+> +++ b/drivers/dma/at_hdmac.c
+> @@ -2041,8 +2041,7 @@ static void at_dma_shutdown(struct platform_device *pdev)
+>  
+>  static int at_dma_prepare(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct at_dma *atdma = platform_get_drvdata(pdev);
+> +	struct at_dma *atdma = dev_get_drvdata(dev);
+>  	struct dma_chan *chan, *_chan;
+>  
+>  	list_for_each_entry_safe(chan, _chan, &atdma->dma_common.channels,
+> @@ -2076,8 +2075,7 @@ static void atc_suspend_cyclic(struct at_dma_chan *atchan)
+>  
+>  static int at_dma_suspend_noirq(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct at_dma *atdma = platform_get_drvdata(pdev);
+> +	struct at_dma *atdma = dev_get_drvdata(dev);
+>  	struct dma_chan *chan, *_chan;
+>  
+>  	/* preserve data */
+> @@ -2118,8 +2116,7 @@ static void atc_resume_cyclic(struct at_dma_chan *atchan)
+>  
+>  static int at_dma_resume_noirq(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct at_dma *atdma = platform_get_drvdata(pdev);
+> +	struct at_dma *atdma = dev_get_drvdata(dev);
+>  	struct dma_chan *chan, *_chan;
+>  
+>  	/* bring back DMA controller */
+> -- 
+> 2.11.0
+> 
