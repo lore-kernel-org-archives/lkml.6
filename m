@@ -1,47 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754643AbeDWK2t (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:28:49 -0400
-Received: from mail-ot0-f180.google.com ([74.125.82.180]:38194 "EHLO
-        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754393AbeDWK2o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:28:44 -0400
-X-Google-Smtp-Source: AB8JxZqTsZcAr1KhbCYhE9Fu8Br+bAx3QYyVgOamx924M6AeCSfPvLMRbaKhi4wFoJc58nRB3wijTWIMWJegT/QKBwo=
+        id S1754704AbeDWK3U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:29:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38566 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754617AbeDWK3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 06:29:17 -0400
+Date: Mon, 23 Apr 2018 11:29:09 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jan Kiszka <jan.kiszka@web.de>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        will.deacon@arm.com, catalin.marinas@arm.com, suzuki.poulose@arm.com
+Subject: Re: BUG: KASAN: global-out-of-bounds in
+ unmap_kernel_at_el0+0x70/0x1a0
+Message-ID: <20180423102909.ra2n6tqvwcn7oash@lakrids.cambridge.arm.com>
+References: <97d99ad9-c5cf-a4d2-126a-2b39ffead0b3@web.de>
+ <20180422190639.lyfvgnzapo2mrpu6@salmiak>
+ <b14575e7-c862-fb7c-b776-86976e68f4b7@web.de>
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <CAJfpegt_i78O_sswFucHf8ZhD8BPkLVXAWFdxE6YkvU6v=SyTw@mail.gmail.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-17-mszeredi@redhat.com>
- <CAOQ4uxhw+B_BqMjojSSrvnCYOLgc7J1TR_eOvPkfo=Gb0vcW8Q@mail.gmail.com>
- <CAOQ4uxhzsV=9PaJF3uPpMMrkKAmysFuOqmPzjhRCzmWjNC8S+w@mail.gmail.com> <CAJfpegt_i78O_sswFucHf8ZhD8BPkLVXAWFdxE6YkvU6v=SyTw@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 23 Apr 2018 12:28:43 +0200
-Message-ID: <CAJfpegsBD8xt2-rPGJpsMJ3joFfUzcQerhneLSKAFk7Tfbe+3A@mail.gmail.com>
-Subject: Re: [RFC PATCH 16/35] ovl: readd lsattr/chattr support
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b14575e7-c862-fb7c-b776-86976e68f4b7@web.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 12:21 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Mon, Apr 23, 2018 at 07:00:52AM +0200, Jan Kiszka wrote:
+> On 2018-04-22 21:06, Mark Rutland wrote:
 
-> We could fix it to use file_inode()->i_sb instead of
-> f_path.dentry->d_sb after reverting the overlay specific hack, and
-> that would fix the freeze bypass bug and would be correct for all
-> filesystems.   But I wonder how many such issues we have where
-> discrepancy between f_path.dentry and file_inode() matters.
+> > Does the below help?
 
-OTOH, any such issues should already have surfaced.  Just need to be
-careful when reverting VFS patches that they don't regress in the face
-of f_path containing the overlay path.
+> > From ade322407e3d6d1f50e558ebd50d2c1c7bd811c2 Mon Sep 17 00:00:00 2001
+> > From: Mark Rutland <mark.rutland@arm.com>
+> > Date: Sun, 22 Apr 2018 19:58:08 +0100
+> > Subject: [PATCH] arm64: add sentinel to kpti_safe_list
+> > 
+> > We're missing a sentinel entry in kpti_safe_list. Thus is_midr_in_range_list()
+> > can walk past the end of kpti_safe_list. Depending on the contents of memory,
+> > this could erroneously match a CPU's MIDR, cause a data abort, or other bad
+> > outcomes.
+> > 
+> > Add the sentinel entry to avoid this.
+> > 
+> > Fixes: be5b299830c63ed7 ("arm64: capabilities: Add support for checks based on a list of MIDRs")
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > Reported-by: Jan Kiszka <jan.kiszka@web.de>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > ---
+> >  arch/arm64/kernel/cpufeature.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> > index 536d572e5596..9d1b06d67c53 100644
+> > --- a/arch/arm64/kernel/cpufeature.c
+> > +++ b/arch/arm64/kernel/cpufeature.c
+> > @@ -868,6 +868,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+> >  	static const struct midr_range kpti_safe_list[] = {
+> >  		MIDR_ALL_VERSIONS(MIDR_CAVIUM_THUNDERX2),
+> >  		MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
+> > +		{ /* sentinel */ }
+> >  	};
+> >  	char const *str = "command line option";
+> >  
+> > 
+> 
+> Jep, all fine now!
 
-So we are probably better to keep using overlay path in real file
-universally, just to keep the code simpler.
+Cool. Can I take that as a Tested-by?
 
-Thanks,
-Miklos
+Mark.
