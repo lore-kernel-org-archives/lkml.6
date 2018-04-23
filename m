@@ -1,23 +1,23 @@
 Return-Path: <tony@atomide.com>
-X-Google-Smtp-Source: AIpwx48iY0fXiOWD1XdzhTxgZuH2a3j0L1IzfcQfDW7MEKQ/llu+JoKI3VyR1qQXZQRNMPliEA1/
-ARC-Seal: i=1; a=rsa-sha256; t=1524505572; cv=none;
+X-Google-Smtp-Source: AIpwx48Z+r7CgFMpGgf9/SuWOFsSfPhadN1lVP2EIX8GRilQBSDEESzT3yjvqY8FCK6LkbOre2tG
+ARC-Seal: i=1; a=rsa-sha256; t=1524505571; cv=none;
         d=google.com; s=arc-20160816;
-        b=FzbNMFrwI9LT/w2sF3PSOmrm72rJH/p3ObYjCtQfSuhe0bgojRo8HOmgm6suu2OiQi
-         oUrn4Sg/VvwKEY+KgD3Ds+1lsMLfnlG6D0H9hLNpvCu7qmGUPQn2D1aK7DgU+wncIsnf
-         c4xgfcm0BN9YO6fkKadAL8REx98/3Ziw6Qa8RyVLLyZzqxtATbC7CBZuY0MczgPIc1h5
-         iXp6hGQUvlbQeKgZh8J61hRaGZwouvkk4nciLPbVb4ybSOmWbg/vrTSsQumxDtxsR+Nc
-         DJ+E//l2tmgE7O6BzXRmCRSIEaV/jcx/ysqhv9edMVGmwvmMRiMIrX9+Xngk7VU0Hsye
-         2m6w==
+        b=QWdwd20CzkigfECiAMg2jX8YwFn07QjT26ma1NnbKkDHO/KICeaSAYt3AWfSTRdolR
+         JDBJLtbVTFYvjhBFsf7+iPPBs/fe/vzfRJ/kU+Qq3XJpypgYb8+Z3piNwm4U0yXdBLlK
+         rTHIcO52mZv39Yrg2JF+/6p4tnHyBhPIgQPntvvuMdkM+r7ksI/EUJ1SDLfcArcRmA/c
+         R1ajE78zmG9YveOHHyCGH6eyL67QaxlyPDCWqvbL8dKE07oWayPeEaSn+mL3UXCWhyqj
+         Q2r3OAcn4nj5PP2GVYahW1h6CfR9oL1vZR3nAInpFk9gpRBU8mzE3ENekQKqEWefLo9a
+         hd7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=pBX1ZTNYG04bRgJJTeef3PrVZPi4lWB3zDc3yCoQi7E=;
-        b=BfRTYUggaeazHmG3TyLcUp5Oy/HQI4lNGvUFYk+Ep4t4LPq/LykhITzZuixYboiag0
-         QxggP2sqW2d/JDkeZPNJPyX/j1SDLQV7zNd4Bu3kRZrUgr94HZQ1OvxGG4tO87rHW87h
-         wgUcwGYOiYRQYBZDf24N2KcUnf2bhIHJqsVdgwvSeJbE+63Ucw2iGY88K/htQM50dSCa
-         ZeLE4/r5wquGaxFtCxEVAkWd2mqZKDC3hAPEewNBClUO1O35EMkT2vSngfb1qAHvKRSY
-         b+h5fNxHxyjWHrsRmIR2WRO2UNbwQp2Y91h8C8ULr8Nb+u31k+8Jll8wxyJuTpmu/C6M
-         VsCA==
+        bh=SKtHDcUrqhsCXkW/vwuACGcfqcLKd9sIk8uEqDiOyuc=;
+        b=qRPxtuaOKEHk/FOIoYdDT47dctF5XBw64cmCN/Ulb3rWtDg6q+FtnF79B+Uap921vw
+         wfmtR0u3waKZWV80jWenjTXUrB40eNmjEkR25QvrsBrEADJ5a8+dIMViPdDtXuHip9W3
+         spsyJ1T8WGK/uFTatT8J6HW8aLs0mp4T/Ay4LcNYx0apufqXbY+6tPpaY9cprN7CKimh
+         0W2GO8hCDRShTJh/JsksYSUF81kHlfoQhYRIXp53YXXq/rSNACahjsGvjiR/vOHK8hN7
+         3GHiG5POkn9W2ROzY7TEr1q6qUlmcqBOTzcUS+A8XXV6ARspnt4FO2owkNv1N0wjy3cV
+         Pz/g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
 Authentication-Results: mx.google.com;
@@ -31,305 +31,144 @@ Cc: Dave Gerlach <d-gerlach@ti.com>,
 	Tero Kristo <t-kristo@ti.com>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH 03/16] ARM: OMAP2+: Use signed value for sysc register offsets
-Date: Mon, 23 Apr 2018 10:45:36 -0700
-Message-Id: <20180423174549.57412-4-tony@atomide.com>
+	Keerthy <j-keerthy@ti.com>
+Subject: [PATCH 02/16] ARM: OMAP2+: Allow using ti-sysc for system timers
+Date: Mon, 23 Apr 2018 10:45:35 -0700
+Message-Id: <20180423174549.57412-3-tony@atomide.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180423174549.57412-1-tony@atomide.com>
 References: <20180423174549.57412-1-tony@atomide.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598559955768642778?=
-X-GMAIL-MSGID: =?utf-8?q?1598559955768642778?=
+X-GMAIL-THRID: =?utf-8?q?1598559953455580522?=
+X-GMAIL-MSGID: =?utf-8?q?1598559953455580522?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We currently don't know if a revision register exists or not. Zero is
-often a valid offset for the revision register. As we are still checking
-device tree data against platform data, we will get bogus warnings with
-correct device tree data because of incomplete platform data.
+If a system timer is configured with an interrconnect target module in
+the dts, the ti,hwmods and module fck are at the interconnect target
+level. Then there's a separate fck for the timer child device.
 
-Let's fix the issue by using signed offsets and tag the revision registers
-that don't exist with -ENODEV, and init the missing ones with the correct
-revision register offset.
+If the child device has a separate functional clock, we need to configure
+it directly. For example, timer clk clkctrl clock bit 0 is the module
+clock for the interconnect target, and bit 24 being the functional clock
+for the timer IP.
 
-Cc: Paul Walmsley <paul@pwsan.com>
+For system timers, we already mark them as disabled. Now must also mark
+the interconnect target module as disabled to prevent ti-sysc to manage
+it instead of the system timer.
+
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- arch/arm/mach-omap2/omap_hwmod.c              | 21 ++++++++++---------
- arch/arm/mach-omap2/omap_hwmod.h              |  6 +++---
- .../omap_hwmod_33xx_43xx_ipblock_data.c       |  1 +
- arch/arm/mach-omap2/omap_hwmod_3xxx_data.c    |  4 ++++
- arch/arm/mach-omap2/omap_hwmod_43xx_data.c    |  1 +
- arch/arm/mach-omap2/omap_hwmod_44xx_data.c    |  4 ++++
- arch/arm/mach-omap2/omap_hwmod_54xx_data.c    |  3 +++
- arch/arm/mach-omap2/omap_hwmod_7xx_data.c     |  6 ++++++
- arch/arm/mach-omap2/omap_hwmod_81xx_data.c    |  1 +
- 9 files changed, 34 insertions(+), 13 deletions(-)
+ arch/arm/mach-omap2/timer.c | 67 ++++++++++++++++++++++++++++---------
+ 1 file changed, 52 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -481,7 +481,7 @@ static int _wait_softreset_complete(struct omap_hwmod *oh)
- 
- 	sysc = oh->class->sysc;
- 
--	if (sysc->sysc_flags & SYSS_HAS_RESET_STATUS)
-+	if (sysc->sysc_flags & SYSS_HAS_RESET_STATUS && sysc->syss_offs > 0)
- 		omap_test_timeout((omap_hwmod_read(oh, sysc->syss_offs)
- 				   & SYSS_RESETDONE_MASK),
- 				  MAX_MODULE_SOFTRESET_WAIT, c);
-@@ -3171,19 +3171,19 @@ static int omap_hwmod_init_regbits(struct device *dev,
-  */
- int omap_hwmod_init_reg_offs(struct device *dev,
- 			     const struct ti_sysc_module_data *data,
--			     u32 *rev_offs, u32 *sysc_offs, u32 *syss_offs)
-+			     s32 *rev_offs, s32 *sysc_offs, s32 *syss_offs)
- {
--	*rev_offs = 0;
-+	*rev_offs = -ENODEV;
- 	*sysc_offs = 0;
- 	*syss_offs = 0;
- 
--	if (data->offsets[SYSC_REVISION] > 0)
-+	if (data->offsets[SYSC_REVISION] >= 0)
- 		*rev_offs = data->offsets[SYSC_REVISION];
- 
--	if (data->offsets[SYSC_SYSCONFIG] > 0)
-+	if (data->offsets[SYSC_SYSCONFIG] >= 0)
- 		*sysc_offs = data->offsets[SYSC_SYSCONFIG];
- 
--	if (data->offsets[SYSC_SYSSTATUS] > 0)
-+	if (data->offsets[SYSC_SYSSTATUS] >= 0)
- 		*syss_offs = data->offsets[SYSC_SYSSTATUS];
- 
- 	return 0;
-@@ -3312,8 +3312,8 @@ static int omap_hwmod_check_module(struct device *dev,
- 				   struct omap_hwmod *oh,
- 				   const struct ti_sysc_module_data *data,
- 				   struct sysc_regbits *sysc_fields,
--				   u32 rev_offs, u32 sysc_offs,
--				   u32 syss_offs, u32 sysc_flags,
-+				   s32 rev_offs, s32 sysc_offs,
-+				   s32 syss_offs, u32 sysc_flags,
- 				   u32 idlemodes)
- {
- 	if (!oh->class->sysc)
-@@ -3365,7 +3365,7 @@ static int omap_hwmod_check_module(struct device *dev,
- int omap_hwmod_allocate_module(struct device *dev, struct omap_hwmod *oh,
- 			       const struct ti_sysc_module_data *data,
- 			       struct sysc_regbits *sysc_fields,
--			       u32 rev_offs, u32 sysc_offs, u32 syss_offs,
-+			       s32 rev_offs, s32 sysc_offs, s32 syss_offs,
- 			       u32 sysc_flags, u32 idlemodes)
- {
- 	struct omap_hwmod_class_sysconfig *sysc;
-@@ -3425,7 +3425,8 @@ int omap_hwmod_init_module(struct device *dev,
- {
- 	struct omap_hwmod *oh;
- 	struct sysc_regbits *sysc_fields;
--	u32 rev_offs, sysc_offs, syss_offs, sysc_flags, idlemodes;
-+	s32 rev_offs, sysc_offs, syss_offs;
-+	u32 sysc_flags, idlemodes;
- 	int error;
- 
- 	if (!dev || !data)
-diff --git a/arch/arm/mach-omap2/omap_hwmod.h b/arch/arm/mach-omap2/omap_hwmod.h
---- a/arch/arm/mach-omap2/omap_hwmod.h
-+++ b/arch/arm/mach-omap2/omap_hwmod.h
-@@ -317,9 +317,9 @@ struct omap_hwmod_ocp_if {
-  * then this field has to be populated with the correct offset structure.
-  */
- struct omap_hwmod_class_sysconfig {
--	u32 rev_offs;
--	u32 sysc_offs;
--	u32 syss_offs;
-+	s32 rev_offs;
-+	s32 sysc_offs;
-+	s32 syss_offs;
- 	u16 sysc_flags;
- 	struct sysc_regbits *sysc_fields;
- 	u8 srst_udelay;
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-@@ -629,6 +629,7 @@ struct omap_hwmod am33xx_gpmc_hwmod = {
- 
- /* 'i2c' class */
- static struct omap_hwmod_class_sysconfig am33xx_i2c_sysc = {
-+	.rev_offs	= 0,
- 	.sysc_offs	= 0x0010,
- 	.syss_offs	= 0x0090,
- 	.sysc_flags	= (SYSC_HAS_AUTOIDLE | SYSC_HAS_CLOCKACTIVITY |
-diff --git a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
---- a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-@@ -885,6 +885,7 @@ static struct omap_hwmod omap3xxx_dma_system_hwmod = {
-  */
- 
- static struct omap_hwmod_class_sysconfig omap3xxx_mcbsp_sysc = {
-+	.rev_offs	= -ENODEV,
- 	.sysc_offs	= 0x008c,
- 	.sysc_flags	= (SYSC_HAS_CLOCKACTIVITY | SYSC_HAS_ENAWAKEUP |
- 			   SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET),
-@@ -990,6 +991,7 @@ static struct omap_hwmod omap3xxx_mcbsp5_hwmod = {
- 
- /* 'mcbsp sidetone' class */
- static struct omap_hwmod_class_sysconfig omap3xxx_mcbsp_sidetone_sysc = {
-+	.rev_offs	= -ENODEV,
- 	.sysc_offs	= 0x0010,
- 	.sysc_flags	= SYSC_HAS_AUTOIDLE,
- 	.sysc_fields	= &omap_hwmod_sysc_type1,
-@@ -1018,6 +1020,7 @@ static struct omap_hwmod omap3xxx_mcbsp3_sidetone_hwmod = {
- 
- /* SR common */
- static struct omap_hwmod_class_sysconfig omap34xx_sr_sysc = {
-+	.rev_offs	= -ENODEV,
- 	.sysc_offs	= 0x24,
- 	.sysc_flags	= (SYSC_HAS_CLOCKACTIVITY | SYSC_NO_CACHE),
- 	.sysc_fields	= &omap34xx_sr_sysc_fields,
-@@ -1030,6 +1033,7 @@ static struct omap_hwmod_class omap34xx_smartreflex_hwmod_class = {
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -167,6 +167,43 @@ static const struct of_device_id omap_timer_match[] __initconst = {
+ 	{ }
  };
  
- static struct omap_hwmod_class_sysconfig omap36xx_sr_sysc = {
-+	.rev_offs	= -ENODEV,
- 	.sysc_offs	= 0x38,
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
- 	.sysc_flags	= (SYSC_HAS_SIDLEMODE | SYSC_HAS_ENAWAKEUP |
-diff --git a/arch/arm/mach-omap2/omap_hwmod_43xx_data.c b/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
---- a/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
-@@ -378,6 +378,7 @@ static struct omap_hwmod am43xx_usb_otg_ss1_hwmod = {
- };
++static int omap_timer_add_disabled_property(struct device_node *np)
++{
++	struct property *prop;
++
++	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
++	if (!prop)
++		return -ENOMEM;
++
++	prop->name = "status";
++	prop->value = "disabled";
++	prop->length = strlen(prop->value);
++
++	return of_add_property(np, prop);
++}
++
++static int omap_timer_update_dt(struct device_node *np)
++{
++	int error = 0;
++
++	if (!of_device_is_compatible(np, "ti,omap-counter32k")) {
++		error = omap_timer_add_disabled_property(np);
++		if (error)
++			return error;
++	}
++
++	/* No parent interconnect target module configured? */
++	if (of_get_property(np, "ti,hwmods", NULL))
++		return error;
++
++	/* Tag parent interconnect target module disabled */
++	error = omap_timer_add_disabled_property(np->parent);
++	if (error)
++		return error;
++
++	return 0;
++}
++
+ /**
+  * omap_get_timer_dt - get a timer using device-tree
+  * @match	- device-tree match structure for matching a device type
+@@ -182,6 +219,7 @@ static struct device_node * __init omap_get_timer_dt(const struct of_device_id *
+ 						     const char *property)
+ {
+ 	struct device_node *np;
++	int error;
  
- static struct omap_hwmod_class_sysconfig am43xx_qspi_sysc = {
-+	.rev_offs	= 0,
- 	.sysc_offs      = 0x0010,
- 	.sysc_flags     = SYSC_HAS_SIDLEMODE,
- 	.idlemodes      = (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
-diff --git a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
---- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-@@ -1360,6 +1360,7 @@ static struct omap_hwmod omap44xx_hsi_hwmod = {
-  */
+ 	for_each_matching_node(np, match) {
+ 		if (!of_device_is_available(np))
+@@ -196,17 +234,9 @@ static struct device_node * __init omap_get_timer_dt(const struct of_device_id *
+ 				  of_get_property(np, "ti,timer-secure", NULL)))
+ 			continue;
  
- static struct omap_hwmod_class_sysconfig omap44xx_i2c_sysc = {
-+	.rev_offs	= 0,
- 	.sysc_offs	= 0x0010,
- 	.syss_offs	= 0x0090,
- 	.sysc_flags	= (SYSC_HAS_AUTOIDLE | SYSC_HAS_CLOCKACTIVITY |
-@@ -1634,6 +1635,7 @@ static struct omap_hwmod omap44xx_mailbox_hwmod = {
+-		if (!of_device_is_compatible(np, "ti,omap-counter32k")) {
+-			struct property *prop;
++		error = omap_timer_update_dt(np);
++		WARN(error, "%s: Could not update dt: %i\n", __func__, error);
  
- /* The IP is not compliant to type1 / type2 scheme */
- static struct omap_hwmod_class_sysconfig omap44xx_mcasp_sysc = {
-+	.rev_offs	= 0,
- 	.sysc_offs	= 0x0004,
- 	.sysc_flags	= SYSC_HAS_SIDLEMODE,
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
-@@ -1667,6 +1669,7 @@ static struct omap_hwmod omap44xx_mcasp_hwmod = {
-  */
+-			prop = kzalloc(sizeof(*prop), GFP_KERNEL);
+-			if (!prop)
+-				return NULL;
+-			prop->name = "status";
+-			prop->value = "disabled";
+-			prop->length = strlen(prop->value);
+-			of_add_property(np, prop);
+-		}
+ 		return np;
+ 	}
  
- static struct omap_hwmod_class_sysconfig omap44xx_mcbsp_sysc = {
-+	.rev_offs	= -ENODEV,
- 	.sysc_offs	= 0x008c,
- 	.sysc_flags	= (SYSC_HAS_CLOCKACTIVITY | SYSC_HAS_ENAWAKEUP |
- 			   SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET),
-@@ -2353,6 +2356,7 @@ static struct omap_hwmod omap44xx_slimbus2_hwmod = {
+@@ -265,8 +295,12 @@ static int __init omap_dm_timer_init_one(struct omap_dm_timer *timer,
+ 		return -ENODEV;
  
- /* The IP is not compliant to type1 / type2 scheme */
- static struct omap_hwmod_class_sysconfig omap44xx_smartreflex_sysc = {
-+	.rev_offs	= -ENODEV,
- 	.sysc_offs	= 0x0038,
- 	.sysc_flags	= (SYSC_HAS_ENAWAKEUP | SYSC_HAS_SIDLEMODE),
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
-diff --git a/arch/arm/mach-omap2/omap_hwmod_54xx_data.c b/arch/arm/mach-omap2/omap_hwmod_54xx_data.c
---- a/arch/arm/mach-omap2/omap_hwmod_54xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_54xx_data.c
-@@ -804,6 +804,7 @@ static struct omap_hwmod omap54xx_gpio8_hwmod = {
-  */
+ 	of_property_read_string_index(np, "ti,hwmods", 0, &oh_name);
+-	if (!oh_name)
+-		return -ENODEV;
++	if (!oh_name) {
++		of_property_read_string_index(np->parent, "ti,hwmods", 0,
++					      &oh_name);
++		if (!oh_name)
++			return -ENODEV;
++	}
  
- static struct omap_hwmod_class_sysconfig omap54xx_i2c_sysc = {
-+	.rev_offs	= 0,
- 	.sysc_offs	= 0x0010,
- 	.syss_offs	= 0x0090,
- 	.sysc_flags	= (SYSC_HAS_AUTOIDLE | SYSC_HAS_CLOCKACTIVITY |
-@@ -974,6 +975,7 @@ static struct omap_hwmod omap54xx_mailbox_hwmod = {
-  */
+ 	timer->irq = irq_of_parse_and_map(np, 0);
+ 	if (!timer->irq)
+@@ -418,9 +452,12 @@ static int __init __maybe_unused omap2_sync32k_clocksource_init(void)
+ 	if (!np)
+ 		return -ENODEV;
  
- static struct omap_hwmod_class_sysconfig omap54xx_mcbsp_sysc = {
-+	.rev_offs	= -ENODEV,
- 	.sysc_offs	= 0x008c,
- 	.sysc_flags	= (SYSC_HAS_CLOCKACTIVITY | SYSC_HAS_ENAWAKEUP |
- 			   SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET),
-@@ -1997,6 +1999,7 @@ static struct omap_hwmod omap54xx_ocp2scp3_hwmod = {
-  */
+-	of_property_read_string_index(np, "ti,hwmods", 0, &oh_name);
+-	if (!oh_name)
+-		return -ENODEV;
++	of_property_read_string_index(np->parent, "ti,hwmods", 0, &oh_name);
++	if (!oh_name) {
++		of_property_read_string_index(np, "ti,hwmods", 0, &oh_name);
++		if (!oh_name)
++			return -ENODEV;
++	}
  
- static struct omap_hwmod_class_sysconfig omap54xx_sata_sysc = {
-+	.rev_offs	= 0x00fc,
- 	.sysc_offs	= 0x0000,
- 	.sysc_flags	= (SYSC_HAS_MIDLEMODE | SYSC_HAS_SIDLEMODE),
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
-diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
---- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-@@ -1070,6 +1070,7 @@ static struct omap_hwmod dra7xx_hdq1w_hwmod = {
-  */
- 
- static struct omap_hwmod_class_sysconfig dra7xx_i2c_sysc = {
-+	.rev_offs	= 0,
- 	.sysc_offs	= 0x0010,
- 	.syss_offs	= 0x0090,
- 	.sysc_flags	= (SYSC_HAS_AUTOIDLE | SYSC_HAS_CLOCKACTIVITY |
-@@ -1440,6 +1441,7 @@ static struct omap_hwmod dra7xx_mcspi4_hwmod = {
-  *
-  */
- static struct omap_hwmod_class_sysconfig dra7xx_mcasp_sysc = {
-+	.rev_offs	= 0,
- 	.sysc_offs	= 0x0004,
- 	.sysc_flags	= SYSC_HAS_SIDLEMODE,
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
-@@ -1898,6 +1900,7 @@ static struct omap_hwmod dra7xx_pciess2_hwmod = {
-  */
- 
- static struct omap_hwmod_class_sysconfig dra7xx_qspi_sysc = {
-+	.rev_offs	= 0,
- 	.sysc_offs	= 0x0010,
- 	.sysc_flags	= SYSC_HAS_SIDLEMODE,
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
-@@ -1930,6 +1933,7 @@ static struct omap_hwmod dra7xx_qspi_hwmod = {
-  *
-  */
- static struct omap_hwmod_class_sysconfig dra7xx_rtcss_sysc = {
-+	.rev_offs	= 0x0074,
- 	.sysc_offs	= 0x0078,
- 	.sysc_flags	= SYSC_HAS_SIDLEMODE,
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
-@@ -1965,6 +1969,7 @@ static struct omap_hwmod dra7xx_rtcss_hwmod = {
-  */
- 
- static struct omap_hwmod_class_sysconfig dra7xx_sata_sysc = {
-+	.rev_offs	= 0x00fc,
- 	.sysc_offs	= 0x0000,
- 	.sysc_flags	= (SYSC_HAS_MIDLEMODE | SYSC_HAS_SIDLEMODE),
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
-@@ -2003,6 +2008,7 @@ static struct omap_hwmod dra7xx_sata_hwmod = {
- 
- /* The IP is not compliant to type1 / type2 scheme */
- static struct omap_hwmod_class_sysconfig dra7xx_smartreflex_sysc = {
-+	.rev_offs	= -ENODEV,
- 	.sysc_offs	= 0x0038,
- 	.sysc_flags	= (SYSC_HAS_ENAWAKEUP | SYSC_HAS_SIDLEMODE),
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
-diff --git a/arch/arm/mach-omap2/omap_hwmod_81xx_data.c b/arch/arm/mach-omap2/omap_hwmod_81xx_data.c
---- a/arch/arm/mach-omap2/omap_hwmod_81xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_81xx_data.c
-@@ -954,6 +954,7 @@ static struct omap_hwmod_ocp_if dm816x_l4_hs__emac1 = {
- };
- 
- static struct omap_hwmod_class_sysconfig dm81xx_sata_sysc = {
-+	.rev_offs	= 0x00fc,
- 	.sysc_offs	= 0x1100,
- 	.sysc_flags	= SYSC_HAS_SIDLEMODE,
- 	.idlemodes	= SIDLE_FORCE,
+ 	/*
+ 	 * First check hwmod data is available for sync32k counter
 -- 
 2.17.0
