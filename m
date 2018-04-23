@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx4+fQRg7/E3kaPIjyjEbiCybf2RmvBe7mHZ0MYSbzqmSvCJXDyrp5cXvkbkRsurBQHEP3KKE
-ARC-Seal: i=1; a=rsa-sha256; t=1524498473; cv=none;
+X-Google-Smtp-Source: AIpwx491UzApj2Jfh1jXXj29dsBPVurlciVhXuBPpJYJrmtntw5xT3NAU/EBDpVQtKFC0+BSAPsN
+ARC-Seal: i=1; a=rsa-sha256; t=1524498474; cv=none;
         d=google.com; s=arc-20160816;
-        b=l9vF1N7doIC69mxk57tdc0dhVSds//CvlT+a0emXVAKwenVjI26Iw9/h543gV2CBQG
-         zdAJN3ER2iV+faxaLsTWG5vMaMyZIwv8itf7/gaU21+q09dVDgrtU9vorwxYYT+kv23z
-         hoa2a4x1y0SLDtetC/j5F/uU88fVUlCnERuFUQjgi3USpkk4gsJzA2HV04QAaz0WqWUv
-         z7m9waUvD6VeacawgQZi7hpAKZkN+NPr0JgbaDoKcvV30qjs6HBr1fGRilRf90jbZFa3
-         W7oGBLR0lEhy9i6VSSg0Ej1AVT4xCSg4i5tAb23ESo3FtM1+WOJeYUkSN5k/9FjUVFQL
-         nfiQ==
+        b=jOx20vnzXvNvwGqTx2QyIgHU1W/awjl+XJTLxVZ+i97Ji2a3/ayjNNNIId7mC+tFPy
+         R890lY9/SOalhobwX+jZfC3E/swLPSVGxqT1E00Io3YpJEAe3uV41rTftF8ZwuLDdvVQ
+         odlnLFKQCZUxsYged2BeJ1ahml34MGiI/sGvfLM1EABqebrJ4WuGXiDQc6D4RIG+REiN
+         OAT/c5vr8MwoX7M3XhhyBpYsHn5UrdpEM+v/5McpDP/DtbRonu4bLotMZhs76YxbF5ut
+         5/+SLXpFp0aD7VCyC2Cd2wFH4tlaoawmb0jMxdkv/VWTa8JfVmcyWTHpPcZx2GaVy1fw
+         pC5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=4KgEFRMmnQgOss+VhYorEuHDL2PukOhjh4h6mIuZ5hw=;
-        b=CLwX8tZcxfTu0Iq3aInvSE1VqoXOxgb52yZjDptyAe87RTo55aFN7GERSpbBlDkEmj
-         Jv8u0ia1Qk0qRlcc21z3cmu/sEpwDGqcaX4QbNuL+dJAhJaph2ajJm6iQNbLh98SdsKY
-         YwJe5LfsadwTE+4Z04/E1ygpJzVU4Z/cbLS+kki/Ca6UDyBOwMYc791huo8IDsuRAJI1
-         x/r5uybbtNSEX2RfOXe00RJ96o3Hy2+L6wB8b1uBBGK3MyFpQrXOfivJwM/ZWsIEQKRx
-         feTQJKsnWRITWuNR3ezQztuCaKbaxjpBCjo/lQoI4FCMsPdb/DsSAsHLYvDvj5PHfIYD
-         E9IA==
+        bh=WeXc/Ao+LnCoDUTx4VGRj1iHDitMElHV+QHmbKrVox4=;
+        b=VV3N5g0kobzJPk424PD+r5LLZ86BLiiWjBtrmIoVC83x/aCHjrHtWu6vVUmbzVMmsO
+         YwTxSz2y2+Q/7I1yaMjid5ZDuiE5XekmSkPkGqg8lft1//I9L5PJ2aL9OMB33OGLIGZK
+         nbpW2uTMUWPc1pkpAKl/8vdrCwaYt9iLajLM5OQwVTMF2pRtIPjmziD75bcmokyuOWAk
+         lzu3kxyKca94aF/uBVutKa/7CNUEtRSA7RWKVR6SSlxk8DT0r1bzDWurL4mejI7jPlHY
+         FgNzYxfr9vDiGz1+drsYq0GWr5p2JzNVIeHSzrSm8bUrk22DoTXNZLRr7uW6WfPdvyuk
+         875w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=MpP06tv1;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=XDfO2s8k;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=MpP06tv1;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=XDfO2s8k;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -58,143 +58,84 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 20/37] x86/pgtable: Move two more functions from pgtable_64.h to pgtable.h
-Date: Mon, 23 Apr 2018 17:47:23 +0200
-Message-Id: <1524498460-25530-21-git-send-email-joro@8bytes.org>
+Subject: [PATCH 21/37] x86/mm/pae: Populate valid user PGD entries
+Date: Mon, 23 Apr 2018 17:47:24 +0200
+Message-Id: <1524498460-25530-22-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552511362545650?=
-X-GMAIL-MSGID: =?utf-8?q?1598552511362545650?=
+X-GMAIL-THRID: =?utf-8?q?1598552512896556873?=
+X-GMAIL-MSGID: =?utf-8?q?1598552512896556873?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-These two functions are required for PTI on 32 bit:
+Generic page-table code populates all non-leaf entries with
+_KERNPG_TABLE bits set. This is fine for all paging modes
+except PAE.
 
-	* pgdp_maps_userspace()
-	* pgd_large()
-
-Also re-implement pgdp_maps_userspace() so that it will work
-on 64 and 32 bit kernels.
+In PAE mode only a subset of the bits is allowed to be set.
+Make sure we only set allowed bits by masking out the
+reserved bits.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable-2level_types.h |  3 +++
- arch/x86/include/asm/pgtable-3level_types.h |  1 +
- arch/x86/include/asm/pgtable.h              | 15 +++++++++++++++
- arch/x86/include/asm/pgtable_32.h           |  2 --
- arch/x86/include/asm/pgtable_64.h           | 15 ---------------
- arch/x86/include/asm/pgtable_64_types.h     |  2 ++
- 6 files changed, 21 insertions(+), 17 deletions(-)
+ arch/x86/include/asm/pgtable_types.h | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable-2level_types.h b/arch/x86/include/asm/pgtable-2level_types.h
-index f982ef8..6deb6cd 100644
---- a/arch/x86/include/asm/pgtable-2level_types.h
-+++ b/arch/x86/include/asm/pgtable-2level_types.h
-@@ -35,4 +35,7 @@ typedef union {
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index 1e5a406..65f2dbaf 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -50,6 +50,7 @@
+ #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
+ #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
+ #define _PAGE_SOFTW2	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW2)
++#define _PAGE_SOFTW3	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW3)
+ #define _PAGE_PAT	(_AT(pteval_t, 1) << _PAGE_BIT_PAT)
+ #define _PAGE_PAT_LARGE (_AT(pteval_t, 1) << _PAGE_BIT_PAT_LARGE)
+ #define _PAGE_SPECIAL	(_AT(pteval_t, 1) << _PAGE_BIT_SPECIAL)
+@@ -267,14 +268,37 @@ typedef struct pgprot { pgprotval_t pgprot; } pgprot_t;
  
- #define PTRS_PER_PTE	1024
+ typedef struct { pgdval_t pgd; } pgd_t;
  
-+/* This covers all VMSPLIT_* and VMSPLIT_*_OPT variants */
-+#define PGD_KERNEL_START	(CONFIG_PAGE_OFFSET >> PGDIR_SHIFT)
++#ifdef CONFIG_X86_PAE
 +
- #endif /* _ASM_X86_PGTABLE_2LEVEL_DEFS_H */
-diff --git a/arch/x86/include/asm/pgtable-3level_types.h b/arch/x86/include/asm/pgtable-3level_types.h
-index 78038e0..858358a 100644
---- a/arch/x86/include/asm/pgtable-3level_types.h
-+++ b/arch/x86/include/asm/pgtable-3level_types.h
-@@ -46,5 +46,6 @@ typedef union {
- #define PTRS_PER_PTE	512
- 
- #define MAX_POSSIBLE_PHYSMEM_BITS	36
-+#define PGD_KERNEL_START	(CONFIG_PAGE_OFFSET >> PGDIR_SHIFT)
- 
- #endif /* _ASM_X86_PGTABLE_3LEVEL_DEFS_H */
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 557ddf8..55c236e 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1172,6 +1172,21 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
- 	}
- }
- #endif
 +/*
-+ * Page table pages are page-aligned.  The lower half of the top
-+ * level is used for userspace and the top half for the kernel.
-+ *
-+ * Returns true for parts of the PGD that map userspace and
-+ * false for the parts that map the kernel.
++ * PHYSICAL_PAGE_MASK might be non-constant when SME is compiled in, so we can't
++ * use it here.
 + */
-+static inline bool pgdp_maps_userspace(void *__ptr)
-+{
-+	unsigned long ptr = (unsigned long)__ptr;
 +
-+	return (((ptr & ~PAGE_MASK) / sizeof(pgd_t)) < PGD_KERNEL_START);
-+}
++#define PGD_PAE_PAGE_MASK	((signed long)PAGE_MASK)
++#define PGD_PAE_PHYS_MASK	(((1ULL << __PHYSICAL_MASK_SHIFT)-1) & PGD_PAE_PAGE_MASK)
 +
-+static inline int pgd_large(pgd_t pgd) { return 0; }
- 
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
- /*
-diff --git a/arch/x86/include/asm/pgtable_32.h b/arch/x86/include/asm/pgtable_32.h
-index 88a056b..b3ec519 100644
---- a/arch/x86/include/asm/pgtable_32.h
-+++ b/arch/x86/include/asm/pgtable_32.h
-@@ -34,8 +34,6 @@ static inline void check_pgt_cache(void) { }
- void paging_init(void);
- void sync_initial_page_table(void);
- 
--static inline int pgd_large(pgd_t pgd) { return 0; }
--
- /*
-  * Define this if things work differently on an i386 and an i486:
-  * it will (on an i486) warn about kernel memory accesses that are
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 6dd2eb6..84a5eb0 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -132,20 +132,6 @@ static inline pud_t native_pudp_get_and_clear(pud_t *xp)
- #endif
++/*
++ * PAE allows Base Address, P, PWT, PCD and AVL bits to be set in PGD entries.
++ * All other bits are Reserved MBZ
++ */
++#define PGD_ALLOWED_BITS	(PGD_PAE_PHYS_MASK | _PAGE_PRESENT | \
++				 _PAGE_PWT | _PAGE_PCD | \
++				 _PAGE_SOFTW1 | _PAGE_SOFTW2 | _PAGE_SOFTW3 )
++
++#else
++/* No need to mask any bits for !PAE */
++#define PGD_ALLOWED_BITS	(~0ULL)
++#endif
++
+ static inline pgd_t native_make_pgd(pgdval_t val)
+ {
+-	return (pgd_t) { val };
++	return (pgd_t) { val & PGD_ALLOWED_BITS };
  }
  
--/*
-- * Page table pages are page-aligned.  The lower half of the top
-- * level is used for userspace and the top half for the kernel.
-- *
-- * Returns true for parts of the PGD that map userspace and
-- * false for the parts that map the kernel.
-- */
--static inline bool pgdp_maps_userspace(void *__ptr)
--{
--	unsigned long ptr = (unsigned long)__ptr;
--
--	return (ptr & ~PAGE_MASK) < (PAGE_SIZE / 2);
--}
--
- static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
+ static inline pgdval_t native_pgd_val(pgd_t pgd)
  {
- 	pgd_t pgd;
-@@ -185,7 +171,6 @@ extern void sync_global_pgds(unsigned long start, unsigned long end);
- /*
-  * Level 4 access.
-  */
--static inline int pgd_large(pgd_t pgd) { return 0; }
- #define mk_kernel_pgd(address) __pgd((address) | _KERNPG_TABLE)
+-	return pgd.pgd;
++	return pgd.pgd & PGD_ALLOWED_BITS;
+ }
  
- /* PUD - Level3 access */
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index d5c21a3..355b488 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -142,4 +142,6 @@ extern unsigned int ptrs_per_p4d;
- 
- #define EARLY_DYNAMIC_PAGE_TABLES	64
- 
-+#define PGD_KERNEL_START	((PAGE_SIZE / 2) / sizeof(pgd_t))
-+
- #endif /* _ASM_X86_PGTABLE_64_DEFS_H */
+ static inline pgdval_t pgd_flags(pgd_t pgd)
 -- 
 2.7.4
