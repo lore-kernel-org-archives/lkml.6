@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2513731-1524554743-2-15892602713446291594
+X-Cyrus-Session-Id: sloti22d1t05-1593853-1524506603-2-13547543460913747565
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524554743; b=AKXoD9x7eiGD/1NyjGASEK8v+qbg0Jr+mX4S7ozmgnpPgM3eSt
-    joGo/plEjOgwPvbzHSsik4SLQSa711yttebOSUbAd8BO2ngCa+PDVSYDRukf9o1o
-    jv3Wjl4a6ZxiZBOHyXkLy4u19HhdHn6C89F+fEKP/U8NP84XrxqNEfV2pA0b7kt0
-    npylAiyCTD+/gqXzvEmNqbo/jDI9qR9iuIDwX3W3p3YCxIvDcipgF+Ea1wdO6DES
-    waa6IoWhmXhihfj7aw8p54eXQ70Y9ckUvjDYhMcg5rrNAfcDodL/GmQ0nZvYoZWP
-    wuIcJpHw6eYUakZOJ3Zsa1jS0EC092wokbKw==
+    1524506602; b=vd8pbuVRyy+ea0cXvdJzfJ3oHlZZW0yUTRKniarSBcUWmJW//z
+    9xwYjERn8D3d+ON+hwZd5UTR1G3j/hFmLkV+piEWNCcIlrjDGVStPRrMCCfs6sl4
+    wh0embeY4cUVDoFuDA1uBqGpJDR4di5ujrmim7ZDmgBqyE8Sf6ouMnODffzdqMro
+    SErMLJAmTK6bCKvUKW0B7ReYA7Pj8expyJrx/jiEgBuFhn0y4j0rBvOCxSoBhhn5
+    sIkOC+fFh0UfWo3a0P/kIAmg0mb+SL16h20yqxDwvaaZSaI4nwT/c+67enfI0Ncg
+    4IL7FgXBVCqvtGtWZq7RsIU/2JUZQ1WF/uTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524554743; bh=hNGtrQDDdUV0usiK0jFWqGYnE3UvQ1
-    u9BTpcMjZ17ts=; b=YXSRmBK1/YrxmxYDsAgo6XBFeMSjpZGnA1koywqcZcT1jB
-    py3pXlShv9Fqp2OXtJKmL0+oCPDrUeTiwZfk3Ag/sZ6/0VNdVvkmc018OhZl2eNC
-    b8H7q/BEQYSvNo+Gcmwid5My9sFnEkR1UVlCEaFlFkpvdWrv10prOAsVyJDXMAkR
-    NcJHElZJbYBMjA3Wfzvf/YVfcvwAyZyPOejFBDp9LLHTYgZT80Evj7nglLxKErub
-    9+Nf0PxKa3IlDKA1QkP6o7PXwGqLLD247WeZAMzLUrqmg2WPNoWw6QPo9CZdpXy6
-    wWUVh+Roy3AOXHpyWh0TgHOBXhNp4mo7Ir+viVOw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524506602; bh=ORS5tsnf5d+6WXc+o0KC1kuG3w6Whi
+    yxvGTNOFBmf9s=; b=GzijJVXsxFvG54iQhQGPpSderVxgZYUz8NmExYkcVBbY8S
+    t+dhsXiFbFmFJmEDpQA6G0doWa7C9EjKYBWA+ObDbEHJ4iZlnqEH3aa1mubKxnaa
+    Z/5Se/6GQ3PcxFKKDK/lmbgdUZeXbBh/uj3HGuRkXUepP7QBWlUOpd8Ysfs/YyNC
+    U71soXoP1HL8y/LAN/1ACCfibrpUre7MMk/N7+R2YsambdbV/PfIXb6WftrP4g89
+    tFXRp06Q1QRE46/lqpn6we+j/pl8sla+6+66TRjwbPYmZG3zxjdMRdvjuSgMzRNu
+    7p0qxehemjlg2f6aV/IikTRSIfVKdGPitriKBGCg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,38 +51,35 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAz2j/iRPr7UAYx019AJZ13JptxlZ0RhvqB1ks4AavF54XPSL9LFkmx1VNwpDP4i0PXg/qkm341V5C1odyospoGo6X5l30WvDik2lY6T9gKvzXuvUpx/
-    LHsGXFLIA2OhBNV7ixXtBsr/6QaAIZsYDeZmasIOP2U94HgQhJLJCpAOqnf3HTKUzdxPgB8799wrLYogiHyqpB4zYX4uwfWaGlZE+TaiXbPtKsm+PGZZ+FOI
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPgIgozRtHPoSqBpH4VZEpiNG5p7NfXauJz8c3qZ768XLThD4bHRVhzClBAe+VTUiUj0nFq83ZYGTY3geYMwKEf39U8YckVYwYRIsrbkvSRYbpF1gKBr
+    fxiiqQsfXtKwVmYt9g+VFUNJNmgXc8Ci1E0l3L69VaTLxrEBZ2V68OwoRDTUWm7vLsYLrNIJeI98XpaTyr5cHQwob65z/l45MAM2kPaThG1beGVYaq0+fqC5
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=xRDiy12qv0EA:10
-    a=Kd1tUaAdevIA:10 a=YWtRXzOXAAAA:8 a=3zB3tIwD0MfBNlhhfxUA:9 a=CjuIK1q_8ugA:10
-    a=XosyFl2cby_8ldcV-F0Q:22
+    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756075AbeDXHZl (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 24 Apr 2018 03:25:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39370 "EHLO
+        id S932257AbeDWSDT (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 23 Apr 2018 14:03:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48774 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755224AbeDXHZl (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 24 Apr 2018 03:25:41 -0400
-Date: Tue, 24 Apr 2018 09:25:34 +0200
+        with ESMTP id S932129AbeDWSDT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 23 Apr 2018 14:03:19 -0400
+Date: Mon, 23 Apr 2018 20:03:12 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+To: linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
 Subject: Re: [PATCH 4.16 000/196] 4.16.4-stable review
-Message-ID: <20180424072534.GB18419@kroah.com>
+Message-ID: <20180423180312.GA27081@kroah.com>
 References: <20180422135104.278511750@linuxfoundation.org>
- <20180423165605.GE12958@roeck-us.net>
- <20180423180607.GA27360@kroah.com>
- <20180423215813.GA3976@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180423215813.GA3976@roeck-us.net>
+In-Reply-To: <20180422135104.278511750@linuxfoundation.org>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -90,34 +87,21 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 02:58:13PM -0700, Guenter Roeck wrote:
-> On Mon, Apr 23, 2018 at 08:06:07PM +0200, Greg Kroah-Hartman wrote:
-> > On Mon, Apr 23, 2018 at 09:56:05AM -0700, Guenter Roeck wrote:
-> > > On Sun, Apr 22, 2018 at 03:50:20PM +0200, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 4.16.4 release.
-> > > > There are 196 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Tue Apr 24 13:50:16 UTC 2018.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > 
-> > > For v4.16.3-197-g405d1f8:
-> > > 
-> > > Build results:
-> > > 	total: 143 pass: 143 fail: 0
-> > > Qemu test results:
-> > > 	total: 139 pass: 139 fail: 0
-> > > 
-> > > Details are available at http://kerneltests.org/builders.
-> > 
-> > Thanks for testing all of these.  I've pushed out new trees for 4.16.y,
-> > 4.14.y, and 4.9.y so I'll watch your builders to make sure all is good
-> > with them.
-> > 
-> Still no failures after rebuilding all three releases.
+On Sun, Apr 22, 2018 at 03:50:20PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.16.4 release.
+> There are 196 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue Apr 24 13:50:16 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
+> and the diffstat can be found below.
 
-Wonderful, thanks for letting me know.
-
-greg k-h
+There is a -rc3 out now, to fix some issues reported with -rc1 and -rc2
+(I forgot to announce -rc2, sorry.):
+ 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.4-rc3.gz
