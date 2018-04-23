@@ -1,313 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755370AbeDWNYk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:24:40 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34662 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755069AbeDWNYf (ORCPT
+        id S1755299AbeDWNZR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:25:17 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40118 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754919AbeDWNZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:24:35 -0400
-X-Google-Smtp-Source: AIpwx4804FYFKaTui7WI0hIdQT+I0G4dwhsP3mXDs1km3a6wSjyaHCE18lQSEagLExj5YJoZIWx44dkLxMOChW3ot70=
+        Mon, 23 Apr 2018 09:25:12 -0400
+Date: Mon, 23 Apr 2018 06:26:18 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Jacek Tomaka <jacekt@dug.com>, linux-kernel@vger.kernel.org,
+        cmetcalf@mellanox.com, cl@linux.com, lcapitulino@redhat.com,
+        efault@gmx.de, peterz@infradead.org, riel@redhat.com,
+        tglx@linutronix.de, kernellwp@gmail.com, mingo@kernel.org
+Subject: Re: NO_HZ_FULL and tick running within a reasonable amount of time
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180402220438.GA15885@linux.vnet.ibm.com>
+ <20180403114130.GA22765@lerouge>
+ <20180403170858.GO3948@linux.vnet.ibm.com>
+ <20180423130421.GA18293@lerouge>
 MIME-Version: 1.0
-In-Reply-To: <CA+ToGPGvAeuEwGkPfxd6DKBG9nFbYbG1vQh7nosAtBT5uCPxYA@mail.gmail.com>
-References: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com>
- <20180423091633.GU4064@hirez.programming.kicks-ass.net> <CA+ToGPEaHb1ueDRGuzCzm_HxketqxW8j1gawEsCCp2QGLCA=xg@mail.gmail.com>
- <20180423114850.GK4082@hirez.programming.kicks-ass.net> <CA+ToGPHA+Y=0PtiXF7fTSqSgwtzsJy3Z=U1i3xiW9jkzQGsXWQ@mail.gmail.com>
- <20180423123847.GL4082@hirez.programming.kicks-ass.net> <CA+ToGPGvAeuEwGkPfxd6DKBG9nFbYbG1vQh7nosAtBT5uCPxYA@mail.gmail.com>
-From: Diego Viola <diego.viola@gmail.com>
-Date: Mon, 23 Apr 2018 10:24:33 -0300
-Message-ID: <CA+ToGPGt56ncqrN-F64w9wkTCOVXzcnNXSrej-iUaWLqoQOo+g@mail.gmail.com>
-Subject: Re: Experiencing freezes with kernel 4.16.3 on a desktop with E5500
- CPU (bisect included)
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, len.brown@intel.com,
-        rui.zhang@intel.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180423130421.GA18293@lerouge>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18042313-0052-0000-0000-000002E0DEA0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008905; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01022106; UDB=6.00521664; IPR=6.00801341;
+ MB=3.00020725; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 13:25:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042313-0053-0000-0000-00005C6EC9C2
+Message-Id: <20180423132618.GN26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804230138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 9:49 AM, Diego Viola <diego.viola@gmail.com> wrote:
-> On Mon, Apr 23, 2018 at 9:38 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->> On Mon, Apr 23, 2018 at 08:49:25AM -0300, Diego Viola wrote:
->>> On Mon, Apr 23, 2018 at 8:48 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->>> > On Mon, Apr 23, 2018 at 08:23:24AM -0300, Diego Viola wrote:
->>> >> > That's a Core2 era chip; does it actually have stable TSC ?
->>> >>
->>> >> I'm not sure.
->>> >
->>> > dmesg | grep -i tsc
->>> >
->>> > should be able to tell you.
->>>
->>> [diego@dualcore ~]$ dmesg | grep -i tsc
->>> [    0.000000] tsc: Fast TSC calibration using PIT
->>> [    0.016666] tsc: Fast TSC calibration using PIT
->>> [    0.019999] tsc: Detected 2793.087 MHz processor
->>> [    0.019999] clocksource: tsc-early: mask: 0xffffffffffffffff
->>> max_cycles: 0x2842be30f1f, max_idle_ns: 440795236296 ns
->>> [    0.162058] clocksource: Switched to clocksource tsc-early
->>> [    0.300076] tsc: Marking TSC unstable due to TSC halts in idle
->>> [diego@dualcore ~]$
->>
->> Much thanks.. I suspect there a bunch of fail when marking unstable
->> before we register clocksource_tsc.
->>
->> The below patch is a bit ugly, but should cure a number of things; it
->> compiles but hasn't otherwise been tested, can you give it a spin?
->>
->> ---
->>
->>  - when TSC is unstable and we've already registered tsc-early, don't
->>    forget to unregister it; this then leaves us without a tsc
->>    clocksource entirely -- which is good.
->>
->>  - when we call mark_tsc_unstable() before we've registered
->>    clocksource_tsc things go wobbly because it doesn't know about
->>    clocksource_tsc_early. Fix that by:
->>
->>     - Make clocksource_mark_unstable() work for unregistered
->>       clocksources.
->>
->>        - which means we have to be able to detect this; use cs.list
->>          for this; initialize it empty.
->>        - means we also have to place all cs.list manipulation under
->>          watchdog_lock -- bit ugly.
->>
->>     - Make __clocksource_unstable() de-rate the clocksource.
->>
->>     - Call clocksource_mark_unstable() on both tsc and tsc_early.
->>
->> This way we should either end up with a derated tsc clocksource marked
->> UNSTABLE or no tsc clocksource at all, either should result in it not
->> becoming the active clocksource.
->>
->> ---
->>  arch/x86/kernel/tsc.c     | 22 +++++++++++-----------
->>  kernel/time/clocksource.c | 43 +++++++++++++++++++++++++++++++++++--------
->>  2 files changed, 46 insertions(+), 19 deletions(-)
->>
->> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
->> index 91e6da48cbb6..74392d9d51e0 100644
->> --- a/arch/x86/kernel/tsc.c
->> +++ b/arch/x86/kernel/tsc.c
->> @@ -1067,6 +1067,7 @@ static struct clocksource clocksource_tsc_early = {
->>         .resume                 = tsc_resume,
->>         .mark_unstable          = tsc_cs_mark_unstable,
->>         .tick_stable            = tsc_cs_tick_stable,
->> +       .list                   = LIST_HEAD_INIT(clocksource_tsc_early.list),
->>  };
->>
->>  /*
->> @@ -1086,6 +1087,7 @@ static struct clocksource clocksource_tsc = {
->>         .resume                 = tsc_resume,
->>         .mark_unstable          = tsc_cs_mark_unstable,
->>         .tick_stable            = tsc_cs_tick_stable,
->> +       .list                   = LIST_HEAD_INIT(clocksource_tsc.list),
->>  };
->>
->>  void mark_tsc_unstable(char *reason)
->> @@ -1098,13 +1100,9 @@ void mark_tsc_unstable(char *reason)
->>                 clear_sched_clock_stable();
->>         disable_sched_clock_irqtime();
->>         pr_info("Marking TSC unstable due to %s\n", reason);
->> -       /* Change only the rating, when not registered */
->> -       if (clocksource_tsc.mult) {
->> -               clocksource_mark_unstable(&clocksource_tsc);
->> -       } else {
->> -               clocksource_tsc.flags |= CLOCK_SOURCE_UNSTABLE;
->> -               clocksource_tsc.rating = 0;
->> -       }
->> +
->> +       clocksource_mark_unstable(&clocksource_tsc_early);
->> +       clocksource_mark_unstable(&clocksource_tsc);
->>  }
->>
->>  EXPORT_SYMBOL_GPL(mark_tsc_unstable);
->> @@ -1244,7 +1242,7 @@ static void tsc_refine_calibration_work(struct work_struct *work)
->>
->>         /* Don't bother refining TSC on unstable systems */
->>         if (tsc_unstable)
->> -               return;
->> +               goto unreg;
->>
->>         /*
->>          * Since the work is started early in boot, we may be
->> @@ -1297,11 +1295,12 @@ static void tsc_refine_calibration_work(struct work_struct *work)
->>
->>  out:
->>         if (tsc_unstable)
->> -               return;
->> +               goto unreg;
->>
->>         if (boot_cpu_has(X86_FEATURE_ART))
->>                 art_related_clocksource = &clocksource_tsc;
->>         clocksource_register_khz(&clocksource_tsc, tsc_khz);
->> +unreg:
->>         clocksource_unregister(&clocksource_tsc_early);
->>  }
->>
->> @@ -1311,8 +1310,8 @@ static int __init init_tsc_clocksource(void)
->>         if (!boot_cpu_has(X86_FEATURE_TSC) || tsc_disabled > 0 || !tsc_khz)
->>                 return 0;
->>
->> -       if (check_tsc_unstable())
->> -               return 0;
->> +       if (tsc_unstable)
->> +               goto unreg;
->>
->>         if (tsc_clocksource_reliable)
->>                 clocksource_tsc.flags &= ~CLOCK_SOURCE_MUST_VERIFY;
->> @@ -1328,6 +1327,7 @@ static int __init init_tsc_clocksource(void)
->>                 if (boot_cpu_has(X86_FEATURE_ART))
->>                         art_related_clocksource = &clocksource_tsc;
->>                 clocksource_register_khz(&clocksource_tsc, tsc_khz);
->> +unreg:
->>                 clocksource_unregister(&clocksource_tsc_early);
->>                 return 0;
->>         }
->> diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
->> index 0e974cface0b..f689c9e3ff5e 100644
->> --- a/kernel/time/clocksource.c
->> +++ b/kernel/time/clocksource.c
->> @@ -119,6 +119,16 @@ static DEFINE_SPINLOCK(watchdog_lock);
->>  static int watchdog_running;
->>  static atomic_t watchdog_reset_pending;
->>
->> +static void inline clocksource_watchdog_lock(unsigned long *flags)
->> +{
->> +       spin_lock_irqsave(&watchdog_lock, *flags);
->> +}
->> +
->> +static void inline clocksource_watchdog_unlock(unsigned long *flags)
->> +{
->> +       spin_unlock_irqrestore(&watchdog_lock, *flags);
->> +}
->> +
->>  static int clocksource_watchdog_kthread(void *data);
->>  static void __clocksource_change_rating(struct clocksource *cs, int rating);
->>
->> @@ -142,6 +152,13 @@ static void __clocksource_unstable(struct clocksource *cs)
->>         cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
->>         cs->flags |= CLOCK_SOURCE_UNSTABLE;
->>
->> +       if (list_empty(&cs->list)) {
->> +               cs->rating = 0;
->> +               return;
->> +       }
->> +
->> +       __clocksource_change_rating(cs, 0);
->> +
->>         if (cs->mark_unstable)
->>                 cs->mark_unstable(cs);
->>
->> @@ -164,7 +181,7 @@ void clocksource_mark_unstable(struct clocksource *cs)
->>
->>         spin_lock_irqsave(&watchdog_lock, flags);
->>         if (!(cs->flags & CLOCK_SOURCE_UNSTABLE)) {
->> -               if (list_empty(&cs->wd_list))
->> +               if (!list_empty(&cs->list) && list_empty(&cs->wd_list))
->>                         list_add(&cs->wd_list, &watchdog_list);
->>                 __clocksource_unstable(cs);
->>         }
->> @@ -319,9 +336,8 @@ static void clocksource_resume_watchdog(void)
->>
->>  static void clocksource_enqueue_watchdog(struct clocksource *cs)
->>  {
->> -       unsigned long flags;
->> +       INIT_LIST_HEAD(&cs->wd_list);
->>
->> -       spin_lock_irqsave(&watchdog_lock, flags);
->>         if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
->>                 /* cs is a clocksource to be watched. */
->>                 list_add(&cs->wd_list, &watchdog_list);
->> @@ -331,7 +347,6 @@ static void clocksource_enqueue_watchdog(struct clocksource *cs)
->>                 if (cs->flags & CLOCK_SOURCE_IS_CONTINUOUS)
->>                         cs->flags |= CLOCK_SOURCE_VALID_FOR_HRES;
->>         }
->> -       spin_unlock_irqrestore(&watchdog_lock, flags);
->>  }
->>
->>  static void clocksource_select_watchdog(bool fallback)
->> @@ -373,9 +388,6 @@ static void clocksource_select_watchdog(bool fallback)
->>
->>  static void clocksource_dequeue_watchdog(struct clocksource *cs)
->>  {
->> -       unsigned long flags;
->> -
->> -       spin_lock_irqsave(&watchdog_lock, flags);
->>         if (cs != watchdog) {
->>                 if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
->>                         /* cs is a watched clocksource. */
->> @@ -384,7 +396,6 @@ static void clocksource_dequeue_watchdog(struct clocksource *cs)
->>                         clocksource_stop_watchdog();
->>                 }
->>         }
->> -       spin_unlock_irqrestore(&watchdog_lock, flags);
->>  }
->>
->>  static int __clocksource_watchdog_kthread(void)
->> @@ -779,14 +790,19 @@ EXPORT_SYMBOL_GPL(__clocksource_update_freq_scale);
->>   */
->>  int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
->>  {
->> +       unsigned long flags;
->>
->>         /* Initialize mult/shift and max_idle_ns */
->>         __clocksource_update_freq_scale(cs, scale, freq);
->>
->>         /* Add clocksource to the clocksource list */
->>         mutex_lock(&clocksource_mutex);
->> +
->> +       clocksource_watchdog_lock(&flags);
->>         clocksource_enqueue(cs);
->>         clocksource_enqueue_watchdog(cs);
->> +       clocksource_watchdog_unlock(&flags);
->> +
->>         clocksource_select();
->>         clocksource_select_watchdog(false);
->>         mutex_unlock(&clocksource_mutex);
->> @@ -808,8 +824,13 @@ static void __clocksource_change_rating(struct clocksource *cs, int rating)
->>   */
->>  void clocksource_change_rating(struct clocksource *cs, int rating)
->>  {
->> +       unsigned long flags;
->> +
->>         mutex_lock(&clocksource_mutex);
->> +       clocksource_watchdog_lock(&flags);
->>         __clocksource_change_rating(cs, rating);
->> +       clocksource_watchdog_unlock(&flags);
->> +
->>         clocksource_select();
->>         clocksource_select_watchdog(false);
->>         mutex_unlock(&clocksource_mutex);
->> @@ -821,6 +842,8 @@ EXPORT_SYMBOL(clocksource_change_rating);
->>   */
->>  static int clocksource_unbind(struct clocksource *cs)
->>  {
->> +       unsigned long flags;
->> +
->>         if (clocksource_is_watchdog(cs)) {
->>                 /* Select and try to install a replacement watchdog. */
->>                 clocksource_select_watchdog(true);
->> @@ -834,8 +857,12 @@ static int clocksource_unbind(struct clocksource *cs)
->>                 if (curr_clocksource == cs)
->>                         return -EBUSY;
->>         }
->> +
->> +       clocksource_watchdog_lock(&flags);
->>         clocksource_dequeue_watchdog(cs);
->>         list_del_init(&cs->list);
->> +       clocksource_watchdog_lock(&flags);
->> +
->>         return 0;
->>  }
->>
->
-> Yes, compiling the kernel (torvalds/linux.git HEAD) with your patch right now.
->
-> Thanks,
-> Diego
+On Mon, Apr 23, 2018 at 03:04:23PM +0200, Frederic Weisbecker wrote:
+> On Tue, Apr 03, 2018 at 10:08:58AM -0700, Paul E. McKenney wrote:
+> > On Tue, Apr 03, 2018 at 01:41:31PM +0200, Frederic Weisbecker wrote:
+> > > On Mon, Apr 02, 2018 at 03:04:38PM -0700, Paul E. McKenney wrote:
+> > > > Hello!
+> > > > 
+> > > > I am hitting the following on today's mainline under rcutorture, but
+> > > > only on scenarios built with CONFIG_NO_HZ_FULL=y:
+> > > > 
+> > > > ------------------------------------------------------------------------
+> > > > 
+> > > > WARNING: CPU: 0 PID: 7 at /home/paulmck/public_git/linux-rcu/kernel/sched/core.c:3124 sched_tick_remote+0x113/0x120
+> > > > Modules linked in:
+> > > > CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.16.0+ #1
+> > > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+> > > > Workqueue: events_unbound sched_tick_remote
+> > > > RIP: 0010:sched_tick_remote+0x113/0x120
+> > > > RSP: 0018:ffff94d540103e20 EFLAGS: 00010002
+> > > > RAX: 000000012e9bb357 RBX: ffff8f95dfd21840 RCX: 000000000000001f
+> > > > RDX: 00000000b2d05e00 RSI: 00000000ffffffff RDI: ffff8f95dfd21858
+> > > > RBP: ffff94d540103e48 R08: 00000000f6499019 R09: 00000000f6499000
+> > > > R10: 00000000b163d33b R11: ffffffffa5c8c212 R12: ffff8f95dfd25518
+> > > > R13: ffff8f95de9e4200 R14: 0000000000003402 R15: ffff8f95dfd21858
+> > > > FS:  0000000000000000(0000) GS:ffff8f95dfc00000(0000) knlGS:0000000000000000
+> > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > CR2: 000000000a015b40 CR3: 000000001de14000 CR4: 00000000000006f0
+> > > > Call Trace:
+> > > >  process_one_work+0x1d9/0x6a0
+> > > >  worker_thread+0x42/0x420
+> > > >  kthread+0xf3/0x130
+> > > >  ? rescuer_thread+0x340/0x340
+> > > >  ? kthread_delayed_work_timer_fn+0x80/0x80
+> > > >  ret_from_fork+0x3a/0x50
+> > > > Code: ff 48 8b 83 80 0b 00 00 48 85 c0 0f 85 41 ff ff ff e9 45 ff ff ff be ff ff ff ff 4c 89 ff e8 55 44 02 00 85 c0 75 87 0f 0b eb 83 <0f> 0b eb 97 66 0f 1f 84 00 00 00 00 00 41 57 41 56 41 55 41 54
+> > > > ---[ end trace fbdcbe529a8ae799 ]--
+> > > > 
+> > > > ------------------------------------------------------------------------
+> > > > 
+> > > > The WARN_ON_ONCE() triggering is this guy:
+> > > > 
+> > > > 	delta = rq_clock_task(rq) - curr->se.exec_start;
+> > > > 	WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
+> > > 
+> > > Weird. Can you try to print up those values and see how much they drift?
+> > > 
+> > >         if (WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3))
+> > >                printk_once("clock_task: %lld exec_start: %lld\n", rq_clock_task(rq), curr->se.exec_start);
+> > 
+> > Here you go!
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > WARNING: CPU: 0 PID: 7 at /home/paulmck/public_git/linux-rcu/kernel/sched/core.c:3124 sched_tick_remote+0xdb/0x100
+> > Modules linked in:
+> > CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.16.0+ #1
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+> > Workqueue: events_unbound sched_tick_remote
+> > RIP: 0010:sched_tick_remote+0xdb/0x100
+> > RSP: 0018:ffffa2c440103e60 EFLAGS: 00010006
+> > RAX: 00000000b2d05e00 RBX: ffff96f0dfd20980 RCX: 000000016a8de322
+> > RDX: 000000000d33a301 RSI: 0000000177c18623 RDI: fffffffeb0bf0e53
+> > RBP: ffff96f0dfd24328 R08: 0000000000000000 R09: 0000000000000001
+> > R10: 0000000000000000 R11: 0000000000000000 R12: ffff96f0de9d2640
+> > R13: 0000000000000000 R14: 0ffff96f0de81700 R15: ffff96f0de96f540
+> > FS:  0000000000000000(0000) GS:ffff96f0dfc00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00000000f7ec6ca3 CR3: 000000001e03e000 CR4: 00000000000006f0
+> > Call Trace:
+> >  process_one_work+0x139/0x3e0
+> >  worker_thread+0x42/0x420
+> >  kthread+0xf3/0x130
+> >  ? create_worker+0x190/0x190
+> >  ? kthread_destroy_worker+0x40/0x40
+> >  ret_from_fork+0x35/0x40
+> > Code: 89 8b 43 04 85 c0 0f 85 75 ff ff ff 48 8b 83 e0 0a 00 00 48 85 c0 0f 85 65 ff ff ff e9 69 ff ff ff 48 89 df e8 87 fe ff ff eb 8d <0f> 0b 80 3d 7d 57 2b 01 00 75 a8 48 c7 c7 e8 e1 fd a4 c6 05 6d
+> > ---[ end trace f0c6a1afa55d130d ]---
+> > clock_task: 6304138787 exec_start: 221487873
+> 
+> I'm trying to reproduce it on a large CPUs system. It seems to be easier
+> to trigger it that way.
 
-I tried your patch with 4.17-rc2 but now my system won't boot, I
-believe it fails at early booting.
+As long as it isn't just me.  ;-)
+
+On the TASKS03 rcutorture scenario, it triggers pretty quickly on
+a two-CPU virtual machine, if that helps.
+
+							Thanx, Paul
