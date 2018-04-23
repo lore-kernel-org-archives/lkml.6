@@ -1,138 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754449AbeDWJkO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:40:14 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59339 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754078AbeDWJkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:40:12 -0400
-Date: Mon, 23 Apr 2018 11:40:09 +0200
-From: Quentin Schulz <quentin.schulz@bootlin.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 2/2] ubi: introduce ubi.nocheck parameter to skip CRC
- check when attaching ubi vol
-Message-ID: <20180423094009.5cjvg7jxvwiegq2g@qschulz>
-References: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com>
- <6551534f88b3aa77cc377c4270c4ddf7fe92cdf4.1524214122.git-series.quentin.schulz@bootlin.com>
- <20180420191924.18b81e96@bbrezillon>
+        id S1754550AbeDWJrj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 05:47:39 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:42442 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754237AbeDWJrh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 05:47:37 -0400
+X-Google-Smtp-Source: AIpwx49/MR7ApzyX80y8BlvJS8g3GpbSFhaun8WNiZRf5t3gS1EYkylg7zRDpv8NCiFz3vUMt+HX4Q1VY/0cdzyBWWo=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6t2mtra42yh4ylry"
-Content-Disposition: inline
-In-Reply-To: <20180420191924.18b81e96@bbrezillon>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAK8P3a2FNU2k=nzE=FCt=2GL2x=-UdhkFGUJQqFe-h8FfMZRdw@mail.gmail.com>
+References: <0ca46228311ec615947e199def9fed62d70c1f07.1524118799.git.baolin.wang@linaro.org>
+ <CAK8P3a15stj5Yurd7rM7278cYPtM6kufs=QL2GihCOxRUCHRSQ@mail.gmail.com>
+ <CAMuHMdVQea-tQ4vQF=SrkCCqaRCRyo=aBiAuyv7p0z0FEi3r2g@mail.gmail.com> <CAK8P3a2FNU2k=nzE=FCt=2GL2x=-UdhkFGUJQqFe-h8FfMZRdw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Apr 2018 11:47:35 +0200
+X-Google-Sender-Auth: nNpK81SmGOnqLgj0nNgtCH-sp68
+Message-ID: <CAMuHMdXPnKGJYLPm-DrmtMiJ30z0f=+5EJMp3NuuibuP_3A-3w@mail.gmail.com>
+Subject: Re: [PATCH] m68k: Remove read_persistent_clock()
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Baolin Wang <baolin.wang@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Finn Thain <fthain@telegraphics.com.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Arnd,
 
---6t2mtra42yh4ylry
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Apr 23, 2018 at 11:28 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, Apr 23, 2018 at 11:07 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Fri, Apr 20, 2018 at 5:22 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>> On Thu, Apr 19, 2018 at 8:22 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>>>> The read_persistent_clock() uses a timespec, which is not year 2038 safe
+>>>> on 32bit systems. Moreover on m68k architecture, we have implemented generic
+>>>> RTC drivers that can be used to compensate the system suspend time. So
+>>>> we can remove the obsolete read_persistent_clock().
+>>>>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>>>
+>>> I'm not sure about this one: it's still possible to turn off
+>>> CONFIG_RTC_DRV_GENERIC
+>>> on M68KCLASSIC, and in that case we still need a read_persistent_clock64()
+>>> implementation. Or we use your patch but make CONFIG_RTC_DRV_GENERIC
+>>> mandatory.
+>>
+>> Typically (in the defconfigs) CONFIG_RTC_DRV_GENERIC is either "m",
+>> or not set.
+>>
+>> And in both cases, a platform-specific RTC class driver may or may not be
+>> builtin or loaded. We have them for some Amigas (RTC_DRV_MSM6242 or
+>> RTC_DRV_RP5C01).
+>>
+>> I've never been an expert of timekeeping code...
+>
+> Some extra background on this:
+>
+> read_persistent_clock64/read_persistent_clock is primarily needed when you
+> have a real time source that is better than the one exposed in the RTC class
+> driver.  For platforms doing suspend/resume, the timekeeping code will
+> first try calling read_persistent_clock64() but fall back to the RTC
+> if that fails.
+> On only a few architectures like m68k, read_persistent_clock64() falls
+> back to reading the RTC hardware, which means it will still work even if
+> the RTC_DRV_GENERIC driver is not loaded. Removing that code will
+> still work correctly as long as the generic RTC driver does get loaded
+> before suspend. On platforms without suspend/resume, none of this matters.
 
-Hi Boris,
+M68k-with-MMU[*] does not support suspend/resume.
 
-On Fri, Apr 20, 2018 at 07:19:24PM +0200, Boris Brezillon wrote:
-> On Fri, 20 Apr 2018 10:52:41 +0200
-> Quentin Schulz <quentin.schulz@bootlin.com> wrote:
->=20
-> > There's already ECC on NAND pages so there may be no need for one to
-> > check the CRC of a UBI volume.
->=20
-> That's true that ECC can help detecting corruptions, but I don't think
-> this is the actual reason for disabling CRC check at volume open time.
-> The actual reason for doing that is when the UBI volume user (in our
-> case the squashfs FS) is also checking data consistency on its own
-> (which is the case for squashfs).
->=20
-> >=20
-> > Let's introduce a ubi.nocheck parameter that let one skip the CRC check
-> > when attaching a UBI volume.
-> >=20
-> > This also drastically speeds kernel boot by removing a potentially
-> > useless check, e.g. I gained 3.2s on boot time of a SPEAr600-based board
-> > for a ~20MB UBI volume used as rootfs.
->=20
-> Can you give the old and new open/mount time instead of telling how
-> much you gained on the whole boot-time?
+[*] Probably the PM dependency should be updated for Coldfire with MMU?
 
-# grabserial -v -d /dev/ttyUSB0 -t "Starting kernel"
+> The other user of read_persistent_clock() is to set the initial time at boot.
+> This again can be done by the RTC subsystem if the correct RTC driver
+> is built-in and CONFIG_RTC_HCTOSYS is set. Alexandre is planning
+> to remove that option and instead force early user space to load the
+> RTC driver and then sync it manually using the sysfs knob for it.
+>
+> If you have ancient user space that doesn't do this, you might still
+> rely on read_persistent_clock() to set the boot time.
 
-Kernel command line is:
-rootfstype=3Dsquashfs root=3D/dev/ubiblock0_0 ubi.mtd=3Dubi ubi.block=3D0,r=
-ootfs mtdparts=3Dnand:92M@36M(ubi)
+Yeah, we have some ancient userspace (old ramdisk from just after the
+a.out to ELF switch ;-), which worked fine last time I tried ;-)
 
-Current behaviour (CRC checking):
-[2.335558 0.017867] ubi0: attaching mtd7
-[2.504021 0.168463] ubi0: scanning is finished
-[2.519824 0.015803] ubi0: attached mtd7 (name "ubi", size 92 MiB)
-[2.523987 0.004163] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 12902=
-4 bytes
-[2.530447 0.006460] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page siz=
-e 512
-[2.535836 0.005389] ubi0: VID header offset: 512 (aligned 512), data offset=
-: 2048
-[2.541601 0.005765] ubi0: good PEBs: 736, bad PEBs: 0, corrupted PEBs: 0
-[2.547923 0.006322] ubi0: user volume: 3, internal volumes: 1, max. volumes=
- count: 128
-[2.554223 0.006300] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, =
-image sequence number: 463835917
-[2.562460 0.008237] ubi0: available PEBs: 0, total reserved PEBs: 736, PEBs=
- reserved for bad PEB handling: 20
-[2.569779 0.007319] ubi0: background thread "ubi_bgt0d" started, PID 546
-[4.550142 1.980363] block ubiblock0_0: created from ubi0:0(rootfs)
+But this should not be considered a dependency, as most people will
+run e.g. Debian/ports, which I assume is a modern userspace.
 
-Skipping CRC check (ubi.nocheck=3D0,rootfs):
-[2.349903 0.019126] ubi0: attaching mtd7
-[2.516995 0.167092] ubi0: scanning is finished
-[2.527101 0.010106] ubi0: skipping CRC check for volume rootfs
-[2.536719 0.009618] ubi0: attached mtd7 (name "ubi", size 92 MiB)
-[2.541859 0.005140] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 12902=
-4 bytes
-[2.547744 0.005885] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page siz=
-e 512
-[2.552990 0.005246] ubi0: VID header offset: 512 (aligned 512), data offset=
-: 2048
-[2.560497 0.007507] ubi0: good PEBs: 736, bad PEBs: 0, corrupted PEBs: 0
-[2.568010 0.007513] ubi0: user volume: 3, internal volumes: 1, max. volumes=
- count: 128
-[2.574723 0.006713] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, =
-image sequence number: 463835917
-[2.586223 0.011500] ubi0: available PEBs: 0, total reserved PEBs: 736, PEBs=
- reserved for bad PEB handling: 20
-[2.592365 0.006142] ubi0: background thread "ubi_bgt0d" started, PID 545
-[2.595960 0.003595] block ubiblock0_0: created from ubi0:0(rootfs)
+>> Should we get rid of ARCH_USES_GETTIMEOFFSET?
+>> it seems m68k and two ARM platforms are the last users.
+>> What needs to be done?
+>
+> This is entirely unrelated, but generally speaking it would be
+> great to convert m68k away from ARCH_USES_GETTIMEOFFSET,
+> yes.
+>
+> The first step would be to get rid of all the dummy gettimeoffset() functions
+> that return a constant (like dn_gettimeoffset()).
+>
+> The larger part of that effort would be to turn each clock implementation
+> in m68k into a real clocksource driver. This is probably straightforward,
+> but I don't know the details (adding LinusW to Cc, he's done this on
+> some ARM hardware in the past).
 
-It seems like it's more in the magnitude of 2s rather than 3, but still.
+OK, more work to do...
 
-This is retrieved from the boot log.
+>>> See below for a version I did a while ago (but never submitted as I got
+>>> distracted).
+>>
+>> Thanks, I can apply it, if it is deemed correct ;-)
+>
+> Please apply Finn's bugfix for the month-off bug first, that one is more
+> urgent. I've rebased my patch on top of his and resent that one.
 
-Thanks,
-Quentin
+Sure. Will do. Thanks!
 
---6t2mtra42yh4ylry
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iQIcBAABCAAGBQJa3anxAAoJEIS4mnU+4PGjU04QAJsGAk//w18sZRftPU4WqW/u
-SPYBFfU+W975QRkyxNSdpU0yferh4b+0EAUedAeYfiCLiWYb/kfqVz3+cuJcfulk
-0PtCDxrY+POGvwJyxMvKhFVNavGym7OTy7CAnCYcdmABpr8yvrgrKKwoKPD56iQE
-QNUneSv6aDq8IRJw0ObG+AXoDfRCM+Yf4P0EwcNjCZK8EqANHzjbM8HJBiyMfOZE
-tJWU+nCoVpnQ/B27lcgewaa7TDl0EiSb0X5ku1ARzLlezcOXdsBRWV/ANKd2p2d8
-fbBcmQE3l5uL6GMVXdtIgyQkwUcQRzSNdwwdhUiI9rXykTAZryedwttK4kmEAcYT
-YKZahwCZ5KqzeOKMbu+6Sn/6NbMfuiUdnnOYONHa9K6Wh4F2a0sF2YvyuGKJV29Q
-wDXQ68v98RJBEW/LZLh16NsZiI65PiliF29mk4lE4YnG2BMjpwIwcrH1HjJGJeDL
-4kZtn4eMMwffIh2BuGXBo+RbC/vVJCVvY9FkhCsphBjc2EbO+sDTVT6nkxw4YITT
-Copcp9DCIOP18oI1RqwtopyeHTKkO5H2WLMItErMQ9gSFOMVrPJYczvdeHQ2YCNn
-HfX6rfDh7wKHWqJ48qu0fcoz3NbrlI072tGoqsk6Zdx35iy/e3eOT19YaUWk4DLw
-1WywAM50gs6LhGzE4Nd2
-=Nqjv
------END PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---6t2mtra42yh4ylry--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
