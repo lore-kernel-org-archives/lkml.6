@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx49MsgrI/WM9a059YUO0Hkt/abuUygv+o9aM/FcRb3MXwUeSDjA+PTSnNBTtxl9eq8GMfAPn
+X-Google-Smtp-Source: AIpwx4+Q2BCh+I+ThH9YdwwG8EQCRptpSZzFJuQXBkY90+mt7BaH7NKtYmY961UrS0eShvQ4N5BP
 ARC-Seal: i=1; a=rsa-sha256; t=1524498468; cv=none;
         d=google.com; s=arc-20160816;
-        b=vwdpMR9TKltaiQ94hjICDCHlljWX8OQ1JG1EzmrmwTplqWGFEA8E+pqw7gUXS9+6iL
-         r3okmTnsb2Sii3To5k6HtzyXtXQ34OgB5S4xGezQlzwrpRnDzpkE2+Kfy4OtAPYLN16/
-         ehbYkIdFpcNqML9OG5hEGMKwl/dm+96lDtQpavpXUvpwoiWsnvEWDjHBQQfPSFeUUTdb
-         udypnxNwyCBsCCzp77KK0WJaTUwiAD3BDskjfO86fnoFeBoTGOgJS1tsaU6QtW1BlwZ+
-         kD8KRQIIjvZFoUcv2bf7FErZI6EqblkBNRnfJ5cZ7LJBSh4GKZbLKS1emTYNrKrQkBuv
-         72Uw==
+        b=SWyN2bmNQVmVM7Oa+uTobVHcjYN7TcPT9P4aRoIS79D5IpilOoi9iwscWLKp203rqP
+         YxNBoYidwCA8MHzKCoMI+K1fZ7f1C07Tf+WEvwfNJlzNO9HCZmy0o30U6hvfOisVmBqE
+         jTKcc0mxwJUzhhfBc02ZAlKAgjTFdzYNTdTGnyTosZtWX53Mq1vPnRsfGOzhqgjdmV8I
+         5By78pJ34J3WIqzxZOj7q0Rq+OB1KdjOprMUDyclZmNL5MgrT89lhBhQKh65ag2IbBVF
+         iLo9yRYnePLC24sG/7y3KOX1tYLU48BMseTFQyyyM4/PNrEA429kaq6R/GqsboWAQ861
+         eP3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=79DLp5R+WcU06oOf27QHmMntCacXl56x7Z5lQK9JwSw=;
-        b=NrIi+y7+Y06Fco2kHDV5BivfOxksoP45KNfM/L63gCLTd0MqPQh2yVpjX97flYogKC
-         KGbFs/rTz2h8M8koHm4O1Zhof5cseKVCG8xrubvoYJvx6FJLZf6FSnYc5iGbNUClbesN
-         cw5PoBGOfoGdzXYMep76AmdqUe7L8zEx8Ci6EoV/GI6t2ThJ69pA1N6/ofGmPTwALz9e
-         elo4TTKIyIuJXjWcVn/9Vjxn8vCxcSBR0AlRfOikVTkTmJEdE3lltKxKLSm3vo9gLG50
-         fp2I4htnjubBLNSqiHRqzLAfIa/I1VdOB0EGdRZl+Lm5GdiDuDVdPBOvVkZk0sPYmEO0
-         5FFw==
+        bh=JA4ft/zbEQyrYYEDRQTfooNSsNBYYyu6NoZlpHRNmDU=;
+        b=fNC9Zm5ZHUQrl7rIArCFBpZSf/RlOBi+TrxlRh49X5d5ilR/xQgHB0+5bSdCSJn6Rh
+         Ne77EAM5w2/h7pZYqFZupeWqFb10Djd5D8YsKWGbbdN6dUWncMOJHDD40IlPPKDouHk8
+         kTlwiBZQVo1tU3v+/TCITsdz6JE05tnjU0X3LCj9GQuJB2QG2pzJDME9i4oFECrSLzk8
+         t7l36KqisUwze3PcCvO8A06dSB1CdM+GMNbQIB99In3++Fw1ey9eSWOTXLI9SKCzu2Z5
+         hqLyi3U527T6waLgUeGFxU1tKdCVxR13hjvJXqdci9Bb8J2m6bRT1ByQxrlGKOG6oZtl
+         0GxA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=TAC/TnvM;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=SaUL/HJ8;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=TAC/TnvM;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=SaUL/HJ8;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,57 +58,53 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 02/37] x86/entry/32: Rename TSS_sysenter_sp0 to TSS_entry_stack
-Date: Mon, 23 Apr 2018 17:47:05 +0200
-Message-Id: <1524498460-25530-3-git-send-email-joro@8bytes.org>
+Subject: [PATCH 01/37] x86/asm-offsets: Move TSS_sp0 and TSS_sp1 to asm-offsets.c
+Date: Mon, 23 Apr 2018 17:47:04 +0200
+Message-Id: <1524498460-25530-2-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552504479691573?=
-X-GMAIL-MSGID: =?utf-8?q?1598552504479691573?=
+X-GMAIL-THRID: =?utf-8?q?1598552504733324374?=
+X-GMAIL-MSGID: =?utf-8?q?1598552504733324374?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-The stack address doesn't need to be stored in tss.sp0 if
-we switch manually like on sysenter. Rename the offset so
-that it still makes sense when we change its location.
-
-We will also use this stack for all kernel-entry points, not
-just sysenter. Reflect that in the name as well.
+These offsets will be used in 32 bit assembly code as well,
+so make them available for all of x86 code.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S        | 2 +-
- arch/x86/kernel/asm-offsets_32.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/asm-offsets.c    | 4 ++++
+ arch/x86/kernel/asm-offsets_64.c | 2 --
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index bef8e2b..ec288be 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -412,7 +412,7 @@ ENTRY(xen_sysenter_target)
-  * 0(%ebp) arg6
-  */
- ENTRY(entry_SYSENTER_32)
--	movl	TSS_sysenter_sp0(%esp), %esp
-+	movl	TSS_entry_stack(%esp), %esp
- .Lsysenter_past_esp:
- 	pushl	$__USER_DS		/* pt_regs->ss */
- 	pushl	%ebp			/* pt_regs->sp (stashed in bp) */
-diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
-index f91ba53..c6ac48f 100644
---- a/arch/x86/kernel/asm-offsets_32.c
-+++ b/arch/x86/kernel/asm-offsets_32.c
-@@ -47,7 +47,7 @@ void foo(void)
- 	BLANK();
+diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+index 76417a9..232152c 100644
+--- a/arch/x86/kernel/asm-offsets.c
++++ b/arch/x86/kernel/asm-offsets.c
+@@ -103,4 +103,8 @@ void common(void) {
+ 	OFFSET(CPU_ENTRY_AREA_entry_trampoline, cpu_entry_area, entry_trampoline);
+ 	OFFSET(CPU_ENTRY_AREA_entry_stack, cpu_entry_area, entry_stack_page);
+ 	DEFINE(SIZEOF_entry_stack, sizeof(struct entry_stack));
++
++	/* Offset for sp0 and sp1 into the tss_struct */
++	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
++	OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
+ }
+diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offsets_64.c
+index bf51e51..d2eba73 100644
+--- a/arch/x86/kernel/asm-offsets_64.c
++++ b/arch/x86/kernel/asm-offsets_64.c
+@@ -65,8 +65,6 @@ int main(void)
+ #undef ENTRY
  
- 	/* Offset from the sysenter stack to tss.sp0 */
--	DEFINE(TSS_sysenter_sp0, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
-+	DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
- 	       offsetofend(struct cpu_entry_area, entry_stack_page.stack));
+ 	OFFSET(TSS_ist, tss_struct, x86_tss.ist);
+-	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
+-	OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
+ 	BLANK();
  
  #ifdef CONFIG_CC_STACKPROTECTOR
 -- 
