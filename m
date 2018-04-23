@@ -1,99 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932417AbeDWTKw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 15:10:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57892 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932175AbeDWTKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 15:10:47 -0400
-Date: Mon, 23 Apr 2018 13:10:44 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        sulrich@codeaurora.org, timur@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
-Message-ID: <20180423131044.53471670@w520.home>
-In-Reply-To: <10d9cf68-29ed-d205-a25f-b8dade53cdd8@codeaurora.org>
-References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
-        <20180419202632.GE14063@ziepe.ca>
-        <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
-        <290e9530-dcde-9c10-7ae0-59ac4c509db4@codeaurora.org>
-        <20180420140049.GP28657@bhelgaas-glaptop.roam.corp.google.com>
-        <20180420090420.03fb1e6c@w520.home>
-        <10d9cf68-29ed-d205-a25f-b8dade53cdd8@codeaurora.org>
+        id S932437AbeDWTLH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 15:11:07 -0400
+Received: from gateway23.websitewelcome.com ([192.185.49.184]:32871 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932308AbeDWTLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 15:11:05 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1524499368.git.gustavo@embeddedor.com>
+ <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+ <20180423152455.363d285c@vento.lan>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <3ab9c4c9-0656-a08e-740e-394e2e509ae9@embeddedor.com>
+Date: Mon, 23 Apr 2018 14:11:02 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180423152455.363d285c@vento.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.48.65
+X-Source-L: No
+X-Exim-ID: 1fAgrg-001Fvr-Ji
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.145.48.65]:60338
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018 13:28:22 -0400
-Sinan Kaya <okaya@codeaurora.org> wrote:
 
-> On 4/20/2018 11:04 AM, Alex Williamson wrote:
-> > Is there a concern here about whether the endpoint device driver or the
-> > PCI core really knows better about link retraining?  This makes me
-> > remember my unfinished (and need to revisit) Pericom quirk[1] where
-> > errata in the PCIe switch requires that upstream and downstream links
-> > are balanced (ie. same link rate) or else enabling ACS results in
-> > packets not properly flowing through the switch.  If an endpoint driver
-> > starts deciding to retrain links, overriding quirks in the PCI core,
-> > then such topology manipulation isn't possible.  Why does the
-> > driver .probe() function think it can retrain at a higher link rate
-> > than PCI core?  Thanks,  
-> 
-> The example given is for some serdes firmware load to happen in probe and
-> then performing a retrain to reach to a better speed.
-> 
-> It becomes a chicken and egg problem. 
-> 
-> 1. Endpoint HW trains to gen1 by default pre-boot.
-> 2. PCI core enumerates the device.
-> 3. Endpoint driver gets loaded
-> 4. Driver does the firmware programming followed by a link retrain.
-> 
-> I think it is the responsibility of the PCI core to provide reset APIs.
-> However, expecting endpoint drivers to be knowledgeable about hotplug is
-> too much.
-> 
-> We can certainly contain AER change into pci directory by moving the slot
-> reset function to drivers/pci.h file.
-> 
-> But, we need to think about what to do about VFIO and other endpoint
-> initiated reset cases. My suggestion was to move this into a single API and
-> remove all other APIs from include/linux/pci.h.
 
-I'm a little confused about the relation between reset and retrain.
-AIUI we can retrain the link without any sort of endpoint reset and if
-some sort of driver/firmware setup is required on the endpoint to
-achieve the target link speed, then I'd think we only want to retrain.
-How this is going to work with vfio is an interesting question.  We're
-only providing access to the device, not the link to the device.
-Multifunction endpoints become a big problem if one function starts
-requesting link retraining while another is in use elsewhere.
- 
-> Coming back to this patch...
+On 04/23/2018 01:24 PM, Mauro Carvalho Chehab wrote:
+> Em Mon, 23 Apr 2018 12:38:03 -0500
+> "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
 > 
-> Do we need a retrain API with the speed that driver wants to reach to?
-> API can return what was actually accomplished. The quirk from Alex can
-> run inside this API to make a decision on what speed do we actually want
-> to reach to for a given PCI topology by reprogramming the target link speed
-> field.
+>> f->index can be controlled by user-space, hence leading to a
+>> potential exploitation of the Spectre variant 1 vulnerability.
+>>
+>> Smatch warning:
+>> drivers/media/usb/tm6000/tm6000-video.c:879 vidioc_enum_fmt_vid_cap() warn: potential spectre issue 'format'
+>>
+>> Fix this by sanitizing f->index before using it to index
+>> array _format_
+>>
+>> Notice that given that speculation windows are large, the policy is
+>> to kill the speculation on the first load and not worry if it can be
+>> completed with a dependent load/store [1].
+>>
+>> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+>>
+>> Cc: stable@vger.kernel.org
+>> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   drivers/media/usb/tm6000/tm6000-video.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
+>> index b2399d4..d701027 100644
+>> --- a/drivers/media/usb/tm6000/tm6000-video.c
+>> +++ b/drivers/media/usb/tm6000/tm6000-video.c
+>> @@ -26,6 +26,7 @@
+>>   #include <linux/kthread.h>
+>>   #include <linux/highmem.h>
+>>   #include <linux/freezer.h>
+>> +#include <linux/nospec.h>
+>>   
+>>   #include "tm6000-regs.h"
+>>   #include "tm6000.h"
+>> @@ -875,6 +876,7 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
+>>   	if (f->index >= ARRAY_SIZE(format))
+>>   		return -EINVAL;
+>>   
+>> +	f->index = array_index_nospec(f->index, ARRAY_SIZE(format));
+> 
+> Please enlighten me: how do you think this could be exploited?
+> 
+> When an application calls VIDIOC_ENUM_FMT from a /dev/video0 device,
+> it will just enumerate a hardware functionality, with is constant
+> for a given hardware piece.
+> 
+> The way it works is that userspace do something like:
+> 
+> 	int ret = 0;
+> 
+> 	for (i = 0; ret == 0; i++) {
+> 		ret = ioctl(VIDIOC_ENUM_FMT, ...);
+> 	}
+> 
+> in order to read an entire const table.
+> 
+> Usually, it doesn't require any special privilege to call this ioctl,
+> but, even if someone changes its permission to 0x400, a simple lsusb
+> output is enough to know what hardware model is there. A lsmod
+> or cat /proc/modules) also tells that the tm6000 module was loaded,
+> with is a very good hint that the tm6000 is there or was there in the
+> past.
+> 
+> In the specific case of tm6000, all hardware supports exactly the
+> same formats, as this is usually defined per-driver. So, a quick look
+> at the driver is enough to know exactly what the ioctl would answer.
+> Also, the net is full of other resources that would allow anyone
+> to get the supported formats for a piece of hardware.
+> 
+> Even assuming that the OS doesn't have lsusb, that /proc is not
+> mounted, that /dev/video0 require special permissions, that the
+> potential attacker doesn't have physical access to the equipment (in
+> order to see if an USB board is plugged), etc... What possible harm
+> he could do by identifying a hardware feature?
+> 
+> Similar notes for the other patches to drivers/media in this
+> series: let's not just start adding bloatware where not needed.
+> 
+> Please notice that I'm fine if you want to submit potential
+> Spectre variant 1 fixups, but if you're willing to do so,
+> please provide an explanation about the potential threat scenarios
+> that you're identifying at the code.
+> 
+> Dan,
+> 
+> It probably makes sense to have somewhere at smatch a place where
+> we could explicitly mark the false-positives, in order to avoid
+> use to receive patches that would just add an extra delay where
+> it is not needed.
+> 
+I see I've missed some obvious things that you've pointed out here. I'll 
+mark these warnings as False Positives and take your points into account 
+for the analysis of the rest of the Spectre issues reported by Smatch.
 
-Yes, I think the core should provide a retraining API, that would also
-make the Pericom quirk easier to implement.  We'd want a field/flag on
-the pcidev that could be set by quirks to limit the highest target
-rate, but it makes sense that this should be an interface provided by
-and control point for the PCI core.  Thanks,
+Sorry for the noise and thanks for the feedback.
 
-Alex
+Thanks
+--
+Gustavo
