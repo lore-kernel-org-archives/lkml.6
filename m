@@ -1,86 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754694AbeDWJ7E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:59:04 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:61721 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754431AbeDWJ7C (ORCPT
+        id S1754665AbeDWKDB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:03:01 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:44319 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754576AbeDWKC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:59:02 -0400
-X-IronPort-AV: E=Sophos;i="5.49,317,1520899200";
-   d="scan'208";a="52425687"
-Date: Mon, 23 Apr 2018 10:58:59 +0100
-From: Wei Liu <wei.liu2@citrix.com>
-To: Stanislav Kinsburskii <staskins@amazon.com>
-CC: <jakub.kicinski@netronome.com>, <hpa@zytor.com>, <mcroce@redhat.com>,
-        <tglx@linutronix.de>, <ggarcia@abra.uab.cat>, <daniel@iogearbox.net>,
-        <x86@kernel.org>, <mingo@redhat.com>, <xen-devel@lists.xenproject.org>,
-        <axboe@kernel.dk>, <konrad.wilk@oracle.com>, <amir.jer.levy@intel.com>,
-        <paul.durrant@citrix.com>, <stefanha@redhat.com>,
-        <dsa@cumulusnetworks.com>, <boris.ostrovsky@oracle.com>,
-        <jgross@suse.com>, <linux-block@vger.kernel.org>,
-        <wei.liu2@citrix.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <davem@davemloft.net>,
-        <dwmw@amazon.co.uk>, <roger.pau@citrix.com>
-Subject: Re: [PATCH 2/3] xen netback: add fault injection facility
-Message-ID: <20180423095859.vdi7f7r267urodlx@citrix.com>
-References: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
- <20180420104731.17823.97617.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+        Mon, 23 Apr 2018 06:02:57 -0400
+Date: Mon, 23 Apr 2018 12:02:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v5 3/6] dt-bindings: arm: Document the RZN1D-DB board
+Message-ID: <20180423100248.et7lsq25fmmxdhrn@verge.net.au>
+References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1523963101-56725-4-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdU4upXcYZ_yD2a_=J5VAUE28fni7_NotmchjpYUqCxV=A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180420104731.17823.97617.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+In-Reply-To: <CAMuHMdU4upXcYZ_yD2a_=J5VAUE28fni7_NotmchjpYUqCxV=A@mail.gmail.com>
+Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 10:47:31AM +0000, Stanislav Kinsburskii wrote:
->  
->  #include <linux/kthread.h>
->  #include <linux/if_vlan.h>
-> @@ -1649,6 +1650,7 @@ static int __init netback_init(void)
->  			PTR_ERR(xen_netback_dbg_root));
->  #endif /* CONFIG_DEBUG_FS */
->  
-> +	(void) xen_netbk_fi_init();
+On Tue, Apr 17, 2018 at 05:49:25PM +0200, Geert Uytterhoeven wrote:
+> Hi Michel,
+> 
+> On Tue, Apr 17, 2018 at 1:04 PM, Michel Pollet
+> <michel.pollet@bp.renesas.com> wrote:
+> > This documents the RZ/N1 bindings for the RZN1D-DB board.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/shmobile.txt | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+> > index 61b486f..6efb3f1 100644
+> > --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> > +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> > @@ -51,7 +51,8 @@ SoCs:
+> >      compatible = "renesas,r8a77990"
+> >    - R-Car D3 (R8A77995)
+> >      compatible = "renesas,r8a77995"
+> > -
+> > +  - RZ/N1D (R9A06G032)
+> > +    compatible = "renesas,r9a06g032", "renesas,rzn1"
+> 
+> Why do you need a family-specific compatible value ("renesas,rzn1",
+> which is a marketing name)?
 
-If you care about the return value, please propagate it to
-netback_init's caller. Otherwise you can just make the function return
-void.
+Thanks Michel, Thanks Geert,
 
-> +
-> +int xenvif_fi_init(struct xenvif *vif)
-> +{
-> +	struct dentry *parent;
-> +	struct xenvif_fi *vfi;
-> +	int fi, err = -ENOMEM;
-> +
-> +	parent = vif_fi_dir;
-> +	if (!parent)
-> +		return -ENOMEM;
-> +
-> +	vfi = kmalloc(sizeof(*vfi), GFP_KERNEL);
-> +	if (!vfi)
-> +		return -ENOMEM;
-> +
-> +	vfi->dir = debugfs_create_dir(vif->dev->name, parent);
-> +	if (!vfi->dir)
-> +		goto err_dir;
-> +
-> +	for (fi = 0; fi < XENVIF_FI_MAX; fi++) {
-> +		vfi->faults[fi] = xen_fi_dir_add(vfi->dir,
-> +				xenvif_fi_names[fi]);
-> +		if (!vfi->faults[fi])
-> +			goto err_fault;
-> +	}
-> +
-> +	vif->fi_info = vfi;
-> +	return 0;
-> +
-> +err_fault:
-> +	for (; fi > 0; fi--)
-
-fi >= 0
-
-Wei.
+it looks like this extra compatible value should be dropped.
+Its not consistent with the way other Renesas SoC families are handled
+and past experience has not lead us to want family-specific compatible
+values.
