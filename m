@@ -1,57 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932463AbeDWVeB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 17:34:01 -0400
-Received: from ozlabs.org ([203.11.71.1]:49561 "EHLO ozlabs.org"
+        id S932584AbeDWVew (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 17:34:52 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:41014 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932185AbeDWVdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 17:33:55 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 24 Apr 2018 07:32:28 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simon Horman <horms@verge.net.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the renesas tree
-Message-ID: <20180424073228.22a9f64d@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/P9.KeanxRn6oH=nkNvcubPD"; protocol="application/pgp-signature"
+        id S932499AbeDWVem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 17:34:42 -0400
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/6] x86/microcode/AMD: Subtract SECTION_HDR_SIZE from file leftover length
+Date: Mon, 23 Apr 2018 23:34:06 +0200
+Message-Id: <572982c62551739903c5f7f2a70e3962fdb135a7.1524515406.git.mail@maciej.szmigiero.name>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cover.1524515406.git.mail@maciej.szmigiero.name>
+References: <cover.1524515406.git.mail@maciej.szmigiero.name>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/P9.KeanxRn6oH=nkNvcubPD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+verify_patch_size() verifies whether the remaining size of the microcode
+container file is large enough to contain a patch of the indicated size.
 
-Hi Simon,
+However, the section header length is not included in this indicated
+size but it is present in the leftover file length so it should be
+subtracted from the leftover file length before passing this value to
+verify_patch_size().
 
-Commit
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Link: http://lkml.kernel.org/r/b4854b17-e3ba-54d6-488d-0e0bfffe4c71@maciej.szmigiero.name
+[ Split comment. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/cpu/microcode/amd.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-  341d83147b6a ("arm64: dts: renesas: r8a77970: sort subnodes of the soc no=
-de")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/P9.KeanxRn6oH=nkNvcubPD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlreUO0ACgkQAVBC80lX
-0GxlUAf2LWd/RIC1viPYTYV49YerAPk2kFi1JYMiKM7wdgkU1dgetCcbpfcDZZQ3
-bv1qq5+Uo51nnFwh4JGZl1xNZiB6LXcjOpOpzDN4hr0VBYzbFCsBKM9y/WMdSFj0
-3qDxKznqV/k2WkyCKTmTs/v/3oc0lb4FVRgeq6r53j9Z+AdHZn87g4UIl9vfQTI+
-MHORgigrbA1/tZdsNu5iKyqCIBY/KkitJwdDGwDTlvVGYJrer2kXmtVF7aXPJf5e
-sgi0JUR7RDVx/k+zXhufOFEHntOFZQ0db5zZabebtmccSBlbCPAi64X158AKPhiV
-YFiPaJbiOvoOtF6YtcxjbPgY6w2O
-=SwpT
------END PGP SIGNATURE-----
-
---Sig_/P9.KeanxRn6oH=nkNvcubPD--
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 0624957aa068..dc8ea9a9d962 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -461,8 +461,12 @@ static int collect_cpu_info_amd(int cpu, struct cpu_signature *csig)
+ 	return 0;
+ }
+ 
+-static unsigned int verify_patch_size(u8 family, u32 patch_size,
+-				      unsigned int size)
++/*
++ * Check whether the passed remaining file @size is large enough to contain a
++ * patch of the indicated @patch_size (and also whether this size does not
++ * exceed the per-family maximum).
++ */
++static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int size)
+ {
+ 	u32 max_size;
+ 
+@@ -613,7 +617,12 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ 		return crnt_size;
+ 	}
+ 
+-	ret = verify_patch_size(family, patch_size, leftover);
++	/*
++	 * The section header length is not included in this indicated size
++	 * but is present in the leftover file length so we need to subtract
++	 * it before passing this value to the function below.
++	 */
++	ret = verify_patch_size(family, patch_size, leftover - SECTION_HDR_SIZE);
+ 	if (!ret) {
+ 		pr_err("Patch-ID 0x%08x: size mismatch.\n", mc_hdr->patch_id);
+ 		return crnt_size;
