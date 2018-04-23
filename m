@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754210AbeDWDEo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 23:04:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39330 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753969AbeDWDCk (ORCPT
+        id S1754038AbeDWDFb (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 23:05:31 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35332 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753964AbeDWDCk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 22 Apr 2018 23:02:40 -0400
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -16,20 +16,20 @@ Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         fweisbec@gmail.com, oleg@redhat.com, joel.opensrc@gmail.com,
         torvalds@linux-foundation.org, npiggin@gmail.com,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 01/21] rcu: Improve non-root rcu_cbs_completed() accuracy
-Date: Sun, 22 Apr 2018 20:03:24 -0700
+Subject: [PATCH tip/core/rcu 02/21] rcu: Make rcu_start_future_gp()'s grace-period check more precise
+Date: Sun, 22 Apr 2018 20:03:25 -0700
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180423030258.GA23370@linux.vnet.ibm.com>
 References: <20180423030258.GA23370@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18042303-0040-0000-0000-000004207439
+x-cbid: 18042303-0024-0000-0000-0000034CD02E
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008903; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000257; SDB=6.01021898; UDB=6.00521542; IPR=6.00801134;
  MB=3.00020719; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 03:02:36
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042303-0041-0000-0000-000008267DAC
-Message-Id: <1524452624-27589-1-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18042303-0025-0000-0000-000047C2E846
+Message-Id: <1524452624-27589-2-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -41,54 +41,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When rcu_cbs_completed() is invoked on a non-root rcu_node structure,
-it unconditionally assumes that two grace periods must complete before
-the callbacks at hand can be invoked.  This is overly conservative because
-if that non-root rcu_node structure believes that no grace period is in
-progress, and if the corresponding rcu_state structure's ->gpnum field
-has not yet been incremented, then these callbacks may safely be invoked
-after only one grace period has completed.
-
-This change is required to permit grace-period start requests to use
-funnel locking, which is in turn permitted to reduce root rcu_node ->lock
-contention, which has been observed by Nick Piggin.  Furthermore, such
-contention will likely be increased by the merging of RCU-bh, RCU-preempt,
-and RCU-sched, so it makes sense to take steps to decrease it.
-
-This commit therefore improves the accuracy of rcu_cbs_completed() when
-invoked on a non-root rcu_node structure as described above.
+The rcu_start_future_gp() function uses a sloppy check for a grace
+period being in progress, which works today because there are a number
+of code sequences that resolve the resulting races.  However, some of
+these race-resolution code sequences must acquire the root rcu_node
+structure's ->lock, and contention on that lock has started manifesting.
+This commit therefore makes rcu_start_future_gp() check more precise,
+eliminating the sloppy lockless check of the rcu_state structure's ->gpnum
+and ->completed fields.  The effect is that rcu_start_future_gp() will
+sometimes unnecessarily attempt to start a new grace period, but this
+overhead will be reduced later using funnel locking.
 
 Reported-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ kernel/rcu/tree.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 2a734692a581..f5ca72f2ed43 100644
+index f5ca72f2ed43..4bbba17422cd 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -1642,6 +1642,21 @@ static unsigned long rcu_cbs_completed(struct rcu_state *rsp,
- 		return rnp->completed + 1;
+@@ -1705,20 +1705,12 @@ rcu_start_future_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+ 	}
  
  	/*
-+	 * If the current rcu_node structure believes that RCU is
-+	 * idle, and if the rcu_state structure does not yet reflect
-+	 * the start of a new grace period, then the next grace period
-+	 * will suffice.  The memory barrier is needed to accurately
-+	 * sample the rsp->gpnum, and pairs with the second lock
-+	 * acquisition in rcu_gp_init(), which is augmented with
-+	 * smp_mb__after_unlock_lock() for this purpose.
-+	 */
-+	if (rnp->gpnum == rnp->completed) {
-+		smp_mb(); /* See above block comment. */
-+		if (READ_ONCE(rsp->gpnum) == rnp->completed)
-+			return rnp->completed + 1;
-+	}
-+
-+	/*
- 	 * Otherwise, wait for a possible partial grace period and
- 	 * then the subsequent full grace period.
+-	 * If either this rcu_node structure or the root rcu_node structure
+-	 * believe that a grace period is in progress, then we must wait
+-	 * for the one following, which is in "c".  Because our request
+-	 * will be noticed at the end of the current grace period, we don't
+-	 * need to explicitly start one.  We only do the lockless check
+-	 * of rnp_root's fields if the current rcu_node structure thinks
+-	 * there is no grace period in flight, and because we hold rnp->lock,
+-	 * the only possible change is when rnp_root's two fields are
+-	 * equal, in which case rnp_root->gpnum might be concurrently
+-	 * incremented.  But that is OK, as it will just result in our
+-	 * doing some extra useless work.
++	 * If this rcu_node structure believes that a grace period is in
++	 * progress, then we must wait for the one following, which is in
++	 * "c".  Because our request will be noticed at the end of the
++	 * current grace period, we don't need to explicitly start one.
  	 */
+-	if (rnp->gpnum != rnp->completed ||
+-	    READ_ONCE(rnp_root->gpnum) != READ_ONCE(rnp_root->completed)) {
++	if (rnp->gpnum != rnp->completed) {
+ 		rnp->need_future_gp[c & 0x1]++;
+ 		trace_rcu_future_gp(rnp, rdp, c, TPS("Startedleaf"));
+ 		goto out;
 -- 
 2.5.2
