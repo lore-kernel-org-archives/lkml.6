@@ -1,58 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755932AbeDWPV7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:21:59 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54395 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755568AbeDWPU4 (ORCPT
+        id S1755918AbeDWPV4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:21:56 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:54509 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755635AbeDWPVw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:20:56 -0400
-From: Lionel Debieve <lionel.debieve@st.com>
-To: Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/4] ARM: dts: stm32: Add CRC support on stm32mp157c
-Date: Mon, 23 Apr 2018 17:19:47 +0200
-Message-ID: <20180423151947.2526-5-lionel.debieve@st.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180423151947.2526-1-lionel.debieve@st.com>
-References: <20180423151947.2526-1-lionel.debieve@st.com>
+        Mon, 23 Apr 2018 11:21:52 -0400
+X-Originating-IP: 2.224.242.101
+Date: Mon, 23 Apr 2018 17:21:43 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
+ (CEU)
+Message-ID: <20180423152143.GH3999@w540>
+References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
+ <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.65]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="RwxaKO075aXzzOz0"
+Content-Disposition: inline
+In-Reply-To: <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add CRC instance of the stm32mp157c SoC
 
-Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+--RwxaKO075aXzzOz0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index 5ce7d28f8a1f..2962decacd87 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -185,6 +185,13 @@
- 			status = "disabled";
- 		};
- 
-+		crc1: crc@58009000 {
-+			compatible = "st,stm32f7-crc";
-+			reg = <0x58009000 0x400>;
-+			clocks = <&rcc CRC1>;
-+			status = "disabled";
-+		};
-+
- 		usart1: serial@5c000000 {
- 			compatible = "st,stm32h7-uart";
- 			reg = <0x5c000000 0x400>;
--- 
-2.15.1
+Hi Simon,
+
+On Wed, Feb 21, 2018 at 07:29:18PM +0100, Simon Horman wrote:
+> On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
+> > Add Capture Engine Unit (CEU) node to device tree.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+>
+> This patch depends on the binding for "renesas,r7s72100-ceu".
+> Please repost or otherwise ping me once that dependency has been accepted.
+
+Bindings for the CEU interface went in v4.17-rc1.
+
+Could you please resurect this patch?
+
+Thanks
+   j
+
+--RwxaKO075aXzzOz0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa3foHAAoJEHI0Bo8WoVY88jgP/jwL5jYnW1PO6nNMb2aW2DdP
+lB6YSXYDY25gsU3XZH544VzEmi6Wj2ynXGqKNlkTuWubcvmbvXtMEUqoVuOIfnte
+TJhBphhttylk5yhxXK7MpaxDZ5zeD/mnhSsKr55ZIV6M+4g/7AZAESLif4eoJbeL
+y0v44ngRjol2VJPFSI9S4lm9jiWy5Vi+LG8OFR4mfCkRO9WbCMIuUpehucEQNnWw
+eUnpgr8DnPMCUodbTBxM3E8+3FGZq/EaD9ucNjkxZ5Sb/7wkrfgK37uX6EUuewp8
+51b5ZK8Q9vTnuRnKmhmnEVL19GXAdJga5uSPhnbV7t2rabb1awWoXHX1fLvKzjWn
+Ag5pTjdT7c0mSykQYS48PiQljRBjBT7qh5laUJ/TKH1xHB62eoBFmjkO8z8Tv4K+
+pZA6myEgHSRjI+CerdnzWOn2QmB5i8AmP7f8tbto6EfGMv7Bb3/RBY36cpjkVnhO
+hHKbvwiS1EWBoGyeyGneFdbaFYvWhlBUzdlkIMrmOuZM8mQWc0zJhokOS7XQUkik
+1WK17peJPt/XOZGiBDX2aQIuVyntyqJGFXbSLNWsMD5Hy+3whA2bFMr+OJxjMx43
+pftCR0plJYxIvhLUCIAoiQSRCsVPNtiO/tTmKmknkzx5cDU5cH4jqEkTdJSqhtdr
+IlJgVoiaZ+bwN4ko8IZm
+=9cTo
+-----END PGP SIGNATURE-----
+
+--RwxaKO075aXzzOz0--
