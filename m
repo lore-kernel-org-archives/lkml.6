@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755011AbeDWKur (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:50:47 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38674 "EHLO
+        id S1755282AbeDWK4H (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:56:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38862 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754643AbeDWKug (ORCPT
+        with ESMTP id S1755013AbeDWKut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:50:36 -0400
+        Mon, 23 Apr 2018 06:50:49 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -23,9 +23,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH v6 09/27] drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
-Date: Mon, 23 Apr 2018 12:49:45 +0200
-Message-Id: <20180423105003.9004-10-enric.balletbo@collabora.com>
+Subject: [RESEND PATCH v6 15/27] drm/bridge: analogix_dp: Fix timeout of video streamclk config
+Date: Mon, 23 Apr 2018 12:49:51 +0200
+Message-Id: <20180423105003.9004-16-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
 References: <20180423105003.9004-1-enric.balletbo@collabora.com>
@@ -35,13 +35,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zain wang <wzz@rock-chips.com>
 
-Enhanced mode is required by the eDP 1.2 specification, and not doing it
-early could result in a period of time where we have a link transmitting
-idle packets without it. Since there is no reason to disable it, we just
-enable it at the beginning of link training and then keep it on all the
-time.
+The STRM_VALID bit in register ANALOGIX_DP_SYS_CTL_3 may be unstable,
+so we may hit the error log "Timeout of video streamclk ok" since
+checked this unstable bit.
+In fact, we can go continue and the streamclk is ok if we wait enough time,
+it does no effect on display.
+Let's change this error to warn.
 
-Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
@@ -51,39 +52,24 @@ Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 1f4f34149019..1e1743b59c77 100644
+index 5540e2dfc2ec..a72e454a7292 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -281,6 +281,8 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
- 	retval = drm_dp_dpcd_write(&dp->aux, DP_LINK_BW_SET, buf, 2);
- 	if (retval < 0)
- 		return retval;
-+	/* set enhanced mode if available */
-+	analogix_dp_set_enhanced_mode(dp);
+@@ -921,8 +921,9 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+ 			done_count = 0;
+ 		}
+ 		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
+-			dev_err(dp->dev, "Timeout of video streamclk ok\n");
+-			return -ETIMEDOUT;
++			dev_warn(dp->dev,
++				 "Ignoring timeout of video streamclk ok\n");
++			break;
+ 		}
  
- 	/* Set TX pre-emphasis to minimum */
- 	for (lane = 0; lane < lane_count; lane++)
-@@ -593,8 +595,6 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- 		dev_dbg(dp->dev, "fast link training %s\n",
- 			dp->fast_train_enable ? "supported" : "unsupported");
- 
--		/* set enhanced mode if available */
--		analogix_dp_set_enhanced_mode(dp);
- 		dp->link_train.lt_state = FINISHED;
- 
- 		return 0;
-@@ -940,8 +940,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
- 	}
- 
- 	analogix_dp_enable_scramble(dp, 1);
--	analogix_dp_enable_rx_to_enhanced_mode(dp, 1);
--	analogix_dp_enable_enhanced_mode(dp, 1);
- 
- 	analogix_dp_init_video(dp);
- 	ret = analogix_dp_config_video(dp);
+ 		usleep_range(1000, 1001);
 -- 
 2.17.0
