@@ -1,37 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754524AbeDWIX2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:23:28 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60003 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754478AbeDWIXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:23:24 -0400
-Subject: Re: [PATCH] f2fs: check cap_resource only for data blocks
-To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180421065308.84211-1-jaegeuk@kernel.org>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <ab54e37b-5b9d-b420-89c2-edfcbd9f4558@huawei.com>
-Date: Mon, 23 Apr 2018 16:23:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1754287AbeDWIXE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:23:04 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:40386 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754384AbeDWIXC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 04:23:02 -0400
+X-Google-Smtp-Source: AB8JxZoTokYI6JWVcCtzjkH4pQeDAyNCLZkKMTpwGotgvuIyOqsYOFu7rFoWxDBUAQDunuowDkvwCPiT7cEZa3mXa3HNlGE+qDVz
 MIME-Version: 1.0
-In-Reply-To: <20180421065308.84211-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Date: Mon, 23 Apr 2018 01:23:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000003f2d5056a7fbf92@google.com>
+Subject: KMSAN: uninit-value in strnlen
+From: syzbot <syzbot+cd06c321e7147d03a65e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mostrows@earthlink.net,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/21 14:53, Jaegeuk Kim wrote:
-> This patch changes the rule to check cap_resource for data blocks, not inode
-> or node blocks in order to avoid selinux denial.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Hello,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+syzbot hit the following crash on  
+https://github.com/google/kmsan.git/master commit
+a7f95e9c8a95e9fbb388c3999b61a17667cd3bbe (Sat Apr 21 13:50:22 2018 +0000)
+kmsan: disable assembly checksums
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=cd06c321e7147d03a65e
 
-Thanks,
+So far this crash happened 5 times on  
+https://github.com/google/kmsan.git/master.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5785171018121216
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5117671628603392
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6310764688179200
+Kernel config: https://syzkaller.appspot.com/x/.config?id=328654897048964367
+compiler: clang version 7.0.0 (trunk 329391)
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+cd06c321e7147d03a65e@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+==================================================================
+BUG: KMSAN: uninit-value in strnlen+0xc4/0x110 lib/string.c:499
+CPU: 1 PID: 4507 Comm: syzkaller579712 Not tainted 4.16.0+ #85
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  strnlen+0xc4/0x110 lib/string.c:499
+  dev_name_hash net/core/dev.c:209 [inline]
+  dev_get_by_name_rcu net/core/dev.c:764 [inline]
+  dev_get_by_name+0x6e/0x350 net/core/dev.c:791
+  pppoe_connect+0xcb7/0x2360 drivers/net/ppp/pppoe.c:665
+  SYSC_connect+0x41a/0x510 net/socket.c:1639
+  SyS_connect+0x54/0x80 net/socket.c:1620
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x43fcf9
+RSP: 002b:00007ffca4bd4978 EFLAGS: 00000213 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fcf9
+RDX: 0000000000000007 RSI: 0000000020000040 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401620
+R13: 00000000004016b0 R14: 0000000000000000 R15: 0000000000000000
+
+Local variable description: ----address@SYSC_connect
+Variable was created at:
+  SYSC_connect+0x6f/0x510 net/socket.c:1622
+  SyS_connect+0x54/0x80 net/socket.c:1620
+==================================================================
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
