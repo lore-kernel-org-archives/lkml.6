@@ -1,89 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932083AbeDWPBy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:01:54 -0400
-Received: from zimbra.alphalink.fr ([217.15.80.77]:36122 "EHLO
-        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755433AbeDWPBt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:01:49 -0400
-Date: Mon, 23 Apr 2018 17:01:42 +0200
-From: Guillaume Nault <g.nault@alphalink.fr>
-To: syzbot <syzbot+cd06c321e7147d03a65e@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, mostrows@earthlink.net,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: KMSAN: uninit-value in strnlen
-Message-ID: <20180423150142.GC1440@alphalink.fr>
-References: <00000000000003f2d5056a7fbf92@google.com>
+        id S1755569AbeDWPDO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:03:14 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41813 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755419AbeDWPDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:03:11 -0400
+Date: Mon, 23 Apr 2018 17:03:09 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
+        Ondrej Jirman <megous@megous.com>
+Subject: Re: [PATCH v3 3/3] ARM: dts: sun8i: h3: Add SY8106A regulator to
+ Orange Pi PC
+Message-ID: <20180423150309.dksr2rjazlrmlzx2@flea>
+References: <20180423144657.63264-1-icenowy@aosc.io>
+ <20180423144657.63264-4-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5n6aegyizyrw7jdc"
 Content-Disposition: inline
-In-Reply-To: <00000000000003f2d5056a7fbf92@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180423144657.63264-4-icenowy@aosc.io>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 01:23:01AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on https://github.com/google/kmsan.git/master
-> commit
-> a7f95e9c8a95e9fbb388c3999b61a17667cd3bbe (Sat Apr 21 13:50:22 2018 +0000)
-> kmsan: disable assembly checksums
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=cd06c321e7147d03a65e
-> 
-> So far this crash happened 5 times on
-> https://github.com/google/kmsan.git/master.
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5785171018121216
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=5117671628603392
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=6310764688179200
-> Kernel config: https://syzkaller.appspot.com/x/.config?id=328654897048964367
-> compiler: clang version 7.0.0 (trunk 329391)
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+cd06c321e7147d03a65e@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> ==================================================================
-> BUG: KMSAN: uninit-value in strnlen+0xc4/0x110 lib/string.c:499
-> CPU: 1 PID: 4507 Comm: syzkaller579712 Not tainted 4.16.0+ #85
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
->  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
->  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
->  strnlen+0xc4/0x110 lib/string.c:499
->  dev_name_hash net/core/dev.c:209 [inline]
->  dev_get_by_name_rcu net/core/dev.c:764 [inline]
->  dev_get_by_name+0x6e/0x350 net/core/dev.c:791
->  pppoe_connect+0xcb7/0x2360 drivers/net/ppp/pppoe.c:665
->  SYSC_connect+0x41a/0x510 net/socket.c:1639
->  SyS_connect+0x54/0x80 net/socket.c:1620
->  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> RIP: 0033:0x43fcf9
-> RSP: 002b:00007ffca4bd4978 EFLAGS: 00000213 ORIG_RAX: 000000000000002a
-> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fcf9
-> RDX: 0000000000000007 RSI: 0000000020000040 RDI: 0000000000000003
-> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-> R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401620
-> R13: 00000000004016b0 R14: 0000000000000000 R15: 0000000000000000
-> 
-> Local variable description: ----address@SYSC_connect
-> Variable was created at:
->  SYSC_connect+0x6f/0x510 net/socket.c:1622
->  SyS_connect+0x54/0x80 net/socket.c:1620
-> ==================================================================
-> 
-That's a consequence of not validating sockaddr_len. The sockaddr_pppox
-structure was incomplete.
 
-#syz dup: KMSAN: uninit-value in pppoe_connect
+--5n6aegyizyrw7jdc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 23, 2018 at 10:46:57PM +0800, Icenowy Zheng wrote:
+> From: Ondrej Jirman <megous@megous.com>
+>=20
+> Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
+> Orange Pi PC, then set the power supply of the ARM cores to this
+> regulator, in order to enable DVFS.
+>=20
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> [Icenowy: Enable DVFS in this patch, slight changes and change commit
+>  message]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> [wens@csie.org: Rename regulator label]
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Why is there Chen-Yu's SoB? It doesn't really make much sense, unless
+Chen-Yu would have applied this patch already, but then you wouldn't
+post it, right?
+
+Maxime=20
+
+> ---
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--5n6aegyizyrw7jdc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrd9awACgkQ0rTAlCFN
+r3TInhAAmrq22gc94H5suq9QPZDD4krf9irMnM/zICuvFA0LcjrmKdJzwonl7Nj/
+xH5VI1SEQ7keFGX8bdGqYQDQmqffvf8E/2jeqDYbOEuOuye8rKjexZLckhCZTnHJ
+W0knOdO7dUn465HXffHjOsaZLGb9fl6hZgOm+O+ZZDkNrhtMhbTVM6Q7UCcccZal
+00sT9M8q2k0+ZsmgSrjEY2y0Kc2MNuUPrmLxBZKEYA9obTsroOEYGwi+Q+H9+/uD
+iXVtV8w0l24EpToIDOrbeHg5RJ5mrC67HLBhrhkwO/CaIJATz2st3l3cKHTJd+Ak
+M2zmGAqK4YPXCMupP1k2gH6It0FNmaWR5PUrr3yreFVtEhlQMPfyqc0B6xQ4SP8C
+h9IrdoQt2DZOwRRx4LdmZNdxCEw0nez9kYw8YmT0RVPpfdRLVM5dIyqhG+6L5uO/
+a3/uu9xdDklSfdxIqxVhT7oaqXt1wovYfoCtALCJHT8keqEt2SZpjVWyNNF4m6yP
+mdGlzlLr640Y44F3GyE2grEa+IjqYy4BUKVNnpHk587HZ+EIrLnf+GnR3U/VXjW6
+bEx6a6tQUcIazvurhpqtftq0/SezSKXh+RfEd1yogYSvW/UpkYsuaKkDtHO+gY/p
+KDKxJdm8yJiTRk5tYsd2uORTlpB7/aKIrwhwsFz02WZN3Y4SyLA=
+=rQeH
+-----END PGP SIGNATURE-----
+
+--5n6aegyizyrw7jdc--
