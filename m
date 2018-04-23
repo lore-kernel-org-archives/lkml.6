@@ -1,156 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754162AbeDWHC0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 03:02:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751519AbeDWHCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 03:02:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2686F21795
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 23 Apr 2018 16:02:19 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: jolsa@redhat.com, acme@redhat.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de, pombredanne@nexb.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        uneedsihyeon@gmail.com, kjlx@templeofstupid.com
-Subject: Re: [PATCH v2 3/3] perf/buildid-cache: Support --purge-all option
-Message-Id: <20180423160219.b58fdc600e5d6927105ba57b@kernel.org>
-In-Reply-To: <20180417041346.5617-4-ravi.bangoria@linux.vnet.ibm.com>
-References: <20180417041346.5617-1-ravi.bangoria@linux.vnet.ibm.com>
-        <20180417041346.5617-4-ravi.bangoria@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
+        id S1754102AbeDWHDr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 03:03:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47318 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751519AbeDWHDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 03:03:44 -0400
+Date: Mon, 23 Apr 2018 09:03:37 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc: Harald Freudenberger <FREUDE@de.ibm.com>,
+        Pierre Morel <pmorel@linux.vnet.ibm.com>, alex.williamson@redhat.com,
+        alifm@linux.vnet.ibm.com, berrange@redhat.com,
+        bjsdjshi@linux.vnet.ibm.com, borntrae@linux.ibm.com,
+        fiuczy@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, kvm@vger.kernel.org, kwankhede@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        mjrosato@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com,
+        pasic@linux.vnet.ibm.com, pbonzini@redhat.com,
+        Reinhard Buendgen <BUENDGEN@de.ibm.com>, thuth@redhat.com
+Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
+Message-ID: <20180423090337.1b8b465a.cohuck@redhat.com>
+In-Reply-To: <470d8af7-b9f6-0ab7-9bfa-351fbeaa079c@linux.vnet.ibm.com>
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
+        <OFE3FE11B1.8E1BDDEF-ON00258272.002AEDB1-C1258272.002B06EF@notes.na.collabserv.com>
+        <20180417121044.5c8f2182.cohuck@redhat.com>
+        <2ac8b862-e2dc-843e-a0b8-906fa32b42f4@linux.vnet.ibm.com>
+        <20180417172139.0a2b148b.cohuck@redhat.com>
+        <7276785e-2183-3204-ec80-99fba1546364@linux.vnet.ibm.com>
+        <20180418094949.0403dcaf.cohuck@redhat.com>
+        <470d8af7-b9f6-0ab7-9bfa-351fbeaa079c@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 09:43:46 +0530
-Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+On Sun, 22 Apr 2018 10:52:55 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-> User can remove files from cache using --remove/--purge options
-> but both needs list of files as an argument. It's not convenient
-> when you want to flush out entire cache. Add an option to purge
-> all files from cache.
+> >>>>> (Not providing a crycb if APXA is not available would be loss of
+> >>>>> functionality, I guess? Deciding not to provide vfio-ap if APXA is not
+> >>>>> available is a different game, of course.)  
+> >>>> This would require a change to enabling the CPU model feature for
+> >>>> AP.  
+> >>> But would it actually make sense to tie vfio-ap to APXA? This needs to
+> >>> be answered by folks with access to the architecture :)  
+> >> I don't see any reason to do that from an architectural perspective.
+> >> One can access AP devices whether APXA is installed or not, it just limits
+> >> the range of devices that can be addressed  
+> > So I guess we should not introduce a tie-in then (unless it radically
+> > simplifies the code...)  
 > 
-> Ex,
->   # perf buildid-cache -l
->     8a86ef73e44067bca52cc3f6cd3e5446c783391c /tmp/a.out
->     ebe71fdcf4b366518cc154d570a33cd461a51c36 /tmp/a.out.1
->   # perf buildid-cache -P -v
->     Removing /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c): Ok
->     Removing /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36): Ok
->     Purged all: Ok
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-> ---
->  tools/perf/Documentation/perf-buildid-cache.txt |  3 +++
->  tools/perf/builtin-buildid-cache.c              | 36 ++++++++++++++++++++++++-
->  2 files changed, 38 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-buildid-cache.txt b/tools/perf/Documentation/perf-buildid-cache.txt
-> index 3f285ba6e1f9..f6de0952ff3c 100644
-> --- a/tools/perf/Documentation/perf-buildid-cache.txt
-> +++ b/tools/perf/Documentation/perf-buildid-cache.txt
-> @@ -48,6 +48,9 @@ OPTIONS
->  --purge=::
->          Purge all cached binaries including older caches which have specified
->  	path from the cache.
-> +-P::
-> +--purge-all::
-> +	Purge all cached binaries. This will flush out entire cache.
->  -M::
->  --missing=::
->  	List missing build ids in the cache for the specified file.
-> diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
-> index fd0a08661b42..d11226f76fbc 100644
-> --- a/tools/perf/builtin-buildid-cache.c
-> +++ b/tools/perf/builtin-buildid-cache.c
-> @@ -240,6 +240,34 @@ static int build_id_cache__purge_path(const char *pathname, struct nsinfo *nsi)
->  	return err;
->  }
->  
-> +static int build_id_cache__purge_all(void)
-> +{
-> +	struct strlist *list;
-> +	struct str_node *pos;
-> +	int err;
-> +	char *buf;
-> +
-> +	list = build_id_cache__list_all(false);
-> +	if (!list) {
-> +		pr_debug("Failed to get buildids: -%d\n", errno);
-> +		return -EINVAL;
-> +	}
-> +
-> +	strlist__for_each_entry(pos, list) {
-> +		buf = build_id_cache__origname(pos->s);
-> +		err = build_id_cache__remove_s(pos->s);
-> +		pr_debug("Removing %s (%s): %s\n", buf, pos->s,
-> +			 err ? "FAIL" : "Ok");
-> +		free(buf);
-> +		if (err)
-> +			break;
-> +	}
-> +	strlist__delete(list);
-> +
-> +	pr_debug("Purged all: %s\n", err ? "FAIL" : "Ok");
+> I'm not clear about what you mean by introducing a tie-in. Can you 
+> clarify that?
 
-Hmm, I think this should use pr_info(or pr_warning), at least for Failure case.
-
-Thanks,
-
-> +	return err;
-> +}
-> +
->  static bool dso__missing_buildid_cache(struct dso *dso, int parm __maybe_unused)
->  {
->  	char filename[PATH_MAX];
-> @@ -327,6 +355,7 @@ int cmd_buildid_cache(int argc, const char **argv)
->  	bool force = false;
->  	bool list_files = false;
->  	bool opts_flag = false;
-> +	bool purge_all = false;
->  	char const *add_name_list_str = NULL,
->  		   *remove_name_list_str = NULL,
->  		   *purge_name_list_str = NULL,
-> @@ -350,6 +379,7 @@ int cmd_buildid_cache(int argc, const char **argv)
->  		    "file(s) to remove"),
->  	OPT_STRING('p', "purge", &purge_name_list_str, "file list",
->  		    "file(s) to remove (remove old caches too)"),
-> +	OPT_BOOLEAN('P', "purge-all", &purge_all, "purge all cached files"),
->  	OPT_BOOLEAN('l', "list", &list_files, "list all cached files"),
->  	OPT_STRING('M', "missing", &missing_filename, "file",
->  		   "to find missing build ids in the cache"),
-> @@ -370,7 +400,8 @@ int cmd_buildid_cache(int argc, const char **argv)
->  
->  	opts_flag = add_name_list_str || kcore_filename ||
->  		remove_name_list_str || purge_name_list_str ||
-> -		missing_filename || update_name_list_str;
-> +		missing_filename || update_name_list_str ||
-> +		purge_all;
->  
->  	if (argc || !(list_files || opts_flag))
->  		usage_with_options(buildid_cache_usage, buildid_cache_options);
-> @@ -457,6 +488,9 @@ int cmd_buildid_cache(int argc, const char **argv)
->  		}
->  	}
->  
-> +	if (purge_all)
-> +		ret = build_id_cache__purge_all();
-> +
->  	if (missing_filename)
->  		ret = build_id_cache__fprintf_missing(session, stdout);
->  
-> -- 
-> 2.14.3
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Making vfio-ap depend on APXA.
