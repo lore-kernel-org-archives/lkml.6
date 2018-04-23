@@ -1,191 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754492AbeDWJ1Q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:27:16 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34931 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754081AbeDWJ1C (ORCPT
+        id S1754591AbeDWJ1a (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 05:27:30 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50572 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754518AbeDWJ12 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:27:02 -0400
-X-UUID: c4ece23c09fc41d18df951ae658ae50e-20180423
-From: Chaotian Jing <chaotian.jing@mediatek.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        Phong LE <ple@baylibre.com>, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>, yong mao <yong.mao@mediatek.com>,
-        <linux-mmc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Subject: [PATCH] mmc: mediatek: add 64G DRAM DMA support
-Date: Mon, 23 Apr 2018 17:26:50 +0800
-Message-ID: <1524475610-22079-2-git-send-email-chaotian.jing@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1524475610-22079-1-git-send-email-chaotian.jing@mediatek.com>
-References: <1524475610-22079-1-git-send-email-chaotian.jing@mediatek.com>
+        Mon, 23 Apr 2018 05:27:28 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
+        daniel@ffwll.ch, peda@axentia.se, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] drm: bridge: Add support for static image formats
+Date: Mon, 23 Apr 2018 12:27:39 +0300
+Message-ID: <3108314.q4SV6s3NXE@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1524130269-32688-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org> <1524130269-32688-2-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MT2712 MSDC supports 64G DRAM DMA access, it needs update
-gpd/bd structure.
+Hi Jacopo,
 
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
----
- drivers/mmc/host/mtk-sd.c | 44 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 39 insertions(+), 5 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index d642e11..93269ac 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -228,6 +228,7 @@
- 
- #define MSDC_PATCH_BIT2_CFGRESP   (0x1 << 15)   /* RW */
- #define MSDC_PATCH_BIT2_CFGCRCSTS (0x1 << 28)   /* RW */
-+#define MSDC_PB2_SUPPORT_64G      (0x1 << 1)    /* RW */
- #define MSDC_PB2_RESPWAIT         (0x3 << 2)    /* RW */
- #define MSDC_PB2_RESPSTSENSEL     (0x7 << 16)   /* RW */
- #define MSDC_PB2_CRCSTSENSEL      (0x7 << 29)   /* RW */
-@@ -281,6 +282,8 @@ struct mt_gpdma_desc {
- #define GPDMA_DESC_BDP		(0x1 << 1)
- #define GPDMA_DESC_CHECKSUM	(0xff << 8) /* bit8 ~ bit15 */
- #define GPDMA_DESC_INT		(0x1 << 16)
-+#define GPDMA_DESC_NEXT_H4	(0xf << 24)
-+#define GPDMA_DESC_PTR_H4	(0xf << 28)
- 	u32 next;
- 	u32 ptr;
- 	u32 gpd_data_len;
-@@ -297,6 +300,8 @@ struct mt_bdma_desc {
- #define BDMA_DESC_CHECKSUM	(0xff << 8) /* bit8 ~ bit15 */
- #define BDMA_DESC_BLKPAD	(0x1 << 17)
- #define BDMA_DESC_DWPAD		(0x1 << 18)
-+#define BDMA_DESC_NEXT_H4	(0xf << 24)
-+#define BDMA_DESC_PTR_H4	(0xf << 28)
- 	u32 next;
- 	u32 ptr;
- 	u32 bd_data_len;
-@@ -335,6 +340,7 @@ struct mtk_mmc_compatible {
- 	bool busy_check;
- 	bool stop_clk_fix;
- 	bool enhance_rx;
-+	bool support_64g;
- };
- 
- struct msdc_tune_para {
-@@ -404,6 +410,7 @@ struct msdc_host {
- 	.busy_check = false,
- 	.stop_clk_fix = false,
- 	.enhance_rx = false,
-+	.support_64g = false,
- };
- 
- static const struct mtk_mmc_compatible mt8173_compat = {
-@@ -415,6 +422,7 @@ struct msdc_host {
- 	.busy_check = false,
- 	.stop_clk_fix = false,
- 	.enhance_rx = false,
-+	.support_64g = false,
- };
- 
- static const struct mtk_mmc_compatible mt2701_compat = {
-@@ -426,6 +434,7 @@ struct msdc_host {
- 	.busy_check = false,
- 	.stop_clk_fix = false,
- 	.enhance_rx = false,
-+	.support_64g = false,
- };
- 
- static const struct mtk_mmc_compatible mt2712_compat = {
-@@ -437,6 +446,7 @@ struct msdc_host {
- 	.busy_check = true,
- 	.stop_clk_fix = true,
- 	.enhance_rx = true,
-+	.support_64g = true,
- };
- 
- static const struct mtk_mmc_compatible mt7622_compat = {
-@@ -448,6 +458,7 @@ struct msdc_host {
- 	.busy_check = true,
- 	.stop_clk_fix = true,
- 	.enhance_rx = true,
-+	.support_64g = false,
- };
- 
- static const struct of_device_id msdc_of_ids[] = {
-@@ -558,6 +569,10 @@ static inline void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
- 		bd[j].bd_info &= ~BDMA_DESC_BLKPAD;
- 		bd[j].bd_info &= ~BDMA_DESC_DWPAD;
- 		bd[j].ptr = (u32)dma_address;
-+		if (host->dev_comp->support_64g) {
-+			bd[j].bd_info &= ~BDMA_DESC_PTR_H4;
-+			bd[j].bd_info |= ((dma_address >> 32) & 0xf) << 28;
-+		}
- 		bd[j].bd_data_len &= ~BDMA_DESC_BUFLEN;
- 		bd[j].bd_data_len |= (dma_len & BDMA_DESC_BUFLEN);
- 
-@@ -1367,6 +1382,9 @@ static void msdc_init_hw(struct msdc_host *host)
- 			     MSDC_PATCH_BIT2_CFGCRCSTS);
- 	}
- 
-+	if (host->dev_comp->support_64g)
-+		sdr_set_bits(host->base + MSDC_PATCH_BIT2,
-+			     MSDC_PB2_SUPPORT_64G);
- 	if (host->dev_comp->data_tune) {
- 		sdr_set_bits(host->base + tune_reg,
- 			     MSDC_PAD_TUNE_RD_SEL | MSDC_PAD_TUNE_CMD_SEL);
-@@ -1408,19 +1426,32 @@ static void msdc_init_gpd_bd(struct msdc_host *host, struct msdc_dma *dma)
- {
- 	struct mt_gpdma_desc *gpd = dma->gpd;
- 	struct mt_bdma_desc *bd = dma->bd;
-+	dma_addr_t dma_addr;
- 	int i;
- 
- 	memset(gpd, 0, sizeof(struct mt_gpdma_desc) * 2);
- 
-+	dma_addr = dma->gpd_addr + sizeof(struct mt_gpdma_desc);
- 	gpd->gpd_info = GPDMA_DESC_BDP; /* hwo, cs, bd pointer */
--	gpd->ptr = (u32)dma->bd_addr; /* physical address */
- 	/* gpd->next is must set for desc DMA
- 	 * That's why must alloc 2 gpd structure.
- 	 */
--	gpd->next = (u32)dma->gpd_addr + sizeof(struct mt_gpdma_desc);
-+	gpd->next = (u32)dma_addr;
-+	if (host->dev_comp->support_64g)
-+		gpd->gpd_info |= ((dma_addr >> 32) & 0xf) << 24;
-+
-+	dma_addr = dma->bd_addr;
-+	gpd->ptr = (u32)dma->bd_addr; /* physical address */
-+	if (host->dev_comp->support_64g)
-+		gpd->gpd_info |= ((dma_addr >> 32) & 0xf) << 28;
-+
- 	memset(bd, 0, sizeof(struct mt_bdma_desc) * MAX_BD_NUM);
--	for (i = 0; i < (MAX_BD_NUM - 1); i++)
--		bd[i].next = (u32)dma->bd_addr + sizeof(*bd) * (i + 1);
-+	for (i = 0; i < (MAX_BD_NUM - 1); i++) {
-+		dma_addr = dma->bd_addr + sizeof(*bd) * (i + 1);
-+		bd[i].next = (u32)dma_addr;
-+		if (host->dev_comp->support_64g)
-+			bd[i].bd_info |= ((dma_addr >> 32) & 0xf) << 24;
-+	}
- }
- 
- static void msdc_ops_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-@@ -1913,7 +1944,10 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	mmc->max_blk_size = 2048;
- 	mmc->max_req_size = 512 * 1024;
- 	mmc->max_blk_count = mmc->max_req_size / 512;
--	host->dma_mask = DMA_BIT_MASK(32);
-+	if (host->dev_comp->support_64g)
-+		host->dma_mask = DMA_BIT_MASK(36);
-+	else
-+		host->dma_mask = DMA_BIT_MASK(32);
- 	mmc_dev(mmc)->dma_mask = &host->dma_mask;
- 
- 	host->timeout_clks = 3 * 1048576;
+On Thursday, 19 April 2018 12:31:02 EEST Jacopo Mondi wrote:
+> Add support for storing image format information in DRM bridges with
+> associated helper function.
+> 
+> This patch replicates for bridges what 'drm_display_info_set_bus_formats()'
+> is for connectors.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 30 ++++++++++++++++++++++++++++++
+>  include/drm/drm_bridge.h     |  8 ++++++++
+>  2 files changed, 38 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index 1638bfe..e2ad098 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -157,6 +157,36 @@ void drm_bridge_detach(struct drm_bridge *bridge)
+>  }
+> 
+>  /**
+> + * drm_bridge_set_bus_formats() - set bridge supported image formats
+> + * @bridge: the bridge to set image formats in
+> + * @formats: array of MEDIA_BUS_FMT\_ supported image formats
+
+Why the \ (here and below) ?
+
+> + * @num_formats: number of elements in the @formats array
+> + *
+> + * Store a list of supported image formats in a bridge.
+> + * See MEDIA_BUS_FMT_* definitions in include/uapi/linux/media-bus-format.h
+> for
+> + * a full list of available formats.
+> + */
+> +int drm_bridge_set_bus_formats(struct drm_bridge *bridge, const u32
+> *formats,
+> +			       unsigned int num_formats)
+> +{
+> +	u32 *fmts;
+> +
+> +	if (!formats || !num_formats)
+> +		return -EINVAL;
+> +
+> +	fmts = kmemdup(formats, sizeof(*formats) * num_formats, GFP_KERNEL);
+
+This memory will be leaked when the bridge is destroyed.
+
+> +	if (!fmts)
+> +		return -ENOMEM;
+> +
+> +	kfree(bridge->bus_formats);
+> +	bridge->bus_formats = fmts;
+> +	bridge->num_bus_formats = num_formats;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(drm_bridge_set_bus_formats);
+> +
+> +/**
+>   * DOC: bridge callbacks
+>   *
+>   * The &drm_bridge_funcs ops are populated by the bridge driver. The DRM
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index 3270fec..6b3648c 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -258,6 +258,9 @@ struct drm_bridge_timings {
+>   * @encoder: encoder to which this bridge is connected
+>   * @next: the next bridge in the encoder chain
+>   * @of_node: device node pointer to the bridge
+> + * @bus_formats: wire image formats. Array of @num_bus_formats
+> MEDIA_BUS_FMT\_
+> + * elements
+> + * @num_bus_formats: size of @bus_formats array
+>   * @list: to keep track of all added bridges
+>   * @timings: the timing specification for the bridge, if any (may
+>   * be NULL)
+> @@ -271,6 +274,9 @@ struct drm_bridge {
+>  #ifdef CONFIG_OF
+>  	struct device_node *of_node;
+>  #endif
+> +	const u32 *bus_formats;
+> +	unsigned int num_bus_formats;
+> +
+>  	struct list_head list;
+>  	const struct drm_bridge_timings *timings;
+> 
+> @@ -296,6 +302,8 @@ void drm_bridge_mode_set(struct drm_bridge *bridge,
+>  			struct drm_display_mode *adjusted_mode);
+>  void drm_bridge_pre_enable(struct drm_bridge *bridge);
+>  void drm_bridge_enable(struct drm_bridge *bridge);
+> +int drm_bridge_set_bus_formats(struct drm_bridge *bridge, const u32 *fmts,
+> +			       unsigned int num_fmts);
+> 
+>  #ifdef CONFIG_DRM_PANEL_BRIDGE
+>  struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
+
 -- 
-1.8.1.1.dirty
+Regards,
+
+Laurent Pinchart
