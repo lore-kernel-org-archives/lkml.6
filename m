@@ -1,100 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754141AbeDWGnh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:43:37 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:36397 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753018AbeDWGnd (ORCPT
+        id S1754150AbeDWGoZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:44:25 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34153 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752393AbeDWGoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:43:33 -0400
-Subject: Re: [PATCH] phy: exynos-mipi-video: Simplify code by using
- regmap_update_bits()
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-References: <CGME20180416161949epcas1p11b738f30a12bd2f62ad9422f7c4e7ed6@epcas1p1.samsung.com>
- <20180416161938.26958-1-s.nawrocki@samsung.com>
-CC: <krzk@kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <m.szyprowski@samsung.com>,
-        <b.zolnierkie@samsung.com>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <b4eb154e-8acf-1eae-de27-ce3f6a93a47f@ti.com>
-Date: Mon, 23 Apr 2018 12:13:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Mon, 23 Apr 2018 02:44:21 -0400
+X-Google-Smtp-Source: AIpwx49u0OS3NVTVAjf6If9I9nnZ697MWAjRlI8nJaLWmCVNU6wHR3LC7KEGxekQ9/zwXjNarEZZ/Q==
+Date: Mon, 23 Apr 2018 07:44:17 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: tps65911-comparator: Fix an off by one bug
+Message-ID: <20180423064417.2e2ng3su23w4i7hx@dell>
+References: <20180420083909.66a6t63s5q6vpwp7@dell>
+ <20180420090910.GA26071@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20180416161938.26958-1-s.nawrocki@samsung.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180420090910.GA26071@mwanda>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 20 Apr 2018, Dan Carpenter wrote:
 
-
-On Monday 16 April 2018 09:49 PM, Sylwester Nawrocki wrote:
-> There is no functional change, just replacing regmap_read()/modify/
-> regmap_write() with regmap_update_bits() function calls.
-
-merged, thanks!
-
--Kishon
-
+> The COMP1 and COMP2 elements are in 0 and 1 respectively so this code is
+> accessing the wrong elements and one space beyond the end of the array.
+> We should be using "id - 1" instead.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> The "id" variable is never COMP (0) so that code can be removed.
+> 
+> Fixes: 6851ad3ab346 ("TPS65911: Comparator: Add comparator driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/phy/samsung/phy-exynos-mipi-video.c | 34 ++++++++++++-----------------
->  1 file changed, 14 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/phy/samsung/phy-exynos-mipi-video.c b/drivers/phy/samsung/phy-exynos-mipi-video.c
-> index c198886f80a3..00d89599c67d 100644
-> --- a/drivers/phy/samsung/phy-exynos-mipi-video.c
-> +++ b/drivers/phy/samsung/phy-exynos-mipi-video.c
-> @@ -231,33 +231,27 @@ struct exynos_mipi_video_phy {
->  static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
->  			   struct exynos_mipi_video_phy *state, unsigned int on)
+> v2: we can fix the bug and save memory.
+
+Looks like it's as we feared:
+
+ http://www.ti.com/lit/ds/symlink/tps65911.pdf (page 52)
+
+There are only 2 comparators 1 and 2.
+
+> diff --git a/drivers/mfd/tps65911-comparator.c b/drivers/mfd/tps65911-comparator.c
+> index c0789f81a1c5..887409c3938d 100644
+> --- a/drivers/mfd/tps65911-comparator.c
+> +++ b/drivers/mfd/tps65911-comparator.c
+> @@ -22,7 +22,6 @@
+>  #include <linux/gpio.h>
+>  #include <linux/mfd/tps65910.h>
+>  
+> -#define COMP					0
+>  #define COMP1					1
+>  #define COMP2					2
+
+Sorry, but I think these defines should describe the indexes into the
+supplied struct directly, especially as in this case it is their only
+reason for being.
+
+I completely agree with you that defining something that is named '1'
+as '0' is not ideal, but IMHO it's better than jumping through hoops
+using arithmetic in array indexes.
+
+> @@ -58,14 +57,11 @@ static struct comparator tps_comparators[] = {
+>  
+>  static int comp_threshold_set(struct tps65910 *tps65910, int id, int voltage)
 >  {
-> -	u32 val;
-> +	struct regmap *enable_map = state->regmaps[data->enable_map];
-> +	struct regmap *resetn_map = state->regmaps[data->resetn_map];
+> -	struct comparator tps_comp = tps_comparators[id];
+> +	struct comparator tps_comp = tps_comparators[id - 1];
+>  	int curr_voltage = 0;
+>  	int ret;
+>  	u8 index = 0, val;
 >  
->  	spin_lock(&state->slock);
->  
->  	/* disable in PMU sysreg */
->  	if (!on && data->coupled_phy_id >= 0 &&
-> -	    state->phys[data->coupled_phy_id].phy->power_count == 0) {
-> -		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
-> -			    &val);
-> -		val &= ~data->enable_val;
-> -		regmap_write(state->regmaps[data->enable_map], data->enable_reg,
-> -			     val);
-> -	}
+> -	if (id == COMP)
+> -		return 0;
 > -
-> +	    state->phys[data->coupled_phy_id].phy->power_count == 0)
-> +		regmap_update_bits(enable_map, data->enable_reg,
-> +				   data->enable_val, 0);
->  	/* PHY reset */
-> -	regmap_read(state->regmaps[data->resetn_map], data->resetn_reg, &val);
-> -	val = on ? (val | data->resetn_val) : (val & ~data->resetn_val);
-> -	regmap_write(state->regmaps[data->resetn_map], data->resetn_reg, val);
+>  	while (curr_voltage < tps_comp.uV_max) {
+>  		curr_voltage = tps_comp.vsel_table[index];
+>  		if (curr_voltage >= voltage)
+> @@ -85,13 +81,10 @@ static int comp_threshold_set(struct tps65910 *tps65910, int id, int voltage)
+>  
+>  static int comp_threshold_get(struct tps65910 *tps65910, int id)
+>  {
+> -	struct comparator tps_comp = tps_comparators[id];
+> +	struct comparator tps_comp = tps_comparators[id - 1];
+>  	int ret;
+>  	u8 val;
+>  
+> -	if (id == COMP)
+> -		return 0;
 > -
-> +	if (on)
-> +		regmap_update_bits(resetn_map, data->resetn_reg,
-> +				   data->resetn_val, data->resetn_val);
-> +	else
-> +		regmap_update_bits(resetn_map, data->resetn_reg,
-> +				   data->resetn_val, 0);
->  	/* enable in PMU sysreg */
-> -	if (on) {
-> -		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
-> -			    &val);
-> -		val |= data->enable_val;
-> -		regmap_write(state->regmaps[data->enable_map], data->enable_reg,
-> -			     val);
-> -	}
-> +	if (on)
-> +		regmap_update_bits(enable_map, data->enable_reg,
-> +				   data->enable_val, data->enable_val);
->  
->  	spin_unlock(&state->slock);
->  
-> 
+>  	ret = tps65910->read(tps65910, tps_comp.reg, 1, &val);
+>  	if (ret < 0)
+>  		return ret;
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
