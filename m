@@ -1,61 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932363AbeDWSzg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 14:55:36 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44287 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932172AbeDWSze (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 14:55:34 -0400
-X-Google-Smtp-Source: AIpwx48zaeAtoU4i9fw4NDyUIZbwboTfmx5DbYzNBsiE1CezycE4EKnXFGDGfpha2T88amM2CFKktg==
-Date: Mon, 23 Apr 2018 11:55:30 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lyan@suse.com, boris.ostrovsky@oracle.com, andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: Re: [PATCH v2] Input: xen-kbdfront - allow better run-time
- configuration
-Message-ID: <20180423185530.GC66646@dtor-ws>
-References: <20180419133934.31306-1-andr2000@gmail.com>
- <998533bb-8042-b07e-cb79-661750e035d9@gmail.com>
- <a2189ec9-ef4d-2c23-28c6-a6ff8525e8e5@suse.com>
- <7b4c1f8a-6317-1f17-5950-64a1b7183dba@gmail.com>
+        id S932293AbeDWS71 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 14:59:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35728 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932085AbeDWS70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 14:59:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8015321782
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 23 Apr 2018 15:59:23 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: mhiramat@kernel.org, jolsa@redhat.com, acme@redhat.com,
+        kstewart@linuxfoundation.org, tglx@linutronix.de, pombredanne@nexb.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        uneedsihyeon@gmail.com, kjlx@templeofstupid.com
+Subject: Re: [PATCH v2 3/3] perf/buildid-cache: Support --purge-all option
+Message-ID: <20180423185923.GB3788@kernel.org>
+References: <20180417041346.5617-1-ravi.bangoria@linux.vnet.ibm.com>
+ <20180417041346.5617-4-ravi.bangoria@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7b4c1f8a-6317-1f17-5950-64a1b7183dba@gmail.com>
+In-Reply-To: <20180417041346.5617-4-ravi.bangoria@linux.vnet.ibm.com>
+X-Url: http://acmel.wordpress.com
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 11:29:45AM +0300, Oleksandr Andrushchenko wrote:
-> On 04/23/2018 11:23 AM, Juergen Gross wrote:
-> > On 23/04/18 10:02, Oleksandr Andrushchenko wrote:
-> > > Juergen, Jason, Dmitry
-> > > any comment on this?
-> > Oleksandr, please give us some time. I can't speak for others, but I am
-> > not sitting here idling and hoping that some work (e.g. patches to
-> > review) might appear.
-> > 
-> > I have a lot of other stuff to do and will respond when I find some time
-> > to look at your patches.
-> > 
-> > Pinging others on Monday when having sent out the patch only on Thursday
-> > is rather unfriendly.
-> Really sorry about this, my bad.
-> I had an impression that the only change we need to
-> discuss was uint -> bool change which seemed rather trivial
+Em Tue, Apr 17, 2018 at 09:43:46AM +0530, Ravi Bangoria escreveu:
+> User can remove files from cache using --remove/--purge options
+> but both needs list of files as an argument. It's not convenient
+> when you want to flush out entire cache. Add an option to purge
+> all files from cache.
+> 
+> Ex,
+>   # perf buildid-cache -l
+>     8a86ef73e44067bca52cc3f6cd3e5446c783391c /tmp/a.out
+>     ebe71fdcf4b366518cc154d570a33cd461a51c36 /tmp/a.out.1
+>   # perf buildid-cache -P -v
+>     Removing /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c): Ok
+>     Removing /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36): Ok
+>     Purged all: Ok
+> 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+> ---
+>  tools/perf/Documentation/perf-buildid-cache.txt |  3 +++
+>  tools/perf/builtin-buildid-cache.c              | 36 ++++++++++++++++++++++++-
+>  2 files changed, 38 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-buildid-cache.txt b/tools/perf/Documentation/perf-buildid-cache.txt
+> index 3f285ba6e1f9..f6de0952ff3c 100644
+> --- a/tools/perf/Documentation/perf-buildid-cache.txt
+> +++ b/tools/perf/Documentation/perf-buildid-cache.txt
+> @@ -48,6 +48,9 @@ OPTIONS
+>  --purge=::
+>          Purge all cached binaries including older caches which have specified
+>  	path from the cache.
+> +-P::
+> +--purge-all::
+> +	Purge all cached binaries. This will flush out entire cache.
+>  -M::
+>  --missing=::
+>  	List missing build ids in the cache for the specified file.
+> diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
+> index fd0a08661b42..d11226f76fbc 100644
+> --- a/tools/perf/builtin-buildid-cache.c
+> +++ b/tools/perf/builtin-buildid-cache.c
+> @@ -240,6 +240,34 @@ static int build_id_cache__purge_path(const char *pathname, struct nsinfo *nsi)
+>  	return err;
+>  }
+>  
+> +static int build_id_cache__purge_all(void)
+> +{
+> +	struct strlist *list;
+> +	struct str_node *pos;
+> +	int err;
+> +	char *buf;
+> +
+> +	list = build_id_cache__list_all(false);
+> +	if (!list) {
+> +		pr_debug("Failed to get buildids: -%d\n", errno);
+> +		return -EINVAL;
+> +	}
+> +
+> +	strlist__for_each_entry(pos, list) {
+> +		buf = build_id_cache__origname(pos->s);
+> +		err = build_id_cache__remove_s(pos->s);
+> +		pr_debug("Removing %s (%s): %s\n", buf, pos->s,
+> +			 err ? "FAIL" : "Ok");
+> +		free(buf);
+> +		if (err)
+> +			break;
+> +	}
+> +	strlist__delete(list);
+> +
+> +	pr_debug("Purged all: %s\n", err ? "FAIL" : "Ok");
+> +	return err;
+> +}
 
-I am sorry I did not respond to the previous version until today, but I
-do not think that we should be extending module parameters for this.
-Protocol features are already there for absolute pointers and
-multi-touch, keyboard and relative pointers should use the same
-mechanism.
+err may be used uninitialized, and debian:7 complains with:
 
-Thanks.
+  CC       /tmp/build/perf/util/ctype.o
+builtin-buildid-cache.c: In function 'cmd_buildid_cache':
+builtin-buildid-cache.c:267:2: error: 'err' may be used uninitialized in this function [-Werror=uninitialized]
+builtin-buildid-cache.c:247:6: note: 'err' was declared here
+  MKDIR    /tmp/build/perf/util/
+cc1: all warnings being treated as errors
+  CC       /tmp/build/perf/util/db-export.o
+mv: cannot stat `/tmp/build/perf/.builtin-buildid-cache.o.tmp': No such file or directory
+make[3]: *** [/tmp/build/perf/builtin-buildid-cache.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
 
--- 
-Dmitry
+
+I'm initializing it to zero.
+
+- Arnaldo
