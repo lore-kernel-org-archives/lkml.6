@@ -1,155 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755716AbeDWPcQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:32:16 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35527 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755244AbeDWPcN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:32:13 -0400
-X-Google-Smtp-Source: AIpwx49FkOMA0r7l+840kjvEgx48NTbZleOjlgAE+DtAhCiAdpECOOsvpIN7LKuRUW5LVaGYprRv/mM2voQWdwWgN2Q=
+        id S1755763AbeDWPcz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:32:55 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42925 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755460AbeDWPcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:32:52 -0400
+Date: Mon, 23 Apr 2018 17:32:50 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] Level-triggered MSI support
+Message-ID: <20180423173250.6060b7ac@xps13>
+In-Reply-To: <20180423103440.26592-1-marc.zyngier@arm.com>
+References: <20180423103440.26592-1-marc.zyngier@arm.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180417191710.14855-3-longli@linuxonhyperv.com>
-References: <20180417191710.14855-1-longli@linuxonhyperv.com> <20180417191710.14855-3-longli@linuxonhyperv.com>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 23 Apr 2018 10:31:51 -0500
-Message-ID: <CAH2r5mv65CGR04f3Z20aRBufisPon5Ptvqk++zii3YT=GN8epQ@mail.gmail.com>
-Subject: Re: [Patch v2 3/6] cifs: smbd: Avoid allocating iov on the stack
-To: Long Li <longli@microsoft.com>
-Cc: CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Didn't see any obvious problems, but can you fix the checkpatch
-warnings and resend to the list (I am more concerned about the last
-two warnings rather than the first one).
+Hi Marc,
 
-$ scripts/checkpatch.pl 0001-cifs-smbd-Avoid-allocating-iov-on-the-stack.patch
-WARNING: line over 80 characters
-#60: FILE: fs/cifs/smbdirect.c:2106:
-+        log_write(ERR, "expected the pdu length in 1st iov, but got
-0x%lu\n", rqst->rq_iov[0].iov_len);
+On Mon, 23 Apr 2018 11:34:33 +0100, Marc Zyngier <marc.zyngier@arm.com>
+wrote:
 
-ERROR: Prefixing 0x with decimal output is defective
-#60: FILE: fs/cifs/smbdirect.c:2106:
-+        log_write(ERR, "expected the pdu length in 1st iov, but got
-0x%lu\n", rqst->rq_iov[0].iov_len);
+> This series is a first shot at teaching the kernel about the oxymoron
+> expressed in $SUBJECT. Over the past couple of years, we've seen some
+> SoCs coming up with ways of signalling level interrupts using a new
+> flavor of MSIs, where the MSI controller uses two distinct messages:
+> one that raises a virtual line, and one that lowers it. The target MSI
+> controller is in charge of maintaining the state of the line.
+> 
+> This allows for a much simplified HW signal routing (no need to have
+> hundreds of discrete lines to signal level interrupts if you already
+> have a memory bus), but results in a departure from the current idea
+> the kernel has of MSIs.
+> 
+> This series takes a minimal approach to the problem, which is to allow
+> MSI controllers to use not only one, but up to two messages at a
+> time. This is controlled by a flag exposed at MSI irq domain creation,
+> and is only supported with platform MSI.
+> 
+> The rest of the series repaints the Marvell ICU/GICP drivers which
+> already make use of this feature with a side-channel, and adds support
+> for the same feature in GICv3. A side effect of the last GICv3 patch
+> is that you can also use SPIs to signal PCI MSIs. This is a last
+> resort measure for SoCs where the ITS is unusable for unspeakable
+> reasons.
+> 
+> Marc Zyngier (7):
+>   genirq/msi: Allow level-triggered MSIs to be exposed by MSI providers
+>   genirq/msi: Limit level-triggered MSI to platform devices
+>   irqchip/mvebu-gicp: Use level-triggered MSIs between ICU and GICP
+>   dma-iommu: Fix compilation when !CONFIG_IOMMU_DMA
+>   irqchip/gic-v3: Add support for Message Based Interrupts as an MSI
+>     controller
+>   irqchip/gic-v3: Add PCI/MSI support to the GICv3 MBI sub-driver
+>   dt-bindings/gic-v3: Add documentation for MBI support
+> 
+>  .../bindings/interrupt-controller/arm,gic-v3.txt   |  17 +
+>  drivers/base/platform-msi.c                        |   3 +
+>  drivers/irqchip/Makefile                           |   2 +-
+>  drivers/irqchip/irq-gic-v3-mbi.c                   | 343 +++++++++++++++++++++
+>  drivers/irqchip/irq-gic-v3.c                       |   6 +
+>  drivers/irqchip/irq-mvebu-gicp.c                   |  37 +--
+>  drivers/irqchip/irq-mvebu-gicp.h                   |  12 -
+>  drivers/irqchip/irq-mvebu-icu.c                    |  33 +-
+>  drivers/pci/msi.c                                  |   3 +
+>  include/linux/dma-iommu.h                          |   1 +
+>  include/linux/irqchip/arm-gic-v3.h                 |   1 +
+>  include/linux/msi.h                                |   2 +
+>  kernel/irq/msi.c                                   |  32 +-
+>  13 files changed, 427 insertions(+), 65 deletions(-)
+>  create mode 100644 drivers/irqchip/irq-gic-v3-mbi.c
+>  delete mode 100644 drivers/irqchip/irq-mvebu-gicp.h
+> 
 
-WARNING: braces {} are not necessary for single statement blocks
-#69: FILE: fs/cifs/smbdirect.c:2112:
-+    for (i = 0; i < rqst->rq_nvec-1; i++) {
-         buflen += iov[i].iov_len;
-     }
+Thanks for the series, I gave it a try on Armada-8040-DB:
 
-total: 1 errors, 2 warnings, 65 lines checked
+# cat /proc/interrupts | grep ICU
+ 28:          0          0          0          0  ICU.f21e0000 107 Level     ahci[f2540000.sata]
+ 29:          0          0          0          0  ICU.f41e0000 107 Level     ahci[f4540000.sata]
+ 35:          2          0          0          0  ICU.f21e0000 129 Level   
+ 36:          3          0          0          0  ICU.f21e0000  41 Level     eth1
+ 37:          0          0          0          0  ICU.f21e0000  45 Level     eth1
+ 38:          0          0          4          0  ICU.f21e0000  49 Level     eth1
+ 39:          0          0          0          2  ICU.f21e0000  53 Level     eth1
+ 40:        128          0          0          0  ICU.f21e0000  57 Level     eth1
+ 47:          2          0          0          0  ICU.f41e0000 129 Level   
+ 54:         82          0          0          0  ICU.f21e0000 106 Level     xhci-hcd:usb3
+ 55:         82          0          0          0  ICU.f21e0000 105 Level     xhci-hcd:usb5
+ 56:          4          0          0          0  ICU.f41e0000 106 Level     xhci-hcd:usb7
+ 57:          0          0          0          0  ICU.f41e0000 105 Level     xhci-hcd:usb1
+ 58:          0          0          0          0  ICU.f41e0000  77 Level     f4284000.rtc
+ 59:        224          0          0          0  ICU.f21e0000 120 Level     mv64xxx_i2c
+ 60:          0          0          0          0  ICU.f41e0000 120 Level     mv64xxx_i2c
+ 61:         52          0          0          0  ICU.f21e0000  27 Level     mmc1
+ 63:          0          0          0          0  ICU.f21e0000  22 Level     armada8k-pcie, PCIe PME, aerdrv
+ 64:          0          0          0          0  ICU.f21e0000  23 Level     armada8k-pcie, PCIe PME, aerdrv
+ 65:          0          0          0          0  ICU.f41e0000  22 Level     armada8k-pcie, PCIe PME, aerdrv
+ 66:          0          0          0          0  ICU.f41e0000  24 Level     armada8k-pcie, PCIe PME, aerdrv
+ 67:          0          0          0          0  ICU.f41e0000  23 Level     armada8k-pcie, PCIe PME, aerdrv
 
-NOTE: For some of the reported defects, checkpatch may be able to
-      mechanically convert to the typical style using --fix or --fix-inplace.
+All these interrupts are NSRs and go through the GICP. I was able to
+use the network (CP0), an I2C bus (CP0) and the USB host ports (on each
+CP).
 
-0001-cifs-smbd-Avoid-allocating-iov-on-the-stack.patch has style
-problems, please review.
+Tested-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-On Tue, Apr 17, 2018 at 2:17 PM, Long Li <longli@linuxonhyperv.com> wrote:
-> From: Long Li <longli@microsoft.com>
->
-> It's not necessary to allocate another iov when going through the buffers
-> in smbd_send() through RDMA send.
->
-> Remove it to reduce stack size.
->
-> Signed-off-by: Long Li <longli@microsoft.com>
-> Cc: stable@vger.kernel.org
-> ---
->  fs/cifs/smbdirect.c | 36 ++++++++++++------------------------
->  1 file changed, 12 insertions(+), 24 deletions(-)
->
-> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-> index b5c6c0d..f575e9a 100644
-> --- a/fs/cifs/smbdirect.c
-> +++ b/fs/cifs/smbdirect.c
-> @@ -2088,7 +2088,7 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
->         int start, i, j;
->         int max_iov_size =
->                 info->max_send_size - sizeof(struct smbd_data_transfer);
-> -       struct kvec iov[SMBDIRECT_MAX_SGE];
-> +       struct kvec *iov;
->         int rc;
->
->         info->smbd_send_pending++;
-> @@ -2099,32 +2099,20 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
->         }
->
->         /*
-> -        * This usually means a configuration error
-> -        * We use RDMA read/write for packet size > rdma_readwrite_threshold
-> -        * as long as it's properly configured we should never get into this
-> -        * situation
-> -        */
-> -       if (rqst->rq_nvec + rqst->rq_npages > SMBDIRECT_MAX_SGE) {
-> -               log_write(ERR, "maximum send segment %x exceeding %x\n",
-> -                        rqst->rq_nvec + rqst->rq_npages, SMBDIRECT_MAX_SGE);
-> -               rc = -EINVAL;
-> -               goto done;
-> -       }
-> -
-> -       /*
-> -        * Remove the RFC1002 length defined in MS-SMB2 section 2.1
-> -        * It is used only for TCP transport
-> +        * Skip the RFC1002 length defined in MS-SMB2 section 2.1
-> +        * It is used only for TCP transport in the iov[0]
->          * In future we may want to add a transport layer under protocol
->          * layer so this will only be issued to TCP transport
->          */
-> -       iov[0].iov_base = (char *)rqst->rq_iov[0].iov_base + 4;
-> -       iov[0].iov_len = rqst->rq_iov[0].iov_len - 4;
-> -       buflen += iov[0].iov_len;
-> +
-> +       if (rqst->rq_iov[0].iov_len != 4) {
-> +               log_write(ERR, "expected the pdu length in 1st iov, but got 0x%lu\n", rqst->rq_iov[0].iov_len);
-> +               return -EINVAL;
-> +       }
-> +       iov = &rqst->rq_iov[1];
->
->         /* total up iov array first */
-> -       for (i = 1; i < rqst->rq_nvec; i++) {
-> -               iov[i].iov_base = rqst->rq_iov[i].iov_base;
-> -               iov[i].iov_len = rqst->rq_iov[i].iov_len;
-> +       for (i = 0; i < rqst->rq_nvec-1; i++) {
->                 buflen += iov[i].iov_len;
->         }
->
-> @@ -2197,14 +2185,14 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
->                                                 goto done;
->                                 }
->                                 i++;
-> -                               if (i == rqst->rq_nvec)
-> +                               if (i == rqst->rq_nvec-1)
->                                         break;
->                         }
->                         start = i;
->                         buflen = 0;
->                 } else {
->                         i++;
-> -                       if (i == rqst->rq_nvec) {
-> +                       if (i == rqst->rq_nvec-1) {
->                                 /* send out all remaining vecs */
->                                 remaining_data_length -= buflen;
->                                 log_write(INFO,
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+Thanks,
+Miquèl
 
 -- 
-Thanks,
-
-Steve
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
