@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753953AbeDWCUR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 22:20:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45534 "EHLO
+        id S1753989AbeDWCUW (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 22:20:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58514 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753613AbeDWCUO (ORCPT
+        by vger.kernel.org with ESMTP id S1753926AbeDWCUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 22 Apr 2018 22:20:14 -0400
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -16,20 +16,20 @@ Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         fweisbec@gmail.com, oleg@redhat.com, joel.opensrc@gmail.com,
         Boqun Feng <boqun.feng@gmail.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 3/3] rcu: exp: Protect all sync_rcu_preempt_exp_done() with rcu_node lock
-Date: Sun, 22 Apr 2018 19:21:19 -0700
+Subject: [PATCH tip/core/rcu 2/3] rcu: exp: Fix "must hold exp_mutex" comments for QS reporting functions
+Date: Sun, 22 Apr 2018 19:21:18 -0700
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180423022047.GA20189@linux.vnet.ibm.com>
 References: <20180423022047.GA20189@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18042302-0036-0000-0000-000002E8AE30
+x-cbid: 18042302-0052-0000-0000-000002E0B05D
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008903; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000257; SDB=6.01021884; UDB=6.00521534; IPR=6.00801119;
  MB=3.00020718; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 02:20:12
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042302-0037-0000-0000-00004414F848
-Message-Id: <1524450079-20938-3-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18042302-0053-0000-0000-00005C6D7CCB
+Message-Id: <1524450079-20938-2-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -43,100 +43,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Boqun Feng <boqun.feng@gmail.com>
 
-Currently some callsites of sync_rcu_preempt_exp_done() are not called
-with the corresponding rcu_node's ->lock held, which could introduces
-bugs as per Paul:
+Since commit d9a3da0699b2 ("rcu: Add expedited grace-period support
+for preemptible RCU"), there are comments for some funtions in
+rcu_report_exp_rnp()'s call-chain saying that exp_mutex or its
+predecessors needs to be held.
 
-o	CPU 0 in sync_rcu_preempt_exp_done() reads ->exp_tasks and
-	sees that it is NULL.
+However, exp_mutex and its predecessors were used only to synchronize
+between GPs, and it is clear that all variables visited by those functions
+are under the protection of rcu_node's ->lock. Moreover, those functions
+are currently called without held exp_mutex, and seems that doesn't
+introduce any trouble.
 
-o	CPU 1 blocks within an RCU read-side critical section, so
-	it enqueues the task and points ->exp_tasks at it and
-	clears CPU 1's bit in ->expmask.
-
-o	All other CPUs clear their bits in ->expmask.
-
-o	CPU 0 reads ->expmask, sees that it is zero, so incorrectly
-	concludes that all quiescent states have completed, despite
-	the fact that ->exp_tasks is non-NULL.
-
-To fix this, sync_rcu_preempt_exp_unlocked() is introduced to replace
-lockless callsites of sync_rcu_preempt_exp_done().
-
-Further, a lockdep annotation is added into sync_rcu_preempt_exp_done()
-to prevent mis-use in the future.
+So this patch fixes this problem by updating the comments to match the
+current code.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Fixes: d9a3da0699b2 ("rcu: Add expedited grace-period support for preemptible RCU")
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree_exp.h | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
+ kernel/rcu/tree_exp.h | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index d7622cb85aa7..755d0f461f26 100644
+index 73e1d3dca5b1..d7622cb85aa7 100644
 --- a/kernel/rcu/tree_exp.h
 +++ b/kernel/rcu/tree_exp.h
-@@ -20,6 +20,8 @@
-  * Authors: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-  */
- 
-+#include <linux/lockdep.h>
-+
- /*
-  * Record the start of an expedited grace period.
-  */
-@@ -158,11 +160,31 @@ static void __maybe_unused sync_exp_reset_tree(struct rcu_state *rsp)
+@@ -154,7 +154,7 @@ static void __maybe_unused sync_exp_reset_tree(struct rcu_state *rsp)
+  * for the current expedited grace period.  Works only for preemptible
+  * RCU -- other RCU implementation use other means.
+  *
+- * Caller must hold the rcu_state's exp_mutex.
++ * Caller must hold the specificed rcu_node structure's ->lock
   */
  static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
  {
-+	raw_lockdep_assert_held_rcu_node(rnp);
-+
- 	return rnp->exp_tasks == NULL &&
- 	       READ_ONCE(rnp->expmask) == 0;
- }
+@@ -170,8 +170,7 @@ static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
+  * recursively up the tree.  (Calm down, calm down, we do the recursion
+  * iteratively!)
+  *
+- * Caller must hold the rcu_state's exp_mutex and the specified rcu_node
+- * structure's ->lock.
++ * Caller must hold the specified rcu_node structure's ->lock.
+  */
+ static void __rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
+ 				 bool wake, unsigned long flags)
+@@ -207,8 +206,6 @@ static void __rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
+ /*
+  * Report expedited quiescent state for specified node.  This is a
+  * lock-acquisition wrapper function for __rcu_report_exp_rnp().
+- *
+- * Caller must hold the rcu_state's exp_mutex.
+  */
+ static void __maybe_unused rcu_report_exp_rnp(struct rcu_state *rsp,
+ 					      struct rcu_node *rnp, bool wake)
+@@ -221,8 +218,7 @@ static void __maybe_unused rcu_report_exp_rnp(struct rcu_state *rsp,
  
  /*
-+ * Like sync_rcu_preempt_exp_done(), but this function assumes the caller
-+ * doesn't hold the rcu_node's ->lock, and will acquire and release the lock
-+ * itself
-+ */
-+static bool sync_rcu_preempt_exp_done_unlocked(struct rcu_node *rnp)
-+{
-+	unsigned long flags;
-+	bool ret;
-+
-+	raw_spin_lock_irqsave_rcu_node(rnp, flags);
-+	ret = sync_rcu_preempt_exp_done(rnp);
-+	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-+
-+	return ret;
-+}
-+
-+
-+/*
-  * Report the exit from RCU read-side critical section for the last task
-  * that queued itself during or before the current expedited preemptible-RCU
-  * grace period.  This event is reported either to the rcu_node structure on
-@@ -501,9 +523,9 @@ static void synchronize_sched_expedited_wait(struct rcu_state *rsp)
- 	for (;;) {
- 		ret = swait_event_timeout(
- 				rsp->expedited_wq,
--				sync_rcu_preempt_exp_done(rnp_root),
-+				sync_rcu_preempt_exp_done_unlocked(rnp_root),
- 				jiffies_stall);
--		if (ret > 0 || sync_rcu_preempt_exp_done(rnp_root))
-+		if (ret > 0 || sync_rcu_preempt_exp_done_unlocked(rnp_root))
- 			return;
- 		WARN_ON(ret < 0);  /* workqueues should not be signaled. */
- 		if (rcu_cpu_stall_suppress)
-@@ -536,7 +558,7 @@ static void synchronize_sched_expedited_wait(struct rcu_state *rsp)
- 			rcu_for_each_node_breadth_first(rsp, rnp) {
- 				if (rnp == rnp_root)
- 					continue; /* printed unconditionally */
--				if (sync_rcu_preempt_exp_done(rnp))
-+				if (sync_rcu_preempt_exp_done_unlocked(rnp))
- 					continue;
- 				pr_cont(" l=%u:%d-%d:%#lx/%c",
- 					rnp->level, rnp->grplo, rnp->grphi,
+  * Report expedited quiescent state for multiple CPUs, all covered by the
+- * specified leaf rcu_node structure.  Caller must hold the rcu_state's
+- * exp_mutex.
++ * specified leaf rcu_node structure.
+  */
+ static void rcu_report_exp_cpu_mult(struct rcu_state *rsp, struct rcu_node *rnp,
+ 				    unsigned long mask, bool wake)
 -- 
 2.5.2
