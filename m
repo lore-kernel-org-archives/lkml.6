@@ -1,144 +1,1555 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754596AbeDWIkV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:40:21 -0400
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:41422 "EHLO
-        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754451AbeDWIkL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:40:11 -0400
-X-Google-Smtp-Source: AIpwx4+42dW24n55X9FyDLiGZIDtCB0jZlFRLcKdYs0K1cQsrGBwP2AYkcNnzBu+9lll5EZ0DNcnNujVPdyAxM013Pk=
+        id S1754290AbeDWIpy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:45:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56828 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753109AbeDWIpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 04:45:49 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E0C21759
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Mon, 23 Apr 2018 16:44:56 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: jan.tuerk@emtrion.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 5/6] ARM: dts: Add support for emtrion emCON-MX6 series
+Message-ID: <20180423084454.GZ25429@dragon>
+References: <20171220134710.64479-2-jan.tuerk@emtrion.com>
+ <20180420125108.14197-1-jan.tuerk@emtrion.com>
+ <20180420125108.14197-6-jan.tuerk@emtrion.com>
 MIME-Version: 1.0
-In-Reply-To: <00000000000068d87d056a7fe601@google.com>
-References: <00000000000068d87d056a7fe601@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 23 Apr 2018 10:39:49 +0200
-Message-ID: <CACT4Y+Zpw=mL+nqGYs9JE0dEDm+h=sDdLL_BNdgP1WNfCXOGzg@mail.gmail.com>
-Subject: Re: BUG: soft lockup in _raw_spin_unlock
-To: syzbot <syzbot+9d16ae40a3249b00a524@syzkaller.appspotmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180420125108.14197-6-jan.tuerk@emtrion.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 10:34 AM, syzbot
-<syzbot+9d16ae40a3249b00a524@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot hit the following crash on bpf-next commit
-> 878a4d328104fed86ea321c48a5245eed44fbe14 (Fri Apr 20 08:05:16 2018 +0000)
-> libbpf: fixed build error for samples/bpf/
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=9d16ae40a3249b00a524
->
-> Unfortunately, I don't have any reproducer for this crash yet.
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=6223576852070400
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=-8733987683919582507
-> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9d16ae40a3249b00a524@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-
-
-This looks like:
-
-#syz dup: INFO: rcu detected stall in d_walk
-
-> random: crng init done
-> watchdog: BUG: soft lockup - CPU#1 stuck for 134s! [syz-executor5:4541]
-> Modules linked in:
-> irq event stamp: 61201690
-> hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>]
-> seqcount_lockdep_reader_access include/linux/seqlock.h:83 [inline]
-> hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>]
-> read_seqcount_begin include/linux/seqlock.h:164 [inline]
-> hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>] read_seqbegin
-> include/linux/seqlock.h:433 [inline]
-> hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>]
-> read_seqbegin_or_lock include/linux/seqlock.h:529 [inline]
-> hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>]
-> d_walk+0x80f/0xc80 fs/dcache.c:1248
-> hardirqs last disabled at (61201690): [<ffffffff87800901>]
-> interrupt_entry+0xb1/0xf0 arch/x86/entry/entry_64.S:624
-> softirqs last  enabled at (22717476): [<ffffffff87a00778>]
-> __do_softirq+0x778/0xaf5 kernel/softirq.c:311
-> softirqs last disabled at (22717407): [<ffffffff8146fce1>] invoke_softirq
-> kernel/softirq.c:365 [inline]
-> softirqs last disabled at (22717407): [<ffffffff8146fce1>]
-> irq_exit+0x1d1/0x200 kernel/softirq.c:405
-> CPU: 1 PID: 4541 Comm: syz-executor5 Not tainted 4.16.0+ #8
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783
-> [inline]
-> RIP: 0010:lock_release+0x4d4/0xa10 kernel/locking/lockdep.c:3942
-> RSP: 0018:ffff88019e567880 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-> RAX: dffffc0000000000 RBX: 1ffff10033cacf15 RCX: 1ffff10033cab9dd
-> RDX: 1ffffffff11a30ed RSI: 0000000000000004 RDI: 0000000000000282
-> RBP: ffff88019e5679b0 R08: 1ffff10033cacf19 R09: ffffed003b5e46c2
-> R10: 0000000000000003 R11: 0000000000000003 R12: ffff88019e55c6c0
-> R13: ffff8801a8c5a7b8 R14: ffff88019e55c6c0 R15: ffff88019e5678c8
-> FS:  0000000000e6f940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000e78978 CR3: 000000019ec29000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  __raw_spin_unlock include/linux/spinlock_api_smp.h:150 [inline]
->  _raw_spin_unlock+0x1a/0x30 kernel/locking/spinlock.c:176
->  spin_unlock include/linux/spinlock.h:350 [inline]
->  d_walk+0x75f/0xc80 fs/dcache.c:1332
->  shrink_dcache_parent+0x179/0x230 fs/dcache.c:1486
->  vfs_rmdir+0x202/0x470 fs/namei.c:3850
->  do_rmdir+0x523/0x610 fs/namei.c:3911
->  SYSC_rmdir fs/namei.c:3929 [inline]
->  SyS_rmdir+0x1a/0x20 fs/namei.c:3927
->  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x4550e7
-> RSP: 002b:00007fff59f01b28 EFLAGS: 00000206 ORIG_RAX: 0000000000000054
-> RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 00000000004550e7
-> RDX: 0000000000000000 RSI: 00007fff59f038d0 RDI: 00007fff59f038d0
-> RBP: 00007fff59f038d0 R08: 0000000000000000 R09: 0000000000000001
-> R10: 000000000000000a R11: 0000000000000206 R12: 0000000000e70940
-> R13: 0000000000000000 R14: 00000000000001ca R15: 0000000000019a6a
-> Code: 00 00 00 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 a3 03 00 00 48 83 3d
-> 13 d0 75 07 00 0f 84 b8 02 00 00 48 8b bd e8 fe ff ff 57 9d <0f> 1f 44 00 00
-> 48 b8 00 00 00 00 00 fc ff df 48 01 c3 48 c7 03
->
->
+On Fri, Apr 20, 2018 at 02:50:52PM +0200, jan.tuerk@emtrion.com wrote:
+> From: Jan Tuerk <jan.tuerk@emtrion.com>
+> 
+> This patch adds support for the emtrion GmbH emCON-MX6 modules.
+> They are available with imx.6 Solo, Dual-Lite, Dual and Quad
+> equipped with Memory from 512MB to 2GB (configured by U-Boot).
+> 
+> Our default developer-Kit ships with the Avari baseboard and the
+> EDT ETM0700G0BDH6 Display (imx6[q|dl]-emcon-avari).
+> 
+> The devicetree is split into the common part providing all module
+> components and the basic support for all SoC versions
+> (imx6qdl-emcon.dtsi) and parts which are i.mx6 S|DL and D|Q relevant.
+> Finally the support for the avari baseboard in the developer-kit
+> configuration is provided by the emcon-avari dts files.
+> 
+> Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
 > ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/00000000000068d87d056a7fe601%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+>  Documentation/devicetree/bindings/arm/emtrion.txt |  13 +
+
+It's better to have a separate patch for bindings doc, which needs to be
+acknowledged by DT maintainers.
+
+>  arch/arm/boot/dts/Makefile                        |   2 +
+>  arch/arm/boot/dts/imx6dl-emcon-avari.dts          | 224 ++++++
+>  arch/arm/boot/dts/imx6dl-emcon.dtsi               |  27 +
+>  arch/arm/boot/dts/imx6q-emcon-avari.dts           | 224 ++++++
+>  arch/arm/boot/dts/imx6q-emcon.dtsi                |  27 +
+>  arch/arm/boot/dts/imx6qdl-emcon.dtsi              | 838 ++++++++++++++++++++++
+>  7 files changed, 1355 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/emtrion.txt
+>  create mode 100644 arch/arm/boot/dts/imx6dl-emcon-avari.dts
+>  create mode 100644 arch/arm/boot/dts/imx6dl-emcon.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6q-emcon-avari.dts
+>  create mode 100644 arch/arm/boot/dts/imx6q-emcon.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6qdl-emcon.dtsi
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/emtrion.txt b/Documentation/devicetree/bindings/arm/emtrion.txt
+> new file mode 100644
+> index 000000000000..3ff6c6c2034d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/emtrion.txt
+> @@ -0,0 +1,13 @@
+> +Emtrion Devicetree Bindings
+> +===========================
+> +
+> +emCON Series:
+> +-------------
+> +
+> +Required root node properties
+> +	- compatible:
+> +	- "emtrion,emcon-mx6", "fsl,imx6q", "fsl,imx6dl"; : emCON-MX6 Generic SoM
+> +	- "emtrion,emcon-mx6", "fsl,imx6q"; 		: emCON-MX6D or emCON-MX6Q SoM
+> +	- "emtrion,emcon-mx6-avari", "fsl,imx6q";	: emCON-MX6D or emCON-MX6Q SoM on Avari Base
+> +	- "emtrion,emcon-mx6", "fsl,imx6dl"; 		: emCON-MX6S or emCON-MX6DL SoM
+> +	- "emtrion,emcon-mx6-avari", "fsl,imx6dl";	: emCON-MX6S or emCON-MX6DL SoM on Avari Base
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 7e2424957809..05b930da3fda 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -381,6 +381,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+>  	imx6dl-cubox-i-emmc-som-v15.dtb \
+>  	imx6dl-cubox-i-som-v15.dtb \
+>  	imx6dl-dfi-fs700-m60.dtb \
+> +	imx6dl-emcon-avari.dtb \
+>  	imx6dl-gw51xx.dtb \
+>  	imx6dl-gw52xx.dtb \
+>  	imx6dl-gw53xx.dtb \
+> @@ -442,6 +443,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+>  	imx6q-display5-tianma-tm070-1280x768.dtb \
+>  	imx6q-dmo-edmqmx6.dtb \
+>  	imx6q-dms-ba16.dtb \
+> +	imx6q-emcon-avari.dtb \
+>  	imx6q-evi.dtb \
+>  	imx6q-gk802.dtb \
+>  	imx6q-gw51xx.dtb \
+> diff --git a/arch/arm/boot/dts/imx6dl-emcon-avari.dts b/arch/arm/boot/dts/imx6dl-emcon-avari.dts
+> new file mode 100644
+> index 000000000000..2344fb9498e3
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6dl-emcon-avari.dts
+> @@ -0,0 +1,224 @@
+> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
+> +/* Copyright (C) 2018 emtrion GmbH
+> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
+> + */
+
+/*
+ * Copyright ...
+ */
+
+> +
+> +/dts-v1/;
+> +#include "imx6dl.dtsi"
+> +#include "imx6qdl-emcon.dtsi"
+> +#include "imx6dl-emcon.dtsi" /*Include camera2 pinmux*/
+
+/* bla bla */
+
+> +
+> +/ {
+> +	model = "emtrion SoM emCON-MX6 Solo/Dual-Lite Avari";
+> +	compatible = "emtrion,emcon-mx6-avari", "fsl,imx6dl";
+> +
+> +	aliases {
+> +		mmc0 = &usdhc3;
+> +		mmc2 = &usdhc1;
+> +		mmc1 = &usdhc2;
+> +		mmc3 = &usdhc4;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = <&uart1>;
+> +	};
+> +
+> +	memory {
+
+The unit-address is missing.
+
+> +		reg = <0x10000000 0x40000000>;
+> +	};
+> +
+> +	supplies {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+
+DT maintainers do not like this fake container node.  Please put the
+fixed regulator nodes directly under root with a unique name like below.
+
+	reg_xxx: regulator-xxx {
+		...
+	};
+
+> +
+> +		wallplug5p0: supply@0 {
+> +			compatible = "regulator-fixed";
+> +			reg = <0>;
+> +			regulator-name = "WALL-PLUG";
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <5000000>;
+> +			regulator-always-on;
+> +			regulator-boot-on;
+> +		};
+> +
+> +		base3p3: supply@1 {
+> +			compatible = "regulator-fixed";
+> +			reg = <1>;
+> +			vin-supply = <&wallplug5p0>;
+> +			regulator-name = "3V3-avari";
+> +			regulator-min-microvolt = <3300000>;
+> +			regulator-max-microvolt = <3300000>;
+> +			regulator-always-on;
+> +			regulator-boot-on;
+> +		};
+> +
+> +		base1p5: supply@2 {
+> +			compatible = "regulator-fixed";
+> +			reg = <2>;
+> +			vin-supply = <&base3p3>;
+> +			regulator-name = "1V5-avari";
+> +			regulator-min-microvolt = <1500000>;
+> +			regulator-max-microvolt = <1500000>;
+> +			regulator-always-on;
+> +			regulator-boot-on;
+> +		};
+> +
+> +		reg_usb_otg: otgvbus@3 {
+> +			compatible = "regulator-fixed";
+> +			reg = <3>;
+> +			vin-supply = <&wallplug5p0>;
+> +			regulator-name = "OTG_VBUS";
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <5000000>;
+> +			gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
+> +			regulator-always-on;
+> +		};
+> +
+> +	};
+> +
+> +
+> +	sndosc: 12MHZosc {
+
+	clock-xxx {
+		...
+	};
+
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency  = <12000000>;
+> +	};
+> +
+> +	sound {
+> +		compatible = "fsl,imx-audio-sgtl5000";
+> +		model = "emCON-avari-sgtl5000";
+> +		ssi-controller = <&ssi2>;
+> +		audio-codec = <&sgtl5000>;
+> +		audio-routing =
+> +			"Headphone Jack", "HP_OUT";
+> +		mux-int-port = <2>;
+> +		mux-ext-port = <3>;
+> +	};
+> +
+> +};
+> +
+> +
+
+One newline is good enough.
+
+> +&iomuxc {
+> +	pinctrl-names = "default";
+> +	/*Unused emCON-MX6 outputs on AVARI*/
+> +	pinctrl-0 = <
+> +				 &pinctrl_emcon_gpio1 &pinctrl_emcon_gpio2
+> +				 &pinctrl_emcon_gpio3 &pinctrl_emcon_gpio5
+> +				 &pinctrl_emcon_gpio6 &pinctrl_emcon_gpio7
+> +				 &pinctrl_emcon_gpio8 &pinctrl_emcon_irq_a
+> +				 &pinctrl_emcon_irq_b &pinctrl_emcon_irq_c
+> +				 &pinctrl_emcon_irq_pwr &pinctrl_nor_flash
+> +				 &pinctrl_usdhc2
+> +				 &pinctrl_spdif_out     &pinctrl_spdif_in
+> +				 &pinctrl_cpi1          &pinctrl_cpi2
+> +				>;
+
+Only pins without clear consumer should be put into hog group.  Also the
+indent seems broken.
+
+> +};
+> +
+> +&audmux {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_audmux>;
+> +	status = "okay";
+> +};
+> +
+> +
+> +
+
+One newline is good enough.  Also, please try to sort these labelled
+nodes alphabetically.
+
+> +&i2c3 {
+> +	clock-frequency = <100000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c3>;
+> +	status = "okay";
+> +
+> +	sgtl5000: audio-codec@a {
+> +		compatible = "fsl,sgtl5000";
+> +		reg = <0x0a>;
+> +		clocks = <&sndosc>;
+> +		VDDA-supply = <&base3p3>;
+> +		VDDIO-supply = <&base3p3>;
+
+#sound-dai-cells is missing.
+
+> +	};
+> +
+> +	boardID: pca8754a@3a {
+
+Please find a more generic node name for it.
+
+> +		compatible = "nxp,pca8574";
+> +		reg = <0x3a>;
+> +		gpio-controller;
+> +		#gpio-cells = <1>;
+> +	};
+> +
+> +	captouch: touchscreen@38 {
+> +		compatible = "edt,edt-ft5406";
+> +		reg = <0x38>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_irq_touch2 &pinctrl_emcon_gpio4>;
+> +		interrupt-parent = <&gpio6>;
+> +		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
+> +		wake-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
+> +		wakeup-source;
+> +		status = "okay";
+
+The "okay" status is only needed to flip the default "disabled" device.
+
+> +	};
+> +};
+> +
+> +&ssi2 {
+> +	status = "okay";
+> +};
+> +
+> +&rgb_encoder {
+> +	status = "okay";
+> +};
+> +
+> +&rgb_panel {
+> +	compatible = "edt,etm0700g0bdh6";
+> +	status = "okay";
+> +};
+> +
+> +&i2c2 {
+> +	status = "okay";
+> +};
+> +
+> +&hdmi {
+> +	ddc-i2c-bus = <&i2c2>;
+> +	status = "okay";
+> +};
+> +
+> +&usbh1 {
+> +	status = "okay";
+> +};
+> +
+> +&usbotg {
+> +	status = "okay";
+> +};
+> +
+> +&pcie {
+> +	status = "okay";
+> +};
+> +
+> +&usdhc1 {
+> +	status = "okay";
+> +};
+> +
+> +&can1 {
+> +	status = "okay";
+> +};
+> +
+> +&can2 {
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +	uart-has-rtscts;
+> +};
+> +
+> +&uart3 {
+> +	status = "okay";
+> +};
+> +
+> +&uart4 {
+> +	status = "okay";
+> +};
+> +
+> +&uart5 {
+> +	status = "okay";
+> +};
+> +
+> +&ecspi2 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/imx6dl-emcon.dtsi b/arch/arm/boot/dts/imx6dl-emcon.dtsi
+> new file mode 100644
+> index 000000000000..1ed629c9747e
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6dl-emcon.dtsi
+> @@ -0,0 +1,27 @@
+> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
+> +/* Copyright (C) 2018 emtrion GmbH
+> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
+> + */
+> +
+> +/ {
+> +	model = "emtrion SoM emCON-MX6 Solo/DualLite";
+> +	compatible = "emtrion,emcon-mx6", "fsl,imx6dl";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_cpi2: csi1grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_D17__IPU1_CSI1_PIXCLK	0x0b0b1
+> +			MX6QDL_PAD_EIM_EB3__IPU1_CSI1_HSYNC		0x1b0b1
+> +			MX6QDL_PAD_EIM_D29__IPU1_CSI1_VSYNC		0x1b0b1
+> +			MX6QDL_PAD_EIM_A17__IPU1_CSI1_DATA12	0x1b0b1
+> +			MX6QDL_PAD_EIM_D27__IPU1_CSI1_DATA13	0x1b0b1
+> +			MX6QDL_PAD_EIM_D26__IPU1_CSI1_DATA14	0x1b0b1
+> +			MX6QDL_PAD_EIM_D20__IPU1_CSI1_DATA15	0x1b0b1
+> +			MX6QDL_PAD_EIM_D19__IPU1_CSI1_DATA16	0x1b0b1
+> +			MX6QDL_PAD_EIM_D18__IPU1_CSI1_DATA17	0x1b0b1
+> +			MX6QDL_PAD_EIM_D16__IPU1_CSI1_DATA18	0x1b0b1
+> +			MX6QDL_PAD_EIM_EB2__IPU1_CSI1_DATA19	0x1b0b1
+> +		>;
+> +	};
+> +};
+> diff --git a/arch/arm/boot/dts/imx6q-emcon-avari.dts b/arch/arm/boot/dts/imx6q-emcon-avari.dts
+> new file mode 100644
+> index 000000000000..0c85b5ee011c
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6q-emcon-avari.dts
+
+There are so many things duplicated between imx6dl-emcon-avari.dts and
+imx6q-emcon-avari.dts.  Can you do something to avoid that?
+
+> @@ -0,0 +1,224 @@
+> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
+> +/* Copyright (C) 2018 emtrion GmbH
+> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
+> + */
+> +
+> +/dts-v1/;
+> +#include "imx6q.dtsi"
+> +#include "imx6qdl-emcon.dtsi"
+> +#include "imx6q-emcon.dtsi" /*Include camera2 pinmux*/
+> +
+> +/ {
+> +	model = "emtrion SoM emCON-MX6 Dual/Quad on Avari";
+> +	compatible = "emtrion,emcon-mx6-avari", "fsl,imx6q";
+> +
+> +	aliases {
+> +		mmc0 = &usdhc3;
+> +		mmc2 = &usdhc1;
+> +		mmc1 = &usdhc2;
+> +		mmc3 = &usdhc4;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = <&uart1>;
+> +	};
+> +
+> +	memory {
+> +		reg = <0x10000000 0x40000000>;
+> +	};
+> +
+> +	supplies {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		wallplug5p0: supply@0 {
+> +			compatible = "regulator-fixed";
+> +			reg = <0>;
+> +			regulator-name = "WALL-PLUG";
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <5000000>;
+> +			regulator-always-on;
+> +			regulator-boot-on;
+> +		};
+> +
+> +		base3p3: supply@1 {
+> +			compatible = "regulator-fixed";
+> +			reg = <1>;
+> +			vin-supply = <&wallplug5p0>;
+> +			regulator-name = "3V3-avari";
+> +			regulator-min-microvolt = <3300000>;
+> +			regulator-max-microvolt = <3300000>;
+> +			regulator-always-on;
+> +			regulator-boot-on;
+> +		};
+> +
+> +		base1p5: supply@2 {
+> +			compatible = "regulator-fixed";
+> +			reg = <2>;
+> +			vin-supply = <&base3p3>;
+> +			regulator-name = "1V5-avari";
+> +			regulator-min-microvolt = <1500000>;
+> +			regulator-max-microvolt = <1500000>;
+> +			regulator-always-on;
+> +			regulator-boot-on;
+> +		};
+> +
+> +		reg_usb_otg: otgvbus@3 {
+> +			compatible = "regulator-fixed";
+> +			reg = <3>;
+> +			vin-supply = <&wallplug5p0>;
+> +			regulator-name = "OTG_VBUS";
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <5000000>;
+> +			gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
+> +			regulator-always-on;
+> +		};
+> +
+> +	};
+> +
+> +
+> +	sndosc: 12MHZosc {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency  = <12000000>;
+> +	};
+> +
+> +	sound {
+> +		compatible = "fsl,imx-audio-sgtl5000";
+> +		model = "emCON-avari-sgtl5000";
+> +		ssi-controller = <&ssi2>;
+> +		audio-codec = <&sgtl5000>;
+> +		audio-routing =
+> +			"Headphone Jack", "HP_OUT";
+> +		mux-int-port = <2>;
+> +		mux-ext-port = <3>;
+> +	};
+> +
+> +};
+> +
+> +
+> +&iomuxc {
+> +	pinctrl-names = "default";
+> +	/*Unused emCON-MX6 pingroups on AVARI baseboard, enable defaults*/
+> +	pinctrl-0 = <
+> +				 &pinctrl_emcon_gpio1 &pinctrl_emcon_gpio2
+> +				 &pinctrl_emcon_gpio3 &pinctrl_emcon_gpio5
+> +				 &pinctrl_emcon_gpio6 &pinctrl_emcon_gpio7
+> +				 &pinctrl_emcon_gpio8 &pinctrl_emcon_irq_a
+> +				 &pinctrl_emcon_irq_b &pinctrl_emcon_irq_c
+> +				 &pinctrl_emcon_irq_pwr &pinctrl_nor_flash
+> +				 &pinctrl_usdhc2
+> +				 &pinctrl_spdif_out     &pinctrl_spdif_in
+> +				 &pinctrl_cpi1          &pinctrl_cpi2
+> +				>;
+> +};
+> +
+> +&audmux {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_audmux>;
+> +	status = "okay";
+> +};
+> +
+> +
+> +
+> +&i2c3 {
+> +	clock-frequency = <100000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c3>;
+> +	status = "okay";
+> +
+> +	sgtl5000: audio-codec@a {
+> +		compatible = "fsl,sgtl5000";
+> +		reg = <0x0a>;
+> +		clocks = <&sndosc>;
+> +		VDDA-supply = <&base3p3>;
+> +		VDDIO-supply = <&base3p3>;
+> +	};
+> +
+> +	boardID: pca8754a@3a {
+> +		compatible = "nxp,pca8574";
+> +		reg = <0x3a>;
+> +		gpio-controller;
+> +		#gpio-cells = <1>;
+> +	};
+> +
+> +	captouch: touchscreen@38 {
+> +		compatible = "edt,edt-ft5406";
+> +		reg = <0x38>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_irq_touch2 &pinctrl_emcon_gpio4>;
+> +		interrupt-parent = <&gpio6>;
+> +		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
+> +		wake-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
+> +		wakeup-source;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&ssi2 {
+> +	status = "okay";
+> +};
+> +
+> +&rgb_encoder {
+> +	status = "okay";
+> +};
+> +
+> +&rgb_panel {
+> +	compatible = "edt,etm0700g0bdh6";
+> +	status = "okay";
+> +};
+> +
+> +&i2c2 {
+> +	status = "okay";
+> +};
+> +
+> +&hdmi {
+> +	ddc-i2c-bus = <&i2c2>;
+> +	status = "okay";
+> +};
+> +
+> +&usbh1 {
+> +	status = "okay";
+> +};
+> +
+> +&usbotg {
+> +	status = "okay";
+> +};
+> +
+> +&pcie {
+> +	status = "okay";
+> +};
+> +
+> +&usdhc1 {
+> +	status = "okay";
+> +};
+> +
+> +&can1 {
+> +	status = "okay";
+> +};
+> +
+> +&can2 {
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +	uart-has-rtscts;
+> +};
+> +
+> +&uart3 {
+> +	status = "okay";
+> +};
+> +
+> +&uart4 {
+> +	status = "okay";
+> +};
+> +
+> +&uart5 {
+> +	status = "okay";
+> +};
+> +
+> +&ecspi2 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/imx6q-emcon.dtsi b/arch/arm/boot/dts/imx6q-emcon.dtsi
+> new file mode 100644
+> index 000000000000..33b3fbf3fba0
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6q-emcon.dtsi
+> @@ -0,0 +1,27 @@
+> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
+> +/* Copyright (C) 2018 emtrion GmbH
+> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
+> + */
+> +
+> +/ {
+> +	model = "emtrion SoM emCON-MX6 Dual/Quad";
+> +	compatible = "emtrion,emcon-mx6", "fsl,imx6q";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_cpi2: csi1grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_D17__IPU2_CSI1_PIXCLK	0x0b0b1
+> +			MX6QDL_PAD_EIM_EB3__IPU2_CSI1_HSYNC		0x1b0b1
+> +			MX6QDL_PAD_EIM_D29__IPU2_CSI1_VSYNC		0x1b0b1
+> +			MX6QDL_PAD_EIM_A17__IPU2_CSI1_DATA12	0x1b0b1
+> +			MX6QDL_PAD_EIM_D27__IPU2_CSI1_DATA13	0x1b0b1
+> +			MX6QDL_PAD_EIM_D26__IPU2_CSI1_DATA14	0x1b0b1
+> +			MX6QDL_PAD_EIM_D20__IPU2_CSI1_DATA15	0x1b0b1
+> +			MX6QDL_PAD_EIM_D19__IPU2_CSI1_DATA16	0x1b0b1
+> +			MX6QDL_PAD_EIM_D18__IPU2_CSI1_DATA17	0x1b0b1
+> +			MX6QDL_PAD_EIM_D16__IPU2_CSI1_DATA18	0x1b0b1
+> +			MX6QDL_PAD_EIM_EB2__IPU2_CSI1_DATA19	0x1b0b1
+> +		>;
+> +	};
+> +};
+> diff --git a/arch/arm/boot/dts/imx6qdl-emcon.dtsi b/arch/arm/boot/dts/imx6qdl-emcon.dtsi
+> new file mode 100644
+> index 000000000000..5f9296dce130
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6qdl-emcon.dtsi
+> @@ -0,0 +1,838 @@
+> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
+> +/* Copyright (C) 2018 emtrion GmbH
+> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
+> + */
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/pwm/pwm.h>
+> +#include <dt-bindings/input/input.h>
+> +
+> +/ {
+> +
+> +	model = "emtrion SoM emCON-MX6";
+> +	compatible = "emtrion,emcon-mx6", "fsl,imx6q", "fsl,imx6dl";
+> +
+> +	aliases {
+> +		mmc0 = &usdhc3;
+> +		mmc2 = &usdhc1;
+> +		mmc1 = &usdhc2;
+> +	};
+> +
+> +	regulators {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		reg_parallel_disp: regulator@0 {
+> +			compatible = "regulator-fixed";
+> +			reg = <0>;
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&pinctrl_rgb_bl_en>;
+> +			regulator-name = "LCD-Supply";
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <5000000>;
+> +			gpio = <&gpio7 9 GPIO_ACTIVE_HIGH>;
+> +			enable-active-high;
+> +		};
+> +
+> +		reg_lvds_disp: regulator@1 {
+> +			compatible = "regulator-fixed";
+> +			reg = <1>;
+> +			regulator-name = "LVDS-Supply";
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <5000000>;
+> +			gpio = <&gpio7 10 GPIO_ACTIVE_HIGH>;
+> +			enable-active-high;
+> +		};
+> +	};
+> +
+> +	som_leds: leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_som_leds>;
+> +
+> +		green {
+> +			label = "som:green";
+> +			gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "heartbeat";
+> +			default-state = "on";
+> +		};
+> +
+> +		red {
+> +			label = "som:red";
+> +			gpios = <&gpio3 1 GPIO_ACTIVE_LOW>;
+> +			default-state = "keep";
+> +		};
+> +
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_emcon_wake>;
+> +
+> +		wake {
+> +			label = "Wake";
+> +			linux,code = <KEY_WAKEUP>;
+> +			gpios = <&gpio3 2 GPIO_ACTIVE_LOW>;
+> +			wakeup-source;
+> +		};
+> +	};
+> +
+> +	pwm_fan: pwm-fan {
+> +		compatible = "pwm-fan";
+> +		cooling-min-state = <0>;
+> +		cooling-max-state = <4>;
+> +		#cooling-cells = <2>;
+> +		pwms = <&pwm4 0 50000>;
+> +		cooling-levels = <0 64 127 191 255>;
+> +		status = "disabled";
+> +	};
+> +
+> +	rgb_encoder: disp0 {
+
+s/disp0/display
+
+> +		compatible = "fsl,imx-parallel-display";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_rgb24_display>;
+> +		status = "disabled";
+> +
+> +		port@0 {
+> +			reg = <0>;
+
+Have a newline between property list and child node.
+
+> +			rgb_encoder_in: endpoint {
+> +				remote-endpoint = <&ipu1_di0_disp0>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			rgb_encoder_out: endpoint {
+> +				remote-endpoint = <&rgb_panel_in>;
+> +			};
+> +		};
+> +	};
+> +
+> +	rgb_panel: panel {
+> +		backlight = <&rgb_backlight>;
+> +		power-supply = <&reg_parallel_disp>;
+> +		port {
+> +			rgb_panel_in: endpoint {
+> +				remote-endpoint = <&rgb_encoder_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	rgb_backlight: rgb-backlight {
+> +		compatible = "pwm-backlight";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_rgb_bl>;
+> +		enable-gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
+> +		pwms = <&pwm3 0 5000000>;
+> +		brightness-levels = <250 176 160 144 128 112
+> +							96 80 64 48 32 16 8 1
+> +							>;
+
+Broken indent.
+
+> +		default-brightness-level = <13>;
+> +		status = "okay";
+> +	};
+> +
+> +	lvds_backlight: lvds-backlight {
+> +		compatible = "pwm-backlight";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_lvds_bl>;
+> +		enable-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>;
+> +		pwms = <&pwm1 0 50000>;
+> +		brightness-levels = <0 4 8 16 32 64 80 96 112
+> +							128 144 160 176 250
+> +							>;
+> +		default-brightness-level = <13>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +
+> +&iomuxc {
+> +
+> +	pinctrl_secure: securegrp {
+
+Unused?
+
+> +		fsl,pins = <
+> +			MX6QDL_PAD_GPIO_18__GPIO7_IO13			0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart1: uart1grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_CSI0_DAT10__UART1_TX_DATA	0x1b0b1
+> +			MX6QDL_PAD_CSI0_DAT11__UART1_RX_DATA	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart2: uart2grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD4_DAT5__UART2_RTS_B		0x1b0b1
+> +			MX6QDL_PAD_SD4_DAT6__UART2_CTS_B		0x1b0b1
+> +			MX6QDL_PAD_SD4_DAT7__UART2_TX_DATA		0x1b0b1
+> +			MX6QDL_PAD_SD4_DAT4__UART2_RX_DATA		0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart3: uart3grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_D24__UART3_TX_DATA		0x1b0b1
+> +			MX6QDL_PAD_EIM_D25__UART3_RX_DATA		0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart4: uart4grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_KEY_COL0__UART4_TX_DATA		0x1b0b1
+> +			MX6QDL_PAD_KEY_ROW0__UART4_RX_DATA		0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart5: uart5grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_KEY_COL1__UART5_TX_DATA		0x1b0b1
+> +			MX6QDL_PAD_KEY_ROW1__UART5_RX_DATA		0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_gpio1: emcongpio1 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_D0__GPIO2_IO00			0x0b0b1
+> +		>;
+> +	};
+
+Try to keep these pinctrl entries alphabetically sorted.
+
+> +
+> +	pinctrl_emcon_gpio2: emcongpio2 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_D1__GPIO2_IO01			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_gpio3: emcongpio3 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_D2__GPIO2_IO02			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_gpio4: emcongpio4 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_D3__GPIO2_IO03			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_gpio5: emcongpio5 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_D4__GPIO2_IO04			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_gpio6: emcongpio6 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_D5__GPIO2_IO05			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_gpio7: emcongpio7 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_D6__GPIO2_IO06			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_gpio8: emcongpio8 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_D7__GPIO2_IO07			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_irq_a: emconirqa {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_CLE__GPIO6_IO07		0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_irq_b: emconirqb {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_CS2__GPIO6_IO15		0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_irq_c: emconirqc {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_CS3__GPIO6_IO16		0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_wake: emconwake {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_DA2__GPIO3_IO02			0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_emcon_irq_pwr: emconirqpwr {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_D23__GPIO3_IO23			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_som_leds: somledgrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_DA0__GPIO3_IO00			0x0b0b1
+> +			MX6QDL_PAD_EIM_DA1__GPIO3_IO01			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_nor_flash: norflashgrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_NANDF_CS0__GPIO6_IO11		0x1b0b1
+> +			MX6QDL_PAD_EIM_D21__ECSPI4_SCLK			0x100b1
+> +			MX6QDL_PAD_EIM_D28__ECSPI4_MOSI			0x100b1
+> +			MX6QDL_PAD_EIM_D22__ECSPI4_MISO			0x100b1
+> +			MX6QDL_PAD_EIM_A25__GPIO5_IO02			0x100b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_ecspi2: ecspi2grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_CS0__ECSPI2_SCLK			0x100b1
+> +			MX6QDL_PAD_EIM_CS1__ECSPI2_MOSI			0x100b1
+> +			MX6QDL_PAD_EIM_OE__ECSPI2_MISO			0x100b1
+> +			MX6QDL_PAD_EIM_LBA__GPIO2_IO27			0x100b1
+> +			MX6QDL_PAD_EIM_RW__GPIO2_IO26			0x100b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_pwm_fan: pwmfan {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD4_DAT2__PWM4_OUT			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_can1: can1grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_KEY_COL2__FLEXCAN1_TX		0x1b0b1
+> +			MX6QDL_PAD_KEY_ROW2__FLEXCAN1_RX		0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_can2: can2grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_KEY_COL4__FLEXCAN2_TX		0x1b0b1
+> +			MX6QDL_PAD_KEY_ROW4__FLEXCAN2_RX		0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_spdif_out: spdifout {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_GPIO_19__SPDIF_OUT			0x13091
+> +		>;
+> +	};
+> +
+> +	pinctrl_spdif_in: spdifin {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_GPIO_16__SPDIF_IN			0x1b0b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_cpi1: csi0grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_CSI0_PIXCLK__IPU1_CSI0_PIXCLK 0xb0b1
+> +			MX6QDL_PAD_CSI0_MCLK__IPU1_CSI0_HSYNC	0x1b0b1
+> +			MX6QDL_PAD_CSI0_VSYNC__IPU1_CSI0_VSYNC	0x1b0b1
+> +			MX6QDL_PAD_CSI0_DAT12__IPU1_CSI0_DATA12 0x1b0b1
+> +			MX6QDL_PAD_CSI0_DAT13__IPU1_CSI0_DATA13 0x1b0b1
+> +			MX6QDL_PAD_CSI0_DAT14__IPU1_CSI0_DATA14 0x1b0b1
+> +			MX6QDL_PAD_CSI0_DAT15__IPU1_CSI0_DATA15 0x1b0b1
+> +			MX6QDL_PAD_CSI0_DAT16__IPU1_CSI0_DATA16 0x1b0b1
+> +			MX6QDL_PAD_CSI0_DAT17__IPU1_CSI0_DATA17 0x1b0b1
+> +			MX6QDL_PAD_CSI0_DAT18__IPU1_CSI0_DATA18 0x1b0b1
+> +			MX6QDL_PAD_CSI0_DAT19__IPU1_CSI0_DATA19 0x1b0b1
+> +		>;
+> +	};
+> +
+> +	/*camera2-pinctrl is in imx6q-emcon.dtsi or imx6dl-emcon.dtsi*/
+> +
+> +	pinctrl_pcie_ctrl: pciegrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_A16__GPIO2_IO22			0x1b0b1
+> +			MX6QDL_PAD_GPIO_17__GPIO7_IO12			0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_audmux: audmux {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_CSI0_DAT7__AUD3_RXD			0x130b0
+> +			MX6QDL_PAD_CSI0_DAT4__AUD3_TXC			0x1b060
+> +			MX6QDL_PAD_CSI0_DAT5__AUD3_TXD			0x130B0
+> +			MX6QDL_PAD_CSI0_DAT6__AUD3_TXFS			0x1b060
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c1: i2c1grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_CSI0_DAT8__I2C1_SDA		0x4001b8b1
+> +			MX6QDL_PAD_CSI0_DAT9__I2C1_SCL		0x4001b8b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c2: i2c2grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_KEY_COL3__I2C2_SCL		0x4001b8b1
+> +			MX6QDL_PAD_KEY_ROW3__I2C2_SDA		0x4001b8b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c3: i2c3grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_GPIO_3__I2C3_SCL		0x4000b070
+> +			MX6QDL_PAD_GPIO_6__I2C3_SDA		0x4001b870
+> +		>;
+> +	};
+> +
+> +	pinctrl_pmic: pmicgrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD4_DAT0__GPIO2_IO08			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_usb_host1: usbhgrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_D31__USB_H1_PWR			0x1B058
+> +			MX6QDL_PAD_EIM_D30__USB_H1_OC			0x1B058
+> +		>;
+> +	};
+> +
+> +	pinctrl_usb_otg: usbotggrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_ENET_RX_ER__USB_OTG_ID		0x17059
+> +			MX6QDL_PAD_GPIO_7__GPIO1_IO07			0x17059
+> +			MX6QDL_PAD_GPIO_8__GPIO1_IO08			0x17059
+> +		>;
+> +	};
+> +
+> +	pinctrl_lvds_reg: lvdsreggrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD4_CLK__GPIO7_IO10			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_lvds_bl: lvdsbacklightgrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_GPIO_9__PWM1_OUT			0x0b0b1
+> +			MX6QDL_PAD_NANDF_WP_B__GPIO6_IO09		0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_irq_touch1: irqtouch1 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_GPIO_5__GPIO1_IO05			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_rgb_bl_en: rgbenable {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD4_CMD__GPIO7_IO09			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_irq_touch2: irqtouch2 {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_EIM_BCLK__GPIO6_IO31			0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_rgb_bl: rgbbacklightgrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD4_DAT1__PWM3_OUT			0x0b0b1
+> +			MX6QDL_PAD_NANDF_ALE__GPIO6_IO08		0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_rgb24_display: rgbgrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK 0x10
+> +			MX6QDL_PAD_DI0_PIN15__IPU1_DI0_PIN15       0x10
+> +			MX6QDL_PAD_DI0_PIN2__IPU1_DI0_PIN02        0x10
+> +			MX6QDL_PAD_DI0_PIN3__IPU1_DI0_PIN03        0x10
+> +			MX6QDL_PAD_DISP0_DAT0__IPU1_DISP0_DATA00   0x10
+> +			MX6QDL_PAD_DISP0_DAT1__IPU1_DISP0_DATA01   0x10
+> +			MX6QDL_PAD_DISP0_DAT2__IPU1_DISP0_DATA02   0x10
+> +			MX6QDL_PAD_DISP0_DAT3__IPU1_DISP0_DATA03   0x10
+> +			MX6QDL_PAD_DISP0_DAT4__IPU1_DISP0_DATA04   0x10
+> +			MX6QDL_PAD_DISP0_DAT5__IPU1_DISP0_DATA05   0x10
+> +			MX6QDL_PAD_DISP0_DAT6__IPU1_DISP0_DATA06   0x10
+> +			MX6QDL_PAD_DISP0_DAT7__IPU1_DISP0_DATA07   0x10
+> +			MX6QDL_PAD_DISP0_DAT8__IPU1_DISP0_DATA08   0x10
+> +			MX6QDL_PAD_DISP0_DAT9__IPU1_DISP0_DATA09   0x10
+> +			MX6QDL_PAD_DISP0_DAT10__IPU1_DISP0_DATA10  0x10
+> +			MX6QDL_PAD_DISP0_DAT11__IPU1_DISP0_DATA11  0x10
+> +			MX6QDL_PAD_DISP0_DAT12__IPU1_DISP0_DATA12  0x10
+> +			MX6QDL_PAD_DISP0_DAT13__IPU1_DISP0_DATA13  0x10
+> +			MX6QDL_PAD_DISP0_DAT14__IPU1_DISP0_DATA14  0x10
+> +			MX6QDL_PAD_DISP0_DAT15__IPU1_DISP0_DATA15  0x10
+> +			MX6QDL_PAD_DISP0_DAT16__IPU1_DISP0_DATA16  0x10
+> +			MX6QDL_PAD_DISP0_DAT17__IPU1_DISP0_DATA17  0x10
+> +			MX6QDL_PAD_DISP0_DAT18__IPU1_DISP0_DATA18  0x10
+> +			MX6QDL_PAD_DISP0_DAT19__IPU1_DISP0_DATA19  0x10
+> +			MX6QDL_PAD_DISP0_DAT20__IPU1_DISP0_DATA20  0x10
+> +			MX6QDL_PAD_DISP0_DAT21__IPU1_DISP0_DATA21  0x10
+> +			MX6QDL_PAD_DISP0_DAT22__IPU1_DISP0_DATA22  0x10
+> +			MX6QDL_PAD_DISP0_DAT23__IPU1_DISP0_DATA23  0x10
+> +		>;
+> +	};
+> +
+> +	pinctrl_enet: enetgrp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_ENET_MDIO__ENET_MDIO			0x1b030
+> +			MX6QDL_PAD_ENET_MDC__ENET_MDC			0x1b030
+> +			MX6QDL_PAD_RGMII_TXC__RGMII_TXC			0x1b030
+> +			MX6QDL_PAD_RGMII_TD0__RGMII_TD0			0x1b030
+> +			MX6QDL_PAD_RGMII_TD1__RGMII_TD1			0x1b030
+> +			MX6QDL_PAD_RGMII_TD2__RGMII_TD2			0x1b030
+> +			MX6QDL_PAD_RGMII_TD3__RGMII_TD3			0x1b030
+> +			MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL	0x1b030
+> +			MX6QDL_PAD_ENET_REF_CLK__ENET_TX_CLK	0x4001a0b1
+> +			MX6QDL_PAD_RGMII_RXC__RGMII_RXC			0x1b030
+> +			MX6QDL_PAD_RGMII_RD0__RGMII_RD0			0x1b030
+> +			MX6QDL_PAD_RGMII_RD1__RGMII_RD1			0x1b030
+> +			MX6QDL_PAD_RGMII_RD2__RGMII_RD2			0x1b030
+> +			MX6QDL_PAD_RGMII_RD3__RGMII_RD3			0x1b030
+> +			MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL	0x1b0b0
+> +			MX6QDL_PAD_CSI0_DATA_EN__GPIO5_IO20		0x1b058
+> +			MX6QDL_PAD_ENET_TXD0__GPIO1_IO30		0x1b0b0
+> +		 >;
+> +	};
+> +
+> +
+> +	pinctrl_usdhc3: usdhc3grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD3_CMD__SD3_CMD			0x17059
+> +			MX6QDL_PAD_SD3_CLK__SD3_CLK			0x10059
+> +			MX6QDL_PAD_SD3_DAT0__SD3_DATA0			0x17059
+> +			MX6QDL_PAD_SD3_DAT1__SD3_DATA1			0x17059
+> +			MX6QDL_PAD_SD3_DAT2__SD3_DATA2			0x17059
+> +			MX6QDL_PAD_SD3_DAT3__SD3_DATA3			0x17059
+> +			MX6QDL_PAD_SD3_DAT4__SD3_DATA4			0x17059
+> +			MX6QDL_PAD_SD3_DAT5__SD3_DATA5			0x17059
+> +			MX6QDL_PAD_SD3_DAT6__SD3_DATA6			0x17059
+> +			MX6QDL_PAD_SD3_DAT7__SD3_DATA7			0x17059
+> +			MX6QDL_PAD_SD3_RST__SD3_RESET			0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1: usdhc1grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD1_CMD__SD1_CMD			0x17059
+> +			MX6QDL_PAD_SD1_CLK__SD1_CLK			0x10059
+> +			MX6QDL_PAD_SD1_DAT0__SD1_DATA0			0x17059
+> +			MX6QDL_PAD_SD1_DAT1__SD1_DATA1			0x17059
+> +			MX6QDL_PAD_SD1_DAT2__SD1_DATA2			0x17059
+> +			MX6QDL_PAD_SD1_DAT3__SD1_DATA3			0x17059
+> +			MX6QDL_PAD_GPIO_1__SD1_CD_B			0x1b0b1
+> +			MX6QDL_PAD_DI0_PIN4__SD1_WP			0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2: usdhc2grp {
+> +		fsl,pins = <
+> +			MX6QDL_PAD_SD2_CMD__SD2_CMD			0x17059
+> +			MX6QDL_PAD_SD2_CLK__SD2_CLK			0x10059
+> +			MX6QDL_PAD_SD2_DAT0__SD2_DATA0			0x17059
+> +			MX6QDL_PAD_SD2_DAT1__SD2_DATA1			0x17059
+> +			MX6QDL_PAD_SD2_DAT2__SD2_DATA2			0x17059
+> +			MX6QDL_PAD_SD2_DAT3__SD2_DATA3			0x17059
+> +			MX6QDL_PAD_GPIO_4__SD2_CD_B			0x1b0b1
+> +			MX6QDL_PAD_GPIO_2__SD2_WP			0x1b0b1
+> +		>;
+> +	};
+> +
+> +};
+> +
+> +
+> +&i2c1 {
+> +	clock-frequency = <100000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c1>;
+> +	status = "okay";
+> +
+> +	rtc: rtc@68 {
+> +		compatible = "dallas,ds1307";
+> +		reg = <0x68>;
+> +	};
+> +
+> +	da9063: pmic@58 {
+> +		compatible = "dlg,da9063";
+> +		reg = <0x58>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_pmic>;
+> +		interrupt-parent = <&gpio2>;
+> +		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +
+> +		onkey {
+> +			compatible = "dlg,da9063-onkey";
+> +			wakeup-source;
+> +		};
+> +
+> +		wdt {
+
+s/wdt/watchdog
+
+> +			compatible = "dlg,da9063-watchdog";
+> +			timeout-sec = <0>;
+> +		};
+> +
+> +		regulators {
+> +			vddcore_reg: bcore1 {
+> +				regulator-min-microvolt = <1100000>;
+> +				regulator-max-microvolt = <1450000>;
+> +				regulator-ramp-delay = <20000>;
+> +				regulator-name = "DA9063_CORE";
+> +				regulator-always-on;
+> +			};
+> +
+> +			vddsoc_reg: bcore2 {
+> +				regulator-min-microvolt = <1100000>;
+> +				regulator-max-microvolt = <1450000>;
+> +				regulator-ramp-delay = <20000>;
+> +				regulator-name = "DA9063_SOC";
+> +				regulator-always-on;
+> +			};
+> +
+> +			vdd_ddr3_reg: bpro {
+> +				regulator-min-microvolt = <1500000>;
+> +				regulator-max-microvolt = <1500000>;
+> +				regulator-ramp-delay = <20000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vdd_3v3_reg: bperi {
+> +				regulator-min-microvolt = <3300000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-ramp-delay = <20000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vdd_sata_reg: ldo3 {
+> +				regulator-min-microvolt = <2500000>;
+> +				regulator-max-microvolt = <2500000>;
+> +				regulator-always-on;
+> +			};
+> +			vdd_mipi_reg: ldo4 {
+> +				regulator-min-microvolt = <2500000>;
+> +				regulator-max-microvolt = <2500000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vdd_mx6_snvs_reg: ldo5 {
+> +				regulator-min-microvolt = <3300000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vdd_hdmi_reg: ldo6 {
+> +				regulator-min-microvolt = <2500000>;
+> +				regulator-max-microvolt = <2500000>;
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +			};
+> +
+> +			vdd_pcie_reg: ldo7 {
+> +				regulator-min-microvolt = <2500000>;
+> +				regulator-max-microvolt = <2500000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vdd_1V8_reg: ldo8 {
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vdd_3V3_sdc_reg: ldo9 {
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vdd_1V2_reg: ldo10 {
+> +				regulator-min-microvolt = <1200000>;
+> +				regulator-max-microvolt = <1200000>;
+> +				regulator-always-on;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&uart1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart1>;
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart2>;
+> +};
+> +
+> +&uart3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart3>;
+> +};
+> +
+> +&uart4 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart4>;
+> +};
+> +
+> +&uart5 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart5>;
+> +};
+> +
+> +&fec {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_enet>;
+> +	phy-mode = "rgmii";
+> +	phy-reset-gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
+> +	phy-reset-duration = <50>;
+> +	phy-supply = <&vdd_1V8_reg>;
+> +	phy-handle = <&ksz9031>;
+> +	status = "okay";
+> +
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		ksz9031: phy@0 {
+> +			compatible = "ethernet-phy-ieee802.3-c22";
+> +			reg = <0>;
+> +			interrupt-parent = <&gpio1>;
+> +			interrupts = <30 IRQ_TYPE_EDGE_FALLING>;
+> +			rxdv-skew-ps = <480>;
+> +			txen-skew-ps = <480>;
+> +			rxd0-skew-ps = <480>;
+> +			rxd1-skew-ps = <480>;
+> +			rxd2-skew-ps = <480>;
+> +			rxd3-skew-ps = <480>;
+> +			txd0-skew-ps = <420>;
+> +			txd1-skew-ps = <420>;
+> +			txd2-skew-ps = <360>;
+> +			txd3-skew-ps = <360>;
+> +			txc-skew-ps = <1020>;
+> +			rxc-skew-ps = <960>;
+> +		};
+> +	};
+> +};
+> +
+> +
+> +&usdhc3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usdhc3>;
+> +	non-removable;
+> +	bus-width = <8>;
+> +	status = "okay";
+> +};
+> +
+> +&pcie {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pcie_ctrl>;
+> +	reset-gpio = <&gpio7 12 GPIO_ACTIVE_LOW>;
+> +	disable-gpio = <&gpio2 22 GPIO_ACTIVE_LOW>;
+> +};
+> +
+> +&i2c2 {
+> +	clock-frequency = <100000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c2>;
+> +};
+> +
+> +&usdhc1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usdhc1>;
+> +	fsl,wp-controller;
+> +};
+> +
+> +&usdhc2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usdhc2>;
+> +	fsl,wp-controller;
+> +};
+> +
+> +
+> +&ipu1_di0_disp0 {
+> +	remote-endpoint = <&rgb_encoder_in>;
+> +};
+> +
+> +&pwm1 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm3 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm4 {
+> +	status = "okay";
+> +};
+> +
+> +&ecspi2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_ecspi2>;
+> +	cs-gpios =  <&gpio2 25 GPIO_ACTIVE_HIGH>,
+> +				<&gpio2 26 GPIO_ACTIVE_HIGH>;
+> +};
+> +
+> +&ecspi4 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_nor_flash>;
+> +};
+> +
+> +&can1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_can1>;
+> +};
+> +
+> +&can2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_can2>;
+> +};
+> +
+> +&usbh1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usb_host1>;
+> +};
+> +
+> +&usbotg {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usb_otg>;
+> +	vbus-supply = <&reg_usb_otg>;
+> +	dr_mode = "peripheral";
+> +};
+> +
+> +/******device power Management*********/
+> +
+> +&cpu0 {
+> +	voltage-tolerance = <2>;
+> +};
+> +
+> +&reg_arm {
+> +	vin-supply = <&vddcore_reg>;
+> +};
+> +
+> +&reg_soc {
+> +	vin-supply = <&vddsoc_reg>;
+> +};
+> +
+> +&reg_pu {
+> +	vin-supply = <&vddsoc_reg>;
+> +};
+> +
+> +
+> +
+> +/*******Disabled HW following***********/
+> +
+> +
+> +&weim {
+> +	status = "disabled";
+> +};
+
+Isn't weim disabled by default?
+
+Shawn
+
+> +
+> +&snvs_rtc {
+> +	status = "disabled";
+> +};
+> -- 
+> 2.11.0
+> 
