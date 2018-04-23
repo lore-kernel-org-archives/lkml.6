@@ -1,110 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932607AbeDWVlF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 17:41:05 -0400
-Received: from bert.emutex.com ([91.103.1.109]:54295 "EHLO bert.emutex.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932461AbeDWVie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 17:38:34 -0400
-From: Javier Arteaga <javier@emutex.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Javier Arteaga <javier@emutex.com>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "Dan O'Donovan" <dan@emutex.com>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nicola Lunghi <nicola.lunghi@emutex.com>
-Subject: [PATCH v2 2/3] iio: adc128s052: add ACPI _HID AANT1280
-Date: Mon, 23 Apr 2018 22:38:04 +0100
-Message-Id: <20180423213805.12591-3-javier@emutex.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180423213805.12591-1-javier@emutex.com>
-References: <20180423213805.12591-1-javier@emutex.com>
-X-Spam-Score: -1.0 (-)
-X-Spam-Report: Spam detection software, running on the system "statler.emutex.com",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  From: Nicola Lunghi <nicola.lunghi@emutex.com> ACPI _HID AANT1280
-    matches an ADC124S101 present on E3940 SKUs of the UP Squared board. Add
-   it to the driver. [...]
- Content analysis details:   (-1.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+        id S932514AbeDWVnU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 17:43:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46094 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932291AbeDWVnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 17:43:19 -0400
+Date: Mon, 23 Apr 2018 16:43:17 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Will Deacon <will.deacon@arm.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
+Subject: Re: [PATCH] perf tools: set kernel end address properly
+Message-Id: <20180423164317.5a47f3dd9842d533413a1d4b@arm.com>
+In-Reply-To: <CAKv+Gu_sY+Q+kqO1hp6f30WSGNPY1cnW5VJYj9cuVA0hU5YDVw@mail.gmail.com>
+References: <20180416042240.21528-1-namhyung@kernel.org>
+        <20180416092345.GA23274@krava>
+        <20180416135125.GA23802@kernel.org>
+        <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
+        <20180416165800.GD3202@kernel.org>
+        <20180416122407.0d90863b69fed80166384850@arm.com>
+        <20180416174811.1aca9106364effe435f363c8@arm.com>
+        <20180417022726.GA31947@sejong>
+        <20180418193759.b63912fe5e5b8a9023ec80a8@arm.com>
+        <20180419025424.GC13370@sejong>
+        <20180419183313.db3e3a105191a7f30b7650b2@arm.com>
+        <CAKv+Gu_sY+Q+kqO1hp6f30WSGNPY1cnW5VJYj9cuVA0hU5YDVw@mail.gmail.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicola Lunghi <nicola.lunghi@emutex.com>
+On Fri, 20 Apr 2018 10:10:32 +0200
+Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 
-ACPI _HID AANT1280 matches an ADC124S101 present on E3940 SKUs of the UP
-Squared board.
+> On 20 April 2018 at 01:33, Kim Phillips <kim.phillips@arm.com> wrote:
+> > On Thu, 19 Apr 2018 11:54:24 +0900
+> > Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> >> On Wed, Apr 18, 2018 at 07:37:59PM -0500, Kim Phillips wrote:
+> >> > diff --git a/tools/perf/arch/arm64/util/sym-handling.c b/tools/perf/arch/arm64/util/sym-handling.c
+> >> > index 0051b1ee8450..5c4a2e208bbc 100644
+> >> > --- a/tools/perf/arch/arm64/util/sym-handling.c
+> >> > +++ b/tools/perf/arch/arm64/util/sym-handling.c
+> >> > @@ -20,3 +20,16 @@ bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
+> >> >                ehdr.e_type == ET_DYN;
+> >> >  }
+> >> >  #endif
+> >> > +
+> >> > +const char *arch__normalize_symbol_name(const char *name)
+> >> > +{
+> >> > +       /*
+> >> > +        * arm64 kernels compensating for a CPU erratum can put up a
+> >> > +        * module_emit_adrp_veneer in place of a module_emit_plt_entry
+> >> > +        */
+> >> > +       if (name && strlen(name) >= 23 &&
+> >> > +           !strncmp(name, "module_emit_adrp_veneer", 23))
+> >> > +               return "module_emit_plt_entry";
+> >> > +
+> >> > +       return name;
+> >> > +}
+> >>
+> >> I don't know it's always preferable or just for the test.  It it's the
+> >> latter it may be better to move it to the test code.
+> >
+> > AFACT, the veneer is a moniker and doesn't technically exist, and
+> > shouldn't be being looked-up.  Both chunks of this diff are needed to
+> > pass perf test 1: this chunk above is because in
+> > arch__normalize_symbol_name(), we squash the perf test 1's "<veneer>
+> > not in *kallsyms*" problem, and in the below chunk, we prevent it
+> > coming up when the test code iterates over the *vmlinux* symbols. I.e.
+> > we need to prevent the veneer from coming up in both kallsyms *and*
+> > vmlinux.
+> 
+> I don't have all the context here, so I don't know what exactly
+> arch__normalize_symbol_name() is trying to accomplish.
 
-Add it to the driver.
+Sorry about that.  The problem is that perf test 1 ("vmlinux
+symtab matches kallsyms") is failing, because
+module_emit_adrp_veneer exists in /boot/vmlinux but doesn't exist
+in /proc/kallsyms, and, sure enough, it's not in the latter.
 
-Signed-off-by: Nicola Lunghi <nicola.lunghi@emutex.com>
-[javier@emutex.com: fix up commit message and one checkpatch warning]
-Signed-off-by: Javier Arteaga <javier@emutex.com>
----
- drivers/iio/adc/ti-adc128s052.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+> What I do know is that module_emit_adrp_veneer() and
+> module_emit_plt_entry() are not part of the veneer themselves: they
+> are ordinary routines that are part of the module loader, and which
+> populate the allocated veneer space on demand when encountering ADRP
+> instructions that need to be rerouted.
+...
+> > >> rare case we might need to add more paranoid checks.
+> >
+> > It's certainly rare: Adding the authors of the veneer to cc for
+> > comments:
+> >
+> > Will, Ard, how probable are veneer-style symbols such as the
+> > one introduced in commit a257e0257 "arm64/kernel: don't ban ADRP to
+> > work around Cortex-A53 erratum #843419" to happen again in the future?
+> >
+> 
+> Distro kernels typically enable full KASLR, so on systems that
+> implement EFI_RNG_PROTOCOL, all function calls from modules into the
+> kernel proper are redirected via veneers. (Note that these are bl
+> instructions not adrp instructions though).
+> 
+> > I would have thought WARNing on within-a-pagesize would be OK,
+> > Namhyung.  Are you suggesting checking instead for a hardcoded veneer
+> > symbol string?
+> 
+> Veneers don't have symbol strings. Veneers are anonymous sequences of
+> instructions living in a patch of R-X mapped module space somewhere.
+> The only symbol strings are for the routines that generate these
+> veneers, not for the veneers themselves.
 
-diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
-index e6716c326c5e..bc5096e98900 100644
---- a/drivers/iio/adc/ti-adc128s052.c
-+++ b/drivers/iio/adc/ti-adc128s052.c
-@@ -12,6 +12,7 @@
-  * published by the Free Software Foundation.
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/err.h>
- #include <linux/spi/spi.h>
- #include <linux/module.h>
-@@ -136,9 +137,22 @@ static int adc128_probe(struct spi_device *spi)
- {
- 	struct iio_dev *indio_dev;
- 	struct adc128 *adc;
--	int config = spi_get_device_id(spi)->driver_data;
-+	int config;
- 	int ret;
- 
-+	if (ACPI_COMPANION(&spi->dev)) {
-+		const struct acpi_device_id *ad_id;
-+
-+		ad_id = acpi_match_device(spi->dev.driver->acpi_match_table,
-+					  &spi->dev);
-+		if (!ad_id)
-+			return -ENODEV;
-+
-+		config = ad_id->driver_data;
-+	} else {
-+		config = spi_get_device_id(spi)->driver_data;
-+	}
-+
- 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*adc));
- 	if (!indio_dev)
- 		return -ENOMEM;
-@@ -207,10 +221,19 @@ static const struct spi_device_id adc128_id[] = {
- };
- MODULE_DEVICE_TABLE(spi, adc128_id);
- 
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id adc128_acpi_match[] = {
-+	{ "AANT1280", 2 }, /* ADC124S021 compatible ACPI ID */
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, adc128_acpi_match);
-+#endif
-+
- static struct spi_driver adc128_driver = {
- 	.driver = {
- 		.name = "adc128s052",
- 		.of_match_table = of_match_ptr(adc128_of_match),
-+		.acpi_match_table = ACPI_PTR(adc128_acpi_match),
- 	},
- 	.probe = adc128_probe,
- 	.remove = adc128_remove,
--- 
-2.17.0
+OK, thanks, so AFAICT this means the function module_emit_adrp_veneer()
+should still show up in /proc/kallsyms, but it's not.  I'm also seeing
+some weird characters, e.g., here there's a byte with a binary 02 value
+following a weird symbol named 'L14472' (part of the xfs module?):
+
+$ grep L1 /proc/kallsyms | hexdump -C | head
+<snip>
+00000540  30 30 30 30 30 20 72 20  2e 4c 31 34 34 37 32 02  |00000 r .L14472.|
+<snip>
+
+arch__normalize_symbol_name() is a place where architecture code can
+clean up symbol names in perf, and I thought module_emit_adrp_veneer()
+was a veneer itself, but it seems that's not the case, so the
+literal string check for it shouldn't be needed.  The test is still
+failing though because it doesn't show up in kallsyms...
+
+Thanks,
+
+Kim
