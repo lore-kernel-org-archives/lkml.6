@@ -1,195 +1,47 @@
-Return-Path: <hdegoede@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524575488; cv=none;
-        d=google.com; s=arc-20160816;
-        b=YuDGImeOoQ2n/CBTq0Ntpta15npT+uyN3CmPowLLDgDp3bgcfcDODGruWcMjvvPc4c
-         +w+B9ETLSFnTlMEwO7h/RTyHOLuWqqcfJvNKdmBDK41RkfK5Kl87zLZPPFBVtxnbGbi7
-         wRxY00RpXcCPuppgZffm6BRX18Hg033lNdLflnGDvIqlCtpT6T7U7OTMka4aUWwG3ZFN
-         cffCB8H211KaeLPynDt6g6LSwDi0Nz6/Dx306D2RHjCS6EHjiI+yzgg4YodHWEecpCLe
-         fJVsuyB1IYHEQCAork6Qtu4zuqespU7IwphxF7qHLAIhv75INAO9vc+4IX0TM5v4CUf6
-         MaMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=pherexfB0aR0C3mDgUHaIa1lkGXTYl7UCXVXuSRKd2c=;
-        b=Jl5lJaNau2P8xfxOVFbQLee/rB7Lcfz6SxJwA/jKygqFnsDhgQgyMnqWcR7H9dyjPK
-         bA1AWHT8gjX1Ac6e2oaggOzajZmfL20OuqVE5bVgq5qs1Z8IbVc8NPeizsrD83PonvQZ
-         Rb8Q5ekFeX0asrCkr8MirwRA9hHFuUIRIZJgYdPylQgrZs5Bd50cWytkEXtgVHXIUm9r
-         NmUa/0cck6XN1YDeTe3HDbNKhB1dBwyjhuXmX4C/KGJ2DNSB0FWtq1reC4kvuhLM5Egw
-         WcT5uVGleNO+J7jQQDIsiFEN+FlR+NjiDNFyugrP/k9BL3NHyFlv8a07SRDVrc7GxRJ2
-         752w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AIpwx49TleLx6jp0Cs3hj6ZW8nnI1Gdz/rsts9iYbHNZASk+uLt2VqN7L9Oc+eD2Ka+Z4Vxxn5gyiA==
+Date: Mon, 23 Apr 2018 13:55:16 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Darren Hart <dvhart@infradead.org>,
+	Andy Shevchenko <andy@infradead.org>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Jones <pjones@redhat.com>, Dave Olsthoorn <dave@bewaar.me>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Matt Fleming <matt@codeblueprint.co.uk>,
+	David Howells <dhowells@redhat.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Josh Triplett <josh@joshtriplett.org>, dmitry.torokhov@gmail.com,
+	mfuzzey@parkeon.com, keescook@chromium.org,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Arend Van Spriel <arend.vanspriel@broadcom.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, nbroeking@me.com,
+	bjorn.andersson@linaro.org, Torsten Duwe <duwe@suse.de>,
+	x86@kernel.org, linux-efi@vger.kernel.org
 Subject: Re: [PATCH v3 1/5] efi: Export boot-services code and data as
  debugfs-blobs
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>,
- "Luis R . Rodriguez" <mcgrof@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H . Peter Anvin" <hpa@zytor.com>, platform-driver-x86@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Peter Jones <pjones@redhat.com>, Dave Olsthoorn <dave@bewaar.me>,
- Will Deacon <will.deacon@arm.com>, Andy Lutomirski <luto@kernel.org>,
- Matt Fleming <matt@codeblueprint.co.uk>, David Howells
- <dhowells@redhat.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
- Josh Triplett <josh@joshtriplett.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Martin Fuzzey <mfuzzey@parkeon.com>, Kees Cook <keescook@chromium.org>,
- Kalle Valo <kvalo@codeaurora.org>,
- Arend Van Spriel <arend.vanspriel@broadcom.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Nicolas Broeking <nbroeking@me.com>,
- Bjorn Andersson <bjorn.andersson@linaro.org>, Torsten Duwe <duwe@suse.de>,
- the arch/x86 maintainers <x86@kernel.org>, linux-efi@vger.kernel.org
+Message-ID: <20180423115516.GA7951@kroah.com>
 References: <20180408174014.21908-1-hdegoede@redhat.com>
  <20180408174014.21908-2-hdegoede@redhat.com>
- <CAKv+Gu-DZ86y5pmQ+-gQWLHAcs47H-cixCM1pBKmKZXA=+jRmg@mail.gmail.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <3919feeb-cdad-7ce0-4fdf-1bf0004b63b5@redhat.com>
-Date: Tue, 24 Apr 2018 15:11:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-DZ86y5pmQ+-gQWLHAcs47H-cixCM1pBKmKZXA=+jRmg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597199777602363676?=
-X-GMAIL-MSGID: =?utf-8?q?1598633267360235949?=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180408174014.21908-2-hdegoede@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
-
-On 16-04-18 10:23, Ard Biesheuvel wrote:
-> Hallo Hans,
+On Sun, Apr 08, 2018 at 07:40:10PM +0200, Hans de Goede wrote:
+> Sometimes it is useful to be able to dump the efi boot-services code and
+> data. This commit adds these as debugfs-blobs to /sys/kernel/debug/efi,
+> but only if efi=debug is passed on the kernel-commandline as this requires
+> not freeing those memory-regions, which costs 20+ MB of RAM.
 > 
-> On 8 April 2018 at 19:40, Hans de Goede <hdegoede@redhat.com> wrote:
->> Sometimes it is useful to be able to dump the efi boot-services code and
->> data. This commit adds these as debugfs-blobs to /sys/kernel/debug/efi,
->> but only if efi=debug is passed on the kernel-commandline as this requires
->> not freeing those memory-regions, which costs 20+ MB of RAM.
->>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->> Changes in v2:
->> -Do not call pr_err on debugfs call failures
->> ---
->>   arch/x86/platform/efi/quirks.c |  4 +++
->>   drivers/firmware/efi/efi.c     | 53 ++++++++++++++++++++++++++++++++++
->>   2 files changed, 57 insertions(+)
->>
->> diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
->> index 5b513ccffde4..0f968c7bcfec 100644
->> --- a/arch/x86/platform/efi/quirks.c
->> +++ b/arch/x86/platform/efi/quirks.c
->> @@ -374,6 +374,10 @@ void __init efi_free_boot_services(void)
->>          int num_entries = 0;
->>          void *new, *new_md;
->>
->> +       /* Keep all regions for /sys/kernel/debug/efi */
->> +       if (efi_enabled(EFI_DBG))
->> +               return;
->> +
->>          for_each_efi_memory_desc(md) {
->>                  unsigned long long start = md->phys_addr;
->>                  unsigned long long size = md->num_pages << EFI_PAGE_SHIFT;
->> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
->> index cd42f66a7c85..10c896e8b82b 100644
->> --- a/drivers/firmware/efi/efi.c
->> +++ b/drivers/firmware/efi/efi.c
->> @@ -18,6 +18,7 @@
->>   #include <linux/kobject.h>
->>   #include <linux/module.h>
->>   #include <linux/init.h>
->> +#include <linux/debugfs.h>
->>   #include <linux/device.h>
->>   #include <linux/efi.h>
->>   #include <linux/of.h>
->> @@ -316,6 +317,55 @@ static __init int efivar_ssdt_load(void)
->>   static inline int efivar_ssdt_load(void) { return 0; }
->>   #endif
->>
->> +#ifdef CONFIG_DEBUG_FS
->> +
->> +#define EFI_DEBUGFS_MAX_BLOBS 32
->> +
->> +static struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
->> +
->> +static void __init efi_debugfs_init(void)
->> +{
->> +       struct dentry *efi_debugfs;
->> +       efi_memory_desc_t *md;
->> +       char name[32];
->> +       int type_count[EFI_BOOT_SERVICES_DATA + 1] = {};
->> +       int i = 0;
->> +
->> +       efi_debugfs = debugfs_create_dir("efi", NULL);
->> +       if (IS_ERR_OR_NULL(efi_debugfs))
->> +               return;
->> +
->> +       for_each_efi_memory_desc(md) {
->> +               switch (md->type) {
->> +               case EFI_BOOT_SERVICES_CODE:
->> +                       snprintf(name, sizeof(name), "boot_services_code%d",
->> +                                type_count[md->type]++);
->> +                       break;
->> +               case EFI_BOOT_SERVICES_DATA:
->> +                       snprintf(name, sizeof(name), "boot_services_data%d",
->> +                                type_count[md->type]++);
->> +                       break;
->> +               default:
->> +                       continue;
->> +               }
->> +
->> +               debugfs_blob[i].size = md->num_pages << EFI_PAGE_SHIFT;
->> +               debugfs_blob[i].data = memremap(md->phys_addr,
->> +                                               debugfs_blob[i].size,
->> +                                               MEMREMAP_WB);
->> +               if (!debugfs_blob[i].data)
->> +                       continue;
->> +
->> +               debugfs_create_blob(name, 0400, efi_debugfs, &debugfs_blob[i]);
->> +               i++;
->> +               if (i == EFI_DEBUGFS_MAX_BLOBS)
->> +                       break;
->> +       }
->> +}
->> +#else
->> +static inline void efi_debugfs_init(void) {}
->> +#endif
->> +
->>   /*
->>    * We register the efi subsystem with the firmware subsystem and the
->>    * efivars subsystem with the efi subsystem, if the system was booted with
->> @@ -360,6 +410,9 @@ static int __init efisubsys_init(void)
->>                  goto err_remove_group;
->>          }
->>
->> +       if (efi_enabled(EFI_DBG))
->> +               efi_debugfs_init();
->> +
-> 
-> This doesn't really make any sense on non-x86. The boot services
-> regions are released to the kernel for general allocation, and so
-> exposing them this way only makes sense if you keep them as you do for
-> x86.
-> 
-> Could you please try to make this call specific to situations where it
-> makes sense? I don't mind allocating a new EFI_xxx flag for preserving
-> the boot services regions so we could decide to set it for ARM/arm64
-> as well in certain cases in the future.
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-Ok, I've added a new EFI_BOOT_SERVICES flag for this for v4 of this
-patchset, mirroring the existing EFI_RUNTIME_SERVICES flag in naming.
+For the debugfs interaction:
 
-Regards,
-
-Hans
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
