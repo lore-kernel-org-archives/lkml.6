@@ -1,125 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754425AbeDWIeH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:34:07 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:36067 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754309AbeDWIeD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:34:03 -0400
-X-Google-Smtp-Source: AIpwx4+U6J1J36s5uUXaJWNNkrjEPNNNVq2ioN0wM7VIgBYvS3db6a3OvYPes1tDUAmhwPDTYX1kU1F4RFViYAkUhn/DWbvxcelI
+        id S1754372AbeDWIgV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:36:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59492 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754114AbeDWIgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 04:36:16 -0400
+Subject: Re: [PATCH RFC] ACPI: disable extra P_LVLx access on KVM
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org
+References: <1522431741-4678-1-git-send-email-mst@redhat.com>
+ <1969294.enFTGV94N4@aspire.rjw.lan>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <dbf3d84a-8482-cc59-11c9-f59585c8c349@redhat.com>
+Date: Mon, 23 Apr 2018 10:36:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Mon, 23 Apr 2018 01:34:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000068d87d056a7fe601@google.com>
-Subject: BUG: soft lockup in _raw_spin_unlock
-From: syzbot <syzbot+9d16ae40a3249b00a524@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <1969294.enFTGV94N4@aspire.rjw.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 23/04/2018 10:07, Rafael J. Wysocki wrote:
+> On Friday, March 30, 2018 7:43:58 PM CEST Michael S. Tsirkin wrote:
+>> As documented by commit b488f021 "ACPI: restore comment justifying
+>> 'extra' P_LVLx access", Linux does an extra IO read after entering idle
+>> because on (some) chipsets STPCLK# doesn't get asserted in time
+>> to prevent further instruction processing.
+>>
+>> This can never be the case on KVM, and a timer read causes an expensive
+>> VM exit in turn causing useless load on host system. Detect KVM and skip
+>> the read.  TODO: whitelist more hypervisors?
+>>
+>> Note: very lightly tested.  Pls don't apply this yet, I am working on a
+>> _CST implementation for KVM and will repost this without the RFC tag
+>> when it's been tested properly.
+>>
+>> Posting now for early flames/feedback.
+>>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Cc: kvm@vger.kernel.org
+>> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>> ---
+>>  drivers/acpi/processor_idle.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+>> index abb559c..8ae28dc 100644
+>> --- a/drivers/acpi/processor_idle.c
+>> +++ b/drivers/acpi/processor_idle.c
+>> @@ -33,6 +33,7 @@
+>>  #include <linux/cpuidle.h>
+>>  #include <linux/cpu.h>
+>>  #include <acpi/processor.h>
+>> +#include <linux/kvm_para.h>
+>>  
+>>  /*
+>>   * Include the apic definitions for x86 to have the APIC timer related defines
+>> @@ -665,7 +666,8 @@ static void __cpuidle acpi_idle_do_entry(struct acpi_processor_cx *cx)
+>>  		/* Dummy wait op - must do something useless after P_LVL2 read
+>>  		   because chipsets cannot guarantee that STPCLK# signal
+>>  		   gets asserted in time to freeze execution properly. */
+>> -		inl(acpi_gbl_FADT.xpm_timer_block.address);
+>> +		if (!kvm_para_available())
+>> +			inl(acpi_gbl_FADT.xpm_timer_block.address);
+>>  	}
+>>  }
+>>  
+>> @@ -687,7 +689,8 @@ static int acpi_idle_play_dead(struct cpuidle_device *dev, int index)
+>>  		else if (cx->entry_method == ACPI_CSTATE_SYSTEMIO) {
+>>  			inb(cx->address);
+>>  			/* See comment in acpi_idle_do_entry() */
+>> -			inl(acpi_gbl_FADT.xpm_timer_block.address);
+>> +			if (!kvm_para_available())
+>> +				inl(acpi_gbl_FADT.xpm_timer_block.address);
+>>  		} else
+>>  			return -ENODEV;
+>>  	}
+>>
+> 
+> While I have no objections to this change from the ACPI side, I'd like someone
+> from the KVM land to comment on this.
 
-syzbot hit the following crash on bpf-next commit
-878a4d328104fed86ea321c48a5245eed44fbe14 (Fri Apr 20 08:05:16 2018 +0000)
-libbpf: fixed build error for samples/bpf/
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=9d16ae40a3249b00a524
+It would be nicer to blacklist the problematic chipsets, or as Michael
+said have a way to whitelist more hypervisors, but this is certainly
+okay from KVM land too.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6223576852070400
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-8733987683919582507
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+Thanks,
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9d16ae40a3249b00a524@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-random: crng init done
-watchdog: BUG: soft lockup - CPU#1 stuck for 134s! [syz-executor5:4541]
-Modules linked in:
-irq event stamp: 61201690
-hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>]  
-seqcount_lockdep_reader_access include/linux/seqlock.h:83 [inline]
-hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>]  
-read_seqcount_begin include/linux/seqlock.h:164 [inline]
-hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>] read_seqbegin  
-include/linux/seqlock.h:433 [inline]
-hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>]  
-read_seqbegin_or_lock include/linux/seqlock.h:529 [inline]
-hardirqs last  enabled at (61201689): [<ffffffff81c37e8f>]  
-d_walk+0x80f/0xc80 fs/dcache.c:1248
-hardirqs last disabled at (61201690): [<ffffffff87800901>]  
-interrupt_entry+0xb1/0xf0 arch/x86/entry/entry_64.S:624
-softirqs last  enabled at (22717476): [<ffffffff87a00778>]  
-__do_softirq+0x778/0xaf5 kernel/softirq.c:311
-softirqs last disabled at (22717407): [<ffffffff8146fce1>] invoke_softirq  
-kernel/softirq.c:365 [inline]
-softirqs last disabled at (22717407): [<ffffffff8146fce1>]  
-irq_exit+0x1d1/0x200 kernel/softirq.c:405
-CPU: 1 PID: 4541 Comm: syz-executor5 Not tainted 4.16.0+ #8
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
-[inline]
-RIP: 0010:lock_release+0x4d4/0xa10 kernel/locking/lockdep.c:3942
-RSP: 0018:ffff88019e567880 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff10033cacf15 RCX: 1ffff10033cab9dd
-RDX: 1ffffffff11a30ed RSI: 0000000000000004 RDI: 0000000000000282
-RBP: ffff88019e5679b0 R08: 1ffff10033cacf19 R09: ffffed003b5e46c2
-R10: 0000000000000003 R11: 0000000000000003 R12: ffff88019e55c6c0
-R13: ffff8801a8c5a7b8 R14: ffff88019e55c6c0 R15: ffff88019e5678c8
-FS:  0000000000e6f940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000e78978 CR3: 000000019ec29000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __raw_spin_unlock include/linux/spinlock_api_smp.h:150 [inline]
-  _raw_spin_unlock+0x1a/0x30 kernel/locking/spinlock.c:176
-  spin_unlock include/linux/spinlock.h:350 [inline]
-  d_walk+0x75f/0xc80 fs/dcache.c:1332
-  shrink_dcache_parent+0x179/0x230 fs/dcache.c:1486
-  vfs_rmdir+0x202/0x470 fs/namei.c:3850
-  do_rmdir+0x523/0x610 fs/namei.c:3911
-  SYSC_rmdir fs/namei.c:3929 [inline]
-  SyS_rmdir+0x1a/0x20 fs/namei.c:3927
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4550e7
-RSP: 002b:00007fff59f01b28 EFLAGS: 00000206 ORIG_RAX: 0000000000000054
-RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 00000000004550e7
-RDX: 0000000000000000 RSI: 00007fff59f038d0 RDI: 00007fff59f038d0
-RBP: 00007fff59f038d0 R08: 0000000000000000 R09: 0000000000000001
-R10: 000000000000000a R11: 0000000000000206 R12: 0000000000e70940
-R13: 0000000000000000 R14: 00000000000001ca R15: 0000000000019a6a
-Code: 00 00 00 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 a3 03 00 00 48 83 3d  
-13 d0 75 07 00 0f 84 b8 02 00 00 48 8b bd e8 fe ff ff 57 9d <0f> 1f 44 00  
-00 48 b8 00 00 00 00 00 fc ff df 48 01 c3 48 c7 03
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+paolo
