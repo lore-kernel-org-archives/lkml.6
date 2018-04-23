@@ -1,43 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932398AbeDWThm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 15:37:42 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57322 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932175AbeDWThl (ORCPT
+        id S932369AbeDWTnm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 15:43:42 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:49512 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932244AbeDWTnl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 15:37:41 -0400
-Date: Mon, 23 Apr 2018 21:37:23 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Peng Hao <peng.hao2@zte.com.cn>
-Cc: tglx@linutronix.de, pbonzini@redhat.com, mingo@redhat.com,
-        x86@kernel.org, len.brown@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: tsc: fix L2 guest always in tsc_early clocksource
-Message-ID: <20180423193723.GO4082@hirez.programming.kicks-ass.net>
-References: <1524532134-31408-1-git-send-email-peng.hao2@zte.com.cn>
+        Mon, 23 Apr 2018 15:43:41 -0400
+From: Richard Weinberger <richard@nod.at>
+To: Alexander Pateenok <pateenoc@gmail.com>
+Cc: Jeff Dike <jdike@addtoit.com>,
+        user-mode-linux-devel@lists.sourceforge.net,
+        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] um: remove uml initcalls
+Date: Mon, 23 Apr 2018 21:43:32 +0200
+Message-ID: <63526108.WSV0FGAsac@blindfold>
+In-Reply-To: <20180423182017.oxlfhnsrekk34q3b@K55DR>
+References: <20180423182017.oxlfhnsrekk34q3b@K55DR>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524532134-31408-1-git-send-email-peng.hao2@zte.com.cn>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 09:08:54AM +0800, Peng Hao wrote:
-> In L2 guest tsc_read_refs always return ULLONG_MAX, and that will
-> call tsc_refine_calibration_work periodly. So L2 guest will read
-> acpi timer port 0x608 periodly.
-> The patch will let it out of "if(tsc_start == -1){}" infinite loop.
+Alexander,
 
-Help me out a little. What's an L2 guest?
+Am Montag, 23. April 2018, 20:20:17 CEST schrieb Alexander Pateenok:
+> __uml_initcall() is not used and .uml.initcall.init section is empty:
+> 
+> $ grep -r '__uml_initcall('
+> arch/um/include/shared/init.h:#define __uml_initcall(fn)	\
+> $ readelf -s ../umobj/linux | grep __uml_initcall
+>  23214: 00000000603b75d8     0 NOTYPE  GLOBAL DEFAULT   32 __uml_initcall_start
+>  25337: 00000000603b75d8     0 NOTYPE  GLOBAL DEFAULT   32 __uml_initcall_end
+> 
+> So it is unnecessary.
 
-And I'm assuming you don't have HPET and then end up wanting to use
-PM-timer? Which is also busted and resturns crap results?
+Right. The last user was removed almost 10 years ago by:
+d2efa6d5ce14 ("uml: remove the dead TTY_LOG code")
 
-So if the whole TSC sync has no way of ever working; what is your patch
-doing? How is the actual TSC calibrated?
-
-Should you instead be using fast_calibrate() and passing in a known
-value from the host? Thereby avoiding all this calibration nonsense
-entirely.
+Thanks,
+//richard
