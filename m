@@ -1,248 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755222AbeDWKv6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:51:58 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:39146 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755107AbeDWKvM (ORCPT
+        id S1755256AbeDWKwW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:52:22 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49090 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754808AbeDWKwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:51:12 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        a.hajda@samsung.com, kernel@collabora.com, m.szyprowski@samsung.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com,
-        linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com,
-        hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH v6 25/27] drm/rockchip: psr: Sanitize semantics of allow/inhibit API
-Date: Mon, 23 Apr 2018 12:50:01 +0200
-Message-Id: <20180423105003.9004-26-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
-References: <20180423105003.9004-1-enric.balletbo@collabora.com>
+        Mon, 23 Apr 2018 06:52:19 -0400
+Date: Mon, 23 Apr 2018 12:52:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Yonghong Song <yhs@fb.com>
+Cc: mingo@kernel.org, ast@fb.com, daniel@iogearbox.net,
+        linux-kernel@vger.kernel.org, x86@kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH v2] x86/cpufeature: guard asm_volatile_goto usage with
+ NO_BPF_WORKAROUND
+Message-ID: <20180423105209.GX4064@hirez.programming.kicks-ass.net>
+References: <20180415042738.1788215-1-yhs@fb.com>
+ <20180420081936.GD4064@hirez.programming.kicks-ass.net>
+ <fd14097e-31c5-0c0e-cbe5-d399299ca489@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd14097e-31c5-0c0e-cbe5-d399299ca489@fb.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomasz Figa <tfiga@chromium.org>
+On Fri, Apr 20, 2018 at 11:06:03AM -0700, Yonghong Song wrote:
+> On 4/20/18 1:19 AM, Peter Zijlstra wrote:
 
-Currently both rockchip_drm_psr_activate() and _deactivate() only set the
-boolean "active" flag without actually making sure that hardware state
-complies with it.
+> > Hurm, so adding __BPF__ for BPF compiles isn't an option? It seems to me
+> > having a CPP flag to identify BPF compile context might be useful in
+> > general.
+> 
+> With "clang -target bpf", we already have __BPF__ defined.
+> For tracing, esp. ptrace.h is included, "clang -target <native_arch>" where
+> "-target <native_arch>" can be omitted, is typically used.
 
-Since we are going to extend the usage of this API to properly lock PSR
-for the duration of atomic commits, we change the semantics in following
-way:
- - a counter is used to track the number of inhibit requests,
- - PSR is actually disabled in hardware on first inhibit request,
- - PSR enable work is scheduled on last allow request.
+> The reason is the native architecture header files typically
+> include a lot of various asm related stuff where "-target bpf" cannot
+> really handle. We relay on native clang to flush out all these
+> asm constructs and only bpf program needed stuff survives
+> reach to backend compiler.
 
-The above allows using the API as a way to deterministically synchronize
-PSR state changes with other DRM events, i.e. atomic commits and cursor
-updates. As a nice side effect, the naming is sorted out and we have
-"inhibit" for stopping the software logic and "enable" for hardware
-state.
+So because 'clang -target bpf' is 'broken', you do a work-around using
+'clang -target <native_arch>'. But because that doesn't set __BPF__ you
+want to add NO_BPF_WORKAROUND to the kernel instead of adding __BPF__ to
+your build rules to better mimick -target bpf, which you should be
+using.
 
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
----
-
- .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  4 +-
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c   | 55 ++++++++++++++-----
- drivers/gpu/drm/rockchip/rockchip_drm_psr.h   |  4 +-
- 3 files changed, 46 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 6d45d62466b3..080f05352195 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -134,7 +134,7 @@ static int rockchip_dp_poweron_end(struct analogix_dp_plat_data *plat_data)
- {
- 	struct rockchip_dp_device *dp = to_dp(plat_data);
- 
--	return rockchip_drm_psr_activate(&dp->encoder);
-+	return rockchip_drm_psr_inhibit_put(&dp->encoder);
- }
- 
- static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
-@@ -142,7 +142,7 @@ static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
- 	struct rockchip_dp_device *dp = to_dp(plat_data);
- 	int ret;
- 
--	ret = rockchip_drm_psr_deactivate(&dp->encoder);
-+	ret = rockchip_drm_psr_inhibit_get(&dp->encoder);
- 	if (ret != 0)
- 		return ret;
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-index 1a6157ffecec..74f6a6a887dd 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-@@ -25,7 +25,7 @@ struct psr_drv {
- 	struct drm_encoder	*encoder;
- 
- 	struct mutex		lock;
--	bool			active;
-+	int			inhibit_count;
- 	bool			enabled;
- 
- 	struct delayed_work	flush_work;
-@@ -71,7 +71,7 @@ static int psr_set_state_locked(struct psr_drv *psr, bool enable)
- {
- 	int ret;
- 
--	if (!psr->active)
-+	if (psr->inhibit_count > 0)
- 		return -EINVAL;
- 
- 	if (enable == psr->enabled)
-@@ -96,13 +96,18 @@ static void psr_flush_handler(struct work_struct *work)
- }
- 
- /**
-- * rockchip_drm_psr_activate - activate PSR on the given pipe
-+ * rockchip_drm_psr_inhibit_put - release PSR inhibit on given encoder
-  * @encoder: encoder to obtain the PSR encoder
-  *
-+ * Decrements PSR inhibit count on given encoder. Should be called only
-+ * for a PSR inhibit count increment done before. If PSR inhibit counter
-+ * reaches zero, PSR flush work is scheduled to make the hardware enter
-+ * PSR mode in PSR_FLUSH_TIMEOUT_MS.
-+ *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
--int rockchip_drm_psr_activate(struct drm_encoder *encoder)
-+int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder)
- {
- 	struct psr_drv *psr = find_psr_by_encoder(encoder);
- 
-@@ -110,21 +115,30 @@ int rockchip_drm_psr_activate(struct drm_encoder *encoder)
- 		return PTR_ERR(psr);
- 
- 	mutex_lock(&psr->lock);
--	psr->active = true;
-+	--psr->inhibit_count;
-+	WARN_ON(psr->inhibit_count < 0);
-+	if (!psr->inhibit_count)
-+		mod_delayed_work(system_wq, &psr->flush_work,
-+				 PSR_FLUSH_TIMEOUT_MS);
- 	mutex_unlock(&psr->lock);
- 
- 	return 0;
- }
--EXPORT_SYMBOL(rockchip_drm_psr_activate);
-+EXPORT_SYMBOL(rockchip_drm_psr_inhibit_put);
- 
- /**
-- * rockchip_drm_psr_deactivate - deactivate PSR on the given pipe
-+ * rockchip_drm_psr_inhibit_get - acquire PSR inhibit on given encoder
-  * @encoder: encoder to obtain the PSR encoder
-  *
-+ * Increments PSR inhibit count on given encoder. This function guarantees
-+ * that after it returns PSR is turned off on given encoder and no PSR-related
-+ * hardware state change occurs at least until a matching call to
-+ * rockchip_drm_psr_inhibit_put() is done.
-+ *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
--int rockchip_drm_psr_deactivate(struct drm_encoder *encoder)
-+int rockchip_drm_psr_inhibit_get(struct drm_encoder *encoder)
- {
- 	struct psr_drv *psr = find_psr_by_encoder(encoder);
- 
-@@ -132,14 +146,14 @@ int rockchip_drm_psr_deactivate(struct drm_encoder *encoder)
- 		return PTR_ERR(psr);
- 
- 	mutex_lock(&psr->lock);
--	psr->active = false;
--	psr->enabled = false;
-+	psr_set_state_locked(psr, false);
-+	++psr->inhibit_count;
- 	mutex_unlock(&psr->lock);
- 	cancel_delayed_work_sync(&psr->flush_work);
- 
- 	return 0;
- }
--EXPORT_SYMBOL(rockchip_drm_psr_deactivate);
-+EXPORT_SYMBOL(rockchip_drm_psr_inhibit_get);
- 
- static void rockchip_drm_do_flush(struct psr_drv *psr)
- {
-@@ -199,6 +213,11 @@ EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
-  * @encoder: encoder that obtain the PSR function
-  * @psr_set: call back to set PSR state
-  *
-+ * The function returns with PSR inhibit counter initialized with one
-+ * and the caller (typically encoder driver) needs to call
-+ * rockchip_drm_psr_inhibit_put() when it becomes ready to accept PSR
-+ * enable request.
-+ *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
-@@ -218,7 +237,7 @@ int rockchip_drm_psr_register(struct drm_encoder *encoder,
- 	INIT_DELAYED_WORK(&psr->flush_work, psr_flush_handler);
- 	mutex_init(&psr->lock);
- 
--	psr->active = false;
-+	psr->inhibit_count = 1;
- 	psr->enabled = false;
- 	psr->encoder = encoder;
- 	psr->set = psr_set;
-@@ -236,6 +255,11 @@ EXPORT_SYMBOL(rockchip_drm_psr_register);
-  * @encoder: encoder that obtain the PSR function
-  * @psr_set: call back to set PSR state
-  *
-+ * It is expected that the PSR inhibit counter is 1 when this function is
-+ * called, which corresponds to a state when related encoder has been
-+ * disconnected from any CRTCs and its driver called
-+ * rockchip_drm_psr_inhibit_get() to stop the PSR logic.
-+ *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
-@@ -247,7 +271,12 @@ void rockchip_drm_psr_unregister(struct drm_encoder *encoder)
- 	mutex_lock(&drm_drv->psr_list_lock);
- 	list_for_each_entry_safe(psr, n, &drm_drv->psr_list, list) {
- 		if (psr->encoder == encoder) {
--			cancel_delayed_work_sync(&psr->flush_work);
-+			/*
-+			 * Any other value would mean that the encoder
-+			 * is still in use.
-+			 */
-+			WARN_ON(psr->inhibit_count != 1);
-+
- 			list_del(&psr->list);
- 			kfree(psr);
- 		}
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-index 06537ee27565..40e026c14168 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-@@ -18,8 +18,8 @@
- void rockchip_drm_psr_flush_all(struct drm_device *dev);
- int rockchip_drm_psr_flush(struct drm_crtc *crtc);
- 
--int rockchip_drm_psr_activate(struct drm_encoder *encoder);
--int rockchip_drm_psr_deactivate(struct drm_encoder *encoder);
-+int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder);
-+int rockchip_drm_psr_inhibit_get(struct drm_encoder *encoder);
- 
- int rockchip_drm_psr_register(struct drm_encoder *encoder,
- 			int (*psr_set)(struct drm_encoder *, bool enable));
--- 
-2.17.0
+How is that sane? Why not use 'clang -target <native_arch> -D__BPF__'
