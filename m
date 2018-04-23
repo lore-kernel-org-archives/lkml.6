@@ -1,115 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754586AbeDWJjG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:39:06 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:6527 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754304AbeDWJjF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:39:05 -0400
-X-UUID: 7c6ca21f6a1b45778d42aff72a290742-20180423
-Message-ID: <1524476340.12322.14.camel@mtkswgap22>
-Subject: Re: [PATCH v2 2/2] soc: mediatek: add a fixed wait for SRAM stable
-From: Sean Wang <sean.wang@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: <rjw@rjwysocki.net>, <khilman@baylibre.com>, <ulf.hansson@linaro.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Weiyi Lu" <weiyi.lu@mediatek.com>
-Date: Mon, 23 Apr 2018 17:39:00 +0800
-In-Reply-To: <51840588-96e4-2520-f3d7-a61e74da6814@gmail.com>
-References: <2e16481e1477dfae0cfb24568d8111da81d92628.1524472331.git.sean.wang@mediatek.com>
-         <0ef8e87ba7156e626d1a1a48388f222ce917099b.1524472331.git.sean.wang@mediatek.com>
-         <51840588-96e4-2520-f3d7-a61e74da6814@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1754449AbeDWJkO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 05:40:14 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59339 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754078AbeDWJkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 05:40:12 -0400
+Date: Mon, 23 Apr 2018 11:40:09 +0200
+From: Quentin Schulz <quentin.schulz@bootlin.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH 2/2] ubi: introduce ubi.nocheck parameter to skip CRC
+ check when attaching ubi vol
+Message-ID: <20180423094009.5cjvg7jxvwiegq2g@qschulz>
+References: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com>
+ <6551534f88b3aa77cc377c4270c4ddf7fe92cdf4.1524214122.git-series.quentin.schulz@bootlin.com>
+ <20180420191924.18b81e96@bbrezillon>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6t2mtra42yh4ylry"
+Content-Disposition: inline
+In-Reply-To: <20180420191924.18b81e96@bbrezillon>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-23 at 11:31 +0200, Matthias Brugger wrote:
-> 
-> On 04/23/2018 10:36 AM, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > MT7622_POWER_DOMAIN_WB doesn't send an ACK when its managed SRAM becomes
-> > stable, which is not like the behavior the other power domains should
-> > have. Therefore, it's necessary for such a power domain to have a fixed
-> > and well-predefined duration to wait until its managed SRAM can be allowed
-> > to access by all functions running on the top.
-> > 
-> > v1 -> v2:
-> >  - use MTK_SCPD_FWAIT_SRAM flag as an indication requiring force waiting.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > Cc: Weiyi Lu <weiyi.lu@mediatek.com>
-> > ---
-> >  drivers/soc/mediatek/mtk-scpsys.c | 24 ++++++++++++++++++------
-> >  1 file changed, 18 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> > index b1b45e4..d4f1a63 100644
-> > --- a/drivers/soc/mediatek/mtk-scpsys.c
-> > +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> > @@ -32,6 +32,7 @@
-> >  #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
-> >  
-> >  #define MTK_SCPD_ACTIVE_WAKEUP		BIT(0)
-> > +#define MTK_SCPD_FWAIT_SRAM		BIT(1)
-> >  #define MTK_SCPD_CAPS(_scpd, _x)	((_scpd)->data->caps & (_x))
-> >  
-> >  #define SPM_VDE_PWR_CON			0x0210
-> > @@ -237,11 +238,22 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
-> >  	val &= ~scpd->data->sram_pdn_bits;
-> >  	writel(val, ctl_addr);
-> >  
-> > -	/* wait until SRAM_PDN_ACK all 0 */
-> > -	ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
-> > -				 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-> > -	if (ret < 0)
-> > -		goto err_pwr_ack;
-> > +	/* Either wait until SRAM_PDN_ACK all 0 or have a force wait */
-> > +	if (!MTK_SCPD_CAPS(scpd, MTK_SCPD_FWAIT_SRAM)) {
-> > +		ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
-> > +					 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-> > +		if (ret < 0)
-> > +			goto err_pwr_ack;
-> > +	} else {
-> > +		/*
-> > +		 * Currently, MTK_SCPD_FWAIT_SRAM is necessary only for
-> > +		 * MT7622_POWER_DOMAIN_WB and thus just a trivial setup is
-> > +		 * applied here. If there're more domains which need to force
-> > +		 * waiting for its own pre-defined value, the duration should
-> > +		 * be coded in the caps field.
-> > +		 */
-> 
-> I would say, if necessary in the future we can add a switch statement here.
-> Other then that the patches look good. If you are OK, I'll just delete the last
-> sentence when applying the patch.
-> 
 
-yes, it's okay for me. 
+--6t2mtra42yh4ylry
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Regards,
-> Matthias
-> 
-> > +		usleep_range(12000, 12100);
-> > +	};
-> >  
-> >  	if (scpd->data->bus_prot_mask) {
-> >  		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
-> > @@ -785,7 +797,7 @@ static const struct scp_domain_data scp_domain_data_mt7622[] = {
-> >  		.sram_pdn_ack_bits = 0,
-> >  		.clk_id = {CLK_NONE},
-> >  		.bus_prot_mask = MT7622_TOP_AXI_PROT_EN_WB,
-> > -		.caps = MTK_SCPD_ACTIVE_WAKEUP,
-> > +		.caps = MTK_SCPD_ACTIVE_WAKEUP | MTK_SCPD_FWAIT_SRAM,
-> >  	},
-> >  };
-> >  
-> > 
+Hi Boris,
+
+On Fri, Apr 20, 2018 at 07:19:24PM +0200, Boris Brezillon wrote:
+> On Fri, 20 Apr 2018 10:52:41 +0200
+> Quentin Schulz <quentin.schulz@bootlin.com> wrote:
+>=20
+> > There's already ECC on NAND pages so there may be no need for one to
+> > check the CRC of a UBI volume.
+>=20
+> That's true that ECC can help detecting corruptions, but I don't think
+> this is the actual reason for disabling CRC check at volume open time.
+> The actual reason for doing that is when the UBI volume user (in our
+> case the squashfs FS) is also checking data consistency on its own
+> (which is the case for squashfs).
+>=20
+> >=20
+> > Let's introduce a ubi.nocheck parameter that let one skip the CRC check
+> > when attaching a UBI volume.
+> >=20
+> > This also drastically speeds kernel boot by removing a potentially
+> > useless check, e.g. I gained 3.2s on boot time of a SPEAr600-based board
+> > for a ~20MB UBI volume used as rootfs.
+>=20
+> Can you give the old and new open/mount time instead of telling how
+> much you gained on the whole boot-time?
+
+# grabserial -v -d /dev/ttyUSB0 -t "Starting kernel"
+
+Kernel command line is:
+rootfstype=3Dsquashfs root=3D/dev/ubiblock0_0 ubi.mtd=3Dubi ubi.block=3D0,r=
+ootfs mtdparts=3Dnand:92M@36M(ubi)
+
+Current behaviour (CRC checking):
+[2.335558 0.017867] ubi0: attaching mtd7
+[2.504021 0.168463] ubi0: scanning is finished
+[2.519824 0.015803] ubi0: attached mtd7 (name "ubi", size 92 MiB)
+[2.523987 0.004163] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 12902=
+4 bytes
+[2.530447 0.006460] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page siz=
+e 512
+[2.535836 0.005389] ubi0: VID header offset: 512 (aligned 512), data offset=
+: 2048
+[2.541601 0.005765] ubi0: good PEBs: 736, bad PEBs: 0, corrupted PEBs: 0
+[2.547923 0.006322] ubi0: user volume: 3, internal volumes: 1, max. volumes=
+ count: 128
+[2.554223 0.006300] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, =
+image sequence number: 463835917
+[2.562460 0.008237] ubi0: available PEBs: 0, total reserved PEBs: 736, PEBs=
+ reserved for bad PEB handling: 20
+[2.569779 0.007319] ubi0: background thread "ubi_bgt0d" started, PID 546
+[4.550142 1.980363] block ubiblock0_0: created from ubi0:0(rootfs)
+
+Skipping CRC check (ubi.nocheck=3D0,rootfs):
+[2.349903 0.019126] ubi0: attaching mtd7
+[2.516995 0.167092] ubi0: scanning is finished
+[2.527101 0.010106] ubi0: skipping CRC check for volume rootfs
+[2.536719 0.009618] ubi0: attached mtd7 (name "ubi", size 92 MiB)
+[2.541859 0.005140] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 12902=
+4 bytes
+[2.547744 0.005885] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page siz=
+e 512
+[2.552990 0.005246] ubi0: VID header offset: 512 (aligned 512), data offset=
+: 2048
+[2.560497 0.007507] ubi0: good PEBs: 736, bad PEBs: 0, corrupted PEBs: 0
+[2.568010 0.007513] ubi0: user volume: 3, internal volumes: 1, max. volumes=
+ count: 128
+[2.574723 0.006713] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, =
+image sequence number: 463835917
+[2.586223 0.011500] ubi0: available PEBs: 0, total reserved PEBs: 736, PEBs=
+ reserved for bad PEB handling: 20
+[2.592365 0.006142] ubi0: background thread "ubi_bgt0d" started, PID 545
+[2.595960 0.003595] block ubiblock0_0: created from ubi0:0(rootfs)
+
+It seems like it's more in the magnitude of 2s rather than 3, but still.
+
+This is retrieved from the boot log.
+
+Thanks,
+Quentin
+
+--6t2mtra42yh4ylry
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJa3anxAAoJEIS4mnU+4PGjU04QAJsGAk//w18sZRftPU4WqW/u
+SPYBFfU+W975QRkyxNSdpU0yferh4b+0EAUedAeYfiCLiWYb/kfqVz3+cuJcfulk
+0PtCDxrY+POGvwJyxMvKhFVNavGym7OTy7CAnCYcdmABpr8yvrgrKKwoKPD56iQE
+QNUneSv6aDq8IRJw0ObG+AXoDfRCM+Yf4P0EwcNjCZK8EqANHzjbM8HJBiyMfOZE
+tJWU+nCoVpnQ/B27lcgewaa7TDl0EiSb0X5ku1ARzLlezcOXdsBRWV/ANKd2p2d8
+fbBcmQE3l5uL6GMVXdtIgyQkwUcQRzSNdwwdhUiI9rXykTAZryedwttK4kmEAcYT
+YKZahwCZ5KqzeOKMbu+6Sn/6NbMfuiUdnnOYONHa9K6Wh4F2a0sF2YvyuGKJV29Q
+wDXQ68v98RJBEW/LZLh16NsZiI65PiliF29mk4lE4YnG2BMjpwIwcrH1HjJGJeDL
+4kZtn4eMMwffIh2BuGXBo+RbC/vVJCVvY9FkhCsphBjc2EbO+sDTVT6nkxw4YITT
+Copcp9DCIOP18oI1RqwtopyeHTKkO5H2WLMItErMQ9gSFOMVrPJYczvdeHQ2YCNn
+HfX6rfDh7wKHWqJ48qu0fcoz3NbrlI072tGoqsk6Zdx35iy/e3eOT19YaUWk4DLw
+1WywAM50gs6LhGzE4Nd2
+=Nqjv
+-----END PGP SIGNATURE-----
+
+--6t2mtra42yh4ylry--
