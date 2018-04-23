@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755285AbeDWNa7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:30:59 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:44828 "EHLO
+        id S1755372AbeDWNbL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:31:11 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42461 "EHLO
         mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755059AbeDWNa4 (ORCPT
+        with ESMTP id S1755059AbeDWNbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:30:56 -0400
-X-Google-Smtp-Source: AIpwx4+xP8vTFc9mPV3r32LvMEGUSwSVqKkxS320f2otdlV4YroByogh31EB0eSJuw/as8C+HRq6BA==
+        Mon, 23 Apr 2018 09:31:00 -0400
+X-Google-Smtp-Source: AIpwx49yLZ2T7Qa6/EhKvjbVWpz6czRwj+vDBzV+M9EaujhABMpT03x7lhOnwYC3NgBrrMpEzVvQ2g==
 From: David Herrmann <dh.herrmann@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
@@ -16,78 +16,55 @@ Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
         Eric Paris <eparis@parisplace.org>, serge@hallyn.com,
         davem@davemloft.net, netdev@vger.kernel.org,
         David Herrmann <dh.herrmann@gmail.com>
-Subject: [PATCH 0/3] Introduce LSM-hook for socketpair(2)
-Date: Mon, 23 Apr 2018 15:30:12 +0200
-Message-Id: <20180423133015.5455-1-dh.herrmann@gmail.com>
+Subject: [PATCH 3/3] selinux: provide unix_stream_socketpair callback
+Date: Mon, 23 Apr 2018 15:30:15 +0200
+Message-Id: <20180423133015.5455-4-dh.herrmann@gmail.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180423133015.5455-1-dh.herrmann@gmail.com>
+References: <20180423133015.5455-1-dh.herrmann@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Make sure to implement the new unix_stream_socketpair callback so the
+SO_PEERSEC call on socketpair(2)s will return correct information.
 
-This series adds a new LSM hook for the socketpair(2) syscall. The idea
-is to allow SO_PEERSEC to be called on AF_UNIX sockets created via
-socketpair(2), and return the same information as if you emulated
-socketpair(2) via a temporary listener socket. Right now SO_PEERSEC
-will return the unlabeled credentials for a socketpair, rather than the
-actual credentials of the creating process.
+Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+---
+ security/selinux/hooks.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-A simple call to:
-
-    socketpair(AF_UNIX, SOCK_STREAM, 0, out);
-
-can be emulated via a temporary listener socket bound to a unique,
-random name in the abstract namespace. By connecting to this listener
-socket, accept(2) will return the second part of the pair. If
-SO_PEERSEC is queried on these, the correct credentials of the creating
-process are returned. A simple comparison between the behavior of
-SO_PEERSEC on socketpair(2) and an emulated socketpair is included in
-the dbus-broker test-suite [1].
-
-This patch series tries to close this gap and makes both behave the
-same. A new LSM-hook is added which allows LSMs to cache the correct
-peer information on newly created socket-pairs.
-
-Apart from fixing this behavioral difference, the dbus-broker project
-actually needs to query the credentials of socketpairs, and currently
-must resort to racy procfs(2) queries to get the LSM credentials of its
-controller socket. Several parts of the dbus-broker project allow you
-to pass in a socket during execve(2), which will be used by the child
-process to accept control-commands from its parent. One natural way to
-create this communication channel is to use socketpair(2). However,
-right now SO_PEERSEC does not return any useful information, hence, the
-child-process would need other means to retrieve this information. By
-avoiding socketpair(2) and using the hacky-emulated version, this is not
-an issue.
-
-There was a previous discussion on this matter [2] roughly a year ago.
-Back then there was the suspicion that proper SO_PEERSEC would confuse
-applications. However, we could not find any evidence backing this
-suspicion. Furthermore, we now actually see the contrary. Lack of
-SO_PEERSEC makes it a hassle to use socketpairs with LSM credentials.
-Hence, we propose to implement full SO_PEERSEC for socketpairs.
-
-This series only adds SELinux backends, since that is what we need for
-RHEL. I will gladly extend the other LSMs if needed.
-
-Thanks
-David
-
-[1] https://github.com/bus1/dbus-broker/blob/master/src/util/test-peersec.c
-[2] https://www.spinics.net/lists/selinux/msg22674.html
-
-David Herrmann (3):
-  security: add hook for socketpair(AF_UNIX, ...)
-  net/unix: hook unix_socketpair() into LSM
-  selinux: provide unix_stream_socketpair callback
-
- include/linux/lsm_hooks.h |  8 ++++++++
- include/linux/security.h  |  7 +++++++
- net/unix/af_unix.c        |  5 +++++
- security/security.c       |  6 ++++++
- security/selinux/hooks.c  | 14 ++++++++++++++
- 5 files changed, 40 insertions(+)
-
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 4cafe6a19167..828881d9a41d 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4905,6 +4905,18 @@ static int selinux_socket_unix_stream_connect(struct sock *sock,
+ 	return 0;
+ }
+ 
++static int selinux_socket_unix_stream_socketpair(struct sock *socka,
++						 struct sock *sockb)
++{
++	struct sk_security_struct *sksec_a = socka->sk_security;
++	struct sk_security_struct *sksec_b = sockb->sk_security;
++
++	sksec_a->peer_sid = sksec_b->sid;
++	sksec_b->peer_sid = sksec_a->sid;
++
++	return 0;
++}
++
+ static int selinux_socket_unix_may_send(struct socket *sock,
+ 					struct socket *other)
+ {
+@@ -6995,6 +7007,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_getsecctx, selinux_inode_getsecctx),
+ 
+ 	LSM_HOOK_INIT(unix_stream_connect, selinux_socket_unix_stream_connect),
++	LSM_HOOK_INIT(unix_stream_socketpair,
++			selinux_socket_unix_stream_socketpair),
+ 	LSM_HOOK_INIT(unix_may_send, selinux_socket_unix_may_send),
+ 
+ 	LSM_HOOK_INIT(socket_create, selinux_socket_create),
 -- 
 2.17.0
