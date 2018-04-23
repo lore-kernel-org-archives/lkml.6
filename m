@@ -1,85 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755918AbeDWPV4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:21:56 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:54509 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755635AbeDWPVw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:21:52 -0400
-X-Originating-IP: 2.224.242.101
-Date: Mon, 23 Apr 2018 17:21:43 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
- (CEU)
-Message-ID: <20180423152143.GH3999@w540>
-References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
- <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
+        id S1755909AbeDWP0D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:26:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33332 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755666AbeDWP0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:26:01 -0400
+Date: Mon, 23 Apr 2018 18:25:57 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+Message-ID: <20180423181250-mutt-send-email-mst@kernel.org>
+References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
+ <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
+ <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180418.134651.2225112489265654270.davem@davemloft.net>
+ <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180420114712.GB10788@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804200817230.22382@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="RwxaKO075aXzzOz0"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <alpine.LRH.2.02.1804200817230.22382@file01.intranet.prod.int.rdu2.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Apr 20, 2018 at 08:20:23AM -0400, Mikulas Patocka wrote:
+> 
+> 
+> On Fri, 20 Apr 2018, Matthew Wilcox wrote:
+> 
+> > On Thu, Apr 19, 2018 at 12:12:38PM -0400, Mikulas Patocka wrote:
+> > > Unfortunatelly, some kernel code has bugs - it uses kvmalloc and then
+> > > uses DMA-API on the returned memory or frees it with kfree. Such bugs were
+> > > found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
+> > > code.
+> > 
+> > Maybe it's time to have the SG code handle vmalloced pages?  This is
+> > becoming more and more common with vmapped stacks (and some of our
+> > workarounds are hideous -- allocate 4 bytes with kmalloc because we can't
+> > DMA onto the stack any more?).  We already have a few places which do
+> > handle sgs of vmalloced addresses, such as the nx crypto driver:
+> > 
+> >         if (is_vmalloc_addr(start_addr))
+> >                 sg_addr = page_to_phys(vmalloc_to_page(start_addr))
+> >                           + offset_in_page(sg_addr);
+> >         else
+> >                 sg_addr = __pa(sg_addr);
+> > 
+> > and videobuf:
+> > 
+> >                 pg = vmalloc_to_page(virt);
+> >                 if (NULL == pg)
+> >                         goto err;
+> >                 BUG_ON(page_to_pfn(pg) >= (1 << (32 - PAGE_SHIFT)));
+> >                 sg_set_page(&sglist[i], pg, PAGE_SIZE, 0);
+> > 
+> > Yes, there's the potential that we have to produce two SG entries for a
+> > virtually contiguous region if it crosses a page boundary, and our APIs
+> > aren't set up right to make it happen.  But this is something we should
+> > consider fixing ... otherwise we'll end up with dozens of driver hacks.
+> > The videobuf implementation was already copy-and-pasted into the saa7146
+> > driver, for example.
+> 
+> What if the device requires physically contiguous area and the vmalloc 
+> area crosses a page? Will you use a bounce buffer? Where do you allocate 
+> the bounce buffer from? What if you run out of bounce buffers?
+> 
+> Mikulkas
 
---RwxaKO075aXzzOz0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+I agree with Matthew here.
 
-Hi Simon,
+4 byte variables are typically size aligned so won't cross a boundary.
 
-On Wed, Feb 21, 2018 at 07:29:18PM +0100, Simon Horman wrote:
-> On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
-> > Add Capture Engine Unit (CEU) node to device tree.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
->
-> This patch depends on the binding for "renesas,r7s72100-ceu".
-> Please repost or otherwise ping me once that dependency has been accepted.
+That's enough for virtio at least. People using structs can force
+alignment.
 
-Bindings for the CEU interface went in v4.17-rc1.
+We could wrap access in a macro (sizeof(x) >= alignof(x)) to help
+guarantee that.
 
-Could you please resurect this patch?
-
-Thanks
-   j
-
---RwxaKO075aXzzOz0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJa3foHAAoJEHI0Bo8WoVY88jgP/jwL5jYnW1PO6nNMb2aW2DdP
-lB6YSXYDY25gsU3XZH544VzEmi6Wj2ynXGqKNlkTuWubcvmbvXtMEUqoVuOIfnte
-TJhBphhttylk5yhxXK7MpaxDZ5zeD/mnhSsKr55ZIV6M+4g/7AZAESLif4eoJbeL
-y0v44ngRjol2VJPFSI9S4lm9jiWy5Vi+LG8OFR4mfCkRO9WbCMIuUpehucEQNnWw
-eUnpgr8DnPMCUodbTBxM3E8+3FGZq/EaD9ucNjkxZ5Sb/7wkrfgK37uX6EUuewp8
-51b5ZK8Q9vTnuRnKmhmnEVL19GXAdJga5uSPhnbV7t2rabb1awWoXHX1fLvKzjWn
-Ag5pTjdT7c0mSykQYS48PiQljRBjBT7qh5laUJ/TKH1xHB62eoBFmjkO8z8Tv4K+
-pZA6myEgHSRjI+CerdnzWOn2QmB5i8AmP7f8tbto6EfGMv7Bb3/RBY36cpjkVnhO
-hHKbvwiS1EWBoGyeyGneFdbaFYvWhlBUzdlkIMrmOuZM8mQWc0zJhokOS7XQUkik
-1WK17peJPt/XOZGiBDX2aQIuVyntyqJGFXbSLNWsMD5Hy+3whA2bFMr+OJxjMx43
-pftCR0plJYxIvhLUCIAoiQSRCsVPNtiO/tTmKmknkzx5cDU5cH4jqEkTdJSqhtdr
-IlJgVoiaZ+bwN4ko8IZm
-=9cTo
------END PGP SIGNATURE-----
-
---RwxaKO075aXzzOz0--
+-- 
+MST
