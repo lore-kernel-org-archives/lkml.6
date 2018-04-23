@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755725AbeDWOvo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:51:44 -0400
+        id S1755504AbeDWOwE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:52:04 -0400
 Received: from mail-he1eur01on0056.outbound.protection.outlook.com ([104.47.0.56]:26568
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755684AbeDWOv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:51:29 -0400
+        id S1755666AbeDWOvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 10:51:25 -0400
 Authentication-Results: arm.com; dkim=none (message not signed)
  header.d=none;arm.com; dmarc=none action=none header.from=arm.com;
 From: Ayan Kumar Halder <ayan.halder@arm.com>
@@ -14,9 +14,9 @@ To: ayan.halder@arm.com, liviu.dudau@arm.com, brian.starkey@arm.com,
         malidp@foss.arm.com, airlied@linux.ie, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
 Cc: nd@arm.com
-Subject: [PATCH v2 8/8] drm/arm/malidp: Added the late system pm functions
-Date: Mon, 23 Apr 2018 15:50:51 +0100
-Message-Id: <1524495051-3891-9-git-send-email-ayan.halder@arm.com>
+Subject: [PATCH v2 7/8] drm/arm/malidp: Set the output_depth register in modeset
+Date: Mon, 23 Apr 2018 15:50:50 +0100
+Message-Id: <1524495051-3891-8-git-send-email-ayan.halder@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524495051-3891-1-git-send-email-ayan.halder@arm.com>
 References: <1524495051-3891-1-git-send-email-ayan.halder@arm.com>
@@ -29,43 +29,43 @@ X-ClientProxiedBy: VI1PR0701CA0055.eurprd07.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3039;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3039;3:Bf2+nIJGld03A1pJ+5EO+B8swZjeWAVdvCdvApJpr/+b7iJ/Ud2iZvkSYh42kUWPg7I5hYl5PrMaQyBiV7Dsnl2aq9YcaN3RJAXtt9lKHM0JCCLvb/TIJHpVsBj+9DuoJJ43jFBLXiFJgLUKxSY37TlPXyvIAcMX5CRtdrnkkOJd2kOFFPwwve4CLAm52ssnWdm4i+w4fVzAearuLFXEJIQgAE6GDGPCTSRQW1UCthz/cXl9CmU8pRCVQ8h2sj0B;25:yO9lzBdX46IrJRkOLpj5YFuI97+Rz/G9v5TEOgt4l7voj2LbKfvzfzKJ2JQF4YU1UHPIey++6BVnW0+Tep+GzBr2uHTNF7VpMhuZ/X2/5qH9l37zQniiOQBYM6vxrxDtFlIYaEnFXLAcuic0tE5T5JMHck1AO2bb7JyzO9AzblcTbKiN7PY5KTsaLIp1xrenD8Ox5GtT16j62YmHIIiyZLDJ5+YPKFcPSHFjWd6FvbfRakB+5muEPKbiuYwnBVtu6qPFVBqJFy2DTlNN59MutF6ezcEIpyUYrlH1/GZsmMfFRfcXKK54j9SjAtXdgo8PCcefddk5dh0dC+1RPyV8CQ==;31:SN6SDmYO2iUdTGjErCEm476k8RjDfrydbm92JAtZ2tkGSQoVDH9nfQ13ZxhxiJnEuUkDYg2UvJEaqfRP+CkI963cuvdTih2RdnMyYwvux9zAz/SYUA7J4Wh6BHsE4K5t1uzpZyW9QLxYcjmD41aIwjQGSaHtppGzDmkaRIZg9B5rO83kb6qIIl4MC23K/ZXlITS1UzexUnONHCbXsOb29HAGz5vTgKIzUVnu+UqOpsM=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3039;3:UUpRHLJSGHjVNw7QQIlTuVos+/wfoa+/pqT8mMHxSx8BjYFDm06ZAUfGCY98awQuxAlkK1brJuE/QaI8KxmqTwdHGplQ94yQlrPJf7umY5Pi1NlMs8ybpXR/pl96Jn4CdoV+mW0XYXPjpSSp7pHC02np5LZzosMKsNZYtcIkm5QjWiiMpvMk43mtRNiwjaT1Hsk8/qWUsvPleLLVhvC497TbPiVvQKZt/jrvbIZ068Bo9A9Fi02IWutJ3cOSQGzB;25:L/c21wXzoTFiqSiYfitL/ZfnbKiBBI5odLU4OjO48T0glE2ot/zNKWC5l65ynCz+grsMidQalOoNnd8Jkre7c2SjdnyGanYuJb9AuRFoUx1p/LMPTu9xB4nGoaNjSu9IqSFeoHWCwf6jMaKw5l1IxP7mazTZTr5GbVu1s3PQRmoP631/ya6h7oq5gxjNLH6CVA/75dPDcBUBvRX3pIGz+CI/R1xQTAyI5Lw55vD/CtVFGWFI0YTrKXyUW+lVTazzx+wTmaLhRRijxiriqSceQ0HsXZ8jOXtDPTvyp5jPENsS2mSnejlZ49uOT/Vcxkwc4fce0rcdEHnITQcAzSmi+Q==;31:g/cnwaDP+e9t9NujYAyCqig8NVqZRS49uSn79NAd1Uyskhw4Go3PREcV/SJr88FkSoUw6ARLQn9ukIRqScV6cr79pOG//jNHdu7zt72SVQGX7tpvlSTwI6OFEd+UmJ2a6rBzrGuQXO8oRXOcVxtaNPsDI1YxSsw7X2fBoG4vq/WFduAS8DIcWFbpyKVEVJ4FoF3EdOOoFptYrRBCsh5YZOdhm9KBahJKiNU/Atfuesg=
 X-MS-TrafficTypeDiagnostic: VI1PR08MB3039:
 NoDisclaimer: True
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3039;20:RBZBiiT/JHleI0N93JtGeyV/MCmqc4u4kTtDQIhAy/xwQB/j114HrBYkSp6eDjHvYJNErxMjFcUwhD2K4OE8e4ZS+X6ytWZrL+HtWCYwrf074YhukbbAt47Yqv72XSDIlbSVVolldJeBFbJbiT7EvFDYFiCjfKxaupzNdvTJtB6JvzNzSICUFeGYa4C878dNqEHYqw8JnfHGlIR3kGigh5A+zvQqNbwIG2snriuQa5fjEuukhlibDfOFVMDNTW5V;4:fGP5r2L7G57G8GZDRzKcCE2uthYuJvZ0637rl4tveBzSnKLJjhHTPQBljAEfy9Obv/cz2qKNonZsuKIneHjifqdfpAReMKvzPFaVsMeRS8msmxKUmcvf9MMjjIaDLEz2uhzNfkDelQpAvnl+xzXmIKoNWUcfxw0l3QDPw+Z438VjYhIrJ5M5H7ZP9bJggs5Y6gkPduTL/hjSiYORyVnvmlf/blinqTyN76om5jyqz3yCtiDgQ1LJMp396brRx+ozWAbAiJsxc1uACzDr7eTxo5NX9YI0jAJAVmQUmTOi5T61fzxSWvOZyLKQhUDkCV8t
-X-Microsoft-Antispam-PRVS: <VI1PR08MB30397CDBC0E87E4D087163D8E4890@VI1PR08MB3039.eurprd08.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3039;20:8GlPseiLEiUk6PLB4tcDXetvwqqUt/k6zYHFA+PgzhtYeE/mqYzk1Zo/jOftWnkNwG41oX98AliF26637LaYjbfH8VB0sNHabZB/a/Pjknm1ewNtGOzS7bJQBh2NkuG0KXxw3H1i1i8h4j9uxfyeU3IMLE7QFbCLrSeHvln+QEkY//HkKjpWAjutGVB7HDOMOoELGTrpzY0TH2LNAQOormaDUlLBmYEr3Vj/0IlQ9BVrt7DSYuk7sApeem9eRv7k;4:tszi4HGcYLJv9YdmYceWVgZaOPbby8kWO4dGxrGvglTaUOACK6PRjUYLqGQAQzh7JEBg6k7FYuGeqVrHSkapHZOUdXlzXbsTIr9ij/vduM9KchhlDv5mvwE99kA+MW6X7aolzYcAT8vWOPmzodPUaHgrl4wa+9mMHPHVPFU8c8UAgjFEu/Tt6Ze4lLnQSpZMuqTf1cC7qojLKQ3m9BAwKdCCcLehQ2vZBbmSfyl4hZB0d2dwyfUKOEz90uqL4ROE52Q9Gdpl8pyFI7U0m3gj1NeXtmf07yPeqCYTM7bJ4r/JScv5RorOvd4F5x/kXsOe
+X-Microsoft-Antispam-PRVS: <VI1PR08MB3039675F77139A5AE46946C2E4890@VI1PR08MB3039.eurprd08.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231232)(944501410)(52105095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:VI1PR08MB3039;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3039;
 X-Forefront-PRVS: 06515DA04B
 X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(39380400002)(396003)(366004)(36756003)(47776003)(50466002)(6116002)(26005)(81166006)(3846002)(8676002)(48376002)(5660300001)(7736002)(66066001)(305945005)(16526019)(446003)(478600001)(2616005)(956004)(476003)(16586007)(52116002)(76176011)(59450400001)(316002)(4326008)(386003)(25786009)(72206003)(86362001)(6666003)(7696005)(11346002)(6486002)(2906002)(8936002)(50226002)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3039;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;LANG:en;MLV:sfv;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB3039;23:owfuhh5xjXpnZDIRIKw3v03Om7YDtWpn+38McCLKq?=
- =?us-ascii?Q?66ZMBSKpR2hI1ogVj5GTQpzzCofQgtJurBaAvHGpGzQt9EJ9E8uP/wMTZlsX?=
- =?us-ascii?Q?gpPoIkz6etNRwYo8NdxyDv0JTFj1YstP4oZvNbVonnzUk/3T7gJjE3DnQaPx?=
- =?us-ascii?Q?ntmGq6bbx2X1X3dnUacqpvOqDAWSNtrV9msGj4z5tJeo7Tm1hWUGarytRDXU?=
- =?us-ascii?Q?Wjz7/nWQpXqC/Jjevl7iBo6zzMTrS4tJB3RzBpHX4luWDc2tPgiK7LU5w7wr?=
- =?us-ascii?Q?UjDfVHO/qFkyeudd1d32vlMXnkgDD7vGA+Jiy6GMVX7z2ewXu3pXdYIe7Xx7?=
- =?us-ascii?Q?5nBPna7fVgjDfIQaQCPxjHatOmFtjjhvOMSuIqg0bxq2mqXl4Gh+gEWDTSoD?=
- =?us-ascii?Q?8+f3w/QlYZI6oJmdPSDPD+66xGLDjKEbhb3ueAUJGMm2u1kITF85BpnEyTBp?=
- =?us-ascii?Q?upYOn1dZrj1uETyrU1KTZu1YLn9ZtkYnpgHuD+teYgVj3DQ2E4SvHAq3ro/v?=
- =?us-ascii?Q?xrolG32wCtQ+1OoH03VIaPxSdO7gyCCA0rzSrFLXdBjq+Xh8NHR2/bDMnbLO?=
- =?us-ascii?Q?DOVmCmpuyUcgzVon61gGRRZ1z2MbMmkOFtTFCVnwmrJi1I49j5pDusHHL/DG?=
- =?us-ascii?Q?zAhvsI4/NYBerTPah8JZOluxGXH9kMcWTVHW3AD/Bu9KniBA0oJQ56L+0yNE?=
- =?us-ascii?Q?L46Sg87QrcSkxFDwxKYS03Qm+kXZ61qVGW3y610yQ6iWnW+TT7AXzBy75aeU?=
- =?us-ascii?Q?DFTnHspmWCEM+zQlaznMXW17T4ogyRtt4/IPDFpMrFTiN8DbrMJYRXyQ0KGO?=
- =?us-ascii?Q?6djt1CwaFpCSMrtZrHnBBfzhn9zXUZZQQDR5o+eWGSgpMmijO7cTnUv9uLMf?=
- =?us-ascii?Q?rW8UrJLK1olR1dcjISmXh62+tua05d3ChUMi8nl+YtSuS1cYMSsxKNsB7+4U?=
- =?us-ascii?Q?ikN87vW2+eBm5/f2pWmeJbXWpNswdxkbeynYLAH/Wo8TZL8iqMQHah+Yj8jK?=
- =?us-ascii?Q?gI=3D?=
-X-Microsoft-Antispam-Message-Info: Csc3jjK4h65RY1LZt9CZ+8yFS3APlX9V8dTzyS297FRGk8dknwAaupdWac+EBEaGlfCBHWLLFELQK4UJ45Vd04DAsYzfb2WS4Eqh+ZWUQxrgblkOPxaHokAhDUpW7ihuw0gTviTkiBJIuZSzBLH6ZxPDna5dc3cp1oB9YaDde6S5D3rkvhsihaP8aJ/Q9qFw
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3039;6:G42hUpALKAjtr0uUVqAAoDa4qfob7MYoXrbjXirCFEgSWyqfl7aOaP+zVbbOa6c9pJXgj6aG6JlaE5S7zdfw83xQI7/qAX0oBfx6MKBRYbHuYm1jf1wL9IdFwlndCADPR9DF+UVX8ynV4uAkNwgL4XD8+TuFAwD7lAalDUtHUNDKuO2Cx/95U3HvpgsO6w5hhMvHogOT2LKCcKKfugHn+LzhH6NZn3RHDsBMfGQuAJHcOQhyElo/BrdP6Bg/epoQt62cfujhNH3A6/aX8Ywtzepa+V5jL58InsGYVM7xJM0sSLITkgDeywuj2gLnd3cULmuXGLsq1KHfo0i2ef60DlHad3CQl7lvQp70jNebhb9mATxZmz1V9fwvHOEISCGaZrs0DiwBiTmln5hVZQd5+YPKUtMzHQlo4lNuYLiidNH2exScBoP5K9nbOuzwomZnsATJDdGvSQi+Wgp8K8DLpw==;5:xE/MFF47KkvtHN9VT+klNWZIaqNzxvUtdNQ2mUwMah+pjdMhlOTB/PmksczYjhkRbtG+24Hav0TNFsuKvBPvmuE8NMIrQmIksEucqgyMapa6WZiPdqPl08JIv/px719s894dRqGzHz/HwF5WZGSDn85JPzfC+S6xpq3dFGrwO9Y=;24:uNvzfzoFtVoTtJtfHOVQN7XdzEEOymYBEUNdC2zO/15ZOcpUnWhaB3Of0TvWh8WcXHynbgCPVYT1dE7pi+WJr3s2AizdFsjt0S3RPPMjLe0=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB3039;23:lwADA757kF0w+q++bMrAWREL+J7DihMbwyfAdsZKb?=
+ =?us-ascii?Q?/AMjeeo4z6gtAD3Vp789mllOS03VveFMkn96WrUyV4BAMJQQbluxLosF9iK0?=
+ =?us-ascii?Q?fPV1VhWWDIG/VWWx322POhHR6X7UGPOpjwNj8SnvBYMfxHa14KEzSHd65ElR?=
+ =?us-ascii?Q?hIkWylzwt5kPs+UGuqtfSNNY/ozV5lGOaMBeN3Gx9TFAxm+hVD/fBIedZ56o?=
+ =?us-ascii?Q?ngQAYEvKFtZ40W+xEdGTxNRl8L00T1ovGgp9lrgSu+McUC5oNBp83g7xWZlZ?=
+ =?us-ascii?Q?xd/spTQ/L0/bvly+Oe9nqw0djYIEtxG5YeSMY0+Fbe/hJACwwoQpSTZRt5y+?=
+ =?us-ascii?Q?A5qvD8L5ckxcW26lBb1Qpg/fRaf8vXBqJlOClJuwrNqDl7g2VUIUeAC27rLP?=
+ =?us-ascii?Q?zQVf6mXNDE6vkqDqVtqOHJBByrMbw08OYRV3WWtOaOXVcuFxISQamJ0DzPkv?=
+ =?us-ascii?Q?DFRSdmOiuK0j50rHBlwCWHlDG+jxvcnA4/kh3tb0JAjdK5WPTsD4Zd6vCeA+?=
+ =?us-ascii?Q?UEnU2C6pm34ukCUqtHCXdGzP+oiogrdIRFJGotbPgETgtwwhllknUU5Sz0Mz?=
+ =?us-ascii?Q?cGgATya4ybpzXptKroTdcu3OkCbjjnk5JWZFtSPetk/KOwONuCOdzC9Pr54d?=
+ =?us-ascii?Q?re4tTX9PDFUcJZDc1K+mf3sImkKjpjn7W9hvVeYjmVtff09xvxGkJhhYPVo7?=
+ =?us-ascii?Q?yHPg4dAJjGADZOjX0H/qR0cgxAu+Nwg9bhU4bXAJEiMzwZ1ePJ7pK/LAnsNg?=
+ =?us-ascii?Q?2AL+zkxPZRTZak8ExFYaBtEa2bFmdsjgVciPjPfyME8jbEhpenj+pb2LBLju?=
+ =?us-ascii?Q?1C6iAsIBj6XLzk8UPQOVNYRWABHcD6uqHheMRUURQj+pZPzqhG+pRlNWE3Ga?=
+ =?us-ascii?Q?+CMV5vKXlFTg2sST5iDzQB0457lv+TWizyj5kPvr6GGBX6p5qFFqHzMhU0+3?=
+ =?us-ascii?Q?PZwEXNb6p457q6KxqKBKZUQiYKPvNJhl+hbQSBC6YTaghBKlRqyIWAsIfMGU?=
+ =?us-ascii?Q?00=3D?=
+X-Microsoft-Antispam-Message-Info: 1mt1W5zw3qjRwIGkR45QqGnJIKtv9E6b3gAJWUvVrg/kddaB72aAliNDgpIWmPnbPHc52jtdrQE0tO+RTKvgIoQkUYK7rfJDQpHuFm3teVu+wEmpB+RIlYdjBCjGPBxC21ruxbi9BlMFOqfZaNwGcztd3vRJtzmrjWYG1OjyA2LbGlhzNQNmEPwatnWJ4dRx
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3039;6:4svnpW7xZOKqheskWHA7UaiqEmAxtP7d/Ynl35R9QvKFcR6hlVrphRdNvitcaDyKwYC2Pefcfs9LPm2t7afCzk+dIO8QsOKOJk2r/8a9y/T8yRpJp2iaa9amVGzJhyxY0DtxDqFroYbqBC2RMHFePgVNAW2tteZrH2/4jQi6ucXGu0kBaEzVpr08v834BiVzzSLW4dQH6SgNTGjkO16XMpFA79CoFZaZZS0ZXq8+NMQOUKI6Kqlb8HRImmK79XN/ByvHocehzCWL6Lv0iuE/hFdR64oYNHWnO9NnQF/krWAdwY8/rLAF87ORCxqHqEEdv/7jd5yd2YzaxZEWW7pGlPz1f53n1JdHFDbsmbz0utta6GTw5DOPw0d0TOP8SN34BYz11u67MLfhPeSS+KJ5VXiWERgv+ypQNb7imTpKiuejIqur9wh+h0G3KjgYlYRMpxnPIct9qwf4Ddpq5hGvOw==;5:Mj7iW6RUmNbfWAnFAaO64WDIiWqSkn6QdFYluGsADCxZGEx1fabG2qW8cAxDKqg/unlKqg8iPyzDCu2Mdrwe2V7CjqBmSgcyFQHBBqbtv4rAXAcIyeBq+sui4d5jISy1DiVrIfMtK811LbHUU51zuY4SaCOopdMuCW6Ur5ixeeI=;24:gvdyxGCxeQ6amPb5oEkURivGngFdRcgmIyELSGM+VCRAqmXwk0o3EQQItnnj581D4bPHySdcTTKXswcvG16jGdOnbx2euV+UNHQuew24vlE=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3039;7:mmRtCsmx84BQIvrq70vvIDUDq8QWE/eAfU6+IiBazecCE/uz09PZvyPLGg4H4shchtMef1SaMDY80pCBz8kGMVdYCczaA2Nvq+a+4jZ+b2xRQ9HHodzI3K5mhRPNuOt/NvnLUQvKjAZXC4dHLpnikP0mRFiFrZCGtbdZk0K4orJADkNun//Zb9+6HMyvQJ71e4GvvStywAi0NnQlVUW8irgvuiaSqkQl00g86EqLkCXuv4BGC2I8vcFJwmUmHC6p
-X-MS-Office365-Filtering-Correlation-Id: 2b722f64-651e-4b4d-b7ae-08d5a929a850
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3039;7:dm0LdwGVvWoW0tNIZr45lxqFfkxIwGiMjmBxOIxJqZc54aBgcRIEEP06RjJIYbTO1HsdD98aj4vT0iwH73lJCtlCiy2bT3y55Tjsvx2/6ejcD6uj6kMKo3oHQbIdOmu64ZhmQdveCjc2c0R444yskp5C/UH0pxf5KDHvIsBoMVC2jElvzTS0sVrHK7Uv7g0JeYSj8HOQ+tyzDntVlnxJ3jXScA2QUgkvs2BiFfjv/3PHeHAd1DjuEEUjYxQQ4FtM
+X-MS-Office365-Filtering-Correlation-Id: 55c6f3c8-2d79-4729-4b41-08d5a929a762
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2018 14:51:12.1658
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2018 14:51:10.6345
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b722f64-651e-4b4d-b7ae-08d5a929a850
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55c6f3c8-2d79-4729-4b41-08d5a929a762
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3039
@@ -73,64 +73,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-malidp_pm_suspend_late checks if the runtime status is not suspended
-and if so, invokes malidp_runtime_pm_suspend which disables the
-display engine/core interrupts and the clocks. It sets the runtime status
-as suspended.
-
-The difference between suspend() and suspend_late() is as follows:-
-1. suspend() makes the device quiescent. In our case, we invoke the DRM
-helper which disables the CRTC. This would have invoked runtime pm
-suspend but the system suspend process disables runtime pm.
-2. suspend_late() It continues the suspend operations of the drm device 
-which was started by suspend(). In our case, it performs the same functionality
-as runtime_suspend().
-
-The complimentary functions are resume() and resume_early(). In the case of
-resume_early(), we invoke malidp_runtime_pm_resume() which enables the clocks 
-and the interrupts. It sets the runtime status as active. If the device was
-in runtime suspend mode before system suspend was called, pm_runtime_work()
-will put the device back in runtime suspended mode( after the complete system
-has been resumed).
+One needs to store the value of the OUTPUT_DEPTH that one has parsed from
+device tree, so that it can be restored on system resume. This value is
+set in the modeset function as this gets reset when the system suspends.
 
 Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
 
 ---
 Changes in v2:-
-- Removed the change id and modified the commit message
+- Removed the change id
 ---
- drivers/gpu/drm/arm/malidp_drv.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/drm/arm/malidp_drv.c | 1 +
+ drivers/gpu/drm/arm/malidp_hw.c  | 4 ++++
+ drivers/gpu/drm/arm/malidp_hw.h  | 1 +
+ 3 files changed, 6 insertions(+)
 
 diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index bd44a6d..f6124d8 100644
+index e5a1fa0..bd44a6d 100644
 --- a/drivers/gpu/drm/arm/malidp_drv.c
 +++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -766,8 +766,25 @@ static int __maybe_unused malidp_pm_resume(struct device *dev)
- 	return 0;
- }
+@@ -601,6 +601,7 @@ static int malidp_bind(struct device *dev)
+ 	for (i = 0; i < MAX_OUTPUT_CHANNELS; i++)
+ 		out_depth = (out_depth << 8) | (output_width[i] & 0xf);
+ 	malidp_hw_write(hwdev, out_depth, hwdev->hw->map.out_depth_base);
++	hwdev->output_color_depth = out_depth;
  
-+static int __maybe_unused malidp_pm_suspend_late(struct device *dev)
-+{
-+	if (!pm_runtime_status_suspended(dev)) {
-+		malidp_runtime_pm_suspend(dev);
-+		pm_runtime_set_suspended(dev);
-+	}
-+	return 0;
-+}
-+
-+static int __maybe_unused malidp_pm_resume_early(struct device *dev)
-+{
-+	malidp_runtime_pm_resume(dev);
-+	pm_runtime_set_active(dev);
-+	return 0;
-+}
-+
- static const struct dev_pm_ops malidp_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend, malidp_pm_resume) \
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend_late, malidp_pm_resume_early) \
- 	SET_RUNTIME_PM_OPS(malidp_runtime_pm_suspend, malidp_runtime_pm_resume, NULL)
- };
+ 	atomic_set(&malidp->config_valid, 0);
+ 	init_waitqueue_head(&malidp->wq);
+diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+index 90d76e4..1bf10fb 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -234,6 +234,8 @@ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *
+ {
+ 	u32 val = 0;
  
++	malidp_hw_write(hwdev, hwdev->output_color_depth,
++		hwdev->hw->map.out_depth_base);
+ 	malidp_hw_clearbits(hwdev, MALIDP500_DC_CLEAR_MASK, MALIDP500_DC_CONTROL);
+ 	if (mode->flags & DISPLAY_FLAGS_HSYNC_HIGH)
+ 		val |= MALIDP500_HSYNCPOL;
+@@ -458,6 +460,8 @@ static void malidp550_modeset(struct malidp_hw_device *hwdev, struct videomode *
+ {
+ 	u32 val = MALIDP_DE_DEFAULT_PREFETCH_START;
+ 
++	malidp_hw_write(hwdev, hwdev->output_color_depth,
++		hwdev->hw->map.out_depth_base);
+ 	malidp_hw_write(hwdev, val, MALIDP550_DE_CONTROL);
+ 	/*
+ 	 * Mali-DP550 and Mali-DP650 encode the background color like this:
+diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
+index 3b049d0..844732d 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.h
++++ b/drivers/gpu/drm/arm/malidp_hw.h
+@@ -228,6 +228,7 @@ struct malidp_hw_device {
+ 
+ 	u8 min_line_size;
+ 	u16 max_line_size;
++	u32 output_color_depth;
+ 
+ 	/* track the device PM state */
+ 	bool pm_suspended;
 -- 
 2.7.4
