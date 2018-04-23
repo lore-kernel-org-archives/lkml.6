@@ -1,78 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755410AbeDWOJL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:09:11 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:46348 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755216AbeDWOJF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:09:05 -0400
-X-Google-Smtp-Source: AB8JxZpmdRxSQMSht2bqPaTfBczaUOx+pyo6YhsKYzqL1fKD7EbpzPZZgepGKsSDq32s/k1MloGNuGH3J4b6nUTWg/c=
+        id S1755443AbeDWOKm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:10:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57580 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754962AbeDWOKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 10:10:41 -0400
+Subject: Re: [PATCH v7 0/5] cpuset: Enable cpuset controller in default
+ hierarchy
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
+References: <1524145624-23655-1-git-send-email-longman@redhat.com>
+ <20180423130715.GA32341@localhost.localdomain>
+ <20180423135756.GC32341@localhost.localdomain>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <22ad86e3-0661-6db0-f4f3-5b06f439dcf7@redhat.com>
+Date: Mon, 23 Apr 2018 10:10:39 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <20180423135309.GC2794@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-14-mszeredi@redhat.com>
- <20180423133617.GB2794@redhat.com> <CAJfpegsmxOtn9yjy4fvsYOt7cL49mzOM00bh8+CgxJcT3meLBQ@mail.gmail.com>
- <20180423135309.GC2794@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 23 Apr 2018 16:09:03 +0200
-Message-ID: <CAJfpegt5qkjm2BTejkpSk9QKNEyvKOHYnk+bEUq35=Ryk4a+=w@mail.gmail.com>
-Subject: Re: [RFC PATCH 13/35] ovl: readd fsync
-To: Vivek Goyal <vgoyal@redhat.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180423135756.GC32341@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 3:53 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
-> On Mon, Apr 23, 2018 at 03:39:45PM +0200, Miklos Szeredi wrote:
->> On Mon, Apr 23, 2018 at 3:36 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
->> > On Thu, Apr 12, 2018 at 05:08:04PM +0200, Miklos Szeredi wrote:
->> >> Implement stacked fsync().
->> >>
->> >> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> >> ---
->> >>  fs/overlayfs/file.c | 20 ++++++++++++++++++++
->> >>  1 file changed, 20 insertions(+)
->> >>
->> >> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
->> >> index b98204c1c19c..4417527667ff 100644
->> >> --- a/fs/overlayfs/file.c
->> >> +++ b/fs/overlayfs/file.c
->> >> @@ -222,10 +222,30 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->> >>       return ret;
->> >>  }
->> >>
->> >> +static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
->> >> +{
->> >> +     struct fd real;
->> >> +     const struct cred *old_cred;
->> >> +     int ret;
->> >> +
->> >> +     ret = ovl_real_file(file, &real);
->> >> +     if (ret)
->> >> +             return ret;
->> >> +
->> >> +     old_cred = ovl_override_creds(file_inode(file)->i_sb);
->> >> +     ret = vfs_fsync_range(real.file, start, end, datasync);
->> >> +     revert_creds(old_cred);
->> >
->> > Can we avoid calling fsync() on real file if it is not upper. Is it worth
->> > optimizing.
+On 04/23/2018 09:57 AM, Juri Lelli wrote:
+> On 23/04/18 15:07, Juri Lelli wrote:
+>> Hi Waiman,
 >>
->> Not sure it's worth bothering with.   If caller of fsync(2) didn't
->> worry about cost, then why should we?
+>> On 19/04/18 09:46, Waiman Long wrote:
+>>> v7:
+>>>  - Add a root-only cpuset.cpus.isolated control file for CPU isolation.
+>>>  - Enforce that load_balancing can only be turned off on cpusets with
+>>>    CPUs from the isolated list.
+>>>  - Update sched domain generation to allow cpusets with CPUs only
+>>>    from the isolated CPU list to be in separate root domains.
+> Guess I'll be adding comments as soon as I stumble on something unclear
+> (to me :), hope that's OK (shout if I should do it differently).
 >
-> I was thinking more from the point of view of metadata copy up patches.
-> For a metacopy file, I was thinking if I can just issue fsync() on upper
-> file and skip it on lower file.
+> The below looked unexpected to me:
+>
+> root@debian-kvm:/sys/fs/cgroup# cat g1/cpuset.cpus
+> 2-3
+> root@debian-kvm:/sys/fs/cgroup# cat g1/cpuset.mems
+>
+> root@debian-kvm:~# echo $$ > /sys/fs/cgroup/g1/cgroup.threads
+> root@debian-kvm:/sys/fs/cgroup# cat g1/cgroup.threads
+> 2312
+>
+> So I can add tasks to groups with no mems? Or is it this only true in my
+> case with a single mem node? Or maybe it's inherited from root group
+> (slightly confusing IMHO if that's the case).
 
-Ah, in that case I agree with  doing fsync only on upper.   If there's
-a choice in implementing the given functionality (and performance
-doesn't matter) then the simplest one should be chosen.
+No mems mean looking up the parents until we find one with non-empty
+mems. The mems.effective will show you the actual memory nodes used.
 
-Thanks,
-Miklos
+-Longman
