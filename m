@@ -1,110 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755925AbeDWQHr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:07:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:42752 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755383AbeDWQHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:07:46 -0400
-Subject: Re: [RFC 1/2] iommu/arm-smmu-v3: Remove bypass in
- arm_smmu_reset_device
-To: Yisheng Xie <xieyisheng1@huawei.com>, will.deacon@arm.com,
-        joro@8bytes.org
-Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, liubo95@huawei.com,
-        dingtianhong@huawei.com
-References: <1524483959-54940-1-git-send-email-xieyisheng1@huawei.com>
- <1524483959-54940-2-git-send-email-xieyisheng1@huawei.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <9e2f8646-482a-e721-d1b6-e674de48e276@arm.com>
-Date: Mon, 23 Apr 2018 17:07:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755715AbeDWQIw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:08:52 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:40156 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755339AbeDWQIr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 12:08:47 -0400
+Date: Mon, 23 Apr 2018 17:08:33 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 7/8] drm/i2c: tda998x: register as a drm bridge
+Message-ID: <20180423160833.GF16141@n2100.armlinux.org.uk>
+References: <20180423072301.11962-1-peda@axentia.se>
+ <20180423072301.11962-8-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <1524483959-54940-2-git-send-email-xieyisheng1@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180423072301.11962-8-peda@axentia.se>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/04/18 12:45, Yisheng Xie wrote:
-> Add a bypass parameter in arm_smmu_device to keep whether smmu device
-> should pypass or not, so parameter bypass in arm_smmu_reset_device can
-> be removed.
-
-Given that the GBPA configuration implied by the bypass argument here is 
-only there to avoid initialising a full stream table when the firmware 
-is terminally broken, I wonder if it would make sense to simply skip 
-allocating a stream table at all in that case. Then we could just base 
-the subsequent SMMUEN/GPBA decision on whether strtab_cfg.strtab is 
-valid or not.
-
-Robin.
-
-> This should not have any functional change, but prepare for later patch.
-> 
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
->   drivers/iommu/arm-smmu-v3.c | 11 ++++++-----
->   1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> index 1d64710..044df6e 100644
-> --- a/drivers/iommu/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm-smmu-v3.c
-> @@ -587,6 +587,8 @@ struct arm_smmu_device {
->   
->   	u32				sync_count;
->   
-> +	bool				bypass;
+On Mon, Apr 23, 2018 at 09:23:00AM +0200, Peter Rosin wrote:
+>  static int tda998x_remove(struct i2c_client *client)
+>  {
+> -	component_del(&client->dev, &tda998x_ops);
+> +	struct device *dev = &client->dev;
+> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
 > +
->   	/* IOMMU core code handle */
->   	struct iommu_device		iommu;
->   };
-> @@ -2384,7 +2386,7 @@ static int arm_smmu_device_disable(struct arm_smmu_device *smmu)
->   	return ret;
->   }
->   
-> -static int arm_smmu_device_reset(struct arm_smmu_device *smmu, bool bypass)
-> +static int arm_smmu_device_reset(struct arm_smmu_device *smmu)
->   {
->   	int ret;
->   	u32 reg, enables;
-> @@ -2487,7 +2489,7 @@ static int arm_smmu_device_reset(struct arm_smmu_device *smmu, bool bypass)
->   
->   
->   	/* Enable the SMMU interface, or ensure bypass */
-> -	if (!bypass || disable_bypass) {
-> +	if (!smmu->bypass || disable_bypass) {
->   		enables |= CR0_SMMUEN;
->   	} else {
->   		ret = arm_smmu_update_gbpa(smmu, 0, GBPA_ABORT);
-> @@ -2778,7 +2780,6 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
->   	resource_size_t ioaddr;
->   	struct arm_smmu_device *smmu;
->   	struct device *dev = &pdev->dev;
-> -	bool bypass;
->   
->   	smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
->   	if (!smmu) {
-> @@ -2796,7 +2797,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
->   	}
->   
->   	/* Set bypass mode according to firmware probing result */
-> -	bypass = !!ret;
-> +	smmu->bypass = !!ret;
->   
->   	/* Base address */
->   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> @@ -2842,7 +2843,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
->   	platform_set_drvdata(pdev, smmu);
->   
->   	/* Reset the device */
-> -	ret = arm_smmu_device_reset(smmu, bypass);
-> +	ret = arm_smmu_device_reset(smmu);
->   	if (ret)
->   		return ret;
->   
-> 
+> +	drm_bridge_remove(&bridge->bridge);
+> +	component_del(dev, &tda998x_ops);
+> +
+
+I'd like to ask a rather fundamental question about DRM bridge support,
+because I suspect that there's a major fsckup here.
+
+The above is the function that deals with the TDA998x device being
+unbound from the driver.  With the component API, this results in the
+DRM device correctly being torn down, because one of the hardware
+devices has gone.
+
+With DRM bridge, the bridge is merely removed from the list of
+bridges:
+
+void drm_bridge_remove(struct drm_bridge *bridge)
+{
+        mutex_lock(&bridge_lock);
+        list_del_init(&bridge->list);
+        mutex_unlock(&bridge_lock);
+}
+EXPORT_SYMBOL(drm_bridge_remove);
+
+and the memory backing the "struct tda998x_bridge" (which contains
+the struct drm_bridge) will be freed by the devm subsystem.
+
+However, there is no notification into the rest of the DRM subsystem
+that the device has gone away.  Worse, the memory that is still in
+use by DRM has now been freed, so further use of the DRM device
+results in a use-after-free bug.
+
+This is really not good, and to me looks like a fundamental problem
+with the DRM bridge code.  I see nothing in the DRM bridge code that
+deals with the lifetime of a "DRM bridge" or indeed the lifetime of
+the actual device itself.
+
+So, from what I can see, there seems to be a fundamental lifetime
+issue with the design of the DRM bridge code.  This needs to be
+fixed.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
