@@ -1,101 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754947AbeDWK7A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:59:00 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38450 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754729AbeDWKuT (ORCPT
+        id S1754780AbeDWK7z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:59:55 -0400
+Received: from mail-pg0-f51.google.com ([74.125.83.51]:39058 "EHLO
+        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754671AbeDWK7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:50:19 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        a.hajda@samsung.com, kernel@collabora.com, m.szyprowski@samsung.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com,
-        linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com,
-        hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org,
-        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH v6 01/27] drm/bridge: analogix_dp: Move enable video into config_video()
-Date: Mon, 23 Apr 2018 12:49:37 +0200
-Message-Id: <20180423105003.9004-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
-References: <20180423105003.9004-1-enric.balletbo@collabora.com>
+        Mon, 23 Apr 2018 06:59:51 -0400
+X-Google-Smtp-Source: AIpwx49lHJqRH5ai7isRsDubZtRhXGgdRSp7d+uDe+PNeCEETqlrQikqQlvGjx9DqwyiD6fSrI76X86/0QapslHsqTk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <000000000000af09f3056a813d2d@google.com>
+References: <000000000000af09f3056a813d2d@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 23 Apr 2018 12:59:30 +0200
+Message-ID: <CACT4Y+Zmx647NnNVV0=9OOt8jWQt8VKfYuLCSU_fnbOvkN09MA@mail.gmail.com>
+Subject: Re: WARNING: kernel stack regs at (ptrval) in syzkaller has bad 'bp'
+ value (ptrval)
+To: syzbot <syzbot+e073e4740cfbb3ae200b@syzkaller.appspotmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+        Eric Biggers <ebiggers3@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lin Huang <hl@rock-chips.com>
+On Mon, Apr 23, 2018 at 12:10 PM, syzbot
+<syzbot+e073e4740cfbb3ae200b@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot hit the following crash on upstream commit
+> 5ec83b22a2dd13180762c89698e4e2c2881a423c (Sun Apr 22 19:13:04 2018 +0000)
+> Merge tag '4.17-rc1-SMB3-CIFS' of git://git.samba.org/sfrench/cifs-2.6
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=e073e4740cfbb3ae200b
+>
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6509307940044800
+> syzkaller reproducer:
+> https://syzkaller.appspot.com/x/repro.syz?id=6027105183727616
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=4763013630394368
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-We need to enable video before analogix_dp_is_video_stream_on(), so
-we can get the right video stream status.
+There are 2 similar bugs reported:
 
-We needed to increase the delay in the timeout loop because there is
-random "Timeout of video streamclk ok" message happen when debug edp
-panel, this time do not define in the spec.
+https://syzkaller.appspot.com/bug?id=4fcc07e4e85fc6c1d5472fcc8ab5a35db01972dc
+https://syzkaller.appspot.com/bug?id=bed7a7acabe08fe69a89a4225572911a32598651
 
-Cc: 征增 王 <wzz@rock-chips.com>
-Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
+They all seem to point to crypto/SHA3/K512_4.
++crypto maintainers
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 5c52307146c7..05a0ca4af057 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -819,11 +819,10 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
- 		if (analogix_dp_is_slave_video_stream_clock_on(dp) == 0)
- 			break;
- 		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
--			dev_err(dp->dev, "Timeout of video streamclk ok\n");
-+			dev_err(dp->dev, "Timeout of slave video streamclk ok\n");
- 			return -ETIMEDOUT;
- 		}
--
--		usleep_range(1, 2);
-+		usleep_range(1000, 1001);
- 	}
- 
- 	/* Set to use the register calculated M/N video */
-@@ -838,6 +837,9 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
- 	/* Configure video slave mode */
- 	analogix_dp_enable_video_master(dp, 0);
- 
-+	/* Enable video */
-+	analogix_dp_start_video(dp);
-+
- 	timeout_loop = 0;
- 
- 	for (;;) {
-@@ -948,9 +950,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
- 			DRM_ERROR("failed to enable the panel\n");
- 	}
- 
--	/* Enable video */
--	analogix_dp_start_video(dp);
--
- 	dp->psr_enable = analogix_dp_detect_sink_psr(dp);
- 	if (dp->psr_enable)
- 		analogix_dp_enable_sink_psr(dp);
--- 
-2.17.0
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+e073e4740cfbb3ae200b@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+>
+>         (ptrval): 0000000000445649 (0x445649)
+>         (ptrval): 0000000000000033 (0x33)
+>         (ptrval): 0000000000000216 (0x216)
+>         (ptrval): 00007f155536eda8 (0x7f155536eda8)
+>         (ptrval): 000000000000002b (0x2b)
+> WARNING: kernel stack regs at         (ptrval) in syzkaller547737:4493 has
+> bad 'bp' value         (ptrval)
+> WARNING: kernel stack frame pointer at         (ptrval) in
+> syzkaller547737:4496 has bad value         (ptrval)
+>
+>
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000af09f3056a813d2d%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
