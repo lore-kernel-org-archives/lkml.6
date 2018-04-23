@@ -1,99 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754880AbeDWMIj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:08:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36596 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754837AbeDWMIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:08:34 -0400
-Date: Mon, 23 Apr 2018 14:08:21 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Quentin Schulz <quentin.schulz@bootlin.com>
-Cc: dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 2/2] ubi: introduce ubi.nocheck parameter to skip CRC
- check when attaching ubi vol
-Message-ID: <20180423140821.3992df89@bbrezillon>
-In-Reply-To: <20180423094009.5cjvg7jxvwiegq2g@qschulz>
-References: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com>
-        <6551534f88b3aa77cc377c4270c4ddf7fe92cdf4.1524214122.git-series.quentin.schulz@bootlin.com>
-        <20180420191924.18b81e96@bbrezillon>
-        <20180423094009.5cjvg7jxvwiegq2g@qschulz>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1754862AbeDWMKl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:10:41 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36777 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754746AbeDWMKj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 08:10:39 -0400
+X-Google-Smtp-Source: AB8JxZogZxTtBG5cwhvBPNaCOFDvFpUuhjCY7LbRmf4uKgUvLn6srunA+UcB/pE4tUlznMCk2C7gmQ==
+Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+To: Wei Liu <wei.liu2@citrix.com>
+Cc: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        jgross@suse.com, Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
+        boris.ostrovsky@oracle.com
+References: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
+ <20180416192905.GA18096@downor-Z87X-UD5H>
+ <20180417075928.GT31310@phenom.ffwll.local>
+ <20180417205744.GA15930@downor-Z87X-UD5H>
+ <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
+ <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
+ <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+ <20180420071914.GG31310@phenom.ffwll.local>
+ <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
+ <20180423115242.ywdwqblj2aseu3fr@citrix.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
+Date: Mon, 23 Apr 2018 15:10:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180423115242.ywdwqblj2aseu3fr@citrix.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018 11:40:09 +0200
-Quentin Schulz <quentin.schulz@bootlin.com> wrote:
+On 04/23/2018 02:52 PM, Wei Liu wrote:
+> On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko wrote:
+>>>>      the gntdev.
+>>>>
+>>>> I think this is generic enough that it could be implemented by a
+>>>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
+>>>> something similar to this.
+>>> You can't just wrap random userspace memory into a dma-buf. We've just had
+>>> this discussion with kvm/qemu folks, who proposed just that, and after a
+>>> bit of discussion they'll now try to have a driver which just wraps a
+>>> memfd into a dma-buf.
+>> So, we have to decide either we introduce a new driver
+>> (say, under drivers/xen/xen-dma-buf) or extend the existing
+>> gntdev/balloon to support dma-buf use-cases.
+>>
+>> Can anybody from Xen community express their preference here?
+>>
+> Oleksandr talked to me on IRC about this, he said a few IOCTLs need to
+> be added to either existing drivers or a new driver.
+>
+> I went through this thread twice and skimmed through the relevant
+> documents, but I couldn't see any obvious pros and cons for either
+> approach. So I don't really have an opinion on this.
+>
+> But, assuming if implemented in existing drivers, those IOCTLs need to
+> be added to different drivers, which means userspace program needs to
+> write more code and get more handles, it would be slightly better to
+> implement a new driver from that perspective.
+If gntdev/balloon extension is still considered:
 
-> Hi Boris,
-> 
-> On Fri, Apr 20, 2018 at 07:19:24PM +0200, Boris Brezillon wrote:
-> > On Fri, 20 Apr 2018 10:52:41 +0200
-> > Quentin Schulz <quentin.schulz@bootlin.com> wrote:
-> >   
-> > > There's already ECC on NAND pages so there may be no need for one to
-> > > check the CRC of a UBI volume.  
-> > 
-> > That's true that ECC can help detecting corruptions, but I don't think
-> > this is the actual reason for disabling CRC check at volume open time.
-> > The actual reason for doing that is when the UBI volume user (in our
-> > case the squashfs FS) is also checking data consistency on its own
-> > (which is the case for squashfs).
-> >   
-> > > 
-> > > Let's introduce a ubi.nocheck parameter that let one skip the CRC check
-> > > when attaching a UBI volume.
-> > > 
-> > > This also drastically speeds kernel boot by removing a potentially
-> > > useless check, e.g. I gained 3.2s on boot time of a SPEAr600-based board
-> > > for a ~20MB UBI volume used as rootfs.  
-> > 
-> > Can you give the old and new open/mount time instead of telling how
-> > much you gained on the whole boot-time?  
-> 
-> # grabserial -v -d /dev/ttyUSB0 -t "Starting kernel"
-> 
-> Kernel command line is:
-> rootfstype=squashfs root=/dev/ubiblock0_0 ubi.mtd=ubi ubi.block=0,rootfs mtdparts=nand:92M@36M(ubi)
-> 
-> Current behaviour (CRC checking):
-> [2.335558 0.017867] ubi0: attaching mtd7
-> [2.504021 0.168463] ubi0: scanning is finished
-> [2.519824 0.015803] ubi0: attached mtd7 (name "ubi", size 92 MiB)
-> [2.523987 0.004163] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 129024 bytes
-> [2.530447 0.006460] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size 512
-> [2.535836 0.005389] ubi0: VID header offset: 512 (aligned 512), data offset: 2048
-> [2.541601 0.005765] ubi0: good PEBs: 736, bad PEBs: 0, corrupted PEBs: 0
-> [2.547923 0.006322] ubi0: user volume: 3, internal volumes: 1, max. volumes count: 128
-> [2.554223 0.006300] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, image sequence number: 463835917
-> [2.562460 0.008237] ubi0: available PEBs: 0, total reserved PEBs: 736, PEBs reserved for bad PEB handling: 20
-> [2.569779 0.007319] ubi0: background thread "ubi_bgt0d" started, PID 546
-> [4.550142 1.980363] block ubiblock0_0: created from ubi0:0(rootfs)
-> 
-> Skipping CRC check (ubi.nocheck=0,rootfs):
-> [2.349903 0.019126] ubi0: attaching mtd7
-> [2.516995 0.167092] ubi0: scanning is finished
-> [2.527101 0.010106] ubi0: skipping CRC check for volume rootfs
-> [2.536719 0.009618] ubi0: attached mtd7 (name "ubi", size 92 MiB)
-> [2.541859 0.005140] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 129024 bytes
-> [2.547744 0.005885] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size 512
-> [2.552990 0.005246] ubi0: VID header offset: 512 (aligned 512), data offset: 2048
-> [2.560497 0.007507] ubi0: good PEBs: 736, bad PEBs: 0, corrupted PEBs: 0
-> [2.568010 0.007513] ubi0: user volume: 3, internal volumes: 1, max. volumes count: 128
-> [2.574723 0.006713] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, image sequence number: 463835917
-> [2.586223 0.011500] ubi0: available PEBs: 0, total reserved PEBs: 736, PEBs reserved for bad PEB handling: 20
-> [2.592365 0.006142] ubi0: background thread "ubi_bgt0d" started, PID 545
-> [2.595960 0.003595] block ubiblock0_0: created from ubi0:0(rootfs)
-> 
-> It seems like it's more in the magnitude of 2s rather than 3, but still.
+All the IOCTLs will be in gntdev driver (in current xen-zcopy terminology):
+  - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
+  - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
+  - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
 
-No, I meant add this information to the commit message since telling
-how many seconds are saved on the absolute boot-time does not give any
-information on the before vs after ratio.
+Balloon driver extension, which is needed for contiguous/DMA
+buffers, will be to provide new *kernel API*, no UAPI is needed.
+
+> Wei.
+Thank you,
+Oleksandr
