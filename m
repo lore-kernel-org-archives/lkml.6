@@ -1,380 +1,632 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754836AbeDWKfj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:35:39 -0400
-Received: from foss.arm.com ([217.140.101.70]:38726 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754773AbeDWKfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:35:23 -0400
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] irqchip/gic-v3: Add support for Message Based Interrupts as an MSI controller
-Date: Mon, 23 Apr 2018 11:34:38 +0100
-Message-Id: <20180423103440.26592-6-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180423103440.26592-1-marc.zyngier@arm.com>
-References: <20180423103440.26592-1-marc.zyngier@arm.com>
+        id S1754872AbeDWKgD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:36:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41268 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754716AbeDWKfx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 06:35:53 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 23 Apr 2018 16:05:50 +0530
+From: kgunda@codeaurora.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH V1 4/4] qcom: spmi-wled: Add auto-calibration logic
+ support
+In-Reply-To: <1bf21293555e5f03a9806cc4d605ac60@codeaurora.org>
+References: <1510834717-21765-1-git-send-email-kgunda@codeaurora.org>
+ <1510834717-21765-5-git-send-email-kgunda@codeaurora.org>
+ <20171205054004.GG28761@minitux>
+ <d5ab425e78957fd59145f7d49fd897e6@codeaurora.org>
+ <20180419155854.GW18510@minitux>
+ <1bf21293555e5f03a9806cc4d605ac60@codeaurora.org>
+Message-ID: <7d3692565edf0950126c6e3e0238e9ae@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GICv3 offers the possibility to signal SPIs using a pair of doorbells
-(SETPI, CLRSPI) under the name of Message Based Interrupts (MBI).
-They can be used as either traditional (edge) MSIs, or the more exotic
-level-triggered flavour.
-
-Let's implement support for platform MSI, which is the original intent
-for this feature.
-
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/Makefile           |   2 +-
- drivers/irqchip/irq-gic-v3-mbi.c   | 287 +++++++++++++++++++++++++++++++++++++
- drivers/irqchip/irq-gic-v3.c       |   6 +
- include/linux/irqchip/arm-gic-v3.h |   1 +
- 4 files changed, 295 insertions(+), 1 deletion(-)
- create mode 100644 drivers/irqchip/irq-gic-v3-mbi.c
-
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 5ed465ab1c76..15f268f646bf 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -27,7 +27,7 @@ obj-$(CONFIG_ARM_GIC)			+= irq-gic.o irq-gic-common.o
- obj-$(CONFIG_ARM_GIC_PM)		+= irq-gic-pm.o
- obj-$(CONFIG_ARCH_REALVIEW)		+= irq-gic-realview.o
- obj-$(CONFIG_ARM_GIC_V2M)		+= irq-gic-v2m.o
--obj-$(CONFIG_ARM_GIC_V3)		+= irq-gic-v3.o irq-gic-common.o
-+obj-$(CONFIG_ARM_GIC_V3)		+= irq-gic-v3.o irq-gic-v3-mbi.o irq-gic-common.o
- obj-$(CONFIG_ARM_GIC_V3_ITS)		+= irq-gic-v3-its.o irq-gic-v3-its-platform-msi.o irq-gic-v4.o
- obj-$(CONFIG_ARM_GIC_V3_ITS_PCI)	+= irq-gic-v3-its-pci-msi.o
- obj-$(CONFIG_ARM_GIC_V3_ITS_FSL_MC)	+= irq-gic-v3-its-fsl-mc-msi.o
-diff --git a/drivers/irqchip/irq-gic-v3-mbi.c b/drivers/irqchip/irq-gic-v3-mbi.c
-new file mode 100644
-index 000000000000..20303f54e8c0
---- /dev/null
-+++ b/drivers/irqchip/irq-gic-v3-mbi.c
-@@ -0,0 +1,287 @@
-+/*
-+ * Copyright (C) 2018 ARM Limited, All Rights Reserved.
-+ * Author: Marc Zyngier <marc.zyngier@arm.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#define pr_fmt(fmt) "GICv3: " fmt
-+
-+#include <linux/dma-iommu.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/msi.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#include <linux/irqchip/arm-gic-v3.h>
-+
-+struct mbi_range {
-+	u32			spi_start;
-+	u32			nr_spis;
-+	unsigned long		*bm;
-+};
-+
-+static spinlock_t		mbi_lock;
-+static phys_addr_t		mbi_phys_base;
-+static struct mbi_range		*mbi_ranges;
-+static unsigned int		mbi_range_nr;
-+
-+static struct irq_chip mbi_irq_chip = {
-+	.name			= "MBI",
-+	.irq_mask		= irq_chip_mask_parent,
-+	.irq_unmask		= irq_chip_unmask_parent,
-+	.irq_eoi		= irq_chip_eoi_parent,
-+	.irq_set_type		= irq_chip_set_type_parent,
-+	.irq_set_affinity	= irq_chip_set_affinity_parent,
-+};
-+
-+static int mbi_irq_gic_domain_alloc(struct irq_domain *domain,
-+				       unsigned int virq,
-+				       irq_hw_number_t hwirq)
-+{
-+	struct irq_fwspec fwspec;
-+	struct irq_data *d;
-+	int err;
-+
-+	/*
-+	 * Using ACPI? There is no MBI support in the spec, you
-+	 * shouldn't even be here.
-+	 */
-+	if (!is_of_node(domain->parent->fwnode))
-+		return -EINVAL;
-+
-+	/*
-+	 * Let's default to edge. This is consistent with traditional
-+	 * MSIs, and systems requiring level signaling will just
-+	 * enforce the trigger on their own.
-+	 */
-+	fwspec.fwnode = domain->parent->fwnode;
-+	fwspec.param_count = 3;
-+	fwspec.param[0] = 0;
-+	fwspec.param[1] = hwirq - 32;
-+	fwspec.param[2] = IRQ_TYPE_EDGE_RISING;
-+
-+	err = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
-+	if (err)
-+		return err;
-+
-+	d = irq_domain_get_irq_data(domain->parent, virq);
-+	d->chip->irq_set_type(d, IRQ_TYPE_EDGE_RISING);
-+
-+	return 0;
-+}
-+
-+static void mbi_free_msi(struct mbi_range *mbi, unsigned int hwirq,
-+			 int nr_irqs)
-+{
-+	spin_lock(&mbi_lock);
-+	bitmap_release_region(mbi->bm, hwirq - mbi->spi_start,
-+			      get_count_order(nr_irqs));
-+	spin_unlock(&mbi_lock);
-+}
-+
-+static int mbi_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
-+				   unsigned int nr_irqs, void *args)
-+{
-+	struct mbi_range *mbi = NULL;
-+	int hwirq, offset, i, err = 0;
-+
-+	spin_lock(&mbi_lock);
-+	for (i = 0; i < mbi_range_nr; i++) {
-+		offset = bitmap_find_free_region(mbi_ranges[i].bm,
-+						 mbi_ranges[i].nr_spis,
-+						 get_count_order(nr_irqs));
-+		if (offset >= 0) {
-+			mbi = &mbi_ranges[i];
-+			break;
-+		}
-+	}
-+	spin_unlock(&mbi_lock);
-+
-+	if (!mbi)
-+		return -ENOSPC;
-+
-+	hwirq = mbi->spi_start + offset;
-+
-+	for (i = 0; i < nr_irqs; i++) {
-+		err = mbi_irq_gic_domain_alloc(domain, virq + i, hwirq + i);
-+		if (err)
-+			goto fail;
-+
-+		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-+					      &mbi_irq_chip, mbi);
-+	}
-+
-+	return 0;
-+
-+fail:
-+	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
-+	mbi_free_msi(mbi, hwirq, nr_irqs);
-+	return err;
-+}
-+
-+static void mbi_irq_domain_free(struct irq_domain *domain,
-+				unsigned int virq, unsigned int nr_irqs)
-+{
-+	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
-+	struct mbi_range *mbi = irq_data_get_irq_chip_data(d);
-+
-+	mbi_free_msi(mbi, d->hwirq, nr_irqs);
-+	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
-+}
-+
-+static const struct irq_domain_ops mbi_domain_ops = {
-+	.alloc			= mbi_irq_domain_alloc,
-+	.free			= mbi_irq_domain_free,
-+};
-+
-+static void mbi_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
-+{
-+	msg[0].address_hi = upper_32_bits(mbi_phys_base + GICD_SETSPI_NSR);
-+	msg[0].address_lo = lower_32_bits(mbi_phys_base + GICD_SETSPI_NSR);
-+	msg[0].data = data->parent_data->hwirq;
-+
-+	iommu_dma_map_msi_msg(data->irq, msg);
-+}
-+
-+static void mbi_compose_mbi_msg(struct irq_data *data, struct msi_msg *msg)
-+{
-+	mbi_compose_msi_msg(data, msg);
-+
-+	msg[1].address_hi = upper_32_bits(mbi_phys_base + GICD_CLRSPI_NSR);
-+	msg[1].address_lo = lower_32_bits(mbi_phys_base + GICD_CLRSPI_NSR);
-+	msg[1].data = data->parent_data->hwirq;
-+
-+	iommu_dma_map_msi_msg(data->irq, &msg[1]);
-+}
-+
-+/* Platform-MSI specific irqchip */
-+static struct irq_chip mbi_pmsi_irq_chip = {
-+	.name			= "pMSI",
-+	.irq_set_type		= irq_chip_set_type_parent,
-+	.irq_compose_msi_msg	= mbi_compose_mbi_msg,
-+};
-+
-+static struct msi_domain_ops mbi_pmsi_ops = {
-+};
-+
-+static struct msi_domain_info mbi_pmsi_domain_info = {
-+	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
-+		   MSI_FLAG_LEVEL_CAPABLE),
-+	.ops	= &mbi_pmsi_ops,
-+	.chip	= &mbi_pmsi_irq_chip,
-+};
-+
-+static int mbi_allocate_domains(struct irq_domain *parent)
-+{
-+	struct irq_domain *nexus_domain, *plat_domain;
-+
-+	nexus_domain = irq_domain_create_tree(parent->fwnode,
-+					      &mbi_domain_ops, NULL);
-+	if (!nexus_domain)
-+		return -ENOMEM;
-+
-+	irq_domain_update_bus_token(nexus_domain, DOMAIN_BUS_NEXUS);
-+	nexus_domain->parent = parent;
-+
-+	plat_domain = platform_msi_create_irq_domain(parent->fwnode,
-+						     &mbi_pmsi_domain_info,
-+						     nexus_domain);
-+
-+	if (!plat_domain) {
-+		irq_domain_remove(plat_domain);
-+		irq_domain_remove(nexus_domain);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+int __init mbi_init(struct fwnode_handle *fwnode, struct irq_domain *parent)
-+{
-+	struct device_node *np;
-+	const __be32 *reg;
-+	int ret, n;
-+
-+	np = to_of_node(fwnode);
-+
-+	if (!of_property_read_bool(np, "msi-controller"))
-+		return 0;
-+
-+	n = of_property_count_elems_of_size(np, "mbi-ranges", sizeof(u32));
-+	if (n <= 0 || n % 2)
-+		return -EINVAL;
-+
-+	mbi_range_nr = n / 2;
-+	mbi_ranges = kcalloc(mbi_range_nr, sizeof(*mbi_ranges), GFP_KERNEL);
-+	if (!mbi_ranges)
-+		return -ENOMEM;
-+
-+	for (n = 0; n < mbi_range_nr; n++) {
-+		ret = of_property_read_u32_index(np, "mbi-ranges", n * 2,
-+						 &mbi_ranges[n].spi_start);
-+		if (ret)
-+			goto err_free_mbi;
-+		ret = of_property_read_u32_index(np, "mbi-ranges", n * 2 + 1,
-+						 &mbi_ranges[n].nr_spis);
-+		if (ret)
-+			goto err_free_mbi;
-+
-+		mbi_ranges[n].bm = kcalloc(BITS_TO_LONGS(mbi_ranges[n].nr_spis),
-+					   sizeof(long), GFP_KERNEL);
-+		if (!mbi_ranges[n].bm) {
-+			ret = -ENOMEM;
-+			goto err_free_mbi;
-+		}
-+		pr_info("MBI range [%d:%d]\n", mbi_ranges[n].spi_start,
-+			mbi_ranges[n].spi_start + mbi_ranges[n].nr_spis - 1);
-+	}
-+
-+	reg = of_get_property(np, "mbi-alias", NULL);
-+	if (reg) {
-+		mbi_phys_base = of_translate_address(np, reg);
-+		if (mbi_phys_base == OF_BAD_ADDR) {
-+			ret = -ENXIO;
-+			goto err_free_mbi;
-+		}
-+	} else {
-+		struct resource res;
-+
-+		if (of_address_to_resource(np, 0, &res)) {
-+			ret = -ENXIO;
-+			goto err_free_mbi;
-+		}
-+
-+		mbi_phys_base = res.start;
-+	}
-+
-+	pr_info("Using MBI frame %pa\n", &mbi_phys_base);
-+
-+	ret = mbi_allocate_domains(parent);
-+	if (ret)
-+		goto err_free_mbi;
-+
-+	return 0;
-+
-+err_free_mbi:
-+	if (mbi_ranges) {
-+		for (n = 0; n < mbi_range_nr; n++)
-+			kfree(mbi_ranges[n].bm);
-+		kfree(mbi_ranges);
-+	}
-+
-+	return ret;
-+}
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index e5d101418390..1c6d039f22a3 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1112,6 +1112,12 @@ static int __init gic_init_bases(void __iomem *dist_base,
- 	pr_info("Distributor has %sRange Selector support\n",
- 		gic_data.has_rss ? "" : "no ");
- 
-+	if (typer & GICD_TYPER_MBIS) {
-+		err = mbi_init(handle, gic_data.domain);
-+		if (err)
-+			pr_err("Failed to initialize MBIs\n");
-+	}
-+
- 	set_handle_irq(gic_handle_irq);
- 
- 	gic_update_vlpi_properties();
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index f5af3b594e6e..cbb872c1b607 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -587,6 +587,7 @@ struct fwnode_handle;
- int its_cpu_init(void);
- int its_init(struct fwnode_handle *handle, struct rdists *rdists,
- 	     struct irq_domain *domain);
-+int mbi_init(struct fwnode_handle *fwnode, struct irq_domain *parent);
- 
- static inline bool gic_enable_sre(void)
- {
--- 
-2.14.2
+On 2018-04-20 11:13, kgunda@codeaurora.org wrote:
+> On 2018-04-19 21:28, Bjorn Andersson wrote:
+>> On Thu 19 Apr 03:45 PDT 2018, kgunda@codeaurora.org wrote:
+>> 
+>>> 
+>>> On 2017-12-05 11:10, Bjorn Andersson wrote:
+>>> > On Thu 16 Nov 04:18 PST 2017, Kiran Gunda wrote:
+>>> >
+>>> > > The auto-calibration algorithm checks if the current WLED sink
+>>> > > configuration is valid. It tries enabling every sink and checks
+>>> > > if the OVP fault is observed. Based on this information it
+>>> > > detects and enables the valid sink configuration. Auto calibration
+>>> > > will be triggered when the OVP fault interrupts are seen frequently
+>>> > > thereby it tries to fix the sink configuration.
+>>> > >
+>>> >
+>>> > So it's not auto "calibration" it's auto "detection" of strings?
+>>> >
+>>> Hi Bjorn,
+>>> Sorry for late response. Please find my answers.
+>>> 
+>> 
+>> No worries, happy to hear back from you!
+>> 
+> Thanks!
+>>> Correct. This is the auto detection, This is the name given by the
+>>> HW/systems team.
+>> 
+>> I think the name should be considered a "hardware bug", that we can 
+>> work
+>> around in software (give it a useful name and document what the 
+>> original
+>> name was).
+>> 
+> I don't think this is the "hardware bug". Rather we can say HW doesn't
+> support it.
+> Hence, we are implementing it as a SW feature to detect the strings
+> present on the
+> display panel, if the user fails to give the correct strings. As you
+> suggested I will
+> rename this to "auto detection" instead of "auto calibration".
+> 
+>>> > When is this feature needed?
+>>> >
+>>> This feature is needed if the string configuration is given wrong in
+>>> the DT node by the user.
+>> 
+>> DT describes the hardware and for all other nodes it must do so
+>> accurately.
+>> 
+> But the user may not be aware of the strings present on the display 
+> panel or
+> may be using the same software on different devices which have 
+> different strings
+> present.
+>> For cases where the hardware supports auto detection of functionality 
+>> we
+>> remove information from DT and rely on that logic to figure out the
+>> hardware. We do not use it to reconfigure the hardware once we detect 
+>> an
+>> error. So when auto-detection is enabled it should always be used to
+>> probe the hardware.
+>> 
+> The auto string detection is not supported in any qcom hardware and i 
+> don't
+> think there is a plan to introduce in new hardware also.
+> 
+>> Regards,
+>> Bjorn
+>> 
+>>> > > Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>>> > > ---
+>>> > >  .../bindings/leds/backlight/qcom-spmi-wled.txt     |   5 +
+>>> > >  drivers/video/backlight/qcom-spmi-wled.c           | 304
+>>> > > ++++++++++++++++++++-
+>>> > >  2 files changed, 306 insertions(+), 3 deletions(-)
+>>> > >
+>>> > > diff --git
+>>> > > a/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
+>>> > > b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
+>>> > > index d39ee93..f06c0cd 100644
+>>> > > ---
+>>> > > a/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
+>>> > > +++
+>>> > > b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
+>>> > > @@ -94,6 +94,11 @@ The PMIC is connected to the host processor via
+>>> > > SPMI bus.
+>>> > >  	Definition: Interrupt names associated with the interrupts.
+>>> > >  		    Currently supported interrupts are "sc-irq" and "ovp-irq".
+>>> > >
+>>> > > +- qcom,auto-calibration
+>>> >
+>>> > qcom,auto-string-detect?
+>>> >
+>>> ok. Will address in the next patch.
+>>> > > +	Usage:      optional
+>>> > > +	Value type: <bool>
+>>> > > +	Definition: Enables auto-calibration of the WLED sink configuration.
+>>> > > +
+>>> > >  Example:
+>>> > >
+>>> > >  qcom-wled@d800 {
+>>> > > diff --git a/drivers/video/backlight/qcom-spmi-wled.c
+>>> > > b/drivers/video/backlight/qcom-spmi-wled.c
+>>> > > index 8b2a77a..aee5c56 100644
+>>> > > --- a/drivers/video/backlight/qcom-spmi-wled.c
+>>> > > +++ b/drivers/video/backlight/qcom-spmi-wled.c
+>>> > > @@ -38,11 +38,14 @@
+>>> > >  #define  QCOM_WLED_CTRL_SC_FAULT_BIT		BIT(2)
+>>> > >
+>>> > >  #define QCOM_WLED_CTRL_INT_RT_STS		0x10
+>>> > > +#define  QCOM_WLED_CTRL_OVP_FLT_RT_STS_BIT	BIT(1)
+>>> >
+>>> > The use of BIT() makes this a mask and not a bit number, so if you just
+>>> > drop that you can afford to spell out the "FAULT" like the data sheet
+>>> > does. Perhaps even making it QCOM_WLED_CTRL_OVP_FAULT_STATUS ?
+>>> >
+>>> ok. Will change it in the next series.
+>>> > >
+>>> > >  #define QCOM_WLED_CTRL_MOD_ENABLE		0x46
+>>> > >  #define  QCOM_WLED_CTRL_MOD_EN_MASK		BIT(7)
+>>> > >  #define  QCOM_WLED_CTRL_MODULE_EN_SHIFT		7
+>>> > >
+>>> > > +#define QCOM_WLED_CTRL_FDBK_OP			0x48
+>>> >
+>>> > This is called WLED_CTRL_FEEDBACK_CONTROL, why the need to make it
+>>> > unreadable?
+>>> >
+>>> Ok. Will address it in next series.
+>>> > > +
+>>> > >  #define QCOM_WLED_CTRL_SWITCH_FREQ		0x4c
+>>> > >  #define  QCOM_WLED_CTRL_SWITCH_FREQ_MASK	GENMASK(3, 0)
+>>> > >
+>>> > > @@ -99,6 +102,7 @@ struct qcom_wled_config {
+>>> > >  	int ovp_irq;
+>>> > >  	bool en_cabc;
+>>> > >  	bool ext_pfet_sc_pro_en;
+>>> > > +	bool auto_calib_enabled;
+>>> > >  };
+>>> > >
+>>> > >  struct qcom_wled {
+>>> > > @@ -108,18 +112,25 @@ struct qcom_wled {
+>>> > >  	struct mutex lock;
+>>> > >  	struct qcom_wled_config cfg;
+>>> > >  	ktime_t last_sc_event_time;
+>>> > > +	ktime_t start_ovp_fault_time;
+>>> > >  	u16 sink_addr;
+>>> > >  	u16 ctrl_addr;
+>>> > > +	u16 auto_calibration_ovp_count;
+>>> > >  	u32 brightness;
+>>> > >  	u32 sc_count;
+>>> > >  	bool prev_state;
+>>> > >  	bool ovp_irq_disabled;
+>>> > > +	bool auto_calib_done;
+>>> > > +	bool force_mod_disable;
+>>> > >  };
+>>> > >
+>>> > >  static int qcom_wled_module_enable(struct qcom_wled *wled, int val)
+>>> > >  {
+>>> > >  	int rc;
+>>> > >
+>>> > > +	if (wled->force_mod_disable)
+>>> > > +		return 0;
+>>> > > +
+>>> > >  	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+>>> > >  			QCOM_WLED_CTRL_MOD_ENABLE, QCOM_WLED_CTRL_MOD_EN_MASK,
+>>> > >  			val << QCOM_WLED_CTRL_MODULE_EN_SHIFT);
+>>> > > @@ -187,12 +198,10 @@ static int qcom_wled_set_brightness(struct
+>>> > > qcom_wled *wled, u16 brightness)
+>>> > >  	v[1] = (brightness >> 8) & 0xf;
+>>> > >
+>>> > >  	for (i = 0; (string_cfg >> i) != 0; i++) {
+>>> > > -		if (string_cfg & BIT(i)) {
+>>> >
+>>> > Why was this check here in the first place, if it's now fine to
+>>> > configure the brightness of all strings?
+>>> >
+>>> > Also, a single-string config of 0b0001 will only set brightness on the
+>>> > first string, while 0b1000 will set brightness on all strings.
+>>> >
+>>> I will correct/remove it next series.
+>>> > >  			rc = regmap_bulk_write(wled->regmap, wled->sink_addr +
+>>> > >  					QCOM_WLED_SINK_BRIGHT_LSB_REG(i), v, 2);
+>>> > >  			if (rc < 0)
+>>> > >  				return rc;
+>>> > > -		}
+>>> > >  	}
+>>> > >
+>>> > >  	return 0;
+>>> > > @@ -294,6 +303,262 @@ static irqreturn_t
+>>> > > qcom_wled_sc_irq_handler(int irq, void *_wled)
+>>> > >  	return IRQ_HANDLED;
+>>> > >  }
+>>> > >
+>>> > > +#define AUTO_CALIB_BRIGHTNESS		200
+>>> > > +static int qcom_wled_auto_calibrate(struct qcom_wled *wled)
+>>> > > +{
+>>> > > +	int rc = 0, i;
+>>> > > +	u32 sink_config = 0, int_sts;
+>>> > > +	u8 reg = 0, sink_test = 0, sink_valid = 0;
+>>> > > +	u8 string_cfg = wled->cfg.string_cfg;
+>>> > > +
+>>> > > +	/* read configured sink configuration */
+>>> > > +	rc = regmap_read(wled->regmap, wled->sink_addr +
+>>> > > +			QCOM_WLED_SINK_CURR_SINK_EN, &sink_config);
+>>> > > +	if (rc < 0) {
+>>> > > +		pr_err("Failed to read SINK configuration rc=%d\n", rc);
+>>> > > +		goto failed_calib;
+>>> > > +	}
+>>> > > +
+>>> > > +	/* disable the module before starting calibration */
+>>> > > +	rc = regmap_update_bits(wled->regmap,
+>>> > > +			wled->ctrl_addr + QCOM_WLED_CTRL_MOD_ENABLE,
+>>> > > +			QCOM_WLED_CTRL_MOD_EN_MASK, 0);
+>>> > > +	if (rc < 0) {
+>>> > > +		pr_err("Failed to disable WLED module rc=%d\n",	rc);
+>>> > > +		goto failed_calib;
+>>> > > +	}
+>>> >
+>>> > Any error handling beyond this point seems to leave the backlight off
+>>> > (indefinitely?), this does seem like potentially bad user experience...
+>>> Ok. will address in next series.
+>>> >
+It is very unlikely to hit the error path in the below code. As the 
+below code
+just deals with the registers read/writes through the SPMI interface, 
+which is a stable
+interface. In worst case if see the errors, there is no use of bypassing 
+the error handling
+as the register write itself doesn't go through and the complete system 
+gets effected. Having
+error handling at-least gives some information.
+>>> > In particular I wonder about the case when this would happen at some
+>>> > random time, minutes, hours, days, months after the device was booted.
+>>> >
+>>> This will happen for every reboot.
+>>> > > +
+>>> > > +	/* set low brightness across all sinks */
+>>> > > +	rc = qcom_wled_set_brightness(wled, AUTO_CALIB_BRIGHTNESS);
+>>> > > +	if (rc < 0) {
+>>> > > +		pr_err("Failed to set brightness for calibration rc=%d\n", rc);
+>>> > > +		goto failed_calib;
+>>> > > +	}
+>>> > > +
+>>> > > +	if (wled->cfg.en_cabc) {
+>>> > > +		for (i = 0; (string_cfg >> i) != 0; i++) {
+>>> > > +			reg = 0;
+>>> > > +			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
+>>> > > +					QCOM_WLED_SINK_CABC_REG(i),
+>>> > > +					QCOM_WLED_SINK_CABC_MASK, reg);
+>>> >
+>>> > Just replace "reg" with 0.
+>>> Ok. will address in next series.
+>>> >
+>>> > > +			if (rc < 0)
+>>> > > +				goto failed_calib;
+>>> > > +		}
+>>> > > +	}
+>>> > > +
+>>> > > +	/* disable all sinks */
+>>> > > +	rc = regmap_write(wled->regmap,
+>>> > > +			wled->sink_addr + QCOM_WLED_SINK_CURR_SINK_EN, 0);
+>>> > > +	if (rc < 0) {
+>>> > > +		pr_err("Failed to disable all sinks rc=%d\n", rc);
+>>> > > +		goto failed_calib;
+>>> > > +	}
+>>> > > +
+>>> > > +	/* iterate through the strings one by one */
+>>> > > +	for (i = 0; (string_cfg >> i) != 0; i++) {
+>>> > > +		sink_test = 1 << (QCOM_WLED_SINK_CURR_SINK_SHFT + i);
+>>> >
+>>> > BIT(QCOM_WLED_SINK_CURR_SINK_SHFT + i);
+>>> >
+>>> Will address in next series.
+>>> > > +
+>>> > > +		/* Enable feedback control */
+>>> > > +		rc = regmap_write(wled->regmap, wled->ctrl_addr +
+>>> > > +				QCOM_WLED_CTRL_FDBK_OP, i + 1);
+>>> > > +		if (rc < 0) {
+>>> > > +			pr_err("Failed to enable feedback for SINK %d rc = %d\n",
+>>> > > +				i + 1, rc);
+>>> > > +			goto failed_calib;
+>>> > > +		}
+>>> > > +
+>>> > > +		/* enable the sink */
+>>> > > +		rc = regmap_write(wled->regmap, wled->sink_addr +
+>>> > > +				QCOM_WLED_SINK_CURR_SINK_EN, sink_test);
+>>> > > +		if (rc < 0) {
+>>> > > +			pr_err("Failed to configure SINK %d rc=%d\n",
+>>> > > +						i + 1, rc);
+>>> > > +			goto failed_calib;
+>>> > > +		}
+>>> > > +
+>>> > > +		/* Enable the module */
+>>> > > +		rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+>>> > > +				QCOM_WLED_CTRL_MOD_ENABLE,
+>>> > > +				QCOM_WLED_CTRL_MOD_EN_MASK,
+>>> > > +				QCOM_WLED_CTRL_MOD_EN_MASK);
+>>> >
+>>> > I like the use of regmap_update_bits(..., MASK, MASK) it's clean, but
+>>> > makes me wonder why it's done differently in qcom_wled_module_enable().
+>>> >
+>>> will address it in the next series.
+>>> > > +		if (rc < 0) {
+>>> > > +			pr_err("Failed to enable WLED module rc=%d\n", rc);
+>>> > > +			goto failed_calib;
+>>> > > +		}
+>>> > > +
+>>> > > +		usleep_range(QCOM_WLED_SOFT_START_DLY_US,
+>>> > > +				QCOM_WLED_SOFT_START_DLY_US + 1000);
+>>> > > +
+>>> > > +		rc = regmap_read(wled->regmap, wled->ctrl_addr +
+>>> > > +				QCOM_WLED_CTRL_INT_RT_STS, &int_sts);
+>>> > > +		if (rc < 0) {
+>>> > > +			pr_err("Error in reading WLED_INT_RT_STS rc=%d\n", rc);
+>>> > > +			goto failed_calib;
+>>> > > +		}
+>>> > > +
+>>> > > +		if (int_sts & QCOM_WLED_CTRL_OVP_FAULT_BIT)
+>>> > > +			pr_debug("WLED OVP fault detected with SINK %d\n",
+>>> > > +						i + 1);
+>>> > > +		else
+>>> > > +			sink_valid |= sink_test;
+>>> > > +
+>>> > > +		/* Disable the module */
+>>> > > +		rc = regmap_update_bits(wled->regmap,
+>>> > > +				wled->ctrl_addr + QCOM_WLED_CTRL_MOD_ENABLE,
+>>> > > +				QCOM_WLED_CTRL_MOD_EN_MASK, 0);
+>>> > > +		if (rc < 0) {
+>>> > > +			pr_err("Failed to disable WLED module rc=%d\n", rc);
+>>> > > +			goto failed_calib;
+>>> > > +		}
+>>> > > +	}
+>>> > > +
+>>> > > +	if (sink_valid == sink_config) {
+>>> > > +		pr_debug("WLED auto-calibration complete, default sink-config=%x
+>>> > > OK!\n",
+>>> > > +						sink_config);
+>>> > > +	} else {
+>>> > > +		pr_warn("Invalid WLED default sink config=%x changing it to=%x\n",
+>>> > > +						sink_config, sink_valid);
+>>> > > +		sink_config = sink_valid;
+>>> > > +	}
+>>> > > +
+>>> > > +	if (!sink_config) {
+>>> > > +		pr_warn("No valid WLED sinks found\n");
+>>> > > +		wled->force_mod_disable = true;
+>>> > > +		goto failed_calib;
+>>> > > +	}
+>>> > > +
+>>> > > +	/* write the new sink configuration */
+>>> > > +	rc = regmap_write(wled->regmap,
+>>> > > +			wled->sink_addr + QCOM_WLED_SINK_CURR_SINK_EN,
+>>> > > +			sink_config);
+>>> > > +	if (rc < 0) {
+>>> > > +		pr_err("Failed to reconfigure the default sink rc=%d\n", rc);
+>>> > > +		goto failed_calib;
+>>> > > +	}
+>>> > > +
+>>> > > +	/* MODULATOR_EN setting for valid sinks */
+>>> >
+>>> > "Enable valid sinks"
+>>> >
+>>> Will address it in the next series.
+>>> > > +	for (i = 0; (string_cfg >> i) != 0; i++) {
+>>> > > +		if (wled->cfg.en_cabc) {
+>>> > > +			reg = QCOM_WLED_SINK_CABC_EN;
+>>> >
+>>> > "reg" is a bad name of a variable holding the "value" to be written to a
+>>> > register.
+>>> >
+>>> Will address it in the next series.
+>>> > > +			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
+>>> > > +					QCOM_WLED_SINK_CABC_REG(i),
+>>> > > +					QCOM_WLED_SINK_CABC_MASK, reg);
+>>> >
+>>> > Again, just inline the value in the function call.
+>>> >
+>>> Will address it in the next series.
+>>> > > +			if (rc < 0)
+>>> > > +				goto failed_calib;
+>>> > > +		}
+>>> > > +
+>>> > > +		if (sink_config & (1 << (QCOM_WLED_SINK_CURR_SINK_SHFT + i)))
+>>> >
+>>> > BIT(QCOM_WLED_SINK_CURR_SINK_SHFT + i)
+>>> >
+>>> Will address it in the next series.
+>>> > > +			reg = QCOM_WLED_SINK_REG_STR_MOD_EN;
+>>> > > +		else
+>>> > > +			reg = 0x0; /* disable modulator_en for unused sink */
+>>> > > +
+>>> > > +		rc = regmap_write(wled->regmap, wled->sink_addr +
+>>> > > +				QCOM_WLED_SINK_MOD_EN_REG(i), reg);
+>>> > > +		if (rc < 0) {
+>>> > > +			pr_err("Failed to configure MODULATOR_EN rc=%d\n", rc);
+>>> > > +			goto failed_calib;
+>>> > > +		}
+>>> > > +	}
+>>> > > +
+>>> > > +	/* restore the feedback setting */
+>>> > > +	rc = regmap_write(wled->regmap,
+>>> > > +			wled->ctrl_addr + QCOM_WLED_CTRL_FDBK_OP, 0);
+>>> > > +	if (rc < 0) {
+>>> > > +		pr_err("Failed to restore feedback setting rc=%d\n", rc);
+>>> > > +		goto failed_calib;
+>>> > > +	}
+>>> > > +
+>>> > > +	/* restore  brightness */
+>>> > > +	rc = qcom_wled_set_brightness(wled, wled->brightness);
+>>> > > +	if (rc < 0) {
+>>> > > +		pr_err("Failed to set brightness after calibration rc=%d\n",
+>>> > > +			rc);
+>>> > > +		goto failed_calib;
+>>> > > +	}
+>>> > > +
+>>> > > +	rc = regmap_update_bits(wled->regmap,
+>>> > > +			wled->ctrl_addr + QCOM_WLED_CTRL_MOD_ENABLE,
+>>> > > +			QCOM_WLED_CTRL_MOD_EN_MASK,
+>>> > > +			QCOM_WLED_CTRL_MOD_EN_MASK);
+>>> > > +	if (rc < 0) {
+>>> > > +		pr_err("Failed to enable WLED module rc=%d\n", rc);
+>>> > > +		goto failed_calib;
+>>> > > +	}
+>>> > > +
+>>> > > +	/* delay for WLED soft-start */
+>>> >
+>>> > What comes after this that you want to delay?
+>>> >
+>>> > This delay is used to make the OVP IRQ not fire immediately, but as
+>>> > we've now successfully executed the string auto detection run we're
+>>> > never going to do anything in the OVP handler.
+>>> >
+>>> Will correct it in the next series.
+>>> > > +	usleep_range(QCOM_WLED_SOFT_START_DLY_US,
+>>> > > +			QCOM_WLED_SOFT_START_DLY_US + 1000);
+>>> > > +
+>>> > > +failed_calib:
+>>> > > +	return rc;
+>>> > > +}
+>>> > > +
+>>> > > +#define WLED_AUTO_CAL_OVP_COUNT		5
+>>> > > +#define WLED_AUTO_CAL_CNT_DLY_US	1000000	/* 1 second */
+>>> > > +static bool qcom_wled_auto_cal_required(struct qcom_wled *wled)
+>>> > > +{
+>>> > > +	s64 elapsed_time_us;
+>>> > > +
+>>> > > +	/*
+>>> > > +	 * Check if the OVP fault was an occasional one
+>>> > > +	 * or if its firing continuously, the latter qualifies
+>>> > > +	 * for an auto-calibration check.
+>>> > > +	 */
+>>> > > +	if (!wled->auto_calibration_ovp_count) {
+>>> > > +		wled->start_ovp_fault_time = ktime_get();
+>>> > > +		wled->auto_calibration_ovp_count++;
+>>> > > +	} else {
+>>> > > +		elapsed_time_us = ktime_us_delta(ktime_get(),
+>>> > > +				wled->start_ovp_fault_time);
+>>> > > +		if (elapsed_time_us > WLED_AUTO_CAL_CNT_DLY_US)
+>>> > > +			wled->auto_calibration_ovp_count = 0;
+>>> > > +		else
+>>> > > +			wled->auto_calibration_ovp_count++;
+>>> > > +
+>>> > > +		if (wled->auto_calibration_ovp_count >=
+>>> > > +				WLED_AUTO_CAL_OVP_COUNT) {
+>>> > > +			wled->auto_calibration_ovp_count = 0;
+>>> > > +			return true;
+>>> > > +		}
+>>> > > +	}
+>>> > > +
+>>> > > +	return false;
+>>> > > +}
+>>> > > +
+>>> > > +static int qcom_wled_auto_calibrate_at_init(struct qcom_wled *wled)
+>>> >
+>>> > I presume this function is expected to detect if there is a invalid
+>>> > configuration at boot and try to figure out which strings are actually
+>>> > wired.
+>>> >
+>>> Correct.
+>>> > > +{
+>>> > > +	int rc;
+>>> > > +	u32 fault_status = 0, rt_status = 0;
+>>> > > +
+>>> > > +	if (!wled->cfg.auto_calib_enabled)
+>>> > > +		return 0;
+>>> > > +
+>>> > > +	rc = regmap_read(wled->regmap,
+>>> > > +			wled->ctrl_addr + QCOM_WLED_CTRL_INT_RT_STS,
+>>> > > +			&rt_status);
+>>> > > +	if (rc < 0)
+>>> > > +		pr_err("Failed to read RT status rc=%d\n", rc);
+>>> > > +
+>>> > > +	rc = regmap_read(wled->regmap,
+>>> > > +			wled->ctrl_addr + QCOM_WLED_CTRL_FAULT_STATUS,
+>>> > > +			&fault_status);
+>>> > > +	if (rc < 0)
+>>> > > +		pr_err("Failed to read fault status rc=%d\n", rc);
+>>> > > +
+>>> > > +	if ((rt_status & QCOM_WLED_CTRL_OVP_FLT_RT_STS_BIT) ||
+>>> > > +			(fault_status & QCOM_WLED_CTRL_OVP_FAULT_BIT)) {
+>>> >
+>>> > You should be able to drop the extra () around these.
+>>> >
+>>> Ok. Will remove it in the next series.
+>>> > > +		mutex_lock(&wled->lock);
+>>> > > +		rc = qcom_wled_auto_calibrate(wled);
+>>> > > +		if (rc < 0)
+>>> > > +			pr_err("Failed auto-calibration rc=%d\n", rc);
+>>> >
+>>> > qcom_wled_auto_calibrate() did already print, no need to repeat this.
+>>> >
+>>> Ok. Will remove this in the next series.
+>>> > > +		else
+>>> > > +			wled->auto_calib_done = true;
+>>> > > +		mutex_unlock(&wled->lock);
+>>> > > +	}
+>>> > > +
+>>> > > +	return rc;
+>>> > > +}
+>>> > > +
+>>> > >  static irqreturn_t qcom_wled_ovp_irq_handler(int irq, void *_wled)
+>>> > >  {
+>>> > >  	struct qcom_wled *wled = _wled;
+>>> > > @@ -319,6 +584,33 @@ static irqreturn_t
+>>> > > qcom_wled_ovp_irq_handler(int irq, void *_wled)
+>>> > >  		pr_err("WLED OVP fault detected, int_sts=%x fault_sts= %x\n",
+>>> > >  			int_sts, fault_sts);
+>>> > >
+>>> > > +	if (fault_sts & QCOM_WLED_CTRL_OVP_FAULT_BIT) {
+>>> > > +		if (wled->cfg.auto_calib_enabled && !wled->auto_calib_done) {
+>>> > > +			if (qcom_wled_auto_cal_required(wled)) {
+>>> >
+>>> > So this will be invoked only once, iff we didn't boot with a faulty
+>>> > configuration in which case the qcom_wled_auto_calibrate_at_init() has
+>>> > already done this step and set auto_calib_done.
+>>> >
+>>> >
+>>> > Which also would mean that all logic in this handler, beyond the
+>>> > printouts, are only ever going to be executed zero or one times.
+>>> >
+>>> > Why don't you just do auto-detection during probe (iff the flag is set
+>>> > in DT) and you can remove all this extra logic?
+>>> >
+>>> I think we have seen a issue, where the OVP interrupt is not getting 
+>>> set
+>>> some times during the execution of this function at boot. In that 
+>>> case the
+>>> auto calibration is
+>>> done bit later. That's why this code is added.
+>>> > > +				mutex_lock(&wled->lock);
+>>> > > +				if (wled->cfg.ovp_irq > 0 &&
+>>> > > +						!wled->ovp_irq_disabled) {
+>>> > > +					disable_irq_nosync(wled->cfg.ovp_irq);
+>>> > > +					wled->ovp_irq_disabled = true;
+>>> > > +				}
+>>> > > +
+>>> > > +				rc = qcom_wled_auto_calibrate(wled);
+>>> > > +				if (rc < 0)
+>>> > > +					pr_err("Failed auto-calibration rc=%d\n",
+>>> > > +						rc);
+>>> >
+>>> > qcom_wled_auto_calibrate() did already print.
+>>> >
+>>> Ok. I will remove it in the next series.
+>>> > > +				else
+>>> > > +					wled->auto_calib_done = true;
+>>> > > +
+>>> > > +				if (wled->cfg.ovp_irq > 0 &&
+>>> > > +						wled->ovp_irq_disabled) {
+>>> > > +					enable_irq(wled->cfg.ovp_irq);
+>>> > > +					wled->ovp_irq_disabled = false;
+>>> > > +				}
+>>> > > +				mutex_unlock(&wled->lock);
+>>> > > +			}
+>>> > > +		}
+>>> > > +	}
+>>> > > +
+>>> >
+>>> > Regards,
+>>> > Bjorn
+>>> > --
+>>> > To unsubscribe from this list: send the line "unsubscribe linux-arm-msm"
+>>> > in
+>>> > the body of a message to majordomo@vger.kernel.org
+>>> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe 
+>> linux-arm-msm" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
