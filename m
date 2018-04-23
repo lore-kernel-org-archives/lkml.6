@@ -1,139 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932514AbeDWVnU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 17:43:20 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46094 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932291AbeDWVnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 17:43:19 -0400
-Date: Mon, 23 Apr 2018 16:43:17 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Will Deacon <will.deacon@arm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
-Subject: Re: [PATCH] perf tools: set kernel end address properly
-Message-Id: <20180423164317.5a47f3dd9842d533413a1d4b@arm.com>
-In-Reply-To: <CAKv+Gu_sY+Q+kqO1hp6f30WSGNPY1cnW5VJYj9cuVA0hU5YDVw@mail.gmail.com>
-References: <20180416042240.21528-1-namhyung@kernel.org>
-        <20180416092345.GA23274@krava>
-        <20180416135125.GA23802@kernel.org>
-        <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
-        <20180416165800.GD3202@kernel.org>
-        <20180416122407.0d90863b69fed80166384850@arm.com>
-        <20180416174811.1aca9106364effe435f363c8@arm.com>
-        <20180417022726.GA31947@sejong>
-        <20180418193759.b63912fe5e5b8a9023ec80a8@arm.com>
-        <20180419025424.GC13370@sejong>
-        <20180419183313.db3e3a105191a7f30b7650b2@arm.com>
-        <CAKv+Gu_sY+Q+kqO1hp6f30WSGNPY1cnW5VJYj9cuVA0hU5YDVw@mail.gmail.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932551AbeDWVnu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 17:43:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55766 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932291AbeDWVnt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 17:43:49 -0400
+Date: Mon, 23 Apr 2018 14:43:48 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Andres Freund <andres@anarazel.de>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Always report a writeback error once
+Message-ID: <20180423214348.GH13383@bombadil.infradead.org>
+References: <20180423204208.GG13383@bombadil.infradead.org>
+ <20180423205730.34wvykqhefbkrtfw@alap3.anarazel.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180423205730.34wvykqhefbkrtfw@alap3.anarazel.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 10:10:32 +0200
-Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-
-> On 20 April 2018 at 01:33, Kim Phillips <kim.phillips@arm.com> wrote:
-> > On Thu, 19 Apr 2018 11:54:24 +0900
-> > Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> >> On Wed, Apr 18, 2018 at 07:37:59PM -0500, Kim Phillips wrote:
-> >> > diff --git a/tools/perf/arch/arm64/util/sym-handling.c b/tools/perf/arch/arm64/util/sym-handling.c
-> >> > index 0051b1ee8450..5c4a2e208bbc 100644
-> >> > --- a/tools/perf/arch/arm64/util/sym-handling.c
-> >> > +++ b/tools/perf/arch/arm64/util/sym-handling.c
-> >> > @@ -20,3 +20,16 @@ bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
-> >> >                ehdr.e_type == ET_DYN;
-> >> >  }
-> >> >  #endif
-> >> > +
-> >> > +const char *arch__normalize_symbol_name(const char *name)
-> >> > +{
-> >> > +       /*
-> >> > +        * arm64 kernels compensating for a CPU erratum can put up a
-> >> > +        * module_emit_adrp_veneer in place of a module_emit_plt_entry
-> >> > +        */
-> >> > +       if (name && strlen(name) >= 23 &&
-> >> > +           !strncmp(name, "module_emit_adrp_veneer", 23))
-> >> > +               return "module_emit_plt_entry";
-> >> > +
-> >> > +       return name;
-> >> > +}
-> >>
-> >> I don't know it's always preferable or just for the test.  It it's the
-> >> latter it may be better to move it to the test code.
-> >
-> > AFACT, the veneer is a moniker and doesn't technically exist, and
-> > shouldn't be being looked-up.  Both chunks of this diff are needed to
-> > pass perf test 1: this chunk above is because in
-> > arch__normalize_symbol_name(), we squash the perf test 1's "<veneer>
-> > not in *kallsyms*" problem, and in the below chunk, we prevent it
-> > coming up when the test code iterates over the *vmlinux* symbols. I.e.
-> > we need to prevent the veneer from coming up in both kallsyms *and*
-> > vmlinux.
+On Mon, Apr 23, 2018 at 01:57:30PM -0700, Andres Freund wrote:
+> On 2018-04-23 13:42:08 -0700, Matthew Wilcox wrote:
+> > @@ -119,19 +119,11 @@ EXPORT_SYMBOL(errseq_set);
+> >  errseq_t errseq_sample(errseq_t *eseq)
+> >  {
 > 
-> I don't have all the context here, so I don't know what exactly
-> arch__normalize_symbol_name() is trying to accomplish.
+> There's a comment above this:
+>  *
+>  * This function allows callers to sample an errseq_t value, marking it as
+>  * "seen" if required.
 
-Sorry about that.  The problem is that perf test 1 ("vmlinux
-symtab matches kallsyms") is failing, because
-module_emit_adrp_veneer exists in /boot/vmlinux but doesn't exist
-in /proc/kallsyms, and, sure enough, it's not in the latter.
+Oh, good catch.  I'll fix that.  Thanks!
 
-> What I do know is that module_emit_adrp_veneer() and
-> module_emit_plt_entry() are not part of the veneer themselves: they
-> are ordinary routines that are part of the module loader, and which
-> populate the allocated veneer space on demand when encountering ADRP
-> instructions that need to be rerouted.
-...
-> > >> rare case we might need to add more paranoid checks.
-> >
-> > It's certainly rare: Adding the authors of the veneer to cc for
-> > comments:
-> >
-> > Will, Ard, how probable are veneer-style symbols such as the
-> > one introduced in commit a257e0257 "arm64/kernel: don't ban ADRP to
-> > work around Cortex-A53 erratum #843419" to happen again in the future?
-> >
+> I've never really looked at this code in any depth before, but won't
+> this potentially lead to the same error being reported on multiple FDs?
+> Imagine two fds (potentially in different processes) getting the 0
+> returned by errseq_sample() because it's not ERRSEQ_SEEN. Afaict
+> file_check_and_advance_wb_err() will return an error that's always
+> unlike 0 in that case, and thus the error will returned on both fds?
 > 
-> Distro kernels typically enable full KASLR, so on systems that
-> implement EFI_RNG_PROTOCOL, all function calls from modules into the
-> kernel proper are redirected via veneers. (Note that these are bl
-> instructions not adrp instructions though).
-> 
-> > I would have thought WARNing on within-a-pagesize would be OK,
-> > Namhyung.  Are you suggesting checking instead for a hardcoded veneer
-> > symbol string?
-> 
-> Veneers don't have symbol strings. Veneers are anonymous sequences of
-> instructions living in a patch of R-X mapped module space somewhere.
-> The only symbol strings are for the routines that generate these
-> veneers, not for the veneers themselves.
+> I'm personally perfectly fine with that, but it's not necessarily what's
+> described as desired in your email?.
 
-OK, thanks, so AFAICT this means the function module_emit_adrp_veneer()
-should still show up in /proc/kallsyms, but it's not.  I'm also seeing
-some weird characters, e.g., here there's a byte with a binary 02 value
-following a weird symbol named 'L14472' (part of the xfs module?):
+That's what I was trying to say with this paragraph:
 
-$ grep L1 /proc/kallsyms | hexdump -C | head
-<snip>
-00000540  30 30 30 30 30 20 72 20  2e 4c 31 34 34 37 32 02  |00000 r .L14472.|
-<snip>
+> > This patch restores that behaviour by reporting errors to file descriptors
+> > which are opened after the error occurred, but before it was reported
+> > to any file descriptor.
 
-arch__normalize_symbol_name() is a place where architecture code can
-clean up symbol names in perf, and I thought module_emit_adrp_veneer()
-was a veneer itself, but it seems that's not the case, so the
-literal string check for it shouldn't be needed.  The test is still
-failing though because it doesn't show up in kallsyms...
+Maybe it was a little unclear?  I'd appreciate a suggestion on making
+it clearer.
 
-Thanks,
+I think this behaviour is perfectly justifiable.  Writeback errors occur
+asynchronously to open.  Userspace can't tell the difference between:
 
-Kim
+kernel: writeback
+p1: open
+p2: open
+p1: fsync
+p2: fsync
+
+and
+
+p1: open
+p2: open
+kernel: writeback
+p1: fsync
+p2: fsync
+
+Since both p1 and p2 would get the writeback error in the second case,
+they can both get the writeback error in the first place.
+
+p2 can't rely on this, after all we could have the sequence:
+
+p1: open
+p1: fsync
+p2: open
+p2: fsync
+
+and p2 will not see the error, but it wouldn't have seen the error
+before the errseq_t infrastructure went in.  And maybe p1 handled the
+error three weeks ago; we don't want p2 to see the error.
