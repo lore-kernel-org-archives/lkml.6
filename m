@@ -1,1555 +1,273 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754290AbeDWIpy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:45:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753109AbeDWIpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:45:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E0C21759
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Mon, 23 Apr 2018 16:44:56 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: jan.tuerk@emtrion.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 5/6] ARM: dts: Add support for emtrion emCON-MX6 series
-Message-ID: <20180423084454.GZ25429@dragon>
-References: <20171220134710.64479-2-jan.tuerk@emtrion.com>
- <20180420125108.14197-1-jan.tuerk@emtrion.com>
- <20180420125108.14197-6-jan.tuerk@emtrion.com>
+        id S1754368AbeDWIri (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:47:38 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:53073 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753005AbeDWIrf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 04:47:35 -0400
+X-Originating-IP: 2.224.242.101
+Date: Mon, 23 Apr 2018 10:47:28 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/8] drm: rcar-du: rcar-lvds: Add bridge format support
+Message-ID: <20180423084728.GD17088@w540>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524130269-32688-7-git-send-email-jacopo+renesas@jmondi.org>
+ <11e82e23-4ab0-7441-1798-1eeb4fb96995@axentia.se>
+ <20180423072815.GM4235@w540>
+ <9378eadb-1dbf-ecfe-9bd1-40bec21c4648@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="cQXOx3fnlpmgJsTP"
 Content-Disposition: inline
-In-Reply-To: <20180420125108.14197-6-jan.tuerk@emtrion.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <9378eadb-1dbf-ecfe-9bd1-40bec21c4648@axentia.se>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 02:50:52PM +0200, jan.tuerk@emtrion.com wrote:
-> From: Jan Tuerk <jan.tuerk@emtrion.com>
-> 
-> This patch adds support for the emtrion GmbH emCON-MX6 modules.
-> They are available with imx.6 Solo, Dual-Lite, Dual and Quad
-> equipped with Memory from 512MB to 2GB (configured by U-Boot).
-> 
-> Our default developer-Kit ships with the Avari baseboard and the
-> EDT ETM0700G0BDH6 Display (imx6[q|dl]-emcon-avari).
-> 
-> The devicetree is split into the common part providing all module
-> components and the basic support for all SoC versions
-> (imx6qdl-emcon.dtsi) and parts which are i.mx6 S|DL and D|Q relevant.
-> Finally the support for the avari baseboard in the developer-kit
-> configuration is provided by the emcon-avari dts files.
-> 
-> Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
-> ---
->  Documentation/devicetree/bindings/arm/emtrion.txt |  13 +
 
-It's better to have a separate patch for bindings doc, which needs to be
-acknowledged by DT maintainers.
+--cQXOx3fnlpmgJsTP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
->  arch/arm/boot/dts/Makefile                        |   2 +
->  arch/arm/boot/dts/imx6dl-emcon-avari.dts          | 224 ++++++
->  arch/arm/boot/dts/imx6dl-emcon.dtsi               |  27 +
->  arch/arm/boot/dts/imx6q-emcon-avari.dts           | 224 ++++++
->  arch/arm/boot/dts/imx6q-emcon.dtsi                |  27 +
->  arch/arm/boot/dts/imx6qdl-emcon.dtsi              | 838 ++++++++++++++++++++++
->  7 files changed, 1355 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/emtrion.txt
->  create mode 100644 arch/arm/boot/dts/imx6dl-emcon-avari.dts
->  create mode 100644 arch/arm/boot/dts/imx6dl-emcon.dtsi
->  create mode 100644 arch/arm/boot/dts/imx6q-emcon-avari.dts
->  create mode 100644 arch/arm/boot/dts/imx6q-emcon.dtsi
->  create mode 100644 arch/arm/boot/dts/imx6qdl-emcon.dtsi
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/emtrion.txt b/Documentation/devicetree/bindings/arm/emtrion.txt
-> new file mode 100644
-> index 000000000000..3ff6c6c2034d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/emtrion.txt
-> @@ -0,0 +1,13 @@
-> +Emtrion Devicetree Bindings
-> +===========================
-> +
-> +emCON Series:
-> +-------------
-> +
-> +Required root node properties
-> +	- compatible:
-> +	- "emtrion,emcon-mx6", "fsl,imx6q", "fsl,imx6dl"; : emCON-MX6 Generic SoM
-> +	- "emtrion,emcon-mx6", "fsl,imx6q"; 		: emCON-MX6D or emCON-MX6Q SoM
-> +	- "emtrion,emcon-mx6-avari", "fsl,imx6q";	: emCON-MX6D or emCON-MX6Q SoM on Avari Base
-> +	- "emtrion,emcon-mx6", "fsl,imx6dl"; 		: emCON-MX6S or emCON-MX6DL SoM
-> +	- "emtrion,emcon-mx6-avari", "fsl,imx6dl";	: emCON-MX6S or emCON-MX6DL SoM on Avari Base
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 7e2424957809..05b930da3fda 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -381,6 +381,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
->  	imx6dl-cubox-i-emmc-som-v15.dtb \
->  	imx6dl-cubox-i-som-v15.dtb \
->  	imx6dl-dfi-fs700-m60.dtb \
-> +	imx6dl-emcon-avari.dtb \
->  	imx6dl-gw51xx.dtb \
->  	imx6dl-gw52xx.dtb \
->  	imx6dl-gw53xx.dtb \
-> @@ -442,6 +443,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
->  	imx6q-display5-tianma-tm070-1280x768.dtb \
->  	imx6q-dmo-edmqmx6.dtb \
->  	imx6q-dms-ba16.dtb \
-> +	imx6q-emcon-avari.dtb \
->  	imx6q-evi.dtb \
->  	imx6q-gk802.dtb \
->  	imx6q-gw51xx.dtb \
-> diff --git a/arch/arm/boot/dts/imx6dl-emcon-avari.dts b/arch/arm/boot/dts/imx6dl-emcon-avari.dts
-> new file mode 100644
-> index 000000000000..2344fb9498e3
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6dl-emcon-avari.dts
-> @@ -0,0 +1,224 @@
-> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
-> +/* Copyright (C) 2018 emtrion GmbH
-> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
-> + */
+Hi Peter,
 
-/*
- * Copyright ...
- */
+On Mon, Apr 23, 2018 at 09:59:22AM +0200, Peter Rosin wrote:
+> On 2018-04-23 09:28, jacopo mondi wrote:
+> > Hi Peter,
+> >    thanks for looking into this
+> >
+> > On Sun, Apr 22, 2018 at 10:08:21PM +0200, Peter Rosin wrote:
+> >> On 2018-04-19 11:31, Jacopo Mondi wrote:
+> >>> With the introduction of static input image format enumeration in DRM
+> >>> bridges, add support to retrieve the format in rcar-lvds LVDS encoder
+> >>> from both panel or bridge, to set the desired LVDS mode.
+> >>>
+> >>> Do not rely on 'DRM_BUS_FLAG_DATA_LSB_TO_MSB' flag to mirror the LVDS
+> >>> format, as it is only defined for drm connectors, but use the newly
+> >>> introduced _LE version of LVDS mbus image formats.
+> >>>
+> >>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>> ---
+> >>>  drivers/gpu/drm/rcar-du/rcar_lvds.c | 64 +++++++++++++++++++++++++------------
+> >>>  1 file changed, 44 insertions(+), 20 deletions(-)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> >>> index 3d2d3bb..2fa875f 100644
+> >>> --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> >>> +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> >>> @@ -280,41 +280,65 @@ static bool rcar_lvds_mode_fixup(struct drm_bridge *bridge,
+> >>>  	return true;
+> >>>  }
+> >>>
+> >>> -static void rcar_lvds_get_lvds_mode(struct rcar_lvds *lvds)
+> >>> +static int rcar_lvds_get_lvds_mode_from_connector(struct rcar_lvds *lvds,
+> >>> +						  unsigned int *bus_fmt)
+> >>>  {
+> >>>  	struct drm_display_info *info = &lvds->connector.display_info;
+> >>> -	enum rcar_lvds_mode mode;
+> >>> -
+> >>> -	/*
+> >>> -	 * There is no API yet to retrieve LVDS mode from a bridge, only panels
+> >>> -	 * are supported.
+> >>> -	 */
+> >>> -	if (!lvds->panel)
+> >>> -		return;
+> >>>
+> >>>  	if (!info->num_bus_formats || !info->bus_formats) {
+> >>>  		dev_err(lvds->dev, "no LVDS bus format reported\n");
+> >>> -		return;
+> >>> +		return -EINVAL;
+> >>> +	}
+> >>> +
+> >>> +	*bus_fmt = info->bus_formats[0];
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int rcar_lvds_get_lvds_mode_from_bridge(struct rcar_lvds *lvds,
+> >>> +					       unsigned int *bus_fmt)
+> >>> +{
+> >>> +	if (!lvds->next_bridge->num_bus_formats ||
+> >>> +	    !lvds->next_bridge->bus_formats) {
+> >>> +		dev_err(lvds->dev, "no LVDS bus format reported\n");
+> >>> +		return -EINVAL;
+> >>>  	}
+> >>>
+> >>> -	switch (info->bus_formats[0]) {
+> >>> +	*bus_fmt = lvds->next_bridge->bus_formats[0];
+> >>
+> >> What makes the first reported format the best choice?
+> >
+> > It already was the selection 'policy' in place in this driver before
+> > introducing bridge formats. As you can see from the switch I have here
+> > removed, the first format was selected even when only the format
+> > reported by the connector was inspected.
+>
+> Well, *if* some bridge/panel do support more than one format, and your
+> driver depends on it being the first reported format, then I can easily
+> see that some other driver also requires its expected format to be first.
+> Then we might end up in a war over what format should be reported as the
+> first so that this multi-input bridge/panel could be used by both drivers.
+>
+> > And, anyway, as DRM lacks a format negotiation API, there is no way to
+> > tell a bridge/panel "use this format instead of this other one" (which
+> > makes me wonders why more formats can be reported, but the
+> > bus_formats[] helpers for connectors allow that, so I thought it made
+> > sense to do the same for bridges).
+>
+> Since there is no way to negotiate, I would assume that the other end
+> really does support all reported formats (in some automagical way). To
+> me, the only sensible approach is to loop over the formats and see if
+> *any* of them fits, and assume that something else<tm> deals with the
+> details.
+>
 
-> +
-> +/dts-v1/;
-> +#include "imx6dl.dtsi"
-> +#include "imx6qdl-emcon.dtsi"
-> +#include "imx6dl-emcon.dtsi" /*Include camera2 pinmux*/
+I see. I agree looping may be a better way of handling this
+actually...
 
-/* bla bla */
+> >>
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static void rcar_lvds_get_lvds_mode(struct rcar_lvds *lvds)
+> >>> +{
+> >>> +	unsigned int bus_fmt;
+> >>> +	int ret;
+> >>> +
+> >>> +	if (lvds->panel)
+> >>> +		ret = rcar_lvds_get_lvds_mode_from_connector(lvds, &bus_fmt);
+> >>> +	else
+> >>> +		ret = rcar_lvds_get_lvds_mode_from_bridge(lvds, &bus_fmt);
+> >>
+> >> What if no bridge reports any format, shouldn't the connector be examined
+> >> then?
+> >
+> > There is no fallback selection policy at the moment as you can see, or
+> > either, as it was before, the LVDS mode is not set for the rcar_lvds
+> > component  if it's not reported by the next element in the pipeline (and I
+> > should probably return 0, not an error here in that case).
+> >
+> > The connector associated with a panel is only inspected if it's next in the
+> > pipeline.
+>
+> But by not going to the connector for the case where no bridge in the
+> pipeline has any info on the format, you effectively demand that at
+> least some bridge in the pipeline should report supported input
+> format(s). That excludes a lot of existing bridge combinations from
+> being used. Or do you see it as a requirement that bridges must
+> report their supported input formats? Perhaps only when used with
+> this driver?
 
-> +
-> +/ {
-> +	model = "emtrion SoM emCON-MX6 Solo/Dual-Lite Avari";
-> +	compatible = "emtrion,emcon-mx6-avari", "fsl,imx6dl";
-> +
-> +	aliases {
-> +		mmc0 = &usdhc3;
-> +		mmc2 = &usdhc1;
-> +		mmc1 = &usdhc2;
-> +		mmc3 = &usdhc4;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = <&uart1>;
-> +	};
-> +
-> +	memory {
+That's a point that should be discussed imho.
 
-The unit-address is missing.
+Daniel in his reply to your original series suggested format should be
+reported by bridges when they get registered [1]. I have not enforced that
+though, as it requires all mainline bridge drivers (which are not that
+many -yet-) to register a format before bridge_add(). If there is
+consensus on this, all other drivers should be updated (I'm not even
+sure it is possible for all of them honestly).
 
-> +		reg = <0x10000000 0x40000000>;
-> +	};
-> +
-> +	supplies {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
+Anyway, the only thing I'm sure is that I don't want to make this
+driver 'special', I would prefer that in case format is not there,
+we'll ignore the LVDS mode configuration as it was before this series.
 
-DT maintainers do not like this fake container node.  Please put the
-fixed regulator nodes directly under root with a unique name like below.
+Thanks
+  j
 
-	reg_xxx: regulator-xxx {
-		...
-	};
 
-> +
-> +		wallplug5p0: supply@0 {
-> +			compatible = "regulator-fixed";
-> +			reg = <0>;
-> +			regulator-name = "WALL-PLUG";
-> +			regulator-min-microvolt = <5000000>;
-> +			regulator-max-microvolt = <5000000>;
-> +			regulator-always-on;
-> +			regulator-boot-on;
-> +		};
-> +
-> +		base3p3: supply@1 {
-> +			compatible = "regulator-fixed";
-> +			reg = <1>;
-> +			vin-supply = <&wallplug5p0>;
-> +			regulator-name = "3V3-avari";
-> +			regulator-min-microvolt = <3300000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-always-on;
-> +			regulator-boot-on;
-> +		};
-> +
-> +		base1p5: supply@2 {
-> +			compatible = "regulator-fixed";
-> +			reg = <2>;
-> +			vin-supply = <&base3p3>;
-> +			regulator-name = "1V5-avari";
-> +			regulator-min-microvolt = <1500000>;
-> +			regulator-max-microvolt = <1500000>;
-> +			regulator-always-on;
-> +			regulator-boot-on;
-> +		};
-> +
-> +		reg_usb_otg: otgvbus@3 {
-> +			compatible = "regulator-fixed";
-> +			reg = <3>;
-> +			vin-supply = <&wallplug5p0>;
-> +			regulator-name = "OTG_VBUS";
-> +			regulator-min-microvolt = <5000000>;
-> +			regulator-max-microvolt = <5000000>;
-> +			gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
-> +			regulator-always-on;
-> +		};
-> +
-> +	};
-> +
-> +
-> +	sndosc: 12MHZosc {
+[1] https://lkml.org/lkml/2018/4/4/50
+>
+> >>
+> >>> +	if (ret)
+> >>> +		return;
+> >>> +
+> >>> +	switch (bus_fmt) {
+> >>> +	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE:
+> >>> +	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE:
+> >>> +		lvds->mode |= RCAR_LVDS_MODE_MIRROR;
+> >>>  	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
+> >>>  	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
+> >>> -		mode = RCAR_LVDS_MODE_JEIDA;
+> >>> +		lvds->mode = RCAR_LVDS_MODE_JEIDA;
+> >>
+> >> This is b0rken, first the mirror bit is ORed into some unknown preexisting
+> >> value, then the code falls through (without any fall through comment, btw)
+> >> and forcibly sets the mode, thus discarding the mirror bit which was
+> >> carefully ORed in.
+> >
+> > You are correct, the second assignment should have been an |= and not
+> > a plain assignment. The variable is 0ed though, as 'struct rcar_lvds
+> > *lvds' is kzalloc-ed in probe function.
+>
+> The code would be clearer if you explicitly zeroed the mode in this
+> function. Or do you rely on this function to not clobber other bits?
+> In that case apply some bit-mask.
+>
+> Cheers,
+> Peter
+>
+> >>
+> >>>  		break;
+> >>> +
+> >>> +	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE:
+> >>> +		lvds->mode |= RCAR_LVDS_MODE_MIRROR;
+> >>>  	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
+> >>> -		mode = RCAR_LVDS_MODE_VESA;
+> >>> +		lvds->mode = RCAR_LVDS_MODE_VESA;
+> >>
+> >> Dito.
+> >>
+> >> Cheers,
+> >> Peter
+> >>
+> >>>  		break;
+> >>>  	default:
+> >>>  		dev_err(lvds->dev, "unsupported LVDS bus format 0x%04x\n",
+> >>> -			info->bus_formats[0]);
+> >>> -		return;
+> >>> +			bus_fmt);
+> >>>  	}
+> >>> -
+> >>> -	if (info->bus_flags & DRM_BUS_FLAG_DATA_LSB_TO_MSB)
+> >>> -		mode |= RCAR_LVDS_MODE_MIRROR;
+> >>> -
+> >>> -	lvds->mode = mode;
+> >>>  }
+> >>>
+> >>>  static void rcar_lvds_mode_set(struct drm_bridge *bridge,
+> >>>
+> >>
+>
 
-	clock-xxx {
-		...
-	};
+--cQXOx3fnlpmgJsTP
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency  = <12000000>;
-> +	};
-> +
-> +	sound {
-> +		compatible = "fsl,imx-audio-sgtl5000";
-> +		model = "emCON-avari-sgtl5000";
-> +		ssi-controller = <&ssi2>;
-> +		audio-codec = <&sgtl5000>;
-> +		audio-routing =
-> +			"Headphone Jack", "HP_OUT";
-> +		mux-int-port = <2>;
-> +		mux-ext-port = <3>;
-> +	};
-> +
-> +};
-> +
-> +
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-One newline is good enough.
+iQIcBAEBAgAGBQJa3Z2gAAoJEHI0Bo8WoVY8MuYP+gMezpvf1adDHCGnFQaQd2Dk
+laYgxs47ugWDTLErx3Cn3w6L4YnloQbpqlwkVTvP1dTCaTINJVy2P4zbkbC2IbGp
+Vs0drtXzcYk9dumuIAhx3eIXVG8G3PX+5HQWcqGTD37E4AkgqVigi2SYHwM+ZO7m
+LsRx5wii3c1ukp5766EoAZEwGwAvt1GK5mraimn8mzgd1ndKQRm/kYGQQL2GnYzU
+Sn6I6EVKGnWxIvWFgTAsT0yLIJt4ubfNR8t01DE1d2A9J6dQtwfFUk7hBeEkvn4c
+Bnoc1L6cIYaLAX4+gG7t+FyCpF5s4e5/1rbEvYVqHJ/IpyHOPP7HL+LWB2ra0GQk
+gj3bzwLoGmVDvHOaC4DEY8xVcaAvY8f7hrBjJkGC6o4ZccztsE0zrwNjgUbvjxHD
+87VvhYhzAVtiLfJHf4VAwv0jUIqJszRYK0nKwsrMboZkd5BSgC5tdlTBsMB9yj4r
+vc7XU3fRVDBB9iMi/zLq5Cb7FKVC5GQmB6/kBs0CcMC/jTZpJPd7CeHgi33i8H+w
+t7v+GP6n38cViFJDLlCxlU/uuB7/s2q69L1g0693HUvl5fWJdr4cwQ0IvAbDq8F0
+LDlY1mw4/7qHRdxPu9aqXs1wLQ9KBIZEfJOqLDyWnf2A9vXK8tBw72zOtvmwZ9Ml
+9bYyqyS6WaQIQPMsZrdm
+=fSTS
+-----END PGP SIGNATURE-----
 
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	/*Unused emCON-MX6 outputs on AVARI*/
-> +	pinctrl-0 = <
-> +				 &pinctrl_emcon_gpio1 &pinctrl_emcon_gpio2
-> +				 &pinctrl_emcon_gpio3 &pinctrl_emcon_gpio5
-> +				 &pinctrl_emcon_gpio6 &pinctrl_emcon_gpio7
-> +				 &pinctrl_emcon_gpio8 &pinctrl_emcon_irq_a
-> +				 &pinctrl_emcon_irq_b &pinctrl_emcon_irq_c
-> +				 &pinctrl_emcon_irq_pwr &pinctrl_nor_flash
-> +				 &pinctrl_usdhc2
-> +				 &pinctrl_spdif_out     &pinctrl_spdif_in
-> +				 &pinctrl_cpi1          &pinctrl_cpi2
-> +				>;
-
-Only pins without clear consumer should be put into hog group.  Also the
-indent seems broken.
-
-> +};
-> +
-> +&audmux {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_audmux>;
-> +	status = "okay";
-> +};
-> +
-> +
-> +
-
-One newline is good enough.  Also, please try to sort these labelled
-nodes alphabetically.
-
-> +&i2c3 {
-> +	clock-frequency = <100000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c3>;
-> +	status = "okay";
-> +
-> +	sgtl5000: audio-codec@a {
-> +		compatible = "fsl,sgtl5000";
-> +		reg = <0x0a>;
-> +		clocks = <&sndosc>;
-> +		VDDA-supply = <&base3p3>;
-> +		VDDIO-supply = <&base3p3>;
-
-#sound-dai-cells is missing.
-
-> +	};
-> +
-> +	boardID: pca8754a@3a {
-
-Please find a more generic node name for it.
-
-> +		compatible = "nxp,pca8574";
-> +		reg = <0x3a>;
-> +		gpio-controller;
-> +		#gpio-cells = <1>;
-> +	};
-> +
-> +	captouch: touchscreen@38 {
-> +		compatible = "edt,edt-ft5406";
-> +		reg = <0x38>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_irq_touch2 &pinctrl_emcon_gpio4>;
-> +		interrupt-parent = <&gpio6>;
-> +		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
-> +		wake-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-> +		wakeup-source;
-> +		status = "okay";
-
-The "okay" status is only needed to flip the default "disabled" device.
-
-> +	};
-> +};
-> +
-> +&ssi2 {
-> +	status = "okay";
-> +};
-> +
-> +&rgb_encoder {
-> +	status = "okay";
-> +};
-> +
-> +&rgb_panel {
-> +	compatible = "edt,etm0700g0bdh6";
-> +	status = "okay";
-> +};
-> +
-> +&i2c2 {
-> +	status = "okay";
-> +};
-> +
-> +&hdmi {
-> +	ddc-i2c-bus = <&i2c2>;
-> +	status = "okay";
-> +};
-> +
-> +&usbh1 {
-> +	status = "okay";
-> +};
-> +
-> +&usbotg {
-> +	status = "okay";
-> +};
-> +
-> +&pcie {
-> +	status = "okay";
-> +};
-> +
-> +&usdhc1 {
-> +	status = "okay";
-> +};
-> +
-> +&can1 {
-> +	status = "okay";
-> +};
-> +
-> +&can2 {
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	status = "okay";
-> +	uart-has-rtscts;
-> +};
-> +
-> +&uart3 {
-> +	status = "okay";
-> +};
-> +
-> +&uart4 {
-> +	status = "okay";
-> +};
-> +
-> +&uart5 {
-> +	status = "okay";
-> +};
-> +
-> +&ecspi2 {
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm/boot/dts/imx6dl-emcon.dtsi b/arch/arm/boot/dts/imx6dl-emcon.dtsi
-> new file mode 100644
-> index 000000000000..1ed629c9747e
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6dl-emcon.dtsi
-> @@ -0,0 +1,27 @@
-> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
-> +/* Copyright (C) 2018 emtrion GmbH
-> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
-> + */
-> +
-> +/ {
-> +	model = "emtrion SoM emCON-MX6 Solo/DualLite";
-> +	compatible = "emtrion,emcon-mx6", "fsl,imx6dl";
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl_cpi2: csi1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_D17__IPU1_CSI1_PIXCLK	0x0b0b1
-> +			MX6QDL_PAD_EIM_EB3__IPU1_CSI1_HSYNC		0x1b0b1
-> +			MX6QDL_PAD_EIM_D29__IPU1_CSI1_VSYNC		0x1b0b1
-> +			MX6QDL_PAD_EIM_A17__IPU1_CSI1_DATA12	0x1b0b1
-> +			MX6QDL_PAD_EIM_D27__IPU1_CSI1_DATA13	0x1b0b1
-> +			MX6QDL_PAD_EIM_D26__IPU1_CSI1_DATA14	0x1b0b1
-> +			MX6QDL_PAD_EIM_D20__IPU1_CSI1_DATA15	0x1b0b1
-> +			MX6QDL_PAD_EIM_D19__IPU1_CSI1_DATA16	0x1b0b1
-> +			MX6QDL_PAD_EIM_D18__IPU1_CSI1_DATA17	0x1b0b1
-> +			MX6QDL_PAD_EIM_D16__IPU1_CSI1_DATA18	0x1b0b1
-> +			MX6QDL_PAD_EIM_EB2__IPU1_CSI1_DATA19	0x1b0b1
-> +		>;
-> +	};
-> +};
-> diff --git a/arch/arm/boot/dts/imx6q-emcon-avari.dts b/arch/arm/boot/dts/imx6q-emcon-avari.dts
-> new file mode 100644
-> index 000000000000..0c85b5ee011c
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6q-emcon-avari.dts
-
-There are so many things duplicated between imx6dl-emcon-avari.dts and
-imx6q-emcon-avari.dts.  Can you do something to avoid that?
-
-> @@ -0,0 +1,224 @@
-> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
-> +/* Copyright (C) 2018 emtrion GmbH
-> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
-> + */
-> +
-> +/dts-v1/;
-> +#include "imx6q.dtsi"
-> +#include "imx6qdl-emcon.dtsi"
-> +#include "imx6q-emcon.dtsi" /*Include camera2 pinmux*/
-> +
-> +/ {
-> +	model = "emtrion SoM emCON-MX6 Dual/Quad on Avari";
-> +	compatible = "emtrion,emcon-mx6-avari", "fsl,imx6q";
-> +
-> +	aliases {
-> +		mmc0 = &usdhc3;
-> +		mmc2 = &usdhc1;
-> +		mmc1 = &usdhc2;
-> +		mmc3 = &usdhc4;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = <&uart1>;
-> +	};
-> +
-> +	memory {
-> +		reg = <0x10000000 0x40000000>;
-> +	};
-> +
-> +	supplies {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		wallplug5p0: supply@0 {
-> +			compatible = "regulator-fixed";
-> +			reg = <0>;
-> +			regulator-name = "WALL-PLUG";
-> +			regulator-min-microvolt = <5000000>;
-> +			regulator-max-microvolt = <5000000>;
-> +			regulator-always-on;
-> +			regulator-boot-on;
-> +		};
-> +
-> +		base3p3: supply@1 {
-> +			compatible = "regulator-fixed";
-> +			reg = <1>;
-> +			vin-supply = <&wallplug5p0>;
-> +			regulator-name = "3V3-avari";
-> +			regulator-min-microvolt = <3300000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-always-on;
-> +			regulator-boot-on;
-> +		};
-> +
-> +		base1p5: supply@2 {
-> +			compatible = "regulator-fixed";
-> +			reg = <2>;
-> +			vin-supply = <&base3p3>;
-> +			regulator-name = "1V5-avari";
-> +			regulator-min-microvolt = <1500000>;
-> +			regulator-max-microvolt = <1500000>;
-> +			regulator-always-on;
-> +			regulator-boot-on;
-> +		};
-> +
-> +		reg_usb_otg: otgvbus@3 {
-> +			compatible = "regulator-fixed";
-> +			reg = <3>;
-> +			vin-supply = <&wallplug5p0>;
-> +			regulator-name = "OTG_VBUS";
-> +			regulator-min-microvolt = <5000000>;
-> +			regulator-max-microvolt = <5000000>;
-> +			gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
-> +			regulator-always-on;
-> +		};
-> +
-> +	};
-> +
-> +
-> +	sndosc: 12MHZosc {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency  = <12000000>;
-> +	};
-> +
-> +	sound {
-> +		compatible = "fsl,imx-audio-sgtl5000";
-> +		model = "emCON-avari-sgtl5000";
-> +		ssi-controller = <&ssi2>;
-> +		audio-codec = <&sgtl5000>;
-> +		audio-routing =
-> +			"Headphone Jack", "HP_OUT";
-> +		mux-int-port = <2>;
-> +		mux-ext-port = <3>;
-> +	};
-> +
-> +};
-> +
-> +
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	/*Unused emCON-MX6 pingroups on AVARI baseboard, enable defaults*/
-> +	pinctrl-0 = <
-> +				 &pinctrl_emcon_gpio1 &pinctrl_emcon_gpio2
-> +				 &pinctrl_emcon_gpio3 &pinctrl_emcon_gpio5
-> +				 &pinctrl_emcon_gpio6 &pinctrl_emcon_gpio7
-> +				 &pinctrl_emcon_gpio8 &pinctrl_emcon_irq_a
-> +				 &pinctrl_emcon_irq_b &pinctrl_emcon_irq_c
-> +				 &pinctrl_emcon_irq_pwr &pinctrl_nor_flash
-> +				 &pinctrl_usdhc2
-> +				 &pinctrl_spdif_out     &pinctrl_spdif_in
-> +				 &pinctrl_cpi1          &pinctrl_cpi2
-> +				>;
-> +};
-> +
-> +&audmux {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_audmux>;
-> +	status = "okay";
-> +};
-> +
-> +
-> +
-> +&i2c3 {
-> +	clock-frequency = <100000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c3>;
-> +	status = "okay";
-> +
-> +	sgtl5000: audio-codec@a {
-> +		compatible = "fsl,sgtl5000";
-> +		reg = <0x0a>;
-> +		clocks = <&sndosc>;
-> +		VDDA-supply = <&base3p3>;
-> +		VDDIO-supply = <&base3p3>;
-> +	};
-> +
-> +	boardID: pca8754a@3a {
-> +		compatible = "nxp,pca8574";
-> +		reg = <0x3a>;
-> +		gpio-controller;
-> +		#gpio-cells = <1>;
-> +	};
-> +
-> +	captouch: touchscreen@38 {
-> +		compatible = "edt,edt-ft5406";
-> +		reg = <0x38>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_irq_touch2 &pinctrl_emcon_gpio4>;
-> +		interrupt-parent = <&gpio6>;
-> +		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
-> +		wake-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-> +		wakeup-source;
-> +		status = "okay";
-> +	};
-> +};
-> +
-> +&ssi2 {
-> +	status = "okay";
-> +};
-> +
-> +&rgb_encoder {
-> +	status = "okay";
-> +};
-> +
-> +&rgb_panel {
-> +	compatible = "edt,etm0700g0bdh6";
-> +	status = "okay";
-> +};
-> +
-> +&i2c2 {
-> +	status = "okay";
-> +};
-> +
-> +&hdmi {
-> +	ddc-i2c-bus = <&i2c2>;
-> +	status = "okay";
-> +};
-> +
-> +&usbh1 {
-> +	status = "okay";
-> +};
-> +
-> +&usbotg {
-> +	status = "okay";
-> +};
-> +
-> +&pcie {
-> +	status = "okay";
-> +};
-> +
-> +&usdhc1 {
-> +	status = "okay";
-> +};
-> +
-> +&can1 {
-> +	status = "okay";
-> +};
-> +
-> +&can2 {
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	status = "okay";
-> +	uart-has-rtscts;
-> +};
-> +
-> +&uart3 {
-> +	status = "okay";
-> +};
-> +
-> +&uart4 {
-> +	status = "okay";
-> +};
-> +
-> +&uart5 {
-> +	status = "okay";
-> +};
-> +
-> +&ecspi2 {
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm/boot/dts/imx6q-emcon.dtsi b/arch/arm/boot/dts/imx6q-emcon.dtsi
-> new file mode 100644
-> index 000000000000..33b3fbf3fba0
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6q-emcon.dtsi
-> @@ -0,0 +1,27 @@
-> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
-> +/* Copyright (C) 2018 emtrion GmbH
-> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
-> + */
-> +
-> +/ {
-> +	model = "emtrion SoM emCON-MX6 Dual/Quad";
-> +	compatible = "emtrion,emcon-mx6", "fsl,imx6q";
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl_cpi2: csi1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_D17__IPU2_CSI1_PIXCLK	0x0b0b1
-> +			MX6QDL_PAD_EIM_EB3__IPU2_CSI1_HSYNC		0x1b0b1
-> +			MX6QDL_PAD_EIM_D29__IPU2_CSI1_VSYNC		0x1b0b1
-> +			MX6QDL_PAD_EIM_A17__IPU2_CSI1_DATA12	0x1b0b1
-> +			MX6QDL_PAD_EIM_D27__IPU2_CSI1_DATA13	0x1b0b1
-> +			MX6QDL_PAD_EIM_D26__IPU2_CSI1_DATA14	0x1b0b1
-> +			MX6QDL_PAD_EIM_D20__IPU2_CSI1_DATA15	0x1b0b1
-> +			MX6QDL_PAD_EIM_D19__IPU2_CSI1_DATA16	0x1b0b1
-> +			MX6QDL_PAD_EIM_D18__IPU2_CSI1_DATA17	0x1b0b1
-> +			MX6QDL_PAD_EIM_D16__IPU2_CSI1_DATA18	0x1b0b1
-> +			MX6QDL_PAD_EIM_EB2__IPU2_CSI1_DATA19	0x1b0b1
-> +		>;
-> +	};
-> +};
-> diff --git a/arch/arm/boot/dts/imx6qdl-emcon.dtsi b/arch/arm/boot/dts/imx6qdl-emcon.dtsi
-> new file mode 100644
-> index 000000000000..5f9296dce130
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6qdl-emcon.dtsi
-> @@ -0,0 +1,838 @@
-> +// SPDX-License-Identifier: (GPL-2.0 or MIT)
-> +/* Copyright (C) 2018 emtrion GmbH
-> + * Author: Jan Tuerk  <jan.tuerk@emtrion.com>
-> + */
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/pwm/pwm.h>
-> +#include <dt-bindings/input/input.h>
-> +
-> +/ {
-> +
-> +	model = "emtrion SoM emCON-MX6";
-> +	compatible = "emtrion,emcon-mx6", "fsl,imx6q", "fsl,imx6dl";
-> +
-> +	aliases {
-> +		mmc0 = &usdhc3;
-> +		mmc2 = &usdhc1;
-> +		mmc1 = &usdhc2;
-> +	};
-> +
-> +	regulators {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		reg_parallel_disp: regulator@0 {
-> +			compatible = "regulator-fixed";
-> +			reg = <0>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&pinctrl_rgb_bl_en>;
-> +			regulator-name = "LCD-Supply";
-> +			regulator-min-microvolt = <5000000>;
-> +			regulator-max-microvolt = <5000000>;
-> +			gpio = <&gpio7 9 GPIO_ACTIVE_HIGH>;
-> +			enable-active-high;
-> +		};
-> +
-> +		reg_lvds_disp: regulator@1 {
-> +			compatible = "regulator-fixed";
-> +			reg = <1>;
-> +			regulator-name = "LVDS-Supply";
-> +			regulator-min-microvolt = <5000000>;
-> +			regulator-max-microvolt = <5000000>;
-> +			gpio = <&gpio7 10 GPIO_ACTIVE_HIGH>;
-> +			enable-active-high;
-> +		};
-> +	};
-> +
-> +	som_leds: leds {
-> +		compatible = "gpio-leds";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_som_leds>;
-> +
-> +		green {
-> +			label = "som:green";
-> +			gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "heartbeat";
-> +			default-state = "on";
-> +		};
-> +
-> +		red {
-> +			label = "som:red";
-> +			gpios = <&gpio3 1 GPIO_ACTIVE_LOW>;
-> +			default-state = "keep";
-> +		};
-> +
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_emcon_wake>;
-> +
-> +		wake {
-> +			label = "Wake";
-> +			linux,code = <KEY_WAKEUP>;
-> +			gpios = <&gpio3 2 GPIO_ACTIVE_LOW>;
-> +			wakeup-source;
-> +		};
-> +	};
-> +
-> +	pwm_fan: pwm-fan {
-> +		compatible = "pwm-fan";
-> +		cooling-min-state = <0>;
-> +		cooling-max-state = <4>;
-> +		#cooling-cells = <2>;
-> +		pwms = <&pwm4 0 50000>;
-> +		cooling-levels = <0 64 127 191 255>;
-> +		status = "disabled";
-> +	};
-> +
-> +	rgb_encoder: disp0 {
-
-s/disp0/display
-
-> +		compatible = "fsl,imx-parallel-display";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_rgb24_display>;
-> +		status = "disabled";
-> +
-> +		port@0 {
-> +			reg = <0>;
-
-Have a newline between property list and child node.
-
-> +			rgb_encoder_in: endpoint {
-> +				remote-endpoint = <&ipu1_di0_disp0>;
-> +			};
-> +		};
-> +
-> +		port@1 {
-> +			reg = <1>;
-> +			rgb_encoder_out: endpoint {
-> +				remote-endpoint = <&rgb_panel_in>;
-> +			};
-> +		};
-> +	};
-> +
-> +	rgb_panel: panel {
-> +		backlight = <&rgb_backlight>;
-> +		power-supply = <&reg_parallel_disp>;
-> +		port {
-> +			rgb_panel_in: endpoint {
-> +				remote-endpoint = <&rgb_encoder_out>;
-> +			};
-> +		};
-> +	};
-> +
-> +	rgb_backlight: rgb-backlight {
-> +		compatible = "pwm-backlight";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_rgb_bl>;
-> +		enable-gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
-> +		pwms = <&pwm3 0 5000000>;
-> +		brightness-levels = <250 176 160 144 128 112
-> +							96 80 64 48 32 16 8 1
-> +							>;
-
-Broken indent.
-
-> +		default-brightness-level = <13>;
-> +		status = "okay";
-> +	};
-> +
-> +	lvds_backlight: lvds-backlight {
-> +		compatible = "pwm-backlight";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_lvds_bl>;
-> +		enable-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>;
-> +		pwms = <&pwm1 0 50000>;
-> +		brightness-levels = <0 4 8 16 32 64 80 96 112
-> +							128 144 160 176 250
-> +							>;
-> +		default-brightness-level = <13>;
-> +		status = "okay";
-> +	};
-> +};
-> +
-> +
-> +&iomuxc {
-> +
-> +	pinctrl_secure: securegrp {
-
-Unused?
-
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_18__GPIO7_IO13			0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart1: uart1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_CSI0_DAT10__UART1_TX_DATA	0x1b0b1
-> +			MX6QDL_PAD_CSI0_DAT11__UART1_RX_DATA	0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart2: uart2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD4_DAT5__UART2_RTS_B		0x1b0b1
-> +			MX6QDL_PAD_SD4_DAT6__UART2_CTS_B		0x1b0b1
-> +			MX6QDL_PAD_SD4_DAT7__UART2_TX_DATA		0x1b0b1
-> +			MX6QDL_PAD_SD4_DAT4__UART2_RX_DATA		0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart3: uart3grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_D24__UART3_TX_DATA		0x1b0b1
-> +			MX6QDL_PAD_EIM_D25__UART3_RX_DATA		0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart4: uart4grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_KEY_COL0__UART4_TX_DATA		0x1b0b1
-> +			MX6QDL_PAD_KEY_ROW0__UART4_RX_DATA		0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart5: uart5grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_KEY_COL1__UART5_TX_DATA		0x1b0b1
-> +			MX6QDL_PAD_KEY_ROW1__UART5_RX_DATA		0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_gpio1: emcongpio1 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_D0__GPIO2_IO00			0x0b0b1
-> +		>;
-> +	};
-
-Try to keep these pinctrl entries alphabetically sorted.
-
-> +
-> +	pinctrl_emcon_gpio2: emcongpio2 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_D1__GPIO2_IO01			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_gpio3: emcongpio3 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_D2__GPIO2_IO02			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_gpio4: emcongpio4 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_D3__GPIO2_IO03			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_gpio5: emcongpio5 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_D4__GPIO2_IO04			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_gpio6: emcongpio6 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_D5__GPIO2_IO05			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_gpio7: emcongpio7 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_D6__GPIO2_IO06			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_gpio8: emcongpio8 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_D7__GPIO2_IO07			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_irq_a: emconirqa {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_CLE__GPIO6_IO07		0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_irq_b: emconirqb {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_CS2__GPIO6_IO15		0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_irq_c: emconirqc {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_CS3__GPIO6_IO16		0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_wake: emconwake {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_DA2__GPIO3_IO02			0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_emcon_irq_pwr: emconirqpwr {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_D23__GPIO3_IO23			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_som_leds: somledgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_DA0__GPIO3_IO00			0x0b0b1
-> +			MX6QDL_PAD_EIM_DA1__GPIO3_IO01			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_nor_flash: norflashgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_NANDF_CS0__GPIO6_IO11		0x1b0b1
-> +			MX6QDL_PAD_EIM_D21__ECSPI4_SCLK			0x100b1
-> +			MX6QDL_PAD_EIM_D28__ECSPI4_MOSI			0x100b1
-> +			MX6QDL_PAD_EIM_D22__ECSPI4_MISO			0x100b1
-> +			MX6QDL_PAD_EIM_A25__GPIO5_IO02			0x100b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_ecspi2: ecspi2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_CS0__ECSPI2_SCLK			0x100b1
-> +			MX6QDL_PAD_EIM_CS1__ECSPI2_MOSI			0x100b1
-> +			MX6QDL_PAD_EIM_OE__ECSPI2_MISO			0x100b1
-> +			MX6QDL_PAD_EIM_LBA__GPIO2_IO27			0x100b1
-> +			MX6QDL_PAD_EIM_RW__GPIO2_IO26			0x100b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_pwm_fan: pwmfan {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD4_DAT2__PWM4_OUT			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_can1: can1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_KEY_COL2__FLEXCAN1_TX		0x1b0b1
-> +			MX6QDL_PAD_KEY_ROW2__FLEXCAN1_RX		0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_can2: can2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_KEY_COL4__FLEXCAN2_TX		0x1b0b1
-> +			MX6QDL_PAD_KEY_ROW4__FLEXCAN2_RX		0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_spdif_out: spdifout {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_19__SPDIF_OUT			0x13091
-> +		>;
-> +	};
-> +
-> +	pinctrl_spdif_in: spdifin {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_16__SPDIF_IN			0x1b0b0
-> +		>;
-> +	};
-> +
-> +	pinctrl_cpi1: csi0grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_CSI0_PIXCLK__IPU1_CSI0_PIXCLK 0xb0b1
-> +			MX6QDL_PAD_CSI0_MCLK__IPU1_CSI0_HSYNC	0x1b0b1
-> +			MX6QDL_PAD_CSI0_VSYNC__IPU1_CSI0_VSYNC	0x1b0b1
-> +			MX6QDL_PAD_CSI0_DAT12__IPU1_CSI0_DATA12 0x1b0b1
-> +			MX6QDL_PAD_CSI0_DAT13__IPU1_CSI0_DATA13 0x1b0b1
-> +			MX6QDL_PAD_CSI0_DAT14__IPU1_CSI0_DATA14 0x1b0b1
-> +			MX6QDL_PAD_CSI0_DAT15__IPU1_CSI0_DATA15 0x1b0b1
-> +			MX6QDL_PAD_CSI0_DAT16__IPU1_CSI0_DATA16 0x1b0b1
-> +			MX6QDL_PAD_CSI0_DAT17__IPU1_CSI0_DATA17 0x1b0b1
-> +			MX6QDL_PAD_CSI0_DAT18__IPU1_CSI0_DATA18 0x1b0b1
-> +			MX6QDL_PAD_CSI0_DAT19__IPU1_CSI0_DATA19 0x1b0b1
-> +		>;
-> +	};
-> +
-> +	/*camera2-pinctrl is in imx6q-emcon.dtsi or imx6dl-emcon.dtsi*/
-> +
-> +	pinctrl_pcie_ctrl: pciegrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_A16__GPIO2_IO22			0x1b0b1
-> +			MX6QDL_PAD_GPIO_17__GPIO7_IO12			0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_audmux: audmux {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_CSI0_DAT7__AUD3_RXD			0x130b0
-> +			MX6QDL_PAD_CSI0_DAT4__AUD3_TXC			0x1b060
-> +			MX6QDL_PAD_CSI0_DAT5__AUD3_TXD			0x130B0
-> +			MX6QDL_PAD_CSI0_DAT6__AUD3_TXFS			0x1b060
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c1: i2c1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_CSI0_DAT8__I2C1_SDA		0x4001b8b1
-> +			MX6QDL_PAD_CSI0_DAT9__I2C1_SCL		0x4001b8b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c2: i2c2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_KEY_COL3__I2C2_SCL		0x4001b8b1
-> +			MX6QDL_PAD_KEY_ROW3__I2C2_SDA		0x4001b8b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c3: i2c3grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_3__I2C3_SCL		0x4000b070
-> +			MX6QDL_PAD_GPIO_6__I2C3_SDA		0x4001b870
-> +		>;
-> +	};
-> +
-> +	pinctrl_pmic: pmicgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD4_DAT0__GPIO2_IO08			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_usb_host1: usbhgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_D31__USB_H1_PWR			0x1B058
-> +			MX6QDL_PAD_EIM_D30__USB_H1_OC			0x1B058
-> +		>;
-> +	};
-> +
-> +	pinctrl_usb_otg: usbotggrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_ENET_RX_ER__USB_OTG_ID		0x17059
-> +			MX6QDL_PAD_GPIO_7__GPIO1_IO07			0x17059
-> +			MX6QDL_PAD_GPIO_8__GPIO1_IO08			0x17059
-> +		>;
-> +	};
-> +
-> +	pinctrl_lvds_reg: lvdsreggrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD4_CLK__GPIO7_IO10			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_lvds_bl: lvdsbacklightgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_9__PWM1_OUT			0x0b0b1
-> +			MX6QDL_PAD_NANDF_WP_B__GPIO6_IO09		0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_irq_touch1: irqtouch1 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_5__GPIO1_IO05			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_rgb_bl_en: rgbenable {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD4_CMD__GPIO7_IO09			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_irq_touch2: irqtouch2 {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_BCLK__GPIO6_IO31			0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_rgb_bl: rgbbacklightgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD4_DAT1__PWM3_OUT			0x0b0b1
-> +			MX6QDL_PAD_NANDF_ALE__GPIO6_IO08		0x0b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_rgb24_display: rgbgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK 0x10
-> +			MX6QDL_PAD_DI0_PIN15__IPU1_DI0_PIN15       0x10
-> +			MX6QDL_PAD_DI0_PIN2__IPU1_DI0_PIN02        0x10
-> +			MX6QDL_PAD_DI0_PIN3__IPU1_DI0_PIN03        0x10
-> +			MX6QDL_PAD_DISP0_DAT0__IPU1_DISP0_DATA00   0x10
-> +			MX6QDL_PAD_DISP0_DAT1__IPU1_DISP0_DATA01   0x10
-> +			MX6QDL_PAD_DISP0_DAT2__IPU1_DISP0_DATA02   0x10
-> +			MX6QDL_PAD_DISP0_DAT3__IPU1_DISP0_DATA03   0x10
-> +			MX6QDL_PAD_DISP0_DAT4__IPU1_DISP0_DATA04   0x10
-> +			MX6QDL_PAD_DISP0_DAT5__IPU1_DISP0_DATA05   0x10
-> +			MX6QDL_PAD_DISP0_DAT6__IPU1_DISP0_DATA06   0x10
-> +			MX6QDL_PAD_DISP0_DAT7__IPU1_DISP0_DATA07   0x10
-> +			MX6QDL_PAD_DISP0_DAT8__IPU1_DISP0_DATA08   0x10
-> +			MX6QDL_PAD_DISP0_DAT9__IPU1_DISP0_DATA09   0x10
-> +			MX6QDL_PAD_DISP0_DAT10__IPU1_DISP0_DATA10  0x10
-> +			MX6QDL_PAD_DISP0_DAT11__IPU1_DISP0_DATA11  0x10
-> +			MX6QDL_PAD_DISP0_DAT12__IPU1_DISP0_DATA12  0x10
-> +			MX6QDL_PAD_DISP0_DAT13__IPU1_DISP0_DATA13  0x10
-> +			MX6QDL_PAD_DISP0_DAT14__IPU1_DISP0_DATA14  0x10
-> +			MX6QDL_PAD_DISP0_DAT15__IPU1_DISP0_DATA15  0x10
-> +			MX6QDL_PAD_DISP0_DAT16__IPU1_DISP0_DATA16  0x10
-> +			MX6QDL_PAD_DISP0_DAT17__IPU1_DISP0_DATA17  0x10
-> +			MX6QDL_PAD_DISP0_DAT18__IPU1_DISP0_DATA18  0x10
-> +			MX6QDL_PAD_DISP0_DAT19__IPU1_DISP0_DATA19  0x10
-> +			MX6QDL_PAD_DISP0_DAT20__IPU1_DISP0_DATA20  0x10
-> +			MX6QDL_PAD_DISP0_DAT21__IPU1_DISP0_DATA21  0x10
-> +			MX6QDL_PAD_DISP0_DAT22__IPU1_DISP0_DATA22  0x10
-> +			MX6QDL_PAD_DISP0_DAT23__IPU1_DISP0_DATA23  0x10
-> +		>;
-> +	};
-> +
-> +	pinctrl_enet: enetgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_ENET_MDIO__ENET_MDIO			0x1b030
-> +			MX6QDL_PAD_ENET_MDC__ENET_MDC			0x1b030
-> +			MX6QDL_PAD_RGMII_TXC__RGMII_TXC			0x1b030
-> +			MX6QDL_PAD_RGMII_TD0__RGMII_TD0			0x1b030
-> +			MX6QDL_PAD_RGMII_TD1__RGMII_TD1			0x1b030
-> +			MX6QDL_PAD_RGMII_TD2__RGMII_TD2			0x1b030
-> +			MX6QDL_PAD_RGMII_TD3__RGMII_TD3			0x1b030
-> +			MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL	0x1b030
-> +			MX6QDL_PAD_ENET_REF_CLK__ENET_TX_CLK	0x4001a0b1
-> +			MX6QDL_PAD_RGMII_RXC__RGMII_RXC			0x1b030
-> +			MX6QDL_PAD_RGMII_RD0__RGMII_RD0			0x1b030
-> +			MX6QDL_PAD_RGMII_RD1__RGMII_RD1			0x1b030
-> +			MX6QDL_PAD_RGMII_RD2__RGMII_RD2			0x1b030
-> +			MX6QDL_PAD_RGMII_RD3__RGMII_RD3			0x1b030
-> +			MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL	0x1b0b0
-> +			MX6QDL_PAD_CSI0_DATA_EN__GPIO5_IO20		0x1b058
-> +			MX6QDL_PAD_ENET_TXD0__GPIO1_IO30		0x1b0b0
-> +		 >;
-> +	};
-> +
-> +
-> +	pinctrl_usdhc3: usdhc3grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD3_CMD__SD3_CMD			0x17059
-> +			MX6QDL_PAD_SD3_CLK__SD3_CLK			0x10059
-> +			MX6QDL_PAD_SD3_DAT0__SD3_DATA0			0x17059
-> +			MX6QDL_PAD_SD3_DAT1__SD3_DATA1			0x17059
-> +			MX6QDL_PAD_SD3_DAT2__SD3_DATA2			0x17059
-> +			MX6QDL_PAD_SD3_DAT3__SD3_DATA3			0x17059
-> +			MX6QDL_PAD_SD3_DAT4__SD3_DATA4			0x17059
-> +			MX6QDL_PAD_SD3_DAT5__SD3_DATA5			0x17059
-> +			MX6QDL_PAD_SD3_DAT6__SD3_DATA6			0x17059
-> +			MX6QDL_PAD_SD3_DAT7__SD3_DATA7			0x17059
-> +			MX6QDL_PAD_SD3_RST__SD3_RESET			0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc1: usdhc1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD1_CMD__SD1_CMD			0x17059
-> +			MX6QDL_PAD_SD1_CLK__SD1_CLK			0x10059
-> +			MX6QDL_PAD_SD1_DAT0__SD1_DATA0			0x17059
-> +			MX6QDL_PAD_SD1_DAT1__SD1_DATA1			0x17059
-> +			MX6QDL_PAD_SD1_DAT2__SD1_DATA2			0x17059
-> +			MX6QDL_PAD_SD1_DAT3__SD1_DATA3			0x17059
-> +			MX6QDL_PAD_GPIO_1__SD1_CD_B			0x1b0b1
-> +			MX6QDL_PAD_DI0_PIN4__SD1_WP			0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc2: usdhc2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD2_CMD__SD2_CMD			0x17059
-> +			MX6QDL_PAD_SD2_CLK__SD2_CLK			0x10059
-> +			MX6QDL_PAD_SD2_DAT0__SD2_DATA0			0x17059
-> +			MX6QDL_PAD_SD2_DAT1__SD2_DATA1			0x17059
-> +			MX6QDL_PAD_SD2_DAT2__SD2_DATA2			0x17059
-> +			MX6QDL_PAD_SD2_DAT3__SD2_DATA3			0x17059
-> +			MX6QDL_PAD_GPIO_4__SD2_CD_B			0x1b0b1
-> +			MX6QDL_PAD_GPIO_2__SD2_WP			0x1b0b1
-> +		>;
-> +	};
-> +
-> +};
-> +
-> +
-> +&i2c1 {
-> +	clock-frequency = <100000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c1>;
-> +	status = "okay";
-> +
-> +	rtc: rtc@68 {
-> +		compatible = "dallas,ds1307";
-> +		reg = <0x68>;
-> +	};
-> +
-> +	da9063: pmic@58 {
-> +		compatible = "dlg,da9063";
-> +		reg = <0x58>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_pmic>;
-> +		interrupt-parent = <&gpio2>;
-> +		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-> +		interrupt-controller;
-> +
-> +		onkey {
-> +			compatible = "dlg,da9063-onkey";
-> +			wakeup-source;
-> +		};
-> +
-> +		wdt {
-
-s/wdt/watchdog
-
-> +			compatible = "dlg,da9063-watchdog";
-> +			timeout-sec = <0>;
-> +		};
-> +
-> +		regulators {
-> +			vddcore_reg: bcore1 {
-> +				regulator-min-microvolt = <1100000>;
-> +				regulator-max-microvolt = <1450000>;
-> +				regulator-ramp-delay = <20000>;
-> +				regulator-name = "DA9063_CORE";
-> +				regulator-always-on;
-> +			};
-> +
-> +			vddsoc_reg: bcore2 {
-> +				regulator-min-microvolt = <1100000>;
-> +				regulator-max-microvolt = <1450000>;
-> +				regulator-ramp-delay = <20000>;
-> +				regulator-name = "DA9063_SOC";
-> +				regulator-always-on;
-> +			};
-> +
-> +			vdd_ddr3_reg: bpro {
-> +				regulator-min-microvolt = <1500000>;
-> +				regulator-max-microvolt = <1500000>;
-> +				regulator-ramp-delay = <20000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vdd_3v3_reg: bperi {
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-ramp-delay = <20000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vdd_sata_reg: ldo3 {
-> +				regulator-min-microvolt = <2500000>;
-> +				regulator-max-microvolt = <2500000>;
-> +				regulator-always-on;
-> +			};
-> +			vdd_mipi_reg: ldo4 {
-> +				regulator-min-microvolt = <2500000>;
-> +				regulator-max-microvolt = <2500000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vdd_mx6_snvs_reg: ldo5 {
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vdd_hdmi_reg: ldo6 {
-> +				regulator-min-microvolt = <2500000>;
-> +				regulator-max-microvolt = <2500000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			vdd_pcie_reg: ldo7 {
-> +				regulator-min-microvolt = <2500000>;
-> +				regulator-max-microvolt = <2500000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vdd_1V8_reg: ldo8 {
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vdd_3V3_sdc_reg: ldo9 {
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			vdd_1V2_reg: ldo10 {
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt = <1200000>;
-> +				regulator-always-on;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&uart1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart1>;
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart2>;
-> +};
-> +
-> +&uart3 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart3>;
-> +};
-> +
-> +&uart4 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart4>;
-> +};
-> +
-> +&uart5 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart5>;
-> +};
-> +
-> +&fec {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_enet>;
-> +	phy-mode = "rgmii";
-> +	phy-reset-gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
-> +	phy-reset-duration = <50>;
-> +	phy-supply = <&vdd_1V8_reg>;
-> +	phy-handle = <&ksz9031>;
-> +	status = "okay";
-> +
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		ksz9031: phy@0 {
-> +			compatible = "ethernet-phy-ieee802.3-c22";
-> +			reg = <0>;
-> +			interrupt-parent = <&gpio1>;
-> +			interrupts = <30 IRQ_TYPE_EDGE_FALLING>;
-> +			rxdv-skew-ps = <480>;
-> +			txen-skew-ps = <480>;
-> +			rxd0-skew-ps = <480>;
-> +			rxd1-skew-ps = <480>;
-> +			rxd2-skew-ps = <480>;
-> +			rxd3-skew-ps = <480>;
-> +			txd0-skew-ps = <420>;
-> +			txd1-skew-ps = <420>;
-> +			txd2-skew-ps = <360>;
-> +			txd3-skew-ps = <360>;
-> +			txc-skew-ps = <1020>;
-> +			rxc-skew-ps = <960>;
-> +		};
-> +	};
-> +};
-> +
-> +
-> +&usdhc3 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usdhc3>;
-> +	non-removable;
-> +	bus-width = <8>;
-> +	status = "okay";
-> +};
-> +
-> +&pcie {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_pcie_ctrl>;
-> +	reset-gpio = <&gpio7 12 GPIO_ACTIVE_LOW>;
-> +	disable-gpio = <&gpio2 22 GPIO_ACTIVE_LOW>;
-> +};
-> +
-> +&i2c2 {
-> +	clock-frequency = <100000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c2>;
-> +};
-> +
-> +&usdhc1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usdhc1>;
-> +	fsl,wp-controller;
-> +};
-> +
-> +&usdhc2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usdhc2>;
-> +	fsl,wp-controller;
-> +};
-> +
-> +
-> +&ipu1_di0_disp0 {
-> +	remote-endpoint = <&rgb_encoder_in>;
-> +};
-> +
-> +&pwm1 {
-> +	status = "okay";
-> +};
-> +
-> +&pwm3 {
-> +	status = "okay";
-> +};
-> +
-> +&pwm4 {
-> +	status = "okay";
-> +};
-> +
-> +&ecspi2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_ecspi2>;
-> +	cs-gpios =  <&gpio2 25 GPIO_ACTIVE_HIGH>,
-> +				<&gpio2 26 GPIO_ACTIVE_HIGH>;
-> +};
-> +
-> +&ecspi4 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_nor_flash>;
-> +};
-> +
-> +&can1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_can1>;
-> +};
-> +
-> +&can2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_can2>;
-> +};
-> +
-> +&usbh1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usb_host1>;
-> +};
-> +
-> +&usbotg {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usb_otg>;
-> +	vbus-supply = <&reg_usb_otg>;
-> +	dr_mode = "peripheral";
-> +};
-> +
-> +/******device power Management*********/
-> +
-> +&cpu0 {
-> +	voltage-tolerance = <2>;
-> +};
-> +
-> +&reg_arm {
-> +	vin-supply = <&vddcore_reg>;
-> +};
-> +
-> +&reg_soc {
-> +	vin-supply = <&vddsoc_reg>;
-> +};
-> +
-> +&reg_pu {
-> +	vin-supply = <&vddsoc_reg>;
-> +};
-> +
-> +
-> +
-> +/*******Disabled HW following***********/
-> +
-> +
-> +&weim {
-> +	status = "disabled";
-> +};
-
-Isn't weim disabled by default?
-
-Shawn
-
-> +
-> +&snvs_rtc {
-> +	status = "disabled";
-> +};
-> -- 
-> 2.11.0
-> 
+--cQXOx3fnlpmgJsTP--
