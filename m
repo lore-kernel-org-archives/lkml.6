@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932878AbeDWXcs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 19:32:48 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:41928 "EHLO ale.deltatee.com"
+        id S932892AbeDWXcv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 19:32:51 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:41934 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932642AbeDWXbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932644AbeDWXbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Apr 2018 19:31:05 -0400
 From: Logan Gunthorpe <logang@deltatee.com>
 To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
@@ -20,147 +20,180 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Alex Williamson <alex.williamson@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 23 Apr 2018 17:30:34 -0600
-Message-Id: <20180423233046.21476-3-logang@deltatee.com>
+Date: Mon, 23 Apr 2018 17:30:36 -0600
+Message-Id: <20180423233046.21476-5-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180423233046.21476-1-logang@deltatee.com>
 References: <20180423233046.21476-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, axboe@kernel.dk, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v4 02/14] PCI/P2PDMA: Add sysfs group to display p2pmem stats
+Subject: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices behind switches
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a sysfs group to display statistics about P2P memory that is
-registered in each PCI device.
+For peer-to-peer transactions to work the downstream ports in each
+switch must not have the ACS flags set. At this time there is no way
+to dynamically change the flags and update the corresponding IOMMU
+groups so this is done at enumeration time before the groups are
+assigned.
 
-Attributes in the group display the total amount of P2P memory, the
-amount available and whether it is published or not.
+This effectively means that if CONFIG_PCI_P2PDMA is selected then
+all devices behind any PCIe switch heirarchy will be in the same IOMMU
+group. Which implies that individual devices behind any switch
+heirarchy will not be able to be assigned to separate VMs because
+there is no isolation between them. Additionally, any malicious PCIe
+devices will be able to DMA to memory exposed by other EPs in the same
+domain as TLPs will not be checked by the IOMMU.
+
+Given that the intended use case of P2P Memory is for users with
+custom hardware designed for purpose, we do not expect distributors
+to ever need to enable this option. Users that want to use P2P
+must have compiled a custom kernel with this configuration option
+and understand the implications regarding ACS. They will either
+not require ACS or will have design the system in such a way that
+devices that require isolation will be separate from those using P2P
+transactions.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- Documentation/ABI/testing/sysfs-bus-pci | 25 +++++++++++++++
- drivers/pci/p2pdma.c                    | 54 +++++++++++++++++++++++++++++++++
- 2 files changed, 79 insertions(+)
+ drivers/pci/Kconfig        |  9 +++++++++
+ drivers/pci/p2pdma.c       | 45 ++++++++++++++++++++++++++++++---------------
+ drivers/pci/pci.c          |  6 ++++++
+ include/linux/pci-p2pdma.h |  5 +++++
+ 4 files changed, 50 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-index 44d4b2be92fd..044812c816d0 100644
---- a/Documentation/ABI/testing/sysfs-bus-pci
-+++ b/Documentation/ABI/testing/sysfs-bus-pci
-@@ -323,3 +323,28 @@ Description:
+diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+index b2396c22b53e..b6db41d4b708 100644
+--- a/drivers/pci/Kconfig
++++ b/drivers/pci/Kconfig
+@@ -139,6 +139,15 @@ config PCI_P2PDMA
+ 	  transations must be between devices behind the same root port.
+ 	  (Typically behind a network of PCIe switches).
  
- 		This is similar to /sys/bus/pci/drivers_autoprobe, but
- 		affects only the VFs associated with a specific PF.
++	  Enabling this option will also disable ACS on all ports behind
++	  any PCIe switch. This effectively puts all devices behind any
++	  switch heirarchy into the same IOMMU group. Which implies that
++	  individual devices behind any switch will not be able to be
++	  assigned to separate VMs because there is no isolation between
++	  them. Additionally, any malicious PCIe devices will be able to
++	  DMA to memory exposed by other EPs in the same domain as TLPs
++	  will not be checked by the IOMMU.
 +
-+What:		/sys/bus/pci/devices/.../p2pmem/available
-+Date:		November 2017
-+Contact:	Logan Gunthorpe <logang@deltatee.com>
-+Description:
-+		If the device has any Peer-to-Peer memory registered, this
-+	        file contains the amount of memory that has not been
-+		allocated (in decimal).
-+
-+What:		/sys/bus/pci/devices/.../p2pmem/size
-+Date:		November 2017
-+Contact:	Logan Gunthorpe <logang@deltatee.com>
-+Description:
-+		If the device has any Peer-to-Peer memory registered, this
-+	        file contains the total amount of memory that the device
-+		provides (in decimal).
-+
-+What:		/sys/bus/pci/devices/.../p2pmem/published
-+Date:		November 2017
-+Contact:	Logan Gunthorpe <logang@deltatee.com>
-+Description:
-+		If the device has any Peer-to-Peer memory registered, this
-+	        file contains a '1' if the memory has been published for
-+		use inside the kernel or a '0' if it is only intended
-+		for use within the driver that published it.
+ 	  If unsure, say N.
+ 
+ config PCI_LABEL
 diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-index e524a12eca1f..4daad6374869 100644
+index ed9dce8552a2..e9f43b43acac 100644
 --- a/drivers/pci/p2pdma.c
 +++ b/drivers/pci/p2pdma.c
-@@ -24,6 +24,54 @@ struct pci_p2pdma {
- 	bool p2pmem_published;
- };
- 
-+static ssize_t size_show(struct device *dev, struct device_attribute *attr,
-+			 char *buf)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	size_t size = 0;
-+
-+	if (pdev->p2pdma->pool)
-+		size = gen_pool_size(pdev->p2pdma->pool);
-+
-+	return snprintf(buf, PAGE_SIZE, "%zd\n", size);
-+}
-+static DEVICE_ATTR_RO(size);
-+
-+static ssize_t available_show(struct device *dev, struct device_attribute *attr,
-+			      char *buf)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	size_t avail = 0;
-+
-+	if (pdev->p2pdma->pool)
-+		avail = gen_pool_avail(pdev->p2pdma->pool);
-+
-+	return snprintf(buf, PAGE_SIZE, "%zd\n", avail);
-+}
-+static DEVICE_ATTR_RO(available);
-+
-+static ssize_t published_show(struct device *dev, struct device_attribute *attr,
-+			      char *buf)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%d\n",
-+			pdev->p2pdma->p2pmem_published);
-+}
-+static DEVICE_ATTR_RO(published);
-+
-+static struct attribute *p2pmem_attrs[] = {
-+	&dev_attr_size.attr,
-+	&dev_attr_available.attr,
-+	&dev_attr_published.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group p2pmem_group = {
-+	.attrs = p2pmem_attrs,
-+	.name = "p2pmem",
-+};
-+
- static void pci_p2pdma_percpu_release(struct percpu_ref *ref)
- {
- 	struct pci_p2pdma *p2p =
-@@ -53,6 +101,7 @@ static void pci_p2pdma_release(void *data)
- 	percpu_ref_exit(&pdev->p2pdma->devmap_ref);
- 
- 	gen_pool_destroy(pdev->p2pdma->pool);
-+	sysfs_remove_group(&pdev->dev.kobj, &p2pmem_group);
- 	pdev->p2pdma = NULL;
+@@ -240,27 +240,42 @@ static struct pci_dev *find_parent_pci_dev(struct device *dev)
  }
  
-@@ -83,9 +132,14 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
+ /*
+- * If a device is behind a switch, we try to find the upstream bridge
+- * port of the switch. This requires two calls to pci_upstream_bridge():
+- * one for the upstream port on the switch, one on the upstream port
+- * for the next level in the hierarchy. Because of this, devices connected
+- * to the root port will be rejected.
++ * pci_p2pdma_disable_acs - disable ACS flags for all PCI bridges
++ * @pdev: device to disable ACS flags for
++ *
++ * The ACS flags for P2P Request Redirect and P2P Completion Redirect need
++ * to be disabled on any PCI bridge in order for the TLPS to not be forwarded
++ * up to the RC which is not what we want for P2P.
++ *
++ * This function is called when the devices are first enumerated and
++ * will result in all devices behind any bridge to be in the same IOMMU
++ * group. At this time, there is no way to "hotplug" IOMMU groups so we rely
++ * on this largish hammer. If you need the devices to be in separate groups
++ * don't enable CONFIG_PCI_P2PDMA.
++ *
++ * Returns 1 if the ACS bits for this device was cleared, otherwise 0.
+  */
+-static struct pci_dev *get_upstream_bridge_port(struct pci_dev *pdev)
++int pci_p2pdma_disable_acs(struct pci_dev *pdev)
+ {
+-	struct pci_dev *up1, *up2;
++	int pos;
++	u16 ctrl;
  
- 	pdev->p2pdma = p2p;
+-	if (!pdev)
+-		return NULL;
++	if (!pci_is_bridge(pdev))
++		return 0;
  
-+	error = sysfs_create_group(&pdev->dev.kobj, &p2pmem_group);
-+	if (error)
-+		goto out_pool_destroy;
+-	up1 = pci_dev_get(pci_upstream_bridge(pdev));
+-	if (!up1)
+-		return NULL;
++	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ACS);
++	if (!pos)
++		return 0;
 +
- 	return 0;
++	pci_info(pdev, "disabling ACS flags for peer-to-peer DMA\n");
++
++	pci_read_config_word(pdev, pos + PCI_ACS_CTRL, &ctrl);
++
++	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR);
  
- out_pool_destroy:
-+	pdev->p2pdma = NULL;
- 	gen_pool_destroy(p2p->pool);
- out:
- 	devm_kfree(&pdev->dev, p2p);
+-	up2 = pci_dev_get(pci_upstream_bridge(up1));
+-	pci_dev_put(up1);
++	pci_write_config_word(pdev, pos + PCI_ACS_CTRL, ctrl);
+ 
+-	return up2;
++	return 1;
+ }
+ 
+ /*
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e597655a5643..7e2f5724ba22 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -16,6 +16,7 @@
+ #include <linux/of.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
++#include <linux/pci-p2pdma.h>
+ #include <linux/pm.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+@@ -2835,6 +2836,11 @@ static void pci_std_enable_acs(struct pci_dev *dev)
+  */
+ void pci_enable_acs(struct pci_dev *dev)
+ {
++#ifdef CONFIG_PCI_P2PDMA
++	if (pci_p2pdma_disable_acs(dev))
++		return;
++#endif
++
+ 	if (!pci_acs_enable)
+ 		return;
+ 
+diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
+index 0cde88341eeb..fcb3437a2f3c 100644
+--- a/include/linux/pci-p2pdma.h
++++ b/include/linux/pci-p2pdma.h
+@@ -18,6 +18,7 @@ struct block_device;
+ struct scatterlist;
+ 
+ #ifdef CONFIG_PCI_P2PDMA
++int pci_p2pdma_disable_acs(struct pci_dev *pdev);
+ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+ 		u64 offset);
+ int pci_p2pdma_add_client(struct list_head *head, struct device *dev);
+@@ -40,6 +41,10 @@ int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+ void pci_p2pdma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+ 			 enum dma_data_direction dir);
+ #else /* CONFIG_PCI_P2PDMA */
++static inline int pci_p2pdma_disable_acs(struct pci_dev *pdev)
++{
++	return 0;
++}
+ static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
+ 		size_t size, u64 offset)
+ {
 -- 
 2.11.0
