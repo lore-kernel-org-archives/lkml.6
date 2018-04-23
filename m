@@ -1,149 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755611AbeDWPar (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:30:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48906 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755184AbeDWPaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:30:46 -0400
-Date: Mon, 23 Apr 2018 17:30:42 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 9/9] perf stat: Display user and system time
-Message-ID: <20180423153042.GC8331@krava>
-References: <20180423090823.32309-1-jolsa@kernel.org>
- <20180423090823.32309-10-jolsa@kernel.org>
- <20180423145120.GH30324@kernel.org>
+        id S1755716AbeDWPcQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:32:16 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35527 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755244AbeDWPcN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:32:13 -0400
+X-Google-Smtp-Source: AIpwx49FkOMA0r7l+840kjvEgx48NTbZleOjlgAE+DtAhCiAdpECOOsvpIN7LKuRUW5LVaGYprRv/mM2voQWdwWgN2Q=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423145120.GH30324@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180417191710.14855-3-longli@linuxonhyperv.com>
+References: <20180417191710.14855-1-longli@linuxonhyperv.com> <20180417191710.14855-3-longli@linuxonhyperv.com>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 23 Apr 2018 10:31:51 -0500
+Message-ID: <CAH2r5mv65CGR04f3Z20aRBufisPon5Ptvqk++zii3YT=GN8epQ@mail.gmail.com>
+Subject: Re: [Patch v2 3/6] cifs: smbd: Avoid allocating iov on the stack
+To: Long Li <longli@microsoft.com>
+Cc: CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 11:51:20AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Apr 23, 2018 at 11:08:23AM +0200, Jiri Olsa escreveu:
-> > Adding the support to read rusage data once the
-> > workload is finished and display the system/user
-> > time values:
-> > 
-> >   $ perf stat --null ./perf bench sched pipe
-> >   ...
-> > 
-> >    Performance counter stats for './perf bench sched pipe':
-> > 
-> >        5.342599256 seconds time elapsed
-> > 
-> >        2.544434000 seconds user
-> >        4.549691000 seconds sys
-> 
-> Please write a setence or two explaining the above three timings, do it
-> nicely so that we can add it to the man page and avoid people scratching
-> heads :-)
+Didn't see any obvious problems, but can you fix the checkpatch
+warnings and resend to the list (I am more concerned about the last
+two warnings rather than the first one).
 
-will do  ;-)
+$ scripts/checkpatch.pl 0001-cifs-smbd-Avoid-allocating-iov-on-the-stack.patch
+WARNING: line over 80 characters
+#60: FILE: fs/cifs/smbdirect.c:2106:
++        log_write(ERR, "expected the pdu length in 1st iov, but got
+0x%lu\n", rqst->rq_iov[0].iov_len);
 
-> 
-> All the other patches were applied, some to perf/urgent (fixes) the
-> remaining ones, new features, added to perf/core, up to Ingo to decide
-> where to merge when I get to ask him to pull.
+ERROR: Prefixing 0x with decimal output is defective
+#60: FILE: fs/cifs/smbdirect.c:2106:
++        log_write(ERR, "expected the pdu length in 1st iov, but got
+0x%lu\n", rqst->rq_iov[0].iov_len);
 
-cool, thanks
+WARNING: braces {} are not necessary for single statement blocks
+#69: FILE: fs/cifs/smbdirect.c:2112:
++    for (i = 0; i < rqst->rq_nvec-1; i++) {
+         buflen += iov[i].iov_len;
+     }
 
-jirka
+total: 1 errors, 2 warnings, 65 lines checked
 
-> 
-> - Arnaldo
->  
-> > It works only in non -r mode.
-> > 
-> > Suggested-by: Ingo Molnar <mingo@kernel.org>
-> > Link: http://lkml.kernel.org/n/tip-t8k6d3gs8sz8zqnz3aslk5ro@git.kernel.org
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  tools/perf/builtin-stat.c | 28 +++++++++++++++++++++++++++-
-> >  1 file changed, 27 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> > index 2137c7d11767..9c987617c8e7 100644
-> > --- a/tools/perf/builtin-stat.c
-> > +++ b/tools/perf/builtin-stat.c
-> > @@ -80,6 +80,9 @@
-> >  #include <sys/stat.h>
-> >  #include <sys/wait.h>
-> >  #include <unistd.h>
-> > +#include <sys/time.h>
-> > +#include <sys/resource.h>
-> > +#include <sys/wait.h>
-> >  
-> >  #include "sane_ctype.h"
-> >  
-> > @@ -174,6 +177,8 @@ static const char		*output_name;
-> >  static int			output_fd;
-> >  static int			print_free_counters_hint;
-> >  static u64			*walltime_run;
-> > +static bool			ru_display			= false;
-> > +static struct rusage		ru_data;
-> >  
-> >  struct perf_stat {
-> >  	bool			 record;
-> > @@ -725,7 +730,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
-> >  					break;
-> >  			}
-> >  		}
-> > -		waitpid(child_pid, &status, 0);
-> > +		wait4(child_pid, &status, 0, &ru_data);
-> >  
-> >  		if (workload_exec_errno) {
-> >  			const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
-> > @@ -1773,6 +1778,11 @@ static void print_table(FILE *output, int precision, double avg)
-> >  	fprintf(output, "\n%*s# Final result:\n", indent, "");
-> >  }
-> >  
-> > +static double timeval2double(struct timeval *t)
-> > +{
-> > +	return t->tv_sec + (double) t->tv_usec/USEC_PER_SEC;
-> > +}
-> > +
-> >  static void print_footer(void)
-> >  {
-> >  	double avg = avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
-> > @@ -1784,6 +1794,15 @@ static void print_footer(void)
-> >  
-> >  	if (run_count == 1) {
-> >  		fprintf(output, " %17.9f seconds time elapsed", avg);
-> > +
-> > +		if (ru_display) {
-> > +			double utime = timeval2double(&ru_data.ru_utime);
-> > +			double stime = timeval2double(&ru_data.ru_stime);
-> > +
-> > +			fprintf(output, "\n\n");
-> > +			fprintf(output, " %17.9f seconds user\n", utime);
-> > +			fprintf(output, " %17.9f seconds sys\n", stime);
-> > +		}
-> >  	} else {
-> >  		double sd = stddev_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
-> >  		/*
-> > @@ -2869,6 +2888,13 @@ int cmd_stat(int argc, const char **argv)
-> >  		goto out;
-> >  	}
-> >  
-> > +	/*
-> > +	 * Display user/system times only for single
-> > +	 * run and when there's specified tracee.
-> > +	 */
-> > +	if ((run_count == 1) && target__none(&target))
-> > +		ru_display = true;
-> > +
-> >  	if (output_fd < 0) {
-> >  		fprintf(stderr, "argument to --log-fd must be a > 0\n");
-> >  		parse_options_usage(stat_usage, stat_options, "log-fd", 0);
-> > -- 
-> > 2.13.6
+NOTE: For some of the reported defects, checkpatch may be able to
+      mechanically convert to the typical style using --fix or --fix-inplace.
+
+0001-cifs-smbd-Avoid-allocating-iov-on-the-stack.patch has style
+problems, please review.
+
+On Tue, Apr 17, 2018 at 2:17 PM, Long Li <longli@linuxonhyperv.com> wrote:
+> From: Long Li <longli@microsoft.com>
+>
+> It's not necessary to allocate another iov when going through the buffers
+> in smbd_send() through RDMA send.
+>
+> Remove it to reduce stack size.
+>
+> Signed-off-by: Long Li <longli@microsoft.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  fs/cifs/smbdirect.c | 36 ++++++++++++------------------------
+>  1 file changed, 12 insertions(+), 24 deletions(-)
+>
+> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+> index b5c6c0d..f575e9a 100644
+> --- a/fs/cifs/smbdirect.c
+> +++ b/fs/cifs/smbdirect.c
+> @@ -2088,7 +2088,7 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
+>         int start, i, j;
+>         int max_iov_size =
+>                 info->max_send_size - sizeof(struct smbd_data_transfer);
+> -       struct kvec iov[SMBDIRECT_MAX_SGE];
+> +       struct kvec *iov;
+>         int rc;
+>
+>         info->smbd_send_pending++;
+> @@ -2099,32 +2099,20 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
+>         }
+>
+>         /*
+> -        * This usually means a configuration error
+> -        * We use RDMA read/write for packet size > rdma_readwrite_threshold
+> -        * as long as it's properly configured we should never get into this
+> -        * situation
+> -        */
+> -       if (rqst->rq_nvec + rqst->rq_npages > SMBDIRECT_MAX_SGE) {
+> -               log_write(ERR, "maximum send segment %x exceeding %x\n",
+> -                        rqst->rq_nvec + rqst->rq_npages, SMBDIRECT_MAX_SGE);
+> -               rc = -EINVAL;
+> -               goto done;
+> -       }
+> -
+> -       /*
+> -        * Remove the RFC1002 length defined in MS-SMB2 section 2.1
+> -        * It is used only for TCP transport
+> +        * Skip the RFC1002 length defined in MS-SMB2 section 2.1
+> +        * It is used only for TCP transport in the iov[0]
+>          * In future we may want to add a transport layer under protocol
+>          * layer so this will only be issued to TCP transport
+>          */
+> -       iov[0].iov_base = (char *)rqst->rq_iov[0].iov_base + 4;
+> -       iov[0].iov_len = rqst->rq_iov[0].iov_len - 4;
+> -       buflen += iov[0].iov_len;
+> +
+> +       if (rqst->rq_iov[0].iov_len != 4) {
+> +               log_write(ERR, "expected the pdu length in 1st iov, but got 0x%lu\n", rqst->rq_iov[0].iov_len);
+> +               return -EINVAL;
+> +       }
+> +       iov = &rqst->rq_iov[1];
+>
+>         /* total up iov array first */
+> -       for (i = 1; i < rqst->rq_nvec; i++) {
+> -               iov[i].iov_base = rqst->rq_iov[i].iov_base;
+> -               iov[i].iov_len = rqst->rq_iov[i].iov_len;
+> +       for (i = 0; i < rqst->rq_nvec-1; i++) {
+>                 buflen += iov[i].iov_len;
+>         }
+>
+> @@ -2197,14 +2185,14 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
+>                                                 goto done;
+>                                 }
+>                                 i++;
+> -                               if (i == rqst->rq_nvec)
+> +                               if (i == rqst->rq_nvec-1)
+>                                         break;
+>                         }
+>                         start = i;
+>                         buflen = 0;
+>                 } else {
+>                         i++;
+> -                       if (i == rqst->rq_nvec) {
+> +                       if (i == rqst->rq_nvec-1) {
+>                                 /* send out all remaining vecs */
+>                                 remaining_data_length -= buflen;
+>                                 log_write(INFO,
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Thanks,
+
+Steve
