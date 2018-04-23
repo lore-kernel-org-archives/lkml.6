@@ -1,36 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932443AbeDWTt2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 15:49:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41388 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932292AbeDWTtY (ORCPT
+        id S932432AbeDWTvE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 15:51:04 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37141 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932345AbeDWTvC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 15:49:24 -0400
-Date: Mon, 23 Apr 2018 12:49:17 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: jack@suse.cz, viro@zeniv.linux.org.uk, ross.zwisler@linux.intel.com,
-        akpm@linux-foundation.org, dan.j.williams@intel.com, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] fs: dax: Adding new return type vm_fault_t
-Message-ID: <20180423194917.GF13383@bombadil.infradead.org>
-References: <20180423180625.GA16101@jordon-HP-15-Notebook-PC>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423180625.GA16101@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 23 Apr 2018 15:51:02 -0400
+X-Google-Smtp-Source: AIpwx4+CeqmefN4jvREtZYN1F576WLMJ7K5aiwh0q4Z/1YrgBKHWI+/I/Ndcb4vQLgpjyxI9LRag6Q==
+From: Mathieu Malaterre <malat@debian.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild/debian: Use KBUILD_BUILD_* when set
+Date: Mon, 23 Apr 2018 21:50:54 +0200
+Message-Id: <20180423195055.26069-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 11:36:25PM +0530, Souptick Joarder wrote:
-> If the insertion of PTE failed because someone else
-> already added a different entry in the mean time, we
-> treat that as success as we assume the same entry was
-> actually inserted.
+Be nice to the user and check env vars KBUILD_BUILD_USER &
+KBUILD_BUILD_HOST when those are set.
 
-No, Jan said to *make it a comment*.  In the source file.  That's why
-he formatted it with the /* */.  Not in the changelog.
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ scripts/package/mkdebian | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+index 6adb3a16ba3b..05d58d3ae8a0 100755
+--- a/scripts/package/mkdebian
++++ b/scripts/package/mkdebian
+@@ -76,6 +76,8 @@ if [ -n "$DEBEMAIL" ]; then
+        email=$DEBEMAIL
+ elif [ -n "$EMAIL" ]; then
+        email=$EMAIL
++elif [ -n "$KBUILD_BUILD_USER" ] && [ -n "$KBUILD_BUILD_HOST" ]; then
++       email=$KBUILD_BUILD_USER@$KBUILD_BUILD_HOST
+ else
+        email=$(id -nu)@$(hostname -f 2>/dev/null || hostname)
+ fi
+-- 
+2.11.0
