@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755100AbeDWMj6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:39:58 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:33330 "EHLO
+        id S1754934AbeDWMlp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:41:45 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:42752 "EHLO
         mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755054AbeDWMjz (ORCPT
+        with ESMTP id S1754832AbeDWMll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:39:55 -0400
-X-Google-Smtp-Source: AIpwx4+s+KYiPPiLOKCmsmZm1FX/j9UddIf9gtJUood6Lnjkz0PpyhqJvYV1WpXQSsCGF+65q3gzBeKpYYdOqwRosQc=
+        Mon, 23 Apr 2018 08:41:41 -0400
+X-Google-Smtp-Source: AIpwx4+lbCrf/7wQNMbVnrIhT1jGIpnlkC9XXstY02WAgoXOrzJ+JQfcpOo5LQr1e0m9cTc6YRREzAXAaJ7w9EjB/yI=
 MIME-Version: 1.0
-In-Reply-To: <736C3C1A-AABA-471C-94D2-ECF3353F78A3@cnexlabs.com>
+In-Reply-To: <52CBD83E-784F-41E0-BB1E-CE12A93D015E@cnexlabs.com>
 References: <1524155964-3743-1-git-send-email-hans.ml.holmberg@owltronix.com>
- <1524155964-3743-2-git-send-email-hans.ml.holmberg@owltronix.com> <736C3C1A-AABA-471C-94D2-ECF3353F78A3@cnexlabs.com>
+ <1524155964-3743-3-git-send-email-hans.ml.holmberg@owltronix.com> <52CBD83E-784F-41E0-BB1E-CE12A93D015E@cnexlabs.com>
 From: Hans Holmberg <hans@owltronix.com>
-Date: Mon, 23 Apr 2018 15:39:52 +0300
-Message-ID: <CANr-nt1TNukaBGuB3D8po3M9ReF_E5eJN44XiOqJfKXfYpCMrA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] lightnvm: pblk: rework write error recovery path
+Date: Mon, 23 Apr 2018 15:41:40 +0300
+Message-ID: <CANr-nt0_zrGT9Nxfy52mnxdbEA1wYj7q79Qqi_d5HmcPPVWqBg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] lightnvm: pblk: garbage collect lines with failed writes
 To: Javier Gonzalez <javier@cnexlabs.com>
 Cc: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
@@ -26,525 +26,543 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 9:38 PM, Javier Gonzalez <javier@cnexlabs.com> wrote:
+On Fri, Apr 20, 2018 at 9:49 PM, Javier Gonzalez <javier@cnexlabs.com> wrote:
 >> On 19 Apr 2018, at 09.39, Hans Holmberg <hans.ml.holmberg@owltronix.com> wrote:
 >>
 >> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 >>
->> The write error recovery path is incomplete, so rework
->> the write error recovery handling to do resubmits directly
->> from the write buffer.
+>> Write failures should not happen under normal circumstances,
+>> so in order to bring the chunk back into a known state as soon
+>> as possible, evacuate all the valid data out of the line and let the
+>> fw judge if the block can be written to in the next reset cycle.
 >>
->> When a write error occurs, the remaining sectors in the chunk are
->> mapped out and invalidated and the request inserted in a resubmit list.
+>> Do this by introducing a new gc list for lines with failed writes,
+>> and ensure that the rate limiter allocates a small portion of
+>> the write bandwidth to get the job done.
 >>
->> The writer thread checks if there are any requests to resubmit,
->> scans and invalidates any lbas that have been overwritten by later
->> writes and resubmits the failed entries.
+>> The lba list is saved in memory for use during gc as we
+>> cannot gurantee that the emeta data is readable if a write
+>> error occurred.
 >>
 >> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 >> ---
->> drivers/lightnvm/pblk-init.c     |   2 +
->> drivers/lightnvm/pblk-recovery.c |  91 ---------------
->> drivers/lightnvm/pblk-write.c    | 241 ++++++++++++++++++++++++++++-----------
->> drivers/lightnvm/pblk.h          |   8 +-
->> 4 files changed, 180 insertions(+), 162 deletions(-)
+>> drivers/lightnvm/pblk-core.c  | 43 +++++++++++++++++++++--
+>> drivers/lightnvm/pblk-gc.c    | 79 +++++++++++++++++++++++++++----------------
+>> drivers/lightnvm/pblk-init.c  | 39 ++++++++++++++-------
+>> drivers/lightnvm/pblk-rl.c    | 29 +++++++++++++---
+>> drivers/lightnvm/pblk-sysfs.c | 15 ++++++--
+>> drivers/lightnvm/pblk-write.c |  2 ++
+>> drivers/lightnvm/pblk.h       | 25 +++++++++++---
+>> 7 files changed, 178 insertions(+), 54 deletions(-)
 >>
+>> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+>> index 7762e89..f6135e4 100644
+>> --- a/drivers/lightnvm/pblk-core.c
+>> +++ b/drivers/lightnvm/pblk-core.c
+>> @@ -373,7 +373,13 @@ struct list_head *pblk_line_gc_list(struct pblk *pblk, struct pblk_line *line)
+>>
+>>       lockdep_assert_held(&line->lock);
+>>
+>> -     if (!vsc) {
+>> +     if (line->w_err_gc->has_write_err) {
+>> +             if (line->gc_group != PBLK_LINEGC_WERR) {
+>> +                     line->gc_group = PBLK_LINEGC_WERR;
+>> +                     move_list = &l_mg->gc_werr_list;
+>> +                     pblk_rl_werr_line_in(&pblk->rl);
+>> +             }
+>> +     } else if (!vsc) {
+>>               if (line->gc_group != PBLK_LINEGC_FULL) {
+>>                       line->gc_group = PBLK_LINEGC_FULL;
+>>                       move_list = &l_mg->gc_full_list;
+>> @@ -1603,8 +1609,13 @@ static void __pblk_line_put(struct pblk *pblk, struct pblk_line *line)
+>>       line->state = PBLK_LINESTATE_FREE;
+>>       line->gc_group = PBLK_LINEGC_NONE;
+>>       pblk_line_free(line);
+>> -     spin_unlock(&line->lock);
+>>
+>> +     if (line->w_err_gc->has_write_err) {
+>> +             pblk_rl_werr_line_out(&pblk->rl);
+>> +             line->w_err_gc->has_write_err = 0;
+>> +     }
+>> +
+>> +     spin_unlock(&line->lock);
+>>       atomic_dec(&gc->pipeline_gc);
+>>
+>>       spin_lock(&l_mg->free_lock);
+>> @@ -1767,11 +1778,32 @@ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line)
+>>
+>>       spin_lock(&l_mg->close_lock);
+>>       spin_lock(&line->lock);
+>> +
+>> +     /* Update the in-memory start address for emeta, in case it has
+>> +      * shifted due to write errors
+>> +      */
+>> +     if (line->emeta_ssec != line->cur_sec)
+>> +             line->emeta_ssec = line->cur_sec;
+>> +
+>>       list_add_tail(&line->list, &l_mg->emeta_list);
+>>       spin_unlock(&line->lock);
+>>       spin_unlock(&l_mg->close_lock);
+>>
+>>       pblk_line_should_sync_meta(pblk);
+>> +
+>> +
+>> +}
+>> +
+>> +static void pblk_save_lba_list(struct pblk *pblk, struct pblk_line *line)
+>> +{
+>> +     struct pblk_line_meta *lm = &pblk->lm;
+>> +     unsigned int lba_list_size = lm->emeta_len[2];
+>> +     struct pblk_w_err_gc *w_err_gc = line->w_err_gc;
+>> +     struct pblk_emeta *emeta = line->emeta;
+>> +
+>> +     w_err_gc->lba_list = kmalloc(lba_list_size, GFP_KERNEL);
+>> +     memcpy(w_err_gc->lba_list, emeta_to_lbas(pblk, emeta->buf),
+>> +                             lba_list_size);
+>> }
+>>
+>> void pblk_line_close_ws(struct work_struct *work)
+>> @@ -1780,6 +1812,13 @@ void pblk_line_close_ws(struct work_struct *work)
+>>                                                                       ws);
+>>       struct pblk *pblk = line_ws->pblk;
+>>       struct pblk_line *line = line_ws->line;
+>> +     struct pblk_w_err_gc *w_err_gc = line->w_err_gc;
+>> +
+>> +     /* Write errors makes the emeta start address stored in smeta invalid,
+>> +      * so keep a copy of the lba list until we've gc'd the line
+>> +      */
+>> +     if (w_err_gc->has_write_err)
+>> +             pblk_save_lba_list(pblk, line);
+>>
+>>       pblk_line_close(pblk, line);
+>>       mempool_free(line_ws, pblk->gen_ws_pool);
+>> diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+>> index b0cc277..62f0548 100644
+>> --- a/drivers/lightnvm/pblk-gc.c
+>> +++ b/drivers/lightnvm/pblk-gc.c
+>> @@ -138,10 +138,10 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+>>       struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+>>       struct pblk_line_meta *lm = &pblk->lm;
+>>       struct pblk_gc *gc = &pblk->gc;
+>> -     struct line_emeta *emeta_buf;
+>> +     struct line_emeta *emeta_buf = NULL;
+>>       struct pblk_line_ws *gc_rq_ws;
+>>       struct pblk_gc_rq *gc_rq;
+>> -     __le64 *lba_list;
+>> +     __le64 *lba_list = NULL;
+>>       unsigned long *invalid_bitmap;
+>>       int sec_left, nr_secs, bit;
+>>       int ret;
+>> @@ -150,34 +150,42 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+>>       if (!invalid_bitmap)
+>>               goto fail_free_ws;
+>>
+>> -     emeta_buf = pblk_malloc(lm->emeta_len[0], l_mg->emeta_alloc_type,
+>> -                                                             GFP_KERNEL);
+>> -     if (!emeta_buf) {
+>> -             pr_err("pblk: cannot use GC emeta\n");
+>> -             goto fail_free_bitmap;
+>> -     }
+>> -
+>> -     ret = pblk_line_read_emeta(pblk, line, emeta_buf);
+>> -     if (ret) {
+>> -             pr_err("pblk: line %d read emeta failed (%d)\n", line->id, ret);
+>> -             goto fail_free_emeta;
+>> -     }
+>> +     if (line->w_err_gc->has_write_err) {
+>> +             lba_list = line->w_err_gc->lba_list;
+>> +     } else {
+>> +             emeta_buf = pblk_malloc(lm->emeta_len[0],
+>> +                             l_mg->emeta_alloc_type, GFP_KERNEL);
+>> +             if (!emeta_buf) {
+>> +                     pr_err("pblk: cannot use GC emeta\n");
+>> +                     goto fail_free_bitmap;
+>> +             }
+>>
+>> -     /* If this read fails, it means that emeta is corrupted. For now, leave
+>> -      * the line untouched. TODO: Implement a recovery routine that scans and
+>> -      * moves all sectors on the line.
+>> -      */
+>> +             ret = pblk_line_read_emeta(pblk, line, emeta_buf);
+>> +             if (ret) {
+>> +                     pr_err("pblk: line %d read emeta failed (%d)\n",
+>> +                                     line->id, ret);
+>> +                     goto fail_free_emeta;
+>> +             }
+>>
+>> -     ret = pblk_recov_check_emeta(pblk, emeta_buf);
+>> -     if (ret) {
+>> -             pr_err("pblk: inconsistent emeta (line %d)\n", line->id);
+>> -             goto fail_free_emeta;
+>> -     }
+>> +             /* If this read fails, it means that emeta is corrupted.
+>> +              * For now, leave the line untouched.
+>> +              * TODO: Implement a recovery routine that scans and moves
+>> +              * all sectors on the line.,
+>> +              */
+>> +
+>> +             ret = pblk_recov_check_emeta(pblk, emeta_buf);
+>> +             if (ret) {
+>> +                     pr_err("pblk: inconsistent emeta (line %d)\n",
+>> +                                     line->id);
+>> +                     goto fail_free_emeta;
+>> +             }
+>>
+>> -     lba_list = emeta_to_lbas(pblk, emeta_buf);
+>> -     if (!lba_list) {
+>> -             pr_err("pblk: could not interpret emeta (line %d)\n", line->id);
+>> -             goto fail_free_emeta;
+>> +             lba_list = emeta_to_lbas(pblk, emeta_buf);
+>> +             if (!lba_list) {
+>> +                     pr_err("pblk: could not interpret emeta (line %d)\n",
+>> +                                     line->id);
+>> +                     goto fail_free_emeta;
+>> +             }
+>>       }
+>
+>
+> would it be an idea to make move all the logic above to a different
+> function returning lba_list? This way, we do not have an extra indent
+> for a single line use case.
+
+Yes, indeed it would. I'll refactor this into a separate function.
+
+>
+>>
+>>       spin_lock(&line->lock);
+>> @@ -240,7 +248,12 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+>>               goto next_rq;
+>>
+>> out:
+>> -     pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
+>> +     if (line->w_err_gc->has_write_err) {
+>> +             kfree(lba_list);
+>> +             line->w_err_gc->lba_list = NULL;
+>> +     } else
+>> +             pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
+>> +
+>>       kfree(line_ws);
+>>       kfree(invalid_bitmap);
+>>
+>> @@ -252,7 +265,11 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+>> fail_free_gc_rq:
+>>       kfree(gc_rq);
+>> fail_free_emeta:
+>> -     pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
+>> +     if (line->w_err_gc->has_write_err) {
+>> +             kfree(lba_list);
+>> +             line->w_err_gc->lba_list = NULL;
+>> +     } else
+>> +             pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
+>
+> Can you open/close brackets here too?
+
+I'll tidy this up along with the refactoring mentioned above.
+
+>
+>> fail_free_bitmap:
+>>       kfree(invalid_bitmap);
+>> fail_free_ws:
+>> @@ -349,12 +366,14 @@ static struct pblk_line *pblk_gc_get_victim_line(struct pblk *pblk,
+>> static bool pblk_gc_should_run(struct pblk_gc *gc, struct pblk_rl *rl)
+>> {
+>>       unsigned int nr_blocks_free, nr_blocks_need;
+>> +     unsigned int werr_lines = atomic_read(&rl->werr_lines);
+>>
+>>       nr_blocks_need = pblk_rl_high_thrs(rl);
+>>       nr_blocks_free = pblk_rl_nr_free_blks(rl);
+>>
+>>       /* This is not critical, no need to take lock here */
+>> -     return ((gc->gc_active) && (nr_blocks_need > nr_blocks_free));
+>> +     return ((werr_lines > 0) ||
+>> +             ((gc->gc_active) && (nr_blocks_need > nr_blocks_free)));
+>> }
+>>
+>> void pblk_gc_free_full_lines(struct pblk *pblk)
 >> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
->> index bfc488d..6f06727 100644
+>> index 6f06727..092e361 100644
 >> --- a/drivers/lightnvm/pblk-init.c
 >> +++ b/drivers/lightnvm/pblk-init.c
->> @@ -426,6 +426,7 @@ static int pblk_core_init(struct pblk *pblk)
->>               goto free_r_end_wq;
+>> @@ -495,9 +495,14 @@ static void pblk_line_mg_free(struct pblk *pblk)
 >>
->>       INIT_LIST_HEAD(&pblk->compl_list);
->> +     INIT_LIST_HEAD(&pblk->resubmit_list);
+>> static void pblk_line_meta_free(struct pblk_line *line)
+>> {
+>> +     struct pblk_w_err_gc *w_err_gc = line->w_err_gc;
+>> +
+>>       kfree(line->blk_bitmap);
+>>       kfree(line->erase_bitmap);
+>>       kfree(line->chks);
+>> +
+>> +     kfree(w_err_gc->lba_list);
+>> +     kfree(w_err_gc);
+>> }
+>>
+>> static void pblk_lines_free(struct pblk *pblk)
+>> @@ -813,20 +818,28 @@ static int pblk_alloc_line_meta(struct pblk *pblk, struct pblk_line *line)
+>>               return -ENOMEM;
+>>
+>>       line->erase_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
+>> -     if (!line->erase_bitmap) {
+>> -             kfree(line->blk_bitmap);
+>> -             return -ENOMEM;
+>> -     }
+>> +     if (!line->erase_bitmap)
+>> +             goto free_blk_bitmap;
+>> +
+>>
+>>       line->chks = kmalloc(lm->blk_per_line * sizeof(struct nvm_chk_meta),
+>>                                                               GFP_KERNEL);
+>> -     if (!line->chks) {
+>> -             kfree(line->erase_bitmap);
+>> -             kfree(line->blk_bitmap);
+>> -             return -ENOMEM;
+>> -     }
+>> +     if (!line->chks)
+>> +             goto free_erase_bitmap;
+>> +
+>> +     line->w_err_gc = kzalloc(sizeof(struct pblk_w_err_gc), GFP_KERNEL);
+>> +     if (!line->w_err_gc)
+>> +             goto free_chks;
 >>
 >>       return 0;
+>> +
+>> +free_chks:
+>> +     kfree(line->chks);
+>> +free_erase_bitmap:
+>> +     kfree(line->erase_bitmap);
+>> +free_blk_bitmap:
+>> +     kfree(line->blk_bitmap);
+>> +     return -ENOMEM;
+>> }
 >>
->> @@ -1185,6 +1186,7 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
->>       pblk->state = PBLK_STATE_RUNNING;
->>       pblk->gc.gc_enabled = 0;
+>> static int pblk_line_mg_init(struct pblk *pblk)
+>> @@ -851,12 +864,14 @@ static int pblk_line_mg_init(struct pblk *pblk)
+>>       INIT_LIST_HEAD(&l_mg->gc_mid_list);
+>>       INIT_LIST_HEAD(&l_mg->gc_low_list);
+>>       INIT_LIST_HEAD(&l_mg->gc_empty_list);
+>> +     INIT_LIST_HEAD(&l_mg->gc_werr_list);
 >>
->> +     spin_lock_init(&pblk->resubmit_lock);
->>       spin_lock_init(&pblk->trans_lock);
->>       spin_lock_init(&pblk->lock);
+>>       INIT_LIST_HEAD(&l_mg->emeta_list);
 >>
->> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
->> index 9cb6d5d..5983428 100644
->> --- a/drivers/lightnvm/pblk-recovery.c
->> +++ b/drivers/lightnvm/pblk-recovery.c
->> @@ -16,97 +16,6 @@
+>> -     l_mg->gc_lists[0] = &l_mg->gc_high_list;
+>> -     l_mg->gc_lists[1] = &l_mg->gc_mid_list;
+>> -     l_mg->gc_lists[2] = &l_mg->gc_low_list;
+>> +     l_mg->gc_lists[0] = &l_mg->gc_werr_list;
+>> +     l_mg->gc_lists[1] = &l_mg->gc_high_list;
+>> +     l_mg->gc_lists[2] = &l_mg->gc_mid_list;
+>> +     l_mg->gc_lists[3] = &l_mg->gc_low_list;
 >>
->> #include "pblk.h"
+>>       spin_lock_init(&l_mg->free_lock);
+>>       spin_lock_init(&l_mg->close_lock);
+>> diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
+>> index 883a711..6a0616a 100644
+>> --- a/drivers/lightnvm/pblk-rl.c
+>> +++ b/drivers/lightnvm/pblk-rl.c
+>> @@ -73,6 +73,16 @@ void pblk_rl_user_in(struct pblk_rl *rl, int nr_entries)
+>>       pblk_rl_kick_u_timer(rl);
+>> }
 >>
->> -void pblk_submit_rec(struct work_struct *work)
->> -{
->> -     struct pblk_rec_ctx *recovery =
->> -                     container_of(work, struct pblk_rec_ctx, ws_rec);
->> -     struct pblk *pblk = recovery->pblk;
->> -     struct nvm_rq *rqd = recovery->rqd;
->> -     struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
->> -     struct bio *bio;
->> -     unsigned int nr_rec_secs;
->> -     unsigned int pgs_read;
->> -     int ret;
->> -
->> -     nr_rec_secs = bitmap_weight((unsigned long int *)&rqd->ppa_status,
->> -                                                             NVM_MAX_VLBA);
->> -
->> -     bio = bio_alloc(GFP_KERNEL, nr_rec_secs);
->> -
->> -     bio->bi_iter.bi_sector = 0;
->> -     bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
->> -     rqd->bio = bio;
->> -     rqd->nr_ppas = nr_rec_secs;
->> -
->> -     pgs_read = pblk_rb_read_to_bio_list(&pblk->rwb, bio, &recovery->failed,
->> -                                                             nr_rec_secs);
->
-> Please, remove functions that are not longer used. Doing a pass on the
-> rest of the removed functions would be a good idea.
-
-Yes, thanks.
-
->
->> -     if (pgs_read != nr_rec_secs) {
->> -             pr_err("pblk: could not read recovery entries\n");
->> -             goto err;
->> -     }
->> -
->> -     if (pblk_setup_w_rec_rq(pblk, rqd, c_ctx)) {
->
-> Same here
-
-I'll clean it up.
-
->> -
->> -#ifdef CONFIG_NVM_DEBUG
->> -     atomic_long_add(nr_rec_secs, &pblk->recov_writes);
->> -#endif
->
-> Can you add this debug counter to the new path? I see you added other
-> counters, if it is a rename, can you put it on a separate patch?
-
-Thanks for catching the lost recov counter update, what other counters
-are you referring to?
-
->
->> -
->> -     ret = pblk_submit_io(pblk, rqd);
->> -     if (ret) {
->> -             pr_err("pblk: I/O submission failed: %d\n", ret);
->> -             goto err;
->> -     }
->> -
->> -     mempool_free(recovery, pblk->rec_pool);
->> -     return;
->> -
->> -err:
->> -     bio_put(bio);
->> -     pblk_free_rqd(pblk, rqd, PBLK_WRITE);
->> -}
->> -
->> -int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
->> -                     struct pblk_rec_ctx *recovery, u64 *comp_bits,
->> -                     unsigned int comp)
->> -{
->> -     struct nvm_rq *rec_rqd;
->> -     struct pblk_c_ctx *rec_ctx;
->> -     int nr_entries = c_ctx->nr_valid + c_ctx->nr_padded;
->> -
->> -     rec_rqd = pblk_alloc_rqd(pblk, PBLK_WRITE);
->> -     rec_ctx = nvm_rq_to_pdu(rec_rqd);
->> -
->> -     /* Copy completion bitmap, but exclude the first X completed entries */
->> -     bitmap_shift_right((unsigned long int *)&rec_rqd->ppa_status,
->> -                             (unsigned long int *)comp_bits,
->> -                             comp, NVM_MAX_VLBA);
->> -
->> -     /* Save the context for the entries that need to be re-written and
->> -      * update current context with the completed entries.
->> -      */
->> -     rec_ctx->sentry = pblk_rb_wrap_pos(&pblk->rwb, c_ctx->sentry + comp);
->> -     if (comp >= c_ctx->nr_valid) {
->> -             rec_ctx->nr_valid = 0;
->> -             rec_ctx->nr_padded = nr_entries - comp;
->> -
->> -             c_ctx->nr_padded = comp - c_ctx->nr_valid;
->> -     } else {
->> -             rec_ctx->nr_valid = c_ctx->nr_valid - comp;
->> -             rec_ctx->nr_padded = c_ctx->nr_padded;
->> -
->> -             c_ctx->nr_valid = comp;
->> -             c_ctx->nr_padded = 0;
->> -     }
->> -
->> -     recovery->rqd = rec_rqd;
->> -     recovery->pblk = pblk;
->> -
->> -     return 0;
->> -}
->> -
->> int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta_buf)
+>> +void pblk_rl_werr_line_in(struct pblk_rl *rl)
+>> +{
+>> +     atomic_inc(&rl->werr_lines);
+>> +}
+>> +
+>> +void pblk_rl_werr_line_out(struct pblk_rl *rl)
+>> +{
+>> +     atomic_dec(&rl->werr_lines);
+>> +}
+>> +
+>> void pblk_rl_gc_in(struct pblk_rl *rl, int nr_entries)
 >> {
->>       u32 crc;
+>>       atomic_add(nr_entries, &rl->rb_gc_cnt);
+>> @@ -99,11 +109,21 @@ static void __pblk_rl_update_rates(struct pblk_rl *rl,
+>> {
+>>       struct pblk *pblk = container_of(rl, struct pblk, rl);
+>>       int max = rl->rb_budget;
+>> +     int werr_gc_needed = atomic_read(&rl->werr_lines);
+>>
+>>       if (free_blocks >= rl->high) {
+>> -             rl->rb_user_max = max;
+>> -             rl->rb_gc_max = 0;
+>> -             rl->rb_state = PBLK_RL_HIGH;
+>> +             if (werr_gc_needed) {
+>> +                     /* Allocate a small budget for recovering
+>> +                      * lines with write errors
+>> +                      */
+>> +                     rl->rb_gc_max = 1 << rl->rb_windows_pw;
+>> +                     rl->rb_user_max = max - rl->rb_gc_max;
+>> +                     rl->rb_state = PBLK_RL_WERR;
+>> +             } else {
+>> +                     rl->rb_user_max = max;
+>> +                     rl->rb_gc_max = 0;
+>> +                     rl->rb_state = PBLK_RL_OFF;
+>> +             }
+>>       } else if (free_blocks < rl->high) {
+>>               int shift = rl->high_pw - rl->rb_windows_pw;
+>>               int user_windows = free_blocks >> shift;
+>> @@ -124,7 +144,7 @@ static void __pblk_rl_update_rates(struct pblk_rl *rl,
+>>               rl->rb_state = PBLK_RL_LOW;
+>>       }
+>>
+>> -     if (rl->rb_state == (PBLK_RL_MID | PBLK_RL_LOW))
+>> +     if (rl->rb_state != PBLK_RL_OFF)
+>>               pblk_gc_should_start(pblk);
+>>       else
+>>               pblk_gc_should_stop(pblk);
+>> @@ -221,6 +241,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+>>       atomic_set(&rl->rb_user_cnt, 0);
+>>       atomic_set(&rl->rb_gc_cnt, 0);
+>>       atomic_set(&rl->rb_space, -1);
+>> +     atomic_set(&rl->werr_lines, 0);
+>>
+>>       timer_setup(&rl->u_timer, pblk_rl_u_timer, 0);
+>>
+>> diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+>> index e61909a..88a0a7c 100644
+>> --- a/drivers/lightnvm/pblk-sysfs.c
+>> +++ b/drivers/lightnvm/pblk-sysfs.c
+>> @@ -173,6 +173,8 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+>>       int free_line_cnt = 0, closed_line_cnt = 0, emeta_line_cnt = 0;
+>>       int d_line_cnt = 0, l_line_cnt = 0;
+>>       int gc_full = 0, gc_high = 0, gc_mid = 0, gc_low = 0, gc_empty = 0;
+>> +     int gc_werr = 0;
+>> +
+>>       int bad = 0, cor = 0;
+>>       int msecs = 0, cur_sec = 0, vsc = 0, sec_in_line = 0;
+>>       int map_weight = 0, meta_weight = 0;
+>> @@ -237,6 +239,15 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+>>               gc_empty++;
+>>       }
+>>
+>> +     list_for_each_entry(line, &l_mg->gc_werr_list, list) {
+>> +             if (line->type == PBLK_LINETYPE_DATA)
+>> +                     d_line_cnt++;
+>> +             else if (line->type == PBLK_LINETYPE_LOG)
+>> +                     l_line_cnt++;
+>> +             closed_line_cnt++;
+>> +             gc_werr++;
+>> +     }
+>> +
+>>       list_for_each_entry(line, &l_mg->bad_list, list)
+>>               bad++;
+>>       list_for_each_entry(line, &l_mg->corrupt_list, list)
+>> @@ -275,8 +286,8 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+>>                                       l_mg->nr_lines);
+>>
+>>       sz += snprintf(page + sz, PAGE_SIZE - sz,
+>> -             "GC: full:%d, high:%d, mid:%d, low:%d, empty:%d, queue:%d\n",
+>> -                     gc_full, gc_high, gc_mid, gc_low, gc_empty,
+>> +             "GC: full:%d, high:%d, mid:%d, low:%d, empty:%d, werr: %d, queue:%d\n",
+>> +                     gc_full, gc_high, gc_mid, gc_low, gc_empty, gc_werr,
+>>                       atomic_read(&pblk->gc.read_inflight_gc));
+>>
+>>       sz += snprintf(page + sz, PAGE_SIZE - sz,
 >> diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
->> index 3e6f1eb..ab45157 100644
+>> index ab45157..3b6bead 100644
 >> --- a/drivers/lightnvm/pblk-write.c
 >> +++ b/drivers/lightnvm/pblk-write.c
->> @@ -103,68 +103,147 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
->>       pblk_rb_sync_end(&pblk->rwb, &flags);
->> }
->>
->> -/* When a write fails, we are not sure whether the block has grown bad or a page
->> - * range is more susceptible to write errors. If a high number of pages fail, we
->> - * assume that the block is bad and we mark it accordingly. In all cases, we
->> - * remap and resubmit the failed entries as fast as possible; if a flush is
->> - * waiting on a completion, the whole stack would stall otherwise.
->> - */
->> -static void pblk_end_w_fail(struct pblk *pblk, struct nvm_rq *rqd)
->> +/* Map remaining sectors in chunk, starting from ppa */
->> +static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
->> {
->> -     void *comp_bits = &rqd->ppa_status;
->> -     struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
->> -     struct pblk_rec_ctx *recovery;
->> -     struct ppa_addr *ppa_list = rqd->ppa_list;
->> -     int nr_ppas = rqd->nr_ppas;
->> -     unsigned int c_entries;
->> -     int bit, ret;
->> +     struct nvm_tgt_dev *dev = pblk->dev;
->> +     struct nvm_geo *geo = &dev->geo;
->> +     struct pblk_line *line;
->> +     struct ppa_addr map_ppa = *ppa;
->> +     u64 paddr;
->> +     int done = 0;
->>
->> -     if (unlikely(nr_ppas == 1))
->> -             ppa_list = &rqd->ppa_addr;
->> +     line = &pblk->lines[pblk_ppa_to_line(*ppa)];
->> +     spin_lock(&line->lock);
->>
->> -     recovery = mempool_alloc(pblk->rec_pool, GFP_ATOMIC);
->> +     while (!done)  {
->> +             paddr = pblk_dev_ppa_to_line_addr(pblk, map_ppa);
->>
->> -     INIT_LIST_HEAD(&recovery->failed);
->> +             if (!test_and_set_bit(paddr, line->map_bitmap))
->> +                     line->left_msecs--;
->>
->> -     bit = -1;
->> -     while ((bit = find_next_bit(comp_bits, nr_ppas, bit + 1)) < nr_ppas) {
->> -             struct pblk_rb_entry *entry;
->> -             struct ppa_addr ppa;
->> +             if (!test_and_set_bit(paddr, line->invalid_bitmap))
->> +                     le32_add_cpu(line->vsc, -1);
->>
->> -             /* Logic error */
->> -             if (bit > c_ctx->nr_valid) {
->> -                     WARN_ONCE(1, "pblk: corrupted write request\n");
->> -                     mempool_free(recovery, pblk->rec_pool);
->> -                     goto out;
->> +             if (geo->version == NVM_OCSSD_SPEC_12) {
->> +                     map_ppa.ppa++;
->> +                     if (map_ppa.g.pg == geo->num_pg)
->> +                             done = 1;
->> +             } else {
->> +                     map_ppa.m.sec++;
->> +                     if (map_ppa.m.sec == geo->clba)
->> +                             done = 1;
+>> @@ -136,6 +136,7 @@ static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
 >>               }
->> +     }
->>
->> -             ppa = ppa_list[bit];
->> -             entry = pblk_rb_sync_scan_entry(&pblk->rwb, &ppa);
->> -             if (!entry) {
->> -                     pr_err("pblk: could not scan entry on write failure\n");
->> -                     mempool_free(recovery, pblk->rec_pool);
->> -                     goto out;
->> -             }
->> +     spin_unlock(&line->lock);
->> +}
->> +
->> +static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
->> +             unsigned int nr_entries)
->
-> Can you align this?
-
-Done.
-
->
->> +{
->> +     struct pblk_rb *rb = &pblk->rwb;
->> +     struct pblk_rb_entry *entry;
->> +     struct pblk_line *line;
->> +     struct pblk_w_ctx *w_ctx;
->> +     struct ppa_addr ppa_l2p;
->> +     int flags;
->> +     unsigned int pos, i;
->> +
->> +     spin_lock(&pblk->trans_lock);
->> +     pos = sentry;
->> +     for (i = 0; i < nr_entries; i++) {
->> +             entry = &rb->entries[pos];
->> +             w_ctx = &entry->w_ctx;
->> +
->> +             /* Check if the lba has been overwritten */
->> +             ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
->> +             if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
->> +                     w_ctx->lba = ADDR_EMPTY;
->> +
->> +             /* Mark up the entry as submittable again */
->> +             flags = READ_ONCE(w_ctx->flags);
->> +             flags |= PBLK_WRITTEN_DATA;
->> +             /* Release flags on write context. Protect from writes */
->> +             smp_store_release(&w_ctx->flags, flags);
->>
->> -             /* The list is filled first and emptied afterwards. No need for
->> -              * protecting it with a lock
->> +             /* Decrese the reference count to the line as we will
->> +              * re-map these entries
->>                */
->> -             list_add_tail(&entry->index, &recovery->failed);
->> +             line = &pblk->lines[pblk_ppa_to_line(w_ctx->ppa)];
->> +             kref_put(&line->ref, pblk_line_put);
->> +
->> +             pos = (pos + 1) & (rb->nr_entries - 1);
->>       }
->> +     spin_unlock(&pblk->trans_lock);
->> +}
->>
->> -     c_entries = find_first_bit(comp_bits, nr_ppas);
->> -     ret = pblk_recov_setup_rq(pblk, c_ctx, recovery, comp_bits, c_entries);
->> -     if (ret) {
->> -             pr_err("pblk: could not recover from write failure\n");
->> -             mempool_free(recovery, pblk->rec_pool);
->> -             goto out;
->> +static void pblk_queue_resubmit(struct pblk *pblk, struct pblk_c_ctx *c_ctx)
->> +{
->> +     struct pblk_c_ctx *r_ctx;
->> +
->> +     r_ctx = kzalloc(sizeof(struct pblk_c_ctx), GFP_KERNEL);
->> +     if (!r_ctx) {
->> +             pr_err("pblk: failed to allocate resubmit context");
->
-> No need to print allocation failures - I know there are a few of these
-> in the code, but they should be removed.
-
-Yep, checkpatch warns on these. Done.
-
->
->> +             return;
 >>       }
 >>
->> +     r_ctx->lun_bitmap = NULL;
->> +     r_ctx->sentry = c_ctx->sentry;
->> +     r_ctx->nr_valid = c_ctx->nr_valid;
->> +     r_ctx->nr_padded = c_ctx->nr_padded;
->> +
->> +     spin_lock(&pblk->resubmit_lock);
->> +     list_add_tail(&r_ctx->list, &pblk->resubmit_list);
->> +     spin_unlock(&pblk->resubmit_lock);
->> +}
->> +
->> +static void pblk_submit_rec(struct work_struct *work)
->> +{
->> +     struct pblk_rec_ctx *recovery =
->> +                     container_of(work, struct pblk_rec_ctx, ws_rec);
->> +     struct pblk *pblk = recovery->pblk;
->> +     struct nvm_rq *rqd = recovery->rqd;
->> +     struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
->> +     struct ppa_addr *ppa_list;
->> +
->> +     pblk_log_write_err(pblk, rqd);
->> +
->> +     if (rqd->nr_ppas == 1)
->> +             ppa_list = &rqd->ppa_addr;
->> +     else
->> +             ppa_list = rqd->ppa_list;
->> +
->> +     pblk_map_remaining(pblk, ppa_list);
->> +     pblk_queue_resubmit(pblk, c_ctx);
->> +
->> +     pblk_up_rq(pblk, rqd->ppa_list, rqd->nr_ppas, c_ctx->lun_bitmap);
->> +     if (c_ctx->nr_padded)
->> +             pblk_bio_free_pages(pblk, rqd->bio, c_ctx->nr_valid,
->> +                                                     c_ctx->nr_padded);
->> +     bio_put(rqd->bio);
->> +     pblk_free_rqd(pblk, rqd, PBLK_WRITE);
->> +     mempool_free(recovery, pblk->rec_pool);
->> +
->> +     atomic_dec(&pblk->inflight_io);
->> +}
->> +
->> +
->> +static void pblk_end_w_fail(struct pblk *pblk, struct nvm_rq *rqd)
->> +{
->> +     struct pblk_rec_ctx *recovery;
->> +
->> +     recovery = mempool_alloc(pblk->rec_pool, GFP_ATOMIC);
->> +     if (!recovery) {
->> +             pr_err("pblk: could not allocate recovery work\n");
->> +             return;
->> +     }
->> +
->> +     recovery->pblk = pblk;
->> +     recovery->rqd = rqd;
->> +
->>       INIT_WORK(&recovery->ws_rec, pblk_submit_rec);
->>       queue_work(pblk->close_wq, &recovery->ws_rec);
->> -
->> -out:
->> -     pblk_complete_write(pblk, rqd, c_ctx);
+>> +     line->w_err_gc->has_write_err = 1;
+>>       spin_unlock(&line->lock);
 >> }
 >>
->> static void pblk_end_io_write(struct nvm_rq *rqd)
->> @@ -173,8 +252,8 @@ static void pblk_end_io_write(struct nvm_rq *rqd)
->>       struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
->>
+>> @@ -277,6 +278,7 @@ static void pblk_end_io_write_meta(struct nvm_rq *rqd)
 >>       if (rqd->error) {
->> -             pblk_log_write_err(pblk, rqd);
->> -             return pblk_end_w_fail(pblk, rqd);
->> +             pblk_end_w_fail(pblk, rqd);
->> +             return;
+>>               pblk_log_write_err(pblk, rqd);
+>>               pr_err("pblk: metadata I/O failed. Line %d\n", line->id);
+>> +             line->w_err_gc->has_write_err = 1;
 >>       }
->> #ifdef CONFIG_NVM_DEBUG
->>       else
->> @@ -339,6 +418,7 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
->>       bio = pblk_bio_map_addr(pblk, data, rq_ppas, rq_len,
->>                                       l_mg->emeta_alloc_type, GFP_KERNEL);
->>       if (IS_ERR(bio)) {
->> +             pr_err("pblk: failed to map emeta io");
->>               ret = PTR_ERR(bio);
->>               goto fail_free_rqd;
->>       }
->> @@ -515,26 +595,54 @@ static int pblk_submit_write(struct pblk *pblk)
->>       unsigned int secs_avail, secs_to_sync, secs_to_com;
->>       unsigned int secs_to_flush;
->>       unsigned long pos;
->> +     unsigned int resubmit;
 >>
->> -     /* If there are no sectors in the cache, flushes (bios without data)
->> -      * will be cleared on the cache threads
->> -      */
->> -     secs_avail = pblk_rb_read_count(&pblk->rwb);
->> -     if (!secs_avail)
->> -             return 1;
->> -
->> -     secs_to_flush = pblk_rb_flush_point_count(&pblk->rwb);
->> -     if (!secs_to_flush && secs_avail < pblk->min_write_pgs)
->> -             return 1;
->> -
->> -     secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail, secs_to_flush);
->> -     if (secs_to_sync > pblk->max_write_pgs) {
->> -             pr_err("pblk: bad buffer sync calculation\n");
->> -             return 1;
->> -     }
->> +     spin_lock(&pblk->resubmit_lock);
->> +     resubmit = !list_empty(&pblk->resubmit_list);
->> +     spin_unlock(&pblk->resubmit_lock);
->> +
->> +     /* Resubmit failed writes first */
->> +     if (resubmit) {
->> +             struct pblk_c_ctx *r_ctx;
->> +
->> +             spin_lock(&pblk->resubmit_lock);
->> +             r_ctx = list_first_entry(&pblk->resubmit_list,
->> +                                     struct pblk_c_ctx, list);
->> +             list_del(&r_ctx->list);
->> +             spin_unlock(&pblk->resubmit_lock);
->>
->> -     secs_to_com = (secs_to_sync > secs_avail) ? secs_avail : secs_to_sync;
->> -     pos = pblk_rb_read_commit(&pblk->rwb, secs_to_com);
->> +             secs_avail = r_ctx->nr_valid;
->> +             pos = r_ctx->sentry;
->> +
->> +             pblk_prepare_resubmit(pblk, pos, secs_avail);
->> +             secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail,
->> +                             secs_avail);
->> +
->> +             kfree(r_ctx);
->> +     } else {
->> +             /* If there are no sectors in the cache,
->> +              * flushes (bios without data) will be cleared on
->> +              * the cache threads
->> +              */
->> +             secs_avail = pblk_rb_read_count(&pblk->rwb);
->> +             if (!secs_avail)
->> +                     return 1;
->> +
->> +             secs_to_flush = pblk_rb_flush_point_count(&pblk->rwb);
->> +             if (!secs_to_flush && secs_avail < pblk->min_write_pgs)
->> +                     return 1;
->> +
->> +             secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail,
->> +                                     secs_to_flush);
->> +             if (secs_to_sync > pblk->max_write_pgs) {
->> +                     pr_err("pblk: bad buffer sync calculation\n");
->> +                     return 1;
->> +             }
->> +
->> +             secs_to_com = (secs_to_sync > secs_avail) ?
->> +                     secs_avail : secs_to_sync;
->> +             pos = pblk_rb_read_commit(&pblk->rwb, secs_to_com);
->> +     }
->>
->>       bio = bio_alloc(GFP_KERNEL, secs_to_sync);
->>
->> @@ -553,6 +661,7 @@ static int pblk_submit_write(struct pblk *pblk)
->>       if (pblk_submit_io_set(pblk, rqd))
->>               goto fail_free_bio;
->>
->> +
->
-> No need for the extra line
-
-Removed.
-
->
->> #ifdef CONFIG_NVM_DEBUG
->>       atomic_long_add(secs_to_sync, &pblk->sub_writes);
->> #endif
+>>       sync = atomic_add_return(rqd->nr_ppas, &emeta->sync);
 >> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
->> index 9838d03..cff6aea 100644
+>> index cff6aea..a4e55d8 100644
 >> --- a/drivers/lightnvm/pblk.h
 >> +++ b/drivers/lightnvm/pblk.h
->> @@ -128,7 +128,6 @@ struct pblk_pad_rq {
->> struct pblk_rec_ctx {
->>       struct pblk *pblk;
->>       struct nvm_rq *rqd;
->> -     struct list_head failed;
->>       struct work_struct ws_rec;
+>> @@ -89,12 +89,14 @@ struct pblk_sec_meta {
+>> /* The number of GC lists and the rate-limiter states go together. This way the
+>>  * rate-limiter can dictate how much GC is needed based on resource utilization.
+>>  */
+>> -#define PBLK_GC_NR_LISTS 3
+>> +#define PBLK_GC_NR_LISTS 4
+>>
+>> enum {
+>> -     PBLK_RL_HIGH = 1,
+>> -     PBLK_RL_MID = 2,
+>> -     PBLK_RL_LOW = 3,
+>> +     PBLK_RL_OFF = 0,
+>> +     PBLK_RL_WERR = 1,
+>> +     PBLK_RL_HIGH = 2,
+>> +     PBLK_RL_MID = 3,
+>> +     PBLK_RL_LOW = 4
 >> };
 >>
->> @@ -664,6 +663,9 @@ struct pblk {
+>> #define pblk_dma_meta_size (sizeof(struct pblk_sec_meta) * PBLK_MAX_REQ_ADDRS)
+>> @@ -278,6 +280,8 @@ struct pblk_rl {
+>>       int rb_user_active;
+>>       int rb_gc_active;
 >>
->>       struct list_head compl_list;
->>
->> +     spinlock_t resubmit_lock;        /* Resubmit list lock */
->> +     struct list_head resubmit_list; /* Resubmit list for failed writes*/
+>> +     atomic_t werr_lines;    /* Number of write error lines that needs gc */
 >> +
->>       mempool_t *page_bio_pool;
->>       mempool_t *gen_ws_pool;
->>       mempool_t *rec_pool;
->> @@ -849,13 +851,9 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq);
->> /*
->>  * pblk recovery
->>  */
->> -void pblk_submit_rec(struct work_struct *work);
->> struct pblk_line *pblk_recov_l2p(struct pblk *pblk);
->> int pblk_recov_pad(struct pblk *pblk);
->> int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta);
->> -int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
->> -                     struct pblk_rec_ctx *recovery, u64 *comp_bits,
->> -                     unsigned int comp);
+>>       struct timer_list u_timer;
 >>
+>>       unsigned long long nr_secs;
+>> @@ -311,6 +315,7 @@ enum {
+>>       PBLK_LINEGC_MID = 23,
+>>       PBLK_LINEGC_HIGH = 24,
+>>       PBLK_LINEGC_FULL = 25,
+>> +     PBLK_LINEGC_WERR = 26
+>> };
+>>
+>> #define PBLK_MAGIC 0x70626c6b /*pblk*/
+>> @@ -412,6 +417,11 @@ struct pblk_smeta {
+>>       struct line_smeta *buf;         /* smeta buffer in persistent format */
+>> };
+>>
+>> +struct pblk_w_err_gc {
+>> +     int has_write_err;
+>> +     __le64 *lba_list;
+>> +};
+>> +
+>> struct pblk_line {
+>>       struct pblk *pblk;
+>>       unsigned int id;                /* Line number corresponds to the
+>> @@ -457,6 +467,8 @@ struct pblk_line {
+>>
+>>       struct kref ref;                /* Write buffer L2P references */
+>>
+>> +     struct pblk_w_err_gc *w_err_gc; /* Write error gc recovery metadata */
+>> +
+>>       spinlock_t lock;                /* Necessary for invalid_bitmap only */
+>> };
+>>
+>> @@ -488,6 +500,8 @@ struct pblk_line_mgmt {
+>>       struct list_head gc_mid_list;   /* Full lines ready to GC, mid isc */
+>>       struct list_head gc_low_list;   /* Full lines ready to GC, low isc */
+>>
+>> +     struct list_head gc_werr_list;  /* Write err recovery list */
+>> +
+>>       struct list_head gc_full_list;  /* Full lines ready to GC, no valid */
+>>       struct list_head gc_empty_list; /* Full lines close, all valid */
+>>
+>> @@ -894,6 +908,9 @@ void pblk_rl_free_lines_dec(struct pblk_rl *rl, struct pblk_line *line,
+>>                           bool used);
+>> int pblk_rl_is_limit(struct pblk_rl *rl);
+>>
+>> +void pblk_rl_werr_line_in(struct pblk_rl *rl);
+>> +void pblk_rl_werr_line_out(struct pblk_rl *rl);
+>> +
 >> /*
->>  * pblk gc
+>>  * pblk sysfs
+>>  */
 >> --
 >> 2.7.4
 >
-> Otherwise, it looks good to me.
+> Otherwise, it looks good to me
 
-Great, thanks for the review!
+Great, thanks.
+
+>
+> Javier
