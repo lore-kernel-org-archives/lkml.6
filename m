@@ -1,22 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754794AbeDWLc4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 07:32:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36554 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754624AbeDWLcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 07:32:51 -0400
-Date: Mon, 23 Apr 2018 13:32:45 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
-        pasic@linux.ibm.com, pmorel@linux.ibm.com
-Subject: Re: [PATCH v2 0/5] vfio: ccw: error handling fixes and improvements
-Message-ID: <20180423133245.164c64b4.cohuck@redhat.com>
-In-Reply-To: <20180423110113.59385-1-bjsdjshi@linux.vnet.ibm.com>
-References: <20180423110113.59385-1-bjsdjshi@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1754804AbeDWLgI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 07:36:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754624AbeDWLgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 07:36:07 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A4CE21782
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 23 Apr 2018 07:36:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
+Message-ID: <20180423073603.6b3294ba@gandalf.local.home>
+In-Reply-To: <20180423103232.k23yulv2e7fah42r@pathway.suse.cz>
+References: <20180416014729.GB1034@jagdpanzerIV>
+        <20180416042553.GA555@jagdpanzerIV>
+        <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
+        <20180420021511.GB6397@jagdpanzerIV>
+        <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
+        <20180420080428.622a8e7f@gandalf.local.home>
+        <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
+        <20180420101751.6c1c70e8@gandalf.local.home>
+        <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
+        <20180420111307.44008fc7@gandalf.local.home>
+        <20180423103232.k23yulv2e7fah42r@pathway.suse.cz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -24,44 +40,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018 13:01:08 +0200
-Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
+On Mon, 23 Apr 2018 12:32:32 +0200
+Petr Mladek <pmladek@suse.com> wrote:
 
-> Dear Reviewers,
+> > Really?
+> > 
+> > 
+> >   console_trylock_spinning(); /* console_owner now equals current */  
 > 
-> Here is a new version for this patch series.
-> 
-> We didn't get agreement on patch #5 (#4 in v1) in the former cycle though,
-> I made it based on my understanding. We can continue discussing on it.
-> 
-> Changelog:
-> v1->v2:
->  - #1. Reworded commit message and comment, plus some typo fixes.
->  - #2. New patch.
->  - #3. Added the missing suggested-by Pierre.
->        Fixed typos.
->        Added sanity check on pa->pa_iova_pfn and updated comments accordingly.
->  - #4. Removed unused idaw_nr.
->  - #5. Replaced leading white spaces with TABs.
->        Traced the function in anycase.
-> 
-> Dong Jia Shi (3):
->   vfio: ccw: shorten kernel doc description for pfn_array_pin()
->   vfio: ccw: refactor and improve pfn_array_alloc_pin()
->   vfio: ccw: set ccw->cda to NULL defensively
-> 
-> Halil Pasic (2):
->   vfio: ccw: fix cleanup if cp_prefetch fails
->   vfio: ccw: add traceponits for interesting error paths
-> 
->  drivers/s390/cio/Makefile         |   1 +
->  drivers/s390/cio/vfio_ccw_cp.c    | 134 ++++++++++++++++++++------------------
->  drivers/s390/cio/vfio_ccw_fsm.c   |  16 ++++-
->  drivers/s390/cio/vfio_ccw_trace.h |  77 ++++++++++++++++++++++
->  4 files changed, 164 insertions(+), 64 deletions(-)
->  create mode 100644 drivers/s390/cio/vfio_ccw_trace.h
-> 
+> No, console_trylock_spinning() does not modify console_owner. The
+> handshake is done using console_waiter variable.
 
-Out of this series, patch 1 is a fix, while the rest are improvements,
-correct? So patch 1 would be material for 4.17 (and maybe stable?), the
-rest for 4.18?
+Ug, you're right. Somehow when I looked at where console_owner was set
+"console_lock_spinning_enabled" I saw it as "console_trylock_spinning".
+
+This is what I get when I'm trying to follow three threads at the same
+time :-/
+
+> 
+> console_owner is really set only between:
+> 
+>     console_lock_spinning_enable()
+>     console_lock_spinning_disable_and_check()
+> 
+> and this entire section is called with interrupts disabled.
+
+OK, I agree with you now. Although, one hour may still be too long.
+
+-- Steve
