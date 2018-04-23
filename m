@@ -1,108 +1,105 @@
-Return-Path: <pavel@ucw.cz>
-X-Google-Smtp-Source: AIpwx4/Og42A9TzNhmz+e6mPi4L1x2kS53NMWGyI+l2YhGERJIYMfTiPa3uByHbUkEBQPvFMFr1L
-ARC-Seal: i=1; a=rsa-sha256; t=1524512306; cv=none;
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AIpwx4/S+uK68pEuIcARoBFUfyjr/RDRgujRta33qTtm/JcxH8YeQgUvfTCOKkclGZs2dqlIFncX
+ARC-Seal: i=1; a=rsa-sha256; t=1524498476; cv=none;
         d=google.com; s=arc-20160816;
-        b=RnZRdIkgUFUHWdIZQ4Z5C8q4i1sFpvHdjIwC0GTFby0PAeEcNdw35mRLJqEnuzlW+H
-         4gCnfXkW5dDzXJ1mpr8Vr0FR5AjU0gangvl54ZE8u3NkmXptX4fhqqmbv90KNHZ7Bhy4
-         1lU9lplWmiHIXlNUcB+XxkkaA5+vfMegztw/3wY682c/gxHsY6bYR+KNVVy7jS/vcZiS
-         5ezHweHfbSrq4jtLwgsCWY32QwD06U5FiinZNbildAn9dLICmm5ceNk0iagQL0VgRPJI
-         ByPuJAJgLROZS9aVG/Xp3dt+EwvFm4Hgqqb7KmLayAdRSmLRaN2hvinHofSL7VrHqGNv
-         vqJw==
+        b=d3Iajh5gGhJRAj9Km1XfOGJN/EWK+mhvyRNEAAwxuO0ZtLBWJjM89eMYPuoVddHHNQ
+         CMdYzAnL67YBrCwQvAqYxY1uhO8kN1HnIUhv7NKYsrLzUqQbk5p262r2j4nbXH7czcTp
+         x0N9Q+7nyiQm4JygHVMnlVK2G8EkCpXUsUX8yOMOfSIQrionmgQ7VkizTGFuWrfkGRx9
+         a2yvjMWjufIOrOHprbBz8EZs0l/bzzzpaIACpU3eM04N3nO0Hx5+KyV83CAZwjF674Oy
+         WOv1JqPBNhxij/9O4MBjtgai/I8H+JhBNhZgqRW3nofiD4W94jMYk4E63hTerBputAAf
+         AjAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=Yt00m+3jBtZPsbqmv+Ufe9mYPSr6+K5EyjxgcJZZpiE=;
-        b=g5i86qVC9a3msb/V37SMALcQCCem6jCquRF/JeethR+MIzPSKRbqcvyPiL1Xp2h+ik
-         0g89VXg49f/FiOU7bTz9m4UcM6yUIMt3rP1hMgTyjRSbOORQxEHoJVLtdPeloqQ7VMz3
-         y+UJXKXWTHjcqJe/zm+928zD1JDdu9xAaYNyEIjitwr7juteqJGqG5SlQASkXWc7O5Ms
-         3MvCVLTsZay4n959Pw9kJl7gaJiTxpnOO2PSLnp/T+5ajKVhnIxxUrLTJlZG0eThpqay
-         mQKmDSytExp/vqLUy0c8JbWzUP0qYQe9dwOu2+YTL1O84qsWqDcfIhU3urP1RGrZpoKR
-         GJAQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=AkL2T1gFHrvbc/GzjpwIwKONVsdxG+I5UvQKry0B44A=;
+        b=AYJrfoyu877sHDbPUqGUsOWMz18xSCmkF8ruDIzW/zT2nLva26LApprEZCqCFeNCWN
+         3Ji7hbFoiU//sfR2hH2vsOsARD4yZeFF+tIMRLwQuOSxYH610H3NoTwgx6NaIi3gMfbH
+         JTCpqFRdXYBbFv361MYykUGUdhr2+PJrRwxCcsQtXeZu+5tFGZE2CKQvb7M1W2zhfFNw
+         x0ATqktwTyM5KEWZmUHyylPv8XLNPskPLYbmwt/5UeA6XCpmi7WfKwXMusdxDY35Wnol
+         HWnDLZmvbXy10AvMgFDWDYXfPDyv1LfVQ4O2MrgttOUeXvSKYVREZZ9KdmmwdzrPV7VP
+         yf0A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=g7eBR9dz;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
-Date: Mon, 23 Apr 2018 21:38:25 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=g7eBR9dz;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+From: Joerg Roedel <joro@8bytes.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Andy Lutomirski <luto@kernel.org>,
 	Dave Hansen <dave.hansen@intel.com>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Juergen Gross <jgross@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Borislav Petkov <bp@alien8.de>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	Brian Gerst <brgerst@gmail.com>,
 	David Laight <David.Laight@aculab.com>,
 	Denys Vlasenko <dvlasenk@redhat.com>,
 	Eduardo Valentin <eduval@amazon.com>,
 	Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-	daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+	Will Deacon <will.deacon@arm.com>,
+	aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at,
+	hughd@google.com,
+	keescook@google.com,
 	Andrea Arcangeli <aarcange@redhat.com>,
 	Waiman Long <llong@redhat.com>,
-	"David H . Gutteridge" <dhgutteridge@sympatico.ca>, jroedel@suse.de
-Subject: Re: [PATCH 00/37 v6] PTI support for x86-32
-Message-ID: <20180423193825.GA3827@amd>
-References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
-Content-Disposition: inline
+	Pavel Machek <pavel@ucw.cz>,
+	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+	jroedel@suse.de,
+	joro@8bytes.org
+Subject: [PATCH 27/37] x86/mm/pti: Keep permissions when cloning kernel text in pti_clone_kernel_text()
+Date: Mon, 23 Apr 2018 17:47:30 +0200
+Message-Id: <1524498460-25530-28-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552504711746562?=
-X-GMAIL-MSGID: =?utf-8?q?1598567016004479127?=
+X-GMAIL-THRID: =?utf-8?q?1598552515043565489?=
+X-GMAIL-MSGID: =?utf-8?q?1598552515043565489?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: Joerg Roedel <jroedel@suse.de>
 
---NzB8fVQJ5HfG6fxh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Mapping the kernel text area to user-space makes only sense
+if it has the same permissions as in the kernel page-table.
+If permissions are different this will cause a TLB reload
+when using the kernel page-table, which is as good as not
+mapping it at all.
 
-Hi!
+On 64-bit kernels this patch makes no difference, as the
+whole range cloned by pti_clone_kernel_text() is mapped RO
+anyway. On 32 bit there are writeable mappings in the range,
+so just keep the permissions as they are.
 
-> here is the new version of my PTI patches for x86-32 which
-> implement last weeks review comments.
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/mm/pti.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Let me test the series:
-
-Applying: x86/entry/32: Leave the kernel via trampoline stack
-/data/l/linux-next-32/.git/rebase-apply/patch:80: trailing whitespace.
- /* Load entry stack pointer and allocate frame for eflags/eax */
- warning: 1 line adds whitespace errors.
-Applying:  x86/entry/32: Introduce SAVE_ALL_NMI and RESTORE_ALL_NMI
-	=09
-Might be worth fixing if you'll do another iteration.
-
-I did a quick boot and it works for me.
-
-Tested-by: Pavel Machek <pavel@ucw.cz>
-
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---NzB8fVQJ5HfG6fxh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlreNjEACgkQMOfwapXb+vISvgCeLVpnAlUbWwrOocy3sGGIoFcW
-i5UAoItBl3gR3f45LIt6FlzGlSXdVAIG
-=7PSV
------END PGP SIGNATURE-----
-
---NzB8fVQJ5HfG6fxh--
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 9cceae3..e3059bb0 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -460,7 +460,7 @@ void pti_clone_kernel_text(void)
+ 	if (!pti_kernel_image_global_ok())
+ 		return;
+ 
+-	pti_clone_pmds(start, end, _PAGE_RW);
++	pti_clone_pmds(start, end, 0);
+ }
+ 
+ /*
+-- 
+2.7.4
