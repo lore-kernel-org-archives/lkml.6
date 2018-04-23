@@ -1,83 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932285AbeDWRxt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:53:49 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:43483 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932125AbeDWRxo (ORCPT
+        id S932254AbeDWR4d (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:56:33 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:59938 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932125AbeDWR4c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:53:44 -0400
-X-Google-Smtp-Source: AIpwx4+7B8/3KKSxzOBMIqiONYZ8pIIuQWLdpGwRYPeD4E9/t1+Cl7bwSYNov35+rE+jmHMIn795UqWz5eHiH1QWH0w=
-MIME-Version: 1.0
-In-Reply-To: <CAOtvUMd41+5DzHRbViyNZkiL92BYh2YaREvhiAH0UPnPYCzB+w@mail.gmail.com>
-References: <1524484097-8315-1-git-send-email-gilad@benyossef.com>
- <CAMuHMdXNAkCVpyGyQMKRMRGuXyjOHAGgvHT4QGkuYdZetOr-9Q@mail.gmail.com> <CAOtvUMd41+5DzHRbViyNZkiL92BYh2YaREvhiAH0UPnPYCzB+w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 23 Apr 2018 19:53:43 +0200
-X-Google-Sender-Auth: FXFCgtNXQtwPflZqifIf1AIZcfI
-Message-ID: <CAMuHMdXZ0vL7Rxg4+CsP1u_Eb95Nj+qHnrahYPhAewmcrxN9HQ@mail.gmail.com>
-Subject: Re: [PATCH] crypto: ccree: limit build to plausible archs
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 23 Apr 2018 13:56:32 -0400
+X-Google-Smtp-Source: AB8JxZpQU8iMtkdji9ReobLsWw2WPUgZV8WjtLOY3DGzlQOmTA7nabIPlV2UsFKIUWUYdcJYWFcMOQ==
+From: valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: next-20180416 - warnings from 'make tools/perf'
+In-Reply-To: <20180423065204.cgzu7mvivrph3gfw@gmail.com>
+References: <61890.1524462741@turing-police.cc.vt.edu>
+ <20180423065204.cgzu7mvivrph3gfw@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1524506183_2556P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date: Mon, 23 Apr 2018 13:56:23 -0400
+Message-ID: <148698.1524506183@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gilad,
+--==_Exmh_1524506183_2556P
+Content-Type: text/plain; charset=us-ascii
 
-On Mon, Apr 23, 2018 at 3:22 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> On Mon, Apr 23, 2018 at 3:13 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Mon, Apr 23, 2018 at 1:48 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->>> Limit option to compile ccree to plausible architectures.
->>
->> Thanks for your patch!
->>
->>> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
->>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->>> ---
->>>  drivers/crypto/Kconfig | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
->>> index d1ea1a0..7302785 100644
->>> --- a/drivers/crypto/Kconfig
->>> +++ b/drivers/crypto/Kconfig
->>> @@ -726,6 +726,7 @@ config CRYPTO_DEV_ARTPEC6
->>>  config CRYPTO_DEV_CCREE
->>>         tristate "Support for ARM TrustZone CryptoCell family of security processors"
->>>         depends on CRYPTO && CRYPTO_HW && OF && HAS_DMA
->>> +       depends on (XTENSA || X86 || UNICORE32 || SUPERH || RISCV || PPC32 || OPENRISC || NIOS2 || NDS32 || MIPS || MICROBLAZE || HEXAGON || H8300 || ARM || ARM64 || ARC || COMPILE_TEST)
->>
->> That list looks a bit excessive to me...
->
-> I'm sorry, but as an Arm employee I'm not in liberty to identify which
-> customer licensed or might license CryptoCell for which platform, now
-> or in the future.
->
-> I'm sure you understand.
+On Mon, 23 Apr 2018 08:52:04 +0200, Ingo Molnar said:
 
-IC, a clever marketing scheme to make everyone think that everybody else
-is already a licensee ;-)
+> The warnings are harmless, and they should be fixed in v4.17-rc2.
 
-What about using "depends on <list> || COMPILE_TEST", with <list> the
-platforms for which the DTS (incl. "arm,cryptocell-*") will be submitted
-for v4.18? The list can easily be extended when needed.
+Having been burnt all too many times over the past 4 decades by mismatched
+headers, I figured I should mention it...
 
-Thanks!
+I see that in next-20180423 it's down to 2 warnings (prctl.h and if_link.h)
 
-Gr{oetje,eeting}s,
 
-                        Geert
+--==_Exmh_1524506183_2556P
+Content-Type: application/pgp-signature
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQEVAwUBWt4eR40DS38y7CIcAQJsBgf7Bd8k1fyHiMG8iI+v6syZxeCV5VGVQ1FG
+nPP9T93vPtJp7ryQXq7UnFqw0ynmpC/UQLJO80eRgbT3FbiUSHcIBwkVBe7Jw9L2
+Z3j8Za6hsi2JoCfswQjQtjaWooHFdX4WbUwWet5TYOYoDVwW1fhlMIkPkni24oM1
++gHYieoY8kjU49mplhwOKZwnR3HZgnoh5kOf/b0r4Acl6wFhPnOcoEbGhWvwel+h
+iof2leHeRreSpSiCEP+cmgCG5NwjyoAvwiyKVVvLGOUsOE06/exbexDPOhgDNwx0
+RrZ5VQt0el7zZ/i7oy58qjx1NYOy4wNWBx2CJyolZ7kvc++2lMo1bA==
+=27F3
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1524506183_2556P--
