@@ -1,37 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932231AbeDWP60 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:58:26 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:50214 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755878AbeDWP6X (ORCPT
+        id S1755995AbeDWP65 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:58:57 -0400
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:41607 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755449AbeDWP6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:58:23 -0400
-Date: Mon, 23 Apr 2018 11:58:21 -0400 (EDT)
-Message-Id: <20180423.115821.640630949143585629.davem@davemloft.net>
-To: laoar.shao@gmail.com
-Cc: eric.dumazet@gmail.com, alexei.starovoitov@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: init sk_cookie for inet socket
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1524405004-10960-1-git-send-email-laoar.shao@gmail.com>
-References: <1524405004-10960-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 23 Apr 2018 11:58:53 -0400
+X-Google-Smtp-Source: AIpwx48I25kWCdP/w/jKOKJpIvW4SsWUqtJYX2arM2B6LS92AEG9G+OXO1UZuU1weRugCqFtDnecyyrwIKju594w6bg=
+MIME-Version: 1.0
+In-Reply-To: <m3wowydkn0.fsf@linaro.org>
+References: <20180419110056.10342-1-rui.silva@linaro.org> <20180419110056.10342-2-rui.silva@linaro.org>
+ <CAOMZO5A3+WMu+U5STP-z3qdXnUQN2yTJne2OV9-SrEs70JJyDA@mail.gmail.com> <m3wowydkn0.fsf@linaro.org>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 23 Apr 2018 12:58:52 -0300
+Message-ID: <CAOMZO5DO1ZkrTz5UBpMxERTpkEWrPkTEb5w6ShMh754nybZ4nA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] media: ov2680: dt: Add bindings for OV2680
+To: Rui Miguel Silva <rui.silva@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 22 Apr 2018 21:50:04 +0800
+On Mon, Apr 23, 2018 at 12:09 PM, Rui Miguel Silva <rui.silva@linaro.org> wrote:
 
-> With sk_cookie we can identify a socket, that is very helpful for
-> traceing and statistic, i.e. tcp tracepiont and ebpf.
-> So we'd better init it by default for inet socket.
-> When using it, we just need call atomic64_read(&sk->sk_cookie).
-> 
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Yes, you are correct, I will fix this, and the dts entry.
 
-Applied, thank you.
+As this pin has both reset and powerdown functionalities, maybe you
+can name the property as 'reset-gpios'
+
+Thanks
