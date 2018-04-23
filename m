@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755250AbeDWKy4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:54:56 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38970 "EHLO
+        id S1755072AbeDWKuy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:50:54 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38760 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755092AbeDWKu5 (ORCPT
+        with ESMTP id S1754953AbeDWKum (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:50:57 -0400
+        Mon, 23 Apr 2018 06:50:42 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -23,9 +23,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH v6 19/27] drm/bridge: analogix_dp: Properly log AUX CH errors
-Date: Mon, 23 Apr 2018 12:49:55 +0200
-Message-Id: <20180423105003.9004-20-enric.balletbo@collabora.com>
+Subject: [RESEND PATCH v6 12/27] drm/bridge: analogix_dp: Reset aux channel if an error occurred
+Date: Mon, 23 Apr 2018 12:49:48 +0200
+Message-Id: <20180423105003.9004-13-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
 References: <20180423105003.9004-1-enric.balletbo@collabora.com>
@@ -36,65 +36,87 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Lin Huang <hl@rock-chips.com>
 
-The code in analogix_dp_transfer() that was supposed to print out:
-  AUX CH error happened
-
-Was actually dead code. That's because the previous check (whether
-the interrupt status indicated any errors) would have hit for all
-errors anyway.
-
-Let's combine the two error checks so we can actually see AUX CH
-errors.  We'll also downgrade the message to a warning since some of
-these types of errors might be expected for some displays.  If this
-gets too noisy we can downgrade again to debug.
+AUX errors are caused by many different reasons. We may not know what
+happened in aux channel on failure, so let's reset aux channel if some
+errors occurred.
 
 Cc: 征增 王 <wzz@rock-chips.com>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Cc: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ .../gpu/drm/bridge/analogix/analogix_dp_reg.c  | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 4eae206ec31b..58e8a28e99aa 100644
+index dee1ba109b5f..7b7fd227e1f9 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -1105,6 +1105,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 			     struct drm_dp_aux_msg *msg)
- {
- 	u32 reg;
-+	u32 status_reg;
- 	u8 *buffer = msg->buffer;
- 	unsigned int i;
- 	int num_transferred = 0;
-@@ -1193,16 +1194,12 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+@@ -466,6 +466,10 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
+ 	reg = RPLY_RECEIV | AUX_ERR;
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA);
  
- 	/* Clear interrupt source for AUX CH access error */
- 	reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
--	if (reg & AUX_ERR) {
-+	status_reg = readl(dp->reg_base + ANALOGIX_DP_AUX_CH_STA);
-+	if ((reg & AUX_ERR) || (status_reg & AUX_STATUS_MASK)) {
- 		writel(AUX_ERR, dp->reg_base + ANALOGIX_DP_INT_STA);
--		goto aux_error;
--	}
++	analogix_dp_set_analog_power_down(dp, AUX_BLOCK, true);
++	usleep_range(10, 11);
++	analogix_dp_set_analog_power_down(dp, AUX_BLOCK, false);
++
+ 	analogix_dp_reset_aux(dp);
  
--	/* Check AUX CH error access status */
--	reg = readl(dp->reg_base + ANALOGIX_DP_AUX_CH_STA);
--	if ((reg & AUX_STATUS_MASK)) {
--		dev_err(dp->dev, "AUX CH error happened: %d\n\n",
--			reg & AUX_STATUS_MASK);
-+		dev_warn(dp->dev, "AUX CH error happened: %#x (%d)\n",
-+			 status_reg & AUX_STATUS_MASK, !!(reg & AUX_ERR));
- 		goto aux_error;
+ 	/* Disable AUX transaction H/W retry */
+@@ -1159,7 +1163,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 				 reg, !(reg & AUX_EN), 25, 500 * 1000);
+ 	if (ret) {
+ 		dev_err(dp->dev, "AUX CH enable timeout!\n");
+-		return -ETIMEDOUT;
++		goto aux_error;
  	}
  
+ 	/* TODO: Wait for an interrupt instead of looping? */
+@@ -1168,7 +1172,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 				 reg, reg & RPLY_RECEIV, 10, 20 * 1000);
+ 	if (ret) {
+ 		dev_err(dp->dev, "AUX CH cmd reply timeout!\n");
+-		return -ETIMEDOUT;
++		goto aux_error;
+ 	}
+ 
+ 	/* Clear interrupt source for AUX CH command reply */
+@@ -1178,7 +1182,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 	reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
+ 	if (reg & AUX_ERR) {
+ 		writel(AUX_ERR, dp->reg_base + ANALOGIX_DP_INT_STA);
+-		return -EREMOTEIO;
++		goto aux_error;
+ 	}
+ 
+ 	/* Check AUX CH error access status */
+@@ -1186,7 +1190,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 	if ((reg & AUX_STATUS_MASK)) {
+ 		dev_err(dp->dev, "AUX CH error happened: %d\n\n",
+ 			reg & AUX_STATUS_MASK);
+-		return -EREMOTEIO;
++		goto aux_error;
+ 	}
+ 
+ 	if (msg->request & DP_AUX_I2C_READ) {
+@@ -1212,4 +1216,10 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
+ 
+ 	return num_transferred > 0 ? num_transferred : -EBUSY;
++
++aux_error:
++	/* if aux err happen, reset aux */
++	analogix_dp_init_aux(dp);
++
++	return -EREMOTEIO;
+ }
 -- 
 2.17.0
