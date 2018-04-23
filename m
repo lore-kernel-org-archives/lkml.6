@@ -1,59 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753826AbeDWA1p (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 20:27:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45430 "EHLO mx2.suse.de"
+        id S1753829AbeDWAr5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 20:47:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46878 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753791AbeDWA1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 20:27:42 -0400
-Date: Sun, 22 Apr 2018 18:27:38 -0600
+        id S1753752AbeDWAry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 20:47:54 -0400
+Date: Sun, 22 Apr 2018 18:47:48 -0600
 From: Michal Hocko <mhocko@kernel.org>
-To: vcaputo@pengaru.com
-Cc: Pavel Machek <pavel@ucw.cz>, Ferry Toth <ftoth@telfort.nl>,
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: kirill.shutemov@linux.intel.com, hughd@google.com, hch@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: DOS by unprivileged user
-Message-ID: <20180423002738.GF16083@dhcp22.suse.cz>
-References: <9023506.UBh6vynRGa@delfion>
- <20180422101654.GA26243@amd>
- <20180422174300.srzhf3veqxfigqhg@shells.gnugeneration.com>
+Subject: Re: [RFC v2 PATCH] mm: shmem: make stat.st_blksize return huge page
+ size if THP is on
+Message-ID: <20180423004748.GP17484@dhcp22.suse.cz>
+References: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180422174300.srzhf3veqxfigqhg@shells.gnugeneration.com>
+In-Reply-To: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 22-04-18 10:43:00, vcaputo@pengaru.com wrote:
-> On Sun, Apr 22, 2018 at 12:16:54PM +0200, Pavel Machek wrote:
-> > On Thu 2018-04-19 21:13:35, Ferry Toth wrote:
-> > > It appears any ordinary user can easily create a DOS on linux.
-> > > 
-> > > One sure way to reproduce this is to open gitk on the linux kernel repo 
-> > > (SIC) on a machine with 8GB RAM 16 GB swap on a HDD with btrfs and quad core 
-> > > + hyperthreading. But I will be easy enough to get the same effect with more 
-> > > RAM, other fs etc.
-> > 
-> > You may want to disable swap.
-> > 
+On Sat 21-04-18 00:33:59, Yang Shi wrote:
+> Since tmpfs THP was supported in 4.8, hugetlbfs is not the only
+> filesystem with huge page support anymore. tmpfs can use huge page via
+> THP when mounting by "huge=" mount option.
 > 
-> I run without swap on my laptops, and still observe long periods of
-> thrashing on the road towards OOM.  What seems to occur is the active
-> file-backed mappings of executables/libraries become a sort of swap
-> area, repeatedly being discarded and faulted back in as the context
-> switches occur.
+> When applications use huge page on hugetlbfs, it just need check the
+> filesystem magic number, but it is not enough for tmpfs. Make
+> stat.st_blksize return huge page size if it is mounted by appropriate
+> "huge=" option.
 > 
-> If there's any good way to prevent this, I'd like to know.
+> Some applications could benefit from this change, for example QEMU.
+> When use mmap file as guest VM backend memory, QEMU typically mmap the
+> file size plus one extra page. If the file is on hugetlbfs the extra
+> page is huge page size (i.e. 2MB), but it is still 4KB on tmpfs even
+> though THP is enabled. tmpfs THP requires VMA is huge page aligned, so
+> if 4KB page is used THP will not be used at all. The below /proc/meminfo
+> fragment shows the THP use of QEMU with 4K page:
+> 
+> ShmemHugePages:   679936 kB
+> ShmemPmdMapped:        0 kB
+> 
+> By reading st_blksize, tmpfs can use huge page, then /proc/meminfo looks
+> like:
+> 
+> ShmemHugePages:    77824 kB
+> ShmemPmdMapped:     6144 kB
+> 
+> statfs.f_bsize still returns 4KB for tmpfs since THP could be split, and it
+> also may fallback to 4KB page silently if there is not enough huge page.
+> Furthermore, different f_bsize makes max_blocks and free_blocks
+> calculation harder but without too much benefit. Returning huge page
+> size via stat.st_blksize sounds good enough.
 
-I am afraid there is none yet. Johannes had some ground work for
-page cache trashing detection https://marc.info/?i=20170727153010.23347-1-hannes%40cmpxchg.org
-but there was no version of the patchseries for quite some time and
-there was no integration into the oom detection which would be
-non-trivial as well.
+I am not sure I understand the above. So does QEMU or other tmpfs users
+rely on f_bsize to do mmap alignment tricks? Also I thought that THP
+will be used on the first aligned address even when the initial/last
+portion of the mapping is not THP aligned.
 
-I realize this sucks. But the reality is that this is far from trivial
-to resolve without introducing pre-mature OOM killer invocations.
+And more importantly
+[...]
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -39,6 +39,7 @@
+>  #include <asm/tlbflush.h> /* for arch/microblaze update_mmu_cache() */
+>  
+>  static struct vfsmount *shm_mnt;
+> +static bool is_huge = false;
+>  
+>  #ifdef CONFIG_SHMEM
+>  /*
+> @@ -995,6 +996,8 @@ static int shmem_getattr(const struct path *path, struct kstat *stat,
+>  		spin_unlock_irq(&info->lock);
+>  	}
+>  	generic_fillattr(inode, stat);
+> +	if (is_huge)
+> +		stat->blksize = HPAGE_PMD_SIZE;
+>  	return 0;
+>  }
+>  
+> @@ -3574,6 +3577,7 @@ static int shmem_parse_options(char *options, struct shmem_sb_info *sbinfo,
+>  					huge != SHMEM_HUGE_NEVER)
+>  				goto bad_val;
+>  			sbinfo->huge = huge;
+> +			is_huge = true;
+
+Huh! How come this is a global flag. What if we have multiple shmem
+mounts some with huge pages enabled and some without? Btw. we seem to
+already have that information stored in the supperblock
+		} else if (!strcmp(this_char, "huge")) {
+			int huge;
+			huge = shmem_parse_huge(value);
+			if (huge < 0)
+				goto bad_val;
+			if (!has_transparent_hugepage() &&
+					huge != SHMEM_HUGE_NEVER)
+				goto bad_val;
+			sbinfo->huge = huge;
 -- 
 Michal Hocko
 SUSE Labs
