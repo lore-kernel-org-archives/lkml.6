@@ -1,100 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932281AbeDWRlT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:41:19 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47632 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932261AbeDWRlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:41:09 -0400
-Date: Mon, 23 Apr 2018 19:41:06 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Russell King <linux@armlinux.org.uk>, Jyri Sarha <jsarha@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 2/8] dt-bindings: display: atmel: optional
- video-interface of endpoints
-Message-ID: <20180423194106.3b178211@bbrezillon>
-In-Reply-To: <20180423072301.11962-3-peda@axentia.se>
-References: <20180423072301.11962-1-peda@axentia.se>
-        <20180423072301.11962-3-peda@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932268AbeDWRmD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:42:03 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:37608 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932092AbeDWRmA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 13:42:00 -0400
+X-Authority-Reason: nr=8
+Date: Mon, 23 Apr 2018 12:41:59 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 05/11] omap_vout: fix potential Spectre variant 1
+Message-ID: <078fe4c0397eceae961e4a3dc37c19513b9f8614.1524499368.git.gustavo@embeddedor.com>
+References: <cover.1524499368.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1524499368.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.48.65
+X-Source-L: No
+X-Exim-ID: 1fAfTT-004OmQ-ON
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.145.48.65]:49560
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 42
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018 09:22:55 +0200
-Peter Rosin <peda@axentia.se> wrote:
+index can be controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
 
-> With bus-type/bus-width properties in the endpoint nodes, the video-
-> interface of the connection can be specified for cases where the
-> heuristic fails to select the correct output mode. This can happen
-> e.g. if not all RGB pins are routed on the PCB; the driver has no
-> way of knowing this, and needs to be told explicitly.
-> 
-> This is critical for the devices that have the "conflicting output
-> formats" issue (SAM9N12, SAM9X5, SAMA5D3), since the most significant
-> RGB bits move around depending on the selected output mode. For
-> devices that do not have the "conflicting output formats" issue
-> (SAMA5D2, SAMA5D4), this is completely irrelevant.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+Smatch warning:
+drivers/media/platform/omap/omap_vout.c:1062 vidioc_enum_fmt_vid_out() warn: potential spectre issue 'omap_formats'
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fix this by sanitizing index before using it to index
+omap_formats.
 
-> ---
->  .../devicetree/bindings/display/atmel/hlcdc-dc.txt | 26 ++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-> index 82f2acb3d374..9de434a8f523 100644
-> --- a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-> +++ b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-> @@ -15,6 +15,14 @@ Required children nodes:
->   to external devices using the OF graph reprensentation (see ../graph.txt).
->   At least one port node is required.
->  
-> +Optional properties in grandchild nodes:
-> + Any endpoint grandchild node may specify a desired video interface
-> + according to ../../media/video-interfaces.txt, specifically
-> + - bus-type: must be <0>.
-> + - bus-width: recognized values are <12>, <16>, <18> and <24>, and
-> +   override any output mode selection heuristic, forcing "rgb444",
-> +   "rgb565", "rgb666" and "rgb888" respectively.
-> +
->  Example:
->  
->  	hlcdc: hlcdc@f0030000 {
-> @@ -50,3 +58,21 @@ Example:
->  			#pwm-cells = <3>;
->  		};
->  	};
-> +
-> +
-> +Example 2: With a video interface override to force rgb565; as above
-> +but with these changes/additions:
-> +
-> +	&hlcdc {
-> +		hlcdc-display-controller {
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb565>;
-> +
-> +			port@0 {
-> +				hlcdc_panel_output: endpoint@0 {
-> +					bus-type = <0>;
-> +					bus-width = <16>;
-> +				};
-> +			};
-> +		};
-> +	};
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/media/platform/omap/omap_vout.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
+index 5700b78..1a7ec39 100644
+--- a/drivers/media/platform/omap/omap_vout.c
++++ b/drivers/media/platform/omap/omap_vout.c
+@@ -51,6 +51,8 @@
+ #include "omap_voutdef.h"
+ #include "omap_vout_vrfb.h"
+ 
++#include <linux/nospec.h>
++
+ MODULE_AUTHOR("Texas Instruments");
+ MODULE_DESCRIPTION("OMAP Video for Linux Video out driver");
+ MODULE_LICENSE("GPL");
+@@ -1059,6 +1061,7 @@ static int vidioc_enum_fmt_vid_out(struct file *file, void *fh,
+ 	if (index >= NUM_OUTPUT_FORMATS)
+ 		return -EINVAL;
+ 
++	index = array_index_nospec(index, NUM_OUTPUT_FORMATS);
+ 	fmt->flags = omap_formats[index].flags;
+ 	strlcpy(fmt->description, omap_formats[index].description,
+ 			sizeof(fmt->description));
+-- 
+2.7.4
