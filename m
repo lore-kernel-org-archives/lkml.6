@@ -1,89 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755286AbeDWOMO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:12:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755579AbeDWOMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:12:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6FC217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 23 Apr 2018 11:12:04 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH v2] perf test: Adapt test case
- record+probe_libc_inet_pton.sh for s390
-Message-ID: <20180423141204.GA30324@kernel.org>
-References: <20180423082428.7930-1-tmricht@linux.ibm.com>
+        id S1755576AbeDWOLW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:11:22 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46018 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755562AbeDWOLR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 10:11:17 -0400
+From: Philippe Cornu <philippe.cornu@st.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Andrzej Hajda <a.hajda@samsung.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH 3/4] drm/panel: otm8009a: no message if probe success
+Date: Mon, 23 Apr 2018 16:10:52 +0200
+Message-ID: <20180423141054.13128-4-philippe.cornu@st.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180423141054.13128-1-philippe.cornu@st.com>
+References: <20180423141054.13128-1-philippe.cornu@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423082428.7930-1-tmricht@linux.ibm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.32]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Apr 23, 2018 at 10:24:28AM +0200, Thomas Richter escreveu:
-> perf test case 58 (record+probe_libc_inet_pton.sh)
-> executed on s390x using kernel 4.16.0rc3
-> displays this result:
->  # ./perf trace --no-syscalls
->            -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
->      probe_libc:inet_pton: (3ffa0240448)
-> 	      __GI___inet_pton (/usr/lib64/libc-2.26.so)
-> 	      gaih_inet (inlined)
-> 	      __GI_getaddrinfo (inlined)
-> 	      main (/usr/bin/ping)
-> 	      __libc_start_main (/usr/lib64/libc-2.26.so)
-> 	     _start (/usr/bin/ping)
-> 
-> After I installed kernel 4.16.0 the same tests uses
-> commands
->  # perf record -e probe_libc:inet_pton/call-graph=dwarf/
->       -o /tmp/perf.data.abc ping -6 -c 1 ::1
->  # perf script -i /tmp/perf.data.abc
-> and displays:
->  ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
-> 	       140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-> 	       fbde1 gaih_inet (inlined)
-> 	       fe2b9 __GI_getaddrinfo (inlined)
-> 	        398d main (/usr/bin/ping)
-> 
-> Nothing else changed including glibc elfutils and other libraries
-> picked up by the build.
-> The entries for __libc_start_main and _start are missing.
-> 
-> I bisected missing __libc_start_main and _start to commit
-> 3d20c6246690219881786de10d2dda93f616d0ac
-> ("perf unwind: Unwind with libdw doesn't take symfs into account")
-> 
-> When I undo this commit I get this call stack on s390:
->  [root@s35lp76 perf]# ./perf script  -i /tmp/perf.data.abc
->  ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
-> 	140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-> 	 fbde1 gaih_inet (inlined)
-> 	 fe2b9 __GI_getaddrinfo (inlined)
-> 	  398d main (/usr/bin/ping)
-> 	 22fbd __libc_start_main (/usr/lib64/libc-2.26.so)
-> 	  457b _start (/usr/bin/ping)
-> 
-> Looks like dwarf functions dwfl_xxx  create different call back
-> stack trace when using file
-> /usr/lib/debug/usr/bin/ping-20161105-7.fc27.s390x.debug instead of
-> file /usr/bin/ping.
-> 
-> Fix this test case on s390 and do not expect any call back stack
-> entry after the main() function. Also be more robust and accept a
-> leading __GI_ prefix in front of getaddrinfo.
-> 
-> On x86 this test case shows the same call stack using
-> both kernel versions 4.16.0rc3 and 4.16.0 and also
-> stops at main:
+Remove the message in case of probe success. This comes from
+a suggestion followed in the recent integration of the
+raydium rm68200 panel.
 
-Thanks, applied.
+Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+---
+ drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+index de4a16d5275c..4c638b7b9943 100644
+--- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
++++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+@@ -14,8 +14,6 @@
+ #include <linux/regulator/consumer.h>
+ #include <video/mipi_display.h>
+ 
+-#define DRV_NAME "orisetech_otm8009a"
+-
+ #define OTM8009A_BACKLIGHT_DEFAULT	240
+ #define OTM8009A_BACKLIGHT_MAX		255
+ 
+@@ -461,7 +459,7 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
+ 	ctx->panel.dev = dev;
+ 	ctx->panel.funcs = &otm8009a_drm_funcs;
+ 
+-	ctx->bl_dev = backlight_device_register(DRV_NAME "_backlight", dev, ctx,
++	ctx->bl_dev = backlight_device_register(dev_name(dev), dev, ctx,
+ 						&otm8009a_backlight_ops, NULL);
+ 	if (IS_ERR(ctx->bl_dev)) {
+ 		dev_err(dev, "failed to register backlight device\n");
+@@ -483,11 +481,6 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
+ 		return ret;
+ 	}
+ 
+-	DRM_INFO(DRV_NAME "_panel %ux%u@%u %ubpp dsi %udl - ready\n",
+-		 default_mode.hdisplay, default_mode.vdisplay,
+-		 default_mode.vrefresh,
+-		 mipi_dsi_pixel_format_to_bpp(dsi->format), dsi->lanes);
+-
+ 	return 0;
+ }
+ 
+@@ -513,7 +506,7 @@ static struct mipi_dsi_driver orisetech_otm8009a_driver = {
+ 	.probe  = otm8009a_probe,
+ 	.remove = otm8009a_remove,
+ 	.driver = {
+-		.name = DRV_NAME "_panel",
++		.name = "panel-orisetech-otm8009a",
+ 		.of_match_table = orisetech_otm8009a_of_match,
+ 	},
+ };
+-- 
+2.15.1
