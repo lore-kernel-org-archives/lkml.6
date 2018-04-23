@@ -1,151 +1,397 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754592AbeDWIhJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:37:09 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:44543 "EHLO
+        id S1754632AbeDWIhS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:37:18 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:34009 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754460AbeDWIhC (ORCPT
+        with ESMTP id S1754460AbeDWIhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:37:02 -0400
+        Mon, 23 Apr 2018 04:37:11 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Paul Mackerras <paulus@samba.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
         y2038@lists.linaro.org, arnd@arndb.de
-Subject: [PATCH 4/5] powerpc: use time64_t in update_persistent_clock
-Date: Mon, 23 Apr 2018 10:36:41 +0200
-Message-Id: <20180423083642.2608886-4-arnd@arndb.de>
+Subject: [PATCH 3/5] powerpc: use time64_t in read_persistent_clock
+Date: Mon, 23 Apr 2018 10:36:40 +0200
+Message-Id: <20180423083642.2608886-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180423083642.2608886-1-arnd@arndb.de>
 References: <20180423083642.2608886-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:i63MvfCuZ7Wx+sv739EyVTndhVZT0rXBFW6AebTXY1+jMIVqX0s
- P7In6PFoMNFMHtsyTbXB/HJKmt7EBUlEi4tM22Fk2SgZnUbK6s/Tx6juHLN4lKHk2CnY2dJ
- k5xP3B29BBunlGgWof81essBJqC7WrL8qHVQuggLOcieRYilfEGKevOiteVBOADwComZpk0
- 7A4Vp9pmRovaDdNtCqNeg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:bclzS236dUY=:FzqmGPHCBFRqiAuwUlvlu1
- 7/p9TDxk4pwj/Lj8UC+/tViK1J9Q49liYHw3v7jbSWKiNaDY7h09Lxc+GVE1aQwqSnq0XYKFt
- pet9lGW8DsNvwi1lQmgQ7DhUn/NUko3M2KdQ/QgW26cX3ej1YgoMqEZ2nJqzz0vlRY+ArokiR
- ErZzXCsOE2z5q8LD4JAag0XYYbWSztSdABEkJzDRRriqXtG7rdz8Xem9mQQJQK6Q5LpMGlPwr
- wnw2tmBCHOoH0DXwKyRDr8pCecEUdyt6z1eoZNO2w2qVARi8zXy7gXgpZ8fb/mdmHrpBm6Zsf
- iji0nGvRFRE6Lb4khLDriB+GeszBpzy9zj6UePjuliKPOwszxP3pVR2NltSGFephJn0K25VkW
- jTijKSDJqBViM1v7NsjNT0h9KmTLKGoJ/JslgsHsXl6qpnlSNJ/Vnfv2cx2mxCEipomM9Wi5b
- KTAMTyhyTTFVaZ/8HuSS7Zfp0XVO5HluxFL8H9AORohZGc4U1zgfWZlFbLednVK2b08kuTLcj
- DZCVzKmUPHKIWj8tkmUcI56t5CckWfDRsvPlbhbwwHZTZdHln/LmscCoC1Ejky5IOJX/HelDg
- VoKyv/qq1Fxzi408lRdxtHnaUI3WH8ZylqI1KBjutgvzO8RjFHkJ1sq+o/Huu2pBLP11VO5yg
- t3UzNqEkOca4dpWTbpL8hy3wXMcm/bq4R7TVMhU2kSMMoXpwXSjkCwCkrlLidtXbSHsncvNMt
- icCvQAroWqWq236UmzoGqFmCrJas/3wXRNh72Q==
+X-Provags-ID: V03:K1:fUUMNx6slM3mkrjSZxz36cZCFnH2Db2qqujtoQwh0stwT9VS4Tl
+ 7k9LoJ/lzLIgFKgiLAcJVoiSKgdsc8wnzOh/82keL4FI+Fc1XZ5A+3PCrG0CjVb9D6E+iyb
+ QjBlCcOcWUs2plHo24K/Zd+F3t3o9P/2ALDdPkJZFxZDlZ+pM0xpfRDCRVOk7S0Z1TmAVam
+ nongbA2ntj1P/IRI4jLSw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:PrBG12/YFCs=:TiygOgsF6TFX1sbL+9G7Ae
+ w3dTReBeEU+Ic1QAQ7sZBiR/3YOj71TjLebHYam1noI/85MRkrOPWvC6Ia64h2oToaAAktI0K
+ xvCpfAbEASD4Ghry811aKV5/KqEKilpzBrPDn+1tBnnROiAIA1SQAC7wzk1opeAK1Ha0V9mi1
+ ISieIKS9AN28AhVOBV1iWAOKrA3Clv/1RTcD8q/krSTWOTteCn0keAi5Ovp1z6q8rmLfgFR2a
+ lXEK1bL9Vj2nW3LM9zJsrAVIhn7RQWpWZUqPENlnVK9wI/lnVnRMAnb0oLB9gs5jyYkHtNmkP
+ ZdI6Vy4ZNmxUpeWxrYGbBaVwVYzaneRvcsQQF5MjtC7fmp6lOcTdxWSemKYpo7Y8gnWqJyU1u
+ qQKBCKIzo8P7NYEzxTgD0wvUz31lt6H0BOHQKSF0fvWbrrok2A3wmkkYhTPxRCfrSYJ7U7e6i
+ mbks030nAApEKVz9+2Xc1ssS2xSNVwY6OIpznDnE6uJkp5bJiBqi0s5KF93DQmyO0TU/AeKvn
+ NjbeRq156HhUgnh8p1PDiLK0eihTMB/J+eo3MWZ3ecszWW5ZNXTer0bVba60ujyzRjBUQi0NL
+ rFWsDDmBmXUhavO5LS9AMz39+0GpBHb5jYnc7dyPrN9NfQ756gIlMpPRVMVOS4QY7o+6vpMSI
+ QO8T91iz4W6MTvuYG9eXO255IbMPgR3nS1ifdQ6SEV4kPomnBk81fOVolSGlll/9S5MrxQm4c
+ k+AOXy2FtVhT6oCR6ZLNr1KjGqE7vHYxks0UzQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-update_persistent_clock() is deprecated because it suffers from overflow
-in 2038 on 32-bit architectures. This changes powerpc to use the
-update_persistent_clock64() replacement, and to pass down 64-bit
-timestamps consistently.
+Looking through the remaining users of the deprecated mktime()
+function, I found the powerpc rtc handlers, which use it in
+place of rtc_tm_to_time64().
 
-This is now simpler, as we no longer have to worry about the offset
-numbers in tm_year and tm_mon that are different between the Linux
-conventions and RTAS.
+To clean this up, I'm changing over the read_persistent_clock()
+function to the read_persistent_clock64() variant, and change
+all the platform specific handlers along with it.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/powerpc/kernel/time.c              |  6 ++----
- arch/powerpc/platforms/8xx/m8xx_setup.c |  7 +++----
- arch/powerpc/platforms/powermac/time.c  | 17 ++++-------------
- 3 files changed, 9 insertions(+), 21 deletions(-)
+v2: fix a typo: rtc_tm_to_time66 -> rtc_tm_to_time64
+---
+ arch/powerpc/include/asm/machdep.h        |  2 +-
+ arch/powerpc/include/asm/opal.h           |  2 +-
+ arch/powerpc/include/asm/rtas.h           |  2 +-
+ arch/powerpc/kernel/rtas-rtc.c            |  4 ++--
+ arch/powerpc/kernel/time.c                |  7 +++----
+ arch/powerpc/platforms/8xx/m8xx_setup.c   |  4 +---
+ arch/powerpc/platforms/maple/maple.h      |  2 +-
+ arch/powerpc/platforms/maple/time.c       |  5 ++---
+ arch/powerpc/platforms/pasemi/pasemi.h    |  2 +-
+ arch/powerpc/platforms/pasemi/time.c      |  4 ++--
+ arch/powerpc/platforms/powermac/pmac.h    |  2 +-
+ arch/powerpc/platforms/powermac/time.c    | 31 +++++++++++--------------------
+ arch/powerpc/platforms/powernv/opal-rtc.c |  5 ++---
+ arch/powerpc/platforms/ps3/platform.h     |  2 +-
+ arch/powerpc/platforms/ps3/time.c         |  2 +-
+ 15 files changed, 31 insertions(+), 45 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/machdep.h b/arch/powerpc/include/asm/machdep.h
+index ffe7c71e1132..a47de82fb8e2 100644
+--- a/arch/powerpc/include/asm/machdep.h
++++ b/arch/powerpc/include/asm/machdep.h
+@@ -83,7 +83,7 @@ struct machdep_calls {
+ 
+ 	int		(*set_rtc_time)(struct rtc_time *);
+ 	void		(*get_rtc_time)(struct rtc_time *);
+-	unsigned long	(*get_boot_time)(void);
++	time64_t	(*get_boot_time)(void);
+ 	unsigned char 	(*rtc_read_val)(int addr);
+ 	void		(*rtc_write_val)(int addr, unsigned char val);
+ 
+diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
+index 03e1a920491e..fc211bd98e0f 100644
+--- a/arch/powerpc/include/asm/opal.h
++++ b/arch/powerpc/include/asm/opal.h
+@@ -325,7 +325,7 @@ extern int opal_async_wait_response_interruptible(uint64_t token,
+ extern int opal_get_sensor_data(u32 sensor_hndl, u32 *sensor_data);
+ 
+ struct rtc_time;
+-extern unsigned long opal_get_boot_time(void);
++extern time64_t opal_get_boot_time(void);
+ extern void opal_nvram_init(void);
+ extern void opal_flash_update_init(void);
+ extern void opal_flash_update_print_message(void);
+diff --git a/arch/powerpc/include/asm/rtas.h b/arch/powerpc/include/asm/rtas.h
+index ec9dd79398ee..71e393c46a49 100644
+--- a/arch/powerpc/include/asm/rtas.h
++++ b/arch/powerpc/include/asm/rtas.h
+@@ -361,7 +361,7 @@ extern int rtas_offline_cpus_mask(cpumask_var_t cpus);
+ extern int rtas_ibm_suspend_me(u64 handle);
+ 
+ struct rtc_time;
+-extern unsigned long rtas_get_boot_time(void);
++extern time64_t rtas_get_boot_time(void);
+ extern void rtas_get_rtc_time(struct rtc_time *rtc_time);
+ extern int rtas_set_rtc_time(struct rtc_time *rtc_time);
+ 
+diff --git a/arch/powerpc/kernel/rtas-rtc.c b/arch/powerpc/kernel/rtas-rtc.c
+index 49600985c7ef..a28239b8b0c0 100644
+--- a/arch/powerpc/kernel/rtas-rtc.c
++++ b/arch/powerpc/kernel/rtas-rtc.c
+@@ -13,7 +13,7 @@
+ 
+ #define MAX_RTC_WAIT 5000	/* 5 sec */
+ #define RTAS_CLOCK_BUSY (-2)
+-unsigned long __init rtas_get_boot_time(void)
++time64_t __init rtas_get_boot_time(void)
+ {
+ 	int ret[8];
+ 	int error;
+@@ -38,7 +38,7 @@ unsigned long __init rtas_get_boot_time(void)
+ 		return 0;
+ 	}
+ 
+-	return mktime(ret[0], ret[1], ret[2], ret[3], ret[4], ret[5]);
++	return mktime64(ret[0], ret[1], ret[2], ret[3], ret[4], ret[5]);
+ }
+ 
+ /* NOTE: get_rtc_time will get an error if executed in interrupt context
 diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index afb27962b396..f9b0baa3fa2b 100644
+index 360e71d455cc..afb27962b396 100644
 --- a/arch/powerpc/kernel/time.c
 +++ b/arch/powerpc/kernel/time.c
-@@ -781,16 +781,14 @@ void __init generic_calibrate_decr(void)
- 	}
- }
- 
--int update_persistent_clock(struct timespec now)
-+int update_persistent_clock64(struct timespec64 now)
- {
- 	struct rtc_time tm;
- 
- 	if (!ppc_md.set_rtc_time)
- 		return -ENODEV;
- 
--	to_tm(now.tv_sec + 1 + timezone_offset, &tm);
--	tm.tm_year -= 1900;
--	tm.tm_mon -= 1;
-+	rtc_time64_to_tm(now.tv_sec + 1 + timezone_offset, &tm);
- 
+@@ -795,7 +795,7 @@ int update_persistent_clock(struct timespec now)
  	return ppc_md.set_rtc_time(&tm);
  }
+ 
+-static void __read_persistent_clock(struct timespec *ts)
++static void __read_persistent_clock(struct timespec64 *ts)
+ {
+ 	struct rtc_time tm;
+ 	static int first = 1;
+@@ -819,11 +819,10 @@ static void __read_persistent_clock(struct timespec *ts)
+ 	}
+ 	ppc_md.get_rtc_time(&tm);
+ 
+-	ts->tv_sec = mktime(tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday,
+-			    tm.tm_hour, tm.tm_min, tm.tm_sec);
++	ts->tv_sec = rtc_tm_to_time64(&tm);
+ }
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	__read_persistent_clock(ts);
+ 
 diff --git a/arch/powerpc/platforms/8xx/m8xx_setup.c b/arch/powerpc/platforms/8xx/m8xx_setup.c
-index d76daa90647b..027c42d8966c 100644
+index 2188d691a40f..d76daa90647b 100644
 --- a/arch/powerpc/platforms/8xx/m8xx_setup.c
 +++ b/arch/powerpc/platforms/8xx/m8xx_setup.c
-@@ -169,15 +169,14 @@ int mpc8xx_set_rtc_time(struct rtc_time *tm)
+@@ -192,9 +192,7 @@ void mpc8xx_get_rtc_time(struct rtc_time *tm)
+ 
+ 	/* Get time from the RTC. */
+ 	data = in_be32(&sys_tmr->sit_rtc);
+-	to_tm(data, tm);
+-	tm->tm_year -= 1900;
+-	tm->tm_mon -= 1;
++	rtc_time64_to_tm(data, tm);
+ 	immr_unmap(sys_tmr);
+ 	return;
+ }
+diff --git a/arch/powerpc/platforms/maple/maple.h b/arch/powerpc/platforms/maple/maple.h
+index d10f4af3a42e..4f358b55c341 100644
+--- a/arch/powerpc/platforms/maple/maple.h
++++ b/arch/powerpc/platforms/maple/maple.h
+@@ -6,7 +6,7 @@
+  */
+ extern int maple_set_rtc_time(struct rtc_time *tm);
+ extern void maple_get_rtc_time(struct rtc_time *tm);
+-extern unsigned long maple_get_boot_time(void);
++extern time64_t maple_get_boot_time(void);
+ extern void maple_calibrate_decr(void);
+ extern void maple_pci_init(void);
+ extern void maple_pci_irq_fixup(struct pci_dev *dev);
+diff --git a/arch/powerpc/platforms/maple/time.c b/arch/powerpc/platforms/maple/time.c
+index cfddc87f81bf..becf2ebf7df5 100644
+--- a/arch/powerpc/platforms/maple/time.c
++++ b/arch/powerpc/platforms/maple/time.c
+@@ -137,7 +137,7 @@ static struct resource rtc_iores = {
+ 	.flags = IORESOURCE_IO | IORESOURCE_BUSY,
+ };
+ 
+-unsigned long __init maple_get_boot_time(void)
++time64_t __init maple_get_boot_time(void)
  {
- 	sitk8xx_t __iomem *sys_tmr1;
- 	sit8xx_t __iomem *sys_tmr2;
--	int time;
-+	time64_t time;
+ 	struct rtc_time tm;
+ 	struct device_node *rtcs;
+@@ -170,7 +170,6 @@ unsigned long __init maple_get_boot_time(void)
+ 	request_resource(&ioport_resource, &rtc_iores);
  
- 	sys_tmr1 = immr_map(im_sitk);
- 	sys_tmr2 = immr_map(im_sit);
--	time = mktime(tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday,
--	              tm->tm_hour, tm->tm_min, tm->tm_sec);
-+	time = rtc_tm_to_time64(tm);
+ 	maple_get_rtc_time(&tm);
+-	return mktime(tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday,
+-		      tm.tm_hour, tm.tm_min, tm.tm_sec);
++	return rtc_tm_to_time64(&tm);
+ }
  
- 	out_be32(&sys_tmr1->sitk_rtck, KAPWR_KEY);
--	out_be32(&sys_tmr2->sit_rtc, time);
-+	out_be32(&sys_tmr2->sit_rtc, (u32)time);
- 	out_be32(&sys_tmr1->sitk_rtck, ~KAPWR_KEY);
+diff --git a/arch/powerpc/platforms/pasemi/pasemi.h b/arch/powerpc/platforms/pasemi/pasemi.h
+index 329d2a619254..70b56048ed1b 100644
+--- a/arch/powerpc/platforms/pasemi/pasemi.h
++++ b/arch/powerpc/platforms/pasemi/pasemi.h
+@@ -2,7 +2,7 @@
+ #ifndef _PASEMI_PASEMI_H
+ #define _PASEMI_PASEMI_H
  
- 	immr_unmap(sys_tmr2);
+-extern unsigned long pas_get_boot_time(void);
++extern time64_t pas_get_boot_time(void);
+ extern void pas_pci_init(void);
+ extern void pas_pci_irq_fixup(struct pci_dev *dev);
+ extern void pas_pci_dma_dev_setup(struct pci_dev *dev);
+diff --git a/arch/powerpc/platforms/pasemi/time.c b/arch/powerpc/platforms/pasemi/time.c
+index fa54351ac268..ea815254ee7b 100644
+--- a/arch/powerpc/platforms/pasemi/time.c
++++ b/arch/powerpc/platforms/pasemi/time.c
+@@ -21,8 +21,8 @@
+ 
+ #include <asm/time.h>
+ 
+-unsigned long __init pas_get_boot_time(void)
++time64_t __init pas_get_boot_time(void)
+ {
+ 	/* Let's just return a fake date right now */
+-	return mktime(2006, 1, 1, 12, 0, 0);
++	return mktime64(2006, 1, 1, 12, 0, 0);
+ }
+diff --git a/arch/powerpc/platforms/powermac/pmac.h b/arch/powerpc/platforms/powermac/pmac.h
+index 6f15b8804e9b..16a52afdb76e 100644
+--- a/arch/powerpc/platforms/powermac/pmac.h
++++ b/arch/powerpc/platforms/powermac/pmac.h
+@@ -15,7 +15,7 @@ struct rtc_time;
+ extern int pmac_newworld;
+ 
+ extern long pmac_time_init(void);
+-extern unsigned long pmac_get_boot_time(void);
++extern time64_t pmac_get_boot_time(void);
+ extern void pmac_get_rtc_time(struct rtc_time *);
+ extern int pmac_set_rtc_time(struct rtc_time *);
+ extern void pmac_read_rtc_time(void);
 diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index d5d1c452038e..7c968e46736f 100644
+index 274af6fa388e..d5d1c452038e 100644
 --- a/arch/powerpc/platforms/powermac/time.c
 +++ b/arch/powerpc/platforms/powermac/time.c
 @@ -84,15 +84,6 @@ long __init pmac_time_init(void)
  	return delta;
  }
  
--#if defined(CONFIG_ADB_CUDA) || defined(CONFIG_ADB_PMU) || \
--    defined(CONFIG_PMAC_SMU)
--static unsigned long from_rtc_time(struct rtc_time *tm)
+-#if defined(CONFIG_ADB_CUDA) || defined(CONFIG_ADB_PMU)
+-static void to_rtc_time(unsigned long now, struct rtc_time *tm)
 -{
--	return mktime(tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday,
--		      tm->tm_hour, tm->tm_min, tm->tm_sec);
+-	to_tm(now, tm);
+-	tm->tm_year -= 1900;
+-	tm->tm_mon -= 1;
 -}
 -#endif
 -
+ #if defined(CONFIG_ADB_CUDA) || defined(CONFIG_ADB_PMU) || \
+     defined(CONFIG_PMAC_SMU)
+ static unsigned long from_rtc_time(struct rtc_time *tm)
+@@ -103,10 +94,10 @@ static unsigned long from_rtc_time(struct rtc_time *tm)
+ #endif
+ 
  #ifdef CONFIG_ADB_CUDA
- static time64_t cuda_get_time(void)
+-static unsigned long cuda_get_time(void)
++static time64_t cuda_get_time(void)
  {
-@@ -115,10 +106,10 @@ static time64_t cuda_get_time(void)
+ 	struct adb_request req;
+-	unsigned int now;
++	time64_t now;
+ 
+ 	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
+ 		return 0;
+@@ -117,10 +108,10 @@ static unsigned long cuda_get_time(void)
+ 		       req.reply_len);
+ 	now = (req.reply[3] << 24) + (req.reply[4] << 16)
+ 		+ (req.reply[5] << 8) + req.reply[6];
+-	return ((unsigned long)now) - RTC_OFFSET;
++	return now - RTC_OFFSET;
+ }
+ 
+-#define cuda_get_rtc_time(tm)	to_rtc_time(cuda_get_time(), (tm))
++#define cuda_get_rtc_time(tm)	rtc_time64_to_tm(cuda_get_time(), (tm))
  
  static int cuda_set_rtc_time(struct rtc_time *tm)
  {
--	unsigned int nowtime;
-+	time64_t nowtime;
- 	struct adb_request req;
+@@ -147,10 +138,10 @@ static int cuda_set_rtc_time(struct rtc_time *tm)
+ #endif
  
--	nowtime = from_rtc_time(tm) + RTC_OFFSET;
-+	nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
- 	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
- 			 nowtime >> 24, nowtime >> 16, nowtime >> 8,
- 			 nowtime) < 0)
-@@ -158,10 +149,10 @@ static time64_t pmu_get_time(void)
+ #ifdef CONFIG_ADB_PMU
+-static unsigned long pmu_get_time(void)
++static time64_t pmu_get_time(void)
+ {
+ 	struct adb_request req;
+-	unsigned int now;
++	time64_t now;
+ 
+ 	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
+ 		return 0;
+@@ -160,10 +151,10 @@ static unsigned long pmu_get_time(void)
+ 		       req.reply_len);
+ 	now = (req.reply[0] << 24) + (req.reply[1] << 16)
+ 		+ (req.reply[2] << 8) + req.reply[3];
+-	return ((unsigned long)now) - RTC_OFFSET;
++	return now - RTC_OFFSET;
+ }
+ 
+-#define pmu_get_rtc_time(tm)	to_rtc_time(pmu_get_time(), (tm))
++#define pmu_get_rtc_time(tm)	rtc_time64_to_tm(pmu_get_time(), (tm))
  
  static int pmu_set_rtc_time(struct rtc_time *tm)
  {
--	unsigned int nowtime;
-+	time64_t nowtime;
- 	struct adb_request req;
+@@ -188,13 +179,13 @@ static int pmu_set_rtc_time(struct rtc_time *tm)
+ #endif
  
--	nowtime = from_rtc_time(tm) + RTC_OFFSET;
-+	nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
- 	if (pmu_request(&req, NULL, 5, PMU_SET_RTC, nowtime >> 24,
- 			nowtime >> 16, nowtime >> 8, nowtime) < 0)
- 		return -ENXIO;
+ #ifdef CONFIG_PMAC_SMU
+-static unsigned long smu_get_time(void)
++static time64_t smu_get_time(void)
+ {
+ 	struct rtc_time tm;
+ 
+ 	if (smu_get_rtc_time(&tm, 1))
+ 		return 0;
+-	return from_rtc_time(&tm);
++	return rtc_tm_to_time64(&tm);
+ }
+ 
+ #else
+@@ -204,7 +195,7 @@ static unsigned long smu_get_time(void)
+ #endif
+ 
+ /* Can't be __init, it's called when suspending and resuming */
+-unsigned long pmac_get_boot_time(void)
++time64_t pmac_get_boot_time(void)
+ {
+ 	/* Get the time from the RTC, used only at boot time */
+ 	switch (sys_ctrler) {
+diff --git a/arch/powerpc/platforms/powernv/opal-rtc.c b/arch/powerpc/platforms/powernv/opal-rtc.c
+index f8868864f373..f515c4a76900 100644
+--- a/arch/powerpc/platforms/powernv/opal-rtc.c
++++ b/arch/powerpc/platforms/powernv/opal-rtc.c
+@@ -34,7 +34,7 @@ static void opal_to_tm(u32 y_m_d, u64 h_m_s_ms, struct rtc_time *tm)
+ 	tm->tm_wday     = -1;
+ }
+ 
+-unsigned long __init opal_get_boot_time(void)
++time64_t __init opal_get_boot_time(void)
+ {
+ 	struct rtc_time tm;
+ 	u32 y_m_d;
+@@ -59,8 +59,7 @@ unsigned long __init opal_get_boot_time(void)
+ 	y_m_d = be32_to_cpu(__y_m_d);
+ 	h_m_s_ms = be64_to_cpu(__h_m_s_ms);
+ 	opal_to_tm(y_m_d, h_m_s_ms, &tm);
+-	return mktime(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+-		      tm.tm_hour, tm.tm_min, tm.tm_sec);
++	return rtc_tm_to_time64(&tm);
+ }
+ 
+ static __init int opal_time_init(void)
+diff --git a/arch/powerpc/platforms/ps3/platform.h b/arch/powerpc/platforms/ps3/platform.h
+index 1809cfc562ee..9bc68f913466 100644
+--- a/arch/powerpc/platforms/ps3/platform.h
++++ b/arch/powerpc/platforms/ps3/platform.h
+@@ -57,7 +57,7 @@ static inline void ps3_smp_cleanup_cpu(int cpu) { }
+ /* time */
+ 
+ void __init ps3_calibrate_decr(void);
+-unsigned long __init ps3_get_boot_time(void);
++time64_t __init ps3_get_boot_time(void);
+ void ps3_get_rtc_time(struct rtc_time *time);
+ int ps3_set_rtc_time(struct rtc_time *time);
+ 
+diff --git a/arch/powerpc/platforms/ps3/time.c b/arch/powerpc/platforms/ps3/time.c
+index 11b45b58c81b..9dac125c997e 100644
+--- a/arch/powerpc/platforms/ps3/time.c
++++ b/arch/powerpc/platforms/ps3/time.c
+@@ -76,7 +76,7 @@ static u64 read_rtc(void)
+ 	return rtc_val;
+ }
+ 
+-unsigned long __init ps3_get_boot_time(void)
++time64_t __init ps3_get_boot_time(void)
+ {
+ 	return read_rtc() + ps3_os_area_get_rtc_diff();
+ }
 -- 
 2.9.0
