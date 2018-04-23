@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx4/J3QAekCRtJQ3PyI+Zr249mzy44dT8a6qalb1cydgf/XvNWUGFfo+TcjWRY0G4ed/Mf7LC
-ARC-Seal: i=1; a=rsa-sha256; t=1524498473; cv=none;
+X-Google-Smtp-Source: AIpwx4/UzGp4ALP7XPO0kyCchuXVKx/Xge3Smp0a5nM0s76MJsOISbD7npAg/R/LrKn0FUJV+wE1
+ARC-Seal: i=1; a=rsa-sha256; t=1524498483; cv=none;
         d=google.com; s=arc-20160816;
-        b=G5OffUU257gEYnwitXo55uQ6VI4TUzraMWmgJXpSJnERLBzmqzK0ACl9NPBa0cTU4V
-         86kpczRAjMIcXr38rRmdW5Z9eZ6cP2/rJOfd/4wlKeE5GIAD8w+StU1PUia9yWVpdxNm
-         SkzwIVUoCM9vwTWeGLsom7o9ltXxXLTvuxU6bI4L2NKZE/VNLX5Zv0+cQFRkq02mkA1Q
-         bGhznGAorr+E3TdZG2MxezzK0MAPS/wleKpzemmz3evyrAkng5Q2m2Mkj9Vs7Dyjtm5N
-         Ms/p4oog6vZiBBIayCM0ffiiiXQiNpUXxXzdmmBfNUQ4mb5wPa0jLi8dvs7DtqHxDjPm
-         rRyQ==
+        b=REYNkfgdifXxqKBGznmlazkeDHbXps23WNuqNHnPs8qUHyh4eHcaowr/7ObhEjopVn
+         NOFQnIZZ+mN7hcD1KH+NPFr32RS59nM2HbxUdklXvLeN3fU+1WHcr9e76L/coAv5Kule
+         Ly6+3zHOniERPCaofEnkHXRHuPgNLoyJpQUCFcMpe0H0wz9O1DmqxXsUL4QfPs0PxJbJ
+         BZLlJ6+gGmOlCOUe6PpA5Ceyn7ijR3qs3sPExSUGYKpEsU6eCnUDDSPid7RS6vz3Zvm4
+         a5d2IDpN2sVWcNhRH+BwnCi42s8taROBUjnaMiNKZ7Gb3hOUVS4BaD9L9BgMofSk0zF2
+         NdKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=6dQOIlW3IjyIC9NEJ7gz1FwKgUM1vbUBR1JSU/HHuzw=;
-        b=nmivWXIkjvE0W6ghjTNeQh7nCiGP7mJpCUyRduQYrdvfRYs38HjYp6EHYNjGw2WG2x
-         amqjqEQs/AU35x9PlR25zhVWfyCESt7I+cxFQdvId+y/+hI92iBZxnr48RsaLKQf5JHb
-         xJEH7lwp2EEtmCntgnHU2Grtytn4w4YwzDW2qgKZwv1bYt6ZLotke8TwvStdif0RTDFY
-         Meg4YWKfHU9bpI62REwMw1gTQSLUypRGFj069m0lH65cDgdh6P2hArNAxRVOJzv6Syhm
-         iitGeIjBX6k9qXo2deXbBXbYBd6Z3++bjm75pNuQdfyilY0AS9njfoUfQMVlvgBFfqs0
-         0f9w==
+        bh=JnFN1zhiRIMRvYr6aycd3dKQhrkRKwR9b+Mpjbgr6sU=;
+        b=wDohPARUGZ8WOb6FGFdX5t3hqRV1pqC72wsSJ4e6FrnJLFHmrSJI+T+95XmcT84EiC
+         Mmfeb8H1UsUwApJhML+vzPcArR780IYDOMbDoZ547DI3kewHoMZoN4ubtTrR6J1AnUro
+         jt0ctwPpVG8RQZOEBFZwVdBmdrLKZkF6jEQncG/Kesmic2Fmkp7F/AmUvMxLq+mgeUOr
+         OhqMO/STSFkA5A8cv3HBMyvDwKRppFnoLVQAikxVlDO6vpBECIiONFKrMvpwiYs9tr2D
+         eBazOotWs8ooGsHDH56K/KkRr0A0hIOdZsWpYOpGN+GPBvstJWhIfq1W42HAVg8dH+dd
+         PKdA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=dNXtindy;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=mhiouAqv;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=dNXtindy;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=mhiouAqv;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,108 +58,119 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 17/37] x86/pgtable/32: Allocate 8k page-tables when PTI is enabled
-Date: Mon, 23 Apr 2018 17:47:20 +0200
-Message-Id: <1524498460-25530-18-git-send-email-joro@8bytes.org>
+Subject: [PATCH 34/37] x86/ldt: Enable LDT user-mapping for PAE
+Date: Mon, 23 Apr 2018 17:47:37 +0200
+Message-Id: <1524498460-25530-35-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552511657285039?=
-X-GMAIL-MSGID: =?utf-8?q?1598552511657285039?=
+X-GMAIL-THRID: =?utf-8?q?1598552522454761188?=
+X-GMAIL-MSGID: =?utf-8?q?1598552522454761188?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Allocate a kernel and a user page-table root when PTI is
-enabled. Also allocate a full page per root for PAE because
-otherwise the bit to flip in cr3 to switch between them
-would be non-constant, which creates a lot of hassle.
-Keep that for a later optimization.
+This adds the needed special case for PAE to get the LDT
+mapped into the user page-table when PTI is enabled. The big
+difference to the other paging modes is that we don't have a
+full top-level PGD entry available for the LDT, but only PMD
+entry.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/kernel/head_32.S | 20 +++++++++++++++-----
- arch/x86/mm/pgtable.c     |  5 +++--
- 2 files changed, 18 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/mmu_context.h |  5 ----
+ arch/x86/kernel/ldt.c              | 53 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-index b59e4fb..12a3e8c 100644
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -512,11 +512,18 @@ ENTRY(initial_code)
- ENTRY(setup_once_ref)
- 	.long setup_once
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 57e3785..28b2376 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -71,12 +71,7 @@ struct ldt_struct {
  
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+#define	PGD_ALIGN	(2 * PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	1024
-+#else
-+#define	PGD_ALIGN	(PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	0
-+#endif
- /*
-  * BSS section
-  */
- __PAGE_ALIGNED_BSS
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- #ifdef CONFIG_X86_PAE
- .globl initial_pg_pmd
- initial_pg_pmd:
-@@ -526,14 +533,17 @@ initial_pg_pmd:
- initial_page_table:
- 	.fill 1024,4,0
- #endif
-+	.align PGD_ALIGN
- initial_pg_fixmap:
- 	.fill 1024,4,0
--.globl empty_zero_page
--empty_zero_page:
--	.fill 4096,1,0
- .globl swapper_pg_dir
-+	.align PGD_ALIGN
- swapper_pg_dir:
- 	.fill 1024,4,0
-+	.fill PTI_USER_PGD_FILL,4,0
-+.globl empty_zero_page
-+empty_zero_page:
-+	.fill 4096,1,0
- EXPORT_SYMBOL(empty_zero_page)
- 
- /*
-@@ -542,7 +552,7 @@ EXPORT_SYMBOL(empty_zero_page)
- #ifdef CONFIG_X86_PAE
- __PAGE_ALIGNED_DATA
- 	/* Page-aligned for the benefit of paravirt? */
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- ENTRY(initial_page_table)
- 	.long	pa(initial_pg_pmd+PGD_IDENT_ATTR),0	/* low identity map */
- # if KPMDS == 3
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index ffc8c13..f4211d2 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -339,7 +339,8 @@ static inline pgd_t *_pgd_alloc(void)
- 	 * We allocate one page for pgd.
- 	 */
- 	if (!SHARED_KERNEL_PMD)
--		return (pgd_t *)__get_free_page(PGALLOC_GFP);
-+		return (pgd_t *)__get_free_pages(PGALLOC_GFP,
-+						 PGD_ALLOCATION_ORDER);
- 
- 	/*
- 	 * Now PAE kernel is not running as a Xen domain. We can allocate
-@@ -351,7 +352,7 @@ static inline pgd_t *_pgd_alloc(void)
- static inline void _pgd_free(pgd_t *pgd)
+ static inline void *ldt_slot_va(int slot)
  {
- 	if (!SHARED_KERNEL_PMD)
--		free_page((unsigned long)pgd);
-+		free_pages((unsigned long)pgd, PGD_ALLOCATION_ORDER);
- 	else
- 		kmem_cache_free(pgd_cache, pgd);
+-#ifdef CONFIG_X86_64
+ 	return (void *)(LDT_BASE_ADDR + LDT_SLOT_STRIDE * slot);
+-#else
+-	BUG();
+-	return (void *)fix_to_virt(FIX_HOLE);
+-#endif
  }
+ 
+ /*
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 69af9a0..733e6ac 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -126,6 +126,57 @@ static void do_sanity_check(struct mm_struct *mm,
+ 	}
+ }
+ 
++#ifdef CONFIG_X86_PAE
++
++static pmd_t *pgd_to_pmd_walk(pgd_t *pgd, unsigned long va)
++{
++	p4d_t *p4d;
++	pud_t *pud;
++
++	if (pgd->pgd == 0)
++		return NULL;
++
++	p4d = p4d_offset(pgd, va);
++	if (p4d_none(*p4d))
++		return NULL;
++
++	pud = pud_offset(p4d, va);
++	if (pud_none(*pud))
++		return NULL;
++
++	return pmd_offset(pud, va);
++}
++
++static void map_ldt_struct_to_user(struct mm_struct *mm)
++{
++	pgd_t *k_pgd = pgd_offset(mm, LDT_BASE_ADDR);
++	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
++	pmd_t *k_pmd, *u_pmd;
++
++	k_pmd = pgd_to_pmd_walk(k_pgd, LDT_BASE_ADDR);
++	u_pmd = pgd_to_pmd_walk(u_pgd, LDT_BASE_ADDR);
++
++	if (static_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
++		set_pmd(u_pmd, *k_pmd);
++}
++
++static void sanity_check_ldt_mapping(struct mm_struct *mm)
++{
++	pgd_t *k_pgd = pgd_offset(mm, LDT_BASE_ADDR);
++	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
++	bool had_kernel, had_user;
++	pmd_t *k_pmd, *u_pmd;
++
++	k_pmd      = pgd_to_pmd_walk(k_pgd, LDT_BASE_ADDR);
++	u_pmd      = pgd_to_pmd_walk(u_pgd, LDT_BASE_ADDR);
++	had_kernel = (k_pmd->pmd != 0);
++	had_user   = (u_pmd->pmd != 0);
++
++	do_sanity_check(mm, had_kernel, had_user);
++}
++
++#else /* !CONFIG_X86_PAE */
++
+ static void map_ldt_struct_to_user(struct mm_struct *mm)
+ {
+ 	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
+@@ -143,6 +194,8 @@ static void sanity_check_ldt_mapping(struct mm_struct *mm)
+ 	do_sanity_check(mm, had_kernel, had_user);
+ }
+ 
++#endif /* CONFIG_X86_PAE */
++
+ /*
+  * If PTI is enabled, this maps the LDT into the kernelmode and
+  * usermode tables for the given mm.
 -- 
 2.7.4
