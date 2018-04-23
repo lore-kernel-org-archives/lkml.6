@@ -1,112 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932243AbeDWUlK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 16:41:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37972 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755680AbeDWUlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 16:41:06 -0400
-Date: Mon, 23 Apr 2018 14:41:04 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Sinan Kaya <okaya@codeaurora.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        sulrich@codeaurora.org, timur@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
-Message-ID: <20180423144104.2dad7495@w520.home>
-In-Reply-To: <20180423202311.GA164898@bhelgaas-glaptop.roam.corp.google.com>
-References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
-        <20180419202632.GE14063@ziepe.ca>
-        <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
-        <290e9530-dcde-9c10-7ae0-59ac4c509db4@codeaurora.org>
-        <20180420140049.GP28657@bhelgaas-glaptop.roam.corp.google.com>
-        <20180420090420.03fb1e6c@w520.home>
-        <10d9cf68-29ed-d205-a25f-b8dade53cdd8@codeaurora.org>
-        <20180423131044.53471670@w520.home>
-        <20180423202311.GA164898@bhelgaas-glaptop.roam.corp.google.com>
+        id S932345AbeDWUmM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 16:42:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48160 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932254AbeDWUmJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 16:42:09 -0400
+Date: Mon, 23 Apr 2018 13:42:08 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc: Andres Freund <andres@anarazel.de>
+Subject: [PATCH] Always report a writeback error once
+Message-ID: <20180423204208.GG13383@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018 15:23:11 -0500
-Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-> On Mon, Apr 23, 2018 at 01:10:44PM -0600, Alex Williamson wrote:
-> > On Mon, 23 Apr 2018 13:28:22 -0400
-> > Sinan Kaya <okaya@codeaurora.org> wrote:
-> >   
-> > > On 4/20/2018 11:04 AM, Alex Williamson wrote:  
-> > > > Is there a concern here about whether the endpoint device driver or the
-> > > > PCI core really knows better about link retraining?  This makes me
-> > > > remember my unfinished (and need to revisit) Pericom quirk[1] where
-> > > > errata in the PCIe switch requires that upstream and downstream links
-> > > > are balanced (ie. same link rate) or else enabling ACS results in
-> > > > packets not properly flowing through the switch.  If an endpoint driver
-> > > > starts deciding to retrain links, overriding quirks in the PCI core,
-> > > > then such topology manipulation isn't possible.  Why does the
-> > > > driver .probe() function think it can retrain at a higher link rate
-> > > > than PCI core?  Thanks,    
-> > > 
-> > > The example given is for some serdes firmware load to happen in probe and
-> > > then performing a retrain to reach to a better speed.
-> > > 
-> > > It becomes a chicken and egg problem. 
-> > > 
-> > > 1. Endpoint HW trains to gen1 by default pre-boot.
-> > > 2. PCI core enumerates the device.
-> > > 3. Endpoint driver gets loaded
-> > > 4. Driver does the firmware programming followed by a link retrain.
-> > > 
-> > > I think it is the responsibility of the PCI core to provide reset APIs.
-> > > However, expecting endpoint drivers to be knowledgeable about hotplug is
-> > > too much.
-> > > 
-> > > We can certainly contain AER change into pci directory by moving the slot
-> > > reset function to drivers/pci.h file.
-> > > 
-> > > But, we need to think about what to do about VFIO and other endpoint
-> > > initiated reset cases. My suggestion was to move this into a single API and
-> > > remove all other APIs from include/linux/pci.h.  
-> > 
-> > I'm a little confused about the relation between reset and retrain.
-> > AIUI we can retrain the link without any sort of endpoint reset and if
-> > some sort of driver/firmware setup is required on the endpoint to
-> > achieve the target link speed, then I'd think we only want to retrain.  
-> 
-> In hfi1, do_pcie_gen3_transition() resets the device.  I don't know if
-> retraining the link would be sufficient; maybe the reset is required
-> to make the device use the new firmware.  I guess we already export
-> reset interfaces, so if we add a retrain interface, drivers could
-> choose what they need.
-> 
-> > How this is going to work with vfio is an interesting question.  We're
-> > only providing access to the device, not the link to the device.  
-> 
-> > Multifunction endpoints become a big problem if one function starts
-> > requesting link retraining while another is in use elsewhere.  
-> 
-> Can we just make it the driver's problem by returning -EPERM if one
-> function requests a retrain while another function is in use?
+The errseq_t infrastructure assumes that errors which occurred before
+the file descriptor was opened are of no interest to the application.
+This turns out to be a regression for some applications, notably Postgres.
 
-Yes, this is basically how we handle bus resets through vfio-pci, if
-there are multiple devices affected by a bus reset, slots or functions,
-the caller needs to prove ownership of all of them before we do a bus
-reset.  That's great for video cards where we have the GPU and audio
-functions typically assigned together anyway, but I don't know that
-it's a great solution for IB where you're more likely to want to assign
-separate functions to separate users and nobody can get the device to
-run at full speed unless all the functions are assigned to one user.
-Thanks,
+Before errseq_t, a writeback error would be reported exactly once (as
+long as the inode remained in memory), so Postgres could open a file,
+call fsync() and find out whether there had been a writeback error on
+that file from another process.
 
-Alex
+This patch restores that behaviour by reporting errors to file descriptors
+which are opened after the error occurred, but before it was reported
+to any file descriptor.
+
+Cc: stable@vger.kernel.org
+Fixes: 5660e13d2fd6 ("fs: new infrastructure for writeback error handling and reporting")
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+
+diff --git a/lib/errseq.c b/lib/errseq.c
+index df782418b333..093f1fba4ee0 100644
+--- a/lib/errseq.c
++++ b/lib/errseq.c
+@@ -119,19 +119,11 @@ EXPORT_SYMBOL(errseq_set);
+ errseq_t errseq_sample(errseq_t *eseq)
+ {
+ 	errseq_t old = READ_ONCE(*eseq);
+-	errseq_t new = old;
+ 
+-	/*
+-	 * For the common case of no errors ever having been set, we can skip
+-	 * marking the SEEN bit. Once an error has been set, the value will
+-	 * never go back to zero.
+-	 */
+-	if (old != 0) {
+-		new |= ERRSEQ_SEEN;
+-		if (old != new)
+-			cmpxchg(eseq, old, new);
+-	}
+-	return new;
++	/* If nobody has seen this error yet, then we can be the first. */
++	if (!(old & ERRSEQ_SEEN))
++		old = 0;
++	return old;
+ }
+ EXPORT_SYMBOL(errseq_sample);
+ 
