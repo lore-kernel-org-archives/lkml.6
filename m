@@ -1,104 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754150AbeDWGoZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:44:25 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34153 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752393AbeDWGoV (ORCPT
+        id S1751535AbeDWGoh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:44:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51198 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753009AbeDWGoe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:44:21 -0400
-X-Google-Smtp-Source: AIpwx49u0OS3NVTVAjf6If9I9nnZ697MWAjRlI8nJaLWmCVNU6wHR3LC7KEGxekQ9/zwXjNarEZZ/Q==
-Date: Mon, 23 Apr 2018 07:44:17 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] mfd: tps65911-comparator: Fix an off by one bug
-Message-ID: <20180423064417.2e2ng3su23w4i7hx@dell>
-References: <20180420083909.66a6t63s5q6vpwp7@dell>
- <20180420090910.GA26071@mwanda>
+        Mon, 23 Apr 2018 02:44:34 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180420090910.GA26071@mwanda>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Date: Mon, 23 Apr 2018 12:14:32 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
+ parameter
+In-Reply-To: <20180422183440.3ce7e7aa@xps13>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+ <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
+ <20180406143133.67f33d33@xps13>
+ <23c8330d00d4d9b62c4c1ab597cbb22b@codeaurora.org>
+ <20180410094657.63ac7ec9@xps13> <20180410095558.34c4d91f@xps13>
+ <20180410100745.625d66f8@bbrezillon>
+ <c1cb40d0d24e50657308a40bb8398d35@codeaurora.org>
+ <20180422183440.3ce7e7aa@xps13>
+Message-ID: <689fa334d7105e251463e58e1aef3ec8@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018, Dan Carpenter wrote:
-
-> The COMP1 and COMP2 elements are in 0 and 1 respectively so this code is
-> accessing the wrong elements and one space beyond the end of the array.
-> We should be using "id - 1" instead.
+On 2018-04-22 22:04, Miquel Raynal wrote:
+> Hi Abhishek,
 > 
-> The "id" variable is never COMP (0) so that code can be removed.
+> On Thu, 12 Apr 2018 15:29:48 +0530, Abhishek Sahu
+> <absahu@codeaurora.org> wrote:
 > 
-> Fixes: 6851ad3ab346 ("TPS65911: Comparator: Add comparator driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: we can fix the bug and save memory.
+>> On 2018-04-10 13:37, Boris Brezillon wrote:
+>> > On Tue, 10 Apr 2018 09:55:58 +0200
+>> > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+>> > >> > Hi Abhishek,
+>> >> >
+>> >> > On Tue, 10 Apr 2018 11:39:35 +0530, Abhishek Sahu
+>> >> > <absahu@codeaurora.org> wrote:
+>> >> >
+>> >> > > On 2018-04-06 18:01, Miquel Raynal wrote:
+>> >> > > > Hi Abhishek,
+>> >> > > >
+>> >> > > > On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
+>> >> > > > <absahu@codeaurora.org> wrote:
+>> >> > > >
+>> >> > > >> Currently the driver uses the ECC strength specified in
+>> >> > > >> device tree. The ONFI or JEDEC device parameter page
+>> >> > > >> contains the ‘ECC correctability’ field which indicates the
+>> >> > > >> number of bits that the host should be able to correct per
+>> >> > > >> 512 bytes of data.
+>> >> > > >
+>> >> > > > This is misleading. This field is not about the controller but rather
+>> >> > > > the chip requirements in terms of minimal strength for nominal use.
+>> >> > > >
+>> >> > >
+>> >> > >   Thanks Miquel.
+>> >> > >
+>> >> > >   Yes. Its NAND chip requirement. I have used the description for
+>> >> > >   NAND ONFI param page
+>> >> > >
+>> >> > >   5.6.1.24. Byte 112: Number of bits ECC correctability
+>> >> > >   This field indicates the number of bits that the host should be
+>> >> > >   able to correct per 512 bytes of data.
+>> >> > >
+>> >> > > >> The ecc correctability is assigned in
+>> >> > > >> chip parameter during device probe time. QPIC/EBI2 NAND
+>> >> > > >> supports 4/8-bit ecc correction. The Same kind of board
+>> >> > > >> can have different NAND parts so use the ecc strength
+>> >> > > >> from device parameter (if its non zero) instead of
+>> >> > > >> device tree.
+>> >> > > >
+>> >> > > > That is not what you do.
+>> >> > > >
+>> >> > > > What you do is forcing the strength to be 8-bit per ECC chunk if the
+>> >> > > > NAND chip requires at least 8-bit/chunk strength.
+>> >> > > >
+>> >> > > > The DT property is here to force a strength. Otherwise, Linux will
+>> >> > > > propose to the NAND controller to use the minimum strength required by
+>> >> > > > the chip (from either the ONFI/JEDEC parameter page or from a static
+>> >> > > > table).
+>> >> > > >
+>> >> > >
+>> >> > >   The main problem is that the same kind of boards can have different
+>> >> > >   NAND parts.
+>> >> > >
+>> >> > >   Lets assume, we have following 2 cases.
+>> >> > >
+>> >> > >   1. Non ONFI/JEDEC device for which chip->ecc_strength_ds
+>> >> > >      will be zero. In this case, the ecc->strength from DT
+>> >> > >      will be used
+>> >> >
+>> >> > No, the strength from DT will always be used if the property is
+>> >> > present, no matter the type of chip.
+>> >> >
+>> >> > >   2. ONFI/JEDEC device for which chip->ecc_strength_ds > 8.
+>> >> > >      Since QCOM nand controller can not support
+>> >> > >      ECC correction greater than 8 bits so we can use 8 bit ECC
+>> >> > >      itself instead of failing NAND boot completely.
+>> >> >
+>> >> > I understand that. But this is still not what you do.
+>> >> >
+>> >> > >
+>> >> > > > IMHO, you have two solutions:
+>> >> > > > 1/ Remove these properties from the board DT (breaks DT backward
+>> >> > > > compatibility though);
+>> >> > >
+>> >> > >   - nand-ecc-strength: This is optional property in nand.txt and
+>> >> > >     Required property in qcom_nandc.txt.
+>> >> >
+>> >> > Well, this property is not controller specific but chip specific. The
+>> >> > controller driver does not rely on it, so this property should not be
+>> >> > required.
+>> >> >
+>> >> > > We can't remove since
+>> >> > >     if the device is Non ONFI/JEDEC, then ecc strength will come
+>> >> > >     from DT only.
+>> >> >
+>> >> > We can remove it and let the core handle this (as this is generic to
+>> >> > all raw NANDs and not specific to this controller driver). Try it out!
+>> 
+>>   Thanks Boris and Miquel for your inputs.
+>> 
+>>   Just want to confirm if already its implemented in core layer
+>>   or shall I explore regrading this option.
+>> 
+>>   I checked by removing this property alone from dtsi and it was
+>>   failing with
+>> 
+>>   "Driver must set ecc.strength when using hardware ECC"
+>> 
+>>   I checked the code in nand_base.c also but couldn't get
+>>   anything related with this.
+> 
+> I don't know exactly what you did but you should have a look at what
+> lead you to this path:
+> https://elixir.bootlin.com/linux/v4.17-rc1/source/drivers/mtd/nand/raw/nand_base.c#L6421
+> 
 
-Looks like it's as we feared:
+  Our driver supports both ECC strength 4 bits and 8 bits
+  and normally till now, we need to specify the ecc strength in device 
+tree.
 
- http://www.ti.com/lit/ds/symlink/tps65911.pdf (page 52)
+  Now, since same board can have different ECC strength chip so we
+  can't fix the ecc strength in device tree and we need to look
+  the required correction in ONFI param.
 
-There are only 2 comparators 1 and 2.
+  We can have some code in generic layer which
 
-> diff --git a/drivers/mfd/tps65911-comparator.c b/drivers/mfd/tps65911-comparator.c
-> index c0789f81a1c5..887409c3938d 100644
-> --- a/drivers/mfd/tps65911-comparator.c
-> +++ b/drivers/mfd/tps65911-comparator.c
-> @@ -22,7 +22,6 @@
->  #include <linux/gpio.h>
->  #include <linux/mfd/tps65910.h>
->  
-> -#define COMP					0
->  #define COMP1					1
->  #define COMP2					2
+  1. Provides the way to specify the supported strength in DT by NAND
+     controller (for our case, it is 4 and 8)
+  2. Read the chip ONFI/JEDEC Param and choose the configure to use
+     controller strength according to its requirement.
+  3. For Non ONFI/JEDEC devices, choose the maximum strength according
+     to OOB bytes.
 
-Sorry, but I think these defines should describe the indexes into the
-supplied struct directly, especially as in this case it is their only
-reason for being.
+  I just want to check if we have something like this already in place
+  or I can add the same in generic code so that this can be used by
+  other drivers also.
 
-I completely agree with you that defining something that is named '1'
-as '0' is not ideal, but IMHO it's better than jumping through hoops
-using arithmetic in array indexes.
-
-> @@ -58,14 +57,11 @@ static struct comparator tps_comparators[] = {
->  
->  static int comp_threshold_set(struct tps65910 *tps65910, int id, int voltage)
->  {
-> -	struct comparator tps_comp = tps_comparators[id];
-> +	struct comparator tps_comp = tps_comparators[id - 1];
->  	int curr_voltage = 0;
->  	int ret;
->  	u8 index = 0, val;
->  
-> -	if (id == COMP)
-> -		return 0;
-> -
->  	while (curr_voltage < tps_comp.uV_max) {
->  		curr_voltage = tps_comp.vsel_table[index];
->  		if (curr_voltage >= voltage)
-> @@ -85,13 +81,10 @@ static int comp_threshold_set(struct tps65910 *tps65910, int id, int voltage)
->  
->  static int comp_threshold_get(struct tps65910 *tps65910, int id)
->  {
-> -	struct comparator tps_comp = tps_comparators[id];
-> +	struct comparator tps_comp = tps_comparators[id - 1];
->  	int ret;
->  	u8 val;
->  
-> -	if (id == COMP)
-> -		return 0;
-> -
->  	ret = tps65910->read(tps65910, tps_comp.reg, 1, &val);
->  	if (ret < 0)
->  		return ret;
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+  Thanks,
+  Abhishek
