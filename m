@@ -1,59 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755728AbeDWP2j (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:28:39 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49682 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755498AbeDWP2i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:28:38 -0400
-Date: Mon, 23 Apr 2018 16:28:35 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH 13/18 v2] regulator: wm8994: Pass descriptor instead of
- GPIO number
-Message-ID: <20180423152835.GG19834@sirena.org.uk>
-References: <20180422230742.3729-1-linus.walleij@linaro.org>
- <20180422230742.3729-13-linus.walleij@linaro.org>
+        id S1755848AbeDWP3K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:29:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51382 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755761AbeDWP3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:29:09 -0400
+Date: Mon, 23 Apr 2018 17:29:05 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 7/9] perf stat: Add --table option to display time of
+ each run
+Message-ID: <20180423152905.GB8331@krava>
+References: <20180423090823.32309-1-jolsa@kernel.org>
+ <20180423090823.32309-8-jolsa@kernel.org>
+ <20180423144149.GG30324@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="APlYHCtpeOhspHkB"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180422230742.3729-13-linus.walleij@linaro.org>
-X-Cookie: I think, therefore I am... I think.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180423144149.GG30324@kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 23, 2018 at 11:41:49AM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Apr 23, 2018 at 11:08:21AM +0200, Jiri Olsa escreveu:
+> > Adding --table option to display time for each
+> > run (-r option), like:
+> 
+> You forgot to add this to 'perf stat's man page, I'm doing it this time,
 
---APlYHCtpeOhspHkB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ugh, sry.. thanks ;-)
 
-On Mon, Apr 23, 2018 at 01:07:37AM +0200, Linus Walleij wrote:
-> Instead of passing a global GPIO number for the enable GPIO, pass
-> a descriptor looked up from the device tree node or the board file
-> decriptor table for the regulator.
-
-This doesn't apply against current code, please check and resend.
-
---APlYHCtpeOhspHkB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrd+6IACgkQJNaLcl1U
-h9AGkAf9EaxjU1WJJls7JRqeuaohUyxUarN2bTWWM5wo4wfc14FQ0YPMHkDUk5cA
-o6kkrE2Y2s5tMrc5h7Odbaa5p23XXAqWi1Xbque519Pp+lO1DSJPEmZ6n2Q4VqT8
-24KCrhU2f9uYiBjsad7JoG3EOJL8JSqoHYW8b4dv/zkRQWh7cN8mCmTUIty332Qk
-Igua4diXTb1TaUeh3QheapmDdV4BCgI5vVpNsTB3t7pBoJOgn0ImGkY50naRtEQM
-laVNIVSKyABMItf8jT5sfhxMfzpX5GiFc5e+zZZp8b//HyGDXiDUaKo+rPEz+cRR
-XmIVN0ONODWFJRbisLFqGRlMHb43Mg==
-=aGb5
------END PGP SIGNATURE-----
-
---APlYHCtpeOhspHkB--
+jirka
