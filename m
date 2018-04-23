@@ -1,117 +1,281 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755113AbeDWNE1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:04:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754947AbeDWNE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:04:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F74C21795
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Mon, 23 Apr 2018 15:04:23 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Jacek Tomaka <jacekt@dug.com>
-Cc: linux-kernel@vger.kernel.org, cmetcalf@mellanox.com, cl@linux.com,
-        lcapitulino@redhat.com, efault@gmx.de, peterz@infradead.org,
-        riel@redhat.com, tglx@linutronix.de, kernellwp@gmail.com,
-        mingo@kernel.org
-Subject: Re: NO_HZ_FULL and tick running within a reasonable amount of time
-Message-ID: <20180423130421.GA18293@lerouge>
-References: <20180402220438.GA15885@linux.vnet.ibm.com>
- <20180403114130.GA22765@lerouge>
- <20180403170858.GO3948@linux.vnet.ibm.com>
+        id S1755019AbeDWNFv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:05:51 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53796 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754802AbeDWNFu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 09:05:50 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
+        daniel@ffwll.ch, peda@axentia.se, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/8] media: Add LE version of RGB LVDS formats
+Date: Mon, 23 Apr 2018 16:06:01 +0300
+Message-ID: <1733883.PFymhGyeZa@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1524130269-32688-6-git-send-email-jacopo+renesas@jmondi.org>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org> <1524130269-32688-6-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180403170858.GO3948@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 10:08:58AM -0700, Paul E. McKenney wrote:
-> On Tue, Apr 03, 2018 at 01:41:31PM +0200, Frederic Weisbecker wrote:
-> > On Mon, Apr 02, 2018 at 03:04:38PM -0700, Paul E. McKenney wrote:
-> > > Hello!
-> > > 
-> > > I am hitting the following on today's mainline under rcutorture, but
-> > > only on scenarios built with CONFIG_NO_HZ_FULL=y:
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > WARNING: CPU: 0 PID: 7 at /home/paulmck/public_git/linux-rcu/kernel/sched/core.c:3124 sched_tick_remote+0x113/0x120
-> > > Modules linked in:
-> > > CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.16.0+ #1
-> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-> > > Workqueue: events_unbound sched_tick_remote
-> > > RIP: 0010:sched_tick_remote+0x113/0x120
-> > > RSP: 0018:ffff94d540103e20 EFLAGS: 00010002
-> > > RAX: 000000012e9bb357 RBX: ffff8f95dfd21840 RCX: 000000000000001f
-> > > RDX: 00000000b2d05e00 RSI: 00000000ffffffff RDI: ffff8f95dfd21858
-> > > RBP: ffff94d540103e48 R08: 00000000f6499019 R09: 00000000f6499000
-> > > R10: 00000000b163d33b R11: ffffffffa5c8c212 R12: ffff8f95dfd25518
-> > > R13: ffff8f95de9e4200 R14: 0000000000003402 R15: ffff8f95dfd21858
-> > > FS:  0000000000000000(0000) GS:ffff8f95dfc00000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 000000000a015b40 CR3: 000000001de14000 CR4: 00000000000006f0
-> > > Call Trace:
-> > >  process_one_work+0x1d9/0x6a0
-> > >  worker_thread+0x42/0x420
-> > >  kthread+0xf3/0x130
-> > >  ? rescuer_thread+0x340/0x340
-> > >  ? kthread_delayed_work_timer_fn+0x80/0x80
-> > >  ret_from_fork+0x3a/0x50
-> > > Code: ff 48 8b 83 80 0b 00 00 48 85 c0 0f 85 41 ff ff ff e9 45 ff ff ff be ff ff ff ff 4c 89 ff e8 55 44 02 00 85 c0 75 87 0f 0b eb 83 <0f> 0b eb 97 66 0f 1f 84 00 00 00 00 00 41 57 41 56 41 55 41 54
-> > > ---[ end trace fbdcbe529a8ae799 ]--
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > The WARN_ON_ONCE() triggering is this guy:
-> > > 
-> > > 	delta = rq_clock_task(rq) - curr->se.exec_start;
-> > > 	WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
-> > 
-> > Weird. Can you try to print up those values and see how much they drift?
-> > 
-> >         if (WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3))
-> >                printk_once("clock_task: %lld exec_start: %lld\n", rq_clock_task(rq), curr->se.exec_start);
-> 
-> Here you go!
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> WARNING: CPU: 0 PID: 7 at /home/paulmck/public_git/linux-rcu/kernel/sched/core.c:3124 sched_tick_remote+0xdb/0x100
-> Modules linked in:
-> CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.16.0+ #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-> Workqueue: events_unbound sched_tick_remote
-> RIP: 0010:sched_tick_remote+0xdb/0x100
-> RSP: 0018:ffffa2c440103e60 EFLAGS: 00010006
-> RAX: 00000000b2d05e00 RBX: ffff96f0dfd20980 RCX: 000000016a8de322
-> RDX: 000000000d33a301 RSI: 0000000177c18623 RDI: fffffffeb0bf0e53
-> RBP: ffff96f0dfd24328 R08: 0000000000000000 R09: 0000000000000001
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffff96f0de9d2640
-> R13: 0000000000000000 R14: 0ffff96f0de81700 R15: ffff96f0de96f540
-> FS:  0000000000000000(0000) GS:ffff96f0dfc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000f7ec6ca3 CR3: 000000001e03e000 CR4: 00000000000006f0
-> Call Trace:
->  process_one_work+0x139/0x3e0
->  worker_thread+0x42/0x420
->  kthread+0xf3/0x130
->  ? create_worker+0x190/0x190
->  ? kthread_destroy_worker+0x40/0x40
->  ret_from_fork+0x35/0x40
-> Code: 89 8b 43 04 85 c0 0f 85 75 ff ff ff 48 8b 83 e0 0a 00 00 48 85 c0 0f 85 65 ff ff ff e9 69 ff ff ff 48 89 df e8 87 fe ff ff eb 8d <0f> 0b 80 3d 7d 57 2b 01 00 75 a8 48 c7 c7 e8 e1 fd a4 c6 05 6d
-> ---[ end trace f0c6a1afa55d130d ]---
-> clock_task: 6304138787 exec_start: 221487873
-> 
+Hi Jacopo,
 
-I'm trying to reproduce it on a large CPUs system. It seems to be easier
-to trigger it that way.
+Thank you for the patch.
 
-Thanks.
+On Thursday, 19 April 2018 12:31:06 EEST Jacopo Mondi wrote:
+> Some LVDS controller can output swapped versions of LVDS RGB formats.
+> Define and document them in the list of supported media bus formats
+
+I wouldn't introduce those new formats as we don't need them. As a general 
+rule we would like to have at least one user for any new format added to the 
+API.
+
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  Documentation/media/uapi/v4l/subdev-formats.rst | 174 +++++++++++++++++++++
+>  include/uapi/linux/media-bus-format.h           |   5 +-
+>  2 files changed, 178 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/media/uapi/v4l/subdev-formats.rst
+> b/Documentation/media/uapi/v4l/subdev-formats.rst index 9fcabe7..9a5263c
+> 100644
+> --- a/Documentation/media/uapi/v4l/subdev-formats.rst
+> +++ b/Documentation/media/uapi/v4l/subdev-formats.rst
+> @@ -1669,6 +1669,64 @@ JEIDA defined bit mapping will be named
+>        - b\ :sub:`2`
+>        - g\ :sub:`1`
+>        - r\ :sub:`0`
+> +    * .. _MEDIA-BUS-FMT-RGB666-1X7X3-SPWG_LE:
+> +
+> +      - MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE
+> +      - 0x101b
+> +      - 0
+> +      -
+> +      -
+> +      - b\ :sub:`2`
+> +      - g\ :sub:`1`
+> +      - r\ :sub:`0`
+> +    * -
+> +      -
+> +      - 1
+> +      -
+> +      -
+> +      - b\ :sub:`3`
+> +      - g\ :sub:`2`
+> +      - r\ :sub:`1`
+> +    * -
+> +      -
+> +      - 2
+> +      -
+> +      -
+> +      - b\ :sub:`4`
+> +      - g\ :sub:`3`
+> +      - r\ :sub:`2`
+> +    * -
+> +      -
+> +      - 3
+> +      -
+> +      -
+> +      - b\ :sub:`5`
+> +      - g\ :sub:`4`
+> +      - r\ :sub:`3`
+> +    * -
+> +      -
+> +      - 4
+> +      -
+> +      -
+> +      - d
+> +      - g\ :sub:`5`
+> +      - r\ :sub:`4`
+> +    * -
+> +      -
+> +      - 5
+> +      -
+> +      -
+> +      - d
+> +      - b\ :sub:`0`
+> +      - r\ :sub:`5`
+> +    * -
+> +      -
+> +      - 6
+> +      -
+> +      -
+> +      - d
+> +      - b\ :sub:`1`
+> +      - g\ :sub:`0`
+>      * .. _MEDIA-BUS-FMT-RGB888-1X7X4-SPWG:
+> 
+>        - MEDIA_BUS_FMT_RGB888_1X7X4_SPWG
+> @@ -1727,6 +1785,64 @@ JEIDA defined bit mapping will be named
+>        - b\ :sub:`2`
+>        - g\ :sub:`1`
+>        - r\ :sub:`0`
+> +    * .. _MEDIA-BUS-FMT-RGB888-1X7X4-SPWG_LE:
+> +
+> +      - MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE
+> +      - 0x101c
+> +      - 0
+> +      -
+> +      - r\ :sub:`6`
+> +      - b\ :sub:`2`
+> +      - g\ :sub:`1`
+> +      - r\ :sub:`0`
+> +    * -
+> +      -
+> +      - 1
+> +      -
+> +      - r\ :sub:`7`
+> +      - b\ :sub:`3`
+> +      - g\ :sub:`2`
+> +      - r\ :sub:`1`
+> +    * -
+> +      -
+> +      - 2
+> +      -
+> +      - g\ :sub:`6`
+> +      - b\ :sub:`4`
+> +      - g\ :sub:`3`
+> +      - r\ :sub:`2`
+> +    * -
+> +      -
+> +      - 3
+> +      -
+> +      - g\ :sub:`7`
+> +      - b\ :sub:`5`
+> +      - g\ :sub:`4`
+> +      - r\ :sub:`3`
+> +    * -
+> +      -
+> +      - 4
+> +      -
+> +      - b\ :sub:`6`
+> +      - d
+> +      - g\ :sub:`5`
+> +      - r\ :sub:`4`
+> +    * -
+> +      -
+> +      - 5
+> +      -
+> +      - b\ :sub:`7`
+> +      - d
+> +      - b\ :sub:`0`
+> +      - r\ :sub:`5`
+> +    * -
+> +      -
+> +      - 6
+> +      -
+> +      - d
+> +      - d
+> +      - b\ :sub:`1`
+> +      - g\ :sub:`0`
+>      * .. _MEDIA-BUS-FMT-RGB888-1X7X4-JEIDA:
+> 
+>        - MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA
+> @@ -1785,6 +1901,64 @@ JEIDA defined bit mapping will be named
+>        - b\ :sub:`4`
+>        - g\ :sub:`3`
+>        - r\ :sub:`2`
+> +    * .. _MEDIA-BUS-FMT-RGB888-1X7X4-JEIDA_LE:
+> +
+> +      - MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE
+> +      - 0x101d
+> +      - 0
+> +      -
+> +      - r\ :sub:`0`
+> +      - b\ :sub:`4`
+> +      - g\ :sub:`3`
+> +      - r\ :sub:`2`
+> +    * -
+> +      -
+> +      - 1
+> +      -
+> +      - r\ :sub:`1`
+> +      - b\ :sub:`5`
+> +      - g\ :sub:`4`
+> +      - r\ :sub:`3`
+> +    * -
+> +      -
+> +      - 2
+> +      -
+> +      - g\ :sub:`0`
+> +      - b\ :sub:`6`
+> +      - g\ :sub:`5`
+> +      - r\ :sub:`4`
+> +    * -
+> +      -
+> +      - 3
+> +      -
+> +      - g\ :sub:`1`
+> +      - b\ :sub:`7`
+> +      - g\ :sub:`6`
+> +      - r\ :sub:`5`
+> +    * -
+> +      -
+> +      - 4
+> +      -
+> +      - b\ :sub:`0`
+> +      - d
+> +      - g\ :sub:`7`
+> +      - r\ :sub:`6`
+> +    * -
+> +      -
+> +      - 5
+> +      -
+> +      - b\ :sub:`1`
+> +      - d
+> +      - b\ :sub:`2`
+> +      - r\ :sub:`7`
+> +    * -
+> +      -
+> +      - 6
+> +      -
+> +      - d
+> +      - d
+> +      - b\ :sub:`3`
+> +      - g\ :sub:`2`
+> 
+>  .. raw:: latex
+> 
+> diff --git a/include/uapi/linux/media-bus-format.h
+> b/include/uapi/linux/media-bus-format.h index 9e35117..5bea7c0 100644
+> --- a/include/uapi/linux/media-bus-format.h
+> +++ b/include/uapi/linux/media-bus-format.h
+> @@ -34,7 +34,7 @@
+> 
+>  #define MEDIA_BUS_FMT_FIXED			0x0001
+> 
+> -/* RGB - next is	0x101b */
+> +/* RGB - next is	0x101f */
+>  #define MEDIA_BUS_FMT_RGB444_1X12		0x1016
+>  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_BE	0x1001
+>  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE	0x1002
+> @@ -49,13 +49,16 @@
+>  #define MEDIA_BUS_FMT_RBG888_1X24		0x100e
+>  #define MEDIA_BUS_FMT_RGB666_1X24_CPADHI	0x1015
+>  #define MEDIA_BUS_FMT_RGB666_1X7X3_SPWG		0x1010
+> +#define MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE	0x101b
+>  #define MEDIA_BUS_FMT_BGR888_1X24		0x1013
+>  #define MEDIA_BUS_FMT_GBR888_1X24		0x1014
+>  #define MEDIA_BUS_FMT_RGB888_1X24		0x100a
+>  #define MEDIA_BUS_FMT_RGB888_2X12_BE		0x100b
+>  #define MEDIA_BUS_FMT_RGB888_2X12_LE		0x100c
+>  #define MEDIA_BUS_FMT_RGB888_1X7X4_SPWG		0x1011
+> +#define MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE	0x101c
+>  #define MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA	0x1012
+> +#define MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE	0x101d
+>  #define MEDIA_BUS_FMT_ARGB8888_1X32		0x100d
+>  #define MEDIA_BUS_FMT_RGB888_1X32_PADHI		0x100f
+>  #define MEDIA_BUS_FMT_RGB101010_1X30		0x1018
+
+-- 
+Regards,
+
+Laurent Pinchart
