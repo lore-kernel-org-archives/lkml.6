@@ -1,162 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752224AbeDWGcK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:32:10 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42529 "EHLO
+        id S1752164AbeDWGdE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:33:04 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:37444 "EHLO
         mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeDWGcI (ORCPT
+        with ESMTP id S1752384AbeDWGdA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:32:08 -0400
-X-Google-Smtp-Source: AIpwx4/s7WK1s+WipW2b0Hl3CNOvg0TFNSQ7gKlwgRKMANoBj1yXBe9P7bHw5p3JkaotkhN6grD13g==
-Date: Mon, 23 Apr 2018 15:31:57 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
-        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
-        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v10 06/25] mm: make pte_unmap_same compatible with SPF
-Message-ID: <20180423063157.GB114098@rodete-desktop-imager.corp.google.com>
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1523975611-15978-7-git-send-email-ldufour@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523975611-15978-7-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 23 Apr 2018 02:33:00 -0400
+X-Google-Smtp-Source: AIpwx4/e7ORUHNeBBe268mGR+9pskozfP1x5+mvMTzUyGxIVjrkWXYAGwrCJljvLS3s4njFINaGcJw==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v6 1/3] regulator: axp20x: add drivevbus support for axp803
+Date: Mon, 23 Apr 2018 12:02:37 +0530
+Message-Id: <20180423063239.3988-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 04:33:12PM +0200, Laurent Dufour wrote:
-> pte_unmap_same() is making the assumption that the page table are still
-> around because the mmap_sem is held.
-> This is no more the case when running a speculative page fault and
-> additional check must be made to ensure that the final page table are still
-> there.
-> 
-> This is now done by calling pte_spinlock() to check for the VMA's
-> consistency while locking for the page tables.
-> 
-> This is requiring passing a vm_fault structure to pte_unmap_same() which is
-> containing all the needed parameters.
-> 
-> As pte_spinlock() may fail in the case of a speculative page fault, if the
-> VMA has been touched in our back, pte_unmap_same() should now return 3
-> cases :
-> 	1. pte are the same (0)
-> 	2. pte are different (VM_FAULT_PTNOTSAME)
-> 	3. a VMA's changes has been detected (VM_FAULT_RETRY)
-> 
-> The case 2 is handled by the introduction of a new VM_FAULT flag named
-> VM_FAULT_PTNOTSAME which is then trapped in cow_user_page().
+Like axp221, axp223, axp813 the axp803 is also supporting external
+regulator to drive the  OTG VBus through N_VBUSEN PMIC pin.
 
-I don't see such logic in this patch.
-Maybe you introduces it later? If so, please comment on it.
-Or just return 0 in case of 2 without introducing VM_FAULT_PTNOTSAME.
+Add support for it.
 
-> If VM_FAULT_RETRY is returned, it is passed up to the callers to retry the
-> page fault while holding the mmap_sem.
-> 
-> Acked-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  include/linux/mm.h |  1 +
->  mm/memory.c        | 39 ++++++++++++++++++++++++++++-----------
->  2 files changed, 29 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 4d1aff80669c..714da99d77a3 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1208,6 +1208,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
->  #define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
->  					 * and needs fsync() to complete (for
->  					 * synchronous page faults in DAX) */
-> +#define VM_FAULT_PTNOTSAME 0x4000	/* Page table entries have changed */
->  
->  #define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
->  			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 0b9a51f80e0e..f86efcb8e268 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2309,21 +2309,29 @@ static inline bool pte_map_lock(struct vm_fault *vmf)
->   * parts, do_swap_page must check under lock before unmapping the pte and
->   * proceeding (but do_wp_page is only called after already making such a check;
->   * and do_anonymous_page can safely check later on).
-> + *
-> + * pte_unmap_same() returns:
-> + *	0			if the PTE are the same
-> + *	VM_FAULT_PTNOTSAME	if the PTE are different
-> + *	VM_FAULT_RETRY		if the VMA has changed in our back during
-> + *				a speculative page fault handling.
->   */
-> -static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
-> -				pte_t *page_table, pte_t orig_pte)
-> +static inline int pte_unmap_same(struct vm_fault *vmf)
->  {
-> -	int same = 1;
-> +	int ret = 0;
-> +
->  #if defined(CONFIG_SMP) || defined(CONFIG_PREEMPT)
->  	if (sizeof(pte_t) > sizeof(unsigned long)) {
-> -		spinlock_t *ptl = pte_lockptr(mm, pmd);
-> -		spin_lock(ptl);
-> -		same = pte_same(*page_table, orig_pte);
-> -		spin_unlock(ptl);
-> +		if (pte_spinlock(vmf)) {
-> +			if (!pte_same(*vmf->pte, vmf->orig_pte))
-> +				ret = VM_FAULT_PTNOTSAME;
-> +			spin_unlock(vmf->ptl);
-> +		} else
-> +			ret = VM_FAULT_RETRY;
->  	}
->  #endif
-> -	pte_unmap(page_table);
-> -	return same;
-> +	pte_unmap(vmf->pte);
-> +	return ret;
->  }
->  
->  static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
-> @@ -2912,10 +2920,19 @@ int do_swap_page(struct vm_fault *vmf)
->  	pte_t pte;
->  	int locked;
->  	int exclusive = 0;
-> -	int ret = 0;
-> +	int ret;
->  
-> -	if (!pte_unmap_same(vma->vm_mm, vmf->pmd, vmf->pte, vmf->orig_pte))
-> +	ret = pte_unmap_same(vmf);
-> +	if (ret) {
-> +		/*
-> +		 * If pte != orig_pte, this means another thread did the
-> +		 * swap operation in our back.
-> +		 * So nothing else to do.
-> +		 */
-> +		if (ret == VM_FAULT_PTNOTSAME)
-> +			ret = 0;
->  		goto out;
-> +	}
->  
->  	entry = pte_to_swp_entry(vmf->orig_pte);
->  	if (unlikely(non_swap_entry(entry))) {
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+---
+Changes for v6:
+- Rebase on master 
+Changes for v5:
+- Collect Chen-Yu reviewed-by tag
+Changes for v4:
+- rebase on master
+Changes for v3:
+- Update drivevbus in table of regulators
+
+ Documentation/devicetree/bindings/mfd/axp20x.txt | 3 ++-
+ drivers/regulator/axp20x-regulator.c             | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/mfd/axp20x.txt b/Documentation/devicetree/bindings/mfd/axp20x.txt
+index 9455503b0299..d1762f3b30af 100644
+--- a/Documentation/devicetree/bindings/mfd/axp20x.txt
++++ b/Documentation/devicetree/bindings/mfd/axp20x.txt
+@@ -43,7 +43,7 @@ Optional properties:
+ 			  regulator to drive the OTG VBus, rather then
+ 			  as an input pin which signals whether the
+ 			  board is driving OTG VBus or not.
+-			  (axp221 / axp223 / axp813 only)
++			  (axp221 / axp223 / axp803/ axp813 only)
+ 
+ - x-powers,master-mode: Boolean (axp806 only). Set this when the PMIC is
+ 			wired for master mode. The default is slave mode.
+@@ -132,6 +132,7 @@ FLDO2		: LDO		: fldoin-supply		: shared supply
+ LDO_IO0		: LDO		: ips-supply		: GPIO 0
+ LDO_IO1		: LDO		: ips-supply		: GPIO 1
+ RTC_LDO		: LDO		: ips-supply		: always on
++DRIVEVBUS	: Enable output	: drivevbus-supply	: external regulator
+ 
+ AXP806 regulators, type, and corresponding input supply names:
+ 
+diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+index 181622b2813d..91b8ff8bac15 100644
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -721,6 +721,8 @@ static int axp20x_regulator_probe(struct platform_device *pdev)
+ 	case AXP803_ID:
+ 		regulators = axp803_regulators;
+ 		nregulators = AXP803_REG_ID_MAX;
++		drivevbus = of_property_read_bool(pdev->dev.parent->of_node,
++						  "x-powers,drive-vbus-en");
+ 		break;
+ 	case AXP806_ID:
+ 		regulators = axp806_regulators;
+-- 
+2.14.3
