@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754287AbeDWIXE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:23:04 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:40386 "EHLO
+        id S1754604AbeDWIYd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:24:33 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:54208 "EHLO
         mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754384AbeDWIXC (ORCPT
+        with ESMTP id S1754256AbeDWIYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:23:02 -0400
-X-Google-Smtp-Source: AB8JxZoTokYI6JWVcCtzjkH4pQeDAyNCLZkKMTpwGotgvuIyOqsYOFu7rFoWxDBUAQDunuowDkvwCPiT7cEZa3mXa3HNlGE+qDVz
+        Mon, 23 Apr 2018 04:24:02 -0400
+X-Google-Smtp-Source: AIpwx4/pSSwCyt6jbOuPJGBTnRrW1MrplMBMYbnWAnCLFDKq4WsyNS47t2k6ml+6FsoEsvfuGhmBt9zGPoqiCZs9bHqs7xoc98q4
 MIME-Version: 1.0
-Date: Mon, 23 Apr 2018 01:23:01 -0700
+Date: Mon, 23 Apr 2018 01:24:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000003f2d5056a7fbf92@google.com>
-Subject: KMSAN: uninit-value in strnlen
-From: syzbot <syzbot+cd06c321e7147d03a65e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, mostrows@earthlink.net,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000009c7bf8056a7fc226@google.com>
+Subject: KMSAN: uninit-value in pppol2tp_connect
+From: syzbot <syzbot+a70ac890b23b1bf29f5c@syzkaller.appspotmail.com>
+To: davem@davemloft.net, jchapman@katalix.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -29,27 +30,28 @@ https://github.com/google/kmsan.git/master commit
 a7f95e9c8a95e9fbb388c3999b61a17667cd3bbe (Sat Apr 21 13:50:22 2018 +0000)
 kmsan: disable assembly checksums
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=cd06c321e7147d03a65e
+https://syzkaller.appspot.com/bug?extid=a70ac890b23b1bf29f5c
 
-So far this crash happened 5 times on  
+So far this crash happened 3 times on  
 https://github.com/google/kmsan.git/master.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5785171018121216
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4946656566968320
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5117671628603392
+https://syzkaller.appspot.com/x/repro.syz?id=5395971013869568
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6310764688179200
+https://syzkaller.appspot.com/x/log.txt?id=5936570024591360
 Kernel config: https://syzkaller.appspot.com/x/.config?id=328654897048964367
 compiler: clang version 7.0.0 (trunk 329391)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+cd06c321e7147d03a65e@syzkaller.appspotmail.com
+Reported-by: syzbot+a70ac890b23b1bf29f5c@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
 ==================================================================
-BUG: KMSAN: uninit-value in strnlen+0xc4/0x110 lib/string.c:499
-CPU: 1 PID: 4507 Comm: syzkaller579712 Not tainted 4.16.0+ #85
+BUG: KMSAN: uninit-value in pppol2tp_connect+0x258/0x1c50  
+net/l2tp/l2tp_ppp.c:622
+CPU: 1 PID: 4524 Comm: syzkaller735385 Not tainted 4.16.0+ #85
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
@@ -57,22 +59,18 @@ Call Trace:
   dump_stack+0x185/0x1d0 lib/dump_stack.c:53
   kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
   __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-  strnlen+0xc4/0x110 lib/string.c:499
-  dev_name_hash net/core/dev.c:209 [inline]
-  dev_get_by_name_rcu net/core/dev.c:764 [inline]
-  dev_get_by_name+0x6e/0x350 net/core/dev.c:791
-  pppoe_connect+0xcb7/0x2360 drivers/net/ppp/pppoe.c:665
+  pppol2tp_connect+0x258/0x1c50 net/l2tp/l2tp_ppp.c:622
   SYSC_connect+0x41a/0x510 net/socket.c:1639
   SyS_connect+0x54/0x80 net/socket.c:1620
   do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43fcf9
-RSP: 002b:00007ffca4bd4978 EFLAGS: 00000213 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fcf9
-RDX: 0000000000000007 RSI: 0000000020000040 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401620
-R13: 00000000004016b0 R14: 0000000000000000 R15: 0000000000000000
+RIP: 0033:0x445559
+RSP: 002b:00007f0b96f0ddb8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445559
+RDX: 0000000000000000 RSI: 0000000020000200 RDI: 0000000000000003
+RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffec2b0929f R14: 00007f0b96f0e9c0 R15: 0000000000000001
 
 Local variable description: ----address@SYSC_connect
 Variable was created at:
