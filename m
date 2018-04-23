@@ -1,88 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754862AbeDWMKl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:10:41 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36777 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754746AbeDWMKj (ORCPT
+        id S1754892AbeDWMMr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:12:47 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53078 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754729AbeDWMMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:10:39 -0400
-X-Google-Smtp-Source: AB8JxZogZxTtBG5cwhvBPNaCOFDvFpUuhjCY7LbRmf4uKgUvLn6srunA+UcB/pE4tUlznMCk2C7gmQ==
-Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
- DRM driver
-To: Wei Liu <wei.liu2@citrix.com>
-Cc: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        jgross@suse.com, Artem Mygaiev <Artem_Mygaiev@epam.com>,
-        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
-        airlied@linux.ie,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
-        boris.ostrovsky@oracle.com
-References: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
- <20180416192905.GA18096@downor-Z87X-UD5H>
- <20180417075928.GT31310@phenom.ffwll.local>
- <20180417205744.GA15930@downor-Z87X-UD5H>
- <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
- <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
- <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
- <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
- <20180420071914.GG31310@phenom.ffwll.local>
- <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
- <20180423115242.ywdwqblj2aseu3fr@citrix.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
-Date: Mon, 23 Apr 2018 15:10:35 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 23 Apr 2018 08:12:43 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Peter Rosin <peda@axentia.se>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        a.hajda@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/8] drm: bridge: thc63lvd1024: Add support for LVDS mode map
+Date: Mon, 23 Apr 2018 15:12:54 +0300
+Message-ID: <1653352.Yto2ZqehFs@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180423074156.GO4235@w540>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org> <86c2d4c9-8079-9f25-f24a-58c7866a8274@axentia.se> <20180423074156.GO4235@w540>
 MIME-Version: 1.0
-In-Reply-To: <20180423115242.ywdwqblj2aseu3fr@citrix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/23/2018 02:52 PM, Wei Liu wrote:
-> On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko wrote:
->>>>      the gntdev.
->>>>
->>>> I think this is generic enough that it could be implemented by a
->>>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
->>>> something similar to this.
->>> You can't just wrap random userspace memory into a dma-buf. We've just had
->>> this discussion with kvm/qemu folks, who proposed just that, and after a
->>> bit of discussion they'll now try to have a driver which just wraps a
->>> memfd into a dma-buf.
->> So, we have to decide either we introduce a new driver
->> (say, under drivers/xen/xen-dma-buf) or extend the existing
->> gntdev/balloon to support dma-buf use-cases.
->>
->> Can anybody from Xen community express their preference here?
->>
-> Oleksandr talked to me on IRC about this, he said a few IOCTLs need to
-> be added to either existing drivers or a new driver.
->
-> I went through this thread twice and skimmed through the relevant
-> documents, but I couldn't see any obvious pros and cons for either
-> approach. So I don't really have an opinion on this.
->
-> But, assuming if implemented in existing drivers, those IOCTLs need to
-> be added to different drivers, which means userspace program needs to
-> write more code and get more handles, it would be slightly better to
-> implement a new driver from that perspective.
-If gntdev/balloon extension is still considered:
+Hi Jacopo,
 
-All the IOCTLs will be in gntdev driver (in current xen-zcopy terminology):
-  - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
-  - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
-  - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
+On Monday, 23 April 2018 10:41:56 EEST jacopo mondi wrote:
+> On Sun, Apr 22, 2018 at 10:02:51PM +0200, Peter Rosin wrote:
+> > On 2018-04-19 11:31, Jacopo Mondi wrote:
+> >> The THC63LVD1024 LVDS to RGB bridge supports two different LVDS mapping
+> >> modes, selectable by means of an external pin.
+> >> 
+> >> Add support for configurable LVDS input mapping modes, using the newly
+> >> introduced support for bridge input image formats.
+> >> 
+> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >> ---
+> >> 
+> >>  drivers/gpu/drm/bridge/thc63lvd1024.c | 41 ++++++++++++++++++++++++++++
+> >>  1 file changed, 41 insertions(+)
+> >> 
+> >> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c
+> >> b/drivers/gpu/drm/bridge/thc63lvd1024.c index 48527f8..a3071a1 100644
+> >> --- a/drivers/gpu/drm/bridge/thc63lvd1024.c
+> >> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
 
-Balloon driver extension, which is needed for contiguous/DMA
-buffers, will be to provide new *kernel API*, no UAPI is needed.
+[snip]
 
-> Wei.
-Thank you,
-Oleksandr
+> >> +static int thc63_set_bus_fmt(struct thc63_dev *thc63)
+> >> +{
+> >> +	u32 bus_fmt;
+> >> +	u32 map;
+> >> +	int ret;
+> >> +
+> >> +	ret = of_property_read_u32(thc63->dev->of_node, "thine,map", &map);
+> >> +	if (ret) {
+> >> +		dev_err(thc63->dev,
+> >> +			"Unable to parse property \"thine,map\": %d\n", ret);
+> >> +		return ret;
+> >> +	}
+> >> +
+> >> +	switch (map) {
+> >> +	case THC63_LVDS_MAP_MODE1:
+> >> +		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
+> >> +		break;
+> >> +	case THC63_LVDS_MAP_MODE2:
+> >> +		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
+> > 
+> > Why do you assume rgb888/1x7x4 here? It might as well be rgb666/1x7x3
+> > or rgb101010/1x7x5, no?
+> 
+> I should combine the 'map' pin input mode property with the 'bus_width' one
+> to find that out probably.
+
+Yes, but that could also be left for later, when the need to support those 
+formats arise, especially given that include/uapi/linux/media-bus-format.h has 
+no 1x7x5 formats yet.
+
+> >> +		break;
+> >> +	default:
+> >> +		dev_err(thc63->dev,
+> >> +			"Invalid value for property \"thine,map\": %u\n", map);
+> >> +		return -EINVAL;
+> >> +	}
+> >> +
+> >> +	drm_bridge_set_bus_formats(&thc63->bridge, &bus_fmt, 1);
+> >> +
+> >> +	return 0;
+> >> +}
+
+-- 
+Regards,
+
+Laurent Pinchart
