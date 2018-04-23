@@ -1,35 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755271AbeDWKwb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:52:31 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:44886 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754808AbeDWKw2 (ORCPT
+        id S1754818AbeDWKxQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:53:16 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37324 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754766AbeDWKxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:52:28 -0400
-Subject: Re: WARNING: inconsistent lock state
-To: syzbot <syzbot+9de458f6a5e713ee8c1a@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000008eb847056a7a6c62@google.com>
-Cc: akpm@linux-foundation.org, gs051095@gmail.com, lauraa@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        mingo@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, viresh.kumar@linaro.org
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <4c75f8f7-1c32-585b-f0c4-971e7fd40536@I-love.SAKURA.ne.jp>
-Date: Mon, 23 Apr 2018 19:52:27 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 23 Apr 2018 06:53:13 -0400
+X-Google-Smtp-Source: AIpwx4+MyDojDkq33OkWoBrniGHi/M9J5ACKjv5JQULsDOzd65LMU6TKhvJlB6prcQJHUMmvDsa4lmlI492mXxPoTYA=
 MIME-Version: 1.0
-In-Reply-To: <0000000000008eb847056a7a6c62@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180419104019.24406-1-enric.balletbo@collabora.com>
+References: <20180419104019.24406-1-enric.balletbo@collabora.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 23 Apr 2018 12:53:12 +0200
+Message-ID: <CAPDyKFr_NPNqCmyD0XHa=vy_--kOCzgwUjNqkvXO0uUOdFM=tQ@mail.gmail.com>
+Subject: Re: [PATCH 0/6] devfreq: rk3399_dmc: improve rk3399_dmc driver and
+ it's documentation
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Myungjoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Heiko Stuebner <heiko@sntech.de>, Linux PM <linux-pm@vger.kernel.org>,
+        Derek Basehore <dbasehore@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Doug Anderson <dianders@google.com>, groek@google.com,
+        kernel@collabora.com, Elaine Zhang <zhangqing@rock-chips.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lin Huang <hl@rock-chips.com>, Jeffy Chen <jeffy.chen@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a side effect of doing GFP_KERNEL | __GFP_NOFAIL allocation attempt from IRQ context.
+On 19 April 2018 at 12:40, Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+> Dear all,
+>
+> These patches is an attempt to improve a little bit the rk3399_dmc
+> driver and it's documentation in order to have all in a better shape for
+> a future work I am doing. My final intention is add ddrfreq support for
+> rockchip drm driver, but the patches for this are still
+> work-in-progress. So let's start with this first patchset that is
+> basically some fixes/improvements for the rk3399_dmc driver.
 
-I think that this discussion will continue at
-http://lkml.kernel.org/r/201804231921.DGB18791.QOVFLFMJFtSOHO@I-love.SAKURA.ne.jp .
+I didn't get cc:ed the series, but only the last part, which makes it
+bit hard to get the full context.
+
+Moreover, it would be good if you explained a bit more on what the
+above series actually does and why. Also I don't get why is the PM
+domain changes is in the series, as this seems to be about devfreq.
+
+My point is, if you want me to review, please try to be more precise
+so I know what to review.
+
+>
+> Best regards,
+>
+> Enric Balletbo i Serra (3):
+>   dt-bindings: clock: add DDR3 standard speed bins.
+>   devfreq: rk3399_dmc: remove wait for dcf irq event.
+>   dt-bindings: devfreq: rk3399_dmc: remove interrupts as is not
+>     required.
+>
+> Lin Huang (2):
+>   devfreq: rk3399_dmc: do not print error when get supply and clk defer.
+>   devfreq: rk3399_dmc: register devfreq notification to dmc driver.
+>
+> Nick Milner (1):
+>   dt-bindings: devfreq: rk3399_dmc: improve binding documentation.
+>
+>  .../bindings/devfreq/rk3399_dmc.txt           | 204 +++++++++---------
+>  drivers/devfreq/rk3399_dmc.c                  | 106 +--------
+>  drivers/soc/rockchip/pm_domains.c             |  31 +++
+>  include/dt-bindings/clock/ddr.h               |  34 +++
+>  include/soc/rockchip/rk3399_dmc.h             |  63 ++++++
+>  5 files changed, 238 insertions(+), 200 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/ddr.h
+>  create mode 100644 include/soc/rockchip/rk3399_dmc.h
+>
+> --
+> 2.17.0
+>
+
+Kind regards
+Uffe
