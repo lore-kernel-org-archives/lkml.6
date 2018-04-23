@@ -1,286 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932191AbeDWR3p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:29:45 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45770 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeDWR3m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:29:42 -0400
-X-Google-Smtp-Source: AIpwx48yb7wMU6jQ2rtrcbHgIJgNRyCgZu8wuxaILYYgfwgaA9o6P4VZ5E9SfriMDZcoA+3j53obOw==
-Date: Mon, 23 Apr 2018 10:29:37 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, orsonzhai@gmail.com,
-        zhang.lyra@gmail.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiaotong.lu@spreadtrum.com
-Subject: Re: [PATCH v2 2/2] input: misc: Add Spreadtrum vibrator driver
-Message-ID: <20180423172937.GA66646@dtor-ws>
-References: <e2f85ec0b1fb66baa41dd85bb31e8113e23c704b.1524450536.git.baolin.wang@linaro.org>
- <dc7af2705ab659a7cf579145b7e1eda9697b0ef2.1524450536.git.baolin.wang@linaro.org>
+        id S932180AbeDWRbL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:31:11 -0400
+Received: from mail.us.es ([193.147.175.20]:56934 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932101AbeDWRbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 13:31:06 -0400
+Date: Mon, 23 Apr 2018 19:30:47 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Ahmed Abdelsalam <amsalam20@gmail.com>
+Cc: fw@strlen.de, davem@davemloft.net, dav.lebrun@gmail.com,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, netdev@vger.kernel.org
+Subject: Re: [nf-next] netfilter: extend SRH match to support matching
+ previous, next and last SID
+Message-ID: <20180423173047.gsf2xjlmpichyvte@salvia>
+References: <1524480503-1883-1-git-send-email-amsalam20@gmail.com>
+ <1524480503-1883-2-git-send-email-amsalam20@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dc7af2705ab659a7cf579145b7e1eda9697b0ef2.1524450536.git.baolin.wang@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1524480503-1883-2-git-send-email-amsalam20@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiaotong,
-
-On Mon, Apr 23, 2018 at 10:33:36AM +0800, Baolin Wang wrote:
-> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+On Mon, Apr 23, 2018 at 05:48:22AM -0500, Ahmed Abdelsalam wrote:
+> IPv6 Segment Routing Header (SRH) contains a list of SIDs to be crossed by
+> SR encapsulated packet. Each SID is encoded as an IPv6 prefix.
 > 
-> This patch adds the Spreadtrum vibrator driver, which embedded in the
-> Spreadtrum SC27xx series PMICs.
+> When a Firewall receives an SR encapsulated packet, it should be able to
+> identify which node previously processed the packet (previous SID), which
+> node is going to process the packet next (next SID), and which node is the
+> last to process the packet (last SID) which represent the final destination
+> of the packet in case of inline SR mode.
 > 
-> Signed-off-by: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> An example use-case of using these features could be SID list that includes
+> two firewalls. When the second firewall receives a packet, it can check
+> whether the packet has been processed by the first firewall or not. Based on
+> that check, it decides to apply all rules, apply just subset of the rules,
+> or totally skip all rules and forward the packet to the next SID.
+> 
+> This patch extends SRH match to support matching previous SID, next SID, and
+> last SID.
+> 
+> Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
 > ---
-> Changes since v1:
->  - Remove input_ff_destroy() and input_unregister_device()
-> ---
->  drivers/input/misc/Kconfig        |   10 +++
->  drivers/input/misc/Makefile       |    1 +
->  drivers/input/misc/sc27xx-vibra.c |  156 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 167 insertions(+)
->  create mode 100644 drivers/input/misc/sc27xx-vibra.c
+>  include/uapi/linux/netfilter_ipv6/ip6t_srh.h | 22 +++++++++++++--
+>  net/ipv6/netfilter/ip6t_srh.c                | 41 +++++++++++++++++++++++++++-
+>  2 files changed, 60 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-> index 572b15f..c761c0c 100644
-> --- a/drivers/input/misc/Kconfig
-> +++ b/drivers/input/misc/Kconfig
-> @@ -841,4 +841,14 @@ config INPUT_RAVE_SP_PWRBUTTON
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called rave-sp-pwrbutton.
+> diff --git a/include/uapi/linux/netfilter_ipv6/ip6t_srh.h b/include/uapi/linux/netfilter_ipv6/ip6t_srh.h
+> index f3cc0ef..9808382 100644
+> --- a/include/uapi/linux/netfilter_ipv6/ip6t_srh.h
+> +++ b/include/uapi/linux/netfilter_ipv6/ip6t_srh.h
+> @@ -17,7 +17,10 @@
+>  #define IP6T_SRH_LAST_GT        0x0100
+>  #define IP6T_SRH_LAST_LT        0x0200
+>  #define IP6T_SRH_TAG            0x0400
+> -#define IP6T_SRH_MASK           0x07FF
+> +#define IP6T_SRH_PSID           0x0800
+> +#define IP6T_SRH_NSID           0x1000
+> +#define IP6T_SRH_LSID           0x2000
+> +#define IP6T_SRH_MASK           0x3FFF
 >  
-> +config INPUT_SC27XX_VIBRA
-> +	tristate "Spreadtrum sc27xx vibrator support"
-> +	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> +	select INPUT_FF_MEMLESS
-> +	help
-> +	  This option enables support for Spreadtrum sc27xx vibrator driver.
-> +
-> +	  To compile this driver as a module, choose M here. The module will
-> +	  be called sc27xx_vibra.
-> +
->  endif
-> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-> index 72cde28..9d0f9d1 100644
-> --- a/drivers/input/misc/Makefile
-> +++ b/drivers/input/misc/Makefile
-> @@ -66,6 +66,7 @@ obj-$(CONFIG_INPUT_RETU_PWRBUTTON)	+= retu-pwrbutton.o
->  obj-$(CONFIG_INPUT_AXP20X_PEK)		+= axp20x-pek.o
->  obj-$(CONFIG_INPUT_GPIO_ROTARY_ENCODER)	+= rotary_encoder.o
->  obj-$(CONFIG_INPUT_RK805_PWRKEY)	+= rk805-pwrkey.o
-> +obj-$(CONFIG_INPUT_SC27XX_VIBRA)	+= sc27xx-vibra.o
->  obj-$(CONFIG_INPUT_SGI_BTNS)		+= sgi_btns.o
->  obj-$(CONFIG_INPUT_SIRFSOC_ONKEY)	+= sirfsoc-onkey.o
->  obj-$(CONFIG_INPUT_SOC_BUTTON_ARRAY)	+= soc_button_array.o
-> diff --git a/drivers/input/misc/sc27xx-vibra.c b/drivers/input/misc/sc27xx-vibra.c
-> new file mode 100644
-> index 0000000..f78e70f
-> --- /dev/null
-> +++ b/drivers/input/misc/sc27xx-vibra.c
-> @@ -0,0 +1,156 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 Spreadtrum Communications Inc.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/input.h>
-> +#include <linux/workqueue.h>
-> +
-> +#define CUR_DRV_CAL_SEL		GENMASK(13, 12)
-> +#define SLP_LDOVIBR_PD_EN	BIT(9)
-> +#define LDO_VIBR_PD		BIT(8)
-> +
-> +struct vibra_info {
-> +	struct input_dev	*input_dev;
-> +	struct work_struct	play_work;
-> +	struct regmap		*regmap;
-> +	u32			base;
-> +	u32			strength;
-> +	bool			enabled;
-> +};
-> +
-> +static void sc27xx_vibra_set(struct vibra_info *info, bool on)
-> +{
-> +	if (on) {
-> +		regmap_update_bits(info->regmap, info->base, LDO_VIBR_PD, 0);
-> +		regmap_update_bits(info->regmap, info->base,
-> +				   SLP_LDOVIBR_PD_EN, 0);
-> +		info->enabled = true;
-> +	} else {
-> +		regmap_update_bits(info->regmap, info->base, LDO_VIBR_PD,
-> +				   LDO_VIBR_PD);
-> +		regmap_update_bits(info->regmap, info->base,
-> +				   SLP_LDOVIBR_PD_EN, SLP_LDOVIBR_PD_EN);
-> +		info->enabled = false;
-> +	}
-> +}
-> +
-> +static int sc27xx_vibra_hw_init(struct vibra_info *info)
-> +{
-> +	return regmap_update_bits(info->regmap, info->base, CUR_DRV_CAL_SEL, 0);
-> +}
-> +
-> +static void sc27xx_vibra_play_work(struct work_struct *work)
-> +{
-> +	struct vibra_info *info = container_of(work, struct vibra_info,
-> +					       play_work);
-> +
-> +	if (info->strength && !info->enabled)
-> +		sc27xx_vibra_set(info, true);
-> +	else if (info->enabled)
-> +		sc27xx_vibra_set(info, false);
+>  /* Values for "mt_invflags" field in struct ip6t_srh */
+>  #define IP6T_SRH_INV_NEXTHDR    0x0001
+> @@ -31,7 +34,10 @@
+>  #define IP6T_SRH_INV_LAST_GT    0x0100
+>  #define IP6T_SRH_INV_LAST_LT    0x0200
+>  #define IP6T_SRH_INV_TAG        0x0400
+> -#define IP6T_SRH_INV_MASK       0x07FF
+> +#define IP6T_SRH_INV_PSID       0x0800
+> +#define IP6T_SRH_INV_NSID       0x1000
+> +#define IP6T_SRH_INV_LSID       0x2000
+> +#define IP6T_SRH_INV_MASK       0x3FFF
+>  
+>  /**
+>   *      struct ip6t_srh - SRH match options
+> @@ -40,6 +46,12 @@
+>   *      @ segs_left: Segments left field of SRH
+>   *      @ last_entry: Last entry field of SRH
+>   *      @ tag: Tag field of SRH
+> + *      @ psid_addr: Address of previous SID in SRH SID list
+> + *      @ nsid_addr: Address of NEXT SID in SRH SID list
+> + *      @ lsid_addr: Address of LAST SID in SRH SID list
+> + *      @ psid_msk: Mask of previous SID in SRH SID list
+> + *      @ nsid_msk: Mask of next SID in SRH SID list
+> + *      @ lsid_msk: MAsk of last SID in SRH SID list
+>   *      @ mt_flags: match options
+>   *      @ mt_invflags: Invert the sense of match options
+>   */
+> @@ -50,6 +62,12 @@ struct ip6t_srh {
+>  	__u8                    segs_left;
+>  	__u8                    last_entry;
+>  	__u16                   tag;
+> +	struct in6_addr		psid_addr;
+> +	struct in6_addr		nsid_addr;
+> +	struct in6_addr		lsid_addr;
+> +	struct in6_addr		psid_msk;
+> +	struct in6_addr		nsid_msk;
+> +	struct in6_addr		lsid_msk;
 
-I do not think this is correct. If you issue 2 play requests with
-info->strength that is not 0 then you'll end up disabling the vibrator.
+This is changing something exposed through UAPI, so you will need a
+new revision for this.
 
-I think you want the 2nd condition to be:
+>  	__u16                   mt_flags;
+>  	__u16                   mt_invflags;
+>  };
+> diff --git a/net/ipv6/netfilter/ip6t_srh.c b/net/ipv6/netfilter/ip6t_srh.c
+> index 33719d5..2b5cc73 100644
+> --- a/net/ipv6/netfilter/ip6t_srh.c
+> +++ b/net/ipv6/netfilter/ip6t_srh.c
+> @@ -30,7 +30,9 @@ static bool srh_mt6(const struct sk_buff *skb, struct xt_action_param *par)
+>  	const struct ip6t_srh *srhinfo = par->matchinfo;
+>  	struct ipv6_sr_hdr *srh;
+>  	struct ipv6_sr_hdr _srh;
+> -	int hdrlen, srhoff = 0;
+> +	int hdrlen, psidoff, nsidoff, lsidoff, srhoff = 0;
+> +	struct in6_addr *psid, *nsid, *lsid;
+> +	struct in6_addr _psid, _nsid, _lsid;
 
-	else if (info->strength == 0 && info->enabled)
-		sc27xx_vibra_set(info, false);
+Could you rearrange variable definitions? ie. longest line first, eg.
 
-
-> +}
-> +
-> +static int sc27xx_vibra_play(struct input_dev *input, void *data,
-> +			     struct ff_effect *effect)
-> +{
-> +	struct vibra_info *info = input_get_drvdata(input);
-> +
-> +	info->strength = effect->u.rumble.weak_magnitude;
-> +	schedule_work(&info->play_work);
-> +
-> +	return 0;
-> +}
-> +
-> +static void sc27xx_vibra_close(struct input_dev *input)
-> +{
-> +	struct vibra_info *info = input_get_drvdata(input);
-> +
-> +	cancel_work_sync(&info->play_work);
-> +	if (info->enabled)
-> +		sc27xx_vibra_set(info, false);
-> +}
-> +
-> +static int sc27xx_vibra_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *node = pdev->dev.of_node;
-> +	struct vibra_info *info;
-> +	int ret;
-
-Can we please call this variable "error"?
-
-> +
-> +	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
-> +	if (!info)
-> +		return -ENOMEM;
-> +
-> +	info->regmap = dev_get_regmap(pdev->dev.parent, NULL);
-> +	if (!info->regmap) {
-> +		dev_err(&pdev->dev, "failed to get vibrator regmap.\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = of_property_read_u32(node, "reg", &info->base);
-
-I am fan of generic device properties, please change to
-device_property_read_u32().
-
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to get vibrator base address.\n");
-> +		return ret;
-> +	}
-> +
-> +	info->input_dev = devm_input_allocate_device(&pdev->dev);
-> +	if (!info->input_dev) {
-> +		dev_err(&pdev->dev, "failed to allocate input device.\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	info->input_dev->name = "sc27xx:vibrator";
-> +	info->input_dev->id.version = 0;
-> +	info->input_dev->dev.parent = pdev->dev.parent;
-
-Why is device reparented to the parent of platform device? This breaks
-devm implementation for the input device. If you really need this,
-you'll have to switch to unmanaged API.
-
-> +	info->input_dev->close = sc27xx_vibra_close;
-> +
-> +	input_set_drvdata(info->input_dev, info);
-> +	input_set_capability(info->input_dev, EV_FF, FF_RUMBLE);
-> +	INIT_WORK(&info->play_work, sc27xx_vibra_play_work);
-> +	info->enabled = false;
-> +
-> +	ret = input_ff_create_memless(info->input_dev, NULL, sc27xx_vibra_play);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to register vibrator to FF.\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = input_register_device(info->input_dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to register input device.\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = sc27xx_vibra_hw_init(info);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to initialize the vibrator.\n");
-> +		return ret;
-> +	}
-
-It is too late to initialize hardware after registering the input
-device, as once registered it should be fully functional. I'd recommend
-calling this before calling input_register_device(), or (maybe even
-better) doing this as part of open() method.
-
-> +
-> +	platform_set_drvdata(pdev, info);
-
-I do not think you are using platform device's driver data anywhere.
-
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id sc27xx_vibra_of_match[] = {
-> +	{ .compatible = "sprd,sc27xx-vibrator", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, sc27xx_vibra_of_match);
-> +
-> +static struct platform_driver sc27xx_vibra_driver = {
-> +	.driver = {
-> +		.name = "sc27xx-vibrator",
-> +		.of_match_table = sc27xx_vibra_of_match,
-
-Do you need suspend support by chance? To shut off the vibrator when
-system transitions to sleep?
-
-> +	},
-> +	.probe = sc27xx_vibra_probe,
-> +};
-> +
-> +module_platform_driver(sc27xx_vibra_driver);
-> +
-> +MODULE_DESCRIPTION("Spreadtrum SC27xx Vibrator Driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
-> -- 
-> 1.7.9.5
-> 
+	int hdrlen, psidoff, nsidoff, lsidoff, srhoff = 0;
+  	const struct ip6t_srh *srhinfo = par->matchinfo;
+	struct in6_addr *psid, *nsid, *lsid;
+  	struct ipv6_sr_hdr *srh;
+  	struct ipv6_sr_hdr _srh;
 
 Thanks.
-
--- 
-Dmitry
