@@ -1,210 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754910AbeDWLBw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 07:01:52 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56888 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754846AbeDWLBl (ORCPT
+        id S1754869AbeDWLBr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 07:01:47 -0400
+Received: from s02.spamexperts.axc.nl ([185.182.56.112]:47499 "EHLO
+        s02.spamexperts.axc.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754787AbeDWLBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 07:01:41 -0400
-From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: cohuck@redhat.com, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
-        pasic@linux.ibm.com, pmorel@linux.ibm.com,
-        Halil Pasic <pasic@linux.vnet.ibm.com>,
-        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Subject: [PATCH v2 5/5] vfio: ccw: add traceponits for interesting error paths
-Date: Mon, 23 Apr 2018 13:01:13 +0200
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180423110113.59385-1-bjsdjshi@linux.vnet.ibm.com>
-References: <20180423110113.59385-1-bjsdjshi@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18042311-8235-0000-0000-00000D5AA738
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008905; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01022058; UDB=6.00521638; IPR=6.00801293;
- MB=3.00020722; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 11:01:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042311-8236-0000-0000-0000409AC6E6
-Message-Id: <20180423110113.59385-6-bjsdjshi@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804230116
+        Mon, 23 Apr 2018 07:01:33 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 23 Apr 2018 13:01:03 +0200
+From: Pascal Roeleven <dev@pascalroeleven.nl>
+To: maxime.ripard@bootlin.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] Re: [PATCH] ARM: dts: sun4i: Fix incorrect clocks
+ for displays
+In-Reply-To: <20180423071421.byupsz4gxpmhfe44@flea>
+References: <20180420102112.2843-1-dev@pascalroeleven.nl>
+ <20180423071421.byupsz4gxpmhfe44@flea>
+Message-ID: <887c9144972ab75a4520141a17e1607b@pascalroeleven.nl>
+User-Agent: Roundcube Webmail/1.3.5
+PrimaryMX: Accepted email from trusted host.  Hint: This skips spam scanning so make sure other host is not vulnerable
+X-Relay-Host: 185.182.56.42
+X-Spam-Score: 0.0 (/)
+X-Spam-Report: Spam detection software, running on the system "vserver22.axc.nl",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  On 2018-04-23 09:14, Maxime Ripard wrote: > On Fri, Apr 20,
+    2018 at 12:21:12PM +0200, Pascal Roeleven wrote: >> Some displays on SUN4i
+    devices wouldn't properly stay on unless >> 'clk_ignore_unused' is used.
+   >> >> Change the duplicate clocks to the probably intended ones. >> >> Signed-off-by:
+    Pascal Roeleven <dev@pascalroeleven.nl> > > What was the difference with
+   the first patch you sent? > > Anyway, I've applied it, thanks > > Maxime >
+    > -- > Maxime Ripard, Bootlin (formerly Free Electrons) > Embedded Linux
+   and Kernel engineering > https://bootlin.com [...]
+ Content analysis details:   (0.0 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was blocked.
+                             See
+                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+                              for more information.
+                             [URIs: pascalroeleven.nl]
+SpamTally: Final spam score: 0
+X-Originating-IP: 185.182.56.82
+X-SpamExperts-Domain: vserver22.axc.nl
+X-SpamExperts-Username: 185.182.56.82
+Authentication-Results: spamexperts.axc.nl; auth=pass smtp.auth=185.182.56.82@vserver22.axc.nl
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00707305160397)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5sZWPgoG9A6BM/DrXs3mBL1602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO01c7t7BiHkROxieRAgMjhj9NTFFPuvqPiGTFfLuvLv+7Zl3j5VIQEtsGGxM4ibFs2bp
+ vuk2H397d4iSK3nh/8fyHC7Trb0yHaCuBe+zVs1zDzCjdvuLlNprJt7sM9U2tvEm1xUk+uitP3zt
+ fVUM86qADZEAq6MVvDzVG1eBiMwsxonw6auRGB+OqkfrxZvcAu63p/UbUTcmIpuXtxg/CxlyFZQN
+ yGR1xdWr/EMlluN/HaaU/Zb275qB1xqcfpxQM78iXoKuit7KYsvfORRN32/uqqHf0YlM0FoFl5SM
+ CrNVm5UrAVUJXWCOkjmLx5rfPWJqWWpqOdpQykhUmzfN+rpd3FLLN5JZzRmnU7SUHT2Pg8CBO1Sn
+ vm6qXHQp7O9kdXzJqywiCyRpWLvaQP8TpD1s24tFNcrW2H3oHk7M+t/IGFvlHOQsi9fJrQH2HB7K
+ cn7E9n664KB+xMpIjboCH5KLZs4XEHfQdJxMWQNlIJHit1AzVHmN/1Ca6vYbegKN9pDtMXpd47Jk
+ uyvi9F/b5Xr+q263SxhPVtF/V2M9L7dcNvokIFGx07bhuY7QrNII/xIn+RMmMo9n/zJo//hfCVlk
+ AdhK23InA2zzja5I1riDJBcOl1Sca1tCLiymrRRXBKDkaM024bykcyHR7I4FbmnLRaO3oh2Y+QPh
+ zq1ed4hKPsarl5dnGXsBogEFWhbvijo/WtzAwxKxmN+PCLjJS1n9BQ7dDQWLiI0sLYm4yP/7OMye
+ V7249X2e1GQHGQCkca9WJmbhekdrgcJsDlHBdahrSlHVtLHaZkFpoXAuc0NSEIfqJfx0xnvORO1u
+ Vic89WCijbR5gOtRiEFrJGnSGxi96t0jSpXk/FZ1fwcf7/prCnx4FGUWiONpnHe100SbOuHRfOND
+ F4cVqm7lmX5VA+Pwnfs6UYm2Ai3DKHJBJpSzwr8AJI+ULtNHd99UioyGXUy4L73dGT+pP/Hi7yJ7
+ 6rVy2DNwOgV373pfDhBQ21OdRS1J8Q9o9wsNBuY1VdC8WZCMICylBBeA9ExrvE2k+wP4j3vl9ilE
+ NAJdELfMPSIKfhWFL18GAOeh/x4RI75Pxakgsnq2YdHMNQhGOMdLA4kBXtD10+3+aA6m3yQ23IEc
+ XNM8K+LjoSSEl2/JdfLG6TwbaO2SDHRS+6qA2mIAaxiySMNG8mWJheziSx58QXxt
+X-Report-Abuse-To: spam@s01.spamexperts.axc.nl
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Halil Pasic <pasic@linux.vnet.ibm.com>
+On 2018-04-23 09:14, Maxime Ripard wrote:
+> On Fri, Apr 20, 2018 at 12:21:12PM +0200, Pascal Roeleven wrote:
+>> Some displays on SUN4i devices wouldn't properly stay on unless
+>> 'clk_ignore_unused' is used.
+>> 
+>> Change the duplicate clocks to the probably intended ones.
+>> 
+>> Signed-off-by: Pascal Roeleven <dev@pascalroeleven.nl>
+> 
+> What was the difference with the first patch you sent?
+> 
+> Anyway, I've applied it, thanks
+> 
+> Maxime
+> 
+> --
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
-Add some tracepoints so we can inspect what is not working as is should.
-
-Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
----
- drivers/s390/cio/Makefile         |  1 +
- drivers/s390/cio/vfio_ccw_fsm.c   | 16 +++++++-
- drivers/s390/cio/vfio_ccw_trace.h | 77 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 93 insertions(+), 1 deletion(-)
- create mode 100644 drivers/s390/cio/vfio_ccw_trace.h
-
-diff --git a/drivers/s390/cio/Makefile b/drivers/s390/cio/Makefile
-index a070ef0efe65..f230516abb96 100644
---- a/drivers/s390/cio/Makefile
-+++ b/drivers/s390/cio/Makefile
-@@ -5,6 +5,7 @@
- 
- # The following is required for define_trace.h to find ./trace.h
- CFLAGS_trace.o := -I$(src)
-+CFLAGS_vfio_ccw_fsm.o := -I$(src)
- 
- obj-y += airq.o blacklist.o chsc.o cio.o css.o chp.o idset.o isc.o \
- 	fcx.o itcw.o crw.o ccwreq.o trace.o ioasm.o
-diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
-index ff6963ad6e39..90cab4e1436e 100644
---- a/drivers/s390/cio/vfio_ccw_fsm.c
-+++ b/drivers/s390/cio/vfio_ccw_fsm.c
-@@ -13,6 +13,9 @@
- #include "ioasm.h"
- #include "vfio_ccw_private.h"
- 
-+#define CREATE_TRACE_POINTS
-+#include "vfio_ccw_trace.h"
-+
- static int fsm_io_helper(struct vfio_ccw_private *private)
- {
- 	struct subchannel *sch;
-@@ -105,6 +108,10 @@ static void fsm_disabled_irq(struct vfio_ccw_private *private,
- 	 */
- 	cio_disable_subchannel(sch);
- }
-+inline struct subchannel_id get_schid(struct vfio_ccw_private *p)
-+{
-+	return p->sch->schid;
-+}
- 
- /*
-  * Deal with the ccw command request from the userspace.
-@@ -135,6 +142,8 @@ static void fsm_io_request(struct vfio_ccw_private *private,
- 			goto err_out;
- 
- 		io_region->ret_code = cp_prefetch(&private->cp);
-+		trace_vfio_ccw_cp_prefetch(get_schid(private),
-+					   io_region->ret_code);
- 		if (io_region->ret_code) {
- 			cp_free(&private->cp);
- 			goto err_out;
-@@ -142,11 +151,13 @@ static void fsm_io_request(struct vfio_ccw_private *private,
- 
- 		/* Start channel program and wait for I/O interrupt. */
- 		io_region->ret_code = fsm_io_helper(private);
-+		trace_vfio_ccw_fsm_io_helper(get_schid(private),
-+					     io_region->ret_code);
- 		if (io_region->ret_code) {
- 			cp_free(&private->cp);
- 			goto err_out;
- 		}
--		return;
-+		goto out;
- 	} else if (scsw->cmd.fctl & SCSW_FCTL_HALT_FUNC) {
- 		/* XXX: Handle halt. */
- 		io_region->ret_code = -EOPNOTSUPP;
-@@ -159,6 +170,9 @@ static void fsm_io_request(struct vfio_ccw_private *private,
- 
- err_out:
- 	private->state = VFIO_CCW_STATE_IDLE;
-+out:
-+	trace_vfio_ccw_io_fctl(scsw->cmd.fctl, get_schid(private),
-+			       io_region->ret_code);
- }
- 
- /*
-diff --git a/drivers/s390/cio/vfio_ccw_trace.h b/drivers/s390/cio/vfio_ccw_trace.h
-new file mode 100644
-index 000000000000..25128331c285
---- /dev/null
-+++ b/drivers/s390/cio/vfio_ccw_trace.h
-@@ -0,0 +1,77 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ * Tracepoints for vfio_ccw driver
-+ *
-+ * Copyright IBM Corp. 2018
-+ *
-+ * Author(s): Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-+ *            Halil Pasic <pasic@linux.vnet.ibm.com>
-+ */
-+
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM vfio_ccw
-+
-+#if !defined(_VFIO_CCW_TRACE_) || defined(TRACE_HEADER_MULTI_READ)
-+#define _VFIO_CCW_TRACE_
-+
-+#include <linux/tracepoint.h>
-+
-+DECLARE_EVENT_CLASS(vfio_ccw_schid_errno,
-+	TP_PROTO(struct subchannel_id schid, int errno),
-+	TP_ARGS(schid, errno),
-+
-+	TP_STRUCT__entry(
-+		__field_struct(struct subchannel_id, schid)
-+		__field(int, errno)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->schid = schid;
-+		__entry->errno = errno;
-+	),
-+
-+	TP_printk("schid=%x.%x.%04x errno=%d", __entry->schid.cssid,
-+		  __entry->schid.ssid, __entry->schid.sch_no, __entry->errno)
-+);
-+
-+DEFINE_EVENT(vfio_ccw_schid_errno, vfio_ccw_cp_prefetch,
-+	TP_PROTO(struct subchannel_id schid, int errno),
-+	TP_ARGS(schid, errno)
-+);
-+
-+DEFINE_EVENT(vfio_ccw_schid_errno, vfio_ccw_fsm_io_helper,
-+	TP_PROTO(struct subchannel_id schid, int errno),
-+	TP_ARGS(schid, errno)
-+);
-+
-+TRACE_EVENT(vfio_ccw_io_fctl,
-+	TP_PROTO(int fctl, struct subchannel_id schid, int errno),
-+	TP_ARGS(fctl, schid, errno),
-+
-+	TP_STRUCT__entry(
-+		__field(int, fctl)
-+		__field_struct(struct subchannel_id, schid)
-+		__field(int, errno)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->fctl = fctl;
-+		__entry->schid = schid;
-+		__entry->errno = errno;
-+	),
-+
-+	TP_printk("schid=%x.%x.%04x fctl=%x errno=%d", __entry->schid.cssid,
-+		  __entry->schid.ssid, __entry->schid.sch_no,
-+		  __entry->fctl, __entry->errno)
-+);
-+
-+#endif /* _VFIO_CCW_TRACE_ */
-+
-+/* This part must be outside protection */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE vfio_ccw_trace
-+
-+#include <trace/define_trace.h>
--- 
-2.13.5
+I'm sorry there isn't any.
+It's the first patch I have ever send so had some git-send-email issues 
+and
+didn't know the correct procedure to resend a patch.
