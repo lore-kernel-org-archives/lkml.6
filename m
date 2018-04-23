@@ -1,114 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932145AbeDWRCe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:02:34 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46992 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932068AbeDWRCd (ORCPT
+        id S932210AbeDWREc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:04:32 -0400
+Received: from sonic316-19.consmr.mail.bf2.yahoo.com ([74.6.130.193]:44071
+        "EHLO sonic316-19.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932129AbeDWRE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:02:33 -0400
-Date: Mon, 23 Apr 2018 19:02:30 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Paul Menzel <pmenzel+linux-kernel@molgen.mpg.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: How to disable Linux =?utf-8?Q?kernel_?=
- =?utf-8?Q?self-extraction_=28KERNEL=5FGZIP=2C_KERNEL=5FBZIP2=2C_=E2=80=A6?=
- =?utf-8?B?KT8=?=
-Message-ID: <20180423170230.GA22412@amd>
-References: <9468be0e-5eb9-246c-e60e-3d8019a42fd1@molgen.mpg.de>
- <20180422102033.GB26243@amd>
- <b22efb58-b63e-7130-f2d7-a9d28225ef9b@molgen.mpg.de>
- <20180422205208.GA8672@amd>
+        Mon, 23 Apr 2018 13:04:28 -0400
+X-YMail-OSG: wYXbXiQVM1nvDuu1aB.L7oeT7zipbGNQWi29vGUJi4Zf_9W2WTCbsoyKKufmtVQ
+ hzwvQWuShbHyCn0NCRPAlIiEZ9ysMZxsWN8PhBv1TlmGZPkC4X_dfZzQrNVYKNm39e.JFVg7MNwM
+ 6Do8gboDdM0wwHRnZK8l5CdRF.mItmsUW6EYwy2eOSG8fGkY7EWKZ0ATUI.mmMsY9nLaPlaAym44
+ I1oXYUSxypds9brLMdzlPne6McFLQQ0mObpJ_Zx1Ez1nDZnkexA_EwbLj0sD3r8gS2HLyo6FPvr.
+ CAztrc14vfWek.KZd_bUl62kdHK2vnQld9Tb_d9zMfWQK2BnjAec1wKuzAdh5O4Olw3Z7w80juPn
+ tG1LFhzqbCb2EDsw92vpoop82Tlvj35d93IdqTykpXqx1FJ2vZ4l3eM4mJHF41MBohIghQdfZHkl
+ SUUzNJrELwpkGtmT6V4.Ez2mc8DNPlzBbix4b4BAnk7aVJlID.nkS883CMSUL5.T3dPmtxc2ats7
+ Wmt1W7b_uYHywNiGPt4yk_ckaTGgVQkG3R8mXRcQWGftaILnZgM2b89KWUb5cG7p5FUmW3NYRrvz
+ YvkI-
+Subject: Re: [PATCH 0/3] Introduce LSM-hook for socketpair(2)
+To: David Herrmann <dh.herrmann@gmail.com>, linux-kernel@vger.kernel.org
+Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        teg@jklm.no, Stephen Smalley <sds@tycho.nsa.gov>,
+        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>, serge@hallyn.com,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20180423133015.5455-1-dh.herrmann@gmail.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <32eea1d6-450c-bc68-59d6-74bc5011ead2@schaufler-ca.com>
+Date: Mon, 23 Apr 2018 10:04:19 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
-Content-Disposition: inline
-In-Reply-To: <20180422205208.GA8672@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180423133015.5455-1-dh.herrmann@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 4/23/2018 6:30 AM, David Herrmann wrote:
+> Hi
+>
+> This series adds a new LSM hook for the socketpair(2) syscall. The idea
+> is to allow SO_PEERSEC to be called on AF_UNIX sockets created via
+> socketpair(2), and return the same information as if you emulated
+> socketpair(2) via a temporary listener socket. Right now SO_PEERSEC
+> will return the unlabeled credentials for a socketpair, rather than the
+> actual credentials of the creating process.
+>
+> ...
+>
+> This series only adds SELinux backends, since that is what we need for
+> RHEL. I will gladly extend the other LSMs if needed.
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I would be very happy to see a proposed patch for Smack. It shouldn't
+be much different from the SELinux version, with the exception that it
+will use pointers to smk_known structures instead of secids. It would be
+a big help, as someone just threw a whole new species of scorpion into
+this pit.
 
-Hi!
-
-> > >>I try to decrease boot time, and my system has an SSD and enough spac=
-e, so
-> > >>loading 18 instead of 12 MB doesn=E2=80=99t make a difference, but the
-> > >>self-extraction is noticeable. So, I like to disable it.
-> > >
-> > >How long does GZIP extraction take on your hardware?
-> >=20
-> > It=E2=80=99s hard to measure =E2=80=93 at least I didn=E2=80=99t find a=
- way to do so =E2=80=93, but counting
-> > from the last GRUB message to the first message of Linux (with `quiet`
-> > removed from the the command line), it takes roughly *two* seconds.
-> >=20
-> > ```
-> > $ ls -l /boot/vmlinuz-4.15.0-3-686-pae
-> > -rw-r--r-- 1 root root  3987200 Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686=
--pae
-> > $ ls -lh /boot/vmlinuz-4.15.0-3-686-pae
-> > -rw-r--r-- 1 root root 3,9M Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686-pae
-> > $ time scripts/extract-vmlinux vmlinuz-4.15.0-3-686-pae > bla.txt
-> >=20
-> > real    0m1,204s
-> > user    0m1,041s
-> > sys     0m0,245s
-> > ```
->=20
-> Interesting; looks like I have faster machine (thinkpad X220).
->=20
-> pavel@duo:/data/l/linux$ time scripts/extract-vmlinux /tmp/vmlinux.bin
-> > /tmp/delme
-> 0.21user 0.15system 0.66 (0m0.660s) elapsed 56.36%CPU
-> pavel@duo:/data/l/linux$ ls -al /tmp/delme
-> -rw-r--r-- 1 pavel pavel 18275356 Apr 22 22:44 /tmp/delme
-> pavel@duo:/data/l/linux$ gzip /tmp/delme
-> pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
-> 0.21user 0.02system 0.23 (0m0.232s) elapsed 100.03%CPU
-> pavel@duo:/data/l/linux$ gzip -1 /tmp/delme
-> pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
-> 0.22user 0.03system 0.25 (0m0.257s) elapsed 100.11%CPU
-> pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
->=20
-> ..and it also looks like extract-kernel is significantly slower than
-> gzip -9, because it is not using all the CPU. Strange.
->=20
-> Interesting. I somehow assumed gzip -d would be faster than that on
-> modern machines.
->=20
-> So yes, looks like uncompressed kernel image may be good idea.
-
-Actually... Compressors usually have a mode when they store the data
-uncompressed. So you should be able to prepare .gz image which is not
-really compressed inside, and thus really fast to uncompress.
-
-Or maybe even better -- there should be some compression algorithms
-that are fast enough to uncompress that there should be no
-slowdown. Maybe use one of those?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlreEaYACgkQMOfwapXb+vJuGgCgivTLoIa19tIEQbDUyfD5bl1V
-WEMAn3f3UU9jeKV+flxUZ+MfB9J/vLaO
-=He0a
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
+>
+> Thanks
+> David
+>
+> [1] https://github.com/bus1/dbus-broker/blob/master/src/util/test-peersec.c
+> [2] https://www.spinics.net/lists/selinux/msg22674.html
+>
+> David Herrmann (3):
+>   security: add hook for socketpair(AF_UNIX, ...)
+>   net/unix: hook unix_socketpair() into LSM
+>   selinux: provide unix_stream_socketpair callback
+>
+>  include/linux/lsm_hooks.h |  8 ++++++++
+>  include/linux/security.h  |  7 +++++++
+>  net/unix/af_unix.c        |  5 +++++
+>  security/security.c       |  6 ++++++
+>  security/selinux/hooks.c  | 14 ++++++++++++++
+>  5 files changed, 40 insertions(+)
+>
