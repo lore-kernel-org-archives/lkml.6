@@ -1,43 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754431AbeDWJQw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:16:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49756 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754201AbeDWJQk (ORCPT
+        id S1754510AbeDWJRL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 05:17:11 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40146 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754484AbeDWJRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:16:40 -0400
-Date: Mon, 23 Apr 2018 11:16:33 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Diego Viola <diego.viola@gmail.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, len.brown@intel.com,
-        rui.zhang@intel.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: Experiencing freezes with kernel 4.16.3 on a desktop with E5500
- CPU (bisect included)
-Message-ID: <20180423091633.GU4064@hirez.programming.kicks-ass.net>
-References: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Mon, 23 Apr 2018 05:17:04 -0400
+X-Google-Smtp-Source: AIpwx4+dcCmTPYdzA36FzqiT1o3iPLK22W3iZCjnE+6LyMEnfvbpZk8+3igS1uZnEPYxqimZ2Hht6Q==
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: rjw@rjwysocki.net
+Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arnd@arndb.de, broonie@kernel.org,
+        lorenzo.pieralisi@arm.com, bill.fletcher@linaro.org,
+        linux-arm-kernel@lists.infradead.org, graeme.gregory@linaro.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v2] ACPI / button: make module loadable when booted in non-ACPI mode
+Date: Mon, 23 Apr 2018 11:16:56 +0200
+Message-Id: <20180423091656.26257-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 21, 2018 at 11:19:55PM -0300, Diego Viola wrote:
+Modules such as nouveau.ko and i915.ko have a link time dependency on
+acpi_lid_open(), and due to its use of acpi_bus_register_driver(),
+the button.ko module that provides it is only loadable when booted in
+ACPI mode. However, the ACPI button driver can be built into the core
+kernel as well, in which case the dependency can always be satisfied,
+and the dependent modules can be loaded regardless of whether the
+system was booted in ACPI mode or not.
 
-> The problem only happens *after* resuming from suspend, in normal S0
-> state it never happens.
+So let's fix this asymmetry by making the ACPI button driver loadable
+as a module even if not booted in ACPI mode, so it can provide the
+acpi_lid_open() symbol in the same way as when built into the kernel.
 
-What kind of suspend are you doing? s2disk, s2ram ?
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+v2: invert acpi_disabled logic and move comment into __acpi_bus_register_driver
 
-> My machine is a desktop and has a dual core E5500 CPU with 2GB of RAM,
-> I run Arch Linux and I use the i3wm.
+Could we perhaps get this into -stable as well? It is not a classic
+regression, but it completely breaks, e.g., Fedora when booting in
+DT mode on an ARM system.
 
-That's a Core2 era chip; does it actually have stable TSC ?
+ drivers/acpi/button.c | 24 +++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-> aa83c45762a242acce9b35020363225a7b59d7c9 is the first bad commit
-
-That is most curious; that was supposed to only affect early boot. I'll
-try and figure out of there's some intersection with suspend.
+diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+index e1eee7a60fad..f33242e4fe6c 100644
+--- a/drivers/acpi/button.c
++++ b/drivers/acpi/button.c
+@@ -635,4 +635,26 @@ module_param_call(lid_init_state,
+ 		  NULL, 0644);
+ MODULE_PARM_DESC(lid_init_state, "Behavior for reporting LID initial state");
+ 
+-module_acpi_driver(acpi_button_driver);
++static int __acpi_bus_register_driver(struct acpi_driver *driver)
++{
++	/*
++	 * Modules such as nouveau.ko and i915.ko have a link time dependency
++	 * on acpi_lid_open(), and would therefore not be loadable on ACPI
++	 * capable kernels booted in non-ACPI mode if we use the ordinary
++	 * acpi_bus_[un]register_driver routines here (which only work when
++	 * booted in ACPI mode) and build this driver as a module. So provide
++	 * our own versions instead.
++	 */
++	if (acpi_disabled)
++		return 0;
++	return acpi_bus_register_driver(driver);
++}
++
++static void __acpi_bus_unregister_driver(struct acpi_driver *driver)
++{
++	if (!acpi_disabled)
++		acpi_bus_unregister_driver(driver);
++}
++
++module_driver(acpi_button_driver, __acpi_bus_register_driver,
++	      __acpi_bus_unregister_driver);
+-- 
+2.17.0
