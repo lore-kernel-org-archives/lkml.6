@@ -1,118 +1,62 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-923319-1524475105-3-15068131822519155845
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524475104; b=cRsFyfQze2hM+uyeDxeLAZF2SaBmcJnedrgZ102w4MyQJsfrPY
-    3J6gteY63iXlgXrbZGCtcujgGq24iKbHq8UIyIBkc+A3UoVux5E4/xRkh/Np4nm7
-    y/0/B7+59NtPm5UhIjxrPej3gPN2pFIlyVmXXvaSt9EKYoWSqG1Bg8z8Rn5CVBuG
-    J/oCfkdc2zTszvrsU5HBMCA2DgK+BrDKIYx6+iytk1mWKFDpvw8OiMYnw3rFPI5d
-    f/eiGp/ujiTNkrxiNxXgzRfQkr6cJQfeKPM5wuid+D139izH527PoBWC7ETzC8NU
-    FqZjpOy0DSLQ2P/RnoU2zOHHrPIXbEv6fWGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524475104; bh=HjuKJ
-    x9Za0CRms0NQ0MYb9U7emSTzMLc5/GJacpzea8=; b=vklpbXdyZ+zHd8AiC+tGS
-    c4D4Jflg9o6mYN1C7ekveH1a2tZj7TCCB2cskszAUGSLHMtLm8RpxiBQE+LUwQpc
-    pkKL+0raKftZ5W2ortA4DiQLhy02si+fBItZKW0ymMrj4N8Cd6tkGD+lPGrEu5Mq
-    KDwuwSHspfeNOQhGG5CgIXzsGM0tQ6S9Qr+J+x+x9eafd325NogWxoo01pte+Igs
-    vKbsPpeic35Lbm/uDP+HLgwyWOFBOm0/SiGW7hb5m3f9v+WSIBziOB8DzxtQszjc
-    QdURVPoolD8OKmsA3dvJ++JhzJrwJ6Yw7mr6FmeffmmJuQHmrwzkliNS71vXTWv4
-    g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMNW6vPbVIpTPodSY15j2U2fq1g+lu6DZ209301Nfzq0r1O/xPnGuJb8uGhsaC7bXMR6c2smElE9W12VxPtIEiC/zqGoq6pJ+9MuTY+ksMmNYAAAanx1
-    /wShZQbuAz6Bk48gz5diGbPthR1aXRZFnCbJ0icdrwccJwm6HcMrRV+0qVymqYItPzvL0F8y11MNmJJkeHw9rHUD1wdTUXyeLKpj/Tw5acwHjyQ/QzsTtRlW
-    j8x540pgfL2j6k8+K3TxqQ==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=sPEKT-_OGD64R-LmTNUA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Mon, 23 Apr 2018 11:18:12 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: Re: [PATCH] android: binder: Change return type to vm_fault_t
-Message-ID: <20180423091812.GB14322@kroah.com>
-References: <20180416151121.GA26791@jordon-HP-15-Notebook-PC>
+Return-Path: <jrdr.linux@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524477601; cv=none;
+        d=google.com; s=arc-20160816;
+        b=pz6evdbVH7PSoHZ2I3W6OFIY6G6PJzUoqJXUrCJ9gY2jRiXkQBJ+NeD7ui4hZjWc0R
+         +ES+psW4ZfHIPl5AO3utvdPabG1LHhxP+cbYgRLfF36Ny8pCt+vPjtOlGnE47TEFAcRY
+         tmDFSy/WsS3cOG7ouDpVY+5Qrv+lwA3+q0DJ/ksBuVvAPqslqIwOlcPtBP1PgiO3F1Sq
+         x4QbvRcD96i7M5FO9oDP5T0RbpgHZEi6H4sI9lM+Jq2gGCfkEJQaAfyRWk5twJsZvt+S
+         sFUV/RWbvQKznf3gRGuRQSkOLsuZ48aIhrGjyqKGs2oD8sn1UNWcGJUeHflqwqXTshYU
+         1bTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=YqY7mCr1ZEsu/NYIMD8o24TBYSwImbTbqkdNvEFGWlo=;
+        b=lQcJdJRwZOKo3jZHwF+L/wv+dROkCRRsH3qDNYqK3CcrwTnr51sBccYbmbfyuq26SV
+         r4CL/43syBqzhk3Q0E9GfWMI50pWfijWX9GSRIL9Fg1eGSZa2Fg7HdNSoOkL0oKMNkXc
+         MBc2VDneW9xlUxYOrtVtKsasS/tWcLysDwXLG4ljCd5uxCFUV1Akxykdmafl+7n6KHiz
+         Cd+uFaizKyyCwr2L/DkafzE+NUcYODHfXKnc08VkV2BijPwUCkQINCT+IHBBhSQbZ40J
+         9j/IJum53sLB650wrlBSBlTianm6/m0VXBUiw7Q2VLWrMm9Iy8EHuMFEx0CEukwg472k
+         kkNg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=KddB+tPM;
+       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=KddB+tPM;
+       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx487PBBAeH9dCVGBjU/yix9IDt+JUiIo3qDcDRRyD7m/8WhBKglPEZhg5GQ22Xzdh3sEd6/lz423sDu8yRxIBYs=
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180416151121.GA26791@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, tkjos@android.com, linux-kernel@vger.kernel.org,
- willy@infradead.org, arve@android.com, maco@android.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180423091812.GB14322@kroah.com>
+References: <20180416151121.GA26791@jordon-HP-15-Notebook-PC> <20180423091812.GB14322@kroah.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Mon, 23 Apr 2018 15:30:00 +0530
+Message-ID: <CAFqt6zZc50b6oeJhau0=-winrqsnxrKjFB7gFLxgwQqp70Dh5A@mail.gmail.com>
+Subject: Re: [PATCH] android: binder: Change return type to vm_fault_t
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: arve@android.com, tkjos@android.com, maco@android.com,
+	devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597915915131087032?=
+X-GMAIL-MSGID: =?utf-8?q?1598530625185226040?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 16, 2018 at 08:41:21PM +0530, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler
-> in struct vm_operations_struct. For now, this is
-> just documenting that the function returns a 
-> VM_FAULT value rather than an errno.  Once all
-> instances are converted, vm_fault_t will become
-> a distinct type.
-> 
-> Reference commit id->
-> 1c8f422059ae5da07db7406ab916203f9417e396
+On Mon, Apr 23, 2018 at 2:48 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Mon, Apr 16, 2018 at 08:41:21PM +0530, Souptick Joarder wrote:
+>> Use new return type vm_fault_t for fault handler
+>> in struct vm_operations_struct. For now, this is
+>> just documenting that the function returns a
+>> VM_FAULT value rather than an errno.  Once all
+>> instances are converted, vm_fault_t will become
+>> a distinct type.
+>>
+>> Reference commit id->
+>> 1c8f422059ae5da07db7406ab916203f9417e396
+>
+> As you know, that is not how you reference git commit ids.  Please fix
+> up and resend.
 
-As you know, that is not how you reference git commit ids.  Please fix
-up and resend.
-
-thanks,
-
-greg k-h
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Sure, I will send v2.
