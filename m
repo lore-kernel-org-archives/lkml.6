@@ -1,119 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755299AbeDWNAK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:00:10 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:39297 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754841AbeDWNAI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:00:08 -0400
-X-Google-Smtp-Source: AIpwx4/L0TDawrS8PDBjTC3zkJJKjcuYgVlH9AOaqY5hqP+OrHdbofZx2GFA2RcwYMFBf2KLUvdzsQ==
-Date: Mon, 23 Apr 2018 22:00:02 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, Peter Zijlstra <peterz@infradead.org>,
-        Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180423130002.GA465@tigerII.localdomain>
-References: <20180413124704.19335-1-pmladek@suse.com>
- <20180413101233.0792ebf0@gandalf.local.home>
- <20180414023516.GA17806@tigerII.localdomain>
- <20180416014729.GB1034@jagdpanzerIV>
- <20180416042553.GA555@jagdpanzerIV>
- <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
- <20180420021511.GB6397@jagdpanzerIV>
- <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
- <20180423052133.GA3643@jagdpanzerIV>
- <20180423122600.sozmrytiasd32bhc@pathway.suse.cz>
+        id S1755113AbeDWNE1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:04:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754947AbeDWNE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 09:04:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F74C21795
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Mon, 23 Apr 2018 15:04:23 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Jacek Tomaka <jacekt@dug.com>
+Cc: linux-kernel@vger.kernel.org, cmetcalf@mellanox.com, cl@linux.com,
+        lcapitulino@redhat.com, efault@gmx.de, peterz@infradead.org,
+        riel@redhat.com, tglx@linutronix.de, kernellwp@gmail.com,
+        mingo@kernel.org
+Subject: Re: NO_HZ_FULL and tick running within a reasonable amount of time
+Message-ID: <20180423130421.GA18293@lerouge>
+References: <20180402220438.GA15885@linux.vnet.ibm.com>
+ <20180403114130.GA22765@lerouge>
+ <20180403170858.GO3948@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180423122600.sozmrytiasd32bhc@pathway.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180403170858.GO3948@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/23/18 14:26), Petr Mladek wrote:
-> need to see the problems and be able to debug them. BTW: I wrote
-> this in the patch description.
+On Tue, Apr 03, 2018 at 10:08:58AM -0700, Paul E. McKenney wrote:
+> On Tue, Apr 03, 2018 at 01:41:31PM +0200, Frederic Weisbecker wrote:
+> > On Mon, Apr 02, 2018 at 03:04:38PM -0700, Paul E. McKenney wrote:
+> > > Hello!
+> > > 
+> > > I am hitting the following on today's mainline under rcutorture, but
+> > > only on scenarios built with CONFIG_NO_HZ_FULL=y:
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > WARNING: CPU: 0 PID: 7 at /home/paulmck/public_git/linux-rcu/kernel/sched/core.c:3124 sched_tick_remote+0x113/0x120
+> > > Modules linked in:
+> > > CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.16.0+ #1
+> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+> > > Workqueue: events_unbound sched_tick_remote
+> > > RIP: 0010:sched_tick_remote+0x113/0x120
+> > > RSP: 0018:ffff94d540103e20 EFLAGS: 00010002
+> > > RAX: 000000012e9bb357 RBX: ffff8f95dfd21840 RCX: 000000000000001f
+> > > RDX: 00000000b2d05e00 RSI: 00000000ffffffff RDI: ffff8f95dfd21858
+> > > RBP: ffff94d540103e48 R08: 00000000f6499019 R09: 00000000f6499000
+> > > R10: 00000000b163d33b R11: ffffffffa5c8c212 R12: ffff8f95dfd25518
+> > > R13: ffff8f95de9e4200 R14: 0000000000003402 R15: ffff8f95dfd21858
+> > > FS:  0000000000000000(0000) GS:ffff8f95dfc00000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 000000000a015b40 CR3: 000000001de14000 CR4: 00000000000006f0
+> > > Call Trace:
+> > >  process_one_work+0x1d9/0x6a0
+> > >  worker_thread+0x42/0x420
+> > >  kthread+0xf3/0x130
+> > >  ? rescuer_thread+0x340/0x340
+> > >  ? kthread_delayed_work_timer_fn+0x80/0x80
+> > >  ret_from_fork+0x3a/0x50
+> > > Code: ff 48 8b 83 80 0b 00 00 48 85 c0 0f 85 41 ff ff ff e9 45 ff ff ff be ff ff ff ff 4c 89 ff e8 55 44 02 00 85 c0 75 87 0f 0b eb 83 <0f> 0b eb 97 66 0f 1f 84 00 00 00 00 00 41 57 41 56 41 55 41 54
+> > > ---[ end trace fbdcbe529a8ae799 ]--
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > The WARN_ON_ONCE() triggering is this guy:
+> > > 
+> > > 	delta = rq_clock_task(rq) - curr->se.exec_start;
+> > > 	WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
+> > 
+> > Weird. Can you try to print up those values and see how much they drift?
+> > 
+> >         if (WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3))
+> >                printk_once("clock_task: %lld exec_start: %lld\n", rq_clock_task(rq), curr->se.exec_start);
 > 
-> > A very quick googling:
+> Here you go!
 > 
-> Nice collection. Just note that the useful (ratelimited) information
-> always fits into the first 100 lines in all these examples:
-
-I'm *very and really* sorry to ask that, but are you serious now?
-Apologies if I'm not getting a joke here, or something.
-
-[..]
-> > Throttling down that error mechanism to 100 lines
-> > per hour, or 1000 lines per hour is unlikely will be welcomed.
+> 							Thanx, Paul
 > 
-> I wonder if you have bigger problems with the number of lines
-> or with the length of the period.
+> ------------------------------------------------------------------------
 > 
-> We simply _must_ limit the number of lines. Otherwise we would
-> never be able to break an _infinite_ loop.
-
-Give me examples of such messages, and please do explain why you were
-not able to rate-limit them and instead decided to introduce a system
-wide printk() rate-limit.
-
-> > Among all the patches and proposal that we saw so far, one stands out - it's
-> > the original Tejun's patch [offloading to work queue]. Because it has zero
-> > interference with the existing call_console_drivers()->printk()
-> > channels.
+> WARNING: CPU: 0 PID: 7 at /home/paulmck/public_git/linux-rcu/kernel/sched/core.c:3124 sched_tick_remote+0xdb/0x100
+> Modules linked in:
+> CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.16.0+ #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+> Workqueue: events_unbound sched_tick_remote
+> RIP: 0010:sched_tick_remote+0xdb/0x100
+> RSP: 0018:ffffa2c440103e60 EFLAGS: 00010006
+> RAX: 00000000b2d05e00 RBX: ffff96f0dfd20980 RCX: 000000016a8de322
+> RDX: 000000000d33a301 RSI: 0000000177c18623 RDI: fffffffeb0bf0e53
+> RBP: ffff96f0dfd24328 R08: 0000000000000000 R09: 0000000000000001
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff96f0de9d2640
+> R13: 0000000000000000 R14: 0ffff96f0de81700 R15: ffff96f0de96f540
+> FS:  0000000000000000(0000) GS:ffff96f0dfc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000f7ec6ca3 CR3: 000000001e03e000 CR4: 00000000000006f0
+> Call Trace:
+>  process_one_work+0x139/0x3e0
+>  worker_thread+0x42/0x420
+>  kthread+0xf3/0x130
+>  ? create_worker+0x190/0x190
+>  ? kthread_destroy_worker+0x40/0x40
+>  ret_from_fork+0x35/0x40
+> Code: 89 8b 43 04 85 c0 0f 85 75 ff ff ff 48 8b 83 e0 0a 00 00 48 85 c0 0f 85 65 ff ff ff e9 69 ff ff ff 48 89 df e8 87 fe ff ff eb 8d <0f> 0b 80 3d 7d 57 2b 01 00 75 a8 48 c7 c7 e8 e1 fd a4 c6 05 6d
+> ---[ end trace f0c6a1afa55d130d ]---
+> clock_task: 6304138787 exec_start: 221487873
 > 
-> The only problem is that it does not solve the infinite loop.
 
-Same as above. I'm not kidding. I really want to know what unfixable&endless
-messages you are talking about? May I take look at the backtraces?
+I'm trying to reproduce it on a large CPUs system. It seems to be easier
+to trigger it that way.
 
-> > What is so special about this case that we decided to screw up printk()
-> > instead?
-> 
-> Also messages from console drivers are about printk debugging. There must
-> be some limitations by definition.
-
-No. Check the links that I found after _literally_ 5 seconds of googling.
-Tons of messages are coming from core kernel code. Nothing to do with
-the debugging. It *is* a valid and widely used error reporting channel.
-End of story.
-
-
-SERIOUSLY. PLEASE (!) - don't turn printk() into rate-limited printk().
-Don't introduce that HUGE regression. Let's handle it the same way as we
-always do - let's look at the logs, and rate-limit misbehaving code.
-
-
-> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > index 247808333ba4..484c456c095a 100644
-> > --- a/kernel/printk/printk.c
-> > +++ b/kernel/printk/printk.c
-> > @@ -2385,9 +2385,11 @@ void console_unlock(void)
-> >  		 */
-> >  		console_lock_spinning_enable();
-> >  
-> > +		__printk_safe_exit();
-> >  		stop_critical_timings();	/* don't trace print latency */
-> >  		call_console_drivers(ext_text, ext_len, text, len);
-> >  		start_critical_timings();
-> > +		__printk_safe_enter();
-> 
-> Is this by intention? What is the reason to call
-> console_lock_spinning_disable_and_check() in printk_safe() context, please?
-
-Yes, it is. console_lock_spinning_enable() is touching console_owner_lock:
-an `internal' printk lock -- which we also touch in vprintk_emit(). As such
-[internal printk lock] it must be accessed under printk_safe(), by definition.
-
-> >  		if (console_lock_spinning_disable_and_check()) {
-> >  			printk_safe_exit_irqrestore(flags);
-
-	-ss
+Thanks.
