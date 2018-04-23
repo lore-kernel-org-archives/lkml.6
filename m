@@ -1,115 +1,141 @@
-Return-Path: <BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org>
-X-Google-Smtp-Source: AIpwx49e377CTPvyda3k87fR4v7dQ0LoGjbrXUw21qd7Pwe4j4oGrXDC/6EH6FRFTFnQthrP1S1O
-ARC-Seal: i=1; a=rsa-sha256; t=1524141710; cv=none;
+Return-Path: <kernel-hardening-return-13088-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx48BVoGXIWfAY2ooEoFNhlwFuppltG7qKmKJdAqHtzqcS8VEzON+A+aMsc/iY0kmSulxnyj4
+ARC-Seal: i=1; a=rsa-sha256; t=1524488144; cv=none;
         d=google.com; s=arc-20160816;
-        b=af38gCLeSQxUUT8c9gKryTjBv2qMrG8SoBmfiG+8hV7lywasl1sEg33w7YCAl9+cZs
-         //sF7iwYdmK07/E6pbJl3DmCuPeQj7Wh3x+jACLaDzApFhmphntBRSu7QT2wf3jpfQ4M
-         j+PYg7sQgqWMayWk8hT0mxXrQpbSFQjqUs9d+5nrj5BBsLQhs3twwlusU6nwr8JhRUYm
-         Zf6Won7lU+Lq7Cn4frv5ZkfVzSiqpk0KJXwTDkd1m5KeoUp+C1zO5JB278D3d+ogesw/
-         PvR441dHPUG3tBPSxlsdYywimL/VP9URQxY9qnm2c7v6hpQDkPzQbo36n2hgG1fahplK
-         D/YQ==
+        b=ziGHq1IelZNTivYQOLt+q5+aqil47qxi3+nsdkYeXsKY3TIrXISO89ow76YZqWOCHi
+         kkGYUug7LeL+3SAe6fc+nTNPrRVKwKX0KjSu15FA+xhn2PJdc6s24gUStDFDilc946mL
+         mKSr31IVL7OxZC1jgKX5zOvE0O1RopvPqyETl+PABZNghtznsrAmg6sFNiLadwHHpE5b
+         BFt/QeE16pGUheUNxUXQj6AW1P68vQ4hkVTxfWEFfL4trc0UMYcDg2wXsGXPPRoYHRF9
+         zLMQL5WKy6UjPT2xpc8gR5GQVdFM5PZTV8lCyfxPH6QqyljAw9K91MK1tJVNgUJE41AD
+         0FJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=cJes1OhW4NH13lzjMc3PXbipHrYVkpl4//zrNZeV84I=;
-        b=fW/R7rlGJQ89JDn8AlAEO9lex/cjr/y9Tky/W9CgDfPJDFH3nmSnmJYqrWydmIf6tk
-         s4BR7PXqXxpSNpVcHbLpXpoPgTMz8ZiaiP8RY1i/tCPpcybtvwDibfYDhFiUVuoS54Vo
-         cU4X/sKcZ5g6uuSaPn/RMhw7Fz9p3YeF3+CPVSNzPvsry7AMAwi68xm5s7u3PEuryLKK
-         l8cvvjFq74zOZQ12ybtHbUywTwcSOfJOqPPUtsDCs7QKyOsMnZefCmPnE1wWqpaW9aY1
-         StmmeRJ2vTYP51xYGqKatsLRQ72LdhxvzHgxnIZVbuzPKqRaieM3fCWQJJkbuJSV/ffD
-         PvSg==
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=e9HDvz/LcbcDeAwauzFQKVn+N2jmZd9EmEcqwM4Ck7Q=;
+        b=mns/Jp1kUbKCxHq2WJTRY6Yrkdc+Q5Wl0rdPQ33tJoXDiedJVoYjdsPyA8FEQInjH6
+         rkAlxQWrZkVRTA7X+VUs6IWqGnr8DLwdpj6qr1rLy7qjCB8vqy/NmYEiIIgloRK1OvDW
+         hKDbAHwdkp5F8FwPVAUYPBnTyHu48t5BZs1FeIhG2OrpV4AAW+MeG+tOtR5EixB6LHIl
+         4RtDAwy916acyYG8cGxVpJySLiMXVyIoTCyGpyzD5b++qbRngX7vMxSvCokCHkXYQgGs
+         BaCFFU4zpwAxHRJrUa/VASw3iQcge1EdqDqOyizvz4FOS6TnwyDl1qJNWe8qTutvDttJ
+         XVWw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=J6DD3veh;
-       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BejYbuPy;
+       spf=pass (google.com: domain of kernel-hardening-return-13088-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13088-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=J6DD3veh;
-       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
-From: Christoph Hellwig <hch@lst.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Corey Minyard <minyard@acm.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-acpi@vger.kernel.org,
-	drbd-dev@lists.linbit.com,
-	linux-ide@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	devel@driverdev.osuosl.org,
-	linux-afs@lists.infradead.org,
-	linux-ext4@vger.kernel.org,
-	jfs-discussion@lists.sourceforge.net,
-	netfilter-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/39] net/can: single_open_net needs to be paired with single_release_net
-Date: Thu, 19 Apr 2018 14:41:02 +0200
-Message-Id: <20180419124140.9309-2-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180419124140.9309-1-hch@lst.de>
-References: <20180419124140.9309-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BejYbuPy;
+       spf=pass (google.com: domain of kernel-hardening-return-13088-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13088-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To: willy@infradead.org,
+	keescook@chromium.org,
+	paul@paul-moore.com,
+	sds@tycho.nsa.gov,
+	mhocko@kernel.org,
+	corbet@lwn.net
+Cc: labbott@redhat.com,
+	linux-cc=david@fromorbit.com,
+	--cc=rppt@linux.vnet.ibm.com,
+	--security-module@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	igor.stoppa@gmail.com,
+	Igor Stoppa <igor.stoppa@huawei.com>
+Subject: [RFC PATCH v23 0/6] mm: security: write protection for dynamic data
+Date: Mon, 23 Apr 2018 16:54:49 +0400
+Message-Id: <20180423125458.5338-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598178417551173376?=
-X-GMAIL-MSGID: =?utf-8?q?1598178417551173376?=
+X-GMAIL-THRID: =?utf-8?q?1598541680355567743?=
+X-GMAIL-MSGID: =?utf-8?q?1598541680355567743?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Otherwise we will leak a reference to the network namespace.
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- net/can/bcm.c  | 2 +-
- net/can/proc.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+The memory is managed in pools: when a memory pool is protected, all the
+memory that is currently part of it, will become R/O.
 
-diff --git a/net/can/bcm.c b/net/can/bcm.c
-index ac5e5e34fee3..8073fa14e143 100644
---- a/net/can/bcm.c
-+++ b/net/can/bcm.c
-@@ -249,7 +249,7 @@ static const struct file_operations bcm_proc_fops = {
- 	.open		= bcm_proc_open,
- 	.read		= seq_read,
- 	.llseek		= seq_lseek,
--	.release	= single_release,
-+	.release	= single_release_net,
- };
- #endif /* CONFIG_PROC_FS */
- 
-diff --git a/net/can/proc.c b/net/can/proc.c
-index fdf704e9bb8c..fde2fd55b826 100644
---- a/net/can/proc.c
-+++ b/net/can/proc.c
-@@ -279,7 +279,7 @@ static const struct file_operations can_stats_proc_fops = {
- 	.open		= can_stats_proc_open,
- 	.read		= seq_read,
- 	.llseek		= seq_lseek,
--	.release	= single_release,
-+	.release	= single_release_net,
- };
- 
- static int can_reset_stats_proc_show(struct seq_file *m, void *v)
-@@ -449,7 +449,7 @@ static const struct file_operations can_rcvlist_sff_proc_fops = {
- 	.open		= can_rcvlist_sff_proc_open,
- 	.read		= seq_read,
- 	.llseek		= seq_lseek,
--	.release	= single_release,
-+	.release	= single_release_net,
- };
- 
- 
-@@ -492,7 +492,7 @@ static const struct file_operations can_rcvlist_eff_proc_fops = {
- 	.open		= can_rcvlist_eff_proc_open,
- 	.read		= seq_read,
- 	.llseek		= seq_lseek,
--	.release	= single_release,
-+	.release	= single_release_net,
- };
- 
- /*
+A R/O pool can be expanded (adding more protectable memory).
+It can also be destroyed, to recover its memory, but it cannot be
+turned back into normal R/W mode.
+
+This is intentional. This feature is meant for data that either doesn't
+need further modifications after initialization, or it will change very
+seldom.
+
+The data might need to be released, for example as part of module unloading.
+The pool, therefore, can be destroyed.
+
+For those cases where the data is never completely stable, however it can
+stay unmodified for very long periods, there is a possibility of
+allocating it from a "rare write" pool, which allows modification to its
+data, through an helper function.
+
+I did not want to overcomplicate the first version of rare write, but it
+might be needed to add disabling/enabling of preemption, however I would
+appreciate comments in general about the implementation through transient
+remapping.
+
+An example is provided, showing how to protect one of hte internal states
+of SELinux.
+
+Changes since v22:
+[http://www.openwall.com/lists/kernel-hardening/2018/04/13/3]
+
+- refactored some helper functions in a separate local header
+- expanded the documentation
+- introduction of rare write support
+- example with SELinux "initialized" field
+
+
+Igor Stoppa (9):
+  struct page: add field for vm_struct
+  vmalloc: rename llist field in vmap_area
+  Protectable Memory
+  Documentation for Pmalloc
+  Pmalloc selftest
+  lkdtm: crash on overwriting protected pmalloc var
+  Pmalloc Rare Write: modify selected pools
+  Preliminary self test for pmalloc rare write
+  Protect SELinux initialized state with pmalloc
+
+ Documentation/core-api/index.rst    |   1 +
+ Documentation/core-api/pmalloc.rst  | 189 ++++++++++++++++++++++++++
+ drivers/misc/lkdtm/core.c           |   3 +
+ drivers/misc/lkdtm/lkdtm.h          |   1 +
+ drivers/misc/lkdtm/perms.c          |  25 ++++
+ include/linux/mm_types.h            |   1 +
+ include/linux/pmalloc.h             | 170 ++++++++++++++++++++++++
+ include/linux/test_pmalloc.h        |  24 ++++
+ include/linux/vmalloc.h             |   6 +-
+ init/main.c                         |   2 +
+ mm/Kconfig                          |  16 +++
+ mm/Makefile                         |   2 +
+ mm/pmalloc.c                        | 258 ++++++++++++++++++++++++++++++++++++
+ mm/pmalloc_helpers.h                | 210 +++++++++++++++++++++++++++++
+ mm/test_pmalloc.c                   | 213 +++++++++++++++++++++++++++++
+ mm/usercopy.c                       |   9 ++
+ mm/vmalloc.c                        |  10 +-
+ security/selinux/hooks.c            |  12 +-
+ security/selinux/include/security.h |   2 +-
+ security/selinux/ss/services.c      |  51 ++++---
+ 20 files changed, 1174 insertions(+), 31 deletions(-)
+ create mode 100644 Documentation/core-api/pmalloc.rst
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 include/linux/test_pmalloc.h
+ create mode 100644 mm/pmalloc.c
+ create mode 100644 mm/pmalloc_helpers.h
+ create mode 100644 mm/test_pmalloc.c
+
 -- 
-2.17.0
+2.14.1
