@@ -1,58 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932607AbeDWWlL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 18:41:11 -0400
-Received: from resqmta-po-05v.sys.comcast.net ([96.114.154.164]:49388 "EHLO
-        resqmta-po-05v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932514AbeDWWlK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 18:41:10 -0400
-Date: Mon, 23 Apr 2018 17:41:06 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Vlastimil Babka <vbabka@suse.cz>
-cc: Michal Hocko <mhocko@kernel.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] SLUB: Do not fallback to mininum order if __GFP_NORETRY
- is set
-In-Reply-To: <26580de4-70b5-90f7-b3b9-22f57ba38843@suse.cz>
-Message-ID: <alpine.DEB.2.20.1804231738020.3811@nuc-kabylake>
-References: <alpine.DEB.2.20.1804180944180.1062@nuc-kabylake> <20180419110051.GB16083@dhcp22.suse.cz> <alpine.DEB.2.20.1804200952230.18006@nuc-kabylake> <26580de4-70b5-90f7-b3b9-22f57ba38843@suse.cz>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfEcjkcIxzJKVPhWLxpQ2X8DhEQ2pJNDLla7KQesvz0T3n3MzC+1sPzmYvYqssex3H0zdicditeCpMMauUiakGsETr2KH7ewJUW0iS54yKsyd7BeQYbmS
- arTi9s+kqGj3QywZlQlhSxr7xR729DDHjsSHo6wv/HtYgwbbqNEGmXiAX47+Tdy2cE8yoStynnPRmUMZs8mjurxx2fmkoVN162tG5VTvY+VZVw/pTKL5WcQz
- Qh/JC5D8gRrC/EB4xo7iWIfVfTBmeQR47kz1AXejCrN4wn7dxqp+n9+3RJCW73pCVvo1+BOxEiyWOHAqkERQYJWBGlF7t8TcOkkmvHNxD5u/3DqsPQdk8Xiu
- yQ2dGc40tbNV9QUtZBEj3bcKMISNd+jdVev8dqcXS+pXNHDSM8Uu5N3OYvzTbuP2zXx/P5/vY7PxOgyUK4Zbsi6f9IoGROBm94csvhInEj/PUGzb4CG86AA3
- 3OXBOo13N099PC/0zYk+mB3G05LBq5/RxcnqGg==
+        id S932591AbeDWWt4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 18:49:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932514AbeDWWtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 18:49:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA1572178B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: clear page_error for all the writebacking pages
+Date: Mon, 23 Apr 2018 16:49:14 -0600
+Message-Id: <20180423224914.46640-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 21 Apr 2018, Vlastimil Babka wrote:
+This patch clear page_error bit, if the page is going to be writebacked.
 
-> > The problem is that SLUB does not honor GFP_NORETRY. The semantics of
-> > GFP_NORETRY are not followed.
->
-> The caller might want SLUB to try hard to get that high-order page that
-> will minimize memory waste (e.g. 2MB page for 3 640k objects), and
-> __GFP_NORETRY will kill the effort on allocating that high-order page.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/gc.c      | 1 +
+ fs/f2fs/inline.c  | 1 +
+ fs/f2fs/node.c    | 1 +
+ fs/f2fs/segment.c | 1 +
+ 4 files changed, 4 insertions(+)
 
-Well yes since *_NORETRY says that fallbacks are acceptable.
-
-> Thus, using __GPF_NORETRY for "please give me a space-optimized object,
-> or nothing (because I have a fallback that's better than wasting memory,
-> e.g. by using 1MB page for 640kb object)" is not ideal.
->
-> Maybe __GFP_RETRY_MAYFAIL is a better fit? Or perhaps indicate this
-> situation to SLUB with e.g. __GFP_COMP, although that's rather ugly?
-
-Yuck. None of that sounds like an intuitive approach.
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 70418b34c5f6..a7de8b3431a9 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -693,6 +693,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 		dec_page_count(fio.sbi, F2FS_DIRTY_META);
+ 
+ 	set_page_writeback(fio.encrypted_page);
++	ClearPageError(page);
+ 
+ 	/* allocate block address */
+ 	f2fs_wait_on_page_writeback(dn.node_page, NODE, true);
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index b50e36351280..1eaa2049eafa 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -139,6 +139,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+ 
+ 	/* write data page to try to make data consistent */
+ 	set_page_writeback(page);
++	ClearPageError(page);
+ 	fio.old_blkaddr = dn->data_blkaddr;
+ 	set_inode_flag(dn->inode, FI_HOT_DATA);
+ 	write_data_page(dn, &fio);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index ae83ca9d2d31..3a3d38b3e9ec 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1394,6 +1394,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 		fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
+ 
+ 	set_page_writeback(page);
++	ClearPageError(page);
+ 	fio.old_blkaddr = ni.blk_addr;
+ 	write_node_page(nid, &fio);
+ 	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 3325b9959119..a99c30b4eec9 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2758,6 +2758,7 @@ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page,
+ 		fio.op_flags &= ~REQ_META;
+ 
+ 	set_page_writeback(page);
++	ClearPageError(page);
+ 	f2fs_submit_page_write(&fio);
+ 
+ 	f2fs_update_iostat(sbi, io_type, F2FS_BLKSIZE);
+-- 
+2.17.0.484.g0c8726318c-goog
