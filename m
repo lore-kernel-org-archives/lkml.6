@@ -1,23 +1,23 @@
 Return-Path: <tony@atomide.com>
-X-Google-Smtp-Source: AIpwx48UCmaLzLUzajRhsK2b2VlZBJ5DS6D3VxvcqxRZpZIXQurAB9et4jOrSlDmgsq3mFdNijRB
-ARC-Seal: i=1; a=rsa-sha256; t=1524505597; cv=none;
+X-Google-Smtp-Source: AIpwx4/K9PPzx5Ca5opZHqUXHU5RQlsYRVK2Xm5RLrB4EcQRcgjFiwKkn8xGPoNAI9VxArfEKE1N
+ARC-Seal: i=1; a=rsa-sha256; t=1524505594; cv=none;
         d=google.com; s=arc-20160816;
-        b=BIK9eeOM2l02+sqiEwAVXAmJnpkA6zfPAZt7Crco8Ut9pc8qFxgxdsyeq0aaO9a+p4
-         OLOesJL4sA7eTIb73wnKqUedRw42P34SnaMpsQOYzdcp2cMIXjPG+VL5vwcdkRiW90ng
-         8iX0KyK5uP1c/OzMxK+bIK2byc9YUzGm2URc6ae9TFzCxJHPlvZ+DZmOYkXIjI0dR0VD
-         aHp7tsL59TQUOuPwupCUrzGfJ73GGKXbdwp3zc+U/BXbmhl2rZIY/pALteknmDtl9FpL
-         OadWXPG7FvypsjCoWtMpeQYNGdQNu/1Ta6XPBDNcOnx1HMGmikoLdHJrUd8OOlarNZTT
-         iaBw==
+        b=0ERiizIGy5JjfkRugfEMwts/q22ZDWoJYXYJ2zw09a9E5qt2zaqkTRahfVIXh+r99s
+         pSZD9p6dahz3tJUMhkWw1BZMr4wXObQY09tK1JWpwQaw4KYZCGjSpj3txHROLKjOMEok
+         KRetJV0Zv11BIAzYukusWYFcZh4TB8lT52YZ1ciNfr5AwEuNZ+JaE4gBKEeJ5Ou67fkr
+         1IPGnQxB++0JeUC457CIU9YR4d8g0ODcd2ldQfBy8TyIL1haPwlKG70advjNhk2SHg8V
+         MublNvlnT8nO0V7o7TwDW6qU3lrA1Icl/aYEFyPmHY30fBUJBCrmoJzlgl4+qUdBQ0Kq
+         FxAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=j4FLq21F0mrEq6luwEIL9kqMrHusUS/i72yHOeTBdAU=;
-        b=CXVW+3i5D3Mte+A5m1dT9vkLvT5BiEtGxeAlLq6L5IOO8iNNEUxXmnlNuQ6sbhMlIn
-         VFeGbMxIKXTP5c5Nu2unSHJVDKD2OnY9q97WlWFwp0LFPIRqQA0TSVVvjhECdvWy3zqF
-         LBzXK2MNXHEzhDCFUUCD1cxRtO9bIFH7lAFYdI/H/bjBdP9ug1wrvK2kz9VZOcm+rxt5
-         fguoQ3asoUjTJBN2Y5Sg4qk+AsuBrrV0MYAMEMUuJYyTv+vZe6ItqR2srccXG9Zst8k8
-         BOcjHGmbmSgbYsKOMjYLN3j8Y+Q2VSIOct+JygWav4vUchhBuWbnstrJcM0rP7HS+d2P
-         6XgA==
+        bh=7Wx+G4kjRQd8BNXO15lAh9UTe+jpUapftrwNVd+SxsM=;
+        b=ZiCXyRQCd8+Vih3426bRhQCa+ONnRJvo6Jdz58RExVQv28EdysQXdPiMCg0S4poSyl
+         h/7BxBU2G5ZRYosczjSDzWXG3QNWlx4EFen/JFye0QwzKIC/3w8/gB1BAfpXhF5Fh1nP
+         56kq6F6xz1QVFWniyS8kMaqsJjlpduLQCpDiE2s+yygtuIGLEr0ZD0pBQ4PfGmRvOXGx
+         SfOuXFEDKCXrX+STzEdQWxpJlF4DtWMw3EhvO3YqIkGWn90oNLJIV2YRQkeFVUGY0Rv4
+         0FmKCOCS6cXqHZkKnlTw2seDEjmeMcYD2d3jFsqyH7T32GKW6QtcUE9NgrvDfdSYhxS2
+         cPow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
 Authentication-Results: mx.google.com;
@@ -31,39 +31,131 @@ Cc: Dave Gerlach <d-gerlach@ti.com>,
 	Tero Kristo <t-kristo@ti.com>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 13/16] bus: ti-sysc: Detect omap4 type timers for quirk
-Date: Mon, 23 Apr 2018 10:45:46 -0700
-Message-Id: <20180423174549.57412-14-tony@atomide.com>
+Subject: [PATCH 12/16] bus: ti-sysc: Add initial support for external resets
+Date: Mon, 23 Apr 2018 10:45:45 -0700
+Message-Id: <20180423174549.57412-13-tony@atomide.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180423174549.57412-1-tony@atomide.com>
 References: <20180423174549.57412-1-tony@atomide.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598559981766852135?=
-X-GMAIL-MSGID: =?utf-8?q?1598559981766852135?=
+X-GMAIL-THRID: =?utf-8?q?1598559978199858397?=
+X-GMAIL-MSGID: =?utf-8?q?1598559978199858397?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Starting with omap4 some timers have different sysc registers (type2) compared
-to the omap2 timers (type1). We need to detect these to enable the quirk for
-SYSC_QUIRK_LEGACY_IDLE, otherwise these won't be idling properly.
+Some modules need to use external resets in the rstctrl bits. Typically
+only one of the rstctrl bits is for the interconnect target module while
+the others are for various child devices.
 
-Siganed-off-by: Tony Lindgren <tony@atomide.com>
+For ti-sysc driver, we just need the module rstctrl bit mapped. The rest
+of the rstctrl bits can be directly mapped to the child devices.
+
+Cc: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/bus/ti-sysc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/bus/ti-sysc.c | 48 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 47 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
 --- a/drivers/bus/ti-sysc.c
 +++ b/drivers/bus/ti-sysc.c
-@@ -875,6 +875,9 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
- 		   SYSC_QUIRK_LEGACY_IDLE),
- 	SYSC_QUIRK("timer", 0, 0, 0x10, 0x14, 0x00000015, 0xffffffff,
- 		   SYSC_QUIRK_LEGACY_IDLE),
-+	/* Some timers on omap4 and later */
-+	SYSC_QUIRK("timer", 0, 0, 0x10, -1, 0x4fff1301, 0xffffffff,
-+		   SYSC_QUIRK_LEGACY_IDLE),
- 	SYSC_QUIRK("uart", 0, 0x50, 0x54, 0x58, 0x00000052, 0xffffffff,
- 		   SYSC_QUIRK_LEGACY_IDLE),
- };
+@@ -19,6 +19,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/slab.h>
+@@ -74,6 +75,7 @@ struct sysc {
+ 	struct clk **clocks;
+ 	const char **clock_roles;
+ 	int nr_clocks;
++	struct reset_control *rsts;
+ 	const char *legacy_mode;
+ 	const struct sysc_capabilities *cap;
+ 	struct sysc_config cfg;
+@@ -213,6 +215,42 @@ static int sysc_get_clocks(struct sysc *ddata)
+ 	return 0;
+ }
+ 
++/**
++ * sysc_init_resets - reset module on init
++ * @ddata: device driver data
++ *
++ * A module can have both OCP softreset control and external rstctrl.
++ * If more complicated rstctrl resets are needed, please handle these
++ * directly from the child device driver and map only the module reset
++ * for the parent interconnect target module device.
++ *
++ * Automatic reset of the module on init can be skipped with the
++ * "ti,no-reset-on-init" device tree property.
++ */
++static int sysc_init_resets(struct sysc *ddata)
++{
++	int error;
++
++	ddata->rsts =
++		devm_reset_control_array_get_optional_exclusive(ddata->dev);
++	if (IS_ERR(ddata->rsts))
++		return PTR_ERR(ddata->rsts);
++
++	if (ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT)
++		goto deassert;
++
++	error = reset_control_assert(ddata->rsts);
++	if (error)
++		return error;
++
++deassert:
++	error = reset_control_deassert(ddata->rsts);
++	if (error)
++		return error;
++
++	return 0;
++}
++
+ /**
+  * sysc_parse_and_check_child_range - parses module IO region from ranges
+  * @ddata: device driver data
+@@ -889,6 +927,7 @@ static int sysc_init_module(struct sysc *ddata)
+ 
+ 		return 0;
+ 	}
++
+ 	ddata->revision = sysc_read_revision(ddata);
+ 	pm_runtime_put_sync(ddata->dev);
+ 
+@@ -1583,8 +1622,11 @@ static int sysc_probe(struct platform_device *pdev)
+ 	if (error)
+ 		goto unprepare;
+ 
+-	pm_runtime_enable(ddata->dev);
++	error = sysc_init_resets(ddata);
++	if (error)
++		return error;
+ 
++	pm_runtime_enable(ddata->dev);
+ 	error = sysc_init_module(ddata);
+ 	if (error)
+ 		goto unprepare;
+@@ -1615,6 +1657,9 @@ static int sysc_probe(struct platform_device *pdev)
+ 		pm_runtime_put(&pdev->dev);
+ 	}
+ 
++	if (!of_get_available_child_count(ddata->dev->of_node))
++		reset_control_assert(ddata->rsts);
++
+ 	return 0;
+ 
+ err:
+@@ -1644,6 +1689,7 @@ static int sysc_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
++	reset_control_assert(ddata->rsts);
+ 
+ unprepare:
+ 	sysc_unprepare(ddata);
 -- 
 2.17.0
