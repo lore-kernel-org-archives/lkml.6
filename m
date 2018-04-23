@@ -1,51 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932101AbeDWQnb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:43:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54072 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754788AbeDWQna (ORCPT
+        id S932204AbeDWQoW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:44:22 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41251 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932141AbeDWQoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:43:30 -0400
-Date: Mon, 23 Apr 2018 18:43:25 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, diego.viola@gmail.com,
-        len.brown@intel.com, rjw@rjwysocki.net, rui.zhang@intel.com
-Subject: Re: [PATCH 2/5] clocksource: Allow clocksource_mark_unstable() on
- unregisered clocksources
-Message-ID: <20180423164325.GR4129@hirez.programming.kicks-ass.net>
-References: <20180423161648.622657048@infradead.org>
- <20180423162642.059848458@infradead.org>
- <20180423164113.GN4082@hirez.programming.kicks-ass.net>
+        Mon, 23 Apr 2018 12:44:19 -0400
+X-Google-Smtp-Source: AIpwx4+JHOLMV55gGfnLk7fL+WoJnRmc0q4zyoNi6ZnHNajKVQvxzooIAMCY1VLTUHiEAyen6ZMEUTKx7k5eY8HIRVo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423164113.GN4082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <87in8ibrql.wl%kuninori.morimoto.gx@renesas.com>
+References: <87in8ibrql.wl%kuninori.morimoto.gx@renesas.com>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Mon, 23 Apr 2018 09:44:17 -0700
+Message-ID: <CAJ+vNU0mykhkMNNrN=Zsrj0_pv=XAkGiiQkXehQ4EWBkMDAv7w@mail.gmail.com>
+Subject: Re: [PATCH v3][RESEND] media: i2c: tda1997: replace codec to component
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>, linux-kernel@vger.kernel.org,
+        linux-media <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 06:41:13PM +0200, Peter Zijlstra wrote:
-> I've no idea why it says it cannot do that with the lock held. But
-> there's more stale comments in there.
+On Sun, Apr 22, 2018 at 7:10 PM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> Now we can replace Codec to Component. Let's do it.
+>
+> Note:
+>         xxx_codec_xxx()         ->      xxx_component_xxx()
+>         .idle_bias_off = 0      ->      .idle_bias_on = 1
+>         .ignore_pmdown_time = 0 ->      .use_pmdown_time = 1
+>         -                       ->      .endianness = 1
+>         -                       ->      .non_legacy_dai_naming = 1
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+> Tim, Mauro
+>
+> 2 weeks passed. I re-send.
+> This replace patch is needed for ALSA SoC, otherwise it can't probe anymore.
+>
+> v2 -> v3
+>
+>  - fixup driver name (= tda1997)
+>
 
-Like that one, the x86 tsc code is the only caller of this. I could not
-find anything hotplug.
+Kuninori,
 
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -173,10 +173,8 @@ static void __clocksource_unstable(struc
-  * clocksource_mark_unstable - mark clocksource unstable via watchdog
-  * @cs:		clocksource to be marked unstable
-  *
-- * This function is called instead of clocksource_change_rating from
-- * cpu hotplug code to avoid a deadlock between the clocksource mutex
-- * and the cpu hotplug mutex. It defers the update of the clocksource
-- * to the watchdog thread.
-+ * This function is called by the x86 TSC code to mark clocksources as unstable;
-+ * it defers demotion and re-selection to a kthread.
-  */
- void clocksource_mark_unstable(struct clocksource *cs)
- {
+Could you add some detail to the commit explaining why we need to
+replace codec to component? I don't really know what that means.
+Please refer to a commit if the ASoC API is changing in some way we
+need to catch up with.
+
+Regards,
+
+Tim
