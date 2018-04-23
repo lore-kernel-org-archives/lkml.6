@@ -1,75 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932399AbeDWTQ1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 15:16:27 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43667 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932175AbeDWTQX (ORCPT
+        id S932434AbeDWTQp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 15:16:45 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58567 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932175AbeDWTQn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 15:16:23 -0400
-X-Google-Smtp-Source: AIpwx48AXP19vjK5HDboLVEryonGNru+CderjjSEOwSTmMMPhCU+i/GNCdN8xNDCfEkeBdeZ7dxv4w==
-Date: Mon, 23 Apr 2018 22:16:18 +0300
-From: jackm <jackm@dev.mellanox.co.il>
-To: =?ISO-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>,
-        Don Hiatt <don.hiatt@intel.com>,
-        Dasaratharaman Chandramouli
-        <dasaratharaman.chandramouli@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
-Message-ID: <20180423221618.0000795d@dev.mellanox.co.il>
-In-Reply-To: <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
-References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
-        <1524196555.11756.30.camel@redhat.com>
-        <20180420153451.GF30433@ziepe.ca>
-        <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
-Organization: Mellanox
-X-Mailer: Claws Mail 3.15.0 (GTK+ 2.24.31; i686-w64-mingw32)
+        Mon, 23 Apr 2018 15:16:43 -0400
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH] stop_machine: Use raw spinlocks
+Date: Mon, 23 Apr 2018 21:16:35 +0200
+Message-Id: <20180423191635.6014-1-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3NJGW0d001544
 
-On Mon, 23 Apr 2018 16:19:57 +0200
-Håkon Bugge <haakon.bugge@oracle.com> wrote:
+From: Thomas Gleixner <tglx@linutronix.de>
 
+Use raw-locks in stop_machine() to allow locking in irq-off and
+preempt-disabled regions on -RT.
 
-> > 
-> > This actually looks like a genuine bug, why is it described only as
-> > 'confusing'? ib_register_mad_agent is callable from userspace, so at
-> > least two userspace agents can race and get the same TID’s.  
-> 
-> My understanding is that every lookup is using the {port, TID} tuple.
-> As such, it is not a bug, but, very confusing.
-Haakon, you are correct (see snippet from the IB spec, below).
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[bigeasy: update patch description.]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ kernel/stop_machine.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-We will NOT have a situation where there are 2 threads/apps
-with the same agent ID on the *same port* (accessing the agent ID
-allocator is protected by a per-port spinlock). Having the same agent ID
-on DIFFERENT ports is OK.
-Thus, there is NO bug here. (But as Haakon says, IMHO it is more robust
-to avoid having the same agent ID for 2 agents even if those agents are
-on different ports).
-
-> 
-> > TIDs need to be globally unique on the entire machine.  
-> 
-Jason, that is not exactly correct.
-
->From the IB Spec 1.3, C13-18.1.1 (in section 13.4.6.4 - TransactionID
-usage):
-"When initiating a new operation, MADHeader:TransactionID
-shall be set to such a value that within that MAD the combination of
-TID, SGID, and MgmtClass is different from that of any other currently
-executing operation. If the MAD does not have a GRH, its SLID is used
-in the combination in place of an SGID."
-
-Since the SGID/SLID is different for each port, the per-port guarantee
-of no 2 agents receiving the same agent-ID value is sufficient.
-
--Jack
+diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+index b7591261652d..c25ba18274fb 100644
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -36,7 +36,7 @@ struct cpu_stop_done {
+ struct cpu_stopper {
+ 	struct task_struct	*thread;
+=20
+-	spinlock_t		lock;
++	raw_spinlock_t		lock;
+ 	bool			enabled;	/* is this stopper enabled? */
+ 	struct list_head	works;		/* list of pending works */
+=20
+@@ -78,13 +78,13 @@ static bool cpu_stop_queue_work(unsigned int cpu, struc=
+t cpu_stop_work *work)
+ 	unsigned long flags;
+ 	bool enabled;
+=20
+-	spin_lock_irqsave(&stopper->lock, flags);
++	raw_spin_lock_irqsave(&stopper->lock, flags);
+ 	enabled =3D stopper->enabled;
+ 	if (enabled)
+ 		__cpu_stop_queue_work(stopper, work);
+ 	else if (work->done)
+ 		cpu_stop_signal_done(work->done);
+-	spin_unlock_irqrestore(&stopper->lock, flags);
++	raw_spin_unlock_irqrestore(&stopper->lock, flags);
+=20
+ 	return enabled;
+ }
+@@ -231,8 +231,8 @@ static int cpu_stop_queue_two_works(int cpu1, struct cp=
+u_stop_work *work1,
+ 	struct cpu_stopper *stopper2 =3D per_cpu_ptr(&cpu_stopper, cpu2);
+ 	int err;
+ retry:
+-	spin_lock_irq(&stopper1->lock);
+-	spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
++	raw_spin_lock_irq(&stopper1->lock);
++	raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
+=20
+ 	err =3D -ENOENT;
+ 	if (!stopper1->enabled || !stopper2->enabled)
+@@ -255,8 +255,8 @@ static int cpu_stop_queue_two_works(int cpu1, struct cp=
+u_stop_work *work1,
+ 	__cpu_stop_queue_work(stopper1, work1);
+ 	__cpu_stop_queue_work(stopper2, work2);
+ unlock:
+-	spin_unlock(&stopper2->lock);
+-	spin_unlock_irq(&stopper1->lock);
++	raw_spin_unlock(&stopper2->lock);
++	raw_spin_unlock_irq(&stopper1->lock);
+=20
+ 	if (unlikely(err =3D=3D -EDEADLK)) {
+ 		while (stop_cpus_in_progress)
+@@ -448,9 +448,9 @@ static int cpu_stop_should_run(unsigned int cpu)
+ 	unsigned long flags;
+ 	int run;
+=20
+-	spin_lock_irqsave(&stopper->lock, flags);
++	raw_spin_lock_irqsave(&stopper->lock, flags);
+ 	run =3D !list_empty(&stopper->works);
+-	spin_unlock_irqrestore(&stopper->lock, flags);
++	raw_spin_unlock_irqrestore(&stopper->lock, flags);
+ 	return run;
+ }
+=20
+@@ -461,13 +461,13 @@ static void cpu_stopper_thread(unsigned int cpu)
+=20
+ repeat:
+ 	work =3D NULL;
+-	spin_lock_irq(&stopper->lock);
++	raw_spin_lock_irq(&stopper->lock);
+ 	if (!list_empty(&stopper->works)) {
+ 		work =3D list_first_entry(&stopper->works,
+ 					struct cpu_stop_work, list);
+ 		list_del_init(&work->list);
+ 	}
+-	spin_unlock_irq(&stopper->lock);
++	raw_spin_unlock_irq(&stopper->lock);
+=20
+ 	if (work) {
+ 		cpu_stop_fn_t fn =3D work->fn;
+@@ -541,7 +541,7 @@ static int __init cpu_stop_init(void)
+ 	for_each_possible_cpu(cpu) {
+ 		struct cpu_stopper *stopper =3D &per_cpu(cpu_stopper, cpu);
+=20
+-		spin_lock_init(&stopper->lock);
++		raw_spin_lock_init(&stopper->lock);
+ 		INIT_LIST_HEAD(&stopper->works);
+ 	}
+=20
+--=20
+2.17.0
