@@ -1,61 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932347AbeDWSy4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 14:54:56 -0400
-Received: from anholt.net ([50.246.234.109]:60472 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932172AbeDWSyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 14:54:53 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Stefan Schake <stschake@gmail.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Stefan Schake <stschake@gmail.com>
-Subject: Re: [PATCH v4 1/2] drm/vc4: Add CTM support
-In-Reply-To: <20180420122545.40014-1-stschake@gmail.com>
-References: <20180420122545.40014-1-stschake@gmail.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Mon, 23 Apr 2018 11:54:49 -0700
-Message-ID: <87fu3l4uti.fsf@anholt.net>
+        id S932363AbeDWSzg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 14:55:36 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44287 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932172AbeDWSze (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 14:55:34 -0400
+X-Google-Smtp-Source: AIpwx48zaeAtoU4i9fw4NDyUIZbwboTfmx5DbYzNBsiE1CezycE4EKnXFGDGfpha2T88amM2CFKktg==
+Date: Mon, 23 Apr 2018 11:55:30 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lyan@suse.com, boris.ostrovsky@oracle.com, andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH v2] Input: xen-kbdfront - allow better run-time
+ configuration
+Message-ID: <20180423185530.GC66646@dtor-ws>
+References: <20180419133934.31306-1-andr2000@gmail.com>
+ <998533bb-8042-b07e-cb79-661750e035d9@gmail.com>
+ <a2189ec9-ef4d-2c23-28c6-a6ff8525e8e5@suse.com>
+ <7b4c1f8a-6317-1f17-5950-64a1b7183dba@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7b4c1f8a-6317-1f17-5950-64a1b7183dba@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Mon, Apr 23, 2018 at 11:29:45AM +0300, Oleksandr Andrushchenko wrote:
+> On 04/23/2018 11:23 AM, Juergen Gross wrote:
+> > On 23/04/18 10:02, Oleksandr Andrushchenko wrote:
+> > > Juergen, Jason, Dmitry
+> > > any comment on this?
+> > Oleksandr, please give us some time. I can't speak for others, but I am
+> > not sitting here idling and hoping that some work (e.g. patches to
+> > review) might appear.
+> > 
+> > I have a lot of other stuff to do and will respond when I find some time
+> > to look at your patches.
+> > 
+> > Pinging others on Monday when having sent out the patch only on Thursday
+> > is rather unfriendly.
+> Really sorry about this, my bad.
+> I had an impression that the only change we need to
+> discuss was uint -> bool change which seemed rather trivial
 
-Stefan Schake <stschake@gmail.com> writes:
+I am sorry I did not respond to the previous version until today, but I
+do not think that we should be extending module parameters for this.
+Protocol features are already there for absolute pointers and
+multi-touch, keyboard and relative pointers should use the same
+mechanism.
 
-> The hardware has a single block for applying a CTM prior to gamma lut.
-> It can be fed with pixels from one of our CRTC at a time and uses a
-> matrix with S0.9 scalars. Use private atomic state to reject attempts
-> from userland to apply CTM for more than one CRTC at a time and reject
-> matrices with scalars that we can't approximate without integer bits.
+Thanks.
 
-Looks good!  I think you got all the transition cases we were concerned
-about before.
-
-Reviewed and applied these two to drm-misc-next.  Thanks!
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlreK/kACgkQtdYpNtH8
-nuivrg/3QWOHIW2f3/aubiNWNFtlU7tMi41uWUWsnTpgYPd/zuiW3Waf+atMl9XX
-/VsiQqmJrUQAFtb2O1KAQ+CTPvi/Up9zuPDOfRc9eX1ORD/XIXoD7DfcoesfysV4
-U4Oad6BjSIrxWAfkSz9h5bSo9aGktxbiQr4t2n8j349xmfrfpxLH5JtgDyuaQkZ3
-KEwzjHthpnVlKrppFoLVfZtdvtX33WLj2GqAzQ21P2BewLBMWhElcqvbmZ4CW532
-aGeQ/zIPzfxwl5udRJbp4yiIQ8xSv5V2kHqfZbTJUmG132Z3abPlbAGJxmF6XXOx
-nemnYmGP967c1yw7BUcTTUoWlWOvpdj38ZBxMAnuK5J0rtKwy0K+wTh+3dOexsGG
-g/HTZWEVY8Bl/AW53ZyY2Pylls7q+HCM7cP9aBJq9uqJMUU9GsQF6PryimsAVIgt
-dB/2lXKSL0QE4wVzTpR8L1359933ZgC1lCaLXKTmcFkevwmMzWf3pkaxeG+GPvEv
-imC2IUz1ayczTZm6pogr/ER/wKxqZm96JSGcKw7rnCIBTBU/7ijTUkTE4mke3Gqw
-HwPaculiksZLBMtQUxgDaMy7UcOQXvicw+THUpM5XaQwNbfGFYlBpDFdc1fBIpI9
-0bctdpejB68pV2v8mKEDSGTrG7xPNqXbTeNAP5t0CrRGuQ6+pA==
-=4WJI
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Dmitry
