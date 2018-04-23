@@ -1,88 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753003AbeDWG3u (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:29:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40920 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751216AbeDWG3r (ORCPT
+        id S1752224AbeDWGcK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:32:10 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:42529 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeDWGcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:29:47 -0400
+        Mon, 23 Apr 2018 02:32:08 -0400
+X-Google-Smtp-Source: AIpwx4/s7WK1s+WipW2b0Hl3CNOvg0TFNSQ7gKlwgRKMANoBj1yXBe9P7bHw5p3JkaotkhN6grD13g==
+Date: Mon, 23 Apr 2018 15:31:57 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v10 06/25] mm: make pte_unmap_same compatible with SPF
+Message-ID: <20180423063157.GB114098@rodete-desktop-imager.corp.google.com>
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523975611-15978-7-git-send-email-ldufour@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Mon, 23 Apr 2018 11:59:46 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 4/9] mtd: nand: qcom: fix null pointer access for erased
- buffer detection
-In-Reply-To: <20180422182532.221747b6@xps13>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
- <1522845745-6624-5-git-send-email-absahu@codeaurora.org>
- <20180410111220.3873a24c@xps13>
- <d201308d57317ff7d37d7169d7985d76@codeaurora.org>
- <20180422182532.221747b6@xps13>
-Message-ID: <3699eb1ef15c63a4ea1490be7308d3dd@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523975611-15978-7-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-22 21:55, Miquel Raynal wrote:
-> Hi Abhishek,
+On Tue, Apr 17, 2018 at 04:33:12PM +0200, Laurent Dufour wrote:
+> pte_unmap_same() is making the assumption that the page table are still
+> around because the mmap_sem is held.
+> This is no more the case when running a speculative page fault and
+> additional check must be made to ensure that the final page table are still
+> there.
 > 
-> On Thu, 12 Apr 2018 12:24:16 +0530, Abhishek Sahu
-> <absahu@codeaurora.org> wrote:
+> This is now done by calling pte_spinlock() to check for the VMA's
+> consistency while locking for the page tables.
 > 
->> On 2018-04-10 14:42, Miquel Raynal wrote:
->> > Hi Abhishek,
->> > > On Wed,  4 Apr 2018 18:12:20 +0530, Abhishek Sahu
->> > <absahu@codeaurora.org> wrote:
->> > >> parse_read_errors can be called with only oob buf also in which
->> >> case data_buf will be NULL.  If data_buf is NULL, then don’t
->> >> treat this page as completely erased in case of ECC uncorrectable
->> >> error.
->> >> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> >> ---
->> >>  drivers/mtd/nand/qcom_nandc.c | 7 +++++--
->> >>  1 file changed, 5 insertions(+), 2 deletions(-)
->> >> >> diff --git a/drivers/mtd/nand/qcom_nandc.c >> b/drivers/mtd/nand/qcom_nandc.c
->> >> index 57c16a6..0ebcc55 100644
->> >> --- a/drivers/mtd/nand/qcom_nandc.c
->> >> +++ b/drivers/mtd/nand/qcom_nandc.c
->> >> @@ -1607,9 +1607,11 @@ static int parse_read_errors(struct >> qcom_nand_host *host, u8 *data_buf,
->> >>  			if (host->bch_enabled) {
->> >>  				erased = (erased_cw & ERASED_CW) == ERASED_CW ?
->> >>  					 true : false;
->> > > Why the parse_read_errors() function could not be called without
->> > data_buf when using BCH? Are you sure the situation can only happen
->> > without it?
->> >
->>    host->bch_enabled case is different where controller itself tells
->>    regarding erased page in status register.
->> 
->> > Would the following apply here too, with a:
->> >
->>   erased_chunk_check_and_fixup will be used only for 4 bit RS ECC
->>   code in which there is no support from HW for erased page detection
->>   and we need to check few data bytes value.
+> This is requiring passing a vm_fault structure to pte_unmap_same() which is
+> containing all the needed parameters.
 > 
-> So please explain this with a comment.
+> As pte_spinlock() may fail in the case of a speculative page fault, if the
+> VMA has been touched in our back, pte_unmap_same() should now return 3
+> cases :
+> 	1. pte are the same (0)
+> 	2. pte are different (VM_FAULT_PTNOTSAME)
+> 	3. a VMA's changes has been detected (VM_FAULT_RETRY)
 > 
-> Thanks,
-> Miquèl
+> The case 2 is handled by the introduction of a new VM_FAULT flag named
+> VM_FAULT_PTNOTSAME which is then trapped in cow_user_page().
 
-  Sure Miquel.
-  I will do the same and update the patch with more comments.
+I don't see such logic in this patch.
+Maybe you introduces it later? If so, please comment on it.
+Or just return 0 in case of 2 without introducing VM_FAULT_PTNOTSAME.
 
-  Thanks,
-  Abhishek
+> If VM_FAULT_RETRY is returned, it is passed up to the callers to retry the
+> page fault while holding the mmap_sem.
+> 
+> Acked-by: David Rientjes <rientjes@google.com>
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> ---
+>  include/linux/mm.h |  1 +
+>  mm/memory.c        | 39 ++++++++++++++++++++++++++++-----------
+>  2 files changed, 29 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 4d1aff80669c..714da99d77a3 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1208,6 +1208,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
+>  #define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
+>  					 * and needs fsync() to complete (for
+>  					 * synchronous page faults in DAX) */
+> +#define VM_FAULT_PTNOTSAME 0x4000	/* Page table entries have changed */
+>  
+>  #define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
+>  			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 0b9a51f80e0e..f86efcb8e268 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2309,21 +2309,29 @@ static inline bool pte_map_lock(struct vm_fault *vmf)
+>   * parts, do_swap_page must check under lock before unmapping the pte and
+>   * proceeding (but do_wp_page is only called after already making such a check;
+>   * and do_anonymous_page can safely check later on).
+> + *
+> + * pte_unmap_same() returns:
+> + *	0			if the PTE are the same
+> + *	VM_FAULT_PTNOTSAME	if the PTE are different
+> + *	VM_FAULT_RETRY		if the VMA has changed in our back during
+> + *				a speculative page fault handling.
+>   */
+> -static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
+> -				pte_t *page_table, pte_t orig_pte)
+> +static inline int pte_unmap_same(struct vm_fault *vmf)
+>  {
+> -	int same = 1;
+> +	int ret = 0;
+> +
+>  #if defined(CONFIG_SMP) || defined(CONFIG_PREEMPT)
+>  	if (sizeof(pte_t) > sizeof(unsigned long)) {
+> -		spinlock_t *ptl = pte_lockptr(mm, pmd);
+> -		spin_lock(ptl);
+> -		same = pte_same(*page_table, orig_pte);
+> -		spin_unlock(ptl);
+> +		if (pte_spinlock(vmf)) {
+> +			if (!pte_same(*vmf->pte, vmf->orig_pte))
+> +				ret = VM_FAULT_PTNOTSAME;
+> +			spin_unlock(vmf->ptl);
+> +		} else
+> +			ret = VM_FAULT_RETRY;
+>  	}
+>  #endif
+> -	pte_unmap(page_table);
+> -	return same;
+> +	pte_unmap(vmf->pte);
+> +	return ret;
+>  }
+>  
+>  static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
+> @@ -2912,10 +2920,19 @@ int do_swap_page(struct vm_fault *vmf)
+>  	pte_t pte;
+>  	int locked;
+>  	int exclusive = 0;
+> -	int ret = 0;
+> +	int ret;
+>  
+> -	if (!pte_unmap_same(vma->vm_mm, vmf->pmd, vmf->pte, vmf->orig_pte))
+> +	ret = pte_unmap_same(vmf);
+> +	if (ret) {
+> +		/*
+> +		 * If pte != orig_pte, this means another thread did the
+> +		 * swap operation in our back.
+> +		 * So nothing else to do.
+> +		 */
+> +		if (ret == VM_FAULT_PTNOTSAME)
+> +			ret = 0;
+>  		goto out;
+> +	}
+>  
+>  	entry = pte_to_swp_entry(vmf->orig_pte);
+>  	if (unlikely(non_swap_entry(entry))) {
+> -- 
+> 2.7.4
+> 
