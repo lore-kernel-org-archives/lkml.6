@@ -1,89 +1,287 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932261AbeDWPxb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:53:31 -0400
-Received: from foss.arm.com ([217.140.101.70]:42636 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932247AbeDWPx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:53:28 -0400
-Subject: Re: [PATCH 0/7] Level-triggered MSI support
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180423103440.26592-1-marc.zyngier@arm.com>
- <CAKv+Gu9zrnUevJdde_6vSwqFh0ojtDdC7Y_uHxqcGmE=5OZizw@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <b5c77c79-11e2-ce71-7037-6d050677241a@arm.com>
-Date: Mon, 23 Apr 2018 16:53:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932363AbeDWPzf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:55:35 -0400
+Received: from mail-it0-f47.google.com ([209.85.214.47]:39530 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932238AbeDWPz0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:55:26 -0400
+X-Google-Smtp-Source: AIpwx49JUhLyu6Sq9+n7y8KfsCWonH9YaL8GrV0LzkdIpDhjVPpT1BW6jGS+71osrUfkWpVLkl9FoCbUNlHPB5FmeA4=
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu9zrnUevJdde_6vSwqFh0ojtDdC7Y_uHxqcGmE=5OZizw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180423061201.GC26268@magnolia>
+References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+ <1520705944-6723-7-git-send-email-jix024@eng.ucsd.edu> <20180423061201.GC26268@magnolia>
+From: Andiry Xu <jix024@eng.ucsd.edu>
+Date: Mon, 23 Apr 2018 08:55:24 -0700
+Message-ID: <CAD4SzjvGVNz1D3iWjrY7+=x7-5np_bzbe3YmRGz1KSXQ2Uisng@mail.gmail.com>
+Subject: Re: [RFC v2 06/83] Add inode get/read methods.
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Rudoff, Andy" <andy.rudoff@intel.com>,
+        Tom Coughlan <coughlan@redhat.com>,
+        Steven Swanson <swanson@cs.ucsd.edu>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.com>,
+        Steven Whitehouse <swhiteho@redhat.com>, miklos@szeredi.hu,
+        Jian Xu <andiry.xu@gmail.com>, Andiry Xu <jix024@cs.ucsd.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/04/18 12:51, Ard Biesheuvel wrote:
-> On 23 April 2018 at 12:34, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> This series is a first shot at teaching the kernel about the oxymoron
->> expressed in $SUBJECT. Over the past couple of years, we've seen some
->> SoCs coming up with ways of signalling level interrupts using a new
->> flavor of MSIs, where the MSI controller uses two distinct messages:
->> one that raises a virtual line, and one that lowers it. The target MSI
->> controller is in charge of maintaining the state of the line.
+On Sun, Apr 22, 2018 at 11:12 PM, Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+> [haaa, I finally found time to read more of these]
+>
+> On Sat, Mar 10, 2018 at 10:17:47AM -0800, Andiry Xu wrote:
+>> From: Andiry Xu <jix024@cs.ucsd.edu>
 >>
->> This allows for a much simplified HW signal routing (no need to have
->> hundreds of discrete lines to signal level interrupts if you already
->> have a memory bus), but results in a departure from the current idea
->> the kernel has of MSIs.
+>> These routines are incomplete and currently only support reserved inodes,
+>> whose addresses are fixed. This is necessary for fill_super to work.
+>> File/dir operations are left NULL.
 >>
->> This series takes a minimal approach to the problem, which is to allow
->> MSI controllers to use not only one, but up to two messages at a
->> time. This is controlled by a flag exposed at MSI irq domain creation,
->> and is only supported with platform MSI.
+>> Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
+>> ---
+>>  fs/nova/inode.c | 176 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>  fs/nova/inode.h |   3 +
+>>  2 files changed, 179 insertions(+)
+>>  create mode 100644 fs/nova/inode.c
 >>
->> The rest of the series repaints the Marvell ICU/GICP drivers which
->> already make use of this feature with a side-channel, and adds support
->> for the same feature in GICv3. A side effect of the last GICv3 patch
->> is that you can also use SPIs to signal PCI MSIs. This is a last
->> resort measure for SoCs where the ITS is unusable for unspeakable
->> reasons.
+>> diff --git a/fs/nova/inode.c b/fs/nova/inode.c
+>> new file mode 100644
+>> index 0000000..bfdc5dc
+>> --- /dev/null
+>> +++ b/fs/nova/inode.c
+>> @@ -0,0 +1,176 @@
+>> +/*
+>> + * BRIEF DESCRIPTION
+>> + *
+>> + * Inode methods (allocate/free/read/write).
+>> + *
+>> + * Copyright 2015-2016 Regents of the University of California,
+>> + * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
+>> + * Copyright 2012-2013 Intel Corporation
+>> + * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
+>> + * Copyright 2003 Sony Corporation
+>> + * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
+>> + * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
+>> + * This file is licensed under the terms of the GNU General Public
+>> + * License version 2. This program is licensed "as is" without any
+>> + * warranty of any kind, whether express or implied.
+>> + */
+>> +
+>> +#include <linux/fs.h>
+>> +#include <linux/aio.h>
+>> +#include <linux/highuid.h>
+>> +#include <linux/module.h>
+>> +#include <linux/mpage.h>
+>> +#include <linux/backing-dev.h>
+>> +#include <linux/types.h>
+>> +#include <linux/ratelimit.h>
+>> +#include "nova.h"
+>> +#include "inode.h"
+>> +
+>> +unsigned int blk_type_to_shift[NOVA_BLOCK_TYPE_MAX] = {12, 21, 30};
+>> +uint32_t blk_type_to_size[NOVA_BLOCK_TYPE_MAX] = {0x1000, 0x200000, 0x40000000};
+>> +
+>> +void nova_set_inode_flags(struct inode *inode, struct nova_inode *pi,
+>> +     unsigned int flags)
+>> +{
+>> +     inode->i_flags &=
+>> +             ~(S_SYNC | S_APPEND | S_IMMUTABLE | S_NOATIME | S_DIRSYNC);
+>> +     if (flags & FS_SYNC_FL)
+>> +             inode->i_flags |= S_SYNC;
+>> +     if (flags & FS_APPEND_FL)
+>> +             inode->i_flags |= S_APPEND;
+>> +     if (flags & FS_IMMUTABLE_FL)
+>> +             inode->i_flags |= S_IMMUTABLE;
+>> +     if (flags & FS_NOATIME_FL)
+>> +             inode->i_flags |= S_NOATIME;
+>> +     if (flags & FS_DIRSYNC_FL)
+>> +             inode->i_flags |= S_DIRSYNC;
+>> +     if (!pi->i_xattr)
+>> +             inode_has_no_xattr(inode);
+>> +     inode->i_flags |= S_DAX;
+>> +}
+>> +
+>> +/* copy persistent state to struct inode */
+>> +static int nova_read_inode(struct super_block *sb, struct inode *inode,
+>> +     u64 pi_addr)
+>> +{
+>> +     struct nova_inode_info *si = NOVA_I(inode);
+>> +     struct nova_inode *pi, fake_pi;
+>> +     struct nova_inode_info_header *sih = &si->header;
+>> +     int ret = -EIO;
+>> +     unsigned long ino;
+>> +
+>> +     ret = nova_get_reference(sb, pi_addr, &fake_pi,
+>> +                     (void **)&pi, sizeof(struct nova_inode));
+>> +     if (ret) {
+>> +             nova_dbg("%s: read pi @ 0x%llx failed\n",
+>> +                             __func__, pi_addr);
+>> +             goto bad_inode;
+>> +     }
+>> +
+>> +     inode->i_mode = sih->i_mode;
+>
+> Hm, do you validate the on-pmem metadata as it's read in?  What if
+> i_mode is garbage?
+>
+
+I have checksum for inode and all metadata structures in the
+NOVA-fortis code. I removed them in this patchset to make the code
+shorter and simpler.
+
+>> +     i_uid_write(inode, le32_to_cpu(pi->i_uid));
+>> +     i_gid_write(inode, le32_to_cpu(pi->i_gid));
+>> +//   set_nlink(inode, le16_to_cpu(pi->i_links_count));
+>
+> C++ comment?
+>
+
+Will fix.
+
+>> +     inode->i_generation = le32_to_cpu(pi->i_generation);
+>> +     nova_set_inode_flags(inode, pi, le32_to_cpu(pi->i_flags));
+>> +     ino = inode->i_ino;
+>> +
+>> +     /* check if the inode is active. */
+>> +     if (inode->i_mode == 0 || pi->deleted == 1) {
+>> +             /* this inode is deleted */
+>> +             ret = -ESTALE;
+>> +             goto bad_inode;
+>> +     }
+>> +
+>> +     inode->i_blocks = sih->i_blocks;
+>
+> Not le64_to_cpu(sih->i_blocks)?  Or is that somewhere else I'm
+> missing...
+>
+
+sih is the in-DRAM inode structure, so le64_to_cpu is not needed. When
+we read inode from pmem (nova_inode *pi) to sih, we need
+le64_to_cpu(). The endian checking is not performed thoroughly as it
+only supports x86-64 now.
+
+>> +
+>> +     switch (inode->i_mode & S_IFMT) {
+>> +     case S_IFREG:
+>> +             break;
+>> +     case S_IFDIR:
+>> +             break;
+>> +     case S_IFLNK:
+>> +             break;
+>> +     default:
+>> +             init_special_inode(inode, inode->i_mode,
+>> +                                le32_to_cpu(pi->dev.rdev));
+>> +             break;
+>> +     }
+>> +
+>> +     /* Update size and time after rebuild the tree */
+>> +     inode->i_size = le64_to_cpu(sih->i_size);
+>
+> FWIW the type of i_size is loff_t, which is an unsigned type.  Despite
+> this, the VFS does not support files with negative sizes... which means
+> that this probably ought to check for that.
+>
+
+I will think about that. Thanks.
+
+Thanks,
+Andiry
+
+> --D
+>
+>> +     inode->i_atime.tv_sec = (__s32)le32_to_cpu(pi->i_atime);
+>> +     inode->i_ctime.tv_sec = (__s32)le32_to_cpu(pi->i_ctime);
+>> +     inode->i_mtime.tv_sec = (__s32)le32_to_cpu(pi->i_mtime);
+>> +     inode->i_atime.tv_nsec = inode->i_mtime.tv_nsec =
+>> +                                      inode->i_ctime.tv_nsec = 0;
+>> +     set_nlink(inode, le16_to_cpu(pi->i_links_count));
+>> +     return 0;
+>> +
+>> +bad_inode:
+>> +     make_bad_inode(inode);
+>> +     return ret;
+>> +}
+>> +
+>> +/* Get the address in PMEM of an inode by inode number.  Allocate additional
+>> + * block to store additional inodes if necessary.
+>> + */
+>> +int nova_get_inode_address(struct super_block *sb, u64 ino,
+>> +     u64 *pi_addr, int extendable)
+>> +{
+>> +     if (ino < NOVA_NORMAL_INODE_START) {
+>> +             *pi_addr = nova_get_reserved_inode_addr(sb, ino);
+>> +             return 0;
+>> +     }
+>> +
+>> +     *pi_addr = 0;
+>> +     return 0;
+>> +}
+>> +
+>> +struct inode *nova_iget(struct super_block *sb, unsigned long ino)
+>> +{
+>> +     struct nova_inode_info *si;
+>> +     struct inode *inode;
+>> +     u64 pi_addr;
+>> +     int err;
+>> +
+>> +     inode = iget_locked(sb, ino);
+>> +     if (unlikely(!inode))
+>> +             return ERR_PTR(-ENOMEM);
+>> +     if (!(inode->i_state & I_NEW))
+>> +             return inode;
+>> +
+>> +     si = NOVA_I(inode);
+>> +
+>> +     nova_dbgv("%s: inode %lu\n", __func__, ino);
+>> +
+>> +     err = nova_get_inode_address(sb, ino, &pi_addr, 0);
+>> +     if (err) {
+>> +             nova_dbg("%s: get inode %lu address failed %d\n",
+>> +                      __func__, ino, err);
+>> +             goto fail;
+>> +     }
+>> +
+>> +     if (pi_addr == 0) {
+>> +             nova_dbg("%s: failed to get pi_addr for inode %lu\n",
+>> +                      __func__, ino);
+>> +             err = -EACCES;
+>> +             goto fail;
+>> +     }
+>> +
+>> +     err = nova_read_inode(sb, inode, pi_addr);
+>> +     if (unlikely(err)) {
+>> +             nova_dbg("%s: failed to read inode %lu\n", __func__, ino);
+>> +             goto fail;
+>> +
+>> +     }
+>> +
+>> +     inode->i_ino = ino;
+>> +
+>> +     unlock_new_inode(inode);
+>> +     return inode;
+>> +fail:
+>> +     iget_failed(inode);
+>> +     return ERR_PTR(err);
+>> +}
+>> +
+>> diff --git a/fs/nova/inode.h b/fs/nova/inode.h
+>> index f9187e3..dbd5256 100644
+>> --- a/fs/nova/inode.h
+>> +++ b/fs/nova/inode.h
+>> @@ -184,4 +184,7 @@ static inline int nova_persist_inode(struct nova_inode *pi)
+>>       return 0;
+>>  }
 >>
-> 
-> Hi Marc,
-> 
-> I am hitting the splat below when trying this series on SynQuacer,
-> with mbi range <64 32> (which is reserved in the h/w manual but note
-> that I haven't confirmed with Socionext whether these are expected to
-> work or not. However, I don't think that makes any difference
-> regarding the issue below.)
-
-[...]
-
-For the record: After some IRC debugging with Ard, this turns out to be
-due to two issues:
-- GICv3 is now advertising several domains, all using the same device nodes
-- irq_find_host() is picking the first one, which is the wrong one.
-
-A good way to avoid this mess is to:
-- Let GICv3 advertise its core domain with DOMAIN_BUS_WIRED (consistent
-with what the armada-370-xp driver is already doing)
-- Let irq_find_host return DOMAIN_BUS_WIRED before trying DOMAIN_BUS_ANY
-(consistent with the way irq_create_fwspec_mapping works).
-
-I've stashed the whole series at [1] with these two fixes.
-
-	M.
-
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git
-irq/level-msi
--- 
-Jazz is not dead. It just smells funny...
+>> +int nova_get_inode_address(struct super_block *sb, u64 ino,
+>> +     u64 *pi_addr, int extendable);
+>> +struct inode *nova_iget(struct super_block *sb, unsigned long ino);
+>>  #endif
+>> --
+>> 2.7.4
+>>
