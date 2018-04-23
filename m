@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx48bfmdxEdE2XnEQQT/ag8ueOrKwyOMFTmOT/5qI6vro9NWjjtfXxkxjJb/Apj0kFziQkZS7
-ARC-Seal: i=1; a=rsa-sha256; t=1524498471; cv=none;
+X-Google-Smtp-Source: AIpwx4+oaDh+n19yyBEOEFYTyKB0nnAo55JJ6iyeQvee+mlMmokDHG2EvV4vHhdOZFt6xJY9UA4e
+ARC-Seal: i=1; a=rsa-sha256; t=1524498470; cv=none;
         d=google.com; s=arc-20160816;
-        b=asuUrt0PFtKu8nMTtvBeoIdX3bfMerqvJV/B26rFXifH3g4lGCO8Ak1fPZpPTqF1KD
-         XowBIWlmdulqjlhOSQbUHPA0xLlAcMgGspx16S6VtfrUgLfBwi2Vp/UNUGF+Mc596G/Y
-         QGBcarpVpCUXKJJR8xCGSmmXJHg7l1OMN+mBYIwCalBVDOLtTpCo1R4l/ZNWGhg2mCOi
-         7fg2mZ2eF5SE5fu/hZ1izPrv83ZtV4gNKNrExC32vxFqaNksXL4XaJjCYh2FvbT6TFY0
-         iGp+IeRdt/ACiwlEjIUJ6bmMzwew+iHK5ee7wK1899p6ERemilCBnV0TSHBmUumWAi6A
-         CLnQ==
+        b=O5p5kWCxFnF//Ajjx4Xd8ZY4Ird1dDAcax0aYcJzHjHQTcbLYhCk+UQeWPq/PrMlKP
+         lZR+3PPB/XGYhydu8Gk63V/AudHR87DY+M5iqkS52eadDD0UEoLhj2aNMc0Mtgnu3Gtk
+         epN1gWWcw5fNNuDsNk3mn89bzAl4jPaFW6KSbEAy+2hpGBfGf1ZBN+o4DBMHiRtTUoVU
+         lTkyveQUJcvSAHmdYroK6W74PdIIJgIHUQhZw3Fav3PjgKIQIBh04QpiIs2brnAiyFCi
+         nKv+iJ+Xw85wysTvDrdiQ5mTK5j6dsaAaX7dCEviaSE9mEWUO2E0gpZ4mQLWingjcMte
+         iLPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=QPUVe13AazL9LrZF5vw2cXDgMLpeQYHXtbF+GuHButM=;
-        b=FI6VxcsoPoB6XVMva5QMoMAlt56XHUg1p3Sob0AFk/OpPkEMQDzspZPOTB90RTl9k8
-         gxekFg+/vM0a2vbw3nu+5FXKaP1nsiZRxCboti/7okY9dkFUXtItvUwZE5Q1SJ9qp9ju
-         z7zC2tK6YUGa5z0RA4vkWrHjmtXysMq+V/oOO8jebVcFqx0wx1E9Vfc0jrFubiIOXFFp
-         F7/E0i+tt6kbZB5K+hv6RLXTBYpU+NgrwBicnpXq+QTPBY/Rg9uS9rJpQHFfa8WYexlU
-         MYZ/cAh661mQVCxFObw38MMc9J5TLyTmbwvHfyxmSXOGhA9gqCBIcHOhhSMHZT0dVnUJ
-         t8gQ==
+        bh=3iy4hHBTYS8Y6OIhJpAvVb/NIIrv1CbReyBomjD1ntw=;
+        b=EvDTcycdF9+SMYyJPlUEmIj+Q/MxsE6nbwz2+QTATvSSvpCpAqfhJuKqsHn/ANphid
+         ZbMzQ8XDhD0DjVu/BB7CdRVoCBVq8sK+CMqO/op4d3frW1XMwTjnPrf6lZiWoVvb5Ac/
+         eI38VwTuQsEf2cMbvrXEqczCdAnA8X9PzlC98TNkIdybbQDEkLweQuCdkRcAc1S25U/3
+         1TYWhmKQes/x44qgDct8SFSaR/vRFibbA6LYwDU0txuIGLuuH5BUYex7Oo2VNYrDOfX6
+         zR+9WLwEfP6TpJNoc5Quxm8idBNGha9/lymfYSpGelf55p4th1WgHrQNYAsFCdBwy0fX
+         CleA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Fo3j9tSD;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=JSrr118C;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Fo3j9tSD;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=JSrr118C;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,214 +58,86 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 10/37] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
-Date: Mon, 23 Apr 2018 17:47:13 +0200
-Message-Id: <1524498460-25530-11-git-send-email-joro@8bytes.org>
+Subject: [PATCH 09/37] x86/entry/32: Introduce SAVE_ALL_NMI and RESTORE_ALL_NMI
+Date: Mon, 23 Apr 2018 17:47:12 +0200
+Message-Id: <1524498460-25530-10-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552509449154585?=
-X-GMAIL-MSGID: =?utf-8?q?1598552509449154585?=
+X-GMAIL-THRID: =?utf-8?q?1598552507821201537?=
+X-GMAIL-MSGID: =?utf-8?q?1598552507821201537?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-It can happen that we enter the kernel from kernel-mode and
-on the entry-stack. The most common way this happens is when
-we get an exception while loading the user-space segment
-registers on the kernel-to-userspace exit path.
-
-The segment loading needs to be done after the entry-stack
-switch, because the stack-switch needs kernel %fs for
-per_cpu access.
-
-When this happens, we need to make sure that we leave the
-kernel with the entry-stack again, so that the interrupted
-code-path runs on the right stack when switching to the
-user-cr3.
-
-We do this by detecting this condition on kernel-entry by
-checking CS.RPL and %esp, and if it happens, we copy over
-the complete content of the entry stack to the task-stack.
-This needs to be done because once we enter the exception
-handlers we might be scheduled out or even migrated to a
-different CPU, so that we can't rely on the entry-stack
-contents. We also leave a marker in the stack-frame to
-detect this condition on the exit path.
-
-On the exit path the copy is reversed, we copy all of the
-remaining task-stack back to the entry-stack and switch
-to it.
+These macros will be used in the NMI handler code and
+replace plain SAVE_ALL and RESTORE_REGS there. We will add
+the NMI-specific CR3-switch to these macros later.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 116 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 115 insertions(+), 1 deletion(-)
+ arch/x86/entry/entry_32.S | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index e2621bf..b3477ff 100644
+index 927df80..e2621bf 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -299,6 +299,9 @@
-  * copied there. So allocate the stack-frame on the task-stack and
-  * switch to it before we do any copying.
-  */
-+
-+#define CS_FROM_ENTRY_STACK	(1 << 31)
-+
- .macro SWITCH_TO_KERNEL_STACK
+@@ -186,6 +186,9 @@
  
- 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-@@ -320,6 +323,16 @@
- 	/* Load top of task-stack into %edi */
- 	movl	TSS_entry_stack(%edi), %edi
- 
-+	/*
-+	 * Clear upper bits of the CS slot in pt_regs in case hardware
-+	 * didn't clear it for us
-+	 */
-+	andl	$(0x0000ffff), PT_CS(%esp)
-+
-+	/* Special case - entry from kernel mode via entry stack */
-+	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
-+	jz	.Lentry_from_kernel_\@
-+
- 	/* Bytes to copy */
- 	movl	$PTREGS_SIZE, %ecx
- 
-@@ -333,8 +346,8 @@
- 	 */
- 	addl	$(4 * 4), %ecx
- 
--.Lcopy_pt_regs_\@:
- #endif
-+.Lcopy_pt_regs_\@:
- 
- 	/* Allocate frame on task-stack */
- 	subl	%ecx, %edi
-@@ -350,6 +363,56 @@
- 	cld
- 	rep movsl
- 
-+	jmp .Lend_\@
-+
-+.Lentry_from_kernel_\@:
-+
-+	/*
-+	 * This handles the case when we enter the kernel from
-+	 * kernel-mode and %esp points to the entry-stack. When this
-+	 * happens we need to switch to the task-stack to run C code,
-+	 * but switch back to the entry-stack again when we approach
-+	 * iret and return to the interrupted code-path. This usually
-+	 * happens when we hit an exception while restoring user-space
-+	 * segment registers on the way back to user-space.
-+	 *
-+	 * When we switch to the task-stack here, we can't trust the
-+	 * contents of the entry-stack anymore, as the exception handler
-+	 * might be scheduled out or moved to another CPU. Therefore we
-+	 * copy the complete entry-stack to the task-stack and set a
-+	 * marker in the iret-frame (bit 31 of the CS dword) to detect
-+	 * what we've done on the iret path.
-+	 *
-+	 * On the iret path we copy everything back and switch to the
-+	 * entry-stack, so that the interrupted kernel code-path
-+	 * continues on the same stack it was interrupted with.
-+	 *
-+	 * Be aware that an NMI can happen anytime in this code.
-+	 *
-+	 * %esi: Entry-Stack pointer (same as %esp)
-+	 * %edi: Top of the task stack
-+	 */
-+
-+	/* Calculate number of bytes on the entry stack in %ecx */
-+	movl	%esi, %ecx
-+
-+	/* %ecx to the top of entry-stack */
-+	andl	$(MASK_entry_stack), %ecx
-+	addl	$(SIZEOF_entry_stack), %ecx
-+
-+	/* Number of bytes on the entry stack to %ecx */
-+	sub	%esi, %ecx
-+
-+	/* Mark stackframe as coming from entry stack */
-+	orl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
-+
-+	/*
-+	 * %esi and %edi are unchanged, %ecx contains the number of
-+	 * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
-+	 * the stack-frame on task-stack and copy everything over
-+	 */
-+	jmp .Lcopy_pt_regs_\@
-+
- .Lend_\@:
  .endm
  
-@@ -408,6 +471,56 @@
- .endm
- 
- /*
-+ * This macro handles the case when we return to kernel-mode on the iret
-+ * path and have to switch back to the entry stack.
-+ *
-+ * See the comments below the .Lentry_from_kernel_\@ label in the
-+ * SWITCH_TO_KERNEL_STACK macro for more details.
-+ */
-+.macro PARANOID_EXIT_TO_KERNEL_MODE
-+
-+	/*
-+	 * Test if we entered the kernel with the entry-stack. Most
-+	 * likely we did not, because this code only runs on the
-+	 * return-to-kernel path.
-+	 */
-+	testl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
-+	jz	.Lend_\@
-+
-+	/* Unlikely slow-path */
-+
-+	/* Clear marker from stack-frame */
-+	andl	$(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
-+
-+	/* Copy the remaining task-stack contents to entry-stack */
-+	movl	%esp, %esi
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
-+
-+	/* Bytes on the task-stack to ecx */
-+	movl	PER_CPU_VAR(cpu_current_top_of_stack), %ecx
-+	subl	%esi, %ecx
-+
-+	/* Allocate stack-frame on entry-stack */
-+	subl	%ecx, %edi
-+
-+	/*
-+	 * Save future stack-pointer, we must not switch until the
-+	 * copy is done, otherwise the NMI handler could destroy the
-+	 * contents of the task-stack we are about to copy.
-+	 */
-+	movl	%edi, %ebx
-+
-+	/* Do the copy */
-+	shrl	$2, %ecx
-+	cld
-+	rep movsl
-+
-+	/* Safe to switch to entry-stack now */
-+	movl	%ebx, %esp
-+
-+.Lend_\@:
++.macro SAVE_ALL_NMI
++	SAVE_ALL
 +.endm
-+/*
-  * %eax: prev task
-  * %edx: next task
-  */
-@@ -769,6 +882,7 @@ restore_all:
+ /*
+  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+  * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
+@@ -232,6 +235,10 @@
+ 	POP_GS_EX
+ .endm
  
- restore_all_kernel:
- 	TRACE_IRQS_IRET
-+	PARANOID_EXIT_TO_KERNEL_MODE
- 	RESTORE_REGS 4
++.macro RESTORE_ALL_NMI pop=0
++	RESTORE_REGS pop=\pop
++.endm
++
+ .macro CHECK_AND_APPLY_ESPFIX
+ #ifdef CONFIG_X86_ESPFIX32
+ #define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
+@@ -1166,7 +1173,7 @@ ENTRY(nmi)
+ #endif
+ 
+ 	pushl	%eax				# pt_regs->orig_ax
+-	SAVE_ALL
++	SAVE_ALL_NMI
+ 	ENCODE_FRAME_POINTER
+ 	xorl	%edx, %edx			# zero error code
+ 	movl	%esp, %eax			# pt_regs pointer
+@@ -1194,7 +1201,7 @@ ENTRY(nmi)
+ 
+ .Lnmi_return:
+ 	CHECK_AND_APPLY_ESPFIX
+-	RESTORE_REGS 4
++	RESTORE_ALL_NMI pop=4
  	jmp	.Lirq_return
  
+ #ifdef CONFIG_X86_ESPFIX32
+@@ -1210,12 +1217,12 @@ ENTRY(nmi)
+ 	pushl	16(%esp)
+ 	.endr
+ 	pushl	%eax
+-	SAVE_ALL
++	SAVE_ALL_NMI
+ 	ENCODE_FRAME_POINTER
+ 	FIXUP_ESPFIX_STACK			# %eax == %esp
+ 	xorl	%edx, %edx			# zero error code
+ 	call	do_nmi
+-	RESTORE_REGS
++	RESTORE_ALL_NMI
+ 	lss	12+4(%esp), %esp		# back to espfix stack
+ 	jmp	.Lirq_return
+ #endif
 -- 
 2.7.4
