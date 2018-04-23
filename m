@@ -1,66 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754698AbeDWIiY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:38:24 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:40907 "EHLO
+        id S1754491AbeDWIiU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:38:20 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:58587 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754594AbeDWIhM (ORCPT
+        with ESMTP id S1754597AbeDWIhQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:37:12 -0400
+        Mon, 23 Apr 2018 04:37:16 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Paul Mackerras <paulus@samba.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
         y2038@lists.linaro.org, arnd@arndb.de
-Subject: [PATCH 1/5] powerpc: always enable RTC_LIB
-Date: Mon, 23 Apr 2018 10:36:38 +0200
-Message-Id: <20180423083642.2608886-1-arnd@arndb.de>
+Subject: [PATCH 5/5] powerpc: remove unused to_tm() helper
+Date: Mon, 23 Apr 2018 10:36:42 +0200
+Message-Id: <20180423083642.2608886-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:zWvL38seKXvP56XrNeY+SIJ3zKyG1Pbqt5VEep1gY3DXFLKqyeK
- EXHINLugZb6isRtvYVOUvAEFpX6yyRLaMVZrVx1tgY+zbTynqhtsJVlDqOHdvNR/wdLC9vC
- p7lVZTBtCgf3Glnbp28T6XYzskc7pelhzP5hJ8ZRvFSNWZCnf5Jv8XEXiF31UO0PRvmTcIc
- J4yIARrcNuU4sXDW+IEDw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:NUv5yRseWb4=:UJDT8Mw5NiSYLjWnRIgAPM
- 6bfCBb7SSzDj1dDqyL8H9Sb+713n650iQrdWl8wkXG0merynvDrQquy1HVQmU/U/UJfHjhBQF
- c+c8L45MJxdE9PgU/X8IN9jpAMw//WHuNvoYrnmxDaqcAa+dNH8/elMcxiKnwjjMI943jsDDT
- DjPD/8RMPMyC112G4itCVt8Z4/B4hT78is9TYENlhUgQYbrbqCefQ+WDounNotdtAICsDALKM
- 7gA6GY84pDHku38D0Sus82b7mXntv7VJ0UZWMozYtS+/e2cRuBOsjD2f4bYr93BfgrnLlf5mq
- keLZt24sOOQ/ap4gbbjvLZudwmc/8NV0wVNrNOnmbn/jCXmbmA7KiH6IKK+9IH8GGGGLdmHUI
- aePaK2kHNvtxy/HAatHzdOcNSKn4OSpDG+/Q71/P1npA4yyVmMHM513/yO88yagWRtMelhlsb
- 2bxRW1nL8gwI9iLXrCVA+TGUhRuMOePg6U4LwfH9I1UmwTEr0+ss94KTCRrgjqw0ld0HDhZSG
- Ji/dMo4OmSPnDbSYtGNCHGBUfK9y7wvU1vak0b5iPrZtFa6wwus6NQJJplk+wFCTeZAV0PV36
- IODVHSpI8bbyILxtASEOD3ul37D8UXdxlw0DvDBSfd1OrmSeP1IWGyQLF2s6ioreGwXXqdVRv
- AvJkBnGJWkUqNLcvih6H+YwfCDz5mwZB8NnaQU9gXsW9zupXsQxdKSdDpNdlSQwcdTMdDElGV
- 5rkSt2htKeGbCa1HgAfOqi7pH3Fue+kSes7TvQ==
+In-Reply-To: <20180423083642.2608886-1-arnd@arndb.de>
+References: <20180423083642.2608886-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:W0hINnDI0ZbdXVpyAdpGvscBey4v4Q8BDN7S+80MT39s8ov6JHi
+ NZBpsdzhzspbCPN1b09xXlI7tg0TeTIxah0t4RJE/6GgaVCCpzbJGS3dma9NXA713fPtqq0
+ 6km3P2/IreMrIo5n1glfRWD43+E7lMukJsvXWTe5rnORFj1Spaai6QNyHvG2LoiXzvXq0Hf
+ jAAeZ0VFw5GoGXSJLStXQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:xroRxFA9f5Y=:KvdlsfBnkbfRH9qeGfFpA5
+ n0PJK033+/l+9qe/WauCwwtaYqiXDW0zBfEvy/coK70Glm86TpH+QghbjYiwPlN8dtcuKe8wm
+ UpPiCsaPj1DXChSYNOt/+ti0DV9mnzdFPZQmpoKA0Q9rSqweJnOh+OVelAJSZwFJJDcw0UEmw
+ eAagmjU29JvWjZuUNIRbwbkGdsmFmCHNFPlKOURROqrGF+HB/8Y5DXSmG2xSqyKzkZKZJgesB
+ t/o3kRzyuL0AhQwpZsLsfq9xVAYzzRrhIEfP/Jst0SZWncsEj9ong885Hu4tjmHdMXZhAs1/e
+ LEsJ7EbqmHRFCbg2U8hl6/Ud3bHFMs0s7U/m0CGTTCdvJ7xPW7DfE0ESmPukawshKnk44xdO/
+ y8urCZ0uu/lLIVgRl06va7hShWVh/wYr8ZxhRca2P25bgcqy+HVO/QqML9dMDuTDUvHq7Jhp8
+ StOpd/CkhidPqzo1MsYzPXffI2+Lgtdncu5AtzjvXfOn7oUHyNstmejZwj2y2kxspwONiSgB9
+ ieYY6egD2t/n5V80IIThsLw7Cr5/cRC8Xt+DPmeG2RNq3sI5dYy5DC6ZKEAm4fxkc5AWrR1gc
+ GAiHy10lg2ZyhZGj1TjNtkBvNNKU/pFqQcV3MBD4tIQ8oD6HnL3hDxACTAa7FUKslSf0Qb/5G
+ eMZD1cvLZ2B/lSO5GRP06VpS477YxK9Uzj1EnJ9iG9vUM93qOiiLBdYAjIhRQFw6G1XaNSl4s
+ e16t+GvqN4kehHzRopWCszwPIuxuH3uCKhI3bg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to use the rtc_tm_to_time64() and rtc_time64_to_tm()
-helper functions in later patches, we have to ensure that
-CONFIG_RTC_LIB is always built-in.
-
-Note that this symbol only controls a couple of helper functions,
-not the actual RTC subsystem, which remains optional and is
-enabled with CONFIG_RTC_CLASS.
+to_tm() is now completely unused, the only reference being in the
+_dump_time() helper that is also unused. This removes both, leaving
+the rest of the powerpc RTC code y2038 safe to as far as the hardware
+supports.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/powerpc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/include/asm/time.h   |  2 --
+ arch/powerpc/kernel/time.c        | 50 ---------------------------------------
+ arch/powerpc/platforms/ps3/time.c | 24 -------------------
+ 3 files changed, 76 deletions(-)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index c32a181a7cbb..de2cda320fdd 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -232,6 +232,7 @@ config PPC
- 	select OF_RESERVED_MEM
- 	select OLD_SIGACTION			if PPC32
- 	select OLD_SIGSUSPEND
-+	select RTC_LIB
- 	select SPARSE_IRQ
- 	select SYSCTL_EXCEPTION_TRACE
- 	select VIRT_TO_BUS			if !PPC64
+diff --git a/arch/powerpc/include/asm/time.h b/arch/powerpc/include/asm/time.h
+index db546c034905..79bc9c3e4325 100644
+--- a/arch/powerpc/include/asm/time.h
++++ b/arch/powerpc/include/asm/time.h
+@@ -26,8 +26,6 @@ extern unsigned long tb_ticks_per_usec;
+ extern unsigned long tb_ticks_per_sec;
+ extern struct clock_event_device decrementer_clockevent;
+ 
+-struct rtc_time;
+-extern void to_tm(int tim, struct rtc_time * tm);
+ extern void tick_broadcast_ipi_handler(void);
+ 
+ extern void generic_calibrate_decr(void);
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index f9b0baa3fa2b..79bdeea85ab4 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -1138,56 +1138,6 @@ void __init time_init(void)
+ #endif
+ }
+ 
+-
+-#define FEBRUARY	2
+-#define	STARTOFTIME	1970
+-#define SECDAY		86400L
+-#define SECYR		(SECDAY * 365)
+-#define	leapyear(year)		((year) % 4 == 0 && \
+-				 ((year) % 100 != 0 || (year) % 400 == 0))
+-#define	days_in_year(a) 	(leapyear(a) ? 366 : 365)
+-#define	days_in_month(a) 	(month_days[(a) - 1])
+-
+-static int month_days[12] = {
+-	31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+-};
+-
+-void to_tm(int tim, struct rtc_time * tm)
+-{
+-	register int    i;
+-	register long   hms, day;
+-
+-	day = tim / SECDAY;
+-	hms = tim % SECDAY;
+-
+-	/* Hours, minutes, seconds are easy */
+-	tm->tm_hour = hms / 3600;
+-	tm->tm_min = (hms % 3600) / 60;
+-	tm->tm_sec = (hms % 3600) % 60;
+-
+-	/* Number of years in days */
+-	for (i = STARTOFTIME; day >= days_in_year(i); i++)
+-		day -= days_in_year(i);
+-	tm->tm_year = i;
+-
+-	/* Number of months in days left */
+-	if (leapyear(tm->tm_year))
+-		days_in_month(FEBRUARY) = 29;
+-	for (i = 1; day >= days_in_month(i); i++)
+-		day -= days_in_month(i);
+-	days_in_month(FEBRUARY) = 28;
+-	tm->tm_mon = i;
+-
+-	/* Days are what is left over (+1) from all that. */
+-	tm->tm_mday = day + 1;
+-
+-	/*
+-	 * No-one uses the day of the week.
+-	 */
+-	tm->tm_wday = -1;
+-}
+-EXPORT_SYMBOL(to_tm);
+-
+ /*
+  * Divide a 128-bit dividend by a 32-bit divisor, leaving a 128 bit
+  * result.
+diff --git a/arch/powerpc/platforms/ps3/time.c b/arch/powerpc/platforms/ps3/time.c
+index 9dac125c997e..08ca76e23d09 100644
+--- a/arch/powerpc/platforms/ps3/time.c
++++ b/arch/powerpc/platforms/ps3/time.c
+@@ -28,30 +28,6 @@
+ 
+ #include "platform.h"
+ 
+-#define dump_tm(_a) _dump_tm(_a, __func__, __LINE__)
+-static void _dump_tm(const struct rtc_time *tm, const char* func, int line)
+-{
+-	pr_debug("%s:%d tm_sec  %d\n", func, line, tm->tm_sec);
+-	pr_debug("%s:%d tm_min  %d\n", func, line, tm->tm_min);
+-	pr_debug("%s:%d tm_hour %d\n", func, line, tm->tm_hour);
+-	pr_debug("%s:%d tm_mday %d\n", func, line, tm->tm_mday);
+-	pr_debug("%s:%d tm_mon  %d\n", func, line, tm->tm_mon);
+-	pr_debug("%s:%d tm_year %d\n", func, line, tm->tm_year);
+-	pr_debug("%s:%d tm_wday %d\n", func, line, tm->tm_wday);
+-}
+-
+-#define dump_time(_a) _dump_time(_a, __func__, __LINE__)
+-static void __maybe_unused _dump_time(int time, const char *func,
+-	int line)
+-{
+-	struct rtc_time tm;
+-
+-	to_tm(time, &tm);
+-
+-	pr_debug("%s:%d time    %d\n", func, line, time);
+-	_dump_tm(&tm, func, line);
+-}
+-
+ void __init ps3_calibrate_decr(void)
+ {
+ 	int result;
 -- 
 2.9.0
