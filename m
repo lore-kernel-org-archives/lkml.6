@@ -1,90 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932469AbeDWVa7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 17:30:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40526 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932368AbeDWVau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 17:30:50 -0400
-Subject: Re: [PATCH] locking/rwsem: Synchronize task state & waiter->task of
- readers
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-References: <1523380938-19462-1-git-send-email-longman@redhat.com>
- <6c112ecb-d662-b1fc-152a-32060ec46dae@redhat.com>
- <20180423205514.GA5876@andrea>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <4661980a-ad4a-1578-0b8f-5b6788912582@redhat.com>
-Date: Mon, 23 Apr 2018 17:30:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S932463AbeDWVeB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 17:34:01 -0400
+Received: from ozlabs.org ([203.11.71.1]:49561 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932185AbeDWVdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 17:33:55 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 24 Apr 2018 07:32:28 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simon Horman <horms@verge.net.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the renesas tree
+Message-ID: <20180424073228.22a9f64d@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180423205514.GA5876@andrea>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/P9.KeanxRn6oH=nkNvcubPD"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/23/2018 04:55 PM, Andrea Parri wrote:
-> Hi Waiman,
->
-> On Mon, Apr 23, 2018 at 12:46:12PM -0400, Waiman Long wrote:
->> On 04/10/2018 01:22 PM, Waiman Long wrote:
->>> It was observed occasionally in PowerPC systems that there was reader
->>> who had not been woken up but that its waiter->task had been cleared.
-> Can you provide more details about these observations?  (links to LKML
-> posts, traces, applications used/micro-benchmarks, ...)
+--Sig_/P9.KeanxRn6oH=nkNvcubPD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-They were customers reported problems on the RHEL7 kernel. Actually, we
-are not able to reproduce it in-house. From the symptom, it does look
-like a memory synchronization issue which I believe is also there in the
-upstream code.
+Hi Simon,
 
->>> One probable cause of this missed wakeup may be the fact that the
->>> waiter->task and the task state have not been properly synchronized as
->>> the lock release-acquire pair of different locks in the wakeup code path
->>> does not provide a full memory barrier guarantee.
-> I guess that by the "pair of different locks" you mean (sem->wait_lock,
-> p->pi_lock), right?  BTW, __rwsem_down_write_failed_common() is calling
-> wake_up_q() _before_ releasing the wait_lock: did you intend to exclude
-> this callsite? (why?)
+Commit
 
-Yes, I am talking about sem->wait_lock and p->pi_lock.
+  341d83147b6a ("arm64: dts: renesas: r8a77970: sort subnodes of the soc no=
+de")
 
-Right, there is an alternative reader wakeup path in
-__rwsem_down_write_failed_common() iin addition to unlock wakeup. I
-didn't purposely exclude that, but I think it has similar issue. I will
-clarify that in the next version.
+is missing a Signed-off-by from its committer.
 
->
->> So smp_store_mb()
->>> is now used to set waiter->task to NULL to provide a proper memory
->>> barrier for synchronization.
-> Mmh; the patch is not introducing an smp_store_mb()... My guess is that
-> you are thinking at the sequence:
->
-> 	smp_store_release(&waiter->task, NULL);
-> 	[...]
-> 	smp_mb(); /* added with your patch */
->
-> or what am I missing?
-
-I actually thought about doing that at the beginning. The reasons why I
-changed my mind were:
-1) If there are multiple readers ready to be woken up, you will have to
-issue multiple smp_mb instead of just 1 here.
-2) smp_store_mb() is implemented with a smp_mb after the store. So it
-may not be able to ensure that setting the reader waiter to nil is the
-last operation seen by other CPUs as noted in the comment above
-smp_store_release().
-
-For these 2 reasons, I decide to add an extra smp_mb at the end.
-
+--=20
 Cheers,
-Longman
+Stephen Rothwell
+
+--Sig_/P9.KeanxRn6oH=nkNvcubPD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlreUO0ACgkQAVBC80lX
+0GxlUAf2LWd/RIC1viPYTYV49YerAPk2kFi1JYMiKM7wdgkU1dgetCcbpfcDZZQ3
+bv1qq5+Uo51nnFwh4JGZl1xNZiB6LXcjOpOpzDN4hr0VBYzbFCsBKM9y/WMdSFj0
+3qDxKznqV/k2WkyCKTmTs/v/3oc0lb4FVRgeq6r53j9Z+AdHZn87g4UIl9vfQTI+
+MHORgigrbA1/tZdsNu5iKyqCIBY/KkitJwdDGwDTlvVGYJrer2kXmtVF7aXPJf5e
+sgi0JUR7RDVx/k+zXhufOFEHntOFZQ0db5zZabebtmccSBlbCPAi64X158AKPhiV
+YFiPaJbiOvoOtF6YtcxjbPgY6w2O
+=SwpT
+-----END PGP SIGNATURE-----
+
+--Sig_/P9.KeanxRn6oH=nkNvcubPD--
