@@ -1,74 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754114AbeDWHOe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 03:14:34 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53585 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750756AbeDWHOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 03:14:33 -0400
-Date: Mon, 23 Apr 2018 09:14:21 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Pascal Roeleven <dev@pascalroeleven.nl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] ARM: dts: sun4i: Fix incorrect clocks for displays
-Message-ID: <20180423071421.byupsz4gxpmhfe44@flea>
-References: <20180420102112.2843-1-dev@pascalroeleven.nl>
+        id S1753109AbeDWHTy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 03:19:54 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34796 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbeDWHTx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 03:19:53 -0400
+X-Google-Smtp-Source: AIpwx48DpVtQib0Hdh2g+LXOFsVliqhEICFLL5O2jEEI+YPw6/Ye8oPnPm3x+TbmfHg0vVTNKTxlbA==
+Date: Mon, 23 Apr 2018 16:19:41 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v10 09/25] mm: protect VMA modifications using VMA
+ sequence count
+Message-ID: <20180423071941.GD114098@rodete-desktop-imager.corp.google.com>
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523975611-15978-10-git-send-email-ldufour@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yofuic37aad2weiq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180420102112.2843-1-dev@pascalroeleven.nl>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <1523975611-15978-10-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 17, 2018 at 04:33:15PM +0200, Laurent Dufour wrote:
+> The VMA sequence count has been introduced to allow fast detection of
+> VMA modification when running a page fault handler without holding
+> the mmap_sem.
+> 
+> This patch provides protection against the VMA modification done in :
+> 	- madvise()
+> 	- mpol_rebind_policy()
+> 	- vma_replace_policy()
+> 	- change_prot_numa()
+> 	- mlock(), munlock()
+> 	- mprotect()
+> 	- mmap_region()
+> 	- collapse_huge_page()
+> 	- userfaultd registering services
+> 
+> In addition, VMA fields which will be read during the speculative fault
+> path needs to be written using WRITE_ONCE to prevent write to be split
+> and intermediate values to be pushed to other CPUs.
+> 
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> ---
+>  fs/proc/task_mmu.c |  5 ++++-
+>  fs/userfaultfd.c   | 17 +++++++++++++----
+>  mm/khugepaged.c    |  3 +++
+>  mm/madvise.c       |  6 +++++-
+>  mm/mempolicy.c     | 51 ++++++++++++++++++++++++++++++++++-----------------
+>  mm/mlock.c         | 13 ++++++++-----
+>  mm/mmap.c          | 22 +++++++++++++---------
+>  mm/mprotect.c      |  4 +++-
+>  mm/swap_state.c    |  8 ++++++--
+>  9 files changed, 89 insertions(+), 40 deletions(-)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index c486ad4b43f0..aeb417f28839 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1136,8 +1136,11 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
+>  					goto out_mm;
+>  				}
+>  				for (vma = mm->mmap; vma; vma = vma->vm_next) {
+> -					vma->vm_flags &= ~VM_SOFTDIRTY;
+> +					vm_write_begin(vma);
+> +					WRITE_ONCE(vma->vm_flags,
+> +						   vma->vm_flags & ~VM_SOFTDIRTY);
+>  					vma_set_page_prot(vma);
+> +					vm_write_end(vma);
 
---yofuic37aad2weiq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+trivial:
 
-On Fri, Apr 20, 2018 at 12:21:12PM +0200, Pascal Roeleven wrote:
-> Some displays on SUN4i devices wouldn't properly stay on unless
-> 'clk_ignore_unused' is used.
->=20
-> Change the duplicate clocks to the probably intended ones.
->=20
-> Signed-off-by: Pascal Roeleven <dev@pascalroeleven.nl>
+I think It's tricky to maintain that VMA fields to be read during SPF should be
+(READ|WRITE_ONCE). I think we need some accessor to read/write them rather than
+raw accessing like like vma_set_page_prot. Maybe spf prefix would be helpful. 
 
-What was the difference with the first patch you sent?
+	vma_spf_set_value(vma, vm_flags, val);
 
-Anyway, I've applied it, thanks
+We also add some markers in vm_area_struct's fileds to indicate that
+people shouldn't access those fields directly.
 
-Maxime
+Just a thought.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
---yofuic37aad2weiq
-Content-Type: application/pgp-signature; name="signature.asc"
+>  				}
+>  				downgrade_write(&mm->mmap_sem);
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrdh8wACgkQ0rTAlCFN
-r3S1oA/+P22r7q3WrFzmbh+WhPBVxB+/8xP5RRyJsb1kxBhZPYhsFeJjMyiyKHu/
-wjEb0kdfvAjixuMOo+qOKFUjwu/BGywIEMhySIOdGgLzORmNvC6U46ZPnObnN0oy
-5nPTByzsEnPdwgkdsfhjUpSB8LSY8uLeL5s6K6LGSKTeerYtn5UgYPNOAgi48JLP
-jQD003q5H1NOCndPetv3tXfYwd2ek4M5xNoIountXovB/XO7Zvn/GBL8yPlJLyRp
-4eP5moywYZyEi9PmsTI8Qxod5XKWsSodR8iecoOp9gTBxeWP1bqNEUpXhgclnAlI
-HbfASEVLiCTyE5L0K4K2J/vlykr96SSHMLaGh16Tsphh7YQioi168UU3wVlfMbir
-V2L9qn47so1KvorWx6DyDVOxGGY72hR0WZnHkwIXzxJxvrNH2U57MynrkWKIdV85
-zJzlYBz1xwxIIbiEMpH1IUq2d+617OT2hdWIWFwWrJgbNaLQPn5sqtu0+W9jx9Fj
-d2J0tgj7M1ozsm+Sq1HPifq28GUi2f4dlU4UT7X81g1bPPKiWryHP+Ays6+hgGq3
-3HR6vaiDN+BDiDF07dGGBYQxq+FUGze2EqEHzGtwbf3vzfsORkJTYuys/7UWn9TO
-iLP5RYQyE1wSrlndnSf2FolWtooHYKM2RiGno33bOMEz3Thj4zc=
-=Fzfb
------END PGP SIGNATURE-----
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index fe079756bb18..8a8a402ed59f 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -575,6 +575,10 @@ static unsigned long swapin_nr_pages(unsigned long offset)
+>   * the readahead.
+>   *
+>   * Caller must hold down_read on the vma->vm_mm if vmf->vma is not NULL.
+> + * This is needed to ensure the VMA will not be freed in our back. In the case
+> + * of the speculative page fault handler, this cannot happen, even if we don't
+> + * hold the mmap_sem. Callees are assumed to take care of reading VMA's fields
 
---yofuic37aad2weiq--
+I guess reader would be curious on *why* is safe with SPF.
+Comment about the why could be helpful for reviewer.
+
+> + * using READ_ONCE() to read consistent values.
+>   */
+>  struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+>  				struct vm_fault *vmf)
+> @@ -668,9 +672,9 @@ static inline void swap_ra_clamp_pfn(struct vm_area_struct *vma,
+>  				     unsigned long *start,
+>  				     unsigned long *end)
+>  {
+> -	*start = max3(lpfn, PFN_DOWN(vma->vm_start),
+> +	*start = max3(lpfn, PFN_DOWN(READ_ONCE(vma->vm_start)),
+>  		      PFN_DOWN(faddr & PMD_MASK));
+> -	*end = min3(rpfn, PFN_DOWN(vma->vm_end),
+> +	*end = min3(rpfn, PFN_DOWN(READ_ONCE(vma->vm_end)),
+>  		    PFN_DOWN((faddr & PMD_MASK) + PMD_SIZE));
+>  }
+>  
+> -- 
+> 2.7.4
+> 
