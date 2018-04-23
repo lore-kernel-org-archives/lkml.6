@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755339AbeDWNbI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:31:08 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33911 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755228AbeDWNa7 (ORCPT
+        id S1755405AbeDWNcD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:32:03 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38983 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755200AbeDWNa6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:30:59 -0400
-X-Google-Smtp-Source: AIpwx49/8o0TaHHH0Wr5Hu6t6XvXke6CI7EdeRuEZXLS879plpk3URxF+i35uAneeIp2Uk+pZqjAIg==
+        Mon, 23 Apr 2018 09:30:58 -0400
+X-Google-Smtp-Source: AIpwx49DLuKS5xxa2oNupuVI7CMu/7HMipNtx8MY8FWsh9OUBEIP0WiUVThiu3dbuuIu50xIikyr2A==
 From: David Herrmann <dh.herrmann@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
@@ -16,9 +16,9 @@ Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
         Eric Paris <eparis@parisplace.org>, serge@hallyn.com,
         davem@davemloft.net, netdev@vger.kernel.org,
         David Herrmann <dh.herrmann@gmail.com>
-Subject: [PATCH 2/3] net/unix: hook unix_socketpair() into LSM
-Date: Mon, 23 Apr 2018 15:30:14 +0200
-Message-Id: <20180423133015.5455-3-dh.herrmann@gmail.com>
+Subject: [PATCH 1/3] security: add hook for socketpair(AF_UNIX, ...)
+Date: Mon, 23 Apr 2018 15:30:13 +0200
+Message-Id: <20180423133015.5455-2-dh.herrmann@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180423133015.5455-1-dh.herrmann@gmail.com>
 References: <20180423133015.5455-1-dh.herrmann@gmail.com>
@@ -26,30 +26,103 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the newly created LSM-hook for unix_socketpair(). The default hook
-return-value is 0, so behavior stays the same unless LSMs start using
-this hook.
+Right now the LSM labels for socketpairs are always uninitialized,
+since there is no security hook for the socketpair() syscall. This
+patch adds the required hooks so LSMs can properly label socketpairs.
+This allows SO_PEERSEC to return useful information on those sockets.
+
+Note that the behavior of socketpair() can be emulated by creating a
+listener socket, connecting to it, and then discarding the initial
+listener socket. With this workaround, SO_PEERSEC would return the
+caller's security context. However, with socketpair(), the uninitialized
+context is returned unconditionally. This is unexpected and makes
+socketpair() less useful in situations where the security context is
+crucial to the application.
+
+With the new socketpair-hook this disparity can be solved by making
+socketpair() return the expected security context.
 
 Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
 ---
- net/unix/af_unix.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ include/linux/lsm_hooks.h | 8 ++++++++
+ include/linux/security.h  | 7 +++++++
+ security/security.c       | 6 ++++++
+ 3 files changed, 21 insertions(+)
 
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 68bb70a62afe..bc9705ace9b1 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -1371,6 +1371,11 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
- static int unix_socketpair(struct socket *socka, struct socket *sockb)
- {
- 	struct sock *ska = socka->sk, *skb = sockb->sk;
-+	int err;
-+
-+	err = security_unix_stream_socketpair(ska, skb);
-+	if (err)
-+		return err;
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 9d0b286f3dba..2a23c75c1541 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -717,6 +717,12 @@
+  *	@other contains the peer sock structure.
+  *	@newsk contains the new sock structure.
+  *	Return 0 if permission is granted.
++ * @unix_stream_socketpair:
++ *	Check permissions before establishing a Unix domain stream connection
++ *	for a fresh pair of sockets.
++ *	@socka contains the first sock structure.
++ *	@sockb contains the second sock structure.
++ *	Return 0 if permission is granted and the connection was established.
+  * @unix_may_send:
+  *	Check permissions before connecting or sending datagrams from @sock to
+  *	@other.
+@@ -1651,6 +1657,7 @@ union security_list_options {
+ #ifdef CONFIG_SECURITY_NETWORK
+ 	int (*unix_stream_connect)(struct sock *sock, struct sock *other,
+ 					struct sock *newsk);
++	int (*unix_stream_socketpair)(struct sock *socka, struct sock *sockb);
+ 	int (*unix_may_send)(struct socket *sock, struct socket *other);
  
- 	/* Join our sockets back to back */
- 	sock_hold(ska);
+ 	int (*socket_create)(int family, int type, int protocol, int kern);
+@@ -1919,6 +1926,7 @@ struct security_hook_heads {
+ 	struct hlist_head inode_getsecctx;
+ #ifdef CONFIG_SECURITY_NETWORK
+ 	struct hlist_head unix_stream_connect;
++	struct hlist_head unix_stream_socketpair;
+ 	struct hlist_head unix_may_send;
+ 	struct hlist_head socket_create;
+ 	struct hlist_head socket_post_create;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 200920f521a1..be275deeda10 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1187,6 +1187,7 @@ static inline int security_inode_getsecctx(struct inode *inode, void **ctx, u32
+ #ifdef CONFIG_SECURITY_NETWORK
+ 
+ int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk);
++int security_unix_stream_socketpair(struct sock *socka, struct sock *sockb);
+ int security_unix_may_send(struct socket *sock,  struct socket *other);
+ int security_socket_create(int family, int type, int protocol, int kern);
+ int security_socket_post_create(struct socket *sock, int family,
+@@ -1242,6 +1243,12 @@ static inline int security_unix_stream_connect(struct sock *sock,
+ 	return 0;
+ }
+ 
++static inline int security_unix_stream_socketpair(struct sock *socka,
++						  struct sock *sockb)
++{
++	return 0;
++}
++
+ static inline int security_unix_may_send(struct socket *sock,
+ 					 struct socket *other)
+ {
+diff --git a/security/security.c b/security/security.c
+index 7bc2fde023a7..3dfd374e84e5 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1340,6 +1340,12 @@ int security_unix_stream_connect(struct sock *sock, struct sock *other, struct s
+ }
+ EXPORT_SYMBOL(security_unix_stream_connect);
+ 
++int security_unix_stream_socketpair(struct sock *socka, struct sock *sockb)
++{
++	return call_int_hook(unix_stream_socketpair, 0, socka, sockb);
++}
++EXPORT_SYMBOL(security_unix_stream_socketpair);
++
+ int security_unix_may_send(struct socket *sock,  struct socket *other)
+ {
+ 	return call_int_hook(unix_may_send, 0, sock, other);
 -- 
 2.17.0
