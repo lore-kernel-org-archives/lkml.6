@@ -1,109 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754545AbeDWJJj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:09:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36670 "EHLO mx1.redhat.com"
+        id S1754518AbeDWJId (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 05:08:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52190 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754529AbeDWJIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:08:36 -0400
+        id S1754397AbeDWJI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 05:08:27 -0400
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 6/9] perf stat: Display time in precision based on std deviation
-Date: Mon, 23 Apr 2018 11:08:20 +0200
-Message-Id: <20180423090823.32309-7-jolsa@kernel.org>
+Subject: [PATCH 1/9] perf check-headers.sh: Simplify arguments passing
+Date: Mon, 23 Apr 2018 11:08:15 +0200
+Message-Id: <20180423090823.32309-2-jolsa@kernel.org>
 In-Reply-To: <20180423090823.32309-1-jolsa@kernel.org>
 References: <20180423090823.32309-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingo suggested to display elapsed time for multirun
-workload (perf stat -e) with precision based on the
-precision of the standard deviation.
+Passing whole string instead of parsing them after.
+It simplifies things for the next patches, that adds
+another function call, which makes it hard to pass
+arguments in the correct shape.
 
-In his own words:
-
-  > It would be better if perf stat would display elapsed time with a precision
-  > adjusted to stddev, it should display at most 2 more significant digits than
-  > the stddev inaccuracy.
-  >
-  > I.e. in the above case 0.39% is 0.109, so we only have accuracy for 1 digit, and
-  > so we should only display 3:
-  >
-  >        27.988 seconds time elapsed                                ( +-  0.39% )
-
-Plus suggestion about the output, which is small enough and
-connected with above change that I merged both changes together.
-
-  > Small output style nit - I think it would be nice if with --repeat the stddev was
-  > also displayed in absolute values, besides percentage:
-  >
-  >       27.988 +- 0.109 seconds time elapsed   ( +- 0.39% )
-
-The output is now:
-
-   Performance counter stats for './perf bench sched pipe' (5 runs):
-   SNIP
-           13.3667 +- 0.0256 seconds time elapsed  ( +-  0.19% )
-
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Link: http://lkml.kernel.org/n/tip-q10lhnqju8rdpiha542mvied@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-7sxkyhuktvxiepem60d6451b@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/builtin-stat.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ tools/perf/check-headers.sh | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 147a27e8c937..6b4f3d359cb3 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1733,19 +1733,37 @@ static void print_header(int argc, const char **argv)
- 	}
- }
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index 9aff89bc7535..88c5f9449809 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -59,13 +59,8 @@ check () {
+   file=$1
  
-+static int get_precision(double num)
-+{
-+	if (num > 1)
-+		return 0;
-+
-+	return lround(ceil(-log10(num)));
-+}
-+
- static void print_footer(void)
- {
-+	double avg = avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
- 	FILE *output = stat_config.output;
- 	int n;
+   shift
+-  opts=
+-  while [ -n "$*" ]; do
+-    opts="$opts \"$1\""
+-    shift
+-  done
  
- 	if (!null_run)
- 		fprintf(output, "\n");
--	fprintf(output, " %17.9f seconds time elapsed",
--			avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC);
--	if (run_count > 1) {
--		fprintf(output, "                                        ");
--		print_noise_pct(stddev_stats(&walltime_nsecs_stats),
--				avg_stats(&walltime_nsecs_stats));
-+
-+	if (run_count == 1) {
-+		fprintf(output, " %17.9f seconds time elapsed", avg);
-+	} else {
-+		double sd = stddev_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
-+		/*
-+		 * Display at most 2 more significant
-+		 * digits than the stddev inaccuracy.
-+		 */
-+		int precision = get_precision(sd) + 2;
-+
-+		fprintf(output, " %17.*f +- %.*f seconds time elapsed",
-+			precision, avg, precision, sd);
-+
-+		print_noise_pct(sd, avg);
- 	}
- 	fprintf(output, "\n\n");
+-  cmd="diff $opts ../$file ../../$file > /dev/null"
++  cmd="diff $* ../$file ../../$file > /dev/null"
  
+   test -f ../../$file &&
+   eval $cmd || echo "Warning: Kernel ABI header at 'tools/$file' differs from latest version at '$file'" >&2
+@@ -83,7 +78,7 @@ for i in $HEADERS; do
+ done
+ 
+ # diff with extra ignore lines
+-check arch/x86/lib/memcpy_64.S        -I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"
+-check arch/x86/lib/memset_64.S        -I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"
+-check include/uapi/asm-generic/mman.h -I "^#include <\(uapi/\)*asm-generic/mman-common.h>"
+-check include/uapi/linux/mman.h       -I "^#include <\(uapi/\)*asm/mman.h>"
++check arch/x86/lib/memcpy_64.S        '-I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"'
++check arch/x86/lib/memset_64.S        '-I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"'
++check include/uapi/asm-generic/mman.h '-I "^#include <\(uapi/\)*asm-generic/mman-common.h>"'
++check include/uapi/linux/mman.h       '-I "^#include <\(uapi/\)*asm/mman.h>"'
 -- 
 2.13.6
