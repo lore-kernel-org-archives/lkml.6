@@ -1,101 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754604AbeDWIYd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:24:33 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:54208 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754256AbeDWIYC (ORCPT
+        id S1754617AbeDWIYo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:24:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34742 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754256AbeDWIYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:24:02 -0400
-X-Google-Smtp-Source: AIpwx4/pSSwCyt6jbOuPJGBTnRrW1MrplMBMYbnWAnCLFDKq4WsyNS47t2k6ml+6FsoEsvfuGhmBt9zGPoqiCZs9bHqs7xoc98q4
-MIME-Version: 1.0
-Date: Mon, 23 Apr 2018 01:24:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009c7bf8056a7fc226@google.com>
-Subject: KMSAN: uninit-value in pppol2tp_connect
-From: syzbot <syzbot+a70ac890b23b1bf29f5c@syzkaller.appspotmail.com>
-To: davem@davemloft.net, jchapman@katalix.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Mon, 23 Apr 2018 04:24:39 -0400
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH v2] perf test: Adapt test case record+probe_libc_inet_pton.sh for s390
+Date: Mon, 23 Apr 2018 10:24:28 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18042308-0040-0000-0000-000004506CC8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042308-0041-0000-0000-000020F4D25C
+Message-Id: <20180423082428.7930-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804230092
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+perf test case 58 (record+probe_libc_inet_pton.sh)
+executed on s390x using kernel 4.16.0rc3
+displays this result:
+ # ./perf trace --no-syscalls
+           -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+     probe_libc:inet_pton: (3ffa0240448)
+	      __GI___inet_pton (/usr/lib64/libc-2.26.so)
+	      gaih_inet (inlined)
+	      __GI_getaddrinfo (inlined)
+	      main (/usr/bin/ping)
+	      __libc_start_main (/usr/lib64/libc-2.26.so)
+	     _start (/usr/bin/ping)
 
-syzbot hit the following crash on  
-https://github.com/google/kmsan.git/master commit
-a7f95e9c8a95e9fbb388c3999b61a17667cd3bbe (Sat Apr 21 13:50:22 2018 +0000)
-kmsan: disable assembly checksums
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=a70ac890b23b1bf29f5c
+After I installed kernel 4.16.0 the same tests uses
+commands
+ # perf record -e probe_libc:inet_pton/call-graph=dwarf/
+      -o /tmp/perf.data.abc ping -6 -c 1 ::1
+ # perf script -i /tmp/perf.data.abc
+and displays:
+ ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
+	       140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+	       fbde1 gaih_inet (inlined)
+	       fe2b9 __GI_getaddrinfo (inlined)
+	        398d main (/usr/bin/ping)
 
-So far this crash happened 3 times on  
-https://github.com/google/kmsan.git/master.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4946656566968320
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5395971013869568
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5936570024591360
-Kernel config: https://syzkaller.appspot.com/x/.config?id=328654897048964367
-compiler: clang version 7.0.0 (trunk 329391)
+Nothing else changed including glibc elfutils and other libraries
+picked up by the build.
+The entries for __libc_start_main and _start are missing.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a70ac890b23b1bf29f5c@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+I bisected missing __libc_start_main and _start to commit
+3d20c6246690219881786de10d2dda93f616d0ac
+("perf unwind: Unwind with libdw doesn't take symfs into account")
 
-==================================================================
-BUG: KMSAN: uninit-value in pppol2tp_connect+0x258/0x1c50  
-net/l2tp/l2tp_ppp.c:622
-CPU: 1 PID: 4524 Comm: syzkaller735385 Not tainted 4.16.0+ #85
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-  pppol2tp_connect+0x258/0x1c50 net/l2tp/l2tp_ppp.c:622
-  SYSC_connect+0x41a/0x510 net/socket.c:1639
-  SyS_connect+0x54/0x80 net/socket.c:1620
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x445559
-RSP: 002b:00007f0b96f0ddb8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445559
-RDX: 0000000000000000 RSI: 0000000020000200 RDI: 0000000000000003
-RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffec2b0929f R14: 00007f0b96f0e9c0 R15: 0000000000000001
+When I undo this commit I get this call stack on s390:
+ [root@s35lp76 perf]# ./perf script  -i /tmp/perf.data.abc
+ ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
+	140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+	 fbde1 gaih_inet (inlined)
+	 fe2b9 __GI_getaddrinfo (inlined)
+	  398d main (/usr/bin/ping)
+	 22fbd __libc_start_main (/usr/lib64/libc-2.26.so)
+	  457b _start (/usr/bin/ping)
 
-Local variable description: ----address@SYSC_connect
-Variable was created at:
-  SYSC_connect+0x6f/0x510 net/socket.c:1622
-  SyS_connect+0x54/0x80 net/socket.c:1620
-==================================================================
+Looks like dwarf functions dwfl_xxx  create different call back
+stack trace when using file
+/usr/lib/debug/usr/bin/ping-20161105-7.fc27.s390x.debug instead of
+file /usr/bin/ping.
 
+Fix this test case on s390 and do not expect any call back stack
+entry after the main() function. Also be more robust and accept a
+leading __GI_ prefix in front of getaddrinfo.
 
+On x86 this test case shows the same call stack using
+both kernel versions 4.16.0rc3 and 4.16.0 and also
+stops at main:
+
+[root@f27 perf]# ./perf script -i /tmp/perf.data.tmr
+ping  4446 [000]   172.027088: probe_libc:inet_pton: (7fdfa08c93c0)
+	           1393c0 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+	            fe60d getaddrinfo (/usr/lib64/libc-2.26.so)
+	             2f40 main (/usr/bin/ping)
+
+[root@f27 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
 ---
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 1ecc1f0ff84a..016882dbbc16 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -19,12 +19,10 @@ trace_libc_inet_pton_backtrace() {
+ 	expected[1]=".*inet_pton[[:space:]]\($libc\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+-		eventattr='call-graph=dwarf'
++		eventattr='call-graph=dwarf,max-stack=4'
+ 		expected[2]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
+-		expected[3]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
++		expected[3]="(__GI_)?getaddrinfo[[:space:]]\($libc|inlined\)$"
+ 		expected[4]="main[[:space:]]\(.*/bin/ping.*\)$"
+-		expected[5]="__libc_start_main[[:space:]]\($libc\)$"
+-		expected[6]="_start[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	*)
+ 		eventattr='max-stack=3'
+-- 
+2.14.3
