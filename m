@@ -1,62 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932350AbeDWTbu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 15:31:50 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37972 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932235AbeDWTbs (ORCPT
+        id S932464AbeDWTcE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 15:32:04 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46548 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932235AbeDWTb6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 15:31:48 -0400
-X-Google-Smtp-Source: AIpwx4/FIwBrcqVccgtU4J+XtYAJQdt6GYmFw3NJHdzithTdS00Ur1CRaAg8rh3Fl1kJnDP79xhzmw==
-From: Anders Roxell <anders.roxell@linaro.org>
-To: mchehab@kernel.org, p.zabel@pengutronix.de
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] drivers: media: platform: make VIDEO_VIU depend on I2C
-Date: Mon, 23 Apr 2018 21:31:39 +0200
-Message-Id: <20180423193139.16792-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.17.0
+        Mon, 23 Apr 2018 15:31:58 -0400
+Date: Mon, 23 Apr 2018 15:31:20 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tiwei.bie@intel.com,
+        jfreimann@redhat.com, wexu@redhat.com
+Subject: Re: [RFC V3 PATCH 0/8] Packed ring for vhost
+Message-ID: <20180423193120.GD30033@char.us.oracle.com>
+References: <1524461700-5469-1-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524461700-5469-1-git-send-email-jasowang@redhat.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8872 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804230194
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 7378f1149884 ("media: omap2: omapfb: allow building it with
-COMPILE_TEST") broke compilation without CONFIG_I2C selected.
-drivers/media/platform/fsl-viu.c: In function ‘viu_of_probe’:
-drivers/media/platform/fsl-viu.c:1452:7: error: implicit declaration of function ‘i2c_get_adapter’; did you mean ‘i2c_lock_adapter’? [-Werror=implicit-function-declaration]
-  ad = i2c_get_adapter(0);
-       ^~~~~~~~~~~~~~~
-       i2c_lock_adapter
-drivers/media/platform/fsl-viu.c:1452:5: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-  ad = i2c_get_adapter(0);
-     ^
-drivers/media/platform/fsl-viu.c:1534:2: error: implicit declaration of function ‘i2c_put_adapter’; did you mean ‘i2c_lock_adapter’? [-Werror=implicit-function-declaration]
-  i2c_put_adapter(ad);
-  ^~~~~~~~~~~~~~~
-  i2c_lock_adapter
+On Mon, Apr 23, 2018 at 01:34:52PM +0800, Jason Wang wrote:
+> Hi all:
+> 
+> This RFC implement packed ring layout. The code were tested with
+> Tiwei's RFC V2 a thttps://lkml.org/lkml/2018/4/1/48. Some fixups and
+> tweaks were needed on top of Tiwei's code to make it run. TCP stream
+> and pktgen does not show obvious difference compared with split ring.
 
-Added I2C dependency in order to make all configurations work again.
+I have to ask then - what is the benefit of this?
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- drivers/media/platform/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 91b0c7324afb..56c205b44ee1 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -42,7 +42,7 @@ config VIDEO_SH_VOU
- 
- config VIDEO_VIU
- 	tristate "Freescale VIU Video Driver"
--	depends on VIDEO_V4L2 && (PPC_MPC512x || COMPILE_TEST)
-+	depends on VIDEO_V4L2 && (PPC_MPC512x || COMPILE_TEST) && I2C
- 	select VIDEOBUF_DMA_CONTIG
- 	default y
- 	---help---
--- 
-2.17.0
+> 
+> Changes from V2:
+> - do not use & in checking desc_event_flags
+> - off should be most significant bit
+> - remove the workaround of mergeable buffer for dpdk prototype
+> - id should be in the last descriptor in the chain
+> - keep _F_WRITE for write descriptor when adding used
+> - device flags updating should use ADDR_USED type
+> - return error on unexpected unavail descriptor in a chain
+> - return false in vhost_ve_avail_empty is descriptor is available
+> - track last seen avail_wrap_counter
+> - correctly examine available descriptor in get_indirect_packed()
+> - vhost_idx_diff should return u16 instead of bool
+> 
+> Changes from V1:
+> 
+> - Refactor vhost used elem code to avoid open coding on used elem
+> - Event suppression support (compile test only).
+> - Indirect descriptor support (compile test only).
+> - Zerocopy support.
+> - vIOMMU support.
+> - SCSI/VSOCK support (compile test only).
+> - Fix several bugs
+> 
+> For simplicity, I don't implement batching or other optimizations.
+> 
+> Please review.
+> 
+> Jason Wang (8):
+>   vhost: move get_rx_bufs to vhost.c
+>   vhost: hide used ring layout from device
+>   vhost: do not use vring_used_elem
+>   vhost_net: do not explicitly manipulate vhost_used_elem
+>   vhost: vhost_put_user() can accept metadata type
+>   virtio: introduce packed ring defines
+>   vhost: packed ring support
+>   vhost: event suppression for packed ring
+> 
+>  drivers/vhost/net.c                | 136 ++----
+>  drivers/vhost/scsi.c               |  62 +--
+>  drivers/vhost/vhost.c              | 824 ++++++++++++++++++++++++++++++++++---
+>  drivers/vhost/vhost.h              |  47 ++-
+>  drivers/vhost/vsock.c              |  42 +-
+>  include/uapi/linux/virtio_config.h |   9 +
+>  include/uapi/linux/virtio_ring.h   |  32 ++
+>  7 files changed, 926 insertions(+), 226 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
