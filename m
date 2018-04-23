@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753918AbeDWBjc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 21:39:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50179 "EHLO mx2.suse.de"
+        id S1753886AbeDWBlR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 21:41:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50268 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753830AbeDWBj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 21:39:29 -0400
+        id S1753443AbeDWBlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 21:41:16 -0400
 From: NeilBrown <neilb@suse.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 23 Apr 2018 11:39:17 +1000
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+To: David Miller <davem@davemloft.net>
+Date: Mon, 23 Apr 2018 11:41:08 +1000
+Cc: herbert@gondor.apana.org.au, tgraf@suug.ch, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] rhashtable: remove incorrect comment on r{hl, hash}table_walk_enter()
-In-Reply-To: <20180419032237.yjvjuh6n7n6tggtr@gondor.apana.org.au>
-References: <152403346237.16895.8767189357062722046.stgit2@noble> <152403402192.16895.9740762152906281009.stgit2@noble> <20180418142854.wacgjdycxvfjh77s@gondor.apana.org.au> <87efjcqg2r.fsf@notabene.neil.brown.name> <20180419032237.yjvjuh6n7n6tggtr@gondor.apana.org.au>
-Message-ID: <87d0yqog56.fsf@notabene.neil.brown.name>
+Subject: Re: [PATCH 1/6] rhashtable: remove outdated comments about grow_decision etc
+In-Reply-To: <20180418.214737.1146004592657647139.davem@davemloft.net>
+References: <152403402187.16895.84802790561768231.stgit2@noble> <20180418142940.qd34y2ykjvmyjjh5@gondor.apana.org.au> <878t9kqfhq.fsf@notabene.neil.brown.name> <20180418.214737.1146004592657647139.davem@davemloft.net>
+Message-ID: <87a7tuog23.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: multipart/signed; boundary="=-=-=";
         micalg=pgp-sha256; protocol="application/pgp-signature"
@@ -26,104 +26,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 19 2018, Herbert Xu wrote:
+On Wed, Apr 18 2018, David Miller wrote:
 
-> On Thu, Apr 19, 2018 at 08:56:28AM +1000, NeilBrown wrote:
->>
->> I don't want to do that - I just want the documentation to be correct
->> (or at least, not be blatantly incorrect).  The function does not sleep,
->> and is safe to call with spin locks held.
->> Do we need to spell out when it can be called?  If so, maybe:
+> From: NeilBrown <neilb@suse.com>
+> Date: Thu, 19 Apr 2018 09:09:05 +1000
+>
+>> On Wed, Apr 18 2018, Herbert Xu wrote:
 >>=20
->>    This function may be called from any process context, including
->>    non-preemptable context, but cannot be called from interrupts.
+>>> On Wed, Apr 18, 2018 at 04:47:01PM +1000, NeilBrown wrote:
+>>>> grow_decision and shink_decision no longer exist, so remove
+>>>> the remaining references to them.
+>>>>=20
+>>>> Signed-off-by: NeilBrown <neilb@suse.com>
+>>>
+>>> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+>>=20
+>> Thanks.  Is that Ack sufficient for this patch to go upstream, or is
+>> there something else that I need to do?
 >
-> Just to make it perfectly clear, how about "cannot be called from
-> softirq or hardirq context"? Previously the not able to sleep part
-> completely ruled out any ambiguity but the new wording could confuse
-> people into thinking that this can be called from softirq context
-> where it would be unsafe if mixed with process context usage.
+> One patch being ACK'd does not release the whole series to be applied
+> and the whole series will be treated as a complete unit for that
+> purpose.
 >
+> So if discussion is holding up one patch in the series, it holds up
+> the entire series.
+>
+> So get the entire series in acceptable condition, or submit only one
+> change at a time individually and wait for that one to be accepted
+> before you submit and ask for feedback on the next one.
+>
+> I hope that makes things clear for you.
 
-Sound fair.  Could you Ack the following?  Then I'll resend all the
-patches that have an ack.
-I've realised that the "further improve stability of rhashtable_walk"
-patch isn't actually complete, so I'll withdraw that for now.
+Yes, nice and clear.  Thanks a lot!
 
-Thanks,
 NeilBrown
-
-From=20e16c037398b6c057787437f3a0aaa7fd44c3bee3 Mon Sep 17 00:00:00 2001
-From: NeilBrown <neilb@suse.com>
-Date: Mon, 16 Apr 2018 11:05:39 +1000
-Subject: [PATCH] rhashtable: Revise incorrect comment on
- r{hl,hash}table_walk_enter()
-
-Neither rhashtable_walk_enter() or rhltable_walk_enter() sleep, though
-they do take a spinlock without irq protection.
-So revise the comments to accurately state the contexts in which
-these functions can be called.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- include/linux/rhashtable.h | 5 +++--
- lib/rhashtable.c           | 5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index 87d443a5b11d..4e1f535c2034 100644
-=2D-- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -1268,8 +1268,9 @@ static inline int rhashtable_walk_init(struct rhashta=
-ble *ht,
-  * For a completely stable walk you should construct your own data
-  * structure outside the hash table.
-  *
-=2D * This function may sleep so you must not call it from interrupt
-=2D * context or with spin locks held.
-+ * This function may be called from any process context, including
-+ * non-preemptable context, but cannot be called from softirq or
-+ * hardirq context.
-  *
-  * You must call rhashtable_walk_exit after this function returns.
-  */
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 2b2b79974b61..6d490f51174e 100644
-=2D-- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -668,8 +668,9 @@ EXPORT_SYMBOL_GPL(rhashtable_insert_slow);
-  * For a completely stable walk you should construct your own data
-  * structure outside the hash table.
-  *
-=2D * This function may sleep so you must not call it from interrupt
-=2D * context or with spin locks held.
-+ * This function may be called from any process context, including
-+ * non-preemptable context, but cannot be called from softirq or
-+ * hardirq context.
-  *
-  * You must call rhashtable_walk_exit after this function returns.
-  */
-=2D-=20
-2.14.0.rc0.dirty
-
 
 --=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrdOUYACgkQOeye3VZi
-gbnnpA/9HTRgJaKgT4RcH7gyOxd67e6dCqQUsW03265SQxkv8jWLEmteoQZOs3Nl
-6UNlI3JUGqQaYtLstZewxkkyjJfbF/jdCBgorR/ICkGg7w5mbVNkameyDK+b+0ND
-lUXD9L8s132z4WoybmHgAmJ0kYX2OmQcLSCXhSag2iTiQvdl0dPjgIZXq+iB6q6J
-fZ8TdVP/x1OqXjRXhhKTx3VbqhiteUhFr3RLLjsRsowWJ/bRjuF+6K8E7lLq1stb
-LYz17eQC18E82fiJWdeiRORtQYC1RmiDe0/68M7zBlAsvmOuQiXlEcGFkPHtUvK4
-j5HcFQk6asdL4kpbLM3zachIAcES20oo1t092Kqa2heFFfJnr+ATGeRBAc6KMMHw
-Rhfm9dFnm2Fyt7I0xI/1Yujm2V+Vk3OLCfK3RrGKuE7hXMnw/aTD/uEq6hQ4cpxj
-pvfyww6OtPA0QGlzmHkkWZC1yxdjKMKI51o233zM5be3OnZrvlVLOi6UQGF3ZqSh
-TNmLK8C9dBzi+0KvEkQSvyALj/ZHI+IGzyoIiXhre6NoQuXdlPuE6f5hj4YP7t7P
-i/wSGn7NFwhduzRGgPHSFGAll2f+1WxmcktA7I/u+L2rPfJLlEB79yvQ1trx8WtC
-igDSl1eD2CZDAQrouOS8NzpPXjc3eGg+WmEKKieZmQlWBJBnF9w=
-=0QmK
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrdObQACgkQOeye3VZi
+gbmalBAAvq2/JIJcAlxyH6Ova3l0nuz6/8wZRpaEP27D19yy6hobqjkC6zYA13Wp
+7C9smELfVR9J9/yLQgmWu5oETTnC3s6wmK+JhiAdAHElwwqm4XEIQBq76NMyipTn
+gKGDNumStdXrHBHzvXZz6GmMFOJGY7Rg4/JGgs0uNaStxWJI60n/NjLbYpCB/84C
+eSQQZqno8eZQQfQCqO6pzbJJ3mLmg2HYGQJ7TGedjpAcF0+OoO6gohBGmqbD6VYj
+MusBwfObocteBQ/XrWSo/IHlDyzIJ0TWLqlnAe9TYeqK24qW+k2Fn4XJ5k6rS2tK
+FMjuwRNHY2o9nhCRfDRG++CT7dg26qnVx8H9q0WmtNlyv6AKV2ji1+Edf4UlfQGu
+BlVnhqzKTcsK6V7iDkeazhmOEQm0RWbmQ/f3xad0izfY0qu0Quvp17v4P5ImFNnx
+AbO67MQT/zFGYYy4+9KJ4xY+1J7qiHTZa4BkcoECEYm0/fNeDZQsKb81vU43vrJ5
+eRLi53VirAb5wGTIFuJW713r0RmOlUcNjB9P+4pE/Mg9y20aP86bL7EA2NzAXF6d
+9cvBSAoZG6gPqHgWk+uUXHURpfI8Par99AlBpBN+T7mb+K/MeCbga8jAEe4zBM1X
+AO9mEQYxnfjCuXLvsdQro/MheEnDAwIkW0dbqul6j1cGWaNs5dI=
+=lZ4o
 -----END PGP SIGNATURE-----
 --=-=-=--
