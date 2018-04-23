@@ -1,61 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932384AbeDWTgv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 15:36:51 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43510 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932262AbeDWTgu (ORCPT
+        id S932398AbeDWThm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 15:37:42 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57322 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932175AbeDWThl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 15:36:50 -0400
-X-Google-Smtp-Source: AB8JxZoS/LaItBcaS4YqGsYDRu8ycayPqYhPj98SH4FtLiUY5JXfFI73VepxRMnCguAh0679o9bJew==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] powerpc/mm/radix: use do/while(0) trick for single statement block
-Date: Mon, 23 Apr 2018 21:36:38 +0200
-Message-Id: <20180423193638.10535-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180408194424.8719-1-malat@debian.org>
-References: <20180408194424.8719-1-malat@debian.org>
+        Mon, 23 Apr 2018 15:37:41 -0400
+Date: Mon, 23 Apr 2018 21:37:23 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Peng Hao <peng.hao2@zte.com.cn>
+Cc: tglx@linutronix.de, pbonzini@redhat.com, mingo@redhat.com,
+        x86@kernel.org, len.brown@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86: tsc: fix L2 guest always in tsc_early clocksource
+Message-ID: <20180423193723.GO4082@hirez.programming.kicks-ass.net>
+References: <1524532134-31408-1-git-send-email-peng.hao2@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524532134-31408-1-git-send-email-peng.hao2@zte.com.cn>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 7a22d6321c3d ("powerpc/mm/radix: Update command line parsing for
-disable_radix") an `if` statement was added for a possible empty body
-(prom_debug).
+On Tue, Apr 24, 2018 at 09:08:54AM +0800, Peng Hao wrote:
+> In L2 guest tsc_read_refs always return ULLONG_MAX, and that will
+> call tsc_refine_calibration_work periodly. So L2 guest will read
+> acpi timer port 0x608 periodly.
+> The patch will let it out of "if(tsc_start == -1){}" infinite loop.
 
-Fix the following warning, treated as error with W=1:
+Help me out a little. What's an L2 guest?
 
-  arch/powerpc/kernel/prom_init.c:656:46: error: suggest braces around empty body in an ‘if’ statement [-Werror=empty-body]
+And I'm assuming you don't have HPET and then end up wanting to use
+PM-timer? Which is also busted and resturns crap results?
 
-Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
-v2: update macro directly
+So if the whole TSC sync has no way of ever working; what is your patch
+doing? How is the actual TSC calibrated?
 
- arch/powerpc/kernel/prom_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-index 5ae153b97d0a..7edf3aa5bc6d 100644
---- a/arch/powerpc/kernel/prom_init.c
-+++ b/arch/powerpc/kernel/prom_init.c
-@@ -103,7 +103,7 @@ int of_workarounds;
- #ifdef DEBUG_PROM
- #define prom_debug(x...)	prom_printf(x)
- #else
--#define prom_debug(x...)
-+#define prom_debug(x...)	do { } while (0)
- #endif
- 
- 
--- 
-2.11.0
+Should you instead be using fast_calibrate() and passing in a known
+value from the host? Thereby avoiding all this calibration nonsense
+entirely.
