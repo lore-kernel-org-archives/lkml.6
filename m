@@ -1,122 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754449AbeDWKGn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:06:43 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37656 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754078AbeDWKGh (ORCPT
+        id S1754614AbeDWKIS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:08:18 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:44416 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754437AbeDWKIO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:06:37 -0400
-X-Google-Smtp-Source: AIpwx49dNdNAIHlhDyS3pDslML2+/1ZMwFzpZpnGNrDakFNM70hcJozdumenk35u/ZA8Vpq+Xp3yPw==
-Date: Mon, 23 Apr 2018 12:06:32 +0200
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: jgg@ziepe.ca, Christopher Li <sparse@chrisli.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH v2 1/4] tpm: Add explicit endianness cast
-Message-ID: <20180423100629.effueb6i7q3hmhu3@ltop.local>
-References: <20180412101350.210547-1-tweek@google.com>
- <20180412101350.210547-2-tweek@google.com>
- <20180417030202.GA30624@ziepe.ca>
- <CA+zpnLdU=t6eOY9GOLAyiXkZBw=NueckiejHSexd8P7MKYuRww@mail.gmail.com>
- <20180417140013.GA2029@ziepe.ca>
- <CA+zpnLePcFJQURBNZEt=mRSRb9GUYR=1t9EQn82W0+311xKZ7w@mail.gmail.com>
- <20180420145740.GC30433@ziepe.ca>
- <CA+zpnLcSDTz99Z4fe4CGxH6RzTGvQCoGqQc4p_EMOj9=cuFQgg@mail.gmail.com>
+        Mon, 23 Apr 2018 06:08:14 -0400
+Date: Mon, 23 Apr 2018 12:08:10 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] arm: shmobile: Add the RZ/N1D (R9A06G032) to the
+ shmobile Kconfig
+Message-ID: <20180423100810.g2tucr5bd6ftubmo@verge.net.au>
+References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1523963101-56725-2-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+zpnLcSDTz99Z4fe4CGxH6RzTGvQCoGqQc4p_EMOj9=cuFQgg@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <1523963101-56725-2-git-send-email-michel.pollet@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 09:22:06AM +0000, Thiebaud Weksteen wrote:
-> On Fri, Apr 20, 2018 at 4:57 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+On Tue, Apr 17, 2018 at 12:04:16PM +0100, Michel Pollet wrote:
+> Add the RZ/N1D SoC to the reset of the Renesas SoC Collection.
 > 
-> > On Thu, Apr 19, 2018 at 01:09:12PM +0000, Thiebaud Weksteen wrote:
-> > > On Tue, Apr 17, 2018 at 4:00 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > >
-> > > > On Tue, Apr 17, 2018 at 08:32:33AM +0000, Thiebaud Weksteen wrote:
-> > > > > On Tue, Apr 17, 2018 at 5:02 AM Jason Gunthorpe <jgg@ziepe.ca>
-> wrote:
-> > > > >
-> > > > > > On Thu, Apr 12, 2018 at 12:13:47PM +0200, Thiebaud Weksteen wrote:
-> > > > > > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > > > > > >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
-> > > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > > index 96fd5646f866..d74568d58a66 100644
-> > > > > > > +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
-> > > > > > >        * but physical tpm needs the conversion.
-> > > > > > >        */
-> > > > > > >       if (of_property_match_string(np, "compatible",
-> "IBM,vtpm") <
-> > > 0) {
-> > > > > > > -             size = be32_to_cpup(sizep);
-> > > > > > > -             base = be64_to_cpup(basep);
-> > > > > > > +             size = be32_to_cpup((__be32 *)sizep);
-> > > > > > > +             base = be64_to_cpup((__be64 *)basep);
-> > > > >
-> > > > > > Er, no.. change the definitions of sizep and basep to be __be
-> > > > >
-> > > > > > Jason
-> > > > >
-> > > > > Please read the comment before the condition. sizep and
-> > > > > basep may contain either little endian or big endian and this block
-> is
-> > > used
-> > > > > to adjust that. Let me know if there is a better way for handling
-> this.
-> > >
-> > > > Well a cast like that will throw sparse warnings, you need __force at
-> > > > least
-> > >
-> > > I don't think so. Since the variable is only defined as u32*, no
-> specific
-> > > warning is generated. I've used `make C=2 drivers/char/tpm/` with this
-> > > patch applied and no new warning is being triggered.
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Interesting.
-
-> > I'm surprised to hear you say that..
-
-Same for me.
-
-> > Sparse is supposed to require force on all cast that change the
-> > annotation, and there are many examples in the kernel that have force
-> > in that case.
-
-
-Yes, sparse is supposed to warn in such cases and the __force is there
-to quiets the warning when it is known that the cast is in fact correct.
-
- 
-> +linux-sparse@vger.kernel.org and sparse@chrisli.org for a sanity check.
-> 
-> If you look at the man page of sparse, under the bitwise option, it states:
-> "Sparse will warn on [...] any conversion of one restricted type into
-> another, except via a cast that includes __attribute__((force)).". In our
-> case, it is a conversion from unrestricted to restricted which does not
-> fall in this category.
-
-The man page is not very clear here. It must be understood in the context
-where each use of '__bitwise' will create a new *distinct* type.
-Given this and the normal type checking, sparse should warn
-"on any conversion of one restricted type into another *or* between a
-restricted and the corresponding plain/unrestricted type" (or consider
-that an 'unrestricted type' is 'a restricted type with no restriction',
-which is, I think, what was meant here).
-
-The fact that sparse doesn't warn in your case is clearly a bug in
-sparse's type checking.
-
-Regards,
--- Luc Van Oostenryck
+Thanks, applied.
