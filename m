@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx49dQ+GkQys0C5I78/bciBakpoOmmD10z/eNHMFJMB8LfmqiCyj7wGCe490HOi0WuJrc27zV
-ARC-Seal: i=1; a=rsa-sha256; t=1524498477; cv=none;
+X-Google-Smtp-Source: AIpwx4+83376eclmoSqJIVuQJmIaNAadfD95FE/EquhIjh4ShjY6EkkOwd/ue5E+VNd9I5QS5HCC
+ARC-Seal: i=1; a=rsa-sha256; t=1524498475; cv=none;
         d=google.com; s=arc-20160816;
-        b=YI6zNhC2Yi0G10yqb8SwBGG1gIoFUDaR3TuG+t1TscAEiH9kTvlmixqZG6wv5brfvZ
-         taXlgiabADwpmTGPSkhFHPYaNjApBP7jxWYNB8E+wsfXyyQxwCQq/H1LZVQcvbfWnyfm
-         aL2Kc2VE22IZRpijelIkYd0LoqaBkmQFal+qGZKkB1poIiga3zCXosfT8BSAQJCr/w2x
-         NBdaF/yv4QxXb7yhHDtLwPMz5T35SgLAvMjU+vv/LDWzoZ4kcudmMNN/sOC9dcSCXO4g
-         7GJAwIDiNjjwqDW62i4UUEifBQBlzm4sHdFvkHvpmtZhFWpRap0cJCbDvZzvczgzXWrU
-         MfOA==
+        b=fDuVvrhks0bNYL5TrSmYmau7Pxn2F11PtqY7aL0jeM8vJw4YIJ8yZR+/1COoY9zEMj
+         YYN6s4jrESIrt2WgHgZcpwAqA8jqC6IiziDf+0KZtfyICo1S1E+oilaOyaHmnkQF0+DH
+         aT4hwODP2K65ygBZOlycqQM7cZtVnXZHB2cvSBQiMlkSUYi3KTNDJbwLmcWl6fQoT2Oc
+         vwqxDikECQrM9Btf/1/9x+E0Qsqoxwv3UACL1uih1NeXfwhuk/MZDy2RHH959qls+xIb
+         jTPi6/Hh+dWgVnWcegquCzDShJOFOgh5GyY1luYAwuEHdlGvigYvEr3OZoY2IWD5U8Zq
+         Kg+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=K+DM/iUTmS3QBSAQC0ndYk5BtfjhFheYemUNlnJnRLg=;
-        b=cAbpjZ/4tVCv3n7BMLyiadeDQvU2sySikvoZGbdkrEEX+xXXkrUm7dTxyMEQQir6+B
-         UrG6Z7PdvZ1Z5KgaaaO9Fp+kDgYcpbecFXoPc23bjhgLdmszka6f1G2avKoK0A+mLNNj
-         Y2WcWRtr/VAdN3v78PCZt5stud+XA+3oGuAnpcWIiSyLCWFaC3WXhn2kN1gbTF4SaAek
-         vewajEXULm8Mhl7xS77uSu/PseF8ojogYj3PoTkKS3H8zEMb+PA2e9FTKhEx2AU6OK1H
-         268rNMvcufJhBN0esfPbT+WcIqgvpWnG3Gw+XHEZda26sipwVnriq2oB7/eXlYfbSdrp
-         Q6Qg==
+        bh=ztOkeM8hpJ8qxoWjXo6JBy8pkFONtOwKqJDg4PtNm40=;
+        b=pPwJ3wX2ydO2E8ce1RLm2KCEBiXUjnCUlm+dU2HtYLkGZKm+A5sZVFBDz0kD2VOnDU
+         JYG6sFKC30OuPxnI+BPofijglMg1ksX3GAFl+u4waLULDD1svecnUozFge+K6f0/vCTB
+         9jmM3c8ZL3Ne5FbpLIJUIf9JI8Gy2NKeokllzfxofzor0Ws5c6YQ7rtAqefYLTmaaE96
+         BWD6NnLRP6Qal8HY+6m3NiVFzGWoPTd8g/+MgGyG1A8nERGRjt/AG0RW9ox3xMoVzmtu
+         8mCzNPuxMY9NTNwi2N8X4Y2P8UpBJ+FsX8NA9GqkOtux4HX1KVakIqs0VY+3PuwR7ANK
+         DeDA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=fTdSsyOW;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=FNo0UvZV;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=fTdSsyOW;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=FNo0UvZV;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -58,67 +58,95 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 26/37] x86/mm/pti: Clone CPU_ENTRY_AREA on PMD level on x86_32
-Date: Mon, 23 Apr 2018 17:47:29 +0200
-Message-Id: <1524498460-25530-27-git-send-email-joro@8bytes.org>
+Subject: [PATCH 19/37] x86/pgtable: Move pti_set_user_pgtbl() to pgtable.h
+Date: Mon, 23 Apr 2018 17:47:22 +0200
+Message-Id: <1524498460-25530-20-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552516032649275?=
-X-GMAIL-MSGID: =?utf-8?q?1598552516032649275?=
+X-GMAIL-THRID: =?utf-8?q?1598552513267437779?=
+X-GMAIL-MSGID: =?utf-8?q?1598552513267437779?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Cloning on the P4D level would clone the complete kernel
-address space into the user-space page-tables for PAE
-kernels. Cloning on PMD level is fine for PAE and legacy
-paging.
+There it is also usable from 32 bit code.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/mm/pti.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/x86/include/asm/pgtable.h    | 23 +++++++++++++++++++++++
+ arch/x86/include/asm/pgtable_64.h | 21 ---------------------
+ 2 files changed, 23 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index f967b51..9cceae3 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -348,6 +348,7 @@ pti_clone_pmds(unsigned long start, unsigned long end, pmdval_t clear)
- 	}
- }
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 3055c77..557ddf8 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -635,8 +635,31 @@ static inline int is_new_memtype_allowed(u64 paddr, unsigned long size,
  
-+#ifdef CONFIG_X86_64
- /*
-  * Clone a single p4d (i.e. a top-level entry on 4-level systems and a
-  * next-level entry on 5-level systems.
-@@ -371,6 +372,25 @@ static void __init pti_clone_user_shared(void)
- 	pti_clone_p4d(CPU_ENTRY_AREA_BASE);
- }
- 
-+#else /* CONFIG_X86_64 */
+ pmd_t *populate_extra_pmd(unsigned long vaddr);
+ pte_t *populate_extra_pte(unsigned long vaddr);
++
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd);
 +
 +/*
-+ * On 32 bit PAE systems with 1GB of Kernel address space there is only
-+ * one pgd/p4d for the whole kernel. Cloning that would map the whole
-+ * address space into the user page-tables, making PTI useless. So clone
-+ * the page-table on the PMD level to prevent that.
++ * Take a PGD location (pgdp) and a pgd value that needs to be set there.
++ * Populates the user and returns the resulting PGD that must be set in
++ * the kernel copy of the page tables.
 + */
-+static void __init pti_clone_user_shared(void)
++static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
 +{
-+	unsigned long start, end;
-+
-+	start = CPU_ENTRY_AREA_BASE;
-+	end   = start + (PAGE_SIZE * CPU_ENTRY_AREA_PAGES);
-+
-+	pti_clone_pmds(start, end, 0);
++	if (!static_cpu_has(X86_FEATURE_PTI))
++		return pgd;
++	return __pti_set_user_pgtbl(pgdp, pgd);
 +}
-+#endif /* CONFIG_X86_64 */
++#else   /* CONFIG_PAGE_TABLE_ISOLATION */
++static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
++{
++	return pgd;
++}
++#endif  /* CONFIG_PAGE_TABLE_ISOLATION */
 +
- /*
-  * Clone the ESPFIX P4D into the user space visible page table
-  */
+ #endif	/* __ASSEMBLY__ */
+ 
++
+ #ifdef CONFIG_X86_32
+ # include <asm/pgtable_32.h>
+ #else
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 9934115..6dd2eb6 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -146,27 +146,6 @@ static inline bool pgdp_maps_userspace(void *__ptr)
+ 	return (ptr & ~PAGE_MASK) < (PAGE_SIZE / 2);
+ }
+ 
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd);
+-
+-/*
+- * Take a PGD location (pgdp) and a pgd value that needs to be set there.
+- * Populates the user and returns the resulting PGD that must be set in
+- * the kernel copy of the page tables.
+- */
+-static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+-{
+-	if (!static_cpu_has(X86_FEATURE_PTI))
+-		return pgd;
+-	return __pti_set_user_pgtbl(pgdp, pgd);
+-}
+-#else
+-static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+-{
+-	return pgd;
+-}
+-#endif
+-
+ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
+ {
+ 	pgd_t pgd;
 -- 
 2.7.4
