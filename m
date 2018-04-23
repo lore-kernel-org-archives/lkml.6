@@ -1,282 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754144AbeDWICW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:02:22 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:41752 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751356AbeDWICS (ORCPT
+        id S1754195AbeDWIDf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:03:35 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41659 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751356AbeDWIDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:02:18 -0400
-X-Google-Smtp-Source: AIpwx4+3nnUv9eFn0ew8MLudi+sY++K2itEuSPQum8uEFpshfnehTJoTg0XG9lJLz6OFW8w7jega/w==
-Subject: Re: [PATCH v2] Input: xen-kbdfront - allow better run-time
- configuration
-To: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
-        jgross@suse.com, lyan@suse.com, boris.ostrovsky@oracle.com
-Cc: andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180419133934.31306-1-andr2000@gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <998533bb-8042-b07e-cb79-661750e035d9@gmail.com>
-Date: Mon, 23 Apr 2018 11:02:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 23 Apr 2018 04:03:31 -0400
+X-Google-Smtp-Source: AIpwx484z8OPYQ9yQCGJ+4jz/FsyBShj3HqjDgJe2ePgmm4aRQq6jnW2BDFxAeBRe5oHBgpcHodO8w==
+Date: Mon, 23 Apr 2018 16:03:28 +0800
+From: Geliang Tang <geliangtang@gmail.com>
+To: Kees Cook <keescook@chromium.org>, Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>,
+        Nick Terrell <terrelln@fb.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pstore: add zstd compression support
+Message-ID: <20180423080328.x37v4cvovxoxnqak@OptiPlex>
+References: <9c9416b2dff19f05fb4c35879aaa83d11ff72c92.1521626182.git.geliangtang@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180419133934.31306-1-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c9416b2dff19f05fb4c35879aaa83d11ff72c92.1521626182.git.geliangtang@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Juergen, Jason, Dmitry
-any comment on this?
-
-Thank you,
-Oleksandr
-On 04/19/2018 04:39 PM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->
-> It is now only possible to control if multi-touch virtual device
-> is created or not (via the corresponding XenStore entries),
-> but keyboard and pointer devices are always created.
-> In some cases this is not desirable. For example, if virtual
-> keyboard device is exposed to Android then the latter won't
-> automatically show on-screen keyboard as it expects that a
-> physical keyboard device can be used for typing.
->
-> Make it possible to configure which virtual devices are created
-> with module parameters:
->    - provide no_ptr_dev if no pointer device needs to be created
->    - provide no_kbd_dev if no keyboard device needs to be created
-> Keep old behavior by default.
->
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
-> Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+On Wed, Mar 21, 2018 at 08:29:31PM +0800, Geliang Tang wrote:
+> This patch added the 6th compression algorithm support for pstore: zstd.
+> 
+> Signed-off-by: Geliang Tang <geliangtang@gmail.com>
 > ---
-> Changes since v1:
->    - changed module parameters from uint to bool
->
->   drivers/input/misc/xen-kbdfront.c | 159 +++++++++++++++++-------------
->   1 file changed, 92 insertions(+), 67 deletions(-)
->
-> diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
-> index d91f3b1c5375..d8cca212f737 100644
-> --- a/drivers/input/misc/xen-kbdfront.c
-> +++ b/drivers/input/misc/xen-kbdfront.c
-> @@ -51,6 +51,16 @@ module_param_array(ptr_size, int, NULL, 0444);
->   MODULE_PARM_DESC(ptr_size,
->   	"Pointing device width, height in pixels (default 800,600)");
->   
-> +static bool no_ptr_dev;
-> +module_param(no_ptr_dev, bool, 0);
-> +MODULE_PARM_DESC(no_ptr_dev,
-> +	"If set then no virtual pointing device exposed to the guest");
+> Depend on 'crypto: Add zstd support' by Nick Terrell <terrelln@fb.com>
+
+Hi Kees,
+
+The patch 'crypto: zstd - Add zstd support' has been applied to
+linux-next tree, 20180423, already. So we can use zstd in pstore
+compression now. Please reconsider if my patch can be applied.
+
+Thanks.
+-Geliang
+
+> ---
+>  fs/pstore/Kconfig    | 17 ++++++++++++++---
+>  fs/pstore/platform.c | 16 ++++++++++++++++
+>  2 files changed, 30 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+> index 09c19ef91526..63cf4813559a 100644
+> --- a/fs/pstore/Kconfig
+> +++ b/fs/pstore/Kconfig
+> @@ -50,12 +50,19 @@ config PSTORE_842_COMPRESS
+>  	help
+>  	  This option enables 842 compression algorithm support.
+>  
+> +config PSTORE_ZSTD_COMPRESS
+> +	tristate "zstd compression"
+> +	depends on PSTORE
+> +	select CRYPTO_ZSTD
+> +	help
+> +	  This option enables zstd compression algorithm support.
 > +
-> +static bool no_kbd_dev;
-> +module_param(no_kbd_dev, bool, 0);
-> +MODULE_PARM_DESC(no_kbd_dev,
-> +	"If set then no virtual keyboard device exposed to the guest");
+>  config PSTORE_COMPRESS
+>  	def_bool y
+>  	depends on PSTORE
+>  	depends on PSTORE_DEFLATE_COMPRESS || PSTORE_LZO_COMPRESS ||	\
+>  		   PSTORE_LZ4_COMPRESS || PSTORE_LZ4HC_COMPRESS ||	\
+> -		   PSTORE_842_COMPRESS
+> +		   PSTORE_842_COMPRESS || PSTORE_ZSTD_COMPRESS
+>  
+>  choice
+>  	prompt "Default pstore compression algorithm"
+> @@ -65,8 +72,8 @@ choice
+>  	  This change be changed at boot with "pstore.compress=..." on
+>  	  the kernel command line.
+>  
+> -	  Currently, pstore has support for 5 compression algorithms:
+> -	  deflate, lzo, lz4, lz4hc and 842.
+> +	  Currently, pstore has support for 6 compression algorithms:
+> +	  deflate, lzo, lz4, lz4hc, 842 and zstd.
+>  
+>  	  The default compression algorithm is deflate.
+>  
+> @@ -85,6 +92,9 @@ choice
+>  	config PSTORE_842_COMPRESS_DEFAULT
+>  		bool "842" if PSTORE_842_COMPRESS
+>  
+> +	config PSTORE_ZSTD_COMPRESS_DEFAULT
+> +		bool "zstd" if PSTORE_ZSTD_COMPRESS
 > +
->   static int xenkbd_remove(struct xenbus_device *);
->   static int xenkbd_connect_backend(struct xenbus_device *, struct xenkbd_info *);
->   static void xenkbd_disconnect_backend(struct xenkbd_info *);
-> @@ -63,6 +73,9 @@ static void xenkbd_disconnect_backend(struct xenkbd_info *);
->   static void xenkbd_handle_motion_event(struct xenkbd_info *info,
->   				       struct xenkbd_motion *motion)
->   {
-> +	if (unlikely(!info->ptr))
-> +		return;
+>  endchoice
+>  
+>  config PSTORE_COMPRESS_DEFAULT
+> @@ -95,6 +105,7 @@ config PSTORE_COMPRESS_DEFAULT
+>  	default "lz4" if PSTORE_LZ4_COMPRESS_DEFAULT
+>  	default "lz4hc" if PSTORE_LZ4HC_COMPRESS_DEFAULT
+>  	default "842" if PSTORE_842_COMPRESS_DEFAULT
+> +	default "zstd" if PSTORE_ZSTD_COMPRESS_DEFAULT
+>  
+>  config PSTORE_CONSOLE
+>  	bool "Log kernel console messages"
+> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+> index 1143ef351c58..9df8cdc378f5 100644
+> --- a/fs/pstore/platform.c
+> +++ b/fs/pstore/platform.c
+> @@ -34,6 +34,9 @@
+>  #if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS) || IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
+>  #include <linux/lz4.h>
+>  #endif
+> +#if IS_ENABLED(CONFIG_PSTORE_ZSTD_COMPRESS)
+> +#include <linux/zstd.h>
+> +#endif
+>  #include <linux/crypto.h>
+>  #include <linux/string.h>
+>  #include <linux/timer.h>
+> @@ -192,6 +195,13 @@ static int zbufsize_842(size_t size)
+>  }
+>  #endif
+>  
+> +#if IS_ENABLED(CONFIG_PSTORE_ZSTD_COMPRESS)
+> +static int zbufsize_zstd(size_t size)
+> +{
+> +	return ZSTD_compressBound(size);
+> +}
+> +#endif
 > +
->   	input_report_rel(info->ptr, REL_X, motion->rel_x);
->   	input_report_rel(info->ptr, REL_Y, motion->rel_y);
->   	if (motion->rel_z)
-> @@ -73,6 +86,9 @@ static void xenkbd_handle_motion_event(struct xenkbd_info *info,
->   static void xenkbd_handle_position_event(struct xenkbd_info *info,
->   					 struct xenkbd_position *pos)
->   {
-> +	if (unlikely(!info->ptr))
-> +		return;
-> +
->   	input_report_abs(info->ptr, ABS_X, pos->abs_x);
->   	input_report_abs(info->ptr, ABS_Y, pos->abs_y);
->   	if (pos->rel_z)
-> @@ -97,6 +113,9 @@ static void xenkbd_handle_key_event(struct xenkbd_info *info,
->   		return;
->   	}
->   
-> +	if (unlikely(!dev))
-> +		return;
-> +
->   	input_event(dev, EV_KEY, key->keycode, value);
->   	input_sync(dev);
->   }
-> @@ -192,7 +211,7 @@ static int xenkbd_probe(struct xenbus_device *dev,
->   				  const struct xenbus_device_id *id)
->   {
->   	int ret, i;
-> -	unsigned int abs, touch;
-> +	unsigned int touch;
->   	struct xenkbd_info *info;
->   	struct input_dev *kbd, *ptr, *mtouch;
->   
-> @@ -211,24 +230,6 @@ static int xenkbd_probe(struct xenbus_device *dev,
->   	if (!info->page)
->   		goto error_nomem;
->   
-> -	/* Set input abs params to match backend screen res */
-> -	abs = xenbus_read_unsigned(dev->otherend,
-> -				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
-> -	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
-> -						  XENKBD_FIELD_WIDTH,
-> -						  ptr_size[KPARAM_X]);
-> -	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
-> -						  XENKBD_FIELD_HEIGHT,
-> -						  ptr_size[KPARAM_Y]);
-> -	if (abs) {
-> -		ret = xenbus_write(XBT_NIL, dev->nodename,
-> -				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
-> -		if (ret) {
-> -			pr_warn("xenkbd: can't request abs-pointer\n");
-> -			abs = 0;
-> -		}
-> -	}
-> -
->   	touch = xenbus_read_unsigned(dev->nodename,
->   				     XENKBD_FIELD_FEAT_MTOUCH, 0);
->   	if (touch) {
-> @@ -241,60 +242,84 @@ static int xenkbd_probe(struct xenbus_device *dev,
->   	}
->   
->   	/* keyboard */
-> -	kbd = input_allocate_device();
-> -	if (!kbd)
-> -		goto error_nomem;
-> -	kbd->name = "Xen Virtual Keyboard";
-> -	kbd->phys = info->phys;
-> -	kbd->id.bustype = BUS_PCI;
-> -	kbd->id.vendor = 0x5853;
-> -	kbd->id.product = 0xffff;
-> -
-> -	__set_bit(EV_KEY, kbd->evbit);
-> -	for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
-> -		__set_bit(i, kbd->keybit);
-> -	for (i = KEY_OK; i < KEY_MAX; i++)
-> -		__set_bit(i, kbd->keybit);
-> -
-> -	ret = input_register_device(kbd);
-> -	if (ret) {
-> -		input_free_device(kbd);
-> -		xenbus_dev_fatal(dev, ret, "input_register_device(kbd)");
-> -		goto error;
-> +	if (!no_kbd_dev) {
-> +		kbd = input_allocate_device();
-> +		if (!kbd)
-> +			goto error_nomem;
-> +		kbd->name = "Xen Virtual Keyboard";
-> +		kbd->phys = info->phys;
-> +		kbd->id.bustype = BUS_PCI;
-> +		kbd->id.vendor = 0x5853;
-> +		kbd->id.product = 0xffff;
-> +
-> +		__set_bit(EV_KEY, kbd->evbit);
-> +		for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
-> +			__set_bit(i, kbd->keybit);
-> +		for (i = KEY_OK; i < KEY_MAX; i++)
-> +			__set_bit(i, kbd->keybit);
-> +
-> +		ret = input_register_device(kbd);
-> +		if (ret) {
-> +			input_free_device(kbd);
-> +			xenbus_dev_fatal(dev, ret, "input_register_device(kbd)");
-> +			goto error;
-> +		}
-> +		info->kbd = kbd;
->   	}
-> -	info->kbd = kbd;
->   
->   	/* pointing device */
-> -	ptr = input_allocate_device();
-> -	if (!ptr)
-> -		goto error_nomem;
-> -	ptr->name = "Xen Virtual Pointer";
-> -	ptr->phys = info->phys;
-> -	ptr->id.bustype = BUS_PCI;
-> -	ptr->id.vendor = 0x5853;
-> -	ptr->id.product = 0xfffe;
-> -
-> -	if (abs) {
-> -		__set_bit(EV_ABS, ptr->evbit);
-> -		input_set_abs_params(ptr, ABS_X, 0, ptr_size[KPARAM_X], 0, 0);
-> -		input_set_abs_params(ptr, ABS_Y, 0, ptr_size[KPARAM_Y], 0, 0);
-> -	} else {
-> -		input_set_capability(ptr, EV_REL, REL_X);
-> -		input_set_capability(ptr, EV_REL, REL_Y);
-> -	}
-> -	input_set_capability(ptr, EV_REL, REL_WHEEL);
-> +	if (!no_ptr_dev) {
-> +		unsigned int abs;
-> +
-> +		/* Set input abs params to match backend screen res */
-> +		abs = xenbus_read_unsigned(dev->otherend,
-> +					   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
-> +		ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
-> +							  XENKBD_FIELD_WIDTH,
-> +							  ptr_size[KPARAM_X]);
-> +		ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
-> +							  XENKBD_FIELD_HEIGHT,
-> +							  ptr_size[KPARAM_Y]);
-> +		if (abs) {
-> +			ret = xenbus_write(XBT_NIL, dev->nodename,
-> +					   XENKBD_FIELD_REQ_ABS_POINTER, "1");
-> +			if (ret) {
-> +				pr_warn("xenkbd: can't request abs-pointer\n");
-> +				abs = 0;
-> +			}
-> +		}
->   
-> -	__set_bit(EV_KEY, ptr->evbit);
-> -	for (i = BTN_LEFT; i <= BTN_TASK; i++)
-> -		__set_bit(i, ptr->keybit);
-> +		ptr = input_allocate_device();
-> +		if (!ptr)
-> +			goto error_nomem;
-> +		ptr->name = "Xen Virtual Pointer";
-> +		ptr->phys = info->phys;
-> +		ptr->id.bustype = BUS_PCI;
-> +		ptr->id.vendor = 0x5853;
-> +		ptr->id.product = 0xfffe;
-> +
-> +		if (abs) {
-> +			__set_bit(EV_ABS, ptr->evbit);
-> +			input_set_abs_params(ptr, ABS_X, 0, ptr_size[KPARAM_X], 0, 0);
-> +			input_set_abs_params(ptr, ABS_Y, 0, ptr_size[KPARAM_Y], 0, 0);
-> +		} else {
-> +			input_set_capability(ptr, EV_REL, REL_X);
-> +			input_set_capability(ptr, EV_REL, REL_Y);
-> +		}
-> +		input_set_capability(ptr, EV_REL, REL_WHEEL);
->   
-> -	ret = input_register_device(ptr);
-> -	if (ret) {
-> -		input_free_device(ptr);
-> -		xenbus_dev_fatal(dev, ret, "input_register_device(ptr)");
-> -		goto error;
-> +		__set_bit(EV_KEY, ptr->evbit);
-> +		for (i = BTN_LEFT; i <= BTN_TASK; i++)
-> +			__set_bit(i, ptr->keybit);
-> +
-> +		ret = input_register_device(ptr);
-> +		if (ret) {
-> +			input_free_device(ptr);
-> +			xenbus_dev_fatal(dev, ret, "input_register_device(ptr)");
-> +			goto error;
-> +		}
-> +		info->ptr = ptr;
->   	}
-> -	info->ptr = ptr;
->   
->   	/* multi-touch device */
->   	if (touch) {
+>  static const struct pstore_zbackend *zbackend __ro_after_init;
+>  
+>  static const struct pstore_zbackend zbackends[] = {
+> @@ -224,6 +234,12 @@ static const struct pstore_zbackend zbackends[] = {
+>  		.zbufsize	= zbufsize_842,
+>  		.name		= "842",
+>  	},
+> +#endif
+> +#if IS_ENABLED(CONFIG_PSTORE_ZSTD_COMPRESS)
+> +	{
+> +		.zbufsize	= zbufsize_zstd,
+> +		.name		= "zstd",
+> +	},
+>  #endif
+>  	{ }
+>  };
+> -- 
+> 2.14.1
