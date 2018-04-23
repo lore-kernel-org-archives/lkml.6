@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932866AbeDWXcr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 19:32:47 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:41916 "EHLO ale.deltatee.com"
+        id S932853AbeDWXcn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 19:32:43 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:41918 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932648AbeDWXbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932635AbeDWXbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Apr 2018 19:31:05 -0400
 From: Logan Gunthorpe <logang@deltatee.com>
 To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
@@ -20,115 +20,108 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Alex Williamson <alex.williamson@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 23 Apr 2018 17:30:39 -0600
-Message-Id: <20180423233046.21476-8-logang@deltatee.com>
+Date: Mon, 23 Apr 2018 17:30:42 -0600
+Message-Id: <20180423233046.21476-11-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180423233046.21476-1-logang@deltatee.com>
 References: <20180423233046.21476-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, axboe@kernel.dk, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v4 07/14] block: Introduce PCI P2P flags for request and request queue
+Subject: [PATCH v4 10/14] nvme-pci: Add support for P2P memory in requests
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QUEUE_FLAG_PCI_P2P is introduced meaning a driver's request queue
-supports targeting P2P memory.
+For P2P requests, we must use the pci_p2pmem_[un]map_sg() functions
+instead of the dma_map_sg functions.
 
-REQ_PCI_P2P is introduced to indicate a particular bio request is
-directed to/from PCI P2P memory. A request with this flag is not
-accepted unless the corresponding queues have the QUEUE_FLAG_PCI_P2P
-flag set.
+With that, we can then indicate PCI_P2P support in the request queue.
+For this, we create an NVME_F_PCI_P2P flag which tells the core to
+set QUEUE_FLAG_PCI_P2P in the request queue.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- block/blk-core.c          |  3 +++
- include/linux/blk_types.h | 18 +++++++++++++++++-
- include/linux/blkdev.h    |  3 +++
- 3 files changed, 23 insertions(+), 1 deletion(-)
+ drivers/nvme/host/core.c |  4 ++++
+ drivers/nvme/host/nvme.h |  1 +
+ drivers/nvme/host/pci.c  | 19 +++++++++++++++----
+ 3 files changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 806ce2442819..35680cbebaf4 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2270,6 +2270,9 @@ generic_make_request_checks(struct bio *bio)
- 	if ((bio->bi_opf & REQ_NOWAIT) && !queue_is_rq_based(q))
- 		goto not_supported;
- 
-+	if ((bio->bi_opf & REQ_PCI_P2PDMA) && !blk_queue_pci_p2pdma(q))
-+		goto not_supported;
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 9df4f71e58ca..2ca9debbcf2b 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2977,7 +2977,11 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 	ns->queue = blk_mq_init_queue(ctrl->tagset);
+ 	if (IS_ERR(ns->queue))
+ 		goto out_free_ns;
 +
- 	if (should_fail_bio(bio))
- 		goto end_io;
- 
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 17b18b91ebac..41194d54c45a 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -279,6 +279,10 @@ enum req_flag_bits {
- 	__REQ_BACKGROUND,	/* background IO */
- 	__REQ_NOWAIT,           /* Don't wait if request will block */
- 
-+#ifdef CONFIG_PCI_P2PDMA
-+	__REQ_PCI_P2PDMA,	/* request is to/from P2P memory */
-+#endif
+ 	blk_queue_flag_set(QUEUE_FLAG_NONROT, ns->queue);
++	if (ctrl->ops->flags & NVME_F_PCI_P2PDMA)
++		blk_queue_flag_set(QUEUE_FLAG_PCI_P2PDMA, ns->queue);
 +
- 	/* command specific flags for REQ_OP_WRITE_ZEROES: */
- 	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
+ 	ns->queue->queuedata = ns;
+ 	ns->ctrl = ctrl;
  
-@@ -303,6 +307,18 @@ enum req_flag_bits {
- #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
- #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 061fecfd44f5..9a689c13998f 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -306,6 +306,7 @@ struct nvme_ctrl_ops {
+ 	unsigned int flags;
+ #define NVME_F_FABRICS			(1 << 0)
+ #define NVME_F_METADATA_SUPPORTED	(1 << 1)
++#define NVME_F_PCI_P2PDMA		(1 << 2)
+ 	int (*reg_read32)(struct nvme_ctrl *ctrl, u32 off, u32 *val);
+ 	int (*reg_write32)(struct nvme_ctrl *ctrl, u32 off, u32 val);
+ 	int (*reg_read64)(struct nvme_ctrl *ctrl, u32 off, u64 *val);
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 514da4de3c85..09b6aba6ed28 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -798,8 +798,13 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
+ 		goto out;
  
-+#ifdef CONFIG_PCI_P2PDMA
-+/*
-+ * Currently SGLs do not support mixed P2P and regular memory so
-+ * requests with P2P memory must not be merged.
-+ */
-+#define REQ_PCI_P2PDMA		(1ULL << __REQ_PCI_P2PDMA)
-+#define REQ_IS_PCI_P2PDMA(req)	((req)->cmd_flags & REQ_PCI_P2PDMA)
-+#else
-+#define REQ_PCI_P2PDMA		0
-+#define REQ_IS_PCI_P2PDMA(req)	0
-+#endif /* CONFIG_PCI_P2PDMA */
+ 	ret = BLK_STS_RESOURCE;
+-	nr_mapped = dma_map_sg_attrs(dev->dev, iod->sg, iod->nents, dma_dir,
+-			DMA_ATTR_NO_WARN);
 +
- #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
++	if (REQ_IS_PCI_P2PDMA(req))
++		nr_mapped = pci_p2pdma_map_sg(dev->dev, iod->sg, iod->nents,
++					  dma_dir);
++	else
++		nr_mapped = dma_map_sg_attrs(dev->dev, iod->sg, iod->nents,
++					     dma_dir,  DMA_ATTR_NO_WARN);
+ 	if (!nr_mapped)
+ 		goto out;
  
- #define REQ_DRV			(1ULL << __REQ_DRV)
-@@ -311,7 +327,7 @@ enum req_flag_bits {
- 	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
+@@ -844,7 +849,12 @@ static void nvme_unmap_data(struct nvme_dev *dev, struct request *req)
+ 			DMA_TO_DEVICE : DMA_FROM_DEVICE;
  
- #define REQ_NOMERGE_FLAGS \
--	(REQ_NOMERGE | REQ_PREFLUSH | REQ_FUA)
-+	(REQ_NOMERGE | REQ_PREFLUSH | REQ_FUA | REQ_PCI_P2PDMA)
- 
- #define bio_op(bio) \
- 	((bio)->bi_opf & REQ_OP_MASK)
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 9af3e0f430bc..116367babb39 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -698,6 +698,7 @@ struct request_queue {
- #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
- #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
- #define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
-+#define QUEUE_FLAG_PCI_P2PDMA  30	/* device supports pci p2p requests */
- 
- #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
- 				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
-@@ -730,6 +731,8 @@ bool blk_queue_flag_test_and_clear(unsigned int flag, struct request_queue *q);
- #define blk_queue_dax(q)	test_bit(QUEUE_FLAG_DAX, &(q)->queue_flags)
- #define blk_queue_scsi_passthrough(q)	\
- 	test_bit(QUEUE_FLAG_SCSI_PASSTHROUGH, &(q)->queue_flags)
-+#define blk_queue_pci_p2pdma(q)	\
-+	test_bit(QUEUE_FLAG_PCI_P2PDMA, &(q)->queue_flags)
- 
- #define blk_noretry_request(rq) \
- 	((rq)->cmd_flags & (REQ_FAILFAST_DEV|REQ_FAILFAST_TRANSPORT| \
+ 	if (iod->nents) {
+-		dma_unmap_sg(dev->dev, iod->sg, iod->nents, dma_dir);
++		if (REQ_IS_PCI_P2PDMA(req))
++			pci_p2pdma_unmap_sg(dev->dev, iod->sg, iod->nents,
++					    dma_dir);
++		else
++			dma_unmap_sg(dev->dev, iod->sg, iod->nents, dma_dir);
++
+ 		if (blk_integrity_rq(req)) {
+ 			if (req_op(req) == REQ_OP_READ)
+ 				nvme_dif_remap(req, nvme_dif_complete);
+@@ -2439,7 +2449,8 @@ static int nvme_pci_get_address(struct nvme_ctrl *ctrl, char *buf, int size)
+ static const struct nvme_ctrl_ops nvme_pci_ctrl_ops = {
+ 	.name			= "pcie",
+ 	.module			= THIS_MODULE,
+-	.flags			= NVME_F_METADATA_SUPPORTED,
++	.flags			= NVME_F_METADATA_SUPPORTED |
++				  NVME_F_PCI_P2PDMA,
+ 	.reg_read32		= nvme_pci_reg_read32,
+ 	.reg_write32		= nvme_pci_reg_write32,
+ 	.reg_read64		= nvme_pci_reg_read64,
 -- 
 2.11.0
