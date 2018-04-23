@@ -1,87 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754205AbeDWIFI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:05:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53395 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754033AbeDWIFE (ORCPT
+        id S1754235AbeDWIF4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:05:56 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:52701 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753109AbeDWIFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:05:04 -0400
-X-Google-Smtp-Source: AIpwx49IiYwIc74DyRXfzqhvi1YaAOCQIq64o9N+J1n5UdKWpkUD0HG7jEEaUx8IzF5vRpDmtIRpCw==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [alsa-devel] [PATCH v4 3/3] ALSA: hda: Disabled unused audio
- controller for Dell platforms with Switchable Graphics
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <s5hbmeew01d.wl-tiwai@suse.de>
-Date: Mon, 23 Apr 2018 16:04:55 +0800
-Cc: mjg59@srcf.ucam.org,
-        =?utf-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        dvhart@infradead.org, andy@infradead.org,
-        Mario Limonciello <mario.limonciello@dell.com>, tiwai@suse.com,
-        alsa-devel@alsa-project.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <E5D0F76C-0A83-4D2C-81F7-BD5768C0A7DC@canonical.com>
-References: <20180420094432.13133-1-kai.heng.feng@canonical.com>
- <20180420094432.13133-3-kai.heng.feng@canonical.com>
- <s5hbmeew01d.wl-tiwai@suse.de>
-To: Takashi Iwai <tiwai@suse.de>
-X-Mailer: Apple Mail (2.3445.6.18)
+        Mon, 23 Apr 2018 04:05:53 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [RESEND] KVM: x86: use timespec64 for KVM_HC_CLOCK_PAIRING
+Date: Mon, 23 Apr 2018 10:04:26 +0200
+Message-Id: <20180423080512.1614520-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:qv2vviUhSJ/fJDEihO9m+rlRZf7wod8efxdcrvfrNvYnweN3G+J
+ ovKLKEjuzPiK1CSZ7DvSr3VG6anwI21T4+Ht8xIt7y6UW9y+1VclYSna821QQKWoVw9xPMC
+ SAlge54zvTlubOk5/4QpyCUgNiBYaFcEwPUtotwwVtO0iRHLqddrKBYtIH1WY4Go+GnL6NF
+ JbI4T0ks7NCETFuD8vmQw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:duqV5tNnCtA=:uvTtFl1LuujZI0F3iRZxh+
+ H2K5qOpzZdJv2gtyenJT10S/lvUdjEBO7Y0ur5mqbpkaDLRsGwM0gIBVDpw+RLFU5Np4krzVx
+ osdAecD0e/x8IFub/tlXouePewX/3n8xscU364RGds58guuXLUO36jv3CMsTfdIGKPww0HrRa
+ saH5Q3zFOJkMQu+hrFZT9hBH9JS5JVNOjQsR6GSsz0IrHG6Cql/EjPNKR/9i5ye+EKczf2joL
+ juCU03few0CZP3Btm2/8FBZQHW0ArA5XnZDneOrhRFFyduOPO8oARzlJUKeauMUQ5btVylgGH
+ Ege1pjIlf3uxqrlWCt+llaFCqx3xhqHH2da7FDJPTa6/NRgEGOCCv8ImyiHzNWTW/iyr27l6h
+ LW6zeJpvkPmZFkPjnmEpLTyc9jOcIP7MFB66DrVcYaHDB8q7TNBVB/6MDzBM6FhBS1EZ9X8hy
+ l9lLCvMFSPZHSc7kqGg1oCE7SwzoH4rNvNBxVxTwOsqnA/OFiv8L4k6t4OPB7IkpxmGdVNOUm
+ YaF/TGqCMOUIsTtg8FBSL6oPyCM8AgmxQuhiteeRQVQz6dM9fstaRFk14c6V9poPpkgXM3AJs
+ o1imzMmE2naW3cFZtoSU3EqqAVf5EnhVCGqZMYHAVuCI+YFn4mXuuY8qx/xKGwOceflLphv85
+ PaO/SNT++4qo4Mz+S4IvbnWAHI57EQkUqFtmn0wr0abfu4ZNFIb6cDsgw7xM5QYbuwpaWnpcW
+ c/Cgt0nM1HCgzQZ29VUaLkTa0YfeB3/fsu454g==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The hypercall was added using a struct timespec based implementation,
+but we should not use timespec in new code.
 
+This changes it to timespec64. There is no functional change
+here since the implementation is only used in 64-bit kernels
+that use the same definition for timespec and timespec64.
 
-> On Apr 20, 2018, at 8:10 PM, Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Fri, 20 Apr 2018 11:44:32 +0200,
-> Kai-Heng Feng wrote:
->> Now it's a typical discrete-only system. HDMI audio comes from AMD audio
->> controller, others from Intel audio controller.
->>
->> When SG is enabled, the unused AMD audio contoller still exposes its
->> sysfs, so userspace still opens the control file and stream. If
->> userspace tries to output sound through the stream, it hangs the system.
->
-> Hm, could you give more information about how it hangs?
+Fixes: 55dd00a73a51 ("KVM: x86: add KVM_HC_CLOCK_PAIRING hypercall")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I originally sent this in October, but got no reply. The patch
+is still required for the overall cleanup of 'timespec' uses
+in the kernel, please apply.
+---
+ arch/x86/kvm/x86.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Well, I should say "it hangs the userspace process" instead.
-
-$ speaker-test -t wav -c 2 -D hw:CARD=HDMI,DEV=3
-...and it just stopped. Can't Ctrl+C to break it.
-
->
->
->> @@ -1627,6 +1629,42 @@ static void check_msi(struct azx *chip)
->>  	}
->>  }
->>
->> +#if IS_ENABLED(CONFIG_DELL_LAPTOP)
->
-> This should be IS_REACHABLE(), as both dell-laptop and HD-audio are
-> tristate.
-
-Thanks, will update in next version.
-
->
->> +static bool check_dell_switchable_gfx(struct pci_dev *pdev)
->
-> I'd remove "_dell" word here.  Such a check would be likely needed for
-> other vendors, and it's quite possible that the function will be
-> extended to cover a wider DMI table.
-
-Makes sense. Will also update this one.
-
-Kai-Heng
-
->
->
-> thanks,
->
-> Takashi
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index b2ff74b12ec4..961ee64cb137 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1755,7 +1755,7 @@ static int do_monotonic_boot(s64 *t, u64 *tsc_timestamp)
+ 	return mode;
+ }
+ 
+-static int do_realtime(struct timespec *ts, u64 *tsc_timestamp)
++static int do_realtime(struct timespec64 *ts, u64 *tsc_timestamp)
+ {
+ 	struct pvclock_gtod_data *gtod = &pvclock_gtod_data;
+ 	unsigned long seq;
+@@ -1788,7 +1788,7 @@ static bool kvm_get_time_and_clockread(s64 *kernel_ns, u64 *tsc_timestamp)
+ }
+ 
+ /* returns true if host is using TSC based clocksource */
+-static bool kvm_get_walltime_and_clockread(struct timespec *ts,
++static bool kvm_get_walltime_and_clockread(struct timespec64 *ts,
+ 					   u64 *tsc_timestamp)
+ {
+ 	/* checked again under seqlock below */
+@@ -6610,7 +6610,7 @@ static int kvm_pv_clock_pairing(struct kvm_vcpu *vcpu, gpa_t paddr,
+ 			        unsigned long clock_type)
+ {
+ 	struct kvm_clock_pairing clock_pairing;
+-	struct timespec ts;
++	struct timespec64 ts;
+ 	u64 cycle;
+ 	int ret;
+ 
+-- 
+2.9.0
