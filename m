@@ -1,112 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754205AbeDWHXi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 03:23:38 -0400
-Received: from mail-bn3nam01on0052.outbound.protection.outlook.com ([104.47.33.52]:28989
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1754261AbeDWHXu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 03:23:50 -0400
+Received: from mail-db5eur01on0102.outbound.protection.outlook.com ([104.47.2.102]:23753
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751785AbeDWHXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 03:23:18 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com;
-Date: Mon, 23 Apr 2018 15:22:49 +0800
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bhadram Varka <vbhadram@nvidia.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jingju Hou <Jingju.Hou@synaptics.com>
-Subject: [PATCH v2] net: phy: marvell: clear wol event before setting it
-Message-ID: <20180423152249.5f1deb65@xhacker.debian>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1754185AbeDWHXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 03:23:38 -0400
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=axentia.se;
+From: Peter Rosin <peda@axentia.se>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Russell King <linux@armlinux.org.uk>, Jyri Sarha <jsarha@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 4/8] drm/i2c: tda998x: find the drm_device via the drm_connector
+Date: Mon, 23 Apr 2018 09:22:57 +0200
+Message-Id: <20180423072301.11962-5-peda@axentia.se>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180423072301.11962-1-peda@axentia.se>
+References: <20180423072301.11962-1-peda@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: OSAPR01CA0063.jpnprd01.prod.outlook.com
- (2603:1096:604:a::27) To BN6PR03MB2625.namprd03.prod.outlook.com
- (2603:10b6:404:59::8)
+Content-Type: text/plain
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1PR05CA0128.eurprd05.prod.outlook.com
+ (2603:10a6:7:28::15) To DB6PR0202MB2774.eurprd02.prod.outlook.com
+ (2603:10a6:4:a8::20)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN6PR03MB2625;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2625;3:Ngsik/gRPp5eK30WMrYtpFVLRNDEpDQi7oWK3iY/qfhOjk3HDd318b5PQiN2ictehN2BVPtnOGVZi8Abx0zyu//ZLIolvrHGMOGooUj4W6Fv+0UYnBn0TTi6MjeFf68bAo3HyqBwm1Fl6CHYOcMO1sSc/cRHnTdgJEFPGiNAU3tQmXOt9Z516AayjdGjtY+7zvEDVuPeXvN56hot+dxeVAMC9d8pbpKgY33d2zLDLvgbz81Gcp3xmEV9DQNyAEkH;25:RgOobK7EPl/s1hWZvi0XxfhBgAUM+a5m2lmJcP1hRVmsgZ+g1EoHnIdL/W36DeUKMbOn3RnrHYD+cRIZYB1edxxaTKPaO+lStpy9DzuEYoi1Wu9mIHIsmCNC/AhBFDUakYiu5ZnSKfqWs2sui4OIv11IwZ2fMgYK/K3Iey5FVl77aG/nRC+vp14JSmHObvFiN+21h2yKiEAtVOpnpUosEBHi9gt/rIbG1mXvpFSb+ueIMxEsyU9VPUazfhiW/CxLf6+NMFh55bI1wS+GBSnhIvhPFrzQocopPsTw8gL6msdZKuG+PUWzaNexGk8q6nF81DaYcFhhtid1wSQAFuq+eA==;31:1m5e+yAPZooEI+JFv1YyW//1gOR8donhQxlnWciejetK+mVm5qb5gsPbAMgeAdSS9Ao2DHVoa2YrK72r8ozzEscTgVIZhuA9GWxhZKXUNSrdTobdxm6pwGTj+YliLMeqhhakL1N36StFHkb4BqnvOVGi21dovUW8NZUIAvzeybofm/ZLruhu2MUwELdOzcU864Kc9Rrh0wwmL4GyPAvqELzP4OOHaA/zBeltsEQhawI=
-X-MS-TrafficTypeDiagnostic: BN6PR03MB2625:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2625;20:tDME5NkkRIKPAIX54VtqP2zyeRkRgsfZTykUl1342x24qD6c9uvn12Nkkaa08TpPN5c379SqRj0TUtD5yqq8htTNFVtaGw1jrb7ijLdcFGteDps8X04/N60jp1Mf/aPYTcoRMrh4wFYYWXt4kzjHCiA6X1kU5444y7OxK2dsDm6yh+01AFNnxdxABzFnKHadGNWgAIWS+PjqjlDrTSw8ugBWvarcHb7p2U6rF+w5mfsTJG2FI4ubSEXkvVNrrfdja5L2JfPbGVuUOBsux16jreofCoy0rq4AVW0hOz3zsi+TQl5Xhwr1ffs9qD8fRoC+niG9gtaUJS4goCBylAjbV7PZOWg/rWeZ/abIAsJX/sQqPX+T3OKsTUgAOQz4pyA2xXz/6HAaBGbTgXqtdgZHUT2Vr4OPdiwy9ON2tzO6L5tlnYbDorKfkU0hVUIuPNBLNCEH3c95wWi/cujXNRu4cSB915Nu5rUdKoVkmVwjQAlcSWlj3Vts5a0g2Lpv3NCh;4:TWMlYdTV/rrgL6aQ2SLFQZScKcg3/K7SYXC+EX/rlFVZtLbrS5v+jS1ECVPjxjDpNe22wwAPiD+PbSNCZ7Q/GJo8lPY9+mw8Oi6rullHaw8qKxq8wyMASWav75yScLKMl5CEva9DpUBIniiMH5pv/ZQhEzKm3xuQcIaXuzp+iruSQqBlvjFcuURDxJhUym4Lt+tfD3m+HwIs7eAo1PJz2FOWV7X0cis1yW3ShmLEYhluaGEi77IEPoVTTkgh1I4vKMWcf1lNz0lTy2OWqY+uyw==
-X-Microsoft-Antispam-PRVS: <BN6PR03MB262589DA02821BC32A30DD61ED890@BN6PR03MB2625.namprd03.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DB6PR0202MB2774;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;3:vHNV8LbNsPLLTyMUtR21svSNRylqKquD+ma+LykF5LJS3r1weS7MQMCZoJgdfZ+izzBLF+7K3ktfPjWDIC191fDnf+nBjLdtAjO7K2V4xz4ra6wxJUBsw2Tpj2gk7mHJdNuK+JJpSwYkalqTQBaTWPmj513hxdX5YixN9/CnxFo1+DUs5Xk6E4MjbAI+0qwlkvJJD1OG6nfJ2qzwioNWQbAiC5/Uo4o0sz9LJAwba6FzogUgTr4ZhgXUyZ9EcIU7;25:WGvjFFSLpPyOU6NMyyx14mSM+hsWdDaipz9YLuq6Eh9RqArUm4Bf+pisOm0l6ROW0p2xppg4X46pCmevAq4h5+AngT68BViQHE6nzV9ZubAKM7ndMp7Ii60D39huQzMYabJDXwXxl8rbr7OiX/DEd8bfl+XEUAXIaFmbREBg4JHojoonJyFq3m9EY4j4p83ubnrhelxt7XLt3KQBnF1TvQnHdAE3Wfy3XGDsIEkRc/pDa/3MoVR4auD5pMCxeI/uBh5oXTNLQ+LRtCqblgWsITLv3fRRztFb65/pqKlqckPvDb2ZmspJDG69G04p0q+n9hNyHzbgK5PB5e8zgKDMlg==;31:moy/TepVLWYBQe2VOLV63kljUj0CCgivDjKxQILeD4Ot+zORFbO8mTzUH3/V8TuYzmKtMlVz7/64qSxWtu8bMwQXBCXmLGaFWmMaC4GC02/T4PJ7ciCfhAY5MOnnE4vOHAmWjezDZhSOpSgh/1tOtF82BD1V2vUg5ttBT+JVzidf1E5LvtZo81Vt/sXQ4Fc/S3dIP69UJb+XBEvsdawoHYl9gnCdojb//WMh7qAVrJs=
+X-MS-TrafficTypeDiagnostic: DB6PR0202MB2774:
+X-Microsoft-Antispam-PRVS: <DB6PR0202MB2774C413E240E6D9134ACCF0BC890@DB6PR0202MB2774.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:BN6PR03MB2625;BCL:0;PCL:0;RULEID:;SRVR:BN6PR03MB2625;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(2016111802025)(6072148)(6043046)(201708071742011);SRVR:DB6PR0202MB2774;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0202MB2774;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;4:fKzvm7o4iCsje8TkiP33ExUmHNgiRH95LnGOxu7+6DcLCow+ColV58erGO/lmtjv8IhgujXb5WzMxU8P96Snye/ZNVW6YCtJ7WTm7JlatpMdoEa5+HwORppUcXtu+bHpr7hVFiPiWJt81OrU3T3Pwt2dYxPwJ0krKJNnRS6+jOpfJtwdqioDBT66yK4Yo11ebBSfYMbxDIbE73LMSFtLOwWEsZrjSdaXT04Mi6tCv2qz7hWGvR8RXY4JcxqX0KmtD7aorkttFRKgfBX0xosM6A==
 X-Forefront-PRVS: 06515DA04B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(39850400004)(39380400002)(366004)(346002)(316002)(6666003)(26005)(50466002)(110136005)(50226002)(386003)(6506007)(7696005)(86362001)(52116002)(2906002)(3846002)(66066001)(81166006)(23726003)(1076002)(47776003)(16526019)(55016002)(33896004)(72206003)(8676002)(230700001)(6116002)(8936002)(186003)(7736002)(305945005)(4326008)(39060400002)(9686003)(476003)(5660300001)(25786009)(478600001)(956004)(107886003)(53936002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB2625;H:xhacker.debian;FPR:;SPF:None;LANG:en;MLV:ovrnspm;PTR:InfoNoRecords;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR03MB2625;23:eIAr21DSh+Pl2FuwXGWNgtRNCsYLnQWzalLIyUAhg?=
- =?us-ascii?Q?JteREslTWoGbNyl9/pZBfA+LTRrlSRGTy+ZG2VOiu243dQnmrg/zW6biz+il?=
- =?us-ascii?Q?acHllLIHLvaz0NbXH/MZuVEFgnp1CqG5TT3Vo/ilyiTFVTHsaC5O8t3n0flc?=
- =?us-ascii?Q?vejVzZIhdBYW+iJa6pzrW90M/T6Igf2//NjkhDYRkCxRRkQK7V3AAiYiGYsS?=
- =?us-ascii?Q?ckThknq6eBIukL6QN64GoCbEjWf/Th2Ou+iWlz+l56wRvPslDgJW9aCoOfrH?=
- =?us-ascii?Q?f4RA2K0Xv2+YpOmFw7vs8aMPBa6S80Kzmm6NpvigExK3gJv6vqEGD63ivMqB?=
- =?us-ascii?Q?cAs7dWpJP8a4EWFAOmtf40sa3VcoNh+l7mzRn0T99Sd4eIe3dJMav7E45dr6?=
- =?us-ascii?Q?n8906FkW5sqmLaZtDY3hHzMb4sk9lywR/HcwKKfq0CQH2VBbr/Kz0pDpaPds?=
- =?us-ascii?Q?N91IuqbEZxDiFEGWUcp7ComrjlggqjkAONbOkDuSrMkVFpSWcdAQWKJexBwc?=
- =?us-ascii?Q?fwKYzTynDSS23yL/r47RkPn4G4WHHN2gnd02pQ6clwcvJsbLUAl/eyL8rvre?=
- =?us-ascii?Q?Nm0rmR0vYTLFwt037mdl+rzLLjkrk5frZrs7/NGdwbeN3t7w7Ozt5e20E6lh?=
- =?us-ascii?Q?G/OMhWqvuJt2SbG+RkFVsjJgKr/rsBMykahpTR6SuPQnBAqD9fixDA8rZqBF?=
- =?us-ascii?Q?AI/xRcAajPXjlZRfjJ16GF3il6gYfOovhPrBo4/p3ye+TEr7g5f9jFvxjfrc?=
- =?us-ascii?Q?WvTBXPNCdSGXP3SuJ8Ld0IktbeChMW6AC1GzD1WeEt4kDFarHJhCYDQaSws6?=
- =?us-ascii?Q?Wo4R7NjiNwL896VmFJg4Lug6BvpwCcRBzxnFwn6D1dRAyB7qmHX8d/9EvkzP?=
- =?us-ascii?Q?Nrs0SrXKRMcrH9tzOSr4VhRd+ePzNxaoVDg2m/3hOp4LD0NxUgN//3nAobYy?=
- =?us-ascii?Q?1pQJXT39H5s/pGLCah5n8zfINlayzwBPVurYJFwv0Z16lULn0jc39BcA/lHr?=
- =?us-ascii?Q?yOMoftWkvFLQBMPDM7VPVZJlUXoxAmcIHBF2AUh3QF5EaDaA8xg25woamfQB?=
- =?us-ascii?Q?1FPiqOM01qdYT1flLcO1UB7IQUs?=
-X-Microsoft-Antispam-Message-Info: d2YjsEuHtPSzp4H01aRVWzfEUxbCoIyGfBhoXdno2ZzfwLQ2Z1Wi8Q6RmKl7edkLGjUSw/g8irxbwnPK5qqJ/4w92x1VCXUFccDz7WHt9IPyNDqlaI1Tcki9/TOwj8YdXhqLx6fEitHyCtNEW57qaZ3NB65GmfIBGzoadLbw88K/gRjCJBfdzkj8p0rjBXx4
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2625;6:DYaddeDLylZkco8At3zj+0wZSF3rnIVMFSlujd80ZQwK4cW7NqQts1+R9oPXjCQ/IgP80pZFAjOyshDofM2vc5K45aGAJw/0kwLFHjyxe57rOmLfz+slO/ihiiDeDGFOUJqC89rgzpIE5yEBf4uNj/9lSPzvAG64uhNCT79bq5RNEbIfb6sp1wkIxfR+7y8/YO47rj/r8SJZGbngL1780CYO528T+OO0gNcdFJwC5JNYR9LtWMVhpeOAoZFkfKBM4euPULUaOY82CIj+JNC/w9yStXTxVFgRXsprdWe5vB0dOB2BOOyKK/gRnBtlSmP0mLoe6YcD8ZqE1Id6LtDBWx7wSYfXGyIGUv+sQTR/24N7w+cLyIC0l5mh/cMCL1Nbl3AUL30Q41V0M9M7vEgWDN9FQLfbZGe9W72OFpNaHKMISW26AWUXByCBRUKD7HnITXR4Dfh6NtmokXKBci8oRg==;5:Ajqjy6mLkJIEXX218XCidzBKuz5Ex+HaIDsO5VX/uipULUN2cDbPeA8OEFncpNxNlTAWyEHV9ebtEnZ5VpOI5ka8d67ThUbXba/Thv2AXYVgM0ftT48lXSvaKhZMfhLV+ekl8uETvn4r+WcSHHTePAlBg/cNrdfSQnj7BNblV4g=;24:kiYb+F4qr1dL3Ywhy6Ro0sT8z6cw9JrsJOiqEnNbdiH/WsrSLQOfXmpPKJ1hXozrINMmebemD2i/LMdsgttOrYSt4AxkVG6zGSkk1VdQkdY=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(396003)(39380400002)(6506007)(386003)(59450400001)(2351001)(25786009)(2361001)(1076002)(26005)(476003)(3846002)(6116002)(956004)(2616005)(11346002)(76176011)(478600001)(52116002)(66066001)(86362001)(2906002)(446003)(16526019)(81166006)(48376002)(5660300001)(305945005)(8936002)(6486002)(6916009)(74482002)(36756003)(7736002)(53936002)(6666003)(316002)(54906003)(7416002)(4326008)(16586007)(50466002)(186003)(50226002)(47776003)(8676002)(6512007)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0202MB2774;H:orc.pedanet;FPR:;SPF:None;LANG:en;MLV:sfv;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0202MB2774;23:n4GFcMaMY5CAi7zOxITvYc54zO8ygBDnuQy2wGZ?=
+ =?us-ascii?Q?URhCTn+83uVs0mzCaz17VGfZwqnh2VezFjl8j2Bwqv1eVy6CvSVIlzx1lz3s?=
+ =?us-ascii?Q?oxKpDuWPoGLtkWBhwBcOH/mCkuY9vK28VGYM6W9M5enoIphJ+Wq5ooM2zYGi?=
+ =?us-ascii?Q?1vqYG548WUPF6C8cAxsOuRP2l4o0Kv52BBf2B70WDRm4VQMe/5Zi1w4iADnm?=
+ =?us-ascii?Q?68zI20stLsp+N0pim445XCxq7jhXPSoVQ+Bl5WGNjb7uqN6CDc8VlljztbC1?=
+ =?us-ascii?Q?i/YWE1ZM8JByD0SxZZA8DBRizpPPDyf9XC/O1BxAhjyh3lONcgwW04W+1CeD?=
+ =?us-ascii?Q?TFboQVK6Inm26bJhOQb2gR/KBnIWPdVuhHaxSymqua5rA8QF5C9zvcGEjw96?=
+ =?us-ascii?Q?wIM2tt3c1UST9SAchLFUb13wCMBFgIMAnC46RYH4p+/K/Xxmi5upLTRXcIWB?=
+ =?us-ascii?Q?O5LnDKgpNWI2R2esb1aSMhWdMwbwHeM5qdQ9V4JBJR8qmMiGIsNYqGYrcai/?=
+ =?us-ascii?Q?dTIQtNvHGHdEDFzH6RLvJVUlvLYBt+cGAQGk9I7MaZs8EYCcqcpVWiA/GRZI?=
+ =?us-ascii?Q?zlF6w+PMuJQVs0svwHAc03gr7TfjvhGH+GnX3NUjnZVJ9QxLHum5fp2NkJ3N?=
+ =?us-ascii?Q?6B+1HbCSsvP5CdNYONQnX+97E95omnBxFjpc5mLuLGVYJSGiNqTBvYvRsMdC?=
+ =?us-ascii?Q?DEVZ1s51kxcFAmmnBdnTeiP9Zcn6WTCepGGyy0D9I8/6dpKwX7PndwqS3dk3?=
+ =?us-ascii?Q?OOmSxO0Nmg5n4frsnXltU6Na2Wb4v/h7gvf+a5hLZ+MZ6dWXX0TsEVdRtlXA?=
+ =?us-ascii?Q?EWbIODyHfVRibaklpUSPxZwUz8rxht87FT0ljkI1L8oS0m2GojmUuZXIsxoY?=
+ =?us-ascii?Q?+dCXGidif8Klj/g7AGiafyYgluuMNs89q/US4knifK8ktewvKuiDnc7b+NPe?=
+ =?us-ascii?Q?oNEftg7iEKunWg0DyWzvJc8W7ZVXJaPm/sIzwz3tu5Xolmsp1P0rB3lBNoNE?=
+ =?us-ascii?Q?diiIAz7x2g8jrLXQFmdZmJyw8jHyHeLPX7Ik72o/25MaHi+nWksbYITgV4vr?=
+ =?us-ascii?Q?3FUmKy2rczN2/LT41MLNmyPHjhrE9etmcZbU7RsHwgFwQrgKiwRvHcRFU8RH?=
+ =?us-ascii?Q?bO20oD9QksOS/OYwuquq8OwTTZ8aP7cvC?=
+X-Microsoft-Antispam-Message-Info: x/UDAxgWOItPirT4hOE2NDvUrAlSngbLj+9ef+4G/6AaBFF1TZNdftbzJa3gNNl07LK8g8jQv/7zYKP9uQjhBOjfvFKrixeooci8f1argsJOYsi4RvD6ckeHTQCNeI+m9f0HaEJGhOjfgXGvlww6B5poqam8S3n3KywYpPZgKtq42UCzSw32UgxvlkpLmrdX
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;6:c+fwCpcAjGm4YNThTyqm80WyDPAleXUU75H17N2E8J2dbqC85BlB7Gd9O+sH+CE/cS+ISeFEtQLOjmfRrNEJKfLt7hFFOX2igulMrulEiGCjZgmdXp5x7UfARvf8PxajUMfPOaeaH6r0/0n/G3z+GdrgpOmJa1OuGIrR7EHBJNqk99TZk+Vrvb7bVMCDqC2ol5XeDdSXF/z0EhBRIyUR4N9AoZ7FKlLhWBkzFG63lGEOO2yrjh/LDlcxQO11N9cepDDUMul912krM3ml2kyM+VhzTcotbhm05/vlt9MgCzGBB5gR35ZiC84/EO2wnNb622SwyFGaYp2ZG90a8HTkWL5BhWttHJhpUOhiuV7JxfG3bthC8M1sYPoX9TEAXkh0OOoVvECzOYVjO1uXoAdxNEX2DX+ccqdz6ay6dzT+d3lM14Su3ywu1jWGLiUSxRZgRZUGKpSUIEBpwpwuP/wUMQ==;5:9PtYFGlbDOhui7/mHE0dgRu717bLKwnGK4Sc9eTuN1naRMoWwuwezN0DZloSVGWmyp5dia3gyIGIfTDAk1kt7vqEhZZBTjzX+aUbeDKa1m1fVBrNIb0AQ9OXVYGUWryFbuqgr8aHnP/JbbQLQeF6Zk4cXiHqIFugQ7grIke8HYY=;24:8Duro8WnD5nZ6YbCUeaFdY/YaZkKfwduo3y+moCrxj1VwNIuR1mfCMqR8MBpWhfryrHfoSH5S5Y9ywlfkHd0rKEEeouLsKM7f1cdh9xdHWo=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2625;7:HDF8PfZIvsxFoC6vmST04GbFy5f/+gd636fFUFSCcXlPqhfEKYlKchv+4rBMRWxP5dX4LcrXUfgBmQ+rze9sifIelRXiEZUOCNVWvIbOBUqai4mzakCq7l/9De+WfaQG5ZXSomB7YyFeSGwO1jNeFjiLespMbfKg5Oudb/9JB2FyZnUNYeiSaM1fVHeWVrdOp1V7yelFl/DoLlNqyT/iBukXu3g4SEwd58fxEVQyAMTdOpKfZY7dxhD7S43/ixoN
-X-MS-Office365-Filtering-Correlation-Id: 0849615e-97c6-4a42-0544-08d5a8eb14cc
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2018 07:23:14.0440 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0849615e-97c6-4a42-0544-08d5a8eb14cc
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;7:ZtWSkB4Z9s6R25gxcPGMVB8yUq3L6FOjUf2t6ka/OpXcrK7y5Hc0vlrtp+cwYrUw5twNJYWPE5I/93AOzPFcB2kyRNZBJCUJv19ynWlqEhBvSfSEYf7cJ0jydgwxjBC706/cd4yDTWJEe7dpOhfdG3jXGC2hORjODZ9Lr+sk7TKFabbw4mB3Sv6KXIULgppQEw2A1ftgjx9a9/AwPv7z0ZEfLTFN361iM3jSj99NCJpOz4V1kcvwTWZCTRz5GlNo
+X-MS-Office365-Filtering-Correlation-Id: 3fa39455-bacf-40ad-4e6a-08d5a8eb2045
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2018 07:23:34.2955 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fa39455-bacf-40ad-4e6a-08d5a8eb2045
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB2625
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0202MB2774
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jingju Hou <Jingju.Hou@synaptics.com>
+This prepares for being a drm_bridge which will not register the
+encoder. That makes the connector the better choice.
 
-If WOL event happened once, the LED[2] interrupt pin will not be
-cleared unless we read the CSISR register. If interrupts are in use,
-the normal interrupt handling will clear the WOL event. Let's clear the
-WOL event before enabling it if !phy_interrupt_is_valid().
-
-Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
-Since v1:
- - reuse MII_M1011_IEVENT, suggested by Bhadram Varka
- - make read conditional on !phy_interrupt_is_valid(), suggested by
-   Andrew
- drivers/net/phy/marvell.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/i2c/tda998x_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-index c22e8e383247..25e2a099b71c 100644
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -1393,6 +1393,15 @@ static int m88e1318_set_wol(struct phy_device *phydev,
- 		if (err < 0)
- 			goto error;
+diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+index cd3f0873bbdd..8f6e013f2b87 100644
+--- a/drivers/gpu/drm/i2c/tda998x_drv.c
++++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+@@ -630,7 +630,7 @@ static void tda998x_detect_work(struct work_struct *work)
+ {
+ 	struct tda998x_priv *priv =
+ 		container_of(work, struct tda998x_priv, detect_work);
+-	struct drm_device *dev = priv->encoder.dev;
++	struct drm_device *dev = priv->connector.dev;
  
-+		/* If WOL event happened once, the LED[2] interrupt pin
-+		 * will not be cleared unless we reading the interrupt status
-+		 * register. If interrupts are in use, the normal interrupt
-+		 * handling will clear the WOL event. Clear the WOL event
-+		 * before enabling it if !phy_interrupt_is_valid()
-+		 */
-+		if (!phy_interrupt_is_valid(phydev))
-+			phy_read(phydev, MII_M1011_IEVENT);
-+
- 		/* Enable the WOL interrupt */
- 		err = __phy_modify(phydev, MII_88E1318S_PHY_CSIER, 0,
- 				   MII_88E1318S_PHY_CSIER_WOL_EIE);
+ 	if (dev)
+ 		drm_kms_helper_hotplug_event(dev);
 -- 
-2.17.0
+2.11.0
