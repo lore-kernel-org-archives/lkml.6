@@ -1,76 +1,76 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-923319-1524475769-2-9301318141927394615
+X-Cyrus-Session-Id: sloti22d1t05-923319-1524475227-2-12618757430981457246
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='au', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524475768; b=Mmz1vcZlQS/s4Gt1hhZYvKc96B5Q2DvwpXTHCeHA+QWuV7mlmt
-    8cbHY81GYw4D6V/vMjWONYGIt4vQZRtS4O6n3qWPwNwHF5UEXYoT6wWk86EK73/Y
-    ms4YEw+lwSTszVzmt4rHbCec2lgIBEyLVFhcLlZWHijKq6tpwOfmEkTQEcinPd1L
-    4x67DQrkgpLDnWaUTZSgZ1CBARo8OiIzsX30fjaUYiI3qirEgvp6XO9tNF8C+gcp
-    5d26I7q7+kBoFcCb4O7v5KYqvVkXBEOJcseZs5y3XDOV7OyEA12umRvX4TAHTHFZ
-    6fkzyWdtlIGqKtjXJlYnHWdryy10JZlzgV3A==
+    1524475226; b=dKaH3/uXQyj+fOB8RDg3+osm3zwqtAlxaxvc0Aw6IgpJ2tPSWv
+    GPxlpkyGs+D2g26mByhekgdBdSWgWACuBR+1noo+IFXzdcZoWLLa7k3170GFJnOU
+    iPGObpnDIgAeoRBQvdwtxNYVoZDsAecn1aXci9IUiM8ltxuX1ZsXJmKpRxbicCiN
+    BH54GgSbPysg9RRkqesGO4WE4BR1sIdizmQuZGC0gxHygLRor8oLgrN5H9SDDauq
+    3Fiq5E36yoZd1MiBqDkkCpo3igQF+gmUhD5gvqMHjfuvlIwn+DX8cMKtQnTBm+8z
+    59eG0AgupTJPeheX/hTxcEaO/bCPIOf8TyGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
     :references:mime-version:in-reply-to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524475768; bh=oyabf
-    TCXZhn59M7HgGcykSCF5k4cxmK/hx4wZZCUpG8=; b=wXJoNKIxzNteK87eJv6bg
-    Fa/LBroW6+HeNJf5XycbFNKix9zUbPLT49DsWZGjpKWHziSIoQlWe92fw2NTFxMA
-    kN5QKwVeu5oeUGxjAE9yLUuojpCxLro97gh+sxu0AS9Du8hI+Cd4hJmZcNjmsDjJ
-    GeOy3RuVS6QsMcC02ShyzrkD6dOAKkMA2PG6FqaY708H6zXi+x5CR7q37W1f8d2a
-    tzQib4IYIciI8/gS6XmNjwFB/CM2BjkCJyF7duOmvds2no35kMu1chTL9MaPX0Rt
-    gpBri9yIL5go0TlugmzvwBsZ+ZiS1Rkj3AARdPFNNU1jcvJMfWsNe17tw1BNc6vG
-    g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=verge.net.au header.i=@verge.net.au header.b=E2sv5EwL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
+    :content-transfer-encoding:sender; s=fm2; t=1524475226; bh=YqQSy
+    Z+84yqmcwKxDYqI/oej20saKbh5Auw3ir40b7Q=; b=Fq2w1z1wgBMu2wR+fOU28
+    FJki0+/mojvjncbx5uXe04sK6dXGiSR1W9IV1rzh3ujFbjgXVRWopq07hQIwfj18
+    UwT9np124O/ddaM7gflw6RvNZ71AJ2ZP502n33ftJCXoqb5b2Lzu8Sbh1i+B9LYC
+    3C4DHbijL7HYBklHiHu1AWRwOBQfE8LCGYN6jkF4qgbT2Ks7ly+4M7HBWZzKEiNZ
+    C9lvGnS3BX1oMokfZpWdzAvgg5lALtE3GOAyNQB3/P1EgvbAKkTTZgdkz+8XjtTK
+    +JgIZ8CHZQuROC/UGfhj8r4GX6PK5kuOrmsXCEtae2A1eG5T4XM+ZVmhN2tyghBn
+    w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=verge.net.au header.i=@verge.net.au header.b=dIiS3DCW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=verge.net.au;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=verge.net.au header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=verge.net.au header.i=@verge.net.au header.b=E2sv5EwL x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=verge.net.au header.i=@verge.net.au header.b=dIiS3DCW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=verge.net.au;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=verge.net.au header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMogTiHpAfC28Wa++/XV2vE4fzGhm832RC0cjCKkWfcdM7GB6CWR04gN6/WGzHtdkJFszauTVQ4H3aJ65xoPI7IMOlK+WgHmeTIZEkQCdn4Q3XQ8nEX3
-    Vy8EjDKMeo5rd6CROCwOkQ0/mv3adHCdm8EgYZDWx2igttux84v1vpcD7ANKQDtOSz7UJATiDpKbbwSqjmLnB+ejdIjk2FY66e4IPJjt+7EqiTEsfq23GVC+
-    wx+bgv8dvogZuL4PXCwj8A==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=DK24gdrmsZPqZ_xNIn8A:9
+X-CM-Envelope: MS4wfD7egNjl43a0+xzaDPyC3fjOU4lIjC1SODdQenbkGvNwG+h5SCWEjNxclFTx6SLq6CVnKTPuUtzS1kCcPeqPadyd/pUVGpyr4voctIXFpmdRAfdiByLi
+    BG8craqHEBHAveboiS9bxqiHts6POEAlmFmV65pFadugBcKIjq7CLjOdzGPFhtujFugrrg5tMfwuYbq6z1Po9OrC7+KOhtnSiPkt6gaq1+jlJG4DFixnVS1d
+    Lnu5Y6tvbpGh0gIjWIw+LA==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=J5lvwRSe18BbF4UvBYYA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Mon, 23 Apr 2018 11:29:18 +0200
+Date: Mon, 23 Apr 2018 11:20:14 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: Re: [PATCH/RFC 7/8] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig
  symbol
-Message-ID: <20180423092917.h24b2gem6j24uhnk@verge.net.au>
+Message-ID: <20180423092011.qnhcorgcu2j5hrls@verge.net.au>
 References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
  <1524230914-10175-8-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
@@ -121,9 +121,24 @@ On Fri, Apr 20, 2018 at 03:28:33PM +0200, Geert Uytterhoeven wrote:
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 > This depends on the previous patches in this series, hence the RFC.
+> 
+> JFTR, after this, the following symbols for drivers supporting only
+> Renesas SuperH "SH-Mobile" SoCs can no longer be selected:
+>   - CONFIG_KEYBOARD_SH_KEYSC,
+>   - CONFIG_VIDEO_SH_VOU,
+>   - CONFIG_VIDEO_SH_MOBILE_CEU,
+>   - CONFIG_DRM_SHMOBILE[*],
+>   - CONFIG_FB_SH_MOBILE_MERAM.
+> (changes for a shmobile_defconfig .config)
+> 
+> [*] CONFIG_DRM_SHMOBILE has a dependency on ARM, but it was never wired
+>     up.  From the use of sh_mobile_meram, I guess it was meant for
+>     SH-Mobile AP4 on Mackerel or AP4EVB, which are long gone.
+>     So the only remaining upstream platforms that could make use of it
+>     are legacy SuperH SH-Mobile SoCs?
 
-Thanks, I have marked this and the following patch as deferred.
-Please repost or otherwise ping me once the dependencies are in place.
+That sounds about right. If there is interest I can sift through my mail
+archive and see if it yields any answers.
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
