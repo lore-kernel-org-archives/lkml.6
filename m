@@ -1,85 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755663AbeDWQsn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:48:43 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33747 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755308AbeDWQsm (ORCPT
+        id S1755772AbeDWQuD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:50:03 -0400
+Received: from mail-ua0-f180.google.com ([209.85.217.180]:33733 "EHLO
+        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755573AbeDWQuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:48:42 -0400
-X-Google-Smtp-Source: AB8JxZq/+E7yjAhpJlps6FvO/QVKhya7LxwGcVUSN6osG9OofihZX0IqcgPNAWhMacn+zvIvEg6LsMHhdQDgfbdG7u0=
+        Mon, 23 Apr 2018 12:50:01 -0400
+X-Google-Smtp-Source: AIpwx4/9paP35bh5q91g1V2AAnSM0uzGaNjF6OglOfPvWHQdEnI4OxZ7GzvMzxlyVqZ9GC4Trox7oqmktVvj6hTb26o=
 MIME-Version: 1.0
-In-Reply-To: <b5c77c79-11e2-ce71-7037-6d050677241a@arm.com>
-References: <20180423103440.26592-1-marc.zyngier@arm.com> <CAKv+Gu9zrnUevJdde_6vSwqFh0ojtDdC7Y_uHxqcGmE=5OZizw@mail.gmail.com>
- <b5c77c79-11e2-ce71-7037-6d050677241a@arm.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 23 Apr 2018 18:48:41 +0200
-Message-ID: <CAKv+Gu9rxc4em8gxR41BGF-LTFYt+m=nu8b-7qjRCAr8RmSoxQ@mail.gmail.com>
-Subject: Re: [PATCH 0/7] Level-triggered MSI support
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <d2ed3578-ca09-15a6-e688-ffb9a097c2aa@arm.com>
+References: <20180418222905.10414-1-robh@kernel.org> <e7a2f4ca-40c2-05ef-097c-2cecd31fb731@gmail.com>
+ <CAL_JsqKVCdk8nFwmtfNt4mMOVYFVxefgafP6JtXThvFhROFB8w@mail.gmail.com> <d2ed3578-ca09-15a6-e688-ffb9a097c2aa@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Apr 2018 18:49:59 +0200
+X-Google-Sender-Auth: BAaTojsyLgo6HiRq-slUpM72zyk
+Message-ID: <CAMuHMdU8q0VUxw-EXDqjjYbjeCwCkKuDJUjO0vSaCVrYLXqX4A@mail.gmail.com>
+Subject: Re: [RFC PATCH] dt-bindings: add a jsonschema binding example
+To: Grant Likely <grant.likely@arm.com>
+Cc: Rob Herring <robh@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        devicetree-spec@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 April 2018 at 17:53, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On 23/04/18 12:51, Ard Biesheuvel wrote:
->> On 23 April 2018 at 12:34, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>> This series is a first shot at teaching the kernel about the oxymoron
->>> expressed in $SUBJECT. Over the past couple of years, we've seen some
->>> SoCs coming up with ways of signalling level interrupts using a new
->>> flavor of MSIs, where the MSI controller uses two distinct messages:
->>> one that raises a virtual line, and one that lowers it. The target MSI
->>> controller is in charge of maintaining the state of the line.
->>>
->>> This allows for a much simplified HW signal routing (no need to have
->>> hundreds of discrete lines to signal level interrupts if you already
->>> have a memory bus), but results in a departure from the current idea
->>> the kernel has of MSIs.
->>>
->>> This series takes a minimal approach to the problem, which is to allow
->>> MSI controllers to use not only one, but up to two messages at a
->>> time. This is controlled by a flag exposed at MSI irq domain creation,
->>> and is only supported with platform MSI.
->>>
->>> The rest of the series repaints the Marvell ICU/GICP drivers which
->>> already make use of this feature with a side-channel, and adds support
->>> for the same feature in GICv3. A side effect of the last GICv3 patch
->>> is that you can also use SPIs to signal PCI MSIs. This is a last
->>> resort measure for SoCs where the ITS is unusable for unspeakable
->>> reasons.
->>>
->>
->> Hi Marc,
->>
->> I am hitting the splat below when trying this series on SynQuacer,
->> with mbi range <64 32> (which is reserved in the h/w manual but note
->> that I haven't confirmed with Socionext whether these are expected to
->> work or not. However, I don't think that makes any difference
->> regarding the issue below.)
->
-> [...]
->
-> For the record: After some IRC debugging with Ard, this turns out to be
-> due to two issues:
-> - GICv3 is now advertising several domains, all using the same device nodes
-> - irq_find_host() is picking the first one, which is the wrong one.
->
-> A good way to avoid this mess is to:
-> - Let GICv3 advertise its core domain with DOMAIN_BUS_WIRED (consistent
-> with what the armada-370-xp driver is already doing)
-> - Let irq_find_host return DOMAIN_BUS_WIRED before trying DOMAIN_BUS_ANY
-> (consistent with the way irq_create_fwspec_mapping works).
->
-> I've stashed the whole series at [1] with these two fixes.
->
+Hi Grant,
 
-For the fixed version (1c1eff8a4d6b14aae9a709570e692f5fcd837670)
+On Mon, Apr 23, 2018 at 4:47 PM, Grant Likely <grant.likely@arm.com> wrote:
+> On 21/04/2018 02:28, Rob Herring wrote:
+>> On Fri, Apr 20, 2018 at 4:00 PM, Frank Rowand <frowand.list@gmail.com>
+>> wrote:
+>>>> +  interrupts:
+>>>> +    # Either 1 or 2 interrupts can be present
+>>>> +    minItems: 1
+>>>> +    maxItems: 2
+>>>> +    items:
+>>>> +      - description: tx or combined interrupt
+>>>> +      - description: rx interrupt
+>>>> +
+>>>> +    description: |
+>>>> +      A variable number of interrupts warrants a description of what
+>>>> conditions
+>>>> +      affect the number of interrupts. Otherwise, descriptions on
+>>>> standard
+>>>> +      properties are not necessary.
+>>>> +
+>>>> +  interrupt-names:
+>>>> +    # minItems must be specified here because the default would be 2
+>>>> +    minItems: 1
+>>>
+>>> Why the difference between the interrupts property and the
+>>> interrupt-names
+>>> property (specifying maxItems for interrupt, but not interrupt-names)?
+>>
+>> I should probably have maxItems here too.
+>>
+>>> Others have already commented on a desire to have a way to specify that
+>>> number of interrupts should match number of interrupt-names.
+>>
+>> Yeah, but I don't see a way to do that. You could stick the array size
+>> constraints in a common definition and have a $ref to that definition
+>> from both, but that doesn't really save you too much.
+>
+>
+> There has been discussions in the jsonschema community regarding
+> referencing data in the document when applying the schema.
+>
+> https://github.com/json-schema-org/json-schema-spec/issues/549
+>
+> However, those discussions are ongoing and have been pushed back to
+> after draft-8 (the current release is draft-7). We can instead define
+> DT-specific keywords and extend the validator to make it do what we
+> want. We need to do something very similar to validate that the length
+> of tuples in 'reg', 'interrupts', and '*gpios' match the '#*-cells' values.
 
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org> # SynQuacer
+Checking that property lengths match the corresponding #*-cells cannot
+be done for a schema, but only for the final DTS, as #*-cells is a property
+of the target node, right?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
