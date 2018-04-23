@@ -1,187 +1,291 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754088AbeDWG4k (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:56:40 -0400
-Received: from mail-it0-f45.google.com ([209.85.214.45]:54908 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751519AbeDWG4g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:56:36 -0400
-X-Google-Smtp-Source: AIpwx49IYJzsfFGSXYHmtQCvutG3N5ksR0MlSR2x+DXW/PIOlqV094CJjKcmjz66H5ZnGMILAPuE7ui8WRwZvcivEVg=
+        id S1754078AbeDWG6d convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:58:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53192 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751519AbeDWG6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 02:58:30 -0400
+Date: Mon, 23 Apr 2018 08:58:17 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 8/9] mtd: nand: qcom: helper function for raw read
+Message-ID: <20180423085817.74e56091@xps13>
+In-Reply-To: <484485e160af41cf062549938c53d078@codeaurora.org>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+        <1522845745-6624-9-git-send-email-absahu@codeaurora.org>
+        <20180410114428.68d59c8d@xps13>
+        <c3e32eb24408a973d0c89984a466d9da@codeaurora.org>
+        <20180422181929.65d42ca8@xps13>
+        <484485e160af41cf062549938c53d078@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <000000000000f35c4b056a7995f4@google.com>
-References: <000000000000f35c4b056a7995f4@google.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Mon, 23 Apr 2018 14:56:35 +0800
-Message-ID: <CADvbK_dZBs9Od9oN3zrnLnkM4vqaQZm7+XU3HEjb-iNOXgnkzg@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in __sctp_v6_cmp_addr
-To: syzbot <syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com>
-Cc: davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>, syzkaller-bugs@googlegroups.com,
-        Vlad Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 9:02 AM, syzbot
-<syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot hit the following crash on upstream commit
-> 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
-> Merge branch 'fixes' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=cd494c1dd681d4d93ebb
->
-> So far this crash happened 305 times on net-next, upstream.
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6684817483628544
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=6321732692475904
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=5381423422767104
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
->
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in ipv6_addr_equal include/net/ipv6.h:507
-> [inline]
-> BUG: KASAN: slab-out-of-bounds in __sctp_v6_cmp_addr+0x4c7/0x530
-> net/sctp/ipv6.c:580
-Two v4 addresses went into ipv6_addr_equal, this happens when one
-v4 socket bind v4 addr A, then another v6 socket tries to bind the
-same v4 addr A.
+Hi Abhishek,
 
-This is an old issue, I will send a fix soon. Thanks.
+On Mon, 23 Apr 2018 11:58:42 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
 
-> Read of size 8 at addr ffff8801b58626d0 by task syzkaller106428/4452
->
-> CPU: 1 PID: 4452 Comm: syzkaller106428 Not tainted 4.17.0-rc1+ #10
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  ipv6_addr_equal include/net/ipv6.h:507 [inline]
->  __sctp_v6_cmp_addr+0x4c7/0x530 net/sctp/ipv6.c:580
->  sctp_inet6_cmp_addr+0x169/0x1a0 net/sctp/ipv6.c:898
->  sctp_bind_addr_conflict+0x28c/0x470 net/sctp/bind_addr.c:368
->  sctp_get_port_local+0x9fc/0x1540 net/sctp/socket.c:7515
->  sctp_do_bind+0x21c/0x5f0 net/sctp/socket.c:435
->  sctp_bindx_add+0x90/0x1a0 net/sctp/socket.c:529
->  sctp_setsockopt_bindx+0x2ad/0x320 net/sctp/socket.c:1058
->  sctp_setsockopt+0x12c4/0x7000 net/sctp/socket.c:4227
->  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3039
->  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
->  __do_sys_setsockopt net/socket.c:1914 [inline]
->  __se_sys_setsockopt net/socket.c:1911 [inline]
->  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x445839
-> RSP: 002b:00007fbe3f0fdd98 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445839
-> RDX: 0000000000000064 RSI: 0000000000000084 RDI: 0000000000000004
-> RBP: 00000000006dac20 R08: 0000000000000010 R09: 000000000000a6fe
-> R10: 00000000205ba000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007ffc1404827f R14: 00007fbe3f0fe9c0 R15: 0000000000000003
->
-> Allocated by task 4452:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->  __do_kmalloc_node mm/slab.c:3682 [inline]
->  __kmalloc_node+0x47/0x70 mm/slab.c:3689
->  kmalloc_node include/linux/slab.h:554 [inline]
->  kvmalloc_node+0x6b/0x100 mm/util.c:421
->  kvmalloc include/linux/mm.h:550 [inline]
->  vmemdup_user+0x2d/0xa0 mm/util.c:186
->  sctp_setsockopt_bindx+0x5d/0x320 net/sctp/socket.c:1022
->  sctp_setsockopt+0x12c4/0x7000 net/sctp/socket.c:4227
->  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3039
->  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
->  __do_sys_setsockopt net/socket.c:1914 [inline]
->  __se_sys_setsockopt net/socket.c:1911 [inline]
->  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Freed by task 2818:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xd9/0x260 mm/slab.c:3813
->  single_release+0x8f/0xb0 fs/seq_file.c:609
->  __fput+0x34d/0x890 fs/file_table.c:209
->  ____fput+0x15/0x20 fs/file_table.c:243
->  task_work_run+0x1e4/0x290 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
->  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> The buggy address belongs to the object at ffff8801b58626c0
->  which belongs to the cache kmalloc-32 of size 32
-> The buggy address is located 16 bytes inside of
->  32-byte region [ffff8801b58626c0, ffff8801b58626e0)
-> The buggy address belongs to the page:
-> page:ffffea0006d61880 count:1 mapcount:0 mapping:ffff8801b5862000
-> index:0xffff8801b5862fc1
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffff8801b5862000 ffff8801b5862fc1 0000000100000032
-> raw: ffffea0006ddd1e0 ffffea0006dd2860 ffff8801da8001c0 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801b5862580: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
->  ffff8801b5862600: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
->>
->> ffff8801b5862680: fb fb fb fb fc fc fc fc 00 00 fc fc fc fc fc fc
->
->                                                  ^
->  ffff8801b5862700: 00 00 00 00 fc fc fc fc 00 00 04 fc fc fc fc fc
->  ffff8801b5862780: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> ==================================================================
->
->
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> On 2018-04-22 21:49, Miquel Raynal wrote:
+> > Hi Abhishek,  
+> > > On Thu, 12 Apr 2018 12:36:42 +0530, Abhishek Sahu  
+> > <absahu@codeaurora.org> wrote:  
+> > >> On 2018-04-10 15:14, Miquel Raynal wrote:
+> >> > Hi Abhishek,  
+> >> > > On Wed,  4 Apr 2018 18:12:24 +0530, Abhishek Sahu  
+> >> > <absahu@codeaurora.org> wrote:  
+> >> > >> This patch does minor code reorganization for raw reads.  
+> >> >> Currently the raw read is required for complete page but for
+> >> >> subsequent patches related with erased codeword bit flips
+> >> >> detection, only few CW should be read. So, this patch adds
+> >> >> helper function and introduces the read CW bitmask which
+> >> >> specifies which CW reads are required in complete page.
+> >> > > I am not sure this is the right approach for subpage reads. If the  
+> >> > controller supports it, you should just enable it in chip->options.
+> >> >  
+> >>   Thanks Miquel.  
+> >> >>   It is internal to this file only. This patch makes one static helper  
+> >>   function which provides the support to read subpages.
+> > > Drivers should expose raw helpers, why keeping this helper static then?  
+> > >> >> >> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>  
+> >> >> ---
+> >> >>  drivers/mtd/nand/qcom_nandc.c | 186 >> +++++++++++++++++++++++++-----------------
+> >> >>  1 file changed, 110 insertions(+), 76 deletions(-)  
+> >> >> >> diff --git a/drivers/mtd/nand/qcom_nandc.c >> b/drivers/mtd/nand/qcom_nandc.c  
+> >> >> index 40c790e..f5d1fa4 100644
+> >> >> --- a/drivers/mtd/nand/qcom_nandc.c
+> >> >> +++ b/drivers/mtd/nand/qcom_nandc.c
+> >> >> @@ -1590,6 +1590,114 @@ static int check_flash_errors(struct >> qcom_nand_host *host, int cw_cnt)
+> >> >>  }  
+> >> >> >>  /*  
+> >> >> + * Helper to perform the page raw read operation. The read_cw_mask >> will be
+> >> >> + * used to specify the codewords for which the data should be read. >> The
+> >> >> + * single page contains multiple CW. Sometime, only few CW data is >> required
+> >> >> + * in complete page. Also, start address will be determined with
+> >> >> + * this CW mask to skip unnecessary data copy from NAND flash device. >> Then,
+> >> >> + * actual data copy from NAND controller to data buffer will be done >> only
+> >> >> + * for the CWs which have the mask set.
+> >> >> + */
+> >> >> +static int
+> >> >> +nandc_read_page_raw(struct mtd_info *mtd, struct nand_chip *chip,
+> >> >> +		    u8 *data_buf, u8 *oob_buf,
+> >> >> +		    int page, unsigned long read_cw_mask)
+> >> >> +{
+> >> >> +	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+> >> >> +	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+> >> >> +	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> >> >> +	int i, ret;
+> >> >> +	int read_loc, start_step, last_step;
+> >> >> +
+> >> >> +	nand_read_page_op(chip, page, 0, NULL, 0);
+> >> >> +
+> >> >> +	host->use_ecc = false;
+> >> >> +	start_step = ffs(read_cw_mask) - 1;
+> >> >> +	last_step = fls(read_cw_mask);
+> >> >> +
+> >> >> +	clear_bam_transaction(nandc);
+> >> >> +	set_address(host, host->cw_size * start_step, page);
+> >> >> +	update_rw_regs(host, last_step - start_step, true);
+> >> >> +	config_nand_page_read(nandc);
+> >> >> +
+> >> >> +	for (i = start_step; i < last_step; i++) {
+> >> >> +		int data_size1, data_size2, oob_size1, oob_size2;
+> >> >> +		int reg_off = FLASH_BUF_ACC;
+> >> >> +
+> >> >> +		data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
+> >> >> +		oob_size1 = host->bbm_size;
+> >> >> +
+> >> >> +		if (i == (ecc->steps - 1)) {
+> >> >> +			data_size2 = ecc->size - data_size1 -
+> >> >> +				     ((ecc->steps - 1) << 2);
+> >> >> +			oob_size2 = (ecc->steps << 2) + host->ecc_bytes_hw +
+> >> >> +				    host->spare_bytes;
+> >> >> +		} else {
+> >> >> +			data_size2 = host->cw_data - data_size1;
+> >> >> +			oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
+> >> >> +		}
+> >> >> +
+> >> >> +		/*
+> >> >> +		 * Don't perform actual data copy from NAND controller to data
+> >> >> +		 * buffer through DMA for this codeword
+> >> >> +		 */
+> >> >> +		if (!(read_cw_mask & BIT(i))) {
+> >> >> +			if (nandc->props->is_bam)
+> >> >> +				nandc_set_read_loc(nandc, 0, 0, 0, 1);
+> >> >> +
+> >> >> +			config_nand_cw_read(nandc, false);
+> >> >> +
+> >> >> +			data_buf += data_size1 + data_size2;
+> >> >> +			oob_buf += oob_size1 + oob_size2;
+> >> >> +
+> >> >> +			continue;
+> >> >> +		}
+> >> >> +
+> >> >> +		if (nandc->props->is_bam) {
+> >> >> +			read_loc = 0;
+> >> >> +			nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
+> >> >> +			read_loc += data_size1;
+> >> >> +
+> >> >> +			nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
+> >> >> +			read_loc += oob_size1;
+> >> >> +
+> >> >> +			nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
+> >> >> +			read_loc += data_size2;
+> >> >> +
+> >> >> +			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
+> >> >> +		}
+> >> >> +
+> >> >> +		config_nand_cw_read(nandc, false);
+> >> >> +
+> >> >> +		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
+> >> >> +		reg_off += data_size1;
+> >> >> +		data_buf += data_size1;
+> >> >> +
+> >> >> +		read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
+> >> >> +		reg_off += oob_size1;
+> >> >> +		oob_buf += oob_size1;
+> >> >> +
+> >> >> +		read_data_dma(nandc, reg_off, data_buf, data_size2, 0);
+> >> >> +		reg_off += data_size2;
+> >> >> +		data_buf += data_size2;
+> >> >> +
+> >> >> +		read_data_dma(nandc, reg_off, oob_buf, oob_size2, 0);
+> >> >> +		oob_buf += oob_size2;
+> >> >> +	}
+> >> >> +
+> >> >> +	ret = submit_descs(nandc);
+> >> >> +	if (ret)
+> >> >> +		dev_err(nandc->dev, "failure to read raw page\n");
+> >> >> +
+> >> >> +	free_descs(nandc);
+> >> >> +
+> >> >> +	if (!ret)
+> >> >> +		ret = check_flash_errors(host, last_step - start_step);
+> >> >> +
+> >> >> +	return 0;
+> >> >> +}
+> >> >> +
+> >> >> +/*
+> >> >>   * reads back status registers set by the controller to notify page >> read
+> >> >>   * errors. this is equivalent to what 'ecc->correct()' would do.
+> >> >>   */
+> >> >> @@ -1839,82 +1947,8 @@ static int qcom_nandc_read_page_raw(struct >> mtd_info *mtd,
+> >> >>  				    struct nand_chip *chip, uint8_t *buf,
+> >> >>  				    int oob_required, int page)
+> >> >>  {
+> >> >> -	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+> >> >> -	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+> >> >> -	u8 *data_buf, *oob_buf;
+> >> >> -	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> >> >> -	int i, ret;
+> >> >> -	int read_loc;
+> >> >> -
+> >> >> -	nand_read_page_op(chip, page, 0, NULL, 0);
+> >> >> -	data_buf = buf;
+> >> >> -	oob_buf = chip->oob_poi;
+> >> >> -
+> >> >> -	host->use_ecc = false;
+> >> >> -
+> >> >> -	clear_bam_transaction(nandc);
+> >> >> -	update_rw_regs(host, ecc->steps, true);
+> >> >> -	config_nand_page_read(nandc);
+> >> >> -
+> >> >> -	for (i = 0; i < ecc->steps; i++) {
+> >> >> -		int data_size1, data_size2, oob_size1, oob_size2;
+> >> >> -		int reg_off = FLASH_BUF_ACC;
+> >> >> -
+> >> >> -		data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
+> >> >> -		oob_size1 = host->bbm_size;
+> >> >> -
+> >> >> -		if (i == (ecc->steps - 1)) {
+> >> >> -			data_size2 = ecc->size - data_size1 -
+> >> >> -				     ((ecc->steps - 1) << 2);
+> >> >> -			oob_size2 = (ecc->steps << 2) + host->ecc_bytes_hw +
+> >> >> -				    host->spare_bytes;
+> >> >> -		} else {
+> >> >> -			data_size2 = host->cw_data - data_size1;
+> >> >> -			oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
+> >> >> -		}
+> >> >> -
+> >> >> -		if (nandc->props->is_bam) {
+> >> >> -			read_loc = 0;
+> >> >> -			nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
+> >> >> -			read_loc += data_size1;
+> >> >> -
+> >> >> -			nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
+> >> >> -			read_loc += oob_size1;
+> >> >> -
+> >> >> -			nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
+> >> >> -			read_loc += data_size2;
+> >> >> -
+> >> >> -			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
+> >> >> -		}
+> >> >> -
+> >> >> -		config_nand_cw_read(nandc, false);
+> >> >> -
+> >> >> -		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
+> >> >> -		reg_off += data_size1;
+> >> >> -		data_buf += data_size1;
+> >> >> -
+> >> >> -		read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
+> >> >> -		reg_off += oob_size1;
+> >> >> -		oob_buf += oob_size1;
+> >> >> -
+> >> >> -		read_data_dma(nandc, reg_off, data_buf, data_size2, 0);
+> >> >> -		reg_off += data_size2;
+> >> >> -		data_buf += data_size2;
+> >> >> -
+> >> >> -		read_data_dma(nandc, reg_off, oob_buf, oob_size2, 0);
+> >> >> -		oob_buf += oob_size2;
+> >> >> -	}
+> >> >> -
+> >> >> -	ret = submit_descs(nandc);
+> >> >> -	if (ret)
+> >> >> -		dev_err(nandc->dev, "failure to read raw page\n");
+> >> >> -
+> >> >> -	free_descs(nandc);
+> >> >> -
+> >> >> -	if (!ret)
+> >> >> -		ret = check_flash_errors(host, ecc->steps);
+> >> >> -
+> >> >> -	return 0;
+> >> >> +	return nandc_read_page_raw(mtd, chip, buf, chip->oob_poi, page,
+> >> >> +				   BIT(chip->ecc.steps) - 1);
+> >> > > I don't understand this. chip->ecc.steps is constant, right? So you  
+> >> > always ask for the same subpage?  
+> >> >>   We need to do raw read for subpages in which we got uncorrectable  
+> >>   error in next patch for erased page bitflip detection. This patch >> does
+> >>   reorganization of raw read and moves common code in helper function
+> >>   nandc_read_page_raw.  
+> >> >>   For nomral raw read, all the subpages will be read so  
+> >>   BIT(chip->ecc.steps) - 1 is used for qcom_nandc_read_page_raw.  
+> >> >>   While for erased page raw read, only those sub pages will be  
+> >>   read for which the controller gives the uncorrectable error.
+> > > Still not okay: the driver should expose a way to do raw reads no  
+> > matter the length and the start and you should use that in a generic
+> > way.
+> >   
+>   Thanks Miquel.
+>   I will explore regarding that.
+>   Looks like, we can some helper like read_subpage.
+
+Of course, when you implement raw accessors you can have static helpers
+to clarify the code.
+
+Regards,
+Miquèl
