@@ -1,100 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751392AbeDWF6W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 01:58:22 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35032 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeDWF6V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 01:58:21 -0400
-X-Google-Smtp-Source: AIpwx486wjYwg2ifBAZkGZLt1h7lQAcxnkOSEdu0NmrO0Y9oJDQ4KzZOr67rXwzLdM3RpKHDcWn9yQ==
-Date: Mon, 23 Apr 2018 14:58:09 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
-        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
-        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v10 01/25] mm: introduce CONFIG_SPECULATIVE_PAGE_FAULT
-Message-ID: <20180423055809.GA114098@rodete-desktop-imager.corp.google.com>
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1523975611-15978-2-git-send-email-ldufour@linux.vnet.ibm.com>
+        id S1751419AbeDWGCI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:02:08 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45878 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750852AbeDWGCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 02:02:06 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] fsck.f2fs: fix to avoid accessing invalid memory address
+Date: Mon, 23 Apr 2018 14:01:45 +0800
+Message-ID: <20180423060145.50324-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523975611-15978-2-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+This patch adds to check return value of calloc in write_superblock().
 
-I guess it's good timing to review. Guess LSF/MM goes so might change
-a lot since then. :) Anyway, I grap a time to review.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fsck/mount.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Tue, Apr 17, 2018 at 04:33:07PM +0200, Laurent Dufour wrote:
-> This configuration variable will be used to build the code needed to
-> handle speculative page fault.
-> 
-> By default it is turned off, and activated depending on architecture
-> support, SMP and MMU.
-
-Can we have description in here why it depends on architecture?
-
-> 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Suggested-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  mm/Kconfig | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index d5004d82a1d6..5484dca11199 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -752,3 +752,25 @@ config GUP_BENCHMARK
->  	  performance of get_user_pages_fast().
->  
->  	  See tools/testing/selftests/vm/gup_benchmark.c
-> +
-> +config ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-> +       def_bool n
-> +
-> +config SPECULATIVE_PAGE_FAULT
-> +       bool "Speculative page faults"
-> +       default y
-> +       depends on ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-> +       depends on MMU && SMP
-> +       help
-> +         Try to handle user space page faults without holding the mmap_sem.
-> +
-> +	 This should allow better concurrency for massively threaded process
-> +	 since the page fault handler will not wait for other threads memory
-> +	 layout change to be done, assuming that this change is done in another
-> +	 part of the process's memory space. This type of page fault is named
-> +	 speculative page fault.
-> +
-> +	 If the speculative page fault fails because of a concurrency is
-> +	 detected or because underlying PMD or PTE tables are not yet
-> +	 allocating, it is failing its processing and a classic page fault
-> +	 is then tried.
-> -- 
-> 2.7.4
-> 
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 7e936dc056e5..badbe639742e 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -2155,6 +2155,7 @@ void write_superblock(struct f2fs_super_block *new_sb)
+ 	u_int8_t *buf;
+ 
+ 	buf = calloc(BLOCK_SZ, 1);
++	ASSERT(buf);
+ 
+ 	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
+ 	for (index = 0; index < 2; index++) {
+-- 
+2.15.0.55.gc2ece9dc4de6
