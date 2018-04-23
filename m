@@ -1,23 +1,23 @@
 Return-Path: <tony@atomide.com>
-X-Google-Smtp-Source: AIpwx4/K9PPzx5Ca5opZHqUXHU5RQlsYRVK2Xm5RLrB4EcQRcgjFiwKkn8xGPoNAI9VxArfEKE1N
-ARC-Seal: i=1; a=rsa-sha256; t=1524505594; cv=none;
+X-Google-Smtp-Source: AIpwx48cOac18HzX/eCk3UIc6EUcZOfcoba/PRP2kNrA4VputhJxIPf5PDyfg1RXaPdbuEuuH40X
+ARC-Seal: i=1; a=rsa-sha256; t=1524505593; cv=none;
         d=google.com; s=arc-20160816;
-        b=0ERiizIGy5JjfkRugfEMwts/q22ZDWoJYXYJ2zw09a9E5qt2zaqkTRahfVIXh+r99s
-         pSZD9p6dahz3tJUMhkWw1BZMr4wXObQY09tK1JWpwQaw4KYZCGjSpj3txHROLKjOMEok
-         KRetJV0Zv11BIAzYukusWYFcZh4TB8lT52YZ1ciNfr5AwEuNZ+JaE4gBKEeJ5Ou67fkr
-         1IPGnQxB++0JeUC457CIU9YR4d8g0ODcd2ldQfBy8TyIL1haPwlKG70advjNhk2SHg8V
-         MublNvlnT8nO0V7o7TwDW6qU3lrA1Icl/aYEFyPmHY30fBUJBCrmoJzlgl4+qUdBQ0Kq
-         FxAA==
+        b=0nwQATYZIWO0w1yv4XEArc5wEPdWlJwTxLIF7knR1SIiQbVKBTehLcLJYNAVi4lSW4
+         rGvIWcUNezXtM8bC3rAXlF8ygqCsWUIrJNDCLXcCK8S31IvGd0onZM2Odh6mnkxCGov7
+         DLWcFasDY8MoOQ1gPvJNLehiEFL+52xHG1a+3MD+jnF6HQoPExoRFiidnZ8IdsuUdae1
+         Y63z0rAC7EWvEb9GKU60tMeKjPPlroitdKQH8rknfhmEOLhs6F4KQrvoss8X0RsszyQN
+         RFtf25n4HFJ1ngsj/MKk0OTDxQo325fvrH/KZAHJ8kZcpbr0LZKMfde6xYOcvowo+WWs
+         OiCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=7Wx+G4kjRQd8BNXO15lAh9UTe+jpUapftrwNVd+SxsM=;
-        b=ZiCXyRQCd8+Vih3426bRhQCa+ONnRJvo6Jdz58RExVQv28EdysQXdPiMCg0S4poSyl
-         h/7BxBU2G5ZRYosczjSDzWXG3QNWlx4EFen/JFye0QwzKIC/3w8/gB1BAfpXhF5Fh1nP
-         56kq6F6xz1QVFWniyS8kMaqsJjlpduLQCpDiE2s+yygtuIGLEr0ZD0pBQ4PfGmRvOXGx
-         SfOuXFEDKCXrX+STzEdQWxpJlF4DtWMw3EhvO3YqIkGWn90oNLJIV2YRQkeFVUGY0Rv4
-         0FmKCOCS6cXqHZkKnlTw2seDEjmeMcYD2d3jFsqyH7T32GKW6QtcUE9NgrvDfdSYhxS2
-         cPow==
+        bh=X1T6JsaWF2jeyUZaw2PqTV66HAbmMm8QiPFmTXlblH4=;
+        b=TRynP/v25JiqfS62uXB4sLFNqJRfYgZWYgNGZIa7r13vShxjTeKqXvWSEvJxPRLnGy
+         1kUBDA3Jeag0mZv18w5gnbx1HRZJtD/BYiRhFvf2Job7GSXAtq/+0UkojQ23ll4Mkh/I
+         uDLR8g6rewPKUpt0IhyZ/yPen2yZD42vMH3HPi7cE3QW5omfYXm5MbMYiDg/QS1X/5Ba
+         GeOAvQHAqHfPsS+h54IMf5p0xTq4ug3asv4Zcv0Ha+xljnzqwcbkTYyML1fw7CgQTjRZ
+         fx8ooauyM0SktlstPHFRRzzDSJ3iHNCVXFDnAjrJIvIuGKU4AGPqJtYglEVCo833/HCg
+         Ft4g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
 Authentication-Results: mx.google.com;
@@ -31,131 +31,146 @@ Cc: Dave Gerlach <d-gerlach@ti.com>,
 	Tero Kristo <t-kristo@ti.com>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 12/16] bus: ti-sysc: Add initial support for external resets
-Date: Mon, 23 Apr 2018 10:45:45 -0700
-Message-Id: <20180423174549.57412-13-tony@atomide.com>
+Subject: [PATCH 11/16] bus: ti-sysc: Improve suspend and resume handling
+Date: Mon, 23 Apr 2018 10:45:44 -0700
+Message-Id: <20180423174549.57412-12-tony@atomide.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180423174549.57412-1-tony@atomide.com>
 References: <20180423174549.57412-1-tony@atomide.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598559978199858397?=
-X-GMAIL-MSGID: =?utf-8?q?1598559978199858397?=
+X-GMAIL-THRID: =?utf-8?q?1598559976776953995?=
+X-GMAIL-MSGID: =?utf-8?q?1598559976776953995?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Some modules need to use external resets in the rstctrl bits. Typically
-only one of the rstctrl bits is for the interconnect target module while
-the others are for various child devices.
+Based on testing with more devices I noticed that some devices
+don't suspend or resume properly. We need to PM runtime suspend
+and resume devices if we have ddata->needs_resume set.
 
-For ti-sysc driver, we just need the module rstctrl bit mapped. The rest
-of the rstctrl bits can be directly mapped to the child devices.
+Let's also improve the error handling and add few debug statements
+to make it easier to notice suspend and resume related issues if
+DEBUG is set.
 
-Cc: Suman Anna <s-anna@ti.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/bus/ti-sysc.c | 48 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
+ drivers/bus/ti-sysc.c | 54 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 48 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
 --- a/drivers/bus/ti-sysc.c
 +++ b/drivers/bus/ti-sysc.c
-@@ -19,6 +19,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/slab.h>
-@@ -74,6 +75,7 @@ struct sysc {
- 	struct clk **clocks;
- 	const char **clock_roles;
- 	int nr_clocks;
-+	struct reset_control *rsts;
- 	const char *legacy_mode;
- 	const struct sysc_capabilities *cap;
- 	struct sysc_config cfg;
-@@ -213,6 +215,42 @@ static int sysc_get_clocks(struct sysc *ddata)
- 	return 0;
+@@ -662,6 +662,7 @@ static int __maybe_unused sysc_runtime_resume(struct device *dev)
+ static int sysc_suspend(struct device *dev)
+ {
+ 	struct sysc *ddata;
++	int error;
+ 
+ 	ddata = dev_get_drvdata(dev);
+ 
+@@ -672,14 +673,27 @@ static int sysc_suspend(struct device *dev)
+ 	if (!ddata->enabled)
+ 		return 0;
+ 
++	dev_dbg(ddata->dev, "%s %s\n", __func__,
++		ddata->name ? ddata->name : "");
++
++	error = pm_runtime_put_sync_suspend(dev);
++	if (error < 0) {
++		dev_warn(ddata->dev, "%s not idle %i %s\n",
++			 __func__, error,
++			 ddata->name ? ddata->name : "");
++
++		return 0;
++	}
++
+ 	ddata->needs_resume = true;
+ 
+-	return sysc_runtime_suspend(dev);
++	return 0;
  }
  
-+/**
-+ * sysc_init_resets - reset module on init
-+ * @ddata: device driver data
-+ *
-+ * A module can have both OCP softreset control and external rstctrl.
-+ * If more complicated rstctrl resets are needed, please handle these
-+ * directly from the child device driver and map only the module reset
-+ * for the parent interconnect target module device.
-+ *
-+ * Automatic reset of the module on init can be skipped with the
-+ * "ti,no-reset-on-init" device tree property.
-+ */
-+static int sysc_init_resets(struct sysc *ddata)
-+{
+ static int sysc_resume(struct device *dev)
+ {
+ 	struct sysc *ddata;
 +	int error;
-+
-+	ddata->rsts =
-+		devm_reset_control_array_get_optional_exclusive(ddata->dev);
-+	if (IS_ERR(ddata->rsts))
-+		return PTR_ERR(ddata->rsts);
-+
-+	if (ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT)
-+		goto deassert;
-+
-+	error = reset_control_assert(ddata->rsts);
-+	if (error)
-+		return error;
-+
-+deassert:
-+	error = reset_control_deassert(ddata->rsts);
-+	if (error)
-+		return error;
-+
-+	return 0;
-+}
-+
- /**
-  * sysc_parse_and_check_child_range - parses module IO region from ranges
-  * @ddata: device driver data
-@@ -889,6 +927,7 @@ static int sysc_init_module(struct sysc *ddata)
  
- 		return 0;
- 	}
+ 	ddata = dev_get_drvdata(dev);
+ 
+@@ -691,9 +705,16 @@ static int sysc_resume(struct device *dev)
+ 		dev_dbg(ddata->dev, "%s %s\n", __func__,
+ 			ddata->name ? ddata->name : "");
+ 
+-		ddata->needs_resume = false;
++		error = pm_runtime_get_sync(dev);
++		if (error < 0) {
++			dev_err(ddata->dev, "%s  error %i %s\n",
++				__func__, error,
++				 ddata->name ? ddata->name : "");
+ 
+-		return sysc_runtime_resume(dev);
++			return error;
++		}
 +
- 	ddata->revision = sysc_read_revision(ddata);
- 	pm_runtime_put_sync(ddata->dev);
- 
-@@ -1583,8 +1622,11 @@ static int sysc_probe(struct platform_device *pdev)
- 	if (error)
- 		goto unprepare;
- 
--	pm_runtime_enable(ddata->dev);
-+	error = sysc_init_resets(ddata);
-+	if (error)
-+		return error;
- 
-+	pm_runtime_enable(ddata->dev);
- 	error = sysc_init_module(ddata);
- 	if (error)
- 		goto unprepare;
-@@ -1615,6 +1657,9 @@ static int sysc_probe(struct platform_device *pdev)
- 		pm_runtime_put(&pdev->dev);
++		ddata->needs_resume = false;
  	}
  
-+	if (!of_get_available_child_count(ddata->dev->of_node))
-+		reset_control_assert(ddata->rsts);
-+
  	return 0;
+@@ -735,6 +756,9 @@ static int sysc_noirq_resume(struct device *dev)
+ 		return 0;
  
- err:
-@@ -1644,6 +1689,7 @@ static int sysc_remove(struct platform_device *pdev)
+ 	if (ddata->needs_resume) {
++		dev_dbg(ddata->dev, "%s %s\n", __func__,
++			ddata->name ? ddata->name : "");
++
+ 		ddata->needs_resume = false;
  
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
-+	reset_control_assert(ddata->rsts);
+ 		return sysc_runtime_resume(dev);
+@@ -1069,18 +1093,33 @@ static int sysc_child_suspend_noirq(struct device *dev)
  
- unprepare:
- 	sysc_unprepare(ddata);
+ 	ddata = sysc_child_to_parent(dev);
+ 
++	dev_dbg(ddata->dev, "%s %s\n", __func__,
++		ddata->name ? ddata->name : "");
++
+ 	error = pm_generic_suspend_noirq(dev);
+-	if (error)
++	if (error) {
++		dev_err(dev, "%s error at %i: %i\n",
++			__func__, __LINE__, error);
++
+ 		return error;
++	}
+ 
+ 	if (!pm_runtime_status_suspended(dev)) {
+ 		error = pm_generic_runtime_suspend(dev);
+-		if (error)
++		if (error) {
++			dev_err(dev, "%s error at %i: %i\n",
++				__func__, __LINE__, error);
++
+ 			return error;
++		}
+ 
+ 		error = sysc_runtime_suspend(ddata->dev);
+-		if (error)
++		if (error) {
++			dev_err(dev, "%s error at %i: %i\n",
++				__func__, __LINE__, error);
++
+ 			return error;
++		}
+ 
+ 		ddata->child_needs_resume = true;
+ 	}
+@@ -1095,6 +1134,9 @@ static int sysc_child_resume_noirq(struct device *dev)
+ 
+ 	ddata = sysc_child_to_parent(dev);
+ 
++	dev_dbg(ddata->dev, "%s %s\n", __func__,
++		ddata->name ? ddata->name : "");
++
+ 	if (ddata->child_needs_resume) {
+ 		ddata->child_needs_resume = false;
+ 
 -- 
 2.17.0
