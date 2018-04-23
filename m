@@ -1,70 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754379AbeDWIvw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:51:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60160 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754029AbeDWIvq (ORCPT
+        id S1754350AbeDWIw0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:52:26 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37284 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754263AbeDWIwY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:51:46 -0400
-Date: Mon, 23 Apr 2018 10:51:27 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, rostedt@goodmis.org, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        joel.opensrc@gmail.com
-Subject: Re: [PATCH tip/core/rcu 01/22] sched: Make non-production PREEMPT
- cond_resched() help Tasks RCU
-Message-ID: <20180423085127.GR4064@hirez.programming.kicks-ass.net>
-References: <20180423023150.GA21533@linux.vnet.ibm.com>
- <1524450747-22778-1-git-send-email-paulmck@linux.vnet.ibm.com>
+        Mon, 23 Apr 2018 04:52:24 -0400
+Subject: Re: [PATCH v1 0/4] Add DMAv2 and DMAMUX Support on STM32MP157C
+To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1524215681-14555-1-git-send-email-pierre-yves.mordret@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <ad5373d4-13b4-319f-5dce-6b8c735a9851@st.com>
+Date: Mon, 23 Apr 2018 10:51:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524450747-22778-1-git-send-email-paulmck@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1524215681-14555-1-git-send-email-pierre-yves.mordret@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 22, 2018 at 07:32:06PM -0700, Paul E. McKenney wrote:
-> In CONFIG_PREEMPT=y kernels, cond_resched() is a complete no-op, and
-> thus cannot help advance Tasks-RCU grace periods.  However, such grace
-> periods are only an issue in non-production benchmarking runs of the
-> Linux kernel.  This commit therefore makes cond_resched() invoke
-> rcu_note_voluntary_context_switch() for kernels implementing Tasks RCU
-> even in CONFIG_PREEMPT=y kernels.
+Hi Pierre-Yves,
 
-I'm confused.. why is having this conditional on TRACEPOINT_BENCHMARK a
-sane idea?
-
-> 
-> Reported-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+On 04/20/2018 11:14 AM, Pierre-Yves MORDRET wrote:
+> This patch adds DMAv2 and DMAMUX support on STM32MP157C with configs and device tree.
 > ---
->  include/linux/sched.h | 6 ++++++
->  1 file changed, 6 insertions(+)
+>    Version history:
+>       v1:
+>          * Initial
+> ---
 > 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index b3d697f3b573..fe8f7178a22d 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1617,6 +1617,12 @@ static inline int test_tsk_need_resched(struct task_struct *tsk)
->   */
->  #ifndef CONFIG_PREEMPT
->  extern int _cond_resched(void);
-> +#elif defined(CONFIG_TRACEPOINT_BENCHMARK)
-> +static inline int _cond_resched(void)
-> +{
-> +	rcu_note_voluntary_context_switch(current);
-> +	return 0;
-> +}
->  #else
->  static inline int _cond_resched(void) { return 0; }
->  #endif
-> -- 
-> 2.5.2
+> Pierre-Yves MORDRET (4):
+>    ARM: configs: stm32: Add DMAv2 support on STM32MP157C machine
+>    ARM: configs: stm32: Add DMAMUX support on STM32MP157C
+
+For patches located in mach-stm32, for the next time I prefer that you 
+format commit header as following:
+
+ARM: stm32: Add DMAv2 support on STM32MP157C.....
+
+I don't see other issue, so don't resend for that, I will change it.
+
+Regards
+Alex
+
+
+>    ARM: dts: stm32: Add DMAv2 support on STM32MP157C
+>    ARM: dts: stm32: Add DMAMUX support on STM32MP157C
+> 
+>   arch/arm/boot/dts/stm32mp157c.dtsi | 44 ++++++++++++++++++++++++++++++++++++++
+>   arch/arm/mach-stm32/Kconfig        |  2 ++
+>   2 files changed, 46 insertions(+)
 > 
