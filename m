@@ -1,328 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755930AbeDWQVA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:21:00 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45155 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755423AbeDWQU5 (ORCPT
+        id S1755705AbeDWQ3m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:29:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51066 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755547AbeDWQ3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:20:57 -0400
-X-Google-Smtp-Source: AIpwx4+XAcZT3LemZrN3ZHXDkQv14OrYLs2TeWbNCvuga73OfxPStQTDc7DH/IkhFoZI5bfdYA00kA==
-From: Stephen Boyd <swboyd@chromium.org>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>
-Subject: [PATCH v3] soc: qcom: cmd-db: Make endian-agnostic
-Date: Mon, 23 Apr 2018 09:20:54 -0700
-Message-Id: <20180423162054.238544-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+        Mon, 23 Apr 2018 12:29:37 -0400
+Message-Id: <20180423162642.059848458@infradead.org>
+User-Agent: quilt/0.63-1
+Date: Mon, 23 Apr 2018 18:16:50 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
+        diego.viola@gmail.com, len.brown@intel.com, rjw@rjwysocki.net,
+        rui.zhang@intel.com
+Subject: [PATCH 2/5] clocksource: Allow clocksource_mark_unstable() on unregisered clocksources
+References: <20180423161648.622657048@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=peterz-tsc-early-fix-2.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver deals with memory that is stored in little-endian format.
-Update the structures with the proper little-endian types and then
-do the proper conversions when reading the fields. Note that we compare
-the ids with a memcmp() because we already pad out the string 'id' field
-to exactly 8 bytes with the strncpy() onto the stack.
+Because of how we flip between tsc-early and tsc clocksources we might
+need to mark one or both unstable. The current code in
+mark_tsc_unstable() only worked because we registered the tsc
+clocksource once and then never touched it.
 
-Cc: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Evan Green <evgreen@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Since we now unregister the tsc-early clocksource, we need to know if
+a clocksource got unregistered and the current cs->mult test doesn't
+work for that. Instead use list_empty(&cs->list) to test for
+registration.
+
+Furthermore, since clocksource_mark_unstable() needs to place the cs
+on the wd_list, it links the cs->list and cs->wd_list serialization.
+We must not see a clocsource registered (!empty cs->list) but already
+past dequeue_watchdog(). So place {en,de}queue{,_watchdog}() under the
+same lock.
+
+This then allows us to unconditionally use
+clocksource_mark_unstable(), regardless of the registration state.
+
+Tested-by: Diego Viola <diego.viola@gmail.com>
+Cc: stable@kernel.org
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
+ kernel/time/clocksource.c |   39 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 30 insertions(+), 9 deletions(-)
 
-Changes from v2:
- * Fixed rsc_offset conversion to use data_offset instead of header_offset
-   for finding first offset
- * Tested and confirmed slave ids and aux data for ARC regulators look
-   the same as before
-                                                                                                                                                               
-Changes from v1:                                                                                                                                               
- * Fixed negation on probe time magic matches check to be correct                                                                                              
- * Fixed kernel doc and renamed magic_num to magic                                                                                                             
- * Killed cmd_db_get_header_by_rsc_id() entirely                                                                                                               
- * Changed chars to u8s for simplicity of thinking about signedness                                                                                            
- * Fixed cmd_db_get_header()'s memcmp to do the right thing by checking                                                                                        
-   for a match instead of the opposite                                                                                                                         
- * Tested on real hardware           
-
- drivers/soc/qcom/cmd-db.c | 131 ++++++++++++++++++++------------------
- 1 file changed, 69 insertions(+), 62 deletions(-)
-
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index b5172049f608..a6f646295f06 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -13,18 +13,9 @@
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -119,6 +119,16 @@ static DEFINE_SPINLOCK(watchdog_lock);
+ static int watchdog_running;
+ static atomic_t watchdog_reset_pending;
  
- #define NUM_PRIORITY		2
- #define MAX_SLV_ID		8
--#define CMD_DB_MAGIC		0x0C0330DBUL
- #define SLAVE_ID_MASK		0x7
- #define SLAVE_ID_SHIFT		16
- 
--#define ENTRY_HEADER(hdr)	((void *)cmd_db_header +	\
--				sizeof(*cmd_db_header) +	\
--				hdr->header_offset)
--
--#define RSC_OFFSET(hdr, ent)	((void *)cmd_db_header +	\
--				sizeof(*cmd_db_header) +	\
--				hdr.data_offset + ent.offset)
--
- /**
-  * struct entry_header: header for each entry in cmddb
-  *
-@@ -35,11 +26,11 @@
-  * @offset: offset from :@data_offset, start of the data
-  */
- struct entry_header {
--	u64 id;
--	u32 priority[NUM_PRIORITY];
--	u32 addr;
--	u16 len;
--	u16 offset;
-+	u8 id[8];
-+	__le32 priority[NUM_PRIORITY];
-+	__le32 addr;
-+	__le16 len;
-+	__le16 offset;
- };
- 
- /**
-@@ -53,30 +44,30 @@ struct entry_header {
-  * @reserved: reserved for future use.
-  */
- struct rsc_hdr {
--	u16 slv_id;
--	u16 header_offset;
--	u16 data_offset;
--	u16 cnt;
--	u16 version;
--	u16 reserved[3];
-+	__le16 slv_id;
-+	__le16 header_offset;
-+	__le16 data_offset;
-+	__le16 cnt;
-+	__le16 version;
-+	__le16 reserved[3];
- };
- 
- /**
-  * struct cmd_db_header: The DB header information
-  *
-  * @version: The cmd db version
-- * @magic_number: constant expected in the database
-+ * @magic: constant expected in the database
-  * @header: array of resources
-  * @checksum: checksum for the header. Unused.
-  * @reserved: reserved memory
-  * @data: driver specific data
-  */
- struct cmd_db_header {
--	u32 version;
--	u32 magic_num;
-+	__le32 version;
-+	u8 magic[4];
- 	struct rsc_hdr header[MAX_SLV_ID];
--	u32 checksum;
--	u32 reserved;
-+	__le32 checksum;
-+	__le32 reserved;
- 	u8 data[];
- };
- 
-@@ -99,8 +90,34 @@ struct cmd_db_header {
-  * h/w accelerator and request a resource state.
-  */
- 
-+static const u8 CMD_DB_MAGIC[] = { 0xdb, 0x30, 0x03, 0x0c };
-+
-+static bool cmd_db_magic_matches(const struct cmd_db_header *header)
++static void inline clocksource_watchdog_lock(unsigned long *flags)
 +{
-+	const u8 *magic = header->magic;
-+
-+	return memcmp(magic, CMD_DB_MAGIC, ARRAY_SIZE(CMD_DB_MAGIC)) == 0;
++	spin_lock_irqsave(&watchdog_lock, *flags);
 +}
 +
- static struct cmd_db_header *cmd_db_header;
++static void inline clocksource_watchdog_unlock(unsigned long *flags)
++{
++	spin_unlock_irqrestore(&watchdog_lock, *flags);
++}
++
+ static int clocksource_watchdog_kthread(void *data);
+ static void __clocksource_change_rating(struct clocksource *cs, int rating);
  
+@@ -142,6 +152,9 @@ static void __clocksource_unstable(struc
+ 	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
+ 	cs->flags |= CLOCK_SOURCE_UNSTABLE;
+ 
++	if (list_empty(&cs->list))
++		return;
 +
-+static inline void *rsc_to_entry_header(struct rsc_hdr *hdr)
-+{
-+	u16 offset = le16_to_cpu(hdr->header_offset);
-+
-+	return cmd_db_header->data + offset;
-+}
-+
-+static inline void *
-+rsc_offset(struct rsc_hdr *hdr, struct entry_header *ent)
-+{
-+	u16 offset = le16_to_cpu(hdr->data_offset);
-+	u16 loffset = le16_to_cpu(ent->offset);
-+
-+	return cmd_db_header->data + offset + loffset;
-+}
-+
- /**
-  * cmd_db_ready - Indicates if command DB is available
-  *
-@@ -110,29 +127,20 @@ int cmd_db_ready(void)
+ 	if (cs->mark_unstable)
+ 		cs->mark_unstable(cs);
+ 
+@@ -164,7 +177,7 @@ void clocksource_mark_unstable(struct cl
+ 
+ 	spin_lock_irqsave(&watchdog_lock, flags);
+ 	if (!(cs->flags & CLOCK_SOURCE_UNSTABLE)) {
+-		if (list_empty(&cs->wd_list))
++		if (!list_empty(&cs->list) && list_empty(&cs->wd_list))
+ 			list_add(&cs->wd_list, &watchdog_list);
+ 		__clocksource_unstable(cs);
+ 	}
+@@ -319,9 +332,6 @@ static void clocksource_resume_watchdog(
+ 
+ static void clocksource_enqueue_watchdog(struct clocksource *cs)
  {
- 	if (cmd_db_header == NULL)
- 		return -EPROBE_DEFER;
--	else if (cmd_db_header->magic_num != CMD_DB_MAGIC)
-+	else if (!cmd_db_magic_matches(cmd_db_header))
- 		return -EINVAL;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&watchdog_lock, flags);
+ 	if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
+ 		/* cs is a clocksource to be watched. */
+ 		list_add(&cs->wd_list, &watchdog_list);
+@@ -331,7 +341,6 @@ static void clocksource_enqueue_watchdog
+ 		if (cs->flags & CLOCK_SOURCE_IS_CONTINUOUS)
+ 			cs->flags |= CLOCK_SOURCE_VALID_FOR_HRES;
+ 	}
+-	spin_unlock_irqrestore(&watchdog_lock, flags);
+ }
  
+ static void clocksource_select_watchdog(bool fallback)
+@@ -373,9 +382,6 @@ static void clocksource_select_watchdog(
+ 
+ static void clocksource_dequeue_watchdog(struct clocksource *cs)
+ {
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&watchdog_lock, flags);
+ 	if (cs != watchdog) {
+ 		if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
+ 			/* cs is a watched clocksource. */
+@@ -384,7 +390,6 @@ static void clocksource_dequeue_watchdog
+ 			clocksource_stop_watchdog();
+ 		}
+ 	}
+-	spin_unlock_irqrestore(&watchdog_lock, flags);
+ }
+ 
+ static int __clocksource_watchdog_kthread(void)
+@@ -779,14 +784,19 @@ EXPORT_SYMBOL_GPL(__clocksource_update_f
+  */
+ int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
+ {
++	unsigned long flags;
+ 
+ 	/* Initialize mult/shift and max_idle_ns */
+ 	__clocksource_update_freq_scale(cs, scale, freq);
+ 
+ 	/* Add clocksource to the clocksource list */
+ 	mutex_lock(&clocksource_mutex);
++
++	clocksource_watchdog_lock(&flags);
+ 	clocksource_enqueue(cs);
+ 	clocksource_enqueue_watchdog(cs);
++	clocksource_watchdog_unlock(&flags);
++
+ 	clocksource_select();
+ 	clocksource_select_watchdog(false);
+ 	mutex_unlock(&clocksource_mutex);
+@@ -808,8 +818,13 @@ static void __clocksource_change_rating(
+  */
+ void clocksource_change_rating(struct clocksource *cs, int rating)
+ {
++	unsigned long flags;
++
+ 	mutex_lock(&clocksource_mutex);
++	clocksource_watchdog_lock(&flags);
+ 	__clocksource_change_rating(cs, rating);
++	clocksource_watchdog_unlock(&flags);
++
+ 	clocksource_select();
+ 	clocksource_select_watchdog(false);
+ 	mutex_unlock(&clocksource_mutex);
+@@ -821,6 +836,8 @@ EXPORT_SYMBOL(clocksource_change_rating)
+  */
+ static int clocksource_unbind(struct clocksource *cs)
+ {
++	unsigned long flags;
++
+ 	if (clocksource_is_watchdog(cs)) {
+ 		/* Select and try to install a replacement watchdog. */
+ 		clocksource_select_watchdog(true);
+@@ -834,8 +851,12 @@ static int clocksource_unbind(struct clo
+ 		if (curr_clocksource == cs)
+ 			return -EBUSY;
+ 	}
++
++	clocksource_watchdog_lock(&flags);
+ 	clocksource_dequeue_watchdog(cs);
+ 	list_del_init(&cs->list);
++	clocksource_watchdog_unlock(&flags);
++
  	return 0;
  }
- EXPORT_SYMBOL(cmd_db_ready);
  
--static u64 cmd_db_get_u64_id(const char *id)
--{
--	u64 rsc_id = 0;
--	u8 *ch = (u8 *)&rsc_id;
--
--	strncpy(ch, id, min(strlen(id), sizeof(rsc_id)));
--
--	return rsc_id;
--}
--
--static int cmd_db_get_header(u64 query, struct entry_header *eh,
-+static int cmd_db_get_header(const char *id, struct entry_header *eh,
- 			     struct rsc_hdr *rh)
- {
- 	struct rsc_hdr *rsc_hdr;
- 	struct entry_header *ent;
- 	int ret, i, j;
-+	u8 query[8];
- 
- 	ret = cmd_db_ready();
- 	if (ret)
-@@ -141,18 +149,21 @@ static int cmd_db_get_header(u64 query, struct entry_header *eh,
- 	if (!eh || !rh)
- 		return -EINVAL;
- 
-+	/* Pad out query string to same length as in DB */
-+	strncpy(query, id, sizeof(query));
-+
- 	for (i = 0; i < MAX_SLV_ID; i++) {
- 		rsc_hdr = &cmd_db_header->header[i];
- 		if (!rsc_hdr->slv_id)
- 			break;
- 
--		ent = ENTRY_HEADER(rsc_hdr);
--		for (j = 0; j < rsc_hdr->cnt; j++, ent++) {
--			if (ent->id == query)
-+		ent = rsc_to_entry_header(rsc_hdr);
-+		for (j = 0; j < le16_to_cpu(rsc_hdr->cnt); j++, ent++) {
-+			if (memcmp(ent->id, query, sizeof(ent->id)) == 0)
- 				break;
- 		}
- 
--		if (j < rsc_hdr->cnt) {
-+		if (j < le16_to_cpu(rsc_hdr->cnt)) {
- 			memcpy(eh, ent, sizeof(*ent));
- 			memcpy(rh, rsc_hdr, sizeof(*rh));
- 			return 0;
-@@ -162,15 +173,6 @@ static int cmd_db_get_header(u64 query, struct entry_header *eh,
- 	return -ENODEV;
- }
- 
--static int cmd_db_get_header_by_rsc_id(const char *id,
--				       struct entry_header *ent_hdr,
--				       struct rsc_hdr *rsc_hdr)
--{
--	u64 rsc_id = cmd_db_get_u64_id(id);
--
--	return cmd_db_get_header(rsc_id, ent_hdr, rsc_hdr);
--}
--
- /**
-  * cmd_db_read_addr() - Query command db for resource id address.
-  *
-@@ -187,9 +189,9 @@ u32 cmd_db_read_addr(const char *id)
- 	struct entry_header ent;
- 	struct rsc_hdr rsc_hdr;
- 
--	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
- 
--	return ret < 0 ? 0 : ent.addr;
-+	return ret < 0 ? 0 : le32_to_cpu(ent.addr);
- }
- EXPORT_SYMBOL(cmd_db_read_addr);
- 
-@@ -207,19 +209,21 @@ int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
- 	int ret;
- 	struct entry_header ent;
- 	struct rsc_hdr rsc_hdr;
-+	u16 ent_len;
- 
- 	if (!data)
- 		return -EINVAL;
- 
--	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
- 	if (ret)
- 		return ret;
- 
--	if (len < ent.len)
-+	ent_len = le16_to_cpu(ent.len);
-+	if (len < ent_len)
- 		return -EINVAL;
- 
--	len = min_t(u16, ent.len, len);
--	memcpy(data, RSC_OFFSET(rsc_hdr, ent), len);
-+	len = min_t(u16, ent_len, len);
-+	memcpy(data, rsc_offset(&rsc_hdr, &ent), len);
- 
- 	return len;
- }
-@@ -238,9 +242,9 @@ size_t cmd_db_read_aux_data_len(const char *id)
- 	struct entry_header ent;
- 	struct rsc_hdr rsc_hdr;
- 
--	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
- 
--	return ret < 0 ? 0 : ent.len;
-+	return ret < 0 ? 0 : le16_to_cpu(ent.len);
- }
- EXPORT_SYMBOL(cmd_db_read_aux_data_len);
- 
-@@ -256,11 +260,14 @@ enum cmd_db_hw_type cmd_db_read_slave_id(const char *id)
- 	int ret;
- 	struct entry_header ent;
- 	struct rsc_hdr rsc_hdr;
-+	u32 addr;
- 
--	ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
-+	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
-+	if (ret < 0)
-+		return CMD_DB_HW_INVALID;
- 
--	return ret < 0 ? CMD_DB_HW_INVALID :
--		       (ent.addr >> SLAVE_ID_SHIFT) & SLAVE_ID_MASK;
-+	addr = le32_to_cpu(ent.addr);
-+	return (addr >> SLAVE_ID_SHIFT) & SLAVE_ID_MASK;
- }
- EXPORT_SYMBOL(cmd_db_read_slave_id);
- 
-@@ -282,7 +289,7 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	if (cmd_db_header->magic_num != CMD_DB_MAGIC) {
-+	if (!cmd_db_magic_matches(cmd_db_header)) {
- 		dev_err(&pdev->dev, "Invalid Command DB Magic\n");
- 		return -EINVAL;
- 	}
--- 
-Sent by a computer through tubes
