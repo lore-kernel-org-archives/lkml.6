@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754242AbeDWCfg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 22:35:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59630 "EHLO
+        id S1754109AbeDWCfb (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 22:35:31 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44250 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753929AbeDWCbV (ORCPT
+        by vger.kernel.org with ESMTP id S1753945AbeDWCbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 22:31:21 -0400
+        Sun, 22 Apr 2018 22:31:22 -0400
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To: linux-kernel@vger.kernel.org
 Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -15,20 +15,20 @@ Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel.opensrc@gmail.com,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 03/22] rcu: Don't allocate rcu_nocb_mask if no one needs it
-Date: Sun, 22 Apr 2018 19:32:08 -0700
+Subject: [PATCH tip/core/rcu 14/22] rcu: Add leaf-node macros
+Date: Sun, 22 Apr 2018 19:32:19 -0700
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180423023150.GA21533@linux.vnet.ibm.com>
 References: <20180423023150.GA21533@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18042302-0052-0000-0000-000002E0B1C0
+x-cbid: 18042302-0056-0000-0000-0000044375FA
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008903; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000257; SDB=6.01021888; UDB=6.00521536; IPR=6.00801123;
- MB=3.00020719; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 02:31:18
+ MB=3.00020718; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 02:31:19
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042302-0053-0000-0000-00005C6D822B
-Message-Id: <1524450747-22778-3-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18042302-0057-0000-0000-000008877F33
+Message-Id: <1524450747-22778-14-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -40,45 +40,97 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 44c65ff2e3b0 ("rcu: Eliminate NOCBs CPU-state Kconfig options")
-made allocation of rcu_nocb_mask depend only on the rcu_nocbs=,
-nohz_full=, or isolcpus= kernel boot parameters.  However, it failed
-to change the initial value of rcu_init_nohz()'s local variable
-need_rcu_nocb_mask to false, which can result in useless allocation
-of an all-zero rcu_nocb_mask.  This commit therefore fixes this bug by
-changing the initial value of need_rcu_nocb_mask to false.
+This commit adds rcu_first_leaf_node() that returns a pointer to
+the first leaf rcu_node structure in the specified RCU flavor and an
+rcu_is_leaf_node() that returns true iff the specified rcu_node structure
+is a leaf.  This commit also uses these macros where appropriate.
 
-While we are in the area, also correct the error message that is printed
-when someone specifies that can-never-exist CPUs should be NOCBs CPUs.
-
-Reported-by: Byungchul Park <byungchul.park@lge.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Byungchul Park <byungchul.park@lge.com>
 ---
- kernel/rcu/tree_plugin.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/rcu/rcu.h         | 11 ++++++++---
+ kernel/rcu/tree.c        |  4 ++--
+ kernel/rcu/tree_plugin.h |  4 ++--
+ 3 files changed, 12 insertions(+), 7 deletions(-)
 
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index 7a693e31184a..5b5bb9ee2e20 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -270,6 +270,12 @@ static inline void rcu_init_levelspread(int *levelspread, const int *levelcnt)
+ 	}
+ }
+ 
++/* Returns first leaf rcu_node of the specified RCU flavor. */
++#define rcu_first_leaf_node(rsp) ((rsp)->level[rcu_num_lvls - 1])
++
++/* Is this rcu_node a leaf? */
++#define rcu_is_leaf_node(rnp) ((rnp)->level == rcu_num_lvls - 1)
++
+ /*
+  * Do a full breadth-first scan of the rcu_node structures for the
+  * specified rcu_state structure.
+@@ -284,8 +290,7 @@ static inline void rcu_init_levelspread(int *levelspread, const int *levelcnt)
+  * rcu_node tree with but one rcu_node structure, this loop is a no-op.
+  */
+ #define rcu_for_each_nonleaf_node_breadth_first(rsp, rnp) \
+-	for ((rnp) = &(rsp)->node[0]; \
+-	     (rnp) < (rsp)->level[rcu_num_lvls - 1]; (rnp)++)
++	for ((rnp) = &(rsp)->node[0]; !rcu_is_leaf_node(rsp, rnp); (rnp)++)
+ 
+ /*
+  * Scan the leaves of the rcu_node hierarchy for the specified rcu_state
+@@ -294,7 +299,7 @@ static inline void rcu_init_levelspread(int *levelspread, const int *levelcnt)
+  * It is still a leaf node, even if it is also the root node.
+  */
+ #define rcu_for_each_leaf_node(rsp, rnp) \
+-	for ((rnp) = (rsp)->level[rcu_num_lvls - 1]; \
++	for ((rnp) = rcu_first_leaf_node(rsp); \
+ 	     (rnp) < &(rsp)->node[rcu_num_nodes]; (rnp)++)
+ 
+ /*
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 19d9475d74f2..08b72dd02d88 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2405,7 +2405,7 @@ rcu_report_qs_rnp(unsigned long mask, struct rcu_state *rsp,
+ 			return;
+ 		}
+ 		WARN_ON_ONCE(oldmask); /* Any child must be all zeroed! */
+-		WARN_ON_ONCE(rnp->level != rcu_num_lvls - 1 &&
++		WARN_ON_ONCE(!rcu_is_leaf_node(rnp) &&
+ 			     rcu_preempt_blocked_readers_cgp(rnp));
+ 		rnp->qsmask &= ~mask;
+ 		trace_rcu_quiescent_state_report(rsp->name, rnp->gpnum,
+@@ -4063,7 +4063,7 @@ static void __init rcu_init_one(struct rcu_state *rsp)
+ 
+ 	init_swait_queue_head(&rsp->gp_wq);
+ 	init_swait_queue_head(&rsp->expedited_wq);
+-	rnp = rsp->level[rcu_num_lvls - 1];
++	rnp = rcu_first_leaf_node(rsp);
+ 	for_each_possible_cpu(i) {
+ 		while (i > rnp->grphi)
+ 			rnp++;
 diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 6c5df18bbf2f..3566e4f6dfcc 100644
+index d37b9bb3f481..b999032e9466 100644
 --- a/kernel/rcu/tree_plugin.h
 +++ b/kernel/rcu/tree_plugin.h
-@@ -2283,7 +2283,7 @@ static void do_nocb_deferred_wakeup(struct rcu_data *rdp)
- void __init rcu_init_nohz(void)
- {
- 	int cpu;
--	bool need_rcu_nocb_mask = true;
-+	bool need_rcu_nocb_mask = false;
- 	struct rcu_state *rsp;
+@@ -182,7 +182,7 @@ static void rcu_preempt_ctxt_queue(struct rcu_node *rnp, struct rcu_data *rdp)
  
- #if defined(CONFIG_NO_HZ_FULL)
-@@ -2306,7 +2306,7 @@ void __init rcu_init_nohz(void)
- #endif /* #if defined(CONFIG_NO_HZ_FULL) */
+ 	raw_lockdep_assert_held_rcu_node(rnp);
+ 	WARN_ON_ONCE(rdp->mynode != rnp);
+-	WARN_ON_ONCE(rnp->level != rcu_num_lvls - 1);
++	WARN_ON_ONCE(!rcu_is_leaf_node(rnp));
  
- 	if (!cpumask_subset(rcu_nocb_mask, cpu_possible_mask)) {
--		pr_info("\tNote: kernel parameter 'rcu_nocbs=' contains nonexistent CPUs.\n");
-+		pr_info("\tNote: kernel parameter 'rcu_nocbs=', 'nohz_full', or 'isolcpus=' contains nonexistent CPUs.\n");
- 		cpumask_and(rcu_nocb_mask, cpu_possible_mask,
- 			    rcu_nocb_mask);
- 	}
+ 	/*
+ 	 * Decide where to queue the newly blocked task.  In theory,
+@@ -533,7 +533,7 @@ void rcu_read_unlock_special(struct task_struct *t)
+ 		rnp = t->rcu_blocked_node;
+ 		raw_spin_lock_rcu_node(rnp); /* irqs already disabled. */
+ 		WARN_ON_ONCE(rnp != t->rcu_blocked_node);
+-		WARN_ON_ONCE(rnp->level != rcu_num_lvls - 1);
++		WARN_ON_ONCE(!rcu_is_leaf_node(rnp));
+ 		empty_norm = !rcu_preempt_blocked_readers_cgp(rnp);
+ 		empty_exp = sync_rcu_preempt_exp_done(rnp);
+ 		smp_mb(); /* ensure expedited fastpath sees end of RCU c-s. */
 -- 
 2.5.2
