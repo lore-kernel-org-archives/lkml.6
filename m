@@ -1,32 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932548AbeDWSF0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 14:05:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58718 "EHLO
+        id S932568AbeDWSFt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 14:05:49 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59002 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932506AbeDWSFP (ORCPT
+        with ESMTP id S932538AbeDWSFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 14:05:15 -0400
+        Mon, 23 Apr 2018 14:05:24 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties" to the regulator tree
-In-Reply-To: <1524057484-25350-2-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1fAfpv-0004FS-DO@debutante>
-Date: Mon, 23 Apr 2018 19:05:11 +0100
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: axp20x: add drivevbus support for axp803" to the regulator tree
+In-Reply-To: <1513011400-4120-1-git-send-email-jagan@amarulasolutions.com>
+Message-Id: <E1fAfpz-0004Gb-3w@debutante>
+Date: Mon, 23 Apr 2018 19:05:15 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties
+   regulator: axp20x: add drivevbus support for axp803
 
 has been applied to the regulator tree at
 
@@ -51,61 +54,58 @@ to this mail.
 Thanks,
 Mark
 
->From c85964de544cae98c3d8d29c936b6d13258e4a10 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 18 Apr 2018 15:18:01 +0200
-Subject: [PATCH] dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode
- properties
+>From 1f5d6462b5856ddd44d4500ac80b7862faff351b Mon Sep 17 00:00:00 2001
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Mon, 23 Apr 2018 12:02:37 +0530
+Subject: [PATCH] regulator: axp20x: add drivevbus support for axp803
 
-Document the new optional properties related to DDR Backup Mode and
-toggle/momentary power switches.
+Like axp221, axp223, axp813 the axp803 is also supporting external
+regulator to drive the  OTG VBus through N_VBUSEN PMIC pin.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add support for it.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/mfd/bd9571mwv.txt     | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ Documentation/devicetree/bindings/mfd/axp20x.txt | 3 ++-
+ drivers/regulator/axp20x-regulator.c             | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-index 9ab216a851d5..25d1f697eb25 100644
---- a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -25,6 +25,25 @@ Required properties:
- 			    Each child node is defined using the standard
- 			    binding for regulators.
+diff --git a/Documentation/devicetree/bindings/mfd/axp20x.txt b/Documentation/devicetree/bindings/mfd/axp20x.txt
+index 9455503b0299..d1762f3b30af 100644
+--- a/Documentation/devicetree/bindings/mfd/axp20x.txt
++++ b/Documentation/devicetree/bindings/mfd/axp20x.txt
+@@ -43,7 +43,7 @@ Optional properties:
+ 			  regulator to drive the OTG VBus, rather then
+ 			  as an input pin which signals whether the
+ 			  board is driving OTG VBus or not.
+-			  (axp221 / axp223 / axp813 only)
++			  (axp221 / axp223 / axp803/ axp813 only)
  
-+Optional properties:
-+  - rohm,ddr-backup-power : Value to use for DDR-Backup Power (default 0).
-+			    This is a bitmask that specifies which DDR power
-+			    rails need to be kept powered when backup mode is
-+			    entered, for system suspend:
-+			      - bit 0: DDR0
-+			      - bit 1: DDR1
-+			      - bit 2: DDR0C
-+			      - bit 3: DDR1C
-+			    These bits match the KEEPON_DDR* bits in the
-+			    documentation for the "BKUP Mode Cnt" register.
-+  - rohm,rstbmode-level: The RSTB signal is configured for level mode, to
-+			 accommodate a toggle power switch (the RSTBMODE pin is
-+			 strapped low).
-+  - rohm,rstbmode-pulse: The RSTB signal is configured for pulse mode, to
-+			 accommodate a momentary power switch (the RSTBMODE pin
-+			 is strapped high).
-+			 The two properties above are mutually exclusive.
-+
- Example:
+ - x-powers,master-mode: Boolean (axp806 only). Set this when the PMIC is
+ 			wired for master mode. The default is slave mode.
+@@ -132,6 +132,7 @@ FLDO2		: LDO		: fldoin-supply		: shared supply
+ LDO_IO0		: LDO		: ips-supply		: GPIO 0
+ LDO_IO1		: LDO		: ips-supply		: GPIO 1
+ RTC_LDO		: LDO		: ips-supply		: always on
++DRIVEVBUS	: Enable output	: drivevbus-supply	: external regulator
  
- 	pmic: pmic@30 {
-@@ -36,6 +55,8 @@ Example:
- 		#interrupt-cells = <2>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		rohm,ddr-backup-power = <0xf>;
-+		rohm,rstbmode-pulse;
+ AXP806 regulators, type, and corresponding input supply names:
  
- 		regulators {
- 			dvfs: dvfs {
+diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+index 181622b2813d..91b8ff8bac15 100644
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -721,6 +721,8 @@ static int axp20x_regulator_probe(struct platform_device *pdev)
+ 	case AXP803_ID:
+ 		regulators = axp803_regulators;
+ 		nregulators = AXP803_REG_ID_MAX;
++		drivevbus = of_property_read_bool(pdev->dev.parent->of_node,
++						  "x-powers,drive-vbus-en");
+ 		break;
+ 	case AXP806_ID:
+ 		regulators = axp806_regulators;
 -- 
 2.17.0
