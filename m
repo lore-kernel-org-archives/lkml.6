@@ -1,59 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932334AbeDWS1C (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 14:27:02 -0400
-Received: from anholt.net ([50.246.234.109]:60284 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932194AbeDWS1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 14:27:01 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 16/61] gpu: drm: vc4: simplify getting .drvdata
-In-Reply-To: <20180419140641.27926-17-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-17-wsa+renesas@sang-engineering.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Mon, 23 Apr 2018 11:26:56 -0700
-Message-ID: <87vachhj7z.fsf@anholt.net>
+        id S932358AbeDWSiy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 14:38:54 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46638 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932085AbeDWSiw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 14:38:52 -0400
+X-Google-Smtp-Source: AIpwx4+davGhKjRl3wMJwstFZxwWItYFB5FTMHAV5HxlVr8ByBm5OlFdMCHSSMjrRoXHY0eWXxA1ow==
+Date: Mon, 23 Apr 2018 12:38:48 -0600
+From: Anatoliy Glagolev <glagolig@gmail.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        axboe@kernel.dk, fujita.tomonori@lab.ntt.co.jp,
+        martin.petersen@oracle.com, jthumshirn@suse.de, hare@suse.com,
+        bblock@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bsg referencing bus driver module
+Message-ID: <20180423183845.GA21609@xldev-tmpl.dev.purestorage.com>
+References: <CANFzKepsGq0EHX4GPtC0RZOWqVf2fTJ6uA2WH-SZNsBuwMJ5KA@mail.gmail.com>
+ <CANFzKer6QDaJALX3LKPF2DV6LgczTh-efQe9+zeK8BuxTWFt1A@mail.gmail.com>
+ <CANFzKepRSA+VoVAvOfW6U_qHFVDZex+=hQ=QhU+7Z=unvwejJQ@mail.gmail.com>
+ <1524218126.3321.6.camel@HansenPartnership.com>
+ <20180420224404.GC32372@xldev-tmpl.dev.purestorage.com>
+ <1524383279.3389.7.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524383279.3389.7.camel@HansenPartnership.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Thanks, James. The idea of cutting communications with Scsi_Host at
+bsg_unregister_queue(..) time and leaving bsg_class_device to
+its own fate makes a lot of sense, conceptually. But there are
+implementation issues that are difficult to work around.
 
-Wolfram Sang <wsa+renesas@sang-engineering.com> writes:
+bsg.c creates bsg_class_device and takes a reference to Scsi_Host
+at bsg_register_queue(..) time. The reference is dropped at
+bsg_class_device's release(..) function. If the driver implementing
+Scsi_Host template is not around we crash.
+We could move the reference drop from bsg_class_device's release(..)
+function to bsg_unregister_queue(..). That would be a small change in
+bsg.c. But bsg.c sets Scsi_Host as the parent of bsg_class_device's
+device. We cannot have a device around with a dangling parent.
+A device's parent cannot be changed dynamically. Not setting
+the device's parent at creation may affect software relying
+on bsg_class_device - Scsi_Host child-parent relations.
 
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Applied to drm-misc-next.  Thanks!
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlreJXAACgkQtdYpNtH8
-nuhrfRAAtsGa94ThjB3penHE1ORa0TEnWyCvBzCk80ZZVXTyBXHL1l1vl0AIBFxD
-oHoWFooZYxH0FwpBqFPO1J/y4mVtbkbdOVd9AQZ8yccBiTtuehFMGhCW8RAKSYku
-NAgS3GPxx3QOk0Nn/eIQ1stlJi9PbJByUEwUuJwjMxzDcl18/wIrflzR6yjiaIbo
-c8XhcTao5yy2oHRfQPwSWPdgzaJaQLCQhFcPgoD4ioCNGdtfzQjWV3stHdIcvKwo
-BLlqFyar1+2ReUPNu7TZXpQWeZnP2aW9TAwY14S7/MZzRANcd7HkbMb8ceaUMQHs
-+TmhRNtJ//L4jSDhXE7/EZfRGbFyPhx2FZyXvI/UYtU7ZObkUYkW5yC7X7ha47E5
-uSLEaR6eTqnM/fuHOlEcubp7xpT2lOA2QKvcnUCp0UeNGp01f5BQkfWhbBqYndNb
-CgcaUNhKv7SOEvaIapDtuj/SlTtYEQiFzFcA7725Wfxt57iZusM0XwkzpJtfkDSF
-z1ZJmffQVskT+ioUClr8X/5R5yC7f3KMLJQ0L4kYjDnWx4D5qcaWmSavfmhgWG4t
-5QI8WrxWcNaMbPTkKxOqYxzN1XFE+oaFww68aCySBaFtBIbWASSjNYN4l1aC3P5y
-ZVyIoyN9EhmsHdbCLmBrwQJJSBCnfax8aN2zoMEhwiwawthxJG8=
-=v5Lv
------END PGP SIGNATURE-----
---=-=-=--
+It looks like I am out of options. Do you have suggestions on
+how to work around Scsi_Host being bsg_class_device's parent?
