@@ -1,59 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752856AbeDWGJN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:09:13 -0400
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:38436 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751268AbeDWGJJ (ORCPT
+        id S1752224AbeDWGLb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:11:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34566 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751216AbeDWGL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:09:09 -0400
-X-Google-Smtp-Source: AIpwx4870NtiYFldiSBHwiluxI7FQkZb+uibfVtzKBriHtmTxLQNqPuwoaldzIitR4fIineA9ps/ZQ==
-Date: Mon, 23 Apr 2018 08:09:23 +0200
-From: Ahmed Abdelsalam <amsalam20@gmail.com>
-To: David Miller <davem@davemloft.net>
-Cc: dlebrun@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [net] ipv6: sr: fix NULL pointer dereference in
- seg6_do_srh_encap()- v4 pkts
-Message-Id: <20180423080923.9dc889c97a24df7337ca4958@gmail.com>
-In-Reply-To: <20180422.210604.1788466884650842473.davem@davemloft.net>
-References: <1524232685-1203-1-git-send-email-amsalam20@gmail.com>
-        <20180422.210604.1788466884650842473.davem@davemloft.net>
-X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.21; x86_64-apple-darwin10.8.0)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 23 Apr 2018 02:11:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41A35606DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=riteshh@codeaurora.org
+Subject: Re: [RFC PATCH 16/35] ovl: readd lsattr/chattr support
+To: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180412150826.20988-1-mszeredi@redhat.com>
+ <20180412150826.20988-17-mszeredi@redhat.com>
+From: Ritesh Harjani <riteshh@codeaurora.org>
+Message-ID: <5b3e2c0d-5dc5-a98b-1eb9-1c123b0508dd@codeaurora.org>
+Date: Mon, 23 Apr 2018 11:41:19 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180412150826.20988-17-mszeredi@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 22 Apr 2018 21:06:04 -0400 (EDT)
-David Miller <davem@davemloft.net> wrote:
 
-> From: Ahmed Abdelsalam <amsalam20@gmail.com>
-> Date: Fri, 20 Apr 2018 15:58:05 +0200
-> 
-> > In case of seg6 in encap mode, seg6_do_srh_encap() calls set_tun_src()
-> > in order to set the src addr of outer IPv6 header.
-> > 
-> > The net_device is required for set_tun_src(). However calling ip6_dst_idev()
-> > on dst_entry in case of IPv4 traffic results on the following bug.
-> > 
-> > Using just dst->dev should fix this BUG.
->  ...
-> > Fixes: 8936ef7604c11 ipv6: sr: fix NULL pointer dereference when setting encap source address
-> 
-> Please format your Fixes: tag properly next time.  The commit header
-> text should be enclosed by (" ").  I fixed it up for you this time.
-> 
 
-Ok! 
-Thanks David for your time. 
-
-> > Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+On 4/12/2018 8:38 PM, Miklos Szeredi wrote:
+> Implement FS_IOC_GETFLAGS and FS_IOC_SETFLAGS.
 > 
-> Applied and queued up for -stable.
+> Needs vfs_ioctl() exported to modules.
+Do you think if it is better to separate out ovl implementation and 
+export of vfs_ioctl method ?
+Probably there are other users which should be using vfs_ioctl method as 
+well (like ecryptfs) ?
 
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>   fs/internal.h       |  1 -
+>   fs/ioctl.c          |  1 +
+>   fs/overlayfs/file.c | 59 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/fs.h  |  2 ++
+>   4 files changed, 62 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 3319bf39e339..d5108d9c6a2f 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -176,7 +176,6 @@ extern const struct dentry_operations ns_dentry_operations;
+>    */
+>   extern int do_vfs_ioctl(struct file *file, unsigned int fd, unsigned int cmd,
+>   		    unsigned long arg);
+> -extern long vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+>   
+>   /*
+>    * iomap support:
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 5ace7efb0d04..696f4c46a868 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -49,6 +49,7 @@ long vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>    out:
+>   	return error;
+>   }
+> +EXPORT_SYMBOL(vfs_ioctl);
+>   
+>   static int ioctl_fibmap(struct file *filp, int __user *p)
+>   {
+> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> index 05e3e2f80b89..cc004ff1b05b 100644
+> --- a/fs/overlayfs/file.c
+> +++ b/fs/overlayfs/file.c
+> @@ -8,6 +8,7 @@
+>   
+>   #include <linux/cred.h>
+>   #include <linux/file.h>
+> +#include <linux/mount.h>
+>   #include <linux/xattr.h>
+>   #include <linux/uio.h>
+>   #include "overlayfs.h"
+> @@ -291,6 +292,63 @@ long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>   	return ret;
+>   }
+>   
+> +static long ovl_real_ioctl(struct file *file, unsigned int cmd,
+> +			   unsigned long arg)
+> +{
+> +	struct fd real;
+> +	const struct cred *old_cred;
+> +	long ret;
+> +
+> +	ret = ovl_real_file(file, &real);
+> +	if (ret)
+> +		return ret;
+> +
+> +	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+> +	ret = vfs_ioctl(real.file, cmd, arg);
+> +	revert_creds(old_cred);
+> +
+> +	fdput(real);
+> +
+> +	return ret;
+> +}
+> +
+> +long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> +{
+> +	long ret;
+> +	struct inode *inode = file_inode(file);
+> +
+> +	switch (cmd) {
+> +	case FS_IOC_GETFLAGS:
+> +		ret = ovl_real_ioctl(file, cmd, arg);
+> +		break;
+> +
+> +	case FS_IOC_SETFLAGS:
+> +		if (!inode_owner_or_capable(inode))
+> +			return -EACCES;
+> +
+> +		ret = mnt_want_write_file(file);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = ovl_copy_up(file_dentry(file));
+> +		if (!ret) {
+> +			ret = ovl_real_ioctl(file, cmd, arg);
+> +
+> +			inode_lock(inode);
+> +			ovl_copyflags(ovl_inode_real(inode), inode);
+> +			inode_unlock(inode);
+> +		}
+> +
+> +		mnt_drop_write_file(file);
+> +		break;
+> +
+> +	default:
+> +		ret = -ENOTTY;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>   const struct file_operations ovl_file_operations = {
+>   	.open		= ovl_open,
+>   	.release	= ovl_release,
+> @@ -300,4 +358,5 @@ const struct file_operations ovl_file_operations = {
+>   	.fsync		= ovl_fsync,
+>   	.mmap		= ovl_mmap,
+>   	.fallocate	= ovl_fallocate,
+> +	.unlocked_ioctl	= ovl_ioctl,
+
+What about compat_ioctl ? should that implementation also go in the same 
+patch ?
+
+>   };
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 0b215faa30ae..1add10f04b56 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1621,6 +1621,8 @@ int vfs_mkobj(struct dentry *, umode_t,
+>   		int (*f)(struct dentry *, umode_t, void *),
+>   		void *);
+>   
+> +extern long vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+> +
+>   /*
+>    * VFS file helper functions.
+>    */
+> 
 
 -- 
-Ahmed Abdelsalam <amsalam20@gmail.com>
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, 
+Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project.
