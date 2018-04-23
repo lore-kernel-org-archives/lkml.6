@@ -1,92 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932108AbeDWQC4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:02:56 -0400
-Received: from scorn.kernelslacker.org ([45.56.101.199]:54422 "EHLO
-        scorn.kernelslacker.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755830AbeDWQCy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:02:54 -0400
-Date: Mon, 23 Apr 2018 11:27:13 -0400
-From: Dave Jones <davej@codemonkey.org.uk>
-To: Linux Kernel <linux-kernel@vger.kernel.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org
-Subject: 4.17-rc2: Could not determine valid watermarks for inherited state
-Message-ID: <20180423152713.2rrwwye3wfstbv5v@codemonkey.org.uk>
-Mail-Followup-To: Dave Jones <davej@codemonkey.org.uk>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org
+        id S1755887AbeDWQDp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:03:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52882 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755138AbeDWQDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 12:03:43 -0400
+Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
+To: Borislav Petkov <bp@alien8.de>
+Cc: Eduardo Habkost <ehabkost@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <20180226121509.GE4377@pd.tnic>
+ <24cd527d-5287-f0be-ffe8-eab341bf1d94@redhat.com>
+ <3866d359-0ef8-6a99-6254-84890be62b93@redhat.com>
+ <20180226122205.GG4377@pd.tnic>
+ <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com>
+ <CANRm+CyyL2jjjn7nZtLJvP+t1pN9ndAGhijmbX4LJh15=O+dvQ@mail.gmail.com>
+ <20180417202417.GA29865@localhost.localdomain>
+ <CANRm+CwA22VmpA5cfQg8mF_Xke_hXtP+_ui5xU+LV8v0JNj=3Q@mail.gmail.com>
+ <20180418090329.GJ29865@localhost.localdomain>
+ <de059c45-d706-ff70-9063-92ac0a807e26@redhat.com>
+ <20180423125849.GD22238@pd.tnic>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7eeb63dd-5f7f-df91-47b1-7b15005cf45c@redhat.com>
+Date: Mon, 23 Apr 2018 18:03:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Spam-Note: SpamAssassin invocation failed
+In-Reply-To: <20180423125849.GD22238@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This warning just started appearing during boot on a machine I upgraded
-to 4.17-rc2.  The warning seems to have been there since 2015, but it
-has never triggered before today.
+On 23/04/2018 14:58, Borislav Petkov wrote:
+>>>> QEMU can't get the host value by rdmsr MSR_IA32_UCODE_REV directly
+>>>> since rdmsr will #GP when ring !=0, any idea?
+>>> By looking at kvm_get_msr_feature(), it looks like
+>>> ioctl(system_fd, KVM_GET_MSRS) would return the host MSR value
+>>> for us.
+>> Yes, that's exactly what it was introduced for (together with other MSRs
+>> including VMX capabilities).
+> Can't qemu do:
+> 
+> grep microcode /proc/cpuinfo | awk '{ print $3 }' | head -n 1
+> 
+> ?
 
-	Dave
+Yes, but you took that a statement bit too narrowly.
 
-[    1.158500] fb: switching to inteldrmfb from EFI VGA
-[    1.159073] Console: switching to colour dummy device 80x25
-[    1.159523] checking generic (a0000 10000) vs hw (e0000000 10000000)
-[    1.159539] fb: switching to inteldrmfb from VGA16 VGA
-[    1.159752] [drm] Replacing VGA console driver
-[    1.164454] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-[    1.164472] [drm] Driver supports precise vblank timestamp query.
-[    1.167285] i915 0000:00:02.0: vgaarb: changed VGA decodes: olddecodes=io+mem,decodes=io+mem:owns=io+mem
-[    1.170212] ------------[ cut here ]------------
-[    1.170230] Could not determine valid watermarks for inherited state
-[    1.170267] WARNING: CPU: 1 PID: 1 at drivers/gpu/drm/i915/intel_display.c:14584 sanitize_watermarks+0x17b/0x1c0
-[    1.170291] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc2+ #1
-[    1.170308] Hardware name: Shuttle Inc. SH87R/FH87, BIOS 2.03 06/19/2014
-[    1.170325] RIP: 0010:sanitize_watermarks+0x17b/0x1c0
-[    1.170338] RSP: 0000:ffffa944c0023bf0 EFLAGS: 00010246
-[    1.170352] RAX: 0000000000000000 RBX: ffff9193508c0000 RCX: 0000000000000000
-[    1.170369] RDX: 0000000000000001 RSI: ffffffff990b7399 RDI: ffffffff990b7399
-[    1.170385] RBP: ffff9193508c0000 R08: 0000000000000001 R09: 0000000000000001
-[    1.170401] R10: 0000000000000000 R11: 0000000000000000 R12: 00000000ffffffea
-[    1.170418] R13: ffff9193508faa88 R14: ffff919350823528 R15: ffff9193508c0a08
-[    1.170434] FS:  0000000000000000(0000) GS:ffff919356400000(0000) knlGS:0000000000000000
-[    1.170453] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    1.170466] CR2: 0000000000000000 CR3: 000000011d224001 CR4: 00000000000606e0
-[    1.170483] Call Trace:
-[    1.170493]  intel_modeset_init+0x769/0x18f0
-[    1.170506]  i915_driver_load+0x9b9/0xf30
-[    1.170519]  ? _raw_spin_unlock_irqrestore+0x3f/0x70
-[    1.170534]  pci_device_probe+0xa3/0x120
-[    1.170546]  driver_probe_device+0x28a/0x320
-[    1.170557]  __driver_attach+0x9e/0xb0
-[    1.170568]  ? driver_probe_device+0x320/0x320
-[    1.170581]  bus_for_each_dev+0x68/0xc0
-[    1.170592]  bus_add_driver+0x11d/0x210
-[    1.170604]  ? mipi_dsi_bus_init+0x11/0x11
-[    1.170615]  driver_register+0x5b/0xd0
-[    1.170627]  do_one_initcall+0x10b/0x33f
-[    1.170638]  ? do_early_param+0x8b/0x8b
-[    1.170651]  ? rcu_read_lock_sched_held+0x66/0x70
-[    1.170663]  ? do_early_param+0x8b/0x8b
-[    1.170674]  kernel_init_freeable+0x1c3/0x249
-[    1.170687]  ? rest_init+0xc0/0xc0
-[    1.170697]  kernel_init+0xa/0x100
-[    1.170707]  ret_from_fork+0x24/0x30
-[    1.170717] Code: 00 00 00 65 48 33 04 25 28 00 00 00 75 4f 48 8d a4 24 88 00 00 00 5b 5d 41 5c 41 5d 41 5e c3 48 c7 c7 e0 5d 04 9a e8 25 33 b1 ff <0f> 0b eb a4 48 c7 c6 d5 73 04 9a 48 c7 c7 0f c6 fe 99 e8 0e 33 
-[    1.170847] irq event stamp: 1449710
-[    1.170858] hardirqs last  enabled at (1449709): [<ffffffff990b6f8b>] console_unlock+0x51b/0x6b0
-[    1.170879] hardirqs last disabled at (1449710): [<ffffffff99a00ff6>] error_entry+0x86/0x100
-[    1.170900] softirqs last  enabled at (1449580): [<ffffffff99c003dd>] __do_softirq+0x3dd/0x521
-[    1.170922] softirqs last disabled at (1449563): [<ffffffff9905d327>] irq_exit+0xb7/0xc0
+We didn't include KVM_GET_MSRS because microcode version wasn't
+otherwise available; rather, there's a general need for KVM userspace to
+know the values of host MSRs, and microcode is an example.
 
-
-00:02.0 VGA compatible controller: Intel Corporation Xeon E3-1200 v3/4th Gen Core Processor Integrated Graphics Controller (rev 06)
-
-(That's 8086:0402 fwiw)
+Paolo
