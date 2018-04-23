@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx4/754pdk8vnrFjidepMSoQa+uQoMMCF3C3mCLIyVSjuQenYPCIs4xhmzcEXPXBVHhqIF5nX
-ARC-Seal: i=1; a=rsa-sha256; t=1524498470; cv=none;
+X-Google-Smtp-Source: AB8JxZoS/3ThOaajV0dW/wgPiulvmZRec5nWai7Jnum+i+wifvHBNwfcGynNQkK5xFParsZFubs4
+ARC-Seal: i=1; a=rsa-sha256; t=1524498469; cv=none;
         d=google.com; s=arc-20160816;
-        b=ja8MLHbLvgw94WsE/Tu1a+eHSEM6QUrOQa9pFXPnqq6HGM2EZeDAXFVF4sfvnZall+
-         QYL0q/pC8nHSF2rZihGReEO9lwGLtT7NhG4zTVAcJNenswbNxSxYjB7DCcewnAPHF9fp
-         /qwetRTKsZHvuIr9wvenTBetdMQZEeCKCRb+/739inshtgBrJ7nBlI4gM6UcIGr6VjkR
-         Q7fcdJ7z4dtO9eAC6IMZKTgGgR14w5kZwThpCv+tFt/N/4wdIJ4RE+vZOEyrGi6XZO38
-         XV98iPPk9H+7usuiWtzJjoHt+/9ww8AGbXeP6wJ564HcUtdqkAwxjwitq4JMbhXz03xA
-         pm6w==
+        b=JcIeIWuDvh/wN+VafTE01WyicdnjF0x8i7BGPSjhJoAAxCIrBzQIx+LF9trppgDpzE
+         ctcK+9znCoWGbndgsn6hwc3JMN2MX0XKSo2eK1K0hQl+6tK9ZtgtJO3Ky4H17LBTnoGl
+         +xlkO1KVZb83lCyQzijqKWZIHixJ/3pfCVZKDf/StFIJceQVsUOV1o8GNLeFaZ7hHfYo
+         Gy3L3SBUbtJzHx33lqhtPhBfaFOlPp1RgpBRKzNFMSFQndz3LGSDFtS/RhiNpAPco7jk
+         gB6cMfzLQZcVpGKw+XHBarGLf2fRHFiObrf3Lzxcaq08XcVcPw1OgEgO6X6EFq1Oav1/
+         Embw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=GwVNm4YEqpxefrLlBhr35CsLDX5ntTMi/1+OR0DSRxQ=;
-        b=zbnhLypI0ixp12woyMOVe5r8+PhznT/z6OzpEi2eZGEuedY+9eGUO6naNw6EmVurN4
-         eM4k0nJhOOyZ1Bmd729dofUhheJ4hgfkeBo9KSVeafDxkH0HrGRYZJcBvIr/RUJoNta8
-         8wEg3TdVhtKcXB4v7dQwnUOnObk/p7I7S8pGxuwGasXLs1kYLztcE8XTYkbKAhH0YFvp
-         UXoJRG4n4Cnt2d3U+8ywbbAyz0PEiZg00YnwaqecSOLMcyDSUlpTDe88Ao+PcEri0TNN
-         iuWaHf0rq5VjnfnxVwLz/xvLkUHuWoqAYOTiCOrGaoMh7/Ou3IXZSCkkf+lmc8BZPWgf
-         tckw==
+        bh=As1QK1SfZFoKkepHCdFdNR8IF6nzgbilli2hGnAj1fI=;
+        b=VbhMHqZveVdt+sqmrtCEltS7CyL2ah1R+pkHxZ8VlKkW0OQJcstPH4oJOUlwZ5gegB
+         z6HlhuJAEoc1jkQOO76THf37w/5wft62/liARMJcjfw3U+cyIpWhh4r2GfAwut6Pgtsh
+         e0faPbldDewoeMzoAPOP+Fo257wLTG/D6Gd2ZIZs2/mFDz/AKNa3j9yV4jX2vi/12Qrx
+         Tdcq5ZWNDfwYcQFjf/SVl9GM3pCBf7uND/CUFYuFYsB3IawURmyElT65aPInfy3sZdNB
+         7WO2mgXQ5rdbAai6bpYhQRKnIGsJedxLSyu+0LbmyiBS1S2q1IM0hYnEYqOeAzpMsyJL
+         8f2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=bjP1P92B;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=PfERHSeV;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=bjP1P92B;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=PfERHSeV;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -58,367 +58,66 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 07/37] x86/entry/32: Enter the kernel via trampoline stack
-Date: Mon, 23 Apr 2018 17:47:10 +0200
-Message-Id: <1524498460-25530-8-git-send-email-joro@8bytes.org>
+Subject: [PATCH 06/37] x86/entry/32: Split off return-to-kernel path
+Date: Mon, 23 Apr 2018 17:47:09 +0200
+Message-Id: <1524498460-25530-7-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552507894399012?=
-X-GMAIL-MSGID: =?utf-8?q?1598552507894399012?=
+X-GMAIL-THRID: =?utf-8?q?1598552507076916088?=
+X-GMAIL-MSGID: =?utf-8?q?1598552507076916088?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Use the entry-stack as a trampoline to enter the kernel. The
-entry-stack is already in the cpu_entry_area and will be
-mapped to userspace when PTI is enabled.
+Use a separate return path when we know we are returning to
+the kernel. This allows us to put the PTI cr3-switch and the
+switch to the entry-stack into the return-to-user path
+without further checking.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S        | 136 +++++++++++++++++++++++++++++++--------
- arch/x86/include/asm/switch_to.h |   6 +-
- arch/x86/kernel/asm-offsets.c    |   1 +
- arch/x86/kernel/cpu/common.c     |   5 +-
- arch/x86/kernel/process.c        |   2 -
- arch/x86/kernel/process_32.c     |  10 +--
- 6 files changed, 121 insertions(+), 39 deletions(-)
+ arch/x86/entry/entry_32.S | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 2f04d6e..1d6b527 100644
+index 3a319fd..2f04d6e 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -154,25 +154,36 @@
+@@ -65,7 +65,7 @@
+ # define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
+ #else
+ # define preempt_stop(clobbers)
+-# define resume_kernel		restore_all
++# define resume_kernel		restore_all_kernel
+ #endif
  
- #endif /* CONFIG_X86_32_LAZY_GS */
- 
--.macro SAVE_ALL pt_regs_ax=%eax
-+.macro SAVE_ALL pt_regs_ax=%eax switch_stacks=0
- 	cld
-+	/* Push segment registers and %eax */
- 	PUSH_GS
- 	pushl	%fs
- 	pushl	%es
- 	pushl	%ds
- 	pushl	\pt_regs_ax
-+
-+	/* Load kernel segments */
-+	movl	$(__USER_DS), %eax
-+	movl	%eax, %ds
-+	movl	%eax, %es
-+	movl	$(__KERNEL_PERCPU), %eax
-+	movl	%eax, %fs
-+	SET_KERNEL_GS %eax
-+
-+	/* Push integer registers and complete PT_REGS */
- 	pushl	%ebp
- 	pushl	%edi
- 	pushl	%esi
- 	pushl	%edx
- 	pushl	%ecx
- 	pushl	%ebx
--	movl	$(__USER_DS), %edx
--	movl	%edx, %ds
--	movl	%edx, %es
--	movl	$(__KERNEL_PERCPU), %edx
--	movl	%edx, %fs
--	SET_KERNEL_GS %edx
-+
-+	/* Switch to kernel stack if necessary */
-+.if \switch_stacks > 0
-+	SWITCH_TO_KERNEL_STACK
-+.endif
-+
- .endm
- 
- /*
-@@ -269,6 +280,72 @@
- .Lend_\@:
- #endif /* CONFIG_X86_ESPFIX32 */
- .endm
-+
-+
-+/*
-+ * Called with pt_regs fully populated and kernel segments loaded,
-+ * so we can access PER_CPU and use the integer registers.
-+ *
-+ * We need to be very careful here with the %esp switch, because an NMI
-+ * can happen everywhere. If the NMI handler finds itself on the
-+ * entry-stack, it will overwrite the task-stack and everything we
-+ * copied there. So allocate the stack-frame on the task-stack and
-+ * switch to it before we do any copying.
-+ */
-+.macro SWITCH_TO_KERNEL_STACK
-+
-+	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-+
-+	/* Are we on the entry stack? Bail out if not! */
-+	movl	PER_CPU_VAR(cpu_entry_area), %edi
-+	addl	$CPU_ENTRY_AREA_entry_stack, %edi
-+	cmpl	%esp, %edi
-+	jae	.Lend_\@
-+
-+	/* Load stack pointer into %esi and %edi */
-+	movl	%esp, %esi
-+	movl	%esi, %edi
-+
-+	/* Move %edi to the top of the entry stack */
-+	andl	$(MASK_entry_stack), %edi
-+	addl	$(SIZEOF_entry_stack), %edi
-+
-+	/* Load top of task-stack into %edi */
-+	movl	TSS_entry_stack(%edi), %edi
-+
-+	/* Bytes to copy */
-+	movl	$PTREGS_SIZE, %ecx
-+
-+#ifdef CONFIG_VM86
-+	testl	$X86_EFLAGS_VM, PT_EFLAGS(%esi)
-+	jz	.Lcopy_pt_regs_\@
-+
-+	/*
-+	 * Stack-frame contains 4 additional segment registers when
-+	 * coming from VM86 mode
-+	 */
-+	addl	$(4 * 4), %ecx
-+
-+.Lcopy_pt_regs_\@:
-+#endif
-+
-+	/* Allocate frame on task-stack */
-+	subl	%ecx, %edi
-+
-+	/* Switch to task-stack */
-+	movl	%edi, %esp
-+
-+	/*
-+	 * We are now on the task-stack and can safely copy over the
-+	 * stack-frame
-+	 */
-+	shrl	$2, %ecx
-+	cld
-+	rep movsl
-+
-+.Lend_\@:
-+.endm
-+
- /*
-  * %eax: prev task
-  * %edx: next task
-@@ -461,6 +538,7 @@ ENTRY(xen_sysenter_target)
-  */
- ENTRY(entry_SYSENTER_32)
- 	movl	TSS_entry_stack(%esp), %esp
-+
- .Lsysenter_past_esp:
- 	pushl	$__USER_DS		/* pt_regs->ss */
- 	pushl	%ebp			/* pt_regs->sp (stashed in bp) */
-@@ -469,7 +547,7 @@ ENTRY(entry_SYSENTER_32)
- 	pushl	$__USER_CS		/* pt_regs->cs */
- 	pushl	$0			/* pt_regs->ip = 0 (placeholder) */
- 	pushl	%eax			/* pt_regs->orig_ax */
--	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest */
-+	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest, stack already switched */
- 
- 	/*
- 	 * SYSENTER doesn't filter flags, so we need to clear NT, AC
-@@ -580,7 +658,8 @@ ENDPROC(entry_SYSENTER_32)
- ENTRY(entry_INT80_32)
- 	ASM_CLAC
- 	pushl	%eax			/* pt_regs->orig_ax */
--	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest */
-+
-+	SAVE_ALL pt_regs_ax=$-ENOSYS switch_stacks=1	/* save rest */
- 
- 	/*
- 	 * User mode is traced as though IRQs are on, and the interrupt gate
-@@ -677,7 +756,8 @@ END(irq_entries_start)
- common_interrupt:
- 	ASM_CLAC
- 	addl	$-0x80, (%esp)			/* Adjust vector into the [-256, -1] range */
--	SAVE_ALL
-+
-+	SAVE_ALL switch_stacks=1
- 	ENCODE_FRAME_POINTER
- 	TRACE_IRQS_OFF
- 	movl	%esp, %eax
-@@ -685,16 +765,16 @@ common_interrupt:
- 	jmp	ret_from_intr
- ENDPROC(common_interrupt)
- 
--#define BUILD_INTERRUPT3(name, nr, fn)	\
--ENTRY(name)				\
--	ASM_CLAC;			\
--	pushl	$~(nr);			\
--	SAVE_ALL;			\
--	ENCODE_FRAME_POINTER;		\
--	TRACE_IRQS_OFF			\
--	movl	%esp, %eax;		\
--	call	fn;			\
--	jmp	ret_from_intr;		\
-+#define BUILD_INTERRUPT3(name, nr, fn)			\
-+ENTRY(name)						\
-+	ASM_CLAC;					\
-+	pushl	$~(nr);					\
-+	SAVE_ALL switch_stacks=1;			\
-+	ENCODE_FRAME_POINTER;				\
-+	TRACE_IRQS_OFF					\
-+	movl	%esp, %eax;				\
-+	call	fn;					\
-+	jmp	ret_from_intr;				\
- ENDPROC(name)
- 
- #define BUILD_INTERRUPT(name, nr)		\
-@@ -926,16 +1006,20 @@ common_exception:
- 	pushl	%es
- 	pushl	%ds
- 	pushl	%eax
-+	movl	$(__USER_DS), %eax
-+	movl	%eax, %ds
-+	movl	%eax, %es
-+	movl	$(__KERNEL_PERCPU), %eax
-+	movl	%eax, %fs
- 	pushl	%ebp
- 	pushl	%edi
- 	pushl	%esi
- 	pushl	%edx
- 	pushl	%ecx
- 	pushl	%ebx
-+	SWITCH_TO_KERNEL_STACK
- 	ENCODE_FRAME_POINTER
- 	cld
--	movl	$(__KERNEL_PERCPU), %ecx
--	movl	%ecx, %fs
- 	UNWIND_ESPFIX_STACK
- 	GS_TO_REG %ecx
- 	movl	PT_GS(%esp), %edi		# get the function address
-@@ -943,9 +1027,6 @@ common_exception:
- 	movl	$-1, PT_ORIG_EAX(%esp)		# no syscall to restart
- 	REG_TO_PTGS %ecx
- 	SET_KERNEL_GS %ecx
--	movl	$(__USER_DS), %ecx
--	movl	%ecx, %ds
--	movl	%ecx, %es
- 	TRACE_IRQS_OFF
- 	movl	%esp, %eax			# pt_regs pointer
- 	CALL_NOSPEC %edi
-@@ -964,6 +1045,7 @@ ENTRY(debug)
+ .macro TRACE_IRQS_IRET
+@@ -399,9 +399,9 @@ ENTRY(resume_kernel)
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ .Lneed_resched:
+ 	cmpl	$0, PER_CPU_VAR(__preempt_count)
+-	jnz	restore_all
++	jnz	restore_all_kernel
+ 	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
+-	jz	restore_all
++	jz	restore_all_kernel
+ 	call	preempt_schedule_irq
+ 	jmp	.Lneed_resched
+ END(resume_kernel)
+@@ -606,6 +606,11 @@ restore_all:
  	 */
- 	ASM_CLAC
- 	pushl	$-1				# mark this as an int
+ 	INTERRUPT_RETURN
+ 
++restore_all_kernel:
++	TRACE_IRQS_IRET
++	RESTORE_REGS 4
++	jmp	.Lirq_return
 +
- 	SAVE_ALL
- 	ENCODE_FRAME_POINTER
- 	xorl	%edx, %edx			# error code 0
-@@ -999,6 +1081,7 @@ END(debug)
-  */
- ENTRY(nmi)
- 	ASM_CLAC
-+
- #ifdef CONFIG_X86_ESPFIX32
- 	pushl	%eax
- 	movl	%ss, %eax
-@@ -1066,7 +1149,8 @@ END(nmi)
- ENTRY(int3)
- 	ASM_CLAC
- 	pushl	$-1				# mark this as an int
--	SAVE_ALL
-+
-+	SAVE_ALL switch_stacks=1
- 	ENCODE_FRAME_POINTER
- 	TRACE_IRQS_OFF
- 	xorl	%edx, %edx			# zero error code
-diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
-index eb5f799..20e5f7ab 100644
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -89,13 +89,9 @@ static inline void refresh_sysenter_cs(struct thread_struct *thread)
- /* This is used when switching tasks or entering/exiting vm86 mode. */
- static inline void update_sp0(struct task_struct *task)
- {
--	/* On x86_64, sp0 always points to the entry trampoline stack, which is constant: */
--#ifdef CONFIG_X86_32
--	load_sp0(task->thread.sp0);
--#else
-+	/* sp0 always points to the entry trampoline stack, which is constant: */
- 	if (static_cpu_has(X86_FEATURE_XENPV))
- 		load_sp0(task_top_of_stack(task));
--#endif
- }
- 
- #endif /* _ASM_X86_SWITCH_TO_H */
-diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-index 232152c..86f06e8 100644
---- a/arch/x86/kernel/asm-offsets.c
-+++ b/arch/x86/kernel/asm-offsets.c
-@@ -103,6 +103,7 @@ void common(void) {
- 	OFFSET(CPU_ENTRY_AREA_entry_trampoline, cpu_entry_area, entry_trampoline);
- 	OFFSET(CPU_ENTRY_AREA_entry_stack, cpu_entry_area, entry_stack_page);
- 	DEFINE(SIZEOF_entry_stack, sizeof(struct entry_stack));
-+	DEFINE(MASK_entry_stack, (~(sizeof(struct entry_stack) - 1)));
- 
- 	/* Offset for sp0 and sp1 into the tss_struct */
- 	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 8a5b185..311e988 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1718,11 +1718,12 @@ void cpu_init(void)
- 	enter_lazy_tlb(&init_mm, curr);
- 
- 	/*
--	 * Initialize the TSS.  Don't bother initializing sp0, as the initial
--	 * task never enters user mode.
-+	 * Initialize the TSS.  sp0 points to the entry trampoline stack
-+	 * regardless of what task is running.
- 	 */
- 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
- 	load_TR_desc();
-+	load_sp0((unsigned long)(cpu_entry_stack(cpu) + 1));
- 
- 	load_mm_ldt(&init_mm);
- 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 03408b9..2b256d3 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -56,14 +56,12 @@ __visible DEFINE_PER_CPU_PAGE_ALIGNED(struct tss_struct, cpu_tss_rw) = {
- 		 */
- 		.sp0 = (1UL << (BITS_PER_LONG-1)) + 1,
- 
--#ifdef CONFIG_X86_64
- 		/*
- 		 * .sp1 is cpu_current_top_of_stack.  The init task never
- 		 * runs user code, but cpu_current_top_of_stack should still
- 		 * be well defined before the first context switch.
- 		 */
- 		.sp1 = TOP_OF_INIT_STACK,
--#endif
- 
- #ifdef CONFIG_X86_32
- 		.ss0 = __KERNEL_DS,
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 097d36a..3f3a8c6 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -289,10 +289,12 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	 */
- 	update_sp0(next_p);
- 	refresh_sysenter_cs(next);
--	this_cpu_write(cpu_current_top_of_stack,
--		       (unsigned long)task_stack_page(next_p) +
--		       THREAD_SIZE);
--	/* SYSENTER reads the task-stack from tss.sp1 */
-+	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
-+	/*
-+	 * TODO: Find a way to let cpu_current_top_of_stack point to
-+	 * cpu_tss_rw.x86_tss.sp1. Doing so now results in stack corruption with
-+	 * iret exceptions.
-+	 */
- 	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
- 
- 	/*
+ .section .fixup, "ax"
+ ENTRY(iret_exc	)
+ 	pushl	$0				# no error code
 -- 
 2.7.4
