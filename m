@@ -1,305 +1,550 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754972AbeDWMjG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:39:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50562 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754909AbeDWMjB (ORCPT
+        id S1755100AbeDWMj6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:39:58 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:33330 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755054AbeDWMjz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:39:01 -0400
-Date: Mon, 23 Apr 2018 14:38:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Diego Viola <diego.viola@gmail.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, len.brown@intel.com,
-        rui.zhang@intel.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: Experiencing freezes with kernel 4.16.3 on a desktop with E5500
- CPU (bisect included)
-Message-ID: <20180423123847.GL4082@hirez.programming.kicks-ass.net>
-References: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com>
- <20180423091633.GU4064@hirez.programming.kicks-ass.net>
- <CA+ToGPEaHb1ueDRGuzCzm_HxketqxW8j1gawEsCCp2QGLCA=xg@mail.gmail.com>
- <20180423114850.GK4082@hirez.programming.kicks-ass.net>
- <CA+ToGPHA+Y=0PtiXF7fTSqSgwtzsJy3Z=U1i3xiW9jkzQGsXWQ@mail.gmail.com>
+        Mon, 23 Apr 2018 08:39:55 -0400
+X-Google-Smtp-Source: AIpwx4+s+KYiPPiLOKCmsmZm1FX/j9UddIf9gtJUood6Lnjkz0PpyhqJvYV1WpXQSsCGF+65q3gzBeKpYYdOqwRosQc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+ToGPHA+Y=0PtiXF7fTSqSgwtzsJy3Z=U1i3xiW9jkzQGsXWQ@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <736C3C1A-AABA-471C-94D2-ECF3353F78A3@cnexlabs.com>
+References: <1524155964-3743-1-git-send-email-hans.ml.holmberg@owltronix.com>
+ <1524155964-3743-2-git-send-email-hans.ml.holmberg@owltronix.com> <736C3C1A-AABA-471C-94D2-ECF3353F78A3@cnexlabs.com>
+From: Hans Holmberg <hans@owltronix.com>
+Date: Mon, 23 Apr 2018 15:39:52 +0300
+Message-ID: <CANr-nt1TNukaBGuB3D8po3M9ReF_E5eJN44XiOqJfKXfYpCMrA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] lightnvm: pblk: rework write error recovery path
+To: Javier Gonzalez <javier@cnexlabs.com>
+Cc: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 08:49:25AM -0300, Diego Viola wrote:
-> On Mon, Apr 23, 2018 at 8:48 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Mon, Apr 23, 2018 at 08:23:24AM -0300, Diego Viola wrote:
-> >> > That's a Core2 era chip; does it actually have stable TSC ?
-> >>
-> >> I'm not sure.
-> >
-> > dmesg | grep -i tsc
-> >
-> > should be able to tell you.
-> 
-> [diego@dualcore ~]$ dmesg | grep -i tsc
-> [    0.000000] tsc: Fast TSC calibration using PIT
-> [    0.016666] tsc: Fast TSC calibration using PIT
-> [    0.019999] tsc: Detected 2793.087 MHz processor
-> [    0.019999] clocksource: tsc-early: mask: 0xffffffffffffffff
-> max_cycles: 0x2842be30f1f, max_idle_ns: 440795236296 ns
-> [    0.162058] clocksource: Switched to clocksource tsc-early
-> [    0.300076] tsc: Marking TSC unstable due to TSC halts in idle
-> [diego@dualcore ~]$
+On Fri, Apr 20, 2018 at 9:38 PM, Javier Gonzalez <javier@cnexlabs.com> wrote:
+>> On 19 Apr 2018, at 09.39, Hans Holmberg <hans.ml.holmberg@owltronix.com> wrote:
+>>
+>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>
+>> The write error recovery path is incomplete, so rework
+>> the write error recovery handling to do resubmits directly
+>> from the write buffer.
+>>
+>> When a write error occurs, the remaining sectors in the chunk are
+>> mapped out and invalidated and the request inserted in a resubmit list.
+>>
+>> The writer thread checks if there are any requests to resubmit,
+>> scans and invalidates any lbas that have been overwritten by later
+>> writes and resubmits the failed entries.
+>>
+>> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>> ---
+>> drivers/lightnvm/pblk-init.c     |   2 +
+>> drivers/lightnvm/pblk-recovery.c |  91 ---------------
+>> drivers/lightnvm/pblk-write.c    | 241 ++++++++++++++++++++++++++++-----------
+>> drivers/lightnvm/pblk.h          |   8 +-
+>> 4 files changed, 180 insertions(+), 162 deletions(-)
+>>
+>> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+>> index bfc488d..6f06727 100644
+>> --- a/drivers/lightnvm/pblk-init.c
+>> +++ b/drivers/lightnvm/pblk-init.c
+>> @@ -426,6 +426,7 @@ static int pblk_core_init(struct pblk *pblk)
+>>               goto free_r_end_wq;
+>>
+>>       INIT_LIST_HEAD(&pblk->compl_list);
+>> +     INIT_LIST_HEAD(&pblk->resubmit_list);
+>>
+>>       return 0;
+>>
+>> @@ -1185,6 +1186,7 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
+>>       pblk->state = PBLK_STATE_RUNNING;
+>>       pblk->gc.gc_enabled = 0;
+>>
+>> +     spin_lock_init(&pblk->resubmit_lock);
+>>       spin_lock_init(&pblk->trans_lock);
+>>       spin_lock_init(&pblk->lock);
+>>
+>> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+>> index 9cb6d5d..5983428 100644
+>> --- a/drivers/lightnvm/pblk-recovery.c
+>> +++ b/drivers/lightnvm/pblk-recovery.c
+>> @@ -16,97 +16,6 @@
+>>
+>> #include "pblk.h"
+>>
+>> -void pblk_submit_rec(struct work_struct *work)
+>> -{
+>> -     struct pblk_rec_ctx *recovery =
+>> -                     container_of(work, struct pblk_rec_ctx, ws_rec);
+>> -     struct pblk *pblk = recovery->pblk;
+>> -     struct nvm_rq *rqd = recovery->rqd;
+>> -     struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
+>> -     struct bio *bio;
+>> -     unsigned int nr_rec_secs;
+>> -     unsigned int pgs_read;
+>> -     int ret;
+>> -
+>> -     nr_rec_secs = bitmap_weight((unsigned long int *)&rqd->ppa_status,
+>> -                                                             NVM_MAX_VLBA);
+>> -
+>> -     bio = bio_alloc(GFP_KERNEL, nr_rec_secs);
+>> -
+>> -     bio->bi_iter.bi_sector = 0;
+>> -     bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
+>> -     rqd->bio = bio;
+>> -     rqd->nr_ppas = nr_rec_secs;
+>> -
+>> -     pgs_read = pblk_rb_read_to_bio_list(&pblk->rwb, bio, &recovery->failed,
+>> -                                                             nr_rec_secs);
+>
+> Please, remove functions that are not longer used. Doing a pass on the
+> rest of the removed functions would be a good idea.
 
-Much thanks.. I suspect there a bunch of fail when marking unstable
-before we register clocksource_tsc.
+Yes, thanks.
 
-The below patch is a bit ugly, but should cure a number of things; it
-compiles but hasn't otherwise been tested, can you give it a spin?
+>
+>> -     if (pgs_read != nr_rec_secs) {
+>> -             pr_err("pblk: could not read recovery entries\n");
+>> -             goto err;
+>> -     }
+>> -
+>> -     if (pblk_setup_w_rec_rq(pblk, rqd, c_ctx)) {
+>
+> Same here
 
----
+I'll clean it up.
 
- - when TSC is unstable and we've already registered tsc-early, don't
-   forget to unregister it; this then leaves us without a tsc
-   clocksource entirely -- which is good.
+>> -
+>> -#ifdef CONFIG_NVM_DEBUG
+>> -     atomic_long_add(nr_rec_secs, &pblk->recov_writes);
+>> -#endif
+>
+> Can you add this debug counter to the new path? I see you added other
+> counters, if it is a rename, can you put it on a separate patch?
 
- - when we call mark_tsc_unstable() before we've registered
-   clocksource_tsc things go wobbly because it doesn't know about
-   clocksource_tsc_early. Fix that by:
+Thanks for catching the lost recov counter update, what other counters
+are you referring to?
 
-    - Make clocksource_mark_unstable() work for unregistered
-      clocksources.
+>
+>> -
+>> -     ret = pblk_submit_io(pblk, rqd);
+>> -     if (ret) {
+>> -             pr_err("pblk: I/O submission failed: %d\n", ret);
+>> -             goto err;
+>> -     }
+>> -
+>> -     mempool_free(recovery, pblk->rec_pool);
+>> -     return;
+>> -
+>> -err:
+>> -     bio_put(bio);
+>> -     pblk_free_rqd(pblk, rqd, PBLK_WRITE);
+>> -}
+>> -
+>> -int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
+>> -                     struct pblk_rec_ctx *recovery, u64 *comp_bits,
+>> -                     unsigned int comp)
+>> -{
+>> -     struct nvm_rq *rec_rqd;
+>> -     struct pblk_c_ctx *rec_ctx;
+>> -     int nr_entries = c_ctx->nr_valid + c_ctx->nr_padded;
+>> -
+>> -     rec_rqd = pblk_alloc_rqd(pblk, PBLK_WRITE);
+>> -     rec_ctx = nvm_rq_to_pdu(rec_rqd);
+>> -
+>> -     /* Copy completion bitmap, but exclude the first X completed entries */
+>> -     bitmap_shift_right((unsigned long int *)&rec_rqd->ppa_status,
+>> -                             (unsigned long int *)comp_bits,
+>> -                             comp, NVM_MAX_VLBA);
+>> -
+>> -     /* Save the context for the entries that need to be re-written and
+>> -      * update current context with the completed entries.
+>> -      */
+>> -     rec_ctx->sentry = pblk_rb_wrap_pos(&pblk->rwb, c_ctx->sentry + comp);
+>> -     if (comp >= c_ctx->nr_valid) {
+>> -             rec_ctx->nr_valid = 0;
+>> -             rec_ctx->nr_padded = nr_entries - comp;
+>> -
+>> -             c_ctx->nr_padded = comp - c_ctx->nr_valid;
+>> -     } else {
+>> -             rec_ctx->nr_valid = c_ctx->nr_valid - comp;
+>> -             rec_ctx->nr_padded = c_ctx->nr_padded;
+>> -
+>> -             c_ctx->nr_valid = comp;
+>> -             c_ctx->nr_padded = 0;
+>> -     }
+>> -
+>> -     recovery->rqd = rec_rqd;
+>> -     recovery->pblk = pblk;
+>> -
+>> -     return 0;
+>> -}
+>> -
+>> int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta_buf)
+>> {
+>>       u32 crc;
+>> diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+>> index 3e6f1eb..ab45157 100644
+>> --- a/drivers/lightnvm/pblk-write.c
+>> +++ b/drivers/lightnvm/pblk-write.c
+>> @@ -103,68 +103,147 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
+>>       pblk_rb_sync_end(&pblk->rwb, &flags);
+>> }
+>>
+>> -/* When a write fails, we are not sure whether the block has grown bad or a page
+>> - * range is more susceptible to write errors. If a high number of pages fail, we
+>> - * assume that the block is bad and we mark it accordingly. In all cases, we
+>> - * remap and resubmit the failed entries as fast as possible; if a flush is
+>> - * waiting on a completion, the whole stack would stall otherwise.
+>> - */
+>> -static void pblk_end_w_fail(struct pblk *pblk, struct nvm_rq *rqd)
+>> +/* Map remaining sectors in chunk, starting from ppa */
+>> +static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
+>> {
+>> -     void *comp_bits = &rqd->ppa_status;
+>> -     struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
+>> -     struct pblk_rec_ctx *recovery;
+>> -     struct ppa_addr *ppa_list = rqd->ppa_list;
+>> -     int nr_ppas = rqd->nr_ppas;
+>> -     unsigned int c_entries;
+>> -     int bit, ret;
+>> +     struct nvm_tgt_dev *dev = pblk->dev;
+>> +     struct nvm_geo *geo = &dev->geo;
+>> +     struct pblk_line *line;
+>> +     struct ppa_addr map_ppa = *ppa;
+>> +     u64 paddr;
+>> +     int done = 0;
+>>
+>> -     if (unlikely(nr_ppas == 1))
+>> -             ppa_list = &rqd->ppa_addr;
+>> +     line = &pblk->lines[pblk_ppa_to_line(*ppa)];
+>> +     spin_lock(&line->lock);
+>>
+>> -     recovery = mempool_alloc(pblk->rec_pool, GFP_ATOMIC);
+>> +     while (!done)  {
+>> +             paddr = pblk_dev_ppa_to_line_addr(pblk, map_ppa);
+>>
+>> -     INIT_LIST_HEAD(&recovery->failed);
+>> +             if (!test_and_set_bit(paddr, line->map_bitmap))
+>> +                     line->left_msecs--;
+>>
+>> -     bit = -1;
+>> -     while ((bit = find_next_bit(comp_bits, nr_ppas, bit + 1)) < nr_ppas) {
+>> -             struct pblk_rb_entry *entry;
+>> -             struct ppa_addr ppa;
+>> +             if (!test_and_set_bit(paddr, line->invalid_bitmap))
+>> +                     le32_add_cpu(line->vsc, -1);
+>>
+>> -             /* Logic error */
+>> -             if (bit > c_ctx->nr_valid) {
+>> -                     WARN_ONCE(1, "pblk: corrupted write request\n");
+>> -                     mempool_free(recovery, pblk->rec_pool);
+>> -                     goto out;
+>> +             if (geo->version == NVM_OCSSD_SPEC_12) {
+>> +                     map_ppa.ppa++;
+>> +                     if (map_ppa.g.pg == geo->num_pg)
+>> +                             done = 1;
+>> +             } else {
+>> +                     map_ppa.m.sec++;
+>> +                     if (map_ppa.m.sec == geo->clba)
+>> +                             done = 1;
+>>               }
+>> +     }
+>>
+>> -             ppa = ppa_list[bit];
+>> -             entry = pblk_rb_sync_scan_entry(&pblk->rwb, &ppa);
+>> -             if (!entry) {
+>> -                     pr_err("pblk: could not scan entry on write failure\n");
+>> -                     mempool_free(recovery, pblk->rec_pool);
+>> -                     goto out;
+>> -             }
+>> +     spin_unlock(&line->lock);
+>> +}
+>> +
+>> +static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
+>> +             unsigned int nr_entries)
+>
+> Can you align this?
 
-       - which means we have to be able to detect this; use cs.list
-         for this; initialize it empty.
-       - means we also have to place all cs.list manipulation under
-         watchdog_lock -- bit ugly.
+Done.
 
-    - Make __clocksource_unstable() de-rate the clocksource.
+>
+>> +{
+>> +     struct pblk_rb *rb = &pblk->rwb;
+>> +     struct pblk_rb_entry *entry;
+>> +     struct pblk_line *line;
+>> +     struct pblk_w_ctx *w_ctx;
+>> +     struct ppa_addr ppa_l2p;
+>> +     int flags;
+>> +     unsigned int pos, i;
+>> +
+>> +     spin_lock(&pblk->trans_lock);
+>> +     pos = sentry;
+>> +     for (i = 0; i < nr_entries; i++) {
+>> +             entry = &rb->entries[pos];
+>> +             w_ctx = &entry->w_ctx;
+>> +
+>> +             /* Check if the lba has been overwritten */
+>> +             ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
+>> +             if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
+>> +                     w_ctx->lba = ADDR_EMPTY;
+>> +
+>> +             /* Mark up the entry as submittable again */
+>> +             flags = READ_ONCE(w_ctx->flags);
+>> +             flags |= PBLK_WRITTEN_DATA;
+>> +             /* Release flags on write context. Protect from writes */
+>> +             smp_store_release(&w_ctx->flags, flags);
+>>
+>> -             /* The list is filled first and emptied afterwards. No need for
+>> -              * protecting it with a lock
+>> +             /* Decrese the reference count to the line as we will
+>> +              * re-map these entries
+>>                */
+>> -             list_add_tail(&entry->index, &recovery->failed);
+>> +             line = &pblk->lines[pblk_ppa_to_line(w_ctx->ppa)];
+>> +             kref_put(&line->ref, pblk_line_put);
+>> +
+>> +             pos = (pos + 1) & (rb->nr_entries - 1);
+>>       }
+>> +     spin_unlock(&pblk->trans_lock);
+>> +}
+>>
+>> -     c_entries = find_first_bit(comp_bits, nr_ppas);
+>> -     ret = pblk_recov_setup_rq(pblk, c_ctx, recovery, comp_bits, c_entries);
+>> -     if (ret) {
+>> -             pr_err("pblk: could not recover from write failure\n");
+>> -             mempool_free(recovery, pblk->rec_pool);
+>> -             goto out;
+>> +static void pblk_queue_resubmit(struct pblk *pblk, struct pblk_c_ctx *c_ctx)
+>> +{
+>> +     struct pblk_c_ctx *r_ctx;
+>> +
+>> +     r_ctx = kzalloc(sizeof(struct pblk_c_ctx), GFP_KERNEL);
+>> +     if (!r_ctx) {
+>> +             pr_err("pblk: failed to allocate resubmit context");
+>
+> No need to print allocation failures - I know there are a few of these
+> in the code, but they should be removed.
 
-    - Call clocksource_mark_unstable() on both tsc and tsc_early.
+Yep, checkpatch warns on these. Done.
 
-This way we should either end up with a derated tsc clocksource marked
-UNSTABLE or no tsc clocksource at all, either should result in it not
-becoming the active clocksource.
+>
+>> +             return;
+>>       }
+>>
+>> +     r_ctx->lun_bitmap = NULL;
+>> +     r_ctx->sentry = c_ctx->sentry;
+>> +     r_ctx->nr_valid = c_ctx->nr_valid;
+>> +     r_ctx->nr_padded = c_ctx->nr_padded;
+>> +
+>> +     spin_lock(&pblk->resubmit_lock);
+>> +     list_add_tail(&r_ctx->list, &pblk->resubmit_list);
+>> +     spin_unlock(&pblk->resubmit_lock);
+>> +}
+>> +
+>> +static void pblk_submit_rec(struct work_struct *work)
+>> +{
+>> +     struct pblk_rec_ctx *recovery =
+>> +                     container_of(work, struct pblk_rec_ctx, ws_rec);
+>> +     struct pblk *pblk = recovery->pblk;
+>> +     struct nvm_rq *rqd = recovery->rqd;
+>> +     struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
+>> +     struct ppa_addr *ppa_list;
+>> +
+>> +     pblk_log_write_err(pblk, rqd);
+>> +
+>> +     if (rqd->nr_ppas == 1)
+>> +             ppa_list = &rqd->ppa_addr;
+>> +     else
+>> +             ppa_list = rqd->ppa_list;
+>> +
+>> +     pblk_map_remaining(pblk, ppa_list);
+>> +     pblk_queue_resubmit(pblk, c_ctx);
+>> +
+>> +     pblk_up_rq(pblk, rqd->ppa_list, rqd->nr_ppas, c_ctx->lun_bitmap);
+>> +     if (c_ctx->nr_padded)
+>> +             pblk_bio_free_pages(pblk, rqd->bio, c_ctx->nr_valid,
+>> +                                                     c_ctx->nr_padded);
+>> +     bio_put(rqd->bio);
+>> +     pblk_free_rqd(pblk, rqd, PBLK_WRITE);
+>> +     mempool_free(recovery, pblk->rec_pool);
+>> +
+>> +     atomic_dec(&pblk->inflight_io);
+>> +}
+>> +
+>> +
+>> +static void pblk_end_w_fail(struct pblk *pblk, struct nvm_rq *rqd)
+>> +{
+>> +     struct pblk_rec_ctx *recovery;
+>> +
+>> +     recovery = mempool_alloc(pblk->rec_pool, GFP_ATOMIC);
+>> +     if (!recovery) {
+>> +             pr_err("pblk: could not allocate recovery work\n");
+>> +             return;
+>> +     }
+>> +
+>> +     recovery->pblk = pblk;
+>> +     recovery->rqd = rqd;
+>> +
+>>       INIT_WORK(&recovery->ws_rec, pblk_submit_rec);
+>>       queue_work(pblk->close_wq, &recovery->ws_rec);
+>> -
+>> -out:
+>> -     pblk_complete_write(pblk, rqd, c_ctx);
+>> }
+>>
+>> static void pblk_end_io_write(struct nvm_rq *rqd)
+>> @@ -173,8 +252,8 @@ static void pblk_end_io_write(struct nvm_rq *rqd)
+>>       struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
+>>
+>>       if (rqd->error) {
+>> -             pblk_log_write_err(pblk, rqd);
+>> -             return pblk_end_w_fail(pblk, rqd);
+>> +             pblk_end_w_fail(pblk, rqd);
+>> +             return;
+>>       }
+>> #ifdef CONFIG_NVM_DEBUG
+>>       else
+>> @@ -339,6 +418,7 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
+>>       bio = pblk_bio_map_addr(pblk, data, rq_ppas, rq_len,
+>>                                       l_mg->emeta_alloc_type, GFP_KERNEL);
+>>       if (IS_ERR(bio)) {
+>> +             pr_err("pblk: failed to map emeta io");
+>>               ret = PTR_ERR(bio);
+>>               goto fail_free_rqd;
+>>       }
+>> @@ -515,26 +595,54 @@ static int pblk_submit_write(struct pblk *pblk)
+>>       unsigned int secs_avail, secs_to_sync, secs_to_com;
+>>       unsigned int secs_to_flush;
+>>       unsigned long pos;
+>> +     unsigned int resubmit;
+>>
+>> -     /* If there are no sectors in the cache, flushes (bios without data)
+>> -      * will be cleared on the cache threads
+>> -      */
+>> -     secs_avail = pblk_rb_read_count(&pblk->rwb);
+>> -     if (!secs_avail)
+>> -             return 1;
+>> -
+>> -     secs_to_flush = pblk_rb_flush_point_count(&pblk->rwb);
+>> -     if (!secs_to_flush && secs_avail < pblk->min_write_pgs)
+>> -             return 1;
+>> -
+>> -     secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail, secs_to_flush);
+>> -     if (secs_to_sync > pblk->max_write_pgs) {
+>> -             pr_err("pblk: bad buffer sync calculation\n");
+>> -             return 1;
+>> -     }
+>> +     spin_lock(&pblk->resubmit_lock);
+>> +     resubmit = !list_empty(&pblk->resubmit_list);
+>> +     spin_unlock(&pblk->resubmit_lock);
+>> +
+>> +     /* Resubmit failed writes first */
+>> +     if (resubmit) {
+>> +             struct pblk_c_ctx *r_ctx;
+>> +
+>> +             spin_lock(&pblk->resubmit_lock);
+>> +             r_ctx = list_first_entry(&pblk->resubmit_list,
+>> +                                     struct pblk_c_ctx, list);
+>> +             list_del(&r_ctx->list);
+>> +             spin_unlock(&pblk->resubmit_lock);
+>>
+>> -     secs_to_com = (secs_to_sync > secs_avail) ? secs_avail : secs_to_sync;
+>> -     pos = pblk_rb_read_commit(&pblk->rwb, secs_to_com);
+>> +             secs_avail = r_ctx->nr_valid;
+>> +             pos = r_ctx->sentry;
+>> +
+>> +             pblk_prepare_resubmit(pblk, pos, secs_avail);
+>> +             secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail,
+>> +                             secs_avail);
+>> +
+>> +             kfree(r_ctx);
+>> +     } else {
+>> +             /* If there are no sectors in the cache,
+>> +              * flushes (bios without data) will be cleared on
+>> +              * the cache threads
+>> +              */
+>> +             secs_avail = pblk_rb_read_count(&pblk->rwb);
+>> +             if (!secs_avail)
+>> +                     return 1;
+>> +
+>> +             secs_to_flush = pblk_rb_flush_point_count(&pblk->rwb);
+>> +             if (!secs_to_flush && secs_avail < pblk->min_write_pgs)
+>> +                     return 1;
+>> +
+>> +             secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail,
+>> +                                     secs_to_flush);
+>> +             if (secs_to_sync > pblk->max_write_pgs) {
+>> +                     pr_err("pblk: bad buffer sync calculation\n");
+>> +                     return 1;
+>> +             }
+>> +
+>> +             secs_to_com = (secs_to_sync > secs_avail) ?
+>> +                     secs_avail : secs_to_sync;
+>> +             pos = pblk_rb_read_commit(&pblk->rwb, secs_to_com);
+>> +     }
+>>
+>>       bio = bio_alloc(GFP_KERNEL, secs_to_sync);
+>>
+>> @@ -553,6 +661,7 @@ static int pblk_submit_write(struct pblk *pblk)
+>>       if (pblk_submit_io_set(pblk, rqd))
+>>               goto fail_free_bio;
+>>
+>> +
+>
+> No need for the extra line
 
----
- arch/x86/kernel/tsc.c     | 22 +++++++++++-----------
- kernel/time/clocksource.c | 43 +++++++++++++++++++++++++++++++++++--------
- 2 files changed, 46 insertions(+), 19 deletions(-)
+Removed.
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 91e6da48cbb6..74392d9d51e0 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -1067,6 +1067,7 @@ static struct clocksource clocksource_tsc_early = {
- 	.resume			= tsc_resume,
- 	.mark_unstable		= tsc_cs_mark_unstable,
- 	.tick_stable		= tsc_cs_tick_stable,
-+	.list			= LIST_HEAD_INIT(clocksource_tsc_early.list),
- };
- 
- /*
-@@ -1086,6 +1087,7 @@ static struct clocksource clocksource_tsc = {
- 	.resume			= tsc_resume,
- 	.mark_unstable		= tsc_cs_mark_unstable,
- 	.tick_stable		= tsc_cs_tick_stable,
-+	.list			= LIST_HEAD_INIT(clocksource_tsc.list),
- };
- 
- void mark_tsc_unstable(char *reason)
-@@ -1098,13 +1100,9 @@ void mark_tsc_unstable(char *reason)
- 		clear_sched_clock_stable();
- 	disable_sched_clock_irqtime();
- 	pr_info("Marking TSC unstable due to %s\n", reason);
--	/* Change only the rating, when not registered */
--	if (clocksource_tsc.mult) {
--		clocksource_mark_unstable(&clocksource_tsc);
--	} else {
--		clocksource_tsc.flags |= CLOCK_SOURCE_UNSTABLE;
--		clocksource_tsc.rating = 0;
--	}
-+
-+	clocksource_mark_unstable(&clocksource_tsc_early);
-+	clocksource_mark_unstable(&clocksource_tsc);
- }
- 
- EXPORT_SYMBOL_GPL(mark_tsc_unstable);
-@@ -1244,7 +1242,7 @@ static void tsc_refine_calibration_work(struct work_struct *work)
- 
- 	/* Don't bother refining TSC on unstable systems */
- 	if (tsc_unstable)
--		return;
-+		goto unreg;
- 
- 	/*
- 	 * Since the work is started early in boot, we may be
-@@ -1297,11 +1295,12 @@ static void tsc_refine_calibration_work(struct work_struct *work)
- 
- out:
- 	if (tsc_unstable)
--		return;
-+		goto unreg;
- 
- 	if (boot_cpu_has(X86_FEATURE_ART))
- 		art_related_clocksource = &clocksource_tsc;
- 	clocksource_register_khz(&clocksource_tsc, tsc_khz);
-+unreg:
- 	clocksource_unregister(&clocksource_tsc_early);
- }
- 
-@@ -1311,8 +1310,8 @@ static int __init init_tsc_clocksource(void)
- 	if (!boot_cpu_has(X86_FEATURE_TSC) || tsc_disabled > 0 || !tsc_khz)
- 		return 0;
- 
--	if (check_tsc_unstable())
--		return 0;
-+	if (tsc_unstable)
-+		goto unreg;
- 
- 	if (tsc_clocksource_reliable)
- 		clocksource_tsc.flags &= ~CLOCK_SOURCE_MUST_VERIFY;
-@@ -1328,6 +1327,7 @@ static int __init init_tsc_clocksource(void)
- 		if (boot_cpu_has(X86_FEATURE_ART))
- 			art_related_clocksource = &clocksource_tsc;
- 		clocksource_register_khz(&clocksource_tsc, tsc_khz);
-+unreg:
- 		clocksource_unregister(&clocksource_tsc_early);
- 		return 0;
- 	}
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 0e974cface0b..f689c9e3ff5e 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -119,6 +119,16 @@ static DEFINE_SPINLOCK(watchdog_lock);
- static int watchdog_running;
- static atomic_t watchdog_reset_pending;
- 
-+static void inline clocksource_watchdog_lock(unsigned long *flags)
-+{
-+	spin_lock_irqsave(&watchdog_lock, *flags);
-+}
-+
-+static void inline clocksource_watchdog_unlock(unsigned long *flags)
-+{
-+	spin_unlock_irqrestore(&watchdog_lock, *flags);
-+}
-+
- static int clocksource_watchdog_kthread(void *data);
- static void __clocksource_change_rating(struct clocksource *cs, int rating);
- 
-@@ -142,6 +152,13 @@ static void __clocksource_unstable(struct clocksource *cs)
- 	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
- 	cs->flags |= CLOCK_SOURCE_UNSTABLE;
- 
-+	if (list_empty(&cs->list)) {
-+		cs->rating = 0;
-+		return;
-+	}
-+
-+	__clocksource_change_rating(cs, 0);
-+
- 	if (cs->mark_unstable)
- 		cs->mark_unstable(cs);
- 
-@@ -164,7 +181,7 @@ void clocksource_mark_unstable(struct clocksource *cs)
- 
- 	spin_lock_irqsave(&watchdog_lock, flags);
- 	if (!(cs->flags & CLOCK_SOURCE_UNSTABLE)) {
--		if (list_empty(&cs->wd_list))
-+		if (!list_empty(&cs->list) && list_empty(&cs->wd_list))
- 			list_add(&cs->wd_list, &watchdog_list);
- 		__clocksource_unstable(cs);
- 	}
-@@ -319,9 +336,8 @@ static void clocksource_resume_watchdog(void)
- 
- static void clocksource_enqueue_watchdog(struct clocksource *cs)
- {
--	unsigned long flags;
-+	INIT_LIST_HEAD(&cs->wd_list);
- 
--	spin_lock_irqsave(&watchdog_lock, flags);
- 	if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
- 		/* cs is a clocksource to be watched. */
- 		list_add(&cs->wd_list, &watchdog_list);
-@@ -331,7 +347,6 @@ static void clocksource_enqueue_watchdog(struct clocksource *cs)
- 		if (cs->flags & CLOCK_SOURCE_IS_CONTINUOUS)
- 			cs->flags |= CLOCK_SOURCE_VALID_FOR_HRES;
- 	}
--	spin_unlock_irqrestore(&watchdog_lock, flags);
- }
- 
- static void clocksource_select_watchdog(bool fallback)
-@@ -373,9 +388,6 @@ static void clocksource_select_watchdog(bool fallback)
- 
- static void clocksource_dequeue_watchdog(struct clocksource *cs)
- {
--	unsigned long flags;
--
--	spin_lock_irqsave(&watchdog_lock, flags);
- 	if (cs != watchdog) {
- 		if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
- 			/* cs is a watched clocksource. */
-@@ -384,7 +396,6 @@ static void clocksource_dequeue_watchdog(struct clocksource *cs)
- 			clocksource_stop_watchdog();
- 		}
- 	}
--	spin_unlock_irqrestore(&watchdog_lock, flags);
- }
- 
- static int __clocksource_watchdog_kthread(void)
-@@ -779,14 +790,19 @@ EXPORT_SYMBOL_GPL(__clocksource_update_freq_scale);
-  */
- int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
- {
-+	unsigned long flags;
- 
- 	/* Initialize mult/shift and max_idle_ns */
- 	__clocksource_update_freq_scale(cs, scale, freq);
- 
- 	/* Add clocksource to the clocksource list */
- 	mutex_lock(&clocksource_mutex);
-+
-+	clocksource_watchdog_lock(&flags);
- 	clocksource_enqueue(cs);
- 	clocksource_enqueue_watchdog(cs);
-+	clocksource_watchdog_unlock(&flags);
-+
- 	clocksource_select();
- 	clocksource_select_watchdog(false);
- 	mutex_unlock(&clocksource_mutex);
-@@ -808,8 +824,13 @@ static void __clocksource_change_rating(struct clocksource *cs, int rating)
-  */
- void clocksource_change_rating(struct clocksource *cs, int rating)
- {
-+	unsigned long flags;
-+
- 	mutex_lock(&clocksource_mutex);
-+	clocksource_watchdog_lock(&flags);
- 	__clocksource_change_rating(cs, rating);
-+	clocksource_watchdog_unlock(&flags);
-+
- 	clocksource_select();
- 	clocksource_select_watchdog(false);
- 	mutex_unlock(&clocksource_mutex);
-@@ -821,6 +842,8 @@ EXPORT_SYMBOL(clocksource_change_rating);
-  */
- static int clocksource_unbind(struct clocksource *cs)
- {
-+	unsigned long flags;
-+
- 	if (clocksource_is_watchdog(cs)) {
- 		/* Select and try to install a replacement watchdog. */
- 		clocksource_select_watchdog(true);
-@@ -834,8 +857,12 @@ static int clocksource_unbind(struct clocksource *cs)
- 		if (curr_clocksource == cs)
- 			return -EBUSY;
- 	}
-+
-+	clocksource_watchdog_lock(&flags);
- 	clocksource_dequeue_watchdog(cs);
- 	list_del_init(&cs->list);
-+	clocksource_watchdog_lock(&flags);
-+
- 	return 0;
- }
- 
+>
+>> #ifdef CONFIG_NVM_DEBUG
+>>       atomic_long_add(secs_to_sync, &pblk->sub_writes);
+>> #endif
+>> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+>> index 9838d03..cff6aea 100644
+>> --- a/drivers/lightnvm/pblk.h
+>> +++ b/drivers/lightnvm/pblk.h
+>> @@ -128,7 +128,6 @@ struct pblk_pad_rq {
+>> struct pblk_rec_ctx {
+>>       struct pblk *pblk;
+>>       struct nvm_rq *rqd;
+>> -     struct list_head failed;
+>>       struct work_struct ws_rec;
+>> };
+>>
+>> @@ -664,6 +663,9 @@ struct pblk {
+>>
+>>       struct list_head compl_list;
+>>
+>> +     spinlock_t resubmit_lock;        /* Resubmit list lock */
+>> +     struct list_head resubmit_list; /* Resubmit list for failed writes*/
+>> +
+>>       mempool_t *page_bio_pool;
+>>       mempool_t *gen_ws_pool;
+>>       mempool_t *rec_pool;
+>> @@ -849,13 +851,9 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq);
+>> /*
+>>  * pblk recovery
+>>  */
+>> -void pblk_submit_rec(struct work_struct *work);
+>> struct pblk_line *pblk_recov_l2p(struct pblk *pblk);
+>> int pblk_recov_pad(struct pblk *pblk);
+>> int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta);
+>> -int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
+>> -                     struct pblk_rec_ctx *recovery, u64 *comp_bits,
+>> -                     unsigned int comp);
+>>
+>> /*
+>>  * pblk gc
+>> --
+>> 2.7.4
+>
+> Otherwise, it looks good to me.
+
+Great, thanks for the review!
