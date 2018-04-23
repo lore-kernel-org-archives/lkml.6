@@ -1,280 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932175AbeDWRk4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:40:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47615 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932079AbeDWRkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:40:53 -0400
-Date: Mon, 23 Apr 2018 19:40:50 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Russell King <linux@armlinux.org.uk>, Jyri Sarha <jsarha@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 3/8] drm/atmel-hlcdc: support bus-width (12/16/18/24)
- in endpoint nodes
-Message-ID: <20180423194050.6e8be628@bbrezillon>
-In-Reply-To: <20180423072301.11962-4-peda@axentia.se>
-References: <20180423072301.11962-1-peda@axentia.se>
-        <20180423072301.11962-4-peda@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932265AbeDWRlK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:41:10 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:16334 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932079AbeDWRk6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 13:40:58 -0400
+X-Authority-Reason: nr=8
+Date: Mon, 23 Apr 2018 12:40:54 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 04/11] marvell-ccic: mcam-core: fix potential Spectre variant
+ 1
+Message-ID: <64785db2204b1a4446d012e4508c16c523c43345.1524499368.git.gustavo@embeddedor.com>
+References: <cover.1524499368.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1524499368.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.48.65
+X-Source-L: No
+X-Exim-ID: 1fAfST-004Nvv-Hx
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.145.48.65]:49558
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 37
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018 09:22:56 +0200
-Peter Rosin <peda@axentia.se> wrote:
+fmt->index can be controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
 
-> This beats the heuristic that the connector is involved in what format
-> should be output for cases where this fails.
-> 
-> E.g. if there is a bridge that changes format between the encoder and the
-> connector, or if some of the RGB pins between the lcd controller and the
-> encoder are not routed on the PCB.
-> 
-> This is critical for the devices that have the "conflicting output
-> formats" issue (SAM9N12, SAM9X5, SAMA5D3), since the most significant
-> RGB bits move around depending on the selected output mode. For
-> devices that do not have the "conflicting output formats" issue
-> (SAMA5D2, SAMA5D4), this is completely irrelevant.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+Smatch warning:
+drivers/media/platform/marvell-ccic/mcam-core.c:1323 mcam_vidioc_enum_fmt_vid_cap() warn: potential spectre issue 'mcam_formats'
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fix this by sanitizing fmt->index before using it to index
+mcam_formats.
 
-> ---
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c   | 70 +++++++++++++++++-------
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h     |  1 +
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c | 67 ++++++++++++++++++++---
->  3 files changed, 111 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> index d73281095fac..c38a479ada98 100644
-> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> @@ -226,6 +226,55 @@ static void atmel_hlcdc_crtc_atomic_enable(struct drm_crtc *c,
->  #define ATMEL_HLCDC_RGB888_OUTPUT	BIT(3)
->  #define ATMEL_HLCDC_OUTPUT_MODE_MASK	GENMASK(3, 0)
->  
-> +static int atmel_hlcdc_connector_output_mode(struct drm_connector_state *state)
-> +{
-> +	struct drm_connector *connector = state->connector;
-> +	struct drm_display_info *info = &connector->display_info;
-> +	struct drm_encoder *encoder;
-> +	unsigned int supported_fmts = 0;
-> +	int j;
-> +
-> +	encoder = state->best_encoder;
-> +	if (!encoder)
-> +		encoder = connector->encoder;
-> +
-> +	switch (atmel_hlcdc_encoder_get_bus_fmt(encoder)) {
-> +	case 0:
-> +		break;
-> +	case MEDIA_BUS_FMT_RGB444_1X12:
-> +		return ATMEL_HLCDC_RGB444_OUTPUT;
-> +	case MEDIA_BUS_FMT_RGB565_1X16:
-> +		return ATMEL_HLCDC_RGB565_OUTPUT;
-> +	case MEDIA_BUS_FMT_RGB666_1X18:
-> +		return ATMEL_HLCDC_RGB666_OUTPUT;
-> +	case MEDIA_BUS_FMT_RGB888_1X24:
-> +		return ATMEL_HLCDC_RGB888_OUTPUT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (j = 0; j < info->num_bus_formats; j++) {
-> +		switch (info->bus_formats[j]) {
-> +		case MEDIA_BUS_FMT_RGB444_1X12:
-> +			supported_fmts |= ATMEL_HLCDC_RGB444_OUTPUT;
-> +			break;
-> +		case MEDIA_BUS_FMT_RGB565_1X16:
-> +			supported_fmts |= ATMEL_HLCDC_RGB565_OUTPUT;
-> +			break;
-> +		case MEDIA_BUS_FMT_RGB666_1X18:
-> +			supported_fmts |= ATMEL_HLCDC_RGB666_OUTPUT;
-> +			break;
-> +		case MEDIA_BUS_FMT_RGB888_1X24:
-> +			supported_fmts |= ATMEL_HLCDC_RGB888_OUTPUT;
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
-> +	return supported_fmts;
-> +}
-> +
->  static int atmel_hlcdc_crtc_select_output_mode(struct drm_crtc_state *state)
->  {
->  	unsigned int output_fmts = ATMEL_HLCDC_OUTPUT_MODE_MASK;
-> @@ -238,31 +287,12 @@ static int atmel_hlcdc_crtc_select_output_mode(struct drm_crtc_state *state)
->  	crtc = drm_crtc_to_atmel_hlcdc_crtc(state->crtc);
->  
->  	for_each_new_connector_in_state(state->state, connector, cstate, i) {
-> -		struct drm_display_info *info = &connector->display_info;
->  		unsigned int supported_fmts = 0;
-> -		int j;
->  
->  		if (!cstate->crtc)
->  			continue;
->  
-> -		for (j = 0; j < info->num_bus_formats; j++) {
-> -			switch (info->bus_formats[j]) {
-> -			case MEDIA_BUS_FMT_RGB444_1X12:
-> -				supported_fmts |= ATMEL_HLCDC_RGB444_OUTPUT;
-> -				break;
-> -			case MEDIA_BUS_FMT_RGB565_1X16:
-> -				supported_fmts |= ATMEL_HLCDC_RGB565_OUTPUT;
-> -				break;
-> -			case MEDIA_BUS_FMT_RGB666_1X18:
-> -				supported_fmts |= ATMEL_HLCDC_RGB666_OUTPUT;
-> -				break;
-> -			case MEDIA_BUS_FMT_RGB888_1X24:
-> -				supported_fmts |= ATMEL_HLCDC_RGB888_OUTPUT;
-> -				break;
-> -			default:
-> -				break;
-> -			}
-> -		}
-> +		supported_fmts = atmel_hlcdc_connector_output_mode(cstate);
->  
->  		if (crtc->dc->desc->conflicting_output_formats)
->  			output_fmts &= supported_fmts;
-> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
-> index ab32d5b268d2..77bd2d0ae508 100644
-> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
-> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h
-> @@ -454,5 +454,6 @@ void atmel_hlcdc_crtc_irq(struct drm_crtc *c);
->  int atmel_hlcdc_crtc_create(struct drm_device *dev);
->  
->  int atmel_hlcdc_create_outputs(struct drm_device *dev);
-> +int atmel_hlcdc_encoder_get_bus_fmt(struct drm_encoder *encoder);
->  
->  #endif /* DRM_ATMEL_HLCDC_H */
-> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-> index 8db51fb131db..db4d6aaaef93 100644
-> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-> @@ -27,33 +27,86 @@
->  
->  #include "atmel_hlcdc_dc.h"
->  
-> +struct atmel_hlcdc_rgb_output {
-> +	struct drm_encoder encoder;
-> +	int bus_fmt;
-> +};
-> +
->  static const struct drm_encoder_funcs atmel_hlcdc_panel_encoder_funcs = {
->  	.destroy = drm_encoder_cleanup,
->  };
->  
-> +static struct atmel_hlcdc_rgb_output *
-> +atmel_hlcdc_encoder_to_rgb_output(struct drm_encoder *encoder)
-> +{
-> +	return container_of(encoder, struct atmel_hlcdc_rgb_output, encoder);
-> +}
-> +
-> +int atmel_hlcdc_encoder_get_bus_fmt(struct drm_encoder *encoder)
-> +{
-> +	struct atmel_hlcdc_rgb_output *output;
-> +
-> +	output = atmel_hlcdc_encoder_to_rgb_output(encoder);
-> +
-> +	return output->bus_fmt;
-> +}
-> +
-> +static int atmel_hlcdc_of_bus_fmt(struct device_node *ep)
-> +{
-> +	u32 bus_width = 0;
-> +
-> +	of_property_read_u32(ep, "bus-width", &bus_width);
-> +
-> +	switch (bus_width) {
-> +	case 0:
-> +		return 0;
-> +	case 12:
-> +		return MEDIA_BUS_FMT_RGB444_1X12;
-> +	case 16:
-> +		return MEDIA_BUS_FMT_RGB565_1X16;
-> +	case 18:
-> +		return MEDIA_BUS_FMT_RGB666_1X18;
-> +	case 24:
-> +		return MEDIA_BUS_FMT_RGB888_1X24;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->  static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
->  {
-> -	struct drm_encoder *encoder;
-> +	struct atmel_hlcdc_rgb_output *output;
-> +	struct device_node *ep;
->  	struct drm_panel *panel;
->  	struct drm_bridge *bridge;
->  	int ret;
->  
-> +	ep = of_graph_get_endpoint_by_regs(dev->dev->of_node, 0, endpoint);
-> +	if (!ep)
-> +		return -ENODEV;
-> +
->  	ret = drm_of_find_panel_or_bridge(dev->dev->of_node, 0, endpoint,
->  					  &panel, &bridge);
->  	if (ret)
->  		return ret;
->  
-> -	encoder = devm_kzalloc(dev->dev, sizeof(*encoder), GFP_KERNEL);
-> -	if (!encoder)
-> +	output = devm_kzalloc(dev->dev, sizeof(*output), GFP_KERNEL);
-> +	if (!output)
->  		return -EINVAL;
->  
-> -	ret = drm_encoder_init(dev, encoder,
-> +	output->bus_fmt = atmel_hlcdc_of_bus_fmt(ep);
-> +	if (output->bus_fmt < 0) {
-> +		dev_err(dev->dev, "invalid bus width\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = drm_encoder_init(dev, &output->encoder,
->  			       &atmel_hlcdc_panel_encoder_funcs,
->  			       DRM_MODE_ENCODER_NONE, NULL);
->  	if (ret)
->  		return ret;
->  
-> -	encoder->possible_crtcs = 0x1;
-> +	output->encoder.possible_crtcs = 0x1;
->  
->  	if (panel) {
->  		bridge = drm_panel_bridge_add(panel, DRM_MODE_CONNECTOR_Unknown);
-> @@ -62,7 +115,7 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
->  	}
->  
->  	if (bridge) {
-> -		ret = drm_bridge_attach(encoder, bridge, NULL);
-> +		ret = drm_bridge_attach(&output->encoder, bridge, NULL);
->  		if (!ret)
->  			return 0;
->  
-> @@ -70,7 +123,7 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
->  			drm_panel_bridge_remove(bridge);
->  	}
->  
-> -	drm_encoder_cleanup(encoder);
-> +	drm_encoder_cleanup(&output->encoder);
->  
->  	return ret;
->  }
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/media/platform/marvell-ccic/mcam-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/media/platform/marvell-ccic/mcam-core.c
+index 80670ee..0a54dba 100644
+--- a/drivers/media/platform/marvell-ccic/mcam-core.c
++++ b/drivers/media/platform/marvell-ccic/mcam-core.c
+@@ -33,6 +33,8 @@
+ 
+ #include "mcam-core.h"
+ 
++#include <linux/nospec.h>
++
+ #ifdef MCAM_MODE_VMALLOC
+ /*
+  * Internal DMA buffer management.  Since the controller cannot do S/G I/O,
+@@ -1318,6 +1320,7 @@ static int mcam_vidioc_enum_fmt_vid_cap(struct file *filp,
+ {
+ 	if (fmt->index >= N_MCAM_FMTS)
+ 		return -EINVAL;
++	fmt->index = array_index_nospec(fmt->index, N_MCAM_FMTS);
+ 	strlcpy(fmt->description, mcam_formats[fmt->index].desc,
+ 			sizeof(fmt->description));
+ 	fmt->pixelformat = mcam_formats[fmt->index].pixelformat;
+-- 
+2.7.4
