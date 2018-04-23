@@ -1,46 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754617AbeDWJ1u (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:27:50 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46635 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754542AbeDWJ1q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:27:46 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Diego Viola <diego.viola@gmail.com>, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, len.brown@intel.com, rui.zhang@intel.com,
-        linux-pm@vger.kernel.org
-Subject: Re: Experiencing freezes with kernel 4.16.3 on a desktop with E5500 CPU (bisect included)
-Date: Mon, 23 Apr 2018 11:27:36 +0200
-Message-ID: <2120072.1825pzNyX4@aspire.rjw.lan>
-In-Reply-To: <20180423091633.GU4064@hirez.programming.kicks-ass.net>
-References: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com> <20180423091633.GU4064@hirez.programming.kicks-ass.net>
+        id S1754666AbeDWJ22 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 05:28:28 -0400
+Received: from mga07.intel.com ([134.134.136.100]:33652 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754078AbeDWJ2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 05:28:24 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,317,1520924400";
+   d="scan'208";a="35424473"
+Date: Mon, 23 Apr 2018 17:29:09 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, wexu@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jfreimann@redhat.com
+Subject: Re: [RFC v2] virtio: support packed ring
+Message-ID: <20180423092908.77rii3gi7dcaf7o6@debian>
+References: <20180401141216.8969-1-tiwei.bie@intel.com>
+ <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, April 23, 2018 11:16:33 AM CEST Peter Zijlstra wrote:
-> On Sat, Apr 21, 2018 at 11:19:55PM -0300, Diego Viola wrote:
+On Mon, Apr 23, 2018 at 01:42:14PM +0800, Jason Wang wrote:
+> On 2018年04月01日 22:12, Tiwei Bie wrote:
+> > Hello everyone,
+> > 
+> > This RFC implements packed ring support for virtio driver.
+> > 
+> > The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
+> > by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
+> > Minor changes are needed for the vhost code, e.g. to kick the guest.
+> > 
+> > TODO:
+> > - Refinements and bug fixes;
+> > - Split into small patches;
+> > - Test indirect descriptor support;
+> > - Test/fix event suppression support;
+> > - Test devices other than net;
+> > 
+> > RFC v1 -> RFC v2:
+> > - Add indirect descriptor support - compile test only;
+> > - Add event suppression supprt - compile test only;
+> > - Move vring_packed_init() out of uapi (Jason, MST);
+> > - Merge two loops into one in virtqueue_add_packed() (Jason);
+> > - Split vring_unmap_one() for packed ring and split ring (Jason);
+> > - Avoid using '%' operator (Jason);
+> > - Rename free_head -> next_avail_idx (Jason);
+> > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+> > - Some other refinements and bug fixes;
+> > 
+> > Thanks!
+> > 
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
+> >   include/linux/virtio_ring.h        |    8 +-
+> >   include/uapi/linux/virtio_config.h |   12 +-
+> >   include/uapi/linux/virtio_ring.h   |   61 ++
+> >   4 files changed, 980 insertions(+), 195 deletions(-)
+> > 
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index 71458f493cf8..0515dca34d77 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -58,14 +58,15 @@
 > 
-> > The problem only happens *after* resuming from suspend, in normal S0
-> > state it never happens.
+> [...]
 > 
-> What kind of suspend are you doing? s2disk, s2ram ?
+> > +
+> > +	if (vq->indirect) {
+> > +		u32 len;
+> > +
+> > +		desc = vq->desc_state[head].indir_desc;
+> > +		/* Free the indirect table, if any, now that it's unmapped. */
+> > +		if (!desc)
+> > +			goto out;
+> > +
+> > +		len = virtio32_to_cpu(vq->vq.vdev,
+> > +				      vq->vring_packed.desc[head].len);
+> > +
+> > +		BUG_ON(!(vq->vring_packed.desc[head].flags &
+> > +			 cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_INDIRECT)));
 > 
-> > My machine is a desktop and has a dual core E5500 CPU with 2GB of RAM,
-> > I run Arch Linux and I use the i3wm.
+> It looks to me spec does not force to keep VRING_DESC_F_INDIRECT here. So we
+> can safely remove this BUG_ON() here.
 > 
-> That's a Core2 era chip; does it actually have stable TSC ?
+> > +		BUG_ON(len == 0 || len % sizeof(struct vring_packed_desc));
 > 
-> > aa83c45762a242acce9b35020363225a7b59d7c9 is the first bad commit
-> 
-> That is most curious; that was supposed to only affect early boot. I'll
-> try and figure out of there's some intersection with suspend.
+> Len could be ignored for used descriptor according to the spec, so we need
+> remove this BUG_ON() too.
 
-Well, FWIW, I wonder if the flags that were set in init_tsc_clocksource() for
-unstable TSC before the above commit may be involved in this somehow.
+Yeah, you're right! The BUG_ON() isn't right. I'll remove it.
+And I think something related to this in the spec isn't very
+clear currently.
+
+In the spec, there are below words:
+
+https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L272
+"""
+In descriptors with VIRTQ_DESC_F_INDIRECT set VIRTQ_DESC_F_WRITE
+is reserved and is ignored by the device.
+"""
+
+So when device writes back an used descriptor in this case,
+device may not set the VIRTQ_DESC_F_WRITE flag as the flag
+is reserved and should be ignored.
+
+https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L170
+"""
+Element Length is reserved for used descriptors without the
+VIRTQ_DESC_F_WRITE flag, and is ignored by drivers.
+"""
+
+And this is the way how driver ignores the `len` in an used
+descriptor.
+
+https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L241
+"""
+To increase ring capacity the driver can store a (read-only
+by the device) table of indirect descriptors anywhere in memory,
+and insert a descriptor in the main virtqueue (with \field{Flags}
+bit VIRTQ_DESC_F_INDIRECT on) that refers to a buffer element
+containing this indirect descriptor table;
+"""
+
+So the indirect descriptors in the table are read-only by
+the device. And the only descriptor which is writeable by
+the device is the descriptor in the main virtqueue (with
+Flags bit VIRTQ_DESC_F_INDIRECT on). So if we ignore the
+`len` in this descriptor, we won't be able to get the
+length of the data written by the device.
+
+So I think the `len` in this descriptor will carry the
+length of the data written by the device (if the buffers
+are writable to the device) even if the VIRTQ_DESC_F_WRITE
+isn't set by the device. How do you think?
+
+
+> 
+> The reason is we don't touch descriptor ring in the case of split, so
+> BUG_ON()s may help there.
+> 
+> > +
+> > +		for (j = 0; j < len / sizeof(struct vring_packed_desc); j++)
+> > +			vring_unmap_one_packed(vq, &desc[j]);
+> > +
+> > +		kfree(desc);
+> > +		vq->desc_state[head].indir_desc = NULL;
+> > +	} else if (ctx) {
+> > +		*ctx = vq->desc_state[head].indir_desc;
+> > +	}
+> > +
+> > +out:
+> > +	return vq->desc_state[head].num;
+> > +}
+> > +
+> > +static inline bool more_used_split(const struct vring_virtqueue *vq)
+> >   {
+> >   	return vq->last_used_idx != virtio16_to_cpu(vq->vq.vdev, vq->vring.used->idx);
+> >   }
+> > +static inline bool more_used_packed(const struct vring_virtqueue *vq)
+> > +{
+> > +	u16 last_used, flags;
+> > +	bool avail, used;
+> > +
+> > +	if (vq->vq.num_free == vq->vring_packed.num)
+> > +		return false;
+> > +
+> > +	last_used = vq->last_used_idx;
+> > +	flags = virtio16_to_cpu(vq->vq.vdev,
+> > +				vq->vring_packed.desc[last_used].flags);
+> > +	avail = flags & VRING_DESC_F_AVAIL(1);
+> > +	used = flags & VRING_DESC_F_USED(1);
+> > +
+> > +	return avail == used;
+> > +}
+> 
+> This looks interesting, spec said:
+> 
+> "
+> Thus VIRTQ_DESC_F_AVAIL and VIRTQ_DESC_F_USED bits are different for an
+> available descriptor and
+> equal for a used descriptor.
+> Note that this observation is mostly useful for sanity-checking as these are
+> necessary but not sufficient
+> conditions - for example, all descriptors are zero-initialized. To detect
+> used and available descriptors it is
+> possible for drivers and devices to keep track of the last observed value of
+> VIRTQ_DESC_F_USED/VIRTQ_-
+> DESC_F_AVAIL. Other techniques to detect
+> VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
+> might also be possible.
+> "
+> 
+> So it looks to me it was not sufficient, looking at the example codes in
+> spec, do we need to track last seen used_wrap_counter here?
+
+I don't think we have to track used_wrap_counter in
+driver. There was a discussion on this:
+
+https://lists.oasis-open.org/archives/virtio-dev/201802/msg00177.html
+
+And after that, below sentence was added (it's also
+in the above words you quoted):
+
+"""
+Other techniques to detect
+VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
+might also be possible.
+"""
+
+Best regards,
+Tiwei Bie
+
+
+> 
+> Thanks
