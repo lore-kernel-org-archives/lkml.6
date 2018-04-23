@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754174AbeDWCdF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 22:33:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60116 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753959AbeDWCbX (ORCPT
+        id S1754194AbeDWCdQ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 22:33:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58860 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753962AbeDWCbX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 22 Apr 2018 22:31:23 -0400
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -15,24 +15,24 @@ Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel.opensrc@gmail.com,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 06/22] rcu: Rename cond_resched_rcu_qs() to cond_resched_tasks_rcu_qs()
-Date: Sun, 22 Apr 2018 19:32:11 -0700
+Subject: [PATCH tip/core/rcu 11/22] srcu: Add cleanup_srcu_struct_quiesced()
+Date: Sun, 22 Apr 2018 19:32:16 -0700
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180423023150.GA21533@linux.vnet.ibm.com>
 References: <20180423023150.GA21533@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18042302-0036-0000-0000-000002E8AF7B
+x-cbid: 18042302-0040-0000-0000-00000420725F
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008903; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000257; SDB=6.01021888; UDB=6.00521536; IPR=6.00801123;
  MB=3.00020719; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 02:31:19
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042302-0037-0000-0000-00004414FD97
-Message-Id: <1524450747-22778-6-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18042302-0041-0000-0000-000008267BD5
+Message-Id: <1524450747-22778-11-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1804230025
@@ -40,215 +40,173 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit e31d28b6ab8f ("trace: Eliminate cond_resched_rcu_qs() in favor
-of cond_resched()") substituted cond_resched() for the earlier call
-to cond_resched_rcu_qs().  However, the new-age cond_resched() does
-not do anything to help RCU-tasks grace periods because (1) RCU-tasks
-is only enabled when CONFIG_PREEMPT=y and (2) cond_resched() is a
-complete no-op when preemption is enabled.  This situation results
-in hangs when running the trace benchmarks.
+The current cleanup_srcu_struct() flushes work, which prevents it
+from being invoked from some workqueue contexts, as well as from
+atomic (non-blocking) contexts.  This patch therefore introduced a
+cleanup_srcu_struct_quiesced(), which can be invoked only after all
+activity on the specified srcu_struct has completed.  This restriction
+allows cleanup_srcu_struct_quiesced() to be invoked from workqueue
+contexts as well as from atomic contexts.
 
-A number of potential fixes were discussed on LKML
-(https://lkml.kernel.org/r/20180224151240.0d63a059@vmware.local.home),
-including making cond_resched() not be a no-op; making cond_resched()
-not be a no-op, but only when running tracing benchmarks; reverting
-the aforementioned commit (which works because cond_resched_rcu_qs()
-does provide an RCU-tasks quiescent state; and adding a call to the
-scheduler/RCU rcu_note_voluntary_context_switch() function.  All were
-deemed unsatisfactory, either due to added cond_resched() overhead or
-due to magic functions inviting cargo culting.
-
-This commit renames cond_resched_rcu_qs() to cond_resched_tasks_rcu_qs(),
-which provides a clear hint as to what this function is doing and
-why and where it should be used, and then replaces the call to
-cond_resched() with cond_resched_tasks_rcu_qs() in the trace benchmark's
-benchmark_event_kthread() function.
-
-Reported-by: Steven Rostedt <rostedt@goodmis.org>
+Suggested-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Tested-by: Nitzan Carmi <nitzanc@mellanox.com>
 ---
- include/linux/rcupdate.h       |  4 ++--
- kernel/rcu/rcuperf.c           |  2 +-
- kernel/rcu/tree.c              | 20 ++++++++++----------
- kernel/rcu/tree_plugin.h       |  4 ++--
- kernel/rcu/update.c            |  2 +-
- kernel/torture.c               |  2 +-
- kernel/trace/trace_benchmark.c |  4 ++--
- 7 files changed, 19 insertions(+), 19 deletions(-)
+ include/linux/srcu.h    | 36 +++++++++++++++++++++++++++++++++++-
+ kernel/rcu/rcutorture.c |  7 ++++++-
+ kernel/rcu/srcutiny.c   |  9 ++++++---
+ kernel/rcu/srcutree.c   | 30 +++++++++++++++++-------------
+ 4 files changed, 64 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 36360d07f25b..19d235fefdb9 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -188,13 +188,13 @@ static inline void exit_tasks_rcu_finish(void) { }
- #endif /* #else #ifdef CONFIG_TASKS_RCU */
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 33c1c698df09..91494d7e8e41 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -69,11 +69,45 @@ struct srcu_struct { };
+ 
+ void call_srcu(struct srcu_struct *sp, struct rcu_head *head,
+ 		void (*func)(struct rcu_head *head));
+-void cleanup_srcu_struct(struct srcu_struct *sp);
++void _cleanup_srcu_struct(struct srcu_struct *sp, bool quiesced);
+ int __srcu_read_lock(struct srcu_struct *sp) __acquires(sp);
+ void __srcu_read_unlock(struct srcu_struct *sp, int idx) __releases(sp);
+ void synchronize_srcu(struct srcu_struct *sp);
+ 
++/**
++ * cleanup_srcu_struct - deconstruct a sleep-RCU structure
++ * @sp: structure to clean up.
++ *
++ * Must invoke this after you are finished using a given srcu_struct that
++ * was initialized via init_srcu_struct(), else you leak memory.
++ */
++static inline void cleanup_srcu_struct(struct srcu_struct *sp)
++{
++	_cleanup_srcu_struct(sp, false);
++}
++
++/**
++ * cleanup_srcu_struct_quiesced - deconstruct a quiesced sleep-RCU structure
++ * @sp: structure to clean up.
++ *
++ * Must invoke this after you are finished using a given srcu_struct that
++ * was initialized via init_srcu_struct(), else you leak memory.  Also,
++ * all grace-period processing must have completed.
++ *
++ * "Completed" means that the last synchronize_srcu() and
++ * synchronize_srcu_expedited() calls must have returned before the call
++ * to cleanup_srcu_struct_quiesced().  It also means that the callback
++ * from the last call_srcu() must have been invoked before the call to
++ * cleanup_srcu_struct_quiesced(), but you can use srcu_barrier() to help
++ * with this last.  Violating these rules will get you a WARN_ON() splat
++ * (with high probability, anyway), and will also cause the srcu_struct
++ * to be leaked.
++ */
++static inline void cleanup_srcu_struct_quiesced(struct srcu_struct *sp)
++{
++	_cleanup_srcu_struct(sp, true);
++}
++
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
  
  /**
-- * cond_resched_rcu_qs - Report potential quiescent states to RCU
-+ * cond_resched_tasks_rcu_qs - Report potential quiescent states to RCU
-  *
-  * This macro resembles cond_resched(), except that it is defined to
-  * report potential quiescent states to RCU-tasks even if the cond_resched()
-  * machinery were to be shut off, as some advocate for PREEMPT kernels.
-  */
--#define cond_resched_rcu_qs() \
-+#define cond_resched_tasks_rcu_qs() \
- do { \
- 	if (!cond_resched()) \
- 		rcu_note_voluntary_context_switch_lite(current); \
-diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-index 777e7a6a0292..e232846516b3 100644
---- a/kernel/rcu/rcuperf.c
-+++ b/kernel/rcu/rcuperf.c
-@@ -369,7 +369,7 @@ static bool __maybe_unused torturing_tasks(void)
-  */
- static void rcu_perf_wait_shutdown(void)
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 680c96d8c00f..f0e1d44459f8 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -593,7 +593,12 @@ static void srcu_torture_init(void)
+ 
+ static void srcu_torture_cleanup(void)
  {
--	cond_resched_rcu_qs();
-+	cond_resched_tasks_rcu_qs();
- 	if (atomic_read(&n_rcu_perf_writer_finished) < nrealwriters)
- 		return;
- 	while (!torture_must_stop())
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 2a734692a581..c4db0e20b035 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1234,10 +1234,10 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
- 	}
+-	cleanup_srcu_struct(&srcu_ctld);
++	static DEFINE_TORTURE_RANDOM(rand);
++
++	if (torture_random(&rand) & 0x800)
++		cleanup_srcu_struct(&srcu_ctld);
++	else
++		cleanup_srcu_struct_quiesced(&srcu_ctld);
+ 	srcu_ctlp = &srcu_ctl; /* In case of a later rcutorture run. */
+ }
  
- 	/*
--	 * Has this CPU encountered a cond_resched_rcu_qs() since the
--	 * beginning of the grace period?  For this to be the case,
--	 * the CPU has to have noticed the current grace period.  This
--	 * might not be the case for nohz_full CPUs looping in the kernel.
-+	 * Has this CPU encountered a cond_resched() since the beginning
-+	 * of the grace period?  For this to be the case, the CPU has to
-+	 * have noticed the current grace period.  This might not be the
-+	 * case for nohz_full CPUs looping in the kernel.
- 	 */
- 	jtsq = jiffies_till_sched_qs;
- 	ruqp = per_cpu_ptr(&rcu_dynticks.rcu_urgent_qs, rdp->cpu);
-@@ -2049,7 +2049,7 @@ static bool rcu_gp_init(struct rcu_state *rsp)
- 					    rnp->level, rnp->grplo,
- 					    rnp->grphi, rnp->qsmask);
- 		raw_spin_unlock_irq_rcu_node(rnp);
--		cond_resched_rcu_qs();
-+		cond_resched_tasks_rcu_qs();
- 		WRITE_ONCE(rsp->gp_activity, jiffies);
- 	}
- 
-@@ -2151,7 +2151,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
- 		sq = rcu_nocb_gp_get(rnp);
- 		raw_spin_unlock_irq_rcu_node(rnp);
- 		rcu_nocb_gp_cleanup(sq);
--		cond_resched_rcu_qs();
-+		cond_resched_tasks_rcu_qs();
- 		WRITE_ONCE(rsp->gp_activity, jiffies);
- 		rcu_gp_slow(rsp, gp_cleanup_delay);
- 	}
-@@ -2202,7 +2202,7 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 			/* Locking provides needed memory barrier. */
- 			if (rcu_gp_init(rsp))
- 				break;
--			cond_resched_rcu_qs();
-+			cond_resched_tasks_rcu_qs();
- 			WRITE_ONCE(rsp->gp_activity, jiffies);
- 			WARN_ON(signal_pending(current));
- 			trace_rcu_grace_period(rsp->name,
-@@ -2247,7 +2247,7 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 				trace_rcu_grace_period(rsp->name,
- 						       READ_ONCE(rsp->gpnum),
- 						       TPS("fqsend"));
--				cond_resched_rcu_qs();
-+				cond_resched_tasks_rcu_qs();
- 				WRITE_ONCE(rsp->gp_activity, jiffies);
- 				ret = 0; /* Force full wait till next FQS. */
- 				j = jiffies_till_next_fqs;
-@@ -2260,7 +2260,7 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 				}
- 			} else {
- 				/* Deal with stray signal. */
--				cond_resched_rcu_qs();
-+				cond_resched_tasks_rcu_qs();
- 				WRITE_ONCE(rsp->gp_activity, jiffies);
- 				WARN_ON(signal_pending(current));
- 				trace_rcu_grace_period(rsp->name,
-@@ -2782,7 +2782,7 @@ static void force_qs_rnp(struct rcu_state *rsp, int (*f)(struct rcu_data *rsp))
- 	struct rcu_node *rnp;
- 
- 	rcu_for_each_leaf_node(rsp, rnp) {
--		cond_resched_rcu_qs();
-+		cond_resched_tasks_rcu_qs();
- 		mask = 0;
- 		raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 		if (rnp->qsmask == 0) {
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 12774c4fb546..dfc42c3d52d4 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1598,7 +1598,7 @@ static int rcu_oom_notify(struct notifier_block *self,
- 
- 	for_each_online_cpu(cpu) {
- 		smp_call_function_single(cpu, rcu_oom_notify_cpu, NULL, 1);
--		cond_resched_rcu_qs();
-+		cond_resched_tasks_rcu_qs();
- 	}
- 
- 	/* Unconditionally decrement: no need to wake ourselves up. */
-@@ -2227,7 +2227,7 @@ static int rcu_nocb_kthread(void *arg)
- 				cl++;
- 			c++;
- 			local_bh_enable();
--			cond_resched_rcu_qs();
-+			cond_resched_tasks_rcu_qs();
- 			list = next;
- 		}
- 		trace_rcu_batch_end(rdp->rsp->name, c, !!list, 0, 0, 1);
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 68fa19a5e7bd..e401960c7f51 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -624,7 +624,7 @@ EXPORT_SYMBOL_GPL(call_rcu_tasks);
-  * grace period has elapsed, in other words after all currently
-  * executing rcu-tasks read-side critical sections have elapsed.  These
-  * read-side critical sections are delimited by calls to schedule(),
-- * cond_resched_rcu_qs(), idle execution, userspace execution, calls
-+ * cond_resched_tasks_rcu_qs(), idle execution, userspace execution, calls
-  * to synchronize_rcu_tasks(), and (in theory, anyway) cond_resched().
-  *
-  * This is a very specialized primitive, intended only for a few uses in
-diff --git a/kernel/torture.c b/kernel/torture.c
-index 37b94012a3f8..3de1efbecd6a 100644
---- a/kernel/torture.c
-+++ b/kernel/torture.c
-@@ -574,7 +574,7 @@ void stutter_wait(const char *title)
+diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+index 76ac5f50b2c7..622792abe41a 100644
+--- a/kernel/rcu/srcutiny.c
++++ b/kernel/rcu/srcutiny.c
+@@ -86,16 +86,19 @@ EXPORT_SYMBOL_GPL(init_srcu_struct);
+  * Must invoke this after you are finished using a given srcu_struct that
+  * was initialized via init_srcu_struct(), else you leak memory.
+  */
+-void cleanup_srcu_struct(struct srcu_struct *sp)
++void _cleanup_srcu_struct(struct srcu_struct *sp, bool quiesced)
  {
- 	int spt;
+ 	WARN_ON(sp->srcu_lock_nesting[0] || sp->srcu_lock_nesting[1]);
+-	flush_work(&sp->srcu_work);
++	if (quiesced)
++		WARN_ON(work_pending(&sp->srcu_work));
++	else
++		flush_work(&sp->srcu_work);
+ 	WARN_ON(sp->srcu_gp_running);
+ 	WARN_ON(sp->srcu_gp_waiting);
+ 	WARN_ON(sp->srcu_cb_head);
+ 	WARN_ON(&sp->srcu_cb_head != sp->srcu_cb_tail);
+ }
+-EXPORT_SYMBOL_GPL(cleanup_srcu_struct);
++EXPORT_SYMBOL_GPL(_cleanup_srcu_struct);
  
--	cond_resched_rcu_qs();
-+	cond_resched_tasks_rcu_qs();
- 	spt = READ_ONCE(stutter_pause_test);
- 	for (; spt; spt = READ_ONCE(stutter_pause_test)) {
- 		if (spt == 1) {
-diff --git a/kernel/trace/trace_benchmark.c b/kernel/trace/trace_benchmark.c
-index 22fee766081b..80e0b2aca703 100644
---- a/kernel/trace/trace_benchmark.c
-+++ b/kernel/trace/trace_benchmark.c
-@@ -159,13 +159,13 @@ static int benchmark_event_kthread(void *arg)
- 		 * wants to run, schedule in, but if the CPU is idle,
- 		 * we'll keep burning cycles.
- 		 *
--		 * Note the _rcu_qs() version of cond_resched() will
-+		 * Note the tasks_rcu_qs() version of cond_resched() will
- 		 * notify synchronize_rcu_tasks() that this thread has
- 		 * passed a quiescent state for rcu_tasks. Otherwise
- 		 * this thread will never voluntarily schedule which would
- 		 * block synchronize_rcu_tasks() indefinitely.
- 		 */
--		cond_resched();
-+		cond_resched_tasks_rcu_qs();
- 	}
+ /*
+  * Removes the count for the old reader from the appropriate element of
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index fb560fca9ef4..b4123d7a2cec 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -366,24 +366,28 @@ static unsigned long srcu_get_delay(struct srcu_struct *sp)
+ 	return SRCU_INTERVAL;
+ }
  
- 	return 0;
+-/**
+- * cleanup_srcu_struct - deconstruct a sleep-RCU structure
+- * @sp: structure to clean up.
+- *
+- * Must invoke this after you are finished using a given srcu_struct that
+- * was initialized via init_srcu_struct(), else you leak memory.
+- */
+-void cleanup_srcu_struct(struct srcu_struct *sp)
++/* Helper for cleanup_srcu_struct() and cleanup_srcu_struct_quiesced(). */
++void _cleanup_srcu_struct(struct srcu_struct *sp, bool quiesced)
+ {
+ 	int cpu;
+ 
+ 	if (WARN_ON(!srcu_get_delay(sp)))
+-		return; /* Leakage unless caller handles error. */
++		return; /* Just leak it! */
+ 	if (WARN_ON(srcu_readers_active(sp)))
+-		return; /* Leakage unless caller handles error. */
+-	flush_delayed_work(&sp->work);
++		return; /* Just leak it! */
++	if (quiesced) {
++		if (WARN_ON(delayed_work_pending(&sp->work)))
++			return; /* Just leak it! */
++	} else {
++		flush_delayed_work(&sp->work);
++	}
+ 	for_each_possible_cpu(cpu)
+-		flush_delayed_work(&per_cpu_ptr(sp->sda, cpu)->work);
++		if (quiesced) {
++			if (WARN_ON(delayed_work_pending(&per_cpu_ptr(sp->sda, cpu)->work)))
++				return; /* Just leak it! */
++		} else {
++			flush_delayed_work(&per_cpu_ptr(sp->sda, cpu)->work);
++		}
+ 	if (WARN_ON(rcu_seq_state(READ_ONCE(sp->srcu_gp_seq)) != SRCU_STATE_IDLE) ||
+ 	    WARN_ON(srcu_readers_active(sp))) {
+ 		pr_info("%s: Active srcu_struct %p state: %d\n", __func__, sp, rcu_seq_state(READ_ONCE(sp->srcu_gp_seq)));
+@@ -392,7 +396,7 @@ void cleanup_srcu_struct(struct srcu_struct *sp)
+ 	free_percpu(sp->sda);
+ 	sp->sda = NULL;
+ }
+-EXPORT_SYMBOL_GPL(cleanup_srcu_struct);
++EXPORT_SYMBOL_GPL(_cleanup_srcu_struct);
+ 
+ /*
+  * Counts the new reader in the appropriate per-CPU element of the
 -- 
 2.5.2
