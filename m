@@ -1,135 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755791AbeDWPfU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:35:20 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:38316 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755546AbeDWPfQ (ORCPT
+        id S1755797AbeDWPgK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:36:10 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:53180 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755244AbeDWPgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:35:16 -0400
-X-Google-Smtp-Source: AIpwx4/62GA/pasqSD7/oQ1lbOFqTHNr1NM0EGZu9bO/eEwY29fXNKU45hnGowfE6oqENiQuPnaEpGOxMg6YkNl5OPw=
-MIME-Version: 1.0
-In-Reply-To: <20180417191710.14855-4-longli@linuxonhyperv.com>
-References: <20180417191710.14855-1-longli@linuxonhyperv.com> <20180417191710.14855-4-longli@linuxonhyperv.com>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 23 Apr 2018 10:34:55 -0500
-Message-ID: <CAH2r5msFfBuTb5AF7inHVnA0B=miTc-S3kw_cKV_SfmeEd0_cw@mail.gmail.com>
-Subject: Re: [Patch v2 4/6] cifs: smbd: Don't use RDMA read/write when signing
- is used
-To: Long Li <longli@microsoft.com>
-Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 23 Apr 2018 11:36:07 -0400
+From: Liming Sun <lsun@mellanox.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Liming Sun <lsun@mellanox.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/3] Documentation: bluefield-dw-mshc: add DT description
+Date: Mon, 23 Apr 2018 11:32:21 -0400
+Message-Id: <7505274f8d82642fd08e874160acd45be2418673.1524497286.git.lsun@mellanox.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+In-Reply-To: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+This commit adds "mellanox,bluefield-dw-mshc" for dwmmc driver
+extension on Mellanox BlueField SoC platform.
 
-On Tue, Apr 17, 2018 at 2:17 PM, Long Li <longli@linuxonhyperv.com> wrote:
-> From: Long Li <longli@microsoft.com>
->
-> SMB server will not sign data transferred through RDMA read/write. When
-> signing is used, it's a good idea to have all the data signed.
->
-> In this case, use RDMA send/recv for all data transfers. This will degrade
-> performance as this is not generally configured in RDMA environemnt. So
-> warn the user on signing and RDMA send/recv.
->
-> Signed-off-by: Long Li <longli@microsoft.com>
-> Cc: stable@vger.kernel.org
-> ---
->  fs/cifs/cifssmb.c |  3 +++
->  fs/cifs/smb2ops.c | 18 ++++++++++++++----
->  fs/cifs/smb2pdu.c |  4 ++--
->  3 files changed, 19 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-> index 6d3e40d..1529a08 100644
-> --- a/fs/cifs/cifssmb.c
-> +++ b/fs/cifs/cifssmb.c
-> @@ -455,6 +455,9 @@ cifs_enable_signing(struct TCP_Server_Info *server, bool mnt_sign_required)
->                 server->sign = true;
->         }
->
-> +       if (cifs_rdma_enabled(server) && server->sign)
-> +               cifs_dbg(VFS, "Signing is enabled, and RDMA read/write will be disabled");
-> +
->         return 0;
->  }
->
-> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-> index 38ebf3f..b76b858 100644
-> --- a/fs/cifs/smb2ops.c
-> +++ b/fs/cifs/smb2ops.c
-> @@ -252,9 +252,14 @@ smb2_negotiate_wsize(struct cifs_tcon *tcon, struct smb_vol *volume_info)
->         wsize = volume_info->wsize ? volume_info->wsize : CIFS_DEFAULT_IOSIZE;
->         wsize = min_t(unsigned int, wsize, server->max_write);
->  #ifdef CONFIG_CIFS_SMB_DIRECT
-> -       if (server->rdma)
-> -               wsize = min_t(unsigned int,
-> +       if (server->rdma) {
-> +               if (server->sign)
-> +                       wsize = min_t(unsigned int,
-> +                               wsize, server->smbd_conn->max_fragmented_send_size);
-> +               else
-> +                       wsize = min_t(unsigned int,
->                                 wsize, server->smbd_conn->max_readwrite_size);
-> +       }
->  #endif
->         if (!(server->capabilities & SMB2_GLOBAL_CAP_LARGE_MTU))
->                 wsize = min_t(unsigned int, wsize, SMB2_MAX_BUFFER_SIZE);
-> @@ -272,9 +277,14 @@ smb2_negotiate_rsize(struct cifs_tcon *tcon, struct smb_vol *volume_info)
->         rsize = volume_info->rsize ? volume_info->rsize : CIFS_DEFAULT_IOSIZE;
->         rsize = min_t(unsigned int, rsize, server->max_read);
->  #ifdef CONFIG_CIFS_SMB_DIRECT
-> -       if (server->rdma)
-> -               rsize = min_t(unsigned int,
-> +       if (server->rdma) {
-> +               if (server->sign)
-> +                       rsize = min_t(unsigned int,
-> +                               rsize, server->smbd_conn->max_fragmented_recv_size);
-> +               else
-> +                       rsize = min_t(unsigned int,
->                                 rsize, server->smbd_conn->max_readwrite_size);
-> +       }
->  #endif
->
->         if (!(server->capabilities & SMB2_GLOBAL_CAP_LARGE_MTU))
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index 41625e4..33f612f 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -2595,7 +2595,7 @@ smb2_new_read_req(void **buf, unsigned int *total_len,
->          * If we want to do a RDMA write, fill in and append
->          * smbd_buffer_descriptor_v1 to the end of read request
->          */
-> -       if (server->rdma && rdata &&
-> +       if (server->rdma && rdata && !server->sign &&
->                 rdata->bytes >= server->smbd_conn->rdma_readwrite_threshold) {
->
->                 struct smbd_buffer_descriptor_v1 *v1;
-> @@ -2973,7 +2973,7 @@ smb2_async_writev(struct cifs_writedata *wdata,
->          * If we want to do a server RDMA read, fill in and append
->          * smbd_buffer_descriptor_v1 to the end of write request
->          */
-> -       if (server->rdma && wdata->bytes >=
-> +       if (server->rdma && !server->sign && wdata->bytes >=
->                 server->smbd_conn->rdma_readwrite_threshold) {
->
->                 struct smbd_buffer_descriptor_v1 *v1;
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Liming Sun <lsun@mellanox.com>
+---
+ .../devicetree/bindings/mmc/bluefield-dw-mshc.txt  | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
 
-
-
+diff --git a/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+new file mode 100644
+index 0000000..ee0dd61
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+@@ -0,0 +1,29 @@
++* Mellanox Bluefield SoC specific extensions to the Synopsys Designware
++  Mobile Storage Host Controller
++
++Read synopsys-dw-mshc.txt for more details
++
++The Synopsys designware mobile storage host controller is used to interface
++a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
++differences between the core Synopsys dw mshc controller properties described
++by synopsys-dw-mshc.txt and the properties used by the Mellanox Bluefield SoC
++specific extensions to the Synopsys Designware Mobile Storage Host Controller.
++
++Required Properties:
++
++* compatible: should be one of the following.
++  - "mellanox,bluefield-dw-mshc": for controllers with Mellanox Bluefield SoC
++    specific extensions.
++
++Example:
++
++	/* Mellanox Bluefield SoC MMC */
++	dwmmc0@4,0 {
++		compatible = "mellanox,bluefield-dw-mshc";
++		reg = <4 0x8000 0x400>;
++		interrupts = <32>;
++		fifo-depth = <0x100>;
++		clock-frequency = <24000000>;
++		bus-width = <8>;
++		cap-mmc-highspeed;
++	};
 -- 
-Thanks,
-
-Steve
+1.8.3.1
