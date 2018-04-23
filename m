@@ -1,115 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754519AbeDWI0n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:26:43 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:58259 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754398AbeDWIXC (ORCPT
+        id S1754348AbeDWI2i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:28:38 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:46176 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754045AbeDWI2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:23:02 -0400
-X-Google-Smtp-Source: AIpwx49zKWa8Ed66Olla3HQu+xonzXckMQWYNEPA00kPFMmr8tZZqWWpXX43qEphiCBN9qn1fI1uoMRewnPfh2WWx9QJuDuE7JED
+        Mon, 23 Apr 2018 04:28:33 -0400
+X-Google-Smtp-Source: AIpwx4+Ya1QU/MJ5/Qj+dAp6jf6Nqq4EqnC4wSrDqF6BCaz9fwbi8pjkIwbB4TO8arRx0ZB/r8/0xQjH6fE57EkRbYs=
 MIME-Version: 1.0
-Date: Mon, 23 Apr 2018 01:23:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000734c0056a7fbf3b@google.com>
-Subject: KMSAN: uninit-value in ebt_stp_mt_check
-From: syzbot <syzbot+5c06e318fc558cc27823@syzkaller.appspotmail.com>
-To: bridge@lists.linux-foundation.org, coreteam@netfilter.org,
-        davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        stephen@networkplumber.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180423081114.1813726-3-arnd@arndb.de>
+References: <20180423081114.1813726-1-arnd@arndb.de> <20180423081114.1813726-3-arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 23 Apr 2018 10:28:31 +0200
+X-Google-Sender-Auth: ZVY2UI57hL_qMZlx0rZq1S0YVCA
+Message-ID: <CAK8P3a30fo0mviQMgg3OXivbVCkC9vBp2R7NfuLKq=si_O0X_w@mail.gmail.com>
+Subject: Re: [PATCH 3/5] powerpc: use time64_t in read_persistent_clock
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vitaly Bordug <vitb@kernel.crashing.org>,
+        Geoff Levand <geoff@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Apr 23, 2018 at 10:10 AM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-syzbot hit the following crash on  
-https://github.com/google/kmsan.git/master commit
-a7f95e9c8a95e9fbb388c3999b61a17667cd3bbe (Sat Apr 21 13:50:22 2018 +0000)
-kmsan: disable assembly checksums
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=5c06e318fc558cc27823
+> @@ -170,7 +170,6 @@ unsigned long __init maple_get_boot_time(void)
+>         request_resource(&ioport_resource, &rtc_iores);
+>
+>         maple_get_rtc_time(&tm);
+> -       return mktime(tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday,
+> -                     tm.tm_hour, tm.tm_min, tm.tm_sec);
+> +       return rtc_tm_to_time66(&tm);
+>  }
 
-So far this crash happened 3 times on  
-https://github.com/google/kmsan.git/master.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5411555638247424
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6309829995921408
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4546610964987904
-Kernel config: https://syzkaller.appspot.com/x/.config?id=328654897048964367
-compiler: clang version 7.0.0 (trunk 329391)
+No, it's not rtc_tm_to_time66 ;(
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5c06e318fc558cc27823@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+I did some build testing over the weekend to make sure I find all the stupid
+bugs, but then sent out the version without the two fixes. Please ignore all
+five patches, will follow up with v2 that fixes this one and another equally
+trivial bug.
 
-==================================================================
-BUG: KMSAN: uninit-value in ebt_stp_mt_check+0x248/0x410  
-net/bridge/netfilter/ebt_stp.c:164
-CPU: 0 PID: 4520 Comm: syzkaller565841 Not tainted 4.16.0+ #85
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-  ebt_stp_mt_check+0x248/0x410 net/bridge/netfilter/ebt_stp.c:164
-  xt_check_match+0x1449/0x1660 net/netfilter/x_tables.c:499
-  ebt_check_match net/bridge/netfilter/ebtables.c:374 [inline]
-  ebt_check_entry net/bridge/netfilter/ebtables.c:704 [inline]
-  translate_table+0x3ffd/0x5e10 net/bridge/netfilter/ebtables.c:945
-  do_replace_finish+0x1258/0x2ea0 net/bridge/netfilter/ebtables.c:1002
-  do_replace+0x707/0x770 net/bridge/netfilter/ebtables.c:1141
-  do_ebt_set_ctl+0x2ab/0x3c0 net/bridge/netfilter/ebtables.c:1518
-  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-  nf_setsockopt+0x476/0x4d0 net/netfilter/nf_sockopt.c:115
-  ip_setsockopt+0x24b/0x2b0 net/ipv4/ip_sockglue.c:1261
-  dccp_setsockopt+0x1c3/0x1f0 net/dccp/proto.c:576
-  sock_common_setsockopt+0x136/0x170 net/core/sock.c:2975
-  SYSC_setsockopt+0x4b8/0x570 net/socket.c:1849
-  SyS_setsockopt+0x76/0xa0 net/socket.c:1828
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x445d39
-RSP: 002b:00007efff4e14da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445d39
-RDX: 0000000000000080 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000358 R09: 0000000000000000
-R10: 00000000200008c0 R11: 0000000000000246 R12: 00000000006dac20
-R13: 006567646972625f R14: 6f745f3168746576 R15: 0000000000000002
-
-Local variable description: ----mtpar.i@translate_table
-Variable was created at:
-  translate_table+0xb9/0x5e10 net/bridge/netfilter/ebtables.c:833
-  do_replace_finish+0x1258/0x2ea0 net/bridge/netfilter/ebtables.c:1002
-==================================================================
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+       Arnd
