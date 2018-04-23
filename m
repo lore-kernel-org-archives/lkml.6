@@ -1,59 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755658AbeDWPFE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:05:04 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:53239 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932069AbeDWPFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:05:02 -0400
-Date: Mon, 23 Apr 2018 23:04:43 +0800
-In-Reply-To: <20180423150309.dksr2rjazlrmlzx2@flea>
-References: <20180423144657.63264-1-icenowy@aosc.io> <20180423144657.63264-4-icenowy@aosc.io> <20180423150309.dksr2rjazlrmlzx2@flea>
+        id S1755670AbeDWPFX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:05:23 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:56227 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755448AbeDWPFV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:05:21 -0400
+X-Google-Smtp-Source: AIpwx49Guekk7nAv/RJpo52i9oy+6HAkCQkezHuH0P6dDl3UYOWMiGJ/SFp3F3VNmXbV8UiSYAiyP1vl5lFdjAScdgM=
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v3 3/3] ARM: dts: sun8i: h3: Add SY8106A regulator to Orange Pi PC
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
-        Ondrej Jirman <megous@megous.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <34DAE9CF-AB6D-4FB9-9FA6-FAE4E4D2D4C3@aosc.io>
+In-Reply-To: <20180417135732.10100-1-robh@kernel.org>
+References: <20180417135732.10100-1-robh@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 23 Apr 2018 17:05:19 +0200
+Message-ID: <CAPDyKFqjrp_CMvaB_oAQ7Nkr4JJ5Y_z7+Q_E6ht32GY0qZJ9RQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: more status property removal from examples
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vinod Koul <vinod.koul@intel.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tanmay Inamdar <tinamdar@apm.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        Rodolfo Giometti <giometti@enneenne.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-于 2018年4月23日 GMT+08:00 下午11:03:09, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Mon, Apr 23, 2018 at 10:46:57PM +0800, Icenowy Zheng wrote:
->> From: Ondrej Jirman <megous@megous.com>
->> 
->> Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
->> Orange Pi PC, then set the power supply of the ARM cores to this
->> regulator, in order to enable DVFS.
->> 
->> Signed-off-by: Ondrej Jirman <megous@megous.com>
->> [Icenowy: Enable DVFS in this patch, slight changes and change commit
->>  message]
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->> [wens@csie.org: Rename regulator label]
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+On 17 April 2018 at 15:57, Rob Herring <robh@kernel.org> wrote:
+> Whack-a-mole some more occurrences of status in examples.
 >
->Why is there Chen-Yu's SoB? It doesn't really make much sense, unless
->Chen-Yu would have applied this patch already, but then you wouldn't
->post it, right?
+> Cc: Vinod Koul <vinod.koul@intel.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: James Hogan <jhogan@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Tanmay Inamdar <tinamdar@apm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Rodolfo Giometti <giometti@enneenne.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/dma/k3dma.txt       | 1 -
+>  Documentation/devicetree/bindings/dma/ti-edma.txt     | 1 -
+>  Documentation/devicetree/bindings/mips/lantiq/rcu.txt | 2 --
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt    | 4 ----
+>  Documentation/devicetree/bindings/mtd/mtk-nand.txt    | 4 ----
+>  Documentation/devicetree/bindings/pci/xgene-pci.txt   | 7 -------
+>  Documentation/devicetree/bindings/pps/pps-gpio.txt    | 1 -
+>  7 files changed, 20 deletions(-)
 
-This is taken from sunxi/h3-h5-for-4.18 branch, which has
-label name change from wens, and then added microvolt property.
+For mmc:
 
-So his SoB is from when he apply it for the first time.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
 
 >
->Maxime 
+> diff --git a/Documentation/devicetree/bindings/dma/k3dma.txt b/Documentation/devicetree/bindings/dma/k3dma.txt
+> index 23f8d712c3ce..4945aeac4dc4 100644
+> --- a/Documentation/devicetree/bindings/dma/k3dma.txt
+> +++ b/Documentation/devicetree/bindings/dma/k3dma.txt
+> @@ -23,7 +23,6 @@ Controller:
+>                         dma-requests = <27>;
+>                         interrupts = <0 12 4>;
+>                         clocks = <&pclk>;
+> -                       status = "disable";
+>                 };
 >
->> ---
+>  Client:
+> diff --git a/Documentation/devicetree/bindings/dma/ti-edma.txt b/Documentation/devicetree/bindings/dma/ti-edma.txt
+> index 66026dcf53e1..3f15f6644527 100644
+> --- a/Documentation/devicetree/bindings/dma/ti-edma.txt
+> +++ b/Documentation/devicetree/bindings/dma/ti-edma.txt
+> @@ -190,7 +190,6 @@ mmc0: mmc@23000000 {
+>         power-domains = <&k2g_pds 0xb>;
+>         clocks = <&k2g_clks 0xb 1>, <&k2g_clks 0xb 2>;
+>         clock-names = "fck", "mmchsdb_fck";
+> -       status = "disabled";
+>  };
+>
+>  ------------------------------------------------------------------------------
+> diff --git a/Documentation/devicetree/bindings/mips/lantiq/rcu.txt b/Documentation/devicetree/bindings/mips/lantiq/rcu.txt
+> index a086f1e1cdd7..7f0822b4beae 100644
+> --- a/Documentation/devicetree/bindings/mips/lantiq/rcu.txt
+> +++ b/Documentation/devicetree/bindings/mips/lantiq/rcu.txt
+> @@ -61,7 +61,6 @@ Example of the RCU bindings on a xRX200 SoC:
+>                 usb_phy0: usb2-phy@18 {
+>                         compatible = "lantiq,xrx200-usb2-phy";
+>                         reg = <0x18 4>, <0x38 4>;
+> -                       status = "disabled";
+>
+>                         resets = <&reset1 4 4>, <&reset0 4 4>;
+>                         reset-names = "phy", "ctrl";
+> @@ -71,7 +70,6 @@ Example of the RCU bindings on a xRX200 SoC:
+>                 usb_phy1: usb2-phy@34 {
+>                         compatible = "lantiq,xrx200-usb2-phy";
+>                         reg = <0x34 4>, <0x3C 4>;
+> -                       status = "disabled";
+>
+>                         resets = <&reset1 5 4>, <&reset0 4 4>;
+>                         reset-names = "phy", "ctrl";
+> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> index 2d5287eeed95..634bb66fc49c 100644
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -67,7 +67,6 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+>                 max-frequency = <195000000>;
+>                 power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+>                 resets = <&cpg 314>;
+> -               status = "disabled";
+>         };
+>
+>         sdhi1: sd@ee120000 {
+> @@ -81,7 +80,6 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+>                 max-frequency = <195000000>;
+>                 power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+>                 resets = <&cpg 313>;
+> -               status = "disabled";
+>         };
+>
+>         sdhi2: sd@ee140000 {
+> @@ -95,7 +93,6 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+>                 max-frequency = <97500000>;
+>                 power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+>                 resets = <&cpg 312>;
+> -               status = "disabled";
+>         };
+>
+>         sdhi3: sd@ee160000 {
+> @@ -109,5 +106,4 @@ Example: R8A7790 (R-Car H2) SDHI controller nodes
+>                 max-frequency = <97500000>;
+>                 power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+>                 resets = <&cpg 311>;
+> -               status = "disabled";
+>         };
+> diff --git a/Documentation/devicetree/bindings/mtd/mtk-nand.txt b/Documentation/devicetree/bindings/mtd/mtk-nand.txt
+> index 1c88526dedfc..c5ba6a4ba1f2 100644
+> --- a/Documentation/devicetree/bindings/mtd/mtk-nand.txt
+> +++ b/Documentation/devicetree/bindings/mtd/mtk-nand.txt
+> @@ -20,7 +20,6 @@ Required NFI properties:
+>  - interrupts:                  Interrupts of NFI.
+>  - clocks:                      NFI required clocks.
+>  - clock-names:                 NFI clocks internal name.
+> -- status:                      Disabled default. Then set "okay" by platform.
+>  - ecc-engine:                  Required ECC Engine node.
+>  - #address-cells:              NAND chip index, should be 1.
+>  - #size-cells:                 Should be 0.
+> @@ -34,7 +33,6 @@ Example:
+>                 clocks = <&pericfg CLK_PERI_NFI>,
+>                          <&pericfg CLK_PERI_NFI_PAD>;
+>                 clock-names = "nfi_clk", "pad_clk";
+> -               status = "disabled";
+>                 ecc-engine = <&bch>;
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
+> @@ -152,7 +150,6 @@ Required BCH properties:
+>  - interrupts:  Interrupts of ECC.
+>  - clocks:      ECC required clocks.
+>  - clock-names: ECC clocks internal name.
+> -- status:      Disabled default. Then set "okay" by platform.
+>
+>  Example:
+>
+> @@ -162,5 +159,4 @@ Example:
+>                 interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_LOW>;
+>                 clocks = <&pericfg CLK_PERI_NFI_ECC>;
+>                 clock-names = "nfiecc_clk";
+> -               status = "disabled";
+>         };
+> diff --git a/Documentation/devicetree/bindings/pci/xgene-pci.txt b/Documentation/devicetree/bindings/pci/xgene-pci.txt
+> index 6fd2decfa66c..92490330dc1c 100644
+> --- a/Documentation/devicetree/bindings/pci/xgene-pci.txt
+> +++ b/Documentation/devicetree/bindings/pci/xgene-pci.txt
+> @@ -25,8 +25,6 @@ Optional properties:
+>
+>  Example:
+>
+> -SoC-specific DT Entry:
+> -
+>         pcie0: pcie@1f2b0000 {
+>                 status = "disabled";
+>                 device_type = "pci";
+> @@ -50,8 +48,3 @@ SoC-specific DT Entry:
+>                 clocks = <&pcie0clk 0>;
+>         };
+>
+> -
+> -Board-specific DT Entry:
+> -       &pcie0 {
+> -               status = "ok";
+> -       };
+> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.txt b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+> index 0de23b793657..3683874832ae 100644
+> --- a/Documentation/devicetree/bindings/pps/pps-gpio.txt
+> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+> @@ -20,5 +20,4 @@ Example:
+>                 assert-falling-edge;
+>
+>                 compatible = "pps-gpio";
+> -               status = "okay";
+>         };
+> --
+> 2.14.1
+>
