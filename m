@@ -1,30 +1,30 @@
 Return-Path: <poza@qualcomm.com>
-X-Google-Smtp-Source: AIpwx48nkCiJ4ydinZ9GjKD+sIaheyiGvJ59tEMya1lBkT7vvng4lsFedeKymU5lUXcB2M/neDg2
-ARC-Seal: i=1; a=rsa-sha256; t=1524496997; cv=none;
+X-Google-Smtp-Source: AIpwx4+Yif3oiMTxy7D+MiGymwhXPZ2MYvS3EJIt/3NVcTOyjJpWgS/BgvBzDVTN2EPXR/oewEvd
+ARC-Seal: i=1; a=rsa-sha256; t=1524496996; cv=none;
         d=google.com; s=arc-20160816;
-        b=S0T7c57YO32gdFhlprDyEObcAtLwcas0+s6uEJG238lrjdgqh/REEo2LyKNhPt3Aay
-         U3Z+W9sAZmFCR1/hbHS2Zb+MlL7Bw48Tljnrba+zN9u6U6sY9LnkiDFdwh+UHOq+whEc
-         i71gvA6rXUTEmWuWqXfq06Dp+9LMzmhUCu3d0WPSiSTvKiu/JV6iWMQBoUwLa6eAf6+1
-         alS1dQJwiMN41i3qRCkt6jz59G1H0N4+e9/qSsfpV5J42aI//LhNlx5ye30HAf9MpQm2
-         5jsvoOzqKpMNsXGI+rqFTXOiGWW+yq8YaNaBWfMfYff1mIIeVl3zp9k/orgsSGEjjctE
-         ghew==
+        b=hW3PwhUJPtagmWs5qRcpvzMkOcyON5ymOPCs0a8oI1FJ3t17HX3aKp8JKkD8h3Vu8Y
+         4Tt7lEg1B20AH6GX+RecEVuG7N06K33sJWGjNkbsX7wB63PipDnyRuvqqCXynF/HbjZc
+         Q4yXrYg2+gnLdambcign1FV4eUix/N4u46KI/jY5vPx+jfDhkXc49DWoRv0f8gE1mkNf
+         tuKQVV/AMxrCsZyrQBChlorhtmtPTDLGy8CqyAjug/zM4iH/d1sNKEtaQLUGpZgLmOYp
+         Q4tSvLm8fcwveCJmjktX5kka5ZEMFKvXVvGHSR0x5rUOmD5LCMe91crTrRvk2qvL93iN
+         6bAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=+d3MgnKfIoj7f2/bsjlph13GVBInKp2VnVePwVd4Gg8=;
-        b=ndyoZV/C0dmc8McFArDWfyb1oQFY/HCip5isEa/PtA+yMBeNUUxRGhBJ7TbPDAq8sb
-         2iGhZr9XShJlr846afdg7PNpMkz1a4SnU47jhhA8b5MgvimaIz0sjKjGEXg1m64tO8rn
-         Lsaw4GHMvkJBaFZENJ0YxASoM+sNPLJ9y5FxRTa0l4b00UF1dVvN20f3ieWXRAS+GKUz
-         MwsU70HlOiadpyfqVu8UR1VbF/LD5ExZJqq5Q68LJTf7eKddoJ4TFXb4pIdNW76wbHlq
-         7dXXRaQrBgcY53ym4pzdfCuojHeuLeyfxB/gPnfqwyUXb5tAWxb/6W3B5na1qgomfO+a
-         B8+g==
+        bh=5QQnjT/FWAwInwIRRPSYUz3ajOaDFioCWZe5EfccPdI=;
+        b=OjtZXe9mN1qV2iYou1/PAWKJrytDzSCa9gyrC6lNJDZ6bTUTjQFDHKilv4ruGGapg3
+         mFg5K3KInKl3yhYh/TTzV8xIOU2JknDyyziCdig4dvckjMgGLE11Qap+YjKNIT3MpJC9
+         9J/ohGUZrSua3NEyQpJZQqWfXu+a43a2zY0WF014GcSSVAH0LgmB4Z6CwKyYOosgfuVM
+         gQ6xdLjVCo7lplOX+QsSO8Tp290OHccCJ1J80lRbEtxtoYce9YiHUq0KWQTWkMtnvAE2
+         NgjeUBtmoDr0lR5WSO7WbCvx658/4pmK3fei75xW0n1YK+0jJ/VZhEor9dw/HJR/VXn/
+         O0vQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.254 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.254 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 X-IronPort-AV: E=Sophos;i="5.49,318,1520924400";
-   d="scan'208";a="337205360"
-X-IronPort-AV: E=McAfee;i="5900,7806,8871"; a="68659285"
+   d="scan'208";a="337205356"
+X-IronPort-AV: E=McAfee;i="5900,7806,8871"; a="68659280"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
@@ -39,136 +39,150 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v14 6/9] PCI: Unify wait for link active into generic PCI
-Date: Mon, 23 Apr 2018 11:23:10 -0400
-Message-Id: <1524496993-29799-7-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v14 3/9] PCI/PORTDRV: Implement generic find service
+Date: Mon, 23 Apr 2018 11:23:07 -0400
+Message-Id: <1524496993-29799-4-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524496993-29799-1-git-send-email-poza@codeaurora.org>
 References: <1524496993-29799-1-git-send-email-poza@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598550963964253272?=
-X-GMAIL-MSGID: =?utf-8?q?1598550963964253272?=
+X-GMAIL-THRID: =?utf-8?q?1598550963210380977?=
+X-GMAIL-MSGID: =?utf-8?q?1598550963210380977?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Clients such as HP, DPC are using pcie_wait_link_active(), which waits
-till the link becomes active or inactive.
-
-Made generic function and moved it to drivers/pci/pci.c
+This patch implements generic pcie_port_find_service() routine.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 18a42f8..e0c2b8e 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -231,25 +231,11 @@ bool pciehp_check_link_active(struct controller *ctrl)
- 	return ret;
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index 4acec3b..aeb8236 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -231,32 +231,6 @@ static bool find_source_device(struct pci_dev *parent,
+ 	return true;
  }
  
--static void __pcie_wait_link_active(struct controller *ctrl, bool active)
+-static int find_aer_service_iter(struct device *device, void *data)
 -{
--	int timeout = 1000;
+-	struct pcie_port_service_driver *service_driver, **drv;
 -
--	if (pciehp_check_link_active(ctrl) == active)
--		return;
--	while (timeout > 0) {
--		msleep(10);
--		timeout -= 10;
--		if (pciehp_check_link_active(ctrl) == active)
--			return;
+-	drv = (struct pcie_port_service_driver **) data;
+-
+-	if (device->bus == &pcie_port_bus_type && device->driver) {
+-		service_driver = to_service_driver(device->driver);
+-		if (service_driver->service == PCIE_PORT_SERVICE_AER) {
+-			*drv = service_driver;
+-			return 1;
+-		}
 -	}
--	ctrl_dbg(ctrl, "Data Link Layer Link Active not %s in 1000 msec\n",
--			active ? "set" : "cleared");
+-
+-	return 0;
 -}
 -
- static void pcie_wait_link_active(struct controller *ctrl)
- {
--	__pcie_wait_link_active(ctrl, true);
-+	struct pci_dev *pdev = ctrl_dev(ctrl);
-+
-+	pcie_wait_for_link(pdev, true);
- }
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev)
+-{
+-	struct pcie_port_service_driver *drv = NULL;
+-
+-	device_for_each_child(&dev->dev, &drv, find_aer_service_iter);
+-
+-	return drv;
+-}
+-
+ /**
+  * handle_error_source - handle logging error into an event log
+  * @aerdev: pointer to pcie_device data structure of the root port
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index c6a9a72..98aeec4 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -193,10 +193,8 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+ 		udev = dev->bus->self;
+ 	}
  
- static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index f6a4dd1..2bcf977 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4176,6 +4176,36 @@ static int pci_pm_reset(struct pci_dev *dev, int probe)
+-#if IS_ENABLED(CONFIG_PCIEAER)
+ 	/* Use the aer driver of the component firstly */
+-	driver = find_aer_service(udev);
+-#endif
++	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
+ 
+ 	if (driver && driver->reset_link) {
+ 		status = driver->reset_link(udev);
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index 9a8d0dd..419bdf3 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -79,5 +79,6 @@ static inline void pcie_port_platform_notify(struct pci_dev *port, int *mask)
+ static inline void pcie_port_platform_notify(struct pci_dev *port, int *mask){}
+ #endif /* !CONFIG_ACPI */
+ 
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev);
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service);
+ #endif /* _PORTDRV_H_ */
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index ef3bad4..94de1fa 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -23,6 +23,11 @@
+ 
+ bool pciehp_msi_disabled;
+ 
++struct portdrv_service_data {
++	struct pcie_port_service_driver *drv;
++	u32 service;
++};
++
+ static int __init pciehp_setup(char *str)
+ {
+ 	if (!strncmp(str, "nomsi", 5))
+@@ -414,6 +419,46 @@ static int remove_iter(struct device *dev, void *data)
  	return 0;
  }
  
-+/**
-+ * pcie_wait_for_link - Wait for link till it's active/inactive
-+ * @pdev: Bridge device
-+ * @active: waiting for active or inactive ?
-+ *
-+ * Use this to wait till link becomes active or inactive.
-+ */
-+bool pcie_wait_for_link(struct pci_dev *pdev, bool active)
++static int find_service_iter(struct device *device, void *data)
 +{
-+	int timeout = 1000;
-+	bool ret;
-+	u16 lnk_status;
++	struct pcie_port_service_driver *service_driver;
++	struct portdrv_service_data *pdrvs;
++	u32 service;
 +
-+	for (;;) {
-+		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-+		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
-+		if (ret == active)
-+			return true;
-+		if (timeout <= 0)
-+			break;
-+		msleep(10);
-+		timeout -= 10;
++	pdrvs = (struct portdrv_service_data *) data;
++	service = pdrvs->service;
++
++	if (device->bus == &pcie_port_bus_type && device->driver) {
++		service_driver = to_service_driver(device->driver);
++		if (service_driver->service == service) {
++			pdrvs->drv = service_driver;
++			return 1;
++		}
 +	}
 +
-+	pci_info(pdev, "Data Link Layer Link Active not %s in 1000 msec\n",
-+		 active ? "set" : "cleared");
++	return 0;
++}
++/**
++ * pcie_port_find_service - find the service driver
++ * @dev: PCI Express port the service devices associated with
++ * @service: Service to find
++ *
++ * Find PCI Express port service driver associated with given service
++ */
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service)
++{
++	struct pcie_port_service_driver *drv;
++	struct portdrv_service_data pdrvs;
 +
-+	return false;
++	pdrvs.drv = NULL;
++	pdrvs.service = service;
++	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
++
++	drv = pdrvs.drv;
++	return drv;
 +}
 +
- void pci_reset_secondary_bus(struct pci_dev *dev)
- {
- 	u16 ctrl;
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index abc514e..5c44fbc 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -345,6 +345,8 @@ void pci_enable_acs(struct pci_dev *dev);
- /* PCI error reporting and recovery */
- void pcie_do_recovery(struct pci_dev *dev, int severity);
- 
-+bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
-+
- #ifdef CONFIG_PCIEASPM
- void pcie_aspm_init_link_state(struct pci_dev *pdev);
- void pcie_aspm_exit_link_state(struct pci_dev *pdev);
-diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
-index ad02298..6baed85 100644
---- a/drivers/pci/pcie/pcie-dpc.c
-+++ b/drivers/pci/pcie/pcie-dpc.c
-@@ -68,19 +68,9 @@ static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
- 
- static void dpc_wait_link_inactive(struct dpc_dev *dpc)
- {
--	unsigned long timeout = jiffies + HZ;
- 	struct pci_dev *pdev = dpc->dev->port;
--	struct device *dev = &dpc->dev->device;
--	u16 lnk_status;
- 
--	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
--					!time_after(jiffies, timeout)) {
--		msleep(10);
--		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	}
--	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
--		dev_warn(dev, "Link state not disabled for DPC event\n");
-+	pcie_wait_for_link(pdev, false);
- }
- 
  /**
+  * pcie_port_device_remove - unregister PCI Express port service devices
+  * @dev: PCI Express port the service devices to unregister are associated with
 -- 
 2.7.4
