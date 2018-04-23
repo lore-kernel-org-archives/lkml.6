@@ -1,90 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755367AbeDWN75 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:59:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39773 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754943AbeDWN7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:59:53 -0400
-Date: Mon, 23 Apr 2018 15:59:47 +0200
-From: Jan Kara <jack@suse.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, Souptick Joarder <jrdr.linux@gmail.com>,
-        viro@zeniv.linux.org.uk, mawilcox@microsoft.com,
-        ross.zwisler@linux.intel.com, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] fs: dax: Adding new return type vm_fault_t
-Message-ID: <20180423135947.dovwxnhzknobmyog@quack2.suse.cz>
-References: <20180421210529.GA27238@jordon-HP-15-Notebook-PC>
- <20180422230948.2mvimlf3zspry4ji@quack2.suse.cz>
- <20180423022505.GA2308@bombadil.infradead.org>
+        id S1755354AbeDWOA7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:00:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42462 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755010AbeDWOA6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 10:00:58 -0400
+Date: Mon, 23 Apr 2018 16:00:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Diego Viola <diego.viola@gmail.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, len.brown@intel.com,
+        rui.zhang@intel.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: Experiencing freezes with kernel 4.16.3 on a desktop with E5500
+ CPU (bisect included)
+Message-ID: <20180423140052.GO4129@hirez.programming.kicks-ass.net>
+References: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com>
+ <20180423091633.GU4064@hirez.programming.kicks-ass.net>
+ <CA+ToGPEaHb1ueDRGuzCzm_HxketqxW8j1gawEsCCp2QGLCA=xg@mail.gmail.com>
+ <20180423114850.GK4082@hirez.programming.kicks-ass.net>
+ <CA+ToGPHA+Y=0PtiXF7fTSqSgwtzsJy3Z=U1i3xiW9jkzQGsXWQ@mail.gmail.com>
+ <20180423123847.GL4082@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180423022505.GA2308@bombadil.infradead.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180423123847.GL4082@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 22-04-18 19:25:05, Matthew Wilcox wrote:
-> On Mon, Apr 23, 2018 at 01:09:48AM +0200, Jan Kara wrote:
-> > > -int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
-> > > -			pfn_t pfn)
-> > > +vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
-> > > +		unsigned long addr, pfn_t pfn)
-> > >  {
-> > > -	return __vm_insert_mixed(vma, addr, pfn, true);
-> > > +	int err;
-> > > +
-> > > +	err =  __vm_insert_mixed(vma, addr, pfn, true);
-> > > +	if (err == -ENOMEM)
-> > > +		return VM_FAULT_OOM;
-> > > +	if (err < 0 && err != -EBUSY)
-> > > +		return VM_FAULT_SIGBUS;
-> > > +	return VM_FAULT_NOPAGE;
-> > >  }
-> > > -EXPORT_SYMBOL(vm_insert_mixed_mkwrite);
-> > > +EXPORT_SYMBOL(vmf_insert_mixed_mkwrite);
-> > 
-> > So are we sure that all the callers of this function (and also of
-> > vmf_insert_mixed()) are OK with EBUSY? Because especially in the
-> > vmf_insert_mixed() case other page than the caller provided is in page
-> > tables and thus possibly the caller needs to do some error recovery (such
-> > as drop page refcount) in such case...
-> 
-> I went through all the users and didn't find any that did anything
-> with -EBUSY other than turn it into VM_FAULT_NOPAGE.  I agree that it's
-> possible that there might have been someone who wanted to do that, but
-> we tend to rely on mapcount (through rmap) rather than refcount (ie we
-> use refcount to mean the number of kernel references to the page and then
-> use mapcount for the number of times it's mapped into a process' address
-> space).  All the drivers I audited would allocagte the page first, store
-> it in their own data structures, then try to insert it into the virtual
-> address space.  So an EBUSY always meant "the same page was inserted".
-> 
-> If we did want to support "This happened already" in the future, we
-> could define a VM_FAULT flag for that.
+On Mon, Apr 23, 2018 at 02:38:47PM +0200, Peter Zijlstra wrote:
+> @@ -834,8 +857,12 @@ static int clocksource_unbind(struct clocksource *cs)
+>  		if (curr_clocksource == cs)
+>  			return -EBUSY;
+>  	}
+> +
+> +	clocksource_watchdog_lock(&flags);
+>  	clocksource_dequeue_watchdog(cs);
+>  	list_del_init(&cs->list);
+> +	clocksource_watchdog_lock(&flags);
 
-OK, fair enough and thanks for doing an audit! So possibly just add a
-comment above vmf_insert_mixed() and vmf_insert_mixed_mkwrite() like:
+It works a lot better when this is _unlock();
 
-/*
- * If the insertion of PTE failed because someone else already added a
- * different entry in the mean time, we treat that as success as we assume
- * the same entry was actually inserted.
- */
+> +
+>  	return 0;
+>  }
+>  
 
-After that feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-to the patch.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+With that, and intel_idle.c modified to always issue the "halts in
+idle" thing, my IVB comes up in hpet mode. Let me dig up a Core2 era
+machine and see if that works too.
