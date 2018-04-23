@@ -1,107 +1,117 @@
-Return-Path: <pavel@ucw.cz>
-X-Google-Smtp-Source: AIpwx4/Qh0Tq7ux8YErxcdYI+V7e8rtYc0O4fhMdmYiHVwSeESeKhVkbr6OiRQj9NIR6zQ6c6pjM
-ARC-Seal: i=1; a=rsa-sha256; t=1524168837; cv=none;
-        d=google.com; s=arc-20160816;
-        b=LmJbt7sA9IPcfexaZye0kPTf/O2jHw1KQArv2oFpgFSUIAQVXrScU1MfpzLNYGp/bU
-         jTh7qGDLw0hda0/i2Fqk8o5ZbiRVaUOBj1NY0fSzwbd5UOsh8EoOB/+oPHFCoVY427lg
-         rFoaVg66xA7oC/lDQqOi0iWnkfDlSXEOK9bg1JPz13RYFUKTNY+VggJsU9YV5MXRyWyB
-         MjHi0+v9CsKyw9Q0oJ2wkpAYHlvL5JpMcSgS8h4gw+e0nY0f0z8ANV1QMW5QQ6gL5Uu3
-         Hk+5Y/p3XSyMs5mYz5mTc/aSmp9S6YtvR74udO0oMch7g9J8C43T0kFDX3R9Y+hH7MMN
-         s10A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=zR2bqg3zM/RK30ITJ0MloKFdIF6gxbMOzfyz5fLy8Cw=;
-        b=XkJGJxcAZn04DzG5euGPgD3SL3GBTjfZnAqq1zdl5nGbnPpKSxzeFQ9NI7kQjIJVof
-         kaPrjrwTssN4MURgJLvCeyoHea2ep5RB9CfGY5pbdKritSjiDbCkLVh9uMcIapGIV+cU
-         elN+j1LlavUmSLvi8VZKspu2aDs3IdXUVbSSamPHJ6bk8U1nBPF2pGu5uHq8DYD9Xp9L
-         N5DsDuyj47vddv5NqIhTwC/DVn7352/LGkxXooKpk5MrOyFG6CrqBOO27vfyNWuktUh7
-         60JV9/DQ7WSDn4CWr7zRXpRQA9KZbujfIbilfvlbM5KNescJyUmM7I3HXQ8KSwrnJ29a
-         6J9A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
-Date: Thu, 19 Apr 2018 22:13:56 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Mark Brown <broonie@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <len.brown@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH/RFC 0/2] regulator: bd9571mwv: Add support for toggle
- power switches
-Message-ID: <20180419201356.GC25034@amd>
-References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
- <CAMuHMdXyWs1v_D4EUd-H75Q3cpQv6yD2V_MptjJP7FjYhu5c3g@mail.gmail.com>
- <20180418140041.GD10061@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Clx92ZfkiYIKRjnr"
-Content-Disposition: inline
-In-Reply-To: <20180418140041.GD10061@sirena.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-906599-1524477070-2-14656135322972883727
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524477069; b=HcuTSnTsmmRh6BTIjPcM7XtdiNiwCo6aBR0QrfL72kxkAvi+al
+    zCSw1dIxRrg4Beklw82uGXmbK72osT+v6aI8hYiB4tgf+wOA7vi/e7Zj9IQSG+Cl
+    VixPmr/vtSRqt22DT/oVuUNqXbDGCG72qtfUrUa8HKGyzpKIgtESkQ7eIjsJNpSk
+    hkTv19pPzsKgjyi5Bie7OBttCuTAhlExY1PqxUezwp/BlFJ0QI53KvScWIN8gpUS
+    /Q+Pbw4p6PASRDNda40Ekg5jScrZ6mCXJOoU8Shew/hV3bDrSjlEXetKU2KS2Omj
+    ZZ1mXuRATOUiZXvg1D3cWnbiYq7d7vjJscoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1524477069; bh=AogD7aM7dFoo0wisGI57EEnc+xFN5F
+    W2uu6Yy2X3DmI=; b=llZBCGMn0OC5Rnig8F21KbREbCj1ZOornoTD2hBbIQ87DM
+    QqlZA+sW4tXkiXoG8t7bNCN4QZYkQI/kn8de7EbsBmAQSwK0W4k219lmI9k3yzVh
+    UlWUwT3XD0w9c10MbPTfW9JTcQoX9sWIfBG2Et0dCHB9gi5HMhyX6rWjhKgXPvVF
+    03eCYnLeV97WVkqril3eeD4GRs/5GfPR5cCCyrRQwWY6Q/QJW07+R59Lqw+yiKdW
+    b2INtijaLDw+TKZ8PN53yzgGRbNscK0VQtNszS7O0EYr4QiDRYSthUJrDgJTgomX
+    GQq1P83Np1M452oCaxeyk2eRs+849TB9E+h/g2Ag==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=wVMsqCf1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=blgiR6ia;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=wVMsqCf1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=blgiR6ia;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNCfVevyGjN9hSk4D4I6t7tqVvcYLGGt4VzlsLMEPFGbm8YMhIqscaUwPlvxeLfAJEv1ADfI4e5zBlJWbHXdruexqTSEUofv8bspaKubxscuolYq7Ufw
+    Cv6l3LXGU4D+KWm05rcqcjKrNyhO7xbQQKuwDeqh2SPJ2JO3SR94d5dwEKdQLobZNgjozX1REvOLzn3a20N8FUewD01B/TWJhYofc/DL5/IB/R+BI6zsKcpI
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=OLL_FvSJAAAA:8
+    a=VwQbUJbxAAAA:8 a=A_J5-YiRP2OO3Pcff-sA:9 a=esMPUqux980A:10 a=x8gzFH9gYPwA:10
+    a=tqpKPK-PZRsA:10 a=oIrB72frpwYPwTMnlWqB:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754486AbeDWJvG (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 23 Apr 2018 05:51:06 -0400
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:40940 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754335AbeDWJvF (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Mon, 23 Apr 2018 05:51:05 -0400
+X-Google-Smtp-Source: AIpwx48P3e3itV5pcXf8feuHN7A+/Gudgsq4YAoyN12zryhT0pdtuxNZYw+IItAOA1Cp2m7xeqFs6Q==
+From: Michal Simek <michal.simek@xilinx.com>
+To: linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>, geert+renesas@glider.be
+Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/4] serial: uartps: Dynamic allocation
+Date: Mon, 23 Apr 2018 11:50:59 +0200
+Message-Id: <cover.1524477059.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.17.0
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594912189945282587?=
-X-GMAIL-MSGID: =?utf-8?q?1598206862979433121?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi,
 
---Clx92ZfkiYIKRjnr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+this is the initial version before next step which is move
+uart_register_driver to probe function.
+I was able to get rid of static array with uart_port structures.
+It was wired with console which is also fixed.
+And the next step is the most complicated one handle .nr in uart_driver
+structure in more generic way.
 
-On Wed 2018-04-18 15:00:41, Mark Brown wrote:
-> On Wed, Apr 18, 2018 at 03:29:36PM +0200, Geert Uytterhoeven wrote:
->=20
-> > Any comments/suggestions?
->=20
-> > In case you lost the patches from the thread:
-> > https://www.spinics.net/lists/linux-renesas-soc/msg24955.html
->=20
-> Please don't send content free pings and please allow a reasonable time
-> for review.  People get busy, go on holiday, attend conferences and so=20
-> on so unless there is some reason for urgency (like critical bug fixes)
-> please allow at least a couple of weeks for review.  If there have been
-> review comments then people may be waiting for those to be
+I am sending these patches as v1. RFC was sent in past
+(https://www.spinics.net/lists/linux-serial/msg27106.html)
+and I promised to wait till Geert's
+"serial: xuartps: Fix out-of-bounds access through DT
+alias" (sha1: e7d75e18d0fc3f7193b65282b651f980c778d935) is applied.
 
-If I follow the logs right, there was one month before ping. That
-seems pretty reasonable time.
+Thanks,
+Michal
 
-> Sending content free pings adds to the mail volume (if they are seen at
-> all) which is often the problem and since they can't be reviewed
 
-Yep, and sending content free complains about pings also adds to the
-main volume :-(.
+Michal Simek (4):
+  serial: uartps: Remove console_initcall from the driver
+  serial: uartps: Use dynamic array for console port
+  serial: uartps: Move cnds_uart_get_port to probe
+  serial: uartps: Remove static port array
 
-Anyway, last time I sent you a patch... you _had_ time to complain
-that I'm pinging too often, but you apparently did not have time to
-look at the patch. That patch would have been in time for v4.16-rc1
-IIRC.
+ drivers/tty/serial/xilinx_uartps.c | 102 +++++++++++------------------
+ 1 file changed, 40 insertions(+), 62 deletions(-)
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+-- 
+2.17.0
 
---Clx92ZfkiYIKRjnr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrY+IQACgkQMOfwapXb+vLzqgCeL7ZTf7fKhjiIrRwjNAwROwiz
-kdsAni5RaYPZ16cP2+bhWpf5juj0RsL5
-=aa5D
------END PGP SIGNATURE-----
-
---Clx92ZfkiYIKRjnr--
