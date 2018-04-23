@@ -1,100 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754892AbeDWMMr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:12:47 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53078 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754729AbeDWMMn (ORCPT
+        id S1754911AbeDWMNJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:13:09 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:33328 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754729AbeDWMNF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:12:43 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Peter Rosin <peda@axentia.se>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] drm: bridge: thc63lvd1024: Add support for LVDS mode map
-Date: Mon, 23 Apr 2018 15:12:54 +0300
-Message-ID: <1653352.Yto2ZqehFs@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180423074156.GO4235@w540>
-References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org> <86c2d4c9-8079-9f25-f24a-58c7866a8274@axentia.se> <20180423074156.GO4235@w540>
+        Mon, 23 Apr 2018 08:13:05 -0400
+X-Google-Smtp-Source: AIpwx49UOC9ODY4NJzQiyUbDeRJxGwGolMU9caJBU36LUOGhI9foo6NANB92y/K5O2iGc25bMRQsjePAbDoA/izrnkY=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1524484097-8315-1-git-send-email-gilad@benyossef.com>
+References: <1524484097-8315-1-git-send-email-gilad@benyossef.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Apr 2018 14:13:04 +0200
+X-Google-Sender-Auth: l-wMvc--LislnRLxRC2CgMFErxU
+Message-ID: <CAMuHMdXNAkCVpyGyQMKRMRGuXyjOHAGgvHT4QGkuYdZetOr-9Q@mail.gmail.com>
+Subject: Re: [PATCH] crypto: ccree: limit build to plausible archs
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Hi Gilad,
 
-On Monday, 23 April 2018 10:41:56 EEST jacopo mondi wrote:
-> On Sun, Apr 22, 2018 at 10:02:51PM +0200, Peter Rosin wrote:
-> > On 2018-04-19 11:31, Jacopo Mondi wrote:
-> >> The THC63LVD1024 LVDS to RGB bridge supports two different LVDS mapping
-> >> modes, selectable by means of an external pin.
-> >> 
-> >> Add support for configurable LVDS input mapping modes, using the newly
-> >> introduced support for bridge input image formats.
-> >> 
-> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/bridge/thc63lvd1024.c | 41 ++++++++++++++++++++++++++++
-> >>  1 file changed, 41 insertions(+)
-> >> 
-> >> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c
-> >> b/drivers/gpu/drm/bridge/thc63lvd1024.c index 48527f8..a3071a1 100644
-> >> --- a/drivers/gpu/drm/bridge/thc63lvd1024.c
-> >> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+On Mon, Apr 23, 2018 at 1:48 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> Limit option to compile ccree to plausible architectures.
 
-[snip]
+Thanks for your patch!
 
-> >> +static int thc63_set_bus_fmt(struct thc63_dev *thc63)
-> >> +{
-> >> +	u32 bus_fmt;
-> >> +	u32 map;
-> >> +	int ret;
-> >> +
-> >> +	ret = of_property_read_u32(thc63->dev->of_node, "thine,map", &map);
-> >> +	if (ret) {
-> >> +		dev_err(thc63->dev,
-> >> +			"Unable to parse property \"thine,map\": %d\n", ret);
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	switch (map) {
-> >> +	case THC63_LVDS_MAP_MODE1:
-> >> +		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
-> >> +		break;
-> >> +	case THC63_LVDS_MAP_MODE2:
-> >> +		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
-> > 
-> > Why do you assume rgb888/1x7x4 here? It might as well be rgb666/1x7x3
-> > or rgb101010/1x7x5, no?
-> 
-> I should combine the 'map' pin input mode property with the 'bus_width' one
-> to find that out probably.
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> ---
+>  drivers/crypto/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+> index d1ea1a0..7302785 100644
+> --- a/drivers/crypto/Kconfig
+> +++ b/drivers/crypto/Kconfig
+> @@ -726,6 +726,7 @@ config CRYPTO_DEV_ARTPEC6
+>  config CRYPTO_DEV_CCREE
+>         tristate "Support for ARM TrustZone CryptoCell family of security processors"
+>         depends on CRYPTO && CRYPTO_HW && OF && HAS_DMA
+> +       depends on (XTENSA || X86 || UNICORE32 || SUPERH || RISCV || PPC32 || OPENRISC || NIOS2 || NDS32 || MIPS || MICROBLAZE || HEXAGON || H8300 || ARM || ARM64 || ARC || COMPILE_TEST)
 
-Yes, but that could also be left for later, when the need to support those 
-formats arise, especially given that include/uapi/linux/media-bus-format.h has 
-no 1x7x5 formats yet.
+That list looks a bit excessive to me...
 
-> >> +		break;
-> >> +	default:
-> >> +		dev_err(thc63->dev,
-> >> +			"Invalid value for property \"thine,map\": %u\n", map);
-> >> +		return -EINVAL;
-> >> +	}
-> >> +
-> >> +	drm_bridge_set_bus_formats(&thc63->bridge, &bus_fmt, 1);
-> >> +
-> >> +	return 0;
-> >> +}
+>         default n
+>         select CRYPTO_HASH
+>         select CRYPTO_BLKCIPHER
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
