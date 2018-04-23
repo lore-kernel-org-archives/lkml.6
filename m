@@ -1,124 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754977AbeDWK6q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:58:46 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:44740 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754792AbeDWKu1 (ORCPT
+        id S1754947AbeDWK7A (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:59:00 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38450 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754729AbeDWKuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:50:27 -0400
-X-Google-Smtp-Source: AIpwx4/v6CH+nr3mKLZkqvJiIXo28If1jMRGnn2iExFnzmtmve2NVOziB3gbC7+BrUgGKooXV8oJUw==
-Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH v2 2/3] microblaze: remove redundant early_printk support
-To: Rob Herring <robh@kernel.org>, Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180328020700.17050-1-robh@kernel.org>
- <20180328020700.17050-3-robh@kernel.org>
- <584d5be2-6961-5f65-d0d7-bc4661aa21f0@xilinx.com>
- <CAL_Jsq+yEfWZkwWAWKeDuFjxaaZO0uec6eqaq7UNOF-oY30ZuQ@mail.gmail.com>
-From: Michal Simek <monstr@monstr.eu>
-Openpgp: preference=signencrypt
-Message-ID: <71dfbcd9-501c-631f-76a3-53d7265d9321@monstr.eu>
-Date: Mon, 23 Apr 2018 12:50:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 23 Apr 2018 06:50:19 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
+        a.hajda@samsung.com, kernel@collabora.com, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        orjan.eide@arm.com, wxt@rock-chips.com, jeffy.chen@rock-chips.com,
+        linux-arm-kernel@lists.infradead.org, wzz@rock-chips.com,
+        hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [RESEND PATCH v6 01/27] drm/bridge: analogix_dp: Move enable video into config_video()
+Date: Mon, 23 Apr 2018 12:49:37 +0200
+Message-Id: <20180423105003.9004-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
+References: <20180423105003.9004-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+yEfWZkwWAWKeDuFjxaaZO0uec6eqaq7UNOF-oY30ZuQ@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="YTLizl6FzbBZth1fY9aR62vNtjxVLuDhS"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---YTLizl6FzbBZth1fY9aR62vNtjxVLuDhS
-Content-Type: multipart/mixed; boundary="R6lnnvjbszCRTdzewUUt4qRdkcIEkDqpZ";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Rob Herring <robh@kernel.org>, Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <71dfbcd9-501c-631f-76a3-53d7265d9321@monstr.eu>
-Subject: Re: [PATCH v2 2/3] microblaze: remove redundant early_printk support
-References: <20180328020700.17050-1-robh@kernel.org>
- <20180328020700.17050-3-robh@kernel.org>
- <584d5be2-6961-5f65-d0d7-bc4661aa21f0@xilinx.com>
- <CAL_Jsq+yEfWZkwWAWKeDuFjxaaZO0uec6eqaq7UNOF-oY30ZuQ@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+yEfWZkwWAWKeDuFjxaaZO0uec6eqaq7UNOF-oY30ZuQ@mail.gmail.com>
+From: Lin Huang <hl@rock-chips.com>
 
---R6lnnvjbszCRTdzewUUt4qRdkcIEkDqpZ
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+We need to enable video before analogix_dp_is_video_stream_on(), so
+we can get the right video stream status.
 
-On 13.4.2018 16:11, Rob Herring wrote:
-> On Tue, Apr 10, 2018 at 8:44 AM, Michal Simek <michal.simek@xilinx.com>=
- wrote:
->> Hi Rob,
->>
->> On 28.3.2018 04:06, Rob Herring wrote:
->>> With earlycon support now enabled, the arch specific early_printk sup=
-port
->>> can be removed.
->>
->> earlycon is not the full replacement of early_printk support as is
->> designed right now.
->> Definitely current early_printk is pretty old and contains code
->> duplication but it starts much earlier then earlycon.
->=20
-> Yes, essentially it's after MMU enabling rather than before. But it is
-> still before any h/w specific setup (dependent on the DT) which is
-> where one would typically fail to boot. Generally, I've found before
-> DT unflattening to be early enough. What can go wrong at this early
-> stage? Memory is flaky or you've passed in bad memory ranges or image
-> locations. An earlier console may or may not help there and those
-> problems are easier to debug in the bootloader.
->=20
-> So it is a question of what you want to maintain.
->=20
->>> Signed-off-by: Rob Herring <robh@kernel.org>
->>> Cc: Michal Simek <monstr@monstr.eu>
->>> ---
->>> v2:
->>> - Fix booting. The setup_memory call needed to be before the
->>>   parse_early_param call.
->>
->> What's the reason for calling setup_memory before parse_early_param?
->> Is there any dependency?
->=20
-> Yes, either fixmap or ioremap (in your case) has to be functional when
-> earlycon is setup which happens via parse_early_param.
+We needed to increase the delay in the timeout loop because there is
+random "Timeout of video streamclk ok" message happen when debug edp
+panel, this time do not define in the spec.
 
-Ok. Let's add it and see if there is any issue. Do you have any code
-which depends on this series?
+Cc: 征增 王 <wzz@rock-chips.com>
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
 
-Thanks,
-Michal
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
-
-
-
---R6lnnvjbszCRTdzewUUt4qRdkcIEkDqpZ--
-
---YTLizl6FzbBZth1fY9aR62vNtjxVLuDhS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAlrdumsACgkQykllyylKDCFyJACfUpevq9xlPQ2HeQtztZZL8arc
-7b4AnRZodc3KjXjvwekJ1e6NrD6/306E
-=mIGA
------END PGP SIGNATURE-----
-
---YTLizl6FzbBZth1fY9aR62vNtjxVLuDhS--
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 5c52307146c7..05a0ca4af057 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -819,11 +819,10 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+ 		if (analogix_dp_is_slave_video_stream_clock_on(dp) == 0)
+ 			break;
+ 		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
+-			dev_err(dp->dev, "Timeout of video streamclk ok\n");
++			dev_err(dp->dev, "Timeout of slave video streamclk ok\n");
+ 			return -ETIMEDOUT;
+ 		}
+-
+-		usleep_range(1, 2);
++		usleep_range(1000, 1001);
+ 	}
+ 
+ 	/* Set to use the register calculated M/N video */
+@@ -838,6 +837,9 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+ 	/* Configure video slave mode */
+ 	analogix_dp_enable_video_master(dp, 0);
+ 
++	/* Enable video */
++	analogix_dp_start_video(dp);
++
+ 	timeout_loop = 0;
+ 
+ 	for (;;) {
+@@ -948,9 +950,6 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 			DRM_ERROR("failed to enable the panel\n");
+ 	}
+ 
+-	/* Enable video */
+-	analogix_dp_start_video(dp);
+-
+ 	dp->psr_enable = analogix_dp_detect_sink_psr(dp);
+ 	if (dp->psr_enable)
+ 		analogix_dp_enable_sink_psr(dp);
+-- 
+2.17.0
