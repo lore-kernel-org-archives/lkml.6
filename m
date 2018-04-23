@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx4/UzGp4ALP7XPO0kyCchuXVKx/Xge3Smp0a5nM0s76MJsOISbD7npAg/R/LrKn0FUJV+wE1
-ARC-Seal: i=1; a=rsa-sha256; t=1524498483; cv=none;
+X-Google-Smtp-Source: AIpwx494g0IHAGmCt2hmc9u6aKb20pI2TwsZhi8BRmjVcitiiHjoxwcPuxnE6OU5/H6UeDzteCrC
+ARC-Seal: i=1; a=rsa-sha256; t=1524498479; cv=none;
         d=google.com; s=arc-20160816;
-        b=REYNkfgdifXxqKBGznmlazkeDHbXps23WNuqNHnPs8qUHyh4eHcaowr/7ObhEjopVn
-         NOFQnIZZ+mN7hcD1KH+NPFr32RS59nM2HbxUdklXvLeN3fU+1WHcr9e76L/coAv5Kule
-         Ly6+3zHOniERPCaofEnkHXRHuPgNLoyJpQUCFcMpe0H0wz9O1DmqxXsUL4QfPs0PxJbJ
-         BZLlJ6+gGmOlCOUe6PpA5Ceyn7ijR3qs3sPExSUGYKpEsU6eCnUDDSPid7RS6vz3Zvm4
-         a5d2IDpN2sVWcNhRH+BwnCi42s8taROBUjnaMiNKZ7Gb3hOUVS4BaD9L9BgMofSk0zF2
-         NdKQ==
+        b=0YTUCnXSsiJi0lJty3CxAVDC5RC54r3DwrAjgo0KmcaP8fny8BgXzikYsgCf9DMmEd
+         FTAFX3n4DqqTESQycTVbJXteBNWE6uXgG9dgpZUl/zzhJWwZFdihGlUy3XFQgx7TID2K
+         KZtf1G/bHhgn/ZU3P95PIxJY6iGYjGRp6dvM2aLkH5BObt5kXhLSDPQceajVzthlaIFr
+         hVcGA/ZUazoBP0JiNf2qL0YkKgBLBeCHJ0s46PDwGw7ipTfY4doO2uVcGRlrblk3MH5y
+         s8N/ssCPkApPxo84jfvzjlQXqDWYSEKR95rqR80Rk5ApmUihRwdNqhX3JUyMYayr9nXb
+         NfMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=JnFN1zhiRIMRvYr6aycd3dKQhrkRKwR9b+Mpjbgr6sU=;
-        b=wDohPARUGZ8WOb6FGFdX5t3hqRV1pqC72wsSJ4e6FrnJLFHmrSJI+T+95XmcT84EiC
-         Mmfeb8H1UsUwApJhML+vzPcArR780IYDOMbDoZ547DI3kewHoMZoN4ubtTrR6J1AnUro
-         jt0ctwPpVG8RQZOEBFZwVdBmdrLKZkF6jEQncG/Kesmic2Fmkp7F/AmUvMxLq+mgeUOr
-         OhqMO/STSFkA5A8cv3HBMyvDwKRppFnoLVQAikxVlDO6vpBECIiONFKrMvpwiYs9tr2D
-         eBazOotWs8ooGsHDH56K/KkRr0A0hIOdZsWpYOpGN+GPBvstJWhIfq1W42HAVg8dH+dd
-         PKdA==
+        bh=02ZYST3vL3TajOm1Vb8AN5LojMZtoSkZRi5vbIS2byQ=;
+        b=hHydHqHxCjUdIAvvLHsiLz62WswIG1PFFyU0p1Lq0/uXh8usrHXjwEQJvNnR5k0y/i
+         /cQibbK+W+RKh6BG0Ri8iueooQqROcA//opCa4zixoxpd2Hf2K88UzFNuYopeGqngp8M
+         F+7Ew7UOLhkhrhJPII87/WyOsmIzBQ64ijkdD+LOvcLgk4fTWhtWBFEYoXD9LiN8VzMt
+         s6R7jUZOh3CHSESNNp6q2Jvrpnu0cwMDmpDuChb5p2SPzgyM7nOJOp7UG/3rGxfgmK0Y
+         d/AlO+wBIpjLIQdQTyrOGSohPIjUnF0/sMWSiHukL9cpHma0atPSPQVF86dsR0GfWJAp
+         P60g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=mhiouAqv;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Q911HJj8;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=mhiouAqv;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Q911HJj8;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -58,119 +58,44 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 34/37] x86/ldt: Enable LDT user-mapping for PAE
-Date: Mon, 23 Apr 2018 17:47:37 +0200
-Message-Id: <1524498460-25530-35-git-send-email-joro@8bytes.org>
+Subject: [PATCH 24/37] x86/mm/pti: Add an overflow check to pti_clone_pmds()
+Date: Mon, 23 Apr 2018 17:47:27 +0200
+Message-Id: <1524498460-25530-25-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552522454761188?=
-X-GMAIL-MSGID: =?utf-8?q?1598552522454761188?=
+X-GMAIL-THRID: =?utf-8?q?1598552516749924845?=
+X-GMAIL-MSGID: =?utf-8?q?1598552516749924845?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-This adds the needed special case for PAE to get the LDT
-mapped into the user page-table when PTI is enabled. The big
-difference to the other paging modes is that we don't have a
-full top-level PGD entry available for the LDT, but only PMD
-entry.
+The addr counter will overflow if we clone the last PMD of
+the address space, resulting in an endless loop.
+
+Check for that and bail out of the loop when it happens.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/mmu_context.h |  5 ----
- arch/x86/kernel/ldt.c              | 53 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+), 5 deletions(-)
+ arch/x86/mm/pti.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 57e3785..28b2376 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -71,12 +71,7 @@ struct ldt_struct {
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 9bea9c3..f967b51 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -297,6 +297,10 @@ pti_clone_pmds(unsigned long start, unsigned long end, pmdval_t clear)
+ 		p4d_t *p4d;
+ 		pud_t *pud;
  
- static inline void *ldt_slot_va(int slot)
- {
--#ifdef CONFIG_X86_64
- 	return (void *)(LDT_BASE_ADDR + LDT_SLOT_STRIDE * slot);
--#else
--	BUG();
--	return (void *)fix_to_virt(FIX_HOLE);
--#endif
- }
- 
- /*
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index 69af9a0..733e6ac 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -126,6 +126,57 @@ static void do_sanity_check(struct mm_struct *mm,
- 	}
- }
- 
-+#ifdef CONFIG_X86_PAE
++		/* Overflow check */
++		if (addr < start)
++			break;
 +
-+static pmd_t *pgd_to_pmd_walk(pgd_t *pgd, unsigned long va)
-+{
-+	p4d_t *p4d;
-+	pud_t *pud;
-+
-+	if (pgd->pgd == 0)
-+		return NULL;
-+
-+	p4d = p4d_offset(pgd, va);
-+	if (p4d_none(*p4d))
-+		return NULL;
-+
-+	pud = pud_offset(p4d, va);
-+	if (pud_none(*pud))
-+		return NULL;
-+
-+	return pmd_offset(pud, va);
-+}
-+
-+static void map_ldt_struct_to_user(struct mm_struct *mm)
-+{
-+	pgd_t *k_pgd = pgd_offset(mm, LDT_BASE_ADDR);
-+	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
-+	pmd_t *k_pmd, *u_pmd;
-+
-+	k_pmd = pgd_to_pmd_walk(k_pgd, LDT_BASE_ADDR);
-+	u_pmd = pgd_to_pmd_walk(u_pgd, LDT_BASE_ADDR);
-+
-+	if (static_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
-+		set_pmd(u_pmd, *k_pmd);
-+}
-+
-+static void sanity_check_ldt_mapping(struct mm_struct *mm)
-+{
-+	pgd_t *k_pgd = pgd_offset(mm, LDT_BASE_ADDR);
-+	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
-+	bool had_kernel, had_user;
-+	pmd_t *k_pmd, *u_pmd;
-+
-+	k_pmd      = pgd_to_pmd_walk(k_pgd, LDT_BASE_ADDR);
-+	u_pmd      = pgd_to_pmd_walk(u_pgd, LDT_BASE_ADDR);
-+	had_kernel = (k_pmd->pmd != 0);
-+	had_user   = (u_pmd->pmd != 0);
-+
-+	do_sanity_check(mm, had_kernel, had_user);
-+}
-+
-+#else /* !CONFIG_X86_PAE */
-+
- static void map_ldt_struct_to_user(struct mm_struct *mm)
- {
- 	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
-@@ -143,6 +194,8 @@ static void sanity_check_ldt_mapping(struct mm_struct *mm)
- 	do_sanity_check(mm, had_kernel, had_user);
- }
- 
-+#endif /* CONFIG_X86_PAE */
-+
- /*
-  * If PTI is enabled, this maps the LDT into the kernelmode and
-  * usermode tables for the given mm.
+ 		pgd = pgd_offset_k(addr);
+ 		if (WARN_ON(pgd_none(*pgd)))
+ 			return;
 -- 
 2.7.4
