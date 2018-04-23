@@ -1,124 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754617AbeDWIYo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:24:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34742 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754256AbeDWIYj (ORCPT
+        id S1754590AbeDWIYc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:24:32 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:35455 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754415AbeDWIYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:24:39 -0400
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH v2] perf test: Adapt test case record+probe_libc_inet_pton.sh for s390
-Date: Mon, 23 Apr 2018 10:24:28 +0200
-X-Mailer: git-send-email 2.13.5
-X-TM-AS-GCONF: 00
-x-cbid: 18042308-0040-0000-0000-000004506CC8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042308-0041-0000-0000-000020F4D25C
-Message-Id: <20180423082428.7930-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804230092
+        Mon, 23 Apr 2018 04:24:02 -0400
+X-Google-Smtp-Source: AIpwx4+sEm677eXIU3rE8Wz0icX3/TyxO+8pP/tMkoVRKqBKwVH6/yoUd0olqQd6oeuBXcG2ILxLMnT2yOkHiN0VkPuBQ+nmDrPx
+MIME-Version: 1.0
+Date: Mon, 23 Apr 2018 01:24:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009f23ab056a7fc243@google.com>
+Subject: WARNING: suspicious RCU usage in rt6_check_expired
+From: syzbot <syzbot+2422c9e35796659d2273@syzkaller.appspotmail.com>
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-perf test case 58 (record+probe_libc_inet_pton.sh)
-executed on s390x using kernel 4.16.0rc3
-displays this result:
- # ./perf trace --no-syscalls
-           -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-     probe_libc:inet_pton: (3ffa0240448)
-	      __GI___inet_pton (/usr/lib64/libc-2.26.so)
-	      gaih_inet (inlined)
-	      __GI_getaddrinfo (inlined)
-	      main (/usr/bin/ping)
-	      __libc_start_main (/usr/lib64/libc-2.26.so)
-	     _start (/usr/bin/ping)
+Hello,
 
-After I installed kernel 4.16.0 the same tests uses
-commands
- # perf record -e probe_libc:inet_pton/call-graph=dwarf/
-      -o /tmp/perf.data.abc ping -6 -c 1 ::1
- # perf script -i /tmp/perf.data.abc
-and displays:
- ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
-	       140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-	       fbde1 gaih_inet (inlined)
-	       fe2b9 __GI_getaddrinfo (inlined)
-	        398d main (/usr/bin/ping)
+syzbot hit the following crash on net-next commit
+0638eb573cde5888c0886c7f35da604e5db209a6 (Sat Apr 21 20:06:14 2018 +0000)
+Merge branch 'ipv6-Another-followup-to-the-fib6_info-change'
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=2422c9e35796659d2273
 
-Nothing else changed including glibc elfutils and other libraries
-picked up by the build.
-The entries for __libc_start_main and _start are missing.
+So far this crash happened 3 times on net-next.
+Unfortunately, I don't have any reproducer for this crash yet.
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6081013801287680
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-8412024688694752032
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-I bisected missing __libc_start_main and _start to commit
-3d20c6246690219881786de10d2dda93f616d0ac
-("perf unwind: Unwind with libdw doesn't take symfs into account")
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2422c9e35796659d2273@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-When I undo this commit I get this call stack on s390:
- [root@s35lp76 perf]# ./perf script  -i /tmp/perf.data.abc
- ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
-	140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-	 fbde1 gaih_inet (inlined)
-	 fe2b9 __GI_getaddrinfo (inlined)
-	  398d main (/usr/bin/ping)
-	 22fbd __libc_start_main (/usr/lib64/libc-2.26.so)
-	  457b _start (/usr/bin/ping)
+netlink: 'syz-executor4': attribute type 6 has an invalid length.
+netlink: 'syz-executor4': attribute type 1 has an invalid length.
+netlink: 'syz-executor4': attribute type 6 has an invalid length.
 
-Looks like dwarf functions dwfl_xxx  create different call back
-stack trace when using file
-/usr/lib/debug/usr/bin/ping-20161105-7.fc27.s390x.debug instead of
-file /usr/bin/ping.
+=============================
+WARNING: suspicious RCU usage
+4.16.0+ #11 Not tainted
+-----------------------------
+net/ipv6/route.c:410 suspicious rcu_dereference_check() usage!
 
-Fix this test case on s390 and do not expect any call back stack
-entry after the main() function. Also be more robust and accept a
-leading __GI_ prefix in front of getaddrinfo.
+other info that might help us debug this:
 
-On x86 this test case shows the same call stack using
-both kernel versions 4.16.0rc3 and 4.16.0 and also
-stops at main:
 
-[root@f27 perf]# ./perf script -i /tmp/perf.data.tmr
-ping  4446 [000]   172.027088: probe_libc:inet_pton: (7fdfa08c93c0)
-	           1393c0 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-	            fe60d getaddrinfo (/usr/lib64/libc-2.26.so)
-	             2f40 main (/usr/bin/ping)
+rcu_scheduler_active = 2, debug_locks = 1
+1 lock held by syz-executor7/25958:
+  #0: 00000000d1963139 (sk_lock-AF_INET6){+.+.}, at: lock_sock  
+include/net/sock.h:1469 [inline]
+  #0: 00000000d1963139 (sk_lock-AF_INET6){+.+.}, at:  
+sock_setsockopt+0x19c/0x1fe0 net/core/sock.c:717
 
-[root@f27 perf]#
+stack backtrace:
+CPU: 1 PID: 25958 Comm: syz-executor7 Not tainted 4.16.0+ #11
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  lockdep_rcu_suspicious+0x14a/0x153 kernel/locking/lockdep.c:4592
+  rt6_check_expired+0x38b/0x3e0 net/ipv6/route.c:410
+  ip6_negative_advice+0x67/0xc0 net/ipv6/route.c:2204
+  dst_negative_advice include/net/sock.h:1786 [inline]
+  sock_setsockopt+0x138f/0x1fe0 net/core/sock.c:1051
+  __sys_setsockopt+0x2df/0x390 net/socket.c:1899
+  SYSC_setsockopt net/socket.c:1914 [inline]
+  SyS_setsockopt+0x34/0x50 net/socket.c:1911
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x455389
+RSP: 002b:00007f7556e30c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f7556e316d4 RCX: 0000000000455389
+RDX: 0000000000000035 RSI: 0000000000000001 RDI: 0000000000000013
+RBP: 000000000072bf58 R08: 0000000000000004 R09: 0000000000000000
+R10: 0000000020000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000005ff R14: 00000000006fc088 R15: 0000000000000001
+netlink: 'syz-executor4': attribute type 4 has an invalid length.
+netlink: 'syz-executor4': attribute type 4 has an invalid length.
+IPVS: set_ctl: invalid protocol: 59 127.0.0.1:20000 lc
+IPVS: set_ctl: invalid protocol: 127 224.0.0.1:20000 rr
+IPVS: sync thread started: state = BACKUP, mcast_ifn = ip6tnl0, syncid = 4,  
+id = 0
+IPVS: set_ctl: invalid protocol: 127 224.0.0.1:20000 rr
+netlink: 72 bytes leftover after parsing attributes in process  
+`syz-executor2'.
+netlink: 72 bytes leftover after parsing attributes in process  
+`syz-executor2'.
+dccp_xmit_packet: Payload too large (65423) for featneg.
+IPVS: set_ctl: invalid protocol: 29 1.0.0.0:2 wlc
+IPVS: set_ctl: invalid protocol: 29 1.0.0.0:2 wlc
+netlink: 32 bytes leftover after parsing attributes in process  
+`syz-executor7'.
+netlink: 12 bytes leftover after parsing attributes in process  
+`syz-executor1'.
+netlink: 12 bytes leftover after parsing attributes in process  
+`syz-executor1'.
+netlink: 'syz-executor1': attribute type 29 has an invalid length.
+netlink: 8 bytes leftover after parsing attributes in process  
+`syz-executor1'.
+IPVS: set_ctl: invalid protocol: 108 224.0.0.1:20004 lblc
+netlink: 'syz-executor1': attribute type 29 has an invalid length.
+netlink: 8 bytes leftover after parsing attributes in process  
+`syz-executor1'.
+IPVS: set_ctl: invalid protocol: 108 224.0.0.1:20004 lblc
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+
 ---
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 1ecc1f0ff84a..016882dbbc16 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -19,12 +19,10 @@ trace_libc_inet_pton_backtrace() {
- 	expected[1]=".*inet_pton[[:space:]]\($libc\)$"
- 	case "$(uname -m)" in
- 	s390x)
--		eventattr='call-graph=dwarf'
-+		eventattr='call-graph=dwarf,max-stack=4'
- 		expected[2]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
--		expected[3]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
-+		expected[3]="(__GI_)?getaddrinfo[[:space:]]\($libc|inlined\)$"
- 		expected[4]="main[[:space:]]\(.*/bin/ping.*\)$"
--		expected[5]="__libc_start_main[[:space:]]\($libc\)$"
--		expected[6]="_start[[:space:]]\(.*/bin/ping.*\)$"
- 		;;
- 	*)
- 		eventattr='max-stack=3'
--- 
-2.14.3
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
