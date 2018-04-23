@@ -1,650 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754024AbeDWDg3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 23:36:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44332 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753934AbeDWDg0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 23:36:26 -0400
-Subject: Re: [PATCH 03/24] VFS: Introduce the structs and doc for a filesystem
- context [ver #7]
-To: David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org
-References: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
- <152414468332.23902.3065751107691714414.stgit@warthog.procyon.org.uk>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <05034a85-013b-30b6-ce17-4c95d4cab195@infradead.org>
-Date: Sun, 22 Apr 2018 20:36:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754034AbeDWDvW (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 23:51:22 -0400
+Received: from mail-eopbgr40078.outbound.protection.outlook.com ([40.107.4.78]:29776
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753988AbeDWDvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 23:51:19 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com;
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] ARM: dts: imx6sx-sabreauto: add PMIC support
+Date: Mon, 23 Apr 2018 11:46:55 +0800
+Message-Id: <1524455219-6736-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <152414468332.23902.3065751107691714414.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: HK2PR04CA0088.apcprd04.prod.outlook.com
+ (2603:1096:202:15::32) To HE1PR04MB1324.eurprd04.prod.outlook.com
+ (2a01:111:e400:588a::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1324;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1324;3:cpF2L0VIeenmx0hOkWvUSNlSuWh6xGSrcWOwmfNz5SJP9Cx4UR395TU/B1ZQX4lqKi/QUQK4BZ/Vnu/Iumk4mT1Myu6l5XZlw7lP1yHVI9SoMDaZZzIrZvMkynCh7UKPHpS1VFMw2LpI/JV59EGjl7JGuNEwgHMibR4KBu5nj2iI7vS0bqelZLrV26sDijS5VW7awyqgYjejAKahTZgZkA7iXnGO4mLPZaUZniabCyl4hh+OjsUWofAkYvS0QeHq;25:gDztSgHdC6J4/YouilSWe1UQK7WujqyVbQ5oMb1fLh1d7icQxxHzGPrdTWks6ZoD9HcOyQ1A/KL0xFCwV5vUCLkiY2sqYEHm/ugd38m2/2lD0k0x0Pzl3QOeUeFfvOeAL+pwUzg2v2Nh3WNxND+uVcu/DRbUNaQmwyxpLf4JWQ+5DAcCKaEKG2tufXfYw6RF4FxEbAepb7gS22Ans2crUAIl72k5yxt9uMV+xIz8ILzvyirrNzrRp/ztnyhy0pRSEeA0atDXJYYzfYUQgvs3bQKK0VMGWAglPZPSG+PUNSdNU8a6smLo9Y/htJoxrsrlq0lBXtsARAvwkqTWSuaECA==;31:SMCXho2ZN+DyovPwuUIcXci+9LDtq2I0vPjzThcJYDqOLK5dlbaLdB3K/lX5I/AHLbQQaLtYo1agjXdsMfMQ0jWnosaTwWLWlbhbDA8Hyh9L+zKXA1snDUPzqmFcDmfyctQxbpcuhm2cs6CFjeF8gBDIHcaf1PQliCBHTY9pa28av+bEhhiBLv+CoJkzQEXCcaL1KAS/e08n64nx1V3wWB0gTCpe77+H8jJiym34TcU=
+X-MS-TrafficTypeDiagnostic: HE1PR04MB1324:
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1324;20:E8sPA0WavEvFirP/A1r2hukxO0RCK5JVDt5VaEgf9pESYj4h1vLnyHBPPfj+DzMVzXTOYZybf3J4D6yYDbnXo7FBkQzuEsRgIgfZuiIJDNmv87h4xi+h0czcKlk+zKNUJbdIut2UlxNJWOTQOEJK7fIJ/x5a184n4GQrns+dujVuTVVUa+0cu1N+aWqW7BaIRTxUZqM6Jfde79wmc+QtykJfFcYheaNxtjoigibpgu031ENsb3Ilgo5FixTFyJCQvp6SCP5701g4YU2JHSnFCDLSZ52sivoqI16dUz7CeWzNJTtrtC1Uvo0vmsgbXnRJ7wnAtMY3h/dF7IBxQ2rf0aY3tJx/4iVJ72DeGBu6S87G2FJ59X0g/xwnU/xAoLNTTP+s3ZORD7wioKDPo+26ItGQAU1ZRDNy1Wcmsj1M7h8V9o42hjYCFVaPfjOYxJ0zJ3xAYo+Ix4sr99ff2pbxCsm7+ju8N9aNduoCZDObZIRVmvLE1o9pd7/y3VZ9uI5h;4:hvxQWZgo99FtPWkCfzbhXQ8Prxu4Ejilt2Yhq7taNkexU2v8sjaL85r1VLjAHkopFj1FRglu0czrQ/3j6qhi0ANdjlDuM86SVC37HUBpToHpr6q8XSTzmYq0Qy1AzbNeKHFjOMqaIcfIxzqxWGcW/YBlhJ8tIYbMIOaOgq9YjZJds4KA8uJmYzpCnuPSIf1UYGHWNW5OSIN18aqp1wcw5f0urB4S7Zxo4jLmDgDHuYiQ3oxDgodIynK4WWrTZWXhivNIsNLrWoz5t7/OcL+jsAO65BdecWEoKiwIp7AhlP6xMsULSQj9EJAlejdoYUjP
+X-Microsoft-Antispam-PRVS: <HE1PR04MB13242EF7A68469B9B34FA730F5890@HE1PR04MB1324.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231232)(944501410)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:HE1PR04MB1324;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1324;
+X-Forefront-PRVS: 06515DA04B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(376002)(346002)(396003)(366004)(8936002)(6666003)(26005)(186003)(16526019)(386003)(7736002)(6506007)(6486002)(2906002)(316002)(16586007)(478600001)(52116002)(51416003)(25786009)(4326008)(575784001)(86362001)(36756003)(50466002)(6512007)(53936002)(956004)(2616005)(3846002)(6116002)(47776003)(476003)(50226002)(305945005)(5660300001)(81166006)(8676002)(66066001)(48376002)(32563001)(473944003)(357404004);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1324;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;MLV:nov;PTR:InfoNoRecords;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB1324;23:O5k1T5SLqklkGEcjEgrt+qTeQHG8JjtdKlFqDWW7Z?=
+ =?us-ascii?Q?zawP9bfPxiZiYtsVTfVDofEW6rJnFxylVwQhS29LRxGbxcQYOZOcr9DnjTKI?=
+ =?us-ascii?Q?MubKiDJ2vWJFIlZixY+/xVkYmp9ReYe0M52v8jCE4pPkimYzpjq1TLRCP/aF?=
+ =?us-ascii?Q?VfCzC5DHty2dLSxB5KtzPs2u4T9UZqg8LByWsH2btwr9on2Bn9N6pUZpVZZB?=
+ =?us-ascii?Q?4sxD9uwZb5ymwNVSZ7elL31LzMLvZsuX2uQ1yyMGKL+v1EYyqiQ4oMaz4Y6z?=
+ =?us-ascii?Q?clfD4KT2/RQa0GBiLGRp0AF+zl+DRA7pt7vUx9aGT+eUb4Cq/bg6/WBFt9u8?=
+ =?us-ascii?Q?EUOxR6UmCpHoN7IffBP/mjBHnLNnrv7Pmnk3LTokE03MqoKIuq8fSIhbyQIa?=
+ =?us-ascii?Q?YM0Uu37CjHTHnITTJqJC7HXLrP+YDpcLZgDCAgU8VjR29SU0hSB6GZ7KohJb?=
+ =?us-ascii?Q?R+GUPj0spy4+yXqSvF8FSMzl2epq+jUUrlWpLL3CI898cPMiev0yHyg6QoaR?=
+ =?us-ascii?Q?4ps1qNiaymReEQlMbh6LMztHiHoKqRkzk+ufee46GmENZtCyAPVin/iKVyi4?=
+ =?us-ascii?Q?VY7iPPjWyDqxCzZUZiqT/wGmnqoUZ0XWu5DKSG870xy+XmNlvY2jhG73Zg5q?=
+ =?us-ascii?Q?OdzcZnH05mofdHydihogOdu581YZsjHn9Jlp0104vvwiOJ5jOJW1zUdSHpQz?=
+ =?us-ascii?Q?qWFObylxio6DR+Mu0Zf++bdrLoB9yFdgBqYzB6q537FUhd8LomzpbvHl8jEg?=
+ =?us-ascii?Q?rJKg2MNRKcseSBIGJeXoHgdwGa8TGV2m+iBNqt13GhSERE/RXFawrzUvqtnX?=
+ =?us-ascii?Q?Mbli9fa27PD9mCjr8j4XS4gCrnnRyB0xUJdyPjH8IwdIa77WGPVLotppJFWz?=
+ =?us-ascii?Q?aGwfessN604IBWVn7j3zZ0HGm2IKj8CKwAe+3MaTqrXidfXEjVE2q0LnJ0RT?=
+ =?us-ascii?Q?jtGC6NJQ4PZkuTzaEL4tw9LLOxS96EcgGxIS6n/CwkY6ZgEj1P3TdaCHOVDa?=
+ =?us-ascii?Q?pZBzsL3U0yE4qcg/v5+algkhtKER5VPgi8bNFOZB+IyNw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: pxcVP2IvVR7blG3X58ujvFtYhpvwIiv2jJIcvQ3Hnqj5ku/OeRiCoXJ3j+lA59vu7yJNbg7fdWyDqUe0s5wD390d3BSJgY5/QRZZBPGQA4GbU/9LpSOeKlRj3cSZ6PT1SHSINOzy2XK1AJtf6bAJCh0VU4hsf9oeKJAq+5sL00/KixJib/f6+Ud5l6CfunUA
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1324;6:wQvim5iTt5wL3hFaeGfyxmge7bf3wkt9Xc24UnQNS4QHyRzzNvc5j7Rh760nXA0mns6fDQ5WHkc76tTLW1wm+O/uc/S9whw0WD4W7N6jKHYQfaHTBwTX37/6oE9C/TJ8vuo8orr5L4cdctsNNNbR0qp+lq7/sbfW+r1n0IJIbO9RIAKIQPYZdqCqC0A17g9pSGJtHXJ8NXAqEslVwYFJIaJdKHPxGga2v1jDrRewFbc8SnZ+pi7P9yjEI08JO1FGpuHGAv6ZVWrOMhVYfr35pNubGcWYAMNYoLpujaMzKJoO/NucoQg3k32FzVSpo4VupAU6kVYuAwj2QElAf0/WYmDwEcr2d0RYgcOtd6NtLhtlc8ixNmd8aBPl6wjoElDT9u0Ip6hXLyDk9JnRfW9Bx/MP+1+Ly1PIRmPDY+c7VnKl02m0EulEhoMI6s+L4Qttzit9R4sqJH6RQlaa4SstaA==;5:Hk713iU5yZw+EzSWqR599k72GMOXI3R+ntpac8gRiKuc0+V4u0O376ErtNPA1scdDR1HflJUl+o6aT/zA3zD/bEjVAV6nMqCKq3yOVt+TgVM7l5kHzwBQkPzXCNdRsTzcNvWXVv2/5SO3BIOMI9CovBHwa7Rv4PeyyvYTpMmfyE=;24:jPzUZ6O3eFkF4GpjwZ+Y22cA4T2+fPMojOfno0Sdmqpp5bJRYycuQ8ZjwMTB1j04GER6bsPZheGnPEO4rGqaBznVubG1sCXiRXX0qy24guI=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1324;7:NASUu8aPEb1UR8YdcF+0m0+Bl9hnvmHa6+ZoE077osCKDCclQ5WRC8uVPLrlJfB5KmahYOTw2pR+cK2gpvj7oUcx4ZFvLnBTf+rlBguCkjHd9JqmtX145EutqHsAFVgr9G6V18ygfsvDUxJncleownp4gPd2t3gv3JZ2o8X5hxihtY83sPpx8CdI9okvsl4HKYl4iNhUTcGMIsMWEmm/G27/XSDKtibzrj5HaxQg2wkMS0GBxyLmdnIeT9O15jRi
+X-MS-Office365-Filtering-Correlation-Id: 2c3b07fa-d612-47d0-257e-08d5a8cd75e7
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2018 03:51:11.2793
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c3b07fa-d612-47d0-257e-08d5a8cd75e7
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1324
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+Add pfuze100 support on i.MX6SX Sabre Auto board.
 
-On 04/19/18 06:31, David Howells wrote:
-> Introduce a filesystem context concept to be used during superblock
-> creation for mount and superblock reconfiguration for remount.  This is
-> allocated at the beginning of the mount procedure and into it is placed:
-> 
->  (1) Filesystem type.
-> 
->  (2) Namespaces.
-> 
->  (3) Device name.
-> 
->  (4) Superblock flags (MS_*).
-> 
->  (5) Security details.
-> 
->  (6) Filesystem-specific data, as set by the mount options.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
-> 
->  Documentation/filesystems/mounting.txt |  445 ++++++++++++++++++++++++++++++++
->  include/linux/fs_context.h             |   76 +++++
->  2 files changed, 521 insertions(+)
->  create mode 100644 Documentation/filesystems/mounting.txt
->  create mode 100644 include/linux/fs_context.h
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/imx6sx-sabreauto.dts | 117 +++++++++++++++++++++++++++++++++
+ 1 file changed, 117 insertions(+)
 
-> diff --git a/Documentation/filesystems/mounting.txt b/Documentation/filesystems/mounting.txt
-> new file mode 100644
-> index 000000000000..805135a66b64
-> --- /dev/null
-> +++ b/Documentation/filesystems/mounting.txt
-> @@ -0,0 +1,445 @@
-> +			      ===================
-> +			      FILESYSTEM MOUNTING
-> +			      ===================
-> +
-> +CONTENTS
-> +
-> + (1) Overview.
-> +
-> + (2) The filesystem context.
-> +
-> + (3) The filesystem context operations.
-> +
-> + (4) Filesystem context security.
-> +
-> + (5) VFS filesystem context operations.
-> +
-> +
-> +========
-> +OVERVIEW
-> +========
-> +
-> +The creation of new mounts is now to be done in a multistep process:
-> +
-> + (1) Create a filesystem context.
-> +
-> + (2) Parse the options and attach them to the context.  Options may be passed
-> +     individually from userspace.
-
-Does this say that step (2) can be multiple small steps? How does step (2) know
-when userspace has completed sending individual options?
-
-
-> +
-> + (3) Validate and pre-process the context.
-> +
-> + (4) Get or create a superblock and mountable root.
-> +
-> + (5) Perform the mount.
-> +
-> + (6) Return an error message attached to the context.
-
-where/how is this done?
-
-> +
-> + (7) Destroy the context.
-> +
-> +To support this, the file_system_type struct gains two new fields:
-> +
-> +	unsigned short fs_context_size;
-> +
-> +which indicates the total amount of space that should be allocated for context
-> +data (see the Filesystem Context section), and:
-> +
-> +	int (*init_fs_context)(struct fs_context *fc, struct super_block *src_sb);
-> +
-> +which is invoked to set up the filesystem-specific parts of a filesystem
-> +context, including the additional space.  The src_sb parameter is used to
-> +convey the superblock from which the filesystem may draw extra information
-> +(such as namespaces) for submount (FS_CONTEXT_FOR_SUBMOUNT) or reconfiguration
-> +(FS_CONTEXT_FOR_RECONFIGURE) purposes - otherwise it will be NULL.
-> +
-> +Note that security initialisation is done *after* the filesystem is called so
-> +that the namespaces may be adjusted first.
-> +
-> +And the super_operations struct gains one field:
-> +
-> +	int (*reconfigure) (struct super_block *, struct fs_context *);
-> +
-> +This shadows the ->reconfigure() operation and takes a prepared filesystem
-> +context instead of the mount flags and data page.  It may modify the sb_flags
-> +in the context for the caller to pick up.
-> +
-> +[NOTE] reconfigure is intended as a replacement for remount_fs.
-> +
-> +
-> +======================
-> +THE FILESYSTEM CONTEXT
-> +======================
-> +
-> +The creation and reconfiguration of a superblock is governed by a filesystem
-> +context.  This is represented by the fs_context structure:
-> +
-> +	struct fs_context {
-> +		const struct fs_context_operations *ops;
-> +		struct file_system_type *fs;
-> +		struct dentry		*root;
-> +		struct user_namespace	*user_ns;
-> +		struct net		*net_ns;
-> +		const struct cred	*cred;
-> +		char			*device;
-> +		char			*subtype;
-> +		void			*security;
-> +		void			*s_fs_info;
-> +		unsigned int		sb_flags;
-> +		bool			sloppy;
-> +		bool			silent;
-> +		bool			degraded;
-> +		bool			drop_sb;
-> +		enum fs_context_purpose	purpose : 8;
-> +	};
-> +
-> +When the VFS creates this, it allocates ->fs_context_size bytes (as specified
-> +by the file_system_type object) to hold both the fs_context struct and any
-> +extra data required by the filesystem.  The fs_context struct is placed at the
-> +beginning of this space.  Any extra space beyond that is for use by the
-> +filesystem.  The filesystem should wrap the struct in its own, e.g.:
-
-                                                      in its own struct, e.g.:
-
-> +
-> +	struct nfs_fs_context {
-> +		struct fs_context fc;
-> +		...
-> +	};
-> +
-> +placing the fs_context struct first.  container_of() can then be used.  The
-> +file_system_type would be initialised thus:
-> +
-> +	struct file_system_type nfs = {
-> +		...
-> +		.fs_context_size	= sizeof(struct nfs_fs_context),
-> +		.init_fs_context	= nfs_init_fs_context,
-> +		...
-> +	};
-> +
-> +The fs_context fields are as follows:
-> +
-> + (*) const struct fs_context_operations *ops
-> +
-> +     These are operations that can be done on a filesystem context (see
-> +     below).  This must be set by the ->init_fs_context() file_system_type
-> +     operation.
-> +
-> + (*) struct file_system_type *fs
-> +
-> +     A pointer to the file_system_type of the filesystem that is being
-> +     constructed or reconfigured.  This retains a reference on the type owner.
-> +
-> + (*) struct dentry *root
-> +
-> +     A pointer to the root of the mountable tree (and indirectly, the
-> +     superblock thereof).  This is filled in by the ->get_tree() op.
-> +
-> + (*) struct user_namespace *user_ns
-> + (*) struct net *net_ns
-> +
-> +     There are a subset of the namespaces in use by the invoking process.  They
-> +     retain references on each namespace.  The subscribed namespaces may be
-> +     replaced by the filesystem to reflect other sources, such as the parent
-> +     mount superblock on an automount.
-> +
-> + (*) struct cred *cred
-> +
-> +     The mounter's credentials.  This retains a reference on the credentials.
-> +
-> + (*) char *device
-> +
-> +     This is the device to be mounted.  It may be a block device
-> +     (e.g. /dev/sda1) or something more exotic, such as the "host:/path" that
-> +     NFS desires.
-> +
-> + (*) char *subtype
-> +
-> +     This is a string to be added to the type displayed in /proc/mounts to
-> +     qualify it (used by FUSE).  This is available for the filesystem to set if
-> +     desired.
-> +
-> + (*) void *security
-> +
-> +     A place for the LSMs to hang their security data for the superblock.  The
-> +     relevant security operations are described below.
-> +
-> + (*) void *s_fs_info
-> +
-> +     The proposed s_fs_info for a new superblock, set in the superblock by
-> +     sget_fc().  This can be used to distinguish superblocks.
-> +
-> + (*) unsigned int sb_flags
-> +
-> +     This holds the SB_* flags to be set in super_block::s_flags.
-> +
-> + (*) bool sloppy
-> + (*) bool silent
-> +
-> +     These are set if the sloppy or silent mount options are given.
-> +
-> +     [NOTE] sloppy is probably unnecessary when userspace passes over one
-> +     option at a time since the error can just be ignored if userspace deems it
-> +     to be unimportant.
-> +
-> +     [NOTE] silent is probably redundant with sb_flags & SB_SILENT.
-> +
-> + (*) bool degraded
-> +
-> +     This is set if any preallocated resources in the context have been used
-> +     up, thereby rendering it unreusable for the ->get_tree() op.
-> +
-> + (*) bool drop_sb
-> +
-> +     This is set if a superblock reference needs to be deactivated when the
-> +     context is put.
-> +
-> + (*) enum fs_context_purpose
-> +
-> +     This indicates the purpose for which the context is intended.  The
-> +     available values are:
-> +
-> +	FS_CONTEXT_FOR_USER_MOUNT,	-- New superblock for user-specified mount
-> +	FS_CONTEXT_FOR_KERNEL_MOUNT,	-- New superblock for kernel-internal mount
-> +	FS_CONTEXT_FOR_SUBMOUNT		-- New automatic submount of extant mount
-> +	FS_CONTEXT_FOR_RECONFIGURE	-- Change an existing mount
-> +
-> +The mount context is created by calling vfs_new_fs_context(), vfs_sb_reconfig()
-> +or vfs_dup_fs_context() and is destroyed with put_fs_context().  Note that the
-> +structure is not refcounted.
-> +
-> +VFS, security and filesystem mount options are set individually with
-> +vfs_parse_mount_option().  Options provided by the old mount(2) system call as
-> +a page of data can be parsed with generic_parse_monolithic().
-> +
-> +When mounting, the filesystem is allowed to take data from any of the pointers
-> +and attach it to the superblock (or whatever), provided it clears the pointer
-> +in the mount context.
-> +
-> +The filesystem is also allowed to allocate resources and pin them with the
-> +mount context.  For instance, NFS might pin the appropriate protocol version
-> +module.
-> +
-> +
-> +=================================
-> +THE FILESYSTEM CONTEXT OPERATIONS
-> +=================================
-> +
-> +The filesystem context points to a table of operations:
-> +
-> +	struct fs_context_operations {
-> +		void (*free)(struct fs_context *fc);
-> +		int (*dup)(struct fs_context *fc, struct fs_context *src_fc);
-> +		int (*parse_source)(struct fs_context *fc);
-> +		int (*parse_option)(struct fs_context *fc, char *opt);
-> +		int (*parse_monolithic)(struct fs_context *fc, void *data);
-> +		int (*validate)(struct fs_context *fc);
-> +		int (*get_tree)(struct fs_context *fc);
-> +	};
-> +
-> +These operations are invoked by the various stages of the mount procedure to
-> +manage the filesystem context.  They are as follows:
-> +
-> + (*) void (*free)(struct fs_context *fc);
-> +
-> +     Called to clean up the filesystem-specific part of the filesystem context
-> +     when the context is destroyed.  It should be aware that parts of the
-> +     context may have been removed and NULL'd out by ->get_tree().
-> +
-> + (*) int (*dup)(struct fs_context *fc, struct fs_context *src_fc);
-> +
-> +     Called when a filesystem context has been duplicated to get any refs or
-> +     copy any non-referenced resources held in the filesystem-specific part of
-> +     the filesystem context.  An error may be returned to indicate failure to
-> +     do this.
-> +
-> +     [!] Note that even if this fails, put_fs_context() will be called
-> +	 immediately thereafter, so ->dup() *must* make the
-> +	 filesystem-specific part safe for ->free().
-> +
-> + (*) int (*parse_source)(struct fs_context *fc);
-> +
-> +     Called when the source or device is specified for a filesystem context.
-> +     The string will have been stored in fc->source prior to calling.  If
-
-"source" is called "device" above but "source" in the header file.
-Please change one of them to be consistent.
-
-> +     successful, 0 should be returned and a negative error code otherwise.
-
-	                                 or a
-
-> +
-> + (*) int (*parse_option)(struct fs_context *fc, char *p);
-> +
-> +     Called when an option is to be added to the filesystem context.  p points
-> +     to the option string, likely in "key[=val]" format.  VFS-specific options
-> +     will have been weeded out and fc->sb_flags updated in the context.
-> +     Security options will also have been weeded out and fc->security updated.
-> +
-> +     If successful, 0 should be returned and a negative error code otherwise.
-
-	                                    or a
-
-> +
-> + (*) int (*parse_monolithic)(struct fs_context *fc, void *data);
-> +
-> +     Called when the mount(2) system call is invoked to pass the entire data
-> +     page in one go.  If this is expected to be just a list of "key[=val]"
-> +     items separated by commas, then this may be set to NULL.
-> +
-> +     The return value is as for ->parse_option().
-> +
-> +     If the filesystem (eg. NFS) needs to examine the data first and then finds
-
-	                   e.g.
-
-> +     it's the standard key-val list then it may pass it off to
-> +     generic_parse_monolithic().
-> +
-> + (*) int (*validate)(struct fs_context *fc);
-> +
-> +     Called when all the options have been applied and the mount is about to
-> +     take place.  It is should check for inconsistencies from mount options and
-> +     it is also allowed to do preliminary resource acquisition.  For instance,
-> +     the core NFS module could load the NFS protocol module here.
-> +
-> +     Note that if fc->purpose == FS_CONTEXT_FOR_RECONFIGURE, some of the
-> +     options necessary for a new mount may not be set.
-> +
-> +     The return value is as for ->parse_option().
-> +
-> + (*) int (*get_tree)(struct fs_context *fc);
-> +
-> +     Called to get or create the mountable root and superblock, using the
-> +     information stored in the filesystem context (reconfiguration goes via a
-> +     different vector).  It may detach any resources it desires from the
-> +     filesystem context and transfer them to the superblock it creates.
-> +
-> +     On success it should set fc->root to the mountable root and return 0.  In
-> +     the case of an error, it should return a negative error code.
-> +
-> +
-> +===========================
-> +FILESYSTEM CONTEXT SECURITY
-> +===========================
-> +
-> +The filesystem context contains a security pointer that the LSMs can use for
-> +building up a security context for the superblock to be mounted.  There are a
-> +number of operations used by the new mount code for this purpose:
-> +
-> + (*) int security_fs_context_alloc(struct fs_context *fc,
-> +				   struct super_block *src_sb);
-> +
-> +     Called to initialise fc->security (which is preset to NULL) and allocate
-> +     any resources needed.  It should return 0 on success and a negative error
-
-	                                                     or a
-
-> +     code on failure.
-> +
-> +     src_sb is non-NULL in the case of reconfiguration
-> +     (FS_CONTEXT_FOR_RECONFIGURE) in which case it indicates the superblock to
-> +     be reconfigured or in the case of a submount (FS_CONTEXT_FOR_SUBMOUNT) in
-> +     which case it indicates the parent superblock.
-
-I seem to recall that you were going to rewrite that long sentence above.
--ETOOMANYCASES
-
-> +
-> + (*) int security_fs_context_dup(struct fs_context *fc,
-> +				 struct fs_context *src_fc);
-> +
-> +     Called to initialise fc->security (which is preset to NULL) and allocate
-> +     any resources needed.  The original filesystem context is pointed to by
-> +     src_fc and may be used for reference.  It should return 0 on success and a
-
-	                                                                     or a
-
-> +     negative error code on failure.
-> +
-> + (*) void security_fs_context_free(struct fs_context *fc);
-> +
-> +     Called to clean up anything attached to fc->security.  Note that the
-> +     contents may have been transferred to a superblock and the pointer NULL'd
-> +     out during mount.
-
-[Here we have evidence that in English any noun can be verbed.]   :)
-
-> +
-> + (*) int security_fs_context_parse_option(struct fs_context *fc, char *opt);	
-> +
-> +     Called for each mount option.  The arguments are as for the
-> +     ->parse_option() method.  An active LSM may reject one with an error, pass
-> +     one over and return 0 or consume one and return 1.  If consumed, the
-
-What does "pass one over" mean?
-
-> +     option isn't passed on to the filesystem.
-> +
-> + (*) int security_sb_get_tree(struct fs_context *fc);
-> +
-> +     Called during the mount procedure to verify that the specified superblock
-> +     is allowed to be mounted and to transfer the security data there.  It
-> +     should return 0 or a negative error code.
-> +
-> +     [NOTE] Should I add a security_fs_context_validate() operation so that the
-> +     LSM has the opportunity to allocate stuff and check the options as a
-> +     whole?
-> +
-> + (*) int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint)
-
-	end line with ';' like the other prototypes.
-
-> +
-> +     Called during the mount procedure to verify that the root dentry attached
-> +     to the context is permitted to be attached to the specified mountpoint.
-> +     It should return 0 on success and a negative error code on failure.
-
-	                              or a
-
-> +
-> +
-> +=================================
-> +VFS FILESYSTEM CONTEXT OPERATIONS
-> +=================================
-> +
-> +There are four operations for creating a filesystem context and
-> +one for destroying a context:
-> +
-> + (*) struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
-> +					   struct super_block *src_sb;
-
-				s/;/,/ above
-
-> +					   unsigned int sb_flags);
-> +
-> +     Create a filesystem context for a given filesystem type.  This allocates
-> +     the filesystem context, sets the flags, initialises the security and calls
-> +     fs_type->init_fs_context() to initialise the filesystem context.
-> +
-> +     src_sb can be NULL or it may indicate a superblock that is going to be
-> +     reconfigured (FS_CONTEXT_FOR_RECONFIGURE) or a superblock that is the
-> +     parent of a submount (FS_CONTEXT_FOR_SUBMOUNT).  This superblock is
-> +     provided as a source of namespace information.
-> +
-> + (*) struct fs_context *vfs_sb_reconfigure(struct vfsmount *mnt,
-> +					   unsigned int sb_flags);
-> +
-> +     Create a filesystem context from the same filesystem as an extant mount
-> +     and initialise the mount parameters from the superblock underlying that
-> +     mount.  This is for use by superblock parameter reconfiguration.
-> +
-> + (*) struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc);
-> +
-> +     Duplicate a filesystem context, copying any options noted and duplicating
-> +     or additionally referencing any resources held therein.  This is available
-> +     for use where a filesystem has to get a mount within a mount, such as NFS4
-> +     does by internally mounting the root of the target server and then doing a
-> +     private pathwalk to the target directory.
-> +
-> + (*) void put_fs_context(struct fs_context *fc);
-> +
-> +     Destroy a filesystem context, releasing any resources it holds.  This
-> +     calls the ->free() operation.  This is intended to be called by anyone who
-> +     created a filesystem context.
-> +
-> +     [!] filesystem contexts are not refcounted, so this causes unconditional
-> +	 destruction.
-> +
-> +In all the above operations, apart from the put op, the return is a mount
-> +context pointer or a negative error code.
-> +
-> +For the remaining operations, if an error occurs, a negative error code will be
-> +returned.
-> +
-> + (*) int vfs_get_tree(struct fs_context *fc);
-> +
-> +     Get or create the mountable root and superblock, using the parameters in
-> +     the filesystem context to select/configure the superblock.  This invokes
-> +     the ->validate() op and then the ->get_tree() op.
-> +
-> +     [NOTE] ->validate() could perhaps be rolled into ->get_tree() and
-> +     ->reconfigure().
-> +
-> + (*) struct vfsmount *vfs_create_mount(struct fs_context *fc);
-> +
-> +     Create a mount given the parameters in the specified filesystem context.
-> +     Note that this does not attach the mount to anything.
-> +
-> + (*) int vfs_set_fs_source(struct fs_context *fc, char *source);
-> +
-> +     Supply the source name or device name for the mount.  This may cause the
-> +     filesystem to access the device.
-> +
-> + (*) int vfs_parse_fs_option(struct fs_context *fc, char *data);
-> +
-> +     Supply a single mount option to the filesystem context.  The mount option
-> +     should likely be in a "key[=val]" string form.  The option is first
-> +     checked to see if it corresponds to a standard mount flag (in which case
-> +     it is used to set an SB_xxx flag and consumed) or a security option (in
-> +     which case the LSM consumes it) before it is passed on to the filesystem.
-> +
-> + (*) int generic_parse_monolithic(struct fs_context *fc, void *data);
-> +
-> +     Parse a sys_mount() data page, assuming the form to be a text list
-> +     consisting of key[=val] options separated by commas.  Each item in the
-> +     list is passed to vfs_mount_option().  This is the default when the
-> +     ->parse_monolithic() operation is NULL.
-
-> diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-> new file mode 100644
-> index 000000000000..732a11898242
-> --- /dev/null
-> +++ b/include/linux/fs_context.h
-> @@ -0,0 +1,76 @@
-> +/* Filesystem superblock creation and reconfiguration context.
-> + *
-> + * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-> +
-> +#ifndef _LINUX_FS_CONTEXT_H
-> +#define _LINUX_FS_CONTEXT_H
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/errno.h>
-> +
-> +struct cred;
-> +struct dentry;
-> +struct file_operations;
-> +struct file_system_type;
-> +struct mnt_namespace;
-> +struct net;
-> +struct pid_namespace;
-> +struct super_block;
-> +struct user_namespace;
-> +struct vfsmount;
-> +
-> +enum fs_context_purpose {
-> +	FS_CONTEXT_FOR_USER_MOUNT,	/* New superblock for user-specified mount */
-> +	FS_CONTEXT_FOR_KERNEL_MOUNT,	/* New superblock for kernel-internal mount */
-> +	FS_CONTEXT_FOR_SUBMOUNT,	/* New superblock for automatic submount */
-> +	FS_CONTEXT_FOR_RECONFIGURE,	/* Superblock reconfiguration (remount) */
-> +};
-> +
-> +/*
-> + * Filesystem context as allocated and constructed by the ->init_fs_context()
-> + * file_system_type operation.  The size of the object allocated is specified
-> + * in struct file_system_type::fs_context_size and this must include sufficient
-> + * space for the fs_context struct.
-> + *
-> + * Superblock creation fills in ->root whereas reconfiguration begins with this
-> + * already set.
-> + *
-> + * See Documentation/filesystems/mounting.txt
-> + */
-> +struct fs_context {
-> +	const struct fs_context_operations *ops;
-> +	struct file_system_type	*fs_type;
-> +	struct dentry		*root;		/* The root and superblock */
-> +	struct user_namespace	*user_ns;	/* The user namespace for this mount */
-> +	struct net		*net_ns;	/* The network namespace for this mount */
-> +	const struct cred	*cred;		/* The mounter's credentials */
-> +	char			*source;	/* The source name (eg. device) */
-> +	char			*subtype;	/* The subtype to set on the superblock */
-> +	void			*security;	/* The LSM context */
-> +	void			*s_fs_info;	/* Proposed s_fs_info */
-> +	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
-> +	bool			sloppy;		/* Unrecognised options are okay */
-> +	bool			silent;
-> +	bool			degraded;	/* True if the context can't be reused */
-> +	bool			drop_sb;	/* T if need to drop an SB reference */
-
-s/T /True /
-
-> +	enum fs_context_purpose	purpose : 8;
-> +};
-> +
-> +struct fs_context_operations {
-> +	void (*free)(struct fs_context *fc);
-> +	int (*dup)(struct fs_context *fc, struct fs_context *src_fc);
-> +	int (*parse_source)(struct fs_context *fc);
-> +	int (*parse_option)(struct fs_context *fc, char *opt, size_t len);
-> +	int (*parse_monolithic)(struct fs_context *fc, void *data);
-> +	int (*validate)(struct fs_context *fc);
-> +	int (*get_tree)(struct fs_context *fc);
-> +};
-> +
-> +#endif /* _LINUX_FS_CONTEXT_H */
-> 
-
-
+diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
+index 57d1ea0..2caca934 100644
+--- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
++++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
+@@ -74,6 +74,14 @@
+ 
+ &iomuxc {
+ 	imx6x-sabreauto {
++
++		pinctrl_i2c2_1: i2c2grp-1 {
++			fsl,pins = <
++				MX6SX_PAD_GPIO1_IO03__I2C2_SDA          0x4001b8b1
++				MX6SX_PAD_GPIO1_IO02__I2C2_SCL          0x4001b8b1
++			>;
++		};
++
+ 		pinctrl_uart1: uart1grp {
+ 			fsl,pins = <
+ 				MX6SX_PAD_GPIO1_IO04__UART1_TX		0x1b0b1
+@@ -148,3 +156,112 @@
+ 		};
+ 	};
+ };
++
++&i2c2 {
++	clock-frequency = <100000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c2_1>;
++	status = "okay";
++
++	pmic: pfuze100@08 {
++		compatible = "fsl,pfuze100";
++		reg = <0x08>;
++
++		regulators {
++			sw1a_reg: sw1ab {
++				regulator-min-microvolt = <300000>;
++				regulator-max-microvolt = <1875000>;
++				regulator-boot-on;
++				regulator-always-on;
++				regulator-ramp-delay = <6250>;
++			};
++
++			sw1c_reg: sw1c {
++				regulator-min-microvolt = <300000>;
++				regulator-max-microvolt = <1875000>;
++				regulator-boot-on;
++				regulator-always-on;
++				regulator-ramp-delay = <6250>;
++			};
++
++			sw2_reg: sw2 {
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			sw3a_reg: sw3a {
++				regulator-min-microvolt = <400000>;
++				regulator-max-microvolt = <1975000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			sw3b_reg: sw3b {
++				regulator-min-microvolt = <400000>;
++				regulator-max-microvolt = <1975000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			sw4_reg: sw4 {
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++
++			swbst_reg: swbst {
++				regulator-min-microvolt = <5000000>;
++				regulator-max-microvolt = <5150000>;
++			};
++
++			snvs_reg: vsnvs {
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <3000000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			vref_reg: vrefddr {
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			vgen1_reg: vgen1 {
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <1550000>;
++				regulator-always-on;
++			};
++
++			vgen2_reg: vgen2 {
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <1550000>;
++			};
++
++			vgen3_reg: vgen3 {
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++
++			vgen4_reg: vgen4 {
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++
++			vgen5_reg: vgen5 {
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++
++			vgen6_reg: vgen6 {
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++		};
++	};
++};
 -- 
-~Randy
+2.7.4
