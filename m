@@ -1,90 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755774AbeDWRBd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:01:33 -0400
-Received: from mga01.intel.com ([192.55.52.88]:65510 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755573AbeDWRBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:01:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,318,1520924400";
-   d="scan'208";a="39794569"
-Date: Mon, 23 Apr 2018 20:01:28 +0300
-From: Imre Deak <imre.deak@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Mika Kuoppala <mika.kuoppala@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: Early timeouts due to inaccurate jiffies during system
- suspend/resume
-Message-ID: <20180423170128.mf7g26rniimm7asf@ideak-desk.fi.intel.com>
-Reply-To: imre.deak@intel.com
-References: <20180419013200.wxkzqfdacfsijci5@ideak-desk.fi.intel.com>
- <alpine.DEB.2.21.1804191256200.1563@nanos.tec.linutronix.de>
+        id S932145AbeDWRCe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:02:34 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46992 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932068AbeDWRCd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 13:02:33 -0400
+Date: Mon, 23 Apr 2018 19:02:30 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Paul Menzel <pmenzel+linux-kernel@molgen.mpg.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: How to disable Linux =?utf-8?Q?kernel_?=
+ =?utf-8?Q?self-extraction_=28KERNEL=5FGZIP=2C_KERNEL=5FBZIP2=2C_=E2=80=A6?=
+ =?utf-8?B?KT8=?=
+Message-ID: <20180423170230.GA22412@amd>
+References: <9468be0e-5eb9-246c-e60e-3d8019a42fd1@molgen.mpg.de>
+ <20180422102033.GB26243@amd>
+ <b22efb58-b63e-7130-f2d7-a9d28225ef9b@molgen.mpg.de>
+ <20180422205208.GA8672@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804191256200.1563@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180422205208.GA8672@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 01:05:39PM +0200, Thomas Gleixner wrote:
-> On Thu, 19 Apr 2018, Imre Deak wrote:
-> > Hi,
-> > 
-> > while checking bug [1], I noticed that jiffies based timing loops like
-> > 
-> > 	expire = jiffies + timeout + 1;
-> > 	while (!time_after(jiffies, expire))
-> > 		do_something;
-> > 
-> > can last shorter than expected (that is less than timeout).
-> 
-> Yes, that can happen when the timer interrupt is delayed long enough for
-> whatever reason. If you need accurate timing then you need to use
-> ktime_get().
 
-Thanks. I always regarded jiffies as non-accurate, but something that
-gives a minimum time delay guarantee (when adjusted by +1 as above). I
-wonder if there are other callers in kernel that don't expect an early
-timeout.
+--8t9RHnE3ZwKMSgU+
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We switched now to using ktime_get_raw() in the i915 driver.
+Hi!
 
-> 
-> > After some ftracing it seems like jiffies gets stale due to a missed
-> > LAPIC timer interrupt after the interrupt is armed in
-> > lapic_next_deadline() and before jiffies is sampled at 2. above.
-> > Eventually the interrupt does get delivered, at which point jiffies gets
-> > updated via tick_do_update_jiffies64() with a >1 ticks increment.
-> > Between lapic_next_deadline() and the - late - delivery of the interrupt
-> > the CPU on which the interrupt is armed doesn't go idle.
-> 
-> That's odd. I have no real explanation for that.
+> > >>I try to decrease boot time, and my system has an SSD and enough spac=
+e, so
+> > >>loading 18 instead of 12 MB doesn=E2=80=99t make a difference, but the
+> > >>self-extraction is noticeable. So, I like to disable it.
+> > >
+> > >How long does GZIP extraction take on your hardware?
+> >=20
+> > It=E2=80=99s hard to measure =E2=80=93 at least I didn=E2=80=99t find a=
+ way to do so =E2=80=93, but counting
+> > from the last GRUB message to the first message of Linux (with `quiet`
+> > removed from the the command line), it takes roughly *two* seconds.
+> >=20
+> > ```
+> > $ ls -l /boot/vmlinuz-4.15.0-3-686-pae
+> > -rw-r--r-- 1 root root  3987200 Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686=
+-pae
+> > $ ls -lh /boot/vmlinuz-4.15.0-3-686-pae
+> > -rw-r--r-- 1 root root 3,9M Apr 19 12:13 /boot/vmlinuz-4.15.0-3-686-pae
+> > $ time scripts/extract-vmlinux vmlinuz-4.15.0-3-686-pae > bla.txt
+> >=20
+> > real    0m1,204s
+> > user    0m1,041s
+> > sys     0m0,245s
+> > ```
+>=20
+> Interesting; looks like I have faster machine (thinkpad X220).
+>=20
+> pavel@duo:/data/l/linux$ time scripts/extract-vmlinux /tmp/vmlinux.bin
+> > /tmp/delme
+> 0.21user 0.15system 0.66 (0m0.660s) elapsed 56.36%CPU
+> pavel@duo:/data/l/linux$ ls -al /tmp/delme
+> -rw-r--r-- 1 pavel pavel 18275356 Apr 22 22:44 /tmp/delme
+> pavel@duo:/data/l/linux$ gzip /tmp/delme
+> pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
+> 0.21user 0.02system 0.23 (0m0.232s) elapsed 100.03%CPU
+> pavel@duo:/data/l/linux$ gzip -1 /tmp/delme
+> pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
+> 0.22user 0.03system 0.25 (0m0.257s) elapsed 100.11%CPU
+> pavel@duo:/data/l/linux$ time gzip -d /tmp/delme.gz
+>=20
+> ..and it also looks like extract-kernel is significantly slower than
+> gzip -9, because it is not using all the CPU. Strange.
+>=20
+> Interesting. I somehow assumed gzip -d would be faster than that on
+> modern machines.
+>=20
+> So yes, looks like uncompressed kernel image may be good idea.
 
-Looks like the reason is IRQ latency. For reference here are the
-longest ones I found with irqsoff ftracing, all running with IRQs disabled
-during system resume:
+Actually... Compressors usually have a mode when they store the data
+uncompressed. So you should be able to prepare .gz image which is not
+really compressed inside, and thus really fast to uncompress.
 
-hpet_rtc_interrupt()->hpet_rtc_timer_reinit():
-do { ... } while(!hpet_cnt_ahead(...));
-takes sometimes up to ~40msec for me.
+Or maybe even better -- there should be some compression algorithms
+that are fast enough to uncompress that there should be no
+slowdown. Maybe use one of those?
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-hpet_rtc_interrupt()->mc146818_get_time():
-if (mc146818_is_updating()) mdelay(20);
+--8t9RHnE3ZwKMSgU+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-driver_probe_device->atkbd_connect()->i8042_port_close()->__i8042_command()->i8042_wait_write():
-takes sometimes up to ~10msec for me.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-All the above paired with asynchronous calling of the drivers' resume
-hooks may result in the jumps in jiffies I saw.
+iEYEARECAAYFAlreEaYACgkQMOfwapXb+vJuGgCgivTLoIa19tIEQbDUyfD5bl1V
+WEMAn3f3UU9jeKV+flxUZ+MfB9J/vLaO
+=He0a
+-----END PGP SIGNATURE-----
 
---Imre
+--8t9RHnE3ZwKMSgU+--
