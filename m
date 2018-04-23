@@ -1,115 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754260AbeDWISB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:18:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59762 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754144AbeDWIR7 (ORCPT
+        id S1754356AbeDWISs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:18:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53615 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754330AbeDWISn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:17:59 -0400
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH v2] perf list: Remove s390 specific strcmp_cpuid_cmp function
-Date: Mon, 23 Apr 2018 10:17:45 +0200
-X-Mailer: git-send-email 2.13.5
-X-TM-AS-GCONF: 00
-x-cbid: 18042308-0020-0000-0000-00000414CF18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042308-0021-0000-0000-000042A92A08
-Message-Id: <20180423081745.3672-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804230090
+        Mon, 23 Apr 2018 04:18:43 -0400
+X-Google-Smtp-Source: AIpwx49Bt/0FLUk/uQNOcM8Rc7bs7WadXFSUA56FBiGGL7D6wIv1jYz4oSMWh+6yDyozXIV75EcgZg==
+Content-Type: text/plain;
+        charset=utf-8;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [alsa-devel] [PATCH v4 3/3] ALSA: hda: Disabled unused audio
+ controller for Dell platforms with Switchable Graphics
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20180423080844.yh6ndicpu6mwy336@pali>
+Date: Mon, 23 Apr 2018 16:18:35 +0800
+Cc: Takashi Iwai <tiwai@suse.de>, mjg59@srcf.ucam.org,
+        dvhart@infradead.org, andy@infradead.org,
+        Mario Limonciello <mario.limonciello@dell.com>, tiwai@suse.com,
+        alsa-devel@alsa-project.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Message-Id: <FF30493D-012C-41E8-B379-85138E1EDE05@canonical.com>
+References: <20180420094432.13133-1-kai.heng.feng@canonical.com>
+ <20180420094432.13133-3-kai.heng.feng@canonical.com>
+ <s5hbmeew01d.wl-tiwai@suse.de>
+ <E5D0F76C-0A83-4D2C-81F7-BD5768C0A7DC@canonical.com>
+ <20180423080844.yh6ndicpu6mwy336@pali>
+To: =?utf-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the type field in pmu-events/arch/s390/mapfile.cvs
-more generic to match the created cpuid string for s390.
-The pattern also checks for the counter first version
-number and counter second version number ([13]\.[1-5])
-and the authorization field which follows. These numbers do
-not exist in the cpuid identification string when perf
-commands are executed on a z/VM environment (which does
-not support CPU counter measurement facility).
-CPUID string for LPAR:
-   cpuid : IBM,3906,704,M03,3.5,002f
-CPUID string for z/VM:
-   cpuid : IBM,2964,702,N96
 
-This allows the removal of s390 specific cpuid compare code
-and uses the common compare function with its regular
-expression matching algorithm.
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
----
- tools/perf/arch/s390/util/header.c          | 18 ------------------
- tools/perf/pmu-events/arch/s390/mapfile.csv | 10 +++++-----
- tools/perf/util/pmu.c                       |  2 +-
- 3 files changed, 6 insertions(+), 24 deletions(-)
+> On Apr 23, 2018, at 4:08 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+>
+> On Monday 23 April 2018 16:04:55 Kai Heng Feng wrote:
+>>> On Apr 20, 2018, at 8:10 PM, Takashi Iwai <tiwai@suse.de> wrote:
+>>>
+>>> On Fri, 20 Apr 2018 11:44:32 +0200,
+>>> Kai-Heng Feng wrote:
+>>>> Now it's a typical discrete-only system. HDMI audio comes from AMD audio
+>>>> controller, others from Intel audio controller.
+>>>>
+>>>> When SG is enabled, the unused AMD audio contoller still exposes its
+>>>> sysfs, so userspace still opens the control file and stream. If
+>>>> userspace tries to output sound through the stream, it hangs the system.
+>>>
+>>> Hm, could you give more information about how it hangs?
+>>
+>> Well, I should say "it hangs the userspace process" instead.
+>>
+>> $ speaker-test -t wav -c 2 -D hw:CARD=HDMI,DEV=3
+>> ...and it just stopped. Can't Ctrl+C to break it.
+>
+> So userspace process cannot be killed at all? Then it is different bug
+> in kernel and disabling pci device is just a workaround. Not a real fix.
+>
+> I would propose to find out what happen and why it cannot be killed
+> (probably it stuck somewhere in kernel) and fix it properly.
 
-diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
-index a4c30f1c70be..163b92f33998 100644
---- a/tools/perf/arch/s390/util/header.c
-+++ b/tools/perf/arch/s390/util/header.c
-@@ -146,21 +146,3 @@ char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
- 		zfree(&buf);
- 	return buf;
- }
--
--/*
-- * Compare the cpuid string returned by get_cpuid() function
-- * with the name generated by the jevents file read from
-- * pmu-events/arch/s390/mapfile.csv.
-- *
-- * Parameter mapcpuid is the cpuid as stored in the
-- * pmu-events/arch/s390/mapfile.csv. This is just the type number.
-- * Parameter cpuid is the cpuid returned by function get_cpuid().
-- */
--int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
--{
--	char *cp = strchr(cpuid, ',');
--
--	if (cp == NULL)
--		return -1;
--	return strncmp(cp + 1, mapcpuid, strlen(mapcpuid));
--}
-diff --git a/tools/perf/pmu-events/arch/s390/mapfile.csv b/tools/perf/pmu-events/arch/s390/mapfile.csv
-index ca7682748a4b..af6386ba3df4 100644
---- a/tools/perf/pmu-events/arch/s390/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/s390/mapfile.csv
-@@ -1,6 +1,6 @@
- Family-model,Version,Filename,EventType
--209[78],1,cf_z10,core
--281[78],1,cf_z196,core
--282[78],1,cf_zec12,core
--296[45],1,cf_z13,core
--3906,3,cf_z14,core
-+^IBM.209[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z10,core
-+^IBM.281[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z196,core
-+^IBM.282[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_zec12,core
-+^IBM.296[45].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z13,core
-+^IBM.390[67].*[13]\.[1-5].[[:xdigit:]]+$,3,cf_z14,core
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 8675ddf558c6..08e39197c77d 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -586,7 +586,7 @@ char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
-  * cpuid string generated on this platform.
-  * Otherwise return non-zero.
-  */
--int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
-+int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
- {
- 	regex_t re;
- 	regmatch_t pmatch[1];
--- 
-2.14.3
+That's because the audio device got runtime suspended by the graphics.
+
+In this case, if we really want to use the the discrete audio, then we also  
+need to wake up the graphics.
+The discrete audio is totally useless when SG is enabled, so my approach is  
+just to disable it.
+
+Kai-Heng
+
+>
+>>>> @@ -1627,6 +1629,42 @@ static void check_msi(struct azx *chip)
+>>>>  	}
+>>>>  }
+>>>>
+>>>> +#if IS_ENABLED(CONFIG_DELL_LAPTOP)
+>>>
+>>> This should be IS_REACHABLE(), as both dell-laptop and HD-audio are
+>>> tristate.
+>>
+>> Thanks, will update in next version.
+>>
+>>>> +static bool check_dell_switchable_gfx(struct pci_dev *pdev)
+>>>
+>>> I'd remove "_dell" word here.  Such a check would be likely needed for
+>>> other vendors, and it's quite possible that the function will be
+>>> extended to cover a wider DMI table.
+>>
+>> Makes sense. Will also update this one.
+>>
+>> Kai-Heng
+>>
+>>> thanks,
+>>>
+>>> Takashi
+>
+> -- 
+> Pali Rohár
+> pali.rohar@gmail.com
