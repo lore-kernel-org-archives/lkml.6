@@ -1,94 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754294AbeDWHl5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 03:41:57 -0400
-Received: from mail-pf0-f172.google.com ([209.85.192.172]:33157 "EHLO
-        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751356AbeDWHly (ORCPT
+        id S1754352AbeDWHmI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 03:42:08 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:42361 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754299AbeDWHmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 03:41:54 -0400
-X-Google-Smtp-Source: AIpwx4/RnkZKtsykIixriRfpupF/u80RDRbjdbN3OPbiBNQ0UBsYAGr5ioTIdXuekZTysgu9zZk2pA==
-Date: Sun, 22 Apr 2018 21:41:50 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Luciano Coelho <luciano.coelho@intel.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>,
-        Joey Pabalinas <joeypabalinas@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: New sparse warning from min_t(): expression using sizeof(void)
-Message-ID: <20180423074150.cc4nrr4ogfql43fx@gmail.com>
-References: <87a7txf15w.fsf@kamboji.qca.qualcomm.com>
- <20180421082444.i4eyw2zxl6tipt6i@gmail.com>
- <87604ley7t.fsf@kamboji.qca.qualcomm.com>
- <4777fb12da0a71e030cc7b0cf47d5391be2a3efd.camel@intel.com>
+        Mon, 23 Apr 2018 03:42:02 -0400
+X-Originating-IP: 2.224.242.101
+Date: Mon, 23 Apr 2018 09:41:56 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/8] drm: bridge: thc63lvd1024: Add support for LVDS mode
+ map
+Message-ID: <20180423074156.GO4235@w540>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524130269-32688-4-git-send-email-jacopo+renesas@jmondi.org>
+ <86c2d4c9-8079-9f25-f24a-58c7866a8274@axentia.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tdqvskbjew4jxvmc"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="NyChO5MpGs3JHJbz"
 Content-Disposition: inline
-In-Reply-To: <4777fb12da0a71e030cc7b0cf47d5391be2a3efd.camel@intel.com>
-User-Agent: NeoMutt/20180323-62-378db9
+In-Reply-To: <86c2d4c9-8079-9f25-f24a-58c7866a8274@axentia.se>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---tdqvskbjew4jxvmc
-Content-Type: text/plain; charset=us-ascii
+--NyChO5MpGs3JHJbz
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 23, 2018 at 09:20:14AM +0300, Luciano Coelho wrote:
-> Thanks, this solves the problem for me, but I'm still getting a lot of
-> this:
->=20
-> ./include/linux/mm.h:533:24: warning: constant 0xffffc90000000000 is so b=
-ig it is unsigned long
->=20
-> Is there a patch in sparse to solve this one as well? Or is this an
-> actual error that must be fixed in mm.h?
+Hi Peter,
 
-This is definitely a valid warning in the general case (integer promotion
-rules can cause *incredibly* difficult to find bugs if you overlook them,
-so it's very useful to get a warning when a promotion occurs implicitly to
-integer constants).
+On Sun, Apr 22, 2018 at 10:02:51PM +0200, Peter Rosin wrote:
+> On 2018-04-19 11:31, Jacopo Mondi wrote:
+> > The THC63LVD1024 LVDS to RGB bridge supports two different LVDS mapping
+> > modes, selectable by means of an external pin.
+> >
+> > Add support for configurable LVDS input mapping modes, using the newly
+> > introduced support for bridge input image formats.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/gpu/drm/bridge/thc63lvd1024.c | 41 +++++++++++++++++++++++++++++++++++
+> >  1 file changed, 41 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > index 48527f8..a3071a1 100644
+> > --- a/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > @@ -10,9 +10,15 @@
+> >  #include <drm/drm_panel.h>
+> >
+> >  #include <linux/gpio/consumer.h>
+> > +#include <linux/of.h>
+> >  #include <linux/of_graph.h>
+> >  #include <linux/regulator/consumer.h>
+> >
+> > +enum thc63_lvds_mapping_mode {
+> > +	THC63_LVDS_MAP_MODE2,
+> > +	THC63_LVDS_MAP_MODE1,
+> > +};
+> > +
+> >  enum thc63_ports {
+> >  	THC63_LVDS_IN0,
+> >  	THC63_LVDS_IN1,
+> > @@ -116,6 +122,37 @@ static int thc63_parse_dt(struct thc63_dev *thc63)
+> >  	return 0;
+> >  }
+> >
+> > +static int thc63_set_bus_fmt(struct thc63_dev *thc63)
+> > +{
+> > +	u32 bus_fmt;
+> > +	u32 map;
+> > +	int ret;
+> > +
+> > +	ret = of_property_read_u32(thc63->dev->of_node, "thine,map", &map);
+> > +	if (ret) {
+> > +		dev_err(thc63->dev,
+> > +			"Unable to parse property \"thine,map\": %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	switch (map) {
+> > +	case THC63_LVDS_MAP_MODE1:
+> > +		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
+> > +		break;
+> > +	case THC63_LVDS_MAP_MODE2:
+> > +		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
+>
+> Why do you assume rgb888/1x7x4 here? It might as well be rgb666/1x7x3
+> or rgb101010/1x7x5, no?
 
-In this case though, you are comparing it against `unsigned long addr`
-which is exactly the same type, so there's no bug.
+I should combine the 'map' pin input mode property with the 'bus_width' one
+to find that out probably.
 
-It could possibly be argued that in:
+Thanks
+   j
 
-> arch/x86/include/asm/pgtable_64_types.h:122: # define VMALLOC_START __VMA=
-LLOC_BASE_L4
-> arch/x86/include/asm/pgtable_64_types.h:108: #define __VMALLOC_BASE_L4 0x=
-ffffc90000000000
 
-__VMALLOC_BASE_L4 would be better written as 0xffffc90000000000UL, which wo=
-uld
-indeed shut up sparse.
+>
+> Cheers,
+> Peter
+>
+> > +		break;
+> > +	default:
+> > +		dev_err(thc63->dev,
+> > +			"Invalid value for property \"thine,map\": %u\n", map);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	drm_bridge_set_bus_formats(&thc63->bridge, &bus_fmt, 1);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int thc63_gpio_init(struct thc63_dev *thc63)
+> >  {
+> >  	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
+> > @@ -166,6 +203,10 @@ static int thc63_probe(struct platform_device *pdev)
+> >  	if (ret)
+> >  		return ret;
+> >
+> > +	ret = thc63_set_bus_fmt(thc63);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	thc63->bridge.driver_private = thc63;
+> >  	thc63->bridge.of_node = pdev->dev.of_node;
+> >  	thc63->bridge.funcs = &thc63_bridge_func;
+> >
+>
 
---=20
-Cheers,
-Joey Pabalinas
-
---tdqvskbjew4jxvmc
+--NyChO5MpGs3JHJbz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlrdjj4ACgkQruvLfWhy
-VBl2SRAA1ZhpBw7wGVNBK2AUmd+nP2L4xMOO9ypDVbe71AB4mvxNiE1oN/VveiOO
-YDSXAxmQgwpIgiExUcgZYXqLC1RWa7wiuGXg9c8aP6up3hci70vVxanu9teng25O
-OS8sKULzrg9v5sekC2mka4lncHgnrk0jLyM6wd5PQfEaV73ekPJpg/UkZSGYEjCQ
-NCUjOoHq1v8G/kpAxOpSzkK/n2Fnd/BGxEqX8aWqhiu+7Z4hkwnpGkBGYNCDbICL
-Qh618wFPsfZkg2uSgpNGLSjsVmooKRT4RJoQk0xpsWbk4e1U0xI5VWcqoFbkew+i
-4TNW7R8sf0iOTy2Bm9rJClkp6niq5WUgGm0XvuwxeDgkDpWkgaK6THvxCgPoo6mn
-9I+1g07WuQV01H1oSbwwsb6ZIcE6Bb1XmkGDPBaPFh5knk86OGZQeyvMcrXcL9ir
-zi95T3LIA5T3WJE56//pyBwATqXGX9Qoymvjdvyb+feuH3YJ8AtRtljWWJlYlpiw
-br9cVu9yO2kDgy8a2YeNHLsH/V98lQbtnCp/n3gWOQCGNbKjDk/uyK9UfoDL8th2
-i+xkAQz3ZvnEnJuSpZWolQ/KH9FtIdi4Ajh3+YrOgW44y3XsXfv1tHvsDwz1lPRD
-H/QW85wrV6CEQhsTOPFHi1jQWesFke3q5bgae4qTTAvlj5R8E/M=
-=9+LS
+iQIcBAEBAgAGBQJa3Y5EAAoJEHI0Bo8WoVY8JwcP/02uvblFIFHBRV8hNd2CsuWM
+iak+iVSqM6cjH06kELz4FtQOQLoA5jSlL5Zq3MtNlFISIbW0CVjPqus0NTuSJvGN
+fk79kMv66dbEsQAI+TZQHuKAHOGihuLFLrHOlM3qefL+30P0cPIzZPkR6UKrDuFO
+Tf7ZP/civlbJFGg6vOSA2+tNPhykOqo2e3Z75n/l10k17ETygyQcdmAPLuJdqSkT
+H3aSUBRE/h451m0Fg5/CvFu0zaHNf3Li4q3POsmUVaHBZXt5ukrhguthqwSP00Gw
+sNQ2TQvpONUeDYCu9n5Bk0PmiMdKs8OYVecxA8h+GinR8VSJ+ip5m/lfN9AbYmIm
+0Tr5Dptpn1Z+yq8ugTz6XcQU+qvlVwbRy1nbmd4Xso1UdQDIxQdrz83mujhHgFAT
+E8JKs2YHaBjF1qSzIflx0xr4EHMjRKN86ACC9eEJQKWEau2X99pzB3eXJaJcCXfm
+lB66JbHd20bpn0ZghnlEyhAf4A0ZSQ3tQXDq8d5NNPpp2GSc0fvy9P/F1+iSlhCE
+0ngxZGbwQ9pMeht/P5tpfSqvCAiKWlf0UIdGNd+03GJDyWTLEPlrxE4XlA+ZYFPA
+FfqduV+PAlxkUHicB1Vmx4MxGvtPkSbmxQnr9szH5YKasZpL2TATD85B2IcrQSzX
+lVUlAZ+h6Ol5Ki2hAco0
+=WFaU
 -----END PGP SIGNATURE-----
 
---tdqvskbjew4jxvmc--
+--NyChO5MpGs3JHJbz--
