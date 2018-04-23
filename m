@@ -1,222 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755621AbeDWPBV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:01:21 -0400
-Received: from mail-io0-f178.google.com ([209.85.223.178]:44843 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755580AbeDWPBQ (ORCPT
+        id S932083AbeDWPBy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:01:54 -0400
+Received: from zimbra.alphalink.fr ([217.15.80.77]:36122 "EHLO
+        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755433AbeDWPBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:01:16 -0400
-X-Google-Smtp-Source: AB8JxZp6DH+YkaPn1Z+ui+tY6rStaQvZeFlrOlq6LWNeAgnNFDq/JElNTU86dWiJOnVLP2FkrvfIB1ex7pQdYFEl9iQ=
+        Mon, 23 Apr 2018 11:01:49 -0400
+Date: Mon, 23 Apr 2018 17:01:42 +0200
+From: Guillaume Nault <g.nault@alphalink.fr>
+To: syzbot <syzbot+cd06c321e7147d03a65e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, mostrows@earthlink.net,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: KMSAN: uninit-value in strnlen
+Message-ID: <20180423150142.GC1440@alphalink.fr>
+References: <00000000000003f2d5056a7fbf92@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180423161113.463d4f0e@jawa>
-References: <20180422213126.32756-1-lukma@denx.de> <CAPDyKFqaV0ehiHCNdt0i4sWE9cskBa9AQHdRZmzCphPzCdm9ow@mail.gmail.com>
- <20180423113619.6f557d8e@jawa> <CAPDyKFrhzVcST2SYjJaLb1vLTG3Rv+X7tmh7E-78A8xTYQyXOg@mail.gmail.com>
- <20180423161113.463d4f0e@jawa>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 23 Apr 2018 17:01:14 +0200
-Message-ID: <CAPDyKFoe7+M=ftQmMrP5O68TkuwkMSsoLuGrMa6N9ygew4eHPw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: disable card sleep via device-tree
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Chanho Min <chanho.min@lge.com>, devicetree@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000003f2d5056a7fbf92@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 April 2018 at 16:11, Lukasz Majewski <lukma@denx.de> wrote:
-> Hi Ulf,
->
->> On 23 April 2018 at 11:36, Lukasz Majewski <lukma@denx.de> wrote:
->> > Hi Ulf,
->> >
->> >> On 22 April 2018 at 23:31, Lukasz Majewski <lukma@denx.de> wrote:
->> >> > From: Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
->> >> >
->> >> > On a TQMa53 module the mmc_sleep leaves the eMMC card in a state
->> >> > that the imx53 rom boot code is unable to probe, resulting in
->> >> > reboot hanging. Add a device tree property to disable sleeping
->> >> > on suspend.
->> >> >
->> >> > For TQMa53 modules the exact commit to cause hang after reboot
->> >> > (v3.10 -> v3.11):
->> >> > commit 486fdbbc1483 ("mmc: core: Add shutdown callback for (e)MMC
->> >> > bus_ops")
->> >> >
->> >> > [The exact discussion can be found here:
->> >> > https://patchwork.kernel.org/patch/8881401/
->> >> > "i.MX53 restart via watchdog does not work"
->> >> >
->> >> > Signed-off-by: Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
->> >> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
->> >> > ---
->> >> >  Documentation/devicetree/bindings/mmc/mmc-card.txt | 4 ++++
->> >> >  drivers/mmc/core/mmc.c                             | 7 +++++--
->> >> >  include/linux/mmc/card.h                           | 2 +-
->> >> >  3 files changed, 10 insertions(+), 3 deletions(-)
->> >> >
->> >> > diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.txt
->> >> > b/Documentation/devicetree/bindings/mmc/mmc-card.txt index
->> >> > 8d2d71758907..c3ee151edd7c 100644 ---
->> >> > a/Documentation/devicetree/bindings/mmc/mmc-card.txt +++
->> >> > b/Documentation/devicetree/bindings/mmc/mmc-card.txt @@ -12,6
->> >> > +12,9 @@ Required properties: Optional properties:
->> >> >  -broken-hpi : Use this to indicate that the mmc-card has a
->> >> > broken hpi implementation, and that hpi should not be used
->> >> > +-no-sleep-on-suspend : Do not put the card to sleep when
->> >> > suspending.
->> >> > +              There are boards with bootloaders that are unable
->> >> > +              to probe such card when rebooting.
->> >> >
->> >> >  Example:
->> >> >
->> >> > @@ -26,5 +29,6 @@ Example:
->> >> >                 reg = <0>;
->> >> >                 compatible = "mmc-card";
->> >> >                 broken-hpi;
->> >> > +               no-sleep-on-suspend;
->> >> >         };
->> >> >  };
->> >> > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->> >> > index 208a762b87ef..a3b74b5c8893 100644
->> >> > --- a/drivers/mmc/core/mmc.c
->> >> > +++ b/drivers/mmc/core/mmc.c
->> >> > @@ -381,8 +381,11 @@ static int mmc_decode_ext_csd(struct
->> >> > mmc_card *card, u8 *ext_csd) }
->> >> >
->> >> >         np = mmc_of_find_child_device(card->host, 0);
->> >> > -       if (np && of_device_is_compatible(np, "mmc-card"))
->> >> > +       if (np && of_device_is_compatible(np, "mmc-card")) {
->> >> >                 broken_hpi = of_property_read_bool(np,
->> >> > "broken-hpi");
->> >> > +               card->no_sleep_on_suspend =
->> >> > +                       of_property_read_bool(np,
->> >> > "no-sleep-on-suspend");
->> >> > +       }
->> >> >         of_node_put(np);
->> >> >
->> >> >         /*
->> >> > @@ -1990,7 +1993,7 @@ static int _mmc_suspend(struct mmc_host
->> >> > *host, bool is_suspend) if (mmc_can_poweroff_notify(host->card)
->> >> > && ((host->caps2 & MMC_CAP2_FULL_PWR_CYCLE)
->> >> > || !is_suspend)) err = mmc_poweroff_notify(host->card,
->> >> > notify_type);
->> >> > -       else if (mmc_can_sleep(host->card))
->> >> > +       else if (mmc_can_sleep(host->card)
->> >> > && !host->card->no_sleep_on_suspend)
->> >>
->> >> No, this is wrong.
->> >>
->> >> This means that the mmc_power_off() a few lines below would start
->> >> to violate the eMMC spec.
->> >> That via powering off the card, without first
->> >> sending the sleep or power-off-notify command.
->> >> You are probably just lucky, as your particular eMMC card still
->> >> copes with this in-correct sequence (I know there are these kind
->> >> of cards).
->> >>
->> >> Well, what is also interesting in this regards, is what is
->> >> happening during mmc_power_off().
->> >
->> > The mmc_power_off() -> mmc_pwrseq_power_off() -> here the *pwrseq is
->> > null, so we do nothing with the power.
->> >
->> > In mmc_power_off() function we call mmc_set_initial_state(host);
->> >
->> >> Does your host driver cut power to VMMC and/or
->> >> VQMMC?
->> >
->> > The esdhci3 controller uses 'vmm-supply' which is a
->> > 'regulator-fixed' with 'regulator-always-on' attribute.
->>
->> Assume you mean vmmc-supply.
->>
->> Anyway, it seems a bit weird to have this regulator as fixed and
->> always on. Of course it's possible, but it's more common to have vqmmc
->> fixed and always on. Maybe double check the schematics.
->>
->> >
->> > It seems like the eMMC is always powered with 3.3V.
->>
->> What about vqmmc then?
->
-> It seems like the vqmmc is not added/used in dts (imx53.dtsi). Only the
-> vmmc-supply is used.
+On Mon, Apr 23, 2018 at 01:23:01AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot hit the following crash on https://github.com/google/kmsan.git/master
+> commit
+> a7f95e9c8a95e9fbb388c3999b61a17667cd3bbe (Sat Apr 21 13:50:22 2018 +0000)
+> kmsan: disable assembly checksums
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=cd06c321e7147d03a65e
+> 
+> So far this crash happened 5 times on
+> https://github.com/google/kmsan.git/master.
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5785171018121216
+> syzkaller reproducer:
+> https://syzkaller.appspot.com/x/repro.syz?id=5117671628603392
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=6310764688179200
+> Kernel config: https://syzkaller.appspot.com/x/.config?id=328654897048964367
+> compiler: clang version 7.0.0 (trunk 329391)
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+cd06c321e7147d03a65e@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+> 
+> ==================================================================
+> BUG: KMSAN: uninit-value in strnlen+0xc4/0x110 lib/string.c:499
+> CPU: 1 PID: 4507 Comm: syzkaller579712 Not tainted 4.16.0+ #85
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+>  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+>  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+>  strnlen+0xc4/0x110 lib/string.c:499
+>  dev_name_hash net/core/dev.c:209 [inline]
+>  dev_get_by_name_rcu net/core/dev.c:764 [inline]
+>  dev_get_by_name+0x6e/0x350 net/core/dev.c:791
+>  pppoe_connect+0xcb7/0x2360 drivers/net/ppp/pppoe.c:665
+>  SYSC_connect+0x41a/0x510 net/socket.c:1639
+>  SyS_connect+0x54/0x80 net/socket.c:1620
+>  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+> RIP: 0033:0x43fcf9
+> RSP: 002b:00007ffca4bd4978 EFLAGS: 00000213 ORIG_RAX: 000000000000002a
+> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fcf9
+> RDX: 0000000000000007 RSI: 0000000020000040 RDI: 0000000000000003
+> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+> R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401620
+> R13: 00000000004016b0 R14: 0000000000000000 R15: 0000000000000000
+> 
+> Local variable description: ----address@SYSC_connect
+> Variable was created at:
+>  SYSC_connect+0x6f/0x510 net/socket.c:1622
+>  SyS_connect+0x54/0x80 net/socket.c:1620
+> ==================================================================
+> 
+That's a consequence of not validating sockaddr_len. The sockaddr_pppox
+structure was incomplete.
 
-My point is, that perhaps DTS is wrong or too simplified.
-
-Perhaps vmmc can be powered off/on?
-
->
->>
->> >
->> > Considering the above it seems like the card is still powered - the
->> > HW design also supports some backup powering (so the voltage from
->> > the board is not took immediately).
->>
->> I think you need to verify that the CMD5 (sleep) is actually sent and
->> successfully completed.
->>
->> In regards to that, do your host support MMC_CAP_WAIT_WHILE_BUSY?
->
-> No. This flag is not supported (set) on this host.
-
-Okay. One thing to remove from possible root causes.
-
->
->> If
->> not, there is a delay (specific to the card) after the CMD5.
->
-> Yes, the delay is used (mmc.c Line 1890).
-> The delay is 7ms (as read from card->ext_csd.sa_timeout).
->
-> Increasing it by 10 (or 100) ms doesn't solve the problem.
-
-Okay. To really be sure, I would also try 1000ms.
-
->
->>
->> So the support in your host driver for MMC_CAP_WAIT_WHILE_BUSY could
->> be broken, or the delay may be too short. Perhaps forcing to use the
->> delay and use a delay that for sure should work is worth to test.
->>
->> >
->> >
->> > To be even more strange the suspend to mem works without any issues
->> > (without this patch).
->> > With "reboot -f" it seems like we hang in imx53 BootROM (as I can
->> > read it from my JTAG debugger).
->>
->> So clearly there is a difference during reboot.
->>
->> A wild guess... Probably vmmc supply is turned on/off in this path,
->> while perhaps the CMD5 support has failed when the kernel issued
->> it...
->
-> This needs to be checked.
->
-> It may be also possible that the BootROM expects that the eMMC would
-> not be in SLEEP state (after CMD5 issuing).
-
-Well, in principle that shouldn't matter.
-
-CMD0 is fine to use to wakeup the card from sleep state and that can
-be followed by a regular initialization sequence. This is the way the
-mmc core, during system resume does it.
-
-Another possible option is that the power to vqmmc becomes power
-cycled during reboot, while power to vmmc isn't.
-
-Hope my ideas to narrow down the problem are helping and not adding
-confusion. :-)
-
-Kind regards
-Uffe
+#syz dup: KMSAN: uninit-value in pppoe_connect
