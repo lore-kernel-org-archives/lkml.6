@@ -1,64 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755494AbeDWPKA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:10:00 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:35352 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755385AbeDWPJ6 (ORCPT
+        id S1755565AbeDWPKK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:10:10 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:40188 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755435AbeDWPKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:09:58 -0400
-X-Google-Smtp-Source: AIpwx48m10u6p8JiLOVFSzhJKcd/X7NEJ8L+RzP8RPJfAcE91ytpmdaYeO+br43kxLSg6KE8hsMBzA==
-References: <20180419110056.10342-1-rui.silva@linaro.org> <20180419110056.10342-2-rui.silva@linaro.org> <CAOMZO5A3+WMu+U5STP-z3qdXnUQN2yTJne2OV9-SrEs70JJyDA@mail.gmail.com>
-User-agent: mu4e 1.0; emacs 25.3.1
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Rui Miguel Silva <rui.silva@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 1/2] media: ov2680: dt: Add bindings for OV2680
-In-reply-to: <CAOMZO5A3+WMu+U5STP-z3qdXnUQN2yTJne2OV9-SrEs70JJyDA@mail.gmail.com>
-Date: Mon, 23 Apr 2018 16:09:55 +0100
-Message-ID: <m3wowydkn0.fsf@linaro.org>
+        Mon, 23 Apr 2018 11:10:06 -0400
+X-Google-Smtp-Source: AIpwx4/yMRH+8R2qoIosFvkaQjuwVRHAgIG+MMQ+1xhZsR2Grx2ASblX0cDAW+c9wdpfJj85UqaJXA==
+Subject: Re: WARNING: suspicious RCU usage in rt6_check_expired
+To: Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+2422c9e35796659d2273@syzkaller.appspotmail.com>,
+        davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <0000000000009f23ab056a7fc243@google.com>
+ <a0eb8d30-0f76-fad2-e9fa-5de92f59b2ff@gmail.com>
+From: David Ahern <dsahern@gmail.com>
+Message-ID: <a73fcd37-b8f9-a340-7874-e83350b61879@gmail.com>
+Date: Mon, 23 Apr 2018 09:10:03 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
+In-Reply-To: <a0eb8d30-0f76-fad2-e9fa-5de92f59b2ff@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabio,
-Thanks for the review.
+On 4/23/18 7:31 AM, Eric Dumazet wrote:
+>> stack backtrace:
+>> CPU: 1 PID: 25958 Comm: syz-executor7 Not tainted 4.16.0+ #11
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:77 [inline]
+>>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>>  lockdep_rcu_suspicious+0x14a/0x153 kernel/locking/lockdep.c:4592
+>>  rt6_check_expired+0x38b/0x3e0 net/ipv6/route.c:410
+>>  ip6_negative_advice+0x67/0xc0 net/ipv6/route.c:2204
+>>  dst_negative_advice include/net/sock.h:1786 [inline]
+>>  sock_setsockopt+0x138f/0x1fe0 net/core/sock.c:1051
+>>  __sys_setsockopt+0x2df/0x390 net/socket.c:1899
+>>  SYSC_setsockopt net/socket.c:1914 [inline]
+>>  SyS_setsockopt+0x34/0x50 net/socket.c:1911
+>>  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+>>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-On Mon 23 Apr 2018 at 14:11, Fabio Estevam wrote:
-> Hi Rui,
->
-> On Thu, Apr 19, 2018 at 8:00 AM, Rui Miguel Silva 
-> <rui.silva@linaro.org> wrote:
->
->> +Optional Properties:
->> +- powerdown-gpios: reference to the GPIO connected to the 
->> powerdown pin,
->> +                    if any. This is an active high signal to 
->> the OV2680.
->
-> I looked at the OV2680 datasheet and I see a pin called XSHUTDN, 
-> which has
-> the following description:
->
-> XSHUTDN: reset and power down (active low with internal pull 
-> down resistor)
->
-> So it should be active low, not active high.
+...
 
-Yes, you are correct, I will fix this, and the dts entry.
+> 
+> Added in commit a68886a691804d3f6d479ebf6825480fbafb6a00
+> ("net/ipv6: Make from in rt6_info rcu protected")
+> 
 
-Thanks.
-
----
-Cheers,
-	Rui
+I missed the rcu_read_lock for this path. Will send a patch.
