@@ -1,101 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754150AbeDWDEN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 23:04:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44524 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754016AbeDWDD4 (ORCPT
+        id S1754179AbeDWDEa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 23:04:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42502 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753976AbeDWDCk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 23:03:56 -0400
-Date: Sun, 22 Apr 2018 20:03:49 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, Zi Yan <zi.yan@sent.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
- consider non-anonymous thp as unmovable page)
-Message-ID: <20180423030349.GB2308@bombadil.infradead.org>
-References: <20180403083451.GG5501@dhcp22.suse.cz>
- <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
- <20180405085927.GC6312@dhcp22.suse.cz>
- <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
- <20180405124830.GJ6312@dhcp22.suse.cz>
- <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
- <20180405150547.GN6312@dhcp22.suse.cz>
- <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
- <20180405160317.GP6312@dhcp22.suse.cz>
- <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Sun, 22 Apr 2018 23:02:40 -0400
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel.opensrc@gmail.com,
+        torvalds@linux-foundation.org, npiggin@gmail.com,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tip/core/rcu 17/21] rcu: Make rcu_start_this_gp() check for out-of-range requests
+Date: Sun, 22 Apr 2018 20:03:40 -0700
+X-Mailer: git-send-email 2.5.2
+In-Reply-To: <20180423030258.GA23370@linux.vnet.ibm.com>
+References: <20180423030258.GA23370@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18042303-0024-0000-0000-0000034CD032
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008903; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01021898; UDB=6.00521542; IPR=6.00801134;
+ MB=3.00020719; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 03:02:37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042303-0025-0000-0000-000047C2E84C
+Message-Id: <1524452624-27589-17-git-send-email-paulmck@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804230032
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 03:07:11AM +0000, Naoya Horiguchi wrote:
-> Subject: [PATCH] mm: enable thp migration for shmem thp
+If rcu_start_this_gp() is invoked with a requested grace period more
+than three in the future, then either the ->need_future_gp[] array
+needs to be bigger or the caller needs to be repaired.  This commit
+therefore adds a WARN_ON_ONCE() checking for this condition.
 
-This patch is buggy, but not in a significant way:
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+---
+ kernel/rcu/tree.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> @@ -524,13 +524,26 @@ int migrate_page_move_mapping(struct address_space *mapping,
->  	}
->  
->  	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-
-^^^ this line should have been deleted
-
-> +	if (PageTransHuge(page)) {
-> +		int i;
-> +		int index = page_index(page);
-> +
-> +		for (i = 0; i < HPAGE_PMD_NR; i++) {
-^^^ or this iteration should start at 1
-> +			pslot = radix_tree_lookup_slot(&mapping->i_pages,
-> +						       index + i);
-> +			radix_tree_replace_slot(&mapping->i_pages, pslot,
-> +						newpage + i);
-> +		}
-> +	} else {
-> +		radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-^^^ and if the second option, then we don't need this line
-> +	}
-
-So either this:
-
--	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-+	if (PageTransHuge(page)) {
-+		int i;
-+		int index = page_index(page);
-+
-+		for (i = 0; i < HPAGE_PMD_NR; i++) {
-+			pslot = radix_tree_lookup_slot(&mapping->i_pages,
-+						       index + i);
-+			radix_tree_replace_slot(&mapping->i_pages, pslot,
-+						newpage + i);
-+		}
-+	} else {
-+		radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-+	}
-
-Or this:
-
- 	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-+	if (PageTransHuge(page)) {
-+		int i;
-+		int index = page_index(page);
-+
-+		for (i = 1; i < HPAGE_PMD_NR; i++) {
-+			pslot = radix_tree_lookup_slot(&mapping->i_pages,
-+						       index + i);
-+			radix_tree_replace_slot(&mapping->i_pages, pslot,
-+						newpage + i);
-+		}
-+	}
-
-The second one is shorter and involves fewer lookups ...
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index d3c769502929..07bccb1f0c87 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1698,6 +1698,8 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+ 	for (rnp_root = rnp; 1; rnp_root = rnp_root->parent) {
+ 		if (rnp_root != rnp)
+ 			raw_spin_lock_rcu_node(rnp_root);
++		WARN_ON_ONCE(ULONG_CMP_LT(rnp_root->gpnum +
++					  need_future_gp_mask(), c));
+ 		if (need_future_gp_element(rnp_root, c) ||
+ 		    ULONG_CMP_GE(rnp_root->gpnum, c) ||
+ 		    (rnp != rnp_root &&
+-- 
+2.5.2
