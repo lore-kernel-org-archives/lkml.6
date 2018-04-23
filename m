@@ -1,123 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754216AbeDWHfP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 03:35:15 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:48845 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751318AbeDWHfM (ORCPT
+        id S1754117AbeDWHjr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 03:39:47 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42809 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751216AbeDWHjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 03:35:12 -0400
-X-Originating-IP: 2.224.242.101
-Date: Mon, 23 Apr 2018 09:35:04 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] dt-bindings: display: bridge: thc63lvd1024: Add lvds
- map property
-Message-ID: <20180423073504.GN4235@w540>
-References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524130269-32688-3-git-send-email-jacopo+renesas@jmondi.org>
- <17d6f6b0-e657-4a5f-63a6-572cdf062bd3@axentia.se>
+        Mon, 23 Apr 2018 03:39:42 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bill Fletcher <bill.fletcher@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] ACPI / bus: ignore rather than fail bus driver registrations on non-ACPI boot
+Date: Mon, 23 Apr 2018 09:39:32 +0200
+Message-ID: <1646053.XbTMSZpCTE@aspire.rjw.lan>
+In-Reply-To: <CAKv+Gu8PmKe+X5b0P_KuWfB6U-P-EngJw04JdJUkEkwrqNK97g@mail.gmail.com>
+References: <20180419165825.13008-1-ard.biesheuvel@linaro.org> <CAKv+Gu8xY-RvJKTKfv-e0qonL4oECDBK+ppxztvh9BgdpG8CUg@mail.gmail.com> <CAKv+Gu8PmKe+X5b0P_KuWfB6U-P-EngJw04JdJUkEkwrqNK97g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="D6IIOQQv2Iwyp54J"
-Content-Disposition: inline
-In-Reply-To: <17d6f6b0-e657-4a5f-63a6-572cdf062bd3@axentia.se>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---D6IIOQQv2Iwyp54J
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Peter,
-   thanks for commenting,
-
-On Sun, Apr 22, 2018 at 10:02:41PM +0200, Peter Rosin wrote:
-> On 2018-04-19 11:31, Jacopo Mondi wrote:
-> > The THC63LVD1024 LVDS to RGB bridge supports two different input mapping
-> > modes, selectable by means of an external pin.
+On Sunday, April 22, 2018 2:34:17 PM CEST Ard Biesheuvel wrote:
+> On 22 April 2018 at 11:57, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> > On 22 April 2018 at 11:27, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >> On Thu, Apr 19, 2018 at 6:58 PM, Ard Biesheuvel
+> >> <ard.biesheuvel@linaro.org> wrote:
+> >>> When building ACPI bus drivers such as button.ko into the core kernel,
+> >>> other drivers that depend on its symbols are loadable even when booting
+> >>> with ACPI disabled. For instance, nouveau.ko has a link time dependency
+> >>> on acpi_lid_open() on ACPI capable kernels, and calls it regardless of
+> >>> whether the system booted via ACPI.
+> >>>
+> >>> However, when building button.ko as a module, it will refuse to load if
+> >>> the system did not boot in ACPI mode, which subsequently prevents the
+> >>> nouveau driver from loading as well, resulting in broken graphics.
+> >>>
+> >>> Given that returning an error from an initcall() is ignored for drivers
+> >>> that are built into the kernel,
+> >>
+> >> Which makes sense, because they are present in the kernel anyway.
+> >>
+> >>> let's align the module case with this,
+> >>> and not return an error when registering an ACPI bus driver on a system
+> >>> that did not boot via ACPI.
+> >>
+> >> But why is loading a module that's never going to be used actually OK?
+> >>
+> >> Isn't this a problem with the assumptions made by the nouveau driver
+> >> that need not be met depending on what configuration the kernel is run
+> >> in?
+> >>
+> >> Honestly, it doesn't appear quite right to try to change the rest of
+> >> the kernel to follow the nouveau's expectations.
+> >>
 > >
-> > Describe the LVDS mode map through a newly defined mandatory property in
-> > device tree bindings.
+> > I don't disagree here, I am just unsure whether other options are any better.
 > >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  .../devicetree/bindings/display/bridge/thine,thc63lvd1024.txt          | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> > index 37f0c04..0937595 100644
-> > --- a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> > +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> > @@ -12,6 +12,8 @@ Required properties:
-> >  - compatible: Shall be "thine,thc63lvd1024"
-> >  - vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS input,
-> >    PPL and digital circuitry
-> > +- thine,map: LVDS mapping mode selection signal, pin name "MAP". Shall be <1>
-> > +  for mapping mode 1, <0> for mapping mode 2
->
-> Since the MAP pin is an input pin, I would expect there to be an optional gpio
-> specifier like thine,map-gpios so that the driver can set it according to
-> the value given in thine,map in case the HW has a line from some gpio output
-> to the MAP pin (instead of hardwired hi/low which seem to be your thinking).
+> > I think the alternative is to make acpi_lid_open() a non-modular
+> > function of the ACPI core that invokes the button ACPI bus driver if
+> > it was loaded, and always returns false otherwise. Would that work for
+> > you?
+> 
+> BTW not only nouveau invokes acpi_lid_open(), i915 does it as well.
 
-I see... As the only use case I had has the pin tied to vcc, I
-thought about making it a binary property, and I wonder in how many
-cases the chip 'MAP' pin would actually be GPIO controlled input and
-not an hardwired one instead. I don't see the LVDS mapping mode to be
-changed at runtime, but you are right, who knows....
+Clearly, the design is somewhat ad-hoc here.
 
-Do you think we can add an options 'thine,map-gpios' property along
-to the proposed ones?
+It looks like using module_acpi_driver() in button.c is a mistake given the
+dependencies.  The module initialization should ignore the
+acpi_bus_register_driver() failure in there, but there's no reason for the
+other ACPI driver modules to be affected by that.
 
-thanks
-   j
-
->
-> Cheers,
-> Peter
->
-> >
-> >  Optional properties:
-> >  - powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
-> > @@ -36,6 +38,7 @@ Example:
-> >
-> >  		vcc-supply = <&reg_lvds_vcc>;
-> >  		powerdown-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
-> > +		thine,map = <1>;
-> >
-> >  		ports {
-> >  			#address-cells = <1>;
-> >
->
-
---D6IIOQQv2Iwyp54J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJa3YynAAoJEHI0Bo8WoVY8dl8P/i0yToIkzEvqWHs1+lqzgB8r
-9L5j9C4G+MvNIybk/J/edo0UIIXttc/GAtr5ESNw3zl8qj3fPwkZ4LHnDaVnow8U
-qbdrgBKV9d4OeOOttz7JoufVGg1CkdIry2oFQsqAgSOWUAda78XRxzXx0n2FGOJe
-tIja6IJkDSXuPrKc7p4GldZd/5ZUwY/0b/MVAbqq56XEwveX2deeW1lmt1lWEcmw
-TFH1jfigtjrnQBqh1WLalUDbmVnDk90ooGg10ooRb5SuLNdhBpDCMl5Kv43Wuuq3
-AAC/5gaTkXaLbeLxHkEa2PG113/sEXurAEOi1EiWHLvwA1fNYdV9Wr28/BF/kKI4
-Z9FiCfuW/lqdSFAxmtDrfHJYZhbEdAZmP4VFnSjOMd3pYiPffyW4Rl+f+cHykRu4
-DqTtvAELMAfbEv1GFsty/j+bfYV4PBssfCkYeMY1W8b/2xUBbhabyg3tuCNh8Q65
-ffHXiGB1qHtQL90F457beTu+ABix2lnSV46MiYQzyXbQYoO67hWWWC3nZFAHnueA
-2fyp8tGTluy5G61cp9Y3IcPp+Q0cxqyef8Pzk8KIj4yJSD7lxg/xzLNz4MAzuybG
-BbPmo0uUkZ16t0+t3AhCjsW/W/xyAfhXBwrRHzAXNgXqmqBfGFKtBZTUw/l8ckGZ
-PSlPzfBpb3uT7QZZk9vG
-=4Kpk
------END PGP SIGNATURE-----
-
---D6IIOQQv2Iwyp54J--
+And if you change that, please add a comment referring to the dependencies
+in question.
