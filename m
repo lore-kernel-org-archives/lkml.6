@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754638AbeDWKKG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:10:06 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:50048 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754382AbeDWKKC (ORCPT
+        id S1754655AbeDWKKN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:10:13 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:53043 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754511AbeDWKKC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Apr 2018 06:10:02 -0400
-X-Google-Smtp-Source: AIpwx49YVfNHNWKeKG43vDOHWDp8h+mwq3xl46kwx3r1T3MnpZ0HJydG+NDA+z/bbLVdXY5Ff6fZ8elf48S16h/w5lkdxtlxgfSx
+X-Google-Smtp-Source: AIpwx4/XBxcQJokGWCIWvBrLGyyt1Bclqw+cQshMOzT1UNHHfZEKznRXaaJ2sd1kH3TBxJ6hUYGv5Yhj3A1eMQWYHBSB54oT5td4
 MIME-Version: 1.0
 Date: Mon, 23 Apr 2018 03:10:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ac17c0056a813dac@google.com>
-Subject: WARNING: kernel stack frame pointer at         (ptrval) in syzkaller
- has bad value         (ptrval)
-From: syzbot <syzbot+e81cee75d9f3fe72ec33@syzkaller.appspotmail.com>
+Message-ID: <000000000000af09f3056a813d2d@google.com>
+Subject: WARNING: kernel stack regs at         (ptrval) in syzkaller has bad
+ 'bp' value         (ptrval)
+From: syzbot <syzbot+e073e4740cfbb3ae200b@syzkaller.appspotmail.com>
 To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -28,32 +28,32 @@ syzbot hit the following crash on upstream commit
 5ec83b22a2dd13180762c89698e4e2c2881a423c (Sun Apr 22 19:13:04 2018 +0000)
 Merge tag '4.17-rc1-SMB3-CIFS' of git://git.samba.org/sfrench/cifs-2.6
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=e81cee75d9f3fe72ec33
+https://syzkaller.appspot.com/bug?extid=e073e4740cfbb3ae200b
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4545675937185792
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6509307940044800
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6597511200374784
+https://syzkaller.appspot.com/x/repro.syz?id=6027105183727616
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4986591978192896
+https://syzkaller.appspot.com/x/log.txt?id=4763013630394368
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=1808800213120130118
 compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e81cee75d9f3fe72ec33@syzkaller.appspotmail.com
+Reported-by: syzbot+e073e4740cfbb3ae200b@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-         (ptrval): 000000000043fe19 (0x43fe19)
+         (ptrval): 0000000000445649 (0x445649)
          (ptrval): 0000000000000033 (0x33)
          (ptrval): 0000000000000216 (0x216)
-         (ptrval): 00007ffd01ce4bd8 (0x7ffd01ce4bd8)
+         (ptrval): 00007f155536eda8 (0x7f155536eda8)
          (ptrval): 000000000000002b (0x2b)
-WARNING: kernel stack frame pointer at         (ptrval) in  
-syzkaller601944:4492 has bad value         (ptrval)
-WARNING: kernel stack regs at         (ptrval) in syzkaller601944:4492 has  
+WARNING: kernel stack regs at         (ptrval) in syzkaller547737:4493 has  
 bad 'bp' value         (ptrval)
+WARNING: kernel stack frame pointer at         (ptrval) in  
+syzkaller547737:4496 has bad value         (ptrval)
 
 
 ---
