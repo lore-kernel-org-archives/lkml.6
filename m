@@ -1,58 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754772AbeDWLIj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 07:08:39 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:33883 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754449AbeDWLIh (ORCPT
+        id S1754756AbeDWLX0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 07:23:26 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:34720 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754692AbeDWLXZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 07:08:37 -0400
-X-Google-Smtp-Source: AIpwx4/aBkI6Z9eDVYv1s3WxMDSLudyoynQL8SRnJQvh1kDg8JE6GBagbvPqJ3YXZLbkGehncPhdVNzWJRSHGMuNZ54=
+        Mon, 23 Apr 2018 07:23:25 -0400
+X-Google-Smtp-Source: AIpwx4+XkIzRDeegaDTceJSLwTpmk9eG/cVxBGwjhuyxAZJQn5A4oY+Xb9ohFDlcEgYn5lx+ctsMEQT4YwZGbahxSm8=
 MIME-Version: 1.0
-In-Reply-To: <1524455219-6736-4-git-send-email-Anson.Huang@nxp.com>
-References: <1524455219-6736-1-git-send-email-Anson.Huang@nxp.com> <1524455219-6736-4-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 23 Apr 2018 08:08:36 -0300
-Message-ID: <CAOMZO5CDAQtw7Q6NgSzKP4ogaqRaGSE0A+st1iqZ=cQsK49moQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <Linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180423091633.GU4064@hirez.programming.kicks-ass.net>
+References: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com>
+ <20180423091633.GU4064@hirez.programming.kicks-ass.net>
+From: Diego Viola <diego.viola@gmail.com>
+Date: Mon, 23 Apr 2018 08:23:24 -0300
+Message-ID: <CA+ToGPEaHb1ueDRGuzCzm_HxketqxW8j1gawEsCCp2QGLCA=xg@mail.gmail.com>
+Subject: Re: Experiencing freezes with kernel 4.16.3 on a desktop with E5500
+ CPU (bisect included)
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, len.brown@intel.com,
+        rui.zhang@intel.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+On Mon, Apr 23, 2018 at 6:16 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Sat, Apr 21, 2018 at 11:19:55PM -0300, Diego Viola wrote:
+>
+>> The problem only happens *after* resuming from suspend, in normal S0
+>> state it never happens.
+>
+> What kind of suspend are you doing? s2disk, s2ram ?
 
-On Mon, Apr 23, 2018 at 12:46 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Add FEC support on i.MX6SX Sabre Auto board.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  arch/arm/boot/dts/imx6sx-sabreauto.dts | 70 ++++++++++++++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> index 812f40b..eadd483 100644
-> --- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> +++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> @@ -41,6 +41,40 @@
->         clock-frequency = <24576000>;
->  };
->
-> +&fec1 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_enet1_1>;
-> +       phy-mode = "rgmii";
-> +       phy-handle = <&ethphy1>;
-> +       pinctrl-assert-gpios = <&max7322 0 GPIO_ACTIVE_HIGH>;
+Suspend to RAM with systemctl suspend.
 
-This property does not exist in mainline, only in the NXP vendor kernel.
+>
+>> My machine is a desktop and has a dual core E5500 CPU with 2GB of RAM,
+>> I run Arch Linux and I use the i3wm.
+>
+> That's a Core2 era chip; does it actually have stable TSC ?
+
+I'm not sure.
+
+>
+>> aa83c45762a242acce9b35020363225a7b59d7c9 is the first bad commit
+>
+> That is most curious; that was supposed to only affect early boot. I'll
+> try and figure out of there's some intersection with suspend.
+
+Thanks.
