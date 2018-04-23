@@ -1,107 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932395AbeDWTOF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 15:14:05 -0400
-Received: from gateway23.websitewelcome.com ([192.185.49.184]:26727 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932330AbeDWTOC (ORCPT
+        id S932399AbeDWTQ1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 15:16:27 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43667 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932175AbeDWTQX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 15:14:02 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH 00/11] fix potential Spectre variant 1 issues
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <cover.1524499368.git.gustavo@embeddedor.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <96bd3e25-9503-d23d-4e3c-091e68b6bf8f@embeddedor.com>
-Date: Mon, 23 Apr 2018 14:13:58 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 23 Apr 2018 15:16:23 -0400
+X-Google-Smtp-Source: AIpwx48AXP19vjK5HDboLVEryonGNru+CderjjSEOwSTmMMPhCU+i/GNCdN8xNDCfEkeBdeZ7dxv4w==
+Date: Mon, 23 Apr 2018 22:16:18 +0300
+From: jackm <jackm@dev.mellanox.co.il>
+To: =?ISO-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>,
+        Don Hiatt <don.hiatt@intel.com>,
+        Dasaratharaman Chandramouli
+        <dasaratharaman.chandramouli@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
+Message-ID: <20180423221618.0000795d@dev.mellanox.co.il>
+In-Reply-To: <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
+References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
+        <1524196555.11756.30.camel@redhat.com>
+        <20180420153451.GF30433@ziepe.ca>
+        <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
+Organization: Mellanox
+X-Mailer: Claws Mail 3.15.0 (GTK+ 2.24.31; i686-w64-mingw32)
 MIME-Version: 1.0
-In-Reply-To: <cover.1524499368.git.gustavo@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.48.65
-X-Source-L: No
-X-Exim-ID: 1fAguW-001IbZ-FI
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.145.48.65]:60348
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3NJGW0d001544
 
-Hi,
+On Mon, 23 Apr 2018 16:19:57 +0200
+Håkon Bugge <haakon.bugge@oracle.com> wrote:
 
-Please, drop this series. Further analysis is required as it seems all 
-these are False Positives.
 
-Sorry for the noise.
+> > 
+> > This actually looks like a genuine bug, why is it described only as
+> > 'confusing'? ib_register_mad_agent is callable from userspace, so at
+> > least two userspace agents can race and get the same TID’s.  
+> 
+> My understanding is that every lookup is using the {port, TID} tuple.
+> As such, it is not a bug, but, very confusing.
+Haakon, you are correct (see snippet from the IB spec, below).
 
-Thanks
---
-Gustavo
+We will NOT have a situation where there are 2 threads/apps
+with the same agent ID on the *same port* (accessing the agent ID
+allocator is protected by a per-port spinlock). Having the same agent ID
+on DIFFERENT ports is OK.
+Thus, there is NO bug here. (But as Haakon says, IMHO it is more robust
+to avoid having the same agent ID for 2 agents even if those agents are
+on different ports).
 
-On 04/23/2018 12:37 PM, Gustavo A. R. Silva wrote:
-> This patchset aims to fix various media platform and media usb
-> cases where we have user controlled array dereferences that could
-> be exploited due to the Spectre variant 1 vulnerability. All were
-> reported by Dan Carpenter.
 > 
-> Notice that given that speculation windows are large, the policy is
-> to kill the speculation on the first load and not worry if it can be
-> completed with a dependent load/store [1].
+> > TIDs need to be globally unique on the entire machine.  
 > 
-> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-> 
-> Thanks
-> 
-> Gustavo A. R. Silva (11):
->    media: tm6000: fix potential Spectre variant 1
->    exynos4-is: mipi-csis: fix potential Spectre variant 1
->    fsl-viu: fix potential Spectre variant 1
->    marvell-ccic: mcam-core: fix potential Spectre variant 1
->    omap_vout: fix potential Spectre variant 1
->    rcar-v4l2: fix potential Spectre variant 1
->    rcar_drif: fix potential Spectre variant 1
->    sh_vou: fix potential Spectre variant 1
->    vimc-debayer: fix potential Spectre variant 1
->    vivid-sdr-cap: fix potential Spectre variant 1
->    vsp1_rwpf: fix potential Spectre variant 1
-> 
->   drivers/media/platform/exynos4-is/mipi-csis.c   | 5 ++++-
->   drivers/media/platform/fsl-viu.c                | 8 ++++----
->   drivers/media/platform/marvell-ccic/mcam-core.c | 3 +++
->   drivers/media/platform/omap/omap_vout.c         | 3 +++
->   drivers/media/platform/rcar-vin/rcar-v4l2.c     | 4 +++-
->   drivers/media/platform/rcar_drif.c              | 4 +++-
->   drivers/media/platform/sh_vou.c                 | 3 +++
->   drivers/media/platform/vimc/vimc-debayer.c      | 5 ++++-
->   drivers/media/platform/vivid/vivid-sdr-cap.c    | 6 ++++++
->   drivers/media/platform/vsp1/vsp1_rwpf.c         | 3 +++
->   drivers/media/usb/tm6000/tm6000-video.c         | 2 ++
->   11 files changed, 38 insertions(+), 8 deletions(-)
-> 
+Jason, that is not exactly correct.
+
+>From the IB Spec 1.3, C13-18.1.1 (in section 13.4.6.4 - TransactionID
+usage):
+"When initiating a new operation, MADHeader:TransactionID
+shall be set to such a value that within that MAD the combination of
+TID, SGID, and MgmtClass is different from that of any other currently
+executing operation. If the MAD does not have a GRH, its SLID is used
+in the combination in place of an SGID."
+
+Since the SGID/SLID is different for each port, the per-port guarantee
+of no 2 agents receiving the same agent-ID value is sufficient.
+
+-Jack
