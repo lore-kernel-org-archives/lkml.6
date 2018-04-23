@@ -1,77 +1,102 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524505754; cv=none;
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AIpwx4+1Nv4BOpq8RQ0MPsNyzQB+CNJ85Hc4LtEkgF9P6qFduSPhc3gJdWwd8nCSyry2M7zGtdIc
+ARC-Seal: i=1; a=rsa-sha256; t=1524498476; cv=none;
         d=google.com; s=arc-20160816;
-        b=D8pc2Cbd24oC8XPV+iCfxrO2Yp+ilYtIDI1oKFPB7e1cKYShkLj79qWNH0m6lpW2+Q
-         42qretWeilY7hUWs1ML9oZ95E1rKcAgc/+7Y2P6fqe9QW6pAHnNogbpiuT4vv4cAU0VW
-         AF5KYn/lk90BmzGX47Ou765kKWQBSiv/UveQG9r1yNGdWiOImp4Otf4TF1liw9KrqLru
-         KNzLsWHiMbTEarDPyFvi6PR/QRII33AH3ZQJvCil2Rrmz8xhJfve8En7Wtier1f3TulG
-         Py0+f9atjHZmZI/GZcGppwOs6arJWuhrwKY0AEUZIfneQ3PYfBJ/B5dboZSsksxEMMw6
-         ppjA==
+        b=kdFkaFZt8ULmlJ01zZG10I6SPnQckFsMaglDxdCbF6H8KIKFqwLz9lzJtG1Fgnn5o5
+         voZQOwcb76FvuYyG15EQTV/eiyfdZmPvyV/S7iC0Cb+mg5+57ez+LOC7ee0q0txXH+Lm
+         Q0Qiql/QKeEMWd4nQ5Fz+rFLOdhgUHlDUefWUuWUrtYdHg69DcMrn0fYEcvTHTYy6i2T
+         JFRLutr9pp+N3m+2cnW/gbV1VuwL3WJVCZSpKp1CXqUGbuNgTyuWa0Q8ti5bzNa7HJNu
+         k2kcohkBa0Kty6zN6SwM43X6CH8iTBCPabYPiMPKhbNJGpMM1lN1YE/E03EVLOR7QoYZ
+         lNjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=OWBBHy0W5f9I8vBQlT4V0WQiRCI9cYQ8sT1koP3hce0=;
-        b=rqOJw/Eu/4zhFwXVl16/0ckf0zsnZBJr4QqN6WHfIyqoQ7VMgvwIk+PVWsqhwcJUKA
-         B8vr5jh4Kmzf0xbaf+w5pNBF4hGULdVHVOIG+a/kDmCca1da/hzjpfxriK2owOJ6W4sf
-         vfOeliUYZf3g5zCc3rBWiKRiJ3bhzD0b5xXqC7zFTesn8TyCTKfW0z9J3TS3kUFbTtq8
-         yAmRfiwVE5fTWJjQh92x1HmsWpP8BU653NeZN22mziDSJ5l5u4pRbZ/5xX2h+18MITSb
-         Rb4sR390Cn7oOKZRAqzShSIpWyXFD3WgtXCHcnwDMac9BPWm1vIVjBWlS9/7iXtXnLJJ
-         6Ogw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=0qmWb7xiSzU7S3Tuxgcnd74RbQVyw7wJWYfNbHnb9fM=;
+        b=vAOz5B8VhVdxbv6b55Q5MEISQRY5jQMvahXi4yRUjpacGpRNn9rQ6xkxZt75XT4VEC
+         eA3giyIZcxNp/mDFyFFF80ADOpOMyw5rjrM0fp9ePSKNaEj4tbzxYpRgLJe2g9eWegXe
+         H+BTpE2nyj/sJCgbJgckNJztZvi9F/86VJQNblDZkTyBeh278mPM1tQae/n6x2PoyyGA
+         n2Jcco+JVbzpOBwyUrlQp9dx11m1E7JeKyUUD/H78bxCwNRd4O2cPbYdZfjGsBlCDiD+
+         lRsORmtZMInqBAZmpoUdnaaZw7ItufWIWO/5W2macPnuFYMv8TqjFdthhE8yh7mia32/
+         6blw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=O4tBr90o;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=L9LnBb/7;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GlLcSiHw;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=O4tBr90o;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=L9LnBb/7;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AIpwx4/pTEvX/CC91TQN3rx9NUs6A9Esc2jh5csGeB0eQeN32zHMSdvCruMryvkNXjBD7wO+8gBqFMv5szMQ2U/1PBo=
-MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <20180423174506.mpbpnvfzv6fmpbzy@suse.de>
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GlLcSiHw;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+From: Joerg Roedel <joro@8bytes.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>,
+	aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at,
+	hughd@google.com,
+	keescook@google.com,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+	jroedel@suse.de,
+	joro@8bytes.org
+Subject: [PATCH 28/37] x86/mm/pti: Map kernel-text to user-space on 32 bit kernels
+Date: Mon, 23 Apr 2018 17:47:31 +0200
+Message-Id: <1524498460-25530-29-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
- <CA+55aFwg75rOXN5Q0qHf_GF-hnVo8mjxnTo2FbM993fuc8x7Gw@mail.gmail.com> <20180423174506.mpbpnvfzv6fmpbzy@suse.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 23 Apr 2018 10:49:13 -0700
-X-Google-Sender-Auth: nleSs3pfA4hHA4anl8fTxVjjsZo
-Message-ID: <CA+55aFwt+o1kjgkVcxLbO_558J5zWMg_XpfmEkW2LW2eq1CiDQ@mail.gmail.com>
-Subject: Re: [PATCH 00/37 v6] PTI support for x86-32
-To: Joerg Roedel <jroedel@suse.de>
-Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, "the arch/x86 maintainers" <x86@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-	Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Brian Gerst <brgerst@gmail.com>,
-	David Laight <David.Laight@aculab.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>, Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>, "Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
-	Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-	"David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552504711746562?=
-X-GMAIL-MSGID: =?utf-8?q?1598560146168112820?=
+X-GMAIL-THRID: =?utf-8?q?1598552514601150146?=
+X-GMAIL-MSGID: =?utf-8?q?1598552514601150146?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 10:45 AM, Joerg Roedel <jroedel@suse.de> wrote:
->
-> Just checked that and there are no pages with GLB and USR set, not even
-> a vdso page.
+From: Joerg Roedel <jroedel@suse.de>
 
-Thanks.
+Keeping the kernel text mapped with G bit set keeps its
+entries in the TLB across kernel entry/exit and improved the
+performance. The 64 bit x86 kernels already do this when
+there is no PCID, so do this in 32 bit as well since PCID is
+not even supported there.
 
-> The vsyscall page does not exist on plain 32 bit, no? All I could find
-> there is the vdso page, and that has no compat mapping anymore in recent
-> upstream kernels. To my understanding the vdso page is mapped into the
-> user-space portion of the address space. At least that is what I found
-> while looking at this, but I might have missed something.
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/mm/init_32.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-I guess it's just the x86-64 vsyscall page then. Thanks for checking.
-
-                 Linus
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index c893c6a..8299b98 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -956,4 +956,10 @@ void mark_rodata_ro(void)
+ 	mark_nxdata_nx();
+ 	if (__supported_pte_mask & _PAGE_NX)
+ 		debug_checkwx();
++
++	/*
++	 * Do this after all of the manipulation of the
++	 * kernel text page tables are complete.
++	 */
++	pti_clone_kernel_text();
+ }
+-- 
+2.7.4
