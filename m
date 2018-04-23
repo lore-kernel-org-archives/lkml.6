@@ -1,73 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754665AbeDWKDB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:03:01 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:44319 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754576AbeDWKC5 (ORCPT
+        id S1754666AbeDWKDe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:03:34 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40556 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754466AbeDWKDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:02:57 -0400
-Date: Mon, 23 Apr 2018 12:02:52 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v5 3/6] dt-bindings: arm: Document the RZN1D-DB board
-Message-ID: <20180423100248.et7lsq25fmmxdhrn@verge.net.au>
-References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
- <1523963101-56725-4-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdU4upXcYZ_yD2a_=J5VAUE28fni7_NotmchjpYUqCxV=A@mail.gmail.com>
+        Mon, 23 Apr 2018 06:03:32 -0400
+Date: Mon, 23 Apr 2018 11:03:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: sean.wang@mediatek.com
+Cc: matthias.bgg@gmail.com, rjw@rjwysocki.net, khilman@baylibre.com,
+        ulf.hansson@linaro.org, linux-mediatek@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] regmap: include <linux/ktime.h> from
+ include/linux/regmap.h
+Message-ID: <20180423100318.GA19834@sirena.org.uk>
+References: <ccea364eeb830b2092987d271c8308b97fe59d8f.1524465345.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdU4upXcYZ_yD2a_=J5VAUE28fni7_NotmchjpYUqCxV=A@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <ccea364eeb830b2092987d271c8308b97fe59d8f.1524465345.git.sean.wang@mediatek.com>
+X-Cookie: I think, therefore I am... I think.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 05:49:25PM +0200, Geert Uytterhoeven wrote:
-> Hi Michel,
-> 
-> On Tue, Apr 17, 2018 at 1:04 PM, Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
-> > This documents the RZ/N1 bindings for the RZN1D-DB board.
-> >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > ---
-> >  Documentation/devicetree/bindings/arm/shmobile.txt | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-> > index 61b486f..6efb3f1 100644
-> > --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> > +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> > @@ -51,7 +51,8 @@ SoCs:
-> >      compatible = "renesas,r8a77990"
-> >    - R-Car D3 (R8A77995)
-> >      compatible = "renesas,r8a77995"
-> > -
-> > +  - RZ/N1D (R9A06G032)
-> > +    compatible = "renesas,r9a06g032", "renesas,rzn1"
-> 
-> Why do you need a family-specific compatible value ("renesas,rzn1",
-> which is a marketing name)?
 
-Thanks Michel, Thanks Geert,
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-it looks like this extra compatible value should be dropped.
-Its not consistent with the way other Renesas SoC families are handled
-and past experience has not lead us to want family-specific compatible
-values.
+On Mon, Apr 23, 2018 at 02:42:44PM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+>=20
+> Similar to the readx_poll_timeout() macro calling ktime_* and using
+> ktime_t type, which is declared in <linux/ktime.h>. So, make
+
+I'm missing patch 2 here - what's the story, are there any
+dependencies?
+
+--gBBFr7Ir9EOA20Yy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrdr2IACgkQJNaLcl1U
+h9BVuwf/VtE8pK33MXz12kl0OpPTVWose3BdVvLrb9ZnKlqo4+Bp2g/HS0i7JWi/
+q0DYrM0EA08fDlJbNSIhvjkm71YmV01v76YSYEtIakh27tRgR733F1QhznS/nPkU
+3K2Cw9MCDVdhXQj0XNH+Aw8bRIT+E1yS5tvG+1VG4vAS8G2QGsS0Wsxgj4BV+NhL
+Zvozs296ty9HUwHUbAdnYD+ezRWzPieUpIckk7l7Z/J0zJsindjHs7scB7SPMliI
+hovcNmkcU2cOlPA0GR5Qu0YXHw75ILNgyIiNYR/QDEHo7j3Y31Gu8719/SxZvSF0
+AoXA932DOuTHbSdAS72nSs47D0rkZQ==
+=nJUn
+-----END PGP SIGNATURE-----
+
+--gBBFr7Ir9EOA20Yy--
