@@ -1,108 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753829AbeDWAr5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 20:47:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46878 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753752AbeDWAry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 20:47:54 -0400
-Date: Sun, 22 Apr 2018 18:47:48 -0600
-From: Michal Hocko <mhocko@kernel.org>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: kirill.shutemov@linux.intel.com, hughd@google.com, hch@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 PATCH] mm: shmem: make stat.st_blksize return huge page
- size if THP is on
-Message-ID: <20180423004748.GP17484@dhcp22.suse.cz>
-References: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
+        id S1753855AbeDWBCF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 21:02:05 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:56465 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753755AbeDWBCD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 21:02:03 -0400
+X-Google-Smtp-Source: AB8JxZqzU64XVDTbTLmsUEWnvUbFShqMguvc6QwJB4DlEay6Lx/Uni6AKpGDRi5O13Et6p06OaTK0gRs8fLc4qim0pkyxneex7fi
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Date: Sun, 22 Apr 2018 18:02:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000eeeeff056a79954c@google.com>
+Subject: KASAN: null-ptr-deref Read in refcount_inc_not_zero
+From: syzbot <syzbot+6a35cd2d9559c909d570@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dvlasenk@redhat.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        xiaolou4617@gmail.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 21-04-18 00:33:59, Yang Shi wrote:
-> Since tmpfs THP was supported in 4.8, hugetlbfs is not the only
-> filesystem with huge page support anymore. tmpfs can use huge page via
-> THP when mounting by "huge=" mount option.
-> 
-> When applications use huge page on hugetlbfs, it just need check the
-> filesystem magic number, but it is not enough for tmpfs. Make
-> stat.st_blksize return huge page size if it is mounted by appropriate
-> "huge=" option.
-> 
-> Some applications could benefit from this change, for example QEMU.
-> When use mmap file as guest VM backend memory, QEMU typically mmap the
-> file size plus one extra page. If the file is on hugetlbfs the extra
-> page is huge page size (i.e. 2MB), but it is still 4KB on tmpfs even
-> though THP is enabled. tmpfs THP requires VMA is huge page aligned, so
-> if 4KB page is used THP will not be used at all. The below /proc/meminfo
-> fragment shows the THP use of QEMU with 4K page:
-> 
-> ShmemHugePages:   679936 kB
-> ShmemPmdMapped:        0 kB
-> 
-> By reading st_blksize, tmpfs can use huge page, then /proc/meminfo looks
-> like:
-> 
-> ShmemHugePages:    77824 kB
-> ShmemPmdMapped:     6144 kB
-> 
-> statfs.f_bsize still returns 4KB for tmpfs since THP could be split, and it
-> also may fallback to 4KB page silently if there is not enough huge page.
-> Furthermore, different f_bsize makes max_blocks and free_blocks
-> calculation harder but without too much benefit. Returning huge page
-> size via stat.st_blksize sounds good enough.
+Hello,
 
-I am not sure I understand the above. So does QEMU or other tmpfs users
-rely on f_bsize to do mmap alignment tricks? Also I thought that THP
-will be used on the first aligned address even when the initial/last
-portion of the mapping is not THP aligned.
+syzbot hit the following crash on upstream commit
+285848b0f4074f04ab606f1e5dca296482033d54 (Sun Apr 22 04:20:48 2018 +0000)
+Merge tag 'random_for_linus_stable' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/tytso/random
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=6a35cd2d9559c909d570
 
-And more importantly
-[...]
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -39,6 +39,7 @@
->  #include <asm/tlbflush.h> /* for arch/microblaze update_mmu_cache() */
->  
->  static struct vfsmount *shm_mnt;
-> +static bool is_huge = false;
->  
->  #ifdef CONFIG_SHMEM
->  /*
-> @@ -995,6 +996,8 @@ static int shmem_getattr(const struct path *path, struct kstat *stat,
->  		spin_unlock_irq(&info->lock);
->  	}
->  	generic_fillattr(inode, stat);
-> +	if (is_huge)
-> +		stat->blksize = HPAGE_PMD_SIZE;
->  	return 0;
->  }
->  
-> @@ -3574,6 +3577,7 @@ static int shmem_parse_options(char *options, struct shmem_sb_info *sbinfo,
->  					huge != SHMEM_HUGE_NEVER)
->  				goto bad_val;
->  			sbinfo->huge = huge;
-> +			is_huge = true;
+So far this crash happened 1772 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5975533900791808
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=4813418829709312
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5008564225572864
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-Huh! How come this is a global flag. What if we have multiple shmem
-mounts some with huge pages enabled and some without? Btw. we seem to
-already have that information stored in the supperblock
-		} else if (!strcmp(this_char, "huge")) {
-			int huge;
-			huge = shmem_parse_huge(value);
-			if (huge < 0)
-				goto bad_val;
-			if (!has_transparent_hugepage() &&
-					huge != SHMEM_HUGE_NEVER)
-				goto bad_val;
-			sbinfo->huge = huge;
--- 
-Michal Hocko
-SUSE Labs
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6a35cd2d9559c909d570@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+==================================================================
+BUG: KASAN: null-ptr-deref in atomic_read  
+include/asm-generic/atomic-instrumented.h:21 [inline]
+BUG: KASAN: null-ptr-deref in refcount_inc_not_zero+0x8f/0x2d0  
+lib/refcount.c:120
+Read of size 4 at addr 0000000000000004 by task syzkaller633288/4488
+
+CPU: 0 PID: 4488 Comm: syzkaller633288 Not tainted 4.17.0-rc1+ #12
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  kasan_report_error mm/kasan/report.c:352 [inline]
+  kasan_report.cold.7+0x6d/0x2fe mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+  refcount_inc_not_zero+0x8f/0x2d0 lib/refcount.c:120
+  refcount_inc+0x15/0x70 lib/refcount.c:153
+  llc_sap_hold include/net/llc.h:116 [inline]
+  llc_ui_release+0xba/0x2b0 net/llc/af_llc.c:207
+  sock_release+0x96/0x1b0 net/socket.c:594
+  sock_close+0x16/0x20 net/socket.c:1149
+  __fput+0x34d/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1aee/0x2730 kernel/exit.c:865
+  do_group_exit+0x16f/0x430 kernel/exit.c:968
+  __do_sys_exit_group kernel/exit.c:979 [inline]
+  __se_sys_exit_group kernel/exit.c:977 [inline]
+  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:977
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x43e878
+RSP: 002b:00007ffd854075f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043e878
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004be220 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006cc160 R14: 0000000000000000 R15: 0000000000000000
+==================================================================
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
