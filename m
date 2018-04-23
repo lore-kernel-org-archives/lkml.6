@@ -1,127 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932557AbeDWVuQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 17:50:16 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46066 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932318AbeDWVuN (ORCPT
+        id S932584AbeDWVuh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 17:50:37 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:48493 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932318AbeDWVue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 17:50:13 -0400
-X-Google-Smtp-Source: AIpwx4+6RmEhkwtcW+o4/3YUeF0u4Fg1xpjiAI3Xz5+4u6e6S+rfJivxvlrkXjJwc3DF9sFuBjA+rA==
-Date: Tue, 24 Apr 2018 00:50:09 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: [PATCH] proc: restore seekdir("/proc", 256) semantics
-Message-ID: <20180423215009.GE9043@avx2>
+        Mon, 23 Apr 2018 17:50:34 -0400
+X-ME-Sender: <xms:KVXeWvVuqcU4eyISkqwdFPHKM7e7wq9vKN305yJ6jrsBB3OFZdYDEQ>
+Date: Mon, 23 Apr 2018 14:50:32 -0700
+From: Andres Freund <andres@anarazel.de>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Always report a writeback error once
+Message-ID: <20180423215032.qfk3ktoadf4tofrq@alap3.anarazel.de>
+References: <20180423204208.GG13383@bombadil.infradead.org>
+ <20180423205730.34wvykqhefbkrtfw@alap3.anarazel.de>
+ <20180423214348.GH13383@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180423214348.GH13383@bombadil.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Long time ago "/proc/self" was an honest symlink and all not-PID entries
-were output before /proc/$PID. To not lose /proc/self in readdir output
-after it became permanently positive dentry it was stuck before /proc/1.
+On 2018-04-23 14:43:48 -0700, Matthew Wilcox wrote:
+> On Mon, Apr 23, 2018 at 01:57:30PM -0700, Andres Freund wrote:
+> > I've never really looked at this code in any depth before, but won't
+> > this potentially lead to the same error being reported on multiple FDs?
+> > Imagine two fds (potentially in different processes) getting the 0
+> > returned by errseq_sample() because it's not ERRSEQ_SEEN. Afaict
+> > file_check_and_advance_wb_err() will return an error that's always
+> > unlike 0 in that case, and thus the error will returned on both fds?
+> > 
+> > I'm personally perfectly fine with that, but it's not necessarily what's
+> > described as desired in your email?.
+> 
+> That's what I was trying to say with this paragraph:
+> 
+> > > This patch restores that behaviour by reporting errors to file descriptors
+> > > which are opened after the error occurred, but before it was reported
+> > > to any file descriptor.
+> 
+> Maybe it was a little unclear?  I'd appreciate a suggestion on making
+> it clearer.
 
-One side effect of the change was that the code
+I think I was thinking of the following paragraph from your commit
+message:
 
-	d = opendir("/proc");
-	seekdir(d, 256);
+> Before errseq_t, a writeback error would be reported exactly once (as
+> long as the inode remained in memory), so Postgres could open a file,
+> call fsync() and find out whether there had been a writeback error on
+> that file from another process.
 
-stopped pointing to the first PID for applications that want to skip all
-the crap.
+Note the "exactly once", making "that behaviour" in the following
+paragraph potentially refer to exactly once:
 
-Later "/proc/thread-self" was added in the same way.
+> This patch restores that behaviour by reporting errors to file descriptors
+> which are opened after the error occurred, but before it was reported
+> to any file descriptor.
 
-It looks like ps and top aren't seeking over /proc but are simply
-skipping over so nobody noticed.
+Just adding a sentence here saying something like "This means that the
+error might be reported to more fds than before." or such would address
+that potential ambiguity?
 
-Restore old behaviour, make seekdir(254) point to /proc/self and
-seekdir(255) point to /proc/thread-self.
+> I think this behaviour is perfectly justifiable.
 
-Commit in question:
+I agree.
 
-	commit 021ada7dff22d0d9540ff596cb0f8bb866755ee1
-	procfs: switch /proc/self away from proc_dir_entry
+Greetings,
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- fs/proc/base.c |   14 ++++++--------
- fs/proc/root.c |    4 ++--
- 2 files changed, 8 insertions(+), 10 deletions(-)
-
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -3230,8 +3230,6 @@ static struct tgid_iter next_tgid(struct pid_namespace *ns, struct tgid_iter ite
- 	return iter;
- }
- 
--#define TGID_OFFSET (FIRST_PROCESS_ENTRY + 2)
--
- /* for the /proc/ directory itself, after non-process stuff has been done */
- int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- {
-@@ -3239,22 +3237,22 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- 	struct pid_namespace *ns = file_inode(file)->i_sb->s_fs_info;
- 	loff_t pos = ctx->pos;
- 
--	if (pos >= PID_MAX_LIMIT + TGID_OFFSET)
-+	if (pos >= PID_MAX_LIMIT + FIRST_PROCESS_ENTRY)
- 		return 0;
- 
--	if (pos == TGID_OFFSET - 2) {
-+	if (pos == FIRST_PROCESS_ENTRY - 2) {
- 		struct inode *inode = d_inode(ns->proc_self);
- 		if (!dir_emit(ctx, "self", 4, inode->i_ino, DT_LNK))
- 			return 0;
- 		ctx->pos = pos = pos + 1;
- 	}
--	if (pos == TGID_OFFSET - 1) {
-+	if (pos == FIRST_PROCESS_ENTRY - 1) {
- 		struct inode *inode = d_inode(ns->proc_thread_self);
- 		if (!dir_emit(ctx, "thread-self", 11, inode->i_ino, DT_LNK))
- 			return 0;
- 		ctx->pos = pos = pos + 1;
- 	}
--	iter.tgid = pos - TGID_OFFSET;
-+	iter.tgid = pos - FIRST_PROCESS_ENTRY;
- 	iter.task = NULL;
- 	for (iter = next_tgid(ns, iter);
- 	     iter.task;
-@@ -3267,14 +3265,14 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- 			continue;
- 
- 		len = snprintf(name, sizeof(name), "%u", iter.tgid);
--		ctx->pos = iter.tgid + TGID_OFFSET;
-+		ctx->pos = iter.tgid + FIRST_PROCESS_ENTRY;
- 		if (!proc_fill_cache(file, ctx, name, len,
- 				     proc_pid_instantiate, iter.task, NULL)) {
- 			put_task_struct(iter.task);
- 			return 0;
- 		}
- 	}
--	ctx->pos = PID_MAX_LIMIT + TGID_OFFSET;
-+	ctx->pos = PID_MAX_LIMIT + FIRST_PROCESS_ENTRY;
- 	return 0;
- }
- 
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -162,11 +162,11 @@ static struct dentry *proc_root_lookup(struct inode * dir, struct dentry * dentr
- 
- static int proc_root_readdir(struct file *file, struct dir_context *ctx)
- {
--	if (ctx->pos < FIRST_PROCESS_ENTRY) {
-+	if (ctx->pos < FIRST_PROCESS_ENTRY - 2) {
- 		int error = proc_readdir(file, ctx);
- 		if (unlikely(error <= 0))
- 			return error;
--		ctx->pos = FIRST_PROCESS_ENTRY;
-+		ctx->pos = FIRST_PROCESS_ENTRY - 2;
- 	}
- 
- 	return proc_pid_readdir(file, ctx);
+Andres Freund
