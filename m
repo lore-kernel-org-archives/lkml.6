@@ -1,117 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754917AbeDWL4N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 07:56:13 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:36523 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754814AbeDWL4L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 07:56:11 -0400
-X-Google-Smtp-Source: AIpwx4+SgIAkeY28qznL8YaJRHdfAeN60JKLt1vzw7gTKG00jDsiKKns4h8y8jnNlgtGb2znZyZpYf1lQfRxSJnugm4=
+        id S1755062AbeDWL4k (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 07:56:40 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7198 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755019AbeDWL4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 07:56:37 -0400
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <will.deacon@arm.com>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <liubo95@huawei.com>, <dingtianhong@huawei.com>,
+        Yisheng Xie <xieyisheng1@huawei.com>
+Subject: [RFC 1/2] iommu/arm-smmu-v3: Remove bypass in arm_smmu_reset_device
+Date: Mon, 23 Apr 2018 19:45:58 +0800
+Message-ID: <1524483959-54940-2-git-send-email-xieyisheng1@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+In-Reply-To: <1524483959-54940-1-git-send-email-xieyisheng1@huawei.com>
+References: <1524483959-54940-1-git-send-email-xieyisheng1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <38e7d755-f95a-fcad-3f70-3a4eb049fc81@de.ibm.com>
-References: <1524185248-51744-1-git-send-email-wanpengli@tencent.com>
- <20180420091537.1c6cb06b.cohuck@redhat.com> <CANRm+CxTDFu4C7bB_9e2a4Wi3BKDvc-RrX3Pj4Q5SRdZHmO-BA@mail.gmail.com>
- <20180420162155.675d516d.cohuck@redhat.com> <CANRm+CwQB_EBK_GSF-Nrm6kfpQoNZJmg+N382B+d4YVNjj_gOA@mail.gmail.com>
- <38e7d755-f95a-fcad-3f70-3a4eb049fc81@de.ibm.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Mon, 23 Apr 2018 19:56:10 +0800
-Message-ID: <CANRm+Cyoufp89=orEMBst3uwLAn6gfuNkh4g80upM52NOLpDFw@mail.gmail.com>
-Subject: Re: [PATCH v2] KVM: Extend MAX_IRQ_ROUTES to 4096 for all archs
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Cornelia Huck <cohuck@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Tonny Lu <tonnylu@tencent.com>, Janosch Frank <frankja@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3NBuIdn005226
 
-2018-04-23 19:50 GMT+08:00 Christian Borntraeger <borntraeger@de.ibm.com>:
->
->
-> On 04/21/2018 02:38 AM, Wanpeng Li wrote:
->> 2018-04-20 22:21 GMT+08:00 Cornelia Huck <cohuck@redhat.com>:
->>> On Fri, 20 Apr 2018 21:51:13 +0800
->>> Wanpeng Li <kernellwp@gmail.com> wrote:
->>>
->>>> 2018-04-20 15:15 GMT+08:00 Cornelia Huck <cohuck@redhat.com>:
->>>>> On Thu, 19 Apr 2018 17:47:28 -0700
->>>>> Wanpeng Li <kernellwp@gmail.com> wrote:
->>>>>
->>>>>> From: Wanpeng Li <wanpengli@tencent.com>
->>>>>>
->>>>>> Our virtual machines make use of device assignment by configuring
->>>>>> 12 NVMe disks for high I/O performance. Each NVMe device has 129
->>>>>> MSI-X Table entries:
->>>>>> Capabilities: [50] MSI-X: Enable+ Count=129 Masked-Vector table: BAR=0 offset=00002000
->>>>>> The windows virtual machines fail to boot since they will map the number of
->>>>>> MSI-table entries that the NVMe hardware reported to the bus to msi routing
->>>>>> table, this will exceed the 1024. This patch extends MAX_IRQ_ROUTES to 4096
->>>>>> for all archs, in the future this might be extended again if needed.
->>>>>>
->>>>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
->>>>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
->>>>>> Cc: Tonny Lu <tonnylu@tencent.com>
->>>>>> Cc: Cornelia Huck <cohuck@redhat.com>
->>>>>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->>>>>> Signed-off-by: Tonny Lu <tonnylu@tencent.com>
->>>>>> ---
->>>>>> v1 -> v2:
->>>>>>  * extend MAX_IRQ_ROUTES to 4096 for all archs
->>>>>>
->>>>>>  include/linux/kvm_host.h | 6 ------
->>>>>>  1 file changed, 6 deletions(-)
->>>>>>
->>>>>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
->>>>>> index 6930c63..0a5c299 100644
->>>>>> --- a/include/linux/kvm_host.h
->>>>>> +++ b/include/linux/kvm_host.h
->>>>>> @@ -1045,13 +1045,7 @@ static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
->>>>>>
->>>>>>  #ifdef CONFIG_HAVE_KVM_IRQ_ROUTING
->>>>>>
->>>>>> -#ifdef CONFIG_S390
->>>>>>  #define KVM_MAX_IRQ_ROUTES 4096 //FIXME: we can have more than that...
->>>>>
->>>>> What about /* might need extension/rework in the future */ instead of
->>>>> the FIXME?
->>>>
->>>> Yeah, I guess the maintainers can help to fix it when applying. :)
->>>>
->>>>>
->>>>> As far as I understand, 4096 should cover most architectures and the
->>>>> sane end of s390 configurations, but will not be enough at the scarier
->>>>> end of s390. (I'm not sure how much it matters in practice.)
->>>>>
->>>>> Do we want to make this a tuneable in the future? Do some kind of
->>>>> dynamic allocation? Not sure whether it is worth the trouble.
->>>>
->>>> I think keep as it is currently.
->>>
->>> My main question here is how long this is enough... the number of
->>> virtqueues per device is up to 1K from the initial 64, which makes it
->>> possible to hit the 4K limit with fewer virtio devices than before (on
->>> s390, each virtqueue uses a routing table entry). OTOH, we don't want
->>> giant tables everywhere just to accommodate s390.
->>
->> I suspect there is no real scenario to futher extend for s390 since no
->> guys report.
->>
->>> If the s390 maintainers tell me that nobody is doing the really insane
->>> stuff, I'm happy as well :)
->>
->> Christian, any thoughts?
->
-> For now this patch is a no-op for s390 so as long as nobody complains today we are good.
-> If it turns out to be "not enough" we can then add a configurable number or whatever.
+Add a bypass parameter in arm_smmu_device to keep whether smmu device
+should pypass or not, so parameter bypass in arm_smmu_reset_device can
+be removed.
 
-Thanks Christian. Paolo, could you pick this one w/ "/* might need
-extension/rework in the future */ instead of
-the FIXME" change or do you need I to send out a new version? :)
+This should not have any functional change, but prepare for later patch.
 
-Regards,
-Wanpeng Li
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+---
+ drivers/iommu/arm-smmu-v3.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 1d64710..044df6e 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -587,6 +587,8 @@ struct arm_smmu_device {
+ 
+ 	u32				sync_count;
+ 
++	bool				bypass;
++
+ 	/* IOMMU core code handle */
+ 	struct iommu_device		iommu;
+ };
+@@ -2384,7 +2386,7 @@ static int arm_smmu_device_disable(struct arm_smmu_device *smmu)
+ 	return ret;
+ }
+ 
+-static int arm_smmu_device_reset(struct arm_smmu_device *smmu, bool bypass)
++static int arm_smmu_device_reset(struct arm_smmu_device *smmu)
+ {
+ 	int ret;
+ 	u32 reg, enables;
+@@ -2487,7 +2489,7 @@ static int arm_smmu_device_reset(struct arm_smmu_device *smmu, bool bypass)
+ 
+ 
+ 	/* Enable the SMMU interface, or ensure bypass */
+-	if (!bypass || disable_bypass) {
++	if (!smmu->bypass || disable_bypass) {
+ 		enables |= CR0_SMMUEN;
+ 	} else {
+ 		ret = arm_smmu_update_gbpa(smmu, 0, GBPA_ABORT);
+@@ -2778,7 +2780,6 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 	resource_size_t ioaddr;
+ 	struct arm_smmu_device *smmu;
+ 	struct device *dev = &pdev->dev;
+-	bool bypass;
+ 
+ 	smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
+ 	if (!smmu) {
+@@ -2796,7 +2797,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Set bypass mode according to firmware probing result */
+-	bypass = !!ret;
++	smmu->bypass = !!ret;
+ 
+ 	/* Base address */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -2842,7 +2843,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, smmu);
+ 
+ 	/* Reset the device */
+-	ret = arm_smmu_device_reset(smmu, bypass);
++	ret = arm_smmu_device_reset(smmu);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+1.7.12.4
