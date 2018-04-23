@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755761AbeDWRVn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:21:43 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41174 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755460AbeDWRVl (ORCPT
+        id S1755871AbeDWRVw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:21:52 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:57286 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755800AbeDWRVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:21:41 -0400
+        Mon, 23 Apr 2018 13:21:45 -0400
 Smtp-Origin-Hostprefix: devbig
 From: Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig102.frc2.facebook.com
@@ -17,10 +17,12 @@ CC: <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
         Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
         Miklos Szeredi <miklos@szeredi.hu>
 Smtp-Origin-Cluster: frc2c02
-Subject: [PATCH v5 1/2] tracing: fix bad use of igrab in trace_uprobe.c
-Date: Mon, 23 Apr 2018 10:21:34 -0700
-Message-ID: <20180423172135.4050588-1-songliubraving@fb.com>
+Subject: [PATCH v5 2/2] tracing: remove igrab() iput() call from uprobes.c
+Date: Mon, 23 Apr 2018 10:21:35 -0700
+Message-ID: <20180423172135.4050588-2-songliubraving@fb.com>
 X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180423172135.4050588-1-songliubraving@fb.com>
+References: <20180423172135.4050588-1-songliubraving@fb.com>
 X-FB-Internal: Safe
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -32,178 +34,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Miklos reported and suggested:
+Caller of uprobe_register is required to keep the inode and containing
+mount point referenced.
 
-  This pattern repeats two times in trace_uprobe.c and in
-  kernel/events/core.c as well:
+There was misuse of igrab() in uprobes.c and trace_uprobe.c. This is
+because igrab() will not prevent umount of the containing mount point.
+To fix this, we added path to struct trace_uprobe, which keeps the inode
+and containing mount reference.
 
-      ret = kern_path(filename, LOOKUP_FOLLOW, &path);
-      if (ret)
-          goto fail_address_parse;
+For uprobes.c, it is not necessary to call igrab() in uprobe_register(),
+as the caller is required to keep the inode reference. The igrab() is
+removed and comments on this requirement is added to uprobe_register().
 
-      inode = igrab(d_inode(path.dentry));
-      path_put(&path);
-
-  And it's wrong.  You can only hold a reference to the inode if you
-  have an active ref to the superblock as well (which is normally
-  through path.mnt) or holding s_umount.
-
-  This way unmounting the containing filesystem while the tracepoint is
-  active will give you the "VFS: Busy inodes after unmount..." message
-  and a crash when the inode is finally put.
-
-  Solution: store path instead of inode.
-
-This patch fixes two instances in trace_uprobe.c. struct path is added to
-struct trace_uprobe to keep the inode and containing mount point
-referenced.
-
-Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
-Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
+Link: http://lkml.kernel.org/r/CAELBmZB2XX=qEOLAdvGG4cPx4GEntcSnWQquJLUK1ongRj35cA@mail.gmail.com
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Howard McLauchlan <hmclauchlan@fb.com>
 Cc: Josef Bacik <jbacik@fb.com>
 Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
-Reported-by: Miklos Szeredi <miklos@szeredi.hu>
 Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- kernel/trace/trace_uprobe.c | 35 ++++++++++++++---------------------
- 1 file changed, 14 insertions(+), 21 deletions(-)
+ kernel/events/uprobes.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 34fd0e0..ac89287 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -55,6 +55,7 @@ struct trace_uprobe {
- 	struct list_head		list;
- 	struct trace_uprobe_filter	filter;
- 	struct uprobe_consumer		consumer;
-+	struct path			path;
- 	struct inode			*inode;
- 	char				*filename;
- 	unsigned long			offset;
-@@ -289,7 +290,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
- 	for (i = 0; i < tu->tp.nr_args; i++)
- 		traceprobe_free_probe_arg(&tu->tp.args[i]);
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index ce6848e..1725b90 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -491,7 +491,7 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
+ 	if (!uprobe)
+ 		return NULL;
  
--	iput(tu->inode);
-+	path_put(&tu->path);
- 	kfree(tu->tp.call.class->system);
- 	kfree(tu->tp.call.name);
- 	kfree(tu->filename);
-@@ -363,7 +364,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
- static int create_trace_uprobe(int argc, char **argv)
- {
- 	struct trace_uprobe *tu;
--	struct inode *inode;
- 	char *arg, *event, *group, *filename;
- 	char buf[MAX_EVENT_NAME_LEN];
- 	struct path path;
-@@ -371,7 +371,6 @@ static int create_trace_uprobe(int argc, char **argv)
- 	bool is_delete, is_return;
- 	int i, ret;
- 
--	inode = NULL;
- 	ret = 0;
- 	is_delete = false;
- 	is_return = false;
-@@ -437,21 +436,16 @@ static int create_trace_uprobe(int argc, char **argv)
- 	}
- 	/* Find the last occurrence, in case the path contains ':' too. */
- 	arg = strrchr(argv[1], ':');
--	if (!arg) {
--		ret = -EINVAL;
--		goto fail_address_parse;
--	}
-+	if (!arg)
-+		return -EINVAL;
- 
- 	*arg++ = '\0';
- 	filename = argv[1];
- 	ret = kern_path(filename, LOOKUP_FOLLOW, &path);
- 	if (ret)
--		goto fail_address_parse;
--
--	inode = igrab(d_real_inode(path.dentry));
--	path_put(&path);
-+		return ret;
- 
--	if (!inode || !S_ISREG(inode->i_mode)) {
-+	if (!d_is_reg(path.dentry)) {
- 		ret = -EINVAL;
- 		goto fail_address_parse;
- 	}
-@@ -490,7 +484,7 @@ static int create_trace_uprobe(int argc, char **argv)
- 		goto fail_address_parse;
- 	}
- 	tu->offset = offset;
--	tu->inode = inode;
-+	tu->path = path;
- 	tu->filename = kstrdup(filename, GFP_KERNEL);
- 
- 	if (!tu->filename) {
-@@ -558,7 +552,7 @@ static int create_trace_uprobe(int argc, char **argv)
- 	return ret;
- 
- fail_address_parse:
--	iput(inode);
-+	path_put(&path);
- 
- 	pr_info("Failed to parse address or file.\n");
- 
-@@ -922,6 +916,7 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
- 		goto err_flags;
- 
- 	tu->consumer.filter = filter;
-+	tu->inode = d_real_inode(tu->path.dentry);
- 	ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
- 	if (ret)
- 		goto err_buffer;
-@@ -967,6 +962,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
- 	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
- 
- 	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
-+	tu->inode = NULL;
- 	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
- 
- 	uprobe_buffer_disable();
-@@ -1337,7 +1333,6 @@ struct trace_event_call *
- create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
- {
- 	struct trace_uprobe *tu;
--	struct inode *inode;
- 	struct path path;
- 	int ret;
- 
-@@ -1345,11 +1340,8 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--	inode = igrab(d_inode(path.dentry));
--	path_put(&path);
--
--	if (!inode || !S_ISREG(inode->i_mode)) {
+-	uprobe->inode = igrab(inode);
++	uprobe->inode = inode;
+ 	uprobe->offset = offset;
+ 	init_rwsem(&uprobe->register_rwsem);
+ 	init_rwsem(&uprobe->consumer_rwsem);
+@@ -502,7 +502,6 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
+ 	if (cur_uprobe) {
+ 		kfree(uprobe);
+ 		uprobe = cur_uprobe;
 -		iput(inode);
-+	if (!d_is_reg(path.dentry)) {
-+		path_put(&path);
- 		return ERR_PTR(-EINVAL);
  	}
  
-@@ -1364,11 +1356,12 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
- 	if (IS_ERR(tu)) {
- 		pr_info("Failed to allocate trace_uprobe.(%d)\n",
- 			(int)PTR_ERR(tu));
-+		path_put(&path);
- 		return ERR_CAST(tu);
- 	}
+ 	return uprobe;
+@@ -701,7 +700,6 @@ static void delete_uprobe(struct uprobe *uprobe)
+ 	rb_erase(&uprobe->rb_node, &uprobes_tree);
+ 	spin_unlock(&uprobes_treelock);
+ 	RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
+-	iput(uprobe->inode);
+ 	put_uprobe(uprobe);
+ }
  
- 	tu->offset = offs;
--	tu->inode = inode;
-+	tu->path = path;
- 	tu->filename = kstrdup(name, GFP_KERNEL);
- 	init_trace_event_call(tu, &tu->tp.call);
- 
+@@ -873,7 +871,8 @@ static void __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *u
+  * tuple).  Creation refcount stops uprobe_unregister from freeing the
+  * @uprobe even before the register operation is complete. Creation
+  * refcount is released when the last @uc for the @uprobe
+- * unregisters.
++ * unregisters. Caller of uprobe_register() is required to keep @inode
++ * (and the containing mount) referenced.
+  *
+  * Return errno if it cannot successully install probes
+  * else return 0 (success)
 -- 
 2.9.5
