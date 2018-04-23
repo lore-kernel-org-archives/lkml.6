@@ -1,167 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755292AbeDWN20 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:28:26 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:59082 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755095AbeDWN2C (ORCPT
+        id S1755285AbeDWNa7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:30:59 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44828 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755059AbeDWNa4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:28:02 -0400
-X-Google-Smtp-Source: AIpwx4/iuOH/3NDe7+IjuAc3MaApCe/8LqzbsrYghLFUogpiQAh5ZbbSwO295PnACYXiSrRl+SIExoN+s6SgvUALquvPggzatqst
-MIME-Version: 1.0
-Date: Mon, 23 Apr 2018 06:28:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c9559c056a8401a6@google.com>
-Subject: KMSAN: uninit-value in ip_vs_lblcr_check_expire
-From: syzbot <syzbot+3dfdea57819073a04f21@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        horms@verge.net.au, ja@ssi.bg, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        wensong@linux-vs.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Mon, 23 Apr 2018 09:30:56 -0400
+X-Google-Smtp-Source: AIpwx4+xP8vTFc9mPV3r32LvMEGUSwSVqKkxS320f2otdlV4YroByogh31EB0eSJuw/as8C+HRq6BA==
+From: David Herrmann <dh.herrmann@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        teg@jklm.no, Stephen Smalley <sds@tycho.nsa.gov>,
+        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>, serge@hallyn.com,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        David Herrmann <dh.herrmann@gmail.com>
+Subject: [PATCH 0/3] Introduce LSM-hook for socketpair(2)
+Date: Mon, 23 Apr 2018 15:30:12 +0200
+Message-Id: <20180423133015.5455-1-dh.herrmann@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi
 
-syzbot hit the following crash on  
-https://github.com/google/kmsan.git/master commit
-d2d741e5d1898dfde1a75ea3d29a9a3e2edf0617 (Sun Apr 22 15:05:22 2018 +0000)
-kmsan: add initialization for shmem pages
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=3dfdea57819073a04f21
+This series adds a new LSM hook for the socketpair(2) syscall. The idea
+is to allow SO_PEERSEC to be called on AF_UNIX sockets created via
+socketpair(2), and return the same information as if you emulated
+socketpair(2) via a temporary listener socket. Right now SO_PEERSEC
+will return the unlabeled credentials for a socketpair, rather than the
+actual credentials of the creating process.
 
-So far this crash happened 2 times on  
-https://github.com/google/kmsan.git/master.
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6285034612850688
-Kernel config: https://syzkaller.appspot.com/x/.config?id=328654897048964367
-compiler: clang version 7.0.0 (trunk 329391)
+A simple call to:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3dfdea57819073a04f21@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+    socketpair(AF_UNIX, SOCK_STREAM, 0, out);
 
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000014
-R13: 00000000000004f3 R14: 00000000006fa768 R15: 0000000000000000
-==================================================================
-BUG: KMSAN: uninit-value in ip_vs_lblcr_check_expire+0x1551/0x1600  
-net/netfilter/ipvs/ip_vs_lblcr.c:479
-CPU: 0 PID: 13883 Comm: syz-executor4 Not tainted 4.16.0+ #86
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-  ip_vs_lblcr_check_expire+0x1551/0x1600 net/netfilter/ipvs/ip_vs_lblcr.c:479
-  call_timer_fn+0x26a/0x5a0 kernel/time/timer.c:1326
-  expire_timers kernel/time/timer.c:1363 [inline]
-  __run_timers+0xda7/0x11c0 kernel/time/timer.c:1666
-  run_timer_softirq+0x43/0x70 kernel/time/timer.c:1692
-  __do_softirq+0x56d/0x93d kernel/softirq.c:285
-  invoke_softirq kernel/softirq.c:365 [inline]
-  irq_exit+0x202/0x240 kernel/softirq.c:405
-  exiting_irq+0xe/0x10 arch/x86/include/asm/apic.h:541
-  smp_apic_timer_interrupt+0x64/0x90 arch/x86/kernel/apic/apic.c:1055
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:857
-  </IRQ>
-RIP: 0010:native_restore_fl arch/x86/include/asm/irqflags.h:37 [inline]
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/irqflags.h:78 [inline]
-RIP: 0010:dump_stack+0x1af/0x1d0 lib/dump_stack.c:58
-RSP: 0018:ffff880156a2ef00 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff12
-RAX: ffff8801fddc2590 RBX: ffff88014f62c418 RCX: ffff880000000000
-RDX: ffff8801fd9c2590 RSI: aaaaaaaaaaaab000 RDI: ffffea0000000000
-RBP: ffff880156a2ef48 R08: 0000000001080000 R09: 0000000000000002
-R10: 0000000000000000 R11: 0000000000000000 R12: 00000000cf000109
-R13: 0000000000000286 R14: 0000000000000000 R15: 0000000000000000
-  fail_dump lib/fault-inject.c:51 [inline]
-  should_fail+0x87b/0xab0 lib/fault-inject.c:149
-  should_failslab+0x279/0x2a0 mm/failslab.c:32
-  slab_pre_alloc_hook mm/slab.h:422 [inline]
-  slab_alloc_node mm/slub.c:2663 [inline]
-  slab_alloc mm/slub.c:2745 [inline]
-  kmem_cache_alloc+0x136/0xb90 mm/slub.c:2750
-  dst_alloc+0x295/0x860 net/core/dst.c:104
-  __ip6_dst_alloc net/ipv6/route.c:361 [inline]
-  ip6_rt_cache_alloc+0x445/0xd00 net/ipv6/route.c:1061
-  ip6_pol_route+0x3f19/0x5da0 net/ipv6/route.c:1751
-  ip6_pol_route_output+0xe6/0x110 net/ipv6/route.c:1892
-  fib6_rule_lookup+0x494/0x720 net/ipv6/fib6_rules.c:87
-  ip6_route_output_flags+0x4fa/0x590 net/ipv6/route.c:1920
-  ip6_dst_lookup_tail+0x2fe/0x1a60 net/ipv6/ip6_output.c:992
-  ip6_dst_lookup_flow+0xfc/0x270 net/ipv6/ip6_output.c:1093
-  rawv6_sendmsg+0x1b05/0x4fb0 net/ipv6/raw.c:908
-  inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
-  __sys_sendmsg net/socket.c:2080 [inline]
-  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
-  SyS_sendmsg+0x54/0x80 net/socket.c:2087
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x455389
-RSP: 002b:00007fa5b1000c68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fa5b10016d4 RCX: 0000000000455389
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000014
-R13: 00000000000004f3 R14: 00000000006fa768 R15: 0000000000000000
+can be emulated via a temporary listener socket bound to a unique,
+random name in the abstract namespace. By connecting to this listener
+socket, accept(2) will return the second part of the pair. If
+SO_PEERSEC is queried on these, the correct credentials of the creating
+process are returned. A simple comparison between the behavior of
+SO_PEERSEC on socketpair(2) and an emulated socketpair is included in
+the dbus-broker test-suite [1].
 
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
-  kmsan_alloc_meta_for_pages+0x161/0x3a0 mm/kmsan/kmsan.c:814
-  kmsan_alloc_page+0x82/0xe0 mm/kmsan/kmsan.c:868
-  __alloc_pages_nodemask+0xf5b/0x5dc0 mm/page_alloc.c:4283
-  alloc_pages_current+0x6b5/0x970 mm/mempolicy.c:2055
-  alloc_pages include/linux/gfp.h:494 [inline]
-  kmalloc_order mm/slab_common.c:1164 [inline]
-  kmalloc_order_trace+0xb9/0x390 mm/slab_common.c:1175
-  kmalloc_large include/linux/slab.h:446 [inline]
-  __kmalloc+0x332/0x350 mm/slub.c:3778
-  kmalloc include/linux/slab.h:517 [inline]
-  ip_vs_lblcr_init_svc+0x57/0x310 net/netfilter/ipvs/ip_vs_lblcr.c:518
-  ip_vs_bind_scheduler+0xa4/0x1e0 net/netfilter/ipvs/ip_vs_sched.c:51
-  ip_vs_add_service+0xa91/0x1d70 net/netfilter/ipvs/ip_vs_ctl.c:1265
-  do_ip_vs_set_ctl+0x25c8/0x2790 net/netfilter/ipvs/ip_vs_ctl.c:2457
-  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-  nf_setsockopt+0x476/0x4d0 net/netfilter/nf_sockopt.c:115
-  ip_setsockopt+0x24b/0x2b0 net/ipv4/ip_sockglue.c:1261
-  dccp_setsockopt+0x1c3/0x1f0 net/dccp/proto.c:576
-  sock_common_setsockopt+0x136/0x170 net/core/sock.c:2975
-  SYSC_setsockopt+0x4b8/0x570 net/socket.c:1849
-  SyS_setsockopt+0x76/0xa0 net/socket.c:1828
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-==================================================================
+This patch series tries to close this gap and makes both behave the
+same. A new LSM-hook is added which allows LSMs to cache the correct
+peer information on newly created socket-pairs.
 
+Apart from fixing this behavioral difference, the dbus-broker project
+actually needs to query the credentials of socketpairs, and currently
+must resort to racy procfs(2) queries to get the LSM credentials of its
+controller socket. Several parts of the dbus-broker project allow you
+to pass in a socket during execve(2), which will be used by the child
+process to accept control-commands from its parent. One natural way to
+create this communication channel is to use socketpair(2). However,
+right now SO_PEERSEC does not return any useful information, hence, the
+child-process would need other means to retrieve this information. By
+avoiding socketpair(2) and using the hacky-emulated version, this is not
+an issue.
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+There was a previous discussion on this matter [2] roughly a year ago.
+Back then there was the suspicion that proper SO_PEERSEC would confuse
+applications. However, we could not find any evidence backing this
+suspicion. Furthermore, we now actually see the contrary. Lack of
+SO_PEERSEC makes it a hassle to use socketpairs with LSM credentials.
+Hence, we propose to implement full SO_PEERSEC for socketpairs.
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+This series only adds SELinux backends, since that is what we need for
+RHEL. I will gladly extend the other LSMs if needed.
+
+Thanks
+David
+
+[1] https://github.com/bus1/dbus-broker/blob/master/src/util/test-peersec.c
+[2] https://www.spinics.net/lists/selinux/msg22674.html
+
+David Herrmann (3):
+  security: add hook for socketpair(AF_UNIX, ...)
+  net/unix: hook unix_socketpair() into LSM
+  selinux: provide unix_stream_socketpair callback
+
+ include/linux/lsm_hooks.h |  8 ++++++++
+ include/linux/security.h  |  7 +++++++
+ net/unix/af_unix.c        |  5 +++++
+ security/security.c       |  6 ++++++
+ security/selinux/hooks.c  | 14 ++++++++++++++
+ 5 files changed, 40 insertions(+)
+
+-- 
+2.17.0
