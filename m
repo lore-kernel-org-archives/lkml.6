@@ -1,72 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755227AbeDWNWK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:22:10 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:42954 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755209AbeDWNWH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:22:07 -0400
-X-Google-Smtp-Source: AIpwx4+IeEEcjuCM3qlFUfw8rSyQteUHSEoZXvcGArlXq3NIevFZnogFb2lIvDN7tEIoTHsU1uSFJ6jCNsB3DocpJHA=
+        id S1755264AbeDWNWT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:22:19 -0400
+Received: from mga05.intel.com ([192.55.52.43]:42541 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755209AbeDWNWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 09:22:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,318,1520924400";
+   d="scan'208";a="222604731"
+From: "Wan, Kaike" <kaike.wan@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        "Fleck, John" <john.fleck@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+Subject: RE: hrtimer (rdmavt RNR timer) was lost
+Thread-Topic: hrtimer (rdmavt RNR timer) was lost
+Thread-Index: AdPYjd2ThjlA5Zo8QY6oOpfcrqyjeQCpnQoAAAvh6fA=
+Date: Mon, 23 Apr 2018 13:22:11 +0000
+Message-ID: <3F128C9216C9B84BB6ED23EF16290AFB634C9420@CRSMSX101.amr.corp.intel.com>
+References: <3F128C9216C9B84BB6ED23EF16290AFB634C8C87@CRSMSX101.amr.corp.intel.com>
+ <alpine.DEB.2.21.1804231355570.2077@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1804231355570.2077@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzA0MmJjYTktOTllYS00MTZhLTkzMDYtZmYzM2MxMTYyOWZlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJuMHdXdDdORncxSXUzaFwvZkZ0RlR3b3pMZk9rMzZvMjZvVFFxd1hJejBSNmxWbGJOTWdnU014ZXZJV1ZaRlU0SyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [172.18.205.10]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-Originating-IP: [217.140.96.140]
-In-Reply-To: <CAMuHMdXNAkCVpyGyQMKRMRGuXyjOHAGgvHT4QGkuYdZetOr-9Q@mail.gmail.com>
-References: <1524484097-8315-1-git-send-email-gilad@benyossef.com> <CAMuHMdXNAkCVpyGyQMKRMRGuXyjOHAGgvHT4QGkuYdZetOr-9Q@mail.gmail.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Mon, 23 Apr 2018 16:22:06 +0300
-Message-ID: <CAOtvUMd41+5DzHRbViyNZkiL92BYh2YaREvhiAH0UPnPYCzB+w@mail.gmail.com>
-Subject: Re: [PATCH] crypto: ccree: limit build to plausible archs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 3:13 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Gilad,
->
-> On Mon, Apr 23, 2018 at 1:48 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->> Limit option to compile ccree to plausible architectures.
->
-> Thanks for your patch!
->
->> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->> ---
->>  drivers/crypto/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
->> index d1ea1a0..7302785 100644
->> --- a/drivers/crypto/Kconfig
->> +++ b/drivers/crypto/Kconfig
->> @@ -726,6 +726,7 @@ config CRYPTO_DEV_ARTPEC6
->>  config CRYPTO_DEV_CCREE
->>         tristate "Support for ARM TrustZone CryptoCell family of security processors"
->>         depends on CRYPTO && CRYPTO_HW && OF && HAS_DMA
->> +       depends on (XTENSA || X86 || UNICORE32 || SUPERH || RISCV || PPC32 || OPENRISC || NIOS2 || NDS32 || MIPS || MICROBLAZE || HEXAGON || H8300 || ARM || ARM64 || ARC || COMPILE_TEST)
->
-> That list looks a bit excessive to me...
-
-I'm sorry, but as an Arm employee I'm not in liberty to identify which
-customer licensed or might license CryptoCell for which platform, now
-or in the future.
-
-I'm sure you understand.
-
-Gilad
 
 
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+> -----Original Message-----
+> From: Thomas Gleixner [mailto:tglx@linutronix.de]
+> Sent: Monday, April 23, 2018 8:53 AM
+> To: Wan, Kaike <kaike.wan@intel.com>
+> Cc: Marciniszyn, Mike <mike.marciniszyn@intel.com>; Dalessandro, Dennis
+> <dennis.dalessandro@intel.com>; Weiny, Ira <ira.weiny@intel.com>; Fleck,
+> John <john.fleck@intel.com>; linux-kernel@vger.kernel.org; linux-
+> rdma@vger.kernel.org
+> Subject: Re: hrtimer (rdmavt RNR timer) was lost
+> 
+> On Fri, 20 Apr 2018, Wan, Kaike wrote:
+> 
+> Please do not send html mail. It's rejected by the list server.
+> 
+> >           <idle>-0     [001] d.h. 3598473310671: hrtimer_start:
+> hrtimer=00000000708914d7 function=rvt_rc_rnr_retry [rdmavt]
+> expires=712172295802 softexpires=712172295802mode=REL
+> base=0000000066dda1ea next=0000000039cae92b
+> >           <idle>-0     [001] d.h. 3598473311561: hrtimer_post_add:
+> hrtimer=00000000708914d7 function=rvt_rc_rnr_retry [rdmavt]
+> base=0000000066dda1ea next=0000000039cae92b
+> >
+> 
+> > --> The target was first added. The expires was 712172295802. The call
+> >     was made from cpu 1 while the timer base was on cpu 3.
+> 
+> >           <idle>-0     [003] dn.. 3598605305357: hrtimer_start:
+> hrtimer=0000000004346740 function=tick_sched_timer
+> expires=716767000000 softexpires=716767000000mode=ABS|PINNED
+> base=0000000066dda1ea next=00000000708914d7
+> >           <idle>-0     [003] dn.. 3598605305781: hrtimer_post_add:
+> hrtimer=0000000004346740 function=tick_sched_timer
+> base=0000000066dda1ea next=00000000708914d7
+> >
+> > --> the target timer was the next one to trigger. The call was from cpu 3.
+> >
+> >           <idle>-0     [003] dN.. 3598605306604: hrtimer_pre_remove:
+> hrtimer=0000000004346740 function=tick_sched_timer
+> base=0000000066dda1ea next=00000000708914d7
+> >           <idle>-0     [003] dN.. 3598605306802: hrtimer_post_remove:
+> hrtimer=0000000004346740 function=tick_sched_timer
+> base=0000000066dda1ea next=00000000708914d7
+> >
+> > --> The tick_sched_timer was removed
+> >
+> >           <idle>-0     [003] dN.. 3598605307236: hrtimer_start:
+> hrtimer=0000000004346740 function=tick_sched_timer
+> expires=712171000000 softexpires=712171000000mode=ABS|PINNED
+> base=0000000066dda1ea next=00000000708914d7
+> >           <idle>-0     [003] dN.. 3598605307601: hrtimer_post_add:
+> hrtimer=0000000004346740 function=tick_sched_timer
+> base=0000000066dda1ea next=0000000004346740
+> >
+> > --> The tick_sched_timer was added again with a new expires
+> > --> (712171000000
+> >     < 716767000000), which replaced the target (712172295802) as the
+> >     head->next.
+> >
+> >           <idle>-0     [002] d.h. 3598605313255: hrtimer_start:
+> hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt]
+> expires=712172915662 softexpires=712172915662mode=REL
+> base=0000000066dda1ea next=0000000004346740
+> >           <idle>-0     [002] d.h. 3599538740786: hrtimer_post_add:
+> hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt]
+> base=0000000066dda1ea next=00000000662d2dd8
+> >
+> >
+> > --> A new hrtimer (00000000662d2dd8) was added (from cpu 2). Its
+> > --> expires
+> >     (712172915662) was larger than the target's (712172295802). How could
+> >     it become the next hrtimer to trigger??? The next pointer was not set
+> >     properly here.
+> 
+> I have no idea how that can happen assumed that you did not strip anything
+> from the trace. If you stripped stuff, please send me the full trace or upload
+> it somewhere.
+> 
+> Can you apply the following debug patch and enable the hrtimer_start trace
+> point and send me the full trace or upload it somewhere?
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+The original trace was about 29GB and I filtered it with  "0000000066dda1ea" (the offending base) to generate a 1.4GB  file that I could open and investigate.  I am not sure how I can send them to you. Do you have somewhere I can upload to?
+
+I can try your debug patch and again I am anticipating a big trace file.
+
+Kaike
+
+> 
+> Thanks,
+> 
+> 	tglx
+> 
+> 8<-------------------------
+> --- a/lib/timerqueue.c
+> +++ b/lib/timerqueue.c
+> @@ -57,6 +57,10 @@ bool timerqueue_add(struct timerqueue_he
+>  	rb_link_node(&node->node, parent, p);
+>  	rb_insert_color(&node->node, &head->head);
+> 
+> +	trace_printk("head %p next %p next->exp %llu node %p node-
+> >exp %llu\n",
+> +		     head, head->next, head->next ? head->next->expires :
+> 0ULL,
+> +		     node, node->expires);
+> +
+>  	if (!head->next || node->expires < head->next->expires) {
+>  		head->next = node;
+>  		return true;
+> @@ -84,6 +88,11 @@ bool timerqueue_del(struct timerqueue_he
+> 
+>  		head->next = rb_entry_safe(rbn, struct timerqueue_node,
+> node);
+>  	}
+> +
+> +	trace_printk("head %p next %p next->exp %llu node %p node-
+> >exp %llu\n",
+> +		     head, head->next, head->next ? head->next->expires :
+> 0ULL,
+> +		     node, node->expires);
+> +
+>  	rb_erase(&node->node, &head->head);
+>  	RB_CLEAR_NODE(&node->node);
+>  	return head->next != NULL;
