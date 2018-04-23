@@ -1,104 +1,256 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932567AbeDWWIN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 18:08:13 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:44312 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932498AbeDWWIM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 18:08:12 -0400
-X-Google-Smtp-Source: AIpwx49QGE/dlmMa6lSuZVMNKrG0e9VVOLfWFgnEDwk1W1xHmDMa41VeUERvOP1CGKrtf7dJZjNuGw==
-Date: Mon, 23 Apr 2018 15:08:10 -0700 (PDT)
-X-Google-Original-Date: Mon, 23 Apr 2018 14:47:53 PDT (-0700)
-Subject: Re: [PATCH] RISC-V: Load modules within relative jump range of the kernel text.
-In-Reply-To: <87lgdfieqj.fsf@xps13.shealevy.com>
-CC: linux-riscv@lists.infradead.org, albert@sifive.com,
-        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@sifive.com>
-To: shea@shealevy.com
-Message-ID: <mhng-0a2f9574-9b23-4f26-ae76-18ed7f2c8533@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S932587AbeDWWId (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 18:08:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44074 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932315AbeDWWIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 18:08:31 -0400
+Subject: [PATCH] vfio/type1: Fix task tracking for QEMU vCPU hotplug
+From: Alex Williamson <alex.williamson@redhat.com>
+To: alex.williamson@redhat.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xuyandong2@huawei.com, zhang.zhanghailiang@huawei.com,
+        wangxinxin.wang@huawei.com, kwankhede@nvidia.com
+Date: Mon, 23 Apr 2018 16:08:25 -0600
+Message-ID: <20180423220808.27282.8721.stgit@gimli.home>
+User-Agent: StGit/0.18-102-gdf9f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 22 Apr 2018 05:53:56 PDT (-0700), shea@shealevy.com wrote:
-> Hi Palmer,
->
-> Shea Levy <shea@shealevy.com> writes:
->
->> Signed-off-by: Shea Levy <shea@shealevy.com>
->> ---
->>
->> Note that this patch worked in my old modules patchset and seems to be
->> working now, but my kernel boot locks up on top of
->> riscv-for-linus-4.17-mw0 and I don't know if it's due to this patch or
->> something else that's changed in the mean time.
->>
->> ---
->>  arch/riscv/include/asm/pgtable.h |  9 +++++++++
->>  arch/riscv/kernel/module.c       | 11 +++++++++++
->>  2 files changed, 20 insertions(+)
->>
->> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
->> index 16301966d65b..b08ded13364a 100644
->> --- a/arch/riscv/include/asm/pgtable.h
->> +++ b/arch/riscv/include/asm/pgtable.h
->> @@ -25,6 +25,7 @@
->>  #include <asm/page.h>
->>  #include <asm/tlbflush.h>
->>  #include <linux/mm_types.h>
->> +#include <linux/sizes.h>
->>  
->>  #ifdef CONFIG_64BIT
->>  #include <asm/pgtable-64.h>
->> @@ -425,6 +426,14 @@ static inline void pgtable_cache_init(void)
->>  #define TASK_SIZE VMALLOC_START
->>  #endif
->>  
->> +/*
->> + * The module space lives between the addresses given by TASK_SIZE
->> + * and PAGE_OFFSET - it must be within 2G of the kernel text.
->> + */
->> +#define MODULES_SIZE		(SZ_128M)
->> +#define MODULES_VADDR		(PAGE_OFFSET - MODULES_SIZE)
->> +#define MODULES_END		(VMALLOC_END)
->> +
->>  #include <asm-generic/pgtable.h>
->>  
->>  #endif /* !__ASSEMBLY__ */
->> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
->> index 5dddba301d0a..1b382c7de095 100644
->> --- a/arch/riscv/kernel/module.c
->> +++ b/arch/riscv/kernel/module.c
->> @@ -16,6 +16,8 @@
->>  #include <linux/err.h>
->>  #include <linux/errno.h>
->>  #include <linux/moduleloader.h>
->> +#include <linux/vmalloc.h>
->> +#include <asm/pgtable.h>
->>  
->>  static int apply_r_riscv_64_rela(struct module *me, u32 *location, Elf_Addr v)
->>  {
->> @@ -382,3 +384,12 @@ int apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
->>  
->>  	return 0;
->>  }
->> +
->> +void *module_alloc(unsigned long size)
->> +{
->> +	return __vmalloc_node_range(size, 1, MODULES_VADDR,
->> +				    MODULES_END, GFP_KERNEL,
->> +				    PAGE_KERNEL_EXEC, 0,
->> +				    NUMA_NO_NODE,
->> +				    __builtin_return_address(0));
->> +}
->> -- 
->> 2.16.2
->
-> Any thoughts on this?
+MAP_DMA ioctls might be called from various threads within a process,
+for example when using QEMU, the vCPU threads are often generating
+these calls and we therefore take a reference to that vCPU task.
+However, QEMU also supports vCPU hotplug on some machines and the task
+that called MAP_DMA may have exited by the time UNMAP_DMA is called,
+resulting in the mm_struct pointer being NULL and thus a failure to
+match against the existing mapping.
 
-The concept looks good, but does this actually keep the modules within 2GiB of 
-the text if PAGE_OFFSET is large?
+To resolve this, we instead take a reference to the thread
+group_leader, which has the same mm_struct and resource limits, but
+is less likely exit, at least in the QEMU case.  A difficulty here is
+guaranteeing that the capabilities of the group_leader match that of
+the calling thread, which we resolve by tracking CAP_IPC_LOCK at the
+time of calling rather than at an indeterminate time in the future.
+Potentially this also results in better efficiency as this is now
+recorded once per MAP_DMA ioctl.
+
+Reported-by: Xu Yandong <xuyandong2@huawei.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+---
+ drivers/vfio/vfio_iommu_type1.c |   73 +++++++++++++++++++++++++--------------
+ 1 file changed, 47 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 5c212bf29640..1dca77f37fd0 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -83,6 +83,7 @@ struct vfio_dma {
+ 	size_t			size;		/* Map size (bytes) */
+ 	int			prot;		/* IOMMU_READ/WRITE */
+ 	bool			iommu_mapped;
++	bool			lock_cap;	/* capable(CAP_IPC_LOCK) */
+ 	struct task_struct	*task;
+ 	struct rb_root		pfn_list;	/* Ex-user pinned pfn list */
+ };
+@@ -253,29 +254,25 @@ static int vfio_iova_put_vfio_pfn(struct vfio_dma *dma, struct vfio_pfn *vpfn)
+ 	return ret;
+ }
+ 
+-static int vfio_lock_acct(struct task_struct *task, long npage, bool *lock_cap)
++static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
+ {
+ 	struct mm_struct *mm;
+-	bool is_current;
+ 	int ret;
+ 
+ 	if (!npage)
+ 		return 0;
+ 
+-	is_current = (task->mm == current->mm);
+-
+-	mm = is_current ? task->mm : get_task_mm(task);
++	mm = async ? get_task_mm(dma->task) : dma->task->mm;
+ 	if (!mm)
+ 		return -ESRCH; /* process exited */
+ 
+ 	ret = down_write_killable(&mm->mmap_sem);
+ 	if (!ret) {
+ 		if (npage > 0) {
+-			if (lock_cap ? !*lock_cap :
+-			    !has_capability(task, CAP_IPC_LOCK)) {
++			if (!dma->lock_cap) {
+ 				unsigned long limit;
+ 
+-				limit = task_rlimit(task,
++				limit = task_rlimit(dma->task,
+ 						RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+ 
+ 				if (mm->locked_vm + npage > limit)
+@@ -289,7 +286,7 @@ static int vfio_lock_acct(struct task_struct *task, long npage, bool *lock_cap)
+ 		up_write(&mm->mmap_sem);
+ 	}
+ 
+-	if (!is_current)
++	if (async)
+ 		mmput(mm);
+ 
+ 	return ret;
+@@ -400,7 +397,7 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+  */
+ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 				  long npage, unsigned long *pfn_base,
+-				  bool lock_cap, unsigned long limit)
++				  unsigned long limit)
+ {
+ 	unsigned long pfn = 0;
+ 	long ret, pinned = 0, lock_acct = 0;
+@@ -431,7 +428,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 	 * pages are already counted against the user.
+ 	 */
+ 	if (!vfio_find_vpfn(dma, iova)) {
+-		if (!lock_cap && current->mm->locked_vm + 1 > limit) {
++		if (!dma->lock_cap && current->mm->locked_vm + 1 > limit) {
+ 			put_pfn(*pfn_base, dma->prot);
+ 			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
+ 					limit << PAGE_SHIFT);
+@@ -456,7 +453,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 		}
+ 
+ 		if (!vfio_find_vpfn(dma, iova)) {
+-			if (!lock_cap &&
++			if (!dma->lock_cap &&
+ 			    current->mm->locked_vm + lock_acct + 1 > limit) {
+ 				put_pfn(pfn, dma->prot);
+ 				pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
+@@ -469,7 +466,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 	}
+ 
+ out:
+-	ret = vfio_lock_acct(current, lock_acct, &lock_cap);
++	ret = vfio_lock_acct(dma, lock_acct, false);
+ 
+ unpin_out:
+ 	if (ret) {
+@@ -498,7 +495,7 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
+ 	}
+ 
+ 	if (do_accounting)
+-		vfio_lock_acct(dma->task, locked - unlocked, NULL);
++		vfio_lock_acct(dma, locked - unlocked, true);
+ 
+ 	return unlocked;
+ }
+@@ -515,7 +512,7 @@ static int vfio_pin_page_external(struct vfio_dma *dma, unsigned long vaddr,
+ 
+ 	ret = vaddr_get_pfn(mm, vaddr, dma->prot, pfn_base);
+ 	if (!ret && do_accounting && !is_invalid_reserved_pfn(*pfn_base)) {
+-		ret = vfio_lock_acct(dma->task, 1, NULL);
++		ret = vfio_lock_acct(dma, 1, true);
+ 		if (ret) {
+ 			put_pfn(*pfn_base, dma->prot);
+ 			if (ret == -ENOMEM)
+@@ -542,7 +539,7 @@ static int vfio_unpin_page_external(struct vfio_dma *dma, dma_addr_t iova,
+ 	unlocked = vfio_iova_put_vfio_pfn(dma, vpfn);
+ 
+ 	if (do_accounting)
+-		vfio_lock_acct(dma->task, -unlocked, NULL);
++		vfio_lock_acct(dma, -unlocked, true);
+ 
+ 	return unlocked;
+ }
+@@ -834,7 +831,7 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
+ 		unlocked += vfio_sync_unpin(dma, domain, &unmapped_region_list);
+ 
+ 	if (do_accounting) {
+-		vfio_lock_acct(dma->task, -unlocked, NULL);
++		vfio_lock_acct(dma, -unlocked, true);
+ 		return 0;
+ 	}
+ 	return unlocked;
+@@ -1049,14 +1046,12 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
+ 	size_t size = map_size;
+ 	long npage;
+ 	unsigned long pfn, limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-	bool lock_cap = capable(CAP_IPC_LOCK);
+ 	int ret = 0;
+ 
+ 	while (size) {
+ 		/* Pin a contiguous chunk of memory */
+ 		npage = vfio_pin_pages_remote(dma, vaddr + dma->size,
+-					      size >> PAGE_SHIFT, &pfn,
+-					      lock_cap, limit);
++					      size >> PAGE_SHIFT, &pfn, limit);
+ 		if (npage <= 0) {
+ 			WARN_ON(!npage);
+ 			ret = (int)npage;
+@@ -1131,8 +1126,36 @@ static int vfio_dma_do_map(struct vfio_iommu *iommu,
+ 	dma->iova = iova;
+ 	dma->vaddr = vaddr;
+ 	dma->prot = prot;
+-	get_task_struct(current);
+-	dma->task = current;
++
++	/*
++	 * We need to be able to both add to a task's locked memory and test
++	 * against the locked memory limit and we need to be able to do both
++	 * outside of this call path as pinning can be asynchronous via the
++	 * external interfaces for mdev devices.  RLIMIT_MEMLOCK requires a
++	 * task_struct and VM locked pages requires an mm_struct, however
++	 * holding an indefinite mm reference is not recommended, therefore we
++	 * only hold a reference to a task.  We could hold a reference to
++	 * current, however QEMU uses this call path through vCPU threads,
++	 * which can be killed resulting in a NULL mm and failure in the unmap
++	 * path when called via a different thread.  Avoid this problem by
++	 * using the group_leader as threads within the same group require
++	 * both CLONE_THREAD and CLONE_VM and will therefore use the same
++	 * mm_struct.
++	 *
++	 * Previously we also used the task for testing CAP_IPC_LOCK at the
++	 * time of pinning and accounting, however has_capability() makes use
++	 * of real_cred, a copy-on-write field, so we can't guarantee that it
++	 * matches group_leader, or in fact that it might not change by the
++	 * time it's evaluated.  If a process were to call MAP_DMA with
++	 * CAP_IPC_LOCK but later drop it, it doesn't make sense that they
++	 * possibly see different results for an iommu_mapped vfio_dma vs
++	 * externally mapped.  Therefore track CAP_IPC_LOCK in vfio_dma at the
++	 * time of calling MAP_DMA.
++	 */
++	get_task_struct(current->group_leader);
++	dma->task = current->group_leader;
++	dma->lock_cap = capable(CAP_IPC_LOCK);
++
+ 	dma->pfn_list = RB_ROOT;
+ 
+ 	/* Insert zero-sized and grow as we map chunks of it */
+@@ -1167,7 +1190,6 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
+ 	struct vfio_domain *d;
+ 	struct rb_node *n;
+ 	unsigned long limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-	bool lock_cap = capable(CAP_IPC_LOCK);
+ 	int ret;
+ 
+ 	/* Arbitrarily pick the first domain in the list for lookups */
+@@ -1214,8 +1236,7 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
+ 
+ 				npage = vfio_pin_pages_remote(dma, vaddr,
+ 							      n >> PAGE_SHIFT,
+-							      &pfn, lock_cap,
+-							      limit);
++							      &pfn, limit);
+ 				if (npage <= 0) {
+ 					WARN_ON(!npage);
+ 					ret = (int)npage;
+@@ -1492,7 +1513,7 @@ static void vfio_iommu_unmap_unpin_reaccount(struct vfio_iommu *iommu)
+ 			if (!is_invalid_reserved_pfn(vpfn->pfn))
+ 				locked++;
+ 		}
+-		vfio_lock_acct(dma->task, locked - unlocked, NULL);
++		vfio_lock_acct(dma, locked - unlocked, true);
+ 	}
+ }
+ 
