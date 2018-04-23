@@ -1,170 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754934AbeDWM0J (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:26:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53034 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754788AbeDWM0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:26:05 -0400
-Date: Mon, 23 Apr 2018 14:26:00 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, Peter Zijlstra <peterz@infradead.org>,
-        Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180423122600.sozmrytiasd32bhc@pathway.suse.cz>
-References: <20180413124704.19335-1-pmladek@suse.com>
- <20180413101233.0792ebf0@gandalf.local.home>
- <20180414023516.GA17806@tigerII.localdomain>
- <20180416014729.GB1034@jagdpanzerIV>
- <20180416042553.GA555@jagdpanzerIV>
- <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
- <20180420021511.GB6397@jagdpanzerIV>
- <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
- <20180423052133.GA3643@jagdpanzerIV>
+        id S1754893AbeDWMaQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:30:16 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57383 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754729AbeDWMaN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 08:30:13 -0400
+From: Yannick FERTRE <yannick.fertre@st.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Archit Taneja" <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+CC: Philippe CORNU <philippe.cornu@st.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "David Airlie" <airlied@linux.ie>,
+        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        Brian Norris <briannorris@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org"
+        <linux-rockchip@lists.infradead.org>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Mickael REULIER <mickael.reulier@st.com>,
+        Vincent ABRIOU <vincent.abriou@st.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] drm/bridge/synopsys: dsi: use adjusted_mode in mode_set
+Thread-Topic: [PATCH] drm/bridge/synopsys: dsi: use adjusted_mode in mode_set
+Thread-Index: AQHTlfTjD0BbTyAp1Em29Mkkb8XJlaOKj2yAgAAIrICAAAZCgIAHEuMAgAjP6gCAdAgHgIAAJtiA
+Date: Mon, 23 Apr 2018 12:29:34 +0000
+Message-ID: <5a214d57-0a1d-8cbe-eb9e-2f6a9ad1ddb8@st.com>
+References: <20180125155504.8611-1-philippe.cornu@st.com>
+ <7ec671c2-a777-5dcd-dcc9-e026fff89900@st.com> <1802436.kt7XbhHcH5@avalon>
+ <2334482.mQhE6fZxKp@avalon>
+In-Reply-To: <2334482.mQhE6fZxKp@avalon>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <598662D32899F24582AE5FE326EFA79C@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423052133.GA3643@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3NCUNIh005443
 
-On Mon 2018-04-23 14:21:33, Sergey Senozhatsky wrote:
-> On (04/20/18 11:12), Petr Mladek wrote:
-> call_console_drivers() is super complex, unbelievable complex. In fact,
-> it's so complex that we never know where we will end up, because it can
-> pass the control to almost every core kernel mechanism or subsystem:
+Hi Philippe,
+I've tried your patch on both 4.17-rc1 & drm-misc-next and it works fine.
+So,
 
-I fully agree. We will never be able to completely avoid messages
-from these code paths and it would even be contra-productive. People
-need to see the problems and be able to debug them. BTW: I wrote
-this in the patch description.
+Reviewed-by: Yannick Fertré <yannick.fertre@st.com>
+Tested-by: Yannick Fertré <yannick.fertre@st.com>
 
-> A very quick googling:
+BR
 
-Nice collection. Just note that the useful (ratelimited) information
-always fits into the first 100 lines in all these examples:
+Yannick Fertré
 
-> 	https://bugzilla.altlinux.org/attachment.cgi?id=5811
-
-The two WARNINGs starts repeating after 65 lines.
-
-Note that the backtraces at the end of the log are from
-NMI watchdog => not ratelimited by this patch (with the extra fix)
-
-
-> 	https://access.redhat.com/solutions/702533
-
-fits into 52 lines
-
-> 	https://bugzilla.redhat.com/attachment.cgi?id=561164
-
-both warnings fit into 54 lines
-
-> 	https://lists.gt.net/linux/kernel/2341113
-
-BUG report fits into 26 lines
-
-> 	https://www.systutorials.com/linux-kernels/56987/ib-mlx4-reduce-sriov-multicast-cleanup-warning-message-to-debug-level-linux-4-10-17/
-
-NMI bactrace => not affected by this patch (with the extra fix)
-
-> 	https://github.com/raspberrypi/linux/issues/663
-
-Bug report fits into 29 lines
-
-> 	https://bugs.openvz.org/browse/VZWEB-36
-
-Starts to repeat after 79 lines. I wonder if it ever ended without
-killing the system.
-
-
-
-
-> Throttling down that error mechanism to 100 lines
-> per hour, or 1000 lines per hour is unlikely will be welcomed.
-
-I wonder if you have bigger problems with the number of lines
-or with the length of the period.
-
-We simply _must_ limit the number of lines. Otherwise we would
-never be able to break an _infinite_ loop.
-
-But we could eventually replace the time period with a more
-complex solution. For example, if we call console drivers
-outside printk_safe context then the "recursive" messages
-will be written to the mail log buffer directly. Then we could
-reset the counter of the recursive messages when leaving
-console_unlock() the regular way. I mean when all lines are
-handled.
-
-
-> Among all the patches and proposal that we saw so far, one stands out - it's
-> the original Tejun's patch [offloading to work queue]. Because it has zero
-> interference with the existing call_console_drivers()->printk()
-> channels.
-
-The only problem is that it does not solve the infinite loop. If
-writing one line produces one or more new lines (warnings/errors)
-than the only way out is to start dropping the recursive messages.
-Offloading would just move the infinite loop to another process.
-
-Note that the offload might help if there is a deadlock/livelock
-between the original printk() caller and console drivers. Then moving
-console_unlock() to another "safe" context helps to unblock the
-situation. But the offload has its own problems and limiting
-the number of recursive messages would solve this as well.
-
-
-> What is so special about this case that we decided to screw up printk()
-> instead?
-
-There are many situations where printk() is limited. For example, we
-are limited to 8kB in NMI or printk_safe() context. The printk_safe()
-context is about printk debugging. Also messages from console drivers
-are about printk debugging. There must be some limitations by
-definition.
-
-
-> I think that we need to apply the patch below.
-> That call_console_drivers()->printk->IRQ_work->irq->flush appears to be
-> pointless.
-
-I agree that calling console drivers in printk_safe context is
-pointless. Normal vprintk_emit() can be safely called because
-logbuf_lock is not taken here. Also console_unlock() will
-never by called recursively because it is guarded by console_sem.
-
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> ---
->  kernel/printk/printk.c | 2 ++
->  1 file changed, 2 insertions(+)
+On 04/23/2018 12:10 PM, Laurent Pinchart wrote:
+> Hi Philippe,
 > 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 247808333ba4..484c456c095a 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2385,9 +2385,11 @@ void console_unlock(void)
->  		 */
->  		console_lock_spinning_enable();
->  
-> +		__printk_safe_exit();
->  		stop_critical_timings();	/* don't trace print latency */
->  		call_console_drivers(ext_text, ext_len, text, len);
->  		start_critical_timings();
-> +		__printk_safe_enter();
-
-Is this by intention? What is the reason to call
-console_lock_spinning_disable_and_check() in printk_safe() context, please?
-
->  		if (console_lock_spinning_disable_and_check()) {
->  			printk_safe_exit_irqrestore(flags);
-
-Best Regards,
-Petr
+> On Thursday, 8 February 2018 15:15:40 EEST Laurent Pinchart wrote:
+>> On Saturday, 3 February 2018 00:41:26 EET Philippe CORNU wrote:
+>>> On 01/29/2018 11:40 AM, Laurent Pinchart wrote:
+>>>> On Monday, 29 January 2018 12:17:37 EET Philippe CORNU wrote:
+>>>>> On 01/29/2018 10:46 AM, Laurent Pinchart wrote:
+>>>>>> On Thursday, 25 January 2018 17:55:04 EET Philippe Cornu wrote:
+>>>>>>> The "adjusted_mode" clock value (ie the real pixel clock) is more
+>>>>>>> accurate than "mode" clock value (ie the panel/bridge requested
+>>>>>>> clock value). It offers a better preciseness for timing
+>>>>>>> computations and allows to reduce the extra dsi bandwidth in
+>>>>>>> burst mode (from ~20% to ~10-12%, hw platform dependant).
+>>>>>>>
+>>>>>>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>>>>>>
+>>>>>> The adjusted mode is documented as
+>>>>>>
+>>>>>>    /**
+>>>>>>    
+>>>>>>     * @adjusted_mode:
+>>>>>>     *
+>>>>>>     * Internal display timings which can be used by the driver to
+>>>>>>     handle
+>>>>>>     * differences between the mode requested by userspace in @mode and
+>>>>>>     what
+>>>>>>     * is actually programmed into the hardware. It is purely driver
+>>>>>>     * implementation defined what exactly this adjusted mode means.
+>>>>>>     Usually
+>>>>>>     * it is used to store the hardware display timings used between the
+>>>>>>     * CRTC and encoder blocks.
+>>>>>>     */
+>>>>>>
+>>>>>> This is easy to handle when the CRTC and encoder are controlled by the
+>>>>>> same driver, as the field is "implementation defined" by a single
+>>>>>> driver. However, when using bridges, there are two drivers involved,
+>>>>>> and
+>>>>>> they must both agree to meaningfully use the adjusted mode. I can't
+>>>>>> see
+>>>>>> how to do so without standardizing the meaning of the adjusted mode
+>>>>>> field.
+>>>>>
+>>>>> This is exactly the reason why my first implementation used the dsi
+>>>>> bridge "optional pixel clock" instead of the adjusted_mode (see [1])
+>>>>>
+>>>>> But after digging more into the drm source code, I think using
+>>>>> adjusted_mode instead of the pixel clock here brings more advantages
+>>>>> because:
+>>>>> * adjusted_mode is an argument of bridge mode_set() probably for being
+>>>>> used in any manner, maybe like this :)
+>>>>> * if the bridge "user" (crtc or a master bridge drivers) does not need
+>>>>> to modify its adjusted_mode then mode & adjusted_mode mode_set()
+>>>>> arguments will have the same values so "no consequence" for the bridge.
+>>>>> * if the bridge "user" (crtc or master bridge drivers) needs to adjust
+>>>>> any value of the mode then this adjustment is available for the bridge.
+>>>>
+>>>> Remember that there can be multiple chained bridges, and a single
+>>>> adjusted mode field.
+>>>>
+>>>>> * rockchip crtc updates a part of the mode (the clock), stm is doing
+>>>>> the
+>>>>> same (see [2]) but any future "user" of the dw_mipi_dsi bridge can
+>>>>> adjust something else (blankings...) and the dw_mipi_dsi bridge will be
+>>>>> then aware of...
+>>>>>
+>>>>> But maybe it is a wrong usage of the "adjusted_mode offer"...
+>>>>
+>>>> I don't disagree that there's a need for using adjusted values, but I
+>>>> believe we need to create a clear API to do so. Using the adjust_mode
+>>>> field as-is when it's clearly documented as being implementation-defined
+>>>> is asking for trouble.
+>>>
+>>> Laurent, do you think we can use "adjusted mode" here in this small
+>>> patch as the actual 2 "users" of this bridge (rockchip & stm) use both
+>>> "adjusted mode" in their crtc?
+>>
+>> The Synopsys DSI driver might only be used by two display controller drivers
+>> today, it is nonetheless a standard bridge driver that should not make any
+>> assumption of a particular use of the adjusted_mode in particular display
+>> controller drivers. To use the adjusted_mode value in bridge drivers we
+>> need to standardize its usage, otherwise we'll end up with
+>> incompatibilities between bridge drivers and display controller drivers.
+> 
+> Now that the documentation has been clarified I have no objection against this
+> patch anymore.
+> 
+>>>>> [1] https://patchwork.freedesktop.org/patch/200240/
+>>>>> [2] https://patchwork.freedesktop.org/patch/200720/
+>>>>>
+>>>>>> Daniel, what's your opinion on this ?
+>>>
+>>> Daniel, any opinion on the adjusted_mode usage?
+>>>
+>>>>>>> ---
+>>>>>>> Note: This patch replaces "drm/bridge/synopsys: dsi: add optional
+>>>>>>> pixel clock"
+>>>>>>>
+>>>>>>> drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 12 ++++++------
+>>>>>>> 1 file changed, 6 insertions(+), 6 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>>>>>>> b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c index
+>>>>>>> ed8af32f8e52..b926b62e9e33 100644
+>>>>>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>>>>>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>>>>>>> @@ -707,20 +707,20 @@ static void dw_mipi_dsi_bridge_mode_set(struct
+>>>>>>> drm_bridge *bridge,
+>>>>>>>
+>>>>>>>     	clk_prepare_enable(dsi->pclk);
+>>>>>>>
+>>>>>>> -	ret = phy_ops->get_lane_mbps(priv_data, mode, dsi->mode_flags,
+>>>>>>> +	ret = phy_ops->get_lane_mbps(priv_data, adjusted_mode,
+>>>>>>> dsi->mode_flags,
+>>>>>>>
+>>>>>>>     				     dsi->lanes, dsi->format, &dsi->lane_mbps);
+>>>>>>>     
+>>>>>>>     if (ret)
+>>>>>>>     
+>>>>>>>     	DRM_DEBUG_DRIVER("Phy get_lane_mbps() failed\n");
+>>>>>>>     
+>>>>>>>     pm_runtime_get_sync(dsi->dev);
+>>>>>>>     dw_mipi_dsi_init(dsi);
+>>>>>>>
+>>>>>>> -	dw_mipi_dsi_dpi_config(dsi, mode);
+>>>>>>> +	dw_mipi_dsi_dpi_config(dsi, adjusted_mode);
+>>>>>>>
+>>>>>>>     dw_mipi_dsi_packet_handler_config(dsi);
+>>>>>>>     dw_mipi_dsi_video_mode_config(dsi);
+>>>>>>>
+>>>>>>> -	dw_mipi_dsi_video_packet_config(dsi, mode);
+>>>>>>> +	dw_mipi_dsi_video_packet_config(dsi, adjusted_mode);
+>>>>>>>
+>>>>>>>     dw_mipi_dsi_command_mode_config(dsi);
+>>>>>>>
+>>>>>>> -	dw_mipi_dsi_line_timer_config(dsi, mode);
+>>>>>>> -	dw_mipi_dsi_vertical_timing_config(dsi, mode);
+>>>>>>> +	dw_mipi_dsi_line_timer_config(dsi, adjusted_mode);
+>>>>>>> +	dw_mipi_dsi_vertical_timing_config(dsi, adjusted_mode);
+>>>>>>>
+>>>>>>>     dw_mipi_dsi_dphy_init(dsi);
+>>>>>>>     dw_mipi_dsi_dphy_timing_config(dsi);
+>>>>>>>
+>>>>>>> @@ -734,7 +734,7 @@ static void dw_mipi_dsi_bridge_mode_set(struct
+>>>>>>> drm_bridge *bridge,
+>>>>>>>
+>>>>>>>     dw_mipi_dsi_dphy_enable(dsi);
+>>>>>>>
+>>>>>>> -	dw_mipi_dsi_wait_for_two_frames(mode);
+>>>>>>> +	dw_mipi_dsi_wait_for_two_frames(adjusted_mode);
+>>>>>>>
+>>>>>>>     /* Switch to cmd mode for panel-bridge pre_enable & panel prepare
+>>>>>>>     */
+>>>>>>>     dw_mipi_dsi_set_mode(dsi, 0);
+> 
