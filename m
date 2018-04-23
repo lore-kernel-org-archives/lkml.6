@@ -1,126 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755763AbeDWPcz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:32:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42925 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755460AbeDWPcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:32:52 -0400
-Date: Mon, 23 Apr 2018 17:32:50 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] Level-triggered MSI support
-Message-ID: <20180423173250.6060b7ac@xps13>
-In-Reply-To: <20180423103440.26592-1-marc.zyngier@arm.com>
-References: <20180423103440.26592-1-marc.zyngier@arm.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1755836AbeDWPeC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:34:02 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:53035 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755563AbeDWPd7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:33:59 -0400
+From: Liming Sun <lsun@mellanox.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Liming Sun <lsun@mellanox.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] mmc: dw_mmc-bluefield: Add driver extension
+Date: Mon, 23 Apr 2018 11:32:20 -0400
+Message-Id: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+This commit adds extension to the dw_mmc driver for Mellanox BlueField
+SoC. It updates the UHS_REG_EXT register to bring up the eMMC card on
+this SoC.
 
-On Mon, 23 Apr 2018 11:34:33 +0100, Marc Zyngier <marc.zyngier@arm.com>
-wrote:
+Signed-off-by: Liming Sun <lsun@mellanox.com>
+---
+ drivers/mmc/host/Kconfig            |  9 +++++
+ drivers/mmc/host/Makefile           |  1 +
+ drivers/mmc/host/dw_mmc-bluefield.c | 72 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 82 insertions(+)
+ create mode 100644 drivers/mmc/host/dw_mmc-bluefield.c
 
-> This series is a first shot at teaching the kernel about the oxymoron
-> expressed in $SUBJECT. Over the past couple of years, we've seen some
-> SoCs coming up with ways of signalling level interrupts using a new
-> flavor of MSIs, where the MSI controller uses two distinct messages:
-> one that raises a virtual line, and one that lowers it. The target MSI
-> controller is in charge of maintaining the state of the line.
-> 
-> This allows for a much simplified HW signal routing (no need to have
-> hundreds of discrete lines to signal level interrupts if you already
-> have a memory bus), but results in a departure from the current idea
-> the kernel has of MSIs.
-> 
-> This series takes a minimal approach to the problem, which is to allow
-> MSI controllers to use not only one, but up to two messages at a
-> time. This is controlled by a flag exposed at MSI irq domain creation,
-> and is only supported with platform MSI.
-> 
-> The rest of the series repaints the Marvell ICU/GICP drivers which
-> already make use of this feature with a side-channel, and adds support
-> for the same feature in GICv3. A side effect of the last GICv3 patch
-> is that you can also use SPIs to signal PCI MSIs. This is a last
-> resort measure for SoCs where the ITS is unusable for unspeakable
-> reasons.
-> 
-> Marc Zyngier (7):
->   genirq/msi: Allow level-triggered MSIs to be exposed by MSI providers
->   genirq/msi: Limit level-triggered MSI to platform devices
->   irqchip/mvebu-gicp: Use level-triggered MSIs between ICU and GICP
->   dma-iommu: Fix compilation when !CONFIG_IOMMU_DMA
->   irqchip/gic-v3: Add support for Message Based Interrupts as an MSI
->     controller
->   irqchip/gic-v3: Add PCI/MSI support to the GICv3 MBI sub-driver
->   dt-bindings/gic-v3: Add documentation for MBI support
-> 
->  .../bindings/interrupt-controller/arm,gic-v3.txt   |  17 +
->  drivers/base/platform-msi.c                        |   3 +
->  drivers/irqchip/Makefile                           |   2 +-
->  drivers/irqchip/irq-gic-v3-mbi.c                   | 343 +++++++++++++++++++++
->  drivers/irqchip/irq-gic-v3.c                       |   6 +
->  drivers/irqchip/irq-mvebu-gicp.c                   |  37 +--
->  drivers/irqchip/irq-mvebu-gicp.h                   |  12 -
->  drivers/irqchip/irq-mvebu-icu.c                    |  33 +-
->  drivers/pci/msi.c                                  |   3 +
->  include/linux/dma-iommu.h                          |   1 +
->  include/linux/irqchip/arm-gic-v3.h                 |   1 +
->  include/linux/msi.h                                |   2 +
->  kernel/irq/msi.c                                   |  32 +-
->  13 files changed, 427 insertions(+), 65 deletions(-)
->  create mode 100644 drivers/irqchip/irq-gic-v3-mbi.c
->  delete mode 100644 drivers/irqchip/irq-mvebu-gicp.h
-> 
-
-Thanks for the series, I gave it a try on Armada-8040-DB:
-
-# cat /proc/interrupts | grep ICU
- 28:          0          0          0          0  ICU.f21e0000 107 Level     ahci[f2540000.sata]
- 29:          0          0          0          0  ICU.f41e0000 107 Level     ahci[f4540000.sata]
- 35:          2          0          0          0  ICU.f21e0000 129 Level   
- 36:          3          0          0          0  ICU.f21e0000  41 Level     eth1
- 37:          0          0          0          0  ICU.f21e0000  45 Level     eth1
- 38:          0          0          4          0  ICU.f21e0000  49 Level     eth1
- 39:          0          0          0          2  ICU.f21e0000  53 Level     eth1
- 40:        128          0          0          0  ICU.f21e0000  57 Level     eth1
- 47:          2          0          0          0  ICU.f41e0000 129 Level   
- 54:         82          0          0          0  ICU.f21e0000 106 Level     xhci-hcd:usb3
- 55:         82          0          0          0  ICU.f21e0000 105 Level     xhci-hcd:usb5
- 56:          4          0          0          0  ICU.f41e0000 106 Level     xhci-hcd:usb7
- 57:          0          0          0          0  ICU.f41e0000 105 Level     xhci-hcd:usb1
- 58:          0          0          0          0  ICU.f41e0000  77 Level     f4284000.rtc
- 59:        224          0          0          0  ICU.f21e0000 120 Level     mv64xxx_i2c
- 60:          0          0          0          0  ICU.f41e0000 120 Level     mv64xxx_i2c
- 61:         52          0          0          0  ICU.f21e0000  27 Level     mmc1
- 63:          0          0          0          0  ICU.f21e0000  22 Level     armada8k-pcie, PCIe PME, aerdrv
- 64:          0          0          0          0  ICU.f21e0000  23 Level     armada8k-pcie, PCIe PME, aerdrv
- 65:          0          0          0          0  ICU.f41e0000  22 Level     armada8k-pcie, PCIe PME, aerdrv
- 66:          0          0          0          0  ICU.f41e0000  24 Level     armada8k-pcie, PCIe PME, aerdrv
- 67:          0          0          0          0  ICU.f41e0000  23 Level     armada8k-pcie, PCIe PME, aerdrv
-
-All these interrupts are NSRs and go through the GICP. I was able to
-use the network (CP0), an I2C bus (CP0) and the USB host ports (on each
-CP).
-
-Tested-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miquèl
-
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 9589f9c..26ac6b5 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -717,6 +717,15 @@ config MMC_DW_K3
+ 	  Synopsys DesignWare Memory Card Interface driver. Select this option
+ 	  for platforms based on Hisilicon K3 SoC's.
+ 
++config MMC_DW_BLUEFIELD
++	tristate "BlueField specific extensions for Synopsys DW Memory Card Interface"
++	depends on MMC_DW
++	select MMC_DW_PLTFM
++	help
++	  This selects support for Mellanox BlueField SoC specific extensions to
++	  the Synopsys DesignWare Memory Card Interface driver. Select this
++	  option for platforms based on Mellanox BlueField SoC's.
++
+ config MMC_DW_PCI
+ 	tristate "Synopsys Designware MCI support on PCI bus"
+ 	depends on MMC_DW && PCI
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index 6aead24..267b3f1 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -55,6 +55,7 @@ obj-$(CONFIG_MMC_DW_K3)		+= dw_mmc-k3.o
+ obj-$(CONFIG_MMC_DW_PCI)	+= dw_mmc-pci.o
+ obj-$(CONFIG_MMC_DW_ROCKCHIP)	+= dw_mmc-rockchip.o
+ obj-$(CONFIG_MMC_DW_ZX)		+= dw_mmc-zx.o
++obj-$(CONFIG_MMC_DW_BLUEFIELD)	+= dw_mmc-bluefield.o
+ obj-$(CONFIG_MMC_SH_MMCIF)	+= sh_mmcif.o
+ obj-$(CONFIG_MMC_JZ4740)	+= jz4740_mmc.o
+ obj-$(CONFIG_MMC_VUB300)	+= vub300.o
+diff --git a/drivers/mmc/host/dw_mmc-bluefield.c b/drivers/mmc/host/dw_mmc-bluefield.c
+new file mode 100644
+index 0000000..12067b1
+--- /dev/null
++++ b/drivers/mmc/host/dw_mmc-bluefield.c
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018 Mellanox Technologies.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/module.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/mmc/host.h>
++#include <linux/mmc/mmc.h>
++#include <linux/of.h>
++
++#include "dw_mmc.h"
++#include "dw_mmc-pltfm.h"
++
++static void dw_mci_bluefield_set_ios(struct dw_mci *host, struct mmc_ios *ios)
++{
++	u32 regs;
++
++	/* Set drive=4 (bit 29:23) and sample=2 (bit 22:16) in UHS_REG_EXT. */
++	regs = mci_readl(host, UHS_REG_EXT);
++	regs = (regs & ~0x3F100000 & ~0x7F0000) | (4 << 23) | (2 << 16);
++	mci_writel(host, UHS_REG_EXT, regs);
++}
++
++static const struct dw_mci_drv_data bluefield_drv_data = {
++	.set_ios		= dw_mci_bluefield_set_ios
++};
++
++static const struct of_device_id dw_mci_bluefield_match[] = {
++	{ .compatible = "mellanox,bluefield-dw-mshc",
++		.data = &bluefield_drv_data },
++	{},
++};
++MODULE_DEVICE_TABLE(of, dw_mci_bluefield_match);
++
++static int dw_mci_bluefield_probe(struct platform_device *pdev)
++{
++	const struct dw_mci_drv_data *drv_data = NULL;
++	const struct of_device_id *match;
++
++	if (pdev->dev.of_node) {
++		match = of_match_node(dw_mci_bluefield_match,
++				      pdev->dev.of_node);
++		drv_data = match->data;
++	}
++
++	return dw_mci_pltfm_register(pdev, drv_data);
++}
++
++static struct platform_driver dw_mci_bluefield_pltfm_driver = {
++	.probe		= dw_mci_bluefield_probe,
++	.remove		= dw_mci_pltfm_remove,
++	.driver		= {
++		.name		= "dwmmc_bluefield",
++		.of_match_table	= dw_mci_bluefield_match,
++		.pm		= &dw_mci_pltfm_pmops,
++	},
++};
++
++module_platform_driver(dw_mci_bluefield_pltfm_driver);
++
++MODULE_DESCRIPTION("BlueField DW Multimedia Card driver");
++MODULE_AUTHOR("Mellanox Technologies");
++MODULE_LICENSE("GPL v2");
 -- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+1.8.3.1
