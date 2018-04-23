@@ -1,103 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754152AbeDWG7W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:59:22 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:18351 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751535AbeDWG7U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:59:20 -0400
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Kevin Hilman <khilman@baylibre.com>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH] ARM64: dts: meson-axg: enable AP6255 wifi module
-Date: Mon, 23 Apr 2018 14:57:29 +0000
-Message-ID: <20180423145729.14368-1-yixun.lan@amlogic.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.20.250]
+        id S1754187AbeDWG7b (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:59:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55522 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751535AbeDWG73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 02:59:29 -0400
+From: Jiri Olsa <jolsa@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc: lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: [PATCH 0/3] bpf: Store/dump license string for loaded program
+Date: Mon, 23 Apr 2018 08:59:24 +0200
+Message-Id: <20180423065927.23127-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Meson-AXG S400 board is shipped with AP6255 wifi module,
-which is actually using the brcmfmac 43455 driver.
+hi,
+sending the change to store and dump the license
+info for loaded BPF programs. It's important for
+us get the license info, when investigating on
+screwed up machine.
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Adding change to bpftool to dump the license via:
+
+  # bpftool prog list
+  1: kprobe  name func_begin  tag 59bef35a42fda602 license GPL
+          loaded_at Apr 22/15:46  uid 0
+          xlated 272B  not jited  memlock 4096B  map_ids 1
+
+  # bpftool prog show --json
+  [{"id":1,"type":"kprobe","name":"fun ... ,"license":"GPL", ... ]
+
+Also available at:
+  https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+  bpf/license
+
+thanks,
+jirka
+
+
 ---
- .../arm64/boot/dts/amlogic/meson-axg-s400.dts | 44 ++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+Jiri Olsa (3):
+      bpf: Store license string for loaded program
+      tools bpf: Sync bpf.h uapi header
+      tools bpftool: Display license in prog show/list
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-index f67d4e47e641..b3e1bdca32bb 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-@@ -51,7 +51,16 @@
- 
- 	sdio_pwrseq: sdio-pwrseq {
- 		compatible = "mmc-pwrseq-simple";
--		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
-+		reset-gpios = <&gpio GPIOX_7 GPIO_ACTIVE_LOW>;
-+		clocks = <&wifi32k>;
-+		clock-names = "ext_clock";
-+	};
-+
-+	wifi32k: wifi32k {
-+		compatible = "pwm-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		pwms = <&pwm_ab 0 30518 0>; /* PWM_A at 32.768KHz */
- 	};
- };
- 
-@@ -86,6 +95,12 @@
- 	pinctrl-names = "default";
- };
- 
-+&pwm_ab {
-+	status = "okay";
-+	pinctrl-0 = <&pwm_a_x20_pins>;
-+	pinctrl-names = "default";
-+};
-+
- /* emmc storage */
- &sd_emmc_c {
- 	status = "okay";
-@@ -105,3 +120,30 @@
- 	vmmc-supply = <&vcc_3v3>;
- 	vqmmc-supply = <&vddio_boot>;
- };
-+
-+/* wifi module */
-+&sd_emmc_b {
-+	status = "okay";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	pinctrl-0 = <&sdio_pins>;
-+	pinctrl-1 = <&sdio_clk_gate_pins>;
-+	pinctrl-names = "default", "clk-gate";
-+
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	max-frequency = <100000000>;
-+	non-removable;
-+	disable-wp;
-+
-+	mmc-pwrseq = <&sdio_pwrseq>;
-+
-+	vmmc-supply = <&vddao_3v3>;
-+	vqmmc-supply = <&vddio_boot>;
-+
-+	brcmf: wifi@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+	};
-+};
--- 
-2.17.0
+ include/linux/bpf.h            | 1 +
+ include/uapi/linux/bpf.h       | 3 +++
+ kernel/bpf/core.c              | 1 +
+ kernel/bpf/syscall.c           | 7 ++++++-
+ tools/bpf/bpftool/prog.c       | 4 ++++
+ tools/include/uapi/linux/bpf.h | 4 ++++
+ 6 files changed, 19 insertions(+), 1 deletion(-)
