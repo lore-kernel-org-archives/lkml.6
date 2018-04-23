@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932706AbeDWXbN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 19:31:13 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:41920 "EHLO ale.deltatee.com"
+        id S932878AbeDWXcs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 19:32:48 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:41928 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932652AbeDWXbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932642AbeDWXbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Apr 2018 19:31:05 -0400
 From: Logan Gunthorpe <logang@deltatee.com>
 To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
@@ -20,100 +20,147 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Alex Williamson <alex.williamson@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 23 Apr 2018 17:30:43 -0600
-Message-Id: <20180423233046.21476-12-logang@deltatee.com>
+Date: Mon, 23 Apr 2018 17:30:34 -0600
+Message-Id: <20180423233046.21476-3-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180423233046.21476-1-logang@deltatee.com>
 References: <20180423233046.21476-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, axboe@kernel.dk, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v4 11/14] nvme-pci: Add a quirk for a pseudo CMB
+Subject: [PATCH v4 02/14] PCI/P2PDMA: Add sysfs group to display p2pmem stats
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a quirk to use CMB-like memory on older devices that have
-an exposed BAR but do not advertise support for using CMBLOC and
-CMBSIZE.
+Add a sysfs group to display statistics about P2P memory that is
+registered in each PCI device.
 
-We'd like to use some of these older cards to test P2P memory.
+Attributes in the group display the total amount of P2P memory, the
+amount available and whether it is published or not.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 ---
- drivers/nvme/host/nvme.h |  7 +++++++
- drivers/nvme/host/pci.c  | 24 ++++++++++++++++++++----
- 2 files changed, 27 insertions(+), 4 deletions(-)
+ Documentation/ABI/testing/sysfs-bus-pci | 25 +++++++++++++++
+ drivers/pci/p2pdma.c                    | 54 +++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
 
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 9a689c13998f..885e9ec9b889 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -84,6 +84,13 @@ enum nvme_quirks {
- 	 * Supports the LighNVM command set if indicated in vs[1].
- 	 */
- 	NVME_QUIRK_LIGHTNVM			= (1 << 6),
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+index 44d4b2be92fd..044812c816d0 100644
+--- a/Documentation/ABI/testing/sysfs-bus-pci
++++ b/Documentation/ABI/testing/sysfs-bus-pci
+@@ -323,3 +323,28 @@ Description:
+ 
+ 		This is similar to /sys/bus/pci/drivers_autoprobe, but
+ 		affects only the VFs associated with a specific PF.
 +
-+	/*
-+	 * Pseudo CMB Support on BAR 4. For adapters like the Microsemi
-+	 * NVRAM that have CMB-like memory on a BAR but does not set
-+	 * CMBLOC or CMBSZ.
-+	 */
-+	NVME_QUIRK_PSEUDO_CMB_BAR4		= (1 << 7),
++What:		/sys/bus/pci/devices/.../p2pmem/available
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the amount of memory that has not been
++		allocated (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/size
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the total amount of memory that the device
++		provides (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/published
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains a '1' if the memory has been published for
++		use inside the kernel or a '0' if it is only intended
++		for use within the driver that published it.
+diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+index e524a12eca1f..4daad6374869 100644
+--- a/drivers/pci/p2pdma.c
++++ b/drivers/pci/p2pdma.c
+@@ -24,6 +24,54 @@ struct pci_p2pdma {
+ 	bool p2pmem_published;
  };
  
- /*
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 09b6aba6ed28..e526e969680a 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1685,6 +1685,13 @@ static ssize_t nvme_cmb_show(struct device *dev,
- }
- static DEVICE_ATTR(cmb, S_IRUGO, nvme_cmb_show, NULL);
- 
-+static u32 nvme_pseudo_cmbsz(struct pci_dev *pdev, int bar)
++static ssize_t size_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
 +{
-+	return NVME_CMBSZ_WDS | NVME_CMBSZ_RDS |
-+		(((ilog2(SZ_16M) - 12) / 4) << NVME_CMBSZ_SZU_SHIFT) |
-+		((pci_resource_len(pdev, bar) / SZ_16M) << NVME_CMBSZ_SZ_SHIFT);
-+}
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t size = 0;
 +
- static u64 nvme_cmb_size_unit(struct nvme_dev *dev)
++	if (pdev->p2pdma->pool)
++		size = gen_pool_size(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", size);
++}
++static DEVICE_ATTR_RO(size);
++
++static ssize_t available_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t avail = 0;
++
++	if (pdev->p2pdma->pool)
++		avail = gen_pool_avail(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", avail);
++}
++static DEVICE_ATTR_RO(available);
++
++static ssize_t published_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%d\n",
++			pdev->p2pdma->p2pmem_published);
++}
++static DEVICE_ATTR_RO(published);
++
++static struct attribute *p2pmem_attrs[] = {
++	&dev_attr_size.attr,
++	&dev_attr_available.attr,
++	&dev_attr_published.attr,
++	NULL,
++};
++
++static const struct attribute_group p2pmem_group = {
++	.attrs = p2pmem_attrs,
++	.name = "p2pmem",
++};
++
+ static void pci_p2pdma_percpu_release(struct percpu_ref *ref)
  {
- 	u8 szu = (dev->cmbsz >> NVME_CMBSZ_SZU_SHIFT) & NVME_CMBSZ_SZU_MASK;
-@@ -1704,10 +1711,15 @@ static void nvme_map_cmb(struct nvme_dev *dev)
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
- 	int bar;
+ 	struct pci_p2pdma *p2p =
+@@ -53,6 +101,7 @@ static void pci_p2pdma_release(void *data)
+ 	percpu_ref_exit(&pdev->p2pdma->devmap_ref);
  
--	dev->cmbsz = readl(dev->bar + NVME_REG_CMBSZ);
--	if (!dev->cmbsz)
--		return;
--	dev->cmbloc = readl(dev->bar + NVME_REG_CMBLOC);
-+	if (dev->ctrl.quirks & NVME_QUIRK_PSEUDO_CMB_BAR4) {
-+		dev->cmbsz = nvme_pseudo_cmbsz(pdev, 4);
-+		dev->cmbloc = 4;
-+	} else {
-+		dev->cmbsz = readl(dev->bar + NVME_REG_CMBSZ);
-+		if (!dev->cmbsz)
-+			return;
-+		dev->cmbloc = readl(dev->bar + NVME_REG_CMBLOC);
-+	}
+ 	gen_pool_destroy(pdev->p2pdma->pool);
++	sysfs_remove_group(&pdev->dev.kobj, &p2pmem_group);
+ 	pdev->p2pdma = NULL;
+ }
  
- 	size = nvme_cmb_size_unit(dev) * nvme_cmb_size(dev);
- 	offset = nvme_cmb_size_unit(dev) * NVME_CMB_OFST(dev->cmbloc);
-@@ -2736,6 +2748,10 @@ static const struct pci_device_id nvme_id_table[] = {
- 		.driver_data = NVME_QUIRK_LIGHTNVM, },
- 	{ PCI_DEVICE(0x1d1d, 0x2807),	/* CNEX WL */
- 		.driver_data = NVME_QUIRK_LIGHTNVM, },
-+	{ PCI_DEVICE(0x11f8, 0xf117),	/* Microsemi NVRAM adaptor */
-+		.driver_data = NVME_QUIRK_PSEUDO_CMB_BAR4, },
-+	{ PCI_DEVICE(0x1db1, 0x0002),	/* Everspin nvNitro adaptor */
-+		.driver_data = NVME_QUIRK_PSEUDO_CMB_BAR4,  },
- 	{ PCI_DEVICE_CLASS(PCI_CLASS_STORAGE_EXPRESS, 0xffffff) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2001) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
+@@ -83,9 +132,14 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
+ 
+ 	pdev->p2pdma = p2p;
+ 
++	error = sysfs_create_group(&pdev->dev.kobj, &p2pmem_group);
++	if (error)
++		goto out_pool_destroy;
++
+ 	return 0;
+ 
+ out_pool_destroy:
++	pdev->p2pdma = NULL;
+ 	gen_pool_destroy(p2p->pool);
+ out:
+ 	devm_kfree(&pdev->dev, p2p);
 -- 
 2.11.0
