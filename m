@@ -1,95 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754856AbeDWMY4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:24:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36900 "EHLO mail.bootlin.com"
+        id S1754934AbeDWM0J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:26:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53034 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754788AbeDWMYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:24:55 -0400
-Date: Mon, 23 Apr 2018 14:24:44 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Pascal Roeleven <dev@pascalroeleven.nl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] Re: [PATCH] ARM: dts: sun4i: Fix incorrect clocks
- for displays
-Message-ID: <20180423122444.msxpe5e4ovr6eqqb@flea>
-References: <20180420102112.2843-1-dev@pascalroeleven.nl>
- <20180423071421.byupsz4gxpmhfe44@flea>
- <887c9144972ab75a4520141a17e1607b@pascalroeleven.nl>
+        id S1754788AbeDWM0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 08:26:05 -0400
+Date: Mon, 23 Apr 2018 14:26:00 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, Peter Zijlstra <peterz@infradead.org>,
+        Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
+Message-ID: <20180423122600.sozmrytiasd32bhc@pathway.suse.cz>
+References: <20180413124704.19335-1-pmladek@suse.com>
+ <20180413101233.0792ebf0@gandalf.local.home>
+ <20180414023516.GA17806@tigerII.localdomain>
+ <20180416014729.GB1034@jagdpanzerIV>
+ <20180416042553.GA555@jagdpanzerIV>
+ <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
+ <20180420021511.GB6397@jagdpanzerIV>
+ <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
+ <20180423052133.GA3643@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2tmxv6dh5nmwdvru"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <887c9144972ab75a4520141a17e1607b@pascalroeleven.nl>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180423052133.GA3643@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon 2018-04-23 14:21:33, Sergey Senozhatsky wrote:
+> On (04/20/18 11:12), Petr Mladek wrote:
+> call_console_drivers() is super complex, unbelievable complex. In fact,
+> it's so complex that we never know where we will end up, because it can
+> pass the control to almost every core kernel mechanism or subsystem:
 
---2tmxv6dh5nmwdvru
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I fully agree. We will never be able to completely avoid messages
+from these code paths and it would even be contra-productive. People
+need to see the problems and be able to debug them. BTW: I wrote
+this in the patch description.
 
-On Mon, Apr 23, 2018 at 01:01:03PM +0200, Pascal Roeleven wrote:
-> On 2018-04-23 09:14, Maxime Ripard wrote:
-> > On Fri, Apr 20, 2018 at 12:21:12PM +0200, Pascal Roeleven wrote:
-> > > Some displays on SUN4i devices wouldn't properly stay on unless
-> > > 'clk_ignore_unused' is used.
-> > >=20
-> > > Change the duplicate clocks to the probably intended ones.
-> > >=20
-> > > Signed-off-by: Pascal Roeleven <dev@pascalroeleven.nl>
-> >=20
-> > What was the difference with the first patch you sent?
-> >=20
-> > Anyway, I've applied it, thanks
-> >=20
-> > Maxime
-> >=20
-> > --
-> > Maxime Ripard, Bootlin (formerly Free Electrons)
-> > Embedded Linux and Kernel engineering
-> > https://bootlin.com
->=20
-> I'm sorry there isn't any.
-> It's the first patch I have ever send so had some git-send-email issues a=
-nd
-> didn't know the correct procedure to resend a patch.
+> A very quick googling:
 
-Just set RESEND in the subject prefix (using --subject-prefix=3D"PATCH
-RESEND"), and say why you resent it in the patch / cover letter after
-the --- and before the diffstat.
+Nice collection. Just note that the useful (ratelimited) information
+always fits into the first 100 lines in all these examples:
 
-Maxime
+> 	https://bugzilla.altlinux.org/attachment.cgi?id=5811
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The two WARNINGs starts repeating after 65 lines.
 
---2tmxv6dh5nmwdvru
-Content-Type: application/pgp-signature; name="signature.asc"
+Note that the backtraces at the end of the log are from
+NMI watchdog => not ratelimited by this patch (with the extra fix)
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrd0IsACgkQ0rTAlCFN
-r3Sdhg/+LThkqlPVTzr0CIoG/5+0yaikJ0vqBmarQBmO5GjpRTQOZoM/iGiyZbdm
-aFI6WSDkJ+CZOvnN3FLXa1WwJZ8Oak/avoyKFYNcHkBHg1urzDmZybO2Q9uK9PcA
-NCa6vBMspGEJG7tchjWkOMy/h5p31ejnZldlpSmBI17HnK4m74kfPws4IgaiJZpH
-Xyp5aMJTltM2r5vbpN3lhJ9itVGgI9EejYBgxhLCHtHmsfjU4F+W3WUY3OJMAVsn
-LEuprG9zLdfPqb82tITDNAhlX3qN/TJXfHjsbrmmHhlc4mMxFEdbw9MM74Px10q+
-jIxEpFI1MuURur9a1hJqqId4vJAD+E27tzgbPBp0oCTIwZV8b6txYsTi838jpDbA
-b63XWN1hWAZuTKDMnpnP3FRDPoAtiooXDtmRhiKwvZLjGV93zlkibECukH7ZyaFe
-RU6/NoX089mPiOnvYo9X/5ermzennpnA4Fcpk1ZZVbEPXYPMoAYL3b/5QjQhgjC8
-tVDCxhbck9scYvVdmksiWY1FWDu80Q4ldrSJO5fHwC0Bt0XtK8Ca/R9Xx8YOIojc
-Ym0pLMRH8XigkFXsZZ0tRCz/uNirAYDlGif0vrLHG8D/yIHUk6iJ4aqqsP/nT7xu
-4NMFWTSPj6LKHw7zOsvNxO+2fAJmyOKNBTm/pqDtdlsKVEr7BdA=
-=QDMo
------END PGP SIGNATURE-----
+> 	https://access.redhat.com/solutions/702533
 
---2tmxv6dh5nmwdvru--
+fits into 52 lines
+
+> 	https://bugzilla.redhat.com/attachment.cgi?id=561164
+
+both warnings fit into 54 lines
+
+> 	https://lists.gt.net/linux/kernel/2341113
+
+BUG report fits into 26 lines
+
+> 	https://www.systutorials.com/linux-kernels/56987/ib-mlx4-reduce-sriov-multicast-cleanup-warning-message-to-debug-level-linux-4-10-17/
+
+NMI bactrace => not affected by this patch (with the extra fix)
+
+> 	https://github.com/raspberrypi/linux/issues/663
+
+Bug report fits into 29 lines
+
+> 	https://bugs.openvz.org/browse/VZWEB-36
+
+Starts to repeat after 79 lines. I wonder if it ever ended without
+killing the system.
+
+
+
+
+> Throttling down that error mechanism to 100 lines
+> per hour, or 1000 lines per hour is unlikely will be welcomed.
+
+I wonder if you have bigger problems with the number of lines
+or with the length of the period.
+
+We simply _must_ limit the number of lines. Otherwise we would
+never be able to break an _infinite_ loop.
+
+But we could eventually replace the time period with a more
+complex solution. For example, if we call console drivers
+outside printk_safe context then the "recursive" messages
+will be written to the mail log buffer directly. Then we could
+reset the counter of the recursive messages when leaving
+console_unlock() the regular way. I mean when all lines are
+handled.
+
+
+> Among all the patches and proposal that we saw so far, one stands out - it's
+> the original Tejun's patch [offloading to work queue]. Because it has zero
+> interference with the existing call_console_drivers()->printk()
+> channels.
+
+The only problem is that it does not solve the infinite loop. If
+writing one line produces one or more new lines (warnings/errors)
+than the only way out is to start dropping the recursive messages.
+Offloading would just move the infinite loop to another process.
+
+Note that the offload might help if there is a deadlock/livelock
+between the original printk() caller and console drivers. Then moving
+console_unlock() to another "safe" context helps to unblock the
+situation. But the offload has its own problems and limiting
+the number of recursive messages would solve this as well.
+
+
+> What is so special about this case that we decided to screw up printk()
+> instead?
+
+There are many situations where printk() is limited. For example, we
+are limited to 8kB in NMI or printk_safe() context. The printk_safe()
+context is about printk debugging. Also messages from console drivers
+are about printk debugging. There must be some limitations by
+definition.
+
+
+> I think that we need to apply the patch below.
+> That call_console_drivers()->printk->IRQ_work->irq->flush appears to be
+> pointless.
+
+I agree that calling console drivers in printk_safe context is
+pointless. Normal vprintk_emit() can be safely called because
+logbuf_lock is not taken here. Also console_unlock() will
+never by called recursively because it is guarded by console_sem.
+
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> ---
+>  kernel/printk/printk.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 247808333ba4..484c456c095a 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2385,9 +2385,11 @@ void console_unlock(void)
+>  		 */
+>  		console_lock_spinning_enable();
+>  
+> +		__printk_safe_exit();
+>  		stop_critical_timings();	/* don't trace print latency */
+>  		call_console_drivers(ext_text, ext_len, text, len);
+>  		start_critical_timings();
+> +		__printk_safe_enter();
+
+Is this by intention? What is the reason to call
+console_lock_spinning_disable_and_check() in printk_safe() context, please?
+
+>  		if (console_lock_spinning_disable_and_check()) {
+>  			printk_safe_exit_irqrestore(flags);
+
+Best Regards,
+Petr
