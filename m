@@ -1,136 +1,335 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754372AbeDWIgV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:36:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59492 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754114AbeDWIgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:36:16 -0400
-Subject: Re: [PATCH RFC] ACPI: disable extra P_LVLx access on KVM
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org
-References: <1522431741-4678-1-git-send-email-mst@redhat.com>
- <1969294.enFTGV94N4@aspire.rjw.lan>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <dbf3d84a-8482-cc59-11c9-f59585c8c349@redhat.com>
-Date: Mon, 23 Apr 2018 10:36:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754542AbeDWIgl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:36:41 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:11999 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754384AbeDWIga (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 04:36:30 -0400
+X-UUID: 47a5a4d2fc824c12b2613c782e2c5710-20180423
+From: <sean.wang@mediatek.com>
+To: <matthias.bgg@gmail.com>, <rjw@rjwysocki.net>, <khilman@baylibre.com>
+CC: <ulf.hansson@linaro.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 1/2] soc: mediatek: introduce a CAPS flag for scp_domain_data
+Date: Mon, 23 Apr 2018 16:36:21 +0800
+Message-ID: <2e16481e1477dfae0cfb24568d8111da81d92628.1524472331.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <1969294.enFTGV94N4@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/04/2018 10:07, Rafael J. Wysocki wrote:
-> On Friday, March 30, 2018 7:43:58 PM CEST Michael S. Tsirkin wrote:
->> As documented by commit b488f021 "ACPI: restore comment justifying
->> 'extra' P_LVLx access", Linux does an extra IO read after entering idle
->> because on (some) chipsets STPCLK# doesn't get asserted in time
->> to prevent further instruction processing.
->>
->> This can never be the case on KVM, and a timer read causes an expensive
->> VM exit in turn causing useless load on host system. Detect KVM and skip
->> the read.  TODO: whitelist more hypervisors?
->>
->> Note: very lightly tested.  Pls don't apply this yet, I am working on a
->> _CST implementation for KVM and will repost this without the RFC tag
->> when it's been tested properly.
->>
->> Posting now for early flames/feedback.
->>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Cc: kvm@vger.kernel.org
->> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->> ---
->>  drivers/acpi/processor_idle.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
->> index abb559c..8ae28dc 100644
->> --- a/drivers/acpi/processor_idle.c
->> +++ b/drivers/acpi/processor_idle.c
->> @@ -33,6 +33,7 @@
->>  #include <linux/cpuidle.h>
->>  #include <linux/cpu.h>
->>  #include <acpi/processor.h>
->> +#include <linux/kvm_para.h>
->>  
->>  /*
->>   * Include the apic definitions for x86 to have the APIC timer related defines
->> @@ -665,7 +666,8 @@ static void __cpuidle acpi_idle_do_entry(struct acpi_processor_cx *cx)
->>  		/* Dummy wait op - must do something useless after P_LVL2 read
->>  		   because chipsets cannot guarantee that STPCLK# signal
->>  		   gets asserted in time to freeze execution properly. */
->> -		inl(acpi_gbl_FADT.xpm_timer_block.address);
->> +		if (!kvm_para_available())
->> +			inl(acpi_gbl_FADT.xpm_timer_block.address);
->>  	}
->>  }
->>  
->> @@ -687,7 +689,8 @@ static int acpi_idle_play_dead(struct cpuidle_device *dev, int index)
->>  		else if (cx->entry_method == ACPI_CSTATE_SYSTEMIO) {
->>  			inb(cx->address);
->>  			/* See comment in acpi_idle_do_entry() */
->> -			inl(acpi_gbl_FADT.xpm_timer_block.address);
->> +			if (!kvm_para_available())
->> +				inl(acpi_gbl_FADT.xpm_timer_block.address);
->>  		} else
->>  			return -ENODEV;
->>  	}
->>
-> 
-> While I have no objections to this change from the ACPI side, I'd like someone
-> from the KVM land to comment on this.
+From: Sean Wang <sean.wang@mediatek.com>
 
-It would be nicer to blacklist the problematic chipsets, or as Michael
-said have a way to whitelist more hypervisors, but this is certainly
-okay from KVM land too.
+Instead of adding more and more fields to scp_domain_data which get
+checked in the code flow, add a caps field used for an indication the
+characteristics for each SCP domain.
 
-Thanks,
+At present, type u8 for the caps field is selected which can satisfy the
+current situation and doesn't take up extra space against type bool
+previously used.
 
-paolo
+Suggested-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 65 ++++++++++++++++++++-------------------
+ 1 file changed, 34 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index f140e71..b1b45e4 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -31,6 +31,9 @@
+ #define MTK_POLL_DELAY_US   10
+ #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
+ 
++#define MTK_SCPD_ACTIVE_WAKEUP		BIT(0)
++#define MTK_SCPD_CAPS(_scpd, _x)	((_scpd)->data->caps & (_x))
++
+ #define SPM_VDE_PWR_CON			0x0210
+ #define SPM_MFG_PWR_CON			0x0214
+ #define SPM_VEN_PWR_CON			0x0230
+@@ -120,7 +123,7 @@ struct scp_domain_data {
+ 	u32 sram_pdn_ack_bits;
+ 	u32 bus_prot_mask;
+ 	enum clk_id clk_id[MAX_CLKS];
+-	bool active_wakeup;
++	u8 caps;
+ };
+ 
+ struct scp;
+@@ -424,7 +427,7 @@ static struct scp *init_scp(struct platform_device *pdev,
+ 		genpd->name = data->name;
+ 		genpd->power_off = scpsys_power_off;
+ 		genpd->power_on = scpsys_power_on;
+-		if (scpd->data->active_wakeup)
++		if (MTK_SCPD_CAPS(scpd, MTK_SCPD_ACTIVE_WAKEUP))
+ 			genpd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
+ 	}
+ 
+@@ -477,7 +480,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
+ 		.bus_prot_mask = MT2701_TOP_AXI_PROT_EN_CONN_M |
+ 				 MT2701_TOP_AXI_PROT_EN_CONN_S,
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2701_POWER_DOMAIN_DISP] = {
+ 		.name = "disp",
+@@ -486,7 +489,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.clk_id = {CLK_MM},
+ 		.bus_prot_mask = MT2701_TOP_AXI_PROT_EN_MM_M0,
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2701_POWER_DOMAIN_MFG] = {
+ 		.name = "mfg",
+@@ -495,7 +498,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(12, 12),
+ 		.clk_id = {CLK_MFG},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2701_POWER_DOMAIN_VDEC] = {
+ 		.name = "vdec",
+@@ -504,7 +507,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(12, 12),
+ 		.clk_id = {CLK_MM},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2701_POWER_DOMAIN_ISP] = {
+ 		.name = "isp",
+@@ -513,7 +516,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(13, 12),
+ 		.clk_id = {CLK_MM},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2701_POWER_DOMAIN_BDP] = {
+ 		.name = "bdp",
+@@ -521,7 +524,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
+ 		.ctl_offs = SPM_BDP_PWR_CON,
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2701_POWER_DOMAIN_ETH] = {
+ 		.name = "eth",
+@@ -530,7 +533,7 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_ETHIF},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2701_POWER_DOMAIN_HIF] = {
+ 		.name = "hif",
+@@ -539,14 +542,14 @@ static const struct scp_domain_data scp_domain_data_mt2701[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_ETHIF},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2701_POWER_DOMAIN_IFR_MSC] = {
+ 		.name = "ifr_msc",
+ 		.sta_mask = PWR_STATUS_IFR_MSC,
+ 		.ctl_offs = SPM_IFR_MSC_PWR_CON,
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ };
+ 
+@@ -561,7 +564,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(8, 8),
+ 		.sram_pdn_ack_bits = GENMASK(12, 12),
+ 		.clk_id = {CLK_MM},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_VDEC] = {
+ 		.name = "vdec",
+@@ -570,7 +573,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(8, 8),
+ 		.sram_pdn_ack_bits = GENMASK(12, 12),
+ 		.clk_id = {CLK_MM, CLK_VDEC},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_VENC] = {
+ 		.name = "venc",
+@@ -579,7 +582,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_MM, CLK_VENC, CLK_JPGDEC},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_ISP] = {
+ 		.name = "isp",
+@@ -588,7 +591,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(13, 12),
+ 		.clk_id = {CLK_MM},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_AUDIO] = {
+ 		.name = "audio",
+@@ -597,7 +600,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_AUDIO},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_USB] = {
+ 		.name = "usb",
+@@ -606,7 +609,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(10, 8),
+ 		.sram_pdn_ack_bits = GENMASK(14, 12),
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_USB2] = {
+ 		.name = "usb2",
+@@ -615,7 +618,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(10, 8),
+ 		.sram_pdn_ack_bits = GENMASK(14, 12),
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_MFG] = {
+ 		.name = "mfg",
+@@ -625,7 +628,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_ack_bits = GENMASK(16, 16),
+ 		.clk_id = {CLK_MFG},
+ 		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_MFG_SC1] = {
+ 		.name = "mfg_sc1",
+@@ -634,7 +637,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(8, 8),
+ 		.sram_pdn_ack_bits = GENMASK(16, 16),
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_MFG_SC2] = {
+ 		.name = "mfg_sc2",
+@@ -643,7 +646,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(8, 8),
+ 		.sram_pdn_ack_bits = GENMASK(16, 16),
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT2712_POWER_DOMAIN_MFG_SC3] = {
+ 		.name = "mfg_sc3",
+@@ -652,7 +655,7 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.sram_pdn_bits = GENMASK(8, 8),
+ 		.sram_pdn_ack_bits = GENMASK(16, 16),
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ };
+ 
+@@ -752,7 +755,7 @@ static const struct scp_domain_data scp_domain_data_mt7622[] = {
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_NONE},
+ 		.bus_prot_mask = MT7622_TOP_AXI_PROT_EN_ETHSYS,
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT7622_POWER_DOMAIN_HIF0] = {
+ 		.name = "hif0",
+@@ -762,7 +765,7 @@ static const struct scp_domain_data scp_domain_data_mt7622[] = {
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_HIFSEL},
+ 		.bus_prot_mask = MT7622_TOP_AXI_PROT_EN_HIF0,
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT7622_POWER_DOMAIN_HIF1] = {
+ 		.name = "hif1",
+@@ -772,7 +775,7 @@ static const struct scp_domain_data scp_domain_data_mt7622[] = {
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_HIFSEL},
+ 		.bus_prot_mask = MT7622_TOP_AXI_PROT_EN_HIF1,
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT7622_POWER_DOMAIN_WB] = {
+ 		.name = "wb",
+@@ -782,7 +785,7 @@ static const struct scp_domain_data scp_domain_data_mt7622[] = {
+ 		.sram_pdn_ack_bits = 0,
+ 		.clk_id = {CLK_NONE},
+ 		.bus_prot_mask = MT7622_TOP_AXI_PROT_EN_WB,
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ };
+ 
+@@ -798,7 +801,7 @@ static const struct scp_domain_data scp_domain_data_mt7623a[] = {
+ 		.bus_prot_mask = MT2701_TOP_AXI_PROT_EN_CONN_M |
+ 				 MT2701_TOP_AXI_PROT_EN_CONN_S,
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT7623A_POWER_DOMAIN_ETH] = {
+ 		.name = "eth",
+@@ -807,7 +810,7 @@ static const struct scp_domain_data scp_domain_data_mt7623a[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_ETHIF},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT7623A_POWER_DOMAIN_HIF] = {
+ 		.name = "hif",
+@@ -816,14 +819,14 @@ static const struct scp_domain_data scp_domain_data_mt7623a[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_ETHIF},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT7623A_POWER_DOMAIN_IFR_MSC] = {
+ 		.name = "ifr_msc",
+ 		.sta_mask = PWR_STATUS_IFR_MSC,
+ 		.ctl_offs = SPM_IFR_MSC_PWR_CON,
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ };
+ 
+@@ -889,7 +892,7 @@ static const struct scp_domain_data scp_domain_data_mt8173[] = {
+ 		.sram_pdn_bits = GENMASK(11, 8),
+ 		.sram_pdn_ack_bits = GENMASK(15, 12),
+ 		.clk_id = {CLK_NONE},
+-		.active_wakeup = true,
++		.caps = MTK_SCPD_ACTIVE_WAKEUP,
+ 	},
+ 	[MT8173_POWER_DOMAIN_MFG_ASYNC] = {
+ 		.name = "mfg_async",
+-- 
+2.7.4
