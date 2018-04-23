@@ -1,229 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754666AbeDWJ22 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:28:28 -0400
-Received: from mga07.intel.com ([134.134.136.100]:33652 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754078AbeDWJ2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:28:24 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,317,1520924400";
-   d="scan'208";a="35424473"
-Date: Mon, 23 Apr 2018 17:29:09 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, wexu@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jfreimann@redhat.com
-Subject: Re: [RFC v2] virtio: support packed ring
-Message-ID: <20180423092908.77rii3gi7dcaf7o6@debian>
-References: <20180401141216.8969-1-tiwei.bie@intel.com>
- <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
+        id S1754683AbeDWJ2o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 05:28:44 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:41237 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754401AbeDWJ2j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 05:28:39 -0400
+X-Google-Smtp-Source: AB8JxZrOC/pj0ZkiZp14T5vgOjWSuDUcg/B49wo9IzhPKH4n8QY+To4f//8GBCvmnGqxsZq/o1S2zP1TBa7o1EJPpoo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAMuHMdVQea-tQ4vQF=SrkCCqaRCRyo=aBiAuyv7p0z0FEi3r2g@mail.gmail.com>
+References: <0ca46228311ec615947e199def9fed62d70c1f07.1524118799.git.baolin.wang@linaro.org>
+ <CAK8P3a15stj5Yurd7rM7278cYPtM6kufs=QL2GihCOxRUCHRSQ@mail.gmail.com> <CAMuHMdVQea-tQ4vQF=SrkCCqaRCRyo=aBiAuyv7p0z0FEi3r2g@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 23 Apr 2018 11:28:38 +0200
+X-Google-Sender-Auth: V1lZrzUxIWLHK-TECC4-UKLpQK0
+Message-ID: <CAK8P3a2FNU2k=nzE=FCt=2GL2x=-UdhkFGUJQqFe-h8FfMZRdw@mail.gmail.com>
+Subject: Re: [PATCH] m68k: Remove read_persistent_clock()
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Baolin Wang <baolin.wang@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Finn Thain <fthain@telegraphics.com.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 01:42:14PM +0800, Jason Wang wrote:
-> On 2018年04月01日 22:12, Tiwei Bie wrote:
-> > Hello everyone,
-> > 
-> > This RFC implements packed ring support for virtio driver.
-> > 
-> > The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
-> > by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
-> > Minor changes are needed for the vhost code, e.g. to kick the guest.
-> > 
-> > TODO:
-> > - Refinements and bug fixes;
-> > - Split into small patches;
-> > - Test indirect descriptor support;
-> > - Test/fix event suppression support;
-> > - Test devices other than net;
-> > 
-> > RFC v1 -> RFC v2:
-> > - Add indirect descriptor support - compile test only;
-> > - Add event suppression supprt - compile test only;
-> > - Move vring_packed_init() out of uapi (Jason, MST);
-> > - Merge two loops into one in virtqueue_add_packed() (Jason);
-> > - Split vring_unmap_one() for packed ring and split ring (Jason);
-> > - Avoid using '%' operator (Jason);
-> > - Rename free_head -> next_avail_idx (Jason);
-> > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
-> > - Some other refinements and bug fixes;
-> > 
-> > Thanks!
-> > 
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
-> >   include/linux/virtio_ring.h        |    8 +-
-> >   include/uapi/linux/virtio_config.h |   12 +-
-> >   include/uapi/linux/virtio_ring.h   |   61 ++
-> >   4 files changed, 980 insertions(+), 195 deletions(-)
-> > 
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index 71458f493cf8..0515dca34d77 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -58,14 +58,15 @@
-> 
-> [...]
-> 
-> > +
-> > +	if (vq->indirect) {
-> > +		u32 len;
-> > +
-> > +		desc = vq->desc_state[head].indir_desc;
-> > +		/* Free the indirect table, if any, now that it's unmapped. */
-> > +		if (!desc)
-> > +			goto out;
-> > +
-> > +		len = virtio32_to_cpu(vq->vq.vdev,
-> > +				      vq->vring_packed.desc[head].len);
-> > +
-> > +		BUG_ON(!(vq->vring_packed.desc[head].flags &
-> > +			 cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_INDIRECT)));
-> 
-> It looks to me spec does not force to keep VRING_DESC_F_INDIRECT here. So we
-> can safely remove this BUG_ON() here.
-> 
-> > +		BUG_ON(len == 0 || len % sizeof(struct vring_packed_desc));
-> 
-> Len could be ignored for used descriptor according to the spec, so we need
-> remove this BUG_ON() too.
+On Mon, Apr 23, 2018 at 11:07 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Arnd,
+>
+> On Fri, Apr 20, 2018 at 5:22 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Thu, Apr 19, 2018 at 8:22 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>>> The read_persistent_clock() uses a timespec, which is not year 2038 safe
+>>> on 32bit systems. Moreover on m68k architecture, we have implemented generic
+>>> RTC drivers that can be used to compensate the system suspend time. So
+>>> we can remove the obsolete read_persistent_clock().
+>>>
+>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>>
+>> I'm not sure about this one: it's still possible to turn off
+>> CONFIG_RTC_DRV_GENERIC
+>> on M68KCLASSIC, and in that case we still need a read_persistent_clock64()
+>> implementation. Or we use your patch but make CONFIG_RTC_DRV_GENERIC
+>> mandatory.
+>
+> Typically (in the defconfigs) CONFIG_RTC_DRV_GENERIC is either "m",
+> or not set.
+>
+> And in both cases, a platform-specific RTC class driver may or may not be
+> builtin or loaded. We have them for some Amigas (RTC_DRV_MSM6242 or
+> RTC_DRV_RP5C01).
+>
+> I've never been an expert of timekeeping code...
 
-Yeah, you're right! The BUG_ON() isn't right. I'll remove it.
-And I think something related to this in the spec isn't very
-clear currently.
+Some extra background on this:
 
-In the spec, there are below words:
+read_persistent_clock64/read_persistent_clock is primarily needed when you
+have a real time source that is better than the one exposed in the RTC class
+driver.  For platforms doing suspend/resume, the timekeeping code will
+first try calling read_persistent_clock64() but fall back to the RTC
+if that fails.
+On only a few architectures like m68k, read_persistent_clock64() falls
+back to reading the RTC hardware, which means it will still work even if
+the RTC_DRV_GENERIC driver is not loaded. Removing that code will
+still work correctly as long as the generic RTC driver does get loaded
+before suspend. On platforms without suspend/resume, none of this matters.
 
-https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L272
-"""
-In descriptors with VIRTQ_DESC_F_INDIRECT set VIRTQ_DESC_F_WRITE
-is reserved and is ignored by the device.
-"""
+The other user of read_persistent_clock() is to set the initial time at boot.
+This again can be done by the RTC subsystem if the correct RTC driver
+is built-in and CONFIG_RTC_HCTOSYS is set. Alexandre is planning
+to remove that option and instead force early user space to load the
+RTC driver and then sync it manually using the sysfs knob for it.
 
-So when device writes back an used descriptor in this case,
-device may not set the VIRTQ_DESC_F_WRITE flag as the flag
-is reserved and should be ignored.
+If you have ancient user space that doesn't do this, you might still
+rely on read_persistent_clock() to set the boot time.
 
-https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L170
-"""
-Element Length is reserved for used descriptors without the
-VIRTQ_DESC_F_WRITE flag, and is ignored by drivers.
-"""
+> Should we get rid of ARCH_USES_GETTIMEOFFSET?
+> it seems m68k and two ARM platforms are the last users.
+> What needs to be done?
 
-And this is the way how driver ignores the `len` in an used
-descriptor.
+This is entirely unrelated, but generally speaking it would be
+great to convert m68k away from ARCH_USES_GETTIMEOFFSET,
+yes.
 
-https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L241
-"""
-To increase ring capacity the driver can store a (read-only
-by the device) table of indirect descriptors anywhere in memory,
-and insert a descriptor in the main virtqueue (with \field{Flags}
-bit VIRTQ_DESC_F_INDIRECT on) that refers to a buffer element
-containing this indirect descriptor table;
-"""
+The first step would be to get rid of all the dummy gettimeoffset() functions
+that return a constant (like dn_gettimeoffset()).
 
-So the indirect descriptors in the table are read-only by
-the device. And the only descriptor which is writeable by
-the device is the descriptor in the main virtqueue (with
-Flags bit VIRTQ_DESC_F_INDIRECT on). So if we ignore the
-`len` in this descriptor, we won't be able to get the
-length of the data written by the device.
+The larger part of that effort would be to turn each clock implementation
+in m68k into a real clocksource driver. This is probably straightforward,
+but I don't know the details (adding LinusW to Cc, he's done this on
+some ARM hardware in the past).
 
-So I think the `len` in this descriptor will carry the
-length of the data written by the device (if the buffers
-are writable to the device) even if the VIRTQ_DESC_F_WRITE
-isn't set by the device. How do you think?
+>> See below for a version I did a while ago (but never submitted as I got
+>> distracted).
+>
+> Thanks, I can apply it, if it is deemed correct ;-)
 
+Please apply Finn's bugfix for the month-off bug first, that one is more
+urgent. I've rebased my patch on top of his and resent that one.
 
-> 
-> The reason is we don't touch descriptor ring in the case of split, so
-> BUG_ON()s may help there.
-> 
-> > +
-> > +		for (j = 0; j < len / sizeof(struct vring_packed_desc); j++)
-> > +			vring_unmap_one_packed(vq, &desc[j]);
-> > +
-> > +		kfree(desc);
-> > +		vq->desc_state[head].indir_desc = NULL;
-> > +	} else if (ctx) {
-> > +		*ctx = vq->desc_state[head].indir_desc;
-> > +	}
-> > +
-> > +out:
-> > +	return vq->desc_state[head].num;
-> > +}
-> > +
-> > +static inline bool more_used_split(const struct vring_virtqueue *vq)
-> >   {
-> >   	return vq->last_used_idx != virtio16_to_cpu(vq->vq.vdev, vq->vring.used->idx);
-> >   }
-> > +static inline bool more_used_packed(const struct vring_virtqueue *vq)
-> > +{
-> > +	u16 last_used, flags;
-> > +	bool avail, used;
-> > +
-> > +	if (vq->vq.num_free == vq->vring_packed.num)
-> > +		return false;
-> > +
-> > +	last_used = vq->last_used_idx;
-> > +	flags = virtio16_to_cpu(vq->vq.vdev,
-> > +				vq->vring_packed.desc[last_used].flags);
-> > +	avail = flags & VRING_DESC_F_AVAIL(1);
-> > +	used = flags & VRING_DESC_F_USED(1);
-> > +
-> > +	return avail == used;
-> > +}
-> 
-> This looks interesting, spec said:
-> 
-> "
-> Thus VIRTQ_DESC_F_AVAIL and VIRTQ_DESC_F_USED bits are different for an
-> available descriptor and
-> equal for a used descriptor.
-> Note that this observation is mostly useful for sanity-checking as these are
-> necessary but not sufficient
-> conditions - for example, all descriptors are zero-initialized. To detect
-> used and available descriptors it is
-> possible for drivers and devices to keep track of the last observed value of
-> VIRTQ_DESC_F_USED/VIRTQ_-
-> DESC_F_AVAIL. Other techniques to detect
-> VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
-> might also be possible.
-> "
-> 
-> So it looks to me it was not sufficient, looking at the example codes in
-> spec, do we need to track last seen used_wrap_counter here?
-
-I don't think we have to track used_wrap_counter in
-driver. There was a discussion on this:
-
-https://lists.oasis-open.org/archives/virtio-dev/201802/msg00177.html
-
-And after that, below sentence was added (it's also
-in the above words you quoted):
-
-"""
-Other techniques to detect
-VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
-might also be possible.
-"""
-
-Best regards,
-Tiwei Bie
-
-
-> 
-> Thanks
+       Arnd
