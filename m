@@ -1,74 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755700AbeDWPqE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:46:04 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33392 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755244AbeDWPqC (ORCPT
+        id S932111AbeDWPrs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:47:48 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:42590 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754992AbeDWPrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:46:02 -0400
-Date: Mon, 23 Apr 2018 08:47:07 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        joel.opensrc@gmail.com
-Subject: Re: [PATCH tip/core/rcu 01/22] sched: Make non-production PREEMPT
- cond_resched() help Tasks RCU
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180423023150.GA21533@linux.vnet.ibm.com>
- <1524450747-22778-1-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180423085127.GR4064@hirez.programming.kicks-ass.net>
- <20180423124000.GL26088@linux.vnet.ibm.com>
- <20180423094742.6582e19d@gandalf.local.home>
- <20180423141038.GA4064@hirez.programming.kicks-ass.net>
- <20180423103529.36848ae1@gandalf.local.home>
+        Mon, 23 Apr 2018 11:47:41 -0400
+X-Google-Smtp-Source: AIpwx48UVCT0W9OTo6ZkWVifWkKsesvFT/lhaE8Hia0qr/wul0DW7vgGS5rN1wYsOlUD6drzDrWufgtLBAzoc6cWGaY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423103529.36848ae1@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18042315-0040-0000-0000-00000420A83D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008906; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01022153; UDB=6.00521692; IPR=6.00801388;
- MB=3.00020728; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 15:45:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042315-0041-0000-0000-00000826B23C
-Message-Id: <20180423154707.GP26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804230156
+In-Reply-To: <84adb7c2-bcf7-5e17-a9d0-482416e2d26c@redhat.com>
+References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
+ <20180421203437.GW28657@bhelgaas-glaptop.roam.corp.google.com> <84adb7c2-bcf7-5e17-a9d0-482416e2d26c@redhat.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 23 Apr 2018 08:47:39 -0700
+Message-ID: <CAKgT0Uca2ZoXWjF5Upa+-dwHPfvrd4H6usmmr8GgB0FkkciWsQ@mail.gmail.com>
+Subject: Re: [pci PATCH v8 0/4] Add support for unmanaged SR-IOV
+To: Don Dutile <ddutile@redhat.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 10:35:29AM -0400, Steven Rostedt wrote:
-> On Mon, 23 Apr 2018 16:10:38 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > >  http://lkml.kernel.org/r/20180227153646.GD3777@linux.vnet.ibm.com  
-> > 
-> > That thread using cond_resched_task_rcu_qs() seems like a _lot_ better
-> > than having cond_resched() semantics change depending on random
-> > !scheduler config parameters.
-> 
-> Yeah, I agree. Not sure why Paul didn't push it. Maybe because I never
-> replied to that final email and he forgot?
-> 
-> Paul?
+On Mon, Apr 23, 2018 at 8:21 AM, Don Dutile <ddutile@redhat.com> wrote:
+> On 04/21/2018 04:34 PM, Bjorn Helgaas wrote:
+>>
+>> On Fri, Apr 20, 2018 at 12:28:08PM -0400, Alexander Duyck wrote:
+>>>
+>>> This series is meant to add support for SR-IOV on devices when the VFs
+>>> are
+>>> not managed by the kernel. Examples of recent patches attempting to do
+>>> this
+>>> include:
+>>> virto - https://patchwork.kernel.org/patch/10241225/
+>>> pci-stub - https://patchwork.kernel.org/patch/10109935/
+>>> vfio - https://patchwork.kernel.org/patch/10103353/
+>>> uio - https://patchwork.kernel.org/patch/9974031/
+>>>
+>>> Since this is quickly blowing up into a multi-driver problem it is
+>>> probably
+>>> best to implement this solution as generically as possible.
+>>>
+>>> This series is an attempt to do that. What we do with this patch set is
+>>> provide a generic framework to enable SR-IOV in the case that the PF
+>>> driver
+>>> doesn't support managing the VFs itself.
+>>>
+>>> I based my patch set originally on the patch by Mark Rustad but there
+>>> isn't
+>>> much left after going through and cleaning out the bits that were no
+>>> longer
+>>> needed, and after incorporating the feedback from David Miller. At this
+>>> point
+>>> the only items to be fully reused was his patch description which is now
+>>> present in patch 3 of the set.
+>>>
+>>> This solution is limited in scope to just adding support for devices that
+>>> provide no functionality for SR-IOV other than allocating the VFs by
+>>> calling pci_enable_sriov. Previous sets had included patches for VFIO,
+>>> but
+>>> for now I am dropping that as the scope of that work is larger then I
+>>> think I can take on at this time.
+>>>
+>>> v2: Reduced scope back to just virtio_pci and vfio-pci
+>>>      Broke into 3 patch set from single patch
+>>>      Changed autoprobe behavior to always set when num_vfs is set
+>>> non-zero
+>>> v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is
+>>> used
+>>>      Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in
+>>> kernel
+>>> v4: Dropped vfio-pci patch
+>>>      Added ena and nvme to drivers now using
+>>> pci_sriov_configure_unmanaged
+>>>      Dropped pci_disable_sriov call in virtio_pci to be consistent with
+>>> ena
+>>> v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
+>>>      Added new patch that enables pci_sriov_configure_simple
+>>>      Updated drivers to use pci_sriov_configure_simple
+>>> v6: Defined pci_sriov_configure_simple as NULL when SR-IOV is not enabled
+>>>      Updated drivers to drop "#ifdef" checks for IOV
+>>>      Added pci-pf-stub as place for PF-only drivers to add support
+>>> v7: Dropped pci_id table explanation from pci-pf-stub driver
+>>>      Updated pci_sriov_configure_simple to drop need for err value
+>>>      Fixed comment explaining why pci_sriov_configure_simple is NULL
+>>> v8: Dropped virtio from the set, support to be added later after TC
+>>> approval
+>>>
+>>> Cc: Mark Rustad <mark.d.rustad@intel.com>
+>>> Cc: Maximilian Heyne <mheyne@amazon.de>
+>>> Cc: Liang-Min Wang <liang-min.wang@intel.com>
+>>> Cc: David Woodhouse <dwmw@amazon.co.uk>
+>>>
+>>> ---
+>>>
+>>> Alexander Duyck (4):
+>>>        pci: Add pci_sriov_configure_simple for PFs that don't manage VF
+>>> resources
+>>>        ena: Migrate over to unmanaged SR-IOV support
+>>>        nvme: Migrate over to unmanaged SR-IOV support
+>>>        pci-pf-stub: Add PF driver stub for PFs that function only to
+>>> enable VFs
+>>>
+>>>
+>>>   drivers/net/ethernet/amazon/ena/ena_netdev.c |   28 -------------
+>>>   drivers/nvme/host/pci.c                      |   20 ----------
+>>>   drivers/pci/Kconfig                          |   12 ++++++
+>>>   drivers/pci/Makefile                         |    2 +
+>>>   drivers/pci/iov.c                            |   31 +++++++++++++++
+>>>   drivers/pci/pci-pf-stub.c                    |   54
+>>> ++++++++++++++++++++++++++
+>>>   include/linux/pci.h                          |    3 +
+>>>   include/linux/pci_ids.h                      |    2 +
+>>>   8 files changed, 106 insertions(+), 46 deletions(-)
+>>>   create mode 100644 drivers/pci/pci-pf-stub.c
+>>
+>>
+>> I tentatively applied these to pci/virtualization-review.
+>>
+>> The code changes look fine, but I want to flesh out the changelogs a
+>> little bit before merging them.
+>>
+>> For example, I'm not sure what you mean by "devices where the PF is
+>> not capable of managing VF resources."
+>>
+> I agree w/Bjorn's assessment of the changelog.
+> The VF's are (minimally) assigned via the pf-stub driver, so they are
+> 'managed by the kernel'.
+> The security model is the same as the existing one, which was the issue we
+> resolved in the previous set(s) of patches.
+>
+> I am hoping that something like vfio will be used to deal with the VF
+> ownership
+> and the reset mechanisms during assignement & de-assignment to 'guests'
+> (qemu-kvm, DPDK, or whatever user-process),
+> so the known, existing security model(s) is(are) maintained as well.
+> If so, it'd be good to add such verbage somewhere (as 0/n is not kept in
+> anything but possibly Bjorn's patchwork, or whatever patch mgmt tool he
+> uses, and future reference would be good to have) say, an update to
+> Documentation/PCI/pci-iov-howto.txt.
+>
+> So... the 'unmanaged SR-IOV' Subject, IMO, is not a valid Subject for the
+> patch series any longer.
+>
+> No objections to the patch series, as Bjorn noted, just the commit
+> log(s)/nomenclature of what is really being done.
+> The expectation of VF enablement via the PF was born out of the fairly
+> complicated, and unique PF vs VF drivers of the first implementations, which
+> AlexD knows so well.  This "VFs act just like PFs without SRIOV
+> capabilities" support is what this patch set enables with a much lighter
+> configuration mechanism.
+> So, maybe the patch set ought to be 'lightweight SRIOV enablement'.
+>
+> --dd
 
-Yeah, I have been a bit event-driven of late.  So the thought is to keep
-cond_resched() as-is and use cond_resched_task_rcu_qs(), that is after
-the rename, for the stress tests instead of the current cond_resched().
-Or did I lose the thread?
+I'd be good with this being referred to as "lightweight SRIOV enablement".
 
-						Thanx, paul
+The only reason why I was referring to it as "unmanaged" was because I
+am used to drivers that use the PF MMIO registers to manage VF
+resources and that doesn't exist in this model. Obviously this is all
+still managed via the extended PCIe configuration though so there is
+still some management taking place by the PCI subsystem in the kernel.
+
+Thanks.
+
+- Alex
