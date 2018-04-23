@@ -1,130 +1,387 @@
-Return-Path: <kernel-hardening-return-13119-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AB8JxZp4OaYRVaUSJVcszKRA6Hm6vkFXqa2OTBwgY71U2eqYUdAx4bW98MM1fkdghnnoDwOJKMPe
-ARC-Seal: i=1; a=rsa-sha256; t=1524589504; cv=none;
+Return-Path: <kernel-hardening-return-13097-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AB8JxZpJ7mlfvDivHEnWoWYzQZM5TKVu2C7969wE+xlBSPOw5CBY3YCwwr8ovxdvhRRqXQm0i7kp
+ARC-Seal: i=1; a=rsa-sha256; t=1524488252; cv=none;
         d=google.com; s=arc-20160816;
-        b=p+2RRwu3m7pqs970Zp03EYiys0mFZn+RwgibafjFuhqHFvvqwU8I4VAzzOZ1Y3mC+N
-         LVGVoRVnVZax5JG6dJyx6X5Jw63WmMvnvMrZENKAI1Cmgvv2DEYqgxYwICngSXKevuOJ
-         p0FYS3zJ43kU+t36ivP8oEhG+tMOPKcdNfANtsNbJc83RL4yR7q7WXTh5BNtQI8rSQSN
-         Nw0GH8ivUkAgSRsxPFHOxN9XhvejVAgdfIE9y7h5gqshubCLUg7yvBMZykOIVLNnnbQH
-         5ujaLHjiXA5uFNravlmtdU+UwHQ6i36r63W5Oltt3JdmKsad+QmyHJHyeKPX4WEVWtdj
-         ZXBQ==
+        b=kJWfcp5QzjmZRdIDJ2mOT1a3FecRuYDy0fTmPu0vyDpKNrzbJ8W+vxymgKX3FidQmb
+         q59AM6sKnv0h2LWxmjH4/8hhOANhri+LaE/FzehLMrdGZ3SzDS44QWHdSkbwJpWoA5v/
+         1VZSS/7OgWc02HtmwNOEcHukV6zCiUKez/zZilIbiHoxGKEheMS5X1fXMdpv9SxPNj3l
+         dGCTzKPPlRhmrl8EhSuW0FHq5uUMWg0L/XeRKUX/xoegWk9YcslFMP/up1wdMxsTh015
+         UHWpB3BFm7+cVSeBPuW5QH1IUJRZ4ZSE1T2/tuPedWAvCMMqfaU07PTV+GmVmlhLrcSx
+         jAhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:references:cc:to:from:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
          :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=Vm7vBAO4WJMfUCTWFP2Z0/dE/TVAoCX/XqxZ4GpYMFQ=;
-        b=kQ9JTlhe4If18tRyJBfm0TbwG89o/8e4H1vJPeKaR/z0q/9oZ85bzI4QcWxLZiyjZd
-         8Jd/wrLvxDpofoEFLkRQnzYFUm5JQpbLVGXLy4PtsmsCjFylcZOaRwoWTgB3PyQ4X4UQ
-         UYc6Ifn8btY8fusUxXqlsUswlGpQWZMf3c5YT+/LMEvIYYldVpRtaL5qugcHUXRzUGlf
-         ZHTXKQAbzfnBAgJrPEYCUvrjktQuhIdrHtwsCqc2UCi4n5gKUtgL2AMrNBNNHcWBgQer
-         K25T1RxWHl5kBKGQGivBkmQDOLQdQpNPy4xWD3GO5vqhPcRO5LGWJc5xgcfvLa3+fXlu
-         1Hog==
+        bh=PTrtViIW4IFfIyTzjTI3SO62T4CFCpa+SdGXzTxM3A0=;
+        b=B6RRnKi+Hu6dw68DLEA2zNNpnWBP+YZULBUTWv+G3YcMFiVoBlKlUYeAqWLkRssWXf
+         Q1++ePdf+hyVXaSwVh3KF4D7QgphdgbUI1A1fS5UfMZXQmi1XbwSMOYCuLmRQLXvmSEN
+         Nfgaj1u6r9pt0VhdO/nKXg/My0QjIvDSgHulySWPfbyogbOtJxL9Pp6DWSOnThC35/UD
+         uJra1YGoFZZ4A3iW43mBGX+2sNhNyteTjjAYX+pHPOrYK9YlsUo+CE9jpBk4INpYKCwq
+         6l9Q5GGSJ7ojkI7HPXkDCvRoJjJ1ju0LBhHVcnU1ed8cXirzcYIWihAIr0nBzOSMA9/2
+         KcNg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZcSNG2Da;
-       spf=pass (google.com: domain of kernel-hardening-return-13119-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13119-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XXxFRisR;
+       spf=pass (google.com: domain of kernel-hardening-return-13097-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13097-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZcSNG2Da;
-       spf=pass (google.com: domain of kernel-hardening-return-13119-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13119-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XXxFRisR;
+       spf=pass (google.com: domain of kernel-hardening-return-13097-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13097-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCH 7/9] Pmalloc Rare Write: modify selected pools
 From: Igor Stoppa <igor.stoppa@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: keescook@chromium.org, paul@paul-moore.com, sds@tycho.nsa.gov,
- mhocko@kernel.org, corbet@lwn.net, labbott@redhat.com, david@fromorbit.com,
- rppt@linux.vnet.ibm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-hardening@lists.openwall.com, Igor Stoppa <igor.stoppa@huawei.com>,
- Carlos Chinea Perez <carlos.chinea.perez@huawei.com>,
- Remi Denis Courmont <remi.denis.courmont@huawei.com>,
- linux-security-module@vger.kernel.org
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To: willy@infradead.org,
+	keescook@chromium.org,
+	paul@paul-moore.com,
+	sds@tycho.nsa.gov,
+	mhocko@kernel.org,
+	corbet@lwn.net
+Cc: labbott@redhat.com,
+	linux-cc=david@fromorbit.com,
+	--cc=rppt@linux.vnet.ibm.com,
+	--security-module@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	igor.stoppa@gmail.com,
+	Igor Stoppa <igor.stoppa@huawei.com>
+Subject: [PATCH 9/9] Protect SELinux initialized state with pmalloc
+Date: Mon, 23 Apr 2018 16:54:58 +0400
+Message-Id: <20180423125458.5338-10-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180423125458.5338-1-igor.stoppa@huawei.com>
 References: <20180423125458.5338-1-igor.stoppa@huawei.com>
- <20180423125458.5338-8-igor.stoppa@huawei.com>
- <20180424115050.GD26636@bombadil.infradead.org>
- <98799559-121f-3d9d-343f-b22d30f21b6d@gmail.com>
-Message-ID: <be0c9294-90a3-5820-dca2-7ce0a9a5dcab@gmail.com>
-Date: Tue, 24 Apr 2018 21:04:42 +0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <98799559-121f-3d9d-343f-b22d30f21b6d@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598541768538376919?=
-X-GMAIL-MSGID: =?utf-8?q?1598647963889984568?=
+X-GMAIL-THRID: =?utf-8?q?1598541793965902014?=
+X-GMAIL-MSGID: =?utf-8?q?1598541793965902014?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 24/04/18 16:33, Igor Stoppa wrote:
-> 
-> 
-> On 24/04/18 15:50, Matthew Wilcox wrote:
->> On Mon, Apr 23, 2018 at 04:54:56PM +0400, Igor Stoppa wrote:
->>> While the vanilla version of pmalloc provides support for permanently
->>> transitioning between writable and read-only of a memory pool, this
->>> patch seeks to support a separate class of data, which would still
->>> benefit from write protection, most of the time, but it still needs to
->>> be modifiable. Maybe very seldom, but still cannot be permanently marked
->>> as read-only.
->>
->> This seems like a horrible idea that basically makes this feature 
->> useless.
->> I would say the right way to do this is to have:
->>
->> struct modifiable_data {
->>     struct immutable_data *d;
->>     ...
->> };
->>
->> Then allocate a new pool, change d and destroy the old pool.
-> 
-> I'm not sure I understand.
+SELinux is one of the primary targets, when a system running it comes
+under attack.
 
-A few cups of coffee later ...
+The reason is that, even if an attacker ishould manage to gain root,
+SELinux will still prevent most desirable actions.
 
-This seems like a regression from my case.
+Even in a fully locked down system, SELinux still presents a vulnerability
+that is often exploited, because it is very simple to attack, once
+kernel address layout randomization has been defeated and the attacker
+has gained capability of writing to kernelunprotected data.
 
-My case (see the example with the initialized state) is:
+In various places, SELinux relies on an "initialized" internal state
+variable, to decide if the policy is loaded and tests should be
+performed. Needless to say, it's in the interest of hte attacker to turn
+it off and pretend that the policyDB is still uninitialized.
 
-static void *pointer_to_pmalloc_memory __ro_after_init;
+Even if recent patches move the "initialized" state inside a structure,
+it is still vulnerable.
 
-then, during init:
+This patch seeks to protect it, using it as demo for the pmalloc API,
+which is meant to provide additional protection to data which is likely
+to not be changed very often, if ever (after a transient).
 
-pointer_to_pmalloc_memory = pmalloc(pool, size);
+The patch is probably in need of rework, to make it fit better with the
+new SELinux internal data structures, however it shows how to deny an
+easy target to the attacker.
 
-then init happens
+In case the kernel is compiled with JOP safeguards, then it becomes far
+harder for the attacker to jump into the middle of the function which
+calls pmalloc_rare_write, to alter the state.
 
-*pointer_to_pmalloc_memory = some_value;
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ security/selinux/hooks.c            | 12 ++++-----
+ security/selinux/include/security.h |  2 +-
+ security/selinux/ss/services.c      | 51 +++++++++++++++++++++++--------------
+ 3 files changed, 39 insertions(+), 26 deletions(-)
 
-pmalloc_protect_pool(pool9;
-
-and to change the value:
-
-support_variable = some_other_value;
-
-pmalloc_rare_write(pool, pointer_to_pmalloc_memory,
-                    &support_variable, size)
-
-But in this case the pmalloc allocation would be assigned to a writable 
-variable.
-
-This seems like a regression to me: at this point who cares anymore 
-about the pmalloc memory?
-
-Just rewrite the pointer to point to somewhere else that is writable and 
-has the desired (from the attacker) value.
-
-It doesn't even require gadgets. pmalloc becomes useless.
-
-Do I still need more coffee?
-
---
-igor
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 4cafe6a19167..6049f80115bc 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -285,7 +285,7 @@ static int __inode_security_revalidate(struct inode *inode,
+ 
+ 	might_sleep_if(may_sleep);
+ 
+-	if (selinux_state.initialized &&
++	if (*ss_initialized_ptr &&
+ 	    isec->initialized != LABEL_INITIALIZED) {
+ 		if (!may_sleep)
+ 			return -ECHILD;
+@@ -612,7 +612,7 @@ static int selinux_get_mnt_opts(const struct super_block *sb,
+ 	if (!(sbsec->flags & SE_SBINITIALIZED))
+ 		return -EINVAL;
+ 
+-	if (!selinux_state.initialized)
++	if (!*ss_initialized_ptr)
+ 		return -EINVAL;
+ 
+ 	/* make sure we always check enough bits to cover the mask */
+@@ -735,7 +735,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 
+ 	mutex_lock(&sbsec->lock);
+ 
+-	if (!selinux_state.initialized) {
++	if (!*ss_initialized_ptr) {
+ 		if (!num_opts) {
+ 			/* Defer initialization until selinux_complete_init,
+ 			   after the initial policy is loaded and the security
+@@ -1022,7 +1022,7 @@ static int selinux_sb_clone_mnt_opts(const struct super_block *oldsb,
+ 	 * if the parent was able to be mounted it clearly had no special lsm
+ 	 * mount options.  thus we can safely deal with this superblock later
+ 	 */
+-	if (!selinux_state.initialized)
++	if (!*ss_initialized_ptr)
+ 		return 0;
+ 
+ 	/*
+@@ -3040,7 +3040,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 		isec->initialized = LABEL_INITIALIZED;
+ 	}
+ 
+-	if (!selinux_state.initialized || !(sbsec->flags & SBLABEL_MNT))
++	if (!*ss_initialized_ptr || !(sbsec->flags & SBLABEL_MNT))
+ 		return -EOPNOTSUPP;
+ 
+ 	if (name)
+@@ -7253,7 +7253,7 @@ static void selinux_nf_ip_exit(void)
+ #ifdef CONFIG_SECURITY_SELINUX_DISABLE
+ int selinux_disable(struct selinux_state *state)
+ {
+-	if (state->initialized) {
++	if (*ss_initialized_ptr) {
+ 		/* Not permitted after initial policy load. */
+ 		return -EINVAL;
+ 	}
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index 23e762d529fa..ec7debb143be 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -96,13 +96,13 @@ extern char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX];
+ struct selinux_avc;
+ struct selinux_ss;
+ 
++extern bool *ss_initialized_ptr;
+ struct selinux_state {
+ 	bool disabled;
+ #ifdef CONFIG_SECURITY_SELINUX_DEVELOP
+ 	bool enforcing;
+ #endif
+ 	bool checkreqprot;
+-	bool initialized;
+ 	bool policycap[__POLICYDB_CAPABILITY_MAX];
+ 	struct selinux_avc *avc;
+ 	struct selinux_ss *ss;
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 8057e19dc15f..c09ca6f9b269 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -52,6 +52,7 @@
+ #include <linux/selinux.h>
+ #include <linux/flex_array.h>
+ #include <linux/vmalloc.h>
++#include <linux/pmalloc.h>
+ #include <net/netlabel.h>
+ 
+ #include "flask.h"
+@@ -80,10 +81,20 @@ char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
+ 	"nnp_nosuid_transition"
+ };
+ 
++bool *ss_initialized_ptr __ro_after_init;
++static struct pmalloc_pool *selinux_pool;
+ static struct selinux_ss selinux_ss;
+ 
+ void selinux_ss_init(struct selinux_ss **ss)
+ {
++	selinux_pool = pmalloc_create_pool(PMALLOC_RW);
++	if (unlikely(!selinux_pool))
++		panic("SELinux: unable to create pmalloc pool.");
++	ss_initialized_ptr = pmalloc(selinux_pool, sizeof(bool));
++	if (unlikely(!ss_initialized_ptr))
++		panic("SElinux: unable to allocate from pmalloc pool.");
++	*ss_initialized_ptr = false;
++	pmalloc_protect_pool(selinux_pool);
+ 	rwlock_init(&selinux_ss.policy_rwlock);
+ 	mutex_init(&selinux_ss.status_lock);
+ 	*ss = &selinux_ss;
+@@ -772,7 +783,7 @@ static int security_compute_validatetrans(struct selinux_state *state,
+ 	int rc = 0;
+ 
+ 
+-	if (!state->initialized)
++	if (!*ss_initialized_ptr)
+ 		return 0;
+ 
+ 	read_lock(&state->ss->policy_rwlock);
+@@ -872,7 +883,7 @@ int security_bounded_transition(struct selinux_state *state,
+ 	int index;
+ 	int rc;
+ 
+-	if (!state->initialized)
++	if (!*ss_initialized_ptr)
+ 		return 0;
+ 
+ 	read_lock(&state->ss->policy_rwlock);
+@@ -1032,7 +1043,7 @@ void security_compute_xperms_decision(struct selinux_state *state,
+ 	memset(xpermd->dontaudit->p, 0, sizeof(xpermd->dontaudit->p));
+ 
+ 	read_lock(&state->ss->policy_rwlock);
+-	if (!state->initialized)
++	if (!*ss_initialized_ptr)
+ 		goto allow;
+ 
+ 	policydb = &state->ss->policydb;
+@@ -1121,7 +1132,7 @@ void security_compute_av(struct selinux_state *state,
+ 	read_lock(&state->ss->policy_rwlock);
+ 	avd_init(state, avd);
+ 	xperms->len = 0;
+-	if (!state->initialized)
++	if (!*ss_initialized_ptr)
+ 		goto allow;
+ 
+ 	policydb = &state->ss->policydb;
+@@ -1175,7 +1186,7 @@ void security_compute_av_user(struct selinux_state *state,
+ 
+ 	read_lock(&state->ss->policy_rwlock);
+ 	avd_init(state, avd);
+-	if (!state->initialized)
++	if (!*ss_initialized_ptr)
+ 		goto allow;
+ 
+ 	policydb = &state->ss->policydb;
+@@ -1294,7 +1305,7 @@ static int security_sid_to_context_core(struct selinux_state *state,
+ 		*scontext = NULL;
+ 	*scontext_len  = 0;
+ 
+-	if (!state->initialized) {
++	if (!*ss_initialized_ptr) {
+ 		if (sid <= SECINITSID_NUM) {
+ 			char *scontextp;
+ 
+@@ -1466,7 +1477,7 @@ static int security_context_to_sid_core(struct selinux_state *state,
+ 	if (!scontext2)
+ 		return -ENOMEM;
+ 
+-	if (!state->initialized) {
++	if (!*ss_initialized_ptr) {
+ 		int i;
+ 
+ 		for (i = 1; i < SECINITSID_NUM; i++) {
+@@ -1648,7 +1659,7 @@ static int security_compute_sid(struct selinux_state *state,
+ 	int rc = 0;
+ 	bool sock;
+ 
+-	if (!state->initialized) {
++	if (!*ss_initialized_ptr) {
+ 		switch (orig_tclass) {
+ 		case SECCLASS_PROCESS: /* kernel value */
+ 			*out_sid = ssid;
+@@ -2128,7 +2139,8 @@ int security_load_policy(struct selinux_state *state, void *data, size_t len)
+ 	policydb = &state->ss->policydb;
+ 	sidtab = &state->ss->sidtab;
+ 
+-	if (!state->initialized) {
++	if (!*ss_initialized_ptr) {
++		bool dummy_initialized = true;
+ 		rc = policydb_read(policydb, fp);
+ 		if (rc)
+ 			goto out;
+@@ -2148,7 +2160,8 @@ int security_load_policy(struct selinux_state *state, void *data, size_t len)
+ 		}
+ 
+ 		security_load_policycaps(state);
+-		state->initialized = 1;
++		pmalloc_rare_write(selinux_pool, ss_initialized_ptr,
++				   &dummy_initialized, sizeof(bool));
+ 		seqno = ++state->ss->latest_granting;
+ 		selinux_complete_init();
+ 		avc_ss_reset(state->avc, seqno);
+@@ -2578,7 +2591,7 @@ int security_get_user_sids(struct selinux_state *state,
+ 	*sids = NULL;
+ 	*nel = 0;
+ 
+-	if (!state->initialized)
++	if (!*ss_initialized_ptr)
+ 		goto out;
+ 
+ 	read_lock(&state->ss->policy_rwlock);
+@@ -2812,7 +2825,7 @@ int security_get_bools(struct selinux_state *state,
+ 	struct policydb *policydb;
+ 	int i, rc;
+ 
+-	if (!state->initialized) {
++	if (!*ss_initialized_ptr) {
+ 		*len = 0;
+ 		*names = NULL;
+ 		*values = NULL;
+@@ -2987,7 +3000,7 @@ int security_sid_mls_copy(struct selinux_state *state,
+ 	int rc;
+ 
+ 	rc = 0;
+-	if (!state->initialized || !policydb->mls_enabled) {
++	if (!*ss_initialized_ptr || !policydb->mls_enabled) {
+ 		*new_sid = sid;
+ 		goto out;
+ 	}
+@@ -3094,7 +3107,7 @@ int security_net_peersid_resolve(struct selinux_state *state,
+ 	/*
+ 	 * We don't need to check initialized here since the only way both
+ 	 * nlbl_sid and xfrm_sid are not equal to SECSID_NULL would be if the
+-	 * security server was initialized and state->initialized was true.
++	 * security server was initialized and *ss_initialized_ptr was true.
+ 	 */
+ 	if (!policydb->mls_enabled)
+ 		return 0;
+@@ -3149,7 +3162,7 @@ int security_get_classes(struct selinux_state *state,
+ 	struct policydb *policydb = &state->ss->policydb;
+ 	int rc;
+ 
+-	if (!state->initialized) {
++	if (!*ss_initialized_ptr) {
+ 		*nclasses = 0;
+ 		*classes = NULL;
+ 		return 0;
+@@ -3298,7 +3311,7 @@ int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+ 
+ 	*rule = NULL;
+ 
+-	if (!state->initialized)
++	if (!*ss_initialized_ptr)
+ 		return -EOPNOTSUPP;
+ 
+ 	switch (field) {
+@@ -3598,7 +3611,7 @@ int security_netlbl_secattr_to_sid(struct selinux_state *state,
+ 	struct context *ctx;
+ 	struct context ctx_new;
+ 
+-	if (!state->initialized) {
++	if (!*ss_initialized_ptr) {
+ 		*sid = SECSID_NULL;
+ 		return 0;
+ 	}
+@@ -3665,7 +3678,7 @@ int security_netlbl_sid_to_secattr(struct selinux_state *state,
+ 	int rc;
+ 	struct context *ctx;
+ 
+-	if (!state->initialized)
++	if (!*ss_initialized_ptr)
+ 		return 0;
+ 
+ 	read_lock(&state->ss->policy_rwlock);
+@@ -3704,7 +3717,7 @@ int security_read_policy(struct selinux_state *state,
+ 	int rc;
+ 	struct policy_file fp;
+ 
+-	if (!state->initialized)
++	if (!*ss_initialized_ptr)
+ 		return -EINVAL;
+ 
+ 	*len = security_policydb_len(state);
+-- 
+2.14.1
