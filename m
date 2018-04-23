@@ -1,67 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755013AbeDWMbX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:31:23 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36430 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754968AbeDWMbQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:31:16 -0400
-Date: Mon, 23 Apr 2018 05:32:23 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, rostedt@goodmis.org, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        joel.opensrc@gmail.com
-Subject: Re: [PATCH tip/core/rcu 06/22] rcu: Rename cond_resched_rcu_qs() to
- cond_resched_tasks_rcu_qs()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180423023150.GA21533@linux.vnet.ibm.com>
- <1524450747-22778-6-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180423085347.GS4064@hirez.programming.kicks-ass.net>
+        id S1755060AbeDWMbt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:31:49 -0400
+Received: from foss.arm.com ([217.140.101.70]:40496 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754863AbeDWMbs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 08:31:48 -0400
+Subject: Re: [PATCH 0/7] Level-triggered MSI support
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180423103440.26592-1-marc.zyngier@arm.com>
+ <CAKv+Gu9zrnUevJdde_6vSwqFh0ojtDdC7Y_uHxqcGmE=5OZizw@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <5aff4953-caf7-b0f0-38ec-abfa0d8e58c7@arm.com>
+Date: Mon, 23 Apr 2018 13:31:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423085347.GS4064@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18042312-0036-0000-0000-000002E8D634
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008905; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01022088; UDB=6.00521654; IPR=6.00801323;
- MB=3.00020723; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 12:31:13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042312-0037-0000-0000-00004416135B
-Message-Id: <20180423123223.GK26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804230130
+In-Reply-To: <CAKv+Gu9zrnUevJdde_6vSwqFh0ojtDdC7Y_uHxqcGmE=5OZizw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 10:53:47AM +0200, Peter Zijlstra wrote:
-> On Sun, Apr 22, 2018 at 07:32:11PM -0700, Paul E. McKenney wrote:
-> > Commit e31d28b6ab8f ("trace: Eliminate cond_resched_rcu_qs() in favor
-> > of cond_resched()") substituted cond_resched() for the earlier call
-> > to cond_resched_rcu_qs().  However, the new-age cond_resched() does
-> > not do anything to help RCU-tasks grace periods because (1) RCU-tasks
-> > is only enabled when CONFIG_PREEMPT=y and (2) cond_resched() is a
-> > complete no-op when preemption is enabled.  This situation results
-> > in hangs when running the trace benchmarks.
+HI Ard,
+
+On 23/04/18 12:51, Ard Biesheuvel wrote:
+> On 23 April 2018 at 12:34, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>> This series is a first shot at teaching the kernel about the oxymoron
+>> expressed in $SUBJECT. Over the past couple of years, we've seen some
+>> SoCs coming up with ways of signalling level interrupts using a new
+>> flavor of MSIs, where the MSI controller uses two distinct messages:
+>> one that raises a virtual line, and one that lowers it. The target MSI
+>> controller is in charge of maintaining the state of the line.
+>>
+>> This allows for a much simplified HW signal routing (no need to have
+>> hundreds of discrete lines to signal level interrupts if you already
+>> have a memory bus), but results in a departure from the current idea
+>> the kernel has of MSIs.
+>>
+>> This series takes a minimal approach to the problem, which is to allow
+>> MSI controllers to use not only one, but up to two messages at a
+>> time. This is controlled by a flag exposed at MSI irq domain creation,
+>> and is only supported with platform MSI.
+>>
+>> The rest of the series repaints the Marvell ICU/GICP drivers which
+>> already make use of this feature with a side-channel, and adds support
+>> for the same feature in GICv3. A side effect of the last GICv3 patch
+>> is that you can also use SPIs to signal PCI MSIs. This is a last
+>> resort measure for SoCs where the ITS is unusable for unspeakable
+>> reasons.
+>>
 > 
-> But a few patches earlier you tried to address that..
+> Hi Marc,
+> 
+> I am hitting the splat below when trying this series on SynQuacer,
+> with mbi range <64 32> (which is reserved in the h/w manual but note
+> that I haven't confirmed with Socionext whether these are expected to
+> work or not. However, I don't think that makes any difference
+> regarding the issue below.)
 
-Yes.  And all this patch does is change the name to better match
-what this primitive actually does.
+Thanks for giving it a go. Something looks odd below:
 
-I could merge the two patches, if that would help.
+> 
+>  Unable to handle kernel read from unreadable memory at virtual address 00000018
+>  Mem abort info:
+>    ESR = 0x96000004
+>    Exception class = DABT (current EL), IL = 32 bits
+>    SET = 0, FnV = 0
+>    EA = 0, S1PTW = 0
+>  Data abort info:
+>    ISV = 0, ISS = 0x00000004
+>    CM = 0, WnR = 0
+>  user pgtable: 4k pages, 48-bit VAs, pgdp =         (ptrval)
+>  [0000000000000018] pgd=0000000000000000
+>  Internal error: Oops: 96000004 [#1] PREEMPT SMP
+>  Modules linked in: gpio_keys(+) efivarfs ip_tables x_tables autofs4
+> ext4 crc16 mbcache jbd2 fscrypto sr_mod cdrom sd_mod ahci xhci_pci
+> libahci xhci_hcd libata usbcore scsi_mod realtek netsec of_mdio
+> fixed_phy libphy i2c_synquacer gpio_mb86s7x
+>  CPU: 19 PID: 398 Comm: systemd-udevd Tainted: G        W
+> 4.17.0-rc2+ #54
+>  Hardware name: Socionext SynQuacer E-series DeveloperBox, BIOS build
+> #101 Apr  2 2018
+>  pstate: a0400085 (NzCv daIf +PAN -UAO)
+>  pc : iommu_dma_map_msi_msg+0x40/0x1e8
+>  lr : iommu_dma_map_msi_msg+0x34/0x1e8
+>  sp : ffff00000b8db690
+>  x29: ffff00000b8db690 x28: ffffeca6f07442a0
+>  x27: 0000000000000000 x26: ffffeca6f07442d4
+>  x25: ffffeca6f0744398 x24: 0000000000000000
+>  x23: 0000000000000016 x22: 0000000000000000
+>  x21: ffffeca6f755ed00 x20: ffff00000b8db770
+>  x19: 0000000000000016 x18: ffffffffffffffff
+>  x17: ffff446c203fd000 x16: ffff446c1f3b5108
+>  x15: ffffeca6f0a095b0 x14: ffffeca6f0a3a587
+>  x13: ffffeca6f0a3a586 x12: 0000000000000040
+>  x11: 0000000000000004 x10: 0000000000000016
+>  x9 : ffffeca6f70009d8 x8 : 0000000000000000
+>  x7 : ffffeca6f0744200 x6 : ffffeca6f0744200
+>  x5 : ffffeca6f7000900 x4 : ffffeca6f0744200
+>  x3 : 0000000000000000 x2 : 0000000000000000
+>  x1 : ffffeca6f0744258 x0 : 0000000000000000
+>  Process systemd-udevd (pid: 398, stack limit = 0x        (ptrval))
+>  Call trace:
+>   iommu_dma_map_msi_msg+0x40/0x1e8
 
-							Thanx, Paul
+We die here because irq_get_msi_desc() has returned a NULL pointer.
+That's not really expected.
+
+>   mbi_compose_msi_msg+0x54/0x60
+>   mbi_compose_mbi_msg+0x28/0x68
+
+We're requesting a platform MSI...
+
+>   irq_chip_compose_msi_msg+0x5c/0x78
+>   msi_domain_activate+0x40/0x90
+>   __irq_domain_activate_irq+0x74/0xb8
+>   __irq_domain_activate_irq+0x3c/0xb8
+>   irq_domain_activate_irq+0x4c/0x60
+>   irq_activate+0x40/0x50
+>   __setup_irq+0x4bc/0x7e0
+>   request_threaded_irq+0xf0/0x198
+>   request_any_context_irq+0x6c/0xc0
+>   devm_request_any_context_irq+0x78/0xf0
+>   gpio_keys_probe+0x324/0x9a0 [gpio_keys]
+
+from the gpio_keys driver, which shouldn't be doing platform MSI at all.
+It looks like we've looked-up the wrong irq domain, and really bad
+things happen after that.
+
+Could you point me to the device-tree of this machine? I need to
+understand how we can end-up in such a situation.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
