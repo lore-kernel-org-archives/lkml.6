@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx491UzApj2Jfh1jXXj29dsBPVurlciVhXuBPpJYJrmtntw5xT3NAU/EBDpVQtKFC0+BSAPsN
-ARC-Seal: i=1; a=rsa-sha256; t=1524498474; cv=none;
+X-Google-Smtp-Source: AIpwx4/Yvz2GjPn9zptH+d7oxKDkBuVHtawgk+fkB9HSBJnDzkv4XYh0+VqlSwMiKrwhoxQBC6g1
+ARC-Seal: i=1; a=rsa-sha256; t=1524498473; cv=none;
         d=google.com; s=arc-20160816;
-        b=jOx20vnzXvNvwGqTx2QyIgHU1W/awjl+XJTLxVZ+i97Ji2a3/ayjNNNIId7mC+tFPy
-         R890lY9/SOalhobwX+jZfC3E/swLPSVGxqT1E00Io3YpJEAe3uV41rTftF8ZwuLDdvVQ
-         odlnLFKQCZUxsYged2BeJ1ahml34MGiI/sGvfLM1EABqebrJ4WuGXiDQc6D4RIG+REiN
-         OAT/c5vr8MwoX7M3XhhyBpYsHn5UrdpEM+v/5McpDP/DtbRonu4bLotMZhs76YxbF5ut
-         5/+SLXpFp0aD7VCyC2Cd2wFH4tlaoawmb0jMxdkv/VWTa8JfVmcyWTHpPcZx2GaVy1fw
-         pC5Q==
+        b=pCKO8xVHviXHWnLle6XpAadOtpj77KrXRHUNqWcsxIGYNLOgQjUmrxh3mjsiyrs77E
+         BrMcTsQ9L6HU4k+p9BXII0xFVlxQPC6ZujgvM4tOyd77AHYJGgt17gmOFZmXbSQAm0ME
+         /dbXz+sPu/NeQWbOC2uVZXyea3Z3VU3DYaqdST4rVNU9hQgkqQS2lp8T+DpyMXU8mokg
+         dli0J2ChVT9yyByHwbr2LKXOyTe7O+Lv2Lg5YEQzmN+FK7V13Cg2otBknqmP7nmyKvSX
+         D5iAA+VTn/bhTLguwE0UUebDXfJ5T3H7aeA8Gf53VL0okwSdkokt6X28ykj2zgpTaiUu
+         fizA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=WeXc/Ao+LnCoDUTx4VGRj1iHDitMElHV+QHmbKrVox4=;
-        b=VV3N5g0kobzJPk424PD+r5LLZ86BLiiWjBtrmIoVC83x/aCHjrHtWu6vVUmbzVMmsO
-         YwTxSz2y2+Q/7I1yaMjid5ZDuiE5XekmSkPkGqg8lft1//I9L5PJ2aL9OMB33OGLIGZK
-         nbpW2uTMUWPc1pkpAKl/8vdrCwaYt9iLajLM5OQwVTMF2pRtIPjmziD75bcmokyuOWAk
-         lzu3kxyKca94aF/uBVutKa/7CNUEtRSA7RWKVR6SSlxk8DT0r1bzDWurL4mejI7jPlHY
-         FgNzYxfr9vDiGz1+drsYq0GWr5p2JzNVIeHSzrSm8bUrk22DoTXNZLRr7uW6WfPdvyuk
-         875w==
+        bh=OcvQhocRGo8adLG5spe7U+na6Cqu9Y9MpjcgHIpoCVg=;
+        b=UHeS4/rZEKRLj7BOu7P+AxIZd4p/+9p7+7s/MM63EAmENr3vtEQJUbCmCUQiLo0uGy
+         /gPwaKtJ4kFbdFvwyIWf9hp2dMlWz4oO6i9qiyBuQrsCMXr1wR93pm2eaUJQRkA3H0xN
+         bP0mCLXr/eVqvZwrpdTIZ6UNy6ew8qPbug4MlwQozJ7yE+VnPO9YcZnlelbevYEZXPo7
+         yrdDJtdSI6k9GbaZnh5srU52E/iE0TtMWIAEHYAMoF/YB8B8dsr3WZ7NXQvlPAhus0VT
+         huqb3F5f8SJ5tRwvMyE+e9YrZZc8dRf/KV/+KIu5e9/y01/BETJnod+aOtn8Gml3M30n
+         6Uvg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=XDfO2s8k;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=FAJuawDA;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=XDfO2s8k;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=FAJuawDA;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,84 +58,121 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 21/37] x86/mm/pae: Populate valid user PGD entries
-Date: Mon, 23 Apr 2018 17:47:24 +0200
-Message-Id: <1524498460-25530-22-git-send-email-joro@8bytes.org>
+Subject: [PATCH 14/37] x86/entry/32: Add PTI cr3 switches to NMI handler code
+Date: Mon, 23 Apr 2018 17:47:17 +0200
+Message-Id: <1524498460-25530-15-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552512896556873?=
-X-GMAIL-MSGID: =?utf-8?q?1598552512896556873?=
+X-GMAIL-THRID: =?utf-8?q?1598552510843022690?=
+X-GMAIL-MSGID: =?utf-8?q?1598552510843022690?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Generic page-table code populates all non-leaf entries with
-_KERNPG_TABLE bits set. This is fine for all paging modes
-except PAE.
-
-In PAE mode only a subset of the bits is allowed to be set.
-Make sure we only set allowed bits by masking out the
-reserved bits.
+The NMI handler is special, as it needs to leave with the
+same cr3 as it was entered with. We need to do this because
+we could enter the NMI handler from kernel code with
+user-cr3 already loaded.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_types.h | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ arch/x86/entry/entry_32.S | 41 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 35 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index 1e5a406..65f2dbaf 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -50,6 +50,7 @@
- #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
- #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
- #define _PAGE_SOFTW2	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW2)
-+#define _PAGE_SOFTW3	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW3)
- #define _PAGE_PAT	(_AT(pteval_t, 1) << _PAGE_BIT_PAT)
- #define _PAGE_PAT_LARGE (_AT(pteval_t, 1) << _PAGE_BIT_PAT_LARGE)
- #define _PAGE_SPECIAL	(_AT(pteval_t, 1) << _PAGE_BIT_SPECIAL)
-@@ -267,14 +268,37 @@ typedef struct pgprot { pgprotval_t pgprot; } pgprot_t;
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index b2b0ecb..f47e535 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -77,6 +77,8 @@
+ #endif
+ .endm
  
- typedef struct { pgdval_t pgd; } pgd_t;
++#define PTI_SWITCH_MASK         (1 << PAGE_SHIFT)
++
+ /*
+  * User gs save/restore
+  *
+@@ -213,8 +215,19 @@
  
-+#ifdef CONFIG_X86_PAE
-+
-+/*
-+ * PHYSICAL_PAGE_MASK might be non-constant when SME is compiled in, so we can't
-+ * use it here.
-+ */
-+
-+#define PGD_PAE_PAGE_MASK	((signed long)PAGE_MASK)
-+#define PGD_PAE_PHYS_MASK	(((1ULL << __PHYSICAL_MASK_SHIFT)-1) & PGD_PAE_PAGE_MASK)
-+
-+/*
-+ * PAE allows Base Address, P, PWT, PCD and AVL bits to be set in PGD entries.
-+ * All other bits are Reserved MBZ
-+ */
-+#define PGD_ALLOWED_BITS	(PGD_PAE_PHYS_MASK | _PAGE_PRESENT | \
-+				 _PAGE_PWT | _PAGE_PCD | \
-+				 _PAGE_SOFTW1 | _PAGE_SOFTW2 | _PAGE_SOFTW3 )
-+
-+#else
-+/* No need to mask any bits for !PAE */
-+#define PGD_ALLOWED_BITS	(~0ULL)
-+#endif
-+
- static inline pgd_t native_make_pgd(pgdval_t val)
- {
--	return (pgd_t) { val };
-+	return (pgd_t) { val & PGD_ALLOWED_BITS };
- }
+ .endm
  
- static inline pgdval_t native_pgd_val(pgd_t pgd)
- {
--	return pgd.pgd;
-+	return pgd.pgd & PGD_ALLOWED_BITS;
- }
+-.macro SAVE_ALL_NMI
++.macro SAVE_ALL_NMI cr3_reg:req
+ 	SAVE_ALL
++
++	/*
++	 * Now switch the CR3 when PTI is enabled.
++	 *
++	 * We can enter with either user or kernel cr3, the code will
++	 * store the old cr3 in \cr3_reg and switches to the kernel cr3
++	 * if necessary.
++	 */
++	SWITCH_TO_KERNEL_CR3 scratch_reg=\cr3_reg
++
++.Lend_\@:
+ .endm
+ /*
+  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+@@ -262,7 +275,23 @@
+ 	POP_GS_EX
+ .endm
  
- static inline pgdval_t pgd_flags(pgd_t pgd)
+-.macro RESTORE_ALL_NMI pop=0
++.macro RESTORE_ALL_NMI cr3_reg:req pop=0
++	/*
++	 * Now switch the CR3 when PTI is enabled.
++	 *
++	 * We enter with kernel cr3 and switch the cr3 to the value
++	 * stored on \cr3_reg, which is either a user or a kernel cr3.
++	 */
++	ALTERNATIVE "jmp .Lswitched_\@", "", X86_FEATURE_PTI
++
++	testl	$PTI_SWITCH_MASK, \cr3_reg
++	jz	.Lswitched_\@
++
++	/* User cr3 in \cr3_reg - write it to hardware cr3 */
++	movl	\cr3_reg, %cr3
++
++.Lswitched_\@:
++
+ 	RESTORE_REGS pop=\pop
+ .endm
+ 
+@@ -1333,7 +1362,7 @@ ENTRY(nmi)
+ #endif
+ 
+ 	pushl	%eax				# pt_regs->orig_ax
+-	SAVE_ALL_NMI
++	SAVE_ALL_NMI cr3_reg=%edi
+ 	ENCODE_FRAME_POINTER
+ 	xorl	%edx, %edx			# zero error code
+ 	movl	%esp, %eax			# pt_regs pointer
+@@ -1361,7 +1390,7 @@ ENTRY(nmi)
+ 
+ .Lnmi_return:
+ 	CHECK_AND_APPLY_ESPFIX
+-	RESTORE_ALL_NMI pop=4
++	RESTORE_ALL_NMI cr3_reg=%edi pop=4
+ 	jmp	.Lirq_return
+ 
+ #ifdef CONFIG_X86_ESPFIX32
+@@ -1377,12 +1406,12 @@ ENTRY(nmi)
+ 	pushl	16(%esp)
+ 	.endr
+ 	pushl	%eax
+-	SAVE_ALL_NMI
++	SAVE_ALL_NMI cr3_reg=%edi
+ 	ENCODE_FRAME_POINTER
+ 	FIXUP_ESPFIX_STACK			# %eax == %esp
+ 	xorl	%edx, %edx			# zero error code
+ 	call	do_nmi
+-	RESTORE_ALL_NMI
++	RESTORE_ALL_NMI cr3_reg=%edi
+ 	lss	12+4(%esp), %esp		# back to espfix stack
+ 	jmp	.Lirq_return
+ #endif
 -- 
 2.7.4
