@@ -1,45 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755549AbeDWONx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:13:53 -0400
-Received: from mail-ot0-f180.google.com ([74.125.82.180]:37126 "EHLO
-        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755495AbeDWOLF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:11:05 -0400
-X-Google-Smtp-Source: AIpwx49GThsVtz2QcfLGLuPJsS4V6FPC23xxNVrjtSQxRtD9jM+D15f58lmzT9fPCrmi66SuVKnCZJi7qwcarsTXCpM=
+        id S1755483AbeDWOQg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:16:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37446 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755184AbeDWOQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 10:16:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2849B217A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 23 Apr 2018 11:16:29 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 3/9] perf stat: Keep the / modifier separator in fallback
+Message-ID: <20180423141629.GB30324@kernel.org>
+References: <20180423090823.32309-1-jolsa@kernel.org>
+ <20180423090823.32309-4-jolsa@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180419110056.10342-2-rui.silva@linaro.org>
-References: <20180419110056.10342-1-rui.silva@linaro.org> <20180419110056.10342-2-rui.silva@linaro.org>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 23 Apr 2018 11:11:03 -0300
-Message-ID: <CAOMZO5A3+WMu+U5STP-z3qdXnUQN2yTJne2OV9-SrEs70JJyDA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] media: ov2680: dt: Add bindings for OV2680
-To: Rui Miguel Silva <rui.silva@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180423090823.32309-4-jolsa@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rui,
+Em Mon, Apr 23, 2018 at 11:08:17AM +0200, Jiri Olsa escreveu:
+> The perf stat fallback for EACCES error sets exclude_kernel
+> for event and repeats the open. In addition, it also changes
+> the name of the event to reflect that change by adding the
+> 'u' modifier.
+> 
+> But it does not take into account the '/' separator, so the
+> event name can end up mangled, like:
+> (note the '/:' characters)
+> 
+>   $ perf stat -e cpu/cpu-cycles/ kill
+>   ...
+>              386,832      cpu/cpu-cycles/:u
+> 
+> Adding the code to check on the '/' separatos and set
+> following event name:
+> 
+>   $ perf stat -e cpu/cpu-cycles/ kill
+>   ...
+>              388,548      cpu/cpu-cycles/u
 
-On Thu, Apr 19, 2018 at 8:00 AM, Rui Miguel Silva <rui.silva@linaro.org> wrote:
+Thanks, tested, reproduced and applied to perf/urgent
 
-> +Optional Properties:
-> +- powerdown-gpios: reference to the GPIO connected to the powerdown pin,
-> +                    if any. This is an active high signal to the OV2680.
-
-I looked at the OV2680 datasheet and I see a pin called XSHUTDN, which has
-the following description:
-
-XSHUTDN: reset and power down (active low with internal pull down resistor)
-
-So it should be active low, not active high.
+- Arnaldo
