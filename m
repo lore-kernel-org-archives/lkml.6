@@ -1,90 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751414AbeDWFBd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 01:01:33 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:36697 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750756AbeDWFBb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 01:01:31 -0400
-X-Google-Smtp-Source: AIpwx48xBaOsbNiu7JXaPUK8GyU4zXboFMqQDdeLaq8qWcJohCyX9vId3+xjmsZJgWdnyVPoLfXy9KDICVEYKZKHke8=
+        id S1751392AbeDWFSm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 01:18:42 -0400
+Received: from mga14.intel.com ([192.55.52.115]:14688 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750786AbeDWFSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 01:18:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,316,1520924400";
+   d="scan'208";a="222540900"
+Date: Mon, 23 Apr 2018 10:53:17 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Radhey Shyam Pandey <radheys@xilinx.com>
+Cc: "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "'RADHEYCS@GMAIL.COM'" <RADHEYCS@GMAIL.COM>
+Subject: Re: [RFC 4/6] dmaengine: xilinx_dma: Freeup active list based on
+ descriptor completion bit
+Message-ID: <20180423052317.GZ6014@localhost>
+References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
+ <1522665546-10035-5-git-send-email-radheys@xilinx.com>
+ <20180411091102.GZ6014@localhost>
+ <BN6PR02MB3282D60BCF6A4B40BCC7A5B8C7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <CADYJ94eQyN7dtnnVN_AF0VixaJh3x52068xYtq54hsS4BpdwFg@mail.gmail.com>
-References: <CGME20180406045340epcas1p1ae6416dc25823212303c9109d125c018@epcas1p1.samsung.com>
- <1522990390-30804-1-git-send-email-chandan.vn@samsung.com>
- <ff125919-66f7-6658-e9b1-817188c1bdd9@redhat.com> <CADYJ94eQyN7dtnnVN_AF0VixaJh3x52068xYtq54hsS4BpdwFg@mail.gmail.com>
-From: Chandan Vn <vn.chandan@gmail.com>
-Date: Mon, 23 Apr 2018 10:30:49 +0530
-Message-ID: <CADYJ94e=gFhSF+tQ-1f0Dy61urHjG=UNoWYPq7bsT+-VTR1nDw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arm64: To remove initrd reserved area entry from memblock
-To: Laura Abbott <labbott@redhat.com>
-Cc: CHANDAN VN <chandan.vn@samsung.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, Takahiro Akashi <takahiro.akashi@linaro.org>,
-        james.morse@arm.com, robin.murphy@arm.com, steve.capper@arm.com,
-        kristina.martsenko@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, cpgs@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN6PR02MB3282D60BCF6A4B40BCC7A5B8C7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Apr 17, 2018 at 12:28:52PM +0000, Radhey Shyam Pandey wrote:
 
-May I know when this patch would be taken for merging?
+> > > +		if ((seg->hw.status & XILINX_DMA_COMP_MASK) ||
+> > > +			(!chan->xdev->has_axieth_connected)) {
+> > 
+> > why the second case ? That is not expalined in log?
+> In the current implementation, delay timeout is enabled only for
+> has_axieth_connected usecase. For ethernet, we need real-time processing
+> while still having benefit of interrupt coalescing. Example: In RX interrupt
+> coalescing is set to 0x3.  Without delay timeout, DMA engine will wait for
+> all frames and then issue completion interrupt. In ethernet usecase, this
+> can introduce huge latencies. Delay timeout interrupt will trigger if delay
+> time period has expired and we can notify dma client with received frames.
+> 
+> The second case is added to keep the previous implementation as is.(i.e when
+> Delay timeout interrupt is not enabled - move all active desc to done list). 
+> Sure I will add a description for it in the commit log.
 
+That should help, it didn't seem to have anything to do with log or other
+changes, please keep in mind again that changelog should describe the change
+and help ppl review...
 
-On Sat, Apr 7, 2018 at 9:58 AM, Chandan Vn <vn.chandan@gmail.com> wrote:
-> On Fri, Apr 6, 2018 at 9:47 PM, Laura Abbott <labbott@redhat.com> wrote:
->> Does this have an impact on anything besides accounting
->> in memblock?
->
-> Yes, the impact is only on accounting or debugging.
->
-> We were trying to reduce the reserved memory by removing initrd reserved area.
-> After disabling "keepinitrd", only way to check if it was removed or
-> not was to check
-> /sys/kernel/debug/memblock/reserved. We found the entry to be present
-> irrespective of
-> "keepinitrd" being enabled/disabled.
-> I hope that with the fix others wont face similar issue. Also we did
-> not find any such problem
-> with ARM32 ARCHITECTURE.
->
-> On Fri, Apr 6, 2018 at 9:47 PM, Laura Abbott <labbott@redhat.com> wrote:
->> On 04/05/2018 09:53 PM, CHANDAN VN wrote:
->>>
->>> INITRD reserved area entry is not removed from memblock
->>> even though initrd reserved area is freed. After freeing
->>> the memory it is released from memblock. The same can be
->>> checked from /sys/kernel/debug/memblock/reserved.
->>>
->>> The patch makes sure that the initrd entry is removed from
->>> memblock when keepinitrd is not enabled.
->>>
->>
->> Does this have an impact on anything besides accounting
->> in memblock?
->>
->>
->>> Signed-off-by: CHANDAN VN <chandan.vn@samsung.com>
->>> ---
->>>   arch/arm64/mm/init.c | 4 +++-
->>>   1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->>> index 9f3c47a..1b18b47 100644
->>> --- a/arch/arm64/mm/init.c
->>> +++ b/arch/arm64/mm/init.c
->>> @@ -646,8 +646,10 @@ void free_initmem(void)
->>>     void __init free_initrd_mem(unsigned long start, unsigned long end)
->>>   {
->>> -       if (!keep_initrd)
->>> +       if (!keep_initrd) {
->>>                 free_reserved_area((void *)start, (void *)end, 0,
->>> "initrd");
->>> +               memblock_free(__virt_to_phys(start), end - start);
->>> +       }
->>>   }
->>>     static int __init keepinitrd_setup(char *__unused)
->>>
->>
+-- 
+~Vinod
