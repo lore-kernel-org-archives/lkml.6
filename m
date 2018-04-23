@@ -1,104 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755218AbeDWMnZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:43:25 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36246 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754857AbeDWMnW (ORCPT
+        id S1755226AbeDWMnr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:43:47 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37311 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754942AbeDWMnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:43:22 -0400
-Subject: Re: [RESEND PATCH v1 2/2] trace: events: block: Add tag in block
- trace events
-To: "Bean Huo (beanhuo)" <beanhuo@micron.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhad.com" <mingo@redhad.com>,
-        "Bart.VanAssche@sandisk.com" <Bart.VanAssche@sandisk.com>,
-        "rajatja@google.com" <rajatja@google.com>
-References: <64d6073b28b140cda3e5870a54e0a7bc@SIWEX5A.sing.micron.com>
-From: Steffen Maier <maier@linux.ibm.com>
-Date: Mon, 23 Apr 2018 14:43:13 +0200
+        Mon, 23 Apr 2018 08:43:45 -0400
+X-Google-Smtp-Source: AIpwx486Ayq2LBRvLiLL7bAcEeJ+zfi3o1u54zjDAlOD+tf/C1Y+nqogwI7ffRnSV81X4Wql5l/nIA==
+Subject: Re: [PATCH 0/7] Level-triggered MSI support
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel@vger.kernel.org
+References: <20180423103440.26592-1-marc.zyngier@arm.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <5d7e8fa9-e1d2-acc2-4137-443b5a82b488@linaro.org>
+Date: Mon, 23 Apr 2018 13:43:37 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <64d6073b28b140cda3e5870a54e0a7bc@SIWEX5A.sing.micron.com>
+In-Reply-To: <20180423103440.26592-1-marc.zyngier@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18042312-0008-0000-0000-000004EE461B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042312-0009-0000-0000-00001E826921
-Message-Id: <f28ab517-9172-e585-718c-8a54adbfc3bc@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804230132
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 04/16/2018 04:33 PM, Bean Huo (beanhuo) wrote:
-> Print the request tag along with other information in block trace events
-> when tracing request , and unplug type (Sync / Async).
+
+On 23/04/18 11:34, Marc Zyngier wrote:
+> This series is a first shot at teaching the kernel about the oxymoron
+> expressed in $SUBJECT. Over the past couple of years, we've seen some
+> SoCs coming up with ways of signalling level interrupts using a new
+> flavor of MSIs, where the MSI controller uses two distinct messages:
+> one that raises a virtual line, and one that lowers it. The target MSI
+> controller is in charge of maintaining the state of the line.
 > 
-> Signed-off-by: Bean Huo <beanhuo@micron.com>
-> ---
->   include/trace/events/block.h | 36 +++++++++++++++++++++++++-----------
->   1 file changed, 25 insertions(+), 11 deletions(-)
+> This allows for a much simplified HW signal routing (no need to have
+> hundreds of discrete lines to signal level interrupts if you already
+> have a memory bus), but results in a departure from the current idea
+> the kernel has of MSIs.
 > 
-> diff --git a/include/trace/events/block.h b/include/trace/events/block.h
-> index 81b43f5..f8c0b9e 100644
-> --- a/include/trace/events/block.h
-> +++ b/include/trace/events/block.h
-
-> @@ -478,15 +486,18 @@ DECLARE_EVENT_CLASS(block_unplug,
+> This series takes a minimal approach to the problem, which is to allow
+> MSI controllers to use not only one, but up to two messages at a
+> time. This is controlled by a flag exposed at MSI irq domain creation,
+> and is only supported with platform MSI.
 > 
->   	TP_STRUCT__entry(
->   		__field( int,		nr_rq			)
-> +		__field( bool,		explicit		)
->   		__array( char,		comm,	TASK_COMM_LEN	)
->   	),
+> The rest of the series repaints the Marvell ICU/GICP drivers which
+> already make use of this feature with a side-channel, and adds support
+> for the same feature in GICv3. A side effect of the last GICv3 patch
+> is that you can also use SPIs to signal PCI MSIs. This is a last
+> resort measure for SoCs where the ITS is unusable for unspeakable
+> reasons.
 > 
->   	TP_fast_assign(
->   		__entry->nr_rq = depth;
-> +		__entry->explicit = explicit;
->   		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
->   	),
+> Marc Zyngier (7):
+>    genirq/msi: Allow level-triggered MSIs to be exposed by MSI providers
+>    genirq/msi: Limit level-triggered MSI to platform devices
+>    irqchip/mvebu-gicp: Use level-triggered MSIs between ICU and GICP
+>    dma-iommu: Fix compilation when !CONFIG_IOMMU_DMA
+>    irqchip/gic-v3: Add support for Message Based Interrupts as an MSI
+>      controller
+>    irqchip/gic-v3: Add PCI/MSI support to the GICv3 MBI sub-driver
+>    dt-bindings/gic-v3: Add documentation for MBI support
 > 
-> -	TP_printk("[%s] %d", __entry->comm, __entry->nr_rq)
-> +	TP_printk("[%s] %d %s", __entry->comm, __entry->nr_rq,
-> +		   __entry->explicit ? "Sync" : "Async")
->   );
-> 
->   /**
 
-This entire hunk does not seem related to this patch description.
-Also, I'm not sure trace-cmd and perf et al. could format it accordingly.
-See also my patch for this same functionality:
-https://www.spinics.net/lists/linux-block/msg24691.html
-("[PATCH v2 1/2] tracing/events: block: track and print if unplug was 
-explicit or schedule")
+Thanks for the patches,
+
+Am able to get PCIe MSI interrupts on Qualcomm DragonBoard DB820c with 
+this patchset.
+
+root@linaro-alip:~# cat /proc/interrupts  | grep -i MSI
+  44:          0          0          0          0     GICv3 437 Edge 
+  qcom-pcie-msi
+  45:          0          0          0          0     GICv3 445 Edge 
+  qcom-pcie-msi
+  46:          0          0          0          0     GICv3 453 Edge 
+  qcom-pcie-msi
+  80:          0          0          0          0       MSI 134217728 
+Edge      PCIe PME, aerdrv
+114:          0          0          0          0       MSI 268435456 
+Edge      PCIe PME, aerdrv
+115:          0          0          0          0       MSI 134742016 
+Edge      ahci[0001:01:00.0]
+197:          0          0          0          0       MSI   0 Edge 
+PCIe PME, aerdrv
+199:       2108          0          0          0       MSI 524288 Edge 
+    ath10k_pci
+202:        295          0          0          0       MSI 268959744 
+Edge      eth0
 
 
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
--- 
-Mit freundlichen Grüßen / Kind regards
-Steffen Maier
-
-Linux on z Systems Development
-
-IBM Deutschland Research & Development GmbH
-Vorsitzende des Aufsichtsrats: Martina Koederitz
-Geschaeftsfuehrung: Dirk Wittkopp
-Sitz der Gesellschaft: Boeblingen
-Registergericht: Amtsgericht Stuttgart, HRB 243294
+--srini
