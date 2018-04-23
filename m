@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753923AbeDWBP1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 21:15:27 -0400
-Received: from mga01.intel.com ([192.55.52.88]:23614 "EHLO mga01.intel.com"
+        id S1753870AbeDWBXS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 21:23:18 -0400
+Received: from mga04.intel.com ([192.55.52.120]:16065 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753824AbeDWBPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 21:15:19 -0400
+        id S1753755AbeDWBXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Apr 2018 21:23:17 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,315,1520924400";
-   d="xz'?yaml'?scan'208";a="39583002"
-Date: Mon, 23 Apr 2018 09:12:47 +0800
+   d="xz'?yaml'?scan'208";a="39584118"
+Date: Mon, 23 Apr 2018 09:20:45 +0800
 From: kernel test robot <xiaolong.ye@intel.com>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: linux-kernel@vger.kernel.org, lkp@01.org
-Subject: [lkp-robot] [mm/memory_hotplug]  b77eab7079:
- kernel_selftests.memory-hotplug..fail
-Message-ID: <20180423011247.GK5563@yexl-desktop>
+To: Qu Wenruo <wqu@suse.com>
+Cc: David Sterba <dsterba@suse.com>, LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
+Subject: [lkp-robot] [btrfs]  7eafb77890:
+ stderr.fs_mark:fsync_failed_Input/output_error
+Message-ID: <20180423012045.GL5563@yexl-desktop>
 Reply-To: kernel test robot <xiaolong.ye@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ChQOR20MqfxkMJg9"
+Content-Type: multipart/mixed; boundary="iJXiJc/TAIT2rh2r"
 Content-Disposition: inline
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -29,59 +30,147 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ChQOR20MqfxkMJg9
+--iJXiJc/TAIT2rh2r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
 FYI, we noticed the following commit (built with gcc-7):
 
-commit: b77eab7079d9e477489d2416cceda05d3c1cf21f ("mm/memory_hotplug: optimize probe routine")
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+commit: 7eafb77890ff459863e3bc772465cb641c14f754 ("btrfs: Do super block ve=
+rification before writing it to disk")
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 
-in testcase: kernel_selftests
+in testcase: fsmark
 with following parameters:
 
-	group: kselftests-02
+	iterations: 1x
+	nr_threads: 1t
+	disk: 1BRD_32G
+	fs: btrfs
+	fs2: nfsv4
+	filesize: 4K
+	test_size: 4G
+	sync_method: fsyncBeforeClose
+	nr_files_per_directory: 1fpd
+	cpufreq_governor: performance
 
-test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
-test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
+test-description: The fsmark is a file system benchmark to test synchronous=
+ write workloads, for example, mail servers workload.
+test-url: https://sourceforge.net/projects/fsmark/
 
 
-on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
+on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with =
+64G memory
 
-caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+caused below changes (please refer to attached dmesg/kmsg for entire log/ba=
+cktrace):
 
 
-2018-04-14 05:44:58 make run_tests -C memory-hotplug
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/memory-hotplug'
-Test scope: 2% hotplug memory
-	 online all hot-pluggable memory in offline state:
-		 SKIPPED - no hot-pluggable memory in offline state
-	 offline 2% hot-pluggable memory in online state
-	 trying to offline 1 out of 28 memory block(s):
-online->offline memory10
-	 online all hot-pluggable memory in offline state:
-offline->online memory10
-./mem-on-off-test.sh: line 70: echo: write error: Device or resource busy
-online_memory_expect_success 10: unexpected fail
-	 Test with memory notifier error injection
-./mem-on-off-test.sh: line 70: echo: write error: Device or resource busy
-online_memory_expect_success 10: unexpected fail
-selftests: memory-hotplug [FAIL]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/memory-hotplug'
+
+[  128.496659] ------------[ cut here ]------------
+[  128.502439] BTRFS: Transaction aborted (error -117)
+[  128.50=008652] WARNING: U: 21 PID: 1581 at fs/btrfs/tree-log.c:3101 btrf=
+s_sync_log+0x9c4/0xbe0 [btrfs]
+[  128.521041] Modules linked in: rpcsec_gss_krb5 nfsv4 dns_resolver nfsd a=
+uth_rpcgss dm_mod brd btrfs xor zstd_decompress zstd_compress xxhash raid6_=
+pq sd_mod sg intel_rapl sb_edac x86_pkg_temp_thermal intel_powerclamp coret=
+emp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel mgag=
+200 ghash_clmulni_intel snd_pcm ttm snd_timer pcbc drm_kms_helper ipmi_si m=
+xm_wmi snd syscopyarea aesni_intel ipmi_devintf sysfillrect soundcore crypt=
+o_simd sysimgblt ahci fb_sys_fops glue_helper cryptd libahci drm ipmi_msgha=
+ndler pcspkr libata shpchp wmi acpi_power_meter acpi_pad ip_tables
+[  128.581706] CPU: 21 PID: 1581 Comm: nfsd Not tainted 4.16.0-rc7-00174-g7=
+eafb77 #1
+[  128.590723] Hardware name: Intel Corporation S2600KPR/S2600KPR, BIOS SE5=
+C610.86B.01.01.0019.101220160604 10/12/2016
+[  128.602982] RIP: 0010:btrfs_sync_log+0x9c4/0xbe0 [btrfs]
+[  128.609603] RSP: 0018:ffffc90008903ad0 EFLAGS: 00010282
+[  128.616053] RAX: 0000000000000027 RBX: ffff881037f0c800 RCX: 00000000000=
+00000
+[  128.624712] RDX: ffff88085f75ed00 RSI: ffff88085f756918 RDI: ffff88085f7=
+56918
+[  128.633366] RBP: ffffc90008903bb0 R08: 0000000000000807 R09: 0000000000a=
+aaaaa
+[  128.641948] R10: ffffc90008903a00 R11: ffff88085a4c2ec0 R12: ffff8810749=
+34000
+[  128.650601] R13: 00000000ffffff8b R14: ffff88107a630000 R15: ffff8810749=
+33800
+[  128.659213] FS:  0000000000000000(0000) GS:ffff88085f740000(0000) knlGS:=
+0000000000000000
+[  128.668879] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  128.675904] CR2: 00007f4a6a747660 CR3: 000000107f20a001 CR4: 00000000003=
+606e0
+[  128.684570] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[  128.693185] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[  128.701795] Call Trace:
+[  128.705166]  ? btrfs_sync_file+0x2f3/0x3f0 [btrfs]
+[  128.711151]  btrfs_sync_file+0x2f3/0x3f0 [btrfs]
+[  128.716910]  btrfs_file_write_iter+0x440/0x550 [btrfs]
+[  128.723284]  do_iter_readv_writev+0x116/0x170
+[  128.728753]  do_iter_write+0x80/0x190
+[  128.733487]  nfsd_vfs_write+0xaf/0x370 [nfsd]
+[  128.738885]  nfsd4_write+0x179/0x1c0 [nfsd]
+[  128.744121]  nfsd4_proc_compound+0x3f1/0x640 [nfsd]
+[  128.750123]  nfsd_dispatch+0xf5/0x230 [nfsd]
+[  128.755499]  svc_process_common+0x496/0x680
+[  128.760732]  ? nfsd_destroy+0x60/0x60 [nfsd]
+[  128.765996]  svc_process+0xed/0x1b0
+[  128.770499]  nfsd+0xf1/0x160 [nfsd]
+[  128.774899]  kthread+0x11e/0x140
+[  128.778988]  ? kthread_associate_blkcg+0xb0/0xb0
+[  128.784679]  ret_from_fork+0x35/0x40
+[  128.789187] Code: 00 00 48 8b 42 50 f0 48 0f ba a8 e8 cd 00 00 02 72 1b =
+41 83 fd fb 0f 84 6f 01 00 00 44 89 ee 48 c7 c7 40 ec 76 a0 e8 3c f1 95 e0 =
+<0f> 0b 48 8b bd 60 ff ff ff 44 89 e9 ba 1d 0c 00 00 48 c7 c6 20=20
+[  128.811411] ---[ end trace 6c998d6c6547e8f7 ]---
+[  128.817132] BTRFS: error (device ram0) in btrfs_sync_log:3101: errno=3D-=
+117 unknown
+[  128.826014] BTRFS info (device ram0): forced readonly
+[  128.835886] fs_mark: fsync failed Input/output error
+
+2018-04-19 17:23:24 fs_mark -d /nfs/ram0/1 -D 1000000 -N 1 -n 1000000 -L 1 =
+-S 1 -s 4096
+
+#  fs_mark  -d  /nfs/ram0/1  -D  1000000  -N  1  -n  1000000  -L  1  -S  1 =
+ -s  4096=20
+#	Version 3.3, 1 thread(s) starting at Thu Apr 19 17:23:25 2018
+#	Sync method: INBAND FSYNC: fsync() per file in write loop.
+#	Directories:  Round Robin between directories across 1000000 subdirectori=
+es with 1 files per subdirectory.
+#	File names: 40 bytes long, (16 initial bytes of time stamp with 24 random=
+ bytes at end of name)
+#	Files info: size 4096 bytes, written with an IO size of 16384 bytes per w=
+rite
+#	App overhead is time in microseconds spent in the test not doing file wri=
+ting related system calls.
+
+FSUse%        Count         Size    Files/sec     App Overhead
+
+
+
+To reproduce:
+
+        git clone https://github.com/intel/lkp-tests.git
+        cd lkp-tests
+        bin/lkp install job.yaml  # job file is attached in this email
+        bin/lkp run     job.yaml
+
 
 
 Thanks,
 Xiaolong
 
---ChQOR20MqfxkMJg9
+--iJXiJc/TAIT2rh2r
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="config-4.16.0-07318-gb77eab7"
+Content-Disposition: attachment; filename="config-4.16.0-rc7-00174-g7eafb77"
 
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86_64 4.16.0 Kernel Configuration
+# Linux/x86_64 4.16.0-rc7 Kernel Configuration
 #
 CONFIG_64BIT=y
 CONFIG_X86_64=y
@@ -196,6 +285,7 @@ CONFIG_NO_HZ_COMMON=y
 # CONFIG_HZ_PERIODIC is not set
 # CONFIG_NO_HZ_IDLE is not set
 CONFIG_NO_HZ_FULL=y
+# CONFIG_NO_HZ_FULL_ALL is not set
 CONFIG_NO_HZ=y
 CONFIG_HIGH_RES_TIMERS=y
 
@@ -355,6 +445,7 @@ CONFIG_JUMP_LABEL=y
 CONFIG_OPTPROBES=y
 CONFIG_KPROBES_ON_FTRACE=y
 CONFIG_UPROBES=y
+# CONFIG_HAVE_64BIT_ALIGNED_ACCESS is not set
 CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS=y
 CONFIG_ARCH_USE_BUILTIN_BSWAP=y
 CONFIG_KRETPROBES=y
@@ -400,6 +491,7 @@ CONFIG_CC_STACKPROTECTOR_NONE=y
 # CONFIG_CC_STACKPROTECTOR_REGULAR is not set
 # CONFIG_CC_STACKPROTECTOR_STRONG is not set
 # CONFIG_CC_STACKPROTECTOR_AUTO is not set
+CONFIG_THIN_ARCHIVES=y
 CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES=y
 CONFIG_HAVE_CONTEXT_TRACKING=y
 CONFIG_HAVE_VIRT_CPU_ACCOUNTING_GEN=y
@@ -420,14 +512,20 @@ CONFIG_ARCH_MMAP_RND_COMPAT_BITS=8
 CONFIG_HAVE_ARCH_COMPAT_MMAP_BASES=y
 CONFIG_HAVE_COPY_THREAD_TLS=y
 CONFIG_HAVE_STACK_VALIDATION=y
+# CONFIG_HAVE_ARCH_HASH is not set
+# CONFIG_ISA_BUS_API is not set
 CONFIG_OLD_SIGSUSPEND3=y
 CONFIG_COMPAT_OLD_SIGACTION=y
+# CONFIG_CPU_NO_EFFICIENT_FFS is not set
 CONFIG_HAVE_ARCH_VMAP_STACK=y
 CONFIG_VMAP_STACK=y
+# CONFIG_ARCH_OPTIONAL_KERNEL_RWX is not set
+# CONFIG_ARCH_OPTIONAL_KERNEL_RWX_DEFAULT is not set
 CONFIG_ARCH_HAS_STRICT_KERNEL_RWX=y
 CONFIG_STRICT_KERNEL_RWX=y
 CONFIG_ARCH_HAS_STRICT_MODULE_RWX=y
 CONFIG_STRICT_MODULE_RWX=y
+CONFIG_ARCH_HAS_PHYS_TO_DMA=y
 CONFIG_ARCH_HAS_REFCOUNT=y
 # CONFIG_REFCOUNT_FULL is not set
 
@@ -436,6 +534,7 @@ CONFIG_ARCH_HAS_REFCOUNT=y
 #
 # CONFIG_GCOV_KERNEL is not set
 CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
+# CONFIG_HAVE_GENERIC_DMA_COHERENT is not set
 CONFIG_RT_MUTEXES=y
 CONFIG_BASE_SMALL=0
 CONFIG_MODULES=y
@@ -527,6 +626,7 @@ CONFIG_FREEZER=y
 CONFIG_ZONE_DMA=y
 CONFIG_SMP=y
 CONFIG_X86_FEATURE_NAMES=y
+CONFIG_X86_FAST_FEATURE_TESTS=y
 CONFIG_X86_X2APIC=y
 CONFIG_X86_MPPARSE=y
 # CONFIG_GOLDFISH is not set
@@ -618,6 +718,7 @@ CONFIG_PERF_EVENTS_INTEL_UNCORE=y
 CONFIG_PERF_EVENTS_INTEL_RAPL=y
 CONFIG_PERF_EVENTS_INTEL_CSTATE=y
 # CONFIG_PERF_EVENTS_AMD_POWER is not set
+# CONFIG_VM86 is not set
 CONFIG_X86_16BIT=y
 CONFIG_X86_ESPFIX64=y
 CONFIG_X86_VSYSCALL_EMULATION=y
@@ -804,7 +905,6 @@ CONFIG_ACPI_BATTERY=y
 CONFIG_ACPI_BUTTON=y
 CONFIG_ACPI_VIDEO=m
 CONFIG_ACPI_FAN=y
-# CONFIG_ACPI_TAD is not set
 CONFIG_ACPI_DOCK=y
 CONFIG_ACPI_CPU_FREQ_PSS=y
 CONFIG_ACPI_PROCESSOR_CSTATE=y
@@ -816,6 +916,7 @@ CONFIG_ACPI_HOTPLUG_CPU=y
 CONFIG_ACPI_PROCESSOR_AGGREGATOR=m
 CONFIG_ACPI_THERMAL=y
 CONFIG_ACPI_NUMA=y
+# CONFIG_ACPI_CUSTOM_DSDT is not set
 CONFIG_ARCH_HAS_ACPI_TABLE_UPGRADE=y
 CONFIG_ACPI_TABLE_UPGRADE=y
 CONFIG_ACPI_DEBUG=y
@@ -888,6 +989,7 @@ CONFIG_X86_SPEEDSTEP_LIB=m
 CONFIG_CPU_IDLE=y
 # CONFIG_CPU_IDLE_GOV_LADDER is not set
 CONFIG_CPU_IDLE_GOV_MENU=y
+# CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED is not set
 CONFIG_INTEL_IDLE=y
 
 #
@@ -898,7 +1000,6 @@ CONFIG_PCI_DIRECT=y
 CONFIG_PCI_MMCONFIG=y
 CONFIG_PCI_XEN=y
 CONFIG_PCI_DOMAINS=y
-CONFIG_MMCONF_FAM10H=y
 # CONFIG_PCI_CNB20LE_QUIRK is not set
 CONFIG_PCIEPORTBUS=y
 CONFIG_HOTPLUG_PCI_PCIE=y
@@ -985,6 +1086,7 @@ CONFIG_COMPAT_BINFMT_ELF=y
 CONFIG_ELFCORE=y
 CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS=y
 CONFIG_BINFMT_SCRIPT=y
+# CONFIG_HAVE_AOUT is not set
 CONFIG_BINFMT_MISC=m
 CONFIG_COREDUMP=y
 CONFIG_IA32_EMULATION=y
@@ -1034,7 +1136,6 @@ CONFIG_NET_IPGRE_DEMUX=m
 CONFIG_NET_IP_TUNNEL=m
 CONFIG_NET_IPGRE=m
 CONFIG_NET_IPGRE_BROADCAST=y
-CONFIG_IP_MROUTE_COMMON=y
 CONFIG_IP_MROUTE=y
 CONFIG_IP_MROUTE_MULTIPLE_TABLES=y
 CONFIG_IP_PIMSM_V1=y
@@ -1348,13 +1449,18 @@ CONFIG_IP_VS_PE_SIP=m
 CONFIG_NF_DEFRAG_IPV4=m
 CONFIG_NF_CONNTRACK_IPV4=m
 # CONFIG_NF_SOCKET_IPV4 is not set
-# CONFIG_NF_TABLES_IPV4 is not set
+CONFIG_NF_TABLES_IPV4=m
+CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+# CONFIG_NFT_REJECT_IPV4 is not set
+# CONFIG_NFT_DUP_IPV4 is not set
+# CONFIG_NFT_FIB_IPV4 is not set
 # CONFIG_NF_TABLES_ARP is not set
 CONFIG_NF_DUP_IPV4=m
 # CONFIG_NF_LOG_ARP is not set
 CONFIG_NF_LOG_IPV4=m
 CONFIG_NF_REJECT_IPV4=m
 CONFIG_NF_NAT_IPV4=m
+CONFIG_NFT_CHAIN_NAT_IPV4=m
 CONFIG_NF_NAT_MASQUERADE_IPV4=m
 CONFIG_NF_NAT_SNMP_BASIC=m
 CONFIG_NF_NAT_PROTO_GRE=m
@@ -1388,11 +1494,16 @@ CONFIG_IP_NF_ARP_MANGLE=m
 CONFIG_NF_DEFRAG_IPV6=m
 CONFIG_NF_CONNTRACK_IPV6=m
 # CONFIG_NF_SOCKET_IPV6 is not set
-# CONFIG_NF_TABLES_IPV6 is not set
+CONFIG_NF_TABLES_IPV6=m
+CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+# CONFIG_NFT_REJECT_IPV6 is not set
+# CONFIG_NFT_DUP_IPV6 is not set
+# CONFIG_NFT_FIB_IPV6 is not set
 CONFIG_NF_DUP_IPV6=m
 CONFIG_NF_REJECT_IPV6=m
 CONFIG_NF_LOG_IPV6=m
 CONFIG_NF_NAT_IPV6=m
+CONFIG_NFT_CHAIN_NAT_IPV6=m
 # CONFIG_NF_NAT_MASQUERADE_IPV6 is not set
 CONFIG_IP6_NF_IPTABLES=m
 CONFIG_IP6_NF_MATCH_AH=m
@@ -1413,7 +1524,9 @@ CONFIG_IP6_NF_MANGLE=m
 CONFIG_IP6_NF_RAW=m
 CONFIG_IP6_NF_SECURITY=m
 # CONFIG_IP6_NF_NAT is not set
-# CONFIG_NF_TABLES_BRIDGE is not set
+CONFIG_NF_TABLES_BRIDGE=m
+# CONFIG_NFT_BRIDGE_META is not set
+# CONFIG_NF_LOG_BRIDGE is not set
 CONFIG_BRIDGE_NF_EBTABLES=m
 CONFIG_BRIDGE_EBT_BROUTE=m
 CONFIG_BRIDGE_EBT_T_FILTER=m
@@ -1461,7 +1574,6 @@ CONFIG_INET_SCTP_DIAG=m
 # CONFIG_RDS is not set
 CONFIG_TIPC=m
 CONFIG_TIPC_MEDIA_UDP=y
-CONFIG_TIPC_DIAG=m
 CONFIG_ATM=m
 CONFIG_ATM_CLIP=m
 # CONFIG_ATM_CLIP_NO_ICMP is not set
@@ -1557,7 +1669,6 @@ CONFIG_NET_EMATCH_META=m
 CONFIG_NET_EMATCH_TEXT=m
 # CONFIG_NET_EMATCH_CANID is not set
 CONFIG_NET_EMATCH_IPSET=m
-# CONFIG_NET_EMATCH_IPT is not set
 CONFIG_NET_CLS_ACT=y
 CONFIG_NET_ACT_POLICE=m
 CONFIG_NET_ACT_GACT=m
@@ -1733,6 +1844,7 @@ CONFIG_ALLOW_DEV_COREDUMP=y
 # CONFIG_DEBUG_TEST_DRIVER_REMOVE is not set
 # CONFIG_TEST_ASYNC_DRIVER_PROBE is not set
 CONFIG_SYS_HYPERVISOR=y
+# CONFIG_GENERIC_CPU_DEVICES is not set
 CONFIG_GENERIC_CPU_AUTOPROBE=y
 CONFIG_GENERIC_CPU_VULNERABILITIES=y
 CONFIG_REGMAP=y
@@ -1791,8 +1903,13 @@ CONFIG_MTD_BLOCK=m
 CONFIG_MTD_MAP_BANK_WIDTH_1=y
 CONFIG_MTD_MAP_BANK_WIDTH_2=y
 CONFIG_MTD_MAP_BANK_WIDTH_4=y
+# CONFIG_MTD_MAP_BANK_WIDTH_8 is not set
+# CONFIG_MTD_MAP_BANK_WIDTH_16 is not set
+# CONFIG_MTD_MAP_BANK_WIDTH_32 is not set
 CONFIG_MTD_CFI_I1=y
 CONFIG_MTD_CFI_I2=y
+# CONFIG_MTD_CFI_I4 is not set
+# CONFIG_MTD_CFI_I8 is not set
 # CONFIG_MTD_RAM is not set
 # CONFIG_MTD_ROM is not set
 # CONFIG_MTD_ABSENT is not set
@@ -1841,6 +1958,7 @@ CONFIG_PARPORT_PC=m
 CONFIG_PARPORT_SERIAL=m
 # CONFIG_PARPORT_PC_FIFO is not set
 # CONFIG_PARPORT_PC_SUPERIO is not set
+# CONFIG_PARPORT_GSC is not set
 # CONFIG_PARPORT_AX88796 is not set
 CONFIG_PARPORT_1284=y
 CONFIG_PARPORT_NOT_PC=y
@@ -1861,6 +1979,7 @@ CONFIG_BLK_DEV_PCIESSD_MTIP32XX=m
 # CONFIG_ZRAM is not set
 # CONFIG_BLK_DEV_DAC960 is not set
 # CONFIG_BLK_DEV_UMEM is not set
+# CONFIG_BLK_DEV_COW_COMMON is not set
 CONFIG_BLK_DEV_LOOP=m
 CONFIG_BLK_DEV_LOOP_MIN_COUNT=0
 # CONFIG_BLK_DEV_CRYPTOLOOP is not set
@@ -1921,6 +2040,7 @@ CONFIG_VMWARE_BALLOON=m
 # CONFIG_LATTICE_ECP3_CONFIG is not set
 # CONFIG_SRAM is not set
 # CONFIG_PCI_ENDPOINT_TEST is not set
+# CONFIG_MISC_RTSX is not set
 # CONFIG_C2PORT is not set
 
 #
@@ -1988,6 +2108,10 @@ CONFIG_VMWARE_VMCI=m
 #
 # CONFIG_GENWQE is not set
 # CONFIG_ECHO is not set
+# CONFIG_CXL_BASE is not set
+# CONFIG_CXL_AFU_DRIVER_OPS is not set
+# CONFIG_CXL_LIB is not set
+# CONFIG_OCXL_BASE is not set
 # CONFIG_MISC_RTSX_PCI is not set
 # CONFIG_MISC_RTSX_USB is not set
 CONFIG_HAVE_IDE=y
@@ -2121,6 +2245,7 @@ CONFIG_SCSI_OSD_ULD=m
 CONFIG_SCSI_OSD_DPRINT_SENSE=1
 # CONFIG_SCSI_OSD_DEBUG is not set
 CONFIG_ATA=m
+# CONFIG_ATA_NONSTANDARD is not set
 CONFIG_ATA_VERBOSE_ERROR=y
 CONFIG_ATA_ACPI=y
 # CONFIG_SATA_ZPODD is not set
@@ -2354,6 +2479,8 @@ CONFIG_NET_CADENCE=y
 CONFIG_NET_VENDOR_BROADCOM=y
 CONFIG_B44=m
 CONFIG_B44_PCI_AUTOSELECT=y
+CONFIG_B44_PCICORE_AUTOSELECT=y
+CONFIG_B44_PCI=y
 CONFIG_BNX2=m
 CONFIG_CNIC=m
 CONFIG_TIGON3=y
@@ -2420,7 +2547,6 @@ CONFIG_IXGBEVF=m
 CONFIG_I40E=m
 # CONFIG_I40E_DCB is not set
 # CONFIG_I40EVF is not set
-# CONFIG_ICE is not set
 # CONFIG_FM10K is not set
 # CONFIG_NET_VENDOR_I825XX is not set
 CONFIG_JME=m
@@ -2444,14 +2570,12 @@ CONFIG_MLX4_CORE_GEN2=y
 CONFIG_NET_VENDOR_MICROCHIP=y
 # CONFIG_ENC28J60 is not set
 # CONFIG_ENCX24J600 is not set
-# CONFIG_LAN743X is not set
 CONFIG_NET_VENDOR_MYRI=y
 CONFIG_MYRI10GE=m
 # CONFIG_FEALNX is not set
 # CONFIG_NET_VENDOR_NATSEMI is not set
 CONFIG_NET_VENDOR_NETRONOME=y
 # CONFIG_NFP is not set
-CONFIG_NET_VENDOR_NI=y
 # CONFIG_NET_VENDOR_NVIDIA is not set
 CONFIG_NET_VENDOR_OKI=y
 CONFIG_ETHOC=m
@@ -2726,7 +2850,6 @@ CONFIG_IEEE802154_FAKELB=m
 # CONFIG_IEEE802154_ATUSB is not set
 # CONFIG_IEEE802154_ADF7242 is not set
 # CONFIG_IEEE802154_CA8210 is not set
-# CONFIG_IEEE802154_MCR20A is not set
 CONFIG_XEN_NETDEV_FRONTEND=m
 # CONFIG_XEN_NETDEV_BACKEND is not set
 CONFIG_VMXNET3=m
@@ -2774,6 +2897,8 @@ CONFIG_ISDN_DRV_AVMB1_C4=m
 # CONFIG_CAPI_EICON is not set
 CONFIG_ISDN_DRV_GIGASET=m
 CONFIG_GIGASET_CAPI=y
+# CONFIG_GIGASET_I4L is not set
+# CONFIG_GIGASET_DUMMYLL is not set
 CONFIG_GIGASET_BASE=m
 CONFIG_GIGASET_M105=m
 CONFIG_GIGASET_M101=m
@@ -3042,6 +3167,7 @@ CONFIG_SERIAL_8250_MANY_PORTS=y
 CONFIG_SERIAL_8250_SHARE_IRQ=y
 # CONFIG_SERIAL_8250_DETECT_IRQ is not set
 CONFIG_SERIAL_8250_RSA=y
+# CONFIG_SERIAL_8250_FSL is not set
 CONFIG_SERIAL_8250_DW=y
 # CONFIG_SERIAL_8250_RT288X is not set
 CONFIG_SERIAL_8250_LPSS=y
@@ -3189,6 +3315,7 @@ CONFIG_I2C_DESIGNWARE_PCI=m
 # CONFIG_I2C_GPIO is not set
 # CONFIG_I2C_OCORES is not set
 CONFIG_I2C_PCA_PLATFORM=m
+# CONFIG_I2C_PXA_PCI is not set
 CONFIG_I2C_SIMTEC=m
 # CONFIG_I2C_XILINX is not set
 
@@ -3651,10 +3778,13 @@ CONFIG_SSB=m
 CONFIG_SSB_SPROM=y
 CONFIG_SSB_PCIHOST_POSSIBLE=y
 CONFIG_SSB_PCIHOST=y
+# CONFIG_SSB_B43_PCI_BRIDGE is not set
 CONFIG_SSB_SDIOHOST_POSSIBLE=y
 CONFIG_SSB_SDIOHOST=y
 # CONFIG_SSB_SILENT is not set
 # CONFIG_SSB_DEBUG is not set
+CONFIG_SSB_DRIVER_PCICORE_POSSIBLE=y
+CONFIG_SSB_DRIVER_PCICORE=y
 # CONFIG_SSB_DRIVER_GPIO is not set
 CONFIG_BCMA_POSSIBLE=y
 CONFIG_BCMA=m
@@ -3748,6 +3878,7 @@ CONFIG_MFD_SM501=m
 # CONFIG_TWL6040_CORE is not set
 # CONFIG_MFD_WL1273_CORE is not set
 # CONFIG_MFD_LM3533 is not set
+# CONFIG_MFD_TMIO is not set
 CONFIG_MFD_VX855=m
 # CONFIG_MFD_ARIZONA_I2C is not set
 # CONFIG_MFD_ARIZONA_SPI is not set
@@ -3770,12 +3901,10 @@ CONFIG_IR_SANYO_DECODER=m
 CONFIG_IR_SHARP_DECODER=m
 CONFIG_IR_MCE_KBD_DECODER=m
 CONFIG_IR_XMP_DECODER=m
-# CONFIG_IR_IMON_DECODER is not set
 CONFIG_RC_DEVICES=y
 CONFIG_RC_ATI_REMOTE=m
 CONFIG_IR_ENE=m
 CONFIG_IR_IMON=m
-# CONFIG_IR_IMON_RAW is not set
 CONFIG_IR_MCEUSB=m
 CONFIG_IR_ITE_CIR=m
 CONFIG_IR_FINTEK=m
@@ -4174,11 +4303,6 @@ CONFIG_VIDEO_M52790=m
 #
 # Sensors used on soc_camera driver
 #
-
-#
-# Media SPI Adapters
-#
-# CONFIG_CXD2880_SPI_DRV is not set
 CONFIG_MEDIA_TUNER=m
 CONFIG_MEDIA_TUNER_SIMPLE=m
 CONFIG_MEDIA_TUNER_TDA18250=m
@@ -4293,6 +4417,7 @@ CONFIG_DVB_CXD2841ER=m
 CONFIG_DVB_RTL2830=m
 CONFIG_DVB_RTL2832=m
 CONFIG_DVB_SI2168=m
+# CONFIG_DVB_AS102_FE is not set
 CONFIG_DVB_GP8PSK_FE=m
 
 #
@@ -4358,13 +4483,9 @@ CONFIG_DVB_M88RS2000=m
 CONFIG_DVB_AF9033=m
 
 #
-# Common Interface (EN50221) controller drivers
-#
-CONFIG_DVB_CXD2099=m
-
-#
 # Tools to develop new frontends
 #
+# CONFIG_DVB_DUMMY_FE is not set
 
 #
 # Graphics support
@@ -4405,6 +4526,7 @@ CONFIG_DRM_I2C_NXP_TDA998X=m
 #
 # AMD Library routines
 #
+# CONFIG_CHASH is not set
 # CONFIG_DRM_NOUVEAU is not set
 CONFIG_DRM_I915=m
 # CONFIG_DRM_I915_ALPHA_SUPPORT is not set
@@ -4453,6 +4575,7 @@ CONFIG_DRM_PANEL_BRIDGE=y
 # CONFIG_DRM_TINYDRM is not set
 # CONFIG_DRM_LEGACY is not set
 CONFIG_DRM_PANEL_ORIENTATION_QUIRKS=y
+# CONFIG_DRM_LIB_RANDOM is not set
 
 #
 # Frame buffer Devices
@@ -4461,16 +4584,22 @@ CONFIG_FB=y
 # CONFIG_FIRMWARE_EDID is not set
 CONFIG_FB_CMDLINE=y
 CONFIG_FB_NOTIFY=y
+# CONFIG_FB_DDC is not set
 CONFIG_FB_BOOT_VESA_SUPPORT=y
 CONFIG_FB_CFB_FILLRECT=y
 CONFIG_FB_CFB_COPYAREA=y
 CONFIG_FB_CFB_IMAGEBLIT=y
+# CONFIG_FB_CFB_REV_PIXELS_IN_BYTE is not set
 CONFIG_FB_SYS_FILLRECT=m
 CONFIG_FB_SYS_COPYAREA=m
 CONFIG_FB_SYS_IMAGEBLIT=m
+# CONFIG_FB_PROVIDE_GET_FB_UNMAPPED_AREA is not set
 # CONFIG_FB_FOREIGN_ENDIAN is not set
 CONFIG_FB_SYS_FOPS=m
 CONFIG_FB_DEFERRED_IO=y
+# CONFIG_FB_SVGALIB is not set
+# CONFIG_FB_MACMODES is not set
+# CONFIG_FB_BACKLIGHT is not set
 # CONFIG_FB_MODE_HELPERS is not set
 CONFIG_FB_TILEBLITTING=y
 
@@ -4556,6 +4685,7 @@ CONFIG_BACKLIGHT_APPLE=m
 # CONFIG_BACKLIGHT_LV5207LP is not set
 # CONFIG_BACKLIGHT_BD6107 is not set
 # CONFIG_BACKLIGHT_ARCXCNN is not set
+# CONFIG_VGASTATE is not set
 CONFIG_HDMI=y
 
 #
@@ -4611,6 +4741,7 @@ CONFIG_SND_SEQ_VIRMIDI=m
 CONFIG_SND_MPU401_UART=m
 CONFIG_SND_OPL3_LIB=m
 CONFIG_SND_OPL3_LIB_SEQ=m
+# CONFIG_SND_OPL4_LIB_SEQ is not set
 CONFIG_SND_VX_LIB=m
 CONFIG_SND_AC97_CODEC=m
 CONFIG_SND_DRIVERS=y
@@ -4921,6 +5052,7 @@ CONFIG_USB_EHCI_PCI=y
 # CONFIG_USB_EHCI_HCD_PLATFORM is not set
 # CONFIG_USB_OXU210HP_HCD is not set
 # CONFIG_USB_ISP116X_HCD is not set
+# CONFIG_USB_ISP1362_HCD is not set
 # CONFIG_USB_FOTG210_HCD is not set
 # CONFIG_USB_MAX3421_HCD is not set
 CONFIG_USB_OHCI_HCD=y
@@ -5226,7 +5358,6 @@ CONFIG_LEDS_INTEL_SS4200=m
 #
 CONFIG_LEDS_BLINKM=m
 # CONFIG_LEDS_MLXCPLD is not set
-# CONFIG_LEDS_MLXREG is not set
 # CONFIG_LEDS_USER is not set
 # CONFIG_LEDS_NIC78BX is not set
 
@@ -5494,6 +5625,7 @@ CONFIG_XEN_ACPI=y
 CONFIG_XEN_SYMS=y
 CONFIG_XEN_HAVE_VPMU=y
 CONFIG_STAGING=y
+# CONFIG_IRDA is not set
 # CONFIG_IPX is not set
 # CONFIG_NCP_FS is not set
 # CONFIG_PRISM2_USB is not set
@@ -5544,7 +5676,6 @@ CONFIG_FWTTY_MAX_CARD_PORTS=32
 #
 # CONFIG_DRM_VBOXVIDEO is not set
 # CONFIG_PI433 is not set
-# CONFIG_MTK_MMC is not set
 CONFIG_X86_PLATFORM_DEVICES=y
 CONFIG_ACER_WMI=m
 # CONFIG_ACER_WIRELESS is not set
@@ -5628,7 +5759,10 @@ CONFIG_COMMON_CLK=y
 # CONFIG_COMMON_CLK_SI5351 is not set
 # CONFIG_COMMON_CLK_CDCE706 is not set
 # CONFIG_COMMON_CLK_CS2000_CP is not set
+# CONFIG_COMMON_CLK_NXP is not set
 # CONFIG_COMMON_CLK_PWM is not set
+# CONFIG_COMMON_CLK_PXA is not set
+# CONFIG_COMMON_CLK_PIC32 is not set
 # CONFIG_HWSPINLOCK is not set
 
 #
@@ -5637,6 +5771,11 @@ CONFIG_COMMON_CLK=y
 CONFIG_CLKEVT_I8253=y
 CONFIG_I8253_LOCK=y
 CONFIG_CLKBLD_I8253=y
+# CONFIG_ATMEL_PIT is not set
+# CONFIG_SH_TIMER_CMT is not set
+# CONFIG_SH_TIMER_MTU2 is not set
+# CONFIG_SH_TIMER_TMU is not set
+# CONFIG_EM_TIMER_STI is not set
 CONFIG_MAILBOX=y
 CONFIG_PCC=y
 # CONFIG_ALTERA_MBOX is not set
@@ -5687,6 +5826,7 @@ CONFIG_IRQ_REMAP=y
 #
 # Qualcomm SoC drivers
 #
+# CONFIG_SUNXI_SRAM is not set
 # CONFIG_SOC_TI is not set
 
 #
@@ -5742,6 +5882,7 @@ CONFIG_PWM_LPSS_PLATFORM=m
 # IRQ chip support
 #
 CONFIG_ARM_GIC_MAX_NR=1
+# CONFIG_ARM_GIC_V3_ITS is not set
 # CONFIG_IPACK_BUS is not set
 # CONFIG_RESET_CONTROLLER is not set
 # CONFIG_FMC is not set
@@ -5781,10 +5922,6 @@ CONFIG_DAX=y
 CONFIG_DEV_DAX=m
 CONFIG_DEV_DAX_PMEM=m
 CONFIG_NVMEM=y
-
-#
-# HW tracing support
-#
 CONFIG_STM=m
 CONFIG_STM_DUMMY=m
 CONFIG_STM_SOURCE_CONSOLE=m
@@ -5792,13 +5929,13 @@ CONFIG_STM_SOURCE_HEARTBEAT=m
 CONFIG_STM_SOURCE_FTRACE=m
 CONFIG_INTEL_TH=m
 CONFIG_INTEL_TH_PCI=m
-# CONFIG_INTEL_TH_ACPI is not set
 CONFIG_INTEL_TH_GTH=m
 CONFIG_INTEL_TH_STH=m
 CONFIG_INTEL_TH_MSU=m
 CONFIG_INTEL_TH_PTI=m
 # CONFIG_INTEL_TH_DEBUG is not set
 # CONFIG_FPGA is not set
+# CONFIG_FSI is not set
 CONFIG_PM_OPP=y
 # CONFIG_UNISYS_VISORBUS is not set
 # CONFIG_SIOX is not set
@@ -5836,6 +5973,7 @@ CONFIG_EFI_RUNTIME_WRAPPERS=y
 # CONFIG_APPLE_PROPERTIES is not set
 # CONFIG_RESET_ATTACK_MITIGATION is not set
 CONFIG_UEFI_CPER=y
+# CONFIG_EFI_DEV_PATH_PARSER is not set
 
 #
 # Tegra firmware driver
@@ -6228,15 +6366,13 @@ CONFIG_SCHEDSTATS=y
 #
 # Lock Debugging (spinlocks, mutexes, etc...)
 #
-CONFIG_LOCK_DEBUGGING_SUPPORT=y
-# CONFIG_PROVE_LOCKING is not set
-# CONFIG_LOCK_STAT is not set
 # CONFIG_DEBUG_RT_MUTEXES is not set
 # CONFIG_DEBUG_SPINLOCK is not set
 # CONFIG_DEBUG_MUTEXES is not set
 # CONFIG_DEBUG_WW_MUTEX_SLOWPATH is not set
-# CONFIG_DEBUG_RWSEMS is not set
 # CONFIG_DEBUG_LOCK_ALLOC is not set
+# CONFIG_PROVE_LOCKING is not set
+# CONFIG_LOCK_STAT is not set
 CONFIG_DEBUG_ATOMIC_SLEEP=y
 # CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
 CONFIG_LOCK_TORTURE_TEST=m
@@ -6254,6 +6390,7 @@ CONFIG_DEBUG_LIST=y
 #
 # RCU Debugging
 #
+# CONFIG_PROVE_RCU is not set
 CONFIG_TORTURE_TEST=m
 # CONFIG_RCU_PERF_TEST is not set
 CONFIG_RCU_TORTURE_TEST=m
@@ -6365,6 +6502,7 @@ CONFIG_TEST_KMOD=m
 CONFIG_HAVE_ARCH_KGDB=y
 # CONFIG_KGDB is not set
 CONFIG_ARCH_HAS_UBSAN_SANITIZE_ALL=y
+# CONFIG_ARCH_WANTS_UBSAN_NO_NULL is not set
 # CONFIG_UBSAN is not set
 CONFIG_ARCH_HAS_DEVMEM_IS_ALLOWED=y
 CONFIG_STRICT_DEVMEM=y
@@ -6375,6 +6513,7 @@ CONFIG_EARLY_PRINTK=y
 CONFIG_EARLY_PRINTK_DBGP=y
 # CONFIG_EARLY_PRINTK_EFI is not set
 # CONFIG_EARLY_PRINTK_USB_XDBC is not set
+# CONFIG_X86_PTDUMP_CORE is not set
 # CONFIG_X86_PTDUMP is not set
 # CONFIG_EFI_PGT_DUMP is not set
 # CONFIG_DEBUG_WX is not set
@@ -6510,6 +6649,7 @@ CONFIG_CRYPTO_CRYPTD=m
 CONFIG_CRYPTO_MCRYPTD=m
 CONFIG_CRYPTO_AUTHENC=m
 CONFIG_CRYPTO_TEST=m
+CONFIG_CRYPTO_ABLK_HELPER=m
 CONFIG_CRYPTO_SIMD=m
 CONFIG_CRYPTO_GLUE_HELPER_X86=m
 CONFIG_CRYPTO_ENGINE=m
@@ -6527,7 +6667,6 @@ CONFIG_CRYPTO_ECHAINIV=m
 # Block modes
 #
 CONFIG_CRYPTO_CBC=y
-# CONFIG_CRYPTO_CFB is not set
 CONFIG_CRYPTO_CTR=y
 CONFIG_CRYPTO_CTS=y
 CONFIG_CRYPTO_ECB=y
@@ -6612,8 +6751,6 @@ CONFIG_CRYPTO_SERPENT=m
 CONFIG_CRYPTO_SERPENT_SSE2_X86_64=m
 CONFIG_CRYPTO_SERPENT_AVX_X86_64=m
 CONFIG_CRYPTO_SERPENT_AVX2_X86_64=m
-# CONFIG_CRYPTO_SM4 is not set
-# CONFIG_CRYPTO_SPECK is not set
 CONFIG_CRYPTO_TEA=m
 CONFIG_CRYPTO_TWOFISH=m
 CONFIG_CRYPTO_TWOFISH_COMMON=m
@@ -6650,6 +6787,7 @@ CONFIG_CRYPTO_HW=y
 CONFIG_CRYPTO_DEV_PADLOCK=m
 CONFIG_CRYPTO_DEV_PADLOCK_AES=m
 CONFIG_CRYPTO_DEV_PADLOCK_SHA=m
+# CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_DESC is not set
 # CONFIG_CRYPTO_DEV_CCP is not set
 # CONFIG_CRYPTO_DEV_QAT_DH895xCC is not set
 # CONFIG_CRYPTO_DEV_QAT_C3XXX is not set
@@ -6705,6 +6843,7 @@ CONFIG_BINARY_PRINTF=y
 #
 CONFIG_RAID6_PQ=m
 CONFIG_BITREVERSE=y
+# CONFIG_HAVE_ARCH_BITREVERSE is not set
 CONFIG_RATIONAL=y
 CONFIG_GENERIC_STRNCPY_FROM_USER=y
 CONFIG_GENERIC_STRNLEN_USER=y
@@ -6729,6 +6868,7 @@ CONFIG_CRC32_SLICEBY8=y
 CONFIG_LIBCRC32C=y
 CONFIG_CRC8=m
 CONFIG_XXHASH=m
+# CONFIG_AUDIT_ARCH_COMPAT_GENERIC is not set
 # CONFIG_RANDOM32_SELFTEST is not set
 CONFIG_ZLIB_INFLATE=y
 CONFIG_ZLIB_DEFLATE=y
@@ -6768,7 +6908,8 @@ CONFIG_HAS_IOMEM=y
 CONFIG_HAS_IOPORT_MAP=y
 CONFIG_HAS_DMA=y
 CONFIG_SGL_ALLOC=y
-CONFIG_DMA_DIRECT_OPS=y
+# CONFIG_DMA_DIRECT_OPS is not set
+# CONFIG_DMA_VIRT_OPS is not set
 CONFIG_CHECK_SIGNATURE=y
 CONFIG_CPUMASK_OFFSTACK=y
 CONFIG_CPU_RMAP=y
@@ -6788,6 +6929,7 @@ CONFIG_FONT_SUPPORT=y
 # CONFIG_FONTS is not set
 CONFIG_FONT_8x8=y
 CONFIG_FONT_8x16=y
+# CONFIG_SG_SPLIT is not set
 CONFIG_SG_POOL=y
 CONFIG_ARCH_HAS_SG_CHAIN=y
 CONFIG_ARCH_HAS_PMEM_API=y
@@ -6795,7 +6937,7 @@ CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE=y
 CONFIG_SBITMAP=y
 # CONFIG_STRING_SELFTEST is not set
 
---ChQOR20MqfxkMJg9
+--iJXiJc/TAIT2rh2r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=job-script
 
@@ -6803,98 +6945,58 @@ Content-Disposition: attachment; filename=job-script
 
 export_top_env()
 {
-	export suite='kernel_selftests'
-	export testcase='kernel_selftests'
-	export category='functional'
-	export need_cpu=2
-	export kernel_cmdline='erst_disable'
-	export job_origin='/lkp/lkp/.src-20180412-090831/allot/cyclic:linux-devel:devel-hourly/lkp-bdw-ep3/kernel_selftests.yaml'
+	export suite='fsmark'
+	export testcase='fsmark'
+	export category='benchmark'
+	export iterations=1
+	export nr_threads=1
+	export need_memory='48G'
+	export job_origin='/lkp/lkp/.src-20180418-151303/allot/cyclic:linux-devel:devel-hourly/lkp-bdw-ep3c/fsmark-stress-journal-1brd.yaml'
 	export queue='bisect'
-	export testbox='lkp-bdw-ep3'
-	export tbox_group='lkp-bdw-ep3'
-	export submit_id='5ad11d000b9a937b590616c0'
-	export job_file='/lkp/scheduled/lkp-bdw-ep3/kernel_selftests-kselftests-02-debian-x86_64-2016-08-31.cgz-b77eab7079d9e477489d2416cceda05d3c1cf21f-20180414-31577-1k1sfyq-0.yaml'
-	export id='da2e3419f971dfcbab8a8c05902dd24c09f12e3f'
+	export testbox='lkp-bdw-ep3c'
+	export tbox_group='lkp-bdw-ep3c'
+	export submit_id='5ad85c660b9a931334dcc388'
+	export job_file='/lkp/scheduled/lkp-bdw-ep3c/fsmark-1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance-debian-x86_64-2016-08-31.cgz-7eafb77890ff459863e3bc772465cb641c14f754-20180419-70452-1vp5bqm-0.yaml'
+	export id='8697c9e75fd943739af89e5aa6a7ae0e5e410cee'
 	export model='Broadwell-EP'
 	export nr_cpu=88
 	export memory='64G'
-	export swap_partitions=
-	export rootfs_partition=
-	export hdd_partition='/dev/disk/by-id/ata-ST250DM000-1BD141_W2ADD5CZ-part1'
+	export nr_hdd_partitions=1
+	export hdd_partitions='/dev/disk/by-id/ata-ST2000NM0011_Z1P67EBL-part1'
+	export swap_partitions='/dev/disk/by-id/ata-ST2000NM0011_Z1P67EBL-part2'
+	export rootfs_partition='/dev/disk/by-id/ata-ST2000NM0011_Z1P67EBL-part3'
 	export brand='Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz'
-	export need_kernel_headers=true
-	export need_kernel_selftests=true
-	export need_kconfig='CONFIG_RUNTIME_TESTING_MENU=y
-CONFIG_TEST_FIRMWARE
-CONFIG_TEST_USER_COPY
-CONFIG_MEMORY_NOTIFIER_ERROR_INJECT
-CONFIG_MEMORY_HOTPLUG_SPARSE=y
-CONFIG_NOTIFIER_ERROR_INJECTION
-CONFIG_FTRACE=y
-CONFIG_TEST_BITMAP
-CONFIG_TEST_PRINTF
-CONFIG_TEST_STATIC_KEYS
-CONFIG_BPF_SYSCALL=y
-CONFIG_NET_CLS_BPF=m
-CONFIG_BPF_EVENTS=y
-CONFIG_TEST_BPF=m
-CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG=y
-CONFIG_HIST_TRIGGERS=y
-CONFIG_EMBEDDED=y
-CONFIG_GPIO_MOCKUP=y
-CONFIG_USERFAULTFD=y
-CONFIG_SYNC_FILE=y
-CONFIG_SW_SYNC=y
-CONFIG_MISC_FILESYSTEMS=y
-CONFIG_PSTORE=y
-CONFIG_PSTORE_PMSG=y
-CONFIG_PSTORE_CONSOLE=y
-CONFIG_PSTORE_RAM=m
-CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
-CONFIG_EXPERT=y
-CONFIG_CHECKPOINT_RESTORE=y
-CONFIG_EFIVAR_FS
-CONFIG_TEST_KMOD=m
-CONFIG_TEST_LKM=m
-CONFIG_XFS_FS=m
-CONFIG_TUN=m
-CONFIG_BTRFS_FS=m
-CONFIG_TEST_SYSCTL=m
-CONFIG_BPF_STREAM_PARSER=y
-CONFIG_CGROUP_BPF=y
-CONFIG_IPV6_MULTIPLE_TABLES=y
-CONFIG_NET_L3_MASTER_DEV=y
-CONFIG_NET_VRF=y
-CONFIG_NET_FOU=m
-CONFIG_NET_FOU_IP_TUNNELS=y
-CONFIG_MACSEC=y
-CONFIG_X86_INTEL_MPX=y'
-	export commit='b77eab7079d9e477489d2416cceda05d3c1cf21f'
+	export need_kconfig='CONFIG_BLK_DEV_RAM=m
+CONFIG_BLK_DEV=y
+CONFIG_BLOCK=y
+CONFIG_NFSD
+CONFIG_BTRFS_FS
+CONFIG_NFS_V4'
+	export commit='7eafb77890ff459863e3bc772465cb641c14f754'
 	export kconfig='x86_64-rhel-7.2'
 	export compiler='gcc-7'
 	export rootfs='debian-x86_64-2016-08-31.cgz'
-	export enqueue_time='2018-04-14 05:11:28 +0800'
-	export _id='5ad11d000b9a937b590616c0'
-	export _rt='/result/kernel_selftests/kselftests-02/lkp-bdw-ep3/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f'
+	export enqueue_time='2018-04-19 17:07:50 +0800'
+	export _id='5ad85c660b9a931334dcc388'
+	export _rt='/result/fsmark/1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance/lkp-bdw-ep3c/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754'
 	export user='lkp'
-	export head_commit='debc1d587b431e53400e1cba5c9f950a347b9763'
-	export base_commit='0adb32858b0bddf4ada5f364a84ed60b196dbcda'
-	export branch='linux-devel/devel-hourly-2018041000'
-	export result_root='/result/kernel_selftests/kselftests-02/lkp-bdw-ep3/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/0'
+	export head_commit='eba9dcb6513d830689ff7130c9763392ddba2dd5'
+	export base_commit='60cc43fc888428bb2f18f08997432d426a243338'
+	export branch='linux-devel/devel-hourly-2018041805'
+	export result_root='/result/fsmark/1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance/lkp-bdw-ep3c/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/0'
 	export LKP_SERVER='inn'
 	export max_uptime=3600
 	export initrd='/osimage/debian/debian-x86_64-2016-08-31.cgz'
 	export bootloader_append='root=/dev/ram0
 user=lkp
-job=/lkp/scheduled/lkp-bdw-ep3/kernel_selftests-kselftests-02-debian-x86_64-2016-08-31.cgz-b77eab7079d9e477489d2416cceda05d3c1cf21f-20180414-31577-1k1sfyq-0.yaml
+job=/lkp/scheduled/lkp-bdw-ep3c/fsmark-1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance-debian-x86_64-2016-08-31.cgz-7eafb77890ff459863e3bc772465cb641c14f754-20180419-70452-1vp5bqm-0.yaml
 ARCH=x86_64
 kconfig=x86_64-rhel-7.2
-branch=linux-devel/devel-hourly-2018041000
-commit=b77eab7079d9e477489d2416cceda05d3c1cf21f
-BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/vmlinuz-4.16.0-07318-gb77eab7
-erst_disable
+branch=linux-devel/devel-hourly-2018041805
+commit=7eafb77890ff459863e3bc772465cb641c14f754
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/vmlinuz-4.16.0-rc7-00174-g7eafb77
 max_uptime=3600
-RESULT_ROOT=/result/kernel_selftests/kselftests-02/lkp-bdw-ep3/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/0
+RESULT_ROOT=/result/fsmark/1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance/lkp-bdw-ep3c/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/0
 LKP_SERVER=inn
 debug
 apic=debug
@@ -6916,17 +7018,15 @@ earlyprintk=ttyS0,115200
 console=ttyS0,115200
 vga=normal
 rw'
-	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/modules.cgz'
-	export bm_initrd='/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/kernel_selftests_2018-04-01.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/kernel_selftests-x86_64-10b84daddbec_2018-04-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz'
-	export linux_headers_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/linux-headers.cgz'
-	export linux_selftests_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/linux-selftests.cgz'
+	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/modules.cgz'
+	export bm_initrd='/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2018-04-19.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-04-04.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-f8cf2f16a7c9_2018-04-09.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/fs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/fs2_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/fsmark_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/fsmark-x86_64_2016-11-16.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz'
 	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
 	export site='inn'
 	export LKP_CGI_PORT=80
 	export LKP_CIFS_PORT=139
-	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/vmlinuz-4.16.0-07318-gb77eab7'
-	export dequeue_time='2018-04-14 05:43:18 +0800'
-	export job_initrd='/lkp/scheduled/lkp-bdw-ep3/kernel_selftests-kselftests-02-debian-x86_64-2016-08-31.cgz-b77eab7079d9e477489d2416cceda05d3c1cf21f-20180414-31577-1k1sfyq-0.cgz'
+	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/vmlinuz-4.16.0-rc7-00174-g7eafb77'
+	export dequeue_time='2018-04-19 17:22:12 +0800'
+	export job_initrd='/lkp/scheduled/lkp-bdw-ep3c/fsmark-1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance-debian-x86_64-2016-08-31.cgz-7eafb77890ff459863e3bc772465cb641c14f754-20180419-70452-1vp5bqm-0.cgz'
 
 	[ -n "$LKP_SRC" ] ||
 	export LKP_SRC=/lkp/${user:-lkp}/src
@@ -6942,20 +7042,73 @@ run_job()
 
 	export_top_env
 
+	run_setup nr_brd=1 ramdisk_size=34359738368 $LKP_SRC/setup/disk
+
+	run_setup fs='btrfs' $LKP_SRC/setup/fs
+
+	run_setup fs='nfsv4' $LKP_SRC/setup/fs2
+
+	run_setup $LKP_SRC/setup/cpufreq_governor 'performance'
+
+	run_monitor delay=10 $LKP_SRC/monitors/no-stdout/wrapper perf-profile
 	run_monitor $LKP_SRC/monitors/wrapper kmsg
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
+	run_monitor $LKP_SRC/monitors/wrapper iostat
 	run_monitor $LKP_SRC/monitors/wrapper heartbeat
+	run_monitor $LKP_SRC/monitors/wrapper vmstat
+	run_monitor $LKP_SRC/monitors/wrapper numa-numastat
+	run_monitor $LKP_SRC/monitors/wrapper numa-vmstat
+	run_monitor $LKP_SRC/monitors/wrapper numa-meminfo
+	run_monitor $LKP_SRC/monitors/wrapper proc-vmstat
+	run_monitor $LKP_SRC/monitors/wrapper proc-stat
+	run_monitor $LKP_SRC/monitors/wrapper meminfo
+	run_monitor $LKP_SRC/monitors/wrapper slabinfo
+	run_monitor $LKP_SRC/monitors/wrapper interrupts
+	run_monitor $LKP_SRC/monitors/wrapper lock_stat
+	run_monitor $LKP_SRC/monitors/wrapper latency_stats
+	run_monitor $LKP_SRC/monitors/wrapper softirqs
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper bdi_dev_mapping
+	run_monitor $LKP_SRC/monitors/wrapper diskstats
+	run_monitor $LKP_SRC/monitors/wrapper nfsstat
+	run_monitor $LKP_SRC/monitors/wrapper cpuidle
+	run_monitor $LKP_SRC/monitors/wrapper cpufreq-stats
+	run_monitor $LKP_SRC/monitors/wrapper turbostat
+	run_monitor $LKP_SRC/monitors/wrapper sched_debug
+	run_monitor $LKP_SRC/monitors/wrapper perf-stat
+	run_monitor $LKP_SRC/monitors/wrapper mpstat
 	run_monitor $LKP_SRC/monitors/wrapper oom-killer
 	run_monitor $LKP_SRC/monitors/plain/watchdog
 
-	run_test group='kselftests-02' $LKP_SRC/tests/wrapper kernel_selftests
+	run_test filesize='4K' test_size='4G' sync_method='fsyncBeforeClose' nr_files_per_directory='1fpd' $LKP_SRC/tests/wrapper fsmark
 }
 
 extract_stats()
 {
-	$LKP_SRC/stats/wrapper kernel_selftests
+	$LKP_SRC/stats/wrapper perf-profile
+	$LKP_SRC/stats/wrapper fsmark
 	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper boot-time
+	$LKP_SRC/stats/wrapper iostat
+	$LKP_SRC/stats/wrapper vmstat
+	$LKP_SRC/stats/wrapper numa-numastat
+	$LKP_SRC/stats/wrapper numa-vmstat
+	$LKP_SRC/stats/wrapper numa-meminfo
+	$LKP_SRC/stats/wrapper proc-vmstat
+	$LKP_SRC/stats/wrapper meminfo
+	$LKP_SRC/stats/wrapper slabinfo
+	$LKP_SRC/stats/wrapper interrupts
+	$LKP_SRC/stats/wrapper lock_stat
+	$LKP_SRC/stats/wrapper latency_stats
+	$LKP_SRC/stats/wrapper softirqs
+	$LKP_SRC/stats/wrapper diskstats
+	$LKP_SRC/stats/wrapper nfsstat
+	$LKP_SRC/stats/wrapper cpuidle
+	$LKP_SRC/stats/wrapper turbostat
+	$LKP_SRC/stats/wrapper sched_debug
+	$LKP_SRC/stats/wrapper perf-stat
+	$LKP_SRC/stats/wrapper mpstat
 
-	$LKP_SRC/stats/wrapper time kernel_selftests.time
+	$LKP_SRC/stats/wrapper time fsmark.time
 	$LKP_SRC/stats/wrapper time
 	$LKP_SRC/stats/wrapper dmesg
 	$LKP_SRC/stats/wrapper kmsg
@@ -6965,4924 +7118,621 @@ extract_stats()
 
 "$@"
 
---ChQOR20MqfxkMJg9
+--iJXiJc/TAIT2rh2r
 Content-Type: application/x-xz
-Content-Disposition: attachment; filename="kmsg.xz"
+Content-Disposition: attachment; filename="dmesg.xz"
 Content-Transfer-Encoding: base64
 
-/Td6WFoAAATm1rRGAgAhARYAAAB0L+Wj5nnjynJdADWZSqugAxvb4nJgTnLkWq7GiE5NSjeI
-iOUi9aLumK5uQor8WvJOGrzvdDg5bdxr3hVZJANjOZp9CvXQVNvl4G13iI0JqRRa9cULHp3l
-V+7wk+REeuprhfoV0kJRUV9lkZU8owGj/6RrVZv+9eUwIXA7AqojWfs6ECrql5M6BNuWz8xZ
-zxAAhsMcVmGIkmrbhcIvnTGt/tPdKlZ/DGKh5kWHCvVEOsdZoJMwY18LueEP6SaatRX+1zzp
-FxM8ODrsauK7ZLLimmY5z51fx7Q5Yb3c7yROQpBzqBpMSXHj6Z6wfiTtqD27HpAI/Ehaiblk
-cswrf96VQzGfS+j6xYSyIc9Z9M2vsaAKEtMoDhjO/Z9uERRLkLU7xvbWn6hZRv/1acS+VnL7
-KZ8UJAQei6g6AStM9mMhMdMY1UmMFNTMWtdVBkUMObouA/PBw2QO8d9paPK7c29XLAB7CzjK
-iJe2GDAlhJn07mCyvWEX2aseCcuW7hXvnQevy8btooF3Q2gYAlGM1zQz05cP/jHAVs1gi8OM
-G2kA+H1PhbrLcXcI7BNWsngb8S+xogibw7ySrkdQMiaqMVoLkbFPtJskYTlnhMljmXLXK5OL
-3pFX0zMcICRkq1uur3jVFXucCgpBza5TNvdhGeVdQYxMuhtg0XdIv3BsIA1jcHQUtNQfii1R
-LPcD2kBdRbYk3RI0B6siEJkAiA4PtAFWerVG653VU4SfBtwzH5FjfpYjar7n/696SAmppXAH
-LaZBnkAzRjSrp3F8E+PFCtk780zoUeWvgfuCjJ6S1VMK1zDFwszsvrWLyiqh7UnO2gErmOAZ
-phIKIQqXvZWgE57FxhpPJPqmRKkyiReBlLiF6KcCh+Spzrs122RzSrKZBS08g+2MoavITPPW
-kH/YS7S9G95UXn568KyxbvYcFY4CTs/LRYbfs8coigObxnkKl70cZ1wCVhATRVPX2bcI+6hA
-RLna9s24KyrRCDyOflaeCSn8tRtgk7j5sd0LiI0miHdcDz5UwB5Sp130fjAYO6xICG4hsZPh
-h3Bo1AOdKd6vwel95bcnssLf8D02x+v1tdTVh7XheEmDiidXMO0gRrUYjluQ6Uw2t383NG69
-6fzhFY8gH79sSoQr5Lwdh/bN7uc6Ptwu2Zpb+uzhc1TztZY9H5bjIOCeLrlbmPBLibK9kk2N
-Y4sUF3hve93qVbG4T3hkhLRcrmS8iwbDXdl91V+oFDC7ncYTGAVnXcdnJZjYFrflgPpVsuUL
-aba3KVVOdSH5fkSDLhTkJWKwZLCWhHRhphyYG5y5EiBh+poUzq96W7etR/IWTzEEQQ6BbO7s
-OBlvkSa0WIBpFVcKd/y3hkhJFTLm9+3s6qJ+S0FJecKMB+Uz1ZWNW5QxZjM7HQep/DIY1HGO
-Vys+DQvEgX0+PR1UKwu+hwh6yiMLyzwB1scKyF0Q6MrWhkONa0y5uVgOa+we1e/WKiQsQvAT
-jyN2P27iLndmujjX/h8bRusta3p/qEAm4Ov5Smna+FiD3a35EhJC1Hrvpf4SMQzlN3jaeAnd
-Hj8mTv1KDIYi5p+ROdWKNsR2mN+wPxxRAMnn5rV96G8I3Iqa2Uw0LA3YBnQNs2v43bPJPi+e
-3KMxJHU8WDtx6MgTDBr+jSNZhx4Z6c21x/qGChuszWh/7bfLaVs+6fU6FN+H45mM1cPiuSqO
-681bgSO0BFpLi9E9+RIIVsCivFd8OoUGRSGsuIFPNoVhfiiqP6UlERhptfRIe76YOkZpN/2t
-lvwuRJLOjhzUg13HCc/1GLVRzh9Ko2NzI1ppRfzgw2nrMqHKdZ8q/162E55itIalupeXcPXo
-90+HDvjWBTV6n0qDsqR7F2RotHYKrroLDY5M+2FNrcQ0B70OCOwMF76sQ8BnBqaDu0ghHyJp
-l/sc5gT0SgK/JdsxryoqxiH7o28Blj1OUaehuOX2hxDrGZbTq7mYtJdudlM70XuA3/wcmSjI
-p9up8w1/VNtSl8x4vPUOpNMkHPJvg+Me69T+cVAlHKlamsJzjkPouSrrwWk7Dkw+qCZ3Qm+8
-G9MUYtrlAEf3dFizHy+gA2WFnHRGjTs2x8DJWZnbbbJnHNTY32gwwEhS1vpo3sJA7U6Ms7FI
-MPBA29plAXPp/thVaH0ZllIpyCHw/+/4DQtr16OQzUBLIagNXQbtMiNK50GhplmWTmIInNgt
-SsfT8m+hbIXJmiNG2ViAOQys7LQuUi076/11+722Dssu0z5Ttld7z7cQYW3VnxoH2UtZQZnr
-6f0LWz7BfIyoduFz4gENCCk51AdZCufXn8jRFyJCp2DiNXoj9TpFjnbMSFsYYkpex2/Ry1yI
-RMdeVOsMAAMpyXaKODlutTT/sgfGmbJqhTHCDoibtxcEWEyhJ99I6qFyCfSZmf7vJPMSpSAN
-vegz0QUICcZuK9mPLa9Ix29ImQaI/gUkMc0gzr0blJFnYCc8OtHrT0wbb0jVq1xiJCNFQhKx
-ffoIV6rKAsD3dEjKSLo1lRFzA2qirPLzZ6jBDFaa6rS8yZK1VRzE1m4gfm00iWgRdPnFO6Rl
-CB9dhiCvQl+IgXHID5BQKQHbn5q4+WVuTOd5suZd02ARvZK2AerGC2w920VPhUAhLMnR6kR8
-q9Ovxh+0kFJUFa7kU1ZgvejEDR3EdmhqUjMWgoja+0kCa0Ow3rqboj6zQ0tEWm753xwbDcUf
-CSS10F7EFNOs41h4sVy2H3Cm4Mr9sSGyytOJRE5/SlLycaBJcF61Yg8+hgz/e076Zn8Refc+
-ZvDIT4tmJTdNZ7l1c9b5aZFrNO+/bSEHC3ja4IKeyuusvsCa33JAPC4uJKg769UX2SIC+ZVr
-h0uwJy9ejKozZVgjDdwMLC10IRZIHqm0AlnUt9yXKI2G2GapWN7+plVo3u9odGAtHNpk/TP7
-WPSrq4PUhDl4/DO7riU/jwh6E9V0Md4T6ymlT9l7NyvC9L22G7/E366TS88Om5aBXkHDU6oM
-92uY6i7aXkTmCu+aLiLQu6wcaueCyrhfqtWK4uCe4tru5BJafvwvfuvPmbmuwKJ9sNuMcPhN
-+KXYC6wBCwnOOVBFBQ2uJ5y1T7JLJruJMvBJV/h18zHfu9/baO4SGfjdZuTcOoCV1AsPmYHN
-uINlhdlz8uImJessEtM2fSnjRwYCn/3Ul4p0X4FQR75IRjKtG3qaihVeB+EXuRThQ6nupZ8D
-TxVBPGrxWlWa/vq2xxAlsi061X0BbfH5YvCuzmlBhXbfLHdrZRcEk96l063mxqbTaY37ZW89
-2WiqPxZhMN2ZGITDLvLJR9KXrEXwwDsG2MJi89cYbbr5MnR7t42bopanMmVZcGGQIRpOltL5
-1UGkdDrH3i9OdXycG8pj9E8dvJXdP0wUTeXUwgiBBNjllFUQZmg7534/NZdS8tteyEK4zPVg
-2nudepZI8x77XaVuyTJD5r+0aoDojWHMUK00LHm1c2hIOwqbgGmwk6mAB+c8cek/v4PZSt4T
-NwzqVxRwqS1Lr6wTSK6NYp+jMKCGVtaMqxfL7YXEnoV45RtN80k88AMK6ryS8pSRR6kYTokH
-D540BptJ7zi2i7U7CiXXJzQybH1AjCQNSl5zC1x4bEMT72gxOIZtXVrebyr4Rb4CaWsPLgea
-K4hr3r4AOKMlxR/LscIpoE24WQ5igFpwemNDGbp+GdCzH1nxnjdkTfB/7RvFn52Mapg6uGXu
-UaY1ePn2MydIxa0UBRaS0ZI0Xvwco8mBqQ6o03U/h9nkk38oW2CbvY5PsMSwlYbOgR3Locch
-RRNt6epM7TS/EM6JcwceN/rGQX1YWhHbrJT7cyrUWYUEoC7H7VX1jE9hOvyCpjABL+tw2UY8
-yKN3h2/kzlonFPJwFwmiQ4OV8u7d+cQJl+ZJ7TW4WK+QUnXPo/NqbJzgtQDgWflMqE4b6N+1
-6ueBCAeJNvlVoEKZHOSfOgKxqNpiE5PROX+E5BoruZBVntlAXqwyyPvcHX9lNyeiS1L3+37C
-VdpC/5Hf4t0yZE2GHMh/ESspgpHXJEeCIFOZVWeA5S0bG0p1HQKtRa+jGglLa2OW/n/z2QAt
-NsRNT+m3iNEwRrbXuUm+iw9QHgWDpJgajucF93qnE/TxSR3H8bnPHea1nAJssxGKgJz+NM8B
-uoMsSELNNMpSPiuZpt/f9+YfFMlAXJWElJpU7M37G97hDaSfyivFWHGKjwfj4gR/qo5BNcfq
-AQJ9cYT/ZvX/nlyAs89bCH+uQE2E27gBjcYVgSxwjTrofYG6LYuG+DgHBwjNhQYnT4PmHFvJ
-5mX7kdwaU2VrG1tgxmgRjRhen7W2GCxFWxLsAgF0g+Hfmofiijo0NLG0FPWFOJaHI9771svg
-gjV/H8r28TpFjjBdtDqkb15ci2vj1hFS6DnMv59+JiWZn7336N3wxAZynaeUTOlGx56YewFP
-JXU1dAgbWPwcIS5Xi0nX2iFHP9enV/fiBx+yk2jXZl782P2C8uu8+mFZYQ1mHkcQNWE9gkA/
-8PmuSJGX4x3O0ggQrReJMKndCK0ZiK6umNnwNvyff46oDp45cgWcqmdToYwC/OQ9vP0c6inh
-zSv3pcRQi+Q8CE4d/ByMyMkBfkIBsh6XbrEkuAAqR2qrjqw1hwgg2nTIMa0JLXKdimR+240K
-IedKqHNQwUgps6sBwdYAeLpUYfmL+WTLvUajfqxyhgmn++IWubeZndB5IDwmgGI5o+llOM2+
-5+M6iEDwiWe/o8hm1ekl54rbh6NaVSshMkM4IDxWE8NyCTcTdO7HWCtF6qLIergKxuVXUi3J
-sY5MFsMJpP0BRiJqrwWT6Or7VJYwMINoaxZs75NaKBlam0/bJ8F+ynG5r5NzstvuP402kqV3
-swYD4fE4tyi8gtz0/TKqLGbgfGzOOJIvhb83fklocoZHGmVs8rqH+QnZn6l3DFWBd/ymiIdI
-oruecoch9KxZnIOkH2W7JxRPRokvQ76wGRxMXCehYoRdPHMExn8/MaULkYGq7jznN+dGkaJ4
-djurZh1uuN16bLFbLj5AVoII7ZsAF+oSLJcJB6fwWImmzG0Cp8mK9cDg0FZaMjAihnl+w4gw
-NRa93lPU82ubGfjzVmKeg3HOESjdPe+mnWYE6U0q5vUtLEN4xWPczttZdKOVdd/ZnkSdBgkp
-xYcUA3uwKKljylLQ5ljd0kv2BoYJnxXkoY4XN0PYxTEh9xyACsdxyZk7ngupqQcNgDL8LFrq
-B8HMiamNwXrchTXAiBSno1jF9mdnqsbr2cjHqEubv7dGf3+RTdIxvLavGiTvISPdzugr9J5u
-NtStHsn4hKYsxGrubkzrbhh0utfjBWgzuPkqwAVytXPhsUhC5QAApyPdW454Li8ivJ6ab9cK
-KHxSmutZzRZsko48Nee5yFBtww3tLtHUb6ALnzI64TlUqu81COp0cNm9NnD/PTaX3EhEOf2g
-lEcYNAEMsfXddCd5Jz0TxqM8vh3koMMb47PDCxY4ZAIHREhWVneuD9rgmkCJkUJOlBzHRXOU
-tdjFSxUcA0aldCdtJqUMQGY3uRbca/qfDj0P8vrGYwjwN1CW2J7u/5/Rn/QPBFZqG1Mli3SU
-fn3m86sqkAdHm9PmlEDT0YaGSA7h0dTHi3815SWpR/NHHF3NJtDGt9Bs1CkmYF97aeYupCT5
-Kesi0HN5lVoElzHwk1yA1N4JloRnSGw5DdyNzn0UsmiV7QFqcO8lOIPj84X3gohYzM8nmYMK
-0dufjp6YztYKoteTz7fi8FPXf4JdIpBQG/UEtd+Q6dxcsePDvX1olqLIFMYoCDXhOvCt75vu
-90j/LaxW7n3f9b7X6u9fCLbNTVppXmVzHD8bmuV9xZhK1BwMCBW1l8vnfrOQQx+QMlxc0S48
-CD9zjz8h0GFeYu/78ruwl9yLJ5Jet5I3AH50qwZ7aAtJAaZ3GU2w76+xf6pQxud3/wpPiK87
-y1Z857MmOIgWzv3BYcF8WUD+W6JMyeBgfLGr+HIQL4cVf5wXD5ASq6UEfsvwM7nIQCiL9NwD
-IGc6f4eQouN4a1bFE/uyywkf2NClYzOgZ95qNINf3jAhAwzabTLm77gL4vtnXmQjWen0IzDk
-naZht2uXhQ5wwWIQSoxNZmOaakcCuk5Dhcuqj1n1OLYdlZ66q54p4Pf9xlZaI+MixXw+NsAm
-GXRwZdpZW24D7i7+TJMZfkSHNBIvCHXe1QHfqaNc9urPEiT5Km/DWYLLGlPqXhiut92Hi1ZD
-loLtMJ69blz3aoo2oonzcrE8jgl/gmqG1N6A2Ai7W/ZEwIxpiEjm0Xp1rNOReV7dIvMiNNyz
-LlNRYkYQGoUujk8V1XZw9XnL1yqaOhpwGzbWJaFSKY+HJ5Eu3bWDecKoNsIlUBT1GdUuSI2/
-48dekFrke0XeEPwrqaF+q10NqcnbQYuynNEKg6Z1GyfgfdyjvAT3I8bflhPM5a3oRuNeLzxH
-3j4lDvnnfPmrJVMMJcrVfVdsDeNSgg132oJcDN2dO36wRqKTa51SAc5WmVLNabdopPHFiUNd
-Jo8VrxZ7rGp7zYA9wzBXIIYbvhSLD2EG0VNmhwfXfzpGhd7OeUJwrr1kbaT8yc8aNP64Ir6V
-H4YTniWWVhzxBXOGRvKxVu39+zJfJgiu3Bw7WQtZ0TKUJw6okig8VQV3hCi9zyV2ri4G1HqB
-9EjHZORFgyWOUcTSfsXqABuUaSkd3/drw9u42O+k2m3JjhACFWTmP5YqrGSTmfNOWwzSsr8o
-d7ucFZ89LEzVKFDJ6NmjSK4LthDawkJH0vbm1W5iDEyKk4ouSh7B6LT3YBwk0xvI/2N4LaIU
-Z/B7Qd2Kg62EDPjvXIPQ/Owt4a8B2nXitfQJIga5Oyd55lwaiEQEGkaw49FP/t1zSdMi55Wz
-Rk5l0H6pyLvBHXsFKKQ3faMiSGCZWauWSVMj+FNJ2qYZYxChUZBUoKd5vxoQrNtwH/3M6uOz
-JyDWtxpp6855AZEV84fp2P6vc2g1Q5aReOR4kHubgmg8k5fefk/fCq2gNVUne6rYUIqgh4HQ
-jOF4jPvaqMziPioBOc0CmSFXNRfLYssTFKXPz1n6ABTWG5YjnH13cNwXMPBRW0iqNHVTukhQ
-1C/lmwQQVSpMAEqqyr7jzfjgBPlZ2OMx1ISfN9yol4dOemKR3eWVI4O0+OlR9hulRwxQGhBu
-mbf42z1CzN14xNCE/0TwlJ1Y01aQLvygTR9GYjbpwRUfFC/o3l6tKNFjy4YrC1m5xq3zc1Rk
-LmNRFsYHIrOHqWnLoKlruOQVPt8+wiSg5PAdflLF0BcWbmSjSWtbVu3sMSu7nIuVtSzW00YJ
-PsmaDa+t8VZjFuxAtxuYJS6FLY6DNsrk5GiboOKYlMU7JeagnfI19MEL3o9FXubAryI/AaTs
-GePB2qglA5z5TQ/L8H/jGBBGFj6hAqRXgTZjgCvX17CS3ZXp7P9GfHWrXX/OUoQbhKyF/s0S
-YHlMKkO0u1AgXJtidsTJcpcCt/DYl1t58dGV8CtsDC73B7vXxk08xk2G7QjpWjIssANjl7GD
-HqMpzeEyMHpZlcGc9+J/LzUJX/Q8bEPvH4/VJau5n0+JFDxFo7h55mDg+cchF7VDfJYFJjOa
-p7eEdaVMeHMqauA7F7zOcG+1aMASgezuXyBh87sSI8l1EW1b6qz3vsoXGbeM0MWi9PyC7bkv
-dKNSCgtV4zHf2wYpf2VoPpud//dyU66TOCKybcIw92UjR/Vtr97iH2037etbnRvl9AlE+YH3
-VKEBgEhIntD/M1aHy2H9Yml4ZHlYVFM7+bzoZgQct5zJjUqSDpns7jhn7MgnOYSnxDduYyVb
-RZXn7kJhs5ekKb2VqIcKMDiBqMCmP9UUZC3AUK8R3Dm4+o/NVph8NcroMgxOVf5ouxroj+5x
-e6mvQuPzjLe0fJLhwitWgP5N5KHked4rmZxFvrKF7wioVWK2vNjdoAizT8Y6r6DqeRy/Vv20
-+WmDLJjwi2CMYu9cK0fMDvFXbksVL9nIw/HI2q/uNSeHjmzjb7q999xQsWUDbPT+sw7yAtPU
-86mBv9EuF5+YTnWcBdjENmQsixQ/ZO78LuVjxxKgLW87c9HT4oAzc+AmUF0OStKn36UPma3e
-BzsGT57P2IRV2X3NITy6FRr8yVT2B2y6CwUxOhOeS01kcu6Ay5rMy7BnUJPv/TTB6iHho8+8
-EoJCwMmQ1nhhzxH3zmA4rBMojvCuSrEHW7PX73r8selisP7cE26NT88o1E6rpJPcynnG7uI2
-cYt0TBN7uUVmqKvfTY9buLKaXs9Qv7pWwzeMd29OEpEzd/mfLEavkuXRHgsxgWYLCQ5yTArg
-a1V/5aWeaYO9wNGv9oLb27KTiydd/wdd+Lhqpl1W9LrXK28djYS7col6gR2OCMFnpD7rVnEa
-fFUjYNlkuCzH3oa5fYjvqcNwjuH0Xu9oVzcf0SkIyD4DlJbxN4cyDVZ30ElzCVjuuMm4zLPp
-QT2q6vlsS40hgc3jvxpOS76PU3QmRyOfNGata8OWPRGHiisFK54INg6atCEEMV8nAfq+RaGm
-DMdjbCKyzlEZqLUVixoZFJb/ydYaNlzNmESykomgSVFtpBx9ZCOciZEDJtCkWmioH/tFCcUf
-jd1dq3CGtNvVXiJ0dfpbqSPMYb1kKYcj8pfVXenpJKzVqInMworCppm7IG5gs1j3oPcV+wVK
-86Q23D6MLuYtG5+vKf9E1F/zZdhQP1zv8eYf96caILIM39o4R9ug/sVUDE/py7QJ0+uh2L8O
-PUhMf68hu+WSAYWvkHD0xHL9yRQdAwff6Nv1Xc3MH1keb+HT1jwBNi6AVpZfWjycJYD8it7z
-fOMaLpSRwIyNCdCvrFjqhtxyBgtHRo7JisEut2dKpyMQgTx4xaSxlhDwKhM/3nHpS+m0ItvJ
-2CdYU+/W4kUmpi1BTMXTYN1fTP4RIWm+pmEIaMT5UU9zN09TieHISzPGFNuur7LY4xEwFuSh
-faiMxrtCMuKrQp2NRYVSMwz1ipM4WZJaCDP/veqf6IW9tqV3UnU/sMD28LZfoR2ZYSkKSxle
-o7kC13uP64z6VCsTfZD+D/BEUu9I9EXN6rV6JlYKTSwRG/Y5UruhZIANdwDTTc++23m/Ipzq
-WxIdczmYW2SjMZirf1qS2W/cqN87DA3SVVANXiN/MZj+i+h/cG384BlYujVfJj1uwWXwl1BX
-CM/GXM7BTkw9vja24yJ6u8YY9JnGGPjPeiXmHnJW1R9OuXZheIi3EtZ24CyPlvYi4IDlapqE
-f/Ypi3UY4+QwtQGAGlphv57YhlkJfZeTE0cjNtnhWirN0CjT0n5DYAwNhhlcWYQB7khNd0lo
-1zS5rDqZS4RREklScO1gaqolOGYqz2ng+gXnDhkYl1IObS1m3GwBXViJLmGGVvFeq4C1ycmL
-N6PpaTlQZhZTU1TtnrFCm2l5MLlGtdgTP1SLWx+ufDh9gcidQDqKJ3CZJoNoXoId+EjSF3W4
-0KMCwQamDZn6B2NOcRVh+3RzlIBRI1e39Rzz8eubbOlxQFFpdJT1cUth4gt3xg+9US/lpGsq
-NltBPFPfjx7OWPFn5T3p2z+89xfY8a6oNtd6BRr/Ot1eGAo4SvYQNeSWbYErvpQdRNz1K1On
-pewdBI0QdEMO8Ot4GICxk0F20mYSHAZEX8oNwxRqiuqtw7SONstGdxKYqbYucyrMEMKouLgG
-9Nbz627MZPlQxK9+HSpcIaHA7LlUw1mDmB4ABV31MjRDugjA3Lks7tnW1p4uPlPoMaEAsLJn
-7scO7QnoZWAYAwl8bvGwrbiWnTk9rUkMtZfX/D03uH/idSSD6vb4bw59YuRHrpWP3yHWLnKT
-1DvT3RO1zAE9zf7bx3zRAnwRXrWWW8+680fVV3nQRBwJhmYzoEFubWy17zIDlMFhmN04K0pO
-3+5ER+UnMxe83IiE3YFZCKqr1Ccnduld5ycJLIt/6YzYPd54DhNWh+BEO0gjjp9KJyqDuFz+
-vU1faKnUrVIhptPsRHIk2YGUElEkPMJs8P7wyJFe/D1pKKncCn3SA5L/tUPIBFgu1xH0kuR3
-Y9j9LMTGc9pFHFHaTGKYV9Vf6mvNYaTnrgU3Cnc5XSzI9vfNcSQHiJxux38/lH4QW5qvUdyC
-VrHmpA0TjAMDCq0v1e7lTLnsuAbnxwIrOmptb8YR/knbwxkDexECzV94j8TbsUZsszWEWfmN
-hx1eo1aQSeo9GI1jELJVR043kVifNNXHodrMuuUH7zJq9JvqPxNwchSuQgAPfUXQ9bacaNlo
-5IOEjlVafZeJZ1068ArXF9ghm8fQC5vmsBMlv2xHhDFVCHSsa4h8bK5h/5OjrcttGf4ywBs6
-FNe7eqH/zwQ+ZOvUekVIoB9EXXjvuQw1tcmvg767ZE1ZMFzR+n9fduUuwWRCtyqwgBR1j81z
-6dzFn+CLYGbVf5WctcbGVzi/5dymshnwfeKiKhb242ff1gKsDVIWvn7LDGDJ7eSRoye8zRn5
-5sWExH/YtGFTL+XAlZaVNDeDG4CEfxP5CxgHUz26me63ltAb9UdvG3QCeeSJ6mAlYd0N3GDY
-PCweVCORC8+LrY3xk6A21EjhPzWTexaUkx2cYMXrOFmcGq65j5QOP+MQCeabpk/6HzX7/hc6
-7W9/4R5qevisjCw81H9uOVOIgY3FHLKfh3z9sPro7IKoTQPA/G+vXuw5smjr+h5wVxgH4o3q
-QMzQIJzDrfk3uK+XygiXWLGP8oELvqXxsuPHPw67pyd77WDhIIlIOEh+F8qPTXSqCfKnLGMK
-Ns078J4ffa/PLwbRvjAHv8kgJZ+64YqJmKsfgxZF4aTWP5mcYpyTnE6JXGn9FVb9HYYV2RKQ
-33gP9Cu6HU7+8ObNHCcfpt1b+le9hLWrNUhOZLyHSdwrXQRFSpedBBEnobGG6CQZs+boxoRC
-DzUZFx0ujts6n8sq8tjBqgXUlU+JPox6lWU+Tm7uKE6ZO9Ad20lOh8cayzSN3GQhN1gz5vhu
-r1dsOro/PzgDteH36sA3jCO8D9MYNbyr9J9MXV+GbGBoAPj+x9Ofi91Lj55vk3ZBfNshZWJF
-r3b9ulpYnPkqu+9e6otupw7BcwgR//tt8DRfCat12nr2+IfiScPEWTN1l5OF2sLa8o99w4BP
-GOSu+yQ7ywHiFHwSJ+ITm6G+S9irlEhAlKF/iJc9u75ojM/Mp1z8qkA+45zNIsaXX2I/YSEI
-uSIytMUhtcEYVddZ8b6+2uDWAIg7+z22BAEef0KH/Lnc1HBmrDwaC+qGqM+JwX8EEfYy0pqf
-4Vwinkdm44xFnlR1mJ7HBK3C2KajFMr5D0q8dGMIFj1QDK+UVWyMGNCLXg7ixYlNI925k2vt
-nT+qkLflTXSyczCfG5s8MO7+3LElxLtCC7Lxln6YkVx6aHS2JblOvMvLl3cy2B9LLQpHau02
-3JeHF88Hberjw0ul5n7tcadqJQW0xEo+NPT9BGTS50st3DmiDPB1zMb/+B4/Ve1XLZjp83Dm
-y230hWpHZGWGjbHc9LEpYge7K3SqI/yNt+U2mDxcugNUEbuVMwEJJ/jeYSSUA/WLHdjxdNrP
-Y0ybaH4qn1AxrGjCCiRDEMCulSKqnZMDvzVA3ASM/og6IFKaYDV0Hxd3y8WwxUzUbMGDtVQj
-I5vFkfjIE0UuZI7J1c4UXk6ypKytOszeAMnW7jH6J+x9zCdyF7VIQc47I4IWVIirKk34bsoO
-lI8uGgu1zQ+W0BkqD2+WZAvjK1HwhvIbIRyqisPnquaoOkdsArXzqPQXZ70P/tnxl/fD7Sln
-HYMTfAZKqO5LZM9ffqnVgVbWDWsUTYU3wXvYSX8IxaWf4DLJnPmk31LDrc/xGiXNYlpKH0JM
-2qZhUetwjMtE9S4UG9JRxlhLmxnTBMHWKgF+FMqeHwWMj3xfR75wcGO6bvWtbplLDA2P/QCx
-CJJbLdJ00iayrr+jLPt/Y23tN39wH8G+F64jHyHynOKgDgFeroiFHnmLbTjNcrc9tIc239Fe
-f6IeNVjr4ybjPMW+Yo4UH3Jq97ktfPmyGXDrqRPtAb45nNhQllEk4ZeyBEB0YPddWF4OZP1Y
-HnXiWVJm854wnvKirGQiiWDTtUUc4ImaEyNCoabQf2oSZU3LYKBsPXgC5cdpYYjqg1YPso59
-xy+wDfZqP0V558zeGSjJlR7Tkmj76ayO7hqtPIVfANHAZrl51FLhtUkHJLWaUcyUCFi5GnB0
-WSNsjxuksz3aKe4M4O1M7yZ5fCNAI6yKGXP0F2bz27+T0jI5XwmmdNk8nQZKiysfE+e7eaZQ
-iN127NoRMWpJkDdfzJwgiY/nrNkBdrjpdK8rlKQ+Aj+dUr6bqCb/80xdvG9fxmJT56LN2yRH
-9CGvyqXBjGonpF2Fy9XuvhGEgySozKqFDiLth7vz88JhCTotpQwcgHzGViNGxqyBOz5QKV/u
-2iKGP4O4tHotEAiUAricogXdrZPJeXXCJJGkcFIWC/dyTx810J7Zu1E7kIF44kxifj/+4uoH
-b5N2S40vujBUFQ43zfT2O7QWOB++BnZha0pzuJRYy80lWvYsiNaT7kbESndj+99QkQytDyUN
-93VgCK9imNGPboe+Jk20KnHfhPwbTyKI0H7jnUR5SZPQftLZPpUnTyWCQWfY4LVq1IOAUMbb
-ODZ/FcdjvjQ/aokk5BkOcHfk5vdDBaQZv81lJKZjLE8IayyhQZaApxbFwTJ/PvEhcW7Aw7mH
-auwT390cMFx2YEKQ3tLhoL1WNa4G7CLhYDNYzFtbsxIkufgmpPiG0ISrLJRAGSBBxVPheJv7
-qCDwbJP45XIq7PGkr8FZgqVR8sBFis72ynFdu42VmzMy/akYnLd4SGrMvQNKKZBecpAMr32I
-qIKpLvzlvChl0AdRGieVBHiZ2+bj9EmKliFEArjx9fZ/XPSxpz5etWwKAKFJ8VDrqx4WY5X7
-pmfSX9/+wDQdwtdso5LD7o4+chjC6VzFa+DN4d8DpKe3FQQug+yvvG8yFFB5WKm87zyaQbuB
-jPd4KgmdhBWUfbmdHGgr9a/6mdF2vEzdNpKeEbe/UyLYWNYX802lVE8Zrl8rq8+ZjCXor519
-qEr33REfLZXAXqLEwIf5oywv2JMQk2SfMsXCdQCcJzwh6R/o+nC+PFqFf400mPpFj/AzCEZy
-k3kgB0S91d3ii/OMu4tuWJmvVeqO8xcVkU3r1wFS6+61S2wr+wm+Wi5+y02NoDjvaf8++SBG
-UyMNuvL/c+UdEOyF6wWemWw6fJ+22tXPaQLNuKeRiq5yAmtmyPBwLa626QmTv49TbXUjro+5
-CEwUYlp3rNeZO2V7CyJdGVx5eQi9/wB1JkjBSLwwRAuepPGkOIem2r4357Jtg1mta1MMs2py
-MW+b3M+BGIJuZSxm7lrmYzLR0a2F9Wgf+ic1Khelpm+PHvdIIyayKWb9DenYsY/fz+KFwmEG
-D/c4QzRU8u/bQUaW8/irxySmEEy/3t5ny/Smj9agdVC08MjXZrVg1mSfFAvbguK7KQv5GweQ
-XnEhvYtgi7KONA0hewSWCBRvXaTA2zX5jO6BGyriKN2X143nyEGTIZ39+WXToaDbweG24v3W
-UP7mIy22WdGJYEnkolrAapH/D0capILi/FaqYGGaDGTXtRHxO17qO3jHMDaHahPyo/oDBQbG
-K8CmfKF8yblqD+o+4pnCGtveXeDsZc6+BAUx/+tfvEZnkNPMtf0T6s09MAZDOwaO62dX8xtU
-UsMcYCnWFBmwTYvC0/A6TvmpeFcRE3GFQPcwMKV9bZgCyA+W1K5QYPNyr/eQZ8MzZvBsoy6m
-jt/xlVsJ+kyayOtuhtYUTVqPE4nA+jtyArJxPpDVmE6ezP+DJX5vCQAJwjGxTJ4xvgMkkC50
-JXA5+ue98/Kb+60H4HN0isfSGr5WlQBmWwYWlyWkEnphJYNccYToEGiFvM7cpoYrvu2YdrSz
-+LLIwThRBZuypalIgJsjXOK0EwY/+xr5liVrA5YVWVo/uOwo2qyDHB3qFY+OfM1+o39i4AaU
-zN45bhkOFz7+Wb58FvGjQs0tjtzN19PaJjseyR6VafydEQlDH/geAtkXjLoj6aITD3WV8AWJ
-tDkJ+J0DabQ+0IGhjEObarUeybiGqZLodN7IplvPuyTd7aEES3wdCC9Efr+S6c3HIOS7ifQD
-KgRZuT6d9dLyjoPUcXoaYPJlVvF72nPqdEssmkCh1eldZfzAIlj932YvfPxB6IdPKt5poKWK
-NGI1D/blbBEsbz3o7faQUjW/QL8M2/jYoKRyh6x7iz2tSsBar9Cj/HD9lXPBo7gTcXZSjTfs
-VNuAnDLSduNc2lDtLS7Vq9/19hboyTEH08ygmy3iWzf0h3Eg2xWEKzi9OyzO4eTBbj4gjpaF
-xlVKvjJdnJI0i2ivwK/CpBWr+A3bH4Qk8eu77smKL/ToYcxRZSV5Tw75bCeYfmHgox+hdoy/
-3tKYUOQBKK18SRjfdn55iHbT7PvTvW2cxrBCDRd6IVZrHbIIgCAGCk/mOUv8YwXknaczarLY
-qThXpMHemGNDSJDmWQuAu1jBNeXDdGEm/1JORwjxfX5wMHD5SEc9/L/1RPPkkmJEP3lSz+uJ
-5n1v8WzjsRRwKBgnCofV40AO+tf1Ucmg+U8ITbrp2o0cQNPjL6ylB5SlbpWKMO8GEsRNp5IJ
-kEwi9ULaFjbsr1Km3T8HKORwPYXxlNJVUnQh9ywHfvscAhzU1smxS0CIEa+B52CS0WuE2JDf
-TdYN+gzWRDLTDANNdXtvTM0Xoc6arW10OR/f7mhy5O/nnJNnR46McBYjPitH6KMbqDZ6+2Sm
-LN4/qt/l/GU9l49/YoBYb1PGy2ozV561q8rdjslTSoxSAkP12h/agMURDEbn3PZgggN/clLZ
-JNCt340PwxhGZt+2/iPwmVZ8IswqdLziYxsY1JyFC/U/y4pC57c/lcdkayyaag3umPkHDYlr
-BMCdT7i5kg6OB2aC3GvGCbbgJnIElx90olCoP++Ip7W59e42Mqrff6mK8Ij0+wFOFqC4z2qO
-/4AdrA7gGQf812kHcLAvytpbybKXyyCXuTqdFiSlAuN5qyEGMMpfCRjDyV/8AXZD17ziy18y
-/T9MxwGrOcX3d7U/gAtIzURyTTPp8mjWd/9InfcFXW3xfzy2fXVUVwKbD2N5uJEMkebYKWTs
-tqFcW5cHRzks5V6gVlJy4GCDyP5WRa2nPo8eD/nU1ueuY/rR/o0X8OvTZXXgVkhkZlLf12tZ
-uvKHXCsixXZpCgLHZGTfLyGxkOwwbxpGocQAlg3ltdDAlr+npQoDfUln1myOItf3ZCs4PDMt
-xkITuyNFINpAm4yAgTGlgBCIarcSbB74Pb73sUdqtNsAEx8YOYktyksY9d0WftQzgvsC08jB
-5XYKv7p0+vGuUgcu9xDb+jrjALMqLNyt4uotP2V9mUQtCVRtGanKKk/6Cp+UWVtH1miLJZ3d
-9tpYuRrTsYh8lATWc7YHZfQzgAI1x2N+R+2PdHwMw4Rv9togPA4GlsvnbMzayBkHaFHP/zaZ
-l5f11AB9I1zds5Uwywmfs9hmM0uVjfJWgDX1RSg4G649H+yUiNbfwORHai854NAf4Py8LGak
-EX+I5I1cNUwJex6E9ECPs6OHBTZ312MARijqZEvvZn5kOI6lcoF+7UL4G5P2ApmoAycO98ib
-m9JjBp18lqDpn3CzHRe5n40OdPxIg9QWSzSIQDZFNiRsoCQ6tW5Zmw9dGz9iY8GOHmrRVm1O
-3VZaHRWITJ+7tFf0Cd06ydzAhNCpaeFqnZB3jE4IGjNNEsWTK8XqPG9GrLSfVd4L+cFgRCOV
-h//UfqVYiC2VbLtkH51Xc8LEq1Bh+U1hC4xNCXOtYjNwwLDbWuJqkrzZNGUhodlOK7dGeI3n
-7LWoCZv2El6vpM0bYiWFYLXhDzoBy5JEQ82GOPHhc9ZQZyk9qfx0Z47SkmAeRNxMAmanTNhU
-FeGWRFSsgbkSpY3rmrmCLCZ9wDyG9YEt/bv5538lpZJnFwFvO1yR8lMClfeMz0A08xv2ujnT
-O55xiTnIbas5IhqpRK6AQVHNAmwodgLsoXBDN1P9TqoTOtJjqlzME4gyG/6j54FITr0TBrzp
-2ILLg8z4WniO2AfMnV2/wsUJYjZDr2GcAQfGJ2jFQrWBGkyDcmpiGLWxTCPWqrL/lVU/UASH
-/1tN7EX04Kj1iroqBkHduGjLhRCpRFhBQnO7lFLZ+4r9fEOm5fKr48YGghRFr+5S21bBTLyv
-Dm3u+lYHxqHaTopiLpKs81DRdMUdb5N/fCLH+SbNXjPHMAsuNlUv7e14I+h+pglts8hJ8NvD
-X4G1iSXN+v2fJK6xmC+durf0HSf43YaIvVz2FmRzEYsWL8O1AyXW/5CqCG/O9wlKU+KqYNus
-3di2wyvP57fhDPtiILS4DesTz4rTWVAK5Ert06QZEx7G+9lBifHurSEs5LiAjtjfTfUMAFbQ
-Z0BTP8nn/N02z74t5HH0GyI8MaGUMqApCDutZr35d6nrGNyrO+ZJJgYR9DP9WZLO1TPTHV2Q
-OE3fF2zHQEDBC7T/iIfhuYicvNyKvflRDv5LS4gD0ZTbrGuO/I6gC/WrBonjBM/0xBgetLgc
-Pv96grcwLSQhadnAQCwq59Lbaqk/Nr4kl8TrjuzFabouO3ZlVYuIqBjReCK7/T3EXzCB5FOc
-YymKDAhvTDehF/7mrGxseBQOQLwmzxnlbv2/v1uEckOfRV4IIwjr3R+xDBFpKdn+gtgGVwEA
-x72Yy9/AAR/O5gBeXnImtLXMrjIB4xWl2YsrSzebSYGL+U3hHo2jSwVCXivlnFKJj9uEhwyU
-T8Rb2/KKvjhf6/iLfE4JvZGzij4/ZVRDZ589D1TKeg3NEZcopE1Izliz/Lfosdmig5s7wH/C
-/gTM8jLibr6ozaTvVimhbvGWZZiSP61rewJ2si7LMHB482Kyvx8sSL8CrvwIdFm01xWm4Rm1
-pCPdaAoSkROyC8tZM/+r2t9XscnOs1SRdKBmozQHgCJcL45H4FNPTJku3M/Zx0KfEhRAi16H
-YDNRSW4LzHTPZuZwGpJAzwE3+C6map3eogR97Eoxo9lXZRFO0mt9rqu+iRsvvWDoipxwg46a
-UOcdplgubwQyv65EeRbsA+S0JlBEJUEmVEXTvRCC6w3fdCe6v296fLUXRN6vEpFbV/aasjih
-TD0v2z1wIZE9txzlDQLLH3cAkWku4tanb6zkENXbvabkiRUddiWpXORfVOpyRXNXdeUFzlrz
-KbPSfTuxQ9AuVeqG68ocnjcJzUwzh5bNaNFALm3VBqeeSS4uydd6LYd8fRHPbrqHDBBMy2LR
-Qkewo+mWFHnFer8PO8OYWDFDEDBf1xvYtQsO/BFg7EIQUcqa/0+64rg350Us7FPHVr3IwuDq
-E7mUAQcrZxqofUSR5ueiASypVS2BoJ5/TJ16IrIoagjZBj5vLLU3w0fx+tqrjP5UcTgb+zHA
-MBCJa+z8lCXuhWq6KSTHavMFFJjpPq9/Twf/r85jCT/0uHXIfEUbFVd4hZxpCCL5HKvK2BF8
-in0Kx7bu2WsyQbjIdMLGH0l+8cHWnI2LkfDQS2mIcWVP7cfnRKXyyy6NQAsBgjnkfqgZ/4EK
-bc40sH9RLRg4ndn2g7CdiCe1xzeeHgM3bR6tsB5GE5M99Gw2jsv5Di8JAd6LuWiFfDwjRSH6
-+v3CwbDJrAg/jyFdMppR5ayS88r5N7Qo5yfcKfrm6FF/RT/3C8v2q0e3QeT43WA3SAhidJJp
-+tv/05hv9UuW7GZNepP+K5kLUx4Qj6CdVX3KnbXrH5Al67NNgLk4pK2yR+HDPemtsNlbKXP/
-Fzwpd6YhJSvewWHSzWkdC01zU9bEGcbyGFTxCkk6XJeKn7tRT6lEsWF63IZs5K6aEiOU+hnY
-OpVnbP/KjpL1xcQLvn+PnB75yLtNbjGvjqAa4MVOZH1qdkmDU8XOfvikDWcSvYlh5uIuNmsW
-vJVStO13N1M55oha9VrBoVk7qOqZqYz7GOgxaJfFcJGnmz8cdonrtWvkOg5ffHrB690J4YUM
-pz6lIuGauwqdg5AkBtP+7jE5wo/OxzkmKQw0RqunQpa8sm1CDKBjcH/FfZTY2QRu0WUjNIY/
-4w/UYZwDcpfpSoaXMTRbxZj1xpeHgU3yXxrQIzTQwZyRpfaYN84cBvxgLBqNQiDGtVsG6eSi
-DH3ftLAkyKYZgyXzTlfrEnioZUhpB/1yWxkVbCfgwv/Ut0Pz/0fCPP+LG6BUMJC19f3hG4/5
-NN6bPlMlT/8eMmybQrrTFiqXq5vHg1TE9k5vgRSUOiEDGwBGXWu0wLN/TPeVFB/yPo1OWkJR
-2cBI656NUCocmfH/Ix8xahAzUmUOw9Ow52ya4vViuBNFzCa2D4ikaDQtTpdzVxUqGhvCzxIG
-Bzdn6w/lQLvbMD30FjD0Yx7JKNZcFzVvOA4J3XLu+TcTCEKOMU0Ux+EpnvMEnx0USkjkCcct
-YpML3arw6xj5UpffGLNSi9932r797kEpX/rI80+B+ZQ2AA5mNkA7AmOCEyn42W7GfDONCcHG
-3/wANSjDx1hUAFgAGLBYh1qUbwdbma8FTtLbL3NVKKCAi8D9Ljf7wPL70kTjPyCnNYYVDeId
-jgO9VlEhF2Xy0von/hPKfrXw7RHXLhLnvjLL7KIorI6KrL7ZuLxKrsy+Ice5ATeQxPPYHbXQ
-bu3+B0JiU1X334dZsK7/BOK3SU3fgmDg7ell+6uhIetGx+i0Z2iYZ3c+wocSCFKO7f4kul67
-vGdDKm/6ns6rgTZAvLw84S2Xd8IwwgoEDU77uCZa4YvRuqxPBmZcY9OAas1EO+r70CHQqPut
-RvzCGJr3RM7Uif/RjYGVxfjViYXw1dquWwy4YrLbBEYmFR/sEboxwppcjiKI7u9tQYYoegrE
-lPdyGz/6vuvK8mfa4ARWzOKBVqFtSMOUG2XLxf/L5jU/7J3K4iLEmN5ZjEuZAuYRW1SvCFLR
-nfBlk/qbzsz8TEqyPUgrZRTqauYbe8Io5G8kidCKh+gyAr9cy1PnV/cx9EDw/miNIC5v2SAM
-ujkigMaUoMHux6IzfiQQsc/vgNFY2AM0W8/2YlyiX0ummzk6POSz+PLMca/QCLHKjHK+1oLv
-y1elb3PxkoLlxwAhWB/CPG9yR/zNxwqOcKLdjNfGLxJYTos1yRAze9R/K/dZIHMO41AjxBic
-e3eJexGhrmo2R4dAUVRd1TAoFq6dfHV18ud+wp7rjHP1kKWkK1WBKHlMGjrygcn8tu90vYVF
-tpEzwHVgJ5SbNQF7Lk9ceJOp3uxT02FN9b+rNmDeF0bO2HEwnIh/bWS1YzuR3bd7T+cEpeBR
-Cnt/+6p1jaRZZ3QqMsHqcrZaAcqlnOWIp72SIlg86noU0yuLe7bom3eTJhMohozzU1d0hcJW
-U6VE5nrSFxCTk3LcaioQ5RpBVohlpVwpJLv4D7O8rTP95Q3RQ0jOflexc/5I+tsVRMjplP+b
-jq9qgkn/7IO0Bw0sayJ+rs0z/3YZk7e3wjw3/ulo0DfF+gafm1aWwRTp9wl7aguyd/HNOjUp
-YgpCSvjybDEApKu9ppDZXoXAgIpTlPqfjHLgdDR/bD+IWZkzR3JYqmDxngcUAZrKqH010UfQ
-JE4ckzxPy031TCDvEwTyzuKSvVRkVg8vpykoNB7YKbgWdNR4DBR/LsDfrPAzOmrv1Vbt+Ewf
-ufIADLUdQILD/H2nPUxQeFZ/rpe/F2o6GdyExjOTo5oUr6CSh3P/q0uICYxWqxA8qxkPgmxG
-+FrsjZiahg7eTt0UiggvzALRi8+/WBohRx1cDmhtNR/47zm0ltG0hj0LgKQpYveuQP2FAxEB
-Urpc1SJOFFsAoPQGyRgdpTPTxcXhSCQxn1/zS4KiW2JeWu1E993Z+eK391bpTu5xK00EW+oa
-Sd09NwAA8qxdkmJyr0f9/HxevBZAZGFXlyWzu9EQj3s3CloQRZbwX45psEwE7aoO0Fi8H9MB
-FC9vNWujYYvzlwjp56LEct0UaEM7wtYyiRTV2R6L8dwKQQRVI0pgAegKGW3XeWiehuByX7hD
-0molmIO01jA21yTmH8Z7Yppy36hecA0oSxZ1U8zz36X+1Ht6sATQStwUDf4tW9BLh656zi9J
-sgqZmMpxV0DO6m0uOc93QhZ4/QYvTVdXGhVjRk3miwIyRbHyDilDDU2sC0TY0giseBh3SVrf
-Y+rLd/rhHmRF37OZfZR+sjCQ9sKbIOsSRk+wbLbEUzFDVMtPKUTOmeLzpjbOo0pz/IaGyy4S
-AJ27O1CDuNA2LFWnb50hugs5dH9xPmMIN01Okc36XsYRqqyHDSkfIySxk3S75X6g6mtO+2P8
-LtH71be2fUU0mE00b5TBpiH+CZdO4MRATUBPnqpznAxdXiH/pOKLshjmQehTFFmh35ON7mKy
-ILOZF/LBa+nNLf0XvLmUNnr/SaJfbnzSRIifSexC1HE3Mi6eAua90GJz+s3G0chMYndlPLac
-dmWdNsBKAfgSSdwlmk9gnOK5nlE8OvZLQRIxeGwPYlzPHsne8lMleGAfscJG6LARXiayf8hn
-XTRzLhoJLUP2JmXJIy0phCYzOGMwVc/r4lH03j8yis+5H1F9n+tfI38kc7TDw5zDTsCBzzA4
-gzjrlrcOx3dOT5WNokMh+p6giBiaX+oag0+AExrTdV2i+BnE+u71Zho7ZtBKQiWICRpzDhBS
-gW/yXzCxBk0tibzmBMg0jnWwuZ6Uz6Uz42of53AnAbfqz2Bxas47RB9FrrSNIr9iQxpFI3Xz
-uAam+z4o6Mq5LOyxlm4k9vjrNoQtlXRYpXBoSydIZPr5gC+LONUyJymMPKpGs4jL37Nhnh5D
-x4kmpTzpLkdLSMgPjyhh0WfgnnGucpdNRB2Ng8rK4GrWC3pVhell7R/+4rwKYQxSiy65dqox
-6kltRcquSDXALwCs06OtctzZHh43jtgfrQlWkDn3IsIZa90kvcBQzsQDesc6mzi0PAGq058b
-kcOaiuOahzbJEZPFSk0QihLNQsFQE86O/O9qnvDONqUp092N9LHspw1MOYG2FLJGsXrWNsWD
-w43lZ0igUUgVW/ycU68nqQ0aRwgPhyfZgO0gmxkyYlZbyRUq33JYa+octYeiKNavyB31p732
-IZ42P1zaaF70/Za6ULe+LwhxJVrOS2ooa6BKHX7TerrmJzuH2cvMyWQ7QYrXIjwV3G3FhGCE
-w5sPq/DShd9aTBF/28sFeG8Xop53C9s6rECksn+QtYnzlPYfIN189K9Xf3KmxvP6/jifcDfr
-MQDWsXLF70kTaPpB0oORkDaS7wVFN8CJe6VYTE2SnOBIM8IdCq1jZCWpNH7Hkxz4Frzluazk
-nUho9QMYrwmETbCFs7zuRVRAVkjpu3iA0ovc8Q2zcwc/Fsz38re1JNJZy4ag5XrLcxQjxccC
-18fnWXsQHbRAqtw/0kSoibMJUqyLQ47td0ZWVhgT98XMbyI15ADGLXoUzFLOLm86VL+uPliv
-urZ1WjfXPo9wb8XfvRQMYzJGcbIoU1jZ+aq2T+G80LRNGal9E+bPNnON2t0uFB990EYogn3c
-HStglDH+wgD+xpSotzMbyJ44Ey4M2PWCpkDAUMVait+YkwseTJjo/5RGWWTZItT075sJjf47
-X7qiaQ7S0MMvlDFVt9rsiFWFCPo5ZqW4RynKHrSz9jJa15kCKXtWrW8u7TrT+aUxc28QIB4f
-mF7YvW9nEHeEfiQvWax90k7Pylsu5xTZuNLkQEA7fDyzxYAL0wFvXi+3FpHnBaiTuvQSe09Q
-kgG6KkON/EaUy8KPqq7Uq26pHXLI/IgsI6AHmHIbiXo0arp8TP9tiLv5bzb1XQ09bfOPcl/E
-s2EhtMjA+r9A05390WgduQvk/STgMjfv9w/N0/KCiS6ySru5IBZK8+iuQ7/fui4jQH0wtumb
-kGwj6lrtUcDTZ+01lhP1vXcZuyqq6fttdUZ52rx/PoWLYm2JZjOvqKV3AI/bVbAHSlidbieN
-ZsA3U57G8TnHcXMZgHUhL82C04DnIak/hA1Qg10lYPP4A6cGDWRKVTDTrzmerHlFNe4gCRgo
-PGV2eOryruvLgd/W8b0ot4WZhAEPzrn4NfwSUsVZwOo7ZbsFuZdc8BEB7nIBHwRr7GjJVEJQ
-/xCpdyhdEgqGwmCfAS7qSPUvY0PoVP+6t3s0LysbI5sShDZi1Oh5NvIczOliMduNwcddQ4DZ
-yns8zihseI29op8C85ko9vpJ1IBe8XnZEHr7VCf+cyzHH8ZZCM6P0H+y3qs3IUbJ15RYMsqR
-eu325tJJFEiILQ7/kWTMPQaZnUc2JjjWM23z0cQDwdFLrDiEa5Wwqy6fBzT2H8kafjKdeU1F
-w5cns/iBfrXPsu4Frw4Tm6FamruCTbTtTqNhnFhvXJsg/QzW+ZSCuAeCawQM0iHYbU9nRMia
-9EsxbrkZ3BI8U6H1i9KHgKR17/JTjjQEDIxMbsu4loduJu6GY70jpk82KAgVJ07O9MIj1hF/
-jYo++8IQ3TDNy8l11xi51Zh2b26fkuJzY8KmTV7NwvL5zEYHU6qOzti0O1UkUhRu+LHC6Qw+
-/y0DpgRRLZz0Wxx2vrumgHO4lSYD+Ie3i8d8koQZf8APG5sBie/n5Kxh2eFVO9YEml682xyi
-gJb08NuYzIhrJrf6ax01vFDxGbBRJ0k7q3zYIfo6R+YM9ObXMR5TgckOMuWtTI3YVSDF7GeI
-oKyRj3vt5keqP3Ng3qzqa3fESNxfdEkWqqHPsgled2pjK6NNIuUkJobMtkLlJX3llM4aMiD1
-lCMzAoVWinj+KPlaDCunvw38Ad+h3VRBEwOULvHGRiLDiNLAZVY4tJRso3s3JQ864qFU/MI9
-21hcQx7QCpmZhviGnlAXxcGPIzaV2aUvaVxmiHJuGucKLicry/fqy8eaWDgOJ9cZ5JZm4Lo3
-Bb7HjHp0XGMJdHE/tMtU5j5s6c0sXMi4VHrs7LA72ueHk/HTrvx3BhVmWCSZjSe0BwRiRE0D
-H95AlpxgX/K4l+20+KITNszNbkvWdxZcL8SI2fgkR9/BBUqpj3HIVuuSO07x9rQBzH5Ojr/y
-pSoOKfZiEq/5d/wlDl+qUrSAJHP0M7hQt3QnXrOG1NJJeN2Cn2XdFKVyMYzSlhJ23JIui7oe
-gm+Ost10X8nToUV9G5kBPMMeM1o+ZLROl31J32mERqukOcQaLqadMEQ84GeZXQtRP3AvenHf
-5L2ody/qL1Fu26y1Hciw5d13juv8RzmlOece0OCxcIM+MyLyh3J3PMAsMhQLxXwjhMS5HuPX
-5uCrbDoyPK2UybxZ9/gIHysISmTmq93mCewWM4XFqn0EH6AFsekOYJUPjaQ3Fa25bC3oMJm0
-+KzTZpYrtpyeWKApsfxieGVw+xxi6J1Ih1Tv2sq+EidznocXOQs8NCm2GkjRAVYxkivSlEOH
-HuxsU2Og86wr6j8/BhQXWZhmxmb7aKJzOxF1ZRycOJcYEWpQCrtniC3/FmCIyajXkVmftul9
-ZkKhGlxgvZUaL9iTp+NLOpUI+olxo8qusPpnMi42LWTP2K5/8FkQdmK/0jdvCWkk+RaNweQn
-jye50KQZoztyl2wUX0VOxG4W8UR6hXvNo6haIXEgRJeicvPAbB5+G6K8txf7i78OXWfP/nm9
-n+Ag7THLbmurqEZsSGfB6KqFjdbA2jP2cyoVlcPf0RMfd0MeugObQyuFzlvnAgh5aJ5uvSb2
-3gZP7qKYnBGisn+Y2oMuytZWB4r7QOmUSvJ9cSg+PwPeAPJ+VQhTVBQtbsvfegczkIC7aFbB
-52ZhgbjrkewajUnuyRAI2GPbaGG/v0E8r1fj/NIQ/Fiky/TULyV6aoXc7xmaO1MSauzDiosO
-1MkuCL12r+dlSI7yaoEGULshMtfiZBVBhmouaU3MrhBgouHcw7HUvP5LQubhpsv1t12wx+ET
-JMEPHDyOb5d0sQVl8QA3qTLnCA0s9476HUAAvNZJwZKbw0fRnWNd8VXf9Eprg/cN4UX/A4Py
-6VEjPSYIsbC6iSjwv+y0p8ozcpZpBxtTaLH+YzmpuKi8fEmNGGxLdUz0qpkcS/58E9o1ueJt
-Ow4CdV3hoQjEgSxHnbqZcwLOoswZkpNMY0qM1AJc6WOzjXRfKwdtYkNK1Le+Ub5eaXfEV5PL
-GXKOzxP/ULXuS4wCgBs9qWg+J0z7RJFC49y5DEI3t1Blv+0MIOyhMlbnBwfkBwNpkPBR6Lpb
-eBe/+dQUSBngWBCkqzSzNx/NZPUDbKRF6Lt9EZ+9llTtdYZckvaZ9tYt1fwCVmpf1YPL2vkf
-HXGOeYLFOpqEjTuTNPq2qtn6zf9AKmfHITV8H6rYB5imNaNuzdkmtP0axAUv1TASomBCISMe
-0dEoDzgJwZwvGZTSbcnjqtS7gQXJ+XwJjTyskw6xnj6CWtTgPVMlJ0OT1bdP5+0gjy7eSvIW
-dvdV2/vBU4TVrCA3fw2jB7DjiNPS5oN23O90fsX6mkOqQJkLh/bQwZaUyqDHwaD5miqP0D4y
-9X3zfXnrsp0TLLcm7hALOBA0xSb7/gRm243hVAJW6kRxK5jDjw5/FO6Cp9KxRU0vvv3mcYoK
-JLUYqdhvYco7Tw8VL8EJveqRdoWZW4Ck0ZgaaVVIGrD8y1ACuio3Lkvz8J7Bkfw/0AtMljYG
-+X8FfW1/1rr8M635AEYIQ5RpUif9Te74jKJGwVlO/JIXyyY0G5LhlL6lZvNznv97+UHZHoYM
-qnxvN65cfmgWN1L1dprJ2i701yrpI9iSXovnRHo+2IoQopsgCA5l7lD6paBWa99j2KyB4QT5
-J4edEC1eU0wDxUDnNZbREo0H7mcqIix68DzaPH7rGPEh3yWHkXQD7rdNARdodZHbtgYWaLh6
-9ZJlEaSn4mkxbMm4BDDNFR+n84+pfNHVgGvHrujvyPD8Xmrq4qgLoOZrA1+Fzakv9u57Yndw
-biXCrn0poinckgtNv2bcr0IAUctqSJBwFOUcsDUYc4B+1kMs8qVzDV3fJzVag9UkFR2ygc/W
-AMtdvXUaWXB2R+9znNmCvoGccPr8X4O4fvalVSqhJqGQCXRQkYaCyxw8uqBi3/fYv39Ddlfh
-2iam/AXJmkcCX28+NBvNyj2Vb9Em4Z51I6xZN6mt/jYEwj2LoYwpXF4LU4rwFwvsiandzW4e
-665fcMaRH+K+g1EchdB8qmhL0YdVmsgZ8ZAu3Cg4mHo/dLZzbHlonSqBo6YdFTf0ZqM64Sey
-bJDAkgH0T/wx888PgC1Tr34Hfo6PkR3JfxMJQ6Qvr6QmcvyAkOf3jYY3f6XaxfR+OJCoMQeH
-kEdIP1a8jRLryg/GFaZ0wUsuLe7ezqMWetdOp+u/EMIGAAyRQwZyFbyiMfgk1EPwkHZfMXJP
-b0u85TkZhUmN7FG+XX0ku/KNBZf5M/wC7WBY6cX0XGK+M8C8lE4ZMmJZ896tXEyn1Hgs/qgo
-sq8670uEWbvQbn432AxbipYVcwa0V8D6EsK0/sYS6nET/2NB9qy52h2W73lR/0qE0OZ7SOgB
-5yL/Ny68iO40CRbyg7qzKUoA3CLgGEsC9DBVhNFiQHScTGKd12feFc7PUbfxHGty57MqaiQ0
-kHEgKyYuogoopQrCNeFQEkw0pHWZ9IxsgOV/xT6172n3IysdhosGC896owjh4lb0f6Vv9I7w
-EUkYfZ9QGNZlwx0K9VPEX32G1suLBGTRmW7xjzH8jwUs0HLsHkh3c4x5W3lAlJO+PMggeOfL
-vTQWHTnyiDePlCNOZYyielIFhbQ+ZpAMsBfvMF7LA6ZkAEzI0n3Q3uTDlYiX/8jakaL4OX8U
-NENQQAR6PDMwylW+6DlAAJvftnh5jndTxTMIEI0VO2PVSLG/9SZqX0npCQDsrpdgkR8Px0ON
-UY3KOxQkr2jJHFzqPEFyvQFm07cExD8gaW38y6mepsMWXfzk0GNrOW2wDqWyPVCDkotNak0h
-EWg/bWccVycG126ucYba5bqDsdgv3LXMa/R/yTfQG5V4O0+aHxtnw2+nqsiRwYKYtHtXECSp
-2qQf5NB83yVCgGrWE8IBgzFYC6amFDYW6txiYub/okwXETBv353jtHBsco03gpjcU3N59NvK
-sKzOEpVqYXedgBEZiThPRQ64FgYGbW/Z5rwBD8hBmknxy7wNwT04T51ygqiPF8q1AG349p+5
-XdblsEwbG67khMG52rbdoExllgoBiRupJA/EYcUKXm5E4L+SbrMtxjwDDSNtm2eHAKtzhsY4
-LtwT6ij9bWVPS3dDP59Zq5J65ADiaDifO9id/m0J+dN441JxxvDJBF0C8mrVfAFGJgw70HDu
-qQgSio8UI9TZ/lPtsxS/JV4M6CE4Axsw1fxtE12KbrKdnBQnVhHorqsFtbQCml38J+zsksiH
-0y1OFO7vlNVB06oO0P5xqRB8rsLxEW7rxCHmvR9UJsti1HAjDL+Uho+McVRreO6Y1I6avvyZ
-FwwUAOjSerQxfayIHqHhrPWmMDm8LwGOXFA+tXfAFcyJ36lWsB6C/ag5arFGD54B/OtKImpi
-th0uAdyl1E56AIvmuV9GVM2Bb2gP3JJxfCrXxMI02rXf+RZtueidEkG/y5Ooc69APlPJ8UId
-Rf0bR5NOIBREpwUotkrMoPfdbS2FoGrIn7hTmoMEpYoRhrL0pbcc9zznPo/g0Ium9O9JX+Yi
-16lzZqmzLWCHaZNdpcQmLv2coOMYm3VB2J1uRov9X/rW4q0FIkEbTOvUhOvpi/ojRNuoUj7O
-xICvAt6+D8fFFyJc3S9uAMF4KpDqPt9G1E9/Q301pTqPVE6eW66tT2h8oGiQUYAbyIOb4FM5
-K0yE+qeLPzhaetTVpiPUXCDeOTBEsoIEDtHs09Gw9V6BWagNqdgh8cyQFtIvbMuLJX7fmyzX
-2jQndhNz2XICe5ZND/VhqfWqmMe5r5bwc6sgoPSXwy79lhCpPnbt2MReVTEDLnOoGaG+RJ7c
-nYODmKGyqBbblpQ6pw+dDj0EMvWRWO7mSfY1u1puRuxoZgyQpzMACS1D+nEjdEeeFgLXchW7
-P7mtX0wt8JlkVVcXjCHUmxRvRgHDbcGDVz7CBIJ96PJxRpj4OJyBWeCsBAoDtU4S7CfgGA/2
-gp/Iz3nQ9xi2M14oxd6JZcZVtxQP5uORYRKjvCdQdTvsgfGEvmZjO7rgk1YfiLgHHHMricr4
-Tur844EhPyjmBtbJRLuRvrorOef+0fXaCM+GJk45zNteYQKu5LyjuOJdcRJODY9NROmX4QZb
-L6ZDCTErbGDLIrjkYbAgHM02FYl2+vbJs551+GrUqcGcITMbqClipWI67T5cr1OQQ/o8D/Vk
-B318rj55age/7vfbCu+T7VOw8Mu6Y87rttg/2GBDoslLqHGdy+WkTKb0sqDVAFgKNLbLzCVO
-9FKeQQbqKvaEkr2jIaRtHh8mj00gjYFnkOStniv39SnZb0Rh+1IAebrVYsVBFn2Z8obNccZg
-2CO0g/1NSzzPwPB4nZM1lhN0WXeNCUkY/F8EJkfxmCV3PypgSDNtp90Ph/ZYiQsv4oFcjLTE
-pmpHyFGYfv3U1jCRHYqbeS73XTDABFWCg9fRPylB4OcAi/0atq4hwvq9sZ9mstuT3fn/2hID
-YNZ6pmf9wf/tdvoY0wOKr4VnMzk+he12WLqchXzt6RVBYt8W2Rc62WvABwBJed/+TfHvz3sL
-BeVAzHTgUzJhcwykrOal5uVBOwjsF4zNKOTD6KBBlwawgkj2+te59lporPMFYkSI6feZil6w
-REyCXfYHsJgWw6vW9Pankm807qezV/qmCl1kH0phb1os6V0aiwQMN/CF7UWZxa+bfdQXsYR9
-ci08e3usibMjyH/Ru3ZyegTlEbtVosaPaOxUVLZIdqPtm3+NVg/ES5XrVYCZxmqLslJr8xgL
-ncdgckqIuboeZvQJPngWhzeenjDlIq0thIbxXMfhGe/c3FZoXl2y+YP1uHiHJxea8Ebrp5/v
-Z1+Cupt1JMgpvgbh1Tgt07ndoqUvuHLJAigjtWe+HahkkCV0FwT168m1fsLBk3/YJ3wZaUtx
-IQmHBTZuawp/9zdxjb00x+om/Eb/iEv7TMlTmbplx1dPlGZbMHQN4NManUa0Cv9JNbhLtzdE
-XlsCKQl6y/rVcYAv4CVE26wE7i5QhtbdCFoTghJi9AKT/W/WhR/7JkqEkpdcQwyGnDhEZPaA
-SZJbiKSPIIHNAy0nEKFCzr0np5zf6fmgbewanqhl0QGj3qv2E8Ma8XnOf7GwB8Y9XOppDquC
-4gOOXu2BkP5b6veRCm6ixOXKj9J5jghjEAh0adprA4DJbJd2HX9wPLqW6CKO7n82Yt4exSw7
-No2KkIdUKJUYJ29pfqX+iBBhINU9nUjP+5fUuUYhe0DuTZqCidmDm/rxV2Ncm3f7pOdoibx+
-VgPIh9BC++h4NBhY8c9U/Eyqr4pRMPqMwdCDY2CI/PZS5RunshYQn0MRJR0qFrqGyXsgELgP
-6K0JRHMDHD9N+qMPMBJ40LxI7xKitTUg9dNM4Ih7K7td14I2kXd2FkWUUYekyzdoMLhSxCuZ
-8hETPPRKsvrfV5yB/8O+2VensBdp+Xqd7596PzUL18REykEpe595S9MLSZyqj3mIZzxud4L9
-nukPyMZWor0RzdvnqFomXYswKxFbzzw8stIZdnpe9yq1n5Spuo1QB+PkPNW41dA/PZ4JF3YT
-5BvffYOrGAUVo8ieHPf1dHOUuxyl98JLw7jwSCpfuPK8nk/IEf7DEIErYBVoxNu96qpHj9q+
-TKs1DM41vABd8WXfXqEUapmoGZhMNysmzmpdXiajExycJGWyfvbOWEO/oTqIpCaxByNzqHgi
-T2B99a8eLLd0bQXuhZdnOdDRY7VGYWHxP3Enyc/MC3uron6S4i9z4Zx2VA9hRWIBvG9OxvaA
-1Dw5cc2HsrPtHYnN9FLLCf1DQ4e0oJDcn6oOGw9a91dNMCyL/3xfcwP2gNw/uvAmH8NeMUv1
-TFZAFGhfQSkNA/AtGiIa1+c1M7CH1frwQ3WY8LNctgej3c0YJau+GnaFoN27hh+WpGo5fwhK
-vHFdU9K8R12/Cc9AStxhenzw97paNMr2dGszXHqNrtDyQ4axMYs6GXAdEqMCEnoOB4ztyELC
-xLSSr3XdFmXuTmPDujs4TgRhiWsADKUzVrJiiL/LNvSShu8uYXE0R3cop82YXdRRNEHO3LNF
-e2/l0Rz9d4XMTHa3HfPPb9fdOut2XQw21LmSM0IzbyLcgd4aenu+P+X9C1IQJgVL4omAKVPX
-sW5qvnn4NGdU4vJ2uJGuFcuD3FxKK6aA48zADJAOQu3bt9LO9VjL5LpjGQqzCn1+xbnY0Xp2
-1bTIFo7y2bcMsdPmCfMZ595omvYVFqV4pRKFPkNjPsUFDcZZSOrao/sLer3iGuyQKiwLYPiv
-3QLn0VNlhImLbo4LW+qGBz0gdexswEHm8eavsFkVZVumHWK6WC1LGoZlvo/cZb9H+25k3AnO
-Qj1+wXKV3JBl3t3j+PSYg1vKTkkdfvhWLRBP5a0AadM46vbBaDAHI1s5YB7vIaMsWCnJ+Fvl
-iohvSrwkkRYrzx5MY8e3ja81MCQ8jbjo1CHCBDjhwcqtvIRuYCSmFVvOB81u1iIlsFZCBHcd
-CVNH+W48bM9xtjVa0D83zKZXEwqZ3AJD7EjUPMh9AGUmvISyGinRPkqnK/VGhQsECM2O8F2c
-gWEsva+0rotU0VCgPQLUoHvUXloS36jj/+jAikNfufkXmTo2r5b/aWNY3qLowYCAUzND8WyV
-w4GemgzAMZp0e4oE05hEgrMIao1+6tTe2OC39/Kom4GbrGVFY9B0W7+sHqcikpbBoQBIxQUq
-6z/wU9yYyZWTRMcvHQvc0ZWjjIaLogqrO+4n+Ic2ypKVmpzmjAeudZdLe40+XcJYjwRh9ck7
-2GxOWo4r/zCoys/WBjHb4TQvSIBteARfgYVK+NDORR4V5RmTAq2mXOOXkGKKVVn+UU7Lde30
-e8inU4a0jBehWEq053TKUd3wnIu1aOVF2XB6ycHbWyM97A1+sJLRHrCamuGKxl/LyEHAMFqQ
-JrART9ATNnr4v//IyYxKiayoHwJ4OZmUasYcu+BzuurcGjWOOL4/vbH5eH2srsrDOYbS0+fz
-fHy77tcXBuyZ5FA9GDeRdnsBqGAygJjBGLIn+BDXmKKlcMZ58zMnNdoJFGV7RwAyR7Ig3tlP
-w94nBuhXifpwYTqCBv4G9ju8vJPJ2kGRB3Z9iv2eXIOdzcwQIlKTXDJ85Mycn8j3IZ+y3rsw
-Sgemq3rCVrm2XEIbWoRKe5cwwbAKzYHI86tQnNuaQ4/LyagnkGVfCumuj0ssyxfDN00pZLFC
-igqw+TEuFXRMz+fvGHpWFv5p7fotRc4Hg6TMuFv9xeNUPe5FThZsa+sDPZk7xpAtMtcHpTMK
-lsbtcYwMmC+vrAUPZY95xkUasDSnWvGtnvcXhaa7l1fsCC7EKmGYvZsnuumte1RD5HVErN7Y
-Y0mLdIFTXHUXY10yL+ZvsNSKmfj8CE8fcBgfweU1nn1jMyRluHo9LIvdk/hU4WMX8do7W3hp
-mU+VWagTJkhuRWNaCsc9pEJKWex1XrRdIpwJrrFQb+B7WVF8cDOoPnyjSK5XfId16BknUENf
-UTc2cIW9zGDcqG9gvQLMFLmu0CFnMjQVjdzN/Kv1NL49Gl2IszQXNnlcW9wBP7RrD+I0OyCw
-W4oIOTI91AMJlXKZkMgNA9LfmTSPfs7tc4XMAywzaKzo+mdMKvmuXApzeWHx9QATDTvjwg69
-XlR7MPWBtD4lig389n+UPRPGb2U6cNrgeVxsbSAd4rnKsS3EzmHz4CdR6liyyj6kRAxvAHPg
-j9La+Dm2/mED3pf15xQbIgpBQBN6EebX0cKyYAeJwx7ntUIfW2KXi2KqUJNo/6MHGJR/YI10
-JSl5QEDeCAzQ3lPVtpbP3u/l9lRchQd0m66TKUBujMW9CHyzKzWJrx8Miw845gyoB4Vka/i5
-Fx/ZLinB8xAoSjvmtTjGiqQLHJ9fN4rXpNRoeG76g3pnBJhoa99EgIDPkBj1ZR/CmSmlgF9H
-DbM2J1pvya4172R+diMpKfI2X9xt0qgfEcpBuxfBdgOtBnMwQ7SFrYT5Q0xiU5GgpGNHjqVh
-bknLJNGt5nYwMgq42LUqaTJerDbN8/Trla4k8T5dkj3Sx0eVo/0z3w/y57kGFxaenY+CNXIy
-1CLx+ynFurqhd9kqcKzc0AE9m/LFQuZOYXY45scQyZR7+8PesFhi/Y6N7TO+WSakDjIzgaNg
-sB6W4ot6ePJzlkHxoWzh4BdCxTXNe9jBX75c63rU8E/nvzWTRU79rd9gaIZdQdpBm8fS0V8y
-yG6NXt/pt9uEI8H4KqSEfkSVvUItrdDnpTpmyCFyELvS2kQyTIKVsyC5uVU7ZAr/N6/1SDic
-ehzswteYlyRuo4N1rPlxrg/MP+Qvd5tevl2TTNHDOUb/6Pl1fmeErUUsdHOhuQioFO6vj+Za
-cKROs2gIj7n3Yb6kJwHMsQh2T2OCaY8LCrSk4O7OROUXgNAfQYY0Hmh4+GeeztFxDTWCILM7
-Y5yragY5+OzrKhVPYjn6oTzYV9VR9VZBhVRp8koJ+4L+LcOQx34dzwcigb93lNmUXtneNkDy
-ltN8lXgiBjoTyL8QPN10rNNLmoU1h/HCcxUTXhqJy1rA13w2eMLPSrO0sRt39Lhj6GV5GCXU
-N0gMYAlHDUCORRk2bJAPYaYOO0DobEUhSPmAi0m77FIc87x3EOpqnlUk0JGnR1Kqj4Qy7UAp
-KMlfx6xAEVbvR/Hb19ukBhHn4iHH9R1pA3nnatFv1Q586aSO4zyF3C/uI+d2z7UhKV60j5Em
-2+Ht8fqd4rri+JtPboVVGCDQj05KhB8TjBLelbddRARH93goMjJAVad/kbuiP6BwSuj7dCS4
-prduYvZ3zEBwrWRQBs8opTls7OdfuXj5XezrUcS62gsp6mjMKnyLWSI/LvrrpN4DCIqaz2xD
-F1iJRj6SbQAOHVpIMyXEytrBau6umo/htm06AfnXR5Qw/cJLDGGsCdl8wHjo6hTJuM+50bGZ
-yvgmC9Xo8Pqe4OvKJnMsBGhGbn9N8xIli2fOomrsLUOy4wjdUl4844icbsn3IPVqMf9PyagN
-4qwBiyZ9ERJ1ridiQWK0FcMk+PoicT3k89YVMAzY/gA38s3Crqk+YCJS/J99dd21NEjJAssz
-29xN3fPdDIPs6GKiuX2uDeuLo0Qz8DuRQqPJKPuj2k0PRKfZofy2eSmce5RgWJzU1XIkI/DK
-d4TDQp/Sd0T6RJSY83jXLjLk0pU1ICsKatmXwRZ/I2nStweJ8+S7nkFaQFu03iBPfdQR5naN
-huky74FFIB2ICbQpAd9VYC5HLS3mqnHTnMv2NLrzkUqcugggfB12mTXKXpF6yXuHPxMbebHI
-NoFfUFd/29/8YQ3DK7CyUlSx7n/D6u5YXVtCMhnQqZgC2GsJe9BDuMdNowvGzrM/8VZoAsgq
-WL/AQ2ue7TQgHmdrGQX3UEcF+Gj97NCZAU33MZxwtROUs73KlwrZw0ro1/k4OZek3acdEbUM
-CK4VNiI4/G4FSzD/joBOvPNPp6th1ukE0Qhsf7GXqwyXOsmB8lmzX5phqRr3c5tzLCHQ3EIF
-47kPmIJBBQvtmARcCyoQm/0sbTjUL5++baLxf6sJBnWBWvklZl7b5uBmJbgi8+bUV/WFREqc
-U07uFBsebUrgArcLqL6T6gAAF60sfgEicoybAsZDqHQynQ63awY8V/uNmbATezEiYjGEVPFk
-jJtMLLmV+BTBLf9oNLKu2X2WYyjCBqzI5KfRp3WZwXMD3jh+kPO/aU+wJ5I2gubqEJ79ol2T
-X4WaFoaotChV7FG5jJ7dJaUmVlogBgOkOhFTzJ/be1aZHFoBj+Qlh1RCFMLz8im1/xjsGMQO
-En57+LhCsRH6a2+24P0yWfA519JgSMgf1RsuSi/wqfGlRon+TGwSocox4wTlfA7QhozKQmH0
-T9KkFk7B7H4dNcjgulbOiFi5a+uqVN9+lP126WEMNBeN4jJuzs49yH+Gn30ASPP/LMu7fYnT
-RbC2yf09xq0oJZDIC6MEt16clX22PsyKuNi90u8kakH/5SKSVZs6NAaBT3D5AEsVCFoIBLgy
-e8veZUY8txUZVGilaZQS1SX8Z5vzJ91M7LtCKYrMDGPkgE8To/DeW+TqYsG+oCxBw6mqZ4qN
-yycFixjFVMc+nAZoliocUgB2/zTrxFSh8BsSR105+HXXnWoPB2010qOIb4hZ4ZLi84iBUQHi
-kP5P09vXiEsjtxgc4Sknpupyuf75k9K2948Q1kTsQyy4YqM4/J1wxZilxzQ1TXzK9Y7JSwQ5
-+UWCbIh8LSDIjTqp/DJq13ndKp9wAfW0delB7hzg3885v9l8V/i/4lBYAEWXQjnL9UqjQwgc
-3QjBRAUY3bOS8Kd9UrNyw6KscaIZr6gtaEOiRGHa4je2X8Dq411VvCagMVjqUoqPERxj5id5
-Y4xzQTccCsYWBtgjfUCI7Lmkxiufy+IMzdT6/1jA9HWtxA9RZJHm2XOiAwe6L8o2HpnRIpdV
-bUUtKcZJ3wOKjjyeLl/dv9n1Am/ZPiFt8mpeHNCWgCatO181cIF2AfwLVBXhGzaUGSkbJibQ
-flEuBKn5YVA4twzrTHYK5LyxN9QKTu/FZHbCC/sg5GwS0UyrQGJi9gJcWXaOb7zGIcCSjut8
-pkReHdgT9iaK/EwnTN1I8QuFFLgpuFtXUvpH9MBtUUqATVWAcllaXtoLzYEflq821ZavoAcJ
-rZkSLbSVFI1YUDXKdnUtxRyr7Pg4dTLdje/YxUOWIh9I0iKkA07T20rWLG2qKcQeUIFpIUCc
-z6SaJ0HTr+hQf7ahj9WS/A+1Y2RLDXKaDKp4t0gZgo4i/ASV8//jQPjDC5pdESxJ5xnI6AL+
-Z6F14aaZLTYIJkeoS74CDpCXY2JCnVsgkun10muCwcXsV988wOuhgSZdvzA/fu+kIHT/QChK
-BWph1WzyqnroqwDyFDXCb30cKdEbO0PJR692Z/ccwy6Xx2P5a8KG7hjsdShpZ6H6KcGqgqcB
-GPEVMw3uReLCRHC9VFxVM38ImnPv9E1eDZHF32J1hmKwszkp+nkTjuN7oks40UrLDICR+IAa
-7pxlIYBjVyQVjYHQ7VPpXHnL8lgGLWMjnPhAHOue4mHrJQNCQ6mTnDgyhojb3IZfPUafI4Y5
-IpZGTzEKoSkoQAyA6cV6YQILXn3Tfs3TscgE2g7CM5+zCth5fC+v23QgP9VVpLHYFw19p1M9
-WflHQZWKYLdF2BWE+z9bT60VLtBMZYENojH5cAUIRu9u9oh87uufH0/aMKp+PcC110kertnY
-T2GfuHU3KobT3Nd/PCMvHw+gzJ0Um/kvZU2bo1llQTm/Ozca/nAMQsgf1+Q4BokdCyPV7590
-qWqaM0bRMQx6U5Ra4tIcRpsmBIMIIR7SptHqUCbclh5rYyU+3ald9hCJehsEwRouhg4qRWc2
-S60kHrIkSSB45ELGGgYt8KWNMmAuPsGEVijCcCvckc54wPwzkxpmY0Xgxi1OViQMNZl2oUnm
-cbqGhe4lb+1xiug9MS0iCDQffg7J91MIPTIgBMgFnjeA7pdwx7oHIC/UKe9Fro7O16SGPOYR
-G06QRZpcDy4rnQFiv4yycxCba0ZOAoqE7KiFMa5LHlSuhpqkfyqAaGDnSXEhHq9Essn07hrZ
-ojOZMCVzeNhoLqQMMzZXpeK3H7st0LfFcYf1xHvCd+01/jr+AwmqsGZKlRzyi8+JOXm0nWNX
-bEcXfEhYd5pmBuhCYFBCKpvh1q38bjyXMj8lAI/Hm5WkiSH9PyTrAlUTLAnAqqWV2ALJ6D9o
-i3MdKKoG1VQMISYldRZdY2VT7TOYE+2NFXu7jyKlgwGGtzSc1VPDLoy40Es1PZtYgwK0Yx1g
-KLstMRJH+1E+dW5C/x39C/6Q5WXoBuRRPUdYHLQSMwl3KvXh3otWJenfK26J5DU39FasZjQV
-1NYtp5DnpRO9FQTQSVvvAnI/dwYZGCwk/VcfW7gnoeXoqeBVPE3d7u7WsTDnIHqL5eYBjwUt
-KbI5U1tk7Fv+EGLGxF/VG1eU5SGrARJZEN0B9GvRKiC1kwHeOW9FKOEVKEVUKSwIE/Tt8kXm
-c9uBTKj7hYj6z0di9s6vhH6g9EEEHe6rxEwbTMeZ+Xuo1UlRBMyLkwd7GjQjW1B51kW330iR
-OHM6Qnmu0ygpOXA1Lu1fo6YG3aBz8AiJ/PleY23vmEAxbexCZfY1W1iCIU5Qo1HunoA3g4VY
-a/hSpC1hQvjjpXmb04nxNuL9zKNCByKJ0R4Ex/jqAymNWGZUm1bwxhSrKJg0AISqrmpYMz+p
-8W+JGwpqOY9lHm8DY4j0h4oJGIGW8rWz10poZL3cSsShm75abxlkqUmP7TqNJR8cq1TtNi1x
-aBfqittTZbbkqONwUDSo+J+IpCP3+uUbIl+USFnt8d7EcURy2ZBWpUb+2NAaeFOzBT1CBqPW
-tqsBFtlzKsiBAY042/33dt1Lo185CczZNSXkHCqWU+Vv+vzzCfRRPSSl+2/wsfAKvaT2MR8l
-w+oKHXrDAATUjClc4c/vkZjMK/XVajnIU2EFuw0f9DFoy/B5hf0u6O7QoEQR00Ygu7oZF9q9
-Vs3q2s6d5gSlBAa3yRwALUMPypoUAf0b3/AEC7hcaChJQajqywLBsjNwaMlIv5CpmeRJUQDa
-lkvWFVKu/xwrvS6Tyjcl2LgNy4UVt5udKKYofN+guCFESRiDoH14ZefU1FOxoHPgoYMGGWTP
-XhJqL+yVnxRF4SbCOFhMUzI2BCFgRUn4YaUIluD1mTTVfGlqNo/DD+/tlzpPqAU8j3zB3Hyf
-NDMb6FSyy/FG9KxkNjNmZHMpkdCu9XrrUcZDAaPJoCctJQ4N/x0QmjYsFZpqetPXG/ZwimIz
-c6pu1r3V762nUDFJMlqKv///H5EtymRWSXTCXBAA3pWx6nGHkiCgUk7zNwGZX4gzsLqJktR+
-X/3J8KqQzUir363a/Hcpkowj2WRI8eSqXxhjj6J3eiGRshT8CnQmUVJlCZUH8/MU1pmnhPUZ
-MeuQ3+HKjocbhMGuYSeFnY4KBMH1XjO0UZ016yFKZr+vykOmBXuDkwWwdV+V3hf6jG6BbWno
-S3l6MSO6HmAclN8JuRh1EqgziFZfpF9v1Pu1svE0Yazm1nB1F7C6tVwb67o6uP1SXZSQwusq
-tL+PgD9ReEz3DuJmJH65QcN7pbP95kj7dag5/ze2faXhfiETx/S8sm2fOwL1u1p6f+nNq7yB
-iiI3aG3IhW5WOZ784eHVsvxS6NlUVyKAZFW/m6r4Dl0/VlzcKJakig8Eh/alcpXvXUrzxlXl
-bFOjDUZovD6qjItfIdCKDwQuD3fOhRZg7zYnJoG1ABMlZRnTkPHt+eCMV5tIsoeqb6+NuQL2
-jqzvkAfaBoZdDg+sRf5tZTnSv8daJ6CKCyShFOWGa/ES9XDQ1GLj9h1HAPLzi3fbeeH1pyu8
-LGNRQ+TmoKikvtlHRCLWIDEupoGZ1saY+064O5UrRDAbLeJdOo4D85RwAx/mDqswHLeWfR1i
-zcBymOjgDAVZsmD8mCqnR3jl1ihsQsK9AJWS0sRVl5PXAi3iqubeIdA5JPEB17au9RZEiDE6
-X4MxynfWy33s4HzcaktcnbeKeDjUUtZig359byoyjwPtF38dw02+UdPtC0tYfCf/bFY0tt65
-3pp/x0kmZS/4TJx5QFfGZUhsJjUXmBld+3xphWBfXTSed2IFXAxltwHDmm1yVN66YNN4eTm0
-N+d7JC9Tkv/KNIWqbPU6xthcdcPNK6Y5hWYYnR+Meg/OE6yc12y+2XtqrsMUEmqZtxva5i+V
-rOJVvV8MbtAfH2/+aIYDoNsjXVgrnXZvmMXbPjvW/eQRaZojnkzSUMkkYHDJAW5LhtLl+/uE
-45XLgwmMUd4Y8F4932ZQdBHRRTbDtpkUN96vgarKJoiGjFP4l/mfwMT2PqYlUOIfjUPaqxKi
-UJ/ypqM4jKRLlkF69uZFfvoMgxCYJpTX+geMTl04JYhoPjm8dBh4mlevQMRe/6vghH1m3Vk3
-TkiXmRQopIvP9PofGNz865/x/AE6SbOsgFv7jV5KNetb4E542MS0ClBup9XlP2OrXTYbOPEl
-CODmtZ/b0k4F7nA2cgqccj1vc3bjnmf9ZjylKF3a/jMzp8vsP6PK5D2FN0gx56Wv0NifZb4m
-314+tNf4xQk38jZG/+Tkx/m+boV1j5lXirNA8gcFY2lLM30UDoWSrdbw2ct5oP/QDHr4CTEa
-/6MNrU9pLtoWVVhYxaxc29c3fW8FuMapkxmt9k/eNW9v6LQ+w6Pl3Bk8h3JUOziKpaHwqoMc
-q2ZMGKt/ThyAoRsX3Uayx5beiPBUq7DcT7iIKizQWp0cjZuYvnmVXgbrtBCkMNEPsBvapu4b
-WV0olLP8up9nSNy++E80dgzcj8/xm3iHS4LWa49v3BzUjD/ULGQUc9tToO+7JQ3CCtK6aT/J
-eHR/SYx1z0UJb1eMkr9GKssNaHGY2cb8V9mxkwVH2euQeBPPZ5wGnL+qanykKUuy213ia1BV
-+YA6aaIgqj39t075TgkoY/qzQvI/I4IJDhBAdU2/OB+2UvJNtVzg3BfPvAVAYsAzQrrQ5W0x
-O82ndLK+Z7szf6npKfuww/avxzMx1eaOatmgKf0K8EPRmfwfEi3MmkLyojH1wz3vM8fUvHh6
-BCEfmdFMpi5JHcByzinBArcuVFQjFsCIDbVC7j2zGqZURRywIj92c8tszrkBYzTipYibvYbC
-EGklkQ0mdkP/SpRxtoBrVLFvWPNbmxRS1+30v8PPK9F++KNh3y6W65gMnZVeP4cAdYrGtLRr
-mewqH1tVaLk85fbCR9lMasmJVPYfkLicklc8DU1alF1PBW7UB/DjqnoM7W2NWQNzLniBeUv6
-CxZezXxbmWzoffYAIcv1cLHWvcPhvw2kpMT6sFY2ZNApPjbA5eWX5TNQa9jzurSeqDbYdsC8
-rz/N4CsXfnRRZEaoUFm4VxUMnRSHUxfXanWjdsm12EoZ3Vak/IwNLWyQfTuMVBYduKCkxISz
-feArw6DUA+fyHQdT6iNlM+5sVp/YGXMRA3vVwVeSM3j+hkWsSHs+I8j9vhB6jLy6mFN3r0pZ
-ubQakaJMcpgFD354zndxFs2j0VAxt5remg5hQAoxezOgVPCvywGM+SXxaRdWGsKCULthDgwn
-BNwunOdg9JLOyseK7pUZaB4AsW9cAV51E9FtrAIGrPQ3q33PXlx3N9CUQzNntu1vWyLr9SyF
-fxaT+OkZOxcSnHRo0y/21dj4tJ9+tQq3crR0mrKq9cLzga0qdqaD5kih3WHSlQJeSvkCdzju
-S+pqs+KBQsamDnP1cqGXCTTWkDEiVXCwRB8HpfpP0ebNGnQSnkI5Lf3kWr8bVe9gFi4r/Glp
-JxKlm9WUi7dBYb9S0ES8F0K0NtmCL5RF1iZaKXSKACHQ0DGngNE/DfxyXqzjGfamTSKAa65w
-pXsyJba74+jZ9bImgxhEF1Rmb8XoZCyPQa6utQjpVwMMsBx3u0yXVh94qtTNuKtARMLhIz5+
-8AOJAigvxxZL/XKlOs1j2cbjIoneSUOetBBfeNFDkUNX9s61NumoM37UOBsCRtXi1QgxLMup
-wyDWkjHqMqs6AqmI8m5zNNwi1HxbWuPdRy6FAdFm88iTpN5urEimFEm6wcCt9SAe+R1/r9NS
-X+GZUStng3AnHKGGZI2PQOKE7OCbtYz60JXA0hSTdwMdGjW57ALHP0FixQRqrgsdNFXy25ov
-QNwaiLhnL2gIP2md9iGYJAfVIQzvuKIZoBXkXccwK0QimySB3ynr+VYnM72PnxUnPzxhxyFN
-KZREfphCtSW4lrDf/SbWnGp1PSwLkSc8xVSDJSMHlhQuXkJvywZRMleRSmuArOuqcNaOro5Z
-jB57IpoXy8Vx4sVr4J6Dlj7ZsGGLXQZOiDwKQ/ZDQBjfgZ9c1lU03HXoxKBFNo4IctukWvl4
-fBzseIOssmexhTGnXWlQ9WiZ0+WRr82i1xXk+Kk/M5SbpGjEON88iT1iXqY8EKuFuRSfOJg0
-F2ogmhacLpx1LMSPjNr204ImldZUjvTUWp4mPdSl7Gm4WvMQW48hcTuz1ceH7Hq5mDaZeFqt
-oWH2O2vpnRAJ7kiqaBTSNLweFMK+yev18fAjfJF8o9MrH5xMpP6gOPsQdSmIJuV8/+DK140R
-KtmqJiWxMqfq9Au4yI7sAJ4v7sg7H/+cLVAzfjfakGzrbUYgMrbX/v7ALunLhwf/aGu3UoYY
-6El+coq3qtTWW1jDqmVIOnaG4qc7mAUVpo6vilt4SKhHOXeR5gMkr2pFrpbYvz8JDFPeLPsi
-Uvc2b5uaJDtdxfeDqHCHFYKz1R+XEME+Vm8+9FvQPa7Yh46JtkG5jzgsk/NkjbYwzUBVyqeA
-rouSYy9nSsn30IQVgBuDH1S+/0cznb0FTolYmkVSAGXeCMamuesqvcRE0vwiDVzsFM9eqtiM
-oxqoFpBrXXQt19zhAC8isRxJUmbN7NmV2d3s6ry4gM8xUtNXZAEE4xdcCSsddF0uTY5eegAv
-5bS/j0y6zKH+xy9zoaiD7m6J1X3Fx2oE6B5j6aIInU4jfx7dgupT2UrbGD7I0YONff3pMIwI
-ZXb9iYDgfQX/K1HplkpIBBMWiPj5PQ1u/Hi+tOWNJxQu6+UjwSaIawgBSI6lnTapHVShhS/p
-QsTg15nwqkr5TulTEzo0dRd4E0pLCqqKW7iOEnKYECAJnKMK/gdZWjj0bBQOeUhkX4M1Dyek
-XURZdqjDxEHc7JW78iyfRT+O8KvFLFRlVyeCOKhAIgsaSBE2ZGgv4p8edw6mXTYfO+1umDGJ
-Ga5t+bWIYHQEOT/yhunWN8IIiL17Iq8FCtJr2G+fwkAfeld5czJat+27eeVOxUAmzkRUAKWl
-XY5UJNu9we0HgowuA+WlcFYZ0r1dranZlcV61Oo21sPJrVQKu2MkOnWgK+Hr6fY1MEXtBh8z
-1JbdhrjNKoBbbkN+cIpd2TlbyWmnSTe/X8oFGPXhipUQ4DdGuMvhmCEYTPeosUyANdDJFIhg
-uEEada0hBG04D83eZXcNmtfp15p6xZteYY6htKxGzjycrNfz7snxJP4pNRlpzgCbOnLh816F
-0kCdqUY3NAKSeWdDyDkQ5WELKm+rRGG0EgMoTbu1Z9SqYXD58lEDoi+AY7mQSYdeDIXe5Def
-L6X5IJKSQOjya6zb3n1axqkV1uGzYsj1DAba3Ka+w1V09/w2x2pNyHumL+KAPv8hVo/7HBSH
-GCD7IrC9DebZEsl1bVY11qdHoDKGcvzvHrzGHh4xL0+BZVWHPhGItae4yxWabg+IBwk5CJIM
-c+qH9weyuooVFHEGOsOhHmcKR2EhpiY/tGWIuVEt59SzkNCoVRRIvYQk9eyMB1OBFkiTza4K
-55Wr6tuoxf1GYfSsbSsYWKSSgXFiEQRSgbJQnrfAGkJnlbJvqK0AmB9uhehB+KhV5AaHUOc9
-Fj3+XuYSOmUyD0ES6Gi9E2Q/px7Xv5nmUybTd2SodcYwvpnjoTww497TjF4wkFaXzcmVUyPF
-8RE2UR7gBKNk/5Bs9cUjvJ9MJf7xNtI1eAQa+QzfpJBODNwIyvwYRi+16eldxB/SW4gIQBuR
-sW+e9wf6dRjsYyAjKgRwFYczvFzwUdXVvFYk5phKAzphxcmlPMoKdijbHMoW2+Cv6LtOlR+U
-tqk0Bx505n9CHHn/b749/OdB+PF2lADTI61/JIM1+emx4EMLlmU1pxDLMZeVWHpiuod/2tT/
-L2ZZCSlykvedwwr9z1HN0KA/5oeb7aOg4AF/WRHLKytJZMA6pBe8Dojx3SciiFwhoOMluCDK
-NJgT+l4R6gxArZPIoS2YVZ8IsotPd+ra9YzDQe3mlLJ0aYkUC3cylCfOlJUATZrlLTeTaDSd
-NN5VTX23d+hVH/dvGOitWaNzpiAV0q8q5GBLdcpnln6KY2m5S5vCo1Ts8O7/45IB7LjC1olH
-a8QVeIfnvplI2633wGW0rOjzsEV3Yc+uPJWsl/3yVl7QDUwxMe2FDI88U6vEWp3XjXwmq9/g
-xGSKndQnhOU6Gsb+qppILNuhZghLHq57gxQW84YP5hP+5KNwryiqwmCbKMNSYx84aR6oEbV1
-bWDwGqMCHNWFrC+cPXcjcPLujaRcMOiZHmhYuTJiDV9LPn1bfDhqrOiG7LmGhg0zGbfs+MQ1
-1dv14PFv6xUolYsnA6VvYzOwBOru2oUrTkxKFOaaOjh/9Z+guSAmVYXqAZ5clDq11BYJEpj1
-VbG2Qj5tifLLAvnGBSEkOxAh1+zZ22BeA04wvhq3u1/ap883SnYTMZB0CSpmBIGFSLXXZEU2
-mCNb4N1mAIZA4SnDsgRH8WAvlcAb105PnroVP6UCfx9K6Fl24wSi5vhdLx7Z7Q9cCzrkQyUa
-E6W66kUTAq604iGAQlFyfjiWN3Cpk/38WTL2dFxy5Rde/yoYLZVNNjmh8fOSbDvRS7pgEvig
-RCMju61D7g1UwxyklozFg7kQYThMY6h4Xc79KplJZjV83jSWoAWHu/G8RQsYp+ilCUieto1B
-qtgKK07DC8kKiQwoRvDTpHwaTqv4SkZRGu3RIAyVTP9WlD0tZ71H55t6IKCsh+gsxVAzfEGs
-j30VG4CxgdfiVtB9pB9jYXfqgC8hpqG6oMAKAruPIoj3K0D8p6nzbRQj0DLCPWTLOry3J50h
-UAx3V4kmLY2/SJiGThixHnkP5ExCNU0E12OXedxweBGK3gGsNG1E/skTe4SFxN+SWhD4BFbs
-4p8oS3XSN01nweDuvXESD5iAy/6YCC3+eBiTgGtGdrWLZYLGlj/f3GVr5AQZv6pru3geiA88
-Kn0omkZ96rwwXuvbjLdEsqANoupOHTUCk7+4FhTW0nbCXnCXkt13hG6VucMlPlRd3UrFOhDX
-XBPyQ/WVRp4+77lo2t3Bm0RQBWR7wHSrcMSg/cvjsv9VOP/qV9mt2WNKIyIjoUXxeMaI/pyN
-vv4loSmRJ1G0UVqugWbKZ+MPNjJuc3VtaocFT3re9sgBoZeHVMZ6PleilaUejyHR1rkB+4es
-wIrZ0CvEGsynID5gQMCg2hUjy1f+mWkLuTjR8cx5g9Kp617o5WqbWAg5PZp9mDHW9LwY2Lqj
-376fTp041bcssUmRpe1WUEHuxBgmgGxqhsTnFeuVgRgC9phQ4ay3K9C+zPpBTCKZ1Ff8c8SV
-ew8+3izJ8OkMD+UqMARhPRupW945kYpFCxyqMuicD95ltIkRS2smwFERWXkYVdEFlLMlkLWm
-r2lm7FpbNunR9lKtaTt/Vi+SyVOg1OvMYobkbhonSlgonEY0t3qseAchiGbb/iyam4HDQ+Qy
-HWnQ5I1s9XCOrbwmBm7D8q3NsclcW+LHnxxOxKHCTtfgRzFrCeVhwVu01SPiUYPzeHJVKoxz
-UP0+gS1WCZHq6lE73Y3iMdxH19M7bqJNzq21ivb7bbG/AExQG2lulPF3NL/Q2F51ciON6JcI
-8zQzNHKCIpz/MbycTFJOLYnUua9tCQypZDoHZ1GI2z5DEexks2AT1v43Je6PkzPhjHUTUX5p
-ZoEJVt42TnGY5GFw7tXbhvCPqg2x3AMtFrAta9Q+UCsyrbYexvjc4iGLi7b60UK7STJMC9BO
-29eqPODQkqEuVVAcz2xZDfu7PKjiDIrujeiiK2lPeL8sVQG1st+g2i6XLTqQ6PRfkodyNlYL
-Z5pG3NOJC0sIFUlUweKfANZf+YciUTJ3e376m/wjHaiVbmXYZ5cwrUSJWCdc97IMqp4Jtpu8
-2CZyre8WOdz4rIq8mOZy5z3HQCXPkmVApim1hPY4abg9zrZTm/TsDHxoJzbJUPR7VcUHJUtJ
-iNmL4/9O/kZnP/4GvJXlzFfYqDvvTiBeQufI/Wg+kc0sY88rO51Nr0afELjnLg7NHRHvVMoV
-3z5c6KFJpLTCVb61WsEWzVKeGyMqOZzEMtJcVTwmvyvAI+zQA/6Pgf6CVcwLAfXBO29IZCW+
-amEUrbAJ/nZ+bDq0zxWwDQhODwHSTZht6gfJkRxthjHXrojS0t4a4bKUCG5JacJCVKozEj20
-PGvHUv75e+ObP+wdYEeuYo811jbsWKj0VUdTV5yxb3wXMNoHuggpUsKVrl7s6595YV0de6C0
-er9VutZdBugzkjRAED6yMGI4qsLmt7Gvt2ZwxYPIoLtSftjoGOrY1Bsy7FEh2mnsOQR5+Xy9
-WotS2ews1s+lPHbV4xSGgDFd24kN4kcbtDlY6Rvnd7G3+B7KHOrYIoAmwXkqQiNgFlIL/N7h
-F68Yoc86Tc+UI1UjpZVMMQ/Km0CczS/W7lx+ur1fM5gTcz0hDIqb567O6sS6lDlxaywRL7Lf
-LkHCEVEy/noHblyx94N1Zu1Bg1/g+UxTa+H6Pgbw1fBs0VO7sCEcJE9z/qIbFdTTVvvx1g3i
-4jqXXIxvteWfSuDs4LtAxsSTLdwfpFVdzo3qEoXPM4WtatqfcfZ8L9zIhvIj/wNLVqe1gVhv
-211LHKdTX2tqyhWGeyDkaD5Qwj61d0L08ugrBzwmFUHM2XQQG9nf3RqPx5Z0BeC1Xlq18+up
-bdmM+hvcSdf8kF00J18V4eFAnVo/H42ueT0Hn3NWB1zztdoKKLYEH4EfoVLEhP2dwVIjldZe
-PNbYCYFVZ49ZRu5ZOaF8pK/Egnu/U9f4noq5UO77K6xeA3SuLwrlzEsRaooJEMB1BGbnoo3w
-gr9D0isjrinLbVrZf8tR8fMXPQ7nq0FR6wwvH3pOiySCPHmyS7/Fcxryuo1hIse6yqZYSJyy
-g1bea3zqtCQ7e/pizjNUGUG4CE7Uf6qX73l4HNBrnPFKDWOLuZhBXkeSh1Pds/7pMQtaB30Y
-ieCvoBfjKP9xVsurYjn2LQtOiEI089Py8LAacGvxbS9aoG1eig/o0bhsklmvPSiIESLJic4e
-34q2wqAmwnqx4NRJbZjZ+8SqT+W1nmqMhJmpmU9vH4lUG012TjWSG9+LOHNRdo9SkOoTQ8Yu
-C6jq1dUHer7Wlv11+GJ9nyCoDT4n5SakPzOE8xlcMKspbVceMuePqLojSCfuhlb04ibg3LL6
-x/ZY13DoKLuZPg5sVqPr6Zkj/Te4FLHHcIw/PG26Io2v0jK8p/UAKhJw6+tfRKw7iC9CjwUb
-gOoOS0y4Qjin4ZZQZfNar/9KHIo9SMz/ZWcLvwf3OBYiHC3F5AzbpemqOal1TAIPSRn9zGDO
-IqhqZ4uQEKGm7RC5DVRSmjuvBsDi2Bh/O6PLnoD8GTCT+SlQLZPajzl6vfRMOQRbc9YgUZV4
-FfB7BAfPF7uyfVwXd8056InR4ZGhA2fR2yTg7Qg/ZD1vNuPmJb63Lz1bi3V2G7ef/xCWuHif
-4R7lkeOMzaHJUCX79lYSzdB8O0XTsS7QO2aeqLtWCeB/Ajglbl6pRMTRJnKoMzuftcxPiKT3
-jWfPOioeV+eBjV9F77pqKDVhudHtNixvUWdntA4EvkZ9Wy9FsLntwcGCRIMXX1nQbLHhOK8Q
-RgfvbOHZxj63fWL/BCnpnWK0QkcpBANNME+b92Xw1dlsXVI118LoldKPE7TBsobJ66f6rjG/
-c30rR1YpAASPzUZOj2oUJLGXTO/82OvlVxs5nh/N+l2JX2RCYjfjb9FFlWMPLatyIRmRiBCM
-2jUOCQuNyIqEaAj0cZ2T2ycGFxIaP6H/7oOMkt7J8QoKwBbSwcnG5lalz2bbfwS1iGgZnWuO
-UpQes1ncGHzJDwQYdbvD71SrVkgD58vTCpdPo5FCz5tILe0BRxa6A7PLyFmAUB+oukl/Zdvz
-intGd4NxOOPqVRi9pi67suJ8z33pil8fMYCDqGiabGGrCKTbi7HKVVMbGwHoYdFOvhz7YpH3
-gsfOWu8/yRaKATzCaKqL6DoyS9sssrEKp/SxF/TK/+CKA8gGsYr4C3kWlQGjPZUS49RTHmgt
-DsPbhMR36pMH1pLuJxqFSrCPxHYNgxvDOiuRkSk5SGmee8q5CkqbOgYmy+ZWF0izs1CUyrJT
-nxDwwG1jP4o3LRwslYdJpQKCzqANE6Tk+1F3Qgsi2SC9ZuLe9YNhCw1LgVQ+w7HrFkEnNQNK
-MkgUuUxAKnfIK4s86d9CkZSqXlgA5nrMwbsAf+zpIwfR/5CMvDeSi54rtN40WmUKxuKTMm4j
-STP2RJhcGJQc3piwAqbRMjyZZMFDWVrZvUQXXv89LLx6tQxJq1bTIBoPFJx3Ie+LZfbq+cGi
-tGOcq4v5lnj58vZgKgSW5J/T9lOELTQlmqZZUCUD8FVrE1uD+9Rg8PSFGPC5XgLpqj+kwIOi
-5yCgkMnNuH6yUed68+UxXKRwyy47jjkzwySvB9xAmg7NQPGBjKuwbfs5s0nmp+/qnsasFzfD
-NdZ3exKuO05C0mtoBsdhIyE9UYfHaIoEi4JE60oAl87hcEpPRdGLK1nCVlCkAyoNkKuWgq9a
-ljtLa5lQW/va6DtMmDhQjpjy1VZsjq9RSoSXouRkKuFJWPkZXEhPlemAw2G9Rb0tL5bZichs
-/ynZbqZ6bz/+2G7IMmfm7VCuJmrqgfbQZi6kPUwr7CEd+RN16SWRD/lzMLIF9A/iJhWSkHfy
-+WTrwUE4hqCKJEKhScUNICTqoBR3n2iN9MxxH3lx1bj0E738MD9evQChd8V6LzENf2JF++sY
-LjEBcU+oKnc9EQmjd21YUTYvnSUF9wmavqYmy9DHbxDMajjUGs/Fl+pjLdC2NTv9g01SD4TR
-1QilKb6YfjE3UynacKZJeNrG4eX3QqkmR3U0Dx8czitKODlcyV8nQYHHExinBCPGwXMGe9HN
-hK08+q+daUA2WF26Sq+xjHpEktcfzwzLUEM6Hlhd15fCCA4K6SZWLywn8+MrDUeXiOHkzFLT
-mrdIILdrWLRydA+t/8v9wxxThoc09xkMWwuFqoAaJIMzpLisEKH5xN0sHr/x888z/ypzVJXL
-6qaoc6HFAFMkad7nkqJteNg0HGvJ8cc+R3+BdC+0x9HBRnNiT0u4w1mrEJ6+GtNvka90/Jaz
-+GeaCLTmUGIHJKghEeA28H8xvacwcHjYakx166JhzHsVwUUnE2x3ybWdfsTDNTIBi4758bmP
-7ZeOAhc9WRZlhGgtO0fa359E/wbDU1PEY7a55q9xn+J/D3evXLBwq2EmOtYkt0mwqRptywsk
-Ieqp+nRTUmWM9bvZ8qKQ8I/Ya3bSr1mBi0VjjcrKYUnVHlBu6ugqDVCblGyVt4PLBx9pko4j
-M5pNop6AaQFAZx1rnp2TieceoYFVUxxey1fUZdC+S4d8OaX6pIR9vju5e9OdeytGkTdMC6Sr
-tUPs4cZLy/TnOV+mfN9Bsx6+/EXVBbe1bucD2bF7FYZWmNMBsAc0vpfd6U/Q98CT6g9N4bcl
-KUQLHXCEEOP2r4wLVeUJkm0P/jw7690PVSyFTNq3IIXNQEwqyx3YhKgGi8q3ok720Wtc1oFF
-+wkX01UpPUJ/ea84mQfhg4z64nhnvukWIs8TX7/gRxhoheP24T+1nhguZ9tyb1B9YPvTC9wu
-SGD9wGMK6+oAxxcygPmLozDN9xsq1LUFHGutt7p4aASwi4zthpt6w4iR12wFzeG5ITCAvhJr
-5VNXKM9mIOIpo+zhg/RnaKTQvaYA4f13IsW6aMySm4kWr0rikrGpm8KPPKHpChbyMsUpyNUp
-RzLjYJxe/b+OfOuKeAZZMZ+bvKOYJaA5eGH0QjuyzF/gcGmnBwmuaIQvSqGmqzZMgAR9MXbc
-g5DqO0/AluOhSx/n0pnriLQI7daBnoOHFOOtLMBREj+VhmAgI1d3mpoMJ3Svf+RYTDVA45cY
-Tbe9jiF3oQ++y6Jp0z8bxu+yUoSSrqPK+Pn/vTrq9AjdXi4XqvE2A6uI+P+2H3H1cjpiuZFE
-oGYc5qYiJjFSgbt24/c0xwI5BrKUljYQyE+ZbfracASx/0RzKEVh7mNyAXkoYd/d3Uw2LkMP
-J4QQRfhlnkLRUxTrxCCukMWf3aY+Ubemac9jM4D3aHiWcprICWtZrB2u2gdN1qIG5swbdfP0
-hYPCgUUQq+vqioAqKeZpES1DNpNpA/Z1wM4NVG0H2FabhTurM8fqzLlUJnbDeZyhtYMFizLb
-o8/8U+LDqRkNI/zBJEAAqYMmt+NQSp1AaS78EW+oUISuIUzFUA/qR6ie36/3gOQvUdhmSYSg
-rcIhmZzRYetzX0crLhcmR3cyfNNmaU82tIH1FHnJvbOabFb1h4tGnrRmDkVhvchOeoz0bxvh
-9netbL2cniXXT4RBzVNhrCVEpB8pOAnyyTkRbG/vYT7BYCisF/xyLjP2IM1N/ZkcAEiVs/Fm
-YDH8Sz0qsw9uKuxVMGZ837JCCB4uw1Dk3GTeaUcU5sr4A2EuOMYjupfL2FZcuNfS4EBRyZEF
-GcHYV+ueSpznQJuRjiPj6nWnukGjx7MbMf9140oRre/5dH+2ocZjLnk+/Saien7aZUs74Q1d
-l3wTapitD+0ELWVVE5xe9fOFF9hfC7HkfLTmvHyWWPyBp87pV4YoyTxNzxlB5EU4CkXAfVpg
-YuagTMr4f1Bi4cnnbe8EubhIFhjK2k3TaVFy1pSfuRj2/QPTSy2RebYbbm7R4JXhMPovA74k
-fC3PS4gufILdhp7vGA5/4jvDm6Vvjgn06kgrIgJQibDxijOyK7tBTRxORRKRejE6VU9cugqY
-+Jyr6n9elQ88J8JgwibZLKTJZPC582A4g9hBKahzyCqVpXnVrx6LTT3xtP2Ssd7lWtnPW/q0
-ua7SRVQME0m6dim6KLtQz+DM7dTFP1h6pYDsYOLWH+TEuYerp3YoLQE1BQxJe6JegV5S5EeB
-S5avwOyQGe+vFCAeTHmLojp/nijt5ahPdEO2tb1puo6ndCZJioeTRgjhAm/HN25ImwUhK/8g
-kt5oweCfdzq78+RR0Yc+fxa58tiAf62f+0sgSXafn2uM2BBflXTRpEeH9L9J2WsQngBm3+wU
-2A3avTrdIEoUyOl40V2LF4Wwgz7Xn8Y+nwR4TP7YdmHc/4dhJSYz7psFbtYD5DTnfjMJHFG4
-4gGupKhap0tZgGLJ/c4ZzjVBzHxxA1D3T1Y1047sYU2OV+miruavUqIAH6a6qLiAq5OV9hbI
-xMEzMZPGxuWv6KAyjateOuj2BfTQX0hukIS0is7VNkyXw4kmHZu5FxLBmksSRw0kRh4MPVg7
-fUkYEjG8a7bXyCKrDqQ8OTWErWfDzpAJw0QX3/0ripTHuFZ7afcx/wcH/cZgUupMMN2jK0dF
-o2Vwo++Wg+4AcAjLe6u3akimSELVZspB6ErDS9qotjYt9vbQkHb9xS+Aog1x7OQWYae6ocHq
-3MrZVm/fQvI+YXnbwsHIGOle/ThTrqQeQdESro0Chkz54nA8a/1l5NE4uSl5fiDfLpoQPPAB
-97nkeE+Gclxj3pR+r/jedqPyqxrjEwjSccSPiE49cYbaEb5NMKfIyZcE7J+ESKJUXk3B/b01
-Bbq95ZNglNXJVz58zqcU7RrUglpDsCvuk9/qv3jsyy2z3/DLZSl7VFTKEjRCq7PhuyySPqEj
-whOqq4BmNwTZoaE/iZeKYwuqzVHSiJfz9VfvhMiaWOhMe7b8hL/cQa+nRs5ck4L3Ia0P1Zsc
-j3EEd5z/jb/5sTLF9FL9YTMBPdKa9r7QKYwXAGyyONmKzSCRYa2jjVDRuCzgnaXXHKvGVbZe
-1kZb1rvqwklyGGZuvjcFpErgRxcTtdDPM0TJ/35NhDoBsPWOjcUN2I9EsbkiQLzWMk6RpQsw
-r27ORTijr2v9FNuBiFJep1GcyjpeClV6IlmTc+8YZWKwMLF6kf+VE+ZhDtkqHu3/F6y4sMfY
-EKoURcM3ON7VcCxMdR3TZY+PEnwIuXT9ZlPSH/5fmw1QXKLPJOo8/aSF9KKh9hwL/ikk8Vvc
-y3iSqc6QbpL89/aB8XsR3AHlqLS4bWIaGeMz5Ds7jLgzO7Qe2TQyx99cwfdhskIJvAIqr4Kl
-ifphLrUFuZ+XwkjDf5WH7bNIurnwZEz8V5nNsU+t/lOc0VSZBoK1fxh7e3HX233iVgIODvjc
-BdXKolfzDp48F3ngMV0vLuPW4cardvItzdY8otSl/jgQMjd4zwAXjr2NUTZeBjHY0JNsLpw6
-rUmIxAWUtqhKPZ3piKH02fgufPqxGandINBDEIzJdpTdQFEbOmiDrzFsCfrLnjSH+ZBEh8e6
-tpRk7xG+d1F9OfpJOEZt/dGrCyJBLE2iSHu329sXXIbm93c32Yhh28gQ6jc475jfcdhjTi5j
-+Ehqsl7QUdjQrHqcG0CLJQbxxAkPjV/xVEAMk4P9lFaVSlr7DWuch+vqpVG11mlmk673AgAW
-Go6kjhUiFbEtIEAzWwR/18Ht1GsJkrO4ypAoHc3eGYS9QYBWuF4G5hU3sskRm+9MXWX/sOR+
-KM4Wucv0p3e9QugAeVwKrTsyxTZ6vwf1SuVQKhwzsUqNjz036LaOPuojlSuSST0xOzgFdrdl
-nOSOVfXZ7jZByYe812HUIxcXatnRqf0+sQ1lxaMxHrlAPa8EUlaI9eisKz4ehAMsVvP61ALx
-2HVg/nbjoO0gviSAEqhlH3UTOrbbay9tZNDX5wdesX4pcFo3UwWeeAUMSLh/Xhq+zT5rLfA/
-GQopQHokemvBJjquPjEuCD1arEL8qNfDZXonqzCg2i1ja5ObR/jt+5cTzBDN82UWXwujQr9v
-ccq1VoA7EaStjIfc2KjSyW1wSR8HN/38TQkk/g5hmojKTSMsdd8gbpiihcpMHp9CzuD4mmK1
-47f7wRujMU06ubTwJWzCOXXDJMnmWwEk0Ioy45JdWa1RZW25Ob+9KeIFW2kvIcQiP6A+KVMC
-nB04/9JtFdxRwWNJ19IdsWXLvW9eoknqg94oDUZS4mdskaVq1kDfL1mlaPv1Pi0GwDapE/vy
-txw2HaHe+eqwBya4moSfCvmqy5X/YZvxT7G1aKBasQrtavflXUz0VQEyYY17NGvOG6Oz2UMg
-TgsEPYzMbYGvKiRQcwijijH007CAWFHGXyRPe0cgJHy2gLM01bh2fXjbIlCjRH6Q3vYlRATp
-5w9urB8e028CwDkBuVQjMdVEfLvxL33YQ8MzQz5+LlqrUTckH2KBcpvTUHQzO50zRk/oQ4U6
-Wbpb0uYLUELuUNjpcoW6qX0nWtspQUmi2whJNbNfGNweBcj0igO3iBpLEkoHa2wbPvzXsEWl
-kcIGxUXknGQRQ8r9u0gLlg/IBoQNgMcfmy5/sA+a89zMxLxH3DEM805b3LwoBzb3ZVPlJuN2
-1FWZEeRioG1loNPxJMTQfWE2KOCaCBWmB3edTSgBGfKUS3Iu2rEZnhcHRXGJ/FDuHzDuhlib
-mN/Va55tbukT0TVRAjPEdwD17pOV9TgVoejnWlGnyq5kOkN41nh4zE7Z5dZ8+F98VQUe/H8C
-U1ehNRdjQjZsMXloeiXMDpeo5DK7KvWhEWUdTpfD3yM50OmZRn7CtkVUEzJPpZ8Kx0UYVKtS
-ZSC273HT2BIUWK993O6ILhJZAUh6/qa8VKKKOPdKeLXEcqK13wE//IvE4j5x0UNuA4q/F+Lb
-TXSsrTcMicsSEHFOldVKIrk49aaP3TAlb9DhsSjbYIRpnVFY0ulIVdI3KKe3aqLoofJsw8ko
-wQEzaZ0K/gZ8CfVSFmx4qnPhzJM/br7sQibh+wgVM/ETgrwRJGjkbWGZ0FtUX89ENGpUKLJo
-EH2OVuT1PbJtHE9kcYYB9PPkh/2AuOwfWAOFfJsopS/nyUvwlz0Uzr7phkFfZAOjvYrPch9l
-m4qaTdetTrjUtv8bNOTCVCG+2GVoXX3zK3WtP1Du/0hh4qe3wTgGTK0wJffyglUTGtXD2BqH
-8TrYgCdSuJo2r1uXP8TbaNfD1fSeQCm3fBo4wRKJfsu5bkPQu7bm8yWtarOgrXN1et9IGC8+
-i+11PVdTFDfw7OAxmyqjPCQiY1cKhvIzcEA82F3nSfdn/akpLsq44qGWBb6WM4ciCtObmazf
-fEVPdhtHHyAu4mJpMQwE7mC4vFtpKw8zMvqAGDoDnW6b6QdHpfDY5CdALCDoWloIktflznm+
-a1nx4XlkcHNe65YXVYNpQfs3+nf09d0sTyZ0LIzQ01mYD0EJGaoL2Su0yYNJMjngl52+NUsi
-7IxqGe+NPeVUqYl4EgA2qxD9KL/q4CCtwmWvLE06BMN98gHaY9zl7ECap/si9yqG18L1Bkxv
-YiajSDe10gpigoWQ7q4VGLEjsbm8mSQm7ymriKYDTlI8/y1LAvkc3ciZVqjdSTVDcA8Rua9h
-SLmwrQK/Xl8ygMvTv56RKa9n9ys8GoreSzjyVECKWwVPlDsW2yJIVfD222shLm0tY2jOsvOD
-Q0FfPhlYLa9Ox7Zq9Q2fgZ8hgKk7i5c9MYq90jil0e6rZC5xDqxwp5DtG6WAisy1eaHahLIl
-eKtjIBIiMyD0P8UITpe//XxgKMJxqlPVtaOBGmr+sjriNAIY4Nq6MqWRHEGTsRk6t1r39w0a
-jZFuIyGvj7bGFiDVkNskaSgoz2OIryGrkdtvfeFYH1yN+O5T9fB5FbwCkqFa+GEazjTbpIGc
-XtYq4sMrV8lwSMGO/ObEEFxo1nzG2Eo9T+oHWU1nmh/kbBDlGfXM+v7iG2Jx70U+pLOHHShU
-eWVv2BRXoxlklP1fCx8uz5eld73PpYQ586kgA7THjmiSh1ABbxgazvu0CGIrnTx+I7x8aBDq
-ZUUhR+Dd9KOWI1zM2HMeYwZj1f0bFZLZNo+c6L20z7H8KZLvdvDGKS5az7Rmes7oCUFpYHKz
-nOSP6dK+tDWr57K5HLHocCxuSJjquCoKowdUioLzEwZJsyEpo1UgsPDk4hoVhDAUd3suzrRT
-YmfVrb/9SV4eC2FurSYzn1LW6/Iy7LE5T4wr8A6j6qdM4XWA+/UYNcsBs7wcBCzrMeR/Zrbo
-2TgbpPm3ecQwYCZUxGNbr0uBTN8n+KTo35dSLrxZPiDQaDOJCqDn7qxFFg9BaR0Ue1SvM2HJ
-AYR2Gm/z7cmYpHIU4CMFDD+xnDDlojfT83XoVjBWU91rHkJZt+oFPEBqfy2fGSygDtwHXjpc
-urWEqh9DdlZ60rKlbr90idvr4xY7xR5e+axdmTtQNJuEQVxoabzl7eDPSXly+upPRSB7mp8y
-+XV35+A7OrRxJPD8wIpw5Ljd7b6b3fRfFzRTSOvIcBLJvuR9dJC8kSh50cPypvfRhpXNpt7w
-HCcIMToUePnZpRlXIYSVp89qtdeqSmNuCBgwTDW4g21xT8GTYb+wOfMscd5fUAtfeK0tfFCA
-GhGQgQ1fB6bEq/v2txlnHi01sJ368xdpyCs7CZZBM+SscmHF36TnHXdZ0ea1Fiwh1p8EL5GL
-6MBSopETxNt4GO8pFEVgBSNMHEFE9NbsIxh3DHiimPggxay2ODO1h3ghod71BLULoG667lqM
-l1lDFTEUS/NXK+p0C4WIJyuwyI1ZnyVEJsfqgDpEI8CmLSYesd3V4lqb1GKl+H/0HEXWI6QF
-+YDIusag2qruMIvRxwHnHJYJRQ/gxejpV/EdpKxzW1hcxD+itBTWfaoH+Sdl9MILJ9n5ckf2
-jb32hy1ORBaKDOgwBplfGhMODAIQo7n+jvVZzq07lt2pjS6iIPrDvZ5E9pZrAGcHtLP4Tzxr
-kWoQKP99Y1zKtcpsfVoQTK6xbHvq4f1b4ksCAa3cWeK4/aspPuoH8jKjY1aZebabzu10DudQ
-APc+jtv/fWsMwQcbWQXI7CP0oUfslTCvjWzDIjORe2GdLZM6xlpcKfepTVWHgPu3S21URapF
-J1zQJFfsGpY1lZO5/lff2wQwDjnyFwvG7WcOdRIcKFPpe9H0FujLXJz7O44JtAqbdPSemEol
-Ojr7cqSRormdx1Z/77VJPBf0yCduHwdEM0IZusWRfb8qObzFnK20ebg9FnyIWey/rgVufH04
-S2s3H6U6eWqHq08DaGGCbG036sfouyMdS4bRLHb+tFN7V4fOesYu71PtvoiuJSCtVhIBl6W4
-nZrXcrDdOdxMlrIJcORv9zFFTQ0sNodNonK8dcImI0xuxTVEeTqvqCFplpun+RLOmZ808T5x
-clXjCGJFF6jwxMbNq0zJuWFL2/tCb4//sJPAtFTt43QPZmL0aLZ1aR/Ruy8CJ5/JNKetd5G9
-KSXPfiyLylbdqu6U0+T/V282TPfaLiTAriM+JTCQvUeFEoolqAXAe882JUxsR4DvobS7IYpU
-BX/qr/l+uPmJ7Ls5bwJ1XpplP+u/SWh7kKWM3a7J0ADHAfN8j48ALkdsSmDNMXtgLJvukG60
-etkziS9Vo5FHIDoIPih1Ycx/tUxC3R/3h5EREjZNwdF0cvrVyaSbEiX07OU7gkWFKpZNsPMP
-QYD8lQAsY/1kzD1GQZcODy6RZ1rCOoduAQdXh5Qvy8QMEroL2IOOB4BLHke8+oJSMA5L01hA
-dhCHH4SyDHgHrFilFFXSGqOFzinf7gVMeRe7g2Jzc6bq6d4TDL883TwGlx4uBwHafE75LsjU
-gwoFRhhcuBmHpb3boPh2ICbtsABqjRVCyyuWkr94lXv6OXIzzW3vLp7owlUvVEur8TMiGKKY
-pSgVQQcNFmubTJM7WERmM+ETjarG46Fq94pOtt4jyLBScdOc1N4tEfS+1t8GIMQCo9qEnUMJ
-8rH9mOeA8Pk32IeCp4xafgiDT4qnJ1eK0adKtrs5LfiB7xOks8PVHhq1XxUKC8rKJmtzlE51
-Lt1nfHgY8AUIRkwEiQanAnQiSq4/Jp8+oEBurL0v7CnyDDjsA1rR+vRB992JmRJNuouYETx6
-Dsqp+KLDQqFiE/RyM8EVTJcq0byzuWYsbmHUGZbjk3NEXvuefJdnIZNNJDWVO4y12cJ5gy0y
-mHyqL7Fo1PkFi8HQBVa/cPDa3JniqZJl8Md+wkh6WbNBRXJAiEbjJ0f2ave1OCmH7IhaREP/
-8Kxim/c6gsIRrmkIo9OMHdG19qsZHSCs1pRg5XNiDeVxRIk48RB5kxdw9EdaID5Tig4Lh/2J
-Fq/ULN8UrOEWQX8BNLncD9ozwtqzKyDVB4SkxnuI1nYpyHmdGEUlIIiALfhn4sQjdwu72idp
-laSe39P75ygeIp3TQnnIm8mQ7BtEvmdabVaR7PHwrdDS3yfNkCh+sSTiwxt5k48DhqttJLvJ
-dwHYxImDgpIvfhKZOawB1w8byhqtEcW0OBMuzVurKjYDTQbStdsCu3JqulrYEKIXKBEgVYle
-0FqRnEJ0vutZzX/TEGITcgZSdtaylhSbKwxLmljQbAowvnhAkB/5xEuggQpz5ADZvRHqHDiE
-J+bs93TA3/EzW68IdAOlNi+r/9V05DBKf71NVvaAYtM18fnjo3qXIayLIFI6+a7e+jhheZuY
-/XPLTgPQI38T1Opxy6wgD1YlLd7rSs8OnRpiSa7JcRE44ZSvdY4ue8uawu3fDP5X64lvLPoS
-YQuC3HjRAhdrYG41QgW70kpzi0vn8Gg2WChClUjVsksasmgAVb819zXz7g8iq25a3RVSHv4M
-OdsuS63mTQ0zpAjVv5nmFQNGfHDvohW6gK2aYhRuEWwaXUeE7To3mvjS+p4YqELHz5QVXc5t
-hgc55oA63ZVOe0mELeAfRsQpcyeyD6qn8xi8ynjNyOTY/+otEAE8D5cSlyaB/X4D9Zt8z7yN
-OxNABFUG2rxsaPS9NnrJKqqf5k+eTV1bcjqwHfXZYCZ+Trn+ZPerL6q4xvo+mWqXJ2Z57eVK
-wtRm/jWajwzlRAl+/3hS+bXJSfbusTcGgxlT+VO9Ltt5wv3ZeP3mKXWzv3yMts+Ge7mgNr1Y
-pgwEwrrHnH8Mu+Z4GzBNeQ8Q58Nz1ujgBrNksWHaNe6nupVKvFPAEyTK+4y4YeWGSRHGBZXu
-L4LrHSOTQU1hv2aacNFe0HR/GoJ+n7fvSQSB0TDOEIED/fsumh0O1XdFgnVb9BtdBUXGelDI
-TZczB5RyehMpb79qn2eN0b4Qa+FtrGJqacHcYpI3mZSvalK/g4/x1fvD5sqAFfY4aU3/G3s3
-2p0Aw/rQu51cI0UECDi4yuK/0oGoaysas6AwaiYlljScBqmLatJQczMYMqO586e4Zd62Book
-9HJsyD9QENW1vcle7A95wtAfZGDhDj0mqXBoGXCBbLFbPn19l3yunw4lyraSAxY9Boj7QDR6
-xRreaKK/xoVl9EjGYLmflg1BVgQtZ5rXE0hV1fcmwJfzGmlsF+4uyHBBCNT+XtlPZZWB1SM3
-f3cz6cA0YM+qgRK0h5MKnPqzhp5oyGqE/92s9f3R+2FQhaKP7mFEULL7OGwKvX084O+Mx0j6
-hChR+OlkokKbNCUkWFlfLYJ4wtpSftZLDO6oYzX7YqWKpJs015FI9Us087QMnBJBoxqUyW9E
-I8coJec03lzjd9Kg5A7/YB24m6bNUwPSpaqlcOvmMe4Q9Gm0ZOArHpbUpY8flkajFX87XVMk
-+cdHnZzL4vdoalf2YKuKt9lXtchQASip094FvDNZ5naYzUg0O1hzLA3vSLkTfrgpHelW6mHc
-e6AxPQNiXSbyyYnhXLD6Pa5pyaTUurlhXSOb6ClC4Ev/BXM7apPXD0QTNFQC9USBWz1JcbgA
-WU30D92W+CGUlS9YDgDsd25rAoKz9eddzSZXdd4mG4i7dorWXpHibyCF7YOd4+anFUpRfD44
-0Azc6Q+jrI2iQqb5CAQ6J/IqxFHpT9t8je3XTJ8t2Sr02f/HGm+S64FlWm2xFRKh76i8FTO7
-F7+mJYxqgpljQpllRMwm283VddoK5/It0z4obtvQqxqhsS0Oll6Gr8vd6t1clrQhC4rRbfKV
-9sEW847rupHRIozgdUaSolvmDCwBzmu0bmTz/U884YMxtT57kXoEEx4SYHVzoeXyltdjUc/M
-Cur6YtGQN0OjHud3T3mOr+ucnt+qvC1jgnxoMnQGMAhrwZ99mFmSF6SLXd9EfGAMBEhvnLKU
-hBSX9hIclUpHrAe1tm5Ug7c7OLdPnYtscal39Wq7V3Ol5l+QXlonUqyoKtIMu5fXchJu+MqI
-L1GVYFcVY8C5yS1i272gHO2TTm/YR4h10vXvf9qR47sE7Cv0EEEYgDhZA/jXvsTRqk/po3cl
-NtDQgxAsksBzT4r/nG/AWe5n2RGXbE97zPjeVb4+n5tp2FaH47XCJ7goA8k5OSRQqzrlfxLk
-giWZ3MiYC7J7oZ+L0+l6TLe4SW+WuSKAtFO58Zlae/X4lFKlilIuenTtbls3ylfJHX0Vnu7R
-vfa9tD0ssJU4R7ZjkjCgJ9LYkBZbwyU4VR5td0E+WOxMqLCSQCSXel1Z9ZMMWEoLEJhPTkCM
-/wiwMd6jWlLsGFUy2uo43/3cVxyx8nenoXVb9e8YU2B5nxdIXbZLKrKKuQnl9WEPgyP5R5Zf
-Rk+qhpP+p1jBVIXxwfO2vKrIWkp9egA/rDpea0WMqavtz79MRQcJSwQNjixKREqr9ZXET18Y
-rUOeShJ41zpgvTANQp9KSdqRTaPMmRlhbPjmSODTX1FrFbM9SHuWZMtMxXhkcHz9mue04gxN
-2fwpeMUlzGN5pp3QUC93q+Tv5uEZKq8r0JD4gAJtHF10WqwkL9yIQvs3vd1b8mN22OUZFRPv
-nlE+xoRTt4Wxu+HPwnedP9y1EAwn5XNZEDCAH9hqbQCZFg64gpi1QSH+znuuxedcbq5vSpu/
-idJN9RiPrZ9Xrzos1ehcB/iJJILkC59ShG+Gu5Zu8gXhxKfIK0YNna7LeUVC2oW6zy0HQYsQ
-h1QFUXXYYCQYP9CYvuzDWExBng/dWziGD3VufIqCMfQtqJM2x3lSYvhJGveFnTWEKO415vBd
-jd60xHUstoUF+6r6rBXWtHFQc8tDUbSB4dLBz3FLxXoMcCVA51U6puGbz/nqCeDmvOOCuNc9
-8kPBbIVmd+hm7Wf0wJ9SX1v6hmUa+k9/8XR6i1zG8Hhfz/faDBEVRd3pKndxMzsgQjBlrGY9
-8SnFT1U5Ces8npAeUoDa6Iv4kMJL/raYC0Ze739PzADmSRKiUSlNHw6wkw4EfGgaJdYdgiPd
-JyKMGSpQBYVCP8CfXZpe8biyZYKCs7J9ljqiPkBjn8omm+Kx3lXjkWOPnzaYQFtYKKXIOfPi
-Dii/4u97GaKnt0LHi/H5BwM/nGZIY3lLthJeKnxgTOBXNpCf1jT+f3sPhSbtZnLkwv2rEPrf
-eGWDGleEq1TRpqsyvxLIFg8R/lnpQplKS9vDwwLxGORztAlDO1wvnn6EEiNwMC7MfCx7TR5U
-21ZjFYu4ontATxHPFJJq2Zl7iTWAmA5KF3UKK993ahOrw+srpg/q9pQLGiwLljrb0YQwp8cp
-RFQR3FjrMxhUmH7Yd0vYQIXzETfa/+ccrJGRZOqPQvd160cUkfsLfhgMZ06jJJdz8r93F05m
-a1Die7wRHrS4Dr+6X/bLbqBEdwotus1qI9lNi89X+FQvZ4jqJ2bmEq8Qj3FU65KUterFnwaD
-icWW7NLb9eLv/C9ZWMB66fOee2WtvnJ5qani2ELbMA9oBC/rg4wKV+lvF0WV/XDd+XcMXuID
-Ao3/EpW2Yxu+LpjUKn6GKAY5HB8/b6ZUJX/MgWIn6pp6CxJle49wDqxy6VdtI/BerltWYRnJ
-J8Vtg0wLSd4kdOlHnEZ9ZNsNRmlJhz/9JWfJ4/U2GWnx5b77zg2DMAgH3QJz+S67dftdwLnJ
-BTpF8HxWNneXZ6reA18LPWk2GnF4uAMXv8s/JoxSfFykEaW2Syg+v1IswfXkUDaQbZWYBkgM
-IOcMcWuES2c8ViTlynsTdWLAXxMyzBJaUBU4Jle9b6H1lVb7VUSVFr+zaaOhJ5JXgWLCWm+w
-GEyjrBa/Iu1ZP8o1oGsGlamcPCtSCcv3PmRQqvPRlfxRo9CovxV8AL52XIyG36Do8xdyYqjP
-V6rvu727Qsm71/mMpmjajD+BqScxQyGDdScsEnqpt84Y+ARdh83EZYvO1rCy9WOy0l7D7A0+
-b/WHHuO6U80CSPPfg4P79Q43hO4na1stVJZrgADazHkft0ZX4Af9hKyJGoLqgzI84umokdkJ
-v/OTvxLqfNPlXzEFexhD3ReVuivJ49nXbeGcF7f5n3VON7cTHkSGU4qzx1VWLtRNWvyfZVzk
-Euugl/iZDVMyFkfo0P/ptJ2daD64/Womok/5dl0Q9EhXp2hius2cZ8O4bASLJlLSLfeksvR1
-QjFCa9eOIy7G2MgtDdJ1poDf3egmuzURzwFZu7zOtvibm1fxVbjEAR/nttrCEaDJOqJlH3Qf
-CPjhlPYMeNWmWJPq61gtnvtbfP8l6VrZLl2WT9rDJyioX0lkZ56Ypj8mehEukgdev3HUM50Q
-Dq6t6T27DGVw1Nq1UZrgOj7ppE4RluQyrCGiZT8hXzvvN75LpCXNt2b0lDoXZu+q7LJEc29M
-K6SdnuLPz6e1QKhZS1sYn8E0BEPEbHmfgGKMlfl84VrCdvWYk+gCw3wsuXY+98u7/BJJ053k
-mvFoc+Xp17q9jpVp45HzwDT/zaqoCjZr5Uhyuj+SCnIwDauUzOfGcwisG23o9MefgDLaSXtw
-68R6r2q3/LgglRokPTOl1wzZUkwRIZR9m/M+zPXdQFSFJxtZmIxZoEUzXKCymnxsNDt8DQFv
-iHwvIlBD9YYuUnGglLUp68PsV2v1InXAg0MQ5xOZow0G2IcnRlaYKstkVTfwApHH+MvtASFv
-doCfCw4ea+i0MHdh92RoqPJuHsf5kWhrvroBi0f15Z2yEBAySOYXEe5Jxs0z3hTcckJkmlIX
-uWJFDZI3Vdv6FDhblRoTdQm27rgET6XSRoTz7lSaP6mQw0R/iop6aq98XDbbML9dlKVx1lGi
-Nd1m/wayzg5dzO+P4ZkOFB3v9uctYN+TMErDTMAepbD1aRvJX1VFvS+w6UX3WfU4N30UoXIB
-F/nVP4Ktx8JKbEb7bkWV5bM8nO+Qja6OQB4rII+IpHmLV3jjSqoRnxGLsDr6urWglVTSXpwH
-XSVS8g8TKddzXGHnXXDoITXl4IQSaK37Tgn1UPUE3EZ+3UraxbsoS9kFDYwqL7AhBjyZJWQj
-kH7ztTkdpsvLNvey9E/wmhaJ87GQpdA6A9vNRnoQV/EaIDm7WPVSkT+/2GGFLU/txK7+T+cS
-ErQINzbsqcr/9h2zJjsuJROdBM/mKTxTRLAgX4oaML/49t7wVxk0CYE6tlpDBS1rQ/v1hy0a
-eo2cjUyTvcGdA0ddvsZCQTFZqrtvbg/NwPX95zRQ9qrQZ5rv5uz3hyWtot9X4kFpxv6j/eKd
-j2VnsnvZ9Cuk7pCeMECdovGAFsndruYEL24z184Sz1mMHm3SRM/g5STXAJoA+erPPa/0og06
-mXssbdlxVayeOk0V33zfdNa4IoPC9pc19ae68iR/JBraTXTxMOi2a1Jx+nzb+sdujXshMf93
-+f9HYUv0z77M3mKh4KAzoPZNx9w8POc+JimOVkqGLjLn24wpH0AvgEOcyFZ7DvaVIlQhwAFf
-QYKTOy3dNOU30WGtt7tASHKSunwzDXema0a6Hw+z2vQhdPLg4QhthsI0wwDsa+dRhXhsqmhf
-iXk3TAx5nAdJIDUhKkkaSM+VnvVkdQ30eHjNTCulndhL1/AGIStzzMFuvb0NYFW4k+CK6cGG
-bGYFAx4G2gwVjW1u+mRjG8QO/qey0QTYGS7ysf7TZThLxjLUJ0ux3L9n7l1Kv/qXvZMzly6a
-t49kQUqlVtjQWea4ZyRfA95199UAfS8uMe8Hrraq6XnMKLD/XihaLQ8vzO21BbJo/5EgD5kp
-TE6PVJZSYCUjngMvvB4UD1yqm3VROC7iw87NhZOFKgKW3StcrbcOOXHWpGFIC35UCxeoF0VX
-pgCQrhfZon6gshNKVJjg8XjzQND+CQA97UeE66HlncUvujeB9tL9xF/Y4/sxDi9Ikv6UFllp
-D0Vo/FikNKeQeKxgryh2ddgwr432Xv3IYEs/8FBi+bXKkZD0+Jw7TpsuCPWzYwFE0pnoQ/dv
-JrfOePhDyVfEPfpvz65ii7n1rvDmH34ZEzaCeAF/KsC8mXVu6B7IG7SlmceiLz3qJJqAi3hr
-5RUVFZeMuKrtVIH+6NXOR4fdVj+OeshOKTwXdjTUOa1v6i+oFOJYETbFfX9970XfXj/YrHcL
-RIo34zk+pazuZkwhIkGucZ/FD7dnkv3ljbXQZ8PD4eNZaL8v8IE339HJPi6DXGgdwVFeKYWj
-ZoeVLY2tl+Skb2SVw4EaY2wlBBOvRxtLxKH/y/Dp6VWdC37kkOisoGzopYhtLiCHs75UNYji
-M1avaYDbY7K0HBC7fchoDxdcMyG9aOJaQXcwf/4MOpqgIZIyzY16rLtE7zG+HNvNuqDO9Mcr
-mK/VbdjC4CMM1hFcibh+lImoIB1x6kyxTE3HQ8c30Hzj8w5E5lTZzIcUgd72p/w6/UZVmFIA
-Sp3Z5xNEFdMjsrhUNjTtxFXRwWqFbRk+oxhi1tBs0H/3ocuO88Npy46IfhZoAaka3bVPDE7w
-blUqR1z1ebRlNNRd+NNRxg6DLripvmbKvyDqPXlFJwLYmZ4KDIgvk+099s28NnxH+gqsiM6s
-uykI7TiWY8c4qbtH+nLyZqIz80RoKT7hZnH8t8T0T7IAyJBWPIv7ckeP+PpJk32m52vpCqND
-7onPvaSYr+jVZsBxYnn0ZeZMZpLx7nv2kxt6jcNFx7A7Bu/MeBNF97R61J0y2RjiurHljVsT
-Cv5ln1XvgUWPSzISwMioxY5lCRuCnLWusJ1NMrQwyfuUdozdlv5E3NvEsJoTk1jdVjpUwZ6H
-3/ZYDhxqkpNiLU4ddCHHyZqbbtze2eAh5akqM4nslJ2JzlNRvwRHgArtyY8POfOrpPpuQOl0
-ojgGMDmpgI9qQns4SbSY7HIoYqAJMGDI6rtRNFwG6IAgJlWEMvSeqlrJmOVYbtLXhd3cMDiG
-bYmQM2Pq4cklpdZTvmXRnwiDkMkr9XOC8/oy2nGzn/LHoANXsT+32YMZ3v1/PB2wR1/BqpTC
-3OymD9GRJVaqYRENmX1+anOFLbYLhmFfJgIvCWtVW8mjChYu1DFUUr3T/13UeHts4VMhoh/l
-XkLz6FHW94VxgfbvpXEO5Yo3uVc1C6VRVgVbtL4GVQ2/sr+RTHotLMumztny+Z7fL1tT9tk/
-eOYX7lGuXamWtIpndqRpPkLt9KyoIn8qvB6gG86KhOM9X2MnOh8h3ZMhOYLPUHJqZ4K7IfII
-XAHmwrfax+8J9aBxIHPXQMnzan4CNgoI+TFS54SzD5BwbAanIARbVaSOiHpHz1a2+fSJgZwu
-EcNuoFYYWiWpFWNnIaSS+VeOR6xSAcnZ41bEg1XnPFpxrdGvdKqpADkO3ufR/sKZ2yoz0RRD
-PPxqB7tzBD9yRAvkAJxHus3Ug5CvPzXxDN2knlbsiLLv4vpax/XXi878bHuUun5pJwxXuqc/
-zT3dTPQLVNBXYVnY6Ka2eBMo/GXIgAB4Uc/ZRJ9dX6isXpGCvscocVFpyTMiDsn9rrL18vQD
-zXdiJORCxt7dl/iFidlRIxlpxJ/BiQ+ZLHvZBGxLf50A2PFph/wbOgxfqm89Xske9ZcPpxcS
-JhT+j827er2mAG0tE1sI1yz9osl0btLb77LTme76skDrr4ND1G2w6UWOAtwI5ufizG5ZH8cD
-Zngo700Z5lAxP1jFNAoUWWT43fcZIW9BHWq7p3Klpsb1JlfnIGtnZZEPr8k+g728W/JAQk1s
-XBRYufm9rL5GIh28sqqfhlwTY5Y6AF7qEgloctRvvMlY+H6NcX0VYtklWHLMp8hdSa8QKf16
-8hAWkpmQJ2Tu6urW/B+4gvYB2KCrsUSv+StwfgiqrHtnY9jQyVQWnW95BNIN+dRw56F/SyTP
-PUjA9sPQIXbNHpU+hMCGRLyCIwTAD6FXAcS6As2JbJ/Od7mUpggeRbR2p1Zj0T65+4GgDdzq
-jWyjFV47JgqDoEvOemKG4E2gFKNPKlDdIQsvL+HrYvW39lSQww70OkC/yt1s8JXehAodX2zu
-R2DpZfZzQTN7OP7bkg4WnfLWbe/Xf0PHF7Gl5M9TdkA/d/4cNb0CuAAlq17sHPjeU8qAfF1f
-RNoQ3s0nGW3rMX30rxRRBe7NLTHBroW8LPTDR8LEo8BUYaSaskSqCoe+v/g3yG/IXxZYIwvg
-ErRfWuKMUibIStukXdkAT00iQX6nhMwcQYAUb8H+6dKswaRXnt1s1Am+CJ3eSMOBlhpVwWUK
-g+Y0KUsSfu3GZ8WsgP+220Jscj8T/zf8SjS45Brleyo1HCCUwAYNXXX5HgL+V3hLySlVurdG
-mr2Fdv6HLnMU8h//gJ0ibWB7m3dvizWDb1kWnayKfjjsUguoqKXGeTX0/eiYIvbPaG2FAjNj
-k9ooBtDhY6D4EZ+JAheQhaoa8xoyRicbZ223vd39bOcjr5CZdcu6RGWerUb/Azz1/UmJ5cd6
-Vb21BJ8RRxkPzRDSO3WFzztOxdFzxysp930EcxiFqc6tFIlsdMUcspfmdDAcAgDmvMt5NPCx
-sE7h+KZsk/PLNsy+0LaYi3FNiWIkqnQBTxrZRrOzDHX8/1pM6L3ElJBctS0LDE8e/RC7LbJK
-5ANVPVa+eMR5kNp76OIA61g32LuteFtt09exQPlE+d6oqvZkblCvhhccwDIHzEQtSXx8eOdT
-O48Ij3q7tAw0x0Dp2+prR3syjaeLf+P/tcl6IHIor14U2zpinDDXNqnam+812lmb4KqCEPUq
-j7hhIH/MXqQuaOMiXxadZGiCz6nxAJ5pk1qw82H7qRd5NgF9Z75HYf+FCSOSyDHPFa49Nqht
-PoNC5RgyhoM7AQO/8A7i3RMr/I00jwlo1+lNcJzUYl4pIgR9XwG4MoVbtZR7sY9V/gs46QOQ
-b8bFmQgx9V47nnKaL+0U7v82wOMXbYNuyXMdkOpDUuQiMrH5bJ0Nky8mtqs3zSfagY+BFbzh
-IX58i5awjNwLGTqVGWtcQdDOSuGow3vcs3xiUs2ptqKVYpCe8TIuhAeSJ0hkLEUWT+GmvG5A
-ZoGa0RYYdxEoQVVxSmmGY2ktyCy6uqAMknHJlPOOM5Y0QlDJPl+94CBBEQKt+03/bqrU5LJh
-TO6kIWWazqsvGTvav+ITMytwfQ7yD/uV3ZHTMSsQI02pLxT63ZvPcYWEgoMPQoXn4Mpppv4F
-M+ATq2QQERTLzS3Ni2wc+csUeARAuutg3givQUmIXha+1F4R28RtzwLLr51sL1GsnovvGY7k
-1A6ExJfuprYK4YeALNISddY0MC/6TwBkoJaquO3hkqixGLh9t+LIBQOgP7bqKSkDA+pFEuWl
-5QZwZkPWomnNT+8dHrSQ6rwe5rDdMFjDRqB0q8duT828llugeuOwtGBF9YQ+FnQmsH2s17+h
-rqDc8jgQTjynQ0zKiLCxnc/xVoEZzavRDoxCFAbEN9iwW+JMmJK/J6XOS3IwMPBOrrA9pCY3
-DYZBhKONeIfBdJXtLJq/UC/jc4Ua6fkUVVSIEkMd0/rED8WaFsRUFcD9m9CNEJpDqPSW+fWi
-iI9LQCj4xEnIPa9tq/J65kiZ9DajEEfqfZDKRS8qDDUbNIsoobo41U5QBfbfT7VUaofVbUoP
-rkw3EBQNuNZQD5QFSyCkPDWcuGqavbiwoS3aVsSDiwnUlY3NFyo/8B00sAqmjnPoiqO0Mk1M
-CbmtvNDg3FzWrlFnQHD4WhA9W57OFWyfVOzh60MqZQiG/Xt93gRC2tlZZI8BrDqJbqKIogSj
-coZ22e2inCm3ixkeZIx9/GpBadroEgdQHwB+WLKpuZwx24OnzNvN/iBr3O56d/r3pJR3RJ1C
-pA+GiDnOLwqzfMvOlbE1hCSBDPlEU79Axt3pMcQ9k9lWj54EDhHX5hpcjrWd4FPGYvdvOqs0
-2XrRWbRO3G7f/v4zKubu1CvSto22Dwavz8aJxcxcQYxlvpKst6Qa3x3SArXiyGR7MD6vMUNR
-/np/gAM/To/aHx1Pi5smA9OuJFuFZKUto++BPh340QlwG82+EBHqdjEXWpJ8WS+Oyc3gIwgM
-ptgfIMAayk/ZW28+b5OuCSg3s+9sgk//1wzlhuKmACNAs4hmaReN9CzwvrVvOaaVYZq6pUGq
-u6b1G9mkDnSGVuhDQOBBLPMq0Qkshf0P9Zq+9NIdm9azM/JeruvYUIDmVQlY+cigweBuzyvc
-tlM21QXKhGlVq0CHzC7Mj1dJFVK0xB6HsTi5wcXcOYWFCZ/+yEN8DlprG819iesLvj8/bD4C
-qM/98tjgtUz2WE9eD6jFVaJCZHEoz6o8IiY7SLeYxf+dny7VDf1SHfWpcYZWVeP8NxGIBW2v
-PUSgTRFD8/X117j105OoKlV6tPNzHwtKmjKISYoI6EEbNMNQ26KtqjHo0os7N0HiaonUWobe
-3In6CH8HSocD6KnEtykf0rY2cqpQXwG6y6mdaHX7n/W8u4Cxl3qSz7wRpveDyOSemVyn0rI3
-nDlSiQqaqexsGNK6tUYfuKqTlXk5SIf+EJDj5xvB/kaecyiLuk5VID1kJHi1WR8nwN8lz+Pd
-j2+Rb3TyMOIiyHFJZqaxatvrgAK/WOra22BdAPMl599b7roE6Vnr37Lasp42YourPFg6kh6r
-M6fIG+ZsTH6yBkNxPGlTSOG/OSMEpAYZpaXBCx9ra2ExIua6H89rKgOhCg8rOIcmVzIh4LM9
-xs7Plpa6A9erMn8o5X5Mda//GU1LNzFx3AnYVjA7524xVumQEpJ+sXy/3Ecd0gVQqk2gMczP
-RX6mg+JQDGEjHR4DhNMO8s50cRiLgQ8bLFCxOOXcMl7dgEDrJfDZqMg3zCbrNVnUxfd3VgZo
-t8BmEiyCcESUrB6mj2VMV0seK8wS40eJtK/gTLk1DfZLD6R+wwHB3gmtM01G6w+CnpmkUHK2
-ji5lC2pg4wRDjal88XBgG2qqiOMLlmBy+i5pCTlxmbm/lHfp7aMCG7FsXE3j/vTlBgqQskbO
-o1lod1mhC4hiVn6RaS/DYxZo20ms2jqZOjM/fiefO2bDQCv/kJEGjQ11YaAGrx4bVxfykHEA
-RdZXnTv9+F5W320psilBSIzfA9rJ68vR1/bM2JhlvnRO8eSFfBr3/xZZvtBGtBVwQPIfG2La
-KGb7Ee025D13xPuvXqy4ukgv+59Vz1dESgg6zHqO7UANTHnYJkQ9rDfHyLEXrUiJb4PJnv2M
-zxGTeic8oqwy2XWi2/cVeBEMrPc6VKPuNvB8STamZSeEOSTUXDvJuxnkTiET9ySnIdPw3GzN
-YfjfF5rUfW9T1AUHoQsgjMUJmdJSKMzjNi0xejhDVMd4z2uYKTEwYyFgypLJNoTQaVQVATkE
-sx1i2/mf47PbfbRTeD2+R7iwfkmifUdEhqI2mFDZLdfBaIiDRTfW9AOMK5Ey58s3ZAbuNipW
-ZaLr1kqAMTM+LA3j5rgrONHqFyMcqhyMdipp4JNoo3gyG1bobpqdcdID1YBfoR9ZkDopcMXw
-n7TZC1ZjQ52AOA1md++n7LGoNmHX00Y8Nk5DpVnjcBchpxjei9kP1T+pa7smjFf9C7ZAL52n
-grKGhN2Lm8sfh77Q8uVwgkRrEg60FMvqCH+OgvmnZ1LVnIMq4/IIr6rbdYqS+2PhxqN/rFB7
-72YTt965aQRqSlymPG/0ECeTtiqossBYO4rbjSvku5XMxP4dDj8CnPiXUpthzvE6NO0lpiwf
-G3lcpEzAx1t3vN2ZQUs4EjSsbolsnIogJsQLoxfDZIbASgQMrK34uUUg8YRYBNraAHztgRbx
-ieI3UH7GQZwvGGbIYNNbu7SHqeBbf0ZaGxQ9gu1dVyKmnTOLyBphTK7MhJBFGvbZwre/mU+p
-ooibLGTed3nEyWt32uiQPdB7NovyVPzal0lGZIvokIOYAtkp8kNcO4PTxM1Bd8uXcgi9Kxb7
-OxfKr2CRwMcZylyq2nDJwZJxNrQsWSlkeI3FBeEZ4hjIvkXctmrNfitzhI94mSXlT2SOGdy4
-zDB6mo5V8LLYAsUMuCG4Y2KLMQ0e1+txgPLttOY3MZ9I2giG5gHPC3yBnxYg+RPLp9DbI4em
-QJwMIgeuwPcqbcjx7e4yIqDeyca1Ulk87606d1tFd2FbnUqWrjmc0AImT5h/U/A//5p0KPRL
-wnSAO6wQIvZDX7foJ0VGTXjCT2tCuPsdVA+zoarNwRmr4bhLy4lE4AEqJTGSd85r2x//Fw1b
-4JHh12ASvk39xMfoxykCx3ug6YyH/nhZAZMzvi2rzd2xv1X1jezWvxqk2HcEUZ1VifNIpsd8
-Pn4VSU5sgXARaWOYGQSiOqx5wPDa0MfvlYeCAV4axOSd90WrzSPavahhmTBB8b6YIsAi/fX7
-Rlj0+jBsTZ4eReVMCgSvslIlOoLti4Mz7J7nt8TNayIT7rnRyFJRGaPiNHZxIrygF675FWjg
-v+sLwRSDeEH1bj/v6wCQXVFhPmEMtlTKWKqZIG764kd6zMDCYMZ1q0isgOVPYRejoOVUeKG9
-71Bnnz/ZnokjI+8t92mAaKq1VZzJt4HDtSTK6pHYxWDIZ+GrsVL8E/QNvjzeE2VaeVvQOaLw
-2wQZ75jUnQkuSFFhXKz4C1OVVf3iv7sYcrj4nQsvnmoQQjQgZt+//jq2jtBLOyPq7sC++alf
-zx5m9hkblVqh+3qxwDpNhjwoYZmGHzjONaFwDxWZzq+Edf9eV5QRfT3SWDHVWl/yallP38wt
-tQ6cdiUx72900+q9i0rJ8Q0oZb1xiU8zCOq3+DuWk9TSkqVcVXomhDJikXHW9BRxUxnrUdzB
-Jj1L64HzskvTqFLpZ1rzbqb7RaKFf6pWAsci42qtm48jk+o+GVMG6fsMUTx+tlR8y0f/Slih
-G9J8kaiGO7bJh/5FCdXaZtBXFbxtIzvvCRG8CekUH4zE/KCo+jA9JcMkhbVhLD0Ksx0ZD0nU
-/BBYVSs04CYo+TUOhNbyiEdmcOoJ7KrOO0ipG6WYhh/v0O0Cx+rhusqEOdEmSpyU4KS9ri5+
-53PRuKmpxsuBkp1baSlmZtxguEv712qDiD+ZZ/G611UVyQyriunD+6KcsdpnHIHJ4LH02xNk
-82tYPi7MUmm/HJ2hJZh7oyBPFzsEtvLeq9PZd0vzS0OIwz4Q+wytmRkyXDm5cYro9+vmLqrw
-Ze21OekPyjZm4QuXKZ8PxpBD8TAKp9In40UKgjJOgF4yoiYQvc+QS0MhPxlIcxdM+vgVrnvs
-rTuXl+F2eyWSqDX2PeR/zWEfd725vyS055T3p2cA3ZQds4hVw/zlK3I/yzztJ7+MOHxUWz9Q
-rDi/QiZTaP6Dk0crEw1oeJ4G4XOufvK3bcb3hyiEDRjHc3xXYB8KHSyvIYhQQ5UYBb5W9ZUf
-aPORLs8a+4PT8S2LYl24RJVJ8TBbDXG6meqmO/wS0R4Jx9oOn/rnyqFR1v2vdX07XL6rRxH0
-bG7eDutFr4wjmhYk08OMLjfvnTROrDHMAk2na8pv16KzbopOhvuRwJHyaV/ds1OJSbz++wFk
-GPpu9PE6SZNpRa/FAthVZJQR23b6oEeZVRnbX98ynn7INggXF0xbd0V+7SfbQHWiqWWUnP+y
-rBKgweF1GgLtLwt0HBd7rNBua9VHS1OvKS6t2Tg8CZGu6/yusiJlemPzWbgla82HiZfS+diU
-hmYRvG7bJ/In6BR6XIndLB3WKJvn4iq4l+aepdKgGm+42eMB/fFiv6er4zSOBwOU0t8le5cs
-jO3eiPNIKpfTh7lPlKb65v2GnwabFKO05om82ozqu6pPBhbOaUBbt0B6hA3sRWufRMZcV2o/
-+/+AgJ+fbok5WUUby21+9Qv7kjJGH5RqKAvsalt7Flz1XYCiq1hOgBou/MRS+3TsbyPRxW/s
-ntCpiFvjTiMFKALUm9hQOoIe52cNvXYl82arMldfeeNLSs7U6DgadTxlHUEEsXsFzdbdBpno
-xNJZcOQ5ik3IVWk2uhzrx7+pBvwy6YZ5/jEXbhz9AxHHRXbwupTlax7Xq2uNdMfmRRR+1HPl
-YwCyGzjHSRP6xIKEEKXk7w3K97z+nnAQs2Nkf5oGWKx98Fx8GKnungiYCOFRt4k0ZdF/WBpg
-VPg6xYuMjEo/1mQouQ0KpRmcw72UUKEn4Ce1dugYOEXM/mp64CEqbyZzXVa3G3G44mnEVvd2
-TlWNpNgnNCAlq3edYKgjKt8da7ekBvghnJ1EcvEonXpfiAmtRIsO8wVSUxBUnqrY/EegLE/K
-HZ0lj47XIgWWyQztSiusIDr9mVB7ago2UV1YO/EYdCUFhIs32Jo6k+fbbNh9SUGcc2IRmN18
-oUIdeOxYCSHKY2mSjExLTwB4jw+hDbtta6In53QuTvfrchGR8EoVmttGSCTjcwSSLS9QO68y
-0xWB0S5EsgI7V1EbDcQeSKpy9P1P7sEi3q3o1sC/rGZWgNc7EnL1eQVKNl90sHUT46czZZCt
-kM2lYJq2sKQep8zLcTNcwVB1VGvHnNbMNfpzTjR9XIy+iWau/m5V2mWeC6kJMEEHi+xTxORW
-HNG7RsHgQZKhSW2fKD2unpqoxSnUPrUL+acVpypPSdv9YoT0KV0o3/Jng8q2T/7b0UOwVE2X
-d9Y8xWMyoyzjmoVuC9enjrPCcMqvOGC94epYGgIimf+c1Bnn/Y5UDEeIRWgSokglAxhmM8en
-5k8+7HLyFDNSbCiXM8Il54mnQhmouW+GIbxMPpiTzKKuR8cohWqhrgCIiA6R8ye1yOK5mlgy
-en+0lFGs8mr+eaZszZy7ATOgDzR4viAf9T0n3bfcSenzoFGlbwzCNjOALXmDwEW0LrcyqkHj
-y4D0+govo1QXwOt7VFthSfjWre5KVWNMSUd8BvZSuTjawrdKXoFRP9Qw+wQ65SxtFVOH823z
-8gQJT8yJUKy4EWdqPgbRm24McDGGFW198ogtDPRxjFS6kbCGM2L95bWMMZU46mgxvJxx09Z2
-J6NuSVfs2B0TT8Q4EWKS5dCuB8E1s/6FnShs/2DvjKpcvC+tfn+whqeMsry5YqMQ6fCluRaj
-XxxwwMH3BQr6PFhiN3FpOAAAAABfD0B97VCOhQABjpUD5PMZOcStGbHEZ/sCAAAAAARZWg==
-
---ChQOR20MqfxkMJg9
-Content-Type: text/plain; charset=utf8
-Content-Disposition: attachment; filename=kernel_selftests
-Content-Transfer-Encoding: quoted-printable
-
-KERNEL SELFTESTS: linux_headers_dir is /usr/src/linux-headers-x86_64-rhel-7=
-=2E2-b77eab7079d9e477489d2416cceda05d3c1cf21f
-2018-04-14 05:44:55 ln -sf /usr/bin/gcc-5 /usr/bin/gcc
-2018-04-14 05:44:55 ln -sf /usr/bin/clang-7 /usr/bin/clang
-2018-04-14 05:44:55 ln -sf /usr/bin/llc-7 /usr/bin/llc
-media_tests test: not in Makefile
-2018-04-14 05:44:55 make TARGETS=3Dmedia_tests
-make[1]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77ea=
-b7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/media_tests'
-gcc     media_device_test.c   -o media_device_test
-gcc     media_device_open.c   -o media_device_open
-gcc     video_device_test.c   -o video_device_test
-make[1]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab=
-7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/media_tests'
-ignored_by_lkp media_tests test
-
-2018-04-14 05:44:55 make run_tests -C membarrier
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/membarrier'
-gcc -g -I../../../../usr/include/    membarrier_test.c  -o /usr/src/linux-s=
-elftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/tes=
-ting/selftests/membarrier/membarrier_test
-TAP version 13
-selftests: membarrier_test
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-TAP version 13
-ok 1 sys_membarrier available
-ok 2 sys membarrier invalid command test: command =3D -1, flags =3D 0, errn=
-o =3D 22. Failed as expected
-ok 3 sys membarrier MEMBARRIER_CMD_QUERY invalid flags test: flags =3D 1, e=
-rrno =3D 22. Failed as expected
-ok 4 sys membarrier MEMBARRIER_CMD_GLOBAL test: flags =3D 0
-ok 5 sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED not registered failure=
- test: flags =3D 0, errno =3D 1
-ok 6 sys membarrier MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED test: flags =
-=3D 0
-ok 7 sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED test: flags =3D 0
-ok 8 sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE not register=
-ed failure test: flags =3D 0, errno =3D 1
-ok 9 sys membarrier MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE tes=
-t: flags =3D 0
-ok 10 sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE test: flags=
- =3D 0
-ok 11 sys membarrier MEMBARRIER_CMD_GLOBAL_EXPEDITED test: flags =3D 0
-ok 12 sys membarrier MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED test: flags =
-=3D 0
-ok 13 sys membarrier MEMBARRIER_CMD_GLOBAL_EXPEDITED test: flags =3D 0
-Pass 13 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..13
-ok 1..1 selftests: membarrier_test [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/membarrier'
-
-2018-04-14 05:44:55 make run_tests -C memfd
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/memfd'
-gcc -D_FILE_OFFSET_BITS=3D64 -I../../../../include/uapi/ -I../../../../incl=
-ude/ -I../../../../usr/include/   -c -o common.o common.c
-gcc -D_FILE_OFFSET_BITS=3D64 -I../../../../include/uapi/ -I../../../../incl=
-ude/ -I../../../../usr/include/    memfd_test.c common.o  -o /usr/src/linux=
--selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/t=
-esting/selftests/memfd/memfd_test
-memfd_test.c: In function =E2=80=98mfd_assert_get_seals=E2=80=99:
-memfd_test.c:74:6: warning: implicit declaration of function =E2=80=98fcntl=
-=E2=80=99 [-Wimplicit-function-declaration]
-  r =3D fcntl(fd, F_GET_SEALS);
-      ^
-memfd_test.c: In function =E2=80=98mfd_assert_open=E2=80=99:
-memfd_test.c:197:6: warning: implicit declaration of function =E2=80=98open=
-=E2=80=99 [-Wimplicit-function-declaration]
-  r =3D open(buf, flags, mode);
-      ^
-memfd_test.c: In function =E2=80=98mfd_assert_write=E2=80=99:
-memfd_test.c:328:6: warning: implicit declaration of function =E2=80=98fall=
-ocate=E2=80=99 [-Wimplicit-function-declaration]
-  r =3D fallocate(fd,
-      ^
-gcc -D_FILE_OFFSET_BITS=3D64 -I../../../../include/uapi/ -I../../../../incl=
-ude/ -I../../../../usr/include/    fuse_mnt.c -lfuse -pthread -o /usr/src/l=
-inux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/too=
-ls/testing/selftests/memfd/fuse_mnt
-gcc -D_FILE_OFFSET_BITS=3D64 -I../../../../include/uapi/ -I../../../../incl=
-ude/ -I../../../../usr/include/    fuse_test.c common.o  -o /usr/src/linux-=
-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/te=
-sting/selftests/memfd/fuse_test
-fuse_test.c: In function =E2=80=98mfd_assert_get_seals=E2=80=99:
-fuse_test.c:67:6: warning: implicit declaration of function =E2=80=98fcntl=
-=E2=80=99 [-Wimplicit-function-declaration]
-  r =3D fcntl(fd, F_GET_SEALS);
-      ^
-fuse_test.c: In function =E2=80=98main=E2=80=99:
-fuse_test.c:261:7: warning: implicit declaration of function =E2=80=98open=
-=E2=80=99 [-Wimplicit-function-declaration]
-  fd =3D open(argv[1], O_RDONLY | O_CLOEXEC);
-       ^
-TAP version 13
-selftests: run_tests.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-opening: ./mnt/memfd
-fuse: DONE
-memfd: CREATE
-memfd: BASIC
-memfd: SEAL-WRITE
-memfd: SEAL-SHRINK
-memfd: SEAL-GROW
-memfd: SEAL-RESIZE
-memfd: SHARE-DUP=20
-memfd: SHARE-MMAP=20
-memfd: SHARE-OPEN=20
-memfd: SHARE-FORK=20
-memfd: SHARE-DUP (shared file-table)
-memfd: SHARE-MMAP (shared file-table)
-memfd: SHARE-OPEN (shared file-table)
-memfd: SHARE-FORK (shared file-table)
-memfd: DONE
-memfd-hugetlb: CREATE
-memfd-hugetlb: BASIC
-memfd-hugetlb: SEAL-WRITE
-memfd-hugetlb: SEAL-SHRINK
-memfd-hugetlb: SEAL-GROW
-memfd-hugetlb: SEAL-RESIZE
-memfd-hugetlb: SHARE-DUP=20
-memfd-hugetlb: SHARE-MMAP=20
-memfd-hugetlb: SHARE-OPEN=20
-memfd-hugetlb: SHARE-FORK=20
-memfd-hugetlb: SHARE-DUP (shared file-table)
-memfd-hugetlb: SHARE-MMAP (shared file-table)
-memfd-hugetlb: SHARE-OPEN (shared file-table)
-memfd-hugetlb: SHARE-FORK (shared file-table)
-memfd: DONE
-opening: ./mnt/memfd
-fuse: DONE
-ok 1..1 selftests: run_tests.sh [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/memfd'
-
-2018-04-14 05:44:58 make run_tests -C memory-hotplug
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/memory-hotplug'
-Test scope: 2% hotplug memory
-	 online all hot-pluggable memory in offline state:
-		 SKIPPED - no hot-pluggable memory in offline state
-	 offline 2% hot-pluggable memory in online state
-	 trying to offline 1 out of 28 memory block(s):
-online->offline memory10
-	 online all hot-pluggable memory in offline state:
-offline->online memory10
-=2E/mem-on-off-test.sh: line 70: echo: write error: Device or resource busy
-online_memory_expect_success 10: unexpected fail
-	 Test with memory notifier error injection
-=2E/mem-on-off-test.sh: line 70: echo: write error: Device or resource busy
-online_memory_expect_success 10: unexpected fail
-selftests: memory-hotplug [FAIL]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/memory-hotplug'
-
-2018-04-14 05:45:00 make run_tests -C mount
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/mount'
-gcc -Wall -O2    unprivileged-remount-test.c  -o /usr/src/linux-selftests-x=
-86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selft=
-ests/mount/unprivileged-remount-test
-if [ -f /proc/self/uid_map ] ; then ./unprivileged-remount-test ; else echo=
- "WARN: No /proc/self/uid_map exist, test skipped." ; fi
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/mount'
-
-2018-04-14 05:45:00 make run_tests -C mqueue
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/mqueue'
-gcc -O2    mq_open_tests.c -lrt -lpthread -lpopt -o /usr/src/linux-selftest=
-s-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/se=
-lftests/mqueue/mq_open_tests
-gcc -O2    mq_perf_tests.c -lrt -lpthread -lpopt -o /usr/src/linux-selftest=
-s-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/se=
-lftests/mqueue/mq_perf_tests
-
-Initial system state:
-	Using queue path:		/test1
-	RLIMIT_MSGQUEUE(soft):		819200
-	RLIMIT_MSGQUEUE(hard):		819200
-	Maximum Message Size:		8192
-	Maximum Queue Size:		10
-	Default Message Size:		8192
-	Default Queue Size:		10
-
-Adjusted system state for testing:
-	RLIMIT_MSGQUEUE(soft):		819200
-	RLIMIT_MSGQUEUE(hard):		819200
-	Maximum Message Size:		8192
-	Maximum Queue Size:		10
-	Default Message Size:		8192
-	Default Queue Size:		10
-
-
-Test series 1, behavior when no attr struct passed to mq_open:
-Kernel supports setting defaults separately from maximums:		PASS
-Given sane values, mq_open without an attr struct succeeds:		PASS
-Kernel properly honors default setting knobs:				PASS
-Kernel properly limits default values to lesser of default/max:		PASS
-Kernel properly fails to create queue when defaults would
-exceed rlimit:								PASS
-
-
-Test series 2, behavior when attr struct is passed to mq_open:
-Queue open in excess of rlimit max when euid =3D 0 failed:		PASS
-Queue open with mq_maxmsg > limit when euid =3D 0 succeeded:		PASS
-Queue open with mq_msgsize > limit when euid =3D 0 succeeded:		PASS
-Queue open with total size > 2GB when euid =3D 0 failed:			PASS
-Queue open in excess of rlimit max when euid =3D 99 failed:		PASS
-Queue open with mq_maxmsg > limit when euid =3D 99 failed:		PASS
-Queue open with mq_msgsize > limit when euid =3D 99 failed:		PASS
-Queue open with total size > 2GB when euid =3D 99 failed:			PASS
-
-Initial system state:
-	Using queue path:			/mq_perf_tests
-	RLIMIT_MSGQUEUE(soft):			819200
-	RLIMIT_MSGQUEUE(hard):			819200
-	Maximum Message Size:			8192
-	Maximum Queue Size:			10
-	Nice value:				0
-
-Adjusted system state for testing:
-	RLIMIT_MSGQUEUE(soft):			(unlimited)
-	RLIMIT_MSGQUEUE(hard):			(unlimited)
-	Maximum Message Size:			16777216
-	Maximum Queue Size:			65530
-	Nice value:				-20
-	Continuous mode:			(disabled)
-	CPUs to pin:				63
-
-	Queue /mq_perf_tests created:
-		mq_flags:			O_NONBLOCK
-		mq_maxmsg:			65530
-		mq_msgsize:			16
-		mq_curmsgs:			0
-
-	Started mqueue performance test thread on CPU 63
-		Max priorities:			32768
-		Clock resolution:		1 nsec
-
-	Test #1: Time send/recv message, queue empty
-		(10000000 iterations)
-		Send msg:			7.797018693s total time
-						779 nsec/msg
-		Recv msg:			7.962445227s total time
-						796 nsec/msg
-
-	Test #2a: Time send/recv message, queue full, constant prio
-:
-		(100000 iterations)
-		Filling queue...done.		0.24964785s
-		Testing...done.
-		Send msg:			0.71912804s total time
-						719 nsec/msg
-		Recv msg:			0.73076087s total time
-						730 nsec/msg
-		Draining queue...done.		0.26609613s
-
-	Test #2b: Time send/recv message, queue full, increasing prio
-:
-		(100000 iterations)
-		Filling queue...done.		0.35070347s
-		Testing...done.
-		Send msg:			0.81806563s total time
-						818 nsec/msg
-		Recv msg:			0.79010530s total time
-						790 nsec/msg
-		Draining queue...done.		0.29666913s
-
-	Test #2c: Time send/recv message, queue full, decreasing prio
-:
-		(100000 iterations)
-		Filling queue...done.		0.34613573s
-		Testing...done.
-		Send msg:			0.85777929s total time
-						857 nsec/msg
-		Recv msg:			0.83258398s total time
-						832 nsec/msg
-		Draining queue...done.		0.29347449s
-
-	Test #2d: Time send/recv message, queue full, random prio
-:
-		(100000 iterations)
-		Filling queue...done.		0.36800281s
-		Testing...done.
-		Send msg:			0.92597207s total time
-						925 nsec/msg
-		Recv msg:			0.84684298s total time
-						846 nsec/msg
-		Draining queue...done.		0.30652777s
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/mqueue'
-
-2018-04-14 05:45:22 make run_tests -C net
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/net'
-gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/    reuseport=
-_bpf.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d241=
-6cceda05d3c1cf21f/tools/testing/selftests/net/reuseport_bpf
-gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/    reuseport=
-_bpf_cpu.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489=
-d2416cceda05d3c1cf21f/tools/testing/selftests/net/reuseport_bpf_cpu
-gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/  -lnuma  reu=
-seport_bpf_numa.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9=
-e477489d2416cceda05d3c1cf21f/tools/testing/selftests/net/reuseport_bpf_numa
-gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/    reuseport=
-_dualstack.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e4774=
-89d2416cceda05d3c1cf21f/tools/testing/selftests/net/reuseport_dualstack
-gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/    reuseaddr=
-_conflict.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e47748=
-9d2416cceda05d3c1cf21f/tools/testing/selftests/net/reuseaddr_conflict
-gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/    socket.c =
- -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda0=
-5d3c1cf21f/tools/testing/selftests/net/socket
-gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/    psock_fan=
-out.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416=
-cceda05d3c1cf21f/tools/testing/selftests/net/psock_fanout
-gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/    psock_tpa=
-cket.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d241=
-6cceda05d3c1cf21f/tools/testing/selftests/net/psock_tpacket
-gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/    msg_zeroc=
-opy.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416=
-cceda05d3c1cf21f/tools/testing/selftests/net/msg_zerocopy
-TAP version 13
-selftests: reuseport_bpf
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
----- IPv4 UDP ----
-Testing EBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing EBPF mod 20...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 10: 10
-Socket 11: 11
-Socket 12: 12
-Socket 13: 13
-Socket 14: 14
-Socket 15: 15
-Socket 16: 16
-Socket 17: 17
-Socket 18: 18
-Socket 19: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 10: 30
-Socket 11: 31
-Socket 12: 32
-Socket 13: 33
-Socket 14: 34
-Socket 15: 35
-Socket 16: 36
-Socket 17: 37
-Socket 18: 38
-Socket 19: 39
-Reprograming, testing mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 0: 30
-Socket 1: 31
-Socket 2: 32
-Socket 3: 33
-Socket 4: 34
-Socket 5: 35
-Socket 6: 36
-Socket 7: 37
-Socket 8: 38
-Socket 9: 39
-Testing CBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing CBPF mod 20...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 10: 10
-Socket 11: 11
-Socket 12: 12
-Socket 13: 13
-Socket 14: 14
-Socket 15: 15
-Socket 16: 16
-Socket 17: 17
-Socket 18: 18
-Socket 19: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 10: 30
-Socket 11: 31
-Socket 12: 32
-Socket 13: 33
-Socket 14: 34
-Socket 15: 35
-Socket 16: 36
-Socket 17: 37
-Socket 18: 38
-Socket 19: 39
-Reprograming, testing mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 0: 30
-Socket 1: 31
-Socket 2: 32
-Socket 3: 33
-Socket 4: 34
-Socket 5: 35
-Socket 6: 36
-Socket 7: 37
-Socket 8: 38
-Socket 9: 39
-Testing too many filters...
-Testing filters on non-SO_REUSEPORT socket...
----- IPv6 UDP ----
-Testing EBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing EBPF mod 20...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 10: 10
-Socket 11: 11
-Socket 12: 12
-Socket 13: 13
-Socket 14: 14
-Socket 15: 15
-Socket 16: 16
-Socket 17: 17
-Socket 18: 18
-Socket 19: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 10: 30
-Socket 11: 31
-Socket 12: 32
-Socket 13: 33
-Socket 14: 34
-Socket 15: 35
-Socket 16: 36
-Socket 17: 37
-Socket 18: 38
-Socket 19: 39
-Reprograming, testing mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 0: 30
-Socket 1: 31
-Socket 2: 32
-Socket 3: 33
-Socket 4: 34
-Socket 5: 35
-Socket 6: 36
-Socket 7: 37
-Socket 8: 38
-Socket 9: 39
-Testing CBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing CBPF mod 20...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 10: 10
-Socket 11: 11
-Socket 12: 12
-Socket 13: 13
-Socket 14: 14
-Socket 15: 15
-Socket 16: 16
-Socket 17: 17
-Socket 18: 18
-Socket 19: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 10: 30
-Socket 11: 31
-Socket 12: 32
-Socket 13: 33
-Socket 14: 34
-Socket 15: 35
-Socket 16: 36
-Socket 17: 37
-Socket 18: 38
-Socket 19: 39
-Reprograming, testing mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 0: 30
-Socket 1: 31
-Socket 2: 32
-Socket 3: 33
-Socket 4: 34
-Socket 5: 35
-Socket 6: 36
-Socket 7: 37
-Socket 8: 38
-Socket 9: 39
-Testing too many filters...
-Testing filters on non-SO_REUSEPORT socket...
----- IPv6 UDP w/ mapped IPv4 ----
-Testing EBPF mod 20...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 10: 10
-Socket 11: 11
-Socket 12: 12
-Socket 13: 13
-Socket 14: 14
-Socket 15: 15
-Socket 16: 16
-Socket 17: 17
-Socket 18: 18
-Socket 19: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 10: 30
-Socket 11: 31
-Socket 12: 32
-Socket 13: 33
-Socket 14: 34
-Socket 15: 35
-Socket 16: 36
-Socket 17: 37
-Socket 18: 38
-Socket 19: 39
-Reprograming, testing mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 0: 30
-Socket 1: 31
-Socket 2: 32
-Socket 3: 33
-Socket 4: 34
-Socket 5: 35
-Socket 6: 36
-Socket 7: 37
-Socket 8: 38
-Socket 9: 39
-Testing EBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing CBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing CBPF mod 20...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 10: 10
-Socket 11: 11
-Socket 12: 12
-Socket 13: 13
-Socket 14: 14
-Socket 15: 15
-Socket 16: 16
-Socket 17: 17
-Socket 18: 18
-Socket 19: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 10: 30
-Socket 11: 31
-Socket 12: 32
-Socket 13: 33
-Socket 14: 34
-Socket 15: 35
-Socket 16: 36
-Socket 17: 37
-Socket 18: 38
-Socket 19: 39
-Reprograming, testing mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Socket 0: 20
-Socket 1: 21
-Socket 2: 22
-Socket 3: 23
-Socket 4: 24
-Socket 5: 25
-Socket 6: 26
-Socket 7: 27
-Socket 8: 28
-Socket 9: 29
-Socket 0: 30
-Socket 1: 31
-Socket 2: 32
-Socket 3: 33
-Socket 4: 34
-Socket 5: 35
-Socket 6: 36
-Socket 7: 37
-Socket 8: 38
-Socket 9: 39
----- IPv4 TCP ----
-Testing EBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing CBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing too many filters...
-Testing filters on non-SO_REUSEPORT socket...
----- IPv6 TCP ----
-Testing EBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing CBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing too many filters...
-Testing filters on non-SO_REUSEPORT socket...
----- IPv6 TCP w/ mapped IPv4 ----
-Testing EBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing CBPF mod 10...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 5: 5
-Socket 6: 6
-Socket 7: 7
-Socket 8: 8
-Socket 9: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 5: 15
-Socket 6: 16
-Socket 7: 17
-Socket 8: 18
-Socket 9: 19
-Reprograming, testing mod 5...
-Socket 0: 0
-Socket 1: 1
-Socket 2: 2
-Socket 3: 3
-Socket 4: 4
-Socket 0: 5
-Socket 1: 6
-Socket 2: 7
-Socket 3: 8
-Socket 4: 9
-Socket 0: 10
-Socket 1: 11
-Socket 2: 12
-Socket 3: 13
-Socket 4: 14
-Socket 0: 15
-Socket 1: 16
-Socket 2: 17
-Socket 3: 18
-Socket 4: 19
-Testing filter add without bind...
-SUCCESS
-ok 1..1 selftests: reuseport_bpf [PASS]
-selftests: reuseport_bpf_cpu
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
----- IPv4 UDP ----
-send cpu 0, receive socket 0
-send cpu 1, receive socket 1
-send cpu 2, receive socket 2
-send cpu 3, receive socket 3
-send cpu 4, receive socket 4
-send cpu 5, receive socket 5
-send cpu 6, receive socket 6
-send cpu 7, receive socket 7
-send cpu 8, receive socket 8
-send cpu 9, receive socket 9
-send cpu 10, receive socket 10
-send cpu 11, receive socket 11
-send cpu 12, receive socket 12
-send cpu 13, receive socket 13
-send cpu 14, receive socket 14
-send cpu 15, receive socket 15
-send cpu 16, receive socket 16
-send cpu 17, receive socket 17
-send cpu 18, receive socket 18
-send cpu 19, receive socket 19
-send cpu 20, receive socket 20
-send cpu 21, receive socket 21
-send cpu 22, receive socket 22
-send cpu 23, receive socket 23
-send cpu 24, receive socket 24
-send cpu 25, receive socket 25
-send cpu 26, receive socket 26
-send cpu 27, receive socket 27
-send cpu 28, receive socket 28
-send cpu 29, receive socket 29
-send cpu 30, receive socket 30
-send cpu 31, receive socket 31
-send cpu 32, receive socket 32
-send cpu 33, receive socket 33
-send cpu 34, receive socket 34
-send cpu 35, receive socket 35
-send cpu 36, receive socket 36
-send cpu 37, receive socket 37
-send cpu 38, receive socket 38
-send cpu 39, receive socket 39
-send cpu 40, receive socket 40
-send cpu 41, receive socket 41
-send cpu 42, receive socket 42
-send cpu 43, receive socket 43
-send cpu 44, receive socket 44
-send cpu 45, receive socket 45
-send cpu 46, receive socket 46
-send cpu 47, receive socket 47
-send cpu 48, receive socket 48
-send cpu 49, receive socket 49
-send cpu 50, receive socket 50
-send cpu 51, receive socket 51
-send cpu 52, receive socket 52
-send cpu 53, receive socket 53
-send cpu 54, receive socket 54
-send cpu 55, receive socket 55
-send cpu 56, receive socket 56
-send cpu 57, receive socket 57
-send cpu 58, receive socket 58
-send cpu 59, receive socket 59
-send cpu 60, receive socket 60
-send cpu 61, receive socket 61
-send cpu 62, receive socket 62
-send cpu 63, receive socket 63
-send cpu 64, receive socket 64
-send cpu 65, receive socket 65
-send cpu 66, receive socket 66
-send cpu 67, receive socket 67
-send cpu 68, receive socket 68
-send cpu 69, receive socket 69
-send cpu 70, receive socket 70
-send cpu 71, receive socket 71
-send cpu 72, receive socket 72
-send cpu 73, receive socket 73
-send cpu 74, receive socket 74
-send cpu 75, receive socket 75
-send cpu 76, receive socket 76
-send cpu 77, receive socket 77
-send cpu 78, receive socket 78
-send cpu 79, receive socket 79
-send cpu 80, receive socket 80
-send cpu 81, receive socket 81
-send cpu 82, receive socket 82
-send cpu 83, receive socket 83
-send cpu 84, receive socket 84
-send cpu 85, receive socket 85
-send cpu 86, receive socket 86
-send cpu 87, receive socket 87
-send cpu 87, receive socket 87
-send cpu 86, receive socket 86
-send cpu 85, receive socket 85
-send cpu 84, receive socket 84
-send cpu 83, receive socket 83
-send cpu 82, receive socket 82
-send cpu 81, receive socket 81
-send cpu 80, receive socket 80
-send cpu 79, receive socket 79
-send cpu 78, receive socket 78
-send cpu 77, receive socket 77
-send cpu 76, receive socket 76
-send cpu 75, receive socket 75
-send cpu 74, receive socket 74
-send cpu 73, receive socket 73
-send cpu 72, receive socket 72
-send cpu 71, receive socket 71
-send cpu 70, receive socket 70
-send cpu 69, receive socket 69
-send cpu 68, receive socket 68
-send cpu 67, receive socket 67
-send cpu 66, receive socket 66
-send cpu 65, receive socket 65
-send cpu 64, receive socket 64
-send cpu 63, receive socket 63
-send cpu 62, receive socket 62
-send cpu 61, receive socket 61
-send cpu 60, receive socket 60
-send cpu 59, receive socket 59
-send cpu 58, receive socket 58
-send cpu 57, receive socket 57
-send cpu 56, receive socket 56
-send cpu 55, receive socket 55
-send cpu 54, receive socket 54
-send cpu 53, receive socket 53
-send cpu 52, receive socket 52
-send cpu 51, receive socket 51
-send cpu 50, receive socket 50
-send cpu 49, receive socket 49
-send cpu 48, receive socket 48
-send cpu 47, receive socket 47
-send cpu 46, receive socket 46
-send cpu 45, receive socket 45
-send cpu 44, receive socket 44
-send cpu 43, receive socket 43
-send cpu 42, receive socket 42
-send cpu 41, receive socket 41
-send cpu 40, receive socket 40
-send cpu 39, receive socket 39
-send cpu 38, receive socket 38
-send cpu 37, receive socket 37
-send cpu 36, receive socket 36
-send cpu 35, receive socket 35
-send cpu 34, receive socket 34
-send cpu 33, receive socket 33
-send cpu 32, receive socket 32
-send cpu 31, receive socket 31
-send cpu 30, receive socket 30
-send cpu 29, receive socket 29
-send cpu 28, receive socket 28
-send cpu 27, receive socket 27
-send cpu 26, receive socket 26
-send cpu 25, receive socket 25
-send cpu 24, receive socket 24
-send cpu 23, receive socket 23
-send cpu 22, receive socket 22
-send cpu 21, receive socket 21
-send cpu 20, receive socket 20
-send cpu 19, receive socket 19
-send cpu 18, receive socket 18
-send cpu 17, receive socket 17
-send cpu 16, receive socket 16
-send cpu 15, receive socket 15
-send cpu 14, receive socket 14
-send cpu 13, receive socket 13
-send cpu 12, receive socket 12
-send cpu 11, receive socket 11
-send cpu 10, receive socket 10
-send cpu 9, receive socket 9
-send cpu 8, receive socket 8
-send cpu 7, receive socket 7
-send cpu 6, receive socket 6
-send cpu 5, receive socket 5
-send cpu 4, receive socket 4
-send cpu 3, receive socket 3
-send cpu 2, receive socket 2
-send cpu 1, receive socket 1
-send cpu 0, receive socket 0
-send cpu 0, receive socket 0
-send cpu 2, receive socket 2
-send cpu 4, receive socket 4
-send cpu 6, receive socket 6
-send cpu 8, receive socket 8
-send cpu 10, receive socket 10
-send cpu 12, receive socket 12
-send cpu 14, receive socket 14
-send cpu 16, receive socket 16
-send cpu 18, receive socket 18
-send cpu 20, receive socket 20
-send cpu 22, receive socket 22
-send cpu 24, receive socket 24
-send cpu 26, receive socket 26
-send cpu 28, receive socket 28
-send cpu 30, receive socket 30
-send cpu 32, receive socket 32
-send cpu 34, receive socket 34
-send cpu 36, receive socket 36
-send cpu 38, receive socket 38
-send cpu 40, receive socket 40
-send cpu 42, receive socket 42
-send cpu 44, receive socket 44
-send cpu 46, receive socket 46
-send cpu 48, receive socket 48
-send cpu 50, receive socket 50
-send cpu 52, receive socket 52
-send cpu 54, receive socket 54
-send cpu 56, receive socket 56
-send cpu 58, receive socket 58
-send cpu 60, receive socket 60
-send cpu 62, receive socket 62
-send cpu 64, receive socket 64
-send cpu 66, receive socket 66
-send cpu 68, receive socket 68
-send cpu 70, receive socket 70
-send cpu 72, receive socket 72
-send cpu 74, receive socket 74
-send cpu 76, receive socket 76
-send cpu 78, receive socket 78
-send cpu 80, receive socket 80
-send cpu 82, receive socket 82
-send cpu 84, receive socket 84
-send cpu 86, receive socket 86
-send cpu 1, receive socket 1
-send cpu 3, receive socket 3
-send cpu 5, receive socket 5
-send cpu 7, receive socket 7
-send cpu 9, receive socket 9
-send cpu 11, receive socket 11
-send cpu 13, receive socket 13
-send cpu 15, receive socket 15
-send cpu 17, receive socket 17
-send cpu 19, receive socket 19
-send cpu 21, receive socket 21
-send cpu 23, receive socket 23
-send cpu 25, receive socket 25
-send cpu 27, receive socket 27
-send cpu 29, receive socket 29
-send cpu 31, receive socket 31
-send cpu 33, receive socket 33
-send cpu 35, receive socket 35
-send cpu 37, receive socket 37
-send cpu 39, receive socket 39
-send cpu 41, receive socket 41
-send cpu 43, receive socket 43
-send cpu 45, receive socket 45
-send cpu 47, receive socket 47
-send cpu 49, receive socket 49
-send cpu 51, receive socket 51
-send cpu 53, receive socket 53
-send cpu 55, receive socket 55
-send cpu 57, receive socket 57
-send cpu 59, receive socket 59
-send cpu 61, receive socket 61
-send cpu 63, receive socket 63
-send cpu 65, receive socket 65
-send cpu 67, receive socket 67
-send cpu 69, receive socket 69
-send cpu 71, receive socket 71
-send cpu 73, receive socket 73
-send cpu 75, receive socket 75
-send cpu 77, receive socket 77
-send cpu 79, receive socket 79
-send cpu 81, receive socket 81
-send cpu 83, receive socket 83
-send cpu 85, receive socket 85
-send cpu 87, receive socket 87
----- IPv6 UDP ----
-send cpu 0, receive socket 0
-send cpu 1, receive socket 1
-send cpu 2, receive socket 2
-send cpu 3, receive socket 3
-send cpu 4, receive socket 4
-send cpu 5, receive socket 5
-send cpu 6, receive socket 6
-send cpu 7, receive socket 7
-send cpu 8, receive socket 8
-send cpu 9, receive socket 9
-send cpu 10, receive socket 10
-send cpu 11, receive socket 11
-send cpu 12, receive socket 12
-send cpu 13, receive socket 13
-send cpu 14, receive socket 14
-send cpu 15, receive socket 15
-send cpu 16, receive socket 16
-send cpu 17, receive socket 17
-send cpu 18, receive socket 18
-send cpu 19, receive socket 19
-send cpu 20, receive socket 20
-send cpu 21, receive socket 21
-send cpu 22, receive socket 22
-send cpu 23, receive socket 23
-send cpu 24, receive socket 24
-send cpu 25, receive socket 25
-send cpu 26, receive socket 26
-send cpu 27, receive socket 27
-send cpu 28, receive socket 28
-send cpu 29, receive socket 29
-send cpu 30, receive socket 30
-send cpu 31, receive socket 31
-send cpu 32, receive socket 32
-send cpu 33, receive socket 33
-send cpu 34, receive socket 34
-send cpu 35, receive socket 35
-send cpu 36, receive socket 36
-send cpu 37, receive socket 37
-send cpu 38, receive socket 38
-send cpu 39, receive socket 39
-send cpu 40, receive socket 40
-send cpu 41, receive socket 41
-send cpu 42, receive socket 42
-send cpu 43, receive socket 43
-send cpu 44, receive socket 44
-send cpu 45, receive socket 45
-send cpu 46, receive socket 46
-send cpu 47, receive socket 47
-send cpu 48, receive socket 48
-send cpu 49, receive socket 49
-send cpu 50, receive socket 50
-send cpu 51, receive socket 51
-send cpu 52, receive socket 52
-send cpu 53, receive socket 53
-send cpu 54, receive socket 54
-send cpu 55, receive socket 55
-send cpu 56, receive socket 56
-send cpu 57, receive socket 57
-send cpu 58, receive socket 58
-send cpu 59, receive socket 59
-send cpu 60, receive socket 60
-send cpu 61, receive socket 61
-send cpu 62, receive socket 62
-send cpu 63, receive socket 63
-send cpu 64, receive socket 64
-send cpu 65, receive socket 65
-send cpu 66, receive socket 66
-send cpu 67, receive socket 67
-send cpu 68, receive socket 68
-send cpu 69, receive socket 69
-send cpu 70, receive socket 70
-send cpu 71, receive socket 71
-send cpu 72, receive socket 72
-send cpu 73, receive socket 73
-send cpu 74, receive socket 74
-send cpu 75, receive socket 75
-send cpu 76, receive socket 76
-send cpu 77, receive socket 77
-send cpu 78, receive socket 78
-send cpu 79, receive socket 79
-send cpu 80, receive socket 80
-send cpu 81, receive socket 81
-send cpu 82, receive socket 82
-send cpu 83, receive socket 83
-send cpu 84, receive socket 84
-send cpu 85, receive socket 85
-send cpu 86, receive socket 86
-send cpu 87, receive socket 87
-send cpu 87, receive socket 87
-send cpu 86, receive socket 86
-send cpu 85, receive socket 85
-send cpu 84, receive socket 84
-send cpu 83, receive socket 83
-send cpu 82, receive socket 82
-send cpu 81, receive socket 81
-send cpu 80, receive socket 80
-send cpu 79, receive socket 79
-send cpu 78, receive socket 78
-send cpu 77, receive socket 77
-send cpu 76, receive socket 76
-send cpu 75, receive socket 75
-send cpu 74, receive socket 74
-send cpu 73, receive socket 73
-send cpu 72, receive socket 72
-send cpu 71, receive socket 71
-send cpu 70, receive socket 70
-send cpu 69, receive socket 69
-send cpu 68, receive socket 68
-send cpu 67, receive socket 67
-send cpu 66, receive socket 66
-send cpu 65, receive socket 65
-send cpu 64, receive socket 64
-send cpu 63, receive socket 63
-send cpu 62, receive socket 62
-send cpu 61, receive socket 61
-send cpu 60, receive socket 60
-send cpu 59, receive socket 59
-send cpu 58, receive socket 58
-send cpu 57, receive socket 57
-send cpu 56, receive socket 56
-send cpu 55, receive socket 55
-send cpu 54, receive socket 54
-send cpu 53, receive socket 53
-send cpu 52, receive socket 52
-send cpu 51, receive socket 51
-send cpu 50, receive socket 50
-send cpu 49, receive socket 49
-send cpu 48, receive socket 48
-send cpu 47, receive socket 47
-send cpu 46, receive socket 46
-send cpu 45, receive socket 45
-send cpu 44, receive socket 44
-send cpu 43, receive socket 43
-send cpu 42, receive socket 42
-send cpu 41, receive socket 41
-send cpu 40, receive socket 40
-send cpu 39, receive socket 39
-send cpu 38, receive socket 38
-send cpu 37, receive socket 37
-send cpu 36, receive socket 36
-send cpu 35, receive socket 35
-send cpu 34, receive socket 34
-send cpu 33, receive socket 33
-send cpu 32, receive socket 32
-send cpu 31, receive socket 31
-send cpu 30, receive socket 30
-send cpu 29, receive socket 29
-send cpu 28, receive socket 28
-send cpu 27, receive socket 27
-send cpu 26, receive socket 26
-send cpu 25, receive socket 25
-send cpu 24, receive socket 24
-send cpu 23, receive socket 23
-send cpu 22, receive socket 22
-send cpu 21, receive socket 21
-send cpu 20, receive socket 20
-send cpu 19, receive socket 19
-send cpu 18, receive socket 18
-send cpu 17, receive socket 17
-send cpu 16, receive socket 16
-send cpu 15, receive socket 15
-send cpu 14, receive socket 14
-send cpu 13, receive socket 13
-send cpu 12, receive socket 12
-send cpu 11, receive socket 11
-send cpu 10, receive socket 10
-send cpu 9, receive socket 9
-send cpu 8, receive socket 8
-send cpu 7, receive socket 7
-send cpu 6, receive socket 6
-send cpu 5, receive socket 5
-send cpu 4, receive socket 4
-send cpu 3, receive socket 3
-send cpu 2, receive socket 2
-send cpu 1, receive socket 1
-send cpu 0, receive socket 0
-send cpu 0, receive socket 0
-send cpu 2, receive socket 2
-send cpu 4, receive socket 4
-send cpu 6, receive socket 6
-send cpu 8, receive socket 8
-send cpu 10, receive socket 10
-send cpu 12, receive socket 12
-send cpu 14, receive socket 14
-send cpu 16, receive socket 16
-send cpu 18, receive socket 18
-send cpu 20, receive socket 20
-send cpu 22, receive socket 22
-send cpu 24, receive socket 24
-send cpu 26, receive socket 26
-send cpu 28, receive socket 28
-send cpu 30, receive socket 30
-send cpu 32, receive socket 32
-send cpu 34, receive socket 34
-send cpu 36, receive socket 36
-send cpu 38, receive socket 38
-send cpu 40, receive socket 40
-send cpu 42, receive socket 42
-send cpu 44, receive socket 44
-send cpu 46, receive socket 46
-send cpu 48, receive socket 48
-send cpu 50, receive socket 50
-send cpu 52, receive socket 52
-send cpu 54, receive socket 54
-send cpu 56, receive socket 56
-send cpu 58, receive socket 58
-send cpu 60, receive socket 60
-send cpu 62, receive socket 62
-send cpu 64, receive socket 64
-send cpu 66, receive socket 66
-send cpu 68, receive socket 68
-send cpu 70, receive socket 70
-send cpu 72, receive socket 72
-send cpu 74, receive socket 74
-send cpu 76, receive socket 76
-send cpu 78, receive socket 78
-send cpu 80, receive socket 80
-send cpu 82, receive socket 82
-send cpu 84, receive socket 84
-send cpu 86, receive socket 86
-send cpu 1, receive socket 1
-send cpu 3, receive socket 3
-send cpu 5, receive socket 5
-send cpu 7, receive socket 7
-send cpu 9, receive socket 9
-send cpu 11, receive socket 11
-send cpu 13, receive socket 13
-send cpu 15, receive socket 15
-send cpu 17, receive socket 17
-send cpu 19, receive socket 19
-send cpu 21, receive socket 21
-send cpu 23, receive socket 23
-send cpu 25, receive socket 25
-send cpu 27, receive socket 27
-send cpu 29, receive socket 29
-send cpu 31, receive socket 31
-send cpu 33, receive socket 33
-send cpu 35, receive socket 35
-send cpu 37, receive socket 37
-send cpu 39, receive socket 39
-send cpu 41, receive socket 41
-send cpu 43, receive socket 43
-send cpu 45, receive socket 45
-send cpu 47, receive socket 47
-send cpu 49, receive socket 49
-send cpu 51, receive socket 51
-send cpu 53, receive socket 53
-send cpu 55, receive socket 55
-send cpu 57, receive socket 57
-send cpu 59, receive socket 59
-send cpu 61, receive socket 61
-send cpu 63, receive socket 63
-send cpu 65, receive socket 65
-send cpu 67, receive socket 67
-send cpu 69, receive socket 69
-send cpu 71, receive socket 71
-send cpu 73, receive socket 73
-send cpu 75, receive socket 75
-send cpu 77, receive socket 77
-send cpu 79, receive socket 79
-send cpu 81, receive socket 81
-send cpu 83, receive socket 83
-send cpu 85, receive socket 85
-send cpu 87, receive socket 87
----- IPv4 TCP ----
-send cpu 0, receive socket 0
-send cpu 1, receive socket 1
-send cpu 2, receive socket 2
-send cpu 3, receive socket 3
-send cpu 4, receive socket 4
-send cpu 5, receive socket 5
-send cpu 6, receive socket 6
-send cpu 7, receive socket 7
-send cpu 8, receive socket 8
-send cpu 9, receive socket 9
-send cpu 10, receive socket 10
-send cpu 11, receive socket 11
-send cpu 12, receive socket 12
-send cpu 13, receive socket 13
-send cpu 14, receive socket 14
-send cpu 15, receive socket 15
-send cpu 16, receive socket 16
-send cpu 17, receive socket 17
-send cpu 18, receive socket 18
-send cpu 19, receive socket 19
-send cpu 20, receive socket 20
-send cpu 21, receive socket 21
-send cpu 22, receive socket 22
-send cpu 23, receive socket 23
-send cpu 24, receive socket 24
-send cpu 25, receive socket 25
-send cpu 26, receive socket 26
-send cpu 27, receive socket 27
-send cpu 28, receive socket 28
-send cpu 29, receive socket 29
-send cpu 30, receive socket 30
-send cpu 31, receive socket 31
-send cpu 32, receive socket 32
-send cpu 33, receive socket 33
-send cpu 34, receive socket 34
-send cpu 35, receive socket 35
-send cpu 36, receive socket 36
-send cpu 37, receive socket 37
-send cpu 38, receive socket 38
-send cpu 39, receive socket 39
-send cpu 40, receive socket 40
-send cpu 41, receive socket 41
-send cpu 42, receive socket 42
-send cpu 43, receive socket 43
-send cpu 44, receive socket 44
-send cpu 45, receive socket 45
-send cpu 46, receive socket 46
-send cpu 47, receive socket 47
-send cpu 48, receive socket 48
-send cpu 49, receive socket 49
-send cpu 50, receive socket 50
-send cpu 51, receive socket 51
-send cpu 52, receive socket 52
-send cpu 53, receive socket 53
-send cpu 54, receive socket 54
-send cpu 55, receive socket 55
-send cpu 56, receive socket 56
-send cpu 57, receive socket 57
-send cpu 58, receive socket 58
-send cpu 59, receive socket 59
-send cpu 60, receive socket 60
-send cpu 61, receive socket 61
-send cpu 62, receive socket 62
-send cpu 63, receive socket 63
-send cpu 64, receive socket 64
-send cpu 65, receive socket 65
-send cpu 66, receive socket 66
-send cpu 67, receive socket 67
-send cpu 68, receive socket 68
-send cpu 69, receive socket 69
-send cpu 70, receive socket 70
-send cpu 71, receive socket 71
-send cpu 72, receive socket 72
-send cpu 73, receive socket 73
-send cpu 74, receive socket 74
-send cpu 75, receive socket 75
-send cpu 76, receive socket 76
-send cpu 77, receive socket 77
-send cpu 78, receive socket 78
-send cpu 79, receive socket 79
-send cpu 80, receive socket 80
-send cpu 81, receive socket 81
-send cpu 82, receive socket 82
-send cpu 83, receive socket 83
-send cpu 84, receive socket 84
-send cpu 85, receive socket 85
-send cpu 86, receive socket 86
-send cpu 87, receive socket 87
-send cpu 87, receive socket 87
-send cpu 86, receive socket 86
-send cpu 85, receive socket 85
-send cpu 84, receive socket 84
-send cpu 83, receive socket 83
-send cpu 82, receive socket 82
-send cpu 81, receive socket 81
-send cpu 80, receive socket 80
-send cpu 79, receive socket 79
-send cpu 78, receive socket 78
-send cpu 77, receive socket 77
-send cpu 76, receive socket 76
-send cpu 75, receive socket 75
-send cpu 74, receive socket 74
-send cpu 73, receive socket 73
-send cpu 72, receive socket 72
-send cpu 71, receive socket 71
-send cpu 70, receive socket 70
-send cpu 69, receive socket 69
-send cpu 68, receive socket 68
-send cpu 67, receive socket 67
-send cpu 66, receive socket 66
-send cpu 65, receive socket 65
-send cpu 64, receive socket 64
-send cpu 63, receive socket 63
-send cpu 62, receive socket 62
-send cpu 61, receive socket 61
-send cpu 60, receive socket 60
-send cpu 59, receive socket 59
-send cpu 58, receive socket 58
-send cpu 57, receive socket 57
-send cpu 56, receive socket 56
-send cpu 55, receive socket 55
-send cpu 54, receive socket 54
-send cpu 53, receive socket 53
-send cpu 52, receive socket 52
-send cpu 51, receive socket 51
-send cpu 50, receive socket 50
-send cpu 49, receive socket 49
-send cpu 48, receive socket 48
-send cpu 47, receive socket 47
-send cpu 46, receive socket 46
-send cpu 45, receive socket 45
-send cpu 44, receive socket 44
-send cpu 43, receive socket 43
-send cpu 42, receive socket 42
-send cpu 41, receive socket 41
-send cpu 40, receive socket 40
-send cpu 39, receive socket 39
-send cpu 38, receive socket 38
-send cpu 37, receive socket 37
-send cpu 36, receive socket 36
-send cpu 35, receive socket 35
-send cpu 34, receive socket 34
-send cpu 33, receive socket 33
-send cpu 32, receive socket 32
-send cpu 31, receive socket 31
-send cpu 30, receive socket 30
-send cpu 29, receive socket 29
-send cpu 28, receive socket 28
-send cpu 27, receive socket 27
-send cpu 26, receive socket 26
-send cpu 25, receive socket 25
-send cpu 24, receive socket 24
-send cpu 23, receive socket 23
-send cpu 22, receive socket 22
-send cpu 21, receive socket 21
-send cpu 20, receive socket 20
-send cpu 19, receive socket 19
-send cpu 18, receive socket 18
-send cpu 17, receive socket 17
-send cpu 16, receive socket 16
-send cpu 15, receive socket 15
-send cpu 14, receive socket 14
-send cpu 13, receive socket 13
-send cpu 12, receive socket 12
-send cpu 11, receive socket 11
-send cpu 10, receive socket 10
-send cpu 9, receive socket 9
-send cpu 8, receive socket 8
-send cpu 7, receive socket 7
-send cpu 6, receive socket 6
-send cpu 5, receive socket 5
-send cpu 4, receive socket 4
-send cpu 3, receive socket 3
-send cpu 2, receive socket 2
-send cpu 1, receive socket 1
-send cpu 0, receive socket 0
-send cpu 0, receive socket 0
-send cpu 2, receive socket 2
-send cpu 4, receive socket 4
-send cpu 6, receive socket 6
-send cpu 8, receive socket 8
-send cpu 10, receive socket 10
-send cpu 12, receive socket 12
-send cpu 14, receive socket 14
-send cpu 16, receive socket 16
-send cpu 18, receive socket 18
-send cpu 20, receive socket 20
-send cpu 22, receive socket 22
-send cpu 24, receive socket 24
-send cpu 26, receive socket 26
-send cpu 28, receive socket 28
-send cpu 30, receive socket 30
-send cpu 32, receive socket 32
-send cpu 34, receive socket 34
-send cpu 36, receive socket 36
-send cpu 38, receive socket 38
-send cpu 40, receive socket 40
-send cpu 42, receive socket 42
-send cpu 44, receive socket 44
-send cpu 46, receive socket 46
-send cpu 48, receive socket 48
-send cpu 50, receive socket 50
-send cpu 52, receive socket 52
-send cpu 54, receive socket 54
-send cpu 56, receive socket 56
-send cpu 58, receive socket 58
-send cpu 60, receive socket 60
-send cpu 62, receive socket 62
-send cpu 64, receive socket 64
-send cpu 66, receive socket 66
-send cpu 68, receive socket 68
-send cpu 70, receive socket 70
-send cpu 72, receive socket 72
-send cpu 74, receive socket 74
-send cpu 76, receive socket 76
-send cpu 78, receive socket 78
-send cpu 80, receive socket 80
-send cpu 82, receive socket 82
-send cpu 84, receive socket 84
-send cpu 86, receive socket 86
-send cpu 1, receive socket 1
-send cpu 3, receive socket 3
-send cpu 5, receive socket 5
-send cpu 7, receive socket 7
-send cpu 9, receive socket 9
-send cpu 11, receive socket 11
-send cpu 13, receive socket 13
-send cpu 15, receive socket 15
-send cpu 17, receive socket 17
-send cpu 19, receive socket 19
-send cpu 21, receive socket 21
-send cpu 23, receive socket 23
-send cpu 25, receive socket 25
-send cpu 27, receive socket 27
-send cpu 29, receive socket 29
-send cpu 31, receive socket 31
-send cpu 33, receive socket 33
-send cpu 35, receive socket 35
-send cpu 37, receive socket 37
-send cpu 39, receive socket 39
-send cpu 41, receive socket 41
-send cpu 43, receive socket 43
-send cpu 45, receive socket 45
-send cpu 47, receive socket 47
-send cpu 49, receive socket 49
-send cpu 51, receive socket 51
-send cpu 53, receive socket 53
-send cpu 55, receive socket 55
-send cpu 57, receive socket 57
-send cpu 59, receive socket 59
-send cpu 61, receive socket 61
-send cpu 63, receive socket 63
-send cpu 65, receive socket 65
-send cpu 67, receive socket 67
-send cpu 69, receive socket 69
-send cpu 71, receive socket 71
-send cpu 73, receive socket 73
-send cpu 75, receive socket 75
-send cpu 77, receive socket 77
-send cpu 79, receive socket 79
-send cpu 81, receive socket 81
-send cpu 83, receive socket 83
-send cpu 85, receive socket 85
-send cpu 87, receive socket 87
----- IPv6 TCP ----
-send cpu 0, receive socket 0
-send cpu 1, receive socket 1
-send cpu 2, receive socket 2
-send cpu 3, receive socket 3
-send cpu 4, receive socket 4
-send cpu 5, receive socket 5
-send cpu 6, receive socket 6
-send cpu 7, receive socket 7
-send cpu 8, receive socket 8
-send cpu 9, receive socket 9
-send cpu 10, receive socket 10
-send cpu 11, receive socket 11
-send cpu 12, receive socket 12
-send cpu 13, receive socket 13
-send cpu 14, receive socket 14
-send cpu 15, receive socket 15
-send cpu 16, receive socket 16
-send cpu 17, receive socket 17
-send cpu 18, receive socket 18
-send cpu 19, receive socket 19
-send cpu 20, receive socket 20
-send cpu 21, receive socket 21
-send cpu 22, receive socket 22
-send cpu 23, receive socket 23
-send cpu 24, receive socket 24
-send cpu 25, receive socket 25
-send cpu 26, receive socket 26
-send cpu 27, receive socket 27
-send cpu 28, receive socket 28
-send cpu 29, receive socket 29
-send cpu 30, receive socket 30
-send cpu 31, receive socket 31
-send cpu 32, receive socket 32
-send cpu 33, receive socket 33
-send cpu 34, receive socket 34
-send cpu 35, receive socket 35
-send cpu 36, receive socket 36
-send cpu 37, receive socket 37
-send cpu 38, receive socket 38
-send cpu 39, receive socket 39
-send cpu 40, receive socket 40
-send cpu 41, receive socket 41
-send cpu 42, receive socket 42
-send cpu 43, receive socket 43
-send cpu 44, receive socket 44
-send cpu 45, receive socket 45
-send cpu 46, receive socket 46
-send cpu 47, receive socket 47
-send cpu 48, receive socket 48
-send cpu 49, receive socket 49
-send cpu 50, receive socket 50
-send cpu 51, receive socket 51
-send cpu 52, receive socket 52
-send cpu 53, receive socket 53
-send cpu 54, receive socket 54
-send cpu 55, receive socket 55
-send cpu 56, receive socket 56
-send cpu 57, receive socket 57
-send cpu 58, receive socket 58
-send cpu 59, receive socket 59
-send cpu 60, receive socket 60
-send cpu 61, receive socket 61
-send cpu 62, receive socket 62
-send cpu 63, receive socket 63
-send cpu 64, receive socket 64
-send cpu 65, receive socket 65
-send cpu 66, receive socket 66
-send cpu 67, receive socket 67
-send cpu 68, receive socket 68
-send cpu 69, receive socket 69
-send cpu 70, receive socket 70
-send cpu 71, receive socket 71
-send cpu 72, receive socket 72
-send cpu 73, receive socket 73
-send cpu 74, receive socket 74
-send cpu 75, receive socket 75
-send cpu 76, receive socket 76
-send cpu 77, receive socket 77
-send cpu 78, receive socket 78
-send cpu 79, receive socket 79
-send cpu 80, receive socket 80
-send cpu 81, receive socket 81
-send cpu 82, receive socket 82
-send cpu 83, receive socket 83
-send cpu 84, receive socket 84
-send cpu 85, receive socket 85
-send cpu 86, receive socket 86
-send cpu 87, receive socket 87
-send cpu 87, receive socket 87
-send cpu 86, receive socket 86
-send cpu 85, receive socket 85
-send cpu 84, receive socket 84
-send cpu 83, receive socket 83
-send cpu 82, receive socket 82
-send cpu 81, receive socket 81
-send cpu 80, receive socket 80
-send cpu 79, receive socket 79
-send cpu 78, receive socket 78
-send cpu 77, receive socket 77
-send cpu 76, receive socket 76
-send cpu 75, receive socket 75
-send cpu 74, receive socket 74
-send cpu 73, receive socket 73
-send cpu 72, receive socket 72
-send cpu 71, receive socket 71
-send cpu 70, receive socket 70
-send cpu 69, receive socket 69
-send cpu 68, receive socket 68
-send cpu 67, receive socket 67
-send cpu 66, receive socket 66
-send cpu 65, receive socket 65
-send cpu 64, receive socket 64
-send cpu 63, receive socket 63
-send cpu 62, receive socket 62
-send cpu 61, receive socket 61
-send cpu 60, receive socket 60
-send cpu 59, receive socket 59
-send cpu 58, receive socket 58
-send cpu 57, receive socket 57
-send cpu 56, receive socket 56
-send cpu 55, receive socket 55
-send cpu 54, receive socket 54
-send cpu 53, receive socket 53
-send cpu 52, receive socket 52
-send cpu 51, receive socket 51
-send cpu 50, receive socket 50
-send cpu 49, receive socket 49
-send cpu 48, receive socket 48
-send cpu 47, receive socket 47
-send cpu 46, receive socket 46
-send cpu 45, receive socket 45
-send cpu 44, receive socket 44
-send cpu 43, receive socket 43
-send cpu 42, receive socket 42
-send cpu 41, receive socket 41
-send cpu 40, receive socket 40
-send cpu 39, receive socket 39
-send cpu 38, receive socket 38
-send cpu 37, receive socket 37
-send cpu 36, receive socket 36
-send cpu 35, receive socket 35
-send cpu 34, receive socket 34
-send cpu 33, receive socket 33
-send cpu 32, receive socket 32
-send cpu 31, receive socket 31
-send cpu 30, receive socket 30
-send cpu 29, receive socket 29
-send cpu 28, receive socket 28
-send cpu 27, receive socket 27
-send cpu 26, receive socket 26
-send cpu 25, receive socket 25
-send cpu 24, receive socket 24
-send cpu 23, receive socket 23
-send cpu 22, receive socket 22
-send cpu 21, receive socket 21
-send cpu 20, receive socket 20
-send cpu 19, receive socket 19
-send cpu 18, receive socket 18
-send cpu 17, receive socket 17
-send cpu 16, receive socket 16
-send cpu 15, receive socket 15
-send cpu 14, receive socket 14
-send cpu 13, receive socket 13
-send cpu 12, receive socket 12
-send cpu 11, receive socket 11
-send cpu 10, receive socket 10
-send cpu 9, receive socket 9
-send cpu 8, receive socket 8
-send cpu 7, receive socket 7
-send cpu 6, receive socket 6
-send cpu 5, receive socket 5
-send cpu 4, receive socket 4
-send cpu 3, receive socket 3
-send cpu 2, receive socket 2
-send cpu 1, receive socket 1
-send cpu 0, receive socket 0
-send cpu 0, receive socket 0
-send cpu 2, receive socket 2
-send cpu 4, receive socket 4
-send cpu 6, receive socket 6
-send cpu 8, receive socket 8
-send cpu 10, receive socket 10
-send cpu 12, receive socket 12
-send cpu 14, receive socket 14
-send cpu 16, receive socket 16
-send cpu 18, receive socket 18
-send cpu 20, receive socket 20
-send cpu 22, receive socket 22
-send cpu 24, receive socket 24
-send cpu 26, receive socket 26
-send cpu 28, receive socket 28
-send cpu 30, receive socket 30
-send cpu 32, receive socket 32
-send cpu 34, receive socket 34
-send cpu 36, receive socket 36
-send cpu 38, receive socket 38
-send cpu 40, receive socket 40
-send cpu 42, receive socket 42
-send cpu 44, receive socket 44
-send cpu 46, receive socket 46
-send cpu 48, receive socket 48
-send cpu 50, receive socket 50
-send cpu 52, receive socket 52
-send cpu 54, receive socket 54
-send cpu 56, receive socket 56
-send cpu 58, receive socket 58
-send cpu 60, receive socket 60
-send cpu 62, receive socket 62
-send cpu 64, receive socket 64
-send cpu 66, receive socket 66
-send cpu 68, receive socket 68
-send cpu 70, receive socket 70
-send cpu 72, receive socket 72
-send cpu 74, receive socket 74
-send cpu 76, receive socket 76
-send cpu 78, receive socket 78
-send cpu 80, receive socket 80
-send cpu 82, receive socket 82
-send cpu 84, receive socket 84
-send cpu 86, receive socket 86
-send cpu 1, receive socket 1
-send cpu 3, receive socket 3
-send cpu 5, receive socket 5
-send cpu 7, receive socket 7
-send cpu 9, receive socket 9
-send cpu 11, receive socket 11
-send cpu 13, receive socket 13
-send cpu 15, receive socket 15
-send cpu 17, receive socket 17
-send cpu 19, receive socket 19
-send cpu 21, receive socket 21
-send cpu 23, receive socket 23
-send cpu 25, receive socket 25
-send cpu 27, receive socket 27
-send cpu 29, receive socket 29
-send cpu 31, receive socket 31
-send cpu 33, receive socket 33
-send cpu 35, receive socket 35
-send cpu 37, receive socket 37
-send cpu 39, receive socket 39
-send cpu 41, receive socket 41
-send cpu 43, receive socket 43
-send cpu 45, receive socket 45
-send cpu 47, receive socket 47
-send cpu 49, receive socket 49
-send cpu 51, receive socket 51
-send cpu 53, receive socket 53
-send cpu 55, receive socket 55
-send cpu 57, receive socket 57
-send cpu 59, receive socket 59
-send cpu 61, receive socket 61
-send cpu 63, receive socket 63
-send cpu 65, receive socket 65
-send cpu 67, receive socket 67
-send cpu 69, receive socket 69
-send cpu 71, receive socket 71
-send cpu 73, receive socket 73
-send cpu 75, receive socket 75
-send cpu 77, receive socket 77
-send cpu 79, receive socket 79
-send cpu 81, receive socket 81
-send cpu 83, receive socket 83
-send cpu 85, receive socket 85
-send cpu 87, receive socket 87
-SUCCESS
-ok 1..2 selftests: reuseport_bpf_cpu [PASS]
-selftests: reuseport_bpf_numa
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
----- IPv4 UDP ----
-send node 0, receive socket 0
-send node 1, receive socket 1
-send node 1, receive socket 1
-send node 0, receive socket 0
----- IPv6 UDP ----
-send node 0, receive socket 0
-send node 1, receive socket 1
-send node 1, receive socket 1
-send node 0, receive socket 0
----- IPv4 TCP ----
-send node 0, receive socket 0
-send node 1, receive socket 1
-send node 1, receive socket 1
-send node 0, receive socket 0
----- IPv6 TCP ----
-send node 0, receive socket 0
-send node 1, receive socket 1
-send node 1, receive socket 1
-send node 0, receive socket 0
-SUCCESS
-ok 1..3 selftests: reuseport_bpf_numa [PASS]
-selftests: reuseport_dualstack
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
----- UDP IPv4 created before IPv6 ----
----- UDP IPv6 created before IPv4 ----
----- UDP IPv4 created before IPv6 (large) ----
----- UDP IPv6 created before IPv4 (large) ----
----- TCP IPv4 created before IPv6 ----
----- TCP IPv6 created before IPv4 ----
-SUCCESS
-ok 1..4 selftests: reuseport_dualstack [PASS]
-selftests: reuseaddr_conflict
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Opening 127.0.0.1:9999
-Opening INADDR_ANY:9999
-bind: Address already in use
-Opening in6addr_any:9999
-Opening INADDR_ANY:9999
-bind: Address already in use
-Opening INADDR_ANY:9999 after closing ipv6 socket
-bind: Address already in use
-Successok 1..5 selftests: reuseaddr_conflict [PASS]
-selftests: run_netsocktests
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
---------------------
-running socket test
---------------------
-[PASS]
-ok 1..6 selftests: run_netsocktests [PASS]
-selftests: run_afpackettests
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
---------------------
-running psock_fanout test
---------------------
-test: control single socket
-test: control multiple sockets
-test: unique ids
-
-test: datapath 0x0 ports 8000,8002
-info: count=3D0,0, expect=3D0,0
-info: count=3D15,5, expect=3D15,5
-info: count=3D20,5, expect=3D20,5
-
-test: datapath 0x1000 ports 8000,8002
-info: count=3D0,0, expect=3D0,0
-info: count=3D15,5, expect=3D15,5
-info: count=3D20,15, expect=3D20,15
-
-test: datapath 0x1 ports 8000,8002
-info: count=3D0,0, expect=3D0,0
-info: count=3D10,10, expect=3D10,10
-info: count=3D17,18, expect=3D18,17
-
-test: datapath 0x3 ports 8000,8002
-info: count=3D0,0, expect=3D0,0
-info: count=3D15,5, expect=3D15,5
-info: count=3D20,15, expect=3D20,15
-
-test: datapath 0x6 ports 8000,8002
-info: count=3D0,0, expect=3D0,0
-info: count=3D5,15, expect=3D15,5
-info: count=3D20,15, expect=3D15,20
-
-test: datapath 0x7 ports 8000,8002
-info: count=3D0,0, expect=3D0,0
-info: count=3D5,15, expect=3D15,5
-info: count=3D20,15, expect=3D15,20
-
-test: datapath 0x2 ports 8000,8002
-info: count=3D0,0, expect=3D0,0
-info: count=3D20,0, expect=3D20,0
-info: count=3D20,0, expect=3D20,0
-
-test: datapath 0x2 ports 8000,8002
-info: count=3D0,0, expect=3D0,0
-info: count=3D0,20, expect=3D0,20
-info: count=3D0,20, expect=3D0,20
-
-test: datapath 0x2000 ports 8000,8002
-info: count=3D0,0, expect=3D0,0
-info: count=3D20,20, expect=3D20,20
-info: count=3D20,20, expect=3D20,20
-OK. All tests passed
-[PASS]
---------------------
-running psock_tpacket test
---------------------
-test: TPACKET_V1 with PACKET_RX_RING .................... 100 pkts (14200 b=
-ytes)
-test: TPACKET_V1 with PACKET_TX_RING .................... 100 pkts (14200 b=
-ytes)
-test: TPACKET_V2 with PACKET_RX_RING .................... 100 pkts (14200 b=
-ytes)
-test: TPACKET_V2 with PACKET_TX_RING .................... 100 pkts (14200 b=
-ytes)
-test: TPACKET_V3 with PACKET_RX_RING .................... 100 pkts (14200 b=
-ytes)
-test: TPACKET_V3 with PACKET_TX_RING .................... 100 pkts (14200 b=
-ytes)
-OK. All tests passed
-[PASS]
-ok 1..7 selftests: run_afpackettests [PASS]
-selftests: test_bpf.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-test_bpf: ok
-ok 1..8 selftests: test_bpf.sh [PASS]
-selftests: netdevice.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-SKIP: eth0: interface already up
-Cannot get device udp-fragmentation-offload settings: Operation not support=
-ed
-PASS: eth0: ethtool list features
-PASS: eth0: ethtool dump
-PASS: eth0: ethtool stats
-SKIP: eth0: interface kept up
-PASS: eth1: set interface up
-PASS: eth1: set MAC address
-SKIP: eth1: set IP address
-Cannot get device udp-fragmentation-offload settings: Operation not support=
-ed
-PASS: eth1: ethtool list features
-PASS: eth1: ethtool dump
-PASS: eth1: ethtool stats
-PASS: eth1: stop interface
-ok 1..9 selftests: netdevice.sh [PASS]
-selftests: rtnetlink.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-PASS: policy routing
-PASS: route get
-PASS: tc htb hierarchy
-PASS: gre tunnel endpoint
-PASS: gretap
-RTNETLINK answers: Operation not supported
-Cannot find device "ip6gretap00"
-Cannot find device "ip6gretap00"
-Cannot find device "ip6gretap00"
-Usage: ... { ip6gre | ip6gretap | ip6erspan} [ remote ADDR ]
-                                  [ local ADDR ]
-                                  [ [i|o]seq ]
-                                  [ [i|o]key KEY ]
-                                  [ [i|o]csum ]
-                                  [ hoplimit TTL ]
-                                  [ encaplimit ELIM ]
-                                  [ tclass TCLASS ]
-                                  [ flowlabel FLOWLABEL ]
-                                  [ dscp inherit ]
-                                  [ fwmark MARK ]
-                                  [ dev PHYS_DEV ]
-                                  [ noencap ]
-                                  [ encap { fou | gue | none } ]
-                                  [ encap-sport PORT ]
-                                  [ encap-dport PORT ]
-                                  [ [no]encap-csum ]
-                                  [ [no]encap-csum6 ]
-                                  [ [no]encap-remcsum ]
-                                  [ erspan IDX ]
-
-Where: ADDR      :=3D IPV6_ADDRESS
-       TTL       :=3D { 0..255 } (default=3D64)
-       KEY       :=3D { DOTTED_QUAD | NUMBER }
-       ELIM      :=3D { none | 0..255 }(default=3D4)
-       TCLASS    :=3D { 0x0..0xff | inherit }
-       FLOWLABEL :=3D { 0x0..0xfffff | inherit }
-       MARK      :=3D { 0x0..0xffffffff | inherit }
-Cannot find device "ip6gretap00"
-FAIL: ip6gretap
-Usage: ... { gre | gretap | erspan } [ remote ADDR ]
-                            [ local ADDR ]
-                            [ [i|o]seq ]
-                            [ [i|o]key KEY ]
-                            [ [i|o]csum ]
-                            [ ttl TTL ]
-                            [ tos TOS ]
-                            [ [no]pmtudisc ]
-                            [ [no]ignore-df ]
-                            [ dev PHYS_DEV ]
-                            [ noencap ]
-                            [ encap { fou | gue | none } ]
-                            [ encap-sport PORT ]
-                            [ encap-dport PORT ]
-                            [ [no]encap-csum ]
-                            [ [no]encap-csum6 ]
-                            [ [no]encap-remcsum ]
-                            [ external ]
-                            [ fwmark MARK ]
-                            [ erspan IDX ]
-
-Where: ADDR :=3D { IP_ADDRESS | any }
-       TOS  :=3D { NUMBER | inherit }
-       TTL  :=3D { 1..255 | inherit }
-       KEY  :=3D { DOTTED_QUAD | NUMBER }
-       MARK :=3D { 0x0..0xffffffff }
-Cannot find device "erspan00"
-Cannot find device "erspan00"
-Cannot find device "erspan00"
-Usage: ... { gre | gretap | erspan } [ remote ADDR ]
-                            [ local ADDR ]
-                            [ [i|o]seq ]
-                            [ [i|o]key KEY ]
-                            [ [i|o]csum ]
-                            [ ttl TTL ]
-                            [ tos TOS ]
-                            [ [no]pmtudisc ]
-                            [ [no]ignore-df ]
-                            [ dev PHYS_DEV ]
-                            [ noencap ]
-                            [ encap { fou | gue | none } ]
-                            [ encap-sport PORT ]
-                            [ encap-dport PORT ]
-                            [ [no]encap-csum ]
-                            [ [no]encap-csum6 ]
-                            [ [no]encap-remcsum ]
-                            [ external ]
-                            [ fwmark MARK ]
-                            [ erspan IDX ]
-
-Where: ADDR :=3D { IP_ADDRESS | any }
-       TOS  :=3D { NUMBER | inherit }
-       TTL  :=3D { 1..255 | inherit }
-       KEY  :=3D { DOTTED_QUAD | NUMBER }
-       MARK :=3D { 0x0..0xffffffff }
-Cannot find device "erspan00"
-Cannot find device "erspan00"
-Cannot find device "erspan00"
-FAIL: erspan
-Usage: ... { ip6gre | ip6gretap | ip6erspan} [ remote ADDR ]
-                                  [ local ADDR ]
-                                  [ [i|o]seq ]
-                                  [ [i|o]key KEY ]
-                                  [ [i|o]csum ]
-                                  [ hoplimit TTL ]
-                                  [ encaplimit ELIM ]
-                                  [ tclass TCLASS ]
-                                  [ flowlabel FLOWLABEL ]
-                                  [ dscp inherit ]
-                                  [ fwmark MARK ]
-                                  [ dev PHYS_DEV ]
-                                  [ noencap ]
-                                  [ encap { fou | gue | none } ]
-                                  [ encap-sport PORT ]
-                                  [ encap-dport PORT ]
-                                  [ [no]encap-csum ]
-                                  [ [no]encap-csum6 ]
-                                  [ [no]encap-remcsum ]
-                                  [ erspan IDX ]
-
-Where: ADDR      :=3D IPV6_ADDRESS
-       TTL       :=3D { 0..255 } (default=3D64)
-       KEY       :=3D { DOTTED_QUAD | NUMBER }
-       ELIM      :=3D { none | 0..255 }(default=3D4)
-       TCLASS    :=3D { 0x0..0xff | inherit }
-       FLOWLABEL :=3D { 0x0..0xfffff | inherit }
-       MARK      :=3D { 0x0..0xffffffff | inherit }
-Cannot find device "ip6erspan00"
-Cannot find device "ip6erspan00"
-Cannot find device "ip6erspan00"
-Usage: ... { ip6gre | ip6gretap | ip6erspan} [ remote ADDR ]
-                                  [ local ADDR ]
-                                  [ [i|o]seq ]
-                                  [ [i|o]key KEY ]
-                                  [ [i|o]csum ]
-                                  [ hoplimit TTL ]
-                                  [ encaplimit ELIM ]
-                                  [ tclass TCLASS ]
-                                  [ flowlabel FLOWLABEL ]
-                                  [ dscp inherit ]
-                                  [ fwmark MARK ]
-                                  [ dev PHYS_DEV ]
-                                  [ noencap ]
-                                  [ encap { fou | gue | none } ]
-                                  [ encap-sport PORT ]
-                                  [ encap-dport PORT ]
-                                  [ [no]encap-csum ]
-                                  [ [no]encap-csum6 ]
-                                  [ [no]encap-remcsum ]
-                                  [ erspan IDX ]
-
-Where: ADDR      :=3D IPV6_ADDRESS
-       TTL       :=3D { 0..255 } (default=3D64)
-       KEY       :=3D { DOTTED_QUAD | NUMBER }
-       ELIM      :=3D { none | 0..255 }(default=3D4)
-       TCLASS    :=3D { 0x0..0xff | inherit }
-       FLOWLABEL :=3D { 0x0..0xfffff | inherit }
-       MARK      :=3D { 0x0..0xffffffff | inherit }
-Cannot find device "ip6erspan00"
-Cannot find device "ip6erspan00"
-Cannot find device "ip6erspan00"
-Usage: ... { ip6gre | ip6gretap | ip6erspan} [ remote ADDR ]
-                                  [ local ADDR ]
-                                  [ [i|o]seq ]
-                                  [ [i|o]key KEY ]
-                                  [ [i|o]csum ]
-                                  [ hoplimit TTL ]
-                                  [ encaplimit ELIM ]
-                                  [ tclass TCLASS ]
-                                  [ flowlabel FLOWLABEL ]
-                                  [ dscp inherit ]
-                                  [ fwmark MARK ]
-                                  [ dev PHYS_DEV ]
-                                  [ noencap ]
-                                  [ encap { fou | gue | none } ]
-                                  [ encap-sport PORT ]
-                                  [ encap-dport PORT ]
-                                  [ [no]encap-csum ]
-                                  [ [no]encap-csum6 ]
-                                  [ [no]encap-remcsum ]
-                                  [ erspan IDX ]
-
-Where: ADDR      :=3D IPV6_ADDRESS
-       TTL       :=3D { 0..255 } (default=3D64)
-       KEY       :=3D { DOTTED_QUAD | NUMBER }
-       ELIM      :=3D { none | 0..255 }(default=3D4)
-       TCLASS    :=3D { 0x0..0xff | inherit }
-       FLOWLABEL :=3D { 0x0..0xfffff | inherit }
-       MARK      :=3D { 0x0..0xffffffff | inherit }
-Cannot find device "ip6erspan00"
-FAIL: ip6erspan
-PASS: bridge setup
-PASS: ipv6 addrlabel
-PASS: set ifalias 9b973a6f-02f7-48f8-8695-6ee82656d5a0 for test-dummy0
-PASS: vrf
-PASS: vxlan
-PASS: fou
-PASS: macsec
-ok 1..10 selftests: rtnetlink.sh [PASS]
-selftests: fib_tests.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Single path route test
-    Start point
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    Nexthop device deleted
-    TEST: IPv4 fibmatch - no route                                      [ O=
-K ]
-    TEST: IPv6 fibmatch - no route                                      [ O=
-K ]
-
-Multipath route test
-    Start point
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    One nexthop device deleted
-    TEST: IPv4 - multipath route removed on delete                      [ O=
-K ]
-    TEST: IPv6 - multipath down to single path                          [ O=
-K ]
-    Second nexthop device deleted
-    TEST: IPv6 - no route                                               [ O=
-K ]
-
-Single path, admin down
-    Start point
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    Route deleted on down
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-
-Admin down multipath
-    Verify start point
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    One device down, one up
-    TEST: IPv4 fibmatch on down device                                  [ O=
-K ]
-    TEST: IPv6 fibmatch on down device                                  [ O=
-K ]
-    TEST: IPv4 fibmatch on up device                                    [ O=
-K ]
-    TEST: IPv6 fibmatch on up device                                    [ O=
-K ]
-    TEST: IPv4 flags on down device                                     [ O=
-K ]
-    TEST: IPv6 flags on down device                                     [ O=
-K ]
-    TEST: IPv4 flags on up device                                       [ O=
-K ]
-    TEST: IPv6 flags on up device                                       [ O=
-K ]
-    Other device down and up
-    TEST: IPv4 fibmatch on down device                                  [ O=
-K ]
-    TEST: IPv6 fibmatch on down device                                  [ O=
-K ]
-    TEST: IPv4 fibmatch on up device                                    [ O=
-K ]
-    TEST: IPv6 fibmatch on up device                                    [ O=
-K ]
-    TEST: IPv4 flags on down device                                     [ O=
-K ]
-    TEST: IPv6 flags on down device                                     [ O=
-K ]
-    TEST: IPv4 flags on up device                                       [ O=
-K ]
-    TEST: IPv6 flags on up device                                       [ O=
-K ]
-    Both devices down
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-
-Local carrier tests - single path
-    Start point
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    TEST: IPv4 - no linkdown flag                                       [ O=
-K ]
-    TEST: IPv6 - no linkdown flag                                       [ O=
-K ]
-    Carrier off on nexthop
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    TEST: IPv4 - linkdown flag set                                      [ O=
-K ]
-    TEST: IPv6 - linkdown flag set                                      [ O=
-K ]
-    Route to local address with carrier down
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    TEST: IPv4 linkdown flag set                                        [ O=
-K ]
-    TEST: IPv6 linkdown flag set                                        [ O=
-K ]
-
-Single path route carrier test
-    Start point
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    TEST: IPv4 no linkdown flag                                         [ O=
-K ]
-    TEST: IPv6 no linkdown flag                                         [ O=
-K ]
-    Carrier down
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    TEST: IPv4 linkdown flag set                                        [ O=
-K ]
-    TEST: IPv6 linkdown flag set                                        [ O=
-K ]
-    Second address added with carrier down
-    TEST: IPv4 fibmatch                                                 [ O=
-K ]
-    TEST: IPv6 fibmatch                                                 [ O=
-K ]
-    TEST: IPv4 linkdown flag set                                        [ O=
-K ]
-    TEST: IPv6 linkdown flag set                                        [ O=
-K ]
-
-IPv4 nexthop tests
-<<< write me >>>
-
-IPv6 nexthop tests
-    TEST: Directly connected nexthop, unicast address                   [ O=
-K ]
-    TEST: Directly connected nexthop, unicast address with device       [ O=
-K ]
-    TEST: Gateway is linklocal address                                  [ O=
-K ]
-    TEST: Gateway is linklocal address, no device                       [ O=
-K ]
-    TEST: Gateway can not be local unicast address                      [ O=
-K ]
-    TEST: Gateway can not be local unicast address, with device         [ O=
-K ]
-    TEST: Gateway can not be a local linklocal address                  [ O=
-K ]
-    TEST: Gateway can be local address in a VRF                         [ O=
-K ]
-    TEST: Gateway can be local address in a VRF, with device            [ O=
-K ]
-    TEST: Gateway can be local linklocal address in a VRF               [ O=
-K ]
-    TEST: Redirect to VRF lookup                                        [ O=
-K ]
-    TEST: VRF route, gateway can be local address in default VRF        [ O=
-K ]
-    TEST: VRF route, gateway can not be a local address                 [ O=
-K ]
-    TEST: VRF route, gateway can not be a local addr with device        [ O=
-K ]
-ok 1..11 selftests: fib_tests.sh [PASS]
-selftests: fib-onlink-tests.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-########################################
-Configuring interfaces
-
-######################################################################
-TEST SECTION: IPv4 onlink
-######################################################################
-
-#########################################
-TEST SUBSECTION: Valid onlink commands
-
-#########################################
-TEST SUBSECTION: default VRF - main table
-
-COMMAND: ip ro add table 254 169.254.101.1/32 via 169.254.1.254 dev veth1 o=
-nlink
-
-    TEST: unicast connected                                   [ OK ]
-
-COMMAND: ip ro add table 254 169.254.101.2/32 via 169.254.11.254 dev veth1 =
-onlink
-
-    TEST: unicast recursive                                   [ OK ]
-
-#########################################
-TEST SUBSECTION: VRF lisa
-
-COMMAND: ip ro add table 1101 169.254.102.1/32 via 169.254.5.254 dev veth5 =
-onlink
-
-    TEST: unicast connected                                   [ OK ]
-
-COMMAND: ip ro add table 1101 169.254.102.2/32 via 169.254.12.254 dev veth5=
- onlink
-
-    TEST: unicast recursive                                   [ OK ]
-
-#########################################
-TEST SUBSECTION: VRF device, PBR table
-
-COMMAND: ip ro add table 101 169.254.102.3/32 via 169.254.5.254 dev veth5 o=
-nlink
-
-    TEST: unicast connected                                   [ OK ]
-
-COMMAND: ip ro add table 101 169.254.102.4/32 via 169.254.12.254 dev veth5 =
-onlink
-
-    TEST: unicast recursive                                   [ OK ]
-
-#########################################
-TEST SUBSECTION: default VRF - main table - multipath
-
-COMMAND: ip ro add table 254 169.254.101.5/32 nexthop via 169.254.1.254 dev=
- veth1 onlink nexthop via 169.254.3.254 dev veth3 onlink
-
-    TEST: unicast connected - multipath                       [ OK ]
-
-COMMAND: ip ro add table 254 169.254.101.6/32 nexthop via 169.254.11.254 de=
-v veth1 onlink nexthop via 169.254.12.254 dev veth3 onlink
-
-    TEST: unicast recursive - multipath                       [ OK ]
-
-COMMAND: ip ro add table 254 169.254.101.7/32 nexthop via 169.254.1.254 dev=
- veth1 nexthop via 169.254.3.254 dev veth3 onlink
-
-    TEST: unicast connected - multipath onlink first only     [ OK ]
-
-COMMAND: ip ro add table 254 169.254.101.8/32 nexthop via 169.254.1.254 dev=
- veth1 onlink nexthop via 169.254.3.254 dev veth3
-
-    TEST: unicast connected - multipath onlink second only    [ OK ]
-
-#########################################
-TEST SUBSECTION: Invalid onlink commands
-
-COMMAND: ip ro add table 254 169.254.101.11/32 via 169.254.1.1 dev veth1 on=
-link
-Error: Nexthop has invalid gateway.
-
-    TEST: Invalid gw - local unicast address                  [ OK ]
-
-COMMAND: ip ro add table 1101 169.254.102.11/32 via 169.254.5.1 dev veth5 o=
-nlink
-Error: Nexthop has invalid gateway.
-
-    TEST: Invalid gw - local unicast address, VRF             [ OK ]
-
-COMMAND: ip ro add table 254 169.254.101.101/32 via 169.254.1.1  onlink
-RTNETLINK answers: No such device
-
-    TEST: No nexthop device given                             [ OK ]
-
-COMMAND: ip ro add table 254 169.254.101.102/32 via 169.254.3.1 dev veth1 o=
-nlink
-Error: Nexthop has invalid gateway.
-
-    TEST: Gateway resolves to wrong nexthop device            [ OK ]
-
-COMMAND: ip ro add table 1101 169.254.102.103/32 via 169.254.7.1 dev veth5 =
-onlink
-Error: Nexthop has invalid gateway.
-
-    TEST: Gateway resolves to wrong nexthop device - VRF      [ OK ]
-
-######################################################################
-TEST SECTION: IPv6 onlink
-######################################################################
-
-#########################################
-TEST SUBSECTION: Valid onlink commands
-
-#########################################
-TEST SUBSECTION: default VRF - main table
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::1/128 via 2001:db8:101::64 de=
-v veth1 onlink
-
-    TEST: unicast connected                                   [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::2/128 via 2001:db8:11::64 dev=
- veth1 onlink
-
-    TEST: unicast recursive                                   [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::3/128 via ::ffff:10.1.1.254 d=
-ev veth1 onlink
-
-    TEST: v4-mapped                                           [ OK ]
-
-#########################################
-TEST SUBSECTION: VRF lisa
-
-COMMAND: ip -6 ro add table 1101 2001:db8:102::1/128 via 2001:db8:501::64 d=
-ev veth5 onlink
-
-    TEST: unicast connected                                   [ OK ]
-
-COMMAND: ip -6 ro add table 1101 2001:db8:102::2/128 via 2001:db8:12::64 de=
-v veth5 onlink
-
-    TEST: unicast recursive                                   [ OK ]
-
-COMMAND: ip -6 ro add table 1101 2001:db8:102::3/128 via ::ffff:10.2.1.254 =
-dev veth5 onlink
-
-    TEST: v4-mapped                                           [ OK ]
-
-#########################################
-TEST SUBSECTION: VRF device, PBR table
-
-COMMAND: ip -6 ro add table 101 2001:db8:102::4/128 via 2001:db8:501::64 de=
-v veth5 onlink
-
-    TEST: unicast connected                                   [ OK ]
-
-COMMAND: ip -6 ro add table 101 2001:db8:102::5/128 via 2001:db8:12::64 dev=
- veth5 onlink
-
-    TEST: unicast recursive                                   [ OK ]
-
-COMMAND: ip -6 ro add table 101 2001:db8:102::6/128 via ::ffff:10.2.1.254 d=
-ev veth5 onlink
-
-    TEST: v4-mapped                                           [ OK ]
-
-#########################################
-TEST SUBSECTION: default VRF - main table - multipath
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::4/128 onlink nexthop via 2001=
-:db8:101::64 dev veth1 nexthop via 2001:db8:301::64 dev veth3
-
-    TEST: unicast connected - multipath onlink                [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::5/128 onlink nexthop via 2001=
-:db8:11::64 dev veth1 nexthop via 2001:db8:12::64 dev veth3
-
-    TEST: unicast recursive - multipath onlink                [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::6/128 onlink nexthop via ::ff=
-ff:10.1.1.254 dev veth1 nexthop via ::ffff:10.2.1.254 dev veth3
-
-    TEST: v4-mapped - multipath onlink                        [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::7/128  nexthop via 2001:db8:1=
-01::64 dev veth1 onlink nexthop via 2001:db8:301::64 dev veth3 onlink
-
-    TEST: unicast connected - multipath onlink both nexthops  [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::8/128  nexthop via 2001:db8:1=
-01::64 dev veth1 onlink nexthop via 2001:db8:301::64 dev veth3
-
-    TEST: unicast connected - multipath onlink first only     [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::9/128  nexthop via 2001:db8:1=
-01::64 dev veth1 nexthop via 2001:db8:301::64 dev veth3 onlink
-
-    TEST: unicast connected - multipath onlink second only    [ OK ]
-
-#########################################
-TEST SUBSECTION: Invalid onlink commands
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::11/128 via 2001:db8:101::1 de=
-v veth1 onlink
-Error: Gateway can not be a local address.
-
-    TEST: Invalid gw - local unicast address                  [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::12/128 via fe80::7cfa:3cff:fe=
-a8:545c dev veth1 onlink
-Error: Gateway can not be a local address.
-
-    TEST: Invalid gw - local linklocal address                [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::12/128 via ff02::1 dev veth1 =
-onlink
-Error: Invalid gateway address.
-
-    TEST: Invalid gw - multicast address                      [ OK ]
-
-COMMAND: ip -6 ro add table 1101 2001:db8:102::11/128 via 2001:db8:501::1 d=
-ev veth5 onlink
-Error: Gateway can not be a local address.
-
-    TEST: Invalid gw - local unicast address, VRF             [ OK ]
-
-COMMAND: ip -6 ro add table 1101 2001:db8:102::12/128 via fe80::10bf:10ff:f=
-e5f:4ff7 dev veth5 onlink
-Error: Gateway can not be a local address.
-
-    TEST: Invalid gw - local linklocal address, VRF           [ OK ]
-
-COMMAND: ip -6 ro add table 1101 2001:db8:102::12/128 via ff02::1 dev veth5=
- onlink
-Error: Invalid gateway address.
-
-    TEST: Invalid gw - multicast address, VRF                 [ OK ]
-
-COMMAND: ip -6 ro add table 254 2001:db8:101::101/128 via 2001:db8:101::1  =
-onlink
-Error: Nexthop device required for onlink.
-
-    TEST: No nexthop device given                             [ OK ]
-
-COMMAND: ip -6 ro add table 1101 2001:db8:102::103/128 via 2001:db8:701::64=
- dev veth5 onlink
-Error: Nexthop has invalid gateway or device mismatch.
-
-    TEST: Gateway resolves to wrong nexthop device - VRF      [ OK ]
-
-Tests passed:  38
-Tests failed:   0
-ok 1..12 selftests: fib-onlink-tests.sh [PASS]
-selftests: pmtu.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-TEST: vti6: PMTU exceptions                                         [ OK ]
-TEST: vti4: PMTU exceptions                                         [ OK ]
-TEST: vti4: default MTU assignment                                  [ OK ]
-TEST: vti6: default MTU assignment                                  [ OK ]
-TEST: vti4: MTU setting on link creation                            [ OK ]
-TEST: vti6: MTU setting on link creation                            [ OK ]
-TEST: vti6: MTU changes on link changes                             [ OK ]
-ok 1..13 selftests: pmtu.sh [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/net'
-
-2018-04-14 05:46:08 make run_tests -C nsfs
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/nsfs'
-gcc -Wall -Werror    owner.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b=
-77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/nsfs/owner
-gcc -Wall -Werror    pidns.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b=
-77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/nsfs/pidns
-TAP version 13
-selftests: owner
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-ok 1..1 selftests: owner [PASS]
-selftests: pidns
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-ok 1..2 selftests: pidns [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/nsfs'
-ignored_by_lkp powerpc test
-prctl test: not in Makefile
-2018-04-14 05:46:08 make TARGETS=3Dprctl
-make[1]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77ea=
-b7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/prctl'
-Makefile:14: warning: overriding recipe for target 'clean'
-=2E./lib.mk:97: warning: ignoring old recipe for target 'clean'
-gcc     disable-tsc-ctxt-sw-stress-test.c   -o disable-tsc-ctxt-sw-stress-t=
-est
-gcc     disable-tsc-on-off-stress-test.c   -o disable-tsc-on-off-stress-test
-gcc     disable-tsc-test.c   -o disable-tsc-test
-make[1]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab=
-7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/prctl'
-
-2018-04-14 05:46:08 make run_tests -C prctl
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/prctl'
-Makefile:14: warning: overriding recipe for target 'clean'
-=2E./lib.mk:97: warning: ignoring old recipe for target 'clean'
-TAP version 13
-selftests: disable-tsc-ctxt-sw-stress-test
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[No further output means we're allright]
-ok 1..1 selftests: disable-tsc-ctxt-sw-stress-test [PASS]
-selftests: disable-tsc-on-off-stress-test
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[No further output means we're allright]
-ok 1..2 selftests: disable-tsc-on-off-stress-test [PASS]
-selftests: disable-tsc-test
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-rdtsc() =3D=3D 1870136829837436
-prctl(PR_GET_TSC, &tsc_val); tsc_val =3D=3D PR_TSC_ENABLE
-rdtsc() =3D=3D 1870136829990670
-prctl(PR_SET_TSC, PR_TSC_ENABLE)
-rdtsc() =3D=3D 1870136829998146
-prctl(PR_SET_TSC, PR_TSC_SIGSEGV)
-rdtsc() =3D=3D [ SIG_SEGV ]
-prctl(PR_GET_TSC, &tsc_val); tsc_val =3D=3D PR_TSC_SIGSEGV
-prctl(PR_SET_TSC, PR_TSC_ENABLE)
-rdtsc() =3D=3D 1870136830031110
-ok 1..3 selftests: disable-tsc-test [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/prctl'
-
-2018-04-14 05:46:28 make run_tests -C pstore
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/pstore'
-TAP version 13
-selftests: pstore_tests
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=3D=3D=3D Pstore unit tests (pstore_tests) =3D=3D=3D
-UUID=3Db31b69b7-2810-422d-926c-77d2e0b41069
-Checking pstore backend is registered ... ok
-	backend=3Dramoops
-	cmdline=3Dip=3D::::lkp-bdw-ep3::dhcp root=3D/dev/ram0 user=3Dlkp job=3D/lk=
-p/scheduled/lkp-bdw-ep3/kernel_selftests-kselftests-02-debian-x86_64-2016-0=
-8-31.cgz-b77eab7079d9e477489d2416cceda05d3c1cf21f-20180414-31577-1k1sfyq-0.=
-yaml ARCH=3Dx86_64 kconfig=3Dx86_64-rhel-7.2 branch=3Dlinux-devel/devel-hou=
-rly-2018041000 commit=3Db77eab7079d9e477489d2416cceda05d3c1cf21f BOOT_IMAGE=
-=3D/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21=
-f/vmlinuz-4.16.0-07318-gb77eab7 erst_disable max_uptime=3D3600 RESULT_ROOT=
-=3D/result/kernel_selftests/kselftests-02/lkp-bdw-ep3/debian-x86_64-2016-08=
--31.cgz/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/0 LK=
-P_SERVER=3Dinn debug apic=3Ddebug sysrq_always_enabled rcupdate.rcu_cpu_sta=
-ll_timeout=3D100 net.ifnames=3D0 printk.devkmsg=3Don panic=3D-1 softlockup_=
-panic=3D1 nmi_watchdog=3Dpanic oops=3Dpanic load_ramdisk=3D2 prompt_ramdisk=
-=3D0 drbd.minor_count=3D8 systemd.log_level=3Derr ignore_loglevel console=
-=3Dtty0 earlyprintk=3DttyS0,115200 console=3DttyS0,115200 vga=3Dnormal rw
-Checking pstore console is registered ... ok
-Checking /dev/pmsg0 exists ... ok
-Writing unique string to /dev/pmsg0 ... ok
-ok 1..1 selftests: pstore_tests [PASS]
-selftests: pstore_post_reboot_tests
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=3D=3D=3D Pstore unit tests (pstore_post_reboot_tests) =3D=3D=3D
-UUID=3Df6104f90-ed80-48b6-a9f9-9b2bfd6f54c8
-Checking pstore backend is registered ... ok
-	backend=3Dramoops
-	cmdline=3Dip=3D::::lkp-bdw-ep3::dhcp root=3D/dev/ram0 user=3Dlkp job=3D/lk=
-p/scheduled/lkp-bdw-ep3/kernel_selftests-kselftests-02-debian-x86_64-2016-0=
-8-31.cgz-b77eab7079d9e477489d2416cceda05d3c1cf21f-20180414-31577-1k1sfyq-0.=
-yaml ARCH=3Dx86_64 kconfig=3Dx86_64-rhel-7.2 branch=3Dlinux-devel/devel-hou=
-rly-2018041000 commit=3Db77eab7079d9e477489d2416cceda05d3c1cf21f BOOT_IMAGE=
-=3D/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21=
-f/vmlinuz-4.16.0-07318-gb77eab7 erst_disable max_uptime=3D3600 RESULT_ROOT=
-=3D/result/kernel_selftests/kselftests-02/lkp-bdw-ep3/debian-x86_64-2016-08=
--31.cgz/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/0 LK=
-P_SERVER=3Dinn debug apic=3Ddebug sysrq_always_enabled rcupdate.rcu_cpu_sta=
-ll_timeout=3D100 net.ifnames=3D0 printk.devkmsg=3Don panic=3D-1 softlockup_=
-panic=3D1 nmi_watchdog=3Dpanic oops=3Dpanic load_ramdisk=3D2 prompt_ramdisk=
-=3D0 drbd.minor_count=3D8 systemd.log_level=3Derr ignore_loglevel console=
-=3Dtty0 earlyprintk=3DttyS0,115200 console=3DttyS0,115200 vga=3Dnormal rw
-pstore_crash_test has not been executed yet. we skip further tests.
-ok 1..2 selftests: pstore_post_reboot_tests [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/pstore'
-ptp test: not in Makefile
-2018-04-14 05:46:28 make TARGETS=3Dptp
-make[1]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77ea=
-b7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/ptp'
-Makefile:10: warning: overriding recipe for target 'clean'
-=2E./lib.mk:97: warning: ignoring old recipe for target 'clean'
-gcc -I../../../../usr/include/    testptp.c  -lrt -o testptp
-make[1]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab=
-7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/ptp'
-
-2018-04-14 05:46:28 make run_tests -C ptp
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/ptp'
-Makefile:10: warning: overriding recipe for target 'clean'
-=2E./lib.mk:97: warning: ignoring old recipe for target 'clean'
-TAP version 13
-selftests: testptp
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-ok 1..1 selftests: testptp [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/ptp'
-
-2018-04-14 05:46:28 make run_tests -C ptrace
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/ptrace'
-gcc -iquote../../../../include/uapi -Wall    peeksiginfo.c  -o /usr/src/lin=
-ux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools=
-/testing/selftests/ptrace/peeksiginfo
-TAP version 13
-selftests: peeksiginfo
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-PASS
-ok 1..1 selftests: peeksiginfo [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/ptrace'
-
-2018-04-14 05:46:29 make run_tests -C seccomp
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/seccomp'
-gcc -Wl,-no-as-needed -Wall  -lpthread seccomp_bpf.c -o seccomp_bpf
-gcc -Wl,-no-as-needed -Wall    seccomp_benchmark.c   -o seccomp_benchmark
-TAP version 13
-selftests: seccomp_bpf
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D] Running 64 tests from 1 test cases.
-[ RUN      ] global.mode_strict_support
-[       OK ] global.mode_strict_support
-[ RUN      ] global.mode_strict_cannot_call_prctl
-[       OK ] global.mode_strict_cannot_call_prctl
-[ RUN      ] global.no_new_privs_support
-[       OK ] global.no_new_privs_support
-[ RUN      ] global.mode_filter_support
-[       OK ] global.mode_filter_support
-[ RUN      ] global.mode_filter_without_nnp
-[       OK ] global.mode_filter_without_nnp
-[ RUN      ] global.filter_size_limits
-[       OK ] global.filter_size_limits
-[ RUN      ] global.filter_chain_limits
-[       OK ] global.filter_chain_limits
-[ RUN      ] global.mode_filter_cannot_move_to_strict
-[       OK ] global.mode_filter_cannot_move_to_strict
-[ RUN      ] global.mode_filter_get_seccomp
-[       OK ] global.mode_filter_get_seccomp
-[ RUN      ] global.ALLOW_all
-[       OK ] global.ALLOW_all
-[ RUN      ] global.empty_prog
-[       OK ] global.empty_prog
-[ RUN      ] global.log_all
-[       OK ] global.log_all
-[ RUN      ] global.unknown_ret_is_kill_inside
-[       OK ] global.unknown_ret_is_kill_inside
-[ RUN      ] global.unknown_ret_is_kill_above_allow
-[       OK ] global.unknown_ret_is_kill_above_allow
-[ RUN      ] global.KILL_all
-[       OK ] global.KILL_all
-[ RUN      ] global.KILL_one
-[       OK ] global.KILL_one
-[ RUN      ] global.KILL_one_arg_one
-[       OK ] global.KILL_one_arg_one
-[ RUN      ] global.KILL_one_arg_six
-[       OK ] global.KILL_one_arg_six
-[ RUN      ] global.KILL_thread
-[=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D] Running 64 tests from 1 test cases.
-[ RUN      ] global.mode_strict_support
-[       OK ] global.mode_strict_support
-[ RUN      ] global.mode_strict_cannot_call_prctl
-[       OK ] global.mode_strict_cannot_call_prctl
-[ RUN      ] global.no_new_privs_support
-[       OK ] global.no_new_privs_support
-[ RUN      ] global.mode_filter_support
-[       OK ] global.mode_filter_support
-[ RUN      ] global.mode_filter_without_nnp
-[       OK ] global.mode_filter_without_nnp
-[ RUN      ] global.filter_size_limits
-[       OK ] global.filter_size_limits
-[ RUN      ] global.filter_chain_limits
-[       OK ] global.filter_chain_limits
-[ RUN      ] global.mode_filter_cannot_move_to_strict
-[       OK ] global.mode_filter_cannot_move_to_strict
-[ RUN      ] global.mode_filter_get_seccomp
-[       OK ] global.mode_filter_get_seccomp
-[ RUN      ] global.ALLOW_all
-[       OK ] global.ALLOW_all
-[ RUN      ] global.empty_prog
-[       OK ] global.empty_prog
-[ RUN      ] global.log_all
-[       OK ] global.log_all
-[ RUN      ] global.unknown_ret_is_kill_inside
-[       OK ] global.unknown_ret_is_kill_inside
-[ RUN      ] global.unknown_ret_is_kill_above_allow
-[       OK ] global.unknown_ret_is_kill_above_allow
-[ RUN      ] global.KILL_all
-[       OK ] global.KILL_all
-[ RUN      ] global.KILL_one
-[       OK ] global.KILL_one
-[ RUN      ] global.KILL_one_arg_one
-[       OK ] global.KILL_one_arg_one
-[ RUN      ] global.KILL_one_arg_six
-[       OK ] global.KILL_one_arg_six
-[ RUN      ] global.KILL_thread
-[       OK ] global.KILL_thread
-[ RUN      ] global.KILL_process
-[       OK ] global.KILL_process
-[ RUN      ] global.arg_out_of_range
-[       OK ] global.arg_out_of_range
-[ RUN      ] global.ERRNO_valid
-[       OK ] global.ERRNO_valid
-[ RUN      ] global.ERRNO_zero
-[       OK ] global.ERRNO_zero
-[ RUN      ] global.ERRNO_capped
-[       OK ] global.ERRNO_capped
-[ RUN      ] global.ERRNO_order
-[       OK ] global.ERRNO_order
-[ RUN      ] TRAP.dfl
-[       OK ] TRAP.dfl
-[ RUN      ] TRAP.ign
-[       OK ] TRAP.ign
-[ RUN      ] TRAP.handler
-[       OK ] TRAP.handler
-[ RUN      ] precedence.allow_ok
-[       OK ] precedence.allow_ok
-[ RUN      ] precedence.kill_is_highest
-[       OK ] precedence.kill_is_highest
-[ RUN      ] precedence.kill_is_highest_in_any_order
-[       OK ] precedence.kill_is_highest_in_any_order
-[ RUN      ] precedence.trap_is_second
-[       OK ] precedence.trap_is_second
-[ RUN      ] precedence.trap_is_second_in_any_order
-[       OK ] precedence.trap_is_second_in_any_order
-[ RUN      ] precedence.errno_is_third
-[       OK ] precedence.errno_is_third
-[ RUN      ] precedence.errno_is_third_in_any_order
-[       OK ] precedence.errno_is_third_in_any_order
-[ RUN      ] precedence.trace_is_fourth
-[       OK ] precedence.trace_is_fourth
-[ RUN      ] precedence.trace_is_fourth_in_any_order
-[       OK ] precedence.trace_is_fourth_in_any_order
-[ RUN      ] precedence.log_is_fifth
-[       OK ] precedence.log_is_fifth
-[ RUN      ] precedence.log_is_fifth_in_any_order
-[       OK ] precedence.log_is_fifth_in_any_order
-[ RUN      ] TRACE_poke.read_has_side_effects
-[       OK ] TRACE_poke.read_has_side_effects
-[ RUN      ] TRACE_poke.getpid_runs_normally
-[       OK ] TRACE_poke.getpid_runs_normally
-[ RUN      ] TRACE_syscall.ptrace_syscall_redirected
-[       OK ] TRACE_syscall.ptrace_syscall_redirected
-[ RUN      ] TRACE_syscall.ptrace_syscall_dropped
-[       OK ] TRACE_syscall.ptrace_syscall_dropped
-[ RUN      ] TRACE_syscall.syscall_allowed
-[       OK ] TRACE_syscall.syscall_allowed
-[ RUN      ] TRACE_syscall.syscall_redirected
-[       OK ] TRACE_syscall.syscall_redirected
-[ RUN      ] TRACE_syscall.syscall_dropped
-[       OK ] TRACE_syscall.syscall_dropped
-[ RUN      ] TRACE_syscall.skip_after_RET_TRACE
-[       OK ] TRACE_syscall.skip_after_RET_TRACE
-[ RUN      ] TRACE_syscall.kill_after_RET_TRACE
-[       OK ] TRACE_syscall.kill_after_RET_TRACE
-[ RUN      ] TRACE_syscall.skip_after_ptrace
-[       OK ] TRACE_syscall.skip_after_ptrace
-[ RUN      ] TRACE_syscall.kill_after_ptrace
-[       OK ] TRACE_syscall.kill_after_ptrace
-[ RUN      ] global.seccomp_syscall
-[       OK ] global.seccomp_syscall
-[ RUN      ] global.seccomp_syscall_mode_lock
-[       OK ] global.seccomp_syscall_mode_lock
-[ RUN      ] global.detect_seccomp_filter_flags
-[       OK ] global.detect_seccomp_filter_flags
-[ RUN      ] global.TSYNC_first
-[       OK ] global.TSYNC_first
-[ RUN      ] TSYNC.siblings_fail_prctl
-[       OK ] TSYNC.siblings_fail_prctl
-[ RUN      ] TSYNC.two_siblings_with_ancestor
-[       OK ] TSYNC.two_siblings_with_ancestor
-[ RUN      ] TSYNC.two_sibling_want_nnp
-[       OK ] TSYNC.two_sibling_want_nnp
-[ RUN      ] TSYNC.two_siblings_with_no_filter
-[       OK ] TSYNC.two_siblings_with_no_filter
-[ RUN      ] TSYNC.two_siblings_with_one_divergence
-[       OK ] TSYNC.two_siblings_with_one_divergence
-[ RUN      ] TSYNC.two_siblings_not_under_filter
-[       OK ] TSYNC.two_siblings_not_under_filter
-[ RUN      ] global.syscall_restart
-[       OK ] global.syscall_restart
-[ RUN      ] global.filter_flag_log
-[       OK ] global.filter_flag_log
-[ RUN      ] global.get_action_avail
-[       OK ] global.get_action_avail
-[ RUN      ] global.get_metadata
-[       OK ] global.get_metadata
-[=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D] 64 / 64 tests passed.
-[  PASSED  ]
-ok 1..1 selftests: seccomp_bpf [PASS]
-selftests: seccomp_benchmark
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Calibrating reasonable sample size...
-1523655991.213790807 - 1523655991.213773267 =3D 17540
-1523655991.213834832 - 1523655991.213802021 =3D 32811
-1523655991.213902139 - 1523655991.213836570 =3D 65569
-1523655991.214065881 - 1523655991.213903465 =3D 162416
-1523655991.214350163 - 1523655991.214067728 =3D 282435
-1523655991.214914723 - 1523655991.214351747 =3D 562976
-1523655991.216050690 - 1523655991.214916308 =3D 1134382
-1523655991.218321815 - 1523655991.216052443 =3D 2269372
-1523655991.222834189 - 1523655991.218323834 =3D 4510355
-1523655991.227955342 - 1523655991.222835809 =3D 5119533
-1523655991.235426564 - 1523655991.227956042 =3D 7470522
-1523655991.250027036 - 1523655991.235427214 =3D 14599822
-1523655991.276507238 - 1523655991.250027805 =3D 26479433
-1523655991.328626410 - 1523655991.276507855 =3D 52118555
-1523655991.432552613 - 1523655991.328627069 =3D 103925544
-1523655991.640827895 - 1523655991.432553235 =3D 208274660
-1523655992.062815901 - 1523655991.640828735 =3D 421987166
-1523655992.899341528 - 1523655992.062816857 =3D 836524671
-1523655994.545635082 - 1523655992.899342305 =3D 1646292777
-1523655997.845260531 - 1523655994.545636153 =3D 3299624378
-1523656004.415913907 - 1523655997.845261550 =3D 6570652357
-Benchmarking 33554432 samples...
-19.804059275 - 13.202739140 =3D 6601320135
-getpid native: 196 ns
-29.436250811 - 19.804194706 =3D 9632056105
-getpid RET_ALLOW: 287 ns
-Estimated seccomp overhead per syscall: 91 ns
-ok 1..2 selftests: seccomp_benchmark [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/seccomp'
-
-2018-04-14 05:47:00 make run_tests -C sigaltstack
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sigaltstack'
-gcc -Wall    sas.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d=
-9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sigaltstack/sas
-TAP version 13
-selftests: sas
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-TAP version 13
-ok 1 Initial sigaltstack state was SS_DISABLE
-# [RUN]	signal USR1
-ok 2 sigaltstack is disabled in sighandler
-# [RUN]	switched to user ctx
-# [RUN]	signal USR2
-# [OK]	Stack preserved
-ok 3 sigaltstack is still SS_AUTODISARM after signal
-Pass 3 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..3
-ok 1..1 selftests: sas [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sigaltstack'
-
-2018-04-14 05:47:00 make run_tests -C size
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/size'
-gcc -static -ffreestanding -nostartfiles -s    get_size.c  -o /usr/src/linu=
-x-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/=
-testing/selftests/size/get_size
-TAP version 13
-selftests: get_size
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-TAP version 13
-# Testing system size.
-ok 1 get runtime memory use
-# System runtime memory report (units in Kilobytes):
- ---
- Total:  63758012
- Free:   61428584
- Buffer: 0
- In use: 2329428
- ...
-1..1
-ok 1..1 selftests: get_size [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/size'
-
-2018-04-14 05:47:00 make run_tests -C splice
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/splice'
-gcc     default_file_splice_read.c  -o /usr/src/linux-selftests-x86_64-rhel=
--7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/splic=
-e/default_file_splice_read
-TAP version 13
-selftests: default_file_splice_read.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-ok 1..1 selftests: default_file_splice_read.sh [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/splice'
-
-2018-04-14 05:47:00 make run_tests -C static_keys
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/static_keys'
-TAP version 13
-selftests: test_static_keys.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-static_key: ok
-ok 1..1 selftests: test_static_keys.sh [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/static_keys'
-
-2018-04-14 05:47:01 make run_tests -C sync
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync'
-gcc -c sync_alloc.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d=
-9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync_alloc.o
-gcc -c sync_fence.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d=
-9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync_fence.o
-gcc -c sync_merge.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d=
-9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync_merge.o
-gcc -c sync_wait.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9=
-e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync_wait.o
-gcc -c sync_stress_parallelism.c -o /usr/src/linux-selftests-x86_64-rhel-7.=
-2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/syn=
-c_stress_parallelism.o
-gcc -c sync_stress_consumer.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-b=
-77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync_s=
-tress_consumer.o
-gcc -c sync_stress_merge.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77e=
-ab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync_stre=
-ss_merge.o
-gcc -c sync_test.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9=
-e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync_test.o -O2 -=
-g -std=3Dgnu89 -pthread -Wall -Wextra -I../../../../usr/include/
-gcc -c sync.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e4774=
-89d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync.o -O2 -g -std=3Dg=
-nu89 -pthread -Wall -Wextra -I../../../../usr/include/
-gcc -o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cce=
-da05d3c1cf21f/tools/testing/selftests/sync/sync_test /usr/src/linux-selftes=
-ts-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/s=
-elftests/sync/sync_test.o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync.o /usr/s=
-rc/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f=
-/tools/testing/selftests/sync/sync_alloc.o /usr/src/linux-selftests-x86_64-=
-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/s=
-ync/sync_fence.o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e4774=
-89d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync_merge.o /usr/src/=
-linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/to=
-ols/testing/selftests/sync/sync_wait.o /usr/src/linux-selftests-x86_64-rhel=
--7.2-b77eab7079d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/=
-sync_stress_parallelism.o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync/sync_stress_c=
-onsumer.o /usr/src/linux-selftests-x86_64-rhel-7.2-b77eab7079d9e477489d2416=
-cceda05d3c1cf21f/tools/testing/selftests/sync/sync_stress_merge.o -O2 -g -s=
-td=3Dgnu89 -pthread -Wall -Wextra -I../../../../usr/include/ -pthread
-TAP version 13
-selftests: sync_test
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-TAP version 13
-# [RUN]	Testing sync framework
-ok 1 [RUN]	test_alloc_timeline
-ok 2 [RUN]	test_alloc_fence
-ok 3 [RUN]	test_alloc_fence_negative
-ok 4 [RUN]	test_fence_one_timeline_wait
-ok 5 [RUN]	test_fence_one_timeline_merge
-ok 6 [RUN]	test_fence_merge_same_fence
-ok 7 [RUN]	test_fence_multi_timeline_wait
-ok 8 [RUN]	test_stress_two_threads_shared_timeline
-ok 9 [RUN]	test_consumer_stress_multi_producer_single_consumer
-ok 10 [RUN]	test_merge_stress_random_merge
-Pass 10 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..10
-ok 1..1 selftests: sync_test [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sync'
-
-2018-04-14 05:47:02 make run_tests -C sysctl
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab70=
-79d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sysctl'
-TAP version 13
-selftests: sysctl.sh
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Checking production write strict setting ... ok
-Sat Apr 14 05:47:02 CST 2018
-Running test: sysctl_test_0001 - run #0
-=3D=3D Testing sysctl behavior against /proc/sys/debug/test_sysctl/int_0001=
- =3D=3D
-Writing test file ... ok
-Checking sysctl is not set to test value ... ok
-Writing sysctl from shell ... ok
-Resetting sysctl to original value ... ok
-Writing entire sysctl in single write ... ok
-Writing middle of sysctl after synchronized seek ... ok
-Writing beyond end of sysctl ... ok
-Writing sysctl with multiple long writes ... ok
-Checking ignoring spaces up to PAGE_SIZE works on write ...ok
-Checking passing PAGE_SIZE of spaces fails on write ...ok
-Sat Apr 14 05:47:02 CST 2018
-Running test: sysctl_test_0002 - run #0
-=3D=3D Testing sysctl behavior against /proc/sys/debug/test_sysctl/string_0=
-001 =3D=3D
-Writing test file ... ok
-Checking sysctl is not set to test value ... ok
-Writing sysctl from shell ... ok
-Resetting sysctl to original value ... ok
-Writing entire sysctl in single write ... ok
-Writing middle of sysctl after synchronized seek ... ok
-Writing beyond end of sysctl ... ok
-Writing sysctl with multiple long writes ... ok
-Writing entire sysctl in short writes ... ok
-Writing middle of sysctl after unsynchronized seek ... ok
-Checking sysctl maxlen is at least 65 ... ok
-Checking sysctl keeps original string on overflow append ... ok
-Checking sysctl stays NULL terminated on write ... ok
-Checking sysctl stays NULL terminated on overwrite ... ok
-Sat Apr 14 05:47:02 CST 2018
-Running test: sysctl_test_0003 - run #0
-=3D=3D Testing sysctl behavior against /proc/sys/debug/test_sysctl/int_0002=
- =3D=3D
-Writing test file ... ok
-Checking sysctl is not set to test value ... ok
-Writing sysctl from shell ... ok
-Resetting sysctl to original value ... ok
-Writing entire sysctl in single write ... ok
-Writing middle of sysctl after synchronized seek ... ok
-Writing beyond end of sysctl ... ok
-Writing sysctl with multiple long writes ... ok
-Checking ignoring spaces up to PAGE_SIZE works on write ...ok
-Checking passing PAGE_SIZE of spaces fails on write ...ok
-Testing INT_MAX works ...ok
-Testing INT_MAX + 1 will fail as expected...ok
-Testing negative values will work as expected...ok
-Sat Apr 14 05:47:02 CST 2018
-Running test: sysctl_test_0004 - run #0
-=3D=3D Testing sysctl behavior against /proc/sys/debug/test_sysctl/uint_000=
-1 =3D=3D
-Writing test file ... ok
-Checking sysctl is not set to test value ... ok
-Writing sysctl from shell ... ok
-Resetting sysctl to original value ... ok
-Writing entire sysctl in single write ... ok
-Writing middle of sysctl after synchronized seek ... ok
-Writing beyond end of sysctl ... ok
-Writing sysctl with multiple long writes ... ok
-Checking ignoring spaces up to PAGE_SIZE works on write ...ok
-Checking passing PAGE_SIZE of spaces fails on write ...ok
-Testing UINT_MAX works ...ok
-Testing UINT_MAX + 1 will fail as expected...ok
-Testing negative values will not work as expected ...ok
-Sat Apr 14 05:47:02 CST 2018
-Running test: sysctl_test_0005 - run #0
-Testing array works as expected ... ok
-Testing skipping trailing array elements works ... ok
-Testing PAGE_SIZE limit on array works ... ok
-Testing exceeding PAGE_SIZE limit fails as expected ... Files - and /proc/s=
-ys/debug/test_sysctl/int_0003 differ
-ok
-Sat Apr 14 05:47:02 CST 2018
-Running test: sysctl_test_0005 - run #1
-Testing array works as expected ... ok
-Testing skipping trailing array elements works ... ok
-Testing PAGE_SIZE limit on array works ... ok
-Testing exceeding PAGE_SIZE limit fails as expected ... Files - and /proc/s=
-ys/debug/test_sysctl/int_0003 differ
-ok
-Sat Apr 14 05:47:02 CST 2018
-Running test: sysctl_test_0005 - run #2
-Testing array works as expected ... ok
-Testing skipping trailing array elements works ... ok
-Testing PAGE_SIZE limit on array works ... ok
-Testing exceeding PAGE_SIZE limit fails as expected ... Files - and /proc/s=
-ys/debug/test_sysctl/int_0003 differ
-ok
-ok 1..1 selftests: sysctl.sh [PASS]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-b77eab707=
-9d9e477489d2416cceda05d3c1cf21f/tools/testing/selftests/sysctl'
-
---ChQOR20MqfxkMJg9
+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
++Qi15iuPscRn+wIAAAAABFla
+
+--iJXiJc/TAIT2rh2r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=fsmark
+
+2018-04-19 17:23:24 fs_mark -d /nfs/ram0/1 -D 1000000 -N 1 -n 1000000 -L 1 -S 1 -s 4096
+
+#  fs_mark  -d  /nfs/ram0/1  -D  1000000  -N  1  -n  1000000  -L  1  -S  1  -s  4096 
+#	Version 3.3, 1 thread(s) starting at Thu Apr 19 17:23:25 2018
+#	Sync method: INBAND FSYNC: fsync() per file in write loop.
+#	Directories:  Round Robin between directories across 1000000 subdirectories with 1 files per subdirectory.
+#	File names: 40 bytes long, (16 initial bytes of time stamp with 24 random bytes at end of name)
+#	Files info: size 4096 bytes, written with an IO size of 16384 bytes per write
+#	App overhead is time in microseconds spent in the test not doing file writing related system calls.
+
+FSUse%        Count         Size    Files/sec     App Overhead
+
+--iJXiJc/TAIT2rh2r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename="job.yaml"
 
 ---
 
-#! jobs/kernel_selftests.yaml
-suite: kernel_selftests
-testcase: kernel_selftests
-category: functional
-need_cpu: 2
-kernel_selftests:
-  group: kselftests-02
-kernel_cmdline: erst_disable
-job_origin: "/lkp/lkp/.src-20180412-090831/allot/cyclic:linux-devel:devel-hourly/lkp-bdw-ep3/kernel_selftests.yaml"
+#! jobs/fsmark-stress-journal-1brd.yaml
+suite: fsmark
+testcase: fsmark
+category: benchmark
+perf-profile:
+  delay: 10
+iterations: 1x
+nr_threads: 1t
+disk: 1BRD_32G
+need_memory: 48G
+fs: btrfs
+fs2: nfsv4
+fsmark:
+  filesize: 4K
+  test_size: 4G
+  sync_method: fsyncBeforeClose
+  nr_files_per_directory: 1fpd
+job_origin: "/lkp/lkp/.src-20180418-151303/allot/cyclic:linux-devel:devel-hourly/lkp-bdw-ep3c/fsmark-stress-journal-1brd.yaml"
 
 #! queue options
 queue: bisect
-testbox: lkp-bdw-ep3
-tbox_group: lkp-bdw-ep3
-submit_id: 5ad11d000b9a937b590616c0
-job_file: "/lkp/scheduled/lkp-bdw-ep3/kernel_selftests-kselftests-02-debian-x86_64-2016-08-31.cgz-b77eab7079d9e477489d2416cceda05d3c1cf21f-20180414-31577-1k1sfyq-0.yaml"
-id: da2e3419f971dfcbab8a8c05902dd24c09f12e3f
+testbox: lkp-bdw-ep3c
+tbox_group: lkp-bdw-ep3c
+submit_id: 5ad85c660b9a931334dcc388
+job_file: "/lkp/scheduled/lkp-bdw-ep3c/fsmark-1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance-debian-x86_64-2016-08-31.cgz-7eafb77890ff459863e3bc772465cb641c14f754-20180419-70452-1vp5bqm-0.yaml"
+id: 8697c9e75fd943739af89e5aa6a7ae0e5e410cee
 
-#! hosts/lkp-bdw-ep3
+#! hosts/lkp-bdw-ep3c
 model: Broadwell-EP
 nr_cpu: 88
 memory: 64G
-swap_partitions: 
-rootfs_partition: 
-hdd_partition: "/dev/disk/by-id/ata-ST250DM000-1BD141_W2ADD5CZ-part1"
+nr_hdd_partitions: 1
+hdd_partitions: "/dev/disk/by-id/ata-ST2000NM0011_Z1P67EBL-part1"
+swap_partitions: "/dev/disk/by-id/ata-ST2000NM0011_Z1P67EBL-part2"
+rootfs_partition: "/dev/disk/by-id/ata-ST2000NM0011_Z1P67EBL-part3"
 brand: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
 
-#! include/category/functional
+#! include/category/benchmark
 kmsg: 
+boot-time: 
+iostat: 
 heartbeat: 
+vmstat: 
+numa-numastat: 
+numa-vmstat: 
+numa-meminfo: 
+proc-vmstat: 
+proc-stat: 
+meminfo: 
+slabinfo: 
+interrupts: 
+lock_stat: 
+latency_stats: 
+softirqs: 
+bdi_dev_mapping: 
+diskstats: 
+nfsstat: 
+cpuidle: 
+cpufreq-stats: 
+turbostat: 
+sched_debug: 
+perf-stat: 
+mpstat: 
 
-#! include/kernel_selftests
-need_kernel_headers: true
-need_kernel_selftests: true
+#! include/category/ALL
+cpufreq_governor: performance
+
+#! include/disk/nr_brd
 need_kconfig:
-- CONFIG_RUNTIME_TESTING_MENU=y
-- CONFIG_TEST_FIRMWARE
-- CONFIG_TEST_USER_COPY
-- CONFIG_MEMORY_NOTIFIER_ERROR_INJECT
-- CONFIG_MEMORY_HOTPLUG_SPARSE=y
-- CONFIG_NOTIFIER_ERROR_INJECTION
-- CONFIG_FTRACE=y
-- CONFIG_TEST_BITMAP
-- CONFIG_TEST_PRINTF
-- CONFIG_TEST_STATIC_KEYS
-- CONFIG_BPF_SYSCALL=y
-- CONFIG_NET_CLS_BPF=m
-- CONFIG_BPF_EVENTS=y
-- CONFIG_TEST_BPF=m
-- CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG=y
-- CONFIG_HIST_TRIGGERS=y
-- CONFIG_EMBEDDED=y
-- CONFIG_GPIO_MOCKUP=y
-- CONFIG_USERFAULTFD=y
-- CONFIG_SYNC_FILE=y
-- CONFIG_SW_SYNC=y
-- CONFIG_MISC_FILESYSTEMS=y
-- CONFIG_PSTORE=y
-- CONFIG_PSTORE_PMSG=y
-- CONFIG_PSTORE_CONSOLE=y
-- CONFIG_PSTORE_RAM=m
-- CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
-- CONFIG_EXPERT=y
-- CONFIG_CHECKPOINT_RESTORE=y
-- CONFIG_EFIVAR_FS
-- CONFIG_TEST_KMOD=m
-- CONFIG_TEST_LKM=m
-- CONFIG_XFS_FS=m
-- CONFIG_TUN=m
-- CONFIG_BTRFS_FS=m
-- CONFIG_TEST_SYSCTL=m
-- CONFIG_BPF_STREAM_PARSER=y
-- CONFIG_CGROUP_BPF=y
-- CONFIG_IPV6_MULTIPLE_TABLES=y
-- CONFIG_NET_L3_MASTER_DEV=y
-- CONFIG_NET_VRF=y
-- CONFIG_NET_FOU=m
-- CONFIG_NET_FOU_IP_TUNNELS=y
-- CONFIG_MACSEC=y
-- CONFIG_X86_INTEL_MPX=y
+- CONFIG_BLK_DEV_RAM=m
+- CONFIG_BLK_DEV=y
+- CONFIG_BLOCK=y
+- CONFIG_NFSD
+- CONFIG_BTRFS_FS
+- CONFIG_NFS_V4
+
+#! include/fsmark
 
 #! include/queue/cyclic
-commit: b77eab7079d9e477489d2416cceda05d3c1cf21f
+commit: 7eafb77890ff459863e3bc772465cb641c14f754
+
+#! include/fs/OTHERS
+
+#! include/fs/nfsv4
 
 #! default params
 kconfig: x86_64-rhel-7.2
 compiler: gcc-7
 rootfs: debian-x86_64-2016-08-31.cgz
-enqueue_time: 2018-04-14 05:11:28.721434640 +08:00
-_id: 5ad11d000b9a937b590616c0
-_rt: "/result/kernel_selftests/kselftests-02/lkp-bdw-ep3/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f"
+enqueue_time: 2018-04-19 17:07:50.693798338 +08:00
+_id: 5ad85c660b9a931334dcc388
+_rt: "/result/fsmark/1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance/lkp-bdw-ep3c/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754"
 
 #! schedule options
 user: lkp
-head_commit: debc1d587b431e53400e1cba5c9f950a347b9763
-base_commit: 0adb32858b0bddf4ada5f364a84ed60b196dbcda
-branch: linux-devel/devel-hourly-2018041000
-result_root: "/result/kernel_selftests/kselftests-02/lkp-bdw-ep3/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/0"
+head_commit: eba9dcb6513d830689ff7130c9763392ddba2dd5
+base_commit: 60cc43fc888428bb2f18f08997432d426a243338
+branch: linux-devel/devel-hourly-2018041805
+result_root: "/result/fsmark/1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance/lkp-bdw-ep3c/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/0"
 LKP_SERVER: inn
 max_uptime: 3600
 initrd: "/osimage/debian/debian-x86_64-2016-08-31.cgz"
 bootloader_append:
 - root=/dev/ram0
 - user=lkp
-- job=/lkp/scheduled/lkp-bdw-ep3/kernel_selftests-kselftests-02-debian-x86_64-2016-08-31.cgz-b77eab7079d9e477489d2416cceda05d3c1cf21f-20180414-31577-1k1sfyq-0.yaml
+- job=/lkp/scheduled/lkp-bdw-ep3c/fsmark-1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance-debian-x86_64-2016-08-31.cgz-7eafb77890ff459863e3bc772465cb641c14f754-20180419-70452-1vp5bqm-0.yaml
 - ARCH=x86_64
 - kconfig=x86_64-rhel-7.2
-- branch=linux-devel/devel-hourly-2018041000
-- commit=b77eab7079d9e477489d2416cceda05d3c1cf21f
-- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/vmlinuz-4.16.0-07318-gb77eab7
-- erst_disable
+- branch=linux-devel/devel-hourly-2018041805
+- commit=7eafb77890ff459863e3bc772465cb641c14f754
+- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/vmlinuz-4.16.0-rc7-00174-g7eafb77
 - max_uptime=3600
-- RESULT_ROOT=/result/kernel_selftests/kselftests-02/lkp-bdw-ep3/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/0
+- RESULT_ROOT=/result/fsmark/1x-1t-1BRD_32G-btrfs-nfsv4-4K-4G-fsyncBeforeClose-1fpd-performance/lkp-bdw-ep3c/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/0
 - LKP_SERVER=inn
 - debug
 - apic=debug
@@ -11904,14 +7754,12 @@ bootloader_append:
 - console=ttyS0,115200
 - vga=normal
 - rw
-modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/modules.cgz"
-bm_initrd: "/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/kernel_selftests_2018-04-01.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/kernel_selftests-x86_64-10b84daddbec_2018-04-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz"
-linux_headers_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/linux-headers.cgz"
-linux_selftests_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/linux-selftests.cgz"
+modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/modules.cgz"
+bm_initrd: "/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2018-04-19.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-04-04.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-f8cf2f16a7c9_2018-04-09.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/fs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/fs2_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/fsmark_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/fsmark-x86_64_2016-11-16.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz"
 lkp_initrd: "/lkp/lkp/lkp-x86_64.cgz"
 site: inn
 
-#! /lkp/lkp/.src-20180413-112425/include/site/inn
+#! /lkp/lkp/.src-20180418-230520/include/site/inn
 LKP_CGI_PORT: 80
 LKP_CIFS_PORT: 139
 oom-killer: 
@@ -11920,43 +7768,47 @@ watchdog:
 #! runtime status
 
 #! user overrides
-kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/b77eab7079d9e477489d2416cceda05d3c1cf21f/vmlinuz-4.16.0-07318-gb77eab7"
-dequeue_time: 2018-04-14 05:43:18.742564143 +08:00
+kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/7eafb77890ff459863e3bc772465cb641c14f754/vmlinuz-4.16.0-rc7-00174-g7eafb77"
+dequeue_time: 2018-04-19 17:22:12.690965735 +08:00
 
-#! /lkp/lkp/.src-20180413-234505/include/site/inn
+#! /lkp/lkp/.src-20180419-144811/include/site/inn
 job_state: finished
-loadavg: 15.61 6.27 2.29 1/840 7462
-start_time: '1523655895'
-end_time: '1523656022'
-version: "/lkp/lkp/.src-20180413-234505"
+loadavg: 0.73 0.40 0.16 1/799 5390
+start_time: '1524129804'
+end_time: '1524129914'
+version: "/lkp/lkp/.src-20180419-144811"
 
---ChQOR20MqfxkMJg9
+--iJXiJc/TAIT2rh2r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=reproduce
 
- "ln" "-sf" "/usr/bin/gcc-5" "/usr/bin/gcc"
- "ln" "-sf" "/usr/bin/clang-7" "/usr/bin/clang"
- "ln" "-sf" "/usr/bin/llc-7" "/usr/bin/llc"
- "make" "TARGETS=media_tests"
- "make" "run_tests" "-C" "membarrier"
- "make" "run_tests" "-C" "memfd"
- "make" "run_tests" "-C" "memory-hotplug"
- "make" "run_tests" "-C" "mount"
- "make" "run_tests" "-C" "mqueue"
- "make" "run_tests" "-C" "net"
- "make" "run_tests" "-C" "nsfs"
- "make" "TARGETS=prctl"
- "make" "run_tests" "-C" "prctl"
- "make" "run_tests" "-C" "pstore"
- "make" "TARGETS=ptp"
- "make" "run_tests" "-C" "ptp"
- "make" "run_tests" "-C" "ptrace"
- "make" "run_tests" "-C" "seccomp"
- "make" "run_tests" "-C" "sigaltstack"
- "make" "run_tests" "-C" "size"
- "make" "run_tests" "-C" "splice"
- "make" "run_tests" "-C" "static_keys"
- "make" "run_tests" "-C" "sync"
- "make" "run_tests" "-C" "sysctl"
+ "modprobe" "-r" "brd"
+ "modprobe" "brd" "rd_nr=1" "rd_size=33554432"
+dmsetup remove_all
+wipefs -a --force /dev/ram0
+mkfs -t btrfs /dev/ram0
+mkdir -p /fs/ram0
+mount -t btrfs /dev/ram0 /fs/ram0
+mkdir /export
+mount -t tmpfs nfsv4_root_export /export
+mkdir -p /export//fs/ram0
+mount --bind /fs/ram0 /export//fs/ram0
+echo '/export//fs/ram0 *(rw,no_subtree_check,no_root_squash)' >> /etc/exports
+/etc/init.d/rpcbind start
+/etc/init.d/nfs-common start
+systemctl restart nfs-server
+mkdir -p /nfs/ram0
+mount -t nfs -o vers=4 localhost:/fs/ram0 /nfs/ram0
 
---ChQOR20MqfxkMJg9--
+for cpu_dir in /sys/devices/system/cpu/cpu[0-9]*
+do
+	online_file="$cpu_dir"/online
+	[ -f "$online_file" ] && [ "$(cat "$online_file")" -eq 0 ] && continue
+
+	file="$cpu_dir"/cpufreq/scaling_governor
+	[ -f "$file" ] && echo "performance" > "$file"
+done
+
+ "fs_mark" "-d" "/nfs/ram0/1" "-D" "1000000" "-N" "1" "-n" "1000000" "-L" "1" "-S" "1" "-s" "4096"
+
+--iJXiJc/TAIT2rh2r--
