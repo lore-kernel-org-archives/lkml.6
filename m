@@ -1,149 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755836AbeDWPeC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:34:02 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:53035 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1755563AbeDWPd7 (ORCPT
+        id S1755791AbeDWPfU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:35:20 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38316 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755546AbeDWPfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:33:59 -0400
-From: Liming Sun <lsun@mellanox.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Liming Sun <lsun@mellanox.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] mmc: dw_mmc-bluefield: Add driver extension
-Date: Mon, 23 Apr 2018 11:32:20 -0400
-Message-Id: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 23 Apr 2018 11:35:16 -0400
+X-Google-Smtp-Source: AIpwx4/62GA/pasqSD7/oQ1lbOFqTHNr1NM0EGZu9bO/eEwY29fXNKU45hnGowfE6oqENiQuPnaEpGOxMg6YkNl5OPw=
+MIME-Version: 1.0
+In-Reply-To: <20180417191710.14855-4-longli@linuxonhyperv.com>
+References: <20180417191710.14855-1-longli@linuxonhyperv.com> <20180417191710.14855-4-longli@linuxonhyperv.com>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 23 Apr 2018 10:34:55 -0500
+Message-ID: <CAH2r5msFfBuTb5AF7inHVnA0B=miTc-S3kw_cKV_SfmeEd0_cw@mail.gmail.com>
+Subject: Re: [Patch v2 4/6] cifs: smbd: Don't use RDMA read/write when signing
+ is used
+To: Long Li <longli@microsoft.com>
+Cc: Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds extension to the dw_mmc driver for Mellanox BlueField
-SoC. It updates the UHS_REG_EXT register to bring up the eMMC card on
-this SoC.
+merged into cifs-2.6.git for-next
 
-Signed-off-by: Liming Sun <lsun@mellanox.com>
----
- drivers/mmc/host/Kconfig            |  9 +++++
- drivers/mmc/host/Makefile           |  1 +
- drivers/mmc/host/dw_mmc-bluefield.c | 72 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 82 insertions(+)
- create mode 100644 drivers/mmc/host/dw_mmc-bluefield.c
+On Tue, Apr 17, 2018 at 2:17 PM, Long Li <longli@linuxonhyperv.com> wrote:
+> From: Long Li <longli@microsoft.com>
+>
+> SMB server will not sign data transferred through RDMA read/write. When
+> signing is used, it's a good idea to have all the data signed.
+>
+> In this case, use RDMA send/recv for all data transfers. This will degrade
+> performance as this is not generally configured in RDMA environemnt. So
+> warn the user on signing and RDMA send/recv.
+>
+> Signed-off-by: Long Li <longli@microsoft.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  fs/cifs/cifssmb.c |  3 +++
+>  fs/cifs/smb2ops.c | 18 ++++++++++++++----
+>  fs/cifs/smb2pdu.c |  4 ++--
+>  3 files changed, 19 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+> index 6d3e40d..1529a08 100644
+> --- a/fs/cifs/cifssmb.c
+> +++ b/fs/cifs/cifssmb.c
+> @@ -455,6 +455,9 @@ cifs_enable_signing(struct TCP_Server_Info *server, bool mnt_sign_required)
+>                 server->sign = true;
+>         }
+>
+> +       if (cifs_rdma_enabled(server) && server->sign)
+> +               cifs_dbg(VFS, "Signing is enabled, and RDMA read/write will be disabled");
+> +
+>         return 0;
+>  }
+>
+> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+> index 38ebf3f..b76b858 100644
+> --- a/fs/cifs/smb2ops.c
+> +++ b/fs/cifs/smb2ops.c
+> @@ -252,9 +252,14 @@ smb2_negotiate_wsize(struct cifs_tcon *tcon, struct smb_vol *volume_info)
+>         wsize = volume_info->wsize ? volume_info->wsize : CIFS_DEFAULT_IOSIZE;
+>         wsize = min_t(unsigned int, wsize, server->max_write);
+>  #ifdef CONFIG_CIFS_SMB_DIRECT
+> -       if (server->rdma)
+> -               wsize = min_t(unsigned int,
+> +       if (server->rdma) {
+> +               if (server->sign)
+> +                       wsize = min_t(unsigned int,
+> +                               wsize, server->smbd_conn->max_fragmented_send_size);
+> +               else
+> +                       wsize = min_t(unsigned int,
+>                                 wsize, server->smbd_conn->max_readwrite_size);
+> +       }
+>  #endif
+>         if (!(server->capabilities & SMB2_GLOBAL_CAP_LARGE_MTU))
+>                 wsize = min_t(unsigned int, wsize, SMB2_MAX_BUFFER_SIZE);
+> @@ -272,9 +277,14 @@ smb2_negotiate_rsize(struct cifs_tcon *tcon, struct smb_vol *volume_info)
+>         rsize = volume_info->rsize ? volume_info->rsize : CIFS_DEFAULT_IOSIZE;
+>         rsize = min_t(unsigned int, rsize, server->max_read);
+>  #ifdef CONFIG_CIFS_SMB_DIRECT
+> -       if (server->rdma)
+> -               rsize = min_t(unsigned int,
+> +       if (server->rdma) {
+> +               if (server->sign)
+> +                       rsize = min_t(unsigned int,
+> +                               rsize, server->smbd_conn->max_fragmented_recv_size);
+> +               else
+> +                       rsize = min_t(unsigned int,
+>                                 rsize, server->smbd_conn->max_readwrite_size);
+> +       }
+>  #endif
+>
+>         if (!(server->capabilities & SMB2_GLOBAL_CAP_LARGE_MTU))
+> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+> index 41625e4..33f612f 100644
+> --- a/fs/cifs/smb2pdu.c
+> +++ b/fs/cifs/smb2pdu.c
+> @@ -2595,7 +2595,7 @@ smb2_new_read_req(void **buf, unsigned int *total_len,
+>          * If we want to do a RDMA write, fill in and append
+>          * smbd_buffer_descriptor_v1 to the end of read request
+>          */
+> -       if (server->rdma && rdata &&
+> +       if (server->rdma && rdata && !server->sign &&
+>                 rdata->bytes >= server->smbd_conn->rdma_readwrite_threshold) {
+>
+>                 struct smbd_buffer_descriptor_v1 *v1;
+> @@ -2973,7 +2973,7 @@ smb2_async_writev(struct cifs_writedata *wdata,
+>          * If we want to do a server RDMA read, fill in and append
+>          * smbd_buffer_descriptor_v1 to the end of write request
+>          */
+> -       if (server->rdma && wdata->bytes >=
+> +       if (server->rdma && !server->sign && wdata->bytes >=
+>                 server->smbd_conn->rdma_readwrite_threshold) {
+>
+>                 struct smbd_buffer_descriptor_v1 *v1;
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 9589f9c..26ac6b5 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -717,6 +717,15 @@ config MMC_DW_K3
- 	  Synopsys DesignWare Memory Card Interface driver. Select this option
- 	  for platforms based on Hisilicon K3 SoC's.
- 
-+config MMC_DW_BLUEFIELD
-+	tristate "BlueField specific extensions for Synopsys DW Memory Card Interface"
-+	depends on MMC_DW
-+	select MMC_DW_PLTFM
-+	help
-+	  This selects support for Mellanox BlueField SoC specific extensions to
-+	  the Synopsys DesignWare Memory Card Interface driver. Select this
-+	  option for platforms based on Mellanox BlueField SoC's.
-+
- config MMC_DW_PCI
- 	tristate "Synopsys Designware MCI support on PCI bus"
- 	depends on MMC_DW && PCI
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 6aead24..267b3f1 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -55,6 +55,7 @@ obj-$(CONFIG_MMC_DW_K3)		+= dw_mmc-k3.o
- obj-$(CONFIG_MMC_DW_PCI)	+= dw_mmc-pci.o
- obj-$(CONFIG_MMC_DW_ROCKCHIP)	+= dw_mmc-rockchip.o
- obj-$(CONFIG_MMC_DW_ZX)		+= dw_mmc-zx.o
-+obj-$(CONFIG_MMC_DW_BLUEFIELD)	+= dw_mmc-bluefield.o
- obj-$(CONFIG_MMC_SH_MMCIF)	+= sh_mmcif.o
- obj-$(CONFIG_MMC_JZ4740)	+= jz4740_mmc.o
- obj-$(CONFIG_MMC_VUB300)	+= vub300.o
-diff --git a/drivers/mmc/host/dw_mmc-bluefield.c b/drivers/mmc/host/dw_mmc-bluefield.c
-new file mode 100644
-index 0000000..12067b1
---- /dev/null
-+++ b/drivers/mmc/host/dw_mmc-bluefield.c
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Mellanox Technologies.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/io.h>
-+#include <linux/irq.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/mmc/host.h>
-+#include <linux/mmc/mmc.h>
-+#include <linux/of.h>
-+
-+#include "dw_mmc.h"
-+#include "dw_mmc-pltfm.h"
-+
-+static void dw_mci_bluefield_set_ios(struct dw_mci *host, struct mmc_ios *ios)
-+{
-+	u32 regs;
-+
-+	/* Set drive=4 (bit 29:23) and sample=2 (bit 22:16) in UHS_REG_EXT. */
-+	regs = mci_readl(host, UHS_REG_EXT);
-+	regs = (regs & ~0x3F100000 & ~0x7F0000) | (4 << 23) | (2 << 16);
-+	mci_writel(host, UHS_REG_EXT, regs);
-+}
-+
-+static const struct dw_mci_drv_data bluefield_drv_data = {
-+	.set_ios		= dw_mci_bluefield_set_ios
-+};
-+
-+static const struct of_device_id dw_mci_bluefield_match[] = {
-+	{ .compatible = "mellanox,bluefield-dw-mshc",
-+		.data = &bluefield_drv_data },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, dw_mci_bluefield_match);
-+
-+static int dw_mci_bluefield_probe(struct platform_device *pdev)
-+{
-+	const struct dw_mci_drv_data *drv_data = NULL;
-+	const struct of_device_id *match;
-+
-+	if (pdev->dev.of_node) {
-+		match = of_match_node(dw_mci_bluefield_match,
-+				      pdev->dev.of_node);
-+		drv_data = match->data;
-+	}
-+
-+	return dw_mci_pltfm_register(pdev, drv_data);
-+}
-+
-+static struct platform_driver dw_mci_bluefield_pltfm_driver = {
-+	.probe		= dw_mci_bluefield_probe,
-+	.remove		= dw_mci_pltfm_remove,
-+	.driver		= {
-+		.name		= "dwmmc_bluefield",
-+		.of_match_table	= dw_mci_bluefield_match,
-+		.pm		= &dw_mci_pltfm_pmops,
-+	},
-+};
-+
-+module_platform_driver(dw_mci_bluefield_pltfm_driver);
-+
-+MODULE_DESCRIPTION("BlueField DW Multimedia Card driver");
-+MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_LICENSE("GPL v2");
+
+
 -- 
-1.8.3.1
+Thanks,
+
+Steve
