@@ -1,116 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932172AbeDWQKg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:10:36 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56560 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932085AbeDWQKe (ORCPT
+        id S1755663AbeDWQMO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:12:14 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:37587 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755306AbeDWQMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:10:34 -0400
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Balbir Singh <bsingharora@gmail.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] delayacct: use raw_spinlocks
-Date: Mon, 23 Apr 2018 18:10:23 +0200
-Message-Id: <20180423161024.6710-1-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.17.0
+        Mon, 23 Apr 2018 12:12:13 -0400
+X-Google-Smtp-Source: AIpwx4+xkaZ0kp6fy4c+Rdq1aP7PJbWdgcvxwyRelq69QGtUG+rIhl/ZRWdCD3aFLEPe5pl1R50KTPe/bmWHyrILBqs=
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180423151035.GP4129@hirez.programming.kicks-ass.net>
+References: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com>
+ <20180423091633.GU4064@hirez.programming.kicks-ass.net> <CA+ToGPEaHb1ueDRGuzCzm_HxketqxW8j1gawEsCCp2QGLCA=xg@mail.gmail.com>
+ <20180423114850.GK4082@hirez.programming.kicks-ass.net> <CA+ToGPHA+Y=0PtiXF7fTSqSgwtzsJy3Z=U1i3xiW9jkzQGsXWQ@mail.gmail.com>
+ <20180423123847.GL4082@hirez.programming.kicks-ass.net> <20180423140052.GO4129@hirez.programming.kicks-ass.net>
+ <20180423151035.GP4129@hirez.programming.kicks-ass.net>
+From: Diego Viola <diego.viola@gmail.com>
+Date: Mon, 23 Apr 2018 13:12:12 -0300
+Message-ID: <CA+ToGPEZ189D8_VrVyMQPU2X_FKgP9d7QvwGhHmiOgAoe9de=g@mail.gmail.com>
+Subject: Re: Experiencing freezes with kernel 4.16.3 on a desktop with E5500
+ CPU (bisect included)
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, len.brown@intel.com,
+        rui.zhang@intel.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-try_to_wake_up() might invoke delayacct_blkio_end() while holding the
-pi_lock (which is a raw_spinlock_t). The lock is only held for a short
-amount of time so it should be safe to make it raw.
-Make struct task_delay_info.lock a raw_spinlock_t.
+On Mon, Apr 23, 2018 at 12:10 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Mon, Apr 23, 2018 at 04:00:52PM +0200, Peter Zijlstra wrote:
+>> On Mon, Apr 23, 2018 at 02:38:47PM +0200, Peter Zijlstra wrote:
+>> > @@ -834,8 +857,12 @@ static int clocksource_unbind(struct clocksource *cs)
+>> >             if (curr_clocksource == cs)
+>> >                     return -EBUSY;
+>> >     }
+>> > +
+>> > +   clocksource_watchdog_lock(&flags);
+>> >     clocksource_dequeue_watchdog(cs);
+>> >     list_del_init(&cs->list);
+>> > +   clocksource_watchdog_lock(&flags);
+>>
+>> It works a lot better when this is _unlock();
+>>
+>> > +
+>> >     return 0;
+>> >  }
+>> >
+>>
+>> With that, and intel_idle.c modified to always issue the "halts in
+>> idle" thing, my IVB comes up in hpet mode. Let me dig up a Core2 era
+>> machine and see if that works too.
+>
+> OK, that was fairly painful, but the box managed to boot a modified
+> kernel and seems to function correctly, lemme try suspend/resume.
+>
+>
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/delayacct.h |  2 +-
- kernel/delayacct.c        | 17 +++++++++--------
- 2 files changed, 10 insertions(+), 9 deletions(-)
+I can confirm that applying Peter's patch to the 4.17-rc2 kernel and
+changing kernel/time/clocksource.c:864 to _unlock solves my problem.
 
-diff --git a/include/linux/delayacct.h b/include/linux/delayacct.h
-index 5e335b6203f4..e6c0448ebcc7 100644
---- a/include/linux/delayacct.h
-+++ b/include/linux/delayacct.h
-@@ -29,7 +29,7 @@
-=20
- #ifdef CONFIG_TASK_DELAY_ACCT
- struct task_delay_info {
--	spinlock_t	lock;
-+	raw_spinlock_t	lock;
- 	unsigned int	flags;	/* Private per-task flags */
-=20
- 	/* For each stat XXX, add following, aligned appropriately
-diff --git a/kernel/delayacct.c b/kernel/delayacct.c
-index e2764d767f18..ca8ac2824f0b 100644
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -44,23 +44,24 @@ void __delayacct_tsk_init(struct task_struct *tsk)
- {
- 	tsk->delays =3D kmem_cache_zalloc(delayacct_cache, GFP_KERNEL);
- 	if (tsk->delays)
--		spin_lock_init(&tsk->delays->lock);
-+		raw_spin_lock_init(&tsk->delays->lock);
- }
-=20
- /*
-  * Finish delay accounting for a statistic using its timestamps (@start),
-  * accumalator (@total) and @count
-  */
--static void delayacct_end(spinlock_t *lock, u64 *start, u64 *total, u32 *c=
-ount)
-+static void delayacct_end(raw_spinlock_t *lock, u64 *start, u64 *total,
-+			  u32 *count)
- {
- 	s64 ns =3D ktime_get_ns() - *start;
- 	unsigned long flags;
-=20
- 	if (ns > 0) {
--		spin_lock_irqsave(lock, flags);
-+		raw_spin_lock_irqsave(lock, flags);
- 		*total +=3D ns;
- 		(*count)++;
--		spin_unlock_irqrestore(lock, flags);
-+		raw_spin_unlock_irqrestore(lock, flags);
- 	}
- }
-=20
-@@ -127,7 +128,7 @@ int __delayacct_add_tsk(struct taskstats *d, struct tas=
-k_struct *tsk)
-=20
- 	/* zero XXX_total, non-zero XXX_count implies XXX stat overflowed */
-=20
--	spin_lock_irqsave(&tsk->delays->lock, flags);
-+	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
- 	tmp =3D d->blkio_delay_total + tsk->delays->blkio_delay;
- 	d->blkio_delay_total =3D (tmp < d->blkio_delay_total) ? 0 : tmp;
- 	tmp =3D d->swapin_delay_total + tsk->delays->swapin_delay;
-@@ -137,7 +138,7 @@ int __delayacct_add_tsk(struct taskstats *d, struct tas=
-k_struct *tsk)
- 	d->blkio_count +=3D tsk->delays->blkio_count;
- 	d->swapin_count +=3D tsk->delays->swapin_count;
- 	d->freepages_count +=3D tsk->delays->freepages_count;
--	spin_unlock_irqrestore(&tsk->delays->lock, flags);
-+	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
-=20
- 	return 0;
- }
-@@ -147,10 +148,10 @@ __u64 __delayacct_blkio_ticks(struct task_struct *tsk)
- 	__u64 ret;
- 	unsigned long flags;
-=20
--	spin_lock_irqsave(&tsk->delays->lock, flags);
-+	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
- 	ret =3D nsec_to_clock_t(tsk->delays->blkio_delay +
- 				tsk->delays->swapin_delay);
--	spin_unlock_irqrestore(&tsk->delays->lock, flags);
-+	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
- 	return ret;
- }
-=20
---=20
-2.17.0
+Peter, thank you so much, I appreciate your help a lot.
+
+Diego
