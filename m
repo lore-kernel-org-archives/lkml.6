@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754241AbeDWDFr (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 23:05:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42454 "EHLO
+        id S1754256AbeDWDFy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 23:05:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36346 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753959AbeDWDCj (ORCPT
+        by vger.kernel.org with ESMTP id S1753957AbeDWDCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 22 Apr 2018 23:02:39 -0400
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -16,20 +16,20 @@ Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         fweisbec@gmail.com, oleg@redhat.com, joel.opensrc@gmail.com,
         torvalds@linux-foundation.org, npiggin@gmail.com,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 05/21] rcu: Make rcu_gp_cleanup() more accurately predict need for new GP
-Date: Sun, 22 Apr 2018 20:03:28 -0700
+Subject: [PATCH tip/core/rcu 09/21] rcu: Make rcu_migrate_callbacks wake GP kthread when needed
+Date: Sun, 22 Apr 2018 20:03:32 -0700
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180423030258.GA23370@linux.vnet.ibm.com>
 References: <20180423030258.GA23370@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18042303-0040-0000-0000-000004207438
+x-cbid: 18042303-0024-0000-0000-0000034CD02F
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008903; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000257; SDB=6.01021898; UDB=6.00521542; IPR=6.00801134;
  MB=3.00020719; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 03:02:36
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042303-0041-0000-0000-000008267DAD
-Message-Id: <1524452624-27589-5-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18042303-0025-0000-0000-000047C2E849
+Message-Id: <1524452624-27589-9-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -41,134 +41,50 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, rcu_gp_cleanup() scans the rcu_node tree in order to reset
-state to reflect the end of the grace period.  It also checks to see
-whether a new grace period is needed, but in a number of cases, rather
-than directly cause the new grace period to be immediately started, it
-instead leaves the grace-period-needed state where various fail-safes
-can find it.  This works fine, but results in higher contention on the
-root rcu_node structure's ->lock, which is undesirable, and contention
-on that lock has recently become noticeable.
+The rcu_migrate_callbacks() function invokes rcu_advance_cbs()
+twice, ignoring the return value.  This is OK at pressent because of
+failsafe code that does the wakeup when needed.  However, this failsafe
+code acquires the root rcu_node structure's lock frequently, while
+rcu_migrate_callbacks() does so only once per CPU-offline operation.
 
-This commit therefore makes rcu_gp_cleanup() immediately start a new
-grace period if there is any need for one.
+This commit therefore makes rcu_migrate_callbacks()
+wake up the RCU GP kthread when either call to rcu_advance_cbs()
+returns true, thus removing need for the failsafe code.
 
-It is quite possible that it will later be necessary to throttle the
-grace-period rate, but that can be dealt with when and if.
-
-Reported-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c        | 16 ++++++++++------
- kernel/rcu/tree.h        |  1 -
- kernel/rcu/tree_plugin.h | 17 -----------------
- 3 files changed, 10 insertions(+), 24 deletions(-)
+ kernel/rcu/tree.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 497f139056c7..afc5e32f0da4 100644
+index 6ef1f2b4a6d3..f75eb5174021 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -1763,14 +1763,14 @@ rcu_start_future_gp(struct rcu_node *rnp, struct rcu_data *rdp,
-  * Clean up any old requests for the just-ended grace period.  Also return
-  * whether any additional grace periods have been requested.
-  */
--static int rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
-+static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
- {
- 	int c = rnp->completed;
--	int needmore;
-+	bool needmore;
- 	struct rcu_data *rdp = this_cpu_ptr(rsp->rda);
+@@ -3876,6 +3876,7 @@ static void rcu_migrate_callbacks(int cpu, struct rcu_state *rsp)
+ 	struct rcu_data *my_rdp;
+ 	struct rcu_data *rdp = per_cpu_ptr(rsp->rda, cpu);
+ 	struct rcu_node *rnp_root = rcu_get_root(rdp->rsp);
++	bool needwake;
  
- 	need_future_gp_element(rnp, c) = 0;
--	needmore = need_future_gp_element(rnp, c + 1);
-+	needmore = need_any_future_gp(rnp);
- 	trace_rcu_future_gp(rnp, rdp, c,
- 			    needmore ? TPS("CleanupMore") : TPS("Cleanup"));
- 	return needmore;
-@@ -2113,7 +2113,6 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
- {
- 	unsigned long gp_duration;
- 	bool needgp = false;
--	int nocb = 0;
- 	struct rcu_data *rdp;
- 	struct rcu_node *rnp = rcu_get_root(rsp);
- 	struct swait_queue_head *sq;
-@@ -2152,7 +2151,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
- 		if (rnp == rdp->mynode)
- 			needgp = __note_gp_changes(rsp, rnp, rdp) || needgp;
- 		/* smp_mb() provided by prior unlock-lock pair. */
--		nocb += rcu_future_gp_cleanup(rsp, rnp);
-+		needgp = rcu_future_gp_cleanup(rsp, rnp) || needgp;
- 		sq = rcu_nocb_gp_get(rnp);
- 		raw_spin_unlock_irq_rcu_node(rnp);
- 		rcu_nocb_gp_cleanup(sq);
-@@ -2162,13 +2161,18 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
+ 	if (rcu_is_nocb_cpu(cpu) || rcu_segcblist_empty(&rdp->cblist))
+ 		return;  /* No callbacks to migrate. */
+@@ -3887,12 +3888,15 @@ static void rcu_migrate_callbacks(int cpu, struct rcu_state *rsp)
+ 		return;
  	}
- 	rnp = rcu_get_root(rsp);
- 	raw_spin_lock_irq_rcu_node(rnp); /* Order GP before ->completed update. */
--	rcu_nocb_gp_set(rnp, nocb);
- 
- 	/* Declare grace period done. */
- 	WRITE_ONCE(rsp->completed, rsp->gpnum);
- 	trace_rcu_grace_period(rsp->name, rsp->completed, TPS("end"));
- 	rsp->gp_state = RCU_GP_IDLE;
-+	/* Check for GP requests since above loop. */
- 	rdp = this_cpu_ptr(rsp->rda);
-+	if (need_any_future_gp(rnp)) {
-+		trace_rcu_future_gp(rnp, rdp, rsp->completed - 1,
-+				    TPS("CleanupMore"));
-+		needgp = true;
-+	}
- 	/* Advance CBs to reduce false positives below. */
- 	needgp = rcu_advance_cbs(rsp, rnp, rdp) || needgp;
- 	if (needgp || cpu_needs_another_gp(rsp, rdp)) {
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 18b091474ffa..bd1103763551 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -469,7 +469,6 @@ static void print_cpu_stall_info_end(void);
- static void zero_cpu_stall_ticks(struct rcu_data *rdp);
- static void increment_cpu_stall_ticks(void);
- static bool rcu_nocb_cpu_needs_barrier(struct rcu_state *rsp, int cpu);
--static void rcu_nocb_gp_set(struct rcu_node *rnp, int nrq);
- static struct swait_queue_head *rcu_nocb_gp_get(struct rcu_node *rnp);
- static void rcu_nocb_gp_cleanup(struct swait_queue_head *sq);
- static void rcu_init_one_nocb(struct rcu_node *rnp);
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 640ea927d8a4..313b77d9cf06 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1780,19 +1780,6 @@ static void rcu_nocb_gp_cleanup(struct swait_queue_head *sq)
- 	swake_up_all(sq);
- }
- 
--/*
-- * Set the root rcu_node structure's ->need_future_gp field
-- * based on the sum of those of all rcu_node structures.  This does
-- * double-count the root rcu_node structure's requests, but this
-- * is necessary to handle the possibility of a rcu_nocb_kthread()
-- * having awakened during the time that the rcu_node structures
-- * were being updated for the end of the previous grace period.
-- */
--static void rcu_nocb_gp_set(struct rcu_node *rnp, int nrq)
--{
--	need_future_gp_element(rnp, rnp->completed + 1) += nrq;
--}
--
- static struct swait_queue_head *rcu_nocb_gp_get(struct rcu_node *rnp)
- {
- 	return &rnp->nocb_gp_wq[rnp->completed & 0x1];
-@@ -2495,10 +2482,6 @@ static void rcu_nocb_gp_cleanup(struct swait_queue_head *sq)
- {
- }
- 
--static void rcu_nocb_gp_set(struct rcu_node *rnp, int nrq)
--{
--}
--
- static struct swait_queue_head *rcu_nocb_gp_get(struct rcu_node *rnp)
- {
- 	return NULL;
+ 	raw_spin_lock_rcu_node(rnp_root); /* irqs already disabled. */
+-	rcu_advance_cbs(rsp, rnp_root, rdp); /* Leverage recent GPs. */
+-	rcu_advance_cbs(rsp, rnp_root, my_rdp); /* Assign GP to pending CBs. */
++	/* Leverage recent GPs and set GP for new callbacks. */
++	needwake = rcu_advance_cbs(rsp, rnp_root, rdp) ||
++		   rcu_advance_cbs(rsp, rnp_root, my_rdp);
+ 	rcu_segcblist_merge(&my_rdp->cblist, &rdp->cblist);
+ 	WARN_ON_ONCE(rcu_segcblist_empty(&my_rdp->cblist) !=
+ 		     !rcu_segcblist_n_cbs(&my_rdp->cblist));
+ 	raw_spin_unlock_irqrestore_rcu_node(rnp_root, flags);
++	if (needwake)
++		rcu_gp_kthread_wake(rsp);
+ 	WARN_ONCE(rcu_segcblist_n_cbs(&rdp->cblist) != 0 ||
+ 		  !rcu_segcblist_empty(&rdp->cblist),
+ 		  "rcu_cleanup_dead_cpu: Callbacks on offline CPU %d: qlen=%lu, 1stCB=%p\n",
 -- 
 2.5.2
