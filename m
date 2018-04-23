@@ -1,142 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754222AbeDWHXm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 03:23:42 -0400
-Received: from mail-eopbgr50094.outbound.protection.outlook.com ([40.107.5.94]:30971
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        id S1754205AbeDWHXi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 03:23:38 -0400
+Received: from mail-bn3nam01on0052.outbound.protection.outlook.com ([104.47.33.52]:28989
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754118AbeDWHX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 03:23:27 -0400
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=axentia.se;
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Russell King <linux@armlinux.org.uk>, Jyri Sarha <jsarha@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 2/8] dt-bindings: display: atmel: optional video-interface of endpoints
-Date: Mon, 23 Apr 2018 09:22:55 +0200
-Message-Id: <20180423072301.11962-3-peda@axentia.se>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180423072301.11962-1-peda@axentia.se>
-References: <20180423072301.11962-1-peda@axentia.se>
+        id S1751785AbeDWHXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 03:23:18 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com;
+Date: Mon, 23 Apr 2018 15:22:49 +0800
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Bhadram Varka <vbhadram@nvidia.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jingju Hou <Jingju.Hou@synaptics.com>
+Subject: [PATCH v2] net: phy: marvell: clear wol event before setting it
+Message-ID: <20180423152249.5f1deb65@xhacker.debian>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: HE1PR05CA0128.eurprd05.prod.outlook.com
- (2603:10a6:7:28::15) To DB6PR0202MB2774.eurprd02.prod.outlook.com
- (2603:10a6:4:a8::20)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: OSAPR01CA0063.jpnprd01.prod.outlook.com
+ (2603:1096:604:a::27) To BN6PR03MB2625.namprd03.prod.outlook.com
+ (2603:10b6:404:59::8)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DB6PR0202MB2774;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;3:tO6HLtPl/cb9iBXatrMaUCu8TyrRR6lWwdQrr9V/ztcB+D962zDm29X5VRTCzqTT6gYFk/NHZRFqn5uEi+3houJuNB/+P5g9FiNsa7F6wMOvwQo86982/u0/dU4eyfu/3C513iQ9t7k3wQy45YZP8ojs656jqOBKSb2YvIXDW9BDtv8Qcb5zgl9eUGvlBtZRoCVA43DvfJ13SoX8HLPw0WWxJnN97iqbWSYUNrX+M4pQ0ao73/+N0YLYu+M+b/bS;25:JPY+dGdX1vpinvQUOsCGQRLBGhrUP4IScp7F5vm+qLfaHzWyiBL3rkPDizwo4MYopQCKD0iGm6PzprBUKQpQ5KWC600zHAWAlyKo2ABRCLUQqrrcdflMUwce31oS7flfbZcK9DfTOfU1WvL6O+62UeFp1UreZx76rieeBbBFoTCqr3YGU5iHDuEvIg6tWbbji+ezSFv0kK74AhFs7zAPRm3ZLcP/oZe2krNMG0af+oo3ldbuOe92OTUPW5oo8dlWCR+KBtVaZpDROZjkq3LdDvX0zdfa7n5hi1ewn7bWyvKUSV9hTVHWGrstEpX2sr4HKe9Bh+3cm6hEokrE62Mzyw==;31:H4kkPJtXJv0syseRbreqvcu2g+n5SvQOrtD4MbhBv8FtJaEaSFt3lomVQZSgkPzkLnSbRX9x4y5t9THxNgIbpQqDvfghtCzfHeH9Eb/jwoMKWy3+JkdcyRsNlP1smjs/JiQZebtJ7+jkY7kppdGSzl7u39vmesMJfKRZMaTOdMc+zHre4kD9yF8j3zFKVv6RPa6dIQjXOySCw5h/q5IjxMl0aUtlGVbx0ObvCFxc06Q=
-X-MS-TrafficTypeDiagnostic: DB6PR0202MB2774:
-X-Microsoft-Antispam-PRVS: <DB6PR0202MB27744470C74DE8DE9391F5BBBC890@DB6PR0202MB2774.eurprd02.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN6PR03MB2625;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2625;3:Ngsik/gRPp5eK30WMrYtpFVLRNDEpDQi7oWK3iY/qfhOjk3HDd318b5PQiN2ictehN2BVPtnOGVZi8Abx0zyu//ZLIolvrHGMOGooUj4W6Fv+0UYnBn0TTi6MjeFf68bAo3HyqBwm1Fl6CHYOcMO1sSc/cRHnTdgJEFPGiNAU3tQmXOt9Z516AayjdGjtY+7zvEDVuPeXvN56hot+dxeVAMC9d8pbpKgY33d2zLDLvgbz81Gcp3xmEV9DQNyAEkH;25:RgOobK7EPl/s1hWZvi0XxfhBgAUM+a5m2lmJcP1hRVmsgZ+g1EoHnIdL/W36DeUKMbOn3RnrHYD+cRIZYB1edxxaTKPaO+lStpy9DzuEYoi1Wu9mIHIsmCNC/AhBFDUakYiu5ZnSKfqWs2sui4OIv11IwZ2fMgYK/K3Iey5FVl77aG/nRC+vp14JSmHObvFiN+21h2yKiEAtVOpnpUosEBHi9gt/rIbG1mXvpFSb+ueIMxEsyU9VPUazfhiW/CxLf6+NMFh55bI1wS+GBSnhIvhPFrzQocopPsTw8gL6msdZKuG+PUWzaNexGk8q6nF81DaYcFhhtid1wSQAFuq+eA==;31:1m5e+yAPZooEI+JFv1YyW//1gOR8donhQxlnWciejetK+mVm5qb5gsPbAMgeAdSS9Ao2DHVoa2YrK72r8ozzEscTgVIZhuA9GWxhZKXUNSrdTobdxm6pwGTj+YliLMeqhhakL1N36StFHkb4BqnvOVGi21dovUW8NZUIAvzeybofm/ZLruhu2MUwELdOzcU864Kc9Rrh0wwmL4GyPAvqELzP4OOHaA/zBeltsEQhawI=
+X-MS-TrafficTypeDiagnostic: BN6PR03MB2625:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2625;20:tDME5NkkRIKPAIX54VtqP2zyeRkRgsfZTykUl1342x24qD6c9uvn12Nkkaa08TpPN5c379SqRj0TUtD5yqq8htTNFVtaGw1jrb7ijLdcFGteDps8X04/N60jp1Mf/aPYTcoRMrh4wFYYWXt4kzjHCiA6X1kU5444y7OxK2dsDm6yh+01AFNnxdxABzFnKHadGNWgAIWS+PjqjlDrTSw8ugBWvarcHb7p2U6rF+w5mfsTJG2FI4ubSEXkvVNrrfdja5L2JfPbGVuUOBsux16jreofCoy0rq4AVW0hOz3zsi+TQl5Xhwr1ffs9qD8fRoC+niG9gtaUJS4goCBylAjbV7PZOWg/rWeZ/abIAsJX/sQqPX+T3OKsTUgAOQz4pyA2xXz/6HAaBGbTgXqtdgZHUT2Vr4OPdiwy9ON2tzO6L5tlnYbDorKfkU0hVUIuPNBLNCEH3c95wWi/cujXNRu4cSB915Nu5rUdKoVkmVwjQAlcSWlj3Vts5a0g2Lpv3NCh;4:TWMlYdTV/rrgL6aQ2SLFQZScKcg3/K7SYXC+EX/rlFVZtLbrS5v+jS1ECVPjxjDpNe22wwAPiD+PbSNCZ7Q/GJo8lPY9+mw8Oi6rullHaw8qKxq8wyMASWav75yScLKMl5CEva9DpUBIniiMH5pv/ZQhEzKm3xuQcIaXuzp+iruSQqBlvjFcuURDxJhUym4Lt+tfD3m+HwIs7eAo1PJz2FOWV7X0cis1yW3ShmLEYhluaGEi77IEPoVTTkgh1I4vKMWcf1lNz0lTy2OWqY+uyw==
+X-Microsoft-Antispam-PRVS: <BN6PR03MB262589DA02821BC32A30DD61ED890@BN6PR03MB2625.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(2016111802025)(6072148)(6043046)(201708071742011);SRVR:DB6PR0202MB2774;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0202MB2774;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;4:pBag/hh84rqa0nbGv1jgzDbFSNDIxUMh5bbbkYouK8makjD4qDddrWVIFOzv7NBDtcUGUH3scdAUY7r6mxHsdGBN5v9G3Q57odPUZIhkCupqTUUfSY+2mg4QjsadO/ArZSBBW06JWGBjcrEZvLj+kg3q9Tru3Fc74ShTdWEfHdWPdQGO1D8U1JeutV7RST0g9yZ+PBf7hB8yE1hXb6C9ynryGd93Vkcf0nXiPZQLxyAGhX9tpJEThIv3d9iSZ3c6wWT7vKqX+6JeJp2Wr12qvA==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:BN6PR03MB2625;BCL:0;PCL:0;RULEID:;SRVR:BN6PR03MB2625;
 X-Forefront-PRVS: 06515DA04B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(396003)(39380400002)(6506007)(386003)(2351001)(25786009)(2361001)(1076002)(26005)(476003)(3846002)(6116002)(956004)(2616005)(11346002)(76176011)(478600001)(52116002)(66066001)(86362001)(2906002)(446003)(16526019)(81166006)(48376002)(5660300001)(305945005)(8936002)(6486002)(6916009)(74482002)(36756003)(7736002)(53936002)(6666003)(316002)(54906003)(7416002)(4326008)(16586007)(50466002)(186003)(50226002)(47776003)(8676002)(6512007)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0202MB2774;H:orc.pedanet;FPR:;SPF:None;LANG:en;MLV:sfv;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0202MB2774;23:vpUmEASKNZsI3GavH2rB7UcuGNNtNJ3F/PrEZYD?=
- =?us-ascii?Q?wHIvyC5jb0F3ink4Zddm1LnXzh3qteH/4bpIZyWFcJY/YQgIa4oPfgWMvXoR?=
- =?us-ascii?Q?CoxqHlSBnPsTKS7N0McUKEdRmyL1SMt8kw1Bg572etCK/80oZxxOpsujN5vy?=
- =?us-ascii?Q?IxmZkRjM06DIM15JcmpuTl2HsVwmP6HnW5gr1UdzSOetzxXezEtwfBnry0Um?=
- =?us-ascii?Q?6AEQSGUNDuBHCn8rEhEQntsNGjvARxCbcc1wV8MjNaZSWGIWsJNTTPyXxvuU?=
- =?us-ascii?Q?2CDIznA2fkBa8gyxQLfZqIbS64hLcN2573NJXh35q7roA4nlOqeXqdHmUYr1?=
- =?us-ascii?Q?qzJ3drkrcx86fFs3ljqNP2zFlEdDL8MMGZ09c90o0fZ9yu9xjO+3gmh2rtrH?=
- =?us-ascii?Q?u1IdmviMuuEkDPsaqm8EBGrQEOxqAJMBOlc+m05YBfqoWMcroSE/wT2lqNIa?=
- =?us-ascii?Q?c725HcSYwBe3sIvoUKOOdttWaXSAD7HQMSsANP7yfuE7+AD5oLOhGNbKB4fs?=
- =?us-ascii?Q?z1vzyrJP0f/iMtWcS5mXEDOgw+huqrocL0VwO5YL9y/tQDocqllA1MGWNOCj?=
- =?us-ascii?Q?CC8dHFEQsJQmCOX4y1PWZZVB5sx3R2khTD/c9+8uwu8HaDQooBfniv56ho34?=
- =?us-ascii?Q?uQM8HzdBQGqUVSuUQEuXHhg/xXKy/xI/Lfo6FSd/IoUUx+fZO66vrJ8RQr/s?=
- =?us-ascii?Q?N+fypVnJ8pCEAIPX1JC/g18l1eqJMwYRABXgGcwxZRQRO2bP35WppBLE2yBc?=
- =?us-ascii?Q?GKWQvdczzJJn6Opy0hkec5PhOzHoTEp3TlAsEeQGMDVRvK2Qrp+X8iVKgPfZ?=
- =?us-ascii?Q?OzxdTbJGaD6dXFbXPVLLkWzrT341g925BvQr6lQQ0EqTle8JvARl23hs5QN/?=
- =?us-ascii?Q?XlcadFu8KiHn35aujwjkFArOxWccluqQCZUlaOT1CxCm516aAGId78FtUv1v?=
- =?us-ascii?Q?1I6avjEl2qA3v8/xAD4I6cIdnzB+RT8FuajVJlBIJzqXQh5CPKJWnDSUJBjC?=
- =?us-ascii?Q?I29tzQuWX8PeJCt8tPQiLYe68MqME6vcS8g/kBBiDS7zE5Ujw9FdJR8n9/LD?=
- =?us-ascii?Q?eWOBP90Xe7NB2AhDZBGvqnQKo0FpuTdFU4nn4avEyIYO6bAMBEciRKVPBTMm?=
- =?us-ascii?Q?alN9xSxozRCY=3D?=
-X-Microsoft-Antispam-Message-Info: CqZUumsoVRryIwiRIDrr/mDZ5f+5QxqlB+6heJDqJ6BLQn9aHdrdFu9TSLZo5lsou1kRpZ8jJCRrv1ROadvhdAiyaLLMhArxDWYrf0ymK0ZIusZLHF9Kro/yUCKLrLc63tV3tq0d2pc8fOK4NE4qLplQvjak1uSZgpASmujyeG6gxvdoVUIlw7JH7O77DdjB
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;6:DtSauDB4Z/ZILWpnuJbNmLy1unuPema6FJpUf++0EQv6O3imyljY1pZrRds11NAKwatjMBu06voOyu7lCgQ1y237CPLl7d0JPaYD5bZ3w9S3agdEcVTkmaIkiv4D/e5o0cq6Z4Ets0ssAmd73w+mFdbt2h0cyDLbu3mbgZLJ+16l6a0K+r8L5+BmnRnwT82Pcjuz8sOccvojfJaoRpfiDu3wTq5SB6gPeQBiBdkpY0VnNuU/WT48LF2j3aakwz9BaJLwi21LacYyl3cy09ILGKIxMZnkaox4htXIjJwT+aUmUA3FqjcCd3aC4i0srr4MHQG1ioRm0cw3Eru4LmU94DUW4wqBK4kc/VaARAF7q3YDPd+u4x/6ux6eOqaTIofdeOim4mrqKsyqDsiH613AXvoTbKV4uqdeRnq59eE+9mbc+lFBALYXLm4eihYcosvh34rri1kizwIeYBo0pWjuqw==;5:nI+x1BT5QeiB1rSlFdFi5DS+S9rQDC3Q1LC33wxSftGHugNqxbToa/6io8anU/rHurx32r5C1e6Ggl0vF07E2beOtkntvgT+jal5FBtd/ZrazYhP3aSXwFsN4h+DMlzsnzkoqLQtsQvNQz6YL7ZSKM7vumb0yNVe13BAk8GNBiY=;24:wf2Aq8v9QmTETOHIEfVuA0ObWmghOe5dCm0wd0O54FcV1fwwIP+ptaZLOzP0RE1S1uw+XmJ/xpyIQaCJ4h4twqRxDM4KtHZfjpt8VksYku0=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(39850400004)(39380400002)(366004)(346002)(316002)(6666003)(26005)(50466002)(110136005)(50226002)(386003)(6506007)(7696005)(86362001)(52116002)(2906002)(3846002)(66066001)(81166006)(23726003)(1076002)(47776003)(16526019)(55016002)(33896004)(72206003)(8676002)(230700001)(6116002)(8936002)(186003)(7736002)(305945005)(4326008)(39060400002)(9686003)(476003)(5660300001)(25786009)(478600001)(956004)(107886003)(53936002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB2625;H:xhacker.debian;FPR:;SPF:None;LANG:en;MLV:ovrnspm;PTR:InfoNoRecords;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR03MB2625;23:eIAr21DSh+Pl2FuwXGWNgtRNCsYLnQWzalLIyUAhg?=
+ =?us-ascii?Q?JteREslTWoGbNyl9/pZBfA+LTRrlSRGTy+ZG2VOiu243dQnmrg/zW6biz+il?=
+ =?us-ascii?Q?acHllLIHLvaz0NbXH/MZuVEFgnp1CqG5TT3Vo/ilyiTFVTHsaC5O8t3n0flc?=
+ =?us-ascii?Q?vejVzZIhdBYW+iJa6pzrW90M/T6Igf2//NjkhDYRkCxRRkQK7V3AAiYiGYsS?=
+ =?us-ascii?Q?ckThknq6eBIukL6QN64GoCbEjWf/Th2Ou+iWlz+l56wRvPslDgJW9aCoOfrH?=
+ =?us-ascii?Q?f4RA2K0Xv2+YpOmFw7vs8aMPBa6S80Kzmm6NpvigExK3gJv6vqEGD63ivMqB?=
+ =?us-ascii?Q?cAs7dWpJP8a4EWFAOmtf40sa3VcoNh+l7mzRn0T99Sd4eIe3dJMav7E45dr6?=
+ =?us-ascii?Q?n8906FkW5sqmLaZtDY3hHzMb4sk9lywR/HcwKKfq0CQH2VBbr/Kz0pDpaPds?=
+ =?us-ascii?Q?N91IuqbEZxDiFEGWUcp7ComrjlggqjkAONbOkDuSrMkVFpSWcdAQWKJexBwc?=
+ =?us-ascii?Q?fwKYzTynDSS23yL/r47RkPn4G4WHHN2gnd02pQ6clwcvJsbLUAl/eyL8rvre?=
+ =?us-ascii?Q?Nm0rmR0vYTLFwt037mdl+rzLLjkrk5frZrs7/NGdwbeN3t7w7Ozt5e20E6lh?=
+ =?us-ascii?Q?G/OMhWqvuJt2SbG+RkFVsjJgKr/rsBMykahpTR6SuPQnBAqD9fixDA8rZqBF?=
+ =?us-ascii?Q?AI/xRcAajPXjlZRfjJ16GF3il6gYfOovhPrBo4/p3ye+TEr7g5f9jFvxjfrc?=
+ =?us-ascii?Q?WvTBXPNCdSGXP3SuJ8Ld0IktbeChMW6AC1GzD1WeEt4kDFarHJhCYDQaSws6?=
+ =?us-ascii?Q?Wo4R7NjiNwL896VmFJg4Lug6BvpwCcRBzxnFwn6D1dRAyB7qmHX8d/9EvkzP?=
+ =?us-ascii?Q?Nrs0SrXKRMcrH9tzOSr4VhRd+ePzNxaoVDg2m/3hOp4LD0NxUgN//3nAobYy?=
+ =?us-ascii?Q?1pQJXT39H5s/pGLCah5n8zfINlayzwBPVurYJFwv0Z16lULn0jc39BcA/lHr?=
+ =?us-ascii?Q?yOMoftWkvFLQBMPDM7VPVZJlUXoxAmcIHBF2AUh3QF5EaDaA8xg25woamfQB?=
+ =?us-ascii?Q?1FPiqOM01qdYT1flLcO1UB7IQUs?=
+X-Microsoft-Antispam-Message-Info: d2YjsEuHtPSzp4H01aRVWzfEUxbCoIyGfBhoXdno2ZzfwLQ2Z1Wi8Q6RmKl7edkLGjUSw/g8irxbwnPK5qqJ/4w92x1VCXUFccDz7WHt9IPyNDqlaI1Tcki9/TOwj8YdXhqLx6fEitHyCtNEW57qaZ3NB65GmfIBGzoadLbw88K/gRjCJBfdzkj8p0rjBXx4
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2625;6:DYaddeDLylZkco8At3zj+0wZSF3rnIVMFSlujd80ZQwK4cW7NqQts1+R9oPXjCQ/IgP80pZFAjOyshDofM2vc5K45aGAJw/0kwLFHjyxe57rOmLfz+slO/ihiiDeDGFOUJqC89rgzpIE5yEBf4uNj/9lSPzvAG64uhNCT79bq5RNEbIfb6sp1wkIxfR+7y8/YO47rj/r8SJZGbngL1780CYO528T+OO0gNcdFJwC5JNYR9LtWMVhpeOAoZFkfKBM4euPULUaOY82CIj+JNC/w9yStXTxVFgRXsprdWe5vB0dOB2BOOyKK/gRnBtlSmP0mLoe6YcD8ZqE1Id6LtDBWx7wSYfXGyIGUv+sQTR/24N7w+cLyIC0l5mh/cMCL1Nbl3AUL30Q41V0M9M7vEgWDN9FQLfbZGe9W72OFpNaHKMISW26AWUXByCBRUKD7HnITXR4Dfh6NtmokXKBci8oRg==;5:Ajqjy6mLkJIEXX218XCidzBKuz5Ex+HaIDsO5VX/uipULUN2cDbPeA8OEFncpNxNlTAWyEHV9ebtEnZ5VpOI5ka8d67ThUbXba/Thv2AXYVgM0ftT48lXSvaKhZMfhLV+ekl8uETvn4r+WcSHHTePAlBg/cNrdfSQnj7BNblV4g=;24:kiYb+F4qr1dL3Ywhy6Ro0sT8z6cw9JrsJOiqEnNbdiH/WsrSLQOfXmpPKJ1hXozrINMmebemD2i/LMdsgttOrYSt4AxkVG6zGSkk1VdQkdY=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;7:myCHzpYKYFxKpVjDAK21FdZFULX398zDw+qegv0mBDckBopypqtfQyBcT55stOEjpN6tY+bCihWA8Pe/Si6pWmjoUNgWmCamGmRfiHhjniX7e3rsT+dYUWjjr+ZLqWyzAkYoySuDqAD+qi1bsPlLX3SSTi4GhojwtWkJCc3dj95goDXWQIEPcj7P6MguWPH7TP3MF5wNZpCVCwXl1/UppAcgVXjioQHItMoEQUXpxp+njQkgqjS7KYNBEKMptTnI
-X-MS-Office365-Filtering-Correlation-Id: df9e9ed2-0c0b-45b6-df7c-08d5a8eb1a64
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2018 07:23:24.4361 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: df9e9ed2-0c0b-45b6-df7c-08d5a8eb1a64
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2625;7:HDF8PfZIvsxFoC6vmST04GbFy5f/+gd636fFUFSCcXlPqhfEKYlKchv+4rBMRWxP5dX4LcrXUfgBmQ+rze9sifIelRXiEZUOCNVWvIbOBUqai4mzakCq7l/9De+WfaQG5ZXSomB7YyFeSGwO1jNeFjiLespMbfKg5Oudb/9JB2FyZnUNYeiSaM1fVHeWVrdOp1V7yelFl/DoLlNqyT/iBukXu3g4SEwd58fxEVQyAMTdOpKfZY7dxhD7S43/ixoN
+X-MS-Office365-Filtering-Correlation-Id: 0849615e-97c6-4a42-0544-08d5a8eb14cc
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2018 07:23:14.0440 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0849615e-97c6-4a42-0544-08d5a8eb14cc
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0202MB2774
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB2625
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With bus-type/bus-width properties in the endpoint nodes, the video-
-interface of the connection can be specified for cases where the
-heuristic fails to select the correct output mode. This can happen
-e.g. if not all RGB pins are routed on the PCB; the driver has no
-way of knowing this, and needs to be told explicitly.
+From: Jingju Hou <Jingju.Hou@synaptics.com>
 
-This is critical for the devices that have the "conflicting output
-formats" issue (SAM9N12, SAM9X5, SAMA5D3), since the most significant
-RGB bits move around depending on the selected output mode. For
-devices that do not have the "conflicting output formats" issue
-(SAMA5D2, SAMA5D4), this is completely irrelevant.
+If WOL event happened once, the LED[2] interrupt pin will not be
+cleared unless we read the CSISR register. If interrupts are in use,
+the normal interrupt handling will clear the WOL event. Let's clear the
+WOL event before enabling it if !phy_interrupt_is_valid().
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 ---
- .../devicetree/bindings/display/atmel/hlcdc-dc.txt | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Since v1:
+ - reuse MII_M1011_IEVENT, suggested by Bhadram Varka
+ - make read conditional on !phy_interrupt_is_valid(), suggested by
+   Andrew
+ drivers/net/phy/marvell.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-index 82f2acb3d374..9de434a8f523 100644
---- a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-+++ b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
-@@ -15,6 +15,14 @@ Required children nodes:
-  to external devices using the OF graph reprensentation (see ../graph.txt).
-  At least one port node is required.
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index c22e8e383247..25e2a099b71c 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -1393,6 +1393,15 @@ static int m88e1318_set_wol(struct phy_device *phydev,
+ 		if (err < 0)
+ 			goto error;
  
-+Optional properties in grandchild nodes:
-+ Any endpoint grandchild node may specify a desired video interface
-+ according to ../../media/video-interfaces.txt, specifically
-+ - bus-type: must be <0>.
-+ - bus-width: recognized values are <12>, <16>, <18> and <24>, and
-+   override any output mode selection heuristic, forcing "rgb444",
-+   "rgb565", "rgb666" and "rgb888" respectively.
++		/* If WOL event happened once, the LED[2] interrupt pin
++		 * will not be cleared unless we reading the interrupt status
++		 * register. If interrupts are in use, the normal interrupt
++		 * handling will clear the WOL event. Clear the WOL event
++		 * before enabling it if !phy_interrupt_is_valid()
++		 */
++		if (!phy_interrupt_is_valid(phydev))
++			phy_read(phydev, MII_M1011_IEVENT);
 +
- Example:
- 
- 	hlcdc: hlcdc@f0030000 {
-@@ -50,3 +58,21 @@ Example:
- 			#pwm-cells = <3>;
- 		};
- 	};
-+
-+
-+Example 2: With a video interface override to force rgb565; as above
-+but with these changes/additions:
-+
-+	&hlcdc {
-+		hlcdc-display-controller {
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb565>;
-+
-+			port@0 {
-+				hlcdc_panel_output: endpoint@0 {
-+					bus-type = <0>;
-+					bus-width = <16>;
-+				};
-+			};
-+		};
-+	};
+ 		/* Enable the WOL interrupt */
+ 		err = __phy_modify(phydev, MII_88E1318S_PHY_CSIER, 0,
+ 				   MII_88E1318S_PHY_CSIER_WOL_EIE);
 -- 
-2.11.0
+2.17.0
