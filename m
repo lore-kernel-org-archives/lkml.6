@@ -1,47 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755737AbeDWONJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:13:09 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37931 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755526AbeDWOLN (ORCPT
+        id S1755549AbeDWONx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:13:53 -0400
+Received: from mail-ot0-f180.google.com ([74.125.82.180]:37126 "EHLO
+        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755495AbeDWOLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:11:13 -0400
-From: Philippe Cornu <philippe.cornu@st.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Andrzej Hajda <a.hajda@samsung.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH 0/4] drm/panel: otm8009a: backlight fixes & improvements
-Date: Mon, 23 Apr 2018 16:10:49 +0200
-Message-ID: <20180423141054.13128-1-philippe.cornu@st.com>
-X-Mailer: git-send-email 2.15.1
+        Mon, 23 Apr 2018 10:11:05 -0400
+X-Google-Smtp-Source: AIpwx49GThsVtz2QcfLGLuPJsS4V6FPC23xxNVrjtSQxRtD9jM+D15f58lmzT9fPCrmi66SuVKnCZJi7qwcarsTXCpM=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.32]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
- signatures=0
+In-Reply-To: <20180419110056.10342-2-rui.silva@linaro.org>
+References: <20180419110056.10342-1-rui.silva@linaro.org> <20180419110056.10342-2-rui.silva@linaro.org>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 23 Apr 2018 11:11:03 -0300
+Message-ID: <CAOMZO5A3+WMu+U5STP-z3qdXnUQN2yTJne2OV9-SrEs70JJyDA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] media: ov2680: dt: Add bindings for OV2680
+To: Rui Miguel Silva <rui.silva@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch serie fixes 2 backlight issues and adds the new
-backlight api support.
+Hi Rui,
 
-Philippe Cornu (4):
-  drm/panel: otm8009a: fix backlight updates
-  drm/panel: otm8009a: fix glitches by moving backlight enable to
-    otm8009a_enable()
-  drm/panel: otm8009a: no message if probe success
-  drm/panel: otm8009a: use new backlight api
+On Thu, Apr 19, 2018 at 8:00 AM, Rui Miguel Silva <rui.silva@linaro.org> wrote:
 
- drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 58 ++++++++++++------------
- 1 file changed, 30 insertions(+), 28 deletions(-)
+> +Optional Properties:
+> +- powerdown-gpios: reference to the GPIO connected to the powerdown pin,
+> +                    if any. This is an active high signal to the OV2680.
 
--- 
-2.15.1
+I looked at the OV2680 datasheet and I see a pin called XSHUTDN, which has
+the following description:
+
+XSHUTDN: reset and power down (active low with internal pull down resistor)
+
+So it should be active low, not active high.
