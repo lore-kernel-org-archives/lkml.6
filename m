@@ -1,108 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754116AbeDWFhl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 01:37:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60456 "EHLO mx1.redhat.com"
+        id S1751460AbeDWFmW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 01:42:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50718 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752968AbeDWFf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 01:35:28 -0400
+        id S1751233AbeDWFmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 01:42:21 -0400
+Subject: Re: [RFC v2] virtio: support packed ring
+To: Tiwei Bie <tiwei.bie@intel.com>, mst@redhat.com, wexu@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: jfreimann@redhat.com
+References: <20180401141216.8969-1-tiwei.bie@intel.com>
 From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com, jasowang@redhat.com
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tiwei.bie@intel.com, jfreimann@redhat.com, wexu@redhat.com
-Subject: [RFC V3 PATCH 4/8] vhost_net: do not explicitly manipulate vhost_used_elem
-Date: Mon, 23 Apr 2018 13:34:56 +0800
-Message-Id: <1524461700-5469-5-git-send-email-jasowang@redhat.com>
-In-Reply-To: <1524461700-5469-1-git-send-email-jasowang@redhat.com>
-References: <1524461700-5469-1-git-send-email-jasowang@redhat.com>
+Message-ID: <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
+Date: Mon, 23 Apr 2018 13:42:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180401141216.8969-1-tiwei.bie@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two helpers of setting/getting used len were introduced to avoid
-explicitly manipulating vhost_used_elem in zerocopy code. This will be
-used to hide used_elem internals and simplify packed ring
-implementation.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c   | 11 +++++------
- drivers/vhost/vhost.c | 12 ++++++++++--
- drivers/vhost/vhost.h |  5 +++++
- 3 files changed, 20 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 3826f1f..30273ad 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -341,9 +341,10 @@ static void vhost_zerocopy_signal_used(struct vhost_net *net,
- 	int j = 0;
- 
- 	for (i = nvq->done_idx; i != nvq->upend_idx; i = (i + 1) % UIO_MAXIOV) {
--		if (vq->heads[i].elem.len == VHOST_DMA_FAILED_LEN)
-+		if (vhost_get_used_len(vq, &vq->heads[i]) ==
-+		    VHOST_DMA_FAILED_LEN)
- 			vhost_net_tx_err(net);
--		if (VHOST_DMA_IS_DONE(vq->heads[i].elem.len)) {
-+		if (VHOST_DMA_IS_DONE(vhost_get_used_len(vq, &vq->heads[i]))) {
- 			vq->heads[i].elem.len = VHOST_DMA_CLEAR_LEN;
- 			++j;
- 		} else
-@@ -542,10 +543,8 @@ static void handle_tx(struct vhost_net *net)
- 			struct ubuf_info *ubuf;
- 			ubuf = nvq->ubuf_info + nvq->upend_idx;
- 
--			vq->heads[nvq->upend_idx].elem.id =
--				cpu_to_vhost32(vq, used.elem.id);
--			vq->heads[nvq->upend_idx].elem.len =
--				VHOST_DMA_IN_PROGRESS;
-+			vhost_set_used_len(vq, &used, VHOST_DMA_IN_PROGRESS);
-+			vq->heads[nvq->upend_idx] = used;
- 			ubuf->callback = vhost_zerocopy_callback;
- 			ubuf->ctx = nvq->ubufs;
- 			ubuf->desc = nvq->upend_idx;
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 24f3013..5cc1cdb 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2099,11 +2099,19 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
- }
- EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
- 
--static void vhost_set_used_len(struct vhost_virtqueue *vq,
--			       struct vhost_used_elem *used, int len)
-+void vhost_set_used_len(struct vhost_virtqueue *vq,
-+			struct vhost_used_elem *used, int len)
- {
- 	used->elem.len = cpu_to_vhost32(vq, len);
- }
-+EXPORT_SYMBOL_GPL(vhost_set_used_len);
-+
-+int vhost_get_used_len(struct vhost_virtqueue *vq,
-+		       struct vhost_used_elem *used)
-+{
-+	return vhost32_to_cpu(vq, used->elem.len);
-+}
-+EXPORT_SYMBOL_GPL(vhost_get_used_len);
- 
- /* This is a multi-buffer version of vhost_get_desc, that works if
-  *	vq has read descriptors only.
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 8dea44b..604821b 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -198,6 +198,11 @@ int vhost_get_bufs(struct vhost_virtqueue *vq,
- 		   unsigned *log_num,
- 		   unsigned int quota,
- 		   s16 *count);
-+void vhost_set_used_len(struct vhost_virtqueue *vq,
-+			struct vhost_used_elem *used,
-+			int len);
-+int vhost_get_used_len(struct vhost_virtqueue *vq,
-+		       struct vhost_used_elem *used);
- void vhost_discard_vq_desc(struct vhost_virtqueue *, int n);
- 
- int vhost_vq_init_access(struct vhost_virtqueue *);
--- 
-2.7.4
+On 2018年04月01日 22:12, Tiwei Bie wrote:
+> Hello everyone,
+>
+> This RFC implements packed ring support for virtio driver.
+>
+> The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
+> by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
+> Minor changes are needed for the vhost code, e.g. to kick the guest.
+>
+> TODO:
+> - Refinements and bug fixes;
+> - Split into small patches;
+> - Test indirect descriptor support;
+> - Test/fix event suppression support;
+> - Test devices other than net;
+>
+> RFC v1 -> RFC v2:
+> - Add indirect descriptor support - compile test only;
+> - Add event suppression supprt - compile test only;
+> - Move vring_packed_init() out of uapi (Jason, MST);
+> - Merge two loops into one in virtqueue_add_packed() (Jason);
+> - Split vring_unmap_one() for packed ring and split ring (Jason);
+> - Avoid using '%' operator (Jason);
+> - Rename free_head -> next_avail_idx (Jason);
+> - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+> - Some other refinements and bug fixes;
+>
+> Thanks!
+>
+> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> ---
+>   drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
+>   include/linux/virtio_ring.h        |    8 +-
+>   include/uapi/linux/virtio_config.h |   12 +-
+>   include/uapi/linux/virtio_ring.h   |   61 ++
+>   4 files changed, 980 insertions(+), 195 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 71458f493cf8..0515dca34d77 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -58,14 +58,15 @@
+>   
+
+[...]
+
+> +
+> +	if (vq->indirect) {
+> +		u32 len;
+> +
+> +		desc = vq->desc_state[head].indir_desc;
+> +		/* Free the indirect table, if any, now that it's unmapped. */
+> +		if (!desc)
+> +			goto out;
+> +
+> +		len = virtio32_to_cpu(vq->vq.vdev,
+> +				      vq->vring_packed.desc[head].len);
+> +
+> +		BUG_ON(!(vq->vring_packed.desc[head].flags &
+> +			 cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_INDIRECT)));
+
+It looks to me spec does not force to keep VRING_DESC_F_INDIRECT here. 
+So we can safely remove this BUG_ON() here.
+
+> +		BUG_ON(len == 0 || len % sizeof(struct vring_packed_desc));
+
+Len could be ignored for used descriptor according to the spec, so we 
+need remove this BUG_ON() too.
+
+The reason is we don't touch descriptor ring in the case of split, so 
+BUG_ON()s may help there.
+
+> +
+> +		for (j = 0; j < len / sizeof(struct vring_packed_desc); j++)
+> +			vring_unmap_one_packed(vq, &desc[j]);
+> +
+> +		kfree(desc);
+> +		vq->desc_state[head].indir_desc = NULL;
+> +	} else if (ctx) {
+> +		*ctx = vq->desc_state[head].indir_desc;
+> +	}
+> +
+> +out:
+> +	return vq->desc_state[head].num;
+> +}
+> +
+> +static inline bool more_used_split(const struct vring_virtqueue *vq)
+>   {
+>   	return vq->last_used_idx != virtio16_to_cpu(vq->vq.vdev, vq->vring.used->idx);
+>   }
+>   
+> +static inline bool more_used_packed(const struct vring_virtqueue *vq)
+> +{
+> +	u16 last_used, flags;
+> +	bool avail, used;
+> +
+> +	if (vq->vq.num_free == vq->vring_packed.num)
+> +		return false;
+> +
+> +	last_used = vq->last_used_idx;
+> +	flags = virtio16_to_cpu(vq->vq.vdev,
+> +				vq->vring_packed.desc[last_used].flags);
+> +	avail = flags & VRING_DESC_F_AVAIL(1);
+> +	used = flags & VRING_DESC_F_USED(1);
+> +
+> +	return avail == used;
+> +}
+
+This looks interesting, spec said:
+
+"
+Thus VIRTQ_DESC_F_AVAIL and VIRTQ_DESC_F_USED bits are different for an 
+available descriptor and
+equal for a used descriptor.
+Note that this observation is mostly useful for sanity-checking as these 
+are necessary but not sufficient
+conditions - for example, all descriptors are zero-initialized. To 
+detect used and available descriptors it is
+possible for drivers and devices to keep track of the last observed 
+value of VIRTQ_DESC_F_USED/VIRTQ_-
+DESC_F_AVAIL. Other techniques to detect 
+VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
+might also be possible.
+"
+
+So it looks to me it was not sufficient, looking at the example codes in 
+spec, do we need to track last seen used_wrap_counter here?
+
+Thanks
