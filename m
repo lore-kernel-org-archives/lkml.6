@@ -1,102 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932523AbeDWUXQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 16:23:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932399AbeDWUXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 16:23:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D20DB2178B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 23 Apr 2018 15:23:11 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Sinan Kaya <okaya@codeaurora.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        sulrich@codeaurora.org, timur@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
-Message-ID: <20180423202311.GA164898@bhelgaas-glaptop.roam.corp.google.com>
-References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
- <20180419202632.GE14063@ziepe.ca>
- <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
- <290e9530-dcde-9c10-7ae0-59ac4c509db4@codeaurora.org>
- <20180420140049.GP28657@bhelgaas-glaptop.roam.corp.google.com>
- <20180420090420.03fb1e6c@w520.home>
- <10d9cf68-29ed-d205-a25f-b8dade53cdd8@codeaurora.org>
- <20180423131044.53471670@w520.home>
+        id S1755600AbeDWUfF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 16:35:05 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:46347 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755165AbeDWUfD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 16:35:03 -0400
+X-Google-Smtp-Source: AIpwx4/or4R1669l/jHlV7ZAkmGi5tbnNoXMggm9c3Cbus76+t0Bw7uQkfkPF+HTgSDmIneRwb0blA==
+Date: Mon, 23 Apr 2018 13:35:00 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+Subject: [PATCH] mtd: nftl: Remove VLA usage
+Message-ID: <20180423203500.GA36488@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180423131044.53471670@w520.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 01:10:44PM -0600, Alex Williamson wrote:
-> On Mon, 23 Apr 2018 13:28:22 -0400
-> Sinan Kaya <okaya@codeaurora.org> wrote:
-> 
-> > On 4/20/2018 11:04 AM, Alex Williamson wrote:
-> > > Is there a concern here about whether the endpoint device driver or the
-> > > PCI core really knows better about link retraining?  This makes me
-> > > remember my unfinished (and need to revisit) Pericom quirk[1] where
-> > > errata in the PCIe switch requires that upstream and downstream links
-> > > are balanced (ie. same link rate) or else enabling ACS results in
-> > > packets not properly flowing through the switch.  If an endpoint driver
-> > > starts deciding to retrain links, overriding quirks in the PCI core,
-> > > then such topology manipulation isn't possible.  Why does the
-> > > driver .probe() function think it can retrain at a higher link rate
-> > > than PCI core?  Thanks,  
-> > 
-> > The example given is for some serdes firmware load to happen in probe and
-> > then performing a retrain to reach to a better speed.
-> > 
-> > It becomes a chicken and egg problem. 
-> > 
-> > 1. Endpoint HW trains to gen1 by default pre-boot.
-> > 2. PCI core enumerates the device.
-> > 3. Endpoint driver gets loaded
-> > 4. Driver does the firmware programming followed by a link retrain.
-> > 
-> > I think it is the responsibility of the PCI core to provide reset APIs.
-> > However, expecting endpoint drivers to be knowledgeable about hotplug is
-> > too much.
-> > 
-> > We can certainly contain AER change into pci directory by moving the slot
-> > reset function to drivers/pci.h file.
-> > 
-> > But, we need to think about what to do about VFIO and other endpoint
-> > initiated reset cases. My suggestion was to move this into a single API and
-> > remove all other APIs from include/linux/pci.h.
-> 
-> I'm a little confused about the relation between reset and retrain.
-> AIUI we can retrain the link without any sort of endpoint reset and if
-> some sort of driver/firmware setup is required on the endpoint to
-> achieve the target link speed, then I'd think we only want to retrain.
+On the quest to remove all VLAs from the kernel[1] this changes the
+check_free_sectors() routine to use the same stack buffer for both
+data byte checks (SECTORSIZE) and oob byte checks (oobsize). Since
+these regions aren't needed at the same time, they don't need to be
+consecutively allocated. Additionally, while it's possible for oobsize
+to be large, it is unlikely to be larger than the actual SECTORSIZE. As
+such, remove the VLA, adjust offsets and add a sanity check to make sure
+we never get a pathological oobsize.
 
-In hfi1, do_pcie_gen3_transition() resets the device.  I don't know if
-retraining the link would be sufficient; maybe the reset is required
-to make the device use the new firmware.  I guess we already export
-reset interfaces, so if we add a retrain interface, drivers could
-choose what they need.
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-> How this is going to work with vfio is an interesting question.  We're
-> only providing access to the device, not the link to the device.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ drivers/mtd/inftlmount.c | 11 ++++++++---
+ drivers/mtd/nftlmount.c  | 11 ++++++++---
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-> Multifunction endpoints become a big problem if one function starts
-> requesting link retraining while another is in use elsewhere.
+diff --git a/drivers/mtd/inftlmount.c b/drivers/mtd/inftlmount.c
+index aab4f68bd36f..9cdae7f0fc2e 100644
+--- a/drivers/mtd/inftlmount.c
++++ b/drivers/mtd/inftlmount.c
+@@ -334,7 +334,7 @@ static int memcmpb(void *a, int c, int n)
+ static int check_free_sectors(struct INFTLrecord *inftl, unsigned int address,
+ 	int len, int check_oob)
+ {
+-	u8 buf[SECTORSIZE + inftl->mbd.mtd->oobsize];
++	u8 buf[SECTORSIZE];
+ 	struct mtd_info *mtd = inftl->mbd.mtd;
+ 	size_t retlen;
+ 	int i;
+@@ -346,10 +346,15 @@ static int check_free_sectors(struct INFTLrecord *inftl, unsigned int address,
+ 			return -1;
+ 
+ 		if (check_oob) {
++			if (mtd->oobsize > sizeof(buf)) {
++				pr_warn("MTD oobsize > SECTORSIZE: %d\n",
++					mtd->oobsize);
++				return -1;
++			}
+ 			if(inftl_read_oob(mtd, address, mtd->oobsize,
+-					  &retlen, &buf[SECTORSIZE]) < 0)
++					  &retlen, buf) < 0)
+ 				return -1;
+-			if (memcmpb(buf + SECTORSIZE, 0xff, mtd->oobsize) != 0)
++			if (memcmpb(buf, 0xff, mtd->oobsize) != 0)
+ 				return -1;
+ 		}
+ 		address += SECTORSIZE;
+diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
+index a6fbfa4e5799..e6eba7f3fdf5 100644
+--- a/drivers/mtd/nftlmount.c
++++ b/drivers/mtd/nftlmount.c
+@@ -272,7 +272,7 @@ static int memcmpb(void *a, int c, int n)
+ static int check_free_sectors(struct NFTLrecord *nftl, unsigned int address, int len,
+ 			      int check_oob)
+ {
+-	u8 buf[SECTORSIZE + nftl->mbd.mtd->oobsize];
++	u8 buf[SECTORSIZE];
+ 	struct mtd_info *mtd = nftl->mbd.mtd;
+ 	size_t retlen;
+ 	int i;
+@@ -284,10 +284,15 @@ static int check_free_sectors(struct NFTLrecord *nftl, unsigned int address, int
+ 			return -1;
+ 
+ 		if (check_oob) {
++			if (mtd->oobsize > sizeof(buf)) {
++				pr_warn("MTD oobsize > SECTORSIZE: %d\n",
++					mtd->oobsize);
++				return -1;
++			}
+ 			if(nftl_read_oob(mtd, address, mtd->oobsize,
+-					 &retlen, &buf[SECTORSIZE]) < 0)
++					 &retlen, buf) < 0)
+ 				return -1;
+-			if (memcmpb(buf + SECTORSIZE, 0xff, mtd->oobsize) != 0)
++			if (memcmpb(buf, 0xff, mtd->oobsize) != 0)
+ 				return -1;
+ 		}
+ 		address += SECTORSIZE;
+-- 
+2.7.4
 
-Can we just make it the driver's problem by returning -EPERM if one
-function requests a retrain while another function is in use?
 
-Bjorn
+-- 
+Kees Cook
+Pixel Security
