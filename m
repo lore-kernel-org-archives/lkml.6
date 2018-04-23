@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx4/KtkRwHi+5BMtfpNYRRweLkIG9Dt55cdKQraiXQU2B2WiIc3pjJ0MHioy3J6JDmahgrY53
-ARC-Seal: i=1; a=rsa-sha256; t=1524498483; cv=none;
+X-Google-Smtp-Source: AIpwx4+2Wf9Knpm5Bg6nYfkFYM3sv/3HTmbLa7X2IKarNsGZ+XOl3bZDrtk5kFRJtu7vd1LgH/PR
+ARC-Seal: i=1; a=rsa-sha256; t=1524498482; cv=none;
         d=google.com; s=arc-20160816;
-        b=TeYySKo92zV6vg+Kvr70/b38UXy0IBwyZuuyCDHzonYsgBQZ3yefziGpaUaoIow5e1
-         pJyRnHyDhO1wiiwHx3DeH01PS3rGJRHNHzS3rLa9ds0bOE20argcZLizFVnhKIX3vLIn
-         JIIHcxcccXzakXXDeWF3z8W1j8MUNt6I62KC2N/eV+36oBcJbYJKq8y/D/umyCf3X90r
-         5d93c/L20PkV5purjsJjF8Z+R5KNlsVEL66RbD5goroS2c/UArhvn7+7BISer9ZBkF2e
-         aLuN+n0SCGrtzGK5BnZ0UUxrp7NKzR+KO5cUenz+IK4FOe17UA1KYFyH+lnif87/Sdsl
-         RzMw==
+        b=aVcGOzg8vt9Nm9mNG7x9AUuVWpKb1fNI2WuxLJeQVxzUV66ir0ikhEJXv2B1S/0Wee
+         /8E/GpnG9Z46/C9m2MqbDQyj2a3bjwlk4BijvDcDUYPMjsny/+M6NZPuEwklRD4dyMLF
+         vIoL7OX3cDN8YpyrnAFbtsdjSCyRJZVq7rAZo4ncHEs+MkUMVQeWcc1bqtyqKPgfmyJs
+         m6bdCrx8dHw+b4tbRbLffvXQrwaDn09Wo9vrHuZ9j6u64Ifg2rKQJdvu4FwDF7yAVSlc
+         3eiyRitWDpqf4C19XDMzjEj/eD6VUyIbbnpYK/pH6pePpDZ8tUWQFroGjQ1TzoiFKYJW
+         PEdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=v2axBOnpnXabVVkJuEFD8oEyEA4P/N4K6umsrPMrA4w=;
-        b=PZ3SJ0zz2jBygpc8oDFEXXDQNTeQW1MEsm2USR481AaliruCoO5+zus7L9n70FvM08
-         gjAGcP/80sTBv5q+pSNOMAFQU2pu7hqWRyfUDqzSoBWxhv+L6VVsfxFHNq3GLRwYd6HU
-         VUjYirEgQxpzSkaLQ71DTUO9t9+Gjzt/zrXfLsxe5lb31YUWaYW1uqga7CxzVOk9JHEh
-         lUCunNm4AQUd/takTK983fPi9zhXxTw9kLBhIXROEpWygWevyge3qgKkTO6WuwvOqX3Y
-         TAMsrNE0mxiO0p9FzZEQZDwb/HM9La5s/NFnSG5h0dNZ9K0gBM5LkWo9e0wVNh/qOos5
-         BILA==
+        bh=CliYgnZbmohA5O1xBxVSliAIvcy3J5hZOwxEIrmd3QM=;
+        b=JxbhaAtIOd6h3djzahZE1Q38rt/bGkujG48N3LZAeeeZAmKf7H/XhAtxphFuhC4l/6
+         4Ue1d3kbuM4N0lRb1q+0eMNY4m5IM/q84pD8kIWYKU0I+EQbPwXKDd1zz4PkAdmG5TQx
+         WKAGyyb6xCpHKNk4GMERGO/Q0rNPYuqZryitsBOJpMFbM+IZbqs3JIIOz539/oM0eXmq
+         64/a6FZfPgJsYl6cNIlHCN780gr7CuFQZP0ysaBDDflqsmEdsuFhBPIe/qmTPXRAl07r
+         7vxzrRvEDGaNLCX2vZ6L7TYEmkP8pQ6F8jygZFJ41F+mmx5i8GwUuREasT4SU9metllW
+         FXyw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ERnBmOLn;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=P3h+Mune;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ERnBmOLn;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=P3h+Mune;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,85 +58,39 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 31/37] x86/ldt: Reserve address-space range on 32 bit for the LDT
-Date: Mon, 23 Apr 2018 17:47:34 +0200
-Message-Id: <1524498460-25530-32-git-send-email-joro@8bytes.org>
+Subject: [PATCH 35/37] x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
+Date: Mon, 23 Apr 2018 17:47:38 +0200
+Message-Id: <1524498460-25530-36-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552522055269667?=
-X-GMAIL-MSGID: =?utf-8?q?1598552522055269667?=
+X-GMAIL-THRID: =?utf-8?q?1598552520514660983?=
+X-GMAIL-MSGID: =?utf-8?q?1598552520514660983?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Reserve 2MB/4MB of address-space for mapping the LDT to
-user-space on 32 bit PTI kernels.
+Allow PTI to be compiled on x86_32.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_32_types.h | 7 +++++--
- arch/x86/mm/dump_pagetables.c           | 9 +++++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ security/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
-index e3225e8..1fa76c9 100644
---- a/arch/x86/include/asm/pgtable_32_types.h
-+++ b/arch/x86/include/asm/pgtable_32_types.h
-@@ -50,13 +50,16 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
- 	((FIXADDR_TOT_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1))   \
- 	 & PMD_MASK)
- 
--#define PKMAP_BASE		\
-+#define LDT_BASE_ADDR		\
- 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
- 
-+#define PKMAP_BASE		\
-+	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
-+
- #ifdef CONFIG_HIGHMEM
- # define VMALLOC_END	(PKMAP_BASE - 2 * PAGE_SIZE)
- #else
--# define VMALLOC_END	(CPU_ENTRY_AREA_BASE - 2 * PAGE_SIZE)
-+# define VMALLOC_END	(LDT_BASE_ADDR - 2 * PAGE_SIZE)
- #endif
- 
- #define MODULES_VADDR	VMALLOC_START
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 23d24d1..db1d7a0 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -123,6 +123,9 @@ enum address_markers_idx {
- #ifdef CONFIG_HIGHMEM
- 	PKMAP_BASE_NR,
- #endif
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
-+	LDT_NR,
-+#endif
- 	CPU_ENTRY_AREA_NR,
- 	FIXADDR_START_NR,
- 	END_OF_SPACE_NR,
-@@ -136,6 +139,9 @@ static struct addr_marker address_markers[] = {
- #ifdef CONFIG_HIGHMEM
- 	[PKMAP_BASE_NR]		= { 0UL,		"Persistent kmap() Area" },
- #endif
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
-+	[LDT_NR]		= { 0UL,		"LDT remap" },
-+#endif
- 	[CPU_ENTRY_AREA_NR]	= { 0UL,		"CPU entry area" },
- 	[FIXADDR_START_NR]	= { 0UL,		"Fixmap area" },
- 	[END_OF_SPACE_NR]	= { -1,			NULL }
-@@ -609,6 +615,9 @@ static int __init pt_dump_init(void)
- # endif
- 	address_markers[FIXADDR_START_NR].start_address = FIXADDR_START;
- 	address_markers[CPU_ENTRY_AREA_NR].start_address = CPU_ENTRY_AREA_BASE;
-+# ifdef CONFIG_MODIFY_LDT_SYSCALL
-+	address_markers[LDT_NR].start_address = LDT_BASE_ADDR;
-+# endif
- #endif
- 	return 0;
- }
+diff --git a/security/Kconfig b/security/Kconfig
+index c430206..afa91c6 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -57,7 +57,7 @@ config SECURITY_NETWORK
+ config PAGE_TABLE_ISOLATION
+ 	bool "Remove the kernel mapping in user mode"
+ 	default y
+-	depends on X86_64 && !UML
++	depends on X86 && !UML
+ 	help
+ 	  This feature reduces the number of hardware side channels by
+ 	  ensuring that the majority of kernel addresses are not mapped
 -- 
 2.7.4
