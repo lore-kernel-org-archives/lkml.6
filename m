@@ -1,142 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754237AbeDWIQQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:16:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56558 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754045AbeDWIQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:16:11 -0400
-Date: Mon, 23 Apr 2018 10:16:09 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 06/11] ARM: sunxi: Add initialization of CNTVOFF
-Message-ID: <20180423081609.dirsitco3aeaqztx@flea>
-References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
- <20180420211022.11759-7-mylene.josserand@bootlin.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7qoatix34pogn6m2"
-Content-Disposition: inline
-In-Reply-To: <20180420211022.11759-7-mylene.josserand@bootlin.com>
-User-Agent: NeoMutt/20180323
+        id S1754260AbeDWISB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:18:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59762 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754144AbeDWIR7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 04:17:59 -0400
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH v2] perf list: Remove s390 specific strcmp_cpuid_cmp function
+Date: Mon, 23 Apr 2018 10:17:45 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18042308-0020-0000-0000-00000414CF18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042308-0021-0000-0000-000042A92A08
+Message-Id: <20180423081745.3672-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804230090
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Make the type field in pmu-events/arch/s390/mapfile.cvs
+more generic to match the created cpuid string for s390.
+The pattern also checks for the counter first version
+number and counter second version number ([13]\.[1-5])
+and the authorization field which follows. These numbers do
+not exist in the cpuid identification string when perf
+commands are executed on a z/VM environment (which does
+not support CPU counter measurement facility).
+CPUID string for LPAR:
+   cpuid : IBM,3906,704,M03,3.5,002f
+CPUID string for z/VM:
+   cpuid : IBM,2964,702,N96
 
---7qoatix34pogn6m2
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This allows the removal of s390 specific cpuid compare code
+and uses the common compare function with its regular
+expression matching algorithm.
 
-On Fri, Apr 20, 2018 at 11:10:17PM +0200, Myl=E8ne Josserand wrote:
-> Add the initialization of CNTVOFF for sun8i-a83t.
->=20
-> For boot CPU, create a new machine that handles this
-> function's call in an "init_early" callback. We need to initialize
-> CNTVOFF before the arch timer's initialization otherwise, it will
-> not be taken into account and fails to boot correctly.
-> Because of that, this function can't be called in SMP's early_initcall
-> function which is called after timer's init.
->=20
-> For secondary CPUs, add this function into secondary_startup
-> assembly entry.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
-> ---
->  arch/arm/mach-sunxi/headsmp.S |  1 +
->  arch/arm/mach-sunxi/sunxi.c   | 20 +++++++++++++++++++-
->  2 files changed, 20 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-> index 37dc772701f3..32d76be98541 100644
-> --- a/arch/arm/mach-sunxi/headsmp.S
-> +++ b/arch/arm/mach-sunxi/headsmp.S
-> @@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
-> =20
->  ENTRY(sunxi_mc_smp_secondary_startup)
->  	bl	sunxi_mc_smp_cluster_cache_enable
-> +	bl	secure_cntvoff_init
->  	b	secondary_startup
->  ENDPROC(sunxi_mc_smp_secondary_startup)
-> =20
-> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> index 5e9602ce1573..ddc439f6269b 100644
-> --- a/arch/arm/mach-sunxi/sunxi.c
-> +++ b/arch/arm/mach-sunxi/sunxi.c
-> @@ -16,6 +16,7 @@
->  #include <linux/platform_device.h>
-> =20
->  #include <asm/mach/arch.h>
-> +#include <asm/secure_cntvoff.h>
-> =20
->  static const char * const sunxi_board_dt_compat[] =3D {
->  	"allwinner,sun4i-a10",
-> @@ -62,7 +63,6 @@ MACHINE_END
->  static const char * const sun8i_board_dt_compat[] =3D {
->  	"allwinner,sun8i-a23",
->  	"allwinner,sun8i-a33",
-> -	"allwinner,sun8i-a83t",
->  	"allwinner,sun8i-h2-plus",
->  	"allwinner,sun8i-h3",
->  	"allwinner,sun8i-r40",
-> @@ -75,6 +75,24 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
->  	.dt_compat	=3D sun8i_board_dt_compat,
->  MACHINE_END
-> =20
-> +void __init sun8i_cntvoff_init(void)
-> +{
-> +#ifdef CONFIG_SMP
-> +	secure_cntvoff_init();
-> +#endif
-> +}
-> +
-> +static const char * const sun8i_cntvoff_board_dt_compat[] =3D {
-> +	"allwinner,sun8i-a83t",
-> +	NULL,
-> +};
-> +
-> +DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i-a83t board")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+---
+ tools/perf/arch/s390/util/header.c          | 18 ------------------
+ tools/perf/pmu-events/arch/s390/mapfile.csv | 10 +++++-----
+ tools/perf/util/pmu.c                       |  2 +-
+ 3 files changed, 6 insertions(+), 24 deletions(-)
 
-This name still doesn't really make much sense. It's an A83t, that's
-it.
-
-Apart from the other minor comment I had, and once that name has been
-fixed:
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---7qoatix34pogn6m2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrdlkgACgkQ0rTAlCFN
-r3RsNg/+IIHUgmXY1d9Txs9BLjRMCA5npo2bVo0roi54Xp/YirIfVf4NyeJrRuit
-aT7e7Rjo0JH4KbvAP08eWxqueQfbDJG+uSqdfCG2rudc2QnwfH5vVJLi/ubcDQ8u
-JrAZaYQOZ7d57rDdsHXu2UdItI7baoxbKpoaYTAqRca2xp9BL5m1igsPot9gBCo+
-g3opiV5pRMp0MrRzWgxAfz6RocSVlqsHCCrmRy4ePRAfAv1hs7EgzUmoCYhrX0rN
-XHR6cl/mzcZvsQHfnHgIGtBGQmZnLslqReWlXV3v3IDyrwA+huuvl/7ITNElMAb7
-djPmqOQZCZaRtErZKWSOiOpjRwG0n0cQl9l/iZcn3HDZjTW1VRXEoOmnmW07iBki
-25TUk61qHzaDetAvW1EUfpfKNB8HUnVYL3v4p9pL0rGPJ+Ys/peZHbe4mCMH+2t5
-39VUdIY4S7lM01WGppz52BqA1hnSpPvSezN4XrFZ2MRKAPycv2jwiKVvGDYxpMCN
-vQw5WywK5jmqwV/9iqfbAyYhZ4IThJYE8SVjKL2lzzxj2ZmIbSRjnzT+L5YppSvT
-yqq/PMcS2Dy9F+Y20FblEkTrdSF4tC1WqAU+R9iEsNoxP51FC1DAoZ2pumcyZI0e
-bkZTx0u7iW/Qlo+98akag3WsVhnIP+DYdlOiiP/kMRWpKfveeEA=
-=Imj8
------END PGP SIGNATURE-----
-
---7qoatix34pogn6m2--
+diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
+index a4c30f1c70be..163b92f33998 100644
+--- a/tools/perf/arch/s390/util/header.c
++++ b/tools/perf/arch/s390/util/header.c
+@@ -146,21 +146,3 @@ char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+ 		zfree(&buf);
+ 	return buf;
+ }
+-
+-/*
+- * Compare the cpuid string returned by get_cpuid() function
+- * with the name generated by the jevents file read from
+- * pmu-events/arch/s390/mapfile.csv.
+- *
+- * Parameter mapcpuid is the cpuid as stored in the
+- * pmu-events/arch/s390/mapfile.csv. This is just the type number.
+- * Parameter cpuid is the cpuid returned by function get_cpuid().
+- */
+-int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+-{
+-	char *cp = strchr(cpuid, ',');
+-
+-	if (cp == NULL)
+-		return -1;
+-	return strncmp(cp + 1, mapcpuid, strlen(mapcpuid));
+-}
+diff --git a/tools/perf/pmu-events/arch/s390/mapfile.csv b/tools/perf/pmu-events/arch/s390/mapfile.csv
+index ca7682748a4b..af6386ba3df4 100644
+--- a/tools/perf/pmu-events/arch/s390/mapfile.csv
++++ b/tools/perf/pmu-events/arch/s390/mapfile.csv
+@@ -1,6 +1,6 @@
+ Family-model,Version,Filename,EventType
+-209[78],1,cf_z10,core
+-281[78],1,cf_z196,core
+-282[78],1,cf_zec12,core
+-296[45],1,cf_z13,core
+-3906,3,cf_z14,core
++^IBM.209[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z10,core
++^IBM.281[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z196,core
++^IBM.282[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_zec12,core
++^IBM.296[45].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z13,core
++^IBM.390[67].*[13]\.[1-5].[[:xdigit:]]+$,3,cf_z14,core
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 8675ddf558c6..08e39197c77d 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -586,7 +586,7 @@ char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+  * cpuid string generated on this platform.
+  * Otherwise return non-zero.
+  */
+-int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
++int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+ {
+ 	regex_t re;
+ 	regmatch_t pmatch[1];
+-- 
+2.14.3
