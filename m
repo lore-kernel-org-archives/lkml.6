@@ -1,99 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932084AbeDWOsW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:48:22 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:52695 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755198AbeDWOsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:48:13 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
-        Ondrej Jirman <megous@megous.com>, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 3/3] ARM: dts: sun8i: h3: Add SY8106A regulator to Orange Pi PC
-Date: Mon, 23 Apr 2018 22:46:57 +0800
-Message-Id: <20180423144657.63264-4-icenowy@aosc.io>
-In-Reply-To: <20180423144657.63264-1-icenowy@aosc.io>
-References: <20180423144657.63264-1-icenowy@aosc.io>
+        id S1755599AbeDWOss (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:48:48 -0400
+Received: from sonic309-38.consmr.mail.ir2.yahoo.com ([77.238.179.96]:39967
+        "EHLO sonic309-38.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755370AbeDWOsr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 10:48:47 -0400
+X-YMail-OSG: 3l7RY_sVM1kZYzebqYG_._8AFVZxOItKWfgJq8gDHzEy6BQfA9hlBp68c_XLS7V
+ iY8Kj_IhZAxeRCD1RW3ysK8q6nP.zzHCLtAMvi9o0XFek7Hyj8lfFt7YlAYPuyirpR5tdhnehesi
+ DgoSlcw1FrtPE5GqyyqI8xLF0tBTiAuuaV3ixlwegiIrml5B1fXlwlW7CTmnQbPxbw3G4X128qUf
+ xIuN_5UCLh2aPWxXtZHdy2XfKh3LL2o3IERWnxAHLxT93dLa15PtlD36JWGfNojKgW8OXQpHkSWi
+ WYjs7a2cei.skjQq1Ma8PyLNlTeedP7XoLHCmGZv_wtZvxkK7Qcd5ODYZv74tIn.yYZdIu2QfSY_
+ XXjIGfqbc9vKm6zM16bHNsEgzN6OSAEmKx1NntSgkia.SehiHRHd7WNuP92GoamlNeljqhptZl1s
+ sD3B0G1LcL28MwPkANaxo1JeEh2DUL565QrHDlQwoXFi3RVjeg9yuY0xNTTNmtP5oHFOptImCBIR
+ a5d8_irCOscsUXQw6Yt4NFLCG1xhtw7DZeOip5CTc8sBLNrRt
+Date: Mon, 23 Apr 2018 14:48:41 +0000 (UTC)
+From: Gianfranco Costamagna <locutusofborg@debian.org>
+Reply-To: Gianfranco Costamagna <locutusofborg@debian.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Antonio Rosario Intilisano <antonio.intilisano@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "vger@kernel.org" <vger@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chris Chiu <chiu@endlessm.com>, Daniel Drake <drake@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Message-ID: <1690760144.5633578.1524494921916@mail.yahoo.com>
+In-Reply-To: <CAHp75VdSOGnN5=yxkk1m3=7rBKR1PU3NfO6QNp7wYR7Qx6mWkA@mail.gmail.com>
+References: <20180420212641.30338-1-antonio.intilisano@gmail.com> <a62dded5-0fa9-1a6e-dd71-3e03cc311f1f@debian.org> <CAHp75VdSOGnN5=yxkk1m3=7rBKR1PU3NfO6QNp7wYR7Qx6mWkA@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: acer-wmi: add another KEY_POWER keycode
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.11782 YahooMailNeo Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:59.0) Gecko/20100101 Firefox/59.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Jirman <megous@megous.com>
+Hello,
 
-Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
-Orange Pi PC, then set the power supply of the ARM cores to this
-regulator, in order to enable DVFS.
+>Can you give your corresponding tag as well?
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
-[Icenowy: Enable DVFS in this patch, slight changes and change commit
- message]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-[wens@csie.org: Rename regulator label]
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-Changes in v3:
-- Renamed regulator label (by Chen-Yu Tsai).
-- Added the fixed mode voltage number.
 
-Changes in v2:
-- Reduce maximum voltage to 1.3V.
-- Slightly changed the comment at 1.0V minimum voltage for taking BSP
-  DVFS table instead of Armbian one.
+we are implementing the fix right now, please follow bug
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1766054
 
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-index cea4d647ecbf..46240334128f 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-@@ -113,6 +113,10 @@
- 	status = "okay";
- };
- 
-+&cpu0 {
-+	cpu-supply = <&reg_vdd_cpux>;
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -182,6 +186,30 @@
- 	};
- };
- 
-+&r_i2c {
-+	status = "okay";
-+
-+	reg_vdd_cpux: regulator@65 {
-+		compatible = "silergy,sy8106a";
-+		reg = <0x65>;
-+		regulator-name = "vdd-cpux";
-+		silergy,fixed-microvolt = <1200000>;
-+		/*
-+		 * The datasheet uses 1.1V as the minimum value of VDD-CPUX,
-+		 * however both the Armbian DVFS table and the official one
-+		 * have operating points with voltage under 1.1V, and both
-+		 * DVFS table are known to work properly at the lowest
-+		 * operating point.
-+		 *
-+		 * Use 1.0V as the minimum voltage instead.
-+		 */
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
- &r_pio {
- 	leds_r_opc: led_pins {
- 		pins = "PL10";
--- 
-2.15.1
+G.
