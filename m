@@ -1,179 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751535AbeDWGoh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:44:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51198 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753009AbeDWGoe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:44:34 -0400
+        id S1753121AbeDWGqP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:46:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751324AbeDWGqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 02:46:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9075F217BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AIpwx48/TlT9hILVdP1MNiD/ZC3bixm7NbEYP6qxesdK3F6xSNLSqBgrqgrHaxLpr+8zKxmVURfIs6PS9RbvAu8lcvQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Mon, 23 Apr 2018 12:14:32 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
- parameter
-In-Reply-To: <20180422183440.3ce7e7aa@xps13>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
- <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
- <20180406143133.67f33d33@xps13>
- <23c8330d00d4d9b62c4c1ab597cbb22b@codeaurora.org>
- <20180410094657.63ac7ec9@xps13> <20180410095558.34c4d91f@xps13>
- <20180410100745.625d66f8@bbrezillon>
- <c1cb40d0d24e50657308a40bb8398d35@codeaurora.org>
- <20180422183440.3ce7e7aa@xps13>
-Message-ID: <689fa334d7105e251463e58e1aef3ec8@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <20180422230742.3729-5-linus.walleij@linaro.org>
+References: <20180422230742.3729-1-linus.walleij@linaro.org> <20180422230742.3729-5-linus.walleij@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 23 Apr 2018 08:46:11 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcasYujyBAN7zbsmE0rZXquP2dL_9fr1ZM+nCun3G-UrA@mail.gmail.com>
+Message-ID: <CAJKOXPcasYujyBAN7zbsmE0rZXquP2dL_9fr1ZM+nCun3G-UrA@mail.gmail.com>
+Subject: Re: [PATCH 05/18 v2] regulator: max77686: Pass descriptor instead of
+ GPIO number
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-22 22:04, Miquel Raynal wrote:
-> Hi Abhishek,
-> 
-> On Thu, 12 Apr 2018 15:29:48 +0530, Abhishek Sahu
-> <absahu@codeaurora.org> wrote:
-> 
->> On 2018-04-10 13:37, Boris Brezillon wrote:
->> > On Tue, 10 Apr 2018 09:55:58 +0200
->> > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
->> > >> > Hi Abhishek,
->> >> >
->> >> > On Tue, 10 Apr 2018 11:39:35 +0530, Abhishek Sahu
->> >> > <absahu@codeaurora.org> wrote:
->> >> >
->> >> > > On 2018-04-06 18:01, Miquel Raynal wrote:
->> >> > > > Hi Abhishek,
->> >> > > >
->> >> > > > On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
->> >> > > > <absahu@codeaurora.org> wrote:
->> >> > > >
->> >> > > >> Currently the driver uses the ECC strength specified in
->> >> > > >> device tree. The ONFI or JEDEC device parameter page
->> >> > > >> contains the ‘ECC correctability’ field which indicates the
->> >> > > >> number of bits that the host should be able to correct per
->> >> > > >> 512 bytes of data.
->> >> > > >
->> >> > > > This is misleading. This field is not about the controller but rather
->> >> > > > the chip requirements in terms of minimal strength for nominal use.
->> >> > > >
->> >> > >
->> >> > >   Thanks Miquel.
->> >> > >
->> >> > >   Yes. Its NAND chip requirement. I have used the description for
->> >> > >   NAND ONFI param page
->> >> > >
->> >> > >   5.6.1.24. Byte 112: Number of bits ECC correctability
->> >> > >   This field indicates the number of bits that the host should be
->> >> > >   able to correct per 512 bytes of data.
->> >> > >
->> >> > > >> The ecc correctability is assigned in
->> >> > > >> chip parameter during device probe time. QPIC/EBI2 NAND
->> >> > > >> supports 4/8-bit ecc correction. The Same kind of board
->> >> > > >> can have different NAND parts so use the ecc strength
->> >> > > >> from device parameter (if its non zero) instead of
->> >> > > >> device tree.
->> >> > > >
->> >> > > > That is not what you do.
->> >> > > >
->> >> > > > What you do is forcing the strength to be 8-bit per ECC chunk if the
->> >> > > > NAND chip requires at least 8-bit/chunk strength.
->> >> > > >
->> >> > > > The DT property is here to force a strength. Otherwise, Linux will
->> >> > > > propose to the NAND controller to use the minimum strength required by
->> >> > > > the chip (from either the ONFI/JEDEC parameter page or from a static
->> >> > > > table).
->> >> > > >
->> >> > >
->> >> > >   The main problem is that the same kind of boards can have different
->> >> > >   NAND parts.
->> >> > >
->> >> > >   Lets assume, we have following 2 cases.
->> >> > >
->> >> > >   1. Non ONFI/JEDEC device for which chip->ecc_strength_ds
->> >> > >      will be zero. In this case, the ecc->strength from DT
->> >> > >      will be used
->> >> >
->> >> > No, the strength from DT will always be used if the property is
->> >> > present, no matter the type of chip.
->> >> >
->> >> > >   2. ONFI/JEDEC device for which chip->ecc_strength_ds > 8.
->> >> > >      Since QCOM nand controller can not support
->> >> > >      ECC correction greater than 8 bits so we can use 8 bit ECC
->> >> > >      itself instead of failing NAND boot completely.
->> >> >
->> >> > I understand that. But this is still not what you do.
->> >> >
->> >> > >
->> >> > > > IMHO, you have two solutions:
->> >> > > > 1/ Remove these properties from the board DT (breaks DT backward
->> >> > > > compatibility though);
->> >> > >
->> >> > >   - nand-ecc-strength: This is optional property in nand.txt and
->> >> > >     Required property in qcom_nandc.txt.
->> >> >
->> >> > Well, this property is not controller specific but chip specific. The
->> >> > controller driver does not rely on it, so this property should not be
->> >> > required.
->> >> >
->> >> > > We can't remove since
->> >> > >     if the device is Non ONFI/JEDEC, then ecc strength will come
->> >> > >     from DT only.
->> >> >
->> >> > We can remove it and let the core handle this (as this is generic to
->> >> > all raw NANDs and not specific to this controller driver). Try it out!
->> 
->>   Thanks Boris and Miquel for your inputs.
->> 
->>   Just want to confirm if already its implemented in core layer
->>   or shall I explore regrading this option.
->> 
->>   I checked by removing this property alone from dtsi and it was
->>   failing with
->> 
->>   "Driver must set ecc.strength when using hardware ECC"
->> 
->>   I checked the code in nand_base.c also but couldn't get
->>   anything related with this.
-> 
-> I don't know exactly what you did but you should have a look at what
-> lead you to this path:
-> https://elixir.bootlin.com/linux/v4.17-rc1/source/drivers/mtd/nand/raw/nand_base.c#L6421
-> 
+On Mon, Apr 23, 2018 at 1:07 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Instead of passing a global GPIO number, pass a descriptor looked
+> up from the device tree configuration node.
+>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Rebase the patch on the other changes.
+> ---
+>  drivers/regulator/max77686-regulator.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
+> index c301f3733475..5ebd06f47e6a 100644
+> --- a/drivers/regulator/max77686-regulator.c
+> +++ b/drivers/regulator/max77686-regulator.c
+> @@ -25,8 +25,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/bug.h>
+>  #include <linux/err.h>
+> -#include <linux/gpio.h>
+> -#include <linux/of_gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/driver.h>
+> @@ -90,6 +89,7 @@ enum max77686_ramp_rate {
+>  };
+>
+>  struct max77686_data {
+> +       struct device *dev;
+>         DECLARE_BITMAP(gpio_enabled, MAX77686_REGULATORS);
+>
+>         /* Array indexed by regulator id */
+> @@ -269,16 +269,20 @@ static int max77686_of_parse_cb(struct device_node *np,
+>         case MAX77686_BUCK8:
+>         case MAX77686_BUCK9:
+>         case MAX77686_LDO20 ... MAX77686_LDO22:
+> -               config->ena_gpio = of_get_named_gpio(np,
+> -                                       "maxim,ena-gpios", 0);
+> -               config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
+> -               config->ena_gpio_initialized = true;
+> +               config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
+> +                                                               np,
+> +                                                               "maxim,ena",
+> +                                                               0,
+> +                                                               GPIOD_OUT_HIGH,
+> +                                                               "max77686-LDO");
+> +               if (IS_ERR(config->ena_gpiod))
+> +                       return PTR_ERR(config->ena_gpiod);
 
-  Our driver supports both ECC strength 4 bits and 8 bits
-  and normally till now, we need to specify the ecc strength in device 
-tree.
+Both my previous comments remain not addressed:
+1. Name: This is also for bucks so how about naming it "max77686-regulator"?
+2. Error path here is not equivalent to old code and results in using
+default driver's init data. Instead I would prefer to just ignore the
+gpio.
 
-  Now, since same board can have different ECC strength chip so we
-  can't fix the ecc strength in device tree and we need to look
-  the required correction in ONFI param.
+Best regards,
+Krzysztof
 
-  We can have some code in generic layer which
-
-  1. Provides the way to specify the supported strength in DT by NAND
-     controller (for our case, it is 4 and 8)
-  2. Read the chip ONFI/JEDEC Param and choose the configure to use
-     controller strength according to its requirement.
-  3. For Non ONFI/JEDEC devices, choose the maximum strength according
-     to OOB bytes.
-
-  I just want to check if we have something like this already in place
-  or I can add the same in generic code so that this can be used by
-  other drivers also.
-
-  Thanks,
-  Abhishek
+>                 break;
+>         default:
+>                 return 0;
+>         }
+>
+> -       if (gpio_is_valid(config->ena_gpio)) {
+> +       if (config->ena_gpiod) {
+>                 set_bit(desc->id, max77686->gpio_enabled);
+>
+>                 return regmap_update_bits(config->regmap, desc->enable_reg,
+> @@ -521,6 +525,7 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+>         if (!max77686)
+>                 return -ENOMEM;
+>
+> +       max77686->dev = &pdev->dev;
+>         config.dev = iodev->dev;
+>         config.regmap = iodev->regmap;
+>         config.driver_data = max77686;
+> --
+> 2.14.3
+>
