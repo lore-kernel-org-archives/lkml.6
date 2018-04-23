@@ -1,73 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754131AbeDWHrh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 03:47:37 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55085 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751510AbeDWHrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 03:47:36 -0400
-Date: Mon, 23 Apr 2018 09:47:34 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: allwinner: h6: restore the usage of CCU slice
- macros
-Message-ID: <20180423074734.rb4ddxtymbxtrpzp@flea>
-References: <20180403134024.43156-1-icenowy@aosc.io>
- <1524466728.25095.0.camel@aosc.io>
+        id S1754078AbeDWHtq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 03:49:46 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58866 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751216AbeDWHtn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 03:49:43 -0400
+Subject: Re: [PATCH 5/7] iio: adc: stm32-dfsdm: misc style improvements and
+ fixes
+To: Jonathan Cameron <jic23@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <benjamin.gaignard@linaro.org>,
+        <arnaud.pouliquen@st.com>
+References: <1519390261-25453-1-git-send-email-fabrice.gasnier@st.com>
+ <1519390261-25453-6-git-send-email-fabrice.gasnier@st.com>
+ <20180224130309.7129e79f@archlinux>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <453b8fe0-3b32-b9b7-001f-78a3b1d0b56f@st.com>
+Date: Mon, 23 Apr 2018 09:48:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="od5hmecmkchcbpwp"
-Content-Disposition: inline
-In-Reply-To: <1524466728.25095.0.camel@aosc.io>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180224130309.7129e79f@archlinux>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/24/2018 02:03 PM, Jonathan Cameron wrote:
+> On Fri, 23 Feb 2018 13:50:59 +0100
+> Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
+> 
+>> Misc fixes & style improvements:
+>> - checkpatch warns about line over 80 characters.
+>> - remove extra spaces and a blank line (e.g. checkpatch --strict)
+>> - remove bad error message always printed in probe routine.
+>>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> I'd have preferred this as 3 patches doing one type fo fix each.
+> 
+> Anyhow, I'll need to hold this until the fixes have made there
+> way upstream.  Give me a poke if I seem to have forgotten
+> and the dependencies have made it back to my togreg branch.
 
---od5hmecmkchcbpwp
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jonathan,
 
-On Mon, Apr 23, 2018 at 02:58:48PM +0800, Icenowy Zheng wrote:
-> =E5=9C=A8 2018-04-03=E4=BA=8C=E7=9A=84 21:40 +0800=EF=BC=8CIcenowy Zheng=
-=E5=86=99=E9=81=93=EF=BC=9A
-> > As the definition of CCU slice macros are already merged into the
-> > source
-> > tree, restore the usage of the macros now.
->=20
-> Maxime, could you check this patch and pick it?
+There are few pending patches in this series. I'm not sure everything
+have been merged yet.
+Do you wish I resend those patches as separate series ?
 
-Applied, thanks!
-maxime
+Please let me know,
+Thanks in advance,
+BR,
+Fabrice
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---od5hmecmkchcbpwp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrdj5UACgkQ0rTAlCFN
-r3S4uA/+LcsK/bDAliFoDSFRJ4xs1DdCE4twZ3RO3CxMuQ4IkaJaCp1La8fj65lf
-AWorEo4wHYL0OfJyyxurYlBUI1COaBdTPx2AdeV9sX6W+X+qyYzidsytSKL3PjPq
-5EZCWX503QiTbzBaDkHacUirGg735wrSDky+/GP+9cHGYcIHWkxTXegOAryEqjUj
-lG1yJebA3fpwugLJTp1URFdNoAQGjXzJ5QDID7SUJ7HfoZ2WHVmoJYzkBV64nGqy
-5qQ/rL3nMG+X/kuios/J4wbpvoJx7cLUZl9bjtjLvIWP+EM4je0EABDdYaz7Lc1j
-sniZW9aNciW9tKa4hHCDqhlqjmBU9ZQcHIZtqC7BlociWmfBEwYq3BsIsbzgGe3R
-LUxNBjXaBsrGaxZ0AB1QcU5VXxYn+Uu8NxINk3eeh519l8Y9P4KRY1OixCP+hJDa
-StNvXlK6KOpxJrjMVTT6LJsaA696wMfVuEOrf0+OzjLLRRJ1ribucC2WTLKPgKM9
-tX3Igy7ax/p/nf1pG1lF8zTkp+ciYgypa0Y3cdbsn3J7yrqtCTb038lOWxiBc0Db
-aehxkLeU6uTVb+gFr0/i7MUWtuP8WuUlLO5/tB6xLchHPymArd/L6+sLJP3rvgfT
-r5uPxE7rR4dY9oT1cM0DLysz484GTI3X645GmrFWbwcMbpe3cDU=
-=WPoO
------END PGP SIGNATURE-----
-
---od5hmecmkchcbpwp--
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+>> ---
+>>  drivers/iio/adc/stm32-dfsdm-adc.c | 9 ++++-----
+>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+>> index 01422d1..57bcb45 100644
+>> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
+>> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+>> @@ -253,7 +253,8 @@ static int stm32_dfsdm_start_filter(struct stm32_dfsdm *dfsdm,
+>>  				  DFSDM_CR1_RSWSTART(1));
+>>  }
+>>  
+>> -static void stm32_dfsdm_stop_filter(struct stm32_dfsdm *dfsdm, unsigned int fl_id)
+>> +static void stm32_dfsdm_stop_filter(struct stm32_dfsdm *dfsdm,
+>> +				    unsigned int fl_id)
+>>  {
+>>  	/* Disable conversion */
+>>  	regmap_update_bits(dfsdm->regmap, DFSDM_CR1(fl_id),
+>> @@ -337,7 +338,7 @@ static int stm32_dfsdm_channel_parse_of(struct stm32_dfsdm *dfsdm,
+>>  					    "st,adc-channel-types", chan_idx,
+>>  					    &of_str);
+>>  	if (!ret) {
+>> -		val  = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_type);
+>> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_type);
+>>  		if (val < 0)
+>>  			return val;
+>>  	} else {
+>> @@ -349,7 +350,7 @@ static int stm32_dfsdm_channel_parse_of(struct stm32_dfsdm *dfsdm,
+>>  					    "st,adc-channel-clk-src", chan_idx,
+>>  					    &of_str);
+>>  	if (!ret) {
+>> -		val  = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_src);
+>> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_src);
+>>  		if (val < 0)
+>>  			return val;
+>>  	} else {
+>> @@ -1093,7 +1094,6 @@ static int stm32_dfsdm_adc_probe(struct platform_device *pdev)
+>>  	char *name;
+>>  	int ret, irq, val;
+>>  
+>> -
+>>  	dev_data = of_device_get_match_data(dev);
+>>  	iio = devm_iio_device_alloc(dev, sizeof(*adc));
+>>  	if (!iio) {
+>> @@ -1161,7 +1161,6 @@ static int stm32_dfsdm_adc_probe(struct platform_device *pdev)
+>>  	if (ret < 0)
+>>  		goto err_cleanup;
+>>  
+>> -	dev_err(dev, "of_platform_populate\n");
+>>  	if (dev_data->type == DFSDM_AUDIO) {
+>>  		ret = of_platform_populate(np, NULL, NULL, dev);
+>>  		if (ret < 0) {
+> 
