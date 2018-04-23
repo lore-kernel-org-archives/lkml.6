@@ -1,258 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932263AbeDWQPJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:15:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:42860 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755940AbeDWQOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:14:49 -0400
-Subject: Re: [RFC 2/2] iommu/arm-smmu-v3: Support software retention for
- pm_resume
-To: Yisheng Xie <xieyisheng1@huawei.com>, will.deacon@arm.com,
-        joro@8bytes.org
-Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, liubo95@huawei.com,
-        dingtianhong@huawei.com
-References: <1524483959-54940-1-git-send-email-xieyisheng1@huawei.com>
- <1524483959-54940-3-git-send-email-xieyisheng1@huawei.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f947a71e-4348-c4f7-d900-9b75ca5bc073@arm.com>
-Date: Mon, 23 Apr 2018 17:14:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1524483959-54940-3-git-send-email-xieyisheng1@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1755987AbeDWQP4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:15:56 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44857 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932219AbeDWQPD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 12:15:03 -0400
+X-Google-Smtp-Source: AIpwx4/smDoLZpLvD0cOvHHr8EO1obRG/aEYnvuaweEAFB4igrEOgBy0pjjx2dpnOvCQJTRev2Mq0w==
+From: Jacek Tomaka <jacekt@dugeo.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org
+Cc: jacek.tomaka@poczta.fm
+Subject: [PATCH] x86/cpuid: Add missing TLB cpuid values
+Date: Tue, 24 Apr 2018 00:14:25 +0800
+Message-Id: <20180423161425.24366-1-jacekt@dugeo.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/04/18 12:45, Yisheng Xie wrote:
-> When system suspend, hisilicon's smmu will do power gating for smmu,
-> this time smmu's reg will be set to default value for not having
-> hardware retention, which means need software do the retention instead.
-> 
-> The patch is to use arm_smmu_device_reset() to restore the register of
-> smmu. However, it need to save the msis setting at probe if smmu do not
-> support hardware retention.
-> 
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
->   drivers/iommu/arm-smmu-v3.c | 69 +++++++++++++++++++++++++++++++++++++++++++--
->   1 file changed, 66 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> index 044df6e..6cb56d8 100644
-> --- a/drivers/iommu/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm-smmu-v3.c
-> @@ -534,6 +534,11 @@ struct arm_smmu_strtab_cfg {
->   	u32				strtab_base_cfg;
->   };
->   
-> +struct arm_smmu_msi_val {
-> +	u64				doorbell;
-> +	u32				data;
-> +};
+From: jacek.tomaka@poczta.fm
 
-What does this do that struct msi_msg doesn't already (apart from take 
-up more space in an array)?
+Make kernel print correct message upon boot on Intel Xeon Phi 7210 (and others).
 
-> +
->   /* An SMMUv3 instance */
->   struct arm_smmu_device {
->   	struct device			*dev;
-> @@ -558,6 +563,7 @@ struct arm_smmu_device {
->   
->   #define ARM_SMMU_OPT_SKIP_PREFETCH	(1 << 0)
->   #define ARM_SMMU_OPT_PAGE0_REGS_ONLY	(1 << 1)
-> +#define ARM_SMMU_OPT_SW_RETENTION	(1 << 2)
->   	u32				options;
->   
->   	struct arm_smmu_cmdq		cmdq;
-> @@ -587,6 +593,8 @@ struct arm_smmu_device {
->   
->   	u32				sync_count;
->   
-> +	struct arm_smmu_msi_val		*msi;
-> +	bool				probed;
+Before:
+[ 0.320005] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+After:
+[ 0.320005] Last level dTLB entries: 4KB 256, 2MB 128, 4MB 128, 1GB 16
 
-This looks really hacky. I'm sure there's probably enough driver model 
-information to be able to identify the probe state from just the struct 
-device, but that's still not the right way to go. If you need to know 
-this, then it can only mean we've got one-time software state 
-initialisation mixed in with the actual hardware reset which programs 
-the software state into the device. Thus there should be some 
-refactoring to properly separate those concerns.
+The entries do exist in the official Intel's documentation but the type column there is incorrect (states "Cache" where it should read "TLB")
+https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-2a-manual.html
 
->   	bool				bypass;
->   
->   	/* IOMMU core code handle */
-> @@ -630,6 +638,7 @@ struct arm_smmu_option_prop {
->   static struct arm_smmu_option_prop arm_smmu_options[] = {
->   	{ ARM_SMMU_OPT_SKIP_PREFETCH, "hisilicon,broken-prefetch-cmd" },
->   	{ ARM_SMMU_OPT_PAGE0_REGS_ONLY, "cavium,cn9900-broken-page1-regspace"},
-> +	{ ARM_SMMU_OPT_SW_RETENTION, "hisilicon,broken-hardware-retention" },
+Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
+---
+ arch/x86/kernel/cpu/intel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-That seems a bit over-specific - there are going to be any number of 
-SMMU implementations/integrations which may or may not implement 
-hardware retention states. More crucially, it's also backwards. Making 
-the driver assume that *every* SMMU implements hardware retention unless 
-this new DT property is present is quite obviously completely wrong, 
-especially for ACPI...
-
-The sensible thing to do is to implement suspend/resume support which 
-works in general, *then* consider optimising it for cases where 
-explicitly restoring the hardware state may be skipped (if indeed it 
-makes a significant difference). Are there not already generic DT/ACPI 
-properties for describing the retention levels of different power 
-states, which could be made use of here?
-
->   	{ 0, NULL},
->   };
->   
-> @@ -2228,7 +2237,8 @@ static void arm_smmu_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
->   	phys_addr_t doorbell;
->   	struct device *dev = msi_desc_to_dev(desc);
->   	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> -	phys_addr_t *cfg = arm_smmu_msi_cfg[desc->platform.msi_index];
-> +	int msi_index = desc->platform.msi_index;
-> +	phys_addr_t *cfg = arm_smmu_msi_cfg[msi_index];
->   
->   	doorbell = (((u64)msg->address_hi) << 32) | msg->address_lo;
->   	doorbell &= MSI_CFG0_ADDR_MASK;
-> @@ -2236,6 +2246,28 @@ static void arm_smmu_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
->   	writeq_relaxed(doorbell, smmu->base + cfg[0]);
->   	writel_relaxed(msg->data, smmu->base + cfg[1]);
->   	writel_relaxed(ARM_SMMU_MEMATTR_DEVICE_nGnRE, smmu->base + cfg[2]);
-> +
-> +	if (smmu->options & ARM_SMMU_OPT_SW_RETENTION) {
-
-The overhead of writing an extra 12 bytes per MSI to memory is entirely 
-negligible; saving the message data just doesn't warrant the complexity 
-of being conditional. In fact, given the need to untangle the IRQ 
-requests from the hardware reset, I'd rather expect to end up *only* 
-saving the message here, and writing the IRQ_CFG registers later along 
-with everything else.
-
-> +		smmu->msi[msi_index].doorbell = doorbell;
-> +		smmu->msi[msi_index].data = msg->data;
-> +	}
-> +}
-> +
-> +static void arm_smmu_restore_msis(struct arm_smmu_device *smmu)
-> +{
-> +	int nevc = ARM_SMMU_MAX_MSIS - 1;
-> +
-> +	if (!(smmu->features & ARM_SMMU_FEAT_PRI))
-> +		nevc--;
-> +
-> +	for (; nevc >= 0; nevc--) {
-> +		phys_addr_t *cfg = arm_smmu_msi_cfg[nevc];
-> +		struct arm_smmu_msi_val msi_val = smmu->msi[nevc];
-> +
-> +		writeq_relaxed(msi_val.doorbell, smmu->base + cfg[0]);
-> +		writel_relaxed(msi_val.data, smmu->base + cfg[1]);
-> +		writel_relaxed(ARM_SMMU_MEMATTR_DEVICE_nGnRE, smmu->base + cfg[2]);
-> +	}
->   }
->   
->   static void arm_smmu_setup_msis(struct arm_smmu_device *smmu)
-> @@ -2261,6 +2293,16 @@ static void arm_smmu_setup_msis(struct arm_smmu_device *smmu)
->   		return;
->   	}
->   
-> +	if (smmu->probed) {
-> +		BUG_ON(!(smmu->options & ARM_SMMU_OPT_SW_RETENTION));
-> +		arm_smmu_restore_msis(smmu);
-> +		return;
-> +	} else if (smmu->options & ARM_SMMU_OPT_SW_RETENTION) {
-> +		smmu->msi = devm_kmalloc_array(dev, nvec,
-> +					       sizeof(*(smmu->msi)),
-> +					       GFP_KERNEL);
-> +	}
-
-A single code path which either allocates an empty array *or* writes the 
-contents of that array to hardware is a clear "you're doing it wrong" 
-indicator. Yes, this definitely wants refactoring.
-
-> +
->   	/* Allocate MSIs for evtq, gerror and priq. Ignore cmdq */
->   	ret = platform_msi_domain_alloc_irqs(dev, nvec, arm_smmu_write_msi_msg);
->   	if (ret) {
-> @@ -2294,6 +2336,9 @@ static void arm_smmu_setup_unique_irqs(struct arm_smmu_device *smmu)
->   
->   	arm_smmu_setup_msis(smmu);
->   
-> +	if (smmu->probed)
-> +		return;
-> +
->   	/* Request interrupt lines */
->   	irq = smmu->evtq.q.irq;
->   	if (irq) {
-> @@ -2348,7 +2393,7 @@ static int arm_smmu_setup_irqs(struct arm_smmu_device *smmu)
->   	}
->   
->   	irq = smmu->combined_irq;
-> -	if (irq) {
-> +	if (irq && !smmu->probed) {
->   		/*
->   		 * Cavium ThunderX2 implementation doesn't not support unique
->   		 * irq lines. Use single irq line for all the SMMUv3 interrupts.
-> @@ -2360,7 +2405,7 @@ static int arm_smmu_setup_irqs(struct arm_smmu_device *smmu)
->   					"arm-smmu-v3-combined-irq", smmu);
->   		if (ret < 0)
->   			dev_warn(smmu->dev, "failed to enable combined irq\n");
-> -	} else
-> +	} else if (!irq)
->   		arm_smmu_setup_unique_irqs(smmu);
->   
->   	if (smmu->features & ARM_SMMU_FEAT_PRI)
-> @@ -2882,6 +2927,9 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
->   		if (ret)
->   			return ret;
->   	}
-> +
-> +	smmu->probed = true;
-> +
->   	return 0;
->   }
->   
-> @@ -2899,6 +2947,20 @@ static void arm_smmu_device_shutdown(struct platform_device *pdev)
->   	arm_smmu_device_remove(pdev);
->   }
->   
-> +static int arm_smmu_pm_resume(struct device *dev)
-> +{
-> +	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> +
-> +	if (smmu->options & ARM_SMMU_OPT_SW_RETENTION)
-> +		return arm_smmu_device_reset(smmu);
-
-Given the SYSTEM_SLEEP_PM_OPS below, does your hardware really preserve 
-state across hibernate/restore as well? That would be particularly 
-impressive ;)
-
-Robin.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops arm_smmu_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, arm_smmu_pm_resume)
-> +};
-> +
->   static const struct of_device_id arm_smmu_of_match[] = {
->   	{ .compatible = "arm,smmu-v3", },
->   	{ },
-> @@ -2909,6 +2971,7 @@ static void arm_smmu_device_shutdown(struct platform_device *pdev)
->   	.driver	= {
->   		.name		= "arm-smmu-v3",
->   		.of_match_table	= of_match_ptr(arm_smmu_of_match),
-> +		.pm		= &arm_smmu_pm_ops,
->   	},
->   	.probe	= arm_smmu_device_probe,
->   	.remove	= arm_smmu_device_remove,
-> 
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index b9693b80fc21..21e6cc52d56f 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -835,6 +835,9 @@ static const struct _tlb_table intel_tlb_table[] = {
+ 	{ 0x5d, TLB_DATA_4K_4M,		256,	" TLB_DATA 4 KByte and 4 MByte pages" },
+ 	{ 0x61, TLB_INST_4K,		48,	" TLB_INST 4 KByte pages, full associative" },
+ 	{ 0x63, TLB_DATA_1G,		4,	" TLB_DATA 1 GByte pages, 4-way set associative" },
++	{ 0x6b, TLB_DATA_4K, 		256, 	" TLB_DATA 4 KByte pages, 8-way associative" },
++	{ 0x6c, TLB_DATA_2M_4M, 	128, 	" TLB_DATA 2 MByte or 4 MByte pages, 8-way associative" },
++	{ 0x6d, TLB_DATA_1G, 		16, 	" TLB_DATA 1 GByte pages, fully associative" },
+ 	{ 0x76, TLB_INST_2M_4M,		8,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
+ 	{ 0xb0, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 4-way set associative" },
+ 	{ 0xb1, TLB_INST_2M_4M,		4,	" TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries" },
+-- 
+2.17.0
