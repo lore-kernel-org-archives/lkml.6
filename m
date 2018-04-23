@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754590AbeDWIYc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:24:32 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:35455 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754415AbeDWIYC (ORCPT
+        id S1754320AbeDWIYa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:24:30 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:40632 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754504AbeDWIYD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:24:02 -0400
-X-Google-Smtp-Source: AIpwx4+sEm677eXIU3rE8Wz0icX3/TyxO+8pP/tMkoVRKqBKwVH6/yoUd0olqQd6oeuBXcG2ILxLMnT2yOkHiN0VkPuBQ+nmDrPx
+        Mon, 23 Apr 2018 04:24:03 -0400
+X-Google-Smtp-Source: AIpwx49VFllC/xEZ9VNH9sWd0vKXTHDdLe4i+D7LAM9ezgBY0lVsjdQBiI7uqJFJSPUx/Jub7uO53ColgP7XZbGql99EOYTTvcUG
 MIME-Version: 1.0
 Date: Mon, 23 Apr 2018 01:24:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009f23ab056a7fc243@google.com>
-Subject: WARNING: suspicious RCU usage in rt6_check_expired
-From: syzbot <syzbot+2422c9e35796659d2273@syzkaller.appspotmail.com>
-To: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Message-ID: <000000000000a287d7056a7fc23e@google.com>
+Subject: KMSAN: uninit-value in pppoe_connect
+From: syzbot <syzbot+4f03bdf92fdf9ef5ddab@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mostrows@earthlink.net,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -25,98 +24,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot hit the following crash on net-next commit
-0638eb573cde5888c0886c7f35da604e5db209a6 (Sat Apr 21 20:06:14 2018 +0000)
-Merge branch 'ipv6-Another-followup-to-the-fib6_info-change'
+syzbot hit the following crash on  
+https://github.com/google/kmsan.git/master commit
+a7f95e9c8a95e9fbb388c3999b61a17667cd3bbe (Sat Apr 21 13:50:22 2018 +0000)
+kmsan: disable assembly checksums
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=2422c9e35796659d2273
+https://syzkaller.appspot.com/bug?extid=4f03bdf92fdf9ef5ddab
 
-So far this crash happened 3 times on net-next.
+So far this crash happened 2 times on  
+https://github.com/google/kmsan.git/master.
 Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6081013801287680
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-8412024688694752032
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+https://syzkaller.appspot.com/x/log.txt?id=5233317381144576
+Kernel config: https://syzkaller.appspot.com/x/.config?id=328654897048964367
+compiler: clang version 7.0.0 (trunk 329391)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2422c9e35796659d2273@syzkaller.appspotmail.com
+Reported-by: syzbot+4f03bdf92fdf9ef5ddab@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-netlink: 'syz-executor4': attribute type 6 has an invalid length.
-netlink: 'syz-executor4': attribute type 1 has an invalid length.
-netlink: 'syz-executor4': attribute type 6 has an invalid length.
-
-=============================
-WARNING: suspicious RCU usage
-4.16.0+ #11 Not tainted
------------------------------
-net/ipv6/route.c:410 suspicious rcu_dereference_check() usage!
-
-other info that might help us debug this:
-
-
-rcu_scheduler_active = 2, debug_locks = 1
-1 lock held by syz-executor7/25958:
-  #0: 00000000d1963139 (sk_lock-AF_INET6){+.+.}, at: lock_sock  
-include/net/sock.h:1469 [inline]
-  #0: 00000000d1963139 (sk_lock-AF_INET6){+.+.}, at:  
-sock_setsockopt+0x19c/0x1fe0 net/core/sock.c:717
-
-stack backtrace:
-CPU: 1 PID: 25958 Comm: syz-executor7 Not tainted 4.16.0+ #11
+==================================================================
+BUG: KMSAN: uninit-value in pppoe_connect+0xe9a/0x2360  
+drivers/net/ppp/pppoe.c:662
+CPU: 1 PID: 8338 Comm: syz-executor2 Not tainted 4.16.0+ #85
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  lockdep_rcu_suspicious+0x14a/0x153 kernel/locking/lockdep.c:4592
-  rt6_check_expired+0x38b/0x3e0 net/ipv6/route.c:410
-  ip6_negative_advice+0x67/0xc0 net/ipv6/route.c:2204
-  dst_negative_advice include/net/sock.h:1786 [inline]
-  sock_setsockopt+0x138f/0x1fe0 net/core/sock.c:1051
-  __sys_setsockopt+0x2df/0x390 net/socket.c:1899
-  SYSC_setsockopt net/socket.c:1914 [inline]
-  SyS_setsockopt+0x34/0x50 net/socket.c:1911
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  pppoe_connect+0xe9a/0x2360 drivers/net/ppp/pppoe.c:662
+  SYSC_connect+0x41a/0x510 net/socket.c:1639
+  SyS_connect+0x54/0x80 net/socket.c:1620
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 RIP: 0033:0x455389
-RSP: 002b:00007f7556e30c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007f7556e316d4 RCX: 0000000000455389
-RDX: 0000000000000035 RSI: 0000000000000001 RDI: 0000000000000013
-RBP: 000000000072bf58 R08: 0000000000000004 R09: 0000000000000000
-R10: 0000000020000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000005ff R14: 00000000006fc088 R15: 0000000000000001
-netlink: 'syz-executor4': attribute type 4 has an invalid length.
-netlink: 'syz-executor4': attribute type 4 has an invalid length.
-IPVS: set_ctl: invalid protocol: 59 127.0.0.1:20000 lc
-IPVS: set_ctl: invalid protocol: 127 224.0.0.1:20000 rr
-IPVS: sync thread started: state = BACKUP, mcast_ifn = ip6tnl0, syncid = 4,  
-id = 0
-IPVS: set_ctl: invalid protocol: 127 224.0.0.1:20000 rr
-netlink: 72 bytes leftover after parsing attributes in process  
-`syz-executor2'.
-netlink: 72 bytes leftover after parsing attributes in process  
-`syz-executor2'.
-dccp_xmit_packet: Payload too large (65423) for featneg.
-IPVS: set_ctl: invalid protocol: 29 1.0.0.0:2 wlc
-IPVS: set_ctl: invalid protocol: 29 1.0.0.0:2 wlc
-netlink: 32 bytes leftover after parsing attributes in process  
-`syz-executor7'.
-netlink: 12 bytes leftover after parsing attributes in process  
-`syz-executor1'.
-netlink: 12 bytes leftover after parsing attributes in process  
-`syz-executor1'.
-netlink: 'syz-executor1': attribute type 29 has an invalid length.
-netlink: 8 bytes leftover after parsing attributes in process  
-`syz-executor1'.
-IPVS: set_ctl: invalid protocol: 108 224.0.0.1:20004 lblc
-netlink: 'syz-executor1': attribute type 29 has an invalid length.
-netlink: 8 bytes leftover after parsing attributes in process  
-`syz-executor1'.
-IPVS: set_ctl: invalid protocol: 108 224.0.0.1:20004 lblc
+RSP: 002b:00007f5c253ecc68 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 00007f5c253ed6d4 RCX: 0000000000455389
+RDX: 0000000000000001 RSI: 0000000020000040 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000063 R14: 00000000006f39e8 R15: 0000000000000000
+
+Local variable description: ----address@SYSC_connect
+Variable was created at:
+  SYSC_connect+0x6f/0x510 net/socket.c:1622
+  SyS_connect+0x54/0x80 net/socket.c:1620
+==================================================================
 
 
 ---
