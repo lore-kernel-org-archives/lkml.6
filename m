@@ -1,49 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754111AbeDWGwN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:52:13 -0400
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:33178 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754078AbeDWGwI (ORCPT
+        id S1754088AbeDWG4k (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:56:40 -0400
+Received: from mail-it0-f45.google.com ([209.85.214.45]:54908 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751519AbeDWG4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:52:08 -0400
-X-Google-Smtp-Source: AIpwx49U3u8+iyV9zU08GHZ8zPLXHU574SrPuR7LyblpkBHi47+pFii54+9L0OL96JUjDTNTEypbiw==
-Date: Mon, 23 Apr 2018 08:52:04 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: valdis.kletnieks@vt.edu
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: next-20180416 - warnings from 'make tools/perf'
-Message-ID: <20180423065204.cgzu7mvivrph3gfw@gmail.com>
-References: <61890.1524462741@turing-police.cc.vt.edu>
+        Mon, 23 Apr 2018 02:56:36 -0400
+X-Google-Smtp-Source: AIpwx49IYJzsfFGSXYHmtQCvutG3N5ksR0MlSR2x+DXW/PIOlqV094CJjKcmjz66H5ZnGMILAPuE7ui8WRwZvcivEVg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <61890.1524462741@turing-police.cc.vt.edu>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <000000000000f35c4b056a7995f4@google.com>
+References: <000000000000f35c4b056a7995f4@google.com>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Mon, 23 Apr 2018 14:56:35 +0800
+Message-ID: <CADvbK_dZBs9Od9oN3zrnLnkM4vqaQZm7+XU3HEjb-iNOXgnkzg@mail.gmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in __sctp_v6_cmp_addr
+To: syzbot <syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com>
+Cc: davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>, syzkaller-bugs@googlegroups.com,
+        Vlad Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 23, 2018 at 9:02 AM, syzbot
+<syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot hit the following crash on upstream commit
+> 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
+> Merge branch 'fixes' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=cd494c1dd681d4d93ebb
+>
+> So far this crash happened 305 times on net-next, upstream.
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6684817483628544
+> syzkaller reproducer:
+> https://syzkaller.appspot.com/x/repro.syz?id=6321732692475904
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=5381423422767104
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+cd494c1dd681d4d93ebb@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+>
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in ipv6_addr_equal include/net/ipv6.h:507
+> [inline]
+> BUG: KASAN: slab-out-of-bounds in __sctp_v6_cmp_addr+0x4c7/0x530
+> net/sctp/ipv6.c:580
+Two v4 addresses went into ipv6_addr_equal, this happens when one
+v4 socket bind v4 addr A, then another v6 socket tries to bind the
+same v4 addr A.
 
-* valdis.kletnieks@vt.edu <valdis.kletnieks@vt.edu> wrote:
+This is an old issue, I will send a fix soon. Thanks.
 
-> Seeing these warnings.  'diff' tells me that the files
-> are in fact significantly different.
-> 
-> Warning: Kernel ABI header at 'tools/include/uapi/linux/kvm.h' differs from latest version at 'include/uapi/linux/kvm.h'
-> Warning: Kernel ABI header at 'tools/include/uapi/linux/prctl.h' differs from latest version at 'include/uapi/linux/prctl.h'
-> Warning: Kernel ABI header at 'tools/include/uapi/sound/asound.h' differs from latest version at 'include/uapi/sound/asound.h'
-> Warning: Kernel ABI header at 'tools/arch/x86/include/asm/required-features.h' differs from latest version at 'arch/x86/include/asm/required-features.h'
-> Warning: Kernel ABI header at 'tools/arch/x86/include/uapi/asm/kvm.h' differs from latest version at 'arch/x86/include/uapi/asm/kvm.h'
-> Warning: Kernel ABI header at 'tools/arch/arm/include/uapi/asm/kvm.h' differs from latest version at 'arch/arm/include/uapi/asm/kvm.h'
-> Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/mman-common.h' differs from latest version at 'include/uapi/asm-generic/mman-common.h'
-> Warning: Kernel ABI header at 'tools/include/uapi/linux/bpf.h' differs from latest version at 'include/uapi/linux/bpf.h'
-> Warning: Kernel ABI header at 'tools/include/uapi/linux/if_link.h' differs from latest version at 'include/uapi/linux/if_link.h'
-
-The warnings are harmless, and they should be fixed in v4.17-rc2.
-
-Thanks,
-
-	Ingo
+> Read of size 8 at addr ffff8801b58626d0 by task syzkaller106428/4452
+>
+> CPU: 1 PID: 4452 Comm: syzkaller106428 Not tainted 4.17.0-rc1+ #10
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>  ipv6_addr_equal include/net/ipv6.h:507 [inline]
+>  __sctp_v6_cmp_addr+0x4c7/0x530 net/sctp/ipv6.c:580
+>  sctp_inet6_cmp_addr+0x169/0x1a0 net/sctp/ipv6.c:898
+>  sctp_bind_addr_conflict+0x28c/0x470 net/sctp/bind_addr.c:368
+>  sctp_get_port_local+0x9fc/0x1540 net/sctp/socket.c:7515
+>  sctp_do_bind+0x21c/0x5f0 net/sctp/socket.c:435
+>  sctp_bindx_add+0x90/0x1a0 net/sctp/socket.c:529
+>  sctp_setsockopt_bindx+0x2ad/0x320 net/sctp/socket.c:1058
+>  sctp_setsockopt+0x12c4/0x7000 net/sctp/socket.c:4227
+>  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3039
+>  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
+>  __do_sys_setsockopt net/socket.c:1914 [inline]
+>  __se_sys_setsockopt net/socket.c:1911 [inline]
+>  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x445839
+> RSP: 002b:00007fbe3f0fdd98 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+> RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445839
+> RDX: 0000000000000064 RSI: 0000000000000084 RDI: 0000000000000004
+> RBP: 00000000006dac20 R08: 0000000000000010 R09: 000000000000a6fe
+> R10: 00000000205ba000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007ffc1404827f R14: 00007fbe3f0fe9c0 R15: 0000000000000003
+>
+> Allocated by task 4452:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+>  __do_kmalloc_node mm/slab.c:3682 [inline]
+>  __kmalloc_node+0x47/0x70 mm/slab.c:3689
+>  kmalloc_node include/linux/slab.h:554 [inline]
+>  kvmalloc_node+0x6b/0x100 mm/util.c:421
+>  kvmalloc include/linux/mm.h:550 [inline]
+>  vmemdup_user+0x2d/0xa0 mm/util.c:186
+>  sctp_setsockopt_bindx+0x5d/0x320 net/sctp/socket.c:1022
+>  sctp_setsockopt+0x12c4/0x7000 net/sctp/socket.c:4227
+>  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3039
+>  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
+>  __do_sys_setsockopt net/socket.c:1914 [inline]
+>  __se_sys_setsockopt net/socket.c:1911 [inline]
+>  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Freed by task 2818:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>  __cache_free mm/slab.c:3498 [inline]
+>  kfree+0xd9/0x260 mm/slab.c:3813
+>  single_release+0x8f/0xb0 fs/seq_file.c:609
+>  __fput+0x34d/0x890 fs/file_table.c:209
+>  ____fput+0x15/0x20 fs/file_table.c:243
+>  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+>  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+>  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
+>  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+>  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> The buggy address belongs to the object at ffff8801b58626c0
+>  which belongs to the cache kmalloc-32 of size 32
+> The buggy address is located 16 bytes inside of
+>  32-byte region [ffff8801b58626c0, ffff8801b58626e0)
+> The buggy address belongs to the page:
+> page:ffffea0006d61880 count:1 mapcount:0 mapping:ffff8801b5862000
+> index:0xffff8801b5862fc1
+> flags: 0x2fffc0000000100(slab)
+> raw: 02fffc0000000100 ffff8801b5862000 ffff8801b5862fc1 0000000100000032
+> raw: ffffea0006ddd1e0 ffffea0006dd2860 ffff8801da8001c0 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>  ffff8801b5862580: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+>  ffff8801b5862600: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+>>
+>> ffff8801b5862680: fb fb fb fb fc fc fc fc 00 00 fc fc fc fc fc fc
+>
+>                                                  ^
+>  ffff8801b5862700: 00 00 00 00 fc fc fc fc 00 00 04 fc fc fc fc fc
+>  ffff8801b5862780: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+> ==================================================================
+>
+>
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
