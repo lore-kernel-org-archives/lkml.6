@@ -1,92 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755909AbeDWP0D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:26:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33332 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755666AbeDWP0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:26:01 -0400
-Date: Mon, 23 Apr 2018 18:25:57 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
-Message-ID: <20180423181250-mutt-send-email-mst@kernel.org>
-References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
- <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
- <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
- <20180418.134651.2225112489265654270.davem@davemloft.net>
- <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com>
- <20180420114712.GB10788@bombadil.infradead.org>
- <alpine.LRH.2.02.1804200817230.22382@file01.intranet.prod.int.rdu2.redhat.com>
+        id S1755728AbeDWP2j (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:28:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49682 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755498AbeDWP2i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:28:38 -0400
+Date: Mon, 23 Apr 2018 16:28:35 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH 13/18 v2] regulator: wm8994: Pass descriptor instead of
+ GPIO number
+Message-ID: <20180423152835.GG19834@sirena.org.uk>
+References: <20180422230742.3729-1-linus.walleij@linaro.org>
+ <20180422230742.3729-13-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="APlYHCtpeOhspHkB"
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1804200817230.22382@file01.intranet.prod.int.rdu2.redhat.com>
+In-Reply-To: <20180422230742.3729-13-linus.walleij@linaro.org>
+X-Cookie: I think, therefore I am... I think.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 08:20:23AM -0400, Mikulas Patocka wrote:
-> 
-> 
-> On Fri, 20 Apr 2018, Matthew Wilcox wrote:
-> 
-> > On Thu, Apr 19, 2018 at 12:12:38PM -0400, Mikulas Patocka wrote:
-> > > Unfortunatelly, some kernel code has bugs - it uses kvmalloc and then
-> > > uses DMA-API on the returned memory or frees it with kfree. Such bugs were
-> > > found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
-> > > code.
-> > 
-> > Maybe it's time to have the SG code handle vmalloced pages?  This is
-> > becoming more and more common with vmapped stacks (and some of our
-> > workarounds are hideous -- allocate 4 bytes with kmalloc because we can't
-> > DMA onto the stack any more?).  We already have a few places which do
-> > handle sgs of vmalloced addresses, such as the nx crypto driver:
-> > 
-> >         if (is_vmalloc_addr(start_addr))
-> >                 sg_addr = page_to_phys(vmalloc_to_page(start_addr))
-> >                           + offset_in_page(sg_addr);
-> >         else
-> >                 sg_addr = __pa(sg_addr);
-> > 
-> > and videobuf:
-> > 
-> >                 pg = vmalloc_to_page(virt);
-> >                 if (NULL == pg)
-> >                         goto err;
-> >                 BUG_ON(page_to_pfn(pg) >= (1 << (32 - PAGE_SHIFT)));
-> >                 sg_set_page(&sglist[i], pg, PAGE_SIZE, 0);
-> > 
-> > Yes, there's the potential that we have to produce two SG entries for a
-> > virtually contiguous region if it crosses a page boundary, and our APIs
-> > aren't set up right to make it happen.  But this is something we should
-> > consider fixing ... otherwise we'll end up with dozens of driver hacks.
-> > The videobuf implementation was already copy-and-pasted into the saa7146
-> > driver, for example.
-> 
-> What if the device requires physically contiguous area and the vmalloc 
-> area crosses a page? Will you use a bounce buffer? Where do you allocate 
-> the bounce buffer from? What if you run out of bounce buffers?
-> 
-> Mikulkas
 
-I agree with Matthew here.
+--APlYHCtpeOhspHkB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-4 byte variables are typically size aligned so won't cross a boundary.
+On Mon, Apr 23, 2018 at 01:07:37AM +0200, Linus Walleij wrote:
+> Instead of passing a global GPIO number for the enable GPIO, pass
+> a descriptor looked up from the device tree node or the board file
+> decriptor table for the regulator.
 
-That's enough for virtio at least. People using structs can force
-alignment.
+This doesn't apply against current code, please check and resend.
 
-We could wrap access in a macro (sizeof(x) >= alignof(x)) to help
-guarantee that.
+--APlYHCtpeOhspHkB
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-MST
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrd+6IACgkQJNaLcl1U
+h9AGkAf9EaxjU1WJJls7JRqeuaohUyxUarN2bTWWM5wo4wfc14FQ0YPMHkDUk5cA
+o6kkrE2Y2s5tMrc5h7Odbaa5p23XXAqWi1Xbque519Pp+lO1DSJPEmZ6n2Q4VqT8
+24KCrhU2f9uYiBjsad7JoG3EOJL8JSqoHYW8b4dv/zkRQWh7cN8mCmTUIty332Qk
+Igua4diXTb1TaUeh3QheapmDdV4BCgI5vVpNsTB3t7pBoJOgn0ImGkY50naRtEQM
+laVNIVSKyABMItf8jT5sfhxMfzpX5GiFc5e+zZZp8b//HyGDXiDUaKo+rPEz+cRR
+XmIVN0ONODWFJRbisLFqGRlMHb43Mg==
+=aGb5
+-----END PGP SIGNATURE-----
+
+--APlYHCtpeOhspHkB--
