@@ -1,21 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932184AbeDWRiH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:38:07 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.144]:17657 "EHLO
+        id S932236AbeDWRij (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:38:39 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:46838 "EHLO
         gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932093AbeDWRiG (ORCPT
+        by vger.kernel.org with ESMTP id S932189AbeDWRiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:38:06 -0400
+        Mon, 23 Apr 2018 13:38:21 -0400
 X-Authority-Reason: nr=8
-Date: Mon, 23 Apr 2018 12:38:03 -0500
+Date: Mon, 23 Apr 2018 12:38:19 -0500
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-Message-ID: <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 02/11] exynos4-is: mipi-csis: fix potential Spectre variant 1
+Message-ID: <1d1128bd1e8fd3309ff8e615a06346724281e5b4.1524499368.git.gustavo@embeddedor.com>
 References: <cover.1524499368.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -30,27 +35,27 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.145.48.65
 X-Source-L: No
-X-Exim-ID: 1fAfPh-004LbA-4O
+X-Exim-ID: 1fAfPw-004Lq4-AE
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.145.48.65]:49542
+X-Source-Sender: (embeddedor) [189.145.48.65]:49544
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 19
+X-Email-Count: 23
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-f->index can be controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+code->index can be controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
 Smatch warning:
-drivers/media/usb/tm6000/tm6000-video.c:879 vidioc_enum_fmt_vid_cap() warn: potential spectre issue 'format'
+drivers/media/platform/exynos4-is/mipi-csis.c:549 s5pcsis_enum_mbus_code() warn: potential spectre issue 's5pcsis_formats'
 
-Fix this by sanitizing f->index before using it to index
-array _format_
+Fix this by sanitizing code->index before using it to index
+s5pcsis_formats.
 
 Notice that given that speculation windows are large, the policy is
 to kill the speculation on the first load and not worry if it can be
@@ -62,28 +67,31 @@ Cc: stable@vger.kernel.org
 Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/media/usb/tm6000/tm6000-video.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/exynos4-is/mipi-csis.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
-index b2399d4..d701027 100644
---- a/drivers/media/usb/tm6000/tm6000-video.c
-+++ b/drivers/media/usb/tm6000/tm6000-video.c
-@@ -26,6 +26,7 @@
- #include <linux/kthread.h>
- #include <linux/highmem.h>
- #include <linux/freezer.h>
+diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
+index cba46a6..60104c1 100644
+--- a/drivers/media/platform/exynos4-is/mipi-csis.c
++++ b/drivers/media/platform/exynos4-is/mipi-csis.c
+@@ -35,6 +35,8 @@
+ 
+ #include "mipi-csis.h"
+ 
 +#include <linux/nospec.h>
- 
- #include "tm6000-regs.h"
- #include "tm6000.h"
-@@ -875,6 +876,7 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
- 	if (f->index >= ARRAY_SIZE(format))
++
+ static int debug;
+ module_param(debug, int, 0644);
+ MODULE_PARM_DESC(debug, "Debug level (0-2)");
+@@ -545,7 +547,8 @@ static int s5pcsis_enum_mbus_code(struct v4l2_subdev *sd,
+ {
+ 	if (code->index >= ARRAY_SIZE(s5pcsis_formats))
  		return -EINVAL;
- 
-+	f->index = array_index_nospec(f->index, ARRAY_SIZE(format));
- 	strlcpy(f->description, format[f->index].name, sizeof(f->description));
- 	f->pixelformat = format[f->index].fourcc;
+-
++	code->index = array_index_nospec(code->index,
++					 ARRAY_SIZE(s5pcsis_formats));
+ 	code->code = s5pcsis_formats[code->index].code;
  	return 0;
+ }
 -- 
 2.7.4
