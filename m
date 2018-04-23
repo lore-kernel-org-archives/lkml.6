@@ -1,114 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753121AbeDWGqP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:46:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39300 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751324AbeDWGqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:46:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9075F217BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-X-Google-Smtp-Source: AIpwx48/TlT9hILVdP1MNiD/ZC3bixm7NbEYP6qxesdK3F6xSNLSqBgrqgrHaxLpr+8zKxmVURfIs6PS9RbvAu8lcvQ=
+        id S1754069AbeDWGrM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:47:12 -0400
+Received: from mail-it0-f49.google.com ([209.85.214.49]:33050 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751503AbeDWGrK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 02:47:10 -0400
+X-Google-Smtp-Source: AIpwx483FIWSaGvdrmf7JFF3OE2hAonBzJr6YC+E1Z2uE8124sRIkdnEZX6l8QxbVRczQ5QBovZXhyGXdl8edCMF9cU=
 MIME-Version: 1.0
-In-Reply-To: <20180422230742.3729-5-linus.walleij@linaro.org>
-References: <20180422230742.3729-1-linus.walleij@linaro.org> <20180422230742.3729-5-linus.walleij@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 23 Apr 2018 08:46:11 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcasYujyBAN7zbsmE0rZXquP2dL_9fr1ZM+nCun3G-UrA@mail.gmail.com>
-Message-ID: <CAJKOXPcasYujyBAN7zbsmE0rZXquP2dL_9fr1ZM+nCun3G-UrA@mail.gmail.com>
-Subject: Re: [PATCH 05/18 v2] regulator: max77686: Pass descriptor instead of
- GPIO number
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+In-Reply-To: <1524239609.10138.47.camel@synopsys.com>
+References: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
+ <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com> <1524239609.10138.47.camel@synopsys.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 23 Apr 2018 08:47:09 +0200
+Message-ID: <CAPDyKFpY7JsQukY=E2PRg=iVfmis4i1kvST+b2wtshNc5Jn+jw@mail.gmail.com>
+Subject: Re: [RFC 0/2] dw_mmc: add multislot support
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: "jh80.chung@samsung.com" <jh80.chung@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 1:07 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> Instead of passing a global GPIO number, pass a descriptor looked
-> up from the device tree configuration node.
+On 20 April 2018 at 17:53, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com> wrote:
+> Hi Ulf,
 >
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Rebase the patch on the other changes.
-> ---
->  drivers/regulator/max77686-regulator.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
+> On Fri, 2018-04-20 at 09:35 +0200, Ulf Hansson wrote:
+>> [...]
+>>
+>> >
+>> > 2. Add missing stuff to support multislot mode in DesignWare MMC driver.
+>> >  * Add missing slot switch to __dw_mci_start_request() function.
+>> >  * Refactor set_ios function:
+>> >    a) Calculate common clock which is
+>> >       suitable for all slots instead of directly use clock value
+>> >       provided by mmc core. We calculate common clock as the minimum
+>> >       among each used slot clocks. This clock is calculated in
+>> >       dw_mci_calc_common_clock() function which is called
+>> >       from set_ios()
+>> >    b) Disable clock only if no other slots are ON.
+>> >    c) Setup clock directly in set_ios() only if no other slots
+>> >       are ON. Otherwise adjust clock in __dw_mci_start_request()
+>> >       function before slot switch.
+>> >    d) Move timings and bus_width setup to separate funcions.
+>> >  * Use timing field in each slot structure instead of common field in
+>> >    host structure.
+>> >  * Add locks to serialize access to registers.
+>>
+>> Sorry, but this is a hack to *try* to make multi-slot work and this
+>> isn't sufficient. There were good reasons to why the earlier
+>> non-working multi slot support was removed from dw_mmc.
 >
-> diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
-> index c301f3733475..5ebd06f47e6a 100644
-> --- a/drivers/regulator/max77686-regulator.c
-> +++ b/drivers/regulator/max77686-regulator.c
-> @@ -25,8 +25,7 @@
->  #include <linux/kernel.h>
->  #include <linux/bug.h>
->  #include <linux/err.h>
-> -#include <linux/gpio.h>
-> -#include <linux/of_gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/platform_device.h>
->  #include <linux/regulator/driver.h>
-> @@ -90,6 +89,7 @@ enum max77686_ramp_rate {
->  };
+> Previous multi slot implementation was removed as nobody used it and
+> nobody tested it. There are lots of mistakes in previous implementation
+> which are not related to request serialization
+> like lack of slot switch / lack of adding slot id to CIU commands / ets...
+> So obviously it was never tested and never used at real multi slot hardware.
 >
->  struct max77686_data {
-> +       struct device *dev;
->         DECLARE_BITMAP(gpio_enabled, MAX77686_REGULATORS);
+>> Let me elaborate a bit for your understanding. The core uses a host
+>> lock (mmc_claim|release_host()) to serialize operations and commands,
+>> as to confirm to the SD/SDIO/(e)MMC specs. The above changes gives no
+>> guarantees for this. To make that work, we would need a "mmc bus lock"
+>> to be managed by the core.
 >
->         /* Array indexed by regulator id */
-> @@ -269,16 +269,20 @@ static int max77686_of_parse_cb(struct device_node *np,
->         case MAX77686_BUCK8:
->         case MAX77686_BUCK9:
->         case MAX77686_LDO20 ... MAX77686_LDO22:
-> -               config->ena_gpio = of_get_named_gpio(np,
-> -                                       "maxim,ena-gpios", 0);
-> -               config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
-> -               config->ena_gpio_initialized = true;
-> +               config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
-> +                                                               np,
-> +                                                               "maxim,ena",
-> +                                                               0,
-> +                                                               GPIOD_OUT_HIGH,
-> +                                                               "max77686-LDO");
-> +               if (IS_ERR(config->ena_gpiod))
-> +                       return PTR_ERR(config->ena_gpiod);
+> In current implementation data transfers and commands to different
+> hosts (slots) are serialized internally in the dw_mmc driver. We have
+> request queue and when .request() is called we add new request to the
+> queue. We take new request from the queue only if the previous one
+> has already finished.
 
-Both my previous comments remain not addressed:
-1. Name: This is also for bucks so how about naming it "max77686-regulator"?
-2. Error path here is not equivalent to old code and results in using
-default driver's init data. Instead I would prefer to just ignore the
-gpio.
+That isn't sufficient. The core expects all calls to *any* of the host
+ops to be serialized for one host. It does so to conform to the specs.
 
-Best regards,
-Krzysztof
+For example it may call:
+ ->set_ios()
+->request()
+->set_ios()
+->request()
+->request()
 
->                 break;
->         default:
->                 return 0;
->         }
 >
-> -       if (gpio_is_valid(config->ena_gpio)) {
-> +       if (config->ena_gpiod) {
->                 set_bit(desc->id, max77686->gpio_enabled);
+> So although hosts (slots) have separate locks (mmc_claim|release_host())
+> the requests to different slots are serialized by driver.
 >
->                 return regmap_update_bits(config->regmap, desc->enable_reg,
-> @@ -521,6 +525,7 @@ static int max77686_pmic_probe(struct platform_device *pdev)
->         if (!max77686)
->                 return -ENOMEM;
+> Isn't that enough?
+
+Sorry, but no.
+
+> I'm not very familiar with SD/SDIO/(e)MMC specs so my assumptions might be wrong
+> in that case please correct me.
+
+Well, that kind of explains your simplistic approach.
+
+I would suggest you to study the specs and the behavior of the mmc
+core a bit more carefully, that should give you a better understanding
+of the problems.
+
 >
-> +       max77686->dev = &pdev->dev;
->         config.dev = iodev->dev;
->         config.regmap = iodev->regmap;
->         config.driver_data = max77686;
-> --
-> 2.14.3
+>> However, inventing a "mmc bus lock" would lead to other problems
+>> related to I/O scheduling for upper layers - it simply breaks. For
+>> example, I/O requests for one card/slot can then starve I/O requests
+>> reaching another card/slot.
+>>
 >
+> Nevertheless we had to deal somehow with existing hardware which
+> has multislot dw mmc controller and both slots are used...
+>
+> This patch at least shouldn't break anything for current users (which use
+> it in single slot mode)
+>
+> Moreover we tested this dual-slot implementation and don't catch any problems
+> (probably yet) except bus performance decrease in dual-slot mode (which is
+> quite expected).
+
+Honestly, I don't think efforts of implementing this is worth it!
+
+Even if we would be able to solve the problem from an mmc subsystem
+point of view, we would still have the I/O scheduling problem to
+address. To solve that, we would need to be able to configure upper
+block layer code to run one scheduling instance over multiple block
+devices...
+
+Kind regards
+Uffe
