@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754029AbeDWDCo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 23:02:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39220 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753911AbeDWDCi (ORCPT
+        id S1754091AbeDWDC6 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 23:02:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52266 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753937AbeDWDCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 23:02:38 -0400
+        Sun, 22 Apr 2018 23:02:41 -0400
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To: linux-kernel@vger.kernel.org
 Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -16,20 +16,20 @@ Cc: mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         fweisbec@gmail.com, oleg@redhat.com, joel.opensrc@gmail.com,
         torvalds@linux-foundation.org, npiggin@gmail.com,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 10/21] rcu: Avoid __call_rcu_core() root rcu_node ->lock acquisition
-Date: Sun, 22 Apr 2018 20:03:33 -0700
+Subject: [PATCH tip/core/rcu 21/21] rcu: Update list of rcu_future_grace_period() trace events
+Date: Sun, 22 Apr 2018 20:03:44 -0700
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180423030258.GA23370@linux.vnet.ibm.com>
 References: <20180423030258.GA23370@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18042303-2213-0000-0000-0000029783A4
+x-cbid: 18042303-0044-0000-0000-0000040974B7
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00008903; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000257; SDB=6.01021898; UDB=6.00521542; IPR=6.00801133;
- MB=3.00020719; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 03:02:36
+ MB=3.00020719; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-23 03:02:38
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042303-2214-0000-0000-000059DC406F
-Message-Id: <1524452624-27589-10-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18042303-0045-0000-0000-0000083B7DB4
+Message-Id: <1524452624-27589-21-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -41,42 +41,46 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When __call_rcu_core() notices excessive numbers of callbacks pending
-on the current CPU, we know that at least one of them is not yet
-classified, namely the one that was just now queued.  Therefore, it
-is not necessary to invoke rcu_start_gp() and thus not necessary to
-acquire the root rcu_node structure's ->lock.  This commit therefore
-replaces the rcu_start_gp() with rcu_accelerate_cbs(), thus replacing
-an acquisition of the root rcu_node structure's ->lock with that of
-this CPU's leaf rcu_node structure.
+Reworking grace-period initiation and funnel locking added new
+rcu_future_grace_period() trace events, so this commit updates the
+rcu_future_grace_period() trace event's header comment accordingly.
 
-This decreases contention on the root rcu_node structure's ->lock.
-
-Reported-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/trace/events/rcu.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index f75eb5174021..6396a3d10be9 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2988,11 +2988,11 @@ static void __call_rcu_core(struct rcu_state *rsp, struct rcu_data *rdp,
+diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+index d8c33298c153..5936aac357ab 100644
+--- a/include/trace/events/rcu.h
++++ b/include/trace/events/rcu.h
+@@ -84,20 +84,21 @@ TRACE_EVENT(rcu_grace_period,
+ );
  
- 		/* Start a new grace period if one not already started. */
- 		if (!rcu_gp_in_progress(rsp)) {
--			struct rcu_node *rnp_root = rcu_get_root(rsp);
-+			struct rcu_node *rnp = rdp->mynode;
+ /*
+- * Tracepoint for future grace-period events, including those for no-callbacks
+- * CPUs.  The caller should pull the data from the rcu_node structure,
+- * other than rcuname, which comes from the rcu_state structure, and event,
+- * which is one of the following:
++ * Tracepoint for future grace-period events.  The caller should pull
++ * the data from the rcu_node structure, other than rcuname, which comes
++ * from the rcu_state structure, and event, which is one of the following:
+  *
+- * "Startleaf": Request a nocb grace period based on leaf-node data.
++ * "Startleaf": Request a grace period based on leaf-node data.
++ * "Prestarted": Someone beat us to the request
+  * "Startedleaf": Leaf-node start proved sufficient.
+  * "Startedleafroot": Leaf-node start proved sufficient after checking root.
+  * "Startedroot": Requested a nocb grace period based on root-node data.
++ * "NoGPkthread": The RCU grace-period kthread has not yet started.
+  * "StartWait": Start waiting for the requested grace period.
+  * "ResumeWait": Resume waiting after signal.
+  * "EndWait": Complete wait.
+  * "Cleanup": Clean up rcu_node structure after previous GP.
+- * "CleanupMore": Clean up, and another no-CB GP is needed.
++ * "CleanupMore": Clean up, and another GP is needed.
+  */
+ TRACE_EVENT(rcu_future_grace_period,
  
--			raw_spin_lock_rcu_node(rnp_root);
--			needwake = rcu_start_gp(rsp);
--			raw_spin_unlock_rcu_node(rnp_root);
-+			raw_spin_lock_rcu_node(rnp);
-+			needwake = rcu_accelerate_cbs(rsp, rnp, rdp);
-+			raw_spin_unlock_rcu_node(rnp);
- 			if (needwake)
- 				rcu_gp_kthread_wake(rsp);
- 		} else {
 -- 
 2.5.2
