@@ -1,68 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755443AbeDWOKm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:10:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57580 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754962AbeDWOKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:10:41 -0400
-Subject: Re: [PATCH v7 0/5] cpuset: Enable cpuset controller in default
- hierarchy
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
-References: <1524145624-23655-1-git-send-email-longman@redhat.com>
- <20180423130715.GA32341@localhost.localdomain>
- <20180423135756.GC32341@localhost.localdomain>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <22ad86e3-0661-6db0-f4f3-5b06f439dcf7@redhat.com>
-Date: Mon, 23 Apr 2018 10:10:39 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1755464AbeDWOKu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:10:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52294 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754962AbeDWOKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 10:10:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3351360264
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        luciano.coelho@intel.com, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org
+Subject: Re: New sparse warning from min_t(): expression using sizeof(void)
+References: <87a7txf15w.fsf@kamboji.qca.qualcomm.com>
+        <20180421082444.i4eyw2zxl6tipt6i@gmail.com>
+        <87604ley7t.fsf@kamboji.qca.qualcomm.com>
+Date: Mon, 23 Apr 2018 17:10:39 +0300
+In-Reply-To: <87604ley7t.fsf@kamboji.qca.qualcomm.com> (Kalle Valo's message
+        of "Sat, 21 Apr 2018 11:54:30 +0300")
+Message-ID: <87d0yqdnds.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180423135756.GC32341@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/23/2018 09:57 AM, Juri Lelli wrote:
-> On 23/04/18 15:07, Juri Lelli wrote:
->> Hi Waiman,
+Kalle Valo <kvalo@codeaurora.org> writes:
+
+> Joey Pabalinas <joeypabalinas@gmail.com> writes:
+>
+>> On Sat, Apr 21, 2018 at 10:50:51AM +0300, Kalle Valo wrote:
+>>> Is there any way to fix it? With ath10k I use sparse a lot and because
+>>> of these warnings sparse is now very annoying to use.
 >>
->> On 19/04/18 09:46, Waiman Long wrote:
->>> v7:
->>>  - Add a root-only cpuset.cpus.isolated control file for CPU isolation.
->>>  - Enforce that load_balancing can only be turned off on cpusets with
->>>    CPUs from the isolated list.
->>>  - Update sched domain generation to allow cpusets with CPUs only
->>>    from the isolated CPU list to be in separate root domains.
-> Guess I'll be adding comments as soon as I stumble on something unclear
-> (to me :), hope that's OK (shout if I should do it differently).
+>> I submitted a sparse patch [1] for this not too long ago, but in the
+>> meantime you can still curl the patch [2] and apply it directly to
+>> the v0.5.2 release to suppress the deluge of warnings (-Wpointer-arith
+>> is off by defaultl so no need to change any of you configurations).
+>>
+>> [1] https://lkml.org/lkml/2018/4/10/923
+>> [2] https://patchwork.kernel.org/patch/10334353/raw/
 >
-> The below looked unexpected to me:
->
-> root@debian-kvm:/sys/fs/cgroup# cat g1/cpuset.cpus
-> 2-3
-> root@debian-kvm:/sys/fs/cgroup# cat g1/cpuset.mems
->
-> root@debian-kvm:~# echo $$ > /sys/fs/cgroup/g1/cgroup.threads
-> root@debian-kvm:/sys/fs/cgroup# cat g1/cgroup.threads
-> 2312
->
-> So I can add tasks to groups with no mems? Or is it this only true in my
-> case with a single mem node? Or maybe it's inherited from root group
-> (slightly confusing IMHO if that's the case).
+> Perfect, thanks. Unfortunatelly I need to catch a boat and I can't test
+> it right now, but I'll do that on Monday.
 
-No mems mean looking up the parents until we find one with non-empty
-mems. The mems.effective will show you the actual memory nodes used.
+Yes, this fixed my warnings. Thanks!
 
--Longman
+-- 
+Kalle Valo
