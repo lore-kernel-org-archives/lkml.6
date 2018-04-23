@@ -1,55 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755059AbeDWMqL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:46:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42390 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754802AbeDWMqK (ORCPT
+        id S1755069AbeDWMtf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:49:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50708 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754947AbeDWMte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:46:10 -0400
-Date: Mon, 23 Apr 2018 14:45:52 +0200
+        Mon, 23 Apr 2018 08:49:34 -0400
+Date: Mon, 23 Apr 2018 14:48:55 +0200
 From: Peter Zijlstra <peterz@infradead.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        dan.j.williams@intel.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Smatch check for Spectre stuff
-Message-ID: <20180423124552.GY4064@hirez.programming.kicks-ass.net>
-References: <20180419051510.GA21898@mwanda>
- <20180420120044.GN4064@hirez.programming.kicks-ass.net>
- <fb72fc65-085b-65dc-c965-492d6d0902ea@embeddedor.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, rostedt@goodmis.org, dhowells@redhat.com,
+        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
+        joel.opensrc@gmail.com
+Subject: Re: [PATCH tip/core/rcu 06/22] rcu: Rename cond_resched_rcu_qs() to
+ cond_resched_tasks_rcu_qs()
+Message-ID: <20180423124855.GZ4064@hirez.programming.kicks-ass.net>
+References: <20180423023150.GA21533@linux.vnet.ibm.com>
+ <1524450747-22778-6-git-send-email-paulmck@linux.vnet.ibm.com>
+ <20180423085347.GS4064@hirez.programming.kicks-ass.net>
+ <20180423123223.GK26088@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fb72fc65-085b-65dc-c965-492d6d0902ea@embeddedor.com>
+In-Reply-To: <20180423123223.GK26088@linux.vnet.ibm.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 07:31:03AM -0500, Gustavo A. R. Silva wrote:
-> Hi Peter,
+On Mon, Apr 23, 2018 at 05:32:23AM -0700, Paul E. McKenney wrote:
+> On Mon, Apr 23, 2018 at 10:53:47AM +0200, Peter Zijlstra wrote:
+> > On Sun, Apr 22, 2018 at 07:32:11PM -0700, Paul E. McKenney wrote:
+> > > Commit e31d28b6ab8f ("trace: Eliminate cond_resched_rcu_qs() in favor
+> > > of cond_resched()") substituted cond_resched() for the earlier call
+> > > to cond_resched_rcu_qs().  However, the new-age cond_resched() does
+> > > not do anything to help RCU-tasks grace periods because (1) RCU-tasks
+> > > is only enabled when CONFIG_PREEMPT=y and (2) cond_resched() is a
+> > > complete no-op when preemption is enabled.  This situation results
+> > > in hangs when running the trace benchmarks.
+> > 
+> > But a few patches earlier you tried to address that..
 > 
-> On 04/20/2018 07:00 AM, Peter Zijlstra wrote:
-> > 
-> > Hi Dan,
-> > 
-> > awesome stuff...
-> > 
-> > So I fear that many are actually things we want to fix. Our policy was
-> > to kill the speculation on the first load and not worry if it can be
-> > completed with a dependent load/store.
-> > 
-> I wonder if there is any thread where I can read the discussion about that
-> policy that you mention.
+> Yes.  And all this patch does is change the name to better match
+> what this primitive actually does.
 > 
-> Could you share it here, please?
+> I could merge the two patches, if that would help.
 
-I think it was somewhere in the many spectre variant1 threads when Linus
-Alexei and Dan W were hashing out the mitigation thing. I cannot quickly
-find the specific email.
+I understood the earlier patch was actually changing cond_resched() to
+also work for task-rcu; which resulted in it acually not being a no-op
+for PREEMPT anymore.
 
-Clarifying that position was one reason for the patches I did, Linus and
-Dan W are on Cc and I figure that if they all agree we should maybe add
-a little something to Documentation/speculation.txt.
+But then here you say it doesn't because it's a no-op.
+
+It's not about the rename.. It is about one patch changing PREEMPT
+cond_resched to not be a no-op and you here justifying things because
+PREEMPT cond_resched it a no-op.
