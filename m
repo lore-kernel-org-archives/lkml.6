@@ -1,48 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932626AbeDWVwg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 17:52:36 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37698 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932318AbeDWVwc (ORCPT
+        id S932636AbeDWVw4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 17:52:56 -0400
+Received: from mail-wr0-f177.google.com ([209.85.128.177]:41145 "EHLO
+        mail-wr0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932318AbeDWVww (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 17:52:32 -0400
-X-Google-Smtp-Source: AIpwx4/OC8T8bexlADyn/spxgVb8Ax2d/JVrvMtpz9kh44NJLRk35RL5aM7vemMjDXN8jjGbkPHClSrhZkJpCQeVu38=
+        Mon, 23 Apr 2018 17:52:52 -0400
+X-Google-Smtp-Source: AIpwx4/y3ANWdk2dmccLiakxLYR8xbAsW5L1EAkOleYHbpzeb8SdVJ97yXhKnqMsRrPgZ3PMrgmKhA==
+Date: Tue, 24 Apr 2018 00:52:48 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] proc: use "unsigned int" for /proc/*/stack
+Message-ID: <20180423215248.GG9043@avx2>
 MIME-Version: 1.0
-In-Reply-To: <20180424073840.39b99c2e@canb.auug.org.au>
-References: <20180424073840.39b99c2e@canb.auug.org.au>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 23 Apr 2018 16:52:05 -0500
-Message-ID: <CAH2r5mtHjjMZy8zWcUKFmKsF3X4b1iEt-otbGpiu0-n2G9bohw@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the cifs tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: CIFS <linux-cifs@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed - thx
+struct stack_trace::nr_entries is defined as "unsigned int" (YAY!)
+so the iterator should be unsigned as well.
 
-On Mon, Apr 23, 2018 at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Commits
->
->   dee4bf3f21d8 ("cifs: smbd: Don't use RDMA read/write when signing is used")
->   553018657de2 ("ifs: smbd: Avoid allocating iov on the stack")
->
-> are missing a Signed-off-by from their committer.
->
-> --
-> Cheers,
-> Stephen Rothwell
+It saves 1 byte of code or something like that.
 
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
+ fs/proc/base.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
--- 
-Thanks,
-
-Steve
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -430,7 +430,6 @@ static int proc_pid_stack(struct seq_file *m, struct pid_namespace *ns,
+ 	struct stack_trace trace;
+ 	unsigned long *entries;
+ 	int err;
+-	int i;
+ 
+ 	entries = kmalloc(MAX_STACK_TRACE_DEPTH * sizeof(*entries), GFP_KERNEL);
+ 	if (!entries)
+@@ -443,6 +442,8 @@ static int proc_pid_stack(struct seq_file *m, struct pid_namespace *ns,
+ 
+ 	err = lock_trace(task);
+ 	if (!err) {
++		unsigned int i;
++
+ 		save_stack_trace_tsk(task, &trace);
+ 
+ 		for (i = 0; i < trace.nr_entries; i++) {
