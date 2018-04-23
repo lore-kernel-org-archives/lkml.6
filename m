@@ -1,85 +1,170 @@
-Return-Path: <dan.carpenter@oracle.com>
-X-Google-Smtp-Source: AB8JxZrd7fmG04XESdqqQP8PjrFOYGklfnONz+7b57JiTmVR+/kakUdcajIQX+E5hDV2ETH1P3qX
-ARC-Seal: i=1; a=rsa-sha256; t=1525086959; cv=none;
+Return-Path: <poza@qualcomm.com>
+X-Google-Smtp-Source: AB8JxZqvCDhb3l5/5Dltu+inBPiMMZK16Z0pOAnCr23TDNdGrIuoc7M3S7c94ijgJQesdGu0kDPx
+ARC-Seal: i=1; a=rsa-sha256; t=1524496997; cv=none;
         d=google.com; s=arc-20160816;
-        b=0XhyrVWS++RdyZ+5idP4zVPYHxnB9j0DJnY3a9cd7jXyxMrJ43IPNyVG4ORxcpXfu4
-         7J9mugVzSG9N7NnffBz3BI8ETH/PIQMTyvFtM+pFwsbnAoGuDlH59FmgQm3NURDNBFe7
-         cJbnjVkjV8E9kmKa9c3wSQYpKmvtMPGKkUIbh/LdDL8w5fEjPZtbczL1XVGKcPkmGoN4
-         WIzBf/KSnMolYuZQ8XlYTDIIO9fJ/BQ9rkOTrDBj9G0tF4EFNwsRxMtjZJ/WcYN2EYwd
-         zgzD+CfHNkMNpX/mSyZUd6BWRECVpFCLervCg8nfZdmXuLeUUWl33DhEwyGCqCNo568y
-         n4Lg==
+        b=PnN/uo+eUvOOjqpdZYaLUIqi/7Efuw1mPHwhiXeEzpLlECUEIChWSmGJFEozGGVxmM
+         oDYjuvF3WUrA8Fh81pUeIak13Ob/7ztbdUHzvOH9vNe43MhVyUUHuKEJXMBXkh/O//kD
+         /L713y34ngRDImU16cZtdci6CVSneRoCniJIqCqvMmLqXKXwyqsXngfaJkVIzrflcjSK
+         3fwjxyu8IwwZq4Ln+TetenNhQRxpK35yGTmSSnB2tpYlIxzIacgKVzHJqZ+5H1xjw/JM
+         RQZtMW7cNdPAFBo1XZDHEeJYzulmpZXcGgeWed/J6yC31yD10GyT3FUMrpAqRuMO8iRE
+         YqxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=9CTFmUZ0ZlBaa7eU+0iXHnYQJgiID6jWHHFTn8WrxI0=;
-        b=hd5U9rmowGO4tyueuplVoFcvpG02ezkhUv5P5xQRQLf6LmoH1q53qRpLsZRXkyqy3V
-         9sJBMjvTkHyul6Qtp9n4asfTukKjXtr6Eu/QR6s93+zyoq+iGV/bcgguc3FktqQaSEE7
-         ic2F0cvBqA89adaG+yXtnnhqlOym4F6UoINXoziMywswkScSTA6gc/mxKJGmQWNr/pON
-         8lZFpLFLsuQ82bhOLPRIcYay+ozh7apOgAUpLeoPNzokUtM5C7gHonG4MiYzHmJFWcd1
-         8tSfKd5A9pR80IiLpJPgltRKveKYMW0IpjQH19HpBeVArhx6FTMN0ga8DeWzVLWL8Um0
-         H9aA==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=GOVyhP4UHbCHrCx00ylS38NV6qUeFSRkZbkusrnu390=;
+        b=jIqkuYJ4SVBwa+GB8dxVWsnWhvrV63kNa8W0Yh9yfz27L7wVy1IcQRpmD16NBDM4me
+         qnR0t5W/exqr9zkht8yHgTfZcz+TwcBhfJOVE+K3TUMUUFg6Cfa0ycoiwsrdsj/qIJ+1
+         hzfNBgRmvU6jn3C2DZAtGfxv6TRcAcFluJRnaEqHUqsd5DUZ91Xx8XH18P4TGyESKim2
+         Jm5licGWlqZliSIuqAnsvOea1FfKFpu3kA2glU2mST76OCpDkv7+5HkSN+N5PTgIYC1v
+         UxADfYsfy7wbep1qBOW9B43TkQP8NPrd0FhVYaf54U+mcxVaCszFlzace2Q2EXIKygWm
+         SYfA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=rfa0VTaL;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=rfa0VTaL;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Date: Mon, 30 Apr 2018 14:15:35 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Aastha Gupta <aastha.gupta4104@gmail.com>,
-        "Dilger, Andreas" <andreas.dilger@intel.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        "Drokin, Oleg" <oleg.drokin@intel.com>, "kjlu@umn.edu" <kjlu@umn.edu>,
-        NeilBrown <neilb@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ben Evans <bevans@cray.com>,
-        "lustre-devel@lists.lustre.org" <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH] staging: luster: llite: fix a potential missing-check
- bug when copying lumv
-Message-ID: <20180430111535.gnycdzkok7cgi3ue@mwanda>
-References: <1524872704-13391-1-git-send-email-wang6495@umn.edu>
- <8E6ADED8-592E-4794-8CAB-913A325B1971@intel.com>
- <20180429132058.GB5972@kroah.com>
- <CAAa=b7dPWAsqfQOWzvecHqAHYuhA63_+ya6nOMdPQ7ZaL6JB9w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAa=b7dPWAsqfQOWzvecHqAHYuhA63_+ya6nOMdPQ7ZaL6JB9w@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8878 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=583
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804300110
+       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+X-IronPort-AV: E=Sophos;i="5.49,318,1520924400";
+   d="scan'208";a="126091297"
+X-IronPort-AV: E=McAfee;i="5900,7806,8871"; a="144918531"
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Wei Zhang <wzhang@fb.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Timur Tabi <timur@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v14 0/9] Address error and recovery for AER and DPC
+Date: Mon, 23 Apr 2018 11:23:04 -0400
+Message-Id: <1524496993-29799-1-git-send-email-poza@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598944943578176100?=
-X-GMAIL-MSGID: =?utf-8?q?1599169583874983459?=
+X-GMAIL-THRID: =?utf-8?q?1598550963799959493?=
+X-GMAIL-MSGID: =?utf-8?q?1598550963799959493?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Apr 29, 2018 at 03:58:55PM -0500, Wenwen Wang wrote:
-> It is worth fixing this bug, since it offers an opportunity for adversaries
-> to provide inconsistent user data. In addition to the unwanted version
-> LOV_USER_MAGIC_V1, a malicious user can also use the version
-> LMV_USER_MAGIC, which is also unexpected but allowed in the function
-> ll_dir_setstripe(). These inconsistent data can cause potential logical
-> errors in the following execution. Hence it is necessary to re-verify the
-> data copied from userspace.
-> 
+This patch set brings in error handling support for DPC
 
-This change doesn't really prevent any bugs in current kernels since
-LMV_USER_MAGIC is the same thing as LOV_USER_MAGIC_V1 and the users are
-allowed to use LOV_USER_MAGIC_V1 if they want.
+The current implementation of AER and error message broadcasting to the
+EP driver is tightly coupled and limited to AER service driver.
+It is important to factor out broadcasting and other link handling
+callbacks. So that not only when AER gets triggered, but also when DPC get
+triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
 
-But we should probably verify it just to make the code easier to read
-and because there are static analysis tools which will warn about read
-verify re-read type bugs.
+The goal of the patch-set is:
+DPC should handle the error handling and recovery similar to AER, because 
+finally both are attempting recovery in some or the other way,
+and for that error handling and recovery framework has to be loosely
+coupled.
 
-regards,
-dan carpenter
+It achieves uniformity and transparency to the error handling agents such
+as AER, DPC, with respect to recovery and error handling.
+
+So, this patch-set tries to unify lot of things between error agents and
+make them behave in a well defined way. (be it error (FATAL, NON_FATAL)
+handling or recovery).
+
+The FATAL error handling is handled with remove/reset_link/re-enumerate
+sequence while the NON_FATAL follows the default path.
+Documentation/PCI/pci-error-recovery.txt talks more on that.
+
+Changes since v13:
+    Bjorn's comments addressed
+    > handke FATAL errors with remove devices followed by re-enumeration.
+    > changes in AER and DPC along with required Documentation.
+Changes since v12:
+    Bjorn's and Keith's Comments addressed.
+    > Made DPC and AER error handling identical <aligned err.c>
+    > hanldled cases for hotplug enabled system differently.
+Changes since v11:
+    Bjorn's comments addressed.
+    > rename pcie-err.c to err.c
+    > removed EXPORT_SYMBOL
+    > made generic find_serivce function in port driver.
+    > removed mutex patch as no need to have mutex in pcie_do_recovery
+    > brough in DPC_FATAL in aer.h
+    > so now all the error codes (AER and DPC) are unified in aer.h
+Changes since v10:
+    Christoph Hellwig's, David Laight's and Randy Dunlap's
+    comments addressed.
+        > renamed pci_do_recovery to pcie_do_recovery
+        > removed inner braces in conditional statements.
+        > restrctured the code in pci_wait_for_link
+        > EXPORT_SYMBOL_GPL
+Changes since v9:
+    Sinan's comments addressed.
+        > bool active = true; unnecessary variable removed.
+Changes since v8:
+    Fixed Kbuild errors.
+Changes since v7:
+    Rebased the code on pci master
+        > https://kernel.googlesource.com/pub/scm/linux/kernel/git/helgaas/pci
+Changes since v6:
+    Sinan's and Stefan's comments implemented.
+        > reordered patch 6 and 7
+        > cleaned up
+Changes since v5:
+    Sinan's and Keith's comments incorporated.
+        > made separate patch for mutex
+        > unified error repotting codes into driver/pci/pci.h
+        > got rid of wait link active/inactive and
+          made generic function in driver/pci/pci.c
+Changes since v4:
+    Bjorn's comments incorporated.
+        > Renamed only do_recovery.
+        > moved the things more locally to drivers/pci/pci.h
+Changes since v3:
+    Bjorn's comments incorporated.
+        > Made separate patch renaming generic pci_err.c
+        > Introduce pci_err.h to contain all the error types and recovery
+        > removed all the dependencies on pci.h
+Changes since v2:
+    Based on feedback from Keith:
+    "
+    When DPC is triggered due to receipt of an uncorrectable error Message,
+    the Requester ID from the Message is recorded in the DPC Error
+    Source ID register and that Message is discarded and not forwarded Upstream.
+    "
+    Removed the patch where AER checks if DPC service is active
+Changes since v1:
+    Kbuild errors fixed:
+        > pci_find_dpc_dev made static
+        > ras_event.h updated
+        > pci_find_aer_service call with CONFIG check
+        > pci_find_dpc_service call with CONFIG check
+
+Oza Pawandeep (9):
+  PCI/AER: Rename error recovery to generic PCI naming
+  PCI/AER: Factor out error reporting from AER
+  PCI/PORTDRV: Implement generic find service
+  PCI/PORTDRV: Implement generic find device
+  PCI/DPC: Unify and plumb error handling into DPC
+  PCI: Unify wait for link active into generic PCI
+  PCI/DPC: Disable ERR_NONFATAL for DPC
+  PCI/AER/DPC: Align FATAL error handling for AER and DPC
+  pci-error-recovery: Add AER_FATAL handling
+
+ Documentation/PCI/pci-error-recovery.txt |  35 ++-
+ drivers/pci/hotplug/pciehp_hpc.c         |  20 +-
+ drivers/pci/pci.c                        |  30 +++
+ drivers/pci/pci.h                        |   5 +
+ drivers/pci/pcie/Makefile                |   2 +-
+ drivers/pci/pcie/aer/aerdrv.c            |   2 +
+ drivers/pci/pcie/aer/aerdrv.h            |  30 ---
+ drivers/pci/pcie/aer/aerdrv_core.c       | 317 +-------------------------
+ drivers/pci/pcie/err.c                   | 374 +++++++++++++++++++++++++++++++
+ drivers/pci/pcie/pcie-dpc.c              |  63 +++---
+ drivers/pci/pcie/portdrv.h               |   4 +
+ drivers/pci/pcie/portdrv_core.c          |  69 ++++++
+ include/linux/aer.h                      |   2 +
+ include/uapi/linux/pci_regs.h            |   3 +-
+ 14 files changed, 552 insertions(+), 404 deletions(-)
+ create mode 100644 drivers/pci/pcie/err.c
+
+-- 
+2.7.4
