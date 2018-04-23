@@ -1,81 +1,449 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932210AbeDWREc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:04:32 -0400
-Received: from sonic316-19.consmr.mail.bf2.yahoo.com ([74.6.130.193]:44071
-        "EHLO sonic316-19.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932129AbeDWRE2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:04:28 -0400
-X-YMail-OSG: wYXbXiQVM1nvDuu1aB.L7oeT7zipbGNQWi29vGUJi4Zf_9W2WTCbsoyKKufmtVQ
- hzwvQWuShbHyCn0NCRPAlIiEZ9ysMZxsWN8PhBv1TlmGZPkC4X_dfZzQrNVYKNm39e.JFVg7MNwM
- 6Do8gboDdM0wwHRnZK8l5CdRF.mItmsUW6EYwy2eOSG8fGkY7EWKZ0ATUI.mmMsY9nLaPlaAym44
- I1oXYUSxypds9brLMdzlPne6McFLQQ0mObpJ_Zx1Ez1nDZnkexA_EwbLj0sD3r8gS2HLyo6FPvr.
- CAztrc14vfWek.KZd_bUl62kdHK2vnQld9Tb_d9zMfWQK2BnjAec1wKuzAdh5O4Olw3Z7w80juPn
- tG1LFhzqbCb2EDsw92vpoop82Tlvj35d93IdqTykpXqx1FJ2vZ4l3eM4mJHF41MBohIghQdfZHkl
- SUUzNJrELwpkGtmT6V4.Ez2mc8DNPlzBbix4b4BAnk7aVJlID.nkS883CMSUL5.T3dPmtxc2ats7
- Wmt1W7b_uYHywNiGPt4yk_ckaTGgVQkG3R8mXRcQWGftaILnZgM2b89KWUb5cG7p5FUmW3NYRrvz
- YvkI-
-Subject: Re: [PATCH 0/3] Introduce LSM-hook for socketpair(2)
-To: David Herrmann <dh.herrmann@gmail.com>, linux-kernel@vger.kernel.org
-Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        teg@jklm.no, Stephen Smalley <sds@tycho.nsa.gov>,
-        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20180423133015.5455-1-dh.herrmann@gmail.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <32eea1d6-450c-bc68-59d6-74bc5011ead2@schaufler-ca.com>
-Date: Mon, 23 Apr 2018 10:04:19 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180423133015.5455-1-dh.herrmann@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1755828AbeDWRFc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:05:32 -0400
+Received: from mga14.intel.com ([192.55.52.115]:44862 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755791AbeDWRFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 13:05:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,318,1520924400";
+   d="scan'208";a="49241840"
+From: Haiyue Wang <haiyue.wang@linux.intel.com>
+To: wsa@the-dreams.de, brendanhiggins@google.com,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org
+Cc: Haiyue Wang <haiyue.wang@linux.intel.com>,
+        jarkko.nikula@linux.intel.com, andriy.shevchenko@intel.com,
+        jae.hyun.yoo@linux.intel.com
+Subject: [PATCH i2c/slave-mqueue v5] i2c: slave-mqueue: add a slave backend to receive and queue messages
+Date: Tue, 24 Apr 2018 01:06:32 +0800
+Message-Id: <1524503192-4176-1-git-send-email-haiyue.wang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/23/2018 6:30 AM, David Herrmann wrote:
-> Hi
->
-> This series adds a new LSM hook for the socketpair(2) syscall. The idea
-> is to allow SO_PEERSEC to be called on AF_UNIX sockets created via
-> socketpair(2), and return the same information as if you emulated
-> socketpair(2) via a temporary listener socket. Right now SO_PEERSEC
-> will return the unlabeled credentials for a socketpair, rather than the
-> actual credentials of the creating process.
->
-> ...
->
-> This series only adds SELinux backends, since that is what we need for
-> RHEL. I will gladly extend the other LSMs if needed.
+Some protocols over I2C are designed for bi-directional transferring
+messages by using I2C Master Write protocol. Like the MCTP (Management
+Component Transport Protocol) and IPMB (Intelligent Platform Management
+Bus), they both require that the userspace can receive messages from
+I2C dirvers under slave mode.
 
-I would be very happy to see a proposed patch for Smack. It shouldn't
-be much different from the SELinux version, with the exception that it
-will use pointers to smk_known structures instead of secids. It would be
-a big help, as someone just threw a whole new species of scorpion into
-this pit.
+This new slave mqueue backend is used to receive and queue messages, it
+will exposes these messages to userspace by sysfs bin file.
 
->
-> Thanks
-> David
->
-> [1] https://github.com/bus1/dbus-broker/blob/master/src/util/test-peersec.c
-> [2] https://www.spinics.net/lists/selinux/msg22674.html
->
-> David Herrmann (3):
->   security: add hook for socketpair(AF_UNIX, ...)
->   net/unix: hook unix_socketpair() into LSM
->   selinux: provide unix_stream_socketpair callback
->
->  include/linux/lsm_hooks.h |  8 ++++++++
->  include/linux/security.h  |  7 +++++++
->  net/unix/af_unix.c        |  5 +++++
->  security/security.c       |  6 ++++++
->  security/selinux/hooks.c  | 14 ++++++++++++++
->  5 files changed, 40 insertions(+)
->
+Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+---
+v4 -> v5:
+ - Typo: bellowing -> the below
+
+v3 -> v4:
+ - Drop the small message after receiving I2C STOP.
+
+v2 -> v3:
+ - Just remove the ';' after the end '}' of i2c_slave_mqueue_probe().
+
+v1 -> v2:
+ - Change MQ_MSGBUF_SIZE and MQ_QUEUE_SIZE to be configurable by Kconfig.
+---
+ Documentation/i2c/slave-mqueue-backend.rst | 125 ++++++++++++++++++
+ drivers/i2c/Kconfig                        |  25 ++++
+ drivers/i2c/Makefile                       |   1 +
+ drivers/i2c/i2c-slave-mqueue.c             | 203 +++++++++++++++++++++++++++++
+ 4 files changed, 354 insertions(+)
+ create mode 100644 Documentation/i2c/slave-mqueue-backend.rst
+ create mode 100644 drivers/i2c/i2c-slave-mqueue.c
+
+diff --git a/Documentation/i2c/slave-mqueue-backend.rst b/Documentation/i2c/slave-mqueue-backend.rst
+new file mode 100644
+index 0000000..3966cf0
+--- /dev/null
++++ b/Documentation/i2c/slave-mqueue-backend.rst
+@@ -0,0 +1,125 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=====================================
++Linux I2C slave message queue backend
++=====================================
++
++:Author: Haiyue Wang <haiyue.wang@linux.intel.com>
++
++Some protocols over I2C/SMBus are designed for bi-directional transferring
++messages by using I2C Master Write protocol. This requires that both sides
++of the communication have slave addresses.
++
++Like MCTP (Management Component Transport Protocol) and IPMB (Intelligent
++Platform Management Bus), they both require that the userspace can receive
++messages from i2c dirvers under slave mode.
++
++This I2C slave mqueue (message queue) backend is used to receive and queue
++messages from the remote i2c intelligent device; and it will add the target
++slave address (with R/W# bit is always 0) into the message at the first byte,
++so that userspace can use this byte to dispatch the messages into different
++handling modules. Also, like IPMB, the address byte is in its message format,
++it needs it to do checksum.
++
++For messages are time related, so this backend will flush the oldest message
++to queue the newest one.
++
++Link
++----
++`Intelligent Platform Management Bus
++Communications Protocol Specification
++<https://www.intel.com/content/dam/www/public/us/en/documents/product-briefs/ipmp-spec-v1.0.pdf>`_
++
++`Management Component Transport Protocol (MCTP)
++SMBus/I2C Transport Binding Specification
++<https://www.dmtf.org/sites/default/files/standards/documents/DSP0237_1.1.0.pdf>`_
++
++How to use
++----------
++For example, the I2C5 bus has slave address 0x10, the below command will create
++the related message queue interface:
++
++    echo slave-mqueue 0x1010 > /sys/bus/i2c/devices/i2c-5/new_device
++
++Then you can dump the messages like this:
++
++    hexdump -C /sys/bus/i2c/devices/5-1010/slave-mqueue
++
++Code Example
++------------
++*Note: call 'lseek' before 'read', this is a requirement from kernfs' design.*
++
++::
++
++  #include <sys/types.h>
++  #include <sys/stat.h>
++  #include <unistd.h>
++  #include <poll.h>
++  #include <time.h>
++  #include <fcntl.h>
++  #include <stdio.h>
++
++  int main(int argc, char *argv[])
++  {
++          int i, r;
++          struct pollfd pfd;
++          struct timespec ts;
++          unsigned char data[256];
++
++          pfd.fd = open(argv[1], O_RDONLY | O_NONBLOCK);
++          if (pfd.fd < 0)
++                  return -1;
++
++          pfd.events = POLLPRI;
++
++          while (1) {
++                  r = poll(&pfd, 1, 5000);
++
++                  if (r < 0)
++                          break;
++
++                  if (r == 0 || !(pfd.revents & POLLPRI))
++                          continue;
++
++                  lseek(pfd.fd, 0, SEEK_SET);
++                  r = read(pfd.fd, data, sizeof(data));
++                  if (r <= 0)
++                          continue;
++
++                  clock_gettime(CLOCK_MONOTONIC, &ts);
++                  printf("[%ld.%.9ld] :", ts.tv_sec, ts.tv_nsec);
++                  for (i = 0; i < r; i++)
++                          printf(" %02x", data[i]);
++                  printf("\n");
++          }
++
++          close(pfd.fd);
++
++          return 0;
++  }
++
++Result
++------
++*./a.out "/sys/bus/i2c/devices/5-1010/slave-mqueue"*
++
++::
++
++  [10183.232500449] : 20 18 c8 2c 78 01 5b
++  [10183.479358348] : 20 18 c8 2c 78 01 5b
++  [10183.726556812] : 20 18 c8 2c 78 01 5b
++  [10183.972605863] : 20 18 c8 2c 78 01 5b
++  [10184.220124772] : 20 18 c8 2c 78 01 5b
++  [10184.467764166] : 20 18 c8 2c 78 01 5b
++  [10193.233421784] : 20 18 c8 2c 7c 01 57
++  [10193.480273460] : 20 18 c8 2c 7c 01 57
++  [10193.726788733] : 20 18 c8 2c 7c 01 57
++  [10193.972781945] : 20 18 c8 2c 7c 01 57
++  [10194.220487360] : 20 18 c8 2c 7c 01 57
++  [10194.468089259] : 20 18 c8 2c 7c 01 57
++  [10203.233433099] : 20 18 c8 2c 80 01 53
++  [10203.481058715] : 20 18 c8 2c 80 01 53
++  [10203.727610472] : 20 18 c8 2c 80 01 53
++  [10203.974044856] : 20 18 c8 2c 80 01 53
++  [10204.220734634] : 20 18 c8 2c 80 01 53
++  [10204.468461664] : 20 18 c8 2c 80 01 53
++
+diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
+index efc3354..31e57d2 100644
+--- a/drivers/i2c/Kconfig
++++ b/drivers/i2c/Kconfig
+@@ -118,6 +118,31 @@ if I2C_SLAVE
+ config I2C_SLAVE_EEPROM
+ 	tristate "I2C eeprom slave driver"
+ 
++config I2C_SLAVE_MQUEUE_MESSAGE_SIZE
++	int "The message size of I2C mqueue slave"
++	default 120
++
++config I2C_SLAVE_MQUEUE_QUEUE_SIZE
++	int "The queue size of I2C mqueue slave"
++	default 32
++	help
++	  This number MUST be power of 2.
++
++config I2C_SLAVE_MQUEUE
++	tristate "I2C mqueue (message queue) slave driver"
++	select I2C_SLAVE_MQUEUE_MESSAGE_SIZE
++	select I2C_SLAVE_MQUEUE_QUEUE_SIZE
++	help
++	  Some protocols over I2C are designed for bi-directional transferring
++	  messages by using I2C Master Write protocol. This driver is used to
++	  receive and queue messages from the remote I2C device.
++
++	  Userspace can get the messages by reading sysfs file that this driver
++	  exposes.
++
++	  This support is also available as a module. If so, the module will be
++	  called i2c-slave-mqueue.
++
+ endif
+ 
+ config I2C_DEBUG_CORE
+diff --git a/drivers/i2c/Makefile b/drivers/i2c/Makefile
+index 72c94c6..7ec287b 100644
+--- a/drivers/i2c/Makefile
++++ b/drivers/i2c/Makefile
+@@ -16,6 +16,7 @@ obj-$(CONFIG_I2C_MUX)		+= i2c-mux.o
+ obj-y				+= algos/ busses/ muxes/
+ obj-$(CONFIG_I2C_STUB)		+= i2c-stub.o
+ obj-$(CONFIG_I2C_SLAVE_EEPROM)	+= i2c-slave-eeprom.o
++obj-$(CONFIG_I2C_SLAVE_MQUEUE)	+= i2c-slave-mqueue.o
+ 
+ ccflags-$(CONFIG_I2C_DEBUG_CORE) := -DDEBUG
+ CFLAGS_i2c-core-base.o := -Wno-deprecated-declarations
+diff --git a/drivers/i2c/i2c-slave-mqueue.c b/drivers/i2c/i2c-slave-mqueue.c
+new file mode 100644
+index 0000000..424f435
+--- /dev/null
++++ b/drivers/i2c/i2c-slave-mqueue.c
+@@ -0,0 +1,203 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2017 - 2018, Intel Corporation.
++
++#include <linux/i2c.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/sysfs.h>
++
++#define MQ_MSGBUF_SIZE		CONFIG_I2C_SLAVE_MQUEUE_MESSAGE_SIZE
++#define MQ_QUEUE_SIZE		CONFIG_I2C_SLAVE_MQUEUE_QUEUE_SIZE
++#define MQ_QUEUE_NEXT(x)	(((x) + 1) & (MQ_QUEUE_SIZE - 1))
++
++struct mq_msg {
++	int	len;
++	u8	*buf;
++};
++
++struct mq_queue {
++	struct bin_attribute	bin;
++	struct kernfs_node	*kn;
++
++	spinlock_t		lock; /* spinlock for queue index handling */
++	int			in;
++	int			out;
++
++	struct mq_msg		*curr;
++	int			truncated; /* drop current if truncated */
++	struct mq_msg		queue[MQ_QUEUE_SIZE];
++};
++
++static int i2c_slave_mqueue_callback(struct i2c_client *client,
++				     enum i2c_slave_event event, u8 *val)
++{
++	struct mq_queue *mq = i2c_get_clientdata(client);
++	struct mq_msg *msg = mq->curr;
++	int ret = 0;
++
++	switch (event) {
++	case I2C_SLAVE_WRITE_REQUESTED:
++		mq->truncated = 0;
++
++		msg->len = 1;
++		msg->buf[0] = client->addr << 1;
++		break;
++
++	case I2C_SLAVE_WRITE_RECEIVED:
++		if (msg->len < MQ_MSGBUF_SIZE) {
++			msg->buf[msg->len++] = *val;
++		} else {
++			dev_err(&client->dev, "message is truncated!\n");
++			mq->truncated = 1;
++			ret = -EINVAL;
++		}
++		break;
++
++	case I2C_SLAVE_STOP:
++		if (unlikely(mq->truncated || msg->len < 2))
++			break;
++
++		spin_lock(&mq->lock);
++		mq->in = MQ_QUEUE_NEXT(mq->in);
++		mq->curr = &mq->queue[mq->in];
++		mq->curr->len = 0;
++
++		/* Flush the oldest message */
++		if (mq->out == mq->in)
++			mq->out = MQ_QUEUE_NEXT(mq->out);
++		spin_unlock(&mq->lock);
++
++		kernfs_notify(mq->kn);
++		break;
++
++	default:
++		*val = 0xFF;
++		break;
++	}
++
++	return ret;
++}
++
++static ssize_t i2c_slave_mqueue_bin_read(struct file *filp,
++					 struct kobject *kobj,
++					 struct bin_attribute *attr,
++					 char *buf, loff_t pos, size_t count)
++{
++	struct mq_queue *mq;
++	struct mq_msg *msg;
++	unsigned long flags;
++	bool more = false;
++	ssize_t ret = 0;
++
++	mq = dev_get_drvdata(container_of(kobj, struct device, kobj));
++
++	spin_lock_irqsave(&mq->lock, flags);
++	if (mq->out != mq->in) {
++		msg = &mq->queue[mq->out];
++
++		if (msg->len <= count) {
++			ret = msg->len;
++			memcpy(buf, msg->buf, ret);
++		} else {
++			ret = -EOVERFLOW; /* Drop this HUGE one. */
++		}
++
++		mq->out = MQ_QUEUE_NEXT(mq->out);
++		if (mq->out != mq->in)
++			more = true;
++	}
++	spin_unlock_irqrestore(&mq->lock, flags);
++
++	if (more)
++		kernfs_notify(mq->kn);
++
++	return ret;
++}
++
++static int i2c_slave_mqueue_probe(struct i2c_client *client,
++				  const struct i2c_device_id *id)
++{
++	struct device *dev = &client->dev;
++	struct mq_queue *mq;
++	int ret, i;
++	void *buf;
++
++	mq = devm_kzalloc(dev, sizeof(*mq), GFP_KERNEL);
++	if (!mq)
++		return -ENOMEM;
++
++	BUILD_BUG_ON(!is_power_of_2(MQ_QUEUE_SIZE));
++
++	buf = devm_kmalloc_array(dev, MQ_QUEUE_SIZE, MQ_MSGBUF_SIZE,
++				 GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	for (i = 0; i < MQ_QUEUE_SIZE; i++)
++		mq->queue[i].buf = buf + i * MQ_MSGBUF_SIZE;
++
++	i2c_set_clientdata(client, mq);
++
++	spin_lock_init(&mq->lock);
++	mq->curr = &mq->queue[0];
++
++	sysfs_bin_attr_init(&mq->bin);
++	mq->bin.attr.name = "slave-mqueue";
++	mq->bin.attr.mode = 0400;
++	mq->bin.read = i2c_slave_mqueue_bin_read;
++	mq->bin.size = MQ_MSGBUF_SIZE * MQ_QUEUE_SIZE;
++
++	ret = sysfs_create_bin_file(&dev->kobj, &mq->bin);
++	if (ret)
++		return ret;
++
++	mq->kn = kernfs_find_and_get(dev->kobj.sd, mq->bin.attr.name);
++	if (!mq->kn) {
++		sysfs_remove_bin_file(&dev->kobj, &mq->bin);
++		return -EFAULT;
++	}
++
++	ret = i2c_slave_register(client, i2c_slave_mqueue_callback);
++	if (ret) {
++		kernfs_put(mq->kn);
++		sysfs_remove_bin_file(&dev->kobj, &mq->bin);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int i2c_slave_mqueue_remove(struct i2c_client *client)
++{
++	struct mq_queue *mq = i2c_get_clientdata(client);
++
++	i2c_slave_unregister(client);
++
++	kernfs_put(mq->kn);
++	sysfs_remove_bin_file(&client->dev.kobj, &mq->bin);
++
++	return 0;
++}
++
++static const struct i2c_device_id i2c_slave_mqueue_id[] = {
++	{ "slave-mqueue", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, i2c_slave_mqueue_id);
++
++static struct i2c_driver i2c_slave_mqueue_driver = {
++	.driver = {
++		.name	= "i2c-slave-mqueue",
++	},
++	.probe		= i2c_slave_mqueue_probe,
++	.remove		= i2c_slave_mqueue_remove,
++	.id_table	= i2c_slave_mqueue_id,
++};
++module_i2c_driver(i2c_slave_mqueue_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Haiyue Wang <haiyue.wang@linux.intel.com>");
++MODULE_DESCRIPTION("I2C slave mode for receiving and queuing messages");
+-- 
+2.7.4
