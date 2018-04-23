@@ -1,59 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755245AbeDWMup (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 08:50:45 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:36618 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754857AbeDWMum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 08:50:42 -0400
-Date: Mon, 23 Apr 2018 14:50:13 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Denys Vlasenko <dvlasenk@redhat.com>
-Subject: Re: [PATCH] x86/entry/64/compat: Preserve r8-r11 in int $0x80
-Message-ID: <20180423125013.GC22238@pd.tnic>
-References: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
+        id S1754915AbeDWMxO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 08:53:14 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55501 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754786AbeDWMxN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 08:53:13 -0400
+Date: Mon, 23 Apr 2018 14:53:08 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: "Wan, Kaike" <kaike.wan@intel.com>
+cc: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        "Fleck, John" <john.fleck@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+Subject: Re: hrtimer (rdmavt RNR timer) was lost
+In-Reply-To: <3F128C9216C9B84BB6ED23EF16290AFB634C8C87@CRSMSX101.amr.corp.intel.com>
+Message-ID: <alpine.DEB.2.21.1804231355570.2077@nanos.tec.linutronix.de>
+References: <3F128C9216C9B84BB6ED23EF16290AFB634C8C87@CRSMSX101.amr.corp.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 07:36:36AM -0700, Andy Lutomirski wrote:
-> 32-bit user code that uses int $80 doesn't care about r8-r11.  There is,
-> however, some 64-bit user code that intentionally uses int $0x80 to
-> invoke 32-bit system calls.  From what I've seen, basically all such
-> code assumes that r8-r15 are all preserved, but the kernel clobbers
-> r8-r11.  Since I doubt that there's any code that depends on int $0x80
-> zeroing r8-r11, change the kernel to preserve them.
+On Fri, 20 Apr 2018, Wan, Kaike wrote:
+
+Please do not send html mail. It's rejected by the list server.
+
+>           <idle>-0     [001] d.h. 3598473310671: hrtimer_start: hrtimer=00000000708914d7 function=rvt_rc_rnr_retry [rdmavt] expires=712172295802 softexpires=712172295802mode=REL base=0000000066dda1ea next=0000000039cae92b
+>           <idle>-0     [001] d.h. 3598473311561: hrtimer_post_add: hrtimer=00000000708914d7 function=rvt_rc_rnr_retry [rdmavt] base=0000000066dda1ea next=0000000039cae92b
 > 
-> I suspect that very little user code is broken by the old clobber,
-> since r8-r11 are only rarely allocated by gcc, and they're clobbered
-> by function calls, so they only way we'd see a problem is if the
-> same function that invokes int $0x80 also spills something important
-> to one of these registers.
+
+> --> The target was first added. The expires was 712172295802. The call
+>     was made from cpu 1 while the timer base was on cpu 3.
+
+>           <idle>-0     [003] dn.. 3598605305357: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=716767000000 softexpires=716767000000mode=ABS|PINNED base=0000000066dda1ea next=00000000708914d7
+>           <idle>-0     [003] dn.. 3598605305781: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000708914d7
 > 
-> The current behavior seems to date back to the historical commit
-> "[PATCH] x86-64 merge for 2.6.4".  Before that, all regs were
-> preserved.  I can't find any explanation of why this change was made.
+> --> the target timer was the next one to trigger. The call was from cpu 3.
+> 
+>           <idle>-0     [003] dN.. 3598605306604: hrtimer_pre_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000708914d7
+>           <idle>-0     [003] dN.. 3598605306802: hrtimer_post_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000708914d7
+> 
+> --> The tick_sched_timer was removed
+> 
+>           <idle>-0     [003] dN.. 3598605307236: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=712171000000 softexpires=712171000000mode=ABS|PINNED base=0000000066dda1ea next=00000000708914d7
+>           <idle>-0     [003] dN.. 3598605307601: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=0000000004346740
+> 
+> --> The tick_sched_timer was added again with a new expires (712171000000
+>     < 716767000000), which replaced the target (712172295802) as the
+>     head->next.
+> 
+>           <idle>-0     [002] d.h. 3598605313255: hrtimer_start: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] expires=712172915662 softexpires=712172915662mode=REL base=0000000066dda1ea next=0000000004346740
+>           <idle>-0     [002] d.h. 3599538740786: hrtimer_post_add: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] base=0000000066dda1ea next=00000000662d2dd8
+>
+> 
+> --> A new hrtimer (00000000662d2dd8) was added (from cpu 2). Its expires
+>     (712172915662) was larger than the target's (712172295802). How could
+>     it become the next hrtimer to trigger??? The next pointer was not set
+>     properly here.
 
-Probably because r8-r11 are callee-clobbered, according to ABI so
-someone decided to whack them so that code which doesn't adhere to the
-ABI would fall on its face...
+I have no idea how that can happen assumed that you did not strip anything
+from the trace. If you stripped stuff, please send me the full trace or
+upload it somewhere.
 
-Also, looking at PUSH_AND_CLEAR_REGS and how we call it on the 64-bit
-entry path, we probably should keep clearing those regs to avoid
-speculation crap.
+Can you apply the following debug patch and enable the hrtimer_start trace
+point and send me the full trace or upload it somewhere?
 
-Methinks.
+Thanks,
 
--- 
-Regards/Gruss,
-    Boris.
+	tglx
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+8<-------------------------
+--- a/lib/timerqueue.c
++++ b/lib/timerqueue.c
+@@ -57,6 +57,10 @@ bool timerqueue_add(struct timerqueue_he
+ 	rb_link_node(&node->node, parent, p);
+ 	rb_insert_color(&node->node, &head->head);
+ 
++	trace_printk("head %p next %p next->exp %llu node %p node->exp %llu\n",
++		     head, head->next, head->next ? head->next->expires : 0ULL,
++		     node, node->expires);
++
+ 	if (!head->next || node->expires < head->next->expires) {
+ 		head->next = node;
+ 		return true;
+@@ -84,6 +88,11 @@ bool timerqueue_del(struct timerqueue_he
+ 
+ 		head->next = rb_entry_safe(rbn, struct timerqueue_node, node);
+ 	}
++
++	trace_printk("head %p next %p next->exp %llu node %p node->exp %llu\n",
++		     head, head->next, head->next ? head->next->expires : 0ULL,
++		     node, node->expires);
++
+ 	rb_erase(&node->node, &head->head);
+ 	RB_CLEAR_NODE(&node->node);
+ 	return head->next != NULL;
