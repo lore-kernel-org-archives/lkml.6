@@ -1,48 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755260AbeDWNfd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:35:33 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55715 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754881AbeDWNf3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:35:29 -0400
-Date: Mon, 23 Apr 2018 15:35:26 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: "Wan, Kaike" <kaike.wan@intel.com>
-cc: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        "Fleck, John" <john.fleck@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Subject: RE: hrtimer (rdmavt RNR timer) was lost
-In-Reply-To: <3F128C9216C9B84BB6ED23EF16290AFB634C9420@CRSMSX101.amr.corp.intel.com>
-Message-ID: <alpine.DEB.2.21.1804231528130.2077@nanos.tec.linutronix.de>
-References: <3F128C9216C9B84BB6ED23EF16290AFB634C8C87@CRSMSX101.amr.corp.intel.com> <alpine.DEB.2.21.1804231355570.2077@nanos.tec.linutronix.de> <3F128C9216C9B84BB6ED23EF16290AFB634C9420@CRSMSX101.amr.corp.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1755307AbeDWNgV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:36:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33766 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755152AbeDWNgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 09:36:18 -0400
+Date: Mon, 23 Apr 2018 09:36:17 -0400
+From: Vivek Goyal <vgoyal@redhat.com>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 13/35] ovl: readd fsync
+Message-ID: <20180423133617.GB2794@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com>
+ <20180412150826.20988-14-mszeredi@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412150826.20988-14-mszeredi@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018, Wan, Kaike wrote:
-> > Can you apply the following debug patch and enable the hrtimer_start trace
-> > point and send me the full trace or upload it somewhere?
+On Thu, Apr 12, 2018 at 05:08:04PM +0200, Miklos Szeredi wrote:
+> Implement stacked fsync().
 > 
-> The original trace was about 29GB and I filtered it with
-> "0000000066dda1ea" (the offending base) to generate a 1.4GB file that I
-> could open and investigate.  I am not sure how I can send them to you. Do
-> you have somewhere I can upload to?
->
-> I can try your debug patch and again I am anticipating a big trace file.
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/overlayfs/file.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> index b98204c1c19c..4417527667ff 100644
+> --- a/fs/overlayfs/file.c
+> +++ b/fs/overlayfs/file.c
+> @@ -222,10 +222,30 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+>  	return ret;
+>  }
+>  
+> +static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+> +{
+> +	struct fd real;
+> +	const struct cred *old_cred;
+> +	int ret;
+> +
+> +	ret = ovl_real_file(file, &real);
+> +	if (ret)
+> +		return ret;
+> +
+> +	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+> +	ret = vfs_fsync_range(real.file, start, end, datasync);
+> +	revert_creds(old_cred);
 
-Well, you can find the spot where the fail happens and then extract the
-full thing from 2s before that point to 1s after. That should be reasonably
-small and good enough. Let me know when you have it and how big it is
-(compressed) and we'll figure something out how to transport it.
+Can we avoid calling fsync() on real file if it is not upper. Is it worth
+optimizing.
 
-Thanks,
+Vivek
 
-	tglx
+> +
+> +	fdput(real);
+> +
+> +	return ret;
+> +}
+> +
+>  const struct file_operations ovl_file_operations = {
+>  	.open		= ovl_open,
+>  	.release	= ovl_release,
+>  	.llseek		= ovl_llseek,
+>  	.read_iter	= ovl_read_iter,
+>  	.write_iter	= ovl_write_iter,
+> +	.fsync		= ovl_fsync,
+>  };
+> -- 
+> 2.14.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
