@@ -1,86 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755715AbeDWQIw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:08:52 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40156 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755339AbeDWQIr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:08:47 -0400
-Date: Mon, 23 Apr 2018 17:08:33 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 7/8] drm/i2c: tda998x: register as a drm bridge
-Message-ID: <20180423160833.GF16141@n2100.armlinux.org.uk>
-References: <20180423072301.11962-1-peda@axentia.se>
- <20180423072301.11962-8-peda@axentia.se>
+        id S932086AbeDWQJZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:09:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53414 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755306AbeDWQJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 12:09:24 -0400
+Date: Mon, 23 Apr 2018 10:09:20 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: David Rientjes <rientjes@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, Roman Gushchin <guro@fb.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
+Message-ID: <20180423160920.GX17484@dhcp22.suse.cz>
+References: <201804180057.w3I0vieV034949@www262.sakura.ne.jp>
+ <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
+ <20180418075051.GO17484@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1804181159020.227784@chino.kir.corp.google.com>
+ <20180419063556.GK17484@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com>
+ <20180420082349.GW17484@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1804212023120.84222@chino.kir.corp.google.com>
+ <20180422131857.GI17484@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180423072301.11962-8-peda@axentia.se>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180422131857.GI17484@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 09:23:00AM +0200, Peter Rosin wrote:
->  static int tda998x_remove(struct i2c_client *client)
->  {
-> -	component_del(&client->dev, &tda998x_ops);
-> +	struct device *dev = &client->dev;
-> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
-> +
-> +	drm_bridge_remove(&bridge->bridge);
-> +	component_del(dev, &tda998x_ops);
-> +
+On Sun 22-04-18 07:18:57, Michal Hocko wrote:
+> On Sat 21-04-18 20:45:11, David Rientjes wrote:
+[...]
+> Maybe invoking the reaper as suggested by Tetsuo will help here. Maybe
+> we will come up with something more smart. But I would like to have a
+> stop gap solution for stable that is easy enough. And your patch is not
+> doing that because it adds a very subtle dependency on the page lock.
+> So please stop repeating your arguments all over and either come with
+> an argument which proves me wrong and the lock_page dependency is not
+> real or come with an alternative solution which doesn't make
+> MMF_OOM_SKIP depend on the page lock.
 
-I'd like to ask a rather fundamental question about DRM bridge support,
-because I suspect that there's a major fsckup here.
-
-The above is the function that deals with the TDA998x device being
-unbound from the driver.  With the component API, this results in the
-DRM device correctly being torn down, because one of the hardware
-devices has gone.
-
-With DRM bridge, the bridge is merely removed from the list of
-bridges:
-
-void drm_bridge_remove(struct drm_bridge *bridge)
-{
-        mutex_lock(&bridge_lock);
-        list_del_init(&bridge->list);
-        mutex_unlock(&bridge_lock);
-}
-EXPORT_SYMBOL(drm_bridge_remove);
-
-and the memory backing the "struct tda998x_bridge" (which contains
-the struct drm_bridge) will be freed by the devm subsystem.
-
-However, there is no notification into the rest of the DRM subsystem
-that the device has gone away.  Worse, the memory that is still in
-use by DRM has now been freed, so further use of the DRM device
-results in a use-after-free bug.
-
-This is really not good, and to me looks like a fundamental problem
-with the DRM bridge code.  I see nothing in the DRM bridge code that
-deals with the lifetime of a "DRM bridge" or indeed the lifetime of
-the actual device itself.
-
-So, from what I can see, there seems to be a fundamental lifetime
-issue with the design of the DRM bridge code.  This needs to be
-fixed.
-
+I though I would give this a try but I am at a conference and quite
+busy. Tetsuo are you willing to give it a try so that we have something
+to compare and decide, please?
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Michal Hocko
+SUSE Labs
