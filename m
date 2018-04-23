@@ -1,50 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755499AbeDWOX0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:23:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755335AbeDWOXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 10:23:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5E7121795
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 23 Apr 2018 11:23:19 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@intel.com>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 5/9] perf tools: Disable write_backward for leader
- sampling group events
-Message-ID: <20180423142319.GD30324@kernel.org>
-References: <20180423090823.32309-1-jolsa@kernel.org>
- <20180423090823.32309-6-jolsa@kernel.org>
+        id S1755512AbeDWOYH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:24:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43768 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755335AbeDWOYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 10:24:04 -0400
+Date: Mon, 23 Apr 2018 10:24:02 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, bhutchings@solarflare.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
+        jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        dm-devel@redhat.com, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+In-Reply-To: <20180422130356.GG17484@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1804231006440.22488@file01.intranet.prod.int.rdu2.redhat.com>
+References: <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com> <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com> <20180418.134651.2225112489265654270.davem@davemloft.net> <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com> <20180420130852.GC16083@dhcp22.suse.cz> <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180420210200.GH10788@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180421144757.GC14610@bombadil.infradead.org> <20180422130356.GG17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423090823.32309-6-jolsa@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Apr 23, 2018 at 11:08:19AM +0200, Jiri Olsa escreveu:
-> .. and other related fields that do not need to be enabled
-> for events that have sampling leader.
-> 
-> It fixes the perf top usage Ingo reported broken:
-> 
->   # perf top -e '{cycles,msr/aperf/}:S'
-> 
-> The msr/aperf/ is configured for write_back sampling, which
-> is not allowed by msr pmu, so it fails to create the event.
-> 
-> Adjusting related attr test.
 
-Applied to perf/urgent.
 
-- Arnaldo
+On Sun, 22 Apr 2018, Michal Hocko wrote:
+
+> On Sat 21-04-18 07:47:57, Matthew Wilcox wrote:
+> 
+> > > He didn't want to fix vmalloc(GFP_NOIO)
+> > 
+> > I don't remember that conversation, so I don't know whether I agree with
+> > his reasoning or not.  But we are supposed to be moving away from GFP_NOIO
+> > towards marking regions with memalloc_noio_save() / restore.  If you do
+> > that, you won't need vmalloc(GFP_NOIO).
+> 
+> It was basically to detect GFP_NOIO context _inside_ vmalloc and use the
+> scope API to enforce it there. Does it solve potential problems? Yes it
+> does. Does it solve any existing report, no I am not aware of any. Is
+> it a good fix longterm? Absolutely no, because the scope API should be
+> used _at the place_ where the scope starts rather than a random utility
+> function. If we are going the easier way now, we will never teach users
+> to use the API properly. And I am willing to risk to keep a broken
+> code which we have for years rather than allow a random hack that will
+> seemingly fix it.
+> 
+> Btw. I was pretty much explicit with this reasoning when rejecting the
+> patch. Do you still call that evil?
+
+You are making nonsensical excuses.
+
+That patch doesn't prevent you from refactoring the kernel and eliminating 
+GFP_NOIO in the long term. You can apply the patch and then continue 
+working on GFP_NOIO refactoring as well as before.
+
+> > > he didn't want to fix alloc_pages sleeping when __GFP_NORETRY is used.
+> > 
+> > The GFP flags are a mess, still.
+> 
+> I do not remember that one but __GFP_NORETRY is _allowed_ to sleep. And
+> yes I do _agree_ gfp flags are a mess which is really hard to get fixed
+> because they are lacking a good design from the very beginning. Fixing
+> some of those issues today is a completely PITA.
+
+It may sleep, but if it sleeps regularly, it slows down swapping (because 
+the swapping code does mempool_alloc and mempool_alloc does __GFP_NORETRY 
+allocation). And there were two INTENTIONAL sleeps with schedule_timeout. 
+You removed one and left the other, claiming that __GFP_NORETRY allocation 
+should sleep.
+
+> > > I already said that we can change it from CONFIG_DEBUG_VM to 
+> > > CONFIG_DEBUG_SG - or to whatever other option you may want, just to make 
+> > > sure that it is enabled in distro debug kernels by default.
+> > 
+> > Yes, and I think that's the right idea.  So send a v2 and ignore the
+> > replies that are clearly relating to an earlier version of the patch.
+> > Not everybody reads every mail in the thread before responding to one they
+> > find interesting.  Yes, ideally, one would, but sometimes one doesn't.
+> 
+> And look here. This is yet another ad-hoc idea. We have many users of
+> kvmalloc which have no relation to SG, yet you are going to control
+> their behavior by CONFIG_DEBUG_SG? No way! (yeah evil again)
+
+Why aren't you constructive and pick up pick up the CONFIG flag?
+
+> Really, we have a fault injection framework and this sounds like
+> something to hook in there.
+
+The testing people won't set it up. They install the "kernel-debug" 
+package and run the tests in it.
+
+If you introduce a hidden option that no one knows about, no one will use 
+it.
+
+> -- 
+> Michal Hocko
+> SUSE Labs
+
+Mikulas
