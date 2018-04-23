@@ -1,97 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751314AbeDWHNP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 03:13:15 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58357 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750756AbeDWHNN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 03:13:13 -0400
-Date: Mon, 23 Apr 2018 09:13:11 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: vcaputo@pengaru.com, Ferry Toth <ftoth@telfort.nl>,
-        linux-kernel@vger.kernel.org
-Subject: Re: DOS by unprivileged user
-Message-ID: <20180423071311.GA5768@amd>
-References: <9023506.UBh6vynRGa@delfion>
- <20180422101654.GA26243@amd>
- <20180422174300.srzhf3veqxfigqhg@shells.gnugeneration.com>
- <20180423002738.GF16083@dhcp22.suse.cz>
+        id S1754114AbeDWHOe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 03:14:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53585 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750756AbeDWHOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 03:14:33 -0400
+Date: Mon, 23 Apr 2018 09:14:21 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Pascal Roeleven <dev@pascalroeleven.nl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] ARM: dts: sun4i: Fix incorrect clocks for displays
+Message-ID: <20180423071421.byupsz4gxpmhfe44@flea>
+References: <20180420102112.2843-1-dev@pascalroeleven.nl>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yofuic37aad2weiq"
 Content-Disposition: inline
-In-Reply-To: <20180423002738.GF16083@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180420102112.2843-1-dev@pascalroeleven.nl>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---IJpNTDwzlM2Ie8A6
+--yofuic37aad2weiq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun 2018-04-22 18:27:38, Michal Hocko wrote:
-> On Sun 22-04-18 10:43:00, vcaputo@pengaru.com wrote:
-> > On Sun, Apr 22, 2018 at 12:16:54PM +0200, Pavel Machek wrote:
-> > > On Thu 2018-04-19 21:13:35, Ferry Toth wrote:
-> > > > It appears any ordinary user can easily create a DOS on linux.
-> > > >=20
-> > > > One sure way to reproduce this is to open gitk on the linux kernel =
-repo=20
-> > > > (SIC) on a machine with 8GB RAM 16 GB swap on a HDD with btrfs and =
-quad core=20
-> > > > + hyperthreading. But I will be easy enough to get the same effect =
-with more=20
-> > > > RAM, other fs etc.
-> > >=20
-> > > You may want to disable swap.
-> > >=20
-> >=20
-> > I run without swap on my laptops, and still observe long periods of
-> > thrashing on the road towards OOM.  What seems to occur is the active
-> > file-backed mappings of executables/libraries become a sort of swap
-> > area, repeatedly being discarded and faulted back in as the context
-> > switches occur.
-> >=20
-> > If there's any good way to prevent this, I'd like to know.
+On Fri, Apr 20, 2018 at 12:21:12PM +0200, Pascal Roeleven wrote:
+> Some displays on SUN4i devices wouldn't properly stay on unless
+> 'clk_ignore_unused' is used.
 >=20
-> I am afraid there is none yet. Johannes had some ground work for
-> page cache trashing detection https://marc.info/?i=3D20170727153010.23347=
--1-hannes%40cmpxchg.org
-> but there was no version of the patchseries for quite some time and
-> there was no integration into the oom detection which would be
-> non-trivial as well.
+> Change the duplicate clocks to the probably intended ones.
 >=20
-> I realize this sucks. But the reality is that this is far from trivial
-> to resolve without introducing pre-mature OOM killer invocations.
+> Signed-off-by: Pascal Roeleven <dev@pascalroeleven.nl>
 
-Another problem is that what "unusable machine" in X/web browser
-situation may be normal load for build server...
+What was the difference with the first patch you sent?
 
-I guess one way would be "hey, this is my X server; if it is waiting
-for disk for more than 10 seconds, you probably want to OOM kill
-someone. Ouch and same goes for my window manager".=20
+Anyway, I've applied it, thanks
 
-									Pavel
+Maxime
+
 --=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
---IJpNTDwzlM2Ie8A6
+--yofuic37aad2weiq
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAlrdh4cACgkQMOfwapXb+vImNQCZAc36f8T4LvyaqdjtbZo2ki7n
-lvcAnRAdvXaxteuiussAwyF8cGJFI6Yd
-=OdUa
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrdh8wACgkQ0rTAlCFN
+r3S1oA/+P22r7q3WrFzmbh+WhPBVxB+/8xP5RRyJsb1kxBhZPYhsFeJjMyiyKHu/
+wjEb0kdfvAjixuMOo+qOKFUjwu/BGywIEMhySIOdGgLzORmNvC6U46ZPnObnN0oy
+5nPTByzsEnPdwgkdsfhjUpSB8LSY8uLeL5s6K6LGSKTeerYtn5UgYPNOAgi48JLP
+jQD003q5H1NOCndPetv3tXfYwd2ek4M5xNoIountXovB/XO7Zvn/GBL8yPlJLyRp
+4eP5moywYZyEi9PmsTI8Qxod5XKWsSodR8iecoOp9gTBxeWP1bqNEUpXhgclnAlI
+HbfASEVLiCTyE5L0K4K2J/vlykr96SSHMLaGh16Tsphh7YQioi168UU3wVlfMbir
+V2L9qn47so1KvorWx6DyDVOxGGY72hR0WZnHkwIXzxJxvrNH2U57MynrkWKIdV85
+zJzlYBz1xwxIIbiEMpH1IUq2d+617OT2hdWIWFwWrJgbNaLQPn5sqtu0+W9jx9Fj
+d2J0tgj7M1ozsm+Sq1HPifq28GUi2f4dlU4UT7X81g1bPPKiWryHP+Ays6+hgGq3
+3HR6vaiDN+BDiDF07dGGBYQxq+FUGze2EqEHzGtwbf3vzfsORkJTYuys/7UWn9TO
+iLP5RYQyE1wSrlndnSf2FolWtooHYKM2RiGno33bOMEz3Thj4zc=
+=Fzfb
 -----END PGP SIGNATURE-----
 
---IJpNTDwzlM2Ie8A6--
+--yofuic37aad2weiq--
