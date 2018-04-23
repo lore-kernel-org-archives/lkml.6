@@ -1,73 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932163AbeDWQ5N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:57:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57198 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932085AbeDWQ5H (ORCPT
+        id S932183AbeDWQ5y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:57:54 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:25593 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932079AbeDWQ5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:57:07 -0400
-Date: Mon, 23 Apr 2018 17:57:02 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/4] regulator: bd9571mwv: Add support for DDR backup
- mode
-Message-ID: <20180423165702.GM19834@sirena.org.uk>
-References: <1524057484-25350-1-git-send-email-geert+renesas@glider.be>
- <20180420074914.vl4rer5zdeldfzb3@dell>
- <CAMuHMdWeROfJNvUtfooN8gqA+nTRXhVLvQFpc-xiqUbG9XgcmA@mail.gmail.com>
- <20180420085826.4omlf2rrwuno3mtj@dell>
+        Mon, 23 Apr 2018 12:57:53 -0400
+Subject: Re: [ANNOUNCE] v4.14.29-rt25
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <20180325101204.ibuvdpnusv3vutyc@linutronix.de>
+ <b04275af-000d-7b29-3031-508c9a01cd91@ti.com>
+ <20180420171116.w2hxytgzvp4jgpyl@linutronix.de>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <764d0abc-7e88-a696-17a0-0bf807148d5b@ti.com>
+Date: Mon, 23 Apr 2018 11:57:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SEFvVLxbW/dEDtN8"
-Content-Disposition: inline
-In-Reply-To: <20180420085826.4omlf2rrwuno3mtj@dell>
-X-Cookie: I think, therefore I am... I think.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180420171116.w2hxytgzvp4jgpyl@linutronix.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---SEFvVLxbW/dEDtN8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, Apr 20, 2018 at 09:58:26AM +0100, Lee Jones wrote:
-> On Fri, 20 Apr 2018, Geert Uytterhoeven wrote:
+On 04/20/2018 12:11 PM, Sebastian Andrzej Siewior wrote:
+> On 2018-03-27 13:01:07 [-0500], Grygorii Strashko wrote:
+>> Hi Sebastian,
+> Hi Grygorii,
+> 
+>> I've took this RT version and applied "[RT] kernel/time/posix-timer: avoid schedule()
+>> while holding the RCU lock" [1] on top. Then I run below tests:
+> …
+>> no stall or crashes were observed, but I've caught two "rcu_note_context_switch()" warnings
+> 
+> the warning is unrelated to the patch I posted. This should mute it:
+> 
+> Subject: [PATCH RT] rtmutex: annotate sleeping lock context
+> 
+> The RCU code complains on schedule() within a rcu_readlock() section.
+> The valid scenario on -RT is if a sleeping is held. In order to suppress
+> the warning the mirgrate_disable counter was used to identify the
+> invocation of schedule() due to lock contention.
+> 
+> Grygorii Strashko report that during CPU hotplug we might see the
+> warning via
+>   rt_spin_lock() -> migrate_disable() -> pin_current_cpu() -> __read_rt_lock()
+> 
+> because the counter is not yet set.
+> It is also possible to trigger the warning from cpu_chill()
+> (seen on a kblockd_mod_delayed_work_on() caller).
+> 
+> To address this RCU warning I annotate the sleeping lock context. The
+> counter is incremented before migrate_disable() so the warning Grygorii
+> should not trigger anymore. Additionally I use that counter in
+> cpu_chill() to avoid the RCU warning from there.
 
-> > Alternative, as you've already supplied (some form of) your Ack for the firs
-> > 3 patches, they can go in through Mark? All of it is enhancing the
-> > regulator part.
+Sry, but I can't apply it. What's you base?
 
-> Yes, that's fine too:
-
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-
-I've applied them, let me know if you need a pull request.
-
---SEFvVLxbW/dEDtN8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlreEF0ACgkQJNaLcl1U
-h9Cmbwf+PK1gWYHB1N11I6mVp6+02nsMl918pmBAB+MYSp0mMP9W8Ql963VL2ePO
-+XgeEe+IjNdlv1BGUZSf/rMTYxSG52deDs4EL4h525xxDtJaBRSSATvicv67ncFo
-garmhMAGkkeCaUWQ3JzLyWTWt3nUrSuA+FDqq9DNQomnN+H8NPHeipTDRbiW9o4L
-J2QgG0I19SdrV9p15TvmMyRq5cRAJ3aDYe67c1/lP9QmvcAoGXklJxGQ8hfj+Jzw
-YNOaN27/DqMya/o+/di6aKa2Y88R0g7GWAtftz0Eexl9TGe4v4KedH/EbEsLTQHb
-vYN/EFy4WtImnNWD+B3HNamExDo4zQ==
-=DFY0
------END PGP SIGNATURE-----
-
---SEFvVLxbW/dEDtN8--
+> 
+> Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+-- 
+regards,
+-grygorii
