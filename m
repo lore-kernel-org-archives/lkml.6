@@ -1,75 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754954AbeDWLw7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 07:52:59 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:6351 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754820AbeDWLw6 (ORCPT
+        id S1754917AbeDWL4N (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 07:56:13 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36523 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754814AbeDWL4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 07:52:58 -0400
-X-IronPort-AV: E=Sophos;i="5.49,318,1520899200";
-   d="scan'208";a="52433439"
-Date: Mon, 23 Apr 2018 12:52:43 +0100
-From: Wei Liu <wei.liu2@citrix.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-CC: Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-        <jgross@suse.com>, Artem Mygaiev <Artem_Mygaiev@epam.com>,
-        Dongwon Kim <dongwon.kim@intel.com>, <konrad.wilk@oracle.com>,
-        <airlied@linux.ie>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        <xen-devel@lists.xenproject.org>, <daniel.vetter@intel.com>,
-        <boris.ostrovsky@oracle.com>, Wei Liu <wei.liu2@citrix.com>
-Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
- DRM driver
-Message-ID: <20180423115242.ywdwqblj2aseu3fr@citrix.com>
-References: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
- <20180416192905.GA18096@downor-Z87X-UD5H>
- <20180417075928.GT31310@phenom.ffwll.local>
- <20180417205744.GA15930@downor-Z87X-UD5H>
- <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
- <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
- <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
- <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
- <20180420071914.GG31310@phenom.ffwll.local>
- <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
+        Mon, 23 Apr 2018 07:56:11 -0400
+X-Google-Smtp-Source: AIpwx4+SgIAkeY28qznL8YaJRHdfAeN60JKLt1vzw7gTKG00jDsiKKns4h8y8jnNlgtGb2znZyZpYf1lQfRxSJnugm4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <38e7d755-f95a-fcad-3f70-3a4eb049fc81@de.ibm.com>
+References: <1524185248-51744-1-git-send-email-wanpengli@tencent.com>
+ <20180420091537.1c6cb06b.cohuck@redhat.com> <CANRm+CxTDFu4C7bB_9e2a4Wi3BKDvc-RrX3Pj4Q5SRdZHmO-BA@mail.gmail.com>
+ <20180420162155.675d516d.cohuck@redhat.com> <CANRm+CwQB_EBK_GSF-Nrm6kfpQoNZJmg+N382B+d4YVNjj_gOA@mail.gmail.com>
+ <38e7d755-f95a-fcad-3f70-3a4eb049fc81@de.ibm.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Mon, 23 Apr 2018 19:56:10 +0800
+Message-ID: <CANRm+Cyoufp89=orEMBst3uwLAn6gfuNkh4g80upM52NOLpDFw@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: Extend MAX_IRQ_ROUTES to 4096 for all archs
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Cornelia Huck <cohuck@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Tonny Lu <tonnylu@tencent.com>, Janosch Frank <frankja@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3NBuIdn005226
 
-On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko wrote:
-> > >     the gntdev.
-> > > 
-> > > I think this is generic enough that it could be implemented by a
-> > > device not tied to Xen. AFAICT the hyper_dma guys also wanted
-> > > something similar to this.
-> > You can't just wrap random userspace memory into a dma-buf. We've just had
-> > this discussion with kvm/qemu folks, who proposed just that, and after a
-> > bit of discussion they'll now try to have a driver which just wraps a
-> > memfd into a dma-buf.
-> So, we have to decide either we introduce a new driver
-> (say, under drivers/xen/xen-dma-buf) or extend the existing
-> gntdev/balloon to support dma-buf use-cases.
-> 
-> Can anybody from Xen community express their preference here?
-> 
+2018-04-23 19:50 GMT+08:00 Christian Borntraeger <borntraeger@de.ibm.com>:
+>
+>
+> On 04/21/2018 02:38 AM, Wanpeng Li wrote:
+>> 2018-04-20 22:21 GMT+08:00 Cornelia Huck <cohuck@redhat.com>:
+>>> On Fri, 20 Apr 2018 21:51:13 +0800
+>>> Wanpeng Li <kernellwp@gmail.com> wrote:
+>>>
+>>>> 2018-04-20 15:15 GMT+08:00 Cornelia Huck <cohuck@redhat.com>:
+>>>>> On Thu, 19 Apr 2018 17:47:28 -0700
+>>>>> Wanpeng Li <kernellwp@gmail.com> wrote:
+>>>>>
+>>>>>> From: Wanpeng Li <wanpengli@tencent.com>
+>>>>>>
+>>>>>> Our virtual machines make use of device assignment by configuring
+>>>>>> 12 NVMe disks for high I/O performance. Each NVMe device has 129
+>>>>>> MSI-X Table entries:
+>>>>>> Capabilities: [50] MSI-X: Enable+ Count=129 Masked-Vector table: BAR=0 offset=00002000
+>>>>>> The windows virtual machines fail to boot since they will map the number of
+>>>>>> MSI-table entries that the NVMe hardware reported to the bus to msi routing
+>>>>>> table, this will exceed the 1024. This patch extends MAX_IRQ_ROUTES to 4096
+>>>>>> for all archs, in the future this might be extended again if needed.
+>>>>>>
+>>>>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>>>>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>>>>>> Cc: Tonny Lu <tonnylu@tencent.com>
+>>>>>> Cc: Cornelia Huck <cohuck@redhat.com>
+>>>>>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>>>>>> Signed-off-by: Tonny Lu <tonnylu@tencent.com>
+>>>>>> ---
+>>>>>> v1 -> v2:
+>>>>>>  * extend MAX_IRQ_ROUTES to 4096 for all archs
+>>>>>>
+>>>>>>  include/linux/kvm_host.h | 6 ------
+>>>>>>  1 file changed, 6 deletions(-)
+>>>>>>
+>>>>>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+>>>>>> index 6930c63..0a5c299 100644
+>>>>>> --- a/include/linux/kvm_host.h
+>>>>>> +++ b/include/linux/kvm_host.h
+>>>>>> @@ -1045,13 +1045,7 @@ static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
+>>>>>>
+>>>>>>  #ifdef CONFIG_HAVE_KVM_IRQ_ROUTING
+>>>>>>
+>>>>>> -#ifdef CONFIG_S390
+>>>>>>  #define KVM_MAX_IRQ_ROUTES 4096 //FIXME: we can have more than that...
+>>>>>
+>>>>> What about /* might need extension/rework in the future */ instead of
+>>>>> the FIXME?
+>>>>
+>>>> Yeah, I guess the maintainers can help to fix it when applying. :)
+>>>>
+>>>>>
+>>>>> As far as I understand, 4096 should cover most architectures and the
+>>>>> sane end of s390 configurations, but will not be enough at the scarier
+>>>>> end of s390. (I'm not sure how much it matters in practice.)
+>>>>>
+>>>>> Do we want to make this a tuneable in the future? Do some kind of
+>>>>> dynamic allocation? Not sure whether it is worth the trouble.
+>>>>
+>>>> I think keep as it is currently.
+>>>
+>>> My main question here is how long this is enough... the number of
+>>> virtqueues per device is up to 1K from the initial 64, which makes it
+>>> possible to hit the 4K limit with fewer virtio devices than before (on
+>>> s390, each virtqueue uses a routing table entry). OTOH, we don't want
+>>> giant tables everywhere just to accommodate s390.
+>>
+>> I suspect there is no real scenario to futher extend for s390 since no
+>> guys report.
+>>
+>>> If the s390 maintainers tell me that nobody is doing the really insane
+>>> stuff, I'm happy as well :)
+>>
+>> Christian, any thoughts?
+>
+> For now this patch is a no-op for s390 so as long as nobody complains today we are good.
+> If it turns out to be "not enough" we can then add a configurable number or whatever.
 
-Oleksandr talked to me on IRC about this, he said a few IOCTLs need to
-be added to either existing drivers or a new driver.
+Thanks Christian. Paolo, could you pick this one w/ "/* might need
+extension/rework in the future */ instead of
+the FIXME" change or do you need I to send out a new version? :)
 
-I went through this thread twice and skimmed through the relevant
-documents, but I couldn't see any obvious pros and cons for either
-approach. So I don't really have an opinion on this.
-
-But, assuming if implemented in existing drivers, those IOCTLs need to
-be added to different drivers, which means userspace program needs to
-write more code and get more handles, it would be slightly better to
-implement a new driver from that perspective.
-
-Wei.
+Regards,
+Wanpeng Li
