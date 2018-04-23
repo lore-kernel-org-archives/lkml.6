@@ -1,128 +1,354 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755405AbeDWNcD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 09:32:03 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38983 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755200AbeDWNa6 (ORCPT
+        id S1755396AbeDWNdP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 09:33:15 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:62314 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755016AbeDWNdN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 09:30:58 -0400
-X-Google-Smtp-Source: AIpwx49DLuKS5xxa2oNupuVI7CMu/7HMipNtx8MY8FWsh9OUBEIP0WiUVThiu3dbuuIu50xIikyr2A==
-From: David Herrmann <dh.herrmann@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        teg@jklm.no, Stephen Smalley <sds@tycho.nsa.gov>,
-        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        David Herrmann <dh.herrmann@gmail.com>
-Subject: [PATCH 1/3] security: add hook for socketpair(AF_UNIX, ...)
-Date: Mon, 23 Apr 2018 15:30:13 +0200
-Message-Id: <20180423133015.5455-2-dh.herrmann@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180423133015.5455-1-dh.herrmann@gmail.com>
-References: <20180423133015.5455-1-dh.herrmann@gmail.com>
+        Mon, 23 Apr 2018 09:33:13 -0400
+X-IronPort-AV: E=Sophos;i="5.49,318,1520866800";
+   d="scan'208";a="279048864"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Rob Herring <robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH] irqchip: Add support for Renesas RZ/N1 GPIO interrupt multiplexer
+Date: Mon, 23 Apr 2018 14:33:06 +0100
+Message-Id: <1524490386-1544-1-git-send-email-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now the LSM labels for socketpairs are always uninitialized,
-since there is no security hook for the socketpair() syscall. This
-patch adds the required hooks so LSMs can properly label socketpairs.
-This allows SO_PEERSEC to return useful information on those sockets.
+On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+configured to have 32 interrupt outputs, so we have a total of 96 GPIO
+interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
+8 of the GPIO interrupts to pass onto the GIC. The interrupt signals
+aren't latched, so there is nothing to do in this driver when an interrupt
+is received, other than tell the corresponding GPIO block.
 
-Note that the behavior of socketpair() can be emulated by creating a
-listener socket, connecting to it, and then discarding the initial
-listener socket. With this workaround, SO_PEERSEC would return the
-caller's security context. However, with socketpair(), the uninitialized
-context is returned unconditionally. This is unexpected and makes
-socketpair() less useful in situations where the security context is
-crucial to the application.
-
-With the new socketpair-hook this disparity can be solved by making
-socketpair() return the expected security context.
-
-Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- include/linux/lsm_hooks.h | 8 ++++++++
- include/linux/security.h  | 7 +++++++
- security/security.c       | 6 ++++++
- 3 files changed, 21 insertions(+)
+ .../interrupt-controller/renesas,rzn1-mux.txt      |  85 ++++++++++
+ drivers/irqchip/Kconfig                            |  10 ++
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-rzn1-irq-mux.c                 | 178 +++++++++++++++++++++
+ 4 files changed, 274 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+ create mode 100644 drivers/irqchip/irq-rzn1-irq-mux.c
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 9d0b286f3dba..2a23c75c1541 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -717,6 +717,12 @@
-  *	@other contains the peer sock structure.
-  *	@newsk contains the new sock structure.
-  *	Return 0 if permission is granted.
-+ * @unix_stream_socketpair:
-+ *	Check permissions before establishing a Unix domain stream connection
-+ *	for a fresh pair of sockets.
-+ *	@socka contains the first sock structure.
-+ *	@sockb contains the second sock structure.
-+ *	Return 0 if permission is granted and the connection was established.
-  * @unix_may_send:
-  *	Check permissions before connecting or sending datagrams from @sock to
-  *	@other.
-@@ -1651,6 +1657,7 @@ union security_list_options {
- #ifdef CONFIG_SECURITY_NETWORK
- 	int (*unix_stream_connect)(struct sock *sock, struct sock *other,
- 					struct sock *newsk);
-+	int (*unix_stream_socketpair)(struct sock *socka, struct sock *sockb);
- 	int (*unix_may_send)(struct socket *sock, struct socket *other);
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+new file mode 100644
+index 0000000..f28a365
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+@@ -0,0 +1,85 @@
++* Renesas RZ/N1 GPIO Interrupt Multiplexer
++
++On Renesas RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
++configured to have 32 interrupt outputs, so we have a total of 96 GPIO
++interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
++8 of the GPIO interrupts to pass onto the GIC.
++
++A single node in the device tree is used to describe the GPIO IRQ Muxer.
++
++Required properties:
++- compatible: the SoC specific name, i.e. "renesas,r9a06g032-gpioirq"
++   or "renesas,r9a06g033-gpioirq" followed by the SoC family name, i.e.
++   "renesas,rzn1-gpioirq".
++- interrupt-controller: Identifies the node as an interrupt controller.
++- #interrupt-cells: should be <1>. The meaning of the cells is the input
++   interrupt index, 0 to 95.
++- reg: Base address and size of GPIO IRQ Muxer registers.
++- interrupts: The list of interrupts generated by the muxer which are then
++   connected to a parent interrupt controller. The format of the interrupt
++   specifier depends in the interrupt parent controller.
++- gpioirq-#N: One property for each interrupt output from the GPIO IRQ Muxer
++   that specifies the input interrupt to use, #N is from 0 to 7.
++
++Optional properties:
++- interrupt-parent: pHandle of the parent interrupt controller, if not
++   inherited from the parent node.
++
++
++Example:
++
++	The following is an example for the RZ/N1D SoC.
++
++	gpioirq: gpioirq@51000480 {
++		compatible = "renesas,r9a06g032-gpioirq",
++				"renesas,rzn1-gpioirq";
++		reg = <0x51000480 0x20>;
++		interrupts =
++			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-controller;
++		#interrupt-cells = <1>;
++		status = "disabled";
++	};
++
++	gpio0: gpio@5000b000 {
++		compatible = "snps,dw-apb-gpio";
++		reg = <0x5000b000 0x80>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clock-names = "bus";
++		clocks = <&hclk_gpio0>;
++		status = "disabled";
++
++		gpio0a: gpio-controller@0 {
++			compatible = "snps,dw-apb-gpio-port";
++			bank-name = "gpio0a";
++			gpio-controller;
++			#gpio-cells = <2>;
++			snps,nr-gpios = <32>;
++			reg = <0>;
++
++			interrupt-controller;
++			interrupt-parent = <&gpioirq>;
++			interrupts =   < 0  1  2  3  4  5  6  7
++					 8  9 10 11 12 13 14 15
++					16 17 18 19 20 21 22 23
++					24 25 26 27 28 29 30 31 >;
++			#interrupt-cells = <2>;
++		};
++	};
++
++
++	The following is an example for a board using this.
++
++	&gpioirq {
++		status = "okay";
++		gpioirq-0 = <24>;	/* gpio0a 24 */
++		gpioirq-4 = <3>;	/* gpio0a 3 */
++	};
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index e9233db..16f2633 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -204,6 +204,16 @@ config RENESAS_IRQC
+ 	select GENERIC_IRQ_CHIP
+ 	select IRQ_DOMAIN
  
- 	int (*socket_create)(int family, int type, int protocol, int kern);
-@@ -1919,6 +1926,7 @@ struct security_hook_heads {
- 	struct hlist_head inode_getsecctx;
- #ifdef CONFIG_SECURITY_NETWORK
- 	struct hlist_head unix_stream_connect;
-+	struct hlist_head unix_stream_socketpair;
- 	struct hlist_head unix_may_send;
- 	struct hlist_head socket_create;
- 	struct hlist_head socket_post_create;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 200920f521a1..be275deeda10 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1187,6 +1187,7 @@ static inline int security_inode_getsecctx(struct inode *inode, void **ctx, u32
- #ifdef CONFIG_SECURITY_NETWORK
- 
- int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk);
-+int security_unix_stream_socketpair(struct sock *socka, struct sock *sockb);
- int security_unix_may_send(struct socket *sock,  struct socket *other);
- int security_socket_create(int family, int type, int protocol, int kern);
- int security_socket_post_create(struct socket *sock, int family,
-@@ -1242,6 +1243,12 @@ static inline int security_unix_stream_connect(struct sock *sock,
- 	return 0;
- }
- 
-+static inline int security_unix_stream_socketpair(struct sock *socka,
-+						  struct sock *sockb)
++config RENESAS_RZN1_IRQ_MUX
++	bool "Renesas RZ/N1 GPIO IRQ multiplexer support"
++	depends on ARCH_RZN1
++	select IRQ_DOMAIN
++	select IRQ_DOMAIN_HIERARCHY
++	help
++	  Say yes here to add support for the GPIO IRQ multiplexer embedded
++	  in Renesas RZ/N1 SoC devices. The GPIO IRQ Muxer selects which of
++	  the interrupts coming from the GPIO controllers are used.
++
+ config ST_IRQCHIP
+ 	bool
+ 	select REGMAP
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 5ed465a..8197936 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -45,6 +45,7 @@ obj-$(CONFIG_SIRF_IRQ)			+= irq-sirfsoc.o
+ obj-$(CONFIG_JCORE_AIC)			+= irq-jcore-aic.o
+ obj-$(CONFIG_RENESAS_INTC_IRQPIN)	+= irq-renesas-intc-irqpin.o
+ obj-$(CONFIG_RENESAS_IRQC)		+= irq-renesas-irqc.o
++obj-$(CONFIG_RENESAS_RZN1_IRQ_MUX)	+= irq-rzn1-irq-mux.o
+ obj-$(CONFIG_VERSATILE_FPGA_IRQ)	+= irq-versatile-fpga.o
+ obj-$(CONFIG_ARCH_NSPIRE)		+= irq-zevio.o
+ obj-$(CONFIG_ARCH_VT8500)		+= irq-vt8500.o
+diff --git a/drivers/irqchip/irq-rzn1-irq-mux.c b/drivers/irqchip/irq-rzn1-irq-mux.c
+new file mode 100644
+index 0000000..50ba85f
+--- /dev/null
++++ b/drivers/irqchip/irq-rzn1-irq-mux.c
+@@ -0,0 +1,178 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * RZ/N1 GPIO IRQ Muxer
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ * On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each configured
++ * to have 32 interrupt outputs, so we have a total of 96 GPIO interrupts.
++ * All of these are passed to the GPIO IRQ Muxer, which selects 8 of the GPIO
++ * interrupts to pass onto the GIC.
++ */
++
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqchip/chained_irq.h>
++#include <linux/irqdomain.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_irq.h>
++#include <linux/of_platform.h>
++
++#define NR_GPIO_IRQS		96
++
++struct girq_irq {
++	int out;
++	int in;
++};
++
++struct girq_priv {
++	struct device *dev;
++	u32 __iomem *regs;
++	struct irq_chip irq_chip;
++	struct irq_domain *irq_domain;
++	int nr_irqs;
++	struct girq_irq *irq;
++};
++
++static void girq_enable(struct irq_data *d)
 +{
++	/*
++	 * Either irq_chip->irq_enable must call something or you have to
++	 * implement irq_chip->irq_setup.
++	 */
++}
++
++static void girq_handler(struct irq_desc *desc)
++{
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct girq_priv *p = irq_desc_get_handler_data(desc);
++	int irq = irq_desc_get_irq(desc);
++	int i;
++
++	chained_irq_enter(chip, desc);
++
++	for (i = 0; i < p->nr_irqs; i++) {
++		if (irq == p->irq[i].out) {
++			generic_handle_irq(irq_find_mapping(p->irq_domain,
++					   p->irq[i].in));
++			break;
++		}
++	}
++
++	if (i == p->nr_irqs)
++		handle_bad_irq(desc);
++
++	chained_irq_exit(chip, desc);
++}
++
++static int girq_domain_map(struct irq_domain *h, unsigned int irq,
++				irq_hw_number_t hwirq)
++{
++	struct girq_priv *p = h->host_data;
++
++	irq_set_chip_data(irq, h->host_data);
++	irq_set_chip_and_handler(irq, &p->irq_chip, handle_simple_irq);
++
 +	return 0;
 +}
 +
- static inline int security_unix_may_send(struct socket *sock,
- 					 struct socket *other)
- {
-diff --git a/security/security.c b/security/security.c
-index 7bc2fde023a7..3dfd374e84e5 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1340,6 +1340,12 @@ int security_unix_stream_connect(struct sock *sock, struct sock *other, struct s
- }
- EXPORT_SYMBOL(security_unix_stream_connect);
- 
-+int security_unix_stream_socketpair(struct sock *socka, struct sock *sockb)
-+{
-+	return call_int_hook(unix_stream_socketpair, 0, socka, sockb);
-+}
-+EXPORT_SYMBOL(security_unix_stream_socketpair);
++static const struct irq_domain_ops girq_domain_ops = {
++	.map	= girq_domain_map,
++};
 +
- int security_unix_may_send(struct socket *sock,  struct socket *other)
- {
- 	return call_int_hook(unix_may_send, 0, sock, other);
++static int girq_probe(struct platform_device *pdev)
++{
++	struct girq_priv *p;
++	struct resource *res;
++	struct device *dev = &pdev->dev;
++	struct device_node *np = pdev->dev.of_node;
++	const char *name = dev_name(&pdev->dev);
++	int i;
++
++	p = devm_kzalloc(dev, sizeof(*p), GFP_KERNEL);
++	if (!p)
++		return -ENOMEM;
++	p->dev = dev;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	p->regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(p->regs))
++		return PTR_ERR(p->regs);
++
++	p->nr_irqs = of_irq_count(np);
++	p->irq = devm_kzalloc(dev, p->nr_irqs * sizeof(*p->irq), GFP_KERNEL);
++	if (!p->irq)
++		return -ENOMEM;
++
++	/* Get the fixed output interrupts */
++	for (i = 0; i < p->nr_irqs; i++) {
++		int irq = irq_of_parse_and_map(dev->of_node, i);
++
++		if (!irq) {
++			dev_err(dev, "cannot get interrupt\n");
++			return -ENOENT;
++		}
++
++		irq_set_chained_handler_and_data(irq, girq_handler, p);
++		p->irq[i].out = irq;
++	}
++
++	/* Create IRQ domain for the interrupts coming from the GPIO blocks */
++	p->irq_chip.name = name;
++	p->irq_chip.irq_enable = girq_enable;
++
++	p->irq_domain = irq_domain_add_linear(np, NR_GPIO_IRQS,
++					      &girq_domain_ops, p);
++	if (!p->irq_domain) {
++		dev_err(dev, "cannot initialize irq domain\n");
++		return -ENXIO;
++	}
++
++	/* Set the hardware to select the GPIO irq */
++	for (i = 0; i < p->nr_irqs; i++) {
++		char prop[16];
++
++		sprintf(prop, "gpioirq-%d", i);
++		if (!of_property_read_s32(np, prop, &p->irq[i].in))
++			writel(p->irq[i].in, &p->regs[i]);
++	}
++
++	platform_set_drvdata(pdev, p);
++
++	dev_info(dev, "probed\n");
++
++	return 0;
++}
++
++static int girq_remove(struct platform_device *pdev)
++{
++	struct girq_priv *p = platform_get_drvdata(pdev);
++
++	irq_domain_remove(p->irq_domain);
++
++	return 0;
++}
++
++static const struct of_device_id girq_match[] = {
++	{ .compatible = "renesas,rzn1-gpioirq", },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, girq_match);
++
++static struct platform_driver girq_driver = {
++	.driver = {
++		.name = "gpio_irq_mux",
++		.owner = THIS_MODULE,
++		.of_match_table = girq_match,
++	},
++	.probe = girq_probe,
++	.remove = girq_remove,
++};
++
++module_platform_driver(girq_driver);
++
++MODULE_DESCRIPTION("Renesas RZ/N1 GPIO IRQ Multiplexer Driver");
++MODULE_AUTHOR("Phil Edworthy <phil.edworthy@renesas.com>");
++MODULE_LICENSE("GPL v2");
 -- 
-2.17.0
+2.7.4
