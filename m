@@ -1,90 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932268AbeDWRmD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:42:03 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.144]:37608 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932092AbeDWRmA (ORCPT
+        id S932305AbeDWRm2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:42:28 -0400
+Received: from mail-pg0-f42.google.com ([74.125.83.42]:35960 "EHLO
+        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932076AbeDWRm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:42:00 -0400
-X-Authority-Reason: nr=8
-Date: Mon, 23 Apr 2018 12:41:59 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 05/11] omap_vout: fix potential Spectre variant 1
-Message-ID: <078fe4c0397eceae961e4a3dc37c19513b9f8614.1524499368.git.gustavo@embeddedor.com>
-References: <cover.1524499368.git.gustavo@embeddedor.com>
+        Mon, 23 Apr 2018 13:42:26 -0400
+X-Google-Smtp-Source: AIpwx4/6uhSPOEp6jYyznGtZCFiHIUv9Oo3hq63Kx/LmGtmCednTDFi9W3RrhxLxYw6QkHyWUF7m/w==
+Date: Mon, 23 Apr 2018 10:42:24 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        JF Bastien <jfb@google.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>
+Subject: Re: Clang patch stacks for LTS kernels (v4.4 and v4.9) and status
+ update
+Message-ID: <20180423174224.GA243180@google.com>
+References: <CA+icZUUPGQsRWpdmASzPQAdjmSFmhBwPKGh_CO65C9ot9+nOSQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1524499368.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.48.65
-X-Source-L: No
-X-Exim-ID: 1fAfTT-004OmQ-ON
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.145.48.65]:49560
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 42
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CA+icZUUPGQsRWpdmASzPQAdjmSFmhBwPKGh_CO65C9ot9+nOSQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-index can be controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+Hi Sedat,
 
-Smatch warning:
-drivers/media/platform/omap/omap_vout.c:1062 vidioc_enum_fmt_vid_out() warn: potential spectre issue 'omap_formats'
-
-Fix this by sanitizing index before using it to index
-omap_formats.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/media/platform/omap/omap_vout.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
-index 5700b78..1a7ec39 100644
---- a/drivers/media/platform/omap/omap_vout.c
-+++ b/drivers/media/platform/omap/omap_vout.c
-@@ -51,6 +51,8 @@
- #include "omap_voutdef.h"
- #include "omap_vout_vrfb.h"
+On Mon, Apr 23, 2018 at 03:56:41PM +0200, Sedat Dilek wrote:
+> [ CC Nick ]
+> [ CC Arnd ]
+> [ CC JF ]
  
-+#include <linux/nospec.h>
-+
- MODULE_AUTHOR("Texas Instruments");
- MODULE_DESCRIPTION("OMAP Video for Linux Video out driver");
- MODULE_LICENSE("GPL");
-@@ -1059,6 +1061,7 @@ static int vidioc_enum_fmt_vid_out(struct file *file, void *fh,
- 	if (index >= NUM_OUTPUT_FORMATS)
- 		return -EINVAL;
- 
-+	index = array_index_nospec(index, NUM_OUTPUT_FORMATS);
- 	fmt->flags = omap_formats[index].flags;
- 	strlcpy(fmt->description, omap_formats[index].description,
- 			sizeof(fmt->description));
--- 
-2.7.4
+> I wrote some early documentation (wiki) and tested/booted a
+> clang-compiled kernel on x86-64 bare metal.
+> The project was called "lll-project" these days.
+> The followup - LLVMlinux project - seems to be somehow dead?
+
+Yes, I think it stalled in 2014 or so. There is still a mailing list
+with very occasional traffic.
+
+> After reading your posting, I got really excited and had a quick look
+> over the Linux v4.9.y-LTS patch-stack with additional stuff:
+> 
+> $ git fetch https://chromium.googlesource.com/chromiumos/third_party/kernel
+> refs/sandbox/mka/llvm/v4.9_ext
+> $ git checkout -b llvm_v4.9_ext FETCH_HEAD
+> 
+> I like your commit subjects and messages.
+> 
+> Before starting to compile I have some questions, I hope you can answer them.
+> 
+> [ CLANG-VERSION ]
+> 
+> Here on Debian/testing (will get Version 10 with codename "buster")
+> AMD64 I have the choice of installing CLANG v4.0.1, v5.0.1 and v6.0.0.
+> As you point out LLVM/CLANG v5.0 or higher are a good and faster
+> choice than v4.0.
+> Using CLANG >= 5.0 makes the *CLANG* patch-series obsolete?
+
+Correct, preferably use clang v6 or newer.
+
+> [ REFRESH PATCH-STACK ]
+> 
+> What about the *FROMGIT* and *CUSTOM* patch-series?
+> Are they in upstream in the meantime?
+
+CUSTOM patches address issues in older kernels that have been fixed
+upstream in a different, not easily backportable way. They will never
+land in upstream.
+
+FROMGIT patches should eventually land upstream, since they were taken
+from a maintainer tree.
+
+The commit message includes the upstream git hash, so you can easily
+check if it has landed (though in some cases the hash changes ...)
+
+> If yes, will you refresh this v4.9.y-LTS patch-stack?
+
+I eventually will, the two FROMGIT patches are relatively recent, and
+respinning the trees just to update the tags isn't one of my
+priorities.
+
+> [ ASM-GOTO ]
+> 
+> Foremore, I have seen you have a "refs/sandbox/mka/llvm/v4.14" Git branch.
+> Linux v4.14 is also an LTS release.
+
+Yes, there is also a follow up post:
+https://lkml.org/lkml/2017/11/22/943
+
+> After Linux v4.9 "asm-goto" support was added which is GCC specific.
+
+asm-goto was optional until a few weeks ago, when x86 maintainers
+decided to make it mandatory, and thus break clang builds for x86:
+
+https://lkml.org/lkml/2018/4/2/486
+
+> Is there a workaround to compile Linux-kernel with any CLANG
+> version?
+
+You could revert the patch that makes asm-goto mandatory.
+
+> You happen to know the status in LLVM upstream?
+
+I know people are actively working on this, but don't know an ETA.
+
+> [ X86-EFLAGS/IF ]
+> 
+> AFAICS, I remember an EFLAGS/IF problem on X86 and interrupt handling.
+> You happen to know if this is fixed in LLVM upstream?
+> Some LLVM developers were interested in fixing this.
+> Can you comment on this, JF (we had some email conversation in private in 2016)?
+
+Yes, this has been fixed recently:
+https://bugs.llvm.org/show_bug.cgi?id=36028
+
+Cheers
+
+Matthias
