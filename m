@@ -1,23 +1,23 @@
 Return-Path: <mbrugger@localhost>
-X-Google-Smtp-Source: AIpwx49AWkPJK1cuxBPOnFmQiQoc6KL9hezz3sI5SD5mwkxz5y3KumAN4j09ociNney1Y337V9WA
-ARC-Seal: i=1; a=rsa-sha256; t=1524497543; cv=none;
+X-Google-Smtp-Source: AIpwx4/aNUx0R2wt1/N56yjqmUex68HFrbb98Q3b/stTwVWhETgo180E636nBBEzdXtq0CL+5d0V
+ARC-Seal: i=1; a=rsa-sha256; t=1524497541; cv=none;
         d=google.com; s=arc-20160816;
-        b=nBojFFl0r8uKGTWtxwQdCZie+DovI3Y2czF2WWSu95Um2rD2K+XwxDMfS10hBtmcTs
-         n6gvQGO7+qXpTZRNcOi/Lgh6nRepwKBdlIsqgo3FJNT6fcTOQMco2BTQkI0qpJLw+3wv
-         IR4f71UU87RyIwLHImbUXZKpCrhVp0y+ja3QzoLBI8NxFmS3LBsM62Ml0mC1ZKD3iPNM
-         3Z6TnHpWUYxHrlXbQ/LQSvA7g0Ga1Mj1WU39DW/XoLq1oTD1752rD506zBaM7q/uPjM9
-         epRwsXXcyruAGwDLYLTeXrJitl2SrcdO0x5OnQYtc5O+zIyoO/HmvQ/r0LnqfbMGev+w
-         mP0Q==
+        b=damiNFGPa9C95p2uwDQL8bIzaEGX7ujLfl/bOGx6K/a4tpVn62f7PnqLHZe5PJXCJ4
+         6Vdi5n9WEm+dwRDYCxbNpgbQp4MI15ekJOZwmSLW7KpEJ4tzd9TM0UvQthH2xQKmedHP
+         wj59a2m7UckrF2vrJq2ugRvsidxv6JAwTPwtYXW8iX95iSi3irJScDZalf1ySTSDzD0Z
+         96mtaQK/QZYUf7nLcSXAZVWIa/wduKpbEt+0Al52LS4bhQrxlj+ezN9UoxTHsYKb/O7U
+         yyhsTiTN4Oo1+hDw5T9qr0W/MYXPoD9D7DRRjHrNlSUxSMqpLOIrQ9vAuLiiUKyMEIhc
+         ZXVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KYHrCaV6jF2/RRqudYnt9qxb0g660gNt3sh7wKNhBg0=;
-        b=iv06VcVLmvL/0CShwgYCIYV98J1L3VZbuTmngK7qUKOEJwaWwwaNLUx7DVDS8McEvo
-         zuZUoSguI7g6AXIoCvsasqONhxNOwdad8rVUj6+cYVDwv1FR5Nc8uvKgaMwxpEqwFfFP
-         dRKSOjtc/7cCB+yIX3Xi9BRWNuC13PdOp6fJF/jZRlobz9GTTzltwisbtYPHN2hO3OaL
-         Gy7ymT7A/3Y8/Wo5fa9vEVjA/DiA6EAlmPDTH5juRwn/c8aE+J45dCBx791vKTbCpPxO
-         +oeuynQ50Lazs7G6ScM4pA3svPYO4vLBW85RaaVDkaN3Xl0DZapmddszxw1kJ8XSQeic
-         hMDg==
+        bh=g6AgxHZ1zl69hgws8MkAuWnst7Vljjb20Qunm16rvPE=;
+        b=Gn1omduYatrFFG+YX6w/FOpFTcBTOo+xCDcwfCZ+866F1RXXm30TyYRex0aWifODuj
+         Tc66YfcHO47JaTIPXkDEuNEVcSwVa3jcvLrIYtri/BwLY69Hei+i9kF6++pZarj5s+mN
+         d8bbNZ4A/L3rvRL7O6oHJmnSyy2x6P+ap6FoVD/fD6qkj7DqMQTX0yaWXAmSANIVoRfa
+         dnOgoivWbXfESbd0Ev/hTO+eyKZMrEUYvfBAO4QaM0T2e3BsjSzdaIT+3mtw3my0yxy/
+         ZxsSfMfQCwPG4qCvybiEwHx+P2XG6De+6vD1dygWyTNjPZi/cWPeMzo+AHSmNGsvdve1
+         m7ww==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 37.223.140.222 is neither permitted nor denied by best guess record for domain of mbrugger@localhost) smtp.mailfrom=mbrugger@localhost
 Authentication-Results: mx.google.com;
@@ -47,40 +47,93 @@ Cc: davem@davemloft.net,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 10/10] MAINTAINERS: update Mediatek Soc entry
-Date: Mon, 23 Apr 2018 17:32:09 +0200
-Message-Id: <0fd5bf87d227fdb44bd0ddd2f83c5595380957fb.1524497268.git.mbrugger@suse.com>
+Subject: [v2 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
+Date: Mon, 23 Apr 2018 17:32:00 +0200
+Message-Id: <64ca273429d92f581568a48f3efe6035af65f579.1524497268.git.mbrugger@suse.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
 References: <cover.1524497268.git.mbrugger@suse.com>
 In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
 References: <cover.1524497268.git.mbrugger@suse.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598551535960783123?=
-X-GMAIL-MSGID: =?utf-8?q?1598551535960783123?=
+X-GMAIL-THRID: =?utf-8?q?1598551533740239589?=
+X-GMAIL-MSGID: =?utf-8?q?1598551533740239589?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Mediatek SoCs include several soc specific drivers as well
-as a mfd device. Add these to the maintainers file.
+Add binding description for the mmsys mfd for some Mediatek
+devices. mmsys has some registers to control clock gates (which is
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
 
 Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
+ .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
+ .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
+ 3 files changed, 28 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0a1410d5a621..74f7ea345096 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1621,6 +1621,8 @@ F:	arch/arm/boot/dts/mt7*
- F:	arch/arm/boot/dts/mt8*
- F:	arch/arm/mach-mediatek/
- F:	arch/arm64/boot/dts/mediatek/
-+F:	drivers/soc/mediatek/
-+F:	drivers/mfd/mtk-mmsys.c
- N:	mtk
- K:	mediatek
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 4eb8bbe15c01..4468345f8b1a 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -6,10 +6,8 @@ The Mediatek mmsys controller provides various clocks to the system.
+ Required Properties:
  
+ - compatible: Should be one of:
+-	- "mediatek,mt2701-mmsys", "syscon"
+ 	- "mediatek,mt2712-mmsys", "syscon"
+ 	- "mediatek,mt6797-mmsys", "syscon"
+-	- "mediatek,mt8173-mmsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The mmsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+index 383183a89164..85a3b4ec06cd 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+@@ -9,7 +9,7 @@ function block.
+ 
+ All DISP device tree nodes must be siblings to the central MMSYS_CONFIG node.
+ For a description of the MMSYS_CONFIG binding, see
+-Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt.
++Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+ 
+ DISP function blocks
+ ====================
+diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+new file mode 100644
+index 000000000000..2331ae16917e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+@@ -0,0 +1,27 @@
++MediaTek MMSYS Multifunction Device Driver
++
++MMSYS is a multifunction device with the following sub modules:
++- clocks for the multi-media subsystem
++- central node for the DRM subsystem.
++
++This document describes the binding for MFD device. The MFD takes care to initailize
++the clock driver and the DRM driver. More info see
++Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
++
++Required properties:
++- compatible: Should be one of:
++	- "mediatek,mt2701-mmsys", "syscon"
++	- "mediatek,mt8173-mmsys", "syscon"
++- #clock-cells: Must be 1
++
++Optional properties:
++- power-domains: list of powerdomains needed for the subsystem to work
++
++Example:
++
++mmsys: clock-controller@14000000 {
++	compatible = "mediatek,mt8173-mmsys", "syscon";
++	reg = <0 0x14000000 0 0x1000>;
++	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
++	#clock-cells = <1>;
++};
 -- 
 2.16.3
