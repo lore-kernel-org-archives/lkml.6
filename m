@@ -1,32 +1,32 @@
-Return-Path: <kernel-hardening-return-13096-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AB8JxZpDZcV971zI31qyPYa7ZR1mDJN9Ti2254s2yZfVtWrWLzL1Z++BsY9NSShBAhZ9kgp6d7ZN
-ARC-Seal: i=1; a=rsa-sha256; t=1524488240; cv=none;
+Return-Path: <kernel-hardening-return-13094-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx48stXTcUa+Q0vZVP1KpEfykNgIJg1HwRTyMpWTvy3z7bguU7uL1WKScWAqDzodnhWNAw29C
+ARC-Seal: i=1; a=rsa-sha256; t=1524488215; cv=none;
         d=google.com; s=arc-20160816;
-        b=rcJ4vsd/MGsWieL/4e5NTGeNVQVZKKCmYJGnGz26LiR5FQI/rqn6lCAlQ4bz/h0Vjt
-         JzARpDBnyi55ptRxTC72eDNoIuBGDAFzlMpBktFNoBpelzmF2PgbbSIfIJJadqO/MCG/
-         a6v0egElkHE11xeKHpKyI/dUPk7jmGLC16JrpdFH3tNmZLeaMxMRpaR7jdhrz64zZ0Ez
-         elTxTJ3IpJ6ZN7aBkRwKAWBd6wbMsJxuYiVZJLnnNg6Zj/m8D5JCq42xlV5g8NWu/Dih
-         XYvNr9PS8r+5VjmBMJvYZ9CrWgMciZaEOj6ZYK6zAI8klbmYHzA0VQBzPh22qqmUgLTV
-         g3Cg==
+        b=yvEP7IcV09dL4dQhMbpVmZF8jeM6X722LnLl1x2KEDIR8BTZdbnpsFFtNJn4y+vhiz
+         qKYX52+afdTs6q2slFw0bOFe9jspbO5Ert4+29av0yDpu1wtC0ytFu6ogc0zRXzHXitv
+         7dEFuml1oj1/5k/51yo1wAPJVG7qnIxqItxiMXJ0IA9F7HkMiLBmhjfiNcnkpxx6zGnX
+         eJ96ftX7frJY0OKTgQZ3sHLCKnI6ZLN4FdzYsTl1r/aRVxxCPHbb//GgCuzsHgD355RX
+         WL4ed2YehPjexbAU2c2MQsnuOTDBOG8yhyCRosvzojFAyd13AtmeU4fCHYLNxE43X7Vz
+         ZRZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
          :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=U09LcbMGiUra9N5GfBrZ9Z2qeNHUrpNbiO9P5fSzuZo=;
-        b=oJj+YktNwJQBvRwOpEB9wM5cbcVpQQ/yOXztpbrPYp4BQCiioroOeL6PL4fdejKQa/
-         g3MEYu8UbVo9GghgjkYzfcd68BlK6/CvZTNmbo17DAQAGxExowOqrLf9VjevSiTG4PWN
-         53qllmahypVcqp2+Cgc4JkadSiGlWYzibDNpI4jhgnmdnqPs2/DXjj2r8o9lxsphXrvM
-         iLrmaHPdNmf9enVikps0FOwrDO0c9k7b7RF3nF403XhFVIkAhuOb1bqlW6mtn02nFNMf
-         QCAe2c+A/rEMh3C8aZKPMkkm8HQEj44YxvaHeOOJS5FXoDgGd0GHg7FN3KBffnOXQJI2
-         7RTQ==
+        bh=jwZ+2itaJiX1jytcWxO0WvnASxd1yHLN4hfAbTqc4CE=;
+        b=cezQ2VVtK6eGIjrgfY6H/PxMdhLhapUs+QK904D29r8zD3YoIbfHZAtOzEC+V2TazY
+         RqZxNFeJzBbgwbA6LYhdvR5UFl+B7lj+EQMIm7ipbfYlBiIepa7Jf7QMGxH76cFjDZEu
+         3/H1bHZcfx+s6BC8k9R9TV8ML6osSphAbij/X2JE4wYDI3zMlCSLMKBKB+TZRDcoGzuo
+         EREoplWiz4inc9ULg5aavmeXIyzBDzSDJA7qdwqHnZPA+qtYt/URBrlbGik0otkxmIxL
+         O4b5skVJsXosv8Gb+ggFWy/AB8buv+POJ4If2qUo81nOyrlFIVr1AACnHKjkd2hgvcuS
+         NKWA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Xq0nRWIz;
-       spf=pass (google.com: domain of kernel-hardening-return-13096-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13096-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lhN+OcL1;
+       spf=pass (google.com: domain of kernel-hardening-return-13094-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13094-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Xq0nRWIz;
-       spf=pass (google.com: domain of kernel-hardening-return-13096-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13096-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lhN+OcL1;
+       spf=pass (google.com: domain of kernel-hardening-return-13094-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13094-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
@@ -50,117 +50,96 @@ Cc: labbott@redhat.com,
 	kernel-hardening@lists.openwall.com,
 	igor.stoppa@gmail.com,
 	Igor Stoppa <igor.stoppa@huawei.com>
-Subject: [PATCH 8/9] Preliminary self test for pmalloc rare write
-Date: Mon, 23 Apr 2018 16:54:57 +0400
-Message-Id: <20180423125458.5338-9-igor.stoppa@huawei.com>
+Subject: [PATCH 6/9] lkdtm: crash on overwriting protected pmalloc var
+Date: Mon, 23 Apr 2018 16:54:55 +0400
+Message-Id: <20180423125458.5338-7-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180423125458.5338-1-igor.stoppa@huawei.com>
 References: <20180423125458.5338-1-igor.stoppa@huawei.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598541780529999427?=
-X-GMAIL-MSGID: =?utf-8?q?1598541780529999427?=
+X-GMAIL-THRID: =?utf-8?q?1598541754692196067?=
+X-GMAIL-MSGID: =?utf-8?q?1598541754692196067?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Try to alter locked but modifiable pools.
-The test neds some cleanup and expansion.
-It is provided primarily as reference.
+Verify that pmalloc read-only protection is in place: trying to
+overwrite a protected variable will crash the kernel.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 ---
- mm/test_pmalloc.c | 75 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ drivers/misc/lkdtm/core.c  |  3 +++
+ drivers/misc/lkdtm/lkdtm.h |  1 +
+ drivers/misc/lkdtm/perms.c | 25 +++++++++++++++++++++++++
+ 3 files changed, 29 insertions(+)
 
-diff --git a/mm/test_pmalloc.c b/mm/test_pmalloc.c
-index c8835207a400..e8e945e4a4a3 100644
---- a/mm/test_pmalloc.c
-+++ b/mm/test_pmalloc.c
-@@ -122,6 +122,80 @@ static void test_oovm(void)
- 	pmalloc_destroy_pool(pool);
+diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+index 2154d1bfd18b..c9fd42bda6ee 100644
+--- a/drivers/misc/lkdtm/core.c
++++ b/drivers/misc/lkdtm/core.c
+@@ -155,6 +155,9 @@ static const struct crashtype crashtypes[] = {
+ 	CRASHTYPE(ACCESS_USERSPACE),
+ 	CRASHTYPE(WRITE_RO),
+ 	CRASHTYPE(WRITE_RO_AFTER_INIT),
++#ifdef CONFIG_PROTECTABLE_MEMORY
++	CRASHTYPE(WRITE_RO_PMALLOC),
++#endif
+ 	CRASHTYPE(WRITE_KERN),
+ 	CRASHTYPE(REFCOUNT_INC_OVERFLOW),
+ 	CRASHTYPE(REFCOUNT_ADD_OVERFLOW),
+diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
+index 9e513dcfd809..dcda3ae76ceb 100644
+--- a/drivers/misc/lkdtm/lkdtm.h
++++ b/drivers/misc/lkdtm/lkdtm.h
+@@ -38,6 +38,7 @@ void lkdtm_READ_BUDDY_AFTER_FREE(void);
+ void __init lkdtm_perms_init(void);
+ void lkdtm_WRITE_RO(void);
+ void lkdtm_WRITE_RO_AFTER_INIT(void);
++void lkdtm_WRITE_RO_PMALLOC(void);
+ void lkdtm_WRITE_KERN(void);
+ void lkdtm_EXEC_DATA(void);
+ void lkdtm_EXEC_STACK(void);
+diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
+index 53b85c9d16b8..3c81e59f9d9d 100644
+--- a/drivers/misc/lkdtm/perms.c
++++ b/drivers/misc/lkdtm/perms.c
+@@ -9,6 +9,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/mman.h>
+ #include <linux/uaccess.h>
++#include <linux/pmalloc.h>
+ #include <asm/cacheflush.h>
+ 
+ /* Whether or not to fill the target memory area with do_nothing(). */
+@@ -104,6 +105,30 @@ void lkdtm_WRITE_RO_AFTER_INIT(void)
+ 	*ptr ^= 0xabcd1234;
  }
  
-+#define REGION_SIZE (PAGE_SIZE / 4)
-+#define REGION_NUMBERS 12
-+static inline void fill_region(char *addr, char c)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < REGION_SIZE - 1; i++)
-+		addr[i] = c;
-+	addr[i] = '\0';
-+}
-+
-+static inline void init_regions(char *array)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < REGION_NUMBERS; i++)
-+		fill_region(array + REGION_SIZE * i, i + 'A');
-+}
-+
-+static inline void show_regions(char *array)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < REGION_NUMBERS; i++)
-+		pr_info("%s", array + REGION_SIZE * i);
-+}
-+
-+static inline void init_big_injection(char *big_injection)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < PAGE_SIZE * 3; i++)
-+		big_injection[i] = 'X';
-+}
-+
-+/* Verify rewritable feature. */
-+static int test_rare_write(void)
++#ifdef CONFIG_PROTECTABLE_MEMORY
++void lkdtm_WRITE_RO_PMALLOC(void)
 +{
 +	struct pmalloc_pool *pool;
-+	char *array;
-+	char injection[] = "123456789";
-+	unsigned short size = sizeof(injection);
-+	char *big_injection;
++	int *i;
 +
++	pool = pmalloc_create_pool();
++	if (WARN(!pool, "Failed preparing pool for pmalloc test."))
++		return;
 +
-+	pr_notice("Test pmalloc_rare_write()");
-+	pool = pmalloc_create_pool(PMALLOC_RW);
-+	array = pzalloc(pool, REGION_SIZE * REGION_NUMBERS);
-+	init_regions(array);
++	i = pmalloc(pool, sizeof(int));
++	if (WARN(!i, "Failed allocating memory for pmalloc test.")) {
++		pmalloc_destroy_pool(pool);
++		return;
++	}
++
++	*i = INT_MAX;
 +	pmalloc_protect_pool(pool);
-+	pr_info("------------------------------------------------------");
-+	pmalloc_rare_write(pool, array, injection, size);
-+	pmalloc_rare_write(pool, array + REGION_SIZE, injection, size);
-+	pmalloc_rare_write(pool,
-+			   array + 5 * REGION_SIZE / 2 - size / 2,
-+			   injection, size);
-+	pmalloc_rare_write(pool, array + 3 * REGION_SIZE - size / 2,
-+			   injection, size);
-+	show_regions(array);
-+	pmalloc_destroy_pool(pool);
-+	pr_info("------------------------------------------------------");
-+	pool = pmalloc_create_pool(PMALLOC_RW);
-+	array = pzalloc(pool, REGION_SIZE * REGION_NUMBERS);
-+	init_regions(array);
-+	pmalloc_protect_pool(pool);
-+	big_injection = vmalloc(PAGE_SIZE * 3);
-+	init_big_injection(big_injection);
-+	pmalloc_rare_write(pool, array + REGION_SIZE / 2, big_injection,
-+			   PAGE_SIZE * 2);
-+	show_regions(array);
-+	pr_info("------------------------------------------------------");
-+	return 0;
++
++	pr_info("attempting bad pmalloc write at %p\n", i);
++	*i = 0;
 +}
++#endif
 +
- /**
-  * test_pmalloc()  -main entry point for running the test cases
-  */
-@@ -135,4 +209,5 @@ void test_pmalloc(void)
- 		       test_is_pmalloc_object())))
- 		return;
- 	test_oovm();
-+	test_rare_write();
- }
+ void lkdtm_WRITE_KERN(void)
+ {
+ 	size_t size;
 -- 
 2.14.1
