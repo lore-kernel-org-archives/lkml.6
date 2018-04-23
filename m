@@ -1,152 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754602AbeDWKXz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:23:55 -0400
-Received: from mail.netline.ch ([148.251.143.178]:48010 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753109AbeDWKXy (ORCPT
+        id S1754669AbeDWKYn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:24:43 -0400
+Received: from mail-io0-f182.google.com ([209.85.223.182]:39393 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754591AbeDWKYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:23:54 -0400
-Subject: Re: AMD graphics performance regression in 4.15 and later
-To: Felix Kuehling <felix.kuehling@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Gabriel C <nix.or.die@gmail.com>, Philip Yang <Philip.Yang@amd.com>
-Cc: Jean-Marc Valin <jmvalin@mozilla.com>, Dave Airlie <airlied@linux.ie>,
-        LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
-        alexander.deucher@amd.com, Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
- <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
- <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
- <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
- <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
- <d136f940-d807-d2f7-30a7-8617f130912d@amd.com>
- <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
- <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com>
- <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
- <dafca4cc-c7ca-a06d-3a17-46240b1d20c3@amd.com>
- <2a864040-3888-c30a-2fab-6ff637dddda4@daenzer.net>
- <35c599a3-0042-4f00-52e4-9d17164b93b1@amd.com>
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <45fc9cac-f37e-833f-5f4a-811db206166d@daenzer.net>
-Date: Mon, 23 Apr 2018 12:23:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 23 Apr 2018 06:24:39 -0400
+X-Google-Smtp-Source: AIpwx4/inmLJ/QTy5E7BF4q5DUOyLIuV2ClSbrUdWikrC6KfTjm84VxjkcV8FkSArH13BUC82Evh2pfqa4rc+rHsKkg=
 MIME-Version: 1.0
-In-Reply-To: <35c599a3-0042-4f00-52e4-9d17164b93b1@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180423113619.6f557d8e@jawa>
+References: <20180422213126.32756-1-lukma@denx.de> <CAPDyKFqaV0ehiHCNdt0i4sWE9cskBa9AQHdRZmzCphPzCdm9ow@mail.gmail.com>
+ <20180423113619.6f557d8e@jawa>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 23 Apr 2018 12:24:38 +0200
+Message-ID: <CAPDyKFrhzVcST2SYjJaLb1vLTG3Rv+X7tmh7E-78A8xTYQyXOg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: disable card sleep via device-tree
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chanho Min <chanho.min@lge.com>, devicetree@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-20 09:40 PM, Felix Kuehling wrote:
-> On 2018-04-20 10:47 AM, Michel Dänzer wrote:
->> On 2018-04-11 11:37 AM, Christian König wrote:
->>> Am 11.04.2018 um 06:00 schrieb Gabriel C:
->>>> 2018-04-09 11:42 GMT+02:00 Christian König
->>>> <ckoenig.leichtzumerken@gmail.com>:
->>>>> Am 07.04.2018 um 00:00 schrieb Jean-Marc Valin:
->>>>>> Hi Christian,
->>>>>>
->>>>>> Thanks for the info. FYI, I've also opened a Firefox bug for that at:
->>>>>> https://bugzilla.mozilla.org/show_bug.cgi?id=1448778
->>>>>> Feel free to comment since you have a better understanding of what's
->>>>>> going on.
->>>>>>
->>>>>> One last question: right now I'm running 4.15.0 with the "offending"
->>>>>> patch reverted. Is that safe to run or are there possible bad
->>>>>> interactions with other changes.
->>>>> That should work without problems.
->>>>>
->>>>> But I just had another idea as well, if you want you could still test
->>>>> the
->>>>> new code path which will be using in 4.17.
->>>>>
->>>> While Firefox may do some strange things is not about only Firefox.
->>>>
->>>> With your patches my EPYC box is unusable with  4.15++ kernels.
->>>> The whole Desktop is acting weird.  This one is using
->>>> an Cape Verde PRO [Radeon HD 7750/8740 / R7 250E] GPU.
->>>>
->>>> Box is  2 * EPYC 7281 with 128 GB ECC RAM
->>>>
->>>> Also a 14C Xeon box with a HD7700 is broken same way.
->>> The hardware is irrelevant for this. We need to know what software stack
->>> you use on top of it.
->>>
->>> E.g. desktop environment/Mesa and DDX version etc...
->>>
->>>> Everything breaks in X .. scrolling , moving windows , flickering etc.
->>>>
->>>>
->>>> reverting f4c809914a7c3e4a59cf543da6c2a15d0f75ee38 and
->>>> 648bc3574716400acc06f99915815f80d9563783
->>>> from an 4.15 kernel makes things work again.
->>>>
->>>>
->>>>> Backporting all the detection logic is to invasive, but you could
->>>>> just go
->>>>> into drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c and forcefull use the other
->>>>> code path.
->>>>>
->>>>> Just look out for "#ifdef CONFIG_SWIOTLB" checks and disable those.
->>>>>
->>>> Well you really can't be serious about these suggestions ? Are you ?
->>>>
->>>> Telling peoples to #if 0 random code is not a solution.
->>> That is for testing and not a permanent solution.
->>>
->>>> You broke existsing working userland with your patches and at least
->>>> please fix that for 4.16.
->>>>
->>>> I can help testing code for 4.17/++ if you wish but that is
->>>> *different* storry.
->>> Please test Alex's amd-staging-drm-next branch from
->>> git://people.freedesktop.org/~agd5f/linux.
->> I think we're still missing something here.
+On 23 April 2018 at 11:36, Lukasz Majewski <lukma@denx.de> wrote:
+> Hi Ulf,
+>
+>> On 22 April 2018 at 23:31, Lukasz Majewski <lukma@denx.de> wrote:
+>> > From: Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
+>> >
+>> > On a TQMa53 module the mmc_sleep leaves the eMMC card in a state
+>> > that the imx53 rom boot code is unable to probe, resulting in
+>> > reboot hanging. Add a device tree property to disable sleeping
+>> > on suspend.
+>> >
+>> > For TQMa53 modules the exact commit to cause hang after reboot
+>> > (v3.10 -> v3.11):
+>> > commit 486fdbbc1483 ("mmc: core: Add shutdown callback for (e)MMC
+>> > bus_ops")
+>> >
+>> > [The exact discussion can be found here:
+>> > https://patchwork.kernel.org/patch/8881401/
+>> > "i.MX53 restart via watchdog does not work"
+>> >
+>> > Signed-off-by: Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
+>> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+>> > ---
+>> >  Documentation/devicetree/bindings/mmc/mmc-card.txt | 4 ++++
+>> >  drivers/mmc/core/mmc.c                             | 7 +++++--
+>> >  include/linux/mmc/card.h                           | 2 +-
+>> >  3 files changed, 10 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.txt
+>> > b/Documentation/devicetree/bindings/mmc/mmc-card.txt index
+>> > 8d2d71758907..c3ee151edd7c 100644 ---
+>> > a/Documentation/devicetree/bindings/mmc/mmc-card.txt +++
+>> > b/Documentation/devicetree/bindings/mmc/mmc-card.txt @@ -12,6 +12,9
+>> > @@ Required properties: Optional properties:
+>> >  -broken-hpi : Use this to indicate that the mmc-card has a broken
+>> > hpi implementation, and that hpi should not be used
+>> > +-no-sleep-on-suspend : Do not put the card to sleep when
+>> > suspending.
+>> > +              There are boards with bootloaders that are unable
+>> > +              to probe such card when rebooting.
+>> >
+>> >  Example:
+>> >
+>> > @@ -26,5 +29,6 @@ Example:
+>> >                 reg = <0>;
+>> >                 compatible = "mmc-card";
+>> >                 broken-hpi;
+>> > +               no-sleep-on-suspend;
+>> >         };
+>> >  };
+>> > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+>> > index 208a762b87ef..a3b74b5c8893 100644
+>> > --- a/drivers/mmc/core/mmc.c
+>> > +++ b/drivers/mmc/core/mmc.c
+>> > @@ -381,8 +381,11 @@ static int mmc_decode_ext_csd(struct mmc_card
+>> > *card, u8 *ext_csd) }
+>> >
+>> >         np = mmc_of_find_child_device(card->host, 0);
+>> > -       if (np && of_device_is_compatible(np, "mmc-card"))
+>> > +       if (np && of_device_is_compatible(np, "mmc-card")) {
+>> >                 broken_hpi = of_property_read_bool(np,
+>> > "broken-hpi");
+>> > +               card->no_sleep_on_suspend =
+>> > +                       of_property_read_bool(np,
+>> > "no-sleep-on-suspend");
+>> > +       }
+>> >         of_node_put(np);
+>> >
+>> >         /*
+>> > @@ -1990,7 +1993,7 @@ static int _mmc_suspend(struct mmc_host
+>> > *host, bool is_suspend) if (mmc_can_poweroff_notify(host->card) &&
+>> >                 ((host->caps2 & MMC_CAP2_FULL_PWR_CYCLE)
+>> > || !is_suspend)) err = mmc_poweroff_notify(host->card, notify_type);
+>> > -       else if (mmc_can_sleep(host->card))
+>> > +       else if (mmc_can_sleep(host->card)
+>> > && !host->card->no_sleep_on_suspend)
 >>
->> I'm currently running 4.16.2 + the DRM subsystem changes which are going
->> into 4.17 (so I have the changes Christian is referring to) with a
->> Kaveri APU, and I'm seeing similar symptoms as described by Jean-Marc.
->> Some observations:
+>> No, this is wrong.
 >>
->> Firefox, Thunderbird, or worst, gnome-shell, can freeze for up to on the
->> order of a minute, during which the kernel is spending most of one
->> core's cycles inside alloc_pages (__alloc_pages_nodemask to be more
->> precise), called from ttm_alloc_new_pages.
-> Philip debugged a similar problem with a KFD memory stress test about
-> two weeks ago, where the kernel was seemingly stuck in an infinite loop
-> trying to allocate huge pages. I'm pasting his analysis for the record:
-> 
->> [...] it uses huge_flags GFP_TRANSHUGE to call alloc_pages(), this
->> seems a corner case inside __alloc_pages_slowpath(), it never exits
->> but goes to retry path every time. It can reclaim pages and
->> did_some_progress (as a result, no_progress_loops is reset to 0 every
->> loop, never reach MAX_RECLAIM_RETRIES) but cannot finish huge page
->> allocations under this specific memory pressure.  
-> As a workaround to unblock our release branch testing we removed
-> transparent huge page allocation from  ttm_get_pages. We're seeing this
-> as far back as 4.13 on our release branch.
+>> This means that the mmc_power_off() a few lines below would start to
+>> violate the eMMC spec.
+>> That via powering off the card, without first
+>> sending the sleep or power-off-notify command.
+>> You are probably just lucky, as your particular eMMC card still copes
+>> with this in-correct sequence (I know there are these kind of cards).
+>>
+>> Well, what is also interesting in this regards, is what is happening
+>> during mmc_power_off().
+>
+> The mmc_power_off() -> mmc_pwrseq_power_off() -> here the *pwrseq is
+> null, so we do nothing with the power.
+>
+> In mmc_power_off() function we call mmc_set_initial_state(host);
+>
+>> Does your host driver cut power to VMMC and/or
+>> VQMMC?
+>
+> The esdhci3 controller uses 'vmm-supply' which is a 'regulator-fixed'
+> with 'regulator-always-on' attribute.
 
-Thanks for sharing this. In the future, please raise issues like this on
-the public mailing lists from the beginning.
+Assume you mean vmmc-supply.
 
+Anyway, it seems a bit weird to have this regulator as fixed and
+always on. Of course it's possible, but it's more common to have vqmmc
+fixed and always on. Maybe double check the schematics.
 
-> If we're really talking about the same problem, I don't think it's
-> caused by recent page allocator changes, but rather exposed by recent
-> TTM changes.
+>
+> It seems like the eMMC is always powered with 3.3V.
 
-It sounds related, but probably not exactly the same problem. I already
-had the TTM code using GFP_TRANSHUGE before I ran into the issue. Also,
-__alloc_pages_slowpath eventually succeeds for me, it can just take up
-to about a minute.
+What about vqmmc then?
 
-I'm currently testing using (GFP_TRANSHUGE_LIGHT | __GFP_NORETRY)
-instead of GFP_TRANSHUGE in TTM.
+>
+> Considering the above it seems like the card is still powered - the HW
+> design also supports some backup powering (so the voltage from the
+> board is not took immediately).
 
+I think you need to verify that the CMD5 (sleep) is actually sent and
+successfully completed.
 
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+In regards to that, do your host support MMC_CAP_WAIT_WHILE_BUSY? If
+not, there is a delay (specific to the card) after the CMD5.
+
+So the support in your host driver for MMC_CAP_WAIT_WHILE_BUSY could
+be broken, or the delay may be too short. Perhaps forcing to use the
+delay and use a delay that for sure should work is worth to test.
+
+>
+>
+> To be even more strange the suspend to mem works without any issues
+> (without this patch).
+> With "reboot -f" it seems like we hang in imx53 BootROM (as I can read
+> it from my JTAG debugger).
+
+So clearly there is a difference during reboot.
+
+A wild guess... Probably vmmc supply is turned on/off in this path,
+while perhaps the CMD5 support has failed when the kernel issued it...
+
+>
+> As written in the commit message - problems started after sending
+> suspend sequence of eMMC commands to the eMMC device.
+>
+>
+> [The eMMC memory itself is Micron 4GiB - 4.4.1]
+
+[...]
+
+Kind regards
+Uffe
