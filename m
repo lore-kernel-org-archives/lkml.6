@@ -1,96 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755887AbeDWQDp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:03:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52882 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755138AbeDWQDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:03:43 -0400
-Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
-To: Borislav Petkov <bp@alien8.de>
-Cc: Eduardo Habkost <ehabkost@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <20180226121509.GE4377@pd.tnic>
- <24cd527d-5287-f0be-ffe8-eab341bf1d94@redhat.com>
- <3866d359-0ef8-6a99-6254-84890be62b93@redhat.com>
- <20180226122205.GG4377@pd.tnic>
- <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com>
- <CANRm+CyyL2jjjn7nZtLJvP+t1pN9ndAGhijmbX4LJh15=O+dvQ@mail.gmail.com>
- <20180417202417.GA29865@localhost.localdomain>
- <CANRm+CwA22VmpA5cfQg8mF_Xke_hXtP+_ui5xU+LV8v0JNj=3Q@mail.gmail.com>
- <20180418090329.GJ29865@localhost.localdomain>
- <de059c45-d706-ff70-9063-92ac0a807e26@redhat.com>
- <20180423125849.GD22238@pd.tnic>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7eeb63dd-5f7f-df91-47b1-7b15005cf45c@redhat.com>
-Date: Mon, 23 Apr 2018 18:03:40 +0200
+        id S1755925AbeDWQHr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:07:47 -0400
+Received: from foss.arm.com ([217.140.101.70]:42752 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755383AbeDWQHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 12:07:46 -0400
+Subject: Re: [RFC 1/2] iommu/arm-smmu-v3: Remove bypass in
+ arm_smmu_reset_device
+To: Yisheng Xie <xieyisheng1@huawei.com>, will.deacon@arm.com,
+        joro@8bytes.org
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, liubo95@huawei.com,
+        dingtianhong@huawei.com
+References: <1524483959-54940-1-git-send-email-xieyisheng1@huawei.com>
+ <1524483959-54940-2-git-send-email-xieyisheng1@huawei.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <9e2f8646-482a-e721-d1b6-e674de48e276@arm.com>
+Date: Mon, 23 Apr 2018 17:07:43 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180423125849.GD22238@pd.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1524483959-54940-2-git-send-email-xieyisheng1@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/04/2018 14:58, Borislav Petkov wrote:
->>>> QEMU can't get the host value by rdmsr MSR_IA32_UCODE_REV directly
->>>> since rdmsr will #GP when ring !=0, any idea?
->>> By looking at kvm_get_msr_feature(), it looks like
->>> ioctl(system_fd, KVM_GET_MSRS) would return the host MSR value
->>> for us.
->> Yes, that's exactly what it was introduced for (together with other MSRs
->> including VMX capabilities).
-> Can't qemu do:
+On 23/04/18 12:45, Yisheng Xie wrote:
+> Add a bypass parameter in arm_smmu_device to keep whether smmu device
+> should pypass or not, so parameter bypass in arm_smmu_reset_device can
+> be removed.
+
+Given that the GBPA configuration implied by the bypass argument here is 
+only there to avoid initialising a full stream table when the firmware 
+is terminally broken, I wonder if it would make sense to simply skip 
+allocating a stream table at all in that case. Then we could just base 
+the subsequent SMMUEN/GPBA decision on whether strtab_cfg.strtab is 
+valid or not.
+
+Robin.
+
+> This should not have any functional change, but prepare for later patch.
 > 
-> grep microcode /proc/cpuinfo | awk '{ print $3 }' | head -n 1
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+>   drivers/iommu/arm-smmu-v3.c | 11 ++++++-----
+>   1 file changed, 6 insertions(+), 5 deletions(-)
 > 
-> ?
-
-Yes, but you took that a statement bit too narrowly.
-
-We didn't include KVM_GET_MSRS because microcode version wasn't
-otherwise available; rather, there's a general need for KVM userspace to
-know the values of host MSRs, and microcode is an example.
-
-Paolo
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 1d64710..044df6e 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -587,6 +587,8 @@ struct arm_smmu_device {
+>   
+>   	u32				sync_count;
+>   
+> +	bool				bypass;
+> +
+>   	/* IOMMU core code handle */
+>   	struct iommu_device		iommu;
+>   };
+> @@ -2384,7 +2386,7 @@ static int arm_smmu_device_disable(struct arm_smmu_device *smmu)
+>   	return ret;
+>   }
+>   
+> -static int arm_smmu_device_reset(struct arm_smmu_device *smmu, bool bypass)
+> +static int arm_smmu_device_reset(struct arm_smmu_device *smmu)
+>   {
+>   	int ret;
+>   	u32 reg, enables;
+> @@ -2487,7 +2489,7 @@ static int arm_smmu_device_reset(struct arm_smmu_device *smmu, bool bypass)
+>   
+>   
+>   	/* Enable the SMMU interface, or ensure bypass */
+> -	if (!bypass || disable_bypass) {
+> +	if (!smmu->bypass || disable_bypass) {
+>   		enables |= CR0_SMMUEN;
+>   	} else {
+>   		ret = arm_smmu_update_gbpa(smmu, 0, GBPA_ABORT);
+> @@ -2778,7 +2780,6 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+>   	resource_size_t ioaddr;
+>   	struct arm_smmu_device *smmu;
+>   	struct device *dev = &pdev->dev;
+> -	bool bypass;
+>   
+>   	smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
+>   	if (!smmu) {
+> @@ -2796,7 +2797,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	/* Set bypass mode according to firmware probing result */
+> -	bypass = !!ret;
+> +	smmu->bypass = !!ret;
+>   
+>   	/* Base address */
+>   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> @@ -2842,7 +2843,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+>   	platform_set_drvdata(pdev, smmu);
+>   
+>   	/* Reset the device */
+> -	ret = arm_smmu_device_reset(smmu, bypass);
+> +	ret = arm_smmu_device_reset(smmu);
+>   	if (ret)
+>   		return ret;
+>   
+> 
