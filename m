@@ -1,92 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754589AbeDWJW1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 05:22:27 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34498 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754201AbeDWJWT (ORCPT
+        id S1754334AbeDWJ1F (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 05:27:05 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:17578 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754078AbeDWJ1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:22:19 -0400
-X-Google-Smtp-Source: AIpwx4+Nk0GhwJ7W0/Q4NWa9umNMOPeVb8eY7A6+tblKcGvEQQhbT6lrvnCM/ytl5wMlR8psezEsk5GdMLYW2r9Ze7U=
+        Mon, 23 Apr 2018 05:27:01 -0400
+X-UUID: 4cd664eda6b2405c83a3e66bf4b26cc8-20180423
+From: Chaotian Jing <chaotian.jing@mediatek.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Phong LE <ple@baylibre.com>, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>, yong mao <yong.mao@mediatek.com>,
+        <linux-mmc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Subject: mmc: mediatek: add 64G DRAM DMA support
+Date: Mon, 23 Apr 2018 17:26:49 +0800
+Message-ID: <1524475610-22079-1-git-send-email-chaotian.jing@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-References: <20180412101350.210547-1-tweek@google.com> <20180412101350.210547-2-tweek@google.com>
- <20180417030202.GA30624@ziepe.ca> <CA+zpnLdU=t6eOY9GOLAyiXkZBw=NueckiejHSexd8P7MKYuRww@mail.gmail.com>
- <20180417140013.GA2029@ziepe.ca> <CA+zpnLePcFJQURBNZEt=mRSRb9GUYR=1t9EQn82W0+311xKZ7w@mail.gmail.com>
- <20180420145740.GC30433@ziepe.ca>
-In-Reply-To: <20180420145740.GC30433@ziepe.ca>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Mon, 23 Apr 2018 09:22:06 +0000
-Message-ID: <CA+zpnLcSDTz99Z4fe4CGxH6RzTGvQCoGqQc4p_EMOj9=cuFQgg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] tpm: Add explicit endianness cast
-To: jgg@ziepe.ca, Christopher Li <sparse@chrisli.org>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 4:57 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
 
-> On Thu, Apr 19, 2018 at 01:09:12PM +0000, Thiebaud Weksteen wrote:
-> > On Tue, Apr 17, 2018 at 4:00 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > > On Tue, Apr 17, 2018 at 08:32:33AM +0000, Thiebaud Weksteen wrote:
-> > > > On Tue, Apr 17, 2018 at 5:02 AM Jason Gunthorpe <jgg@ziepe.ca>
-wrote:
-> > > >
-> > > > > On Thu, Apr 12, 2018 at 12:13:47PM +0200, Thiebaud Weksteen wrote:
-> > > > > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > > > > >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
-> > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
-> > > > b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > index 96fd5646f866..d74568d58a66 100644
-> > > > > > +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
-> > > > > >        * but physical tpm needs the conversion.
-> > > > > >        */
-> > > > > >       if (of_property_match_string(np, "compatible",
-"IBM,vtpm") <
-> > 0) {
-> > > > > > -             size = be32_to_cpup(sizep);
-> > > > > > -             base = be64_to_cpup(basep);
-> > > > > > +             size = be32_to_cpup((__be32 *)sizep);
-> > > > > > +             base = be64_to_cpup((__be64 *)basep);
-> > > >
-> > > > > Er, no.. change the definitions of sizep and basep to be __be
-> > > >
-> > > > > Jason
-> > > >
-> > > > Please read the comment before the condition. sizep and
-> > > > basep may contain either little endian or big endian and this block
-is
-> > used
-> > > > to adjust that. Let me know if there is a better way for handling
-this.
-> >
-> > > Well a cast like that will throw sparse warnings, you need __force at
-> > > least
-> >
-> > I don't think so. Since the variable is only defined as u32*, no
-specific
-> > warning is generated. I've used `make C=2 drivers/char/tpm/` with this
-> > patch applied and no new warning is being triggered.
+Chaotian Jing (1):
+  mmc: mediatek: add 64G DRAM DMA support
 
-> I'm surprised to hear you say that..
+ drivers/mmc/host/mtk-sd.c | 44 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 39 insertions(+), 5 deletions(-)
 
-> Sparse is supposed to require force on all cast that change the
-> annotation, and there are many examples in the kernel that have force
-> in that case.
-
-> Jason
-
-+linux-sparse@vger.kernel.org and sparse@chrisli.org for a sanity check.
-
-If you look at the man page of sparse, under the bitwise option, it states:
-"Sparse will warn on [...] any conversion of one restricted type into
-another, except via a cast that includes __attribute__((force)).". In our
-case, it is a conversion from unrestricted to restricted which does not
-fall in this category.
+-- 
+1.8.1.1.dirty
