@@ -1,99 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754570AbeDWIg7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:36:59 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:54839 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754460AbeDWIgf (ORCPT
+        id S1754592AbeDWIhJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:37:09 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:44543 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754460AbeDWIhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:36:35 -0400
-X-UUID: ea6e97b907a74487a11894dbaee5705f-20180423
-From: <sean.wang@mediatek.com>
-To: <matthias.bgg@gmail.com>, <rjw@rjwysocki.net>, <khilman@baylibre.com>
-CC: <ulf.hansson@linaro.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v2 2/2] soc: mediatek: add a fixed wait for SRAM stable
-Date: Mon, 23 Apr 2018 16:36:22 +0800
-Message-ID: <0ef8e87ba7156e626d1a1a48388f222ce917099b.1524472331.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <2e16481e1477dfae0cfb24568d8111da81d92628.1524472331.git.sean.wang@mediatek.com>
-References: <2e16481e1477dfae0cfb24568d8111da81d92628.1524472331.git.sean.wang@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+        Mon, 23 Apr 2018 04:37:02 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        y2038@lists.linaro.org, arnd@arndb.de
+Subject: [PATCH 4/5] powerpc: use time64_t in update_persistent_clock
+Date: Mon, 23 Apr 2018 10:36:41 +0200
+Message-Id: <20180423083642.2608886-4-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180423083642.2608886-1-arnd@arndb.de>
+References: <20180423083642.2608886-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:i63MvfCuZ7Wx+sv739EyVTndhVZT0rXBFW6AebTXY1+jMIVqX0s
+ P7In6PFoMNFMHtsyTbXB/HJKmt7EBUlEi4tM22Fk2SgZnUbK6s/Tx6juHLN4lKHk2CnY2dJ
+ k5xP3B29BBunlGgWof81essBJqC7WrL8qHVQuggLOcieRYilfEGKevOiteVBOADwComZpk0
+ 7A4Vp9pmRovaDdNtCqNeg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:bclzS236dUY=:FzqmGPHCBFRqiAuwUlvlu1
+ 7/p9TDxk4pwj/Lj8UC+/tViK1J9Q49liYHw3v7jbSWKiNaDY7h09Lxc+GVE1aQwqSnq0XYKFt
+ pet9lGW8DsNvwi1lQmgQ7DhUn/NUko3M2KdQ/QgW26cX3ej1YgoMqEZ2nJqzz0vlRY+ArokiR
+ ErZzXCsOE2z5q8LD4JAag0XYYbWSztSdABEkJzDRRriqXtG7rdz8Xem9mQQJQK6Q5LpMGlPwr
+ wnw2tmBCHOoH0DXwKyRDr8pCecEUdyt6z1eoZNO2w2qVARi8zXy7gXgpZ8fb/mdmHrpBm6Zsf
+ iji0nGvRFRE6Lb4khLDriB+GeszBpzy9zj6UePjuliKPOwszxP3pVR2NltSGFephJn0K25VkW
+ jTijKSDJqBViM1v7NsjNT0h9KmTLKGoJ/JslgsHsXl6qpnlSNJ/Vnfv2cx2mxCEipomM9Wi5b
+ KTAMTyhyTTFVaZ/8HuSS7Zfp0XVO5HluxFL8H9AORohZGc4U1zgfWZlFbLednVK2b08kuTLcj
+ DZCVzKmUPHKIWj8tkmUcI56t5CckWfDRsvPlbhbwwHZTZdHln/LmscCoC1Ejky5IOJX/HelDg
+ VoKyv/qq1Fxzi408lRdxtHnaUI3WH8ZylqI1KBjutgvzO8RjFHkJ1sq+o/Huu2pBLP11VO5yg
+ t3UzNqEkOca4dpWTbpL8hy3wXMcm/bq4R7TVMhU2kSMMoXpwXSjkCwCkrlLidtXbSHsncvNMt
+ icCvQAroWqWq236UmzoGqFmCrJas/3wXRNh72Q==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+update_persistent_clock() is deprecated because it suffers from overflow
+in 2038 on 32-bit architectures. This changes powerpc to use the
+update_persistent_clock64() replacement, and to pass down 64-bit
+timestamps consistently.
 
-MT7622_POWER_DOMAIN_WB doesn't send an ACK when its managed SRAM becomes
-stable, which is not like the behavior the other power domains should
-have. Therefore, it's necessary for such a power domain to have a fixed
-and well-predefined duration to wait until its managed SRAM can be allowed
-to access by all functions running on the top.
+This is now simpler, as we no longer have to worry about the offset
+numbers in tm_year and tm_mon that are different between the Linux
+conventions and RTAS.
 
-v1 -> v2:
- - use MTK_SCPD_FWAIT_SRAM flag as an indication requiring force waiting.
-
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Weiyi Lu <weiyi.lu@mediatek.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/soc/mediatek/mtk-scpsys.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ arch/powerpc/kernel/time.c              |  6 ++----
+ arch/powerpc/platforms/8xx/m8xx_setup.c |  7 +++----
+ arch/powerpc/platforms/powermac/time.c  | 17 ++++-------------
+ 3 files changed, 9 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index b1b45e4..d4f1a63 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -32,6 +32,7 @@
- #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index afb27962b396..f9b0baa3fa2b 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -781,16 +781,14 @@ void __init generic_calibrate_decr(void)
+ 	}
+ }
  
- #define MTK_SCPD_ACTIVE_WAKEUP		BIT(0)
-+#define MTK_SCPD_FWAIT_SRAM		BIT(1)
- #define MTK_SCPD_CAPS(_scpd, _x)	((_scpd)->data->caps & (_x))
+-int update_persistent_clock(struct timespec now)
++int update_persistent_clock64(struct timespec64 now)
+ {
+ 	struct rtc_time tm;
  
- #define SPM_VDE_PWR_CON			0x0210
-@@ -237,11 +238,22 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 	val &= ~scpd->data->sram_pdn_bits;
- 	writel(val, ctl_addr);
+ 	if (!ppc_md.set_rtc_time)
+ 		return -ENODEV;
  
--	/* wait until SRAM_PDN_ACK all 0 */
--	ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
--				 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
--	if (ret < 0)
--		goto err_pwr_ack;
-+	/* Either wait until SRAM_PDN_ACK all 0 or have a force wait */
-+	if (!MTK_SCPD_CAPS(scpd, MTK_SCPD_FWAIT_SRAM)) {
-+		ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
-+					 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-+		if (ret < 0)
-+			goto err_pwr_ack;
-+	} else {
-+		/*
-+		 * Currently, MTK_SCPD_FWAIT_SRAM is necessary only for
-+		 * MT7622_POWER_DOMAIN_WB and thus just a trivial setup is
-+		 * applied here. If there're more domains which need to force
-+		 * waiting for its own pre-defined value, the duration should
-+		 * be coded in the caps field.
-+		 */
-+		usleep_range(12000, 12100);
-+	};
+-	to_tm(now.tv_sec + 1 + timezone_offset, &tm);
+-	tm.tm_year -= 1900;
+-	tm.tm_mon -= 1;
++	rtc_time64_to_tm(now.tv_sec + 1 + timezone_offset, &tm);
  
- 	if (scpd->data->bus_prot_mask) {
- 		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
-@@ -785,7 +797,7 @@ static const struct scp_domain_data scp_domain_data_mt7622[] = {
- 		.sram_pdn_ack_bits = 0,
- 		.clk_id = {CLK_NONE},
- 		.bus_prot_mask = MT7622_TOP_AXI_PROT_EN_WB,
--		.caps = MTK_SCPD_ACTIVE_WAKEUP,
-+		.caps = MTK_SCPD_ACTIVE_WAKEUP | MTK_SCPD_FWAIT_SRAM,
- 	},
- };
+ 	return ppc_md.set_rtc_time(&tm);
+ }
+diff --git a/arch/powerpc/platforms/8xx/m8xx_setup.c b/arch/powerpc/platforms/8xx/m8xx_setup.c
+index d76daa90647b..027c42d8966c 100644
+--- a/arch/powerpc/platforms/8xx/m8xx_setup.c
++++ b/arch/powerpc/platforms/8xx/m8xx_setup.c
+@@ -169,15 +169,14 @@ int mpc8xx_set_rtc_time(struct rtc_time *tm)
+ {
+ 	sitk8xx_t __iomem *sys_tmr1;
+ 	sit8xx_t __iomem *sys_tmr2;
+-	int time;
++	time64_t time;
  
+ 	sys_tmr1 = immr_map(im_sitk);
+ 	sys_tmr2 = immr_map(im_sit);
+-	time = mktime(tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday,
+-	              tm->tm_hour, tm->tm_min, tm->tm_sec);
++	time = rtc_tm_to_time64(tm);
+ 
+ 	out_be32(&sys_tmr1->sitk_rtck, KAPWR_KEY);
+-	out_be32(&sys_tmr2->sit_rtc, time);
++	out_be32(&sys_tmr2->sit_rtc, (u32)time);
+ 	out_be32(&sys_tmr1->sitk_rtck, ~KAPWR_KEY);
+ 
+ 	immr_unmap(sys_tmr2);
+diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
+index d5d1c452038e..7c968e46736f 100644
+--- a/arch/powerpc/platforms/powermac/time.c
++++ b/arch/powerpc/platforms/powermac/time.c
+@@ -84,15 +84,6 @@ long __init pmac_time_init(void)
+ 	return delta;
+ }
+ 
+-#if defined(CONFIG_ADB_CUDA) || defined(CONFIG_ADB_PMU) || \
+-    defined(CONFIG_PMAC_SMU)
+-static unsigned long from_rtc_time(struct rtc_time *tm)
+-{
+-	return mktime(tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday,
+-		      tm->tm_hour, tm->tm_min, tm->tm_sec);
+-}
+-#endif
+-
+ #ifdef CONFIG_ADB_CUDA
+ static time64_t cuda_get_time(void)
+ {
+@@ -115,10 +106,10 @@ static time64_t cuda_get_time(void)
+ 
+ static int cuda_set_rtc_time(struct rtc_time *tm)
+ {
+-	unsigned int nowtime;
++	time64_t nowtime;
+ 	struct adb_request req;
+ 
+-	nowtime = from_rtc_time(tm) + RTC_OFFSET;
++	nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
+ 	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
+ 			 nowtime >> 24, nowtime >> 16, nowtime >> 8,
+ 			 nowtime) < 0)
+@@ -158,10 +149,10 @@ static time64_t pmu_get_time(void)
+ 
+ static int pmu_set_rtc_time(struct rtc_time *tm)
+ {
+-	unsigned int nowtime;
++	time64_t nowtime;
+ 	struct adb_request req;
+ 
+-	nowtime = from_rtc_time(tm) + RTC_OFFSET;
++	nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
+ 	if (pmu_request(&req, NULL, 5, PMU_SET_RTC, nowtime >> 24,
+ 			nowtime >> 16, nowtime >> 8, nowtime) < 0)
+ 		return -ENXIO;
 -- 
-2.7.4
+2.9.0
