@@ -1,217 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754119AbeDWGnQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:43:16 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:36360 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753018AbeDWGm5 (ORCPT
+        id S1754101AbeDWGnO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:43:14 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42882 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751268AbeDWGnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:42:57 -0400
-Subject: Re: [PATCH] phy: Add a driver for the ATH79 USB phy
-To: Alban Bedel <albeu@free.fr>
-References: <1521931120-31118-1-git-send-email-albeu@free.fr>
-CC: <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <8052c841-0950-9f03-c21e-0395db198969@ti.com>
-Date: Mon, 23 Apr 2018 12:12:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Mon, 23 Apr 2018 02:43:10 -0400
+X-Google-Smtp-Source: AIpwx4/nnJu8LxcY38+5qGjyd4NaKr0pZxj1XuAynjx9WFU0z/vIjrUHaGZxuCfcOdfyRfF0omBJSA==
+Date: Mon, 23 Apr 2018 15:42:59 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v10 08/25] mm: VMA sequence count
+Message-ID: <20180423064259.GC114098@rodete-desktop-imager.corp.google.com>
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523975611-15978-9-git-send-email-ldufour@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <1521931120-31118-1-git-send-email-albeu@free.fr>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523975611-15978-9-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Sunday 25 March 2018 04:08 AM, Alban Bedel wrote:
-> The ATH79 USB phy is very simple, it only have a reset. On some SoC a
-> second reset is used to force the phy in suspend mode regardless of the
-> USB controller status.
+On Tue, Apr 17, 2018 at 04:33:14PM +0200, Laurent Dufour wrote:
+> From: Peter Zijlstra <peterz@infradead.org>
 > 
-> This driver is added to the qualcom directory as atheros is now part
-> of qualcom and newer SoC of this familly are marketed under the
-> qualcom name.
+> Wrap the VMA modifications (vma_adjust/unmap_page_range) with sequence
+> counts such that we can easily test if a VMA is changed.
 
-merged, thanks!
-
--Kishon
+So, seqcount is to protect modifying all attributes of vma?
 
 > 
-> Signed-off-by: Alban Bedel <albeu@free.fr>
+> The unmap_page_range() one allows us to make assumptions about
+> page-tables; when we find the seqcount hasn't changed we can assume
+> page-tables are still valid.
+
+Hmm, seqcount covers page-table, too.
+Please describe what the seqcount want to protect.
+
+> 
+> The flip side is that we cannot distinguish between a vma_adjust() and
+> the unmap_page_range() -- where with the former we could have
+> re-checked the vma bounds against the address.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> 
+> [Port to 4.12 kernel]
+> [Build depends on CONFIG_SPECULATIVE_PAGE_FAULT]
+> [Introduce vm_write_* inline function depending on
+>  CONFIG_SPECULATIVE_PAGE_FAULT]
+> [Fix lock dependency between mapping->i_mmap_rwsem and vma->vm_sequence by
+>  using vm_raw_write* functions]
+> [Fix a lock dependency warning in mmap_region() when entering the error
+>  path]
+> [move sequence initialisation INIT_VMA()]
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 > ---
->  MAINTAINERS                          |   8 +++
->  drivers/phy/qualcomm/Kconfig         |  11 +++-
->  drivers/phy/qualcomm/Makefile        |   1 +
->  drivers/phy/qualcomm/phy-ath79-usb.c | 108 +++++++++++++++++++++++++++++++++++
->  4 files changed, 127 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/phy/qualcomm/phy-ath79-usb.c
+>  include/linux/mm.h       | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mm_types.h |  3 +++
+>  mm/memory.c              |  2 ++
+>  mm/mmap.c                | 31 +++++++++++++++++++++++++++++++
+>  4 files changed, 80 insertions(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 73c0cda..ce5ecd6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2294,6 +2294,14 @@ S:	Maintained
->  F:	drivers/gpio/gpio-ath79.c
->  F:	Documentation/devicetree/bindings/gpio/gpio-ath79.txt
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index efc1248b82bd..988daf7030c9 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1264,6 +1264,9 @@ struct zap_details {
+>  static inline void INIT_VMA(struct vm_area_struct *vma)
+>  {
+>  	INIT_LIST_HEAD(&vma->anon_vma_chain);
+> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+> +	seqcount_init(&vma->vm_sequence);
+> +#endif
+>  }
 >  
-> +ATHEROS 71XX/9XXX USB PHY DRIVER
-> +M:	Alban Bedel <albeu@free.fr>
-> +W:	https://github.com/AlbanBedel/linux
-> +T:	git git://github.com/AlbanBedel/linux
-> +S:	Maintained
-> +F:	drivers/phy/qualcomm/phy-ath79-usb.c
-> +F:	Documentation/devicetree/bindings/phy/phy-ath79-usb.txt
+>  struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+> @@ -1386,6 +1389,47 @@ static inline void unmap_shared_mapping_range(struct address_space *mapping,
+>  	unmap_mapping_range(mapping, holebegin, holelen, 0);
+>  }
+>  
+> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+> +static inline void vm_write_begin(struct vm_area_struct *vma)
+> +{
+> +	write_seqcount_begin(&vma->vm_sequence);
+> +}
+> +static inline void vm_write_begin_nested(struct vm_area_struct *vma,
+> +					 int subclass)
+> +{
+> +	write_seqcount_begin_nested(&vma->vm_sequence, subclass);
+> +}
+> +static inline void vm_write_end(struct vm_area_struct *vma)
+> +{
+> +	write_seqcount_end(&vma->vm_sequence);
+> +}
+> +static inline void vm_raw_write_begin(struct vm_area_struct *vma)
+> +{
+> +	raw_write_seqcount_begin(&vma->vm_sequence);
+> +}
+> +static inline void vm_raw_write_end(struct vm_area_struct *vma)
+> +{
+> +	raw_write_seqcount_end(&vma->vm_sequence);
+> +}
+> +#else
+> +static inline void vm_write_begin(struct vm_area_struct *vma)
+> +{
+> +}
+> +static inline void vm_write_begin_nested(struct vm_area_struct *vma,
+> +					 int subclass)
+> +{
+> +}
+> +static inline void vm_write_end(struct vm_area_struct *vma)
+> +{
+> +}
+> +static inline void vm_raw_write_begin(struct vm_area_struct *vma)
+> +{
+> +}
+> +static inline void vm_raw_write_end(struct vm_area_struct *vma)
+> +{
+> +}
+> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
 > +
->  ATHEROS ATH GENERIC UTILITIES
->  M:	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
->  L:	linux-wireless@vger.kernel.org
-> diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
-> index 7bfa64b..632a0e7 100644
-> --- a/drivers/phy/qualcomm/Kconfig
-> +++ b/drivers/phy/qualcomm/Kconfig
-> @@ -1,6 +1,15 @@
->  #
-> -# Phy drivers for Qualcomm platforms
-> +# Phy drivers for Qualcomm and Atheros platforms
->  #
-> +config PHY_ATH79_USB
-> +	tristate "Atheros AR71XX/9XXX USB PHY driver"
-> +	depends on OF && (ATH79 || COMPILE_TEST)
-> +	default y if USB_EHCI_HCD_PLATFORM || USB_OHCI_HCD_PLATFORM
-> +	select RESET_CONTROLLER
-> +	select GENERIC_PHY
-> +	help
-> +	  Enable this to support the USB PHY on Atheros AR71XX/9XXX SoCs.
-> +
->  config PHY_QCOM_APQ8064_SATA
->  	tristate "Qualcomm APQ8064 SATA SerDes/PHY driver"
->  	depends on ARCH_QCOM
-> diff --git a/drivers/phy/qualcomm/Makefile b/drivers/phy/qualcomm/Makefile
-> index 9abb789..deb831f4 100644
-> --- a/drivers/phy/qualcomm/Makefile
-> +++ b/drivers/phy/qualcomm/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +obj-$(CONFIG_PHY_ATH79_USB)		+= phy-ath79-usb.o
->  obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
->  obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)	+= phy-qcom-ipq806x-sata.o
->  obj-$(CONFIG_PHY_QCOM_QMP)		+= phy-qcom-qmp.o
-> diff --git a/drivers/phy/qualcomm/phy-ath79-usb.c b/drivers/phy/qualcomm/phy-ath79-usb.c
-> new file mode 100644
-> index 0000000..6fd6e07
-> --- /dev/null
-> +++ b/drivers/phy/qualcomm/phy-ath79-usb.c
-> @@ -0,0 +1,108 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Atheros AR71XX/9XXX USB PHY driver
-> + *
-> + * Copyright (C) 2015-2018 Alban Bedel <albeu@free.fr>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/reset.h>
-> +
-> +struct ath79_usb_phy {
-> +	struct reset_control *reset;
-> +	/* The suspend override logic is inverted, hence the no prefix
-> +	 * to make the code a bit easier to understand.
+>  extern int access_process_vm(struct task_struct *tsk, unsigned long addr,
+>  		void *buf, int len, unsigned int gup_flags);
+>  extern int access_remote_vm(struct mm_struct *mm, unsigned long addr,
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 21612347d311..db5e9d630e7a 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -335,6 +335,9 @@ struct vm_area_struct {
+>  	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
+>  #endif
+>  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
+> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+> +	seqcount_t vm_sequence;
+> +#endif
+>  } __randomize_layout;
+>  
+>  struct core_thread {
+> diff --git a/mm/memory.c b/mm/memory.c
+> index f86efcb8e268..f7fed053df80 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1503,6 +1503,7 @@ void unmap_page_range(struct mmu_gather *tlb,
+>  	unsigned long next;
+>  
+>  	BUG_ON(addr >= end);
+
+The comment about saying it aims for page-table stability will help.
+
+> +	vm_write_begin(vma);
+>  	tlb_start_vma(tlb, vma);
+>  	pgd = pgd_offset(vma->vm_mm, addr);
+>  	do {
+> @@ -1512,6 +1513,7 @@ void unmap_page_range(struct mmu_gather *tlb,
+>  		next = zap_p4d_range(tlb, vma, pgd, addr, next, details);
+>  	} while (pgd++, addr = next, addr != end);
+>  	tlb_end_vma(tlb, vma);
+> +	vm_write_end(vma);
+>  }
+>  
+>  
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 8bd9ae1dfacc..813e49589ea1 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -692,6 +692,30 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>  	long adjust_next = 0;
+>  	int remove_next = 0;
+>  
+> +	/*
+> +	 * Why using vm_raw_write*() functions here to avoid lockdep's warning ?
+> +	 *
+> +	 * Locked is complaining about a theoretical lock dependency, involving
+> +	 * 3 locks:
+> +	 *   mapping->i_mmap_rwsem --> vma->vm_sequence --> fs_reclaim
+> +	 *
+> +	 * Here are the major path leading to this dependency :
+> +	 *  1. __vma_adjust() mmap_sem  -> vm_sequence -> i_mmap_rwsem
+> +	 *  2. move_vmap() mmap_sem -> vm_sequence -> fs_reclaim
+> +	 *  3. __alloc_pages_nodemask() fs_reclaim -> i_mmap_rwsem
+> +	 *  4. unmap_mapping_range() i_mmap_rwsem -> vm_sequence
+> +	 *
+> +	 * So there is no way to solve this easily, especially because in
+> +	 * unmap_mapping_range() the i_mmap_rwsem is grab while the impacted
+> +	 * VMAs are not yet known.
+> +	 * However, the way the vm_seq is used is guarantying that we will
+> +	 * never block on it since we just check for its value and never wait
+> +	 * for it to move, see vma_has_changed() and handle_speculative_fault().
 > +	 */
-> +	struct reset_control *no_suspend_override;
-> +};
+> +	vm_raw_write_begin(vma);
+> +	if (next)
+> +		vm_raw_write_begin(next);
 > +
-> +static int ath79_usb_phy_power_on(struct phy *phy)
-> +{
-> +	struct ath79_usb_phy *priv = phy_get_drvdata(phy);
-> +	int err = 0;
+>  	if (next && !insert) {
+>  		struct vm_area_struct *exporter = NULL, *importer = NULL;
+>  
+> @@ -902,6 +926,7 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>  			anon_vma_merge(vma, next);
+>  		mm->map_count--;
+>  		mpol_put(vma_policy(next));
+> +		vm_raw_write_end(next);
+>  		kmem_cache_free(vm_area_cachep, next);
+>  		/*
+>  		 * In mprotect's case 6 (see comments on vma_merge),
+> @@ -916,6 +941,8 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>  			 * "vma->vm_next" gap must be updated.
+>  			 */
+>  			next = vma->vm_next;
+> +			if (next)
+> +				vm_raw_write_begin(next);
+>  		} else {
+>  			/*
+>  			 * For the scope of the comment "next" and
+> @@ -962,6 +989,10 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>  	if (insert && file)
+>  		uprobe_mmap(insert);
+>  
+> +	if (next && next != vma)
+> +		vm_raw_write_end(next);
+> +	vm_raw_write_end(vma);
 > +
-> +	if (priv->no_suspend_override) {
-> +		err = reset_control_assert(priv->no_suspend_override);
-> +		if (err)
-> +			return err;
-> +	}
-> +
-> +	err = reset_control_deassert(priv->reset);
-> +	if (err && priv->no_suspend_override)
-> +		reset_control_assert(priv->no_suspend_override);
-> +
-> +	return err;
-> +}
-> +
-> +static int ath79_usb_phy_power_off(struct phy *phy)
-> +{
-> +	struct ath79_usb_phy *priv = phy_get_drvdata(phy);
-> +	int err = 0;
-> +
-> +	err = reset_control_assert(priv->reset);
-> +	if (err)
-> +		return err;
-> +
-> +	if (priv->no_suspend_override) {
-> +		err = reset_control_deassert(priv->no_suspend_override);
-> +		if (err)
-> +			reset_control_deassert(priv->reset);
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static const struct phy_ops ath79_usb_phy_ops = {
-> +	.power_on	= ath79_usb_phy_power_on,
-> +	.power_off	= ath79_usb_phy_power_off,
-> +	.owner		= THIS_MODULE,
-> +};
-> +
-> +static int ath79_usb_phy_probe(struct platform_device *pdev)
-> +{
-> +	struct ath79_usb_phy *priv;
-> +	struct phy *phy;
-> +
-> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->reset = devm_reset_control_get(&pdev->dev, "usb-phy");
-> +	if (IS_ERR(priv->reset))
-> +		return PTR_ERR(priv->reset);
-> +
-> +	priv->no_suspend_override = devm_reset_control_get_optional(
-> +		&pdev->dev, "usb-suspend-override");
-> +	if (IS_ERR(priv->no_suspend_override))
-> +		return PTR_ERR(priv->no_suspend_override);
-> +
-> +	phy = devm_phy_create(&pdev->dev, NULL, &ath79_usb_phy_ops);
-> +	if (IS_ERR(phy))
-> +		return PTR_ERR(phy);
-> +
-> +	phy_set_drvdata(phy, priv);
-> +
-> +	return PTR_ERR_OR_ZERO(devm_of_phy_provider_register(
-> +				&pdev->dev, of_phy_simple_xlate));
-> +}
-> +
-> +static const struct of_device_id ath79_usb_phy_of_match[] = {
-> +	{ .compatible = "qca,ar7100-usb-phy" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, ath79_usb_phy_of_match);
-> +
-> +static struct platform_driver ath79_usb_phy_driver = {
-> +	.probe	= ath79_usb_phy_probe,
-> +	.driver = {
-> +		.of_match_table	= ath79_usb_phy_of_match,
-> +		.name		= "ath79-usb-phy",
-> +	}
-> +};
-> +module_platform_driver(ath79_usb_phy_driver);
-> +
-> +MODULE_DESCRIPTION("ATH79 USB PHY driver");
-> +MODULE_AUTHOR("Alban Bedel <albeu@free.fr>");
-> +MODULE_LICENSE("GPL");
+>  	validate_mm(mm);
+>  
+>  	return 0;
+> -- 
+> 2.7.4
 > 
