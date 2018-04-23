@@ -1,57 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754793AbeDWKjq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:39:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:38786 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754597AbeDWKjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:39:43 -0400
-Date: Mon, 23 Apr 2018 11:39:39 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Jan Kiszka <jan.kiszka@web.de>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        will.deacon@arm.com, catalin.marinas@arm.com, suzuki.poulose@arm.com
-Subject: Re: BUG: KASAN: global-out-of-bounds in
- unmap_kernel_at_el0+0x70/0x1a0
-Message-ID: <20180423103938.xbzdrhnzic4zby5w@lakrids.cambridge.arm.com>
-References: <97d99ad9-c5cf-a4d2-126a-2b39ffead0b3@web.de>
- <20180422190639.lyfvgnzapo2mrpu6@salmiak>
- <b14575e7-c862-fb7c-b776-86976e68f4b7@web.de>
- <20180423102909.ra2n6tqvwcn7oash@lakrids.cambridge.arm.com>
- <02ba4513-7913-6415-5252-9cb7d75f3687@web.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02ba4513-7913-6415-5252-9cb7d75f3687@web.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1754655AbeDWKmC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:42:02 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:42887 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754643AbeDWKmA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 06:42:00 -0400
+X-Google-Smtp-Source: AIpwx4+x4NTl5tkFiCesf7CqrBQCiCzMyJ6e71WW59WkjI4s8Tm+S95KqIiuEAC+Iw48clVXImz/gw==
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/fair: Rearrange select_task_rq_fair() to optimize it
+Date: Mon, 23 Apr 2018 16:08:26 +0530
+Message-Id: <8a34a16da90b9f83ffe60316a074a5e4d05b59b0.1524479666.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 12:33:17PM +0200, Jan Kiszka wrote:
-> On 2018-04-23 12:29, Mark Rutland wrote:
-> > On Mon, Apr 23, 2018 at 07:00:52AM +0200, Jan Kiszka wrote:
-> >> On 2018-04-22 21:06, Mark Rutland wrote:
-> > 
-> >>> Does the below help?
+Rearrange select_task_rq_fair() a bit to avoid executing some
+conditional statements in few specific code-paths. That gets rid of the
+goto as well.
 
-[...]
+This shouldn't result in any functional changes.
 
-> >> Jep, all fine now!
-> > 
-> > Cool. Can I take that as a Tested-by?
-> 
-> Yes, sorry:
-> 
-> Tested-by: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> Jan
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ kernel/sched/fair.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
-Cheers!
-
-I'll fix up the reported-by address likewise, and send this out as a
-patch.
-
-Thanks,
-Mark.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 54dc31e7ab9b..cacee15076a4 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6636,6 +6636,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ 		 */
+ 		if (want_affine && (tmp->flags & SD_WAKE_AFFINE) &&
+ 		    cpumask_test_cpu(prev_cpu, sched_domain_span(tmp))) {
++			sd = NULL; /* Prefer wake_affine over balance flags */
+ 			affine_sd = tmp;
+ 			break;
+ 		}
+@@ -6646,33 +6647,26 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ 			break;
+ 	}
+ 
+-	if (affine_sd) {
+-		sd = NULL; /* Prefer wake_affine over balance flags */
+-		if (cpu == prev_cpu)
+-			goto pick_cpu;
+-
+-		new_cpu = wake_affine(affine_sd, p, cpu, prev_cpu, sync);
+-	}
+-
+-	if (sd && !(sd_flag & SD_BALANCE_FORK)) {
++	if (sd) {
+ 		/*
+ 		 * We're going to need the task's util for capacity_spare_wake
+ 		 * in find_idlest_group. Sync it up to prev_cpu's
+ 		 * last_update_time.
+ 		 */
+-		sync_entity_load_avg(&p->se);
+-	}
++		if (!(sd_flag & SD_BALANCE_FORK))
++			sync_entity_load_avg(&p->se);
++
++		new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
++	} else {
++		if (affine_sd && cpu != prev_cpu)
++			new_cpu = wake_affine(affine_sd, p, cpu, prev_cpu, sync);
+ 
+-	if (!sd) {
+-pick_cpu:
+ 		if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
+ 			new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
+ 
+ 			if (want_affine)
+ 				current->recent_used_cpu = cpu;
+ 		}
+-	} else {
+-		new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
+ 	}
+ 	rcu_read_unlock();
+ 
+-- 
+2.15.0.194.g9af6a3dea062
