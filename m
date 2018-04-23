@@ -1,90 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755580AbeDWPOf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 11:14:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50610 "EHLO mail.kernel.org"
+        id S1755700AbeDWPP4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 11:15:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47842 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755397AbeDWPOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:14:34 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FCFA20C51
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: wait IO writeback in commit_inmem_pages()
-Date: Mon, 23 Apr 2018 23:14:25 +0800
-Message-Id: <20180423151425.5019-1-chao@kernel.org>
-X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
+        id S1755047AbeDWPPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 11:15:51 -0400
+Date: Mon, 23 Apr 2018 09:15:45 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+Message-ID: <20180423151545.GU17484@dhcp22.suse.cz>
+References: <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180418.134651.2225112489265654270.davem@davemloft.net>
+ <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180420130852.GC16083@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180420210200.GH10788@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180421144757.GC14610@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+On Mon 23-04-18 10:06:08, Mikulas Patocka wrote:
+> 
+> 
+> On Sat, 21 Apr 2018, Matthew Wilcox wrote:
+> 
+> > On Fri, Apr 20, 2018 at 05:21:26PM -0400, Mikulas Patocka wrote:
+> > > On Fri, 20 Apr 2018, Matthew Wilcox wrote:
+> > > > On Fri, Apr 20, 2018 at 04:54:53PM -0400, Mikulas Patocka wrote:
+> > > > > On Fri, 20 Apr 2018, Michal Hocko wrote:
+> > > > > > No way. This is just wrong! First of all, you will explode most likely
+> > > > > > on many allocations of small sizes. Second, CONFIG_DEBUG_VM tends to be
+> > > > > > enabled quite often.
+> > > > > 
+> > > > > You're an evil person who doesn't want to fix bugs.
+> > > > 
+> > > > Steady on.  There's no need for that.  Michal isn't evil.  Please
+> > > > apologise.
+> > > 
+> > > I see this attitude from Michal again and again.
+> > 
+> > Fine; then *say that*.  I also see Michal saying "No" a lot.  Sometimes
+> > I agree with him, sometimes I don't.  I think he genuinely wants the best
+> > code in the kernel, and saying "No" is part of it.
+> > 
+> > > He didn't want to fix vmalloc(GFP_NOIO)
+> > 
+> > I don't remember that conversation, so I don't know whether I agree with
+> > his reasoning or not.  But we are supposed to be moving away from GFP_NOIO
+> > towards marking regions with memalloc_noio_save() / restore.  If you do
+> > that, you won't need vmalloc(GFP_NOIO).
+> 
+> He said the same thing a year ago. And there was small progress. 6 out of 
+> 27 __vmalloc calls were converted to memalloc_noio_save in a year - 5 in 
+> infiniband and 1 in btrfs. (the whole discussion is here 
+> http://lkml.iu.edu/hypermail/linux/kernel/1706.3/04681.html )
 
-Thread A				Thread B
-- f2fs_ioc_commit_atomic_write
- - commit_inmem_pages
-  - f2fs_submit_merged_write_cond
-  : write data
-					- write_checkpoint
-					 - do_checkpoint
-					 : commit all node within CP
-					 -> SPO
-  - f2fs_do_sync_file
-   - file_write_and_wait_range
-   : wait data writeback
+Well this is not that easy. It requires a cooperation from maintainers.
+I can only do as much. I've posted patches in the past and actively
+bringing up this topic at LSFMM last two years...
 
-In above race condition, data/node can be flushed in reversed order when
-coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
-atomic written data being corrupted.
+> He refuses 15-line patch to fix GFP_NOIO bug because he believes that in 4 
+> years, the kernel will be refactored and GFP_NOIO will be eliminated. Why 
+> does he have veto over this part of the code? I'd much rather argue with 
+> people who have constructive comments about fixing bugs than with him.
 
-This patch adds filemap_fdatawait() in commit_inmem_pages() to keep data
-and node of atomic file being flushed orderly.
+I didn't NACK the patch AFAIR. I've said it is not a good idea longterm.
+I would be much more willing to change my mind if you would back your
+patch by a real bug report. Hacks are acceptable when we have a real
+issue in hands. But if we want to fix potential issue then better make
+it properly.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- clean up codes suggested by Jaegeuk.
- fs/f2fs/file.c    | 4 ++++
- fs/f2fs/segment.c | 2 ++
- 2 files changed, 6 insertions(+)
+[...]
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index bac059474342..0cfa65c21d3f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 
- 	trace_f2fs_sync_file_enter(inode);
- 
-+	if (atomic)
-+		goto write_done;
-+
- 	/* if fdatasync is triggered, let's do in-place-update */
- 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
- 		set_inode_flag(inode, FI_NEED_IPU);
-@@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		return ret;
- 	}
- 
-+write_done:
- 	/* if the inode is dirty, let's recover all the time */
- 	if (!f2fs_skip_inode_update(inode, datasync)) {
- 		f2fs_write_inode(inode, NULL);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 710d817c4350..31336fc54d8e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -419,6 +419,8 @@ static int __commit_inmem_pages(struct inode *inode)
- 		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
- 	} else {
- 		__revoke_inmem_pages(inode, &revoke_list, false, false);
-+
-+		err = filemap_fdatawait(inode->i_mapping);
- 	}
- 
- 	return err;
+> I sent the CONFIG_DEBUG_SG patch before (I wonder why he didn't repond to 
+> it). I'll send a third version of the patch that actually randomly chooses 
+> between kmalloc and vmalloc, because some abuses can only be detected with 
+> kmalloc and we should test both.
+> 
+> For bisecting, it is better to always fallback to vmalloc, but for general 
+> testing, it is better to test both branches.
+
+Agreed!
+
 -- 
-2.16.2.17.g38e79b1fd
+Michal Hocko
+SUSE Labs
