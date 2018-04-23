@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755072AbeDWKuy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 06:50:54 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38760 "EHLO
+        id S1755226AbeDWKzc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 06:55:32 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38934 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754953AbeDWKum (ORCPT
+        with ESMTP id S1755063AbeDWKuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:50:42 -0400
+        Mon, 23 Apr 2018 06:50:55 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -21,102 +21,83 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         hl@rock-chips.com, jingoohan1@gmail.com, sw0312.kim@samsung.com,
         linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org,
+        hshi@chromium.org, "Kristian H . Kristensen" <hoegsberg@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH v6 12/27] drm/bridge: analogix_dp: Reset aux channel if an error occurred
-Date: Mon, 23 Apr 2018 12:49:48 +0200
-Message-Id: <20180423105003.9004-13-enric.balletbo@collabora.com>
+Subject: [RESEND PATCH v6 18/27] drm/bridge: analogix_dp: Reorder plat_data->power_off to happen sooner
+Date: Mon, 23 Apr 2018 12:49:54 +0200
+Message-Id: <20180423105003.9004-19-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180423105003.9004-1-enric.balletbo@collabora.com>
 References: <20180423105003.9004-1-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lin Huang <hl@rock-chips.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-AUX errors are caused by many different reasons. We may not know what
-happened in aux channel on failure, so let's reset aux channel if some
-errors occurred.
+The current user of the analogix power_off is "analogix_dp-rockchip".
+That driver does this:
+- deactivate PSR
+- turn off a clock
 
-Cc: 征增 王 <wzz@rock-chips.com>
-Cc: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
+Both of these things (especially deactive PSR) should be done before
+we turn the PHY power off and turn off analog power.  Let's move the
+callback up.
+
+Note that without this patch (and with
+https://patchwork.kernel.org/patch/9553349/ [seanpaul: this patch was
+not applied, but it seems like the race can still occur]), I experienced
+an error in reboot testing where one thread was at:
+
+  rockchip_drm_psr_deactivate
+  rockchip_dp_powerdown
+  analogix_dp_bridge_disable
+  drm_bridge_disable
+
+...and the other thread was at:
+
+  analogix_dp_send_psr_spd
+  analogix_dp_enable_psr
+  analogix_dp_psr_set
+  psr_flush_handler
+
+The flush handler thread was finding AUX channel errors and eventually
+reported "Failed to apply PSR", where I had a kgdb breakpoint. Presumably
+the device would have eventually given up and shut down anyway, but it
+seems better to fix the order to be more correct.
+
+Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Archit Taneja <architt@codeaurora.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- .../gpu/drm/bridge/analogix/analogix_dp_reg.c  | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index dee1ba109b5f..7b7fd227e1f9 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -466,6 +466,10 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
- 	reg = RPLY_RECEIV | AUX_ERR;
- 	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 69b2c16e5776..a260de4f0bd8 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1337,12 +1337,13 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+ 	}
  
-+	analogix_dp_set_analog_power_down(dp, AUX_BLOCK, true);
-+	usleep_range(10, 11);
-+	analogix_dp_set_analog_power_down(dp, AUX_BLOCK, false);
+ 	disable_irq(dp->irq);
+-	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
+-	phy_power_off(dp->phy);
+ 
+ 	if (dp->plat_data->power_off)
+ 		dp->plat_data->power_off(dp->plat_data);
+ 
++	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
++	phy_power_off(dp->phy);
 +
- 	analogix_dp_reset_aux(dp);
+ 	clk_disable_unprepare(dp->clock);
  
- 	/* Disable AUX transaction H/W retry */
-@@ -1159,7 +1163,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 				 reg, !(reg & AUX_EN), 25, 500 * 1000);
- 	if (ret) {
- 		dev_err(dp->dev, "AUX CH enable timeout!\n");
--		return -ETIMEDOUT;
-+		goto aux_error;
- 	}
- 
- 	/* TODO: Wait for an interrupt instead of looping? */
-@@ -1168,7 +1172,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 				 reg, reg & RPLY_RECEIV, 10, 20 * 1000);
- 	if (ret) {
- 		dev_err(dp->dev, "AUX CH cmd reply timeout!\n");
--		return -ETIMEDOUT;
-+		goto aux_error;
- 	}
- 
- 	/* Clear interrupt source for AUX CH command reply */
-@@ -1178,7 +1182,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 	reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
- 	if (reg & AUX_ERR) {
- 		writel(AUX_ERR, dp->reg_base + ANALOGIX_DP_INT_STA);
--		return -EREMOTEIO;
-+		goto aux_error;
- 	}
- 
- 	/* Check AUX CH error access status */
-@@ -1186,7 +1190,7 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 	if ((reg & AUX_STATUS_MASK)) {
- 		dev_err(dp->dev, "AUX CH error happened: %d\n\n",
- 			reg & AUX_STATUS_MASK);
--		return -EREMOTEIO;
-+		goto aux_error;
- 	}
- 
- 	if (msg->request & DP_AUX_I2C_READ) {
-@@ -1212,4 +1216,10 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
- 
- 	return num_transferred > 0 ? num_transferred : -EBUSY;
-+
-+aux_error:
-+	/* if aux err happen, reset aux */
-+	analogix_dp_init_aux(dp);
-+
-+	return -EREMOTEIO;
- }
+ 	pm_runtime_put_sync(dp->dev);
 -- 
 2.17.0
