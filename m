@@ -1,173 +1,147 @@
-Return-Path: <matthias.bgg@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524563181; cv=none;
+Return-Path: <matthias.bgg@kernel.org>
+X-Google-Smtp-Source: AIpwx4+ei7nLaaKOo0I+HwnqgKROWRWYWfImhDp/DA7O0MQtEGFm1aMM8kqwo9kN0WmEN3gaRsvw
+ARC-Seal: i=1; a=rsa-sha256; t=1524500081; cv=none;
         d=google.com; s=arc-20160816;
-        b=PsGFtSd2IDw1zm7AiasmujC4IwMXN8gCxGfdEa/oKGaCOhAwJbm7XSoet/kdQa/97R
-         aM0IBpKxPhGsYXJHxz69l16c0uWCzrqWAiWlSFr5PebqAa+H+gwib+GZGtTaMSidcoYJ
-         3yTb3im8eymEmbJ9b2EECMI8OKI0c1+9n50gsOk951JYBBHZsz41nAg81FXIEmMDYgHa
-         04G4kCvA2Ilh1jaxTY1TG6UWeoBVXlQNhdb6+DKBlXKH3UhrjR7iSoHrzzYQqoznn6kQ
-         lmHbmcYkUvN7qfFIbKtZcGhr098jVIgG3adeOGG0K/M9eySuhU4zYH9XhQQ5En9NHPgR
-         kUoQ==
+        b=cpRJ4SwK2nkO58F6lgsfV9gKIDZ/O+OmhqhIXXsXJAARDBPXBbT4bfIKRIVHs/9F1o
+         U5Cu4623x3YOWQzHDmPq9cYzpVrxjt0CBahJCfMLR3rWuh0973TIomX6+FimN7if1Qgn
+         ZC3O70A7YrdELAz2lDkMm1ylpZYX9LnVJEpFI+si87k+SrU2sl/2iSm9O6HVKTNH4o6l
+         xj8F1aYf9JgsIn2uxkiU6Egg/gEDwB3VGmuMdgvisZV1X/rlGJs0sxoJrvthWdozLwH5
+         KPT2xhQUtG1Bth1sK8qzGBvBuLAL9DRs8U3wqEZSjOXwS6vgAIaiO5ZMb/NsHngTzKcw
+         h5qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:autocrypt:openpgp:from:references:cc:to
-         :subject:dkim-signature:arc-authentication-results;
-        bh=jrWmmd48yNbxroai4XxrPpPaG8v/B4QGPVnbM1dwLMY=;
-        b=alZeOaSumiFwxZWnzC0paeaebUFT73prpfXH8Xc6ybgZ5kM2QHkvQm78VaQmL1c1Zh
-         aBdlolbM5OlpK3KqcUPcbIGb8H70AZ39RdsabTvuLBH9yCIT1+QgJvkvOdfBM0cC4KFH
-         Ztbtk/S64B4POjRRU1cLLTmfQkOiXN7m59bAQUy7EMLU5BO5xW/icQJ021GcIG4L8FbA
-         iegAhcrYACi77RQsfIeusRpE3L2ATpNBn7ZYk2BHEzfsdmxhluzD85ZkJl4TkFp8QRu8
-         VtsDn0eOXzOC3gfQFdF19i+6Z8vnxk/s6Z+asMXcAGmAXerGdWQ97nOmu5HtnB21rRRf
-         9Shw==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=vtut0kIz7f8MYFQW2zrvgmOldCfS/Z399mstkUP+LEc=;
+        b=NQM43pzUo5YC7GISi+OFMqL06Ox32nI6dWhh/vw+vBI9QCMDw2nSN0bNukJ8unE2XX
+         I0fyCx5reW04WPMa5NplUdIwahdFTPaQ79fK6OgVpRQPNzlt3dc1La+EIJkKYnmjqv46
+         qnjnPhrB93zK0EwbHF0KICh5zqSIdYwk0oVBk2NW2zGPlw7tR89AO8OrjT7S4u7onY/S
+         GzXNieZ8WQdGmgjEWeFq8lkQdVyPSCXPsKk5uJBXmyjKgCrXUwPqHnWl1L3TOxh+xaE1
+         X0Db0iaufJjYS2rKSZ0yzjQwnObZOSF8CIpET4LduZjrY6UAEpFXoEK2qnJuWopUJhFc
+         2rGA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=THBaV1ZX;
-       spf=pass (google.com: domain of matthias.bgg@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=matthias.bgg@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=THBaV1ZX;
-       spf=pass (google.com: domain of matthias.bgg@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=matthias.bgg@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+3c0TIIMCQq0UYFSbMAjuG6sJyRCpYyzAcZcGjJb+TtW+X9OFlqZlAYECs8N3+35FbBnioPQ==
-Subject: Re: [v2 00/10] arm/arm64: mediatek: Fix mmsys device probing
-To: Lee Jones <lee.jones@linaro.org>, matthias.bgg@kernel.org
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
- robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, davem@davemloft.net, gregkh@linuxfoundation.org,
- mchehab@kernel.org, rdunlap@infradead.org, pi-cheng.chen@linaro.org,
- sean.wang@mediatek.com, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Matthias Brugger <mbrugger@suse.com>
+       spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03D0A2183E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=matthias.bgg@kernel.org
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 04/10] drm/mediatek: mt2701: switch to mfd probing.
+Date: Mon, 23 Apr 2018 18:13:53 +0200
+Message-Id: <d8df055198eab1db9942d9b4059683d040920f11.1524497268.git.mbrugger@suse.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
 References: <cover.1524497268.git.mbrugger@suse.com>
- <20180424054854.bpd6h3imazhqnuy3@dell>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <723392d5-ee51-d49b-050b-db4f9709e6bf@gmail.com>
-Date: Tue, 24 Apr 2018 11:46:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180424054854.bpd6h3imazhqnuy3@dell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598551533402013398?=
-X-GMAIL-MSGID: =?utf-8?q?1598620362330243690?=
+X-GMAIL-THRID: =?utf-8?q?1598551534911431555?=
+X-GMAIL-MSGID: =?utf-8?q?1598554197703768930?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Lee,
+From: Matthias Brugger <mbrugger@suse.com>
 
-On 04/24/2018 07:48 AM, Lee Jones wrote:
-> On Mon, 23 Apr 2018, matthias.bgg@kernel.org wrote:
-> 
->> From: Matthias Brugger <mbrugger@suse.com>
->>
->> Changes since v1:
->> - add binding documentation
->> - ddp: use regmap_update_bits
->> - ddp: ignore EPROBE_DEFER on clock probing
->> - mfd: delete mmsys_private
->> - add Reviewed-by and Acked-by tags
-> 
-> I'm confused by the double submission.
-> 
-> Please can you send it again completely detached from the first and
-> the second submissions please?
-> 
+With the mtk-mmsys MFD device in place, we switch the probing for
+mt2701 from device-tree to mfd.
 
-I had some problems with my mailclient. I'll resend as 'v2 resend'.
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-Sorry for that.
-Matthias
-
->> ---
->>
->> MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
->> used in the clk driver) and some registers to set the routing and enable
->> the differnet blocks of the display subsystem.
->>
->> Up to now both drivers, clock and drm are probed with the same device tree
->> compatible. But only the first driver get probed, which in effect breaks
->> graphics on mt8173 and mt2701.
->>
->> This patch set introduces a new mfd device, which binds against the mmsys
->> compatible and takes care of probing the needed devices. It was tested on the
->> bananapi-r2 and the Acer R13 Chromebook.
->>
->>
->> Matthias Brugger (10):
->>   dt-bindings: mediatek: mmsys: Add support for mfd
->>   drm/mediatek: Use regmap for register access
->>   mfd: mtk-mmsys: Add mmsys driver
->>   drm/mediatek: mt2701: switch to mfd probing.
->>   clk: mediatek: mt2701-mm: switch to mfd device
->>   mfd: mtk-mmsys: Add mt8173 nodes
->>   drm/mediatek: Add mfd support for mt8173
->>   clk: mediatek: mt8173-mm: switch to mfd device
->>   drm: mediatek: Omit warning on probe defers
->>   MAINTAINERS: update Mediatek Soc entry
->>
->>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 -
->>  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
->>  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 +++++++
->>  MAINTAINERS                                        |  2 +
->>  drivers/clk/mediatek/clk-mt2701-mm.c               | 10 +--
->>  drivers/clk/mediatek/clk-mt8173.c                  | 17 +++-
->>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |  4 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 41 ++++------
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h             |  4 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 33 ++++----
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.h             |  2 +-
->>  drivers/mfd/Kconfig                                |  9 +++
->>  drivers/mfd/Makefile                               |  2 +
->>  drivers/mfd/mtk-mmsys.c                            | 93 ++++++++++++++++++++++
->>  14 files changed, 189 insertions(+), 59 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
->>  create mode 100644 drivers/mfd/mtk-mmsys.c
->>
-> 
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index a48e28adad09..88ee35907744 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -386,7 +386,7 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct mtk_drm_private *private;
+-	struct device_node *node;
++	struct device_node *node, *parent_node, *mmsys_node;
+ 	struct component_match *match = NULL;
+ 	int ret;
+ 	int i;
+@@ -399,12 +399,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 	INIT_WORK(&private->commit.work, mtk_atomic_work);
+ 	private->data = of_device_get_match_data(dev);
+ 
+-	private->config_regs = syscon_node_to_regmap(dev->of_node);
+-	if (IS_ERR(private->config_regs))
+-		return PTR_ERR(private->config_regs);
++	/* Check if called from mfd */
++	if (!dev->of_node) {
++		mmsys_node = pdev->dev.parent->of_node;
++		private->data = (struct mtk_mmsys_driver_data *)
++				platform_get_device_id(pdev)->driver_data;
++		private->config_regs =
++			syscon_node_to_regmap(mmsys_node);
++		parent_node = mmsys_node->parent;
++	} else {
++		private->config_regs = syscon_node_to_regmap(dev->of_node);
++		if (IS_ERR(private->config_regs))
++			return PTR_ERR(private->config_regs);
++		parent_node = dev->of_node->parent;
++	}
+ 
+ 	/* Iterate over sibling DISP function blocks */
+-	for_each_child_of_node(dev->of_node->parent, node) {
++	for_each_child_of_node(parent_node, node) {
+ 		const struct of_device_id *of_id;
+ 		enum mtk_ddp_comp_type comp_type;
+ 		int comp_id;
+@@ -545,13 +556,17 @@ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
+ 			 mtk_drm_sys_resume);
+ 
+ static const struct of_device_id mtk_drm_of_ids[] = {
+-	{ .compatible = "mediatek,mt2701-mmsys",
+-	  .data = &mt2701_mmsys_driver_data},
+ 	{ .compatible = "mediatek,mt8173-mmsys",
+ 	  .data = &mt8173_mmsys_driver_data},
+ 	{ }
+ };
+ 
++static const struct platform_device_id mtk_drm_ids[] = {
++	{ "drm-mt2701-mm", (kernel_ulong_t)&mt2701_mmsys_driver_data },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(platform, mtk_drm_ids);
++
+ static struct platform_driver mtk_drm_platform_driver = {
+ 	.probe	= mtk_drm_probe,
+ 	.remove	= mtk_drm_remove,
+@@ -560,6 +575,7 @@ static struct platform_driver mtk_drm_platform_driver = {
+ 		.of_match_table = mtk_drm_of_ids,
+ 		.pm     = &mtk_drm_pm_ops,
+ 	},
++	.id_table = mtk_drm_ids,
+ };
+ 
+ static struct platform_driver * const mtk_drm_drivers[] = {
+-- 
+2.16.3
