@@ -1,126 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754010AbeDWD30 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 23:29:26 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:48295 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753911AbeDWD3Z (ORCPT
+        id S1754036AbeDWDaT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 23:30:19 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:39972 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753911AbeDWDaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 23:29:25 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R321e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0T.hvL9w_1524454140;
-Subject: Re: [RFC v2 PATCH] mm: shmem: make stat.st_blksize return huge page
- size if THP is on
-To: Michal Hocko <mhocko@kernel.org>
-Cc: kirill.shutemov@linux.intel.com, hughd@google.com, hch@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180423004748.GP17484@dhcp22.suse.cz>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <3c59a1d1-dc66-ae5f-452c-dd0adb047433@linux.alibaba.com>
-Date: Sun, 22 Apr 2018 21:28:59 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Sun, 22 Apr 2018 23:30:18 -0400
+X-Google-Smtp-Source: AB8JxZoyWGZakdDaCyKZ3jO6NXTvYoLahZ3PovKY0lKspiLyJbsFOGLuh8m3Hfp6v64iR5ZGazswR2o04eCEm40lWzE=
 MIME-Version: 1.0
-In-Reply-To: <20180423004748.GP17484@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com>
+References: <1524243513-29118-1-git-send-email-chuhu@redhat.com> <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com>
+From: Chunyu Hu <chuhu.ncepu@gmail.com>
+Date: Mon, 23 Apr 2018 11:30:16 +0800
+Message-ID: <CABATaM7bLKsz1jRW4O39mpG-ae2LyASitvddXB4765HsYtXK+w@mail.gmail.com>
+Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Chunyu Hu <chuhu@redhat.com>, mhocko@suse.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21 April 2018 at 01:50, Catalin Marinas <catalin.marinas@arm.com> wrote:
+> On Sat, Apr 21, 2018 at 12:58:33AM +0800, Chunyu Hu wrote:
+>> __GFP_NORETRY and  __GFP_NOFAIL are combined in gfp_kmemleak_mask now.
+>> But it's a wrong combination. As __GFP_NOFAIL is blockable, but
+>> __GFP_NORETY is not blockable, make it self-contradiction.
+>>
+>> __GFP_NOFAIL means 'The VM implementation _must_ retry infinitely'. But
+>> it's not the real intention, as kmemleak allow alloc failure happen in
+>> memory pressure, in that case kmemleak just disables itself.
+>
+> Good point. The __GFP_NOFAIL flag was added by commit d9570ee3bd1d
+> ("kmemleak: allow to coexist with fault injection") to keep kmemleak
+> usable under fault injection.
 
+oops. I did not notice this.  so this is for skipping fault injection.
+>
+>> commit 9a67f6488eca ("mm: consolidate GFP_NOFAIL checks in the allocator
+>> slowpath") documented that what user wants here should use GFP_NOWAIT, and
+>> the WARN in __alloc_pages_slowpath caught this weird usage.
 
-On 4/22/18 6:47 PM, Michal Hocko wrote:
-> On Sat 21-04-18 00:33:59, Yang Shi wrote:
->> Since tmpfs THP was supported in 4.8, hugetlbfs is not the only
->> filesystem with huge page support anymore. tmpfs can use huge page via
->> THP when mounting by "huge=" mount option.
 >>
->> When applications use huge page on hugetlbfs, it just need check the
->> filesystem magic number, but it is not enough for tmpfs. Make
->> stat.st_blksize return huge page size if it is mounted by appropriate
->> "huge=" option.
->>
->> Some applications could benefit from this change, for example QEMU.
->> When use mmap file as guest VM backend memory, QEMU typically mmap the
->> file size plus one extra page. If the file is on hugetlbfs the extra
->> page is huge page size (i.e. 2MB), but it is still 4KB on tmpfs even
->> though THP is enabled. tmpfs THP requires VMA is huge page aligned, so
->> if 4KB page is used THP will not be used at all. The below /proc/meminfo
->> fragment shows the THP use of QEMU with 4K page:
->>
->> ShmemHugePages:   679936 kB
->> ShmemPmdMapped:        0 kB
->>
->> By reading st_blksize, tmpfs can use huge page, then /proc/meminfo looks
->> like:
->>
->> ShmemHugePages:    77824 kB
->> ShmemPmdMapped:     6144 kB
->>
->> statfs.f_bsize still returns 4KB for tmpfs since THP could be split, and it
->> also may fallback to 4KB page silently if there is not enough huge page.
->> Furthermore, different f_bsize makes max_blocks and free_blocks
->> calculation harder but without too much benefit. Returning huge page
->> size via stat.st_blksize sounds good enough.
-> I am not sure I understand the above. So does QEMU or other tmpfs users
-> rely on f_bsize to do mmap alignment tricks? Also I thought that THP
+>>  <snip>
+>>  WARNING: CPU: 3 PID: 64 at mm/page_alloc.c:4261 __alloc_pages_slowpath+0x1cc3/0x2780
+> [...]
+>> Replace the __GFP_NOFAIL with GFP_NOWAIT in gfp_kmemleak_mask, __GFP_NORETRY
+>> and GFP_NOWAIT are in the gfp_kmemleak_mask. So kmemleak object allocaion
+>> is no blockable and no reclaim, making kmemleak less disruptive to user
+>> processes in pressure.
+>
+> It doesn't solve the fault injection problem for kmemleak (unless we
+> change __should_failslab() somehow, not sure yet). An option would be to
+> replace __GFP_NORETRY with __GFP_NOFAIL in kmemleak when fault injection
+> is enabled.
+>
+> BTW, does the combination of NOWAIT and NORETRY make kmemleak
+> allocations more likely to fail?
 
-QEMU doesn't. It just check filesystem magic number now, if it is 
-hugetlbfs, then it do mmap on huge page size alignment.
+this NOWAIT added here seems won't make it more likely to fail, as it its
+defined as, which make kswapd woke in pressure.  But this replacement
+indeed will make fault injection in kmemleak got back.
 
-> will be used on the first aligned address even when the initial/last
-> portion of the mapping is not THP aligned.
-
-No, my test shows it is not. And, transhuge_vma_suitable() does check 
-the virtual address alignment. If it is not huge page size aligned, it 
-will not set PMD for huge page.
+#define GFP_NOWAIT  (__GFP_KSWAPD_RECLAIM)
 
 >
-> And more importantly
-> [...]
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -39,6 +39,7 @@
->>   #include <asm/tlbflush.h> /* for arch/microblaze update_mmu_cache() */
->>   
->>   static struct vfsmount *shm_mnt;
->> +static bool is_huge = false;
->>   
->>   #ifdef CONFIG_SHMEM
->>   /*
->> @@ -995,6 +996,8 @@ static int shmem_getattr(const struct path *path, struct kstat *stat,
->>   		spin_unlock_irq(&info->lock);
->>   	}
->>   	generic_fillattr(inode, stat);
->> +	if (is_huge)
->> +		stat->blksize = HPAGE_PMD_SIZE;
->>   	return 0;
->>   }
->>   
->> @@ -3574,6 +3577,7 @@ static int shmem_parse_options(char *options, struct shmem_sb_info *sbinfo,
->>   					huge != SHMEM_HUGE_NEVER)
->>   				goto bad_val;
->>   			sbinfo->huge = huge;
->> +			is_huge = true;
-> Huh! How come this is a global flag. What if we have multiple shmem
-> mounts some with huge pages enabled and some without? Btw. we seem to
-> already have that information stored in the supperblock
-> 		} else if (!strcmp(this_char, "huge")) {
-> 			int huge;
-> 			huge = shmem_parse_huge(value);
-> 			if (huge < 0)
-> 				goto bad_val;
-> 			if (!has_transparent_hugepage() &&
-> 					huge != SHMEM_HUGE_NEVER)
-> 				goto bad_val;
-> 			sbinfo->huge = huge;
-
-Aha, my bad. I should used SHMEM_SB(inode->i_sb) to get shmem_sb_info 
-then check the huge. Thanks a lot for catching this. Will fix in new 
-version.
-
-Yang
+> Cc'ing Dmitry as well.
+>
+>> Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+>> CC: Michal Hocko <mhocko@suse.com>
+>> ---
+>>  mm/kmemleak.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+>> index 9a085d5..4ea07e4 100644
+>> --- a/mm/kmemleak.c
+>> +++ b/mm/kmemleak.c
+>> @@ -126,7 +126,7 @@
+>>  /* GFP bitmask for kmemleak internal allocations */
+>>  #define gfp_kmemleak_mask(gfp)       (((gfp) & (GFP_KERNEL | GFP_ATOMIC)) | \
+>>                                __GFP_NORETRY | __GFP_NOMEMALLOC | \
+>> -                              __GFP_NOWARN | __GFP_NOFAIL)
+>> +                              __GFP_NOWARN | GFP_NOWAIT)
+>>
+>>  /* scanning area inside a memory block */
+>>  struct kmemleak_scan_area {
+>> --
+>> 1.8.3.1
