@@ -1,23 +1,23 @@
 Return-Path: <lionel.debieve@st.com>
-X-Google-Smtp-Source: AIpwx4+cCgQYbr+MAyTRjt07as2pI6ELVqb3plvauhbNRSLLdURRVtOEIykE48ErMnhY/9sStBzh
+X-Google-Smtp-Source: AIpwx48BCUq2q3amlC1AwQ7glGqjuZ+3dSmhiuAjAFZ5rhWpRKuV6kcfR8e3f4ldae8nMhEPTo0R
 ARC-Seal: i=1; a=rsa-sha256; t=1524496272; cv=none;
         d=google.com; s=arc-20160816;
-        b=rYTNIWpHvMAH9rr+0QyyO6KyhJO5uq3HPmTkOuxz3onY8OP0lxK4OVAaxbHMucVTds
-         oO/Tu/PPIA4RsHLOi1P7oGEKxRxpCaeath58LQsASUp84X9RkRRndnHjQ4Jtaw2iDAoQ
-         HkbCNe5Xqi91juds3pQJhenHs1b8RBry10Pa5BBfoQkFug6iC7awPBvDQuYrz0A4UuOx
-         c+AzUl7cuRjDSY934vOJUHM/jr6BAcnOX0OYso24Le7IWk8sLgA8sBaj2kyMR0L4gWAA
-         o2G9ltB+B4ukIS1KSnwCNUg+7afDLkjewsRtlIonqH/BEvCUW6s34QgLi4N2Sgooy9Od
-         X2SA==
+        b=Aae2nROl008LApua/WW8r/7qIVRsV3biBvDvqAh/APN3I69QS1xElxC/Wv/eAY9xj0
+         Kk1xZDEyvINprnERBWKkKmAsrRjNXBHw3j/m7njioB5YYu2ERRRHMdIVMFA/KnNYL0Rp
+         MjDEZ6kA2ptNDjAKYfVquMEpQPQt9kZyxp3OVQNkbVotgjB19O9L9qm0JLE0+PoUytTj
+         dxiWdImCB3YZRiU54fNUjC0T/QGVoambvTINznxvXnkaqQ52FFAI6MoQre/sOSjDVC5d
+         nSafcPaiTari121jqdTuHZKgR32gfGysVygXPGf7bYi7y/QrbReAnPcwLkWaNfBjBHL4
+         kGwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:arc-authentication-results;
-        bh=o1y+mo+WLeNt+RQRMrXAIRKAsWI9V6MathBPbxoffW0=;
-        b=oTbdJ83yBQqRTcY0z4HJlJvJntEKABBGzTFe4vfFgHYh4PL4KOVS2WOcUAUuzgUvmR
-         mucMugcVQcJhgSM55hmoz8oEJF+ZOxjoGtCQhACrBIqWkVl+m9tQnbSyzkmEKRlUbVZJ
-         xuD61rNFYxCKZRirE4/ZVJAwCPs7jlyEYLOVYmnYoXhOr5wSh7L0I7EHrA0IbxwSL311
-         B82z3OXzLdM4yVP2bdKH3o7fUId2b3vdLgKDL7rDL8OQNP86AffS/v4ksnzzfCo2HJas
-         lE9fh9lbgoniRL1ud3Fb+fHuUnYF1ISBAaDSfSLjFWwHUkzt7bGrGqckwsZMLYOl18kM
-         uGwA==
+        bh=QbxuvY1ru4B5tUSF45A36aqaMtilieCQ/G6NKamJVGc=;
+        b=oXvQkGw0eXHlB/xKZlWctrAwqsIOVp8IVB/NYs4Jyv+FSucgH9zfYi+iQsCA0xkPZ7
+         rn4HURW4jHsoQrcY86Sg2w3GiNARaZ6LYWixbPpvbzEkuY7XP7Fi+IKQX1qqHHnAiLMI
+         K6jAJMMb43WsYC4Z/FBQaa89Rhl9S3E+COp0O5CY51UJd1INtwWfpeuREkvm9Znb8m4n
+         ZNetHGSYqAdbCnyX8aczkTTFhi4aAeDxHplx7KrrGaXsI/PWX+P2Ef/PrO5qly0Yw390
+         c8lBw+4pbIZR1ERy5jKmYLFZTuOhyjQsOFfa9I5HHsSn9nK/zDfDi+ENOV3FHEVvh3B8
+         /lsQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of lionel.debieve@st.com designates 91.207.212.93 as permitted sender) smtp.mailfrom=lionel.debieve@st.com
 Authentication-Results: mx.google.com;
@@ -35,9 +35,9 @@ To: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
 CC: Benjamin Gaignard <benjamin.gaignard@st.com>,
         Ludovic Barre
 	<ludovic.barre@st.com>
-Subject: [PATCH 2/2] hwrng: stm32-rng - fix pm_suspend issue
-Date: Mon, 23 Apr 2018 17:04:26 +0200
-Message-ID: <20180423150426.22198-3-lionel.debieve@st.com>
+Subject: [PATCH 1/2] hwrng: stm32 - define default state for rng driver
+Date: Mon, 23 Apr 2018 17:04:25 +0200
+Message-ID: <20180423150426.22198-2-lionel.debieve@st.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180423150426.22198-1-lionel.debieve@st.com>
 References: <20180423150426.22198-1-lionel.debieve@st.com>
@@ -47,40 +47,30 @@ X-Originating-IP: [10.201.23.65]
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_05:,,
  signatures=0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598550203365446391?=
-X-GMAIL-MSGID: =?utf-8?q?1598550203365446391?=
+X-GMAIL-THRID: =?utf-8?q?1598550203649884132?=
+X-GMAIL-MSGID: =?utf-8?q?1598550203649884132?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When suspend is called after pm_runtime_suspend,
-same callback is used and access to rng register is
-freezing system. By calling the pm_runtime_force_suspend,
-it first checks that runtime has been already done.
+Define default state for stm32_rng driver. It will
+be default selected with multi_v7_defconfig
 
 Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
 ---
- drivers/char/hw_random/stm32-rng.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/char/hw_random/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/char/hw_random/stm32-rng.c b/drivers/char/hw_random/stm32-rng.c
-index 0d2328da3b76..042860d97b15 100644
---- a/drivers/char/hw_random/stm32-rng.c
-+++ b/drivers/char/hw_random/stm32-rng.c
-@@ -187,8 +187,13 @@ static int stm32_rng_runtime_resume(struct device *dev)
- }
- #endif
- 
--static UNIVERSAL_DEV_PM_OPS(stm32_rng_pm_ops, stm32_rng_runtime_suspend,
--			    stm32_rng_runtime_resume, NULL);
-+static const struct dev_pm_ops stm32_rng_pm_ops = {
-+	SET_RUNTIME_PM_OPS(stm32_rng_runtime_suspend,
-+			   stm32_rng_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+};
-+
- 
- static const struct of_device_id stm32_rng_match[] = {
- 	{
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index d53541e96bee..c34b257d852d 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -347,6 +347,7 @@ config HW_RANDOM_STM32
+ 	tristate "STMicroelectronics STM32 random number generator"
+ 	depends on HW_RANDOM && (ARCH_STM32 || COMPILE_TEST)
+ 	depends on HAS_IOMEM
++	default HW_RANDOM
+ 	help
+ 	  This driver provides kernel-side support for the Random Number
+ 	  Generator hardware found on STM32 microcontrollers.
 -- 
 2.15.1
