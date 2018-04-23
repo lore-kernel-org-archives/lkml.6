@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx481PRe0eo4D8+OAVwocYcRrwbH6SBrnju+EsQF1oWs36SA8p8TQZFI9d9tpbUs0m3Pg9XQB
-ARC-Seal: i=1; a=rsa-sha256; t=1524498479; cv=none;
+X-Google-Smtp-Source: AIpwx48RWWj9A5vWlA2pe5XOIAuNXlZTuWBPf7/x5/DBakcOaF4CGdFtkC+Bt5o4jczfC++cg+tr
+ARC-Seal: i=1; a=rsa-sha256; t=1524498484; cv=none;
         d=google.com; s=arc-20160816;
-        b=WxJxS0M7nAC9Cqy+JqvU6tLRzFXgRTfCXRv9LhRck2zYi/DtxFB3N/UA32tDDY4Ydy
-         jJ+TfSh0NXbAYcQUpUWdR12lCEGthSpMFm4v1/aIkswANoVsCJkeAx/vnzebBy5sfKwo
-         QsEtLxMkSDUhijgH8PUrNez1ZYEBx3lRPDxPnCanJRGbIMd51bujIXOF6Xhz6lxlQEPn
-         5ATfqhb8HMsdKKu2XH60R5UP6U3A0XD44SAsab9HiYEMQxRdqr0HhVplt4qkwtPWGGoV
-         RXoXFnl4D9sqrdyGUv4hkF3t0cOfdZkJO0+LgaWbI+ZZAtyjwJFk59TzyQaR9uzBLL6L
-         Gh4g==
+        b=v0Z38jqd4EkQ1Pi0bygmolZMN6fn6yta9R3brvvZ5TNovQHC7yEMJLkeFFUMJbMN2W
+         rXgxcfyp42pT/vqUduPj0SOuJl4NtsozRY4u6bwWDMunneAbexhN/vrz11/9JA4yxtwY
+         b0ziPpnuK+meHtCj0P7t+ljc9tzufCM5nLDnbABevFjduTVPTN3hZLYkhc6raQKIjseN
+         WC5hn8kq4gejFBkAjIsanpTt9KnpJ4F3fBI1ASrVPAm0RiDAJG567PCDoltlWT0861xV
+         ZzcasyCGDFF17g4rD3nTiWaYK1Horsx8yg4HY+9pa5G3D28/yqewQWnR4o/QgenDpBEv
+         OL+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=bUtTC/Dyg5FNIa6JGw1gxi9rGbbo2QORoEfBK8fKEY8=;
-        b=GtKeIjmOOQF5n6l0tULA+TGHNU6mfQ7r7OdOj4sj+C2imIduNZbTIsIYCwkj0wnLsh
-         ri/TmP5gFdRtzjyytTfmZd/7hN1VS78cQy7xWG/wHSaaumZXSx9HRl83deT+cuitbc6o
-         CcnjrCktfTB3bZi12oIxoNYnpqCYYYH0ksyXM+ZevRPJ1yUMAau5r6wpP9vbEDLul4kc
-         BLjdQpEbgl6s3B5I1su3mPdqJ/MCmDA/Gq+9roDvpB6lBhgQDr75cl642foLdasn8PAo
-         YyA4OUzFkgdqWK6dJy+1fhm3cYx+2+hhbtGHrQnLWoj81rr41vm9MO/T2E6lDIWWIXKt
-         gqCg==
+        bh=g4Mvb5nbP5KaTzLhUrpKObR4w1hg4TZ23NVo0lBHPNg=;
+        b=dAxD/R/G48Sc5gw4Er7Z/mnJycNsAH1QHasfpuiZ+cKinrS9jg7HBdoJfxui7BLekf
+         eNrkmGMwMPLw2QMJWPcxqvULImfGhUxyfNwGKOI9jnoAfSr2mlzG9SFG/CduOpEb6syq
+         USNNtOe2oY6BQHmFG2geiUmwhOzHkukk96YwEXG1sZLATuwCzhUHkyLk8hD/k5RGFzKH
+         ZE3BOXjGtrbbyOvWJAxxGB00fg1JqDA9Nw/gwrCtjMtp0yiSn/mFftHsXlYs3QfCo8Rb
+         jWUoKrUHjny8ctxKn06OuVUis3CNMFsoMJWCck2re/K2qvZGskytNI8qasxm18AQuxyD
+         VxSw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GHYcm26q;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=W9cvbJTa;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GHYcm26q;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=W9cvbJTa;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,223 +58,171 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 30/37] x86/pgtable/pae: Use separate kernel PMDs for user page-table
-Date: Mon, 23 Apr 2018 17:47:33 +0200
-Message-Id: <1524498460-25530-31-git-send-email-joro@8bytes.org>
+Subject: [PATCH 37/37] x86/entry/32: Add debug code to check entry/exit cr3
+Date: Mon, 23 Apr 2018 17:47:40 +0200
+Message-Id: <1524498460-25530-38-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552517312608879?=
-X-GMAIL-MSGID: =?utf-8?q?1598552517312608879?=
+X-GMAIL-THRID: =?utf-8?q?1598552522724392271?=
+X-GMAIL-MSGID: =?utf-8?q?1598552522724392271?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-We need separate kernel PMDs in the user page-table when PTI
-is enabled to map the per-process LDT for user-space.
+Add a config option that enabled code to check that we enter
+and leave the kernel with the correct cr3. This is needed
+because we have no NX protection of user-addresses in the
+kernel-cr3 on x86-32 and wouldn't notice that type of bug
+otherwise.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/mm/pgtable.c | 100 ++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 81 insertions(+), 19 deletions(-)
+ arch/x86/Kconfig.debug    | 12 ++++++++++++
+ arch/x86/entry/entry_32.S | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 55 insertions(+)
 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index f4211d2..ae98d4c 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -178,6 +178,14 @@ static void pgd_dtor(pgd_t *pgd)
-  */
- #define PREALLOCATED_PMDS	UNSHARED_PTRS_PER_PGD
+diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
+index 192e4d2..a57f556 100644
+--- a/arch/x86/Kconfig.debug
++++ b/arch/x86/Kconfig.debug
+@@ -337,6 +337,18 @@ config X86_DEBUG_FPU
  
-+/*
-+ * We allocate separate PMDs for the kernel part of the user page-table
-+ * when PTI is enabled. We need them to map the per-process LDT into the
-+ * user-space page-table.
-+ */
-+#define PREALLOCATED_USER_PMDS	 (static_cpu_has(X86_FEATURE_PTI) ? \
-+					KERNEL_PGD_PTRS : 0)
+ 	  If unsure, say N.
+ 
++config X86_DEBUG_ENTRY_CR3
++	bool	"Debug CR3 for Kernel entry/exit"
++	depends on X86_32 && PAGE_TABLE_ISOLATION
++	---help---
++	  Add instructions to the x86-32 entry code to check whether the kernel
++	  is entered and left with the correct CR3. When PTI is enabled, this
++	  checks whether we enter the kernel with the user-space cr3 when
++	  coming from user-mode and if we leave with user-cr3 back to
++	  user-space.
 +
- void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
- {
- 	paravirt_alloc_pmd(mm, __pa(pmd) >> PAGE_SHIFT);
-@@ -198,14 +206,14 @@ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
- 
- /* No need to prepopulate any pagetable entries in non-PAE modes. */
- #define PREALLOCATED_PMDS	0
--
-+#define PREALLOCATED_USER_PMDS	 0
- #endif	/* CONFIG_X86_PAE */
- 
--static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
-+static void free_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
- {
- 	int i;
- 
--	for(i = 0; i < PREALLOCATED_PMDS; i++)
-+	for(i = 0; i < count; i++)
- 		if (pmds[i]) {
- 			pgtable_pmd_page_dtor(virt_to_page(pmds[i]));
- 			free_page((unsigned long)pmds[i]);
-@@ -213,7 +221,7 @@ static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
- 		}
- }
- 
--static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
-+static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
- {
- 	int i;
- 	bool failed = false;
-@@ -222,7 +230,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
- 	if (mm == &init_mm)
- 		gfp &= ~__GFP_ACCOUNT;
- 
--	for(i = 0; i < PREALLOCATED_PMDS; i++) {
-+	for(i = 0; i < count; i++) {
- 		pmd_t *pmd = (pmd_t *)__get_free_page(gfp);
- 		if (!pmd)
- 			failed = true;
-@@ -237,7 +245,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
- 	}
- 
- 	if (failed) {
--		free_pmds(mm, pmds);
-+		free_pmds(mm, pmds, count);
- 		return -ENOMEM;
- 	}
- 
-@@ -250,23 +258,38 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
-  * preallocate which never got a corresponding vma will need to be
-  * freed manually.
-  */
-+static void mop_up_one_pmd(struct mm_struct *mm, pgd_t *pgdp)
-+{
-+	pgd_t pgd = *pgdp;
++	  If unsure, say N.
 +
-+	if (pgd_val(pgd) != 0) {
-+		pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
-+
-+		*pgdp = native_make_pgd(0);
-+
-+		paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
-+		pmd_free(mm, pmd);
-+		mm_dec_nr_pmds(mm);
-+	}
-+}
-+
- static void pgd_mop_up_pmds(struct mm_struct *mm, pgd_t *pgdp)
- {
- 	int i;
+ config PUNIT_ATOM_DEBUG
+ 	tristate "ATOM Punit debug driver"
+ 	depends on PCI
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index f47e535..6b371a9 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -166,6 +166,24 @@
+ .Lend_\@:
+ .endm
  
--	for(i = 0; i < PREALLOCATED_PMDS; i++) {
--		pgd_t pgd = pgdp[i];
-+	for(i = 0; i < PREALLOCATED_PMDS; i++)
-+		mop_up_one_pmd(mm, &pgdp[i]);
- 
--		if (pgd_val(pgd) != 0) {
--			pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
- 
--			pgdp[i] = native_make_pgd(0);
-+	if (!static_cpu_has(X86_FEATURE_PTI))
-+		return;
- 
--			paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
--			pmd_free(mm, pmd);
--			mm_dec_nr_pmds(mm);
--		}
--	}
-+	pgdp = kernel_to_user_pgdp(pgdp);
-+
-+	for (i = 0; i < PREALLOCATED_USER_PMDS; i++)
-+		mop_up_one_pmd(mm, &pgdp[i + KERNEL_PGD_BOUNDARY]);
++.macro BUG_IF_WRONG_CR3 no_user_check=0
++#ifdef CONFIG_X86_DEBUG_ENTRY_CR3
++	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
++	.if \no_user_check == 0
++	/* coming from usermode? */
++	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
++	jz	.Lend_\@
++	.endif
++	/* On user-cr3? */
++	movl	%cr3, %eax
++	testl	$PTI_SWITCH_MASK, %eax
++	jnz	.Lend_\@
++	/* From userspace with kernel cr3 - BUG */
++	ud2
++.Lend_\@:
 +#endif
- }
- 
- static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
-@@ -292,6 +315,38 @@ static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
- 	}
- }
- 
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
-+				     pgd_t *k_pgd, pmd_t *pmds[])
-+{
-+	pgd_t *s_pgd = kernel_to_user_pgdp(swapper_pg_dir);
-+	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
-+	p4d_t *u_p4d;
-+	pud_t *u_pud;
-+	int i;
++.endm
 +
-+	u_p4d = p4d_offset(u_pgd, 0);
-+	u_pud = pud_offset(u_p4d, 0);
-+
-+	s_pgd += KERNEL_PGD_BOUNDARY;
-+	u_pud += KERNEL_PGD_BOUNDARY;
-+
-+	for (i = 0; i < PREALLOCATED_USER_PMDS; i++, u_pud++, s_pgd++) {
-+		pmd_t *pmd = pmds[i];
-+
-+		memcpy(pmd, (pmd_t *)pgd_page_vaddr(*s_pgd),
-+		       sizeof(pmd_t) * PTRS_PER_PMD);
-+
-+		pud_populate(mm, u_pud, pmd);
-+	}
-+
-+}
-+#else
-+static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
-+				     pgd_t *k_pgd, pmd_t *pmds[])
-+{
-+}
-+#endif
  /*
-  * Xen paravirt assumes pgd table should be in one page. 64 bit kernel also
-  * assumes that pgd should be in one page.
-@@ -372,6 +427,7 @@ static inline void _pgd_free(pgd_t *pgd)
- pgd_t *pgd_alloc(struct mm_struct *mm)
- {
- 	pgd_t *pgd;
-+	pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
- 	pmd_t *pmds[PREALLOCATED_PMDS];
+  * Switch to kernel cr3 if not already loaded and return current cr3 in
+  * \scratch_reg
+@@ -218,6 +236,8 @@
+ .macro SAVE_ALL_NMI cr3_reg:req
+ 	SAVE_ALL
  
- 	pgd = _pgd_alloc();
-@@ -381,12 +437,15 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
- 
- 	mm->pgd = pgd;
- 
--	if (preallocate_pmds(mm, pmds) != 0)
-+	if (preallocate_pmds(mm, pmds, PREALLOCATED_PMDS) != 0)
- 		goto out_free_pgd;
- 
--	if (paravirt_pgd_alloc(mm) != 0)
-+	if (preallocate_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS) != 0)
- 		goto out_free_pmds;
- 
-+	if (paravirt_pgd_alloc(mm) != 0)
-+		goto out_free_user_pmds;
++	BUG_IF_WRONG_CR3
 +
  	/*
- 	 * Make sure that pre-populating the pmds is atomic with
- 	 * respect to anything walking the pgd_list, so that they
-@@ -396,13 +455,16 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+ 	 * Now switch the CR3 when PTI is enabled.
+ 	 *
+@@ -229,6 +249,7 @@
  
- 	pgd_ctor(mm, pgd);
- 	pgd_prepopulate_pmd(mm, pgd, pmds);
-+	pgd_prepopulate_user_pmd(mm, pgd, u_pmds);
+ .Lend_\@:
+ .endm
++
+ /*
+  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+  * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
+@@ -292,6 +313,8 @@
  
- 	spin_unlock(&pgd_lock);
+ .Lswitched_\@:
  
- 	return pgd;
++	BUG_IF_WRONG_CR3
++
+ 	RESTORE_REGS pop=\pop
+ .endm
  
-+out_free_user_pmds:
-+	free_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS);
- out_free_pmds:
--	free_pmds(mm, pmds);
-+	free_pmds(mm, pmds, PREALLOCATED_PMDS);
- out_free_pgd:
- 	_pgd_free(pgd);
- out:
+@@ -362,6 +385,8 @@
+ 
+ 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
+ 
++	BUG_IF_WRONG_CR3
++
+ 	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
+ 
+ 	/*
+@@ -803,6 +828,7 @@ ENTRY(entry_SYSENTER_32)
+ 	 */
+ 	pushfl
+ 	pushl	%eax
++	BUG_IF_WRONG_CR3 no_user_check=1
+ 	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
+ 	popl	%eax
+ 	popfl
+@@ -897,6 +923,7 @@ ENTRY(entry_SYSENTER_32)
+ 	 * whereas POPF does not.)
+ 	 */
+ 	btr	$X86_EFLAGS_IF_BIT, (%esp)
++	BUG_IF_WRONG_CR3 no_user_check=1
+ 	popfl
+ 	popl	%eax
+ 
+@@ -974,6 +1001,8 @@ restore_all:
+ 	/* Switch back to user CR3 */
+ 	SWITCH_TO_USER_CR3 scratch_reg=%eax
+ 
++	BUG_IF_WRONG_CR3
++
+ 	/* Restore user state */
+ 	RESTORE_REGS pop=4			# skip orig_eax/error_code
+ .Lirq_return:
+@@ -987,6 +1016,7 @@ restore_all:
+ restore_all_kernel:
+ 	TRACE_IRQS_IRET
+ 	PARANOID_EXIT_TO_KERNEL_MODE
++	BUG_IF_WRONG_CR3
+ 	RESTORE_REGS 4
+ 	jmp	.Lirq_return
+ 
+@@ -994,6 +1024,19 @@ restore_all_kernel:
+ ENTRY(iret_exc	)
+ 	pushl	$0				# no error code
+ 	pushl	$do_iret_error
++
++#ifdef CONFIG_X86_DEBUG_ENTRY_CR3
++	/*
++	 * The stack-frame here is the one that iret faulted on, so its a
++	 * return-to-user frame. We are on kernel-cr3 because we come here from
++	 * the fixup code. This confuses the CR3 checker, so switch to user-cr3
++	 * as the checker expects it.
++	 */
++	pushl	%eax
++	SWITCH_TO_USER_CR3 scratch_reg=%eax
++	popl	%eax
++#endif
++
+ 	jmp	common_exception
+ .previous
+ 	_ASM_EXTABLE(.Lirq_return, iret_exc)
 -- 
 2.7.4
