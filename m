@@ -1,92 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932413AbeDWT7u (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 15:59:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34172 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932306AbeDWT7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 15:59:48 -0400
-Date: Mon, 23 Apr 2018 22:59:43 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tiwei.bie@intel.com,
-        jfreimann@redhat.com, wexu@redhat.com
-Subject: Re: [RFC V3 PATCH 0/8] Packed ring for vhost
-Message-ID: <20180423224715-mutt-send-email-mst@kernel.org>
-References: <1524461700-5469-1-git-send-email-jasowang@redhat.com>
- <20180423193120.GD30033@char.us.oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423193120.GD30033@char.us.oracle.com>
+        id S932431AbeDWUBy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 16:01:54 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36667 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932306AbeDWUBx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 16:01:53 -0400
+X-Google-Smtp-Source: AIpwx48uCWy3yk9cFKbKZtPaytZNzSt5p178jiKNcbD4BC+fS61oaPFdZxvdrBfdlj1xg5zHbpifqg==
+Date: Mon, 23 Apr 2018 22:01:48 +0200
+From: Ahmed Abdelsalam <amsalam20@gmail.com>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: fw@strlen.de, davem@davemloft.net, dav.lebrun@gmail.com,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, netdev@vger.kernel.org
+Subject: Re: [nf-next] netfilter: extend SRH match to support matching
+ previous, next and last SID
+Message-Id: <20180423220148.03800031d0cb8e8a7a83dc31@gmail.com>
+In-Reply-To: <20180423173047.gsf2xjlmpichyvte@salvia>
+References: <1524480503-1883-1-git-send-email-amsalam20@gmail.com>
+        <1524480503-1883-2-git-send-email-amsalam20@gmail.com>
+        <20180423173047.gsf2xjlmpichyvte@salvia>
+X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.21; x86_64-apple-darwin10.8.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 03:31:20PM -0400, Konrad Rzeszutek Wilk wrote:
-> On Mon, Apr 23, 2018 at 01:34:52PM +0800, Jason Wang wrote:
-> > Hi all:
+On Mon, 23 Apr 2018 19:30:47 +0200
+Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+
+> On Mon, Apr 23, 2018 at 05:48:22AM -0500, Ahmed Abdelsalam wrote:
+> > Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+> > ---
+> >  include/uapi/linux/netfilter_ipv6/ip6t_srh.h | 22 +++++++++++++--
+> >  net/ipv6/netfilter/ip6t_srh.c                | 41 +++++++++++++++++++++++++++-
+> >  2 files changed, 60 insertions(+), 3 deletions(-)
 > > 
-> > This RFC implement packed ring layout. The code were tested with
-> > Tiwei's RFC V2 a thttps://lkml.org/lkml/2018/4/1/48. Some fixups and
-> > tweaks were needed on top of Tiwei's code to make it run. TCP stream
-> > and pktgen does not show obvious difference compared with split ring.
+> > diff --git a/include/uapi/linux/netfilter_ipv6/ip6t_srh.h b/include/uapi/linux/netfilter_ipv6/ip6t_srh.h
+> > index f3cc0ef..9808382 100644
+> > --- a/include/uapi/linux/netfilter_ipv6/ip6t_srh.h
+> > +++ b/include/uapi/linux/netfilter_ipv6/ip6t_srh.h
+> > @@ -17,7 +17,10 @@
+> >  #define IP6T_SRH_LAST_GT        0x0100
+> >  #define IP6T_SRH_LAST_LT        0x0200
+> >  #define IP6T_SRH_TAG            0x0400
+> > -#define IP6T_SRH_MASK           0x07FF
+> > +#define IP6T_SRH_PSID           0x0800
+> > +#define IP6T_SRH_NSID           0x1000
+> > +#define IP6T_SRH_LSID           0x2000
+> > +#define IP6T_SRH_MASK           0x3FFF
+> >  
+> >  /* Values for "mt_invflags" field in struct ip6t_srh */
+> >  #define IP6T_SRH_INV_NEXTHDR    0x0001
+> > @@ -31,7 +34,10 @@
+> >  #define IP6T_SRH_INV_LAST_GT    0x0100
+> >  #define IP6T_SRH_INV_LAST_LT    0x0200
+> >  #define IP6T_SRH_INV_TAG        0x0400
+> > -#define IP6T_SRH_INV_MASK       0x07FF
+> > +#define IP6T_SRH_INV_PSID       0x0800
+> > +#define IP6T_SRH_INV_NSID       0x1000
+> > +#define IP6T_SRH_INV_LSID       0x2000
+> > +#define IP6T_SRH_INV_MASK       0x3FFF
+> >  
+> >  /**
+> >   *      struct ip6t_srh - SRH match options
+> > @@ -40,6 +46,12 @@
+> >   *      @ segs_left: Segments left field of SRH
+> >   *      @ last_entry: Last entry field of SRH
+> >   *      @ tag: Tag field of SRH
+> > + *      @ psid_addr: Address of previous SID in SRH SID list
+> > + *      @ nsid_addr: Address of NEXT SID in SRH SID list
+> > + *      @ lsid_addr: Address of LAST SID in SRH SID list
+> > + *      @ psid_msk: Mask of previous SID in SRH SID list
+> > + *      @ nsid_msk: Mask of next SID in SRH SID list
+> > + *      @ lsid_msk: MAsk of last SID in SRH SID list
+> >   *      @ mt_flags: match options
+> >   *      @ mt_invflags: Invert the sense of match options
+> >   */
+> > @@ -50,6 +62,12 @@ struct ip6t_srh {
+> >  	__u8                    segs_left;
+> >  	__u8                    last_entry;
+> >  	__u16                   tag;
+> > +	struct in6_addr		psid_addr;
+> > +	struct in6_addr		nsid_addr;
+> > +	struct in6_addr		lsid_addr;
+> > +	struct in6_addr		psid_msk;
+> > +	struct in6_addr		nsid_msk;
+> > +	struct in6_addr		lsid_msk;
 > 
-> I have to ask then - what is the benefit of this?
+> This is changing something exposed through UAPI, so you will need a
+> new revision for this.
 
-You can use this with dpdk within guest.
-The DPDK version did see a performance improvement so hopefully with
-future versions this will too.
+Could you please advice what should be done in this case? 
 
-> > 
-> > Changes from V2:
-> > - do not use & in checking desc_event_flags
-> > - off should be most significant bit
-> > - remove the workaround of mergeable buffer for dpdk prototype
-> > - id should be in the last descriptor in the chain
-> > - keep _F_WRITE for write descriptor when adding used
-> > - device flags updating should use ADDR_USED type
-> > - return error on unexpected unavail descriptor in a chain
-> > - return false in vhost_ve_avail_empty is descriptor is available
-> > - track last seen avail_wrap_counter
-> > - correctly examine available descriptor in get_indirect_packed()
-> > - vhost_idx_diff should return u16 instead of bool
-> > 
-> > Changes from V1:
-> > 
-> > - Refactor vhost used elem code to avoid open coding on used elem
-> > - Event suppression support (compile test only).
-> > - Indirect descriptor support (compile test only).
-> > - Zerocopy support.
-> > - vIOMMU support.
-> > - SCSI/VSOCK support (compile test only).
-> > - Fix several bugs
-> > 
-> > For simplicity, I don't implement batching or other optimizations.
-> > 
-> > Please review.
-> > 
-> > Jason Wang (8):
-> >   vhost: move get_rx_bufs to vhost.c
-> >   vhost: hide used ring layout from device
-> >   vhost: do not use vring_used_elem
-> >   vhost_net: do not explicitly manipulate vhost_used_elem
-> >   vhost: vhost_put_user() can accept metadata type
-> >   virtio: introduce packed ring defines
-> >   vhost: packed ring support
-> >   vhost: event suppression for packed ring
-> > 
-> >  drivers/vhost/net.c                | 136 ++----
-> >  drivers/vhost/scsi.c               |  62 +--
-> >  drivers/vhost/vhost.c              | 824 ++++++++++++++++++++++++++++++++++---
-> >  drivers/vhost/vhost.h              |  47 ++-
-> >  drivers/vhost/vsock.c              |  42 +-
-> >  include/uapi/linux/virtio_config.h |   9 +
-> >  include/uapi/linux/virtio_ring.h   |  32 ++
-> >  7 files changed, 926 insertions(+), 226 deletions(-)
-> > 
-> > -- 
-> > 2.7.4
-> > 
+> 
+> >  	__u16                   mt_flags;
+> >  	__u16                   mt_invflags;
+> >  };
+> > diff --git a/net/ipv6/netfilter/ip6t_srh.c b/net/ipv6/netfilter/ip6t_srh.c
+> > index 33719d5..2b5cc73 100644
+> > --- a/net/ipv6/netfilter/ip6t_srh.c
+> > +++ b/net/ipv6/netfilter/ip6t_srh.c
+> > @@ -30,7 +30,9 @@ static bool srh_mt6(const struct sk_buff *skb, struct xt_action_param *par)
+> >  	const struct ip6t_srh *srhinfo = par->matchinfo;
+> >  	struct ipv6_sr_hdr *srh;
+> >  	struct ipv6_sr_hdr _srh;
+> > -	int hdrlen, srhoff = 0;
+> > +	int hdrlen, psidoff, nsidoff, lsidoff, srhoff = 0;
+> > +	struct in6_addr *psid, *nsid, *lsid;
+> > +	struct in6_addr _psid, _nsid, _lsid;
+> 
+> Could you rearrange variable definitions? ie. longest line first, eg.
+> 
+> 	int hdrlen, psidoff, nsidoff, lsidoff, srhoff = 0;
+>   	const struct ip6t_srh *srhinfo = par->matchinfo;
+> 	struct in6_addr *psid, *nsid, *lsid;
+>   	struct ipv6_sr_hdr *srh;
+>   	struct ipv6_sr_hdr _srh;
+> 
+
+Ok I will re-arrange them in reverse christmas tree form. 
+
+Ahmed 
+
+-- 
+Ahmed Abdelsalam <amsalam20@gmail.com>
