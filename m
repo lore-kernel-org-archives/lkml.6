@@ -1,76 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932487AbeDWTLe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 15:11:34 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:39046 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932453AbeDWTLZ (ORCPT
+        id S932395AbeDWTOF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 15:14:05 -0400
+Received: from gateway23.websitewelcome.com ([192.185.49.184]:26727 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932330AbeDWTOC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 15:11:25 -0400
-X-Google-Smtp-Source: AIpwx48h13dwowxV0k0BocaHAMys4UzxUwjXazDOZA3lvv3GZNMq7NV6WJEUG31zeTpq0NGV2zNg3A==
-Date: Mon, 23 Apr 2018 12:11:23 -0700 (PDT)
-X-Google-Original-Date: Mon, 23 Apr 2018 11:57:00 PDT (-0700)
-Subject: Re: [REVIEW][PATCH 14/22] signal/riscv: Use force_sig_fault where appropriate
-In-Reply-To: <20180420143811.9994-14-ebiederm@xmission.com>
-CC: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, albert@sifive.com,
-        linux-riscv@lists.infradead.org
-From: Palmer Dabbelt <palmer@sifive.com>
-To: ebiederm@xmission.com
-Message-ID: <mhng-77d5b15b-866b-464a-a256-6c7b84726ce3@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
+        Mon, 23 Apr 2018 15:14:02 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH 00/11] fix potential Spectre variant 1 issues
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <cover.1524499368.git.gustavo@embeddedor.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <96bd3e25-9503-d23d-4e3c-091e68b6bf8f@embeddedor.com>
+Date: Mon, 23 Apr 2018 14:13:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <cover.1524499368.git.gustavo@embeddedor.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.48.65
+X-Source-L: No
+X-Exim-ID: 1fAguW-001IbZ-FI
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.145.48.65]:60348
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 07:38:03 PDT (-0700), ebiederm@xmission.com wrote:
-> Filling in struct siginfo before calling force_sig_info a tedious and
-> error prone process, where once in a great while the wrong fields
-> are filled out, and siginfo has been inconsistently cleared.
->
-> Simplify this process by using the helper force_sig_fault.  Which
-> takes as a parameters all of the information it needs, ensures
-> all of the fiddly bits of filling in struct siginfo are done properly
-> and then calls force_sig_info.
->
-> In short about a 5 line reduction in code for every time force_sig_info
-> is called, which makes the calling function clearer.
->
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Albert Ou <albert@sifive.com>
-> Cc: linux-riscv@lists.infradead.org
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
->  arch/riscv/kernel/traps.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
->
-> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> index 48aa6471cede..3087940008f4 100644
-> --- a/arch/riscv/kernel/traps.c
-> +++ b/arch/riscv/kernel/traps.c
-> @@ -66,14 +66,7 @@ void die(struct pt_regs *regs, const char *str)
->  static inline void do_trap_siginfo(int signo, int code,
->  	unsigned long addr, struct task_struct *tsk)
->  {
-> -	siginfo_t info;
-> -
-> -	clear_siginfo(&info);
-> -	info.si_signo = signo;
-> -	info.si_errno = 0;
-> -	info.si_code = code;
-> -	info.si_addr = (void __user *)addr;
-> -	force_sig_info(signo, &info, tsk);
-> +	force_sig_fault(signo, code, (void __user *)addr, tsk);
->  }
->
->  void do_trap(struct pt_regs *regs, int signo, int code,
+Hi,
 
-If I understand this correctly, any change in behavior this causes would have 
-been a bug on our end not filling out siginfo correctly?  In that case then 
-feel free to add an
+Please, drop this series. Further analysis is required as it seems all 
+these are False Positives.
 
-    Acked-by: Palmer Dabbelt <palmer@sifive.com>
+Sorry for the noise.
 
-Thanks!
+Thanks
+--
+Gustavo
+
+On 04/23/2018 12:37 PM, Gustavo A. R. Silva wrote:
+> This patchset aims to fix various media platform and media usb
+> cases where we have user controlled array dereferences that could
+> be exploited due to the Spectre variant 1 vulnerability. All were
+> reported by Dan Carpenter.
+> 
+> Notice that given that speculation windows are large, the policy is
+> to kill the speculation on the first load and not worry if it can be
+> completed with a dependent load/store [1].
+> 
+> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+> 
+> Thanks
+> 
+> Gustavo A. R. Silva (11):
+>    media: tm6000: fix potential Spectre variant 1
+>    exynos4-is: mipi-csis: fix potential Spectre variant 1
+>    fsl-viu: fix potential Spectre variant 1
+>    marvell-ccic: mcam-core: fix potential Spectre variant 1
+>    omap_vout: fix potential Spectre variant 1
+>    rcar-v4l2: fix potential Spectre variant 1
+>    rcar_drif: fix potential Spectre variant 1
+>    sh_vou: fix potential Spectre variant 1
+>    vimc-debayer: fix potential Spectre variant 1
+>    vivid-sdr-cap: fix potential Spectre variant 1
+>    vsp1_rwpf: fix potential Spectre variant 1
+> 
+>   drivers/media/platform/exynos4-is/mipi-csis.c   | 5 ++++-
+>   drivers/media/platform/fsl-viu.c                | 8 ++++----
+>   drivers/media/platform/marvell-ccic/mcam-core.c | 3 +++
+>   drivers/media/platform/omap/omap_vout.c         | 3 +++
+>   drivers/media/platform/rcar-vin/rcar-v4l2.c     | 4 +++-
+>   drivers/media/platform/rcar_drif.c              | 4 +++-
+>   drivers/media/platform/sh_vou.c                 | 3 +++
+>   drivers/media/platform/vimc/vimc-debayer.c      | 5 ++++-
+>   drivers/media/platform/vivid/vivid-sdr-cap.c    | 6 ++++++
+>   drivers/media/platform/vsp1/vsp1_rwpf.c         | 3 +++
+>   drivers/media/usb/tm6000/tm6000-video.c         | 2 ++
+>   11 files changed, 38 insertions(+), 8 deletions(-)
+> 
