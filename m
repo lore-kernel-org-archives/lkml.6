@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx48RWWj9A5vWlA2pe5XOIAuNXlZTuWBPf7/x5/DBakcOaF4CGdFtkC+Bt5o4jczfC++cg+tr
-ARC-Seal: i=1; a=rsa-sha256; t=1524498484; cv=none;
+X-Google-Smtp-Source: AIpwx4/KtkRwHi+5BMtfpNYRRweLkIG9Dt55cdKQraiXQU2B2WiIc3pjJ0MHioy3J6JDmahgrY53
+ARC-Seal: i=1; a=rsa-sha256; t=1524498483; cv=none;
         d=google.com; s=arc-20160816;
-        b=v0Z38jqd4EkQ1Pi0bygmolZMN6fn6yta9R3brvvZ5TNovQHC7yEMJLkeFFUMJbMN2W
-         rXgxcfyp42pT/vqUduPj0SOuJl4NtsozRY4u6bwWDMunneAbexhN/vrz11/9JA4yxtwY
-         b0ziPpnuK+meHtCj0P7t+ljc9tzufCM5nLDnbABevFjduTVPTN3hZLYkhc6raQKIjseN
-         WC5hn8kq4gejFBkAjIsanpTt9KnpJ4F3fBI1ASrVPAm0RiDAJG567PCDoltlWT0861xV
-         ZzcasyCGDFF17g4rD3nTiWaYK1Horsx8yg4HY+9pa5G3D28/yqewQWnR4o/QgenDpBEv
-         OL+g==
+        b=TeYySKo92zV6vg+Kvr70/b38UXy0IBwyZuuyCDHzonYsgBQZ3yefziGpaUaoIow5e1
+         pJyRnHyDhO1wiiwHx3DeH01PS3rGJRHNHzS3rLa9ds0bOE20argcZLizFVnhKIX3vLIn
+         JIIHcxcccXzakXXDeWF3z8W1j8MUNt6I62KC2N/eV+36oBcJbYJKq8y/D/umyCf3X90r
+         5d93c/L20PkV5purjsJjF8Z+R5KNlsVEL66RbD5goroS2c/UArhvn7+7BISer9ZBkF2e
+         aLuN+n0SCGrtzGK5BnZ0UUxrp7NKzR+KO5cUenz+IK4FOe17UA1KYFyH+lnif87/Sdsl
+         RzMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=g4Mvb5nbP5KaTzLhUrpKObR4w1hg4TZ23NVo0lBHPNg=;
-        b=dAxD/R/G48Sc5gw4Er7Z/mnJycNsAH1QHasfpuiZ+cKinrS9jg7HBdoJfxui7BLekf
-         eNrkmGMwMPLw2QMJWPcxqvULImfGhUxyfNwGKOI9jnoAfSr2mlzG9SFG/CduOpEb6syq
-         USNNtOe2oY6BQHmFG2geiUmwhOzHkukk96YwEXG1sZLATuwCzhUHkyLk8hD/k5RGFzKH
-         ZE3BOXjGtrbbyOvWJAxxGB00fg1JqDA9Nw/gwrCtjMtp0yiSn/mFftHsXlYs3QfCo8Rb
-         jWUoKrUHjny8ctxKn06OuVUis3CNMFsoMJWCck2re/K2qvZGskytNI8qasxm18AQuxyD
-         VxSw==
+        bh=v2axBOnpnXabVVkJuEFD8oEyEA4P/N4K6umsrPMrA4w=;
+        b=PZ3SJ0zz2jBygpc8oDFEXXDQNTeQW1MEsm2USR481AaliruCoO5+zus7L9n70FvM08
+         gjAGcP/80sTBv5q+pSNOMAFQU2pu7hqWRyfUDqzSoBWxhv+L6VVsfxFHNq3GLRwYd6HU
+         VUjYirEgQxpzSkaLQ71DTUO9t9+Gjzt/zrXfLsxe5lb31YUWaYW1uqga7CxzVOk9JHEh
+         lUCunNm4AQUd/takTK983fPi9zhXxTw9kLBhIXROEpWygWevyge3qgKkTO6WuwvOqX3Y
+         TAMsrNE0mxiO0p9FzZEQZDwb/HM9La5s/NFnSG5h0dNZ9K0gBM5LkWo9e0wVNh/qOos5
+         BILA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=W9cvbJTa;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ERnBmOLn;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=W9cvbJTa;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ERnBmOLn;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,171 +58,85 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 37/37] x86/entry/32: Add debug code to check entry/exit cr3
-Date: Mon, 23 Apr 2018 17:47:40 +0200
-Message-Id: <1524498460-25530-38-git-send-email-joro@8bytes.org>
+Subject: [PATCH 31/37] x86/ldt: Reserve address-space range on 32 bit for the LDT
+Date: Mon, 23 Apr 2018 17:47:34 +0200
+Message-Id: <1524498460-25530-32-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 References: <1524498460-25530-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598552522724392271?=
-X-GMAIL-MSGID: =?utf-8?q?1598552522724392271?=
+X-GMAIL-THRID: =?utf-8?q?1598552522055269667?=
+X-GMAIL-MSGID: =?utf-8?q?1598552522055269667?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Add a config option that enabled code to check that we enter
-and leave the kernel with the correct cr3. This is needed
-because we have no NX protection of user-addresses in the
-kernel-cr3 on x86-32 and wouldn't notice that type of bug
-otherwise.
+Reserve 2MB/4MB of address-space for mapping the LDT to
+user-space on 32 bit PTI kernels.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/Kconfig.debug    | 12 ++++++++++++
- arch/x86/entry/entry_32.S | 43 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+ arch/x86/include/asm/pgtable_32_types.h | 7 +++++--
+ arch/x86/mm/dump_pagetables.c           | 9 +++++++++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-index 192e4d2..a57f556 100644
---- a/arch/x86/Kconfig.debug
-+++ b/arch/x86/Kconfig.debug
-@@ -337,6 +337,18 @@ config X86_DEBUG_FPU
+diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
+index e3225e8..1fa76c9 100644
+--- a/arch/x86/include/asm/pgtable_32_types.h
++++ b/arch/x86/include/asm/pgtable_32_types.h
+@@ -50,13 +50,16 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
+ 	((FIXADDR_TOT_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1))   \
+ 	 & PMD_MASK)
  
- 	  If unsure, say N.
+-#define PKMAP_BASE		\
++#define LDT_BASE_ADDR		\
+ 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
  
-+config X86_DEBUG_ENTRY_CR3
-+	bool	"Debug CR3 for Kernel entry/exit"
-+	depends on X86_32 && PAGE_TABLE_ISOLATION
-+	---help---
-+	  Add instructions to the x86-32 entry code to check whether the kernel
-+	  is entered and left with the correct CR3. When PTI is enabled, this
-+	  checks whether we enter the kernel with the user-space cr3 when
-+	  coming from user-mode and if we leave with user-cr3 back to
-+	  user-space.
++#define PKMAP_BASE		\
++	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
 +
-+	  If unsure, say N.
-+
- config PUNIT_ATOM_DEBUG
- 	tristate "ATOM Punit debug driver"
- 	depends on PCI
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index f47e535..6b371a9 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -166,6 +166,24 @@
- .Lend_\@:
- .endm
+ #ifdef CONFIG_HIGHMEM
+ # define VMALLOC_END	(PKMAP_BASE - 2 * PAGE_SIZE)
+ #else
+-# define VMALLOC_END	(CPU_ENTRY_AREA_BASE - 2 * PAGE_SIZE)
++# define VMALLOC_END	(LDT_BASE_ADDR - 2 * PAGE_SIZE)
+ #endif
  
-+.macro BUG_IF_WRONG_CR3 no_user_check=0
-+#ifdef CONFIG_X86_DEBUG_ENTRY_CR3
-+	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
-+	.if \no_user_check == 0
-+	/* coming from usermode? */
-+	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
-+	jz	.Lend_\@
-+	.endif
-+	/* On user-cr3? */
-+	movl	%cr3, %eax
-+	testl	$PTI_SWITCH_MASK, %eax
-+	jnz	.Lend_\@
-+	/* From userspace with kernel cr3 - BUG */
-+	ud2
-+.Lend_\@:
+ #define MODULES_VADDR	VMALLOC_START
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 23d24d1..db1d7a0 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -123,6 +123,9 @@ enum address_markers_idx {
+ #ifdef CONFIG_HIGHMEM
+ 	PKMAP_BASE_NR,
+ #endif
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++	LDT_NR,
 +#endif
-+.endm
-+
- /*
-  * Switch to kernel cr3 if not already loaded and return current cr3 in
-  * \scratch_reg
-@@ -218,6 +236,8 @@
- .macro SAVE_ALL_NMI cr3_reg:req
- 	SAVE_ALL
- 
-+	BUG_IF_WRONG_CR3
-+
- 	/*
- 	 * Now switch the CR3 when PTI is enabled.
- 	 *
-@@ -229,6 +249,7 @@
- 
- .Lend_\@:
- .endm
-+
- /*
-  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-  * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
-@@ -292,6 +313,8 @@
- 
- .Lswitched_\@:
- 
-+	BUG_IF_WRONG_CR3
-+
- 	RESTORE_REGS pop=\pop
- .endm
- 
-@@ -362,6 +385,8 @@
- 
- 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
- 
-+	BUG_IF_WRONG_CR3
-+
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
- 
- 	/*
-@@ -803,6 +828,7 @@ ENTRY(entry_SYSENTER_32)
- 	 */
- 	pushfl
- 	pushl	%eax
-+	BUG_IF_WRONG_CR3 no_user_check=1
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
- 	popl	%eax
- 	popfl
-@@ -897,6 +923,7 @@ ENTRY(entry_SYSENTER_32)
- 	 * whereas POPF does not.)
- 	 */
- 	btr	$X86_EFLAGS_IF_BIT, (%esp)
-+	BUG_IF_WRONG_CR3 no_user_check=1
- 	popfl
- 	popl	%eax
- 
-@@ -974,6 +1001,8 @@ restore_all:
- 	/* Switch back to user CR3 */
- 	SWITCH_TO_USER_CR3 scratch_reg=%eax
- 
-+	BUG_IF_WRONG_CR3
-+
- 	/* Restore user state */
- 	RESTORE_REGS pop=4			# skip orig_eax/error_code
- .Lirq_return:
-@@ -987,6 +1016,7 @@ restore_all:
- restore_all_kernel:
- 	TRACE_IRQS_IRET
- 	PARANOID_EXIT_TO_KERNEL_MODE
-+	BUG_IF_WRONG_CR3
- 	RESTORE_REGS 4
- 	jmp	.Lirq_return
- 
-@@ -994,6 +1024,19 @@ restore_all_kernel:
- ENTRY(iret_exc	)
- 	pushl	$0				# no error code
- 	pushl	$do_iret_error
-+
-+#ifdef CONFIG_X86_DEBUG_ENTRY_CR3
-+	/*
-+	 * The stack-frame here is the one that iret faulted on, so its a
-+	 * return-to-user frame. We are on kernel-cr3 because we come here from
-+	 * the fixup code. This confuses the CR3 checker, so switch to user-cr3
-+	 * as the checker expects it.
-+	 */
-+	pushl	%eax
-+	SWITCH_TO_USER_CR3 scratch_reg=%eax
-+	popl	%eax
+ 	CPU_ENTRY_AREA_NR,
+ 	FIXADDR_START_NR,
+ 	END_OF_SPACE_NR,
+@@ -136,6 +139,9 @@ static struct addr_marker address_markers[] = {
+ #ifdef CONFIG_HIGHMEM
+ 	[PKMAP_BASE_NR]		= { 0UL,		"Persistent kmap() Area" },
+ #endif
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++	[LDT_NR]		= { 0UL,		"LDT remap" },
 +#endif
-+
- 	jmp	common_exception
- .previous
- 	_ASM_EXTABLE(.Lirq_return, iret_exc)
+ 	[CPU_ENTRY_AREA_NR]	= { 0UL,		"CPU entry area" },
+ 	[FIXADDR_START_NR]	= { 0UL,		"Fixmap area" },
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+@@ -609,6 +615,9 @@ static int __init pt_dump_init(void)
+ # endif
+ 	address_markers[FIXADDR_START_NR].start_address = FIXADDR_START;
+ 	address_markers[CPU_ENTRY_AREA_NR].start_address = CPU_ENTRY_AREA_BASE;
++# ifdef CONFIG_MODIFY_LDT_SYSCALL
++	address_markers[LDT_NR].start_address = LDT_BASE_ADDR;
++# endif
+ #endif
+ 	return 0;
+ }
 -- 
 2.7.4
