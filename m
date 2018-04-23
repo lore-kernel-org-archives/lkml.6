@@ -1,118 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754127AbeDWG7F (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 02:59:05 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:40484 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751535AbeDWG7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 02:59:04 -0400
-Message-ID: <1524466728.25095.0.camel@aosc.io>
-Subject: Re: [PATCH] arm64: allwinner: h6: restore the usage of CCU slice
- macros
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Mon, 23 Apr 2018 14:58:48 +0800
-In-Reply-To: <20180403134024.43156-1-icenowy@aosc.io>
-References: <20180403134024.43156-1-icenowy@aosc.io>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1754152AbeDWG7W (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 02:59:22 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:18351 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751535AbeDWG7U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 02:59:20 -0400
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Kevin Hilman <khilman@baylibre.com>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH] ARM64: dts: meson-axg: enable AP6255 wifi module
+Date: Mon, 23 Apr 2018 14:57:29 +0000
+Message-ID: <20180423145729.14368-1-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.250]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018-04-03二的 21:40 +0800，Icenowy Zheng写道：
-> As the definition of CCU slice macros are already merged into the
-> source
-> tree, restore the usage of the macros now.
+The Meson-AXG S400 board is shipped with AP6255 wifi module,
+which is actually using the brcmfmac 43455 driver.
 
-Maxime, could you check this patch and pick it?
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ .../arm64/boot/dts/amlogic/meson-axg-s400.dts | 44 ++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
 
-Thanks!
-
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 20 +++++++++++-------
-> --
->  1 file changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> index 56563150d61a..4debc3962830 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> @@ -4,6 +4,8 @@
->   */
->  
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/sun50i-h6-ccu.h>
-> +#include <dt-bindings/reset/sun50i-h6-ccu.h>
->  
->  / {
->  	interrupt-parent = <&gic>;
-> @@ -115,7 +117,7 @@
->  				     <GIC_SPI 53
-> IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 54
-> IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 59
-> IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&ccu 26>, <&osc24M>, <&osc32k>;
-> +			clocks = <&ccu CLK_APB1>, <&osc24M>,
-> <&osc32k>;
->  			clock-names = "apb", "hosc", "losc";
->  			gpio-controller;
->  			#gpio-cells = <3>;
-> @@ -134,8 +136,8 @@
->  			interrupts = <GIC_SPI 0
-> IRQ_TYPE_LEVEL_HIGH>;
->  			reg-shift = <2>;
->  			reg-io-width = <4>;
-> -			clocks = <&ccu 70>;
-> -			resets = <&ccu 21>;
-> +			clocks = <&ccu CLK_BUS_UART0>;
-> +			resets = <&ccu RST_BUS_UART0>;
->  			status = "disabled";
->  		};
->  
-> @@ -145,8 +147,8 @@
->  			interrupts = <GIC_SPI 1
-> IRQ_TYPE_LEVEL_HIGH>;
->  			reg-shift = <2>;
->  			reg-io-width = <4>;
-> -			clocks = <&ccu 71>;
-> -			resets = <&ccu 22>;
-> +			clocks = <&ccu CLK_BUS_UART1>;
-> +			resets = <&ccu RST_BUS_UART1>;
->  			status = "disabled";
->  		};
->  
-> @@ -156,8 +158,8 @@
->  			interrupts = <GIC_SPI 2
-> IRQ_TYPE_LEVEL_HIGH>;
->  			reg-shift = <2>;
->  			reg-io-width = <4>;
-> -			clocks = <&ccu 72>;
-> -			resets = <&ccu 23>;
-> +			clocks = <&ccu CLK_BUS_UART2>;
-> +			resets = <&ccu RST_BUS_UART2>;
->  			status = "disabled";
->  		};
->  
-> @@ -167,8 +169,8 @@
->  			interrupts = <GIC_SPI 3
-> IRQ_TYPE_LEVEL_HIGH>;
->  			reg-shift = <2>;
->  			reg-io-width = <4>;
-> -			clocks = <&ccu 73>;
-> -			resets = <&ccu 24>;
-> +			clocks = <&ccu CLK_BUS_UART3>;
-> +			resets = <&ccu RST_BUS_UART3>;
->  			status = "disabled";
->  		};
->  	};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+index f67d4e47e641..b3e1bdca32bb 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+@@ -51,7 +51,16 @@
+ 
+ 	sdio_pwrseq: sdio-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+-		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&gpio GPIOX_7 GPIO_ACTIVE_LOW>;
++		clocks = <&wifi32k>;
++		clock-names = "ext_clock";
++	};
++
++	wifi32k: wifi32k {
++		compatible = "pwm-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		pwms = <&pwm_ab 0 30518 0>; /* PWM_A at 32.768KHz */
+ 	};
+ };
+ 
+@@ -86,6 +95,12 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&pwm_ab {
++	status = "okay";
++	pinctrl-0 = <&pwm_a_x20_pins>;
++	pinctrl-names = "default";
++};
++
+ /* emmc storage */
+ &sd_emmc_c {
+ 	status = "okay";
+@@ -105,3 +120,30 @@
+ 	vmmc-supply = <&vcc_3v3>;
+ 	vqmmc-supply = <&vddio_boot>;
+ };
++
++/* wifi module */
++&sd_emmc_b {
++	status = "okay";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	pinctrl-0 = <&sdio_pins>;
++	pinctrl-1 = <&sdio_clk_gate_pins>;
++	pinctrl-names = "default", "clk-gate";
++
++	bus-width = <4>;
++	cap-sd-highspeed;
++	max-frequency = <100000000>;
++	non-removable;
++	disable-wp;
++
++	mmc-pwrseq = <&sdio_pwrseq>;
++
++	vmmc-supply = <&vddao_3v3>;
++	vqmmc-supply = <&vddio_boot>;
++
++	brcmf: wifi@1 {
++		reg = <1>;
++		compatible = "brcm,bcm4329-fmac";
++	};
++};
+-- 
+2.17.0
