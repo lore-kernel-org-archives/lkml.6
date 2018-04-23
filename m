@@ -1,63 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932680AbeDWVkQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 17:40:16 -0400
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:46812 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932460AbeDWVj5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 17:39:57 -0400
-X-Google-Smtp-Source: AIpwx4+vSftqfTafusCb8QGrAGyxSqiDrZ8fdj3X0mGl83Ul55Cy75nsgLadoOacgKE6JBaZirRLzg==
-Date: Tue, 24 Apr 2018 00:39:54 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] proc: skip branch in /proc/*/* lookup
-Message-ID: <20180423213954.GD9043@avx2>
+        id S932691AbeDWVkV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 17:40:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:44891 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932504AbeDWVkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 17:40:01 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 24 Apr 2018 07:38:40 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commits in the cifs tree
+Message-ID: <20180424073840.39b99c2e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/0x4BARblwaYaG9txL6PrEg3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code is structured like this:
+--Sig_/0x4BARblwaYaG9txL6PrEg3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-	for ( ... p < last; p++) {
-		if (memcmp == 0)
-			break;
-	}
-	if (p >= last)
-		ERROR
-	OK
+Hi all,
 
-gcc doesn't see that if if lookup succeeds than post loop branch will
-never be taken and skip it.
+Commits
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+  dee4bf3f21d8 ("cifs: smbd: Don't use RDMA read/write when signing is used=
+")
+  553018657de2 ("ifs: smbd: Avoid allocating iov on the stack")
 
- fs/proc/base.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+are missing a Signed-off-by from their committer.
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2485,14 +2485,11 @@ static struct dentry *proc_pident_lookup(struct inode *dir,
- 	for (p = ents; p < last; p++) {
- 		if (p->len != dentry->d_name.len)
- 			continue;
--		if (!memcmp(dentry->d_name.name, p->name, p->len))
-+		if (!memcmp(dentry->d_name.name, p->name, p->len)) {
-+			error = proc_pident_instantiate(dir, dentry, task, p);
- 			break;
-+		}
- 	}
--	if (p >= last)
--		goto out;
--
--	error = proc_pident_instantiate(dir, dentry, task, p);
--out:
- 	put_task_struct(task);
- out_no_task:
- 	return ERR_PTR(error);
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0x4BARblwaYaG9txL6PrEg3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlreUmAACgkQAVBC80lX
+0Gwfngf/VvU89agBO/P/5qdMz1kNV8qLxBVyqwRXWVpGmh2Ck+N+FwAGSFO9oVK8
+tyPEsgv0DCTE+m0TgnuHb+rbG/OOM2E50oPF9wDEpV8jVMv1GOpu0CM4kAempqD8
+2gBasghBiN8ZD2eEUWE0JvEu+pU+Z8RJJmGHIJlCnyiC9FmGTjx5PsJczDV4RaF/
+dTtvpW0/lYW+hKtfnpRWsDphhzQamDT1gDSymmLdoOjsEEXXzg4qKjcna87wsvDO
+orVv9aKo638/da4958vPy5DUH1aTOoicvkMOeh74jwasJ6+W2Ohsaf+12l1lGp6k
+eCiBww1k4oPmYfFsCUqF+flJv4pW3Q==
+=VfTd
+-----END PGP SIGNATURE-----
+
+--Sig_/0x4BARblwaYaG9txL6PrEg3--
