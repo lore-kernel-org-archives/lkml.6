@@ -1,105 +1,102 @@
-Return-Path: <dledford@redhat.com>
-X-Google-Smtp-Source: AB8JxZrLk8hmIZ0qI789avG6FI48W/boQ0i9ukOXutx86ieEImY58AAgnCTUiZRJaGzq9TP0YN3z
-ARC-Seal: i=1; a=rsa-sha256; t=1524496268; cv=none;
-        d=google.com; s=arc-20160816;
-        b=eOKYjfRJY+XDIdCAjJc2xmO/0CZI7AAJJRhJO8ROKad9up6K7cZv48FOUoCJkwECTi
-         X+mFBSDeOjyW0w0m8IoAxg5C94A6aWRSG+Mn4z3zwegPzj8zsToPCvySyif4jor1wO95
-         N3GV8H6uqHOY+BLHRsKildihj7I8IveADN4s69DYEa9Gl69MeotXUYMjTC/52kHufO57
-         VBPK4kLIUV81b8PSYuA0HCrLb8e7s94XrO5BKQ+ZYvZXsWze/cgAjHsBx0imCR+3s7i5
-         d3HKMlQ39oLshNXhAeYQX/2JMcwULejj06RvJnFQEtfJNDzUIZgtj6C51yK3R9WPIGny
-         Mcfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:organization:references:in-reply-to:date:cc:to:from
-         :subject:message-id:arc-authentication-results;
-        bh=7RCR+M8/O0r7I5t7QfZ8hkqe4e/MFMUnSaQpCAseEZk=;
-        b=xyqCbSLPxyqOw3mjbs0s9/Ro+hEfGo8TalQDdtkF+QFkMEfYAK8ygB6AZkAT/sgMmg
-         BajcghJd7l8hnMa09Jueob9fvWwy68YwrzBZbsaGHEvvdYszgURj6M68v+zdQRmVdom/
-         2yXr+/c64+X8sIuDaZXFxz4W4TVaiTfFyFPRtxB+7EGrOqB4XVng2CMYfSfSXNfswaQw
-         iV3gugtcXltCQGANV7eY9U9yR4sLGBb4NEzyIfi6m/Bfcf9tW6GYE67WrIV2DL6qS3lm
-         UsC+QSaEXIIpo9cKUK69ieWOUnjKRomB6P+6cPHXCwHbfCiWv+t9mua96LwHLgf+4iE8
-         7rHA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of dledford@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=dledford@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of dledford@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=dledford@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Message-ID: <1524496266.11756.36.camel@redhat.com>
-Subject: Re: [PATCH for-rc] uapi: Fix SPDX tags for files referring to the
- 'OpenIB.org' license
-From: Doug Ledford <dledford@redhat.com>
-To: David Miller <davem@davemloft.net>, jgg@mellanox.com
-Cc: linux-rdma@vger.kernel.org, kstewart@linuxfoundation.org,
-	pombredanne@nexb.com, gregkh@linuxfoundation.org, tglx@linutronix.de,
-	swinslow@linuxfoundation.org, santosh.shilimkar@oracle.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, davejwatson@fb.com
-Date: Mon, 23 Apr 2018 11:11:06 -0400
-In-Reply-To: <20180422.210823.1454088204642743739.davem@davemloft.net>
-References: <20180420154910.GA2519@ziepe.ca>
-	 <20180422.210823.1454088204642743739.davem@davemloft.net>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-aTiSFOavqybSiOFpKn2H"
-Mime-Version: 1.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1269041-1524492939-2-720645170098051020
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524492939; b=NsUZ84La9Q/tbjvI/DljnG2Ixic1b2ShsgZ3oMopERi4U7kSFK
+    Flkiyginuuv6WElndoAsoWPSJlqi4RWU65Q0IeQOG6jYMBcRcgAEjwUmYWV3uCHv
+    Ylb5iTwomRlHhgyzI2kzwFG7xG9P8MRc9MXhGuDJrOU5uzrF1qsQYRM6tK32sypJ
+    uRnCoPLSzHEvbUhatOpWxEmtBfrOAv+ysCSIR92Ny3u7beFgZ2606h4un8lEbkYq
+    a+dUl/1tm6EF0QIRVOKqH0SUgHNt59Gf5ZzgNY7r0ottpYVtwB2feN9U6jjByUDM
+    EM2S1FHWFY5RTWW21y9cbSOsJzFEkqQRD0Bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:from:date:message-id:subject
+    :to:cc:content-type:sender:list-id; s=fm2; t=1524492939; bh=lHLd
+    0UxSfLnoC6Z9z0LgL8ivEClVEFSYY0Cdm2piy/8=; b=aB94qeLETy+K7uQI/X+T
+    MpCJ134WA4ULH2zenhbaKNv2LB962L0WpVhNRtjJhx3hAIyCOJauveZuSNK2RW6X
+    Uv9ka8C0ZhkzTltgHuUPjFpyBh5QOfC2/qnhtOX74OKLb/Od5dGdTgaz08vWmOhm
+    9QuVip1CvvAi0KBfYFnRlJkq7dOpjM+K5tscGNCtaxUUtV/qH2jJPEs1x9+bs6T4
+    JN3EtbigzXmhwbxtoUwY1HyLSJUPE4sue1Ubh7CCWuissuq0TtbEFu1hqkdJVbY+
+    KRCGSJwPFC7fVZn69KP/k8aSnJd79hTm3vU4QWHu6JcKHMEWnpwBk7MIcBv3RPAX
+    1w==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=OfTSRskV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mYkKstJg;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=OfTSRskV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mYkKstJg;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKx94oKEzrDaLYTDJ2r1sPBYU84JmJ6Qpjpz40T17Ir9x2toyvhJoRPsXD7lQ7vg94pyarQrL4zHkLkBTFCw+LqoHWynUYbt4u4x9v3W7EZQNBIcUF2B
+    hclwRgjnHGsSOl00ewE0nJvn6iSdNQLhNIhMk5ndATXApZRuAUG7dSJcoyRKZn4pheY3sg9wxLgHJ27YavuZ/QKPrDBtXmhnJrIT8DiYP9COh4+DzWjdkHnI
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+    a=oKQYTnOvZvwA:10 a=Kd1tUaAdevIA:10 a=gu6fZOg2AAAA:8 a=FKYsJQZddeuuKPT3cFEA:9
+    a=QEXdDO2ut3YA:10 a=-FEs8UIgK8oA:10 a=NWVoK91CQyQA:10
+    a=2RSlZUUhi9gRBrsHwhhZ:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755770AbeDWOP0 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 23 Apr 2018 10:15:26 -0400
+Received: from mail-it0-f54.google.com ([209.85.214.54]:52035 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932066AbeDWOPW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 23 Apr 2018 10:15:22 -0400
+X-Google-Smtp-Source: AB8JxZoIwiCIj1345FS1/qKIOA5qhOIp8CLYxjOvIp1IiNwSBppX0W8EY5LhfWwfn3Ihvd3fVMNIg7TNiaSIGcmtU8U=
+MIME-Version: 1.0
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 23 Apr 2018 16:15:20 +0200
+Message-ID: <CAOi1vP-oSB65aqWkYX+2AWMHUg4Q8jeRkN65b1xftACR1A=dmA@mail.gmail.com>
+Subject: Re: [4.4,50/97] ext4: add validity checks for bitmap block numbers -- regression?
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Theodore Tso <tytso@mit.edu>, Wen Xu <wen.xu@gatech.edu>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598280819210868767?=
-X-GMAIL-MSGID: =?utf-8?q?1598550199099626084?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi Greg,
 
---=-aTiSFOavqybSiOFpKn2H
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Commit 7dac4a1726a9 ("ext4: add validity checks for bitmap block
+numbers") seems to be the cause of the regression reported here:
 
-On Sun, 2018-04-22 at 21:08 -0400, David Miller wrote:
-> From: Jason Gunthorpe <jgg@mellanox.com>
-> Date: Fri, 20 Apr 2018 09:49:10 -0600
->=20
-> > Based on discussion with Kate Stewart this license is not a
-> > BSD-2-Clause, but is now formally identified as Linux-OpenIB
-> > by SPDX.
-> >=20
-> > The key difference between the licenses is in the 'warranty'
-> > paragraph.
-> >=20
-> > if_infiniband.h refers to the 'OpenIB.org' license, but
-> > does not include the text, instead it links to an obsolete
-> > web site that contains a license that matches the BSD-2-Clause
-> > SPX. There is no 'three clause' version of the OpenIB.org
-> > license.
-> >=20
-> > Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
->=20
-> Acked-by: David S. Miller <davem@davemloft.net>
->=20
+  https://marc.info/?l=linux-ext4&m=152416385122029&w=2
 
-Thanks, applied.
+ext4 folks are probably busy at LSF, so no reply yet.  Should this
+commit be held until we get word from Ted?
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-aTiSFOavqybSiOFpKn2H
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Please excuse broken threading.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrd94oACgkQuCajMw5X
-L92qyQ/+N3Lbrhy4z7gxK7j1KPx6+DaH7yKqP1x3vjKkflvVDePAgfNKEgNWqKZv
-aq0KDjOH/j3JioIaGQRuVtGx7VX+6bhVGfzd0EG3rN4wSzOpklU7X4sgL5zW8ZQ+
-LLYMqTQ+adRZDHaks61gU6nHH8a2Tk2YtE6DaRO3XHzUlzxjVd4tXObDqV6lL2I3
-9bG/VRDteswILhyp5fXXFPrMvneXTUc/HuXCCgTyq+FyR89AXX3SwrRMm5lo6Ubp
-1StnQmkwSlmo6B9Y770zr3uAm8/EpdanTl6h0Oy3WyER+SPznElbiHK726UJ6BXS
-5hOU8K7flfDL9Os/JPIezMcnn/zCgBLCF8R/euzTI6mIjVMpX5bMjFlF3xSTam2H
-TkxFRxOiL/hrNrxRPvjOLgFkDdG8E/cZqhsi6Ap6WYeYiibWeT5PdsXD8o716uvE
-J17g15RK87Dh9I9ZdgKxfJJ7lNO6vsRtili/IC2mmPZHnPjIOx/dSacDZgaH6taV
-6Maquesc/ZACUf/gLoxYfJieagFcwMZTj3g3DgA9EHWwWxa19MFx2iQjBDMIUh7Q
-CYnpV4DkCmb+UNhGF82gG75Z9dQKlKUeGX+CkzOud4zQOGei4A2zXFVo2704hHHp
-d9jLr7oP6IDPvMvw0Y9E70DcwHRiINWJMjH0dA8DQfeTWBaBaI8=
-=slaJ
------END PGP SIGNATURE-----
-
---=-aTiSFOavqybSiOFpKn2H--
+                Ilya
