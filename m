@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755576AbeDWOel (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 10:34:41 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50128 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755297AbeDWOeJ (ORCPT
+        id S1755517AbeDWOeW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 10:34:22 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36813 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755460AbeDWOeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Apr 2018 10:34:09 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180423143406euoutp01a5170435da97cdb9f2c59af56aad1091~oF0Ir02Kp0294402944euoutp01U
-X-AuditID: cbfec7f5-f95739c0000028a9-5c-5addeedb8a15
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180423143405euoutp027b112f5b943d4d6f9b8a48223de68cb5~oF0HLA9j02196021960euoutp026
+X-AuditID: cbfec7f4-b4fc79c0000043e4-dd-5addeedacfe2
 From: Maciej Purski <m.purski@samsung.com>
 To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Cc: Mark Brown <broonie@kernel.org>, Fabio Estevam <festevam@gmail.com>,
@@ -18,42 +18,42 @@ Cc: Mark Brown <broonie@kernel.org>, Fabio Estevam <festevam@gmail.com>,
         Doug Anderson <dianders@chromium.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v7 5/6] regulator: core: Add voltage balancing mechanism
-Date: Mon, 23 Apr 2018 16:33:41 +0200
-Message-id: <1524494022-22260-6-git-send-email-m.purski@samsung.com>
+Subject: [PATCH v7 3/6] regulator: core: Parse coupled regulators properties
+Date: Mon, 23 Apr 2018 16:33:39 +0200
+Message-id: <1524494022-22260-4-git-send-email-m.purski@samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-reply-to: <1524494022-22260-1-git-send-email-m.purski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsWy7djPc7q3392NMljabGKxccZ6VoupD5+w
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsWy7djPc7q33t2NMui9JmWxccZ6VoupD5+w
         Wcw/co7V4uyyg2wWD6/6W3y70sFkcXnXHDaLBS9vsVisPXKX3WLp9YtMFq17j7Bb7L/i5cDj
-        sWbeGkaPb18nsXjMbrjI4rFz1l12j02rOtk8+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK+P1
-        vplsBd9sKrbfOMTewPhDv4uRg0NCwESia75JFyMXh5DACkaJ119PMEM4nxklvu09yNLFyAlW
-        9H9qMyNEYhmjxPONH6Cc/4wSG25tZgEZxSagJbGmPR6kQUTARuLtjQNgNcwC/cwSk5tawSYJ
-        C3hIdMx/zwxiswioSsw5OJUNxOYVcJH4dug/E8Q2OYmb5zrBajgFXCWWND9gBxkkIbCDTeLh
-        5U+MEEUuEr2L70HZwhKvjm9hh7BlJDo7DkINqpa4+HUXG4RdI9F4ewNUjbXE50lbwBYwC/BJ
-        TNo2nRkSFrwSHW1CECUeEks3zIAa4yhx6HYbC8TDMxgl7lxrZJ3AKLWAkWEVo3hqaXFuemqx
-        cV5quV5xYm5xaV66XnJ+7iZGYGSf/nf86w7GfX+SDjEKcDAq8fDu0L0bJcSaWFZcmXuIUYKD
-        WUmE9+EboBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeOI26KCGB9MSS1OzU1ILUIpgsEwenVAPj
-        DhY/nqVXr3WmH3TetaCM3efcxqSl98V3XU+b9P3SyyUzw36frJmjGP4qS1ruC88cnwjOaa77
-        A9+vDP/IWGq+tuCkv8buDaaqXwtCujYvT2/4JbgqJKjr1Po/tk5i7LGejH81jk2OL7Zx/PUn
-        8Oedl1f3dX8J35ssry24veCMCLeG3ddDH9cGK7EUZyQaajEXFScCABuHRhToAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsVy+t/xy7q33t2NMlj6TMhi44z1rBZTHz5h
+        sWbeGkaPb18nsXjMbrjI4rFz1l12j02rOtk8+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK+Ny
+        6yXmggXuFV2TVjI3MJ607GLk5JAQMJHoXfqOsYuRi0NIYAWjxMzrD5ghnM+MEls33mOFqVoz
+        fSsrRGIZo0THxctsEM5/RonXUw+wdzFycLAJaEmsaY8HaRARsJF4e+MA2FhmgX5miclNrSwg
+        NcICPhL71yeA1LAIqEpsn7cObAGvgIvEgzeHmSGWyUncPNcJZnMKuEosaX7ADjJHQmAPm8Sc
+        Y8cZIYpcJB5tOAplC0u8Or6FHcKWkejsOMgEYVdLXPy6iw3CrpFovL0BqsZa4vOkLWALmAX4
+        JCZtm84McpuEAK9ER5sQRImHxLW3b6Ced5T49KyHCeLfGYwSl3fcY5nAKLWAkWEVo3hqaXFu
+        emqxUV5quV5xYm5xaV66XnJ+7iZGYGSf/nf8yw7GXX+SDjEKcDAq8fDu0L0bJcSaWFZcmXuI
+        UYKDWUmE9+EboBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeOI26KCGB9MSS1OzU1ILUIpgsEwen
+        VAOj6/0fDtJPk1sUnedrt7vFlXSqBLg4nayvObqtk3EO55sNol9E7ml8MuRbN5szJzXA9Yi6
+        4Xw7g2+v46Mjlss+t9CcNeHgwUV5Igc2zWnj9rjC+sxDIozBvq29K8HSU2XdpM/rJs/Zqq0w
+        3eLN/mxuDtGpNz8c97uwLcKf68raM7xzZrZYd71XYinOSDTUYi4qTgQAADGay+gCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsVy+t/xy7o3392NMvh2nM9i44z1rBZTHz5h
         s5h/5ByrxdllB9ksHl71t/h2pYPJ4vKuOWwWC17eYrFYe+Quu8XS6xeZLFr3HmG32H/Fy4HH
-        Y828NYwe375OYvGY3XCRxWPnrLvsHptWdbJ59G1ZxejxeZNcAHsUl01Kak5mWWqRvl0CV8br
-        fTPZCr7ZVGy/cYi9gfGHfhcjJ4eEgInE/6nNjF2MXBxCAksYJV61bGEHSQgJNDJJvG3O7GLk
-        4GAT0JJY0x4PEhYRsJF4e+MAWD2zwERmiYWLr7CCJIQFPCQ65r9nBrFZBFQl5hycygZi8wq4
-        SHw79J8JYpmcxM1znWA1nAKuEkuaH0DtcpHYt28X8wRGngWMDKsYRVJLi3PTc4sN9YoTc4tL
-        89L1kvNzNzECg2/bsZ+bdzBe2hh8iFGAg1GJh3eH7t0oIdbEsuLK3EOMEhzMSiK8D98AhXhT
-        EiurUovy44tKc1KLDzFKc7AoifOeN6iMEhJITyxJzU5NLUgtgskycXBKNTDGLtHpEfrT++zv
-        yU1bOP+cYv0xvXfRVr6Fnm2CdtKLPrwSre3cp7VvCSP/9ll9L+263ylznBSb2miWpXdzkeld
-        vSvsdaFSl70e9s703/donv1Oje8a+5/G69b8rTwy4Y7jXicRYTPdc0ZbPzcVrAsPedO45lGI
-        sosDS0Ot3N7Zd946BR82WrhKiaU4I9FQi7moOBEAa6+hjDoCAAA=
-X-CMS-MailID: 20180423143402eucas1p1c8518c75a68eddaf06d8598e97c6a98f
+        Y828NYwe375OYvGY3XCRxWPnrLvsHptWdbJ59G1ZxejxeZNcAHsUl01Kak5mWWqRvl0CV8bl
+        1kvMBQvcK7omrWRuYDxp2cXIySEhYCKxZvpW1i5GLg4hgSWMErf/PWOBcBqZJJadXcfWxcjB
+        wSagJbGmPR6kQUTARuLtjQOMIDXMAhOZJRYuvsIKUiMs4COxf30CSA2LgKrE9nnrWEFsXgEX
+        iQdvDjNDLJOTuHmuE8zmFHCVWNL8gB3EFgKq2bdvF/MERp4FjAyrGEVSS4tz03OLDfWKE3OL
+        S/PS9ZLzczcxAoNv27Gfm3cwXtoYfIhRgINRiYd3h+7dKCHWxLLiytxDjBIczEoivA/fAIV4
+        UxIrq1KL8uOLSnNSiw8xSnOwKInznjeojBISSE8sSc1OTS1ILYLJMnFwSjUwJm+OvOysnx+5
+        d9drf5W9OvzF+n/Ecx975KWGv759Jn16xbtbh59Mqwx7LPJn5oSVK5kP/Jm+/3v6iYSMaeVs
+        txqUFT+GL9lbkLd08Za9hywTb375efZGTnH9xDm3v9zh2hPMtFnm5eW7B4t9y/83CRSdXr5G
+        fcGK0vUd+YnN188a8qed7O8uSVFiKc5INNRiLipOBADVifikOgIAAA==
+X-CMS-MailID: 20180423143401eucas1p1c80bce784a76eca5c86c2e73c53b34df
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180423143402eucas1p1c8518c75a68eddaf06d8598e97c6a98f
-X-RootMTR: 20180423143402eucas1p1c8518c75a68eddaf06d8598e97c6a98f
+X-CMS-RootMailID: 20180423143401eucas1p1c80bce784a76eca5c86c2e73c53b34df
+X-RootMTR: 20180423143401eucas1p1c80bce784a76eca5c86c2e73c53b34df
 References: <1524494022-22260-1-git-send-email-m.purski@samsung.com>
-        <CGME20180423143402eucas1p1c8518c75a68eddaf06d8598e97c6a98f@eucas1p1.samsung.com>
+        <CGME20180423143401eucas1p1c80bce784a76eca5c86c2e73c53b34df@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,255 +62,309 @@ On Odroid XU3/4 and other Exynos5422 based boards there is a case, that
 different devices on the board are supplied by different regulators
 with non-fixed voltages. If one of these devices temporarily requires
 higher voltage, there might occur a situation that the spread between
-two devices' voltages is so high, that there is a risk of changing
+devices' voltages is so high, that there is a risk of changing
 'high' and 'low' states on the interconnection between devices powered
 by those regulators.
 
-Introduce new function regulator_balance_voltage(), which
-keeps max_spread constraint fulfilled between a group of coupled
-regulators. It should be called if a regulator changes its
-voltage or after disabling or enabling. Disabled regulators should
-follow changes of the enabled ones, but their consumers' demands
-shouldn't be taken into account while calculating voltage of other
-coupled regulators.
+Add new structure "coupling_desc" to regulator_dev, which contains
+pointers to all coupled regulators including the owner of the structure,
+number of coupled regulators and counter of currently resolved
+regulators.
 
-Find voltages, which are closest to suiting all the consumers' demands,
-while fulfilling max_spread constraint, keeping the following rules:
-- if one regulator is about to rise its voltage, rise others
-  voltages in order to keep the max_spread
-- if a regulator, which has caused rising other regulators, is
-  lowered, lower other regulators if possible
-- if one regulator is about to lower its voltage, but it hasn't caused
-  rising other regulators, don't change its voltage if it breaks the
-  max_spread
-
-Change regulators' voltages step by step, keeping max_spread constraint
-fulfilled all the time. Function regulator_get_optimal_voltage()
-should find the best possible change for the regulator, which doesn't
-break max_spread constraint. In function regulator_balance_voltage()
-optimize number of steps by finding highest voltage difference on
-each iteration.
-
-If a regulator, which is about to change its voltage, is not coupled,
-method regulator_get_optimal_voltage() should simply return the lowest
-voltage fulfilling consumers' demands.
-
-Coupling should be checked only if the system is in PM_SUSPEND_ON state.
+Add of_functions to parse all data needed in regulator coupling.
+Provide method to check DTS data consistency. Check if each coupled
+regulator's max_spread is equal and if their lists of regulators match.
 
 Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- drivers/regulator/core.c | 192 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 192 insertions(+)
+ drivers/regulator/internal.h      |  28 ++++++-
+ drivers/regulator/of_regulator.c  | 151 ++++++++++++++++++++++++++++++++++++++
+ include/linux/regulator/driver.h  |  18 +++++
+ include/linux/regulator/machine.h |   4 +
+ 4 files changed, 199 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 82b002e..4f2e9cf 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -105,6 +105,8 @@ static int _notifier_call_chain(struct regulator_dev *rdev,
- 				  unsigned long event, void *data);
- static int _regulator_do_set_voltage(struct regulator_dev *rdev,
- 				     int min_uV, int max_uV);
-+static int regulator_balance_voltage(struct regulator_dev *rdev,
-+				     suspend_state_t state);
- static struct regulator *create_regulator(struct regulator_dev *rdev,
- 					  struct device *dev,
- 					  const char *supply_name);
-@@ -3090,6 +3092,196 @@ static int regulator_set_voltage_unlocked(struct regulator *regulator,
- 	return ret;
+diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
+index abfd56e..485db15 100644
+--- a/drivers/regulator/internal.h
++++ b/drivers/regulator/internal.h
+@@ -63,6 +63,14 @@ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 			         const struct regulator_desc *desc,
+ 				 struct regulator_config *config,
+ 				 struct device_node **node);
++
++struct regulator_dev *of_parse_coupled_regulator(struct regulator_dev *rdev,
++						 int index);
++
++int of_get_n_coupled(struct regulator_dev *rdev);
++
++bool of_check_coupling_data(struct regulator_dev *rdev);
++
+ #else
+ static inline struct regulator_init_data *
+ regulator_of_get_init_data(struct device *dev,
+@@ -72,8 +80,25 @@ regulator_of_get_init_data(struct device *dev,
+ {
+ 	return NULL;
  }
+-#endif
  
-+static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
++static inline struct regulator_dev *
++of_parse_coupled_regulator(struct regulator_dev *rdev,
++			   int index)
 +{
-+	struct coupling_desc *c_desc = &rdev->coupling_desc;
-+	struct regulator_dev **c_rdevs = c_desc->coupled_rdevs;
++	return NULL;
++}
++
++static inline int of_get_n_coupled(struct regulator_dev *rdev)
++{
++	return 0;
++}
++
++static inline bool of_check_coupling_data(struct regulator_dev *rdev)
++{
++	return false;
++}
++
++#endif
+ enum regulator_get_type {
+ 	NORMAL_GET,
+ 	EXCLUSIVE_GET,
+@@ -83,5 +108,4 @@ enum regulator_get_type {
+ 
+ struct regulator *_regulator_get(struct device *dev, const char *id,
+ 				 enum regulator_get_type get_type);
+-
+ #endif
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 0d3f73e..6b09c70 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -139,6 +139,10 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 	if (!of_property_read_u32(np, "regulator-system-load", &pval))
+ 		constraints->system_load = pval;
+ 
++	if (!of_property_read_u32(np, "regulator-coupled-max-spread",
++				  &pval))
++		constraints->max_spread = pval;
++
+ 	constraints->over_current_protection = of_property_read_bool(np,
+ 					"regulator-over-current-protection");
+ 
+@@ -408,3 +412,150 @@ struct regulator_dev *of_find_regulator_by_node(struct device_node *np)
+ 
+ 	return dev ? dev_to_rdev(dev) : NULL;
+ }
++
++/*
++ * Returns number of regulators coupled with rdev.
++ */
++int of_get_n_coupled(struct regulator_dev *rdev)
++{
++	struct device_node *node = rdev->dev.of_node;
++	int n_phandles;
++
++	n_phandles = of_count_phandle_with_args(node,
++						"regulator-coupled-with",
++						NULL);
++
++	return (n_phandles > 0) ? n_phandles : 0;
++}
++
++/* Looks for "to_find" device_node in src's "regulator-coupled-with" property */
++static bool of_coupling_find_node(struct device_node *src,
++				  struct device_node *to_find)
++{
++	int n_phandles, i;
++	bool found = false;
++
++	n_phandles = of_count_phandle_with_args(src,
++						"regulator-coupled-with",
++						NULL);
++
++	for (i = 0; i < n_phandles; i++) {
++		struct device_node *tmp = of_parse_phandle(src,
++					   "regulator-coupled-with", i);
++
++		if (!tmp)
++			break;
++
++		/* found */
++		if (tmp == to_find)
++			found = true;
++
++		of_node_put(tmp);
++
++		if (found)
++			break;
++	}
++
++	return found;
++}
++
++/**
++ * of_check_coupling_data - Parse rdev's coupling properties and check data
++ *			    consistency
++ * @rdev - pointer to regulator_dev whose data is checked
++ *
++ * Function checks if all the following conditions are met:
++ * - rdev's max_spread is greater than 0
++ * - all coupled regulators have the same max_spread
++ * - all coupled regulators have the same number of regulator_dev phandles
++ * - all regulators are linked to each other
++ *
++ * Returns true if all conditions are met.
++ */
++bool of_check_coupling_data(struct regulator_dev *rdev)
++{
 +	int max_spread = rdev->constraints->max_spread;
-+	int n_coupled = c_desc->n_coupled;
-+	int desired_min_uV, desired_max_uV, min_current_uV = INT_MAX;
-+	int max_current_uV = 0, highest_min_uV = 0, target_uV, possible_uV;
-+	int i, ret;
++	struct device_node *node = rdev->dev.of_node;
++	int n_phandles = of_get_n_coupled(rdev);
++	struct device_node *c_node;
++	int i;
++	bool ret = true;
 +
-+	/* If consumers don't provide any demands, set voltage to min_uV */
-+	desired_min_uV = rdev->constraints->min_uV;
-+	desired_max_uV = rdev->constraints->max_uV;
-+	ret = regulator_check_consumers(rdev,
-+					&desired_min_uV,
-+					&desired_max_uV, PM_SUSPEND_ON);
-+	if (ret < 0)
-+		goto out;
-+
-+	/*
-+	 * If there are no coupled regulators, simply set the voltage demanded
-+	 * by consumers.
-+	 */
-+	if (n_coupled == 1) {
-+		ret = desired_min_uV;
-+		goto out;
++	if (max_spread <= 0) {
++		dev_err(&rdev->dev, "max_spread value invalid\n");
++		return false;
 +	}
 +
-+	/* Find highest min desired voltage */
-+	for (i = 0; i < n_coupled; i++) {
-+		int tmp_min = 0;
-+		int tmp_max = INT_MAX;
++	/* iterate over rdev's phandles */
++	for (i = 0; i < n_phandles; i++) {
++		int c_max_spread, c_n_phandles;
 +
-+		if (!_regulator_is_enabled(c_rdevs[i]))
-+			continue;
++		c_node = of_parse_phandle(node,
++					  "regulator-coupled-with", i);
 +
-+		ret = regulator_check_consumers(c_rdevs[i],
-+						&tmp_min,
-+						&tmp_max, PM_SUSPEND_ON);
-+		if (ret < 0)
-+			goto out;
++		if (!c_node)
++			ret = false;
 +
-+		if (tmp_min > highest_min_uV)
-+			highest_min_uV = tmp_min;
-+	}
++		c_n_phandles = of_count_phandle_with_args(c_node,
++							  "regulator-coupled-with",
++							  NULL);
 +
-+	/*
-+	 * Let target_uV be equal to the desired one if possible.
-+	 * If not, set it to minimum voltage, allowed by other coupled
-+	 * regulators.
-+	 */
-+	target_uV = max(desired_min_uV,  highest_min_uV - max_spread);
-+
-+	/*
-+	 * Find min and max voltages, which currently aren't
-+	 * violating max_spread
-+	 */
-+	for (i = 0; i < n_coupled; i++) {
-+		int tmp_act;
-+
-+		/*
-+		 * Don't check the regulator, which is about
-+		 * to change voltage
-+		 */
-+		if (c_rdevs[i] == rdev)
-+			continue;
-+		if (!_regulator_is_enabled(c_rdevs[i]))
-+			continue;
-+
-+		tmp_act = _regulator_get_voltage(c_rdevs[i]);
-+		if (tmp_act < 0) {
-+			ret = tmp_act;
-+			goto out;
++		if (c_n_phandles != n_phandles) {
++			dev_err(&rdev->dev, "number of couped reg phandles mismatch\n");
++			ret = false;
++			goto clean;
 +		}
 +
-+		if (tmp_act < min_current_uV)
-+			min_current_uV = tmp_act;
++		if (of_property_read_u32(c_node, "regulator-coupled-max-spread",
++					 &c_max_spread)) {
++			ret = false;
++			goto clean;
++		}
 +
-+		if (tmp_act > max_current_uV)
-+			max_current_uV = tmp_act;
++		if (c_max_spread != max_spread) {
++			dev_err(&rdev->dev,
++				"coupled regulators max_spread mismatch\n");
++			ret = false;
++			goto clean;
++		}
++
++		if (!of_coupling_find_node(c_node, node)) {
++			dev_err(&rdev->dev, "missing 2-way linking for coupled regulators\n");
++			ret = false;
++		}
++
++clean:
++		of_node_put(c_node);
++		if (!ret)
++			break;
 +	}
 +
-+	/* There aren't any other regulators enabled */
-+	if (max_current_uV == 0) {
-+		possible_uV = target_uV;
-+	} else {
-+		/*
-+		 * Correct target voltage, so as it currently isn't
-+		 * violating max_spread
-+		 */
-+		possible_uV = max(target_uV, max_current_uV - max_spread);
-+		possible_uV = min(possible_uV, min_current_uV + max_spread);
-+	}
-+
-+	if (possible_uV > desired_max_uV) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+	ret = possible_uV;
-+
-+out:
 +	return ret;
 +}
 +
-+static int regulator_balance_voltage(struct regulator_dev *rdev,
-+				     suspend_state_t state)
++/**
++ * of_parse_coupled regulator - Get regulator_dev pointer from rdev's property
++ * @rdev: Pointer to regulator_dev, whose DTS is used as a source to parse
++ *	  "regulator-coupled-with" property
++ * @index: Index in phandles array
++ *
++ * Returns the regulator_dev pointer parsed from DTS. If it has not been yet
++ * registered, returns NULL
++ */
++struct regulator_dev *of_parse_coupled_regulator(struct regulator_dev *rdev,
++						 int index)
 +{
-+	struct regulator_dev **c_rdevs;
-+	struct regulator_dev *best_rdev;
-+	struct coupling_desc *c_desc = &rdev->coupling_desc;
-+	int n_coupled;
-+	int i, best_delta, best_uV, ret = 1;
++	struct device_node *node = rdev->dev.of_node;
++	struct device_node *c_node;
++	struct regulator_dev *c_rdev;
 +
-+	c_rdevs = c_desc->coupled_rdevs;
-+	n_coupled = c_desc->n_coupled;
++	c_node = of_parse_phandle(node, "regulator-coupled-with", index);
++	if (!c_node)
++		return NULL;
 +
-+	/*
-+	 * if system is in a state other than PM_SUSPEND_ON, don't check
-+	 * other coupled regulators
-+	 */
-+	if (state != PM_SUSPEND_ON)
-+		n_coupled = 1;
++	c_rdev = of_find_regulator_by_node(c_node);
 +
-+	/*
-+	 * Find the best possible voltage change on each loop. Leave the loop
-+	 * if there isn't any possible change.
-+	 */
-+	while (1) {
-+		best_delta = 0;
-+		best_uV = 0;
-+		best_rdev = NULL;
++	of_node_put(c_node);
 +
-+		/*
-+		 * Find highest difference between optimal voltage
-+		 * and current voltage.
-+		 */
-+		for (i = 0; i < n_coupled; i++) {
-+			/*
-+			 * optimal_uV is the best voltage that can be set for
-+			 * i-th regulator at the moment without violating
-+			 * max_spread constraint in order to balance
-+			 * the coupled voltages.
-+			 */
-+			int optimal_uV, current_uV;
-+
-+			optimal_uV = regulator_get_optimal_voltage(c_rdevs[i]);
-+			if (optimal_uV < 0) {
-+				ret = optimal_uV;
-+				goto out;
-+			}
-+
-+			current_uV = _regulator_get_voltage(c_rdevs[i]);
-+			if (current_uV < 0) {
-+				ret = optimal_uV;
-+				goto out;
-+			}
-+
-+			if (abs(best_delta) < abs(optimal_uV - current_uV)) {
-+				best_delta = optimal_uV - current_uV;
-+				best_rdev = c_rdevs[i];
-+				best_uV = optimal_uV;
-+			}
-+		}
-+
-+		/* Nothing to change, return successfully */
-+		if (!best_rdev) {
-+			ret = 0;
-+			goto out;
-+		}
-+
-+		/*
-+		 * Lock just the supply regulators, as the regulator itself
-+		 * is already locked by regulator_lock_coupled().
-+		 */
-+		if (best_rdev->supply)
-+			regulator_lock_supply(best_rdev->supply->rdev);
-+
-+		ret = regulator_set_voltage_rdev(best_rdev, best_uV,
-+						 best_uV, state);
-+		if (best_rdev->supply)
-+			regulator_unlock_supply(best_rdev->supply->rdev);
-+
-+		if (ret < 0)
-+			goto out;
-+	}
-+
-+out:
-+	return ret;
++	return c_rdev;
 +}
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 659a031..dae6106 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -15,6 +15,8 @@
+ #ifndef __LINUX_REGULATOR_DRIVER_H_
+ #define __LINUX_REGULATOR_DRIVER_H_
+ 
++#define MAX_COUPLED		4
 +
- /**
-  * regulator_set_voltage - set regulator output voltage
-  * @regulator: regulator source
+ #include <linux/device.h>
+ #include <linux/notifier.h>
+ #include <linux/regulator/consumer.h>
+@@ -407,6 +409,20 @@ struct regulator_config {
+ };
+ 
+ /*
++ * struct coupling_desc
++ *
++ * Describes coupling of regulators. Each regulator should have
++ * at least a pointer to itself in coupled_rdevs array.
++ * When a new coupled regulator is resolved, n_resolved is
++ * incremented.
++ */
++struct coupling_desc {
++	struct regulator_dev *coupled_rdevs[MAX_COUPLED];
++	int n_resolved;
++	int n_coupled;
++};
++
++/*
+  * struct regulator_dev
+  *
+  * Voltage / Current regulator class device. One for each
+@@ -429,6 +445,8 @@ struct regulator_dev {
+ 	/* lists we own */
+ 	struct list_head consumer_list; /* consumers we supply */
+ 
++	struct coupling_desc coupling_desc;
++
+ 	struct blocking_notifier_head notifier;
+ 	struct mutex mutex; /* consumer lock */
+ 	struct task_struct *mutex_owner;
+diff --git a/include/linux/regulator/machine.h b/include/linux/regulator/machine.h
+index 93a0489..3468703 100644
+--- a/include/linux/regulator/machine.h
++++ b/include/linux/regulator/machine.h
+@@ -103,6 +103,7 @@ struct regulator_state {
+  * @ilim_uA: Maximum input current.
+  * @system_load: Load that isn't captured by any consumer requests.
+  *
++ * @max_spread: Max possible spread between coupled regulators
+  * @valid_modes_mask: Mask of modes which may be configured by consumers.
+  * @valid_ops_mask: Operations which may be performed by consumers.
+  *
+@@ -154,6 +155,9 @@ struct regulation_constraints {
+ 
+ 	int system_load;
+ 
++	/* used for coupled regulators */
++	int max_spread;
++
+ 	/* valid regulator operating modes for this machine */
+ 	unsigned int valid_modes_mask;
+ 
 -- 
 2.7.4
