@@ -1,62 +1,63 @@
-Return-Path: <jrdr.linux@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524477601; cv=none;
+Return-Path: <rjw@rjwysocki.net>
+X-Google-Smtp-Source: AB8JxZr2aCxhcNlYVHTIN/PBLGGuDD8NjxbdI/jPUGy642+lBQFA3/9cnjU5Rd+89z00UZXHxjKd
+ARC-Seal: i=1; a=rsa-sha256; t=1524475105; cv=none;
         d=google.com; s=arc-20160816;
-        b=pz6evdbVH7PSoHZ2I3W6OFIY6G6PJzUoqJXUrCJ9gY2jRiXkQBJ+NeD7ui4hZjWc0R
-         +ES+psW4ZfHIPl5AO3utvdPabG1LHhxP+cbYgRLfF36Ny8pCt+vPjtOlGnE47TEFAcRY
-         tmDFSy/WsS3cOG7ouDpVY+5Qrv+lwA3+q0DJ/ksBuVvAPqslqIwOlcPtBP1PgiO3F1Sq
-         x4QbvRcD96i7M5FO9oDP5T0RbpgHZEi6H4sI9lM+Jq2gGCfkEJQaAfyRWk5twJsZvt+S
-         sFUV/RWbvQKznf3gRGuRQSkOLsuZ48aIhrGjyqKGs2oD8sn1UNWcGJUeHflqwqXTshYU
-         1bTA==
+        b=zz/xM9ne7gy2adLpUr2wgfieFTOfOXV3DIObcB0l+63OS3f9I7aXRF44ROa2P1+VWI
+         fE33f4Ml15aFiUoUsk9M9A8kOeKO7lM17TZk7wcJMNlGj6QB9ZRV8IIxNVBIIYowWzaI
+         tryJAIfYq7xUgrjoy7ccuVJbR1B8rPzKYDUvHso2LgGN8MnRsQiONEWag/V2gNi1OLkG
+         Bgl9Guwmf4o3kr2zVr7LyWK1+uZTn2mde7cjuIfjZU9Q4O93y8J2SyHjQhsfyhJ54qa4
+         +a3ioq6oeGbZlbgGlxVto6jdNuY9iDvCuRWkMw9K7xc2BoQgNI14z1g59ikFEoIKgs5c
+         vEXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=YqY7mCr1ZEsu/NYIMD8o24TBYSwImbTbqkdNvEFGWlo=;
-        b=lQcJdJRwZOKo3jZHwF+L/wv+dROkCRRsH3qDNYqK3CcrwTnr51sBccYbmbfyuq26SV
-         r4CL/43syBqzhk3Q0E9GfWMI50pWfijWX9GSRIL9Fg1eGSZa2Fg7HdNSoOkL0oKMNkXc
-         MBc2VDneW9xlUxYOrtVtKsasS/tWcLysDwXLG4ljCd5uxCFUV1Akxykdmafl+7n6KHiz
-         Cd+uFaizKyyCwr2L/DkafzE+NUcYODHfXKnc08VkV2BijPwUCkQINCT+IHBBhSQbZ40J
-         9j/IJum53sLB650wrlBSBlTianm6/m0VXBUiw7Q2VLWrMm9Iy8EHuMFEx0CEukwg472k
-         kkNg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=Wie9kD3kqGR2vgmWQ0h79wnUBH+RAkLjfeuXrfX6mkA=;
+        b=UuIgZjRZZk34MXS0NSVgWHqGIMxpCYXPXUP3BrFdnqIsZdhQEMze9zy4do7qbzaH+c
+         Sylsck/18qmocr+z1A800fc7Pu4TlW/Sgr6+AFT0TjSb+cidSYOfE6QdpCf8eefNaUtX
+         wDKYyc9gDfE1TnB7MpOdTD+frEUaxsfhFsI5kUKDctqrzCWHUj7lpOjW1/v3Rk0BPD6b
+         +xnhcrVDTPLH5PJKLcC7IpREYehsACOv7+TbE18U9AGMHnG/12ICIGw9B0B6UMl2pvM9
+         2KNM7wcIb4VLsecaa56w69K0jhifim1vzoFLsk65K1ndf0BkLDnBNRayvh2blWsYWTOY
+         lxGA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=KddB+tPM;
-       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=KddB+tPM;
-       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx487PBBAeH9dCVGBjU/yix9IDt+JUiIo3qDcDRRyD7m/8WhBKglPEZhg5GQ22Xzdh3sEd6/lz423sDu8yRxIBYs=
+       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFC 1/2] PM / wakeup: Add callback for wake-up change notification
+Date: Mon, 23 Apr 2018 11:18:17 +0200
+Message-ID: <1792056.cK5O20Fh4U@aspire.rjw.lan>
+In-Reply-To: <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
+References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be> <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20180423091812.GB14322@kroah.com>
-References: <20180416151121.GA26791@jordon-HP-15-Notebook-PC> <20180423091812.GB14322@kroah.com>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Mon, 23 Apr 2018 15:30:00 +0530
-Message-ID: <CAFqt6zZc50b6oeJhau0=-winrqsnxrKjFB7gFLxgwQqp70Dh5A@mail.gmail.com>
-Subject: Re: [PATCH] android: binder: Change return type to vm_fault_t
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: arve@android.com, tkjos@android.com, maco@android.com,
-	devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597915915131087032?=
-X-GMAIL-MSGID: =?utf-8?q?1598530625185226040?=
+X-GMAIL-THRID: =?utf-8?q?1594912192574352449?=
+X-GMAIL-MSGID: =?utf-8?q?1598528007640207502?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 2:48 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Mon, Apr 16, 2018 at 08:41:21PM +0530, Souptick Joarder wrote:
->> Use new return type vm_fault_t for fault handler
->> in struct vm_operations_struct. For now, this is
->> just documenting that the function returns a
->> VM_FAULT value rather than an errno.  Once all
->> instances are converted, vm_fault_t will become
->> a distinct type.
->>
->> Reference commit id->
->> 1c8f422059ae5da07db7406ab916203f9417e396
->
-> As you know, that is not how you reference git commit ids.  Please fix
-> up and resend.
+First, sorry for the huge delay.
 
-Sure, I will send v2.
+On Wednesday, March 14, 2018 12:26:24 PM CEST Geert Uytterhoeven wrote:
+> Add a callback to inform a device that his wake-up setting has been
+> changed.  This allows a device to synchronize device configuration with
+> an external user action.
+> 
+> E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
+> switch, the system suspend procedure is:
+>   1. Configure PMIC for DDR backup mode, which changes the role of the
+>      accessory power switch from a power to a wake-up switch,
+>   2. Switch accessory power switch off, to prepare for system suspend,
+>   3. Suspend system.
+> 
+> Hence step 1 cannot be done in the PMIC's suspend callback,
+
+I don't quite understand this, so can you please explain?
+
+What can't it be done from ->prepare() or even from a suspend notifier?
+
+> but it can be done in the new callback, in response to the user writing "enabled"
+> to the PMIC's wakeup virtual file in sysfs.
