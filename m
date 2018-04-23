@@ -1,64 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754523AbeDWIst (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 04:48:49 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:43427 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754261AbeDWIsp (ORCPT
+        id S1754563AbeDWIsw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 04:48:52 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:48828 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754312AbeDWIsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:48:45 -0400
-X-Google-Smtp-Source: AIpwx49zbmyvDTOwxFnuRU5dGFEAcZAkR3C/o4+2AjFOw0FNl+9mRAJ6z5nKJolo3W9okI2vAQoxuHAjWBcHfvZN4y8=
+        Mon, 23 Apr 2018 04:48:46 -0400
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Mon, 23 Apr 2018 09:48:39 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        "Richard Fitzgerald" <rf@opensource.cirrus.com>
+Subject: Re: [PATCH 03/18 v2] regulator: arizona-ldo1: Look up a descriptor
+ and pass to the core
+Message-ID: <20180423084839.hs5vrlgo4gzttuj3@localhost.localdomain>
+References: <20180422230742.3729-1-linus.walleij@linaro.org>
+ <20180422230742.3729-3-linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <S1753929AbeDWBDQ/20180423010320Z+1320@vger.kernel.org>
-References: <S1753929AbeDWBDQ/20180423010320Z+1320@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 23 Apr 2018 10:48:44 +0200
-X-Google-Sender-Auth: WYAkvzFgv57qfTmQdQcbt8s1H4Y
-Message-ID: <CAK8P3a2Qt3AO_FF_J8px9KoCoNGkPrn-+k1aj-xrySb-0wYx0Q@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Fix off-by-one calendar month
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sam Creasey <sammy@sammy.net>, linux-m68k@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180422230742.3729-3-linus.walleij@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=554 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1804230096
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 3:02 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+On Mon, Apr 23, 2018 at 01:07:27AM +0200, Linus Walleij wrote:
+> Instead of passing a global GPIO number, pass a descriptor looked
+> up with the standard devm_gpiod_get_optional() call.
+> 
+> We have augmented the GPIO core to look up the regulator special
+> GPIO "wlf,ldoena" in commit 6a537d48461d
+> "gpio: of: Support regulator nonstandard GPIO properties".
+> 
+> Cc: patches@opensource.cirrus.com
+> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  static struct arizona_pdata wm5102_reva_pdata = {
+> -	.ldo1 = {
+> -		.ldoena = S3C64XX_GPN(7),
+> -	},
+>  	.gpio_base = CODEC_GPIO_BASE,
+>  	.irq_flags = IRQF_TRIGGER_HIGH,
+>  	.micd_pol_gpio = CODEC_GPIO_BASE + 4,
+> @@ -237,10 +235,16 @@ static struct spi_board_info wm5102_reva_spi_devs[] = {
+>  	},
+>  };
+>  
+> -static struct arizona_pdata wm5102_pdata = {
+> -	.ldo1 = {
+> -		.ldoena = S3C64XX_GPN(7),
+> +static struct gpiod_lookup_table wm5102_reva_gpiod_table = {
+> +	.dev_id = "spi0.1", /* SPI device name */
+> +	.table = {
+> +		GPIO_LOOKUP("GPION", 7,
+> +			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
 
-> diff --git a/arch/m68k/kernel/time.c b/arch/m68k/kernel/time.c
-> index 97dd4e26f234..6b4389a6e8ea 100644
-> --- a/arch/m68k/kernel/time.c
-> +++ b/arch/m68k/kernel/time.c
-> @@ -74,17 +74,17 @@ static irqreturn_t timer_interrupt(int irq, void *dummy)
->  void read_persistent_clock(struct timespec *ts)
->  {
->         struct rtc_time time;
+This should be wlf,ldoena.
+
+> +		{ },
+>  	},
+> +};
 > +
->         ts->tv_sec = 0;
->         ts->tv_nsec = 0;
->
-> -       if (mach_hwclk) {
-> -               mach_hwclk(0, &time);
-> +       if (!mach_hwclk)
-> +               return;
+> +static struct arizona_pdata wm5102_pdata = {
+>  	.gpio_base = CODEC_GPIO_BASE,
+>  	.irq_flags = IRQF_TRIGGER_HIGH,
+>  	.micd_pol_gpio = CODEC_GPIO_BASE + 2,
+> @@ -264,6 +268,15 @@ static struct spi_board_info wm5102_spi_devs[] = {
+>  	},
+>  };
+>  
+> +static struct gpiod_lookup_table wm5102_gpiod_table = {
+> +	.dev_id = "spi0.1", /* SPI device name */
+> +	.table = {
+> +		GPIO_LOOKUP("GPION", 7,
+> +			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
+> +		{ },
+> +	},
+> +};
 > +
-> +       mach_hwclk(0, &time);
->
-> -               if ((time.tm_year += 1900) < 1970)
-> -                       time.tm_year += 100;
-> -               ts->tv_sec = mktime(time.tm_year, time.tm_mon, time.tm_mday,
-> -                                     time.tm_hour, time.tm_min, time.tm_sec);
-> -       }
-> +       ts->tv_sec = mktime(time.tm_year + 1900, time.tm_mon + 1, time.tm_mday,
-> +                           time.tm_hour, time.tm_min, time.tm_sec);
->  }
 
-This clashes with a patch I had planned to submit today, but otherwise
-looks correct and. I'll respin my patch on top of yours. Since I've taken
-a good look at your changes in the meantime
+Might as well share the same lookup table between the revs since
+it is identical.
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-
-      Arnd
+Thanks,
+Charles
