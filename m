@@ -1,154 +1,82 @@
-Return-Path: <robert.jarzmik@free.fr>
-X-Google-Smtp-Source: AIpwx48gKoHIRmCdO/zdB8qwCddvUDEVoRQwp/3YNUfAjafLqxNaPQY/IVz7Mtljkl3GtA2FZkok
-ARC-Seal: i=1; a=rsa-sha256; t=1522679244; cv=none;
+Return-Path: <Yixun.Lan@amlogic.com>
+X-Google-Smtp-Source: AIpwx49lYA00/o3uZeDQwcbtpwni6obR+XPza4oLSz3uXAQ5PCDuEAD4/n7wsyyV+uta/4Vho3XX
+ARC-Seal: i=1; a=rsa-sha256; t=1524471911; cv=none;
         d=google.com; s=arc-20160816;
-        b=GOHEZiQyrZgM5mneb1P0MpbSRlis+eddopqPfiflaQMed2aGlmnuuVHGLDj3GZrJai
-         MA+oYRusp160Q3GoItsFNYXaIs+9f2tL76bG5IwCrq+RdvV+2apPkUC8oj7pL2ra51/G
-         zNBKkCw4LdAGHhVJIW91aFj7UL2VlSmozPXOAkwD2p6uKRtMq+Ouj6lzTkGAcRfGDc2j
-         jqZq75AYLst+ZJeecE5kn9wa3SgK35jmQUx07eB1EIf3ESgLkUEcouYv+hSpDf+RQnbe
-         QMwSPlpOHikyGp8WCH2RKH/Kkjt9wUQAyMHCq/MYZzVsJpKW7pf4XvhImQ4x3Ue8e0Rr
-         tkCg==
+        b=JMfNs1NSjg9z6f63A3OuMdrzXl/XFKjsEIGdmD1pR+OCUoJoQlrblzvd0NVo1EOVeC
+         h6Ieglr8LwDkU8x7Qzt0dQJKvjsWoSBQSLVkZBthOdc4Pn8bzLJb4fUcWdnW8zd0OGFA
+         85tyYzV7VHY0mcyL2lNsKjOYYR/TNIR3oZyD0qSI8WJU+LgzfHnzKFaBbldaMOxWmuMv
+         AK1i0CWTPJ6dzAimTa3fS15/YkbuYC2mEDmttIQGnMY3KVI4smgus8P/H6msXfK7FXLz
+         2zTyIF2YZWXdpw8s1ZgRB+pQTAgybjYdQlOhZRxyLmoNBjDOPay7N2gIqrEY0VqZlHao
+         kQBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=mime-version:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=R+fIo5AiLSnOjA8pHLvSCJCdg1AM/tXohm5XhgjVeGk=;
-        b=PUup6W6el3Ztd3XHSl7E//g/LXmy82yqugF9Zn+EvWKmTLnp3ZNYBVjWcJKDb5EsYx
-         em1sjR9vfF83t51odlTv+sy5LksynzZ4EJAB2uLsU1pijh7JnFccUvhn0sze9qwRMEnI
-         Z8v2FycnudQFKr63sHjDbekLPMD7mtoHAHXg04c9P0Vz7fxEjEy/iMTzJonpgcO8ao0r
-         cWMSfJToANzrOSSPRwT0Xlb0MtySbwE/gSAKDE1ExDr3cN8Rni+2JtDoPr6QjYGFkcxJ
-         0kREZIm8xEwcbLHf+xrm72G4wrYxf7WcgU6RsYRyFLtcJdkcgV/FWAsgiCeMVsAVxwYW
-         9AGg==
+        bh=qBLWo8lfO1H67mzQI+XjcU9PuVP2DmrbkRIKckCrOZY=;
+        b=ectngq9q7L8gZqL3JUSoCHQT2eq3Mzj3eIufqKjEOcRsKBz3dHp7SCG/DQKKSM0VXp
+         WzW5+OmHAtcYH1dPAKf/o6Gu/2uGZa8tOKRsCz8zVRtoiTOZZiemorV8Ethx8vxA+jKi
+         GxXWKTq6o1xWTTyQoS+1FOrDBGNNX1u5PZLx1sO99f8Lxx7MD+OSkIU6t81dzLMP0wU1
+         2+3owkwLZZ1aQTJug0RReD7X051Mn0y1x1lQHHGjK7k15TYSiopLkK+UexeeHXNaNGUY
+         eA3WmQgIAV2VkBzFtR0b4r0zDJaf8AiZZCkkahc1yNOPj9OM+cTMw+BW9MI9AP35psfe
+         7F+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of robert.jarzmik@free.fr) smtp.mailfrom=robert.jarzmik@free.fr
+       spf=pass (google.com: domain of yixun.lan@amlogic.com designates 58.32.228.45 as permitted sender) smtp.mailfrom=Yixun.Lan@amlogic.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of robert.jarzmik@free.fr) smtp.mailfrom=robert.jarzmik@free.fr
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Mon, 02 Apr 2018 16:27:24 +0200
-X-ME-IP: 86.201.130.131
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Tejun Heo <tj@kernel.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Richard Weinberger <richard@nod.at>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Samuel Ortiz <samuel@sortiz.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	netdev@vger.kernel.org,
-	devel@driverdev.osuosl.org,
-	alsa-devel@alsa-project.org
-Subject: [PATCH 01/15] dmaengine: pxa: use a dma slave map
-Date: Mon,  2 Apr 2018 16:26:42 +0200
-Message-Id: <20180402142656.26815-2-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180402142656.26815-1-robert.jarzmik@free.fr>
-References: <20180402142656.26815-1-robert.jarzmik@free.fr>
+       spf=pass (google.com: domain of yixun.lan@amlogic.com designates 58.32.228.45 as permitted sender) smtp.mailfrom=Yixun.Lan@amlogic.com
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>, Neil Armstrong <narmstrong@baylibre.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Kate Stewart <kstewart@linuxfoundation.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] dt-bindings: reset: fix invalid SPDX license identifier
+Date: Mon, 23 Apr 2018 16:25:12 +0000
+Message-ID: <20180423162513.4564-1-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.250]
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596644911523217790?=
-X-GMAIL-MSGID: =?utf-8?q?1596644911523217790?=
+X-GMAIL-THRID: =?utf-8?q?1598521231346509320?=
+X-GMAIL-MSGID: =?utf-8?q?1598524659181350978?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In order to remove the specific knowledge of the dma mapping from PXA
-drivers, add a default slave map for pxa architectures.
+This fix invalid SPDX license indentifier, also move it to
+first top line according to documentation.
 
-This won't impact MMP architecture, but is aimed only at all PXA boards.
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1804222108120.6136@nanos.tec.linutronix.de
+Fixes: c16292578ffa ("dt-bindings: reset: Add bindings for the Meson-AXG SoC Reset Controller")
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 
-This is the first step, and once all drivers are converted,
-pxad_filter_fn() will be made static, and the DMA resources removed from
-device.c.
-
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Reported-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/dma/pxa_dma.c                 | 10 +++++++++-
- include/linux/platform_data/mmp_dma.h |  4 ++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ Change since v1 at [1]:
+  - update the Link URL
+  - add Thomas' Reviewed-by
 
-diff --git a/drivers/dma/pxa_dma.c b/drivers/dma/pxa_dma.c
-index b53fb618bbf6..9505334f9c6e 100644
---- a/drivers/dma/pxa_dma.c
-+++ b/drivers/dma/pxa_dma.c
-@@ -179,6 +179,8 @@ static unsigned int pxad_drcmr(unsigned int line)
- 	return 0x1000 + line * 4;
- }
- 
-+bool pxad_filter_fn(struct dma_chan *chan, void *param);
-+
+[1] https://lkml.kernel.org/r/20180423152907.5113-1-yixun.lan@amlogic.com
+---
+ include/dt-bindings/reset/amlogic,meson-axg-reset.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/dt-bindings/reset/amlogic,meson-axg-reset.h b/include/dt-bindings/reset/amlogic,meson-axg-reset.h
+index ad6f55dabd6d..4a8e52f68fb7 100644
+--- a/include/dt-bindings/reset/amlogic,meson-axg-reset.h
++++ b/include/dt-bindings/reset/amlogic,meson-axg-reset.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
  /*
-  * Debug fs
+  *
+  * Copyright (c) 2016 BayLibre, SAS.
+@@ -5,8 +6,6 @@
+  *
+  * Copyright (c) 2017 Amlogic, inc.
+  * Author: Yixun Lan <yixun.lan@amlogic.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR BSD)
   */
-@@ -1396,9 +1398,10 @@ static int pxad_probe(struct platform_device *op)
- {
- 	struct pxad_device *pdev;
- 	const struct of_device_id *of_id;
-+	const struct dma_slave_map *slave_map = NULL;
- 	struct mmp_dma_platdata *pdata = dev_get_platdata(&op->dev);
- 	struct resource *iores;
--	int ret, dma_channels = 0, nb_requestors = 0;
-+	int ret, dma_channels = 0, nb_requestors = 0, slave_map_cnt = 0;
- 	const enum dma_slave_buswidth widths =
- 		DMA_SLAVE_BUSWIDTH_1_BYTE   | DMA_SLAVE_BUSWIDTH_2_BYTES |
- 		DMA_SLAVE_BUSWIDTH_4_BYTES;
-@@ -1429,6 +1432,8 @@ static int pxad_probe(struct platform_device *op)
- 	} else if (pdata && pdata->dma_channels) {
- 		dma_channels = pdata->dma_channels;
- 		nb_requestors = pdata->nb_requestors;
-+		slave_map = pdata->slave_map;
-+		slave_map_cnt = pdata->slave_map_cnt;
- 	} else {
- 		dma_channels = 32;	/* default 32 channel */
- 	}
-@@ -1440,6 +1445,9 @@ static int pxad_probe(struct platform_device *op)
- 	pdev->slave.device_prep_dma_memcpy = pxad_prep_memcpy;
- 	pdev->slave.device_prep_slave_sg = pxad_prep_slave_sg;
- 	pdev->slave.device_prep_dma_cyclic = pxad_prep_dma_cyclic;
-+	pdev->slave.filter.map = slave_map;
-+	pdev->slave.filter.mapcnt = slave_map_cnt;
-+	pdev->slave.filter.fn = pxad_filter_fn;
  
- 	pdev->slave.copy_align = PDMA_ALIGNMENT;
- 	pdev->slave.src_addr_widths = widths;
-diff --git a/include/linux/platform_data/mmp_dma.h b/include/linux/platform_data/mmp_dma.h
-index d1397c8ed94e..6397b9c8149a 100644
---- a/include/linux/platform_data/mmp_dma.h
-+++ b/include/linux/platform_data/mmp_dma.h
-@@ -12,9 +12,13 @@
- #ifndef MMP_DMA_H
- #define MMP_DMA_H
- 
-+struct dma_slave_map;
-+
- struct mmp_dma_platdata {
- 	int dma_channels;
- 	int nb_requestors;
-+	int slave_map_cnt;
-+	const struct dma_slave_map *slave_map;
- };
- 
- #endif /* MMP_DMA_H */
+ #ifndef _DT_BINDINGS_AMLOGIC_MESON_AXG_RESET_H
 -- 
-2.11.0
+2.17.0
