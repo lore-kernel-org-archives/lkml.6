@@ -1,98 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932517AbeDWRwk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 13:52:40 -0400
-Received: from h2.hallyn.com ([78.46.35.8]:58726 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932204AbeDWRwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 13:52:35 -0400
-Date: Mon, 23 Apr 2018 12:52:33 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>, teg@jklm.no,
-        Stephen Smalley <sds@tycho.nsa.gov>, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com,
-        davem@davemloft.net, netdev@vger.kernel.org
-Subject: Re: [PATCH 0/3] Introduce LSM-hook for socketpair(2)
-Message-ID: <20180423175233.GA4284@mail.hallyn.com>
-References: <20180423133015.5455-1-dh.herrmann@gmail.com>
+        id S932515AbeDWRw6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 13:52:58 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:25857 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932342AbeDWRwi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 13:52:38 -0400
+X-Authority-Reason: nr=8
+Date: Mon, 23 Apr 2018 12:52:35 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 11/11] vsp1_rwpf: fix potential Spectre variant 1
+Message-ID: <54ddd5303a6964e1295a4f5d009e683810fc3c18.1524499368.git.gustavo@embeddedor.com>
+References: <cover.1524499368.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180423133015.5455-1-dh.herrmann@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <cover.1524499368.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.48.65
+X-Source-L: No
+X-Exim-ID: 1fAfdk-0009D4-AF
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.145.48.65]:49630
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 72
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting David Herrmann (dh.herrmann@gmail.com):
-> Hi
-> 
-> This series adds a new LSM hook for the socketpair(2) syscall. The idea
-> is to allow SO_PEERSEC to be called on AF_UNIX sockets created via
-> socketpair(2), and return the same information as if you emulated
-> socketpair(2) via a temporary listener socket. Right now SO_PEERSEC
-> will return the unlabeled credentials for a socketpair, rather than the
-> actual credentials of the creating process.
-> 
-> A simple call to:
-> 
->     socketpair(AF_UNIX, SOCK_STREAM, 0, out);
-> 
-> can be emulated via a temporary listener socket bound to a unique,
-> random name in the abstract namespace. By connecting to this listener
-> socket, accept(2) will return the second part of the pair. If
-> SO_PEERSEC is queried on these, the correct credentials of the creating
-> process are returned. A simple comparison between the behavior of
-> SO_PEERSEC on socketpair(2) and an emulated socketpair is included in
-> the dbus-broker test-suite [1].
-> 
-> This patch series tries to close this gap and makes both behave the
-> same. A new LSM-hook is added which allows LSMs to cache the correct
-> peer information on newly created socket-pairs.
-> 
-> Apart from fixing this behavioral difference, the dbus-broker project
-> actually needs to query the credentials of socketpairs, and currently
-> must resort to racy procfs(2) queries to get the LSM credentials of its
-> controller socket. Several parts of the dbus-broker project allow you
-> to pass in a socket during execve(2), which will be used by the child
-> process to accept control-commands from its parent. One natural way to
-> create this communication channel is to use socketpair(2). However,
-> right now SO_PEERSEC does not return any useful information, hence, the
-> child-process would need other means to retrieve this information. By
-> avoiding socketpair(2) and using the hacky-emulated version, this is not
-> an issue.
-> 
-> There was a previous discussion on this matter [2] roughly a year ago.
-> Back then there was the suspicion that proper SO_PEERSEC would confuse
-> applications. However, we could not find any evidence backing this
-> suspicion. Furthermore, we now actually see the contrary. Lack of
-> SO_PEERSEC makes it a hassle to use socketpairs with LSM credentials.
-> Hence, we propose to implement full SO_PEERSEC for socketpairs.
-> 
-> This series only adds SELinux backends, since that is what we need for
-> RHEL. I will gladly extend the other LSMs if needed.
-> 
-> Thanks
-> David
-> 
-> [1] https://github.com/bus1/dbus-broker/blob/master/src/util/test-peersec.c
-> [2] https://www.spinics.net/lists/selinux/msg22674.html
-> 
-> David Herrmann (3):
->   security: add hook for socketpair(AF_UNIX, ...)
->   net/unix: hook unix_socketpair() into LSM
->   selinux: provide unix_stream_socketpair callback
-> 
->  include/linux/lsm_hooks.h |  8 ++++++++
->  include/linux/security.h  |  7 +++++++
->  net/unix/af_unix.c        |  5 +++++
->  security/security.c       |  6 ++++++
->  security/selinux/hooks.c  | 14 ++++++++++++++
->  5 files changed, 40 insertions(+)
+code->index can be controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Makes sense to me, thanks.
+Smatch warning:
+drivers/media/platform/vsp1/vsp1_rwpf.c:47 vsp1_rwpf_enum_mbus_code() warn: potential spectre issue 'codes'
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+Fix this by sanitizing code->index before using it to index
+codes.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/media/platform/vsp1/vsp1_rwpf.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.c b/drivers/media/platform/vsp1/vsp1_rwpf.c
+index cfd8f19..6e887be 100644
+--- a/drivers/media/platform/vsp1/vsp1_rwpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rwpf.c
+@@ -13,6 +13,8 @@
+ 
+ #include <media/v4l2-subdev.h>
+ 
++#include <linux/nospec.h>
++
+ #include "vsp1.h"
+ #include "vsp1_rwpf.h"
+ #include "vsp1_video.h"
+@@ -44,6 +46,7 @@ static int vsp1_rwpf_enum_mbus_code(struct v4l2_subdev *subdev,
+ 	if (code->index >= ARRAY_SIZE(codes))
+ 		return -EINVAL;
+ 
++	code->index = array_index_nospec(code->index, ARRAY_SIZE(codes));
+ 	code->code = codes[code->index];
+ 
+ 	return 0;
+-- 
+2.7.4
