@@ -1,71 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758082AbeDXNqr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:46:47 -0400
-Received: from narfation.org ([79.140.41.39]:36000 "EHLO v3-1039.vlinux.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933680AbeDXNpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:45:47 -0400
-From: Sven Eckelmann <sven@narfation.org>
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Antonio Quartulli <a@unstable.cc>,
-        "David S. Miller" <davem@davemloft.net>,
-        b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] batman-adv: fix batadv_interface_tx()'s return type
-Date: Tue, 24 Apr 2018 15:45:43 +0200
-Message-ID: <2333740.P7S8BcYFuH@bentobox>
-User-Agent: KMail/5.2.3 (Linux/4.14.0-0.bpo.3-amd64; KDE/5.28.0; x86_64; ; )
-In-Reply-To: <20180424131847.5469-1-luc.vanoostenryck@gmail.com>
-References: <20180424131847.5469-1-luc.vanoostenryck@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart7028284.oJHuMbyaZl"; micalg="pgp-sha512"; protocol="application/pgp-signature"
+        id S1758231AbeDXNsg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:48:36 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:49533 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933613AbeDXNpA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:45:00 -0400
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
+Subject: [PATCH v7 1/9] bindings: PCI: designware: Example update
+Date: Tue, 24 Apr 2018 14:44:38 +0100
+Message-Id: <7807d123c8232c54a82aac5cb7b1738bfb0df169.1524577064.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart7028284.oJHuMbyaZl
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers,
+however it still be compatible with any previous DT that uses the old
+reg-name.
 
-On Dienstag, 24. April 2018 15:18:46 CEST Luc Van Oostenryck wrote:
-[...]
-> -static int batadv_interface_tx(struct sk_buff *skb,
-> +static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
->  			       struct net_device *soft_iface)
->  {
->  	struct ethhdr *ethhdr;
-> 
+Replaces the PCIe base address example by a real PCIe base address in use.
 
-CHECK: Alignment should match open parenthesis
-#76: FILE: net/batman-adv/soft-interface.c:192:
-+static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
-                               struct net_device *soft_iface)
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes v1->v2:
+ - Removed any iATU reference or changes to avoid confusion.
+ - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
+Changes v2->v3:
+ - Nothing changed, just to follow the patch set version.
+Changes v3->v4:
+ - Reverted "snps,dw-pcie-rc" compatible string requested by Rob Herring.
+Changes v4->v5:
+ - Nothing changed, just to follow the patch set version.
+Changes v5->v6:
+ - Nothing changed, just to follow the patch set version.
+Changes v6->v7:
+ - Nothing changed, just to follow the patch set version.
 
-Kind regards,
-	Sven
---nextPart7028284.oJHuMbyaZl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+ Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlrfNQcACgkQXYcKB8Em
-e0ZD+A/9GMc5rOQAuWEhpa8dh3fpczfJ7E3JM30mEMbUR7+VEyW7/v3YJoIdIa9D
-xPgdy847X8i7NXrfDbbIsp1XDBXrqjOiz5WAa7sBXEFCj3ZAOLXdKpuicCRp4H5W
-xhGbOGcKCAjkvRYSVBtGjebTHmIlsCM87AUAR/ADuNrOVrAwzbNxPUFGTyyoxfpb
-f689dU5z3C3+s3Lflq3m1H/xOpBfpdbg5Ip/ZsTVFeePJGlee6oWW6VqM99hGb/H
-9cLc810PpacMQB337Lf68cNDU+m43rV0mSm+vw3HyC+ZVPDu1vxiLVZ4VZYzf1BK
-OvHU84mYQMOVIJDHC4BW+1fFcF5JBSk2cDkQ5fmTXZzcGfdL0CjlCoOCmcP7mzal
-JjXJNBc1w/KtaR9zjVe+MIp+ZJi0zJbmWQ5+51pEiXICTok4rNekii7lcklMIeoI
-z4ehD2J/rah47KGk6I/lEg1RcN77MkdyoT7RLcqCuO68jY9inMT992pDkWAxyc9Q
-tR+JkT6E22jC//opaxD4D4QGaJlVkuMxKLWfP90ETU7zG4eVW2J0WnP+1xWkZZWa
-yuVVs9eCgZWUPmMXpWbXdKWZFNlCOwSoca6tQFXTyXpxyIQQJnQDxmhfMdgHGgmj
-f17GctIlA7q+lUdhbdddFCGTJzTxzcn/hc3t/k5/Vojy/B+ySpU=
-=jB6s
------END PGP SIGNATURE-----
-
---nextPart7028284.oJHuMbyaZl--
+diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+index 1da7ade..7f9804d 100644
+--- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+@@ -1,7 +1,8 @@
+ * Synopsys DesignWare PCIe interface
+ 
+ Required properties:
+-- compatible: should contain "snps,dw-pcie" to identify the core.
++- compatible:
++	"snps,dw-pcie" for RC mode;
+ - reg: Should contain the configuration address space.
+ - reg-names: Must be "config" for the PCIe configuration space.
+     (The old way of getting the configuration address space from "ranges"
+@@ -41,11 +42,11 @@ EP mode:
+ 
+ Example configuration:
+ 
+-	pcie: pcie@dffff000 {
++	pcie: pcie@dfc00000 {
+ 		compatible = "snps,dw-pcie";
+-		reg = <0xdffff000 0x1000>, /* Controller registers */
+-		      <0xd0000000 0x2000>; /* PCI config space */
+-		reg-names = "ctrlreg", "config";
++		reg = <0xdfc00000 0x0001000>, /* IP registers */
++		      <0xd0000000 0x0002000>; /* Configuration space */
++		reg-names = "dbi", "config";
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+ 		device_type = "pci";
+@@ -54,5 +55,4 @@ Example configuration:
+ 		interrupts = <25>, <24>;
+ 		#interrupt-cells = <1>;
+ 		num-lanes = <1>;
+-		num-viewport = <3>;
+ 	};
+-- 
+2.7.4
