@@ -1,105 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeDXRio (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:38:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46809 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751460AbeDXRil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:38:41 -0400
-Date: Tue, 24 Apr 2018 11:38:36 -0600
-From: Michal Hocko <mhocko@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v3] kvmalloc: always use vmalloc if CONFIG_DEBUG_SG
-Message-ID: <20180424173836.GR17484@dhcp22.suse.cz>
-References: <20180421144757.GC14610@bombadil.infradead.org>
- <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
- <20180423151545.GU17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424125121.GA17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424162906.GM17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424170349.GQ17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
+        id S1752504AbeDXRlS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:41:18 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35230 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750757AbeDXRlQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 13:41:16 -0400
+Date: Tue, 24 Apr 2018 18:41:11 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Collins <collinsd@codeaurora.org>
+Cc: Stephen Boyd <swboyd@chromium.org>, lgirdwood@gmail.com,
+        mark.rutland@arm.com, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rnayak@codeaurora.org, ilina@codeaurora.org
+Subject: Re: [PATCH 1/2] regulator: add QCOM RPMh regulator driver
+Message-ID: <20180424174111.GH22073@sirena.org.uk>
+References: <cover.1521246069.git.collinsd@codeaurora.org>
+ <71fab82672524b95632cdb588c16edfc9711866a.1521246069.git.collinsd@codeaurora.org>
+ <152165924074.91116.13025068669916027026@swboyd.mtv.corp.google.com>
+ <493c1f5d-df99-ca68-0f90-a7937a696f5d@codeaurora.org>
+ <152411734938.46528.9676451637772936597@swboyd.mtv.corp.google.com>
+ <20180419120813.GD27188@sirena.org.uk>
+ <38f42537-f801-115a-4120-1344a67a0462@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="17/8oYur5Y32USnW"
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
+In-Reply-To: <38f42537-f801-115a-4120-1344a67a0462@codeaurora.org>
+X-Cookie: Take your Senator to lunch this week.
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-04-18 13:28:49, Mikulas Patocka wrote:
-> 
-> 
-> On Tue, 24 Apr 2018, Michal Hocko wrote:
-> 
-> > On Tue 24-04-18 13:00:11, Mikulas Patocka wrote:
-> > > 
-> > > 
-> > > On Tue, 24 Apr 2018, Michal Hocko wrote:
-> > > 
-> > > > On Tue 24-04-18 11:50:30, Mikulas Patocka wrote:
-> > > > > 
-> > > > > 
-> > > > > On Tue, 24 Apr 2018, Michal Hocko wrote:
-> > > > > 
-> > > > > > On Mon 23-04-18 20:06:16, Mikulas Patocka wrote:
-> > > > > > [...]
-> > > > > > > @@ -404,6 +405,12 @@ void *kvmalloc_node(size_t size, gfp_t f
-> > > > > > >  	 */
-> > > > > > >  	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-> > > > > > >  
-> > > > > > > +#ifdef CONFIG_DEBUG_SG
-> > > > > > > +	/* Catch bugs when the caller uses DMA API on the result of kvmalloc. */
-> > > > > > > +	if (!(prandom_u32_max(2) & 1))
-> > > > > > > +		goto do_vmalloc;
-> > > > > > > +#endif
-> > > > > > 
-> > > > > > I really do not think there is anything DEBUG_SG specific here. Why you
-> > > > > > simply do not follow should_failslab path or even reuse the function?
-> > > > > 
-> > > > > CONFIG_DEBUG_SG is enabled by default in RHEL and Fedora debug kernel (if 
-> > > > > you don't like CONFIG_DEBUG_SG, pick any other option that is enabled 
-> > > > > there).
-> > > > 
-> > > > Are you telling me that you are shaping a debugging functionality basing
-> > > > on what RHEL has enabled? And you call me evil. This is just rediculous.
-> > > > 
-> > > > > Fail-injection framework is if off by default and it must be explicitly 
-> > > > > enabled and configured by the user - and most users won't enable it.
-> > > > 
-> > > > It can be enabled easily. And if you care enough for your debugging
-> > > > kernel then just make it enabled unconditionally.
-> > > 
-> > > So, should we add a new option CONFIG_KVMALLOC_FALLBACK_DEFAULT? I'm not 
-> > > quite sure if 3 lines of debugging code need an extra option, but if you 
-> > > don't want to reuse any existing debug option, it may be possible. Adding 
-> > > it to the RHEL debug kernel would be trivial.
-> > 
-> > Wouldn't it be equally trivial to simply enable the fault injection? You
-> > would get additional failure paths testing as a bonus.
-> 
-> The RHEL and Fedora debugging kernels are compiled with fault injection. 
-> But the fault-injection framework will do nothing unless it is enabled by 
-> a kernel parameter or debugfs write.
-> 
-> Most users don't know about the fault injection kernel parameters or 
-> debugfs files and won't enabled it. We need a CONFIG_ option to enable it 
-> by default in the debugging kernels (and we could add a kernel parameter 
-> to override the default, fine-tune the fallback probability etc.)
 
-If it is a real issue to install the debugging kernel with the required
-kernel parameter then I a config option for the default on makes sense
-to me.
--- 
-Michal Hocko
-SUSE Labs
+--17/8oYur5Y32USnW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Apr 20, 2018 at 12:28:21PM -0700, David Collins wrote:
+> On 04/19/2018 05:08 AM, Mark Brown wrote:
+
+> > This doesn't sound like what the min_dropout_uV constraint is intended
+> > to handle - that's there for the regulator driver (not constraints) to
+> > indicate how much headroom the regulator needs in the supply voltage in
+> > order to provide regulation.  It's not something the regulator uses,
+> > it's something that gets fed into voltage requests made on the supply of
+> > the regulator which I can't see that the hardware is going to be able to
+> > handle unaided.
+
+> RPMh hardware enforces the requested minimum headroom voltage for all
+> regulators with a parent.  It has full knowledge of the parent-child
+> connections of regulators on the board (as programmed by the bootloader).
+> It automatically reconfigures the parent voltage when needed as a result
+> of requests changing the voltage of any of its child regulators.
+
+If the hardware has full knowledge of all these constraints and enforces
+them transparently then why does the kernel care that it's doing that?
+Doesn't it defeat the point of it doing all this stuff if we have to
+know about it?
+
+> > Ideally future versions of the RPM will have improved interfaces,
+> > there's a bunch of problems like this :(
+
+> Do you have a preference for qcom,regulator-initial-microvolt vs a generic
+> framework supported regulator-initial-microvolt property for configuring a
+> specific voltage at registration time?  We'll need to have support for one
+> or the other in order for the qcom_rpmh-regulator driver to be functional.
+
+This is basically specific to Qualcomm, I can't off hand think of any
+other devices with similar issues.
+
+> > Yes, constraints that specify a single voltage are done by setting min
+> > and max to the same value.  fixed_uV is *only* for regulators that have
+> > a physically fixed voltage.
+
+> XOB managed regulators physically cannot change voltage.  Therefore, do
+> you agree that it is reasonable to use fixed_uV for them?  Note that I
+> removed init_data->constraints.apply_uV manipulation in version 2 of this
+> patch.
+
+If these regulators can't change voltage then surely we know what
+voltage they have without needing it to be specified in DT?
+
+--17/8oYur5Y32USnW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrfbDYACgkQJNaLcl1U
+h9Cufwf8DKt2VxymLwg5FehUKHJfKGDmmKX/slyzbnJvnx551yP4dfGyDDakVpmX
+PwO8eaxHMezYNhc0itCZt4HGUnU2mBtOjRdkN8qM08K7sgWNoL7sK0Tl5xWiaq7h
+PsaRiSb4i7iBG4QGa7z8Q7bqRqFS1xiFwwjGA9ljkrB3b7+v5kIj2Ylhx0MQQ8VB
+S2dWZlEUz8dSTPLGjBSakFVhtCNs375iqWOYwXowkue1FsxZyn0cCObDrbJAEaBh
+4EcuhIuSTkPbXeMNIQZjY3IwdRGy9OeftiVppWzUY2uUn0CGKOCW63tSoQAoj4AT
+rLTfKf2CLxpa3KQ5Av6IA4YFNkmNjg==
+=hSGr
+-----END PGP SIGNATURE-----
+
+--17/8oYur5Y32USnW--
