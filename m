@@ -1,47 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932794AbeDXCpJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 22:45:09 -0400
-Received: from genki.is ([159.203.135.224]:33092 "EHLO genki.is"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932721AbeDXCpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 22:45:05 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 genki.is CC46F40040
-Content-Type: text/plain; charset="utf-8"
+        id S932787AbeDXCr3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 22:47:29 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:33797 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932721AbeDXCrZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 22:47:25 -0400
+X-Google-Smtp-Source: AIpwx48604eZ24+8/1R5NQdCK2wxHjxZbW7ooAgbIHboH8MipHJwwD6VjHoJGV4xGNVMZ6JrcH63cg==
+Date: Mon, 23 Apr 2018 19:47:22 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Mikulas Patocka <mpatocka@redhat.com>
+cc: Michal Hocko <mhocko@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v3] kvmalloc: always use vmalloc if CONFIG_DEBUG_SG
+In-Reply-To: <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+Message-ID: <alpine.DEB.2.21.1804231945410.58980@chino.kir.corp.google.com>
+References: <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com> <20180418.134651.2225112489265654270.davem@davemloft.net> <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com> <20180420130852.GC16083@dhcp22.suse.cz> <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180420210200.GH10788@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180421144757.GC14610@bombadil.infradead.org> <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com> <20180423151545.GU17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-To: David Herrmann <dh.herrmann@gmail.com>
-From: Genki Sky <sky@genki.is>
-In-Reply-To: <2580c734d38041e984215ccc522a4f2d@genki.is>
-Cc: linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com>
- <2580c734d38041e984215ccc522a4f2d@genki.is>
-Message-ID: <cef78d739d29410cb73072e9792598a7@genki.is>
-User-Agent: alot
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock BOOTTIME
-Date: Mon, 23 Apr 2018 22:45:04 -0400
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3O2jBoZ027244
 
-Quoting Genki Sky (2018/04/23 20:40:36 -0400)
-> I came across this thread for same reason as [0]: Daemons getting
-> killed by systemd on resume (after >WatchdogSec seconds of
-> suspending). I'm using master branch of systemd and the kernel. As
-> mentioned, systemd uses CLOCK_MONOTONIC, originally expecting it to
-> not include suspend time.
->
-> Correct me if I'm mistaken, but I don't see the ambiguity of whether
-> this patch series breaks systemd. If it's implemented correctly, you'd
-> hope it *would* break it!
+On Mon, 23 Apr 2018, Mikulas Patocka wrote:
 
-This sounded a little weak on re-reading, sorry. So, I just confirmed
-that after booting a "git revert -m 1 680014d6d1da", the issue no
-longer appears. (I.e., a suspend for >WatchDog sec doesn't result in
-any daemon getting killed).
+> The kvmalloc function tries to use kmalloc and falls back to vmalloc if
+> kmalloc fails.
+> 
+> Unfortunatelly, some kernel code has bugs - it uses kvmalloc and then
+> uses DMA-API on the returned memory or frees it with kfree. Such bugs were
+> found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
+> code.
+> 
+> These bugs are hard to reproduce because kvmalloc falls back to vmalloc
+> only if memory is fragmented.
+> 
+> In order to detect these bugs reliably I submit this patch that changes
+> kvmalloc to fall back to vmalloc with 1/2 probability if CONFIG_DEBUG_SG
+> is turned on. CONFIG_DEBUG_SG is used, because it makes the DMA API layer
+> verify the addresses passed to it, and so the user will get a reliable
+> stacktrace.
+> 
 
-Let me know if I can help in any way.
+Why not just do it unconditionally?  Sounds better than "50% of the time 
+this will catch bugs".
+
+> Some bugs (such as buffer overflows) are better detected
+> with kmalloc code, so we must test the kmalloc path too.
+> 
+> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> 
+> ---
+>  mm/util.c |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> Index: linux-2.6/mm/util.c
+> ===================================================================
+> --- linux-2.6.orig/mm/util.c	2018-04-23 00:12:05.000000000 +0200
+> +++ linux-2.6/mm/util.c	2018-04-23 17:57:02.000000000 +0200
+> @@ -14,6 +14,7 @@
+>  #include <linux/hugetlb.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/userfaultfd_k.h>
+> +#include <linux/random.h>
+>  
+>  #include <asm/sections.h>
+>  #include <linux/uaccess.h>
+> @@ -404,6 +405,12 @@ void *kvmalloc_node(size_t size, gfp_t f
+>  	 */
+>  	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+>  
+> +#ifdef CONFIG_DEBUG_SG
+> +	/* Catch bugs when the caller uses DMA API on the result of kvmalloc. */
+> +	if (!(prandom_u32_max(2) & 1))
+> +		goto do_vmalloc;
+> +#endif
+> +
+>  	/*
+>  	 * We want to attempt a large physically contiguous block first because
+>  	 * it is less likely to fragment multiple larger blocks and therefore
+> @@ -427,6 +434,9 @@ void *kvmalloc_node(size_t size, gfp_t f
+>  	if (ret || size <= PAGE_SIZE)
+>  		return ret;
+>  
+> +#ifdef CONFIG_DEBUG_SG
+> +do_vmalloc:
+> +#endif
+
+You can just do
+
+do_vmalloc: __maybe_unused
+
+>  	return __vmalloc_node_flags_caller(size, node, flags,
+>  			__builtin_return_address(0));
+>  }
+> 
+> 
