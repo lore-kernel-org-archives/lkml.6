@@ -1,63 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932711AbeDXAtj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 20:49:39 -0400
-Received: from genki.is ([159.203.135.224]:32942 "EHLO genki.is"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932635AbeDXAti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 20:49:38 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 genki.is E5D6040040
-Content-Type: text/plain; charset="utf-8"
+        id S932729AbeDXAzC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 20:55:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49188 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932635AbeDXAzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 20:55:00 -0400
+Subject: Re: [RFC v2] virtio: support packed ring
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, wexu@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jfreimann@redhat.com
+References: <20180401141216.8969-1-tiwei.bie@intel.com>
+ <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
+ <20180423092908.77rii3gi7dcaf7o6@debian>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <e08c55df-6ea2-cf7f-d7c9-91e55913ab16@redhat.com>
+Date: Tue, 24 Apr 2018 08:54:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-To: David Herrmann <dh.herrmann@gmail.com>
-From: Genki Sky <sky@genki.is>
-In-Reply-To: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com>
-Cc: linux-kernel@vger.kernel.org
-References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com>
-Message-ID: <2580c734d38041e984215ccc522a4f2d@genki.is>
-User-Agent: alot
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock BOOTTIME
-Date: Mon, 23 Apr 2018 20:40:36 -0400
+In-Reply-To: <20180423092908.77rii3gi7dcaf7o6@debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3O0njni023190
 
-  Hello,
 
-I came across this thread for same reason as [0]: Daemons getting
-killed by systemd on resume (after >WatchdogSec seconds of
-suspending). I'm using master branch of systemd and the kernel. As
-mentioned, systemd uses CLOCK_MONOTONIC, originally expecting it to
-not include suspend time.
 
-Correct me if I'm mistaken, but I don't see the ambiguity of whether
-this patch series breaks systemd. If it's implemented correctly, you'd
-hope it *would* break it!
+On 2018年04月23日 17:29, Tiwei Bie wrote:
+> On Mon, Apr 23, 2018 at 01:42:14PM +0800, Jason Wang wrote:
+>> On 2018年04月01日 22:12, Tiwei Bie wrote:
+>>> Hello everyone,
+>>>
+>>> This RFC implements packed ring support for virtio driver.
+>>>
+>>> The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
+>>> by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
+>>> Minor changes are needed for the vhost code, e.g. to kick the guest.
+>>>
+>>> TODO:
+>>> - Refinements and bug fixes;
+>>> - Split into small patches;
+>>> - Test indirect descriptor support;
+>>> - Test/fix event suppression support;
+>>> - Test devices other than net;
+>>>
+>>> RFC v1 -> RFC v2:
+>>> - Add indirect descriptor support - compile test only;
+>>> - Add event suppression supprt - compile test only;
+>>> - Move vring_packed_init() out of uapi (Jason, MST);
+>>> - Merge two loops into one in virtqueue_add_packed() (Jason);
+>>> - Split vring_unmap_one() for packed ring and split ring (Jason);
+>>> - Avoid using '%' operator (Jason);
+>>> - Rename free_head -> next_avail_idx (Jason);
+>>> - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+>>> - Some other refinements and bug fixes;
+>>>
+>>> Thanks!
+>>>
+>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+>>> ---
+>>>    drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
+>>>    include/linux/virtio_ring.h        |    8 +-
+>>>    include/uapi/linux/virtio_config.h |   12 +-
+>>>    include/uapi/linux/virtio_ring.h   |   61 ++
+>>>    4 files changed, 980 insertions(+), 195 deletions(-)
+>>>
+>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+>>> index 71458f493cf8..0515dca34d77 100644
+>>> --- a/drivers/virtio/virtio_ring.c
+>>> +++ b/drivers/virtio/virtio_ring.c
+>>> @@ -58,14 +58,15 @@
+>> [...]
+>>
+>>> +
+>>> +	if (vq->indirect) {
+>>> +		u32 len;
+>>> +
+>>> +		desc = vq->desc_state[head].indir_desc;
+>>> +		/* Free the indirect table, if any, now that it's unmapped. */
+>>> +		if (!desc)
+>>> +			goto out;
+>>> +
+>>> +		len = virtio32_to_cpu(vq->vq.vdev,
+>>> +				      vq->vring_packed.desc[head].len);
+>>> +
+>>> +		BUG_ON(!(vq->vring_packed.desc[head].flags &
+>>> +			 cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_INDIRECT)));
+>> It looks to me spec does not force to keep VRING_DESC_F_INDIRECT here. So we
+>> can safely remove this BUG_ON() here.
+>>
+>>> +		BUG_ON(len == 0 || len % sizeof(struct vring_packed_desc));
+>> Len could be ignored for used descriptor according to the spec, so we need
+>> remove this BUG_ON() too.
+> Yeah, you're right! The BUG_ON() isn't right. I'll remove it.
+> And I think something related to this in the spec isn't very
+> clear currently.
+>
+> In the spec, there are below words:
+>
+> https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L272
+> """
+> In descriptors with VIRTQ_DESC_F_INDIRECT set VIRTQ_DESC_F_WRITE
+> is reserved and is ignored by the device.
+> """
+>
+> So when device writes back an used descriptor in this case,
+> device may not set the VIRTQ_DESC_F_WRITE flag as the flag
+> is reserved and should be ignored.
+>
+> https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L170
+> """
+> Element Length is reserved for used descriptors without the
+> VIRTQ_DESC_F_WRITE flag, and is ignored by drivers.
+> """
+>
+> And this is the way how driver ignores the `len` in an used
+> descriptor.
+>
+> https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L241
+> """
+> To increase ring capacity the driver can store a (read-only
+> by the device) table of indirect descriptors anywhere in memory,
+> and insert a descriptor in the main virtqueue (with \field{Flags}
+> bit VIRTQ_DESC_F_INDIRECT on) that refers to a buffer element
+> containing this indirect descriptor table;
+> """
+>
+> So the indirect descriptors in the table are read-only by
+> the device. And the only descriptor which is writeable by
+> the device is the descriptor in the main virtqueue (with
+> Flags bit VIRTQ_DESC_F_INDIRECT on). So if we ignore the
+> `len` in this descriptor, we won't be able to get the
+> length of the data written by the device.
+>
+> So I think the `len` in this descriptor will carry the
+> length of the data written by the device (if the buffers
+> are writable to the device) even if the VIRTQ_DESC_F_WRITE
+> isn't set by the device. How do you think?
 
-As a random end user, I see three options to get suspend/resume
-working again on my laptop:
+Yes I think so. But we'd better need clarification from Michael.
 
-(A) Change systemd to keep track of the difference between
-CLOCK_MONOTONIC and CLOCK_MONOTONIC_ACTIVE, using their difference via
-clock_gettime(). This seems to be what the author of this patch series
-intends (?).
+>
+>
+>> The reason is we don't touch descriptor ring in the case of split, so
+>> BUG_ON()s may help there.
+>>
+>>> +
+>>> +		for (j = 0; j < len / sizeof(struct vring_packed_desc); j++)
+>>> +			vring_unmap_one_packed(vq, &desc[j]);
+>>> +
+>>> +		kfree(desc);
+>>> +		vq->desc_state[head].indir_desc = NULL;
+>>> +	} else if (ctx) {
+>>> +		*ctx = vq->desc_state[head].indir_desc;
+>>> +	}
+>>> +
+>>> +out:
+>>> +	return vq->desc_state[head].num;
+>>> +}
+>>> +
+>>> +static inline bool more_used_split(const struct vring_virtqueue *vq)
+>>>    {
+>>>    	return vq->last_used_idx != virtio16_to_cpu(vq->vq.vdev, vq->vring.used->idx);
+>>>    }
+>>> +static inline bool more_used_packed(const struct vring_virtqueue *vq)
+>>> +{
+>>> +	u16 last_used, flags;
+>>> +	bool avail, used;
+>>> +
+>>> +	if (vq->vq.num_free == vq->vring_packed.num)
+>>> +		return false;
+>>> +
+>>> +	last_used = vq->last_used_idx;
+>>> +	flags = virtio16_to_cpu(vq->vq.vdev,
+>>> +				vq->vring_packed.desc[last_used].flags);
+>>> +	avail = flags & VRING_DESC_F_AVAIL(1);
+>>> +	used = flags & VRING_DESC_F_USED(1);
+>>> +
+>>> +	return avail == used;
+>>> +}
+>> This looks interesting, spec said:
+>>
+>> "
+>> Thus VIRTQ_DESC_F_AVAIL and VIRTQ_DESC_F_USED bits are different for an
+>> available descriptor and
+>> equal for a used descriptor.
+>> Note that this observation is mostly useful for sanity-checking as these are
+>> necessary but not sufficient
+>> conditions - for example, all descriptors are zero-initialized. To detect
+>> used and available descriptors it is
+>> possible for drivers and devices to keep track of the last observed value of
+>> VIRTQ_DESC_F_USED/VIRTQ_-
+>> DESC_F_AVAIL. Other techniques to detect
+>> VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
+>> might also be possible.
+>> "
+>>
+>> So it looks to me it was not sufficient, looking at the example codes in
+>> spec, do we need to track last seen used_wrap_counter here?
+> I don't think we have to track used_wrap_counter in
+> driver. There was a discussion on this:
+>
+> https://lists.oasis-open.org/archives/virtio-dev/201802/msg00177.html
+>
+> And after that, below sentence was added (it's also
+> in the above words you quoted):
+>
+> """
+> Other techniques to detect
+> VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
+> might also be possible.
+> """
+>
+> Best regards,
+> Tiwei Bie
 
-(B) Implement timerfd_*(2) for CLOCK_MONOTONIC_ACTIVE in the kernel.
-Do a sed s/CLOCK_MONOTONIC/&_ACTIVE in systemd source code.
+I see, the extra condition "if (vq->vq.num_free == 
+vq->vring_packed.num)" help in this case.
 
-(C) Do a 90% reverting of this patch series. Just introduce
-CLOCK_MONOTONIC_ACTIVE as the "what you should use", document and
-publicize this fact, and sometime in the future (monotonically
-speaking :) finally unify CLOCK_MONOTONIC and CLOCK_BOOTTIME.
+Thanks
 
-Thoughts?
-
-Also, agreed, the missing break in do_clock_gettime() should be fixed,
-as David mentioned in [1]. Is someone already patching this?
-
-[0]: http://lkml.kernel.org/r/CANq1E4Tf27FJHTrO4ZVtWhYK=DLmwzszK=njOpgXZZXqzAOunA@mail.gmail.com
-[1]: http://lkml.kernel.org/r/CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com
-
-  Genki
+>
+>> Thanks
