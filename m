@@ -1,61 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756970AbeDXLvo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 07:51:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50449 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756556AbeDXLvl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 07:51:41 -0400
-From: Colin King <colin.king@canonical.com>
-To: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
-        netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mlxsw: spectrum_switchdev: remove duplicated check on multicast_enable
-Date: Tue, 24 Apr 2018 12:51:39 +0100
-Message-Id: <20180424115139.21134-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1757121AbeDXLxZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 07:53:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44668 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751476AbeDXLxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 07:53:22 -0400
+Date: Tue, 24 Apr 2018 13:53:11 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 3/7] ARM: dts: sun8i: h2-plus: Sort dtb entries in
+ Makefile
+Message-ID: <20180424115311.5s5p5ryyswq7xmat@flea>
+References: <20180424113424.13196-1-wens@csie.org>
+ <20180424113424.13196-4-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="h55geail6mxujuov"
+Content-Disposition: inline
+In-Reply-To: <20180424113424.13196-4-wens@csie.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The check on bridge_port->bridge_device->multicast_enable is performed
-twice in two nested if statements. I can't see any reason for this, the
-second check is redundant and can be removed.
+--h55geail6mxujuov
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Detected by cppcheck:
-drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c:1722]:
-(warning) Identical inner 'if' condition is always true.
+On Tue, Apr 24, 2018 at 07:34:20PM +0800, Chen-Yu Tsai wrote:
+> The dtb entry for the Banana Pi M2 Zero in the device tree makefile
+> somehow ended up in between two Orange Pi boards.
+>=20
+> Move it so the list is properly sorted.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-index c11c9a635866..989ed19e25c9 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -1719,12 +1719,9 @@ __mlxsw_sp_port_mdb_del(struct mlxsw_sp_port *mlxsw_sp_port,
- 	int err;
- 
- 	if (bridge_port->bridge_device->multicast_enabled) {
--		if (bridge_port->bridge_device->multicast_enabled) {
--			err = mlxsw_sp_port_smid_set(mlxsw_sp_port, mid->mid,
--						     false);
--			if (err)
--				netdev_err(dev, "Unable to remove port from SMID\n");
--		}
-+		err = mlxsw_sp_port_smid_set(mlxsw_sp_port, mid->mid, false);
-+		if (err)
-+			netdev_err(dev, "Unable to remove port from SMID\n");
- 	}
- 
- 	err = mlxsw_sp_port_remove_from_mid(mlxsw_sp_port, mid);
--- 
-2.17.0
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--h55geail6mxujuov
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrfGqYACgkQ0rTAlCFN
+r3Q1jA/+J4xTm5B8V5zBadHxzetyfHtaQhX1C5aF6TxRUvYlxsovcCd51nMay0B/
+CKbwjAob9oL2NpN/9wQlrPID9pQKOeNS/Y3X4YANcDk6d0uQNzLydZ8Dq7aDHwaK
+WiHXgUk/yqzvI9q0JGS0YjpAPXbAby/jYj1thhsGs0LCLIeVuoPl+dgLSSIRw/Kp
+x6w7SfRYD51vyGmPHjeRYTpg2c3coqDGwbYXhYMmkp0mMglTmY55QbROnHoN9Ux1
+mqAVaXZW2q09ftC1OIbvMx/LiNUYzzlLJMw4Unr+S+gJ3KxSOrvUGLQUR9NAfN7b
+1qv6trROOE/fzVq5k8qvcRoKv9A5/L3mmoZ8MgP25t4XgLyopP553uvnHzbU9+O2
+TCrUxoeaUvkfPd/BDIqOJz03PrlpNkxl4kT0PHaAeHV1Pen3nnBc3356zUCctypL
+Cg5cJusE4wT//ehSPdoFicvOUx2UeZ284LKKlSt6Slm52raOVA5ns/J+nEJuml8i
+fr7SykL7kkqpGQ4bN+fX658wxMW3yQb+/Tp7xsDZ/UJf+G2hCjS6ct4PbfB3Lvfx
+995A1Awpgq4/zAFDX/z49fPK2ClbMrI2kx+eIrHOFIt5oEqwWAm+Fa7wqH50br37
+4bS+j6sB+S8Ff9+9Pv6S/y5vocW2K55twJwvbPJCobfSzs721D0=
+=6XcU
+-----END PGP SIGNATURE-----
+
+--h55geail6mxujuov--
