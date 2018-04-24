@@ -1,124 +1,153 @@
-Return-Path: <b.zolnierkie@samsung.com>
-X-Google-Smtp-Source: AIpwx4/y7L3UZichjs82k4/tgjmpNabwSpl3yO8F29BCTNVAL3+wKdyNPAP9f7eux9SQnj4X0j71
-ARC-Seal: i=1; a=rsa-sha256; t=1524652958; cv=none;
-        d=google.com; s=arc-20160816;
-        b=a9NE6B0bEEO/d3TBj1mzA5iMYYjBUZzI0IORptaq9671C52GO7oudiUI114IZ3cuFJ
-         TaTBP8o0HwwBdWVgxKPcbyA9QubieNqXwF7K+GV5PZ3Xyb1c1XCddks0Kr8iHLQlR8AB
-         ivFn5xCq0Blxh1gQS5MSJM9hO3JQVgzZGodZ5QDVSCA8uToBgt9Ox5Tp4VzU0RMMdqOf
-         DWgWTJIzriJhiRtDMPjTK9msU7eI5/ErDPKurWfkTYmDmMrhaIbuGbYxFrhlA3Drphnm
-         ekaQFjands77tYpG/GPf57HbcIABpk6HAb79E2ZC1jvYsTkj7PdsDYHa6J7l/3+l+lza
-         vifQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:cms-type:content-transfer-encoding:mime-version
-         :in-reply-to:user-agent:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=LrUugWA73u8WdDGLLyppDHocZ7T6xSzQeQRmblPyrAI=;
-        b=Vfsxr35vPDH8k2Qnf0zCvI12bYMcOhsHw9mgk97Sejegd3++QNn0+DVOdou+Nxq2N7
-         j1nGeqE7YebirEt8XKoF0/jhr7MnIGdDRQO2h8+NgKzb92uANusoCkyiiygK94PlncLZ
-         es0i9QA+oGe1MfKlQ9t2raWim+ic0+7aA43XuFu/MRxSJFk32CePFqh/QEeKoEXlq3gN
-         DTBB7rhSidJY+IYnPttn3dJ2TtkBCWUeB4pEkMyEHfmfMmo35ggWfS9EpaavV0XK+dm+
-         cp7JgNKOlddPock54HLGQWXSNJ4zXfQlEiVamHVvmkxZ78fGgX8jlZ/yUHxbv0D1nwub
-         4WKg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=YsJhjhwn;
-       spf=pass (google.com: domain of b.zolnierkie@samsung.com designates 210.118.77.12 as permitted sender) smtp.mailfrom=b.zolnierkie@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=YsJhjhwn;
-       spf=pass (google.com: domain of b.zolnierkie@samsung.com designates 210.118.77.12 as permitted sender) smtp.mailfrom=b.zolnierkie@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180425104232euoutp0212dbcd701346013696f407eab390c405~op8hbSfKL2875428754euoutp02X
-X-AuditID: cbfec7f5-b45ff700000028a9-7b-5ae05b97e90d
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
-	Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester
-	Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J.
- Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang
-	Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell
-	King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus
-	Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark
-	Brown <broonie@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Greg
-	Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org, linux
-	-gpio@vger.kernel.org, linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC 06/10] thermal: samsung: Remove support for Exynos5440
-Date: Wed, 25 Apr 2018 12:42:28 +0200
-Message-ID: <2298900.1CNNTOno1l@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-Reply-To: <20180424203239.21885-7-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUyTVxTefT/u+7au+rayeAfbjB2asai4uJmb6ZZFx3LZYuKvResH68Y7
-	dINqWnFjP5yOIBUdYMXgwAkRtFqRj1q1xVIjlCK4UAvSsmVFBDajlTjHx1gFXduXZv65ec45
-	z3Oec04uT6v+gIn8Dt1uUa/TZquhnLns+de7rHzzoGbFNZca10zdo/CMycPhY3dHIA6M32Nx
-	lbs78tz2szi/pgHihx3lFO4PH2BxyXCIxl5vI4fLps0Utg5HKI8PD7D4YtU0wMaZcYA99iEK
-	9zafgHjsRzfAx70uCu9//CuHT50poHHrsRaAL7iDHD4d8FHY15WGuwJjEP9ys4fFBS1uDo/c
-	LYa47WEhi5/6mxhc+uQWxGFzO8CW5ohF0wT5IJnUnawDpNfvo8mTsAmQR/0FHAnU/k0TR0WQ
-	IzXO+xSxWg5C8rvfCcm1n+s4crH2e3L7xg8seeTqg8TWV8iQyuAUIMU2C9ig1MjXZIrZO/aI
-	+tT3P5NvP9U3wO2aoL8t65LtA9V0EZDxSHgb1Qf9ESznVcJZgKaN16EUjANUUtzJSMEYQAVD
-	Ni4uqW2OS8wAHW63s1LwF0Ch+k4YZUHhXXSk0AKiOEFIQYGZf2IkWrgvQyFTiIoW5gsE3ejr
-	ZKOYERYjz2RDTKyICNpGe2J2LwkfI5urMMaXCe+g8JUwLXGUqPOnESaKaWEhMvbujxkg4aoM
-	mf1WSpr1QzT45xSU8Hz0oCO+wyvomaOKkgT5AE3anbP3KAXI2aCS8GrU1uGLdOUjDimooTlV
-	Sr+HzOcmQTSNhLmof1QpzTAXmS6X01JagYwHZpssQY1nGmHctchxbtaIoJLferhSoK54bpuK
-	57ap+N+3GtAWsEDMNeRkiYaVOvGb5QZtjiFXl7X8i505VhD5/DefdkzYgWv681Yg8ED9omLF
-	pjsaFavdY8jLaQWIp9UJipbXBjQqRaY27ztRvzNDn5stGlpBEs+oFyi2vbFXoxKytLvFr0Vx
-	l6iPVylelrgPdCctWdTUrmS9dxTnve4EOBkyCqsupcrr60bXJyQHv3r9y8SXy2uS29nK1Z9u
-	WbpuXXpykfBsI+88ZP3k6KuOrRnWhemm9I+WVjP51hZHJbzUqLw+lunJm5MGbFeHk3wXDqIr
-	Lt2tIcvRF1ZOdaX196Q4usvg2iP2jGXOeWu2nB9UM4bt2rfepPUG7X9fFuar+AMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hUaRiH+86Zcxlr4jhZfUnXoWhbanI08zWsDSL46q8oCJoId8qjVs5M
-	zJmRXOi2m1lSrV3GaqwcdSqbLE2ldb0tmI230NScSUi7CbJoRlpm44XOZIH/fDzwe3683wsv
-	T6v7mFB+v8kqWkyGJA0bpGiaqOtalbn7tT7MWTYP8kZ6KRi/6OHA/qaHBd+nXgaya5vl57mX
-	gb/yClnor7tCwQv/KQb+ftdHQ0tLEQeXx+5QUPxOVj6e7WagJHsMwenxTwg8ZW8paC+/zsLQ
-	uVoEV1uqKTjxsZOD3NupNNTYqxDcr+3i4JavlYLWxs3Q6Bti4WlTGwOpVbUc9Lw5z8Lj/jQG
-	JrwPFZAx+owF/50nCNzl8oiHn8nGpaTgZgEi7d5Wmoz6LyLy4UUqR3yuQZr86+jiSF7l/xQp
-	dp9hyUtvJUv+u1HAkRLXMfK8/k+GfKjuYElpR5qCZHWNIHK+1I22Beu1MRazzSouTjRL1vWa
-	3ToI1+qiQRu+Jlqri4jasy48UrN6Q0ycmLQ/WbSs3vC7NjG3o5s79Jk+fLlReRw56XSk5LGw
-	BrvKvTIH8WrhFsIlnUVsOuLlYD6uK0yedGbhMW86O+kMINzsqmQCASuswxfS3CjAIcIK7Bv/
-	wgQkWmhQ4pFXd6lAMEsguL6j4XtBISzDnuFCNsAqufD4fRsX4NnCVlxanfbdVwqR2P+P/8eP
-	ChG+3plPTRaCccO1HkWAaWERPt1+gpnkldhZMchmoGDHFM0xRXNM0ZyIdqMQ0SYZE4xSuFYy
-	GCWbKUG7z2wsRvKhPfJ8LS1D6QM7apDAI80MVdiuV3o1Y0iWUow1CPO0JkRVtbBbr1bFGVL+
-	EC3mWIstSZRqUKS83QU6dPY+s3y2JmusLlIXBdG6qIioiLWgmatqCUvRq4UEg1U8KIqHRMvP
-	HsUrQ4+je9u9Ck/OgG97vGtGz7xdmQ+mx6zfuWk8O9ZnL1oeF+RYO3PawaHha0deKnfWn7x/
-	dCt+u6B373DTiv583hlf/nVgbtacikv3yjJf3/XYnfH2A/5Flb2xC0qW/mKzuJa0900YN7tz
-	mPyctqzcLdRgY6ummBquyKj/zeQtGD3T7DTd0CikRIPuV9oiGb4BUDfhsH4DAAA=
-X-CMS-MailID: 20180425104230eucas1p2c498af765175a5040cdb8caec701f3f3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180425104230eucas1p2c498af765175a5040cdb8caec701f3f3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11
-X-RootMTR: 20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3617087-1524602059-2-9811122249015588348
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES encaro, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524602058; b=Gv93OgQVHbWOsKtf/I8g1L0k74kpARMwpmUTWj0uiP+GaKtqde
+    gBUOqQfI70jWGqHJJHR7w54RXHwksZb6ODrjDDJtc2ZsDid/XnKUSuCtFWMiYCsS
+    W/g986jLdak0Nhpxhu0uxcXKXZYC/MgBKWFw9M1TuK9mylYaBt5CGb7axq9IM6Qr
+    dk7yOSSXPGE/I+Fgn62G6iOG7yqN+5nrFQVt4v3BYhXQhkGY2BOBBPvtnWjEujwY
+    Om9BOG1m3biaLn2QwUKmoDDRr6neSkeow/4kjkIA4X+FRZNfMtCK8+p5+zu2pH1q
+    P6bKIXO7E8LKi4adYWf/rpjpKW0TQW+cd0gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524602058; bh=
+    lUN2CVmp/JvcROn/d7Qo0F/KkkIIxVBXoBG639XpA/0=; b=p0ooaXCYeDSb86UI
+    LR5E/JmwBlV3qM15fsivG/nBpy7c85kea0Ra0zjATHXw4SQ8cjs8WVy4vKZNrR8F
+    lcE2aK6B7frr1WMB3dAm7ic+UAmzRUC8YpYb4CpsYqFrXdrr4GOQUfgxNwUVqs9w
+    JtNSvczV1a67wzOtbhEBAnjyvJnGb7dzCNleakQzF1GTFpmDU9UL3Rf7KTvDDCba
+    txgndyzzFUFblVeT0peAtYXA9uWxKBnzasnzM4gtueY+VTuHfZj6mnOulzNV3Wwk
+    SOVkHxUdQXtGKFUTtm5hbdrpwtZmdW2sDv5InhNL66t25NSEAj286TwmFOVFRBnj
+    CGUD1Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfK6fq+q7jkGIhDAV0H7nNtkWcl7ZNCNyTmi2pbr9lDWqG62Vvl7AsxXtnyHTyL1GAx01Cz2rHAnkgh0V6ZFJ+ZP10gALLHwqBt45Fc9unuPIyXOYrs8C
+    bYxoHde/49GBeLZSS/qidz+4D/wY5h0Zr/Db6rhU77SifySt6JA7QdonERNLq6wtgzkBpXY0kqTtZ5Fa3h/r6L/D6icmfBewaIg3WgNSGsOFMSuvgFdINY5m
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=v_aFM6XbzrSpdwGTRdgA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752030AbeDXUeO (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 24 Apr 2018 16:34:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751654AbeDXUeH (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Tue, 24 Apr 2018 16:34:07 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C365721835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [RFC 08/10] spi: s3c64xx: samsung: Remove support for Exynos5440
+Date: Tue, 24 Apr 2018 22:32:37 +0200
+Message-Id: <20180424203239.21885-9-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
 References: <20180424203239.21885-1-krzk@kernel.org>
-	<CGME20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11@epcas4p4.samsung.com>
-	<20180424203239.21885-7-krzk@kernel.org>
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598661101248192093?=
-X-GMAIL-MSGID: =?utf-8?q?1598714500314428708?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tuesday, April 24, 2018 10:32:35 PM Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
+The Exynos5440 is not actively developed, there are no development
+boards available and probably there are no real products with it.
+Remove wide-tree support for Exynos5440.
 
-Thanks for doing this.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/spi/spi-s3c64xx.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 755ab2dc6969..f55dc78957ad 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1376,15 +1376,6 @@ static struct s3c64xx_spi_port_config exynos4_spi_port_config = {
+ 	.clk_from_cmu	= true,
+ };
+ 
+-static struct s3c64xx_spi_port_config exynos5440_spi_port_config = {
+-	.fifo_lvl_mask	= { 0x1ff },
+-	.rx_lvl_offset	= 15,
+-	.tx_st_done	= 25,
+-	.high_speed	= true,
+-	.clk_from_cmu	= true,
+-	.quirks		= S3C64XX_SPI_QUIRK_POLL,
+-};
+-
+ static struct s3c64xx_spi_port_config exynos7_spi_port_config = {
+ 	.fifo_lvl_mask	= { 0x1ff, 0x7F, 0x7F, 0x7F, 0x7F, 0x1ff},
+ 	.rx_lvl_offset	= 15,
+@@ -1428,9 +1419,6 @@ static const struct of_device_id s3c64xx_spi_dt_match[] = {
+ 	{ .compatible = "samsung,exynos4210-spi",
+ 			.data = (void *)&exynos4_spi_port_config,
+ 	},
+-	{ .compatible = "samsung,exynos5440-spi",
+-			.data = (void *)&exynos5440_spi_port_config,
+-	},
+ 	{ .compatible = "samsung,exynos7-spi",
+ 			.data = (void *)&exynos7_spi_port_config,
+ 	},
+-- 
+2.14.1
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
