@@ -1,24 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934114AbeDXNSz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:18:55 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55839 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934093AbeDXNSt (ORCPT
+        id S1757973AbeDXNTK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:19:10 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53857 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757945AbeDXNTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:18:49 -0400
-X-Google-Smtp-Source: AIpwx48FephBBOxLs+S/oeJavNKMgCGNHxj3DSCqfdA5vkVileq+EeiEWNBHO/NofFZAL8HXfWYJJg==
+        Tue, 24 Apr 2018 09:19:03 -0400
+X-Google-Smtp-Source: AIpwx48l1pnsGZOGTmUySkC2ET0OWX4JkZQ50lTH1VAZOWuyz+Gdj3GrEunyqM2jliWlf52wwSZGEA==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Antonio Quartulli <a@unstable.cc>,
-        "David S. Miller" <davem@davemloft.net>,
-        b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
-Subject: [PATCH] batman-adv: fix batadv_interface_tx()'s return type
-Date: Tue, 24 Apr 2018 15:18:46 +0200
-Message-Id: <20180424131847.5469-1-luc.vanoostenryck@gmail.com>
+        Kalle Valo <kvalo@qca.qualcomm.com>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH] ath6kl: fix ath6kl_data_tx()'s return type
+Date: Tue, 24 Apr 2018 15:18:59 +0200
+Message-Id: <20180424131900.5718-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -32,21 +29,35 @@ Fix this by returning 'netdev_tx_t' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- net/batman-adv/soft-interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath6kl/core.h | 2 +-
+ drivers/net/wireless/ath/ath6kl/txrx.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/batman-adv/soft-interface.c b/net/batman-adv/soft-interface.c
-index edeffcb9f..e6c800b06 100644
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -188,7 +188,7 @@ static void batadv_interface_set_rx_mode(struct net_device *dev)
- {
+diff --git a/drivers/net/wireless/ath/ath6kl/core.h b/drivers/net/wireless/ath/ath6kl/core.h
+index e23d450ba..0d30e762c 100644
+--- a/drivers/net/wireless/ath/ath6kl/core.h
++++ b/drivers/net/wireless/ath/ath6kl/core.h
+@@ -914,7 +914,7 @@ void ath6kl_tx_data_cleanup(struct ath6kl *ar);
+ 
+ struct ath6kl_cookie *ath6kl_alloc_cookie(struct ath6kl *ar);
+ void ath6kl_free_cookie(struct ath6kl *ar, struct ath6kl_cookie *cookie);
+-int ath6kl_data_tx(struct sk_buff *skb, struct net_device *dev);
++netdev_tx_t ath6kl_data_tx(struct sk_buff *skb, struct net_device *dev);
+ 
+ struct aggr_info *aggr_init(struct ath6kl_vif *vif);
+ void aggr_conn_init(struct ath6kl_vif *vif, struct aggr_info *aggr_info,
+diff --git a/drivers/net/wireless/ath/ath6kl/txrx.c b/drivers/net/wireless/ath/ath6kl/txrx.c
+index 8da9506f8..618d12ed4 100644
+--- a/drivers/net/wireless/ath/ath6kl/txrx.c
++++ b/drivers/net/wireless/ath/ath6kl/txrx.c
+@@ -353,7 +353,7 @@ int ath6kl_control_tx(void *devt, struct sk_buff *skb,
+ 	return status;
  }
  
--static int batadv_interface_tx(struct sk_buff *skb,
-+static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
- 			       struct net_device *soft_iface)
+-int ath6kl_data_tx(struct sk_buff *skb, struct net_device *dev)
++netdev_tx_t ath6kl_data_tx(struct sk_buff *skb, struct net_device *dev)
  {
- 	struct ethhdr *ethhdr;
+ 	struct ath6kl *ar = ath6kl_priv(dev);
+ 	struct ath6kl_cookie *cookie = NULL;
 -- 
 2.17.0
