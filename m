@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754796AbeDXJmc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:42:32 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:26599 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753282AbeDXJmZ (ORCPT
+        id S1754189AbeDXJm1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:42:27 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59755 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753241AbeDXJmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:42:25 -0400
+        Tue, 24 Apr 2018 05:42:24 -0400
 From: Amelie Delaunay <amelie.delaunay@st.com>
 To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
@@ -16,10 +16,12 @@ To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
 CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v2 0/4] Add STM32 USBPHYC to stm32mp157c
-Date: Tue, 24 Apr 2018 11:41:41 +0200
-Message-ID: <1524562905-19361-1-git-send-email-amelie.delaunay@st.com>
+Subject: [PATCH v2 4/4] ARM: multi_v7_defconfig: enable STM32 USB PHY Controller (USBPHYC)
+Date: Tue, 24 Apr 2018 11:41:45 +0200
+Message-ID: <1524562905-19361-5-git-send-email-amelie.delaunay@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524562905-19361-1-git-send-email-amelie.delaunay@st.com>
+References: <1524562905-19361-1-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.201.20.5]
@@ -29,26 +31,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for STM32 USB PHY Controller (USBPHYC) to
-stm32mp157c SoC and enables it on stm32mp157c-ev1 board.
+Enable the STM32 USB PHY Controller (USBPHYC) driver, implemented on
+STM32MP1 SoC.
 
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 ---
-Changes in v2:
-* Add reset dt-bindings include
-* Add fixed regulators
-* Enable CONFIG_PHY_STM32_USBPHYC in multi_v7_defconfig
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Amelie Delaunay (4):
-  ARM: dts: stm32: add USBPHYC support to stm32mp157c
-  ARM: dts: stm32: add supplies to usbphyc ports on stm32mp157c-ed1
-  ARM: dts: stm32: enable USBPHYC on stm32mp157c-ev1
-  ARM: multi_v7_defconfig: enable STM32 USB PHY Controller (USBPHYC)
-
- arch/arm/boot/dts/stm32mp157c-ed1.dts | 36 +++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/stm32mp157c-ev1.dts |  5 +++++
- arch/arm/boot/dts/stm32mp157c.dtsi    | 21 ++++++++++++++++++++
- arch/arm/configs/multi_v7_defconfig   |  1 +
- 4 files changed, 63 insertions(+)
-
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index e6b3c96..e78b43f 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -972,6 +972,7 @@ CONFIG_PHY_QCOM_APQ8064_SATA=m
+ CONFIG_PHY_MIPHY28LP=y
+ CONFIG_PHY_RCAR_GEN2=m
+ CONFIG_PHY_STIH407_USB=y
++CONFIG_PHY_STM32_USBPHYC=y
+ CONFIG_PHY_SUN4I_USB=y
+ CONFIG_PHY_SUN9I_USB=y
+ CONFIG_PHY_SAMSUNG_USB2=m
 -- 
 2.7.4
