@@ -1,331 +1,247 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932500AbeDXKOn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 06:14:43 -0400
-Received: from mail-db5eur01on0043.outbound.protection.outlook.com ([104.47.2.43]:11040
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        id S932545AbeDXKO7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 06:14:59 -0400
+Received: from mail-eopbgr10109.outbound.protection.outlook.com ([40.107.1.109]:32544
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932332AbeDXKOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 06:14:40 -0400
+        id S932511AbeDXKOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 06:14:54 -0400
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Oleksandr_Andrushchenko@epam.com;
-Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
- DRM driver
-To: Wei Liu <wei.liu2@citrix.com>, Juergen Gross <jgross@suse.com>,
-        Dongwon Kim <dongwon.kim@intel.com>
-Cc: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Artem Mygaiev <Artem_Mygaiev@epam.com>, konrad.wilk@oracle.com,
-        airlied@linux.ie, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
-        Ian Jackson <Ian.Jackson@eu.citrix.com>
-References: <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
- <20180423115242.ywdwqblj2aseu3fr@citrix.com>
- <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
- <ce2ebb5b-fa13-0475-b0fd-6c330277d151@oracle.com>
- <30ddb005-96c8-f47c-2e23-4e0d354e5842@gmail.com>
- <a25a394c-ecf8-d8cf-15b8-eb8cb71d0a02@suse.com>
- <c4c426eb-5a35-1f8f-59f3-350d6e97d89e@gmail.com>
- <6089d701-5221-75b4-38eb-b23bc5dc30cd@suse.com>
- <85fc8f82-6d4d-9343-2737-85b7d7391168@gmail.com>
- <0657bbb5-5cb7-4c63-5490-fbfc7dec1e59@suse.com>
- <20180424100132.5573sg2hhbhpkr7c@citrix.com>
-From: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
-Message-ID: <b14fd51e-02f2-6039-228e-7dd8be2aebfa@epam.com>
-Date: Tue, 24 Apr 2018 13:14:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ smtp.mailfrom=peda@axentia.se;
+Subject: Re: [PATCH v4 7/8] drm/i2c: tda998x: register as a drm bridge
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180423072301.11962-1-peda@axentia.se>
+ <20180423072301.11962-8-peda@axentia.se>
+ <20180423160833.GF16141@n2100.armlinux.org.uk>
+ <5d6866d0-75bc-4de8-9b87-4fee5430e9dd@axentia.se>
+ <20180424080833.GJ16141@n2100.armlinux.org.uk>
+From: Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <8448e90a-4562-b564-c160-1b5c67e0f92f@axentia.se>
+Date: Tue, 24 Apr 2018 12:14:46 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424100132.5573sg2hhbhpkr7c@citrix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180424080833.GJ16141@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Originating-IP: [85.223.209.52]
-X-ClientProxiedBy: PR2P264CA0020.FRAP264.PROD.OUTLOOK.COM (2603:10a6:101::32)
- To DB5PR0301MB1944.eurprd03.prod.outlook.com (2603:10a6:0:35::16)
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: DB3PR0102CA0027.eurprd01.prod.exchangelabs.com
+ (2603:10a6:8::40) To AM4PR0202MB2772.eurprd02.prod.outlook.com
+ (2603:10a6:200:8c::22)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB5PR0301MB1944;
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR0301MB1944;3:gvAQJwmXe+L/E2BeDrG1JoJCsR/IDyocjDqnSPXRbb2HWPM1WO6RuHMluvtU4P8NxyXn0FKzE8oqUVaWzqpwamtjO9AK+A7WsYBSpHsRa9i8SzQI9gp/I5OWjk9p5YrXZBaDcMcIXSnqrkZjykaSGvbnVzpqc/fjkN1VeBEPRkO7pSZhc7OF81YXBVbYxo+f7R6beAUAClMWihQKy0jBazI+EWJCqqxItcV/UyYGMpgWfOpNnPVeH8XMRoW2Kzxq;25:2cqngllW5+CJttRjWhHn145ZZxsMcr7zQ0qgZBd/lH9o4aaZL9upKqVrPVH94z50wWOdIMcRWMtvsxHIHxykfuFZJQiqs9p8vAsGnLJkWPBZ1tmZSPBJohgfEv1xGvJ3z0ObSDnnRIbrf0v2VsAGKyjo5O3GlbzrdWK5EJD6yUyOhKb5Wbhj+8qrC+PciE57rSBhGQsD2dbh1Ylko77X1WeZGVwS/9wQocwHmFtyQ+WU2Qa+cSV+pQu5Yt8y0bRRnmUikkXhy+rZ+ek74U9P9QFEgIXEtkpSR9/P84EtRhRk44UweMSfT9ngJQUTt+au07C1ENbT9o/1QUue8dntOA==;31:fVLBTSZTkfCZszorOmCZgruXxk+sjp0ivrfbUQ4pU9e95Df5V9PI+KvNUzger9ZCYAZ9UyPsyPAx/4Ksh3Dba+JuTmhsSFBY0SPW/XGHWgL2YP/ykWA0bP33SgF8SelQAuOBZpqzsNdXAD+8ZscZI4QQSHsMlkNq+6jv2V2hqy9KWfyJnU39GeYBTs3/uoG4WBScoRPpxQoDGlAi2mnE1nUB621AhmxLMRPNucdGfAw=
-X-MS-TrafficTypeDiagnostic: DB5PR0301MB1944:
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR0301MB1944;20:RigA+YxBahvkNI7Sxu0vcRe+UVeUf5sKUqqjvPFuj0upI0RO9cO1SR6uWF2f0EmFEXFH/H5TwQjTslEJqL2JSs6qutGkhecX6NGYYl5ktzLr5ZABfHgO5zY5vHWcfamYPlptrw8yaGNne0sdhp4xGBEN7zKR9EiQx47wp6lwj34UYH8xOHQjWGSAyNqYL8p3T1lBsQfqTe0QfjHMdCDNxXXxUvzlms37m9ML0UmsVelxVWb5lcyHA+obwZAHTBqvMIP8joOAz7hAH48aPP34yPeis5tBC+f+TLtz+0g6yYLbfSAycZD6m3fjwoYGIjkK7C8f37Z8Ipoyih8ENNagXcUEZiorqjby4vALwBalFh5b50ZSI7J5shPOEFPw6GftlfxJHZwJdwFV9Is42Jc7kIXMGe8EzERR676CjfqNtIdTLw60Rkezm9DF1GndzCm2YuG6l8gveGP2sNOuLRnTKve00Bb0rs+wlbwKLQBau2CtZ8t4KDRI6bJkSA0gvSuj;4:5dosc8F7/Wibp2KcWOL199rDDOMRTa0vdJLqtb8xBhejtoEiJ/Lxmibz/x50DN6qwA3aWXCCAacVOgm29SsoU480pWrgy0AyiTVFp3iKgefvZl9z/zVdpzLZZBM1ITZKAxBtE9Es2belulVZOoWygXzgus8ZVc3OUZpOxpcctXBO1HtWbO6XTM0o/6DM7i3k7pcDXBdBdkNNKBqokc9VJVZi2BVAwp/7xR8AIb/E//5f7gWVpXhtlM3jIFjPtH6mNExg+tmwX93Y4Q77lgaqKw==
-X-Microsoft-Antispam-PRVS: <DB5PR0301MB194424C1CAED0ECB02CC8DBCE7880@DB5PR0301MB1944.eurprd03.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM4PR0202MB2772;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2772;3:GltSKyR5PUT1VuqYddKYNa8MibDUeihClav1mVW/tK6hPb3V76m5o8ypY5fAnDXtRSk4PJ+D4WSGSf4x8XywHNkAqtwHfrMVEXKdf3NMuhFQdsMNDYkI0qSyjm1dTkKIvg4YbPSXuCmFSpKxcN1LhrWC/pngwkzuBksb3CJF4VgBRW/TXB5VAmwWEOyuabl6uIqCypj/Ogriiq6by1bASjruC77uf1fHkJCIn9KJci0u2vkVPIdd+TkRVQsGbmrQ;25:HAfzNIvHnxf3c1VZbWPciwakMBP5ik9Jg+57ke0IUesMNrPrV2v6SszqpWtipyn+tmgyaf0Eq7WreDJBZj2PnbVZcCfieENXvraVr+o2TcIcIy4RcH8f0qAKTB40K726UdKcJCGmGsRBzlVuTJ+6jeWVbevorzrh+eLtsuiTrB8tl5sUPu16VGxzrEQxu04kqPf0ovVWcn/AEqsy97iFUh43ccYlLL5QI21qCYqkqLGXlEIxdTTc9zVk4kTOVMEazCTQYJSOn8ktZXNftF7yJl8232V2sbD6P+Ab9DaVk3U1uLdMhqIYFqW14/2rSqL+8gQu9HA5FWyi/GbslIHIPA==;31:FQVniSdd8wu2gF0s3rNq11Ix+fGiqqol5Jo5+p4F/vxyKb5mxsNOKpfpcMGD8bWg24NHtLhV0KkXEBrq9SQ+1v8W6kRceVksXgPxIndLxXd049zaWOTDIxUyY2E876nSuiga55eD+j4JgaDnnj23gy/5VEAodYEwu7L2opNnO5UPLIXVpp6fhBF+1uRekMyEbjVQNfGuy89EAloWZK5tLdzaJdyJxBwMvAV8jCN3GIM=
+X-MS-TrafficTypeDiagnostic: AM4PR0202MB2772:
+X-Microsoft-Antispam-PRVS: <AM4PR0202MB2772C306A562CEA2A65C02FCBC880@AM4PR0202MB2772.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231232)(944501410)(52105095)(10201501046)(3002001)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DB5PR0301MB1944;BCL:0;PCL:0;RULEID:;SRVR:DB5PR0301MB1944;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231232)(944501410)(52105095)(6041310)(2016111802025)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:AM4PR0202MB2772;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0202MB2772;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2772;4:LaRXbKTIlT/PFXTlspAm6EwZSxzP83deDul45FpE9/z4vFKd/8nxuMMKvRV0pGnY0Lan/XwAel9Ylh1aN+XF60IB2caQbNbe6VD0nR/kQ0n6Zar61RG3INnUehKjBSLlP7YG1782+cWrm28SXsaIIDtFrnm6bxrCgU+fO4BCGjVks/XVJVUyMdMtRg7zxAP93EIk3CG/nBR7WxByZ836MgIzuoHWdrsFJh24kT2XQseT5oPyhsGZw37wqMZVs3SseummBc55Ec/Hu8x8wapO+Q==
 X-Forefront-PRVS: 0652EA5565
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(6049001)(366004)(376002)(396003)(346002)(39860400002)(39380400002)(199004)(189003)(64126003)(305945005)(16576012)(50466002)(55236004)(6116002)(31686004)(8666007)(956004)(36756003)(316002)(446003)(11346002)(86362001)(2616005)(77096007)(26005)(16526019)(186003)(54906003)(7736002)(58126008)(476003)(31696002)(110136005)(486006)(8936002)(93886005)(5660300001)(65806001)(65956001)(7416002)(66066001)(2486003)(52146003)(23676004)(47776003)(8676002)(81156014)(478600001)(76176011)(52116002)(81166006)(68736007)(2870700001)(2906002)(105586002)(53936002)(6666003)(80792005)(25786009)(72206003)(53546011)(6486002)(3846002)(6246003)(97736004)(229853002)(39060400002)(65826007)(59450400001)(4326008)(67846002)(386003)(106356001)(21314002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR0301MB1944;H:[10.17.182.9];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjVQUjAzMDFNQjE5NDQ7MjM6TWZ3WnBXSDh0WDFyT3Z3ZUhLakk0ODhO?=
- =?utf-8?B?ZlhJNGwvUk40R3ZPZzNNNWFoMTVIU0JYL29meVdQY0IyNnZ1ZGVpbzZ2OWYw?=
- =?utf-8?B?cXZJNnRVL0dPOGRTTWFlYnFvTHBja2dmc0ZMd1IzQ2JmRUJHSUtTRDMxS3J2?=
- =?utf-8?B?S3gwdGRUZ0pEL1dJaEZkWGYvY1FKaXdHWTNtTEw3WTN4eXFCUGRhaEJoNlV3?=
- =?utf-8?B?cnZlSXhnSGJGZDBCakN3czVMS3pHY1Y0aFJWUnIwVzBxS1JpRHduWEJndGxi?=
- =?utf-8?B?MkFNLzBjcHFORmtXM2Z2ZzV4UHJlMExPQnlQcW1Pam9YK3BwNWxEYnZQMVQv?=
- =?utf-8?B?Yk1ERUVPNEVHY1phWDJkZmt2QzZNcXRRekFuRUN0YmZtcmJRQmJBZmRZdzZR?=
- =?utf-8?B?dlVQN3FMZW5WMHNpMFBuSnFnYnh4RHdyZmJhL3IvNmEzTnUySVFaOVYzQ1dR?=
- =?utf-8?B?Mk00d3ZjdW5DLzUrczlja0l2RlJ1OEVMVytmdDJHTUl2aFZFY0MrODN2TFFa?=
- =?utf-8?B?SWZWVDFjMFdoQlpHUEQxVHNoekw3U1A1QXNZREkxT1BQdlZzWnFlS0JhOTBD?=
- =?utf-8?B?Z1I3cFY0ZTU2aE5DMWkwVUVmbmprWFZoTFVJa3hGWjJ5WDdKTi9GZ0o0VUdX?=
- =?utf-8?B?TVJ1VUNGdEhYNi81cGlDMm9pQWhwc3hUS3ptWTJFZFBYcHk1a3FVWTAzNG5U?=
- =?utf-8?B?Y0d6RXprWDFvQm5oVFdHOU9ITnk4VEZLbFRFU2k1V3lRSFNNV1BaV2puWnRT?=
- =?utf-8?B?S293MHJYc0tGSy8rV1JySXBlVTQrWk8xK2ZMWEhtUXI3VlJuM2lzc1grR3Fk?=
- =?utf-8?B?elEybGtoaGphODlTMDArYVBWdDZkOWRaRGV6eTlJa1IrcjcwQ3kweDFhb1gv?=
- =?utf-8?B?NlVYWWJ3eFRXRlNiTWRRNDlPL0g5R3VXdHJpK3NKRXd6VXl6c3Q2c0NMZ2tk?=
- =?utf-8?B?dmNlUHZLM0xQY2N4cmQxbTYzVDJiVU5WK05vc1RkK0ROdkV1Vi9hY0hEU09r?=
- =?utf-8?B?UCtoQWlleThRa3I0QTEzZGlzbGpmSVVPb0lLM1VBdzVic0UrbHcvcXIvekNQ?=
- =?utf-8?B?VmxldUVJNjhVYXFmTklWcWdiMVpnYlJkZVE1L2tzV1FYemt4ZzUvNTdFWHkw?=
- =?utf-8?B?TDdVTEM0UEFDUy84a0JsY1hQb0FUNnNVcnM0NWM4TFhmZk1FbnhTWDN6Tk1v?=
- =?utf-8?B?SVVKUWI5d2F4VnRpalBtUkVETnZRYmNncHhtcjhwcm43VmtTSFR6emp3b3JN?=
- =?utf-8?B?cUNEczVERERVUzFKeEZkZTFWZVZ4VS9EZjQzVVp0U2E3L1NEd2dwdVNTTTQy?=
- =?utf-8?B?NHRMc2dhZ0RDOVkxL2p5bFZrN1hCWllEK01STHZqTVBEbHp5NnpNUC9nSDJ6?=
- =?utf-8?B?VFcwdDE1QlpRNlFJby80MWlTbXcrSVR4YWdPeHFzNlB3SjBpNG5OTk9US0hp?=
- =?utf-8?B?dmF0dm9KOEY5SXl0VWNYeFNVQzlXN1cxR0tjaWtmQm1qV1c1WWZnOVVEenVX?=
- =?utf-8?B?QVBTeEgwYThuQTRuMlpScUh2d1dWR1RyL2ljdk5MY1IxZGs1T1RudlhkWmlT?=
- =?utf-8?B?ZlVzN2ZydW54MVVzMzQvN1VqYlZxRXB3eVd0VUtXRHF2QXhQRDhIMksySzJ4?=
- =?utf-8?B?dmo4eWtOS0xtWHJ0a2dkRlRPSjhCZHZBaVdLdWkxRnNnMTZLbnpra1RFUG5O?=
- =?utf-8?B?QVZOcENxekRoYWthYnJ6RDFHUExDS0pBQlBrNW9nN2pPNVhkcDlxdDRDR3cx?=
- =?utf-8?B?bkUrajJXTTdFMFVlNFJzd1lLMXlkRFNkOXRoRU5lQUhCdnJydTZISUgvTlJG?=
- =?utf-8?B?K0RqYTlHMHprMmhtUHZqbTVZN3daSlFUSjA0b1VKVHRGZ2UxOHpNWU9Zc1BN?=
- =?utf-8?B?OS9iR0J1S2wvNXNsTU1tSm02ZVUrWlc3NjRzNWdoOWtjM3VhRWZ6Z00yMDJO?=
- =?utf-8?B?SUNKWk9KTzRTNllkVXpQZUZPSlkxcVllUVFkSld3clVIWXRXZCtjemwrWjd2?=
- =?utf-8?B?c05JcEhQM2E3MnJwdGxnODU3R2lLTWVZRElKWllIY3M5QU5iWmIvTWdLc3Ix?=
- =?utf-8?B?YmtXRkNYUHJobXJ2dmd4dGZpY1BTOGJTbkdvTlowdEM1ZWc5QXBBTno3Slph?=
- =?utf-8?B?Q05Va2UrUkxpclh2TFhlUGlSdVZjNWhldnZid0RzcU5Ic2V5L3F3RDdwbkt6?=
- =?utf-8?B?NU5SdHo5ajFvRllKaE1yTURyZjdSTGt4VHpIWHMvdUZscTZwNEtOQzV0Nm45?=
- =?utf-8?B?MVdsd3VWVUFSUXdYbi9BUnpPSTVxYSszdjkvVlRVNDBBdzFQZHl3SUlETzlW?=
- =?utf-8?B?TkdoZTdnYVVtakdoUGFmZ1RGbFRVR0YyaWRERUIrVGtudVdLajhibGFnbVpK?=
- =?utf-8?Q?3RJoH9fY8kyrEFUOnijE3Fxsces2UO+UVoqkE=3D?=
-X-Microsoft-Antispam-Message-Info: L3fN8A6y0QZTFBUt26VDWzKCkOIaGBNWxMHC56pd4yyZXuTnAw/uOlf+tspdQzOFpp0dixNHRUvWmI6+A5W+IBvl9j40/7QXG38AhK4nwRE2VOXbSQ3UhgUL2TNzFA57oShCw5TYv+54+MQ+9/FYHSHdtIbZWtgidz/hOx95177eRXiz3m4bHvD06xEmqRcr
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR0301MB1944;6:kw5qvUnt1Uux63X2pq62ph3XQa2t4BpQ++J8kEf1YifAQYEe5UbJQ1podkd560i1LbRZUNDoPY/lEfx8L8RFcQv8ZNlRN5ojaHYkqRZh2GYMVvr3FIHs1+yjFzrNtTA6NU7sOiV9gTn/+8RL697nNq/8b9xmyrpdfJu4A4x26h8/2BWsPgwab6akCmzvmmIAeMjEUGlkEBI6owkOMWA2LQDgnGNJ5oJwUTYya7VQn7PHzrXHm4LTVoN501NfIGxtK948e0KaNrVWQlUIVMrqdlZ2I1rcCXKZHrKyXcSNtLysuu/2wSe3L8S7mJwT6pnMoFlg9aGpA5ujBKuXMohaTUzqcElIauOQbOXv5CGQKnaC4WeGE2uc3y9g4R+jxZCbRWfTB1PxbaNAibB/bEIp8eIySO0abTvyWswNzm79XrutU7Puv8H2oYtnJUuSAATJqoi/MeZc7eXA1ZWmSoR4sQ==;5:Z+Py7uKyrAPUfNBGhjw4Y3mvPRDCeRFjd7OImkHTtHzmeHp/t1hD/fw4y8zOdUXi2ctEeadaCHWscD6w1F762nJeQ5ah8eYNADVZVQOwaUBjE9jiC8fSD3AQyBx0xYQouMEvalEVkpQUYvXUZxFpuOAQHBkViN8kS48yblyF5jI=;24:ssJ3/D4xkOfiguOpe1fEUwgbXN6IpJSsgAQ1Bw42SmxooFTbqUYvOZ125IYtnbt/PYb93HczSJSCPYcwaJR5W84ka/qhOyHHnz8F+CJWg2M=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(396003)(366004)(39840400004)(376002)(39380400002)(346002)(377424004)(199004)(189003)(186003)(6246003)(31686004)(31696002)(76176011)(64126003)(53546011)(77096007)(16526019)(53936002)(68736007)(478600001)(3260700006)(59450400001)(7416002)(65826007)(16576012)(8676002)(8936002)(26005)(117156002)(5890100001)(86362001)(316002)(4326008)(106356001)(386003)(25786009)(5660300001)(81156014)(81166006)(36756003)(66066001)(58126008)(476003)(6116002)(65806001)(65956001)(47776003)(54906003)(305945005)(2906002)(7736002)(3846002)(230700001)(50466002)(6916009)(956004)(2616005)(6666003)(11346002)(446003)(229853002)(6486002)(74482002)(52116002)(52146003)(2486003)(36916002)(23676004)(486006)(97736004)(93886005)(105586002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0202MB2772;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTRQUjAyMDJNQjI3NzI7MjM6SWVXZ3h3aE9xVkc2eDJRYjJoTWQxb0Rr?=
+ =?utf-8?B?Vk9aWlNZYTVVTUtYL3U3elJqYnBkbWtySW1wRENGdVo5QVBKY2M2RG5Jcksz?=
+ =?utf-8?B?dWgzSWg2RHVCWW5GY0JOTVdCZXArOVZKUE1GL25DV2lZVWl0L0phUHRnS0s3?=
+ =?utf-8?B?S1p0cCt4ZFZXaU1VNXVjY3NUQ0Nqdy9RU2dMcEVSQjJEajlZeENOSmJXQ2Zs?=
+ =?utf-8?B?Sm10NkZuUUxPNkVKdGhLNzBYR0prMU9xcExFWnhjZHJsRlRIdUhUcDN3Sm9x?=
+ =?utf-8?B?KzFZWnpPOGZOUmRpNFVFYUNRRlY5bU9CWWJWU0dkb1FoWk9vanNqdEZ5ZWg0?=
+ =?utf-8?B?SlNqTWJRemJNL09YZVF0Wi85OWdHTnJzc241T2VOcnI2K1VhdGZBNFpuNSto?=
+ =?utf-8?B?WE9jM3RDRW92MkF1d1VVaEFnVEhLbHdQLzBBOCtLZ2FwNjJuck5KWWJGRTJp?=
+ =?utf-8?B?bjFMaitWYWJZcmpnYlZKcHpkbUZ3SzVpemJRN2hUR1lrM0l2NHBWMkFCRFFt?=
+ =?utf-8?B?K2F3OWZEVmVGT2s1ajhxbEt6L01XNmhqQThmbUpCd0tXMXkzYkVDdE15RmJZ?=
+ =?utf-8?B?ZkRBeHpYRTFSaHI4dVR5Zi9zV0RJWi94Q2FsaGJyWVNuczVtZ2J4UnZ4eVJT?=
+ =?utf-8?B?MXlpWHh4WXo3dkd1NFlzV050MFM3dENVVWxhdEJQelVQSUNkVFlMVEhqMDBy?=
+ =?utf-8?B?VEVCZ1lSZnJORlVxQlZCeGl1dXpacGRXeXZndXg3QzRrMGp6NEkxT2JFeWpK?=
+ =?utf-8?B?VkY1TTdLb1JrSnlTVEErbDhNU3ExbUgyMzJCWFBEK3cybzVoTGpzZXBBQm5Y?=
+ =?utf-8?B?b0NndVN1dE9wU0o1UWUwdWQ5bFhtQnNzQUVyZFR4YXlxVkNOUHNxNTQ1TG9W?=
+ =?utf-8?B?elFIQWJ1SGExdXR3VW15WXovQ2FCeUdWSmIxOCtyS21LTzJwelZob2FHVGZR?=
+ =?utf-8?B?TDhvNjRWTXZqeUpQUlhmc1F5K2FTQ1U4SDl2SnhRT1JhNCtySUNsS3gxbTh4?=
+ =?utf-8?B?VzUrdnhhTEdFeU11d2pGcTdpQXp1ZFhFOWcwWUtzTGQveGg3blEzTGNQQ216?=
+ =?utf-8?B?SHZVNTc4TE5vWEJsOE05cDROZmI0ZENhUi9IN3dXYVhVZEh5bHFsNkNPVEZ6?=
+ =?utf-8?B?d1psZHJYQ0lHY1NEQlFtQ0pVRnZYdHI2YkQ4cHkzNXNMK1RHY2oxRzgydHhZ?=
+ =?utf-8?B?YUk2dlczRC9CWXRjay9EVi81MDFsMmlJZW5VTmJKclNYUnV4bkZFSDBPRk9U?=
+ =?utf-8?B?cjl2aDFhUWFaajd4OUJyUGNic1A5V2Q5eCtmSlRoVnM0OGoyd3RvaW9oRXR0?=
+ =?utf-8?B?MWJSZ0VrbmxhTXMrT0UzTmhUaFlrRkx1TTdQQjJsWHJ2RWlZbU4yRzFCOHc5?=
+ =?utf-8?B?MzBaNC94c1A5ZW5pNlF4SzhtV1A5YitYYmtwR09vNlE0NmY4T1FIcHNSalI3?=
+ =?utf-8?B?bjVqNXdBdVdkMzh4V1FnRHVNT0RvUk9jVktPeGNvQll1UWNLY3c2NFU0U0RO?=
+ =?utf-8?B?U2dBUjA1dXFBampOenlZSFA1RGNMZytZaHZpTC9hdnEzYk9yMHFMcUFhdEs3?=
+ =?utf-8?B?UEJSajAvTHhNbjRpYUYzWHViR2h2QzZQelEydFZPdmNYa2l0bTNJMXVQNGtr?=
+ =?utf-8?B?RUxoM3BRVE5NOFZpZ0Y4VHEyRnk4dm9iSFVBZ0dXRC9kVnRoR1JVaWxNQTRo?=
+ =?utf-8?B?QXQ3b21oOVRWbnpweE5JTkdseXNVVWg5TDM3Z3lkaUxnMGtlY0hlRXhUOEx3?=
+ =?utf-8?B?cEx1Vi96WStvaUZZSEVMS0ltbFB4Z2kwU0lEM2pFSVhRWThGWjhOcVRqNWNv?=
+ =?utf-8?B?anJRZWh2WVA1eitON2lwMkkydGZLMlZJMmJXalZEc0taNGZSSTNuZHJva1ZD?=
+ =?utf-8?B?Q1BTeUZyUi9jNHY2WHhpVnc2Z3BuNmh4M3ppMGxwVjMzWG9YeERqWHBKcE15?=
+ =?utf-8?B?eFh4OHpGMHRrNkMxamVuMURzbFZYQzRoRXphT0M3TGQwSnNjVnhRdmxmSVlC?=
+ =?utf-8?B?Y2U1TWQ4WWRrRGhCWHJaWmJPTFVyeHRyd0g1Rmllc0VRWU05QjloaTFmTVlI?=
+ =?utf-8?B?ckJkYzc2SjQ1a0dnR3NNV01vWVNoNGZ3cERmRUxjMkJMRjhjMXlHc2RGc3A4?=
+ =?utf-8?B?MDNDMzZ1ekNyck1VdVh5RHpsL3RBTkJZTSs2YkZzb1VVVXBNRmRCUTI5TDFr?=
+ =?utf-8?B?L3Q2b0t1UUdlYm9VZVIvd1RubTdTWVlibm1HUldWa0xxTVc3d3RvMndwYkZG?=
+ =?utf-8?Q?BxZL9KhvrrSgOWjiG5vA?=
+X-Microsoft-Antispam-Message-Info: ty+ninHn4z1IcVFDeIFEaGaIMHj40XLkRpWObQgnol2V177V4bcijDXlunrg3fCY2uypNeCyQirnibY1aJHYzsgB/3g/KIAgHki0/PQSmoXWZ3bD9VHnyH5P9vqbn1lKEJkdbFbQKDZPoIg5M6wW0m1ohc6QwIXWLFh/EV5/qIqSMr9bxdQNCTuV9oYqez4v
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2772;6:l+0hoQnGCLglxyxDYrCXcAExAShg69U05WxBzLdVR224ZWm/er/qX6vPMKWb03VCOZo0g8Pxkhq5XVvHgDeGIniM/rvhX7AklNph16mmlMvZHtdcKlKMJa4Ap6mIUugzRrE70XsQAQr27Fe3fW++hsLmikZiNUjMI7wrNvle5sEGXo8Gqcdt2xWbH5ySZM8vK7CUUrMfVldPuD7K80DgXa7YKHeznjO9AIctQkmuNALlP1OEIuwIhuE4qx//mEo6CLrt3zWbfnlVDPNZY/lvmWmVfOD15Dwz7lr+qgTzcPo4n5Qdp7x4IhEslE4l4SO3lzDfXtJnYifEnJfCpTDPpzH76mb4WgkrD5V5L+2bPayVbwEH68dDj0k4o2kZl4rY4weJoiwTGc0+RbQCXETvIYgnZFTbphGF+3Z4IRSiRzkah/j1kpZyhjd/nFSMVcs9Wu+4bGg8O9rPLO52rqxKCw==;5:EWJDTkn52vz8bdu+PG34DBjbQXqFwvg2f6T6GkgTTHRQLLl0pfbMmACX8attRwsNRt42ClVWhJtMsXiEUVF4r+FxoEcouOMsP5d/3UShjnTLPC5S0sJ3PAursUdBb2r+svvjTXf986oFLx/CjiwQ2ihWtY26euH4DJkE1rtnAKc=;24:bhPQSUlfctnEfv49sCB9CpTJZXlvm/Iswx00UhvuR6PcdTh6Us1sVV0xJ7Aq9St/wEqZa4FuCklt0rIqECs30uo1+zMn1xh7HUZS33oDyLk=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR0301MB1944;7:XWZrtapVksqY6lyj3XHyxnXa5Pcwc2aa7x1y/KaSnZcAw5RwUvIBaBsAzfkGijv2PzEMSENKhA54MzGdVNAlRxEdA/2KYubY4Mh0/zwX1f5Jl+ceT/Hi427B1ZAJaPHHPSDyBkT0QW0HFs3vMiBsr2kU17MBPoe9v/0rWjCHwuM6VjmsE5YEGyt5jZvJn6o10szsLwD4xnzYVM3yBMrdH2yfUjjDLjf9ZHKIP68+rnxD8J62Qzug+hvojTtzXfFT
-X-MS-Office365-Filtering-Correlation-Id: a356fa62-9a8a-4295-03be-08d5a9cc2f81
-X-OriginatorOrg: epam.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2018 10:14:36.6011
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a356fa62-9a8a-4295-03be-08d5a9cc2f81
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2772;7:30CSDNCR9RS4fHnmUsZ3uuXUprbXBebdsU+z1jWZB7pwNgfP9lJbnX4OZJTeWSrYCc+yBffylsnGTUiTLYV3jbNV7TGOqK5E9qnOlWjY/jxXfyc+YPr1aXAwoMkqGxbXKkX2EK+SdUCurxnUTWhVXNoVl72dWmV8pTqJ948IaXVbrF8B6vhCY5RDSRIlKze5Is9qLxBHJrkiq7Iv+WS3CRBZz2lYfSg/r1uil5tXxxQmPqbzQTyoqc5O5Q+rb3bj
+X-MS-Office365-Filtering-Correlation-Id: c80eb96f-71f6-4710-2675-08d5a9cc3764
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2018 10:14:49.9676 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c80eb96f-71f6-4710-2675-08d5a9cc3764
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: b41b72d0-4e9f-4c26-8a69-f949f367c91d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR0301MB1944
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0202MB2772
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 01:01 PM, Wei Liu wrote:
-> On Tue, Apr 24, 2018 at 11:08:41AM +0200, Juergen Gross wrote:
->> On 24/04/18 11:03, Oleksandr Andrushchenko wrote:
->>> On 04/24/2018 11:40 AM, Juergen Gross wrote:
->>>> On 24/04/18 10:07, Oleksandr Andrushchenko wrote:
->>>>> On 04/24/2018 10:51 AM, Juergen Gross wrote:
->>>>>> On 24/04/18 07:43, Oleksandr Andrushchenko wrote:
->>>>>>> On 04/24/2018 01:41 AM, Boris Ostrovsky wrote:
->>>>>>>> On 04/23/2018 08:10 AM, Oleksandr Andrushchenko wrote:
->>>>>>>>> On 04/23/2018 02:52 PM, Wei Liu wrote:
->>>>>>>>>> On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko
->>>>>>>>>> wrote:
->>>>>>>>>>>>>          the gntdev.
->>>>>>>>>>>>>
->>>>>>>>>>>>> I think this is generic enough that it could be implemented by a
->>>>>>>>>>>>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
->>>>>>>>>>>>> something similar to this.
->>>>>>>>>>>> You can't just wrap random userspace memory into a dma-buf. We've
->>>>>>>>>>>> just had
->>>>>>>>>>>> this discussion with kvm/qemu folks, who proposed just that, and
->>>>>>>>>>>> after a
->>>>>>>>>>>> bit of discussion they'll now try to have a driver which just
->>>>>>>>>>>> wraps a
->>>>>>>>>>>> memfd into a dma-buf.
->>>>>>>>>>> So, we have to decide either we introduce a new driver
->>>>>>>>>>> (say, under drivers/xen/xen-dma-buf) or extend the existing
->>>>>>>>>>> gntdev/balloon to support dma-buf use-cases.
->>>>>>>>>>>
->>>>>>>>>>> Can anybody from Xen community express their preference here?
->>>>>>>>>>>
->>>>>>>>>> Oleksandr talked to me on IRC about this, he said a few IOCTLs
->>>>>>>>>> need to
->>>>>>>>>> be added to either existing drivers or a new driver.
->>>>>>>>>>
->>>>>>>>>> I went through this thread twice and skimmed through the relevant
->>>>>>>>>> documents, but I couldn't see any obvious pros and cons for either
->>>>>>>>>> approach. So I don't really have an opinion on this.
->>>>>>>>>>
->>>>>>>>>> But, assuming if implemented in existing drivers, those IOCTLs
->>>>>>>>>> need to
->>>>>>>>>> be added to different drivers, which means userspace program
->>>>>>>>>> needs to
->>>>>>>>>> write more code and get more handles, it would be slightly
->>>>>>>>>> better to
->>>>>>>>>> implement a new driver from that perspective.
->>>>>>>>> If gntdev/balloon extension is still considered:
->>>>>>>>>
->>>>>>>>> All the IOCTLs will be in gntdev driver (in current xen-zcopy
->>>>>>>>> terminology):
->>>>>>>>>      - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
->>>>>>>>>      - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
->>>>>>>>>      - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
->>>>>>>>>
->>>>>>>>> Balloon driver extension, which is needed for contiguous/DMA
->>>>>>>>> buffers, will be to provide new *kernel API*, no UAPI is needed.
->>>>>>>>>
->>>>>>>> So I am obviously a bit late to this thread, but why do you need
->>>>>>>> to add
->>>>>>>> new ioctls to gntdev and balloon? Doesn't this driver manage to do
->>>>>>>> what
->>>>>>>> you want without any extensions?
->>>>>>> 1. I only (may) need to add IOCTLs to gntdev
->>>>>>> 2. balloon driver needs to be extended, so it can allocate
->>>>>>> contiguous (DMA) memory, not IOCTLs/UAPI here, all lives
->>>>>>> in the kernel.
->>>>>>> 3. The reason I need to extend gnttab with new IOCTLs is to
->>>>>>> provide new functionality to create a dma-buf from grant references
->>>>>>> and to produce grant references for a dma-buf. This is what I have as
->>>>>>> UAPI
->>>>>>> description for xen-zcopy driver:
->>>>>>>
->>>>>>> 1. DRM_IOCTL_XEN_ZCOPY_DUMB_FROM_REFS
->>>>>>> This will create a DRM dumb buffer from grant references provided
->>>>>>> by the frontend. The intended usage is:
->>>>>>>      - Frontend
->>>>>>>        - creates a dumb/display buffer and allocates memory
->>>>>>>        - grants foreign access to the buffer pages
->>>>>>>        - passes granted references to the backend
->>>>>>>      - Backend
->>>>>>>        - issues DRM_XEN_ZCOPY_DUMB_FROM_REFS ioctl to map
->>>>>>>          granted references and create a dumb buffer
->>>>>>>        - requests handle to fd conversion via
->>>>>>> DRM_IOCTL_PRIME_HANDLE_TO_FD
->>>>>>>        - requests real HW driver/consumer to import the PRIME buffer
->>>>>>> with
->>>>>>>          DRM_IOCTL_PRIME_FD_TO_HANDLE
->>>>>>>        - uses handle returned by the real HW driver
->>>>>>>      - at the end:
->>>>>>>        o closes real HW driver's handle with DRM_IOCTL_GEM_CLOSE
->>>>>>>        o closes zero-copy driver's handle with DRM_IOCTL_GEM_CLOSE
->>>>>>>        o closes file descriptor of the exported buffer
->>>>>>>
->>>>>>> 2. DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
->>>>>>> This will grant references to a dumb/display buffer's memory
->>>>>>> provided by
->>>>>>> the
->>>>>>> backend. The intended usage is:
->>>>>>>      - Frontend
->>>>>>>        - requests backend to allocate dumb/display buffer and grant
->>>>>>> references
->>>>>>>          to its pages
->>>>>>>      - Backend
->>>>>>>        - requests real HW driver to create a dumb with
->>>>>>> DRM_IOCTL_MODE_CREATE_DUMB
->>>>>>>        - requests handle to fd conversion via
->>>>>>> DRM_IOCTL_PRIME_HANDLE_TO_FD
->>>>>>>        - requests zero-copy driver to import the PRIME buffer with
->>>>>>>          DRM_IOCTL_PRIME_FD_TO_HANDLE
->>>>>>>        - issues DRM_XEN_ZCOPY_DUMB_TO_REFS ioctl to
->>>>>>>          grant references to the buffer's memory.
->>>>>>>        - passes grant references to the frontend
->>>>>>>     - at the end:
->>>>>>>        - closes zero-copy driver's handle with DRM_IOCTL_GEM_CLOSE
->>>>>>>        - closes real HW driver's handle with DRM_IOCTL_GEM_CLOSE
->>>>>>>        - closes file descriptor of the imported buffer
->>>>>>>
->>>>>>> 3. DRM_XEN_ZCOPY_DUMB_WAIT_FREE
->>>>>>> This will block until the dumb buffer with the wait handle provided be
->>>>>>> freed:
->>>>>>> this is needed for synchronization between frontend and backend in
->>>>>>> case
->>>>>>> frontend provides grant references of the buffer via
->>>>>>> DRM_XEN_ZCOPY_DUMB_FROM_REFS IOCTL and which must be released before
->>>>>>> backend replies with XENDISPL_OP_DBUF_DESTROY response.
->>>>>>> wait_handle must be the same value returned while calling
->>>>>>> DRM_XEN_ZCOPY_DUMB_FROM_REFS IOCTL.
->>>>>>>
->>>>>>> So, as you can see the above functionality is not covered by the
->>>>>>> existing UAPI
->>>>>>> of the gntdev driver.
->>>>>>> Now, if we change dumb -> dma-buf and remove DRM code (which is only a
->>>>>>> wrapper
->>>>>>> here on top of dma-buf) we get new driver for dma-buf for Xen.
->>>>>>>
->>>>>>> This is why I have 2 options here: either create a dedicated driver
->>>>>>> for
->>>>>>> this
->>>>>>> (e.g. re-work xen-zcopy to be DRM independent and put it under
->>>>>>> drivers/xen/xen-dma-buf, for example) or extend the existing gntdev
->>>>>>> driver
->>>>>>> with the above UAPI + make changes to the balloon driver to provide
->>>>>>> kernel
->>>>>>> API for DMA buffer allocations.
->>>>>> Which user component would use the new ioctls?
->>>>> It is currently used by the display backend [1] and will
->>>>> probably be used by the hyper-dmabuf frontend/backend
->>>>> (Dongwon from Intel can provide more info on this).
->>>>>> I'm asking because I'm not very fond of adding more linux specific
->>>>>> functions to libgnttab which are not related to a specific Xen version,
->>>>>> but to a kernel version.
->>>>> Hm, I was not thinking about this UAPI to be added to libgnttab.
->>>>> It seems it can be used directly w/o wrappers in user-space
->>>> Would this program use libgnttab in parallel?
->>> In case of the display backend - yes, for shared rings,
->>> extracting grefs from displif protocol it uses gntdev via
->>> helper library [1]
->>>>    If yes how would the two
->>>> usage paths be combined (same applies to the separate driver, btw)? The
->>>> gntdev driver manages resources per file descriptor and libgnttab is
->>>> hiding the file descriptor it is using for a connection.
->>> Ah, at the moment the UAPI was not used in parallel as there were
->>> 2 drivers for that: gntdev + xen-zcopy with different UAPIs.
->>> But now, if we extend gntdev with the new API then you are rigth:
->>> either libgnttab needs to be extended or that new part of the
->>> gntdev UAPI needs to be open-coded by the backend
->>>>    Or would the
->>>> user program use only the new driver for communicating with the gntdev
->>>> driver? In this case it might be an option to extend the gntdev driver
->>>> to present a new device (e.g. "gntdmadev") for that purpose.
->>> No, it seems that libgnttab and this new driver's UAPI will be used
->>> in parallel
->>>>>> So doing this in a separate driver seems to be the better option in
->>>>>> this regard.
->>>>> Well, from maintenance POV it is easier for me to have it all in
->>>>> a separate driver as all dma-buf related functionality will
->>>>> reside at one place. This also means that no changes to existing
->>>>> drivers will be needed (if it is ok to have ballooning in/out
->>>>> code for DMA buffers (allocated with dma_alloc_xxx) not in the balloon
->>>>> driver)
->>>> I think in the end this really depends on how the complete solution
->>>> will look like. gntdev is a special wrapper for the gnttab driver.
->>>> In case the new dma-buf driver needs to use parts of gntdev I'd rather
->>>> have a new driver above gnttab ("gntuser"?) used by gntdev and dma-buf.
->>> The new driver doesn't use gntdev's existing API, but extends it,
->>> e.g. by adding new ways to export/import grefs for a dma-buf and
->>> manage dma-buf's kernel ops. Thus, gntdev, which already provides
->>> UAPI, seems to be a good candidate for such an extension
->> So this would mean you need a modification of libgnttab, right? This is
->> something the Xen tools maintainers need to decide. In case they don't
->> object extending the gntdev driver would be the natural thing to do.
+On 2018-04-24 10:08, Russell King - ARM Linux wrote:
+> On Tue, Apr 24, 2018 at 08:58:42AM +0200, Peter Rosin wrote:
+>> On 2018-04-23 18:08, Russell King - ARM Linux wrote:
+>>> On Mon, Apr 23, 2018 at 09:23:00AM +0200, Peter Rosin wrote:
+>>>>  static int tda998x_remove(struct i2c_client *client)
+>>>>  {
+>>>> -	component_del(&client->dev, &tda998x_ops);
+>>>> +	struct device *dev = &client->dev;
+>>>> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
+>>>> +
+>>>> +	drm_bridge_remove(&bridge->bridge);
+>>>> +	component_del(dev, &tda998x_ops);
+>>>> +
+>>>
+>>> I'd like to ask a rather fundamental question about DRM bridge support,
+>>> because I suspect that there's a major fsckup here.
+>>>
+>>> The above is the function that deals with the TDA998x device being
+>>> unbound from the driver.  With the component API, this results in the
+>>> DRM device correctly being torn down, because one of the hardware
+>>> devices has gone.
+>>>
+>>> With DRM bridge, the bridge is merely removed from the list of
+>>> bridges:
+>>>
+>>> void drm_bridge_remove(struct drm_bridge *bridge)
+>>> {
+>>>         mutex_lock(&bridge_lock);
+>>>         list_del_init(&bridge->list);
+>>>         mutex_unlock(&bridge_lock);
+>>> }
+>>> EXPORT_SYMBOL(drm_bridge_remove);
+>>>
+>>> and the memory backing the "struct tda998x_bridge" (which contains
+>>> the struct drm_bridge) will be freed by the devm subsystem.
+>>>
+>>> However, there is no notification into the rest of the DRM subsystem
+>>> that the device has gone away.  Worse, the memory that is still in
+>>> use by DRM has now been freed, so further use of the DRM device
+>>> results in a use-after-free bug.
+>>>
+>>> This is really not good, and to me looks like a fundamental problem
+>>> with the DRM bridge code.  I see nothing in the DRM bridge code that
+>>> deals with the lifetime of a "DRM bridge" or indeed the lifetime of
+>>> the actual device itself.
+>>>
+>>> So, from what I can see, there seems to be a fundamental lifetime
+>>> issue with the design of the DRM bridge code.  This needs to be
+>>> fixed.
 >>
-> That should be fine. Most of libgnttab does is to wrap existing kernel
-> interfaces and expose them sensibly to user space programs. If gnttab
-> device is extended, libgnttab should be extended accordingly. If a new
-> device is created, a new library should be added. Either way there will
-> be new toolstack code involved, which is not a problem in general.
-Great, so finally I see the following approach to have generic
-dma-buf use-cases support for Xen (which can be used for many purposes,
-e.g. GPU/DRM buffer sharing, V4L, hyper-dmabuf etc.):
+>> Oh crap. A gigantic can of worms...
+> 
+> Yes, it's especially annoying for me, having put the effort in to
+> the component helper to cover all these cases.
+> 
+>> Would a patch (completely untested btw) along this line of thinking make
+>> any difference whatsoever?
+> 
+> It looks interesting - from what I can see of the device links code,
+> it would have the effect of unbinding the DRM device just before
+> TDA998x is unbound, so that's an improvement.
+> 
+> However, from what I can see, the link vanishes at that point (as
+> DL_FLAG_AUTOREMOVE is set), and re-binding the TDA998x device results
+> in nothing further happening - the link will be recreated, but there
+> appears to be nothing that triggers the "consumer" to rebind at that
+> point.  Maybe I've missed something?
 
-1. Extend Linux gntdev driver to support 3 new IOCTLs discussed previously
-2. Extend libgnttab to provide UAPI for those - Linux only as dma-buf
-is a Linux thing
-3. Extend kernel API of the Linux balloon driver to allow dma_alloc_xxx way
-of memory allocations
+Right, auto-remove is a no-go. So, improving on the previous...
 
-If the above looks ok, then I can start prototyping, so we can discuss
-implementation details
+(I think drm_panel might suffer from this issue too?)
 
-Dongwong - could you please comment on all this if it fits your use-cases
-(I do believe it does)?
-> Wei.
->
->> Juergen
-Thank you,
-Oleksandr
+Cheers,
+Peter
+
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index 1638bfe9627c..b1365cfee445 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -121,12 +121,17 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+ 	if (bridge->dev)
+ 		return -EBUSY;
+ 
++	bridge->link = device_link_add(encoder->dev->dev, bridge->owner, 0);
++	if (!bridge->link)
++		return -EINVAL;
++
+ 	bridge->dev = encoder->dev;
+ 	bridge->encoder = encoder;
+ 
+ 	if (bridge->funcs->attach) {
+ 		ret = bridge->funcs->attach(bridge);
+ 		if (ret < 0) {
++			device_link_del(bridge->link);
+ 			bridge->dev = NULL;
+ 			bridge->encoder = NULL;
+ 			return ret;
+@@ -153,6 +158,8 @@ void drm_bridge_detach(struct drm_bridge *bridge)
+ 	if (bridge->funcs->detach)
+ 		bridge->funcs->detach(bridge);
+ 
++	device_link_del(bridge->link);
++
+ 	bridge->dev = NULL;
+ }
+ 
+diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+index b8cb6237a38b..29eba4e9a39d 100644
+--- a/drivers/gpu/drm/i2c/tda998x_drv.c
++++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+@@ -1857,6 +1857,7 @@ tda998x_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	bridge->dev = dev;
+ 	dev_set_drvdata(dev, bridge);
+ 
++	bridge->bridge.owner = dev;
+ 	bridge->bridge.funcs = &tda998x_bridge_funcs;
+ #ifdef CONFIG_OF
+ 	bridge->bridge.of_node = dev->of_node;
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 682d01ba920c..b8f33aba3216 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -224,6 +224,8 @@ struct drm_bridge_funcs {
+ 
+ /**
+  * struct drm_bridge - central DRM bridge control structure
++ * @owner: device that owns the bridge
++ * @link: drm consumer <-> bridge supplier
+  * @dev: DRM device this bridge belongs to
+  * @encoder: encoder to which this bridge is connected
+  * @next: the next bridge in the encoder chain
+@@ -233,6 +235,8 @@ struct drm_bridge_funcs {
+  * @driver_private: pointer to the bridge driver's internal context
+  */
+ struct drm_bridge {
++	struct device *owner;
++	struct device_link *link;
+ 	struct drm_device *dev;
+ 	struct drm_encoder *encoder;
+ 	struct drm_bridge *next;
