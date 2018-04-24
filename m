@@ -1,76 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751561AbeDXTqs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:46:48 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45921 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeDXTqn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:46:43 -0400
-X-Google-Smtp-Source: AB8JxZog3mlli55FQNa7Ga2mrgrMUwffKruvu3JLhxbD70mhILAWDaC7zw4xtA9gj9mfW52vMAJL3g==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] PM / devfreq: Drop custom MIN/MAX macros
-Date: Tue, 24 Apr 2018 12:46:39 -0700
-Message-Id: <20180424194639.22804-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        id S1752288AbeDXTrZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:47:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37090 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750835AbeDXTrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:47:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B18F3217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: avoid bug_on on corrupted inode
+Date: Tue, 24 Apr 2018 13:47:18 -0600
+Message-Id: <20180424194718.71944-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the custom MIN/MAX macros in favour of the standard min/max from
-kernel.h
+syzbot has tested the proposed patch but the reproducer still triggered crash:
+kernel BUG at fs/f2fs/inode.c:LINE!
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+F2FS-fs (loop1): invalid crc value
+F2FS-fs (loop5): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+F2FS-fs (loop5): Can't find valid F2FS filesystem in 1th superblock
+F2FS-fs (loop5): invalid crc value
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/inode.c:238!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4886 Comm: syz-executor1 Not tainted 4.17.0-rc1+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:do_read_inode fs/f2fs/inode.c:238 [inline]
+RIP: 0010:f2fs_iget+0x3307/0x3ca0 fs/f2fs/inode.c:313
+RSP: 0018:ffff8801c44a70e8 EFLAGS: 00010293
+RAX: ffff8801ce208040 RBX: ffff8801b3621080 RCX: ffffffff82eace18
+F2FS-fs (loop2): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+RDX: 0000000000000000 RSI: ffffffff82eaf047 RDI: 0000000000000007
+RBP: ffff8801c44a7410 R08: ffff8801ce208040 R09: ffffed0039ee4176
+R10: ffffed0039ee4176 R11: ffff8801cf720bb7 R12: ffff8801c0efa000
+R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f753aa9d700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+------------[ cut here ]------------
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel BUG at fs/f2fs/inode.c:238!
+CR2: 0000000001b03018 CR3: 00000001c8b74000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ f2fs_fill_super+0x4377/0x7bf0 fs/f2fs/super.c:2842
+ mount_bdev+0x30c/0x3e0 fs/super.c:1165
+ f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
+ mount_fs+0xae/0x328 fs/super.c:1268
+ vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+ vfs_kern_mount fs/namespace.c:1027 [inline]
+ do_new_mount fs/namespace.c:2517 [inline]
+ do_mount+0x564/0x3070 fs/namespace.c:2847
+ ksys_mount+0x12d/0x140 fs/namespace.c:3063
+ __do_sys_mount fs/namespace.c:3077 [inline]
+ __se_sys_mount fs/namespace.c:3074 [inline]
+ __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
+ do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457daa
+RSP: 002b:00007f753aa9cba8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 0000000000457daa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f753aa9cbf0
+RBP: 0000000000000064 R08: 0000000020016a00 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
+R13: 0000000000000064 R14: 00000000006fcb80 R15: 0000000000000000
+RIP: do_read_inode fs/f2fs/inode.c:238 [inline] RSP: ffff8801c44a70e8
+RIP: f2fs_iget+0x3307/0x3ca0 fs/f2fs/inode.c:313 RSP: ffff8801c44a70e8
+invalid opcode: 0000 [#2] SMP KASAN
+---[ end trace 1cbcbec2156680bc ]---
+
+Reported-and-tested-by: syzbot+41a1b341571f0952badb@syzkaller.appspotmail.com
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- drivers/devfreq/devfreq.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ fs/f2fs/inode.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index fe2af6aa88fc..2067cd229ce3 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -28,9 +28,6 @@
- #include <linux/of.h>
- #include "governor.h"
- 
--#define MAX(a,b)	((a > b) ? a : b)
--#define MIN(a,b)	((a < b) ? a : b)
--
- static struct class *devfreq_class;
- 
- /*
-@@ -280,8 +277,8 @@ int update_devfreq(struct devfreq *devfreq)
- 	 * max_freq
- 	 * min_freq
- 	 */
--	max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
--	min_freq = MAX(devfreq->scaling_min_freq, devfreq->min_freq);
-+	max_freq = min(devfreq->scaling_max_freq, devfreq->max_freq);
-+	min_freq = max(devfreq->scaling_min_freq, devfreq->min_freq);
- 
- 	if (min_freq && freq < min_freq) {
- 		freq = min_freq;
-@@ -1149,7 +1146,7 @@ static ssize_t min_freq_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct devfreq *df = to_devfreq(dev);
- 
--	return sprintf(buf, "%lu\n", MAX(df->scaling_min_freq, df->min_freq));
-+	return sprintf(buf, "%lu\n", max(df->scaling_min_freq, df->min_freq));
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 414b1ede642b..7f2fe4574c48 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -185,6 +185,21 @@ void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct page *page)
+ 	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, page));
  }
  
- static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
-@@ -1185,7 +1182,7 @@ static ssize_t max_freq_show(struct device *dev, struct device_attribute *attr,
++static bool sanity_check_inode(struct inode *inode)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)
++			&& !f2fs_has_extra_attr(inode)) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"%s: corrupted inode ino=%lx, run fsck to fix.",
++			__func__, inode->i_ino);
++		return false;
++	}
++	return true;
++}
++
+ static int do_read_inode(struct inode *inode)
  {
- 	struct devfreq *df = to_devfreq(dev);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+@@ -235,7 +250,6 @@ static int do_read_inode(struct inode *inode)
+ 					le16_to_cpu(ri->i_extra_isize) : 0;
  
--	return sprintf(buf, "%lu\n", MIN(df->scaling_max_freq, df->max_freq));
-+	return sprintf(buf, "%lu\n", min(df->scaling_max_freq, df->max_freq));
- }
- static DEVICE_ATTR_RW(max_freq);
- 
+ 	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)) {
+-		f2fs_bug_on(sbi, !f2fs_has_extra_attr(inode));
+ 		fi->i_inline_xattr_size = le16_to_cpu(ri->i_inline_xattr_size);
+ 	} else if (f2fs_has_inline_xattr(inode) ||
+ 				f2fs_has_inline_dentry(inode)) {
+@@ -313,6 +327,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 	ret = do_read_inode(inode);
+ 	if (ret)
+ 		goto bad_inode;
++	if (!sanity_check_inode(inode)) {
++		ret = -EINVAL;
++		goto bad_inode;
++	}
+ make_now:
+ 	if (ino == F2FS_NODE_INO(sbi)) {
+ 		inode->i_mapping->a_ops = &f2fs_node_aops;
 -- 
-2.16.2
+2.17.0.484.g0c8726318c-goog
