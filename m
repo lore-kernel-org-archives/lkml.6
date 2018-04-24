@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934208AbeDXNWi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:22:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51867 "EHLO
+        id S1758007AbeDXNTY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:19:24 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35452 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757992AbeDXNTc (ORCPT
+        with ESMTP id S1757963AbeDXNTS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:19:32 -0400
-X-Google-Smtp-Source: AIpwx48Mq7PL+S3dh+0F2zhw279WWS9V/y4r9BGFFSUlzL/docfRg4HmBwlEkrvxbC4BoWoWGwUJVw==
+        Tue, 24 Apr 2018 09:19:18 -0400
+X-Google-Smtp-Source: AIpwx48PtBeZS9Lu77w9LGEu7O2+3wAVZE1MmsUZ5/f6KNNmqHvPE2VMpu725grzzT+VQtchB6MYXA==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Markus Elfring <elfring@users.sourceforge.net>,
         linux-media@vger.kernel.org
-Subject: [PATCH] media: mb86a20s: fix mb86a20s_get_frontend_algo()'s return type
-Date: Tue, 24 Apr 2018 15:19:27 +0200
-Message-Id: <20180424131929.6119-1-luc.vanoostenryck@gmail.com>
+Subject: [PATCH] media: cx24117: fix cx24117_get_algo()'s return type
+Date: Tue, 24 Apr 2018 15:19:13 +0200
+Message-Id: <20180424131916.5919-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -31,19 +29,19 @@ Fix this by returning 'enum dvbfe_algo' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/media/dvb-frontends/mb86a20s.c | 2 +-
+ drivers/media/dvb-frontends/cx24117.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/mb86a20s.c b/drivers/media/dvb-frontends/mb86a20s.c
-index 36e95196d..c3b1b88e2 100644
---- a/drivers/media/dvb-frontends/mb86a20s.c
-+++ b/drivers/media/dvb-frontends/mb86a20s.c
-@@ -2055,7 +2055,7 @@ static void mb86a20s_release(struct dvb_frontend *fe)
- 	kfree(state);
+diff --git a/drivers/media/dvb-frontends/cx24117.c b/drivers/media/dvb-frontends/cx24117.c
+index 8935114b7..ba55d75d9 100644
+--- a/drivers/media/dvb-frontends/cx24117.c
++++ b/drivers/media/dvb-frontends/cx24117.c
+@@ -1555,7 +1555,7 @@ static int cx24117_tune(struct dvb_frontend *fe, bool re_tune,
+ 	return cx24117_read_status(fe, status);
  }
  
--static int mb86a20s_get_frontend_algo(struct dvb_frontend *fe)
-+static enum dvbfe_algo mb86a20s_get_frontend_algo(struct dvb_frontend *fe)
+-static int cx24117_get_algo(struct dvb_frontend *fe)
++static enum dvbfe_algo cx24117_get_algo(struct dvb_frontend *fe)
  {
  	return DVBFE_ALGO_HW;
  }
