@@ -1,61 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751110AbeDXUbx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 16:31:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56990 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750749AbeDXUbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 16:31:52 -0400
-Date: Tue, 24 Apr 2018 14:31:48 -0600
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrea Arcangeli <aarcange@redhat.com>, guro@fb.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaperunmap
-Message-ID: <20180424203148.GW17484@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com>
- <20180420082349.GW17484@dhcp22.suse.cz>
- <20180420124044.GA17484@dhcp22.suse.cz>
- <alpine.DEB.2.21.1804212019400.84222@chino.kir.corp.google.com>
- <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp>
- <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com>
- <20180424130432.GB17484@dhcp22.suse.cz>
- <alpine.DEB.2.21.1804241256000.231037@chino.kir.corp.google.com>
- <20180424201352.GV17484@dhcp22.suse.cz>
- <alpine.DEB.2.21.1804241317200.231037@chino.kir.corp.google.com>
+        id S1752455AbeDXUfE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 16:35:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52338 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751295AbeDXUfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 16:35:01 -0400
+Subject: Re: [PATCH v3 02/12] KVM: arm/arm64: Document
+ KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+To: Peter Maydell <peter.maydell@linaro.org>,
+        Christoffer Dall <christoffer.dall@arm.com>
+References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+ <1523607658-9166-3-git-send-email-eric.auger@redhat.com>
+ <20180424164649.GA4533@C02W217FHV2R.local>
+ <CAFEAcA_EKuW6DWaHCvAftbL6QUSo6WY0cQmHrZhhbP5HoN_NqQ@mail.gmail.com>
+Cc: Eric Auger <eric.auger.pro@gmail.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kvm-devel <kvm@vger.kernel.org>, kvmarm@lists.cs.columbia.edu,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <cdall@kernel.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Andrew Jones <drjones@redhat.com>, Wei Huang <wei@redhat.com>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <f4179521-225f-82d3-50b6-af775b375453@redhat.com>
+Date: Tue, 24 Apr 2018 22:34:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804241317200.231037@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAFEAcA_EKuW6DWaHCvAftbL6QUSo6WY0cQmHrZhhbP5HoN_NqQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-04-18 13:22:45, David Rientjes wrote:
-[...]
-> > > My patch has passed intensive testing on both x86 and powerpc, so I'll ask 
-> > > that it's pushed for 4.17-rc3.  Many thanks to Tetsuo for the suggestion 
-> > > on calling __oom_reap_task_mm() from exit_mmap().
-> > 
-> > Yeah, but your patch does have a problem with blockable mmu notifiers
-> > IIUC.
+Hi Christoffer, Peter,
+
+On 04/24/2018 06:50 PM, Peter Maydell wrote:
+> On 24 April 2018 at 17:46, Christoffer Dall <christoffer.dall@arm.com> wrote:
+>> On Fri, Apr 13, 2018 at 10:20:48AM +0200, Eric Auger wrote:
+>>> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+>>> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+>>> @@ -27,9 +27,32 @@ Groups:
+>>>        VCPU and all of the redistributor pages are contiguous.
+>>>        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+>>>        This address needs to be 64K aligned.
+>>> +
+>>> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
+>>> +      The attr field of kvm_device_attr encodes 3 values:
+>>> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
+>>> +      values:   |     count      |       base      |  flags   | index
+>>> +      - index encodes the unique redistributor region index
+>>
+>> I'm not entirely sure I understand the purpose of the index field.
+>> Isn't a redistributor region identified uniquely by its base address?
 > 
-> What on earth are you talking about?  exit_mmap() does 
-> mmu_notifier_release().  There are no blockable mmu notifiers.
+> You need a way to tell the difference beween:
+>  (1) redistributors for CPUs 0..63 at 0x40000000, redistributors
+>      for 64..127 at 0x80000000
+>  (2) redistributors for CPUs 0..63 at 0x80000000, redistributors
+>      for 64..127 at 0x40000000
+> 
+> The index field tells you which order the redistributor
+> regions go in.
 
-MMF_OOM_SKIP - remember? The thing that guarantees a forward progress.
-So we cannot really depend on setting MMF_OOM_SKIP if a
-mmu_notifier_release blocks for an excessive/unbounded amount of time.
+Yes redistributors are filled in the index order. This matches DT
+description
+(Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt):
 
-Look I am not really interested in disussing this to death but it would
-be really _nice_ if you could calm down a bit, stop fighting for the solution
-you have proposed and ignore the feedback you are getting.
+<0x0 0x2d000000 0 0x800000>,      // GICR 1: CPUs 0-31
+<0x0 0x2e000000 0 0x800000>;      // GICR 2: CPUs 32-63
 
-There are two things to care about here. Stop the race that can blow up
-and do not regress MMF_OOM_SKIP guarantee. Can we please do that.
--- 
-Michal Hocko
-SUSE Labs
+Thanks
+
+Eric
+
+
+> 
+> thanks
+> -- PMM
+> 
