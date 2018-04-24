@@ -1,91 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758231AbeDXNsg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:48:36 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:49533 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933613AbeDXNpA (ORCPT
+        id S933691AbeDXNtG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:49:06 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50923 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933668AbeDXNQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:45:00 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v7 1/9] bindings: PCI: designware: Example update
-Date: Tue, 24 Apr 2018 14:44:38 +0100
-Message-Id: <7807d123c8232c54a82aac5cb7b1738bfb0df169.1524577064.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+        Tue, 24 Apr 2018 09:16:21 -0400
+X-Google-Smtp-Source: AIpwx48dveVE7U0Nfo8GpKZfGc9ndoN/uNZwCQVksKhVH3wmKft5aFuJ6/BNa6kbsJ5sq2P7kuuCdw==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, netdev@vger.kernel.org
+Subject: [PATCH] amd-xgbe: fix xgbe_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:16:18 +0200
+Message-Id: <20180424131618.3455-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers,
-however it still be compatible with any previous DT that uses the old
-reg-name.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, but the implementation in this
+driver returns an 'int'.
 
-Replaces the PCIe base address example by a real PCIe base address in use.
+Fix this by returning 'netdev_tx_t' in this driver too.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
-Changes v1->v2:
- - Removed any iATU reference or changes to avoid confusion.
- - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
-Changes v2->v3:
- - Nothing changed, just to follow the patch set version.
-Changes v3->v4:
- - Reverted "snps,dw-pcie-rc" compatible string requested by Rob Herring.
-Changes v4->v5:
- - Nothing changed, just to follow the patch set version.
-Changes v5->v6:
- - Nothing changed, just to follow the patch set version.
-Changes v6->v7:
- - Nothing changed, just to follow the patch set version.
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-index 1da7ade..7f9804d 100644
---- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-@@ -1,7 +1,8 @@
- * Synopsys DesignWare PCIe interface
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
+index 7c204f05b..9dc263dda 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
+@@ -1962,7 +1962,7 @@ static int xgbe_close(struct net_device *netdev)
+ 	return 0;
+ }
  
- Required properties:
--- compatible: should contain "snps,dw-pcie" to identify the core.
-+- compatible:
-+	"snps,dw-pcie" for RC mode;
- - reg: Should contain the configuration address space.
- - reg-names: Must be "config" for the PCIe configuration space.
-     (The old way of getting the configuration address space from "ranges"
-@@ -41,11 +42,11 @@ EP mode:
- 
- Example configuration:
- 
--	pcie: pcie@dffff000 {
-+	pcie: pcie@dfc00000 {
- 		compatible = "snps,dw-pcie";
--		reg = <0xdffff000 0x1000>, /* Controller registers */
--		      <0xd0000000 0x2000>; /* PCI config space */
--		reg-names = "ctrlreg", "config";
-+		reg = <0xdfc00000 0x0001000>, /* IP registers */
-+		      <0xd0000000 0x0002000>; /* Configuration space */
-+		reg-names = "dbi", "config";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		device_type = "pci";
-@@ -54,5 +55,4 @@ Example configuration:
- 		interrupts = <25>, <24>;
- 		#interrupt-cells = <1>;
- 		num-lanes = <1>;
--		num-viewport = <3>;
- 	};
+-static int xgbe_xmit(struct sk_buff *skb, struct net_device *netdev)
++static netdev_tx_t xgbe_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	struct xgbe_prv_data *pdata = netdev_priv(netdev);
+ 	struct xgbe_hw_if *hw_if = &pdata->hw_if;
 -- 
-2.7.4
+2.17.0
