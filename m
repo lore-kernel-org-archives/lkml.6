@@ -1,42 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754795AbeDXOkP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:40:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751195AbeDXOkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:40:09 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FD2C21774
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 24 Apr 2018 10:40:06 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>, Petr Mladek <pmladek@suse.com>,
-        Fengguang Wu <fengguang.wu@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: printk feature for syzbot?
-Message-ID: <20180424104006.39c71b32@gandalf.local.home>
-In-Reply-To: <20180424013336.GA1376@jagdpanzerIV>
-References: <201804232233.CIC65675.OJSOMFQOFFHVtL@I-love.SAKURA.ne.jp>
-        <CACT4Y+boyw_Qy=y-iTnsKZrtTgF0Hk3nHN_xtqUdX4etgiYDQw@mail.gmail.com>
-        <20180424013336.GA1376@jagdpanzerIV>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752049AbeDXOlh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:41:37 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54458 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756025AbeDXOgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 10:36:24 -0400
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 1/7] genirq/debugfs: Print percpu affinity for percpu_devid interrupts
+Date: Tue, 24 Apr 2018 15:36:12 +0100
+Message-Id: <20180424143618.16073-2-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180424143618.16073-1-marc.zyngier@arm.com>
+References: <20180424143618.16073-1-marc.zyngier@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 10:33:36 +0900
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+percpu_devid interrupts have their affinities stored in a different
+field. Let's special-case it.
 
-> Petr, Steven, Fengguang, what do you think? Do you have any objections?
-> Ideas?
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ kernel/irq/debugfs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-If it can be turned off by a config option, I'm fine with it.
-
--- Steve
+diff --git a/kernel/irq/debugfs.c b/kernel/irq/debugfs.c
+index 4dadeb3d6666..da41150322e1 100644
+--- a/kernel/irq/debugfs.c
++++ b/kernel/irq/debugfs.c
+@@ -32,7 +32,10 @@ static void irq_debug_show_masks(struct seq_file *m, struct irq_desc *desc)
+ 	struct irq_data *data = irq_desc_get_irq_data(desc);
+ 	struct cpumask *msk;
+ 
+-	msk = irq_data_get_affinity_mask(data);
++	if (irq_is_percpu_devid(data->irq))
++		msk = (struct cpumask *)desc->percpu_affinity;
++	else
++		msk = irq_data_get_affinity_mask(data);
+ 	seq_printf(m, "affinity: %*pbl\n", cpumask_pr_args(msk));
+ #ifdef CONFIG_GENERIC_IRQ_EFFECTIVE_AFF_MASK
+ 	msk = irq_data_get_effective_affinity_mask(data);
+-- 
+2.14.2
