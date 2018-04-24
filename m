@@ -1,60 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeDXRCl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:02:41 -0400
-Received: from mga01.intel.com ([192.55.52.88]:5848 "EHLO mga01.intel.com"
+        id S1751510AbeDXRCs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:02:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43608 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750827AbeDXRCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:02:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,324,1520924400";
-   d="scan'208";a="222973545"
-Message-ID: <1524589355.21176.507.camel@linux.intel.com>
-Subject: Re: [PATCH] platform/x86: acer-wmi: add another KEY_POWER keycode
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Gianfranco Costamagna <locutusofborg@debian.org>
-Cc: Antonio Rosario Intilisano <antonio.intilisano@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "vger@kernel.org" <vger@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Chiu <chiu@endlessm.com>, Daniel Drake <drake@endlessm.com>
-Date: Tue, 24 Apr 2018 20:02:35 +0300
-In-Reply-To: <CAHp75VeDhyKmcJqA5paqJEPsw-gpzq7iJee+zu=ZMqUpDv0_6A@mail.gmail.com>
-References: <20180420212641.30338-1-antonio.intilisano@gmail.com>
-         <a62dded5-0fa9-1a6e-dd71-3e03cc311f1f@debian.org>
-         <CAHp75VdSOGnN5=yxkk1m3=7rBKR1PU3NfO6QNp7wYR7Qx6mWkA@mail.gmail.com>
-         <1690760144.5633578.1524494921916@mail.yahoo.com>
-         <CAHp75VeDhyKmcJqA5paqJEPsw-gpzq7iJee+zu=ZMqUpDv0_6A@mail.gmail.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751454AbeDXRCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 13:02:43 -0400
+Date: Tue, 24 Apr 2018 11:02:39 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: Chunyu Hu <chuhu@redhat.com>
+Cc: Chunyu Hu <chuhu.ncepu@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
+Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in
+ gfp_kmemleak_mask
+Message-ID: <20180424170239.GP17484@dhcp22.suse.cz>
+References: <1524243513-29118-1-git-send-email-chuhu@redhat.com>
+ <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com>
+ <20180422125141.GF17484@dhcp22.suse.cz>
+ <CACT4Y+YWUgyzCBadg+Oe8wDkFCaBzmcKDgu3rKjQxim7NXNLpg@mail.gmail.com>
+ <CABATaM6eWtssvuj3UW9LHLK3HWo8P9g0z9VzFnuqKPKO5KMJ3A@mail.gmail.com>
+ <20180424132057.GE17484@dhcp22.suse.cz>
+ <850575801.19606468.1524588530119.JavaMail.zimbra@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <850575801.19606468.1524588530119.JavaMail.zimbra@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-24 at 19:15 +0300, Andy Shevchenko wrote:
-> On Mon, Apr 23, 2018 at 5:48 PM, Gianfranco Costamagna
-> <locutusofborg@debian.org> wrote:
-> > Hello,
-> > 
-> > > Can you give your corresponding tag as well?
-> > 
-> > 
-> > we are implementing the fix right now, please follow bug
-> > https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1766054
+On Tue 24-04-18 12:48:50, Chunyu Hu wrote:
 > 
-> OK, I postpone this patch until new version.
+> 
+> ----- Original Message -----
+> > From: "Michal Hocko" <mhocko@kernel.org>
+> > To: "Chunyu Hu" <chuhu.ncepu@gmail.com>
+> > Cc: "Dmitry Vyukov" <dvyukov@google.com>, "Catalin Marinas" <catalin.marinas@arm.com>, "Chunyu Hu"
+> > <chuhu@redhat.com>, "LKML" <linux-kernel@vger.kernel.org>, "Linux-MM" <linux-mm@kvack.org>
+> > Sent: Tuesday, April 24, 2018 9:20:57 PM
+> > Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
+> > 
+> > On Mon 23-04-18 12:17:32, Chunyu Hu wrote:
+> > [...]
+> > > So if there is a new flag, it would be the 25th bits.
+> > 
+> > No new flags please. Can you simply store a simple bool into fail_page_alloc
+> > and have save/restore api for that?
+> 
+> Hi Michal,
+> 
+> I still don't get your point. The original NOFAIL added in kmemleak was 
+> for skipping fault injection in page/slab  allocation for kmemleak object, 
+> since kmemleak will disable itself until next reboot, whenever it hit an 
+> allocation failure, in that case, it will lose effect to check kmemleak 
+> in errer path rose by fault injection. But NOFAULT's effect is more than 
+> skipping fault injection, it's also for hard allocation. So a dedicated flag
+> for skipping fault injection in specified slab/page allocation was mentioned.
 
-Or I missed the point and it's working? Tell me what to do with it.
+I am not familiar with the kmemleak all that much, but fiddling with the
+gfp_mask is a wrong way to achieve kmemleak specific action. I might be
+easilly wrong but I do not see any code that would restore the original
+gfp_mask down the kmem_cache_alloc path.
 
-For now I pushed to my review and testing queue, thanks!
+> d9570ee3bd1d ("kmemleak: allow to coexist with fault injection") 
+>   
+> Do you mean something like below, with the save/store api? But looks like
+> to make it possible to skip a specified allocation, not global disabling,
+> a bool is not enough, and a gfp_flag is also needed. Maybe I missed something?
+
+Yes, this is essentially what I meant. It is still a global thing which
+is not all that great and if it matters then you can make it per
+task_struct. That really depends on the code flow here.
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Michal Hocko
+SUSE Labs
