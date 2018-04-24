@@ -1,119 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756367AbeDXHa5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 03:30:57 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:42289 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755835AbeDXHaw (ORCPT
+        id S1756436AbeDXHcF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 03:32:05 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:38491 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756249AbeDXHcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 03:30:52 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180424073050epoutp016c95647e4ff436af4839ca7f7101d2e8~oTr2ZmBOW0584205842epoutp01m
-X-AuditID: b6c32a46-15dff70000001024-a1-5adedd278427
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5ADEDD27.3070207@samsung.com>
-Date: Tue, 24 Apr 2018 16:30:47 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
-In-reply-to: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjmO2fbmdLqa2l9zDI7dKGR5s5cfop2zw5lMbKoFmIn/VDRXdjZ
-        ohs0itKke4oxpDKyYOA1lVxWpN0JxUqLwBFZ655dzSCjnR2jfr3P+/A8L+/78Kpp7SmVTl1o
-        cxGnTShmVZGK1s7ZpvhZ/QFL4uCFVNzyNAYfGXhH4+7uBgY3DfQp8eeDASV+6K9S4ZY3Hyl8
-        svsqhXvuLcOd70uU+HdfowL7/L8APty1fKGGH3yyj+HbvP0M3+Q7oOIvntvNH272AT5YXa/g
-        vzbFmhkLSSsgQh5xxhFbrj2v0Jafzq7MylmSY5qXaIg3pOBkNs4mWEk6uzTTHJ9RWBxalY3b
-        KhS7Q5RZEEV27vw0p93tInEFdtGVzm4yGLgEQ2JyAseFqjE7lTOFJJtJwY3h75RjZMy27wMH
-        FB4wFFkGItQIJqHey0NUGYhUa+ElgHqDjaPND4Dqng0pyoA6rKqtyJIMWtgA0PEah4Q1cDwa
-        PhEIS2g4Fd14UCTRNJyNWi7XM/KYfoDqn54Fsl6PDn27Q0l6BZyB7hwXJFoVoq+9fqKS8Dg4
-        DfUOD4Tl0XADajs9xEg4Cmahx/duAWkmDb00am/9EjZMgIvRq9pHtIQjYAaqK/WH90ewhEHt
-        1z1AvnIpevH8KyXjCejt7WZGxjEo6GsEowaASq6couWmHKCux4FRhxEFq8so+baxqLRzhJFT
-        0aDS/VpZwqPBFzWjYS1CJf5l8vW9AO1taAdHQaz3v8C8/wLz/hfYGUD7wETiEK35ROQcXIIo
-        WEW3LT8h125tAuHf1GdcAue6MjsAVAN2jObMz36LVilsFbdbOwBS02yU5kpswKLV5AnbdxCn
-        PcfpLiZiBzCF8j5G66Jz7aFPt7lyDCbOaDRiU3KKMTGFnaTxrLpv0cJ8wUWKCHEQ518fpY7Q
-        eQDT8/thsK/Sc9q5YeOnuQv1+/3P4craOZFjY8zbpheRGty3dvVgz8Rs+0klHh+o3FRx7YJO
-        Fd2dW6d731z+Yd6tLn6nske/IGlBsPYnl/nyrmlPudianV2dyrWtHqlKS1rfkbYuetdRM6z4
-        UIfWrG+JmjP5G7Vlyvmb6SvceVUzH7AKsUAw6GmnKPwBb5kCuLEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42I5/e+xoK763XtRBt9WaFpsvSVt0f/4NbPF
-        +fMb2C02Pb7GavGx5x6rxeVdc9gstr58x2Qx4/w+JouLp1wtDr9pZ7X4d20ji8WqXX8YLfrO
-        uTvwery/0crusXPWXXaPTas62Tw2L6n36NuyitHj2cL1LB6fN8kFsEdx2aSk5mSWpRbp2yVw
-        ZRz58ZWp4C9PxdfHnSwNjN+4uhg5OCQETCTWTg3uYuTiEBJYxyix4/UW1i5GTg5eAUGJH5Pv
-        sYDUMAvISxy5lA0SZhZQl5g0bxEzRP19Romfx3oYIeq1JHq/nGACqWcRUJU4MSkRJMwGFN7/
-        4gYbiM0voChx9cdjRpASUYEIie4TlSBhEYFgiWedTawgI5kF5jBLPHv9gAUkISzgJPF87RWo
-        XVcZJaafagW7jVPATWJdxy6mCYwCs5CcOgvh1FlITl3AyLyKUTK1oDg3PbfYqMAoL7Vcrzgx
-        t7g0L10vOT93EyMwYrYd1urfwfh4SfwhRgEORiUe3gU/70YJsSaWFVfmHmKU4GBWEuHdK3cv
-        Sog3JbGyKrUoP76oNCe1+BCjNAeLkjgvf/6xSCGB9MSS1OzU1ILUIpgsEwenVAMj+63+jjt5
-        eScfaG/jkbvN/ll0v4LiuemLJC6uXbKZR6irwX7N9fdnuONE5v4+IbGn9PQ/kyyx3MszL8um
-        Jh2XPHeH1b5x1mLGF6ofnZ4vm/7/1z5D32t+U5g9JBbX271iv1Ohw8vbPYmlXsq7+6VFaJqD
-        ENPsMDvRB5ucjeQZpxmdjdn69+lEJZbijERDLeai4kQAstz/PJQCAAA=
-X-CMS-MailID: 20180424073047epcas2p4496fec33a8d365d0884a8887470dca3c
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180419140651epcas5p22119a061c760dd54c0c3e630b053ec1b
-X-RootMTR: 20180419140651epcas5p22119a061c760dd54c0c3e630b053ec1b
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-        <CGME20180419140651epcas5p22119a061c760dd54c0c3e630b053ec1b@epcas5p2.samsung.com>
-        <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+        Tue, 24 Apr 2018 03:32:01 -0400
+X-Google-Smtp-Source: AIpwx4/7zSgp2KA382gndgsxEtCmpAZ09nsMEVU6RyMuh6SpwH0FM+yVDQ5ux05RbLDxCSZLA1QDBA==
+Date: Tue, 24 Apr 2018 17:31:47 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        ppaidipe@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com
+Subject: Re: [PATCH] cpufreq: powernv: Fix the hardlockup by synchronus
+ smp_call in timer interrupt
+Message-ID: <20180424173147.7bcd86c5@roar.ozlabs.ibm.com>
+In-Reply-To: <c88d51af-9eb8-6bb3-4201-8909cda0241b@linux.vnet.ibm.com>
+References: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+        <20180424160034.6e9d2274@roar.ozlabs.ibm.com>
+        <c88d51af-9eb8-6bb3-4201-8909cda0241b@linux.vnet.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 24 Apr 2018 12:47:32 +0530
+Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> wrote:
 
-On 2018년 04월 19일 23:05, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
+> Hi,
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
+> On 04/24/2018 11:30 AM, Nicholas Piggin wrote:
+> > On Tue, 24 Apr 2018 10:11:46 +0530
+> > Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> wrote:
+> >   
+> >> gpstate_timer_handler() uses synchronous smp_call to set the pstate
+> >> on the requested core. This causes the below hard lockup:
+> >>
+> >> [c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
+> >> [c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
+> >> [c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
+> >> [c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
+> >> [c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
+> >> [c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
+> >> [c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
+> >> [c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
+> >> [c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
+> >> [c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
+> >> --- interrupt: 901 at doorbell_global_ipi+0x34/0x50
+> >> LR = arch_send_call_function_ipi_mask+0x120/0x130
+> >> [c000003fe566ba50] [c00000000004876c] arch_send_call_function_ipi_mask+0x4c/0x130 (unreliable)
+> >> [c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
+> >> [c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
+> >> [c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
+> >> [c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
+> >> [c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
+> >> [c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
+> >> [c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
+> >>
+> >> Fix this by using the asynchronus smp_call in the timer interrupt handler.
+> >> We don't have to wait in this handler until the pstates are changed on
+> >> the core. This change will not have any impact on the global pstate
+> >> ramp-down algorithm.
+> >>
+> >> Reported-by: Nicholas Piggin <npiggin@gmail.com>
+> >> Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
+> >> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+> >> ---
+> >>  drivers/cpufreq/powernv-cpufreq.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+> >> index 0591874..7e0c752 100644
+> >> --- a/drivers/cpufreq/powernv-cpufreq.c
+> >> +++ b/drivers/cpufreq/powernv-cpufreq.c
+> >> @@ -721,7 +721,7 @@ void gpstate_timer_handler(struct timer_list *t)
+> >>  	spin_unlock(&gpstates->gpstate_lock);
+> >>  
+> >>  	/* Timer may get migrated to a different cpu on cpu hot unplug */
+> >> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
+> >> +	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 0);
+> >>  }
+> >>  
+> >>  /*  
+> > 
+> > This can still deadlock because !wait case still ends up having to wait
+> > if another !wait smp_call_function caller had previously used the
+> > call single data for this cpu.
+> > 
+> > If you go this way you would have to use smp_call_function_async, which
+> > is more work.
+> > 
+> > As a rule it would be better to avoid smp_call_function entirely if
+> > possible. Can you ensure the timer is running on the right CPU? Use
+> > add_timer_on and try again if the timer is on the wrong CPU, perhaps?
+> >   
 > 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> index 077df3e539a7..f41d89cef0f1 100644
-> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> @@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
->  #ifdef CONFIG_PM_SLEEP
->  static int s3c24xx_dclk_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
-> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
->  
->  	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
->  	return 0;
-> @@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
->  
->  static int s3c24xx_dclk_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
-> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
->  
->  	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
->  	return 0;
-> 
+> Yeah that is doable we can check for the cpu and re-queue it. We will only
+> ramp-down slower in that case which is no harm.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Great, I'd be much happier avoiding that IPI. I guess it should happen
+quite rarely that we have to queue on a different CPU. I would say just
+do add_timer unless we have migrated to the wrong CPU, then do add_timer_on
+in that case (it's a bit slower).
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> (If the targeted core turns out to be offline then we will not queue the timer
+> again as we would have already set the pstate to min in the cpu-down path.)
+
+Something I noticed is that if we can not get the lock (trylock fails),
+then the timer does not get queued again. Should it?
+
+Thanks,
+Nick
