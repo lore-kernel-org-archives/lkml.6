@@ -1,66 +1,76 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AB8JxZrghOu8h4eD8EvnM07YPppVmp13TLkvlA2s8K3zgHkYklKu1fQgGFH4b6XQUTikErLR/fAM
-ARC-Seal: i=1; a=rsa-sha256; t=1524606975; cv=none;
+Return-Path: <wvw@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524604967; cv=none;
         d=google.com; s=arc-20160816;
-        b=phr3ozcJBrjc5ciIeOLLwd/PFSV0xYXPx61jdYqYSSWC+TyxujppxQqZ4dkanQAPCE
-         89VD6ZWU8S6hI1MNPwqLfeaX6Qn6UACWvrBES8inwPnjFmBWOAkle5IF+Vc99Yi7vdQd
-         wBNYvCGZp/BLEwrNE2LhY5nLql0SL5QMDy2ldCsp//TqjF8ALTfBSo1r6yZjo+x5+R8q
-         Na71e+4XYHaE4P4WBxx/T57xrOlXmmKVEkPOOKsL+ZMweAJF5CAyKU7F4Lyz1BZmQoZz
-         d6daIXO4dj4K4S149AGUUj8kQnL3GdFXBMMSLF5ScfajJKsWhDB6Lcb9/NnH6l+sPHkH
-         zgWw==
+        b=mUIuZHuPtX3pDFvkOeJkpPp70t9yyO0Wcbv4u9n29P6img/9EiYoLG314LaMxSn1Mz
+         9y3GOJaH6X2OYEK/ID0Zq4r6C8tr7SBn2ArE5CPTh80NS640PTSD7yZXyVnZh64MGpKE
+         5wDgUl86RIdAnSOKBLd2Hbok6uEc1cUa+RGTK5VFvNTm/oaCLDPrZtRJ0Intip4FyrMW
+         VwiprXYGsg1orO7p3RpSKBxslc4w4EzveKm4Y2AagEpQWKspox9DruKiWS8Hx8tI8kk+
+         +yZGuY7Z2SlUq2sjWmR/h4RcySA3I/pw2lh8bi81VZVbveHQykiFXstLNd3tV75HbFD9
+         6hAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:arc-authentication-results;
-        bh=1Ojr2+Ha4RNIMGA9ow81PpTNjIVS5uIw4PVBfImfCu4=;
-        b=KTR72j3AlJXmJERH+YUvbybfnhksgwWgRRFJNdqst8ltcVNvS9VT3F+Vk3bVX+hGZQ
-         jVvz9qifjruy2AgOHIAa7K9LfeLyGFoOZZndWhPUFv7MdIvmTm1b2GDmW0WrOyXXk5Je
-         90/CCcC5AeHvpnJPjHKy2MORb42wBE3Ud1FmZ/eXll4fW5D7+ONx92ZYSb+yWho9S55D
-         rgI3E6P+N/djB/wRujNMGxjNUd5fPbolsoW2bPToOX50Sux7U6oNiobYBwpxIBMMxeln
-         u9mD/n0s6RHl4xyljpu3K7oBwI3I3qLNxUnRXSr5t9LGGPPIS0GK9/RDuvzXwiyl78bF
-         gdng==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=OTZJEvCtgoauQ56LxM4JhZ2KxUm2g8kUWOXrStAFFd0=;
+        b=USFEsU3HvHH0KBBCVv2mLQnpTzOCts59siIPcPNNWUMNzbmb0p1STIS5vLMCZFSQwi
+         Ks/Z/O0Mzfekaab/r2edOlKQA5MJ+O1oi1ouMixAx5Ltf9WH4y7/nFlgbsz28uhi5/lO
+         /syFNLwm8VCAeHqX1F3bbjr72K4wB5LyH8E4TpvvlkiQudBdl1gtibTOEFNHN0JHJiMj
+         9WyLz0bH7UoNU0QzXUQKx1nIG8gvphwES7TG7VRviJ2N36uLFzduF0gpCnrEC+6V/yto
+         eF2UDCyrnln3TIw6QgoqLopi7ExxXU6GfuEBZYAKo7jxjkQaBE82TY6iUv/1wnExQE1p
+         tNGw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@google.com header.s=20161025 header.b=dPW7oBuf;
+       spf=pass (google.com: domain of wvw@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wvw@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750779AbeDXV4O (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 24 Apr 2018 17:56:14 -0400
-Received: from www62.your-server.de ([213.133.104.62]:60033 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeDXV4O (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:56:14 -0400
-Subject: Re: [PATCH v2] selftests: bpf: update .gitignore with missing file
-To: Anders Roxell <anders.roxell@linaro.org>, ast@kernel.org,
-        shuah@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-References: <065a8bc2-6065-3d43-8b03-35ed693de7ce@iogearbox.net>
- <20180423225305.18947-1-anders.roxell@linaro.org>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <40ecbc34-f7b2-2585-c4b1-432c19972432@iogearbox.net>
-Date: Tue, 24 Apr 2018 23:56:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180423225305.18947-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass header.i=@google.com header.s=20161025 header.b=dPW7oBuf;
+       spf=pass (google.com: domain of wvw@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wvw@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx49xqZ6is7IrHfuHmwG3tg8ZwRcq5e9HhMN2IEl3Ky8gPbl5lBa+WEOEPcsnj5BILL014Ouc2w==
+From: Wei Wang <wvw@google.com>
+X-Google-Original-From: Wei Wang < wvw@google.com >
+To: 
+Cc: gregkh@linuxfoundation.org,
+	wei.vince.wang@gmail.com,
+	Wei Wang <wvw@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@suse.de>,
+	Crt Mori <cmo@melexis.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] kernel.h: fix a typo in comment
+Date: Tue, 24 Apr 2018 14:22:38 -0700
+Message-Id: <20180424212241.16013-1-wvw@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598545167658218974?=
-X-GMAIL-MSGID: =?utf-8?q?1598666283422415712?=
+X-GMAIL-THRID: =?utf-8?q?1598664178691069989?=
+X-GMAIL-MSGID: =?utf-8?q?1598664178691069989?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/24/2018 12:53 AM, Anders Roxell wrote:
-> Fixes: c0fa1b6c3efc ("bpf: btf: Add BTF tests")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
-> Rebased against bpf-next.
+From: Wei Wang <wvw@google.com>
 
-Applied to bpf-next, thanks Anders!
+Signed-off-by: Wei Wang <wvw@google.com>
+---
+ include/linux/kernel.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 6a1eb0b0aad96..e37e40ff14bba 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -664,7 +664,7 @@ do {									\
+  * your code. (Extra memory is used for special buffers that are
+  * allocated when trace_printk() is used.)
+  *
+- * A little optization trick is done here. If there's only one
++ * A little optimization trick is done here. If there's only one
+  * argument, there's no need to scan the string for printf formats.
+  * The trace_puts() will suffice. But how can we take advantage of
+  * using trace_puts() when trace_printk() has only one argument?
+-- 
+2.17.0.484.g0c8726318c-goog
