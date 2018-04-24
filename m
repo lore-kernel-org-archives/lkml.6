@@ -1,78 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeDXQvm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:51:42 -0400
-Received: from mga01.intel.com ([192.55.52.88]:4943 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751339AbeDXQve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:51:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,323,1520924400";
-   d="scan'208";a="36673220"
-Message-ID: <1524588689.21176.506.camel@linux.intel.com>
-Subject: Re: [tip:x86/urgent] x86/io: Define readq()/writeq() to use 64-bit
- type
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ingo Molnar <mingo@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kbuild test robot <lkp@intel.com>, sohil.mehta@intel.com,
-        mitake@dcl.info.waseda.ac.jp, linux-tip-commits@vger.kernel.org
-Date: Tue, 24 Apr 2018 19:51:29 +0300
-In-Reply-To: <20180331184528.dwpmpkpjj6ocwqhp@gmail.com>
-References: <20180119143322.16555-1-andriy.shevchenko@linux.intel.com>
-         <tip-0fc8483b698620ea3d8cc6635b54eccc613c23a3@git.kernel.org>
-         <1522163426.21176.24.camel@linux.intel.com>
-         <20180331101914.ylrlgxhdohcosbnr@gmail.com>
-         <20180331102220.kmtu62uktmfrfe4a@gmail.com>
-         <CAHp75Vd6O-=2dtbQ6eH8ye7QpW9PNEyZRdVwAyCDkS4TQW5vPQ@mail.gmail.com>
-         <CAHp75VdPEG0xFcNYZZCpx4SPX8+7FHFcAGuSVd0vX7TuknmKiQ@mail.gmail.com>
-         <20180331184528.dwpmpkpjj6ocwqhp@gmail.com>
-Organization: Intel Finland Oy
+        id S1752141AbeDXQvE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:51:04 -0400
+Received: from mail-ot0-f176.google.com ([74.125.82.176]:36834 "EHLO
+        mail-ot0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751307AbeDXQu6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:50:58 -0400
+X-Google-Smtp-Source: AB8JxZoytZeb7w3rHwwu8bE306YAt84dKb5bqySSlI2THmVpc4jDzS5UU9CXse9obf21ZGYdTmewIQzevwFbpVmg8pQ=
+MIME-Version: 1.0
+In-Reply-To: <20180424164649.GA4533@C02W217FHV2R.local>
+References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+ <1523607658-9166-3-git-send-email-eric.auger@redhat.com> <20180424164649.GA4533@C02W217FHV2R.local>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Tue, 24 Apr 2018 17:50:37 +0100
+Message-ID: <CAFEAcA_EKuW6DWaHCvAftbL6QUSo6WY0cQmHrZhhbP5HoN_NqQ@mail.gmail.com>
+Subject: Re: [PATCH v3 02/12] KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+To: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Eric Auger <eric.auger@redhat.com>,
+        Eric Auger <eric.auger.pro@gmail.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kvm-devel <kvm@vger.kernel.org>, kvmarm@lists.cs.columbia.edu,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <cdall@kernel.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Andrew Jones <drjones@redhat.com>, Wei Huang <wei@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-03-31 at 20:45 +0200, Ingo Molnar wrote:
-> * Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> 
-> > On Sat, Mar 31, 2018 at 3:06 PM, Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Sat, Mar 31, 2018 at 1:22 PM, Ingo Molnar <mingo@kernel.org>
-> > > wrote:
-> > > > * Ingo Molnar <mingo@kernel.org> wrote:
-> > > >   [tip:x86/urgent 14/14]
-> > > > drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1690:22: sparse:
-> > > > incorrect type in argument 1 (different base types)
-> > > > 
-> > > > Since you were on Cc: of that report I assumed you'd take care
-> > > > of it.
-> > > 
-> > > Ah, yes. This one I fixed.
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit
-> > /?h=for-next&id=71591d1280e5ef02c2af2ffb9801d0c842973be9
-> 
-> Yeah, so this fix in the RDMA tree needs to go upstream first, before
-> we can apply 
-> the changes to the interface. Could you resend at around v4.17-rc1 or
-> so?
+On 24 April 2018 at 17:46, Christoffer Dall <christoffer.dall@arm.com> wrote:
+> On Fri, Apr 13, 2018 at 10:20:48AM +0200, Eric Auger wrote:
+>> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+>> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+>> @@ -27,9 +27,32 @@ Groups:
+>>        VCPU and all of the redistributor pages are contiguous.
+>>        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+>>        This address needs to be 64K aligned.
+>> +
+>> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
+>> +      The attr field of kvm_device_attr encodes 3 values:
+>> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
+>> +      values:   |     count      |       base      |  flags   | index
+>> +      - index encodes the unique redistributor region index
+>
+> I'm not entirely sure I understand the purpose of the index field.
+> Isn't a redistributor region identified uniquely by its base address?
 
-Btw, should I recend or you can still pick it up from linux-next or
-mailing list?
+You need a way to tell the difference beween:
+ (1) redistributors for CPUs 0..63 at 0x40000000, redistributors
+     for 64..127 at 0x80000000
+ (2) redistributors for CPUs 0..63 at 0x80000000, redistributors
+     for 64..127 at 0x40000000
 
-I can resend tomorrow if needed.
+The index field tells you which order the redistributor
+regions go in.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+thanks
+-- PMM
