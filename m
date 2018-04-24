@@ -1,90 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeDXPat (ORCPT <rfc822;w@1wt.eu>);
+        id S1751822AbeDXPay (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:30:54 -0400
+Received: from goliath.siemens.de ([192.35.17.28]:37560 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeDXPat (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Apr 2018 11:30:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50500 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750757AbeDXPaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:30:46 -0400
-Date: Tue, 24 Apr 2018 11:30:40 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Michal Hocko <mhocko@kernel.org>
-cc: Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
-In-Reply-To: <20180424133146.GG17484@dhcp22.suse.cz>
-Message-ID: <alpine.LRH.2.02.1804241107010.31601@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com> <20180420130852.GC16083@dhcp22.suse.cz> <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
- <20180420210200.GH10788@bombadil.infradead.org> <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180421144757.GC14610@bombadil.infradead.org> <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
- <20180423151545.GU17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804232006540.2299@file01.intranet.prod.int.rdu2.redhat.com> <20180424133146.GG17484@dhcp22.suse.cz>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 0/6] PCI: leak fixes, removable generic PCI host, assorted stuff
+Date: Tue, 24 Apr 2018 17:13:36 +0200
+Message-Id: <cover.1524582822.git.jan.kiszka@siemens.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This primarily enables to unbind the generic PCI host controller without
+leaving lots of memory leaks behind. A previous proposal patch 5 was
+rejected because of those issues [1].
+
+The fixes have been validated in the Jailhouse setup, where we add and
+remove a virtual PCI host controller on hypervisor activation/
+deactivation, with the help of kmemleak.
+
+Besides that, there is tiny PCI API cleanup at the beginning and
+support for manually enabled PCI domains at the end that enables the
+Jailhouse scenario.
+
+Jan
+
+[1] http://lkml.iu.edu/hypermail/linux/kernel/1606.3/00072.html
 
 
-On Tue, 24 Apr 2018, Michal Hocko wrote:
+CC: Jingoo Han <jingoohan1@gmail.com>
+CC: Joao Pinto <Joao.Pinto@synopsys.com>
+CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
 
-> On Mon 23-04-18 20:25:15, Mikulas Patocka wrote:
-> 
-> > Fixing __vmalloc code 
-> > is easy and it doesn't require cooperation with maintainers.
-> 
-> But it is a hack against the intention of the scope api.
+Jan Kiszka (6):
+  PCI: Make pci_get_new_domain_nr static
+  PCI: Fix memory leak of devm_pci_alloc_host_bridge
+  PCI: Introduce devm_of_pci_get_host_bridge_resources
+  PCI: Convert of_pci_get_host_bridge_resources users to devm variant
+  PCI: Add support for unbinding the generic PCI host controller
+  arm: Allow to enable PCI_DOMAINS manually
 
-It is not! You can fix __vmalloc now and you can convert the kernel to the 
-scope API in 4 years. It's not one way or the other.
+ arch/arm/Kconfig                       |  7 ++-
+ drivers/pci/dwc/pcie-designware-host.c |  2 +-
+ drivers/pci/host/pci-aardvark.c        |  5 +-
+ drivers/pci/host/pci-ftpci100.c        |  4 +-
+ drivers/pci/host/pci-host-common.c     | 13 +++++
+ drivers/pci/host/pci-host-generic.c    |  1 +
+ drivers/pci/host/pci-v3-semi.c         |  3 +-
+ drivers/pci/host/pci-versatile.c       |  3 +-
+ drivers/pci/host/pci-xgene.c           |  3 +-
+ drivers/pci/host/pcie-altera.c         |  5 +-
+ drivers/pci/host/pcie-iproc-platform.c |  4 +-
+ drivers/pci/host/pcie-rcar.c           |  5 +-
+ drivers/pci/host/pcie-rockchip.c       |  4 +-
+ drivers/pci/host/pcie-xilinx-nwl.c     |  4 +-
+ drivers/pci/host/pcie-xilinx.c         |  4 +-
+ drivers/pci/of.c                       | 93 ++++++++++++++++++++++------------
+ drivers/pci/pci.c                      |  6 +--
+ drivers/pci/probe.c                    |  4 +-
+ include/linux/of_pci.h                 | 14 ++++-
+ include/linux/pci-ecam.h               |  1 +
+ include/linux/pci.h                    |  3 --
+ 21 files changed, 120 insertions(+), 68 deletions(-)
 
-> It also alows maintainers to not care about their broken code.
-
-Most maintainers don't even know that it's broken. Out of 14 subsystems 
-using __vmalloc with GFP_NOIO/NOFS, only 2 realized that its 
-implementation is broken and implemented a workaround (me and the XFS 
-developers).
-
-Misimplementing a function in a subtle and hard-to-notice way won't drive 
-developers away from using it.
-
-> > > > He refuses 15-line patch to fix GFP_NOIO bug because he believes that in 4 
-> > > > years, the kernel will be refactored and GFP_NOIO will be eliminated. Why 
-> > > > does he have veto over this part of the code? I'd much rather argue with 
-> > > > people who have constructive comments about fixing bugs than with him.
-> > > 
-> > > I didn't NACK the patch AFAIR. I've said it is not a good idea longterm.
-> > > I would be much more willing to change my mind if you would back your
-> > > patch by a real bug report. Hacks are acceptable when we have a real
-> > > issue in hands. But if we want to fix potential issue then better make
-> > > it properly.
-> > 
-> > Developers should fix bugs in advance, not to wait until a crash hapens, 
-> > is analyzed and reported.
-> 
-> I agree. But are those existing users broken in the first place? I have
-> seen so many GFP_NOFS abuses that I would dare to guess that most of
-> those vmalloc NOFS abusers can be simply turned into GFP_KERNEL. Maybe
-> that is the reason we haven't heard any complains in years.
-
-alloc_pages reclaims clean pages and most hard work is done by kswapd, so 
-GFP_KERNEL doesn't cause much issues with writeback. But cheating isn't 
-justified if you can get away with it. Incorrect GFP flags cause real 
-problems with shrinkers - because shrinkers are called from alloc_pages 
-and they do respond to GFP flags.
-
-I had reported deadlock due to GFP issues (9d28eb12447). And the worst 
-thing about these bug reports is that they are totally unreproducible and 
-I get nothing, but a stacktrace in bugzilla. I had to guess what happened 
-and I couldn't even test if the patch fixed the bug.
-
-I'm not really happy that you are deliberately leaving these issues behind 
-and making excuses.
-
-Mikulas
+-- 
+2.13.6
