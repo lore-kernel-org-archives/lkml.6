@@ -1,111 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751216AbeDXQX6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:23:58 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41144 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeDXQX4 (ORCPT
+        id S1751575AbeDXQYq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:24:46 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:38149 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeDXQYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:23:56 -0400
-X-Google-Smtp-Source: AB8JxZq20XL7PoqaesH0U9hL8XipSHDDa70knyE0g1/KnpMLtYKBHGjOtH2ZbHaBTPb6sm9g1RhyFg==
-Subject: Re: [PATCH v2 3/5] ALSA: xen-front: Implement Xen event channel
- handling
-To: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
- <20180416062453.24743-4-andr2000@gmail.com> <s5ho9i8sn25.wl-tiwai@suse.de>
- <af277f77-5b22-58e3-4ea6-cde34e3181d3@gmail.com>
- <s5hlgdcsmdm.wl-tiwai@suse.de>
- <f37a8eb9-8733-eae9-4c3e-312d864592fc@gmail.com>
- <s5h604gsl44.wl-tiwai@suse.de>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <a8d3c2d2-25ec-0dc1-c26c-20eb6fbb4e3e@gmail.com>
-Date: Tue, 24 Apr 2018 19:23:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 24 Apr 2018 12:24:44 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+Cc: <linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+        <Alexander.Deucher@amd.com>, <Christian.Koenig@amd.com>,
+        <David.Panariti@amd.com>, <oleg@redhat.com>,
+        <akpm@linux-foundation.org>
+References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
+        <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+Date: Tue, 24 Apr 2018 11:23:18 -0500
+In-Reply-To: <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+        (Andrey Grodzovsky's message of "Tue, 24 Apr 2018 11:30:35 -0400")
+Message-ID: <87muxsbmkp.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <s5h604gsl44.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-XM-SPF: eid=1fB0kE-00061D-LF;;;mid=<87muxsbmkp.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+DqkxCcX4823OE7f8fnRg0igG+wbbriVU=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 244 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.5 (1.0%), b_tie_ro: 1.69 (0.7%), parse: 1.16 (0.5%),
+        extract_message_metadata: 12 (5.0%), get_uri_detail_list: 1.74 (0.7%),
+        tests_pri_-1000: 5.0 (2.0%), tests_pri_-950: 1.19 (0.5%), tests_pri_-900:
+        1.01 (0.4%), tests_pri_-400: 30 (12.5%), check_bayes: 29 (12.1%), b_tokenize:
+        6 (2.5%), b_tok_get_all: 15 (6.0%), b_comp_prob: 2.1 (0.9%), b_tok_touch_all:
+        3.2 (1.3%), b_finish: 0.65 (0.3%), tests_pri_0: 182 (74.4%),
+        check_dkim_signature: 0.48 (0.2%), check_dkim_adsp: 3.8 (1.6%),
+        tests_pri_500: 6 (2.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for signaled process.
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 06:02 PM, Takashi Iwai wrote:
-> On Tue, 24 Apr 2018 16:58:43 +0200,
-> Oleksandr Andrushchenko wrote:
->> On 04/24/2018 05:35 PM, Takashi Iwai wrote:
->>> On Tue, 24 Apr 2018 16:29:15 +0200,
->>> Oleksandr Andrushchenko wrote:
->>>> On 04/24/2018 05:20 PM, Takashi Iwai wrote:
->>>>> On Mon, 16 Apr 2018 08:24:51 +0200,
->>>>> Oleksandr Andrushchenko wrote:
->>>>>> +static irqreturn_t evtchnl_interrupt_req(int irq, void *dev_id)
->>>>>> +{
->>>>>> +	struct xen_snd_front_evtchnl *channel = dev_id;
->>>>>> +	struct xen_snd_front_info *front_info = channel->front_info;
->>>>>> +	struct xensnd_resp *resp;
->>>>>> +	RING_IDX i, rp;
->>>>>> +	unsigned long flags;
->>>>>> +
->>>>>> +	if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
->>>>>> +		return IRQ_HANDLED;
->>>>>> +
->>>>>> +	spin_lock_irqsave(&front_info->io_lock, flags);
->>>>>> +
->>>>>> +again:
->>>>>> +	rp = channel->u.req.ring.sring->rsp_prod;
->>>>>> +	/* ensure we see queued responses up to rp */
->>>>>> +	rmb();
->>>>>> +
->>>>>> +	for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
->>>>> I'm not familiar with Xen stuff in general, but through a quick
->>>>> glance, this kind of code worries me a bit.
->>>>>
->>>>> If channel->u.req.ring.rsp_cons has a bogus number, this may lead to a
->>>>> very long loop, no?  Better to have a sanity check of the ring buffer
->>>>> size.
->>>> In this loop I have:
->>>> resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
->>>> and the RING_GET_RESPONSE macro is designed in the way that
->>>> it wraps around when *i* in the question gets bigger than
->>>> the ring size:
->>>>
->>>> #define RING_GET_REQUEST(_r, _idx)                    \
->>>>       (&((_r)->sring->ring[((_idx) & (RING_SIZE(_r) - 1))].req))
->>>>
->>>> So, even if the counter has a bogus number it will not last long
->>> Hm, this prevents from accessing outside the ring buffer, but does it
->>> change the loop behavior?
->> no, it doesn't
->>> Suppose channel->u.req.ring_rsp_cons = 1, and rp = 0, the loop below
->>> would still consume the whole 32bit counts, no?
->>>
->>> 	for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
->>> 		resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
->>> 		...
->>> 	}
->> You are right here and the comment is totally valid.
->> I'll put an additional check like here [1] and here [2]
->> Will this address your comment?
-> Yep, this kind of sanity checks should work.
+Andrey Grodzovsky <andrey.grodzovsky@amd.com> writes:
+
+> Avoid calling wait_event_killable when you are possibly being called
+> from get_signal routine since in that case you end up in a deadlock
+> where you are alreay blocked in singla processing any trying to wait
+> on a new signal.
+
+I am curious what the call path that is problematic here.
+
+In general waiting seems wrong when the process has already been
+fatally killed as indicated by PF_SIGNALED.
+
+Returning -ERESTARTSYS seems wrong as nothing should make it back even
+to the edge of userspace here.
+
+Given that this is the only use of PF_SIGNALED outside of bsd process
+accounting I find this code very suspicious.
+
+It looks the code path that gets called during exit is buggy and needs
+to be sorted out.
+
+Eric
+
+
+> Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+> ---
+>  drivers/gpu/drm/scheduler/gpu_scheduler.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 >
-Great, will implement the checks this way then
-> thanks,
->
-> Takashi
-Thank you,
-Oleksandr
->>> Takashi
->> Thank you,
->> Oleksandr
->>
->> [1]
->> https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/block/xen-blkback/blkback.c#L1127
->> [2]
->> https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/block/xen-blkback/blkback.c#L1135
->>
+> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler.c b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> index 088ff2b..09fd258 100644
+> --- a/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> @@ -227,9 +227,10 @@ void drm_sched_entity_do_release(struct drm_gpu_scheduler *sched,
+>  		return;
+>  	/**
+>  	 * The client will not queue more IBs during this fini, consume existing
+> -	 * queued IBs or discard them on SIGKILL
+> +	 * queued IBs or discard them when in death signal state since
+> +	 * wait_event_killable can't receive signals in that state.
+>  	*/
+> -	if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
+> +	if (current->flags & PF_SIGNALED)
+>  		entity->fini_status = -ERESTARTSYS;
+>  	else
+>  		entity->fini_status = wait_event_killable(sched->job_scheduled,
