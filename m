@@ -1,76 +1,84 @@
-Return-Path: <kernel-hardening-return-13106-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4+fdCH4uq7HKpvA3QP48i1ifywioSXHNiFye21i/qcvtWhYV1nI19+WM99j3lB2oZipuhEf
-ARC-Seal: i=1; a=rsa-sha256; t=1524570691; cv=none;
+Return-Path: <kernel-hardening-return-13109-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+ZjCSI6rmkhd+wetN4Uwg0RX357VxHzvi/hcKeVMFl7NOMzt/5l2y56O947y4n03HnM4i1
+ARC-Seal: i=1; a=rsa-sha256; t=1524576425; cv=none;
         d=google.com; s=arc-20160816;
-        b=a7EApTJTVpwEij2Tfba6huI/U1MfQ5mdO8GL+XCH/rFlEYywpmSVjAnz4QxpwaN4j2
-         Dv3aAEBu1CDnc5Jz/O5jIFJqz6KGV1nsvNzWG0H2ftxaQgz3rOvrJUGPifkXDDMkhwV7
-         hDuKbe0z8r7CmrMSMPIzMsURNil6NmczAjqpPc5cf08RmIDzz9lgNGVdRZfvJW46U6JR
-         oRnJ9Ma97SO/MZhcxES2EHhdd3SaW47whrV5JzVh3YBP2W62JG7inI5fo3qa/LRChqPa
-         8ZtJ8QjdDnYLg+tZ/4NLCSS6jkwQMyUsOp43J+0nEhoUdSEikasbxGGIVVGdG/Xfe35D
-         VuYg==
+        b=NmAD9OVtNEwOUKWpJPF3ilUAwurUQLDclWqaGEi3z41pD60XvmdoC/9SWTNAMmR0eN
+         CeCbWTqecTU+CBGa4k3fII4Savc3vsXMGD/FLPYDgyyQQfEmlCV2ZpW+0xaT+9Pj4FRo
+         sXvWh4QQoEl4IpshoQIpT/+L1WpYO5UAzsCFabBN4am6d13Qvl1/ZPfxdmOtxclqiavX
+         e9pQjtJZYiIxP6iv1qEioHHYASyjiINKm45z8hvCdGV0vUCx9pfdgggNdltwQMvJYgiK
+         aUe752Dtnq4Sj5S0+w58CrMbSu06qVR+UcgNWH6cYrpgC8nGlpKhbI0DE0crDcsrM0nZ
+         Q2Zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=OQxt61pkYvcYAj73KHUAVctB9+2XcsegsgjJwH5/Wr0=;
-        b=sKQU1mUtwDfqETxN7PTPlauhos8BlZVauS9yGPBR/hP3yFuxJ68h1SxG5PnMCSD7eQ
-         RZRx+/aMm+b8d2uk3nmu2bsTMAT7S2CZ1HYtfQA2KwKDWacrxbfQyWUOgZvOrcab04U8
-         G539i37RKQRhzDc6YA4nPaOVwk9bYIKQmtBqQVlSkLgHiMAtut0UXMzYyZQpWM9PZ2q6
-         yNGtRyjTNXsdS55q7TvmuB+X8YWvb/VesZn9g9wUNVReS/QhZuWDj4FSGZrmvPw0BmTQ
-         gHXA0BZv98NrZIUyXVr4M3kTkVZr6128BtoFfzih56uMU52MsaR63VbeS+GfKkJyoeb7
-         Oslg==
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:delivered-to:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=Lk2/KwrHJdO0WurFYLgCDEX2OpwPBgP9SIx/6mvI3cU=;
+        b=AKy899phU5oC0tLgT7arnO0c2MU4wdv4ppX8ns3zDKrNOAypQK865rNviXjsg43mn4
+         xAYKpJ1BukyyW/Wf5oxg3G+cY6NH4/Ri5dXseJyOpCNiXZiTYkQm0H1njK6AfSkwqIyf
+         +ZBz5n5g+HOUBqmbB9d258K2hE1yUwG5mStexotQhQLHOwCvI2G9Kb54bzGhlAYlXR2e
+         jwcszX87lKW11rQ72KKyFpVme7ZIA9EtJLQks62YKsNjPMo8FIvDBArdDSO7lmHvcTum
+         7V60hahHH2/tojhNkGZTuClpAcd0rtKb4n87yjjR9pIhfKJe8KHS/5YbEmOEL/6xy+bi
+         qVxw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=tGH/q/G3;
-       spf=pass (google.com: domain of kernel-hardening-return-13106-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13106-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rso155Nc;
+       spf=pass (google.com: domain of kernel-hardening-return-13109-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13109-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=tGH/q/G3;
-       spf=pass (google.com: domain of kernel-hardening-return-13106-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13106-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rso155Nc;
+       spf=pass (google.com: domain of kernel-hardening-return-13109-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13109-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Tue, 24 Apr 2018 04:50:50 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Igor Stoppa <igor.stoppa@gmail.com>
-Cc: keescook@chromium.org, paul@paul-moore.com, sds@tycho.nsa.gov,
-	mhocko@kernel.org, corbet@lwn.net, labbott@redhat.com,
-	linux-cc=david@fromorbit.com, --cc=rppt@linux.vnet.ibm.com,
-	--security-module@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-	Igor Stoppa <igor.stoppa@huawei.com>,
-	Carlos Chinea Perez <carlos.chinea.perez@huawei.com>,
-	Remi Denis Courmont <remi.denis.courmont@huawei.com>
 Subject: Re: [PATCH 7/9] Pmalloc Rare Write: modify selected pools
-Message-ID: <20180424115050.GD26636@bombadil.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>, Igor Stoppa <igor.stoppa@gmail.com>
+Cc: keescook@chromium.org, paul@paul-moore.com, sds@tycho.nsa.gov,
+ mhocko@kernel.org, corbet@lwn.net, labbott@redhat.com,
+ linux-cc=david@fromorbit.com, --cc=rppt@linux.vnet.ibm.com,
+ --security-module@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+ Igor Stoppa <igor.stoppa@huawei.com>,
+ Carlos Chinea Perez <carlos.chinea.perez@huawei.com>,
+ Remi Denis Courmont <remi.denis.courmont@huawei.com>
 References: <20180423125458.5338-1-igor.stoppa@huawei.com>
  <20180423125458.5338-8-igor.stoppa@huawei.com>
+ <20180424115050.GD26636@bombadil.infradead.org>
+From: lazytyped <lazytyped@gmail.com>
+Message-ID: <eb23fbd9-1b9e-8633-b0eb-241b8ad24d95@gmail.com>
+Date: Tue, 24 Apr 2018 14:32:36 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423125458.5338-8-igor.stoppa@huawei.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180424115050.GD26636@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598541768538376919?=
-X-GMAIL-MSGID: =?utf-8?q?1598628237819426606?=
+X-GMAIL-MSGID: =?utf-8?q?1598634249765765420?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 04:54:56PM +0400, Igor Stoppa wrote:
-> While the vanilla version of pmalloc provides support for permanently
-> transitioning between writable and read-only of a memory pool, this
-> patch seeks to support a separate class of data, which would still
-> benefit from write protection, most of the time, but it still needs to
-> be modifiable. Maybe very seldom, but still cannot be permanently marked
-> as read-only.
 
-This seems like a horrible idea that basically makes this feature useless.
-I would say the right way to do this is to have:
 
-struct modifiable_data {
-	struct immutable_data *d;
-	...
-};
+On 4/24/18 1:50 PM, Matthew Wilcox wrote:
+> struct modifiable_data {
+> 	struct immutable_data *d;
+> 	...
+> };
+>
+> Then allocate a new pool, change d and destroy the old pool.
 
-Then allocate a new pool, change d and destroy the old pool.
+With the above, you have just shifted the target of the arbitrary write
+from the immutable data itself to the pointer to the immutable data, so
+got no security benefit.
+
+The goal of the patch is to reduce the window when stuff is writeable,
+so that an arbitrary write is likely to hit the time when data is read-only.
+
+
+       -  Enrico
