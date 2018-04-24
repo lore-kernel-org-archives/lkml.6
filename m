@@ -1,54 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751392AbeDXPBE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:01:04 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36218 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751251AbeDXPBB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:01:01 -0400
-Date: Tue, 24 Apr 2018 17:00:58 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Genki Sky <sky@genki.is>
-cc: John Stultz <john.stultz@linaro.org>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock
- BOOTTIME
-In-Reply-To: <24d89dd95ab246e98562a14be05a602e@genki.is>
-Message-ID: <alpine.DEB.2.21.1804241659340.1679@nanos.tec.linutronix.de>
-References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com> <2580c734d38041e984215ccc522a4f2d@genki.is> <cef78d739d29410cb73072e9792598a7@genki.is> <CALAqxLWmcmiOgbH1Ri+Ki-OGFvgzRzRDzX3FZdUhcqu1OoCWiA@mail.gmail.com>
- <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de> <24d89dd95ab246e98562a14be05a602e@genki.is>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1751690AbeDXPBd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:01:33 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:48530 "EHLO extserv.mm-sol.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751437AbeDXPBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:01:25 -0400
+From: Todor Tomov <todor.tomov@linaro.org>
+To: mchehab@kernel.org, hverkuil@xs4all.nl, sakari.ailus@iki.fi,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Todor Tomov <todor.tomov@linaro.org>, Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v3 1/2] dt-bindings: media: Binding document for OV7251 camera sensor
+Date: Tue, 24 Apr 2018 18:01:06 +0300
+Message-Id: <1524582067-28585-2-git-send-email-todor.tomov@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524582067-28585-1-git-send-email-todor.tomov@linaro.org>
+References: <1524582067-28585-1-git-send-email-todor.tomov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018, Genki Sky wrote:
-> Sorry to have been the bearer of bad news :(.
+Add the document for ov7251 device tree binding.
 
-No problem. We're not shooting the messengers
+CC: Rob Herring <robh@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
+CC: devicetree@vger.kernel.org
+Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/media/i2c/ov7251.txt       | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/ov7251.txt
 
-> Again, I just have my user hat on here. It does seem like this unifying
-> would have been nice to have. And even, more compliant with the POSIX
-> definition of MONOTONIC...
-
-Yes, that was the idea
-
-> On that note, maybe it is still worth introducing MONOTONIC_ACTIVE,
-> but just as an alias for MONOTONIC for now. It's also more
-> self-documenting. Then sometime in the future, if people switch over,
-> remove BOOTTIME and make MONOTONIC like BOOTTIME. Though this doesn't
-> help simplify the code, I know.
-
-It doesn't and it does not make applications magically make use of
-MONOTONIC_ACTIVE. We're in a trap here.....
-
-Thanks,
-
-	tglx
+diff --git a/Documentation/devicetree/bindings/media/i2c/ov7251.txt b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
+new file mode 100644
+index 0000000..8281151
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
+@@ -0,0 +1,52 @@
++* Omnivision 1/7.5-Inch B&W VGA CMOS Digital Image Sensor
++
++The Omnivision OV7251 is a 1/7.5-Inch CMOS active pixel digital image sensor
++with an active array size of 640H x 480V. It is programmable through a serial
++I2C interface.
++
++Required Properties:
++- compatible: Value should be "ovti,ov7251".
++- clocks: Reference to the xclk clock.
++- clock-names: Should be "xclk".
++- clock-frequency: Frequency of the xclk clock.
++- enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
++  to the hardware pin XSHUTDOWN which is physically active low.
++- vdddo-supply: Chip digital IO regulator.
++- vdda-supply: Chip analog regulator.
++- vddd-supply: Chip digital core regulator.
++
++The device node shall contain one 'port' child node with a single 'endpoint'
++subnode for its digital output video port, in accordance with the video
++interface bindings defined in
++Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++Example:
++
++	&i2c1 {
++		...
++
++		ov7251: camera-sensor@60 {
++			compatible = "ovti,ov7251";
++			reg = <0x60>;
++
++			enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&camera_bw_default>;
++
++			clocks = <&clks 200>;
++			clock-names = "xclk";
++			clock-frequency = <24000000>;
++
++			vdddo-supply = <&camera_dovdd_1v8>;
++			vdda-supply = <&camera_avdd_2v8>;
++			vddd-supply = <&camera_dvdd_1v2>;
++
++			port {
++				ov7251_ep: endpoint {
++					clock-lanes = <1>;
++					data-lanes = <0>;
++					remote-endpoint = <&csi0_ep>;
++				};
++			};
++		};
++	};
+-- 
+2.7.4
