@@ -1,155 +1,145 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1135939-1523544432-2-7297744484883151925
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3069549-1524575914-2-9490868924805062317
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523544431; b=uo92v2ZPEpxKtT9h486YYU9YgcTCqRvdPWNmnPRJmSikiexf1m
-    82aH1O3dt6NSSDLwtLwBMWBb9Bc7CEY9ASQHoNZ6ctpGpI/9+cztI+CaBjQwOLEt
-    0f3vBLegdEYOl8tCzARWN4kPwtH/bh4TdZgB/lSwMBppEb0bMgEqOeBHxALmy96Y
-    iDEq9UIYPSktn9Xn3Hu2vS9o6MJxID6XG/4TzuVsalYHkelnN9eaXplxgW2JjDRI
-    rbppiOW/1BIxBsluQ9Cd17RKUS/YINiv4IzWlUSOMW+cHqow7foZQCxPpBBQzSOA
-    eejWzgzHKE7dbopZQ/k7nWYS6183jYn67VQA==
+    1524575914; b=oTuAmW5M0qSDwAmI1AVHcQzI40m4TfruJZrlITOXzo9L1zlPiI
+    XST55zYIZowPxl1LmaXDxMCxFhMnoTWBXIparg8JxTpGCz2LchDVAoovVPzjN1CZ
+    V2aZADxYItrRARFvlwOD/SGlBj56FNFMeuHnJ2u+MpOd/NkIWS3jqz8T/jJzWPuZ
+    NujlcruZH/G5HEECQDp4fFjG+MT6jBcovz05KYf8852C5xomkCWLd+y6+PXEjSKl
+    r+GMU5DnYPn0LtuKvsLyCxoKcKp6aqkPrKAaK5aCgfy++Cp1brcpjrKGc5huKZOB
+    F2RrXbBV6l9kOsZyWCPCd97SxHgNmqyWxZXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523544431; bh=IyP6urMNTwORKvgjWYSwpy8jy4JBI3
-    8XnD2HYu82emA=; b=mKjfErHs61p4ZjvAb2gGaNOV+8DPKwVUDzWb0D8QcEACJy
-    pxoH2gmYkk9DmxXVjKkSyQ2Dw8SWIqV5KCNqkVOMcbMRlB+zORwPJILv7npoYOYG
-    8/zUoTtXZfj/JVU/TI1tPZHsGSNAXD9BldqxxfNfgwtJbZFfdXPud9nVpeREe1fZ
-    tgufLWttPgrMo8ggEh/9Exn7i+I00wYsXwcoIp1SgbZiQbn52lsh+DzvcPmoSTcJ
-    fyARAgYF4WVHS/sYvYcG9//J7A4qSCw9VGNcXSLIzWfzcs7slw3ioYWooHSHao9k
-    6rvrJYcluLLE4tB8VK1XP0FWMW72pKAG733vQqQw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524575914; bh=zrcwk
+    4Pq81lNnIuOljSSHri1cfM68zy1jSNNK7/R1ck=; b=Ykee893tK/+RxtM5NiAbn
+    E80sZ4/b+QDL0TfAFfdiEdy0UBFG7uvlsZX0205aSgmXyoFhesK/cHPdt9MKfj9k
+    AHcVWVPlNG/ndiiTkt79j9IuaaiY2k2Wj4aXVxowaecSiSveGZGotxaiL5CHYPt7
+    mHRFX9CeiHyegi9c3NDTQzkUJY8FOrob+ZP2Xgneu4I0pOnzj0B/4ho9P3C6ShW/
+    qm3IwQ0lcbUHjoRUt03eYvR6ccECMfbkJf3VQq+qmxVVWaSM+InN//rUp8MTd8BO
+    oR9obBB9bp7umu+HBmAgo/DQkk2d+5jQUgzaoVwNwpFfWQSoV1MrQZy2tGTxIUwS
+    g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=vYK141wK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FFcV3PSI;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=vYK141wK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FFcV3PSI;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNJfISrIWxs6UL2J9unl/XvUK8TudT6nvhIqD0Vhtd+DMRMHnnaUpmvM/VK3k2N+WjI7jj5c4m0KcHSabgYPWno6YenZdyTK4D0lsdChQllVqqCqwIWH
-    EKHXXZRykXpzQuXTUnEiSHGZMRmMxMdQcwbrD/1D/RMYLX/ub8jm5Xh4r6Qiqqz9ILRNPo+3HGMnNGUDpf8nsUteQf66e45pXpCmErVHMjGOa8ryGqIl7i1n
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=XeUBy_Da3uTAN91KrT4A:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfCxMVw4N1RSFSzziDn/MR0vIjX0yKEWI1x+cWQtDWCQcJcge/E4SkrkbkzEaVAQ1JOLNEhhJDsMCmxCaM78tJXZxbU+gpLKTq+BTIgqiuwqsmMmqHVaT
+    LOrplkP06H2ujI2Bcgd/zEO74Vk+oKt0yqabfhV1pr5Cq2rlCMzG4P3pQuvxG8loZ34k7ET9FB4RKYYGGvZiDYWbZTpY++rA27xjMxR9C0EwVxXGWZc9gD+Y
+    ec8d4Vnu5S4QK1p7ZguTBQ==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=UWLGKgljVrAA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10
+    a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=4XxD8r021ChNIGXyfM4A:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeDLOq4 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 10:46:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45667 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752355AbeDLOqz (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:46:55 -0400
-Date: Thu, 12 Apr 2018 16:46:51 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 1/3] mm: introduce NR_INDIRECTLY_RECLAIMABLE_BYTES
-Message-ID: <20180412144651.GI23400@dhcp22.suse.cz>
-References: <20180305133743.12746-1-guro@fb.com>
- <20180305133743.12746-2-guro@fb.com>
- <08524819-14ef-81d0-fa90-d7af13c6b9d5@suse.cz>
- <20180411135624.GA24260@castle.DHCP.thefacebook.com>
- <46dbe2a5-e65f-8b72-f835-0210bc445e52@suse.cz>
- <20180412115217.GC23400@dhcp22.suse.cz>
- <20180412143826.GA30714@castle.DHCP.thefacebook.com>
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx487RoIj7TKUxphLHRUw/5NVfLhUZE8AaLw6mp8qSZH9oduddK2SR6w3Utx8R0a4tRPTlxq0vQ==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: ks7010: fix ks_wlan_start_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:18:21 +0200
+Message-Id: <20180424131824.5164-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Janusz Lisiecki <janusz.lisiecki@gmail.com>,
+ SUNIL KALLUR RAMEGOWDA <kallur.sunil@gmail.com>,
+ Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+ "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+ Quytelda Kahja <quytelda@tamalin.org>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180412143826.GA30714@castle.DHCP.thefacebook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu 12-04-18 15:38:33, Roman Gushchin wrote:
-> On Thu, Apr 12, 2018 at 01:52:17PM +0200, Michal Hocko wrote:
-> > On Thu 12-04-18 08:52:52, Vlastimil Babka wrote:
-> > > On 04/11/2018 03:56 PM, Roman Gushchin wrote:
-> > > > On Wed, Apr 11, 2018 at 03:16:08PM +0200, Vlastimil Babka wrote:
-> > [...]
-> > > >> With that in mind, can we at least for now put the (manually maintained)
-> > > >> byte counter in a variable that's not directly exposed via /proc/vmstat,
-> > > >> and then when printing nr_slab_reclaimable, simply add the value
-> > > >> (divided by PAGE_SIZE), and when printing nr_slab_unreclaimable,
-> > > >> subtract the same value. This way we would be simply making the existing
-> > > >> counters more precise, in line with their semantics.
-> > > > 
-> > > > Idk, I don't like the idea of adding a counter outside of the vm counters
-> > > > infrastructure, and I definitely wouldn't touch the exposed
-> > > > nr_slab_reclaimable and nr_slab_unreclaimable fields.
-> > 
-> > Why?
-> 
-> Both nr_slab_reclaimable and nr_slab_unreclaimable have a very simple
-> meaning: they are numbers of pages used by corresponding slab caches.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, but the implementation in this
+driver returns an 'int'.
 
-Right, but if names are reclaimable then they should end up in the
-reclaimable slabs and to be accounted as such. Objects themselves are
-not sufficient to reclaim the accounted memory.
+Fix this by returning 'netdev_tx_t' in this driver too.
 
-> In the answer to the very first version of this patchset
-> Andrew suggested to generalize the idea to allow further
-> accounting of non-kmalloc() allocations.
-> I like the idea, even if don't have a good example right now.
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ drivers/staging/ks7010/ks_wlan_net.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Well, I have to disagree here. It sounds completely ad-hoc without
-a reasoable semantic. Or how does it help users when they do not know
-what is the indirect dependency and how to trigger it.
-
-> The problem with external names existed for many years before
-> we've accidentally hit it, so if we don't have other examples
-> right now, it doesn't mean that we wouldn't have them in the future.
-> 
-> > 
-> > > We would be just making the reported values more precise wrt reality.
-> > 
-> > I was suggesting something similar in an earlier discussion. I am not
-> > really happy about the new exposed counter either. It is just arbitrary
-> > by name yet very specific for this particular usecase.
-> > 
-> > What is a poor user supposed to do with the new counter? Can this be
-> > used for any calculations?
-> 
-> For me the most important part is to fix the overcommit logic, because it's
-> a real security and production issue.
-
-Sure, the problem is ugly. Not the first one when the unaccounted kernel
-allocation can eat a lot of memory. We have many other such. The usual
-answer was to use kmemcg accounting.
-
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index 9078e13b0..57412caac 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -71,7 +71,7 @@ static const struct iw_handler_def ks_wlan_handler_def;
+  */
+ static int ks_wlan_open(struct net_device *dev);
+ static void ks_wlan_tx_timeout(struct net_device *dev);
+-static int ks_wlan_start_xmit(struct sk_buff *skb, struct net_device *dev);
++static netdev_tx_t ks_wlan_start_xmit(struct sk_buff *skb, struct net_device *dev);
+ static int ks_wlan_close(struct net_device *dev);
+ static void ks_wlan_set_multicast_list(struct net_device *dev);
+ static struct net_device_stats *ks_wlan_get_stats(struct net_device *dev);
+@@ -2772,7 +2772,7 @@ void ks_wlan_tx_timeout(struct net_device *dev)
+ }
+ 
+ static
+-int ks_wlan_start_xmit(struct sk_buff *skb, struct net_device *dev)
++netdev_tx_t ks_wlan_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ks_wlan_private *priv = netdev_priv(dev);
+ 	int ret;
 -- 
-Michal Hocko
-SUSE Labs
+2.17.0
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
