@@ -1,115 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933220AbeDXMs7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:48:59 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37447 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757862AbeDXMpb (ORCPT
+        id S1757527AbeDXMwZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:52:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38376 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933222AbeDXMtA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:45:31 -0400
-X-Google-Smtp-Source: AIpwx4/JvlJAh7c/CZztEx5nS87Q1iJu56+EKOUE3p4nxztxxhD3vNIF/EsUopNqHQf6vVJiEGdBqA==
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 21/28] venus: helpers: extend set_num_bufs helper with one more argument
-Date: Tue, 24 Apr 2018 15:44:29 +0300
-Message-Id: <20180424124436.26955-22-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+        Tue, 24 Apr 2018 08:49:00 -0400
+Date: Tue, 24 Apr 2018 14:48:55 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: subhra mazumdar <subhra.mazumdar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
+Subject: Re: [PATCH 3/3] sched: limit cpu search and rotate search window for
+ scalability
+Message-ID: <20180424124855.GT4082@hirez.programming.kicks-ass.net>
+References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
+ <20180424004116.28151-4-subhra.mazumdar@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424004116.28151-4-subhra.mazumdar@oracle.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extend venus_helper_set_num_bufs() helper function with one more
-argument to set number of output buffers for the secondary decoder
-output.
+On Mon, Apr 23, 2018 at 05:41:16PM -0700, subhra mazumdar wrote:
+> Lower the lower limit of idle cpu search in select_idle_cpu() and also put
+> an upper limit. This helps in scalability of the search by restricting the
+> search window. Also rotating the search window with help of next_cpu
+> ensures any idle cpu is eventually found in case of high load.
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/helpers.c | 16 ++++++++++++++--
- drivers/media/platform/qcom/venus/helpers.h |  3 ++-
- drivers/media/platform/qcom/venus/vdec.c    |  2 +-
- drivers/media/platform/qcom/venus/venc.c    |  2 +-
- 4 files changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index adf8701a64bb..f04d16953b3a 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -513,7 +513,8 @@ int venus_helper_set_core_usage(struct venus_inst *inst, u32 usage)
- EXPORT_SYMBOL_GPL(venus_helper_set_core_usage);
- 
- int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
--			      unsigned int output_bufs)
-+			      unsigned int output_bufs,
-+			      unsigned int output2_bufs)
- {
- 	u32 ptype = HFI_PROPERTY_PARAM_BUFFER_COUNT_ACTUAL;
- 	struct hfi_buffer_count_actual buf_count;
-@@ -529,7 +530,18 @@ int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
- 	buf_count.type = HFI_BUFFER_OUTPUT;
- 	buf_count.count_actual = output_bufs;
- 
--	return hfi_session_set_property(inst, ptype, &buf_count);
-+	ret = hfi_session_set_property(inst, ptype, &buf_count);
-+	if (ret)
-+		return ret;
-+
-+	if (output2_bufs) {
-+		buf_count.type = HFI_BUFFER_OUTPUT2;
-+		buf_count.count_actual = output2_bufs;
-+
-+		ret = hfi_session_set_property(inst, ptype, &buf_count);
-+	}
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(venus_helper_set_num_bufs);
- 
-diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index d5e727e1ecab..8ff4bd3ef958 100644
---- a/drivers/media/platform/qcom/venus/helpers.h
-+++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -41,7 +41,8 @@ int venus_helper_set_output_resolution(struct venus_inst *inst,
- int venus_helper_set_work_mode(struct venus_inst *inst, u32 mode);
- int venus_helper_set_core_usage(struct venus_inst *inst, u32 usage);
- int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
--			      unsigned int output_bufs);
-+			      unsigned int output_bufs,
-+			      unsigned int output2_bufs);
- int venus_helper_set_raw_format(struct venus_inst *inst, u32 hfi_format,
- 				u32 buftype);
- int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index ceaf1a338eb3..8d188b11b85a 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -758,7 +758,7 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
- 		goto deinit_sess;
- 
- 	ret = venus_helper_set_num_bufs(inst, inst->num_input_bufs,
--					VB2_MAX_FRAME);
-+					VB2_MAX_FRAME, VB2_MAX_FRAME);
- 	if (ret)
- 		goto deinit_sess;
- 
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index 3b3299bff1cd..c9c40d1ce7c6 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -963,7 +963,7 @@ static int venc_start_streaming(struct vb2_queue *q, unsigned int count)
- 		goto deinit_sess;
- 
- 	ret = venus_helper_set_num_bufs(inst, inst->num_input_bufs,
--					inst->num_output_bufs);
-+					inst->num_output_bufs, 0);
- 	if (ret)
- 		goto deinit_sess;
- 
--- 
-2.14.1
+So this patch does 2 (possibly 3) things, that's not good.
