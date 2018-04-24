@@ -1,57 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755595AbeDXFpK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 01:45:10 -0400
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:43672 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750739AbeDXFpJ (ORCPT
+        id S1756054AbeDXFpf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 01:45:35 -0400
+Received: from mail-wr0-f177.google.com ([209.85.128.177]:32824 "EHLO
+        mail-wr0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755809AbeDXFpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 01:45:09 -0400
-X-Google-Smtp-Source: AIpwx486JjpDXiyUfwo+bb80VwUoqXK07eBEUH44Xwy1iCrI+uC6kSdFyjbiIqPTolD5ajsgoHBHuQ==
-Date: Tue, 24 Apr 2018 15:44:57 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@ozlabs.org, msuchanek@suse.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] powerpc/64s: Add barrier_nospec
-Message-ID: <20180424154457.78fe8c09@roar.ozlabs.ibm.com>
-In-Reply-To: <20180424041559.32410-1-mpe@ellerman.id.au>
-References: <20180424041559.32410-1-mpe@ellerman.id.au>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 24 Apr 2018 01:45:33 -0400
+X-Google-Smtp-Source: AIpwx4/99GJhOP29agWN9NTFv/LjKLgLkXNpcmH5qBtKeMhNo95rG1uedHR1JLyWhtsr5FjCgQCTXw==
+Date: Tue, 24 Apr 2018 06:45:29 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: tps65911-comparator: Fix an off by one bug
+Message-ID: <20180424054529.2gv2l24muxzh2n6b@dell>
+References: <20180420083909.66a6t63s5q6vpwp7@dell>
+ <20180420090910.GA26071@mwanda>
+ <20180423064417.2e2ng3su23w4i7hx@dell>
+ <20180423102717.tmx7mlk2yzovnpkh@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180423102717.tmx7mlk2yzovnpkh@mwanda>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 14:15:54 +1000
-Michael Ellerman <mpe@ellerman.id.au> wrote:
+On Mon, 23 Apr 2018, Dan Carpenter wrote:
 
-> From: Michal Suchanek <msuchanek@suse.de>
+> I really don't want authorship credit for a patch that does:
 > 
-> A no-op form of ori (or immediate of 0 into r31 and the result stored
-> in r31) has been re-tasked as a speculation barrier. The instruction
-> only acts as a barrier on newer machines with appropriate firmware
-> support. On older CPUs it remains a harmless no-op.
+> #define COMP1 0
+> #define COMP2 1
 > 
-> Implement barrier_nospec using this instruction.
-> 
-> mpe: The semantics of the instruction are believed to be that it
-> prevents execution of subsequent instructions until preceding branches
-> have been fully resolved and are no longer executing speculatively.
-> There is no further documentation available at this time.
-> 
-> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> ---
-> mpe: Make it Book3S64 only, update comment & change log, add a
->      memory clobber to the asm.
+> It just makes me itch to look at it...
 
-These all seem good to me. Thanks Michal.
+As I say, I get where you're coming from, but it was the decision made
+by the H/W engineers.  Doesn't mean it's not the correct thing to do
+from a S/W POV.
 
-We should (eventually) work on the module patching problem too.
+If you're not happy putting your SOB on the patch, I'll draft it and
+sign it off.  /me has no shame!
 
-Thanks,
-Nick
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
