@@ -1,68 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755941AbeDXF0f (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 01:26:35 -0400
-Received: from mail-ua0-f180.google.com ([209.85.217.180]:32881 "EHLO
-        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752110AbeDXF0c (ORCPT
+        id S1755962AbeDXF0s (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 01:26:48 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38698 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752110AbeDXF0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 01:26:32 -0400
-X-Google-Smtp-Source: AIpwx480jnePAx9q4djKH4T2sTiReMQ6trgd7hHHNNdyLk2x4zBn503MgUfNqiFER27J7ftvq/kiFb32UlqmZGIg7R8=
+        Tue, 24 Apr 2018 01:26:44 -0400
+X-Google-Smtp-Source: AIpwx4/7ww7QkRlHkPDAViXGx9IXkmM/WCmMyvBuUl5VSJ5tEevsnZr7At/+wd94BcQ9MghG2hlVCQ==
+Date: Tue, 24 Apr 2018 15:26:30 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Pavan Kondeti <pkondeti@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH] kernel/sched/core: busy wait before going idle
+Message-ID: <20180424152630.46e9de59@roar.ozlabs.ibm.com>
+In-Reply-To: <20180423101740.GA28936@codeaurora.org>
+References: <20180415133149.24112-1-npiggin@gmail.com>
+        <20180423101740.GA28936@codeaurora.org>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180419230032.13611-1-swboyd@chromium.org>
-References: <20180419230032.13611-1-swboyd@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 23 Apr 2018 22:26:29 -0700
-X-Google-Sender-Auth: 3wMfAQjA9rR1RAT_eHgqXrBOZOc
-Message-ID: <CAD=FV=VoGpRLsPXcfPaiaJh18u+79DcN9PUGScDKUu+COgj7Gw@mail.gmail.com>
-Subject: Re: [PATCH] mfd: qcom-spmi-pmic: Add support for pm8005,pm8998,pmi8998
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 23 Apr 2018 15:47:40 +0530
+Pavan Kondeti <pkondeti@codeaurora.org> wrote:
 
-On Thu, Apr 19, 2018 at 4:00 PM, Stephen Boyd <swboyd@chromium.org> wrote:
-> diff --git a/drivers/mfd/qcom-spmi-pmic.c b/drivers/mfd/qcom-spmi-pmic.c
-> index 2022bdfa7ab4..0b26387c22e7 100644
-> --- a/drivers/mfd/qcom-spmi-pmic.c
-> +++ b/drivers/mfd/qcom-spmi-pmic.c
-> @@ -39,6 +39,9 @@
->  #define PM8916_SUBTYPE         0x0b
->  #define PM8004_SUBTYPE         0x0c
->  #define PM8909_SUBTYPE         0x0d
-> +#define PM8998_SUBTYPE         0x14
-> +#define PMI8998_SUBTYPE                0x15
-> +#define PM8005_SUBTYPE         0x18
+> Hi Nick,
+> 
+> On Sun, Apr 15, 2018 at 11:31:49PM +1000, Nicholas Piggin wrote:
+> > This is a quick hack for comments, but I've always wondered --
+> > if we have a short term polling idle states in cpuidle for performance
+> > -- why not skip the context switch and entry into all the idle states,
+> > and just wait for a bit to see if something wakes up again.
+> > 
+> > It's not uncommon to see various going-to-idle work in kernel profiles.
+> > This might be a way to reduce that (and just the cost of switching
+> > registers and kernel stack to idle thread). This can be an important
+> > path for single thread request-response throughput.
+> > 
+> > tbench bandwidth seems to be improved (the numbers aren't too stable
+> > but they pretty consistently show some gain). 10-20% would be a pretty
+> > nice gain for such workloads
+> > 
+> > clients     1     2     4     8    16   128
+> > vanilla   232   467   823  1819  3218  9065
+> > patched   310   503   962  2465  3743  9820
+> >   
+> 
+> <snip>
+> 
+> > +idle_spin_end:
+> >  	/* Promote REQ to ACT */
+> >  	rq->clock_update_flags <<= 1;
+> >  	update_rq_clock(rq);
+> > @@ -3437,6 +3439,32 @@ static void __sched notrace __schedule(bool preempt)
+> >  		if (unlikely(signal_pending_state(prev->state, prev))) {
+> >  			prev->state = TASK_RUNNING;
+> >  		} else {
+> > +			/*
+> > +			 * Busy wait before switching to idle thread. This
+> > +			 * is marked unlikely because we're idle so jumping
+> > +			 * out of line doesn't matter too much.
+> > +			 */
+> > +			if (unlikely(do_idle_spin && rq->nr_running == 1)) {
+> > +				u64 start;
+> > +
+> > +				do_idle_spin = false;
+> > +
+> > +				rq->clock_update_flags &= ~(RQCF_ACT_SKIP|RQCF_REQ_SKIP);
+> > +				rq_unlock_irq(rq, &rf);
+> > +
+> > +				spin_begin();
+> > +				start = local_clock();
+> > +				while (!need_resched() && prev->state &&
+> > +					!signal_pending_state(prev->state, prev)) {
+> > +					spin_cpu_relax();
+> > +					if (local_clock() - start > 1000000)
+> > +						break;
+> > +				}  
+> 
+> Couple of comments/questions.
+> 
+> When a RT task is doing this busy loop, 
+> 
+> (1) need_resched() may not be set even if a fair/normal task is enqueued on
+> this CPU.
 
-I was being overly paranoid and double-checking these numbers.  I
-confirmed PMI8998 and PM8005 from the docs (yay!).  The PM8998 docs
-didn't have this, but I confirmed that I was talking to PM8998 by
-confirming it was on the right USID and and then printing out the
-value at probe time.  All look good.
+This is true, it should probably spin on nr_running == 1, good catch.
 
+> 
+> (2) Any lower prio RT task waking up on this CPU may migrate to another CPU
+> thinking this CPU is busy with higher prio RT task.
 
->  static const struct of_device_id pmic_spmi_id_table[] = {
->         { .compatible = "qcom,spmi-pmic", .data = (void *)COMMON_SUBTYPE },
-> @@ -54,7 +57,10 @@ static const struct of_device_id pmic_spmi_id_table[] = {
->         { .compatible = "qcom,pmi8994",   .data = (void *)PMI8994_SUBTYPE },
->         { .compatible = "qcom,pm8916",    .data = (void *)PM8916_SUBTYPE },
->         { .compatible = "qcom,pm8004",    .data = (void *)PM8004_SUBTYPE },
-> +       { .compatible = "qcom,pmi8998",   .data = (void *)PMI8998_SUBTYPE },
-> +       { .compatible = "qcom,pm8005",    .data = (void *)PM8005_SUBTYPE },
->         { .compatible = "qcom,pm8909",    .data = (void *)PM8909_SUBTYPE },
-> +       { .compatible = "qcom,pm8998",    .data = (void *)PM8998_SUBTYPE },
+Also true. If we completely replaced the polling idle states with a
+spin here, this would not be acceptable and it would have to be quite
+a lot more work to interact with load calculations etc.
 
-nit: It appears that the above table was previously sorted by SUBTYPE
-ID.  Could you perhaps move your 3 new PMICs to the bottom to maintain
-this?  Other than that, you can add my Reviewed-by if you would like
-(not that I have _any_ real expertise on SPMI, so might not be worth
-it).
+On the other hand if it is a much smaller spin on the order of
+context switch latency that could be considered part of the cost
+of context switching for the purposes of load balancing, *maybe*
+not much else is need.
 
-
--Doug
+Thanks,
+Nick
