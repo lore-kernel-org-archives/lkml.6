@@ -1,64 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeDXQJM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:09:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58087 "EHLO mail.bootlin.com"
+        id S1751440AbeDXQKU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:10:20 -0400
+Received: from thoth.sbs.de ([192.35.17.2]:52275 "EHLO thoth.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751280AbeDXQJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:09:07 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] net: phy: allow scanning busses with missing phys
-Date: Tue, 24 Apr 2018 18:09:04 +0200
-Message-Id: <20180424160904.32457-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.0
+        id S1750938AbeDXQKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:10:19 -0400
+Subject: Re: [PATCH] kmemleak: Report if we need to tune
+ KMEMLEAK_EARLY_LOG_SIZE
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <288b0afc-bcc3-a2aa-2791-707e625d1da7@siemens.com>
+ <20180424155504.frbxmzq4dw3veudu@armageddon.cambridge.arm.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Openpgp: preference=signencrypt
+Message-ID: <c248c83e-e9c1-6b4d-050e-9aa30cd14669@siemens.com>
+Date: Tue, 24 Apr 2018 18:10:14 +0200
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+MIME-Version: 1.0
+In-Reply-To: <20180424155504.frbxmzq4dw3veudu@armageddon.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some MDIO busses will error out when trying to read a phy address with no
-phy present at that address. In that case, probing the bus will fail
-because __mdiobus_register() is scanning the bus for all possible phys
-addresses.
+On 2018-04-24 17:55, Catalin Marinas wrote:
+> On Tue, Apr 24, 2018 at 05:51:15PM +0200, Jan Kiszka wrote:
+>> ...rather than just mysteriously disabling it.
+>>
+>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>> ---
+>>  mm/kmemleak.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+>> index 9a085d525bbc..156c0c69cc5c 100644
+>> --- a/mm/kmemleak.c
+>> +++ b/mm/kmemleak.c
+>> @@ -863,6 +863,7 @@ static void __init log_early(int op_type, const void *ptr, size_t size,
+>>  
+>>  	if (crt_early_log >= ARRAY_SIZE(early_log)) {
+>>  		crt_early_log++;
+>> +		pr_warn("Too many early logs\n");
+> 
+> That's already printed, though later where we have an idea of how big the early
+> log needs to be:
+> 
+> 	if (crt_early_log > ARRAY_SIZE(early_log))
+> 		pr_warn("Early log buffer exceeded (%d), please increase DEBUG_KMEMLEAK_EARLY_LOG_SIZE\n",
+> 			crt_early_log);
+> 
 
-In case MII_PHYSID1 returns -EIO or -ENODEV, consider there is no phy at
-this address and set the phy ID to 0xffffffff which is then properly
-handled in get_phy_device().
+Well, that's good, but where you read "detector disabled", there is no
+hint on that. I missed that because subsystems tend to not do any
+further actions after telling they are off.
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/net/phy/phy_device.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+BTW, my system (virtual ARM64 target) required 26035 entries, which is a
+few orders of magnitude above the default and pretty close the the
+limit. What's causing this? Other debug options?
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index ac23322a32e1..9e4ba8e80a18 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -535,8 +535,17 @@ static int get_phy_id(struct mii_bus *bus, int addr, u32 *phy_id,
- 
- 	/* Grab the bits from PHYIR1, and put them in the upper half */
- 	phy_reg = mdiobus_read(bus, addr, MII_PHYSID1);
--	if (phy_reg < 0)
-+	if (phy_reg < 0) {
-+		/* if there is no device, return without an error so scanning
-+		 * the bus works properly
-+		 */
-+		if (phy_reg == -EIO || phy_reg == -ENODEV) {
-+			*phy_id = 0xffffffff;
-+			return 0;
-+		}
-+
- 		return -EIO;
-+	}
- 
- 	*phy_id = (phy_reg & 0xffff) << 16;
- 
+Jan
+
 -- 
-2.17.0
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
