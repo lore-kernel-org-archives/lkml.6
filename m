@@ -1,130 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932966AbeDXMtG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:49:06 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41829 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757858AbeDXMpa (ORCPT
+        id S933138AbeDXMvM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:51:12 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:35865 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932950AbeDXMvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:45:30 -0400
-X-Google-Smtp-Source: AIpwx4/bp+1eSQY8lVCS5j13/JvcX2e01YINHBxntiNNySDBGjGQxYyDbrKDzIUZLel/6uZfC3n6NA==
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 20/28] venus: helpers,vdec,venc: add helpers to set work mode and core usage
-Date: Tue, 24 Apr 2018 15:44:28 +0300
-Message-Id: <20180424124436.26955-21-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+        Tue, 24 Apr 2018 08:51:07 -0400
+X-ME-Sender: <xms:OyjfWhLKIF6cl3DtHCZDRcPZntlF1_xQBSqOs7i2WT13Mda_BSIHjQ>
+Date: Tue, 24 Apr 2018 15:51:04 +0300
+From: Ido Schimmel <idosch@idosch.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nogahf@mellanox.com
+Subject: Re: [PATCH] mlxsw: spectrum_switchdev: remove duplicated check on
+ multicast_enable
+Message-ID: <20180424125104.GA2461@splinter.mtl.com>
+References: <20180424115139.21134-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424115139.21134-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These are new properties applicable to Venus version 4xx. Add the
-helpers and call them from decoder and encoder drivers.
+On Tue, Apr 24, 2018 at 12:51:39PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The check on bridge_port->bridge_device->multicast_enable is performed
+> twice in two nested if statements. I can't see any reason for this, the
+> second check is redundant and can be removed.
+> 
+> Detected by cppcheck:
+> drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c:1722]:
+> (warning) Identical inner 'if' condition is always true.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+> index c11c9a635866..989ed19e25c9 100644
+> --- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+> +++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+> @@ -1719,12 +1719,9 @@ __mlxsw_sp_port_mdb_del(struct mlxsw_sp_port *mlxsw_sp_port,
+>  	int err;
+>  
+>  	if (bridge_port->bridge_device->multicast_enabled) {
+> -		if (bridge_port->bridge_device->multicast_enabled) {
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/helpers.c | 28 ++++++++++++++++++++++++++++
- drivers/media/platform/qcom/venus/helpers.h |  2 ++
- drivers/media/platform/qcom/venus/vdec.c    |  8 ++++++++
- drivers/media/platform/qcom/venus/venc.c    |  8 ++++++++
- 4 files changed, 46 insertions(+)
+This looks like a copy-paste error. I believe the intention was to check
+'!bridge_port->mrouter' so that if port is an mrouter port packets
+hitting the MDB entry would still be sent to it even after it was
+removed from the MDB entry ports list.
 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 0d55604f7484..adf8701a64bb 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -484,6 +484,34 @@ int venus_helper_set_output_resolution(struct venus_inst *inst,
- }
- EXPORT_SYMBOL_GPL(venus_helper_set_output_resolution);
- 
-+int venus_helper_set_work_mode(struct venus_inst *inst, u32 mode)
-+{
-+	u32 ptype = HFI_PROPERTY_PARAM_WORK_MODE;
-+	struct hfi_video_work_mode wm;
-+
-+	if (!IS_V4(inst->core))
-+		return 0;
-+
-+	wm.video_work_mode = mode;
-+
-+	return hfi_session_set_property(inst, ptype, &wm);
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_set_work_mode);
-+
-+int venus_helper_set_core_usage(struct venus_inst *inst, u32 usage)
-+{
-+	u32 ptype = HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE;
-+	struct hfi_videocores_usage_type cu;
-+
-+	if (!IS_V4(inst->core))
-+		return 0;
-+
-+	cu.video_core_enable_mask = usage;
-+
-+	return hfi_session_set_property(inst, ptype, &cu);
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_set_core_usage);
-+
- int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
- 			      unsigned int output_bufs)
- {
-diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 79af7845efbd..d5e727e1ecab 100644
---- a/drivers/media/platform/qcom/venus/helpers.h
-+++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -38,6 +38,8 @@ int venus_helper_set_input_resolution(struct venus_inst *inst,
- int venus_helper_set_output_resolution(struct venus_inst *inst,
- 				       unsigned int width, unsigned int height,
- 				       u32 buftype);
-+int venus_helper_set_work_mode(struct venus_inst *inst, u32 mode);
-+int venus_helper_set_core_usage(struct venus_inst *inst, u32 usage);
- int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
- 			      unsigned int output_bufs);
- int venus_helper_set_raw_format(struct venus_inst *inst, u32 hfi_format,
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index b43607dee4fe..ceaf1a338eb3 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -550,6 +550,14 @@ static int vdec_set_properties(struct venus_inst *inst)
- 	u32 ptype;
- 	int ret;
- 
-+	ret = venus_helper_set_work_mode(inst, VIDC_WORK_MODE_2);
-+	if (ret)
-+		return ret;
-+
-+	ret = venus_helper_set_core_usage(inst, VIDC_CORE_ID_1);
-+	if (ret)
-+		return ret;
-+
- 	if (core->res->hfi_version == HFI_VERSION_1XX) {
- 		ptype = HFI_PROPERTY_PARAM_VDEC_CONTINUE_DATA_TRANSFER;
- 		ret = hfi_session_set_property(inst, ptype, &en);
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index 8970f14b3a82..3b3299bff1cd 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -643,6 +643,14 @@ static int venc_set_properties(struct venus_inst *inst)
- 	u32 ptype, rate_control, bitrate, profile = 0, level = 0;
- 	int ret;
- 
-+	ret = venus_helper_set_work_mode(inst, VIDC_WORK_MODE_2);
-+	if (ret)
-+		return ret;
-+
-+	ret = venus_helper_set_core_usage(inst, VIDC_CORE_ID_2);
-+	if (ret)
-+		return ret;
-+
- 	ptype = HFI_PROPERTY_CONFIG_FRAME_RATE;
- 	frate.buffer_type = HFI_BUFFER_OUTPUT;
- 	frate.framerate = inst->fps * (1 << 16);
--- 
-2.14.1
+I will send a patch later this week after I run it by Nogah who worked
+on this part.
+
+Thanks for the patch.
+
+> -			err = mlxsw_sp_port_smid_set(mlxsw_sp_port, mid->mid,
+> -						     false);
+> -			if (err)
+> -				netdev_err(dev, "Unable to remove port from SMID\n");
+> -		}
+> +		err = mlxsw_sp_port_smid_set(mlxsw_sp_port, mid->mid, false);
+> +		if (err)
+> +			netdev_err(dev, "Unable to remove port from SMID\n");
+>  	}
+>  
+>  	err = mlxsw_sp_port_remove_from_mid(mlxsw_sp_port, mid);
+> -- 
+> 2.17.0
+> 
