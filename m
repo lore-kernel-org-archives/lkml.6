@@ -1,133 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756575AbeDXIJL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:09:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42819 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756046AbeDXIJA (ORCPT
+        id S1756610AbeDXIJh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:09:37 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34287 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756584AbeDXIJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:09:00 -0400
-Date: Tue, 24 Apr 2018 01:08:02 -0700
-From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-abb67605203687c8b7943d760638d0301787f8d9@git.kernel.org>
-Cc: arjan@linux.intel.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-        hughd@google.com, mingo@kernel.org, aarcange@redhat.com, hpa@zytor.com,
-        dan.j.williams@intel.com, luto@kernel.org, gregkh@linuxfoundation.org,
-        bp@alien8.de, namit@vmware.com, jpoimboe@redhat.com,
-        peterz@infradead.org, jgross@suse.com, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, keescook@google.com
-Reply-To: bp@alien8.de, namit@vmware.com, jgross@suse.com, dwmw2@infradead.org,
-        keescook@google.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, jpoimboe@redhat.com, dan.j.williams@intel.com,
-        hpa@zytor.com, gregkh@linuxfoundation.org, luto@kernel.org,
-        aarcange@redhat.com, dave.hansen@linux.intel.com, hughd@google.com,
-        mingo@kernel.org, arjan@linux.intel.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20180420222023.1C8B2B20@viggo.jf.intel.com>
-References: <20180420222023.1C8B2B20@viggo.jf.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86, pti: Reduce amount of kernel text allowed to be
- Global
-Git-Commit-ID: abb67605203687c8b7943d760638d0301787f8d9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 24 Apr 2018 04:09:32 -0400
+Date: Tue, 24 Apr 2018 10:09:28 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: John Stultz <john.stultz@linaro.org>
+cc: Genki Sky <sky@genki.is>, David Herrmann <dh.herrmann@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock
+ BOOTTIME
+In-Reply-To: <CALAqxLWmcmiOgbH1Ri+Ki-OGFvgzRzRDzX3FZdUhcqu1OoCWiA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de>
+References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com> <2580c734d38041e984215ccc522a4f2d@genki.is> <cef78d739d29410cb73072e9792598a7@genki.is> <CALAqxLWmcmiOgbH1Ri+Ki-OGFvgzRzRDzX3FZdUhcqu1OoCWiA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  abb67605203687c8b7943d760638d0301787f8d9
-Gitweb:     https://git.kernel.org/tip/abb67605203687c8b7943d760638d0301787f8d9
-Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Fri, 20 Apr 2018 15:20:23 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 24 Apr 2018 09:50:54 +0200
+On Mon, 23 Apr 2018, John Stultz wrote:
 
-x86, pti: Reduce amount of kernel text allowed to be Global
+> On Mon, Apr 23, 2018 at 7:45 PM, Genki Sky <sky@genki.is> wrote:
+> > Quoting Genki Sky (2018/04/23 20:40:36 -0400)
+> >> I came across this thread for same reason as [0]: Daemons getting
+> >> killed by systemd on resume (after >WatchdogSec seconds of
+> >> suspending). I'm using master branch of systemd and the kernel. As
+> >> mentioned, systemd uses CLOCK_MONOTONIC, originally expecting it to
+> >> not include suspend time.
+> >>
+> >> Correct me if I'm mistaken, but I don't see the ambiguity of whether
+> >> this patch series breaks systemd. If it's implemented correctly, you'd
+> >> hope it *would* break it!
+> >
+> > This sounded a little weak on re-reading, sorry. So, I just confirmed
+> > that after booting a "git revert -m 1 680014d6d1da", the issue no
+> > longer appears. (I.e., a suspend for >WatchDog sec doesn't result in
+> > any daemon getting killed).
+> >
+> > Let me know if I can help in any way.
+> 
+> Yea, this is the sort of thing I was worried about.
+> 
+> Thomas: I think reverting this change is needed.
 
-Kees reported to me that I made too much of the kernel image global.
-It was far more than just text:
+Sigh. I hoped that something like this would be catched before I sent the
+pull request by those who were actually interested in this change...
 
-	I think this is too much set global: _end is after data,
-	bss, and brk, and all kinds of other stuff that could
-	hold secrets. I think this should match what
-	mark_rodata_ro() is doing.
+I'll try to distangle it.
 
-This does exactly that.  We use __end_rodata_hpage_align as our
-marker both because it is huge-page-aligned and it does not contain
-any sections we expect to hold secrets.
+Thanks,
 
-Kees's logic was that r/o data is in the kernel image anyway and,
-in the case of traditional distributions, can be freely downloaded
-from the web, so there's no reason to hide it.
-
-Fixes: 8c06c7740 (x86/pti: Leave kernel text global for !PCID)
-Reported-by: Kees Cook <keescook@google.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Nadav Amit <namit@vmware.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Link: https://lkml.kernel.org/r/20180420222023.1C8B2B20@viggo.jf.intel.com
-
----
- arch/x86/mm/pti.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index f1fd52f449e0..ae3eb4f5d53b 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -430,12 +430,24 @@ static inline bool pti_kernel_image_global_ok(void)
-  */
- void pti_clone_kernel_text(void)
- {
-+	/*
-+	 * rodata is part of the kernel image and is normally
-+	 * readable on the filesystem or on the web.  But, do not
-+	 * clone the areas past rodata, they might contain secrets.
-+	 */
- 	unsigned long start = PFN_ALIGN(_text);
--	unsigned long end = ALIGN((unsigned long)_end, PMD_PAGE_SIZE);
-+	unsigned long end = (unsigned long)__end_rodata_hpage_align;
- 
- 	if (!pti_kernel_image_global_ok())
- 		return;
- 
-+	pr_debug("mapping partial kernel image into user address space\n");
-+
-+	/*
-+	 * Note that this will undo _some_ of the work that
-+	 * pti_set_kernel_image_nonglobal() did to clear the
-+	 * global bit.
-+	 */
- 	pti_clone_pmds(start, end, _PAGE_RW);
- }
- 
-@@ -458,8 +470,6 @@ void pti_set_kernel_image_nonglobal(void)
- 	if (pti_kernel_image_global_ok())
- 		return;
- 
--	pr_debug("set kernel image non-global\n");
--
- 	set_memory_nonglobal(start, (end - start) >> PAGE_SHIFT);
- }
- 
+	tglx
