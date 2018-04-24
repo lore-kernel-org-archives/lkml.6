@@ -1,238 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752075AbeDXQbb (ORCPT <rfc822;w@1wt.eu>);
+        id S1752255AbeDXQbl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:31:41 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:50957 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751239AbeDXQbb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Apr 2018 12:31:31 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:46507 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750908AbeDXQba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:31:30 -0400
-Message-Id: <02633d43f29e1ba01865cd334216dc8efb8b4b11.1524587425.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH  1/3] powerpc/nohash: remove hash related code from nohash
- headers.
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 24 Apr 2018 18:31:28 +0200 (CEST)
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: "Panariti\, David" <David.Panariti@amd.com>
+Cc: "Grodzovsky\, Andrey" <Andrey.Grodzovsky@amd.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "amd-gfx\@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "Deucher\, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig\, Christian" <Christian.Koenig@amd.com>,
+        "oleg\@redhat.com" <oleg@redhat.com>,
+        "akpm\@linux-foundation.org" <akpm@linux-foundation.org>
+References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
+        <1524583836-12130-4-git-send-email-andrey.grodzovsky@amd.com>
+        <DM5PR12MB244017F98FC732EB5DD86E0395880@DM5PR12MB2440.namprd12.prod.outlook.com>
+        <b4309ea4-c1a0-5811-040b-4390ce6f297f@amd.com>
+        <DM5PR12MB24408FF7C780D95307FB2BAD95880@DM5PR12MB2440.namprd12.prod.outlook.com>
+Date: Tue, 24 Apr 2018 11:30:03 -0500
+In-Reply-To: <DM5PR12MB24408FF7C780D95307FB2BAD95880@DM5PR12MB2440.namprd12.prod.outlook.com>
+        (David Panariti's message of "Tue, 24 Apr 2018 16:20:16 +0000")
+Message-ID: <87bme8bm9g.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fB0qm-0007sK-P9;;;mid=<87bme8bm9g.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+uogP3/fvxseaH3ajwvDkVG7x5NZYKyDc=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;"Panariti\, David" <David.Panariti@amd.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 957 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 4.9 (0.5%), b_tie_ro: 4.2 (0.4%), parse: 1.25 (0.1%),
+        extract_message_metadata: 16 (1.7%), get_uri_detail_list: 2.5 (0.3%),
+        tests_pri_-1000: 8 (0.8%), tests_pri_-950: 1.69 (0.2%), tests_pri_-900: 1.35
+        (0.1%), tests_pri_-400: 30 (3.2%), check_bayes: 29 (3.0%), b_tokenize: 12
+        (1.2%), b_tok_get_all: 7 (0.7%), b_comp_prob: 3.5 (0.4%), b_tok_touch_all:
+        4.1 (0.4%), b_finish: 0.60 (0.1%), tests_pri_0: 237 (24.8%),
+        check_dkim_signature: 0.47 (0.0%), check_dkim_adsp: 2.6 (0.3%),
+        tests_pri_500: 652 (68.1%), poll_dns_idle: 645 (67.3%), rewrite_mail: 0.00
+        (0.0%)
+Subject: Re: [PATCH 3/3] drm/amdgpu: Switch to interrupted wait to recover from ring hang.
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When nohash and book3s header were split, some hash related stuff
-remained in the nohash header. This patch removes them.
+"Panariti, David" <David.Panariti@amd.com> writes:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/nohash/32/pgtable.h | 29 +++------------------
- arch/powerpc/include/asm/nohash/64/pgtable.h | 16 ++----------
- arch/powerpc/include/asm/nohash/pgtable.h    | 38 +++-------------------------
- arch/powerpc/include/asm/nohash/pte-book3e.h |  1 -
- 4 files changed, 10 insertions(+), 74 deletions(-)
+> Andrey Grodzovsky <andrey.grodzovsky@amd.com> writes:
+>> Kind of dma_fence_wait_killable, except that we don't have such API
+>> (maybe worth adding ?)
+> Depends on how many places it would be called, or think it might be called.  Can always factor on the 2nd time it's needed.
+> Factoring, IMO, rarely hurts.  The factored function can easily be visited using `M-.' ;->
+>
+> Also, if the wait could be very long, would a log message, something like "xxx has run for Y seconds."  help?
+> I personally hate hanging w/no info.
 
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index a717b5c39b9c..b413abcd5a09 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -129,7 +129,7 @@ extern int icache_44x_need_flush;
- #ifndef __ASSEMBLY__
- 
- #define pte_clear(mm, addr, ptep) \
--	do { pte_update(ptep, ~_PAGE_HASHPTE, 0); } while (0)
-+	do { pte_update(ptep, ~0, 0); } while (0)
- 
- #define pmd_none(pmd)		(!pmd_val(pmd))
- #define	pmd_bad(pmd)		(pmd_val(pmd) & _PMD_BAD)
-@@ -142,21 +142,6 @@ static inline void pmd_clear(pmd_t *pmdp)
- 
- 
- /*
-- * When flushing the tlb entry for a page, we also need to flush the hash
-- * table entry.  flush_hash_pages is assembler (for speed) in hashtable.S.
-- */
--extern int flush_hash_pages(unsigned context, unsigned long va,
--			    unsigned long pmdval, int count);
--
--/* Add an HPTE to the hash table */
--extern void add_hash_page(unsigned context, unsigned long va,
--			  unsigned long pmdval);
--
--/* Flush an entry from the TLB/hash table */
--extern void flush_hash_entry(struct mm_struct *mm, pte_t *ptep,
--			     unsigned long address);
--
--/*
-  * PTE updates. This function is called whenever an existing
-  * valid PTE is updated. This does -not- include set_pte_at()
-  * which nowadays only sets a new PTE.
-@@ -242,12 +227,6 @@ static inline int __ptep_test_and_clear_young(unsigned int context, unsigned lon
- {
- 	unsigned long old;
- 	old = pte_update(ptep, _PAGE_ACCESSED, 0);
--#if _PAGE_HASHPTE != 0
--	if (old & _PAGE_HASHPTE) {
--		unsigned long ptephys = __pa(ptep) & PAGE_MASK;
--		flush_hash_pages(context, addr, ptephys, 1);
--	}
--#endif
- 	return (old & _PAGE_ACCESSED) != 0;
- }
- #define ptep_test_and_clear_young(__vma, __addr, __ptep) \
-@@ -257,7 +236,7 @@ static inline int __ptep_test_and_clear_young(unsigned int context, unsigned lon
- static inline pte_t ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
- 				       pte_t *ptep)
- {
--	return __pte(pte_update(ptep, ~_PAGE_HASHPTE, 0));
-+	return __pte(pte_update(ptep, ~0, 0));
- }
- 
- #define __HAVE_ARCH_PTEP_SET_WRPROTECT
-@@ -285,7 +264,7 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
- }
- 
- #define __HAVE_ARCH_PTE_SAME
--#define pte_same(A,B)	(((pte_val(A) ^ pte_val(B)) & ~_PAGE_HASHPTE) == 0)
-+#define pte_same(A,B)	((pte_val(A) ^ pte_val(B)) == 0)
- 
- /*
-  * Note that on Book E processors, the pmd contains the kernel virtual
-@@ -326,7 +305,7 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
- /*
-  * Encode and decode a swap entry.
-  * Note that the bits we use in a PTE for representing a swap entry
-- * must not include the _PAGE_PRESENT bit or the _PAGE_HASHPTE bit (if used).
-+ * must not include the _PAGE_PRESENT bit.
-  *   -- paulus
-  */
- #define __swp_type(entry)		((entry).val & 0x1f)
-diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-index 5c5f75d005ad..251d74c9013e 100644
---- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-@@ -173,8 +173,6 @@ static inline void pgd_set(pgd_t *pgdp, unsigned long val)
- /* to find an entry in a kernel page-table-directory */
- /* This now only contains the vmalloc pages */
- #define pgd_offset_k(address) pgd_offset(&init_mm, address)
--extern void hpte_need_flush(struct mm_struct *mm, unsigned long addr,
--			    pte_t *ptep, unsigned long pte, int huge);
- 
- /* Atomic PTE updates */
- static inline unsigned long pte_update(struct mm_struct *mm,
-@@ -205,11 +203,6 @@ static inline unsigned long pte_update(struct mm_struct *mm,
- 	if (!huge)
- 		assert_pte_locked(mm, addr);
- 
--#ifdef CONFIG_PPC_BOOK3S_64
--	if (old & _PAGE_HASHPTE)
--		hpte_need_flush(mm, addr, ptep, old, huge);
--#endif
--
- 	return old;
- }
- 
-@@ -218,7 +211,7 @@ static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
- {
- 	unsigned long old;
- 
--	if ((pte_val(*ptep) & (_PAGE_ACCESSED | _PAGE_HASHPTE)) == 0)
-+	if (pte_young(*ptep))
- 		return 0;
- 	old = pte_update(mm, addr, ptep, _PAGE_ACCESSED, 0, 0);
- 	return (old & _PAGE_ACCESSED) != 0;
-@@ -312,7 +305,7 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
- }
- 
- #define __HAVE_ARCH_PTE_SAME
--#define pte_same(A,B)	(((pte_val(A) ^ pte_val(B)) & ~_PAGE_HPTEFLAGS) == 0)
-+#define pte_same(A,B)	((pte_val(A) ^ pte_val(B)) == 0)
- 
- #define pte_ERROR(e) \
- 	pr_err("%s:%d: bad pte %08lx.\n", __FILE__, __LINE__, pte_val(e))
-@@ -324,11 +317,6 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
- /* Encode and de-code a swap entry */
- #define MAX_SWAPFILES_CHECK() do { \
- 	BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > SWP_TYPE_BITS); \
--	/*							\
--	 * Don't have overlapping bits with _PAGE_HPTEFLAGS	\
--	 * We filter HPTEFLAGS on set_pte.			\
--	 */							\
--	BUILD_BUG_ON(_PAGE_HPTEFLAGS & (0x1f << _PAGE_BIT_SWAP_TYPE)); \
- 	} while (0)
- /*
-  * on pte we don't need handle RADIX_TREE_EXCEPTIONAL_SHIFT;
-diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-index c56de1e8026f..f2fe3cbe90af 100644
---- a/arch/powerpc/include/asm/nohash/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/pgtable.h
-@@ -148,37 +148,16 @@ extern void set_pte_at(struct mm_struct *mm, unsigned long addr, pte_t *ptep,
- static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
- 				pte_t *ptep, pte_t pte, int percpu)
- {
--#if defined(CONFIG_PPC_STD_MMU_32) && defined(CONFIG_SMP) && !defined(CONFIG_PTE_64BIT)
--	/* First case is 32-bit Hash MMU in SMP mode with 32-bit PTEs. We use the
--	 * helper pte_update() which does an atomic update. We need to do that
--	 * because a concurrent invalidation can clear _PAGE_HASHPTE. If it's a
--	 * per-CPU PTE such as a kmap_atomic, we do a simple update preserving
--	 * the hash bits instead (ie, same as the non-SMP case)
--	 */
--	if (percpu)
--		*ptep = __pte((pte_val(*ptep) & _PAGE_HASHPTE)
--			      | (pte_val(pte) & ~_PAGE_HASHPTE));
--	else
--		pte_update(ptep, ~_PAGE_HASHPTE, pte_val(pte));
--
--#elif defined(CONFIG_PPC32) && defined(CONFIG_PTE_64BIT)
-+#if defined(CONFIG_PPC32) && defined(CONFIG_PTE_64BIT)
- 	/* Second case is 32-bit with 64-bit PTE.  In this case, we
- 	 * can just store as long as we do the two halves in the right order
--	 * with a barrier in between. This is possible because we take care,
--	 * in the hash code, to pre-invalidate if the PTE was already hashed,
--	 * which synchronizes us with any concurrent invalidation.
--	 * In the percpu case, we also fallback to the simple update preserving
--	 * the hash bits
-+	 * with a barrier in between.
-+	 * In the percpu case, we also fallback to the simple update
- 	 */
- 	if (percpu) {
--		*ptep = __pte((pte_val(*ptep) & _PAGE_HASHPTE)
--			      | (pte_val(pte) & ~_PAGE_HASHPTE));
-+		*ptep = pte;
- 		return;
- 	}
--#if _PAGE_HASHPTE != 0
--	if (pte_val(*ptep) & _PAGE_HASHPTE)
--		flush_hash_entry(mm, ptep, addr);
--#endif
- 	__asm__ __volatile__("\
- 		stw%U0%X0 %2,%0\n\
- 		eieio\n\
-@@ -186,15 +165,6 @@ static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
- 	: "=m" (*ptep), "=m" (*((unsigned char *)ptep+4))
- 	: "r" (pte) : "memory");
- 
--#elif defined(CONFIG_PPC_STD_MMU_32)
--	/* Third case is 32-bit hash table in UP mode, we need to preserve
--	 * the _PAGE_HASHPTE bit since we may not have invalidated the previous
--	 * translation in the hash yet (done in a subsequent flush_tlb_xxx())
--	 * and see we need to keep track that this PTE needs invalidating
--	 */
--	*ptep = __pte((pte_val(*ptep) & _PAGE_HASHPTE)
--		      | (pte_val(pte) & ~_PAGE_HASHPTE));
--
- #else
- 	/* Anything else just stores the PTE normally. That covers all 64-bit
- 	 * cases, and 32-bit non-hash with 32-bit PTEs.
-diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h b/arch/powerpc/include/asm/nohash/pte-book3e.h
-index ccee8eb509bb..9ff51b4c0cac 100644
---- a/arch/powerpc/include/asm/nohash/pte-book3e.h
-+++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
-@@ -57,7 +57,6 @@
- #define _PAGE_USER		(_PAGE_BAP_UR | _PAGE_BAP_SR) /* Can be read */
- #define _PAGE_PRIVILEGED	(_PAGE_BAP_SR)
- 
--#define _PAGE_HASHPTE	0
- #define _PAGE_BUSY	0
- 
- #define _PAGE_SPECIAL	_PAGE_SW0
--- 
-2.13.3
+Ugh.  This loop appears susceptible to loosing wake ups.  There are
+races between when a wake-up happens, when we clear the sleeping state,
+and when we test the stat to see if we should stat awake.  So yes
+implementing a dma_fence_wait_killable that handles of all that
+correctly sounds like an very good idea.
+
+Eric
+
+
+>> If the ring is hanging for some reason allow to recover the waiting by sending fatal signal.
+>>
+>> Originally-by: David Panariti <David.Panariti@amd.com>
+>> Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+>> ---
+>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 14 ++++++++++----
+>>   1 file changed, 10 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>> index eb80edf..37a36af 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>> @@ -421,10 +421,16 @@ int amdgpu_ctx_wait_prev_fence(struct amdgpu_ctx *ctx, unsigned ring_id)
+>>
+>>       if (other) {
+>>               signed long r;
+>> -             r = dma_fence_wait_timeout(other, false, MAX_SCHEDULE_TIMEOUT);
+>> -             if (r < 0) {
+>> -                     DRM_ERROR("Error (%ld) waiting for fence!\n", r);
+>> -                     return r;
+>> +
+>> +             while (true) {
+>> +                     if ((r = dma_fence_wait_timeout(other, true,
+>> +                                     MAX_SCHEDULE_TIMEOUT)) >= 0)
+>> +                             return 0;
+>> +
+>> +                     if (fatal_signal_pending(current)) {
+>> +                             DRM_ERROR("Error (%ld) waiting for fence!\n", r);
+>> +                             return r;
+>> +                     }
+>>               }
+>>       }
+>>
+>> --
+>> 2.7.4
+>>
+Eric
