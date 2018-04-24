@@ -1,79 +1,68 @@
-Return-Path: <andresx7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524514346; cv=none;
+Return-Path: <kvalo@codeaurora.org>
+X-Google-Smtp-Source: AIpwx483cykRuTfP1IKC6lwkDHxAXB4IfiAHRilXmBbr0PqQwSIS7mrHdSCiGP455Y8VHb2C5ZMH
+ARC-Seal: i=1; a=rsa-sha256; t=1524547784; cv=none;
         d=google.com; s=arc-20160816;
-        b=pT6HV8b4uwdHPBymmJQFgjNhZtnWu76m7VTezCRZXoKyzkoBXIf4DLvnaHmJYM8iAH
-         4xo89NqZOr8xig3FHZ30kqBc8YzBcHzIfCZiZP0AmDWbgIIvkB/+slcMZjROXSkbf//3
-         iBjmvhLTI7uWCGXcPct53wrwp/WDkquU2EpNrU6tbeTBVBpMCb5awqjMn/Avsl9QWVeN
-         //D/HlRalGBgfoNv2wtSHTMh8EcixI27RW0CJ/bDhve9fdRW5wrEZ6b8vWyex1+sMyhY
-         BQV7cS1qh70C9LxLHTuaMlwfav5s/BL/QYMOApVlG+nTuwVzcr0gq6aZ/7mwblWkIDgZ
-         g/ZA==
+        b=Dj/DfZTESMX9esw2f4Ip+KImWSjYDnP8qF3QHid1NUNatKblzaE9i7fM1KxxTMsFZc
+         urog9tE0GO7ZEP2O5QsoBZlIh13PohDTRYnTlKTlwtboI6eZb7dCIoxE+qCZTbyzl9Ir
+         Sf9NJcWVov6UX/91eLJjvkzP317GIkaiJLkI5uXIjzeUqC1t1MTVXY6lu6tJ0f1dZ1Ca
+         aosUrC+7Td+WxfNexoXUHPppuYRrlwA868TkQUPVjgBUEAspQzmpOy+19cnYKYQ3IWrz
+         a7Ip8lqdVkOwRmWJ65LwHda6wuDUr1NNUT8Up7b4Kmr0Ss0x3G0fQ8IXvm3+gO8cqigp
+         FA3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=jKkPtOxxsOO/OOaOXa1om3vVQfSWXWBuAWW8jjohDgs=;
-        b=KA3aW/4tthKTIrOsMImTWEbjXUnWwYL9oH4vnXTP8duGkcaiNKIBT8sWlxRknoc+aC
-         /rnr6cN63VdTIaX+6USBmdNwEF2mFYCwduO9VpmTwc/Scb/kuyAi1Aj4G6LAeIoL1mu4
-         eYC49lQJhYBkOab44i1A93afGH5e8xv+F42qNgJfO/l+yDBPKMbhlz0ewl/txxxkXnb0
-         skyxHuRggUbgAhOoIqaliFpDclCfotruP9Evv/lCKEPFUVAqKv9Us8NexJ2cxLmt+vL6
-         QCHmpHH0rU5Y4ITCeMZbbm6TS0s0RT9gmXNVwyXy1rAUxrTLo7sgFL01qMnrr1SnDxI3
-         yi/g==
+        h=mime-version:user-agent:message-id:in-reply-to:date:references
+         :subject:cc:to:from:dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=9XIVnovJSmILi+97ey1AyoK8DkjMUD/7EYyjm9yem+0=;
+        b=wESX/b5x++SEwnObECrf3USPPe/nGwDkBF+29R3IclwU2X+1qr2pXEnnOOH2RhXPTT
+         fjDN8dL73SBXytQmI+r0doA+A+szfiUL0Vlc2s6d4UicmMMy7U3S+pK1av7coFG025u2
+         psVF9FNG4X/d3kIvumBvxAUdHsCVJLfG0kfJlaDUnPRc/m8XpYdP2YpU1xS2Zday1kEs
+         QaOprQ3RM8UDbnGZOKo3CVYRpUC+TazqwHNcaY7oOTP4/D63/oeeGrRU4V1+JOfi28/U
+         6zD4o+fZvhUXpr6vcsyNIp3KbC5GH34ZrhXP8U/489y8mjSEvpTh6m43gVw5k9IN+5EO
+         jb7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZQ2qhiaV;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=dq/DW6OC;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=dq/DW6OC;
+       spf=pass (google.com: domain of kvalo@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=kvalo@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZQ2qhiaV;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4/XgsWHPjDVHMR93bFF2M7zVdmhhu6D7Rcoy7Mpv5TWULb81up5d0CT6RSQyRxEJB6U/SBSFw==
-From: Andres Rodriguez <andresx7@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: andresx7@gmail.com,
-	gregkh@linuxfoundation.org,
-	mcgrof@kernel.org,
-	alexdeucher@gmail.com,
-	christian.koenig@amd.com,
-	kvalo@codeaurora.org,
-	arend.vanspriel@broadcom.com,
-	linux-wireless@vger.kernel.org,
-	ath10k@lists.infradead.org,
-	hdegoede@redhat.com
-Subject: [PATCH 9/9] ath10k: re-enable the firmware fallback mechanism for testmode
-Date: Mon, 23 Apr 2018 16:12:05 -0400
-Message-Id: <20180423201205.20533-10-andresx7@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180423201205.20533-1-andresx7@gmail.com>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=dq/DW6OC;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=dq/DW6OC;
+       spf=pass (google.com: domain of kvalo@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=kvalo@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC8A16071A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Andres Rodriguez <andresx7@gmail.com>
+Cc: linux-kernel@vger.kernel.org,  gregkh@linuxfoundation.org,  mcgrof@kernel.org,  alexdeucher@gmail.com,  christian.koenig@amd.com,  arend.vanspriel@broadcom.com,  linux-wireless@vger.kernel.org,  ath10k@lists.infradead.org,  hdegoede@redhat.com
+Subject: Re: [PATCH 9/9] ath10k: re-enable the firmware fallback mechanism for testmode
 References: <20180423201205.20533-1-andresx7@gmail.com>
+	<20180423201205.20533-10-andresx7@gmail.com>
+Date: Tue, 24 Apr 2018 08:29:38 +0300
+In-Reply-To: <20180423201205.20533-10-andresx7@gmail.com> (Andres Rodriguez's
+	message of "Mon, 23 Apr 2018 16:12:05 -0400")
+Message-ID: <87fu3lcgu5.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598569155393692911?=
-X-GMAIL-MSGID: =?utf-8?q?1598569155393692911?=
+X-GMAIL-MSGID: =?utf-8?q?1598604217429372348?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The ath10k testmode uses request_firmware_direct() in order to avoid
-producing firmware load warnings. Disabling the fallback mechanism was a
-side effect of disabling warnings.
+Andres Rodriguez <andresx7@gmail.com> writes:
 
-We now have a new API that allows us to avoid warnings while keeping the
-fallback mechanism enabled. So use that instead.
+> The ath10k testmode uses request_firmware_direct() in order to avoid
+> producing firmware load warnings. Disabling the fallback mechanism was a
+> side effect of disabling warnings.
+>
+> We now have a new API that allows us to avoid warnings while keeping the
+> fallback mechanism enabled. So use that instead.
+>
+> Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
 
-Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
----
- drivers/net/wireless/ath/ath10k/testmode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks!
 
-diff --git a/drivers/net/wireless/ath/ath10k/testmode.c b/drivers/net/wireless/ath/ath10k/testmode.c
-index 568810b41657..0beb91be1b1c 100644
---- a/drivers/net/wireless/ath/ath10k/testmode.c
-+++ b/drivers/net/wireless/ath/ath10k/testmode.c
-@@ -157,7 +157,7 @@ static int ath10k_tm_fetch_utf_firmware_api_1(struct ath10k *ar,
- 		 ar->hw_params.fw.dir, ATH10K_FW_UTF_FILE);
- 
- 	/* load utf firmware image */
--	ret = request_firmware_direct(&fw_file->firmware, filename, ar->dev);
-+	ret = request_firmware_nowarn(&fw_file->firmware, filename, ar->dev);
- 	ath10k_dbg(ar, ATH10K_DBG_TESTMODE, "testmode fw request '%s': %d\n",
- 		   filename, ret);
- 
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
+
 -- 
-2.14.1
+Kalle Valo
