@@ -1,107 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeDXRpN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:45:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41792 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750908AbeDXRpK (ORCPT
+        id S1752770AbeDXRpW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:45:22 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53044 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752593AbeDXRpT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:45:10 -0400
-Date: Tue, 24 Apr 2018 18:45:07 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Collins <collinsd@codeaurora.org>
-Cc: Doug Anderson <dianders@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>, Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH v2 2/2] regulator: add QCOM RPMh regulator driver
-Message-ID: <20180424174507.GI22073@sirena.org.uk>
-References: <cover.1523673467.git.collinsd@codeaurora.org>
- <4b45f41996ea3344340e44fab2dc9e487572e209.1523673467.git.collinsd@codeaurora.org>
- <CAD=FV=XKYCDtF93RtYi+dokR2BcT-z6Ex3UjgJ0ia_kF=847eA@mail.gmail.com>
- <4e3353fe-ebb5-46bb-aa58-49ad04c4d9db@codeaurora.org>
- <CAD=FV=W28_exRv+H0MJvPnHWGEeUG=SMKr=UqEKpBzkH44Fzmg@mail.gmail.com>
- <132ab845-52d6-6192-4d8c-5a9c95410688@codeaurora.org>
+        Tue, 24 Apr 2018 13:45:19 -0400
+X-Google-Smtp-Source: AB8JxZrA/1Hcq7IEiAXB0AZ3wmaq1qTJVyHDPGZoWcWFEJJuSxehpGh8yjikB2J025bm04D+rndjpw==
+Date: Tue, 24 Apr 2018 19:45:14 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Keith Packard <keithp@keithp.com>, linux-kernel@vger.kernel.org,
+        Dave Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 0/1] drm: Add crtc_queue_syncobj and crtc_get_syncobj
+ ioctls
+Message-ID: <20180424174514.GB25142@phenom.ffwll.local>
+Mail-Followup-To: Keith Packard <keithp@keithp.com>,
+        linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
+        dri-devel@lists.freedesktop.org
+References: <20180406235649.9494-1-keithp@keithp.com>
+ <20180409091416.GT31310@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gTY1JhLGodeuSBqf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <132ab845-52d6-6192-4d8c-5a9c95410688@codeaurora.org>
-X-Cookie: Take your Senator to lunch this week.
+In-Reply-To: <20180409091416.GT31310@phenom.ffwll.local>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 09, 2018 at 11:14:17AM +0200, Daniel Vetter wrote:
+> On Fri, Apr 06, 2018 at 04:56:48PM -0700, Keith Packard wrote:
+> > (This is an RFC on whether this pair of ioctls seems reasonable. The
+> > code compiles, but I haven't tested it as I'm away from home this
+> > weekend.)
+> > 
+> > I'm rewriting my implementation of the Vulkan EXT_display_control
+> > extension, which provides a way to signal a Vulkan fence at vblank
+> > time. I had implemented it using events, but that isn't great as the
+> > Vulkan API includes the ability to wait for any of a set of fences to
+> > be signaled. As the other Vulkan fences are implemented using
+> > dma_fences in the kernel, and (eventually) using syncobj up in user
+> > space, it seems reasonable to use syncobjs for everything and hook
+> > vblank to those.
+> > 
+> > In any case, I'm proposing two new syncobj/vblank ioctls (the names
+> > aren't great; suggestions welcome, as usual):
+> > 
+> > DRM_IOCTL_CRTC_QUEUE_SYNCOBJ
+> > 
+> > 	Create a new syncobj that will be signaled at (or after) the
+> > 	specified vblank sequence value. This uses the same parameters
+> > 	to specify the target sequence as
+> > 	DRM_IOCTL_CRTC_QUEUE_SEQUENCE.
+> 
+> My understanding of drm_syncobj is that you:
+> 
+> - Create a syncobj with the drm_syncobj_create ioctl.
+> 
+> - Pass it around to various driver callbacks who update the attached
+>   dma_fence pointer using drm_syncobj_replace_fence().
+> 
+> Yes amdgpu does this a bit differently, but that seems to be the
+> exception.
+> 
+> From that pov I'd massage the uapi to just extend
+> drm_crtc_queue_sequence_ioctl with a new syncobj flag. Syncobj we can just
+> add at the bottom of struct drm_crtc_queue_sequence (drm structs can be
+> extended like that, it's part of the uapi). Or we reuse user_data, but
+> that's a bit a hack.
+> 
+> We also don't need a new event type, vblank code simply singals
+> event->fence, which we'll arrange to be the fence behind the syncobj.
+> 
+> > DRM_IOCTL_CRTC_GET_SYNCOBJ
+> > 
+> > 	Once the above syncobj has been signaled, this ioctl allows
+> > 	the application to find out when that happened, returning both
+> > 	the vblank sequence count and time (in ns).
+> 
+> The android syncpt stuff already had the concept of a fence timestamp, and
+> we carried it over as part of struct dma_fence.timestamp. It's just not
+> exposed yet as proper uapi. I think we should aim a bit more into that
+> direction with something like the below sketch:
+> 
+> - Add a dma_fence_signal_ts, which allows us to set the timestamp from a
+>   hw clock.
+> 
+> - Use that in the vblank code.
+> 
+> - Add new drm_syncobj ioctl to query the timestamp of the attached fence
+>   (if it's signalled).
+> 
+> That would entirely avoid the special-case ioctl just for vblank syncobj
+> here. Also, this might be useful in your implementation of
+> VK_GOOGLE_display_timing, since the current query timestamp you're using
+> won't take into account irq wakeup latency. Using fence->timestamp will
+> still miss the irq->atomic worker wakupe latency, but should be a lot
+> better already.
 
---gTY1JhLGodeuSBqf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, I'm going to retract my entire suggestion above for the GET ioctl. It
+would neatly work for vk_google_display_timing, but the KHR version of
+that extensions very much sounds like we want the kernel to report 2 (or
+maybe even 3) different timestamps back. An ioctl is much easier to extend
+than shoe-horning all that into the dma_fence/drm_syncobj abstraction.
 
-On Fri, Apr 20, 2018 at 03:08:57PM -0700, David Collins wrote:
-> On 04/19/2018 09:16 AM, Doug Anderson wrote:
-> > On Wed, Apr 18, 2018 at 4:30 PM, David Collins <collinsd@codeaurora.org=
-> wrote:
+One bikeshed maybe on top: Maybe call the ioctl CRTC_GET_TS_DATA, since
+that's what you're getting, not the syncobj.
 
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
+Sorry for flopping around on this, just learned this all in discussions
+past week.
+-Daniel
 
-> > You'd need to ask Mark if he's OK with it, but a option #3 is to add a
-> > patch to your series fix the regulator framework to try setting the
-> > voltage if _regulator_get_voltage() fails.  Presumably in
-> > machine_constraints_voltage() you'd now do something like:
-> >=20
-> >   int target_min, target_max;
-> >   int current_uV =3D _regulator_get_voltage(rdev);
-> >   if (current_uV < 0) {
-> >     /* Maybe this regulator's hardware can't be read and needs to be in=
-itted */
-> >     _regulator_do_set_voltage(
-> >       rdev, rdev->constraints->min_uV, rdev->constraints->min_uV);
-> >     current_uV =3D _regulator_get_voltage(rdev);
-> >   }
-> >   if (current_uV < 0) {
-> >     rdev_err(rdev,
-> >       "failed to get the current voltage(%d)\n",
-> >       current_uV);
-> >       return current_uV;
-> >   }
+> 
+> > I'd like to hear comments on whether this seems reasonable, or whether
+> > I should go in some other direction.
+> 
+> Besides a few bikesheds to align better with other stuff going around I
+> think this looks good.
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
-> > If Mark doesn't like that then I guess I'd be OK w/ initting it to 0
-> > but this needs to be documented _somewhere_ (unlike for bypass it's
-> > not obvious, so you need to find someplace to put it).  I'd rather not
-> > hack the DT to deal with our software limitations.
-
-> I'm not opposed to your option #3 though it does seem a little hacky and
-> tailored to the qcom_rpmh-regulator specific case.  Note that I think it
-> would be better to vote for min_uV to max_uV than min_uV to min_uV though.
-
-> Mark, what are your thoughts on the best way to handle this situation?
-
-I think that's probably only OK if we have a specific error code for the
-regulator being limited in this way otherwise our error handling for I/O
-problems involves us trying to reconfigure supplies which seems like it
-would be risky. =20
-
---gTY1JhLGodeuSBqf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrfbSIACgkQJNaLcl1U
-h9C9WAf/SZljCZJDKB4bLgbVYGBdwEaqqJMWz4oNgio8hF/RR5NeyKDZ8vnlfoLV
-JwTzMO3F9m2tLinAzq8c9jc6dRLqTn3SBaWOolg5syXustWlVbchf2+Gjjgo4JDM
-VNMYmsDc7UMxMmUnzo1/fBDgTaBC5P3xb/HVTFGV4cktSKOea4tPg6L2JAmDpVL3
-/CNf61gKBsKZcJeekPUosVGIeVfyRx+5CWGSHSZ/gdVmy+muKUvT1n6U5Ya1Y31Y
-Mz/DJq3+bM/6HwUg5ym/0h1VRq8kZO4MTb/j0Jsr+v+3A7cMaVXaxMM/4weV0sww
-blXiNiQT73dqtrJh5I0lGZt1v5Hclg==
-=Quty
------END PGP SIGNATURE-----
-
---gTY1JhLGodeuSBqf--
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
