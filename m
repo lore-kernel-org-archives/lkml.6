@@ -1,143 +1,312 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751384AbeDXTQl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:16:41 -0400
-Received: from mail-io0-f176.google.com ([209.85.223.176]:41691 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeDXTQj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:16:39 -0400
-X-Google-Smtp-Source: AB8JxZr0zITOf89O6GvTbvku+N2MbylNimAoqvDTh8hIeCLBkJYWzHBHtuyXy91PBxJ3lYRqN7RkM8pXOihntyAV3eU=
+        id S1751995AbeDXTR1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:17:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751460AbeDXTRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:17:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F095217D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 24 Apr 2018 16:17:21 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, namhyung@kernel.org, ganapatrao.kulkarni@cavium.com,
+        zhangshaokun@hisilicon.com, yao.jin@linux.intel.com,
+        will.deacon@arm.com, ak@linux.intel.com, agustinv@codeaurora.org
+Subject: Re: [PATCH 4/5] perf parse-events: Specially handle uncore event
+ alias in small groups
+Message-ID: <20180424191721.GB4427@kernel.org>
+References: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
+ <1524594014-79243-4-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180424190905.GU26088@linux.vnet.ibm.com>
-References: <1045420715.14686.1524495583859.JavaMail.zimbra@efficios.com>
- <20180423121800.47b173af@gandalf.local.home> <1212130312.14753.1524503541789.JavaMail.zimbra@efficios.com>
- <20180423172244.694dbc9d@gandalf.local.home> <20180424155655.GA820@linux.vnet.ibm.com>
- <CAJWu+or_-emRLeBbfOtQYyn9W8v-KHH8XecV_k-p5FX_3BLHAQ@mail.gmail.com>
- <20180424172658.GT26088@linux.vnet.ibm.com> <20180424182302.GA404@linux.vnet.ibm.com>
- <20180424182623.GA1357@linux.vnet.ibm.com> <CAJWu+opC9pLxoiXq7QDRUDe6ouC4ij398bHCfnUwp+h7Y_ssDg@mail.gmail.com>
- <20180424190905.GU26088@linux.vnet.ibm.com>
-From: Joel Fernandes <joelaf@google.com>
-Date: Tue, 24 Apr 2018 12:16:37 -0700
-Message-ID: <CAJWu+ooO1b65Jw8O84rNcudch_vVOfGzvAy5bLiQVi2O7yigaA@mail.gmail.com>
-Subject: Re: [RFC v4 3/4] irqflags: Avoid unnecessary calls to trace_ if you can
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        baohong liu <baohong.liu@intel.com>,
-        vedang patel <vedang.patel@intel.com>,
-        kernel-team <kernel-team@lge.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524594014-79243-4-git-send-email-kan.liang@linux.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 12:09 PM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Tue, Apr 24, 2018 at 11:59:32AM -0700, Joel Fernandes wrote:
->> Hi Paul,
->>
->> On Tue, Apr 24, 2018 at 11:26 AM, Paul E. McKenney
->> <paulmck@linux.vnet.ibm.com> wrote:
->> > On Tue, Apr 24, 2018 at 11:23:02AM -0700, Paul E. McKenney wrote:
->> >> On Tue, Apr 24, 2018 at 10:26:58AM -0700, Paul E. McKenney wrote:
->> >> > On Tue, Apr 24, 2018 at 09:01:34AM -0700, Joel Fernandes wrote:
->> >> > > On Tue, Apr 24, 2018 at 8:56 AM, Paul E. McKenney
->> >> > > <paulmck@linux.vnet.ibm.com> wrote:
->> >> > > > On Mon, Apr 23, 2018 at 05:22:44PM -0400, Steven Rostedt wrote:
->> >> > > >> On Mon, 23 Apr 2018 13:12:21 -0400 (EDT)
->> >> > > >> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
->> >> > > >>
->> >> > > >>
->> >> > > >> > I'm inclined to explicitly declare the tracepoints with their given
->> >> > > >> > synchronization method. Tracepoint probe callback functions for currently
->> >> > > >> > existing tracepoints expect to have preemption disabled when invoked.
->> >> > > >> > This assumption will not be true anymore for srcu-tracepoints.
->> >> > > >>
->> >> > > >> Actually, why not have a flag attached to the tracepoint_func that
->> >> > > >> states if it expects preemption to be enabled or not? If a
->> >> > > >> trace_##event##_srcu() is called, then simply disable preemption before
->> >> > > >> calling the callbacks for it. That way if a callback is fine for use
->> >> > > >> with srcu, then it would require calling
->> >> > > >>
->> >> > > >>       register_trace_##event##_may_sleep();
->> >> > > >>
->> >> > > >> Then if someone uses this on a tracepoint where preemption is disabled,
->> >> > > >> we simply do not call it.
->> >> > > >
->> >> > > > One more stupid question...  If we are having to trace so much stuff
->> >> > > > in the idle loop, are we perhaps grossly overstating the extent of that
->> >> > > > "idle" loop?  For being called "idle", this code seems quite busy!
->> >> > >
->> >> > > ;-)
->> >> > > The performance hit I am observing is when running a heavy workload,
->> >> > > like hackbench or something like that. That's what I am trying to
->> >> > > correct.
->> >> > > By the way is there any limitation on using SRCU too early during
->> >> > > boot? I backported Mathieu's srcu tracepoint patches but the kernel
->> >> > > hangs pretty early in the boot. I register lockdep probes in
->> >> > > start_kernel. I am hoping that's not why.
->> >> > >
->> >> > > I could also have just screwed up the backporting... may be for my
->> >> > > testing, I will just replace the rcu API with the srcu instead of all
->> >> > > of Mathieu's new TRACE_EVENT macros for SRCU, since all I am trying to
->> >> > > do right now is measure the performance of my patches with SRCU.
->> >> >
->> >> > Gah, yes, there is an entry on my capacious todo list on making SRCU
->> >> > grace periods work during early boot and mid-boot.  Let me see what
->> >> > I can do...
->> >>
->> >> OK, just need to verify that you are OK with call_srcu()'s callbacks
->> >> not being invoked until sometime during core_initcall() time.  (If you
->> >> really do need them to be invoked before that, in theory it is possible,
->> >> but in practice it is weird, even for RCU.)
->> >
->> > Oh, and that early at boot, you will need to use DEFINE_SRCU() or
->> > DEFINE_STATIC_SRCU() rather than dynamic allocation and initialization.
->>
->> Oh ok.
->>
->> About call_rcu, calling it later may be an issue since we register the
->> probes in start_kernel, for the first probe call_rcu will be sched,
->> but for the second one I think it'll try to call_rcu to get rid of the
->> first one.
->>
->> This is the relevant code that gets called when probes are added:
->>
->> static inline void release_probes(struct tracepoint_func *old)
->> {
->>         if (old) {
->>                 struct tp_probes *tp_probes = container_of(old,
->>                         struct tp_probes, probes[0]);
->>                 call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
->>         }
->> }
->>
->> Maybe we can somehow defer the call_srcu until later? Would that be possible?
->
-> You will be able to invoke call_srcu() early if you wish, it is just that
-> the specified SRCU callback won't be invoked until core_initcall() time.
->
+Em Tue, Apr 24, 2018 at 11:20:13AM -0700, kan.liang@linux.intel.com escreveu:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> Perf stat doesn't count the uncore event aliases from the same uncore
+> block in a group, for example:
 
-Yes, that should be fine then.
+This one is not applying to acme/perf/urgent, all the rest I got merged
+there, the last one with that change from using strstr() to a new bool
+in perf_evsel for the uniquifying operation having being performed.
 
-Also I think I see no issue with static initialization and allocation
-as you were suggesting in your earlier email so that's also Ok.
-
-Let me know when you have anything I can test, thanks a lot. I'll
-pause my testing of srcu for now then and focus on the other parts of
-my patchset.
-
-thanks,
-
-- Joel
+- Arnaldo
+ 
+>   perf stat -e '{unc_m_cas_count.all,unc_m_clockticks}' -a -I 1000
+>   #           time             counts unit events
+>        1.000447342      <not counted>      unc_m_cas_count.all
+>        1.000447342      <not counted>      unc_m_clockticks
+>        2.000740654      <not counted>      unc_m_cas_count.all
+>        2.000740654      <not counted>      unc_m_clockticks
+> 
+> The output is very misleading. It gives a wrong impression that the
+> uncore event doesn't work.
+> 
+> An uncore block could be composed by several PMUs. An uncore event alias
+> is a joint name which means the same event runs on all PMUs of a block.
+> Perf doesn't support mixed events from different PMUs in the same group.
+> It is wrong to put uncore event aliases in a big group.
+> 
+> The right way is to split the big group into multiple small groups which
+> only include the events from the same PMU.
+> Only uncore event aliases from the same uncore block should be specially
+> handled here. It doesn't make sense to mix the uncore events with other
+> uncore events from different blocks or even core events in a group.
+> 
+> With the patch:
+>   #           time             counts unit events
+>      1.001557653            140,833      unc_m_cas_count.all
+>      1.001557653      1,330,231,332      unc_m_clockticks
+>      2.002709483             85,007      unc_m_cas_count.all
+>      2.002709483      1,429,494,563      unc_m_clockticks
+> 
+> Reported-by: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>  tools/perf/util/evsel.h        |  1 +
+>  tools/perf/util/parse-events.c | 94 ++++++++++++++++++++++++++++++++++++++++--
+>  tools/perf/util/parse-events.h |  7 +++-
+>  tools/perf/util/parse-events.y |  8 ++--
+>  4 files changed, 101 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index d3ee3af..b8a1055 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -126,6 +126,7 @@ struct perf_evsel {
+>  	bool			precise_max;
+>  	bool			ignore_missing_thread;
+>  	bool			forced_leader;
+> +	bool			use_uncore_alias;
+>  	/* parse modifier helper */
+>  	int			exclude_GH;
+>  	int			nr_members;
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index 2fb0272..7a836fe 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -1219,13 +1219,16 @@ int parse_events_add_numeric(struct parse_events_state *parse_state,
+>  
+>  int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  			 struct list_head *list, char *name,
+> -			 struct list_head *head_config, bool auto_merge_stats)
+> +			 struct list_head *head_config,
+> +			 bool auto_merge_stats,
+> +			 bool use_alias)
+>  {
+>  	struct perf_event_attr attr;
+>  	struct perf_pmu_info info;
+>  	struct perf_pmu *pmu;
+>  	struct perf_evsel *evsel;
+>  	struct parse_events_error *err = parse_state->error;
+> +	bool use_uncore_alias;
+>  	LIST_HEAD(config_terms);
+>  
+>  	pmu = perf_pmu__find(name);
+> @@ -1244,11 +1247,14 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  		memset(&attr, 0, sizeof(attr));
+>  	}
+>  
+> +	use_uncore_alias = (pmu->is_uncore && use_alias);
+> +
+>  	if (!head_config) {
+>  		attr.type = pmu->type;
+>  		evsel = __add_event(list, &parse_state->idx, &attr, NULL, pmu, NULL, auto_merge_stats);
+>  		if (evsel) {
+>  			evsel->pmu_name = name;
+> +			evsel->use_uncore_alias = use_uncore_alias;
+>  			return 0;
+>  		} else {
+>  			return -ENOMEM;
+> @@ -1282,6 +1288,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  		evsel->metric_expr = info.metric_expr;
+>  		evsel->metric_name = info.metric_name;
+>  		evsel->pmu_name = name;
+> +		evsel->use_uncore_alias = use_uncore_alias;
+>  	}
+>  
+>  	return evsel ? 0 : -ENOMEM;
+> @@ -1317,7 +1324,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+>  				list_add_tail(&term->list, head);
+>  
+>  				if (!parse_events_add_pmu(parse_state, list,
+> -							  pmu->name, head, true)) {
+> +							  pmu->name, head, true, true)) {
+>  					pr_debug("%s -> %s/%s/\n", str,
+>  						 pmu->name, alias->str);
+>  					ok++;
+> @@ -1339,7 +1346,85 @@ int parse_events__modifier_group(struct list_head *list,
+>  	return parse_events__modifier_event(list, event_mod, true);
+>  }
+>  
+> -void parse_events__set_leader(char *name, struct list_head *list)
+> +/*
+> + * Check if the two uncore PMUs are from the same uncore block
+> + * The format of the uncore PMU name is uncore_#blockname_#pmuidx
+> + */
+> +static bool is_same_uncore_block(const char *pmu_name_a, const char *pmu_name_b)
+> +{
+> +	char *end_a, *end_b;
+> +
+> +	end_a = strrchr(pmu_name_a, '_');
+> +	end_b = strrchr(pmu_name_b, '_');
+> +
+> +	if (!end_a || !end_b)
+> +		return false;
+> +
+> +	if ((end_a - pmu_name_a) != (end_b - pmu_name_b))
+> +		return false;
+> +
+> +	return (0 == strncmp(pmu_name_a, pmu_name_b, end_a - pmu_name_a));
+> +}
+> +
+> +static int
+> +parse_events__set_leader_for_uncore_aliase(char *name, struct list_head *list,
+> +					   struct parse_events_state *parse_state)
+> +{
+> +	struct perf_evsel *evsel, *leader;
+> +	uintptr_t *leaders;
+> +	int i = 0, nr_pmu = 0, total_members, ret = 0;
+> +
+> +	leader = list_entry(list->next, struct perf_evsel, node);
+> +	evsel = list_entry(list->prev, struct perf_evsel, node);
+> +	total_members = evsel->idx - leader->idx + 1;
+> +
+> +	leaders = calloc(total_members, sizeof(uintptr_t));
+> +	if (!leaders)
+> +		return ret;
+> +
+> +	 __evlist__for_each_entry(list, evsel) {
+> +
+> +		/* Only split the uncore group which members use alias */
+> +		if (!evsel->use_uncore_alias)
+> +			goto out;
+> +
+> +		/* The events must be from the same uncore block */
+> +		if (!is_same_uncore_block(leader->pmu_name, evsel->pmu_name))
+> +			goto out;
+> +
+> +		if (!strcmp(leader->name, evsel->name))
+> +			leaders[nr_pmu++] = (uintptr_t) evsel;
+> +	}
+> +
+> +	/* only one event alias */
+> +	if (nr_pmu == total_members) {
+> +		parse_state->nr_groups--;
+> +		goto handled;
+> +	}
+> +
+> +	__evlist__for_each_entry(list, evsel) {
+> +		if (i >= nr_pmu)
+> +			i = 0;
+> +		evsel->leader = (struct perf_evsel *) leaders[i++];
+> +	}
+> +
+> +	for (i = 0; i < nr_pmu; i++) {
+> +		evsel = (struct perf_evsel *) leaders[i];
+> +		evsel->nr_members = total_members / nr_pmu;
+> +		evsel->group_name = name ? strdup(name) : NULL;
+> +	}
+> +
+> +	parse_state->nr_groups += nr_pmu - 1;
+> +
+> +handled:
+> +	ret = 1;
+> +out:
+> +	free(leaders);
+> +	return ret;
+> +}
+> +
+> +void parse_events__set_leader(char *name, struct list_head *list,
+> +			      struct parse_events_state *parse_state)
+>  {
+>  	struct perf_evsel *leader;
+>  
+> @@ -1348,6 +1433,9 @@ void parse_events__set_leader(char *name, struct list_head *list)
+>  		return;
+>  	}
+>  
+> +	if (parse_events__set_leader_for_uncore_aliase(name, list, parse_state))
+> +		return;
+> +
+>  	__perf_evlist__set_leader(list);
+>  	leader = list_entry(list->next, struct perf_evsel, node);
+>  	leader->group_name = name ? strdup(name) : NULL;
+> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+> index 5015cfd..4473dac 100644
+> --- a/tools/perf/util/parse-events.h
+> +++ b/tools/perf/util/parse-events.h
+> @@ -167,7 +167,9 @@ int parse_events_add_breakpoint(struct list_head *list, int *idx,
+>  				void *ptr, char *type, u64 len);
+>  int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  			 struct list_head *list, char *name,
+> -			 struct list_head *head_config, bool auto_merge_stats);
+> +			 struct list_head *head_config,
+> +			 bool auto_merge_stats,
+> +			 bool use_alias);
+>  
+>  int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+>  			       char *str,
+> @@ -178,7 +180,8 @@ int parse_events_copy_term_list(struct list_head *old,
+>  
+>  enum perf_pmu_event_symbol_type
+>  perf_pmu__parse_check(const char *name);
+> -void parse_events__set_leader(char *name, struct list_head *list);
+> +void parse_events__set_leader(char *name, struct list_head *list,
+> +			      struct parse_events_state *parse_state);
+>  void parse_events_update_lists(struct list_head *list_event,
+>  			       struct list_head *list_all);
+>  void parse_events_evlist_error(struct parse_events_state *parse_state,
+> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+> index 7afeb80..e37608a 100644
+> --- a/tools/perf/util/parse-events.y
+> +++ b/tools/perf/util/parse-events.y
+> @@ -161,7 +161,7 @@ PE_NAME '{' events '}'
+>  	struct list_head *list = $3;
+>  
+>  	inc_group_count(list, _parse_state);
+> -	parse_events__set_leader($1, list);
+> +	parse_events__set_leader($1, list, _parse_state);
+>  	$$ = list;
+>  }
+>  |
+> @@ -170,7 +170,7 @@ PE_NAME '{' events '}'
+>  	struct list_head *list = $2;
+>  
+>  	inc_group_count(list, _parse_state);
+> -	parse_events__set_leader(NULL, list);
+> +	parse_events__set_leader(NULL, list, _parse_state);
+>  	$$ = list;
+>  }
+>  
+> @@ -232,7 +232,7 @@ PE_NAME opt_event_config
+>  		YYABORT;
+>  
+>  	ALLOC_LIST(list);
+> -	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
+> +	if (parse_events_add_pmu(_parse_state, list, $1, $2, false, false)) {
+>  		struct perf_pmu *pmu = NULL;
+>  		int ok = 0;
+>  		char *pattern;
+> @@ -251,7 +251,7 @@ PE_NAME opt_event_config
+>  					free(pattern);
+>  					YYABORT;
+>  				}
+> -				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true))
+> +				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true, false))
+>  					ok++;
+>  				parse_events_terms__delete(terms);
+>  			}
+> -- 
+> 2.7.4
