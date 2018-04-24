@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933926AbeDXNm7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:42:59 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:56298 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933724AbeDXNQp (ORCPT
+        id S934461AbeDXNnc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:43:32 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39557 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933702AbeDXNQm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:16:45 -0400
-X-Google-Smtp-Source: AIpwx49uY5NgY3KE3/nNcE7p7X3BriAkpn5frDj4mS3n/JUQMbbBWYwHcgiCasAsWoEhaSFxuYMHFw==
+        Tue, 24 Apr 2018 09:16:42 -0400
+X-Google-Smtp-Source: AIpwx49LeIwpF3Jt+rV+kbAYXwljDBlqkOzcmVR3RXY7YKGfNh8JQGf5pg5Jnf9IzLCRnqHlJMAT3Q==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
-Subject: [PATCH] net: gemini: fix gmac_start_xmit()'s return type
-Date: Tue, 24 Apr 2018 15:16:41 +0200
-Message-Id: <20180424131642.3806-1-luc.vanoostenryck@gmail.com>
+        Derek Chickles <derek.chickles@caviumnetworks.com>,
+        Satanand Burla <satananda.burla@caviumnetworks.com>,
+        Felix Manlunas <felix.manlunas@caviumnetworks.com>,
+        Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>,
+        netdev@vger.kernel.org
+Subject: [PATCH] liquidio: fix lio_vf_rep_pkt_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:16:39 +0200
+Message-Id: <20180424131639.3757-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -30,21 +32,30 @@ Fix this by returning 'netdev_tx_t' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/net/ethernet/cortina/gemini.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/cortina/gemini.c b/drivers/net/ethernet/cortina/gemini.c
-index bd3f6e4d1..564b9ceb1 100644
---- a/drivers/net/ethernet/cortina/gemini.c
-+++ b/drivers/net/ethernet/cortina/gemini.c
-@@ -1188,7 +1188,7 @@ static int gmac_map_tx_bufs(struct net_device *netdev, struct sk_buff *skb,
- 	return -ENOMEM;
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
+index 2adafa366..5973a4083 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
+@@ -31,7 +31,7 @@
+ 
+ static int lio_vf_rep_open(struct net_device *ndev);
+ static int lio_vf_rep_stop(struct net_device *ndev);
+-static int lio_vf_rep_pkt_xmit(struct sk_buff *skb, struct net_device *ndev);
++static netdev_tx_t lio_vf_rep_pkt_xmit(struct sk_buff *skb, struct net_device *ndev);
+ static void lio_vf_rep_tx_timeout(struct net_device *netdev);
+ static int lio_vf_rep_phys_port_name(struct net_device *dev,
+ 				     char *buf, size_t len);
+@@ -379,7 +379,7 @@ lio_vf_rep_packet_sent_callback(struct octeon_device *oct,
+ 		netif_wake_queue(ndev);
  }
  
--static int gmac_start_xmit(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t gmac_start_xmit(struct sk_buff *skb, struct net_device *netdev)
+-static int
++static netdev_tx_t
+ lio_vf_rep_pkt_xmit(struct sk_buff *skb, struct net_device *ndev)
  {
- 	struct gemini_ethernet_port *port = netdev_priv(netdev);
- 	unsigned short m = (1 << port->txq_order) - 1;
+ 	struct lio_vf_rep_desc *vf_rep = netdev_priv(ndev);
 -- 
 2.17.0
