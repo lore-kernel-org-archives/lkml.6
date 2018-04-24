@@ -1,199 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932761AbeDXBtF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 21:49:05 -0400
-Received: from mga11.intel.com ([192.55.52.93]:31519 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932665AbeDXBtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 21:49:03 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,320,1520924400";
-   d="scan'208";a="50255827"
-Date: Tue, 24 Apr 2018 09:49:21 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, wexu@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jfreimann@redhat.com
-Subject: Re: [RFC v2] virtio: support packed ring
-Message-ID: <20180424014921.2zwfo3pucjbmx2o4@debian>
-References: <20180401141216.8969-1-tiwei.bie@intel.com>
- <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
- <20180423092908.77rii3gi7dcaf7o6@debian>
- <e08c55df-6ea2-cf7f-d7c9-91e55913ab16@redhat.com>
- <20180424040258-mutt-send-email-mst@kernel.org>
- <20180424011638.vf6f22dnl7ufnnij@debian>
- <20180424042913-mutt-send-email-mst@kernel.org>
- <20180424013747.hmr4ytqe7gdqfhdt@debian>
- <20180424044250-mutt-send-email-mst@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180424044250-mutt-send-email-mst@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S932739AbeDXBxw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 21:53:52 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:16326 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932688AbeDXBxt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 21:53:49 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180424015347epoutp0244faa5e1ad1839c928c8e574e4e170ab~oPFknV-841634616346epoutp025
+X-AuditID: b6c32a38-6f7ff7000000105c-c5-5ade8e278773
+Mime-Version: 1.0
+Subject: RE: [PATCH 1/6] dt-bindings: devfreq: rk3399_dmc: improve binding
+ documentation.
+Reply-To: myungjoo.ham@samsung.com
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "dbasehore@chromium.org" <dbasehore@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dianders@google.com" <dianders@google.com>,
+        "groek@google.com" <groek@google.com>,
+        "kernel@collabora.com" <kernel@collabora.com>,
+        Nick Milner <nick.milner@collabora.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20180419104019.24406-2-enric.balletbo@collabora.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20180424015343epcms1p30dd08ebdea1e25582012711470cf7cdf@epcms1p3>
+Date: Tue, 24 Apr 2018 10:53:43 +0900
+X-CMS-MailID: 20180424015343epcms1p30dd08ebdea1e25582012711470cf7cdf
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-MTR: 20180424015343epcms1p30dd08ebdea1e25582012711470cf7cdf
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCJsWRmVeSWpSXmKPExsWy7bCmrq56370og7bHShYvD2laXP/ynNXi
+        1eY9bBbzj5xjtViwfSWTxZrbhxgtmt5uZ7H4/+g1q8Xmcz2sFmeb3rBbXN41h83ic+8RRoul
+        1y8yWfTvv8lq0br3CLsDv8eaeWsYPWY3XGTx2HF3CaPHgk2lHptWdbJ59G1Zxeix/do8Zo/P
+        m+QCOKJSbTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA
+        bldSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CpFGxoa6RkamOsZGQFp41grI1OgkoTUjOtP
+        5jEVrGaruNRzlamBcQtrFyMnh4SAicT8i1MYuxi5OIQEdjBKHJm9gb2LkYODV0BQ4u8OYZAa
+        YYFoiVfLP7CB2EICShINN/cxQ8T1JToebGMEsdkEdCW2brjLAjJHRGAio8Sxy22sIA6zwAQW
+        iYk3v0Bt45WY0f6UBcKWlti+fCsjyDJOASeJLdeNIcKiEjdXv2WHsd8fm88IYYtItN47ywxh
+        C0o8+LkbKi4l8eTtQqj6eonrnxcxgeyVEJjAKPH7xn+ohL7EoyuzwT7gFfCV2HJ1NhOIzSKg
+        KtHbPBnqNheJVZ1HwIYyC8hLbH87hxnkNmYBTYn1u/Rhzm/Y+Jsdk20rMeEvxM3MAnwS7772
+        wL27Y94TJghbTeLQ7iVQ9TISp6cvZJ7AqDwLEdSzkCyehbB4ASPzKkax1ILi3PTUYsMCE73i
+        xNzi0rx0veT83E2M4BSsZbGDcc85n0OMAhyMSjy8C37ejRJiTSwrrsw9xCjBwawkwrtX7l6U
+        EG9KYmVValF+fFFpTmrxIUZToP8nMkuJJucD80NeSbyhqZGxsbGFiaGZqaGhkjjvU58zUUIC
+        6YklqdmpqQWpRTB9TBycUg2MTQwFyxb6nnjS2NssH31k8+TQp0XBAirTF908GtNQ0e3VxPaU
+        9V3T5S3KrAsMYlzrepIlfu70P9uTst9rp9pKtf8yH8NZEg/tizSVaHjAvMMo415YLv+vBmf/
+        Sf4vXSbpfzM/sCnuyMsD3/TNNwX+9f7J3Ct7y6HLwaMl9Usd+4HQtkW3em8psRRnJBpqMRcV
+        JwIAcgJ3kdcDAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180419104054epcas5p49612174afb26493bcd937a0232b9b1df
+X-RootMTR: 20180419104054epcas5p49612174afb26493bcd937a0232b9b1df
+References: <20180419104019.24406-2-enric.balletbo@collabora.com>
+        <20180419104019.24406-1-enric.balletbo@collabora.com>
+        <CGME20180419104054epcas5p49612174afb26493bcd937a0232b9b1df@epcms1p3>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 04:43:22AM +0300, Michael S. Tsirkin wrote:
-> On Tue, Apr 24, 2018 at 09:37:47AM +0800, Tiwei Bie wrote:
-> > On Tue, Apr 24, 2018 at 04:29:51AM +0300, Michael S. Tsirkin wrote:
-> > > On Tue, Apr 24, 2018 at 09:16:38AM +0800, Tiwei Bie wrote:
-> > > > On Tue, Apr 24, 2018 at 04:05:07AM +0300, Michael S. Tsirkin wrote:
-> > > > > On Tue, Apr 24, 2018 at 08:54:52AM +0800, Jason Wang wrote:
-> > > > > > 
-> > > > > > 
-> > > > > > On 2018年04月23日 17:29, Tiwei Bie wrote:
-> > > > > > > On Mon, Apr 23, 2018 at 01:42:14PM +0800, Jason Wang wrote:
-> > > > > > > > On 2018年04月01日 22:12, Tiwei Bie wrote:
-> > > > > > > > > Hello everyone,
-> > > > > > > > > 
-> > > > > > > > > This RFC implements packed ring support for virtio driver.
-> > > > > > > > > 
-> > > > > > > > > The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
-> > > > > > > > > by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
-> > > > > > > > > Minor changes are needed for the vhost code, e.g. to kick the guest.
-> > > > > > > > > 
-> > > > > > > > > TODO:
-> > > > > > > > > - Refinements and bug fixes;
-> > > > > > > > > - Split into small patches;
-> > > > > > > > > - Test indirect descriptor support;
-> > > > > > > > > - Test/fix event suppression support;
-> > > > > > > > > - Test devices other than net;
-> > > > > > > > > 
-> > > > > > > > > RFC v1 -> RFC v2:
-> > > > > > > > > - Add indirect descriptor support - compile test only;
-> > > > > > > > > - Add event suppression supprt - compile test only;
-> > > > > > > > > - Move vring_packed_init() out of uapi (Jason, MST);
-> > > > > > > > > - Merge two loops into one in virtqueue_add_packed() (Jason);
-> > > > > > > > > - Split vring_unmap_one() for packed ring and split ring (Jason);
-> > > > > > > > > - Avoid using '%' operator (Jason);
-> > > > > > > > > - Rename free_head -> next_avail_idx (Jason);
-> > > > > > > > > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
-> > > > > > > > > - Some other refinements and bug fixes;
-> > > > > > > > > 
-> > > > > > > > > Thanks!
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > > > > > > ---
-> > > > > > > > >    drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
-> > > > > > > > >    include/linux/virtio_ring.h        |    8 +-
-> > > > > > > > >    include/uapi/linux/virtio_config.h |   12 +-
-> > > > > > > > >    include/uapi/linux/virtio_ring.h   |   61 ++
-> > > > > > > > >    4 files changed, 980 insertions(+), 195 deletions(-)
-> > > > > > > > > 
-> > > > > > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > > > > > > > index 71458f493cf8..0515dca34d77 100644
-> > > > > > > > > --- a/drivers/virtio/virtio_ring.c
-> > > > > > > > > +++ b/drivers/virtio/virtio_ring.c
-> > > > > > > > > @@ -58,14 +58,15 @@
-> > > > > > > > [...]
-> > > > > > > > 
-> > > > > > > > > +
-> > > > > > > > > +	if (vq->indirect) {
-> > > > > > > > > +		u32 len;
-> > > > > > > > > +
-> > > > > > > > > +		desc = vq->desc_state[head].indir_desc;
-> > > > > > > > > +		/* Free the indirect table, if any, now that it's unmapped. */
-> > > > > > > > > +		if (!desc)
-> > > > > > > > > +			goto out;
-> > > > > > > > > +
-> > > > > > > > > +		len = virtio32_to_cpu(vq->vq.vdev,
-> > > > > > > > > +				      vq->vring_packed.desc[head].len);
-> > > > > > > > > +
-> > > > > > > > > +		BUG_ON(!(vq->vring_packed.desc[head].flags &
-> > > > > > > > > +			 cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_INDIRECT)));
-> > > > > > > > It looks to me spec does not force to keep VRING_DESC_F_INDIRECT here. So we
-> > > > > > > > can safely remove this BUG_ON() here.
-> > > > > > > > 
-> > > > > > > > > +		BUG_ON(len == 0 || len % sizeof(struct vring_packed_desc));
-> > > > > > > > Len could be ignored for used descriptor according to the spec, so we need
-> > > > > > > > remove this BUG_ON() too.
-> > > > > > > Yeah, you're right! The BUG_ON() isn't right. I'll remove it.
-> > > > > > > And I think something related to this in the spec isn't very
-> > > > > > > clear currently.
-> > > > > > > 
-> > > > > > > In the spec, there are below words:
-> > > > > > > 
-> > > > > > > https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L272
-> > > > > > > """
-> > > > > > > In descriptors with VIRTQ_DESC_F_INDIRECT set VIRTQ_DESC_F_WRITE
-> > > > > > > is reserved and is ignored by the device.
-> > > > > > > """
-> > > > > > > 
-> > > > > > > So when device writes back an used descriptor in this case,
-> > > > > > > device may not set the VIRTQ_DESC_F_WRITE flag as the flag
-> > > > > > > is reserved and should be ignored.
-> > > > > > > 
-> > > > > > > https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L170
-> > > > > > > """
-> > > > > > > Element Length is reserved for used descriptors without the
-> > > > > > > VIRTQ_DESC_F_WRITE flag, and is ignored by drivers.
-> > > > > > > """
-> > > > > > > 
-> > > > > > > And this is the way how driver ignores the `len` in an used
-> > > > > > > descriptor.
-> > > > > > > 
-> > > > > > > https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L241
-> > > > > > > """
-> > > > > > > To increase ring capacity the driver can store a (read-only
-> > > > > > > by the device) table of indirect descriptors anywhere in memory,
-> > > > > > > and insert a descriptor in the main virtqueue (with \field{Flags}
-> > > > > > > bit VIRTQ_DESC_F_INDIRECT on) that refers to a buffer element
-> > > > > > > containing this indirect descriptor table;
-> > > > > > > """
-> > > > > > > 
-> > > > > > > So the indirect descriptors in the table are read-only by
-> > > > > > > the device. And the only descriptor which is writeable by
-> > > > > > > the device is the descriptor in the main virtqueue (with
-> > > > > > > Flags bit VIRTQ_DESC_F_INDIRECT on). So if we ignore the
-> > > > > > > `len` in this descriptor, we won't be able to get the
-> > > > > > > length of the data written by the device.
-> > > > > > > 
-> > > > > > > So I think the `len` in this descriptor will carry the
-> > > > > > > length of the data written by the device (if the buffers
-> > > > > > > are writable to the device) even if the VIRTQ_DESC_F_WRITE
-> > > > > > > isn't set by the device. How do you think?
-> > > > > > 
-> > > > > > Yes I think so. But we'd better need clarification from Michael.
-> > > > > 
-> > > > > I think if you use a descriptor, and you want to supply len
-> > > > > to guest, you set VIRTQ_DESC_F_WRITE in the used descriptor.
-> > > > > Spec also says you must not set VIRTQ_DESC_F_INDIRECT then.
-> > > > > If that's a problem we could look at relaxing that last requirement -
-> > > > > does driver want INDIRECT in used descriptor to match
-> > > > > the value in the avail descriptor for some reason?
-> > > > 
-> > > > For indirect, driver needs some way to get the length
-> > > > of the data written by the driver. And the descriptors
-> > > > in the indirect table is read-only, so the only place
-> > > > device could put this value is the descriptor with the
-> > > > VIRTQ_DESC_F_INDIRECT flag set.
-> > > 
-> > > when writing out used descriptor, device should set VIRTQ_DESC_F_WRITE
-> > > (and clear VIRTQ_DESC_F_INDIRECT).
-> > 
-> > So the spec allows device to set VIRTQ_DESC_F_WRITE bit
-> > when writing out an used descriptor even if the corresponding
-> > descriptors it just parsed don't have the VIRTQ_DESC_F_WRITE
-> > bit set?
-> > 
-> > Best regards,
-> > Tiwei Bie
-> 
-> I think so. In a used descriptor, VIRTQ_DESC_F_WRITE just means length
-> is valid.
+>From: Nick Milner <nick.milner@collabora.com>
+>
+>There are several typos, references to non existent files, grammar and
+>punctuation mistakes in the rk3399_dmc.txt binding. This patch tries
+>to improve the binding documentation and fix these mistakes.
+>
+>Signed-off-by: Nick Milner <nick.milner@collabora.com>
+>Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Got it. It's very neat. Thanks! :)
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 
-Best regards,
-Tiwei Bie
+CC (The original author of this doc): Lin Huang <hl@rock-chips.com>
 
-> 
-> -- 
-> MST
+
+Cheers,
+MyungJoo.
+
+>---
+>
+> .../bindings/devfreq/rk3399_dmc.txt           | 207 +++++++++---------
+> 1 file changed, 105 insertions(+), 102 deletions(-)
+>
+>diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
