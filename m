@@ -1,101 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757596AbeDXMl4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:41:56 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:59716 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752673AbeDXMlw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:41:52 -0400
-Subject: Re: [PATCH v6 3/9] PCI: endpoint: functions/pci-epf-test: Add second
- entry
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-References: <cover.1524062073.git.gustavo.pimentel@synopsys.com>
- <9efd4af2f91e1be2b65d2df93444b35871673e8b.1524062073.git.gustavo.pimentel@synopsys.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <57e5c94a-1e9a-6b4f-cbf8-5ac85ae1a919@ti.com>
-Date: Tue, 24 Apr 2018 18:11:41 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S1757750AbeDXMnU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:43:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47194 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757666AbeDXMnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 08:43:19 -0400
+Date: Tue, 24 Apr 2018 06:43:12 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: kirill.shutemov@linux.intel.com, hughd@google.com, hch@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2 PATCH] mm: shmem: make stat.st_blksize return huge page
+ size if THP is on
+Message-ID: <20180424124312.GZ17484@dhcp22.suse.cz>
+References: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180423004748.GP17484@dhcp22.suse.cz>
+ <3c59a1d1-dc66-ae5f-452c-dd0adb047433@linux.alibaba.com>
+ <20180423150435.GS17484@dhcp22.suse.cz>
+ <aa4b8c48-781a-204c-246a-afa5a54dba99@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <9efd4af2f91e1be2b65d2df93444b35871673e8b.1524062073.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa4b8c48-781a-204c-246a-afa5a54dba99@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon 23-04-18 21:41:50, Yang Shi wrote:
+> 
+> 
+> On 4/23/18 9:04 AM, Michal Hocko wrote:
+> > On Sun 22-04-18 21:28:59, Yang Shi wrote:
+> > > 
+> > > On 4/22/18 6:47 PM, Michal Hocko wrote:
+> > [...]
+> > > > will be used on the first aligned address even when the initial/last
+> > > > portion of the mapping is not THP aligned.
+> > > No, my test shows it is not. And, transhuge_vma_suitable() does check the
+> > > virtual address alignment. If it is not huge page size aligned, it will not
+> > > set PMD for huge page.
+> > It's been quite some time since I've looked at that code but I think you
+> > are wrong. It just doesn't make sense to make the THP decision on the
+> > VMA alignment much. Kirill, can you clarify please?
+> 
+> Thanks a lot Michal and Kirill to elaborate how tmpfs THP make pmd map.
+> 
+> I did a quick test, THP will be PMD mapped as long as :
+> * hint address is huge page aligned if MAP_FIXED
+> Or
+> * offset is huge page aligned
+> And
+> * The size is big enough (>= huge page size)
+> 
+> This test does verify what Kirill said. And, I dig into a little further
+> qemu code and did strace, qemu does try to mmap the file to non huge page
+> aligned address with MAP_FIXED.
 
+Does it make sense to contact Qemu developers and probably fix this?
 
-On Wednesday 18 April 2018 08:16 PM, Gustavo Pimentel wrote:
-> Adds a seconds entry on the pci_epf_test_ids structure that disables the
-> linkup_notifier parameter on driver for the designware EP.
-> 
-> This allows designware EPs that doesn't have linkup notification signal
-> to work with pcitest.
-> 
-> Updates the binding documentation accordingly.
-> 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> Change v2->v3:
->  - Added second entry in pci_epf_test_ids structure.
->  - Remove test_reg_bar field assignment on second entry.
-> Changes v3->v4:
->  - Nothing changed, just to follow the patch set version.
-> Changes v4->v5:
->  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
-> Changes v5->v6:
->  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
-> 
->  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
->  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
-> index 3b68b95..dc39f47 100644
-> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
-> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
-> @@ -1,6 +1,8 @@
->  PCI TEST ENDPOINT FUNCTION
->  
->  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
-> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
-> +      with a custom configuration for the designware EP.
->  
->  Configurable Fields:
->  vendorid	 : should be 0x104c
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index 7cef851..b7dff87 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->  	return 0;
->  }
->  
-> +static const struct pci_epf_test_data data_cfg2 = {
-
-Would prefer a descriptive name, otherwise
-
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-> +	.linkup_notifier = false
-> +};
-> +
->  static const struct pci_epf_device_id pci_epf_test_ids[] = {
->  	{
->  		.name = "pci_epf_test",
->  	},
-> +	{
-> +		.name = "pci_epf_test_dw",
-> +		.driver_data = (kernel_ulong_t)&data_cfg2,
-> +	},
->  	{},
->  };
->  
-> 
+-- 
+Michal Hocko
+SUSE Labs
