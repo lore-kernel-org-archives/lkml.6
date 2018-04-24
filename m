@@ -1,70 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756378AbeDXIv0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:51:26 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:55196 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755957AbeDXIvX (ORCPT
+        id S1756813AbeDXIw5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:52:57 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:35624 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756747AbeDXIws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:51:23 -0400
-Subject: Re: [PATCH v2 0/2] memory: aemif: add support for machine code
-To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-CC: Kevin Hilman <khilman@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180419151252.26212-1-brgl@bgdev.pl>
- <0f2903da-b670-dc85-e61b-64cac90a6c34@oracle.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <4d72accf-7d63-c725-0b67-253ed6818ae0@ti.com>
-Date: Tue, 24 Apr 2018 14:21:00 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 24 Apr 2018 04:52:48 -0400
+X-Google-Smtp-Source: AIpwx4+sRJSDiCrwKp39B9YsAP09DxUe2mZNUJ6dqhXMo1fo5hszCVDb+MdcItrPR/Ysty0unH//STT0EFuHLKf1PCw=
 MIME-Version: 1.0
-In-Reply-To: <0f2903da-b670-dc85-e61b-64cac90a6c34@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAOtvUMe=iOeWAUwDQ-3yy=Ogg0_=4iEwV32ATEn6SrLPEojNGQ@mail.gmail.com>
+References: <1524484097-8315-1-git-send-email-gilad@benyossef.com>
+ <CAMuHMdXNAkCVpyGyQMKRMRGuXyjOHAGgvHT4QGkuYdZetOr-9Q@mail.gmail.com>
+ <CAOtvUMd41+5DzHRbViyNZkiL92BYh2YaREvhiAH0UPnPYCzB+w@mail.gmail.com>
+ <CAMuHMdXZ0vL7Rxg4+CsP1u_Eb95Nj+qHnrahYPhAewmcrxN9HQ@mail.gmail.com> <CAOtvUMe=iOeWAUwDQ-3yy=Ogg0_=4iEwV32ATEn6SrLPEojNGQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Apr 2018 10:52:46 +0200
+X-Google-Sender-Auth: 4DXgIOqaYfn8s0WbGKThObDcIg8
+Message-ID: <CAMuHMdWQAss+_fjrj5BGcstojR0Up9-danH3UxC5PWOLkKrpXQ@mail.gmail.com>
+Subject: Re: [PATCH] crypto: ccree: limit build to plausible archs
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 20 April 2018 10:54 PM, santosh.shilimkar@oracle.com wrote:
-> On 4/19/18 8:12 AM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> This is a follow-up to the series that contained both changes to the
->> aemif driver and platform code. It contains only the driver changes.
->>
->> As the first step in removing duplicate support for aemif from the
->> kernel we need to add support for board files to the aemif memory
->> driver.
->>
->> First patch just uses a static string for the ti-aemif driver name.
->>
->> The second adds support for board files to the aemif driver.
->>
->> This series includes changes requested by Sekhar in his code review:
->> - made aemif the parent of each sub-device before registering it
->> - documented the new members in aemif_platform_data
->>
->> v1 -> v2:
->> - actually iterate over abus entries instead of always accessing the
->>    first one
->>
->> Bartosz Golaszewski (2):
->>    memory: aemif: don't rely on kbuild for driver's name
->>    memory: aemif: add support for board files
->>
-> Applied. Should show up in next soon.
-> 
-> Sekhar, You can use below branch.
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git  'for_4.18/soc-drivers'
+Hi Gilad,
 
-Thanks Santosh!
+On Tue, Apr 24, 2018 at 10:31 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Mon, Apr 23, 2018 at 8:53 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Mon, Apr 23, 2018 at 3:22 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>> On Mon, Apr 23, 2018 at 3:13 PM, Geert Uytterhoeven
+>>> <geert@linux-m68k.org> wrote:
+>>>> On Mon, Apr 23, 2018 at 1:48 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>>>> Limit option to compile ccree to plausible architectures.
+>>>>
+>>>> Thanks for your patch!
+>>>>
+>>>>> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>>>>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>>>>> ---
+>>>>>  drivers/crypto/Kconfig | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+>>>>> index d1ea1a0..7302785 100644
+>>>>> --- a/drivers/crypto/Kconfig
+>>>>> +++ b/drivers/crypto/Kconfig
+>>>>> @@ -726,6 +726,7 @@ config CRYPTO_DEV_ARTPEC6
+>>>>>  config CRYPTO_DEV_CCREE
+>>>>>         tristate "Support for ARM TrustZone CryptoCell family of security processors"
+>>>>>         depends on CRYPTO && CRYPTO_HW && OF && HAS_DMA
+>>>>> +       depends on (XTENSA || X86 || UNICORE32 || SUPERH || RISCV || PPC32 || OPENRISC || NIOS2 || NDS32 || MIPS || MICROBLAZE || HEXAGON || H8300 || ARM || ARM64 || ARC || COMPILE_TEST)
+>>>>
+>>>> That list looks a bit excessive to me...
+>>>
+>>> I'm sorry, but as an Arm employee I'm not in liberty to identify which
+>>> customer licensed or might license CryptoCell for which platform, now
+>>> or in the future.
+>>>
+>>> I'm sure you understand.
 
-Regards,
-Sekhar
+>> What about using "depends on <list> || COMPILE_TEST", with <list> the
+>> platforms for which the DTS (incl. "arm,cryptocell-*") will be submitted
+>> for v4.18? The list can easily be extended when needed.
+
+> Seriously though, I think I was not efficient in communicating my
+> point through. Let me try again:
+
+Perhaps I also wasn't clear. With "platform dependency", I meant not just
+architectures (e.g. ARM64), but also platform families (e.g. ARCH_EXYNOS).
+
+> The boards that came out last year (which I plan to send DT entries
+> for)  are using CryptoCell 630p, which we shipped as a design IP a few
+> years ago. It takes years for an IP design to ship, be designed into
+> SoCs, for these SoCs to ship and be designed into boards and until
+> these ship... and when they do, they almost always don't use the
+> cutting edge latest kernel.
+
+OK, so the list can be extended when you send the DTS for that...
+
+> That is to say - I don't know which SoC and using which architecture
+> the CryptoCell IP was and will be designed into but I want the driver
+> and the kernel to be ready when they do - this IS after all the whole
+> point o doing stuff Upstream First(tm)!
+
+... and IMHO an initial empty list is fine, as it will still be upstream, and
+compile-tested by the bots.
+
+(note: I do love Upstream First(tm)!)
+
+> This is the same of having random PCI devices depend on PCI and not a
+> specific architecture even if no one shipped a system with that device
+> yet and again the same with I2C devices depending on I2C and not a
+> specific architecture even if we don't have a board out with that I2C
+> device designed it. It's a generic none architecture dependent
+> component.
+
+At least those depend on PCI or I2C, and thus won't show up on machines
+without PCI or I2C.
+
+> This is why I initially did not mark the device driver as depending on
+> any specific architecture.
+>
+> In light of your request, and what I believe is the underlying idea to
+> cut down as much as possible build time for test code, to which I
+> agree, I've decided to cut out architecture that there is very little
+> chance to even go into a SoC with CryptoCell, such as s390 or um.
+
+My underlying idea is not to cut down build time for test code (that's what
+we have COMPILE_TEST for), but to enhance usability for users and distros,
+who need to know if it makes sense to enable an option.
+
+> So, any pointer to an architecture that will not likely to go into a
+> SoC in the coming years with some off the shelf HW IP so I can cut off
+> more is very welcome, but using currently shipping boards to indicate
+> which architecture to support is not appropriate.
+>
+> I hope this makes things a bit clearer.
+
+IMHO the extensive list of possible architectures is not really an
+improvement. So either a dependency on COMPILE_TEST, or no dependency
+at all makes the most sense to me.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
