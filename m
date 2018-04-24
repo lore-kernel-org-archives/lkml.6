@@ -1,63 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751582AbeDXWhJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 18:37:09 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45901 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751161AbeDXWf0 (ORCPT
+        id S1751709AbeDXWhS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 18:37:18 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:45880 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751281AbeDXWhO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 18:35:26 -0400
-X-Google-Smtp-Source: AIpwx4+ol/d3CV9MyLBpSxk3Ib/kIgfU+U4Zsm5KODyxZqI/bJv/7k74GBi1unkYjIS3RSy0wm37xg==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] PM / devfreq: Free devfreq upon set_freq_table error
-Date: Tue, 24 Apr 2018 15:35:16 -0700
-Message-Id: <20180424223521.28193-2-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180424223521.28193-1-bjorn.andersson@linaro.org>
-References: <20180424223521.28193-1-bjorn.andersson@linaro.org>
+        Tue, 24 Apr 2018 18:37:14 -0400
+Subject: Re: [PATCH 2/3] sched: introduce per-cpu var next_cpu to track search
+ limit
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
+References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
+ <20180424004116.28151-3-subhra.mazumdar@oracle.com>
+ <20180424124712.GR4082@hirez.programming.kicks-ass.net>
+From: Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <991291cf-68e8-24ef-f3a2-ee8a45f58b6a@oracle.com>
+Date: Tue, 24 Apr 2018 15:39:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180424124712.GR4082@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8873 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=981
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804240212
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When set_freq_table() fails we must still free the previously allocated
-devfreq context, so jump to the correct label for this. Also when this
-happens devfreq will always be non-NULL, so drop the unnecessary
-conditional.
 
-Also destroy the devfreq mutex as we're cleaning up the devfreq object.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/devfreq/devfreq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 2067cd229ce3..30a672397ff0 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -597,7 +597,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		mutex_unlock(&devfreq->lock);
- 		err = set_freq_table(devfreq);
- 		if (err < 0)
--			goto err_out;
-+			goto err_dev;
- 		mutex_lock(&devfreq->lock);
- 	}
- 
-@@ -669,8 +669,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 
- 	device_unregister(&devfreq->dev);
- err_dev:
--	if (devfreq)
--		kfree(devfreq);
-+	mutex_destroy(&devfreq->lock);
-+	kfree(devfreq);
- err_out:
- 	return ERR_PTR(err);
- }
--- 
-2.16.2
+On 04/24/2018 05:47 AM, Peter Zijlstra wrote:
+> On Mon, Apr 23, 2018 at 05:41:15PM -0700, subhra mazumdar wrote:
+>> @@ -17,6 +17,7 @@
+>>   #include <trace/events/sched.h>
+>>   
+>>   DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+>> +DEFINE_PER_CPU_SHARED_ALIGNED(int, next_cpu);
+>>   
+>>   #if defined(CONFIG_SCHED_DEBUG) && defined(HAVE_JUMP_LABEL)
+>>   /*
+>> @@ -6018,6 +6019,7 @@ void __init sched_init(void)
+>>   		struct rq *rq;
+>>   
+>>   		rq = cpu_rq(i);
+>> +		per_cpu(next_cpu, i) = -1;
+> If you leave it uninitialized it'll be 0, and we can avoid that extra
+> branch in the next patch, no?
+0 can be a valid cpu id. I wanted to distinguish the first time. The branch
+predictor will be fully trained so will not have any cost.
