@@ -1,169 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932924AbeDXIGD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:06:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60712 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756358AbeDXIEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:04:48 -0400
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>, Mario.Limonciello@dell.com,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH v2 3/6] HID: input: append a suffix matching the application
-Date: Tue, 24 Apr 2018 10:04:34 +0200
-Message-Id: <20180424080437.21367-4-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180424080437.21367-1-benjamin.tissoires@redhat.com>
-References: <20180424080437.21367-1-benjamin.tissoires@redhat.com>
+        id S932948AbeDXIGc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:06:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52216 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756326AbeDXIGU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 04:06:20 -0400
+Date: Tue, 24 Apr 2018 10:06:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: peng.hao2@zte.com.cn
+Cc: tglx@linutronix.de, pbonzini@redhat.com, mingo@redhat.com,
+        x86@kernel.org, len.brown@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH] x86: tsc: fix L2 guest always in tsc_early
+ clocksource
+Message-ID: <20180424080609.GP4082@hirez.programming.kicks-ass.net>
+References: <201804240956524049538@zte.com.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201804240956524049538@zte.com.cn>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given that we create one input node per application, we should name
-the input node accordingly to not lose userspace.
+On Tue, Apr 24, 2018 at 09:56:52AM +0800, peng.hao2@zte.com.cn wrote:
+> >On Tue, Apr 24, 2018 at 09:08:54AM +0800, Peng Hao wrote:
+> >> In L2 guest tsc_read_refs always return ULLONG_MAX, and that will
+> >> call tsc_refine_calibration_work periodly. So L2 guest will read
+> >> acpi timer port 0x608 periodly.
+> >> The patch will let it out of "if(tsc_start == -1){}" infinite loop.
+> 
+> >Help me out a little. What's an L2 guest?
 
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> kvm nested virtual machine.
+
+So why not say nested guest? I though someone did a new hypervisor based
+on L4 or so and called it L2 for funnies.
+
+> >So if the whole TSC sync has no way of ever working; what is your patch
+> >doing? How is the actual TSC calibrated?
+
+> It exists a period loop in tsc_refine_calibration_work: tsc_start = tsc_read_refs() = -1,so it call schedule_delayed_work(&tsc_irqwork,HZ),
+> then tsc_start = tsc_read_refs() = -1 ....
+> during the process it accesses 0x608 periodly and it is unnecessary and just influencees performance for L2 guest.
+> The patch let it out of the period loop and changes from early-tsc to tsc clocksource.So it will not access ioport 0x608
+> periodly.
+
+Can you please teach your mailer to wrap at 78 chars?
+
+> The kvmclock give a interface kvm_get_tsc_khz  to get the tsc_khz.
+
+But why are you getting to tsc_refine_calibration_work() in the first
+place? If kvm_get_tsc_khz() returns a known good value, it should set
+X86_FEATURE_TSC_KNOWN_FREQ such that we don't attempt to 'refine'
+things.
+
+Something like the below perhaps?
+
 ---
- drivers/hid/hid-input.c | 67 +++++++++++++++++++++++++++++++++++++++++++------
- include/linux/hid.h     |  1 +
- 2 files changed, 60 insertions(+), 8 deletions(-)
+ arch/x86/kernel/kvmclock.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 361643683c08..ab93dd5927c3 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1510,15 +1510,56 @@ static void report_features(struct hid_device *hid)
- 		}
+diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+index 8b26c9e01cc4..918948eaa232 100644
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -138,6 +138,13 @@ static unsigned long kvm_get_tsc_khz(void)
+ 	src = &hv_clock[cpu].pvti;
+ 	tsc_khz = pvclock_tsc_khz(src);
+ 	put_cpu();
++
++	/*
++	 * TSC frequency is reported by the host; calibration against (virtual)
++	 * HPET/PM-timer in a guest is dodgy and will not be accurate.
++	 */
++	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
++
+ 	return tsc_khz;
  }
  
--static struct hid_input *hidinput_allocate(struct hid_device *hid)
-+static struct hid_input *hidinput_allocate(struct hid_device *hid,
-+					   unsigned int application)
- {
- 	struct hid_input *hidinput = kzalloc(sizeof(*hidinput), GFP_KERNEL);
- 	struct input_dev *input_dev = input_allocate_device();
--	if (!hidinput || !input_dev) {
--		kfree(hidinput);
--		input_free_device(input_dev);
--		hid_err(hid, "Out of memory during hid input probe\n");
--		return NULL;
-+	const char *suffix = NULL;
-+
-+	if (!hidinput || !input_dev)
-+		goto fail;
-+
-+	if ((hid->quirks & HID_QUIRK_INPUT_PER_APP) &&
-+	    hid->maxapplication > 1) {
-+		switch (application) {
-+		case HID_GD_KEYBOARD:
-+			suffix = "Keyboard";
-+			break;
-+		case HID_GD_KEYPAD:
-+			suffix = "Keypad";
-+			break;
-+		case HID_GD_MOUSE:
-+			suffix = "Mouse";
-+			break;
-+		case HID_DG_STYLUS:
-+			suffix = "Pen";
-+			break;
-+		case HID_DG_TOUCHSCREEN:
-+			suffix = "Touchscreen";
-+			break;
-+		case HID_DG_TOUCHPAD:
-+			suffix = "Touchpad";
-+			break;
-+		case HID_GD_SYSTEM_CONTROL:
-+			suffix = "System Control";
-+			break;
-+		case HID_CP_CONSUMER_CONTROL:
-+			suffix = "Consumer Control";
-+			break;
-+		case HID_GD_WIRELESS_RADIO_CTLS:
-+			suffix = "Wireless Radio Control";
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
-+	if (suffix) {
-+		hidinput->name = kasprintf(GFP_KERNEL, "%s %s",
-+					   hid->name, suffix);
-+		if (!hidinput->name)
-+			goto fail;
- 	}
- 
- 	input_set_drvdata(input_dev, hid);
-@@ -1528,7 +1569,7 @@ static struct hid_input *hidinput_allocate(struct hid_device *hid)
- 	input_dev->setkeycode = hidinput_setkeycode;
- 	input_dev->getkeycode = hidinput_getkeycode;
- 
--	input_dev->name = hid->name;
-+	input_dev->name = hidinput->name ? hidinput->name : hid->name;
- 	input_dev->phys = hid->phys;
- 	input_dev->uniq = hid->uniq;
- 	input_dev->id.bustype = hid->bus;
-@@ -1543,6 +1584,12 @@ static struct hid_input *hidinput_allocate(struct hid_device *hid)
- 	INIT_LIST_HEAD(&hidinput->reports);
- 
- 	return hidinput;
-+
-+fail:
-+	kfree(hidinput);
-+	input_free_device(input_dev);
-+	hid_err(hid, "Out of memory during hid input probe\n");
-+	return NULL;
- }
- 
- static bool hidinput_has_been_populated(struct hid_input *hidinput)
-@@ -1588,6 +1635,7 @@ static void hidinput_cleanup_hidinput(struct hid_device *hid,
- 
- 	list_del(&hidinput->list);
- 	input_free_device(hidinput->input);
-+	kfree(hidinput->name);
- 
- 	for (k = HID_INPUT_REPORT; k <= HID_OUTPUT_REPORT; k++) {
- 		if (k == HID_OUTPUT_REPORT &&
-@@ -1656,6 +1704,7 @@ int hidinput_connect(struct hid_device *hid, unsigned int force)
- 	struct hid_driver *drv = hid->driver;
- 	struct hid_report *report;
- 	struct hid_input *next, *hidinput = NULL;
-+	unsigned int application;
- 	int i, k;
- 
- 	INIT_LIST_HEAD(&hid->inputs);
-@@ -1688,6 +1737,8 @@ int hidinput_connect(struct hid_device *hid, unsigned int force)
- 			if (!report->maxfield)
- 				continue;
- 
-+			application = report->application;
-+
- 			/*
- 			 * Find the previous hidinput report attached
- 			 * to this report id.
-@@ -1699,7 +1750,7 @@ int hidinput_connect(struct hid_device *hid, unsigned int force)
- 				hidinput = hidinput_match_application(report);
- 
- 			if (!hidinput) {
--				hidinput = hidinput_allocate(hid);
-+				hidinput = hidinput_allocate(hid, application);
- 				if (!hidinput)
- 					goto out_unwind;
- 			}
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index d5ebeacc3b57..d3bd83d9127f 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -512,6 +512,7 @@ struct hid_input {
- 	struct list_head list;
- 	struct hid_report *report;
- 	struct input_dev *input;
-+	const char *name;
- 	bool registered;
- 	struct list_head reports;	/* the list of reports */
- };
--- 
-2.14.3
