@@ -1,61 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756508AbeDXHox (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 03:44:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51480 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755920AbeDXHor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 03:44:47 -0400
-From: Jiri Slaby <jslaby@suse.cz>
-To: rjw@rjwysocki.net
-Cc: linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Martin Kelly <martin@martingkelly.com>, Len Brown <lenb@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org,
-        devel@acpica.org
-Subject: [PATCH 1/1] tools: power/acpi, revert to LD = gcc
-Date: Tue, 24 Apr 2018 09:43:44 +0200
-Message-Id: <20180424074344.23029-1-jslaby@suse.cz>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <54661ff7-5c2a-473b-e08c-1cd267353c03@martingkelly.com>
-References: <54661ff7-5c2a-473b-e08c-1cd267353c03@martingkelly.com>
+        id S1756427AbeDXHqp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 03:46:45 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43461 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755777AbeDXHqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 03:46:44 -0400
+Subject: Re: [PATCH] irqchip/gic-v3: check kasprintf() for failures
+To: Marc Zyngier <marc.zyngier@arm.com>
+References: <20180424071036.20188-1-yuehaibing@huawei.com>
+ <8636zlnk6x.wl-marc.zyngier@arm.com>
+CC: <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <linux-kernel@vger.kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Message-ID: <a9beb72c-f89b-ebfb-182c-a5dd6f4841b3@huawei.com>
+Date: Tue, 24 Apr 2018 15:45:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
+MIME-Version: 1.0
+In-Reply-To: <8636zlnk6x.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 7ed1c1901fe5 (tools: fix cross-compile var clobbering) removed
-setting of LD to $(CROSS_COMPILE)gcc. This broke build of acpica
-(acpidump) in power/acpi:
- ld: unrecognized option '-D_LINUX'
 
-The tools pass CFLAGS to the linker (incl. -D_LINUX), so revert this
-particular change and let LD be $(CC) again. Note that the old behaviour
-was a bit different, it used $(CROSS_COMPILE)gcc which was eliminated by
-the commit 7ed1c1901fe5. We use $(CC) for that reason.
+On 2018/4/24 15:21, Marc Zyngier wrote:
+> On Tue, 24 Apr 2018 08:10:36 +0100,
+> YueHaibing wrote:
+>>
+>> We should just return -ENOMEM here if the allocation fails,
+>> otherwise it may cause a panic.
+> 
+> Can you explain how? From what I can see, node_name is only used as a
+> parameter to pr_err/pr_info, which will perfectly deal with it by
+> printing "(null)", and not causing a panic. Am I missing something?
+> 
+You are right
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Martin Kelly <martin@martingkelly.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Robert Moore <robert.moore@intel.com>
-Cc: Erik Schmauss <erik.schmauss@intel.com>
-Cc: linux-acpi@vger.kernel.org
-Cc: devel@acpica.org
----
- tools/power/acpi/Makefile.config | 1 +
- 1 file changed, 1 insertion(+)
+I just misunderstood,sorry for noise.
 
-diff --git a/tools/power/acpi/Makefile.config b/tools/power/acpi/Makefile.config
-index 2cccbba64418..f304be71c278 100644
---- a/tools/power/acpi/Makefile.config
-+++ b/tools/power/acpi/Makefile.config
-@@ -56,6 +56,7 @@ INSTALL_SCRIPT = ${INSTALL_PROGRAM}
- # to compile vs uClibc, that can be done here as well.
- CROSS = #/usr/i386-linux-uclibc/usr/bin/i386-uclibc-
- CROSS_COMPILE ?= $(CROSS)
-+LD = $(CC)
- HOSTCC = gcc
- 
- # check if compiler option is supported
--- 
-2.16.3
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/irqchip/irq-gic-v3-its-pci-msi.c      | 3 +++
+>>  drivers/irqchip/irq-gic-v3-its-platform-msi.c | 3 +++
+>>  2 files changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/irqchip/irq-gic-v3-its-pci-msi.c b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+>> index 25a98de..ef3911f 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+>> @@ -160,6 +160,9 @@ its_pci_msi_parse_madt(struct acpi_subtable_header *header,
+>>  	its_entry = (struct acpi_madt_generic_translator *)header;
+>>  	node_name = kasprintf(GFP_KERNEL, "ITS@0x%lx",
+>>  			      (long)its_entry->base_address);
+>> +	if(!node_name)
+> 
+> Missing space.
+> 
+>> +		return -ENOMEM;
+>> +
+>>  	dom_handle = iort_find_domain_token(its_entry->translation_id);
+>>  	if (!dom_handle) {
+>>  		pr_err("%s: Unable to locate ITS domain handle\n", node_name);
+>> diff --git a/drivers/irqchip/irq-gic-v3-its-platform-msi.c b/drivers/irqchip/irq-gic-v3-its-platform-msi.c
+>> index 8881a05..b676fb4 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its-platform-msi.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its-platform-msi.c
+>> @@ -126,6 +126,9 @@ its_pmsi_parse_madt(struct acpi_subtable_header *header,
+>>  	its_entry = (struct acpi_madt_generic_translator *)header;
+>>  	node_name = kasprintf(GFP_KERNEL, "ITS@0x%lx",
+>>  			      (long)its_entry->base_address);
+>> +	if(!node_name)
+>> +		return -ENOMEM;
+>> +
+>>  	domain_handle = iort_find_domain_token(its_entry->translation_id);
+>>  	if (!domain_handle) {
+>>  		pr_err("%s: Unable to locate ITS domain handle\n", node_name);
+>> -- 
+>> 2.7.0
+>>
+>>
+> 
+> Thanks,
+> 
+> 	M.
+> 
