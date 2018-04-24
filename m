@@ -1,86 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752255AbeDXQE3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:04:29 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:52985 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750729AbeDXQE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:04:28 -0400
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2] powerpc/signal32: Use fault_in_pages_readable() to prefault
- user context
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mathieu Malaterre <malat@debian.org>
-Message-Id: <20180424160425.DB9946C5A7@po15720vm.idsi0.si.c-s.fr>
-Date: Tue, 24 Apr 2018 18:04:25 +0200 (CEST)
+        id S1751561AbeDXQFS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:05:18 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:13054 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeDXQFO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:05:14 -0400
+Subject: Re: [PATCH v4 7/8] drm/i2c: tda998x: register as a drm bridge
+To: Peter Rosin <peda@axentia.se>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+CC: <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180423072301.11962-1-peda@axentia.se>
+ <20180423072301.11962-8-peda@axentia.se>
+ <20180423160833.GF16141@n2100.armlinux.org.uk>
+ <5d6866d0-75bc-4de8-9b87-4fee5430e9dd@axentia.se>
+ <20180424080833.GJ16141@n2100.armlinux.org.uk>
+ <8448e90a-4562-b564-c160-1b5c67e0f92f@axentia.se>
+From: Jyri Sarha <jsarha@ti.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0cbee3bd-8987-5f2f-519d-f8d1b426f2a3@ti.com>
+Date: Tue, 24 Apr 2018 19:04:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <8448e90a-4562-b564-c160-1b5c67e0f92f@axentia.se>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use fault_in_pages_readable() to prefault user context
-instead of open coding
+On 24/04/18 13:14, Peter Rosin wrote:
+> On 2018-04-24 10:08, Russell King - ARM Linux wrote:
+>> On Tue, Apr 24, 2018 at 08:58:42AM +0200, Peter Rosin wrote:
+>>> On 2018-04-23 18:08, Russell King - ARM Linux wrote:
+>>>> On Mon, Apr 23, 2018 at 09:23:00AM +0200, Peter Rosin wrote:
+>>>>>  static int tda998x_remove(struct i2c_client *client)
+>>>>>  {
+>>>>> -	component_del(&client->dev, &tda998x_ops);
+>>>>> +	struct device *dev = &client->dev;
+>>>>> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
+>>>>> +
+>>>>> +	drm_bridge_remove(&bridge->bridge);
+>>>>> +	component_del(dev, &tda998x_ops);
+>>>>> +
+>>>>
+>>>> I'd like to ask a rather fundamental question about DRM bridge support,
+>>>> because I suspect that there's a major fsckup here.
+>>>>
+>>>> The above is the function that deals with the TDA998x device being
+>>>> unbound from the driver.  With the component API, this results in the
+>>>> DRM device correctly being torn down, because one of the hardware
+>>>> devices has gone.
+>>>>
+>>>> With DRM bridge, the bridge is merely removed from the list of
+>>>> bridges:
+>>>>
+>>>> void drm_bridge_remove(struct drm_bridge *bridge)
+>>>> {
+>>>>         mutex_lock(&bridge_lock);
+>>>>         list_del_init(&bridge->list);
+>>>>         mutex_unlock(&bridge_lock);
+>>>> }
+>>>> EXPORT_SYMBOL(drm_bridge_remove);
+>>>>
+>>>> and the memory backing the "struct tda998x_bridge" (which contains
+>>>> the struct drm_bridge) will be freed by the devm subsystem.
+>>>>
+>>>> However, there is no notification into the rest of the DRM subsystem
+>>>> that the device has gone away.  Worse, the memory that is still in
+>>>> use by DRM has now been freed, so further use of the DRM device
+>>>> results in a use-after-free bug.
+>>>>
+>>>> This is really not good, and to me looks like a fundamental problem
+>>>> with the DRM bridge code.  I see nothing in the DRM bridge code that
+>>>> deals with the lifetime of a "DRM bridge" or indeed the lifetime of
+>>>> the actual device itself.
+>>>>
+>>>> So, from what I can see, there seems to be a fundamental lifetime
+>>>> issue with the design of the DRM bridge code.  This needs to be
+>>>> fixed.
+>>>
+>>> Oh crap. A gigantic can of worms...
+>>
+>> Yes, it's especially annoying for me, having put the effort in to
+>> the component helper to cover all these cases.
+>>
+>>> Would a patch (completely untested btw) along this line of thinking make
+>>> any difference whatsoever?
+>>
+>> It looks interesting - from what I can see of the device links code,
+>> it would have the effect of unbinding the DRM device just before
+>> TDA998x is unbound, so that's an improvement.
+>>
+>> However, from what I can see, the link vanishes at that point (as
+>> DL_FLAG_AUTOREMOVE is set), and re-binding the TDA998x device results
+>> in nothing further happening - the link will be recreated, but there
+>> appears to be nothing that triggers the "consumer" to rebind at that
+>> point.  Maybe I've missed something?
+> 
+> Right, auto-remove is a no-go. So, improving on the previous...
+> 
+> (I think drm_panel might suffer from this issue too?)
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v2: using sizeof(*ctx) as size of ctx instead of 1
+Yes it does and I took a shot at trying to fix it at the end of the
+previous merge window, but gave up as I run out of time. I re-spun the
+work now after reading this thread. I add you and Russell to cc.
 
- arch/powerpc/kernel/signal_32.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+As far as I understand the re-binding problem can be solved with this patch:
 
-diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
-index 492f03451877..4a9e4d6d555b 100644
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -25,6 +25,7 @@
- #include <linux/errno.h>
- #include <linux/elf.h>
- #include <linux/ptrace.h>
-+#include <linux/pagemap.h>
- #include <linux/ratelimit.h>
- #ifdef CONFIG_PPC64
- #include <linux/syscalls.h>
-@@ -1045,7 +1046,6 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
- 		     struct ucontext __user *new_ctx,
- 		     int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
- {
--	unsigned char tmp __maybe_unused;
- 	int ctx_has_vsx_region = 0;
- 
- #ifdef CONFIG_PPC64
-@@ -1109,9 +1109,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
- 	}
- 	if (new_ctx == NULL)
- 		return 0;
--	if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
--	    || __get_user(tmp, (u8 __user *) new_ctx)
--	    || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
-+	if (!access_ok(VERIFY_READ, new_ctx, ctx_size) ||
-+	    fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
- 		return -EFAULT;
- 
- 	/*
-@@ -1231,7 +1230,6 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
- {
- 	struct sig_dbg_op op;
- 	int i;
--	unsigned char tmp __maybe_unused;
- 	unsigned long new_msr = regs->msr;
- #ifdef CONFIG_PPC_ADV_DEBUG_REGS
- 	unsigned long new_dbcr0 = current->thread.debug.dbcr0;
-@@ -1287,9 +1285,8 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
- 	current->thread.debug.dbcr0 = new_dbcr0;
- #endif
- 
--	if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx))
--	    || __get_user(tmp, (u8 __user *) ctx)
--	    || __get_user(tmp, (u8 __user *) (ctx + 1) - 1))
-+	if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx)) ||
-+	    fault_in_pages_readable((u8 __user *)ctx, sizeof(*ctx)))
- 		return -EFAULT;
- 
- 	/*
+https://lists.freedesktop.org/archives/dri-devel/2018-February/166907.html
+
+The device_links are such a new concept that there is at least hope this
+change won't have too unwanted side effects.
+
+> > Cheers,
+> Peter
+> 
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index 1638bfe9627c..b1365cfee445 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -121,12 +121,17 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+>  	if (bridge->dev)
+>  		return -EBUSY;
+>  
+> +	bridge->link = device_link_add(encoder->dev->dev, bridge->owner, 0);
+> +	if (!bridge->link)
+> +		return -EINVAL;
+> +
+
+At least this piece code should prepare for the bridge owner and the
+master drm device being the same, I which case the link should not be
+needed. This happens at least when a panel is attached using
+drm_panel_bridge_add().
+
+Best reagards,
+Jyri
+
+>  	bridge->dev = encoder->dev;
+>  	bridge->encoder = encoder;
+>  
+>  	if (bridge->funcs->attach) {
+>  		ret = bridge->funcs->attach(bridge);
+>  		if (ret < 0) {
+> +			device_link_del(bridge->link);
+>  			bridge->dev = NULL;
+>  			bridge->encoder = NULL;
+>  			return ret;
+> @@ -153,6 +158,8 @@ void drm_bridge_detach(struct drm_bridge *bridge)
+>  	if (bridge->funcs->detach)
+>  		bridge->funcs->detach(bridge);
+>  
+> +	device_link_del(bridge->link);
+> +
+>  	bridge->dev = NULL;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+> index b8cb6237a38b..29eba4e9a39d 100644
+> --- a/drivers/gpu/drm/i2c/tda998x_drv.c
+> +++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+> @@ -1857,6 +1857,7 @@ tda998x_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>  	bridge->dev = dev;
+>  	dev_set_drvdata(dev, bridge);
+>  
+> +	bridge->bridge.owner = dev;
+>  	bridge->bridge.funcs = &tda998x_bridge_funcs;
+>  #ifdef CONFIG_OF
+>  	bridge->bridge.of_node = dev->of_node;
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index 682d01ba920c..b8f33aba3216 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -224,6 +224,8 @@ struct drm_bridge_funcs {
+>  
+>  /**
+>   * struct drm_bridge - central DRM bridge control structure
+> + * @owner: device that owns the bridge
+> + * @link: drm consumer <-> bridge supplier
+>   * @dev: DRM device this bridge belongs to
+>   * @encoder: encoder to which this bridge is connected
+>   * @next: the next bridge in the encoder chain
+> @@ -233,6 +235,8 @@ struct drm_bridge_funcs {
+>   * @driver_private: pointer to the bridge driver's internal context
+>   */
+>  struct drm_bridge {
+> +	struct device *owner;
+> +	struct device_link *link;
+>  	struct drm_device *dev;
+>  	struct drm_encoder *encoder;
+>  	struct drm_bridge *next;
+> 
+> 
+
+
 -- 
-2.13.3
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
