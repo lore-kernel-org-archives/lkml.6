@@ -1,144 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751226AbeDXQU1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:20:27 -0400
-Received: from mail-cys01nam02on0075.outbound.protection.outlook.com ([104.47.37.75]:19091
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752473AbeDXQUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:20:20 -0400
-From: "Panariti, David" <David.Panariti@amd.com>
-To: "Grodzovsky, Andrey" <Andrey.Grodzovsky@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
-CC: "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "oleg@redhat.com" <oleg@redhat.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>
-Subject: Re: [PATCH 3/3] drm/amdgpu: Switch to interrupted wait to recover
- from ring hang.
-Thread-Topic: [PATCH 3/3] drm/amdgpu: Switch to interrupted wait to recover
- from ring hang.
-Thread-Index: AQHT2+GBbg9vSzZK6E2CBnt82gNLC6QQD8FQgAACnICAAALF7Q==
-Date: Tue, 24 Apr 2018 16:20:16 +0000
-Message-ID: <DM5PR12MB24408FF7C780D95307FB2BAD95880@DM5PR12MB2440.namprd12.prod.outlook.com>
-References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
- <1524583836-12130-4-git-send-email-andrey.grodzovsky@amd.com>
- <DM5PR12MB244017F98FC732EB5DD86E0395880@DM5PR12MB2440.namprd12.prod.outlook.com>,<b4309ea4-c1a0-5811-040b-4390ce6f297f@amd.com>
-In-Reply-To: <b4309ea4-c1a0-5811-040b-4390ce6f297f@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=David.Panariti@amd.com;
-x-originating-ip: [65.223.155.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1324;7:R4r8djNh/QcE5oP6hNDpCNqCT/sKzwDU4BSnhQabmaEBN9NrAilQ1Z4/ZQO3bZYr/7MRStJC0/kpWLikaBznx36wogBv3x5cZYxE+hVSxL6aSryUWJ099Cg/lMNt3+OeXW3evKx5+TwyksGGUSMrWnUxImgKrOUsnISJ01VZpE19OFoXEjAOxsXN2Xzy4CzTKEUpFqWGwWiJknvYWaUEw93q8E0ShMq1Vpimc4XqYK07J0RinGEocGMKbRUalO56;20:jj9c1J+IWzKIlUADn8CDcrpwmIr2Y+yWi9hTQ6C0cb5KwLpy02jyzqgurMwoq67jlQMhCyo9jJvmsFkFayQziLaEpEaU19L+e0lUf7o1XXviSWj1ByQq4Cm571N3SxJn7lBqnOYRCI73VPkmPKPT3zlRZC51gU6NihK6ZBHKdBsUR/hxmR18kagYJLVVnHhlY+a+XYyMUgm09ZKiU3WpsgxeqTcn1u9u0qG5Vb3n7HHAX01iull6KyN4Vx5JfIIt
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(346002)(396003)(39380400002)(366004)(39860400002)(376002)(189003)(199004)(13464003)(99286004)(2201001)(486006)(110136005)(25786009)(54906003)(105586002)(229853002)(3660700001)(5660300001)(2900100001)(316002)(86362001)(68736007)(446003)(74316002)(7736002)(305945005)(4326008)(6246003)(7696005)(8936002)(33656002)(6116002)(3846002)(11346002)(26005)(76176011)(476003)(53546011)(59450400001)(6506007)(93886005)(55016002)(102836004)(53936002)(9686003)(5250100002)(97736004)(8676002)(6436002)(81156014)(72206003)(106356001)(66066001)(3280700002)(2501003)(81166006)(2906002)(478600001)(14454004)(21314002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1324;H:DM5PR12MB2440.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1324;
-x-ms-traffictypediagnostic: DM5PR12MB1324:
-x-microsoft-antispam-prvs: <DM5PR12MB1324A6718523505013671D9295880@DM5PR12MB1324.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(217544274631240);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231232)(944501410)(52105095)(6055026)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR12MB1324;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1324;
-x-forefront-prvs: 0652EA5565
-x-microsoft-antispam-message-info: AwxxkIzVVwIeb1ft3KVqfcL0E1wHux/pndxIgwBgQIrVcROUAW+pFicpe9eHffxBM31ql9HsR4S+2rIVY+554PwJHEGerb1iX0rSZTyWpPzhsHdTZ05Xghnp92gUVftpg6Fd0uY3eWaSKxs+O+3lmBAOjXiqtfr59V49MQ3zwE3I4kJ/SmjAE1QgkoHnrIn5
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1751216AbeDXQX6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:23:58 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41144 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeDXQX4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:23:56 -0400
+X-Google-Smtp-Source: AB8JxZq20XL7PoqaesH0U9hL8XipSHDDa70knyE0g1/KnpMLtYKBHGjOtH2ZbHaBTPb6sm9g1RhyFg==
+Subject: Re: [PATCH v2 3/5] ALSA: xen-front: Implement Xen event channel
+ handling
+To: Takashi Iwai <tiwai@suse.de>
+Cc: alsa-devel@alsa-project.org, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180416062453.24743-1-andr2000@gmail.com>
+ <20180416062453.24743-4-andr2000@gmail.com> <s5ho9i8sn25.wl-tiwai@suse.de>
+ <af277f77-5b22-58e3-4ea6-cde34e3181d3@gmail.com>
+ <s5hlgdcsmdm.wl-tiwai@suse.de>
+ <f37a8eb9-8733-eae9-4c3e-312d864592fc@gmail.com>
+ <s5h604gsl44.wl-tiwai@suse.de>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <a8d3c2d2-25ec-0dc1-c26c-20eb6fbb4e3e@gmail.com>
+Date: Tue, 24 Apr 2018 19:23:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 8b22c993-1709-453f-bcc2-08d5a9ff4431
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b22c993-1709-453f-bcc2-08d5a9ff4431
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2018 16:20:16.7251
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1324
+In-Reply-To: <s5h604gsl44.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3OGKWDV016119
 
-> Kind of dma_fence_wait_killable, except that we don't have such API
-> (maybe worth adding ?)
-Depends on how many places it would be called, or think it might be called.  Can always factor on the 2nd time it's needed.
-Factoring, IMO, rarely hurts.  The factored function can easily be visited using `M-.' ;->
-
-Also, if the wait could be very long, would a log message, something like "xxx has run for Y seconds."  help?
-I personally hate hanging w/no info.
-
-regards,
-davep
-
-________________________________________
-From: Grodzovsky, Andrey
-Sent: Tuesday, April 24, 2018 11:58:19 AM
-To: Panariti, David; linux-kernel@vger.kernel.org; amd-gfx@lists.freedesktop.org
-Cc: Deucher, Alexander; Koenig, Christian; oleg@redhat.com; akpm@linux-foundation.org; ebiederm@xmission.com
-Subject: Re: [PATCH 3/3] drm/amdgpu: Switch to interrupted wait to recover from ring hang.
-
-
-
-On 04/24/2018 11:52 AM, Panariti, David wrote:
-> Hi,
+On 04/24/2018 06:02 PM, Takashi Iwai wrote:
+> On Tue, 24 Apr 2018 16:58:43 +0200,
+> Oleksandr Andrushchenko wrote:
+>> On 04/24/2018 05:35 PM, Takashi Iwai wrote:
+>>> On Tue, 24 Apr 2018 16:29:15 +0200,
+>>> Oleksandr Andrushchenko wrote:
+>>>> On 04/24/2018 05:20 PM, Takashi Iwai wrote:
+>>>>> On Mon, 16 Apr 2018 08:24:51 +0200,
+>>>>> Oleksandr Andrushchenko wrote:
+>>>>>> +static irqreturn_t evtchnl_interrupt_req(int irq, void *dev_id)
+>>>>>> +{
+>>>>>> +	struct xen_snd_front_evtchnl *channel = dev_id;
+>>>>>> +	struct xen_snd_front_info *front_info = channel->front_info;
+>>>>>> +	struct xensnd_resp *resp;
+>>>>>> +	RING_IDX i, rp;
+>>>>>> +	unsigned long flags;
+>>>>>> +
+>>>>>> +	if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
+>>>>>> +		return IRQ_HANDLED;
+>>>>>> +
+>>>>>> +	spin_lock_irqsave(&front_info->io_lock, flags);
+>>>>>> +
+>>>>>> +again:
+>>>>>> +	rp = channel->u.req.ring.sring->rsp_prod;
+>>>>>> +	/* ensure we see queued responses up to rp */
+>>>>>> +	rmb();
+>>>>>> +
+>>>>>> +	for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
+>>>>> I'm not familiar with Xen stuff in general, but through a quick
+>>>>> glance, this kind of code worries me a bit.
+>>>>>
+>>>>> If channel->u.req.ring.rsp_cons has a bogus number, this may lead to a
+>>>>> very long loop, no?  Better to have a sanity check of the ring buffer
+>>>>> size.
+>>>> In this loop I have:
+>>>> resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
+>>>> and the RING_GET_RESPONSE macro is designed in the way that
+>>>> it wraps around when *i* in the question gets bigger than
+>>>> the ring size:
+>>>>
+>>>> #define RING_GET_REQUEST(_r, _idx)                    \
+>>>>       (&((_r)->sring->ring[((_idx) & (RING_SIZE(_r) - 1))].req))
+>>>>
+>>>> So, even if the counter has a bogus number it will not last long
+>>> Hm, this prevents from accessing outside the ring buffer, but does it
+>>> change the loop behavior?
+>> no, it doesn't
+>>> Suppose channel->u.req.ring_rsp_cons = 1, and rp = 0, the loop below
+>>> would still consume the whole 32bit counts, no?
+>>>
+>>> 	for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
+>>> 		resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
+>>> 		...
+>>> 	}
+>> You are right here and the comment is totally valid.
+>> I'll put an additional check like here [1] and here [2]
+>> Will this address your comment?
+> Yep, this kind of sanity checks should work.
 >
-> It looks like there can be an infinite loop if neither of the if()'s become true.
-> Is that an impossible condition?
-
-That intended, we want to wait until either the fence signals or fatal
-signal received, we don't want to terminate the wait if fence is not
-signaled  even  when interrupted by non fatal signal.
-Kind of dma_fence_wait_killable, except that we don't have such API
-(maybe worth adding ?)
-
-Andrey
-
+Great, will implement the checks this way then
+> thanks,
 >
-> -----Original Message-----
-> From: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-> Sent: Tuesday, April 24, 2018 11:31 AM
-> To: linux-kernel@vger.kernel.org; amd-gfx@lists.freedesktop.org
-> Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; Panariti, David <David.Panariti@amd.com>; oleg@redhat.com; akpm@linux-foundation.org; ebiederm@xmission.com; Grodzovsky, Andrey <Andrey.Grodzovsky@amd.com>
-> Subject: [PATCH 3/3] drm/amdgpu: Switch to interrupted wait to recover from ring hang.
->
-> If the ring is hanging for some reason allow to recover the waiting by sending fatal signal.
->
-> Originally-by: David Panariti <David.Panariti@amd.com>
-> Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 14 ++++++++++----
->   1 file changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
-> index eb80edf..37a36af 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
-> @@ -421,10 +421,16 @@ int amdgpu_ctx_wait_prev_fence(struct amdgpu_ctx *ctx, unsigned ring_id)
->
->       if (other) {
->               signed long r;
-> -             r = dma_fence_wait_timeout(other, false, MAX_SCHEDULE_TIMEOUT);
-> -             if (r < 0) {
-> -                     DRM_ERROR("Error (%ld) waiting for fence!\n", r);
-> -                     return r;
-> +
-> +             while (true) {
-> +                     if ((r = dma_fence_wait_timeout(other, true,
-> +                                     MAX_SCHEDULE_TIMEOUT)) >= 0)
-> +                             return 0;
-> +
-> +                     if (fatal_signal_pending(current)) {
-> +                             DRM_ERROR("Error (%ld) waiting for fence!\n", r);
-> +                             return r;
-> +                     }
->               }
->       }
->
-> --
-> 2.7.4
->
+> Takashi
+Thank you,
+Oleksandr
+>>> Takashi
+>> Thank you,
+>> Oleksandr
+>>
+>> [1]
+>> https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/block/xen-blkback/blkback.c#L1127
+>> [2]
+>> https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/block/xen-blkback/blkback.c#L1135
+>>
