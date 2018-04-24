@@ -1,436 +1,92 @@
-Return-Path: <a13xp0p0v88@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523024581; cv=none;
+Return-Path: <dave.hansen@linux.intel.com>
+X-Google-Smtp-Source: AIpwx4+3o/ag3OKqIIKd5KF7HQYgQIAyRB+WwNA1D/MMaVB2AqfWro9MmPfd0kGyePcfwDxeNbBC
+ARC-Seal: i=1; a=rsa-sha256; t=1524543834; cv=none;
         d=google.com; s=arc-20160816;
-        b=pD8PlKo0+rMrge7y+HeZ2WT7W0fNV1B1iDHBpi2nrZw4y6RAOllQOK2wuEP9/4upnx
-         8v83k/ZBrNPnMx4rPyr4l+p1fjejHJylfpOEVo0Gj7t6Ohvj/yQM8fwNhRiIzcaOQpCj
-         jHdUloyVfs62zzo+fAn+eF311hlnGdj77yMBowzRER0UPU5Jk5SESdzBAQlacJCce8ES
-         xwVIgG+5205vv/cXIqvDIbyEpqmZ4QUCpRHmLdGDkzlD4LG+vJmH4g75o2oeZTNx3Bpl
-         uJD9kd16qPa/7ZPg2B4TBgoYqBaTH5md8nICp4YvsNiXN9tkcXG7gSlLpLTnee7Miqu1
-         UiXw==
+        b=hv241IrHd6Xyb7m3GXH0aGw5666SytVycX1bsbaZc0xNCGVtaBjQhhe5oYezfReZzl
+         Jcb2TiPIVZtepXBOAKvLKjEj6qAyDgdd3r+CTfdjcXQqCX8LyhMwawRXdZhMnK0XH2hY
+         v48caETcyCLQ1K4zWJXzt1Ecc+WmnUEM407OdSw9WTdkczqzgleNUpuQN/xGZBW6SKQV
+         ZOJiwJpOgXhAiApN1iv3HqFPciRAqx+Uvi3LS91n5LEXZyZCeGRpYUoEMQvGy/YZ8cw6
+         D0zYt+2HTvC6UaWe3vnURqLw5wWgSuPwpA+OzMzhVwk6h9Em0oQWwi1VQxG/LkHqZQaW
+         o/zQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:to:from
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:to:subject
          :arc-authentication-results;
-        bh=2EB2QfuqKaaOvTwchmLCLikH3VYNxn6XnrDqhPoGKOM=;
-        b=vwDzjX3Oyg5hoU4tooDiq+CXtEolDiV5qU8YJmz5HluGChm3owX0lyCQQFMSRcSz7t
-         ymxBOpPnFsN69c419NBQQrAIh/UE10lIOOcpweAuY/EQCs+ONBa65Qgk4utpJg4gWqnG
-         bfD5r1TwuSD5eZpXLXWIfbNelOWd8xGhGutnWENu77XioZqQ+N9WSSWaLD6DvX9osdbD
-         +5RHwUprWYOG4s6djsjEad8D+Re2WUDj7lkKbhe63cpj1jdIV2zehp0aY6MPmeq7/4MB
-         lZrE6NSqAJJhbi6MFzaY8Ct/FJRA73nEWOkwQz9nJweiM3aT6P/fTuomEYC8J/Dj0Nqc
-         +fJA==
+        bh=abj0pkIheIWfAZnZo3lE9e3NO/WO+saBq2vwINadPng=;
+        b=k6EHalTCgBVi5/odPdjIDgY/NSnajJEoGfUjlo0mDyCWyGqmfSmbAFbw2m2fIrhPG7
+         /cX97VX8ZSBGCo3ML5bz/f8Wbvx+QazBU/XcTRw0ukvztAjeir9X3PlDbgk6IuRmBA/+
+         IjXUvaxo5/YQK4ZHKkipydsmMFSKaV2bF2BiNEoWTP7n6I2C77qw0IbJ/rdgfF/cLoVA
+         XvMDxYh3zQmhDU+a39GtQzP9lsLgCwkER5ToRhvinUlMTE9k6Bf65rrfccRiIZwNhk8D
+         yM+WL95hKK5Fi3zgQvKnA7PvCbioMLS/QQxxXuH9WhlhYMKW97Vn2FXDy48vnC/kxCku
+         y48A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
-X-Google-Smtp-Source: AIpwx4/zLa4m95uN5haym8fcOdaDdEg639QgidJIliH2tejr6BnAxvHZrW1z8norgr3xuPdLpGUSQA==
-From: Alexander Popov <alex.popov@linux.com>
-To: kernel-hardening@lists.openwall.com,
-	Kees Cook <keescook@chromium.org>,
-	PaX Team <pageexec@freemail.hu>,
-	Brad Spengler <spender@grsecurity.net>,
-	Ingo Molnar <mingo@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Tycho Andersen <tycho@tycho.ws>,
-	Laura Abbott <labbott@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Richard Sandiford <richard.sandiford@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	"Dmitry V . Levin" <ldv@altlinux.org>,
-	Emese Revfy <re.emese@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Thomas Garnier <thgarnie@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Josef Bacik <jbacik@fb.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Ding Tianhong <dingtianhong@huawei.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Juergen Gross <jgross@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Mathias Krause <minipli@googlemail.com>,
-	Vikas Shivappa <vikas.shivappa@linux.intel.com>,
-	Kyle Huey <me@kylehuey.com>,
-	Dmitry Safonov <dsafonov@virtuozzo.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Florian Weimer <fweimer@redhat.com>,
-	Boris Lukashev <blukashev@sempervictus.com>,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	alex.popov@linux.com
-Subject: [PATCH v11 2/6] x86/entry: Add STACKLEAK erasing the kernel stack at the end of syscalls
-Date: Fri,  6 Apr 2018 17:22:22 +0300
-Message-Id: <1523024546-6150-3-git-send-email-alex.popov@linux.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,321,1520924400";
+   d="scan'208";a="218880558"
+Subject: Re: [PATCH v11 2/6] x86/entry: Add STACKLEAK erasing the kernel stack
+ at the end of syscalls
+To: Alexander Popov <alex.popov@linux.com>,
+ kernel-hardening@lists.openwall.com, Kees Cook <keescook@chromium.org>,
+ PaX Team <pageexec@freemail.hu>, Brad Spengler <spender@grsecurity.net>,
+ Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+ Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Ard Biesheuvel <ard.biesheuvel@linaro.org>, Borislav Petkov <bp@alien8.de>,
+ Richard Sandiford <richard.sandiford@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <a.p.zijlstra@chello.nl>, "Dmitry V . Levin"
+ <ldv@altlinux.org>, Emese Revfy <re.emese@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Thomas Garnier <thgarnie@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, "David S . Miller" <davem@davemloft.net>,
+ Ding Tianhong <dingtianhong@huawei.com>, David Woodhouse
+ <dwmw@amazon.co.uk>, Josh Poimboeuf <jpoimboe@redhat.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Dominik Brodowski <linux@dominikbrodowski.net>,
+ Juergen Gross <jgross@suse.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Mathias Krause <minipli@googlemail.com>,
+ Vikas Shivappa <vikas.shivappa@linux.intel.com>, Kyle Huey
+ <me@kylehuey.com>, Dmitry Safonov <dsafonov@virtuozzo.com>,
+ Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+ Florian Weimer <fweimer@redhat.com>,
+ Boris Lukashev <blukashev@sempervictus.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 References: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
+ <1523024546-6150-3-git-send-email-alex.popov@linux.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <4e668302-8754-3f4e-3372-d0d7ba30cfa3@linux.intel.com>
+Date: Mon, 23 Apr 2018 21:23:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1523024546-6150-3-git-send-email-alex.popov@linux.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597007022879408472?=
-X-GMAIL-MSGID: =?utf-8?q?1597007022879408472?=
+X-GMAIL-MSGID: =?utf-8?q?1598600075650344714?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The STACKLEAK feature erases the kernel stack before returning from
-syscalls. That reduces the information which kernel stack leak bugs can
-reveal and blocks some uninitialized stack variable attacks. Moreover,
-STACKLEAK provides runtime checks for kernel stack overflow detection.
+Hi Alexander,
 
-This commit introduces the architecture-specific code filling the used
-part of the kernel stack with a poison value before returning to the
-userspace. Full STACKLEAK feature also contains the gcc plugin which
-comes in a separate commit.
+You can add:
 
-The STACKLEAK feature is ported from grsecurity/PaX. More information at:
-  https://grsecurity.net/
-  https://pax.grsecurity.net/
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
 
-This code is modified from Brad Spengler/PaX Team's code in the last
-public patch of grsecurity/PaX based on our understanding of the code.
-Changes or omissions from the original code are ours and don't reflect
-the original grsecurity/PaX code.
-
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
----
- Documentation/x86/x86_64/mm.txt  |  2 ++
- arch/Kconfig                     | 27 ++++++++++++++++++++
- arch/x86/Kconfig                 |  1 +
- arch/x86/entry/Makefile          |  3 +++
- arch/x86/entry/calling.h         | 14 +++++++++++
- arch/x86/entry/entry_32.S        |  7 ++++++
- arch/x86/entry/entry_64.S        |  3 +++
- arch/x86/entry/entry_64_compat.S |  5 ++++
- arch/x86/entry/erase.c           | 54 ++++++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/processor.h |  4 +++
- arch/x86/kernel/process_32.c     |  5 ++++
- arch/x86/kernel/process_64.c     |  5 ++++
- include/linux/compiler.h         |  4 +++
- 13 files changed, 134 insertions(+)
- create mode 100644 arch/x86/entry/erase.c
-
-diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-index ea91cb6..21ee7c5 100644
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@ -24,6 +24,7 @@ ffffffffa0000000 - [fixmap start]   (~1526 MB) module mapping space (variable)
- [fixmap start]   - ffffffffff5fffff kernel-internal fixmap range
- ffffffffff600000 - ffffffffff600fff (=4 kB) legacy vsyscall ABI
- ffffffffffe00000 - ffffffffffffffff (=2 MB) unused hole
-+STACKLEAK_POISON value in this last hole: ffffffffffff4111
- 
- Virtual memory map with 5 level page tables:
- 
-@@ -50,6 +51,7 @@ ffffffffa0000000 - fffffffffeffffff (1520 MB) module mapping space
- [fixmap start]   - ffffffffff5fffff kernel-internal fixmap range
- ffffffffff600000 - ffffffffff600fff (=4 kB) legacy vsyscall ABI
- ffffffffffe00000 - ffffffffffffffff (=2 MB) unused hole
-+STACKLEAK_POISON value in this last hole: ffffffffffff4111
- 
- Architecture defines a 64-bit virtual address. Implementations can support
- less. Currently supported are 48- and 57-bit virtual addresses. Bits 63
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 76c0b54..368e2fb 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -401,6 +401,13 @@ config SECCOMP_FILTER
- 
- 	  See Documentation/prctl/seccomp_filter.txt for details.
- 
-+config HAVE_ARCH_STACKLEAK
-+	bool
-+	help
-+	  An architecture should select this if it has the code which
-+	  fills the used part of the kernel stack with the STACKLEAK_POISON
-+	  value before returning from system calls.
-+
- config HAVE_GCC_PLUGINS
- 	bool
- 	help
-@@ -531,6 +538,26 @@ config GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
- 	  in structures.  This reduces the performance hit of RANDSTRUCT
- 	  at the cost of weakened randomization.
- 
-+config GCC_PLUGIN_STACKLEAK
-+	bool "Erase the kernel stack before returning from syscalls"
-+	depends on GCC_PLUGINS
-+	depends on HAVE_ARCH_STACKLEAK
-+	help
-+	  This option makes the kernel erase the kernel stack before it
-+	  returns from a system call. That reduces the information which
-+	  kernel stack leak bugs can reveal and blocks some uninitialized
-+	  stack variable attacks. This option also provides runtime checks
-+	  for kernel stack overflow detection.
-+
-+	  The tradeoff is the performance impact: on a single CPU system kernel
-+	  compilation sees a 1% slowdown, other systems and workloads may vary
-+	  and you are advised to test this feature on your expected workload
-+	  before deploying it.
-+
-+	  This plugin was ported from grsecurity/PaX. More information at:
-+	   * https://grsecurity.net/
-+	   * https://pax.grsecurity.net/
-+
- config HAVE_CC_STACKPROTECTOR
- 	bool
- 	help
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 0fa71a7..e700879 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -119,6 +119,7 @@ config X86
- 	select HAVE_ARCH_COMPAT_MMAP_BASES	if MMU && COMPAT
- 	select HAVE_ARCH_SECCOMP_FILTER
- 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
-+	select HAVE_ARCH_STACKLEAK
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD if X86_64
-diff --git a/arch/x86/entry/Makefile b/arch/x86/entry/Makefile
-index 06fc70c..abe4d92 100644
---- a/arch/x86/entry/Makefile
-+++ b/arch/x86/entry/Makefile
-@@ -15,3 +15,6 @@ obj-y				+= vsyscall/
- 
- obj-$(CONFIG_IA32_EMULATION)	+= entry_64_compat.o syscall_32.o
- 
-+obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += erase.o
-+KASAN_SANITIZE_erase.o		:= n
-+
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index be63330..a555712 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -327,8 +327,22 @@ For 32-bit we have the following conventions - kernel is built with
- 
- #endif
- 
-+.macro ERASE_KSTACK_NOCLOBBER
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	PUSH_AND_CLEAR_REGS
-+	call erase_kstack
-+	POP_REGS
-+#endif
-+.endm
-+
- #endif /* CONFIG_X86_64 */
- 
-+.macro ERASE_KSTACK
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	call erase_kstack
-+#endif
-+.endm
-+
- /*
-  * This does 'call enter_from_user_mode' unless we can avoid it based on
-  * kernel config or using the static jump infrastructure.
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 6ad064c..733088e 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -46,6 +46,8 @@
- #include <asm/frame.h>
- #include <asm/nospec-branch.h>
- 
-+#include "calling.h"
-+
- 	.section .entry.text, "ax"
- 
- /*
-@@ -298,6 +300,7 @@ ENTRY(ret_from_fork)
- 	/* When we fork, we trace the syscall return in the child, too. */
- 	movl    %esp, %eax
- 	call    syscall_return_slowpath
-+	ERASE_KSTACK
- 	jmp     restore_all
- 
- 	/* kernel thread */
-@@ -458,6 +461,8 @@ ENTRY(entry_SYSENTER_32)
- 	ALTERNATIVE "testl %eax, %eax; jz .Lsyscall_32_done", \
- 		    "jmp .Lsyscall_32_done", X86_FEATURE_XENPV
- 
-+	ERASE_KSTACK
-+
- /* Opportunistic SYSEXIT */
- 	TRACE_IRQS_ON			/* User mode traces as IRQs on. */
- 	movl	PT_EIP(%esp), %edx	/* pt_regs->ip */
-@@ -544,6 +549,8 @@ ENTRY(entry_INT80_32)
- 	call	do_int80_syscall_32
- .Lsyscall_32_done:
- 
-+	ERASE_KSTACK
-+
- restore_all:
- 	TRACE_IRQS_IRET
- .Lrestore_all_notrace:
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 18ed349..e267899 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -323,6 +323,8 @@ syscall_return_via_sysret:
- 	 * We are on the trampoline stack.  All regs except RDI are live.
- 	 * We can do future final exit work right here.
- 	 */
-+	ERASE_KSTACK_NOCLOBBER
-+
- 	SWITCH_TO_USER_CR3_STACK scratch_reg=%rdi
- 
- 	popq	%rdi
-@@ -681,6 +683,7 @@ GLOBAL(swapgs_restore_regs_and_return_to_usermode)
- 	 * We are on the trampoline stack.  All regs except RDI are live.
- 	 * We can do future final exit work right here.
- 	 */
-+	ERASE_KSTACK_NOCLOBBER
- 
- 	SWITCH_TO_USER_CR3_STACK scratch_reg=%rdi
- 
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index 08425c4..03d03d4 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -258,6 +258,11 @@ GLOBAL(entry_SYSCALL_compat_after_hwframe)
- 
- 	/* Opportunistic SYSRET */
- sysret32_from_system_call:
-+	/*
-+	 * We are not going to return to the userspace from the trampoline
-+	 * stack. So let's erase the thread stack right now.
-+	 */
-+	ERASE_KSTACK
- 	TRACE_IRQS_ON			/* User mode traces as IRQs on. */
- 	movq	RBX(%rsp), %rbx		/* pt_regs->rbx */
- 	movq	RBP(%rsp), %rbp		/* pt_regs->rbp */
-diff --git a/arch/x86/entry/erase.c b/arch/x86/entry/erase.c
-new file mode 100644
-index 0000000..4892335
---- /dev/null
-+++ b/arch/x86/entry/erase.c
-@@ -0,0 +1,54 @@
-+#include <linux/bug.h>
-+#include <linux/sched.h>
-+#include <asm/current.h>
-+#include <asm/linkage.h>
-+#include <asm/processor.h>
-+
-+asmlinkage void erase_kstack(void)
-+{
-+	register unsigned long p = current->thread.lowest_stack;
-+	register unsigned long boundary = p & ~(THREAD_SIZE - 1);
-+	unsigned long poison = 0;
-+	const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
-+							sizeof(unsigned long);
-+
-+	/*
-+	 * Let's search for the poison value in the stack.
-+	 * Start from the lowest_stack and go to the bottom.
-+	 */
-+	while (p > boundary && poison <= check_depth) {
-+		if (*(unsigned long *)p == STACKLEAK_POISON)
-+			poison++;
-+		else
-+			poison = 0;
-+
-+		p -= sizeof(unsigned long);
-+	}
-+
-+	/*
-+	 * One long int at the bottom of the thread stack is reserved and
-+	 * should not be poisoned (see CONFIG_SCHED_STACK_END_CHECK).
-+	 */
-+	if (p == boundary)
-+		p += sizeof(unsigned long);
-+
-+	/*
-+	 * So let's write the poison value to the kernel stack.
-+	 * Start from the address in p and move up till the new boundary.
-+	 */
-+	if (on_thread_stack())
-+		boundary = current_stack_pointer;
-+	else
-+		boundary = current_top_of_stack();
-+
-+	BUG_ON(boundary - p >= THREAD_SIZE);
-+
-+	while (p < boundary) {
-+		*(unsigned long *)p = STACKLEAK_POISON;
-+		p += sizeof(unsigned long);
-+	}
-+
-+	/* Reset the lowest_stack value for the next syscall */
-+	current->thread.lowest_stack = current_top_of_stack() - 256;
-+}
-+
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index b0ccd48..0c87813 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -494,6 +494,10 @@ struct thread_struct {
- 
- 	mm_segment_t		addr_limit;
- 
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	unsigned long		lowest_stack;
-+#endif
-+
- 	unsigned int		sig_on_uaccess_err:1;
- 	unsigned int		uaccess_err:1;	/* uaccess failed */
- 
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 5224c60..1b0892e 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -136,6 +136,11 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
- 	p->thread.sp0 = (unsigned long) (childregs+1);
- 	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
- 
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	p->thread.lowest_stack = (unsigned long)task_stack_page(p) +
-+						sizeof(unsigned long);
-+#endif
-+
- 	if (unlikely(p->flags & PF_KTHREAD)) {
- 		/* kernel thread */
- 		memset(childregs, 0, sizeof(struct pt_regs));
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 9eb448c..82122af 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -281,6 +281,11 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
- 	p->thread.sp = (unsigned long) fork_frame;
- 	p->thread.io_bitmap_ptr = NULL;
- 
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	p->thread.lowest_stack = (unsigned long)task_stack_page(p) +
-+						sizeof(unsigned long);
-+#endif
-+
- 	savesegment(gs, p->thread.gsindex);
- 	p->thread.gsbase = p->thread.gsindex ? 0 : me->thread.gsbase;
- 	savesegment(fs, p->thread.fsindex);
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ab4711c..341b6cf8 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -342,4 +342,8 @@ unsigned long read_word_at_a_time(const void *addr)
- 	compiletime_assert(__native_word(t),				\
- 		"Need native word sized stores/loads for atomicity.")
- 
-+/* Poison value points to the unused hole in the virtual memory map */
-+#define STACKLEAK_POISON -0xBEEF
-+#define STACKLEAK_POISON_CHECK_DEPTH 128
-+
- #endif /* __LINUX_COMPILER_H */
--- 
-2.7.4
+for this patch if you like.  I haven't taken a super close look at the
+rest, but this is certainly minimally invasive from my point of view for
+the entry code.  Thanks, again for reworking it.
