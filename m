@@ -1,67 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934335AbeDXN3o (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:29:44 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:38145 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934322AbeDXN3j (ORCPT
+        id S933464AbeDXNa3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:30:29 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55592 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933910AbeDXNRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:29:39 -0400
-X-Google-Smtp-Source: AB8JxZoIO+EnPfN8JlKsxBlyVqUefaqChmi3UPK87jXVXhgFeFOD3IOTKsSlsA6pnFMZ5qC9vxh5bR/MGK5sQSp7Q/U=
-MIME-Version: 1.0
-In-Reply-To: <cover.1524570852.git.baolin.wang@linaro.org>
-References: <cover.1524570852.git.baolin.wang@linaro.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 24 Apr 2018 15:29:38 +0200
-X-Google-Sender-Auth: Wz7kbLdVwmodBAeAChJnt0YZwao
-Message-ID: <CAK8P3a0aWk1yJtcBBBiHuaTOMvgy1v4KpnXqtc9HudOEoCfiaQ@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Fix year 2038 issue for sound subsystem
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Ingo Molnar <mingo@kernel.org>,
-        SF Markus Elfring <elfring@users.sourceforge.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>, jeeja.kp@intel.com,
-        Vinod Koul <vinod.koul@intel.com>,
-        Guneshwor Singh <guneshwor.o.singh@intel.com>,
-        subhransu.s.prusty@intel.com, Bhumika Goyal <bhumirks@gmail.com>,
-        gudishax.kranthikumar@intel.com, Naveen M <naveen.m@intel.com>,
-        hardik.t.shah@intel.com, Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Fabian Frederick <fabf@skynet.be>, alsa-devel@alsa-project.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 24 Apr 2018 09:17:54 -0400
+X-Google-Smtp-Source: AIpwx4+2MQUcafQoc7h6xpjPfhgSIbZ3N1vGGBiACTVhQRZJd3gJB9dQ35FPdIsPC975jWmBl0ojHw==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        netdev@vger.kernel.org
+Subject: [PATCH] net: plip: fix plip_tx_packet()'s return type
+Date: Tue, 24 Apr 2018 15:17:49 +0200
+Message-Id: <20180424131751.4761-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 2:06 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
-> Since many structures will use timespec type variables to record time stamp
-> in uapi/asound.h, which are not year 2038 safe on 32bit system. This patchset
-> tries to introduce new structures removing timespec type to compatible native
-> mode and compat mode.
->
-> Moreover this patchset also converts the internal structrures to use timespec64
-> type and related APIs.
->
-> Arnd Bergmann (2):
->   ALSA: move snd_pcm_ioctl_sync_ptr_compat into pcm_native.c
->   ALSA: add new 32-bit layout for snd_pcm_mmap_status/control
->
-> Baolin Wang (6):
->   ALSA: Replace timespec with timespec64
->   ALSA: Avoid using timespec for struct snd_timer_status
->   ALSA: Avoid using timespec for struct snd_ctl_elem_value
->   ALSA: Avoid using timespec for struct snd_pcm_status
->   ALSA: Avoid using timespec for struct snd_rawmidi_status
->   ALSA: Avoid using timespec for struct snd_timer_tread
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, but the implementation in this
+driver returns an 'int'.
 
-Thanks a lot for picking this up again and including my two patches!
+Fix this by returning 'netdev_tx_t' in this driver too.
 
-I've done a private review yesterday, but will have another look either
-today or tomorrow to see if I missed anything. I've also applied the
-series to my randconfig build tree and will see if that finds any new
-bugs. The builder has already found a bug in one of my two patches,
-so there might be more.
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ drivers/net/plip/plip.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-      Arnd
+diff --git a/drivers/net/plip/plip.c b/drivers/net/plip/plip.c
+index feb92ecd1..0b354e65f 100644
+--- a/drivers/net/plip/plip.c
++++ b/drivers/net/plip/plip.c
+@@ -146,7 +146,7 @@ static void plip_timer_bh(struct work_struct *work);
+ static void plip_interrupt(void *dev_id);
+ 
+ /* Functions for DEV methods */
+-static int plip_tx_packet(struct sk_buff *skb, struct net_device *dev);
++static netdev_tx_t plip_tx_packet(struct sk_buff *skb, struct net_device *dev);
+ static int plip_hard_header(struct sk_buff *skb, struct net_device *dev,
+                             unsigned short type, const void *daddr,
+ 			    const void *saddr, unsigned len);
+@@ -962,7 +962,7 @@ plip_interrupt(void *dev_id)
+ 	spin_unlock_irqrestore(&nl->lock, flags);
+ }
+ 
+-static int
++static netdev_tx_t
+ plip_tx_packet(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct net_local *nl = netdev_priv(dev);
+-- 
+2.17.0
