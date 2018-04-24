@@ -1,74 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932762AbeDXArC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 20:47:02 -0400
-Received: from anholt.net ([50.246.234.109]:34452 "EHLO anholt.net"
+        id S932711AbeDXAtj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 20:49:39 -0400
+Received: from genki.is ([159.203.135.224]:32942 "EHLO genki.is"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932661AbeDXAqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 20:46:15 -0400
-From: Eric Anholt <eric@anholt.net>
-To: dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2 0/3] V3D DRM driver
-Date: Mon, 23 Apr 2018 17:46:07 -0700
-Message-Id: <20180424004610.4637-1-eric@anholt.net>
-X-Mailer: git-send-email 2.17.0
+        id S932635AbeDXAti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 20:49:38 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 genki.is E5D6040040
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: David Herrmann <dh.herrmann@gmail.com>
+From: Genki Sky <sky@genki.is>
+In-Reply-To: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com>
+Cc: linux-kernel@vger.kernel.org
+References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com>
+Message-ID: <2580c734d38041e984215ccc522a4f2d@genki.is>
+User-Agent: alot
+Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock BOOTTIME
+Date: Mon, 23 Apr 2018 20:40:36 -0400
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3O0njni023190
 
-Here's v2 of the driver.  This is mostly handling danvet's feedback,
-but there are a couple of other changes:
+  Hello,
 
-- new core patch for prime vmap/vunmap
-- kbuild test robot fixes
-- overflow mem simplification (figured it out over breakfast with keithp)
-- drm_gem_object_unreference_unlocked() to _put_unlocked().
+I came across this thread for same reason as [0]: Daemons getting
+killed by systemd on resume (after >WatchdogSec seconds of
+suspending). I'm using master branch of systemd and the kernel. As
+mentioned, systemd uses CLOCK_MONOTONIC, originally expecting it to
+not include suspend time.
 
-Eric Anholt (3):
-  drm: Make the prime vmap/vunmap hooks optional.
-  dt-bindings: Add a new binding for Broadcom V3D 3.x and newer GPUs.
-  drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+
+Correct me if I'm mistaken, but I don't see the ambiguity of whether
+this patch series breaks systemd. If it's implemented correctly, you'd
+hope it *would* break it!
 
- .../bindings/display/brcm,bcm-v3d.txt         |  28 +
- Documentation/gpu/drivers.rst                 |   1 +
- MAINTAINERS                                   |   8 +
- drivers/gpu/drm/Kconfig                       |   2 +
- drivers/gpu/drm/Makefile                      |   1 +
- drivers/gpu/drm/drm_prime.c                   |   8 +-
- drivers/gpu/drm/v3d/Kconfig                   |   9 +
- drivers/gpu/drm/v3d/Makefile                  |  18 +
- drivers/gpu/drm/v3d/v3d_bo.c                  | 379 ++++++++++
- drivers/gpu/drm/v3d/v3d_debugfs.c             | 191 +++++
- drivers/gpu/drm/v3d/v3d_drv.c                 | 371 ++++++++++
- drivers/gpu/drm/v3d/v3d_drv.h                 | 294 ++++++++
- drivers/gpu/drm/v3d/v3d_fence.c               |  58 ++
- drivers/gpu/drm/v3d/v3d_gem.c                 | 663 ++++++++++++++++++
- drivers/gpu/drm/v3d/v3d_irq.c                 | 206 ++++++
- drivers/gpu/drm/v3d/v3d_mmu.c                 | 122 ++++
- drivers/gpu/drm/v3d/v3d_regs.h                | 295 ++++++++
- drivers/gpu/drm/v3d/v3d_sched.c               | 228 ++++++
- drivers/gpu/drm/v3d/v3d_trace.h               |  82 +++
- drivers/gpu/drm/v3d/v3d_trace_points.c        |   9 +
- include/uapi/drm/v3d_drm.h                    | 191 +++++
- 21 files changed, 3162 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
- create mode 100644 drivers/gpu/drm/v3d/Kconfig
- create mode 100644 drivers/gpu/drm/v3d/Makefile
- create mode 100644 drivers/gpu/drm/v3d/v3d_bo.c
- create mode 100644 drivers/gpu/drm/v3d/v3d_debugfs.c
- create mode 100644 drivers/gpu/drm/v3d/v3d_drv.c
- create mode 100644 drivers/gpu/drm/v3d/v3d_drv.h
- create mode 100644 drivers/gpu/drm/v3d/v3d_fence.c
- create mode 100644 drivers/gpu/drm/v3d/v3d_gem.c
- create mode 100644 drivers/gpu/drm/v3d/v3d_irq.c
- create mode 100644 drivers/gpu/drm/v3d/v3d_mmu.c
- create mode 100644 drivers/gpu/drm/v3d/v3d_regs.h
- create mode 100644 drivers/gpu/drm/v3d/v3d_sched.c
- create mode 100644 drivers/gpu/drm/v3d/v3d_trace.h
- create mode 100644 drivers/gpu/drm/v3d/v3d_trace_points.c
- create mode 100644 include/uapi/drm/v3d_drm.h
+As a random end user, I see three options to get suspend/resume
+working again on my laptop:
 
--- 
-2.17.0
+(A) Change systemd to keep track of the difference between
+CLOCK_MONOTONIC and CLOCK_MONOTONIC_ACTIVE, using their difference via
+clock_gettime(). This seems to be what the author of this patch series
+intends (?).
+
+(B) Implement timerfd_*(2) for CLOCK_MONOTONIC_ACTIVE in the kernel.
+Do a sed s/CLOCK_MONOTONIC/&_ACTIVE in systemd source code.
+
+(C) Do a 90% reverting of this patch series. Just introduce
+CLOCK_MONOTONIC_ACTIVE as the "what you should use", document and
+publicize this fact, and sometime in the future (monotonically
+speaking :) finally unify CLOCK_MONOTONIC and CLOCK_BOOTTIME.
+
+Thoughts?
+
+Also, agreed, the missing break in do_clock_gettime() should be fixed,
+as David mentioned in [1]. Is someone already patching this?
+
+[0]: http://lkml.kernel.org/r/CANq1E4Tf27FJHTrO4ZVtWhYK=DLmwzszK=njOpgXZZXqzAOunA@mail.gmail.com
+[1]: http://lkml.kernel.org/r/CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com
+
+  Genki
