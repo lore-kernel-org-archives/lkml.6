@@ -1,325 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752198AbeDXTXM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:23:12 -0400
-Received: from mga18.intel.com ([134.134.136.126]:41743 "EHLO mga18.intel.com"
+        id S1751417AbeDXTZv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:25:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53778 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750962AbeDXTXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:23:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,324,1520924400";
-   d="scan'208";a="53323245"
-Subject: Re: [PATCH 4/5] perf parse-events: Specially handle uncore event
- alias in small groups
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
-        jolsa@redhat.com, namhyung@kernel.org, ganapatrao.kulkarni@cavium.com,
-        zhangshaokun@hisilicon.com, yao.jin@linux.intel.com,
-        will.deacon@arm.com, ak@linux.intel.com, agustinv@codeaurora.org
-References: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
- <1524594014-79243-4-git-send-email-kan.liang@linux.intel.com>
- <20180424191721.GB4427@kernel.org>
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <9a2070b4-9a27-4e38-f235-2d44ae39dd1f@linux.intel.com>
-Date: Tue, 24 Apr 2018 15:23:06 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1750791AbeDXTZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:25:48 -0400
+Date: Tue, 24 Apr 2018 13:25:42 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+Message-ID: <20180424192542.GS17484@dhcp22.suse.cz>
+References: <20180424162712.GL17484@dhcp22.suse.cz>
+ <20180424183536.GF30619@thunk.org>
 MIME-Version: 1.0
-In-Reply-To: <20180424191721.GB4427@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424183536.GF30619@thunk.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 4/24/2018 3:17 PM, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Apr 24, 2018 at 11:20:13AM -0700, kan.liang@linux.intel.com escreveu:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> Perf stat doesn't count the uncore event aliases from the same uncore
->> block in a group, for example:
+On Tue 24-04-18 14:35:36, Theodore Ts'o wrote:
+> On Tue, Apr 24, 2018 at 10:27:12AM -0600, Michal Hocko wrote:
+> > fs/ext4/xattr.c
+> > 
+> > What to do about this? Well, there are two things. Firstly, it would be
+> > really great to double check whether the GFP_NOFS is really needed. I
+> > cannot judge that because I am not familiar with the code.
 > 
-> This one is not applying to acme/perf/urgent, all the rest I got merged
-> there, the last one with that change from using strstr() to a new bool
-> in perf_evsel for the uniquifying operation having being performed.
->
+> *Most* of the time it's not needed, but there are times when it is.
+> We could be more smart about sending down GFP_NOFS only when it is
+> needed.
 
-Sure. Thank you for letting me know.
+Well, the primary idea is that you do not have to. All you care about is
+to use the scope api where it matters + a comment describing the
+reclaim recursion context (e.g. this lock will be held in the reclaim
+path here and there).
 
-Thanks,
-Kan
+> If we are sending too many GFP_NOFS's allocations such that
+> it's causing heartburn, we could fix this.  (xattr commands are rare
+> enough that I dind't think it was worth it to modulate the GFP flags
+> for this particular case, but we could make it be smarter if it would
+> help.)
 
-> - Arnaldo
->   
->>    perf stat -e '{unc_m_cas_count.all,unc_m_clockticks}' -a -I 1000
->>    #           time             counts unit events
->>         1.000447342      <not counted>      unc_m_cas_count.all
->>         1.000447342      <not counted>      unc_m_clockticks
->>         2.000740654      <not counted>      unc_m_cas_count.all
->>         2.000740654      <not counted>      unc_m_clockticks
->>
->> The output is very misleading. It gives a wrong impression that the
->> uncore event doesn't work.
->>
->> An uncore block could be composed by several PMUs. An uncore event alias
->> is a joint name which means the same event runs on all PMUs of a block.
->> Perf doesn't support mixed events from different PMUs in the same group.
->> It is wrong to put uncore event aliases in a big group.
->>
->> The right way is to split the big group into multiple small groups which
->> only include the events from the same PMU.
->> Only uncore event aliases from the same uncore block should be specially
->> handled here. It doesn't make sense to mix the uncore events with other
->> uncore events from different blocks or even core events in a group.
->>
->> With the patch:
->>    #           time             counts unit events
->>       1.001557653            140,833      unc_m_cas_count.all
->>       1.001557653      1,330,231,332      unc_m_clockticks
->>       2.002709483             85,007      unc_m_cas_count.all
->>       2.002709483      1,429,494,563      unc_m_clockticks
->>
->> Reported-by: Andi Kleen <ak@linux.intel.com>
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->> ---
->>   tools/perf/util/evsel.h        |  1 +
->>   tools/perf/util/parse-events.c | 94 ++++++++++++++++++++++++++++++++++++++++--
->>   tools/perf/util/parse-events.h |  7 +++-
->>   tools/perf/util/parse-events.y |  8 ++--
->>   4 files changed, 101 insertions(+), 9 deletions(-)
->>
->> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
->> index d3ee3af..b8a1055 100644
->> --- a/tools/perf/util/evsel.h
->> +++ b/tools/perf/util/evsel.h
->> @@ -126,6 +126,7 @@ struct perf_evsel {
->>   	bool			precise_max;
->>   	bool			ignore_missing_thread;
->>   	bool			forced_leader;
->> +	bool			use_uncore_alias;
->>   	/* parse modifier helper */
->>   	int			exclude_GH;
->>   	int			nr_members;
->> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
->> index 2fb0272..7a836fe 100644
->> --- a/tools/perf/util/parse-events.c
->> +++ b/tools/perf/util/parse-events.c
->> @@ -1219,13 +1219,16 @@ int parse_events_add_numeric(struct parse_events_state *parse_state,
->>   
->>   int parse_events_add_pmu(struct parse_events_state *parse_state,
->>   			 struct list_head *list, char *name,
->> -			 struct list_head *head_config, bool auto_merge_stats)
->> +			 struct list_head *head_config,
->> +			 bool auto_merge_stats,
->> +			 bool use_alias)
->>   {
->>   	struct perf_event_attr attr;
->>   	struct perf_pmu_info info;
->>   	struct perf_pmu *pmu;
->>   	struct perf_evsel *evsel;
->>   	struct parse_events_error *err = parse_state->error;
->> +	bool use_uncore_alias;
->>   	LIST_HEAD(config_terms);
->>   
->>   	pmu = perf_pmu__find(name);
->> @@ -1244,11 +1247,14 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
->>   		memset(&attr, 0, sizeof(attr));
->>   	}
->>   
->> +	use_uncore_alias = (pmu->is_uncore && use_alias);
->> +
->>   	if (!head_config) {
->>   		attr.type = pmu->type;
->>   		evsel = __add_event(list, &parse_state->idx, &attr, NULL, pmu, NULL, auto_merge_stats);
->>   		if (evsel) {
->>   			evsel->pmu_name = name;
->> +			evsel->use_uncore_alias = use_uncore_alias;
->>   			return 0;
->>   		} else {
->>   			return -ENOMEM;
->> @@ -1282,6 +1288,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
->>   		evsel->metric_expr = info.metric_expr;
->>   		evsel->metric_name = info.metric_name;
->>   		evsel->pmu_name = name;
->> +		evsel->use_uncore_alias = use_uncore_alias;
->>   	}
->>   
->>   	return evsel ? 0 : -ENOMEM;
->> @@ -1317,7 +1324,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
->>   				list_add_tail(&term->list, head);
->>   
->>   				if (!parse_events_add_pmu(parse_state, list,
->> -							  pmu->name, head, true)) {
->> +							  pmu->name, head, true, true)) {
->>   					pr_debug("%s -> %s/%s/\n", str,
->>   						 pmu->name, alias->str);
->>   					ok++;
->> @@ -1339,7 +1346,85 @@ int parse_events__modifier_group(struct list_head *list,
->>   	return parse_events__modifier_event(list, event_mod, true);
->>   }
->>   
->> -void parse_events__set_leader(char *name, struct list_head *list)
->> +/*
->> + * Check if the two uncore PMUs are from the same uncore block
->> + * The format of the uncore PMU name is uncore_#blockname_#pmuidx
->> + */
->> +static bool is_same_uncore_block(const char *pmu_name_a, const char *pmu_name_b)
->> +{
->> +	char *end_a, *end_b;
->> +
->> +	end_a = strrchr(pmu_name_a, '_');
->> +	end_b = strrchr(pmu_name_b, '_');
->> +
->> +	if (!end_a || !end_b)
->> +		return false;
->> +
->> +	if ((end_a - pmu_name_a) != (end_b - pmu_name_b))
->> +		return false;
->> +
->> +	return (0 == strncmp(pmu_name_a, pmu_name_b, end_a - pmu_name_a));
->> +}
->> +
->> +static int
->> +parse_events__set_leader_for_uncore_aliase(char *name, struct list_head *list,
->> +					   struct parse_events_state *parse_state)
->> +{
->> +	struct perf_evsel *evsel, *leader;
->> +	uintptr_t *leaders;
->> +	int i = 0, nr_pmu = 0, total_members, ret = 0;
->> +
->> +	leader = list_entry(list->next, struct perf_evsel, node);
->> +	evsel = list_entry(list->prev, struct perf_evsel, node);
->> +	total_members = evsel->idx - leader->idx + 1;
->> +
->> +	leaders = calloc(total_members, sizeof(uintptr_t));
->> +	if (!leaders)
->> +		return ret;
->> +
->> +	 __evlist__for_each_entry(list, evsel) {
->> +
->> +		/* Only split the uncore group which members use alias */
->> +		if (!evsel->use_uncore_alias)
->> +			goto out;
->> +
->> +		/* The events must be from the same uncore block */
->> +		if (!is_same_uncore_block(leader->pmu_name, evsel->pmu_name))
->> +			goto out;
->> +
->> +		if (!strcmp(leader->name, evsel->name))
->> +			leaders[nr_pmu++] = (uintptr_t) evsel;
->> +	}
->> +
->> +	/* only one event alias */
->> +	if (nr_pmu == total_members) {
->> +		parse_state->nr_groups--;
->> +		goto handled;
->> +	}
->> +
->> +	__evlist__for_each_entry(list, evsel) {
->> +		if (i >= nr_pmu)
->> +			i = 0;
->> +		evsel->leader = (struct perf_evsel *) leaders[i++];
->> +	}
->> +
->> +	for (i = 0; i < nr_pmu; i++) {
->> +		evsel = (struct perf_evsel *) leaders[i];
->> +		evsel->nr_members = total_members / nr_pmu;
->> +		evsel->group_name = name ? strdup(name) : NULL;
->> +	}
->> +
->> +	parse_state->nr_groups += nr_pmu - 1;
->> +
->> +handled:
->> +	ret = 1;
->> +out:
->> +	free(leaders);
->> +	return ret;
->> +}
->> +
->> +void parse_events__set_leader(char *name, struct list_head *list,
->> +			      struct parse_events_state *parse_state)
->>   {
->>   	struct perf_evsel *leader;
->>   
->> @@ -1348,6 +1433,9 @@ void parse_events__set_leader(char *name, struct list_head *list)
->>   		return;
->>   	}
->>   
->> +	if (parse_events__set_leader_for_uncore_aliase(name, list, parse_state))
->> +		return;
->> +
->>   	__perf_evlist__set_leader(list);
->>   	leader = list_entry(list->next, struct perf_evsel, node);
->>   	leader->group_name = name ? strdup(name) : NULL;
->> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
->> index 5015cfd..4473dac 100644
->> --- a/tools/perf/util/parse-events.h
->> +++ b/tools/perf/util/parse-events.h
->> @@ -167,7 +167,9 @@ int parse_events_add_breakpoint(struct list_head *list, int *idx,
->>   				void *ptr, char *type, u64 len);
->>   int parse_events_add_pmu(struct parse_events_state *parse_state,
->>   			 struct list_head *list, char *name,
->> -			 struct list_head *head_config, bool auto_merge_stats);
->> +			 struct list_head *head_config,
->> +			 bool auto_merge_stats,
->> +			 bool use_alias);
->>   
->>   int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
->>   			       char *str,
->> @@ -178,7 +180,8 @@ int parse_events_copy_term_list(struct list_head *old,
->>   
->>   enum perf_pmu_event_symbol_type
->>   perf_pmu__parse_check(const char *name);
->> -void parse_events__set_leader(char *name, struct list_head *list);
->> +void parse_events__set_leader(char *name, struct list_head *list,
->> +			      struct parse_events_state *parse_state);
->>   void parse_events_update_lists(struct list_head *list_event,
->>   			       struct list_head *list_all);
->>   void parse_events_evlist_error(struct parse_events_state *parse_state,
->> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
->> index 7afeb80..e37608a 100644
->> --- a/tools/perf/util/parse-events.y
->> +++ b/tools/perf/util/parse-events.y
->> @@ -161,7 +161,7 @@ PE_NAME '{' events '}'
->>   	struct list_head *list = $3;
->>   
->>   	inc_group_count(list, _parse_state);
->> -	parse_events__set_leader($1, list);
->> +	parse_events__set_leader($1, list, _parse_state);
->>   	$$ = list;
->>   }
->>   |
->> @@ -170,7 +170,7 @@ PE_NAME '{' events '}'
->>   	struct list_head *list = $2;
->>   
->>   	inc_group_count(list, _parse_state);
->> -	parse_events__set_leader(NULL, list);
->> +	parse_events__set_leader(NULL, list, _parse_state);
->>   	$$ = list;
->>   }
->>   
->> @@ -232,7 +232,7 @@ PE_NAME opt_event_config
->>   		YYABORT;
->>   
->>   	ALLOC_LIST(list);
->> -	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
->> +	if (parse_events_add_pmu(_parse_state, list, $1, $2, false, false)) {
->>   		struct perf_pmu *pmu = NULL;
->>   		int ok = 0;
->>   		char *pattern;
->> @@ -251,7 +251,7 @@ PE_NAME opt_event_config
->>   					free(pattern);
->>   					YYABORT;
->>   				}
->> -				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true))
->> +				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true, false))
->>   					ok++;
->>   				parse_events_terms__delete(terms);
->>   			}
->> -- 
->> 2.7.4
+Well, the vmalloc is actually a correctness issue rather than a
+heartburn...
+
+> > If the use is really valid then we have a way to do the vmalloc
+> > allocation properly. We have memalloc_nofs_{save,restore} scope api. How
+> > does that work? You simply call memalloc_nofs_save when the reclaim
+> > recursion critical section starts (e.g. when you take a lock which is
+> > then used in the reclaim path - e.g. shrinker) and memalloc_nofs_restore
+> > when the critical section ends. _All_ allocations within that scope
+> > will get GFP_NOFS semantic automagically. If you are not sure about the
+> > scope itself then the easiest workaround is to wrap the vmalloc itself
+> > with a big fat comment that this should be revisited.
+> 
+> This is something we could do in ext4.  It hadn't been high priority,
+> because we've been rather overloaded.
+
+Well, ext/jbd already has scopes defined for the transaction context so
+anything down that road can be converted to GFP_KERNEL (well, unless the
+same code path is shared outside of the transaction context and still
+requires a protection). It would be really great to identify other
+contexts and slowly move away from the explicit GFP_NOFS. Are you aware
+of other contexts?
+
+> As a suggestion, could you take
+> documentation about how to convert to the memalloc_nofs_{save,restore}
+> scope api (which I think you've written about e-mails at length
+> before), and put that into a file in Documentation/core-api?
+
+I can.
+
+> The question I was trying to figure out which triggered the above
+> request is how/whether to gradually convert to that scope API.  Is it
+> safe to add the memalloc_nofs_{save,restore} to code and keep the
+> GFP_NOFS flags until we're sure we got it all right, for all of the
+> code paths, and then drop the GFP_NOFS?
+
+The first stage is to define and document those scopes. I have provided
+a debugging patch [1] in the past that would dump_stack when seeing an
+explicit GFP_NOFS from a scope which could help to eliminate existing
+users.
+
+[1] http://lkml.kernel.org/r/20170106141845.24362-1-mhocko@kernel.org
+-- 
+Michal Hocko
+SUSE Labs
