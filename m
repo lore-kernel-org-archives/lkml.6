@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2218510-1524537925-2-9449458821090537993
+X-Cyrus-Session-Id: sloti22d1t05-2218510-1524537958-2-18195798080341377913
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524537924; b=JzJtmoWvV2BtKAbdpQAL2sqqME5YakEVC947X95lTFXDrwKZDg
-    Oqg8pFsqxiagXe16qblBgXhfMY6GLyuFiWEzvJ4+34GZkxV9IfLsP8AGaDpaHG0e
-    5s5fswvG3JAd87x3ZOciTe5KikzG3SoEsb723vnsGukQk5iaJrj1iH0QBOQcBQXt
-    3f1ZCOYYON5a3VFk8a8INSiikC3KdEpUWKWFa+Pg1KiKWPqK5/ODUs2sUdIRAovA
-    sdd08cuukiThQnkAGoziNG6zlr5bUq70tgqE/dTPRnpdqNsr3dWarnEgcn5MA7jG
-    iaEdRaVKe4pJ4QAmJ07JuFqWzv0zldOrSBFQ==
+    1524537957; b=geZwTxQirHV8NQ6HCFXdBJ7pMbBHqczKttKBsm58OBkmmkD3k+
+    4fEIAstg6duazMrh5qaYjODa2jGhd8KIisnWfYURnrS/epXbz9MbrMoVIM5C8IEs
+    sBtJvgWm+rtLaWeTrQeeYzS3HwOq3DTuVxl9AhXVVVgMJNvIgCYPnuz8itmXvQVo
+    Z6HyvARj70YSpYlGzeZHIvsJc8Il+QP3dayc3zQnweZC9j7WdxlHdSpYJ4odmZlN
+    Dd8XFwyeMAbGr6YpqXDEYrmYVz0F/krzysQajBtFgYN2qcoefxLhOgfltCfR1IjX
+    YXyGLt4vyNQWNAZO9xMtL+vsBQVm88/0FoVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1524537924; bh=87moivpugfiBGobvjag8KDYC7WtC4I
-    o6sptqVxJtlHo=; b=WC4gK2adE2dDJNWs5hKhXcypQKLrjIODjJmc+QjlSOllOM
-    Rrl4NopA6VQ2U2ZMVypZzYVyPItlasQipHq0MuAggyTiyfzxjQJokxTf6PHrJ2Jv
-    6b0fRc+afIPWtGhcKm+355ikmrdFtu87paLS9fjPOorr9X0JaY5ehLhwi0p4Qvjk
-    FV59pdkakN9iMv4clAHnTHbJB1KECPPqlE+WGGUo7/HZso4oMwuAemynuwwV8Imi
-    lktfTpY1R3CKAhRpKDy3i8VtjAkg+QPcxBqmsedEUzhSFY4hpP3I8EE9Rcf3DO+K
-    fFAkihGSUjQ1kSbZMTAI85RCmEBOFRnTPd6+veRQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524537957; bh=
+    bpCgWSpt0kOxlYFf+tVRVOnLgMyfBDCOaShSlgybNzM=; b=PKoX/brM8H2OrqLj
+    3UgmJP0Q7Aqp/sZHZ7WaK6QIG3khd1S1SPnpCxtBfn974lI+FkOMyesKn9t6n4/p
+    Gov+tRd96Zm91Rln6dpj+WMTCE01jQ6WFkrwZVFU3mG8QQxV6pauosfUShG1UiFt
+    Vy6u6+aQHtRNWm0hg2OZuY6bl15TFO0ER8qIWtdCRo/Lv3aV5iIsNHNKR+60IbI8
+    YVgi9xxcPY6NqcFLu9FLVfh/x3DDHoXmgHDYyGU191ZOrvrHjVRoZpgwszTmuxCI
+    /teKYiQD0wwderJcIi4rqTpVfCt0b5it8viV0m9E8gm1Iq18td6tYdWwJSlYkeWN
+    9CtXpQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rock-chips.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
@@ -50,32 +51,32 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rock-chips.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGfooso0tXXqBHXH430A1RDE4qFl1bDXD5qYHa/3nlVFqP7iVJC7WsnTCVPlAn5m1BJ7JDdNNxxEE43w6R7NBIe8+rhBLZn4ucb3iUqz2EDi47bYFCYd
-    ANAV1Wp880JYBQs+OROCER5d8rr7uBwef5ifNjj91PBQsQTq9AZBJb1VIkyUW5grf6CusXrRiSXKXDpvQodD5qpf6PC7vEtWcp2Dxo8qTYmY7wHHiKDHZ6Qg
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfA5UWW58EG+t885wjyBYT+P80zmGmCQlkylkb9ljn3oDVBcqMao3jc59YInVzoED6PuVs+K6K+QgTGxZ/OiU6Yjr3GddckW7X5m9SVMvYJpgdKphsqfZ
+    li+ptl03gPHk18C2FyXRSfpR+0DhYuEHfbqoAdLdhb2aCag+OPYqIQw3tUbIMCfRQXYAuX6yhoECLrMjYk8fwNJ76P872UnhgA2li3DW0WTkmnh535U+DN03
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=4_-BN3WEXhEA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=Ndx7yIVex8M7RJDNeXoA:9 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=s8YR1HE3AAAA:8 a=VwQbUJbxAAAA:8 a=rPKZa8yPOa4RrKiXScsA:9
+    a=UGYfKW25PYDzIkc5:21 a=Ahoje6AFERjQcf6F:21 a=x8gzFH9gYPwA:10
+    a=jGH_LyMDp9YhSvY-UuyI:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932838AbeDXCpU (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 23 Apr 2018 22:45:20 -0400
-Received: from regular1.263xmail.com ([211.150.99.134]:34584 "EHLO
+        id S932802AbeDXCpP (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 23 Apr 2018 22:45:15 -0400
+Received: from regular1.263xmail.com ([211.150.99.141]:33375 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932721AbeDXCpK (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 23 Apr 2018 22:45:10 -0400
+        with ESMTP id S932772AbeDXCpO (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 23 Apr 2018 22:45:14 -0400
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
 X-RL-SENDER: william.wu@rock-chips.com
 X-FST-TO: hminas@synopsys.com
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: william.wu@rock-chips.com
-X-UNIQUE-TAG: <91098536c97872e2a6ffb1fb628477ac>
+X-UNIQUE-TAG: <709dd1a09ae247b423eaff771f8a902b>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: William Wu <william.wu@rock-chips.com>
@@ -88,32 +89,62 @@ Cc: heiko@sntech.de, linux-kernel@vger.kernel.org,
         John.Youn@synopsys.com, william.wu@rock-chips.com,
         wzz@rock-chips.com, zsq@rock-chips.com, Allen.Hsu@quantatw.com,
         StanTsui@AOPEN.com
-Subject: [PATCH 0/2] usb: dwc2: fix isoc split in transfer issue
-Date: Tue, 24 Apr 2018 10:43:42 +0800
-Message-Id: <1524537824-22010-1-git-send-email-william.wu@rock-chips.com>
+Subject: [PATCH 2/2] usb: dwc2: fix isoc split in transfer with no data
+Date: Tue, 24 Apr 2018 10:43:44 +0800
+Message-Id: <1524537824-22010-3-git-send-email-william.wu@rock-chips.com>
 X-Mailer: git-send-email 2.0.0
+In-Reply-To: <1524537824-22010-1-git-send-email-william.wu@rock-chips.com>
+References: <1524537824-22010-1-git-send-email-william.wu@rock-chips.com>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch fix dma unaligned problem and data lost problem for
-isoc split in transfer.
+If isoc split in transfer with no data (the length of DATA0
+packet is 0), we can't simply return immediately. Because the
+DATA0 can be the first transaction or the second transaction for
+the isoc split in transaction. If the DATA0 packet with on data
+is in the first transaction, we can return immediately. But if
+the the DATA0 packet with on data is in the second transaction
+of isoc split in transaction sequence, we need to increase the
+qtd->isoc_frame_index and giveback urb to device driver if needed,
+otherwise, the MDATA packet will be lost.
 
-Test on rk3288 platform, use an usb hs Hub (GL852G-12) and an usb
-fs audio device (Plantronics headset) to capture and playback.
+A typical test case is that connect the dwc2 controller with an
+usb hs Hub (GL852G-12), and plug an usb fs audio device (Plantronics
+headset) into the downstream port of Hub. Then use the usb mic
+to record, we can find noise when playback.
 
-William Wu (2):
-  usb: dwc2: alloc dma aligned buffer for isoc split in
-  usb: dwc2: fix isoc split in transfer with no data
+In the case, the isoc split in transaction sequence like this:
 
- drivers/usb/dwc2/hcd.c       | 63 +++++++++++++++++++++++++++++++++++++++++---
- drivers/usb/dwc2/hcd.h       | 10 +++++++
- drivers/usb/dwc2/hcd_intr.c  | 10 ++++++-
- drivers/usb/dwc2/hcd_queue.c |  8 +++++-
- 4 files changed, 86 insertions(+), 5 deletions(-)
+- SSPLIT IN transaction
+- CSPLIT IN transaction
+  - MDATA packet (176 bytes)
+- CSPLIT IN transaction
+  - DATA0 packet (0 byte)
 
+This patch use both the length of DATA0 and qtd->isoc_split_offset
+to check if the DATA0 is in the second transaction.
+
+Signed-off-by: William Wu <william.wu@rock-chips.com>
+---
+ drivers/usb/dwc2/hcd_intr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/dwc2/hcd_intr.c b/drivers/usb/dwc2/hcd_intr.c
+index 5e2378f..479f628 100644
+--- a/drivers/usb/dwc2/hcd_intr.c
++++ b/drivers/usb/dwc2/hcd_intr.c
+@@ -930,7 +930,7 @@ static int dwc2_xfercomp_isoc_split_in(struct dwc2_hsotg *hsotg,
+ 	frame_desc = &qtd->urb->iso_descs[qtd->isoc_frame_index];
+ 	len = dwc2_get_actual_xfer_length(hsotg, chan, chnum, qtd,
+ 					  DWC2_HC_XFER_COMPLETE, NULL);
+-	if (!len) {
++	if (!len && !qtd->isoc_split_offset) {
+ 		qtd->complete_split = 0;
+ 		qtd->isoc_split_offset = 0;
+ 		return 0;
 -- 
 2.0.0
 
