@@ -1,86 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932818AbeDXI3y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:29:54 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:44924 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756101AbeDXI3v (ORCPT
+        id S932872AbeDXIax (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:30:53 -0400
+Received: from mail-it0-f43.google.com ([209.85.214.43]:35170 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932840AbeDXIau (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:29:51 -0400
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: David Lechner <david@lechnology.com>, Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com>
- <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
- <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
- <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
- <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
- <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
- <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
- <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
- <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
- <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <aa1c2e6f-793c-1d9e-366a-3496f500f946@ti.com>
-Date: Tue, 24 Apr 2018 13:58:33 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 24 Apr 2018 04:30:50 -0400
+X-Google-Smtp-Source: AB8JxZqDRmhHeA/6Toik8sjOgnObwBZXOj5IyLvfZGEXgrzpoz4PtHK7QGWTiWv0UlhFTA0Dl+7/3T0RHorYjARRQQk=
 MIME-Version: 1.0
-In-Reply-To: <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180418093636.alasuzdjwjb2qovv@quack2.suse.cz>
+References: <000000000000ba999f056a150015@google.com> <20180418093636.alasuzdjwjb2qovv@quack2.suse.cz>
+From: Martijn Coenen <maco@android.com>
+Date: Tue, 24 Apr 2018 10:30:49 +0200
+Message-ID: <CAB0TPYGLW-bCRBTj--Y3xrgridzzR0V4Q+OCa6wv+yCi7RDaBA@mail.gmail.com>
+Subject: Re: INFO: task hung in fsnotify_mark_destroy_workfn
+To: Jan Kara <jack@suse.cz>
+Cc: syzbot <syzbot+e38306788a2e7102a3b6@syzkaller.appspotmail.com>,
+        amir73il@gmail.com, Dan Carpenter <dan.carpenter@oracle.com>,
+        dwindsor@gmail.com, elena.reshetova@intel.com,
+        LKML <linux-kernel@vger.kernel.org>, mszeredi@redhat.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 23 April 2018 08:29 PM, David Lechner wrote:
-> On 04/06/2018 11:46 AM, Stephen Boyd wrote:
->> Quoting Sekhar Nori (2018-04-06 02:37:03)
->>>
->>> Can you please check that and confirm there is no issue with genpd and
->>> using CLK_OF_DECLARE() to initialize clocks?
->>>
->>> Unless you report an issue back, or Mike and Stephen have ideas about
->>> how to handle the dependency between PSC/PLL derived timer clock
->>> initialization and and timer_probe(), I think we need to move back to
->>> using CLK_OF_DECLARE().
->>
->> In such a case, please use the hybrid approach where the clks required
->> for the clockevent and/or clocksource are registered in the early
->> CLK_OF_DECLARE path but the rest of the clks get registered with a
->> proper platform device and driver. There are examples of this approach
->> on other platforms already.
->>
-> 
-> I looked at this a bit last week, but I didn't come up with any approach
-> that I was happy with. It seems like it would be nice to just register
-> the absolute minimum clocks needed. On DA8XX, that would just be the PLL0
-> AUXCLK. On most of the other SoCs, it would be the PLL AUXCLK plus one
-> LPSC clock. The AUXCLKs are easy because they are just a simple gate
-> from the oscillator. The LPSC clocks are a bit more tricky because they
-> have a complex sequence for turning on. Furthermore, on DM646X, we need
-> the whole PLL up to SYSCLK3 plus one LPSC clock, so things get a bit
-> messy there.
+On Wed, Apr 18, 2018 at 11:36 AM, Jan Kara <jack@suse.cz> wrote:
+> OK, so we are waiting for the grace period on fsnotify_mark_srcu. Seems
+> like someone is holding fsnotify_mark_srcu too long or srcu period cannot
+> finish for some other reason. However the reproducer basically contains
+> only one binder ioctl and I have no idea how that's connected with fsnotify
+> in any way.
 
-Things might change in the context of work being done here by Bartosz
-for converting clocks to early platform devices.
+Yeah, binder isn't involved with fsnotify at all.
 
-But, keeping that development aside for a moment: I think this means the
-PLLs and PSCs need to be CLK_OF_DECLARE(). What we can have as platform
-devices are clocks that are not in the path to get timer clock working
-(like CFGCHIP clocks).
+> So either the reproducer is wrong, or binder is corrupting
+> memory and fsnotify is just a victim, or something like that...
 
-Thanks,
-Sekhar
+>From the dumped stacks I don't see how binder is involved in that task
+getting hung up, so either it's not related to binder after all, or it
+is indeed some form of corruption, but then I wouldn't expect it to
+reproduce in the same way every time (or otherwise expect KASAN to
+catch it). I'll try to see if I can repro it locally.
+
+Martijn
+
+
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
