@@ -1,72 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755463AbeDXJQw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:16:52 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:33814 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbeDXJQu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:16:50 -0400
-X-Google-Smtp-Source: AIpwx4+3+LKSou64FBNVpks/UP1ajJfujM422VCowd1EDUq6/85uAF7+U+YFGntaTbnnqd9O0uRHWoHQzpocMH8q3mw=
-MIME-Version: 1.0
-In-Reply-To: <4aac97a5-4efa-8667-3a87-d6f4182dd1e7@amd.com>
-References: <1522376717-136486-1-git-send-email-weiyongjun1@huawei.com> <4aac97a5-4efa-8667-3a87-d6f4182dd1e7@amd.com>
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Tue, 24 Apr 2018 12:16:19 +0300
-Message-ID: <CAFCwf13=M4LiNh+VK9aVZv4stnJHZ3=Oe7LT6p2E4=2O9tudkA@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amdkfd: Fix the error return code in kfd_ioctl_unmap_memory_from_gpu()
-To: Felix Kuehling <felix.kuehling@amd.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S932223AbeDXJTh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:19:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52324 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932077AbeDXJTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 05:19:10 -0400
+From: Hans de Goede <hdegoede@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kevin Shanahan <kevin@shanahan.id.au>
+Subject: [PATCH] libata: Apply NOLPM quirk for SAMSUNG MZMPC128HBFU-000MV SSD
+Date: Tue, 24 Apr 2018 11:19:07 +0200
+Message-Id: <20180424091907.19903-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 2, 2018 at 9:02 PM, Felix Kuehling <felix.kuehling@amd.com> wrote:
-> Thanks for catching that. I'd use -ENODEV to match what is done a few
-> lines below for peer_pdd. With that fixed, this patch is Reviewed-by:
-> Felix Kuehling <Felix.Kuehling@amd.com>
->
-> Regards,
->   Felix
->
->
-> On 2018-03-29 10:25 PM, Wei Yongjun wrote:
->> Passing NULL pointer to PTR_ERR will result in return value of 0
->> indicating success which is clearly not what it is intended here.
->> This patch returns -EINVAL instead.
->>
->> Fixes: 5ec7e02854b3 ("drm/amdkfd: Add ioctls for GPUVM memory management")
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->> ---
->>  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
->> index cd679cf..c32a341 100644
->> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
->> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
->> @@ -1421,7 +1421,7 @@ static int kfd_ioctl_unmap_memory_from_gpu(struct file *filep,
->>
->>       pdd = kfd_get_process_device_data(dev, p);
->>       if (!pdd) {
->> -             err = PTR_ERR(pdd);
->> +             err = -EINVAL;
->>               goto bind_process_to_device_failed;
->>       }
->>
->
+Kevin Shanahan reports the following repeating errors when using LPM,
+causing long delays accessing the disk:
 
-Thanks!
-Applied to -fixes with the -ENODEV return code
+  Apr 23 10:21:43 link kernel: ata1.00: exception Emask 0x0 SAct 0x0 SErr 0x50000 action 0x6 frozen
+  Apr 23 10:21:43 link kernel: ata1: SError: { PHYRdyChg CommWake }
+  Apr 23 10:21:43 link kernel: ata1.00: failed command: WRITE DMA
+  Apr 23 10:21:43 link kernel: ata1.00: cmd ca/00:08:60:5d:cd/00:00:00:00:00/e1 tag 9 dma 4096 out
+                                        res 50/01:01:01:00:00/00:00:00:00:00/00 Emask 0x4 (timeout)
+  Apr 23 10:21:43 link kernel: ata1.00: status: { DRDY }
+  Apr 23 10:21:43 link kernel: ata1.00: error: { AMNF }
+  Apr 23 10:21:43 link kernel: ata1: hard resetting link
+  Apr 23 10:21:43 link kernel: ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+  Apr 23 10:21:43 link kernel: ata1.00: configured for UDMA/133
+  Apr 23 10:21:43 link kernel: ata1: EH complete
 
-Oded
+These go away when switching from med_power_with_dipm to medium_power.
+
+This is somewhat weird as the PM830 datasheet explicitly mentions DIPM
+being supported and the idle power-consumption is specified with DIPM
+enabled.
+
+There are many OEM customized firmware versions for the PM830, so for now
+lets assume this is firmware version specific and blacklist LPM based on
+the firmware version.
+
+Cc: Kevin Shanahan <kevin@shanahan.id.au>
+Reported-by: Kevin Shanahan <kevin@shanahan.id.au>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/ata/libata-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 8bc71ca61e7f..6e400ff2b5db 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4549,6 +4549,9 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
+ 
++	/* This specific Samsung model/firmware-rev does not handle LPM well */
++	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
++
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+-- 
+2.17.0
