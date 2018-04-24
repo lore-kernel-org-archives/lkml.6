@@ -1,66 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933078AbeDXIoq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:44:46 -0400
-Received: from ivanoab5.miniserver.com ([78.31.111.25]:47287 "EHLO
-        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932813AbeDXIon (ORCPT
+        id S1756378AbeDXIv0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:51:26 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:55196 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755957AbeDXIvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:44:43 -0400
-Subject: Re: [uml-devel] [REVIEW][PATCH 19/22] signal/um: Use force_sig_fault
- in relay_signal.
-To: Richard Weinberger <richard.weinberger@gmail.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>, Jeff Dike <jdike@addtoit.com>,
-        linux-um@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        "user-mode-linux-devel@lists.sourceforge.net"
-        <user-mode-linux-devel@lists.sourceforge.net>
-References: <87604mhrnb.fsf@xmission.com>
- <20180420143811.9994-19-ebiederm@xmission.com>
- <7074fe36-27c5-ee82-9659-da703cfc91fe@kot-begemot.co.uk>
- <CAFLxGvyM+Kru=ERDvccjVuMjSPbu+FQzjbUbMwSyEbL1rVGkBQ@mail.gmail.com>
-From: Anton Ivanov <anton.ivanov@kot-begemot.co.uk>
-Message-ID: <7ddd238f-88a8-ed03-fe9e-0f4e5f2a490d@kot-begemot.co.uk>
-Date: Tue, 24 Apr 2018 09:44:22 +0100
+        Tue, 24 Apr 2018 04:51:23 -0400
+Subject: Re: [PATCH v2 0/2] memory: aemif: add support for machine code
+To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC: Kevin Hilman <khilman@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180419151252.26212-1-brgl@bgdev.pl>
+ <0f2903da-b670-dc85-e61b-64cac90a6c34@oracle.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <4d72accf-7d63-c725-0b67-253ed6818ae0@ti.com>
+Date: Tue, 24 Apr 2018 14:21:00 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAFLxGvyM+Kru=ERDvccjVuMjSPbu+FQzjbUbMwSyEbL1rVGkBQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <0f2903da-b670-dc85-e61b-64cac90a6c34@oracle.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-X-Clacks-Overhead: GNU Terry Pratchett
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Richard,
-
-There was a post to uml-devel during the days when the sourceforge 
-mailing list was working in random drop mode which claimed that "this 
-fixes the arm build".
-
-I have not kept it locally and I do not see it the archive (I do not see 
-a few other posts there either - including some of mine).
-
-The joys of having a broken list :(
-
-Whoever posted it, if you are reading it, please re-post again so we can 
-have a look.
-
-In the meantime we are as you said - x86 only.
-
-A.
-
-On 04/24/18 09:32, Richard Weinberger wrote:
-> On Fri, Apr 20, 2018 at 6:06 PM, Anton Ivanov
-> <anton.ivanov@kot-begemot.co.uk> wrote:
->> On 04/20/18 15:38, Eric W. Biederman wrote:
->>> Today user mode linux only works on x86 and x86_64 and this allows
->>> simplifications of relay_signal.
+On Friday 20 April 2018 10:54 PM, santosh.shilimkar@oracle.com wrote:
+> On 4/19/18 8:12 AM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >>
->> I believe someone recently fixed the ARM port. I have not had the time to
->> try the fixes though.
-> Huh? UML is for ages x86 only.
->
+>> This is a follow-up to the series that contained both changes to the
+>> aemif driver and platform code. It contains only the driver changes.
+>>
+>> As the first step in removing duplicate support for aemif from the
+>> kernel we need to add support for board files to the aemif memory
+>> driver.
+>>
+>> First patch just uses a static string for the ti-aemif driver name.
+>>
+>> The second adds support for board files to the aemif driver.
+>>
+>> This series includes changes requested by Sekhar in his code review:
+>> - made aemif the parent of each sub-device before registering it
+>> - documented the new members in aemif_platform_data
+>>
+>> v1 -> v2:
+>> - actually iterate over abus entries instead of always accessing the
+>>    first one
+>>
+>> Bartosz Golaszewski (2):
+>>    memory: aemif: don't rely on kbuild for driver's name
+>>    memory: aemif: add support for board files
+>>
+> Applied. Should show up in next soon.
+> 
+> Sekhar, You can use below branch.
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git  'for_4.18/soc-drivers'
+
+Thanks Santosh!
+
+Regards,
+Sekhar
