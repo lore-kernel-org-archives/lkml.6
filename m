@@ -1,85 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751346AbeDXVR6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 17:17:58 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:17008 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeDXVRy (ORCPT
+        id S1751150AbeDXVWg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 17:22:36 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:44298 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeDXVWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:17:54 -0400
-X-IronPort-AV: E=Sophos;i="5.49,324,1520870400";
-   d="scan'208";a="173298346"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "pmenzel+linux-block@molgen.mpg.de"
-        <pmenzel+linux-block@molgen.mpg.de>
-CC: "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "regressions@leemhuis.info" <regressions@leemhuis.info>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: Re: Regression 4.17-rc1: SSD doesn properly resume causing system
- hang (NULL pointer dereference)
-Thread-Topic: Regression 4.17-rc1: SSD doesn properly resume causing system
- hang (NULL pointer dereference)
-Thread-Index: AQHT2/Iaokzl6JZ9+0atRxesfkEEnKQQLgAAgAANxACAACwEAIAAA7cA
-Date: Tue, 24 Apr 2018 21:17:50 +0000
-Message-ID: <19e19bc6b2fef11faf428fe75447b06e56af9ffd.camel@wdc.com>
-References: <59ca6556-11a6-4f77-76e7-d51c7175eb32@molgen.mpg.de>
-         <67ffdf0050a04bf3615c3d8a3a90b0c9c2aeb1ad.camel@wdc.com>
-         <2cc5f0fb-4caa-9c28-7daa-68993d5cb41a@molgen.mpg.de>
-         <14ff1ed06e36a372680872c227b5abe389c753da.camel@wdc.com>
-         <a3a7f906-3681-15cc-67af-b96e4ac71b0e@molgen.mpg.de>
-         <134955874b401e6764077393c75ab2d4549b940a.camel@wdc.com>
-         <6a2162a7-5f48-c107-0b1c-5258089522c5@molgen.mpg.de>
-In-Reply-To: <6a2162a7-5f48-c107-0b1c-5258089522c5@molgen.mpg.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [198.233.165.212]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB1103;7:paGjDQn8u2O2fdu5lehdKOkbSZNmozr0X/QwduZTomOnAfDVdBAX028upt9xMSfgmQXoA3NfRmAjQSOm4D9GI0nK339qiFHagI+svag352gc4Ptn2wA9gIhHvi4D3IGQCZW0GTedG0zAOzrqO7Qxo9KhNwGZ14jRn/OopZBtwnt+bBaF2WwOJBLnE5X5kdqfNojwzfiud7d5EUznInls885SxGAghNO8YqIs/mKM9aIDZkrAwQZLTlykmEK+U2md;20:+rav+QLIluhme+nzPDThKAbjY+Q7VXIkwkMcaNzm4hmucQMThMa2xIzJzfxzUjdHCA9Haw/rWUVcjpkJM254Rb2qJO06gG7CEaoMrZkJDA36UuhI7cVLGTuZKTZco147z6piur28BhFAniNy8i63Y8aGZadHWsRqBFkE3nwQCls=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB1103;
-x-ms-traffictypediagnostic: MWHPR04MB1103:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB1103815048B98BEFEE642C2398880@MWHPR04MB1103.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR04MB1103;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB1103;
-x-forefront-prvs: 0652EA5565
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39380400002)(366004)(39860400002)(346002)(189003)(199004)(377424004)(6512007)(2616005)(6506007)(6246003)(8936002)(186003)(486006)(476003)(6436002)(97736004)(76176011)(59450400001)(102836004)(3280700002)(93886005)(54906003)(305945005)(53936002)(25786009)(4326008)(446003)(11346002)(316002)(3660700001)(86362001)(99286004)(2900100001)(81156014)(5660300001)(106356001)(478600001)(66066001)(36756003)(118296001)(6486002)(5250100002)(7736002)(26005)(81166006)(8676002)(105586002)(68736007)(229853002)(3846002)(6116002)(2906002)(14454004)(72206003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB1103;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: dZn9/kdIwTKW1kQKZPmvdD62Vt8Liw23Mdma6krd5jzKlhx4hWT23sNXUUFlKlSuVd8aiknv/8eQ88tBVr/AF5+fU1jl24cudkCWQ2elMGef6V1UzF1+JWPT+7XaZJoaaQtZ8LbF7YxdWLinPuGR+VO6tgMfCz4OE5rkoW1YxnGIu4EsjceSMt0sZ03dmtpm
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D45FB520D4C1E0478444848C53851307@namprd04.prod.outlook.com>
+        Tue, 24 Apr 2018 17:22:35 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
+Cc: Michel =?utf-8?Q?D=C3=A4nzer?= <michel@daenzer.net>,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, David.Panariti@amd.com,
+        oleg@redhat.com, Alexander.Deucher@amd.com, akpm@linux-foundation.org,
+        Christian.Koenig@amd.com
+References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
+        <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+        <7313704c-0693-0bb9-8818-99cd2b7c0ca0@daenzer.net>
+        <20180424194418.GE25142@phenom.ffwll.local>
+        <aa2d8587-651e-2c24-a673-4682e7035a8f@amd.com>
+Date: Tue, 24 Apr 2018 16:21:07 -0500
+In-Reply-To: <aa2d8587-651e-2c24-a673-4682e7035a8f@amd.com> (Andrey
+        Grodzovsky's message of "Tue, 24 Apr 2018 17:02:40 -0400")
+Message-ID: <87tvs05mik.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 7428e385-e47b-47a4-3955-08d5aa28d5bd
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7428e385-e47b-47a4-3955-08d5aa28d5bd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2018 21:17:50.2592
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB1103
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1fB5OT-0004AP-3e;;;mid=<87tvs05mik.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/ArEztPnLNOmOoI1U6BgYLHs/Ovj5FFf0=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 539 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 2.4 (0.5%), b_tie_ro: 1.64 (0.3%), parse: 1.49 (0.3%),
+        extract_message_metadata: 19 (3.6%), get_uri_detail_list: 4.2 (0.8%),
+        tests_pri_-1000: 8 (1.5%), tests_pri_-950: 1.72 (0.3%), tests_pri_-900: 1.51
+        (0.3%), tests_pri_-400: 39 (7.3%), check_bayes: 38 (7.0%), b_tokenize: 17
+        (3.1%), b_tok_get_all: 10 (1.8%), b_comp_prob: 5.0 (0.9%), b_tok_touch_all:
+        3.3 (0.6%), b_finish: 0.68 (0.1%), tests_pri_0: 265 (49.2%),
+        check_dkim_signature: 0.78 (0.1%), check_dkim_adsp: 2.8 (0.5%),
+        tests_pri_500: 196 (36.4%), poll_dns_idle: 189 (35.0%), rewrite_mail: 0.00
+        (0.0%)
+Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for signaled process.
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3OLI3CE002842
 
-On Tue, 2018-04-24 at 23:04 +0200, Paul Menzel wrote:
-> I applied your change, and rebuilt the Linux kernel. Unfortunately, it 
-> looks like, it didn’t make a difference.
+Andrey Grodzovsky <Andrey.Grodzovsky@amd.com> writes:
 
-In that case I don't know what is causing the failure. Can you run a bisect
-to determine which commit introduced this regression?
+> On 04/24/2018 03:44 PM, Daniel Vetter wrote:
+>> On Tue, Apr 24, 2018 at 05:46:52PM +0200, Michel Dänzer wrote:
+>>> Adding the dri-devel list, since this is driver independent code.
+>>>
+>>>
+>>> On 2018-04-24 05:30 PM, Andrey Grodzovsky wrote:
+>>>> Avoid calling wait_event_killable when you are possibly being called
+>>>> from get_signal routine since in that case you end up in a deadlock
+>>>> where you are alreay blocked in singla processing any trying to wait
+>>> Multiple typos here, "[...] already blocked in signal processing and [...]"?
+>>>
+>>>
+>>>> on a new signal.
+>>>>
+>>>> Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+>>>> ---
+>>>>   drivers/gpu/drm/scheduler/gpu_scheduler.c | 5 +++--
+>>>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler.c b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+>>>> index 088ff2b..09fd258 100644
+>>>> --- a/drivers/gpu/drm/scheduler/gpu_scheduler.c
+>>>> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+>>>> @@ -227,9 +227,10 @@ void drm_sched_entity_do_release(struct drm_gpu_scheduler *sched,
+>>>>   		return;
+>>>>   	/**
+>>>>   	 * The client will not queue more IBs during this fini, consume existing
+>>>> -	 * queued IBs or discard them on SIGKILL
+>>>> +	 * queued IBs or discard them when in death signal state since
+>>>> +	 * wait_event_killable can't receive signals in that state.
+>>>>   	*/
+>>>> -	if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
+>>>> +	if (current->flags & PF_SIGNALED)
+>> You want fatal_signal_pending() here, instead of inventing your own broken
+>> version.
+>
+> I rely on current->flags & PF_SIGNALED because this being set from
+> within get_signal,
 
-Thanks,
+It doesn't mean that.  Unless you are called by do_coredump (you
+aren't).  The closing of files does not happen in do_coredump.
+Which means you are being called from do_exit.
+In fact you are being called after exit_files which closes
+the files.  The actual __fput processing happens in task_work_run.
 
-Bart.
+> meaning I am within signal processing  in which case I want to avoid
+> any signal based wait for that task,
+> From what i see in the code, task_struct.pending.signal is being set
+> for other threads in same
+> group (zap_other_threads) or for other scenarios, those task are still
+> able to receive signals
+> so calling wait_event_killable there will not have problem.
+
+Excpet that you are geing called after from do_exit and after exit_files
+which is after exit_signal.  Which means that PF_EXITING has been set.
+Which implies that the kernel signal handling machinery has already
+started being torn down.
+
+Not as much as I would like to happen at that point as we are still
+left with some old CLONE_PTHREAD messes in the code that need to be
+cleaned up.
+
+Still given the fact you are task_work_run it is quite possible even
+release_task has been run on that task before the f_op->release method
+is called.  So you simply can not count on signals working.
+
+Which in practice leaves a timeout for ending your wait.  That code can
+legitimately be in a context that is neither interruptible nor killable.
+
+>>>>   		entity->fini_status = -ERESTARTSYS;
+>>>>   	else
+>>>>   		entity->fini_status = wait_event_killable(sched->job_scheduled,
+>> But really this smells like a bug in wait_event_killable, since
+>> wait_event_interruptible does not suffer from the same bug. It will return
+>> immediately when there's a signal pending.
+>
+> Even when wait_event_interruptible is called as following - 
+> ...->do_signal->get_signal->....->wait_event_interruptible ?
+> I haven't tried it but wait_event_interruptible is very much alike to
+> wait_event_killable so I would assume it will also
+> not be interrupted if called like that. (Will give it a try just out
+> of curiosity anyway)
+
+As PF_EXITING is set want_signal should fail and the signal state of the
+task should not be updatable by signals.
+
+Eric
