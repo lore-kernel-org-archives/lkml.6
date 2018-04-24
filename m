@@ -1,59 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753004AbeDXSX7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 14:23:59 -0400
-Received: from sonic305-34.consmr.mail.ir2.yahoo.com ([77.238.177.96]:39777
-        "EHLO sonic305-34.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752700AbeDXSXz (ORCPT
+        id S1752964AbeDXSYf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 14:24:35 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:38295 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751216AbeDXSYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 14:23:55 -0400
-X-YMail-OSG: vOQJGGMVM1nTEQa7SV01NVYYRF2DemAncPutE_vCO82h2zcZ9YQfD_yJSbKdzsz
- yQZ9wnb64lPQNpwkpnCqF3SyaKXzZS7MBhKsEkS35Ry0vuTl9c.ZEeJDX851S2dIMBjniASF2tdG
- e8kyZKFzHBWS7CKDRvr6oVh06pVFNzzorTafT3p3ulAt1XkC6lwdsx0luyZz_MeeTlwoW1fCFVc0
- AoWI1pz3tthGkdX.GIy4kMZz3ekPrxSA2zkcpeV02LVMru2j30aIKAPjGijEVcREY0gpF8lZTvvC
- 7ODILV9cvFF7dlzkbOjFW.F2YeYkRgpEVanh2E7ObZATzFPejnL11wmA6eueU9FOmDSzQxwSz.kt
- itUpGid8hnPn4P9m2rnVutenAlF_D4YW3wJCrll7myCuE19F7JfDf.fwVzsi5XtrnJwBdKzlenej
- M2xriOnJB0sJ7zX6lEhmrlAKv77VeZNx.hPShuPNDkl1e8ROfTByh11b9bbf3DooqDpz_ZtQKOjr
- YZy3rWaiUD4_V98YvrIGgoTWlw36rzcJpq489TlUMFb2DM_mi
-Date: Tue, 24 Apr 2018 18:23:51 +0000 (UTC)
-From: Gianfranco Costamagna <locutusofborg@debian.org>
-Reply-To: Gianfranco Costamagna <locutusofborg@debian.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Antonio Rosario Intilisano <antonio.intilisano@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "vger@kernel.org" <vger@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Chiu <chiu@endlessm.com>, Daniel Drake <drake@endlessm.com>
-Message-ID: <122064928.616643.1524594231224@mail.yahoo.com>
-In-Reply-To: <1524589355.21176.507.camel@linux.intel.com>
-References: <20180420212641.30338-1-antonio.intilisano@gmail.com> <a62dded5-0fa9-1a6e-dd71-3e03cc311f1f@debian.org> <CAHp75VdSOGnN5=yxkk1m3=7rBKR1PU3NfO6QNp7wYR7Qx6mWkA@mail.gmail.com> <1690760144.5633578.1524494921916@mail.yahoo.com> <CAHp75VeDhyKmcJqA5paqJEPsw-gpzq7iJee+zu=ZMqUpDv0_6A@mail.gmail.com> <1524589355.21176.507.camel@linux.intel.com>
-Subject: Re: [PATCH] platform/x86: acer-wmi: add another KEY_POWER keycode
+        Tue, 24 Apr 2018 14:24:33 -0400
+X-Google-Smtp-Source: AIpwx482ZPPhOubDwxY3KdlHwa+0nDQNmkmDxrJPK6y0LRR2FOvLG8Xjr4LQw6SJmit86h3Q8cNfwQ==
+Date: Tue, 24 Apr 2018 11:24:29 -0700
+From: Eric Biggers <ebiggers@google.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] crypto: remove Speck
+Message-ID: <20180424182429.GB174675@google.com>
+References: <20180424161826.31211-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.11819 YahooMailNeo Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.117 Safari/537.36
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424161826.31211-1-Jason@zx2c4.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andy,
+Hi Jason,
 
->Or I missed the point and it's working? Tell me what to do with it.
->For now I pushed to my review and testing queue, thanks!
+On Tue, Apr 24, 2018 at 06:18:26PM +0200, Jason A. Donenfeld wrote:
+> This NSA-designed cipher was rejected for inclusion in international
+> standards by ISO/IEC. Before anyone actually starts using it by
+> accident, let's just not ship it at all.
+> 
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>  arch/arm/crypto/Kconfig             |    6 -
+>  arch/arm/crypto/Makefile            |    2 -
+>  arch/arm/crypto/speck-neon-core.S   |  432 --------
+>  arch/arm/crypto/speck-neon-glue.c   |  288 ------
+>  arch/arm64/crypto/Kconfig           |    6 -
+>  arch/arm64/crypto/Makefile          |    3 -
+>  arch/arm64/crypto/speck-neon-core.S |  352 -------
+>  arch/arm64/crypto/speck-neon-glue.c |  282 -----
+>  arch/s390/defconfig                 |    1 -
+>  crypto/Kconfig                      |   14 -
+>  crypto/Makefile                     |    1 -
+>  crypto/speck.c                      |  307 ------
+>  crypto/testmgr.c                    |   36 -
+>  crypto/testmgr.h                    | 1486 ---------------------------
+>  include/crypto/speck.h              |   62 --
+>  15 files changed, 3278 deletions(-)
+>  delete mode 100644 arch/arm/crypto/speck-neon-core.S
+>  delete mode 100644 arch/arm/crypto/speck-neon-glue.c
+>  delete mode 100644 arch/arm64/crypto/speck-neon-core.S
+>  delete mode 100644 arch/arm64/crypto/speck-neon-glue.c
+>  delete mode 100644 crypto/speck.c
+>  delete mode 100644 include/crypto/speck.h
+> 
 
+Please see my response on the other thread ("[PATCH v2 0/5] crypto: Speck support"):
 
-Antonio did patch and build a custom kernel locally (testing was successful), and submitted
-the patch to me.
+https://marc.info/?l=linux-crypto-vger&m=152459378914647
 
-I pinged some Ubuntu folks to get it applied, and also testing with the .deb provided
-by kernel team was good, so I presume this is a safe patch that can be applied right now
-as-is.
-(this is a trivial patch, Antonio told me in another channel that he can also create and post
-failures logs before and after, as well as do some video with the key pressed).
+Thanks,
 
-I don't think this is needed, but if you want it for historical purposes, just ask and we will
-do our best to provide them!
-
-Gianfranco
+- Eric
