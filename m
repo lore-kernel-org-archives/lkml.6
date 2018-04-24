@@ -1,271 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751061AbeDXPig (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:38:36 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:42109 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeDXPi3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:38:29 -0400
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4/6] PCI: Convert of_pci_get_host_bridge_resources users to devm variant
-Date: Tue, 24 Apr 2018 17:13:40 +0200
-Message-Id: <d76c32d535bb555076b3f7c010a6856ac97bbdae.1524582822.git.jan.kiszka@siemens.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
+        id S1751265AbeDXPjq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:39:46 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55564 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750935AbeDXPjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:39:45 -0400
+Date: Tue, 24 Apr 2018 10:39:43 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>, Will Deacon <will.deacon@arm.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com,
+        Michal Marek <mmarek@suse.cz>
+Subject: [PATCH v2] arm64/kernel: rename
+ module_emit_adrp_veneer->module_emit_veneer_for_adrp
+Message-Id: <20180424103943.453d3449bbe2b35b86cc3443@arm.com>
+In-Reply-To: <CAKv+Gu_LJB1Zkg26kCcAUs6eAcZFpX4LUnWuEhjo8OA=83fz+A@mail.gmail.com>
+References: <20180416042240.21528-1-namhyung@kernel.org>
+        <20180416092345.GA23274@krava>
+        <20180416135125.GA23802@kernel.org>
+        <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
+        <20180416165800.GD3202@kernel.org>
+        <20180416122407.0d90863b69fed80166384850@arm.com>
+        <20180416174811.1aca9106364effe435f363c8@arm.com>
+        <20180417022726.GA31947@sejong>
+        <20180418193759.b63912fe5e5b8a9023ec80a8@arm.com>
+        <20180419025424.GC13370@sejong>
+        <20180419183313.db3e3a105191a7f30b7650b2@arm.com>
+        <CAKv+Gu_sY+Q+kqO1hp6f30WSGNPY1cnW5VJYj9cuVA0hU5YDVw@mail.gmail.com>
+        <20180423164317.5a47f3dd9842d533413a1d4b@arm.com>
+        <CAKv+Gu-u1E9gH7=p5sbiA4k_9mQ13y+056nYKnr2D9BPENNyMg@mail.gmail.com>
+        <20180424075003.48ab0015efc0892832343546@arm.com>
+        <CAKv+Gu-Y8D3Se7yc+8LifMmSAmURj4ZYBwVAbdkL-Krr_=1K3A@mail.gmail.com>
+        <20180424101302.922f38032a32ee2034ccfc05@arm.com>
+        <CAKv+Gu_LJB1Zkg26kCcAUs6eAcZFpX4LUnWuEhjo8OA=83fz+A@mail.gmail.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Commit a257e02579e ("arm64/kernel: don't ban ADRP to work around
+Cortex-A53 erratum #843419") introduced a function whose name ends with
+"_veneer".
 
-Straightforward for all of them, no more leaks afterwards.
+This clashes with commit bd8b22d2888e ("Kbuild: kallsyms: ignore veneers
+emitted by the ARM linker"), which removes symbols ending in "_veneer"
+from kallsyms.
 
-CC: Jingoo Han <jingoohan1@gmail.com>
-CC: Joao Pinto <Joao.Pinto@synopsys.com>
-CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+The problem was manifested as 'perf test -vvvvv vmlinux' failed,
+correctly claiming the symbol 'module_emit_adrp_veneer' was present in
+vmlinux, but not in kallsyms.
+
+...
+    ERR : 0xffff00000809aa58: module_emit_adrp_veneer not on kallsyms
+...
+    test child finished with -1
+    ---- end ----
+    vmlinux symtab matches kallsyms: FAILED!
+
+Fix the problem by renaming module_emit_adrp_veneer to 
+module_emit_veneer_for_adrp.  Now the test passes.
+
+Fixes: a257e02579e ("arm64/kernel: don't ban ADRP to work around Cortex-A53 erratum #843419")
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Michal Marek <mmarek@suse.cz>
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 ---
- drivers/pci/dwc/pcie-designware-host.c | 2 +-
- drivers/pci/host/pci-aardvark.c        | 5 ++---
- drivers/pci/host/pci-ftpci100.c        | 4 ++--
- drivers/pci/host/pci-v3-semi.c         | 3 ++-
- drivers/pci/host/pci-versatile.c       | 3 +--
- drivers/pci/host/pci-xgene.c           | 3 ++-
- drivers/pci/host/pcie-altera.c         | 5 ++---
- drivers/pci/host/pcie-iproc-platform.c | 4 ++--
- drivers/pci/host/pcie-rcar.c           | 5 ++---
- drivers/pci/host/pcie-rockchip.c       | 4 ++--
- drivers/pci/host/pcie-xilinx-nwl.c     | 4 ++--
- drivers/pci/host/pcie-xilinx.c         | 4 ++--
- drivers/pci/of.c                       | 4 ++--
- 13 files changed, 24 insertions(+), 26 deletions(-)
+v2: fixed naming and wording of last sentence in commit text.
 
-diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
-index 6c409079d514..a8f6ab54b4c0 100644
---- a/drivers/pci/dwc/pcie-designware-host.c
-+++ b/drivers/pci/dwc/pcie-designware-host.c
-@@ -342,7 +342,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 	if (!bridge)
- 		return -ENOMEM;
+ arch/arm64/include/asm/module.h | 2 +-
+ arch/arm64/kernel/module-plts.c | 2 +-
+ arch/arm64/kernel/module.c      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
+index b6dbbe3123a9..97d0ef12e2ff 100644
+--- a/arch/arm64/include/asm/module.h
++++ b/arch/arm64/include/asm/module.h
+@@ -39,7 +39,7 @@ struct mod_arch_specific {
+ u64 module_emit_plt_entry(struct module *mod, void *loc, const Elf64_Rela *rela,
+ 			  Elf64_Sym *sym);
  
--	ret = of_pci_get_host_bridge_resources(np, 0, 0xff,
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
- 					&bridge->windows, &pp->io_base);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/pci/host/pci-aardvark.c b/drivers/pci/host/pci-aardvark.c
-index b04d37b3c5de..709f0d69e35b 100644
---- a/drivers/pci/host/pci-aardvark.c
-+++ b/drivers/pci/host/pci-aardvark.c
-@@ -815,14 +815,13 @@ static int advk_pcie_parse_request_of_pci_ranges(struct advk_pcie *pcie)
+-u64 module_emit_adrp_veneer(struct module *mod, void *loc, u64 val);
++u64 module_emit_veneer_for_adrp(struct module *mod, void *loc, u64 val);
+ 
+ #ifdef CONFIG_RANDOMIZE_BASE
+ extern u64 module_alloc_base;
+diff --git a/arch/arm64/kernel/module-plts.c b/arch/arm64/kernel/module-plts.c
+index fa3637284a3d..f0690c2ca3e0 100644
+--- a/arch/arm64/kernel/module-plts.c
++++ b/arch/arm64/kernel/module-plts.c
+@@ -43,7 +43,7 @@ u64 module_emit_plt_entry(struct module *mod, void *loc, const Elf64_Rela *rela,
+ }
+ 
+ #ifdef CONFIG_ARM64_ERRATUM_843419
+-u64 module_emit_adrp_veneer(struct module *mod, void *loc, u64 val)
++u64 module_emit_veneer_for_adrp(struct module *mod, void *loc, u64 val)
  {
- 	int err, res_valid = 0;
- 	struct device *dev = &pcie->pdev->dev;
--	struct device_node *np = dev->of_node;
- 	struct resource_entry *win, *tmp;
- 	resource_size_t iobase;
- 
- 	INIT_LIST_HEAD(&pcie->resources);
- 
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie->resources,
--					       &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    &pcie->resources, &iobase);
- 	if (err)
- 		return err;
- 
-diff --git a/drivers/pci/host/pci-ftpci100.c b/drivers/pci/host/pci-ftpci100.c
-index 5008fd87956a..87748eaeaaed 100644
---- a/drivers/pci/host/pci-ftpci100.c
-+++ b/drivers/pci/host/pci-ftpci100.c
-@@ -476,8 +476,8 @@ static int faraday_pci_probe(struct platform_device *pdev)
- 	if (IS_ERR(p->base))
- 		return PTR_ERR(p->base);
- 
--	ret = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff,
--					       &res, &io_base);
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    &res, &io_base);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/pci/host/pci-v3-semi.c b/drivers/pci/host/pci-v3-semi.c
-index 0a4dea796663..167bf6f6b378 100644
---- a/drivers/pci/host/pci-v3-semi.c
-+++ b/drivers/pci/host/pci-v3-semi.c
-@@ -791,7 +791,8 @@ static int v3_pci_probe(struct platform_device *pdev)
- 	if (IS_ERR(v3->config_base))
- 		return PTR_ERR(v3->config_base);
- 
--	ret = of_pci_get_host_bridge_resources(np, 0, 0xff, &res, &io_base);
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-+						    &io_base);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-versatile.c
-index 5b3876f5312b..ff2cd12b3978 100644
---- a/drivers/pci/host/pci-versatile.c
-+++ b/drivers/pci/host/pci-versatile.c
-@@ -64,11 +64,10 @@ static int versatile_pci_parse_request_of_pci_ranges(struct device *dev,
- 						     struct list_head *res)
- {
- 	int err, mem = 1, res_valid = 0;
--	struct device_node *np = dev->of_node;
- 	resource_size_t iobase;
- 	struct resource_entry *win, *tmp;
- 
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, res, &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, res, &iobase);
- 	if (err)
- 		return err;
- 
-diff --git a/drivers/pci/host/pci-xgene.c b/drivers/pci/host/pci-xgene.c
-index 0a0d7ee6d3c9..7b3ed6e34b6c 100644
---- a/drivers/pci/host/pci-xgene.c
-+++ b/drivers/pci/host/pci-xgene.c
-@@ -632,7 +632,8 @@ static int xgene_pcie_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = of_pci_get_host_bridge_resources(dn, 0, 0xff, &res, &iobase);
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-+						    &iobase);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
-index a6af62e0256d..49410c7ba0cc 100644
---- a/drivers/pci/host/pcie-altera.c
-+++ b/drivers/pci/host/pcie-altera.c
-@@ -488,11 +488,10 @@ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
- {
- 	int err, res_valid = 0;
- 	struct device *dev = &pcie->pdev->dev;
--	struct device_node *np = dev->of_node;
- 	struct resource_entry *win;
- 
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie->resources,
--					       NULL);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff
-+						    &pcie->resources, NULL);
- 	if (err)
- 		return err;
- 
-diff --git a/drivers/pci/host/pcie-iproc-platform.c b/drivers/pci/host/pcie-iproc-platform.c
-index e764a2a2693c..99c2022813e4 100644
---- a/drivers/pci/host/pcie-iproc-platform.c
-+++ b/drivers/pci/host/pcie-iproc-platform.c
-@@ -99,8 +99,8 @@ static int iproc_pcie_pltfm_probe(struct platform_device *pdev)
- 		pcie->phy = NULL;
- 	}
- 
--	ret = of_pci_get_host_bridge_resources(np, 0, 0xff, &resources,
--					       &iobase);
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &resources,
-+						    &iobase);
- 	if (ret) {
- 		dev_err(dev, "unable to get PCI host bridge resources\n");
- 		return ret;
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 6ab28f29ac6a..6eb36c924983 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1067,12 +1067,11 @@ static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
- {
- 	int err;
- 	struct device *dev = pci->dev;
--	struct device_node *np = dev->of_node;
- 	resource_size_t iobase;
- 	struct resource_entry *win, *tmp;
- 
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources,
--					       &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    &pci->resources, &iobase);
- 	if (err)
- 		return err;
- 
-diff --git a/drivers/pci/host/pcie-rockchip.c b/drivers/pci/host/pcie-rockchip.c
-index f1e8f97ea1fb..27b97fcddf15 100644
---- a/drivers/pci/host/pcie-rockchip.c
-+++ b/drivers/pci/host/pcie-rockchip.c
-@@ -1560,8 +1560,8 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		goto err_deinit_port;
- 
--	err = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff,
--					       &res, &io_base);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    &res, &io_base);
- 	if (err)
- 		goto err_remove_irq_domain;
- 
-diff --git a/drivers/pci/host/pcie-xilinx-nwl.c b/drivers/pci/host/pcie-xilinx-nwl.c
-index 4839ae578711..64df768c795c 100644
---- a/drivers/pci/host/pcie-xilinx-nwl.c
-+++ b/drivers/pci/host/pcie-xilinx-nwl.c
-@@ -825,7 +825,6 @@ static const struct of_device_id nwl_pcie_of_match[] = {
- static int nwl_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *node = dev->of_node;
- 	struct nwl_pcie *pcie;
- 	struct pci_bus *bus;
- 	struct pci_bus *child;
-@@ -855,7 +854,8 @@ static int nwl_pcie_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = of_pci_get_host_bridge_resources(node, 0, 0xff, &res, &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-+						    &iobase);
- 	if (err) {
- 		dev_err(dev, "Getting bridge resources failed\n");
- 		return err;
-diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilinx.c
-index 0ad188effc09..88c96e5669e0 100644
---- a/drivers/pci/host/pcie-xilinx.c
-+++ b/drivers/pci/host/pcie-xilinx.c
-@@ -643,8 +643,8 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff, &res,
--					       &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-+						    &iobase);
- 	if (err) {
- 		dev_err(dev, "Getting bridge resources failed\n");
- 		return err;
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 6eab0bde2ab3..4f816c93e562 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -626,12 +626,12 @@ int pci_parse_request_of_pci_ranges(struct device *dev,
- 				    struct resource **bus_range)
- {
- 	int err, res_valid = 0;
--	struct device_node *np = dev->of_node;
- 	resource_size_t iobase;
- 	struct resource_entry *win, *tmp;
- 
- 	INIT_LIST_HEAD(resources);
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, resources, &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, resources,
-+						    &iobase);
- 	if (err)
- 		return err;
- 
+ 	struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
+ 							  &mod->arch.init;
+diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+index 719fde8dcc19..155fd91e78f4 100644
+--- a/arch/arm64/kernel/module.c
++++ b/arch/arm64/kernel/module.c
+@@ -215,7 +215,7 @@ static int reloc_insn_adrp(struct module *mod, __le32 *place, u64 val)
+ 		insn &= ~BIT(31);
+ 	} else {
+ 		/* out of range for ADR -> emit a veneer */
+-		val = module_emit_adrp_veneer(mod, place, val & ~0xfff);
++		val = module_emit_veneer_for_adrp(mod, place, val & ~0xfff);
+ 		if (!val)
+ 			return -ENOEXEC;
+ 		insn = aarch64_insn_gen_branch_imm((u64)place, val,
 -- 
-2.13.6
+2.17.0
