@@ -1,66 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933304AbeDXMuN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:50:13 -0400
-Received: from foss.arm.com ([217.140.101.70]:52714 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932995AbeDXMuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:50:06 -0400
-Date: Tue, 24 Apr 2018 07:50:03 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Will Deacon <will.deacon@arm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
-Subject: Re: [PATCH] perf tools: set kernel end address properly
-Message-Id: <20180424075003.48ab0015efc0892832343546@arm.com>
-In-Reply-To: <CAKv+Gu-u1E9gH7=p5sbiA4k_9mQ13y+056nYKnr2D9BPENNyMg@mail.gmail.com>
-References: <20180416042240.21528-1-namhyung@kernel.org>
-        <20180416092345.GA23274@krava>
-        <20180416135125.GA23802@kernel.org>
-        <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
-        <20180416165800.GD3202@kernel.org>
-        <20180416122407.0d90863b69fed80166384850@arm.com>
-        <20180416174811.1aca9106364effe435f363c8@arm.com>
-        <20180417022726.GA31947@sejong>
-        <20180418193759.b63912fe5e5b8a9023ec80a8@arm.com>
-        <20180419025424.GC13370@sejong>
-        <20180419183313.db3e3a105191a7f30b7650b2@arm.com>
-        <CAKv+Gu_sY+Q+kqO1hp6f30WSGNPY1cnW5VJYj9cuVA0hU5YDVw@mail.gmail.com>
-        <20180423164317.5a47f3dd9842d533413a1d4b@arm.com>
-        <CAKv+Gu-u1E9gH7=p5sbiA4k_9mQ13y+056nYKnr2D9BPENNyMg@mail.gmail.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933272AbeDXMtM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:49:12 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55556 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757799AbeDXMp1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 08:45:27 -0400
+X-Google-Smtp-Source: AIpwx48C+8aqCKTqdebzpERv1i7opxYIXyecUMrRj4nczc5jEUcdw34eBna9v8pJNLONR6B7pQVgdg==
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH 18/28] venus: helpers: add buffer type argument to a helper
+Date: Tue, 24 Apr 2018 15:44:26 +0300
+Message-Id: <20180424124436.26955-19-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 08:13:57 +0200
-Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+This adds one more function argument to pass buffer type to
+set_output_resolution() helper function. That is a preparation
+to support secondary decoder output.
 
-> On 23 April 2018 at 23:43, Kim Phillips <kim.phillips@arm.com> wrote:
-> > arch__normalize_symbol_name() is a place where architecture code can
-> > clean up symbol names in perf, and I thought module_emit_adrp_veneer()
-> > was a veneer itself, but it seems that's not the case, so the
-> > literal string check for it shouldn't be needed.  The test is still
-> > failing though because it doesn't show up in kallsyms...
-> 
-> This turns out to be an unintended side effect of the fact that we
-> (I?) taught kallsyms to disregard symbols ending in "_veneer"
-> 
-> So we should probably rename the function, and everything will be fine.
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+---
+ drivers/media/platform/qcom/venus/helpers.c | 5 +++--
+ drivers/media/platform/qcom/venus/helpers.h | 3 ++-
+ drivers/media/platform/qcom/venus/venc.c    | 3 ++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-ok so what should we rename module_emit_adrp_veneer to?:
-
-module_emit_adrp_veneer_
-module_emit_adrp_veneer_fn
-module_emit_adrp_veneer_nokallsyms
-
-or..?
-
-Kim
+diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+index 94664a3ce3e2..5512fbfdebb9 100644
+--- a/drivers/media/platform/qcom/venus/helpers.c
++++ b/drivers/media/platform/qcom/venus/helpers.c
+@@ -456,12 +456,13 @@ int venus_helper_set_input_resolution(struct venus_inst *inst,
+ EXPORT_SYMBOL_GPL(venus_helper_set_input_resolution);
+ 
+ int venus_helper_set_output_resolution(struct venus_inst *inst,
+-				       unsigned int width, unsigned int height)
++				       unsigned int width, unsigned int height,
++				       u32 buftype)
+ {
+ 	u32 ptype = HFI_PROPERTY_PARAM_FRAME_SIZE;
+ 	struct hfi_framesize fs;
+ 
+-	fs.buffer_type = HFI_BUFFER_OUTPUT;
++	fs.buffer_type = buftype;
+ 	fs.width = width;
+ 	fs.height = height;
+ 
+diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
+index cd306bd8978f..0de9989adcdb 100644
+--- a/drivers/media/platform/qcom/venus/helpers.h
++++ b/drivers/media/platform/qcom/venus/helpers.h
+@@ -36,7 +36,8 @@ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
+ int venus_helper_set_input_resolution(struct venus_inst *inst,
+ 				      unsigned int width, unsigned int height);
+ int venus_helper_set_output_resolution(struct venus_inst *inst,
+-				       unsigned int width, unsigned int height);
++				       unsigned int width, unsigned int height,
++				       u32 buftype);
+ int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
+ 			      unsigned int output_bufs);
+ int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index f87d891325ea..8970f14b3a82 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -795,7 +795,8 @@ static int venc_init_session(struct venus_inst *inst)
+ 		goto deinit;
+ 
+ 	ret = venus_helper_set_output_resolution(inst, inst->width,
+-						 inst->height);
++						 inst->height,
++						 HFI_BUFFER_OUTPUT);
+ 	if (ret)
+ 		goto deinit;
+ 
+-- 
+2.14.1
