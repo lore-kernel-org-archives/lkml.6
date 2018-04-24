@@ -1,63 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751616AbeDXSdS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 14:33:18 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:43116 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751104AbeDXSdQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 14:33:16 -0400
-X-Google-Smtp-Source: AIpwx4/ocZEOi6g6GmDeBBpS2C0aP6tTwaJW742YlTY9944Dc9aoPejZ/U3tfvCpVh8hnKrltgDJBp3OYVpm+hYZnjE=
+        id S1751567AbeDXSgD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 14:36:03 -0400
+Received: from imap.thunk.org ([74.207.234.97]:52818 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751295AbeDXSf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 14:35:59 -0400
+Date: Tue, 24 Apr 2018 14:35:36 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+Message-ID: <20180424183536.GF30619@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Michal Hocko <mhocko@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20180424162712.GL17484@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <122064928.616643.1524594231224@mail.yahoo.com>
-References: <20180420212641.30338-1-antonio.intilisano@gmail.com>
- <a62dded5-0fa9-1a6e-dd71-3e03cc311f1f@debian.org> <CAHp75VdSOGnN5=yxkk1m3=7rBKR1PU3NfO6QNp7wYR7Qx6mWkA@mail.gmail.com>
- <1690760144.5633578.1524494921916@mail.yahoo.com> <CAHp75VeDhyKmcJqA5paqJEPsw-gpzq7iJee+zu=ZMqUpDv0_6A@mail.gmail.com>
- <1524589355.21176.507.camel@linux.intel.com> <122064928.616643.1524594231224@mail.yahoo.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 24 Apr 2018 21:33:14 +0300
-Message-ID: <CAHp75VdMHqo=S+xgFPSv7U+3mHn7DpjXC0KSgSZB+wDZLwRV4Q@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: acer-wmi: add another KEY_POWER keycode
-To: Gianfranco Costamagna <locutusofborg@debian.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Antonio Rosario Intilisano <antonio.intilisano@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "vger@kernel.org" <vger@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Chiu <chiu@endlessm.com>, Daniel Drake <drake@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424162712.GL17484@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 9:23 PM, Gianfranco Costamagna
-<locutusofborg@debian.org> wrote:
-> Hello Andy,
->
->>Or I missed the point and it's working? Tell me what to do with it.
->>For now I pushed to my review and testing queue, thanks!
->
->
-> Antonio did patch and build a custom kernel locally (testing was successful), and submitted
-> the patch to me.
->
-> I pinged some Ubuntu folks to get it applied, and also testing with the .deb provided
-> by kernel team was good, so I presume this is a safe patch that can be applied right now
-> as-is.
-> (this is a trivial patch, Antonio told me in another channel that he can also create and post
-> failures logs before and after, as well as do some video with the key pressed).
->
-> I don't think this is needed, but if you want it for historical purposes, just ask and we will
-> do our best to provide them!
+On Tue, Apr 24, 2018 at 10:27:12AM -0600, Michal Hocko wrote:
+> fs/ext4/xattr.c
+> 
+> What to do about this? Well, there are two things. Firstly, it would be
+> really great to double check whether the GFP_NOFS is really needed. I
+> cannot judge that because I am not familiar with the code.
 
-Thanks for a sync.
+*Most* of the time it's not needed, but there are times when it is.
+We could be more smart about sending down GFP_NOFS only when it is
+needed.  If we are sending too many GFP_NOFS's allocations such that
+it's causing heartburn, we could fix this.  (xattr commands are rare
+enough that I dind't think it was worth it to modulate the GFP flags
+for this particular case, but we could make it be smarter if it would
+help.)
 
-What I asked before still stands, i.e. would be nice to have Tested-by
-tag by someone who actually tested the change.
+> If the use is really valid then we have a way to do the vmalloc
+> allocation properly. We have memalloc_nofs_{save,restore} scope api. How
+> does that work? You simply call memalloc_nofs_save when the reclaim
+> recursion critical section starts (e.g. when you take a lock which is
+> then used in the reclaim path - e.g. shrinker) and memalloc_nofs_restore
+> when the critical section ends. _All_ allocations within that scope
+> will get GFP_NOFS semantic automagically. If you are not sure about the
+> scope itself then the easiest workaround is to wrap the vmalloc itself
+> with a big fat comment that this should be revisited.
 
-Feel free to respond here with it I hope patchwork catch it up.
+This is something we could do in ext4.  It hadn't been high priority,
+because we've been rather overloaded.  As a suggestion, could you take
+documentation about how to convert to the memalloc_nofs_{save,restore}
+scope api (which I think you've written about e-mails at length
+before), and put that into a file in Documentation/core-api?
 
--- 
-With Best Regards,
-Andy Shevchenko
+The question I was trying to figure out which triggered the above
+request is how/whether to gradually convert to that scope API.  Is it
+safe to add the memalloc_nofs_{save,restore} to code and keep the
+GFP_NOFS flags until we're sure we got it all right, for all of the
+code paths, and then drop the GFP_NOFS?
+
+Thanks,
+
+						- Ted
