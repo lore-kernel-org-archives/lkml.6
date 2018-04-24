@@ -1,142 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751226AbeDXSjI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 14:39:08 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:32802 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750772AbeDXSjD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 14:39:03 -0400
-X-Google-Smtp-Source: AIpwx495y/dBnWo8wIGF1g5b34ZT9sFNN/M8Fkm/UFZR24HjuMOR3xgW0502HIA3aCllwmVZpOyOlw==
-Date: Tue, 24 Apr 2018 11:38:59 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH 1/3] PM / devfreq: Actually support providing freq_table
-Message-ID: <20180424183859.GC18510@minitux>
-References: <20180424002016.9205-1-bjorn.andersson@linaro.org>
- <CGME20180424002041epcas5p11439bec6de910c2a465c5cf3acb45a3b@epcas5p1.samsung.com>
- <20180424002016.9205-2-bjorn.andersson@linaro.org>
- <5ADE9AE6.9090601@samsung.com>
- <20180424052916.GD2052@tuxbook-pro>
- <5ADEDC1A.2000101@samsung.com>
+        id S1751940AbeDXSlw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 14:41:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59148 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751443AbeDXSlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 14:41:50 -0400
+Date: Tue, 24 Apr 2018 14:41:47 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Matthew Wilcox <willy@infradead.org>
+cc: Michal Hocko <mhocko@kernel.org>, David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Subject: Re: [PATCH v3] kvmalloc: always use vmalloc if CONFIG_DEBUG_SG
+In-Reply-To: <20180424171651.GC30577@bombadil.infradead.org>
+Message-ID: <alpine.LRH.2.02.1804241428120.8296@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180420130852.GC16083@dhcp22.suse.cz> <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180420210200.GH10788@bombadil.infradead.org> <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180421144757.GC14610@bombadil.infradead.org> <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com> <20180423151545.GU17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424034643.GA26636@bombadil.infradead.org> <alpine.LRH.2.02.1804240818530.28016@file01.intranet.prod.int.rdu2.redhat.com> <20180424171651.GC30577@bombadil.infradead.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ADEDC1A.2000101@samsung.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24 Apr 00:26 PDT 2018, Chanwoo Choi wrote:
 
-> Hi,
-> 
-> On 2018??? 04??? 24??? 14:29, Bjorn Andersson wrote:
-> > On Mon 23 Apr 19:48 PDT 2018, Chanwoo Choi wrote:
+
+On Tue, 24 Apr 2018, Matthew Wilcox wrote:
+
+> On Tue, Apr 24, 2018 at 08:29:14AM -0400, Mikulas Patocka wrote:
 > > 
-> >> Hi,
-> >>
-> >> On 2018??? 04??? 24??? 09:20, Bjorn Andersson wrote:
-> >>> The code in devfreq_add_device() handles the case where a freq_table is
-> >>> passed by the client, but then requests min and max frequences from
-> >>> the, in this case absent, opp tables.
-> >>>
-> >>> Read the min and max frequencies from the frequency table, which has
-> >>> been built from the opp table if one exists, instead of querying the
-> >>> opp table.
-> >>>
-> >>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> >>> ---
-> >>>
-> >>> An alternative approach is to clarify in the devfreq code that it's not
-> >>> possible to pass a freq_table and then in patch 3 create an opp table for the
-> >>> device in runtime; although the error handling of this becomes non-trivial.
-> >>>
-> >>> Transitioning the UFSHCD to use opp tables directly is hindered by the fact
-> >>> that the Qualcomm UFS hardware has two different clocks that needs to be
-> >>> running at different rates, so we would need a way to describe the two rates in
-> >>> the opp table. (And would force us to change the DT binding)
-> >>>
-> >>>  drivers/devfreq/devfreq.c | 22 ++++------------------
-> >>>  1 file changed, 4 insertions(+), 18 deletions(-)
-> >>>
-> >>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> >>> index fe2af6aa88fc..086ced50a13d 100644
-> >>> --- a/drivers/devfreq/devfreq.c
-> >>> +++ b/drivers/devfreq/devfreq.c
-> >>> @@ -74,30 +74,16 @@ static struct devfreq *find_device_devfreq(struct device *dev)
-> >>>  
-> >>>  static unsigned long find_available_min_freq(struct devfreq *devfreq)
-> >>>  {
-> >>> -	struct dev_pm_opp *opp;
-> >>> -	unsigned long min_freq = 0;
-> >>> -
-> >>> -	opp = dev_pm_opp_find_freq_ceil(devfreq->dev.parent, &min_freq);
-> >>> -	if (IS_ERR(opp))
-> >>> -		min_freq = 0;
-> >>> -	else
-> >>> -		dev_pm_opp_put(opp);
-> >>> +	struct devfreq_dev_profile *profile = devfreq->profile;
-> >>>  
-> >>> -	return min_freq;
-> >>> +	return profile->freq_table[0];
-> >>
-> >> It is wrong. The thermal framework support the devfreq-cooling device
-> >> which uses the dev_pm_opp_enable/disable().
-> >>
 > > 
-> > Okay, that makes sense. So rather than registering a custom freq_table I
-> > should register the min and max frequency using dev_pm_opp_add().
-> 
-> Thanks.
-> 
+> > On Mon, 23 Apr 2018, Matthew Wilcox wrote:
 > > 
-> >> In order to find the correct available min frequency,
-> >> the devfreq have to use the OPP function instead of using the first entry
-> >> of the freq_table array.
-> >>
+> > > On Mon, Apr 23, 2018 at 08:06:16PM -0400, Mikulas Patocka wrote:
+> > > > Some bugs (such as buffer overflows) are better detected
+> > > > with kmalloc code, so we must test the kmalloc path too.
+> > > 
+> > > Well now, this brings up another item for the collective TODO list --
+> > > implement redzone checks for vmalloc.  Unless this is something already
+> > > taken care of by kasan or similar.
 > > 
-> > Based on this there seems to be room for cleaning out the freq_table
-> > from devfreq, to reduce the confusion. I will review this further.
+> > The kmalloc overflow testing is also not ideal - it rounds the size up to 
+> > the next slab size and detects buffer overflows only at this boundary.
+> > 
+> > Some times ago, I made a "kmalloc guard" patch that places a magic number 
+> > immediatelly after the requested size - so that it can detect overflows at 
+> > byte boundary 
+> > ( https://www.redhat.com/archives/dm-devel/2014-September/msg00018.html )
+> > 
+> > That patch found a bug in crypto code:
+> > ( http://lkml.iu.edu/hypermail/linux/kernel/1409.1/02325.html )
 > 
-> Actually, devfreq must need to have the freq_table[] array. But, freq_table[]
-> array should be handled in the devfreq core. Now, the devfreq device drivers can
-> touch the freq_table. I think it is not good.
-> 
-> There is a reason why we have to maintain the freq_table[] as the internal variable.
-> OPP doesn't provide the OPP API which get the all registered frequencies.
-> If devfreq-cooling device disables the specific frequency by using dev_pm_oppdisable(),
-> the user of OPP interface can not get the disabled frequency list.
-> So, I maintain the freq_table even if using the OPP interface.
-> 
+> Is it still worth doing this, now we have kasan?
 
-Thanks for the clarification, I see some possibilities for improving
-this but it makes sense.
+The kmalloc guard has much lower overhead than kasan.
 
-> And, devfreq-cooling device uses the freq_table directly because
-> released MALi driver from ARM initializes the freq_table list
-> directly.
-> 
+(BTW. when I tried kasan, it oopsed with persistent memory)
 
-Forgive me if I misunderstand this, but isn't this exactly what I'm
-trying to do in patch 3? Which stopped working back in v4.15-rc1, with
-the introduction of f1d981eaecf8 ("PM / devfreq: Use the available
-min/max frequency").
-
-> I have no any objection for refactoring. Just I'm sharing the issue
-> and current status.
-> 
-
-Thanks for sharing the current status and helping me understand how to
-properly use devfreq.
-
-Regards,
-Bjorn
+Mikulas
