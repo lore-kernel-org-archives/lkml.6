@@ -1,72 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757121AbeDXLxZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 07:53:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44668 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751476AbeDXLxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 07:53:22 -0400
-Date: Tue, 24 Apr 2018 13:53:11 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 3/7] ARM: dts: sun8i: h2-plus: Sort dtb entries in
- Makefile
-Message-ID: <20180424115311.5s5p5ryyswq7xmat@flea>
-References: <20180424113424.13196-1-wens@csie.org>
- <20180424113424.13196-4-wens@csie.org>
+        id S1757158AbeDXLyV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 07:54:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37418 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751436AbeDXLyU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 07:54:20 -0400
+Subject: Re: [PATCH 01/10] vfio: ccw: Moving state change out of IRQ context
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+ <1524149293-12658-2-git-send-email-pmorel@linux.vnet.ibm.com>
+ <20180424065442.GV12194@bjsdjshi@linux.vnet.ibm.com>
+ <ac4b7441-2d17-922b-695e-98c01d87cd42@linux.vnet.ibm.com>
+ <20180424115929.5b5e1ff0.cohuck@redhat.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Tue, 24 Apr 2018 13:49:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="h55geail6mxujuov"
-Content-Disposition: inline
-In-Reply-To: <20180424113424.13196-4-wens@csie.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180424115929.5b5e1ff0.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18042411-0020-0000-0000-000004154394
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042411-0021-0000-0000-000042A9A81A
+Message-Id: <f6253047-e364-c240-c4c5-cf186ca75a7d@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804240117
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 24/04/2018 11:59, Cornelia Huck wrote:
+> On Tue, 24 Apr 2018 10:40:56 +0200
+> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+>
+>> On 24/04/2018 08:54, Dong Jia Shi wrote:
+>>> * Pierre Morel <pmorel@linux.vnet.ibm.com> [2018-04-19 16:48:04 +0200]:
+>>>
+>>> [...]
+>>>   
+>>>> @@ -94,9 +83,15 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
+>>>>    static void vfio_ccw_sch_irq(struct subchannel *sch)
+>>>>    {
+>>>>    	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
+>>>> +	struct irb *irb = this_cpu_ptr(&cio_irb);
+>>>>
+>>>>    	inc_irq_stat(IRQIO_CIO);
+>>>> -	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_INTERRUPT);
+>>>> +	memcpy(&private->irb, irb, sizeof(*irb));
+>>>> +
+>>>> +	WARN_ON(work_pending(&private->io_work));
+>>> Hmm, why do we need this?
+>> The current design insure that we have not two concurrent SSCH requests.
+>> How ever I want here to track spurious interrupt.
+>> If we implement cancel, halt or clear requests, we also may trigger (AFAIU)
+>> a second interrupts depending on races between instructions, controller
+>> and device.
+> You won't get an interrupt for a successful cancel. If you do a
+> halt/clear, you will make the subchannel halt/clear pending in addition
+> to start pending and you'll only get one interrupt (if the I/O has
+> progressed far enough, you won't be able to issue a hsch). The
+> interesting case is:
+> - guest does a ssch, we do a ssch on the device
+> - the guest does a csch before it got the interrupt for the ssch
+> - before we do the csch on the device, the subchannel is already status
+>    pending with completion of the ssch
+> - after we issue the csch, we get a second interrupt (for the csch)
 
---h55geail6mxujuov
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We agree.
 
-On Tue, Apr 24, 2018 at 07:34:20PM +0800, Chen-Yu Tsai wrote:
-> The dtb entry for the Banana Pi M2 Zero in the device tree makefile
-> somehow ended up in between two Orange Pi boards.
->=20
-> Move it so the list is properly sorted.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>
+> I think we should present two interrupts to the guest in that case.
+> Races between issuing ssch/hsch/csch and the subchannel becoming status
+> pending happen on real hardware as well, we're just more likely to see
+> them with the vfio layer in between.
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Yes, agreed too.
 
-Maxime
+>
+> (I'm currently trying to recall what we're doing with unsolicited
+> interrupts. These are fun wrt deferred cc 1; I'm not sure if there are
+> cases where we want to present a deferred cc to the guest.)
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+This patch does not change the current functionalities, only 
+consolidates the FSM.
+The current way to handle unsolicited interrupts is to report them to 
+the guest
+along with the deferred code AFAIU.
 
---h55geail6mxujuov
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> Also, doing a second ssch before we got final state for the first one
+> is perfectly valid. Linux just does not do it, so I'm not sure if we
+> should invest too much time there.
 
------BEGIN PGP SIGNATURE-----
+I agree too, it would just make things unnecessary complicated.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrfGqYACgkQ0rTAlCFN
-r3Q1jA/+J4xTm5B8V5zBadHxzetyfHtaQhX1C5aF6TxRUvYlxsovcCd51nMay0B/
-CKbwjAob9oL2NpN/9wQlrPID9pQKOeNS/Y3X4YANcDk6d0uQNzLydZ8Dq7aDHwaK
-WiHXgUk/yqzvI9q0JGS0YjpAPXbAby/jYj1thhsGs0LCLIeVuoPl+dgLSSIRw/Kp
-x6w7SfRYD51vyGmPHjeRYTpg2c3coqDGwbYXhYMmkp0mMglTmY55QbROnHoN9Ux1
-mqAVaXZW2q09ftC1OIbvMx/LiNUYzzlLJMw4Unr+S+gJ3KxSOrvUGLQUR9NAfN7b
-1qv6trROOE/fzVq5k8qvcRoKv9A5/L3mmoZ8MgP25t4XgLyopP553uvnHzbU9+O2
-TCrUxoeaUvkfPd/BDIqOJz03PrlpNkxl4kT0PHaAeHV1Pen3nnBc3356zUCctypL
-Cg5cJusE4wT//ehSPdoFicvOUx2UeZ284LKKlSt6Slm52raOVA5ns/J+nEJuml8i
-fr7SykL7kkqpGQ4bN+fX658wxMW3yQb+/Tp7xsDZ/UJf+G2hCjS6ct4PbfB3Lvfx
-995A1Awpgq4/zAFDX/z49fPK2ClbMrI2kx+eIrHOFIt5oEqwWAm+Fa7wqH50br37
-4bS+j6sB+S8Ff9+9Pv6S/y5vocW2K55twJwvbPJCobfSzs721D0=
-=6XcU
------END PGP SIGNATURE-----
 
---h55geail6mxujuov--
+-- 
+
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
