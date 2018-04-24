@@ -1,142 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753278AbeDXRsM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:48:12 -0400
-Received: from mga14.intel.com ([192.55.52.115]:49633 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752074AbeDXRsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:48:08 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,324,1520924400";
-   d="scan'208";a="222985279"
-Date: Tue, 24 Apr 2018 20:48:02 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
-        "'linux-security-module@vger.kernel.org'"
-        <linux-security-module@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Message-ID: <20180424174802.GA24613@linux.intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
- <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
- <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
- <20180424160328.GA5119@linux.intel.com>
+        id S1753313AbeDXRsR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:48:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37312 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752105AbeDXRsJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 13:48:09 -0400
+Date: Tue, 24 Apr 2018 14:47:55 -0300
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+Message-ID: <20180424144755.1c2e2478@vento.lan>
+In-Reply-To: <20180424103609.GD4064@hirez.programming.kicks-ass.net>
+References: <cover.1524499368.git.gustavo@embeddedor.com>
+        <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+        <20180423152455.363d285c@vento.lan>
+        <20180424093500.xvpcm3ibcu7adke2@mwanda>
+        <20180424103609.GD4064@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180424160328.GA5119@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 07:03:28PM +0300, Jarkko Sakkinen wrote:
-> On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
-> > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
-> > > > > >
-> > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > > > > > > In crb_map_io() function, __crb_request_locality() is called
-> > > > > > > prior to crb_cmd_ready(), but if one of the consecutive function
-> > > > > > > fails the flow bails out instead of trying to relinquish locality.
-> > > > > > > This patch adds goto jump to __crb_relinquish_locality() on the
-> > > > > > > error path.
-> > > > > > >
-> > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
-> > > > > > > after granting
-> > > > > > > locality)
-> > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > > > > ---
-> > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
-> > > > > > > b/drivers/char/tpm/tpm_crb.c index 7f78482cd157..34fbc6cb097b
-> > > > > > > 100644
-> > > > > > > --- a/drivers/char/tpm/tpm_crb.c
-> > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device
-> > > > > > > *device, struct crb_priv *priv,
-> > > > > > >
-> > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
-> > > > > > > >control_address,
-> > > > > > >  				   sizeof(struct crb_regs_tail));
-> > > > > > > -	if (IS_ERR(priv->regs_t))
-> > > > > > > -		return PTR_ERR(priv->regs_t);
-> > > > > > > +	if (IS_ERR(priv->regs_t)) {
-> > > > > > > +		ret = PTR_ERR(priv->regs_t);
-> > > > > > > +		goto out_relinquish_locality;
-> > > > > > > +	}
-> > > > > > >
-> > > > > > >  	/*
-> > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7
-> > > > > > > +522,7
-> > > > > >
-> > > > > > @@
-> > > > > > > static int crb_map_io(struct acpi_device *device, struct
-> > > > > > > crb_priv *priv,
-> > > > > > >  	 */
-> > > > > > >  	ret = crb_cmd_ready(dev, priv);
-> > > > > > >  	if (ret)
-> > > > > > > -		return ret;
-> > > > > > > +		goto out_relinquish_locality;
-> > > > > > >
-> > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
-> > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device
-> > > > > > > *device, struct crb_priv *priv,
-> > > > > > >
-> > > > > > >  	crb_go_idle(dev, priv);
-> > > > > > >
-> > > > > > > +out_relinquish_locality:
-> > > > > > > +
-> > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
-> > > > > > >
-> > > > > > >  	return ret;
-> > > > > >
-> > > > > > Thanks, please just call it before returning in the error path.
-> > > > >
-> > > > > Can you please elaborate why, isn't the centralized exiting of
-> > > > > functions preferred kernel coding style?
-> > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.html#cent
-> > > > > ra
-> > > > > lized-ex
-> > > > > iting-of-functions
-> > > >
-> > > > You exit only from one location (not multiple) and not from a nested
-> > > > context. Here you just add more complexity by doing this.
-> > > 
-> > > Where is the complexity ? I see it as a standard way of undoing on exit.
-> > > Tomas
+Em Tue, 24 Apr 2018 12:36:09 +0200
+Peter Zijlstra <peterz@infradead.org> escreveu:
+
+> On Tue, Apr 24, 2018 at 12:35:00PM +0300, Dan Carpenter wrote:
+> > On Mon, Apr 23, 2018 at 03:24:55PM -0300, Mauro Carvalho Chehab wrote:  
+> > > Em Mon, 23 Apr 2018 12:38:03 -0500
+> > > "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:  
+> 
+> > > > @@ -875,6 +876,7 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
+> > > >  	if (f->index >= ARRAY_SIZE(format))
+> > > >  		return -EINVAL;
+> > > >  
+> > > > +	f->index = array_index_nospec(f->index, ARRAY_SIZE(format));  
+> > >
+> > > Please enlighten me: how do you think this could be exploited?  
+> 
+> TL;DR: read the papers [1] & [2]
+> 
+> I suspect you didn't get the gist of Spectre V1 [1], let me explain:
+> 
+> Suppose userspace provides f->index > ARRAY_SIZE(format), and we predict
+> the branch to -EINVAL to not be taken.
+> 
+> Then the CPU _WILL_ load (out of bounds) format[f->index] into
+> f->pixelformat and continue onwards to use this bogus value, all the way
+> until it figures out the branch was mis-predicted.
+> 
+> Once it figures out the mispredict, it will throw away the state and
+> start over at the condition site. So far, so basic.
+> 
+> The thing is, is will not (and cannot) throw away all state. Suppose our
+> speculation continues into v4l_fill_fmtdesc() and that switch there is
+> compiled as another array lookup, it will then feed our f->pixelformat
+> (which contains random kernel memory) into that array to find the
+> requested descr pointer.
+> 
+> Now, imagine userspace having flushed cache on the descr pointer array,
+> having trained the branch predictor to mis-predict the branch (see
+> branchscope paper [2]) and doing that out-of-bounds ioctl().
+> 
+> It can then speculative do the out-of-bounds array access, followed by
+> the desc array load, then figure out it was wrong and redo.
+> 
+> Then usespace probes which part of the descr[] array is now in cache and
+> from that it can infer the initial out-of-bound value.
+> 
+> So while format[] is static and bound, it can read random kernel memory
+> up to format+4g, including your crypto keys.
+> 
+> As far as V1 goes, this is actually a fairly solid exploit candidate. No
+> false positive about it.
+> 
+> Now kernel policy is to kill any and all speculation on user controlled
+> array indexing such that we don't have to go look for subsequent side
+> channels (the above cache side channel is the one described in the
+> Spectre paper and by far the easiest, but there are other possible side
+> channels) and we simply don't want to worry about it.
+> 
+> So even from that pov, the proposed patch is good.
+> 
+> 
+> [1] https://spectreattack.com/spectre.pdf
+> [2] www.cs.ucr.edu/~nael/pubs/asplos18.pdf
+
+> On Tue, Apr 24, 2018 at 12:36:09PM +0200, Peter Zijlstra wrote:
 > > 
-> > Jarkko, can you please respond.
-> > Thanks
-> > Tomas
+> > Then usespace probes which part of the descr[] array is now in cache and
+> > from that it can infer the initial out-of-bound value.  
 > 
-> I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
-> 
-> My earlier comment was incorrect as there are two locations to exit (not
-> sure how I managed to overlook the patch that way).
-> 
-> Thus, I have only two very  minor requets:
-> 
-> * Remove the extra newline (the last line addition in the patch).
-> * Use just label named out as we have only one exception handler.
-> 
-> I'll move on to testing, and if it it passes, I can do those updates
-> myself.
-> 
-> /Jarkko
+> Just had a better look at v4l_fill_fmtdesc() and actually read the
+> comment. The code cannot be compiled as a array because it is big and
+> sparse. But the log(n) condition tree is a prime candidate for the
+> branchscope side-channel, which would be able to reconstruct a
+> significant number of bits of the original value. A denser tree gives
+> more bits etc.
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Peter,
 
-/Jarkko
+Thanks for a comprehensive explanation about that. It now makes more
+sense to me.
+
+Yeah, better to apply a fix to avoid the issue with VIDIOC_ENUM_FMT. 
+
+Btw, on almost all media drivers, the implementation for enumerating
+the supported formats are the same (and we have a few other VIDOC_ENUM_foo
+ioctls that usually do similar stuff): the V4L2 core calls a driver,
+with looks into an array, returning the results to the core.
+
+So, a fix like that should likely go to almost all media drivers
+(there are a lot of them!), and, for every new one, to take care
+to avoid introducing it again during patch review process.
+
+So, I'm wondering if are there any way to mitigate it inside the 
+core itself, instead of doing it on every driver, e. g. changing
+v4l_enum_fmt() implementation at v4l2-ioctl.
+
+Ok, a "poor man" approach would be to pass the array directly to
+the core and let the implementation there to implement the array
+fetch logic, calling array_index_nospec() there, but I wonder if
+are there any other way that won't require too much code churn.
+
+
+Thanks,
+Mauro
