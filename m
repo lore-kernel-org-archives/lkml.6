@@ -1,116 +1,102 @@
-Return-Path: <jae.hyun.yoo@linux.intel.com>
-X-Google-Smtp-Source: AIpwx4+isc2KjYgaiqERwx+VwCOz+vZODIvifvbhS/PZA6h1IO45OdIBqkSXooZ69gGNe2veycEf
-ARC-Seal: i=1; a=rsa-sha256; t=1523385174; cv=none;
+Return-Path: <nsekhar@ti.com>
+X-Google-Smtp-Source: AIpwx48T2PMi30z/IuOBIbFp+ZxgO2404vrMSGiQ22URack3UOGWPzFmQOuyc7KaYuoP/F2Z4N/i
+ARC-Seal: i=1; a=rsa-sha256; t=1524557489; cv=none;
         d=google.com; s=arc-20160816;
-        b=UyriUDQbcOAvIEIF4CugaTpo3hppl424RmusZTTpUFafkpI5SW7PqH5ClwYsd7zjlY
-         TfDYGVasc+0pznxILE8JgTOKzdqENOSCW0s2Myh88V2s7uXZwY1y9qZZZdSfIZAQ77vq
-         sApNwTiYI4806cLq2vNs+S3QG4nZK0LTrM7keZxPurhJr/OITPzwRG+fHdWAjfzof1xY
-         UvkP6rOr5fGs/YnVnYpXm5zNNtjirVCbGl7Lg6AR1oUXrpBn7s2pOvUPoyuIqlKGiksE
-         7JGP7ciH8FXn8mY2JARbeOt7F/nT3WacJ3aD+JXbb90WaJALbDRtkI7+JNnKWRMBD5P1
-         WxOg==
+        b=D0nasAB2Pytui9I94WWPlAyEWB+/m9Euf3LwRFUEiCChLrFxllKB0Xk5pAqxObMK/U
+         kDTZra8n3lReIYfSIH9tOzYjJqmrPDYuOn46A4Qx8bAHMMCV6QBdjMIwAEeyouSI/2FB
+         mca5qAKXYqf81Sm5MOzVwt9577WMIDliLSn9652Hx+TARGXwz+ai6bEFtreth3G/bhQv
+         AI4nmwQmpMTtjRDg4v8CLDfMn1AuM+slKmDZxor/o40xkzjhYUY7kZCaLIQmkmUFVCJv
+         d2dSmKK5+3XlsYOLA/VgUIgrKhg2eijHlMBoydUYRWHPVJr9YjOAtkIDp/gSyySViNnA
+         C5+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=ymKj8yWRbmQaTwbaA8gUT8jX8HL4pnQaRyt2whEPpmY=;
-        b=b0AopcQj6I0HzP2nf5MSNVT8mPGfoe58f/rNaWZGVa7UjswvwaW2aYbGNr0jSq2jot
-         4BzCnJ4tUcinr7fiJzKXQ2DlPZqUS4ljrYmQthpkzA4iGbmMhmv6HoZiDPcObz6kgWR1
-         ydmfbIggJdJA0/qTxyousQIaf5shkBsKq6/SX2CfwDwKtbsCn/+5NtD7nHc0QgWVZ355
-         hI0QbVuv1IsBPU4SIGnjfkhGIyoQwVTvCmHIWQrfY7Cggd4SGPLLseuhdzdeCiiIn9W7
-         sXtlcK30xsf5p1iCUDoJHu3uqUzlP8nqrnc4RS6/npBMX/htsw4zxMc2LWS+DIZtpEAY
-         gFvA==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=ql0EktlZ189vON4SZXrPDL+/FOHcBQ07ERnkYL/5uLM=;
+        b=QHQM8sgUztu7yJCgxMzW5lh0SmqlThzFvUJnWVSvHojUMriCaRFX/440xnEq+wDs1R
+         8R92ZjWtNDZQyyNGfSBuOVfKNYAGet3Xdfil5RqD7p5u9E1JdEP1zH3A7eUtE5DBiHMq
+         kAndtcLBQveg0esJRW6o9t+spNNBQTsYBsF3ZZkUl6KJLeQJF7uAuKooBY5Ae8WYSq2M
+         /IKeP8j5qxcTJnkTs/eFmGDhyQqN4lvRw0fbkfykrZvqWQCiqRFBxQ3G7BTM8Jin+5yS
+         JV6P4TD2gwKGCiAyrySardNTtNi5og/1n0brdVXn4PauJwNQkJfGobYLuA+2VY7gPfO2
+         JLPQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=mxVPRVG0;
+       spf=pass (google.com: domain of nsekhar@ti.com designates 198.47.19.17 as permitted sender) smtp.mailfrom=nsekhar@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,433,1517904000";
-   d="scan'208";a="219323726"
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To: Alan Cox <alan@linux.intel.com>,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Fengguang Wu <fengguang.wu@intel.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Haiyue Wang <haiyue.wang@linux.intel.com>,
-	James Feist <james.feist@linux.intel.com>,
-	Jason M Biils <jason.m.bills@linux.intel.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Julia Cartwright <juliac@eso.teric.us>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Milton Miller II <miltonm@us.ibm.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Stef van Os <stef.van.os@prodrive-technologies.com>,
-	Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>,
-	Vernon Mauery <vernon.mauery@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	openbmc@lists.ozlabs.org,
-	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH v3 02/10] Documentations: ioctl: Add ioctl numbers for PECI subsystem
-Date: Tue, 10 Apr 2018 11:32:04 -0700
-Message-Id: <20180410183212.16787-3-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180410183212.16787-1-jae.hyun.yoo@linux.intel.com>
-References: <20180410183212.16787-1-jae.hyun.yoo@linux.intel.com>
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=mxVPRVG0;
+       spf=pass (google.com: domain of nsekhar@ti.com designates 198.47.19.17 as permitted sender) smtp.mailfrom=nsekhar@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+Subject: Re: [RFC work-in-progress 5/7] !WIP ARM: davinci: convert da850 to
+ using the davinci clocksource driver
+To: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>
+CC: Kevin Hilman <khilman@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd --cc=Arnd Bergmann
+	<"sboyd@kernel.orgarnd"@arndb.de>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski
+	<bgolaszewski@baylibre.com>
+References: <20180423183814.20615-1-brgl@bgdev.pl>
+ <20180423183814.20615-6-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <bed00d18-a4c1-5e8f-a15c-f2482e5ecb9a@ti.com>
+Date: Tue, 24 Apr 2018 13:40:33 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180423183814.20615-6-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597385133145211961?=
-X-GMAIL-MSGID: =?utf-8?q?1597385133145211961?=
+X-GMAIL-THRID: =?utf-8?q?1598563244496982650?=
+X-GMAIL-MSGID: =?utf-8?q?1598614393378588343?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit Updates ioctl-number.txt to reflect ioctl numbers being
-used by the PECI subsystem.
+On Tuesday 24 April 2018 12:08 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  arch/arm/mach-davinci/da850.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+> index 3f27d46ca43f..712964383bc2 100644
+> --- a/arch/arm/mach-davinci/da850.c
+> +++ b/arch/arm/mach-davinci/da850.c
+> @@ -757,13 +757,28 @@ void __init da850_init(void)
+>  	WARN(!da8xx_syscfg1_base, "Unable to map syscfg1 module");
+>  }
+>  
+> +static struct platform_device da850_timer_device = {
+> +	.name			= "timer-davinci",
+> +	.id			= -1,
+> +};
+> +
+>  void __init da850_init_time(void)
+>  {
+>  	struct clk *clk;
+> +	int ret;
+>  
+>  	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
+>  
+>  	davinci_timer_init(clk);
+> +
+> +	ret = clk_register_clkdev(clk, NULL, "timer-davinci");
+> +	if (ret) {
+> +		pr_err("%s: error registering ref_clk: %d", __func__, ret);
+> +		return;
+> +	}
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc: Alan Cox <alan@linux.intel.com>
-Cc: Andrew Jeffery <andrew@aj.id.au>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Haiyue Wang <haiyue.wang@linux.intel.com>
-Cc: James Feist <james.feist@linux.intel.com>
-Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Julia Cartwright <juliac@eso.teric.us>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Milton Miller II <miltonm@us.ibm.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stef van Os <stef.van.os@prodrive-technologies.com>
-Cc: Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>
-Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
----
- Documentation/ioctl/ioctl-number.txt | 2 ++
- 1 file changed, 2 insertions(+)
+This part had to be added because you don't have clocks converted to
+early platform devices in your branch, right?
 
-diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-index 84bb74dcae12..4bc3a65d7204 100644
---- a/Documentation/ioctl/ioctl-number.txt
-+++ b/Documentation/ioctl/ioctl-number.txt
-@@ -323,6 +323,8 @@ Code  Seq#(hex)	Include File		Comments
- 0xB3	00	linux/mmc/ioctl.h
- 0xB4	00-0F	linux/gpio.h		<mailto:linux-gpio@vger.kernel.org>
- 0xB5	00-0F	uapi/linux/rpmsg.h	<mailto:linux-remoteproc@vger.kernel.org>
-+0xB6	00-0F	uapi/linux/peci-ioctl.h	PECI subsystem
-+					<mailto:jae.hyun.yoo@linux.intel.com>
- 0xC0	00-0F	linux/usb/iowarrior.h
- 0xCA	00-0F	uapi/misc/cxl.h
- 0xCA	10-2F	uapi/misc/ocxl.h
--- 
-2.16.2
+Thanks,
+Sekhar
