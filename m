@@ -1,110 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756436AbeDXKvh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 06:51:37 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:34146 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756190AbeDXKve (ORCPT
+        id S1756761AbeDXK6Y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 06:58:24 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:48926 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756013AbeDXK6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 06:51:34 -0400
-X-Google-Smtp-Source: AIpwx4+EuHM/zWxywW6NYBrgwCBmMaAPzstuQKzPcJcVEvb4Fw8iFrRX9HMs8U7fjLfB9D631l0ZvPZwmZge1SZwGnk=
+        Tue, 24 Apr 2018 06:58:22 -0400
+Subject: Re: [RFC 06/10] misc: pci_endpoint_test: Add MSI-X support
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+ <8b88f8c2b766f36c71659deb0fce635154b2b39f.1523379766.git.gustavo.pimentel@synopsys.com>
+ <b25dcfb1-e770-e302-d9aa-7c35f6c58fa5@ti.com>
+ <c6d1d492-38a0-6a03-7e61-b8b50226734b@synopsys.com>
+ <a982ca92-d34c-12ea-30bf-9a9b1661d50d@ti.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <2bd77bf2-1d64-6043-422a-6a96c1a3d3a4@synopsys.com>
+Date: Tue, 24 Apr 2018 11:57:09 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424103737.GA19011@piout.net>
-References: <5add30d1.1c69fb81.b868a.84f1SMTPIN_ADDED_MISSING@mx.google.com>
- <CAMuHMdULPOWQPo1G1s5m52rNLzhmPFzfwxsZH0iR_OwVc8VRKw@mail.gmail.com> <20180424103737.GA19011@piout.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Apr 2018 12:51:32 +0200
-X-Google-Sender-Auth: DUvW8icZ0HnDbtaxjtk8nSUVvDE
-Message-ID: <CAMuHMdVh8Pg9r9OoDzh9fWmkcuS1NDQUBOLzRQkiKXD+V+XbPA@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Fix off-by-one calendar month
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Finn Thain <fthain@telegraphics.com.au>, Sam Creasey <sammy@sammy.net>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <a982ca92-d34c-12ea-30bf-9a9b1661d50d@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+Hi Kishon,
 
-On Tue, Apr 24, 2018 at 12:37 PM, Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> On 24/04/2018 12:06:30+0200, Geert Uytterhoeven wrote:
->> On Mon, Apr 23, 2018 at 3:02 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
->> > This fixes a bug in read_persistent_clock() which causes the system
->> > clock to lag the Real Time Clock by one month. The problem was noticed
->> > on a Mac, but theoretically it must also affect Atari, BVME6000 and Q40.
->> >
->> > The tm_mon value in the struct rtc_time passed to mach_hwclk() is
->> > zero-based, and atari_mste_hwclk(), atari_tt_hwclk(), bvme6000_hwclk(),
->> > mac_hwclk() and q40_hwclk() all make this adjustment. Unfortunately,
->> > dn_dummy_hwclk(), mvme147_hwclk(), mvme16x_hwclk(), sun3_hwclk() and
->> > sun3x_hwclk() fail to decrement tm_mon.
->> >
->> > Bring these platforms into line and fix read_persistent_clock() so it
->> > works correctly on all m68k platforms.
->> >
->> > The datasheets for the RTC devices found on the affected platforms
->> > all confirm that the year is stored as a value in the range 0-99 and
->> > the month is stored as a value in the range 1-12. Please refer to the
->> > datasheets for MC146818 (Apollo), DS1643 (MVME), ICM7170 (Sun 3)
->> > and M48T02 (Sun 3x).
->> >
->> > Reported-by: Stan Johnson <userm57@yahoo.com>
->> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+On 24/04/2018 08:19, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Tuesday 17 April 2018 11:08 PM, Gustavo Pimentel wrote:
+>> Hi Kishon,
 >>
->> Thanks, applied and queued for v4.18.
+>> On 17/04/2018 11:33, Kishon Vijay Abraham I wrote:
+>>> Hi,
+>>>
+>>> On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
+>>>> Adds the MSI-X support and updates driver documentation accordingly.
+>>>>
+>>>> Changes the driver parameter in order to allow the interruption type
+>>>> selection.
+>>>>
+>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>> ---
+>>>>  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
+>>>>  drivers/misc/pci_endpoint_test.c                 | 102 +++++++++++++++++------
+>>>>  2 files changed, 79 insertions(+), 26 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+>>>> index 4ebc359..fdfa0f6 100644
+>>>> --- a/Documentation/misc-devices/pci-endpoint-test.txt
+>>>> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
+>>>> @@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
+>>>>  	*) verifying addresses programmed in BAR
+>>>>  	*) raise legacy IRQ
+>>>>  	*) raise MSI IRQ
+>>>> +	*) raise MSI-X IRQ
+>>>>  	*) read data
+>>>>  	*) write data
+>>>>  	*) copy data
+>>>> @@ -25,6 +26,8 @@ ioctl
+>>>>   PCITEST_LEGACY_IRQ: Tests legacy IRQ
+>>>>   PCITEST_MSI: Tests message signalled interrupts. The MSI number
+>>>>  	      to be tested should be passed as argument.
+>>>> + PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
+>>>> +	      to be tested should be passed as argument.
+>>>>   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+>>>>  		as argument.
+>>>>   PCITEST_READ: Perform read tests. The size of the buffer should be passed
+>>>> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+>>>> index 37db0fc..a7d9354 100644
+>>>> --- a/drivers/misc/pci_endpoint_test.c
+>>>> +++ b/drivers/misc/pci_endpoint_test.c
+>>>> @@ -42,11 +42,16 @@
+>>>>  #define PCI_ENDPOINT_TEST_COMMAND	0x4
+>>>>  #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+>>>>  #define COMMAND_RAISE_MSI_IRQ		BIT(1)
+>>>> -#define MSI_NUMBER_SHIFT		2
+>>>> -/* 6 bits for MSI number */
+>>>> -#define COMMAND_READ                    BIT(8)
+>>>> -#define COMMAND_WRITE                   BIT(9)
+>>>> -#define COMMAND_COPY                    BIT(10)
+>>>> +#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+>>>> +#define IRQ_TYPE_SHIFT			3
+>>>> +#define IRQ_TYPE_LEGACY			0
+>>>> +#define IRQ_TYPE_MSI			1
+>>>> +#define IRQ_TYPE_MSIX			2
+>>>> +#define MSI_NUMBER_SHIFT		5
+>>>
+>>> Now that you are anyways fixing this, add a new register entry for MSI numbers.
+>>> Let's not keep COMMAND and MSI's together.
 >>
->> <snip>
+>> What you suggest?
+> 
+> #define PCI_ENDPOINT_TEST_COMMAND	0x4
+> #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+> #define COMMAND_RAISE_MSI_IRQ		BIT(1)
+> #define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+> #define COMMAND_READ                    BIT(3)
+> #define COMMAND_WRITE                   BIT(4)
+> #define COMMAND_COPY                    BIT(5)
+> 
+> #define PCI_ENDPOINT_TEST_STATUS	0x8
+> #define STATUS_READ_SUCCESS             BIT(0)
+> #define STATUS_READ_FAIL                BIT(1)
+> #define STATUS_WRITE_SUCCESS            BIT(2)
+> #define STATUS_WRITE_FAIL               BIT(3)
+> #define STATUS_COPY_SUCCESS             BIT(4)
+> #define STATUS_COPY_FAIL                BIT(5)
+> #define STATUS_IRQ_RAISED               BIT(6)
+> #define STATUS_SRC_ADDR_INVALID         BIT(7)
+> #define STATUS_DST_ADDR_INVALID         BIT(8)
+> 
+> #define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0xc
+> #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
+> 
+> #define PCI_ENDPOINT_TEST_LOWER_DST_ADDR	0x14
+> #define PCI_ENDPOINT_TEST_UPPER_DST_ADDR	0x18
+> 
+> #define PCI_ENDPOINT_TEST_SIZE		0x1c
+> #define PCI_ENDPOINT_TEST_CHECKSUM	0x20
+> 
+> #define PCI_ENDPOINT_TEST_MSI_NUMBER	0x24
+
+Ok. I will do it.
+
+> 
+> We should try not to modify either the existing register offsets or the bit
+> fields within these registers in the future as EP and RC will be running on
+> different systems and it is possible one of them might not have the updated
+> kernel.
+
+I totally agree.
+
 >>
->> > --- a/arch/m68k/kernel/time.c
->> > +++ b/arch/m68k/kernel/time.c
->> > @@ -74,17 +74,17 @@ static irqreturn_t timer_interrupt(int irq, void *dummy)
->> >  void read_persistent_clock(struct timespec *ts)
->> >  {
->> >         struct rtc_time time;
->> > +
->> >         ts->tv_sec = 0;
->> >         ts->tv_nsec = 0;
->> >
->> > -       if (mach_hwclk) {
->> > -               mach_hwclk(0, &time);
->> > +       if (!mach_hwclk)
->> > +               return;
->> > +
->> > +       mach_hwclk(0, &time);
->> >
->> > -               if ((time.tm_year += 1900) < 1970)
->> > -                       time.tm_year += 100;
->
-> Note that this change may break existing users. I'm perfectly fine with
-> it as doing this is generally wrong anyway and this is something I'd
-> like to see eliminated.
-
-The year handling is moved into the various mach_hwclk() implementations
-in the same patch (in the "<snip>" part).
-
->
->> > -               ts->tv_sec = mktime(time.tm_year, time.tm_mon, time.tm_mday,
->> > -                                     time.tm_hour, time.tm_min, time.tm_sec);
->> > -       }
->> > +       ts->tv_sec = mktime(time.tm_year + 1900, time.tm_mon + 1, time.tm_mday,
->> > +                           time.tm_hour, time.tm_min, time.tm_sec);
+>>>> +/* 12 bits for MSI number */
+>>>> +#define COMMAND_READ                    BIT(17)
+>>>> +#define COMMAND_WRITE                   BIT(18)
+>>>> +#define COMMAND_COPY                    BIT(19)
+>>>
+>>> This change should be done along with the pci-epf-test in a single patch.
 >>
->> That might explain why my Amiga spends so much time on file system checks
->> since I wrote the rp5c01 RTC driver...
+>> To be clear, you're saying is this patch should be just be squashed into the
+>> patch number 8 [1], because there is a lot of dependencies namely the defines,
+>> that is used on the alter functions.
+>>
+>> [1] -> https://urldefense.proofpoint.com/v2/url?u=https-3A__patchwork.ozlabs.org_patch_896841_&d=DwIC-g&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=8urVwHCybXa1XMxsEbwHZAzzaEI_HJGXqmWgXpXb9TY&s=MRVr2YPY2Bk_WNFOxBfU4FGrFReTKdPhfzNDLiVxDbs&e=
+> 
+> yeah. We have to make sure git bisect doesn't break functionality.
 
-Upon closer look, it's not, as Amiga no longer provides mach_hwclk().
-So it must be due to fsck running before the rtc module is loaded?
+Ok, it'll be squashed.
 
-Gr{oetje,eeting}s,
+>>
+>>>>  
+>>>>  #define PCI_ENDPOINT_TEST_STATUS	0x8
+>>>>  #define STATUS_READ_SUCCESS             BIT(0)
+>>>> @@ -73,9 +78,9 @@ static DEFINE_IDA(pci_endpoint_test_ida);
+>>>>  #define to_endpoint_test(priv) container_of((priv), struct pci_endpoint_test, \
+>>>>  					    miscdev)
+>>>>  
+>>>> -static bool no_msi;
+>>>> -module_param(no_msi, bool, 0444);
+>>>> -MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
+>>>
+>>> Let's not remove this just to make sure existing users doesn't get affected.
+>>
+>> Hum, by making an internal conversion? Like this
+>> no_msi = false <=> irq_type = 1
+>> no_msi = true <=> irq_type = 0
+> 
+Disregard previous comment, it doesn't make sense. I don't know where my head was.
 
-                        Geert
+It will be like this on probe:
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+if (no_msi)
+	irq_type = IRQ_TYPE_LEGACY;
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+However since we are breaking the compatibility on terms of MSI/MSI-X
+bits/registers (discussion on the top), it makes sense to keep the compatibility
+on this parameter?
+
+> yeah..
+> 
+> Thanks
+> Kishon
+> 
+
+Regards,
+Gustavo
