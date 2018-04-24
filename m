@@ -1,63 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932581AbeDXKRp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 06:17:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37440 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753223AbeDXKRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 06:17:41 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andy Lutomirski <luto@kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH] ftrace/x86: Fix arch_syscall_match_sym_name for x86_64
-Date: Tue, 24 Apr 2018 12:17:38 +0200
-Message-Id: <20180424101738.30015-1-jolsa@kernel.org>
+        id S932598AbeDXKUM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 06:20:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56848 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753223AbeDXKUI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 06:20:08 -0400
+Date: Tue, 24 Apr 2018 11:19:53 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
+        tiwai@suse.com, dannenberg@ti.com, afd@ti.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ASoC: tas6424: Allow disabling auto diagnostics for
+ faster power-on
+Message-ID: <20180424101953.GA22073@sirena.org.uk>
+References: <1524218684-19752-1-git-send-email-jjhiblot@ti.com>
+ <1524218684-19752-2-git-send-email-jjhiblot@ti.com>
+ <20180423154411.GK19834@sirena.org.uk>
+ <d6a1c01b-7a9f-423f-d314-ff2e52aa9ab9@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Content-Disposition: inline
+In-Reply-To: <d6a1c01b-7a9f-423f-d314-ff2e52aa9ab9@ti.com>
+X-Cookie: Take your Senator to lunch this week.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent commit changed the name prefix of syscalls
-for x86_64 (check the 'Fixes:' for commit number).
 
-The names switch from "sys_" prefix to ""__x64_sys_",
-which made the default matching function always fail.
+--UugvWAfsgieZRqgk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Consequently the ftrace syscall __init code could not
-match any syscall metadata so the "syscall" events
-vanished. This fix returns them back.
+On Mon, Apr 23, 2018 at 09:00:18PM +0200, Jean-Jacques Hiblot wrote:
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- arch/x86/include/asm/ftrace.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> I can't think of anything that would make it unusable.
+> This auto diagnostic is really useful in cars where wires can get
+> disconnected or shorted to ground.
+> In quieter environment it may not be as useful, and a test at startup may be
+> sufficient.
+> Diagnostics can also be triggered at will.
+> Do you think a sysfs interface would be better suited to disable the
+> autodiag ?
 
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-index 09ad88572746..7b131ad39ee2 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -67,6 +67,18 @@ static inline bool arch_trace_is_compat_syscall(struct pt_regs *regs)
- 	return false;
- }
- #endif /* CONFIG_FTRACE_SYSCALLS && CONFIG_IA32_EMULATION */
-+
-+#ifdef CONFIG_X86_64
-+#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME 1
-+static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
-+{
-+	/*
-+	 * Skip the __x64_sys_ prefix and compare the
-+	 * syscall name only.
-+	 */
-+	return !strcmp(sym + 9, name + 3);
-+}
-+#endif /* CONFIG_X86_64 */
- #endif /* !__ASSEMBLY__  && !COMPILE_OFFSETS */
- 
- #endif /* _ASM_X86_FTRACE_H */
--- 
-2.13.6
+I'd just make it an ALSA control TBH.  sysfs should work as well though.
+
+--UugvWAfsgieZRqgk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrfBMUACgkQJNaLcl1U
+h9AmdAf9G2hWHGY7WD/hfxizWfpUaXImjYIXNKDx+C5ZRJNzNR0J34RRiOi4l7R9
+PCD9FYNShJiWygRKrE8XhNbLouhXw6M02W+7zjD2Hj280TLTbg4JcH/IpwPvgwER
+ZWiRyWLsm5CY/TwM9HqBhDTfSZWZuC3hLK9fWezm1HCkFGZyQA1b34Bg/7ZdNbDH
+rRpL1vN7cWoNiESP7GPikmCDyVI8sU5BPV6mfu9yW1C72wcsy6KTZ+uTRyKc9F1z
+qXsvHUpQtwktIDPXe+u1BKbRLO69y/unfgrF97ANFii5ziWYLh3lLwUg9ZSTbM9R
+PL7Nuh2gZaZJIilyxvbiHg7pfuGkzQ==
+=2PQK
+-----END PGP SIGNATURE-----
+
+--UugvWAfsgieZRqgk--
