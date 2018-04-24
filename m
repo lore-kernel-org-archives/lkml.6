@@ -1,91 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751693AbeDXPpp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:45:45 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:50895 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750995AbeDXPpn (ORCPT
+        id S1751906AbeDXPpz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:45:55 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:25253 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeDXPpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:45:43 -0400
-X-UUID: ce1a7e9ba7294b819d4ae2932184b164-20180424
-Message-ID: <1524584738.12322.17.camel@mtkswgap22>
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
-From: Sean Wang <sean.wang@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: <mturquette@baylibre.com>, <sboyd@kernel.org>, <airlied@linux.ie>,
-        <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Tue, 24 Apr 2018 23:45:38 +0800
-In-Reply-To: <20180424143907.eewrpzdmkhhux3lb@rob-hp-laptop>
-References: <cover.1524044917.git.sean.wang@mediatek.com>
-         <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
-         <20180424143907.eewrpzdmkhhux3lb@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Apr 2018 11:45:51 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w3OFjQgQ015189
+X-Nifty-SrcIP: [209.85.213.51]
+X-Google-Smtp-Source: AIpwx4+JfzcYGWpKRIQ5EX4gdJgmqKj0lVVXAGozTfAIIMthx7OoqmHpm0bs4Q/0v3083Mr+opSOCpgXMMlC9xXLfi8=
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <CAK7LNAShZOxANg1T=9eGgN1MYRVP3qC1n6i8QO07CChPuge-aA@mail.gmail.com>
+References: <1523500291-24008-1-git-send-email-yamada.masahiro@socionext.com> <CAK7LNAShZOxANg1T=9eGgN1MYRVP3qC1n6i8QO07CChPuge-aA@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 25 Apr 2018 00:44:45 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARyMHSq-sCiJJem3twr-5YeGq4eyZqYXN+n5G1JUfzUfw@mail.gmail.com>
+Message-ID: <CAK7LNARyMHSq-sCiJJem3twr-5YeGq4eyZqYXN+n5G1JUfzUfw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: uniphier: fix input delay value for legacy
+ mode of eMMC
+To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-24 at 09:39 -0500, Rob Herring wrote:
-> On Wed, Apr 18, 2018 at 06:24:54PM +0800, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > Add bindings to g3dsys providing necessary clock and reset control to
-> > Mali-450.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
-> >  1 file changed, 30 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> > new file mode 100644
-> > index 0000000..ff2d70c
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> > @@ -0,0 +1,30 @@
-> > +MediaTek g3dsys controller
-> > +============================
-> > +
-> > +The MediaTek g3dsys controller provides various clocks and reset controller to
-> > +the GPU.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: Should be:
-> > +	- "mediatek,mt2701-g3dsys", "syscon":
-> > +		for MT2701 SoC
-> > +	- "mediatek,mt7623-ethsys", "mediatek,mt2701-g3dsys", "syscon":
-> > +		for MT7623 SoC
-> 
-> ethsys?
-> 
+2018-04-12 13:45 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> 2018-04-12 11:31 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>> The property of the legacy mode for the eMMC PHY turned out to
+>> be worng.  Some eMMC devices are unstable due to the set-up/hold
+>> timing violation.  Correct the delay value.
+>
+> Reminder for myself:
+>   Fix a type  worng -> wrong
+>
 
-thanks! I'll also fix it up in the next version.
+Applied to linux-uniphier.
 
-> > +- #clock-cells: Must be 1
-> > +- #reset-cells: Must be 1
-> > +
-> > +The ethsys controller uses the common clk binding from
-> > +Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-> > +
-> > +Example:
-> > +
-> > +g3dsys: clock-controller@13000000 {
-> > +	compatible = "mediatek,mt7623-g3dsys",
-> > +		     "mediatek,mt2701-g3dsys",
-> > +		     "syscon";
-> > +	reg = <0 0x13000000 0 0x200>;
-> > +	#clock-cells = <1>;
-> > +	#reset-cells = <1>;
-> > +};
-> > -- 
-> > 2.7.4
-> > 
+
+-- 
+Best Regards
+Masahiro Yamada
