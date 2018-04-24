@@ -1,93 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756253AbeDXGIw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 02:08:52 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50872 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755919AbeDXGIu (ORCPT
+        id S1756117AbeDXGOA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 02:14:00 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53099 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeDXGN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 02:08:50 -0400
-Subject: Re: [Xen-devel] [RFC 0/2] To introduce xenwatch multithreading (xen
- mtwatch)
-To: Juergen Gross <jgross@suse.com>
-References: <1523100355-27647-1-git-send-email-dongli.zhang@oracle.com>
- <20180423140911.bihiwfwtlneobgzd@citrix.com>
- <6c379249-886d-76ee-db9c-942967b23d80@oracle.com>
- <db08fec6-5648-4d87-4ace-2f42d1d04479@suse.com>
- <9a91b19a-5556-f1ea-92d5-29f2baa0ccd5@oracle.com>
- <0280ae73-fd29-33a6-e4d5-8c83a8c2a5d7@suse.com>
-Cc: Wei Liu <wei.liu2@citrix.com>, ian.jackson@eu.citrix.com,
-        linux-kernel@vger.kernel.org, srinivas.eeda@oracle.com,
-        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
-        Joao Martins <joao.m.martins@oracle.com>
-From: Dongli Zhang <dongli.zhang@oracle.com>
-Message-ID: <1685df30-d31c-0c1b-40a4-b3282fbcd609@oracle.com>
-Date: Tue, 24 Apr 2018 14:10:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Tue, 24 Apr 2018 02:13:58 -0400
+X-Google-Smtp-Source: AIpwx4/5BP3sGfzb1WriiRga+MhtVuR0D0OWAGEaPPP97QMjeyYmQ1XF02Rih78EYKMWPNnuhmxIufZ1qjwIdypLjYg=
 MIME-Version: 1.0
-In-Reply-To: <0280ae73-fd29-33a6-e4d5-8c83a8c2a5d7@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8872 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804240062
+In-Reply-To: <20180423164317.5a47f3dd9842d533413a1d4b@arm.com>
+References: <20180416042240.21528-1-namhyung@kernel.org> <20180416092345.GA23274@krava>
+ <20180416135125.GA23802@kernel.org> <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
+ <20180416165800.GD3202@kernel.org> <20180416122407.0d90863b69fed80166384850@arm.com>
+ <20180416174811.1aca9106364effe435f363c8@arm.com> <20180417022726.GA31947@sejong>
+ <20180418193759.b63912fe5e5b8a9023ec80a8@arm.com> <20180419025424.GC13370@sejong>
+ <20180419183313.db3e3a105191a7f30b7650b2@arm.com> <CAKv+Gu_sY+Q+kqO1hp6f30WSGNPY1cnW5VJYj9cuVA0hU5YDVw@mail.gmail.com>
+ <20180423164317.5a47f3dd9842d533413a1d4b@arm.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Tue, 24 Apr 2018 08:13:57 +0200
+Message-ID: <CAKv+Gu-u1E9gH7=p5sbiA4k_9mQ13y+056nYKnr2D9BPENNyMg@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: set kernel end address properly
+To: Kim Phillips <kim.phillips@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Will Deacon <will.deacon@arm.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 04/24/2018 02:03 PM, Juergen Gross wrote:
-> On 24/04/18 07:52, Dongli Zhang wrote:
->> Hi Juergen,
+On 23 April 2018 at 23:43, Kim Phillips <kim.phillips@arm.com> wrote:
+> On Fri, 20 Apr 2018 10:10:32 +0200
+> Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+>> On 20 April 2018 at 01:33, Kim Phillips <kim.phillips@arm.com> wrote:
+>> > On Thu, 19 Apr 2018 11:54:24 +0900
+>> > Namhyung Kim <namhyung@kernel.org> wrote:
+>> >
+>> >> On Wed, Apr 18, 2018 at 07:37:59PM -0500, Kim Phillips wrote:
+>> >> > diff --git a/tools/perf/arch/arm64/util/sym-handling.c b/tools/perf/arch/arm64/util/sym-handling.c
+>> >> > index 0051b1ee8450..5c4a2e208bbc 100644
+>> >> > --- a/tools/perf/arch/arm64/util/sym-handling.c
+>> >> > +++ b/tools/perf/arch/arm64/util/sym-handling.c
+>> >> > @@ -20,3 +20,16 @@ bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
+>> >> >                ehdr.e_type == ET_DYN;
+>> >> >  }
+>> >> >  #endif
+>> >> > +
+>> >> > +const char *arch__normalize_symbol_name(const char *name)
+>> >> > +{
+>> >> > +       /*
+>> >> > +        * arm64 kernels compensating for a CPU erratum can put up a
+>> >> > +        * module_emit_adrp_veneer in place of a module_emit_plt_entry
+>> >> > +        */
+>> >> > +       if (name && strlen(name) >= 23 &&
+>> >> > +           !strncmp(name, "module_emit_adrp_veneer", 23))
+>> >> > +               return "module_emit_plt_entry";
+>> >> > +
+>> >> > +       return name;
+>> >> > +}
+>> >>
+>> >> I don't know it's always preferable or just for the test.  It it's the
+>> >> latter it may be better to move it to the test code.
+>> >
+>> > AFACT, the veneer is a moniker and doesn't technically exist, and
+>> > shouldn't be being looked-up.  Both chunks of this diff are needed to
+>> > pass perf test 1: this chunk above is because in
+>> > arch__normalize_symbol_name(), we squash the perf test 1's "<veneer>
+>> > not in *kallsyms*" problem, and in the below chunk, we prevent it
+>> > coming up when the test code iterates over the *vmlinux* symbols. I.e.
+>> > we need to prevent the veneer from coming up in both kallsyms *and*
+>> > vmlinux.
 >>
->> On 04/24/2018 01:22 PM, Juergen Gross wrote:
->>> On 24/04/18 01:55, Dongli Zhang wrote:
->>>> Hi Wei,
->>>>
->>>> On 04/23/2018 10:09 PM, Wei Liu wrote:
->>>>> On Sat, Apr 07, 2018 at 07:25:53PM +0800, Dongli Zhang wrote:
->>>>>> About per-domU xenwatch thread create/destroy, a new type of xenstore node is
->>>>>> introduced: '/local/domain/0/mtwatch/<domid>'.
->>>>>>
->>>>>> Suppose the new domid id 7. During the domU (domid=7) creation, the xen
->>>>>> toolstack writes '/local/domain/0/mtwatch/7' to xenstore before the insertion
->>>>>> of '/local/domain/7'. When the domid=7 is destroyed, the last xenstore
->>>>>> operation by xen toolstack is to remove '/local/domain/0/mtwatch/7'.
->>>>>>
->>>>>> The dom0 kernel subscribes a watch at node '/local/domain/0/mtwatch'.  Kernel
->>>>>> thread [xen-mtwatch-7] is created when '/local/domain/0/mtwatch/7' is inserted,
->>>>>> while this kernel thread is destroyed when the corresponding xenstore node is
->>>>>> removed.
->>>>>
->>>>> Instead of inventing yet another node, can you not watch /local/domain
->>>>> directly?
->>>>
->>>> Would you like to watch at /local/domain directly? Or is your question "is there
->>>> any other way to not watch at /local/domain, while no extra xenstore node will
->>>> be introduced"?
->>>>
->>>> Actually, the first prototype of this idea was to watch at /local/domain
->>>> directly to get aware of the domU create/destroy, so that xen toolstack will not
->>>> get involved. Joao Martins (CCed) had a concern on the performance as watching
->>>> at /local/domain would lead to large amount of xenwatch events.
->>>
->>> That's what the special watches "@introduceDomain" and "@releaseDomain"
->>> are meant for.
+>> I don't have all the context here, so I don't know what exactly
+>> arch__normalize_symbol_name() is trying to accomplish.
+>
+> Sorry about that.  The problem is that perf test 1 ("vmlinux
+> symtab matches kallsyms") is failing, because
+> module_emit_adrp_veneer exists in /boot/vmlinux but doesn't exist
+> in /proc/kallsyms, and, sure enough, it's not in the latter.
+>
+>> What I do know is that module_emit_adrp_veneer() and
+>> module_emit_plt_entry() are not part of the veneer themselves: they
+>> are ordinary routines that are part of the module loader, and which
+>> populate the allocated veneer space on demand when encountering ADRP
+>> instructions that need to be rerouted.
+> ...
+>> > >> rare case we might need to add more paranoid checks.
+>> >
+>> > It's certainly rare: Adding the authors of the veneer to cc for
+>> > comments:
+>> >
+>> > Will, Ard, how probable are veneer-style symbols such as the
+>> > one introduced in commit a257e0257 "arm64/kernel: don't ban ADRP to
+>> > work around Cortex-A53 erratum #843419" to happen again in the future?
+>> >
 >>
->> I used to consider to watch at "@introduceDomain". However, there is no domain
->> information appended with "@introduceDomain" and it is still required for dom0
->> kernel to proactively confirm who is created.
-> 
-> That isn't too hard, right? You just need to read /local/domain to get
-> the list of its children and look for new domains there.
+>> Distro kernels typically enable full KASLR, so on systems that
+>> implement EFI_RNG_PROTOCOL, all function calls from modules into the
+>> kernel proper are redirected via veneers. (Note that these are bl
+>> instructions not adrp instructions though).
+>>
+>> > I would have thought WARNing on within-a-pagesize would be OK,
+>> > Namhyung.  Are you suggesting checking instead for a hardcoded veneer
+>> > symbol string?
+>>
+>> Veneers don't have symbol strings. Veneers are anonymous sequences of
+>> instructions living in a patch of R-X mapped module space somewhere.
+>> The only symbol strings are for the routines that generate these
+>> veneers, not for the veneers themselves.
+>
+> OK, thanks, so AFAICT this means the function module_emit_adrp_veneer()
+> should still show up in /proc/kallsyms, but it's not.  I'm also seeing
+> some weird characters, e.g., here there's a byte with a binary 02 value
+> following a weird symbol named 'L14472' (part of the xfs module?):
+>
+> $ grep L1 /proc/kallsyms | hexdump -C | head
+> <snip>
+> 00000540  30 30 30 30 30 20 72 20  2e 4c 31 34 34 37 32 02  |00000 r .L14472.|
+> <snip>
+>
+> arch__normalize_symbol_name() is a place where architecture code can
+> clean up symbol names in perf, and I thought module_emit_adrp_veneer()
+> was a veneer itself, but it seems that's not the case, so the
+> literal string check for it shouldn't be needed.  The test is still
+> failing though because it doesn't show up in kallsyms...
+>
 
-You are right. I will try to limit the modification within linux kernel, and try
-to not dirty xen toolstack.
+This turns out to be an unintended side effect of the fact that we
+(I?) taught kallsyms to disregard symbols ending in "_veneer"
 
-Thank you very much for the suggestion.
-
-Dongli Zhang
+So we should probably rename the function, and everything will be fine.
