@@ -1,231 +1,109 @@
-Date: Tue, 24 Apr 2018 10:52:06 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 3.18.106
-Message-ID: <20180424085206.GA2937@kroah.com>
+Return-Path: <harsh@prjkt.io>
+ARC-Seal: i=1; a=rsa-sha256; t=1524561578; cv=none;
+        d=google.com; s=arc-20160816;
+        b=kXoUaCraJefxP6BcrhrVjIYgDaNqvr2k/dk/78mP2+InquNq4X51HyovFmiEiXJAu2
+         fwfS5ryOqffRYqqRSEz5pNLKU/FSA3K3iz3fT+9rzVoNCAHM9dr/S5af/czipUUJniSw
+         dac4pFYeqthnrPfQVUg8T3xVSFGRpUad7nEIomiCcoyFrwV9tmYEoA4tVh+vZuTUX0yj
+         vT5DG/s7f99HGttgboy/ZujUDoabsNPuSzK6sXyHWiK8jOwTEQgnGYoOcrg7eovKhbMI
+         zm6EI9GtNnJBAoS7wS7UNZU4xEcvOwdiH038/mEV2t6KodtFsschoF9cPbKlFDn9gqsg
+         WIIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:from:cc:to:subject:autocrypt:content-transfer-encoding
+         :mime-version:references:in-reply-to:user-agent:date:dkim-signature
+         :arc-authentication-results;
+        bh=0IMvfTkFyHsnWS8frUAaYwktv44yGXecBYHP1kJiPDg=;
+        b=VvZs2Jbej4ex6OSvfc4B65a0EWBLmOyaO4j210eSWfwML9NK1maH7QyYWvz4pOAgld
+         sEJ7ecAgPYV8GTgKzATWUoWSbacIxNq0ibCpmNqR/6bElJxUvpFSZooYibBvOtuz2XVR
+         O84hcMI0E5HkkhCp9mzhAph8Mf/EX4+MmPk35Hcohuv/J4JNyunYAX/Ag7K1LbD40xW5
+         N8CrAbui9Y0SJMxrFcqYDXIcn1NGfaI3a1bFHWo2GkPOEIClcfakkAgaJssqK0k76E93
+         QbS/31inIE7r5Teduu1pPmTHKp9vhZL82aHI4R/AkX7zlu1hwFtYoPCJaurX/a+NUjoq
+         9Ltw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@prjkt-io.20150623.gappssmtp.com header.s=20150623 header.b=zOX4qdLR;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of harsh@prjkt.io) smtp.mailfrom=harsh@prjkt.io
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@prjkt-io.20150623.gappssmtp.com header.s=20150623 header.b=zOX4qdLR;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of harsh@prjkt.io) smtp.mailfrom=harsh@prjkt.io
+X-Google-Smtp-Source: AIpwx4/ue13qHeY8w2wwd7VzIU8VW8PjDR7aUj5c22meszEsUoapnAYZ59IJJp3ilZw/of5h88uiXg==
+Date: Tue, 24 Apr 2018 14:49:25 +0530
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180424085206.GA2937@kroah.com>
+References: <20180424085206.GA2937@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
-Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Autocrypt: addr=harsh@prjkt.io; keydata=mQINBForuUUBEADNrWLYhW8qjO6GmfU32cqU
+ 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
+ GOzuzn9qgWR/VAqd9BA=
+Subject: Re: Linux 3.18.106
+To: Greg KH <gregkh@linuxfoundation.org>,linux-kernel@vger.kernel.org,Andrew Morton <akpm@linux-foundation.org>,torvalds@linux-foundation.org,stable@vger.kernel.org
+CC: lwn@lwn.net,Jiri Slaby <jslaby@suse.cz>
+From: Harsh Shandilya <harsh@prjkt.io>
+Message-ID: <68F3F030-D8D7-4778-A4E2-5FE32C9F247C@prjkt.io>
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
+X-GMAIL-THRID: =?utf-8?q?1598618682267163461?=
+X-GMAIL-MSGID: =?utf-8?q?1598618682267163461?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On 24 April 2018 2:22:06 PM IST, Greg KH <gregkh@linuxfoundation=2Eorg> wro=
+te:
+>I'm announcing the release of the 3=2E18=2E106 kernel=2E
+>
+>All users of the 3=2E18 kernel series must upgrade=2E
+>
+>The updated 3=2E18=2Ey git tree can be found at:
+>	git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/stable/linux-stable=2E=
+git
+>linux-3=2E18=2Ey
+>and can be browsed at the normal kernel=2Eorg git web browser:
+>	http://git=2Ekernel=2Eorg/?p=3Dlinux/kernel/git/stable/linux-stable=2Egi=
+t;a=3Dsummary
+>
+>thanks,
+>
+>greg k-h
+Status same as -rc1, no merge issues and no regressions=2E Thanks for the =
+update!
 
---huq684BweRXVnRxX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 3.18.106 kernel.
-
-All users of the 3.18 kernel series must upgrade.
-
-The updated 3.18.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-3.18.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                      |    2=20
- arch/arm/boot/dts/at91sam9g25.dtsi            |    2=20
- arch/mips/lib/memset.S                        |   11 +
- arch/parisc/kernel/drivers.c                  |    4=20
- arch/powerpc/include/asm/barrier.h            |    3=20
- arch/powerpc/include/asm/opal.h               |    3=20
- arch/powerpc/include/asm/synch.h              |    4=20
- arch/powerpc/lib/feature-fixups.c             |    2=20
- arch/powerpc/platforms/powernv/opal-nvram.c   |   11 +
- arch/s390/hypfs/inode.c                       |    2=20
- arch/s390/kernel/ipl.c                        |    1=20
- drivers/char/random.c                         |    2=20
- drivers/clk/mvebu/armada-38x.c                |   15 +-
- drivers/gpu/drm/radeon/si_dpm.c               |    4=20
- drivers/hid/hidraw.c                          |    5=20
- drivers/hid/i2c-hid/i2c-hid.c                 |   13 -
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    4=20
- drivers/mmc/host/jz4740_mmc.c                 |    2=20
- drivers/mtd/ubi/block.c                       |    2=20
- drivers/mtd/ubi/build.c                       |   11 +
- drivers/net/slip/slhc.c                       |    5=20
- drivers/net/xen-netfront.c                    |    7=20
- drivers/pci/hotplug/acpiphp_glue.c            |   23 ++-
- drivers/s390/cio/qdio_main.c                  |   42 +++--
- drivers/thermal/imx_thermal.c                 |    6=20
- drivers/thunderbolt/nhi.c                     |    1=20
- drivers/usb/core/generic.c                    |    9 -
- drivers/usb/dwc3/dwc3-pci.c                   |    2=20
- drivers/usb/musb/musb_gadget_ep0.c            |   14 +
- drivers/watchdog/f71808e_wdt.c                |    2=20
- fs/autofs4/root.c                             |    2=20
- fs/ext4/inode.c                               |    6=20
- fs/ext4/super.c                               |    6=20
- fs/jbd2/journal.c                             |    5=20
- fs/jffs2/super.c                              |    2=20
- fs/namespace.c                                |    3=20
- fs/notify/fanotify/fanotify.c                 |   34 ++--
- fs/reiserfs/journal.c                         |    2=20
- fs/ubifs/super.c                              |   14 +
- include/net/slhc_vj.h                         |    1=20
- include/sound/pcm_oss.h                       |    1=20
- kernel/resource.c                             |    3=20
- net/sunrpc/rpc_pipe.c                         |    1=20
- sound/core/oss/pcm_oss.c                      |  189 ++++++++++++++++++++-=
------
- sound/core/rawmidi_compat.c                   |   18 +-
- sound/soc/codecs/ssm2602.c                    |   19 +-
- 46 files changed, 369 insertions(+), 151 deletions(-)
-
-Aaron Ma (1):
-      HID: i2c-hid: fix size check and type usage
-
-Al Viro (4):
-      jffs2_kill_sb(): deal with failed allocations
-      hypfs_kill_super(): deal with failed allocations
-      rpc_pipefs: fix double-dput()
-      Don't leak MNT_INTERNAL away from internal mounts
-
-Alex Smith (1):
-      mmc: jz4740: Fix race condition in IRQ mask update
-
-Amir Goldstein (1):
-      fanotify: fix logic of events on child
-
-Andrew Morton (1):
-      fs/reiserfs/journal.c: add missing resierfs_warning() arg
-
-Greg Kroah-Hartman (1):
-      Linux 3.18.106
-
-Heinrich Schuchardt (1):
-      usb: musb: gadget: misplaced out of bounds check
-
-Helge Deller (1):
-      parisc: Fix out of array access in match_pci_device()
-
-Ian Kent (1):
-      autofs: mount point create should honour passed in mode
-
-Igor Pylypiv (1):
-      watchdog: f71808e_wdt: Fix WD_EN register read
-
-James Kelly (1):
-      ASoC: ssm2602: Replace reg_default_raw with reg_default
-
-Jason Andryuk (1):
-      xen-netfront: Fix hang on device removal
-
-Julian Wiedmann (2):
-      s390/qdio: don't retry EQBS after CCQ 96
-      s390/qdio: don't merge ERROR output buffers
-
-Matt Redfearn (3):
-      MIPS: memset.S: EVA & fault support for small_memset
-      MIPS: memset.S: Fix return of __clear_user from Lpartial_fixup
-      MIPS: memset.S: Fix clobber of v1 in last_fixup
-
-Mauro Carvalho Chehab (1):
-      media: v4l2-compat-ioctl32: don't oops on overlay
-
-Michael Ellerman (1):
-      powerpc/lib: Fix off-by-one in alternate feature patching
-
-Mika Westerberg (2):
-      ACPI / hotplug / PCI: Check presence of slot itself in get_slot_statu=
-s()
-      thunderbolt: Resume control channel after hibernation image is created
-
-Mikhail Lappo (1):
-      thermal: imx: Fix race condition in imx_thermal_probe()
-
-Nicholas Mc Guire (1):
-      ALSA: oss: consolidate kmalloc/memset 0 call to kzalloc
-
-Nicholas Piggin (4):
-      powerpc/powernv: Handle unknown OPAL errors in opal_nvram_write()
-      powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
-      powerpc/powernv: define a standard delay for OPAL_BUSY type retry loo=
-ps
-      powerpc/powernv: Fix OPAL NVRAM driver OPAL_BUSY loops
-
-Nicolas Ferre (1):
-      ARM: dts: at91: at91sam9g25: fix mux-mask pinctrl property
-
-Paul Parsons (1):
-      drm/radeon: Fix PCIe lane width calculation
-
-Ralph Sennhauser (1):
-      clk: mvebu: armada-38x: add support for 1866MHz variants
-
-Richard Genoud (1):
-      clk: mvebu: armada-38x: add support for missing clocks
-
-Richard Weinberger (2):
-      ubifs: Check ubifs_wbuf_sync() return code
-      ubi: Reject MLC NAND
-
-Rodrigo Rivas Costa (1):
-      HID: hidraw: Fix crash on HIDIOCGFEATURE with a destroyed device
-
-Romain Izard (1):
-      ubi: Fix error for write access
-
-Takashi Iwai (7):
-      resource: fix integer overflow at reallocation
-      ALSA: pcm: Use ERESTARTSYS instead of EINTR in OSS emulation
-      ALSA: pcm: Avoid potential races between OSS ioctls and read/write
-      ALSA: pcm: Return -EBUSY for OSS ioctls changing busy streams
-      ALSA: pcm: Fix mutex unbalance in OSS emulation ioctls
-      ALSA: pcm: Fix endless loop for XRUN recovery in OSS emulation
-      ALSA: rawmidi: Fix missing input substream checks in compat ioctls
-
-Tejaswi Tanikella (1):
-      slip: Check if rstate is initialized before uncompressing
-
-Theodore Ts'o (4):
-      random: use a tighter cap in credit_entropy_bits_safe()
-      jbd2: if the journal is aborted then don't allow update of the log ta=
-il
-      ext4: fail ext4_iget for root directory if unallocated
-      ext4: don't allow r/w mounts if metadata blocks overlap the superblock
-
-Thinh Nguyen (1):
-      usb: dwc3: pci: Properly cleanup resource
-
-Vasily Gorbik (1):
-      s390/ipl: ensure loadparm valid flag is set
-
-Zhengjun Xing (1):
-      USB:fix USB3 devices behind USB3 hubs not resuming at hibernate thaw
-
-
---huq684BweRXVnRxX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlre8DIACgkQONu9yGCS
-aT7SFw//bQNWqEhaKPkaH5Cr72FKzLaWXBAdtIzVZz2pf5SmczGl1AniBb0UoZYZ
-ilpB59sa+gRskgCMjj4xPosjPB2DsAX+c7rG28Xnc3OQPLDZmt0EoCUEu4sh2bPK
-YJSCoE+3NiJt7uOYK2zldW2YrmLIjEOjDa5y4+JZmxgh85E8D8N6X6F6P/pBLcs/
-8Gth4xwBmW8ZGqrGNJ+LWLFCvpX4eFa6JUzptH+QmtBKYnhK6pSSjeJuErsdxegH
-sz6nQonXsEuxeL/qblQ42l6HLeVocxE3xnm73CnzFuCmd501SaWa5ytm/zI8S30h
-/5KbaoQEidp7oETsfagdZkdMYQNN45N2ICxRkvOn+gK3W9eSdiB3SEKy47Boffgc
-e3YTSRpmgO3hI4doI9lkFIspxNuhrGsDt0+7fyg+jdUPaFZNoWHuno32VjBFJz7a
-wmtJ1++JOBXlcoAUow+BDYygP9AOQsIRtgQCBZLiWryIEVW1n4eaMClFxqv+UbGa
-2JZeI2+zcHlcgpW+AXWzRfIx0hJIwUlYR3Zd3shgsY4WJSwkZB3JfwUDZg9oHPwo
-5fO6rsFEvrbwJmWzVW70qgwHrY3iVnxWlFfLNnp+h3clvIr9CQZJB1dBzbw7GB8D
-ldFjRH6/7NiIukwtDdf9ol2wXKRpDdmicBFOs8eZz3cA19TOk+4=
-=0g+V
------END PGP SIGNATURE-----
-
---huq684BweRXVnRxX--
+--=20
+Harsh Shandilya, PRJKT Development LLC
