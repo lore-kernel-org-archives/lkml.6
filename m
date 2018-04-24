@@ -1,67 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932223AbeDXJTh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:19:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52324 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932077AbeDXJTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:19:10 -0400
-From: Hans de Goede <hdegoede@redhat.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kevin Shanahan <kevin@shanahan.id.au>
-Subject: [PATCH] libata: Apply NOLPM quirk for SAMSUNG MZMPC128HBFU-000MV SSD
-Date: Tue, 24 Apr 2018 11:19:07 +0200
-Message-Id: <20180424091907.19903-1-hdegoede@redhat.com>
+        id S932348AbeDXJTu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:19:50 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35967 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932255AbeDXJTn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 05:19:43 -0400
+X-Google-Smtp-Source: AIpwx4+QKztAlC8twM4TF3Mp+I+U+MFx9TuQ2PNdLk6XvKjTvfTzUKZY7NtY1proMKI5IjGHd0iw4w==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: maxime.ripard@bootlin.com, wens@csie.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>, clabbe@baylibre.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ARM64: allwinner: Add support for Libre Computer Board ALL-H3-CC H5 ver.
+Date: Tue, 24 Apr 2018 11:19:34 +0200
+Message-Id: <1524561576-2201-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kevin Shanahan reports the following repeating errors when using LPM,
-causing long delays accessing the disk:
+The Libre Computer Board ALL-H3-CC from Libre Technology is a Raspberry
+Pi B+ form factor single board computer based on the Allwinner H2+, H3, or H5
+SoCs with the same PCB.
+The board has 1GB DDR3 SDRAM, provided by 4 2Gb chips. The mounting holes
+and connectors are in the exact same position as on the Raspberry Pi B+.
 
-  Apr 23 10:21:43 link kernel: ata1.00: exception Emask 0x0 SAct 0x0 SErr 0x50000 action 0x6 frozen
-  Apr 23 10:21:43 link kernel: ata1: SError: { PHYRdyChg CommWake }
-  Apr 23 10:21:43 link kernel: ata1.00: failed command: WRITE DMA
-  Apr 23 10:21:43 link kernel: ata1.00: cmd ca/00:08:60:5d:cd/00:00:00:00:00/e1 tag 9 dma 4096 out
-                                        res 50/01:01:01:00:00/00:00:00:00:00/00 Emask 0x4 (timeout)
-  Apr 23 10:21:43 link kernel: ata1.00: status: { DRDY }
-  Apr 23 10:21:43 link kernel: ata1.00: error: { AMNF }
-  Apr 23 10:21:43 link kernel: ata1: hard resetting link
-  Apr 23 10:21:43 link kernel: ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
-  Apr 23 10:21:43 link kernel: ata1.00: configured for UDMA/133
-  Apr 23 10:21:43 link kernel: ata1: EH complete
+This patchset enables the H5 variant by moving the H3 board definition to a
+common dtsi then include this common dtsi in the H5 dts variant then declares
+the correct compatible and model of the H5 variant.
 
-These go away when switching from med_power_with_dipm to medium_power.
+Neil Armstrong (2):
+  ARM: dts: sun8i-h3-libretech-all-h3-cc: Move board definition to
+    common dtsi
+  ARM64: dts: allwinner: Add dts file for Libre Computer Board ALL-H3-CC
+    H5 ver.
 
-This is somewhat weird as the PM830 datasheet explicitly mentions DIPM
-being supported and the idle power-consumption is specified with DIPM
-enabled.
+ arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 209 +-------------------
+ arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi   | 211 +++++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../allwinner/sun50i-h5-libretech-all-h3-cc.dts    |  14 ++
+ 4 files changed, 228 insertions(+), 207 deletions(-)
+ create mode 100644 arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts
 
-There are many OEM customized firmware versions for the PM830, so for now
-lets assume this is firmware version specific and blacklist LPM based on
-the firmware version.
-
-Cc: Kevin Shanahan <kevin@shanahan.id.au>
-Reported-by: Kevin Shanahan <kevin@shanahan.id.au>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/ata/libata-core.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 8bc71ca61e7f..6e400ff2b5db 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4549,6 +4549,9 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
- 						ATA_HORKAGE_ZERO_AFTER_TRIM |
- 						ATA_HORKAGE_NOLPM, },
- 
-+	/* This specific Samsung model/firmware-rev does not handle LPM well */
-+	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
-+
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
 -- 
-2.17.0
+2.7.4
