@@ -1,109 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932787AbeDXCr3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 22:47:29 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33797 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932721AbeDXCrZ (ORCPT
+        id S932823AbeDXCsO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 22:48:14 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:51080 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932721AbeDXCsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 22:47:25 -0400
-X-Google-Smtp-Source: AIpwx48604eZ24+8/1R5NQdCK2wxHjxZbW7ooAgbIHboH8MipHJwwD6VjHoJGV4xGNVMZ6JrcH63cg==
-Date: Mon, 23 Apr 2018 19:47:22 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Mikulas Patocka <mpatocka@redhat.com>
-cc: Michal Hocko <mhocko@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v3] kvmalloc: always use vmalloc if CONFIG_DEBUG_SG
-In-Reply-To: <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
-Message-ID: <alpine.DEB.2.21.1804231945410.58980@chino.kir.corp.google.com>
-References: <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com> <20180418.134651.2225112489265654270.davem@davemloft.net> <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com> <20180420130852.GC16083@dhcp22.suse.cz> <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180420210200.GH10788@bombadil.infradead.org>
- <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180421144757.GC14610@bombadil.infradead.org> <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com> <20180423151545.GU17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 23 Apr 2018 22:48:11 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180424024808epoutp0140c66075eb74e2b114b80d4715ef8bc5~oP1B9qY_81831818318epoutp01a
+X-AuditID: b6c32a36-b6dff70000001027-c3-5ade9ae7d72d
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5ADE9AE6.9090601@samsung.com>
+Date: Tue, 24 Apr 2018 11:48:06 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH 1/3] PM / devfreq: Actually support providing freq_table
+In-reply-to: <20180424002016.9205-2-bjorn.andersson@linaro.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUhTURjGObt3916r1WmpHSaZ3YhQcu1uTW+l2Rc1yj+MkGJRdtGbrtxH
+        u1MqiMpMY6W5PhSW2ZSiWFCh5aa2rFXYp4TDilKLxPVBWSlmgVTbrlF/nee85/e857wPh8Lk
+        NYSCMphsvNXEFdLEBLz5TqIq+Z2zT6/yjSnYR+2DOOt2mNgnJZ9I1tH+hGQDrbUEO1xxF7BH
+        nnsJ9kLHLwn76sBFgvXW72Hv//RiSyfqApUVEl2Ls5fU9Ty7Qeje+Jtw3beBl7iu8pob6IYb
+        47NIPZ9WwHN5vDWBN+Wa8wym/HR67fqcFTnaFBWTzCxkU+kEE2fk0+mVmVnJqwyFoSfSCcVc
+        YVGolMUJAj1/SZrVXGTjEwrMgi2d3sQwaiWjSlWq1aFVs3mRWhtCtvIF1Xa71DIcvevs8Wf4
+        ftAP7YCiEFyAXI2sHUyg5NAL0KGqUVzcjAL0uemN1A6iIlDXWBspHrQBVB24jYcPZHAq+nGi
+        Dw93wuBMdLdrR7iMwUR0ve3KON8L0E3PMSDySehq8BER1jicg0YfjEQ0Eaq3v38R0VPgLNT9
+        oz/Cx8CNqOXs90ijaFgGUMlQDwhvMNgqQedd58jwzdNgJur8ZAkbomAGGjrtwcIMgr8JVFoz
+        ND7CSvTuswOIehr62HGNFOePQ1330kW+HKByX924+SRAnc/7JKJBg4L1dok422Q0OHJUKppl
+        6HCZXER06MsrHyHqZaj27VgkITnsACh4cG4ViHf+F5jzX2DO/wJzAcwNYnmLYMznBcaiVgqc
+        USgy5StzzcZGEPmUSSle0NCZ6QeQAvQkmetnr14u5YqF3UY/QBRGR8t88X16uSyP272Ht5pz
+        rEWFvOAH2lDeDkwRk2sOfXGTLYfRqjUaDbuASdEyDD1dNpD5WC+H+ZyN38HzFt761yehohT7
+        AfhKXhE89TBgi1N5qtz71s27lNqzodPIdcsMW0bP1GIZzgzP0PLtFQ/c7jphOqUg9vY/bdh7
+        mXz4Xfn6rXp1TLAhu/lmVf2BW13HgK+ndM62xR8cDwOawVlxa6pbPkw55bqYdb4sNraatf+S
+        Zl+fsXan94vDEJzd7/WXZHcDjMaFAo5JwqwC9wd9RhpUqgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsVy+t9jAd3ns+5FGfQe5LI4vf8di8WqiXkW
+        Z5vesFtM3H+W3eLyrjlsFp97jzBadF/fwWax/Pg/JovbjSvYLHYsrLI48XMHswO3x+W+XiaP
+        nbPusnvcubaHzePBoc0sHh+f3mLx6NuyitHj8ya5APYoLpuU1JzMstQifbsEroxpXV2sBZ9F
+        KuZPusbSwPhYoIuRk0NCwETi0p/d7F2MXBxCAjsZJR5fOsEKkuAVEJT4MfkeSxcjBwezgLzE
+        kUvZIGFmAXWJSfMWMUPU32eUWL1lPTNEvZbEhmen2UBsFgFVie8nv4LZbEDx/S9ugNn8AooS
+        V388ZgSZKSoQIdF9ohJkjohAB6PE7nNXWEAcZoFdTBIn1jaxgRQJC/hInHtTALHsOKPE74VT
+        mUAGcQrYS3yavZ15AqPALCS3zkK4dRaSWxcwMq9ilEwtKM5Nzy02KjDMSy3XK07MLS7NS9dL
+        zs/dxAiMkm2Htfp2MN5fEn+IUYCDUYmHd8HPu1FCrIllxZW5hxglOJiVRHj3yt2LEuJNSays
+        Si3Kjy8qzUktPsQozcGiJM57O+9YpJBAemJJanZqakFqEUyWiYNTqoFRZXnwokKmvJSY+TZl
+        UwTrC95srG0pyXJuYuBgWVwjuTEi7KPktpq9i7JWHl2pm/+iXuH8tBT+b4wnKn3Wufd2C1xZ
+        8+3eU2PTv29n65S/T5i/uuP8n8mrK7d2fDujfvXL3HaP5fq1fc9VE9buKV7F/lbQhOlW97Up
+        YXGGpytn7c0095NQnhaoxFKckWioxVxUnAgAWPhWjI4CAAA=
+X-CMS-MailID: 20180424024807epcas1p1f85806e5a4b8258fb1912420df94ca1a
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180424002041epcas5p11439bec6de910c2a465c5cf3acb45a3b
+X-RootMTR: 20180424002041epcas5p11439bec6de910c2a465c5cf3acb45a3b
+References: <20180424002016.9205-1-bjorn.andersson@linaro.org>
+        <CGME20180424002041epcas5p11439bec6de910c2a465c5cf3acb45a3b@epcas5p1.samsung.com>
+        <20180424002016.9205-2-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018, Mikulas Patocka wrote:
+Hi,
 
-> The kvmalloc function tries to use kmalloc and falls back to vmalloc if
-> kmalloc fails.
+On 2018년 04월 24일 09:20, Bjorn Andersson wrote:
+> The code in devfreq_add_device() handles the case where a freq_table is
+> passed by the client, but then requests min and max frequences from
+> the, in this case absent, opp tables.
 > 
-> Unfortunatelly, some kernel code has bugs - it uses kvmalloc and then
-> uses DMA-API on the returned memory or frees it with kfree. Such bugs were
-> found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
-> code.
+> Read the min and max frequencies from the frequency table, which has
+> been built from the opp table if one exists, instead of querying the
+> opp table.
 > 
-> These bugs are hard to reproduce because kvmalloc falls back to vmalloc
-> only if memory is fragmented.
-> 
-> In order to detect these bugs reliably I submit this patch that changes
-> kvmalloc to fall back to vmalloc with 1/2 probability if CONFIG_DEBUG_SG
-> is turned on. CONFIG_DEBUG_SG is used, because it makes the DMA API layer
-> verify the addresses passed to it, and so the user will get a reliable
-> stacktrace.
-> 
-
-Why not just do it unconditionally?  Sounds better than "50% of the time 
-this will catch bugs".
-
-> Some bugs (such as buffer overflows) are better detected
-> with kmalloc code, so we must test the kmalloc path too.
-> 
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  mm/util.c |   10 ++++++++++
->  1 file changed, 10 insertions(+)
 > 
-> Index: linux-2.6/mm/util.c
-> ===================================================================
-> --- linux-2.6.orig/mm/util.c	2018-04-23 00:12:05.000000000 +0200
-> +++ linux-2.6/mm/util.c	2018-04-23 17:57:02.000000000 +0200
-> @@ -14,6 +14,7 @@
->  #include <linux/hugetlb.h>
->  #include <linux/vmalloc.h>
->  #include <linux/userfaultfd_k.h>
-> +#include <linux/random.h>
+> An alternative approach is to clarify in the devfreq code that it's not
+> possible to pass a freq_table and then in patch 3 create an opp table for the
+> device in runtime; although the error handling of this becomes non-trivial.
+> 
+> Transitioning the UFSHCD to use opp tables directly is hindered by the fact
+> that the Qualcomm UFS hardware has two different clocks that needs to be
+> running at different rates, so we would need a way to describe the two rates in
+> the opp table. (And would force us to change the DT binding)
+> 
+>  drivers/devfreq/devfreq.c | 22 ++++------------------
+>  1 file changed, 4 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index fe2af6aa88fc..086ced50a13d 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -74,30 +74,16 @@ static struct devfreq *find_device_devfreq(struct device *dev)
 >  
->  #include <asm/sections.h>
->  #include <linux/uaccess.h>
-> @@ -404,6 +405,12 @@ void *kvmalloc_node(size_t size, gfp_t f
->  	 */
->  	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+>  static unsigned long find_available_min_freq(struct devfreq *devfreq)
+>  {
+> -	struct dev_pm_opp *opp;
+> -	unsigned long min_freq = 0;
+> -
+> -	opp = dev_pm_opp_find_freq_ceil(devfreq->dev.parent, &min_freq);
+> -	if (IS_ERR(opp))
+> -		min_freq = 0;
+> -	else
+> -		dev_pm_opp_put(opp);
+> +	struct devfreq_dev_profile *profile = devfreq->profile;
 >  
-> +#ifdef CONFIG_DEBUG_SG
-> +	/* Catch bugs when the caller uses DMA API on the result of kvmalloc. */
-> +	if (!(prandom_u32_max(2) & 1))
-> +		goto do_vmalloc;
-> +#endif
-> +
->  	/*
->  	 * We want to attempt a large physically contiguous block first because
->  	 * it is less likely to fragment multiple larger blocks and therefore
-> @@ -427,6 +434,9 @@ void *kvmalloc_node(size_t size, gfp_t f
->  	if (ret || size <= PAGE_SIZE)
->  		return ret;
->  
-> +#ifdef CONFIG_DEBUG_SG
-> +do_vmalloc:
-> +#endif
+> -	return min_freq;
+> +	return profile->freq_table[0];
 
-You can just do
+It is wrong. The thermal framework support the devfreq-cooling device
+which uses the dev_pm_opp_enable/disable().
 
-do_vmalloc: __maybe_unused
+In order to find the correct available min frequency,
+the devfreq have to use the OPP function instead of using the first entry
+of the freq_table array.
 
->  	return __vmalloc_node_flags_caller(size, node, flags,
->  			__builtin_return_address(0));
 >  }
+>  
+>  static unsigned long find_available_max_freq(struct devfreq *devfreq)
+>  {
+> -	struct dev_pm_opp *opp;
+> -	unsigned long max_freq = ULONG_MAX;
+> -
+> -	opp = dev_pm_opp_find_freq_floor(devfreq->dev.parent, &max_freq);
+> -	if (IS_ERR(opp))
+> -		max_freq = 0;
+> -	else
+> -		dev_pm_opp_put(opp);
+> +	struct devfreq_dev_profile *profile = devfreq->profile;
+>  
+> -	return max_freq;
+> +	return profile->freq_table[profile->max_state - 1];
+>  }
+
+ditto.
+
+>  
+>  /**
 > 
-> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
