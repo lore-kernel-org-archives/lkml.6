@@ -1,82 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932791AbeDXCKw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 22:10:52 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42810 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932688AbeDXCKt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 22:10:49 -0400
-X-Google-Smtp-Source: AIpwx49zTMR1WRRrYfXTDXbqLEl6iAX8fwAFahRoKbXpK7CD1onrnukI+YSi+pphjfSZK5aSyrBoyA==
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v67FaU3_su9XGaGj4zVSoAnpfN8cAhbBHEJu3Owt=Qicmg@mail.gmail.com>
-References: <20180206044905.30508-1-icenowy@aosc.io> <CAGb2v67FaU3_su9XGaGj4zVSoAnpfN8cAhbBHEJu3Owt=Qicmg@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 24 Apr 2018 10:10:27 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64zj=DHW2ta9d7=SGGbE2BZUeigJw=NqJMUfK0aV9+Aow@mail.gmail.com>
-Message-ID: <CAGb2v64zj=DHW2ta9d7=SGGbE2BZUeigJw=NqJMUfK0aV9+Aow@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 00/10] Allwinner H3 DVFS support
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S932798AbeDXCVW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 22:21:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36662 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932705AbeDXCVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 22:21:15 -0400
+From: jeffm@suse.com
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        Jeff Mahoney <jeffm@suse.com>
+Subject: [RFC] [PATCH 0/5] procfs: reduce duplication by using symlinks
+Date: Mon, 23 Apr 2018 22:21:01 -0400
+Message-Id: <20180424022106.16952-1-jeffm@suse.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 12:41 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> Hi,
->
-> On Tue, Feb 6, 2018 at 12:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> This patchset tries to add DVFS support for Allwinner H3 SoC,
->> considering two kinds of adjustable regulators used on H3 boards:
->> SY8106A I2C-controlled regulator and SY8113B regulator (controllable
->> by GPIO with some special designs on the board), and also taking the
->> uncontrollable boards into consider.
->>
->> PATCH 1 and PATCH 2 are for the SY8106A regulator, then PATCH 3 and
->> PATCH 4 are for the r_i2c bus, which is used by boards with SY8106A
->> to communicate with the regulator.
->>
->> PATCH 5 adds the operating points v2 table to the H3 SoC, but with
->> OPPs higher than 1008MHz temporarily dropped.
->>
->> Then there's patches for several tested boards: Orange Pi PC (with
->> SY8106A), Orange Pi One/Zero (with GPIO-adjustable SY8113B) and
->> ALL-H3-CC (unadjustable).
->>
->> Icenowy Zheng (5):
->>   ARM: sun8i: h3: add operating-points-v2 table for CPU
->>   ARM: sun8i: h2+: add SY8113B regulator used by Orange Pi Zero board
->>   ARM: sun8i: h3: add SY8113B regulator used by Orange Pi One board
->>   ARM: sun8i: h3: fix ALL-H3-CC H3 ver VDD-CPUX voltage
->>   ARM: sun8i: h3: set the cpu-supply to VDD-CPUX on ALL-H3-CC H3 ver
->>
->> Ondrej Jirman (5):
->>   dt-bindings: add binding for the SY8106A voltage regulator
->>   regulator: add support for SY8106A regulator
->>   ARM: sunxi: h3/h5: Add r_i2c pinmux node
->>   ARM: sunxi: h3/h5: Add r_i2c I2C controller
->>   ARM: sun8i: h3: Add SY8106A regulator to Orange Pi PC
+From: Jeff Mahoney <jeffm@suse.com>
 
-Dropped this patch at your request. The rest will be in -next.
+Hi all -
 
-ChenYu
+I recently encountered a customer issue where, on a machine with many TiB
+of memory and a few hundred cores, after a task with a few thousand threads
+and hundreds of files open exited, the system would softlockup.  That
+issue was (is still) being addressed by Nik Borisov's patch to add a
+cond_resched call to shrink_dentry_list.  The underlying issue is still
+there, though.  We just don't complain as loudly.  When a huge task
+exits, now the system is more or less unresponsive for about eight
+minutes.  All CPUs are pinned and every one of them is going through
+dentry and inode eviction for the procfs files associated with each
+thread.  It's made worse by every CPU contending on the super's
+inode list lock.
 
->
-> I've applied all the device tree patches for 4.18, taking into account
-> comments from Maxime. See
->
->     https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/log/?h=sunxi/h3-h5-for-4.17
->
-> Mostly it's just renaming the regulator node names and labels.
->
-> Please resend the first two patches to Mark Brown, the regulator
-> subsystem maintainer. And you might want to mention the branch
-> above in case he needs a use case reference.
->
-> Regards
-> ChenYu
+The numbers get big.  My test case was 4096 threads with 16384 files
+open.  It's a contrived example, but not that far off from the actual
+customer case.  In this case, a simple "find /proc" would create around
+300 million dentry/inode pairs.  More practically, lsof(1) does it too,
+it just takes longer.  On smaller systems, memory pressure starts pushing
+them out. Memory pressure isn't really an issue on this machine, so we
+end up using well over 100GB for proc files.  It's the combination of
+the wasted CPU cycles in teardown and the wasted memory at runtime that
+pushed me to take this approach.
+
+The biggest culprit is the "fd" and "fdinfo" directories, but those are
+made worse by there being multiple copies of them even for the same
+task without threads getting involved:
+
+- /proc/pid/fd and /proc/pid/task/pid/fd are identical but share no
+  resources.
+
+- Every /proc/pid/task/*/fd directory in a thread group has identical
+  contents (unless unshare(CLONE_FILES) was called), but share no
+  resources.
+
+- If we do a lookup like /proc/pid/fd on a member of a thread group,
+  we'll get a valid directory.  Inside, there will be a complete
+  copy of /proc/pid/task/* just like in /proc/tgid/task.  Again,
+  nothing is shared.
+
+This patch set reduces some (most) of the duplication by conditionally
+replacing some of the directories with symbolic links to copies that are
+identical.
+
+1) Eliminate the duplication of the task directories between threads.
+   The task directory belongs to the thread leader and the threads
+   link to it: e.g. /proc/915/task -> ../910/task  This mainly
+   reduces duplication when individual threads are looked up directly
+   at the tgid level.  The impact varies based on the number of threads.
+   The user has to go out of their way in order to mess up their system
+   in this way.  But if they were so inclined, they could create ~550
+   billion inodes and dentries using the test case.
+
+2) Eliminate the duplication of directories that are created identically
+   between the tgid-level pid directory and its task directory: fd,
+   fdinfo, ns, net, attr.  There is obviously more duplication between
+   the two directories, but replacing a file with a symbolic link
+   doesn't get us anything.  This reduces the number of files associated
+   with fd and fdinfo by half if threads aren't involved.
+
+3) Eliminate the duplication of fd and fdinfo directories among threads
+   that share a files_struct.  We check at directory creation time if
+   the task is a group leader and if not, whether it shares ->files with
+   the group leader.  If so, we create a symbolic link to ../tgid/fd*.
+   We use a d_revalidate callback to check whether the thread has called
+   unshare(CLONE_FILES) and, if so, fail the revalidation for the symlink.
+   Upon re-lookup, a directory will be created in its place.  This is
+   pretty simple, so if the thread group leader calls unshare, all threads
+   get directories.
+
+With these patches applied, running the same testcase, the proc_inode
+cache only gets to about 600k objects, which is about 99.7% fewer.  I
+get that procfs isn't supposed to be scalable, but this is kind of
+extreme. :)
+
+Finally, I'm not a procfs expert.  I'm posting this as an RFC for folks
+with more knowledge of the details to pick it apart.  The biggest is that
+I'm not sure if any tools depend on any of these things being directories
+instead of symlinks.  I'd hope not, but I don't have the answer.  I'm
+sure there are corner cases I'm missing.  Hopefully, it's not just flat
+out broken since this is a problem that does need solving.
+
+Now I'll go put on the fireproof suit.
+
+Thanks,
+
+-Jeff
+
+---
+
+Jeff Mahoney (5):
+  procfs: factor out a few helpers
+  procfs: factor out inode revalidation work from pid_revalidation
+  procfs: use symlinks for /proc/<pid>/task when not thread group leader
+  procfs: share common directories between /proc/tgid and
+    /proc/tgid/task/tgid
+  procfs: share fd/fdinfo with thread group leader when files are shared
+
+ fs/proc/base.c | 487 +++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 437 insertions(+), 50 deletions(-)
+
+-- 
+2.12.3
