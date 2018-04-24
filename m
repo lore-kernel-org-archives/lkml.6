@@ -1,49 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758067AbeDXNTz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:19:55 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51941 "EHLO
+        id S1758099AbeDXNUE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:20:04 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:56145 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758034AbeDXNTu (ORCPT
+        with ESMTP id S1758069AbeDXNT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:19:50 -0400
-X-Google-Smtp-Source: AIpwx4/rHvqPkwsDURyBzgjs8Xrj1LAJ96NJC9v6JfRmTDtR7GPWCBI/0Ki9VuwC/Kj6ksI2rf1GiA==
+        Tue, 24 Apr 2018 09:19:56 -0400
+X-Google-Smtp-Source: AIpwx4+C2wDSP+36+Vx4G4clzrsXal17zCG1SeJtB7eg4FBqeEzDzWVB/ER1BqEvvaDk+pmj8HAPJA==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: fix va1j5jf8007s_get_frontend_algo()'s return type
-Date: Tue, 24 Apr 2018 15:19:44 +0200
-Message-Id: <20180424131947.6371-1-luc.vanoostenryck@gmail.com>
+        Pravin B Shelar <pshelar@ovn.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        dev@openvswitch.org
+Subject: [PATCH] openvswitch: make vport_ops:send()'s return type consistent
+Date: Tue, 24 Apr 2018 15:19:53 +0200
+Message-Id: <20180424131953.6474-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The method dvb_frontend_ops::get_frontend_algo() is defined as
-returning an 'enum dvbfe_algo', but the implementation in this
-driver returns an 'int'.
+The method struct vport_ops:send() is defined as returning an
+'netdev_tx_t', which is defined as a typedef for a bitwise type
+and otherwise used for the start_xmit() methods.
+However, most openvswitch drivers use for this method dev_queue_xmit()
+which returns an 'int' and the return value of vport_ops:send() is
+in fact never used.
 
-Fix this by returning 'enum dvbfe_algo' in this driver too.
+Make things typewise consistent and use 'int' for vport_ops:send()
+as well for internal_dev_recv() (which is the only proper send method)
+as using 'netdev_tx_t' doesn't offer any advantages and in fact seems,
+if not wrong at least, inadequate.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/media/pci/pt1/va1j5jf8007s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/openvswitch/vport-internal_dev.c | 6 +++---
+ net/openvswitch/vport.h              | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/pci/pt1/va1j5jf8007s.c b/drivers/media/pci/pt1/va1j5jf8007s.c
-index f49867aef..3edc0fe2e 100644
---- a/drivers/media/pci/pt1/va1j5jf8007s.c
-+++ b/drivers/media/pci/pt1/va1j5jf8007s.c
-@@ -98,7 +98,7 @@ static int va1j5jf8007s_read_snr(struct dvb_frontend *fe, u16 *snr)
- 	return 0;
+diff --git a/net/openvswitch/vport-internal_dev.c b/net/openvswitch/vport-internal_dev.c
+index 3ea55618e..2fd68c2fb 100644
+--- a/net/openvswitch/vport-internal_dev.c
++++ b/net/openvswitch/vport-internal_dev.c
+@@ -231,7 +231,7 @@ static void internal_dev_destroy(struct vport *vport)
+ 	rtnl_unlock();
  }
  
--static int va1j5jf8007s_get_frontend_algo(struct dvb_frontend *fe)
-+static enum dvbfe_algo va1j5jf8007s_get_frontend_algo(struct dvb_frontend *fe)
+-static netdev_tx_t internal_dev_recv(struct sk_buff *skb)
++static int internal_dev_recv(struct sk_buff *skb)
  {
- 	return DVBFE_ALGO_HW;
+ 	struct net_device *netdev = skb->dev;
+ 	struct pcpu_sw_netstats *stats;
+@@ -239,7 +239,7 @@ static netdev_tx_t internal_dev_recv(struct sk_buff *skb)
+ 	if (unlikely(!(netdev->flags & IFF_UP))) {
+ 		kfree_skb(skb);
+ 		netdev->stats.rx_dropped++;
+-		return NETDEV_TX_OK;
++		return 0;
+ 	}
+ 
+ 	skb_dst_drop(skb);
+@@ -257,7 +257,7 @@ static netdev_tx_t internal_dev_recv(struct sk_buff *skb)
+ 	u64_stats_update_end(&stats->syncp);
+ 
+ 	netif_rx(skb);
+-	return NETDEV_TX_OK;
++	return 0;
  }
+ 
+ static struct vport_ops ovs_internal_vport_ops = {
+diff --git a/net/openvswitch/vport.h b/net/openvswitch/vport.h
+index cda66c26a..8dcb48fe8 100644
+--- a/net/openvswitch/vport.h
++++ b/net/openvswitch/vport.h
+@@ -141,7 +141,7 @@ struct vport_ops {
+ 	int (*set_options)(struct vport *, struct nlattr *);
+ 	int (*get_options)(const struct vport *, struct sk_buff *);
+ 
+-	netdev_tx_t (*send) (struct sk_buff *skb);
++	int (*send) (struct sk_buff *skb);
+ 	struct module *owner;
+ 	struct list_head list;
+ };
 -- 
 2.17.0
