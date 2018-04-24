@@ -1,124 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752395AbeDXQs2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:48:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36144 "EHLO mail.kernel.org"
+        id S1752048AbeDXQsx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:48:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:11856 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750827AbeDXQs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:48:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BCCF217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Tue, 24 Apr 2018 18:48:23 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Wan, Kaike" <kaike.wan@intel.com>,
-        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        "Fleck, John" <john.fleck@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: hrtimer (rdmavt RNR timer) was lost
-Message-ID: <20180424164821.GA31724@lerouge>
-References: <3F128C9216C9B84BB6ED23EF16290AFB634C8C87@CRSMSX101.amr.corp.intel.com>
- <alpine.DEB.2.21.1804231355570.2077@nanos.tec.linutronix.de>
- <3F128C9216C9B84BB6ED23EF16290AFB634C9420@CRSMSX101.amr.corp.intel.com>
- <alpine.DEB.2.21.1804231528130.2077@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de>
+        id S1751027AbeDXQsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:48:51 -0400
+Date: Tue, 24 Apr 2018 12:48:50 -0400 (EDT)
+From: Chunyu Hu <chuhu@redhat.com>
+Reply-To: Chunyu Hu <chuhu@redhat.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Chunyu Hu <chuhu.ncepu@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
+Message-ID: <850575801.19606468.1524588530119.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180424132057.GE17484@dhcp22.suse.cz>
+References: <1524243513-29118-1-git-send-email-chuhu@redhat.com> <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com> <20180422125141.GF17484@dhcp22.suse.cz> <CACT4Y+YWUgyzCBadg+Oe8wDkFCaBzmcKDgu3rKjQxim7NXNLpg@mail.gmail.com> <CABATaM6eWtssvuj3UW9LHLK3HWo8P9g0z9VzFnuqKPKO5KMJ3A@mail.gmail.com> <20180424132057.GE17484@dhcp22.suse.cz>
+Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in
+ gfp_kmemleak_mask
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.68.5.20, 10.4.195.24]
+Thread-Topic: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
+Thread-Index: /ptDTdZyFm9byUxQdjPK1jDcg19Oag==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 04:54:58PM +0200, Thomas Gleixner wrote:
-> On Mon, 23 Apr 2018, Thomas Gleixner wrote:
-> > On Mon, 23 Apr 2018, Wan, Kaike wrote:
-> > > > Can you apply the following debug patch and enable the hrtimer_start trace
-> > > > point and send me the full trace or upload it somewhere?
-> > > 
-> > > The original trace was about 29GB and I filtered it with
-> > > "0000000066dda1ea" (the offending base) to generate a 1.4GB file that I
-> > > could open and investigate.  I am not sure how I can send them to you. Do
-> > > you have somewhere I can upload to?
-> > >
-> > > I can try your debug patch and again I am anticipating a big trace file.
-> > 
-> > Well, you can find the spot where the fail happens and then extract the
-> > full thing from 2s before that point to 1s after. That should be reasonably
-> > small and good enough. Let me know when you have it and how big it is
-> > (compressed) and we'll figure something out how to transport it.
-> 
-> Thanks for the more complete data which actually let me decode the wreckage.
-> 
-> So you have NO_HZ enabled and looking at the trace then this is related:
-> 
->           <idle>-0     [003] dN.. 3598605307236: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=712171000000 softexpires=712171000000mode=ABS|PINNED base=0000000066dda1ea next=00000000708914d7
->           <idle>-0     [003] dN.. 3598605307601: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=0000000004346740
-> 	  
->           <idle>-0     [002] d.h. 3598605313255: hrtimer_start: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] expires=712172915662 softexpires=712172915662mode=REL base=0000000066dda1ea next=0000000004346740
->           <idle>-0     [002] d.h. 3599538740786: hrtimer_post_add: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] base=0000000066dda1ea next=00000000662d2dd8
-> 
->           <idle>-0     [003] dn.. 3599538742242: hrtimer_pre_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
->           <idle>-0     [003] dn.. 3599538743084: hrtimer_post_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
->   
->           <idle>-0     [003] dn.. 3599538743830: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=716767000000 softexpires=716767000000mode=ABS|PINNED base=0000000066dda1ea next=00000000662d2dd8
->           <idle>-0     [003] dn.. 3599538744560: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
-> 
-> And staring at the NOHZ code I'm pretty sure, I know what happens.
-> 
-> CPU 3						CPU 2
-> 
-> idle
-> start tick_sched_timer 712171000000
-> 						start rdmavt timer 712172915662
-> 						lock(base)
-> tick_nohz_stop_tick()
-> tick = 716767000000				timerqueue_add(tmr)
-> 
-> hrtimer_set_expires(&ts->sched_timer, tick); <---- FAIL
-> 
-> 						    if (tmr->exp < queue->next->exp)
-> hrtimer_start(sched_timer)			        queue->next = tmr;
-> lock(base)
-> 						unlock(base)
-> timerqueue_remove()
-> timerqueue_add()
-> ....
-> 
-> So ts->sched_timer is still queued and queue->next is pointing to it, but
-> then expires is modified. So the other side sees the new expiry time and
-> makes the rdmavt timer the new queue->next. All f*cked from there.
-> 
-> The problem was introduced with:
-> 
->   d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
-> 
-> The changelog is not really helpful, but I can't see why the expiry time of
-> ts->sched_timer should be updated before the timer is [re]started in case
-> of HIGHRES + NOHZ. hrtimer_start() sets the expiry time, so that should be
-> sufficient. Of course the tick needs to be stored in ts->sched_timer for
-> the !HIGHRES + HOHZ case, but that's trivial enough to do. Patch against
-> Linus tree below. It's easy to backport in case you want to run it against
-> the kernel which made the observation simpler.
-> 
-> I need to come up with integration of hrtimer_set_expires() into debug
-> objects to catch this kind of horrors. Groan....
 
-Sorry for all that, that must have been hairy enough to debug :-(
 
-I thought that I could fiddle with the sched_timer because nothing else
-is supposed to touch it concurrently, but that forgot about the whole
-queue locked under cpu_base. My fault.
+----- Original Message -----
+> From: "Michal Hocko" <mhocko@kernel.org>
+> To: "Chunyu Hu" <chuhu.ncepu@gmail.com>
+> Cc: "Dmitry Vyukov" <dvyukov@google.com>, "Catalin Marinas" <catalin.marinas@arm.com>, "Chunyu Hu"
+> <chuhu@redhat.com>, "LKML" <linux-kernel@vger.kernel.org>, "Linux-MM" <linux-mm@kvack.org>
+> Sent: Tuesday, April 24, 2018 9:20:57 PM
+> Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
+> 
+> On Mon 23-04-18 12:17:32, Chunyu Hu wrote:
+> [...]
+> > So if there is a new flag, it would be the 25th bits.
+> 
+> No new flags please. Can you simply store a simple bool into fail_page_alloc
+> and have save/restore api for that?
 
-The fix looks all good to me, thanks!
+Hi Michal,
 
-ACK.
+I still don't get your point. The original NOFAIL added in kmemleak was 
+for skipping fault injection in page/slab  allocation for kmemleak object, 
+since kmemleak will disable itself until next reboot, whenever it hit an 
+allocation failure, in that case, it will lose effect to check kmemleak 
+in errer path rose by fault injection. But NOFAULT's effect is more than 
+skipping fault injection, it's also for hard allocation. So a dedicated flag
+for skipping fault injection in specified slab/page allocation was mentioned.
+ 
+d9570ee3bd1d ("kmemleak: allow to coexist with fault injection") 
+  
+Do you mean something like below, with the save/store api? But looks like
+to make it possible to skip a specified allocation, not global disabling,
+a bool is not enough, and a gfp_flag is also needed. Maybe I missed something?
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 905db9d..ca6f609 100644                                                                                                                     
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3053,14 +3053,28 @@ struct page *rmqueue(struct zone *preferred_zone,
+ 
+    bool ignore_gfp_highmem;
+    bool ignore_gfp_reclaim;
++   bool ignore_kmemleak_fault;
+    u32 min_order;
+ } fail_page_alloc = { 
+    .attr = FAULT_ATTR_INITIALIZER,
+    .ignore_gfp_reclaim = true,
+    .ignore_gfp_highmem = true,
++   .ignore_kmemleak_fault = true,
+    .min_order = 1,
+ };
+ 
++bool saved_fail_page_alloc_ignore;
++void fail_page_alloc_ignore_save(void)
++{
++   saved_fail_page_alloc_ignore = fail_page_alloc.ignore_kmemleak_fault;
++   fail_page_alloc.ignore_kmemleak_fault = true;
++}
++
++void fail_page_alloc_ignore_restore(void)
++{
++   fail_page_alloc.ignore_kmemleak_fault = saved_fail_page_alloc_ignore;
++}
++
+ static int __init setup_fail_page_alloc(char *str)
+ {
+    return setup_fault_attr(&fail_page_alloc.attr, str);
+@@ -3075,6 +3089,9 @@ static bool should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
+        return false;
+    if (fail_page_alloc.ignore_gfp_highmem && (gfp_mask & __GFP_HIGHMEM))
+        return false;
++   /* looks like here we still need a new GFP_KMEMLKEAK flag ... */
++   if (fail_page_alloc.ignore_kmemleak_fault && (gfp_mask & __GFP_KMEMLEAK))
++       return false;
+    if (fail_page_alloc.ignore_gfp_reclaim &&
+            (gfp_mask & __GFP_DIRECT_RECLAIM))
+        return false;   
+
+> 
+> --
+> Michal Hocko
+> SUSE Labs
+> 
+
+-- 
+Regards,
+Chunyu Hu
