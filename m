@@ -1,66 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751513AbeDXT5E (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:57:04 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:43716 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbeDXT5D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:57:03 -0400
-X-Google-Smtp-Source: AIpwx4+nGRg6dG0fUp18PsBcRxC/Yhz6SZvTzkMyXACR70yvpu+cpywu1bfze0z7QVZGHf3rsjOPO+wmRfzbFpyw0IU=
-MIME-Version: 1.0
-In-Reply-To: <20180424195512.491-1-malat@debian.org>
-References: <20180424195512.491-1-malat@debian.org>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 24 Apr 2018 21:56:42 +0200
-X-Google-Sender-Auth: 4ubxF7R-WSg-CrB-I6IRzbbmO94
-Message-ID: <CA+7wUszw=fF_kUW+Et07nnX1=0VBtrPJU6yfZsuk_uLUJPQsmw@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon: Change the default to PCI on PowerPC
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752777AbeDXT5p (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:57:45 -0400
+Received: from mga07.intel.com ([134.134.136.100]:56865 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750835AbeDXT5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:57:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,324,1520924400";
+   d="scan'208";a="36729881"
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc: acme@redhat.com, eranian@google.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/intel: Don't enable freeze-on-smi for PerfMon V1
+Date: Tue, 24 Apr 2018 15:56:23 -0400
+Message-Id: <1524599783-62181-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3OJvC9Y031347
 
-For reference:
+From: Kan Liang <kan.liang@linux.intel.com>
 
-https://lists.freedesktop.org/archives/mesa-dev/2016-May/115453.html
+The SMM freeze feature was introduced since PerfMon V2. But the current
+code unconditionally enables the feature for all platforms. It can
+generate #GP exception, if the related FREEZE_WHILE_SMM bit is set for
+the machine with PerfMon V1.
 
-2018-04-24 21:55 GMT+02:00 Mathieu Malaterre <malat@debian.org>:
-> AGP mode is unstable on PowerPC. Symptoms are generally of the form:
->
-> [ 1228.795711] radeon 0000:00:10.0: ring 0 stalled for more than 10240msec
->
-> Reviewed-by: Christian König <christian.koenig@amd.com>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  drivers/gpu/drm/radeon/radeon_drv.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-> index b28288a781ef..2a7977a23b31 100644
-> --- a/drivers/gpu/drm/radeon/radeon_drv.c
-> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
-> @@ -168,7 +168,12 @@ int radeon_no_wb;
->  int radeon_modeset = -1;
->  int radeon_dynclks = -1;
->  int radeon_r4xx_atom = 0;
-> +#ifdef __powerpc__
-> +/* Default to PCI on PowerPC (fdo #95017) */
-> +int radeon_agpmode = -1;
-> +#else
->  int radeon_agpmode = 0;
-> +#endif
->  int radeon_vram_limit = 0;
->  int radeon_gart_size = -1; /* auto */
->  int radeon_benchmarking = 0;
-> --
-> 2.11.0
->
+Checking the PerfMon version. Only enable the feature for PerfMon V2 and
+later.
+
+Fixes: 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/core.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 4f2a5c7..08be8ed 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3346,7 +3346,8 @@ static void intel_pmu_cpu_starting(int cpu)
+ 
+ 	cpuc->lbr_sel = NULL;
+ 
+-	flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
++	if (x86_pmu.version > 1)
++		flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
+ 
+ 	if (!cpuc->shared_regs)
+ 		return;
+@@ -3509,6 +3510,8 @@ static __initconst const struct x86_pmu core_pmu = {
+ 	.cpu_dying		= intel_pmu_cpu_dying,
+ };
+ 
++static struct attribute *intel_pmu_attrs[];
++
+ static __initconst const struct x86_pmu intel_pmu = {
+ 	.name			= "Intel",
+ 	.handle_irq		= intel_pmu_handle_irq,
+@@ -3540,6 +3543,8 @@ static __initconst const struct x86_pmu intel_pmu = {
+ 	.format_attrs		= intel_arch3_formats_attr,
+ 	.events_sysfs_show	= intel_event_sysfs_show,
+ 
++	.attrs			= intel_pmu_attrs,
++
+ 	.cpu_prepare		= intel_pmu_cpu_prepare,
+ 	.cpu_starting		= intel_pmu_cpu_starting,
+ 	.cpu_dying		= intel_pmu_cpu_dying,
+@@ -3918,8 +3923,6 @@ __init int intel_pmu_init(void)
+ 
+ 	x86_pmu.max_pebs_events		= min_t(unsigned, MAX_PEBS_EVENTS, x86_pmu.num_counters);
+ 
+-
+-	x86_pmu.attrs			= intel_pmu_attrs;
+ 	/*
+ 	 * Quirk: v2 perfmon does not report fixed-purpose events, so
+ 	 * assume at least 3 events, when not running in a hypervisor:
+-- 
+2.4.11
