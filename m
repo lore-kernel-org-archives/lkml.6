@@ -1,126 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753016AbeDXSSM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 14:18:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54482 "EHLO
+        id S1751957AbeDXSQg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 14:16:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54464 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751990AbeDXSQh (ORCPT
+        with ESMTP id S1750943AbeDXSQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 14:16:37 -0400
+        Tue, 24 Apr 2018 14:16:33 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, netdev@vger.kernel.org
 Cc: "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] ide: kill ide_toggle_bounce
-Date: Tue, 24 Apr 2018 20:16:22 +0200
-Message-Id: <20180424181625.22410-3-hch@lst.de>
+Subject: remove PCI_DMA_BUS_IS_PHYS V2
+Date: Tue, 24 Apr 2018 20:16:20 +0200
+Message-Id: <20180424181625.22410-1-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180424181625.22410-1-hch@lst.de>
-References: <20180424181625.22410-1-hch@lst.de>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ide_toggle_bounce did select various strange block bounce limits, including
-not bouncing at all as soon as an iommu is present in the system.  Given
-that the dma_map routines now handle any required bounce buffering except
-for ISA DMA, and the ide code already must handle either ISA DMA or highmem
-at least for iommu equipped systems we can get rid of the block layer
-bounce limit setting entirely.
+Hi all,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/ide/ide-dma.c   |  2 --
- drivers/ide/ide-lib.c   | 26 --------------------------
- drivers/ide/ide-probe.c |  3 ---
- include/linux/ide.h     |  2 --
- 4 files changed, 33 deletions(-)
+this series tries to get rid of the global and PCI_DMA_BUS_IS_PHYS flag,
+which causes the block layer and networking code to bounce buffer memory
+above the dma mask in some cases.  It is a leftover from i386 + highmem
+days and is obsolete now that we have swiotlb or iommus so that the
+dma ops implementations can always (minus the ISA DMA case which
+will require further attention) handle memory passed to them.
 
-diff --git a/drivers/ide/ide-dma.c b/drivers/ide/ide-dma.c
-index 54d4d78ca46a..6f344654ef22 100644
---- a/drivers/ide/ide-dma.c
-+++ b/drivers/ide/ide-dma.c
-@@ -180,7 +180,6 @@ EXPORT_SYMBOL_GPL(ide_dma_unmap_sg);
- void ide_dma_off_quietly(ide_drive_t *drive)
- {
- 	drive->dev_flags &= ~IDE_DFLAG_USING_DMA;
--	ide_toggle_bounce(drive, 0);
- 
- 	drive->hwif->dma_ops->dma_host_set(drive, 0);
- }
-@@ -211,7 +210,6 @@ EXPORT_SYMBOL(ide_dma_off);
- void ide_dma_on(ide_drive_t *drive)
- {
- 	drive->dev_flags |= IDE_DFLAG_USING_DMA;
--	ide_toggle_bounce(drive, 1);
- 
- 	drive->hwif->dma_ops->dma_host_set(drive, 1);
- }
-diff --git a/drivers/ide/ide-lib.c b/drivers/ide/ide-lib.c
-index e1180fa46196..78cb79eddc8b 100644
---- a/drivers/ide/ide-lib.c
-+++ b/drivers/ide/ide-lib.c
-@@ -6,32 +6,6 @@
- #include <linux/ide.h>
- #include <linux/bitops.h>
- 
--/**
-- *	ide_toggle_bounce	-	handle bounce buffering
-- *	@drive: drive to update
-- *	@on: on/off boolean
-- *
-- *	Enable or disable bounce buffering for the device. Drives move
-- *	between PIO and DMA and that changes the rules we need.
-- */
--
--void ide_toggle_bounce(ide_drive_t *drive, int on)
--{
--	u64 addr = BLK_BOUNCE_HIGH;	/* dma64_addr_t */
--
--	if (!PCI_DMA_BUS_IS_PHYS) {
--		addr = BLK_BOUNCE_ANY;
--	} else if (on && drive->media == ide_disk) {
--		struct device *dev = drive->hwif->dev;
--
--		if (dev && dev->dma_mask)
--			addr = *dev->dma_mask;
--	}
--
--	if (drive->queue)
--		blk_queue_bounce_limit(drive->queue, addr);
--}
--
- u64 ide_get_lba_addr(struct ide_cmd *cmd, int lba48)
- {
- 	struct ide_taskfile *tf = &cmd->tf;
-diff --git a/drivers/ide/ide-probe.c b/drivers/ide/ide-probe.c
-index 2019e66eada7..8d8ed036ca0a 100644
---- a/drivers/ide/ide-probe.c
-+++ b/drivers/ide/ide-probe.c
-@@ -805,9 +805,6 @@ static int ide_init_queue(ide_drive_t *drive)
- 	/* assign drive queue */
- 	drive->queue = q;
- 
--	/* needs drive->queue to be set */
--	ide_toggle_bounce(drive, 1);
--
- 	return 0;
- }
- 
-diff --git a/include/linux/ide.h b/include/linux/ide.h
-index ca9d34feb572..11f0dd03a4b4 100644
---- a/include/linux/ide.h
-+++ b/include/linux/ide.h
-@@ -1508,8 +1508,6 @@ static inline void ide_set_hwifdata (ide_hwif_t * hwif, void *data)
- 	hwif->hwif_data = data;
- }
- 
--extern void ide_toggle_bounce(ide_drive_t *drive, int on);
--
- u64 ide_get_lba_addr(struct ide_cmd *, int);
- u8 ide_dump_status(ide_drive_t *, const char *, u8);
- 
--- 
-2.17.0
+Changes since V1:
+ - dropped all patches not strictly required to remove
+   PCI_DMA_BUS_IS_PHYS, those will be resent separately
