@@ -1,85 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756614AbeDXKaF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 06:30:05 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41487 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756533AbeDXKaE (ORCPT
+        id S932634AbeDXKdH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 06:33:07 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:55454 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1756653AbeDXKdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 06:30:04 -0400
-X-Google-Smtp-Source: AIpwx48VDipwKUs3nUZlEQmxxCRjODZ4vy5UMEQQ8+zt4z5JatxYnThLQTpKqbZscJhXXXAmqT7LDA==
-Date: Tue, 24 Apr 2018 16:00:00 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/fair: Rearrange select_task_rq_fair() to optimize
- it
-Message-ID: <20180424103000.74sbxgztf7h7xppb@vireshk-i7>
-References: <8a34a16da90b9f83ffe60316a074a5e4d05b59b0.1524479666.git.viresh.kumar@linaro.org>
- <434fa179-7c8f-8a01-a07a-4527521a04c7@arm.com>
+        Tue, 24 Apr 2018 06:33:05 -0400
+Date: Tue, 24 Apr 2018 13:33:03 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Loic Poulain <loic.poulain@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        slongerbeam@gmail.com, mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        dragonboard@lists.96boards.org,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [RESEND PATCH] media: i2c: ov5640: Add pixel clock support
+Message-ID: <20180424103303.rrgv2d33stnll2cx@valkosipuli.retiisi.org.uk>
+References: <1522335300-13467-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <1522335300-13467-2-git-send-email-manivannan.sadhasivam@linaro.org>
+ <CAMZdPi-VCsct6S4cYCvN_XniFB9=pJqC8hnTdQnvL5H_CU2a8Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <434fa179-7c8f-8a01-a07a-4527521a04c7@arm.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <CAMZdPi-VCsct6S4cYCvN_XniFB9=pJqC8hnTdQnvL5H_CU2a8Q@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24-04-18, 11:02, Valentin Schneider wrote:
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index cacee15..ad09b67 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6613,7 +6613,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
->  static int
->  select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_flags)
->  {
-> -	struct sched_domain *tmp, *affine_sd = NULL, *sd = NULL;
-> +	struct sched_domain *tmp, *sd = NULL;
->  	int cpu = smp_processor_id();
->  	int new_cpu = prev_cpu;
->  	int want_affine = 0;
-> @@ -6636,8 +6636,10 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
->  		 */
->  		if (want_affine && (tmp->flags & SD_WAKE_AFFINE) &&
->  		    cpumask_test_cpu(prev_cpu, sched_domain_span(tmp))) {
-> +			if (cpu != prev_cpu)
-> +				new_cpu = wake_affine(tmp, p, cpu, prev_cpu, sync);
-> +
->  			sd = NULL; /* Prefer wake_affine over balance flags */
-> -			affine_sd = tmp;
->  			break;
->  		}
->  
-> @@ -6657,16 +6659,11 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
->  			sync_entity_load_avg(&p->se);
->  
->  		new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
-> -	} else {
-> -		if (affine_sd && cpu != prev_cpu)
-> -			new_cpu = wake_affine(affine_sd, p, cpu, prev_cpu, sync);
-> +	} else if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
-> +		new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
->  
-> -		if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
-> -			new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
-> -
-> -			if (want_affine)
-> -				current->recent_used_cpu = cpu;
-> -		}
-> +		if (want_affine)
-> +			current->recent_used_cpu = cpu;
->  	}
->  	rcu_read_unlock();
+On Tue, Apr 24, 2018 at 11:01:18AM +0200, Loic Poulain wrote:
+> On 29 March 2018 at 16:55, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> > Some of the camera subsystems like camss in Qualcommm MSM chipsets
+> > require pixel clock support in camera sensor drivers. So, this commit
+> > adds a default pixel clock rate of 96MHz to OV5640 camera sensor driver.
+> >
+> > According to the datasheet, 96MHz can be used as a pixel clock rate for
+> > most of the modes.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Tested-by: Loic Poulain <loic.poulain@linaro.org>
+> 
+> It works for me on Dragonboard 410c + D3 camera mezzanine (ov5640) .
+> 
+> Any comments on this change?
 
-LGTM.
+<URL:https://patchwork.linuxtv.org/project/linux-media/list/?submitter=Maxime+Ripard&state=*&q=ov5640>
 
-I will merge it as part of the current patch, but maybe wait for a few
-days before sending V2.
+There's also another set that adds PIXEL_CLOCK (as well as LINK_FREQ)
+support to the driver, that seems more complete than this patch but
+requires a rebase on Maxime's patches:
+
+<URL:https://patchwork.linuxtv.org/project/linux-media/list/?submitter=7218&state=*&q=ov5640>
 
 -- 
-viresh
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
