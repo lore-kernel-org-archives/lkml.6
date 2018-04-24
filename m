@@ -1,73 +1,81 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-650796-1524657867-2-9723050627887443998
+X-Cyrus-Session-Id: sloti22d1t05-3668839-1524603076-2-7024773274215105472
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524657867; b=iVDK6veyqOaW7XpfoucbVT6BnfXX2xiQt9KAs4Dyf8SPbXnQgB
-    0KQ0ZE/hvyC7FyXXvNSi767690K4APgVTKKPVg0C00CLkdG2YqdfxQ4LzamtU09l
-    rzafDS+K4BV7e9qZ0Gb6axoh9uJnIIxREHsLqjOPeGcJS/uZBmnJOTI077FXo9t/
-    znl9/Iyb9Oz09glsOItejnpcn+mO4keC8mO09NLv7rRSczY1gblQwad7WZVsQoCM
-    n7rz1JCWX9/r2prGAMoIvSPszK2K7ryks/Yz3kuVqcxUdqcqBl3mGE2MjGk86tKE
-    qeFS6gX2IRs4waelqkpKnkZipP2D+j/oKvcg==
+    1524603075; b=bCzqZ2fVjBZB80WQyCr0xH8816XqvE2T0hoWyKbBy9pmlkD75Q
+    fbDpl6VTA3aGZ8PRbcRU5j6YA1xrJ83AcpZYZGBvgEe73WDsBiNQr0GwT5NH2+t6
+    jcUpqZIPz4KlyOBvDE/wbhRarOUCVze57uPb39eLwRefMJuaEB9crQH/THrmWjWi
+    f1gOnyLnaM3NZtSCYmpnSZTOpTp/nNnaVkpENZqdGQpSYPtk8mpa5E73TsUfBgB+
+    dMjhc7yoy5GguhKqcbYyogpcfSQTIPdxLXg1qS9c1vQhzicN6+wJ3kaYEA+FpJtY
+    N18BlthzFWpvoksNQJ+KGXiGkU5wF18kwAIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524657867; bh=PY92VfCWGlSnmYYwVSWZXRUJwS66yb
-    NvScDNbHlD2bY=; b=ahoILLzoR9zg7av9lgKte/dZkzDcIPgwi93xBDxEq+tx+Z
-    +RiRyZF8K8CW8/2olhvXeGESeANvGjQpoohly5a8Pzs12/kZEt1bKDDKCuNezY5J
-    9a+7AlbpGlWDSQECqO/eOFLH4XMl/5QX8BfHjWiZz56yo01ftzugFUzOO7AE/1qi
-    unFvjvLp8tlrCc9NfRjXH69LyveaBcNCbYt4/T3Ij2aqAubkL0EMcXkT13/tehSU
-    mlHrLw4ESTIMaAZCDqsG/EBVAiHitPFEYWEhlCWlVh5wutnRXzCG7KNVcndkhJKL
-    nnko9SinWVEvy6XrQn16v+DyBtOyyhuP5gPTdnEQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1524603075; bh=Z6gPOh/jEj4lGI2eY6a3/b7wDxkgzHx8A/zHRJgx/4
+    M=; b=U9RvS1MVeNh0wiUJliaavcZgEm1bKTjJRbB1DH83nj/u3ZNZhs3KMRZb67
+    AKoxtr9ZadUyr0IEFtYGCONuwRzwy+e4VgYFrN0siRazgzV8POA9js75vt/xu2iG
+    HV1sZsQM5wK8u5TEITDFY5budSxbEnM27nn30fF8ZNXI2v5xx8d95D0i7r1KQXH3
+    RcPK0ZV0+ZxUvpfPBbBkDDYn3N8k4ExBAom0IWXdxVIW6YhWvNddpcoDfjM5EYSS
+    O19pvJaISRlCCrLQnSf6DR2FpJvIVSD3zJtYB4G/vCf4be7t42ihJbb1ehJpKAWi
+    4fit53zL/yfzgu+Hs7r91tjT2BXw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Kzc16glL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=F+loKIv5;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Kzc16glL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=F+loKIv5;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJEXkemFZ0IzlIoOBh4++ruRfhD/3y2WIjZtH2QfIXX7pXRwhjmJYU5QpK46zc26j2cPoSBMje7TiimegPvB0sOzQTg6O8IxUDFX2oTC0dZUFd5z30Wu
-    +/OLCblo2SnN4HUcmtOA9qr3S9mR0Z6GVX2Vl/rstkf9EyszvYi9TprQ6M/lCfPBZfqZurpnyaC7nYWGUDJx0syMT1+yJOXKODtkR6gUHXkfTJIj2hwxyL56
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=bFUnhJpB9Z3-8uSK8OwA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-CM-Envelope: MS4wfNnpEXM034IGUeowFH0IrRN7c8g6Jf9+0w/YcMcgXuu0OCF3xyKR7gJTAfNUfQVA4D6HVxaGSnN7Ese+Ui0dDL9+1k+QYREvvA9LEJldR3oBnBd6j6Il
+    gW0CzjkMOCO650AkKkeUNa+Z5tPLV1BVBQe6jOEuhrfGGfgbA5fDIZqPmDgMkM+bcu7l6R0V7Az8W9M033ioN0rrRa2NPRJDeT/l9QBSwaTa/XPktvr/TOxQ
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=HEhsBhvELOkTVMn1VSwA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752938AbeDYMEV (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 08:04:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58396 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752189AbeDYMEP (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 25 Apr 2018 08:04:15 -0400
-Date: Wed, 25 Apr 2018 14:04:07 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        id S1751389AbeDXUvI (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 24 Apr 2018 16:51:08 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:40418 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbeDXUvA (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 24 Apr 2018 16:51:00 -0400
+X-Google-Smtp-Source: AB8JxZoObi9xIkKK0kUspvbFRxp38FgRIWrRXKZu6O/eMGAD8xRTEEfBnaRpPwxyiHZ2rWAUNuvM8l753KqznyTRVO4=
+MIME-Version: 1.0
+In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
+References: <20180424203239.21885-1-krzk@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 24 Apr 2018 22:50:58 +0200
+X-Google-Sender-Auth: tm8Cgdv1OiNdC5zb29mesGlfdDU
+Message-ID: <CAK8P3a2CZU1CYFt0fdVSFFnj2Wg=mUcC=yuWAW7zDO0u2Q2dUQ@mail.gmail.com>
+Subject: Re: [RFC 00/10] ARM: Remove support for Exynos5440
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
@@ -86,39 +94,69 @@ Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Alan Stern <stern@rowland.harvard.edu>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES"
+        <linux-samsung-soc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
         linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-spi <linux-spi@vger.kernel.org>, linux-usb@vger.kernel.org,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Olof Johansson <olof@lixom.net>,
         Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC 09/10] usb: host: exynos: Remove support for Exynos5440
-Message-ID: <20180425120407.GA6582@kroah.com>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-10-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180424203239.21885-10-krzk@kernel.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 10:32:38PM +0200, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/usb/host/ehci-exynos.c | 7 -------
->  drivers/usb/host/ohci-exynos.c | 6 ------
->  2 files changed, 13 deletions(-)
+On Tue, Apr 24, 2018 at 10:32 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Hi,
+>
+>
+> Overview
+> ========
+> Let's continue the removal of old platforms. We already get rid of Exynos4212.
+> Now it's time for Exynos5440.
+>
+> The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+> server platforms but it did not make it to the market really.  There are
+> no development boards with it and probably there are no real products
+> neither.  The development for Exynos5440 ended in 2013 and since then
+> the platform is in maintenance mode.
+>
+> The only development happening around it is the PCIe driver for Exynos5433
+> (ARMv8). [1]
+>
+> Removing Exynos5440, makes our life slightly easier:
+> 1. Less maintenance,
+> 2. Smaller code, less quirks,
+> 3. No need to preserve (imaginary) backward-compatibility for Exynos PCIe
+>    driver (so it is easier to add support for Exynos5433).
+>
+>
+> Because of point (3) above - I left the PCIe and PCIe PHY drivers intact.
+>
+>
+> Dependencies
+> ============
+> I think about starting with removal of DTS in some kernel release (patch 1/10).
+> Then all drivers can be removed/updated - subsystem maintainers can pick their
+> patches freely.
+>
+> Finally, after getting rid of all Exynos5440 symbols, the last patch (10/10) will
+> end in arm-soc tree.
+>
+>
+> Any comments?
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I don't see any hard dependency here, if this is all unused, I think we
+can apply both patches 1 and 10 into arm-soc at the same time as merging
+the other patches through the respective subsystem trees.
+
+      Arnd
