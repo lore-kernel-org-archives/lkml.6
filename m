@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756718AbeDXIYs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:24:48 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:46569 "EHLO
+        id S1756662AbeDXIYg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:24:36 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:51659 "EHLO
         srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756630AbeDXIYe (ORCPT
+        with ESMTP id S1756552AbeDXIYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:24:34 -0400
+        Tue, 24 Apr 2018 04:24:33 -0400
 From: Luca Ceresoli <luca@lucaceresoli.net>
 To: linux-media@vger.kernel.org
 Cc: Luca Ceresoli <luca@lucaceresoli.net>,
         Leon Luo <leonl@leopardimaging.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/13] media: imx274: fix typo in comment
-Date: Tue, 24 Apr 2018 10:24:07 +0200
-Message-Id: <1524558258-530-3-git-send-email-luca@lucaceresoli.net>
+Subject: [PATCH v2 00/13] media: imx274: cleanups, improvements and SELECTION API support
+Date: Tue, 24 Apr 2018 10:24:05 +0200
+Message-Id: <1524558258-530-1-git-send-email-luca@lucaceresoli.net>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524558258-530-1-git-send-email-luca@lucaceresoli.net>
-References: <1524558258-530-1-git-send-email-luca@lucaceresoli.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -33,27 +34,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Hi,
 
----
-Changed v1 -> v2:
- - add "media: " prefix to commit message
----
- drivers/media/i2c/imx274.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+this patchset introduces cropping support for the Sony IMX274 sensor
+using the SELECTION API.
 
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 5e425db9204d..dfd04edcdd48 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -971,7 +971,7 @@ static int imx274_s_frame_interval(struct v4l2_subdev *sd,
- 	if (!ret) {
- 		/*
- 		 * exposure time range is decided by frame interval
--		 * need to update it after frame interal changes
-+		 * need to update it after frame interval changes
- 		 */
- 		min = IMX274_MIN_EXPOSURE_TIME;
- 		max = fi->interval.numerator * 1000000
+With respect to v1 this patchset adds the "media: " prefix to commits
+and fixes a warning in patch 9.
+
+Patches 1-6 clean up and restructure code in various places and are
+pretty much independent from the cropping feature.
+
+Patches 7-11 are further restructuring which are mostly useful to
+implement cropping API in a cleaner way.
+
+Patch 12 introduces a helper to allow setting many registers computed
+at runtime in a straightforward way. This would not have been very
+useful before because all long register write sequences came from
+const tables, but it's definitely a must for the cropping code.
+
+Patch 13 implements cropping in the set_selection pad operation. On
+the v4l2 side there is nothing special. The most tricky part was
+respecting all the device constraints on the horizontal crop.
+
+Regards,
+Luca
+
+Luca Ceresoli (13):
+  media: imx274: document reset delays more clearly
+  media: imx274: fix typo in comment
+  media: imx274: slightly simplify code
+  media: imx274: remove unused data from struct imx274_frmfmt
+  media: imx274: rename and reorder register address definitions
+  media: imx274: remove non-indexed pointers from mode_table
+  media: imx274: initialize format before v4l2 controls
+  media: imx274: consolidate per-mode data in imx274_frmfmt
+  media: imx274: get rid of mode_index
+  media: imx274: actually use IMX274_DEFAULT_MODE
+  media: imx274: simplify imx274_write_table()
+  media: imx274: add helper function to fill a reg_8 table chunk
+  media: imx274: add SELECTION support for cropping
+
+ drivers/media/i2c/imx274.c | 598 ++++++++++++++++++++++++++-------------------
+ 1 file changed, 348 insertions(+), 250 deletions(-)
+
 -- 
 2.7.4
