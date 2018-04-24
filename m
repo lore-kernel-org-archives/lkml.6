@@ -1,20 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934253AbeDXNYR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:24:17 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39123 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757950AbeDXNTF (ORCPT
+        id S1758090AbeDXNZE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:25:04 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53834 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933911AbeDXNS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:19:05 -0400
-X-Google-Smtp-Source: AIpwx4/y/U93LVqzhFb/52ImXihvSJ0nXOIap3mO/uq934TeReQYh/IutlogbiikeVbaKYJGxnBx2A==
+        Tue, 24 Apr 2018 09:18:58 -0400
+X-Google-Smtp-Source: AIpwx4+AB5GRpKqAOaOPV5aWxa34iv1SwKlUYeFixvpbItvonSE8BYDe7G2XmyvwGLGWg/UTrx+Meg==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Casey Leedom <leedom@chelsio.com>, netdev@vger.kernel.org
-Subject: [PATCH] cxgb4vf: fix t4vf_eth_xmit()'s return type
-Date: Tue, 24 Apr 2018 15:19:02 +0200
-Message-Id: <20180424131902.5767-1-luc.vanoostenryck@gmail.com>
+        "David S. Miller" <davem@davemloft.net>,
+        Guillaume Nault <g.nault@alphalink.fr>,
+        James Chapman <jchapman@katalix.com>,
+        Dominik Heidler <dheidler@suse.de>, netdev@vger.kernel.org
+Subject: [PATCH] l2tp: fix l2tp_eth_dev_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:18:53 +0200
+Message-Id: <20180424131855.5618-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -28,35 +31,21 @@ Fix this by returning 'netdev_tx_t' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/net/ethernet/chelsio/cxgb4vf/adapter.h | 2 +-
- drivers/net/ethernet/chelsio/cxgb4vf/sge.c     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/l2tp/l2tp_eth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/adapter.h b/drivers/net/ethernet/chelsio/cxgb4vf/adapter.h
-index 5883f09e3..e29fc4699 100644
---- a/drivers/net/ethernet/chelsio/cxgb4vf/adapter.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4vf/adapter.h
-@@ -560,7 +560,7 @@ int t4vf_sge_alloc_eth_txq(struct adapter *, struct sge_eth_txq *,
- 			   unsigned int);
- void t4vf_free_sge_resources(struct adapter *);
+diff --git a/net/l2tp/l2tp_eth.c b/net/l2tp/l2tp_eth.c
+index 5c366ecfa..e027f8b54 100644
+--- a/net/l2tp/l2tp_eth.c
++++ b/net/l2tp/l2tp_eth.c
+@@ -77,7 +77,7 @@ static void l2tp_eth_dev_uninit(struct net_device *dev)
+ 	 */
+ }
  
--int t4vf_eth_xmit(struct sk_buff *, struct net_device *);
-+netdev_tx_t t4vf_eth_xmit(struct sk_buff *, struct net_device *);
- int t4vf_ethrx_handler(struct sge_rspq *, const __be64 *,
- 		       const struct pkt_gl *);
- 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
-index dfce5df75..9ce901f49 100644
---- a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
-@@ -1159,7 +1159,7 @@ static inline void txq_advance(struct sge_txq *tq, unsigned int n)
-  *
-  *	Add a packet to an SGE Ethernet TX queue.  Runs with softirqs disabled.
-  */
--int t4vf_eth_xmit(struct sk_buff *skb, struct net_device *dev)
-+netdev_tx_t t4vf_eth_xmit(struct sk_buff *skb, struct net_device *dev)
+-static int l2tp_eth_dev_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t l2tp_eth_dev_xmit(struct sk_buff *skb, struct net_device *dev)
  {
- 	u32 wr_mid;
- 	u64 cntrl, *end;
+ 	struct l2tp_eth *priv = netdev_priv(dev);
+ 	struct l2tp_session *session = priv->session;
 -- 
 2.17.0
