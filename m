@@ -1,73 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933577AbeDXNPz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:15:55 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.65]:41538 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933220AbeDXNPr (ORCPT
+        id S933593AbeDXNQB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:16:01 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50720 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933548AbeDXNPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:15:47 -0400
-X-Authority-Reason: nr=8
-Date: Tue, 24 Apr 2018 08:15:45 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/i915/selftests: Fix uninitialized variable
-Message-ID: <20180424131545.GA4053@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.48.65
-X-Source-L: No
-X-Exim-ID: 1fAxnO-002UtM-5V
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.145.48.65]:55476
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 24 Apr 2018 09:15:48 -0400
+X-Google-Smtp-Source: AIpwx4+Gkp06yDC0gRApC/EeIO10r+psDsgwVmvXzcl1+rkB1GM2uioOe1EhUEUD6iqs5iNju7s0WA==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Faisal Latif <faisal.latif@intel.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH] IB/nes: fix nes_netdev_start_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:15:45 +0200
+Message-Id: <20180424131545.2810-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a potential execution path in which variable err is
-returned without being properly initialized previously.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, but the implementation in this
+driver returns an 'int'.
 
-Fix this by initializing variable err to 0.
+Fix this by returning 'netdev_tx_t' in this driver too.
 
-Addresses-Coverity-ID: 1468362 ("Uninitialized scalar variable")
-Fixes: f4ecfbfc32ed ("drm/i915: Check whitelist registers across resets")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/gpu/drm/i915/selftests/intel_workarounds.c | 2 +-
+ drivers/infiniband/hw/nes/nes_nic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/selftests/intel_workarounds.c b/drivers/gpu/drm/i915/selftests/intel_workarounds.c
-index 5455b26..17444a3 100644
---- a/drivers/gpu/drm/i915/selftests/intel_workarounds.c
-+++ b/drivers/gpu/drm/i915/selftests/intel_workarounds.c
-@@ -239,7 +239,7 @@ static int live_reset_whitelist(void *arg)
- 	struct intel_engine_cs *engine = i915->engine[RCS];
- 	struct i915_gpu_error *error = &i915->gpu_error;
- 	struct whitelist w;
--	int err;
-+	int err = 0;
- 
- 	/* If we reset the gpu, we should not lose the RING_NONPRIV */
- 
+diff --git a/drivers/infiniband/hw/nes/nes_nic.c b/drivers/infiniband/hw/nes/nes_nic.c
+index 0a75164ce..007d5e8a0 100644
+--- a/drivers/infiniband/hw/nes/nes_nic.c
++++ b/drivers/infiniband/hw/nes/nes_nic.c
+@@ -461,7 +461,7 @@ static bool nes_nic_send(struct sk_buff *skb, struct net_device *netdev)
+ /**
+  * nes_netdev_start_xmit
+  */
+-static int nes_netdev_start_xmit(struct sk_buff *skb, struct net_device *netdev)
++static netdev_tx_t nes_netdev_start_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	struct nes_vnic *nesvnic = netdev_priv(netdev);
+ 	struct nes_device *nesdev = nesvnic->nesdev;
 -- 
-2.7.4
+2.17.0
