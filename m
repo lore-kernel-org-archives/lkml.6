@@ -1,29 +1,29 @@
 Return-Path: <brgl@bgdev.pl>
-ARC-Seal: i=1; a=rsa-sha256; t=1524591085; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524591083; cv=none;
         d=google.com; s=arc-20160816;
-        b=FvYlQ4vYdfj2KYtJ8OK/axvGwGdcXRFScbslQu80Q/MbVkgSOUi6U1YxdU5fMfzBNQ
-         EKltXUHdj0/saKa0y8Q4RdROX5fLtii6mlhyUybKbjlQdx6hFDiSDSVcJe8YBuMVd+lz
-         w2/A9JCjHOGNDc9BXAk2RMXKvNlyhqPUclKj6FFsMUoAqFUULTFpWL2Vr00K9ndJvZ7C
-         h206X54lw9uPM/p/qbCuuttnql/Yf7eXW5824joGoce0M63jd1jbbya9QParhjEa03Ly
-         lsix01FnoS/fOHTx+T+NTXz5eidredw6n600mHemEAtUNk98hA70i/Z2ubFltcYgaGKF
-         v20g==
+        b=E3X0KAK/MnOMLqzrqc3YpmsxCs2M2rDLHb8spxlDuQEpr8W1XPBBYbwAasnZ0SD8nz
+         DTKgbVOsiZ9iCgkNkd27ZH1hX4+UNOg3Gpqyy+DP+/VrX3UHm7XEQA+bvSSdJxfi/VRO
+         p9HBXzTUEPlagm/AXMahyE7DEdkpFkMIw8/7JFN3bFo7OBMqFd55GtX13Deo501OG10n
+         rLYmSxvfdnCAjtADgKCu31HmoJpvXRDTUvPYgiCdrK5s/dOhG7RJanpawqMz0ytZ+o1g
+         cqiauN3x2xwiSza/vq5mEUITrasrdr3nJhYJ6/lIbSzSpRpf9k0r7QKpqECUeSDmpKGf
+         Dvug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=DmMLfO0cO1SinSZx8ehL1IYCX0Qj7xFY2F2c0l2FVF0=;
-        b=0KsTcJJC4663GKvjQoXfu+WHb2kN1HXC6rH5SeA02r8RtcwTH+2Jz3vay1G7TofcIt
-         SkKCfvRoRxnsQs8MZJgF87tt2eRIidF6QyxvBegMIn3PpLfTJn3+DZ+02rVZN+2BJlgS
-         G39JG9hLi/a0xXNeAhcYheEwXktTdPDP5WQCwCr2e8QTSfilDnVc2DbPeThKzY/E9wvL
-         btuHwoBsx6ig/HsXf6hrKOfx1Omo0lv753qPn4j+WM8mrXEAdxD7Vh6ZS6D0tzpU4CUo
-         Krc6l6LIc4JavcgJDQ8DnNcDyiNujcluCY2bEnDiWKC2x27h/etBFyvMqjpkyBwYSsq/
-         8zpg==
+        bh=AF5i7bopzONNfMZoNU+bcfzxnKd1UsOyQaS7YHs6Q2Q=;
+        b=Sgo9SZOP6Kq8WHTU6U56YeUZ04+i3YecVv5ISOpfxSY7pqRdaFtpxeJrpoyAL28UJo
+         RFS1fd8go1qsSgyu/x8ZYO7/TL42XovYE2kpf4YS2om5W9jz0mEwOwn7+T7jVHxH3xEW
+         1AVyNtjuFDQ0pyH8tFVZNKzPeg7ulRHaDkeQMHWr8N1BIh2yWfJWrsU+j51UGcaUabYz
+         q8mU+eAEVxRWVC0qC4RIMFNZd5nl+7uTo/dSQMsFXPZ4PwE37uXcZwTwou05B1XLcp/C
+         TJ5d44xd5+kYqjGlv9lc5eT5HwHKdGocCmRs85Vyauoqc0X9i0NVr/mTYOXsSyiK8kvv
+         cZ1A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=p0QhcDyB;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=UM8fMEoQ;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=p0QhcDyB;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=UM8fMEoQ;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-X-Google-Smtp-Source: AIpwx482lDV95LtPLfBjNTbn9YUydxmUrbwu3RmPDPDU+YJpb5wKn0iofaoQf7cIClF2QLscdsiBsw==
+X-Google-Smtp-Source: AIpwx4+uBjJCeuLhpObQyBFs/aR+GIJq886quj/apC3bdAf2IZLE6sbI79V3J8qo4PL33amANz0EPw==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>,
 	Kevin Hilman <khilman@kernel.org>,
@@ -49,71 +49,58 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 10/11] of: platform: provide of_early_platform_probe()
-Date: Tue, 24 Apr 2018 19:30:50 +0200
-Message-Id: <20180424173051.15099-11-brgl@bgdev.pl>
+Subject: [PATCH 09/11] platform: provide early_platform_driver()
+Date: Tue, 24 Apr 2018 19:30:49 +0200
+Message-Id: <20180424173051.15099-10-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180424173051.15099-1-brgl@bgdev.pl>
 References: <20180424173051.15099-1-brgl@bgdev.pl>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598649621810653436?=
-X-GMAIL-MSGID: =?utf-8?q?1598649621810653436?=
+X-GMAIL-THRID: =?utf-8?q?1598649620120941196?=
+X-GMAIL-MSGID: =?utf-8?q?1598649620120941196?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Implement a function that must be called from machine code early in
-the bo process in order to probe all registered early devices.
+Implement a macro similar to module_platform_driver() which allows to
+register early platform drivers with the default early class.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/of/platform.c       | 12 ++++++++++++
- include/linux/of_platform.h |  2 ++
- 2 files changed, 14 insertions(+)
+ include/linux/platform_device.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index 4b55e568fe77..525a466b03d1 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -541,6 +541,18 @@ int of_early_platform_populate(struct device_node *root,
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(of_early_platform_populate);
-+
-+/**
-+ * of_early_platform_probe() - Probe all registered early platform devices.
-+ *
-+ * Returns 0 on success, a negative error code on failure.
-+ */
-+int of_early_platform_probe(void)
-+{
-+	return early_platform_driver_register_probe_all(
-+				EARLY_PLATFORM_DEFAULT_CLASS, INT_MAX, 0);
-+}
-+EXPORT_SYMBOL_GPL(of_early_platform_probe);
- #endif /* CONFIG_EARLY_PLATFORM_DEVICES */
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index 514ada776004..b565a1237fa6 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -297,6 +297,8 @@ struct early_platform_driver {
+ #define EARLY_PLATFORM_ID_UNSET -2
+ #define EARLY_PLATFORM_ID_ERROR -3
  
- int of_platform_default_populate(struct device_node *root,
-diff --git a/include/linux/of_platform.h b/include/linux/of_platform.h
-index 2bf1013a3e89..caa08e3bf3b7 100644
---- a/include/linux/of_platform.h
-+++ b/include/linux/of_platform.h
-@@ -81,6 +81,7 @@ extern int of_early_platform_populate(struct device_node *root,
- 				      const struct of_device_id *matches,
- 				      const struct of_dev_auxdata *lookup,
- 				      struct device *parent);
-+extern int of_early_platform_probe(void);
++#define EARLY_PLATFORM_DEFAULT_CLASS	"earlydev"
++
+ #ifdef CONFIG_EARLY_PLATFORM_DEVICES
+ 
+ extern int early_platform_driver_register(struct early_platform_driver *epdrv,
+@@ -352,6 +354,9 @@ static inline char *early_platform_driver_setup_func(void)		\
+ }
+ #endif /* MODULE */
+ 
++#define early_platform_driver(__platdrv)				\
++	early_platform_init(EARLY_PLATFORM_DEFAULT_CLASS, &(__platdrv))
++
  #else /* CONFIG_EARLY_PLATFORM_DEVICES */
  static inline int
- of_early_platform_populate(struct device_node *root,
-@@ -90,6 +91,7 @@ of_early_platform_populate(struct device_node *root,
- {
- 	return -ENOSYS;
- }
-+static inline void int of_early_platform_probe(void) {}
+ early_platform_driver_register(struct early_platform_driver *epdrv, char *buf)
+@@ -380,6 +385,7 @@ static inline int early_platform_driver_register_probe_all(char *class_str,
+ static inline void early_platform_cleanup(void) {}
+ #define early_platform_init(class_string, platdrv)
+ #define early_platform_init_buffer(class_string, platdrv, buf, bufsiz)
++#define early_platform_driver(__platdrv)
  #endif /* CONFIG_EARLY_PLATFORM_DEVICES */
  
- extern int of_platform_default_populate(struct device_node *root,
+ #ifdef CONFIG_SUSPEND
 -- 
 2.17.0
