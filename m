@@ -1,123 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751315AbeDXQFZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:05:25 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:59389 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750757AbeDXQFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:05:14 -0400
-Subject: Re: [PATCH] powerpc/signal32: Use fault_in_pages_readable() to
- prefault user context
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-References: <20180424141759.F02AF6C59D@po15720vm.idsi0.si.c-s.fr>
- <CA+7wUsz6NNG=sVUYL1n+ntAJUWNvjtpjCHzJmPuQ4Zb7TuFrZA@mail.gmail.com>
- <CA+7wUsxXwRVHDrE_bzog2+m+kdyDsC4MnjB4_BMc2owDUe7d8A@mail.gmail.com>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <7d61f98e-8cbb-91cf-97d4-f861758ed11d@c-s.fr>
-Date: Tue, 24 Apr 2018 18:05:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751709AbeDXQHV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:07:21 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:35624 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751326AbeDXQHR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:07:17 -0400
+X-Google-Smtp-Source: AIpwx49nY3Gz+OwFeHM1m69JDbtlpwWUHWDgYqzu/2PSsT1VQGE3oNFcZ2cL6GYbhx9y9fBvBl/dMUq1VBRP5vCXtAU=
 MIME-Version: 1.0
-In-Reply-To: <CA+7wUsxXwRVHDrE_bzog2+m+kdyDsC4MnjB4_BMc2owDUe7d8A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180424054315.2yjpnht5pu62i54q@dell>
+References: <20180423200255.154645-1-ksspiers@google.com> <20180424054315.2yjpnht5pu62i54q@dell>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 24 Apr 2018 09:07:16 -0700
+X-Google-Sender-Auth: kUE_DGH7vPr3qJ3BPGLprjLoKOE
+Message-ID: <CAGXu5jL5j6ZknsKN8ve+4qgSQLKsssUTto_UXORABgfHop=-7w@mail.gmail.com>
+Subject: Re: [PATCH] rave-sp: Remove VLA
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Kyle Spiers <ksspiers@google.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 24/04/2018 à 16:50, Mathieu Malaterre a écrit :
-> On Tue, Apr 24, 2018 at 4:45 PM, Mathieu Malaterre <malat@debian.org> wrote:
->> On Tue, Apr 24, 2018 at 4:17 PM, Christophe Leroy
->> <christophe.leroy@c-s.fr> wrote:
->>> Use fault_in_pages_readable() to prefault user context
->>> instead of open coding
->>>
->>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>> ---
->>>   arch/powerpc/kernel/signal_32.c | 13 +++++--------
->>>   1 file changed, 5 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
->>> index 492f03451877..cfacb2726152 100644
->>> --- a/arch/powerpc/kernel/signal_32.c
->>> +++ b/arch/powerpc/kernel/signal_32.c
->>> @@ -25,6 +25,7 @@
->>>   #include <linux/errno.h>
->>>   #include <linux/elf.h>
->>>   #include <linux/ptrace.h>
->>> +#include <linux/pagemap.h>
->>>   #include <linux/ratelimit.h>
->>>   #ifdef CONFIG_PPC64
->>>   #include <linux/syscalls.h>
->>> @@ -1045,7 +1046,6 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
->>>                       struct ucontext __user *new_ctx,
->>>                       int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
->>>   {
->>> -       unsigned char tmp __maybe_unused;
->>>          int ctx_has_vsx_region = 0;
->>>
->>>   #ifdef CONFIG_PPC64
->>> @@ -1109,9 +1109,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
->>>          }
->>>          if (new_ctx == NULL)
->>>                  return 0;
->>> -       if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
->>> -           || __get_user(tmp, (u8 __user *) new_ctx)
->>> -           || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
->>> +       if (!access_ok(VERIFY_READ, new_ctx, ctx_size) ||
->>> +           fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
->>>                  return -EFAULT;
->>>
->>>          /*
->>> @@ -1231,7 +1230,6 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
->>>   {
->>>          struct sig_dbg_op op;
->>>          int i;
->>> -       unsigned char tmp __maybe_unused;
->>>          unsigned long new_msr = regs->msr;
->>>   #ifdef CONFIG_PPC_ADV_DEBUG_REGS
->>>          unsigned long new_dbcr0 = current->thread.debug.dbcr0;
->>> @@ -1287,9 +1285,8 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
->>>          current->thread.debug.dbcr0 = new_dbcr0;
->>>   #endif
->>>
->>> -       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx))
->>> -           || __get_user(tmp, (u8 __user *) ctx)
->>> -           || __get_user(tmp, (u8 __user *) (ctx + 1) - 1))
->>> +       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx)) ||
->>> +           fault_in_pages_readable((u8 __user *)ctx, 1))
+On Mon, Apr 23, 2018 at 10:43 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Mon, 23 Apr 2018, Kyle Spiers wrote:
+>
+>> As part of the effort to remove VLAs from the kernel[1], this creates
+>> constants for the checksum lengths of CCITT and 8B2C and changes
+>> crc_calculated to be the maximum size of a checksum.
 >>
->> I believe you meant:
+>> https://lkml.org/lkml/2018/3/7/621
 >>
->> fault_in_pages_readable((u8 __user *)new_ctx, ctx_size)
+>> Signed-off-by: Kyle Spiers <ksspiers@google.com>
+>> ---
+>>  drivers/mfd/rave-sp.c | 11 +++++++++--
+>>  1 file changed, 9 insertions(+), 2 deletions(-)
 >>
->> Since (u8 __user *) (ctx + 1) - 1 really is (u8 __user *) new_ctx + ctx_size - 1
-> 
-> Without the copy/paste errors:
-> 
-> [...]
-> fault_in_pages_readable((u8 __user *)ctx, sizeof(*ctx))
-> 
-> Since (u8 __user *) (ctx + 1) - 1 really is (u8 __user *) ctx + sizeof(*ctx) - 1
-> [...]
+>> diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+>> index 5c858e784a89..99fa482419f9 100644
+>> --- a/drivers/mfd/rave-sp.c
+>> +++ b/drivers/mfd/rave-sp.c
+>> @@ -45,7 +45,9 @@
+>>  #define RAVE_SP_DLE                  0x10
+>>
+>>  #define RAVE_SP_MAX_DATA_SIZE                64
+>> -#define RAVE_SP_CHECKSUM_SIZE                2  /* Worst case scenario on RDU2 */
+>> +#define RAVE_SP_CHECKSUM_8B2C                1
+>> +#define RAVE_SP_CHECKSUM_CCITT               2
+>> +#define RAVE_SP_CHECKSUM_SIZE                RAVE_SP_CHECKSUM_CCITT
+>>  /*
+>>   * We don't store STX, ETX and unescaped bytes, so Rx is only
+>>   * DATA + CSUM
+>> @@ -415,7 +417,12 @@ static void rave_sp_receive_frame(struct rave_sp *sp,
+>>       const size_t payload_length  = length - checksum_length;
+>>       const u8 *crc_reported       = &data[payload_length];
+>>       struct device *dev           = &sp->serdev->dev;
+>> -     u8 crc_calculated[checksum_length];
+>> +     u8 crc_calculated[RAVE_SP_CHECKSUM_SIZE];
+>> +
+>> +     if (unlikely(length > sizeof(crc_calculated))) {
+>
+> Forgive me if I have this wrong (it's still very early here), but this
+> doesn't leave any room for the payload?
+>
+>     <--       length         -->
+>     <ck len><- payload length ->
+>     [CK][CK][D][A][T][A] .. [64]
+>
+> It is my hope that length would always be larger than the size of the
+> checksum, or else there would never be any data?
+>
+> Should this not be:
+>
+>     if (unlikely(length > RAVE_SP_MAX_DATA_SIZE))
 
-Oops you're right thanks.
-v2 submitted
+Oh, whoops, no, this should be:
 
-Christophe
++     if (unlikely(checksum_lengh > sizeof(crc_calculated))) {
 
+(To validate the VLA max size.)
 
->>>                  return -EFAULT;
->>>
->>>          /*
->>> --
->>> 2.13.3
->>>
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
