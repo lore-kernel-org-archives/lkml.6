@@ -1,57 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751574AbeDXPGp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:06:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750814AbeDXPGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:06:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52FDD20C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 24 Apr 2018 11:06:39 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] trace: fix missing tab for hwlat_detector
-Message-ID: <20180424110639.175ad1f0@gandalf.local.home>
-In-Reply-To: <20180315060639.9578-1-peterx@redhat.com>
-References: <20180315060639.9578-1-peterx@redhat.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751414AbeDXPIX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:08:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35364 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750916AbeDXPIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:08:22 -0400
+Date: Tue, 24 Apr 2018 17:08:20 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] ftrace/x86: Fix arch_syscall_match_sym_name for x86_64
+Message-ID: <20180424150820.GA3396@krava>
+References: <20180424101738.30015-1-jolsa@kernel.org>
+ <20180424103358.3e8efe6e@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424103358.3e8efe6e@gandalf.local.home>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018 14:06:39 +0800
-Peter Xu <peterx@redhat.com> wrote:
+On Tue, Apr 24, 2018 at 10:33:58AM -0400, Steven Rostedt wrote:
+> On Tue, 24 Apr 2018 12:17:38 +0200
+> Jiri Olsa <jolsa@kernel.org> wrote:
+> 
+> > Recent commit changed the name prefix of syscalls
+> > for x86_64 (check the 'Fixes:' for commit number).
+> > 
+> > The names switch from "sys_" prefix to ""__x64_sys_",
+> > which made the default matching function always fail.
+> > 
+> > Consequently the ftrace syscall __init code could not
+> > match any syscall metadata so the "syscall" events
+> > vanished. This fix returns them back.
+> > 
+> 
+> Hi Jiri,
+> 
+> I already fixed it and it's queued it my tree. I'm waiting for some
+> other patches that are waiting for review so I can start testing and
+> push to Linus.
+> 
+> Also, this was half the fix, the total fix is here:
 
-> It's been missing for a while but no one is touching that up.  Fix it.
-
-I just noticed this patch. I added it, thanks!
-
--- Steve
+yep, that's why I enclosed it to CONFIG_X86_64 ;-)
 
 > 
-> CC: Steven Rostedt <rostedt@goodmis.org>
-> CC: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  kernel/trace/trace_entries.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   http://lkml.kernel.org/r/20180418114509.5a76847d@gandalf.local.home
+
+after long time I needed 'syscalls' events and couldn't believe my eyes ;-)
+
 > 
-> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-> index e954ae3d82c0..e3a658bac10f 100644
-> --- a/kernel/trace/trace_entries.h
-> +++ b/kernel/trace/trace_entries.h
-> @@ -356,7 +356,7 @@ FTRACE_ENTRY(hwlat, hwlat_entry,
->  		__field(	unsigned int,		seqnum		)
->  	),
->  
-> -	F_printk("cnt:%u\tts:%010llu.%010lu\tinner:%llu\touter:%llunmi-ts:%llu\tnmi-count:%u\n",
-> +	F_printk("cnt:%u\tts:%010llu.%010lu\tinner:%llu\touter:%llu\tnmi-ts:%llu\tnmi-count:%u\n",
->  		 __entry->seqnum,
->  		 __entry->tv_sec,
->  		 __entry->tv_nsec,
+> I think I'm done waiting, I'll start testing and get my queue out. If
+> the other patches don't get the proper acks, I'm not taking them.
+
+cool, I'll stick with my change for now and rebase when it's in
+
+thanks,
+jirka
