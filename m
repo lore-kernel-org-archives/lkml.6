@@ -1,123 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933361AbeDXM6d (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:58:33 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:39204 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932421AbeDXM63 (ORCPT
+        id S1757454AbeDXNBn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:01:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44164 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932502AbeDXNBj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:58:29 -0400
-X-Google-Smtp-Source: AIpwx496w2AXLb/4kRQuVbqCW3p1UBv8C4tG7U3NKVqW0vCw/Ah/uLtPXARJ4Yjv9WmvkiYBD+YkVw==
-Date: Tue, 24 Apr 2018 07:58:27 -0500
-From: Rob Herring <robh@kernel.org>
-To: Li Wei <liwei213@huawei.com>
-Cc: mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, khilman@baylibre.com, arnd@arndb.de,
-        gregory.clement@free-electrons.com,
-        thomas.petazzoni@free-electrons.com, yamada.masahiro@socionext.com,
-        riku.voipio@linaro.org, treding@nvidia.com, krzk@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-scsi@vger.kernel.org,
-        zangleigang@hisilicon.com, gengjianfeng@hisilicon.com,
-        guodong.xu@linaro.org
-Subject: Re: [PATCH v9 2/5] dt-bindings: scsi: ufs: add document for hisi-ufs
-Message-ID: <20180424125827.k2dgeu6uon75wzni@rob-hp-laptop>
-References: <20180417140814.38098-1-liwei213@huawei.com>
- <20180417140814.38098-3-liwei213@huawei.com>
+        Tue, 24 Apr 2018 09:01:39 -0400
+Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: Harald Freudenberger <FREUDE@de.ibm.com>,
+        Pierre Morel <pmorel@linux.vnet.ibm.com>, alex.williamson@redhat.com,
+        alifm@linux.vnet.ibm.com, berrange@redhat.com,
+        bjsdjshi@linux.vnet.ibm.com, borntrae@linux.ibm.com,
+        fiuczy@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, kvm@vger.kernel.org, kwankhede@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        mjrosato@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com,
+        pasic@linux.vnet.ibm.com, pbonzini@redhat.com,
+        Reinhard Buendgen <BUENDGEN@de.ibm.com>, thuth@redhat.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
+ <OFE3FE11B1.8E1BDDEF-ON00258272.002AEDB1-C1258272.002B06EF@notes.na.collabserv.com>
+ <20180417121044.5c8f2182.cohuck@redhat.com>
+ <2ac8b862-e2dc-843e-a0b8-906fa32b42f4@linux.vnet.ibm.com>
+ <20180417172139.0a2b148b.cohuck@redhat.com>
+ <7276785e-2183-3204-ec80-99fba1546364@linux.vnet.ibm.com>
+ <20180418094949.0403dcaf.cohuck@redhat.com>
+ <470d8af7-b9f6-0ab7-9bfa-351fbeaa079c@linux.vnet.ibm.com>
+ <20180423090337.1b8b465a.cohuck@redhat.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Tue, 24 Apr 2018 09:01:12 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417140814.38098-3-liwei213@huawei.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180423090337.1b8b465a.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18042413-0024-0000-0000-0000184722FE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008913; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01022577; UDB=6.00521947; IPR=6.00801811;
+ MB=3.00020749; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-24 13:01:20
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042413-0025-0000-0000-00004FA900F2
+Message-Id: <192888a1-afc8-8502-5c6f-dbb16625bda2@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804240126
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 10:08:11PM +0800, Li Wei wrote:
-> add ufs node document for Hisilicon.
-> 
-> Signed-off-by: Li Wei <liwei213@huawei.com>
-> ---
->  Documentation/devicetree/bindings/ufs/ufs-hisi.txt | 29 ++++++++++++++++++++++
->  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      | 10 +++++---
->  2 files changed, 36 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/ufs/ufs-hisi.txt b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-> new file mode 100644
-> index 000000000000..d49ab7d8f31d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-> @@ -0,0 +1,29 @@
-> +* Hisilicon Universal Flash Storage (UFS) Host Controller
-> +
-> +UFS nodes are defined to describe on-chip UFS hardware macro.
-> +Each UFS Host Controller should have its own node.
-> +
-> +Required properties:
-> +- compatible        : compatible list, contains one of the following -
-> +					"hisilicon,hi3660-ufs", "jedec,ufs-1.1" for hisi ufs
-> +					host controller present on Hi36xx chipset.
-> +- reg               : should contain UFS register address space & UFS SYS CTRL register address,
-> +- interrupt-parent  : interrupt device
-> +- interrupts        : interrupt number
-> +- resets            : reset node register, the "arst" corresponds to reset the APB/AXI bus.
+On 04/23/2018 03:03 AM, Cornelia Huck wrote:
+> On Sun, 22 Apr 2018 10:52:55 -0400
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>
+>>>>>>> (Not providing a crycb if APXA is not available would be loss of
+>>>>>>> functionality, I guess? Deciding not to provide vfio-ap if APXA is not
+>>>>>>> available is a different game, of course.)
+>>>>>> This would require a change to enabling the CPU model feature for
+>>>>>> AP.
+>>>>> But would it actually make sense to tie vfio-ap to APXA? This needs to
+>>>>> be answered by folks with access to the architecture :)
+>>>> I don't see any reason to do that from an architectural perspective.
+>>>> One can access AP devices whether APXA is installed or not, it just limits
+>>>> the range of devices that can be addressed
+>>> So I guess we should not introduce a tie-in then (unless it radically
+>>> simplifies the code...)
+>> I'm not clear about what you mean by introducing a tie-in. Can you
+>> clarify that?
+> Making vfio-ap depend on APXA.
 
-arst belongs in reset-names.
+I don't think vfio-ap should be dependent upon APXA for the reasons I 
+stated above.
 
-> +- reset-names       : describe reset node register
-
-What happened to clocks? You still have to list which ones apply even if 
-documented in the common binding.
-
-> +
-> +Example:
-> +
-> +	ufs: ufs@ff3b0000 {
-> +		compatible = "hisilicon,hi3660-ufs", "jedec,ufs-1.1";
-> +		/* 0: HCI standard */
-> +		/* 1: UFS SYS CTRL */
-> +		reg = <0x0 0xff3b0000 0x0 0x1000>,
-> +			<0x0 0xff3b1000 0x0 0x1000>;
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
-> +		/* offset: 0x84; bit: 7  */
-> +		resets = <&crg_rst 0x84 7>;
-> +		reset-names = "arst";
-> +	};
-> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> index c39dfef76a18..adcfb79f63f5 100644
-> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> @@ -41,6 +41,8 @@ Optional properties:
->  -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
->  			  Note that it is assume same number of lanes is used both
->  			  directions at once. If not specified, default is 2 lanes per direction.
-> +- resets            : reset node register, the "rst" corresponds to reset the whole UFS IP.
-> +- reset-names       : describe reset node register
-
-Does your controller have 1 or 2 resets? There's no point in adding this 
-here if it doesn't apply to your controller.
-
-
->  Note: If above properties are not defined it can be assumed that the supply
->  regulators or clocks are always on.
-> @@ -61,9 +63,11 @@ Example:
->  		vccq-max-microamp = 200000;
->  		vccq2-max-microamp = 200000;
->  
-> -		clocks = <&core 0>, <&ref 0>, <&iface 0>;
-> -		clock-names = "core_clk", "ref_clk", "iface_clk";
-> -		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
-> +		clocks = <&core 0>, <&ref 0>, <&phy 0>, <&iface 0>;
-> +		clock-names = "core_clk", "ref_clk", "phy_clk", "iface_clk";
-> +		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>, <0 0>;
-> +		resets = <&reset 0 1>;
-> +		reset-names = "rst";
->  		phys = <&ufsphy1>;
->  		phy-names = "ufsphy";
->  	};
-> -- 
-> 2.15.0
-> 
+>
