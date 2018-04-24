@@ -1,238 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932734AbeDXBFO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 21:05:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47074 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932652AbeDXBFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 21:05:11 -0400
-Date: Tue, 24 Apr 2018 04:05:07 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: Tiwei Bie <tiwei.bie@intel.com>, wexu@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jfreimann@redhat.com
-Subject: Re: [RFC v2] virtio: support packed ring
-Message-ID: <20180424040258-mutt-send-email-mst@kernel.org>
-References: <20180401141216.8969-1-tiwei.bie@intel.com>
- <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
- <20180423092908.77rii3gi7dcaf7o6@debian>
- <e08c55df-6ea2-cf7f-d7c9-91e55913ab16@redhat.com>
+        id S932716AbeDXBLa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 21:11:30 -0400
+Received: from lucky1.263xmail.com ([211.157.147.130]:59171 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932665AbeDXBL0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 21:11:26 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <f2fe1a4410007fe70d9dc94b702b9c70>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, shawn.lin@rock-chips.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] mmc: dw_mmc-bluefield: Add driver extension
+To: Liming Sun <lsun@mellanox.com>
+References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <a59e321a-2498-d9c1-4a22-296ffa13417a@rock-chips.com>
+Date: Tue, 24 Apr 2018 09:11:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e08c55df-6ea2-cf7f-d7c9-91e55913ab16@redhat.com>
+In-Reply-To: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 08:54:52AM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年04月23日 17:29, Tiwei Bie wrote:
-> > On Mon, Apr 23, 2018 at 01:42:14PM +0800, Jason Wang wrote:
-> > > On 2018年04月01日 22:12, Tiwei Bie wrote:
-> > > > Hello everyone,
-> > > > 
-> > > > This RFC implements packed ring support for virtio driver.
-> > > > 
-> > > > The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
-> > > > by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
-> > > > Minor changes are needed for the vhost code, e.g. to kick the guest.
-> > > > 
-> > > > TODO:
-> > > > - Refinements and bug fixes;
-> > > > - Split into small patches;
-> > > > - Test indirect descriptor support;
-> > > > - Test/fix event suppression support;
-> > > > - Test devices other than net;
-> > > > 
-> > > > RFC v1 -> RFC v2:
-> > > > - Add indirect descriptor support - compile test only;
-> > > > - Add event suppression supprt - compile test only;
-> > > > - Move vring_packed_init() out of uapi (Jason, MST);
-> > > > - Merge two loops into one in virtqueue_add_packed() (Jason);
-> > > > - Split vring_unmap_one() for packed ring and split ring (Jason);
-> > > > - Avoid using '%' operator (Jason);
-> > > > - Rename free_head -> next_avail_idx (Jason);
-> > > > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
-> > > > - Some other refinements and bug fixes;
-> > > > 
-> > > > Thanks!
-> > > > 
-> > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > ---
-> > > >    drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
-> > > >    include/linux/virtio_ring.h        |    8 +-
-> > > >    include/uapi/linux/virtio_config.h |   12 +-
-> > > >    include/uapi/linux/virtio_ring.h   |   61 ++
-> > > >    4 files changed, 980 insertions(+), 195 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > > index 71458f493cf8..0515dca34d77 100644
-> > > > --- a/drivers/virtio/virtio_ring.c
-> > > > +++ b/drivers/virtio/virtio_ring.c
-> > > > @@ -58,14 +58,15 @@
-> > > [...]
-> > > 
-> > > > +
-> > > > +	if (vq->indirect) {
-> > > > +		u32 len;
-> > > > +
-> > > > +		desc = vq->desc_state[head].indir_desc;
-> > > > +		/* Free the indirect table, if any, now that it's unmapped. */
-> > > > +		if (!desc)
-> > > > +			goto out;
-> > > > +
-> > > > +		len = virtio32_to_cpu(vq->vq.vdev,
-> > > > +				      vq->vring_packed.desc[head].len);
-> > > > +
-> > > > +		BUG_ON(!(vq->vring_packed.desc[head].flags &
-> > > > +			 cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_INDIRECT)));
-> > > It looks to me spec does not force to keep VRING_DESC_F_INDIRECT here. So we
-> > > can safely remove this BUG_ON() here.
-> > > 
-> > > > +		BUG_ON(len == 0 || len % sizeof(struct vring_packed_desc));
-> > > Len could be ignored for used descriptor according to the spec, so we need
-> > > remove this BUG_ON() too.
-> > Yeah, you're right! The BUG_ON() isn't right. I'll remove it.
-> > And I think something related to this in the spec isn't very
-> > clear currently.
-> > 
-> > In the spec, there are below words:
-> > 
-> > https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L272
-> > """
-> > In descriptors with VIRTQ_DESC_F_INDIRECT set VIRTQ_DESC_F_WRITE
-> > is reserved and is ignored by the device.
-> > """
-> > 
-> > So when device writes back an used descriptor in this case,
-> > device may not set the VIRTQ_DESC_F_WRITE flag as the flag
-> > is reserved and should be ignored.
-> > 
-> > https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L170
-> > """
-> > Element Length is reserved for used descriptors without the
-> > VIRTQ_DESC_F_WRITE flag, and is ignored by drivers.
-> > """
-> > 
-> > And this is the way how driver ignores the `len` in an used
-> > descriptor.
-> > 
-> > https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L241
-> > """
-> > To increase ring capacity the driver can store a (read-only
-> > by the device) table of indirect descriptors anywhere in memory,
-> > and insert a descriptor in the main virtqueue (with \field{Flags}
-> > bit VIRTQ_DESC_F_INDIRECT on) that refers to a buffer element
-> > containing this indirect descriptor table;
-> > """
-> > 
-> > So the indirect descriptors in the table are read-only by
-> > the device. And the only descriptor which is writeable by
-> > the device is the descriptor in the main virtqueue (with
-> > Flags bit VIRTQ_DESC_F_INDIRECT on). So if we ignore the
-> > `len` in this descriptor, we won't be able to get the
-> > length of the data written by the device.
-> > 
-> > So I think the `len` in this descriptor will carry the
-> > length of the data written by the device (if the buffers
-> > are writable to the device) even if the VIRTQ_DESC_F_WRITE
-> > isn't set by the device. How do you think?
-> 
-> Yes I think so. But we'd better need clarification from Michael.
+Hi Liming,
 
-I think if you use a descriptor, and you want to supply len
-to guest, you set VIRTQ_DESC_F_WRITE in the used descriptor.
-Spec also says you must not set VIRTQ_DESC_F_INDIRECT then.
-If that's a problem we could look at relaxing that last requirement -
-does driver want INDIRECT in used descriptor to match
-the value in the avail descriptor for some reason?
-
-> > 
-> > 
-> > > The reason is we don't touch descriptor ring in the case of split, so
-> > > BUG_ON()s may help there.
-> > > 
-> > > > +
-> > > > +		for (j = 0; j < len / sizeof(struct vring_packed_desc); j++)
-> > > > +			vring_unmap_one_packed(vq, &desc[j]);
-> > > > +
-> > > > +		kfree(desc);
-> > > > +		vq->desc_state[head].indir_desc = NULL;
-> > > > +	} else if (ctx) {
-> > > > +		*ctx = vq->desc_state[head].indir_desc;
-> > > > +	}
-> > > > +
-> > > > +out:
-> > > > +	return vq->desc_state[head].num;
-> > > > +}
-> > > > +
-> > > > +static inline bool more_used_split(const struct vring_virtqueue *vq)
-> > > >    {
-> > > >    	return vq->last_used_idx != virtio16_to_cpu(vq->vq.vdev, vq->vring.used->idx);
-> > > >    }
-> > > > +static inline bool more_used_packed(const struct vring_virtqueue *vq)
-> > > > +{
-> > > > +	u16 last_used, flags;
-> > > > +	bool avail, used;
-> > > > +
-> > > > +	if (vq->vq.num_free == vq->vring_packed.num)
-> > > > +		return false;
-> > > > +
-> > > > +	last_used = vq->last_used_idx;
-> > > > +	flags = virtio16_to_cpu(vq->vq.vdev,
-> > > > +				vq->vring_packed.desc[last_used].flags);
-> > > > +	avail = flags & VRING_DESC_F_AVAIL(1);
-> > > > +	used = flags & VRING_DESC_F_USED(1);
-> > > > +
-> > > > +	return avail == used;
-> > > > +}
-> > > This looks interesting, spec said:
-> > > 
-> > > "
-> > > Thus VIRTQ_DESC_F_AVAIL and VIRTQ_DESC_F_USED bits are different for an
-> > > available descriptor and
-> > > equal for a used descriptor.
-> > > Note that this observation is mostly useful for sanity-checking as these are
-> > > necessary but not sufficient
-> > > conditions - for example, all descriptors are zero-initialized. To detect
-> > > used and available descriptors it is
-> > > possible for drivers and devices to keep track of the last observed value of
-> > > VIRTQ_DESC_F_USED/VIRTQ_-
-> > > DESC_F_AVAIL. Other techniques to detect
-> > > VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
-> > > might also be possible.
-> > > "
-> > > 
-> > > So it looks to me it was not sufficient, looking at the example codes in
-> > > spec, do we need to track last seen used_wrap_counter here?
-> > I don't think we have to track used_wrap_counter in
-> > driver. There was a discussion on this:
-> > 
-> > https://lists.oasis-open.org/archives/virtio-dev/201802/msg00177.html
-> > 
-> > And after that, below sentence was added (it's also
-> > in the above words you quoted):
-> > 
-> > """
-> > Other techniques to detect
-> > VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
-> > might also be possible.
-> > """
-> > 
-> > Best regards,
-> > Tiwei Bie
+On 2018/4/23 23:32, Liming Sun wrote:
+> This commit adds extension to the dw_mmc driver for Mellanox BlueField
+> SoC. It updates the UHS_REG_EXT register to bring up the eMMC card on
+> this SoC.
 > 
-> I see, the extra condition "if (vq->vq.num_free == vq->vring_packed.num)"
-> help in this case.
+> Signed-off-by: Liming Sun <lsun@mellanox.com>
+> ---
+>   drivers/mmc/host/Kconfig            |  9 +++++
+>   drivers/mmc/host/Makefile           |  1 +
+>   drivers/mmc/host/dw_mmc-bluefield.c | 72 +++++++++++++++++++++++++++++++++++++
+>   3 files changed, 82 insertions(+)
+>   create mode 100644 drivers/mmc/host/dw_mmc-bluefield.c
 > 
-> Thanks
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 9589f9c..26ac6b5 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -717,6 +717,15 @@ config MMC_DW_K3
+>   	  Synopsys DesignWare Memory Card Interface driver. Select this option
+>   	  for platforms based on Hisilicon K3 SoC's.
+>   
+> +config MMC_DW_BLUEFIELD
+> +	tristate "BlueField specific extensions for Synopsys DW Memory Card Interface"
+> +	depends on MMC_DW
+> +	select MMC_DW_PLTFM
+> +	help
+> +	  This selects support for Mellanox BlueField SoC specific extensions to
+> +	  the Synopsys DesignWare Memory Card Interface driver. Select this
+> +	  option for platforms based on Mellanox BlueField SoC's.
+> +
 
-I still think tracking a wrap counter is better.
+It'd better to keep the order, so you could place it before
+MMC_DW_EXYNOS.
 
-> > 
-> > > Thanks
+>   config MMC_DW_PCI
+>   	tristate "Synopsys Designware MCI support on PCI bus"
+>   	depends on MMC_DW && PCI
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 6aead24..267b3f1 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -55,6 +55,7 @@ obj-$(CONFIG_MMC_DW_K3)		+= dw_mmc-k3.o
+>   obj-$(CONFIG_MMC_DW_PCI)	+= dw_mmc-pci.o
+>   obj-$(CONFIG_MMC_DW_ROCKCHIP)	+= dw_mmc-rockchip.o
+>   obj-$(CONFIG_MMC_DW_ZX)		+= dw_mmc-zx.o
+> +obj-$(CONFIG_MMC_DW_BLUEFIELD)	+= dw_mmc-bluefield.o
+
+Ditto.
+
+>   obj-$(CONFIG_MMC_SH_MMCIF)	+= sh_mmcif.o
+>   obj-$(CONFIG_MMC_JZ4740)	+= jz4740_mmc.o
+>   obj-$(CONFIG_MMC_VUB300)	+= vub300.o
+> diff --git a/drivers/mmc/host/dw_mmc-bluefield.c b/drivers/mmc/host/dw_mmc-bluefield.c
+> new file mode 100644
+> index 0000000..12067b1
+> --- /dev/null
+> +++ b/drivers/mmc/host/dw_mmc-bluefield.c
+> @@ -0,0 +1,72 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018 Mellanox Technologies.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/io.h>
+> +#include <linux/irq.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/mmc/host.h>
+> +#include <linux/mmc/mmc.h>
+> +#include <linux/of.h>
+> +
+
+Ditto.
+
+> +#include "dw_mmc.h"
+> +#include "dw_mmc-pltfm.h"
+> +
+> +static void dw_mci_bluefield_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+> +{
+> +	u32 regs;
+> +
+> +	/* Set drive=4 (bit 29:23) and sample=2 (bit 22:16) in UHS_REG_EXT. */
+> +	regs = mci_readl(host, UHS_REG_EXT);
+> +	regs = (regs & ~0x3F100000 & ~0x7F0000) | (4 << 23) | (2 << 16);
+
+GENMASK woule be more readable IMHO.
+
+> +	mci_writel(host, UHS_REG_EXT, regs);
+> +}
+> +
+> +static const struct dw_mci_drv_data bluefield_drv_data = {
+> +	.set_ios		= dw_mci_bluefield_set_ios
+> +};
+> +
+> +static const struct of_device_id dw_mci_bluefield_match[] = {
+> +	{ .compatible = "mellanox,bluefield-dw-mshc",
+> +		.data = &bluefield_drv_data },
+
+Keep the indent.
+
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, dw_mci_bluefield_match);
+> +
+> +static int dw_mci_bluefield_probe(struct platform_device *pdev)
+> +{
+> +	const struct dw_mci_drv_data *drv_data = NULL;
+> +	const struct of_device_id *match;
+> +
+> +	if (pdev->dev.of_node) {
+> +		match = of_match_node(dw_mci_bluefield_match,
+> +				      pdev->dev.of_node);
+> +		drv_data = match->data;
+> +	}
+> +
+> +	return dw_mci_pltfm_register(pdev, drv_data);
+> +}
+> +
+> +static struct platform_driver dw_mci_bluefield_pltfm_driver = {
+> +	.probe		= dw_mci_bluefield_probe,
+> +	.remove		= dw_mci_pltfm_remove,
+> +	.driver		= {
+> +		.name		= "dwmmc_bluefield",
+> +		.of_match_table	= dw_mci_bluefield_match,
+> +		.pm		= &dw_mci_pltfm_pmops,
+> +	},
+> +};
+> +
+> +module_platform_driver(dw_mci_bluefield_pltfm_driver);
+> +
+> +MODULE_DESCRIPTION("BlueField DW Multimedia Card driver");
+> +MODULE_AUTHOR("Mellanox Technologies");
+> +MODULE_LICENSE("GPL v2");
+> 
