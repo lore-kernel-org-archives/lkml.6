@@ -1,125 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752092AbeDXSso (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 14:48:44 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39027 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751740AbeDXSsm (ORCPT
+        id S1752322AbeDXSsy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 14:48:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50128 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751938AbeDXSst (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 14:48:42 -0400
-X-Google-Smtp-Source: AIpwx4+RY4rRPHZE3SfTWnoOUfkF1WIBCTxvEWvV1ii6F2Dljz0g/13TzHMGalEXMyWA/pmpipPyjw==
-Date: Tue, 24 Apr 2018 11:48:38 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH 1/3] PM / devfreq: Actually support providing freq_table
-Message-ID: <20180424184838.GD18510@minitux>
-References: <20180424052916.GD2052@tuxbook-pro>
- <20180424002016.9205-1-bjorn.andersson@linaro.org>
- <20180424002016.9205-2-bjorn.andersson@linaro.org>
- <5ADE9AE6.9090601@samsung.com>
- <CGME20180424002041epcas5p11439bec6de910c2a465c5cf3acb45a3b@epcms1p5>
- <529236451.01524550500717.JavaMail.epsvc@epcpmgr01>
+        Tue, 24 Apr 2018 14:48:49 -0400
+Date: Tue, 24 Apr 2018 20:48:43 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+Message-ID: <20180424184843.GX4043@hirez.programming.kicks-ass.net>
+References: <cover.1524499368.git.gustavo@embeddedor.com>
+ <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+ <20180423152455.363d285c@vento.lan>
+ <20180424093500.xvpcm3ibcu7adke2@mwanda>
+ <20180424103609.GD4064@hirez.programming.kicks-ass.net>
+ <20180424144755.1c2e2478@vento.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <529236451.01524550500717.JavaMail.epsvc@epcpmgr01>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180424144755.1c2e2478@vento.lan>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23 Apr 23:09 PDT 2018, MyungJoo Ham wrote:
-
-> >On Mon 23 Apr 19:48 PDT 2018, Chanwoo Choi wrote:
-> >
-> >> Hi,
-> >> 
-> >> On 2018??? 04??? 24??? 09:20, Bjorn Andersson wrote:
-> >> > The code in devfreq_add_device() handles the case where a freq_table is
-> >> > passed by the client, but then requests min and max frequences from
-> >> > the, in this case absent, opp tables.
-> >> > 
-> >> > Read the min and max frequencies from the frequency table, which has
-> >> > been built from the opp table if one exists, instead of querying the
-> >> > opp table.
-> >> > 
-> >> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> >> > ---
-> >> > 
-> >> > An alternative approach is to clarify in the devfreq code that it's not
-> >> > possible to pass a freq_table and then in patch 3 create an opp table for the
-> >> > device in runtime; although the error handling of this becomes non-trivial.
-> >> > 
-> >> > Transitioning the UFSHCD to use opp tables directly is hindered by the fact
-> >> > that the Qualcomm UFS hardware has two different clocks that needs to be
-> >> > running at different rates, so we would need a way to describe the two rates in
-> >> > the opp table. (And would force us to change the DT binding)
-> >> > 
-> >> >  drivers/devfreq/devfreq.c | 22 ++++------------------
-> >> >  1 file changed, 4 insertions(+), 18 deletions(-)
-> >> > 
-> >> > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> >> > index fe2af6aa88fc..086ced50a13d 100644
-> >> > --- a/drivers/devfreq/devfreq.c
-> >> > +++ b/drivers/devfreq/devfreq.c
-> >> > @@ -74,30 +74,16 @@ static struct devfreq *find_device_devfreq(struct device *dev)
-> >> >  
-> >> >  static unsigned long find_available_min_freq(struct devfreq *devfreq)
-> >> >  {
-> >> > -	struct dev_pm_opp *opp;
-> >> > -	unsigned long min_freq = 0;
-> >> > -
-> >> > -	opp = dev_pm_opp_find_freq_ceil(devfreq->dev.parent, &min_freq);
-> >> > -	if (IS_ERR(opp))
-> >> > -		min_freq = 0;
-> >> > -	else
-> >> > -		dev_pm_opp_put(opp);
-> >> > +	struct devfreq_dev_profile *profile = devfreq->profile;
-> >> >  
-> >> > -	return min_freq;
-> >> > +	return profile->freq_table[0];
-> >> 
-> >> It is wrong. The thermal framework support the devfreq-cooling device
-> >> which uses the dev_pm_opp_enable/disable().
-> >> 
-> >
-> >Okay, that makes sense. So rather than registering a custom freq_table I
-> >should register the min and max frequency using dev_pm_opp_add().
-> >
-> >> In order to find the correct available min frequency,
-> >> the devfreq have to use the OPP function instead of using the first entry
-> >> of the freq_table array.
-> >> 
-> >
-> >Based on this there seems to be room for cleaning out the freq_table
-> >from devfreq, to reduce the confusion. I will review this further.
+On Tue, Apr 24, 2018 at 02:47:55PM -0300, Mauro Carvalho Chehab wrote:
+> So, I'm wondering if are there any way to mitigate it inside the 
+> core itself, instead of doing it on every driver, e. g. changing
+> v4l_enum_fmt() implementation at v4l2-ioctl.
 > 
-> Could you please check if the bug suffering you gets resolved by
-> replacing 0 with ULONG_MAX in the function find_available_max_freq?
-> 
-> -                max_freq = 0;
-> +                max_freq = ULONG_MAX;
-> 
-> Even if you are not using OPP, these functions should provide somewhat
-> "compatible" values.
-> 
+> Ok, a "poor man" approach would be to pass the array directly to
+> the core and let the implementation there to implement the array
+> fetch logic, calling array_index_nospec() there, but I wonder if
+> are there any other way that won't require too much code churn.
 
-I also need to make set_freq_table() handle the case where there is no
-opp table and change a min_freq of 0 from being treated as an error.
+Sadly no; the whole crux is the array bound check itself. You could
+maybe pass around the array size to the core code and then do something
+like:
 
-With this I think we're back at supporting using devfreq without
-specifying any available frequencies. I am however uncertain if this
-should be considered valid use of devfreq.
+	if (f->index >= f->array_size)
+		return -EINVAL;
 
-Regards,
-Bjorn
+	f->index = nospec_array_index(f->index, f->array_size);
+
+in generic code, and have all the drivers use f->index as usual, but
+even that would be quite a bit of code churn I guess.
