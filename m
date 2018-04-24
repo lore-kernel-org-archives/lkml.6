@@ -1,60 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751359AbeDXPWz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:22:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47490 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750749AbeDXPWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:22:50 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <aca7e68c-022b-47ac-c249-59e042d431e8@tycho.nsa.gov>
-References: <aca7e68c-022b-47ac-c249-59e042d431e8@tycho.nsa.gov> <CAHC9VhQhaBNBFwAXJ4TxKO56UTcwb_LcT2G8LwNxdxOD96tTvA@mail.gmail.com> <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk> <152414469006.23902.8132059438921850399.stgit@warthog.procyon.org.uk> <3232.1524238511@warthog.procyon.org.uk>
-To: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: dhowells@redhat.com, Paul Moore <paul@paul-moore.com>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, viro@zeniv.linux.org.uk,
-        selinux@tycho.nsa.gov, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org
-Subject: Re: [PATCH 04/24] VFS: Add LSM hooks for filesystem context [ver #7]
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <702.1524583367.1@warthog.procyon.org.uk>
-Date: Tue, 24 Apr 2018 16:22:47 +0100
-Message-ID: <703.1524583367@warthog.procyon.org.uk>
+        id S1751216AbeDXP0M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:26:12 -0400
+Received: from goliath.siemens.de ([192.35.17.28]:34769 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750749AbeDXP0I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:26:08 -0400
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 3/6] PCI: Introduce devm_of_pci_get_host_bridge_resources
+Date: Tue, 24 Apr 2018 17:13:39 +0200
+Message-Id: <e387d04ea235c9a4879a897bb730adc383a96635.1524582822.git.jan.kiszka@siemens.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
+References: <cover.1524582822.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
+References: <cover.1524582822.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Smalley <sds@tycho.nsa.gov> wrote:
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-> Neither fsopen() nor fscontext_fs_write() appear to perform any kind of
-> up-front permission checking (DAC or MAC), although some security hooks may
-> be ultimately called to allocate structures, parse security options, etc.
-> Is there a reason not apply a may_mount() or similar check up front?
+of_pci_get_host_bridge_resources allocates the resource structures it
+fills dynamically, but none of its callers care to release them so far.
+Rather than requiring everyone to do this explicitly, introduce a
+managed version of that service. This differs API-wise only in taking a
+reference to the associated device, rather than to the device tree node.
 
-may_mount() is called by fsmount() at the moment.  It may make sense to move
-this earlier to fsopen().  Note that there's also going to be something that
-looks like:
+As of_pci_get_host_bridge_resources is an exported interface, we cannot
+simply drop it at this point. After converting all in-tree users to the
+new API, we could phase out the unmanaged one over some grace period.
 
-	fd = fspick("/mnt");
-	fsmount(fd, "/a", MNT_NOEXEC); // ie. bind mount
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ drivers/pci/of.c       | 89 ++++++++++++++++++++++++++++++++------------------
+ include/linux/of_pci.h | 14 ++++++--
+ 2 files changed, 70 insertions(+), 33 deletions(-)
 
-or:
-
-	fd = fspick("/mnt");
-	write(fd, "o intr");
-	write(fd, "x reconfigure"); // ie. something like remount
-	close(fd);
-
-I guess we'd want to call may_mount() in fspick() too.  But there's also the
-possibility of using this to create a query interfact too:
-
-	fd = fspick("/mnt");
-	write(fd, "q intr");
-	read(fd, value_buffer);
-
-David
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index a28355c273ae..6eab0bde2ab3 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -243,26 +243,8 @@ void of_pci_check_probe_only(void)
+ EXPORT_SYMBOL_GPL(of_pci_check_probe_only);
+ 
+ #if defined(CONFIG_OF_ADDRESS)
+-/**
+- * of_pci_get_host_bridge_resources - Parse PCI host bridge resources from DT
+- * @dev: device node of the host bridge having the range property
+- * @busno: bus number associated with the bridge root bus
+- * @bus_max: maximum number of buses for this bridge
+- * @resources: list where the range of resources will be added after DT parsing
+- * @io_base: pointer to a variable that will contain on return the physical
+- * address for the start of the I/O range. Can be NULL if the caller doesn't
+- * expect I/O ranges to be present in the device tree.
+- *
+- * It is the caller's job to free the @resources list.
+- *
+- * This function will parse the "ranges" property of a PCI host bridge device
+- * node and setup the resource mapping based on its content. It is expected
+- * that the property conforms with the Power ePAPR document.
+- *
+- * It returns zero if the range parsing has been successful or a standard error
+- * value if it failed.
+- */
+-int of_pci_get_host_bridge_resources(struct device_node *dev,
++static int __of_pci_get_host_bridge_resources(struct device *dev,
++			struct device_node *dev_node,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base)
+ {
+@@ -277,19 +259,22 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
+ 	if (io_base)
+ 		*io_base = (resource_size_t)OF_BAD_ADDR;
+ 
+-	bus_range = kzalloc(sizeof(*bus_range), GFP_KERNEL);
++	if (dev)
++		bus_range = devm_kzalloc(dev,sizeof(*bus_range), GFP_KERNEL);
++	else
++		bus_range = kzalloc(sizeof(*bus_range), GFP_KERNEL);
+ 	if (!bus_range)
+ 		return -ENOMEM;
+ 
+-	pr_info("host bridge %pOF ranges:\n", dev);
++	pr_info("host bridge %pOF ranges:\n", dev_node);
+ 
+-	err = of_pci_parse_bus_range(dev, bus_range);
++	err = of_pci_parse_bus_range(dev_node, bus_range);
+ 	if (err) {
+ 		bus_range->start = busno;
+ 		bus_range->end = bus_max;
+ 		bus_range->flags = IORESOURCE_BUS;
+ 		pr_info("  No bus range found for %pOF, using %pR\n",
+-			dev, bus_range);
++			dev_node, bus_range);
+ 	} else {
+ 		if (bus_range->end > bus_range->start + bus_max)
+ 			bus_range->end = bus_range->start + bus_max;
+@@ -297,7 +282,7 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
+ 	pci_add_resource(resources, bus_range);
+ 
+ 	/* Check for ranges property */
+-	err = of_pci_range_parser_init(&parser, dev);
++	err = of_pci_range_parser_init(&parser, dev_node);
+ 	if (err)
+ 		goto parse_failed;
+ 
+@@ -321,13 +306,17 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
+ 		if (range.cpu_addr == OF_BAD_ADDR || range.size == 0)
+ 			continue;
+ 
+-		res = kzalloc(sizeof(struct resource), GFP_KERNEL);
++		if (dev)
++			res = devm_kzalloc(dev, sizeof(struct resource),
++					   GFP_KERNEL);
++		else
++			res = kzalloc(sizeof(struct resource), GFP_KERNEL);
+ 		if (!res) {
+ 			err = -ENOMEM;
+ 			goto parse_failed;
+ 		}
+ 
+-		err = of_pci_range_to_resource(&range, dev, res);
++		err = of_pci_range_to_resource(&range, dev_node, res);
+ 		if (err) {
+ 			kfree(res);
+ 			continue;
+@@ -336,13 +325,13 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
+ 		if (resource_type(res) == IORESOURCE_IO) {
+ 			if (!io_base) {
+ 				pr_err("I/O range found for %pOF. Please provide an io_base pointer to save CPU base address\n",
+-					dev);
++					dev_node);
+ 				err = -EINVAL;
+ 				goto conversion_failed;
+ 			}
+ 			if (*io_base != (resource_size_t)OF_BAD_ADDR)
+ 				pr_warn("More than one I/O resource converted for %pOF. CPU base address for old range lost!\n",
+-					dev);
++					dev_node);
+ 			*io_base = range.cpu_addr;
+ 		}
+ 
+@@ -354,12 +343,50 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
+ conversion_failed:
+ 	kfree(res);
+ parse_failed:
+-	resource_list_for_each_entry(window, resources)
+-		kfree(window->res);
++	if (!dev);
++		resource_list_for_each_entry(window, resources)
++			kfree(window->res);
+ 	pci_free_resource_list(resources);
+ 	return err;
+ }
++
++/**
++ * of_pci_get_host_bridge_resources - Parse PCI host bridge resources from DT
++ * @dev: device node of the host bridge having the range property
++ * @busno: bus number associated with the bridge root bus
++ * @bus_max: maximum number of buses for this bridge
++ * @resources: list where the range of resources will be added after DT parsing
++ * @io_base: pointer to a variable that will contain on return the physical
++ * address for the start of the I/O range. Can be NULL if the caller doesn't
++ * expect I/O ranges to be present in the device tree.
++ *
++ * It is the caller's job to free the @resources list.
++ *
++ * This function will parse the "ranges" property of a PCI host bridge device
++ * node and setup the resource mapping based on its content. It is expected
++ * that the property conforms with the Power ePAPR document.
++ *
++ * It returns zero if the range parsing has been successful or a standard error
++ * value if it failed.
++ */
++int of_pci_get_host_bridge_resources(struct device_node *dev_node,
++			unsigned char busno, unsigned char bus_max,
++			struct list_head *resources, resource_size_t *io_base)
++{
++	return __of_pci_get_host_bridge_resources(NULL, dev_node, busno,
++						  bus_max, resources, io_base);
++}
+ EXPORT_SYMBOL_GPL(of_pci_get_host_bridge_resources);
++
++int devm_of_pci_get_host_bridge_resources(struct device *dev,
++			unsigned char busno, unsigned char bus_max,
++			struct list_head *resources, resource_size_t *io_base)
++{
++	return __of_pci_get_host_bridge_resources(dev, dev->of_node, busno,
++						  bus_max, resources, io_base);
++}
++EXPORT_SYMBOL_GPL(devm_of_pci_get_host_bridge_resources);
++
+ #endif /* CONFIG_OF_ADDRESS */
+ 
+ /**
+diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
+index 091033a6b836..08b8f02426a5 100644
+--- a/include/linux/of_pci.h
++++ b/include/linux/of_pci.h
+@@ -71,11 +71,21 @@ of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
+ #endif
+ 
+ #if defined(CONFIG_OF_ADDRESS)
+-int of_pci_get_host_bridge_resources(struct device_node *dev,
++int of_pci_get_host_bridge_resources(struct device_node *dev_node,
++			unsigned char busno, unsigned char bus_max,
++			struct list_head *resources, resource_size_t *io_base);
++int devm_of_pci_get_host_bridge_resources(struct device *dev,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base);
+ #else
+-static inline int of_pci_get_host_bridge_resources(struct device_node *dev,
++static inline int of_pci_get_host_bridge_resources(struct device_node *dev_node,
++			unsigned char busno, unsigned char bus_max,
++			struct list_head *resources, resource_size_t *io_base)
++{
++	return -EINVAL;
++}
++
++static inline int devm_of_pci_get_host_bridge_resources(struct device *dev,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base)
+ {
+-- 
+2.13.6
