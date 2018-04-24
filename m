@@ -1,74 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752901AbeDXNOB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:14:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41174 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757919AbeDXNN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:13:26 -0400
-Date: Tue, 24 Apr 2018 15:13:17 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: Harald Freudenberger <FREUDE@de.ibm.com>,
-        Pierre Morel <pmorel@linux.vnet.ibm.com>, alex.williamson@redhat.com,
-        alifm@linux.vnet.ibm.com, berrange@redhat.com,
-        bjsdjshi@linux.vnet.ibm.com, borntrae@linux.ibm.com,
-        fiuczy@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, kvm@vger.kernel.org, kwankhede@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        mjrosato@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com,
-        pasic@linux.vnet.ibm.com, pbonzini@redhat.com,
-        Reinhard Buendgen <BUENDGEN@de.ibm.com>, thuth@redhat.com
-Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
-Message-ID: <20180424151317.60513959.cohuck@redhat.com>
-In-Reply-To: <192888a1-afc8-8502-5c6f-dbb16625bda2@linux.vnet.ibm.com>
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
-        <OFE3FE11B1.8E1BDDEF-ON00258272.002AEDB1-C1258272.002B06EF@notes.na.collabserv.com>
-        <20180417121044.5c8f2182.cohuck@redhat.com>
-        <2ac8b862-e2dc-843e-a0b8-906fa32b42f4@linux.vnet.ibm.com>
-        <20180417172139.0a2b148b.cohuck@redhat.com>
-        <7276785e-2183-3204-ec80-99fba1546364@linux.vnet.ibm.com>
-        <20180418094949.0403dcaf.cohuck@redhat.com>
-        <470d8af7-b9f6-0ab7-9bfa-351fbeaa079c@linux.vnet.ibm.com>
-        <20180423090337.1b8b465a.cohuck@redhat.com>
-        <192888a1-afc8-8502-5c6f-dbb16625bda2@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1758396AbeDXOCm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:02:42 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33432 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758159AbeDXOCk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 10:02:40 -0400
+X-Google-Smtp-Source: AB8JxZrerpR4gw7iBLpulDl0q9g/ThEXVNStYS+KuS17PDrAhw9KIZlBeuf+rjPQBgkMMhONUgdz0A==
+From: "Jingoo Han" <jingoohan1@gmail.com>
+To: "'Enric Balletbo i Serra'" <enric.balletbo@collabora.com>,
+        <architt@codeaurora.org>, <inki.dae@samsung.com>,
+        <thierry.reding@gmail.com>, <hjc@rock-chips.com>,
+        <seanpaul@chromium.org>, <airlied@linux.ie>, <tfiga@chromium.org>,
+        <heiko@sntech.de>
+Cc: <dri-devel@lists.freedesktop.org>, <dianders@chromium.org>,
+        <a.hajda@samsung.com>, <kernel@collabora.com>,
+        <m.szyprowski@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
+        <jy0922.shim@samsung.com>, <rydberg@bitmath.org>, <krzk@kernel.org>,
+        <linux-rockchip@lists.infradead.org>, <kgene@kernel.org>,
+        <orjan.eide@arm.com>, <wxt@rock-chips.com>,
+        <jeffy.chen@rock-chips.com>, <linux-arm-kernel@lists.infradead.org>,
+        <wzz@rock-chips.com>, <hl@rock-chips.com>, <sw0312.kim@samsung.com>,
+        <linux-kernel@vger.kernel.org>, <kyungmin.park@samsung.com>,
+        <Laurent.pinchart@ideasonboard.com>, <kuankuan.y@gmail.com>,
+        <hshi@chromium.org>,
+        "'Kristian H . Kristensen'" <hoegsberg@chromium.org>
+References: <20180423105003.9004-1-enric.balletbo@collabora.com> <20180423105003.9004-23-enric.balletbo@collabora.com>
+In-Reply-To: <20180423105003.9004-23-enric.balletbo@collabora.com>
+Subject: Re: [RESEND PATCH v6 22/27] drm/bridge: analogix_dp: Split the platform-specific poweron in two parts
+Date: Tue, 24 Apr 2018 10:02:33 -0400
+Message-ID: <000501d3dbd4$e6f238e0$b4d6aaa0$@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+        charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQJsKqzGdLQ3B8H319FIYPcigFOt/AEu9dt2otXchSA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 09:01:12 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+On Monday, April 23, 2018 6:50 AM, Enric Balletbo i Serra wrote:
+> 
+> From: Douglas Anderson <dianders@chromium.org>
+> 
+> Some of the platform-specific stuff in rockchip_dp_poweron() needs to
+> happen before the generic code.  Some needs to happen after.  Let's
+> split the callback in two.
+> 
+> Specifically we can't start doing PSR work until _after_ the whole
+> controller is up, so don't set the enable until the end.
+> 
+> Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> [seanpaul added exynos change]
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Archit Taneja <architt@codeaurora.org>
 
-> On 04/23/2018 03:03 AM, Cornelia Huck wrote:
-> > On Sun, 22 Apr 2018 10:52:55 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> >  
-> >>>>>>> (Not providing a crycb if APXA is not available would be loss of
-> >>>>>>> functionality, I guess? Deciding not to provide vfio-ap if APXA is not
-> >>>>>>> available is a different game, of course.)  
-> >>>>>> This would require a change to enabling the CPU model feature for
-> >>>>>> AP.  
-> >>>>> But would it actually make sense to tie vfio-ap to APXA? This needs to
-> >>>>> be answered by folks with access to the architecture :)  
-> >>>> I don't see any reason to do that from an architectural perspective.
-> >>>> One can access AP devices whether APXA is installed or not, it just limits
-> >>>> the range of devices that can be addressed  
-> >>> So I guess we should not introduce a tie-in then (unless it radically
-> >>> simplifies the code...)  
-> >> I'm not clear about what you mean by introducing a tie-in. Can you
-> >> clarify that?  
-> > Making vfio-ap depend on APXA.  
-> 
-> I don't think vfio-ap should be dependent upon APXA for the reasons I 
-> stated above.
-> 
-> >  
-> 
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-It seems we are in violent agreement :)
+Best regards,
+Jingoo Han
+
+> ---
+> 
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  7 +++++--
+>  drivers/gpu/drm/exynos/exynos_dp.c                 |  2 +-
+>  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 12 ++++++++++--
+>  include/drm/bridge/analogix_dp.h                   |  3 ++-
+>  4 files changed, 18 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index a260de4f0bd8..2bcbfadb6ac5 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -1260,8 +1260,8 @@ static int analogix_dp_set_bridge(struct
+> analogix_dp_device *dp)
+>  		goto out_dp_clk_pre;
+>  	}
+> 
+> -	if (dp->plat_data->power_on)
+> -		dp->plat_data->power_on(dp->plat_data);
+> +	if (dp->plat_data->power_on_start)
+> +		dp->plat_data->power_on_start(dp->plat_data);
+> 
+>  	phy_power_on(dp->phy);
+> 
+> @@ -1286,6 +1286,9 @@ static int analogix_dp_set_bridge(struct
+> analogix_dp_device *dp)
+>  		goto out_dp_init;
+>  	}
+> 
+> +	if (dp->plat_data->power_on_end)
+> +		dp->plat_data->power_on_end(dp->plat_data);
+> +
+>  	enable_irq(dp->irq);
+>  	return 0;
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c
+> b/drivers/gpu/drm/exynos/exynos_dp.c
+> index 964831dab102..86330f396784 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+> @@ -162,7 +162,7 @@ static int exynos_dp_bind(struct device *dev, struct
+> device *master, void *data)
+>  	dp->drm_dev = drm_dev;
+> 
+>  	dp->plat_data.dev_type = EXYNOS_DP;
+> -	dp->plat_data.power_on = exynos_dp_poweron;
+> +	dp->plat_data.power_on_start = exynos_dp_poweron;
+>  	dp->plat_data.power_off = exynos_dp_poweroff;
+>  	dp->plat_data.attach = exynos_dp_bridge_attach;
+>  	dp->plat_data.get_modes = exynos_dp_get_modes;
+> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> index b3f46ed24cdc..23317a2269e1 100644
+> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> @@ -109,7 +109,7 @@ static int rockchip_dp_pre_init(struct
+> rockchip_dp_device *dp)
+>  	return 0;
+>  }
+> 
+> -static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
+> +static int rockchip_dp_poweron_start(struct analogix_dp_plat_data
+> *plat_data)
+>  {
+>  	struct rockchip_dp_device *dp = to_dp(plat_data);
+>  	int ret;
+> @@ -127,6 +127,13 @@ static int rockchip_dp_poweron(struct
+> analogix_dp_plat_data *plat_data)
+>  		return ret;
+>  	}
+> 
+> +	return ret;
+> +}
+> +
+> +static int rockchip_dp_poweron_end(struct analogix_dp_plat_data
+> *plat_data)
+> +{
+> +	struct rockchip_dp_device *dp = to_dp(plat_data);
+> +
+>  	return rockchip_drm_psr_activate(&dp->encoder);
+>  }
+> 
+> @@ -330,7 +337,8 @@ static int rockchip_dp_bind(struct device *dev, struct
+> device *master,
+>  	dp->plat_data.encoder = &dp->encoder;
+> 
+>  	dp->plat_data.dev_type = dp->data->chip_type;
+> -	dp->plat_data.power_on = rockchip_dp_poweron;
+> +	dp->plat_data.power_on_start = rockchip_dp_poweron_start;
+> +	dp->plat_data.power_on_end = rockchip_dp_poweron_end;
+>  	dp->plat_data.power_off = rockchip_dp_powerdown;
+>  	dp->plat_data.get_modes = rockchip_dp_get_modes;
+> 
+> diff --git a/include/drm/bridge/analogix_dp.h
+> b/include/drm/bridge/analogix_dp.h
+> index e9a1116d2f8e..475b706b49de 100644
+> --- a/include/drm/bridge/analogix_dp.h
+> +++ b/include/drm/bridge/analogix_dp.h
+> @@ -33,7 +33,8 @@ struct analogix_dp_plat_data {
+>  	struct drm_connector *connector;
+>  	bool skip_connector;
+> 
+> -	int (*power_on)(struct analogix_dp_plat_data *);
+> +	int (*power_on_start)(struct analogix_dp_plat_data *);
+> +	int (*power_on_end)(struct analogix_dp_plat_data *);
+>  	int (*power_off)(struct analogix_dp_plat_data *);
+>  	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
+>  		      struct drm_connector *);
+> --
+> 2.17.0
