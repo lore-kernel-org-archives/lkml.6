@@ -1,135 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751336AbeDXQDj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:03:39 -0400
-Received: from mga02.intel.com ([134.134.136.20]:53357 "EHLO mga02.intel.com"
+        id S1752255AbeDXQE3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:04:29 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:52985 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750757AbeDXQDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:03:33 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,323,1520924400";
-   d="scan'208";a="36070081"
-Date: Tue, 24 Apr 2018 19:03:28 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
-        "'linux-security-module@vger.kernel.org'"
-        <linux-security-module@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Message-ID: <20180424160328.GA5119@linux.intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
- <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
- <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1750729AbeDXQE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:04:28 -0400
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2] powerpc/signal32: Use fault_in_pages_readable() to prefault
+ user context
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Mathieu Malaterre <malat@debian.org>
+Message-Id: <20180424160425.DB9946C5A7@po15720vm.idsi0.si.c-s.fr>
+Date: Tue, 24 Apr 2018 18:04:25 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
-> > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
-> > > > >
-> > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > > > > > In crb_map_io() function, __crb_request_locality() is called
-> > > > > > prior to crb_cmd_ready(), but if one of the consecutive function
-> > > > > > fails the flow bails out instead of trying to relinquish locality.
-> > > > > > This patch adds goto jump to __crb_relinquish_locality() on the
-> > > > > > error path.
-> > > > > >
-> > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
-> > > > > > after granting
-> > > > > > locality)
-> > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > > > ---
-> > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
-> > > > > > b/drivers/char/tpm/tpm_crb.c index 7f78482cd157..34fbc6cb097b
-> > > > > > 100644
-> > > > > > --- a/drivers/char/tpm/tpm_crb.c
-> > > > > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device
-> > > > > > *device, struct crb_priv *priv,
-> > > > > >
-> > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
-> > > > > > >control_address,
-> > > > > >  				   sizeof(struct crb_regs_tail));
-> > > > > > -	if (IS_ERR(priv->regs_t))
-> > > > > > -		return PTR_ERR(priv->regs_t);
-> > > > > > +	if (IS_ERR(priv->regs_t)) {
-> > > > > > +		ret = PTR_ERR(priv->regs_t);
-> > > > > > +		goto out_relinquish_locality;
-> > > > > > +	}
-> > > > > >
-> > > > > >  	/*
-> > > > > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7
-> > > > > > +522,7
-> > > > >
-> > > > > @@
-> > > > > > static int crb_map_io(struct acpi_device *device, struct
-> > > > > > crb_priv *priv,
-> > > > > >  	 */
-> > > > > >  	ret = crb_cmd_ready(dev, priv);
-> > > > > >  	if (ret)
-> > > > > > -		return ret;
-> > > > > > +		goto out_relinquish_locality;
-> > > > > >
-> > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
-> > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device
-> > > > > > *device, struct crb_priv *priv,
-> > > > > >
-> > > > > >  	crb_go_idle(dev, priv);
-> > > > > >
-> > > > > > +out_relinquish_locality:
-> > > > > > +
-> > > > > >  	__crb_relinquish_locality(dev, priv, 0);
-> > > > > >
-> > > > > >  	return ret;
-> > > > >
-> > > > > Thanks, please just call it before returning in the error path.
-> > > >
-> > > > Can you please elaborate why, isn't the centralized exiting of
-> > > > functions preferred kernel coding style?
-> > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.html#cent
-> > > > ra
-> > > > lized-ex
-> > > > iting-of-functions
-> > >
-> > > You exit only from one location (not multiple) and not from a nested
-> > > context. Here you just add more complexity by doing this.
-> > 
-> > Where is the complexity ? I see it as a standard way of undoing on exit.
-> > Tomas
-> 
-> Jarkko, can you please respond.
-> Thanks
-> Tomas
+Use fault_in_pages_readable() to prefault user context
+instead of open coding
 
-I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v2: using sizeof(*ctx) as size of ctx instead of 1
 
-My earlier comment was incorrect as there are two locations to exit (not
-sure how I managed to overlook the patch that way).
+ arch/powerpc/kernel/signal_32.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Thus, I have only two very  minor requets:
-
-* Remove the extra newline (the last line addition in the patch).
-* Use just label named out as we have only one exception handler.
-
-I'll move on to testing, and if it it passes, I can do those updates
-myself.
-
-/Jarkko
+diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
+index 492f03451877..4a9e4d6d555b 100644
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -25,6 +25,7 @@
+ #include <linux/errno.h>
+ #include <linux/elf.h>
+ #include <linux/ptrace.h>
++#include <linux/pagemap.h>
+ #include <linux/ratelimit.h>
+ #ifdef CONFIG_PPC64
+ #include <linux/syscalls.h>
+@@ -1045,7 +1046,6 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+ 		     struct ucontext __user *new_ctx,
+ 		     int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
+ {
+-	unsigned char tmp __maybe_unused;
+ 	int ctx_has_vsx_region = 0;
+ 
+ #ifdef CONFIG_PPC64
+@@ -1109,9 +1109,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+ 	}
+ 	if (new_ctx == NULL)
+ 		return 0;
+-	if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
+-	    || __get_user(tmp, (u8 __user *) new_ctx)
+-	    || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
++	if (!access_ok(VERIFY_READ, new_ctx, ctx_size) ||
++	    fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
+ 		return -EFAULT;
+ 
+ 	/*
+@@ -1231,7 +1230,6 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+ {
+ 	struct sig_dbg_op op;
+ 	int i;
+-	unsigned char tmp __maybe_unused;
+ 	unsigned long new_msr = regs->msr;
+ #ifdef CONFIG_PPC_ADV_DEBUG_REGS
+ 	unsigned long new_dbcr0 = current->thread.debug.dbcr0;
+@@ -1287,9 +1285,8 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+ 	current->thread.debug.dbcr0 = new_dbcr0;
+ #endif
+ 
+-	if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx))
+-	    || __get_user(tmp, (u8 __user *) ctx)
+-	    || __get_user(tmp, (u8 __user *) (ctx + 1) - 1))
++	if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx)) ||
++	    fault_in_pages_readable((u8 __user *)ctx, sizeof(*ctx)))
+ 		return -EFAULT;
+ 
+ 	/*
+-- 
+2.13.3
