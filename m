@@ -1,78 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751201AbeDXVn1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 17:43:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46030 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750902AbeDXVn0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:43:26 -0400
-Subject: Re: [PATCH 1/3] sched: remove select_idle_core() for scalability
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
-        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
-        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
-References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
- <20180424004116.28151-2-subhra.mazumdar@oracle.com>
- <20180424124621.GQ4082@hirez.programming.kicks-ass.net>
-From: Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <df8f4982-908a-23e6-5148-4d4e91d38be4@oracle.com>
-Date: Tue, 24 Apr 2018 14:45:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751255AbeDXVv4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 17:51:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750779AbeDXVvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 17:51:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D988205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 24 Apr 2018 16:51:50 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Alexander Duyck <alexander.h.duyck@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Subject: Re: [pci PATCH v8 0/4] Add support for unmanaged SR-IOV
+Message-ID: <20180424215150.GB72698@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
+ <20180421203437.GW28657@bhelgaas-glaptop.roam.corp.google.com>
+ <CAKgT0Ufcq6aQW5zPzBUePO4R_BCa2B_aZ8U2=meOQeOvshZ=Mw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180424124621.GQ4082@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8873 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804240204
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0Ufcq6aQW5zPzBUePO4R_BCa2B_aZ8U2=meOQeOvshZ=Mw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Apr 21, 2018 at 05:22:27PM -0700, Alexander Duyck wrote:
+> On Sat, Apr 21, 2018 at 1:34 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+
+> > For example, I'm not sure what you mean by "devices where the PF is
+> > not capable of managing VF resources."
+> >
+> > It *sounds* like you're saying the hardware works differently on some
+> > devices, but I don't think that's what you mean.  I think you're
+> > saying something about which drivers are used for the PF and the VF.
+> 
+> That is sort of what I am saying.
+> 
+> So for example with ixgbe there is functionality which is controlled
+> in the MMIO space of the PF that affects the functionality of the VFs
+> that are generated on the device. The PF has to rearrange the
+> resources such as queues and interrupts on the device before it can
+> enable SR-IOV, and it could alter those later to limit what the VF is
+> capable of doing.
+> 
+> The model I am dealing with via this patch set has a PF that is not
+> much different than the VFs other than the fact that it has some
+> extended configuration space bits in place for SR-IOV, ARI, ACS, and
+> whatever other bits are needed in order to support spawning isolated
+> VFs.
+
+OK, thanks for the explanation, I think I understand what's going on
+now, correct me if I'm mistaken.  I added a hint about "PF" for Randy,
+too.
+
+These are on pci/virtualization for v4.18.
 
 
-On 04/24/2018 05:46 AM, Peter Zijlstra wrote:
-> On Mon, Apr 23, 2018 at 05:41:14PM -0700, subhra mazumdar wrote:
->> select_idle_core() can potentially search all cpus to find the fully idle
->> core even if there is one such core. Removing this is necessary to achieve
->> scalability in the fast path.
-> So this removes the whole core awareness from the wakeup path; this
-> needs far more justification.
->
-> In general running on pure cores is much faster than running on threads.
-> If you plot performance numbers there's almost always a fairly
-> significant drop in slope at the moment when we run out of cores and
-> start using threads.
-The only justification I have is the benchmarks I ran all most all
-improved, most importantly our internal Oracle DB tests which we care about
-a lot. So what you said makes sense in theory but is not borne out by real
-world results. This indicates that threads of these benchmarks care more
-about running immediately on any idle cpu rather than spending time to find
-fully idle core to run on.
-> Also, depending on cpu enumeration, your next patch might not even leave
-> the core scanning for idle CPUs.
->
-> Now, typically on Intel systems, we first enumerate cores and then
-> siblings, but I've seen Intel systems that don't do this and enumerate
-> all threads together. Also other architectures are known to iterate full
-> cores together, both s390 and Power for example do this.
->
-> So by only doing a linear scan on CPU number you will actually fill
-> cores instead of equally spreading across cores. Worse still, by
-> limiting the scan to _4_ you only barely even get onto a next core for
-> SMT4 hardware, never mind SMT8.
-Again this doesn't matter for the benchmarks I ran. Most are happy to make
-the tradeoff on x86 (SMT2). Limiting the scan is mitigated by the fact that
-the scan window is rotated over all cpus, so idle cpus will be found soon.
-There is also stealing by idle cpus. Also this was an RFT so I request this
-to be tested on other architectrues like SMT4/SMT8.
->
-> So while I'm not adverse to limiting the empty core search; I do feel it
-> is important to have. Overloading cores when you don't have to is not
-> good.
-Can we have a config or a way for enabling/disabling select_idle_core?
+commit 8effc395c209
+Author: Alexander Duyck <alexander.h.duyck@intel.com>
+Date:   Sat Apr 21 15:23:09 2018 -0500
+
+    PCI/IOV: Add pci_sriov_configure_simple()
+    
+    SR-IOV (Single Root I/O Virtualization) is an optional PCIe capability (see
+    PCIe r4.0, sec 9).  A PCIe Function with the SR-IOV capability is referred
+    to as a PF (Physical Function).  If SR-IOV is enabled on the PF, several
+    VFs (Virtual Functions) may be created.  The VFs can be individually
+    assigned to virtual machines, which allows them to share a single hardware
+    device while being isolated from each other.
+    
+    Some SR-IOV devices have resources such as queues and interrupts that must
+    be set up in the PF before enabling the VFs, so they require a PF driver to
+    do that.
+    
+    Other SR-IOV devices don't require any PF setup before enabling VFs.  Add a
+    pci_sriov_configure_simple() interface so PF drivers for such devices can
+    use it without repeating the VF-enabling code.
+    
+    Tested-by: Mark Rustad <mark.d.rustad@intel.com>
+    Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+    [bhelgaas: changelog, comment]
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Reviewed-by: Greg Rose <gvrose8192@gmail.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>:wq
+
+commit a8ccf8a66663
+Author: Alexander Duyck <alexander.h.duyck@intel.com>
+Date:   Tue Apr 24 16:47:16 2018 -0500
+
+    PCI/IOV: Add pci-pf-stub driver for PFs that only enable VFs
+    
+    Some SR-IOV PF devices provide no functionality other than acting as a
+    means of enabling VFs.  For these devices, we want to enable the VFs and
+    assign them to guest virtual machines, but there's no need to have a driver
+    for the PF itself.
+    
+    Add a new pci-pf-stub driver to claim those PF devices and provide the
+    generic VF enable functionality.  An administrator can use the sysfs
+    "sriov_numvfs" file to enable VFs, then assign them to guests.
+    
+    For now I only have one example ID provided by Amazon in terms of devices
+    that require this functionality.  The general idea is that in the future we
+    will see other devices added as vendors come up with devices where the PF
+    is more or less just a lightweight shim used to allocate VFs.
+    
+    Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+    [bhelgaas: changelog]
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Reviewed-by: Greg Rose <gvrose8192@gmail.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+commit 115ddc491922
+Author: Alexander Duyck <alexander.h.duyck@intel.com>
+Date:   Tue Apr 24 16:47:22 2018 -0500
+
+    net: ena: Use pci_sriov_configure_simple() to enable VFs
+    
+    Instead of implementing our own version of a SR-IOV configuration stub in
+    the ena driver, use the existing pci_sriov_configure_simple() function.
+    
+    Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Reviewed-by: Greg Rose <gvrose8192@gmail.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+commit 74d986abc20b
+Author: Alexander Duyck <alexander.h.duyck@intel.com>
+Date:   Tue Apr 24 16:47:27 2018 -0500
+
+    nvme-pci: Use pci_sriov_configure_simple() to enable VFs
+    
+    Instead of implementing our own version of a SR-IOV configuration stub in
+    the nvme driver, use the existing pci_sriov_configure_simple() function.
+    
+    Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
