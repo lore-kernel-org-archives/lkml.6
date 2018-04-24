@@ -1,937 +1,396 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932796AbeDXCls (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 22:41:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58330 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932688AbeDXCln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 22:41:43 -0400
-Date: Mon, 23 Apr 2018 20:41:39 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: kvm@vger.kernel.org, kwankhede@nvidia.com,
-        linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH 1/3] sample: vfio mdev display - host device
-Message-ID: <20180423204139.2d157869@w520.home>
-In-Reply-To: <20180409103513.8020-2-kraxel@redhat.com>
-References: <20180409103513.8020-1-kraxel@redhat.com>
-        <20180409103513.8020-2-kraxel@redhat.com>
+        id S932804AbeDXCmt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 22:42:49 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7200 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932688AbeDXCmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 22:42:47 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: fix to avoid race during access gc_thread pointer
+Date: Tue, 24 Apr 2018 10:42:14 +0800
+Message-ID: <20180424024214.83177-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  9 Apr 2018 12:35:11 +0200
-Gerd Hoffmann <kraxel@redhat.com> wrote:
+Thread A			Thread B		Thread C
+- f2fs_remount
+ - stop_gc_thread
+				- f2fs_sbi_store
+							- issue_discard_thread
+   sbi->gc_thread = NULL;
+				  sbi->gc_thread->gc_wake = 1
+							  access sbi->gc_thread->gc_urgent
 
-> Simple framebuffer display, demo-ing the vfio region display interface
-> (VFIO_GFX_PLANE_TYPE_REGION).
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  samples/vfio-mdev/mdpy-defs.h |  19 +
->  samples/vfio-mdev/mdpy.c      | 791 ++++++++++++++++++++++++++++++++++++++++++
->  samples/Kconfig               |   8 +
->  samples/vfio-mdev/Makefile    |   1 +
->  4 files changed, 819 insertions(+)
->  create mode 100644 samples/vfio-mdev/mdpy-defs.h
->  create mode 100644 samples/vfio-mdev/mdpy.c
-> 
-> diff --git a/samples/vfio-mdev/mdpy-defs.h b/samples/vfio-mdev/mdpy-defs.h
-> new file mode 100644
-> index 0000000000..79f0795e11
-> --- /dev/null
-> +++ b/samples/vfio-mdev/mdpy-defs.h
-> @@ -0,0 +1,19 @@
-> +/*
-> + * Simple pci display device.
+Previously, we allocate memory for sbi->gc_thread based on background
+gc thread mount option, the memory can be released if we turn off
+that mount option, but still there are several places access gc_thread
+pointer without considering race condition, result in NULL point
+dereference.
 
-checkpatch wants an SPDX license identifier here now and on mdpy.c
-below.
+In order to fix this issue, keep gc_thread structure valid in sbi all
+the time instead of alloc/free it dynamically.
 
-> + *
-> + * Framebuffer memory is pci bar 0.
-> + * Configuration (read-only) is in pci config space.
-> + * Format field uses drm fourcc codes.
-> + * ATM only DRM_FORMAT_XRGB8888 is supported.
-> + */
-> +
-> +/* pci ids */
-> +#define MDPY_PCI_VENDOR_ID	0x1b36 /* redhat */
-> +#define MDPY_PCI_DEVICE_ID	0x00f0
+In addition, add a rw semaphore to exclude rw operation in fields of
+gc_thread.
 
-I don't see this on pci-ids, so I assume we're just squatting on an
-ID.  How do we do that without risking that we don't interfere with
-some future user?  Are we relying on this being a non-default sample
-device?  Should we just ask for an allocation?
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- add a rw semaphore to exclude rw operation suggested by Jaegeuk.
+ fs/f2fs/debug.c   |  3 +--
+ fs/f2fs/f2fs.h    |  9 ++++++-
+ fs/f2fs/gc.c      | 78 ++++++++++++++++++++++++++++++++++++-------------------
+ fs/f2fs/gc.h      |  1 +
+ fs/f2fs/segment.c | 10 +++++--
+ fs/f2fs/super.c   | 26 +++++++++++++------
+ fs/f2fs/sysfs.c   | 26 ++++++++++++++-----
+ 7 files changed, 107 insertions(+), 46 deletions(-)
 
-> +#define MDPY_PCI_SUBVENDOR_ID	PCI_SUBVENDOR_ID_REDHAT_QUMRANET
-> +#define MDPY_PCI_SUBDEVICE_ID	PCI_SUBDEVICE_ID_QEMU
-> +
-> +/* pci cfg space offsets for fb config (dword) */
-> +#define MDPY_FORMAT_OFFSET	0x40
-> +#define MDPY_WIDTH_OFFSET	0x44
-> +#define MDPY_HEIGHT_OFFSET	0x48
-
-As I understand, these are just registers in PCI config space outside
-of any capabilities.  Wouldn't it be more correct to put these within a
-vendor defined capability?  The only imposed structure of a vendor
-capability is that the byte after the next field is a length field.  So
-you'd have 34h point to a capability starting address, 40h if you like,
-the first byte there would be 09h to identify a vendor capability, the
-next byte would be 00h to terminate the capability chain, the next byte
-is required to be the length, you're using 3 dwords for 12 bytes plus 4
-bytes for the alignment and header, so 10h then the format, width, and
-height are the next three dwords and only their offsets within the
-vendor capability are hard coded.
-
-If you're feeling motivated, all PCI devices technically also require a
-PM capability, but I'm not going to be a stickler for a sample driver.
-
-> diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c
-> new file mode 100644
-> index 0000000000..25882c7b37
-> --- /dev/null
-> +++ b/samples/vfio-mdev/mdpy.c
-> @@ -0,0 +1,791 @@
-> +/*
-> + * Mediated virtual PCI display host device driver
-> + *
-> + * See mdpy-defs.h for device specs
-> + *
-> + *   (c) Gerd Hoffmann <kraxel@redhat.com>
-> + *
-> + * based on mtty driver which is:
-> + *   Copyright (c) 2016, NVIDIA CORPORATION. All rights reserved.
-> + *	 Author: Neo Jia <cjia@nvidia.com>
-> + *		 Kirti Wankhede <kwankhede@nvidia.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/device.h>
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +#include <linux/vmalloc.h>
-> +#include <linux/cdev.h>
-> +#include <linux/vfio.h>
-> +#include <linux/iommu.h>
-> +#include <linux/sysfs.h>
-> +#include <linux/mdev.h>
-> +#include <linux/pci.h>
-> +#include <drm/drm_fourcc.h>
-> +#include "mdpy-defs.h"
-> +
-> +#define MDPY_NAME		"mdpy"
-> +#define MDPY_CLASS_NAME		"mdpy"
-> +
-> +#define MDPY_CONFIG_SPACE_SIZE	0xff
-> +#define MDPY_MEMORY_BAR_OFFSET	PAGE_SIZE
-> +#define MDPY_DISPLAY_REGION	16
-> +
-> +#define STORE_LE16(addr, val)	(*(u16 *)addr = val)
-> +#define STORE_LE32(addr, val)	(*(u32 *)addr = val)
-> +
-> +
-> +MODULE_LICENSE("GPL v2");
-> +
-> +static int max_devices = 4;
-> +module_param_named(count, max_devices, int, 0444);
-> +MODULE_PARM_DESC(count, "number of " MDPY_NAME " devices");
-> +
-> +
-> +#define MDPY_TYPE_1 "vga"
-> +#define MDPY_TYPE_2 "xga"
-> +#define MDPY_TYPE_3 "hd"
-> +
-> +static const struct mdpy_type {
-> +	const char *name;
-> +	u32 format;
-> +	u32 bytepp;
-> +	u32 width;
-> +	u32 height;
-> +} mdpy_types[] = {
-> +	{
-> +		.name	= MDPY_CLASS_NAME "-" MDPY_TYPE_1,
-> +		.format = DRM_FORMAT_XRGB8888,
-> +		.bytepp = 4,
-> +		.width	= 640,
-> +		.height = 480,
-> +	},{
-
-Here and below checkpatch throws an error for no space after the
-comma.  Seems more of a nit in this context, but easy enough to make it
-happy.
-
-> +		.name	= MDPY_CLASS_NAME "-" MDPY_TYPE_2,
-> +		.format = DRM_FORMAT_XRGB8888,
-> +		.bytepp = 4,
-> +		.width	= 1024,
-> +		.height = 768,
-> +	},{
-> +		.name	= MDPY_CLASS_NAME "-" MDPY_TYPE_3,
-> +		.format = DRM_FORMAT_XRGB8888,
-> +		.bytepp = 4,
-> +		.width	= 1920,
-> +		.height = 1080,
-> +	},
-> +};
-> +
-> +static dev_t		mdpy_devt;
-> +static struct class	*mdpy_class;
-> +static struct cdev	mdpy_cdev;
-> +static struct device	mdpy_dev;
-> +static u32		mdpy_count;
-> +
-> +/* State of each mdev device */
-> +struct mdev_state {
-> +	u8 *vconfig;
-> +	u32 bar_mask;
-> +	struct mutex ops_lock;
-> +	struct mdev_device *mdev;
-> +	struct vfio_device_info dev_info;
-> +
-> +	const struct mdpy_type *type;
-> +	u32 memsize;
-> +	void *memblk;
-> +};
-> +
-> +static const struct mdpy_type *mdpy_find_type(struct kobject *kobj)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(mdpy_types); i++)
-> +		if (strcmp(mdpy_types[i].name, kobj->name) == 0)
-> +			return mdpy_types + i;
-> +	return NULL;
-> +}
-> +
-> +static void mdpy_create_config_space(struct mdev_state *mdev_state)
-> +{
-> +	STORE_LE16((u16 *) &mdev_state->vconfig[PCI_VENDOR_ID],
-> +		   MDPY_PCI_VENDOR_ID);
-> +	STORE_LE16((u16 *) &mdev_state->vconfig[PCI_DEVICE_ID],
-> +		   MDPY_PCI_DEVICE_ID);
-> +	STORE_LE16((u16 *) &mdev_state->vconfig[PCI_SUBSYSTEM_VENDOR_ID],
-> +		   MDPY_PCI_SUBVENDOR_ID);
-> +	STORE_LE16((u16 *) &mdev_state->vconfig[PCI_SUBSYSTEM_ID],
-> +		   MDPY_PCI_SUBDEVICE_ID);
-> +
-> +	STORE_LE16((u16 *) &mdev_state->vconfig[PCI_COMMAND],
-> +		   PCI_COMMAND_IO | PCI_COMMAND_MEMORY);
-> +	STORE_LE16((u16 *) &mdev_state->vconfig[PCI_CLASS_DEVICE],
-> +		   PCI_CLASS_DISPLAY_OTHER);
-> +	mdev_state->vconfig[PCI_CLASS_REVISION] =  0x01;
-> +
-> +	STORE_LE32((u32 *) &mdev_state->vconfig[PCI_BASE_ADDRESS_0],
-> +		   PCI_BASE_ADDRESS_SPACE_MEMORY |
-> +		   PCI_BASE_ADDRESS_MEM_TYPE_32	 |
-> +		   PCI_BASE_ADDRESS_MEM_PREFETCH);
-> +	mdev_state->bar_mask = ~(mdev_state->memsize) + 1;
-> +
-> +	/* Vendor specific data */
-> +	STORE_LE32((u32 *) &mdev_state->vconfig[MDPY_FORMAT_OFFSET],
-> +		   mdev_state->type->format);
-> +	STORE_LE32((u32 *) &mdev_state->vconfig[MDPY_WIDTH_OFFSET],
-> +		   mdev_state->type->width);
-> +	STORE_LE32((u32 *) &mdev_state->vconfig[MDPY_HEIGHT_OFFSET],
-> +		   mdev_state->type->height);
-> +}
-> +
-> +static void handle_pci_cfg_write(struct mdev_state *mdev_state, u16 offset,
-> +				 char *buf, u32 count)
-> +{
-> +	struct device *dev = mdev_dev(mdev_state->mdev);
-> +	u32 cfg_addr;
-> +
-> +	switch (offset) {
-> +	case PCI_BASE_ADDRESS_0:
-> +		cfg_addr = *(u32 *)buf;
-> +
-> +		if (cfg_addr == 0xffffffff) {
-> +			cfg_addr = (cfg_addr & mdev_state->bar_mask);
-> +		} else {
-> +			cfg_addr &= PCI_BASE_ADDRESS_MEM_MASK;
-> +			if (cfg_addr)
-> +				dev_info(dev, "BAR0 @ 0x%x\n", cfg_addr);
-> +		}
-> +
-> +		cfg_addr |= (mdev_state->vconfig[offset] &
-> +			     ~PCI_BASE_ADDRESS_MEM_MASK);
-> +		STORE_LE32(&mdev_state->vconfig[offset], cfg_addr);
-> +		break;
-> +	}
-> +}
-> +
-> +static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
-> +			   loff_t pos, bool is_write)
-> +{
-> +	struct mdev_state *mdev_state = mdev_get_drvdata(mdev);
-> +	struct device *dev = mdev_dev(mdev);
-> +	int ret = 0;
-> +
-> +	mutex_lock(&mdev_state->ops_lock);
-> +
-> +	if (pos < MDPY_CONFIG_SPACE_SIZE) {
-> +		if (is_write) {
-> +			handle_pci_cfg_write(mdev_state, pos, buf, count);
-> +		} else {
-> +			memcpy(buf, (mdev_state->vconfig + pos), count);
-> +		}
-> +
-> +	} else {
-> +		dev_info(dev, "%s: %s @0x%llx (unhandled)\n",
-> +			 __func__, is_write ? "WR" : "RD", pos);
-> +		ret = -1;
-> +		goto accessfailed;
-> +	}
-> +
-> +	ret = count;
-> +
-> +
-> +accessfailed:
-> +	mutex_unlock(&mdev_state->ops_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +int mdpy_reset(struct mdev_device *mdev)
-> +{
-> +	struct mdev_state *mdev_state = mdev_get_drvdata(mdev);
-> +	u32 stride, i;
-> +
-> +	/* initialize with gray gradient */
-> +	stride = mdev_state->type->width * mdev_state->type->bytepp;
-> +	for (i = 0; i < mdev_state->type->height; i++)
-> +		memset(mdev_state->memblk + i * stride,
-> +		       i * 255 / mdev_state->type->height,
-> +		       stride);
-> +	return 0;
-> +}
-> +
-> +int mdpy_create(struct kobject *kobj, struct mdev_device *mdev)
-> +{
-> +	const struct mdpy_type *type = mdpy_find_type(kobj);
-> +	struct device *dev = mdev_dev(mdev);
-> +	struct mdev_state *mdev_state;
-> +	u32 fbsize;
-> +
-> +	if (mdpy_count >= max_devices)
-> +		return -ENOMEM;
-> +
-> +	mdev_state = kzalloc(sizeof(struct mdev_state), GFP_KERNEL);
-> +	if (mdev_state == NULL)
-> +		return -ENOMEM;
-> +
-> +	mdev_state->vconfig = kzalloc(MDPY_CONFIG_SPACE_SIZE, GFP_KERNEL);
-> +	if (mdev_state->vconfig == NULL) {
-> +		kfree(mdev_state);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	if (!type)
-> +		type = &mdpy_types[0];
-> +	fbsize = roundup_pow_of_two(type->width * type->height * type->bytepp);
-> +
-> +	mdev_state->memblk = vmalloc_user(fbsize);
-> +	if (!mdev_state->memblk) {
-> +		kfree(mdev_state->vconfig);
-> +		kfree(mdev_state);
-> +		return -ENOMEM;
-> +	}
-> +	dev_info(dev, "%s: %s (%dx%d)\n",
-> +		 __func__, kobj->name, type->width, type->height);
-> +
-> +	mutex_init(&mdev_state->ops_lock);
-> +	mdev_state->mdev = mdev;
-> +	mdev_set_drvdata(mdev, mdev_state);
-> +
-> +	mdev_state->type    = type;
-> +	mdev_state->memsize = fbsize;
-> +	mdpy_create_config_space(mdev_state);
-> +	mdpy_reset(mdev);
-> +
-> +	mdpy_count++;
-> +	return 0;
-> +}
-> +
-> +int mdpy_remove(struct mdev_device *mdev)
-> +{
-> +	struct mdev_state *mdev_state = mdev_get_drvdata(mdev);
-> +	struct device *dev = mdev_dev(mdev);
-> +
-> +	dev_info(dev, "%s\n", __func__);
-> +
-> +	mdev_set_drvdata(mdev, NULL);
-> +	vfree(mdev_state->memblk);
-> +	kfree(mdev_state->vconfig);
-> +	kfree(mdev_state);
-> +
-> +	mdpy_count--;
-> +	return 0;
-> +}
-> +
-> +ssize_t mdpy_read(struct mdev_device *mdev, char __user *buf, size_t count,
-> +		  loff_t *ppos)
-> +{
-> +	unsigned int done = 0;
-> +	int ret;
-> +
-> +	while (count) {
-> +		size_t filled;
-> +
-> +		if (count >= 4 && !(*ppos % 4)) {
-> +			u32 val;
-> +
-> +			ret =  mdev_access(mdev, (char *)&val, sizeof(val),
-> +					   *ppos, false);
-> +			if (ret <= 0)
-> +				goto read_err;
-> +
-> +			if (copy_to_user(buf, &val, sizeof(val)))
-> +				goto read_err;
-> +
-> +			filled = 4;
-> +		} else if (count >= 2 && !(*ppos % 2)) {
-> +			u16 val;
-> +
-> +			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +					  *ppos, false);
-> +			if (ret <= 0)
-> +				goto read_err;
-> +
-> +			if (copy_to_user(buf, &val, sizeof(val)))
-> +				goto read_err;
-> +
-> +			filled = 2;
-> +		} else {
-> +			u8 val;
-> +
-> +			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +					  *ppos, false);
-> +			if (ret <= 0)
-> +				goto read_err;
-> +
-> +			if (copy_to_user(buf, &val, sizeof(val)))
-> +				goto read_err;
-> +
-> +			filled = 1;
-> +		}
-> +
-> +		count -= filled;
-> +		done += filled;
-> +		*ppos += filled;
-> +		buf += filled;
-> +	}
-> +
-> +	return done;
-> +
-> +read_err:
-> +	return -EFAULT;
-> +}
-> +
-> +ssize_t mdpy_write(struct mdev_device *mdev, const char __user *buf,
-> +		   size_t count, loff_t *ppos)
-> +{
-> +	unsigned int done = 0;
-> +	int ret;
-> +
-> +	while (count) {
-> +		size_t filled;
-> +
-> +		if (count >= 4 && !(*ppos % 4)) {
-> +			u32 val;
-> +
-> +			if (copy_from_user(&val, buf, sizeof(val)))
-> +				goto write_err;
-> +
-> +			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +					  *ppos, true);
-> +			if (ret <= 0)
-> +				goto write_err;
-> +
-> +			filled = 4;
-> +		} else if (count >= 2 && !(*ppos % 2)) {
-> +			u16 val;
-> +
-> +			if (copy_from_user(&val, buf, sizeof(val)))
-> +				goto write_err;
-> +
-> +			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +					  *ppos, true);
-> +			if (ret <= 0)
-> +				goto write_err;
-> +
-> +			filled = 2;
-> +		} else {
-> +			u8 val;
-> +
-> +			if (copy_from_user(&val, buf, sizeof(val)))
-> +				goto write_err;
-> +
-> +			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +					  *ppos, true);
-> +			if (ret <= 0)
-> +				goto write_err;
-> +
-> +			filled = 1;
-> +		}
-> +		count -= filled;
-> +		done += filled;
-> +		*ppos += filled;
-> +		buf += filled;
-> +	}
-> +
-> +	return done;
-> +write_err:
-> +	return -EFAULT;
-> +}
-> +
-> +int mdpy_mmap(struct mdev_device *mdev, struct vm_area_struct *vma)
-> +{
-> +	struct mdev_state *mdev_state = mdev_get_drvdata(mdev);
-> +
-> +	if (vma->vm_pgoff != MDPY_MEMORY_BAR_OFFSET >> PAGE_SHIFT)
-> +		return -EINVAL;
-> +	if (vma->vm_end < vma->vm_start)
-> +		return -EINVAL;
-> +	if (vma->vm_end - vma->vm_start > mdev_state->memsize)
-> +		return -EINVAL;
-> +	if ((vma->vm_flags & VM_SHARED) == 0)
-> +		return -EINVAL;
-> +
-> +	return remap_vmalloc_range_partial(vma, vma->vm_start,
-> +					   mdev_state->memblk,
-> +					   vma->vm_end - vma->vm_start);
-> +}
-> +
-> +int mdpy_get_region_info(struct mdev_device *mdev,
-> +			 struct vfio_region_info *region_info,
-> +			 u16 *cap_type_id, void **cap_type)
-> +{
-> +	struct mdev_state *mdev_state;
-> +
-> +	mdev_state = mdev_get_drvdata(mdev);
-> +	if (!mdev_state)
-> +		return -EINVAL;
-> +
-> +	if (region_info->index >= VFIO_PCI_NUM_REGIONS &&
-> +	    region_info->index != MDPY_DISPLAY_REGION)
-> +		return -EINVAL;
-> +
-> +	switch (region_info->index) {
-> +	case VFIO_PCI_CONFIG_REGION_INDEX:
-> +		region_info->offset = 0;
-> +		region_info->size   = MDPY_CONFIG_SPACE_SIZE;
-> +		region_info->flags  = (VFIO_REGION_INFO_FLAG_READ |
-> +				       VFIO_REGION_INFO_FLAG_WRITE);
-> +		break;
-> +	case VFIO_PCI_BAR0_REGION_INDEX:
-> +	case MDPY_DISPLAY_REGION:
-> +		region_info->offset = MDPY_MEMORY_BAR_OFFSET;
-
-That's pretty clever, I'd never considered that two regions could point
-to the same device file offset.
-
-> +		region_info->size   = mdev_state->memsize;
-> +		region_info->flags  = (VFIO_REGION_INFO_FLAG_READ  |
-> +				       VFIO_REGION_INFO_FLAG_WRITE |
-> +				       VFIO_REGION_INFO_FLAG_MMAP);
-
-This doesn't appear to be true, the read and write functions call the
-access function which only handles the config space region.  Are these
-really mmap-only regions?  read/write access support is often useful
-for tracing and debugging, QEMU will break if x-no-mmap=on is used.
-Unfortunately I didn't really consider mmap-only regions for the flags,
-so there's no way to specify the access permissions for such a region
-other than also indication that it supports read(2), write(2).
-
-Thanks,
-Alex
-
-
-> +		break;
-> +	default:
-> +		region_info->size   = 0;
-> +		region_info->offset = 0;
-> +		region_info->flags  = 0;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int mdpy_get_irq_info(struct mdev_device *mdev, struct vfio_irq_info *irq_info)
-> +{
-> +	irq_info->count = 0;
-> +	return 0;
-> +}
-> +
-> +int mdpy_get_device_info(struct mdev_device *mdev,
-> +			 struct vfio_device_info *dev_info)
-> +{
-> +	dev_info->flags = VFIO_DEVICE_FLAGS_PCI;
-> +	dev_info->num_regions = VFIO_PCI_NUM_REGIONS;
-> +	dev_info->num_irqs = VFIO_PCI_NUM_IRQS;
-> +	return 0;
-> +}
-> +
-> +int mdpy_query_gfx_plane(struct mdev_device *mdev,
-> +			 struct vfio_device_gfx_plane_info *plane)
-> +{
-> +	struct mdev_state *mdev_state = mdev_get_drvdata(mdev);
-> +
-> +	if (plane->flags & VFIO_GFX_PLANE_TYPE_PROBE) {
-> +		if (plane->flags == (VFIO_GFX_PLANE_TYPE_PROBE |
-> +				     VFIO_GFX_PLANE_TYPE_REGION))
-> +			return 0;
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (plane->flags != VFIO_GFX_PLANE_TYPE_REGION)
-> +		return -EINVAL;
-> +
-> +	plane->drm_format     = mdev_state->type->format;
-> +	plane->width	      = mdev_state->type->width;
-> +	plane->height	      = mdev_state->type->height;
-> +	plane->stride	      = (mdev_state->type->width *
-> +				 mdev_state->type->bytepp);
-> +	plane->size	      = mdev_state->memsize;
-> +	plane->region_index   = MDPY_DISPLAY_REGION;
-> +
-> +	/* unused */
-> +	plane->drm_format_mod = 0;
-> +	plane->x_pos	      = 0;
-> +	plane->y_pos	      = 0;
-> +	plane->x_hot	      = 0;
-> +	plane->y_hot	      = 0;
-> +
-> +	return 0;
-> +}
-> +
-> +static long mdpy_ioctl(struct mdev_device *mdev, unsigned int cmd,
-> +			unsigned long arg)
-> +{
-> +	int ret = 0;
-> +	unsigned long minsz;
-> +	struct mdev_state *mdev_state;
-> +
-> +	mdev_state = mdev_get_drvdata(mdev);
-> +
-> +	switch (cmd) {
-> +	case VFIO_DEVICE_GET_INFO:
-> +	{
-> +		struct vfio_device_info info;
-> +
-> +		minsz = offsetofend(struct vfio_device_info, num_irqs);
-> +
-> +		if (copy_from_user(&info, (void __user *)arg, minsz))
-> +			return -EFAULT;
-> +
-> +		if (info.argsz < minsz)
-> +			return -EINVAL;
-> +
-> +		ret = mdpy_get_device_info(mdev, &info);
-> +		if (ret)
-> +			return ret;
-> +
-> +		memcpy(&mdev_state->dev_info, &info, sizeof(info));
-> +
-> +		if (copy_to_user((void __user *)arg, &info, minsz))
-> +			return -EFAULT;
-> +
-> +		return 0;
-> +	}
-> +	case VFIO_DEVICE_GET_REGION_INFO:
-> +	{
-> +		struct vfio_region_info info;
-> +		u16 cap_type_id = 0;
-> +		void *cap_type = NULL;
-> +
-> +		minsz = offsetofend(struct vfio_region_info, offset);
-> +
-> +		if (copy_from_user(&info, (void __user *)arg, minsz))
-> +			return -EFAULT;
-> +
-> +		if (info.argsz < minsz)
-> +			return -EINVAL;
-> +
-> +		ret = mdpy_get_region_info(mdev, &info, &cap_type_id,
-> +					   &cap_type);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (copy_to_user((void __user *)arg, &info, minsz))
-> +			return -EFAULT;
-> +
-> +		return 0;
-> +	}
-> +
-> +	case VFIO_DEVICE_GET_IRQ_INFO:
-> +	{
-> +		struct vfio_irq_info info;
-> +
-> +		minsz = offsetofend(struct vfio_irq_info, count);
-> +
-> +		if (copy_from_user(&info, (void __user *)arg, minsz))
-> +			return -EFAULT;
-> +
-> +		if ((info.argsz < minsz) ||
-> +		    (info.index >= mdev_state->dev_info.num_irqs))
-> +			return -EINVAL;
-> +
-> +		ret = mdpy_get_irq_info(mdev, &info);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (copy_to_user((void __user *)arg, &info, minsz))
-> +			return -EFAULT;
-> +
-> +		return 0;
-> +	}
-> +
-> +	case VFIO_DEVICE_QUERY_GFX_PLANE:
-> +	{
-> +		struct vfio_device_gfx_plane_info plane;
-> +
-> +		minsz = offsetofend(struct vfio_device_gfx_plane_info,
-> +				    region_index);
-> +
-> +		if (copy_from_user(&plane, (void __user *)arg, minsz))
-> +			return -EFAULT;
-> +
-> +		if (plane.argsz < minsz)
-> +			return -EINVAL;
-> +
-> +		ret = mdpy_query_gfx_plane(mdev, &plane);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (copy_to_user((void __user *)arg, &plane, minsz))
-> +			return -EFAULT;
-> +
-> +		return 0;
-> +	}
-> +
-> +	case VFIO_DEVICE_SET_IRQS:
-> +		return -EINVAL;
-> +
-> +	case VFIO_DEVICE_RESET:
-> +		return mdpy_reset(mdev);
-> +	}
-> +	return -ENOTTY;
-> +}
-> +
-> +int mdpy_open(struct mdev_device *mdev)
-> +{
-> +	if (!try_module_get(THIS_MODULE))
-> +		return -ENODEV;
-> +
-> +	return 0;
-> +}
-> +
-> +void mdpy_close(struct mdev_device *mdev)
-> +{
-> +	module_put(THIS_MODULE);
-> +}
-> +
-> +static ssize_t
-> +resolution_show(struct device *dev, struct device_attribute *attr,
-> +		char *buf)
-> +{
-> +	struct mdev_device *mdev = mdev_from_dev(dev);
-> +	struct mdev_state *mdev_state = mdev_get_drvdata(mdev);
-> +
-> +	return sprintf(buf, "%dx%d\n",
-> +		       mdev_state->type->width,
-> +		       mdev_state->type->height);
-> +}
-> +static DEVICE_ATTR_RO(resolution);
-> +
-> +static struct attribute *mdev_dev_attrs[] = {
-> +	&dev_attr_resolution.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group mdev_dev_group = {
-> +	.name  = "vendor",
-> +	.attrs = mdev_dev_attrs,
-> +};
-> +
-> +const struct attribute_group *mdev_dev_groups[] = {
-> +	&mdev_dev_group,
-> +	NULL,
-> +};
-> +
-> +static ssize_t
-> +name_show(struct kobject *kobj, struct device *dev, char *buf)
-> +{
-> +	return sprintf(buf, "%s\n", kobj->name);
-> +}
-> +MDEV_TYPE_ATTR_RO(name);
-> +
-> +static ssize_t
-> +description_show(struct kobject *kobj, struct device *dev, char *buf)
-> +{
-> +	const struct mdpy_type *type = mdpy_find_type(kobj);
-> +
-> +	return sprintf(buf, "virtual display, %dx%d framebuffer\n",
-> +		       type ? type->width  : 0,
-> +		       type ? type->height : 0);
-> +}
-> +MDEV_TYPE_ATTR_RO(description);
-> +
-> +static ssize_t
-> +available_instances_show(struct kobject *kobj, struct device *dev, char *buf)
-> +{
-> +	return sprintf(buf, "%d\n", max_devices - mdpy_count);
-> +}
-> +MDEV_TYPE_ATTR_RO(available_instances);
-> +
-> +static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
-> +			       char *buf)
-> +{
-> +	return sprintf(buf, "%s\n", VFIO_DEVICE_API_PCI_STRING);
-> +}
-> +MDEV_TYPE_ATTR_RO(device_api);
-> +
-> +static struct attribute *mdev_types_attrs[] = {
-> +	&mdev_type_attr_name.attr,
-> +	&mdev_type_attr_description.attr,
-> +	&mdev_type_attr_device_api.attr,
-> +	&mdev_type_attr_available_instances.attr,
-> +	NULL,
-> +};
-> +
-> +static struct attribute_group mdev_type_group1 = {
-> +	.name  = MDPY_TYPE_1,
-> +	.attrs = mdev_types_attrs,
-> +};
-> +
-> +static struct attribute_group mdev_type_group2 = {
-> +	.name  = MDPY_TYPE_2,
-> +	.attrs = mdev_types_attrs,
-> +};
-> +
-> +static struct attribute_group mdev_type_group3 = {
-> +	.name  = MDPY_TYPE_3,
-> +	.attrs = mdev_types_attrs,
-> +};
-> +
-> +static struct attribute_group *mdev_type_groups[] = {
-> +	&mdev_type_group1,
-> +	&mdev_type_group2,
-> +	&mdev_type_group3,
-> +	NULL,
-> +};
-> +
-> +static const struct mdev_parent_ops mdev_fops = {
-> +	.owner			= THIS_MODULE,
-> +	.mdev_attr_groups	= mdev_dev_groups,
-> +	.supported_type_groups	= mdev_type_groups,
-> +	.create			= mdpy_create,
-> +	.remove			= mdpy_remove,
-> +	.open			= mdpy_open,
-> +	.release		= mdpy_close,
-> +	.read			= mdpy_read,
-> +	.write			= mdpy_write,
-> +	.ioctl			= mdpy_ioctl,
-> +	.mmap			= mdpy_mmap,
-> +};
-> +
-> +static const struct file_operations vd_fops = {
-> +	.owner		= THIS_MODULE,
-> +};
-> +
-> +static void mdpy_device_release(struct device *dev)
-> +{
-> +	/* nothing */
-> +}
-> +
-> +static int __init mdpy_dev_init(void)
-> +{
-> +	int ret = 0;
-> +
-> +	ret = alloc_chrdev_region(&mdpy_devt, 0, MINORMASK, MDPY_NAME);
-> +	if (ret < 0) {
-> +		pr_err("Error: failed to register mdpy_dev, err: %d\n", ret);
-> +		return ret;
-> +	}
-> +	cdev_init(&mdpy_cdev, &vd_fops);
-> +	cdev_add(&mdpy_cdev, mdpy_devt, MINORMASK);
-> +	pr_info("%s: major %d\n", __func__, MAJOR(mdpy_devt));
-> +
-> +	mdpy_class = class_create(THIS_MODULE, MDPY_CLASS_NAME);
-> +	if (IS_ERR(mdpy_class)) {
-> +		pr_err("Error: failed to register mdpy_dev class\n");
-> +		ret = PTR_ERR(mdpy_class);
-> +		goto failed1;
-> +	}
-> +	mdpy_dev.class = mdpy_class;
-> +	mdpy_dev.release = mdpy_device_release;
-> +	dev_set_name(&mdpy_dev, "%s", MDPY_NAME);
-> +
-> +	ret = device_register(&mdpy_dev);
-> +	if (ret)
-> +		goto failed2;
-> +
-> +	ret = mdev_register_device(&mdpy_dev, &mdev_fops);
-> +	if (ret)
-> +		goto failed3;
-> +
-> +	return 0;
-> +
-> +failed3:
-> +	device_unregister(&mdpy_dev);
-> +failed2:
-> +	class_destroy(mdpy_class);
-> +failed1:
-> +	cdev_del(&mdpy_cdev);
-> +	unregister_chrdev_region(mdpy_devt, MINORMASK);
-> +	return ret;
-> +}
-> +
-> +static void __exit mdpy_dev_exit(void)
-> +{
-> +	mdpy_dev.bus = NULL;
-> +	mdev_unregister_device(&mdpy_dev);
-> +
-> +	device_unregister(&mdpy_dev);
-> +	cdev_del(&mdpy_cdev);
-> +	unregister_chrdev_region(mdpy_devt, MINORMASK);
-> +	class_destroy(mdpy_class);
-> +	mdpy_class = NULL;
-> +}
-> +
-> +module_init(mdpy_dev_init)
-> +module_exit(mdpy_dev_exit)
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index c332a3b9de..a0c104adda 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -111,6 +111,14 @@ config SAMPLE_VFIO_MDEV_MTTY
->  	  Build a virtual tty sample driver for use as a VFIO
->  	  mediated device
->  
-> +config SAMPLE_VFIO_MDEV_MDPY
-> +	tristate "Build VFIO mdpy example mediated device sample code -- loadable modules only"
-> +	depends on VFIO_MDEV_DEVICE && m
-> +	help
-> +	  Build a virtual display sample driver for use as a VFIO
-> +	  mediated device.  It is a simple framebuffer and supports
-> +	  the region display interface (VFIO_GFX_PLANE_TYPE_REGION).
-> +
->  config SAMPLE_STATX
->  	bool "Build example extended-stat using code"
->  	depends on BROKEN
-> diff --git a/samples/vfio-mdev/Makefile b/samples/vfio-mdev/Makefile
-> index cbbd868a50..031d6b88e9 100644
-> --- a/samples/vfio-mdev/Makefile
-> +++ b/samples/vfio-mdev/Makefile
-> @@ -1 +1,2 @@
->  obj-$(CONFIG_SAMPLE_VFIO_MDEV_MTTY) += mtty.o
-> +obj-$(CONFIG_SAMPLE_VFIO_MDEV_MDPY) += mdpy.o
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index a66107b5cfff..0fbd674c66fb 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -221,8 +221,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
+ 	si->cache_mem = 0;
+ 
+ 	/* build gc */
+-	if (sbi->gc_thread)
+-		si->cache_mem += sizeof(struct f2fs_gc_kthread);
++	si->cache_mem += sizeof(struct f2fs_gc_kthread);
+ 
+ 	/* build merge flush thread */
+ 	if (SM_I(sbi)->fcc_info)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8f3ad9662d13..75d3b4875429 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1412,6 +1412,11 @@ static inline struct sit_info *SIT_I(struct f2fs_sb_info *sbi)
+ 	return (struct sit_info *)(SM_I(sbi)->sit_info);
+ }
+ 
++static inline struct f2fs_gc_kthread *GC_I(struct f2fs_sb_info *sbi)
++{
++	return (struct f2fs_gc_kthread *)(sbi->gc_thread);
++}
++
+ static inline struct free_segmap_info *FREE_I(struct f2fs_sb_info *sbi)
+ {
+ 	return (struct free_segmap_info *)(SM_I(sbi)->free_info);
+@@ -2954,8 +2959,10 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
+ /*
+  * gc.c
+  */
++int init_gc_context(struct f2fs_sb_info *sbi);
++void destroy_gc_context(struct f2fs_sb_info * sbi);
+ int start_gc_thread(struct f2fs_sb_info *sbi);
+-void stop_gc_thread(struct f2fs_sb_info *sbi);
++bool stop_gc_thread(struct f2fs_sb_info *sbi);
+ block_t start_bidx_of_node(unsigned int node_ofs, struct inode *inode);
+ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
+ 			unsigned int segno);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 70418b34c5f6..2febb84b2fd6 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -26,8 +26,8 @@
+ static int gc_thread_func(void *data)
+ {
+ 	struct f2fs_sb_info *sbi = data;
+-	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
+-	wait_queue_head_t *wq = &sbi->gc_thread->gc_wait_queue_head;
++	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
++	wait_queue_head_t *wq = &gc_th->gc_wait_queue_head;
+ 	unsigned int wait_ms;
+ 
+ 	wait_ms = gc_th->min_sleep_time;
+@@ -114,17 +114,15 @@ static int gc_thread_func(void *data)
+ 	return 0;
+ }
+ 
+-int start_gc_thread(struct f2fs_sb_info *sbi)
++int init_gc_context(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_gc_kthread *gc_th;
+-	dev_t dev = sbi->sb->s_bdev->bd_dev;
+-	int err = 0;
+ 
+ 	gc_th = f2fs_kmalloc(sbi, sizeof(struct f2fs_gc_kthread), GFP_KERNEL);
+-	if (!gc_th) {
+-		err = -ENOMEM;
+-		goto out;
+-	}
++	if (!gc_th)
++		return -ENOMEM;
++
++	gc_th->f2fs_gc_task = NULL;
+ 
+ 	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
+ 	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
+@@ -135,35 +133,59 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+ 	gc_th->gc_urgent = 0;
+ 	gc_th->gc_wake= 0;
+ 
++	init_rwsem(&gc_th->gc_rwsem);
++
+ 	sbi->gc_thread = gc_th;
+-	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
+-	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
++
++	return 0;
++}
++
++void destroy_gc_context(struct f2fs_sb_info *sbi)
++{
++	kfree(GC_I(sbi));
++	sbi->gc_thread = NULL;
++}
++
++int start_gc_thread(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
++	dev_t dev = sbi->sb->s_bdev->bd_dev;
++	int err = 0;
++
++	init_waitqueue_head(&gc_th->gc_wait_queue_head);
++	gc_th->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
+ 			"f2fs_gc-%u:%u", MAJOR(dev), MINOR(dev));
+ 	if (IS_ERR(gc_th->f2fs_gc_task)) {
+ 		err = PTR_ERR(gc_th->f2fs_gc_task);
+-		kfree(gc_th);
+-		sbi->gc_thread = NULL;
++		gc_th->f2fs_gc_task = NULL;
+ 	}
+-out:
++
+ 	return err;
+ }
+ 
+-void stop_gc_thread(struct f2fs_sb_info *sbi)
++bool stop_gc_thread(struct f2fs_sb_info *sbi)
+ {
+-	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
+-	if (!gc_th)
+-		return;
+-	kthread_stop(gc_th->f2fs_gc_task);
+-	kfree(gc_th);
+-	sbi->gc_thread = NULL;
++	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
++	bool stopped = false;
++
++	down_write(&gc_th->gc_rwsem);
++	if (gc_th->f2fs_gc_task) {
++		kthread_stop(gc_th->f2fs_gc_task);
++		gc_th->f2fs_gc_task = NULL;
++		stopped = true;
++	}
++	up_write(&gc_th->gc_rwsem);
++
++	return stopped;
+ }
+ 
+ static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
+ {
+ 	int gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
+ 
+-	if (!gc_th)
+-		return gc_mode;
++	down_read(&gc_th->gc_rwsem);
++	if (!gc_th->f2fs_gc_task)
++		goto out;
+ 
+ 	if (gc_th->gc_idle) {
+ 		if (gc_th->gc_idle == 1)
+@@ -173,6 +195,8 @@ static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
+ 	}
+ 	if (gc_th->gc_urgent)
+ 		gc_mode = GC_GREEDY;
++out:
++	up_read(&gc_th->gc_rwsem);
+ 	return gc_mode;
+ }
+ 
+@@ -187,17 +211,19 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+ 		p->max_search = dirty_i->nr_dirty[type];
+ 		p->ofs_unit = 1;
+ 	} else {
+-		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
++		p->gc_mode = select_gc_type(GC_I(sbi), gc_type);
+ 		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
+ 		p->max_search = dirty_i->nr_dirty[DIRTY];
+ 		p->ofs_unit = sbi->segs_per_sec;
+ 	}
+ 
+ 	/* we need to check every dirty segments in the FG_GC case */
+-	if (gc_type != FG_GC &&
+-			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
++	down_read(&GC_I(sbi)->gc_rwsem);
++	if (gc_type != FG_GC && GC_I(sbi)->f2fs_gc_task &&
++			!GC_I(sbi)->gc_urgent &&
+ 			p->max_search > sbi->max_victim_search)
+ 		p->max_search = sbi->max_victim_search;
++	up_read(&GC_I(sbi)->gc_rwsem);
+ 
+ 	/* let's select beginning hot/small space first in no_heap mode*/
+ 	if (test_opt(sbi, NOHEAP) &&
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index b0045d4c8d1e..9a5b273328c2 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -26,6 +26,7 @@
+ #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
+ 
+ struct f2fs_gc_kthread {
++	struct rw_semaphore gc_rwsem;		/* semaphore for f2fs_gc_task */
+ 	struct task_struct *f2fs_gc_task;
+ 	wait_queue_head_t gc_wait_queue_head;
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5960768d26df..f787eea1b2f6 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -177,8 +177,12 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+ 
+ 	if (test_opt(sbi, LFS))
+ 		return false;
+-	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
++	down_read(&GC_I(sbi)->gc_rwsem);
++	if (GC_I(sbi)->f2fs_gc_task && GC_I(sbi)->gc_urgent) {
++		down_read(&GC_I(sbi)->gc_rwsem);
+ 		return true;
++	}
++	up_read(&GC_I(sbi)->gc_rwsem);
+ 
+ 	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+ 			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
+@@ -1425,8 +1429,10 @@ static int issue_discard_thread(void *data)
+ 		if (dcc->discard_wake)
+ 			dcc->discard_wake = 0;
+ 
+-		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
++		down_read(&GC_I(sbi)->gc_rwsem);
++		if (GC_I(sbi)->f2fs_gc_task && GC_I(sbi)->gc_urgent)
+ 			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
++		up_read(&GC_I(sbi)->gc_rwsem);
+ 
+ 		sb_start_intwrite(sbi->sb);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index dedb8e50b440..199f29dce86d 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1044,6 +1044,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	kfree(sbi->raw_super);
+ 
+ 	destroy_device_list(sbi);
++	destroy_gc_context(sbi);
+ 	mempool_destroy(sbi->write_io_dummy);
+ #ifdef CONFIG_QUOTA
+ 	for (i = 0; i < MAXQUOTAS; i++)
+@@ -1476,15 +1477,18 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	 * option. Also sync the filesystem.
+ 	 */
+ 	if ((*flags & SB_RDONLY) || !test_opt(sbi, BG_GC)) {
+-		if (sbi->gc_thread) {
+-			stop_gc_thread(sbi);
+-			need_restart_gc = true;
++		need_restart_gc = stop_gc_thread(sbi);
++	} else {
++		down_write(&GC_I(sbi)->gc_rwsem);
++		if (!GC_I(sbi)->f2fs_gc_task) {
++			err = start_gc_thread(sbi);
++			if (err) {
++				up_write(&GC_I(sbi)->gc_rwsem);
++				goto restore_opts;
++			}
++			need_stop_gc = true;
+ 		}
+-	} else if (!sbi->gc_thread) {
+-		err = start_gc_thread(sbi);
+-		if (err)
+-			goto restore_opts;
+-		need_stop_gc = true;
++		up_write(&GC_I(sbi)->gc_rwsem);
+ 	}
+ 
+ 	if (*flags & SB_RDONLY ||
+@@ -2771,6 +2775,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto free_meta_inode;
+ 	}
+ 
++	err = init_gc_context(sbi);
++	if (err)
++		goto free_checkpoint;
++
+ 	/* Initialize device list */
+ 	err = f2fs_scan_devices(sbi);
+ 	if (err) {
+@@ -2981,6 +2989,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	destroy_segment_manager(sbi);
+ free_devices:
+ 	destroy_device_list(sbi);
++	destroy_gc_context(sbi);
++free_checkpoint:
+ 	kfree(sbi->ckpt);
+ free_meta_inode:
+ 	make_bad_inode(sbi->meta_inode);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 2c53de9251be..b8d09935e43f 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -46,7 +46,7 @@ struct f2fs_attr {
+ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
+ {
+ 	if (struct_type == GC_THREAD)
+-		return (unsigned char *)sbi->gc_thread;
++		return (unsigned char *)GC_I(sbi);
+ 	else if (struct_type == SM_INFO)
+ 		return (unsigned char *)SM_I(sbi);
+ 	else if (struct_type == DCC_INFO)
+@@ -248,16 +248,28 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	if (!strcmp(a->attr.name, "trim_sections"))
+ 		return -EINVAL;
+ 
+-	*ui = t;
+-
+-	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
++	if (!strcmp(a->attr.name, "iostat_enable") && t == 0)
+ 		f2fs_reset_iostat(sbi);
+-	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
+-		sbi->gc_thread->gc_wake = 1;
+-		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
++
++	if (a->struct_type == GC_THREAD) {
++		down_write(&GC_I(sbi)->gc_rwsem);
++		if (!GC_I(sbi)->f2fs_gc_task) {
++			up_write(&GC_I(sbi)->gc_rwsem);
++			return -EINVAL;
++		}
++	}
++
++	if (!strcmp(a->attr.name, "gc_urgent") && t == 1) {
++		GC_I(sbi)->gc_wake = 1;
++		wake_up_interruptible_all(&GC_I(sbi)->gc_wait_queue_head);
+ 		wake_up_discard_thread(sbi, true);
+ 	}
+ 
++	*ui = t;
++
++	if (a->struct_type == GC_THREAD)
++		up_write(&GC_I(sbi)->gc_rwsem);
++
+ 	return count;
+ }
+ 
+-- 
+2.15.0.55.gc2ece9dc4de6
