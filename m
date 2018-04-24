@@ -1,76 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755723AbeDXJVA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:21:00 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:47040 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932263AbeDXJTp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:19:45 -0400
-X-Google-Smtp-Source: AIpwx48tqa3jIBfp3aL3rnPc/io/PkvEdRHPmkYYC2JTY6I/AO0slXfM9EhTQnrVRG3QM7c8kDfbPQ==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: maxime.ripard@bootlin.com, wens@csie.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, clabbe@baylibre.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM64: dts: allwinner: Add dts file for Libre Computer Board ALL-H3-CC H5 ver.
-Date: Tue, 24 Apr 2018 11:19:36 +0200
-Message-Id: <1524561576-2201-3-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524561576-2201-1-git-send-email-narmstrong@baylibre.com>
-References: <1524561576-2201-1-git-send-email-narmstrong@baylibre.com>
+        id S1751723AbeDXJZf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:25:35 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7202 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753225AbeDXJZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 05:25:28 -0400
+Subject: Re: [PATCH] f2fs: clear page_error for all the writebacking pages
+To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180423224914.46640-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <7512323f-3bea-d9ce-e0f0-e48571f93415@huawei.com>
+Date: Tue, 24 Apr 2018 17:25:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180423224914.46640-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Libre Computer Board ALL-H3-CC from Libre Technology is a Raspberry
-Pi B+ form factor single board computer based on the Allwinner H2+, H3, or H5
-SoCs with the same PCB.
-The board has 1GB DDR3 SDRAM, provided by 4 2Gb chips. The mounting holes
-and connectors are in the exact same position as on the Raspberry Pi B+.
+Hi Jaegeuk,
 
-This patch enables the H5 variant using the H3 board definition moved to
-a common dtsi in an earlier patch. The dts simply include the common dtsi
-and declares the correct compatible and model of the H5 variant.
+On 2018/4/24 6:49, Jaegeuk Kim wrote:
+> This patch clear page_error bit, if the page is going to be writebacked.
 
-Suggested-by: Corentin Labbe <clabbe@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/allwinner/Makefile                     |  1 +
- .../boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts   | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts
+This patch is similar to previous patch ("f2fs: clear PageError on writepage"),
+only coverage is different, could you merge them?
 
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index 8bebe7d..7e07c07 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-orangepi-win.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-sopine-baseboard.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-teres-i.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-libretech-all-h3-cc.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts
-new file mode 100644
-index 0000000..95e113c
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2018 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ */
-+
-+/dts-v1/;
-+#include "sun50i-h5.dtsi"
-+#include <arm/sunxi-libretech-all-h3-cc.dtsi>
-+
-+/ {
-+	model = "Libre Computer Board ALL-H3-CC H5";
-+	compatible = "libretech,all-h3-cc-h5", "allwinner,sun50i-h5";
-+};
--- 
-2.7.4
+Thanks,
+
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/gc.c      | 1 +
+>  fs/f2fs/inline.c  | 1 +
+>  fs/f2fs/node.c    | 1 +
+>  fs/f2fs/segment.c | 1 +
+>  4 files changed, 4 insertions(+)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 70418b34c5f6..a7de8b3431a9 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -693,6 +693,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>  		dec_page_count(fio.sbi, F2FS_DIRTY_META);
+>  
+>  	set_page_writeback(fio.encrypted_page);
+> +	ClearPageError(page);
+>  
+>  	/* allocate block address */
+>  	f2fs_wait_on_page_writeback(dn.node_page, NODE, true);
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index b50e36351280..1eaa2049eafa 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -139,6 +139,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+>  
+>  	/* write data page to try to make data consistent */
+>  	set_page_writeback(page);
+> +	ClearPageError(page);
+>  	fio.old_blkaddr = dn->data_blkaddr;
+>  	set_inode_flag(dn->inode, FI_HOT_DATA);
+>  	write_data_page(dn, &fio);
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index ae83ca9d2d31..3a3d38b3e9ec 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1394,6 +1394,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>  		fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
+>  
+>  	set_page_writeback(page);
+> +	ClearPageError(page);
+>  	fio.old_blkaddr = ni.blk_addr;
+>  	write_node_page(nid, &fio);
+>  	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 3325b9959119..a99c30b4eec9 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -2758,6 +2758,7 @@ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page,
+>  		fio.op_flags &= ~REQ_META;
+>  
+>  	set_page_writeback(page);
+> +	ClearPageError(page);
+>  	f2fs_submit_page_write(&fio);
+>  
+>  	f2fs_update_iostat(sbi, io_type, F2FS_BLKSIZE);
+> 
