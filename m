@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933257AbeDXMtQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:49:16 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39231 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932991AbeDXMp0 (ORCPT
+        id S932898AbeDXMtZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:49:25 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40378 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932861AbeDXMpX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:45:26 -0400
-X-Google-Smtp-Source: AB8JxZoq2vpk+jKY4rOrzDiUfBUVXf1DudOPJJfA9hbKhMgo3AseU/5WiKTsVXlsoRHF+BN+IheQHg==
+        Tue, 24 Apr 2018 08:45:23 -0400
+X-Google-Smtp-Source: AIpwx4/K4WxdyF0O1t0ibJ5QU8Bj8UENdNOz4V/to0rSr3ie1kRagJBm3A6dbiYHrvwRTN2/tBD4+A==
 From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -15,9 +15,9 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 17/28] venus: delete no longer used bufmode flag from instance
-Date: Tue, 24 Apr 2018 15:44:25 +0300
-Message-Id: <20180424124436.26955-18-stanimir.varbanov@linaro.org>
+Subject: [PATCH 14/28] venus: helpers: rename a helper function and use buffer mode from caps
+Date: Tue, 24 Apr 2018 15:44:22 +0300
+Message-Id: <20180424124436.26955-15-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
 References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
@@ -25,53 +25,63 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Delete no longer used flag cap_bufs_mode_dynamic from instance
-structure.
+Rename is_reg_unreg_needed() to better name is_dynamic_bufmode() and
+use buffer mode from enumerated per codec capabilities.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/core.h       | 2 --
- drivers/media/platform/qcom/venus/hfi_parser.c | 6 +-----
- 2 files changed, 1 insertion(+), 7 deletions(-)
+ drivers/media/platform/qcom/venus/helpers.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index c46334454cd9..255292899204 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -249,7 +249,6 @@ struct venus_buffer {
-  * @priv:	a private for HFI operations callbacks
-  * @session_type:	the type of the session (decoder or encoder)
-  * @hprop:	a union used as a holder by get property
-- * @cap_bufs_mode_dynamic:	buffers allocation mode capability
-  */
- struct venus_inst {
- 	struct list_head list;
-@@ -298,7 +297,6 @@ struct venus_inst {
- 	const struct hfi_inst_ops *ops;
- 	u32 session_type;
- 	union hfi_get_property hprop;
--	bool cap_bufs_mode_dynamic;
- };
+diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+index 2b21f6ed7502..1eda19adbf28 100644
+--- a/drivers/media/platform/qcom/venus/helpers.c
++++ b/drivers/media/platform/qcom/venus/helpers.c
+@@ -354,18 +354,19 @@ session_process_buf(struct venus_inst *inst, struct vb2_v4l2_buffer *vbuf)
+ 	return 0;
+ }
  
- #define IS_V1(core)	((core)->res->hfi_version == HFI_VERSION_1XX)
-diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
-index 4b155997abbb..ac92fd347ce1 100644
---- a/drivers/media/platform/qcom/venus/hfi_parser.c
-+++ b/drivers/media/platform/qcom/venus/hfi_parser.c
-@@ -74,13 +74,9 @@ static void parse_alloc_mode(struct venus_core *core, struct venus_inst *inst,
+-static inline int is_reg_unreg_needed(struct venus_inst *inst)
++static inline int is_dynamic_bufmode(struct venus_inst *inst)
+ {
+-	if (inst->session_type == VIDC_SESSION_TYPE_DEC &&
+-	    inst->core->res->hfi_version == HFI_VERSION_3XX)
+-		return 0;
++	struct venus_core *core = inst->core;
++	struct venus_caps *caps;
  
- 	while (num_entries--) {
- 		if (mode->buffer_type == HFI_BUFFER_OUTPUT ||
--		    mode->buffer_type == HFI_BUFFER_OUTPUT2) {
--			if (*type == HFI_BUFFER_MODE_DYNAMIC && inst)
--				inst->cap_bufs_mode_dynamic = true;
--
-+		    mode->buffer_type == HFI_BUFFER_OUTPUT2)
- 			for_each_codec(core->caps, ARRAY_SIZE(core->caps),
- 				       codecs, domain, fill_buf_mode, type, 1);
--		}
+-	if (inst->session_type == VIDC_SESSION_TYPE_DEC &&
+-	    inst->cap_bufs_mode_dynamic &&
+-	    inst->core->res->hfi_version == HFI_VERSION_1XX)
++	caps = venus_caps_by_codec(core, inst->hfi_codec, inst->session_type);
++	if (!caps)
+ 		return 0;
  
- 		type++;
- 	}
+-	return 1;
++	if (caps->cap_bufs_mode_dynamic)
++		return 1;
++
++	return 0;
+ }
+ 
+ static int session_unregister_bufs(struct venus_inst *inst)
+@@ -374,7 +375,7 @@ static int session_unregister_bufs(struct venus_inst *inst)
+ 	struct hfi_buffer_desc bd;
+ 	int ret = 0;
+ 
+-	if (!is_reg_unreg_needed(inst))
++	if (is_dynamic_bufmode(inst))
+ 		return 0;
+ 
+ 	list_for_each_entry_safe(buf, n, &inst->registeredbufs, reg_list) {
+@@ -394,7 +395,7 @@ static int session_register_bufs(struct venus_inst *inst)
+ 	struct venus_buffer *buf;
+ 	int ret = 0;
+ 
+-	if (!is_reg_unreg_needed(inst))
++	if (is_dynamic_bufmode(inst))
+ 		return 0;
+ 
+ 	list_for_each_entry(buf, &inst->registeredbufs, reg_list) {
 -- 
 2.14.1
