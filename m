@@ -1,88 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933114AbeDXMqo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:46:44 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52386 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757889AbeDXMph (ORCPT
+        id S933190AbeDXMsP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:48:15 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38354 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757332AbeDXMsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:45:37 -0400
-X-Google-Smtp-Source: AIpwx4/Dtzpe7W15JPC5Z4I3Sxw454hpaGLmhqknlCosoTMeWz6UgwfBVFxVGXwY/Yv3IIUhcd8SiQ==
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH 27/28] venus: add sdm845 compatible and resource data
-Date: Tue, 24 Apr 2018 15:44:35 +0300
-Message-Id: <20180424124436.26955-28-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+        Tue, 24 Apr 2018 08:48:07 -0400
+Date: Tue, 24 Apr 2018 14:48:01 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: subhra mazumdar <subhra.mazumdar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
+Subject: Re: [PATCH 3/3] sched: limit cpu search and rotate search window for
+ scalability
+Message-ID: <20180424124801.GS4082@hirez.programming.kicks-ass.net>
+References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
+ <20180424004116.28151-4-subhra.mazumdar@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424004116.28151-4-subhra.mazumdar@oracle.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds sdm845 DT compatible string with it's resource
-data table.
+On Mon, Apr 23, 2018 at 05:41:16PM -0700, subhra mazumdar wrote:
+> +	if (per_cpu(next_cpu, target) != -1)
+> +		target_tmp = per_cpu(next_cpu, target);
+> +	else
+> +		target_tmp = target;
+> +
 
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- .../devicetree/bindings/media/qcom,venus.txt       |  1 +
- drivers/media/platform/qcom/venus/core.c           | 22 ++++++++++++++++++++++
- 2 files changed, 23 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
-index 2693449daf73..00d0d1bf7647 100644
---- a/Documentation/devicetree/bindings/media/qcom,venus.txt
-+++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
-@@ -6,6 +6,7 @@
- 	Definition: Value should contain one of:
- 		- "qcom,msm8916-venus"
- 		- "qcom,msm8996-venus"
-+		- "qcom,sdm845-venus"
- - reg:
- 	Usage: required
- 	Value type: <prop-encoded-array>
-diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index 1b72bfbb6297..13084880cc42 100644
---- a/drivers/media/platform/qcom/venus/core.c
-+++ b/drivers/media/platform/qcom/venus/core.c
-@@ -445,9 +445,31 @@ static const struct venus_resources msm8996_res = {
- 	.fwname = "qcom/venus-4.2/venus.mdt",
- };
- 
-+static const struct freq_tbl sdm845_freq_table[] = {
-+	{ 1944000, 380000000 },	/* 4k UHD @ 60 */
-+	{  972000, 320000000 },	/* 4k UHD @ 30 */
-+	{  489600, 200000000 },	/* 1080p @ 60 */
-+	{  244800, 100000000 },	/* 1080p @ 30 */
-+};
-+
-+static const struct venus_resources sdm845_res = {
-+	.freq_tbl = sdm845_freq_table,
-+	.freq_tbl_size = ARRAY_SIZE(sdm845_freq_table),
-+	.clks = {"core", "iface", "bus" },
-+	.clks_num = 3,
-+	.max_load = 2563200,
-+	.hfi_version = HFI_VERSION_4XX,
-+	.vmem_id = VIDC_RESOURCE_NONE,
-+	.vmem_size = 0,
-+	.vmem_addr = 0,
-+	.dma_mask = 0xe0000000 - 1,
-+	.fwname = "qcom/venus-5.2/venus.mdt",
-+};
-+
- static const struct of_device_id venus_dt_match[] = {
- 	{ .compatible = "qcom,msm8916-venus", .data = &msm8916_res, },
- 	{ .compatible = "qcom,msm8996-venus", .data = &msm8996_res, },
-+	{ .compatible = "qcom,sdm845-venus", .data = &sdm845_res, },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, venus_dt_match);
--- 
-2.14.1
+This one; what's the point here?
