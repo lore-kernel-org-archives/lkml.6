@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933628AbeDXNzq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:55:46 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33073 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933478AbeDXNPQ (ORCPT
+        id S933613AbeDXN4H (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:56:07 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36456 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933369AbeDXNPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:15:16 -0400
-X-Google-Smtp-Source: AIpwx49FZJb6BsRoIEDv58rfZO3ol0D+KyKAY5KJCly1dwEw7Fj4D6KCIP0i8KJt4dF6kgTaxzlIvw==
+        Tue, 24 Apr 2018 09:15:11 -0400
+X-Google-Smtp-Source: AIpwx4/E5KJfIZA9tDVaU6Nxh6kyesa0EoA9S9Kl32NZdJvcdV6hvhqNTSlu7LGg/tlXsi64+iRohA==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org,
+        Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>, Peter Rosin <peda@axentia.se>,
+        Sean Paul <seanpaul@chromium.org>, Keith Packard <keithp@keithp.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Mathieu Larouche <mathieu.larouche@matrox.com>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/radeon: fix mode_valid's return type
-Date: Tue, 24 Apr 2018 15:15:13 +0200
-Message-Id: <20180424131513.2311-1-luc.vanoostenryck@gmail.com>
+Subject: [PATCH] drm/mgag200: fix mode_valid's return type
+Date: Tue, 24 Apr 2018 15:15:06 +0200
+Message-Id: <20180424131508.2210-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -32,56 +33,20 @@ Fix this by using 'enum drm_mode_status' in the driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/gpu/drm/radeon/radeon_connectors.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/mgag200/mgag200_mode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index df9469a8f..2aea2bdff 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -852,7 +852,7 @@ static int radeon_lvds_get_modes(struct drm_connector *connector)
- 	return ret;
- }
+diff --git a/drivers/gpu/drm/mgag200/mgag200_mode.c b/drivers/gpu/drm/mgag200/mgag200_mode.c
+index fb50a9dda..8918539a1 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_mode.c
++++ b/drivers/gpu/drm/mgag200/mgag200_mode.c
+@@ -1586,7 +1586,7 @@ static uint32_t mga_vga_calculate_mode_bandwidth(struct drm_display_mode *mode,
  
--static int radeon_lvds_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_lvds_mode_valid(struct drm_connector *connector,
- 				  struct drm_display_mode *mode)
- {
- 	struct drm_encoder *encoder = radeon_best_single_encoder(connector);
-@@ -1012,7 +1012,7 @@ static int radeon_vga_get_modes(struct drm_connector *connector)
- 	return ret;
- }
+ #define MODE_BANDWIDTH	MODE_BAD
  
--static int radeon_vga_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_vga_mode_valid(struct drm_connector *connector,
- 				  struct drm_display_mode *mode)
- {
- 	struct drm_device *dev = connector->dev;
-@@ -1156,7 +1156,7 @@ static int radeon_tv_get_modes(struct drm_connector *connector)
- 	return 1;
- }
- 
--static int radeon_tv_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_tv_mode_valid(struct drm_connector *connector,
- 				struct drm_display_mode *mode)
- {
- 	if ((mode->hdisplay > 1024) || (mode->vdisplay > 768))
-@@ -1498,7 +1498,7 @@ static void radeon_dvi_force(struct drm_connector *connector)
- 		radeon_connector->use_digital = true;
- }
- 
--static int radeon_dvi_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_dvi_mode_valid(struct drm_connector *connector,
- 				  struct drm_display_mode *mode)
- {
- 	struct drm_device *dev = connector->dev;
-@@ -1800,7 +1800,7 @@ radeon_dp_detect(struct drm_connector *connector, bool force)
- 	return ret;
- }
- 
--static int radeon_dp_mode_valid(struct drm_connector *connector,
-+static enum drm_mode_status radeon_dp_mode_valid(struct drm_connector *connector,
- 				  struct drm_display_mode *mode)
+-static int mga_vga_mode_valid(struct drm_connector *connector,
++static enum drm_mode_status mga_vga_mode_valid(struct drm_connector *connector,
+ 				 struct drm_display_mode *mode)
  {
  	struct drm_device *dev = connector->dev;
 -- 
