@@ -1,70 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751603AbeDXEQK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 00:16:10 -0400
-Received: from ozlabs.org ([203.11.71.1]:48415 "EHLO ozlabs.org"
+        id S1752092AbeDXEQO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 00:16:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:60513 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750962AbeDXEQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 00:16:08 -0400
+        id S1751575AbeDXEQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 00:16:11 -0400
 From: Michael Ellerman <mpe@ellerman.id.au>
 To: linuxppc-dev@ozlabs.org
 Cc: npiggin@gmail.com, msuchanek@suse.de, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] powerpc/64s: Add barrier_nospec
-Date: Tue, 24 Apr 2018 14:15:54 +1000
-Message-Id: <20180424041559.32410-1-mpe@ellerman.id.au>
+Subject: [PATCH 4/6] powerpc/64s: Enable barrier_nospec based on firmware settings
+Date: Tue, 24 Apr 2018 14:15:57 +1000
+Message-Id: <20180424041559.32410-4-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180424041559.32410-1-mpe@ellerman.id.au>
+References: <20180424041559.32410-1-mpe@ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michal Suchanek <msuchanek@suse.de>
 
-A no-op form of ori (or immediate of 0 into r31 and the result stored
-in r31) has been re-tasked as a speculation barrier. The instruction
-only acts as a barrier on newer machines with appropriate firmware
-support. On older CPUs it remains a harmless no-op.
+Check what firmware told us and enable/disable the barrier_nospec as
+appropriate.
 
-Implement barrier_nospec using this instruction.
+We err on the side of enabling the barrier, as it's no-op on older
+systems, see the comment for more detail.
 
-mpe: The semantics of the instruction are believed to be that it
-prevents execution of subsequent instructions until preceding branches
-have been fully resolved and are no longer executing speculatively.
-There is no further documentation available at this time.
-
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
-mpe: Make it Book3S64 only, update comment & change log, add a
-     memory clobber to the asm.
----
- arch/powerpc/include/asm/barrier.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/powerpc/include/asm/setup.h       |  1 +
+ arch/powerpc/kernel/security.c         | 60 ++++++++++++++++++++++++++++++++++
+ arch/powerpc/platforms/powernv/setup.c |  1 +
+ arch/powerpc/platforms/pseries/setup.c |  1 +
+ 4 files changed, 63 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/barrier.h b/arch/powerpc/include/asm/barrier.h
-index c7c63959ba91..e582d2c88092 100644
---- a/arch/powerpc/include/asm/barrier.h
-+++ b/arch/powerpc/include/asm/barrier.h
-@@ -76,6 +76,21 @@ do {									\
- 	___p1;								\
- })
+diff --git a/arch/powerpc/include/asm/setup.h b/arch/powerpc/include/asm/setup.h
+index 4335cddc1cf2..aeb175e8a525 100644
+--- a/arch/powerpc/include/asm/setup.h
++++ b/arch/powerpc/include/asm/setup.h
+@@ -52,6 +52,7 @@ enum l1d_flush_type {
  
-+#ifdef CONFIG_PPC_BOOK3S_64
-+/*
-+ * Prevent execution of subsequent instructions until preceding branches have
-+ * been fully resolved and are no longer executing speculatively.
-+ */
-+#define barrier_nospec_asm ori 31,31,0
-+
-+// This also acts as a compiler barrier due to the memory clobber.
-+#define barrier_nospec() asm (stringify_in_c(barrier_nospec_asm) ::: "memory")
-+
-+#else /* !CONFIG_PPC_BOOK3S_64 */
-+#define barrier_nospec_asm
-+#define barrier_nospec()
-+#endif
-+
- #include <asm-generic/barrier.h>
+ void setup_rfi_flush(enum l1d_flush_type, bool enable);
+ void do_rfi_flush_fixups(enum l1d_flush_type types);
++void setup_barrier_nospec(void);
+ void do_barrier_nospec_fixups(bool enable);
  
- #endif /* _ASM_POWERPC_BARRIER_H */
+ #ifdef CONFIG_PPC_BOOK3S_64
+diff --git a/arch/powerpc/kernel/security.c b/arch/powerpc/kernel/security.c
+index b963eae0b0a0..d1b9639e5e24 100644
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -8,6 +8,7 @@
+ #include <linux/device.h>
+ #include <linux/seq_buf.h>
+ 
++#include <asm/debugfs.h>
+ #include <asm/security_features.h>
+ #include <asm/setup.h>
+ 
+@@ -22,6 +23,65 @@ static void enable_barrier_nospec(bool enable)
+ 	do_barrier_nospec_fixups(enable);
+ }
+ 
++void setup_barrier_nospec(void)
++{
++	bool enable;
++
++	/*
++	 * It would make sense to check SEC_FTR_SPEC_BAR_ORI31 below as well.
++	 * But there's a good reason not to. The two flags we check below are
++	 * both are enabled by default in the kernel, so if the hcall is not
++	 * functional they will be enabled.
++	 * On a system where the host firmware has been updated (so the ori
++	 * functions as a barrier), but on which the hypervisor (KVM/Qemu) has
++	 * not been updated, we would like to enable the barrier. Dropping the
++	 * check for SEC_FTR_SPEC_BAR_ORI31 achieves that. The only downside is
++	 * we potentially enable the barrier on systems where the host firmware
++	 * is not updated, but that's harmless as it's a no-op.
++	 */
++	enable = security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) &&
++		 security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR);
++
++	enable_barrier_nospec(enable);
++}
++
++#ifdef CONFIG_DEBUG_FS
++static int barrier_nospec_set(void *data, u64 val)
++{
++	switch (val) {
++	case 0:
++	case 1:
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	if (!!val == !!barrier_nospec_enabled)
++		return 0;
++
++	enable_barrier_nospec(!!val);
++
++	return 0;
++}
++
++static int barrier_nospec_get(void *data, u64 *val)
++{
++	*val = barrier_nospec_enabled ? 1 : 0;
++	return 0;
++}
++
++DEFINE_SIMPLE_ATTRIBUTE(fops_barrier_nospec,
++			barrier_nospec_get, barrier_nospec_set, "%llu\n");
++
++static __init int barrier_nospec_debugfs_init(void)
++{
++	debugfs_create_file("barrier_nospec", 0600, powerpc_debugfs_root, NULL,
++			    &fops_barrier_nospec);
++	return 0;
++}
++device_initcall(barrier_nospec_debugfs_init);
++#endif /* CONFIG_DEBUG_FS */
++
+ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	bool thread_priv;
+diff --git a/arch/powerpc/platforms/powernv/setup.c b/arch/powerpc/platforms/powernv/setup.c
+index ef8c9ce53a61..e2ca5f77a55f 100644
+--- a/arch/powerpc/platforms/powernv/setup.c
++++ b/arch/powerpc/platforms/powernv/setup.c
+@@ -124,6 +124,7 @@ static void pnv_setup_rfi_flush(void)
+ 		  security_ftr_enabled(SEC_FTR_L1D_FLUSH_HV));
+ 
+ 	setup_rfi_flush(type, enable);
++	setup_barrier_nospec();
+ }
+ 
+ static void __init pnv_setup_arch(void)
+diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
+index b55ad4286dc7..63b1f0d10ef0 100644
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -534,6 +534,7 @@ void pseries_setup_rfi_flush(void)
+ 		 security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR);
+ 
+ 	setup_rfi_flush(types, enable);
++	setup_barrier_nospec();
+ }
+ 
+ #ifdef CONFIG_PCI_IOV
 -- 
 2.14.1
