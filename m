@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933405AbeDXOJk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:09:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44058 "EHLO mail.kernel.org"
+        id S933454AbeDXOJo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:09:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758261AbeDXOJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:09:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F08F217BA
+        id S1757818AbeDXOJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 10:09:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A563E217CE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
 From: Frederic Weisbecker <frederic@kernel.org>
@@ -23,9 +23,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
         "James E . J . Bottomley" <jejb@parisc-linux.org>
-Subject: [PATCH 01/10] ia64: Convert local_softirq_pending() to per-cpu ops
-Date: Tue, 24 Apr 2018 16:09:06 +0200
-Message-Id: <1524578955-8903-2-git-send-email-frederic@kernel.org>
+Subject: [PATCH 02/10] sparc: Convert local_softirq_pending() to use per-cpu op
+Date: Tue, 24 Apr 2018 16:09:07 +0200
+Message-Id: <1524578955-8903-3-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524578955-8903-1-git-send-email-frederic@kernel.org>
 References: <1524578955-8903-1-git-send-email-frederic@kernel.org>
@@ -53,21 +53,21 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>
 Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 ---
- arch/ia64/include/asm/hardirq.h | 2 +-
+ arch/sparc/include/asm/hardirq_64.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/ia64/include/asm/hardirq.h b/arch/ia64/include/asm/hardirq.h
-index bdc4669..22fae71 100644
---- a/arch/ia64/include/asm/hardirq.h
-+++ b/arch/ia64/include/asm/hardirq.h
-@@ -13,7 +13,7 @@
+diff --git a/arch/sparc/include/asm/hardirq_64.h b/arch/sparc/include/asm/hardirq_64.h
+index f565402..6aba904 100644
+--- a/arch/sparc/include/asm/hardirq_64.h
++++ b/arch/sparc/include/asm/hardirq_64.h
+@@ -11,7 +11,7 @@
  
- #define __ARCH_IRQ_STAT	1
+ #define __ARCH_IRQ_STAT
+ #define local_softirq_pending() \
+-	(local_cpu_data().__softirq_pending)
++	(*this_cpu_ptr(&__cpu_data.__softirq_pending))
  
--#define local_softirq_pending()		(local_cpu_data->softirq_pending)
-+#define local_softirq_pending()	(*this_cpu_ptr(&ia64_cpu_info.softirq_pending))
+ void ack_bad_irq(unsigned int irq);
  
- #include <linux/threads.h>
- #include <linux/irq.h>
 -- 
 2.7.4
