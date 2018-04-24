@@ -1,56 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933590AbeDXN7Z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:59:25 -0400
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:33990 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757821AbeDXN7R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:59:17 -0400
-X-Google-Smtp-Source: AIpwx4+AJLrWA7y/VVvzWVOMWN0xRD4Ukadn9XNupNHWHhYYJoKfnjTbYpchPBrs3fnm7omlvQAn/w==
-Subject: Re: [PATCH v2 1/5] ALSA: xen-front: Introduce Xen para-virtualized
- sound frontend driver
-To: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
- <20180416062453.24743-2-andr2000@gmail.com> <s5htvs0so92.wl-tiwai@suse.de>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <6f9b9e79-e6c8-493a-6dd5-717ec9fab881@gmail.com>
-Date: Tue, 24 Apr 2018 16:59:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1758318AbeDXN7m (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:59:42 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:36245 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933459AbeDXN7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:59:36 -0400
+X-Google-Smtp-Source: AIpwx49TbQXIGwJaKLdmmZMWARp2090PAeOWf0GnpZ/DyE1DfS8XH+WCa7WJWKGAftuNxWY8E5giF/3UfwTp5R0YS+0=
 MIME-Version: 1.0
-In-Reply-To: <s5htvs0so92.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <CAHmME9pB-CobQCsm2nNHZq_o8qn2+Fff3cGgshyTaQVXtZpWHg@mail.gmail.com>
+References: <20171223004323.1986-1-Jason@zx2c4.com> <CAHmME9otwT+14LhmebF8Osna7m_u6xvFEi7pMq2v1-k9WD5Lpw@mail.gmail.com>
+ <20180424133527.GB24599@arm.com> <CAHmME9pB-CobQCsm2nNHZq_o8qn2+Fff3cGgshyTaQVXtZpWHg@mail.gmail.com>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Tue, 24 Apr 2018 15:59:33 +0200
+X-Gmail-Original-Message-ID: <CAHmME9pHxE0CRphSM9h8QQMdRW_mh1inGrvNLpPXhMaxdLksVg@mail.gmail.com>
+Message-ID: <CAHmME9pHxE0CRphSM9h8QQMdRW_mh1inGrvNLpPXhMaxdLksVg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: support __int128 with clang
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 04:55 PM, Takashi Iwai wrote:
-> On Mon, 16 Apr 2018 08:24:49 +0200,
-> Oleksandr Andrushchenko wrote:
->> --- /dev/null
->> +++ b/sound/xen/Kconfig
->> @@ -0,0 +1,10 @@
->> +# ALSA Xen drivers
->> +
->> +config SND_XEN_FRONTEND
->> +	tristate "Xen para-virtualized sound frontend driver"
->> +	depends on XEN && SND_PCM
-> Please do select SND_PCM instead of depends.
-will do
->> +	select XEN_XENBUS_FRONTEND
->> +	default n
-> "default n" is superfluous, drop it.
-will drop
+On Tue, Apr 24, 2018 at 3:47 PM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> On Tue, Apr 24, 2018 at 3:35 PM, Will Deacon <will.deacon@arm.com> wrote:
+>> On Sun, Apr 15, 2018 at 06:20:11PM +0200, Jason A. Donenfeld wrote:
+>>> Would you review/merge this when you have a chance?
+>>
+>> No real objection from me, but does the arm64 kernel actually build with
+>> clang?
 >
-> thanks,
->
-> Takashi
-Thank you,
-Oleksandr
+> I've been told that Android is moving their kernel builds over to
+> clang entirely.
+
+More info:
+https://github.com/nathanchance/android-kernel-clang
+https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/#llvm-users
+https://chromium-review.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/809774
+
+I think we have good reason for merging this patch.
