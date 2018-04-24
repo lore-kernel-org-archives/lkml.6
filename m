@@ -1,51 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933402AbeDXORe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:17:34 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54284 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757906AbeDXORd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:17:33 -0400
-Date: Tue, 24 Apr 2018 15:17:29 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [PATCH] arm64: support __int128 with clang
-Message-ID: <20180424141729.r7wfnos3p2kdt3ez@lakrids.cambridge.arm.com>
-References: <20171223004323.1986-1-Jason@zx2c4.com>
- <CAHmME9otwT+14LhmebF8Osna7m_u6xvFEi7pMq2v1-k9WD5Lpw@mail.gmail.com>
- <20180424133527.GB24599@arm.com>
- <20180424135608.m5uxhmclhnljpbau@lakrids.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180424135608.m5uxhmclhnljpbau@lakrids.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1758333AbeDXOSE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:18:04 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:9048 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758299AbeDXOSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 10:18:01 -0400
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/signal32: Use fault_in_pages_readable() to prefault
+ user context
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Mathieu Malaterre <malat@debian.org>
+Message-Id: <20180424141759.F02AF6C59D@po15720vm.idsi0.si.c-s.fr>
+Date: Tue, 24 Apr 2018 16:17:59 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 02:56:09PM +0100, Mark Rutland wrote:
-> I belevie that currently it is not possible to use a released version of
-> clang to build a working kernel without additional patches (at least
-> 5.0.0, there don't seem to be any 6.0.0 binaries that can target
-> AArch64). Issues include:
-> 
-> * Released versions of clang don't support the 's' constraint used in
->   some hyp code.
-> 
+Use fault_in_pages_readable() to prefault user context
+instead of open coding
 
-> * Released versions of clang don't support 'rX' as a register name, as
->   is used by some workaround code shared between arm/arm64.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/signal_32.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-This case will apparently be fixed for 6.0.1 (and presumably 7.0.0):
-
-https://reviews.llvm.org/rL328829
-https://bugs.llvm.org/show_bug.cgi?id=36862
-
-Neither have been released yet.
-
-Mark.
+diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
+index 492f03451877..cfacb2726152 100644
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -25,6 +25,7 @@
+ #include <linux/errno.h>
+ #include <linux/elf.h>
+ #include <linux/ptrace.h>
++#include <linux/pagemap.h>
+ #include <linux/ratelimit.h>
+ #ifdef CONFIG_PPC64
+ #include <linux/syscalls.h>
+@@ -1045,7 +1046,6 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+ 		     struct ucontext __user *new_ctx,
+ 		     int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
+ {
+-	unsigned char tmp __maybe_unused;
+ 	int ctx_has_vsx_region = 0;
+ 
+ #ifdef CONFIG_PPC64
+@@ -1109,9 +1109,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+ 	}
+ 	if (new_ctx == NULL)
+ 		return 0;
+-	if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
+-	    || __get_user(tmp, (u8 __user *) new_ctx)
+-	    || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
++	if (!access_ok(VERIFY_READ, new_ctx, ctx_size) ||
++	    fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
+ 		return -EFAULT;
+ 
+ 	/*
+@@ -1231,7 +1230,6 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+ {
+ 	struct sig_dbg_op op;
+ 	int i;
+-	unsigned char tmp __maybe_unused;
+ 	unsigned long new_msr = regs->msr;
+ #ifdef CONFIG_PPC_ADV_DEBUG_REGS
+ 	unsigned long new_dbcr0 = current->thread.debug.dbcr0;
+@@ -1287,9 +1285,8 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+ 	current->thread.debug.dbcr0 = new_dbcr0;
+ #endif
+ 
+-	if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx))
+-	    || __get_user(tmp, (u8 __user *) ctx)
+-	    || __get_user(tmp, (u8 __user *) (ctx + 1) - 1))
++	if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx)) ||
++	    fault_in_pages_readable((u8 __user *)ctx, 1))
+ 		return -EFAULT;
+ 
+ 	/*
+-- 
+2.13.3
