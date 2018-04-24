@@ -1,82 +1,112 @@
-Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524592256; cv=none;
+Return-Path: <hns@goldelico.com>
+X-Google-Smtp-Source: AIpwx4+0R4LHfFYn7SrP3e5/5mwbpZyYXTjqw8+xMy7uj3RajiuEqhMKwbA/sXi6XJJveq6vUGvE
+ARC-Seal: i=1; a=rsa-sha256; t=1524599061; cv=none;
         d=google.com; s=arc-20160816;
-        b=O1iMNVaxaoJSLbBj8DRGq0c7tFhOBz/EQytBA2go3XU2fzacJv/DDyxe0wl5uUPe2E
-         omMc5XD5R5p8e/+RG9rzIojh7gX4Hzxet1kdPtVpjD0CEb+aQd/9isMiZM379PZUFYfC
-         SANVt2Bw9NxjRoRVLkkCyr7tHzwxYbByyNKGtekG8cYPQNZ4jGIrajUquKULhFZbajFb
-         InpoaRLA7HJmCEfI9FGd0JPsC9/AaTzQJNPeVpFDPqnSDvUZvJzc6ObGKLSUl+Tj2v3f
-         ccx2log7OQyHhL21ZRQDEl25q4BY0CA8N0zWtFhIJ+2rzZnFM4v57ldzNWdzBaeq5Kqh
-         lUjw==
+        b=NDDN41U9a84/gbumaQaqHoi3qKiQe3viD8Ovj7iOG9EehGtZ2uxPGm2xlBpbtafAps
+         LNFFr/nvxEGAFcxoiuVhQB0lypC59xGd3WGlTxvopkM5Odm1gcnVAoudLhjds/cfSWAr
+         02Bp0ZdgWs1fTaS7vdhQ3FvQvJZLa8KTskM5on450JZ9DDPqnMipWYiKk956DyuMgdsg
+         Wm6vBb8oQIF5ocX1oZmZYnRhIvLrKQnNoPPztJTCnnCpUahGBF/Jv96zfj2v4xFi20Qf
+         Fl79VHDzPFvF4Z0o+pJY2cdFh6fbSdpymvbBGElWUqZPDN/+pHneU1E34BG6Yq5Tzp/v
+         iuQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:dkim-signature
          :arc-authentication-results;
-        bh=9rdA5RKRe1r30+h/g5ZMu5UQ+SpVsb7QKTlNqWkj1zA=;
-        b=oj64yFITusT891RhBkPX0CNp1B4UZYD3Tb0KWiux44mHoPvTt5JxaUWQ6we3Ha6BdI
-         Djfy2XuObXbSHwC8WkiCDWs2vu/t6WjsL/g7WugPU0Zfc2CaIyoj2bL3Cb2off7FgclK
-         j3CNt4hhhz+Tv4hYYSkks7jluZ0X3zdCiJ+zKRBZ+puH3p5Orsr23eP94NP68g3xVFNo
-         FLZuSvLG7v78GtSQgcihdg8UoZdo9kHcRwNk3Gi+hUREK/++FSX8zH8qPTKUZJGbNm1x
-         I0FSze7qODkxgwuSn4j+TYO3iF6Me4l1QLvupO1y/KFFPH40DKrDBLVKcGyfvFs/wtMM
-         v1/w==
+        bh=eiX50jg7GVF50Y13JE0BvrkdDETuenub7xGKuYDcu24=;
+        b=LS0VvobRid78m6js4KQy6/R2GZbslLBKEOFcAdxG4/zAS6qGBixLR9blyZsR6lYc70
+         nIuswnAXvtXCvE9w8z3DpbM0uARmXAkY9EGPN2fEjGvZ2eY7FKbSttfUq8NPFqCZuiMD
+         6wPamii5+z5/XYHRcJhAoYSZCemZqhPmAPbGkIjngm2p4wIs6xbgFZiKAvWIZFz9z8C5
+         VoVBDHoDmqsCHie4CHe2uLS1OfKKXSDv+FZHZQCGcI3r69RVa82Yi77lOc5v+im9dyxz
+         2nrk4qPna8OWz4U440voGadY6GnFEgYF0pz2ec6bu1e5qiVQ3N06w5PDiV7KERgwhwcn
+         miTg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oiyVr7vA;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
+       dkim=pass header.i=@goldelico.com header.s=strato-dkim-0002 header.b=q2KsZsFB;
+       spf=neutral (google.com: 2a01:238:20a:202:5301::3 is neither permitted nor denied by best guess record for domain of hns@goldelico.com) smtp.mailfrom=hns@goldelico.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oiyVr7vA;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
-X-Google-Smtp-Source: AB8JxZo67/7nUFWL1iTcHO6QobpegHwHYE6ma8y22/W/OMgCoZf9ov1n5AEobaO6sXwd/WiGT8Aqag==
-Sender: Johan Hovold <jhovold@gmail.com>
-Date: Tue, 24 Apr 2018 19:50:50 +0200
-From: Johan Hovold <johan@kernel.org>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Johan Hovold <johan@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Arnd Bergmann <arnd@arndb.de>, Pavel Machek <pavel@ucw.cz>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 0/7] gnss: add new GNSS subsystem
-Message-ID: <20180424175050.GG4615@localhost>
-References: <20180424163458.11947-1-johan@kernel.org>
- <31CF06C6-D6ED-4930-8D81-12256A518059@goldelico.com>
-MIME-Version: 1.0
+       dkim=pass header.i=@goldelico.com header.s=strato-dkim-0002 header.b=q2KsZsFB;
+       spf=neutral (google.com: 2a01:238:20a:202:5301::3 is neither permitted nor denied by best guess record for domain of hns@goldelico.com) smtp.mailfrom=hns@goldelico.com
+X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiv9N1ED6Y
+X-RZG-CLASS-ID: mo00
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31CF06C6-D6ED-4930-8D81-12256A518059@goldelico.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 0/7] gnss: add new GNSS subsystem
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20180424175050.GG4615@localhost>
+Date: Tue, 24 Apr 2018 21:44:08 +0200
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Andreas Kemnade <andreas@kemnade.info>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Pavel Machek <pavel@ucw.cz>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <8F4FAF5B-AAA9-4D46-A022-99B96C74ABFA@goldelico.com>
+References: <20180424163458.11947-1-johan@kernel.org> <31CF06C6-D6ED-4930-8D81-12256A518059@goldelico.com> <20180424175050.GG4615@localhost>
+To: Johan Hovold <johan@kernel.org>
+X-Mailer: Apple Mail (2.3124)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598647061282688193?=
-X-GMAIL-MSGID: =?utf-8?q?1598650849700329910?=
+X-GMAIL-MSGID: =?utf-8?q?1598657985879524721?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 07:40:00PM +0200, H. Nikolaus Schaller wrote:
-> Hi Johan,
-> 
-> > Am 24.04.2018 um 18:34 schrieb Johan Hovold <johan@kernel.org>:
 
-> > As proof-of-concept I have implemented drivers for receivers based on
-> > two common GNSS chipsets (SiRFstar and u-blox), but due to lack of
-> > hardware these have so far only been tested using mockup devices and a
-> > USB-serial-based GPS device (using out-of-tree code). [ Let me know if
-> > you've got any evalutation kits to spare. ]
+> Am 24.04.2018 um 19:50 schrieb Johan Hovold <johan@kernel.org>:
 > 
-> Ok, those drivers look nice on first glance.
+> On Tue, Apr 24, 2018 at 07:40:00PM +0200, H. Nikolaus Schaller wrote:
+>> Hi Johan,
+>> 
+>>> Am 24.04.2018 um 18:34 schrieb Johan Hovold <johan@kernel.org>:
 > 
-> BTW: I have refactored our w2sg00x4 driver into a gps-core (still creating
-> a /dev/GPS0) and a driver using a common API.
+>>> As proof-of-concept I have implemented drivers for receivers based on
+>>> two common GNSS chipsets (SiRFstar and u-blox), but due to lack of
+>>> hardware these have so far only been tested using mockup devices and a
+>>> USB-serial-based GPS device (using out-of-tree code). [ Let me know if
+>>> you've got any evalutation kits to spare. ]
+>> 
+>> Ok, those drivers look nice on first glance.
+>> 
+>> BTW: I have refactored our w2sg00x4 driver into a gps-core (still creating
+>> a /dev/GPS0) and a driver using a common API.
+>> 
+>> With that it should almost fit by coping some lines from your serdev based
+>> device drivers.
 > 
-> With that it should almost fit by coping some lines from your serdev based
-> device drivers.
+> I think it should be done the other way round (if I understand you
+> correctly), that is, by adding support for configurations were WAKEUP is
+> left not connected to the sirf driver instead.
 
-I think it should be done the other way round (if I understand you
-correctly), that is, by adding support for configurations were WAKEUP is
-left not connected to the sirf driver instead. I had that use-case in
-mind when implementing the driver, and some ideas of how it should be
-done, but did not get around to actually implement it yet.
+Hm. Yes, the w2sg00x4 is a Sirf based chip.
 
-Thanks,
-Johan
+> I had that use-case in mind when implementing
+
+s/implementing/reinventing/
+
+> the driver, and some ideas of how it should be
+> done, but did not get around to actually implement it yet.
+
+What do you need ideas for? We have that function working and
+submitted year after year, but it was always rejected for API
+reasons.
+
+You could have simply reused what we have proposed [1] and just
+adapt it to the new API instead of writing a new driver (which
+is missing some features for us).
+
+"proof-of-concept" is misleading if you expect this to become
+*the* Sirf driver and we are just invited to add some features
+to that. Making our own work and proposals completely obsolete.
+
+What I find really strange and foul play is that we are in the
+review process and then comes a hidden counter-proposal by the
+reviewer.
+
+Well, this is FOSS...
+
+BR,
+Nikolaus
+
+[1]: https://patchwork.ozlabs.org/cover/843392/
