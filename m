@@ -1,267 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932765AbeDXBP4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 21:15:56 -0400
-Received: from mga12.intel.com ([192.55.52.136]:23065 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932633AbeDXBPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 21:15:53 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,320,1520924400";
-   d="scan'208";a="39915279"
-Date: Tue, 24 Apr 2018 09:16:38 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, wexu@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jfreimann@redhat.com
-Subject: Re: [RFC v2] virtio: support packed ring
-Message-ID: <20180424011638.vf6f22dnl7ufnnij@debian>
-References: <20180401141216.8969-1-tiwei.bie@intel.com>
- <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
- <20180423092908.77rii3gi7dcaf7o6@debian>
- <e08c55df-6ea2-cf7f-d7c9-91e55913ab16@redhat.com>
- <20180424040258-mutt-send-email-mst@kernel.org>
+        id S932726AbeDXB0C (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 21:26:02 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:41824 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932633AbeDXB0A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 21:26:00 -0400
+X-Google-Smtp-Source: AB8JxZriHF8qYh7IGOZlVX8FilAZfCmAsQSjvmxtdq89pQdYSe/r27tRRcLrl/btWWbvaXn/ehcSFQ==
+From: "Jingoo Han" <jingoohan1@gmail.com>
+To: "'Enric Balletbo i Serra'" <enric.balletbo@collabora.com>,
+        <architt@codeaurora.org>, <inki.dae@samsung.com>,
+        <thierry.reding@gmail.com>, <hjc@rock-chips.com>,
+        <seanpaul@chromium.org>, <airlied@linux.ie>, <tfiga@chromium.org>,
+        <heiko@sntech.de>
+Cc: <dri-devel@lists.freedesktop.org>, <dianders@chromium.org>,
+        <a.hajda@samsung.com>, <kernel@collabora.com>,
+        <m.szyprowski@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
+        <jy0922.shim@samsung.com>, <rydberg@bitmath.org>, <krzk@kernel.org>,
+        <linux-rockchip@lists.infradead.org>, <kgene@kernel.org>,
+        <orjan.eide@arm.com>, <wxt@rock-chips.com>,
+        <jeffy.chen@rock-chips.com>, <linux-arm-kernel@lists.infradead.org>,
+        <wzz@rock-chips.com>, <hl@rock-chips.com>, <sw0312.kim@samsung.com>,
+        <linux-kernel@vger.kernel.org>, <kyungmin.park@samsung.com>,
+        <Laurent.pinchart@ideasonboard.com>, <kuankuan.y@gmail.com>,
+        <hshi@chromium.org>
+References: <20180423105003.9004-1-enric.balletbo@collabora.com> <20180423105003.9004-15-enric.balletbo@collabora.com>
+In-Reply-To: <20180423105003.9004-15-enric.balletbo@collabora.com>
+Subject: Re: [RESEND PATCH v6 14/27] drm/bridge: analogix_dp: Don't use ANALOGIX_DP_PLL_CTL to control pll
+Date: Mon, 23 Apr 2018 21:25:56 -0400
+Message-ID: <000001d3db6b$32a87200$97f95600$@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180424040258-mutt-send-email-mst@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJsKqzGdLQ3B8H319FIYPcigFOt/AGILm3RotI/UVA=
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 04:05:07AM +0300, Michael S. Tsirkin wrote:
-> On Tue, Apr 24, 2018 at 08:54:52AM +0800, Jason Wang wrote:
-> > 
-> > 
-> > On 2018年04月23日 17:29, Tiwei Bie wrote:
-> > > On Mon, Apr 23, 2018 at 01:42:14PM +0800, Jason Wang wrote:
-> > > > On 2018年04月01日 22:12, Tiwei Bie wrote:
-> > > > > Hello everyone,
-> > > > > 
-> > > > > This RFC implements packed ring support for virtio driver.
-> > > > > 
-> > > > > The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
-> > > > > by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
-> > > > > Minor changes are needed for the vhost code, e.g. to kick the guest.
-> > > > > 
-> > > > > TODO:
-> > > > > - Refinements and bug fixes;
-> > > > > - Split into small patches;
-> > > > > - Test indirect descriptor support;
-> > > > > - Test/fix event suppression support;
-> > > > > - Test devices other than net;
-> > > > > 
-> > > > > RFC v1 -> RFC v2:
-> > > > > - Add indirect descriptor support - compile test only;
-> > > > > - Add event suppression supprt - compile test only;
-> > > > > - Move vring_packed_init() out of uapi (Jason, MST);
-> > > > > - Merge two loops into one in virtqueue_add_packed() (Jason);
-> > > > > - Split vring_unmap_one() for packed ring and split ring (Jason);
-> > > > > - Avoid using '%' operator (Jason);
-> > > > > - Rename free_head -> next_avail_idx (Jason);
-> > > > > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
-> > > > > - Some other refinements and bug fixes;
-> > > > > 
-> > > > > Thanks!
-> > > > > 
-> > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > > ---
-> > > > >    drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
-> > > > >    include/linux/virtio_ring.h        |    8 +-
-> > > > >    include/uapi/linux/virtio_config.h |   12 +-
-> > > > >    include/uapi/linux/virtio_ring.h   |   61 ++
-> > > > >    4 files changed, 980 insertions(+), 195 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > > > index 71458f493cf8..0515dca34d77 100644
-> > > > > --- a/drivers/virtio/virtio_ring.c
-> > > > > +++ b/drivers/virtio/virtio_ring.c
-> > > > > @@ -58,14 +58,15 @@
-> > > > [...]
-> > > > 
-> > > > > +
-> > > > > +	if (vq->indirect) {
-> > > > > +		u32 len;
-> > > > > +
-> > > > > +		desc = vq->desc_state[head].indir_desc;
-> > > > > +		/* Free the indirect table, if any, now that it's unmapped. */
-> > > > > +		if (!desc)
-> > > > > +			goto out;
-> > > > > +
-> > > > > +		len = virtio32_to_cpu(vq->vq.vdev,
-> > > > > +				      vq->vring_packed.desc[head].len);
-> > > > > +
-> > > > > +		BUG_ON(!(vq->vring_packed.desc[head].flags &
-> > > > > +			 cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_INDIRECT)));
-> > > > It looks to me spec does not force to keep VRING_DESC_F_INDIRECT here. So we
-> > > > can safely remove this BUG_ON() here.
-> > > > 
-> > > > > +		BUG_ON(len == 0 || len % sizeof(struct vring_packed_desc));
-> > > > Len could be ignored for used descriptor according to the spec, so we need
-> > > > remove this BUG_ON() too.
-> > > Yeah, you're right! The BUG_ON() isn't right. I'll remove it.
-> > > And I think something related to this in the spec isn't very
-> > > clear currently.
-> > > 
-> > > In the spec, there are below words:
-> > > 
-> > > https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L272
-> > > """
-> > > In descriptors with VIRTQ_DESC_F_INDIRECT set VIRTQ_DESC_F_WRITE
-> > > is reserved and is ignored by the device.
-> > > """
-> > > 
-> > > So when device writes back an used descriptor in this case,
-> > > device may not set the VIRTQ_DESC_F_WRITE flag as the flag
-> > > is reserved and should be ignored.
-> > > 
-> > > https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L170
-> > > """
-> > > Element Length is reserved for used descriptors without the
-> > > VIRTQ_DESC_F_WRITE flag, and is ignored by drivers.
-> > > """
-> > > 
-> > > And this is the way how driver ignores the `len` in an used
-> > > descriptor.
-> > > 
-> > > https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L241
-> > > """
-> > > To increase ring capacity the driver can store a (read-only
-> > > by the device) table of indirect descriptors anywhere in memory,
-> > > and insert a descriptor in the main virtqueue (with \field{Flags}
-> > > bit VIRTQ_DESC_F_INDIRECT on) that refers to a buffer element
-> > > containing this indirect descriptor table;
-> > > """
-> > > 
-> > > So the indirect descriptors in the table are read-only by
-> > > the device. And the only descriptor which is writeable by
-> > > the device is the descriptor in the main virtqueue (with
-> > > Flags bit VIRTQ_DESC_F_INDIRECT on). So if we ignore the
-> > > `len` in this descriptor, we won't be able to get the
-> > > length of the data written by the device.
-> > > 
-> > > So I think the `len` in this descriptor will carry the
-> > > length of the data written by the device (if the buffers
-> > > are writable to the device) even if the VIRTQ_DESC_F_WRITE
-> > > isn't set by the device. How do you think?
-> > 
-> > Yes I think so. But we'd better need clarification from Michael.
+On Monday, April 23, 2018 6:50 AM, Enric Balletbo i Serra wrote:
 > 
-> I think if you use a descriptor, and you want to supply len
-> to guest, you set VIRTQ_DESC_F_WRITE in the used descriptor.
-> Spec also says you must not set VIRTQ_DESC_F_INDIRECT then.
-> If that's a problem we could look at relaxing that last requirement -
-> does driver want INDIRECT in used descriptor to match
-> the value in the avail descriptor for some reason?
-
-For indirect, driver needs some way to get the length
-of the data written by the driver. And the descriptors
-in the indirect table is read-only, so the only place
-device could put this value is the descriptor with the
-VIRTQ_DESC_F_INDIRECT flag set.
-
+> From: zain wang <wzz@rock-chips.com>
 > 
-> > > 
-> > > 
-> > > > The reason is we don't touch descriptor ring in the case of split, so
-> > > > BUG_ON()s may help there.
-> > > > 
-> > > > > +
-> > > > > +		for (j = 0; j < len / sizeof(struct vring_packed_desc); j++)
-> > > > > +			vring_unmap_one_packed(vq, &desc[j]);
-> > > > > +
-> > > > > +		kfree(desc);
-> > > > > +		vq->desc_state[head].indir_desc = NULL;
-> > > > > +	} else if (ctx) {
-> > > > > +		*ctx = vq->desc_state[head].indir_desc;
-> > > > > +	}
-> > > > > +
-> > > > > +out:
-> > > > > +	return vq->desc_state[head].num;
-> > > > > +}
-> > > > > +
-> > > > > +static inline bool more_used_split(const struct vring_virtqueue *vq)
-> > > > >    {
-> > > > >    	return vq->last_used_idx != virtio16_to_cpu(vq->vq.vdev, vq->vring.used->idx);
-> > > > >    }
-> > > > > +static inline bool more_used_packed(const struct vring_virtqueue *vq)
-> > > > > +{
-> > > > > +	u16 last_used, flags;
-> > > > > +	bool avail, used;
-> > > > > +
-> > > > > +	if (vq->vq.num_free == vq->vring_packed.num)
-> > > > > +		return false;
-> > > > > +
-> > > > > +	last_used = vq->last_used_idx;
-> > > > > +	flags = virtio16_to_cpu(vq->vq.vdev,
-> > > > > +				vq->vring_packed.desc[last_used].flags);
-> > > > > +	avail = flags & VRING_DESC_F_AVAIL(1);
-> > > > > +	used = flags & VRING_DESC_F_USED(1);
-> > > > > +
-> > > > > +	return avail == used;
-> > > > > +}
-> > > > This looks interesting, spec said:
-> > > > 
-> > > > "
-> > > > Thus VIRTQ_DESC_F_AVAIL and VIRTQ_DESC_F_USED bits are different for an
-> > > > available descriptor and
-> > > > equal for a used descriptor.
-> > > > Note that this observation is mostly useful for sanity-checking as these are
-> > > > necessary but not sufficient
-> > > > conditions - for example, all descriptors are zero-initialized. To detect
-> > > > used and available descriptors it is
-> > > > possible for drivers and devices to keep track of the last observed value of
-> > > > VIRTQ_DESC_F_USED/VIRTQ_-
-> > > > DESC_F_AVAIL. Other techniques to detect
-> > > > VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
-> > > > might also be possible.
-> > > > "
-> > > > 
-> > > > So it looks to me it was not sufficient, looking at the example codes in
-> > > > spec, do we need to track last seen used_wrap_counter here?
-> > > I don't think we have to track used_wrap_counter in
-> > > driver. There was a discussion on this:
-> > > 
-> > > https://lists.oasis-open.org/archives/virtio-dev/201802/msg00177.html
-> > > 
-> > > And after that, below sentence was added (it's also
-> > > in the above words you quoted):
-> > > 
-> > > """
-> > > Other techniques to detect
-> > > VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
-> > > might also be possible.
-> > > """
-> > > 
-> > > Best regards,
-> > > Tiwei Bie
-> > 
-> > I see, the extra condition "if (vq->vq.num_free == vq->vring_packed.num)"
-> > help in this case.
-> > 
-> > Thanks
+> There is no register named ANALOGIX_DP_PLL_CTL in Rockchip edp phy reg
+> list.  We should use BIT_4 in ANALOGIX_DP_PD to control the pll power
+> instead of ANALOGIX_DP_PLL_CTL.
 > 
-> I still think tracking a wrap counter is better.
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: zain wang <wzz@rock-chips.com>
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Archit Taneja <architt@codeaurora.org>
 
->From my understanding, wrap counter is only needed when
-one side just want to update parts of the status bit(s),
-it's something like the "report status" or "write back"
-feature [1] in the hardware NIC. And in the driver, all
-the status must be updated, and that's why I don't want
-to track the usedwrap counter.
-
-[1] https://github.com/btw616/dpdk-virtio1.1/commit/ca837865bd10
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
 Best regards,
-Tiwei Bie
+Jingoo Han
 
+> ---
 > 
-> > > 
-> > > > Thanks
+>  .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 20 +++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> index 7b7fd227e1f9..02ab1aaa9993 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+> @@ -230,16 +230,20 @@ enum pll_status
+> analogix_dp_get_pll_lock_status(struct analogix_dp_device *dp)
+>  void analogix_dp_set_pll_power_down(struct analogix_dp_device *dp, bool
+> enable)
+>  {
+>  	u32 reg;
+> +	u32 mask = DP_PLL_PD;
+> +	u32 pd_addr = ANALOGIX_DP_PLL_CTL;
+> 
+> -	if (enable) {
+> -		reg = readl(dp->reg_base + ANALOGIX_DP_PLL_CTL);
+> -		reg |= DP_PLL_PD;
+> -		writel(reg, dp->reg_base + ANALOGIX_DP_PLL_CTL);
+> -	} else {
+> -		reg = readl(dp->reg_base + ANALOGIX_DP_PLL_CTL);
+> -		reg &= ~DP_PLL_PD;
+> -		writel(reg, dp->reg_base + ANALOGIX_DP_PLL_CTL);
+> +	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type)) {
+> +		pd_addr = ANALOGIX_DP_PD;
+> +		mask = RK_PLL_PD;
+>  	}
+> +
+> +	reg = readl(dp->reg_base + pd_addr);
+> +	if (enable)
+> +		reg |= mask;
+> +	else
+> +		reg &= ~mask;
+> +	writel(reg, dp->reg_base + pd_addr);
+>  }
+> 
+>  void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+> --
+> 2.17.0
