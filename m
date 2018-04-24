@@ -1,56 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756230AbeDXJnV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:43:21 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:62055 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753297AbeDXJm0 (ORCPT
+        id S1756255AbeDXJrB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:47:01 -0400
+Received: from mail-pg0-f47.google.com ([74.125.83.47]:33661 "EHLO
+        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754500AbeDXJq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:42:26 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v2 3/4] ARM: dts: stm32: enable USBPHYC on stm32mp157c-ev1
-Date: Tue, 24 Apr 2018 11:41:44 +0200
-Message-ID: <1524562905-19361-4-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524562905-19361-1-git-send-email-amelie.delaunay@st.com>
-References: <1524562905-19361-1-git-send-email-amelie.delaunay@st.com>
+        Tue, 24 Apr 2018 05:46:58 -0400
+X-Google-Smtp-Source: AIpwx49Wg1jIcS+i/klmPaHWrZwbL8fFz6thE3uE22vKkrV3xvNNzOXFLvgRjoYBL1C7ZGoggl2Pb1BhkCYclf+BlCM=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_02:,,
- signatures=0
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Tue, 24 Apr 2018 11:46:57 +0200
+Message-ID: <CADYN=9J5yfmZeQoEmUfF_zwGkru=L1V6G7Tbz8yxt12Z6=qPgg@mail.gmail.com>
+Subject: [net-next regression] kselftest failure in fib_nl_newrule()
+To: roopa@cumulusnetworks.com, davem@davemloft.net,
+        dsa@cumulusnetworks.com
+Cc: netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables USBPHYC (USB PHY Controller) on stm32mp157c-ev1.
-This enables the two usbphyc usb2 ports.
+Hi,
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- arch/arm/boot/dts/stm32mp157c-ev1.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+fib-onlink-tests.sh (from kselftest) found a regression between
+next-20180424 [1] (worked with tag next-20180423 [2])
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-index 57e6dbc..070cdad 100644
---- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-@@ -19,3 +19,8 @@
- 		serial0 = &uart4;
- 	};
- };
-+
-+&usbphyc {
-+	status = "okay";
-+};
-+
--- 
-2.7.4
+here is tree commits that look suspicious specially this patch (sha:
+f9d4b0c1e969)
+rewrites fib_nl_newrule().his patch (sha: f9d4b0c1e969) rewrites
+fib_nl_newrule().
+
+b16fb418b1bf ("net: fib_rules: add extack support")
+f9d4b0c1e969 ("fib_rules: move common handling of newrule delrule msgs
+into fib_nl2rule")
+8a14e46f1402 ("net/ipv6: Fix missing rcu dereferences on from")
+
+Cheers,
+Anders
+[1] https://lkft.validation.linaro.org/scheduler/job/195181#L3447
+[2] https://lkft.validation.linaro.org/scheduler/job/193410#L3438
