@@ -1,69 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752049AbeDXTKO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:10:14 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:40528 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751683AbeDXTKM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:10:12 -0400
-From: Richard Weinberger <richard@nod.at>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: vmalloc with GFP_NOFS
-Date: Tue, 24 Apr 2018 21:10:08 +0200
-Message-ID: <1912881.zKmfqiQKhD@blindfold>
-In-Reply-To: <20180424162712.GL17484@dhcp22.suse.cz>
-References: <20180424162712.GL17484@dhcp22.suse.cz>
+        id S1751730AbeDXTPQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:15:16 -0400
+Received: from verein.lst.de ([213.95.11.211]:32796 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751417AbeDXTPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:15:10 -0400
+Date: Tue, 24 Apr 2018 21:16:40 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Greentime Hu <green.hu@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>, linux-xtensa@linux-xtensa.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 13/22] nds32: use generic dma_noncoherent_ops
+Message-ID: <20180424191640.GA32495@lst.de>
+References: <20180420080313.18796-1-hch@lst.de> <20180420080313.18796-14-hch@lst.de> <CAEbi=3fkakVD2vxGu6SgJM77JnNM8Y79xS8_o6m9d_85BJpMFQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEbi=3fkakVD2vxGu6SgJM77JnNM8Y79xS8_o6m9d_85BJpMFQ@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[resending without html ...]
+Hi Greentime,
 
-Am Dienstag, 24. April 2018, 18:27:12 CEST schrieb Michal Hocko:
-> Hi,
-> it seems that we still have few vmalloc users who perform GFP_NOFS
-> allocation:
-> drivers/mtd/ubi/io.c
+thanks for testing the patch!
 
-UBI is not a big deal. We use it here like in UBIFS for debugging
-when self-checks are enabled.
+It looks like nds32 doesn't have a buildbot yet, so this code didn't
+even get syntax checkin, sorry.
 
-> fs/ext4/xattr.c
-> fs/gfs2/dir.c
-> fs/gfs2/quota.c
-> fs/nfs/blocklayout/extent_tree.c
-> fs/ubifs/debug.c
-> fs/ubifs/lprops.c
-> fs/ubifs/lpt_commit.c
-> fs/ubifs/orphan.c
+Below is the incremental fixes based on this thread.
 
-All users in UBIFS are debugging code and some error reporting.
-No fast paths.
-I think we can switch to prealloation + locking without much hassle.
-I can prepare a patch.
+Can you check if my tree works if you just revert the
+"nds32: use generic dma_noncoherent_ops" commit?
 
-Thanks,
-//richard
+diff --git a/arch/nds32/kernel/dma.c b/arch/nds32/kernel/dma.c
+index 688f1a03dee6..48018275e7f4 100644
+--- a/arch/nds32/kernel/dma.c
++++ b/arch/nds32/kernel/dma.c
+@@ -330,7 +330,7 @@ void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
+ 	void *addr = kmap_atomic_pfn(PHYS_PFN(paddr));
+ 	unsigned long start = (unsigned long)addr;
+ 
+-	switch (direction) {
++	switch (dir) {
+ 	case DMA_FROM_DEVICE:
+ 		break;
+ 	case DMA_TO_DEVICE:
+@@ -350,12 +350,12 @@ void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
+ 	void *addr = kmap_atomic_pfn(PHYS_PFN(paddr));
+ 	unsigned long start = (unsigned long)addr;
+ 
+-	switch (direction) {
++	switch (dir) {
+ 	case DMA_TO_DEVICE:
+ 		break;
+ 	case DMA_FROM_DEVICE:
+ 	case DMA_BIDIRECTIONAL:
+-		cpu_dma_inval_range(start, end);
++		cpu_dma_inval_range(start, start + size);
+ 		break;
+ 	default:
+ 		BUG();
