@@ -1,103 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757589AbeDXMtX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:49:23 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37736 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932898AbeDXMpZ (ORCPT
+        id S933307AbeDXMuD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:50:03 -0400
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:37845 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753182AbeDXMtV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:45:25 -0400
-X-Google-Smtp-Source: AB8JxZrQPpXqB2i4pMMGzYkEg7lRnQsci/54Kwa7MQ3Q1RxrH2AT4OAviqdMBj4eOdVDgd307X2lRw==
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 16/28] venus: add helper function to set actual buffer size
-Date: Tue, 24 Apr 2018 15:44:24 +0300
-Message-Id: <20180424124436.26955-17-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+        Tue, 24 Apr 2018 08:49:21 -0400
+X-Google-Smtp-Source: AIpwx4/ePm8I+liirp9wyBnQlKtCCJO4rp4EXOs6ravsxRdzS8n4uN/j7B8kOqwMsmbOZz3mqovUtQ==
+Subject: Re: [PATCH v2 2/2] media: Add a driver for the ov7251 camera sensor
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1521778460-8717-1-git-send-email-todor.tomov@linaro.org>
+ <1521778460-8717-3-git-send-email-todor.tomov@linaro.org>
+ <20180329115147.nai3dgverqpjympu@paasikivi.fi.intel.com>
+ <3b45d013-d9e7-04bf-22a3-06b858c2c7bd@linaro.org>
+ <20180417201021.q6t4imtoaeh5vtsi@kekkonen.localdomain>
+From: Todor Tomov <todor.tomov@linaro.org>
+Message-ID: <b84b4f78-8085-b536-7113-f0a257d3359e@linaro.org>
+Date: Tue, 24 Apr 2018 15:49:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180417201021.q6t4imtoaeh5vtsi@kekkonen.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add and use a helper function to set actual buffer size for
-particular buffer type. This is also preparation to use
-the second decoder output.
+Hi Sakari,
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/helpers.c | 12 ++++++++++++
- drivers/media/platform/qcom/venus/helpers.h |  1 +
- drivers/media/platform/qcom/venus/vdec.c    | 10 ++--------
- 3 files changed, 15 insertions(+), 8 deletions(-)
+On 17.04.2018 23:10, Sakari Ailus wrote:
+> Hi Todor,
+> 
+> On Tue, Apr 17, 2018 at 06:32:07PM +0300, Todor Tomov wrote:
+> ...
+>>>> +static int ov7251_regulators_enable(struct ov7251 *ov7251)
+>>>> +{
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = regulator_enable(ov7251->io_regulator);
+>>>
+>>> How about regulator_bulk_enable() here, and bulk_disable below?
+>>
+>> I'm not using the bulk API because usually there is a power up
+>> sequence and intervals that must be followed. For this sensor
+>> the only constraint is that core regulator must be enabled
+>> after io regulator. But the bulk API doesn't guarantee the
+>> order.
+> 
+> Could you add a comment explaining this? Otherwise it won't take long until
+> someone "fixes" the code.
 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 824ad4d2d064..94664a3ce3e2 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -544,6 +544,18 @@ int venus_helper_set_dyn_bufmode(struct venus_inst *inst)
- }
- EXPORT_SYMBOL_GPL(venus_helper_set_dyn_bufmode);
- 
-+int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype)
-+{
-+	u32 ptype = HFI_PROPERTY_PARAM_BUFFER_SIZE_ACTUAL;
-+	struct hfi_buffer_size_actual bufsz;
-+
-+	bufsz.type = buftype;
-+	bufsz.size = bufsize;
-+
-+	return hfi_session_set_property(inst, ptype, &bufsz);
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_set_bufsize);
-+
- static void delayed_process_buf_func(struct work_struct *work)
- {
- 	struct venus_buffer *buf, *n;
-diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 52b961ed491e..cd306bd8978f 100644
---- a/drivers/media/platform/qcom/venus/helpers.h
-+++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -41,6 +41,7 @@ int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
- 			      unsigned int output_bufs);
- int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
- int venus_helper_set_dyn_bufmode(struct venus_inst *inst);
-+int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype);
- void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
- void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
- void venus_helper_init_instance(struct venus_inst *inst);
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 1de9cc64cf2f..b43607dee4fe 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -710,7 +710,6 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
- {
- 	struct venus_inst *inst = vb2_get_drv_priv(q);
- 	struct venus_core *core = inst->core;
--	u32 ptype;
- 	int ret;
- 
- 	mutex_lock(&inst->lock);
-@@ -740,13 +739,8 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
- 		goto deinit_sess;
- 
- 	if (core->res->hfi_version == HFI_VERSION_3XX) {
--		struct hfi_buffer_size_actual buf_sz;
--
--		ptype = HFI_PROPERTY_PARAM_BUFFER_SIZE_ACTUAL;
--		buf_sz.type = HFI_BUFFER_OUTPUT;
--		buf_sz.size = inst->output_buf_size;
--
--		ret = hfi_session_set_property(inst, ptype, &buf_sz);
-+		ret = venus_helper_set_bufsize(inst, inst->output_buf_size,
-+					       HFI_BUFFER_OUTPUT);
- 		if (ret)
- 			goto deinit_sess;
- 	}
+Sure :D
+I'm adding a comment.
+
+> 
+> ...
+> 
+>>>> +static int ov7251_read_reg(struct ov7251 *ov7251, u16 reg, u8 *val)
+>>>> +{
+>>>> +	u8 regbuf[2];
+>>>> +	int ret;
+>>>> +
+>>>> +	regbuf[0] = reg >> 8;
+>>>> +	regbuf[1] = reg & 0xff;
+>>>> +
+>>>> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, 2);
+>>>> +	if (ret < 0) {
+>>>> +		dev_err(ov7251->dev, "%s: write reg error %d: reg=%x\n",
+>>>> +			__func__, ret, reg);
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	ret = i2c_master_recv(ov7251->i2c_client, val, 1);
+>>>> +	if (ret < 0) {
+>>>> +		dev_err(ov7251->dev, "%s: read reg error %d: reg=%x\n",
+>>>> +			__func__, ret, reg);
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int ov7251_set_exposure(struct ov7251 *ov7251, s32 exposure)
+>>>> +{
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = ov7251_write_reg(ov7251, OV7251_AEC_EXPO_0,
+>>>> +			       (exposure & 0xf000) >> 12);
+>>>> +	if (ret < 0)
+>>>> +		return ret;
+>>>> +
+>>>> +	ret = ov7251_write_reg(ov7251, OV7251_AEC_EXPO_1,
+>>>> +			       (exposure & 0x0ff0) >> 4);
+>>>> +	if (ret < 0)
+>>>> +		return ret;
+>>>> +
+>>>> +	return ov7251_write_reg(ov7251, OV7251_AEC_EXPO_2,
+>>>> +				(exposure & 0x000f) << 4);
+>>>
+>>> It's not a good idea to access multi-octet registers separately. Depending
+>>> on the hardware implementation, the hardware could latch the value in the
+>>> middle of an update. This is only an issue during streaming in practice
+>>> though.
+>>
+>> Good point. The sensor has a group write functionality which can be used
+>> to solve this but in general is intended
+>> to apply a group of exposure and gain settings in the same frame. However
+>> it seems to me that is not possible to use this functionality efficiently
+>> with the currently available user controls. The group write is configured
+>> using an id for a group of commands. So if we configure exposure and gain
+>> separately (a group for each):
+>> - if the driver uses same group id for exposure and gain, if both controls
+>>   are received in one frame the second will overwrite the first (the
+>>   first will not be applied);
+>> - if the driver uses different group id for exposure and gain, it will not
+>>   be possible for the user to change exposure and gain in the same frame
+>>   (as some exposure algorithms do) and it will lead again to frames with
+>>   "incorrect" brightness.
+>>
+>> To do this correctly we will have to extend the API to be able to apply
+>> exposure and gain "atomically":
+>> - a single user control which will set both exposure and gain and it will
+>>   guarantee that they will be applied in the same frame;
+>> - some kind of: begin, set exposure, set gain, end, launch -API
+>>
+>> What do you think?
+>>
+>> Actually, I'm a little bit surprised that I didn't find anything
+>> like this already. And there are already a number of sensor drivers
+>> which update more than one register to set exposure.
+> 
+> The latter of the two would be preferred as it isn't limited to exposure
+> and gain only. Still, you could address the problem for this driver by
+> simply writing the register in a single transaction.
+
+Thanks for suggestion. I've tried the single transaction, I will send the
+next version of the driver shortly.
+
 -- 
-2.14.1
+Best regards,
+Todor Tomov
