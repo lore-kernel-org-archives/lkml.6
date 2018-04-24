@@ -1,131 +1,120 @@
-Return-Path: <kernel-hardening-return-13100-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49WvX7dPYcxvvLoMeuh9PpEQWb7ZPCCOxswscgIDbbum1aGw/rO+oakbFJC4pUMPtJLrTcx
-ARC-Seal: i=1; a=rsa-sha256; t=1524533516; cv=none;
+Return-Path: <brgl@bgdev.pl>
+ARC-Seal: i=1; a=rsa-sha256; t=1524591071; cv=none;
         d=google.com; s=arc-20160816;
-        b=RtXzoINyVqKq3lBFy8WV4WnMCO0pPZ3Y55BPTHiVuVfK+gw9ymIj11fxJtcy8Sr/JK
-         /aM7beCpMtLgJEkYgZlxoWRxOUOMT9exPjgKurlJ4fU+P3z3VWLx2EkwGVcoZuZKWNpz
-         enpdeoDGeGcmk82rid5ZGDQ38CiEFXkHuKSN9SgHUc2bOXcmW0hR6xOqK3D2g69gjGjq
-         CZJZ53nQLONJA636HnvvdVJkqKpsLYHl5XQhWAZKAJ2rlUoI7svUv2T5lkYRhTjbtJAt
-         o7Gpk/pC9/zmd2XAP1g8t9S9YBLBZREIEEQ6N0iHnZRueMsv0Oxo0A9XDCnMCteUIpcj
-         uaJg==
+        b=CWzYGZULZeSsJiHwIr8kS03fVAgWSZTbNalW7IEk2ieuEAhaa5kGPX+7LIeSnCN0Qk
+         b/jqvj/7wN1L8WempQPpgv1EYbMArgUgVD+z1wwDguQkPmVEH8d0ZaweAl8XlgSRozSS
+         dWdDcAqVs3FsmURzoV8sjigkIsh1Myp7BxgC6H5xTc0JyGS25OIqWb4Hun4DihENJ19C
+         ghrzlA2teTWI1Mm11DTE0FZ5ZxiSW84q/Y+ENq2SY8YERo5f35S8kxWgh9TlTxB/JTzQ
+         5epHaWd1Rm5DA7hYrYYD8Ppd0WqPxGWL6Efsjgi9RHcSmXsZRRpsaLSe+QtVR5v/R//H
+         YQVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=SJErzKT9nbvMFCOiOIf+uqZIZJ+5ZpCdx6U/gxgdK3g=;
-        b=mK0J4roQhjf09tkm2lJXI5+9ni/3wFLtNJEwyItSgVVx6IS5aWXigatyz39YrMBNjS
-         MlmrtNGeHVqW2fMw03/fDAfmb1stXZka1Az0fYA+mTvMUnb8Gfmx+Zuo2666wqvspjWE
-         xDquldetJ+B6Cog+U9C7O2oplf7d9g+nfHbMi/jG0TbOV+QxecN5mKr3MvFysPKfRR1o
-         sgDEyjeJIqnabhn3XpX/pLyCSQmXbsJuufHrhT+15O2RMhM2LvWCYFxnqmvwLh2rqln2
-         YC8oMolXCjtVhdBxXxwVFvatc6ef+wNm7gN83mFrSMiQINaOTqryI3lMJrfWujYASR35
-         52Tw==
+        bh=IFrQEk4nDjzvgcrPTH5iMFpItGQmQCsWREhwNBnKrRs=;
+        b=aiV3rvf8LAQVKUqiaiObq0CWvTi9IaD6HR35oPS9o7IeyeDc+SBNgXU7prdmSrKXne
+         DqejIZRTA2NWAIz1moI722aL9KVaR4wOZREvlHxxJIcw6PaM/lGp2Z4GGTPwblkHn4R1
+         OZTwbkdXwCmE9OL8/oKHl8sIbk8G3zv4wUhEMDFyYRA0Je0RBCHii2KDxGM8lABiMa1o
+         7gM4dx1NAP1g+QMqwR1fRi5iFmXy+BgNvOq6MHkA3QTOOUc4moX4QmnLhgb+tXci+NWQ
+         vX1K/nNIKPox7apM9BoxHc7xmNkZa/K+OBoHutt84Iu4kwP6e+prcfnR2mkP3BoG7GkL
+         YYew==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=Y1Srcwxg;
-       spf=pass (google.com: domain of kernel-hardening-return-13100-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13100-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=XIEUzhx1;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=Y1Srcwxg;
-       spf=pass (google.com: domain of kernel-hardening-return-13100-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13100-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Tycho Andersen <tycho@tycho.ws>
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=XIEUzhx1;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
+X-Google-Smtp-Source: AIpwx48R1ziX2RoDGJPprGB+3jngQ3qltyGqgUve4dqV9z6fofpW9gkrYs0T7HBdbvzumya76DV3ng==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Michal Suchanek <msuchanek@suse.de>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	Tycho Andersen <tycho@tycho.ws>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 2/3] dh key: get rid of stack allocated array
-Date: Mon, 23 Apr 2018 19:03:20 -0600
-Message-Id: <20180424010321.14739-2-tycho@tycho.ws>
+	devicetree@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 00/11] platform: device tree support for early platform drivers
+Date: Tue, 24 Apr 2018 19:30:40 +0200
+Message-Id: <20180424173051.15099-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180424010321.14739-1-tycho@tycho.ws>
-References: <20180424010321.14739-1-tycho@tycho.ws>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598589256399427295?=
-X-GMAIL-MSGID: =?utf-8?q?1598589256399427295?=
+X-GMAIL-THRID: =?utf-8?q?1598649607100825317?=
+X-GMAIL-MSGID: =?utf-8?q?1598649607100825317?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We're interested in getting rid of all of the stack allocated arrays in the
-kernel: https://lkml.org/lkml/2018/3/7/621
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This particular vla is used as a temporary output buffer in case there is
-too much hash output for the destination buffer. Instead, let's just
-allocate a buffer that's big enough initially, but only copy back to
-userspace the amount that was originally asked for.
+Device tree based systems often use OF_DECLARE() macros for devices
+that need to be initialized early in the boot process such as clocks,
+timers etc. However platform devices are more desirable.
 
-v2: allocate enough in the original output buffer vs creating a temporary
-    output buffer
+This series aims at introducing support for early platform drivers for
+OF-based systems.
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-CC: David Howells <dhowells@redhat.com>
-CC: James Morris <jmorris@namei.org>
-CC: "Serge E. Hallyn" <serge@hallyn.com>
-CC: Eric Biggers <ebiggers3@gmail.com>
----
- security/keys/dh.c | 29 ++++++++++-------------------
- 1 file changed, 10 insertions(+), 19 deletions(-)
+The idea is to have a special compatible fallback string: "earlydev"
+that similarily to "syscon" would be added to device nodes that need
+early probing. We then need to call of_early_platform_populate() early
+in the boot process to actually probe the registered devices.
 
-diff --git a/security/keys/dh.c b/security/keys/dh.c
-index d1ea9f325f94..9fecaea6c298 100644
---- a/security/keys/dh.c
-+++ b/security/keys/dh.c
-@@ -183,24 +183,13 @@ static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
- 				goto err;
- 		}
- 
--		if (dlen < h) {
--			u8 tmpbuffer[h];
--
--			err = crypto_shash_final(desc, tmpbuffer);
--			if (err)
--				goto err;
--			memcpy(dst, tmpbuffer, dlen);
--			memzero_explicit(tmpbuffer, h);
--			return 0;
--		} else {
--			err = crypto_shash_final(desc, dst);
--			if (err)
--				goto err;
-+		err = crypto_shash_final(desc, dst);
-+		if (err)
-+			goto err;
- 
--			dlen -= h;
--			dst += h;
--			counter = cpu_to_be32(be32_to_cpu(counter) + 1);
--		}
-+		dlen -= h;
-+		dst += h;
-+		counter = cpu_to_be32(be32_to_cpu(counter) + 1);
- 	}
- 
- 	return 0;
-@@ -216,14 +205,16 @@ static int keyctl_dh_compute_kdf(struct kdf_sdesc *sdesc,
- {
- 	uint8_t *outbuf = NULL;
- 	int ret;
-+	size_t outbuf_len = round_up(buflen,
-+			             crypto_shash_digestsize(sdesc->shash.tfm));
- 
--	outbuf = kmalloc(buflen, GFP_KERNEL);
-+	outbuf = kmalloc(outbuf_len, GFP_KERNEL);
- 	if (!outbuf) {
- 		ret = -ENOMEM;
- 		goto err;
- 	}
- 
--	ret = kdf_ctr(sdesc, kbuf, kbuflen, outbuf, buflen, lzero);
-+	ret = kdf_ctr(sdesc, kbuf, kbuflen, outbuf, outbuf_len, lzero);
- 	if (ret)
- 		goto err;
- 
+I am aware that this new compatible does not strictly correspond with
+the "hardware description only" rule of DT, but we already have many
+functionalities that break this rule: syscon, gpio hogs etc.
+
+The first user of this new functionality will be the DaVinci platform
+for which we want to probe the pll, psc and timer drivers early in the
+boot sequence but keep them implemented as platform drivers.
+
+In the future, if this series gets accepted, this could become and
+alternative to TIMER_OF_DECLARE, CLK_OF_DECLARE etc. and could lead
+to deprecating of those macros in favor of early platform drivers.
+
+Bartosz Golaszewski (11):
+  platform: early: provide early_platform_add_device()
+  platform: provide early_platform_driver_register_probe_all()
+  platform: make support for early platform devices conditional
+  of: platform: use pdev as name for vars of type struct platform_device
+  platform: use a dedicated list_head for early devices
+  of: provide for_each_compatible_child_node()
+  dt-bindings: add bindings for early devices
+  of: platform: provide of_early_platform_populate()
+  platform: provide early_platform_driver()
+  of: platform: provide of_early_platform_probe()
+  misc: implement a dummy early platform driver
+
+ Documentation/devicetree/bindings/early.txt |   7 +
+ arch/sh/Kconfig                             |   1 +
+ drivers/base/Kconfig                        |   4 +
+ drivers/base/platform.c                     |  26 ++--
+ drivers/misc/Kconfig                        |   8 ++
+ drivers/misc/Makefile                       |   1 +
+ drivers/misc/dummy-early.c                  |  40 ++++++
+ drivers/of/device.c                         |  14 +-
+ drivers/of/platform.c                       | 143 +++++++++++++++-----
+ include/linux/device.h                      |   4 +
+ include/linux/of.h                          |   3 +
+ include/linux/of_device.h                   |   5 +
+ include/linux/of_platform.h                 |  19 +++
+ include/linux/platform_device.h             |  52 +++++++
+ 14 files changed, 279 insertions(+), 48 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/early.txt
+ create mode 100644 drivers/misc/dummy-early.c
+
 -- 
 2.17.0
