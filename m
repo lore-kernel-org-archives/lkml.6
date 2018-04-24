@@ -1,67 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755957AbeDWQw1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 12:52:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49146 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755817AbeDWQwX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 12:52:23 -0400
-Date: Mon, 23 Apr 2018 17:52:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>, linux-kernel@vger.kernel.org,
-        linux-media <linux-media@vger.kernel.org>
-Subject: Re: [PATCH v3][RESEND] media: i2c: tda1997: replace codec to
- component
-Message-ID: <20180423165213.GL19834@sirena.org.uk>
-References: <87in8ibrql.wl%kuninori.morimoto.gx@renesas.com>
- <CAJ+vNU0mykhkMNNrN=Zsrj0_pv=XAkGiiQkXehQ4EWBkMDAv7w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="j3olVFx0FsM75XyV"
-Content-Disposition: inline
-In-Reply-To: <CAJ+vNU0mykhkMNNrN=Zsrj0_pv=XAkGiiQkXehQ4EWBkMDAv7w@mail.gmail.com>
-X-Cookie: I think, therefore I am... I think.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S932098AbeDWQwa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 12:52:30 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:55486 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755925AbeDWQwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 12:52:24 -0400
+From: Peng Hao <peng.hao2@zte.com.cn>
+To: tglx@linutronix.de, pbonzini@redhat.com, mingo@redhat.com,
+        x86@kernel.org, peterz@infradead.org, len.brown@intel.com
+Cc: linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH] x86: tsc: fix L2 guest always in tsc_early clocksource
+Date: Tue, 24 Apr 2018 09:08:54 +0800
+Message-Id: <1524532134-31408-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-04-24 00:52:17,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-04-24 00:52:13,
+        Serialize complete at 2018-04-24 00:52:13
+X-MAIL: mse01.zte.com.cn w3NGqDsg023865
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In L2 guest tsc_read_refs always return ULLONG_MAX, and that will
+call tsc_refine_calibration_work periodly. So L2 guest will read
+acpi timer port 0x608 periodly.
+The patch will let it out of "if(tsc_start == -1){}" infinite loop.
 
---j3olVFx0FsM75XyV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ arch/x86/kernel/tsc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Mon, Apr 23, 2018 at 09:44:17AM -0700, Tim Harvey wrote:
-
-> Could you add some detail to the commit explaining why we need to
-> replace codec to component? I don't really know what that means.
-> Please refer to a commit if the ASoC API is changing in some way we
-> need to catch up with.
-
-This is a big transition in the ASoC API which is nearing completion -
-this driver is one of the last users of the CODEC struct, we've (well,
-mainly Morimoto-san) been migrating things away from it to the more
-general purpose component.  There's no one commit to point at really as
-the two have coexisted for a while and we won't be able to finally
-remove the CODEC struct until all the drivers have transitioned away.
-
---j3olVFx0FsM75XyV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlreDzwACgkQJNaLcl1U
-h9CzuQf/XTA4TBCShZRcP3dqce97snUUGdPY5Fg1PGcBp+xBKuvkQKLhe5iHy35e
-kIqtbo2Ha2R9uFIJNnlZOcYzgCtFtmtI4Q3ezLFxXSMudRtkTifvxA11Yi13WBTL
-Es1KQlJa7S2fGQSZHM2A2TD/othnmD7iIE4R3wlvSdJ4dbte4x4SJNmLBRnJtDCt
-1SPMLmIh3kzQaU7zOqdm31roaHT/2j08HyB1VttyqJ520sIEXcAuw79b4NnzdeH2
-DDiVBJh4++sOSa4LvIYlXf74Tr6li0gO5hmkeZj83GORA/Cgw/tSmGW08RjpK2YP
-4vV0Jl+ZA45c4+b8uIzyQWVRERA1Cw==
-=BeVd
------END PGP SIGNATURE-----
-
---j3olVFx0FsM75XyV--
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index ef32297..828ef50 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -1236,7 +1236,7 @@ struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns)
+  */
+ static void tsc_refine_calibration_work(struct work_struct *work)
+ {
+-	static u64 tsc_start = -1, ref_start;
++	static u64 tsc_start = 0, ref_start;
+ 	static int hpet;
+ 	u64 tsc_stop, ref_stop, delta;
+ 	unsigned long freq;
+@@ -1251,7 +1251,7 @@ static void tsc_refine_calibration_work(struct work_struct *work)
+ 	 * delayed the first time we expire. So set the workqueue
+ 	 * again once we know timers are working.
+ 	 */
+-	if (tsc_start == -1) {
++	if (tsc_start == 0) {
+ 		/*
+ 		 * Only set hpet once, to avoid mixing hardware
+ 		 * if the hpet becomes enabled later.
+-- 
+1.8.3.1
