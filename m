@@ -1,17 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751047AbeDXPmW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:42:22 -0400
-Received: from mga17.intel.com ([192.55.52.151]:58012 "EHLO mga17.intel.com"
+        id S1751346AbeDXPma (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:42:30 -0400
+Received: from mga07.intel.com ([134.134.136.100]:42737 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750729AbeDXPmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:42:19 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1751003AbeDXPmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:42:22 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,323,1520924400";
-   d="scan'208";a="35796702"
+   d="scan'208";a="40111098"
 Date: Tue, 24 Apr 2018 23:41:16 +0800
 From: kbuild test robot <lkp@intel.com>
 To: jeffm@suse.com
@@ -20,9 +19,9 @@ Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
         Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH 5/5] procfs: share fd/fdinfo with thread group leader
- when files are shared
-Message-ID: <201804242316.TemnBYbI%fengguang.wu@intel.com>
+Subject: [RFC PATCH] procfs: proc_pid_files_link_dentry_operations can be
+ static
+Message-ID: <20180424154116.GA11745@lkp-ne02>
 References: <20180424022106.16952-6-jeffm@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -36,63 +35,23 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jeff,
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.17-rc2 next-20180424]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/jeffm-suse-com/procfs-reduce-duplication-by-using-symlinks/20180424-203620
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
-   fs/proc/base.c:834:32: sparse: expression using sizeof(void)
-   fs/proc/base.c:950:27: sparse: expression using sizeof(void)
-   fs/proc/base.c:951:28: sparse: expression using sizeof(void)
-   fs/proc/base.c:951:28: sparse: expression using sizeof(void)
-   fs/proc/base.c:2085:25: sparse: cast to restricted fmode_t
-   fs/proc/base.c:2140:42: sparse: cast from restricted fmode_t
-   fs/proc/base.c:2243:48: sparse: cast from restricted fmode_t
->> fs/proc/base.c:3568:32: sparse: symbol 'proc_pid_files_link_dentry_operations' was not declared. Should it be static?
-   fs/proc/base.c:1078:36: sparse: context imbalance in '__set_oom_adj' - unexpected unlock
-   fs/proc/base.c:2271:13: sparse: context imbalance in 'timers_start' - wrong count at exit
-   fs/proc/base.c:2297:36: sparse: context imbalance in 'timers_stop' - unexpected unlock
-
-Please review and possibly fold the followup patch.
-
+Fixes: fc3babee0341 ("procfs: share fd/fdinfo with thread group leader when files are shared")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ base.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 98a847b..deb0950 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3565,7 +3565,7 @@ static int proc_pid_files_revalidate(struct dentry *dentry, unsigned int flags)
+  * directory, there's no more work to do beyond pid_revalidate_inode, so
+  * we just use the regular pid_dentry_operations.
+  */
+-const struct dentry_operations proc_pid_files_link_dentry_operations = {
++static const struct dentry_operations proc_pid_files_link_dentry_operations = {
+ 	.d_revalidate	= proc_pid_files_revalidate,
+ 	.d_delete	= pid_delete_dentry,
+ };
