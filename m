@@ -1,28 +1,28 @@
 Return-Path: <matthias.bgg@kernel.org>
-X-Google-Smtp-Source: AIpwx4/9H1BbGf/ime9iYvp3AH1WQ7SYrJDiP2GRq16kXQCOKd4CC7HGgjsOpQp7p1/0HAhmd+/k
-ARC-Seal: i=1; a=rsa-sha256; t=1524563262; cv=none;
+X-Google-Smtp-Source: AIpwx48mIfRP2wCTiLhWprI+kaQTLdSOffTTyD76bxP669oebBHh5X8INR/iyJJcvc4QDGxSuWoV
+ARC-Seal: i=1; a=rsa-sha256; t=1524563251; cv=none;
         d=google.com; s=arc-20160816;
-        b=SmdR2Fb/oBCOQXAPjqx6ITL0iAWFtTnennicq5NqdbD3WPnaeWsGbyBVA33X2228X2
-         KCbvy8allWwuaZb5UrmUPWhwrx3AnliKMIz3vSlOWOfPtFnKJEl6KU657uYu+7lR9vKF
-         8eolIuWOb1KkONCMbKYuiI/DqiaucwIWJORdlWMKbmB26CRsJ8zsGpGY2+Swk/jS20Cs
-         8W/l/TTaPIg0dt9mVLmAyee3+dbZ9mk8Cy989z2m3cuxafU9dJLQEykap6feHZ73p9UC
-         fAIcpyZm73CEaFJRzCLCidx+gwvv+OvMqALfsRxHQf8bFtIF4RsStnoxrDAQ12hrpWad
-         QtwQ==
+        b=VUIKoqFyGozaDdmzwwpmG0RF3FKaGhOnVdVnuxZFrFZYj+jzMPvb3yeALwlf1LmIdl
+         JnCVuaeBJ53aDGBr0PWaQedEWm0H240916AQDU4mitaihOhh7y5FezJhSife0w6yO3y4
+         /hzhGRIbtAtNy+GYp16xBbkHvt9e5HuwTBtSlQKl4X0TIVQ3tmtsDkE2TArcsnS/NQVy
+         G1/+HWZK3BAz824x7GwiIzUjofsWXbWkq3UnY2vuQU5kZR+8s6HJdmk5pTWb/yNQg05N
+         uF8dBbFJu1/QwOIsikNmaUPe6rgdRdcysfXnbbm1m9Gf4RPxo3JDDja6gHq58v69CWkC
+         l94g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=vtut0kIz7f8MYFQW2zrvgmOldCfS/Z399mstkUP+LEc=;
-        b=sALhpZbG+wyPtBHLlxHBx8p0nh4Pid062GXUQ9lqlyJEDql78ZrKut4jCltUw9dtmZ
-         omuwroKEtKJC430z6qepSjJtzXs7StG+IgY3GVLeqJWbZCDcVQvq2+vECeYmp8MYTv8e
-         wCV7PbkjKZ2gHki1FKsX6N3r/v8LBKD3bKeFJA643KzzOuCYg2m0Yz2cQM5lXseNoIJ9
-         lqwlympHslGIhNQEGOEh7Qzsj7RRIoS+gJO2dKgRi2Ll4LjFy1NV4+nAfFcV4tyiTYhm
-         /FxJdXzW9u6/w2uhlDGVIrbBRZ+QJv0ItHQWBElan0I0zObn0NYxbMZJe2eWU8RMJ+0d
-         ka5Q==
+        bh=kJhigIqMMJU+RYIOwekYiDkD26GUgMR/uv+AcYQbPD0=;
+        b=t42haa7OVdpzz+StJDaxRZGvFPd6J6P08eJDaNeenXWaf6M2032wrwTqMOXcAkKB6r
+         GxUogbTT0wvaVSKCU/knjabFwki7zwq4I1WEPzm4hGklAtdPP4yvDb/7ecpFpqv6mip1
+         b780OnmiJunzBVPvK3PXZQlIi1tUAKMRicVxauznHtmCAiHj7V1HbJWmUafEIqC4tMfB
+         bFpVfwhVlPnSkBrTAN1OmTXo3o//GysDhnxeEYAqIsEcjzlxLN3s+7ituQPUEqvo1AwC
+         yLfd0Kj9k6v+Mti4O2nsP0woYQlocWxE31JsrBI19NHaRnWBE/lBpvx+mIaC0dzaXfzJ
+         E/gw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1F8217BA
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB84217D4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=matthias.bgg@kernel.org
 From: matthias.bgg@kernel.org
@@ -50,98 +50,197 @@ Cc: davem@davemloft.net,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 resend 04/10] drm/mediatek: mt2701: switch to mfd probing.
-Date: Tue, 24 Apr 2018 11:47:01 +0200
-Message-Id: <d8df055198eab1db9942d9b4059683d040920f11.1524563001.git.mbrugger@suse.com>
+Subject: [v2 resend 02/10] drm/mediatek: Use regmap for register access
+Date: Tue, 24 Apr 2018 11:46:59 +0200
+Message-Id: <7e20139c8dcc9fe80aa9e401c7bd84a3b9464ff2.1524563001.git.mbrugger@suse.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
 References: <cover.1524563001.git.mbrugger@suse.com>
 In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
 References: <cover.1524563001.git.mbrugger@suse.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598620447134658623?=
-X-GMAIL-MSGID: =?utf-8?q?1598620447134658623?=
+X-GMAIL-THRID: =?utf-8?q?1598620436651095125?=
+X-GMAIL-MSGID: =?utf-8?q?1598620436651095125?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Matthias Brugger <mbrugger@suse.com>
 
-With the mtk-mmsys MFD device in place, we switch the probing for
-mt2701 from device-tree to mfd.
+The mmsys memory space is shared between the drm and the
+clk driver. Use regmap to access it.
 
 Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 ++--
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 38 +++++++++++++--------------------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 ++--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++++-------
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
+ 5 files changed, 24 insertions(+), 37 deletions(-)
 
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 658b8dd45b83..4c65873b4867 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -33,7 +33,7 @@
+  * @enabled: records whether crtc_enable succeeded
+  * @planes: array of 4 drm_plane structures, one for each overlay plane
+  * @pending_planes: whether any plane has pending changes to be applied
+- * @config_regs: memory mapped mmsys configuration register space
++ * @config_regs: regmap mapped mmsys configuration register space
+  * @mutex: handle to one of the ten disp_mutex streams
+  * @ddp_comp_nr: number of components in ddp_comp
+  * @ddp_comp: array of pointers the mtk_ddp_comp structures used by this crtc
+@@ -48,7 +48,7 @@ struct mtk_drm_crtc {
+ 	struct drm_plane		planes[OVL_LAYER_NR];
+ 	bool				pending_planes;
+ 
+-	void __iomem			*config_regs;
++	struct regmap			*config_regs;
+ 	struct mtk_disp_mutex		*mutex;
+ 	unsigned int			ddp_comp_nr;
+ 	struct mtk_ddp_comp		**ddp_comp;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 8130f3dab661..bafc5c77c4fb 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -185,53 +185,45 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+ 	return value;
+ }
+ 
+-static void mtk_ddp_sout_sel(void __iomem *config_regs,
++static void mtk_ddp_sout_sel(struct regmap *config_regs,
+ 			     enum mtk_ddp_comp_id cur,
+ 			     enum mtk_ddp_comp_id next)
+ {
+ 	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
+-		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
+-			       config_regs + DISP_REG_CONFIG_OUT_SEL);
++		regmap_write(config_regs, DISP_REG_CONFIG_OUT_SEL,
++				BLS_TO_DSI_RDMA1_TO_DPI1);
+ }
+ 
+-void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
++void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
+ 			      enum mtk_ddp_comp_id cur,
+ 			      enum mtk_ddp_comp_id next)
+ {
+-	unsigned int addr, value, reg;
++	unsigned int addr, value;
+ 
+ 	value = mtk_ddp_mout_en(cur, next, &addr);
+-	if (value) {
+-		reg = readl_relaxed(config_regs + addr) | value;
+-		writel_relaxed(reg, config_regs + addr);
+-	}
++	if (value)
++		regmap_update_bits(config_regs, addr, value, value);
+ 
+ 	mtk_ddp_sout_sel(config_regs, cur, next);
+ 
+ 	value = mtk_ddp_sel_in(cur, next, &addr);
+-	if (value) {
+-		reg = readl_relaxed(config_regs + addr) | value;
+-		writel_relaxed(reg, config_regs + addr);
+-	}
++	if (value)
++		regmap_update_bits(config_regs, addr, value, value);
+ }
+ 
+-void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
++void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
+ 				   enum mtk_ddp_comp_id cur,
+ 				   enum mtk_ddp_comp_id next)
+ {
+-	unsigned int addr, value, reg;
++	unsigned int addr, value;
+ 
+ 	value = mtk_ddp_mout_en(cur, next, &addr);
+-	if (value) {
+-		reg = readl_relaxed(config_regs + addr) & ~value;
+-		writel_relaxed(reg, config_regs + addr);
+-	}
++	if (value)
++		regmap_update_bits(config_regs, addr, value, 0);
+ 
+ 	value = mtk_ddp_sel_in(cur, next, &addr);
+-	if (value) {
+-		reg = readl_relaxed(config_regs + addr) & ~value;
+-		writel_relaxed(reg, config_regs + addr);
+-	}
++	if (value)
++		regmap_update_bits(config_regs, addr, value, 0);
+ }
+ 
+ struct mtk_disp_mutex *mtk_disp_mutex_get(struct device *dev, unsigned int id)
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+index f9a799168077..32e12f33b76a 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+@@ -20,10 +20,10 @@ struct regmap;
+ struct device;
+ struct mtk_disp_mutex;
+ 
+-void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
++void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
+ 			      enum mtk_ddp_comp_id cur,
+ 			      enum mtk_ddp_comp_id next);
+-void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
++void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
+ 				   enum mtk_ddp_comp_id cur,
+ 				   enum mtk_ddp_comp_id next);
+ 
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index a48e28adad09..88ee35907744 100644
+index a2ca90fc403c..a48e28adad09 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -386,7 +386,7 @@ static int mtk_drm_probe(struct platform_device *pdev)
+@@ -21,6 +21,7 @@
+ #include <drm/drm_of.h>
+ #include <linux/component.h>
+ #include <linux/iommu.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
+@@ -385,7 +386,6 @@ static int mtk_drm_probe(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
  	struct mtk_drm_private *private;
--	struct device_node *node;
-+	struct device_node *node, *parent_node, *mmsys_node;
+-	struct resource *mem;
+ 	struct device_node *node;
  	struct component_match *match = NULL;
  	int ret;
- 	int i;
-@@ -399,12 +399,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
+@@ -399,14 +399,9 @@ static int mtk_drm_probe(struct platform_device *pdev)
  	INIT_WORK(&private->commit.work, mtk_atomic_work);
  	private->data = of_device_get_match_data(dev);
  
--	private->config_regs = syscon_node_to_regmap(dev->of_node);
--	if (IS_ERR(private->config_regs))
--		return PTR_ERR(private->config_regs);
-+	/* Check if called from mfd */
-+	if (!dev->of_node) {
-+		mmsys_node = pdev->dev.parent->of_node;
-+		private->data = (struct mtk_mmsys_driver_data *)
-+				platform_get_device_id(pdev)->driver_data;
-+		private->config_regs =
-+			syscon_node_to_regmap(mmsys_node);
-+		parent_node = mmsys_node->parent;
-+	} else {
-+		private->config_regs = syscon_node_to_regmap(dev->of_node);
-+		if (IS_ERR(private->config_regs))
-+			return PTR_ERR(private->config_regs);
-+		parent_node = dev->of_node->parent;
-+	}
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	private->config_regs = devm_ioremap_resource(dev, mem);
+-	if (IS_ERR(private->config_regs)) {
+-		ret = PTR_ERR(private->config_regs);
+-		dev_err(dev, "Failed to ioremap mmsys-config resource: %d\n",
+-			ret);
+-		return ret;
+-	}
++	private->config_regs = syscon_node_to_regmap(dev->of_node);
++	if (IS_ERR(private->config_regs))
++		return PTR_ERR(private->config_regs);
  
  	/* Iterate over sibling DISP function blocks */
--	for_each_child_of_node(dev->of_node->parent, node) {
-+	for_each_child_of_node(parent_node, node) {
- 		const struct of_device_id *of_id;
- 		enum mtk_ddp_comp_type comp_type;
- 		int comp_id;
-@@ -545,13 +556,17 @@ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
- 			 mtk_drm_sys_resume);
+ 	for_each_child_of_node(dev->of_node->parent, node) {
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index c3378c452c0a..c6fa0ad458e8 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -44,7 +44,7 @@ struct mtk_drm_private {
  
- static const struct of_device_id mtk_drm_of_ids[] = {
--	{ .compatible = "mediatek,mt2701-mmsys",
--	  .data = &mt2701_mmsys_driver_data},
- 	{ .compatible = "mediatek,mt8173-mmsys",
- 	  .data = &mt8173_mmsys_driver_data},
- 	{ }
- };
- 
-+static const struct platform_device_id mtk_drm_ids[] = {
-+	{ "drm-mt2701-mm", (kernel_ulong_t)&mt2701_mmsys_driver_data },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(platform, mtk_drm_ids);
-+
- static struct platform_driver mtk_drm_platform_driver = {
- 	.probe	= mtk_drm_probe,
- 	.remove	= mtk_drm_remove,
-@@ -560,6 +575,7 @@ static struct platform_driver mtk_drm_platform_driver = {
- 		.of_match_table = mtk_drm_of_ids,
- 		.pm     = &mtk_drm_pm_ops,
- 	},
-+	.id_table = mtk_drm_ids,
- };
- 
- static struct platform_driver * const mtk_drm_drivers[] = {
+ 	struct device_node *mutex_node;
+ 	struct device *mutex_dev;
+-	void __iomem *config_regs;
++	struct regmap *config_regs;
+ 	struct device_node *comp_node[DDP_COMPONENT_ID_MAX];
+ 	struct mtk_ddp_comp *ddp_comp[DDP_COMPONENT_ID_MAX];
+ 	const struct mtk_mmsys_driver_data *data;
 -- 
 2.16.3
