@@ -1,45 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758318AbeDXN7m (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:59:42 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:36245 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933459AbeDXN7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:59:36 -0400
-X-Google-Smtp-Source: AIpwx49TbQXIGwJaKLdmmZMWARp2090PAeOWf0GnpZ/DyE1DfS8XH+WCa7WJWKGAftuNxWY8E5giF/3UfwTp5R0YS+0=
-MIME-Version: 1.0
-In-Reply-To: <CAHmME9pB-CobQCsm2nNHZq_o8qn2+Fff3cGgshyTaQVXtZpWHg@mail.gmail.com>
-References: <20171223004323.1986-1-Jason@zx2c4.com> <CAHmME9otwT+14LhmebF8Osna7m_u6xvFEi7pMq2v1-k9WD5Lpw@mail.gmail.com>
- <20180424133527.GB24599@arm.com> <CAHmME9pB-CobQCsm2nNHZq_o8qn2+Fff3cGgshyTaQVXtZpWHg@mail.gmail.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Tue, 24 Apr 2018 15:59:33 +0200
-X-Gmail-Original-Message-ID: <CAHmME9pHxE0CRphSM9h8QQMdRW_mh1inGrvNLpPXhMaxdLksVg@mail.gmail.com>
-Message-ID: <CAHmME9pHxE0CRphSM9h8QQMdRW_mh1inGrvNLpPXhMaxdLksVg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: support __int128 with clang
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1758304AbeDXN6s (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:58:48 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55764 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933397AbeDXNOs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:14:48 -0400
+X-Google-Smtp-Source: AIpwx48b9s1E8acHIDEa/Mo4ElaRHbVlUHWOyorD3YWemsrNQwglXzv5dMk7HSx5U7JwXNnC3IrULg==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/bochs: fix mode_valid's return type
+Date: Tue, 24 Apr 2018 15:14:45 +0200
+Message-Id: <20180424131445.1861-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 3:47 PM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> On Tue, Apr 24, 2018 at 3:35 PM, Will Deacon <will.deacon@arm.com> wrote:
->> On Sun, Apr 15, 2018 at 06:20:11PM +0200, Jason A. Donenfeld wrote:
->>> Would you review/merge this when you have a chance?
->>
->> No real objection from me, but does the arm64 kernel actually build with
->> clang?
->
-> I've been told that Android is moving their kernel builds over to
-> clang entirely.
+The method struct drm_connector_helper_funcs::mode_valid is defined
+as returning an 'enum drm_mode_status' but the driver implementation
+for this method uses an 'int' for it.
 
-More info:
-https://github.com/nathanchance/android-kernel-clang
-https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/#llvm-users
-https://chromium-review.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/809774
+Fix this by using 'enum drm_mode_status' in the driver too.
 
-I think we have good reason for merging this patch.
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ drivers/gpu/drm/bochs/bochs_kms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index a24a18fbd..233980a78 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -188,7 +188,7 @@ static int bochs_connector_get_modes(struct drm_connector *connector)
+ 	return count;
+ }
+ 
+-static int bochs_connector_mode_valid(struct drm_connector *connector,
++static enum drm_mode_status bochs_connector_mode_valid(struct drm_connector *connector,
+ 				      struct drm_display_mode *mode)
+ {
+ 	struct bochs_device *bochs =
+-- 
+2.17.0
