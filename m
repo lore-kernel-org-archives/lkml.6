@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933691AbeDXNtG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:49:06 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50923 "EHLO
+        id S1758242AbeDXNt1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:49:27 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40733 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933668AbeDXNQV (ORCPT
+        with ESMTP id S933551AbeDXNQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:16:21 -0400
-X-Google-Smtp-Source: AIpwx48dveVE7U0Nfo8GpKZfGc9ndoN/uNZwCQVksKhVH3wmKft5aFuJ6/BNa6kbsJ5sq2P7kuuCdw==
+        Tue, 24 Apr 2018 09:16:19 -0400
+X-Google-Smtp-Source: AIpwx4/sVYvWAEhfaTUdVEYQ2Ma7YCr9dfvBw3OBc9Ksc36J3+jUXMUm17j9yXRzNH+KFFS0ti/Vgw==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>, netdev@vger.kernel.org
-Subject: [PATCH] amd-xgbe: fix xgbe_xmit()'s return type
-Date: Tue, 24 Apr 2018 15:16:18 +0200
-Message-Id: <20180424131618.3455-1-luc.vanoostenryck@gmail.com>
+        Vince Bridgers <vbridger@opensource.altera.com>,
+        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org
+Subject: [PATCH] altera-tse: fix tse_start_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:16:16 +0200
+Message-Id: <20180424131616.3406-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -28,21 +29,21 @@ Fix this by returning 'netdev_tx_t' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/net/ethernet/amd/xgbe/xgbe-drv.c | 2 +-
+ drivers/net/ethernet/altera/altera_tse_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
-index 7c204f05b..9dc263dda 100644
---- a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
-@@ -1962,7 +1962,7 @@ static int xgbe_close(struct net_device *netdev)
- 	return 0;
- }
- 
--static int xgbe_xmit(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t xgbe_xmit(struct sk_buff *skb, struct net_device *netdev)
+diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
+index baca8f704..c266af289 100644
+--- a/drivers/net/ethernet/altera/altera_tse_main.c
++++ b/drivers/net/ethernet/altera/altera_tse_main.c
+@@ -565,7 +565,7 @@ static irqreturn_t altera_isr(int irq, void *dev_id)
+  * physically contiguous fragment starting at
+  * skb->data, for length of skb_headlen(skb).
+  */
+-static int tse_start_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t tse_start_xmit(struct sk_buff *skb, struct net_device *dev)
  {
- 	struct xgbe_prv_data *pdata = netdev_priv(netdev);
- 	struct xgbe_hw_if *hw_if = &pdata->hw_if;
+ 	struct altera_tse_private *priv = netdev_priv(dev);
+ 	unsigned int txsize = priv->tx_ring_size;
 -- 
 2.17.0
