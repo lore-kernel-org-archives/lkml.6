@@ -1,161 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeDXToa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:44:30 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38825 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751460AbeDXToY (ORCPT
+        id S1751561AbeDXTqs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:46:48 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:45921 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeDXTqn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:44:24 -0400
-X-Google-Smtp-Source: AIpwx4+gvWP2BbbEsVRlAquQDiXp6iTvdzWhyaBiJSha0dM4MyOPvg1TrrYTH4m4+E5dHf/BIG3/Bg==
-Date: Tue, 24 Apr 2018 12:44:22 -0700 (PDT)
-X-Google-Original-Date: Tue, 24 Apr 2018 12:43:25 PDT (-0700)
-Subject: Re: [PATCH v5 0/2] perf: riscv: Preliminary Perf Event Support on RISC-V
-In-Reply-To: <661405fd-7b23-5f95-568d-0e2eb1925217@wdc.com>
-CC: alankao@andestech.com, albert@sifive.com, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, sols@sifive.com, corbet@lwn.net,
-        linux-riscv@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, greentime@andestech.com,
-        nickhu@andestech.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: atish.patra@wdc.com
-Message-ID: <mhng-355dc09a-ef4a-4cb0-b7fe-c2ac57a04a5c@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 24 Apr 2018 15:46:43 -0400
+X-Google-Smtp-Source: AB8JxZog3mlli55FQNa7Ga2mrgrMUwffKruvu3JLhxbD70mhILAWDaC7zw4xtA9gj9mfW52vMAJL3g==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] PM / devfreq: Drop custom MIN/MAX macros
+Date: Tue, 24 Apr 2018 12:46:39 -0700
+Message-Id: <20180424194639.22804-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 12:27:26 PDT (-0700), atish.patra@wdc.com wrote:
-> On 4/24/18 11:07 AM, Atish Patra wrote:
->> On 4/19/18 4:28 PM, Alan Kao wrote:
->>> This implements the baseline PMU for RISC-V platforms.
->>>
->>> To ease future PMU portings, a guide is also written, containing
->>> perf concepts, arch porting practices and some hints.
->>>
->>> Changes in v5:
->>>    - Fix patch errors from checkpatch.pl.
->>>
->>> Changes in v4:
->>>    - Fix several compilation errors.  Sorry for that.
->>>    - Raise a warning in the write_counter body.
->>>
->>> Changes in v3:
->>>    - Fix typos in the document.
->>>    - Change the initialization routine from statically assigning PMU to
->>>      device-tree-based methods, and set default to the PMU proposed in
->>>      this patch.
->>>
->>> Changes in v2:
->>>    - Fix the bug reported by Alex, which was caused by not sufficient
->>>      initialization.  Check https://lkml.org/lkml/2018/3/31/251 for the
->>>      discussion.
->>>
->>> Alan Kao (2):
->>>     perf: riscv: preliminary RISC-V support
->>>     perf: riscv: Add Document for Future Porting Guide
->>>
->>>    Documentation/riscv/pmu.txt         | 249 ++++++++++++++
->>>    arch/riscv/Kconfig                  |  13 +
->>>    arch/riscv/include/asm/perf_event.h |  79 ++++-
->>>    arch/riscv/kernel/Makefile          |   1 +
->>>    arch/riscv/kernel/perf_event.c      | 485 ++++++++++++++++++++++++++++
->>>    5 files changed, 823 insertions(+), 4 deletions(-)
->>>    create mode 100644 Documentation/riscv/pmu.txt
->>>    create mode 100644 arch/riscv/kernel/perf_event.c
->>>
->> Most of the perf tests either pass or fail because of unsupported
->> event/trace point which is fine.
->>
->> However, I got an rcu-stall for the test "47: Event times".
->> # ./perf test -v 47
->> 47: Event times                                :
->> --- start ---
->> test child forked, pid 2774
->> attaching to spawned child, enable on exec
->>      OK    : ena 2243000, run 2243000
->> attaching to current thread as enabled
->>      OK    : ena 19000, run 19000
->> attaching to current thread as disabled
->>      OK    : ena 5000, run 5000
->> attaching to CPU 0 as enabled
->> [ 1001.466578] INFO: rcu_sched self-detected stall on CPU
->> [ 1001.470947]  4-....: (29999 ticks this GP) idle=5fa/140000000000001/0
->> softirq=19762/19762 fqs=14602
->> [ 1001.480053]   (t=30001 jiffies g=3471 c=3470 q=125)
->> [ 1001.484917] Task dump for CPU 4:
->> [ 1001.488129] perf            R  running task        0  2774   2773
->> 0x00000008
->> [ 1001.495161] Call Trace:
->> [ 1001.497606] [<000000006a3d4f87>] walk_stackframe+0x0/0xc0
->> [ 1001.502980] [<000000004b4b0780>] show_stack+0x3c/0x46
->> [ 1001.508024] [<0000000060c96ab8>] sched_show_task+0xd0/0x122
->> [ 1001.513573] [<000000007d8bd54e>] dump_cpu_task+0x50/0x5a
->> [ 1001.518870] [<0000000053990e11>] rcu_dump_cpu_stacks+0x98/0xd2
->> [ 1001.524685] [<00000000fe94c593>] rcu_check_callbacks+0x614/0x822
->> [ 1001.530680] [<0000000057688dd3>] update_process_times+0x38/0x6a
->> [ 1001.536585] [<0000000063a96de0>] tick_periodic+0x58/0xd8
->> [ 1001.541876] [<0000000013d712f1>] tick_handle_periodic+0x2e/0x7c
->> [ 1001.547780] [<000000009e2ef428>] riscv_timer_interrupt+0x34/0x3c
->> [ 1001.553774] [<00000000ff6b1f18>] riscv_intc_irq+0xbc/0xe0
->> [ 1001.559153] [<00000000c8614c3b>] ret_from_exception+0x0/0xc
->>
->> It is quite possible that we don't support some dependency
->> infrastructure. I am looking into it.
->>
->> Regards,
->> Atish
->>
->>
->>
->>
->>
->
-> Got it working. The test tries to attach the event to CPU0 which doesn't
-> exist in HighFive Unleashed. Changing it to cpu1 works.
->
-> diff --git a/tools/perf/tests/event-times.c b/tools/perf/tests/event-times.c
-> index 1a2686f..eb11632f 100644
-> --- a/tools/perf/tests/event-times.c
-> +++ b/tools/perf/tests/event-times.c
-> @@ -113,9 +113,9 @@ static int attach__cpu_disabled(struct perf_evlist
-> *evlist)
->          struct cpu_map *cpus;
->          int err;
->
-> -       pr_debug("attaching to CPU 0 as enabled\n");
-> +       pr_debug("attaching to CPU 1 as disabled\n");
->
-> -       cpus = cpu_map__new("0");
-> +       cpus = cpu_map__new("1");
->          if (cpus == NULL) {
->                  pr_debug("failed to call cpu_map__new\n");
->                  return -1;
-> @@ -142,9 +142,9 @@ static int attach__cpu_enabled(struct perf_evlist
-> *evlist)
->          struct cpu_map *cpus;
->          int err;
->
-> -       pr_debug("attaching to CPU 0 as enabled\n");
-> +       pr_debug("attaching to CPU 1 as enabled\n");
->
-> -       cpus = cpu_map__new("0");
-> +       cpus = cpu_map__new("1");
->          if (cpus == NULL) {
->                  pr_debug("failed to call cpu_map__new\n");
->                  return -1;
->
->
-> Palmer,
-> Would it be better to officially document it somewhere that CPU0 doesn't
-> exist in the HighFive Unleashed board ?
-> I fear that there will be other standard tests/code path that may fail
-> because of inherent assumption of cpu0 presence.
+Drop the custom MIN/MAX macros in favour of the standard min/max from
+kernel.h
 
-I think the best way to fix this is to just have BBL (or whatever the 
-bootloader is) renumber the CPUs so they're contiguous and begin with 0.  
-Documenting it it just a way to tell people their code needs to be changed, 
-it'll still break.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/devfreq/devfreq.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index fe2af6aa88fc..2067cd229ce3 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -28,9 +28,6 @@
+ #include <linux/of.h>
+ #include "governor.h"
+ 
+-#define MAX(a,b)	((a > b) ? a : b)
+-#define MIN(a,b)	((a < b) ? a : b)
+-
+ static struct class *devfreq_class;
+ 
+ /*
+@@ -280,8 +277,8 @@ int update_devfreq(struct devfreq *devfreq)
+ 	 * max_freq
+ 	 * min_freq
+ 	 */
+-	max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
+-	min_freq = MAX(devfreq->scaling_min_freq, devfreq->min_freq);
++	max_freq = min(devfreq->scaling_max_freq, devfreq->max_freq);
++	min_freq = max(devfreq->scaling_min_freq, devfreq->min_freq);
+ 
+ 	if (min_freq && freq < min_freq) {
+ 		freq = min_freq;
+@@ -1149,7 +1146,7 @@ static ssize_t min_freq_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct devfreq *df = to_devfreq(dev);
+ 
+-	return sprintf(buf, "%lu\n", MAX(df->scaling_min_freq, df->min_freq));
++	return sprintf(buf, "%lu\n", max(df->scaling_min_freq, df->min_freq));
+ }
+ 
+ static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
+@@ -1185,7 +1182,7 @@ static ssize_t max_freq_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct devfreq *df = to_devfreq(dev);
+ 
+-	return sprintf(buf, "%lu\n", MIN(df->scaling_max_freq, df->max_freq));
++	return sprintf(buf, "%lu\n", min(df->scaling_max_freq, df->max_freq));
+ }
+ static DEVICE_ATTR_RW(max_freq);
+ 
+-- 
+2.16.2
