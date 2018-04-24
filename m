@@ -1,111 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752538AbeDXVIx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 17:08:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42970 "EHLO
+        id S1751301AbeDXVJw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 17:09:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44048 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752045AbeDXVIK (ORCPT
+        with ESMTP id S1750846AbeDXVJt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:08:10 -0400
+        Tue, 24 Apr 2018 17:09:49 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E8EA5601CF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH v2 2/2] regulator: add QCOM RPMh regulator driver
+To: Mark Brown <broonie@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>, Matthias Kaehlcke <mka@chromium.org>
+References: <cover.1523673467.git.collinsd@codeaurora.org>
+ <4b45f41996ea3344340e44fab2dc9e487572e209.1523673467.git.collinsd@codeaurora.org>
+ <CAD=FV=XKYCDtF93RtYi+dokR2BcT-z6Ex3UjgJ0ia_kF=847eA@mail.gmail.com>
+ <4e3353fe-ebb5-46bb-aa58-49ad04c4d9db@codeaurora.org>
+ <CAD=FV=W28_exRv+H0MJvPnHWGEeUG=SMKr=UqEKpBzkH44Fzmg@mail.gmail.com>
+ <132ab845-52d6-6192-4d8c-5a9c95410688@codeaurora.org>
+ <20180424174507.GI22073@sirena.org.uk>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <20a8f736-2687-f14f-eaa1-2b2c06eed629@codeaurora.org>
+Date: Tue, 24 Apr 2018 14:09:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180424174507.GI22073@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Tue, 24 Apr 2018 14:08:09 -0700
-From: Subhash Jadavani <subhashj@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-scsi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        linux-scsi-owner@vger.kernel.org
-Subject: Re: [PATCH 2/3] scsi: ufs: Extract devfreq registration
-In-Reply-To: <20180424002016.9205-3-bjorn.andersson@linaro.org>
-References: <20180424002016.9205-1-bjorn.andersson@linaro.org>
- <20180424002016.9205-3-bjorn.andersson@linaro.org>
-Message-ID: <41c6fd36826ee853c86b3fb3e069903c@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-23 17:20, Bjorn Andersson wrote:
-> Failing to register with devfreq leaves hba->devfreq assigned, which
-> causes the error path to dereference the ERR_PTR(). Rather than bolting
-> on more conditionals, move the call of devm_devfreq_add_device() into
-> it's own function and only update hba->devfreq once it's successfully
-> registered.
+On 04/24/2018 10:45 AM, Mark Brown wrote:
+>>> You'd need to ask Mark if he's OK with it, but a option #3 is to add a
+>>> patch to your series fix the regulator framework to try setting the
+>>> voltage if _regulator_get_voltage() fails.  Presumably in
+>>> machine_constraints_voltage() you'd now do something like:
+>>>
+>>>   int target_min, target_max;
+>>>   int current_uV = _regulator_get_voltage(rdev);
+>>>   if (current_uV < 0) {
+>>>     /* Maybe this regulator's hardware can't be read and needs to be initted */
+>>>     _regulator_do_set_voltage(
+>>>       rdev, rdev->constraints->min_uV, rdev->constraints->min_uV);
+>>>     current_uV = _regulator_get_voltage(rdev);
+>>>   }
+>>>   if (current_uV < 0) {
+>>>     rdev_err(rdev,
+>>>       "failed to get the current voltage(%d)\n",
+>>>       current_uV);
+>>>       return current_uV;
+>>>   }
 > 
-> The subsequent patch builds upon this to make UFS actually work again,
-> as it's been broken since f1d981eaecf8 ("PM / devfreq: Use the 
-> available
-> min/max frequency")
+>>> If Mark doesn't like that then I guess I'd be OK w/ initting it to 0
+>>> but this needs to be documented _somewhere_ (unlike for bypass it's
+>>> not obvious, so you need to find someplace to put it).  I'd rather not
+>>> hack the DT to deal with our software limitations.
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 31 ++++++++++++++++++++++---------
->  1 file changed, 22 insertions(+), 9 deletions(-)
+>> I'm not opposed to your option #3 though it does seem a little hacky and
+>> tailored to the qcom_rpmh-regulator specific case.  Note that I think it
+>> would be better to vote for min_uV to max_uV than min_uV to min_uV though.
 > 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 8f22a980b1a7..2253f24309ec 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -1255,6 +1255,26 @@ static struct devfreq_dev_profile 
-> ufs_devfreq_profile = {
->  	.get_dev_status	= ufshcd_devfreq_get_dev_status,
->  };
+>> Mark, what are your thoughts on the best way to handle this situation?
 > 
-> +static int ufshcd_devfreq_init(struct ufs_hba *hba)
-> +{
-> +	struct devfreq *devfreq;
-> +	int ret;
-> +
-> +	devfreq = devm_devfreq_add_device(hba->dev,
-> +			&ufs_devfreq_profile,
-> +			"simple_ondemand",
-> +			NULL);
-> +	if (IS_ERR(devfreq)) {
-> +		ret = PTR_ERR(devfreq);
-> +		dev_err(hba->dev, "Unable to register with devfreq %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	hba->devfreq = devfreq;
-> +
-> +	return 0;
-> +}
-> +
->  static void __ufshcd_suspend_clkscaling(struct ufs_hba *hba)
->  {
->  	unsigned long flags;
-> @@ -6399,16 +6419,9 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
->  				sizeof(struct ufs_pa_layer_attr));
->  			hba->clk_scaling.saved_pwr_info.is_valid = true;
->  			if (!hba->devfreq) {
-> -				hba->devfreq = devm_devfreq_add_device(hba->dev,
-> -							&ufs_devfreq_profile,
-> -							"simple_ondemand",
-> -							NULL);
-> -				if (IS_ERR(hba->devfreq)) {
-> -					ret = PTR_ERR(hba->devfreq);
-> -					dev_err(hba->dev, "Unable to register with devfreq %d\n",
-> -							ret);
-> +				ret = ufshcd_devfreq_init(hba);
-> +				if (ret)
->  					goto out;
-> -				}
->  			}
->  			hba->clk_scaling.is_allowed = true;
->  		}
+> I think that's probably only OK if we have a specific error code for the
+> regulator being limited in this way otherwise our error handling for I/O
+> problems involves us trying to reconfigure supplies which seems like it
+> would be risky.  
 
-Looks good to me.
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+Would you be ok with -EAGAIN being used for this purpose?
+
+Thanks,
+David
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
