@@ -1,77 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934384AbeDXNeD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:34:03 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:37423 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934443AbeDXNd1 (ORCPT
+        id S934466AbeDXNem (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:34:42 -0400
+Received: from mail-pf0-f178.google.com ([209.85.192.178]:44826 "EHLO
+        mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933922AbeDXNeg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:33:27 -0400
-X-Google-Smtp-Source: AIpwx4/cIaCVaTvziXSRCB+FOqkA5Bw8b0iuGRVMO8BNC2CZ7efqZaF2gz+9N048NA7TSZ3adJG/LQ==
-Date: Tue, 24 Apr 2018 14:33:25 +0100
-From: Matt Fleming <matt@codeblueprint.co.uk>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Galbraith <umgwanakikbuti@gmail.com>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-Message-ID: <20180424133325.GA3179@codeblueprint.co.uk>
-References: <20180417142119.GA4511@codeblueprint.co.uk>
- <20180420095005.GH4064@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420095005.GH4064@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24+42 (6e565710a064) (2015-08-30)
+        Tue, 24 Apr 2018 09:34:36 -0400
+X-Google-Smtp-Source: AIpwx48O+a/vjHOvPLW8fjdxhgXKpyiuE7Pfe6qwIkRTQ0uKYslZAVh1eDKhIVl4Au6N3YKPoek6gQ==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [RFC 00/13] arm64: allwinner: Add A64 DE2 pipeline support
+Date: Tue, 24 Apr 2018 19:04:12 +0530
+Message-Id: <20180424133425.24291-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr, at 11:50:05AM, Peter Zijlstra wrote:
-> On Tue, Apr 17, 2018 at 03:21:19PM +0100, Matt Fleming wrote:
-> > Hi guys,
-> > 
-> > We've seen a bug in one of our SLE kernels where the cpu stopper
-> > thread ("migration/15") is entering idle balance. This then triggers
-> > active load balance.
-> > 
-> > At the same time, a task on another CPU triggers a page fault and NUMA
-> > balancing kicks in to try and migrate the task closer to the NUMA node
-> > for that page (we're inside stop_two_cpus()). This faulting task is
-> > spinning in try_to_wake_up() (inside smp_cond_load_acquire(&p->on_cpu,
-> > !VAL)), waiting for "migration/15" to context switch.
-> > 
-> > Unfortunately, because "migration/15" is doing active load balance
-> > it's spinning waiting for the NUMA-page-faulting CPU's stopper lock,
-> > which is already held (since it's inside stop_two_cpus()).
-> > 
-> > Deadlock ensues.
-> 
-> 
-> So if I read that right, something like the following happens:
-> 
-> CPU0					CPU1
-> 
-> schedule(.prev=migrate/0)		<fault>
->   pick_next_task			  ...
->     idle_balance			    migrate_swap()
->       active_balance			      stop_two_cpus()
-> 						spin_lock(stopper0->lock)
-> 						spin_lock(stopper1->lock)
-> 						ttwu(migrate/0)
-> 						  smp_cond_load_acquire() -- waits for schedule()
->         stop_one_cpu(1)
-> 	  spin_lock(stopper1->lock) -- waits for stopper lock
+Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
 
-Yep, that's exactly right.
+A64 DE2 behaviour similar to Allwinner A83T where mixer0, connected to tcon0 with
+RGB, LVDS MIPI-DSI and mixer1, connected to tcon1 with HDMI.
+This series merely concentrated on HDMI pipeline and rest will add eventually.
 
-> Fix _this_ deadlock by taking out the wakeups from under stopper->lock.
-> I'm not entirely sure there isn't more dragons here, but this particular
-> one seems fixable by doing that.
-> 
-> Is there any way you can reproduce/test this?
+patch 1: dt-bindings for a64 DE2 CCU
 
-I'm afraid I don't have any way to test this, but I can ask the
-customer that reported it if they can.
+patch 2: a64 DE2 CCU node addition
 
-Either way, this fix looks good to me.
+patch 3: dt-bindings for a64 DE2 pipeline
+
+patch 4 - 5: dt-bindings for a64 mixer0 and tcon-lcd
+
+patch 6: a64 DE2 pipeline node addition
+
+patch 7 - 8: dt-bindings for a64 HDMI and HDMI PHY
+
+patch 9: a64 HDMI nodes addition
+
+patch 10 - 11: dt-bindings for a64 mixer1 and tcon-tv
+
+patch 12: a64 HDMI pipeline
+
+patch 13: enable HDMI out on bananpi-m64
+
+Tested HDMI on bananapi-m64 (along with DE2 SRAM C changes from [1]
+thread), able to detect the HDMI but, no penguins on screen.
+
+Request for any suggestions.
+
+Test log on Bananpi-m64:
+[    0.247631] sun4i-drm display-engine: bound 1100000.mixer (ops sun8i_mixer_ops)
+[    0.256717] sun4i-drm display-engine: bound 1200000.mixer (ops sun8i_mixer_ops)
+[    0.256783] sun4i-tcon 1c0c000.lcd-controller: Missing LVDS properties, Please upgrade your DT
+[    0.256792] sun4i-tcon 1c0c000.lcd-controller: LVDS output disabled
+[    0.257081] sun4i-drm display-engine: No panel or bridge found... RGB output disabled
+[    0.257099] sun4i-drm display-engine: bound 1c0c000.lcd-controller (ops sun4i_tcon_ops)
+[    0.257273] sun4i-drm display-engine: No panel or bridge found... RGB output disabled
+[    0.257288] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops sun4i_tcon_ops)
+[    0.258176] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller v1.32a with HDCP (sun8i_dw_hdmi_p)
+[    0.258596] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C bus driver
+[    0.259188] sun4i-drm display-engine: bound 1ee0000.hdmi (ops sun8i_dw_hdmi_ops)
+[    0.259199] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    0.259205] [drm] No driver support for vblank timestamp query.
+[    0.259308] [drm] Cannot find any crtc or sizes
+[    0.259824] [drm] Initialized sun4i-drm 1.0.0 20150629 for display-engine on minor 0
+
+[1] https://lkml.org/lkml/2018/3/16/1096
+
+Jagan Teki (13):
+  dt-bindings: clock: Add compatible for A64 DE2 CCU
+  arm64: dts: allwinner: a64: Add DE2 CCU
+  bindings: display: Add compatible for A64 DE2 pipeline
+  bindings: display: Add compatible for A64 Mixer0
+  bindings: display: Add compatible for A64 tcon-lcd
+  arm64: dts: allwinner: a64: Add DE2 pipeline
+  bindings: display: Add compatible for A64 HDMI
+  bindings: display: Add compatible for A64 HDMI PHY
+  arm64: dts: allwinner: a64: Add HDMI support
+  bindings: display: Add compatible for A64 Mixer1
+  bindings: display: Add compatible for A64 tcon-tv
+  arm64: dts: allwinner: a64: Add HDMI pipeline
+  arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
+
+ .../devicetree/bindings/clock/sun8i-de2.txt        |   1 +
+ .../bindings/display/sunxi/sun4i-drm.txt           |   7 +
+ .../boot/dts/allwinner/sun50i-a64-bananapi-m64.dts |  26 +++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 181 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |   1 +
+ include/dt-bindings/clock/sun50i-a64-ccu.h         |   2 +
+ 6 files changed, 218 insertions(+)
+
+-- 
+2.14.3
