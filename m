@@ -1,121 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeDXTWY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:22:24 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37722 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeDXTWX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:22:23 -0400
-Date: Tue, 24 Apr 2018 21:22:18 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Frederic Weisbecker <frederic@kernel.org>
-cc: "Wan, Kaike" <kaike.wan@intel.com>,
-        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        "Fleck, John" <john.fleck@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH] tick/sched: Do not mess with an enqueued hrtimer
-Message-ID: <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1751957AbeDXTWa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:22:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750735AbeDXTWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:22:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A0AB217BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 24 Apr 2018 15:22:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>, tglx@linutronix.de,
+        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel.opensrc@gmail.com, joelaf@google.com,
+        mathieu.desnoyers@efficios.com, baohong.liu@intel.com,
+        rajvi.jingar@intel.com, julia@ni.com, fengguang.wu@intel.com,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH 0/2] selftests: tracing: Update inter-event testcases
+Message-ID: <20180424152221.7049b706@gandalf.local.home>
+In-Reply-To: <152292049091.15769.13306554953968999494.stgit@devbox>
+References: <152292049091.15769.13306554953968999494.stgit@devbox>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kaike reported that in tests rdma hrtimers occasionaly stopped working. He
-did great debugging, which provided enough context to decode the problem.
+On Thu,  5 Apr 2018 18:28:11 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-CPU 3			     	      	     CPU 2
+> Hi,
+> 
+> I've fixed a testcase for inter-event extended error
+> and added a testcase for multiple actions on trigger,
+> which is based on what Tom shown in his mail.
+> 
+> This series can be applied on Steven's tracing repo.
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
+> ftrace/core
+> 
+> Tom, could you review it?
 
-idle
-start sched_timer expires = 712171000000
- queue->next = sched_timer
-					    start rdmavt timer. expires = 712172915662
-					    lock(baseof(CPU3))
-tick_nohz_stop_tick()
-tick = 716767000000			    timerqueue_add(tmr)
+Even without Tom's review. I took both patches.
 
-hrtimer_set_expires(sched_timer, tick);
-  sched_timer->expires = 716767000000  <---- FAIL
-					     if (tmr->expires < queue->next->expires)
-hrtimer_start(sched_timer)		          queue->next = tmr;
-lock(baseof(CPU3))
-					     unlock(baseof(CPU3))
-timerqueue_remove()
-timerqueue_add()
+Thanks Masami!
 
-ts->sched_timer is queued and queue->next is pointing to it, but then
-ts->sched_timer.expires is modified.
-
-This not only corrupts the ordering of the timerqueue RB tree, it also
-makes CPU2 see the new expiry time of timerqueue->next->expires when
-checking whether timerqueue->next needs to be updated. So CPU2 sees that
-the rdma timer is earlier than timerqueue->next and sets the rdma timer as
-new next.
-
-Depending on whether it had also seen the new time at RB tree enqueue, it
-might have queued the rdma timer at the wrong place and then after removing
-the sched_timer the RB tree is completely hosed.
-
-The problem was introduced with a commit which tried to solve inconsistency
-between the hrtimer in the tick_sched data and the underlying hardware
-clockevent. It split out hrtimer_set_expires() to store the new tick time
-in both the NOHZ and the NOHZ + HIGHRES case, but missed the fact that in
-the NOHZ + HIGHRES case the hrtimer might still be queued.
-
-Use hrtimer_start(timer, tick...) for the NOHZ + HIGHRES case which sets
-timer->expires after canceling the timer and move the hrtimer_set_expires()
-invocation into the NOHZ only code path which is not affected as it merily
-uses the hrtimer as next event storage so code pathes can be shared with
-the NOHZ + HIGHRES case.
-
-Fixes: d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
-Reported-by: "Wan Kaike" <kaike.wan@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Marciniszyn Mike" <mike.marciniszyn@intel.com>
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: linux-rdma@vger.kernel.org
-Cc: "Dalessandro Dennis" <dennis.dalessandro@intel.com>
-Cc: "Fleck John" <john.fleck@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: "Weiny Ira" <ira.weiny@intel.com>
-Cc: "linux-rdma@vger.kernel.org"
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de
-
----
- kernel/time/tick-sched.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -804,12 +804,12 @@ static void tick_nohz_stop_tick(struct t
- 		return;
- 	}
- 
--	hrtimer_set_expires(&ts->sched_timer, tick);
--
--	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
--		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
--	else
-+	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
-+		hrtimer_start(&ts->sched_timer, tick, HRTIMER_MODE_ABS_PINNED);
-+	} else {
-+		hrtimer_set_expires(&ts->sched_timer, tick);
- 		tick_program_event(tick, 1);
-+	}
- }
- 
- static void tick_nohz_retain_tick(struct tick_sched *ts)
+-- Steve
