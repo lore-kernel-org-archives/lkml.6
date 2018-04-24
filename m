@@ -1,80 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933878AbeDXNwO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:52:14 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:48516 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933220AbeDXNQE (ORCPT
+        id S934302AbeDXNwb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:52:31 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53989 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933548AbeDXNQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:16:04 -0400
-Subject: Re: [RFC PATCH] MIPS: Oprofile: Drop support
-To: James Hogan <jhogan@kernel.org>
-CC: Ralf Baechle <ralf@linux-mips.org>, <linux-mips@linux-mips.org>,
-        Huacai Chen <chenhc@lemote.com>, <linux-kernel@vger.kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Robert Richter <rric@kernel.org>, <oprofile-list@lists.sf.net>
-References: <1524574554-7451-1-git-send-email-matt.redfearn@mips.com>
- <20180424130511.GB28813@saruman>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <5e464a40-4e4d-dde4-b5b5-ceb637dc5f38@mips.com>
-Date: Tue, 24 Apr 2018 14:15:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180424130511.GB28813@saruman>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.155.41]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1524575740-637137-13540-10775-1
-X-BESS-VER: 2018.5-r1804232011
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192328
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+        Tue, 24 Apr 2018 09:16:03 -0400
+X-Google-Smtp-Source: AIpwx4/BL5+CFGt8GsRVCvWgQyw3Ewupj54Paw4HrIp6F81X2zTzXlboLzOoX7BNpyF5UG8E7PqHSg==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>,
+        netdev@vger.kernel.org
+Subject: [PATCH] cail-hsi: fix cfhsi_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:16:00 +0200
+Message-Id: <20180424131600.3060-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, but the implementation in this
+driver returns an 'int'.
 
+Fix this by returning 'netdev_tx_t' in this driver too.
 
-On 24/04/18 14:05, James Hogan wrote:
-> On Tue, Apr 24, 2018 at 01:55:54PM +0100, Matt Redfearn wrote:
->> Since it appears that MIPS oprofile support is currently broken, core
->> oprofile is not getting many updates and not as many architectures
->> implement support for it compared to perf, remove the MIPS support.
-> 
-> That sounds reasonable to me. Any idea how long its been broken?
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ drivers/net/caif/caif_hsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sorry, not yet. I haven't yet looked into where/how it's broken that 
-would narrow that down...
-
-The other thing to bear in mind is that the userspace tools have not 
-seen any MIPS additions since 2010, the last commit being to add 1004K 
-and 34K support:
-https://sourceforge.net/p/oprofile/oprofile/ci/master/tree/events/mips/
-
-Though I'm not sure if anyone is maintaining a vendor specific fork 
-containing further support.
-
-> 
-> I'll let it sit on the list for a bit in case anybody does object and
-> wants to fix it instead.
-
-Cool, sounds good.
-
-Thanks,
-Matt
-
-> 
-> Thanks
-> James
-> 
+diff --git a/drivers/net/caif/caif_hsi.c b/drivers/net/caif/caif_hsi.c
+index 433a14b9f..a38ee7342 100644
+--- a/drivers/net/caif/caif_hsi.c
++++ b/drivers/net/caif/caif_hsi.c
+@@ -1006,7 +1006,7 @@ static void cfhsi_aggregation_tout(struct timer_list *t)
+ 	cfhsi_start_tx(cfhsi);
+ }
+ 
+-static int cfhsi_xmit(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t cfhsi_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct cfhsi *cfhsi = NULL;
+ 	int start_xfer = 0;
+-- 
+2.17.0
