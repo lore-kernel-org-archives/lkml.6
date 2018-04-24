@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933805AbeDXNRF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:17:05 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52068 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933734AbeDXNQr (ORCPT
+        id S933820AbeDXNRH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:17:07 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39607 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933576AbeDXNQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:16:47 -0400
-X-Google-Smtp-Source: AIpwx48l9hhtLqgio32xZjWgaaTYui8awSiZVseV9meABsJ3hwcit4Aja1LyfxO9YjREp6SvMt3CeQ==
+        Tue, 24 Apr 2018 09:16:54 -0400
+X-Google-Smtp-Source: AB8JxZoNB8UBvwjGxt62/bFUgphrIyDWcPI3p7/YXpqewF8se8dZ45r86dHkVXZxJvuoFqrkelJZNg==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>, netdev@vger.kernel.org
-Subject: [PATCH] net: gianfar: fix gfar_start_xmit()'s return type
-Date: Tue, 24 Apr 2018 15:16:44 +0200
-Message-Id: <20180424131644.3856-1-luc.vanoostenryck@gmail.com>
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        netdev@vger.kernel.org
+Subject: [PATCH] net: mvneta: fix mvneta_tx()'s return type
+Date: Tue, 24 Apr 2018 15:16:51 +0200
+Message-Id: <20180424131651.4004-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -28,30 +29,21 @@ Fix this by returning 'netdev_tx_t' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/net/ethernet/freescale/gianfar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvneta.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-index f27f9bae1..c97c4edfa 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -112,7 +112,7 @@
- const char gfar_driver_version[] = "2.0";
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 17a904cc6..436219e1a 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -2322,7 +2322,7 @@ static int mvneta_tx_frag_process(struct mvneta_port *pp, struct sk_buff *skb,
+ }
  
- static int gfar_enet_open(struct net_device *dev);
--static int gfar_start_xmit(struct sk_buff *skb, struct net_device *dev);
-+static netdev_tx_t gfar_start_xmit(struct sk_buff *skb, struct net_device *dev);
- static void gfar_reset_task(struct work_struct *work);
- static void gfar_timeout(struct net_device *dev);
- static int gfar_close(struct net_device *dev);
-@@ -2334,7 +2334,7 @@ static inline bool gfar_csum_errata_76(struct gfar_private *priv,
- /* This is called by the kernel when a frame is ready for transmission.
-  * It is pointed to by the dev->hard_start_xmit function pointer
-  */
--static int gfar_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t gfar_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ /* Main tx processing */
+-static int mvneta_tx(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t mvneta_tx(struct sk_buff *skb, struct net_device *dev)
  {
- 	struct gfar_private *priv = netdev_priv(dev);
- 	struct gfar_priv_tx_q *tx_queue = NULL;
+ 	struct mvneta_port *pp = netdev_priv(dev);
+ 	u16 txq_id = skb_get_queue_mapping(skb);
 -- 
 2.17.0
