@@ -1,66 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752207AbeDXEkJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 00:40:09 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34825 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbeDXEkF (ORCPT
+        id S1751534AbeDXEmO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 00:42:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58396 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751492AbeDXEmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 00:40:05 -0400
-X-Google-Smtp-Source: AB8JxZq9zd5Pn7XSnhtsX+5UlY2XW+P+vasxJiRmVMmFl2KZ7eIWWoQhts85qRgpBA8yyT60MAkRx280gK27kklEI7k=
-MIME-Version: 1.0
-In-Reply-To: <788ce3f1-6534-5c2e-1870-5ebd8ea4ae7f@gmail.com>
-References: <1524405004-10960-1-git-send-email-laoar.shao@gmail.com>
- <20180423.115821.640630949143585629.davem@davemloft.net> <788ce3f1-6534-5c2e-1870-5ebd8ea4ae7f@gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 24 Apr 2018 12:39:24 +0800
-Message-ID: <CALOAHbDpgOckQhW7_Ysi-F2HCoZW4RKSdUuvTquELJZsaMj6Lg@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: init sk_cookie for inet socket
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: David Miller <davem@davemloft.net>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 24 Apr 2018 00:42:12 -0400
+From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+To: rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc: npiggin@gmail.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, ppaidipe@linux.vnet.ibm.com,
+        svaidy@linux.vnet.ibm.com,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Subject: [PATCH] cpufreq: powernv: Fix the hardlockup by synchronus smp_call in timer interrupt
+Date: Tue, 24 Apr 2018 10:11:46 +0530
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18042404-0044-0000-0000-0000054B69B2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042404-0045-0000-0000-0000288B9A90
+Message-Id: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-23_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804240045
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 12:09 AM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
->
-> On 04/23/2018 08:58 AM, David Miller wrote:
->> From: Yafang Shao <laoar.shao@gmail.com>
->> Date: Sun, 22 Apr 2018 21:50:04 +0800
->>
->>> With sk_cookie we can identify a socket, that is very helpful for
->>> traceing and statistic, i.e. tcp tracepiont and ebpf.
->>> So we'd better init it by default for inet socket.
->>> When using it, we just need call atomic64_read(&sk->sk_cookie).
->>>
->>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
->>
->> Applied, thank you.
->>
->
-> This is adding yet another atomic_inc on a global cache line.
->
+gpstate_timer_handler() uses synchronous smp_call to set the pstate
+on the requested core. This causes the below hard lockup:
 
-That's a trade-off.
+[c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
+[c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
+[c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
+[c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
+[c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
+[c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
+[c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
+[c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
+[c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
+[c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
+--- interrupt: 901 at doorbell_global_ipi+0x34/0x50
+LR = arch_send_call_function_ipi_mask+0x120/0x130
+[c000003fe566ba50] [c00000000004876c] arch_send_call_function_ipi_mask+0x4c/0x130 (unreliable)
+[c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
+[c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
+[c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
+[c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
+[c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
+[c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
+[c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
 
-> Most applications do not need the cookie being ever set.
->
-> The existing mechanism was fine. Set it on demand.
+Fix this by using the asynchronus smp_call in the timer interrupt handler.
+We don't have to wait in this handler until the pstates are changed on
+the core. This change will not have any impact on the global pstate
+ramp-down algorithm.
 
-There are some drawback in the existing mechanism.
-- we have to set the net->cookie_gen and then sk->sk_cookie when we
-want to get the sk_cookie, that's a little expensive as well.
-  After that change, sock_gen_cookie() could be replaced by
-atomic64_read(&sk->sk_cookie) in most places.
+Reported-by: Nicholas Piggin <npiggin@gmail.com>
+Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
+Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+---
+ drivers/cpufreq/powernv-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- If the application want to get the sk_cookie, it must set it first.
-   What if the application don't have the permision to write?
-   Furthermore, maybe it is a security concern ?
-
-
-Thanks
-Yafang
+diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+index 0591874..7e0c752 100644
+--- a/drivers/cpufreq/powernv-cpufreq.c
++++ b/drivers/cpufreq/powernv-cpufreq.c
+@@ -721,7 +721,7 @@ void gpstate_timer_handler(struct timer_list *t)
+ 	spin_unlock(&gpstates->gpstate_lock);
+ 
+ 	/* Timer may get migrated to a different cpu on cpu hot unplug */
+-	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
++	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 0);
+ }
+ 
+ /*
+-- 
+1.8.3.1
