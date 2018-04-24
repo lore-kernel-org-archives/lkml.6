@@ -1,285 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932769AbeDXCbM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 22:31:12 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33828 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932688AbeDXCbI (ORCPT
+        id S932787AbeDXCbW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 22:31:22 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:60734 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932709AbeDXCbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 22:31:08 -0400
-X-Google-Smtp-Source: AIpwx48fho/FCAjGRuJwMVYtEMFY18h8+N3VOk1ZjHE8ZWRvaBch2W7/06pb+LANvBg0f9fggfH3Xw==
-Date: Mon, 23 Apr 2018 19:31:05 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc: mhocko@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, guro@fb.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaperunmap
-In-Reply-To: <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp>
-Message-ID: <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com>
-References: <20180419063556.GK17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com> <20180420082349.GW17484@dhcp22.suse.cz> <20180420124044.GA17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804212019400.84222@chino.kir.corp.google.com>
- <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 23 Apr 2018 22:31:09 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180424023107epoutp044e5ba7706a05bc181f35890f62b5ceac~oPmLNdL4W0811308113epoutp04N
+X-AuditID: b6c32a37-968579c000001030-10-5ade96e8c4a4
+Mime-Version: 1.0
+Subject: RE: [PATCH 3/6] devfreq: rk3399_dmc: remove wait for dcf irq event.
+Reply-To: myungjoo.ham@samsung.com
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "dbasehore@chromium.org" <dbasehore@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dianders@google.com" <dianders@google.com>,
+        "groek@google.com" <groek@google.com>,
+        "kernel@collabora.com" <kernel@collabora.com>,
+        Lin Huang <hl@rock-chips.com>, Chanwoo Choi <cw00.choi@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20180419104019.24406-4-enric.balletbo@collabora.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20180424023104epcms1p7935bae38d97c401b0d2a25d7b1b9ee14@epcms1p7>
+Date: Tue, 24 Apr 2018 11:31:04 +0900
+X-CMS-MailID: 20180424023104epcms1p7935bae38d97c401b0d2a25d7b1b9ee14
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-MTR: 20180424023104epcms1p7935bae38d97c401b0d2a25d7b1b9ee14
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA2VTaUwTQRR2Ot12MdasFXSCis0ajTVybGtlUTBG1FQ5xBh/WKOwgRGIPUi3
+        NWpirCZ41CMQ70K0eBFQIhS1jSiYlShRi8EbDcSDeiNGlOAB2NI2mvhrvvne99733ssMCeXX
+        JdFkodGCzUZOT0tGii/fUCbEvjvcqUv4XaFm3wtK9sm3twT7of6qhD3R3EqwTneViD3/XADs
+        9m63mB169ZFg+2tvQ7a+dS/Berd/krIPrpRL2N59zYAtvtYsnT9aW2ZrE2s9HaeB1umyal3V
+        uyXaAUeTWLv/YjXQuh8fh9peV0wWqcPJBZjLw2YFNuaa8gqN+Sl02ors1GzN7AQmlkliE2mF
+        kTPgFHphelbs4kK9v21asYHTW/1UFsfzdPy8ZLPJasGKAhNvSaFXM4wqjklIjFOp/Kd6zRyV
+        xi/JwQWDgoMoekZs/HmrR2QDbWI7iCARNQt1XeiX2sFIUk55ADrgPSWyA5KUUWPQgGdsQDOW
+        SkfHvAIMYDlFI1t7Iwzy8WjXi8sggCVULLpU2yEO1ImkSgG6+WAHEbhA6iVEvsFDIOgmQ0d3
+        +kLOE5C78tIwH0EtQI+ay0VBPgq1n+uWhnHPzROh3EhU3OmFQTwGvfjREOKjUVd3RUi/FT3p
+        PSkKGCOqBKBfT4dCgXj06mGZJIBlVAa6d6ZpuJCYmorKq8JFF6LXRz8P6yE1Gbm7y2FgE5BS
+        ogtX4sP92+p+Sf/HKWjomACCqaPR5+97ibDGc7wrNNc0JDScDuknojtHKmAJmOL4u2vHP8aO
+        v8ZOAKvBOFzEG/IxzxSp43jOwFuN+XG5JoMLDL/eGYkeUNuaLgCKBPQomfNHh05OcBv4TQYB
+        IBLSkbJrMZ06uSyP27QZm03ZZqse8wLQ+OcvhdFRuSb/XzBashmNSq1Ws7OY2RqGocfLfOl3
+        dXIqn7Pg9RgXYXM4T0RGRNvApCN99xSu83V7SkeocjKT5k9MfvZ1bc0jKGo62FbZU/V62R2f
+        fW6rt6EvtabGxy2tb+GvX4WOupyWRl1SY+33kjTwZp0yM2lANNPZdfhQ2iq7PuPs/eUfo/qX
+        rTBv7XvsKMTVnxYNLk0dXBLTcrF4m7J9ZcwXgtzSOz3j4Ly+plORtJgv4JgZ0MxzfwBJhd9O
+        0wMAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180419104056epcas2p29c74949b650fea596900e395dec662e8
+X-RootMTR: 20180419104056epcas2p29c74949b650fea596900e395dec662e8
+References: <20180419104019.24406-4-enric.balletbo@collabora.com>
+        <20180419104019.24406-1-enric.balletbo@collabora.com>
+        <CGME20180419104056epcas2p29c74949b650fea596900e395dec662e8@epcms1p7>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 22 Apr 2018, Tetsuo Handa wrote:
-
-> > I'm wondering why you do not see oom killing of many processes if the 
-> > victim is a very large process that takes a long time to free memory in 
-> > exit_mmap() as I do because the oom reaper gives up trying to acquire 
-> > mm->mmap_sem and just sets MMF_OOM_SKIP itself.
-> > 
+> We have already wait dcf done in ATF, so don't need wait dcf irq
+> in kernel, besides, clear dcf irq in kernel will import competiton
+> between kernel and ATF, only handle dcf irq in ATF is a better way.
 > 
-> We can call __oom_reap_task_mm() from exit_mmap() (or __mmput()) before
-> exit_mmap() holds mmap_sem for write. Then, at least memory which could
-> have been reclaimed if exit_mmap() did not hold mmap_sem for write will
-> be guaranteed to be reclaimed before MMF_OOM_SKIP is set.
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+
+This does not apply to 4.17-rc2 or a little less recent rc's.
+
+Would you please rebase to the latest?
+
+
+Cheers,
+MyungJoo
+
+> ---
 > 
-
-I think that's an exceptionally good idea and will mitigate the concerns 
-of others.
-
-It can be done without holding mm->mmap_sem in exit_mmap() and uses the 
-same criteria that the oom reaper uses to set MMF_OOM_SKIP itself, so we 
-don't get dozens of unnecessary oom kills.
-
-What do you think about this?  It passes preliminary testing on powerpc 
-and I'm enqueued it for much more intensive testing.  (I'm wishing there 
-was a better way to acknowledge your contribution to fixing this issue, 
-especially since you brought up the exact problem this is addressing in 
-previous emails.)
-
-
-mm, oom: fix concurrent munlock and oom reaper unmap
-
-Since exit_mmap() is done without the protection of mm->mmap_sem, it is
-possible for the oom reaper to concurrently operate on an mm until
-MMF_OOM_SKIP is set.
-
-This allows munlock_vma_pages_all() to concurrently run while the oom
-reaper is operating on a vma.  Since munlock_vma_pages_range() depends on
-clearing VM_LOCKED from vm_flags before actually doing the munlock to
-determine if any other vmas are locking the same memory, the check for
-VM_LOCKED in the oom reaper is racy.
-
-This is especially noticeable on architectures such as powerpc where
-clearing a huge pmd requires serialize_against_pte_lookup().  If the pmd
-is zapped by the oom reaper during follow_page_mask() after the check for
-pmd_none() is bypassed, this ends up deferencing a NULL ptl.
-
-Fix this by manually freeing all possible memory from the mm before doing
-the munlock and then setting MMF_OOM_SKIP.  The oom reaper can not run on
-the mm anymore so the munlock is safe to do in exit_mmap().  It also
-matches the logic that the oom reaper currently uses for determining when
-to set MMF_OOM_SKIP itself, so there's no new risk of excessive oom
-killing.
-
-Fixes: 212925802454 ("mm: oom: let oom_reap_task and exit_mmap run concurrently")
-Cc: stable@vger.kernel.org [4.14+]
-Suggested-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- include/linux/oom.h |  2 ++
- mm/mmap.c           | 39 ++++++++++++----------
- mm/oom_kill.c       | 81 ++++++++++++++++++++++++---------------------
- 3 files changed, 66 insertions(+), 56 deletions(-)
-
-diff --git a/include/linux/oom.h b/include/linux/oom.h
---- a/include/linux/oom.h
-+++ b/include/linux/oom.h
-@@ -95,6 +95,8 @@ static inline int check_stable_address_space(struct mm_struct *mm)
- 	return 0;
- }
- 
-+void __oom_reap_task_mm(struct mm_struct *mm);
-+
- extern unsigned long oom_badness(struct task_struct *p,
- 		struct mem_cgroup *memcg, const nodemask_t *nodemask,
- 		unsigned long totalpages);
-diff --git a/mm/mmap.c b/mm/mmap.c
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3015,6 +3015,27 @@ void exit_mmap(struct mm_struct *mm)
- 	/* mm's last user has gone, and its about to be pulled down */
- 	mmu_notifier_release(mm);
- 
-+	if (unlikely(mm_is_oom_victim(mm))) {
-+		/*
-+		 * Manually reap the mm to free as much memory as possible.
-+		 * Then, as the oom reaper, set MMF_OOM_SKIP to disregard this
-+		 * mm from further consideration.  Taking mm->mmap_sem for write
-+		 * after setting MMF_OOM_SKIP will guarantee that the oom reaper
-+		 * will not run on this mm again after mmap_sem is dropped.
-+		 *
-+		 * This needs to be done before calling munlock_vma_pages_all(),
-+		 * which clears VM_LOCKED, otherwise the oom reaper cannot
-+		 * reliably test it.
-+		 */
-+		mutex_lock(&oom_lock);
-+		__oom_reap_task_mm(mm);
-+		mutex_unlock(&oom_lock);
-+
-+		set_bit(MMF_OOM_SKIP, &mm->flags);
-+		down_write(&mm->mmap_sem);
-+		up_write(&mm->mmap_sem);
-+	}
-+
- 	if (mm->locked_vm) {
- 		vma = mm->mmap;
- 		while (vma) {
-@@ -3036,24 +3057,6 @@ void exit_mmap(struct mm_struct *mm)
- 	/* update_hiwater_rss(mm) here? but nobody should be looking */
- 	/* Use -1 here to ensure all VMAs in the mm are unmapped */
- 	unmap_vmas(&tlb, vma, 0, -1);
--
--	if (unlikely(mm_is_oom_victim(mm))) {
--		/*
--		 * Wait for oom_reap_task() to stop working on this
--		 * mm. Because MMF_OOM_SKIP is already set before
--		 * calling down_read(), oom_reap_task() will not run
--		 * on this "mm" post up_write().
--		 *
--		 * mm_is_oom_victim() cannot be set from under us
--		 * either because victim->mm is already set to NULL
--		 * under task_lock before calling mmput and oom_mm is
--		 * set not NULL by the OOM killer only if victim->mm
--		 * is found not NULL while holding the task_lock.
--		 */
--		set_bit(MMF_OOM_SKIP, &mm->flags);
--		down_write(&mm->mmap_sem);
--		up_write(&mm->mmap_sem);
--	}
- 	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
- 	tlb_finish_mmu(&tlb, 0, -1);
- 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -469,7 +469,6 @@ bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
- 	return false;
- }
- 
--
- #ifdef CONFIG_MMU
- /*
-  * OOM Reaper kernel thread which tries to reap the memory used by the OOM
-@@ -480,16 +479,54 @@ static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
- static struct task_struct *oom_reaper_list;
- static DEFINE_SPINLOCK(oom_reaper_lock);
- 
--static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
-+void __oom_reap_task_mm(struct mm_struct *mm)
- {
--	struct mmu_gather tlb;
- 	struct vm_area_struct *vma;
-+
-+	/*
-+	 * Tell all users of get_user/copy_from_user etc... that the content
-+	 * is no longer stable. No barriers really needed because unmapping
-+	 * should imply barriers already and the reader would hit a page fault
-+	 * if it stumbled over a reaped memory.
-+	 */
-+	set_bit(MMF_UNSTABLE, &mm->flags);
-+
-+	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
-+		if (!can_madv_dontneed_vma(vma))
-+			continue;
-+
-+		/*
-+		 * Only anonymous pages have a good chance to be dropped
-+		 * without additional steps which we cannot afford as we
-+		 * are OOM already.
-+		 *
-+		 * We do not even care about fs backed pages because all
-+		 * which are reclaimable have already been reclaimed and
-+		 * we do not want to block exit_mmap by keeping mm ref
-+		 * count elevated without a good reason.
-+		 */
-+		if (vma_is_anonymous(vma) || !(vma->vm_flags & VM_SHARED)) {
-+			const unsigned long start = vma->vm_start;
-+			const unsigned long end = vma->vm_end;
-+			struct mmu_gather tlb;
-+
-+			tlb_gather_mmu(&tlb, mm, start, end);
-+			mmu_notifier_invalidate_range_start(mm, start, end);
-+			unmap_page_range(&tlb, vma, start, end, NULL);
-+			mmu_notifier_invalidate_range_end(mm, start, end);
-+			tlb_finish_mmu(&tlb, start, end);
-+		}
-+	}
-+}
-+
-+static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
-+{
- 	bool ret = true;
- 
- 	/*
- 	 * We have to make sure to not race with the victim exit path
- 	 * and cause premature new oom victim selection:
--	 * __oom_reap_task_mm		exit_mm
-+	 * oom_reap_task_mm		exit_mm
- 	 *   mmget_not_zero
- 	 *				  mmput
- 	 *				    atomic_dec_and_test
-@@ -534,39 +571,8 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 
- 	trace_start_task_reaping(tsk->pid);
- 
--	/*
--	 * Tell all users of get_user/copy_from_user etc... that the content
--	 * is no longer stable. No barriers really needed because unmapping
--	 * should imply barriers already and the reader would hit a page fault
--	 * if it stumbled over a reaped memory.
--	 */
--	set_bit(MMF_UNSTABLE, &mm->flags);
--
--	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
--		if (!can_madv_dontneed_vma(vma))
--			continue;
-+	__oom_reap_task_mm(mm);
- 
--		/*
--		 * Only anonymous pages have a good chance to be dropped
--		 * without additional steps which we cannot afford as we
--		 * are OOM already.
--		 *
--		 * We do not even care about fs backed pages because all
--		 * which are reclaimable have already been reclaimed and
--		 * we do not want to block exit_mmap by keeping mm ref
--		 * count elevated without a good reason.
--		 */
--		if (vma_is_anonymous(vma) || !(vma->vm_flags & VM_SHARED)) {
--			const unsigned long start = vma->vm_start;
--			const unsigned long end = vma->vm_end;
--
--			tlb_gather_mmu(&tlb, mm, start, end);
--			mmu_notifier_invalidate_range_start(mm, start, end);
--			unmap_page_range(&tlb, vma, start, end, NULL);
--			mmu_notifier_invalidate_range_end(mm, start, end);
--			tlb_finish_mmu(&tlb, start, end);
--		}
--	}
- 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
- 			task_pid_nr(tsk), tsk->comm,
- 			K(get_mm_counter(mm, MM_ANONPAGES)),
-@@ -587,14 +593,13 @@ static void oom_reap_task(struct task_struct *tsk)
- 	struct mm_struct *mm = tsk->signal->oom_mm;
- 
- 	/* Retry the down_read_trylock(mmap_sem) a few times */
--	while (attempts++ < MAX_OOM_REAP_RETRIES && !__oom_reap_task_mm(tsk, mm))
-+	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
- 		schedule_timeout_idle(HZ/10);
- 
- 	if (attempts <= MAX_OOM_REAP_RETRIES ||
- 	    test_bit(MMF_OOM_SKIP, &mm->flags))
- 		goto done;
- 
--
- 	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
- 		task_pid_nr(tsk), tsk->comm);
- 	debug_show_all_locks();
+>  drivers/devfreq/rk3399_dmc.c | 53 +-----------------------------------
+>  1 file changed, 1 insertion(+), 52 deletions(-)
+> 
+> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
+> index 5dfbfa3cc878..44a379657cd5 100644
+> 
