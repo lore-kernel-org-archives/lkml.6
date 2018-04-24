@@ -1,254 +1,144 @@
 Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524766903; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524588647; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ud6J1mvkk+Fj735KvN2QKxzqrivJ51nXWSuF60Fprj8eK6tmT4Lmg6gar3bBqD27fn
-         gDVLETroSOJIvTDQgUZZepKf9VeKUDT6umaI+shfXRk6UTKIXZ9VSvOoqnjslor1NtRU
-         FN7SJDgHtaFobqw0jW10fwTlK8rCj1GS3G9rKhDzgzWcOHGiJz9Y74Jv38DNzjZxjlzd
-         zjAtS8KiVTLPDhpL0evxBnUylMirgW+x2Npu+kzPZ14rUWLPMZuk6YhjCrutYdGk1o33
-         PJur49WNK/l1pfnkSBwDgAg1l6MmK4ZwWZt6yKvXPUIstN6W2Vn89tj7i33vpKRiRceo
-         m/Kw==
+        b=QUSy6aNkbMkUEj1I88an5ausXpdJB+Db3P8+3tUfrqJoKUFT64jRYSBCz+2tPwp3x9
+         DCmy+7wK9cuWDP/YGlJi03RDg7fQaMyTu65yeOMSnf7tfU8ff83blGk7M6x2cB5Hvisz
+         rpRxTyjSaMh+/ijX+NxLBWYFt6yYHFSdUvG31LLhygtIQQ6BNtsim8Afl/JcCbRtYGlJ
+         eVrsrO9Rb6Z/UXVuSV/9NwulgNX/UNtlKmJnoizuceMxBGO2ze0WGXLNEqEkuMtjBQup
+         qudfk9nQuQzHI1elWgCpVCv07hHInF4y3llql+0CkMen6ZfcsdPVTUagDwgPpwDyyY5+
+         QYAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=2RZO4HUyEv2ELt5y9zuo3sKDB25SITCbvvsvMTZGY74=;
-        b=YYaD8bUi2jJMT7Ba5a8uvT85jZ024MRPWu8sWs4+BB+5c4I2+4u7nUnY1BNu0UJWPd
-         T6+3xMIVrG9g8LPR55cIMg3EPltv+wrQ9oRBJVWCPTqx1oKP5j9tZSGgqg082fAnB+cd
-         GRalXlXLvw5IBRHMTPQN5qB+5N6N7C84TQXY7e/nUnWxaCkj1eBKT91xcMBOiup9ohsF
-         +jPWguNngFrTBO9arRAZi1L276fk4E7XNF9loHs4P4Msis3fbvY2MqpWcAm0ZwDDgLim
-         iL3VQ5/ncSOFlkw+zNMv7+78Ief00EMzGBMT4sSQeKEZEQLUgqlgHgSaNJEzIJO3GROP
-         TIyA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:sender
+         :dkim-signature:arc-authentication-results;
+        bh=jPCElnEO6WdeP6e0BWqx2BusWWz6qbo9aVSrUMzzGuk=;
+        b=gS/VhqY/nJxe+DdMyWpzIaxl2sR5UMOW0mbdiL0T/XbNLK57ux+Lu31ogb00J8Y0Sk
+         hBdRtkhqX0ExvD78lu/H2ec+UcWGkiTTTGzMr6DpTrIL45Ac7rvvLJgNHG+fAgBwAbJN
+         QnoShYq5hKEiCmxUtCKnKElhh0khByLhbSa2hrBYyldFOxMyr9NvN8WUmCplQHiPYfnT
+         V3vUXouNkwdvqLTpuJmptZ0ZIlV36/giGY6RR3H3JMD3w2NSeO7z9ZgHu92l05etsGAC
+         aMfzN3/2YqvU4kYn9UgEgF1rPRlAPN7hLbjUagMsre8FT9y0yC26WjriZQByVbnvYVzh
+         f7zg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=U2KZtQSE;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TeYrvRrq;
+       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=U2KZtQSE;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
-X-Google-Smtp-Source: AB8JxZoOrwJqBJiQIuFkGOYREeZy+MLuzPu2k8GA6YKzkjmlM/Dr0d9fgJgI9SkG0JuDhmzJTaUZIw==
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TeYrvRrq;
+       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
+X-Google-Smtp-Source: AB8JxZoaINgkH2qVu21IgJu9rn0qqS+XTdmVf5wFOj47Zg9OOaLzf5+3OtQNfMBJINvSXj2KRZF7uA==
 Sender: Johan Hovold <jhovold@gmail.com>
-Date: Thu, 26 Apr 2018 20:21:36 +0200
 From: Johan Hovold <johan@kernel.org>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Johan Hovold <johan@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Arnd Bergmann <arnd@arndb.de>, Pavel Machek <pavel@ucw.cz>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 0/7] gnss: add new GNSS subsystem
-Message-ID: <20180426182136.GX4615@localhost>
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"H . Nikolaus Schaller" <hns@goldelico.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 6/7] dt-bindings: gnss: add sirfstar binding
+Date: Tue, 24 Apr 2018 18:34:57 +0200
+Message-Id: <20180424163458.11947-7-johan@kernel.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180424163458.11947-1-johan@kernel.org>
 References: <20180424163458.11947-1-johan@kernel.org>
- <31CF06C6-D6ED-4930-8D81-12256A518059@goldelico.com>
- <20180424175050.GG4615@localhost>
- <8F4FAF5B-AAA9-4D46-A022-99B96C74ABFA@goldelico.com>
- <20180425081120.GL4615@localhost>
- <7A11E17A-64B7-4B39-87EC-D6A52773850B@goldelico.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7A11E17A-64B7-4B39-87EC-D6A52773850B@goldelico.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598647061282688193?=
-X-GMAIL-MSGID: =?utf-8?q?1598833980543232741?=
+X-GMAIL-THRID: =?utf-8?q?1598647065272659964?=
+X-GMAIL-MSGID: =?utf-8?q?1598647065272659964?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 12:10:02PM +0200, H. Nikolaus Schaller wrote:
+Add binding for SiRFstar-based GNSS receivers.
 
-> > Am 25.04.2018 um 10:11 schrieb Johan Hovold <johan@kernel.org>:
-> > 
-> > On Tue, Apr 24, 2018 at 09:44:08PM +0200, H. Nikolaus Schaller wrote:
-> > 
-> >>> Am 24.04.2018 um 19:50 schrieb Johan Hovold <johan@kernel.org>:
+Note that while four compatible-strings are initially added representing
+devices which differ in which I/O interfaces they support, they
+otherwise essentially share the same feature set.
 
-> >> You could have simply reused what we have proposed [1] and just
-> >> adapt it to the new API instead of writing a new driver (which
-> >> is missing some features for us).
-> > 
-> > Your code was broken or needed to be updated in several ways as I
-> > pointed out in the thread you refer to.
-> 
-> No, it was not broken (it is in daily use and no practical problems
-> are known), but surely does not cover some corner-cases (e.g. races).
+Pin and supply names (and some recommended timings) vary slightly, but
+the binding recommends using a common set of names.
 
-I'd certainly be sceptical about accepting code into the kernel from
-anyone who completely ignores locking and considers concurrency to be a
-corner case that he cannot be bothered with.
+Note that the wakeup gpio is not intended to be as a wakeup source, but
+rather to detect the current power state of the device (active or
+hibernate).
 
-Sure, out-of-tree code is often sub-par, and that is partly why it
-remains out of tree.
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ .../devicetree/bindings/gnss/sirfstar.txt     | 38 +++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.txt   |  3 ++
+ 2 files changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gnss/sirfstar.txt
 
-> I said we should focus firstly on the "abstraction level". So I
-> postponed these code issues from discussion.
-> 
-> In the end you announced to provide a new kernel API which would
-> make most of the code (all tty stuff) and related problems go away
-> anyways.
-> 
-> Therefore I simply did wait for this API to come, before fixing the
-> remaining issues and submitting a new v6.
-
-Yes, and that's perfectly reasonable, but I wouldn't want to base my
-work on something in that state.
-
-> > It also did not support all those systems that use the same family of
-> > chips, but which has the WAKEUP signal connected.
-> 
-> That is simply wrong.
-> 
-> It supports them. It just does not make use of the WAKEUP signal, but
-> uses a different mechanism to detect the power state of the chip.
-
-Sure, but in a highly inefficient way since without WAKEUP you can
-never be certain that the device is in hibernate, but only assume so
-after a lengthy (as in seconds) timeout has passed without any I/O.
-
-> So our driver is more complete because it gracefully handles a
-> WAKEUP line (by ignoring it) while yours doesn't handle the opposite
-> case of a missing WAKEUP.
-
-I never claimed to support your configuration from the start, but I kept
-it in mind while implementing the framework in order to facilitate for you.
-
-Heck, besides getting the whole frame work implemented for you --
-thereby making this the closest to mainline support for your system that
-you've been over the course of the past five years or however long
-you've been at it -- there's now also an already integrated generic
-sirf driver with all the basics in place (including runtime PM, and not
-relying on legacy interfaces) that you can base your work off of.
-
-> >> "proof-of-concept" is misleading if you expect this to become
-> >> *the* Sirf driver and we are just invited to add some features
-> >> to that. Making our own work and proposals completely obsolete.
-> >> 
-> >> What I find really strange and foul play is that we are in the
-> >> review process and then comes a hidden counter-proposal by the
-> >> reviewer.
-> > 
-> > Dude, in the very same thread you refer to above, after being asked to
-> > reiterate your proposal to find and appropriate abstraction level you
-> > reply:
-> > 
-> > 	"Yes, please feel free to write patches that implement it that
-> > 	way."
-> 
-> When looking back, I understand that as that I suggested to add a "proper
-> abstraction level" (i.e. a gps framework) so that *we* can make use of
-> it.
-
-Yes, you clearly weren't interesting in doing that work yourself.
-
-> I never meant that you should completely replace our driver by an
-> incomplete solution.
-
-But surely you didn't expect your work not to require any kind of
-integration into a new framework.
-
-> > Now I've done just that for you, and then you whine about that too.
-> 
-> At the end of the thread (which I take as the result of v5 review) you said:
-> 
-> "Yeah, I think this is a dead end. We need some kind of gps framework
-> with drivers that can implement the device specific bits.
-> 
-> I may have some time to look at little closer at it this week."
-> 
-> And I answered and laid down my plans for a v6:
-> 
-> "Ok, that would be fine if we can get that!
-> 
-> For a minimal set of API I think something like this (following hci_dev) would suffice:
-> 
-> ...
-> 
-> If that would wrap all creation of some /dev/ttyGPS0 (or however it is called),
-> it would fit our needs for a driver and user-space for our system.
-> 
-> And I would be happy to get rid of creating and registering a /dev/ttyGPS0
-> in the w2sg0004 driver.
-> 
-> Then, the driver will not need to be touched if the GPS framework is improved
-> in some far future (e.g. to provide some additional ioctl for getting kalman-filtered
-> position+heading by doing sensor fusion with some iio-based accelerometer/gyro). 
-> 
-> So I am looking forward to some framework for review and integration testing."
-> 
-> I think it was clear and understandable what I expected (a new framework instead
-> of creating ttys in the driver) and what I did not (a replacement of our
-> w2sg0004 proposal with a variant with missing features).
-
-Sounds like you think you've given me some kind of order that I had to
-fulfil. Sorry, but it doesn't work that way.
-
-> The problem I have with this sort of review process is that I now have to
-> reintegrate the missing pieces of handling the non-WAKEUP case and LNA
-> control and rfkill into your code.
-
-Yes, you're not getting everything for free.
-
-Besides, I have concerns about using rfkill for GNSS (which does not
-transmit any radio), and external LNA control is not something that is
-a chip feature but rather something that should be handled by the
-framework.
-
-So this wouldn't be a simple code dump for you anyway.
-
-> Instead of stripping down our code and adjusting to your API.
-> 
-> Alternatively I have to wait until you present some code of which you
-> think it works. Would you also test it? Probably no. Because of lack
-> of hardware.  So I have to test your new code in an area where I have
-> well-hung code being in daily use.
-
-Of course I'll test it, but I can't say solving your problems for you
-again is at the top of my list, if it ever were.
-
-> And your new code may still be incomplete wrt. what our driver
-> provides to users.
-> 
-> I hope that you understand that this is now more work for me in any
-> case...
-
-I fail to see how not having to implement a GNSS framework can be
-considered more work for you.
-
-> So in the end I will have:
-> * a new but still incomplete driver that is a regression compared to
-> our old driver
-
-It's not a regression, the new mainline driver just wouldn't support
-your configuration yet.
-
-> * even more testing work in addition 5 years urging for acceptance
-> * no appreciation because you sign off and author everything
-
-You'd sign off on your own work (or was it really Neil Brown who
-implemented the driver that you've since been adapting?).
-
-There's still room for adding support for sirf configurations without
-WAKEUP, generic LNA support, and possibly rfkill.
-
-> Is this a good deal or a reason to contribute to our common project?
-> 
-> If you want an example how to get rid of volunteers contributing, this may
-> be one...
-
-Come on...
-
-> > SiRF is a very common chip and I wanted to make sure that the common
-> > setup with WAKEUP connected was supported from the start. I'll get to
-> > your configuration in time too.
-> 
-> As said, our driver would also work if the WAKEUP line exists, and is
-> described in DT, but is broken.
-> 
-> So we will probably stay with our out-of the kernel driver for the
-> time being.
-
-Ok.
-
-Johan
+diff --git a/Documentation/devicetree/bindings/gnss/sirfstar.txt b/Documentation/devicetree/bindings/gnss/sirfstar.txt
+new file mode 100644
+index 000000000000..5e6a02aec49a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gnss/sirfstar.txt
+@@ -0,0 +1,38 @@
++SiRFstar-based GNSS Receiver DT binding
++
++SiRFstar chipsets are used in GNSS-receiver modules produced by several
++vendors and can use UART, SPI or I2C interfaces.
++
++Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
++properties.
++
++Required Properties:
++
++- compatible 	: Must be one of
++
++			"fastrax,uc430"
++			"linx,r4"
++			"wi2wi,w2sg0008i"
++			"wi2wi,w2sg0084i"
++
++- vcc-supply	: Main voltage regulator (3V3_IN, VDD, VCC)
++
++Optional Properties:
++
++- enable-gpios	: GPIO used to power on and off device (ON_OFF)
++- wakeup-gpios	: GPIO used to determine device power state (WAKEUP, RFPWRUP)
++- timepulse-gpios	: Timepulse (e.g 1PPS) GPIO (1PPS, TM)
++
++Example:
++
++serial@1234 {
++	compatible = "ns16550a";
++
++	gnss {
++		compatible = "wi2wi,w2sg0084i";
++
++		vcc-supply = <&gnss_reg>;
++		enable-gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
++		wakeup-gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
++	};
++};
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 2128dfdf73f1..ddd81c82082d 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -120,6 +120,7 @@ excito	Excito
+ ezchip	EZchip Semiconductor
+ fairphone	Fairphone B.V.
+ faraday	Faraday Technology Corporation
++fastrax	Fastrax Oy
+ fcs	Fairchild Semiconductor
+ firefly	Firefly
+ focaltech	FocalTech Systems Co.,Ltd
+@@ -197,6 +198,7 @@ licheepi	Lichee Pi
+ linaro	Linaro Limited
+ linksys	Belkin International, Inc. (Linksys)
+ linux	Linux-specific binding
++linx	Linx Technologies
+ lltc	Linear Technology Corporation
+ lsi	LSI Corp. (LSI Logic)
+ lwn	Liebherr-Werk Nenzing GmbH
+@@ -390,6 +392,7 @@ vivante	Vivante Corporation
+ vocore VoCore Studio
+ voipac	Voipac Technologies s.r.o.
+ vot	Vision Optical Technology Co., Ltd.
++wi2wi	Wi2Wi
+ wd	Western Digital Corp.
+ wetek	WeTek Electronics, limited.
+ wexler	Wexler
+-- 
+2.17.0
