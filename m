@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932845AbeDXDzO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 23:55:14 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:26822 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932729AbeDXDzL (ORCPT
+        id S932869AbeDXDzx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 23:55:53 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:53633 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932729AbeDXDzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 23:55:11 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180424035509epoutp016f7faee70ba690bf8393bdb572690a7d~oQviWn1o33264632646epoutp017
-X-AuditID: b6c32a39-8a5ff70000000fed-28-5adeaa9a86b9
+        Mon, 23 Apr 2018 23:55:48 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180424035545epoutp03b1a6ceb55d622a3041cd77c04a4848f1~oQwEbLb2Q1597115971epoutp031
+X-AuditID: b6c32a39-8a5ff70000000fed-b2-5adeaabeace5
 MIME-version: 1.0
 Content-transfer-encoding: 8BIT
 Content-type: text/plain; charset="UTF-8"
-Message-id: <5ADEAA99.1040903@samsung.com>
-Date: Tue, 24 Apr 2018 12:55:05 +0900
+Message-id: <5ADEAABE.7080201@samsung.com>
+Date: Tue, 24 Apr 2018 12:55:42 +0900
 From: Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
@@ -24,92 +24,69 @@ To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
 Cc: devicetree@vger.kernel.org, heiko@sntech.de, linux-pm@vger.kernel.org,
         dbasehore@chromium.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com, Lin Huang <hl@rock-chips.com>
-Subject: Re: [PATCH 5/6] devfreq: rk3399_dmc: do not print error when get
- supply and clk defer.
-In-reply-to: <20180419104019.24406-6-enric.balletbo@collabora.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm29nOzlqr49T6sLB1QEjD5dlanqKF3Q8kYQQVq1gH/VDRbbIz
-        u0JpF6sxw+jKstSKkCVp3lqmFdtSEhW8VohSWWmaQVRmidXZTlG/vvd93uf5eN6Hl8DUxXgU
-        kWl1ILuVy6bwGdJ6f2x8vNszaEoYex7BjNY04kxJoEPGVPT7APPr9ZiMmaxqxZiaDpeMaT/6
-        Qc50NxTjzOfCAGD688tx5kRTQJ6kZK/kdUpZ78BNwFZ7TuPstPuRlD1T6wHsvb5rGPu5OjpF
-        bkIrMxCXhuwaZE21pWVa043Upq3mtWbDsgQ6nl7OJFIaK2dBRmpdckr8hsxswSSl2ctl5wpQ
-        Csfz1JJVK+22XAfSZNh4h5HaSdM6LZ2QqNXphFe/e4XOIFD2oIySGhfIuavcX17ol+WB6won
-        UBCQXAonGhqAE8wg1KQXwMAxPy423wBs9l/G/7LG6/Ik4qAKwKPN+VhwoCLD4OS5QakTEARG
-        LoCBrqwgjJGxsO5BpVzkDwDY8eUsLvLj4Jj3dKiWkjHwk+spCNa4gD8aeR7CZ5MLYe/kUAiP
-        JHfA+yUToY8iyOMAfmyaDrnAgl5fuYbkQVY4ycFjLeMhRwpyDex8VRZSQHIKhy9GujFxh3Vw
-        fLRfItbhcLSlVh60Dcl5sOuJUeSfBPBk0zVMbM4Lvp8N/hHo4bsyp0Rcbhb8+NUlE8UqeKpA
-        LVJYWNs49Ye+GrbduY2J+7cLTrunpUUg2v1fZO5/kbn/i6wUYB4wB+XwlnTE0zkGLc9Z+Fxr
-        ujbVZqkGocuMW+4FzR3JPkASgJqpKv0+YFLLuL38AYsPQAKjIlRN0YMmtSqNO3AQ2W1me242
-        4n3AICR+FouKTLUJd251mGmDTq/XM0vpZQaapuaq3ia3mdRkOudAWQjlIPtfnYRQROUBtvdI
-        48YGRWuJH3RFxbyZKkqqMnQm/NjW/bCyrsd52VqRFN73tnToaf36l4erKS7mfItxfuKKF32w
-        cMsF0mspQou/tN+IUf5Mqk+eDCtghjfzLcp2o89+qMwRt68sc8mvq5dGhrXFwwVPFm3pUb2/
-        Ml9yMfbWD/NEgeZB/vZd3x5TUj6Do+MwO8/9Bthu0n+vAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsVy+t9jQd2Zq+5FGTy+Y2nxavMeNov5R86x
+Subject: Re: [PATCH 3/6] devfreq: rk3399_dmc: remove wait for dcf irq event.
+In-reply-to: <20180419104019.24406-4-enric.balletbo@collabora.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTNYzrTAa2ORfSJCcIYTWjCMi2FwVBXok2sCeqHWjU4wgiEbnZa
+        4/ZRiQsiigYMpBIQd6pGpC51KUSsaAxUZXEjbdhUIkqMqECMYjuD0a9378m5951zcnFEegqL
+        xPMMFtZsYHQkFia69TA2Ia7B4dcmVr1R0B+d9zG62uNF6StdTYAe7x1E6dG6pwjt9BajdGvB
+        JzHdfrcSo4ePegDdte8SRh9we8SLJ6lP2V6I1C7fOaCudxzG1L/sjSL1sRsOoL79sgpRD9dH
+        ZYi1bFouy2Sz5mjWkGXMzjPkqMiVazOXZSqTE6k4KpVOIaMNjJ5VkemajLjlebqASDJ6B6Oz
+        BqAMhuPIhIVpZqPVwkbnGjmLitxIUfJ4KjElXi4PvIrNC+TKAGULm+u/WiY2DaM7rzscqA34
+        REUgFIdEEiy/dTGkCIThUsIFYHlHESo0IwAW9PwONDjP6jxjEPA6AI82fwDBaQkxDY6W+kVB
+        DkLMgZ62/CCMELHw5r1rYoHvA7D9/jNU4MtgRWGhOFiLiHnw+81+XgUWwBsHXmPBeioRAztH
+        +/j9EcR6eKf6B79oOrEfwCH3L14qEpTaU9zHbwonNNDprOA3hRJLYffXkzwJEuMYfFvfgQpG
+        0+GRn74QoQ6HHx/fEAvWZsO2RyqBfwjAQ+4qRGjKAPS+8k8MKOD7mqIQwdwUOPS9eCIXCSw8
+        KBUoauh9MjTx1xLYO1Yy4b8VwBFHI3ocRNn/i8z+LzL7f5GdBogDzGBNnD6H5SiTMp5j9JzV
+        kBOfZdTXA/4wZaku0OzVNAECB+Rkyekxn1aKMju4XfomAHGEnC5xR/m1Ukk2s2s3azZmmq06
+        lmsCykDiJ5DIiCxj4MwNlkxKKVcoFHQSlaykKHKm5J2mRSslchgLm8+yJtb8dy4ED420gZpN
+        F84mVxfKSgfemzxJiy9W5ju3lrRalHV7t1RWz/1mH2sYSnYtO5/4WV+14nKPfJFtzer53nXW
+        2riCVTX4iE/mscdaw1Nb35WLHzQ8+kLdVe0plW1csq3UogeDV2Y1/Bz1VAz0u2tj8p6b0sb3
+        dWfpN9hqdf2uQarluiOhV7OdFHG5DCVDzBzzB9S+RMCuAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsVy+t9jQd19q+5FGTyeIWfxavMeNov5R86x
         Wqy5fYjR4v+j16wWPzacYrbYfK6H1eJs0xt2i8u75rBZfO49wmhxu3EFm0Xr3iPsDtwesxsu
-        snjsuLuE0WPTqk42j7+z9rN49G1Zxeix/do8Zo/Pm+QC2KO4bFJSczLLUov07RK4MuZv7mEs
-        2MhdsaL3MGsD4yLOLkZODgkBE4m3WxuYuhi5OIQE1jFKLL/czgKS4BUQlPgx+R6QzcHBLCAv
-        ceRSNkiYWUBdYtK8RcwQ9fcZJe5uXs4KUa8l8XpHJxuIzSKgKvGx5yQjiM0GFN//4gZYnF9A
-        UeLqj8eMIDNFBSIkuk9UgoRFBFoYJc79cwGZySywg1Hiz97ZYPXCAokSzcffQi07yyjx6NFz
-        sGWcAk4SFx8uZJ/AKDALya2zEG6dheTWBYzMqxglUwuKc9Nzi40KDPNSy/WKE3OLS/PS9ZLz
-        czcxAiNl22Gtvh2M95fEH2IU4GBU4uFd8PNulBBrYllxZe4hRgkOZiUR3r1y96KEeFMSK6tS
-        i/Lji0pzUosPMUpzsCiJ897OOxYpJJCeWJKanZpakFoEk2Xi4JRqYLQLL3pzhPGg1eok2d0P
-        TZS239jz59D7y6x2D8o0s7612s0PWMV2IKvJL/DtS0ur/F71hEbTkAufA4SDDOv3X5/isECh
-        Ujl0scrM340xW4u+xv93U8lYGxJ6X/W5VsCPRZ1vLwmwJ95MvDMl+KWj/E0bNoVPNxXe9vTs
-        zbZLsD8cIGtQdZ57khJLcUaioRZzUXEiALxUZDaQAgAA
-X-CMS-MailID: 20180424035506epcas1p25aa8d806e94532f671171905890cf3e6
+        snjsuLuE0WPTqk42j7+z9rN49G1Zxeix/do8Zo/Pm+QC2KO4bFJSczLLUov07RK4Mu6tncJe
+        8Jm1YuOqVawNjHdZuhg5OCQETCSuLsrrYuTiEBJYxygx/dJVxi5GTg5eAUGJH5PvgdUwC8hL
+        HLmUDRJmFlCXmDRvETOILSRwn1Hi3eF4iHItiRkdHewgNouAqsTXrU9YQGw2oPj+FzfYQGx+
+        AUWJqz8eM4KMFBWIkOg+UQkSFhFoYZQ4988F5ARmgR2MEn/2zgarFxbwkdi8eQYLxG1nGSX2
+        Hl4HluAUcJJ48Gkq0wRGgVlITp2FcOosJKcuYGRexSiZWlCcm55bbFRgmJdarlecmFtcmpeu
+        l5yfu4kRGCXbDmv17WC8vyT+EKMAB6MSD++Cn3ejhFgTy4orcw8xSnAwK4nw7pW7FyXEm5JY
+        WZValB9fVJqTWnyIUZqDRUmc93besUghgfTEktTs1NSC1CKYLBMHp1QDY+VKzhMHlj4Qj5jm
+        5LM+oGFVWdS6zZP/NifIdkpeKtxYKOpRO+XTXJ+Sp8mbDGSWftYUlHWsUuc4FzCpQWKLq9uN
+        Zb8285Zv5O/2kjjLZlC9PqHIbdHhzZOaNm5K691+17NKwOJqTdb5L/xT6wvDVu62e/DzbpCn
+        zc99jVJBd13a2h1Me5h8lFiKMxINtZiLihMBHaiL344CAAA=
+X-CMS-MailID: 20180424035542epcas1p161d04c9f5db53acb3d1190d7847abfca
 X-Msg-Generator: CA
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180419104226epcas4p42e5d6a66c909325cedcdc1e24bd9007d
-X-RootMTR: 20180419104226epcas4p42e5d6a66c909325cedcdc1e24bd9007d
+X-CMS-RootMailID: 20180419104132epcas2p191448cac9aa785ce7da43dd31032ff90
+X-RootMTR: 20180419104132epcas2p191448cac9aa785ce7da43dd31032ff90
 References: <20180419104019.24406-1-enric.balletbo@collabora.com>
-        <CGME20180419104226epcas4p42e5d6a66c909325cedcdc1e24bd9007d@epcas4p4.samsung.com>
-        <20180419104019.24406-6-enric.balletbo@collabora.com>
+        <CGME20180419104132epcas2p191448cac9aa785ce7da43dd31032ff90@epcas2p1.samsung.com>
+        <20180419104019.24406-4-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
 On 2018년 04월 19일 19:40, Enric Balletbo i Serra wrote:
-> From: Lin Huang <hl@rock-chips.com>
-> 
-> We just return -EPROBE_DEFER error code to caller and do not
-> print error message when try to get center logic regulator
-> and DMC clock defer.
+> We have already wait dcf done in ATF, so don't need wait dcf irq
+> in kernel, besides, clear dcf irq in kernel will import competiton
+> between kernel and ATF, only handle dcf irq in ATF is a better way.
 > 
 > Signed-off-by: Lin Huang <hl@rock-chips.com>
 > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > ---
-> 
->  drivers/devfreq/rk3399_dmc.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-> index 44a379657cd5..5bfca028eaaf 100644
-> --- a/drivers/devfreq/rk3399_dmc.c
-> +++ b/drivers/devfreq/rk3399_dmc.c
-> @@ -308,12 +308,18 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
->  
->  	data->vdd_center = devm_regulator_get(dev, "center");
->  	if (IS_ERR(data->vdd_center)) {
-> +		if (PTR_ERR(data->vdd_center) == -EPROBE_DEFER)
-> +			return -EPROBE_DEFER;
-> +
->  		dev_err(dev, "Cannot get the regulator \"center\"\n");
->  		return PTR_ERR(data->vdd_center);
->  	}
->  
->  	data->dmc_clk = devm_clk_get(dev, "dmc_clk");
->  	if (IS_ERR(data->dmc_clk)) {
-> +		if (PTR_ERR(data->dmc_clk) == -EPROBE_DEFER)
-> +			return -EPROBE_DEFER;
-> +
->  		dev_err(dev, "Cannot get the clk dmc_clk\n");
->  		return PTR_ERR(data->dmc_clk);
->  	};
-> 
 
-Looks good to me.
+The dcf_irq depends on the architecture and device. It means that
+the author or other people access the confidential document
+have to guarantee this change. So, Lin Huang is one of author of this patch,
+looks good to me.
+
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+[snip]
 
 -- 
 Best Regards,
