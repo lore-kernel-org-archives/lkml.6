@@ -1,152 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934619AbeDXNgb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:36:31 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:46663 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757457AbeDXNfm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:35:42 -0400
-X-Google-Smtp-Source: AIpwx487z+aLlnOmCjMjGrt7UznnSFXpD/lzDudSPWr77U6EsDW3Z/2gvcLPIlD7KPdnyPcWa4KtYg==
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [RFC 12/13] arm64: dts: allwinner: a64: Add HDMI pipeline
-Date: Tue, 24 Apr 2018 19:04:24 +0530
-Message-Id: <20180424133425.24291-13-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180424133425.24291-1-jagan@amarulasolutions.com>
-References: <20180424133425.24291-1-jagan@amarulasolutions.com>
+        id S934543AbeDXNfQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:35:16 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53288 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934343AbeDXNfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:35:09 -0400
+Date: Tue, 24 Apr 2018 14:35:27 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, mark.rutland@arm.com
+Subject: Re: [PATCH] arm64: support __int128 with clang
+Message-ID: <20180424133527.GB24599@arm.com>
+References: <20171223004323.1986-1-Jason@zx2c4.com>
+ <CAHmME9otwT+14LhmebF8Osna7m_u6xvFEi7pMq2v1-k9WD5Lpw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHmME9otwT+14LhmebF8Osna7m_u6xvFEi7pMq2v1-k9WD5Lpw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HDMI pipeline on A64 has similar behavior like A83T where
-tcon1 is connected to HDMI. So reuse similar dts nodes for A64.
+On Sun, Apr 15, 2018 at 06:20:11PM +0200, Jason A. Donenfeld wrote:
+> Would you review/merge this when you have a chance?
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 79 ++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
+No real objection from me, but does the arm64 kernel actually build with
+clang?
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index aa73f1ce1ab2..56e06e504d5f 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -109,7 +109,7 @@
- 
- 	de: display-engine {
- 		compatible = "allwinner,sun50i-a64-display-engine";
--		allwinner,pipelines = <&mixer0>;
-+		allwinner,pipelines = <&mixer0>, <&mixer1>;
- 		status = "disabled";
- 	};
- 
-@@ -213,6 +213,31 @@
- 			};
- 		};
- 
-+		mixer1: mixer@1200000 {
-+			compatible = "allwinner,sun50i-a64-de2-mixer-1",
-+				     "allwinner,sun8i-a83t-de2-mixer-1";
-+			reg = <0x01200000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&display_clocks CLK_MIXER1>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_WB>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer1_out: port@1 {
-+					reg = <1>;
-+
-+					mixer1_out_tcon1: endpoint {
-+						remote-endpoint = <&tcon1_in_mixer1>;
-+					};
-+				};
-+			};
-+		};
-+
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun50i-a64-system-controller",
- 				"syscon";
-@@ -261,6 +286,41 @@
- 			};
- 		};
- 
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun50i-a64-tcon-tv",
-+				     "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint {
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun50i-a64-mmc";
- 			reg = <0x01c0f000 0x1000>;
-@@ -719,6 +779,23 @@
- 			phys = <&hdmi_phy>;
- 			phy-names = "hdmi-phy";
- 			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					reg = <0>;
-+
-+					hdmi_in_tcon1: endpoint {
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					reg = <1>;
-+				};
-+			};
- 		};
- 
- 		hdmi_phy: hdmi-phy@1ef0000 {
--- 
-2.14.3
+Will
+
+> On Sat, Dec 23, 2017 at 1:43 AM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> > Commit fb8722735f50 ("arm64: support __int128 on gcc 5+") added support
+> > for arm64 __int128 with gcc with a version-conditional, but neglected to
+> > enable this for clang, which in fact appears to support aarch64 __int128.
+> > This commit therefore enables it if the compiler is clang, using the
+> > same type of makefile conditional used elsewhere in the tree.
+> >
+> > Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> > ---
+> >  arch/arm64/Makefile | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> > index b481b4a7c011..16c2e8b58546 100644
+> > --- a/arch/arm64/Makefile
+> > +++ b/arch/arm64/Makefile
+> > @@ -57,7 +57,11 @@ KBUILD_AFLAGS        += $(lseinstr) $(brokengasinst)
+> >  KBUILD_CFLAGS  += $(call cc-option,-mabi=lp64)
+> >  KBUILD_AFLAGS  += $(call cc-option,-mabi=lp64)
+> >
+> > +ifeq ($(cc-name),clang)
+> > +KBUILD_CFLAGS  += -DCONFIG_ARCH_SUPPORTS_INT128
+> > +else
+> >  KBUILD_CFLAGS  += $(call cc-ifversion, -ge, 0500, -DCONFIG_ARCH_SUPPORTS_INT128)
+> > +endif
+> >
+> >  ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
+> >  KBUILD_CPPFLAGS        += -mbig-endian
+> > --
+> > 2.15.1
+> >
