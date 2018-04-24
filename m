@@ -1,229 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932729AbeDXAzC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 20:55:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49188 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932635AbeDXAzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 20:55:00 -0400
-Subject: Re: [RFC v2] virtio: support packed ring
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, wexu@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jfreimann@redhat.com
-References: <20180401141216.8969-1-tiwei.bie@intel.com>
- <515e635b-bc80-9b8d-72f9-b390ae5103ec@redhat.com>
- <20180423092908.77rii3gi7dcaf7o6@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <e08c55df-6ea2-cf7f-d7c9-91e55913ab16@redhat.com>
-Date: Tue, 24 Apr 2018 08:54:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932765AbeDXA40 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 20:56:26 -0400
+Received: from mail-yb0-f174.google.com ([209.85.213.174]:41067 "EHLO
+        mail-yb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932625AbeDXA4W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 20:56:22 -0400
+X-Google-Smtp-Source: AIpwx49ZJVJTKtU7wcNpqu15zLVk7+HRPqrdXfdBCtPAu0wN9Lv1nvRuZExjfJM+8gXlQqRP+Xy8b0bxX8UPRGmNFlw=
 MIME-Version: 1.0
-In-Reply-To: <20180423092908.77rii3gi7dcaf7o6@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20180320223353.5673-1-guro@fb.com> <20180422202612.127760-1-gthelen@google.com>
+ <20180423103804.GA12648@castle.DHCP.thefacebook.com>
+In-Reply-To: <20180423103804.GA12648@castle.DHCP.thefacebook.com>
+From: Greg Thelen <gthelen@google.com>
+Date: Tue, 24 Apr 2018 00:56:09 +0000
+Message-ID: <CAHH2K0bDXrs+J3jWB1X7wphRMoLgjVUTAAFNLGFarDeAfRhA7Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] memory.low,min reclaim
+To: guro@fb.com
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>, kernel-team@fb.com,
+        Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 23, 2018 at 3:38 AM Roman Gushchin <guro@fb.com> wrote:
 
+> Hi, Greg!
 
-On 2018年04月23日 17:29, Tiwei Bie wrote:
-> On Mon, Apr 23, 2018 at 01:42:14PM +0800, Jason Wang wrote:
->> On 2018年04月01日 22:12, Tiwei Bie wrote:
->>> Hello everyone,
->>>
->>> This RFC implements packed ring support for virtio driver.
->>>
->>> The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
->>> by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
->>> Minor changes are needed for the vhost code, e.g. to kick the guest.
->>>
->>> TODO:
->>> - Refinements and bug fixes;
->>> - Split into small patches;
->>> - Test indirect descriptor support;
->>> - Test/fix event suppression support;
->>> - Test devices other than net;
->>>
->>> RFC v1 -> RFC v2:
->>> - Add indirect descriptor support - compile test only;
->>> - Add event suppression supprt - compile test only;
->>> - Move vring_packed_init() out of uapi (Jason, MST);
->>> - Merge two loops into one in virtqueue_add_packed() (Jason);
->>> - Split vring_unmap_one() for packed ring and split ring (Jason);
->>> - Avoid using '%' operator (Jason);
->>> - Rename free_head -> next_avail_idx (Jason);
->>> - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
->>> - Some other refinements and bug fixes;
->>>
->>> Thanks!
->>>
->>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
->>> ---
->>>    drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
->>>    include/linux/virtio_ring.h        |    8 +-
->>>    include/uapi/linux/virtio_config.h |   12 +-
->>>    include/uapi/linux/virtio_ring.h   |   61 ++
->>>    4 files changed, 980 insertions(+), 195 deletions(-)
->>>
->>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
->>> index 71458f493cf8..0515dca34d77 100644
->>> --- a/drivers/virtio/virtio_ring.c
->>> +++ b/drivers/virtio/virtio_ring.c
->>> @@ -58,14 +58,15 @@
->> [...]
->>
->>> +
->>> +	if (vq->indirect) {
->>> +		u32 len;
->>> +
->>> +		desc = vq->desc_state[head].indir_desc;
->>> +		/* Free the indirect table, if any, now that it's unmapped. */
->>> +		if (!desc)
->>> +			goto out;
->>> +
->>> +		len = virtio32_to_cpu(vq->vq.vdev,
->>> +				      vq->vring_packed.desc[head].len);
->>> +
->>> +		BUG_ON(!(vq->vring_packed.desc[head].flags &
->>> +			 cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_INDIRECT)));
->> It looks to me spec does not force to keep VRING_DESC_F_INDIRECT here. So we
->> can safely remove this BUG_ON() here.
->>
->>> +		BUG_ON(len == 0 || len % sizeof(struct vring_packed_desc));
->> Len could be ignored for used descriptor according to the spec, so we need
->> remove this BUG_ON() too.
-> Yeah, you're right! The BUG_ON() isn't right. I'll remove it.
-> And I think something related to this in the spec isn't very
-> clear currently.
->
-> In the spec, there are below words:
->
-> https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L272
-> """
-> In descriptors with VIRTQ_DESC_F_INDIRECT set VIRTQ_DESC_F_WRITE
-> is reserved and is ignored by the device.
-> """
->
-> So when device writes back an used descriptor in this case,
-> device may not set the VIRTQ_DESC_F_WRITE flag as the flag
-> is reserved and should be ignored.
->
-> https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L170
-> """
-> Element Length is reserved for used descriptors without the
-> VIRTQ_DESC_F_WRITE flag, and is ignored by drivers.
-> """
->
-> And this is the way how driver ignores the `len` in an used
-> descriptor.
->
-> https://github.com/oasis-tcs/virtio-spec/blob/d4fec517dfcf/packed-ring.tex#L241
-> """
-> To increase ring capacity the driver can store a (read-only
-> by the device) table of indirect descriptors anywhere in memory,
-> and insert a descriptor in the main virtqueue (with \field{Flags}
-> bit VIRTQ_DESC_F_INDIRECT on) that refers to a buffer element
-> containing this indirect descriptor table;
-> """
->
-> So the indirect descriptors in the table are read-only by
-> the device. And the only descriptor which is writeable by
-> the device is the descriptor in the main virtqueue (with
-> Flags bit VIRTQ_DESC_F_INDIRECT on). So if we ignore the
-> `len` in this descriptor, we won't be able to get the
-> length of the data written by the device.
->
-> So I think the `len` in this descriptor will carry the
-> length of the data written by the device (if the buffers
-> are writable to the device) even if the VIRTQ_DESC_F_WRITE
-> isn't set by the device. How do you think?
+> On Sun, Apr 22, 2018 at 01:26:10PM -0700, Greg Thelen wrote:
+> > Roman's previously posted memory.low,min patches add per memcg effective
+> > low limit to detect overcommitment of parental limits.  But if we flip
+> > low,min reclaim to bail if usage<{low,min} at any level, then we don't
+need
+> > an effective low limit, which makes the code simpler.  When parent
+limits
+> > are overcommited memory.min will oom kill, which is more drastic but
+makes
+> > the memory.low a simpler concept.  If memcg a/b wants oom kill before
+> > reclaim, then give it to them.  It seems a bit strange for
+a/b/memory.low's
+> > behaviour to depend on a/c/memory.low (i.e. a/b.low is strong unless
+> > a/b.low+a/c.low exceed a.low).
 
-Yes I think so. But we'd better need clarification from Michael.
+> It's actually not strange: a/b and a/c are sharing a common resource:
+> a/memory.low.
 
->
->
->> The reason is we don't touch descriptor ring in the case of split, so
->> BUG_ON()s may help there.
->>
->>> +
->>> +		for (j = 0; j < len / sizeof(struct vring_packed_desc); j++)
->>> +			vring_unmap_one_packed(vq, &desc[j]);
->>> +
->>> +		kfree(desc);
->>> +		vq->desc_state[head].indir_desc = NULL;
->>> +	} else if (ctx) {
->>> +		*ctx = vq->desc_state[head].indir_desc;
->>> +	}
->>> +
->>> +out:
->>> +	return vq->desc_state[head].num;
->>> +}
->>> +
->>> +static inline bool more_used_split(const struct vring_virtqueue *vq)
->>>    {
->>>    	return vq->last_used_idx != virtio16_to_cpu(vq->vq.vdev, vq->vring.used->idx);
->>>    }
->>> +static inline bool more_used_packed(const struct vring_virtqueue *vq)
->>> +{
->>> +	u16 last_used, flags;
->>> +	bool avail, used;
->>> +
->>> +	if (vq->vq.num_free == vq->vring_packed.num)
->>> +		return false;
->>> +
->>> +	last_used = vq->last_used_idx;
->>> +	flags = virtio16_to_cpu(vq->vq.vdev,
->>> +				vq->vring_packed.desc[last_used].flags);
->>> +	avail = flags & VRING_DESC_F_AVAIL(1);
->>> +	used = flags & VRING_DESC_F_USED(1);
->>> +
->>> +	return avail == used;
->>> +}
->> This looks interesting, spec said:
->>
->> "
->> Thus VIRTQ_DESC_F_AVAIL and VIRTQ_DESC_F_USED bits are different for an
->> available descriptor and
->> equal for a used descriptor.
->> Note that this observation is mostly useful for sanity-checking as these are
->> necessary but not sufficient
->> conditions - for example, all descriptors are zero-initialized. To detect
->> used and available descriptors it is
->> possible for drivers and devices to keep track of the last observed value of
->> VIRTQ_DESC_F_USED/VIRTQ_-
->> DESC_F_AVAIL. Other techniques to detect
->> VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
->> might also be possible.
->> "
->>
->> So it looks to me it was not sufficient, looking at the example codes in
->> spec, do we need to track last seen used_wrap_counter here?
-> I don't think we have to track used_wrap_counter in
-> driver. There was a discussion on this:
->
-> https://lists.oasis-open.org/archives/virtio-dev/201802/msg00177.html
->
-> And after that, below sentence was added (it's also
-> in the above words you quoted):
->
-> """
-> Other techniques to detect
-> VIRTQ_DESC_F_AVAIL/VIRTQ_DESC_F_USED bit changes
-> might also be possible.
-> """
->
-> Best regards,
-> Tiwei Bie
+> Exactly as a/b/memory.max and a/c/memory.max are sharing a/memory.max.
+> If there are sibling cgroups which are consuming memory, a cgroup can't
+> exceed parent's memory.max, even if its memory.max is grater.
 
-I see, the extra condition "if (vq->vq.num_free == 
-vq->vring_packed.num)" help in this case.
+> >
+> > I think there might be a simpler way (ableit it doesn't yet include
+> > Documentation):
+> > - memcg: fix memory.low
+> > - memcg: add memory.min
+> >  3 files changed, 75 insertions(+), 6 deletions(-)
+> >
+> > The idea of this alternate approach is for memory.low,min to avoid
+reclaim
+> > if any portion of under-consideration memcg ancestry is under respective
+> > limit.
 
-Thanks
+> This approach has a significant downside: it breaks hierarchical
+constraints
+> for memory.low/min. There are two important outcomes:
 
->
->> Thanks
+> 1) Any leaf's memory.low/min value is respected, even if parent's value
+>           is lower or even 0. It's not possible anymore to limit the amount
+of
+>           protected memory for a sub-tree.
+>           This is especially bad in case of delegation.
+
+As someone who has been using something like memory.min for a while, I have
+cases where it needs to be a strong protection.  Such jobs prefer oom kill
+to reclaim.  These jobs know they need X MB of memory.  But I guess it's on
+me to avoid configuring machines which overcommit memory.min at such cgroup
+levels all the way to the root.
+
+> 2) If a cgroup has an ancestor with the usage under its memory.low/min,
+>           it becomes protection, even if its memory.low/min is 0. So it
+becomes
+>           impossible to have unprotected cgroups in protected sub-tree.
+
+Fair point.
+
+One use case is where a non trivial job which has several memory accounting
+subcontainers.  Is there a way to only set memory.low at the top and have
+the offer protection to the job?
+The case I'm thinking of is:
+% cd /cgroup
+% echo +memory > cgroup.subtree_control
+% mkdir top
+% echo +memory > top/cgroup.subtree_control
+% mkdir top/part1 top/part2
+% echo 1GB > top/memory.min
+% (echo $BASHPID > top/part1/cgroup.procs && part1)
+% (echo $BASHPID > top/part2/cgroup.procs && part2)
+
+Empirically it's been measured that the entire workload (/top) needs 1GB to
+perform well.  But we don't care how the memory is distributed between
+part1,part2.  Is the strategy for that to set /top, /top/part1.min, and
+/top/part2.min to 1GB?
+
+What do you think about exposing emin and elow to user space?  I think that
+would reduce admin/user confusion in situations where memory.min is
+internally discounted.
+
+(tangent) Delegation in v2 isn't something I've been able to fully
+internalize yet.
+The "no interior processes" rule challenges my notion of subdelegation.
+My current model is where a system controller creates a container C with
+C.min and then starts client manager process M in C.  Then M can choose
+to further divide C's resources (e.g. C/S).  This doesn't seem possible
+because v2 doesn't allow for interior processes.  So the system manager
+would need to create C, set C.low, create C/sub_manager, create
+C/sub_resources, set C/sub_manager.low, set C/sub_resources.low, then start
+M in C/sub_manager.  Then sub_manager can create and manage
+C/sub_resources/S.
+
+PS: Thanks for the memory.low and memory.min work.  Regardless of how we
+proceed it's better than the upstream memory.soft_limit_in_bytes!
