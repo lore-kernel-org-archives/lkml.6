@@ -1,62 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932603AbeDXLiw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 07:38:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43910 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932497AbeDXLit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 07:38:49 -0400
-Date: Tue, 24 Apr 2018 13:38:37 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Finn Thain <fthain@telegraphics.com.au>, Sam Creasey <sammy@sammy.net>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] m68k: Fix off-by-one calendar month
-Message-ID: <20180424113837.GB19011@piout.net>
-References: <5add30d1.1c69fb81.b868a.84f1SMTPIN_ADDED_MISSING@mx.google.com>
- <CAMuHMdULPOWQPo1G1s5m52rNLzhmPFzfwxsZH0iR_OwVc8VRKw@mail.gmail.com>
- <20180424103737.GA19011@piout.net>
- <CAMuHMdVh8Pg9r9OoDzh9fWmkcuS1NDQUBOLzRQkiKXD+V+XbPA@mail.gmail.com>
+        id S1756449AbeDXLjt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 07:39:49 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49487 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeDXLjr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 07:39:47 -0400
+From: Colin King <colin.king@canonical.com>
+To: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fsl/fman_port: remove redundant check on port->rev_info.major
+Date: Tue, 24 Apr 2018 12:39:45 +0100
+Message-Id: <20180424113945.16371-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVh8Pg9r9OoDzh9fWmkcuS1NDQUBOLzRQkiKXD+V+XbPA@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/04/2018 12:51:32+0200, Geert Uytterhoeven wrote:
-> > Note that this change may break existing users. I'm perfectly fine with
-> > it as doing this is generally wrong anyway and this is something I'd
-> > like to see eliminated.
-> 
-> The year handling is moved into the various mach_hwclk() implementations
-> in the same patch (in the "<snip>" part).
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Ok.
+The check port->rev_info.major >= 6 is being performed twice, thus
+the inner second check is always true and is redundant, hence it
+can be removed. Detected by cppcheck.
 
-> >
-> >> > -               ts->tv_sec = mktime(time.tm_year, time.tm_mon, time.tm_mday,
-> >> > -                                     time.tm_hour, time.tm_min, time.tm_sec);
-> >> > -       }
-> >> > +       ts->tv_sec = mktime(time.tm_year + 1900, time.tm_mon + 1, time.tm_mday,
-> >> > +                           time.tm_hour, time.tm_min, time.tm_sec);
-> >>
-> >> That might explain why my Amiga spends so much time on file system checks
-> >> since I wrote the rp5c01 RTC driver...
-> 
-> Upon closer look, it's not, as Amiga no longer provides mach_hwclk().
-> So it must be due to fsck running before the rtc module is loaded?
-> 
+drivers/net/ethernet/freescale/fman/fman_port.c:1394]: (warning)
+Identical inner 'if' condition is always true.
 
-Quite possibly, an easy way to know is to check the system time beofre
-fsck runs.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/freescale/fman/fman_port.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-
+diff --git a/drivers/net/ethernet/freescale/fman/fman_port.c b/drivers/net/ethernet/freescale/fman/fman_port.c
+index 6552d68ea6e1..ce6e24c74978 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_port.c
++++ b/drivers/net/ethernet/freescale/fman/fman_port.c
+@@ -1391,12 +1391,10 @@ int fman_port_config(struct fman_port *port, struct fman_port_params *params)
+ 		/* FM_WRONG_RESET_VALUES_ERRATA_FMAN_A005127 Errata
+ 		 * workaround
+ 		 */
+-		if (port->rev_info.major >= 6) {
+-			u32 reg;
++		u32 reg;
+ 
+-			reg = 0x00001013;
+-			iowrite32be(reg, &port->bmi_regs->tx.fmbm_tfp);
+-		}
++		reg = 0x00001013;
++		iowrite32be(reg, &port->bmi_regs->tx.fmbm_tfp);
+ 	}
+ 
+ 	return 0;
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.0
