@@ -1,21 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933786AbeDXNRB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:17:01 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54508 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933200AbeDXNQw (ORCPT
+        id S934526AbeDXNmA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:42:00 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51146 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933763AbeDXNQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:16:52 -0400
-X-Google-Smtp-Source: AIpwx49N7ZuV14uoz3KL59eDpeFBrRmN8ztQ4j/zRfIvdmI2Yh8XcG3Me9n53hf/ZhiL9VAsUFbV/A==
+        Tue, 24 Apr 2018 09:16:59 -0400
+X-Google-Smtp-Source: AIpwx49KwAVxX8u3JGP4ynbYWl9miqyqHZlPBL+16HR6J7kE9eoWUsNRggijHThQvCK7MHXT608oKQ==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Subject: [PATCH] net: ixgbevf: fix ixgbevf_xmit_frame()'s return type
-Date: Tue, 24 Apr 2018 15:16:48 +0200
-Message-Id: <20180424131649.3955-1-luc.vanoostenryck@gmail.com>
+        "David S. Miller" <davem@davemloft.net>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Yan Markman <ymarkman@marvell.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>, netdev@vger.kernel.org
+Subject: [PATCH] net: mvpp2: fix mvpp2_tx()'s return type
+Date: Tue, 24 Apr 2018 15:16:53 +0200
+Message-Id: <20180424131656.4054-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -29,21 +35,21 @@ Fix this by returning 'netdev_tx_t' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 2 +-
+ drivers/net/ethernet/marvell/mvpp2.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 3d9033f26..ce217a2e9 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -4137,7 +4137,7 @@ static int ixgbevf_xmit_frame_ring(struct sk_buff *skb,
- 	return NETDEV_TX_OK;
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index 54a038943..355910345 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -6926,7 +6926,7 @@ static int mvpp2_tx_tso(struct sk_buff *skb, struct net_device *dev,
  }
  
--static int ixgbevf_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t ixgbevf_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
+ /* Main tx processing */
+-static int mvpp2_tx(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t mvpp2_tx(struct sk_buff *skb, struct net_device *dev)
  {
- 	struct ixgbevf_adapter *adapter = netdev_priv(netdev);
- 	struct ixgbevf_ring *tx_ring;
+ 	struct mvpp2_port *port = netdev_priv(dev);
+ 	struct mvpp2_tx_queue *txq, *aggr_txq;
 -- 
 2.17.0
