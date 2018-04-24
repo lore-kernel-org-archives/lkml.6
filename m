@@ -1,134 +1,108 @@
-Return-Path: <youquan.song@intel.com>
-X-Google-Smtp-Source: AIpwx4+PWDfHjOM82ZdVS9B/GU1rG4GDrsXp+ruNRiDPR1/NI7qBH5PFJ0oMqAfgCZIl9XO0zSN0
-ARC-Seal: i=1; a=rsa-sha256; t=1524021586; cv=none;
+Return-Path: <kernel-hardening-return-13101-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx48Fc4tiJdjVQ6EnYSK4tmZFt+EYEA9LrqiwZMzlOblO43q5j0H+GjuzoB2HQ9MUQeOmLtMz
+ARC-Seal: i=1; a=rsa-sha256; t=1524533702; cv=none;
         d=google.com; s=arc-20160816;
-        b=OjVl6CuQxFeE8Xypukx6AqZ26BwwrQsWcq7oI8fSQPvWreykf0Ux6viJ+o49UEvGkJ
-         nzsG1pBgI3Y7vJc3Cs0IPSePh9sJbSyry7TRSPZ7Ir/CrSXEAyPQJ54gp03gtdJiarEz
-         rCMxlpUzsXtwNmESyXfTieWKTSLXlfHVIWCjGw/8bjDDCG5BrBmUlEosqzNVqsaDr2QE
-         YuydDQLNHi1oeZZUmS8p5nltIr6XuCNIrbajypq/sEpCJT2P2h5+nXXQrwlU/5emsa4Y
-         bcHF0+un0U1XDj9wkFUzwa1lzLKGxNUEwWSjZ4L5tisVLNQoNcCc4ufaDQrUiRGLsKdq
-         7aVg==
+        b=yRpZXeuRAij6iSwebhtmYl8Z/BBHWqZzyj4HstOzH81gQzFLmfqdPAzOjtKjJB/qKc
+         fh9z4xKIgdJFjS1gG/CovuQ2iBEx0EzVCgU075cDjF5GbsS1KvdvrnETzDAglsVw9yC7
+         RGW78iiSYwXTFMrTw6cZvg9zMbdcgkViF8xqda8FZMXiVbQPDl40/WmsdE8QlP7PUgRK
+         X5JYPCsz4FXKB9R/Z/DQWngv4tRpy0PKcFZM64rBc1i2AWElBViX7YWrriCL+t58hSGF
+         UoSjKxIfgkI+z2K4ZkXp8aq1pHxEexQn5Na6ZuKuWpDJXhMFkwYWFNKGh8+7Ik73NMnz
+         tuDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=L3Fa1hLE7gRLvHJGIVKv0bvTkfUhBLi156LLb2KS9/o=;
-        b=WTvGxT12rrXYnKQTeqUdfv3yLo7vvrudU4CtrURhyCboJh8UbPypd80MtAfOa/3Ud8
-         Ar1DSKj/UQ0wbec4I9zlz0CzB/5CL7AyRnn+dQTJJPIN9gdBrqsAkQKVwaWEO3Q+ioTt
-         WbW0+6qLHbCK/SSBKlk06EwLb4L4rxvKVX3x3V1xTBehacRVDPs3UY3Sr/owSj77Jgps
-         G6ECedTnCODxhAqufkkUcgyPDMKGp39r/NJS1CvVE6jwxro2nlTdzEoakr6lrDR1bIR8
-         fC+HakW+I+8S2+1UsuXioZxPpofPrdQ1TNvbwyFKICSGqvsp0Ckgpp60KVVW3ngIoBHb
-         Cqkg==
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=Yk/g0djB0jPedGHm0mvrwwxkD9dHO9VodP3jlVLORRA=;
+        b=algckVwguerdhqDfBqwxr7rGtTE++u1cCbsr/ihAUaFNGb2fWr2zvQBXA8lBLGjjWp
+         LryW2tFNtnsOZiUt/zpuHrDXtfhXlJGC35QzCjmH4LuQVHSNq60PAIE1WLZdwdVhUMFK
+         NDYO82UFYdE9P6xiVDU2GyV4kHOTKC34Hlqmp34ynUoeGG44c2HvkjRnSz5llxDaVJfV
+         hgjnlMC7XIq+Ij9Rr0lOB8UEoLDVtz372xXuIRD0SNgoYRS/ZwfNyqMznJb14TZEqq4r
+         wugpQ75Q6cN056KjK7YQZbJE6wjdjgNSc+xggs2/jaZnBmYEiCehE6rDUxMlEsgayb0/
+         yHMw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of youquan.song@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=youquan.song@intel.com
+       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=t7EqQ7Ow;
+       spf=pass (google.com: domain of kernel-hardening-return-13101-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13101-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of youquan.song@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=youquan.song@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
-   d="scan'208";a="35084908"
-From: Youquan Song <youquan.song@intel.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Cc: tim.c.chen@linux.intel.com,
-	ashok.raj@intel.com,
-	dave.hansen@intel.com,
-	yi.y.sun@linux.intel.com,
-	youquan.song@intel.com,
-	youquan.song@linux.intel.com,
-	Ingo Molnar <mingo@kernel.org>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	arjan.van.de.ven@intel.com,
-	bp@alien8.de,
-	jmattson@google.com,
-	karahmed@amazon.de,
-	kvm@vger.kernel.org,
-	pbonzini@redhat.com,
-	rkrcmar@redhat.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 14/24] x86/speculation: Move firmware_restrict_branch_speculation_*() from C to CPP
-Date: Wed, 18 Apr 2018 11:18:22 +0800
-Message-Id: <1524021512-24022-15-git-send-email-youquan.song@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1524021512-24022-1-git-send-email-youquan.song@intel.com>
-References: <1524021512-24022-1-git-send-email-youquan.song@intel.com>
+       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=t7EqQ7Ow;
+       spf=pass (google.com: domain of kernel-hardening-return-13101-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13101-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Tycho Andersen <tycho@tycho.ws>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Tycho Andersen <tycho@tycho.ws>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Eric Biggers <ebiggers3@gmail.com>
+Subject: [PATCH 1/3] big key: get rid of stack array allocation
+Date: Mon, 23 Apr 2018 19:03:19 -0600
+Message-Id: <20180424010321.14739-1-tycho@tycho.ws>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598052459247189744?=
-X-GMAIL-MSGID: =?utf-8?q?1598052459247189744?=
+X-GMAIL-THRID: =?utf-8?q?1598589451187807410?=
+X-GMAIL-MSGID: =?utf-8?q?1598589451187807410?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Ingo Molnar <mingo@kernel.org>
+We're interested in getting rid of all of the stack allocated arrays in the
+kernel [1]. This patch simply hardcodes the iv length to match that of the
+hardcoded cipher.
 
-(cherry picked from commit d72f4e29e6d84b7ec02ae93088aa459ac70e733b)
+[1]: https://lkml.org/lkml/2018/3/7/621
 
-firmware_restrict_branch_speculation_*() recently started using
-preempt_enable()/disable(), but those are relatively high level
-primitives and cause build failures on some 32-bit builds.
+v2: hardcode the length of the nonce to be the GCM AES IV length, and do a
+    sanity check in init(), Eric Biggers
 
-Since we want to keep <asm/nospec-branch.h> low level, convert
-them to macros to avoid header hell...
-
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: arjan.van.de.ven@intel.com
-Cc: bp@alien8.de
-Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Youquan Song <youquan.song@linux.intel.com> [v4.4 backport]
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+CC: David Howells <dhowells@redhat.com>
+CC: James Morris <jmorris@namei.org>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: Jason A. Donenfeld <Jason@zx2c4.com>
+CC: Eric Biggers <ebiggers3@gmail.com>
 ---
- arch/x86/include/asm/nospec-branch.h | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ security/keys/big_key.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 27582aa..4675f65 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -214,20 +214,22 @@ static inline void indirect_branch_prediction_barrier(void)
- /*
-  * With retpoline, we must use IBRS to restrict branch prediction
-  * before calling into firmware.
-+ *
-+ * (Implemented as CPP macros due to header hell.)
-  */
--static inline void firmware_restrict_branch_speculation_start(void)
--{
--	preempt_disable();
--	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
--			      X86_FEATURE_USE_IBRS_FW);
--}
-+#define firmware_restrict_branch_speculation_start()			\
-+do {									\
-+	preempt_disable();						\
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,	\
-+			      X86_FEATURE_USE_IBRS_FW);			\
-+} while (0)
+diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+index 933623784ccd..75c46786a166 100644
+--- a/security/keys/big_key.c
++++ b/security/keys/big_key.c
+@@ -22,6 +22,7 @@
+ #include <keys/user-type.h>
+ #include <keys/big_key-type.h>
+ #include <crypto/aead.h>
++#include <crypto/gcm.h>
  
--static inline void firmware_restrict_branch_speculation_end(void)
--{
--	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
--			      X86_FEATURE_USE_IBRS_FW);
--	preempt_enable();
--}
-+#define firmware_restrict_branch_speculation_end()			\
-+do {									\
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,			\
-+			      X86_FEATURE_USE_IBRS_FW);			\
-+	preempt_enable();						\
-+} while (0)
+ struct big_key_buf {
+ 	unsigned int		nr_pages;
+@@ -109,7 +110,7 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
+ 	 * an .update function, so there's no chance we'll wind up reusing the
+ 	 * key to encrypt updated data. Simply put: one key, one encryption.
+ 	 */
+-	u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
++	u8 zero_nonce[GCM_AES_IV_SIZE];
  
- #endif /* __ASSEMBLY__ */
- 
+ 	aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
+ 	if (!aead_req)
+@@ -425,6 +426,12 @@ static int __init big_key_init(void)
+ 		pr_err("Can't alloc crypto: %d\n", ret);
+ 		return ret;
+ 	}
++
++	if (unlikely(crypto_aead_ivsize(big_key_aead) != GCM_AES_IV_SIZE)) {
++		WARN(1, "big key algorithm changed?");
++		return -EINVAL;
++	}
++
+ 	ret = crypto_aead_setauthsize(big_key_aead, ENC_AUTHTAG_SIZE);
+ 	if (ret < 0) {
+ 		pr_err("Can't set crypto auth tag len: %d\n", ret);
 -- 
-1.8.3.1
+2.17.0
