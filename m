@@ -1,174 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757347AbeDXMNB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:13:01 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:35730 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756858AbeDXMM4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:12:56 -0400
-X-Google-Smtp-Source: AB8JxZpjFWJr/Yt86du1tBOuwi69dPfsfl/yNeIl4nlZFTbcvYrAyS8CZs4pUKxZSsCo2VaMY/ticw==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: testing io.low limit for blk-throttle
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <18accc1e-c7b3-86a7-091b-1d4b631fcd4a@gmail.com>
-Date: Tue, 24 Apr 2018 14:12:51 +0200
-Cc: linux-block <linux-block@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fb.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
-Message-Id: <536A1B1D-575F-4193-ADA6-BA832AEC7179@linaro.org>
-References: <A749046B-BEB9-4278-ABEF-3007817D59DD@linaro.org>
- <4c6b86d9-1668-43c3-c159-e6e23ffb04b4@gmail.com>
- <A0424504-2778-41F4-B1C6-BE1B0253E524@linaro.org>
- <18accc1e-c7b3-86a7-091b-1d4b631fcd4a@gmail.com>
-To: Joseph Qi <jiangqi903@gmail.com>
-X-Mailer: Apple Mail (2.3445.6.18)
+        id S1757439AbeDXMN7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:13:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45573 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756236AbeDXMNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 08:13:55 -0400
+Date: Tue, 24 Apr 2018 14:13:53 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 2/7] ARM: dts: sun8i: h3: Split out common board design
+ for ALL-H3-CC
+Message-ID: <20180424121353.zxujyehsw3er2xq6@flea>
+References: <20180424113424.13196-1-wens@csie.org>
+ <20180424113424.13196-3-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zypndlmz3osmozf6"
+Content-Disposition: inline
+In-Reply-To: <20180424113424.13196-3-wens@csie.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3OCD7ST031614
 
 
+--zypndlmz3osmozf6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Il giorno 23 apr 2018, alle ore 11:01, Joseph Qi <jiangqi903@gmail.com> ha scritto:
-> 
-> 
-> 
-> On 18/4/23 15:35, Paolo Valente wrote:
->> 
->> 
->>> Il giorno 23 apr 2018, alle ore 08:05, Joseph Qi <jiangqi903@gmail.com> ha scritto:
->>> 
->>> Hi Paolo,
->> 
->> Hi Joseph,
->> thanks for chiming in.
->> 
->>> What's your idle and latency config?
->> 
->> I didn't set them at all, as the only (explicit) requirement in my
->> basic test is that one of the group is guaranteed a minimum bps.
->> 
->> 
->>> IMO, io.low will allow others run more bandwidth if cgroup's average
->>> idle time is high or latency is low.
->> 
->> What you say here makes me think that I simply misunderstood the
->> purpose of io.low.  So, here is my problem/question: "I only need to
->> guarantee at least a minimum bandwidth, in bps, to a group.  Is the
->> io.low limit the way to go?"
->> 
->> I know that I can use just io.max (unless I misunderstood the goal of
->> io.max too :( ), but my extra purpose would be to not waste bandwidth
->> when some group is idle.  Yet, as for now, io.low is not working even
->> for the first, simpler goal, i.e., guaranteeing a minimum bandwidth to
->> one group when all groups are active.
->> 
->> Am I getting something wrong?
->> 
->> Otherwise, if there are some special values for idle and latency
->> parameters that would make throttle work for my test, I'll be of
->> course happy to try them.
->> 
-> I think you can try idle time with 1000us for all cgroups, and latency
-> target 100us for cgroup with low limit 100MB/s and 2000us for cgroups
-> with low limit 10MB/s. That means cgroup with low latency target will
-> be preferred.
-> BTW, from my expeierence the parameters are not easy to set because
-> they are strongly correlated to the cgroup IO behavior.
-> 
+On Tue, Apr 24, 2018 at 07:34:19PM +0800, Chen-Yu Tsai wrote:
+> The Libre Computer Project ALL-H3-CC has three models, all using the
+> same board design, but with different pin compatible SoCs and amount of
+> DRAM.
+>=20
+> Currently only the H3 1GB DRAM variant is supported. To support the two
+> other variants, first split the original device tree into a common board
+> design part and an SoC specific part.
+>=20
+> The SoC part only defines which SoC is used and model name, and includes
+> the SoC specific dtsi file and the common design dtsi file.
+>=20
+> Also fix up the SPDX identifier line to use the correct comment style,
+> and place it on the first line.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  .../boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 213 +-----------------
+>  ....dts =3D> sunxi-hx-libretech-all-h3-cc.dtsi} |  11 +-
 
-+Tejun (I guess he might be interested in the results below)
+I think I prefer the name of Neil's DTSI better, and since pretty much
+the same patches (a couple of hours) before, we'll merge them (while
+merging the rest of your patches, obviously).
 
-Hi Joseph,
-thanks for chiming in. Your suggestion did work!
+Does that work for you?
 
-At first, I thought I had also understood the use of latency from the
-outcome of your suggestion: "want low limit really guaranteed for a
-group?  set target latency to a low value for it." But then, as a
-crosscheck, I repeated the same exact test, but reversing target
-latencies: I gave 2000 to the interfered (the group with 100MB/s
-limit) and 100 to the interferers.  And the interfered still got more
-than 100MB/s!  So I exaggerated: 20000 to the interfered.
-Same outcome :(
+Maxime
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-I tried really many other combinations, to try to figure this out, but
-results seemed more or less random w.r.t. to latency values.  I
-didn't even start to test different values for idle.
+--zypndlmz3osmozf6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So, the only sound lesson that I seem to have learned is: if I want
-low limits to be enforced, I have to set target latency and idle
-explicitly.  The actual values of latencies matter little, or not at
-all. At least this holds for my simple tests.
+-----BEGIN PGP SIGNATURE-----
 
-At any rate, thanks to your help, Joseph, I could move to the most
-interesting part for me: how effective is blk-throttle with low
-limits?  I could well be wrong again, but my results do not seem that
-good.  With the simplest type of non-toy example I considered, I
-recorded throughput losses, apparently caused mainly by blk-throttle,
-and ranging from 64% to 75%.
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrfH4AACgkQ0rTAlCFN
+r3RioA/+MlcxGSywxCDUN5R2w4zVifw61aSZ+wcQO2Jespz7hut6trVBtKtQblqY
+NuP4PsUa5XpeD/xnnLVXldVPQ0DQel5TbZarfmYi5HqIBbbDfFEHSST/WABVm+u2
+Ujj37gCehwbkk8qfgTJWhpB6pyZ92bAyhePjrekLYXjOUW0M5/7x4uCce7AWvtQV
+KJkIkfGrIJhLSlCMlYYzoAUmxLSxtTGymNaaXzBautuL3Ar92NC/RHn5YqwZOe1o
+wa/ZN2aRDGiej6Fsv3ILw3rkzLaPvXsW4I05JgogJDV8BgY001O9KsiMuy9Vezx/
+XB3s3QbQnZ/7VNhTUHBdwoQVYbXAgvsS0C7GczAUs9cCeg3SsA+e6INKZmp2E2kk
+5sW1InlKd1BXHC9teHsQyBys5KFuqTnSqKucqSe9x3TFHr+116GkVO+KE7sNwnI+
+d1V4s3N44w4AaERFZRFdfeLOwNYq6TyQKxEBrepz6n+HL1BveXFYDFYGtA9mtnup
+Lfc8sAx9jjBneDqWsogQd1z9xEunzRD03FXkjHVBkc2qa82Wq54WeOVRrJ5V8QRN
+zF6r5PlGQrVSKohzV4N2o9PscseWFdk5/7tL6Ue8/t9AJfAUoxrX08EoxgmfakLk
+lBiNgiqghDj8iFaFPjjNONOlVgUweBKNl2hUxo4kVxHz5Pxdl2o=
+=5ReF
+-----END PGP SIGNATURE-----
 
-Here is a worst-case example.  For each step, I'm reporting below the
-command by which you can reproduce that step with the
-thr-lat-with-interference benchmark of the S suite [1].  I just split
-bandwidth equally among five groups, on my SSD.  The device showed a
-peak rate of ~515MB/s in this test, so I set rpbs to 100MB/s for each
-group (and tried various values, and combinations of values, for the
-target latency, without any effect on the results).  To begin, I made
-every group do sequential reads.  Everything worked perfectly fine.
-
-But then I made one group do random I/O [2], and troubles began.  Even
-if the group doing random I/O was given a target latency of 100usec
-(or lower), while the other had a target latency of 2000usec, the poor
-random-I/O group got only 4.7 MB/s!  (A single process doing 4k sync
-random I/O reaches 25MB/s on my SSD.)
-
-I guess things broke because low limits did not comply any longer with
-the lower speed that device reached with the new, mixed workload: the
-device reached 376MB/s, while the sum of the low limits was 500MB/s.
-BTW the 'fault' for this loss of throughput was not only of the device
-and the workload: if I switched throttling off, then the device still
-reached its peak rate, although granting only 1.3MB/s to the
-random-I/O group.
-
-So, to comply with the 376MB/s, I lowered the low limits to 74MB/s per
-group (to avoid a too tight 75MB/s) [3].  A little better: the
-random-I/O group got 7.2 MB/s.  But the total throughput went down
-further, to 289MB/s, and became again lower than the sum of the low
-limits.  Most certainly, this time the throughput went down mainly
-because blk-throttling was serving the random I/O more than before.
-
-To make a long story short, I arrived to setting just 12MB/s as low
-limit for each group [4].  The random-I/O group was finally happy,
-with a revitalizing 12.77MB/s.  But the total throughput dropped down
-to 127MB/s, i.e., ~25% of the peak rate of the device.  Now the
-'fault' for the throughput loss seemed undoubtedly of blk-throttle.
-The latter was evidently over-throttling some group.
-
-To sum up, for my device, 12MB/s seems to be the highest value for
-which low limits can be guaranteed.  But setting these limits entails
-a high cost: if just one group really does random I/O, then 75% of the
-throughput is lost.
-
-There would be other issues too.  For example, 12MB/s might be too
-little for the needs of some group in some time period.  This fact would
-make it extremely difficult, if ever possible, to set low limits that
-comply with the needs of more dynamic (and probably more
-realistic) workloads than the above one.
-
-I think this is all, sorry for the long mail, I tried to shrink it as
-much as possible.  Looking forward to some feedback.
-
-Thanks,
-Paolo
-
-[1] https://github.com/Algodev-github/S
-[2] sudo ./thr-lat-with-interference.sh -b t -n 4 -w 100M -W 100M -t randread -L 2000
-[3] sudo ./thr-lat-with-interference.sh -b t -n 4 -w 74M -W 74M -t randread -L 2000
-[4] sudo ./thr-lat-with-interference.sh -b t -n 4 -w 12M -W 12M -t randread -L 2000
+--zypndlmz3osmozf6--
