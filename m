@@ -1,67 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757750AbeDXMnU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:43:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47194 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757666AbeDXMnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:43:19 -0400
-Date: Tue, 24 Apr 2018 06:43:12 -0600
-From: Michal Hocko <mhocko@kernel.org>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: kirill.shutemov@linux.intel.com, hughd@google.com, hch@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 PATCH] mm: shmem: make stat.st_blksize return huge page
- size if THP is on
-Message-ID: <20180424124312.GZ17484@dhcp22.suse.cz>
-References: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180423004748.GP17484@dhcp22.suse.cz>
- <3c59a1d1-dc66-ae5f-452c-dd0adb047433@linux.alibaba.com>
- <20180423150435.GS17484@dhcp22.suse.cz>
- <aa4b8c48-781a-204c-246a-afa5a54dba99@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa4b8c48-781a-204c-246a-afa5a54dba99@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1757775AbeDXMo6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:44:58 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:39610 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753162AbeDXMoz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 08:44:55 -0400
+X-Google-Smtp-Source: AIpwx49MLYWN0N/pxFCZz0Lecg12WkvR24QlPzZ/GoStUbsYlv+fwtQdQJWKESt7jRYMsAiJrpp3PA==
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH 00/28] Venus updates
+Date: Tue, 24 Apr 2018 15:44:08 +0300
+Message-Id: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-04-18 21:41:50, Yang Shi wrote:
-> 
-> 
-> On 4/23/18 9:04 AM, Michal Hocko wrote:
-> > On Sun 22-04-18 21:28:59, Yang Shi wrote:
-> > > 
-> > > On 4/22/18 6:47 PM, Michal Hocko wrote:
-> > [...]
-> > > > will be used on the first aligned address even when the initial/last
-> > > > portion of the mapping is not THP aligned.
-> > > No, my test shows it is not. And, transhuge_vma_suitable() does check the
-> > > virtual address alignment. If it is not huge page size aligned, it will not
-> > > set PMD for huge page.
-> > It's been quite some time since I've looked at that code but I think you
-> > are wrong. It just doesn't make sense to make the THP decision on the
-> > VMA alignment much. Kirill, can you clarify please?
-> 
-> Thanks a lot Michal and Kirill to elaborate how tmpfs THP make pmd map.
-> 
-> I did a quick test, THP will be PMD mapped as long as :
-> * hint address is huge page aligned if MAP_FIXED
-> Or
-> * offset is huge page aligned
-> And
-> * The size is big enough (>= huge page size)
-> 
-> This test does verify what Kirill said. And, I dig into a little further
-> qemu code and did strace, qemu does try to mmap the file to non huge page
-> aligned address with MAP_FIXED.
+Hello,
 
-Does it make sense to contact Qemu developers and probably fix this?
+This patch set aims to:
+
+* add initial support for Venus version 4xx (found on sdm845).
+
+* introduce a common capability parser to enumerate better
+  supported uncompressed formats, capabilities by codec,
+  supported codecs and so on.
+
+* also contains various cleanups, readability improvements
+  and fixes.
+
+* adds HEVC codec support for the Venus versions which has
+  support for it.
+
+* add multi-stream support (secondary decoder output), which
+  will give as an opportunity to use UBWC compressed formats
+  to optimize internal interconnect bandwidth on higher
+  resolutions.
+
+Comments are welcome!
+
+regards,
+Stan
+
+Stanimir Varbanov (28):
+  venus: hfi_msgs: correct pointer increment
+  venus: hfi: preparation to support venus 4xx
+  venus: hfi: update sequence event to handle more properties
+  venus: hfi_cmds: add set_properties for 4xx version
+  venus: hfi: support session continue for 4xx version
+  venus: hfi: handle buffer output2 type as well
+  venus: hfi_venus: add halt AXI support for Venus 4xx
+  venus: hfi_venus: add suspend function for 4xx version
+  venus: venc,vdec: adds clocks needed for venus 4xx
+  venus: vdec: call session_continue in insufficient event
+  venus: add common capability parser
+  venus: helpers: make a commmon function for power_enable
+  venus: core: delete not used flag for buffer mode
+  venus: helpers: rename a helper function and use buffer mode from caps
+  venus: add a helper function to set dynamic buffer mode
+  venus: add helper function to set actual buffer size
+  venus: delete no longer used bufmode flag from instance
+  venus: helpers: add buffer type argument to a helper
+  venus: helpers: add a new helper to set raw format
+  venus: helpers,vdec,venc: add helpers to set work mode and core usage
+  venus: helpers: extend set_num_bufs helper with one more argument
+  venus: helpers: add a helper to return opb buffer sizes
+  venus: vdec: get required input buffers as well
+  venus: vdec: new function for output configuration
+  venus: move frame size calculations in common place
+  venus: implementing multi-stream support
+  venus: add sdm845 compatible and resource data
+  venus: add HEVC codec support
+
+ .../devicetree/bindings/media/qcom,venus.txt       |   1 +
+ drivers/media/platform/qcom/venus/Makefile         |   3 +-
+ drivers/media/platform/qcom/venus/core.c           | 102 ++++
+ drivers/media/platform/qcom/venus/core.h           |  91 ++--
+ drivers/media/platform/qcom/venus/helpers.c        | 558 +++++++++++++++++++--
+ drivers/media/platform/qcom/venus/helpers.h        |  23 +-
+ drivers/media/platform/qcom/venus/hfi.c            |  12 +-
+ drivers/media/platform/qcom/venus/hfi.h            |   9 +
+ drivers/media/platform/qcom/venus/hfi_cmds.c       |  64 ++-
+ drivers/media/platform/qcom/venus/hfi_helper.h     | 112 ++++-
+ drivers/media/platform/qcom/venus/hfi_msgs.c       | 401 +++------------
+ drivers/media/platform/qcom/venus/hfi_parser.c     | 290 +++++++++++
+ drivers/media/platform/qcom/venus/hfi_parser.h     |  45 ++
+ drivers/media/platform/qcom/venus/hfi_venus.c      |  69 +++
+ drivers/media/platform/qcom/venus/hfi_venus_io.h   |  24 +
+ drivers/media/platform/qcom/venus/vdec.c           | 324 +++++++-----
+ drivers/media/platform/qcom/venus/venc.c           | 166 +++---
+ 17 files changed, 1641 insertions(+), 653 deletions(-)
+ create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.c
+ create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.h
 
 -- 
-Michal Hocko
-SUSE Labs
+2.14.1
