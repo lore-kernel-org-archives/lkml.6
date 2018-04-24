@@ -1,53 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752901AbeDXO0l (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:26:41 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:44065 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750935AbeDXO0i (ORCPT
+        id S1755843AbeDXO2a (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:28:30 -0400
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:41832 "EHLO
+        mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753645AbeDXO2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:26:38 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] Bluetooth: btusb: add ID for LiteOn 04ca:301a
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180423221707.82190-1-mka@chromium.org>
-Date: Tue, 24 Apr 2018 16:26:36 +0200
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        BlueZ development <linux-bluetooth@vger.kernel.org>,
+        Tue, 24 Apr 2018 10:28:23 -0400
+X-Google-Smtp-Source: AB8JxZrUr7dOLETgcuO57xMqJ6BF792It7atcgOptnwcFKKegw8bLz83SoxWgARqxjVDSGHad+md55368CdJjiSwb84=
+MIME-Version: 1.0
+In-Reply-To: <000000000000ae37a6056a9273f6@google.com>
+References: <20180424062000.GA57884@jaegeuk-macbookpro.roam.corp.google.com> <000000000000ae37a6056a9273f6@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 24 Apr 2018 16:28:02 +0200
+Message-ID: <CACT4Y+b2UgpGHDdfPgu3vp1MR8feL16C=HXsQwx7TC2-3U=0Sg@mail.gmail.com>
+Subject: Re: kernel BUG at fs/f2fs/node.c:LINE!
+To: syzbot <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         LKML <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>, Vic Wei <vwei@codeaurora.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <F14DBB50-02E6-4B03-8C2D-A885A0CDD9D6@holtmann.org>
-References: <20180423221707.82190-1-mka@chromium.org>
-To: Matthias Kaehlcke <mka@chromium.org>
-X-Mailer: Apple Mail (2.3445.6.18)
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>, yuchao0@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+On Tue, Apr 24, 2018 at 8:42 AM, syzbot
+<syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot tried to test the proposed patch but build/boot failed:
+>
+> failed to create VM pool: failed to create GCE image: failed to get create
+> image operation operation-1524552040215-56a926ecc71d9-3edfeb8b-8abca81c:
+> googleapi: Error 403: Rate Limit Exceeded, rateLimitExceeded
+>
+>
+> Tested on git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/dev
+> commit
+> b549e322861b99f1862fb5f08dfb5e5753a38635 (Sat Apr 21 06:44:59 2018 +0000)
+> f2fs: check cap_resource only for data blocks
+>
+> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+> Patch: https://syzkaller.appspot.com/x/patch.diff?id=5565179303559168
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=1808800213120130118
 
-> Contains a QCA6174A chipset, with USB BT. Let's support loading
-> firmware on it.
-> 
-> From usb-devices:
-> T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
-> D:  Ver= 2.01 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-> P:  Vendor=04ca ProdID=301a Rev= 0.01
-> C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
-> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> 
-> Signed-off-by: Vic Wei <vwei@codeaurora.org>
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> drivers/bluetooth/btusb.c | 1 +
-> 1 file changed, 1 insertion(+)
+Hi Jaegeuk,
 
-patch has been applied to bluetooth-next tree.
+Re the last failure (rate limiting), now should be fixed with:
+https://github.com/google/syzkaller/commit/e2f4bf8f3818d49baf0f3789add75d5fd506ad8d
+which adds some backoff-and-retry logic.
 
-Regards
+Re the first one, do I understand it correctly that dev-test already
+contains the fix that you want to test?
+We did not foresee such case initially, but you are not the first one
+to try this. I've added support for testing without a patch now:
+https://github.com/google/syzkaller/commit/9366d03f001170479319878905031f63d4377c46
+and updated the docs:
+https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
 
-Marcel
+So now this should work:
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+dev-test
