@@ -1,132 +1,193 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3668839-1524604360-2-18219729805942653146
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524604359; b=KNJoSTVdhuisxMWGFtvdgY4bChDHa7pj4w+cbi93HegZJw+B4d
-    uhLAhuTRI2+SfuPsQA+ho3woGBlRUiwGpTuT50qZqafBLtmxQAfBH9VUi3x4d15Q
-    Fy2oqlGQ2qICDpsvitFpNvlUt0qr55CxJdfIz0Kwi7nLS41T2EDOl6gG9HoQ0UHf
-    N+TzCPocYGT4hlWlzUIPTa0U1PceiVPMJngyc1P1UJ+DgkzUGNLIVxb9BoXJ2hjs
-    sNqLWc/vmeN2Gs6HS5/gBS/xl9O1RuHGsTwR1BF4V0sKhuhLxvlHQiI0Dx+dsFeh
-    pqqgPGDnwOREp/qU2o/8mAdqnwECb4BPI2Rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1524604359; bh=6qIiZYSumiTaP7cdDrRYz1Qxiv0rb9WWviMIiiY8F+
-    4=; b=fhAj7vm17KxkhR/hPU+jbJuIM1WBzvoNdSCFiAeGrDxlBJ3V30Dooevd0R
-    /JvDKsL0UoaY7g2X0tzpPOkVnSTm3Wh/NoQvvS7n1ABkCBgg71LbrUAvpYje/HSO
-    tLMN4KzVZ2Km08hoNFBVg142O0rtqK8SX07aCP0nJeHVrMuyOy73pjEVJIup7DYR
-    ghLREs2YahD7vcQGzkL80bMA615eCDz8MLJwGnmKxy1HWyk8HkGY9ys+fwvNJsW7
-    0cQc6s0ZjP3uJeObNAodT1QylfzShvcp2NR+9SaqBByM9WUGBiL6J9rOkiCJA94D
-    +LsMmuH1k0ueqR8cblDOdDwfAG7Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ddPkcXKh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YQeTegAd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ddPkcXKh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YQeTegAd;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFNiMJVkUgJZrrJIIKzIKsQRqph8PY6yl3ZV8xQ92BSIDnOGKrtQtc31ct4tV6aJsQ3VyZD+UUUuyfKkEILuqZjDtuNVAVHr7G4fq0ilD8lLDuIWpHYK
-    AKgy04HfWHqD5qu5cknj+KNAv8Qx0HpZygRzPbk1uhqpXVTzvGTgXuDD8A72erD/DKWU9Vzm/ukE0qWyillRApDaLx24tpX/G/ClJEZTpgg/DB8zGfOdLXwO
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=UUw0E1YPMYXNbQZAUSUA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751473AbeDXVM2 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 24 Apr 2018 17:12:28 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:38125 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeDXVMR (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 24 Apr 2018 17:12:17 -0400
-X-Google-Smtp-Source: AIpwx49kdvAXbahUZHeseCAE6zQYTK23jUkRuuPlV0/pYGf6qeGKtr9JTIpb7taKIcdXj40QlW9ADgjGDDP5NJtLxi4=
-MIME-Version: 1.0
-In-Reply-To: <20180424205636.cdp4czq6hhs5gu5a@kozik-lap>
-References: <20180424203239.21885-1-krzk@kernel.org> <CAK8P3a2CZU1CYFt0fdVSFFnj2Wg=mUcC=yuWAW7zDO0u2Q2dUQ@mail.gmail.com>
- <20180424205636.cdp4czq6hhs5gu5a@kozik-lap>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 24 Apr 2018 23:12:15 +0200
-X-Google-Sender-Auth: ClRbdF8XkpKQffim3nj6VCvEFsI
-Message-ID: <CAK8P3a1Az9acSZwdhPz+Gwy6nSL=WAB6-z6Cq9m=nPLzF240_A@mail.gmail.com>
-Subject: Re: [RFC 00/10] ARM: Remove support for Exynos5440
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES"
-        <linux-samsung-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-spi <linux-spi@vger.kernel.org>, linux-usb@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Olof Johansson <olof@lixom.net>,
-        Jaehoon Chung <jh80.chung@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+X-Google-Smtp-Source: AIpwx4+kgVGbPIq/9Pk/P+HNYgWhCz/S27JfoegMeKaoc4/GjfxlTaFMLBXDoUF1aJ5sxPK83p76
+ARC-Seal: i=1; a=rsa-sha256; t=1524602060; cv=none;
+        d=google.com; s=arc-20160816;
+        b=nJE4UwogkT1iYbbFh30dbL9NgliHg35aKLJJVT6gbp+m5I2kw/wnH7WrU1J11oFCGW
+         Pvm99Yo/NlMtQ5FQRbPLYwYPWq26RN75BkAagbRHwge8YArIXOElc+nRhuYDgQZyUoql
+         /bCSAX/G7CBg6JAGG96RV8Hmt87y0xB24z9b9u+BqX4F8igK6CeVuI+eW2paNx0iAEr0
+         fyrbBIXWWOZ1FgYGJqW6r+9b7GRnRCWdJ16nRtjEs3pVd7oD6kaaAWjGN50unaKe3sA5
+         zqhRVZNRNdwLNoi6cN3PJvnkSUhKwG9mOYDh2p8cdCg3un0bRExC858u8S84dYHo4koW
+         v+cA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:arc-authentication-results;
+        bh=r57c7gaAdrra93yNLrZZY3QoI+PN5XF8NqzdEHiUUNs=;
+        b=AXCQ49XTKcFV7xip5ypGOq+Dphtl0mcNB5i406olftFkq8tTtkEFlWV4p/P8+cc75h
+         3isiS6Sty7BPNGxMyc96wvfMWL2xtqk7kJL3obX5PIn7Yj1fXgnFu02zcjw5w82O/pw4
+         BZ2ffp7CHgcvF3qXfhrsi/WQ3sfAP4jh5q/VAqlW8c4AtmZkkwP4LGHp87D4FkAWjL2O
+         8e8GIdQGZfUqYCm/NEkIjDdxIkA4foEQdeWUg3urYbjFkN+ATnRKSYJ8Yk3ogzpNNATW
+         VzDno/N4Qw3YLJ0nmtMJ+UDMeD7YShUdqn+X0Qkq2edoJaOM+/QfsrIkyOqvTU1d0DvZ
+         zhDA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 690E0217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Tejun Heo <tj@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andi Shyti <andi@etezian.org>,
+	Mark Brown <broonie@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [RFC 10/10] ARM: exynos: Remove support for Exynos5440
+Date: Tue, 24 Apr 2018 22:32:39 +0200
+Message-Id: <20180424203239.21885-11-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
+References: <20180424203239.21885-1-krzk@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598661129700313461?=
+X-GMAIL-MSGID: =?utf-8?q?1598661129700313461?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 10:56 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Tue, Apr 24, 2018 at 10:50:58PM +0200, Arnd Bergmann wrote:
->> On Tue, Apr 24, 2018 at 10:32 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> The only dependency is through Kconfig symbol (SOC_EXYNOS5440).  After
-> applying 10/10, which removes SOC_EXYNOS5440, some automatic code
-> testers can complain about non-existing Kconfig option.  That's not big
-> issue because all this will go away so indeed we could take everything
-> in one release.
+The Exynos5440 is not actively developed, there are no development
+boards available and probably there are no real products with it.
+Remove wide-tree support for Exynos5440.
 
-Right, I wouldn't worry about that. Kbuild itself doesn't warn about missing
-symbols, so this is only for helpful automated checks that tell us that there
-is still some pending work.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/mach-exynos/Kconfig  | 12 ------------
+ arch/arm/mach-exynos/common.h |  8 --------
+ arch/arm/mach-exynos/exynos.c | 15 ++-------------
+ 3 files changed, 2 insertions(+), 33 deletions(-)
 
-       Arnd
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 647c319f9f5f..219d389a8521 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -108,18 +108,6 @@ config SOC_EXYNOS5420
+ 	default y
+ 	depends on ARCH_EXYNOS5
+ 
+-config SOC_EXYNOS5440
+-	bool "SAMSUNG EXYNOS5440"
+-	default y
+-	depends on ARCH_EXYNOS5
+-	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+-	select HAVE_ARM_ARCH_TIMER
+-	select AUTO_ZRELADDR
+-	select PINCTRL_EXYNOS5440
+-	select PM_OPP
+-	help
+-	  Enable EXYNOS5440 SoC support
+-
+ config SOC_EXYNOS5800
+ 	bool "SAMSUNG EXYNOS5800"
+ 	default y
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 098f84a149a3..f332c654784b 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -21,7 +21,6 @@
+ #define EXYNOS5250_SOC_ID	0x43520000
+ #define EXYNOS5410_SOC_ID	0xE5410000
+ #define EXYNOS5420_SOC_ID	0xE5420000
+-#define EXYNOS5440_SOC_ID	0xE5440000
+ #define EXYNOS5800_SOC_ID	0xE5422000
+ #define EXYNOS5_SOC_MASK	0xFFFFF000
+ 
+@@ -39,7 +38,6 @@ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5410, EXYNOS5410_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
+-IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
+ 
+ #if defined(CONFIG_SOC_EXYNOS3250)
+@@ -82,12 +80,6 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
+ # define soc_is_exynos5420()	0
+ #endif
+ 
+-#if defined(CONFIG_SOC_EXYNOS5440)
+-# define soc_is_exynos5440()	is_samsung_exynos5440()
+-#else
+-# define soc_is_exynos5440()	0
+-#endif
+-
+ #if defined(CONFIG_SOC_EXYNOS5800)
+ # define soc_is_exynos5800()	is_samsung_exynos5800()
+ #else
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 8c4f5e342dc1..460ae13b3145 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -63,15 +63,6 @@ void __init exynos_sysram_init(void)
+ 	}
+ }
+ 
+-static void __init exynos_init_late(void)
+-{
+-	if (of_machine_is_compatible("samsung,exynos5440"))
+-		/* to be supported later */
+-		return;
+-
+-	exynos_pm_init();
+-}
+-
+ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+ 					int depth, void *data)
+ {
+@@ -79,8 +70,7 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+ 	const __be32 *reg;
+ 	int len;
+ 
+-	if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipid") &&
+-		!of_flat_dt_is_compatible(node, "samsung,exynos5440-clock"))
++	if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipid"))
+ 		return 0;
+ 
+ 	reg = of_get_flat_dt_prop(node, "reg", &len);
+@@ -209,7 +199,6 @@ static char const *const exynos_dt_compat[] __initconst = {
+ 	"samsung,exynos5250",
+ 	"samsung,exynos5260",
+ 	"samsung,exynos5420",
+-	"samsung,exynos5440",
+ 	NULL
+ };
+ 
+@@ -232,7 +221,7 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+ 	.init_early	= exynos_firmware_init,
+ 	.init_irq	= exynos_init_irq,
+ 	.init_machine	= exynos_dt_machine_init,
+-	.init_late	= exynos_init_late,
++	.init_late	= exynos_pm_init,
+ 	.dt_compat	= exynos_dt_compat,
+ 	.dt_fixup	= exynos_dt_fixup,
+ MACHINE_END
+-- 
+2.14.1
