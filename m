@@ -1,82 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756637AbeDXMHC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:07:02 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43192 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752915AbeDXMHB (ORCPT
+        id S1756831AbeDXMHQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:07:16 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35836 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756720AbeDXMHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:07:01 -0400
-Date: Tue, 24 Apr 2018 14:07:00 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: tglx@linutronix.de, dmitry.torokhov@gmail.com,
-        torvalds@linux-foundation.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: CLOCK_MONOTONIC, BOOTTIME, suspend and screensaver regression
-Message-ID: <20180424120659.GA14411@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 24 Apr 2018 08:07:12 -0400
+X-Google-Smtp-Source: AIpwx4+D/0FcDjqJdJe12CurK2zl9XRxhP4Hyx/Jn2FUpT5LdMErndeKSAi4MCqTwgg+p6Ff/ij+8g==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: perex@perex.cz, tiwai@suse.com, arnd@arndb.de
+Cc: baolin.wang@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        o-takashi@sakamocchi.jp, mingo@kernel.org,
+        elfring@users.sourceforge.net, dan.carpenter@oracle.com,
+        jeeja.kp@intel.com, vinod.koul@intel.com, guneshwor.o.singh@intel.com,
+        subhransu.s.prusty@intel.com, bhumirks@gmail.com,
+        gudishax.kranthikumar@intel.com, naveen.m@intel.com,
+        hardik.t.shah@intel.com, arvind.yadav.cs@gmail.com, fabf@skynet.be,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] Fix year 2038 issue for sound subsystem
+Date: Tue, 24 Apr 2018 20:06:07 +0800
+Message-Id: <cover.1524570852.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since many structures will use timespec type variables to record time stamp
+in uapi/asound.h, which are not year 2038 safe on 32bit system. This patchset
+tries to introduce new structures removing timespec type to compatible native
+mode and compat mode.
 
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Moreover this patchset also converts the internal structrures to use timespec64
+type and related APIs.
 
-Hi!
+Arnd Bergmann (2):
+  ALSA: move snd_pcm_ioctl_sync_ptr_compat into pcm_native.c
+  ALSA: add new 32-bit layout for snd_pcm_mmap_status/control
 
-In 4.17-rc1 I have weird problems with network manager... and I also
-have screensaver kicking just after resume.
+Baolin Wang (6):
+  ALSA: Replace timespec with timespec64
+  ALSA: Avoid using timespec for struct snd_timer_status
+  ALSA: Avoid using timespec for struct snd_ctl_elem_value
+  ALSA: Avoid using timespec for struct snd_pcm_status
+  ALSA: Avoid using timespec for struct snd_rawmidi_status
+  ALSA: Avoid using timespec for struct snd_timer_tread
 
-Searching the git logs:
+ include/sound/pcm.h               |   74 +++++++++--
+ include/sound/timer.h             |    4 +-
+ include/uapi/sound/asound.h       |  114 ++++++++++++++--
+ sound/core/pcm.c                  |   12 +-
+ sound/core/pcm_compat.c           |  261 ++++++++-----------------------------
+ sound/core/pcm_lib.c              |   38 ++++--
+ sound/core/pcm_native.c           |  224 +++++++++++++++++++++++++++----
+ sound/core/rawmidi.c              |  131 +++++++++++++++----
+ sound/core/rawmidi_compat.c       |   87 ++++---------
+ sound/core/timer.c                |  224 +++++++++++++++++++++++--------
+ sound/core/timer_compat.c         |   59 +--------
+ sound/pci/hda/hda_controller.c    |   10 +-
+ sound/soc/intel/skylake/skl-pcm.c |    4 +-
+ 13 files changed, 766 insertions(+), 476 deletions(-)
 
-       - The most interesting change is the consolidation of clock
-         MONOTONIC
-	          and clock BOOTTIME.
-
-         Clock MONOTONIC behaves now exactly like clock BOOTTIME and
-         does
-	          not longer ignore the time spent in suspend. A new
-         clock
-	          MONOTONIC_ACTIVE is provived which behaves like
-         clock MONOTONIC in
-	          kernels before this change. This allows applications
-         to
-	          programmatically check for the clock MONOTONIC
-         behaviour.
-
-         As discussed in the review thread, this has the potential of
-	          breaking user space and we might have to revert
-	          this. Knock on wood
-		           that we can avoid that exercise.
-
-
-=2E..I believe you are breaking userspace for me. How can we check that?
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---CE+1k2dSO48ffgeK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrfHeMACgkQMOfwapXb+vJxaQCfUXJa6CyGtTfQe76jGX0ejkBd
-nqEAniT7xzWyqElQKqvfvEMJMxGrQAWo
-=4BWM
------END PGP SIGNATURE-----
-
---CE+1k2dSO48ffgeK--
+-- 
+1.7.9.5
