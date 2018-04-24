@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757669AbeDXMyu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:54:50 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37416 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757813AbeDXMpP (ORCPT
+        id S933317AbeDXMym (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:54:42 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55517 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757814AbeDXMpP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Apr 2018 08:45:15 -0400
-X-Google-Smtp-Source: AIpwx4/VW0QBFccGLsb+ZWNd2Mm+5zpJa2UgV6dDc/OJe3Mt+UfFI1UdK3DwBImu83eWBis66NTcRg==
+X-Google-Smtp-Source: AB8JxZqv4BXkg9sducxE11SOuDGr3pC8Wpo7+9fFkFl6I0LFEek0AYPGWP7m4avIGWttQNJ6KybFZw==
 From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -15,9 +15,9 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 06/28] venus: hfi: handle buffer output2 type as well
-Date: Tue, 24 Apr 2018 15:44:14 +0300
-Message-Id: <20180424124436.26955-7-stanimir.varbanov@linaro.org>
+Subject: [PATCH 07/28] venus: hfi_venus: add halt AXI support for Venus 4xx
+Date: Tue, 24 Apr 2018 15:44:15 +0300
+Message-Id: <20180424124436.26955-8-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
 References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
@@ -25,42 +25,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds handling of buffers of type OUTPUT2 which is needed to
-support Venus 4xx version.
+Add AXI halt support for version 4xx by using venus wrapper
+registers.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/hfi.c      | 3 ++-
- drivers/media/platform/qcom/venus/hfi_msgs.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/platform/qcom/venus/hfi_venus.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/venus/hfi.c b/drivers/media/platform/qcom/venus/hfi.c
-index cbc6fad05e47..a570fdad0de0 100644
---- a/drivers/media/platform/qcom/venus/hfi.c
-+++ b/drivers/media/platform/qcom/venus/hfi.c
-@@ -473,7 +473,8 @@ int hfi_session_process_buf(struct venus_inst *inst, struct hfi_frame_data *fd)
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+index 734ce11b0ed0..53546174aab8 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus.c
++++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+@@ -532,6 +532,23 @@ static int venus_halt_axi(struct venus_hfi_device *hdev)
+ 	u32 val;
+ 	int ret;
  
- 	if (fd->buffer_type == HFI_BUFFER_INPUT)
- 		return ops->session_etb(inst, fd);
--	else if (fd->buffer_type == HFI_BUFFER_OUTPUT)
-+	else if (fd->buffer_type == HFI_BUFFER_OUTPUT ||
-+		 fd->buffer_type == HFI_BUFFER_OUTPUT2)
- 		return ops->session_ftb(inst, fd);
- 
- 	return -EINVAL;
-diff --git a/drivers/media/platform/qcom/venus/hfi_msgs.c b/drivers/media/platform/qcom/venus/hfi_msgs.c
-index 5970e9b1716b..023802e62833 100644
---- a/drivers/media/platform/qcom/venus/hfi_msgs.c
-+++ b/drivers/media/platform/qcom/venus/hfi_msgs.c
-@@ -825,7 +825,8 @@ static void hfi_session_ftb_done(struct venus_core *core,
- 		error = HFI_ERR_SESSION_INVALID_PARAMETER;
- 	}
- 
--	if (buffer_type != HFI_BUFFER_OUTPUT)
-+	if (buffer_type != HFI_BUFFER_OUTPUT &&
-+	    buffer_type != HFI_BUFFER_OUTPUT2)
- 		goto done;
- 
- 	if (hfi_flags & HFI_BUFFERFLAG_EOS)
++	if (hdev->core->res->hfi_version == HFI_VERSION_4XX) {
++		val = venus_readl(hdev, WRAPPER_CPU_AXI_HALT);
++		val |= BIT(16);
++		venus_writel(hdev, WRAPPER_CPU_AXI_HALT, val);
++
++		ret = readl_poll_timeout(base + WRAPPER_CPU_AXI_HALT_STATUS,
++					 val, val & BIT(24),
++					 POLL_INTERVAL_US,
++					 VBIF_AXI_HALT_ACK_TIMEOUT_US);
++		if (ret) {
++			dev_err(dev, "AXI bus port halt timeout\n");
++			return ret;
++		}
++
++		return 0;
++	}
++
+ 	/* Halt AXI and AXI IMEM VBIF Access */
+ 	val = venus_readl(hdev, VBIF_AXI_HALT_CTRL0);
+ 	val |= VBIF_AXI_HALT_CTRL0_HALT_REQ;
 -- 
 2.14.1
