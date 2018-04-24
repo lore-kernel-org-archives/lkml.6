@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756684AbeDXMIu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:08:50 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38351 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932588AbeDXMHj (ORCPT
+        id S1757256AbeDXMJP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:09:15 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40120 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755724AbeDXMHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:07:39 -0400
-X-Google-Smtp-Source: AIpwx49OaG5F233LLcu45LOL4d/Qcf69KMZFuctig3dXfQjn2MGQgEQ188zo3zyQsL4ME7Tz/Ln3BA==
+        Tue, 24 Apr 2018 08:07:24 -0400
+X-Google-Smtp-Source: AIpwx4/v9aqdPs+91Ux9HzW5g2WiRETj+/AxFKsMDq7tGpTaq8+Dc8zbmLZrKC395S/6rdlS4CCfHg==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: perex@perex.cz, tiwai@suse.com, arnd@arndb.de
 Cc: baolin.wang@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
@@ -18,9 +18,9 @@ Cc: baolin.wang@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
         gudishax.kranthikumar@intel.com, naveen.m@intel.com,
         hardik.t.shah@intel.com, arvind.yadav.cs@gmail.com, fabf@skynet.be,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] ALSA: Avoid using timespec for struct snd_rawmidi_status
-Date: Tue, 24 Apr 2018 20:06:12 +0800
-Message-Id: <4b52b5726f66313347519c7e11168f1d0f9b2143.1524570852.git.baolin.wang@linaro.org>
+Subject: [PATCH 2/8] ALSA: Avoid using timespec for struct snd_timer_status
+Date: Tue, 24 Apr 2018 20:06:09 +0800
+Message-Id: <9d2927f93fca520407bb0eddcea08d51b3060494.1524570852.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1524570852.git.baolin.wang@linaro.org>
 References: <cover.1524570852.git.baolin.wang@linaro.org>
@@ -30,335 +30,193 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The struct snd_rawmidi_status will use 'timespec' type variables to record
-timestamp, which is not year 2038 safe on 32bits system.
+struct snd_timer_status uses 'timespec' type variables to record
+timestamp, which will be changed to an incompatible layout with
+updated user space using 64-bit time_t.
 
-Thus we introduced 'struct snd_rawmidi_status32' and 'struct snd_rawmidi_status64'
-to handle 32bit time_t and 64bit time_t in native mode, which replace
-timespec with s64 type.
+To handle both the old and the new layout on 32-bit architectures,
+this patch introduces 'struct snd_timer_status32' and 'struct snd_timer_status64'
+to handle 32bit time_t and 64bit time_t in native mode and compat mode,
+which replaces timespec with s64 type.
 
-In compat mode, we renamed or introduced new structures to handle 32bit/64bit
-time_t in compatible mode. The 'struct snd_rawmidi_status32' and
-snd_rawmidi_ioctl_status32() are used to handle 32bit time_t in compat mode.
-'struct compat_snd_rawmidi_status64' is used to handle 64bit time_t.
-
-When glibc changes time_t to 64-bit, any recompiled program will issue ioctl
-commands that the kernel does not understand without this patch.
+When glibc changes time_t to 64-bit, any recompiled program will issue
+ioctl commands that the kernel does not understand without this patch.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- include/uapi/sound/asound.h |    1 +
- sound/core/rawmidi.c        |  131 ++++++++++++++++++++++++++++++++++---------
- sound/core/rawmidi_compat.c |   87 ++++++++--------------------
- 3 files changed, 126 insertions(+), 93 deletions(-)
+ sound/core/timer.c        |   62 ++++++++++++++++++++++++++++++++++++++++-----
+ sound/core/timer_compat.c |   57 +++++------------------------------------
+ 2 files changed, 62 insertions(+), 57 deletions(-)
 
-diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
-index c9afde4..fad66ad 100644
---- a/include/uapi/sound/asound.h
-+++ b/include/uapi/sound/asound.h
-@@ -650,6 +650,7 @@ struct snd_rawmidi_params {
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index a77b461..c9d7ddb 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -79,6 +79,30 @@ struct snd_timer_user {
+ 	struct mutex ioctl_lock;
+ };
  
- struct snd_rawmidi_status {
- 	int stream;
-+	unsigned char pad1[sizeof(time_t) - sizeof(int)];
- 	struct timespec tstamp;		/* Timestamp */
- 	size_t avail;			/* available bytes */
- 	size_t xruns;			/* count of overruns since last status (in bytes) */
-diff --git a/sound/core/rawmidi.c b/sound/core/rawmidi.c
-index 69616d0..421b899 100644
---- a/sound/core/rawmidi.c
-+++ b/sound/core/rawmidi.c
-@@ -63,6 +63,29 @@
- #define rmidi_dbg(rmidi, fmt, args...) \
- 	dev_dbg(&(rmidi)->dev, fmt, ##args)
- 
-+struct snd_rawmidi_status32 {
-+	s32 stream;
-+	s32 tstamp_sec;			/* Timestamp */
++struct snd_timer_status32 {
++	s32 tstamp_sec;			/* Timestamp - last update */
 +	s32 tstamp_nsec;
-+	u32 avail;			/* available bytes */
-+	u32 xruns;			/* count of overruns since last status (in bytes) */
-+	unsigned char reserved[16];	/* reserved for future use */
++	unsigned int resolution;	/* current period resolution in ns */
++	unsigned int lost;		/* counter of master tick lost */
++	unsigned int overrun;		/* count of read queue overruns */
++	unsigned int queue;		/* used queue size */
++	unsigned char reserved[64];	/* reserved */
 +};
 +
-+#define SNDRV_RAWMIDI_IOCTL_STATUS32	_IOWR('W', 0x20, struct snd_rawmidi_status32)
++#define SNDRV_TIMER_IOCTL_STATUS32	_IOR('T', 0x14, struct snd_timer_status32)
 +
-+struct snd_rawmidi_status64 {
-+	int stream;
-+	u8 rsvd[sizeof(time_t) - sizeof(int)]; /* alignment */
-+	s64 tstamp_sec;			/* Timestamp */
++struct snd_timer_status64 {
++	s64 tstamp_sec;			/* Timestamp - last update */
 +	s64 tstamp_nsec;
-+	size_t avail;			/* available bytes */
-+	size_t xruns;			/* count of overruns since last status (in bytes) */
-+	unsigned char reserved[16];	/* reserved for future use */
++	unsigned int resolution;	/* current period resolution in ns */
++	unsigned int lost;		/* counter of master tick lost */
++	unsigned int overrun;		/* count of read queue overruns */
++	unsigned int queue;		/* used queue size */
++	unsigned char reserved[64];	/* reserved */
 +};
 +
-+#define SNDRV_RAWMIDI_IOCTL_STATUS64	_IOWR('W', 0x20, struct snd_rawmidi_status64)
++#define SNDRV_TIMER_IOCTL_STATUS64	_IOR('T', 0x14, struct snd_timer_status64)
 +
- static struct snd_rawmidi *snd_rawmidi_search(struct snd_card *card, int device)
- {
- 	struct snd_rawmidi *rawmidi;
-@@ -689,7 +712,7 @@ int snd_rawmidi_input_params(struct snd_rawmidi_substream *substream,
- EXPORT_SYMBOL(snd_rawmidi_input_params);
+ /* list of timers */
+ static LIST_HEAD(snd_timer_list);
  
- static int snd_rawmidi_output_status(struct snd_rawmidi_substream *substream,
--				     struct snd_rawmidi_status * status)
-+				     struct snd_rawmidi_status64 * status)
- {
- 	struct snd_rawmidi_runtime *runtime = substream->runtime;
- 
-@@ -702,7 +725,7 @@ static int snd_rawmidi_output_status(struct snd_rawmidi_substream *substream,
+@@ -1842,17 +1866,41 @@ static int snd_timer_user_params(struct file *file,
+ 	return err;
  }
  
- static int snd_rawmidi_input_status(struct snd_rawmidi_substream *substream,
--				    struct snd_rawmidi_status * status)
-+				    struct snd_rawmidi_status64 * status)
+-static int snd_timer_user_status(struct file *file,
+-				 struct snd_timer_status __user *_status)
++static int snd_timer_user_status32(struct file *file,
++				   struct snd_timer_status32 __user *_status)
++ {
++	struct snd_timer_user *tu;
++	struct snd_timer_status32 status;
++
++	tu = file->private_data;
++	if (!tu->timeri)
++		return -EBADFD;
++	memset(&status, 0, sizeof(status));
++	status.tstamp_sec = tu->tstamp.tv_sec;
++	status.tstamp_nsec = tu->tstamp.tv_nsec;
++	status.resolution = snd_timer_resolution(tu->timeri);
++	status.lost = tu->timeri->lost;
++	status.overrun = tu->overrun;
++	spin_lock_irq(&tu->qlock);
++	status.queue = tu->qused;
++	spin_unlock_irq(&tu->qlock);
++	if (copy_to_user(_status, &status, sizeof(status)))
++		return -EFAULT;
++	return 0;
++}
++
++static int snd_timer_user_status64(struct file *file,
++				   struct snd_timer_status64 __user *_status)
  {
- 	struct snd_rawmidi_runtime *runtime = substream->runtime;
+ 	struct snd_timer_user *tu;
+-	struct snd_timer_status status;
++	struct snd_timer_status64 status;
  
-@@ -716,6 +739,80 @@ static int snd_rawmidi_input_status(struct snd_rawmidi_substream *substream,
+ 	tu = file->private_data;
+ 	if (!tu->timeri)
+ 		return -EBADFD;
+ 	memset(&status, 0, sizeof(status));
+-	status.tstamp = timespec64_to_timespec(tu->tstamp);
++	status.tstamp_sec = tu->tstamp.tv_sec;
++	status.tstamp_nsec = tu->tstamp.tv_nsec;
+ 	status.resolution = snd_timer_resolution(tu->timeri);
+ 	status.lost = tu->timeri->lost;
+ 	status.overrun = tu->overrun;
+@@ -1964,8 +2012,10 @@ static long __snd_timer_user_ioctl(struct file *file, unsigned int cmd,
+ 		return snd_timer_user_info(file, argp);
+ 	case SNDRV_TIMER_IOCTL_PARAMS:
+ 		return snd_timer_user_params(file, argp);
+-	case SNDRV_TIMER_IOCTL_STATUS:
+-		return snd_timer_user_status(file, argp);
++	case SNDRV_TIMER_IOCTL_STATUS32:
++		return snd_timer_user_status32(file, argp);
++	case SNDRV_TIMER_IOCTL_STATUS64:
++		return snd_timer_user_status64(file, argp);
+ 	case SNDRV_TIMER_IOCTL_START:
+ 	case SNDRV_TIMER_IOCTL_START_OLD:
+ 		return snd_timer_user_start(file);
+diff --git a/sound/core/timer_compat.c b/sound/core/timer_compat.c
+index e00f7e3..0495ede 100644
+--- a/sound/core/timer_compat.c
++++ b/sound/core/timer_compat.c
+@@ -83,54 +83,11 @@ static int snd_timer_user_info_compat(struct file *file,
  	return 0;
  }
  
-+static int snd_rawmidi_ioctl_status32(struct snd_rawmidi_file *rfile,
-+				      struct snd_rawmidi_status32 __user *argp)
-+{
-+	int err = 0;
-+	struct snd_rawmidi_status32 __user *status = argp;
-+	struct snd_rawmidi_status32 status32;
-+	struct snd_rawmidi_status64 status64;
-+
-+	if (copy_from_user(&status32, argp,
-+			   sizeof(struct snd_rawmidi_status32)))
-+		return -EFAULT;
-+
-+	switch (status32.stream) {
-+	case SNDRV_RAWMIDI_STREAM_OUTPUT:
-+		if (rfile->output == NULL)
-+			return -EINVAL;
-+		err = snd_rawmidi_output_status(rfile->output, &status64);
-+		break;
-+	case SNDRV_RAWMIDI_STREAM_INPUT:
-+		if (rfile->input == NULL)
-+			return -EINVAL;
-+		err = snd_rawmidi_input_status(rfile->input, &status64);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	if (err < 0)
-+		return err;
-+
-+	status32 = (struct snd_rawmidi_status32) {
-+		.stream = status64.stream,
-+		.tstamp_sec = status64.tstamp_sec,
-+		.tstamp_nsec = status64.tstamp_nsec,
-+		.avail = status64.avail,
-+		.xruns = status64.xruns,
-+	};
-+
-+	if (copy_to_user(status, &status32, sizeof(*status)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int snd_rawmidi_ioctl_status64(struct snd_rawmidi_file *rfile,
-+				      struct snd_rawmidi_status64 __user *argp)
-+{
-+	int err = 0;
-+	struct snd_rawmidi_status64 status;
-+
-+	if (copy_from_user(&status, argp, sizeof(struct snd_rawmidi_status64)))
-+		return -EFAULT;
-+
-+	switch (status.stream) {
-+	case SNDRV_RAWMIDI_STREAM_OUTPUT:
-+		if (rfile->output == NULL)
-+			return -EINVAL;
-+		err = snd_rawmidi_output_status(rfile->output, &status);
-+		break;
-+	case SNDRV_RAWMIDI_STREAM_INPUT:
-+		if (rfile->input == NULL)
-+			return -EINVAL;
-+		err = snd_rawmidi_input_status(rfile->input, &status);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	if (err < 0)
-+		return err;
-+	if (copy_to_user(argp, &status,
-+			 sizeof(struct snd_rawmidi_status64)))
-+		return -EFAULT;
-+	return 0;
-+}
-+
- static long snd_rawmidi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct snd_rawmidi_file *rfile;
-@@ -760,32 +857,10 @@ static long snd_rawmidi_ioctl(struct file *file, unsigned int cmd, unsigned long
- 			return -EINVAL;
- 		}
- 	}
--	case SNDRV_RAWMIDI_IOCTL_STATUS:
--	{
--		int err = 0;
--		struct snd_rawmidi_status status;
--		if (copy_from_user(&status, argp, sizeof(struct snd_rawmidi_status)))
--			return -EFAULT;
--		switch (status.stream) {
--		case SNDRV_RAWMIDI_STREAM_OUTPUT:
--			if (rfile->output == NULL)
--				return -EINVAL;
--			err = snd_rawmidi_output_status(rfile->output, &status);
--			break;
--		case SNDRV_RAWMIDI_STREAM_INPUT:
--			if (rfile->input == NULL)
--				return -EINVAL;
--			err = snd_rawmidi_input_status(rfile->input, &status);
--			break;
--		default:
--			return -EINVAL;
--		}
--		if (err < 0)
--			return err;
--		if (copy_to_user(argp, &status, sizeof(struct snd_rawmidi_status)))
--			return -EFAULT;
--		return 0;
--	}
-+	case SNDRV_RAWMIDI_IOCTL_STATUS32:
-+		return snd_rawmidi_ioctl_status32(rfile, argp);
-+	case SNDRV_RAWMIDI_IOCTL_STATUS64:
-+		return snd_rawmidi_ioctl_status64(rfile, argp);
- 	case SNDRV_RAWMIDI_IOCTL_DROP:
- 	{
- 		int val;
-diff --git a/sound/core/rawmidi_compat.c b/sound/core/rawmidi_compat.c
-index e30e30b..c817441 100644
---- a/sound/core/rawmidi_compat.c
-+++ b/sound/core/rawmidi_compat.c
-@@ -55,19 +55,22 @@ static int snd_rawmidi_ioctl_params_compat(struct snd_rawmidi_file *rfile,
- 	return -EINVAL;
- }
- 
--struct snd_rawmidi_status32 {
-+struct compat_snd_rawmidi_status64 {
- 	s32 stream;
+-struct snd_timer_status32 {
 -	struct compat_timespec tstamp;
-+	u8 rsvd[sizeof(time_t) - sizeof(s32)]; /* alignment */
-+	s64 tstamp_sec;
-+	s64 tstamp_nsec;
- 	u32 avail;
- 	u32 xruns;
- 	unsigned char reserved[16];
- } __attribute__((packed));
- 
--static int snd_rawmidi_ioctl_status_compat(struct snd_rawmidi_file *rfile,
--					   struct snd_rawmidi_status32 __user *src)
-+static int snd_rawmidi_ioctl_status_compat64(struct snd_rawmidi_file *rfile,
-+					     struct compat_snd_rawmidi_status64 __user *src)
- {
- 	int err;
--	struct snd_rawmidi_status status;
-+	struct snd_rawmidi_status64 status;
-+	struct compat_snd_rawmidi_status64 compat_status;
- 
- 	if (get_user(status.stream, &src->stream))
- 		return -EFAULT;
-@@ -89,68 +92,24 @@ static int snd_rawmidi_ioctl_status_compat(struct snd_rawmidi_file *rfile,
- 	if (err < 0)
- 		return err;
- 
--	if (compat_put_timespec(&status.tstamp, &src->tstamp) ||
--	    put_user(status.avail, &src->avail) ||
--	    put_user(status.xruns, &src->xruns))
--		return -EFAULT;
+-	u32 resolution;
+-	u32 lost;
+-	u32 overrun;
+-	u32 queue;
+-	unsigned char reserved[64];
+-};
 -
+-static int snd_timer_user_status_compat(struct file *file,
+-					struct snd_timer_status32 __user *_status)
+-{
+-	struct snd_timer_user *tu;
+-	struct snd_timer_status32 status;
+-	
+-	tu = file->private_data;
+-	if (!tu->timeri)
+-		return -EBADFD;
+-	memset(&status, 0, sizeof(status));
+-	status.tstamp.tv_sec = tu->tstamp.tv_sec;
+-	status.tstamp.tv_nsec = tu->tstamp.tv_nsec;
+-	status.resolution = snd_timer_resolution(tu->timeri);
+-	status.lost = tu->timeri->lost;
+-	status.overrun = tu->overrun;
+-	spin_lock_irq(&tu->qlock);
+-	status.queue = tu->qused;
+-	spin_unlock_irq(&tu->qlock);
+-	if (copy_to_user(_status, &status, sizeof(status)))
+-		return -EFAULT;
 -	return 0;
 -}
 -
 -#ifdef CONFIG_X86_X32
--/* X32 ABI has 64bit timespec and 64bit alignment */
--struct snd_rawmidi_status_x32 {
--	s32 stream;
--	u32 rsvd; /* alignment */
--	struct timespec tstamp;
--	u32 avail;
--	u32 xruns;
--	unsigned char reserved[16];
--} __attribute__((packed));
--
--#define put_timespec(src, dst) copy_to_user(dst, src, sizeof(*dst))
--
--static int snd_rawmidi_ioctl_status_x32(struct snd_rawmidi_file *rfile,
--					struct snd_rawmidi_status_x32 __user *src)
--{
--	int err;
--	struct snd_rawmidi_status status;
--
--	if (get_user(status.stream, &src->stream))
--		return -EFAULT;
--
--	switch (status.stream) {
--	case SNDRV_RAWMIDI_STREAM_OUTPUT:
--		if (!rfile->output)
--			return -EINVAL;
--		err = snd_rawmidi_output_status(rfile->output, &status);
--		break;
--	case SNDRV_RAWMIDI_STREAM_INPUT:
--		if (!rfile->input)
--			return -EINVAL;
--		err = snd_rawmidi_input_status(rfile->input, &status);
--		break;
--	default:
--		return -EINVAL;
--	}
--	if (err < 0)
--		return err;
-+	compat_status = (struct compat_snd_rawmidi_status64) {
-+		.stream = status.stream,
-+		.tstamp_sec = status.tstamp_sec,
-+		.tstamp_nsec = status.tstamp_nsec,
-+		.avail = status.avail,
-+		.xruns = status.xruns,
-+	};
- 
--	if (put_timespec(&status.tstamp, &src->tstamp) ||
--	    put_user(status.avail, &src->avail) ||
--	    put_user(status.xruns, &src->xruns))
-+	if (copy_to_user(src, &compat_status, sizeof(*src)))
- 		return -EFAULT;
- 
- 	return 0;
- }
+-/* X32 ABI has the same struct as x86-64 */
+-#define snd_timer_user_status_x32(file, s) \
+-	snd_timer_user_status(file, s)
 -#endif /* CONFIG_X86_X32 */
- 
+-
+-/*
+- */
+-
  enum {
- 	SNDRV_RAWMIDI_IOCTL_PARAMS32 = _IOWR('W', 0x10, struct snd_rawmidi_params32),
--	SNDRV_RAWMIDI_IOCTL_STATUS32 = _IOWR('W', 0x20, struct snd_rawmidi_status32),
+ 	SNDRV_TIMER_IOCTL_GPARAMS32 = _IOW('T', 0x04, struct snd_timer_gparams32),
+ 	SNDRV_TIMER_IOCTL_INFO32 = _IOR('T', 0x11, struct snd_timer_info32),
+-	SNDRV_TIMER_IOCTL_STATUS32 = _IOW('T', 0x14, struct snd_timer_status32),
 -#ifdef CONFIG_X86_X32
--	SNDRV_RAWMIDI_IOCTL_STATUS_X32 = _IOWR('W', 0x20, struct snd_rawmidi_status_x32),
+-	SNDRV_TIMER_IOCTL_STATUS_X32 = _IOW('T', 0x14, struct snd_timer_status),
 -#endif /* CONFIG_X86_X32 */
-+	SNDRV_RAWMIDI_IOCTL_STATUS_COMPAT32 = _IOWR('W', 0x20, struct snd_rawmidi_status32),
-+	SNDRV_RAWMIDI_IOCTL_STATUS_COMPAT64 = _IOWR('W', 0x20, struct compat_snd_rawmidi_status64),
++	SNDRV_TIMER_IOCTL_STATUS_COMPAT32 = _IOW('T', 0x14, struct snd_timer_status32),
++	SNDRV_TIMER_IOCTL_STATUS_COMPAT64 = _IOW('T', 0x14, struct snd_timer_status64),
  };
  
- static long snd_rawmidi_ioctl_compat(struct file *file, unsigned int cmd, unsigned long arg)
-@@ -167,12 +126,10 @@ static long snd_rawmidi_ioctl_compat(struct file *file, unsigned int cmd, unsign
- 		return snd_rawmidi_ioctl(file, cmd, (unsigned long)argp);
- 	case SNDRV_RAWMIDI_IOCTL_PARAMS32:
- 		return snd_rawmidi_ioctl_params_compat(rfile, argp);
--	case SNDRV_RAWMIDI_IOCTL_STATUS32:
--		return snd_rawmidi_ioctl_status_compat(rfile, argp);
+ static long __snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd,
+@@ -159,12 +116,10 @@ static long __snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd,
+ 		return snd_timer_user_gparams_compat(file, argp);
+ 	case SNDRV_TIMER_IOCTL_INFO32:
+ 		return snd_timer_user_info_compat(file, argp);
+-	case SNDRV_TIMER_IOCTL_STATUS32:
+-		return snd_timer_user_status_compat(file, argp);
 -#ifdef CONFIG_X86_X32
--	case SNDRV_RAWMIDI_IOCTL_STATUS_X32:
--		return snd_rawmidi_ioctl_status_x32(rfile, argp);
+-	case SNDRV_TIMER_IOCTL_STATUS_X32:
+-		return snd_timer_user_status_x32(file, argp);
 -#endif /* CONFIG_X86_X32 */
-+	case SNDRV_RAWMIDI_IOCTL_STATUS_COMPAT32:
-+		return snd_rawmidi_ioctl_status32(rfile, argp);
-+	case SNDRV_RAWMIDI_IOCTL_STATUS_COMPAT64:
-+		return snd_rawmidi_ioctl_status_compat64(rfile, argp);
++	case SNDRV_TIMER_IOCTL_STATUS_COMPAT32:
++		return snd_timer_user_status32(file, argp);
++	case SNDRV_TIMER_IOCTL_STATUS_COMPAT64:
++		return snd_timer_user_status64(file, argp);
  	}
  	return -ENOIOCTLCMD;
  }
