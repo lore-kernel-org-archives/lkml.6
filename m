@@ -1,80 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751822AbeDXPay (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:30:54 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:37560 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbeDXPat (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:30:49 -0400
+        id S1751453AbeDXPbD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:31:03 -0400
+Received: from david.siemens.de ([192.35.17.14]:42201 "EHLO david.siemens.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751994AbeDXPa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:30:56 -0400
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 0/6] PCI: leak fixes, removable generic PCI host, assorted stuff
-Date: Tue, 24 Apr 2018 17:13:36 +0200
-Message-Id: <cover.1524582822.git.jan.kiszka@siemens.com>
+Subject: [PATCH 6/6] arm: Allow to enable PCI_DOMAINS manually
+Date: Tue, 24 Apr 2018 17:13:42 +0200
+Message-Id: <4b97c00b9cd72f508aa27f0b58711d73de2cd397.1524582822.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
+References: <cover.1524582822.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
+References: <cover.1524582822.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This primarily enables to unbind the generic PCI host controller without
-leaving lots of memory leaks behind. A previous proposal patch 5 was
-rejected because of those issues [1].
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-The fixes have been validated in the Jailhouse setup, where we add and
-remove a virtual PCI host controller on hypervisor activation/
-deactivation, with the help of kmemleak.
+Required when running over Jailhouse, and there is already a physical
+host controller that Jailhouse does not intercept and rather adds a
+virtual one. That is the case for the Tegra TK1, e.g.
 
-Besides that, there is tiny PCI API cleanup at the beginning and
-support for manually enabled PCI domains at the end that enables the
-Jailhouse scenario.
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ arch/arm/Kconfig | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Jan
-
-[1] http://lkml.iu.edu/hypermail/linux/kernel/1606.3/00072.html
-
-
-CC: Jingoo Han <jingoohan1@gmail.com>
-CC: Joao Pinto <Joao.Pinto@synopsys.com>
-CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-
-Jan Kiszka (6):
-  PCI: Make pci_get_new_domain_nr static
-  PCI: Fix memory leak of devm_pci_alloc_host_bridge
-  PCI: Introduce devm_of_pci_get_host_bridge_resources
-  PCI: Convert of_pci_get_host_bridge_resources users to devm variant
-  PCI: Add support for unbinding the generic PCI host controller
-  arm: Allow to enable PCI_DOMAINS manually
-
- arch/arm/Kconfig                       |  7 ++-
- drivers/pci/dwc/pcie-designware-host.c |  2 +-
- drivers/pci/host/pci-aardvark.c        |  5 +-
- drivers/pci/host/pci-ftpci100.c        |  4 +-
- drivers/pci/host/pci-host-common.c     | 13 +++++
- drivers/pci/host/pci-host-generic.c    |  1 +
- drivers/pci/host/pci-v3-semi.c         |  3 +-
- drivers/pci/host/pci-versatile.c       |  3 +-
- drivers/pci/host/pci-xgene.c           |  3 +-
- drivers/pci/host/pcie-altera.c         |  5 +-
- drivers/pci/host/pcie-iproc-platform.c |  4 +-
- drivers/pci/host/pcie-rcar.c           |  5 +-
- drivers/pci/host/pcie-rockchip.c       |  4 +-
- drivers/pci/host/pcie-xilinx-nwl.c     |  4 +-
- drivers/pci/host/pcie-xilinx.c         |  4 +-
- drivers/pci/of.c                       | 93 ++++++++++++++++++++++------------
- drivers/pci/pci.c                      |  6 +--
- drivers/pci/probe.c                    |  4 +-
- include/linux/of_pci.h                 | 14 ++++-
- include/linux/pci-ecam.h               |  1 +
- include/linux/pci.h                    |  3 --
- 21 files changed, 120 insertions(+), 68 deletions(-)
-
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a7f8e7f4b88f..5f8190cb057d 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1248,8 +1248,13 @@ config PCI
+ 	  VESA. If you have PCI, say Y, otherwise N.
+ 
+ config PCI_DOMAINS
+-	bool
++	bool "Support for multiple PCI domains"
+ 	depends on PCI
++	help
++	  Automatically enabled if the platform supports multiple PCI host
++	  controllers. Say Y if running over a hypervisor like Jailhouse that
++	  dynamically adds further host controllers while the system is
++	  running. Say N otherwise.
+ 
+ config PCI_DOMAINS_GENERIC
+ 	def_bool PCI_DOMAINS
 -- 
 2.13.6
