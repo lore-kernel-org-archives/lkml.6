@@ -1,141 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755475AbeDXJfl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:35:41 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45694 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753057AbeDXJfh (ORCPT
+        id S1755773AbeDXJho (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:37:44 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:48615 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751483AbeDXJhj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:35:37 -0400
-Date: Tue, 24 Apr 2018 12:35:00 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-Message-ID: <20180424093500.xvpcm3ibcu7adke2@mwanda>
-References: <cover.1524499368.git.gustavo@embeddedor.com>
- <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
- <20180423152455.363d285c@vento.lan>
+        Tue, 24 Apr 2018 05:37:39 -0400
+Subject: Re: [RFC 01/10] PCI: dwc: Add MSI-X callbacks handler
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+ <77b7b2687e9618d3f7d1f11c3fc6ecec9a9442ef.1523379766.git.gustavo.pimentel@synopsys.com>
+ <0b7023d9-29c6-0993-07d3-b046d25b67ff@ti.com>
+ <e2fe7d5f-9f57-0e67-d321-541ff4706792@synopsys.com>
+ <0e8b8ce9-db12-1e11-3eb5-62f3fa686d59@ti.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <16d237b2-0052-447e-13cb-bc2f15848be4@synopsys.com>
+Date: Tue, 24 Apr 2018 10:36:27 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423152455.363d285c@vento.lan>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8872 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804240093
+In-Reply-To: <0e8b8ce9-db12-1e11-3eb5-62f3fa686d59@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mauro,
+Hi Kishon,
 
-I saw your comment on LWN.  You argue on LWN that since the format array
-is static the CPU won't speculatively read past the L1 cache?
+On 24/04/2018 08:07, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Monday 23 April 2018 03:06 PM, Gustavo Pimentel wrote:
+>> Hi Kishon,
+>>
+>> On 16/04/2018 10:29, Kishon Vijay Abraham I wrote:
+>>> Hi Gustavo,
+>>>
+>>> On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
+>>>> Changes the pcie_raise_irq function signature, namely the interrupt_num
+>>>> variable type from u8 to u16 to accommodate the MSI-X maximum interrupts
+>>>> of 2048.
+>>>>
+>>>> Implements a PCIe config space capability iterator function to search and
+>>>> save the MSI and MSI-X pointers. With this method the code becomes more
+>>>> generic and flexible.
+>>>>
+>>>> Implements MSI-X set/get functions for sysfs interface in order to change
+>>>> the EP entries number.
+>>>>
+>>>> Implements EP MSI-X interface for triggering interruptions.
+>>>>
+>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>> ---
+>>>>  drivers/pci/dwc/pci-dra7xx.c           |   2 +-
+>>>>  drivers/pci/dwc/pcie-artpec6.c         |   2 +-
+>>>>  drivers/pci/dwc/pcie-designware-ep.c   | 145 ++++++++++++++++++++++++++++++++-
+>>>>  drivers/pci/dwc/pcie-designware-plat.c |   6 +-
+>>>>  drivers/pci/dwc/pcie-designware.h      |  23 +++++-
+>>>>  5 files changed, 173 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+>>>> index ed8558d..5265725 100644
+>>>> --- a/drivers/pci/dwc/pci-dra7xx.c
+>>>> +++ b/drivers/pci/dwc/pci-dra7xx.c
+>>>> @@ -369,7 +369,7 @@ static void dra7xx_pcie_raise_msi_irq(struct dra7xx_pcie *dra7xx,
+>>>>  }
+>>>>  
+>>>>  static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>>>> -				 enum pci_epc_irq_type type, u8 interrupt_num)
+>>>> +				 enum pci_epc_irq_type type, u16 interrupt_num)
+>>>>  {
+>>>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>>>>  	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
+>>>> diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
+>>>> index e66cede..96dc259 100644
+>>>> --- a/drivers/pci/dwc/pcie-artpec6.c
+>>>> +++ b/drivers/pci/dwc/pcie-artpec6.c
+>>>> @@ -428,7 +428,7 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
+>>>>  }
+>>>>  
+>>>>  static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>>>> -				  enum pci_epc_irq_type type, u8 interrupt_num)
+>>>> +				  enum pci_epc_irq_type type, u16 interrupt_num)
+>>>>  {
+>>>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>>>>  
+>>>> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+>>>> index 15b22a6..874d4c2 100644
+>>>> --- a/drivers/pci/dwc/pcie-designware-ep.c
+>>>> +++ b/drivers/pci/dwc/pcie-designware-ep.c
+>>>> @@ -40,6 +40,44 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+>>>>  	__dw_pcie_ep_reset_bar(pci, bar, 0);
+>>>>  }
+>>>>  
+>>>> +void dw_pcie_ep_find_cap_addr(struct dw_pcie_ep *ep)
+>>>> +{
+>>>
+>>> This should be implemented in a generic way similar to pci_find_capability().
+>>> It'll be useful when we try to implement other capabilities as well.
+>>
+>> Hum, what you suggest? Something implemented on the pci-epf-core?
+> 
+> yeah, Initially thought it could be implemented as a helper function in
+> pci-epc-core so that both designware and cadence can use it.
 
-I don't know if that's true.  It should be easy enough to filter out
-the reads into static arrays.  Peter do you know the answer here?
+That would be nice, however I couldn't find out how to access the config space,
+through the pci_epf or pci_epc structs.
 
-regards,
-dan carpenter
+So, I reworked the functions like this:
 
-On Mon, Apr 23, 2018 at 03:24:55PM -0300, Mauro Carvalho Chehab wrote:
-> Em Mon, 23 Apr 2018 12:38:03 -0500
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
+(on pcie-designware-ep.c)
+
+u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+                              u8 cap)
+{
+        u8 cap_id, next_cap_ptr;
+        u16 reg;
+
+        reg = dw_pcie_readw_dbi(pci, cap_ptr);
+        next_cap_ptr = (reg & 0xff00) >> 8;
+        cap_id = (reg & 0x00ff);
+
+        if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
+                return 0;
+
+        if (cap_id == cap)
+                return cap_ptr;
+
+        return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+}
+
+u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+{
+        u8 next_cap_ptr;
+        u16 reg;
+
+        reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+        next_cap_ptr = (reg & 0x00ff);
+
+        if (!next_cap_ptr)
+                return 0;
+
+        return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+}
+
+int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+{
+[...]
+        ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
+        ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
+[...]
+}
+
 > 
-> > f->index can be controlled by user-space, hence leading to a
-> > potential exploitation of the Spectre variant 1 vulnerability.
-> > 
-> > Smatch warning:
-> > drivers/media/usb/tm6000/tm6000-video.c:879 vidioc_enum_fmt_vid_cap() warn: potential spectre issue 'format'
-> > 
-> > Fix this by sanitizing f->index before using it to index
-> > array _format_
-> > 
-> > Notice that given that speculation windows are large, the policy is
-> > to kill the speculation on the first load and not worry if it can be
-> > completed with a dependent load/store [1].
-> > 
-> > [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-> > 
-> > Cc: stable@vger.kernel.org
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > ---
-> >  drivers/media/usb/tm6000/tm6000-video.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/media/usb/tm6000/tm6000-video.c b/drivers/media/usb/tm6000/tm6000-video.c
-> > index b2399d4..d701027 100644
-> > --- a/drivers/media/usb/tm6000/tm6000-video.c
-> > +++ b/drivers/media/usb/tm6000/tm6000-video.c
-> > @@ -26,6 +26,7 @@
-> >  #include <linux/kthread.h>
-> >  #include <linux/highmem.h>
-> >  #include <linux/freezer.h>
-> > +#include <linux/nospec.h>
-> >  
-> >  #include "tm6000-regs.h"
-> >  #include "tm6000.h"
-> > @@ -875,6 +876,7 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
-> >  	if (f->index >= ARRAY_SIZE(format))
-> >  		return -EINVAL;
-> >  
-> > +	f->index = array_index_nospec(f->index, ARRAY_SIZE(format));
->
-> Please enlighten me: how do you think this could be exploited?
+> But do we really have to find the address like this? since all designware IP's
+> will have a particular capability at a fixed address offset, why not follow use
+> existing mechanism in dw_pcie_ep_get_msi?
+
+The capabilities are not fixed to a specific address offset by default they
+assume those values, but they can be easily change at design stage.
+
 > 
-> When an application calls VIDIOC_ENUM_FMT from a /dev/video0 device,
-> it will just enumerate a hardware functionality, with is constant
-> for a given hardware piece.
+> Or is it possible for a particular capability to have address offsets for
+> different vendors? How is it for cadence?
+
+Yes, it's possible to have different address offset for different vendors.
+
 > 
-> The way it works is that userspace do something like:
+> Thanks
+> Kishon
 > 
-> 	int ret = 0;
-> 
-> 	for (i = 0; ret == 0; i++) {
-> 		ret = ioctl(VIDIOC_ENUM_FMT, ...);
-> 	}
-> 
-> in order to read an entire const table.
-> 
-> Usually, it doesn't require any special privilege to call this ioctl,
-> but, even if someone changes its permission to 0x400, a simple lsusb
-> output is enough to know what hardware model is there. A lsmod
-> or cat /proc/modules) also tells that the tm6000 module was loaded,
-> with is a very good hint that the tm6000 is there or was there in the
-> past.
-> 
-> In the specific case of tm6000, all hardware supports exactly the
-> same formats, as this is usually defined per-driver. So, a quick look
-> at the driver is enough to know exactly what the ioctl would answer. 
-> Also, the net is full of other resources that would allow anyone
-> to get the supported formats for a piece of hardware.
-> 
-> Even assuming that the OS doesn't have lsusb, that /proc is not
-> mounted, that /dev/video0 require special permissions, that the
-> potential attacker doesn't have physical access to the equipment (in
-> order to see if an USB board is plugged), etc... What possible harm
-> he could do by identifying a hardware feature?
-> 
-> Similar notes for the other patches to drivers/media in this
-> series: let's not just start adding bloatware where not needed.
-> 
-> Please notice that I'm fine if you want to submit potential
-> Spectre variant 1 fixups, but if you're willing to do so,
-> please provide an explanation about the potential threat scenarios
-> that you're identifying at the code.
-> 
-> Dan,
-> 
-> It probably makes sense to have somewhere at smatch a place where
-> we could explicitly mark the false-positives, in order to avoid
-> use to receive patches that would just add an extra delay where
-> it is not needed.
-> 
-> Regards,
-> Mauro
+
+Thanks,
+Gustavo
