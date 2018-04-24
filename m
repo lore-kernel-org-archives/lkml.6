@@ -1,81 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751957AbeDXPqL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:46:11 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:39090 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeDXPqJ (ORCPT
+        id S1751376AbeDXPrA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:47:00 -0400
+Received: from mail.netline.ch ([148.251.143.178]:60387 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750943AbeDXPq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:46:09 -0400
-X-Google-Smtp-Source: AIpwx4/1TKGOJt1PK0zRDv9sDcSpGlfXzleBM6/QXAPKc+XkdtKrq6KsJyVaihMjta3KU3Rq2y6/V2nrdv/7qELOcCM=
+        Tue, 24 Apr 2018 11:46:56 -0400
+Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
+ signaled process.
+To: Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc: David.Panariti@amd.com, oleg@redhat.com, ebiederm@xmission.com,
+        Alexander.Deucher@amd.com, akpm@linux-foundation.org,
+        Christian.Koenig@amd.com
+References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
+ <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Message-ID: <7313704c-0693-0bb9-8818-99cd2b7c0ca0@daenzer.net>
+Date: Tue, 24 Apr 2018 17:46:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424123523.GF4064@hirez.programming.kicks-ass.net>
-References: <8a34a16da90b9f83ffe60316a074a5e4d05b59b0.1524479666.git.viresh.kumar@linaro.org>
- <434fa179-7c8f-8a01-a07a-4527521a04c7@arm.com> <20180424104304.GE4064@hirez.programming.kicks-ass.net>
- <0985e709-0d71-2c08-20a9-7bfb618fb5f2@arm.com> <20180424123523.GF4064@hirez.programming.kicks-ass.net>
-From: Joel Fernandes <joel.opensrc@gmail.com>
-Date: Tue, 24 Apr 2018 08:46:08 -0700
-Message-ID: <CAEi0qN=qnej22F31jM2CMajee2h+ie0+AptFscwa5L8Arp8q3g@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: Rearrange select_task_rq_fair() to optimize it
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Valentin Schneider <valentin.schneider@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        c@hirez.programming.kicks-ass.net, Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 5:35 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Tue, Apr 24, 2018 at 12:19:07PM +0100, Valentin Schneider wrote:
->> On 24/04/18 11:43, Peter Zijlstra wrote:
->> > On Tue, Apr 24, 2018 at 11:02:26AM +0100, Valentin Schneider wrote:
->> >> I'd argue making things easier to read is a non-negligible part as well.
->> >
->> > Right, so I don't object to either of these (I think); but it would be
->> > good to see this in combination with that proposed EAS change.
->> >
->>
->> True, I would've said the call to find_energy_efficient_cpu() ([1]) could
->> simply be added to the if (sd) {} case, but...
->
-> I think the proposal was to put it before the for_each_domain() loop
-> entirely, however...
->
->> > I think you (valentin) wanted to side-step the entire domain loop in
->> > that case or something.
->> >
->>
->> ...this would change more things. Admittedly I've been sort of out of the loop
->> (no pun intended) lately, but this doesn't ring a bell. That might have been
->> the other frenchie (Quentin) :)
->
-> It does indeed appear I confused the two of you, it was Quentin playing
-> with that.
->
-> In any case, if there not going to be conflicts here, this all looks
-> good.
 
-Both Viresh's and Valentin's patch looks lovely to me too. I couldn't
-spot anything wrong with them either. One suggestion I was thinking
-off is can we add better comments to this code (atleast label fast
-path vs slow path) ?
-
-Also, annotate the conditions for the fast/slow path with
-likely/unlikely since fast path is the common case? so like:
-
-if (unlikely(sd)) {
-  /* Fast path, common case */
-  ...
-} else if (...) {
-  /* Slow path */
-}
+Adding the dri-devel list, since this is driver independent code.
 
 
-thanks,
+On 2018-04-24 05:30 PM, Andrey Grodzovsky wrote:
+> Avoid calling wait_event_killable when you are possibly being called
+> from get_signal routine since in that case you end up in a deadlock
+> where you are alreay blocked in singla processing any trying to wait
 
-- Joel
+Multiple typos here, "[...] already blocked in signal processing and [...]"?
+
+
+> on a new signal.
+> 
+> Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+> ---
+>  drivers/gpu/drm/scheduler/gpu_scheduler.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler.c b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> index 088ff2b..09fd258 100644
+> --- a/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> @@ -227,9 +227,10 @@ void drm_sched_entity_do_release(struct drm_gpu_scheduler *sched,
+>  		return;
+>  	/**
+>  	 * The client will not queue more IBs during this fini, consume existing
+> -	 * queued IBs or discard them on SIGKILL
+> +	 * queued IBs or discard them when in death signal state since
+> +	 * wait_event_killable can't receive signals in that state.
+>  	*/
+> -	if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
+> +	if (current->flags & PF_SIGNALED)
+>  		entity->fini_status = -ERESTARTSYS;
+>  	else
+>  		entity->fini_status = wait_event_killable(sched->job_scheduled,
+> 
+
+
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
