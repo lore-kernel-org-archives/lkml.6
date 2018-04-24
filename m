@@ -1,404 +1,470 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751245AbeDXUmW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 16:42:22 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:43505 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeDXUmR (ORCPT
+        id S1751418AbeDXUoV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 16:44:21 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:37946 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751285AbeDXUoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 16:42:17 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hans.verkuil@cisco.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        mjpeg-users@lists.sourceforge.net, linux-media@vger.kernel.org,
+        Tue, 24 Apr 2018 16:44:16 -0400
+X-Google-Smtp-Source: AIpwx4826yRTHtdT1o1RkLwkj0VY5UzMcBJmZjR1iG6DzH3ADFTKzKvvvn6ZFk6SmaWlIRVQsd1T8Q==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: ebiederm@xmission.com, davem@davemloft.net, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] media: zoran: move to dma-mapping interface
-Date: Tue, 24 Apr 2018 22:40:45 +0200
-Message-Id: <20180424204158.2764095-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:kUuxko1/YPQ8Pb7Q4+8/mHyKmP04Io4Uv8jolVYgCmKCLC333Po
- uH3OOCFAXdxKQMPkBay08v4+f8eBxn4xCSqz+HwYdGnXOAkJhlhtpDgcI+B0JlwgMbdJ+nd
- G+Hj2aMimArAiIRs/+8sN1YJacQ0isG08RBm1qtrWXursn+XpdU27QfkhMFizX+wifQWyEs
- aa3S44ecPucEievF8FxVg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:s3vtu+zIFcs=:thY7T5YNfaLFXKgPAoy1eq
- DnyB06lEOba594c2HiGB/X0T2FjRsMWKymAO8eITpjLn7RSwNfo4feOAthTNJoci8Ui7Q1VCr
- uNM3X9P9Z4mGqauUYK4r+8A6B1Ci56Q6vh5T1d9QFs/k/JRhIqpj7DTRwX5lsGNIqI2L+UPG/
- sY3Rj0Ea4N+NWHfbAi4cSUr908NMlNQwiWu/0OrQjSnTgV1g3eGHtiLAKI1nr9ZSBShELT3pA
- w7rQndUxnc4dmeL5F9ju47ri30U8MTvVkgp1upSjB/jBpBt8Ut7k/hfUTqjGVJkvLs5o2ajok
- LFygqpzGBfdlwv2Ax/tsf8HFnJC2w6l81CeuD0DHZV3zc8/EzPUCnqFel8DN3x05hqY8tWPJg
- VIUobJieFw4DunSV22EUq+0sTxPSoSuIoGqIyBS6sRBSlOOTR6s85PnZ++U8CLK4mkBaYO9ok
- IYDqIE9Pj2ac4NkMEmklbHHb6Z09/fxKuSxg82yB+AxBM8x/BTuEMQhsGiRf88mnfeXOugqRz
- OL4NDHjKdU+TZXo5BoXHAb/TSG01fGFnruh4OMF3u0qq2C7S5nej+Wgg5ugScpN6y4p/2kogn
- EYoK8Ci2kJuNWromDHaWDQZi2cPTLL50Qpj3litbyLxaoykwGNc7RtY/aJnsO6G1SzAq8pJCB
- JYU3Oh13/HjSn6mQNbzOWLhqeOmz/z5LA8Bi3ida6izxTpmMX0mQpxvSKOo/OrQi+fEAwj+RW
- 35s5PPOpzPTCNZZy1EMIFxJgTvCbhaZCA63qBg==
+Cc: avagin@virtuozzo.com, ktkhai@virtuozzo.com, serge@hallyn.com,
+        gregkh@linuxfoundation.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH net-next 2/2 v2] netns: isolate seqnums to use per-netns locks
+Date: Tue, 24 Apr 2018 22:43:35 +0200
+Message-Id: <20180424204335.12904-3-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180424204335.12904-1-christian.brauner@ubuntu.com>
+References: <20180424204335.12904-1-christian.brauner@ubuntu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No drivers should use virt_to_bus() any more. This converts
-one of the few remaining ones to the DMA mapping interface.
+Now that it's possible to have a different set of uevents in different
+network namespaces, per-network namespace uevent sequence numbers are
+introduced. This increases performance as locking is now restricted to the
+network namespace affected by the uevent rather than locking everything.
+Testing revealed significant performance improvements. For details see
+"Testing" below.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Since commit 692ec06 ("netns: send uevent messages") network namespaces not
+owned by the intial user namespace can be sent uevents from a sufficiently
+privileged userspace process.
+In order to send a uevent into a network namespace not owned by the initial
+user namespace we currently still need to take the *global mutex* that
+locks the uevent socket list even though the list *only contains network
+namespaces owned by the initial user namespace*. This needs to be done
+because the uevent counter is a global variable. Taking the global lock is
+performance sensitive since a user on the host can spawn a pool of n
+process that each create their own new user and network namespaces and then
+go on to inject uevents in parallel into the network namespace of all of
+these processes. This can have a significant performance impact for the
+host's udevd since it means that there can be a lot of delay between a
+device being added and the corresponding uevent being sent out and
+available for processing by udevd. It also means that each network
+namespace not owned by the initial user namespace which userspace has sent
+a uevent to will need to wait until the lock becomes available.
+
+Implementation:
+This patch gives each network namespace its own uevent sequence number.
+Each network namespace not owned by the initial user namespace receives its
+own mutex. The struct uevent_sock is opaque to callers outside of kobject.c
+so the mutex *can* and *is* only ever accessed in lib/kobject.c. In this
+file it is clearly documented which lock has to be taken. All network
+namespaces owned by the initial user namespace will still share the same
+lock since they are all served sequentially via the uevent socket list.
+This decouples the locking and ensures that the host retrieves uevents as
+fast as possible even if there are a lot of uevents injected into network
+namespaces not owned by the initial user namespace.  In addition, each
+network namespace not owned by the initial user namespace does not have to
+wait on any other network namespace not sharing the same user namespace.
+
+Testing:
+Two 4.17-rc1 test kernels were compiled. One with per netns uevent seqnums
+with decoupled locking and one without. To ensure that testing made sense
+both kernels carried the patch to remove network namespaces not owned by
+the initial user namespace from the uevent socket list.
+Three tests were constructed. All of them showed significant performance
+improvements with per-netns uevent sequence numbers and decoupled locking.
+
+ # Testcase 1:
+   Only Injecting Uevents into network namespaces not owned by the initial
+   user namespace.
+   - created 1000 new user namespace + network namespace pairs
+   - opened a uevent listener in each of those namespace pairs
+   - injected uevents into each of those network namespaces 10,000 times
+     meaning 10,000,000 (10 million) uevents were injected. (The high
+     number of uevent injections should get rid of a lot of jitter.)
+     The injection was done by fork()ing 1000 uevent injectors in a simple
+     for-loop to ensure that uevents were injected in parallel.
+   - mean transaction time was calculated:
+     - *without* uevent sequence number namespacing: 67 μs
+     - *with* uevent sequence number namespacing:    55 μs
+     - makes a difference of:                        12 μs
+   - a t-test was performed on the two data vectors which revealed
+     shows significant performance improvements:
+     Welch Two Sample t-test
+     data:  x1 and y1
+     t = 405.16, df = 18883000, p-value < 2.2e-16
+     alternative hypothesis: true difference in means is not equal to 0
+     95 percent confidence interval:
+     12.14949 12.26761
+     sample estimates:
+     mean of x mean of y
+     68.48594  56.27739
+
+ # Testcase 2:
+   Injecting Uevents into network namespaces not owned by the initial user
+   namespace and network namespaces owned by the initial user namespace.
+   - created 500 new user namespace + network namespace pairs
+   - created 500 new network namespace pairs
+   - opened a uevent listener in each of those namespace pairs
+   - injected uevents into each of those network namespaces 10,000 times
+     meaning 10,000,000 (10 million) uevents were injected. (The high
+     number of uevent injections should get rid of a lot of jitter.)
+     The injection was done by fork()ing 1000 uevent injectors in a simple
+     for-loop to ensure that uevents were injected in parallel.
+   - mean transaction time was calculated:
+     - *without* uevent sequence number namespacing: 572 μs
+     - *with* uevent sequence number namespacing:    514 μs
+     - makes a difference of:                         58 μs
+   - a t-test was performed on the two data vectors which revealed
+     shows significant performance improvements:
+     Welch Two Sample t-test
+     data:  x2 and y2
+     t = 38.685, df = 19682000, p-value < 2.2e-16
+     alternative hypothesis: true difference in means is not equal to 0
+     95 percent confidence interval:
+     55.10630 60.98815
+     sample estimates:
+     mean of x mean of y
+     572.9684  514.9211
+
+ # Testcase 3:
+   Created 500 new user namespace + network namespace pairs *without uevent
+   listeners*
+   - created 500 new network namespace pairs *without uevent listeners*
+   - injected uevents into each of those network namespaces 10,000 times
+     meaning 10,000,000 (10 million) uevents were injected. (The high number
+     of uevent injections should get rid of a lot of jitter.)
+     The injection was done by fork()ing 1000 uevent injectors in a simple
+     for-loop to ensure that uevents were injected in parallel.
+    - mean transaction time was calculated:
+      - *without* uevent sequence number namespacing: 206 μs
+      - *with* uevent sequence number namespacing:    163 μs
+      - makes a difference of:                         43 μs
+    - a t-test was performed on the two data vectors which revealed
+      shows significant performance improvements:
+      Welch Two Sample t-test
+      data:  x3 and y3
+      t = 58.37, df = 17711000, p-value < 2.2e-16
+      alternative hypothesis: true difference in means is not equal to 0
+      95 percent confidence interval:
+      41.77860 44.68178
+      sample estimates:
+      mean of x mean of y
+      207.2632  164.0330
+
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- drivers/media/pci/zoran/Kconfig        |  2 +-
- drivers/media/pci/zoran/zoran.h        | 10 +++++--
- drivers/media/pci/zoran/zoran_card.c   | 10 +++++--
- drivers/media/pci/zoran/zoran_device.c | 16 +++++-----
- drivers/media/pci/zoran/zoran_driver.c | 54 +++++++++++++++++++++++++---------
- 5 files changed, 63 insertions(+), 29 deletions(-)
+Changelog v1->v2:
+* non-functional change: fix indendation for C directives in
+  kernel/ksysfs.c
+Changelog v0->v1:
+* add detailed test results to the commit message
+* account for kernels compiled without CONFIG_NET
+---
+ include/linux/kobject.h     |   2 +
+ include/net/net_namespace.h |   3 ++
+ kernel/ksysfs.c             |  11 +++-
+ lib/kobject_uevent.c        | 104 +++++++++++++++++++++++++++++-------
+ net/core/net_namespace.c    |  14 +++++
+ 5 files changed, 114 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/media/pci/zoran/Kconfig b/drivers/media/pci/zoran/Kconfig
-index 39ec35bd21a5..26f40e124a32 100644
---- a/drivers/media/pci/zoran/Kconfig
-+++ b/drivers/media/pci/zoran/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_ZORAN
- 	tristate "Zoran ZR36057/36067 Video For Linux"
--	depends on PCI && I2C_ALGOBIT && VIDEO_V4L2 && VIRT_TO_BUS
-+	depends on PCI && I2C_ALGOBIT && VIDEO_V4L2
- 	depends on !ALPHA
- 	help
- 	  Say Y for support for MJPEG capture cards based on the Zoran
-diff --git a/drivers/media/pci/zoran/zoran.h b/drivers/media/pci/zoran/zoran.h
-index 9bb3c21aa275..9ff3a9acb60a 100644
---- a/drivers/media/pci/zoran/zoran.h
-+++ b/drivers/media/pci/zoran/zoran.h
-@@ -183,13 +183,14 @@ struct zoran_buffer {
- 	struct zoran_sync bs;		/* DONE: info to return to application */
- 	union {
- 		struct {
--			__le32 *frag_tab;	/* addresses of frag table */
--			u32 frag_tab_bus;	/* same value cached to save time in ISR */
-+			__le32 *frag_tab;	/* DMA addresses of frag table */
-+			void **frag_virt_tab;	/* virtual addresses of frag table */
-+			dma_addr_t frag_tab_dma;/* same value cached to save time in ISR */
- 		} jpg;
- 		struct {
- 			char *fbuffer;		/* virtual address of frame buffer */
- 			unsigned long fbuffer_phys;/* physical address of frame buffer */
--			unsigned long fbuffer_bus;/* bus address of frame buffer */
-+			dma_addr_t fbuffer_dma;/* bus address of frame buffer */
- 		} v4l;
- 	};
- };
-@@ -221,6 +222,7 @@ struct zoran_fh {
+diff --git a/include/linux/kobject.h b/include/linux/kobject.h
+index 7f6f93c3df9c..4e608968907f 100644
+--- a/include/linux/kobject.h
++++ b/include/linux/kobject.h
+@@ -36,8 +36,10 @@
+ extern char uevent_helper[];
+ #endif
  
- 	struct zoran_overlay_settings overlay_settings;
- 	u32 *overlay_mask;			/* overlay mask */
-+	dma_addr_t overlay_mask_dma;
- 	enum zoran_lock_activity overlay_active;/* feature currently in use? */
++#ifndef CONFIG_NET
+ /* counter to tag the uevent, read only except for the kobject core */
+ extern u64 uevent_seqnum;
++#endif
  
- 	struct zoran_buffer_col buffers;	/* buffers' info */
-@@ -307,6 +309,7 @@ struct zoran {
+ /*
+  * The actions here must match the index to the string array
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index 47e35cce3b64..e4e171b1ba69 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -85,6 +85,8 @@ struct net {
+ 	struct sock		*genl_sock;
  
- 	struct zoran_overlay_settings overlay_settings;
- 	u32 *overlay_mask;	/* overlay mask */
-+	dma_addr_t overlay_mask_dma;
- 	enum zoran_lock_activity overlay_active;	/* feature currently in use? */
+ 	struct uevent_sock	*uevent_sock;		/* uevent socket */
++	/* counter to tag the uevent, read only except for the kobject core */
++	u64                     uevent_seqnum;
  
- 	wait_queue_head_t v4l_capq;
-@@ -346,6 +349,7 @@ struct zoran {
+ 	struct list_head 	dev_base_head;
+ 	struct hlist_head 	*dev_name_head;
+@@ -189,6 +191,7 @@ extern struct list_head net_namespace_list;
  
- 	/* zr36057's code buffer table */
- 	__le32 *stat_com;		/* stat_com[i] is indexed by dma_head/tail & BUZ_MASK_STAT_COM */
-+	dma_addr_t stat_com_dma;
+ struct net *get_net_ns_by_pid(pid_t pid);
+ struct net *get_net_ns_by_fd(int fd);
++u64 get_ns_uevent_seqnum_by_vpid(void);
  
- 	/* (value & BUZ_MASK_FRAME) corresponds to index in pend[] queue */
- 	int jpg_pend[BUZ_MAX_FRAME];
-diff --git a/drivers/media/pci/zoran/zoran_card.c b/drivers/media/pci/zoran/zoran_card.c
-index a6b9ebd20263..dabd8bf77472 100644
---- a/drivers/media/pci/zoran/zoran_card.c
-+++ b/drivers/media/pci/zoran/zoran_card.c
-@@ -890,6 +890,7 @@ zoran_open_init_params (struct zoran *zr)
- 	/* User must explicitly set a window */
- 	zr->overlay_settings.is_set = 0;
- 	zr->overlay_mask = NULL;
-+	zr->overlay_mask_dma = 0;
- 	zr->overlay_active = ZORAN_FREE;
+ #ifdef CONFIG_SYSCTL
+ void ipx_register_sysctl(void);
+diff --git a/kernel/ksysfs.c b/kernel/ksysfs.c
+index 46ba853656f6..38b70b90a21f 100644
+--- a/kernel/ksysfs.c
++++ b/kernel/ksysfs.c
+@@ -19,6 +19,7 @@
+ #include <linux/sched.h>
+ #include <linux/capability.h>
+ #include <linux/compiler.h>
++#include <net/net_namespace.h>
  
- 	zr->v4l_memgrab_active = 0;
-@@ -1028,7 +1029,8 @@ static int zr36057_init (struct zoran *zr)
+ #include <linux/rcupdate.h>	/* rcu_expedited and rcu_normal */
  
- 	/* allocate memory *before* doing anything to the hardware
- 	 * in case allocation fails */
--	zr->stat_com = kzalloc(BUZ_NUM_STAT_COM * 4, GFP_KERNEL);
-+	zr->stat_com = dma_alloc_coherent(&zr->pci_dev->dev,
-+				BUZ_NUM_STAT_COM * 4, &zr->stat_com_dma, GFP_KERNEL);
- 	zr->video_dev = video_device_alloc();
- 	if (!zr->stat_com || !zr->video_dev) {
- 		dprintk(1,
-@@ -1072,7 +1074,8 @@ static int zr36057_init (struct zoran *zr)
- 	return 0;
- 
- exit_free:
--	kfree(zr->stat_com);
-+	dma_free_coherent(&zr->pci_dev->dev, BUZ_NUM_STAT_COM * 4,
-+			  zr->stat_com, zr->stat_com_dma);
- 	kfree(zr->video_dev);
- 	return err;
- }
-@@ -1107,7 +1110,8 @@ static void zoran_remove(struct pci_dev *pdev)
- 	btwrite(0, ZR36057_SPGPPCR);
- 	free_irq(zr->pci_dev->irq, zr);
- 	/* unmap and free memory */
--	kfree(zr->stat_com);
-+	dma_free_coherent(&zr->pci_dev->dev, BUZ_NUM_STAT_COM * 4,
-+			  zr->stat_com, zr->stat_com_dma);
- 	zoran_proc_cleanup(zr);
- 	iounmap(zr->zr36057_mem);
- 	pci_disable_device(zr->pci_dev);
-diff --git a/drivers/media/pci/zoran/zoran_device.c b/drivers/media/pci/zoran/zoran_device.c
-index 40adceebca7e..1ac7810ddd25 100644
---- a/drivers/media/pci/zoran/zoran_device.c
-+++ b/drivers/media/pci/zoran/zoran_device.c
-@@ -430,9 +430,9 @@ zr36057_set_vfe (struct zoran              *zr,
- 		 * zr->overlay_settings.width instead of video_width */
- 
- 		mask_line_size = (BUZ_MAX_WIDTH + 31) / 32;
--		reg = virt_to_bus(zr->overlay_mask);
-+		reg = zr->overlay_mask_dma;
- 		btwrite(reg, ZR36057_MMTR);
--		reg = virt_to_bus(zr->overlay_mask + mask_line_size);
-+		reg = zr->overlay_mask_dma + mask_line_size;
- 		btwrite(reg, ZR36057_MMBR);
- 		reg =
- 		    mask_line_size - (zr->overlay_settings.width +
-@@ -775,7 +775,7 @@ zr36057_set_jpg (struct zoran          *zr,
- 	//btor(ZR36057_VFESPFR_VCLKPol, ZR36057_VFESPFR);
- 
- 	/* code base address */
--	reg = virt_to_bus(zr->stat_com);
-+	reg = zr->stat_com_dma;
- 	btwrite(reg, ZR36057_JCBA);
- 
- 	/* FIFO threshold (FIFO is 160. double words) */
-@@ -1097,7 +1097,7 @@ zoran_feed_stat_com (struct zoran *zr)
- 			if (!(zr->stat_com[i] & cpu_to_le32(1)))
- 				break;
- 			zr->stat_com[i] =
--			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_bus);
-+			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_dma);
- 		} else {
- 			/* fill 2 stat_com entries */
- 			i = ((zr->jpg_dma_head -
-@@ -1105,9 +1105,9 @@ zoran_feed_stat_com (struct zoran *zr)
- 			if (!(zr->stat_com[i] & cpu_to_le32(1)))
- 				break;
- 			zr->stat_com[i] =
--			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_bus);
-+			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_dma);
- 			zr->stat_com[i + 1] =
--			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_bus);
-+			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_dma);
- 		}
- 		zr->jpg_buffers.buffer[frame].state = BUZ_STATE_DMA;
- 		zr->jpg_dma_head++;
-@@ -1272,7 +1272,7 @@ error_handler (struct zoran *zr,
- 		printk(KERN_INFO "stat_com frames:");
- 		for (j = 0; j < BUZ_NUM_STAT_COM; j++) {
- 			for (i = 0; i < zr->jpg_buffers.num_buffers; i++) {
--				if (le32_to_cpu(zr->stat_com[j]) == zr->jpg_buffers.buffer[i].jpg.frag_tab_bus)
-+				if (le32_to_cpu(zr->stat_com[j]) == zr->jpg_buffers.buffer[i].jpg.frag_tab_dma)
- 					printk(KERN_CONT "% d->%d", j, i);
- 			}
- 		}
-@@ -1411,7 +1411,7 @@ zoran_irq (int             irq,
- 
- 					/* Buffer address */
- 
--					reg = zr->v4l_buffers.buffer[frame].v4l.fbuffer_bus;
-+					reg = zr->v4l_buffers.buffer[frame].v4l.fbuffer_dma;
- 					btwrite(reg, ZR36057_VDTR);
- 					if (zr->v4l_settings.height > BUZ_MAX_HEIGHT / 2)
- 						reg += zr->v4l_settings.bytesperline;
-diff --git a/drivers/media/pci/zoran/zoran_driver.c b/drivers/media/pci/zoran/zoran_driver.c
-index 4b6466961b41..dad1fb02ced2 100644
---- a/drivers/media/pci/zoran/zoran_driver.c
-+++ b/drivers/media/pci/zoran/zoran_driver.c
-@@ -235,15 +235,20 @@ static int v4l_fbuffer_alloc(struct zoran_fh *fh)
- 		}
- 		fh->buffers.buffer[i].v4l.fbuffer = mem;
- 		fh->buffers.buffer[i].v4l.fbuffer_phys = virt_to_phys(mem);
--		fh->buffers.buffer[i].v4l.fbuffer_bus = virt_to_bus(mem);
-+		fh->buffers.buffer[i].v4l.fbuffer_dma =
-+			dma_map_single(&zr->pci_dev->dev, mem,
-+				       fh->buffers.buffer_size,
-+				       DMA_FROM_DEVICE);
-+		if (!fh->buffers.buffer[i].v4l.fbuffer_dma)
-+			return -ENXIO;
- 		for (off = 0; off < fh->buffers.buffer_size;
- 		     off += PAGE_SIZE)
- 			SetPageReserved(virt_to_page(mem + off));
- 		dprintk(4,
- 			KERN_INFO
--			"%s: %s - V4L frame %d mem %p (bus: 0x%llx)\n",
-+			"%s: %s - V4L frame %d mem %p (bus: %pad)\n",
- 			ZR_DEVNAME(zr), __func__, i, mem,
--			(unsigned long long)virt_to_bus(mem));
-+			&fh->buffers.buffer[i].v4l.fbuffer_dma);
- 	}
- 
- 	fh->buffers.allocated = 1;
-@@ -308,6 +313,7 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
- 	struct zoran *zr = fh->zr;
- 	int i, j, off;
- 	u8 *mem;
-+	void **virt_tab;
- 
- 	for (i = 0; i < fh->buffers.num_buffers; i++) {
- 		if (fh->buffers.buffer[i].jpg.frag_tab)
-@@ -319,16 +325,19 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
- 		/* Allocate fragment table for this buffer */
- 
- 		mem = (void *)get_zeroed_page(GFP_KERNEL);
--		if (!mem) {
-+		virt_tab = (void *)get_zeroed_page(GFP_KERNEL);
-+		if (!mem || !virt_tab) {
- 			dprintk(1,
- 				KERN_ERR
- 				"%s: %s - get_zeroed_page (frag_tab) failed for buffer %d\n",
- 				ZR_DEVNAME(zr), __func__, i);
-+			kfree(mem);
-+			kfree(virt_tab);
- 			jpg_fbuffer_free(fh);
- 			return -ENOBUFS;
- 		}
- 		fh->buffers.buffer[i].jpg.frag_tab = (__le32 *)mem;
--		fh->buffers.buffer[i].jpg.frag_tab_bus = virt_to_bus(mem);
-+		fh->buffers.buffer[i].jpg.frag_virt_tab = virt_tab;
- 
- 		if (fh->buffers.need_contiguous) {
- 			mem = kmalloc(fh->buffers.buffer_size, GFP_KERNEL);
-@@ -340,8 +349,9 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
- 				jpg_fbuffer_free(fh);
- 				return -ENOBUFS;
- 			}
-+			fh->buffers.buffer[i].jpg.frag_virt_tab[0] = mem;
- 			fh->buffers.buffer[i].jpg.frag_tab[0] =
--				cpu_to_le32(virt_to_bus(mem));
-+				cpu_to_le32(dma_map_single(&zr->pci_dev->dev, mem, fh->buffers.buffer_size, DMA_FROM_DEVICE));
- 			fh->buffers.buffer[i].jpg.frag_tab[1] =
- 				cpu_to_le32((fh->buffers.buffer_size >> 1) | 1);
- 			for (off = 0; off < fh->buffers.buffer_size; off += PAGE_SIZE)
-@@ -359,8 +369,9 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
- 					return -ENOBUFS;
- 				}
- 
-+				fh->buffers.buffer[i].jpg.frag_virt_tab[j] = mem;
- 				fh->buffers.buffer[i].jpg.frag_tab[2 * j] =
--					cpu_to_le32(virt_to_bus(mem));
-+					cpu_to_le32(dma_map_single(&zr->pci_dev->dev, mem, fh->buffers.buffer_size, DMA_FROM_DEVICE));
- 				fh->buffers.buffer[i].jpg.frag_tab[2 * j + 1] =
- 					cpu_to_le32((PAGE_SIZE >> 2) << 1);
- 				SetPageReserved(virt_to_page(mem));
-@@ -368,6 +379,8 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
- 
- 			fh->buffers.buffer[i].jpg.frag_tab[2 * j - 1] |= cpu_to_le32(1);
- 		}
+@@ -33,7 +34,15 @@ static struct kobj_attribute _name##_attr = \
+ static ssize_t uevent_seqnum_show(struct kobject *kobj,
+ 				  struct kobj_attribute *attr, char *buf)
+ {
+-	return sprintf(buf, "%llu\n", (unsigned long long)uevent_seqnum);
++	u64 seqnum;
 +
-+		fh->buffers.buffer[i].jpg.frag_tab_dma = dma_map_single(&zr->pci_dev->dev, mem, PAGE_SIZE, DMA_TO_DEVICE);
- 	}
++#ifdef CONFIG_NET
++	seqnum = get_ns_uevent_seqnum_by_vpid();
++#else
++	seqnum = uevent_seqnum;
++#endif
++
++	return sprintf(buf, "%llu\n", (unsigned long long)seqnum);
+ }
+ KERNEL_ATTR_RO(uevent_seqnum);
  
- 	dprintk(4,
-@@ -400,9 +413,10 @@ static void jpg_fbuffer_free(struct zoran_fh *fh)
- 			frag_tab = buffer->jpg.frag_tab[0];
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index f5f5038787ac..5da20def556d 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -29,21 +29,42 @@
+ #include <net/net_namespace.h>
  
- 			if (frag_tab) {
--				mem = bus_to_virt(le32_to_cpu(frag_tab));
-+				mem = buffer->jpg.frag_virt_tab[0];
- 				for (off = 0; off < fh->buffers.buffer_size; off += PAGE_SIZE)
- 					ClearPageReserved(virt_to_page(mem + off));
-+				dma_unmap_single(&zr->pci_dev->dev, frag_tab, PAGE_SIZE, DMA_FROM_DEVICE);
- 				kfree(mem);
- 				buffer->jpg.frag_tab[0] = 0;
- 				buffer->jpg.frag_tab[1] = 0;
-@@ -413,14 +427,19 @@ static void jpg_fbuffer_free(struct zoran_fh *fh)
  
- 				if (!frag_tab)
- 					break;
--				ClearPageReserved(virt_to_page(bus_to_virt(le32_to_cpu(frag_tab))));
--				free_page((unsigned long)bus_to_virt(le32_to_cpu(frag_tab)));
-+				ClearPageReserved(virt_to_page(buffer->jpg.frag_virt_tab[j]));
-+				dma_unmap_single(&zr->pci_dev->dev, le32_to_cpu(frag_tab), PAGE_SIZE, DMA_FROM_DEVICE);
-+				free_page((unsigned long)buffer->jpg.frag_virt_tab[j]);
-+				buffer->jpg.frag_virt_tab[j] = NULL;
- 				buffer->jpg.frag_tab[2 * j] = 0;
- 				buffer->jpg.frag_tab[2 * j + 1] = 0;
- 			}
++#ifndef CONFIG_NET
+ u64 uevent_seqnum;
++#endif
++
+ #ifdef CONFIG_UEVENT_HELPER
+ char uevent_helper[UEVENT_HELPER_PATH_LEN] = CONFIG_UEVENT_HELPER_PATH;
+ #endif
+ 
++/*
++ * Size a buffer needs to be in order to hold the largest possible sequence
++ * number stored in a u64 including \0 byte: 2^64 - 1 = 21 chars.
++ */
++#define SEQNUM_BUFSIZE (sizeof("SEQNUM=") + 21)
+ struct uevent_sock {
+ 	struct list_head list;
+ 	struct sock *sk;
++	/*
++	 * This mutex protects uevent sockets and the uevent counter of
++	 * network namespaces *not* owned by init_user_ns.
++	 * For network namespaces owned by init_user_ns this lock is *not*
++	 * valid instead the global uevent_sock_mutex must be used!
++	 */
++	struct mutex sk_mutex;
+ };
+ 
+ #ifdef CONFIG_NET
+ static LIST_HEAD(uevent_sock_list);
+ #endif
+ 
+-/* This lock protects uevent_seqnum and uevent_sock_list */
++/*
++ * This mutex protects uevent sockets and the uevent counter of network
++ * namespaces owned by init_user_ns.
++ * For network namespaces not owned by init_user_ns this lock is *not*
++ * valid instead the network namespace specific sk_mutex in struct
++ * uevent_sock must be used!
++ */
+ static DEFINE_MUTEX(uevent_sock_mutex);
+ 
+ /* the strings here must match the enum in include/linux/kobject.h */
+@@ -253,6 +274,22 @@ static int kobj_bcast_filter(struct sock *dsk, struct sk_buff *skb, void *data)
+ 
+ 	return 0;
+ }
++
++static bool can_hold_seqnum(const struct kobj_uevent_env *env, size_t len)
++{
++	if (env->envp_idx >= ARRAY_SIZE(env->envp)) {
++		WARN(1, KERN_ERR "Failed to append sequence number. "
++		     "Too many uevent variables\n");
++		return false;
++	}
++
++	if ((env->buflen + len) > UEVENT_BUFFER_SIZE) {
++		WARN(1, KERN_ERR "Insufficient space to append sequence number\n");
++		return false;
++	}
++
++	return true;
++}
+ #endif
+ 
+ #ifdef CONFIG_UEVENT_HELPER
+@@ -308,18 +345,22 @@ static int kobject_uevent_net_broadcast(struct kobject *kobj,
+ 
+ 	/* send netlink message */
+ 	list_for_each_entry(ue_sk, &uevent_sock_list, list) {
++		/* bump sequence number */
++		u64 seqnum = ++sock_net(ue_sk->sk)->uevent_seqnum;
+ 		struct sock *uevent_sock = ue_sk->sk;
++		char buf[SEQNUM_BUFSIZE];
+ 
+ 		if (!netlink_has_listeners(uevent_sock, 1))
+ 			continue;
+ 
+ 		if (!skb) {
+-			/* allocate message with the maximum possible size */
++			/* calculate header length */
+ 			size_t len = strlen(action_string) + strlen(devpath) + 2;
+ 			char *scratch;
+ 
++			/* allocate message with the maximum possible size */
+ 			retval = -ENOMEM;
+-			skb = alloc_skb(len + env->buflen, GFP_KERNEL);
++			skb = alloc_skb(len + env->buflen + SEQNUM_BUFSIZE, GFP_KERNEL);
+ 			if (!skb)
+ 				continue;
+ 
+@@ -327,11 +368,24 @@ static int kobject_uevent_net_broadcast(struct kobject *kobj,
+ 			scratch = skb_put(skb, len);
+ 			sprintf(scratch, "%s@%s", action_string, devpath);
+ 
++			/* add env */
+ 			skb_put_data(skb, env->buf, env->buflen);
+ 
+ 			NETLINK_CB(skb).dst_group = 1;
  		}
  
-+		dma_unmap_single(&zr->pci_dev->dev, buffer->jpg.frag_tab_dma, PAGE_SIZE, DMA_TO_DEVICE);
- 		free_page((unsigned long)buffer->jpg.frag_tab);
-+		free_page((unsigned long)buffer->jpg.frag_virt_tab);
-+		buffer->jpg.frag_virt_tab = NULL;
- 		buffer->jpg.frag_tab = NULL;
++		/* prepare netns seqnum */
++		retval = snprintf(buf, SEQNUM_BUFSIZE, "SEQNUM=%llu", seqnum);
++		if (retval < 0 || retval >= SEQNUM_BUFSIZE)
++			continue;
++		retval++;
++
++		if (!can_hold_seqnum(env, retval))
++			continue;
++
++		/* append netns seqnum */
++		skb_put_data(skb, buf, retval);
++
+ 		retval = netlink_broadcast_filtered(uevent_sock, skb_get(skb),
+ 						    0, 1, GFP_KERNEL,
+ 						    kobj_bcast_filter,
+@@ -339,8 +393,13 @@ static int kobject_uevent_net_broadcast(struct kobject *kobj,
+ 		/* ENOBUFS should be handled in userspace */
+ 		if (retval == -ENOBUFS || retval == -ESRCH)
+ 			retval = 0;
++
++		/* remove netns seqnum */
++		skb_trim(skb, env->buflen);
+ 	}
+ 	consume_skb(skb);
++#else
++	uevent_seqnum++;
+ #endif
+ 	return retval;
+ }
+@@ -510,14 +569,7 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
  	}
  
-@@ -873,6 +892,7 @@ static void zoran_close_end_session(struct zoran_fh *fh)
- 		if (!zr->v4l_memgrab_active)
- 			zr36057_overlay(zr, 0);
- 		zr->overlay_mask = NULL;
-+		zr->overlay_mask_dma = 0;
+ 	mutex_lock(&uevent_sock_mutex);
+-	/* we will send an event, so request a new sequence number */
+-	retval = add_uevent_var(env, "SEQNUM=%llu", (unsigned long long)++uevent_seqnum);
+-	if (retval) {
+-		mutex_unlock(&uevent_sock_mutex);
+-		goto exit;
+-	}
+-	retval = kobject_uevent_net_broadcast(kobj, env, action_string,
+-					      devpath);
++	retval = kobject_uevent_net_broadcast(kobj, env, action_string, devpath);
+ 	mutex_unlock(&uevent_sock_mutex);
+ 
+ #ifdef CONFIG_UEVENT_HELPER
+@@ -605,17 +657,18 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
+ EXPORT_SYMBOL_GPL(add_uevent_var);
+ 
+ #if defined(CONFIG_NET)
+-static int uevent_net_broadcast(struct sock *usk, struct sk_buff *skb,
++static int uevent_net_broadcast(struct uevent_sock *ue_sk, struct sk_buff *skb,
+ 				struct netlink_ext_ack *extack)
+ {
+-	/* u64 to chars: 2^64 - 1 = 21 chars */
+-	char buf[sizeof("SEQNUM=") + 21];
++	struct sock *usk = ue_sk->sk;
++	char buf[SEQNUM_BUFSIZE];
+ 	struct sk_buff *skbc;
+ 	int ret;
+ 
+ 	/* bump and prepare sequence number */
+-	ret = snprintf(buf, sizeof(buf), "SEQNUM=%llu", ++uevent_seqnum);
+-	if (ret < 0 || (size_t)ret >= sizeof(buf))
++	ret = snprintf(buf, SEQNUM_BUFSIZE, "SEQNUM=%llu",
++		       ++sock_net(ue_sk->sk)->uevent_seqnum);
++	if (ret < 0 || ret >= SEQNUM_BUFSIZE)
+ 		return -ENOMEM;
+ 	ret++;
+ 
+@@ -668,9 +721,15 @@ static int uevent_net_rcv_skb(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 		return -EPERM;
  	}
  
- 	if (fh->map_mode == ZORAN_MAP_MODE_RAW) {
-@@ -940,8 +960,10 @@ static int zoran_open(struct file *file)
+-	mutex_lock(&uevent_sock_mutex);
+-	ret = uevent_net_broadcast(net->uevent_sock->sk, skb, extack);
+-	mutex_unlock(&uevent_sock_mutex);
++	if (net->user_ns == &init_user_ns)
++		mutex_lock(&uevent_sock_mutex);
++	else
++		mutex_lock(&net->uevent_sock->sk_mutex);
++	ret = uevent_net_broadcast(net->uevent_sock, skb, extack);
++	if (net->user_ns == &init_user_ns)
++		mutex_unlock(&uevent_sock_mutex);
++	else
++		mutex_unlock(&net->uevent_sock->sk_mutex);
  
- 	/* used to be BUZ_MAX_WIDTH/HEIGHT, but that gives overflows
- 	 * on norm-change! */
--	fh->overlay_mask =
--	    kmalloc(((768 + 31) / 32) * 576 * 4, GFP_KERNEL);
-+	fh->overlay_mask = dma_alloc_wc(&zr->pci_dev->dev,
-+					((768 + 31) / 32) * 576 * 4,
-+					&fh->overlay_mask_dma,
-+					GFP_KERNEL);
- 	if (!fh->overlay_mask) {
- 		dprintk(1,
- 			KERN_ERR
-@@ -1016,6 +1038,7 @@ zoran_close(struct file  *file)
- 		zr->v4l_overlay_active = 0;
- 		zr36057_overlay(zr, 0);
- 		zr->overlay_mask = NULL;
-+		zr->overlay_mask_dma = 0;
+ 	return ret;
+ }
+@@ -708,6 +767,13 @@ static int uevent_net_init(struct net *net)
+ 		mutex_lock(&uevent_sock_mutex);
+ 		list_add_tail(&ue_sk->list, &uevent_sock_list);
+ 		mutex_unlock(&uevent_sock_mutex);
++	} else {
++		/*
++		 * Uevent sockets and counters for network namespaces
++		 * not owned by the initial user namespace have their
++		 * own mutex.
++		 */
++		mutex_init(&ue_sk->sk_mutex);
+ 	}
  
- 		/* capture off */
- 		wake_up_interruptible(&zr->v4l_capq);
-@@ -1033,7 +1056,8 @@ zoran_close(struct file  *file)
+ 	return 0;
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index a11e03f920d3..8894638f5150 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -618,6 +618,20 @@ struct net *get_net_ns_by_pid(pid_t pid)
+ }
+ EXPORT_SYMBOL_GPL(get_net_ns_by_pid);
  
- 	v4l2_fh_del(&fh->fh);
- 	v4l2_fh_exit(&fh->fh);
--	kfree(fh->overlay_mask);
-+	dma_free_wc(&zr->pci_dev->dev, ((768 + 31) / 32) * 576 * 4,
-+		    fh->overlay_mask, fh->overlay_mask_dma);
- 	kfree(fh);
- 
- 	dprintk(4, KERN_INFO "%s: %s done\n", ZR_DEVNAME(zr), __func__);
-@@ -1284,6 +1308,7 @@ static int setup_overlay(struct zoran_fh *fh, int on)
- 		if (!zr->v4l_memgrab_active)
- 			zr36057_overlay(zr, 0);
- 		zr->overlay_mask = NULL;
-+		zr->overlay_mask_dma = 0;
- 	} else {
- 		if (!zr->vbuf_base || !fh->overlay_settings.is_set) {
- 			dprintk(1,
-@@ -1302,6 +1327,7 @@ static int setup_overlay(struct zoran_fh *fh, int on)
- 		zr->overlay_active = fh->overlay_active = ZORAN_LOCKED;
- 		zr->v4l_overlay_active = 1;
- 		zr->overlay_mask = fh->overlay_mask;
-+		zr->overlay_mask_dma = fh->overlay_mask_dma;
- 		zr->overlay_settings = fh->overlay_settings;
- 		if (!zr->v4l_memgrab_active)
- 			zr36057_overlay(zr, 1);
-@@ -2763,7 +2789,7 @@ zoran_mmap (struct file           *file,
- 				    le32_to_cpu(fh->buffers.
- 				    buffer[i].jpg.frag_tab[2 * j]);
- 				/* should just be pos on i386 */
--				page = virt_to_phys(bus_to_virt(pos))
-+				page = virt_to_phys(fh->buffers.buffer[i].jpg.frag_virt_tab[j])
- 								>> PAGE_SHIFT;
- 				if (remap_pfn_range(vma, start, page,
- 							todo, PAGE_SHARED)) {
++u64 get_ns_uevent_seqnum_by_vpid(void)
++{
++	pid_t cur_pid;
++	struct net *net;
++
++	cur_pid = task_pid_vnr(current);
++	net = get_net_ns_by_pid(cur_pid);
++	if (IS_ERR(net))
++		return 0;
++
++	return net->uevent_seqnum;
++}
++EXPORT_SYMBOL_GPL(get_ns_uevent_seqnum_by_vpid);
++
+ static __net_init int net_ns_net_init(struct net *net)
+ {
+ #ifdef CONFIG_NET_NS
 -- 
-2.9.0
+2.17.0
