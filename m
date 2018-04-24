@@ -1,106 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751575AbeDXQYq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:24:46 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:38149 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeDXQYo (ORCPT
+        id S1751307AbeDXQ0e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:26:34 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:38596 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeDXQ0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:24:44 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-Cc: <linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
-        <Alexander.Deucher@amd.com>, <Christian.Koenig@amd.com>,
-        <David.Panariti@amd.com>, <oleg@redhat.com>,
-        <akpm@linux-foundation.org>
-References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
-        <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
-Date: Tue, 24 Apr 2018 11:23:18 -0500
-In-Reply-To: <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
-        (Andrey Grodzovsky's message of "Tue, 24 Apr 2018 11:30:35 -0400")
-Message-ID: <87muxsbmkp.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 24 Apr 2018 12:26:31 -0400
+X-IronPort-AV: E=Sophos;i="5.49,323,1520870400";
+   d="scan'208";a="179710566"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "pmenzel+linux-block@molgen.mpg.de"
+        <pmenzel+linux-block@molgen.mpg.de>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+CC: "regressions@leemhuis.info" <regressions@leemhuis.info>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: =?utf-8?B?UmU6IFJlZ3Jlc3Npb24gNC4xNy1yYzE6IFNTRCBkb2Vzbsq8dCBwcm9wZXJs?=
+ =?utf-8?B?eSByZXN1bWUgY2F1c2luZyBzeXN0ZW0gaGFuZyAoTlVMTCBwb2ludGVyIGRl?=
+ =?utf-8?Q?reference)?=
+Thread-Topic: =?utf-8?B?UmVncmVzc2lvbiA0LjE3LXJjMTogU1NEIGRvZXNuyrx0IHByb3Blcmx5IHJl?=
+ =?utf-8?B?c3VtZSBjYXVzaW5nIHN5c3RlbSBoYW5nIChOVUxMIHBvaW50ZXIgZGVyZWZl?=
+ =?utf-8?Q?rence)?=
+Thread-Index: AQHT2+j+aAndgYhoQEux8zOPnMS7EQ==
+Date: Tue, 24 Apr 2018 16:26:27 +0000
+Message-ID: <67ffdf0050a04bf3615c3d8a3a90b0c9c2aeb1ad.camel@wdc.com>
+References: <59ca6556-11a6-4f77-76e7-d51c7175eb32@molgen.mpg.de>
+In-Reply-To: <59ca6556-11a6-4f77-76e7-d51c7175eb32@molgen.mpg.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [198.233.165.212]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0863;7:2QoR6nFGX+8TvI7KgaVBcX0I7exoZpnMJUYGRqUrhV/klzTWCJxmmVQLnlA/16F4DFWZdE/89PY8cXmWwSBdCzMyBtk20bYX2+Q/kr1mOirMEnDCA9tb3ULmpJDz5f4ofNoNhiUZdNUtIMGDajGhdEMPx1LJ2A2+skxWWbBvlOwIyljB+r2zh9EnDF80Ze2RWcpacmUIwllpDlfnv14HdBie2sF6+S9sI3DhlF48+jKnN3pyWb9nIv93BQoAHs2X;20:lSXrQkACCCN2UGhpODI3TJSaQziJzAz5mFwQgjKPz653He2jooquqyfIfJEl0ESdoXusPqawuQ+Odr3eOwxdH2iKmfgyDoqFDHZFqL0o9V2k11Uq/CxlOlz7uzTlsM8JURw2/75Dj78lqSnQX+Jru7TEHYZPDkkUpZM2fK2LMg4=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0863;
+x-ms-traffictypediagnostic: MWHPR04MB0863:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0863D905BD4B393DF3A59CAC98880@MWHPR04MB0863.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231232)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041310)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR04MB0863;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0863;
+x-forefront-prvs: 0652EA5565
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39860400002)(39380400002)(396003)(376002)(377424004)(199004)(189003)(6246003)(6512007)(4326008)(54906003)(316002)(53936002)(110136005)(2900100001)(3280700002)(2906002)(7736002)(305945005)(106356001)(68736007)(224313004)(6116002)(224303003)(6436002)(105586002)(118296001)(2501003)(3846002)(5250100002)(8936002)(66066001)(14454004)(2616005)(81156014)(81166006)(72206003)(478600001)(25786009)(97736004)(6506007)(11346002)(476003)(446003)(76176011)(486006)(229853002)(86362001)(5660300001)(186003)(36756003)(6486002)(99286004)(26005)(102836004)(3660700001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0863;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: w/BIfVX1Neqhch3Kd38cFpUDns9dmcgQ2cx+RMgn5Dm8Sg51ZAzp1xaU4F+YsBoVJMyCnSwD/QlbV+dcACEYaXbmv0pHWda2H5E1GZbcZLHQIorFJlQqWNz0xh6SewX7ttxO5qROJMTic4wR3e5e0p7O2mqKwWsgnNZbmvoc5GaywHCdGaFRpZAGdQPme6TI
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F77C461EB2E7694D95E4AA008FAC679D@namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fB0kE-00061D-LF;;;mid=<87muxsbmkp.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+DqkxCcX4823OE7f8fnRg0igG+wbbriVU=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 244 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 2.5 (1.0%), b_tie_ro: 1.69 (0.7%), parse: 1.16 (0.5%),
-        extract_message_metadata: 12 (5.0%), get_uri_detail_list: 1.74 (0.7%),
-        tests_pri_-1000: 5.0 (2.0%), tests_pri_-950: 1.19 (0.5%), tests_pri_-900:
-        1.01 (0.4%), tests_pri_-400: 30 (12.5%), check_bayes: 29 (12.1%), b_tokenize:
-        6 (2.5%), b_tok_get_all: 15 (6.0%), b_comp_prob: 2.1 (0.9%), b_tok_touch_all:
-        3.2 (1.3%), b_finish: 0.65 (0.3%), tests_pri_0: 182 (74.4%),
-        check_dkim_signature: 0.48 (0.2%), check_dkim_adsp: 3.8 (1.6%),
-        tests_pri_500: 6 (2.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for signaled process.
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-MS-Office365-Filtering-Correlation-Id: 52418e85-fd81-4ffb-3ad9-08d5aa002124
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52418e85-fd81-4ffb-3ad9-08d5aa002124
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2018 16:26:27.3975
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0863
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3OGQccJ016161
 
-Andrey Grodzovsky <andrey.grodzovsky@amd.com> writes:
+On Tue, 2018-04-24 at 18:14 +0200, Paul Menzel wrote:
+> Since Linux 4.17-rc1, resume from ACPI on the Lenovo X60 fails because 
+> of a NULL pointer dereference. As the drive doesn’t come back, messages 
+> can be seen on the display, but the system cannot be controlled anymore, 
+> and has to be forcefully shut down.
 
-> Avoid calling wait_event_killable when you are possibly being called
-> from get_signal routine since in that case you end up in a deadlock
-> where you are alreay blocked in singla processing any trying to wait
-> on a new signal.
+Are you using scsi-mq or the legacy SCSI core? If you are not sure how to
+answer this question, please share the kernel config and kernel command
+line parameters.
 
-I am curious what the call path that is problematic here.
+Thanks,
 
-In general waiting seems wrong when the process has already been
-fatally killed as indicated by PF_SIGNALED.
-
-Returning -ERESTARTSYS seems wrong as nothing should make it back even
-to the edge of userspace here.
-
-Given that this is the only use of PF_SIGNALED outside of bsd process
-accounting I find this code very suspicious.
-
-It looks the code path that gets called during exit is buggy and needs
-to be sorted out.
-
-Eric
-
-
-> Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-> ---
->  drivers/gpu/drm/scheduler/gpu_scheduler.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler.c b/drivers/gpu/drm/scheduler/gpu_scheduler.c
-> index 088ff2b..09fd258 100644
-> --- a/drivers/gpu/drm/scheduler/gpu_scheduler.c
-> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler.c
-> @@ -227,9 +227,10 @@ void drm_sched_entity_do_release(struct drm_gpu_scheduler *sched,
->  		return;
->  	/**
->  	 * The client will not queue more IBs during this fini, consume existing
-> -	 * queued IBs or discard them on SIGKILL
-> +	 * queued IBs or discard them when in death signal state since
-> +	 * wait_event_killable can't receive signals in that state.
->  	*/
-> -	if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
-> +	if (current->flags & PF_SIGNALED)
->  		entity->fini_status = -ERESTARTSYS;
->  	else
->  		entity->fini_status = wait_event_killable(sched->job_scheduled,
+Bart.
