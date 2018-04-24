@@ -1,67 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756155AbeDXF7p (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 01:59:45 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33654 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752110AbeDXF7l (ORCPT
+        id S1756168AbeDXGAs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 02:00:48 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44381 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752110AbeDXGAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 01:59:41 -0400
-X-Google-Smtp-Source: AB8JxZoozTRup3pUvVJm4psy7VEF9j3gH/akIpOelMjyLHRR80c0IET5cVbBuSZr95VXKC4dDGIgsRTpi36zAWwOiF4=
+        Tue, 24 Apr 2018 02:00:45 -0400
+X-Google-Smtp-Source: AIpwx4+yuVTwTJaicc9Xv4pnvupRizp2Lq8lSmhJuW3zLSKK7X2L402vxPXRFq+y2thhq7dS0Jg2FQ==
+Date: Tue, 24 Apr 2018 16:00:34 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        ppaidipe@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com
+Subject: Re: [PATCH] cpufreq: powernv: Fix the hardlockup by synchronus
+ smp_call in timer interrupt
+Message-ID: <20180424160034.6e9d2274@roar.ozlabs.ibm.com>
+In-Reply-To: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+References: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180423194917.GF13383@bombadil.infradead.org>
-References: <20180423180625.GA16101@jordon-HP-15-Notebook-PC> <20180423194917.GF13383@bombadil.infradead.org>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Tue, 24 Apr 2018 11:29:39 +0530
-Message-ID: <CAFqt6zatfzk8PmBN110LD_x8goU+vO4U9TAGaamJ4UqwRm+g_g@mail.gmail.com>
-Subject: Re: [PATCH v5] fs: dax: Adding new return type vm_fault_t
-To: Matthew Wilcox <willy@infradead.org>
-Cc: jack@suse.cz, Al Viro <viro@zeniv.linux.org.uk>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>, kirill.shutemov@linux.intel.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 1:19 AM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Mon, Apr 23, 2018 at 11:36:25PM +0530, Souptick Joarder wrote:
->> If the insertion of PTE failed because someone else
->> already added a different entry in the mean time, we
->> treat that as success as we assume the same entry was
->> actually inserted.
->
-> No, Jan said to *make it a comment*.  In the source file.  That's why
-> he formatted it with the /* */.  Not in the changelog.
-Sorry, got confused.
+On Tue, 24 Apr 2018 10:11:46 +0530
+Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> wrote:
 
-I think this should be fine -
+> gpstate_timer_handler() uses synchronous smp_call to set the pstate
+> on the requested core. This causes the below hard lockup:
+> 
+> [c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
+> [c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
+> [c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
+> [c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
+> [c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
+> [c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
+> [c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
+> [c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
+> [c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
+> [c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
+> --- interrupt: 901 at doorbell_global_ipi+0x34/0x50
+> LR = arch_send_call_function_ipi_mask+0x120/0x130
+> [c000003fe566ba50] [c00000000004876c] arch_send_call_function_ipi_mask+0x4c/0x130 (unreliable)
+> [c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
+> [c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
+> [c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
+> [c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
+> [c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
+> [c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
+> [c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
+> 
+> Fix this by using the asynchronus smp_call in the timer interrupt handler.
+> We don't have to wait in this handler until the pstates are changed on
+> the core. This change will not have any impact on the global pstate
+> ramp-down algorithm.
+> 
+> Reported-by: Nicholas Piggin <npiggin@gmail.com>
+> Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
+> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+> ---
+>  drivers/cpufreq/powernv-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+> index 0591874..7e0c752 100644
+> --- a/drivers/cpufreq/powernv-cpufreq.c
+> +++ b/drivers/cpufreq/powernv-cpufreq.c
+> @@ -721,7 +721,7 @@ void gpstate_timer_handler(struct timer_list *t)
+>  	spin_unlock(&gpstates->gpstate_lock);
+>  
+>  	/* Timer may get migrated to a different cpu on cpu hot unplug */
+> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
+> +	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 0);
+>  }
+>  
+>  /*
 
-+/*
-+If the insertion of PTE failed because someone else
-+already added a different entry in the mean time, we
-+treat that as success as we assume the same entry was
-+actually inserted.
-+*/
+This can still deadlock because !wait case still ends up having to wait
+if another !wait smp_call_function caller had previously used the
+call single data for this cpu.
 
--int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
--                       pfn_t pfn)
-+vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
-+               unsigned long addr, pfn_t pfn)
- {
--       return __vm_insert_mixed(vma, addr, pfn, true);
-+       int err;
-+
-+       err =  __vm_insert_mixed(vma, addr, pfn, true);
-+       if (err == -ENOMEM)
-+               return VM_FAULT_OOM;
-+       if (err < 0 && err != -EBUSY)
-+               return VM_FAULT_SIGBUS;
-+       return VM_FAULT_NOPAGE;
- }
--EXPORT_SYMBOL(vm_insert_mixed_mkwrite);
-+EXPORT_SYMBOL(vmf_insert_mixed_mkwrite);
+If you go this way you would have to use smp_call_function_async, which
+is more work.
+
+As a rule it would be better to avoid smp_call_function entirely if
+possible. Can you ensure the timer is running on the right CPU? Use
+add_timer_on and try again if the timer is on the wrong CPU, perhaps?
+
+Thanks,
+Nick
