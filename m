@@ -1,52 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752733AbeDXTde (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:33:34 -0400
-Received: from bert.emutex.com ([91.103.1.109]:54589 "EHLO bert.emutex.com"
+        id S1751476AbeDXTel (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:34:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750735AbeDXTdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:33:31 -0400
-Date: Tue, 24 Apr 2018 20:33:04 +0100
-From: Javier Arteaga <javier@emutex.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "Dan O'Donovan" <dan@emutex.com>, linux-iio@vger.kernel.org,
+        id S1750791AbeDXTek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:34:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BFC321774
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 24 Apr 2018 16:34:36 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: adc128s052: allow driver to be matched using
- ACPI
-Message-ID: <20180424193304.yitnosi3vwirqlu7@localhost>
-References: <20180419132036.27493-1-javier@emutex.com>
- <20180419132036.27493-2-javier@emutex.com>
- <20180421165441.0c64415d@archlinux>
- <20180421204157.y3zoejow7gfl3pj3@localhost>
- <20180424182330.000061a5@huawei.com>
+Subject: Re: [PATCH] perf: Documentation: Support for asciidoctor
+Message-ID: <20180424193436.GF4427@kernel.org>
+References: <20180424150456.17353-1-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180424182330.000061a5@huawei.com>
-X-Spam-Score: -1.0 (-)
-X-Spam-Report: Spam detection software, running on the system "statler.emutex.com",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  On Tue, Apr 24, 2018 at 06:23:30PM +0100, Jonathan Cameron
-    wrote: > Unless we know of ACPI firmwares out there that are doing this,
-   drop the > patch for now. I don't want to see a flood of these based on a
-   'you can > do it that' way argument. [...]
- Content analysis details:   (-1.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+In-Reply-To: <20180424150456.17353-1-tiwai@suse.de>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 06:23:30PM +0100, Jonathan Cameron wrote:
-> Unless we know of ACPI firmwares out there that are doing this, drop the
-> patch for now.  I don't want to see a flood of these based on a 'you can
-> do it that' way argument.
+Em Tue, Apr 24, 2018 at 05:04:56PM +0200, Takashi Iwai escreveu:
+> asciidoc seems behind the recent big wave of python3 conversion, and
+> we were advised to switch to asciidoctor instead.  It's almost
+> compatible but some extensions used for perf documentation don't work
+> with it.  Here is the patch to cover them, and add the proper support
+> for asciidoctor.
+> 
+> Pass USE_ASCIIDOCTOR=yes to make for using asciidoctor instead of
+> asciidoc.  The man source and manual attributes are passed via command
+> options.  The support for these attributes have been fixed in the
+> latest asciidoctor code.
+> 
+> Since asciidoctor can covert to a man page and an HTML directly, we
+> can omit the dependency on xmlto when USE_ASCIIDOCTOR is set.
 
-Fair enough. I'll drop it for v3.
+Applied to perf/core,
+
+- Arnaldo
