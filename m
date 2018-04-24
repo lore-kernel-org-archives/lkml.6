@@ -1,120 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756436AbeDXHcF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 03:32:05 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38491 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756249AbeDXHcB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 03:32:01 -0400
-X-Google-Smtp-Source: AIpwx4/7zSgp2KA382gndgsxEtCmpAZ09nsMEVU6RyMuh6SpwH0FM+yVDQ5ux05RbLDxCSZLA1QDBA==
-Date: Tue, 24 Apr 2018 17:31:47 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        ppaidipe@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com
-Subject: Re: [PATCH] cpufreq: powernv: Fix the hardlockup by synchronus
- smp_call in timer interrupt
-Message-ID: <20180424173147.7bcd86c5@roar.ozlabs.ibm.com>
-In-Reply-To: <c88d51af-9eb8-6bb3-4201-8909cda0241b@linux.vnet.ibm.com>
-References: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-        <20180424160034.6e9d2274@roar.ozlabs.ibm.com>
-        <c88d51af-9eb8-6bb3-4201-8909cda0241b@linux.vnet.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1756491AbeDXHeA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 03:34:00 -0400
+Received: from verein.lst.de ([213.95.11.211]:57575 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756326AbeDXHd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 03:33:58 -0400
+Date: Tue, 24 Apr 2018 09:35:24 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
+        Vincent Chen <deanbo422@gmail.com>, linux-c6x-dev@linux-c6x.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-m68k@vger.kernel.org, openrisc@lists.librecores.org,
+        Greentime Hu <green.hu@gmail.com>, linux-alpha@vger.kernel.org,
+        sparclinux@vger.kernel.org, nios2-dev@lists.rocketboards.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/22] dma-debug: move initialization to common code
+Message-ID: <20180424073524.GB18945@lst.de>
+References: <20180420080313.18796-1-hch@lst.de> <20180420080313.18796-2-hch@lst.de> <294a1469-01d6-10fb-5de1-b1d4513a066c@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <294a1469-01d6-10fb-5de1-b1d4513a066c@arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 12:47:32 +0530
-Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> wrote:
+On Fri, Apr 20, 2018 at 11:23:43AM +0100, Robin Murphy wrote:
+>> -void dma_debug_init(u32 num_entries)
+>> +static int dma_debug_init(void)
+>>   {
+>> +	u32 num_entries;
+>
+> Maybe initialise it to PREALLOC_DMA_DEBUG_ENTRIES?
 
-> Hi,
-> 
-> On 04/24/2018 11:30 AM, Nicholas Piggin wrote:
-> > On Tue, 24 Apr 2018 10:11:46 +0530
-> > Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> wrote:
-> >   
-> >> gpstate_timer_handler() uses synchronous smp_call to set the pstate
-> >> on the requested core. This causes the below hard lockup:
-> >>
-> >> [c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
-> >> [c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
-> >> [c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
-> >> [c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
-> >> [c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
-> >> [c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
-> >> [c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
-> >> [c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
-> >> [c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
-> >> [c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
-> >> --- interrupt: 901 at doorbell_global_ipi+0x34/0x50
-> >> LR = arch_send_call_function_ipi_mask+0x120/0x130
-> >> [c000003fe566ba50] [c00000000004876c] arch_send_call_function_ipi_mask+0x4c/0x130 (unreliable)
-> >> [c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
-> >> [c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
-> >> [c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
-> >> [c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
-> >> [c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
-> >> [c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
-> >> [c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
-> >>
-> >> Fix this by using the asynchronus smp_call in the timer interrupt handler.
-> >> We don't have to wait in this handler until the pstates are changed on
-> >> the core. This change will not have any impact on the global pstate
-> >> ramp-down algorithm.
-> >>
-> >> Reported-by: Nicholas Piggin <npiggin@gmail.com>
-> >> Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
-> >> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-> >> ---
-> >>  drivers/cpufreq/powernv-cpufreq.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
-> >> index 0591874..7e0c752 100644
-> >> --- a/drivers/cpufreq/powernv-cpufreq.c
-> >> +++ b/drivers/cpufreq/powernv-cpufreq.c
-> >> @@ -721,7 +721,7 @@ void gpstate_timer_handler(struct timer_list *t)
-> >>  	spin_unlock(&gpstates->gpstate_lock);
-> >>  
-> >>  	/* Timer may get migrated to a different cpu on cpu hot unplug */
-> >> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
-> >> +	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 0);
-> >>  }
-> >>  
-> >>  /*  
-> > 
-> > This can still deadlock because !wait case still ends up having to wait
-> > if another !wait smp_call_function caller had previously used the
-> > call single data for this cpu.
-> > 
-> > If you go this way you would have to use smp_call_function_async, which
-> > is more work.
-> > 
-> > As a rule it would be better to avoid smp_call_function entirely if
-> > possible. Can you ensure the timer is running on the right CPU? Use
-> > add_timer_on and try again if the timer is on the wrong CPU, perhaps?
-> >   
-> 
-> Yeah that is doable we can check for the cpu and re-queue it. We will only
-> ramp-down slower in that case which is no harm.
+We initialize it down in an if/else clause which seems a little more clear
+to me, at the cost of two extra lines of code.  But I suspect I should
+just go a little further and merge the global req_entries and the local
+num_entries into a single variable with a better name.
 
-Great, I'd be much happier avoiding that IPI. I guess it should happen
-quite rarely that we have to queue on a different CPU. I would say just
-do add_timer unless we have migrated to the wrong CPU, then do add_timer_on
-in that case (it's a bit slower).
+>> +core_initcall(dma_debug_init);
+>
+> I think it's worth noting that for most users this now happens much earlier 
+> than before. In general that's probably good (e.g. on arm64 it should 
+> prevent false-positives from the Arm SMMU drivers under ACPI), and I can't 
+> imagine it's high-risk, but it is a behaviour change.
 
-> (If the targeted core turns out to be offline then we will not queue the timer
-> again as we would have already set the pstate to min in the cpu-down path.)
-
-Something I noticed is that if we can not get the lock (trylock fails),
-then the timer does not get queued again. Should it?
-
-Thanks,
-Nick
+I'll mention this in the changelog, thanks!
