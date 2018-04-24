@@ -1,95 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751506AbeDXQqz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:46:55 -0400
-Received: from foss.arm.com ([217.140.101.70]:56954 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750827AbeDXQqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:46:52 -0400
-Date: Tue, 24 Apr 2018 18:46:49 +0200
-From: Christoffer Dall <christoffer.dall@arm.com>
-To: Eric Auger <eric.auger@redhat.com>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
-        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: Re: [PATCH v3 02/12] KVM: arm/arm64: Document
- KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Message-ID: <20180424164649.GA4533@C02W217FHV2R.local>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
- <1523607658-9166-3-git-send-email-eric.auger@redhat.com>
+        id S1751932AbeDXQrD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:47:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44808 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751513AbeDXQq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:46:59 -0400
+Date: Tue, 24 Apr 2018 12:46:55 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+In-Reply-To: <20180424162712.GL17484@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1804241240120.27049@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180424162712.GL17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523607658-9166-3-git-send-email-eric.auger@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 10:20:48AM +0200, Eric Auger wrote:
-> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
-> KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
-> base address and size of a redistributor region
+
+
+On Tue, 24 Apr 2018, Michal Hocko wrote:
+
+> Hi,
+> it seems that we still have few vmalloc users who perform GFP_NOFS
+> allocation:
+> drivers/mtd/ubi/io.c
+> fs/ext4/xattr.c
+> fs/gfs2/dir.c
+> fs/gfs2/quota.c
+> fs/nfs/blocklayout/extent_tree.c
+> fs/ubifs/debug.c
+> fs/ubifs/lprops.c
+> fs/ubifs/lpt_commit.c
+> fs/ubifs/orphan.c
 > 
-> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
-> to declare several separate redistributor regions.
+> Unfortunatelly vmalloc doesn't suppoer GFP_NOFS semantinc properly
+> because we do have hardocded GFP_KERNEL allocations deep inside the
+> vmalloc layers. That means that if GFP_NOFS really protects from
+> recursion into the fs deadlocks then the vmalloc call is broken.
 > 
-> So the whole redist space does not need to be contiguous anymore.
+> What to do about this? Well, there are two things. Firstly, it would be
+> really great to double check whether the GFP_NOFS is really needed. I
+> cannot judge that because I am not familiar with the code. It would be
+> great if the respective maintainers (hopefully get_maintainer.sh pointed
+> me to all relevant ones). If there is not reclaim recursion issue then
+> simply use the standard vmalloc (aka GFP_KERNEL request).
 > 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> ---
->  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 25 ++++++++++++++++++++++-
->  1 file changed, 24 insertions(+), 1 deletion(-)
+> If the use is really valid then we have a way to do the vmalloc
+> allocation properly. We have memalloc_nofs_{save,restore} scope api. How
+> does that work? You simply call memalloc_nofs_save when the reclaim
+> recursion critical section starts (e.g. when you take a lock which is
+> then used in the reclaim path - e.g. shrinker) and memalloc_nofs_restore
+> when the critical section ends. _All_ allocations within that scope
+> will get GFP_NOFS semantic automagically. If you are not sure about the
+> scope itself then the easiest workaround is to wrap the vmalloc itself
+> with a big fat comment that this should be revisited.
 > 
-> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> index 9293b45..cbc4328 100644
-> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> @@ -27,9 +27,32 @@ Groups:
->        VCPU and all of the redistributor pages are contiguous.
->        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
->        This address needs to be 64K aligned.
-> +
-> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
-> +      The attr field of kvm_device_attr encodes 3 values:
-> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
-> +      values:   |     count      |       base      |  flags   | index
-> +      - index encodes the unique redistributor region index
-
-I'm not entirely sure I understand the purpose of the index field.
-Isn't a redistributor region identified uniquely by its base address?
-
-Otherwise this looks good.
-
-Thanks,
--Christoffer
-
-
-> +      - flags: reserved for future use, currently 0
-> +      - base field encodes bits [51:16] of the guest physical base address
-> +        of the first redistributor in the region.
-> +      - count encodes the number of redistributors in the region. Must be
-> +        greater than 0.
-> +      There are two 64K pages for each redistributor in the region and
-> +      redistributors are laid out contiguously within the region. Regions
-> +      are filled with redistributors in the index order. The sum of all
-> +      region count fields must be greater than or equal to the number of
-> +      VCPUs. Redistributor regions must be registered in the incremental
-> +      index order, starting from index 0.
-> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-> +
-> +  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
-> +  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
-> +
->    Errors:
->      -E2BIG:  Address outside of addressable IPA range
-> -    -EINVAL: Incorrectly aligned address
-> +    -EINVAL: Incorrectly aligned address, bad redistributor region
-> +             count/index, mixed redistributor region attribute usage
->      -EEXIST: Address already configured
->      -ENXIO:  The group or attribute is unknown/unsupported for this device
->               or hardware support is missing.
+> Does that sound like something that can be done in a reasonable time?
+> I have tried to bring this up in the past but our speed is glacial and
+> there are attempts to do hacks like checking for abusers inside the
+> vmalloc which is just too ugly to live.
+> 
+> Please do not hesitate to get back to me if something is not clear.
+> 
+> Thanks!
 > -- 
-> 2.5.5
-> 
+> Michal Hocko
+> SUSE Labs
+
+I made a patch that adds memalloc_noio/fs_save around these calls a year 
+ago: http://lkml.iu.edu/hypermail/linux/kernel/1707.0/01376.html
+
+Mikulas
