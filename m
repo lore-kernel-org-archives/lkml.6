@@ -1,48 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932865AbeDXMRO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:17:14 -0400
-Received: from genki.is ([159.203.135.224]:33756 "EHLO genki.is"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756171AbeDXMMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:12:00 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 genki.is 8A91E406B6
-Content-Type: text/plain; charset="utf-8"
+        id S932908AbeDXMRh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:17:37 -0400
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:39285 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757113AbeDXMRe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 08:17:34 -0400
+X-Google-Smtp-Source: AIpwx4/okiWbzR1SoboCtSCMwJay3R0NUsnXW959Rc0ktV7C+V/ueU10LRdo2/D7KuQPZ3VLdaL0wA==
 MIME-Version: 1.0
-To: John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-From: Genki Sky <sky@genki.is>
-In-Reply-To: <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de>
-Cc: David Herrmann <dh.herrmann@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com>
- <2580c734d38041e984215ccc522a4f2d@genki.is>
- <cef78d739d29410cb73072e9792598a7@genki.is>
- <CALAqxLWmcmiOgbH1Ri+Ki-OGFvgzRzRDzX3FZdUhcqu1OoCWiA@mail.gmail.com>
- <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de>
-Message-ID: <24d89dd95ab246e98562a14be05a602e@genki.is>
-User-Agent: alot
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock BOOTTIME
-Date: Tue, 24 Apr 2018 08:11:58 -0400
+In-Reply-To: <20180424121353.zxujyehsw3er2xq6@flea>
+References: <20180424113424.13196-1-wens@csie.org> <20180424113424.13196-3-wens@csie.org>
+ <20180424121353.zxujyehsw3er2xq6@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 24 Apr 2018 20:17:11 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65iwbmOvQ2YA0e4QyTzQVj=F+5n6cWt2q6K80Y2b_3q3g@mail.gmail.com>
+Message-ID: <CAGb2v65iwbmOvQ2YA0e4QyTzQVj=F+5n6cWt2q6K80Y2b_3q3g@mail.gmail.com>
+Subject: Re: [PATCH 2/7] ARM: dts: sun8i: h3: Split out common board design
+ for ALL-H3-CC
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3OCHKCn031694
 
-Sorry to have been the bearer of bad news :(. Again, I just have my
-user hat on here. It does seem like this unifying would have been nice
-to have. And even, more compliant with the POSIX definition of
-MONOTONIC...
+On Tue, Apr 24, 2018 at 8:13 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Tue, Apr 24, 2018 at 07:34:19PM +0800, Chen-Yu Tsai wrote:
+>> The Libre Computer Project ALL-H3-CC has three models, all using the
+>> same board design, but with different pin compatible SoCs and amount of
+>> DRAM.
+>>
+>> Currently only the H3 1GB DRAM variant is supported. To support the two
+>> other variants, first split the original device tree into a common board
+>> design part and an SoC specific part.
+>>
+>> The SoC part only defines which SoC is used and model name, and includes
+>> the SoC specific dtsi file and the common design dtsi file.
+>>
+>> Also fix up the SPDX identifier line to use the correct comment style,
+>> and place it on the first line.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>  .../boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 213 +-----------------
+>>  ....dts => sunxi-hx-libretech-all-h3-cc.dtsi} |  11 +-
+>
+> I think I prefer the name of Neil's DTSI better, and since pretty much
+> the same patches (a couple of hours) before, we'll merge them (while
+> merging the rest of your patches, obviously).
+>
+> Does that work for you?
 
-On that note, maybe it is still worth introducing MONOTONIC_ACTIVE,
-but just as an alias for MONOTONIC for now. It's also more
-self-documenting. Then sometime in the future, if people switch over,
-remove BOOTTIME and make MONOTONIC like BOOTTIME. Though this doesn't
-help simplify the code, I know.
+I would like for the regulator voltage fix to be merged before the split.
+This will make it trivial to back port, instead of having to reverse the
+split, and maybe failing.
 
-  Thanks again,
-  Genki
+ChenYu
