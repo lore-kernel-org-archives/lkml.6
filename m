@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752673AbeDXSNR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 14:13:17 -0400
+        id S1752807AbeDXSNb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 14:13:31 -0400
 Received: from mail-eopbgr50080.outbound.protection.outlook.com ([40.107.5.80]:51605
         "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751216AbeDXSNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 14:13:12 -0400
+        id S1751216AbeDXSNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 14:13:20 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Ayan.Halder@arm.com;
 From: Ayan Kumar Halder <ayan.halder@arm.com>
@@ -14,9 +14,9 @@ To: ayan.halder@arm.com, liviu.dudau@arm.com, brian.starkey@arm.com,
         malidp@foss.arm.com, airlied@linux.ie, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
 Cc: nd@arm.com
-Subject: [PATCH v3 2/5] drm/arm/malidp: Split malidp interrupt initialization functions.
-Date: Tue, 24 Apr 2018 19:12:44 +0100
-Message-Id: <1524593567-5559-3-git-send-email-ayan.halder@arm.com>
+Subject: [PATCH v3 5/5] drm/arm/malidp: Added the late system pm functions
+Date: Tue, 24 Apr 2018 19:12:47 +0100
+Message-Id: <1524593567-5559-6-git-send-email-ayan.halder@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524593567-5559-1-git-send-email-ayan.halder@arm.com>
 References: <1524593567-5559-1-git-send-email-ayan.halder@arm.com>
@@ -29,46 +29,45 @@ X-ClientProxiedBy: VI1PR07CA0189.eurprd07.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3037;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3037;3:6HeXIMtm8kZODn/SljyGtjLjj9I4VFaBOS1MdONTr15qKAabsrYIDFAow40nA9dzDWVu7IztlLyd5kXydjvccFp2h3HkBNQgyQXGVN5mETBUCTw/0Tf1u3UXZ6HEulri49eEoW6zgGtgaipeUxYu5hTQ/qLc9c3CDLzmPREUMjIw7/L/GGEHPJGXZq3xfYfN+VUM/8if+lwsBGnJmyvN0SPIyHWFXKp2ZML6REWD1FNr6e+e+GzwBx3oKQv8X0Mk;25:CSpzgxVei3rlJiVtdImTm2qnLxoQfBbsYqJwBKyl8LLCs3gn96jfargMss70WRHbVgxVpgU/BvHIDcc4ACmrsuz80Hei0Aom/nVoQQaS2TbdpvaAYyI7MZE76YrnBodjpW5bTHznMnzHVD22QYeUocxbwgHRpQib4LrgEN/TxK4wrdHmLn7IBnai2oMcwt0JDED3I0c6trSvMEVe84VE467l8kdHHajR+djG3rK3/BUfN5SNu814QoNG4FLgcEjoZPj/M/zA1sfStIlKWouLQfcb5Xh2r5X/4qXbujSeS2E+y9AjredWi44nVU931dFHlWrttzycVWn1PV65Dmqbjg==;31:qq+VbUYZSBUUAlL9gU8buZEmFmposTTpGqypg/RR5VXAG5a/grZlmKFVOjl65+WG4LaCa3M5rdWcwbobqGv6eRCSbHjk5dXsCanDGw3ML2MAQoX8AATggPTydHeCg2eORZk2t4tAADySY83gLRFh6koe0e2m8xjarKuxo7z8m9ZRxzEeAVeV1ID+M47ijgosAM3eCF+ZcmbpAi8c8GdYtTBTMaU29C0qp+0fRDRN/fA=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3037;3:0CXRFXAWw2dRmkauJ7KMxdMHOfBBb9vF9xtkK2cVwf3dLd/Rx94o3JHJq+qVUntCK1MjEC4SZunxtbt1OxAccE044PTa34ISD7xzy6pk9nW7Pkz23mOT36+pISBtv8Ej+KqfXpw8DwZG9URlm1u+HO0XDNnCYbThGzKWNZysDlFd6M628kwg/MMLnFA6GK/IrcktxV3Q3CW8IdW/DLb3YTq+2kfRfCpY2dd7S3+iegWlygmBBhEBy7zTI/JPF4B7;25:JMYxpX7UvfpjoRxmxpJ6c7yBK5CZ3osx0iPcYsbalg62+q1Hf4nXLSK2McYEZRqZ0fMuKoMgvJeCBQHtrsJJtNwdx6t9wBLhcLTFBdu0S8qirWVvD86uWuZuQ+2MsvbIPOuQ9fj9+PLxT6u+UuqRJcJQa4qryi82J5/9Ndesbu5UXVRmfA/iQQbxU7dqs9ohPwrKxq+E4N6fEUW+whOQmpfFjP35ovMfjG4/Syg3Z81iKulWCrn7hopu07lE4bH5Q2CmkcXv9B2Pl3Z/Gz72wWrSt0ibU8MMzCYH0hySPMheFqLANTkPTHM5fuRxCbCzEVNPsPmiSSyEV/kwdY/GbQ==;31:gob/htwOFWlK1v4TO8hc3yff0RMztyuSR6tUYeR4KNxJsACZ9ijHDh8wd0GaR11OGJxeAPcdtolzEiXSTd36htgl50hkomhEzXdaW0qGtKNFpRBKwFVK9WW+1HviCuF2AJ/BjtfFqsE2qOe1OLdVVdSM2WdHbzEzZd4uOsI43+yPan1sntNIOPBeuJ98cRrJA3rXCmxpI3eokIEn1tF4zC75Ka/9ED8jH/mi1oEIszc=
 X-MS-TrafficTypeDiagnostic: VI1PR08MB3037:
 NoDisclaimer: True
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3037;20:tvd9Ej6nKnkUy2ng4pAmTPR/ynv9UQl7guGPublkGu25Ec0MmZJaR/6nE5bG9PkYZ2UL0N2pI9/ItSrRMwi5vZPw2zrg4S2nBq2W8YvACWyaXBbR82I9onXYQqNI2s9zOrno6OcLXU7FPABuzle0I1sFs4HoOdxxbzdzSLDGZLDcIAt/inQPBc5pc3/v+bKVi19Wk83sD+Cta5EC/8yrBSPRSQgA/OWPMZm70ggAxgy+v9cm9C1uoICkPaRsVgOy;4:VVyJO2Qn+WR0wS3fd75hjNh5arKHMLrr50rQi3bI1CKEyWpXKEGtMc/mS31CkCwuBX3gpITRZ0F6t+5oJSAkT+k/tY2wA/ikH4/OAoY+9zr/+M/oN3gVXjSJAA5BLTldkTH9SReZyaRD4luO+SX9/jbsq1/r+fmzRQmY4MRQwUzD4Q/dkOxDOJTo7Sk6R7d+gf8FgAQWzjpBwzwNiKkfY5bW3FmFV8GG/II1vQo6qsZwMztK4kUpmmvimhpofSfusR8Aj4ZE2bDvLIFizuN+Wq36GdGWsYj7mJ8ZNFkCrU5WZf0+FFe6cIxgoh7I6nlf
-X-Microsoft-Antispam-PRVS: <VI1PR08MB3037A493E7ABA619AD3D7CEAE4880@VI1PR08MB3037.eurprd08.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3037;20:Qn/d/HA40RxOIWN6JkQIkGq54VFsT6agHThu1Lpy4EkqM0vuu2s//UGN17uZxbTWuzFwwAylWTCwimmnA68jDNIhKKOQ/k2NY9Vj/kQdo7O8RlRi5nwhUuIvv7yOqzZ17Y9xL9fsgXGGqUoYBbHFcoMr0OF5GiuojfACvkuA5vrbEYoPpzAcWaQ9ZLHHeWmXZ7ExvzBoT0mIy7zh+8WA5zVo8qRceSQ9B4Pks97BgnwxinvLJAv1Mem7BahxfXha;4:g8++sU35T+1+JuC9J1JhVx2P+pRTw/w2i/E3WxPQSOBhJiUiBntFXX+SgF9L4KaCz0EIkzfkf3fkIcJim7tN5C6stVdzmrxPbjYTsKvm1BiR/XScZWARWbVvlBRFAqBuiUYXu9zGAvHKuhomnzbEqzbzxqsyu1vIgdJAIUiUdQCJk3g7WF7VmA65XVx3RIevt0TCQ4JmBgBlM0m/9E1+JOY9Mqu7xaqOvpB7nNjI05ecvLEVIwWNznvkFynIn2lR6wHpIayYLkcLBusucajqGRIhI603UbzPWY+65Pn2u/O7M+2TQq6tfLOt0Jg9FaHb
+X-Microsoft-Antispam-PRVS: <VI1PR08MB30378F792D39F50BF61C3E76E4880@VI1PR08MB3037.eurprd08.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231232)(944501410)(52105095)(3002001)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(6072148)(201708071742011);SRVR:VI1PR08MB3037;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3037;
 X-Forefront-PRVS: 0652EA5565
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(39380400002)(366004)(39860400002)(346002)(396003)(189003)(199004)(316002)(6666003)(51416003)(6116002)(53936002)(3846002)(97736004)(6486002)(486006)(66066001)(2906002)(76176011)(36756003)(25786009)(86362001)(72206003)(478600001)(105586002)(8936002)(26005)(8676002)(966005)(956004)(476003)(47776003)(48376002)(7736002)(305945005)(81156014)(7696005)(68736007)(81166006)(386003)(52116002)(106356001)(6306002)(50226002)(446003)(16586007)(50466002)(16526019)(4326008)(11346002)(2616005)(59450400001)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3037;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB3037;23:aDRk9jQy2Fo6oGkb2mVujfEiGyI3OKKlpz2G/5rGA?=
- =?us-ascii?Q?x93OSW78hzQ+M/F+VNiyOtOPDozOhSGFVbc8sQlzLxKt0s0mgGmTaJmvk6/2?=
- =?us-ascii?Q?wAGCaeIROxt2H5sbJIW8jWLZGmxWxN9AlEWhY1eCUXfelWDDswKcyy1mBwRU?=
- =?us-ascii?Q?KLOrmyQUehPIT05yEsroc4BPF5gbDWleAOFDNRT9XnbQLM1kRe2iSIcJOgWg?=
- =?us-ascii?Q?Zh0xB5wukaTUoeq0lVh8KA8iYEdAMI+uCgp0Ozt5qgp6DY/q9/EaBV6gcZtF?=
- =?us-ascii?Q?48fqW/jY4IgrVI52MWQgohWPmI1LmwXpu4zeXYACc8U7X5ncifR0OA/7hXJy?=
- =?us-ascii?Q?IM085rXxED93NTj6ptZfryDkiSGtSENj+yw+d8SO2tNvtWIC3dyGy8Whe34h?=
- =?us-ascii?Q?vdbE/rkmgPf9AasbHPLAJxaAcZk9x4qAdnbmlOpTjng3JPzqbWPEP+1SJx/a?=
- =?us-ascii?Q?OhVmFsphtpsh93kzHlTUkoIziMSnx+ADp/MMxVuic4V1aA1jeVVBp7R57VMO?=
- =?us-ascii?Q?nMMuh2rssRpFpF2kfIh+aYkhYm4+8CFvseqRVZ8PhUWgDVdb2rARI0btq8K9?=
- =?us-ascii?Q?lgE9W001tN/ZlKMYwW1Wtt7G2KVxg0RpdnUONlV53oEUphmjzbVIje1S2Wl/?=
- =?us-ascii?Q?KnYcRItfSbwNpEHf2pvmlEDmwrGDNIfl9Ml8fWyft5Zf10QkQbh1fh6i9G9+?=
- =?us-ascii?Q?dEDlZLqBJu7i7OgThMN7m7uIZf2tcIA2bTyzANPy5eN/lbScCabX7pXhtafU?=
- =?us-ascii?Q?sQnpD2fYpjPi9IYefp0Ac8oAQzoqIB/xs1KbiIrqUUp36rSIZSalXM6lfFbH?=
- =?us-ascii?Q?DxY4dYSIFOHwLcc2ICSZlJyz90JR4evbPqr4SlEU0ix92dzjFU7bnLZ17CF+?=
- =?us-ascii?Q?Jaf5LhS1Qu333wjKAVN+pAXTJGp3Fn9w5vJyhCsph8hU52HwTQN2M1GuOxDQ?=
- =?us-ascii?Q?1PKi9+uyLmKJR5hZdGXnfc8JZL2WtZF6siJDK5bDhcxiIkBOy2RKjVCqIYqI?=
- =?us-ascii?Q?HxEXa2+2kT90/QxaXvfcb0jWPGGMepBG78fWaA3Jg8u4uEKIMGTQnpqjQhdM?=
- =?us-ascii?Q?1RhtTgVzs3LF4lW0qXytrueU+zTdgRH7jf8KiWhXTuTC1OknR/Obylp47O8W?=
- =?us-ascii?Q?nqgKhZxzymGCNOA3MKU3LDiBhuxuvT0WFKn4+mu1mtts96x2dKg72EHCbr6t?=
- =?us-ascii?Q?2o1kgylu9Z9ScS9hElI5twv5LLVlYYwKJh+?=
-X-Microsoft-Antispam-Message-Info: JBoxVcrHo3N+UjNaCz5hIWDJJUz/Kpw7dik/P0NcqSlHRMQyJGgGgWaGNZ+8nJzGq1t9eLVMt+XIDosTeDTEJuReZSZNHbOfOBRN7vM1B4aBSAnQmW+ijKPbPl5C+vLYT32jW9bfR8SIGy6Shqyj4ZDDQcrsIZBtaJaPqX6vutHO/8hG5EBO3sMm8A+VJVjz
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3037;6:4oc39JlgLiBaFFCQA+IFmQZQU5wYIKdn8SZaVpyjXzP9BMdCqAODqLRurFFmFUcAUlapAH0BXbFxIwWrhmpQWjRsHJtOPjXih7X1out7302pPSKH/qB/WneG0duTdq88C4XvQIsU2Clo9mm9InUwkmEutk/OfV6SGxoMcQt+iatMc5nJHg4WQxtO7reBcQEMeB+dEUzPHzMUO6/1wBZtVm46v8mWTVgZEr2sv4RDcU1e3jm4mlb7G9AlovYE7qkgmQK7+jXB+Bsr68PYeyk6YH/2WTXeaRGIWOtZQVCAusM8Z2OC013w8/uXPDW259XNF4QrjAV5R/ckDfYGWooYjIPVZPOeMlmp+YJJ1o1NxXAfWcYnSTw07cRwou7Do7+EUEv3BzaswJ+kd/As29CToK29Agdnruxc5s4j07A02x4iAb+/ZCe5FhKxXFf5sZidC3MqMmddH61+XtN3sEYdkg==;5:19AxctY9kOriTN0E8bnuFkfOS/YBJ3cemyArjJU+ON1DA9ZJ60Djm0Jgb2LIjglO2TrcrDWwOINLVrJI/bat7UETuR3qXCRADj3+uVW/MPJe6VCH98LqnrrQKVysArXLYHXefi0WdutRDY2tHPJbRQnFbzgFyxfT1jDbnqF2e2I=;24:0yizdVNyuAj3/2CZfCgSp4al0X55AsLwQ7FtT15GRjLVprDDo7QeGfNRUXdiZRGYq3A88jaSQEVk3anXKS0y5ADfY9rG98J7/1K900HQ4yU=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(39380400002)(366004)(39860400002)(346002)(396003)(189003)(199004)(316002)(6666003)(51416003)(6116002)(53936002)(3846002)(97736004)(6486002)(486006)(66066001)(2906002)(76176011)(36756003)(25786009)(86362001)(72206003)(478600001)(105586002)(8936002)(26005)(8676002)(956004)(476003)(47776003)(48376002)(7736002)(305945005)(81156014)(7696005)(68736007)(81166006)(386003)(52116002)(106356001)(50226002)(446003)(16586007)(50466002)(16526019)(4326008)(11346002)(2616005)(59450400001)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3037;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB3037;23:l/GPznC1Yle7/0x8csW5AAKp+4iNNQN4xHKYzk7EV?=
+ =?us-ascii?Q?63o7FKk6LknrD8O1e89N9Hk0eL3AAcnW3iH+V3FpnMzkU0nHZRdxcqqkuey3?=
+ =?us-ascii?Q?zmwL+qsmTjWpTPwLcm6gQg27LpOdLrGRPDb6CYfYgJeR5Xm8jVNk7FCtNYAm?=
+ =?us-ascii?Q?j22UQoS/BXQOKCT7eDN3Hqup8M2ZIpRQmSD5XTc9pbspOt543SC/kUsmpdEN?=
+ =?us-ascii?Q?m/VmLVhOPKU1cV7QmXQDX0dTBKME1SiOhSBeR22hD/PdCgHlMBy+qnpg5shh?=
+ =?us-ascii?Q?Bn/ZjLk9mwQiCGwBlimAjeMeisiXsFtDPJXleO37BmMMYhm9UX2Fd5WGvQki?=
+ =?us-ascii?Q?DOdSrdQZNAI8SVQz0AP/LMZG8D6vPonrGGOKUQpWEc6/xmklbH2yZIfLsYah?=
+ =?us-ascii?Q?cSUsLCc49q8UL2C7ofqqnlC758Lbw43qdH92HjPa19WGHddlm1JPuUezQkg1?=
+ =?us-ascii?Q?y6Ii/Dlm8s1zlHBchwvJL2THj1UXfg8aDop8uQVndUGWKBPhBXuqMH9ddyGz?=
+ =?us-ascii?Q?QTUX1cbl2O0KQ035SGwBq7rCaVqKDp7kqSOligEDGE2A0CeX5uRlZ0G5WZvz?=
+ =?us-ascii?Q?h4zGtcrz774e0JwqIJ6ZGcrh26ikjARSCZYtqi+gMid4ErWlo+BoWGL0hCF3?=
+ =?us-ascii?Q?q8Fz/EmnL8jYML8R0H2bubXvF5JE/OV92rEZkaNCqICqzIvTNcT1VrwNwbIB?=
+ =?us-ascii?Q?mxvE5KzIXS0LxpnOJDTKlHdvIJ2+9BCdjAeOy2XHxEYkDJE2xA/wZrX/2Suv?=
+ =?us-ascii?Q?JJxbvIDkHXCixH8UYAgL4MSSkhurqQNd0x5UOhdb6DyLP1lTS1yx2NCIYBRe?=
+ =?us-ascii?Q?rJqA4GdN17+/Br1ezzKYK0e45Z7G0nO8ku3JG25oizij2rH52pR9WN6f2qMQ?=
+ =?us-ascii?Q?xlPJeb+JVTYwNldYz5OOFkIwte+Byi7Or/tlc3FG8y1SLw78zs+S/+1jM5cR?=
+ =?us-ascii?Q?6tJsF8hQ1dfV1vkjhI87plEH4gbdz9F1Ih9A1xHQCvkEzNcqIS24C8eDgCoW?=
+ =?us-ascii?Q?e0VVy3ZO3fRYXyC/8ih8Sg4UCv4MJzzUXt37p5RyFJAK8j42rN8xxHG55lQu?=
+ =?us-ascii?Q?6is0IIFzEyFKC2jIWqp9DNnR+z1v7CNgV5LAVvH98SFbOfrAe4F+pGWf0kUj?=
+ =?us-ascii?Q?GQugB6e1eeEULaICyq1KjX61wJMA+FevbtebwCd9i7qAEYwOjrSLg=3D=3D?=
+X-Microsoft-Antispam-Message-Info: jHU3C+iG/trCyPEQnbLZhu0XWAYnv9D0YroJQoSMnoctn2ANvIdpxe3Ho6nk7L9+ypDlr0HLXzULwJMrXXp2M4fujU0ejm0pocK/9PuSPXI21LLnb8eWAM/idCs+H2DqhJ8gneCOQ8PFUdjlK8nstWHtMlMeV/qdfbLabSM6OO3KtQMmqnYUkYywp3lO0dS8
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3037;6:9ArSRPMZQZU4aQdgKKJlKXm57Mip5fo4nK4Yyp5DQQ1bx6O7QjKsDRtKOZE2Y0nzH0RkMWwRVEtQ7EureNUsEr0Sz1q+FFtlpQ7qbMUsPy2YcRlmgtwJjM3kTUuaupiJfukWUqyb7MI8cyAPgTjPeFXcvuyS6eArpNHg9hnYjTbWiS7eXVfwz86QpUDYjPv+xpFEK5M9Ql7jOafIbFUTdpqb6sU4LQyTGywUaQLT2wb9MmaKlBCSm1UacvGuCbytgirl116GwCKg0XlV0pzLz5pSbOTcfzrzAKhXSQ91zL//D7i7jDsawGMKK9/00ee4vcQ84QjO/QxLgW8/Qzjs1FCcEP0S2dNvDNh9ii0TH6H37g8DoWQN6OlFeHB+g8BjNDcmYbn6mPrqgQS6uQHT18iJlgAqY33YsUSZye0ZBzEp4t8xCnDydVy6EpDPVrpr6afcXU3N0jrPFwhgu4lxVw==;5:ldkJ0XFz7lxSFBa2Cp6j4P8Q9JSNgxfZxarqPQBA7fQyQ/ArDAAAnpX8lW8IIeDlcZY+KOnOOFAM9FiVKjXpSceDvS2frA3CLyDFmdHu5cF6sPrm6sKacf0spOoTga3R5ihb16B+Rdc4m35ze8rLibUYuCtrh6gHkOYLGNJovsc=;24:SSd0E7flffW9VwY8L2uArnXaeUHqG9Yp6ale8LPNam0+PKSRgEKSNAgi1G/cmrmRWTReF++i4LEG+z/Iyan53MBO8UUtSmOdOg9MOAQAzq4=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3037;7:ZgDFGN1Og6kNLWU8FkbALG+vN5ROoo5uTvSRlEChuTr9usd5GfDD4JjRsTj4oMr6FKAWYOgPaU1ct8RuKCn70YyA3Z0ZRY7BQdSgLIJtvd1biEzJLCr3LJllEN5OmpluJBzUuY+Rg+1acNZOGWevsKeaZWZ9VIXQFCRn2DuU8pM7OI4lyxNCu5UQR9UgqKO5qJ4JZqcLctESZMWq5iWvFCUqfFQBrO5wxbbp1KoE5crZ4GsDFtep4cp+26/WO5aZ
-X-MS-Office365-Filtering-Correlation-Id: 3e11971f-e418-4db3-4eb2-08d5aa0f0836
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3037;7:80RGMoKTo7OqD21K1xsK6362yNueWF0fOAONz28YBYJJM23yarjmChr9nrdY/ShA8Dp5koPogtHuiWUTWgGA+0SDraMCMo69mLi0xgaUyYvPdy3DSjECuo8dNphvTL46BzMSWPTATw8kwL4XqRvJU5aasxhYGtwYA7xKo7ISoreTgM3TiFNuP1OPpbPlmVOwJSH5RKb7lk4GnVFaUdslYBWxS3PqtFoaiPQgyvIr8JxppOtBvSGGAdihBiEuJRdP
+X-MS-Office365-Filtering-Correlation-Id: c80ced0c-f27e-48f2-37ec-08d5aa0f0a64
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2018 18:13:07.8363
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2018 18:13:11.4927
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e11971f-e418-4db3-4eb2-08d5aa0f0836
+X-MS-Exchange-CrossTenant-Network-Message-Id: c80ced0c-f27e-48f2-37ec-08d5aa0f0a64
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3037
@@ -76,113 +75,67 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Malidp uses two interrupts ie 1. se_irq - used for memory writeback. 
- and 2. de_irq - used for display output.
-Extract the hardware initialization part from malidp interrupt registration
-ie (malidp_de_irq_init()/ malidp_se_irq_init()) into a separate function 
-(ie malidp_de_irq_hw_init()/malidp_se_irq_hw_init())
-which will be later invoked from runtime_pm_resume function when it needs
-to re-enable the interrupts.
+malidp_pm_suspend_late checks if the runtime status is not suspended
+and if so, invokes malidp_runtime_pm_suspend which disables the
+display engine/core interrupts and the clocks. It sets the runtime status
+as suspended.
+
+The difference between suspend() and suspend_late() is as follows:-
+1. suspend() makes the device quiescent. In our case, we invoke the DRM
+helper which disables the CRTC. This would have invoked runtime pm
+suspend but the system suspend process disables runtime pm.
+2. suspend_late() It continues the suspend operations of the drm device 
+which was started by suspend(). In our case, it performs the same functionality
+as runtime_suspend().
+
+The complimentary functions are resume() and resume_early(). In the case of
+resume_early(), we invoke malidp_runtime_pm_resume() which enables the clocks
+and the interrupts. It sets the runtime status as active. If the device was
+in runtime suspend mode before system suspend was called, pm_runtime_work()
+will put the device back in runtime suspended mode( after the complete system
+has been resumed).
 
 Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
 
 ---
 Changes in v3:-
-- Squashed https://patchwork.kernel.org/patch/10357203/ and 
-https://patchwork.kernel.org/patch/10357209/ into a single commit.
-The reason being that although the two functions belong to different units
-of malidp (ie scaling engine and display engine), the intent for splitting 
-these functions remain the same.
+- Rebased on top of earlier v3 patches, 
 
 Changes in v2:-
-- Removed the change id
+- Removed the change id and modified the commit message
 ---
- drivers/gpu/drm/arm/malidp_hw.c | 38 +++++++++++++++++++++++++++++---------
- drivers/gpu/drm/arm/malidp_hw.h |  2 ++
- 2 files changed, 31 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/arm/malidp_drv.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index 8fb02f3..3f53f7e8 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -869,6 +869,23 @@ static irqreturn_t malidp_de_irq_thread_handler(int irq, void *arg)
- 	return IRQ_HANDLED;
- }
- 
-+void malidp_de_irq_hw_init(struct malidp_hw_device *hwdev)
-+{
-+	/* ensure interrupts are disabled */
-+	malidp_hw_disable_irq(hwdev, MALIDP_DE_BLOCK, 0xffffffff);
-+	malidp_hw_clear_irq(hwdev, MALIDP_DE_BLOCK, 0xffffffff);
-+	malidp_hw_disable_irq(hwdev, MALIDP_DC_BLOCK, 0xffffffff);
-+	malidp_hw_clear_irq(hwdev, MALIDP_DC_BLOCK, 0xffffffff);
-+
-+	/* first enable the DC block IRQs */
-+	malidp_hw_enable_irq(hwdev, MALIDP_DC_BLOCK,
-+			     hwdev->hw->map.dc_irq_map.irq_mask);
-+
-+	/* now enable the DE block IRQs */
-+	malidp_hw_enable_irq(hwdev, MALIDP_DE_BLOCK,
-+			     hwdev->hw->map.de_irq_map.irq_mask);
-+}
-+
- int malidp_de_irq_init(struct drm_device *drm, int irq)
- {
- 	struct malidp_drm *malidp = drm->dev_private;
-@@ -889,13 +906,7 @@ int malidp_de_irq_init(struct drm_device *drm, int irq)
- 		return ret;
- 	}
- 
--	/* first enable the DC block IRQs */
--	malidp_hw_enable_irq(hwdev, MALIDP_DC_BLOCK,
--			     hwdev->hw->map.dc_irq_map.irq_mask);
--
--	/* now enable the DE block IRQs */
--	malidp_hw_enable_irq(hwdev, MALIDP_DE_BLOCK,
--			     hwdev->hw->map.de_irq_map.irq_mask);
-+	malidp_de_irq_hw_init(hwdev);
- 
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index 82221ea..c53b46a 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -768,8 +768,25 @@ static int __maybe_unused malidp_pm_resume(struct device *dev)
  	return 0;
  }
-@@ -941,6 +952,16 @@ static irqreturn_t malidp_se_irq(int irq, void *arg)
- 	return IRQ_HANDLED;
- }
  
-+void malidp_se_irq_hw_init(struct malidp_hw_device *hwdev)
++static int __maybe_unused malidp_pm_suspend_late(struct device *dev)
 +{
-+	/* ensure interrupts are disabled */
-+	malidp_hw_disable_irq(hwdev, MALIDP_SE_BLOCK, 0xffffffff);
-+	malidp_hw_clear_irq(hwdev, MALIDP_SE_BLOCK, 0xffffffff);
-+
-+	malidp_hw_enable_irq(hwdev, MALIDP_SE_BLOCK,
-+			     hwdev->hw->map.se_irq_map.irq_mask);
++	if (!pm_runtime_status_suspended(dev)) {
++		malidp_runtime_pm_suspend(dev);
++		pm_runtime_set_suspended(dev);
++	}
++	return 0;
 +}
 +
- static irqreturn_t malidp_se_irq_thread_handler(int irq, void *arg)
- {
- 	return IRQ_HANDLED;
-@@ -964,8 +985,7 @@ int malidp_se_irq_init(struct drm_device *drm, int irq)
- 		return ret;
- 	}
++static int __maybe_unused malidp_pm_resume_early(struct device *dev)
++{
++	malidp_runtime_pm_resume(dev);
++	pm_runtime_set_active(dev);
++	return 0;
++}
++
+ static const struct dev_pm_ops malidp_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend, malidp_pm_resume) \
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend_late, malidp_pm_resume_early) \
+ 	SET_RUNTIME_PM_OPS(malidp_runtime_pm_suspend, malidp_runtime_pm_resume, NULL)
+ };
  
--	malidp_hw_enable_irq(hwdev, MALIDP_SE_BLOCK,
--			     hwdev->hw->map.se_irq_map.irq_mask);
-+	malidp_se_irq_hw_init(hwdev);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-index 6607aba..864fe92 100644
---- a/drivers/gpu/drm/arm/malidp_hw.h
-+++ b/drivers/gpu/drm/arm/malidp_hw.h
-@@ -297,6 +297,8 @@ static inline void malidp_hw_enable_irq(struct malidp_hw_device *hwdev,
- }
- 
- int malidp_de_irq_init(struct drm_device *drm, int irq);
-+void malidp_se_irq_hw_init(struct malidp_hw_device *hwdev);
-+void malidp_de_irq_hw_init(struct malidp_hw_device *hwdev);
- void malidp_de_irq_fini(struct malidp_hw_device *hwdev);
- int malidp_se_irq_init(struct drm_device *drm, int irq);
- void malidp_se_irq_fini(struct malidp_hw_device *hwdev);
 -- 
 2.7.4
