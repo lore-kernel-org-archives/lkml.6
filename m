@@ -1,69 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751555AbeDXQjR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:39:17 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34210 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751346AbeDXQjM (ORCPT
+        id S1751047AbeDXQmK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:42:10 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:37554 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750757AbeDXQmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:39:12 -0400
-X-Google-Smtp-Source: AIpwx4945nYVd+HyG4fyCCo+sQYsmXjAEIC5+wra4IdAN1qHMNagKoYru+qp0gULqW+PRz1OKllxd4xEEH+rhysZvAc=
+        Tue, 24 Apr 2018 12:42:08 -0400
+X-Google-Smtp-Source: AIpwx49KzRTuNID/UhrHMBHRUHTmJMkS69cxzh3K3oQ9Uc/ZMcpZyYd8V/3kEkq6w8kehXAAyzRduQ==
+Date: Tue, 24 Apr 2018 11:42:07 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jonathan Liu <net147@gmail.com>
+Subject: Re: [PATCH 4/6] drm/panel: simple: Add support for Banana Pi 7"
+ S070WV20-CT16 panel
+Message-ID: <20180424164207.ay4ai6lbspgv6anw@rob-hp-laptop>
+References: <20180419093225.614-1-wens@csie.org>
+ <20180419093225.614-5-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20180424074344.23029-1-jslaby@suse.cz>
-References: <54661ff7-5c2a-473b-e08c-1cd267353c03@martingkelly.com> <20180424074344.23029-1-jslaby@suse.cz>
-From: Martin Kelly <martin@martingkelly.com>
-Date: Tue, 24 Apr 2018 09:38:31 -0700
-Message-ID: <CAN8CM3wHg8ena1ZfUQwioc_fhn0P9gNHVe7OwttUVi0vmkDrcw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] tools: power/acpi, revert to LD = gcc
-To: Jiri Slaby <jslaby@suse.cz>
-Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org,
-        devel@acpica.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419093225.614-5-wens@csie.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 12:43 AM, Jiri Slaby <jslaby@suse.cz> wrote:
-> Commit 7ed1c1901fe5 (tools: fix cross-compile var clobbering) removed
-> setting of LD to $(CROSS_COMPILE)gcc. This broke build of acpica
-> (acpidump) in power/acpi:
->  ld: unrecognized option '-D_LINUX'
->
-> The tools pass CFLAGS to the linker (incl. -D_LINUX), so revert this
-> particular change and let LD be $(CC) again. Note that the old behaviour
-> was a bit different, it used $(CROSS_COMPILE)gcc which was eliminated by
-> the commit 7ed1c1901fe5. We use $(CC) for that reason.
->
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> Cc: Martin Kelly <martin@martingkelly.com>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: Robert Moore <robert.moore@intel.com>
-> Cc: Erik Schmauss <erik.schmauss@intel.com>
-> Cc: linux-acpi@vger.kernel.org
-> Cc: devel@acpica.org
+On Thu, Apr 19, 2018 at 05:32:23PM +0800, Chen-Yu Tsai wrote:
+> This panel is marketed as Banana Pi 7" LCD display. On the back is
+> a sticker denoting the model name S070WV20-CT16.
+> 
+> This is a 7" 800x480 panel connected through a 24-bit RGB interface.
+> However the panel only does 262k colors.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  tools/power/acpi/Makefile.config | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/tools/power/acpi/Makefile.config b/tools/power/acpi/Makefile.config
-> index 2cccbba64418..f304be71c278 100644
-> --- a/tools/power/acpi/Makefile.config
-> +++ b/tools/power/acpi/Makefile.config
-> @@ -56,6 +56,7 @@ INSTALL_SCRIPT = ${INSTALL_PROGRAM}
->  # to compile vs uClibc, that can be done here as well.
->  CROSS = #/usr/i386-linux-uclibc/usr/bin/i386-uclibc-
->  CROSS_COMPILE ?= $(CROSS)
-> +LD = $(CC)
->  HOSTCC = gcc
->
->  # check if compiler option is supported
-> --
-> 2.16.3
->
+>  .../display/panel/bananapi,s070wv20-ct16.txt  |  7 ++++++
+>  drivers/gpu/drm/panel/panel-simple.c          | 25 +++++++++++++++++++
+>  2 files changed, 32 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+> new file mode 100644
+> index 000000000000..2ec35ce36e9a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+> @@ -0,0 +1,7 @@
+> +Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
+> +
+> +Required properties:
+> +- compatible: should be "bananapi,s070wv20-ct16"
+> +
+> +This binding is compatible with the simple-panel binding, which is specified
+> +in simple-panel.txt in this directory.
 
-Reviewed-by: Martin Kelly <martin@martingkelly.com>
-
-Thanks for noticing this and sorry I missed it!
+Does this panel have a power supply (or more than 1) or backlight? I 
+can't know that by just refering to simple-panel.txt.
