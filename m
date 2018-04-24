@@ -1,297 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752205AbeDXQrU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:47:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:56974 "EHLO foss.arm.com"
+        id S1752395AbeDXQs2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:48:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751513AbeDXQrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:47:15 -0400
-Date: Tue, 24 Apr 2018 18:47:12 +0200
-From: Christoffer Dall <christoffer.dall@arm.com>
-To: Eric Auger <eric.auger@redhat.com>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
-        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: Re: [PATCH v3 06/12] KVM: arm/arm64: Helper to register a new
- redistributor region
-Message-ID: <20180424164712.GB4533@C02W217FHV2R.local>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
- <1523607658-9166-7-git-send-email-eric.auger@redhat.com>
+        id S1750827AbeDXQs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:48:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BCCF217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Tue, 24 Apr 2018 18:48:23 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Wan, Kaike" <kaike.wan@intel.com>,
+        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        "Fleck, John" <john.fleck@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: hrtimer (rdmavt RNR timer) was lost
+Message-ID: <20180424164821.GA31724@lerouge>
+References: <3F128C9216C9B84BB6ED23EF16290AFB634C8C87@CRSMSX101.amr.corp.intel.com>
+ <alpine.DEB.2.21.1804231355570.2077@nanos.tec.linutronix.de>
+ <3F128C9216C9B84BB6ED23EF16290AFB634C9420@CRSMSX101.amr.corp.intel.com>
+ <alpine.DEB.2.21.1804231528130.2077@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1523607658-9166-7-git-send-email-eric.auger@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 10:20:52AM +0200, Eric Auger wrote:
-> We introduce a new helper that creates and inserts a new redistributor
-> region into the rdist region list. This helper both handles the case
-> where the redistributor region size is known at registration time
-> and the legacy case where it is not (eventually depending on the number
-> of online vcpus). Depending on pfns, we perform all the possible checks
-> that we can do:
+On Tue, Apr 24, 2018 at 04:54:58PM +0200, Thomas Gleixner wrote:
+> On Mon, 23 Apr 2018, Thomas Gleixner wrote:
+> > On Mon, 23 Apr 2018, Wan, Kaike wrote:
+> > > > Can you apply the following debug patch and enable the hrtimer_start trace
+> > > > point and send me the full trace or upload it somewhere?
+> > > 
+> > > The original trace was about 29GB and I filtered it with
+> > > "0000000066dda1ea" (the offending base) to generate a 1.4GB file that I
+> > > could open and investigate.  I am not sure how I can send them to you. Do
+> > > you have somewhere I can upload to?
+> > >
+> > > I can try your debug patch and again I am anticipating a big trace file.
+> > 
+> > Well, you can find the spot where the fail happens and then extract the
+> > full thing from 2s before that point to 1s after. That should be reasonably
+> > small and good enough. Let me know when you have it and how big it is
+> > (compressed) and we'll figure something out how to transport it.
 > 
-> - end of memory crossing
-> - incorrect alignment of the base address
-> - collision with distributor region if already defined
-> - collision with already registered rdist regions
-> - check of the new index
+> Thanks for the more complete data which actually let me decode the wreckage.
 > 
-> Rdist regions must be inserted by increasing order of indices. Indices
-> must be contiguous.
+> So you have NO_HZ enabled and looking at the trace then this is related:
 > 
-> We also introduce vgic_v3_rdist_region_from_index() which will be used
-> from the vgic kvm-device, later on.
+>           <idle>-0     [003] dN.. 3598605307236: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=712171000000 softexpires=712171000000mode=ABS|PINNED base=0000000066dda1ea next=00000000708914d7
+>           <idle>-0     [003] dN.. 3598605307601: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=0000000004346740
+> 	  
+>           <idle>-0     [002] d.h. 3598605313255: hrtimer_start: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] expires=712172915662 softexpires=712172915662mode=REL base=0000000066dda1ea next=0000000004346740
+>           <idle>-0     [002] d.h. 3599538740786: hrtimer_post_add: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] base=0000000066dda1ea next=00000000662d2dd8
 > 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> ---
->  virt/kvm/arm/vgic/vgic-mmio-v3.c | 95 +++++++++++++++++++++++++++++++++-------
->  virt/kvm/arm/vgic/vgic-v3.c      | 29 ++++++++++++
->  virt/kvm/arm/vgic/vgic.h         | 14 ++++++
->  3 files changed, 122 insertions(+), 16 deletions(-)
+>           <idle>-0     [003] dn.. 3599538742242: hrtimer_pre_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
+>           <idle>-0     [003] dn.. 3599538743084: hrtimer_post_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
+>   
+>           <idle>-0     [003] dn.. 3599538743830: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=716767000000 softexpires=716767000000mode=ABS|PINNED base=0000000066dda1ea next=00000000662d2dd8
+>           <idle>-0     [003] dn.. 3599538744560: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
 > 
-> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> index ce5c927..5273fb8 100644
-> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> @@ -680,14 +680,66 @@ static int vgic_register_all_redist_iodevs(struct kvm *kvm)
->  	return ret;
->  }
->  
-> -int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
-> +/**
-> + * vgic_v3_insert_redist_region - Insert a new redistributor region
-> + *
-> + * Performs various checks before inserting the rdist region in the list.
-> + * Those tests depend on whether the size of the rdist region is known
-> + * (ie. count != 0). The list is sorted by rdist region index.
-> + *
-> + * @kvm: kvm handle
-> + * @index: redist region index
-> + * @base: base of the new rdist region
-> + * @count: number of redistributors the region is made of (of 0 in the old style
-> + * single region, whose size is induced from the number of vcpus)
-> + *
-> + * Return 0 on success, < 0 otherwise
-> + */
-> +static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
-> +					gpa_t base, uint32_t count)
->  {
-> -	struct vgic_dist *vgic = &kvm->arch.vgic;
-> +	struct vgic_dist *d = &kvm->arch.vgic;
->  	struct vgic_redist_region *rdreg;
-> +	struct list_head *rd_regions = &d->rd_regions;
-> +	struct list_head *last = rd_regions->prev;
-> +
-
-nit: extra blank line?
-
-> +	gpa_t new_start, new_end;
-> +	size_t size = count * KVM_VGIC_V3_REDIST_SIZE;
->  	int ret;
->  
-> -	/* vgic_check_ioaddr makes sure we don't do this twice */
-> -	if (!list_empty(&vgic->rd_regions))
-> +	/* single rdist region already set ?*/
-> +	if (!count && !list_empty(rd_regions))
-> +		return -EINVAL;
-> +
-> +	/* cross the end of memory ? */
-> +	if (base + size < base)
-> +		return -EINVAL;
-
-what is the size of memory?  This seems to check for a gpa_t overflow,
-but not againt the IPA space of the VM...
-
-> +
-> +	if (list_empty(rd_regions)) {
-> +		if (index != 0)
-> +			return -EINVAL;
-
-note, I think this can be simplified if we can rid of the index.
-
-> +	} else {
-> +		rdreg = list_entry(last, struct vgic_redist_region, list);
-
-you can use list_last_entry here and get rid of the 'last' temporary
-variable above.
-
-> +		if (index != rdreg->index + 1)
-> +			return -EINVAL;
-> +
-> +		/* Cannot add an explicitly sized regions after legacy region */
-> +		if (!rdreg->count)
-> +			return -EINVAL;
-> +	}
-> +
-> +	/*
-> +	 * collision with already set dist region ?
-> +	 * this assumes we know the size of the new rdist region (pfns != 0)
-> +	 * otherwise we can only test this when all vcpus are registered
-> +	 */
-
-I don't really understand this commentary... :(
-
-> +	if (!count && !IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) &&
-> +		(!(d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= base)) &&
-> +		(!(base + size <= d->vgic_dist_base)))
-> +		return -EINVAL;
-
-Can't you call vgic_v3_check_base() here instead?
-
-> +
-> +	/* collision with any other rdist region? */
-> +	if (vgic_v3_rdist_overlap(kvm, base, size))
->  		return -EINVAL;
->  
->  	rdreg = kzalloc(sizeof(*rdreg), GFP_KERNEL);
-> @@ -696,17 +748,32 @@ int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
->  
->  	rdreg->base = VGIC_ADDR_UNDEF;
->  
-> -	ret = vgic_check_ioaddr(kvm, &rdreg->base, addr, SZ_64K);
-> +	ret = vgic_check_ioaddr(kvm, &rdreg->base, base, SZ_64K);
->  	if (ret)
-> -		goto out;
-> +		goto free;
->  
-> -	rdreg->base = addr;
-> -	if (!vgic_v3_check_base(kvm)) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> +	rdreg->base = base;
-> +	rdreg->count = count;
-> +	rdreg->free_index = 0;
-> +	rdreg->index = index;
->  
-> -	list_add(&rdreg->list, &vgic->rd_regions);
-> +	new_start = base;
-> +	new_end = base + size - 1;
-
-What are these variables used for?
-
-> +
-> +	list_add_tail(&rdreg->list, rd_regions);
-> +	return 0;
-> +free:
-> +	kfree(rdreg);
-> +	return ret;
-> +}
-> +
-> +int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
-> +{
-> +	int ret;
-> +
-> +	ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
-> +	if (ret)
-> +		return ret;
->  
->  	/*
->  	 * Register iodevs for each existing VCPU.  Adding more VCPUs
-> @@ -717,10 +784,6 @@ int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
->  		return ret;
->  
->  	return 0;
-> -
-> -out:
-> -	kfree(rdreg);
-> -	return ret;
->  }
->  
->  int vgic_v3_has_attr_regs(struct kvm_device *dev, struct kvm_device_attr *attr)
-> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-> index 820012a..dbcba5f 100644
-> --- a/virt/kvm/arm/vgic/vgic-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-v3.c
-> @@ -410,6 +410,21 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
->  	return 0;
->  }
->  
-> +/* return true if there is an overlap between any rdist */
-
-Checks if base+size overlaps with any existing redistributor.
-
-> +bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size)
-> +{
-> +	struct vgic_dist *d = &kvm->arch.vgic;
-> +	struct vgic_redist_region *rdreg;
-> +
-> +	list_for_each_entry(rdreg, &d->rd_regions, list) {
-> +		if ((base + size <= rdreg->base) ||
-> +			(rdreg->base + vgic_v3_rd_region_size(kvm, rdreg) <= base))
-> +			continue;
-> +		return true;
-
-can you invert the check above and return false instead of the continue?
-
-(DeMorgan's law should be handy here.)
-
-> +	}
-> +	return false;
-> +}
-> +
->  /*
->   * Check for overlapping regions and for regions crossing the end of memory
->   * for base addresses which have already been set.
-> @@ -461,6 +476,20 @@ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
->  	return NULL;
->  }
->  
-> +struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
-> +							   uint32_t index)
-> +{
-> +	struct list_head *rd_regions = &kvm->arch.vgic.rd_regions;
-> +	struct vgic_redist_region *rdreg;
-> +
-> +	list_for_each_entry(rdreg, rd_regions, list) {
-> +		if (rdreg->index == index)
-> +			return rdreg;
-> +	}
-
-if this ends up being a common operation, we could allocate an array of
-pointers for constant-time lookup instead.  Let's hope it's not too
-common.
-
-> +	return NULL;
-> +}
-> +
-> +
->  int vgic_v3_map_resources(struct kvm *kvm)
->  {
->  	int ret = 0;
-> diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-> index fea32cb..95b8345 100644
-> --- a/virt/kvm/arm/vgic/vgic.h
-> +++ b/virt/kvm/arm/vgic/vgic.h
-> @@ -262,6 +262,20 @@ vgic_v3_redist_region_full(struct vgic_redist_region *region)
->  
->  struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
->  
-> +static inline size_t
-> +vgic_v3_rd_region_size(struct kvm *kvm, struct vgic_redist_region *rdreg)
-> +{
-> +	if (!rdreg->count)
-> +		return atomic_read(&kvm->online_vcpus) * KVM_VGIC_V3_REDIST_SIZE;
-> +	else
-> +		return rdreg->count * KVM_VGIC_V3_REDIST_SIZE;
-> +}
-> +
-> +struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
-> +							   uint32_t index);
-> +
-> +bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size);
-> +
->  int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
->  			 u32 devid, u32 eventid, struct vgic_irq **irq);
->  struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
-> -- 
-> 2.5.5
+> And staring at the NOHZ code I'm pretty sure, I know what happens.
 > 
+> CPU 3						CPU 2
+> 
+> idle
+> start tick_sched_timer 712171000000
+> 						start rdmavt timer 712172915662
+> 						lock(base)
+> tick_nohz_stop_tick()
+> tick = 716767000000				timerqueue_add(tmr)
+> 
+> hrtimer_set_expires(&ts->sched_timer, tick); <---- FAIL
+> 
+> 						    if (tmr->exp < queue->next->exp)
+> hrtimer_start(sched_timer)			        queue->next = tmr;
+> lock(base)
+> 						unlock(base)
+> timerqueue_remove()
+> timerqueue_add()
+> ....
+> 
+> So ts->sched_timer is still queued and queue->next is pointing to it, but
+> then expires is modified. So the other side sees the new expiry time and
+> makes the rdmavt timer the new queue->next. All f*cked from there.
+> 
+> The problem was introduced with:
+> 
+>   d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
+> 
+> The changelog is not really helpful, but I can't see why the expiry time of
+> ts->sched_timer should be updated before the timer is [re]started in case
+> of HIGHRES + NOHZ. hrtimer_start() sets the expiry time, so that should be
+> sufficient. Of course the tick needs to be stored in ts->sched_timer for
+> the !HIGHRES + HOHZ case, but that's trivial enough to do. Patch against
+> Linus tree below. It's easy to backport in case you want to run it against
+> the kernel which made the observation simpler.
+> 
+> I need to come up with integration of hrtimer_set_expires() into debug
+> objects to catch this kind of horrors. Groan....
 
-Thanks,
--Christoffer
+Sorry for all that, that must have been hairy enough to debug :-(
+
+I thought that I could fiddle with the sched_timer because nothing else
+is supposed to touch it concurrently, but that forgot about the whole
+queue locked under cpu_base. My fault.
+
+The fix looks all good to me, thanks!
+
+ACK.
