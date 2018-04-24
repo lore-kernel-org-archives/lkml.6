@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934553AbeDXNfq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:35:46 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41950 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752673AbeDXNfh (ORCPT
+        id S934602AbeDXNfs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:35:48 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33391 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934570AbeDXNfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:35:37 -0400
-X-Google-Smtp-Source: AIpwx49hnDXQj26/NHeyHZKEo/13SmXSZlgBlwrL6zCIynrpZ6oxw03bTQNKGS/yS6aQGQRJX0oA9w==
+        Tue, 24 Apr 2018 09:35:32 -0400
+X-Google-Smtp-Source: AIpwx48BekMgXPTpDX/cA7/jgYozCSz4LhNUurYLXa5H368qqXm90lWLPiSOGzIrxQsI4CQGQWvDpQ==
 From: Jagan Teki <jagan@amarulasolutions.com>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
 Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -19,9 +19,9 @@ Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [RFC 11/13] bindings: display: Add compatible for A64 tcon-tv
-Date: Tue, 24 Apr 2018 19:04:23 +0530
-Message-Id: <20180424133425.24291-12-jagan@amarulasolutions.com>
+Subject: [RFC 10/13] bindings: display: Add compatible for A64 Mixer1
+Date: Tue, 24 Apr 2018 19:04:22 +0530
+Message-Id: <20180424133425.24291-11-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180424133425.24291-1-jagan@amarulasolutions.com>
 References: <20180424133425.24291-1-jagan@amarulasolutions.com>
@@ -29,7 +29,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcon-tv on Allwinner A64 has similar behavior like Allwinner A83T.
+Mixer1 on Allwinner A64 has similar behavior like Allwinner A83T.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
@@ -37,16 +37,16 @@ Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 3576006e9dbb..cf7c7e535d9c 100644
+index 448f99a91382..3576006e9dbb 100644
 --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
 +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -151,6 +151,7 @@ Required properties:
-    * allwinner,sun9i-a80-tcon-lcd
-    * allwinner,sun9i-a80-tcon-tv
-    * allwinner,sun50i-a64-tcon-lcd
-+   * allwinner,sun50i-a64-tcon-tv
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON.
+@@ -315,6 +315,7 @@ Required properties:
+     * allwinner,sun8i-h3-de2-mixer-0
+     * allwinner,sun8i-v3s-de2-mixer
+     * allwinner,sun50i-a64-de2-mixer-0
++    * allwinner,sun50i-a64-de2-mixer-1
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+     * bus: the mixer interface clock
 -- 
 2.14.3
