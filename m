@@ -1,118 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751612AbeDXRFb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:05:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55482 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750735AbeDXRF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:05:27 -0400
-Date: Tue, 24 Apr 2018 13:05:25 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Michal Hocko <mhocko@kernel.org>
-cc: LKML <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
+        id S1751500AbeDXRGp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:06:45 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:57640 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeDXRGj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 13:06:39 -0400
+Date: Tue, 24 Apr 2018 18:06:25 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Jyri Sarha <jsarha@ti.com>
+Cc: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
-        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: vmalloc with GFP_NOFS
-In-Reply-To: <20180424165532.GO17484@dhcp22.suse.cz>
-Message-ID: <alpine.LRH.2.02.1804241300430.28995@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180424162712.GL17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241240120.27049@file01.intranet.prod.int.rdu2.redhat.com> <20180424165532.GO17484@dhcp22.suse.cz>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 7/8] drm/i2c: tda998x: register as a drm bridge
+Message-ID: <20180424170625.GL16141@n2100.armlinux.org.uk>
+References: <20180423072301.11962-1-peda@axentia.se>
+ <20180423072301.11962-8-peda@axentia.se>
+ <20180423160833.GF16141@n2100.armlinux.org.uk>
+ <5d6866d0-75bc-4de8-9b87-4fee5430e9dd@axentia.se>
+ <20180424080833.GJ16141@n2100.armlinux.org.uk>
+ <8448e90a-4562-b564-c160-1b5c67e0f92f@axentia.se>
+ <0cbee3bd-8987-5f2f-519d-f8d1b426f2a3@ti.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0cbee3bd-8987-5f2f-519d-f8d1b426f2a3@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Tue, 24 Apr 2018, Michal Hocko wrote:
-
-> On Tue 24-04-18 12:46:55, Mikulas Patocka wrote:
+On Tue, Apr 24, 2018 at 07:04:16PM +0300, Jyri Sarha wrote:
+> On 24/04/18 13:14, Peter Rosin wrote:
+> > On 2018-04-24 10:08, Russell King - ARM Linux wrote:
+> >> On Tue, Apr 24, 2018 at 08:58:42AM +0200, Peter Rosin wrote:
+> >>> On 2018-04-23 18:08, Russell King - ARM Linux wrote:
+> >>>> On Mon, Apr 23, 2018 at 09:23:00AM +0200, Peter Rosin wrote:
+> >>>>>  static int tda998x_remove(struct i2c_client *client)
+> >>>>>  {
+> >>>>> -	component_del(&client->dev, &tda998x_ops);
+> >>>>> +	struct device *dev = &client->dev;
+> >>>>> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
+> >>>>> +
+> >>>>> +	drm_bridge_remove(&bridge->bridge);
+> >>>>> +	component_del(dev, &tda998x_ops);
+> >>>>> +
+> >>>>
+> >>>> I'd like to ask a rather fundamental question about DRM bridge support,
+> >>>> because I suspect that there's a major fsckup here.
+> >>>>
+> >>>> The above is the function that deals with the TDA998x device being
+> >>>> unbound from the driver.  With the component API, this results in the
+> >>>> DRM device correctly being torn down, because one of the hardware
+> >>>> devices has gone.
+> >>>>
+> >>>> With DRM bridge, the bridge is merely removed from the list of
+> >>>> bridges:
+> >>>>
+> >>>> void drm_bridge_remove(struct drm_bridge *bridge)
+> >>>> {
+> >>>>         mutex_lock(&bridge_lock);
+> >>>>         list_del_init(&bridge->list);
+> >>>>         mutex_unlock(&bridge_lock);
+> >>>> }
+> >>>> EXPORT_SYMBOL(drm_bridge_remove);
+> >>>>
+> >>>> and the memory backing the "struct tda998x_bridge" (which contains
+> >>>> the struct drm_bridge) will be freed by the devm subsystem.
+> >>>>
+> >>>> However, there is no notification into the rest of the DRM subsystem
+> >>>> that the device has gone away.  Worse, the memory that is still in
+> >>>> use by DRM has now been freed, so further use of the DRM device
+> >>>> results in a use-after-free bug.
+> >>>>
+> >>>> This is really not good, and to me looks like a fundamental problem
+> >>>> with the DRM bridge code.  I see nothing in the DRM bridge code that
+> >>>> deals with the lifetime of a "DRM bridge" or indeed the lifetime of
+> >>>> the actual device itself.
+> >>>>
+> >>>> So, from what I can see, there seems to be a fundamental lifetime
+> >>>> issue with the design of the DRM bridge code.  This needs to be
+> >>>> fixed.
+> >>>
+> >>> Oh crap. A gigantic can of worms...
+> >>
+> >> Yes, it's especially annoying for me, having put the effort in to
+> >> the component helper to cover all these cases.
+> >>
+> >>> Would a patch (completely untested btw) along this line of thinking make
+> >>> any difference whatsoever?
+> >>
+> >> It looks interesting - from what I can see of the device links code,
+> >> it would have the effect of unbinding the DRM device just before
+> >> TDA998x is unbound, so that's an improvement.
+> >>
+> >> However, from what I can see, the link vanishes at that point (as
+> >> DL_FLAG_AUTOREMOVE is set), and re-binding the TDA998x device results
+> >> in nothing further happening - the link will be recreated, but there
+> >> appears to be nothing that triggers the "consumer" to rebind at that
+> >> point.  Maybe I've missed something?
 > > 
+> > Right, auto-remove is a no-go. So, improving on the previous...
 > > 
-> > On Tue, 24 Apr 2018, Michal Hocko wrote:
-> > 
-> > > Hi,
-> > > it seems that we still have few vmalloc users who perform GFP_NOFS
-> > > allocation:
-> > > drivers/mtd/ubi/io.c
-> > > fs/ext4/xattr.c
-> > > fs/gfs2/dir.c
-> > > fs/gfs2/quota.c
-> > > fs/nfs/blocklayout/extent_tree.c
-> > > fs/ubifs/debug.c
-> > > fs/ubifs/lprops.c
-> > > fs/ubifs/lpt_commit.c
-> > > fs/ubifs/orphan.c
-> > > 
-> > > Unfortunatelly vmalloc doesn't suppoer GFP_NOFS semantinc properly
-> > > because we do have hardocded GFP_KERNEL allocations deep inside the
-> > > vmalloc layers. That means that if GFP_NOFS really protects from
-> > > recursion into the fs deadlocks then the vmalloc call is broken.
-> > > 
-> > > What to do about this? Well, there are two things. Firstly, it would be
-> > > really great to double check whether the GFP_NOFS is really needed. I
-> > > cannot judge that because I am not familiar with the code. It would be
-> > > great if the respective maintainers (hopefully get_maintainer.sh pointed
-> > > me to all relevant ones). If there is not reclaim recursion issue then
-> > > simply use the standard vmalloc (aka GFP_KERNEL request).
-> > > 
-> > > If the use is really valid then we have a way to do the vmalloc
-> > > allocation properly. We have memalloc_nofs_{save,restore} scope api. How
-> > > does that work? You simply call memalloc_nofs_save when the reclaim
-> > > recursion critical section starts (e.g. when you take a lock which is
-> > > then used in the reclaim path - e.g. shrinker) and memalloc_nofs_restore
-> > > when the critical section ends. _All_ allocations within that scope
-> > > will get GFP_NOFS semantic automagically. If you are not sure about the
-> > > scope itself then the easiest workaround is to wrap the vmalloc itself
-> > > with a big fat comment that this should be revisited.
-> > > 
-> > > Does that sound like something that can be done in a reasonable time?
-> > > I have tried to bring this up in the past but our speed is glacial and
-> > > there are attempts to do hacks like checking for abusers inside the
-> > > vmalloc which is just too ugly to live.
-> > > 
-> > > Please do not hesitate to get back to me if something is not clear.
-> > > 
-> > > Thanks!
-> > > -- 
-> > > Michal Hocko
-> > > SUSE Labs
-> > 
-> > I made a patch that adds memalloc_noio/fs_save around these calls a year 
-> > ago: http://lkml.iu.edu/hypermail/linux/kernel/1707.0/01376.html
+> > (I think drm_panel might suffer from this issue too?)
 > 
-> Yeah, and that is the wrong approach.
+> Yes it does and I took a shot at trying to fix it at the end of the
+> previous merge window, but gave up as I run out of time. I re-spun the
+> work now after reading this thread. I add you and Russell to cc.
 
-It is crude, but it fixes the deadlock possibility. Then, the maintainers 
-will have a lot of time to refactor the code and move these 
-memalloc_noio_save calls to the proper scope.
+Right, and these exact problems are what the component helper is
+there to sort out, in a subsystem independent way.
 
-> Let's try to fix this properly
-> this time. As the above outlines, the worst case we can end up mid-term
-> would be to wrap vmalloc calls with the scope api with a TODO. But I am
-> pretty sure the respective maintainers can come up with a better
-> solution. I am definitely willing to help here.
-> -- 
-> Michal Hocko
-> SUSE Labs
+What is the problem with the component helper that people seem to
+be soo loathed to use it, instead preferring to come up with sub-
+standard and broken alternatives?
 
-Mikulas
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
