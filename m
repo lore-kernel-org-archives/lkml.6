@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758242AbeDXNt1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:49:27 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40733 "EHLO
+        id S1758264AbeDXNt7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:49:59 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51881 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933551AbeDXNQT (ORCPT
+        with ESMTP id S933648AbeDXNQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:16:19 -0400
-X-Google-Smtp-Source: AIpwx4/sVYvWAEhfaTUdVEYQ2Ma7YCr9dfvBw3OBc9Ksc36J3+jUXMUm17j9yXRzNH+KFFS0ti/Vgw==
+        Tue, 24 Apr 2018 09:16:17 -0400
+X-Google-Smtp-Source: AB8JxZouaMm/c8yHGdu8Gt+LNG6S/U+z5q9EXd/jm8zeLxvwoTohyl/XVbp9j5Mgo1LyLTv7933lTw==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Vince Bridgers <vbridger@opensource.altera.com>,
-        netdev@vger.kernel.org, nios2-dev@lists.rocketboards.org
-Subject: [PATCH] altera-tse: fix tse_start_xmit()'s return type
-Date: Tue, 24 Apr 2018 15:16:16 +0200
-Message-Id: <20180424131616.3406-1-luc.vanoostenryck@gmail.com>
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michal Simek <michal.simek@xilinx.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] can: xilinx: fix xcan_start_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:16:13 +0200
+Message-Id: <20180424131614.3357-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -29,21 +31,21 @@ Fix this by returning 'netdev_tx_t' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/net/ethernet/altera/altera_tse_main.c | 2 +-
+ drivers/net/can/xilinx_can.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
-index baca8f704..c266af289 100644
---- a/drivers/net/ethernet/altera/altera_tse_main.c
-+++ b/drivers/net/ethernet/altera/altera_tse_main.c
-@@ -565,7 +565,7 @@ static irqreturn_t altera_isr(int irq, void *dev_id)
-  * physically contiguous fragment starting at
-  * skb->data, for length of skb_headlen(skb).
+diff --git a/drivers/net/can/xilinx_can.c b/drivers/net/can/xilinx_can.c
+index 89aec07c2..a19648606 100644
+--- a/drivers/net/can/xilinx_can.c
++++ b/drivers/net/can/xilinx_can.c
+@@ -386,7 +386,7 @@ static int xcan_do_set_mode(struct net_device *ndev, enum can_mode mode)
+  *
+  * Return: 0 on success and failure value on error
   */
--static int tse_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t tse_start_xmit(struct sk_buff *skb, struct net_device *dev)
+-static int xcan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
++static netdev_tx_t xcan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
  {
- 	struct altera_tse_private *priv = netdev_priv(dev);
- 	unsigned int txsize = priv->tx_ring_size;
+ 	struct xcan_priv *priv = netdev_priv(ndev);
+ 	struct net_device_stats *stats = &ndev->stats;
 -- 
 2.17.0
