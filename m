@@ -1,52 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752837AbeDXT3c (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:29:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751231AbeDXT3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:29:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D7CC21774
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 24 Apr 2018 16:29:28 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
-        jolsa@redhat.com, namhyung@kernel.org, ganapatrao.kulkarni@cavium.com,
-        zhangshaokun@hisilicon.com, yao.jin@linux.intel.com,
-        will.deacon@arm.com, ak@linux.intel.com, agustinv@codeaurora.org
-Subject: Re: [PATCH 4/5] perf parse-events: Specially handle uncore event
- alias in small groups
-Message-ID: <20180424192928.GE4427@kernel.org>
-References: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
- <1524594014-79243-4-git-send-email-kan.liang@linux.intel.com>
- <20180424191721.GB4427@kernel.org>
- <9a2070b4-9a27-4e38-f235-2d44ae39dd1f@linux.intel.com>
+        id S1751460AbeDXTbU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:31:20 -0400
+Received: from mail-yb0-f175.google.com ([209.85.213.175]:39410 "EHLO
+        mail-yb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750962AbeDXTbP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:31:15 -0400
+X-Google-Smtp-Source: AIpwx48z6Vt87WJQIZNHslawI29fEk4yT7yOkT+YOzMsX+0Qp0taBnZb/fYSy3o8820rxpy+gKhcNq7/1b9TzG7OCp4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a2070b4-9a27-4e38-f235-2d44ae39dd1f@linux.intel.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <bug-199473-41252@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-199473-41252@https.bugzilla.kernel.org/>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Date: Tue, 24 Apr 2018 19:31:03 +0000
+Message-ID: <CAErSpo4BOD3V7pgR75Gm7dYqvXYq1QfChjj16Jn1QgSK1W=Drw@mail.gmail.com>
+Subject: Fwd: [Bug 199473] New: pcieport does not scan devices behind PEX
+ switch, while resources are allocated
+To: janpieter.sollie@dommel.be
+Cc: linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Apr 24, 2018 at 03:23:06PM -0400, Liang, Kan escreveu:
-> On 4/24/2018 3:17 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Tue, Apr 24, 2018 at 11:20:13AM -0700, kan.liang@linux.intel.com escreveu:
-> > > From: Kan Liang <kan.liang@linux.intel.com>
-> > > 
-> > > Perf stat doesn't count the uncore event aliases from the same uncore
-> > > block in a group, for example:
-> > 
-> > This one is not applying to acme/perf/urgent, all the rest I got merged
-> > there, the last one with that change from using strstr() to a new bool
-> > in perf_evsel for the uniquifying operation having being performed.
-> 
-> Sure. Thank you for letting me know.
+Thanks for the report!
 
-Just pushed what I have there,
+I don't understand exactly what the issue is yet.  You attached lspci
+output from v4.14.27 and v4.17-rc1.  The v4.17-rc1 output shows several
+devices (4b:00, 4c:00, 4f:00) below the PEX switch, while the v4.14.27
+output shows only the 4f:00 devices.
 
-- Arnaldo
+Is the problem that v4.14.27 doesn't find the 4b:00 and 4c:00 devices?
+Does v4.17-rc1 work correctly?
+
+If v4.17-rc1 works but v4.14.27 does not, it's probably a question of
+working with your distro to see if they can (1) identify some change that
+fixed things, and (2) backport that change to the distro kernel.
+
+The Broadcom driver you attached at comment #4 shouldn't be related to this
+problem.  Device enumeration is performed by the PCI core and doesn't
+require any additional drivers.  I didn't look at the Broadcom driver, so I
+don't know what it does.  The PEX switch does include an endpoint
+(42:00.1); it's possible the driver is for some functionality provided by
+that endpoint.
+
+---------- Forwarded message ---------
+From: <bugzilla-daemon@bugzilla.kernel.org>
+Date: Mon, Apr 23, 2018 at 12:20 AM
+Subject: [Bug 199473] New: pcieport does not scan devices behind PEX
+switch, while resources are allocated
+To: <bhelgaas@google.com>
+
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199473
+
+             Bug ID: 199473
+            Summary: pcieport does not scan devices behind PEX switch,
+                     while resources are allocated
+            Product: Drivers
+            Version: 2.5
+     Kernel Version: 4.17-rc1
+           Hardware: x86-64
+                 OS: Linux
+               Tree: Mainline
+             Status: NEW
+           Severity: normal
+           Priority: P1
+          Component: PCI
+           Assignee: drivers_pci@kernel-bugs.osdl.org
+           Reporter: janpieter.sollie@dommel.be
+         Regression: No
+
+Created attachment 275511
+   --> https://bugzilla.kernel.org/attachment.cgi?id=275511&action=edit
+dmesg stable kernel
+
+pcieport assigns the PEX 8619 pcie expander switch ports, but does not scan
+them for additional objects behind the ports. only 1 device is added @ pci
+region 4f.  Workaround for getting all devices online: while pc is on,
+remove
+the card, reinsert it at a slot before the working device, and make a cold
+start.
+It would be nice if the pcie switches are scanned properly.
+
+--
+You are receiving this mail because:
+You are watching the assignee of the bug.
