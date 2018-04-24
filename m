@@ -1,72 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932872AbeDXDeH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 23:34:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59392 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932797AbeDXDeF (ORCPT
+        id S932886AbeDXDmI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 23:42:08 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:47001 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932797AbeDXDmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 23:34:05 -0400
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-5-logang@deltatee.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <76c1bd8e-6eb4-3238-5cee-7fdeaeccc574@infradead.org>
-Date: Mon, 23 Apr 2018 20:33:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 23 Apr 2018 23:42:06 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0T.lvDFB_1524541312;
+Subject: Re: [RFC v2 PATCH] mm: shmem: make stat.st_blksize return huge page
+ size if THP is on
+To: Michal Hocko <mhocko@kernel.org>, kirill.shutemov@linux.intel.com
+Cc: hughd@google.com, hch@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180423004748.GP17484@dhcp22.suse.cz>
+ <3c59a1d1-dc66-ae5f-452c-dd0adb047433@linux.alibaba.com>
+ <20180423150435.GS17484@dhcp22.suse.cz>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <aa4b8c48-781a-204c-246a-afa5a54dba99@linux.alibaba.com>
+Date: Mon, 23 Apr 2018 21:41:50 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180423233046.21476-5-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180423150435.GS17484@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/23/2018 04:30 PM, Logan Gunthorpe wrote:> > Signed-off-by: Logan Gunthorpe <logang@deltatee.com>> ---
->  drivers/pci/Kconfig        |  9 +++++++++>  drivers/pci/p2pdma.c       | 45 ++++++++++++++++++++++++++++++--------------->  drivers/pci/pci.c          |  6 ++++++>  include/linux/pci-p2pdma.h |  5 +++++>  4 files changed, 50 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-> index b2396c22b53e..b6db41d4b708 100644
-> --- a/drivers/pci/Kconfig
-> +++ b/drivers/pci/Kconfig
-> @@ -139,6 +139,15 @@ config PCI_P2PDMA
->  	  transations must be between devices behind the same root port.
->  	  (Typically behind a network of PCIe switches).
->  
-> +	  Enabling this option will also disable ACS on all ports behind
-> +	  any PCIe switch. This effectively puts all devices behind any
-> +	  switch heirarchy into the same IOMMU group. Which implies that
-
-	         hierarchy                     group, which
-
-and sames fixes in the commit description...
-
-> +	  individual devices behind any switch will not be able to be
-> +	  assigned to separate VMs because there is no isolation between
-> +	  them. Additionally, any malicious PCIe devices will be able to
-> +	  DMA to memory exposed by other EPs in the same domain as TLPs
-> +	  will not be checked by the IOMMU.
-> +
->  	  If unsure, say N.
->  
->  config PCI_LABEL
 
 
--- 
-~Randy
+On 4/23/18 9:04 AM, Michal Hocko wrote:
+> On Sun 22-04-18 21:28:59, Yang Shi wrote:
+>>
+>> On 4/22/18 6:47 PM, Michal Hocko wrote:
+> [...]
+>>> will be used on the first aligned address even when the initial/last
+>>> portion of the mapping is not THP aligned.
+>> No, my test shows it is not. And, transhuge_vma_suitable() does check the
+>> virtual address alignment. If it is not huge page size aligned, it will not
+>> set PMD for huge page.
+> It's been quite some time since I've looked at that code but I think you
+> are wrong. It just doesn't make sense to make the THP decision on the
+> VMA alignment much. Kirill, can you clarify please?
+
+Thanks a lot Michal and Kirill to elaborate how tmpfs THP make pmd map.
+
+I did a quick test, THP will be PMD mapped as long as :
+* hint address is huge page aligned if MAP_FIXED
+Or
+* offset is huge page aligned
+And
+* The size is big enough (>= huge page size)
+
+This test does verify what Kirill said. And, I dig into a little further 
+qemu code and did strace, qemu does try to mmap the file to non huge 
+page aligned address with MAP_FIXED.
+
+I will correct the commit log then submit v4.
+
+Yang
+
+>
+> Please note that I have no objections to actually export the huge page
+> size as the max block size but your changelog just doesn't make any
+> sense to me.
