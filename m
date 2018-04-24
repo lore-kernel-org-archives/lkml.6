@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933454AbeDXOJo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:09:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44116 "EHLO mail.kernel.org"
+        id S933507AbeDXOJx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:09:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757818AbeDXOJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:09:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A563E217CE
+        id S933458AbeDXOJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 10:09:47 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1373C217D4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
 From: Frederic Weisbecker <frederic@kernel.org>
@@ -23,9 +23,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
         "James E . J . Bottomley" <jejb@parisc-linux.org>
-Subject: [PATCH 02/10] sparc: Convert local_softirq_pending() to use per-cpu op
-Date: Tue, 24 Apr 2018 16:09:07 +0200
-Message-Id: <1524578955-8903-3-git-send-email-frederic@kernel.org>
+Subject: [PATCH 04/10] softirq: Consolidate default local_softirq_pending() implementations
+Date: Tue, 24 Apr 2018 16:09:09 +0200
+Message-Id: <1524578955-8903-5-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524578955-8903-1-git-send-email-frederic@kernel.org>
 References: <1524578955-8903-1-git-send-email-frederic@kernel.org>
@@ -33,9 +33,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to consolidate and optimize generic softirq mask accesses, we
-first need to convert architectures to use per-cpu operations when
-possible.
+Consolidate and optimize default softirq mask API implementations.
+Per-CPU operations are expected to be faster and a few architectures
+already rely on them to implement local_softirq_pending() and related
+accessors/mutators. Those will be migrated to the new generic code.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -53,21 +54,56 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>
 Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 ---
- arch/sparc/include/asm/hardirq_64.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/interrupt.h   | 14 ++++++++++++++
+ include/linux/irq_cpustat.h |  6 +-----
+ 2 files changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/arch/sparc/include/asm/hardirq_64.h b/arch/sparc/include/asm/hardirq_64.h
-index f565402..6aba904 100644
---- a/arch/sparc/include/asm/hardirq_64.h
-+++ b/arch/sparc/include/asm/hardirq_64.h
-@@ -11,7 +11,7 @@
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 5426627..7a11f73 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -432,11 +432,25 @@ extern bool force_irqthreads;
+ #define force_irqthreads	(0)
+ #endif
  
- #define __ARCH_IRQ_STAT
- #define local_softirq_pending() \
--	(local_cpu_data().__softirq_pending)
-+	(*this_cpu_ptr(&__cpu_data.__softirq_pending))
++#ifndef local_softirq_pending
++
++#ifndef local_softirq_pending_ref
++#define local_softirq_pending_ref irq_stat.__softirq_pending
++#endif
++
++#define local_softirq_pending()	(__this_cpu_read(local_softirq_pending_ref))
++#define set_softirq_pending(x)	(__this_cpu_write(local_softirq_pending_ref, (x)))
++#define or_softirq_pending(x)	(__this_cpu_or(local_softirq_pending_ref, (x)))
++
++#else /* local_softirq_pending */
++
+ #ifndef __ARCH_SET_SOFTIRQ_PENDING
+ #define set_softirq_pending(x) (local_softirq_pending() = (x))
+ #define or_softirq_pending(x)  (local_softirq_pending() |= (x))
+ #endif
  
- void ack_bad_irq(unsigned int irq);
++#endif /* local_softirq_pending */
++
+ /* Some architectures might implement lazy enabling/disabling of
+  * interrupts. In some cases, such as stop_machine, we might want
+  * to ensure that after a local_irq_disable(), interrupts have
+diff --git a/include/linux/irq_cpustat.h b/include/linux/irq_cpustat.h
+index ddea03c..6e8895c 100644
+--- a/include/linux/irq_cpustat.h
++++ b/include/linux/irq_cpustat.h
+@@ -22,11 +22,7 @@ DECLARE_PER_CPU_ALIGNED(irq_cpustat_t, irq_stat);	/* defined in asm/hardirq.h */
+ #define __IRQ_STAT(cpu, member)	(per_cpu(irq_stat.member, cpu))
+ #endif
  
+-  /* arch independent irq_stat fields */
+-#define local_softirq_pending() \
+-	__IRQ_STAT(smp_processor_id(), __softirq_pending)
+-
+-  /* arch dependent irq_stat fields */
++/* arch dependent irq_stat fields */
+ #define nmi_count(cpu)		__IRQ_STAT((cpu), __nmi_count)	/* i386 */
+ 
+ #endif	/* __irq_cpustat_h */
 -- 
 2.7.4
