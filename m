@@ -1,124 +1,125 @@
-Return-Path: <opensource.ganesh@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522632694; cv=none;
-        d=google.com; s=arc-20160816;
-        b=p6YeH5qBzOfmx8TjUhYql8We2OA3VVnhz+7ZaBXCSMz+KzpIXbMfxg6vsIUTtgNNVr
-         AYXO88+npQ5TA7JbvirWRGF1EOrNiduGmiYFZXSEcVQW9yM+nN7PB5vYdjpN03WJ6hxJ
-         fZZ+4+VD6BWKso2W4EzvwIEdq0PjaWldUy6MvvERUcs3tHumiBGBgYrQJKtJqbN3b1aN
-         k7k6ci0O7zPuTLpFXzPcg4uh/rMy0AWZ9y7tdFEOU64RRdXRPTF/OuNU89ZbH/ptH/es
-         69qH/2juI0ZX7ORngCM6GHLDQWG+MY9tAJkspwR+BQ49oJi5V2NHm+ro/e5qRTXSt+2t
-         JgfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=Z07Ej/RJv2TkFSF/34Wuie37WHiLK/C2l9u4jCcyxYk=;
-        b=gf3bLNYaxHLBJlLCDhAnvwX5Uo6NBe3MrNUPuvtqpKHeizhXTBwEPhmX5/j5/wCw7d
-         VDgk8WvlRwY4bzBz0zkZT37HVJlVZyPY6ymiE+Hj1Jwg6TW4Kx7q0AR2v1p5AtPG7Y6I
-         LQMvcy6uAm+vS5Ai53b8pStC0V8g1Ju3+G6XKjXsRXTtrkMRVwUaImBtu/shTNOC07VH
-         NXhAbcK6i5+ntgg4k+932OOh/n4MXZeuKsZFg56ueixGOnu6FJohdVjIrj7sVqqES70I
-         MHgIKaXkXJJTedcVLjtV5zms0yR/gHcAHIXpbvH2RGds6yA6s/g3mTlGluy3F1meobDK
-         HODg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Zvnt2itK;
-       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Zvnt2itK;
-       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx490MnsGRWx2TEjZQJwuE7c1gtO/Q9XvMp9yw7Hhmz8/3OauAu+IBoMe3CpmE8/nN5M5673Vuu7CsihAvquoMq4=
-MIME-Version: 1.0
-In-Reply-To: <2654052.UvzeiuBsVA@aspire.rjw.lan>
-References: <1520239666-2964-1-git-send-email-opensource.ganesh@gmail.com> <2654052.UvzeiuBsVA@aspire.rjw.lan>
-From: Ganesh Mahendran <opensource.ganesh@gmail.com>
-Date: Mon, 2 Apr 2018 09:31:33 +0800
-Message-ID: <CADAEsF-BCTYM5a2ywwHv1WkMbghKyw5z=y51Qu8DMCVeax9BwA@mail.gmail.com>
-Subject: Re: [PATCH v2] PM / wakeup: use seq_open() to show wakeup stats
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-	Linux PM <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2282724-1524541311-2-18430810549435511144
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='edu', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524541311; b=b8GYXF7sobtHiSmdKbrex3avTRwjZ7BUCylE2F0RXIhCLWbKq9
+    cXWhA5fLL3dLexY5MY2P4IIncNdYjx1u8VNHNNRF4voz5Tc8Y63Av3Vb4jccp+up
+    at5cr3qbR/5igki6dxlMIa60CFCQEZtzp/EUukXI8Ucglo3ifg/v+ntbtTeZFg4K
+    TUtn7VwBA5o4B/ajY23Fy0kA76K3jLXWsFkHrCOmXT+fyB1mbo+QmF6uLBjObA2M
+    oh1u5s5aSGei73v25vr950STB/GG+fXYgXmKraUOn2E6biu3gQ0Ltrmjt1Ly7qGC
+    7FbbBAYGp8A7nqTdoqg3ZFWhxdWooKRCzIOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1524541311; bh=hUbYp9Chm4JeOI+ZuHllb5+HK7rEPY
+    08ErRv8gUjQfw=; b=MGNTkOEiWfeZHJN54PIZ3nkwtyoRhJgnulSpIUOQ3XbhOd
+    yB52iM8LvqrlHa3VfMBgDJI3VrReCT4b0aDNeAfdiOAX9D/WPB3nEK2gNVTJhYqS
+    tDmweskW92iUP1+aUdCPHzEpOvQRZ/4WzeDvVHF9LTKwtNg0EQ7K9Wq6fhBPa06v
+    jk5cbJGBX6NgOc7r+uztq452D/2bOgyXIPlUmdeNMh2V6KtVr/SVPnE6FATed2C3
+    6UZYfbFB2vCafeGW7PbJW0FymeDfS3jcP3RUuNyEfnpbXOBNGmBau32b2hSNkin4
+    JEFHt2Y3S4AJcCEzHw6oBqrVvmlRoATruIetwhlA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=thunk.org header.i=@thunk.org header.b=ek97FEus x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ef5046eb;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mit.edu;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mit.edu header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=thunk.org header.i=@thunk.org header.b=ek97FEus x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ef5046eb;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mit.edu;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mit.edu header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGP5ESmLspm0gtvr2qcaKtTXU8QBSel19rtzIlrl8lM5nK9RemeHDBDGLr+2OQrxGufE83V+xZEBbTmn1ZFZ4vQFgB3fY6S4S2TYumnSPYuUykIMLcS1
+    u1qKEiD6AR7A6uIthwpXtpQmNUs5F899EKiJ8/KWaTH0zWZ1V1ZKd2Uwya305kobxEwtw6NLmCeKtUw2C69WFAXCx3eo0Y5mzTpRU00dI+fwTigDwwo9Q0+D
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=Kd1tUaAdevIA:10
+    a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=PTbSQ8XhQ5YSPodnsGsA:9
+    a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932814AbeDXDlr (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 23 Apr 2018 23:41:47 -0400
+Received: from imap.thunk.org ([74.207.234.97]:48796 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932797AbeDXDlr (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 23 Apr 2018 23:41:47 -0400
+From: Theodore Ts'o <tytso@mit.edu>
+To: penguin-kernel@I-love.SAKURA.ne.jp
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>
+Subject: [PATCH] random: fix possible sleeping allocation from irq context
+Date: Mon, 23 Apr 2018 23:41:38 -0400
+Message-Id: <20180424034138.23994-1-tytso@mit.edu>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594086852232118519?=
-X-GMAIL-MSGID: =?utf-8?q?1596596099990856809?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-03-30 18:25 GMT+08:00 Rafael J. Wysocki <rjw@rjwysocki.net>:
-> On Monday, March 5, 2018 9:47:46 AM CEST Ganesh Mahendran wrote:
->> single_open() interface requires that the whole output must
->> fit into a single buffer. This will lead to timeout when
->> system memory is not in a good situation.
->>
->> This patch use seq_open() to show wakeup stats. This method
->> need only one page, so timeout will not be observed.
->>
->> Signed-off-by: Ganesh Mahendran <opensource.ganesh@gmail.com>
->> ----
->> v2: use srcu_read_lock instead of rcu_read_lock
->> ---
->>  drivers/base/power/wakeup.c | 77 +++++++++++++++++++++++++++++++++++----------
->>  1 file changed, 61 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
->> index ea01621..3bcab7d 100644
->> --- a/drivers/base/power/wakeup.c
->> +++ b/drivers/base/power/wakeup.c
->> @@ -1029,32 +1029,77 @@ static int print_wakeup_source_stats(struct seq_file *m,
->>       return 0;
->>  }
->>
->> -/**
->> - * wakeup_sources_stats_show - Print wakeup sources statistics information.
->> - * @m: seq_file to print the statistics into.
->> - */
->> -static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
->> +static void *wakeup_sources_stats_seq_start(struct seq_file *m,
->> +                                     loff_t *pos)
->>  {
->>       struct wakeup_source *ws;
->> -     int srcuidx;
->> +     loff_t n = *pos;
->> +     int *srcuidx = m->private;
->>
->> -     seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
->> -             "expire_count\tactive_since\ttotal_time\tmax_time\t"
->> -             "last_change\tprevent_suspend_time\n");
->> +     if (n == 0) {
->> +             seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
->> +                     "expire_count\tactive_since\ttotal_time\tmax_time\t"
->> +                     "last_change\tprevent_suspend_time\n");
->> +     }
->>
->> -     srcuidx = srcu_read_lock(&wakeup_srcu);
->> -     list_for_each_entry_rcu(ws, &wakeup_sources, entry)
->> -             print_wakeup_source_stats(m, ws);
->> -     srcu_read_unlock(&wakeup_srcu, srcuidx);
->> +     *srcuidx = srcu_read_lock(&wakeup_srcu);
->> +     list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
->> +             if (n-- > 0)
->> +                     continue;
->> +             goto out;
->> +     }
->> +     ws = NULL;
->> +out:
->> +     return ws;
->> +}
->
-> Please clean up the above at least.
+We can do a sleeping allocation from an irq context when CONFIG_NUMA
+is enabled.  Fix this by initializing the NUMA crng instances in a
+workqueue.
 
-Hi, Rafael
+Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot+9de458f6a5e713ee8c1a@syzkaller.appspotmail.com
+Fixes: 8ef35c866f8862df ("random: set up the NUMA crng instances...")
+Cc: stable@vger.kernel.org
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+---
+ drivers/char/random.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-When length of file "wakeup_sources" is larger than 1 page,
-wakeup_sources_stats_seq_start()
-may be called more then 1 time if the user space wants to read all of the file.
-So we need to locate to last read item, if it is not the first time to
-read the file.
-
-We can see the same logic in kmemleak_seq_start().
-
-Thanks.
-
->
-> If I'm not mistaken, you don't need the label and the goto here.
->
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 3cd3aae24d6d..e182cca7e6cd 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -789,7 +789,7 @@ static void crng_initialize(struct crng_state *crng)
+ }
+ 
+ #ifdef CONFIG_NUMA
+-static void numa_crng_init(void)
++static void do_numa_crng_init(struct work_struct *work)
+ {
+ 	int i;
+ 	struct crng_state *crng;
+@@ -810,6 +810,13 @@ static void numa_crng_init(void)
+ 		kfree(pool);
+ 	}
+ }
++
++DECLARE_WORK(numa_crng_init_work, do_numa_crng_init);
++
++static void numa_crng_init(void)
++{
++	schedule_work(&numa_crng_init_work);
++}
+ #else
+ static void numa_crng_init(void) {}
+ #endif
+-- 
+2.16.1.72.g5be1f00a9a
