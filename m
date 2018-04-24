@@ -1,44 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757812AbeDXNFP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:05:15 -0400
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33562 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753162AbeDXNFM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:05:12 -0400
-X-Google-Smtp-Source: AIpwx4/R/dl48doN9PCSvTJ5kO/sgYt6EjB5dvoagk9XY/2eQbAjyKA0zfrVlHZnAnSiF93l1gu8yw==
-Date: Tue, 24 Apr 2018 08:05:10 -0500
-From: Rob Herring <robh@kernel.org>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] doc: Add vendor prefix for Kaohsiung
-Message-ID: <20180424130510.qdd3pmk6nzvkwojm@rob-hp-laptop>
-References: <20180412143401.6433-1-lukma@denx.de>
- <20180417083115.11000-1-lukma@denx.de>
+        id S933138AbeDXNFX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:05:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757822AbeDXNFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:05:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A51B21774
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Tue, 24 Apr 2018 14:05:12 +0100
+From: James Hogan <jhogan@kernel.org>
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Huacai Chen <chenhc@lemote.com>, linux-kernel@vger.kernel.org,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Robert Richter <rric@kernel.org>, oprofile-list@lists.sf.net
+Subject: Re: [RFC PATCH] MIPS: Oprofile: Drop support
+Message-ID: <20180424130511.GB28813@saruman>
+References: <1524574554-7451-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
 Content-Disposition: inline
-In-Reply-To: <20180417083115.11000-1-lukma@denx.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1524574554-7451-1-git-send-email-matt.redfearn@mips.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 10:31:15AM +0200, Lukasz Majewski wrote:
-> The 'koe' entry has been added to vendor-prefixes.txt to indicate
-> products from Kaohsiung Opto-Electronics Inc.
-> 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> ---
-> Changes for v2:
-> - Replace 'kao' to 'koe' in commit message
-> 
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
 
-Applied.
+--ZoaI/ZTpAVc4A5k6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Rob
+On Tue, Apr 24, 2018 at 01:55:54PM +0100, Matt Redfearn wrote:
+> Since it appears that MIPS oprofile support is currently broken, core
+> oprofile is not getting many updates and not as many architectures
+> implement support for it compared to perf, remove the MIPS support.
+
+That sounds reasonable to me. Any idea how long its been broken?
+
+I'll let it sit on the list for a bit in case anybody does object and
+wants to fix it instead.
+
+Thanks
+James
+
+--ZoaI/ZTpAVc4A5k6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWt8rhwAKCRA1zuSGKxAj
+8lZfAP9eSR44etV2E3TeKaFlQdlxvJdyf/JV8kY8kvLjADfstQEA8TIZDjOp0bcZ
+CDH4FQuVp/SeqEFuxNED3nw+3UudqQ8=
+=hVzL
+-----END PGP SIGNATURE-----
+
+--ZoaI/ZTpAVc4A5k6--
