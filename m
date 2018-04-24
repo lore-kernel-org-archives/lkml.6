@@ -1,287 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751165AbeDXXTj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 19:19:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36338 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750786AbeDXXTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 19:19:38 -0400
-Date: Tue, 24 Apr 2018 17:19:34 -0600
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, guro@fb.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v3 for-4.17] mm, oom: fix concurrent munlock and oom
- reaper unmap
-Message-ID: <20180424231934.GA17484@dhcp22.suse.cz>
-References: <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp>
- <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com>
- <201804240511.w3O5BY4o090598@www262.sakura.ne.jp>
- <alpine.DEB.2.21.1804232231020.82340@chino.kir.corp.google.com>
- <201804250657.GFI21363.StOJHOQFOMFVFL@I-love.SAKURA.ne.jp>
- <alpine.DEB.2.21.1804241525280.238665@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1804241526320.238665@chino.kir.corp.google.com>
+        id S1751275AbeDXXVK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 19:21:10 -0400
+Received: from mail.efficios.com ([167.114.142.138]:58876 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750786AbeDXXVG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 19:21:06 -0400
+Date: Tue, 24 Apr 2018 19:21:04 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Joel Fernandes <joelaf@google.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        rostedt <rostedt@goodmis.org>, Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@lge.com>
+Message-ID: <849066633.939.1524612064698.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CAJWu+opC9pLxoiXq7QDRUDe6ouC4ij398bHCfnUwp+h7Y_ssDg@mail.gmail.com>
+References: <409016827.14587.1524493888181.JavaMail.zimbra@efficios.com> <20180423172244.694dbc9d@gandalf.local.home> <20180424155655.GA820@linux.vnet.ibm.com> <CAJWu+or_-emRLeBbfOtQYyn9W8v-KHH8XecV_k-p5FX_3BLHAQ@mail.gmail.com> <20180424172658.GT26088@linux.vnet.ibm.com> <20180424182302.GA404@linux.vnet.ibm.com> <20180424182623.GA1357@linux.vnet.ibm.com> <CAJWu+opC9pLxoiXq7QDRUDe6ouC4ij398bHCfnUwp+h7Y_ssDg@mail.gmail.com>
+Subject: Re: [RFC v4 3/4] irqflags: Avoid unnecessary calls to trace_ if you
+ can
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804241526320.238665@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2009 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2009)
+Thread-Topic: irqflags: Avoid unnecessary calls to trace_ if you can
+Thread-Index: WU6CymGZebXJeTf9VSa/uszFIN4/qg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-04-18 15:34:03, David Rientjes wrote:
-> Since exit_mmap() is done without the protection of mm->mmap_sem, it is
-> possible for the oom reaper to concurrently operate on an mm until
-> MMF_OOM_SKIP is set.
-> 
-> This allows munlock_vma_pages_all() to concurrently run while the oom
-> reaper is operating on a vma.  Since munlock_vma_pages_range() depends on
-> clearing VM_LOCKED from vm_flags before actually doing the munlock to
-> determine if any other vmas are locking the same memory, the check for
-> VM_LOCKED in the oom reaper is racy.
-> 
-> This is especially noticeable on architectures such as powerpc where
-> clearing a huge pmd requires serialize_against_pte_lookup().  If the pmd
-> is zapped by the oom reaper during follow_page_mask() after the check for
-> pmd_none() is bypassed, this ends up deferencing a NULL ptl or a kernel
-> oops.
-> 
-> Fix this by manually freeing all possible memory from the mm before doing
-> the munlock and then setting MMF_OOM_SKIP.  The oom reaper can not run on
-> the mm anymore so the munlock is safe to do in exit_mmap().  It also
-> matches the logic that the oom reaper currently uses for determining when
-> to set MMF_OOM_SKIP itself, so there's no new risk of excessive oom
-> killing.
-> 
-> This issue fixes CVE-2018-1000200.
-> 
-> Fixes: 212925802454 ("mm: oom: let oom_reap_task and exit_mmap run concurrently")
-> Cc: stable@vger.kernel.org [4.14+]
-> Suggested-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Signed-off-by: David Rientjes <rientjes@google.com>
+----- On Apr 24, 2018, at 2:59 PM, Joel Fernandes joelaf@google.com wrote:
 
-OK, now that I finally got that mmu_notifier_release will make all
-further mmu notifier calls NOOP then this is indeed safe. Considering
-that you take oom_lock, you can set MMF_OOM_SKIP inside that lock and
-won't have to bother with the exclusive mmap_sem AFAICS. So the patch
-can be simplified.
-
-But other than that this looks like a right way to go. I would have
-preferred to hide the oom locking and MMF_OOM_SKIP handling in exit_mmap
-but this is mostly cosmetic.
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  include/linux/oom.h |  2 ++
->  mm/mmap.c           | 44 ++++++++++++++----------
->  mm/oom_kill.c       | 81 ++++++++++++++++++++++++---------------------
->  3 files changed, 71 insertions(+), 56 deletions(-)
+> Hi Paul,
 > 
-> diff --git a/include/linux/oom.h b/include/linux/oom.h
-> --- a/include/linux/oom.h
-> +++ b/include/linux/oom.h
-> @@ -95,6 +95,8 @@ static inline int check_stable_address_space(struct mm_struct *mm)
->  	return 0;
->  }
->  
-> +void __oom_reap_task_mm(struct mm_struct *mm);
-> +
->  extern unsigned long oom_badness(struct task_struct *p,
->  		struct mem_cgroup *memcg, const nodemask_t *nodemask,
->  		unsigned long totalpages);
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -3015,6 +3015,32 @@ void exit_mmap(struct mm_struct *mm)
->  	/* mm's last user has gone, and its about to be pulled down */
->  	mmu_notifier_release(mm);
->  
-> +	if (unlikely(mm_is_oom_victim(mm))) {
-> +		/*
-> +		 * Manually reap the mm to free as much memory as possible.
-> +		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
-> +		 * this mm from further consideration.  Taking mm->mmap_sem for
-> +		 * write after setting MMF_OOM_SKIP will guarantee that the oom
-> +		 * reaper will not run on this mm again after mmap_sem is
-> +		 * dropped.
-> +		 *
-> +		 * Nothing can be holding mm->mmap_sem here and the above call
-> +		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
-> +		 * __oom_reap_task_mm() will not block.
-> +		 *
-> +		 * This needs to be done before calling munlock_vma_pages_all(),
-> +		 * which clears VM_LOCKED, otherwise the oom reaper cannot
-> +		 * reliably test it.
-> +		 */
-> +		mutex_lock(&oom_lock);
-> +		__oom_reap_task_mm(mm);
-> +		mutex_unlock(&oom_lock);
-> +
-> +		set_bit(MMF_OOM_SKIP, &mm->flags);
-> +		down_write(&mm->mmap_sem);
-> +		up_write(&mm->mmap_sem);
-> +	}
-> +
->  	if (mm->locked_vm) {
->  		vma = mm->mmap;
->  		while (vma) {
-> @@ -3036,24 +3062,6 @@ void exit_mmap(struct mm_struct *mm)
->  	/* update_hiwater_rss(mm) here? but nobody should be looking */
->  	/* Use -1 here to ensure all VMAs in the mm are unmapped */
->  	unmap_vmas(&tlb, vma, 0, -1);
-> -
-> -	if (unlikely(mm_is_oom_victim(mm))) {
-> -		/*
-> -		 * Wait for oom_reap_task() to stop working on this
-> -		 * mm. Because MMF_OOM_SKIP is already set before
-> -		 * calling down_read(), oom_reap_task() will not run
-> -		 * on this "mm" post up_write().
-> -		 *
-> -		 * mm_is_oom_victim() cannot be set from under us
-> -		 * either because victim->mm is already set to NULL
-> -		 * under task_lock before calling mmput and oom_mm is
-> -		 * set not NULL by the OOM killer only if victim->mm
-> -		 * is found not NULL while holding the task_lock.
-> -		 */
-> -		set_bit(MMF_OOM_SKIP, &mm->flags);
-> -		down_write(&mm->mmap_sem);
-> -		up_write(&mm->mmap_sem);
-> -	}
->  	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
->  	tlb_finish_mmu(&tlb, 0, -1);
->  
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -469,7 +469,6 @@ bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
->  	return false;
->  }
->  
-> -
->  #ifdef CONFIG_MMU
->  /*
->   * OOM Reaper kernel thread which tries to reap the memory used by the OOM
-> @@ -480,16 +479,54 @@ static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
->  static struct task_struct *oom_reaper_list;
->  static DEFINE_SPINLOCK(oom_reaper_lock);
->  
-> -static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
-> +void __oom_reap_task_mm(struct mm_struct *mm)
->  {
-> -	struct mmu_gather tlb;
->  	struct vm_area_struct *vma;
-> +
-> +	/*
-> +	 * Tell all users of get_user/copy_from_user etc... that the content
-> +	 * is no longer stable. No barriers really needed because unmapping
-> +	 * should imply barriers already and the reader would hit a page fault
-> +	 * if it stumbled over a reaped memory.
-> +	 */
-> +	set_bit(MMF_UNSTABLE, &mm->flags);
-> +
-> +	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
-> +		if (!can_madv_dontneed_vma(vma))
-> +			continue;
-> +
-> +		/*
-> +		 * Only anonymous pages have a good chance to be dropped
-> +		 * without additional steps which we cannot afford as we
-> +		 * are OOM already.
-> +		 *
-> +		 * We do not even care about fs backed pages because all
-> +		 * which are reclaimable have already been reclaimed and
-> +		 * we do not want to block exit_mmap by keeping mm ref
-> +		 * count elevated without a good reason.
-> +		 */
-> +		if (vma_is_anonymous(vma) || !(vma->vm_flags & VM_SHARED)) {
-> +			const unsigned long start = vma->vm_start;
-> +			const unsigned long end = vma->vm_end;
-> +			struct mmu_gather tlb;
-> +
-> +			tlb_gather_mmu(&tlb, mm, start, end);
-> +			mmu_notifier_invalidate_range_start(mm, start, end);
-> +			unmap_page_range(&tlb, vma, start, end, NULL);
-> +			mmu_notifier_invalidate_range_end(mm, start, end);
-> +			tlb_finish_mmu(&tlb, start, end);
-> +		}
-> +	}
-> +}
-> +
-> +static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
-> +{
->  	bool ret = true;
->  
->  	/*
->  	 * We have to make sure to not race with the victim exit path
->  	 * and cause premature new oom victim selection:
-> -	 * __oom_reap_task_mm		exit_mm
-> +	 * oom_reap_task_mm		exit_mm
->  	 *   mmget_not_zero
->  	 *				  mmput
->  	 *				    atomic_dec_and_test
-> @@ -534,39 +571,8 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
->  
->  	trace_start_task_reaping(tsk->pid);
->  
-> -	/*
-> -	 * Tell all users of get_user/copy_from_user etc... that the content
-> -	 * is no longer stable. No barriers really needed because unmapping
-> -	 * should imply barriers already and the reader would hit a page fault
-> -	 * if it stumbled over a reaped memory.
-> -	 */
-> -	set_bit(MMF_UNSTABLE, &mm->flags);
-> -
-> -	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
-> -		if (!can_madv_dontneed_vma(vma))
-> -			continue;
-> +	__oom_reap_task_mm(mm);
->  
-> -		/*
-> -		 * Only anonymous pages have a good chance to be dropped
-> -		 * without additional steps which we cannot afford as we
-> -		 * are OOM already.
-> -		 *
-> -		 * We do not even care about fs backed pages because all
-> -		 * which are reclaimable have already been reclaimed and
-> -		 * we do not want to block exit_mmap by keeping mm ref
-> -		 * count elevated without a good reason.
-> -		 */
-> -		if (vma_is_anonymous(vma) || !(vma->vm_flags & VM_SHARED)) {
-> -			const unsigned long start = vma->vm_start;
-> -			const unsigned long end = vma->vm_end;
-> -
-> -			tlb_gather_mmu(&tlb, mm, start, end);
-> -			mmu_notifier_invalidate_range_start(mm, start, end);
-> -			unmap_page_range(&tlb, vma, start, end, NULL);
-> -			mmu_notifier_invalidate_range_end(mm, start, end);
-> -			tlb_finish_mmu(&tlb, start, end);
-> -		}
-> -	}
->  	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
->  			task_pid_nr(tsk), tsk->comm,
->  			K(get_mm_counter(mm, MM_ANONPAGES)),
-> @@ -587,14 +593,13 @@ static void oom_reap_task(struct task_struct *tsk)
->  	struct mm_struct *mm = tsk->signal->oom_mm;
->  
->  	/* Retry the down_read_trylock(mmap_sem) a few times */
-> -	while (attempts++ < MAX_OOM_REAP_RETRIES && !__oom_reap_task_mm(tsk, mm))
-> +	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
->  		schedule_timeout_idle(HZ/10);
->  
->  	if (attempts <= MAX_OOM_REAP_RETRIES ||
->  	    test_bit(MMF_OOM_SKIP, &mm->flags))
->  		goto done;
->  
-> -
->  	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
->  		task_pid_nr(tsk), tsk->comm);
->  	debug_show_all_locks();
+> On Tue, Apr 24, 2018 at 11:26 AM, Paul E. McKenney
+> <paulmck@linux.vnet.ibm.com> wrote:
+>> On Tue, Apr 24, 2018 at 11:23:02AM -0700, Paul E. McKenney wrote:
+>>> On Tue, Apr 24, 2018 at 10:26:58AM -0700, Paul E. McKenney wrote:
+>>> > On Tue, Apr 24, 2018 at 09:01:34AM -0700, Joel Fernandes wrote:
+>>> > > On Tue, Apr 24, 2018 at 8:56 AM, Paul E. McKenney
+>>> > > <paulmck@linux.vnet.ibm.com> wrote:
+>>> > > > On Mon, Apr 23, 2018 at 05:22:44PM -0400, Steven Rostedt wrote:
+>>> > > >> On Mon, 23 Apr 2018 13:12:21 -0400 (EDT)
+>>> > > >> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+>>> > > >>
+>>> > > >>
+>>> > > >> > I'm inclined to explicitly declare the tracepoints with their given
+>>> > > >> > synchronization method. Tracepoint probe callback functions for currently
+>>> > > >> > existing tracepoints expect to have preemption disabled when invoked.
+>>> > > >> > This assumption will not be true anymore for srcu-tracepoints.
+>>> > > >>
+>>> > > >> Actually, why not have a flag attached to the tracepoint_func that
+>>> > > >> states if it expects preemption to be enabled or not? If a
+>>> > > >> trace_##event##_srcu() is called, then simply disable preemption before
+>>> > > >> calling the callbacks for it. That way if a callback is fine for use
+>>> > > >> with srcu, then it would require calling
+>>> > > >>
+>>> > > >>       register_trace_##event##_may_sleep();
+>>> > > >>
+>>> > > >> Then if someone uses this on a tracepoint where preemption is disabled,
+>>> > > >> we simply do not call it.
+>>> > > >
+>>> > > > One more stupid question...  If we are having to trace so much stuff
+>>> > > > in the idle loop, are we perhaps grossly overstating the extent of that
+>>> > > > "idle" loop?  For being called "idle", this code seems quite busy!
+>>> > >
+>>> > > ;-)
+>>> > > The performance hit I am observing is when running a heavy workload,
+>>> > > like hackbench or something like that. That's what I am trying to
+>>> > > correct.
+>>> > > By the way is there any limitation on using SRCU too early during
+>>> > > boot? I backported Mathieu's srcu tracepoint patches but the kernel
+>>> > > hangs pretty early in the boot. I register lockdep probes in
+>>> > > start_kernel. I am hoping that's not why.
+>>> > >
+>>> > > I could also have just screwed up the backporting... may be for my
+>>> > > testing, I will just replace the rcu API with the srcu instead of all
+>>> > > of Mathieu's new TRACE_EVENT macros for SRCU, since all I am trying to
+>>> > > do right now is measure the performance of my patches with SRCU.
+>>> >
+>>> > Gah, yes, there is an entry on my capacious todo list on making SRCU
+>>> > grace periods work during early boot and mid-boot.  Let me see what
+>>> > I can do...
+>>>
+>>> OK, just need to verify that you are OK with call_srcu()'s callbacks
+>>> not being invoked until sometime during core_initcall() time.  (If you
+>>> really do need them to be invoked before that, in theory it is possible,
+>>> but in practice it is weird, even for RCU.)
+>>
+>> Oh, and that early at boot, you will need to use DEFINE_SRCU() or
+>> DEFINE_STATIC_SRCU() rather than dynamic allocation and initialization.
+>>
+>>                                                         Thanx, Paul
+>>
+> 
+> Oh ok.
+> 
+> About call_rcu, calling it later may be an issue since we register the
+> probes in start_kernel, for the first probe call_rcu will be sched,
+> but for the second one I think it'll try to call_rcu to get rid of the
+> first one.
+> 
+> This is the relevant code that gets called when probes are added:
+> 
+> static inline void release_probes(struct tracepoint_func *old)
+> {
+>        if (old) {
+>                struct tp_probes *tp_probes = container_of(old,
+>                        struct tp_probes, probes[0]);
+>                call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
+>        }
+> }
+> 
+> Maybe we can somehow defer the call_srcu until later? Would that be possible?
+> 
+> also Mathieu, you didn't modify the call_rcu_sched in your prototype
+> to be changed to use call_srcu, should you be doing that?
+
+You're right, I think I should have introduced a call_srcu in there.
+It's missing in my prototype.
+
+However, in the prototype I did, we need to wait for *both* sched-rcu
+and SRCU grace periods, because we don't track which site is using which
+rcu flavor.
+
+So you could achieve this relatively easily by means of two chained
+RCU callbacks, e.g.:
+
+release_probes() calls call_rcu_sched(... , rcu_free_old_probes)
+
+and then in rcu_free_old_probes() do:
+
+call_srcu(... , srcu_free_old_probes)
+
+and perform kfree(container_of(head, struct tp_probes, rcu));
+within srcu_free_old_probes.
+
+It is somewhat a hack, but should work.
+
+Thanks,
+
+Mathieu
+
+> 
+> thanks,
+> 
+>  - Joel
 
 -- 
-Michal Hocko
-SUSE Labs
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
