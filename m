@@ -1,333 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756219AbeDXHQd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 03:16:33 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:46017 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751089AbeDXHQ2 (ORCPT
+        id S1756233AbeDXHRs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 03:17:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58460 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752059AbeDXHRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 03:16:28 -0400
-Date: Tue, 24 Apr 2018 09:16:22 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
-        peda@axentia.se, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/8] media: Add LE version of RGB LVDS formats
-Message-ID: <20180424071622.GE17088@w540>
-References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524130269-32688-6-git-send-email-jacopo+renesas@jmondi.org>
- <1733883.PFymhGyeZa@avalon>
+        Tue, 24 Apr 2018 03:17:42 -0400
+Subject: Re: [PATCH] cpufreq: powernv: Fix the hardlockup by synchronus
+ smp_call in timer interrupt
+To: Nicholas Piggin <npiggin@gmail.com>
+References: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+ <20180424160034.6e9d2274@roar.ozlabs.ibm.com>
+Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        ppaidipe@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com
+From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Date: Tue, 24 Apr 2018 12:47:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Lb0e7rgc7IsuDeGj"
-Content-Disposition: inline
-In-Reply-To: <1733883.PFymhGyeZa@avalon>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180424160034.6e9d2274@roar.ozlabs.ibm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18042407-0040-0000-0000-00000450C833
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042407-0041-0000-0000-000020F5345D
+Message-Id: <c88d51af-9eb8-6bb3-4201-8909cda0241b@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804240074
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---Lb0e7rgc7IsuDeGj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+On 04/24/2018 11:30 AM, Nicholas Piggin wrote:
+> On Tue, 24 Apr 2018 10:11:46 +0530
+> Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> wrote:
+> 
+>> gpstate_timer_handler() uses synchronous smp_call to set the pstate
+>> on the requested core. This causes the below hard lockup:
+>>
+>> [c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
+>> [c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
+>> [c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
+>> [c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
+>> [c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
+>> [c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
+>> [c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
+>> [c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
+>> [c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
+>> [c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
+>> --- interrupt: 901 at doorbell_global_ipi+0x34/0x50
+>> LR = arch_send_call_function_ipi_mask+0x120/0x130
+>> [c000003fe566ba50] [c00000000004876c] arch_send_call_function_ipi_mask+0x4c/0x130 (unreliable)
+>> [c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
+>> [c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
+>> [c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
+>> [c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
+>> [c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
+>> [c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
+>> [c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
+>>
+>> Fix this by using the asynchronus smp_call in the timer interrupt handler.
+>> We don't have to wait in this handler until the pstates are changed on
+>> the core. This change will not have any impact on the global pstate
+>> ramp-down algorithm.
+>>
+>> Reported-by: Nicholas Piggin <npiggin@gmail.com>
+>> Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
+>> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+>> ---
+>>  drivers/cpufreq/powernv-cpufreq.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+>> index 0591874..7e0c752 100644
+>> --- a/drivers/cpufreq/powernv-cpufreq.c
+>> +++ b/drivers/cpufreq/powernv-cpufreq.c
+>> @@ -721,7 +721,7 @@ void gpstate_timer_handler(struct timer_list *t)
+>>  	spin_unlock(&gpstates->gpstate_lock);
+>>  
+>>  	/* Timer may get migrated to a different cpu on cpu hot unplug */
+>> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
+>> +	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 0);
+>>  }
+>>  
+>>  /*
+> 
+> This can still deadlock because !wait case still ends up having to wait
+> if another !wait smp_call_function caller had previously used the
+> call single data for this cpu.
+> 
+> If you go this way you would have to use smp_call_function_async, which
+> is more work.
+> 
+> As a rule it would be better to avoid smp_call_function entirely if
+> possible. Can you ensure the timer is running on the right CPU? Use
+> add_timer_on and try again if the timer is on the wrong CPU, perhaps?
+> 
 
-HI Laurent,
+Yeah that is doable we can check for the cpu and re-queue it. We will only
+ramp-down slower in that case which is no harm.
 
-On Mon, Apr 23, 2018 at 04:06:01PM +0300, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> Thank you for the patch.
->
-> On Thursday, 19 April 2018 12:31:06 EEST Jacopo Mondi wrote:
-> > Some LVDS controller can output swapped versions of LVDS RGB formats.
-> > Define and document them in the list of supported media bus formats
->
-> I wouldn't introduce those new formats as we don't need them. As a general
-> rule we would like to have at least one user for any new format added to the
-> API.
+(If the targeted core turns out to be offline then we will not queue the timer
+again as we would have already set the pstate to min in the cpu-down path.)
 
-I was about to point you to patch [8/8], as the newly introduced
-formats allow replacing the DRM_BUS_FLAG_DATA_ flags, defined in
-drm_connector.h and which I struggled to find a more appropiate place
-where to move them. Or I either duplicate them for bridges, but I
-prefer not to, or we remove them, and defining some dedicated formats,
-seems more natural to me...
+Thanks and Regards,
+Shilpa
 
-I'll reply to your comment on [8/8] on the format names and other
-details.
-
-Thanks
-   j
-
->
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  Documentation/media/uapi/v4l/subdev-formats.rst | 174 +++++++++++++++++++++
-> >  include/uapi/linux/media-bus-format.h           |   5 +-
-> >  2 files changed, 178 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/media/uapi/v4l/subdev-formats.rst
-> > b/Documentation/media/uapi/v4l/subdev-formats.rst index 9fcabe7..9a5263c
-> > 100644
-> > --- a/Documentation/media/uapi/v4l/subdev-formats.rst
-> > +++ b/Documentation/media/uapi/v4l/subdev-formats.rst
-> > @@ -1669,6 +1669,64 @@ JEIDA defined bit mapping will be named
-> >        - b\ :sub:`2`
-> >        - g\ :sub:`1`
-> >        - r\ :sub:`0`
-> > +    * .. _MEDIA-BUS-FMT-RGB666-1X7X3-SPWG_LE:
-> > +
-> > +      - MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE
-> > +      - 0x101b
-> > +      - 0
-> > +      -
-> > +      -
-> > +      - b\ :sub:`2`
-> > +      - g\ :sub:`1`
-> > +      - r\ :sub:`0`
-> > +    * -
-> > +      -
-> > +      - 1
-> > +      -
-> > +      -
-> > +      - b\ :sub:`3`
-> > +      - g\ :sub:`2`
-> > +      - r\ :sub:`1`
-> > +    * -
-> > +      -
-> > +      - 2
-> > +      -
-> > +      -
-> > +      - b\ :sub:`4`
-> > +      - g\ :sub:`3`
-> > +      - r\ :sub:`2`
-> > +    * -
-> > +      -
-> > +      - 3
-> > +      -
-> > +      -
-> > +      - b\ :sub:`5`
-> > +      - g\ :sub:`4`
-> > +      - r\ :sub:`3`
-> > +    * -
-> > +      -
-> > +      - 4
-> > +      -
-> > +      -
-> > +      - d
-> > +      - g\ :sub:`5`
-> > +      - r\ :sub:`4`
-> > +    * -
-> > +      -
-> > +      - 5
-> > +      -
-> > +      -
-> > +      - d
-> > +      - b\ :sub:`0`
-> > +      - r\ :sub:`5`
-> > +    * -
-> > +      -
-> > +      - 6
-> > +      -
-> > +      -
-> > +      - d
-> > +      - b\ :sub:`1`
-> > +      - g\ :sub:`0`
-> >      * .. _MEDIA-BUS-FMT-RGB888-1X7X4-SPWG:
-> >
-> >        - MEDIA_BUS_FMT_RGB888_1X7X4_SPWG
-> > @@ -1727,6 +1785,64 @@ JEIDA defined bit mapping will be named
-> >        - b\ :sub:`2`
-> >        - g\ :sub:`1`
-> >        - r\ :sub:`0`
-> > +    * .. _MEDIA-BUS-FMT-RGB888-1X7X4-SPWG_LE:
-> > +
-> > +      - MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE
-> > +      - 0x101c
-> > +      - 0
-> > +      -
-> > +      - r\ :sub:`6`
-> > +      - b\ :sub:`2`
-> > +      - g\ :sub:`1`
-> > +      - r\ :sub:`0`
-> > +    * -
-> > +      -
-> > +      - 1
-> > +      -
-> > +      - r\ :sub:`7`
-> > +      - b\ :sub:`3`
-> > +      - g\ :sub:`2`
-> > +      - r\ :sub:`1`
-> > +    * -
-> > +      -
-> > +      - 2
-> > +      -
-> > +      - g\ :sub:`6`
-> > +      - b\ :sub:`4`
-> > +      - g\ :sub:`3`
-> > +      - r\ :sub:`2`
-> > +    * -
-> > +      -
-> > +      - 3
-> > +      -
-> > +      - g\ :sub:`7`
-> > +      - b\ :sub:`5`
-> > +      - g\ :sub:`4`
-> > +      - r\ :sub:`3`
-> > +    * -
-> > +      -
-> > +      - 4
-> > +      -
-> > +      - b\ :sub:`6`
-> > +      - d
-> > +      - g\ :sub:`5`
-> > +      - r\ :sub:`4`
-> > +    * -
-> > +      -
-> > +      - 5
-> > +      -
-> > +      - b\ :sub:`7`
-> > +      - d
-> > +      - b\ :sub:`0`
-> > +      - r\ :sub:`5`
-> > +    * -
-> > +      -
-> > +      - 6
-> > +      -
-> > +      - d
-> > +      - d
-> > +      - b\ :sub:`1`
-> > +      - g\ :sub:`0`
-> >      * .. _MEDIA-BUS-FMT-RGB888-1X7X4-JEIDA:
-> >
-> >        - MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA
-> > @@ -1785,6 +1901,64 @@ JEIDA defined bit mapping will be named
-> >        - b\ :sub:`4`
-> >        - g\ :sub:`3`
-> >        - r\ :sub:`2`
-> > +    * .. _MEDIA-BUS-FMT-RGB888-1X7X4-JEIDA_LE:
-> > +
-> > +      - MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE
-> > +      - 0x101d
-> > +      - 0
-> > +      -
-> > +      - r\ :sub:`0`
-> > +      - b\ :sub:`4`
-> > +      - g\ :sub:`3`
-> > +      - r\ :sub:`2`
-> > +    * -
-> > +      -
-> > +      - 1
-> > +      -
-> > +      - r\ :sub:`1`
-> > +      - b\ :sub:`5`
-> > +      - g\ :sub:`4`
-> > +      - r\ :sub:`3`
-> > +    * -
-> > +      -
-> > +      - 2
-> > +      -
-> > +      - g\ :sub:`0`
-> > +      - b\ :sub:`6`
-> > +      - g\ :sub:`5`
-> > +      - r\ :sub:`4`
-> > +    * -
-> > +      -
-> > +      - 3
-> > +      -
-> > +      - g\ :sub:`1`
-> > +      - b\ :sub:`7`
-> > +      - g\ :sub:`6`
-> > +      - r\ :sub:`5`
-> > +    * -
-> > +      -
-> > +      - 4
-> > +      -
-> > +      - b\ :sub:`0`
-> > +      - d
-> > +      - g\ :sub:`7`
-> > +      - r\ :sub:`6`
-> > +    * -
-> > +      -
-> > +      - 5
-> > +      -
-> > +      - b\ :sub:`1`
-> > +      - d
-> > +      - b\ :sub:`2`
-> > +      - r\ :sub:`7`
-> > +    * -
-> > +      -
-> > +      - 6
-> > +      -
-> > +      - d
-> > +      - d
-> > +      - b\ :sub:`3`
-> > +      - g\ :sub:`2`
-> >
-> >  .. raw:: latex
-> >
-> > diff --git a/include/uapi/linux/media-bus-format.h
-> > b/include/uapi/linux/media-bus-format.h index 9e35117..5bea7c0 100644
-> > --- a/include/uapi/linux/media-bus-format.h
-> > +++ b/include/uapi/linux/media-bus-format.h
-> > @@ -34,7 +34,7 @@
-> >
-> >  #define MEDIA_BUS_FMT_FIXED			0x0001
-> >
-> > -/* RGB - next is	0x101b */
-> > +/* RGB - next is	0x101f */
-> >  #define MEDIA_BUS_FMT_RGB444_1X12		0x1016
-> >  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_BE	0x1001
-> >  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE	0x1002
-> > @@ -49,13 +49,16 @@
-> >  #define MEDIA_BUS_FMT_RBG888_1X24		0x100e
-> >  #define MEDIA_BUS_FMT_RGB666_1X24_CPADHI	0x1015
-> >  #define MEDIA_BUS_FMT_RGB666_1X7X3_SPWG		0x1010
-> > +#define MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE	0x101b
-> >  #define MEDIA_BUS_FMT_BGR888_1X24		0x1013
-> >  #define MEDIA_BUS_FMT_GBR888_1X24		0x1014
-> >  #define MEDIA_BUS_FMT_RGB888_1X24		0x100a
-> >  #define MEDIA_BUS_FMT_RGB888_2X12_BE		0x100b
-> >  #define MEDIA_BUS_FMT_RGB888_2X12_LE		0x100c
-> >  #define MEDIA_BUS_FMT_RGB888_1X7X4_SPWG		0x1011
-> > +#define MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE	0x101c
-> >  #define MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA	0x1012
-> > +#define MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE	0x101d
-> >  #define MEDIA_BUS_FMT_ARGB8888_1X32		0x100d
-> >  #define MEDIA_BUS_FMT_RGB888_1X32_PADHI		0x100f
-> >  #define MEDIA_BUS_FMT_RGB101010_1X30		0x1018
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
->
-
---Lb0e7rgc7IsuDeGj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJa3tnGAAoJEHI0Bo8WoVY8NkUP/jbr7QVwPmgIzNo86QV+ptKD
-NvhDLZpNQSlbEYtUSPr0Eb67cF26O1U21Ezf2c0oEQc1QsrGtF5KgBqQHrlL87Yn
-ksAvgT9wZbwwR0L+MP4KO/nP+s/adiCf7/f79Okz0xWYivJ7uJv63+XImKtEW85K
-OUP7WKfnw8CjKVSwbIRmWthVl2K3NNZvrZzjfGFYwGWr9U8RmYTmRaP86Cku1UbA
-P/vCNm9fzECJXLzNsycIfLaeJ9nCtKn4wleI0+X+CXNq5LPZS8JLPnHqFzjE7eLb
-2GNNce01ZICrBn5SyjLJptk1rAq9ht7CIclkqoi7wuQKSirohyZCCtP768vh0njd
-CXDXYaPu80ZRUB0fcFcGZ6pKPMWXFnUqRvQyC3FAlXiShkX4qBNl6ghU5qI4YLk5
-4KtuDw3jALjKLiTf9wZ57Sxm0SekvjJBgzHse0++BrtkxWpgmkE+RfJBXOBC5npi
-1sU8SkZFIK1DzuMBZ/vR5MANME27p4RKn7+CTsSEEnlv4l309vzfcv86eCwS9F+a
-Xrba5tRfh+FwixDXcOxy0IDIfMCpCQBO+tYOgjEvcQW4kD/UwOLHZEHAdnZSMl8G
-ouanzzBuYhFL7Fdeq0wCsqQT45G8j6NsubR7bSAJsSC225OSVJtKPCLjTE/a9woz
-nN0j14ay7AszUdBYFUms
-=ToEU
------END PGP SIGNATURE-----
-
---Lb0e7rgc7IsuDeGj--
+> Thanks,
+> Nick
+> 
