@@ -1,74 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeDXQ2K (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:28:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60844 "EHLO mail.kernel.org"
+        id S1751213AbeDXQ2D (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:28:03 -0400
+Received: from mga06.intel.com ([134.134.136.31]:16170 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751995AbeDXQ2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:28:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6951121735
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Tue, 24 Apr 2018 10:27:59 -0600
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>, yuchao0@huawei.com
-Subject: Re: kernel BUG at fs/f2fs/node.c:LINE!
-Message-ID: <20180424162759.GA66918@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180424062000.GA57884@jaegeuk-macbookpro.roam.corp.google.com>
- <000000000000ae37a6056a9273f6@google.com>
- <CACT4Y+b2UgpGHDdfPgu3vp1MR8feL16C=HXsQwx7TC2-3U=0Sg@mail.gmail.com>
+        id S1751053AbeDXQ17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:27:59 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,323,1520924400";
+   d="scan'208";a="48731752"
+Date: Tue, 24 Apr 2018 19:27:52 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peterhuewe@gmx.de, tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
+        patrickc@us.ibm.com
+Subject: Re: [PATCH v2 1/2] tpm: reduce poll sleep time in tpm_transmit()
+Message-ID: <20180424162752.GC5119@linux.intel.com>
+References: <20180417131246.434-1-nayna@linux.vnet.ibm.com>
+ <20180417131246.434-2-nayna@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+b2UgpGHDdfPgu3vp1MR8feL16C=HXsQwx7TC2-3U=0Sg@mail.gmail.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20180417131246.434-2-nayna@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24, Dmitry Vyukov wrote:
-> On Tue, Apr 24, 2018 at 8:42 AM, syzbot
-> <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com> wrote:
-> > Hello,
-> >
-> > syzbot tried to test the proposed patch but build/boot failed:
-> >
-> > failed to create VM pool: failed to create GCE image: failed to get create
-> > image operation operation-1524552040215-56a926ecc71d9-3edfeb8b-8abca81c:
-> > googleapi: Error 403: Rate Limit Exceeded, rateLimitExceeded
-> >
-> >
-> > Tested on git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/dev
-> > commit
-> > b549e322861b99f1862fb5f08dfb5e5753a38635 (Sat Apr 21 06:44:59 2018 +0000)
-> > f2fs: check cap_resource only for data blocks
-> >
-> > compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-> > Patch: https://syzkaller.appspot.com/x/patch.diff?id=5565179303559168
-> > Kernel config:
-> > https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-> 
-> Hi Jaegeuk,
-> 
-> Re the last failure (rate limiting), now should be fixed with:
-> https://github.com/google/syzkaller/commit/e2f4bf8f3818d49baf0f3789add75d5fd506ad8d
-> which adds some backoff-and-retry logic.
-> 
-> Re the first one, do I understand it correctly that dev-test already
-> contains the fix that you want to test?
-> We did not foresee such case initially, but you are not the first one
-> to try this. I've added support for testing without a patch now:
-> https://github.com/google/syzkaller/commit/9366d03f001170479319878905031f63d4377c46
-> and updated the docs:
-> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
-> 
-> So now this should work:
-> 
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
-> dev-test
+On Tue, Apr 17, 2018 at 09:12:45AM -0400, Nayna Jain wrote:
+> The TPM polling code in tpm_transmit sleeps in each loop iteration for
+> 5 msecs. However, the TPM might return earlier, and thus waiting for
+> 5 msecs adds an unnecessary delay. This patch reduces the polling sleep
+> time in tpm_transmit() from 5 msecs to 1 msecs.
 
-Cool! Thank you so much.
+I'm not sure what TPM returning earlier has to do with this. TPM probably
+never returns exactly in the spec defined timeout/duration. I just don't
+understand reasoning in this paragraph.
+
+> Additionally, this patch renames TPM_POLL_SLEEP and moves it to tpm.h as
+> an enum value.
+> 
+> After this change, performance on a TPM 1.2 with an 8 byte burstcount
+> for 1000 extends improved from ~14 sec to ~10.7 sec.
+
+You cannot give absolute numbers without a context (platform, software).
+
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+
+/Jarkko
