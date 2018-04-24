@@ -1,73 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752549AbeDXQ13 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:27:29 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:43165 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751760AbeDXQ1X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:27:23 -0400
-X-Google-Smtp-Source: AIpwx48+mx1xozJy3EzcWOTeCZmanYZ0DpzwxBR7dADTmJRRCqdLXkmfuia2zfFi3nfqJBsdSx1myw==
-Date: Tue, 24 Apr 2018 11:27:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: jic23@kernel.org, alexandre.torgue@st.com, mark.rutland@arm.com,
-        mcoquelin.stm32@gmail.com, lars@metafoo.de, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, benjamin.gaignard@linaro.org
-Subject: Re: [PATCH 1/3] dt-bindings: iio: stm32-adc: add support for
- STM32MP1.
-Message-ID: <20180424162721.qbfsc7j3syzzykeh@rob-hp-laptop>
-References: <1524065874-434-1-git-send-email-fabrice.gasnier@st.com>
- <1524065874-434-2-git-send-email-fabrice.gasnier@st.com>
+        id S1752670AbeDXQ2K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:28:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751995AbeDXQ2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:28:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6951121735
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Tue, 24 Apr 2018 10:27:59 -0600
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>, yuchao0@huawei.com
+Subject: Re: kernel BUG at fs/f2fs/node.c:LINE!
+Message-ID: <20180424162759.GA66918@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180424062000.GA57884@jaegeuk-macbookpro.roam.corp.google.com>
+ <000000000000ae37a6056a9273f6@google.com>
+ <CACT4Y+b2UgpGHDdfPgu3vp1MR8feL16C=HXsQwx7TC2-3U=0Sg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1524065874-434-2-git-send-email-fabrice.gasnier@st.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CACT4Y+b2UgpGHDdfPgu3vp1MR8feL16C=HXsQwx7TC2-3U=0Sg@mail.gmail.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 05:37:52PM +0200, Fabrice Gasnier wrote:
-> Document support for STM32MP1 ADC. It's quite similar to STM32H7 ADC.
-> Introduce "st,stm32mp1-adc" compatible to handle variants of this
-> hardware such as vregready flag, interrupts, clock rate.
+On 04/24, Dmitry Vyukov wrote:
+> On Tue, Apr 24, 2018 at 8:42 AM, syzbot
+> <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com> wrote:
+> > Hello,
+> >
+> > syzbot tried to test the proposed patch but build/boot failed:
+> >
+> > failed to create VM pool: failed to create GCE image: failed to get create
+> > image operation operation-1524552040215-56a926ecc71d9-3edfeb8b-8abca81c:
+> > googleapi: Error 403: Rate Limit Exceeded, rateLimitExceeded
+> >
+> >
+> > Tested on git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/dev
+> > commit
+> > b549e322861b99f1862fb5f08dfb5e5753a38635 (Sat Apr 21 06:44:59 2018 +0000)
+> > f2fs: check cap_resource only for data blocks
+> >
+> > compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+> > Patch: https://syzkaller.appspot.com/x/patch.diff?id=5565179303559168
+> > Kernel config:
+> > https://syzkaller.appspot.com/x/.config?id=1808800213120130118
 > 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> ---
->  Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> Hi Jaegeuk,
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
-> index e8bb824..9994384 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
-> @@ -24,8 +24,11 @@ Required properties:
->  - compatible: Should be one of:
->    "st,stm32f4-adc-core"
->    "st,stm32h7-adc-core"
-> +  "st,stm32mp1-adc-core"
->  - reg: Offset and length of the ADC block register set.
-> -- interrupts: Must contain the interrupt for ADC block.
-> +- interrupts: One or more interrupts for ADC block. Some parts like stm32f4
-> +  and stm32h7 share a common ADC interrupt line. stm32mp1 has separate
-> +  lines for each ADC within ADC block.
+> Re the last failure (rate limiting), now should be fixed with:
+> https://github.com/google/syzkaller/commit/e2f4bf8f3818d49baf0f3789add75d5fd506ad8d
+> which adds some backoff-and-retry logic.
+> 
+> Re the first one, do I understand it correctly that dev-test already
+> contains the fix that you want to test?
+> We did not foresee such case initially, but you are not the first one
+> to try this. I've added support for testing without a patch now:
+> https://github.com/google/syzkaller/commit/9366d03f001170479319878905031f63d4377c46
+> and updated the docs:
+> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
+> 
+> So now this should work:
+> 
+> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+> dev-test
 
-How many interrupt lines is that?
-
->  - clocks: Core can use up to two clocks, depending on part used:
->    - "adc" clock: for the analog circuitry, common to all ADCs.
->      It's required on stm32f4.
-> @@ -53,6 +56,7 @@ Required properties:
->  - compatible: Should be one of:
->    "st,stm32f4-adc"
->    "st,stm32h7-adc"
-> +  "st,stm32mp1-adc"
->  - reg: Offset of ADC instance in ADC block (e.g. may be 0x0, 0x100, 0x200).
->  - clocks: Input clock private to this ADC instance. It's required only on
->    stm32f4, that has per instance clock input for registers access.
-> -- 
-> 1.9.1
-> 
+Cool! Thank you so much.
