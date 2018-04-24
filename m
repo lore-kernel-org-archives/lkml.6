@@ -1,28 +1,28 @@
 Return-Path: <matthias.bgg@kernel.org>
-X-Google-Smtp-Source: AIpwx487mIv33SEi6W0bR+GlZb7vZPa4nBt0ql0BoxbKItvbcAt15Yleim8xLPoF07b5t9c7QjNn
-ARC-Seal: i=1; a=rsa-sha256; t=1524563287; cv=none;
+X-Google-Smtp-Source: AIpwx4/L4XnkuHzkybuZIcsmComWZmjI2/Oxh5gCaDgpuxJ1DugFeGtiw/XBmNzAkpaJ0+C4MjHM
+ARC-Seal: i=1; a=rsa-sha256; t=1524563282; cv=none;
         d=google.com; s=arc-20160816;
-        b=SvMzWt3vPoh6CXzkS6tWQ5jSdAfjs8y19bwiSZk/6Bzy5IbRPbHztCCIwyVL3hlEUj
-         vyQ6remAmy3NA3VxLAHwLOnez9WUvzXVYwWHDNB+nhJCKltKK2AgI+C9NTEg0ZitJuYi
-         sd8KZOiLm2wfxGcyW83atY5d+ut31c+a1zSeK0oLC4czJdfg0SGoIhRyHTphLueeMM7l
-         kH2YjMB4MRkgQf/lane22z8jxHAkvMVw+sBt0b34mJk0h8nqkEPgu3uibObtIgdjo93x
-         YJVbCUv83c9tRUt7lPKi3PW7jRqKeELv3oicOlqCMRijkNmQ9DPGC+q3mNPkwJE5cY+1
-         kaAQ==
+        b=GIvlxa3NSaLRqcr3JO8yxZ7yhmX6QuwGjaSHmZVIT5uIGz/vqYDNN3D9zJEcE+PIJq
+         tV9B8vmTMb13dl64hmJKjbpUD8Z8SnmUUukMyHt5CbwuAisaPqzNtBiC08MUVokvC6XK
+         B9l936+GMe/7HrU/vYMPihpuuM76vg6/82mqOLP0T1CUThwzyy9hfSHoy0ZS4NdVQ9DI
+         BiikIcs1i9l6z81sYckuqY+VmyGZRVklSecKnNkabUeqsKvy4zOIyFealhEXlsCJ/8Rs
+         JaqDgK8Be6l4OdlYN5Itd50gHoWBE3WW2UX+CgQDkn5MH3DZ5TgYNAPuqkUx2+qYsirV
+         Bwqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=dmeCkJ7AvKJtcBLqEPUe9SmlWlckwxvG0vcODkRP51E=;
-        b=Eq80MNVcYwWDQ6bg+VM2SO1AhmJTzwxujidrcnZASmepPGBWbvgTP1VHZ1IY1r40H9
-         zKa9fGu/zrC+Sv2YIZnVjOWaIehq2sri5LJvAXX+hFWjNNaCngiljXMwERxBaYMbpaxI
-         Hsw0ZVV+RIRH5yC5oThvsWUkrQ1qqfJsZ7Y9CxE29zl/3oQhCZ9gsdv/3DUmXIthIE7g
-         Z7Ccr7h+xMKsTt1smlhudSWiW3GuS1n4idHJaVPFJDTAUsP3434Y59RV2onRej8VYmQY
-         Kxm14UsXASdowOiGboGGg9QkzKXM11ibbf7Kwj+LxHlnNJ9MJTvV2fq6MlfftVAZNBIj
-         o3mQ==
+        bh=A5hZS+UhgLTjIpjMgjBxJPj/Q1Y4fy0BmYqmXfIEoC4=;
+        b=l9fUnJLQQWKRb3a0UbTnmonHHr/AinXfL9qbODJeqglQyIzj3LwbXLEmQvus45hn81
+         38OkqbFa1xq3OPpDkrMrIPi+2nj/Md9smuMjZqljBduTwa4hodWAH0b1/chuPlzXL/j/
+         JPHVt7BokP1wRnrDR66NI3o5oW/fUrSlfeVOlNNYUzTTVIkKWlv3DYGzOIsa0hIHK3ag
+         yHWKg0sLvAJpNnN0fAjT4iquaU0Q61RcYjNBWYvG97RSLPVEBBFJO5y4N+iKA0N0y7RF
+         J+LyM3ZBmXi9eV08SIvyLcBReEwNhK5ymsCoE87NFFXwwOA8d2MxI4ooasscXIzvyZrw
+         4ifQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E29217CE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91B472183C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=matthias.bgg@kernel.org
 From: matthias.bgg@kernel.org
@@ -50,45 +50,76 @@ Cc: davem@davemloft.net,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 resend 09/10] drm: mediatek: Omit warning on probe defers
-Date: Tue, 24 Apr 2018 11:47:06 +0200
-Message-Id: <a698a40ce7723200fd55d0d98daff5a28a7d0039.1524563001.git.mbrugger@suse.com>
+Subject: [v2 resend 08/10] clk: mediatek: mt8173-mm: switch to mfd device
+Date: Tue, 24 Apr 2018 11:47:05 +0200
+Message-Id: <74bf4058534cf187e10ef041da1706878914aa45.1524563001.git.mbrugger@suse.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
 References: <cover.1524563001.git.mbrugger@suse.com>
 In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
 References: <cover.1524563001.git.mbrugger@suse.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598620474277711521?=
-X-GMAIL-MSGID: =?utf-8?q?1598620474277711521?=
+X-GMAIL-THRID: =?utf-8?q?1598620468518295813?=
+X-GMAIL-MSGID: =?utf-8?q?1598620468518295813?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Matthias Brugger <mbrugger@suse.com>
 
-When probe through the MFD, it can happen that the
-clock drivers wasn't probed before the ddp driver gets
-invoked. The driver used to omit a warning that the driver
-failed to get the clocks. Omit this error on the defered probe path.
+As the new mfd device is in place, switch probing
+for the MMSYS to support invocation from the mfd device.
 
 Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt8173.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index bafc5c77c4fb..6b399348a2dc 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -374,7 +374,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
+index 96c292c3e440..abd2592078d4 100644
+--- a/drivers/clk/mediatek/clk-mt8173.c
++++ b/drivers/clk/mediatek/clk-mt8173.c
+@@ -15,6 +15,7 @@
+ #include <linux/clk.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
  
- 	ddp->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(ddp->clk)) {
--		dev_err(dev, "Failed to get clock\n");
-+		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
-+			dev_err(dev, "Failed to get clock\n");
- 		return PTR_ERR(ddp->clk);
- 	}
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+@@ -1152,10 +1153,13 @@ static void __init mtk_imgsys_init(struct device_node *node)
+ }
+ CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt8173-imgsys", mtk_imgsys_init);
  
+-static void __init mtk_mmsys_init(struct device_node *node)
++static int mtk_mmsys_probe(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
++	struct device_node *node;
++
++	node = pdev->dev.parent->of_node;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
+ 
+@@ -1166,8 +1170,17 @@ static void __init mtk_mmsys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	return r;
+ }
+-CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt8173-mmsys", mtk_mmsys_init);
++
++static struct platform_driver clk_mt8173_mm_drv = {
++	.probe = mtk_mmsys_probe,
++	.driver = {
++		.name = "clk-mt8173-mm",
++	},
++};
++builtin_platform_driver(clk_mt8173_mm_drv);
+ 
+ static void __init mtk_vdecsys_init(struct device_node *node)
+ {
 -- 
 2.16.3
