@@ -1,140 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751155AbeDXVkc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 17:40:32 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36920 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeDXVkb (ORCPT
+        id S1751201AbeDXVn1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 17:43:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46030 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750902AbeDXVn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:40:31 -0400
-X-Google-Smtp-Source: AIpwx49q3d08+sunu8x3aBIFs0oczWDIX6h/wtqfzeXU5yYl8/dGIECs6PIJ1AJbgppVncIAmCQRvg==
-Date: Tue, 24 Apr 2018 23:40:27 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
-Cc: Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, David.Panariti@amd.com,
-        oleg@redhat.com, ebiederm@xmission.com, Alexander.Deucher@amd.com,
-        akpm@linux-foundation.org, Christian.Koenig@amd.com
-Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
- signaled process.
-Message-ID: <20180424214027.GG25142@phenom.ffwll.local>
-Mail-Followup-To: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
-        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, David.Panariti@amd.com,
-        oleg@redhat.com, ebiederm@xmission.com, Alexander.Deucher@amd.com,
-        akpm@linux-foundation.org, Christian.Koenig@amd.com
-References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
- <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
- <7313704c-0693-0bb9-8818-99cd2b7c0ca0@daenzer.net>
- <20180424194418.GE25142@phenom.ffwll.local>
- <aa2d8587-651e-2c24-a673-4682e7035a8f@amd.com>
+        Tue, 24 Apr 2018 17:43:26 -0400
+Subject: Re: [PATCH 1/3] sched: remove select_idle_core() for scalability
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
+References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
+ <20180424004116.28151-2-subhra.mazumdar@oracle.com>
+ <20180424124621.GQ4082@hirez.programming.kicks-ass.net>
+From: Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <df8f4982-908a-23e6-5148-4d4e91d38be4@oracle.com>
+Date: Tue, 24 Apr 2018 14:45:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aa2d8587-651e-2c24-a673-4682e7035a8f@amd.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180424124621.GQ4082@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8873 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804240204
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 05:02:40PM -0400, Andrey Grodzovsky wrote:
-> 
-> 
-> On 04/24/2018 03:44 PM, Daniel Vetter wrote:
-> > On Tue, Apr 24, 2018 at 05:46:52PM +0200, Michel Dänzer wrote:
-> > > Adding the dri-devel list, since this is driver independent code.
-> > > 
-> > > 
-> > > On 2018-04-24 05:30 PM, Andrey Grodzovsky wrote:
-> > > > Avoid calling wait_event_killable when you are possibly being called
-> > > > from get_signal routine since in that case you end up in a deadlock
-> > > > where you are alreay blocked in singla processing any trying to wait
-> > > Multiple typos here, "[...] already blocked in signal processing and [...]"?
-> > > 
-> > > 
-> > > > on a new signal.
-> > > > 
-> > > > Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-> > > > ---
-> > > >   drivers/gpu/drm/scheduler/gpu_scheduler.c | 5 +++--
-> > > >   1 file changed, 3 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler.c b/drivers/gpu/drm/scheduler/gpu_scheduler.c
-> > > > index 088ff2b..09fd258 100644
-> > > > --- a/drivers/gpu/drm/scheduler/gpu_scheduler.c
-> > > > +++ b/drivers/gpu/drm/scheduler/gpu_scheduler.c
-> > > > @@ -227,9 +227,10 @@ void drm_sched_entity_do_release(struct drm_gpu_scheduler *sched,
-> > > >   		return;
-> > > >   	/**
-> > > >   	 * The client will not queue more IBs during this fini, consume existing
-> > > > -	 * queued IBs or discard them on SIGKILL
-> > > > +	 * queued IBs or discard them when in death signal state since
-> > > > +	 * wait_event_killable can't receive signals in that state.
-> > > >   	*/
-> > > > -	if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
-> > > > +	if (current->flags & PF_SIGNALED)
-> > You want fatal_signal_pending() here, instead of inventing your own broken
-> > version.
-> 
-> I rely on current->flags & PF_SIGNALED because this being set from within
-> get_signal,
-> meaning I am within signal processing  in which case I want to avoid any
-> signal based wait for that task,
-> From what i see in the code, task_struct.pending.signal is being set for
-> other threads in same
-> group (zap_other_threads) or for other scenarios, those task are still able
-> to receive signals
-> so calling wait_event_killable there will not have problem.
-> > > >   		entity->fini_status = -ERESTARTSYS;
-> > > >   	else
-> > > >   		entity->fini_status = wait_event_killable(sched->job_scheduled,
-> > But really this smells like a bug in wait_event_killable, since
-> > wait_event_interruptible does not suffer from the same bug. It will return
-> > immediately when there's a signal pending.
-> 
-> Even when wait_event_interruptible is called as following -
-> ...->do_signal->get_signal->....->wait_event_interruptible ?
-> I haven't tried it but wait_event_interruptible is very much alike to
-> wait_event_killable so I would assume it will also
-> not be interrupted if called like that. (Will give it a try just out of
-> curiosity anyway)
 
-wait_event_killabel doesn't check for fatal_signal_pending before calling
-schedule, so definitely has a nice race there.
 
-But if you're sure that you really need to check PF_SIGNALED, then I'm
-honestly not clear on what you're trying to pull off here. Your sparse
-explanation of what happens isn't enough, since I have no idea how you can
-get from get_signal() to the above wait_event_killable callsite.
--Daniel
-
-> 
-> Andrey
-> 
-> > 
-> > I think this should be fixed in core code, not papered over in some
-> > subsystem.
-> > -Daniel
-> > 
-> > > 
-> > > -- 
-> > > Earthling Michel Dänzer               |               http://www.amd.com
-> > > Libre software enthusiast             |             Mesa and X developer
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+On 04/24/2018 05:46 AM, Peter Zijlstra wrote:
+> On Mon, Apr 23, 2018 at 05:41:14PM -0700, subhra mazumdar wrote:
+>> select_idle_core() can potentially search all cpus to find the fully idle
+>> core even if there is one such core. Removing this is necessary to achieve
+>> scalability in the fast path.
+> So this removes the whole core awareness from the wakeup path; this
+> needs far more justification.
+>
+> In general running on pure cores is much faster than running on threads.
+> If you plot performance numbers there's almost always a fairly
+> significant drop in slope at the moment when we run out of cores and
+> start using threads.
+The only justification I have is the benchmarks I ran all most all
+improved, most importantly our internal Oracle DB tests which we care about
+a lot. So what you said makes sense in theory but is not borne out by real
+world results. This indicates that threads of these benchmarks care more
+about running immediately on any idle cpu rather than spending time to find
+fully idle core to run on.
+> Also, depending on cpu enumeration, your next patch might not even leave
+> the core scanning for idle CPUs.
+>
+> Now, typically on Intel systems, we first enumerate cores and then
+> siblings, but I've seen Intel systems that don't do this and enumerate
+> all threads together. Also other architectures are known to iterate full
+> cores together, both s390 and Power for example do this.
+>
+> So by only doing a linear scan on CPU number you will actually fill
+> cores instead of equally spreading across cores. Worse still, by
+> limiting the scan to _4_ you only barely even get onto a next core for
+> SMT4 hardware, never mind SMT8.
+Again this doesn't matter for the benchmarks I ran. Most are happy to make
+the tradeoff on x86 (SMT2). Limiting the scan is mitigated by the fact that
+the scan window is rotated over all cpus, so idle cpus will be found soon.
+There is also stealing by idle cpus. Also this was an RFT so I request this
+to be tested on other architectrues like SMT4/SMT8.
+>
+> So while I'm not adverse to limiting the empty core search; I do feel it
+> is important to have. Overloading cores when you don't have to is not
+> good.
+Can we have a config or a way for enabling/disabling select_idle_core?
