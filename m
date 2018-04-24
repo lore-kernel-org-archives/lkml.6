@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933931AbeDXNRp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:17:45 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33452 "EHLO
+        id S934351AbeDXNb3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:31:29 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55548 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933910AbeDXNRh (ORCPT
+        with ESMTP id S933927AbeDXNRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:17:37 -0400
-X-Google-Smtp-Source: AIpwx4/LjNMpel/ht/OaswJydB0tMxk4DJ7Ny3ZuwWlowiYt+bAzPTXHcJaBLE9hX1iumiH1ev2cbA==
+        Tue, 24 Apr 2018 09:17:45 -0400
+X-Google-Smtp-Source: AIpwx4/SNycov1gzj+GOZLn29PmwZ4JBLGKqk/mDx13DoK3VpV3wGcLjMZyDHyB1cdT92cIiCt1Ecg==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>, netdev@vger.kernel.org
-Subject: [PATCH] net: dwc-xlgmac: fix xlgmac_xmit()'s return type
-Date: Tue, 24 Apr 2018 15:17:33 +0200
-Message-Id: <20180424131733.4510-1-luc.vanoostenryck@gmail.com>
+        netdev@vger.kernel.org
+Subject: [PATCH] net: w5300: fix w5300_start_tx()'s return type
+Date: Tue, 24 Apr 2018 15:17:40 +0200
+Message-Id: <20180424131742.4611-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -28,21 +28,21 @@ Fix this by returning 'netdev_tx_t' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/net/ethernet/synopsys/dwc-xlgmac-net.c | 2 +-
+ drivers/net/ethernet/wiznet/w5300.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/synopsys/dwc-xlgmac-net.c b/drivers/net/ethernet/synopsys/dwc-xlgmac-net.c
-index 1f8e96015..7429c2094 100644
---- a/drivers/net/ethernet/synopsys/dwc-xlgmac-net.c
-+++ b/drivers/net/ethernet/synopsys/dwc-xlgmac-net.c
-@@ -697,7 +697,7 @@ static void xlgmac_tx_timeout(struct net_device *netdev)
- 	schedule_work(&pdata->restart_work);
+diff --git a/drivers/net/ethernet/wiznet/w5300.c b/drivers/net/ethernet/wiznet/w5300.c
+index 56ae57300..80fdbff67 100644
+--- a/drivers/net/ethernet/wiznet/w5300.c
++++ b/drivers/net/ethernet/wiznet/w5300.c
+@@ -365,7 +365,7 @@ static void w5300_tx_timeout(struct net_device *ndev)
+ 	netif_wake_queue(ndev);
  }
  
--static int xlgmac_xmit(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t xlgmac_xmit(struct sk_buff *skb, struct net_device *netdev)
+-static int w5300_start_tx(struct sk_buff *skb, struct net_device *ndev)
++static netdev_tx_t w5300_start_tx(struct sk_buff *skb, struct net_device *ndev)
  {
- 	struct xlgmac_pdata *pdata = netdev_priv(netdev);
- 	struct xlgmac_pkt_info *tx_pkt_info;
+ 	struct w5300_priv *priv = netdev_priv(ndev);
+ 
 -- 
 2.17.0
