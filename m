@@ -1,57 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751247AbeDXPVc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:21:32 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:60153 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeDXPV1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:21:27 -0400
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/6] PCI: Fix memory leak of devm_pci_alloc_host_bridge
-Date: Tue, 24 Apr 2018 17:13:38 +0200
-Message-Id: <2a083b46d55687d01d43d4013cfb957cb3720db5.1524582822.git.jan.kiszka@siemens.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
+        id S1751359AbeDXPWz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:22:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47490 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750749AbeDXPWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:22:50 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <aca7e68c-022b-47ac-c249-59e042d431e8@tycho.nsa.gov>
+References: <aca7e68c-022b-47ac-c249-59e042d431e8@tycho.nsa.gov> <CAHC9VhQhaBNBFwAXJ4TxKO56UTcwb_LcT2G8LwNxdxOD96tTvA@mail.gmail.com> <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk> <152414469006.23902.8132059438921850399.stgit@warthog.procyon.org.uk> <3232.1524238511@warthog.procyon.org.uk>
+To: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: dhowells@redhat.com, Paul Moore <paul@paul-moore.com>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, viro@zeniv.linux.org.uk,
+        selinux@tycho.nsa.gov, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org
+Subject: Re: [PATCH 04/24] VFS: Add LSM hooks for filesystem context [ver #7]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <702.1524583367.1@warthog.procyon.org.uk>
+Date: Tue, 24 Apr 2018 16:22:47 +0100
+Message-ID: <703.1524583367@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Stephen Smalley <sds@tycho.nsa.gov> wrote:
 
-devm_pci_release_host_bridge_dev failed to release the resource list.
+> Neither fsopen() nor fscontext_fs_write() appear to perform any kind of
+> up-front permission checking (DAC or MAC), although some security hooks may
+> be ultimately called to allocate structures, parse security options, etc.
+> Is there a reason not apply a may_mount() or similar check up front?
 
-Fixes: 5c3f18cce083 ("PCI: Add devm_pci_alloc_host_bridge() interface")
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- drivers/pci/probe.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+may_mount() is called by fsmount() at the moment.  It may make sense to move
+this earlier to fsopen().  Note that there's also going to be something that
+looks like:
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index ac91b6fd0bcd..eccf204c9160 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -526,12 +526,14 @@ static void devm_pci_release_host_bridge_dev(struct device *dev)
- 
- 	if (bridge->release_fn)
- 		bridge->release_fn(bridge);
-+
-+	pci_free_resource_list(&bridge->windows);
- }
- 
- static void pci_release_host_bridge_dev(struct device *dev)
- {
- 	devm_pci_release_host_bridge_dev(dev);
--	pci_free_host_bridge(to_pci_host_bridge(dev));
-+	kfree(to_pci_host_bridge(dev));
- }
- 
- struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
--- 
-2.13.6
+	fd = fspick("/mnt");
+	fsmount(fd, "/a", MNT_NOEXEC); // ie. bind mount
+
+or:
+
+	fd = fspick("/mnt");
+	write(fd, "o intr");
+	write(fd, "x reconfigure"); // ie. something like remount
+	close(fd);
+
+I guess we'd want to call may_mount() in fspick() too.  But there's also the
+possibility of using this to create a query interfact too:
+
+	fd = fspick("/mnt");
+	write(fd, "q intr");
+	read(fd, value_buffer);
+
+David
