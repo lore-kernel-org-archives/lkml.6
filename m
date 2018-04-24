@@ -1,100 +1,102 @@
-Return-Path: <rdunlap@infradead.org>
-X-Google-Smtp-Source: AIpwx4+m2n1JPmjPmY89Y4vPsNshZa+dWF1jhn/s6HN3UbF+RlzlrVDx01GXtA3J912O8eAFEujI
-ARC-Seal: i=1; a=rsa-sha256; t=1524598361; cv=none;
+Return-Path: <dalias@aerifal.cx>
+X-Google-Smtp-Source: AB8JxZq4jDDnkOXO9Q5clWehrtW4/p9fUUxrpb97YIudP4JDOj2Wd9tdmgX79UEGFtH2mwSVEaQe
+ARC-Seal: i=1; a=rsa-sha256; t=1524592729; cv=none;
         d=google.com; s=arc-20160816;
-        b=QNN5aaR7BreDaatU18Z9nYO9SRT7D0OuvMXJqYlWQyMc6LhsP5oSkALExOaI+Mz/gI
-         JUydSxt+EO3rPoRKU04H+zVjpQKhGXakqCghWi8MEtd9eHvyBZy+gLO6RMsta8vaUT9Q
-         DFQN0zg4jL5AhhrxdjZeQAidVCbdNhQAzgFlEtD3v60kehDedG/UC4y0stxHTZkNwbee
-         ikWGnDKGrKaW5WeZFQAowfgiWJw/uR+Qx5zR4veKvGzf8QGZ+BBrHeNIOtOgPb4LLVN/
-         Hr8F1ax27pXer67Rp+O0TyG4oXrKajrypuCsA0rZ1Z34fP/V/7ImdEXft3y0P2u10nj9
-         jsMg==
+        b=w/fFN6f3HuhrnX5z5GElzjHtE/Lky6dXzSB4hJLBQpTWXKkl9dEreKNYHe40usTecx
+         nx9nTHwU53GkJ5IbIlVlNXL3sPViZoQ4QQNyZ/9RKV45voEVEld8Qs2DKpoTJamHja5I
+         B+n2p8xqGxm59PerVBCa++hcmjDocJX5cBkSvSjJCPvDI2t05ekxNDyE05EaU1q2Ut5M
+         FFeNSVTP43vnzX9RGvswhgkzCHCOQK7gbyYNgb/gTkEa9QnzjQFpLGVElP+gWEk06tEt
+         iIwmu2iW3nWSAcvAD+Qv/6jrRQ+OWp1OmA/Kx6yWLQddJ8rTs7pltuRu2Ojaq+0CX+ZH
+         s52g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=owcjKRSS7UeyfaOZG8AwZzwjN+ahpXC8Q2bTRlNgodY=;
-        b=eLQIX/ac+EeIJu/MK8PGa4MYTvButp+uEKTW15EUS274/zbixDnWpDyh0wBpswByOI
-         2L6k1ZzclNHv27q2calcJtSv8vof0XMMsu5NLyGwO+iltJOqrCyzuJCC4b6m0fTlIJUS
-         9G3KXh9/e9xLlR+r4wRk9XqzaSg6pSmiZj8TI8s1X4K4VnjArC8b4UuO4wxmthltXYZn
-         CsUdywlFNGhkah63RWczKdMxB6s7qC+FtCtfRjhx5Sv99MYYXgqb8VHG3T8Dnu0I6Bbs
-         0dCvuCCUJccgKByFQCFUWom2Ro1iipvXP+G7fEcpHarbMIPOMdzd6csO/+HBB0eReoaP
-         c2EA==
+        h=sender:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=6rLbWN6hzK3s7LnO82jzIV3W1tAvVPZxrKW1SQ1FTAE=;
+        b=cTMP+MFC9vsEgD5yPks3T4jpK1fK+fznYT+aqQumiAlc3P8Jt81xaHrLPyHSjpWJ/5
+         YrZU56o0J9vBzq2gJWNanQoGRGMFfGB0A6dBxL3BiJbfya4/t4b5Qm4Op8eotWjNlqJj
+         snuXFtjA1G98mVxz9tbXDr8sTCHn8KTFFKMxn821UgBmdL2cZiN1b/QR/GiqMdbjMQX5
+         c7fEz4n5/bZpx9qby41NXGqgxYFa2TU6ZkujbEKYvNu00IA1JnV4YSN62ph7Ngf8rnFi
+         nxc2YvOuuIRi/EpdTfZU2xfIIPOev5RLxfsXgdsH6ddEJQ9lDR0LQrPCyHJqkeQwaxCB
+         tNlw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=aihBpba9;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=aihBpba9;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-Subject: Re: [PATCH 03/11] platform: make support for early platform devices
- conditional
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, David Lechner <david@lechnology.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- Frank Rowand <frowand.list@gmail.com>,
- "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
- Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Arend van Spriel <aspriel@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Michal Suchanek <msuchanek@suse.de>, Jan Kiszka <jan.kiszka@siemens.com>,
- Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
+Date: Tue, 24 Apr 2018 13:57:52 -0400
+From: Rich Felker <dalias@libc.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Frank Rowand <frowand.list@gmail.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Michal Suchanek <msuchanek@suse.de>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 00/11] platform: device tree support for early platform
+ drivers
+Message-ID: <20180424175752.GC3094@brightrain.aerifal.cx>
 References: <20180424173051.15099-1-brgl@bgdev.pl>
- <20180424173051.15099-4-brgl@bgdev.pl>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <aa459c94-bfc2-5cf8-0197-6487ea9152a8@infradead.org>
-Date: Tue, 24 Apr 2018 12:31:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424173051.15099-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424173051.15099-1-brgl@bgdev.pl>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Sender: Rich Felker <dalias@aerifal.cx>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598649611911110790?=
-X-GMAIL-MSGID: =?utf-8?q?1598657251091672312?=
+X-GMAIL-THRID: =?utf-8?q?1598649607100825317?=
+X-GMAIL-MSGID: =?utf-8?q?1598651346170106418?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/24/2018 10:30 AM, Bartosz Golaszewski wrote:
+On Tue, Apr 24, 2018 at 07:30:40PM +0200, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  arch/sh/Kconfig                 |  1 +
->  drivers/base/Kconfig            |  4 ++++
->  drivers/base/platform.c         |  3 +++
->  include/linux/platform_device.h | 32 ++++++++++++++++++++++++++++++++
->  4 files changed, 40 insertions(+)
+> Device tree based systems often use OF_DECLARE() macros for devices
+> that need to be initialized early in the boot process such as clocks,
+> timers etc. However platform devices are more desirable.
+> 
+> This series aims at introducing support for early platform drivers for
+> OF-based systems.
+> 
+> The idea is to have a special compatible fallback string: "earlydev"
+> that similarily to "syscon" would be added to device nodes that need
+> early probing. We then need to call of_early_platform_populate() early
+> in the boot process to actually probe the registered devices.
 
-> index 29b0eb452b3a..37de5e1d6217 100644
-> --- a/drivers/base/Kconfig
-> +++ b/drivers/base/Kconfig
-> @@ -205,6 +205,10 @@ config DEBUG_TEST_DRIVER_REMOVE
->  	  unusable. You should say N here unless you are explicitly looking to
->  	  test this functionality.
->  
-> +config EARLY_PLATFORM_DEVICES
-> +	bool
-> +	default n
+This makes no sense to me. It's not the device tree that should
+contain the knowledge that these need to be registered/probed early in
+the boot. That need is a property of the operating system/device
+drivers, and so the *drivers* should be the ones that contain the
+knowledge.
 
-The default value is already 'n', so we usually ask people to omit that
-value.  OTOH, you could combine those 2 lines into:
+> I am aware that this new compatible does not strictly correspond with
+> the "hardware description only" rule of DT, but we already have many
+> functionalities that break this rule: syscon, gpio hogs etc.
+> 
+> The first user of this new functionality will be the DaVinci platform
+> for which we want to probe the pll, psc and timer drivers early in the
+> boot sequence but keep them implemented as platform drivers.
+> 
+> In the future, if this series gets accepted, this could become and
+> alternative to TIMER_OF_DECLARE, CLK_OF_DECLARE etc. and could lead
+> to deprecating of those macros in favor of early platform drivers.
 
-	def_bool n
+This seems completely unacceptable, in that it would render new
+kernels unable to boot on existing device trees (which may be
+hard-coded in rom on existing devices).
 
-
-> +
->  source "drivers/base/test/Kconfig"
->  
->  config SYS_HYPERVISOR
-
-
--- 
-~Randy
+Rich
