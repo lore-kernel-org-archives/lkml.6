@@ -1,52 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751179AbeDXUBL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 16:01:11 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41971 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeDXUBG (ORCPT
+        id S1751274AbeDXUBQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 16:01:16 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:39612 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751212AbeDXUBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 16:01:06 -0400
-X-Google-Smtp-Source: AIpwx49C4UUB1yGnUm4jkVQZSw4hwdy+TkLhd9BE5FK6u2ndhQ3d3jqTrzDSMm6BCcMlyX2wc05SXQ==
-Date: Tue, 24 Apr 2018 13:01:03 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrea Arcangeli <aarcange@redhat.com>, guro@fb.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaperunmap
-In-Reply-To: <20180424130432.GB17484@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1804241256000.231037@chino.kir.corp.google.com>
-References: <20180419063556.GK17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com> <20180420082349.GW17484@dhcp22.suse.cz> <20180420124044.GA17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804212019400.84222@chino.kir.corp.google.com>
- <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp> <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com> <20180424130432.GB17484@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 24 Apr 2018 16:01:14 -0400
+Date: Tue, 24 Apr 2018 16:01:11 -0400 (EDT)
+Message-Id: <20180424.160111.115150071933075757.davem@davemloft.net>
+To: colin.king@canonical.com
+Cc: madalin.bucur@nxp.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fsl/fman_port: remove redundant check on
+ port->rev_info.major
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180424113945.16371-1-colin.king@canonical.com>
+References: <20180424113945.16371-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018, Michal Hocko wrote:
+From: Colin King <colin.king@canonical.com>
+Date: Tue, 24 Apr 2018 12:39:45 +0100
 
-> Is there any reason why we cannot simply call __oom_reap_task_mm as we
-> have it now? mmap_sem for read shouldn't fail here because this is the
-> last reference of the mm and we are past the ksm and khugepaged
-> synchronizations. So unless my jed laged brain fools me the patch should
-> be as simple as the following (I haven't tested it at all).
+> From: Colin Ian King <colin.king@canonical.com>
 > 
+> The check port->rev_info.major >= 6 is being performed twice, thus
+> the inner second check is always true and is redundant, hence it
+> can be removed. Detected by cppcheck.
+> 
+> drivers/net/ethernet/freescale/fman/fman_port.c:1394]: (warning)
+> Identical inner 'if' condition is always true.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-I wanted to remove all per task checks because they are now irrelevant: 
-this would be the first dependency that exit_mmap() has on any 
-task_struct, which isn't intuitive -- we simply want to exit the mmap.  
-There's no requirement that current owns the mm other than this.  I wanted 
-to avoid the implicit dependency on MMF_OOM_SKIP and make it explicit in 
-the exit path to be matched with the oom reaper.  I didn't want anything 
-additional printed to the kernel log about oom reaping unless the 
-oom_reaper actually needed to intervene, which is useful knowledge outside 
-of basic exiting.
-
-My patch has passed intensive testing on both x86 and powerpc, so I'll ask 
-that it's pushed for 4.17-rc3.  Many thanks to Tetsuo for the suggestion 
-on calling __oom_reap_task_mm() from exit_mmap().
+Applied to net-next, thank you.
