@@ -1,44 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755991AbeDXGZf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 02:25:35 -0400
-Received: from hs01.dk-sys.de ([173.249.23.66]:40986 "EHLO hs01.dk-sys.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752110AbeDXGZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 02:25:34 -0400
-From: Danilo Krummrich <danilokrummrich@dk-develop.de>
-To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Danilo Krummrich <danilokrummrich@dk-develop.de>
-Subject: [PATCH resend] vfs: namei: use path_equal() in follow_dotdot()
-Date: Tue, 24 Apr 2018 08:25:31 +0200
-Message-Id: <20180424062531.14600-1-danilokrummrich@dk-develop.de>
+        id S1756095AbeDXG1G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 02:27:06 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:59505 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755940AbeDXG1C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 02:27:02 -0400
+From: Vignesh R <vigneshr@ti.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: Vignesh R <vigneshr@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
+Subject: [PATCH v3 0/3] ti_am335x_tsc: Fix suspend/resume
+Date: Tue, 24 Apr 2018 11:57:38 +0530
+Message-ID: <20180424062741.7891-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use path_equal() to detect whether we're already in root.
+This patch series fixes couple of issues wrt suspend/resume with TI AM335x
+TSC driver. Disable and clear any pending IRQs before suspend, and
+handle case where TSC wakeup would fail, if there were touch events
+during suspend.
 
-Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
----
- fs/namei.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 186bd2464fd5..6f0dc40f88c5 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1438,10 +1438,8 @@ static int path_parent_directory(struct path *path)
- static int follow_dotdot(struct nameidata *nd)
- {
- 	while(1) {
--		if (nd->path.dentry == nd->root.dentry &&
--		    nd->path.mnt == nd->root.mnt) {
-+		if (path_equal(&nd->path, &nd->root))
- 			break;
--		}
- 		if (nd->path.dentry != nd->path.mnt->mnt_root) {
- 			int ret = path_parent_directory(&nd->path);
- 			if (ret)
+Grygorii Strashko (2):
+  Input: ti_am335x_tsc - Ack pending IRQs at probe and before suspend
+  Input: ti_am335x_tsc - Prevent system suspend when TSC is in use
+
+Vignesh R (1):
+  Input: ti_am335x_tsc - Mark IRQ as wakeup capable
+
+ drivers/input/touchscreen/ti_am335x_tsc.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
 -- 
 2.17.0
