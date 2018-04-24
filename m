@@ -1,84 +1,83 @@
-Return-Path: <SRS0=BGWJ=HQ=goodmis.org=rostedt@kernel.org>
-X-Google-Smtp-Source: AB8JxZqpNZON5hXkS17xX1wIeaIB10MTjYe9FdsT2BpaRPeOYs1QBYOP3vI0XRYuaUUeRo/p9okc
-ARC-Seal: i=1; a=rsa-sha256; t=1524793621; cv=none;
+Return-Path: <wvw@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524602379; cv=none;
         d=google.com; s=arc-20160816;
-        b=JEenRmVOFMqqjTsfryIV0uwB3Wli5nAG1w5k9to4U/mS6GFeYudg4hTjbr7ZlRYRDJ
-         cm1I0ONpkqCopqkR3ttuL8jBUoIzo/gmzDlhAzWHYCcnHCymWet3TWAibey9q5HUxAUv
-         jV+vD5IAhavCRPVkEBAHtVaepcwn++XRpm2NWf7SxSaqVPe0Fua6Rwmrd3PoqrQgQ07O
-         kf6l8goqYbrUy7sc22zq97jPXDGTY2iSpi2Z0iN0IPY/yH0umk73fK+r/EtIVZX0Envc
-         CnT3Tpkbi0fQXPC2tyd8/TowPebT/i/c7b8jlf6V7BwZFn6Ck9redem4wnAzHx25eCKZ
-         8k7A==
+        b=eiX20cS7plqFKXrgp9xXaADwb95i7Ye6oBZeOhGJBwZG00HzRTlIvgFn9JG8zIXfiE
+         H68Iiv2cCrALLrqs16i5WmMAP5lw8kg3tQQ0rOD2+dINbL+lrtVYREsrfu1yjeywmPdX
+         18NjEMDe/rC/D+xPxvg9vbx6274ihaC4Q9rYAN7Glcr8J7iCuMWNqZI+jdWoj4IrBgmw
+         PX4fbi551oLbkvKT0gJXjH2HzGAHGLoiEjMwYWOv65KYy5GzSj/yRqz1hMEdTjY20J8B
+         Z/b629sCt2njDWi0IgX9tWl4ZBxk3Kw+E4DTuC8y4LvMCAc3iZRK0WVd2GMtUdZgYcxn
+         xYpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=HEy20rUCo0/cvvZIlvqZLaHeZkubAd8+H7OIn7uN8po=;
-        b=vpcHWjqYBOiBR1jJUGkMmLdxUB/gmboKj+I2CZjNyDRqOkvMUnQ6E82NFZrUtbe2Nn
-         odtVgQ5rYMAo4fZy/yhmgzd33zjpaQl6cw/42fc+HOOcy5XIkI3zaVaKxuOl9mfDU3tv
-         aFNMzAp2F6iZ13vDS2WEcfp9aoKBT+DYt+NCsUvJgzwKVkkKkRNpwLfjbPL/+QaHh3NP
-         cWsMNShiVhvXW0NEEh+KJjnyl1q0c9I56s5BLZWotXjn41ODGMkm0vf62WcPVOaQuRR5
-         djUXI5mg9gMnYwRhj/PfN/zR8cmoLYg0QTtIsfMegCF1/KcAW9OK0BTfHC8dbptOJsAa
-         7rKA==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=EIbvTsDFJFM76ftJi3V3r7423OaRP15Ty8clscqRxI0=;
+        b=S3b2+9hHulqlANEArVjyIwUGNk6S7eyTWOYYSVIpOmdhoF9kZglKA4irmEEFSbBLSu
+         QE86rqvfR+x9xMSSAe7Z7jgMIPnMEFWS4VPnr73fisIBAyMpnWT6zwlQqYP44AlYS+fy
+         PiCKmoosrTBC5z23ED9bmXJnFefTubbJ2PpgqaT//MgdB3f+/O3fP/qL3xWSwvauccwF
+         Uu2KqJv4MN7JDwcpKjO5hnWS2xnC7uvUB0cLP+wU8Xj/H6yJytv/sJiFLQ/cB6ev7oh1
+         cMzJA0WusxpCA7MhUKM07YngopmTLcnnSanCUS+mEsHgRZQ1f6Tt9MGMNNT4wHoURMx5
+         c3WQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=bgwj=hq=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=BGWJ=HQ=goodmis.org=rostedt@kernel.org
+       dkim=pass header.i=@google.com header.s=20161025 header.b=rzeV+KGz;
+       spf=pass (google.com: domain of wvw@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wvw@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=bgwj=hq=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=BGWJ=HQ=goodmis.org=rostedt@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF352184E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 26 Apr 2018 21:46:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Wei Wang <wvw@google.com>
-Cc: gregkh@linuxfoundation.org, Wei Wang <wei.vince.wang@gmail.com>, Ingo
- Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Kees
- Cook <keescook@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Crt Mori <cmo@melexis.com>, Alexei
- Starovoitov <ast@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] do not call trace_printk on non-debug build
-Message-ID: <20180426214657.612623a3@gandalf.local.home>
-In-Reply-To: <CAGXk5yo-9E7xOibMSWzPKgiduLrjzBA2+i0nhPNKiFnfyL7mUA@mail.gmail.com>
-References: <20180424180812.215900-1-wvw@google.com>
-	<20180424145056.7c29ea18@gandalf.local.home>
-	<CAGXk5yo44kAku+ZYx=8HzOgkEVC7ARNSER4MvWTCz-i51up=ew@mail.gmail.com>
-	<20180424151416.397fbbde@gandalf.local.home>
-	<CAGXk5yriz2CtCN-vkL0q7gdpV+f8+9GJH-FT+v3KBLb-fWoCZA@mail.gmail.com>
-	<20180424152607.71fbee34@gandalf.local.home>
-	<CAGXk5yo-9E7xOibMSWzPKgiduLrjzBA2+i0nhPNKiFnfyL7mUA@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+       dkim=pass header.i=@google.com header.s=20161025 header.b=rzeV+KGz;
+       spf=pass (google.com: domain of wvw@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wvw@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx49rUWPS9YcJqj0/oY/SsFWNj+az4rg72jF7E2IMA+HXDu1BFEMkgn+Z7PRB37mRZwkZrS2Z39CSiCUndFLC2Bw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180424180812.215900-1-wvw@google.com> <20180424145056.7c29ea18@gandalf.local.home>
+ <CAGXk5yo44kAku+ZYx=8HzOgkEVC7ARNSER4MvWTCz-i51up=ew@mail.gmail.com>
+ <20180424151416.397fbbde@gandalf.local.home> <CAGXk5yriz2CtCN-vkL0q7gdpV+f8+9GJH-FT+v3KBLb-fWoCZA@mail.gmail.com>
+ <20180424152607.71fbee34@gandalf.local.home>
+In-Reply-To: <20180424152607.71fbee34@gandalf.local.home>
+From: Wei Wang <wvw@google.com>
+Date: Tue, 24 Apr 2018 20:39:27 +0000
+Message-ID: <CAGXk5yre3aDtVbtEz4=DdBnLrT3U=LPA69jOp9zmkfeYiZ7w=Q@mail.gmail.com>
+Subject: Re: [PATCH] do not call trace_printk on non-debug build
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: gregkh@linuxfoundation.org, Wei Wang <wei.vince.wang@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Crt Mori <cmo@melexis.com>,
+	Alexei Starovoitov <ast@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+	Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598651942651560845?=
-X-GMAIL-MSGID: =?utf-8?q?1598861996049654165?=
+X-GMAIL-MSGID: =?utf-8?q?1598661464629691475?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 25 Apr 2018 04:53:33 +0000
-Wei Wang <wvw@google.com> wrote:
+On Tue, Apr 24, 2018, 12:26 Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Tue, Apr 24, 2018 at 12:26 PM Steven Rostedt <rostedt@goodmis.org> wrote:
-> > A lot of kernel developers use trace_printk() and I want to make it as
-> > easy to use as possible. I don't want to add a config to enable it,
-> > because that would be something that could be rather annoying.  
-> 
-> > Let's add it to checkpatch and see if that can draining the swamp of
-> > abusers.  
-> 
-> 
-> Currently I see f2fs trace is using this when having CONFIG_F2FS_IO_TRACE,
-> so I am not sure how checkpatch would work. How about we add a BUILD_BUG
-> surrounded by a config which would let us flag abuse easily on build time?
+> On Tue, 24 Apr 2018 19:20:03 +0000
+> Wei Wang <wvw@google.com> wrote:
 
-I don't want a config to have to be set for adding this. That would
-really irritate myself, as I constantly take configs from others for
-debugging purposes and then slam trace_printk() all over the place. It
-would be annoying to have to remember to enable a config. And having a
-config would also change the way the kernel gets built, and for
-debugging the less variables the better.
+> > checkpatch.pl sounds good. One thing to add is we have many off tree
+> > patches with abuse trace_printk. Also as you mentioned, given this is
+> > really not for use in production and we have been cleaning this our on
+our
+> > side for years, could we consider to enforce this in kernel?
 
-But you are correct. I see lots of abusers with trace_printk(). I think
-it's time for me to start removing them.
+> That nasty warning was suppose to be the enforcement. I would expect
+> nobody would ship a kernel where it produced such a message on boot (or
+> loading of a module). If they don't notice, then they are not testing
+> their code.
 
--- Steve
+> A lot of kernel developers use trace_printk() and I want to make it as
+> easy to use as possible. I don't want to add a config to enable it,
+> because that would be something that could be rather annoying.
+
+The config is not something new and it is controlling pr_debug and
+pr_devel, so might not be too annoying, IMHO. But I agree this is not a
+problem from us but from abusers.
+
+Thanks!
+-Wei
+
+> Let's add it to checkpatch and see if that can draining the swamp of
+> abusers.
+
+> -- Steve
