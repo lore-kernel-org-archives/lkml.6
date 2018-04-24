@@ -1,99 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755928AbeDXFKS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 01:10:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47784 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752207AbeDXFKP (ORCPT
+        id S1755774AbeDXFLy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 01:11:54 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:33981 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755600AbeDXFLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 01:10:15 -0400
-From: Stewart Smith <stewart@linux.ibm.com>
-To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org
-Cc: npiggin@gmail.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, ppaidipe@linux.vnet.ibm.com,
-        svaidy@linux.vnet.ibm.com,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: Re: [PATCH] cpufreq: powernv: Fix the hardlockup by synchronus smp_call in timer interrupt
-In-Reply-To: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-References: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-Date: Tue, 24 Apr 2018 15:10:04 +1000
+        Tue, 24 Apr 2018 01:11:52 -0400
+Message-Id: <201804240511.w3O5BY4o090598@www262.sakura.ne.jp>
+Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaperunmap
+From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To: David Rientjes <rientjes@google.com>
+Cc: mhocko@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, guro@fb.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18042405-2213-0000-0000-00000297F05F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008910; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01022420; UDB=6.00521853; IPR=6.00801654;
- MB=3.00020741; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-24 05:10:14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042405-2214-0000-0000-000059DF4C7D
-Message-Id: <87y3hdb36b.fsf@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804240050
+Date: Tue, 24 Apr 2018 14:11:34 +0900
+References: <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp> <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
-> gpstate_timer_handler() uses synchronous smp_call to set the pstate
-> on the requested core. This causes the below hard lockup:
->
-> [c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
-> [c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
-> [c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
-> [c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
-> [c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
-> [c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
-> [c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
-> [c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
-> [c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
-> [c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
-> --- interrupt: 901 at doorbell_global_ipi+0x34/0x50
-> LR = arch_send_call_function_ipi_mask+0x120/0x130
-> [c000003fe566ba50] [c00000000004876c] arch_send_call_function_ipi_mask+0x4c/0x130 (unreliable)
-> [c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
-> [c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
-> [c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
-> [c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
-> [c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
-> [c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
-> [c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
->
-> Fix this by using the asynchronus smp_call in the timer interrupt handler.
-> We don't have to wait in this handler until the pstates are changed on
-> the core. This change will not have any impact on the global pstate
-> ramp-down algorithm.
->
-> Reported-by: Nicholas Piggin <npiggin@gmail.com>
-> Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
-> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-> ---
->  drivers/cpufreq/powernv-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
-> index 0591874..7e0c752 100644
-> --- a/drivers/cpufreq/powernv-cpufreq.c
-> +++ b/drivers/cpufreq/powernv-cpufreq.c
-> @@ -721,7 +721,7 @@ void gpstate_timer_handler(struct timer_list *t)
->  	spin_unlock(&gpstates->gpstate_lock);
->
->  	/* Timer may get migrated to a different cpu on cpu hot unplug */
-> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
-> +	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 0);
->  }
+> On Sun, 22 Apr 2018, Tetsuo Handa wrote:
+> 
+> > > I'm wondering why you do not see oom killing of many processes if the 
+> > > victim is a very large process that takes a long time to free memory in 
+> > > exit_mmap() as I do because the oom reaper gives up trying to acquire 
+> > > mm->mmap_sem and just sets MMF_OOM_SKIP itself.
+> > > 
+> > 
+> > We can call __oom_reap_task_mm() from exit_mmap() (or __mmput()) before
+> > exit_mmap() holds mmap_sem for write. Then, at least memory which could
+> > have been reclaimed if exit_mmap() did not hold mmap_sem for write will
+> > be guaranteed to be reclaimed before MMF_OOM_SKIP is set.
+> > 
+> 
+> I think that's an exceptionally good idea and will mitigate the concerns 
+> of others.
+> 
+> It can be done without holding mm->mmap_sem in exit_mmap() and uses the 
+> same criteria that the oom reaper uses to set MMF_OOM_SKIP itself, so we 
+> don't get dozens of unnecessary oom kills.
+> 
+> What do you think about this?  It passes preliminary testing on powerpc 
+> and I'm enqueued it for much more intensive testing.  (I'm wishing there 
+> was a better way to acknowledge your contribution to fixing this issue, 
+> especially since you brought up the exact problem this is addressing in 
+> previous emails.)
+> 
 
-Should this have:
-Fixes: eaa2c3aeef83f
-and CC stable v4.7+ ?
+I don't think this patch is safe, for exit_mmap() is calling
+mmu_notifier_invalidate_range_{start,end}() which might block with oom_lock
+held when oom_reap_task_mm() is waiting for oom_lock held by exit_mmap().
+exit_mmap() must not block while holding oom_lock in order to guarantee that
+oom_reap_task_mm() can give up.
 
+Some suggestion on top of your patch:
+
+ mm/mmap.c     | 13 +++++--------
+ mm/oom_kill.c | 51 ++++++++++++++++++++++++++-------------------------
+ 2 files changed, 31 insertions(+), 33 deletions(-)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 981eed4..7b31357 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3019,21 +3019,18 @@ void exit_mmap(struct mm_struct *mm)
+ 		/*
+ 		 * Manually reap the mm to free as much memory as possible.
+ 		 * Then, as the oom reaper, set MMF_OOM_SKIP to disregard this
+-		 * mm from further consideration.  Taking mm->mmap_sem for write
+-		 * after setting MMF_OOM_SKIP will guarantee that the oom reaper
+-		 * will not run on this mm again after mmap_sem is dropped.
++		 * mm from further consideration. Setting MMF_OOM_SKIP under
++		 * oom_lock held will guarantee that the OOM reaper will not
++		 * run on this mm again.
+ 		 *
+ 		 * This needs to be done before calling munlock_vma_pages_all(),
+ 		 * which clears VM_LOCKED, otherwise the oom reaper cannot
+ 		 * reliably test it.
+ 		 */
+-		mutex_lock(&oom_lock);
+ 		__oom_reap_task_mm(mm);
+-		mutex_unlock(&oom_lock);
+-
++		mutex_lock(&oom_lock);
+ 		set_bit(MMF_OOM_SKIP, &mm->flags);
+-		down_write(&mm->mmap_sem);
+-		up_write(&mm->mmap_sem);
++		mutex_unlock(&oom_lock);
+ 	}
+ 
+ 	if (mm->locked_vm) {
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 8ba6cb8..9a29df8 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -523,21 +523,15 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ {
+ 	bool ret = true;
+ 
++	mutex_lock(&oom_lock);
++
+ 	/*
+-	 * We have to make sure to not race with the victim exit path
+-	 * and cause premature new oom victim selection:
+-	 * oom_reap_task_mm		exit_mm
+-	 *   mmget_not_zero
+-	 *				  mmput
+-	 *				    atomic_dec_and_test
+-	 *				  exit_oom_victim
+-	 *				[...]
+-	 *				out_of_memory
+-	 *				  select_bad_process
+-	 *				    # no TIF_MEMDIE task selects new victim
+-	 *  unmap_page_range # frees some memory
++	 * MMF_OOM_SKIP is set by exit_mmap() when the OOM reaper can't
++	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
++	 * under oom_lock held.
+ 	 */
+-	mutex_lock(&oom_lock);
++	if (test_bit(MMF_OOM_SKIP, &mm->flags))
++		goto unlock_oom;
+ 
+ 	if (!down_read_trylock(&mm->mmap_sem)) {
+ 		ret = false;
+@@ -557,18 +551,6 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 		goto unlock_oom;
+ 	}
+ 
+-	/*
+-	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
+-	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
+-	 * under mmap_sem for reading because it serializes against the
+-	 * down_write();up_write() cycle in exit_mmap().
+-	 */
+-	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
+-		up_read(&mm->mmap_sem);
+-		trace_skip_task_reaping(tsk->pid);
+-		goto unlock_oom;
+-	}
+-
+ 	trace_start_task_reaping(tsk->pid);
+ 
+ 	__oom_reap_task_mm(mm);
+@@ -610,8 +592,27 @@ static void oom_reap_task(struct task_struct *tsk)
+ 	/*
+ 	 * Hide this mm from OOM killer because it has been either reaped or
+ 	 * somebody can't call up_write(mmap_sem).
++	 *
++	 * We have to make sure to not cause premature new oom victim selection:
++	 *
++	 * __alloc_pages_may_oom()     oom_reap_task_mm()/exit_mmap()
++	 *   mutex_trylock(&oom_lock)
++	 *   get_page_from_freelist(ALLOC_WMARK_HIGH) # fails
++	 *                               unmap_page_range() # frees some memory
++	 *                               set_bit(MMF_OOM_SKIP)
++	 *   out_of_memory()
++	 *     select_bad_process()
++	 *       test_bit(MMF_OOM_SKIP) # selects new oom victim
++	 *   mutex_unlock(&oom_lock)
++	 *
++	 * Setting MMF_OOM_SKIP under oom_lock held will guarantee that the
++	 * last second alocation attempt is done by __alloc_pages_may_oom()
++	 * before out_of_memory() selects next OOM victim by finding
++	 * MMF_OOM_SKIP.
+ 	 */
++	mutex_lock(&oom_lock);
+ 	set_bit(MMF_OOM_SKIP, &mm->flags);
++	mutex_unlock(&oom_lock);
+ 
+ 	/* Drop a reference taken by wake_oom_reaper */
+ 	put_task_struct(tsk);
 -- 
-Stewart Smith
-OPAL Architect, IBM.
+1.8.3.1
