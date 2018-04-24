@@ -1,319 +1,252 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932777AbeDXCvT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 22:51:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44330 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932721AbeDXCvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 22:51:17 -0400
-Date: Mon, 23 Apr 2018 20:51:11 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: kvm@vger.kernel.org, kwankhede@nvidia.com,
-        linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH 2/3] sample: vfio mdev display - guest driver
-Message-ID: <20180423205111.29016a27@w520.home>
-In-Reply-To: <20180409103513.8020-3-kraxel@redhat.com>
-References: <20180409103513.8020-1-kraxel@redhat.com>
-        <20180409103513.8020-3-kraxel@redhat.com>
+        id S932804AbeDXCwG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 22:52:06 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7201 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932721AbeDXCwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 22:52:05 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: avoid stucking GC due to atomic write
+Date: Tue, 24 Apr 2018 10:51:36 +0800
+Message-ID: <20180424025136.44247-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  9 Apr 2018 12:35:12 +0200
-Gerd Hoffmann <kraxel@redhat.com> wrote:
+f2fs doesn't allow abuse on atomic write class interface, so except
+limiting in-mem pages' total memory usage capacity, we need to limit
+atomic-write usage as well when filesystem is seriously fragmented,
+otherwise we may run into infinite loop during foreground GC because
+target blocks in victim segment are belong to atomic opened file for
+long time.
 
-> Guest fbdev driver for CONFIG_SAMPLE_VFIO_MDEV_MDPY.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  samples/vfio-mdev/mdpy-fb.c | 232 ++++++++++++++++++++++++++++++++++++++++++++
->  samples/Kconfig             |   9 ++
->  samples/vfio-mdev/Makefile  |   1 +
->  3 files changed, 242 insertions(+)
->  create mode 100644 samples/vfio-mdev/mdpy-fb.c
+Now, we will detect failure due to atomic write in foreground GC, if
+the count exceeds threshold, we will drop all atomic written data in
+cache, by this, I expect it can keep our system running safely to
+prevent Dos attack.
 
-Looks good to me, just some trivial checkpatch issues below.
+In addition, his patch adds to show GC skip information in debugfs,
+now it just shows count of skipped caused by atomic write.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- add to show skip info in debugfs.
+ fs/f2fs/debug.c   |  8 ++++++++
+ fs/f2fs/f2fs.h    |  2 ++
+ fs/f2fs/file.c    |  5 +++++
+ fs/f2fs/gc.c      | 29 +++++++++++++++++++++++++----
+ fs/f2fs/gc.h      |  3 +++
+ fs/f2fs/segment.c |  1 +
+ fs/f2fs/segment.h |  2 ++
+ 7 files changed, 46 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 0fbd674c66fb..607b258a9b61 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -104,6 +104,10 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 	si->avail_nids = NM_I(sbi)->available_nids;
+ 	si->alloc_nids = NM_I(sbi)->nid_cnt[PREALLOC_NID];
+ 	si->bg_gc = sbi->bg_gc;
++	si->skipped_atomic_files[BG_GC] =
++			sbi->gc_thread->skipped_atomic_files[BG_GC];
++	si->skipped_atomic_files[FG_GC] =
++			sbi->gc_thread->skipped_atomic_files[FG_GC];
+ 	si->util_free = (int)(free_user_blocks(sbi) >> sbi->log_blocks_per_seg)
+ 		* 100 / (int)(sbi->user_block_count >> sbi->log_blocks_per_seg)
+ 		/ 2;
+@@ -341,6 +345,10 @@ static int stat_show(struct seq_file *s, void *v)
+ 				si->bg_data_blks);
+ 		seq_printf(s, "  - node blocks : %d (%d)\n", si->node_blks,
+ 				si->bg_node_blks);
++		seq_printf(s, "Skipped : atomic write %llu (%llu)\n",
++				si->skipped_atomic_files[BG_GC] +
++				si->skipped_atomic_files[FG_GC],
++				si->skipped_atomic_files[BG_GC]);
+ 		seq_puts(s, "\nExtent Cache:\n");
+ 		seq_printf(s, "  - Hit Count: L1-1:%llu L1-2:%llu L2:%llu\n",
+ 				si->hit_largest, si->hit_cached,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 75d3b4875429..c2b92cb377c6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2254,6 +2254,7 @@ enum {
+ 	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
+ 	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
+ 	FI_PIN_FILE,		/* indicate file should not be gced */
++	FI_ATOMIC_REVOKE_REQUEST,/* indicate atomic committed data has been dropped */
+ };
  
-> diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
-> new file mode 100644
-> index 0000000000..0ebd8feead
-> --- /dev/null
-> +++ b/samples/vfio-mdev/mdpy-fb.c
-> @@ -0,0 +1,232 @@
-> +/*
-
-SPDX license
-
-> + * Framebuffer driver for mdpy (mediated virtual pci display device).
-> + *
-> + * See mdpy-defs.h for device specs
-> + *
-> + *   (c) Gerd Hoffmann <kraxel@redhat.com>
-> + *
-> + * Using some code snippets from simplefb and cirrusfb.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + */
-> +#include <linux/errno.h>
-> +#include <linux/fb.h>
-> +#include <linux/io.h>
-> +#include <linux/pci.h>
-> +#include <linux/module.h>
-> +#include <drm/drm_fourcc.h>
-> +#include "mdpy-defs.h"
-> +
-> +static const struct fb_fix_screeninfo mdpy_fb_fix = {
-> +	.id		= "mdpy-fb",
-> +	.type		= FB_TYPE_PACKED_PIXELS,
-> +	.visual		= FB_VISUAL_TRUECOLOR,
-> +	.accel		= FB_ACCEL_NONE,
-> +};
-> +
-> +static const struct fb_var_screeninfo mdpy_fb_var = {
-> +	.height		= -1,
-> +	.width		= -1,
-> +	.activate	= FB_ACTIVATE_NOW,
-> +	.vmode		= FB_VMODE_NONINTERLACED,
-> +
-> +	.bits_per_pixel = 32,
-> +	.transp.offset	= 24,
-> +	.red.offset	= 16,
-> +	.green.offset	= 8,
-> +	.blue.offset	= 0,
-> +	.transp.length	= 8,
-> +	.red.length	= 8,
-> +	.green.length	= 8,
-> +	.blue.length	= 8,
-> +};
-> +
-> +#define PSEUDO_PALETTE_SIZE 16
-> +
-> +struct mdpy_fb_par {
-> +	u32 palette[PSEUDO_PALETTE_SIZE];
-> +};
-> +
-> +static int mdpy_fb_setcolreg(u_int regno, u_int red, u_int green, u_int blue,
-> +			      u_int transp, struct fb_info *info)
-> +{
-> +	u32 *pal = info->pseudo_palette;
-> +	u32 cr = red >> (16 - info->var.red.length);
-> +	u32 cg = green >> (16 - info->var.green.length);
-> +	u32 cb = blue >> (16 - info->var.blue.length);
-> +	u32 value;
-> +
-> +	if (regno >= PSEUDO_PALETTE_SIZE)
-> +		return -EINVAL;
-> +
-> +	value = (cr << info->var.red.offset) |
-> +		(cg << info->var.green.offset) |
-> +		(cb << info->var.blue.offset);
-> +	if (info->var.transp.length > 0) {
-> +		u32 mask = (1 << info->var.transp.length) - 1;
-
-Technically wants a new line here, I'm torn whether I'd ignore that
-warning.
-
-> +		mask <<= info->var.transp.offset;
-> +		value |= mask;
-> +	}
-> +	pal[regno] = value;
-> +
-> +	return 0;
-> +}
-> +
-> +static void mdpy_fb_destroy(struct fb_info *info)
-> +{
-> +	if (info->screen_base)
-> +		iounmap(info->screen_base);
-> +}
-> +
-> +static struct fb_ops mdpy_fb_ops = {
-> +	.owner		= THIS_MODULE,
-> +	.fb_destroy	= mdpy_fb_destroy,
-> +	.fb_setcolreg	= mdpy_fb_setcolreg,
-> +	.fb_fillrect	= cfb_fillrect,
-> +	.fb_copyarea	= cfb_copyarea,
-> +	.fb_imageblit	= cfb_imageblit,
-> +};
-> +
-> +static int mdpy_fb_probe(struct pci_dev *pdev,
-> +			 const struct pci_device_id *ent)
-> +{
-> +	struct fb_info *info;
-> +	struct mdpy_fb_par *par;
-> +	u32 format, width, height;
-> +	int ret;
-> +
-> +	ret = pci_enable_device(pdev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = pci_request_regions(pdev, "mdpy-fb");
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	pci_read_config_dword(pdev, MDPY_FORMAT_OFFSET, &format);
-> +	pci_read_config_dword(pdev, MDPY_WIDTH_OFFSET,	&width);
-> +	pci_read_config_dword(pdev, MDPY_HEIGHT_OFFSET, &height);
-> +	if (format != DRM_FORMAT_XRGB8888) {
-> +		dev_err(&pdev->dev, "format mismatch (0x%x != 0x%x)\n",
-> +			format, DRM_FORMAT_XRGB8888);
-> +		return -EINVAL;
-> +	}
-> +	if (width < 100	 || width > 10000) {
-> +		dev_err(&pdev->dev, "width (%d) out of range\n", width);
-> +		return -EINVAL;
-> +	}
-> +	if (height < 100 || height > 10000) {
-> +		dev_err(&pdev->dev, "height (%d) out of range\n", height);
-> +		return -EINVAL;
-> +	}
-> +	dev_info(&pdev->dev, "mdpy found: %dx%d framebuffer\n",
-> +		 width, height);
-> +
-> +	info = framebuffer_alloc(sizeof(struct mdpy_fb_par), &pdev->dev);
-> +	if (!info)
-> +		goto err_release_regions;
-> +	pci_set_drvdata(pdev, info);
-> +	par = info->par;
-> +
-> +	info->fix = mdpy_fb_fix;
-> +	info->fix.smem_start = pci_resource_start(pdev, 0);
-> +	info->fix.smem_len = pci_resource_len(pdev, 0);
-> +	info->fix.line_length = width * 4;
-> +
-> +	info->var = mdpy_fb_var;
-> +	info->var.xres = width;
-> +	info->var.yres = height;
-> +	info->var.xres_virtual = width;
-> +	info->var.yres_virtual = height;
-> +
-> +	info->screen_size = info->fix.smem_len;
-> +	info->screen_base = ioremap(info->fix.smem_start,
-> +				    info->screen_size);
-> +	if (!info->screen_base) {
-> +		dev_err(&pdev->dev, "ioremap(pcibar) failed\n");
-> +		ret = -EIO;
-> +		goto err_release_fb;
-> +	}
-> +
-> +	info->apertures = alloc_apertures(1);
-> +	if (!info->apertures) {
-> +		ret = -ENOMEM;
-> +		goto err_unmap;
-> +	}
-> +	info->apertures->ranges[0].base = info->fix.smem_start;
-> +	info->apertures->ranges[0].size = info->fix.smem_len;
-> +
-> +	info->fbops = &mdpy_fb_ops;
-> +	info->flags = FBINFO_DEFAULT;
-> +	info->pseudo_palette = par->palette;
-> +
-> +	ret = register_framebuffer(info);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev,
-> +			"mdpy-fb device register failed: %d\n", ret);
-> +		goto err_unmap;
-> +	}
-> +
-> +	dev_info(&pdev->dev, "fb%d registered\n", info->node);
-> +	return 0;
-> +
-> +err_unmap:
-> +	iounmap(info->screen_base);
-> +
-> +err_release_fb:
-> +	framebuffer_release(info);
-> +
-> +err_release_regions:
-> +	pci_release_regions(pdev);
-> +
-> +	return ret;
-> +}
-> +
-> +static void mdpy_fb_remove(struct pci_dev *pdev)
-> +{
-> +	struct fb_info *info = pci_get_drvdata(pdev);
-> +
-> +	unregister_framebuffer(info);
-> +	framebuffer_release(info);
-> +}
-> +
-> +static struct pci_device_id mdpy_fb_pci_table[] = {
-> +	{
-> +		.vendor	   = MDPY_PCI_VENDOR_ID,
-> +		.device	   = MDPY_PCI_DEVICE_ID,
-> +		.subvendor = MDPY_PCI_SUBVENDOR_ID,
-> +		.subdevice = MDPY_PCI_SUBDEVICE_ID,
-> +	},{
-
-Space after comma, as in the first patch this is the only error from
-checkpatch.  Thanks,
-
-Alex
-
-> +		/* end of list */
-> +	}
-> +};
-> +
-> +static struct pci_driver mdpy_fb_pci_driver = {
-> +	.name		= "mdpy-fb",
-> +	.id_table	= mdpy_fb_pci_table,
-> +	.probe		= mdpy_fb_probe,
-> +	.remove		= mdpy_fb_remove,
-> +};
-> +
-> +static int __init mdpy_fb_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = pci_register_driver(&mdpy_fb_pci_driver);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +module_init(mdpy_fb_init);
-> +
-> +MODULE_DEVICE_TABLE(pci, mdpy_fb_pci_table);
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index a0c104adda..755430c788 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -119,6 +119,15 @@ config SAMPLE_VFIO_MDEV_MDPY
->  	  mediated device.  It is a simple framebuffer and supports
->  	  the region display interface (VFIO_GFX_PLANE_TYPE_REGION).
->  
-> +config SAMPLE_VFIO_MDEV_MDPY_FB
-> +	tristate "Build VFIO mdpy example guest fbdev driver -- loadable module only"
-> +	depends on FB && m
-> +	select FB_CFB_FILLRECT
-> +	select FB_CFB_COPYAREA
-> +	select FB_CFB_IMAGEBLIT
-> +	help
-> +	  Guest fbdev driver for the virtual display sample driver.
-> +
->  config SAMPLE_STATX
->  	bool "Build example extended-stat using code"
->  	depends on BROKEN
-> diff --git a/samples/vfio-mdev/Makefile b/samples/vfio-mdev/Makefile
-> index 031d6b88e9..7a5790aaec 100644
-> --- a/samples/vfio-mdev/Makefile
-> +++ b/samples/vfio-mdev/Makefile
-> @@ -1,2 +1,3 @@
->  obj-$(CONFIG_SAMPLE_VFIO_MDEV_MTTY) += mtty.o
->  obj-$(CONFIG_SAMPLE_VFIO_MDEV_MDPY) += mdpy.o
-> +obj-$(CONFIG_SAMPLE_VFIO_MDEV_MDPY_FB) += mdpy-fb.o
+ static inline void __mark_inode_dirty_flag(struct inode *inode,
+@@ -3010,6 +3011,7 @@ struct f2fs_stat_info {
+ 	int bg_node_segs, bg_data_segs;
+ 	int tot_blks, data_blks, node_blks;
+ 	int bg_data_blks, bg_node_blks;
++	unsigned long long skipped_atomic_files[2];
+ 	int curseg[NR_CURSEG_TYPE];
+ 	int cursec[NR_CURSEG_TYPE];
+ 	int curzone[NR_CURSEG_TYPE];
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index a352804af244..0cfa65c21d3f 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1702,6 +1702,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ skip_flush:
+ 	set_inode_flag(inode, FI_HOT_DATA);
+ 	set_inode_flag(inode, FI_ATOMIC_FILE);
++	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+ 
+ 	F2FS_I(inode)->inmem_task = current;
+@@ -1750,6 +1751,10 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
+ 	}
+ err_out:
++	if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST)) {
++		clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
++		ret = -EINVAL;
++	}
+ 	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+ 	inode_unlock(inode);
+ 	mnt_drop_write_file(filp);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 2febb84b2fd6..ec6cb7b417a1 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -135,6 +135,9 @@ int init_gc_context(struct f2fs_sb_info *sbi)
+ 
+ 	init_rwsem(&gc_th->gc_rwsem);
+ 
++	gc_th->skipped_atomic_files[BG_GC] = 0;
++	gc_th->skipped_atomic_files[FG_GC] = 0;
++
+ 	sbi->gc_thread = gc_th;
+ 
+ 	return 0;
+@@ -629,7 +632,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+  * This can be used to move blocks, aka LBAs, directly on disk.
+  */
+ static void move_data_block(struct inode *inode, block_t bidx,
+-					unsigned int segno, int off)
++				int gc_type, unsigned int segno, int off)
+ {
+ 	struct f2fs_io_info fio = {
+ 		.sbi = F2FS_I_SB(inode),
+@@ -656,8 +659,10 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+ 		goto out;
+ 
+-	if (f2fs_is_atomic_file(inode))
++	if (f2fs_is_atomic_file(inode)) {
++		GC_I(F2FS_I_SB(inode))->skipped_atomic_files[gc_type]++;
+ 		goto out;
++	}
+ 
+ 	if (f2fs_is_pinned_file(inode)) {
+ 		f2fs_pin_file_control(inode, true);
+@@ -763,8 +768,10 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+ 		goto out;
+ 
+-	if (f2fs_is_atomic_file(inode))
++	if (f2fs_is_atomic_file(inode)) {
++		GC_I(F2FS_I_SB(inode))->skipped_atomic_files[gc_type]++;
+ 		goto out;
++	}
+ 	if (f2fs_is_pinned_file(inode)) {
+ 		if (gc_type == FG_GC)
+ 			f2fs_pin_file_control(inode, true);
+@@ -926,7 +933,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 			start_bidx = start_bidx_of_node(nofs, inode)
+ 								+ ofs_in_node;
+ 			if (f2fs_post_read_required(inode))
+-				move_data_block(inode, start_bidx, segno, off);
++				move_data_block(inode, start_bidx, gc_type,
++								segno, off);
+ 			else
+ 				move_data_page(inode, start_bidx, gc_type,
+ 								segno, off);
+@@ -1043,6 +1051,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+ 		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
+ 	};
++	unsigned long long last_skipped =
++			GC_I(sbi)->skipped_atomic_files[FG_GC];
++	unsigned int skipped_round = 0, round = 0;
+ 
+ 	trace_f2fs_gc_begin(sbi->sb, sync, background,
+ 				get_pages(sbi, F2FS_DIRTY_NODES),
+@@ -1094,11 +1105,21 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 		sec_freed++;
+ 	total_freed += seg_freed;
+ 
++	if (gc_type == FG_GC) {
++		if (GC_I(sbi)->skipped_atomic_files[FG_GC] > last_skipped)
++			skipped_round++;
++		last_skipped = GC_I(sbi)->skipped_atomic_files[FG_GC];
++		round++;
++	}
++
+ 	if (gc_type == FG_GC)
+ 		sbi->cur_victim_sec = NULL_SEGNO;
+ 
+ 	if (!sync) {
+ 		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
++			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
++				skipped_round * 2 >= round)
++				drop_inmem_pages_all(sbi);
+ 			segno = NULL_SEGNO;
+ 			goto gc_more;
+ 		}
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index 9a5b273328c2..9aa341cc4347 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -40,6 +40,9 @@ struct f2fs_gc_kthread {
+ 	unsigned int gc_idle;
+ 	unsigned int gc_urgent;
+ 	unsigned int gc_wake;
++
++	/* for skip statistic */
++	unsigned long long skipped_atomic_files[2];
+ };
+ 
+ struct gc_inode_list {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index f787eea1b2f6..ce108a909d66 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -293,6 +293,7 @@ void drop_inmem_pages_all(struct f2fs_sb_info *sbi)
+ 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+ 
+ 	if (inode) {
++		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+ 		drop_inmem_pages(inode);
+ 		iput(inode);
+ 	}
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 492ad0c86fa9..7702b054689c 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -215,6 +215,8 @@ struct segment_allocation {
+ #define IS_DUMMY_WRITTEN_PAGE(page)			\
+ 		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
+ 
++#define MAX_SKIP_ATOMIC_COUNT			16
++
+ struct inmem_pages {
+ 	struct list_head list;
+ 	struct page *page;
+-- 
+2.15.0.55.gc2ece9dc4de6
