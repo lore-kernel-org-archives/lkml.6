@@ -1,130 +1,83 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3191090-1524776146-5-3682898457972236699
+X-Cyrus-Session-Id: sloti22d1t05-3069549-1524575946-2-2107447222004090659
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524776146; b=bG7hchGygvF1xwe2lpfCDOKJp8HUwVVtD5chFxlKkv/nhYR0rD
-    pwvD8SGBu4QrrRT2SlOO2NVN4lvgCvh+KffX8YBzotK4SgUV2zMEONJYTvrF4nPG
-    YmUA0HczZZ5ee7D+auk7iLxtHLGKJBldm5s2f6KDVTl8eZC7ZMc4G3bsJuesCuQN
-    dllLbUFA/tpsini3GO3Yq5IxWRppLw5VGeV6+f7h2MR4Mx68pJpqQseFA1l/qHeC
-    yTY90+U6q1pPzjCCvrFZl+wqYeWM47ll+FCtTQ5VwZ5ljb5Oc9OEc3jX6ac8XG9W
-    EOXb/G3fsj908O7DHrf99wg+XvexMqMCD8cg==
+    1524575946; b=mT/oUR76EgGOxDseC0oFbXLHfSd2djiUx9cXgWUOvuasF/4GZt
+    aMqKsKXzQ+KiuRJednVJmlBHyfX9IraKDT/HWYoKfrkUR0ZM1BnNqD7MCqr448e/
+    PxiQ6OQZPV+h4vOR4NFpCAU+s3huLG9XIJngD1bprN/t1mRWCRNMkhg9hWIyA/AU
+    tt37t9qOlKnT5jjzEzk3XodtdzF98UzgW0dTyxMv+0VOa6Y39VVZ5fR9HcmM11rI
+    NSRIzzzKCskx/TGfHK4ejOfaybaE6cBgXJlQxZTCGrzvEv/RfNTU/ye3oy2hr9J+
+    W7/riu6mQkM/q04TLTtCwJ62uFHkt+ARpw+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524776146; bh=tgPu6
-    Hzh38O+Py8/XudzFA3A2Fy+l2nf8IjisfSNWds=; b=sNQ72v1QGwoqb6Tlqg1Fq
-    9LXsgjteQuCI6Gakp5pTqnhY4cuk7WlDSlyhB4QPtaMRJIV5k/NAO5Y8L3SCrC5C
-    ZHTcDS5O2ACn/POhkaFbIHt7fmKxq+di1cQ3nzXi0FFMt6nddbSDdHsz1URHdozP
-    jCzaVccfkw3du3zPWw6paCApHYY9mn7cYnNmqB5XnbGVWTtj8GltV2PMYCznB7Rr
-    b7axuBiZmLLbIV7kSep3aJVzvHpI1A8qh4JFEnLi2nDl+SRq3SJ1pvW37VK/Tjct
-    /iEYHF+wBNEdVKNnmxeUEM02qCsGUQyRSlfcRFYwa+oszaEstaXektYX8wvB2n+l
-    A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JdtVJKil x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524575946; bh=ja6lj
+    hcYy2ION0XtJRC3gLT40ke90BJNqr+vI7iJoyc=; b=RbNnsLASVS3kxwqIvmsGL
+    c4oFXyLXYTPtGeyneXRBBckpiLU4w66KETbzojATb/sc1sDXH8j6aF90GimJryN5
+    I0ut0Vov/8jlyxNq2PzWxS5bUahvOi92+MoOxX9HWkz2Ll3dev7U8REmW1KGdmNO
+    G2JA9wplmIqlncKt4O9+C8pQj1+SwjJBufhwaq2At9uTtFkOxCiqapWD5lNggzT8
+    hg3S7a0EuCWZqapI5Xt0h/DzqGaYh7/+Cpuiwagpdr/JL6FWkjamqS7yr6xGEobt
+    MOQcKxnGEiDWefXSmRQeTgKrhE2FTipjJcUbfZE4jtQ+AAg9abp7NL3mqYqysGdz
+    Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HcuKoJWp x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=iRvFw2VH;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JdtVJKil x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HcuKoJWp x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=iRvFw2VH;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHsWrDVIy15rzZ+/qHtSQ45Cx/vbGAB6ELecTrugDCc35IM5aP3HNy+lsvSJcRqF/GUJcHFZ/5muDvlZT+mY84RRqlmNxZXbDRyiRl5sniV23ADGejeD
-    2V5IZGAyFxvTBskfW5UwVSldleqZEOslaz7bducXvZFpvM8mTotyrfnd6kfxex/1QpDlf5eQ9MPuqFtQ0UKSVAeXjhsoD6P+cSleHHLC1LXGdHRA/HZeZjL2
-    erHdkiME3BIf+yVwmuQhrg==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=R4fxTKrshSIA:10 a=6RrQ652yKWUA:10
-    a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10 a=Lf-vpJhqX20A:10 a=-uNXE31MpBQA:10
-    a=jJxKW8Ag-pUA:10 a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=DDOyTI_5AAAA:8
-    a=-3s3PlHBCDVvyqGv8nkA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfPGBYz/fUzBqU/U9V79fP6yhi7UVRoDaaTl5kKYDNmoLT6x7cEpugGQkk+qS/7iZMqXiHBH2yR/y+aaXKDqyeLvPUHBBaknsHkF7R7ElFCImdG62JB+1
+    Io4enVpc4fhMR+Ju8TYQfR/Rus2fw92Kg0iTwl3WrUZ+CDKSYilK7Kmvud3U/sBbHEEXegrYBPFWyVpkZwaGI+dr2eXZghQuNm64GdazryN7+YFVidWHrOPJ
+    UrtDj6i00lVCYvGEmcU0XQ==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=UWLGKgljVrAA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10
+    a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=w9j5uuQj-3BbXOR1XwgA:9
+    a=S72Gwef-e_TOMxmf:21 a=KOc_-KXR5j8uQGP7:21 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Dexuan Cui <decui@microsoft.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, KY Srinivasan
- <kys@microsoft.com>, Stephen Hemminger <sthemmin@microsoft.com>
-Subject: [PATCH] Drivers: hv: vmbus: Fix the offer_in_progress in
- vmbus_process_offer()
-Thread-Topic: [PATCH] Drivers: hv: vmbus: Fix the offer_in_progress in
- vmbus_process_offer()
-Thread-Index: AdPdoKfzRngR012LQ7GfpBkEd0k4zg==
-Date: Thu, 26 Apr 2018 20:55:19 +0000
-Message-ID: <KL1P15301MB00067BB599826701A41A23F8BF8E0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-04-26T20:55:17.4478484Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com;
-x-originating-ip: [2001:4898:80e8:b::47a]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1; KL1P15301MB0071;
- 7:DuBCdWt4jbl363XoLhwpmwJN/RYx5JJR1y0rsCJi6TznB/dOjAbsotCNtp91XLaXYx/c8LhkGJaIcCNjmAjaFWUzOMVLGkRv+KfQ3ae1wjisKRpYIdupGy6yisQCrCtjXY0rSQ+/HArhI/Pqts52tnjuK8Kn+KZ4+xImPQWR6gc9Z8CAAagpv8eUqWK165d71+euGqaczOcE4BIlDpRxOe03AmlcD9ocuhZI1qzQLgH832gpwMJGvulrs6ChZBql;
- 20:1FCptmzUL2P1btXFnbIaD9ZeKSEE6YiQXgL2E5hHa2AD8vdAbn9dllQ+SJt91Ry0cjLo7FNzOkM6KldXxNXP4QN/9iC5LRVrRk8Ll673Tw40GDsmnSxrdZmsMrKDAX8agIC3RC0j8GSy3Fl92JJJkuA+f9v/TxFiRrIwg7qJ/EQ=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
- RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);
- SRVR:KL1P15301MB0071;
-x-ms-traffictypediagnostic: KL1P15301MB0071:
-x-microsoft-antispam-prvs: <KL1P15301MB00713F4A8356B493B6855088BF8E0@KL1P15301MB0071.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055); 
-x-exchange-antispam-report-cfa-test: BCL:0; PCL:0;
- RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231232)(944501410)(52105095)(10201501046)(6055026)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);
- SRVR:KL1P15301MB0071; BCL:0; PCL:0; RULEID:; SRVR:KL1P15301MB0071;
-x-forefront-prvs: 0654257CF5
-x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(376002)(39380400002)(396003)(39860400002)(366004)(346002)(189003)(199004)(81156014)(53936002)(1511001)(33656002)(3660700001)(8936002)(77096007)(8676002)(6636002)(81166006)(2900100001)(74316002)(305945005)(86612001)(102836004)(86362001)(99286004)(6506007)(10290500003)(7696005)(6116002)(2501003)(478600001)(7736002)(105586002)(486006)(476003)(5660300001)(106356001)(68736007)(2906002)(46003)(110136005)(25786009)(97736004)(54906003)(14454004)(10090500001)(22452003)(55016002)(3280700002)(1857600001)(4326008)(8990500004)(316002)(186003)(6436002)(9686003);
- DIR:OUT; SFP:1102; SCL:1; SRVR:KL1P15301MB0071;
- H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; MX:1; A:1;
-x-microsoft-antispam-message-info: vr6BrJydlDsDu4O+OmR8qpJNfMTp1yRiaVNT3J3a92LoMp8mfXrod5tOrvxcH3kafeRY626W29EeGsIjFHpuAxbSwiYgYQOhRh+j4bxodibytzdaX6fLwMklQg0WBBQod3r5dbmZXdD4KPLJpDJvhai7QbUjzJw+RCZC7+p9RXMdBeIAnRQtHAiRC+x+M/po
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: bde8332e-78c6-406d-302c-08d5abb80587
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bde8332e-78c6-406d-302c-08d5abb80587
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2018 20:55:19.2636 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0071
+X-Google-Smtp-Source: AIpwx484Yg5NYSao4yfnzkjLo9A2+9UPktymcb4K3/UIKTUScGO7xuiX1cfi4OU61IYhhTbrkSxnzw==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: linux-kernel@vger.kernel.org
+Subject: [PATCH] staging/wilc1000: fix wilc_mac_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:18:57 +0200
+Message-Id: <20180424131857.5668-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -135,14 +88,11 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "olaf@aepfle.de" <olaf@aepfle.de>,
- "jasowang@redhat.com" <jasowang@redhat.com>,
- "driverdev-devel@linuxdriverproject.org"
- <driverdev-devel@linuxdriverproject.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
- "apw@canonical.com" <apw@canonical.com>,
- "vkuznets@redhat.com" <vkuznets@redhat.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-wireless@vger.kernel.org, Ganesh Krishna <ganesh.krishna@microchip.com>,
+ Aditya Shankar <aditya.shankar@microchip.com>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -151,39 +101,46 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, but the implementation in this
+driver returns an 'int'.
 
-I didn't really hit a real bug, but just happened to spot the bug:
-we have decreased the counter at the beginning of vmbus_process_offer(),
-so we mustn't decrease it again.
+Fix this by returning 'netdev_tx_t' in this driver too.
 
-Fixes: 6f3d791f3006 ("Drivers: hv: vmbus: Fix rescind handling issues")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: stable@vger.kernel.org
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Stable <stable@vger.kernel.org> # 4.14 and above
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/hv/channel_mgmt.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/staging/wilc1000/linux_wlan.c | 2 +-
+ drivers/staging/wilc1000/wilc_wlan.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-index ecc2bd2..f3b551a 100644
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -527,10 +527,8 @@ static void vmbus_process_offer(struct vmbus_channel *newchannel)
- 		struct hv_device *dev
- 			= newchannel->primary_channel->device_obj;
+diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
+index 38a83bd31..e06aaed5e 100644
+--- a/drivers/staging/wilc1000/linux_wlan.c
++++ b/drivers/staging/wilc1000/linux_wlan.c
+@@ -941,7 +941,7 @@ static void linux_wlan_tx_complete(void *priv, int status)
+ 	kfree(pv_data);
+ }
  
--		if (vmbus_add_channel_kobj(dev, newchannel)) {
--			atomic_dec(&vmbus_connection.offer_in_progress);
-+		if (vmbus_add_channel_kobj(dev, newchannel))
- 			goto err_free_chan;
--		}
+-int wilc_mac_xmit(struct sk_buff *skb, struct net_device *ndev)
++netdev_tx_t wilc_mac_xmit(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	struct wilc_vif *vif;
+ 	struct tx_complete_data *tx_data = NULL;
+diff --git a/drivers/staging/wilc1000/wilc_wlan.h b/drivers/staging/wilc1000/wilc_wlan.h
+index fa157a67b..d3b5a6b38 100644
+--- a/drivers/staging/wilc1000/wilc_wlan.h
++++ b/drivers/staging/wilc1000/wilc_wlan.h
+@@ -298,7 +298,7 @@ void wilc_chip_sleep_manually(struct wilc *wilc);
  
- 		if (channel->sc_creation_callback != NULL)
- 			channel->sc_creation_callback(newchannel);
+ void wilc_enable_tcp_ack_filter(bool value);
+ int wilc_wlan_get_num_conn_ifcs(struct wilc *wilc);
+-int wilc_mac_xmit(struct sk_buff *skb, struct net_device *dev);
++netdev_tx_t wilc_mac_xmit(struct sk_buff *skb, struct net_device *dev);
+ 
+ void WILC_WFI_p2p_rx(struct net_device *dev, u8 *buff, u32 size);
+ void host_wakeup_notify(struct wilc *wilc);
 -- 
-2.7.4
+2.17.0
 
 _______________________________________________
 devel mailing list
