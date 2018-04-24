@@ -1,135 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753313AbeDXRsR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:48:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37312 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeDXRsJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:48:09 -0400
-Date: Tue, 24 Apr 2018 14:47:55 -0300
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-Message-ID: <20180424144755.1c2e2478@vento.lan>
-In-Reply-To: <20180424103609.GD4064@hirez.programming.kicks-ass.net>
-References: <cover.1524499368.git.gustavo@embeddedor.com>
-        <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
-        <20180423152455.363d285c@vento.lan>
-        <20180424093500.xvpcm3ibcu7adke2@mwanda>
-        <20180424103609.GD4064@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1752391AbeDXRuf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:50:35 -0400
+Received: from thoth.sbs.de ([192.35.17.2]:47595 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751315AbeDXRud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 13:50:33 -0400
+Subject: Re: [PATCH] of: overlay: Stop leaking resources on overlay removal
+To: Frank Rowand <frowand.list@gmail.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alan Tull <atull@kernel.org>
+References: <097f1b01-6cb4-8dcb-0498-7b4c59a7ea53@siemens.com>
+ <7aca82c1-a02c-2f84-bc32-6e8a118ba601@gmail.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Openpgp: preference=signencrypt
+Message-ID: <90e7da9d-d40a-17f1-e627-873f58a3dce5@siemens.com>
+Date: Tue, 24 Apr 2018 19:50:27 +0200
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <7aca82c1-a02c-2f84-bc32-6e8a118ba601@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, 24 Apr 2018 12:36:09 +0200
-Peter Zijlstra <peterz@infradead.org> escreveu:
+On 2018-04-24 19:44, Frank Rowand wrote:
+> On 04/24/18 09:19, Jan Kiszka wrote:
+>> Only the overlay notifier callbacks have a chance to potentially get
+>> hold of references to those two resources, but they do not store them.
+>> So it is safe to stop the intentional leaking.
+>>
+>> See also https://lkml.org/lkml/2018/4/23/1063 and following.
+>>
+>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>> ---
+>>
+>> Ideally, we sort out any remaining worries during the 4.17-rc cycle.
+>>
+>>  drivers/of/overlay.c | 13 ++-----------
+>>  1 file changed, 2 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+>> index b35fe88f1851..3553f1f57a62 100644
+>> --- a/drivers/of/overlay.c
+>> +++ b/drivers/of/overlay.c
+>> @@ -671,17 +671,8 @@ static void free_overlay_changeset(struct overlay_changeset *ovcs)
+>>  		of_node_put(ovcs->fragments[i].overlay);
+>>  	}
+>>  	kfree(ovcs->fragments);
+>> -
+>> -	/*
+>> -	 * TODO
+>> -	 *
+>> -	 * would like to: kfree(ovcs->overlay_tree);
+>> -	 * but can not since drivers may have pointers into this data
+>> -	 *
+>> -	 * would like to: kfree(ovcs->fdt);
+>> -	 * but can not since drivers may have pointers into this data
+>> -	 */
+>> -
+>> +	kfree(ovcs->overlay_tree);
+>> +	kfree(ovcs->fdt);
+>>  	kfree(ovcs);
+>>  }
+>>  
+>>
+> 
+> Nack.  It is premature to submit this while the conversation is
+> continuing in the other thread.
+> 
+> I'll continue the conversation in the other thread.
+> 
 
-> On Tue, Apr 24, 2018 at 12:35:00PM +0300, Dan Carpenter wrote:
-> > On Mon, Apr 23, 2018 at 03:24:55PM -0300, Mauro Carvalho Chehab wrote:  
-> > > Em Mon, 23 Apr 2018 12:38:03 -0500
-> > > "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:  
-> 
-> > > > @@ -875,6 +876,7 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
-> > > >  	if (f->index >= ARRAY_SIZE(format))
-> > > >  		return -EINVAL;
-> > > >  
-> > > > +	f->index = array_index_nospec(f->index, ARRAY_SIZE(format));  
-> > >
-> > > Please enlighten me: how do you think this could be exploited?  
-> 
-> TL;DR: read the papers [1] & [2]
-> 
-> I suspect you didn't get the gist of Spectre V1 [1], let me explain:
-> 
-> Suppose userspace provides f->index > ARRAY_SIZE(format), and we predict
-> the branch to -EINVAL to not be taken.
-> 
-> Then the CPU _WILL_ load (out of bounds) format[f->index] into
-> f->pixelformat and continue onwards to use this bogus value, all the way
-> until it figures out the branch was mis-predicted.
-> 
-> Once it figures out the mispredict, it will throw away the state and
-> start over at the condition site. So far, so basic.
-> 
-> The thing is, is will not (and cannot) throw away all state. Suppose our
-> speculation continues into v4l_fill_fmtdesc() and that switch there is
-> compiled as another array lookup, it will then feed our f->pixelformat
-> (which contains random kernel memory) into that array to find the
-> requested descr pointer.
-> 
-> Now, imagine userspace having flushed cache on the descr pointer array,
-> having trained the branch predictor to mis-predict the branch (see
-> branchscope paper [2]) and doing that out-of-bounds ioctl().
-> 
-> It can then speculative do the out-of-bounds array access, followed by
-> the desc array load, then figure out it was wrong and redo.
-> 
-> Then usespace probes which part of the descr[] array is now in cache and
-> from that it can infer the initial out-of-bound value.
-> 
-> So while format[] is static and bound, it can read random kernel memory
-> up to format+4g, including your crypto keys.
-> 
-> As far as V1 goes, this is actually a fairly solid exploit candidate. No
-> false positive about it.
-> 
-> Now kernel policy is to kill any and all speculation on user controlled
-> array indexing such that we don't have to go look for subsequent side
-> channels (the above cache side channel is the one described in the
-> Spectre paper and by far the easiest, but there are other possible side
-> channels) and we simply don't want to worry about it.
-> 
-> So even from that pov, the proposed patch is good.
-> 
-> 
-> [1] https://spectreattack.com/spectre.pdf
-> [2] www.cs.ucr.edu/~nael/pubs/asplos18.pdf
+Well, at least the strongest argument has been resolved now, the
+notifier topic. Curious to learn what remains. As I noted, we should
+work hard to sort out the API regression prior to the release.
 
-> On Tue, Apr 24, 2018 at 12:36:09PM +0200, Peter Zijlstra wrote:
-> > 
-> > Then usespace probes which part of the descr[] array is now in cache and
-> > from that it can infer the initial out-of-bound value.  
-> 
-> Just had a better look at v4l_fill_fmtdesc() and actually read the
-> comment. The code cannot be compiled as a array because it is big and
-> sparse. But the log(n) condition tree is a prime candidate for the
-> branchscope side-channel, which would be able to reconstruct a
-> significant number of bits of the original value. A denser tree gives
-> more bits etc.
+Jan
 
-Peter,
-
-Thanks for a comprehensive explanation about that. It now makes more
-sense to me.
-
-Yeah, better to apply a fix to avoid the issue with VIDIOC_ENUM_FMT. 
-
-Btw, on almost all media drivers, the implementation for enumerating
-the supported formats are the same (and we have a few other VIDOC_ENUM_foo
-ioctls that usually do similar stuff): the V4L2 core calls a driver,
-with looks into an array, returning the results to the core.
-
-So, a fix like that should likely go to almost all media drivers
-(there are a lot of them!), and, for every new one, to take care
-to avoid introducing it again during patch review process.
-
-So, I'm wondering if are there any way to mitigate it inside the 
-core itself, instead of doing it on every driver, e. g. changing
-v4l_enum_fmt() implementation at v4l2-ioctl.
-
-Ok, a "poor man" approach would be to pass the array directly to
-the core and let the implementation there to implement the array
-fetch logic, calling array_index_nospec() there, but I wonder if
-are there any other way that won't require too much code churn.
-
-
-Thanks,
-Mauro
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
