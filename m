@@ -1,87 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932855AbeDXIE6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:04:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60686 "EHLO mx1.redhat.com"
+        id S932875AbeDXIFk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:05:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49470 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756323AbeDXIEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:04:44 -0400
+        id S932739AbeDXIEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 04:04:49 -0400
 From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 To: Jiri Kosina <jikos@kernel.org>
 Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Peter Hutterer <peter.hutterer@who-t.net>, Mario.Limonciello@dell.com,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH v2 1/6] HID: store the full list of reports in the hidinput
-Date: Tue, 24 Apr 2018 10:04:32 +0200
-Message-Id: <20180424080437.21367-2-benjamin.tissoires@redhat.com>
+Subject: [PATCH v2 4/6] HID: multitouch: make use of HID_QUIRK_INPUT_PER_APP
+Date: Tue, 24 Apr 2018 10:04:35 +0200
+Message-Id: <20180424080437.21367-5-benjamin.tissoires@redhat.com>
 In-Reply-To: <20180424080437.21367-1-benjamin.tissoires@redhat.com>
 References: <20180424080437.21367-1-benjamin.tissoires@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We were only storing the report in case of QUIRK_MULTI_INPUT.
-It is interesting for the upcoming  HID_QUIRK_INPUT_PER_APP to also
-store the full list of reports that are attached to it.
+We now have HID_QUIRK_INPUT_PER_APPLICATION that splits the devices
+into several devices. This helps us as we can now rely on hid-input
+to set the names for us.
 
-We need the full list because a device (Advanced Silicon has some)
-might want to use a different report ID for the Input reports and
-the Output reports. Storing the full list allows the drivers to
-have all the data.
+Also, this helps removing some magical numbers '0' when calling
+.input_configured().
+
+The only thing to take care of is that the field .report in struct
+hid_input is now null. We need to iterate over the full list of
+reports attached to a hid_input.
+
+This is required for some Advanced Silicon touchscreen to correctly apply
+the HID_QUIRK_INPUT_PER_APPLICATION as they have 2 reports associated
+with the hidinput node. One contains the Input data, the other one
+contains the Output data.
 
 Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 ---
- drivers/hid/hid-input.c | 6 ++++++
- include/linux/hid.h     | 2 ++
- 2 files changed, 8 insertions(+)
+ drivers/hid/hid-multitouch.c | 72 ++++++++++++++++++++------------------------
+ 1 file changed, 33 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index a8a33e56b43e..62e42664955e 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1536,9 +1536,12 @@ static struct hid_input *hidinput_allocate(struct hid_device *hid)
- 	input_dev->id.product = hid->product;
- 	input_dev->id.version = hid->version;
- 	input_dev->dev.parent = &hid->dev;
-+
- 	hidinput->input = input_dev;
- 	list_add_tail(&hidinput->list, &hid->inputs);
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index dad2fbb0e3f8..43784d31a1a3 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1274,54 +1274,48 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
+ 	struct mt_device *td = hid_get_drvdata(hdev);
+ 	char *name;
+ 	const char *suffix = NULL;
+-	struct hid_field *field = hi->report->field[0];
++	unsigned int application = 0;
++	struct hid_report *report;
+ 	int ret;
  
-+	INIT_LIST_HEAD(&hidinput->reports);
+-	if (hi->report->id == td->mt_report_id) {
+-		ret = mt_touch_input_configured(hdev, hi);
+-		if (ret)
+-			return ret;
++	list_for_each_entry(report, &hi->reports, hidinput_list) {
++		application = report->application;
++		if (report->id == td->mt_report_id) {
++			ret = mt_touch_input_configured(hdev, hi);
++			if (ret)
++				return ret;
++		}
 +
- 	return hidinput;
- }
- 
-@@ -1688,6 +1691,9 @@ int hidinput_connect(struct hid_device *hid, unsigned int force)
- 
- 			if (hid->quirks & HID_QUIRK_MULTI_INPUT)
- 				hidinput->report = report;
-+
-+			list_add_tail(&report->hidinput_list,
-+				      &hidinput->reports);
- 		}
++		/*
++		 * some egalax touchscreens have "application == DG_TOUCHSCREEN"
++		 * for the stylus. Check this first, and then rely on
++		 * the application field.
++		 */
++		if (report->field[0]->physical == HID_DG_STYLUS) {
++			suffix = "Pen";
++			/* force BTN_STYLUS to allow tablet matching in udev */
++			__set_bit(BTN_STYLUS, hi->input->keybit);
++		}
  	}
  
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 0a8d5c320b6c..e1ec7f91f926 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -464,6 +464,7 @@ struct hid_field {
+-	/*
+-	 * some egalax touchscreens have "application == HID_DG_TOUCHSCREEN"
+-	 * for the stylus. Check this first, and then rely on the application
+-	 * field.
+-	 */
+-	if (hi->report->field[0]->physical == HID_DG_STYLUS) {
+-		suffix = "Pen";
+-		/* force BTN_STYLUS to allow tablet matching in udev */
+-		__set_bit(BTN_STYLUS, hi->input->keybit);
+-	} else {
+-		switch (field->application) {
++	if (!suffix) {
++		switch (application) {
+ 		case HID_GD_KEYBOARD:
+-			suffix = "Keyboard";
+-			break;
+ 		case HID_GD_KEYPAD:
+-			suffix = "Keypad";
+-			break;
+ 		case HID_GD_MOUSE:
+-			suffix = "Mouse";
+-			break;
+-		case HID_DG_STYLUS:
+-			suffix = "Pen";
+-			/* force BTN_STYLUS to allow tablet matching in udev */
+-			__set_bit(BTN_STYLUS, hi->input->keybit);
+-			break;
+-		case HID_DG_TOUCHSCREEN:
+-			/* we do not set suffix = "Touchscreen" */
+-			break;
+ 		case HID_DG_TOUCHPAD:
+-			suffix = "Touchpad";
+-			break;
+ 		case HID_GD_SYSTEM_CONTROL:
+-			suffix = "System Control";
+-			break;
+ 		case HID_CP_CONSUMER_CONTROL:
+-			suffix = "Consumer Control";
+-			break;
+ 		case HID_GD_WIRELESS_RADIO_CTLS:
+-			suffix = "Wireless Radio Control";
++			/* already handled by hid core */
++			break;
++		case HID_DG_TOUCHSCREEN:
++			/* we do not set suffix = "Touchscreen" */
++			hi->input->name = hdev->name;
++			break;
++		case HID_DG_STYLUS:
++			/* force BTN_STYLUS to allow tablet matching in udev */
++			__set_bit(BTN_STYLUS, hi->input->keybit);
+ 			break;
+ 		case HID_VD_ASUS_CUSTOM_MEDIA_KEYS:
+ 			suffix = "Custom Media Keys";
+@@ -1459,10 +1453,10 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
  
- struct hid_report {
- 	struct list_head list;
-+	struct list_head hidinput_list;
- 	unsigned id;					/* id of this report */
- 	unsigned type;					/* report type */
- 	struct hid_field *field[HID_MAX_FIELDS];	/* fields of the report */
-@@ -510,6 +511,7 @@ struct hid_input {
- 	struct hid_report *report;
- 	struct input_dev *input;
- 	bool registered;
-+	struct list_head reports;	/* the list of reports */
- };
+ 	/*
+ 	 * This allows the driver to handle different input sensors
+-	 * that emits events through different reports on the same HID
++	 * that emits events through different applications on the same HID
+ 	 * device.
+ 	 */
+-	hdev->quirks |= HID_QUIRK_MULTI_INPUT;
++	hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
  
- enum hid_type {
+ 	timer_setup(&td->release_timer, mt_expired_timeout, 0);
+ 
 -- 
 2.14.3
