@@ -1,94 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757069AbeDXKGg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 06:06:36 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:39701 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757041AbeDXKGc (ORCPT
+        id S1757090AbeDXKHa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 06:07:30 -0400
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:41554 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756559AbeDXKH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 06:06:32 -0400
-X-Google-Smtp-Source: AB8JxZrCiMh9pULR5hkF3JUM58OJGf6NWp+SIeaKvzD0oD60VQH/oNpGtiQqa23O1W1iLmvoXbV3BXRlC4amZBa0Yng=
-MIME-Version: 1.0
-In-Reply-To: <5add30d1.1c69fb81.b868a.84f1SMTPIN_ADDED_MISSING@mx.google.com>
-References: <5add30d1.1c69fb81.b868a.84f1SMTPIN_ADDED_MISSING@mx.google.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Apr 2018 12:06:30 +0200
-X-Google-Sender-Auth: pINc1uFfe7j5ahuhAL6_3PxguB4
-Message-ID: <CAMuHMdULPOWQPo1G1s5m52rNLzhmPFzfwxsZH0iR_OwVc8VRKw@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Fix off-by-one calendar month
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Sam Creasey <sammy@sammy.net>, linux-m68k <linux-m68k@vger.kernel.org>,
+        Tue, 24 Apr 2018 06:07:27 -0400
+X-Google-Smtp-Source: AIpwx48TYOABCfIbGaJ7wArFWA3TZAag2cp6CBVrFhalVj/ppgVqeSsLFEwJUN8ElKH9qYjCg44rgQ==
+Date: Tue, 24 Apr 2018 11:07:23 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+Subject: Re: [PATCH RESEND] backlight: pwm_bl: don't use GPIOF_* with
+ gpiod_get_direction
+Message-ID: <20180424100723.hyt3vxa2wp7sruqz@dell>
+References: <20180410123241.25745-1-wsa+renesas@sang-engineering.com>
+ <20180411073215.fzvh4ejj2kd7wam3@verge.net.au>
+ <20180416091257.swbt7i6zjfbwysg2@dell>
+ <20180424084124.6tpxf3ekadzefwd4@verge.net.au>
+ <CAMuHMdWLya+=QeCwzszMxGPm7b3KbdsNFgc0vsk8NWC5tDO2QQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWLya+=QeCwzszMxGPm7b3KbdsNFgc0vsk8NWC5tDO2QQ@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
+On Tue, 24 Apr 2018, Geert Uytterhoeven wrote:
 
-On Mon, Apr 23, 2018 at 3:02 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> This fixes a bug in read_persistent_clock() which causes the system
-> clock to lag the Real Time Clock by one month. The problem was noticed
-> on a Mac, but theoretically it must also affect Atari, BVME6000 and Q40.
->
-> The tm_mon value in the struct rtc_time passed to mach_hwclk() is
-> zero-based, and atari_mste_hwclk(), atari_tt_hwclk(), bvme6000_hwclk(),
-> mac_hwclk() and q40_hwclk() all make this adjustment. Unfortunately,
-> dn_dummy_hwclk(), mvme147_hwclk(), mvme16x_hwclk(), sun3_hwclk() and
-> sun3x_hwclk() fail to decrement tm_mon.
->
-> Bring these platforms into line and fix read_persistent_clock() so it
-> works correctly on all m68k platforms.
->
-> The datasheets for the RTC devices found on the affected platforms
-> all confirm that the year is stored as a value in the range 0-99 and
-> the month is stored as a value in the range 1-12. Please refer to the
-> datasheets for MC146818 (Apollo), DS1643 (MVME), ICM7170 (Sun 3)
-> and M48T02 (Sun 3x).
->
-> Reported-by: Stan Johnson <userm57@yahoo.com>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> On Tue, Apr 24, 2018 at 10:41 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Apr 16, 2018 at 10:12:57AM +0100, Lee Jones wrote:
+> >> On Wed, 11 Apr 2018, Simon Horman wrote:
+> >> > On Tue, Apr 10, 2018 at 02:32:40PM +0200, Wolfram Sang wrote:
+> >> > > The documentation was wrong, gpiod_get_direction() returns 0/1 instead
+> >> > > of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
+> >> > > ("gpio: correct docs about return value of gpiod_get_direction"). Now,
+> >> > > fix this user (until a better, system-wide solution is in place).
+> >> > >
+> >> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> > > Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> >> >
+> >> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> >>
+> >> Thanks for the Reviewed-by Simon.  I have applied it to the original mail.
+> >>
+> >> Do you know why you mail wasn't sent attached to the original thread?
+> >> For some reason I received this mail on it's own i.e. not in reply
+> >> to the original.
+> >
+> > No, not off hand. Perhaps I responded to the email in some unusual way
+> > but by now I don't recall. In any case I'll try to be more careful
+> > in future.
+> 
+> I see Lee is using gmail for sending, so I assume also for receiving.
 
-Thanks, applied and queued for v4.18.
+Well I'm using their servers, but my set-up is IMAP/Mutt.
 
-<snip>
-
-> --- a/arch/m68k/kernel/time.c
-> +++ b/arch/m68k/kernel/time.c
-> @@ -74,17 +74,17 @@ static irqreturn_t timer_interrupt(int irq, void *dummy)
->  void read_persistent_clock(struct timespec *ts)
->  {
->         struct rtc_time time;
-> +
->         ts->tv_sec = 0;
->         ts->tv_nsec = 0;
->
-> -       if (mach_hwclk) {
-> -               mach_hwclk(0, &time);
-> +       if (!mach_hwclk)
-> +               return;
-> +
-> +       mach_hwclk(0, &time);
->
-> -               if ((time.tm_year += 1900) < 1970)
-> -                       time.tm_year += 100;
-> -               ts->tv_sec = mktime(time.tm_year, time.tm_mon, time.tm_mday,
-> -                                     time.tm_hour, time.tm_min, time.tm_sec);
-> -       }
-> +       ts->tv_sec = mktime(time.tm_year + 1900, time.tm_mon + 1, time.tm_mday,
-> +                           time.tm_hour, time.tm_min, time.tm_sec);
-
-That might explain why my Amiga spends so much time on file system checks
-since I wrote the rp5c01 RTC driver...
-
-Gr{oetje,eeting}s,
-
-                        Geert
+> While I did receive Simon's reply in-thread, lately I had issues with gmail
+> not always doing so, and sometimes failing to do deduplication when receiving
+> email through multiple paths (mailing lists and/or directly).
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
