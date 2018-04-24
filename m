@@ -1,62 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753251AbeDXJEG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:04:06 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39637 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753084AbeDXJED (ORCPT
+        id S1753465AbeDXJG2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:06:28 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34577 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751239AbeDXJGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:04:03 -0400
-X-Google-Smtp-Source: AIpwx4/CmlDkJLmfHPADS/cco1uyfxxD1YRVw70Az6mkI7BBMsFZR1+KXJ1ZhTvtIC0GSfxhIifKxZBBLz29gonFSNw=
+        Tue, 24 Apr 2018 05:06:24 -0400
+Date: Tue, 24 Apr 2018 11:06:19 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: Diego Viola <diego.viola@gmail.com>, linux-kernel@vger.kernel.org,
+        len.brown@intel.com, rui.zhang@intel.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: Experiencing freezes with kernel 4.16.3 on a desktop with E5500
+ CPU (bisect included)
+In-Reply-To: <20180423164425.GS4129@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1804241105180.5261@nanos.tec.linutronix.de>
+References: <CA+ToGPE59B0EKYkRbMcoddEtWwe50nXNu-91UMdjamz+s8nKfg@mail.gmail.com> <20180423091633.GU4064@hirez.programming.kicks-ass.net> <CA+ToGPEaHb1ueDRGuzCzm_HxketqxW8j1gawEsCCp2QGLCA=xg@mail.gmail.com> <20180423114850.GK4082@hirez.programming.kicks-ass.net>
+ <CA+ToGPHA+Y=0PtiXF7fTSqSgwtzsJy3Z=U1i3xiW9jkzQGsXWQ@mail.gmail.com> <20180423123847.GL4082@hirez.programming.kicks-ass.net> <20180423155801.GQ4129@hirez.programming.kicks-ass.net> <20180423164425.GS4129@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <9b8c9c6134cb27ee8ac37224098e382ab9189d62.1524556744.git.arvind.yadav.cs@gmail.com>
-References: <9b8c9c6134cb27ee8ac37224098e382ab9189d62.1524556744.git.arvind.yadav.cs@gmail.com>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Tue, 24 Apr 2018 11:04:02 +0200
-Message-ID: <CAO-hwJ+cM2nPPiQbHM=u2E0vzvdztR9CFtQD5xztLw8QPOBPbA@mail.gmail.com>
-Subject: Re: [PATCH] HID: wacom: Release device resource data obtained by devres_alloc()
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, jkosina@suse.cz,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 10:03 AM, Arvind Yadav
-<arvind.yadav.cs@gmail.com> wrote:
-> Free device resource data, if __wacom_devm_sysfs_create_group
-> is not successful.
->
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
+On Mon, 23 Apr 2018, Peter Zijlstra wrote:
 
-Looks good to me:
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> On Mon, Apr 23, 2018 at 05:58:01PM +0200, Peter Zijlstra wrote:
+> > Thomas, we could not find the de-rate stuff, but the above can be
+> > simplified; what happens is:
+> > 
+> > 	cs->flags |= UNSTABLE;
+> > 	schedule_work(&watchdog_work)
+> > 	  kthread_run(clocksource_watchdog_kthread)
+> 
+> Also, Thomas, do you remember why we spawn a short running kthread from
+> a work ? Can't we simply run the whole thing from the worker thread?
 
-Cheers,
-Benjamin
+No. I think we did it directly in the early days and then it was changed to
+that worker/thread stuff for whatever reason. I need to do git archaeology.
 
->  drivers/hid/wacom_sys.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
-> index b54ef1f..ee7a37e 100644
-> --- a/drivers/hid/wacom_sys.c
-> +++ b/drivers/hid/wacom_sys.c
-> @@ -1213,8 +1213,10 @@ static int __wacom_devm_sysfs_create_group(struct wacom *wacom,
->         devres->root = root;
->
->         error = sysfs_create_group(devres->root, group);
-> -       if (error)
-> +       if (error) {
-> +               devres_free(devres);
->                 return error;
-> +       }
->
->         devres_add(&wacom->hdev->dev, devres);
->
-> --
-> 1.9.1
->
+Thanks,
+
+	tglx
