@@ -1,141 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756813AbeDXIw5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:52:57 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:35624 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756747AbeDXIws (ORCPT
+        id S1751239AbeDXI4h (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:56:37 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:48473 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750770AbeDXI4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:52:48 -0400
-X-Google-Smtp-Source: AIpwx4+sRJSDiCrwKp39B9YsAP09DxUe2mZNUJ6dqhXMo1fo5hszCVDb+MdcItrPR/Ysty0unH//STT0EFuHLKf1PCw=
+        Tue, 24 Apr 2018 04:56:33 -0400
+Subject: Re: [RFC 00/10] Adds pcitest tool support for MSI-X
+To: Alan Douglas <adouglas@cadence.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+ <SN6PR07MB45123840F0C9487F1CD119A9D8880@SN6PR07MB4512.namprd07.prod.outlook.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <767b50e3-8890-c241-bc97-1687bd0661c1@synopsys.com>
+Date: Tue, 24 Apr 2018 09:49:45 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAOtvUMe=iOeWAUwDQ-3yy=Ogg0_=4iEwV32ATEn6SrLPEojNGQ@mail.gmail.com>
-References: <1524484097-8315-1-git-send-email-gilad@benyossef.com>
- <CAMuHMdXNAkCVpyGyQMKRMRGuXyjOHAGgvHT4QGkuYdZetOr-9Q@mail.gmail.com>
- <CAOtvUMd41+5DzHRbViyNZkiL92BYh2YaREvhiAH0UPnPYCzB+w@mail.gmail.com>
- <CAMuHMdXZ0vL7Rxg4+CsP1u_Eb95Nj+qHnrahYPhAewmcrxN9HQ@mail.gmail.com> <CAOtvUMe=iOeWAUwDQ-3yy=Ogg0_=4iEwV32ATEn6SrLPEojNGQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Apr 2018 10:52:46 +0200
-X-Google-Sender-Auth: 4DXgIOqaYfn8s0WbGKThObDcIg8
-Message-ID: <CAMuHMdWQAss+_fjrj5BGcstojR0Up9-danH3UxC5PWOLkKrpXQ@mail.gmail.com>
-Subject: Re: [PATCH] crypto: ccree: limit build to plausible archs
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <SN6PR07MB45123840F0C9487F1CD119A9D8880@SN6PR07MB4512.namprd07.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gilad,
+Hi Alan,
 
-On Tue, Apr 24, 2018 at 10:31 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> On Mon, Apr 23, 2018 at 8:53 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Mon, Apr 23, 2018 at 3:22 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->>> On Mon, Apr 23, 2018 at 3:13 PM, Geert Uytterhoeven
->>> <geert@linux-m68k.org> wrote:
->>>> On Mon, Apr 23, 2018 at 1:48 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->>>>> Limit option to compile ccree to plausible architectures.
->>>>
->>>> Thanks for your patch!
->>>>
->>>>> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
->>>>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->>>>> ---
->>>>>  drivers/crypto/Kconfig | 1 +
->>>>>  1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
->>>>> index d1ea1a0..7302785 100644
->>>>> --- a/drivers/crypto/Kconfig
->>>>> +++ b/drivers/crypto/Kconfig
->>>>> @@ -726,6 +726,7 @@ config CRYPTO_DEV_ARTPEC6
->>>>>  config CRYPTO_DEV_CCREE
->>>>>         tristate "Support for ARM TrustZone CryptoCell family of security processors"
->>>>>         depends on CRYPTO && CRYPTO_HW && OF && HAS_DMA
->>>>> +       depends on (XTENSA || X86 || UNICORE32 || SUPERH || RISCV || PPC32 || OPENRISC || NIOS2 || NDS32 || MIPS || MICROBLAZE || HEXAGON || H8300 || ARM || ARM64 || ARC || COMPILE_TEST)
->>>>
->>>> That list looks a bit excessive to me...
->>>
->>> I'm sorry, but as an Arm employee I'm not in liberty to identify which
->>> customer licensed or might license CryptoCell for which platform, now
->>> or in the future.
->>>
->>> I'm sure you understand.
+On 24/04/2018 07:48, Alan Douglas wrote:
+> Hi Gustavo,
+> 
+> On 10 April 2018 18:15 Gustavo Pimentel wrote:
+>> This patch set depends the following series:
+>> https://urldefense.proofpoint.com/v2/url?u=https-3A__lkml.org_lkml_2018_4_10_421&d=DwIFAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=R3h7a4AkN9--FFv6jtHaknKIzx6NieDdkYxyCe4obB8&s=J2A11L2_WwzMdaBheYSTwfjPDA7sx3_DyoGPAYsJ9A4&e=> This series aims to add pcitest tool support for MSI-X.
+>>
+>> Includes new callbacks methods and handlers to trigger the MSI-X
+>> interruptions on the EP Designware IP driver.
+>>
+>> Provides new methods on pci_epf_test driver that allows to set/get EP
+>> maximum number of MSI-X entries (similar to set/get MSI methods).
+>>
+>> Reworks on MSI set/get and triggering methods on EP Designware IP driver to
+>> be more generic and flexible.
+>>
+>> Adds a new input parameter (msix) and replicates the whole MSI mechanism
+>> applied to the MSI-X feature on pcitest tool. Also updates the pcitest script
+>> with the new test set applied to this new feature.
+>>
+>> Gustavo Pimentel (10):
+>>   PCI: dwc: Add MSI-X callbacks handler
+>>   PCI: cadence: Update cdns_pcie_ep_raise_irq function signature
+>>   PCI: endpoint: Add MSI-X interfaces
+>>   PCI: dwc: MSI callbacks handler rework
+>>   PCI: dwc: Add legacy interrupt callback handler
+>>   misc: pci_endpoint_test: Add MSI-X support
+>>   misc: pci_endpoint_test: Replace lower into upper case characters
+>>   PCI: endpoint: functions/pci-epf-test: Add MSI-X support
+>>   PCI: endpoint: functions/pci-epf-test: Replace lower into upper case
+>>     characters
+>>   tools: PCI: Add MSI-X support
+>>
+>>  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
+>>  drivers/misc/pci_endpoint_test.c                 | 120 ++++++++++----
+>>  drivers/pci/cadence/pcie-cadence-ep.c            |   2 +-
+>>  drivers/pci/dwc/pci-dra7xx.c                     |   2 +-
+>>  drivers/pci/dwc/pcie-artpec6.c                   |   2 +-
+>>  drivers/pci/dwc/pcie-designware-ep.c             | 201
+>> +++++++++++++++++++++--
+>>  drivers/pci/dwc/pcie-designware-plat.c           |   9 +-
+>>  drivers/pci/dwc/pcie-designware.h                |  40 +++--
+>>  drivers/pci/endpoint/functions/pci-epf-test.c    | 113 +++++++++----
+>>  drivers/pci/endpoint/pci-ep-cfs.c                |  24 +++
+>>  drivers/pci/endpoint/pci-epc-core.c              |  60 ++++++-
+>>  include/linux/pci-epc.h                          |  11 +-
+>>  include/linux/pci-epf.h                          |   1 +
+>>  include/uapi/linux/pcitest.h                     |   1 +
+>>  tools/pci/pcitest.c                              |  18 +-
+>>  tools/pci/pcitest.sh                             |  25 +++
+>>  16 files changed, 528 insertions(+), 104 deletions(-)
+>>
+>> --
+>> 2.7.4
+>>
+> Nice set of patches.  I have tested this with the Cadence EP driver after adding MSI-X support, and found a few changes required.
+> I will send you comments.
 
->> What about using "depends on <list> || COMPILE_TEST", with <list> the
->> platforms for which the DTS (incl. "arm,cryptocell-*") will be submitted
->> for v4.18? The list can easily be extended when needed.
+Ok, great news!
 
-> Seriously though, I think I was not efficient in communicating my
-> point through. Let me try again:
+Maybe after this patch series submission we could start a new thread about new
+features that could be tested/verified using pcitest. I think this could be
+helpful for everybody.
 
-Perhaps I also wasn't clear. With "platform dependency", I meant not just
-architectures (e.g. ARM64), but also platform families (e.g. ARCH_EXYNOS).
+> 
+> Thanks,
+> Alan
+> 
 
-> The boards that came out last year (which I plan to send DT entries
-> for)  are using CryptoCell 630p, which we shipped as a design IP a few
-> years ago. It takes years for an IP design to ship, be designed into
-> SoCs, for these SoCs to ship and be designed into boards and until
-> these ship... and when they do, they almost always don't use the
-> cutting edge latest kernel.
-
-OK, so the list can be extended when you send the DTS for that...
-
-> That is to say - I don't know which SoC and using which architecture
-> the CryptoCell IP was and will be designed into but I want the driver
-> and the kernel to be ready when they do - this IS after all the whole
-> point o doing stuff Upstream First(tm)!
-
-... and IMHO an initial empty list is fine, as it will still be upstream, and
-compile-tested by the bots.
-
-(note: I do love Upstream First(tm)!)
-
-> This is the same of having random PCI devices depend on PCI and not a
-> specific architecture even if no one shipped a system with that device
-> yet and again the same with I2C devices depending on I2C and not a
-> specific architecture even if we don't have a board out with that I2C
-> device designed it. It's a generic none architecture dependent
-> component.
-
-At least those depend on PCI or I2C, and thus won't show up on machines
-without PCI or I2C.
-
-> This is why I initially did not mark the device driver as depending on
-> any specific architecture.
->
-> In light of your request, and what I believe is the underlying idea to
-> cut down as much as possible build time for test code, to which I
-> agree, I've decided to cut out architecture that there is very little
-> chance to even go into a SoC with CryptoCell, such as s390 or um.
-
-My underlying idea is not to cut down build time for test code (that's what
-we have COMPILE_TEST for), but to enhance usability for users and distros,
-who need to know if it makes sense to enable an option.
-
-> So, any pointer to an architecture that will not likely to go into a
-> SoC in the coming years with some off the shelf HW IP so I can cut off
-> more is very welcome, but using currently shipping boards to indicate
-> which architecture to support is not appropriate.
->
-> I hope this makes things a bit clearer.
-
-IMHO the extensive list of possible architectures is not really an
-improvement. So either a dependency on COMPILE_TEST, or no dependency
-at all makes the most sense to me.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Gustavo
