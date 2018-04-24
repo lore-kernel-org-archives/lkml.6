@@ -1,128 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933206AbeDXNHm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:07:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33120 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1757808AbeDXNHh (ORCPT
+        id S933221AbeDXNIe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:08:34 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:54299 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932864AbeDXNIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:07:37 -0400
-Subject: Re: [PATCH 01/10] vfio: ccw: Moving state change out of IRQ context
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
- <1524149293-12658-2-git-send-email-pmorel@linux.vnet.ibm.com>
- <20180424065442.GV12194@bjsdjshi@linux.vnet.ibm.com>
- <ac4b7441-2d17-922b-695e-98c01d87cd42@linux.vnet.ibm.com>
- <20180424115929.5b5e1ff0.cohuck@redhat.com>
- <f6253047-e364-c240-c4c5-cf186ca75a7d@linux.vnet.ibm.com>
- <20180424135533.2e9d03dc.cohuck@redhat.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Tue, 24 Apr 2018 15:07:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 24 Apr 2018 09:08:32 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R611e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0T.nVZ9B_1524575280;
+Subject: Re: [RFC v4 PATCH] mm: shmem: make stat.st_blksize return huge page
+ size if THP is on
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: kirill.shutemov@linux.intel.com, hughd@google.com, mhocko@kernel.org,
+        hch@infradead.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1524542450-92577-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180424112359.svngcdudzodobvmu@kshutemo-mobl1.Home>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <9cd455b9-ae84-8ea9-b3a0-488fe709d1bd@linux.alibaba.com>
+Date: Tue, 24 Apr 2018 07:07:59 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424135533.2e9d03dc.cohuck@redhat.com>
+In-Reply-To: <20180424112359.svngcdudzodobvmu@kshutemo-mobl1.Home>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18042413-0012-0000-0000-000005CE3520
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042413-0013-0000-0000-0000194AA72A
-Message-Id: <02ca116e-f20c-e59b-e609-70882d5f4afa@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804240126
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/04/2018 13:55, Cornelia Huck wrote:
-> On Tue, 24 Apr 2018 13:49:14 +0200
-> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
->
->> On 24/04/2018 11:59, Cornelia Huck wrote:
->>> On Tue, 24 Apr 2018 10:40:56 +0200
->>> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
->>>   
->>>> On 24/04/2018 08:54, Dong Jia Shi wrote:
->>>>> * Pierre Morel <pmorel@linux.vnet.ibm.com> [2018-04-19 16:48:04 +0200]:
->>>>>
->>>>> [...]
->>>>>      
->>>>>> @@ -94,9 +83,15 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
->>>>>>     static void vfio_ccw_sch_irq(struct subchannel *sch)
->>>>>>     {
->>>>>>     	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
->>>>>> +	struct irb *irb = this_cpu_ptr(&cio_irb);
->>>>>>
->>>>>>     	inc_irq_stat(IRQIO_CIO);
->>>>>> -	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_INTERRUPT);
->>>>>> +	memcpy(&private->irb, irb, sizeof(*irb));
->>>>>> +
->>>>>> +	WARN_ON(work_pending(&private->io_work));
->>>>> Hmm, why do we need this?
->>>> The current design insure that we have not two concurrent SSCH requests.
->>>> How ever I want here to track spurious interrupt.
->>>> If we implement cancel, halt or clear requests, we also may trigger (AFAIU)
->>>> a second interrupts depending on races between instructions, controller
->>>> and device.
->>> You won't get an interrupt for a successful cancel. If you do a
->>> halt/clear, you will make the subchannel halt/clear pending in addition
->>> to start pending and you'll only get one interrupt (if the I/O has
->>> progressed far enough, you won't be able to issue a hsch). The
->>> interesting case is:
->>> - guest does a ssch, we do a ssch on the device
->>> - the guest does a csch before it got the interrupt for the ssch
->>> - before we do the csch on the device, the subchannel is already status
->>>     pending with completion of the ssch
->>> - after we issue the csch, we get a second interrupt (for the csch)
->> We agree.
->>
->>> I think we should present two interrupts to the guest in that case.
->>> Races between issuing ssch/hsch/csch and the subchannel becoming status
->>> pending happen on real hardware as well, we're just more likely to see
->>> them with the vfio layer in between.
->> Yes, agreed too.
->>
->>> (I'm currently trying to recall what we're doing with unsolicited
->>> interrupts. These are fun wrt deferred cc 1; I'm not sure if there are
->>> cases where we want to present a deferred cc to the guest.)
->> This patch does not change the current functionalities, only
->> consolidates the FSM.
->> The current way to handle unsolicited interrupts is to report them to
->> the guest
->> along with the deferred code AFAIU.
-> My question was more along the line of "do we actually want to
-> _generate_ a deferred cc1 or unsolicited interrupt, based upon what we
-> do in our state machine". My guess is no, regardless of the changes you
-> do in this series.
->
->>> Also, doing a second ssch before we got final state for the first one
->>> is perfectly valid. Linux just does not do it, so I'm not sure if we
->>> should invest too much time there.
->> I agree too, it would just make things unnecessary complicated.
-> I'm a big fan of just throwing everything at the hardware and let it
-> sort out any races etc. We just need to be sure we don't mix up
-> interrupts :)
->
-OK, I understand, I can do somthing in the interrupt handler to make 
-sure we do not loose interrupt IRQs.
 
-I make a proposition in V2.
+
+On 4/24/18 5:23 AM, Kirill A. Shutemov wrote:
+> On Tue, Apr 24, 2018 at 12:00:50PM +0800, Yang Shi wrote:
+>> Since tmpfs THP was supported in 4.8, hugetlbfs is not the only
+>> filesystem with huge page support anymore. tmpfs can use huge page via
+>> THP when mounting by "huge=" mount option.
+>>
+>> When applications use huge page on hugetlbfs, it just need check the
+>> filesystem magic number, but it is not enough for tmpfs. Make
+>> stat.st_blksize return huge page size if it is mounted by appropriate
+>> "huge=" option to give applications a hint to optimize the behavior with
+>> THP.
+>>
+>> Some applications may not do wisely with THP. For example, QEMU may mmap
+>> file on non huge page aligned hint address with MAP_FIXED, which results
+>> in no pages are PMD mapped even though THP is used. Some applications
+>> may mmap file with non huge page aligned offset. Both behaviors make THP
+>> pointless.
+>>
+>> statfs.f_bsize still returns 4KB for tmpfs since THP could be split, and it
+>> also may fallback to 4KB page silently if there is not enough huge page.
+>> Furthermore, different f_bsize makes max_blocks and free_blocks
+>> calculation harder but without too much benefit. Returning huge page
+>> size via stat.st_blksize sounds good enough.
+>>
+>> Since PUD size huge page for THP has not been supported, now it just
+>> returns HPAGE_PMD_SIZE.
+>>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>> Cc: Hugh Dickins <hughd@google.com>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+>> Suggested-by: Christoph Hellwig <hch@infradead.org>
+>> ---
+>> v3 --> v4:
+>> * Rework the commit log per the education from Michal and Kirill
+>> * Fix build error if CONFIG_TRANSPARENT_HUGEPAGE is disabled
+>> v2 --> v3:
+>> * Use shmem_sb_info.huge instead of global variable per Michal's comment
+>> v2 --> v1:
+>> * Adopted the suggestion from hch to return huge page size via st_blksize
+>>    instead of creating a new flag.
+>>
+>>   mm/shmem.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/mm/shmem.c b/mm/shmem.c
+>> index b859192..19b8055 100644
+>> --- a/mm/shmem.c
+>> +++ b/mm/shmem.c
+>> @@ -988,6 +988,7 @@ static int shmem_getattr(const struct path *path, struct kstat *stat,
+>>   {
+>>   	struct inode *inode = path->dentry->d_inode;
+>>   	struct shmem_inode_info *info = SHMEM_I(inode);
+>> +	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+>>   
+>>   	if (info->alloced - info->swapped != inode->i_mapping->nrpages) {
+>>   		spin_lock_irq(&info->lock);
+>> @@ -995,6 +996,11 @@ static int shmem_getattr(const struct path *path, struct kstat *stat,
+>>   		spin_unlock_irq(&info->lock);
+>>   	}
+>>   	generic_fillattr(inode, stat);
+>> +#ifdef CONFIG_TRANSPARENT_HUGE_PAGECACHE
+>> +	if (sbinfo->huge > 0)
+> No ifdeffery, please.
+>
+> And we probably want to check if shmem_huge is 'force'.
+>
+> Something like this?
+>
+> 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE) &&
+> 		 (shmem_huge == SHMEM_HUGE_FORCE || sbinfo->huge))
+
+Yes, looks good, will do that. I missed "force" part, just realized it 
+is applicable to all mounts.
 
 Thanks,
+Yang
 
-Pierre
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+>
+>> +		stat->blksize = HPAGE_PMD_SIZE;
+>> +#endif
+>> +	
+>>   	return 0;
+>>   }
+>>   
+>> -- 
+>> 1.8.3.1
+>>
