@@ -1,22 +1,23 @@
 Return-Path: <jorge.sanjuan@codethink.co.uk>
-X-Google-Smtp-Source: AIpwx4/JuBf70gwsV6vZb43yo3PoGJDjElpcpckkihp3iiJFKMB4vL+7tx41AdyuQum5dMhjL2us
-ARC-Seal: i=1; a=rsa-sha256; t=1524243819; cv=none;
+X-Google-Smtp-Source: AB8JxZpiUP3FI3A4SQvnR3qcWR8TINmeUzpjcZuPoc8vil+obaRnBmjXE80X1TNfWkeaanHS7ssp
+ARC-Seal: i=1; a=rsa-sha256; t=1524590696; cv=none;
         d=google.com; s=arc-20160816;
-        b=YhjOvA8qhctAkt/Kh6IPj0kAnNRNLSL3/6yheb2K4E93eRTiwcUZaX6RVJt2Ly5me1
-         iRWQGlM+V5SvW1uSRT25IBqzrVWMNnyZ803lZkJv3rgWMOybr/X4zLqGR3KuCMCottf/
-         8gvujEVwpMZ5okH+mXwMu+UtaasZlnvGTqSoUB6A69vJ4U1UfC8Tzin3KradOORTtQFW
-         vu5mDEzZbKsRekkM/+BrG5AcMRDK4CZseKOIjKQJp+4Qjcsyu1O35w6D0cJhPNKtFbXt
-         jqhH1g/UFwJsxI9mOIBcIb69uNcs0NIZ04E/ylT6Xxap2Onga6mZwWt3cuce3faJEUnr
-         MkIQ==
+        b=FQE6KCvDHVgGrxHHiHDTOystNznS0WQMSfOgkc9FXS1CssWKVycoPg8A9R2X9IDD6i
+         qSkbpvZVuE1KsbExlu0oARUX4tUC8DVEzBhHRc4WHB8jaFY6e4meTx+qoNbA3DxqXbam
+         YOOnJSs4epZzyieOisghU/9k22W/M5+PjuOJwU5EB7hxkbMuQSFS+jFnBb1A+qcEJ3R1
+         HUMHCToCVLFXnAwzR/JCrOJ8DjP0UyNMWwI9JswLwco7iOwlH3b+X2REt2L7YdWwThtA
+         oFDHLXJnU71MqsW+fhf9AoNV4Z0dHt+Mja8aYNffD48svpdPyvA5h5VIDqi4cmNOzz+P
+         8l/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=n2gUFmcN7Wk8GZcS/ha9XuM/ObH3P/FLHavXMY+svVU=;
-        b=uzaLN7Ss4LtfcxzALoMyYaZC3OBMlQSjZJH2uhZVdfnki+we4W3DDR4bY59bBtQ8Ke
-         hI+glBR6XqygTgGDCLdQl3NorYrO1TMK9rvCbMWSWPWPGTRYgk9L+ILS2AS2yZ/yJYWc
-         dZmJnCmugfdAn11yKhysGtMrL9mfRt7hekdcIJJduS9ZoGD8Q2JfUKFFXpozlsbHKk3T
-         4Kn6/vqvbTB5NKz2kBnCGuAhmNVqfKMDDJnNM23QCfs5gyRf4zKTXjmaMEhiVhvxo39I
-         KpqElPzxEt/eJdf/55ADA2Lnzt79SSzf+jo3Zevj3IsytqpfKKWH+FPEqdBP3TbnjurZ
-         a2pA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=40Y3ekkKuNvjZxIWP4ZW83rJm+Uc5LprTImJuh4E5xg=;
+        b=XmrWJ6xCVt2D1fYVjcomNcGT1/DcMv9FgiVzojwjG3FFfLFknhGC32x0gSjTGjeIdh
+         N6o5v/mvl0byLlI5oreuh3jDBUxq0wLx2e4C0j9Ni0UVMAgW5pW5OPumqUA3+08gd8Zz
+         dhcB61VtokCjqQ1Ws5PU+FmAaQjIg7AtNrGnKZhjR9cNGBP8NblFjd+27WM+7Mv7Fvb9
+         SS2cluDu/aw7AuHiRg3IB7/5xJ+/dDphyveH5+W2K+eCfXhYbjygVK5+76aX8p2WUXvS
+         XGkMz1T/i1Uf6w/LDZgE+9wgZM2xNVxxiR1f3i8M7okhkV897gGguKv7wemfdHESOo+q
+         DXeQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jorge.sanjuan@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=jorge.sanjuan@codethink.co.uk;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
@@ -29,15 +30,25 @@ Cc: alsa-devel@alsa-project.org,
 	gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-Subject: [PATCH 0/4] ALSA: usb: UAC3 new features.
-Date: Fri, 20 Apr 2018 18:03:23 +0100
-Message-Id: <20180420170327.31569-1-jorge.sanjuan@codethink.co.uk>
+Subject: [PATCH v2 0/4] ALSA: usb: UAC3 new features.
+Date: Tue, 24 Apr 2018 18:24:41 +0100
+Message-Id: <20180424172445.31928-1-jorge.sanjuan@codethink.co.uk>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180420170327.31569-1-jorge.sanjuan@codethink.co.uk>
+References: <20180420170327.31569-1-jorge.sanjuan@codethink.co.uk>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598285487756615401?=
-X-GMAIL-MSGID: =?utf-8?q?1598285487756615401?=
+X-GMAIL-MSGID: =?utf-8?q?1598649213743248844?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+v2 fixes:
+ - If/else statements braces style fixes.
+ - Add wrapping function to mixer unit code.
+ - Make connectors control kctl struct const.
+ - Little endian to cpu conversion in several places.
+ - Sing off and add Fixes tag to fixup commit.
+ - Remove flex-array for a struct that is used statically.
 
 Now that the UAC3 patch [1] has made it to linux-next I have some extra
 features to make a UAC3 device fully work in Linux. Including Jack 
@@ -72,11 +83,11 @@ Michael Drake (1):
   ALSA: usb-audio: ADC3: Fix channel mapping conversion for ADC3.
 
  include/linux/usb/audio-v2.h   |   7 ++
- include/linux/usb/audio-v3.h   |  14 ++++
+ include/linux/usb/audio-v3.h   |  14 +++
  include/uapi/linux/usb/audio.h |  13 ++-
- sound/usb/mixer.c              | 175 ++++++++++++++++++++++++++++++++++++-----
- sound/usb/stream.c             |  19 ++++-
- 5 files changed, 204 insertions(+), 24 deletions(-)
+ sound/usb/mixer.c              | 195 +++++++++++++++++++++++++++++++++++++----
+ sound/usb/stream.c             |  11 ++-
+ 5 files changed, 217 insertions(+), 23 deletions(-)
 
 -- 
 2.11.0
