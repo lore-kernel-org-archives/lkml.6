@@ -1,107 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755915AbeDXFYa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 01:24:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57996 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751938AbeDXFY2 (ORCPT
+        id S1755941AbeDXF0f (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 01:26:35 -0400
+Received: from mail-ua0-f180.google.com ([209.85.217.180]:32881 "EHLO
+        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752110AbeDXF0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 01:24:28 -0400
-Subject: Re: [PATCH] cpufreq: powernv: Fix the hardlockup by synchronus
- smp_call in timer interrupt
-To: Stewart Smith <stewart@linux.ibm.com>, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org
-References: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
- <87y3hdb36b.fsf@linux.vnet.ibm.com>
-Cc: npiggin@gmail.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, ppaidipe@linux.vnet.ibm.com,
-        svaidy@linux.vnet.ibm.com
-From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Date: Tue, 24 Apr 2018 10:54:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        Tue, 24 Apr 2018 01:26:32 -0400
+X-Google-Smtp-Source: AIpwx480jnePAx9q4djKH4T2sTiReMQ6trgd7hHHNNdyLk2x4zBn503MgUfNqiFER27J7ftvq/kiFb32UlqmZGIg7R8=
 MIME-Version: 1.0
-In-Reply-To: <87y3hdb36b.fsf@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18042405-0008-0000-0000-000004EE8003
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042405-0009-0000-0000-00001E82A6E1
-Message-Id: <03d2cbd2-eae7-3eae-dc2a-6b3f3266accc@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804240053
+In-Reply-To: <20180419230032.13611-1-swboyd@chromium.org>
+References: <20180419230032.13611-1-swboyd@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 23 Apr 2018 22:26:29 -0700
+X-Google-Sender-Auth: 3wMfAQjA9rR1RAT_eHgqXrBOZOc
+Message-ID: <CAD=FV=VoGpRLsPXcfPaiaJh18u+79DcN9PUGScDKUu+COgj7Gw@mail.gmail.com>
+Subject: Re: [PATCH] mfd: qcom-spmi-pmic: Add support for pm8005,pm8998,pmi8998
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 04/24/2018 10:40 AM, Stewart Smith wrote:
-> Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
->> gpstate_timer_handler() uses synchronous smp_call to set the pstate
->> on the requested core. This causes the below hard lockup:
->>
->> [c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
->> [c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
->> [c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
->> [c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
->> [c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
->> [c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
->> [c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
->> [c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
->> [c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
->> [c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
->> --- interrupt: 901 at doorbell_global_ipi+0x34/0x50
->> LR = arch_send_call_function_ipi_mask+0x120/0x130
->> [c000003fe566ba50] [c00000000004876c] arch_send_call_function_ipi_mask+0x4c/0x130 (unreliable)
->> [c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
->> [c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
->> [c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
->> [c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
->> [c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
->> [c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
->> [c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
->>
->> Fix this by using the asynchronus smp_call in the timer interrupt handler.
->> We don't have to wait in this handler until the pstates are changed on
->> the core. This change will not have any impact on the global pstate
->> ramp-down algorithm.
->>
->> Reported-by: Nicholas Piggin <npiggin@gmail.com>
->> Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
->> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
->> ---
->>  drivers/cpufreq/powernv-cpufreq.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
->> index 0591874..7e0c752 100644
->> --- a/drivers/cpufreq/powernv-cpufreq.c
->> +++ b/drivers/cpufreq/powernv-cpufreq.c
->> @@ -721,7 +721,7 @@ void gpstate_timer_handler(struct timer_list *t)
->>  	spin_unlock(&gpstates->gpstate_lock);
->>
->>  	/* Timer may get migrated to a different cpu on cpu hot unplug */
->> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
->> +	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 0);
->>  }
-> 
-> Should this have:
-> Fixes: eaa2c3aeef83f
-> and CC stable v4.7+ ?
-> 
+On Thu, Apr 19, 2018 at 4:00 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> diff --git a/drivers/mfd/qcom-spmi-pmic.c b/drivers/mfd/qcom-spmi-pmic.c
+> index 2022bdfa7ab4..0b26387c22e7 100644
+> --- a/drivers/mfd/qcom-spmi-pmic.c
+> +++ b/drivers/mfd/qcom-spmi-pmic.c
+> @@ -39,6 +39,9 @@
+>  #define PM8916_SUBTYPE         0x0b
+>  #define PM8004_SUBTYPE         0x0c
+>  #define PM8909_SUBTYPE         0x0d
+> +#define PM8998_SUBTYPE         0x14
+> +#define PMI8998_SUBTYPE                0x15
+> +#define PM8005_SUBTYPE         0x18
 
-Yeah this is required.
+I was being overly paranoid and double-checking these numbers.  I
+confirmed PMI8998 and PM8005 from the docs (yay!).  The PM8998 docs
+didn't have this, but I confirmed that I was talking to PM8998 by
+confirming it was on the right USID and and then printing out the
+value at probe time.  All look good.
 
-Fixes: eaa2c3aeef83 (cpufreq: powernv: Ramp-down global pstate slower than
-local-pstate)
 
-Thanks and Regards,
-Shilpa
+>  static const struct of_device_id pmic_spmi_id_table[] = {
+>         { .compatible = "qcom,spmi-pmic", .data = (void *)COMMON_SUBTYPE },
+> @@ -54,7 +57,10 @@ static const struct of_device_id pmic_spmi_id_table[] = {
+>         { .compatible = "qcom,pmi8994",   .data = (void *)PMI8994_SUBTYPE },
+>         { .compatible = "qcom,pm8916",    .data = (void *)PM8916_SUBTYPE },
+>         { .compatible = "qcom,pm8004",    .data = (void *)PM8004_SUBTYPE },
+> +       { .compatible = "qcom,pmi8998",   .data = (void *)PMI8998_SUBTYPE },
+> +       { .compatible = "qcom,pm8005",    .data = (void *)PM8005_SUBTYPE },
+>         { .compatible = "qcom,pm8909",    .data = (void *)PM8909_SUBTYPE },
+> +       { .compatible = "qcom,pm8998",    .data = (void *)PM8998_SUBTYPE },
+
+nit: It appears that the above table was previously sorted by SUBTYPE
+ID.  Could you perhaps move your 3 new PMICs to the bottom to maintain
+this?  Other than that, you can add my Reviewed-by if you would like
+(not that I have _any_ real expertise on SPMI, so might not be worth
+it).
+
+
+-Doug
