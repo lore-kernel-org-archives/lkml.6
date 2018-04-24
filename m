@@ -1,69 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751201AbeDXWYp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 18:24:45 -0400
-Received: from mga09.intel.com ([134.134.136.24]:50510 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750766AbeDXWYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 18:24:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,324,1520924400";
-   d="scan'208";a="48814774"
-Message-ID: <1524608680.26220.4.camel@tzanussi-mobl.amr.corp.intel.com>
-Subject: Re: [PATCH 0/2] selftests: tracing: Update inter-event testcases
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, tglx@linutronix.de,
-        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel.opensrc@gmail.com, joelaf@google.com,
-        mathieu.desnoyers@efficios.com, baohong.liu@intel.com,
-        rajvi.jingar@intel.com, julia@ni.com, fengguang.wu@intel.com,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Date: Tue, 24 Apr 2018 17:24:40 -0500
-In-Reply-To: <20180424152221.7049b706@gandalf.local.home>
-References: <152292049091.15769.13306554953968999494.stgit@devbox>
-         <20180424152221.7049b706@gandalf.local.home>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751264AbeDXWZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 18:25:56 -0400
+Received: from mail-pf0-f170.google.com ([209.85.192.170]:45028 "EHLO
+        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeDXWZx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 18:25:53 -0400
+X-Google-Smtp-Source: AIpwx4+QYdXua3VqOqzQhAbiIPaA400d7kS6ffpHqbLd2ggc94DooNVIurNNoi9evRl6sJ85huc5hw==
+Date: Tue, 24 Apr 2018 15:25:51 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc: mhocko@kernel.org, akpm@linux-foundation.org, aarcange@redhat.com,
+        guro@fb.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper
+ unmap
+In-Reply-To: <201804250657.GFI21363.StOJHOQFOMFVFL@I-love.SAKURA.ne.jp>
+Message-ID: <alpine.DEB.2.21.1804241525280.238665@chino.kir.corp.google.com>
+References: <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp> <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com> <201804240511.w3O5BY4o090598@www262.sakura.ne.jp> <alpine.DEB.2.21.1804232231020.82340@chino.kir.corp.google.com>
+ <201804250657.GFI21363.StOJHOQFOMFVFL@I-love.SAKURA.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-24 at 15:22 -0400, Steven Rostedt wrote:
-> On Thu,  5 Apr 2018 18:28:11 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Wed, 25 Apr 2018, Tetsuo Handa wrote:
+
+> > One of the reasons that I extracted __oom_reap_task_mm() out of the new 
+> > oom_reap_task_mm() is to avoid the checks that would be unnecessary when 
+> > called from exit_mmap().  In this case, we can ignore the 
+> > mm_has_blockable_invalidate_notifiers() check because exit_mmap() has 
+> > already done mmu_notifier_release().  So I don't think there's a concern 
+> > about __oom_reap_task_mm() blocking while holding oom_lock.  Unless you 
+> > are referring to something else?
 > 
-> > Hi,
-> > 
-> > I've fixed a testcase for inter-event extended error
-> > and added a testcase for multiple actions on trigger,
-> > which is based on what Tom shown in his mail.
-> > 
-> > This series can be applied on Steven's tracing repo.
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
-> > ftrace/core
-> > 
-> > Tom, could you review it?
+> Oh, mmu_notifier_release() made mm_has_blockable_invalidate_notifiers() == false. OK.
 > 
-> Even without Tom's review. I took both patches.
+> But I want comments why it is safe; I will probably miss that dependency
+> when we move that code next time.
 > 
 
-Oops, sorry, completely forgot about these.. 
-
-For both patches:
-
-Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Tested-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-
-Thanks,
-
-Tom
-
-> Thanks Masami!
-> 
-> -- Steve
+Ok, makes sense.  I'll send a v3 to update the comment.
