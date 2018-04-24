@@ -1,396 +1,296 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932804AbeDXCmt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 22:42:49 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7200 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932688AbeDXCmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 22:42:47 -0400
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: fix to avoid race during access gc_thread pointer
-Date: Tue, 24 Apr 2018 10:42:14 +0800
-Message-ID: <20180424024214.83177-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
+        id S932778AbeDXCo1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 22:44:27 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:34442 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932721AbeDXCoY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 22:44:24 -0400
+X-Google-Smtp-Source: AIpwx48cmWEhB3bUmaOUFqNawPhA2qLmGGoMhs0A+KzvjjDZJVt8G7iPR9jH/2366mhHz6vaw6uuUeQ0xADHU0HPiSM=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180423172937.GA66646@dtor-ws>
+References: <e2f85ec0b1fb66baa41dd85bb31e8113e23c704b.1524450536.git.baolin.wang@linaro.org>
+ <dc7af2705ab659a7cf579145b7e1eda9697b0ef2.1524450536.git.baolin.wang@linaro.org>
+ <20180423172937.GA66646@dtor-ws>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Tue, 24 Apr 2018 10:44:23 +0800
+Message-ID: <CAMz4kuL8qsbQPfSE9vKkCuq41zK_RKq8KmnjaZ00Tga3zXHHKw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] input: misc: Add Spreadtrum vibrator driver
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        xiaotong.lu@spreadtrum.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thread A			Thread B		Thread C
-- f2fs_remount
- - stop_gc_thread
-				- f2fs_sbi_store
-							- issue_discard_thread
-   sbi->gc_thread = NULL;
-				  sbi->gc_thread->gc_wake = 1
-							  access sbi->gc_thread->gc_urgent
+Hi Dmitry,
 
-Previously, we allocate memory for sbi->gc_thread based on background
-gc thread mount option, the memory can be released if we turn off
-that mount option, but still there are several places access gc_thread
-pointer without considering race condition, result in NULL point
-dereference.
+On 24 April 2018 at 01:29, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> Hi Xiaotong,
+>
+> On Mon, Apr 23, 2018 at 10:33:36AM +0800, Baolin Wang wrote:
+>> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>>
+>> This patch adds the Spreadtrum vibrator driver, which embedded in the
+>> Spreadtrum SC27xx series PMICs.
+>>
+>> Signed-off-by: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> Changes since v1:
+>>  - Remove input_ff_destroy() and input_unregister_device()
+>> ---
+>>  drivers/input/misc/Kconfig        |   10 +++
+>>  drivers/input/misc/Makefile       |    1 +
+>>  drivers/input/misc/sc27xx-vibra.c |  156 +++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 167 insertions(+)
+>>  create mode 100644 drivers/input/misc/sc27xx-vibra.c
+>>
+>> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+>> index 572b15f..c761c0c 100644
+>> --- a/drivers/input/misc/Kconfig
+>> +++ b/drivers/input/misc/Kconfig
+>> @@ -841,4 +841,14 @@ config INPUT_RAVE_SP_PWRBUTTON
+>>         To compile this driver as a module, choose M here: the
+>>         module will be called rave-sp-pwrbutton.
+>>
+>> +config INPUT_SC27XX_VIBRA
+>> +     tristate "Spreadtrum sc27xx vibrator support"
+>> +     depends on MFD_SC27XX_PMIC || COMPILE_TEST
+>> +     select INPUT_FF_MEMLESS
+>> +     help
+>> +       This option enables support for Spreadtrum sc27xx vibrator driver.
+>> +
+>> +       To compile this driver as a module, choose M here. The module will
+>> +       be called sc27xx_vibra.
+>> +
+>>  endif
+>> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+>> index 72cde28..9d0f9d1 100644
+>> --- a/drivers/input/misc/Makefile
+>> +++ b/drivers/input/misc/Makefile
+>> @@ -66,6 +66,7 @@ obj-$(CONFIG_INPUT_RETU_PWRBUTTON)  += retu-pwrbutton.o
+>>  obj-$(CONFIG_INPUT_AXP20X_PEK)               += axp20x-pek.o
+>>  obj-$(CONFIG_INPUT_GPIO_ROTARY_ENCODER)      += rotary_encoder.o
+>>  obj-$(CONFIG_INPUT_RK805_PWRKEY)     += rk805-pwrkey.o
+>> +obj-$(CONFIG_INPUT_SC27XX_VIBRA)     += sc27xx-vibra.o
+>>  obj-$(CONFIG_INPUT_SGI_BTNS)         += sgi_btns.o
+>>  obj-$(CONFIG_INPUT_SIRFSOC_ONKEY)    += sirfsoc-onkey.o
+>>  obj-$(CONFIG_INPUT_SOC_BUTTON_ARRAY) += soc_button_array.o
+>> diff --git a/drivers/input/misc/sc27xx-vibra.c b/drivers/input/misc/sc27xx-vibra.c
+>> new file mode 100644
+>> index 0000000..f78e70f
+>> --- /dev/null
+>> +++ b/drivers/input/misc/sc27xx-vibra.c
+>> @@ -0,0 +1,156 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2018 Spreadtrum Communications Inc.
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/input.h>
+>> +#include <linux/workqueue.h>
+>> +
+>> +#define CUR_DRV_CAL_SEL              GENMASK(13, 12)
+>> +#define SLP_LDOVIBR_PD_EN    BIT(9)
+>> +#define LDO_VIBR_PD          BIT(8)
+>> +
+>> +struct vibra_info {
+>> +     struct input_dev        *input_dev;
+>> +     struct work_struct      play_work;
+>> +     struct regmap           *regmap;
+>> +     u32                     base;
+>> +     u32                     strength;
+>> +     bool                    enabled;
+>> +};
+>> +
+>> +static void sc27xx_vibra_set(struct vibra_info *info, bool on)
+>> +{
+>> +     if (on) {
+>> +             regmap_update_bits(info->regmap, info->base, LDO_VIBR_PD, 0);
+>> +             regmap_update_bits(info->regmap, info->base,
+>> +                                SLP_LDOVIBR_PD_EN, 0);
+>> +             info->enabled = true;
+>> +     } else {
+>> +             regmap_update_bits(info->regmap, info->base, LDO_VIBR_PD,
+>> +                                LDO_VIBR_PD);
+>> +             regmap_update_bits(info->regmap, info->base,
+>> +                                SLP_LDOVIBR_PD_EN, SLP_LDOVIBR_PD_EN);
+>> +             info->enabled = false;
+>> +     }
+>> +}
+>> +
+>> +static int sc27xx_vibra_hw_init(struct vibra_info *info)
+>> +{
+>> +     return regmap_update_bits(info->regmap, info->base, CUR_DRV_CAL_SEL, 0);
+>> +}
+>> +
+>> +static void sc27xx_vibra_play_work(struct work_struct *work)
+>> +{
+>> +     struct vibra_info *info = container_of(work, struct vibra_info,
+>> +                                            play_work);
+>> +
+>> +     if (info->strength && !info->enabled)
+>> +             sc27xx_vibra_set(info, true);
+>> +     else if (info->enabled)
+>> +             sc27xx_vibra_set(info, false);
+>
+> I do not think this is correct. If you issue 2 play requests with
+> info->strength that is not 0 then you'll end up disabling the vibrator.
+>
+> I think you want the 2nd condition to be:
+>
+>         else if (info->strength == 0 && info->enabled)
+>                 sc27xx_vibra_set(info, false);
+>
 
-In order to fix this issue, keep gc_thread structure valid in sbi all
-the time instead of alloc/free it dynamically.
+Yes, you are right. Will fix in next patch.
 
-In addition, add a rw semaphore to exclude rw operation in fields of
-gc_thread.
+>
+>> +}
+>> +
+>> +static int sc27xx_vibra_play(struct input_dev *input, void *data,
+>> +                          struct ff_effect *effect)
+>> +{
+>> +     struct vibra_info *info = input_get_drvdata(input);
+>> +
+>> +     info->strength = effect->u.rumble.weak_magnitude;
+>> +     schedule_work(&info->play_work);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static void sc27xx_vibra_close(struct input_dev *input)
+>> +{
+>> +     struct vibra_info *info = input_get_drvdata(input);
+>> +
+>> +     cancel_work_sync(&info->play_work);
+>> +     if (info->enabled)
+>> +             sc27xx_vibra_set(info, false);
+>> +}
+>> +
+>> +static int sc27xx_vibra_probe(struct platform_device *pdev)
+>> +{
+>> +     struct device_node *node = pdev->dev.of_node;
+>> +     struct vibra_info *info;
+>> +     int ret;
+>
+> Can we please call this variable "error"?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- add a rw semaphore to exclude rw operation suggested by Jaegeuk.
- fs/f2fs/debug.c   |  3 +--
- fs/f2fs/f2fs.h    |  9 ++++++-
- fs/f2fs/gc.c      | 78 ++++++++++++++++++++++++++++++++++++-------------------
- fs/f2fs/gc.h      |  1 +
- fs/f2fs/segment.c | 10 +++++--
- fs/f2fs/super.c   | 26 +++++++++++++------
- fs/f2fs/sysfs.c   | 26 ++++++++++++++-----
- 7 files changed, 107 insertions(+), 46 deletions(-)
+Sure.
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index a66107b5cfff..0fbd674c66fb 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -221,8 +221,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- 	si->cache_mem = 0;
- 
- 	/* build gc */
--	if (sbi->gc_thread)
--		si->cache_mem += sizeof(struct f2fs_gc_kthread);
-+	si->cache_mem += sizeof(struct f2fs_gc_kthread);
- 
- 	/* build merge flush thread */
- 	if (SM_I(sbi)->fcc_info)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8f3ad9662d13..75d3b4875429 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1412,6 +1412,11 @@ static inline struct sit_info *SIT_I(struct f2fs_sb_info *sbi)
- 	return (struct sit_info *)(SM_I(sbi)->sit_info);
- }
- 
-+static inline struct f2fs_gc_kthread *GC_I(struct f2fs_sb_info *sbi)
-+{
-+	return (struct f2fs_gc_kthread *)(sbi->gc_thread);
-+}
-+
- static inline struct free_segmap_info *FREE_I(struct f2fs_sb_info *sbi)
- {
- 	return (struct free_segmap_info *)(SM_I(sbi)->free_info);
-@@ -2954,8 +2959,10 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
- /*
-  * gc.c
-  */
-+int init_gc_context(struct f2fs_sb_info *sbi);
-+void destroy_gc_context(struct f2fs_sb_info * sbi);
- int start_gc_thread(struct f2fs_sb_info *sbi);
--void stop_gc_thread(struct f2fs_sb_info *sbi);
-+bool stop_gc_thread(struct f2fs_sb_info *sbi);
- block_t start_bidx_of_node(unsigned int node_ofs, struct inode *inode);
- int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
- 			unsigned int segno);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 70418b34c5f6..2febb84b2fd6 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -26,8 +26,8 @@
- static int gc_thread_func(void *data)
- {
- 	struct f2fs_sb_info *sbi = data;
--	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
--	wait_queue_head_t *wq = &sbi->gc_thread->gc_wait_queue_head;
-+	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
-+	wait_queue_head_t *wq = &gc_th->gc_wait_queue_head;
- 	unsigned int wait_ms;
- 
- 	wait_ms = gc_th->min_sleep_time;
-@@ -114,17 +114,15 @@ static int gc_thread_func(void *data)
- 	return 0;
- }
- 
--int start_gc_thread(struct f2fs_sb_info *sbi)
-+int init_gc_context(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_gc_kthread *gc_th;
--	dev_t dev = sbi->sb->s_bdev->bd_dev;
--	int err = 0;
- 
- 	gc_th = f2fs_kmalloc(sbi, sizeof(struct f2fs_gc_kthread), GFP_KERNEL);
--	if (!gc_th) {
--		err = -ENOMEM;
--		goto out;
--	}
-+	if (!gc_th)
-+		return -ENOMEM;
-+
-+	gc_th->f2fs_gc_task = NULL;
- 
- 	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
- 	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
-@@ -135,35 +133,59 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
- 	gc_th->gc_urgent = 0;
- 	gc_th->gc_wake= 0;
- 
-+	init_rwsem(&gc_th->gc_rwsem);
-+
- 	sbi->gc_thread = gc_th;
--	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
--	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
-+
-+	return 0;
-+}
-+
-+void destroy_gc_context(struct f2fs_sb_info *sbi)
-+{
-+	kfree(GC_I(sbi));
-+	sbi->gc_thread = NULL;
-+}
-+
-+int start_gc_thread(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
-+	dev_t dev = sbi->sb->s_bdev->bd_dev;
-+	int err = 0;
-+
-+	init_waitqueue_head(&gc_th->gc_wait_queue_head);
-+	gc_th->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
- 			"f2fs_gc-%u:%u", MAJOR(dev), MINOR(dev));
- 	if (IS_ERR(gc_th->f2fs_gc_task)) {
- 		err = PTR_ERR(gc_th->f2fs_gc_task);
--		kfree(gc_th);
--		sbi->gc_thread = NULL;
-+		gc_th->f2fs_gc_task = NULL;
- 	}
--out:
-+
- 	return err;
- }
- 
--void stop_gc_thread(struct f2fs_sb_info *sbi)
-+bool stop_gc_thread(struct f2fs_sb_info *sbi)
- {
--	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
--	if (!gc_th)
--		return;
--	kthread_stop(gc_th->f2fs_gc_task);
--	kfree(gc_th);
--	sbi->gc_thread = NULL;
-+	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
-+	bool stopped = false;
-+
-+	down_write(&gc_th->gc_rwsem);
-+	if (gc_th->f2fs_gc_task) {
-+		kthread_stop(gc_th->f2fs_gc_task);
-+		gc_th->f2fs_gc_task = NULL;
-+		stopped = true;
-+	}
-+	up_write(&gc_th->gc_rwsem);
-+
-+	return stopped;
- }
- 
- static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
- {
- 	int gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
- 
--	if (!gc_th)
--		return gc_mode;
-+	down_read(&gc_th->gc_rwsem);
-+	if (!gc_th->f2fs_gc_task)
-+		goto out;
- 
- 	if (gc_th->gc_idle) {
- 		if (gc_th->gc_idle == 1)
-@@ -173,6 +195,8 @@ static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
- 	}
- 	if (gc_th->gc_urgent)
- 		gc_mode = GC_GREEDY;
-+out:
-+	up_read(&gc_th->gc_rwsem);
- 	return gc_mode;
- }
- 
-@@ -187,17 +211,19 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
- 		p->max_search = dirty_i->nr_dirty[type];
- 		p->ofs_unit = 1;
- 	} else {
--		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
-+		p->gc_mode = select_gc_type(GC_I(sbi), gc_type);
- 		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
- 		p->max_search = dirty_i->nr_dirty[DIRTY];
- 		p->ofs_unit = sbi->segs_per_sec;
- 	}
- 
- 	/* we need to check every dirty segments in the FG_GC case */
--	if (gc_type != FG_GC &&
--			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
-+	down_read(&GC_I(sbi)->gc_rwsem);
-+	if (gc_type != FG_GC && GC_I(sbi)->f2fs_gc_task &&
-+			!GC_I(sbi)->gc_urgent &&
- 			p->max_search > sbi->max_victim_search)
- 		p->max_search = sbi->max_victim_search;
-+	up_read(&GC_I(sbi)->gc_rwsem);
- 
- 	/* let's select beginning hot/small space first in no_heap mode*/
- 	if (test_opt(sbi, NOHEAP) &&
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index b0045d4c8d1e..9a5b273328c2 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -26,6 +26,7 @@
- #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
- 
- struct f2fs_gc_kthread {
-+	struct rw_semaphore gc_rwsem;		/* semaphore for f2fs_gc_task */
- 	struct task_struct *f2fs_gc_task;
- 	wait_queue_head_t gc_wait_queue_head;
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 5960768d26df..f787eea1b2f6 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -177,8 +177,12 @@ bool need_SSR(struct f2fs_sb_info *sbi)
- 
- 	if (test_opt(sbi, LFS))
- 		return false;
--	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
-+	down_read(&GC_I(sbi)->gc_rwsem);
-+	if (GC_I(sbi)->f2fs_gc_task && GC_I(sbi)->gc_urgent) {
-+		down_read(&GC_I(sbi)->gc_rwsem);
- 		return true;
-+	}
-+	up_read(&GC_I(sbi)->gc_rwsem);
- 
- 	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
- 			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
-@@ -1425,8 +1429,10 @@ static int issue_discard_thread(void *data)
- 		if (dcc->discard_wake)
- 			dcc->discard_wake = 0;
- 
--		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
-+		down_read(&GC_I(sbi)->gc_rwsem);
-+		if (GC_I(sbi)->f2fs_gc_task && GC_I(sbi)->gc_urgent)
- 			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
-+		up_read(&GC_I(sbi)->gc_rwsem);
- 
- 		sb_start_intwrite(sbi->sb);
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index dedb8e50b440..199f29dce86d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1044,6 +1044,7 @@ static void f2fs_put_super(struct super_block *sb)
- 	kfree(sbi->raw_super);
- 
- 	destroy_device_list(sbi);
-+	destroy_gc_context(sbi);
- 	mempool_destroy(sbi->write_io_dummy);
- #ifdef CONFIG_QUOTA
- 	for (i = 0; i < MAXQUOTAS; i++)
-@@ -1476,15 +1477,18 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	 * option. Also sync the filesystem.
- 	 */
- 	if ((*flags & SB_RDONLY) || !test_opt(sbi, BG_GC)) {
--		if (sbi->gc_thread) {
--			stop_gc_thread(sbi);
--			need_restart_gc = true;
-+		need_restart_gc = stop_gc_thread(sbi);
-+	} else {
-+		down_write(&GC_I(sbi)->gc_rwsem);
-+		if (!GC_I(sbi)->f2fs_gc_task) {
-+			err = start_gc_thread(sbi);
-+			if (err) {
-+				up_write(&GC_I(sbi)->gc_rwsem);
-+				goto restore_opts;
-+			}
-+			need_stop_gc = true;
- 		}
--	} else if (!sbi->gc_thread) {
--		err = start_gc_thread(sbi);
--		if (err)
--			goto restore_opts;
--		need_stop_gc = true;
-+		up_write(&GC_I(sbi)->gc_rwsem);
- 	}
- 
- 	if (*flags & SB_RDONLY ||
-@@ -2771,6 +2775,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_meta_inode;
- 	}
- 
-+	err = init_gc_context(sbi);
-+	if (err)
-+		goto free_checkpoint;
-+
- 	/* Initialize device list */
- 	err = f2fs_scan_devices(sbi);
- 	if (err) {
-@@ -2981,6 +2989,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	destroy_segment_manager(sbi);
- free_devices:
- 	destroy_device_list(sbi);
-+	destroy_gc_context(sbi);
-+free_checkpoint:
- 	kfree(sbi->ckpt);
- free_meta_inode:
- 	make_bad_inode(sbi->meta_inode);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 2c53de9251be..b8d09935e43f 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -46,7 +46,7 @@ struct f2fs_attr {
- static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
- {
- 	if (struct_type == GC_THREAD)
--		return (unsigned char *)sbi->gc_thread;
-+		return (unsigned char *)GC_I(sbi);
- 	else if (struct_type == SM_INFO)
- 		return (unsigned char *)SM_I(sbi);
- 	else if (struct_type == DCC_INFO)
-@@ -248,16 +248,28 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 	if (!strcmp(a->attr.name, "trim_sections"))
- 		return -EINVAL;
- 
--	*ui = t;
--
--	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
-+	if (!strcmp(a->attr.name, "iostat_enable") && t == 0)
- 		f2fs_reset_iostat(sbi);
--	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
--		sbi->gc_thread->gc_wake = 1;
--		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
-+
-+	if (a->struct_type == GC_THREAD) {
-+		down_write(&GC_I(sbi)->gc_rwsem);
-+		if (!GC_I(sbi)->f2fs_gc_task) {
-+			up_write(&GC_I(sbi)->gc_rwsem);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	if (!strcmp(a->attr.name, "gc_urgent") && t == 1) {
-+		GC_I(sbi)->gc_wake = 1;
-+		wake_up_interruptible_all(&GC_I(sbi)->gc_wait_queue_head);
- 		wake_up_discard_thread(sbi, true);
- 	}
- 
-+	*ui = t;
-+
-+	if (a->struct_type == GC_THREAD)
-+		up_write(&GC_I(sbi)->gc_rwsem);
-+
- 	return count;
- }
- 
+>
+>> +
+>> +     info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+>> +     if (!info)
+>> +             return -ENOMEM;
+>> +
+>> +     info->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+>> +     if (!info->regmap) {
+>> +             dev_err(&pdev->dev, "failed to get vibrator regmap.\n");
+>> +             return -ENODEV;
+>> +     }
+>> +
+>> +     ret = of_property_read_u32(node, "reg", &info->base);
+>
+> I am fan of generic device properties, please change to
+> device_property_read_u32().
+
+OK.
+
+>
+>> +     if (ret) {
+>> +             dev_err(&pdev->dev, "failed to get vibrator base address.\n");
+>> +             return ret;
+>> +     }
+>> +
+>> +     info->input_dev = devm_input_allocate_device(&pdev->dev);
+>> +     if (!info->input_dev) {
+>> +             dev_err(&pdev->dev, "failed to allocate input device.\n");
+>> +             return -ENOMEM;
+>> +     }
+>> +
+>> +     info->input_dev->name = "sc27xx:vibrator";
+>> +     info->input_dev->id.version = 0;
+>> +     info->input_dev->dev.parent = pdev->dev.parent;
+>
+> Why is device reparented to the parent of platform device? This breaks
+> devm implementation for the input device. If you really need this,
+> you'll have to switch to unmanaged API.
+
+Sorry, this is one mistake and will fix it in next version.
+
+>
+>> +     info->input_dev->close = sc27xx_vibra_close;
+>> +
+>> +     input_set_drvdata(info->input_dev, info);
+>> +     input_set_capability(info->input_dev, EV_FF, FF_RUMBLE);
+>> +     INIT_WORK(&info->play_work, sc27xx_vibra_play_work);
+>> +     info->enabled = false;
+>> +
+>> +     ret = input_ff_create_memless(info->input_dev, NULL, sc27xx_vibra_play);
+>> +     if (ret) {
+>> +             dev_err(&pdev->dev, "failed to register vibrator to FF.\n");
+>> +             return ret;
+>> +     }
+>> +
+>> +     ret = input_register_device(info->input_dev);
+>> +     if (ret) {
+>> +             dev_err(&pdev->dev, "failed to register input device.\n");
+>> +             return ret;
+>> +     }
+>> +
+>> +     ret = sc27xx_vibra_hw_init(info);
+>> +     if (ret) {
+>> +             dev_err(&pdev->dev, "failed to initialize the vibrator.\n");
+>> +             return ret;
+>> +     }
+>
+> It is too late to initialize hardware after registering the input
+> device, as once registered it should be fully functional. I'd recommend
+> calling this before calling input_register_device(), or (maybe even
+> better) doing this as part of open() method.
+
+OK.
+
+>
+>> +
+>> +     platform_set_drvdata(pdev, info);
+>
+> I do not think you are using platform device's driver data anywhere.
+
+We can remove it.
+
+>
+>> +     return 0;
+>> +}
+>> +
+>> +static const struct of_device_id sc27xx_vibra_of_match[] = {
+>> +     { .compatible = "sprd,sc27xx-vibrator", },
+>> +     {}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, sc27xx_vibra_of_match);
+>> +
+>> +static struct platform_driver sc27xx_vibra_driver = {
+>> +     .driver = {
+>> +             .name = "sc27xx-vibrator",
+>> +             .of_match_table = sc27xx_vibra_of_match,
+>
+> Do you need suspend support by chance? To shut off the vibrator when
+> system transitions to sleep?
+
+We do not need the suspend support, disabling the vibrator is enough.
+Thanks for your comments.
+
 -- 
-2.15.0.55.gc2ece9dc4de6
+Baolin.wang
+Best Regards
