@@ -1,86 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752661AbeDXQbt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:31:49 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:31662 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751053AbeDXQbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:31:34 -0400
-Message-Id: <c0d9b74fe16852258e83fac33c53f4d7e06be523.1524587425.git.christophe.leroy@c-s.fr>
-In-Reply-To: <02633d43f29e1ba01865cd334216dc8efb8b4b11.1524587425.git.christophe.leroy@c-s.fr>
-References: <02633d43f29e1ba01865cd334216dc8efb8b4b11.1524587425.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH  3/3] powerpc/nohash: use IS_ENABLED() to simplify
- __set_pte_at()
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 24 Apr 2018 18:31:32 +0200 (CEST)
+        id S1751518AbeDXQdF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:33:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41316 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750826AbeDXQdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:33:02 -0400
+Date: Tue, 24 Apr 2018 12:33:01 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+In-Reply-To: <20180424161242.GK17484@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1804241229410.23702@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180420130852.GC16083@dhcp22.suse.cz> <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180420210200.GH10788@bombadil.infradead.org> <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180421144757.GC14610@bombadil.infradead.org> <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com> <20180423151545.GU17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804232006540.2299@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424133146.GG17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241107010.31601@file01.intranet.prod.int.rdu2.redhat.com> <20180424161242.GK17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By using IS_ENABLED() we can simplify __set_pte_at() by removing
-redundant *ptep = pte
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/nohash/pgtable.h | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-index f2fe3cbe90af..077472640b35 100644
---- a/arch/powerpc/include/asm/nohash/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/pgtable.h
-@@ -148,40 +148,33 @@ extern void set_pte_at(struct mm_struct *mm, unsigned long addr, pte_t *ptep,
- static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
- 				pte_t *ptep, pte_t pte, int percpu)
- {
--#if defined(CONFIG_PPC32) && defined(CONFIG_PTE_64BIT)
- 	/* Second case is 32-bit with 64-bit PTE.  In this case, we
- 	 * can just store as long as we do the two halves in the right order
- 	 * with a barrier in between.
- 	 * In the percpu case, we also fallback to the simple update
- 	 */
--	if (percpu) {
--		*ptep = pte;
-+	if (IS_ENABLED(CONFIG_PPC32) && IS_ENABLED(CONFIG_PTE_64BIT) && !percpu) {
-+		__asm__ __volatile__("\
-+			stw%U0%X0 %2,%0\n\
-+			eieio\n\
-+			stw%U0%X0 %L2,%1"
-+		: "=m" (*ptep), "=m" (*((unsigned char *)ptep+4))
-+		: "r" (pte) : "memory");
- 		return;
- 	}
--	__asm__ __volatile__("\
--		stw%U0%X0 %2,%0\n\
--		eieio\n\
--		stw%U0%X0 %L2,%1"
--	: "=m" (*ptep), "=m" (*((unsigned char *)ptep+4))
--	: "r" (pte) : "memory");
--
--#else
- 	/* Anything else just stores the PTE normally. That covers all 64-bit
- 	 * cases, and 32-bit non-hash with 32-bit PTEs.
- 	 */
- 	*ptep = pte;
- 
--#ifdef CONFIG_PPC_BOOK3E_64
- 	/*
- 	 * With hardware tablewalk, a sync is needed to ensure that
- 	 * subsequent accesses see the PTE we just wrote.  Unlike userspace
- 	 * mappings, we can't tolerate spurious faults, so make sure
- 	 * the new PTE will be seen the first time.
- 	 */
--	if (is_kernel_addr(addr))
-+	if (IS_ENABLED(CONFIG_PPC_BOOK3E_64) && is_kernel_addr(addr))
- 		mb();
--#endif
--#endif
- }
- 
- 
--- 
-2.13.3
+On Tue, 24 Apr 2018, Michal Hocko wrote:
+
+> On Tue 24-04-18 11:30:40, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Tue, 24 Apr 2018, Michal Hocko wrote:
+> > 
+> > > On Mon 23-04-18 20:25:15, Mikulas Patocka wrote:
+> > > 
+> > > > Fixing __vmalloc code 
+> > > > is easy and it doesn't require cooperation with maintainers.
+> > > 
+> > > But it is a hack against the intention of the scope api.
+> > 
+> > It is not!
+> 
+> This discussion simply doesn't make much sense it seems. The scope API
+> is to document the scope of the reclaim recursion critical section. That
+> certainly is not a utility function like vmalloc.
+
+That 15-line __vmalloc bugfix doesn't prevent you (or any other kernel 
+developer) from converting the code to the scope API. You make nonsensical 
+excuses.
+
+Mikulas
