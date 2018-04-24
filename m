@@ -1,102 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751389AbeDXOqP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:46:15 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:44502 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750739AbeDXOqM (ORCPT
+        id S1751061AbeDXOtG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:49:06 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:41128 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750749AbeDXOtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:46:12 -0400
-X-Google-Smtp-Source: AB8JxZpTo1LtCg+Mz/VWvV9JMThGND8BWudiTUMHlhOF7QIYvEoQiGtpFEtoSvl6UKuXw1Cxtf2Nc9rrB+bjLmDihn0=
+        Tue, 24 Apr 2018 10:49:02 -0400
+X-Google-Smtp-Source: AIpwx48mjBBv8SzygV9Kdz185N8QI62JbGUu4HS8n+Rd0u6IAA5oQQibL5huI7GKo8QnbAAaecR+jjoRzirLBc+RRl0=
 MIME-Version: 1.0
-In-Reply-To: <20180424141759.F02AF6C59D@po15720vm.idsi0.si.c-s.fr>
-References: <20180424141759.F02AF6C59D@po15720vm.idsi0.si.c-s.fr>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 24 Apr 2018 16:45:51 +0200
-X-Google-Sender-Auth: SBkZKlLnyPO6aJXJHEJdkQWKfJ4
-Message-ID: <CA+7wUsz6NNG=sVUYL1n+ntAJUWNvjtpjCHzJmPuQ4Zb7TuFrZA@mail.gmail.com>
-Subject: Re: [PATCH] powerpc/signal32: Use fault_in_pages_readable() to
- prefault user context
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+In-Reply-To: <20180424131720.4357-1-luc.vanoostenryck@gmail.com>
+References: <20180424131720.4357-1-luc.vanoostenryck@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Apr 2018 16:49:01 +0200
+X-Google-Sender-Auth: ExLuMAO9breG8hGx1IX-cxVsFVg
+Message-ID: <CAMuHMdWvvMyEN_sek1e4QxCVZbSZ4X27RqH7XampcH97t=mvwg@mail.gmail.com>
+Subject: Re: [PATCH] net: sh-eth: fix sh_eth_start_xmit()'s return type
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 4:17 PM, Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
-> Use fault_in_pages_readable() to prefault user context
-> instead of open coding
+On Tue, Apr 24, 2018 at 3:17 PM, Luc Van Oostenryck
+<luc.vanoostenryck@gmail.com> wrote:
+> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+> which is a typedef for an enum type, but the implementation in this
+> driver returns an 'int'.
 >
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/kernel/signal_32.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
+> Fix this by returning 'netdev_tx_t' in this driver too.
 >
-> diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
-> index 492f03451877..cfacb2726152 100644
-> --- a/arch/powerpc/kernel/signal_32.c
-> +++ b/arch/powerpc/kernel/signal_32.c
-> @@ -25,6 +25,7 @@
->  #include <linux/errno.h>
->  #include <linux/elf.h>
->  #include <linux/ptrace.h>
-> +#include <linux/pagemap.h>
->  #include <linux/ratelimit.h>
->  #ifdef CONFIG_PPC64
->  #include <linux/syscalls.h>
-> @@ -1045,7 +1046,6 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
->                      struct ucontext __user *new_ctx,
->                      int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
->  {
-> -       unsigned char tmp __maybe_unused;
->         int ctx_has_vsx_region = 0;
->
->  #ifdef CONFIG_PPC64
-> @@ -1109,9 +1109,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
->         }
->         if (new_ctx == NULL)
->                 return 0;
-> -       if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
-> -           || __get_user(tmp, (u8 __user *) new_ctx)
-> -           || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
-> +       if (!access_ok(VERIFY_READ, new_ctx, ctx_size) ||
-> +           fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
->                 return -EFAULT;
->
->         /*
-> @@ -1231,7 +1230,6 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
->  {
->         struct sig_dbg_op op;
->         int i;
-> -       unsigned char tmp __maybe_unused;
->         unsigned long new_msr = regs->msr;
->  #ifdef CONFIG_PPC_ADV_DEBUG_REGS
->         unsigned long new_dbcr0 = current->thread.debug.dbcr0;
-> @@ -1287,9 +1285,8 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
->         current->thread.debug.dbcr0 = new_dbcr0;
->  #endif
->
-> -       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx))
-> -           || __get_user(tmp, (u8 __user *) ctx)
-> -           || __get_user(tmp, (u8 __user *) (ctx + 1) - 1))
-> +       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx)) ||
-> +           fault_in_pages_readable((u8 __user *)ctx, 1))
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 
-I believe you meant:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-fault_in_pages_readable((u8 __user *)new_ctx, ctx_size)
+Gr{oetje,eeting}s,
 
-Since (u8 __user *) (ctx + 1) - 1 really is (u8 __user *) new_ctx + ctx_size - 1
+                        Geert
 
->                 return -EFAULT;
->
->         /*
-> --
-> 2.13.3
->
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
