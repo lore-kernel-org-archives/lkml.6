@@ -1,70 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753043AbeDXSZF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 14:25:05 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33733 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbeDXSZA (ORCPT
+        id S1753072AbeDXSZV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 14:25:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36600 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752634AbeDXSZS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 14:25:00 -0400
-X-Google-Smtp-Source: AIpwx4/6j2b4wM1NtZYa803vd0A0vFmEigOF1AKXMtyoaGqWsogCJA2VPZUeD3c5py1fm3LZDhqqVg==
-Date: Tue, 24 Apr 2018 20:24:57 +0200
-From: Ahmed Abdelsalam <amsalam20@gmail.com>
-To: Ahmed Abdelsalam <amsalam20@gmail.com>
-Cc: davem@davemloft.net, dav.lebrun@gmail.com, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [net-next v2] ipv6: sr: Compute flowlabel for outer IPv6 header
- of seg6 encap mode
-Message-Id: <20180424202457.19cbc7ee781fe52aaeb56357@gmail.com>
-In-Reply-To: <1524592795-1467-1-git-send-email-amsalam20@gmail.com>
-References: <1524592795-1467-1-git-send-email-amsalam20@gmail.com>
-X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.21; x86_64-apple-darwin10.8.0)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Apr 2018 14:25:18 -0400
+Date: Tue, 24 Apr 2018 11:26:23 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Joel Fernandes <joelaf@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@lge.com>
+Subject: Re: [RFC v4 3/4] irqflags: Avoid unnecessary calls to trace_ if you
+ can
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <409016827.14587.1524493888181.JavaMail.zimbra@efficios.com>
+ <20180423105325.7d5d245b@gandalf.local.home>
+ <1045420715.14686.1524495583859.JavaMail.zimbra@efficios.com>
+ <20180423121800.47b173af@gandalf.local.home>
+ <1212130312.14753.1524503541789.JavaMail.zimbra@efficios.com>
+ <20180423172244.694dbc9d@gandalf.local.home>
+ <20180424155655.GA820@linux.vnet.ibm.com>
+ <CAJWu+or_-emRLeBbfOtQYyn9W8v-KHH8XecV_k-p5FX_3BLHAQ@mail.gmail.com>
+ <20180424172658.GT26088@linux.vnet.ibm.com>
+ <20180424182302.GA404@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424182302.GA404@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18042418-0008-0000-0000-000002FD6190
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008914; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01022685; UDB=6.00522012; IPR=6.00801919;
+ MB=3.00020753; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-24 18:25:14
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042418-0009-0000-0000-0000390420E4
+Message-Id: <20180424182623.GA1357@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804240175
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 19:59:55 +0200
-Ahmed Abdelsalam <amsalam20@gmail.com> wrote:
-
-> This patch has been tested for IPv6, IPv4, and L2 traffic.
+On Tue, Apr 24, 2018 at 11:23:02AM -0700, Paul E. McKenney wrote:
+> On Tue, Apr 24, 2018 at 10:26:58AM -0700, Paul E. McKenney wrote:
+> > On Tue, Apr 24, 2018 at 09:01:34AM -0700, Joel Fernandes wrote:
+> > > On Tue, Apr 24, 2018 at 8:56 AM, Paul E. McKenney
+> > > <paulmck@linux.vnet.ibm.com> wrote:
+> > > > On Mon, Apr 23, 2018 at 05:22:44PM -0400, Steven Rostedt wrote:
+> > > >> On Mon, 23 Apr 2018 13:12:21 -0400 (EDT)
+> > > >> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> > > >>
+> > > >>
+> > > >> > I'm inclined to explicitly declare the tracepoints with their given
+> > > >> > synchronization method. Tracepoint probe callback functions for currently
+> > > >> > existing tracepoints expect to have preemption disabled when invoked.
+> > > >> > This assumption will not be true anymore for srcu-tracepoints.
+> > > >>
+> > > >> Actually, why not have a flag attached to the tracepoint_func that
+> > > >> states if it expects preemption to be enabled or not? If a
+> > > >> trace_##event##_srcu() is called, then simply disable preemption before
+> > > >> calling the callbacks for it. That way if a callback is fine for use
+> > > >> with srcu, then it would require calling
+> > > >>
+> > > >>       register_trace_##event##_may_sleep();
+> > > >>
+> > > >> Then if someone uses this on a tracepoint where preemption is disabled,
+> > > >> we simply do not call it.
+> > > >
+> > > > One more stupid question...  If we are having to trace so much stuff
+> > > > in the idle loop, are we perhaps grossly overstating the extent of that
+> > > > "idle" loop?  For being called "idle", this code seems quite busy!
+> > > 
+> > > ;-)
+> > > The performance hit I am observing is when running a heavy workload,
+> > > like hackbench or something like that. That's what I am trying to
+> > > correct.
+> > > By the way is there any limitation on using SRCU too early during
+> > > boot? I backported Mathieu's srcu tracepoint patches but the kernel
+> > > hangs pretty early in the boot. I register lockdep probes in
+> > > start_kernel. I am hoping that's not why.
+> > > 
+> > > I could also have just screwed up the backporting... may be for my
+> > > testing, I will just replace the rcu API with the srcu instead of all
+> > > of Mathieu's new TRACE_EVENT macros for SRCU, since all I am trying to
+> > > do right now is measure the performance of my patches with SRCU.
+> > 
+> > Gah, yes, there is an entry on my capacious todo list on making SRCU
+> > grace periods work during early boot and mid-boot.  Let me see what
+> > I can do...
 > 
-> Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
-> ---
->  include/net/netns/ipv6.h   |  1 +
->  net/ipv6/seg6_iptunnel.c   | 24 ++++++++++++++++++++++--
->  net/ipv6/sysctl_net_ipv6.c |  8 ++++++++
->  3 files changed, 31 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/net/netns/ipv6.h b/include/net/netns/ipv6.h
-> index 97b3a54..c978a31 100644
-> --- a/include/net/netns/ipv6.h
-> +++ b/include/net/netns/ipv6.h
-> @@ -43,6 +43,7 @@ struct netns_sysctl_ipv6 {
->  	int max_hbh_opts_cnt;
->  	int max_dst_opts_len;
->  	int max_hbh_opts_len;
-> +	int seg6_flowlabel;
->  };
->  
->  struct netns_ipv6 {
-> diff --git a/net/ipv6/seg6_iptunnel.c b/net/ipv6/seg6_iptunnel.c
-> index 5fe1394..3d9cd86 100644
-> --- a/net/ipv6/seg6_iptunnel.c
-> +++ b/net/ipv6/seg6_iptunnel.c
-> @@ -91,6 +91,24 @@ static void set_tun_src(struct net *net, struct net_device *dev,
->  	rcu_read_unlock();
->  }
->  
-> +/* Compute flowlabel for outer IPv6 header */
-> +__be32 seg6_make_flowlabel(struct net *net, struct sk_buff *skb,
-> +			   struct ipv6hdr *inner_hdr)
+> OK, just need to verify that you are OK with call_srcu()'s callbacks
+> not being invoked until sometime during core_initcall() time.  (If you
+> really do need them to be invoked before that, in theory it is possible,
+> but in practice it is weird, even for RCU.)
 
-David, please take v3 of the patch. 
-I re-defined seg6_make_flowlabel () as static to fix the kbuild test robot.
+Oh, and that early at boot, you will need to use DEFINE_SRCU() or
+DEFINE_STATIC_SRCU() rather than dynamic allocation and initialization.
 
--- 
-Ahmed Abdelsalam <amsalam20@gmail.com>
+							Thanx, Paul
