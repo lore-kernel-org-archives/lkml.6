@@ -1,53 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751239AbeDXPzL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:55:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:55886 "EHLO foss.arm.com"
+        id S1751414AbeDXPzW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:55:22 -0400
+Received: from imap.thunk.org ([74.207.234.97]:51830 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750757AbeDXPzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:55:09 -0400
-Date: Tue, 24 Apr 2018 16:55:05 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] kmemleak: Report if we need to tune
- KMEMLEAK_EARLY_LOG_SIZE
-Message-ID: <20180424155504.frbxmzq4dw3veudu@armageddon.cambridge.arm.com>
-References: <288b0afc-bcc3-a2aa-2791-707e625d1da7@siemens.com>
+        id S1751285AbeDXPzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:55:16 -0400
+Date: Tue, 24 Apr 2018 11:55:13 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Sebastian Ott <sebott@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [BUG, PATCH] random: sleep in irq context
+Message-ID: <20180424155513.GD30619@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Sebastian Ott <sebott@linux.ibm.com>, linux-kernel@vger.kernel.org
+References: <alpine.LFD.2.21.1804231518060.1767@schleppi>
+ <alpine.LFD.2.21.1804241037590.1601@schleppi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <288b0afc-bcc3-a2aa-2791-707e625d1da7@siemens.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <alpine.LFD.2.21.1804241037590.1601@schleppi>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 05:51:15PM +0200, Jan Kiszka wrote:
-> ...rather than just mysteriously disabling it.
+On Tue, Apr 24, 2018 at 10:40:36AM +0200, Sebastian Ott wrote:
+> On Mon, 23 Apr 2018, Sebastian Ott wrote:
+> > This happend once during boot and I could not reproduce this since, but I
+> > think the following patch should fix the issue:
 > 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  mm/kmemleak.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> index 9a085d525bbc..156c0c69cc5c 100644
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -863,6 +863,7 @@ static void __init log_early(int op_type, const void *ptr, size_t size,
->  
->  	if (crt_early_log >= ARRAY_SIZE(early_log)) {
->  		crt_early_log++;
-> +		pr_warn("Too many early logs\n");
+> I can now recreate the issue reliably. The following patch works for me:
 
-That's already printed, though later where we have an idea of how big the early
-log needs to be:
+I have a patch in the random tree that I will be pushing to Linus
+shortly.  It uses a slightly different approach than yours, but should
+address the problem you observed.
 
-	if (crt_early_log > ARRAY_SIZE(early_log))
-		pr_warn("Early log buffer exceeded (%d), please increase DEBUG_KMEMLEAK_EARLY_LOG_SIZE\n",
-			crt_early_log);
+   https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1672186.html
 
--- 
-Catalin
+							- Ted
