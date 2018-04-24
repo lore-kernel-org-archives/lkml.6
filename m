@@ -1,98 +1,285 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932746AbeDXC2N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 22:28:13 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35236 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932688AbeDXC2M (ORCPT
+        id S932769AbeDXCbM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 22:31:12 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33828 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932688AbeDXCbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 22:28:12 -0400
-X-Google-Smtp-Source: AIpwx498m37fFCsMaifPgY0k7LTJvalfI7fX7zT5rGRkp0nTIkNSqV6kaOmfV264FiWN9L7kBTgr8w==
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: [RFC][PATCH] printk: do not call console drivers from printk_safe context
-Date: Tue, 24 Apr 2018 11:28:02 +0900
-Message-Id: <20180424022802.1330-1-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 23 Apr 2018 22:31:08 -0400
+X-Google-Smtp-Source: AIpwx48fho/FCAjGRuJwMVYtEMFY18h8+N3VOk1ZjHE8ZWRvaBch2W7/06pb+LANvBg0f9fggfH3Xw==
+Date: Mon, 23 Apr 2018 19:31:05 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc: mhocko@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, guro@fb.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaperunmap
+In-Reply-To: <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp>
+Message-ID: <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com>
+References: <20180419063556.GK17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com> <20180420082349.GW17484@dhcp22.suse.cz> <20180420124044.GA17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804212019400.84222@chino.kir.corp.google.com>
+ <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calling console drivers from printk_safe() context does not really
-make call_console_drivers() any safer, because printk_safe() has
-nothing to do with console drivers or the underlying code. At the
-same time printk()-s from console drivers are fine, they don't
-deadlock the system. We need printk_safe() because of the way
-vprintk_emit() works -- we protect logbuf lock, console_owner_lock
-and console_sem spin_lock with printk_safe, -- not because of the
-console drivers (which don't deal with logbuf, console_owner_lock
-or console_sem locks). Hence we can call console drivers outside
-of printk_safe() context.
+On Sun, 22 Apr 2018, Tetsuo Handa wrote:
 
-Another thing to notice is that,
-printk_safe() introduces unneeded complexity, since any printk()
-message from console drivers has to be stored in per-CPU printk_safe()
-buffer first, then be flushed via IRQ work:
-	call_console_drivers()
-	 printk()
-	  printk_safe_log_store()
-	   IRQ_work()
-	    printk_safe_flush_buffer()
-	     printk_deferred()
-	      log_store()
-	       irq_work_queue()               *
-	        wake_up_klogd_work_func()     *
+> > I'm wondering why you do not see oom killing of many processes if the 
+> > victim is a very large process that takes a long time to free memory in 
+> > exit_mmap() as I do because the oom reaper gives up trying to acquire 
+> > mm->mmap_sem and just sets MMF_OOM_SKIP itself.
+> > 
+> 
+> We can call __oom_reap_task_mm() from exit_mmap() (or __mmput()) before
+> exit_mmap() holds mmap_sem for write. Then, at least memory which could
+> have been reclaimed if exit_mmap() did not hold mmap_sem for write will
+> be guaranteed to be reclaimed before MMF_OOM_SKIP is set.
+> 
 
-Note that this also costs us extra IRQ work [along with the IRQ work
-that flushes printk_safe() buffer] - we flush per-CPU printk_safe()
-buffers via printk_deferred().
+I think that's an exceptionally good idea and will mitigate the concerns 
+of others.
 
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+It can be done without holding mm->mmap_sem in exit_mmap() and uses the 
+same criteria that the oom reaper uses to set MMF_OOM_SKIP itself, so we 
+don't get dozens of unnecessary oom kills.
+
+What do you think about this?  It passes preliminary testing on powerpc 
+and I'm enqueued it for much more intensive testing.  (I'm wishing there 
+was a better way to acknowledge your contribution to fixing this issue, 
+especially since you brought up the exact problem this is addressing in 
+previous emails.)
+
+
+mm, oom: fix concurrent munlock and oom reaper unmap
+
+Since exit_mmap() is done without the protection of mm->mmap_sem, it is
+possible for the oom reaper to concurrently operate on an mm until
+MMF_OOM_SKIP is set.
+
+This allows munlock_vma_pages_all() to concurrently run while the oom
+reaper is operating on a vma.  Since munlock_vma_pages_range() depends on
+clearing VM_LOCKED from vm_flags before actually doing the munlock to
+determine if any other vmas are locking the same memory, the check for
+VM_LOCKED in the oom reaper is racy.
+
+This is especially noticeable on architectures such as powerpc where
+clearing a huge pmd requires serialize_against_pte_lookup().  If the pmd
+is zapped by the oom reaper during follow_page_mask() after the check for
+pmd_none() is bypassed, this ends up deferencing a NULL ptl.
+
+Fix this by manually freeing all possible memory from the mm before doing
+the munlock and then setting MMF_OOM_SKIP.  The oom reaper can not run on
+the mm anymore so the munlock is safe to do in exit_mmap().  It also
+matches the logic that the oom reaper currently uses for determining when
+to set MMF_OOM_SKIP itself, so there's no new risk of excessive oom
+killing.
+
+Fixes: 212925802454 ("mm: oom: let oom_reap_task and exit_mmap run concurrently")
+Cc: stable@vger.kernel.org [4.14+]
+Suggested-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: David Rientjes <rientjes@google.com>
 ---
- kernel/printk/internal.h | 7 ++++++-
- kernel/printk/printk.c   | 2 ++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ include/linux/oom.h |  2 ++
+ mm/mmap.c           | 39 ++++++++++++----------
+ mm/oom_kill.c       | 81 ++++++++++++++++++++++++---------------------
+ 3 files changed, 66 insertions(+), 56 deletions(-)
 
-diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index 2a7d04049af4..f3ba1bf08590 100644
---- a/kernel/printk/internal.h
-+++ b/kernel/printk/internal.h
-@@ -55,8 +55,13 @@ void __printk_safe_exit(void);
- 	} while (0)
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -95,6 +95,8 @@ static inline int check_stable_address_space(struct mm_struct *mm)
+ 	return 0;
+ }
  
- #else
-+static void __printk_safe_enter(void) {}
-+static void __printk_safe_exit(void) {}
++void __oom_reap_task_mm(struct mm_struct *mm);
++
+ extern unsigned long oom_badness(struct task_struct *p,
+ 		struct mem_cgroup *memcg, const nodemask_t *nodemask,
+ 		unsigned long totalpages);
+diff --git a/mm/mmap.c b/mm/mmap.c
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3015,6 +3015,27 @@ void exit_mmap(struct mm_struct *mm)
+ 	/* mm's last user has gone, and its about to be pulled down */
+ 	mmu_notifier_release(mm);
  
--__printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
-+static __printf(1, 0) int vprintk_func(const char *fmt, va_list args)
-+{
-+	return 0;
-+}
++	if (unlikely(mm_is_oom_victim(mm))) {
++		/*
++		 * Manually reap the mm to free as much memory as possible.
++		 * Then, as the oom reaper, set MMF_OOM_SKIP to disregard this
++		 * mm from further consideration.  Taking mm->mmap_sem for write
++		 * after setting MMF_OOM_SKIP will guarantee that the oom reaper
++		 * will not run on this mm again after mmap_sem is dropped.
++		 *
++		 * This needs to be done before calling munlock_vma_pages_all(),
++		 * which clears VM_LOCKED, otherwise the oom reaper cannot
++		 * reliably test it.
++		 */
++		mutex_lock(&oom_lock);
++		__oom_reap_task_mm(mm);
++		mutex_unlock(&oom_lock);
++
++		set_bit(MMF_OOM_SKIP, &mm->flags);
++		down_write(&mm->mmap_sem);
++		up_write(&mm->mmap_sem);
++	}
++
+ 	if (mm->locked_vm) {
+ 		vma = mm->mmap;
+ 		while (vma) {
+@@ -3036,24 +3057,6 @@ void exit_mmap(struct mm_struct *mm)
+ 	/* update_hiwater_rss(mm) here? but nobody should be looking */
+ 	/* Use -1 here to ensure all VMAs in the mm are unmapped */
+ 	unmap_vmas(&tlb, vma, 0, -1);
+-
+-	if (unlikely(mm_is_oom_victim(mm))) {
+-		/*
+-		 * Wait for oom_reap_task() to stop working on this
+-		 * mm. Because MMF_OOM_SKIP is already set before
+-		 * calling down_read(), oom_reap_task() will not run
+-		 * on this "mm" post up_write().
+-		 *
+-		 * mm_is_oom_victim() cannot be set from under us
+-		 * either because victim->mm is already set to NULL
+-		 * under task_lock before calling mmput and oom_mm is
+-		 * set not NULL by the OOM killer only if victim->mm
+-		 * is found not NULL while holding the task_lock.
+-		 */
+-		set_bit(MMF_OOM_SKIP, &mm->flags);
+-		down_write(&mm->mmap_sem);
+-		up_write(&mm->mmap_sem);
+-	}
+ 	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+ 	tlb_finish_mmu(&tlb, 0, -1);
  
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -469,7 +469,6 @@ bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
+ 	return false;
+ }
+ 
+-
+ #ifdef CONFIG_MMU
  /*
-  * In !PRINTK builds we still export logbuf_lock spin_lock, console_sem
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 2f4af216bd6e..9acb25ce6081 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2391,9 +2391,11 @@ void console_unlock(void)
- 		 */
- 		console_lock_spinning_enable();
+  * OOM Reaper kernel thread which tries to reap the memory used by the OOM
+@@ -480,16 +479,54 @@ static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
+ static struct task_struct *oom_reaper_list;
+ static DEFINE_SPINLOCK(oom_reaper_lock);
  
-+		__printk_safe_exit();
- 		stop_critical_timings();	/* don't trace print latency */
- 		call_console_drivers(ext_text, ext_len, text, len);
- 		start_critical_timings();
-+		__printk_safe_enter();
+-static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
++void __oom_reap_task_mm(struct mm_struct *mm)
+ {
+-	struct mmu_gather tlb;
+ 	struct vm_area_struct *vma;
++
++	/*
++	 * Tell all users of get_user/copy_from_user etc... that the content
++	 * is no longer stable. No barriers really needed because unmapping
++	 * should imply barriers already and the reader would hit a page fault
++	 * if it stumbled over a reaped memory.
++	 */
++	set_bit(MMF_UNSTABLE, &mm->flags);
++
++	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
++		if (!can_madv_dontneed_vma(vma))
++			continue;
++
++		/*
++		 * Only anonymous pages have a good chance to be dropped
++		 * without additional steps which we cannot afford as we
++		 * are OOM already.
++		 *
++		 * We do not even care about fs backed pages because all
++		 * which are reclaimable have already been reclaimed and
++		 * we do not want to block exit_mmap by keeping mm ref
++		 * count elevated without a good reason.
++		 */
++		if (vma_is_anonymous(vma) || !(vma->vm_flags & VM_SHARED)) {
++			const unsigned long start = vma->vm_start;
++			const unsigned long end = vma->vm_end;
++			struct mmu_gather tlb;
++
++			tlb_gather_mmu(&tlb, mm, start, end);
++			mmu_notifier_invalidate_range_start(mm, start, end);
++			unmap_page_range(&tlb, vma, start, end, NULL);
++			mmu_notifier_invalidate_range_end(mm, start, end);
++			tlb_finish_mmu(&tlb, start, end);
++		}
++	}
++}
++
++static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
++{
+ 	bool ret = true;
  
- 		if (console_lock_spinning_disable_and_check()) {
- 			printk_safe_exit_irqrestore(flags);
--- 
-2.17.0
+ 	/*
+ 	 * We have to make sure to not race with the victim exit path
+ 	 * and cause premature new oom victim selection:
+-	 * __oom_reap_task_mm		exit_mm
++	 * oom_reap_task_mm		exit_mm
+ 	 *   mmget_not_zero
+ 	 *				  mmput
+ 	 *				    atomic_dec_and_test
+@@ -534,39 +571,8 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 
+ 	trace_start_task_reaping(tsk->pid);
+ 
+-	/*
+-	 * Tell all users of get_user/copy_from_user etc... that the content
+-	 * is no longer stable. No barriers really needed because unmapping
+-	 * should imply barriers already and the reader would hit a page fault
+-	 * if it stumbled over a reaped memory.
+-	 */
+-	set_bit(MMF_UNSTABLE, &mm->flags);
+-
+-	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
+-		if (!can_madv_dontneed_vma(vma))
+-			continue;
++	__oom_reap_task_mm(mm);
+ 
+-		/*
+-		 * Only anonymous pages have a good chance to be dropped
+-		 * without additional steps which we cannot afford as we
+-		 * are OOM already.
+-		 *
+-		 * We do not even care about fs backed pages because all
+-		 * which are reclaimable have already been reclaimed and
+-		 * we do not want to block exit_mmap by keeping mm ref
+-		 * count elevated without a good reason.
+-		 */
+-		if (vma_is_anonymous(vma) || !(vma->vm_flags & VM_SHARED)) {
+-			const unsigned long start = vma->vm_start;
+-			const unsigned long end = vma->vm_end;
+-
+-			tlb_gather_mmu(&tlb, mm, start, end);
+-			mmu_notifier_invalidate_range_start(mm, start, end);
+-			unmap_page_range(&tlb, vma, start, end, NULL);
+-			mmu_notifier_invalidate_range_end(mm, start, end);
+-			tlb_finish_mmu(&tlb, start, end);
+-		}
+-	}
+ 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+ 			task_pid_nr(tsk), tsk->comm,
+ 			K(get_mm_counter(mm, MM_ANONPAGES)),
+@@ -587,14 +593,13 @@ static void oom_reap_task(struct task_struct *tsk)
+ 	struct mm_struct *mm = tsk->signal->oom_mm;
+ 
+ 	/* Retry the down_read_trylock(mmap_sem) a few times */
+-	while (attempts++ < MAX_OOM_REAP_RETRIES && !__oom_reap_task_mm(tsk, mm))
++	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
+ 		schedule_timeout_idle(HZ/10);
+ 
+ 	if (attempts <= MAX_OOM_REAP_RETRIES ||
+ 	    test_bit(MMF_OOM_SKIP, &mm->flags))
+ 		goto done;
+ 
+-
+ 	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
+ 		task_pid_nr(tsk), tsk->comm);
+ 	debug_show_all_locks();
