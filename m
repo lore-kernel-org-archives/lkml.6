@@ -1,110 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751445AbeDXOvR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:51:17 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35538 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeDXOvJ (ORCPT
+        id S1750929AbeDXOzE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:55:04 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36195 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeDXOzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:51:09 -0400
-X-Google-Smtp-Source: AIpwx49jLkRaPfTHJhU1JJU1oLGmqNmyhh+ehb8tXOtHee374HNtE19H8Mvi1MvUV/foHv6Nhqi2jFjq6Y0Gb+yXje8=
+        Tue, 24 Apr 2018 10:55:03 -0400
+Date: Tue, 24 Apr 2018 16:54:58 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: "Wan, Kaike" <kaike.wan@intel.com>
+cc: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        "Fleck, John" <john.fleck@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: RE: hrtimer (rdmavt RNR timer) was lost
+In-Reply-To: <alpine.DEB.2.21.1804231528130.2077@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de>
+References: <3F128C9216C9B84BB6ED23EF16290AFB634C8C87@CRSMSX101.amr.corp.intel.com> <alpine.DEB.2.21.1804231355570.2077@nanos.tec.linutronix.de> <3F128C9216C9B84BB6ED23EF16290AFB634C9420@CRSMSX101.amr.corp.intel.com>
+ <alpine.DEB.2.21.1804231528130.2077@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CA+7wUsz6NNG=sVUYL1n+ntAJUWNvjtpjCHzJmPuQ4Zb7TuFrZA@mail.gmail.com>
-References: <20180424141759.F02AF6C59D@po15720vm.idsi0.si.c-s.fr> <CA+7wUsz6NNG=sVUYL1n+ntAJUWNvjtpjCHzJmPuQ4Zb7TuFrZA@mail.gmail.com>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 24 Apr 2018 16:50:47 +0200
-X-Google-Sender-Auth: Z1ven8z2rbGe5R3_j7yLt8u9MMQ
-Message-ID: <CA+7wUsxXwRVHDrE_bzog2+m+kdyDsC4MnjB4_BMc2owDUe7d8A@mail.gmail.com>
-Subject: Re: [PATCH] powerpc/signal32: Use fault_in_pages_readable() to
- prefault user context
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 4:45 PM, Mathieu Malaterre <malat@debian.org> wrote:
-> On Tue, Apr 24, 2018 at 4:17 PM, Christophe Leroy
-> <christophe.leroy@c-s.fr> wrote:
->> Use fault_in_pages_readable() to prefault user context
->> instead of open coding
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>  arch/powerpc/kernel/signal_32.c | 13 +++++--------
->>  1 file changed, 5 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
->> index 492f03451877..cfacb2726152 100644
->> --- a/arch/powerpc/kernel/signal_32.c
->> +++ b/arch/powerpc/kernel/signal_32.c
->> @@ -25,6 +25,7 @@
->>  #include <linux/errno.h>
->>  #include <linux/elf.h>
->>  #include <linux/ptrace.h>
->> +#include <linux/pagemap.h>
->>  #include <linux/ratelimit.h>
->>  #ifdef CONFIG_PPC64
->>  #include <linux/syscalls.h>
->> @@ -1045,7 +1046,6 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
->>                      struct ucontext __user *new_ctx,
->>                      int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
->>  {
->> -       unsigned char tmp __maybe_unused;
->>         int ctx_has_vsx_region = 0;
->>
->>  #ifdef CONFIG_PPC64
->> @@ -1109,9 +1109,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
->>         }
->>         if (new_ctx == NULL)
->>                 return 0;
->> -       if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
->> -           || __get_user(tmp, (u8 __user *) new_ctx)
->> -           || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
->> +       if (!access_ok(VERIFY_READ, new_ctx, ctx_size) ||
->> +           fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
->>                 return -EFAULT;
->>
->>         /*
->> @@ -1231,7 +1230,6 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
->>  {
->>         struct sig_dbg_op op;
->>         int i;
->> -       unsigned char tmp __maybe_unused;
->>         unsigned long new_msr = regs->msr;
->>  #ifdef CONFIG_PPC_ADV_DEBUG_REGS
->>         unsigned long new_dbcr0 = current->thread.debug.dbcr0;
->> @@ -1287,9 +1285,8 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
->>         current->thread.debug.dbcr0 = new_dbcr0;
->>  #endif
->>
->> -       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx))
->> -           || __get_user(tmp, (u8 __user *) ctx)
->> -           || __get_user(tmp, (u8 __user *) (ctx + 1) - 1))
->> +       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx)) ||
->> +           fault_in_pages_readable((u8 __user *)ctx, 1))
->
-> I believe you meant:
->
-> fault_in_pages_readable((u8 __user *)new_ctx, ctx_size)
->
-> Since (u8 __user *) (ctx + 1) - 1 really is (u8 __user *) new_ctx + ctx_size - 1
+On Mon, 23 Apr 2018, Thomas Gleixner wrote:
+> On Mon, 23 Apr 2018, Wan, Kaike wrote:
+> > > Can you apply the following debug patch and enable the hrtimer_start trace
+> > > point and send me the full trace or upload it somewhere?
+> > 
+> > The original trace was about 29GB and I filtered it with
+> > "0000000066dda1ea" (the offending base) to generate a 1.4GB file that I
+> > could open and investigate.  I am not sure how I can send them to you. Do
+> > you have somewhere I can upload to?
+> >
+> > I can try your debug patch and again I am anticipating a big trace file.
+> 
+> Well, you can find the spot where the fail happens and then extract the
+> full thing from 2s before that point to 1s after. That should be reasonably
+> small and good enough. Let me know when you have it and how big it is
+> (compressed) and we'll figure something out how to transport it.
 
-Without the copy/paste errors:
+Thanks for the more complete data which actually let me decode the wreckage.
 
-[...]
-fault_in_pages_readable((u8 __user *)ctx, sizeof(*ctx))
+So you have NO_HZ enabled and looking at the trace then this is related:
 
-Since (u8 __user *) (ctx + 1) - 1 really is (u8 __user *) ctx + sizeof(*ctx) - 1
-[...]
->>                 return -EFAULT;
->>
->>         /*
->> --
->> 2.13.3
->>
+          <idle>-0     [003] dN.. 3598605307236: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=712171000000 softexpires=712171000000mode=ABS|PINNED base=0000000066dda1ea next=00000000708914d7
+          <idle>-0     [003] dN.. 3598605307601: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=0000000004346740
+	  
+          <idle>-0     [002] d.h. 3598605313255: hrtimer_start: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] expires=712172915662 softexpires=712172915662mode=REL base=0000000066dda1ea next=0000000004346740
+          <idle>-0     [002] d.h. 3599538740786: hrtimer_post_add: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] base=0000000066dda1ea next=00000000662d2dd8
+
+          <idle>-0     [003] dn.. 3599538742242: hrtimer_pre_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
+          <idle>-0     [003] dn.. 3599538743084: hrtimer_post_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
+  
+          <idle>-0     [003] dn.. 3599538743830: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=716767000000 softexpires=716767000000mode=ABS|PINNED base=0000000066dda1ea next=00000000662d2dd8
+          <idle>-0     [003] dn.. 3599538744560: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
+
+And staring at the NOHZ code I'm pretty sure, I know what happens.
+
+CPU 3						CPU 2
+
+idle
+start tick_sched_timer 712171000000
+						start rdmavt timer 712172915662
+						lock(base)
+tick_nohz_stop_tick()
+tick = 716767000000				timerqueue_add(tmr)
+
+hrtimer_set_expires(&ts->sched_timer, tick); <---- FAIL
+
+						    if (tmr->exp < queue->next->exp)
+hrtimer_start(sched_timer)			        queue->next = tmr;
+lock(base)
+						unlock(base)
+timerqueue_remove()
+timerqueue_add()
+....
+
+So ts->sched_timer is still queued and queue->next is pointing to it, but
+then expires is modified. So the other side sees the new expiry time and
+makes the rdmavt timer the new queue->next. All f*cked from there.
+
+The problem was introduced with:
+
+  d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
+
+The changelog is not really helpful, but I can't see why the expiry time of
+ts->sched_timer should be updated before the timer is [re]started in case
+of HIGHRES + NOHZ. hrtimer_start() sets the expiry time, so that should be
+sufficient. Of course the tick needs to be stored in ts->sched_timer for
+the !HIGHRES + HOHZ case, but that's trivial enough to do. Patch against
+Linus tree below. It's easy to backport in case you want to run it against
+the kernel which made the observation simpler.
+
+I need to come up with integration of hrtimer_set_expires() into debug
+objects to catch this kind of horrors. Groan....
+
+Thanks,
+
+	tglx
+
+8<-----------
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -804,12 +804,12 @@ static void tick_nohz_stop_tick(struct t
+ 		return;
+ 	}
+ 
+-	hrtimer_set_expires(&ts->sched_timer, tick);
+-
+-	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
+-		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
+-	else
++	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
++		hrtimer_start(&ts->sched_timer, tick, HRTIMER_MODE_ABS_PINNED);
++	} else {
++		hrtimer_set_expires(&ts->sched_timer, tick);
+ 		tick_program_event(tick, 1);
++	}
+ }
+ 
+ static void tick_nohz_retain_tick(struct tick_sched *ts)
