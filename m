@@ -1,1497 +1,779 @@
-Date: Tue, 24 Apr 2018 10:52:11 +0200
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2798069-1524561774-2-6027000309986105978
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='iso-8859-1'
+X-Attached: signature.asc
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524561773; b=kqWdMs9mft4s9BnfataTns9VjuZzNPCdb5XQrmJBxovzhGmiqx
+    HVySEhrrM9uJhcu0X2/RRPSusfloPqKSCGZ+fP6lVDS7sjtu46cXsYNw3UyC7DNj
+    6TrC6JV89Im+sEXvRZ7QIFxttORcU7JhRSBOX1kU63UjwXo/81JxrMIlf+lv/Dou
+    ffPI2Dt2A5KUD1MY5iRunhpoxI40FoerAOpr1gqORJRWrJnPdaveJkhjN2XFnODo
+    u9m2xJTqV2WC4HncqR2nWXqcndBd8Ux4Gjw7+Dfnd9CEosKV8/irz+mEo3EC4bht
+    VR5qx/Moh50vW5tcCflyOy4Yp5jn4TzXHPPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1524561773;
+    bh=BzTlWekkLLJDO4yffjeGcOc1KbZISM+wbjnX6/Q+d00=; b=WNKroQphw5sH
+    3p5/kb7nJNIMkzJfB8PKGQnM4QnDllzOOs0vyBuu59qGQz3q026TbDrkom0LxYb7
+    3A3G+7Lxk9bHhrbmZ2tWN4FLQ6ntGPokf7NAjFEmyNbEGkTCVfnOyByk3xZSBtA1
+    svl5e4PrgQtEEuATCpoBNqsCNClGru6+vgvoUNB8+w/Ayg8XY1ks5fN5gujwNpK0
+    Sgh3S49NSFpn90iI6jBM/9T7LKikMMC2o5Pt8v7BNsJuLkODu0/SensGQu3KXlY1
+    eI5zRVvtcNI0969XVxnDVk/gihwjGZ/rycc7pwRRRubLud80PiolM5OtLHKcPheR
+    vpIlYuyHvQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMY3unYeLZ7Y0JgyzG9ie/nvDM6s7PMEUo9fJAzwSjXZoeNCezFeIePyecFS/OadkxwEyWA4u7iOR72Dm/cJ398BTEgf36piTodL89x3A3b5msXaUvY9
+    fGpZlYkRkNmcdPMgmEnN7pq9xMPS+y734cYnOHn6etgctDi1oQf7tL/56uNNcUZ1OiS45ChE8K7K7tjwYMj5WXqBPepopF0eBFo+ixF7IcJfKar+S200Jxd3
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=imWbkXROeesJ3ZHtfGsA:9 a=6T83M7vYaG1GSJlg:21 a=9N8WlIY7YktDwvcU:21
+    a=wPNLvfGTeEIA:10 a=aEf_Jq6ci2ggLUooA8gA:9 a=ONNS8QRKHyMA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751234AbeDXJWA (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 24 Apr 2018 05:22:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46752 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756002AbeDXJVz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 24 Apr 2018 05:21:55 -0400
+Date: Tue, 24 Apr 2018 11:21:48 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	torvalds@linux-foundation.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 3.18.106
-Message-ID: <20180424085211.GB2937@kroah.com>
-References: <20180424085206.GA2937@kroah.com>
+Subject: Linux 4.16.4
+Message-ID: <20180424092148.GA26280@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
 Content-Disposition: inline
-In-Reply-To: <20180424085206.GA2937@kroah.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-diff --git a/Makefile b/Makefile
-index ba34e4e77d96..375cfa8a374e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 3
- PATCHLEVEL = 18
--SUBLEVEL = 105
-+SUBLEVEL = 106
- EXTRAVERSION =
- NAME = Diseased Newt
- 
-diff --git a/arch/arm/boot/dts/at91sam9g25.dtsi b/arch/arm/boot/dts/at91sam9g25.dtsi
-index 17b879990914..d69cfb540a07 100644
---- a/arch/arm/boot/dts/at91sam9g25.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g25.dtsi
-@@ -20,7 +20,7 @@
- 				atmel,mux-mask = <
- 				      /*    A         B          C     */
- 				       0xffffffff 0xffe0399f 0xc000001c  /* pioA */
--				       0x0007ffff 0x8000fe3f 0x00000000  /* pioB */
-+				       0x0007ffff 0x00047e3f 0x00000000  /* pioB */
- 				       0x80000000 0x07c0ffff 0xb83fffff  /* pioC */
- 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
- 				      >;
-diff --git a/arch/mips/lib/memset.S b/arch/mips/lib/memset.S
-index 7b0e5462ca51..1e178c4ae06f 100644
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -178,7 +178,7 @@
- 1:	PTR_ADDIU	a0, 1			/* fill bytewise */
- 	R10KCBARRIER(0(ra))
- 	bne		t1, a0, 1b
--	sb		a1, -1(a0)
-+	 EX(sb, a1, -1(a0), .Lsmall_fixup\@)
- 
- 2:	jr		ra			/* done */
- 	move		a2, zero
-@@ -204,13 +204,18 @@
- 	PTR_L		t0, TI_TASK($28)
- 	andi		a2, STORMASK
- 	LONG_L		t0, THREAD_BUADDR(t0)
--	LONG_ADDU	a2, t1
-+	LONG_ADDU	a2, a0
- 	jr		ra
- 	LONG_SUBU	a2, t0
- 
- .Llast_fixup\@:
- 	jr		ra
--	andi		v1, a2, STORMASK
-+	 nop
-+
-+.Lsmall_fixup\@:
-+	PTR_SUBU	a2, t1, a0
-+	jr		ra
-+	 PTR_ADDIU	a2, 1
- 
- 	.endm
- 
-diff --git a/arch/parisc/kernel/drivers.c b/arch/parisc/kernel/drivers.c
-index dba508fe1683..4f7060ec6875 100644
---- a/arch/parisc/kernel/drivers.c
-+++ b/arch/parisc/kernel/drivers.c
-@@ -648,6 +648,10 @@ static int match_pci_device(struct device *dev, int index,
- 					(modpath->mod == PCI_FUNC(devfn)));
- 	}
- 
-+	/* index might be out of bounds for bc[] */
-+	if (index >= 6)
-+		return 0;
-+
- 	id = PCI_SLOT(pdev->devfn) | (PCI_FUNC(pdev->devfn) << 5);
- 	return (modpath->bc[index] == id);
- }
-diff --git a/arch/powerpc/include/asm/barrier.h b/arch/powerpc/include/asm/barrier.h
-index bab79a110c7b..7c63ec5d4fa9 100644
---- a/arch/powerpc/include/asm/barrier.h
-+++ b/arch/powerpc/include/asm/barrier.h
-@@ -39,7 +39,8 @@
- 
- #ifdef CONFIG_SMP
- 
--#ifdef __SUBARCH_HAS_LWSYNC
-+/* The sub-arch has lwsync */
-+#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
- #    define SMPWMB      LWSYNC
- #else
- #    define SMPWMB      eieio
-diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
-index 9124b0ede1fc..e6bc95da0e13 100644
---- a/arch/powerpc/include/asm/opal.h
-+++ b/arch/powerpc/include/asm/opal.h
-@@ -801,6 +801,9 @@ typedef struct oppanel_line {
- 	uint64_t 	line_len;
- } oppanel_line_t;
- 
-+/* Default time to sleep or delay between OPAL_BUSY/OPAL_BUSY_EVENT loops */
-+#define OPAL_BUSY_DELAY_MS	10
-+
- /* /sys/firmware/opal */
- extern struct kobject *opal_kobj;
- 
-diff --git a/arch/powerpc/include/asm/synch.h b/arch/powerpc/include/asm/synch.h
-index e682a7143edb..e344d98239a7 100644
---- a/arch/powerpc/include/asm/synch.h
-+++ b/arch/powerpc/include/asm/synch.h
-@@ -5,10 +5,6 @@
- #include <linux/stringify.h>
- #include <asm/feature-fixups.h>
- 
--#if defined(__powerpc64__) || defined(CONFIG_PPC_E500MC)
--#define __SUBARCH_HAS_LWSYNC
--#endif
--
- #ifndef __ASSEMBLY__
- extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
- extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
-diff --git a/arch/powerpc/lib/feature-fixups.c b/arch/powerpc/lib/feature-fixups.c
-index 7ce3870d7ddd..cd0b7bc34cef 100644
---- a/arch/powerpc/lib/feature-fixups.c
-+++ b/arch/powerpc/lib/feature-fixups.c
-@@ -52,7 +52,7 @@ static int patch_alt_instruction(unsigned int *src, unsigned int *dest,
- 		unsigned int *target = (unsigned int *)branch_target(src);
- 
- 		/* Branch within the section doesn't need translating */
--		if (target < alt_start || target >= alt_end) {
-+		if (target < alt_start || target > alt_end) {
- 			instr = translate_branch(dest, src);
- 			if (!instr)
- 				return 1;
-diff --git a/arch/powerpc/platforms/powernv/opal-nvram.c b/arch/powerpc/platforms/powernv/opal-nvram.c
-index f9896fd5d04a..f3b2f6f29716 100644
---- a/arch/powerpc/platforms/powernv/opal-nvram.c
-+++ b/arch/powerpc/platforms/powernv/opal-nvram.c
-@@ -11,6 +11,7 @@
- 
- #define DEBUG
- 
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/of.h>
-@@ -55,9 +56,17 @@ static ssize_t opal_nvram_write(char *buf, size_t count, loff_t *index)
- 
- 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
- 		rc = opal_write_nvram(__pa(buf), count, off);
--		if (rc == OPAL_BUSY_EVENT)
-+		if (rc == OPAL_BUSY_EVENT) {
-+			msleep(OPAL_BUSY_DELAY_MS);
- 			opal_poll_events(NULL);
-+		} else if (rc == OPAL_BUSY) {
-+			msleep(OPAL_BUSY_DELAY_MS);
-+		}
- 	}
-+
-+	if (rc)
-+		return -EIO;
-+
- 	*index += count;
- 	return count;
- }
-diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
-index c952b981e4f2..f7ace92bb1f6 100644
---- a/arch/s390/hypfs/inode.c
-+++ b/arch/s390/hypfs/inode.c
-@@ -326,7 +326,7 @@ static void hypfs_kill_super(struct super_block *sb)
- 
- 	if (sb->s_root)
- 		hypfs_delete_tree(sb->s_root);
--	if (sb_info->update_file)
-+	if (sb_info && sb_info->update_file)
- 		hypfs_remove(sb_info->update_file);
- 	kfree(sb->s_fs_info);
- 	sb->s_fs_info = NULL;
-diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index f5ec05984364..ee2ca1bcfdba 100644
---- a/arch/s390/kernel/ipl.c
-+++ b/arch/s390/kernel/ipl.c
-@@ -808,6 +808,7 @@ static ssize_t reipl_generic_loadparm_store(struct ipl_parameter_block *ipb,
- 	/* copy and convert to ebcdic */
- 	memcpy(ipb->hdr.loadparm, buf, lp_len);
- 	ASCEBC(ipb->hdr.loadparm, LOADPARM_LEN);
-+	ipb->hdr.flags |= DIAG308_FLAGS_LP_VALID;
- 	return len;
- }
- 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 6fa0efa48cc5..4ba5c7e4e254 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -704,7 +704,7 @@ retry:
- 
- static void credit_entropy_bits_safe(struct entropy_store *r, int nbits)
- {
--	const int nbits_max = (int)(~0U >> (ENTROPY_SHIFT + 1));
-+	const int nbits_max = r->poolinfo->poolwords * 32;
- 
- 	/* Cap the value to avoid overflows */
- 	nbits = min(nbits,  nbits_max);
-diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
-index 8bccf4ecdab6..9ff4ea63932d 100644
---- a/drivers/clk/mvebu/armada-38x.c
-+++ b/drivers/clk/mvebu/armada-38x.c
-@@ -46,10 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
- }
- 
- static const u32 armada_38x_cpu_frequencies[] __initconst = {
--	0, 0, 0, 0,
--	1066 * 1000 * 1000, 0, 0, 0,
-+	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
-+	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
- 	1332 * 1000 * 1000, 0, 0, 0,
--	1600 * 1000 * 1000,
-+	1600 * 1000 * 1000, 0, 0, 0,
-+	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
- };
- 
- static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
-@@ -75,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
- };
- 
- static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
--	{0, 1}, {0, 1}, {0, 1}, {0, 1},
--	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-+	{1, 2}, {0, 1}, {1, 2}, {0, 1},
-+	{1, 2}, {0, 1}, {1, 2}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
--	{0, 1}, {0, 1}, {0, 1}, {0, 1},
-+	{1, 2}, {0, 1}, {0, 1}, {1, 2},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
-@@ -90,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
--	{0, 1}, {0, 1}, {0, 1}, {0, 1},
-+	{1, 2}, {0, 1}, {0, 1}, {7, 15},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
-diff --git a/drivers/gpu/drm/radeon/si_dpm.c b/drivers/gpu/drm/radeon/si_dpm.c
-index 2113869e8678..c8509c9992f1 100644
---- a/drivers/gpu/drm/radeon/si_dpm.c
-+++ b/drivers/gpu/drm/radeon/si_dpm.c
-@@ -5894,9 +5894,9 @@ static void si_set_pcie_lane_width_in_smc(struct radeon_device *rdev,
- {
- 	u32 lane_width;
- 	u32 new_lane_width =
--		(radeon_new_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT;
-+		((radeon_new_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT) + 1;
- 	u32 current_lane_width =
--		(radeon_current_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT;
-+		((radeon_current_state->caps & ATOM_PPLIB_PCIE_LINK_WIDTH_MASK) >> ATOM_PPLIB_PCIE_LINK_WIDTH_SHIFT) + 1;
- 
- 	if (new_lane_width != current_lane_width) {
- 		radeon_set_pcie_lanes(rdev, new_lane_width);
-diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
-index 9c2d7c23f296..c0c4df198725 100644
---- a/drivers/hid/hidraw.c
-+++ b/drivers/hid/hidraw.c
-@@ -197,6 +197,11 @@ static ssize_t hidraw_get_report(struct file *file, char __user *buffer, size_t
- 	int ret = 0, len;
- 	unsigned char report_number;
- 
-+	if (!hidraw_table[minor] || !hidraw_table[minor]->exist) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
- 	dev = hidraw_table[minor]->hid;
- 
- 	if (!dev->ll_driver->raw_request) {
-diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-index 462b0a383353..7f2c1c35cf55 100644
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -136,10 +136,10 @@ struct i2c_hid {
- 						   * register of the HID
- 						   * descriptor. */
- 	unsigned int		bufsize;	/* i2c buffer size */
--	char			*inbuf;		/* Input buffer */
--	char			*rawbuf;	/* Raw Input buffer */
--	char			*cmdbuf;	/* Command buffer */
--	char			*argsbuf;	/* Command arguments buffer */
-+	u8			*inbuf;		/* Input buffer */
-+	u8			*rawbuf;	/* Raw Input buffer */
-+	u8			*cmdbuf;	/* Command buffer */
-+	u8			*argsbuf;	/* Command arguments buffer */
- 
- 	unsigned long		flags;		/* device flags */
- 
-@@ -373,7 +373,8 @@ static int i2c_hid_hwreset(struct i2c_client *client)
- 
- static void i2c_hid_get_input(struct i2c_hid *ihid)
- {
--	int ret, ret_size;
-+	int ret;
-+	u32 ret_size;
- 	int size = le16_to_cpu(ihid->hdesc.wMaxInputLength);
- 
- 	if (size > ihid->bufsize)
-@@ -398,7 +399,7 @@ static void i2c_hid_get_input(struct i2c_hid *ihid)
- 		return;
- 	}
- 
--	if (ret_size > size) {
-+	if ((ret_size > size) || (ret_size <= 2)) {
- 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
- 			__func__, size, ret_size);
- 		return;
-diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-index ca0a43ad4ec8..089391b2d0a1 100644
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -101,7 +101,7 @@ static int get_v4l2_window32(struct v4l2_window __user *kp,
- static int put_v4l2_window32(struct v4l2_window __user *kp,
- 			     struct v4l2_window32 __user *up)
- {
--	struct v4l2_clip __user *kclips = kp->clips;
-+	struct v4l2_clip __user *kclips;
- 	struct v4l2_clip32 __user *uclips;
- 	compat_caddr_t p;
- 	u32 clipcount;
-@@ -116,6 +116,8 @@ static int put_v4l2_window32(struct v4l2_window __user *kp,
- 	if (!clipcount)
- 		return 0;
- 
-+	if (get_user(kclips, &kp->clips))
-+		return -EFAULT;
- 	if (get_user(p, &up->clips))
- 		return -EFAULT;
- 	uclips = compat_ptr(p);
-diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
-index 76e8bce6f46e..ad572a0f2124 100644
---- a/drivers/mmc/host/jz4740_mmc.c
-+++ b/drivers/mmc/host/jz4740_mmc.c
-@@ -368,9 +368,9 @@ static void jz4740_mmc_set_irq_enabled(struct jz4740_mmc_host *host,
- 		host->irq_mask &= ~irq;
- 	else
- 		host->irq_mask |= irq;
--	spin_unlock_irqrestore(&host->lock, flags);
- 
- 	writew(host->irq_mask, host->base + JZ_REG_MMC_IMASK);
-+	spin_unlock_irqrestore(&host->lock, flags);
- }
- 
- static void jz4740_mmc_clock_enable(struct jz4740_mmc_host *host,
-diff --git a/drivers/mtd/ubi/block.c b/drivers/mtd/ubi/block.c
-index 8876c7d3d712..06482fa3eee3 100644
---- a/drivers/mtd/ubi/block.c
-+++ b/drivers/mtd/ubi/block.c
-@@ -322,7 +322,7 @@ static int ubiblock_open(struct block_device *bdev, fmode_t mode)
- 	 * in any case.
- 	 */
- 	if (mode & FMODE_WRITE) {
--		ret = -EPERM;
-+		ret = -EROFS;
- 		goto out_unlock;
- 	}
- 
-diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-index c3db383a9000..7bbd11e25f23 100644
---- a/drivers/mtd/ubi/build.c
-+++ b/drivers/mtd/ubi/build.c
-@@ -905,6 +905,17 @@ int ubi_attach_mtd_dev(struct mtd_info *mtd, int ubi_num,
- 		return -EINVAL;
- 	}
- 
-+	/*
-+	 * Both UBI and UBIFS have been designed for SLC NAND and NOR flashes.
-+	 * MLC NAND is different and needs special care, otherwise UBI or UBIFS
-+	 * will die soon and you will lose all your data.
-+	 */
-+	if (mtd->type == MTD_MLCNANDFLASH) {
-+		pr_err("ubi: refuse attaching mtd%d - MLC NAND is not supported\n",
-+			mtd->index);
-+		return -EINVAL;
-+	}
-+
- 	if (ubi_num == UBI_DEV_NUM_AUTO) {
- 		/* Search for an empty slot in the @ubi_devices array */
- 		for (ubi_num = 0; ubi_num < UBI_MAX_DEVICES; ubi_num++)
-diff --git a/drivers/net/slip/slhc.c b/drivers/net/slip/slhc.c
-index 27ed25252aac..cfd81eb1b532 100644
---- a/drivers/net/slip/slhc.c
-+++ b/drivers/net/slip/slhc.c
-@@ -509,6 +509,10 @@ slhc_uncompress(struct slcompress *comp, unsigned char *icp, int isize)
- 		if(x < 0 || x > comp->rslot_limit)
- 			goto bad;
- 
-+		/* Check if the cstate is initialized */
-+		if (!comp->rstate[x].initialized)
-+			goto bad;
-+
- 		comp->flags &=~ SLF_TOSS;
- 		comp->recv_current = x;
- 	} else {
-@@ -673,6 +677,7 @@ slhc_remember(struct slcompress *comp, unsigned char *icp, int isize)
- 	if (cs->cs_tcp.doff > 5)
- 	  memcpy(cs->cs_tcpopt, icp + ihl*4 + sizeof(struct tcphdr), (cs->cs_tcp.doff - 5) * 4);
- 	cs->cs_hsize = ihl*2 + cs->cs_tcp.doff*2;
-+	cs->initialized = true;
- 	/* Put headers back on packet
- 	 * Neither header checksum is recalculated
- 	 */
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 824ae807ea80..9967733a397e 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -2067,7 +2067,10 @@ static void netback_changed(struct xenbus_device *dev,
- 	case XenbusStateInitialised:
- 	case XenbusStateReconfiguring:
- 	case XenbusStateReconfigured:
-+		break;
-+
- 	case XenbusStateUnknown:
-+		wake_up_all(&module_unload_q);
- 		break;
- 
- 	case XenbusStateInitWait:
-@@ -2314,7 +2317,9 @@ static int xennet_remove(struct xenbus_device *dev)
- 		xenbus_switch_state(dev, XenbusStateClosing);
- 		wait_event(module_unload_q,
- 			   xenbus_read_driver_state(dev->otherend) ==
--			   XenbusStateClosing);
-+			   XenbusStateClosing ||
-+			   xenbus_read_driver_state(dev->otherend) ==
-+			   XenbusStateUnknown);
- 
- 		xenbus_switch_state(dev, XenbusStateClosed);
- 		wait_event(module_unload_q,
-diff --git a/drivers/pci/hotplug/acpiphp_glue.c b/drivers/pci/hotplug/acpiphp_glue.c
-index b60309ee80ed..031f64da6151 100644
---- a/drivers/pci/hotplug/acpiphp_glue.c
-+++ b/drivers/pci/hotplug/acpiphp_glue.c
-@@ -587,6 +587,7 @@ static unsigned int get_slot_status(struct acpiphp_slot *slot)
- {
- 	unsigned long long sta = 0;
- 	struct acpiphp_func *func;
-+	u32 dvid;
- 
- 	list_for_each_entry(func, &slot->funcs, sibling) {
- 		if (func->flags & FUNC_HAS_STA) {
-@@ -597,19 +598,27 @@ static unsigned int get_slot_status(struct acpiphp_slot *slot)
- 			if (ACPI_SUCCESS(status) && sta)
- 				break;
- 		} else {
--			u32 dvid;
--
--			pci_bus_read_config_dword(slot->bus,
--						  PCI_DEVFN(slot->device,
--							    func->function),
--						  PCI_VENDOR_ID, &dvid);
--			if (dvid != 0xffffffff) {
-+			if (pci_bus_read_dev_vendor_id(slot->bus,
-+					PCI_DEVFN(slot->device, func->function),
-+					&dvid, 0)) {
- 				sta = ACPI_STA_ALL;
- 				break;
- 			}
- 		}
- 	}
- 
-+	if (!sta) {
-+		/*
-+		 * Check for the slot itself since it may be that the
-+		 * ACPI slot is a device below PCIe upstream port so in
-+		 * that case it may not even be reachable yet.
-+		 */
-+		if (pci_bus_read_dev_vendor_id(slot->bus,
-+				PCI_DEVFN(slot->device, 0), &dvid, 0)) {
-+			sta = ACPI_STA_ALL;
-+		}
-+	}
-+
- 	return (unsigned int)sta;
- }
- 
-diff --git a/drivers/s390/cio/qdio_main.c b/drivers/s390/cio/qdio_main.c
-index 848e3b64ea6e..fb7298920c8c 100644
---- a/drivers/s390/cio/qdio_main.c
-+++ b/drivers/s390/cio/qdio_main.c
-@@ -126,7 +126,7 @@ static inline int qdio_check_ccq(struct qdio_q *q, unsigned int ccq)
- static int qdio_do_eqbs(struct qdio_q *q, unsigned char *state,
- 			int start, int count, int auto_ack)
- {
--	int rc, tmp_count = count, tmp_start = start, nr = q->nr, retried = 0;
-+	int rc, tmp_count = count, tmp_start = start, nr = q->nr;
- 	unsigned int ccq = 0;
- 
- 	qperf_inc(q, eqbs);
-@@ -149,14 +149,7 @@ again:
- 		qperf_inc(q, eqbs_partial);
- 		DBF_DEV_EVENT(DBF_WARN, q->irq_ptr, "EQBS part:%02x",
- 			tmp_count);
--		/*
--		 * Retry once, if that fails bail out and process the
--		 * extracted buffers before trying again.
--		 */
--		if (!retried++)
--			goto again;
--		else
--			return count - tmp_count;
-+		return count - tmp_count;
- 	}
- 
- 	DBF_ERROR("%4x EQBS ERROR", SCH_NO(q));
-@@ -212,7 +205,10 @@ again:
- 	return 0;
- }
- 
--/* returns number of examined buffers and their common state in *state */
-+/*
-+ * Returns number of examined buffers and their common state in *state.
-+ * Requested number of buffers-to-examine must be > 0.
-+ */
- static inline int get_buf_states(struct qdio_q *q, unsigned int bufnr,
- 				 unsigned char *state, unsigned int count,
- 				 int auto_ack, int merge_pending)
-@@ -223,17 +219,23 @@ static inline int get_buf_states(struct qdio_q *q, unsigned int bufnr,
- 	if (is_qebsm(q))
- 		return qdio_do_eqbs(q, state, bufnr, count, auto_ack);
- 
--	for (i = 0; i < count; i++) {
--		if (!__state) {
--			__state = q->slsb.val[bufnr];
--			if (merge_pending && __state == SLSB_P_OUTPUT_PENDING)
--				__state = SLSB_P_OUTPUT_EMPTY;
--		} else if (merge_pending) {
--			if ((q->slsb.val[bufnr] & __state) != __state)
--				break;
--		} else if (q->slsb.val[bufnr] != __state)
--			break;
-+	/* get initial state: */
-+	__state = q->slsb.val[bufnr];
-+	if (merge_pending && __state == SLSB_P_OUTPUT_PENDING)
-+		__state = SLSB_P_OUTPUT_EMPTY;
-+
-+	for (i = 1; i < count; i++) {
- 		bufnr = next_buf(bufnr);
-+
-+		/* merge PENDING into EMPTY: */
-+		if (merge_pending &&
-+		    q->slsb.val[bufnr] == SLSB_P_OUTPUT_PENDING &&
-+		    __state == SLSB_P_OUTPUT_EMPTY)
-+			continue;
-+
-+		/* stop if next state differs from initial state: */
-+		if (q->slsb.val[bufnr] != __state)
-+			break;
- 	}
- 	*state = __state;
- 	return i;
-diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
-index 5a1f1070b702..5a0e4a8ada40 100644
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -493,6 +493,9 @@ static int imx_thermal_probe(struct platform_device *pdev)
- 	if (data->irq < 0)
- 		return data->irq;
- 
-+	data->irq_enabled = true;
-+	data->mode = THERMAL_DEVICE_ENABLED;
-+
- 	ret = devm_request_threaded_irq(&pdev->dev, data->irq,
- 			imx_thermal_alarm_irq, imx_thermal_alarm_irq_thread,
- 			0, "imx_thermal", data);
-@@ -576,9 +579,6 @@ static int imx_thermal_probe(struct platform_device *pdev)
- 	regmap_write(map, TEMPSENSE0 + REG_CLR, TEMPSENSE0_POWER_DOWN);
- 	regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_MEASURE_TEMP);
- 
--	data->irq_enabled = true;
--	data->mode = THERMAL_DEVICE_ENABLED;
--
- 	return 0;
- }
- 
-diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
-index c68fe1222c16..5f3c4f45ab65 100644
---- a/drivers/thunderbolt/nhi.c
-+++ b/drivers/thunderbolt/nhi.c
-@@ -627,6 +627,7 @@ static const struct dev_pm_ops nhi_pm_ops = {
- 					    * we just disable hotplug, the
- 					    * pci-tunnels stay alive.
- 					    */
-+	.thaw_noirq = nhi_resume_noirq,
- 	.restore_noirq = nhi_resume_noirq,
- };
- 
-diff --git a/drivers/usb/core/generic.c b/drivers/usb/core/generic.c
-index 358ca8dd784f..a5240b4d7ab9 100644
---- a/drivers/usb/core/generic.c
-+++ b/drivers/usb/core/generic.c
-@@ -208,8 +208,13 @@ static int generic_suspend(struct usb_device *udev, pm_message_t msg)
- 	if (!udev->parent)
- 		rc = hcd_bus_suspend(udev, msg);
- 
--	/* Non-root devices don't need to do anything for FREEZE or PRETHAW */
--	else if (msg.event == PM_EVENT_FREEZE || msg.event == PM_EVENT_PRETHAW)
-+	/*
-+	 * Non-root USB2 devices don't need to do anything for FREEZE
-+	 * or PRETHAW. USB3 devices don't support global suspend and
-+	 * needs to be selectively suspended.
-+	 */
-+	else if ((msg.event == PM_EVENT_FREEZE || msg.event == PM_EVENT_PRETHAW)
-+		 && (udev->speed < USB_SPEED_SUPER))
- 		rc = 0;
- 	else
- 		rc = usb_port_suspend(udev, msg);
-diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
-index a36cf66302fb..489e1c0dba29 100644
---- a/drivers/usb/dwc3/dwc3-pci.c
-+++ b/drivers/usb/dwc3/dwc3-pci.c
-@@ -143,7 +143,7 @@ static int dwc3_pci_probe(struct pci_dev *pci,
- 	ret = platform_device_add_resources(dwc3, res, ARRAY_SIZE(res));
- 	if (ret) {
- 		dev_err(dev, "couldn't add resources to dwc3 device\n");
--		return ret;
-+		goto err3;
- 	}
- 
- 	pci_set_drvdata(pci, glue);
-diff --git a/drivers/usb/musb/musb_gadget_ep0.c b/drivers/usb/musb/musb_gadget_ep0.c
-index 2af45a0c8930..a4b991992595 100644
---- a/drivers/usb/musb/musb_gadget_ep0.c
-+++ b/drivers/usb/musb/musb_gadget_ep0.c
-@@ -114,15 +114,19 @@ static int service_tx_status_request(
- 		}
- 
- 		is_in = epnum & USB_DIR_IN;
--		if (is_in) {
--			epnum &= 0x0f;
-+		epnum &= 0x0f;
-+		if (epnum >= MUSB_C_NUM_EPS) {
-+			handled = -EINVAL;
-+			break;
-+		}
-+
-+		if (is_in)
- 			ep = &musb->endpoints[epnum].ep_in;
--		} else {
-+		else
- 			ep = &musb->endpoints[epnum].ep_out;
--		}
- 		regs = musb->endpoints[epnum].regs;
- 
--		if (epnum >= MUSB_C_NUM_EPS || !ep->desc) {
-+		if (!ep->desc) {
- 			handled = -EINVAL;
- 			break;
- 		}
-diff --git a/drivers/watchdog/f71808e_wdt.c b/drivers/watchdog/f71808e_wdt.c
-index 016bd9355190..aa93df5833dc 100644
---- a/drivers/watchdog/f71808e_wdt.c
-+++ b/drivers/watchdog/f71808e_wdt.c
-@@ -450,7 +450,7 @@ static bool watchdog_is_running(void)
- 
- 	is_running = (superio_inb(watchdog.sioaddr, SIO_REG_ENABLE) & BIT(0))
- 		&& (superio_inb(watchdog.sioaddr, F71808FG_REG_WDT_CONF)
--			& F71808FG_FLAG_WD_EN);
-+			& BIT(F71808FG_FLAG_WD_EN));
- 
- 	superio_exit(watchdog.sioaddr);
- 
-diff --git a/fs/autofs4/root.c b/fs/autofs4/root.c
-index 21b5bb13af65..9ec171821f3c 100644
---- a/fs/autofs4/root.c
-+++ b/fs/autofs4/root.c
-@@ -753,7 +753,7 @@ static int autofs4_dir_mkdir(struct inode *dir, struct dentry *dentry, umode_t m
- 
- 	autofs4_del_active(dentry);
- 
--	inode = autofs4_get_inode(dir->i_sb, S_IFDIR | 0555);
-+	inode = autofs4_get_inode(dir->i_sb, S_IFDIR | mode);
- 	if (!inode)
- 		return -ENOMEM;
- 	d_add(dentry, inode);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index c2434d72681e..859af265ae1b 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3975,6 +3975,12 @@ struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
- 		goto bad_inode;
- 	raw_inode = ext4_raw_inode(&iloc);
- 
-+	if ((ino == EXT4_ROOT_INO) && (raw_inode->i_links_count == 0)) {
-+		EXT4_ERROR_INODE(inode, "root inode unallocated");
-+		ret = -EUCLEAN;
-+		goto bad_inode;
-+	}
-+
- 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
- 		ei->i_extra_isize = le16_to_cpu(raw_inode->i_extra_isize);
- 		if (EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize >
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index cc0a2298099d..deaf31a7a758 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2093,6 +2093,8 @@ static int ext4_check_descriptors(struct super_block *sb,
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 				 "Block bitmap for group %u overlaps "
- 				 "superblock", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
- 		}
- 		if (block_bitmap < first_block || block_bitmap > last_block) {
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
-@@ -2105,6 +2107,8 @@ static int ext4_check_descriptors(struct super_block *sb,
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 				 "Inode bitmap for group %u overlaps "
- 				 "superblock", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
- 		}
- 		if (inode_bitmap < first_block || inode_bitmap > last_block) {
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
-@@ -2117,6 +2121,8 @@ static int ext4_check_descriptors(struct super_block *sb,
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 				 "Inode table for group %u overlaps "
- 				 "superblock", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
- 		}
- 		if (inode_table < first_block ||
- 		    inode_table + sbi->s_itb_per_group - 1 > last_block) {
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 985e95b9b4ef..2dc76fe6cd10 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -923,7 +923,7 @@ out:
- }
- 
- /*
-- * This is a variaon of __jbd2_update_log_tail which checks for validity of
-+ * This is a variation of __jbd2_update_log_tail which checks for validity of
-  * provided log tail and locks j_checkpoint_mutex. So it is safe against races
-  * with other threads updating log tail.
-  */
-@@ -1399,6 +1399,9 @@ int jbd2_journal_update_sb_log_tail(journal_t *journal, tid_t tail_tid,
- 	journal_superblock_t *sb = journal->j_superblock;
- 	int ret;
- 
-+	if (is_journal_aborted(journal))
-+		return -EIO;
-+
- 	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
- 	jbd_debug(1, "JBD2: updating superblock (start %lu, seq %u)\n",
- 		  tail_block, tail_tid);
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 0918f0e2e266..10902f70883d 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -345,7 +345,7 @@ static void jffs2_put_super (struct super_block *sb)
- static void jffs2_kill_sb(struct super_block *sb)
- {
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
--	if (!(sb->s_flags & MS_RDONLY))
-+	if (c && !(sb->s_flags & MS_RDONLY))
- 		jffs2_stop_garbage_collect_thread(c);
- 	kill_mtd_super(sb);
- 	kfree(c);
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d0cd3f4012ec..ded3f1edd7f7 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -944,7 +944,8 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 			goto out_free;
- 	}
- 
--	mnt->mnt.mnt_flags = old->mnt.mnt_flags & ~(MNT_WRITE_HOLD|MNT_MARKED);
-+	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
-+	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
- 	/* Don't allow unprivileged users to change mount flags */
- 	if (flag & CL_UNPRIVILEGED) {
- 		mnt->mnt.mnt_flags |= MNT_LOCK_ATIME;
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index f6298b974316..62959ac5a5b5 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -92,7 +92,7 @@ static bool fanotify_should_send_event(struct fsnotify_mark *inode_mark,
- 				       u32 event_mask,
- 				       void *data, int data_type)
- {
--	__u32 marks_mask, marks_ignored_mask;
-+	__u32 marks_mask = 0, marks_ignored_mask = 0;
- 	struct path *path = data;
- 
- 	pr_debug("%s: inode_mark=%p vfsmnt_mark=%p mask=%x data=%p"
-@@ -108,24 +108,20 @@ static bool fanotify_should_send_event(struct fsnotify_mark *inode_mark,
- 	    !S_ISDIR(path->dentry->d_inode->i_mode))
- 		return false;
- 
--	if (inode_mark && vfsmnt_mark) {
--		marks_mask = (vfsmnt_mark->mask | inode_mark->mask);
--		marks_ignored_mask = (vfsmnt_mark->ignored_mask | inode_mark->ignored_mask);
--	} else if (inode_mark) {
--		/*
--		 * if the event is for a child and this inode doesn't care about
--		 * events on the child, don't send it!
--		 */
--		if ((event_mask & FS_EVENT_ON_CHILD) &&
--		    !(inode_mark->mask & FS_EVENT_ON_CHILD))
--			return false;
--		marks_mask = inode_mark->mask;
--		marks_ignored_mask = inode_mark->ignored_mask;
--	} else if (vfsmnt_mark) {
--		marks_mask = vfsmnt_mark->mask;
--		marks_ignored_mask = vfsmnt_mark->ignored_mask;
--	} else {
--		BUG();
-+	/*
-+	 * if the event is for a child and this inode doesn't care about
-+	 * events on the child, don't send it!
-+	 */
-+	if (inode_mark &&
-+	    (!(event_mask & FS_EVENT_ON_CHILD) ||
-+	     (inode_mark->mask & FS_EVENT_ON_CHILD))) {
-+		marks_mask |= inode_mark->mask;
-+		marks_ignored_mask |= inode_mark->ignored_mask;
-+	}
-+
-+	if (vfsmnt_mark) {
-+		marks_mask |= vfsmnt_mark->mask;
-+		marks_ignored_mask |= vfsmnt_mark->ignored_mask;
- 	}
- 
- 	if (S_ISDIR(path->dentry->d_inode->i_mode) &&
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index e503effd284d..135f4138f80d 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -2643,7 +2643,7 @@ static int journal_init_dev(struct super_block *super,
- 	if (IS_ERR(journal->j_dev_bd)) {
- 		result = PTR_ERR(journal->j_dev_bd);
- 		journal->j_dev_bd = NULL;
--		reiserfs_warning(super,
-+		reiserfs_warning(super, "sh-457",
- 				 "journal_init_dev: Cannot open '%s': %i",
- 				 jdev_name, result);
- 		return result;
-diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-index 106bf20629ce..2f7a74e73b7d 100644
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -1726,8 +1726,11 @@ static void ubifs_remount_ro(struct ubifs_info *c)
- 
- 	dbg_save_space_info(c);
- 
--	for (i = 0; i < c->jhead_cnt; i++)
--		ubifs_wbuf_sync(&c->jheads[i].wbuf);
-+	for (i = 0; i < c->jhead_cnt; i++) {
-+		err = ubifs_wbuf_sync(&c->jheads[i].wbuf);
-+		if (err)
-+			ubifs_ro_mode(c, err);
-+	}
- 
- 	c->mst_node->flags &= ~cpu_to_le32(UBIFS_MST_DIRTY);
- 	c->mst_node->flags |= cpu_to_le32(UBIFS_MST_NO_ORPHS);
-@@ -1794,8 +1797,11 @@ static void ubifs_put_super(struct super_block *sb)
- 			int err;
- 
- 			/* Synchronize write-buffers */
--			for (i = 0; i < c->jhead_cnt; i++)
--				ubifs_wbuf_sync(&c->jheads[i].wbuf);
-+			for (i = 0; i < c->jhead_cnt; i++) {
-+				err = ubifs_wbuf_sync(&c->jheads[i].wbuf);
-+				if (err)
-+					ubifs_ro_mode(c, err);
-+			}
- 
- 			/*
- 			 * We are being cleanly unmounted which means the
-diff --git a/include/net/slhc_vj.h b/include/net/slhc_vj.h
-index 8716d5942b65..8fcf8908a694 100644
---- a/include/net/slhc_vj.h
-+++ b/include/net/slhc_vj.h
-@@ -127,6 +127,7 @@ typedef __u32 int32;
-  */
- struct cstate {
- 	byte_t	cs_this;	/* connection id number (xmit) */
-+	bool	initialized;	/* true if initialized */
- 	struct cstate *next;	/* next in ring (xmit) */
- 	struct iphdr cs_ip;	/* ip/tcp hdr from most recent packet */
- 	struct tcphdr cs_tcp;
-diff --git a/include/sound/pcm_oss.h b/include/sound/pcm_oss.h
-index 760c969d885d..12bbf8c81112 100644
---- a/include/sound/pcm_oss.h
-+++ b/include/sound/pcm_oss.h
-@@ -57,6 +57,7 @@ struct snd_pcm_oss_runtime {
- 	char *buffer;				/* vmallocated period */
- 	size_t buffer_used;			/* used length from period buffer */
- 	struct mutex params_lock;
-+	atomic_t rw_ref;		/* concurrent read/write accesses */
- #ifdef CONFIG_SND_PCM_OSS_PLUGINS
- 	struct snd_pcm_plugin *plugin_first;
- 	struct snd_pcm_plugin *plugin_last;
-diff --git a/kernel/resource.c b/kernel/resource.c
-index e3011e1a5c8d..d9c7d5d77c8a 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -590,7 +590,8 @@ static int __find_resource(struct resource *root, struct resource *old,
- 			alloc.start = constraint->alignf(constraint->alignf_data, &avail,
- 					size, constraint->align);
- 			alloc.end = alloc.start + size - 1;
--			if (resource_contains(&avail, &alloc)) {
-+			if (alloc.start <= alloc.end &&
-+			    resource_contains(&avail, &alloc)) {
- 				new->start = alloc.start;
- 				new->end = alloc.end;
- 				return 0;
-diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
-index 2d12b76b5a64..d8cfd7048721 100644
---- a/net/sunrpc/rpc_pipe.c
-+++ b/net/sunrpc/rpc_pipe.c
-@@ -1375,6 +1375,7 @@ rpc_gssd_dummy_depopulate(struct dentry *pipe_dentry)
- 	struct dentry *clnt_dir = pipe_dentry->d_parent;
- 	struct dentry *gssd_dir = clnt_dir->d_parent;
- 
-+	dget(pipe_dentry);
- 	__rpc_rmpipe(clnt_dir->d_inode, pipe_dentry);
- 	__rpc_depopulate(clnt_dir, gssd_dummy_info_file, 0, 1);
- 	__rpc_depopulate(gssd_dir, gssd_dummy_clnt_dir, 0, 1);
-diff --git a/sound/core/oss/pcm_oss.c b/sound/core/oss/pcm_oss.c
-index 520c6bed5d2b..e3c5fee7f838 100644
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -833,8 +833,25 @@ static int choose_rate(struct snd_pcm_substream *substream,
- 	return snd_pcm_hw_param_near(substream, params, SNDRV_PCM_HW_PARAM_RATE, best_rate, NULL);
- }
- 
--static int snd_pcm_oss_change_params(struct snd_pcm_substream *substream,
--				     bool trylock)
-+/* parameter locking: returns immediately if tried during streaming */
-+static int lock_params(struct snd_pcm_runtime *runtime)
-+{
-+	if (mutex_lock_interruptible(&runtime->oss.params_lock))
-+		return -ERESTARTSYS;
-+	if (atomic_read(&runtime->oss.rw_ref)) {
-+		mutex_unlock(&runtime->oss.params_lock);
-+		return -EBUSY;
-+	}
-+	return 0;
-+}
-+
-+static void unlock_params(struct snd_pcm_runtime *runtime)
-+{
-+	mutex_unlock(&runtime->oss.params_lock);
-+}
-+
-+/* call with params_lock held */
-+static int snd_pcm_oss_change_params_locked(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct snd_pcm_hw_params *params, *sparams;
-@@ -848,12 +865,9 @@ static int snd_pcm_oss_change_params(struct snd_pcm_substream *substream,
- 	struct snd_mask sformat_mask;
- 	struct snd_mask mask;
- 
--	if (trylock) {
--		if (!(mutex_trylock(&runtime->oss.params_lock)))
--			return -EAGAIN;
--	} else if (mutex_lock_interruptible(&runtime->oss.params_lock))
--		return -EINTR;
--	sw_params = kmalloc(sizeof(*sw_params), GFP_KERNEL);
-+	if (!runtime->oss.params)
-+		return 0;
-+	sw_params = kzalloc(sizeof(*sw_params), GFP_KERNEL);
- 	params = kmalloc(sizeof(*params), GFP_KERNEL);
- 	sparams = kmalloc(sizeof(*sparams), GFP_KERNEL);
- 	if (!sw_params || !params || !sparams) {
-@@ -992,7 +1006,6 @@ static int snd_pcm_oss_change_params(struct snd_pcm_substream *substream,
- 		goto failure;
- 	}
- 
--	memset(sw_params, 0, sizeof(*sw_params));
- 	if (runtime->oss.trigger) {
- 		sw_params->start_threshold = 1;
- 	} else {
-@@ -1080,6 +1093,23 @@ failure:
- 	kfree(sw_params);
- 	kfree(params);
- 	kfree(sparams);
-+	return err;
-+}
-+
-+/* this one takes the lock by itself */
-+static int snd_pcm_oss_change_params(struct snd_pcm_substream *substream,
-+				     bool trylock)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+	int err;
-+
-+	if (trylock) {
-+		if (!(mutex_trylock(&runtime->oss.params_lock)))
-+			return -EAGAIN;
-+	} else if (mutex_lock_interruptible(&runtime->oss.params_lock))
-+		return -ERESTARTSYS;
-+
-+	err = snd_pcm_oss_change_params_locked(substream);
- 	mutex_unlock(&runtime->oss.params_lock);
- 	return err;
- }
-@@ -1108,6 +1138,10 @@ static int snd_pcm_oss_get_active_substream(struct snd_pcm_oss_file *pcm_oss_fil
- 	return 0;
- }
- 
-+/* call with params_lock held */
-+/* NOTE: this always call PREPARE unconditionally no matter whether
-+ * runtime->oss.prepare is set or not
-+ */
- static int snd_pcm_oss_prepare(struct snd_pcm_substream *substream)
- {
- 	int err;
-@@ -1132,14 +1166,35 @@ static int snd_pcm_oss_make_ready(struct snd_pcm_substream *substream)
- 	struct snd_pcm_runtime *runtime;
- 	int err;
- 
--	if (substream == NULL)
--		return 0;
- 	runtime = substream->runtime;
- 	if (runtime->oss.params) {
- 		err = snd_pcm_oss_change_params(substream, false);
- 		if (err < 0)
- 			return err;
- 	}
-+	if (runtime->oss.prepare) {
-+		if (mutex_lock_interruptible(&runtime->oss.params_lock))
-+			return -ERESTARTSYS;
-+		err = snd_pcm_oss_prepare(substream);
-+		mutex_unlock(&runtime->oss.params_lock);
-+		if (err < 0)
-+			return err;
-+	}
-+	return 0;
-+}
-+
-+/* call with params_lock held */
-+static int snd_pcm_oss_make_ready_locked(struct snd_pcm_substream *substream)
-+{
-+	struct snd_pcm_runtime *runtime;
-+	int err;
-+
-+	runtime = substream->runtime;
-+	if (runtime->oss.params) {
-+		err = snd_pcm_oss_change_params_locked(substream);
-+		if (err < 0)
-+			return err;
-+	}
- 	if (runtime->oss.prepare) {
- 		err = snd_pcm_oss_prepare(substream);
- 		if (err < 0)
-@@ -1368,13 +1423,15 @@ static ssize_t snd_pcm_oss_write1(struct snd_pcm_substream *substream, const cha
- 	if (atomic_read(&substream->mmap_count))
- 		return -ENXIO;
- 
--	if ((tmp = snd_pcm_oss_make_ready(substream)) < 0)
--		return tmp;
-+	atomic_inc(&runtime->oss.rw_ref);
- 	while (bytes > 0) {
- 		if (mutex_lock_interruptible(&runtime->oss.params_lock)) {
- 			tmp = -ERESTARTSYS;
- 			break;
- 		}
-+		tmp = snd_pcm_oss_make_ready_locked(substream);
-+		if (tmp < 0)
-+			goto err;
- 		if (bytes < runtime->oss.period_bytes || runtime->oss.buffer_used > 0) {
- 			tmp = bytes;
- 			if (tmp + runtime->oss.buffer_used > runtime->oss.period_bytes)
-@@ -1430,6 +1487,7 @@ static ssize_t snd_pcm_oss_write1(struct snd_pcm_substream *substream, const cha
- 		}
- 		tmp = 0;
- 	}
-+	atomic_dec(&runtime->oss.rw_ref);
- 	return xfer > 0 ? (snd_pcm_sframes_t)xfer : tmp;
- }
- 
-@@ -1475,13 +1533,15 @@ static ssize_t snd_pcm_oss_read1(struct snd_pcm_substream *substream, char __use
- 	if (atomic_read(&substream->mmap_count))
- 		return -ENXIO;
- 
--	if ((tmp = snd_pcm_oss_make_ready(substream)) < 0)
--		return tmp;
-+	atomic_inc(&runtime->oss.rw_ref);
- 	while (bytes > 0) {
- 		if (mutex_lock_interruptible(&runtime->oss.params_lock)) {
- 			tmp = -ERESTARTSYS;
- 			break;
- 		}
-+		tmp = snd_pcm_oss_make_ready_locked(substream);
-+		if (tmp < 0)
-+			goto err;
- 		if (bytes < runtime->oss.period_bytes || runtime->oss.buffer_used > 0) {
- 			if (runtime->oss.buffer_used == 0) {
- 				tmp = snd_pcm_oss_read2(substream, runtime->oss.buffer, runtime->oss.period_bytes, 1);
-@@ -1522,6 +1582,7 @@ static ssize_t snd_pcm_oss_read1(struct snd_pcm_substream *substream, char __use
- 		}
- 		tmp = 0;
- 	}
-+	atomic_dec(&runtime->oss.rw_ref);
- 	return xfer > 0 ? (snd_pcm_sframes_t)xfer : tmp;
- }
- 
-@@ -1537,10 +1598,12 @@ static int snd_pcm_oss_reset(struct snd_pcm_oss_file *pcm_oss_file)
- 			continue;
- 		runtime = substream->runtime;
- 		snd_pcm_kernel_ioctl(substream, SNDRV_PCM_IOCTL_DROP, NULL);
-+		mutex_lock(&runtime->oss.params_lock);
- 		runtime->oss.prepare = 1;
- 		runtime->oss.buffer_used = 0;
- 		runtime->oss.prev_hw_ptr_period = 0;
- 		runtime->oss.period_ptr = 0;
-+		mutex_unlock(&runtime->oss.params_lock);
- 	}
- 	return 0;
- }
-@@ -1626,9 +1689,13 @@ static int snd_pcm_oss_sync(struct snd_pcm_oss_file *pcm_oss_file)
- 			goto __direct;
- 		if ((err = snd_pcm_oss_make_ready(substream)) < 0)
- 			return err;
-+		atomic_inc(&runtime->oss.rw_ref);
-+		if (mutex_lock_interruptible(&runtime->oss.params_lock)) {
-+			atomic_dec(&runtime->oss.rw_ref);
-+			return -ERESTARTSYS;
-+		}
- 		format = snd_pcm_oss_format_from(runtime->oss.format);
- 		width = snd_pcm_format_physical_width(format);
--		mutex_lock(&runtime->oss.params_lock);
- 		if (runtime->oss.buffer_used > 0) {
- #ifdef OSS_DEBUG
- 			pcm_dbg(substream->pcm, "sync: buffer_used\n");
-@@ -1638,10 +1705,8 @@ static int snd_pcm_oss_sync(struct snd_pcm_oss_file *pcm_oss_file)
- 						   runtime->oss.buffer + runtime->oss.buffer_used,
- 						   size);
- 			err = snd_pcm_oss_sync1(substream, runtime->oss.period_bytes);
--			if (err < 0) {
--				mutex_unlock(&runtime->oss.params_lock);
--				return err;
--			}
-+			if (err < 0)
-+				goto unlock;
- 		} else if (runtime->oss.period_ptr > 0) {
- #ifdef OSS_DEBUG
- 			pcm_dbg(substream->pcm, "sync: period_ptr\n");
-@@ -1651,10 +1716,8 @@ static int snd_pcm_oss_sync(struct snd_pcm_oss_file *pcm_oss_file)
- 						   runtime->oss.buffer,
- 						   size * 8 / width);
- 			err = snd_pcm_oss_sync1(substream, size);
--			if (err < 0) {
--				mutex_unlock(&runtime->oss.params_lock);
--				return err;
--			}
-+			if (err < 0)
-+				goto unlock;
- 		}
- 		/*
- 		 * The ALSA's period might be a bit large than OSS one.
-@@ -1685,7 +1748,11 @@ static int snd_pcm_oss_sync(struct snd_pcm_oss_file *pcm_oss_file)
- 				snd_pcm_lib_writev(substream, buffers, size);
- 			}
- 		}
-+unlock:
- 		mutex_unlock(&runtime->oss.params_lock);
-+		atomic_dec(&runtime->oss.rw_ref);
-+		if (err < 0)
-+			return err;
- 		/*
- 		 * finish sync: drain the buffer
- 		 */
-@@ -1696,7 +1763,9 @@ static int snd_pcm_oss_sync(struct snd_pcm_oss_file *pcm_oss_file)
- 		substream->f_flags = saved_f_flags;
- 		if (err < 0)
- 			return err;
-+		mutex_lock(&runtime->oss.params_lock);
- 		runtime->oss.prepare = 1;
-+		mutex_unlock(&runtime->oss.params_lock);
- 	}
- 
- 	substream = pcm_oss_file->streams[SNDRV_PCM_STREAM_CAPTURE];
-@@ -1707,8 +1776,10 @@ static int snd_pcm_oss_sync(struct snd_pcm_oss_file *pcm_oss_file)
- 		err = snd_pcm_kernel_ioctl(substream, SNDRV_PCM_IOCTL_DROP, NULL);
- 		if (err < 0)
- 			return err;
-+		mutex_lock(&runtime->oss.params_lock);
- 		runtime->oss.buffer_used = 0;
- 		runtime->oss.prepare = 1;
-+		mutex_unlock(&runtime->oss.params_lock);
- 	}
- 	return 0;
- }
-@@ -1720,6 +1791,8 @@ static int snd_pcm_oss_set_rate(struct snd_pcm_oss_file *pcm_oss_file, int rate)
- 	for (idx = 1; idx >= 0; --idx) {
- 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
- 		struct snd_pcm_runtime *runtime;
-+		int err;
-+
- 		if (substream == NULL)
- 			continue;
- 		runtime = substream->runtime;
-@@ -1727,10 +1800,14 @@ static int snd_pcm_oss_set_rate(struct snd_pcm_oss_file *pcm_oss_file, int rate)
- 			rate = 1000;
- 		else if (rate > 192000)
- 			rate = 192000;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
- 		if (runtime->oss.rate != rate) {
- 			runtime->oss.params = 1;
- 			runtime->oss.rate = rate;
- 		}
-+		unlock_params(runtime);
- 	}
- 	return snd_pcm_oss_get_rate(pcm_oss_file);
- }
-@@ -1755,13 +1832,19 @@ static int snd_pcm_oss_set_channels(struct snd_pcm_oss_file *pcm_oss_file, unsig
- 	for (idx = 1; idx >= 0; --idx) {
- 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
- 		struct snd_pcm_runtime *runtime;
-+		int err;
-+
- 		if (substream == NULL)
- 			continue;
- 		runtime = substream->runtime;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
- 		if (runtime->oss.channels != channels) {
- 			runtime->oss.params = 1;
- 			runtime->oss.channels = channels;
- 		}
-+		unlock_params(runtime);
- 	}
- 	return snd_pcm_oss_get_channels(pcm_oss_file);
- }
-@@ -1834,6 +1917,7 @@ static int snd_pcm_oss_get_formats(struct snd_pcm_oss_file *pcm_oss_file)
- static int snd_pcm_oss_set_format(struct snd_pcm_oss_file *pcm_oss_file, int format)
- {
- 	int formats, idx;
-+	int err;
- 	
- 	if (format != AFMT_QUERY) {
- 		formats = snd_pcm_oss_get_formats(pcm_oss_file);
-@@ -1847,10 +1931,14 @@ static int snd_pcm_oss_set_format(struct snd_pcm_oss_file *pcm_oss_file, int for
- 			if (substream == NULL)
- 				continue;
- 			runtime = substream->runtime;
-+			err = lock_params(runtime);
-+			if (err < 0)
-+				return err;
- 			if (runtime->oss.format != format) {
- 				runtime->oss.params = 1;
- 				runtime->oss.format = format;
- 			}
-+			unlock_params(runtime);
- 		}
- 	}
- 	return snd_pcm_oss_get_format(pcm_oss_file);
-@@ -1870,8 +1958,6 @@ static int snd_pcm_oss_set_subdivide1(struct snd_pcm_substream *substream, int s
- {
- 	struct snd_pcm_runtime *runtime;
- 
--	if (substream == NULL)
--		return 0;
- 	runtime = substream->runtime;
- 	if (subdivide == 0) {
- 		subdivide = runtime->oss.subdivision;
-@@ -1895,9 +1981,17 @@ static int snd_pcm_oss_set_subdivide(struct snd_pcm_oss_file *pcm_oss_file, int
- 
- 	for (idx = 1; idx >= 0; --idx) {
- 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
-+		struct snd_pcm_runtime *runtime;
-+
- 		if (substream == NULL)
- 			continue;
--		if ((err = snd_pcm_oss_set_subdivide1(substream, subdivide)) < 0)
-+		runtime = substream->runtime;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
-+		err = snd_pcm_oss_set_subdivide1(substream, subdivide);
-+		unlock_params(runtime);
-+		if (err < 0)
- 			return err;
- 	}
- 	return err;
-@@ -1907,8 +2001,6 @@ static int snd_pcm_oss_set_fragment1(struct snd_pcm_substream *substream, unsign
- {
- 	struct snd_pcm_runtime *runtime;
- 
--	if (substream == NULL)
--		return 0;
- 	runtime = substream->runtime;
- 	if (runtime->oss.subdivision || runtime->oss.fragshift)
- 		return -EINVAL;
-@@ -1928,9 +2020,17 @@ static int snd_pcm_oss_set_fragment(struct snd_pcm_oss_file *pcm_oss_file, unsig
- 
- 	for (idx = 1; idx >= 0; --idx) {
- 		struct snd_pcm_substream *substream = pcm_oss_file->streams[idx];
-+		struct snd_pcm_runtime *runtime;
-+
- 		if (substream == NULL)
- 			continue;
--		if ((err = snd_pcm_oss_set_fragment1(substream, val)) < 0)
-+		runtime = substream->runtime;
-+		err = lock_params(runtime);
-+		if (err < 0)
-+			return err;
-+		err = snd_pcm_oss_set_fragment1(substream, val);
-+		unlock_params(runtime);
-+		if (err < 0)
- 			return err;
- 	}
- 	return err;
-@@ -2014,6 +2114,9 @@ static int snd_pcm_oss_set_trigger(struct snd_pcm_oss_file *pcm_oss_file, int tr
- 	}
-       	if (psubstream) {
-       		runtime = psubstream->runtime;
-+		cmd = 0;
-+		if (mutex_lock_interruptible(&runtime->oss.params_lock))
-+			return -ERESTARTSYS;
- 		if (trigger & PCM_ENABLE_OUTPUT) {
- 			if (runtime->oss.trigger)
- 				goto _skip1;
-@@ -2031,13 +2134,19 @@ static int snd_pcm_oss_set_trigger(struct snd_pcm_oss_file *pcm_oss_file, int tr
- 			cmd = SNDRV_PCM_IOCTL_DROP;
- 			runtime->oss.prepare = 1;
- 		}
--		err = snd_pcm_kernel_ioctl(psubstream, cmd, NULL);
--		if (err < 0)
--			return err;
--	}
-  _skip1:
-+		mutex_unlock(&runtime->oss.params_lock);
-+		if (cmd) {
-+			err = snd_pcm_kernel_ioctl(psubstream, cmd, NULL);
-+			if (err < 0)
-+				return err;
-+		}
-+	}
- 	if (csubstream) {
-       		runtime = csubstream->runtime;
-+		cmd = 0;
-+		if (mutex_lock_interruptible(&runtime->oss.params_lock))
-+			return -ERESTARTSYS;
- 		if (trigger & PCM_ENABLE_INPUT) {
- 			if (runtime->oss.trigger)
- 				goto _skip2;
-@@ -2052,11 +2161,14 @@ static int snd_pcm_oss_set_trigger(struct snd_pcm_oss_file *pcm_oss_file, int tr
- 			cmd = SNDRV_PCM_IOCTL_DROP;
- 			runtime->oss.prepare = 1;
- 		}
--		err = snd_pcm_kernel_ioctl(csubstream, cmd, NULL);
--		if (err < 0)
--			return err;
--	}
-  _skip2:
-+		mutex_unlock(&runtime->oss.params_lock);
-+		if (cmd) {
-+			err = snd_pcm_kernel_ioctl(csubstream, cmd, NULL);
-+			if (err < 0)
-+				return err;
-+		}
-+	}
- 	return 0;
- }
- 
-@@ -2308,6 +2420,7 @@ static void snd_pcm_oss_init_substream(struct snd_pcm_substream *substream,
- 	runtime->oss.maxfrags = 0;
- 	runtime->oss.subdivision = 0;
- 	substream->pcm_release = snd_pcm_oss_release_substream;
-+	atomic_set(&runtime->oss.rw_ref, 0);
- }
- 
- static int snd_pcm_oss_release_file(struct snd_pcm_oss_file *pcm_oss_file)
-diff --git a/sound/core/rawmidi_compat.c b/sound/core/rawmidi_compat.c
-index 09a89094dcf7..4e304a24924a 100644
---- a/sound/core/rawmidi_compat.c
-+++ b/sound/core/rawmidi_compat.c
-@@ -36,8 +36,6 @@ static int snd_rawmidi_ioctl_params_compat(struct snd_rawmidi_file *rfile,
- 	struct snd_rawmidi_params params;
- 	unsigned int val;
- 
--	if (rfile->output == NULL)
--		return -EINVAL;
- 	if (get_user(params.stream, &src->stream) ||
- 	    get_user(params.buffer_size, &src->buffer_size) ||
- 	    get_user(params.avail_min, &src->avail_min) ||
-@@ -46,8 +44,12 @@ static int snd_rawmidi_ioctl_params_compat(struct snd_rawmidi_file *rfile,
- 	params.no_active_sensing = val;
- 	switch (params.stream) {
- 	case SNDRV_RAWMIDI_STREAM_OUTPUT:
-+		if (!rfile->output)
-+			return -EINVAL;
- 		return snd_rawmidi_output_params(rfile->output, &params);
- 	case SNDRV_RAWMIDI_STREAM_INPUT:
-+		if (!rfile->input)
-+			return -EINVAL;
- 		return snd_rawmidi_input_params(rfile->input, &params);
- 	}
- 	return -EINVAL;
-@@ -67,16 +69,18 @@ static int snd_rawmidi_ioctl_status_compat(struct snd_rawmidi_file *rfile,
- 	int err;
- 	struct snd_rawmidi_status status;
- 
--	if (rfile->output == NULL)
--		return -EINVAL;
- 	if (get_user(status.stream, &src->stream))
- 		return -EFAULT;
- 
- 	switch (status.stream) {
- 	case SNDRV_RAWMIDI_STREAM_OUTPUT:
-+		if (!rfile->output)
-+			return -EINVAL;
- 		err = snd_rawmidi_output_status(rfile->output, &status);
- 		break;
- 	case SNDRV_RAWMIDI_STREAM_INPUT:
-+		if (!rfile->input)
-+			return -EINVAL;
- 		err = snd_rawmidi_input_status(rfile->input, &status);
- 		break;
- 	default:
-@@ -113,16 +117,18 @@ static int snd_rawmidi_ioctl_status_x32(struct snd_rawmidi_file *rfile,
- 	int err;
- 	struct snd_rawmidi_status status;
- 
--	if (rfile->output == NULL)
--		return -EINVAL;
- 	if (get_user(status.stream, &src->stream))
- 		return -EFAULT;
- 
- 	switch (status.stream) {
- 	case SNDRV_RAWMIDI_STREAM_OUTPUT:
-+		if (!rfile->output)
-+			return -EINVAL;
- 		err = snd_rawmidi_output_status(rfile->output, &status);
- 		break;
- 	case SNDRV_RAWMIDI_STREAM_INPUT:
-+		if (!rfile->input)
-+			return -EINVAL;
- 		err = snd_rawmidi_input_status(rfile->input, &status);
- 		break;
- 	default:
-diff --git a/sound/soc/codecs/ssm2602.c b/sound/soc/codecs/ssm2602.c
-index 314eaece1b7d..ddf67da394de 100644
---- a/sound/soc/codecs/ssm2602.c
-+++ b/sound/soc/codecs/ssm2602.c
-@@ -54,10 +54,17 @@ struct ssm2602_priv {
-  * using 2 wire for device control, so we cache them instead.
-  * There is no point in caching the reset register
-  */
--static const u16 ssm2602_reg[SSM2602_CACHEREGNUM] = {
--	0x0097, 0x0097, 0x0079, 0x0079,
--	0x000a, 0x0008, 0x009f, 0x000a,
--	0x0000, 0x0000
-+static const struct reg_default ssm2602_reg[SSM2602_CACHEREGNUM] = {
-+	{ .reg = 0x00, .def = 0x0097 },
-+	{ .reg = 0x01, .def = 0x0097 },
-+	{ .reg = 0x02, .def = 0x0079 },
-+	{ .reg = 0x03, .def = 0x0079 },
-+	{ .reg = 0x04, .def = 0x000a },
-+	{ .reg = 0x05, .def = 0x0008 },
-+	{ .reg = 0x06, .def = 0x009f },
-+	{ .reg = 0x07, .def = 0x000a },
-+	{ .reg = 0x08, .def = 0x0000 },
-+	{ .reg = 0x09, .def = 0x0000 }
- };
- 
- 
-@@ -620,8 +627,8 @@ const struct regmap_config ssm2602_regmap_config = {
- 	.volatile_reg = ssm2602_register_volatile,
- 
- 	.cache_type = REGCACHE_RBTREE,
--	.reg_defaults_raw = ssm2602_reg,
--	.num_reg_defaults_raw = ARRAY_SIZE(ssm2602_reg),
-+	.reg_defaults = ssm2602_reg,
-+	.num_reg_defaults = ARRAY_SIZE(ssm2602_reg),
- };
- EXPORT_SYMBOL_GPL(ssm2602_regmap_config);
- 
+
+--AhhlLboLdkugWU4S
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.16.4 kernel.
+
+All users of the 4.16 kernel series must upgrade.
+
+The updated 4.16.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.16.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                                  |    2=20
+ arch/arm/boot/dts/at91sam9g25.dtsi                        |    2=20
+ arch/arm/boot/dts/exynos5250.dtsi                         |    8=20
+ arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts             |   24 +
+ arch/arm/boot/dts/sama5d4.dtsi                            |    2=20
+ arch/arm/mach-exynos/pm.c                                 |    6=20
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts       |    2=20
+ arch/mips/include/asm/uaccess.h                           |   11=20
+ arch/mips/lib/memset.S                                    |   11=20
+ arch/powerpc/include/asm/barrier.h                        |    3=20
+ arch/powerpc/include/asm/opal.h                           |    3=20
+ arch/powerpc/include/asm/synch.h                          |    4=20
+ arch/powerpc/kernel/dt_cpu_ftrs.c                         |   19 +
+ arch/powerpc/kernel/eeh_driver.c                          |   68 ++--
+ arch/powerpc/kernel/eeh_pe.c                              |    3=20
+ arch/powerpc/kernel/kprobes.c                             |   30 +-
+ arch/powerpc/kernel/machine_kexec_file_64.c               |    2=20
+ arch/powerpc/lib/feature-fixups.c                         |    2=20
+ arch/powerpc/mm/hash_utils_64.c                           |    6=20
+ arch/powerpc/mm/tlb-radix.c                               |    5=20
+ arch/powerpc/platforms/powernv/opal-nvram.c               |   11=20
+ arch/powerpc/platforms/pseries/lpar.c                     |    8=20
+ arch/powerpc/sysdev/xive/native.c                         |    4=20
+ arch/s390/Kconfig                                         |    8=20
+ arch/s390/hypfs/inode.c                                   |    2=20
+ arch/s390/kernel/perf_cpum_cf_events.c                    |    1=20
+ arch/s390/kernel/setup.c                                  |    1=20
+ arch/um/os-Linux/file.c                                   |    1=20
+ arch/um/os-Linux/signal.c                                 |    3=20
+ arch/x86/um/stub_segv.c                                   |    3=20
+ arch/x86/xen/enlighten_pv.c                               |    8=20
+ drivers/acpi/nfit/core.c                                  |   59 ++-
+ drivers/acpi/nfit/nfit.h                                  |    5=20
+ drivers/acpi/video_detect.c                               |    9=20
+ drivers/base/regmap/regmap.c                              |    2=20
+ drivers/bluetooth/hci_bcm.c                               |   20 +
+ drivers/char/random.c                                     |   84 ++++-
+ drivers/char/tpm/tpm-interface.c                          |    4=20
+ drivers/clk/bcm/clk-bcm2835.c                             |    8=20
+ drivers/clk/mediatek/clk-mt2701.c                         |   15 -
+ drivers/clk/mvebu/armada-38x.c                            |   14=20
+ drivers/clk/renesas/clk-sh73a0.c                          |    6=20
+ drivers/clk/tegra/clk-emc.c                               |    2=20
+ drivers/clk/tegra/clk-tegra-periph.c                      |    2=20
+ drivers/clk/tegra/clk-tegra-super-gen4.c                  |    8=20
+ drivers/clk/tegra/clk-tegra114.c                          |    3=20
+ drivers/clk/tegra/clk-tegra124.c                          |    7=20
+ drivers/clk/tegra/clk-tegra20.c                           |   23 -
+ drivers/clk/tegra/clk-tegra210.c                          |    3=20
+ drivers/clk/tegra/clk-tegra30.c                           |   14=20
+ drivers/cpufreq/armada-37xx-cpufreq.c                     |    2=20
+ drivers/cpufreq/cppc_cpufreq.c                            |    3=20
+ drivers/dax/device.c                                      |    2=20
+ drivers/dma/at_xdmac.c                                    |    4=20
+ drivers/extcon/extcon-intel-cht-wc.c                      |   11=20
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c          |    1=20
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c               |    6=20
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c                    |    2=20
+ drivers/gpu/drm/amd/amdgpu/cik_sdma.c                     |    2=20
+ drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c                    |    2=20
+ drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c                    |    2=20
+ drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c                    |    2=20
+ drivers/gpu/drm/amd/amdgpu/si.c                           |   67 ++++
+ drivers/gpu/drm/amd/amdgpu/si_dpm.c                       |    4=20
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c         |   31 --
+ drivers/gpu/drm/amd/display/dc/dce/dce_stream_encoder.c   |    2=20
+ drivers/gpu/drm/i915/gvt/gvt.h                            |    5=20
+ drivers/gpu/drm/i915/gvt/mmio_context.c                   |  210 +++++++++=
++++--
+ drivers/gpu/drm/i915/gvt/mmio_context.h                   |    5=20
+ drivers/gpu/drm/i915/gvt/scheduler.c                      |    5=20
+ drivers/gpu/drm/i915/i915_drv.c                           |   22 -
+ drivers/gpu/drm/i915/i915_drv.h                           |    2=20
+ drivers/gpu/drm/i915/i915_reg.h                           |   10=20
+ drivers/gpu/drm/i915/intel_sprite.c                       |   81 ++++-
+ drivers/gpu/drm/radeon/radeon_device.c                    |    4=20
+ drivers/gpu/drm/radeon/si_dpm.c                           |    4=20
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c               |   23 -
+ drivers/hid/hid-core.c                                    |   10=20
+ drivers/hid/hid-ids.h                                     |    3=20
+ drivers/hid/hid-input.c                                   |   27 +
+ drivers/hid/hid-multitouch.c                              |    5=20
+ drivers/hid/hid-rmi.c                                     |    4=20
+ drivers/hid/hidraw.c                                      |    5=20
+ drivers/hid/i2c-hid/i2c-hid.c                             |   26 +
+ drivers/hid/wacom_sys.c                                   |    4=20
+ drivers/hid/wacom_wac.c                                   |   76 +++--
+ drivers/i2c/busses/i2c-i801.c                             |   16 -
+ drivers/infiniband/core/ucma.c                            |    3=20
+ drivers/infiniband/core/verbs.c                           |   12=20
+ drivers/infiniband/hw/mlx5/mr.c                           |    2=20
+ drivers/infiniband/sw/rxe/rxe_verbs.c                     |    5=20
+ drivers/infiniband/ulp/srp/ib_srp.c                       |   18 -
+ drivers/infiniband/ulp/srpt/ib_srpt.c                     |   16 -
+ drivers/iommu/intel-svm.c                                 |    1=20
+ drivers/irqchip/irq-gic-common.c                          |    9=20
+ drivers/md/dm-crypt.c                                     |   66 ++++
+ drivers/md/dm-raid.c                                      |    3=20
+ drivers/md/dm.c                                           |   30 +-
+ drivers/media/common/videobuf2/videobuf2-core.c           |    9=20
+ drivers/media/platform/vivid/vivid-vid-common.c           |    3=20
+ drivers/media/platform/vsp1/vsp1_wpf.c                    |    2=20
+ drivers/media/rc/rc-main.c                                |    6=20
+ drivers/misc/cxl/cxllib.c                                 |   85 +++--
+ drivers/mmc/core/block.c                                  |    1=20
+ drivers/mmc/host/jz4740_mmc.c                             |    2=20
+ drivers/mmc/host/sdhci-pci-core.c                         |   25 +
+ drivers/mmc/host/tmio_mmc_core.c                          |    2=20
+ drivers/mtd/ubi/block.c                                   |    2=20
+ drivers/mtd/ubi/build.c                                   |   11=20
+ drivers/mtd/ubi/fastmap-wl.c                              |    1=20
+ drivers/nvdimm/dimm.c                                     |    8=20
+ drivers/nvdimm/dimm_devs.c                                |   22 -
+ drivers/nvdimm/namespace_devs.c                           |    4=20
+ drivers/pci/hotplug/acpiphp_glue.c                        |   23 +
+ drivers/pci/quirks.c                                      |    4=20
+ drivers/phy/allwinner/phy-sun4i-usb.c                     |   10=20
+ drivers/pwm/pwm-mediatek.c                                |   35 ++
+ drivers/pwm/pwm-rcar.c                                    |    8=20
+ drivers/soc/mediatek/mtk-scpsys.c                         |    2=20
+ drivers/spi/spi-atmel.c                                   |    8=20
+ drivers/spi/spi.c                                         |   19 -
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_fops.c |    6=20
+ drivers/thermal/imx_thermal.c                             |    6=20
+ drivers/thunderbolt/icm.c                                 |   36 +-
+ drivers/thunderbolt/nhi.c                                 |    1=20
+ drivers/thunderbolt/switch.c                              |    9=20
+ drivers/usb/core/generic.c                                |    9=20
+ drivers/usb/dwc3/core.c                                   |    3=20
+ drivers/usb/dwc3/dwc3-pci.c                               |    2=20
+ drivers/usb/dwc3/gadget.c                                 |   43 +-
+ drivers/usb/gadget/function/f_midi.c                      |    3=20
+ drivers/usb/gadget/u_f.h                                  |    2=20
+ drivers/usb/gadget/udc/core.c                             |    3=20
+ drivers/usb/musb/musb_gadget_ep0.c                        |   14=20
+ drivers/watchdog/f71808e_wdt.c                            |    2=20
+ fs/autofs4/root.c                                         |    2=20
+ fs/ceph/inode.c                                           |   10=20
+ fs/cifs/Kconfig                                           |    1=20
+ fs/cifs/cifsencrypt.c                                     |   85 -----
+ fs/cifs/cifsfs.c                                          |    1=20
+ fs/cifs/cifsglob.h                                        |    8=20
+ fs/cifs/cifsproto.h                                       |    5=20
+ fs/cifs/inode.c                                           |   33 ++
+ fs/cifs/link.c                                            |   27 -
+ fs/cifs/misc.c                                            |   54 +++
+ fs/cifs/smb2misc.c                                        |   64 ++++
+ fs/cifs/smb2ops.c                                         |   15 -
+ fs/cifs/smb2pdu.c                                         |   38 ++
+ fs/cifs/smb2pdu.h                                         |    1=20
+ fs/cifs/smb2proto.h                                       |    5=20
+ fs/cifs/smb2transport.c                                   |   97 ++----
+ fs/cifs/smbdirect.c                                       |   19 -
+ fs/cifs/smbencrypt.c                                      |   27 -
+ fs/cifs/transport.c                                       |   17 +
+ fs/ext4/balloc.c                                          |    3=20
+ fs/ext4/dir.c                                             |    8=20
+ fs/ext4/ext4_jbd2.c                                       |    7=20
+ fs/ext4/ialloc.c                                          |   47 ---
+ fs/ext4/inode.c                                           |   13=20
+ fs/ext4/ioctl.c                                           |    8=20
+ fs/ext4/super.c                                           |   21 -
+ fs/ext4/xattr.c                                           |  121 ++++----
+ fs/ext4/xattr.h                                           |   11=20
+ fs/fs-writeback.c                                         |    7=20
+ fs/jbd2/journal.c                                         |   30 +-
+ fs/jffs2/super.c                                          |    2=20
+ fs/namespace.c                                            |    3=20
+ fs/notify/fanotify/fanotify.c                             |   34 +-
+ fs/orangefs/super.c                                       |    5=20
+ fs/reiserfs/journal.c                                     |    2=20
+ fs/ubifs/super.c                                          |   14=20
+ fs/udf/unicode.c                                          |    6=20
+ include/dt-bindings/clock/mt2701-clk.h                    |    3=20
+ include/linux/backing-dev-defs.h                          |    5=20
+ include/linux/backing-dev.h                               |   30 +-
+ include/linux/blk_types.h                                 |    5=20
+ include/linux/compiler-clang.h                            |    3=20
+ include/linux/compiler-gcc.h                              |   12=20
+ include/linux/hid.h                                       |   15 -
+ include/linux/hmm.h                                       |    9=20
+ include/linux/mm.h                                        |    1=20
+ include/sound/pcm_oss.h                                   |    1=20
+ include/uapi/linux/random.h                               |    3=20
+ ipc/shm.c                                                 |   23 +
+ kernel/resource.c                                         |    3=20
+ kernel/trace/ring_buffer.c                                |    5=20
+ kernel/trace/trace_uprobe.c                               |    2=20
+ lib/swiotlb.c                                             |    2=20
+ lib/vsprintf.c                                            |    4=20
+ mm/filemap.c                                              |    9=20
+ mm/hmm.c                                                  |    3=20
+ mm/ksm.c                                                  |    7=20
+ mm/memory-failure.c                                       |   16 +
+ mm/page-writeback.c                                       |   18 -
+ mm/slab.c                                                 |    3=20
+ net/sunrpc/rpc_pipe.c                                     |    1=20
+ net/sunrpc/xprtrdma/rpc_rdma.c                            |    2=20
+ net/sunrpc/xprtrdma/transport.c                           |    2=20
+ net/sunrpc/xprtrdma/verbs.c                               |   13=20
+ net/sunrpc/xprtrdma/xprt_rdma.h                           |    1=20
+ sound/core/oss/pcm_oss.c                                  |  186 +++++++++=
++--
+ sound/core/pcm.c                                          |    8=20
+ sound/core/rawmidi_compat.c                               |   18 -
+ sound/pci/hda/hda_intel.c                                 |    3=20
+ sound/pci/hda/patch_realtek.c                             |    3=20
+ sound/soc/codecs/ssm2602.c                                |   19 -
+ sound/soc/soc-topology.c                                  |   23 +
+ sound/usb/line6/midi.c                                    |    2=20
+ virt/kvm/arm/vgic/vgic-its.c                              |   15 -
+ 209 files changed, 2167 insertions(+), 999 deletions(-)
+
+Aaron Armstrong Skomra (1):
+      HID: wacom: bluetooth: send exit report for recent Bluetooth devices
+
+Aaron Ma (4):
+      HID: i2c-hid: fix size check and type usage
+      HID: Fix hid_report_len usage
+      HID: core: Fix size as type u32
+      HID: i2c-hid: Fix resume issue on Raydium touchscreen device
+
+Al Viro (5):
+      jffs2_kill_sb(): deal with failed allocations
+      hypfs_kill_super(): deal with failed allocations
+      orangefs_kill_sb(): deal with allocation failures
+      rpc_pipefs: fix double-dput()
+      Don't leak MNT_INTERNAL away from internal mounts
+
+Alex Deucher (4):
+      drm/amdgpu: Add an ATPX quirk for hybrid laptop
+      drm/amdgpu/sdma: fix mask in emit_pipeline_sync
+      drm/amdgpu: Fix PCIe lane width calculation
+      drm/amdgpu/si: implement get/set pcie_lanes asic callback
+
+Alex Smith (1):
+      mmc: jz4740: Fix race condition in IRQ mask update
+
+Alexander Kappner (1):
+      mmc: core: Prevent bus reference leak in mmc_blk_init()
+
+Amir Goldstein (1):
+      fanotify: fix logic of events on child
+
+Andrew Morton (3):
+      fs/reiserfs/journal.c: add missing resierfs_warning() arg
+      drivers/infiniband/core/verbs.c: fix build with gcc-4.4.4
+      drivers/infiniband/ulp/srpt/ib_srpt.c: fix build with gcc-4.4.4
+
+Aniruddha Banerjee (1):
+      irqchip/gic: Take lock when updating irq type
+
+Arnd Bergmann (1):
+      clk: fix false-positive Wmaybe-uninitialized warning
+
+Aurelien Aptel (3):
+      CIFS: refactor crypto shash/sdesc allocation&free
+      CIFS: add sha512 secmech
+      CIFS: implement v3.11 preauth integrity
+
+Bart Van Assche (5):
+      RDMA/rxe: Fix an out-of-bounds read
+      RDMA/core: Avoid that ib_drain_qp() triggers an out-of-bounds stack a=
+ccess
+      IB/srp: Fix srp_abort()
+      IB/srp: Fix completion vector assignment algorithm
+      IB/srpt: Fix an out-of-bounds stack access in srpt_zerolength_write()
+
+Bas Nieuwenhuizen (1):
+      drm/amdgpu: Fix always_valid bos multiple LRU insertions.
+
+Benjamin Herrenschmidt (1):
+      powerpc/xive: Fix trying to "push" an already active pool VP
+
+Boris Brezillon (1):
+      clk: bcm2835: De-assert/assert PLL reset signal when appropriate
+
+Charlene Liu (1):
+      drm/amd/display: HDMI has no sound after Panel power off/on
+
+Chen-Yu Tsai (1):
+      phy: allwinner: sun4i-usb: poll vbus changes on A23/A33 when driving =
+VBUS
+
+Chris Chiu (1):
+      tpm: self test failure should not cause suspend to fail
+
+Chuck Lever (2):
+      xprtrdma: Fix latency regression on NUMA NFS/RDMA clients
+      xprtrdma: Fix corner cases when handling device removal
+
+Claudio Imbrenda (1):
+      mm/ksm.c: fix inconsistent accounting of zero pages
+
+Dan Carpenter (1):
+      regmap: Fix reversed bounds check in regmap_raw_write()
+
+Dan Williams (6):
+      acpi, nfit: rework NVDIMM leaf method detection
+      libnvdimm, dimm: fix dpa reservation vs uninitialized label area
+      libnvdimm, namespace: use a safe lookup for dimm device name
+      nfit, address-range-scrub: fix scrub in-progress reporting
+      nfit: skip region registration for incomplete control regions
+      libnvdimm, dimm: handle EACCES failures from label reads
+
+Daniel Kurtz (1):
+      mmc: sdhci-pci: Only do AMD tuning for HS200
+
+Dave Jiang (1):
+      device-dax: allow MAP_SYNC to succeed
+
+David Wang (1):
+      ALSA: hda - New VIA controller suppor no-snoop path
+
+Dmitry Osipenko (1):
+      clk: tegra: Mark HCLK, SCLK and EMC as critical
+
+Dmitry Torokhov (1):
+      HID: input: fix battery level reporting on BT mice
+
+Eric Biggers (2):
+      ipc/shm: fix use-after-free of shm file via remap_file_pages()
+      ext4: limit xattr size to INT_MAX
+
+Eryu Guan (1):
+      ext4: protect i_disksize update by i_data_sem in direct write path
+
+Eugen Hristev (1):
+      spi: atmel: init FIFOs before spi enable
+
+Fabi=E1n Inostroza (1):
+      ALSA: line6: Use correct endpoint type for midi output
+
+Felipe Balbi (2):
+      usb: gadget: udc: core: update usb_ep_queue() documentation
+      usb: dwc3: gadget: never call ->complete() from ->ep_queue()
+
+Frederic Barrat (1):
+      cxl: Fix possible deadlock when processing page faults from cxllib
+
+George Cherian (1):
+      cpufreq: CPPC: Use transition_delay_us depending transition_latency
+
+Greg Kroah-Hartman (1):
+      Linux 4.16.4
+
+Greg Thelen (1):
+      writeback: safer lock nesting
+
+Gregory CLEMENT (1):
+      cpufreq: armada-37xx: Fix clock leak
+
+Gustavo A. R. Silva (1):
+      CIFS: fix sha512 check in cifs_crypto_secmech_release
+
+Hans Verkuil (2):
+      media: atomisp_fops.c: disable atomisp_compat_ioctl32
+      media: vivid: check if the cec_adapter is valid
+
+Hans de Goede (3):
+      Bluetooth: hci_bcm: Add irq_polarity module option
+      ACPI / video: Add quirk to force acpi-video backlight on Samsung 670Z=
+5E
+      extcon: intel-cht-wc: Set direction and drv flags for V5 boost GPIO
+
+Harry Wentland (2):
+      Revert "drm/amd/display: fix dereferencing possible ERR_PTR()"
+      Revert "drm/amd/display: disable CRTCs with NULL FB on their primary =
+plane (V2)"
+
+Heiko Carstens (1):
+      s390: add support for IBM z14 Model ZR1
+
+Heinrich Schuchardt (1):
+      usb: musb: gadget: misplaced out of bounds check
+
+Heinz Mauelshagen (1):
+      dm raid: fix nosync status
+
+Hui Wang (2):
+      ALSA: hda/realtek - set PINCFG_HEADSET_MIC to parse_flags
+      ALSA: hda/realtek - adjust the location of one mic
+
+Ian Kent (1):
+      autofs: mount point create should honour passed in mode
+
+Igor Pylypiv (1):
+      watchdog: f71808e_wdt: Fix WD_EN register read
+
+Imre Deak (1):
+      drm/i915: Fix hibernation with ACPI S0 target state
+
+James Kelly (1):
+      ASoC: ssm2602: Replace reg_default_raw with reg_default
+
+Jan Kara (1):
+      udf: Fix leak of UTF-16 surrogates into encoded strings
+
+Jarkko Nikula (1):
+      spi: Fix unregistration of controller with fixed SPI bus number
+
+Jason A. Donenfeld (1):
+      um: Compile with modern headers
+
+Jason Andryuk (1):
+      x86/xen: Delay get_cpu_cap until stack canary is established
+
+Jean Delvare (2):
+      i2c: i801: Save register SMBSLVCMD value only once
+      i2c: i801: Restore configuration at shutdown
+
+Jerome Brunet (1):
+      ARM64: dts: meson: reduce odroid-c2 eMMC maximum rate
+
+Jiri Kosina (1):
+      HID: i2c-hid: fix inverted return value from i2c_hid_command()
+
+Jiri Slaby (1):
+      ext4: fix offset overflow on 32-bit archs in ext4_iomap_begin()
+
+J=E9r=F4me Glisse (2):
+      mm/hmm: fix header file if/else/endif maze
+      mm/hmm: hmm_pfns_bad() was accessing wrong struct
+
+Kees Cook (1):
+      task_struct: only use anon struct under randstruct plugin
+
+Kieran Bingham (1):
+      media: vsp1: Fix BRx conditional path in WPF
+
+Krzysztof Mazur (1):
+      um: Use POSIX ucontext_t instead of struct ucontext
+
+Leon Romanovsky (1):
+      RDMA/mlx5: Protect from NULL pointer derefence
+
+Liam Girdwood (1):
+      ASoC: topology: Fix kcontrol name string handling
+
+Long Li (2):
+      cifs: smbd: avoid reconnect lockup
+      cifs: smbd: disconnect transport on RDMA errors
+
+Lu Baolu (1):
+      iommu/vt-d: Fix a potential memory leak
+
+Marc Zyngier (2):
+      KVM: arm/arm64: vgic-its: Fix potential overrun in vgic_copy_lpi_list
+      drm/rockchip: Clear all interrupts before requesting the IRQ
+
+Marek Szyprowski (2):
+      ARM: EXYNOS: Fix coupled CPU idle freeze on Exynos4210
+      ARM: dts: exynos: Fix IOMMU support for GScaler devices on Exynos5250
+
+Masaharu Hayakawa (1):
+      mmc: tmio: Fix error handling when issuing CMD23
+
+Matt Redfearn (4):
+      MIPS: uaccess: Add micromips clobbers to bzero invocation
+      MIPS: memset.S: EVA & fault support for small_memset
+      MIPS: memset.S: Fix return of __clear_user from Lpartial_fixup
+      MIPS: memset.S: Fix clobber of v1 in last_fixup
+
+Matthew Wilcox (1):
+      mm/filemap.c: fix NULL pointer in page_cache_tree_insert()
+
+Maxime Chevallier (1):
+      spi: Fix scatterlist elements size in spi_map_buf
+
+Maxime Jayat (1):
+      dmaengine: at_xdmac: fix rare residue corruption
+
+Michael Ellerman (2):
+      powerpc/mm/radix: Fix checkstops caused by invalid tlbiel
+      powerpc/lib: Fix off-by-one in alternate feature patching
+
+Michael Neuling (2):
+      powerpc/eeh: Fix race with driver un/bind
+      powerpc/eeh: Fix enabling bridge MMIO windows
+
+Mika Westerberg (6):
+      ACPI / hotplug / PCI: Check presence of slot itself in get_slot_statu=
+s()
+      thunderbolt: Wait a bit longer for ICM to authenticate the active NVM
+      thunderbolt: Serialize PCIe tunnel creation with PCI rescan
+      thunderbolt: Resume control channel after hibernation image is created
+      thunderbolt: Handle connecting device in place of host properly
+      thunderbolt: Prevent crash when ICM firmware is not running
+
+Mike Snitzer (1):
+      dm: backfill abnormal IO support to non-splitting IO submission
+
+Mikhail Lappo (1):
+      thermal: imx: Fix race condition in imx_thermal_probe()
+
+Mikulas Patocka (2):
+      block: use 32-bit blk_status_t on Alpha
+      dm crypt: limit the number of allocated pages
+
+Naoya Horiguchi (1):
+      mm: hwpoison: disable memory error handling on 1GB hugepage
+
+Naveen N. Rao (1):
+      powerpc/kprobes: Fix call trace due to incorrect preempt count
+
+Nicholas Piggin (6):
+      powerpc/64s: Fix pkey support in dt_cpu_ftrs, add CPU_FTR_PKEY bit
+      powerpc/powernv: Handle unknown OPAL errors in opal_nvram_write()
+      powerpc/64s: Fix dt_cpu_ftrs to have restore_cpu clear unwanted LPCR =
+bits
+      powerpc/64: Fix smp_wmb barrier definition use use lwsync consistently
+      powerpc/powernv: define a standard delay for OPAL_BUSY type retry loo=
+ps
+      powerpc/powernv: Fix OPAL NVRAM driver OPAL_BUSY loops
+
+Nico Sneck (1):
+      drm/radeon: add PX quirk for Asus K73TK
+
+Nicolas Ferre (1):
+      ARM: dts: at91: at91sam9g25: fix mux-mask pinctrl property
+
+Paul Mackerras (1):
+      powerpc/64: Call H_REGISTER_PROC_TBL when running as a HPT guest on P=
+OWER9
+
+Paul Parsons (1):
+      drm/radeon: Fix PCIe lane width calculation
+
+Ravi Bangoria (1):
+      trace_uprobe: Use %lx to display offset
+
+Richard Genoud (1):
+      clk: mvebu: armada-38x: add support for missing clocks
+
+Richard Weinberger (3):
+      ubifs: Check ubifs_wbuf_sync() return code
+      ubi: fastmap: Don't flush fastmap work on detach
+      ubi: Reject MLC NAND
+
+Rodrigo Rivas Costa (1):
+      HID: hidraw: Fix crash on HIDIOCGFEATURE with a destroyed device
+
+Roger Quadros (1):
+      usb: dwc3: prevent setting PRTCAP to OTG from debugfs
+
+Roland Dreier (1):
+      RDMA/ucma: Don't allow setting RDMA_OPTION_IB_PATH without an RDMA de=
+vice
+
+Romain Izard (1):
+      ubi: Fix error for write access
+
+Ronnie Sahlberg (2):
+      cifs: fix memory leak in SMB2_open()
+      fix smb3-encryption breakage when CONFIG_DEBUG_SG=3Dy
+
+Ryo Kodama (1):
+      pwm: rcar: Fix a condition to prevent mismatch value setting to duty
+
+Sakari Ailus (1):
+      media: vb2: core: Finish buffers at the end of the stream
+
+Santiago Esteban (1):
+      ARM: dts: at91: sama5d4: fix pinctrl compatible string
+
+Sean Wang (6):
+      arm: dts: mt7623: fix USB initialization fails on bananapi-r2
+      soc: mediatek: fix the mistaken pointer accessed when subdomains are =
+added
+      clk: mediatek: fix PWM clock source by adding a fixed-factor clock
+      pwm: mediatek: Fix up PWM4 and PWM5 malfunction on MT7623
+      pwm: mediatek: Improve precision in rate calculation
+      dt-bindings: clock: mediatek: add binding for fixed-factor clock axis=
+el_d4
+
+Sean Young (1):
+      media: rc: oops in ir_timer_keyup after device unplug
+
+Sinan Kaya (1):
+      PCI: Mark Broadcom HT1100 and HT2000 Root Port Extended Tags as broken
+
+Steve French (2):
+      Tree connect for SMB3.1.1 must be signed for non-encrypted shares
+      smb3: Fix root directory when server returns inode number of zero
+
+Steven Rostedt (VMware) (2):
+      vsprintf: Do not preprocess non-dereferenced pointers for bprintf (%p=
+x and %pK)
+      ring-buffer: Check if memory is available before allocation
+
+Takashi Iwai (8):
+      resource: fix integer overflow at reallocation
+      swiotlb: fix unexpected swiotlb_alloc_coherent failures
+      ALSA: pcm: Avoid potential races between OSS ioctls and read/write
+      ALSA: pcm: Return -EBUSY for OSS ioctls changing busy streams
+      ALSA: pcm: Fix mutex unbalance in OSS emulation ioctls
+      ALSA: pcm: Fix UAF at PCM release via PCM timer access
+      ALSA: pcm: Fix endless loop for XRUN recovery in OSS emulation
+      ALSA: rawmidi: Fix missing input substream checks in compat ioctls
+
+Theodore Ts'o (17):
+      random: use a tighter cap in credit_entropy_bits_safe()
+      jbd2: if the journal is aborted then don't allow update of the log ta=
+il
+      ext4: shutdown should not prevent get_write_access
+      ext4: eliminate sleep from shutdown ioctl
+      ext4: pass -ESHUTDOWN code to jbd2 layer
+      ext4: don't update checksum of new initialized bitmaps
+      ext4: fail ext4_iget for root directory if unallocated
+      ext4: always initialize the crc32c checksum driver
+      ext4: don't allow r/w mounts if metadata blocks overlap the superblock
+      ext4: move call to ext4_error() into ext4_xattr_check_block()
+      ext4: add bounds checking to ext4_xattr_find_entry()
+      ext4: add extra checks to ext4_xattr_block_get()
+      ext4: force revalidation of directory pointer after seekdir(2)
+      random: fix crng_ready() test
+      random: use a different mixing algorithm for add_device_randomness()
+      random: crng_reseed() should lock the crng instance that it is modify=
+ing
+      random: add new ioctl RNDRESEEDCRNG
+
+Thiago Jung Bauermann (1):
+      powerpc/kexec_file: Fix error code when trying to load kdump kernel
+
+Thinh Nguyen (1):
+      usb: dwc3: pci: Properly cleanup resource
+
+Ville Syrj=E4l=E4 (1):
+      drm/i915: Correctly handle limited range YCbCr data on VLV/CHV
+
+Vlastimil Babka (1):
+      mm, slab: reschedule cache_reap() on the same CPU
+
+Weinan Li (1):
+      drm/i915/gvt: init mmio by lri command in vgpu inhibit context
+
+Yan, Zheng (1):
+      ceph: always update atime/mtime/ctime for new inode
+
+Yavuz, Tuba (1):
+      USB: gadget: f_midi: fixing a possible double-free in f_midi
+
+Zhengjun Xing (1):
+      USB:fix USB3 devices behind USB3 hubs not resuming at hibernate thaw
+
+
+--AhhlLboLdkugWU4S
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlre9ysACgkQONu9yGCS
+aT7D1w//TRNLV9YjXfkWMuOQfXEhpXl7s0MdKHHa4ZavJh8PNo+hE//FHqhW4J0R
+HPEONdxEBe4HnS7oW5ndwHragi7R9zAr2LKEzw3oXfkcXf4t3GYqUi0eB2SVmC/b
+/YroeshH1g130NACQ+A33Gd9RtIbjArXukfS66qtSvT7Atk5ZzGLfjipBcLckArQ
+Llim5krYaqbfHOiiio/+X38/EfOgK607rB44SdvOwD7Ge+TqwSXLDzwMRsP9h7Qm
+bDyJTIFL0+0h+/4eahz35d9QEvrx9MpTkf5vrSXlitrlD766LlK9EM57FcArmKmF
+vzj7v+6ZxHyOUbkRb200ohBGkBA1ew/O9JX0AlfZTmc4JxMib9+iAU6dti8Hmp9a
+JN3Xk4NK3/QFx3wawag/ebpH5qStpyjLcNVC83AvNtJfaSKrbnreRTBirrzMev8p
+iqUSf4dU0mipY2QB0p8M8ut8XDvhBA8vUfPXcfPu8EGZ/mXAnTy0KXcQMRBI+65s
+9/yBSmJd/mAYuuwzlRjlK1ijfzLDvfGHNHC7iYQtvQ8o74lFjthENjPtL6PsAEpv
+E5fOjaspOdzwFHXQBeBieQxKBHcU2UiogYfg83GczmlRY5f/Rkz9xyrBnPRN8gHH
+FTT1eiO9nvpTvAavDhAW4JZIZz64BCFc3jctoTB7u04xO3ZhnJo=
+=l3YF
+-----END PGP SIGNATURE-----
+
+--AhhlLboLdkugWU4S--
