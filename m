@@ -1,191 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751518AbeDXTUh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:20:37 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:22266 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750882AbeDXTUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:20:33 -0400
-Subject: Re: [PATCH v4 03/19] powerpc: Mark variable `l` as unused, remove
- `path`
-To: Mathieu Malaterre <malat@debian.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-References: <20180322202007.23088-4-malat@debian.org>
- <20180405202648.2836-1-malat@debian.org>
- <20180406173335.Horde.Qgml03BtHOxSl6SzIPgQLA9@messagerie.si.c-s.fr>
- <CA+7wUswhZHNabB6kAcX8Cu8zMai15RzGn9euwdKau8kY48i-CA@mail.gmail.com>
-From: christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <ff779a22-0bbb-4885-5678-1371d749bc88@c-s.fr>
-Date: Tue, 24 Apr 2018 21:20:29 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751401AbeDXTWY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:22:24 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37722 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeDXTWX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:22:23 -0400
+Date: Tue, 24 Apr 2018 21:22:18 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Frederic Weisbecker <frederic@kernel.org>
+cc: "Wan, Kaike" <kaike.wan@intel.com>,
+        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        "Fleck, John" <john.fleck@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] tick/sched: Do not mess with an enqueued hrtimer
+Message-ID: <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CA+7wUswhZHNabB6kAcX8Cu8zMai15RzGn9euwdKau8kY48i-CA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Kaike reported that in tests rdma hrtimers occasionaly stopped working. He
+did great debugging, which provided enough context to decode the problem.
 
+CPU 3			     	      	     CPU 2
 
-Le 06/04/2018 à 20:32, Mathieu Malaterre a écrit :
-> On Fri, Apr 6, 2018 at 5:33 PM, LEROY Christophe
-> <christophe.leroy@c-s.fr> wrote:
->> Mathieu Malaterre <malat@debian.org> a écrit :
->>
->>> Add gcc attribute unused for `l` variable, replace `path` variable
->>> directly
->>> with prom_scratch. Fix warnings treated as errors with W=1:
->>>
->>>    arch/powerpc/kernel/prom_init.c:607:6: error: variable ‘l’ set but not
->>> used [-Werror=unused-but-set-variable]
->>>    arch/powerpc/kernel/prom_init.c:1388:8: error: variable ‘path’ set but
->>> not used [-Werror=unused-but-set-variable]
->>>
->>> Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
->>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->>> ---
->>> v4: redo v3 since path variable can be avoided
->>> v3: really move path within ifdef DEBUG_PROM
->>> v2: move path within ifdef DEBUG_PROM
->>>
->>>   arch/powerpc/kernel/prom_init.c | 11 +++++------
->>>   1 file changed, 5 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/powerpc/kernel/prom_init.c
->>> b/arch/powerpc/kernel/prom_init.c
->>> index f8a9a50ff9b5..4b223a9470be 100644
->>> --- a/arch/powerpc/kernel/prom_init.c
->>> +++ b/arch/powerpc/kernel/prom_init.c
->>> @@ -604,7 +604,7 @@ static void __init early_cmdline_parse(void)
->>>          const char *opt;
->>>
->>>          char *p;
->>> -       int l = 0;
->>> +       int l __maybe_unused = 0;
->>
->>
->> Instead of hiding the problem with __maybe_unused, I think we could replace
->> the
->> #ifdef CONFIG_CMDLINE
->> by a
->> if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
->>
->> This is recommanded by Linux codying style
-> 
-> Neat. I was not aware of this trick. Does not work in this case though:
-> 
-> diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-> index 7925f64fefde..19634739b279 100644
-> --- a/arch/powerpc/kernel/prom_init.c
-> +++ b/arch/powerpc/kernel/prom_init.c
-> @@ -604,17 +604,16 @@ static void __init early_cmdline_parse(void)
->          const char *opt;
-> 
->          char *p;
-> -       int l __maybe_unused = 0;
-> +       int l = 0;
-> 
->          prom_cmd_line[0] = 0;
->          p = prom_cmd_line;
->          if ((long)prom.chosen > 0)
->                  l = prom_getprop(prom.chosen, "bootargs", p,
-> COMMAND_LINE_SIZE-1);
-> -#ifdef CONFIG_CMDLINE
-> -       if (l <= 0 || p[0] == '\0') /* dbl check */
-> -               strlcpy(prom_cmd_line,
-> -                       CONFIG_CMDLINE, sizeof(prom_cmd_line));
-> -#endif /* CONFIG_CMDLINE */
-> +       if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
-> +               if (l <= 0 || p[0] == '\0') /* dbl check */
-> +                       strlcpy(prom_cmd_line,
-> +                               CONFIG_CMDLINE, sizeof(prom_cmd_line));
->          prom_printf("command line: %s\n", prom_cmd_line);
-> 
->   #ifdef CONFIG_PPC64
-> 
-> 
-> leads to:
-> 
->    CC      arch/powerpc/kernel/prom_init.o
-> ../arch/powerpc/kernel/prom_init.c: In function ‘early_cmdline_parse’:
-> ../arch/powerpc/kernel/prom_init.c:616:5: error: ‘CONFIG_CMDLINE’
-> undeclared (first use in this function)
->       CONFIG_CMDLINE, sizeof(prom_cmd_line));
->       ^~~~~~~~~~~~~~
-> ../arch/powerpc/kernel/prom_init.c:616:5: note: each undeclared
-> identifier is reported only once for each function it appears in
-> ../scripts/Makefile.build:312: recipe for target
-> 'arch/powerpc/kernel/prom_init.o' failed
-> make[6]: *** [arch/powerpc/kernel/prom_init.o] Error 1
+idle
+start sched_timer expires = 712171000000
+ queue->next = sched_timer
+					    start rdmavt timer. expires = 712172915662
+					    lock(baseof(CPU3))
+tick_nohz_stop_tick()
+tick = 716767000000			    timerqueue_add(tmr)
 
-And what about something like :
+hrtimer_set_expires(sched_timer, tick);
+  sched_timer->expires = 716767000000  <---- FAIL
+					     if (tmr->expires < queue->next->expires)
+hrtimer_start(sched_timer)		          queue->next = tmr;
+lock(baseof(CPU3))
+					     unlock(baseof(CPU3))
+timerqueue_remove()
+timerqueue_add()
 
+ts->sched_timer is queued and queue->next is pointing to it, but then
+ts->sched_timer.expires is modified.
 
-+       if (l <= 0 || p[0] == '\0') { /* dbl check */
-  #ifdef CONFIG_CMDLINE
--       if (l <= 0 || p[0] == '\0') /* dbl check */
-                 strlcpy(prom_cmd_line,
-                         CONFIG_CMDLINE, sizeof(prom_cmd_line));
-  #endif /* CONFIG_CMDLINE */
-+}
-          prom_printf("command line: %s\n", prom_cmd_line);
+This not only corrupts the ordering of the timerqueue RB tree, it also
+makes CPU2 see the new expiry time of timerqueue->next->expires when
+checking whether timerqueue->next needs to be updated. So CPU2 sees that
+the rdma timer is earlier than timerqueue->next and sets the rdma timer as
+new next.
 
-Christophe
+Depending on whether it had also seen the new time at RB tree enqueue, it
+might have queued the rdma timer at the wrong place and then after removing
+the sched_timer the RB tree is completely hosed.
 
+The problem was introduced with a commit which tried to solve inconsistency
+between the hrtimer in the tick_sched data and the underlying hardware
+clockevent. It split out hrtimer_set_expires() to store the new tick time
+in both the NOHZ and the NOHZ + HIGHRES case, but missed the fact that in
+the NOHZ + HIGHRES case the hrtimer might still be queued.
 
-> 
-> 
->> Christophe
->>
->>
->>>
->>>          prom_cmd_line[0] = 0;
->>>          p = prom_cmd_line;
->>> @@ -1386,7 +1386,7 @@ static void __init reserve_mem(u64 base, u64 size)
->>>   static void __init prom_init_mem(void)
->>>   {
->>>          phandle node;
->>> -       char *path, type[64];
->>> +       char type[64];
->>>          unsigned int plen;
->>>          cell_t *p, *endp;
->>>          __be32 val;
->>> @@ -1407,7 +1407,6 @@ static void __init prom_init_mem(void)
->>>          prom_debug("root_size_cells: %x\n", rsc);
->>>
->>>          prom_debug("scanning memory:\n");
->>> -       path = prom_scratch;
->>>
->>>          for (node = 0; prom_next_node(&node); ) {
->>>                  type[0] = 0;
->>> @@ -1432,9 +1431,9 @@ static void __init prom_init_mem(void)
->>>                  endp = p + (plen / sizeof(cell_t));
->>>
->>>   #ifdef DEBUG_PROM
->>> -               memset(path, 0, PROM_SCRATCH_SIZE);
->>> -               call_prom("package-to-path", 3, 1, node, path,
->>> PROM_SCRATCH_SIZE-1);
->>> -               prom_debug("  node %s :\n", path);
->>> +               memset(prom_scratch, 0, PROM_SCRATCH_SIZE);
->>> +               call_prom("package-to-path", 3, 1, node, prom_scratch,
->>> PROM_SCRATCH_SIZE - 1);
->>> +               prom_debug("  node %s :\n", prom_scratch);
->>>   #endif /* DEBUG_PROM */
->>>
->>>                  while ((endp - p) >= (rac + rsc)) {
->>> --
->>> 2.11.0
->>
->>
->>
+Use hrtimer_start(timer, tick...) for the NOHZ + HIGHRES case which sets
+timer->expires after canceling the timer and move the hrtimer_set_expires()
+invocation into the NOHZ only code path which is not affected as it merily
+uses the hrtimer as next event storage so code pathes can be shared with
+the NOHZ + HIGHRES case.
+
+Fixes: d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
+Reported-by: "Wan Kaike" <kaike.wan@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Marciniszyn Mike" <mike.marciniszyn@intel.com>
+Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: linux-rdma@vger.kernel.org
+Cc: "Dalessandro Dennis" <dennis.dalessandro@intel.com>
+Cc: "Fleck John" <john.fleck@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: "Weiny Ira" <ira.weiny@intel.com>
+Cc: "linux-rdma@vger.kernel.org"
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de
 
 ---
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+ kernel/time/tick-sched.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -804,12 +804,12 @@ static void tick_nohz_stop_tick(struct t
+ 		return;
+ 	}
+ 
+-	hrtimer_set_expires(&ts->sched_timer, tick);
+-
+-	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
+-		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
+-	else
++	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
++		hrtimer_start(&ts->sched_timer, tick, HRTIMER_MODE_ABS_PINNED);
++	} else {
++		hrtimer_set_expires(&ts->sched_timer, tick);
+ 		tick_program_event(tick, 1);
++	}
+ }
+ 
+ static void tick_nohz_retain_tick(struct tick_sched *ts)
