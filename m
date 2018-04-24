@@ -1,21 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751683AbeDXPbj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:31:39 -0400
-Received: from mail-sn1nam02on0051.outbound.protection.outlook.com ([104.47.36.51]:49750
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1751647AbeDXPcO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:32:14 -0400
+Received: from mail-dm3nam03on0048.outbound.protection.outlook.com ([104.47.41.48]:48821
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750882AbeDXPbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:31:34 -0400
+        id S1751216AbeDXPcK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:32:10 -0400
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; linux-foundation.org; dkim=none (message not signed)
+ header.d=none;linux-foundation.org; dmarc=permerror action=none
+ header.from=amd.com;
 From: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
 To: <linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>
 CC: <Alexander.Deucher@amd.com>, <Christian.Koenig@amd.com>,
         <David.Panariti@amd.com>, <oleg@redhat.com>,
         <akpm@linux-foundation.org>, <ebiederm@xmission.com>,
         Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-Subject: [PATCH 1/3] signals: Allow generation of SIGKILL to exiting task.
-Date: Tue, 24 Apr 2018 11:30:34 -0400
-Message-ID: <1524583836-12130-2-git-send-email-andrey.grodzovsky@amd.com>
+Subject: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for signaled process.
+Date: Tue, 24 Apr 2018 11:30:35 -0400
+Message-ID: <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
 References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
@@ -23,86 +27,83 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(396003)(39860400002)(376002)(346002)(2980300002)(428003)(189003)(199004)(336012)(186003)(44832011)(47776003)(26005)(316002)(76176011)(8676002)(36756003)(126002)(110136005)(7696005)(356003)(54906003)(4326008)(59450400001)(81166006)(2906002)(16586007)(51416003)(81156014)(6666003)(50466002)(86362001)(48376002)(5660300001)(53416004)(486006)(426003)(53936002)(476003)(77096007)(68736007)(6346003)(11346002)(8936002)(50226002)(104016004)(105586002)(305945005)(2616005)(478600001)(72206003)(446003)(106466001)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR12MB0328;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT026;1:Pi8SG7c6KeWf/irKi15utoBCdjzBNvjQl/HEsy/KZE85S7Aptr2wO8kaCeCo/YqxdKJCDUvcyG4kCNXdaXiaVnqFCWz8vkVKRK72bY1avuvLIS6KwmBqV1EYuMtzehFC
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(346002)(39860400002)(376002)(39380400002)(2980300002)(428003)(199004)(189003)(110136005)(126002)(53416004)(104016004)(305945005)(50226002)(4326008)(6666003)(86362001)(8936002)(44832011)(50466002)(8676002)(47776003)(478600001)(81166006)(72206003)(5660300001)(2906002)(356003)(81156014)(36756003)(316002)(53936002)(54906003)(16586007)(59450400001)(97736004)(446003)(68736007)(26005)(76176011)(2616005)(48376002)(486006)(51416003)(7696005)(11346002)(106466001)(476003)(426003)(105586002)(77096007)(186003)(336012);DIR:OUT;SFP:1101;SCL:1;SRVR:BN4PR12MB0753;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT036;1:2pcY6MRsrLHLuS/8MuwNobGSOpwIjQLUJJ0w2gTSn66wePSK4T68+tTqytIDG3drbyD+5MQdINh3CaGGV+tvAaxV64pmK1XFUurXMlPA8/C0A3eleE5V4LZXvvrCQRk9
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:CY1PR12MB0328;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0328;3:77ZD9tILatLJ5HZuA94Plv4yXAVSZ/i2BNVhU8P9v16qJ+c3plbUkC51oxXc5mMwDaH2RqzE7BsNRoAstDEgMhcwX83XPNidT00SoXr82Ia+N/61KFk70mQNqDBflsNBWGy3g1m51b1fu6DRu25NqJYpVcALE8jiu5LtEKE0ndzMpvtf6ppjYIDQ93J7JglvTOhNewL8PxVPajF+NEHe10P0W8eRChQKqjDHo6CfmfneLvAgUUN7iKxBNxtbBnpqTHnKSAghMk+n7ophpwILCCmrFZQJI8K1ZiXyoP8b/fc29wP1sDlLxrGnUuMh1C+M6un2URgWVzjhjDFUBmwKKngn25wbnoQJLB/Ua5JcM3o=;25:LNHoO3VSNgwCS/uf/sxryTzRduB9gv1aFyyvCg+S9vhXRH2S3D7n1Vc20ythPsDjukTbyGkbjwa+bIKhdbQCm/eHSyWZDy6W6wbz9J+wCZqlr9spu3rInfAN16P12BtxlGkukvPoYtuZ2xx8kpwO7tx27gnxNzG/v8eo03PtlBkFLtzvAm9E2uOsf4valbSQkXShwE2dFmLyGABOuK0wW8NP3WGT59M0r/BSwzNK3emYtSUSZN1k4tFxaiZa+RwooJAQ7QcEOE1Hna1jfkiKppaweBnJTA5QSBq8yMrfwhi9JhjayHuMRY4O8i7unhcQ26wZ0oEIlPV8M4mC57dwDw==
-X-MS-TrafficTypeDiagnostic: CY1PR12MB0328:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0328;31:ycbONe0eQmq9JQl3N5YAyRdotXjvrVt+L4iDxmGFdUhraNudoVdEnDe+bkmgefFgMfgNqZv+eIWIv4vANgWhsCRY+aec+ZKQ3zreHuwDRTO86/Y8cv5qRfddaXHjE1aoUBctGNGhipzZ/slMAQwT+t2AiDOUGBBljkGziiy5Toi07fHNSfo1pPlaLxIu+5euab/h38L4mPxgQXB8BwhW6gCtvuzJBc6kcA7t/Uj01nU=;20:4ayRJ0G4V7/UK7eIgp7BGlB/O59m/uY0Yw+mVpuLkPA4tqyr8AGgMIM4JL4zk29AhGkgTjteD4I/k4zSbSRRvTaNX12k9dFStusrZS10bqEM09dCA4VV0uW3BBxfY7L0akpUoRkiTRjkKgFKq/vvMiLNDdIHhRPjqjgyN5InIpLBC2t2ja/592pROua6kidV/WDKfqLt7hanhTJkW0kgvZb3Wz7LNvJbqABHdgCOIZkDku7D8m2SeoGG4/IrZg5dJlvYRYx1b1tKLnviMkuUXwKko3r1es/73wfhgXGjW9GNE6j0TzGkoDUq58dXWrcmILCSwAv6Vkw8KZ1PgTRv9K9kgJnxx4xnMh2sYQGr6AnUJA4T+Z1F7GVnVUecqXWeTSTaNp+39bDCGuNz0/iko7AFsxOKV9pA1LinZBYtZd51IOK1EIkb/QadSUb0IYUK1/7WL2Lov7226eCIR6gBTwhbp4J5Hl+zahd6A6AQ2//mdBRPtV11287BiblSFpzs
-X-Microsoft-Antispam-PRVS: <CY1PR12MB032842DA393C6F5AC7C9DE8CEA880@CY1PR12MB0328.namprd12.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BN4PR12MB0753;
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0753;3:XkXuU1OUjpWqIUUfHy5qKmpp1hbYIqkja9xQD7oY22BiunXmPTTWooAoB2vkT5dNoIryoelCQQrXRRjCpCcOH5xsp0i5qEwfzTJi6jD8MW1bE+lxj6s8WvNzmEhpsZEf6jOUNzaABWkpALQqB/AY2R25XSx4XCioFk3l0osvJmmWZ9NexSChHyPMJtnXRcTIwMn3+bafGgF08+HgXFCIRaYKLsfEwK3Gmlte++tSY729kjbELNgpSZIzkthwWd9ejmiyAoat5wB6isirTTe4VSvCjCB74AGUWuhV/muagr4XqWyJZPQAdekP8umoAcbsVnIY0/4TGthjidiXdXX6VbgAI8G4SLZpe8nc5hZUSBU=;25:9tLimFqHWhEHxdZQ4zC7RQDn31un3YZpSyrRnAPYoR1bgO5y39yFLB4umTPO0STBxUEVYeATWWKpPqmekLyJSYiDvyvnIdA/9tlGJ/bqlXUrdV2FCMPTZ9oLv4qcXtqghhqkTRnHeI2uI8pi82FEKZZRGxgPSoPc+cBsSzO8qDJOkDq/YdnHr6jZeE//NgnXsPj4cGmYYbnd45t1S4UfQIWX/5c/rfy1e6bdnuZzwyJuCuhzbG6LM0rU3Nk9U1HSicT85u6gQdXnR2d5k25/Vn2veig8Q/oBCn8WpPAJHlooUvs9vV63vZV7UNwt7UOM6OLAotNLpKsD7u251G/rew==
+X-MS-TrafficTypeDiagnostic: BN4PR12MB0753:
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0753;31:rX3gwD+SNDHoV8Q6KwtKaMQyDnlkigZv2RzppbitpgTLUu35aSA33fNquhqYDCe9bz4YqyoO5j4KDHiMcM4zUWZR8SJ1niKilrjgAVgdl92lHwKAisiAjYZP6ot9cD1uEvhoPihNwerjk+/7zMGl6mDigR4YVP1RghXluOVxznS/+3mN7hlZ9GjprCeeZEROoveQ/T+aGJH6EC3lrBQLM0KfA3pevPe3Kuk+rchy0rc=;20:v69hcJ8vuOjLOQLvPK35Pf2ryy+8Xgmr/rvvYdQSeUJN+He5nUrOy+778m9kB39nk7FZH1n//9BJ1DbkNEuVq2wDOTWLlpiMF1KtkymMznoLEcYbzsA+tBk2g4apC55ogN5fn4qb/qKSpamxtiREU2awxmGWCCVXvAn5ADJ71ZjfV/U2/cUXqCDGiKbeCsy2m+vRfknvU5HOuZF1dSRJ9q28xms04yISpMbhE7BODXD3oZTOqbLTJ8g4Td3NlCsgBD1eq03WeBqiA65nczYxCuweZexmQ0HvTpsNCupj2A3j6Rrh4pKzy2kx3Ke3VK4qkvy/bzZLPNmA6VwCCNQGeJuZbHxNKeAQINbyTVUu/ZGWO3nKMBo3j4+Uq/w/j0gKTiW5rhb1F+F1IobSN7QQuN/yiR4y5H0aOKJDIy9j+jEkPJBlxq1Oz3wR/eczsBiPFL3GkAamReO+kITj1f6cFUf3x1hfxPlLQE+oOMqGiYZPpID7ge7nrrKcdfpops9Z
+X-Microsoft-Antispam-PRVS: <BN4PR12MB075383273C38A32A8D9EDD86EA880@BN4PR12MB0753.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(3002001)(10201501046)(93006095)(93003095)(6055026)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:CY1PR12MB0328;BCL:0;PCL:0;RULEID:;SRVR:CY1PR12MB0328;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0328;4:CK7zUYzkh2i9IpJMXYfEhci9gydqJ67Y3G4s2/w7wwGM/MC4X0uv3wJFLmraJ32KUhqvkDxziNeOLdIIyDZj7oetScUW6QLB8yDVhXQMwlERiMuVRXPcSS376AkdMDvloVAbvvuaRYY12LxmbGeJvRHH6aO97KPDLoZap94TxYQ9rX34IQcuHVHIUGCPbcxkqRdYm2nFiEk6reZMrg2sj668rhePkPSKZgcrYANYCWbuAcG/CleJAsATpRutR2cCs5GVtP6kDR+sEkB8sfmv/l2ExRaRv58jhqAARtAMcHl5tzqn0j8Tu1jugsgY8QFp
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(3002001)(93006095)(93003095)(10201501046)(6055026)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:BN4PR12MB0753;BCL:0;PCL:0;RULEID:;SRVR:BN4PR12MB0753;
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0753;4:XfokH5pl7/CKvmTIFLJP9hIXq8I9fLlZoJIosucyYITDTvXAwHj6WhEdHO4f2y7YB4Q6O9KJTsmWOV5u3vTpE4mkqXyARwLDOlC/LoKOY6BcblPmnphYP+7I7xxIZOE6jeFBpbujUCTVOQ4TYkJMKsduKhSsW38UNjXZHkfXoJpfGrVLALM/wuRnF7v1E8HXMafgYXsVJdN1gvwRqASMB7qrmV9WvkEFMZBpW+JBynVdutdX2E/1t1QLCiu/N0x3PXZH9pPN6RlDKbwlkYjZ3Wm9vSSXcucGqwA3b2CzXRIyhskyNR0xTwlKIKPvprAT
 X-Forefront-PRVS: 0652EA5565
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR12MB0328;23:OsjwReTJMAEUFW/7UqOPKnb3eVqjstXVWPuYixsL6?=
- =?us-ascii?Q?BBMVGVhr3J3avVsGxnJmjCSHZ2j/eSGwNkT+0u0jx7Pi5U765LPt2PqUkPzF?=
- =?us-ascii?Q?KFvqd0t7xtJUkSuZqWRscx1pt5In2qRsvc5/Ii5jLu5HCrfSRk2Y96Cx1TCH?=
- =?us-ascii?Q?LG9ldtYHmDkRBTX9URa5dIdiqZoaGQ0+Si2BPbLijYr+MEZ9SqMhDx7mGHq4?=
- =?us-ascii?Q?3Symarj5iLL1pp6/CgFPzxkISE1lkZZdWJsIEBmsWh7qA7QeasMc1/zjbcVG?=
- =?us-ascii?Q?wvlRElscSywORdQcDC7VnTyKhVFX1gfm1uVTUfzsWCQzukQe9faf0ysl1mVJ?=
- =?us-ascii?Q?7ohRMKDqXtTlHT+W6v27LJYkmQMqs7orf36o+IlLPvum+rgpYZHHQpoxhx8C?=
- =?us-ascii?Q?we8p7l911Gtq1IJ5Em9YpOlYRhchCj8BiBkz8MgTfXnnbC0vK40k7jW+oybT?=
- =?us-ascii?Q?xFXhhBnSTeW39liBhKY7z4upqQf7tIwTLzALMm7dPAgifqHwQ2uCqd/ocgwh?=
- =?us-ascii?Q?hXa0s7tlb9JMiJH91zyjNzDY/MjvcT8QYamGLbbkjdyF9fnRs4kDDDq1+8tE?=
- =?us-ascii?Q?G6PCD9jeJzzVqUs7dOi954cRFzER1huXH6NSQ+EdnaEllmpOQSQp+oItTps3?=
- =?us-ascii?Q?+Yn44TLM0dCsWII/Qy7EPraWcTVs2hN059oREtnPlnKfJjNXhwiP95bLMxzv?=
- =?us-ascii?Q?opFm3726tNTSnSnf77x0scxCXdO7lPBSRswnueDWe9BNc1grbbLaaBK7G96T?=
- =?us-ascii?Q?acWsfWfWkHOVLm0gGRnPAyfaQEV+N7G9pcgaI5D9zurrGBuDtu/AlaRydon2?=
- =?us-ascii?Q?J2K+WNCI2sMp0Zvbrr0bik1r6zhpJt6d5nf4QgMMLKeC9hhPK7y91yY4vpQt?=
- =?us-ascii?Q?xlL/H1fN7/VRGwxchj7nb5ONJuJyfLJc6c+xgmzINM88Yl2vE/kbd8GVxQih?=
- =?us-ascii?Q?rEeFTs9hV1InnTaovVQnXKOw/VLuVYLkV6S09Jw9vYLlV+oDzLESGPyNxsUz?=
- =?us-ascii?Q?W6H4rz5U5+o61TqeMhan5vVwI31kqNA3uFi6/dteokgqPV97bfAIq7XAzAAb?=
- =?us-ascii?Q?w6icnH7+V5Louv8jxX5OvYTLO73ATNXggdYiTRKjuF1vacj3yF/doDFqD3U0?=
- =?us-ascii?Q?pZLNyYzO3n+S8FFH+tei9tblE4k0HqTD6bvOcZdRw/34LR7YnqIdAc6J8R90?=
- =?us-ascii?Q?tsW5ymoj5pCXh54fUtwEGHfUo94IrL2XX+hSBdF3/2YqUhoVNOdwwxDdQ=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: eVNgnv8fPLoYHEzaXeZX2RoHo0XgJ9OcjIpMiQ63bo+ufcDHI3esjUA2e5ihW0C2BhiueEeWPc41qv9EZWgvv6NLonFv7ziBOJOpaUsfFAX8nNgAHeJZQY28DWAPFULcld+zZJB4YrH3Db2L4FZOgjsu4mh9i77F7j/A7iMxgVDhpGaLwMV6lm2hhs4T9oHM
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0328;6:o0+M/kPJKMDU9jcjB5zk5nyled3KsJYGBTMQGSgJeW++DNgtNKmOf6vQZpLD6KKmcr832g5Y+Os+ZWEcu0wCTjOc1XgtK/xoo6pDMykwfO628P4VG+f8PzSXmS3tWe7dN+Pl26Hynb4U/TOO0noQcHH3YQ5RwJcF4sC+ztuRbB/iKSE/Nrc7TmbFjdxdj4RaFpSlat3mlLP2O0z+4BNxaZ/GnlCAUGeA+6CTfeK8aDPFIsMIDal/OeN0YRTBqT4LrsgWFs1QeaUJ7enFi/MExpcJnXVNhmSjPmmojsmiczGjyylblKHPAUipsdyMHSG7lKhMolS0F7v99dC1zZV6MoE2Yw0glVUmjPUOMx0AMCDbAy7a0okVyfgx78LhULyfEmqzpaJ187MEWFtO2bsXqN02TJZhnUa+e+brX8IP+zPbGLY8S/Ep0UXt8jykvibO07taizVx9GUysJmTtiBe7Q==;5:oSwAWlnrx1TCM8YkYDrBE+k51JTwljxKzzz+238hKhTxouFTEZ8/xwTubRnSCJq4GD/HpbUktO3s9h8cN/r16ZE2PNt9BUmbuGxcXa8Mb4E7sySou4mOk/cJpwtq7/tEcLFrNj8MuFk9tH9IF9t5AnSvdKGc+9V0karASIWSltQ=;24:nOW/UeTixhSyE1uze4XzZkF6aZHOv4znXSbMIwkQirHhf/YIkI9lJo2c9YPBXCSXQGgYjmsEsk5nF5+m8GweZKSkLdB2RjCHbZ1TqrBLfqU=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN4PR12MB0753;23:ZLoZqDWQ89LuJ14CpqJCR7rHd68G2/RIWyyzqSMDB?=
+ =?us-ascii?Q?VcTdh1JnHF9SOTjMNYgoIJp1qkcdRWKj9HfhDqZLjzK71GZ2DoUkz90s3oNS?=
+ =?us-ascii?Q?2Q3+HQdU70F0wgTC2Tb9jkYmfBMgkygrG919a4+y8yXNS9JTXMCdQQtPbHXk?=
+ =?us-ascii?Q?cXy510eZ3cjH6h7VUy1OluBimGss+KtZk+5Z9+7ZHQKci8+5wnQ2C+4oO3Xd?=
+ =?us-ascii?Q?zr9LeGH46JKBgnBXDlHL/sso0RMjyXvL78N5jCFelH+ubzycOamDRpP6Wm9L?=
+ =?us-ascii?Q?ryVOWs/Pp0ou+EJD4sSxB06VfAsIEV3NX2CrQWiFsMEUKy6ipE+PHqkQfO5r?=
+ =?us-ascii?Q?GrRxsR5m61D82heXXXadBXhkd5cOUW6umSN3YpmJ6RPxPfYl7B+faaS7k7Yo?=
+ =?us-ascii?Q?2VVXJUgV71QcKOtn7o6c7X0Du7IwAlU3EnoPtT+maJFnkJg3f/Wtlkxhm0pG?=
+ =?us-ascii?Q?Dm0IMS7gLYFsim82r2KdBWlrWoIYxmLL/tFygPU2RF70ntbiTaGpbgh4G8qw?=
+ =?us-ascii?Q?5cblZ/DSSA+feGCTL5z/Ih0ns4/SttChSLQXNqkbzb7r105fLGTcp2bx4iFq?=
+ =?us-ascii?Q?Kdp468L63GTu67XvU1f6LSGacejvO/VvM833RkKZp6IrrsrnAqJWSGS22Pi3?=
+ =?us-ascii?Q?A+yF8NIZEmHSkl1uCRK8h7p9avMb7yA/aXcLf1yD4nbl8V+UW+KiCRTduGY1?=
+ =?us-ascii?Q?oH88h4cKibM4gKRuRJLdrofTTartiGQhJ0ecdQW7swD11wFGDP3XPKJGoavY?=
+ =?us-ascii?Q?+4ZRkputmyFpf7ePILcbLauSQCyEC0fwex6OTTi9HTW1DdJS5KCG5G5ddo7x?=
+ =?us-ascii?Q?SExKzrYDww/DKBV2PYxdK/Bk1qhYJ/DdeOjZ4Ru69GauitUO04UxVoW+C/qU?=
+ =?us-ascii?Q?Ha6xs0neEzFg8fb0fEiSR0t5vhRuI3l9w5cBP7bBk6dWb6Gszckb8NVthtUw?=
+ =?us-ascii?Q?GNe7uHj+XZ2ujXXTjKjSDyQW9w4ywyiOHLUC/JH5BCVoN2yZkKtFk59Bh2/A?=
+ =?us-ascii?Q?JI83oy/p6dhIVniaJKlLQwWrJC/cumBmQlU7FROnqQ2J0T2GlsFldfeUwYDZ?=
+ =?us-ascii?Q?GkYinD7Wzm8qLwBASckQPik8/D98d4D7Ym8STTJAH8avdmaAjH48KqSf2/EM?=
+ =?us-ascii?Q?3P4jeSXaZoywi/RMZ6hqyfCDryixULWDiJPcyzmLgjL3fDIAl1/8ThuD6qxp?=
+ =?us-ascii?Q?xUzGnTNa4HhmJjEDcv4Oq4KBAjcz7IHOhtx?=
+X-Microsoft-Antispam-Message-Info: Y5OYFYIG6TWqXPonE+25W2Pj1I0pF4VWbaecL+UDaK6J6Wx0H6ZOiZKzKFolBtbw1isU1AS6HEUFI1zhRYK8RTZwLPF15QU6Zr7uEH5arTk82Uawrg16PJ4YnFWshOVTNU44xrRqSK7FUTmKozs/pc/sfVnXfr0LFyCUWErU2dGZH1ix9yb+vOBceAwHy37j
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0753;6:R5D3SjAHqo2zv8FH+VupRdUO9rK7A+y8dekwGaTDbPYoZpcp9ZO0IMhKDv99U1T/nxk/WjzK+ObNHoH+RQOLV61OKhu6H/fbolY291EdqqK2PXwhLs7XxNlXiJ30eTTTVti6sZJzu/FeecosVt4EaYTx69YuJkitLRRjR/JlzKVe4iqjpV476YVdzhMqRA8v+74xhCBsmKWE39vej+ctw+r/ov+saLLU09ag83c72E1Ik35e1SkL6DrG6TK8t48HkyR7RZF8q+ZBVoA6EB9/y/QyNQrOB8/Gddwb+P0dWQvokoLX7ivhQ667TK15P2/6w6162bO3Ne3YVU9i4o/6BCds5X76XaBc35R9z/+Gpd7kYHRNejMgkshqEWqxQVWJgyFS5BdbM2PkVZK9UJUJi83k/RWutkNu0Bcsz4PnatUZ8xuBJJSvIUde67LVGITAPcEvmBZqf7lSOuO8GT+PYw==;5:h6Cb8NPttHkxdFgG7jO0GmJsvf/+WNZQ3S6aMCegSKCxoyg/+LyQQYqO58XDMyB+m7buap7/Tx4KwdJANeMkiEMkC9E8OlHEObBUxTcrX7D/Qbu+dj1AmB6ocdasJUV4ZUM0MbHqFxMpFRbuVrl8YnokisjlMaOHEd9MS+2V7Y8=;24:jDfDM1hkQ9Bu0pB6IvP3pHTsDaKmj1z2NpZUXlgqdfy0DXNoXQ0TSdNkEygQCJv/P73p3MqZkksXLpLRuGXYso65zSCFAhrB4gK3ANJgSJk=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0328;7:aWKcT4fhIPbElWL8ACKI3Db9/hTlVkC6h+skddovFp/V5jgMR8z6+sWGH7wHLmeMKOljwihndsav+ghS4gs4gnOYI1H9EDUeUt2D2Sskk6VUBdqjAENalWpiF/tqN+aLQtX7W4RuWomM/rJO2H/OzBep3OQESN5/UTKpWjT49Nf9EKtboMudpOJu2JQMKrUdRU8695uVdgyj6DecAr+0WqwENPrDyTQqVLu5M4w0iFf4hx51gaae6A3Ey7CPA8g6;20:/kP7LXDg3gY9E26Sh30xn5BaL0AzgfvsIpZP2yjBlld/ku1Rlpl/3+mS1b5yh+NWEejH43uMdya3aKL9HY8aE2WPjOGGRRPV5qw3AiXl0fGU1oOC8JKM+S9GPJxkzkwurIoRyUXm3azrZ2q3Pc7f01+5G70G2DPuikRz+cbK/B5j13hW8lxiVUFVjEM8oKe/MIDwKmlxBI0rhoMCpfQPO/fgnkl6jGBUZmCHYjzQkUDZEfw5zkVumjMbtRXQV8/5
-X-MS-Office365-Filtering-Correlation-Id: 294f4c28-1ffb-4022-f3a0-08d5a9f874fb
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0753;7:BsdNIjjKWJAIKAbvJBNwF0P4mNG+NtSgQtNLJwkCyxoo+PAILWdLAhmxLIBKsq+h/droLfWahShGPtp1ImQqIUTAMYtNS3gmJa72RNcAYVn9RM+HoI0zPWThGiSJXSkyz3H/0XGM5mryBO3SnCBcpifoTPJE7D9s1T09EvryyRnPyanQDcyeMKYRSBM40isfi6DKCG4V4D1sOUasV1SPWvJdCPEeXbKcgTWabaGYoesYbiBsU+acNNf8mNA6X3BU;20:c1cpEaYF/NacuBgE+XT622yQobAT7M6RoefpTCB0bCowrqk6McxRoZmXpMUQdSa3wA9iCDBj6UMZNt1HTDy8Dbmrrxcp8sWjFr5+pHM9AAjLKJDgCODXmZUQeZUeb00pA/EAWZy7uDCfF1qhlsTtWxZ07WHAssa5N2zVUPrS6StLBcJBLssa57Joyg0OYuGUJ7f6STaBoo/dxJVdUjnvTDOyneh57FlJ+YCC6pqhZBLKr+AD2N0sTha5hvXCzd4Z
+X-MS-Office365-Filtering-Correlation-Id: c439b9dd-65a7-4ef4-46d5-08d5a9f88a38
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2018 15:31:31.9633
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2018 15:32:07.5595
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 294f4c28-1ffb-4022-f3a0-08d5a9f874fb
+X-MS-Exchange-CrossTenant-Network-Message-Id: c439b9dd-65a7-4ef4-46d5-08d5a9f88a38
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB0328
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN4PR12MB0753
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently calling wait_event_killable as part of exiting process
-will stall forever since SIGKILL generation is suppresed by PF_EXITING.
-
-In our partilaur case AMDGPU driver wants to flush all GPU jobs in
-flight before shutting down. But if some job hangs the pipe we still want to
-be able to kill it and avoid a process in D state.
+Avoid calling wait_event_killable when you are possibly being called
+from get_signal routine since in that case you end up in a deadlock
+where you are alreay blocked in singla processing any trying to wait
+on a new signal.
 
 Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
 ---
- kernel/signal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/scheduler/gpu_scheduler.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index c6e4c83..c49c706 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -886,10 +886,10 @@ static inline int wants_signal(int sig, struct task_struct *p)
- {
- 	if (sigismember(&p->blocked, sig))
- 		return 0;
--	if (p->flags & PF_EXITING)
--		return 0;
- 	if (sig == SIGKILL)
- 		return 1;
-+	if (p->flags & PF_EXITING)
-+		return 0;
- 	if (task_is_stopped_or_traced(p))
- 		return 0;
- 	return task_curr(p) || !signal_pending(p);
+diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler.c b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+index 088ff2b..09fd258 100644
+--- a/drivers/gpu/drm/scheduler/gpu_scheduler.c
++++ b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+@@ -227,9 +227,10 @@ void drm_sched_entity_do_release(struct drm_gpu_scheduler *sched,
+ 		return;
+ 	/**
+ 	 * The client will not queue more IBs during this fini, consume existing
+-	 * queued IBs or discard them on SIGKILL
++	 * queued IBs or discard them when in death signal state since
++	 * wait_event_killable can't receive signals in that state.
+ 	*/
+-	if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
++	if (current->flags & PF_SIGNALED)
+ 		entity->fini_status = -ERESTARTSYS;
+ 	else
+ 		entity->fini_status = wait_event_killable(sched->job_scheduled,
 -- 
 2.7.4
