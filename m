@@ -1,59 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758215AbeDXNr4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:47:56 -0400
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:46574 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756377AbeDXNrw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:47:52 -0400
-Subject: Re: [regression, bisected] rockchip rk3399 video output breakage
-To: JeffyChen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Joerg Roedel <jroedel@suse.de>, linux-rockchip@lists.infradead.org
-Cc: klaus.goger@theobroma-systems.com,
-        Huang Jiachai <sandy.huang@rock-chips.com>
-References: <3beabd18-0c39-be65-cfe7-8498dc7c296b@theobroma-systems.com>
- <5ADF24F3.6070106@rock-chips.com>
- <fdd0fe29-2117-c67b-5dba-5d1ab0b19dd1@theobroma-systems.com>
- <5ADF321E.4060408@rock-chips.com>
-From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Message-ID: <179239ba-0833-945c-0c2f-26fd9b7c2755@theobroma-systems.com>
-Date: Tue, 24 Apr 2018 15:47:35 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        id S1758082AbeDXNqr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:46:47 -0400
+Received: from narfation.org ([79.140.41.39]:36000 "EHLO v3-1039.vlinux.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933680AbeDXNpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:45:47 -0400
+From: Sven Eckelmann <sven@narfation.org>
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Lindner <mareklindner@neomailbox.ch>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Antonio Quartulli <a@unstable.cc>,
+        "David S. Miller" <davem@davemloft.net>,
+        b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] batman-adv: fix batadv_interface_tx()'s return type
+Date: Tue, 24 Apr 2018 15:45:43 +0200
+Message-ID: <2333740.P7S8BcYFuH@bentobox>
+User-Agent: KMail/5.2.3 (Linux/4.14.0-0.bpo.3-amd64; KDE/5.28.0; x86_64; ; )
+In-Reply-To: <20180424131847.5469-1-luc.vanoostenryck@gmail.com>
+References: <20180424131847.5469-1-luc.vanoostenryck@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5ADF321E.4060408@rock-chips.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart7028284.oJHuMbyaZl"; micalg="pgp-sha512"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.04.18 15:33, JeffyChen wrote:
->>> [   36.076577] WARNING: CPU: 1 PID: 83 at
->>> drivers/gpu/drm/rockchip/rockchip_drm_vop.c:1004
->>> vop_crtc_atomic_flush+0x1c0/0x1c8
-> 
-> this looks like an issue recently reported by heiko, we found that might 
-> due to an unbalanced irq disable in vop driver.
-> 
-> my test patch is:
-> 
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -1601,6 +1601,8 @@ static void vop_unbind(struct device *dev, struct 
-> device *master, void *data)
->   {
->          struct vop *vop = dev_get_drvdata(dev);
-> 
-> +       // Pair with the initial disable_irq()
-> +       enable_irq(vop->irq);
-> 
-> 
-> 
-> and i think sandy would send the real patch soon(maybe already sent?)
+--nextPart7028284.oJHuMbyaZl
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Works fine with your patch! Thank you very much Jeffy.
+On Dienstag, 24. April 2018 15:18:46 CEST Luc Van Oostenryck wrote:
+[...]
+> -static int batadv_interface_tx(struct sk_buff *skb,
+> +static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
+>  			       struct net_device *soft_iface)
+>  {
+>  	struct ethhdr *ethhdr;
+> 
 
-Best regards,
-Jakob
+CHECK: Alignment should match open parenthesis
+#76: FILE: net/batman-adv/soft-interface.c:192:
++static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
+                               struct net_device *soft_iface)
+
+Kind regards,
+	Sven
+--nextPart7028284.oJHuMbyaZl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlrfNQcACgkQXYcKB8Em
+e0ZD+A/9GMc5rOQAuWEhpa8dh3fpczfJ7E3JM30mEMbUR7+VEyW7/v3YJoIdIa9D
+xPgdy847X8i7NXrfDbbIsp1XDBXrqjOiz5WAa7sBXEFCj3ZAOLXdKpuicCRp4H5W
+xhGbOGcKCAjkvRYSVBtGjebTHmIlsCM87AUAR/ADuNrOVrAwzbNxPUFGTyyoxfpb
+f689dU5z3C3+s3Lflq3m1H/xOpBfpdbg5Ip/ZsTVFeePJGlee6oWW6VqM99hGb/H
+9cLc810PpacMQB337Lf68cNDU+m43rV0mSm+vw3HyC+ZVPDu1vxiLVZ4VZYzf1BK
+OvHU84mYQMOVIJDHC4BW+1fFcF5JBSk2cDkQ5fmTXZzcGfdL0CjlCoOCmcP7mzal
+JjXJNBc1w/KtaR9zjVe+MIp+ZJi0zJbmWQ5+51pEiXICTok4rNekii7lcklMIeoI
+z4ehD2J/rah47KGk6I/lEg1RcN77MkdyoT7RLcqCuO68jY9inMT992pDkWAxyc9Q
+tR+JkT6E22jC//opaxD4D4QGaJlVkuMxKLWfP90ETU7zG4eVW2J0WnP+1xWkZZWa
+yuVVs9eCgZWUPmMXpWbXdKWZFNlCOwSoca6tQFXTyXpxyIQQJnQDxmhfMdgHGgmj
+f17GctIlA7q+lUdhbdddFCGTJzTxzcn/hc3t/k5/Vojy/B+ySpU=
+=jB6s
+-----END PGP SIGNATURE-----
+
+--nextPart7028284.oJHuMbyaZl--
