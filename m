@@ -1,82 +1,85 @@
-Return-Path: <SRS0=KIOc=HN=goodmis.org=rostedt@kernel.org>
-X-Google-Smtp-Source: AIpwx48iJGLBMatNQ4k3+j62KCFDVkGA17k1GyZTcGLCWJoIwCIxOXZcOTZZqkIGLYtwvzqViqLM
-ARC-Seal: i=1; a=rsa-sha256; t=1524602920; cv=none;
+Return-Path: <wvw@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524605557; cv=none;
         d=google.com; s=arc-20160816;
-        b=cL732LWzPmTfE4DSpIYnLnmeaUJaRRjvQqyEw6d+db+LuFn8wvEG/PjjNq/oUQc52h
-         RtnUxzuTJD8u9XSB/LsUBOjQumsosKxi7KHw7d5BlNrVyezwyoElvxHymqJc8MiXTV33
-         WnUMjCgucKE5ZCUu6ptjgMvMV02oqP/oPBP+GDlCIG6RXzOnQ1QLIpWcmMD9lVIaAYAD
-         h8qKJHqmMt5jxXZmv7y53MK/BsW6lWGbiIXr+Q3fHWMMirWX+vhhK72ATqjObWSkvzOV
-         O2JuIPAIwt5Fg+yTIM02BVxfjFW+M50NXAvBQMjBZdQ8WpcAeICjL0JgvA2+ywkwpBJ/
-         Pbcg==
+        b=TORPAigTkaqQ0DnmnxH8vI+jEb04Pn6+j0elH2ku3aGh+wmeuEAhKUZeIFDPMTOMFa
+         XVdtRDWGqHIkBHFTQHvO17OZUOYeJMv9y3toa5etTUq2ohrf2/yGB4dNl3pp50qjydkY
+         VuJ0t/vV6XaMP+2yrA0+dGolSmU4CRBMcBPWWiY9RW3G5mFJlWNULE+rUjusrHTvmKUE
+         ZNICInCQKK3xFwNrCVKw6GNhLSBp5cOArVRQMAePqubtlm2TDP8Fu2AZcHlR5KccbMiz
+         4rDoG3HLecgPbfZhr38eOKfITvPuztI0b1d/bIuZnRKlmcIWMuil/hvfqOYEf3OyciZj
+         y5zA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=kgaKpfq2b2V5dDi277pGyQ6IoEbuAt1kBdmley+G23U=;
-        b=m4yZP2/r1i71aAhD8YKUcNhwsCnom3ysCqMe0b4TauNGxaRbxw+IupVVZkyI6bHEas
-         gKjtH2lrsxC0xic3icaNDu14pUChHXGS2wRbmBdi4jariylj35PJfrEgw7n/3qVH+6Gg
-         yoBS/cLPL0MTCi3FcI1IjnjblGjwwLVbLDotm1ibWHdjgNZ39k2/+0SOzd9yr/fRJkuE
-         xVhLYfIUxkcLHv6R11zvKZNZuMBi55CeWFh1t0tY4jMcXlA1ZhM6sTwQIk+4FSm8ZBBp
-         hx0tio7o/U22KvgLSB4oO83fDBbx72+uyT4I59k0DI6Cb2buE/ra+gh6UL3rrwgqIcxN
-         cHgg==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=9aXKerxFtPKCPc6DyAc0N0lubGRC4ftBrnjd1jSZn3E=;
+        b=qs+p/CUemoxf6l12YsRaDiXa1YbCdvm6LRkqJLk7wIVW1u+5ptFwLKnZZ5ApNGygpi
+         5FK6K3vAySCMU2UtO74GTFmACSXglAJFDDbsAJJhDnkifj+QLIBBI2xkjr0EEIEJ8GVV
+         5yRJPdMV94vofmo+L/8jH0XbHvyYqrclFrUbLRHjPTwWlMC9a+jgmNSxnMjKiULB3sdD
+         vX1mABcrA0qRPziJMjwyS0nYavMpo+Xu8Vydpy2ENl/xOA2Fn8fwwMf4RtPj7V6WIsC5
+         hvZWyQ7gUzZcgIS02o1a4H0fYstx+0CwcooqwPEjUrIJ+npObtgKpnfpawlwddffMbhc
+         5nSg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=kioc=hn=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=KIOc=HN=goodmis.org=rostedt@kernel.org
+       dkim=pass header.i=@google.com header.s=20161025 header.b=ioCTuAB9;
+       spf=pass (google.com: domain of wvw@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wvw@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=kioc=hn=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=KIOc=HN=goodmis.org=rostedt@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBDA4217BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 24 Apr 2018 16:48:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Wei Wang <wvw@google.com>
-Cc: gregkh@linuxfoundation.org, Wei Wang <wei.vince.wang@gmail.com>, Ingo
- Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Kees
- Cook <keescook@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Crt Mori <cmo@melexis.com>, Alexei
- Starovoitov <ast@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] do not call trace_printk on non-debug build
-Message-ID: <20180424164837.3f1bcd20@gandalf.local.home>
-In-Reply-To: <20180424164505.0a4d15f7@gandalf.local.home>
-References: <20180424180812.215900-1-wvw@google.com>
-	<20180424145056.7c29ea18@gandalf.local.home>
-	<CAGXk5yo44kAku+ZYx=8HzOgkEVC7ARNSER4MvWTCz-i51up=ew@mail.gmail.com>
-	<20180424151416.397fbbde@gandalf.local.home>
-	<CAGXk5yriz2CtCN-vkL0q7gdpV+f8+9GJH-FT+v3KBLb-fWoCZA@mail.gmail.com>
-	<20180424152607.71fbee34@gandalf.local.home>
-	<CAGXk5yre3aDtVbtEz4=DdBnLrT3U=LPA69jOp9zmkfeYiZ7w=Q@mail.gmail.com>
-	<20180424164505.0a4d15f7@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+       dkim=pass header.i=@google.com header.s=20161025 header.b=ioCTuAB9;
+       spf=pass (google.com: domain of wvw@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wvw@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx4/FDQF3XlDZE5PcMWJwsxnBHBMrWI0DCymG+yhgNxrRoF/2VXDftsXUHXlV5P+ojxA+Z3HmtxLDxPRUE9pP3g8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180424180812.215900-1-wvw@google.com> <20180424145056.7c29ea18@gandalf.local.home>
+ <CAGXk5yo44kAku+ZYx=8HzOgkEVC7ARNSER4MvWTCz-i51up=ew@mail.gmail.com>
+ <20180424151416.397fbbde@gandalf.local.home> <CAGXk5yriz2CtCN-vkL0q7gdpV+f8+9GJH-FT+v3KBLb-fWoCZA@mail.gmail.com>
+ <20180424152607.71fbee34@gandalf.local.home> <CAGXk5yre3aDtVbtEz4=DdBnLrT3U=LPA69jOp9zmkfeYiZ7w=Q@mail.gmail.com>
+ <20180424164505.0a4d15f7@gandalf.local.home> <20180424164837.3f1bcd20@gandalf.local.home>
+In-Reply-To: <20180424164837.3f1bcd20@gandalf.local.home>
+From: Wei Wang <wvw@google.com>
+Date: Tue, 24 Apr 2018 21:32:26 +0000
+Message-ID: <CAGXk5yo0FoBYdtbsg9b+ZqTuNu5wKNQokzHbu=33YF93ombgng@mail.gmail.com>
+Subject: Re: [PATCH] do not call trace_printk on non-debug build
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: gregkh@linuxfoundation.org, Wei Wang <wei.vince.wang@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Crt Mori <cmo@melexis.com>,
+	Alexei Starovoitov <ast@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+	Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598651942651560845?=
-X-GMAIL-MSGID: =?utf-8?q?1598662032289435666?=
+X-GMAIL-MSGID: =?utf-8?q?1598664796655354877?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 24 Apr 2018 16:45:05 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+I have seen case when LLVM appends postfix to most function names, causing
+func such as tracing_mark_write becomes tracing_mark_write.XXX which messed
+all post-processing.
+Also I think this is a typo?
+https://lkml.org/lkml/2018/4/24/1176
+On Tue, Apr 24, 2018 at 1:48 PM Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Tue, 24 Apr 2018 20:39:27 +0000
-> Wei Wang <wvw@google.com> wrote:
-> 
-> > The config is not something new and it is controlling pr_debug and
-> > pr_devel, so might not be too annoying, IMHO. But I agree this is not a
-> > problem from us but from abusers.  
-> 
-> And is the reason I never use pr_debug() and pr_devel().
-> 
+> On Tue, 24 Apr 2018 16:45:05 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Which reminds me, I need to replace pr_debug() to pr_info() for this
-line:
+> > On Tue, 24 Apr 2018 20:39:27 +0000
+> > Wei Wang <wvw@google.com> wrote:
+> >
+> > > The config is not something new and it is controlling pr_debug and
+> > > pr_devel, so might not be too annoying, IMHO. But I agree this is not
+a
+> > > problem from us but from abusers.
+> >
+> > And is the reason I never use pr_debug() and pr_devel().
+> >
 
-  pr_debug("syscall %s metadata not mapped, disabling ftrace event\n",
+> Which reminds me, I need to replace pr_debug() to pr_info() for this
+> line:
 
-In trace_syscalls.c (I didn't add that), as a different commit that
-changed syscall names for x86 caused all syscall tracepoints to
-disappear. And if this was pr_info() and not pr_debug() the one that
-made the change would have noticed his change had impact someplace else.
+>    pr_debug("syscall %s metadata not mapped, disabling ftrace event\n",
 
--- Steve
+> In trace_syscalls.c (I didn't add that), as a different commit that
+> changed syscall names for x86 caused all syscall tracepoints to
+> disappear. And if this was pr_info() and not pr_debug() the one that
+> made the change would have noticed his change had impact someplace else.
+
+> -- Steve
