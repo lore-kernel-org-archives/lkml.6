@@ -1,132 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750929AbeDXOzE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:55:04 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36195 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750739AbeDXOzD (ORCPT
+        id S1751195AbeDXO6s (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:58:48 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43258 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeDXO6r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:55:03 -0400
-Date: Tue, 24 Apr 2018 16:54:58 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: "Wan, Kaike" <kaike.wan@intel.com>
-cc: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        "Fleck, John" <john.fleck@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: RE: hrtimer (rdmavt RNR timer) was lost
-In-Reply-To: <alpine.DEB.2.21.1804231528130.2077@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de>
-References: <3F128C9216C9B84BB6ED23EF16290AFB634C8C87@CRSMSX101.amr.corp.intel.com> <alpine.DEB.2.21.1804231355570.2077@nanos.tec.linutronix.de> <3F128C9216C9B84BB6ED23EF16290AFB634C9420@CRSMSX101.amr.corp.intel.com>
- <alpine.DEB.2.21.1804231528130.2077@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 24 Apr 2018 10:58:47 -0400
+X-Google-Smtp-Source: AB8JxZqJicrVCngSuiOgCZ3nak58Bojiey0TIB58rYOMijpAZDkol3ZpxgBNfgWSv6p4XPH4WsFMaw==
+Subject: Re: [PATCH v2 3/5] ALSA: xen-front: Implement Xen event channel
+ handling
+To: Takashi Iwai <tiwai@suse.de>
+Cc: alsa-devel@alsa-project.org, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180416062453.24743-1-andr2000@gmail.com>
+ <20180416062453.24743-4-andr2000@gmail.com> <s5ho9i8sn25.wl-tiwai@suse.de>
+ <af277f77-5b22-58e3-4ea6-cde34e3181d3@gmail.com>
+ <s5hlgdcsmdm.wl-tiwai@suse.de>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <f37a8eb9-8733-eae9-4c3e-312d864592fc@gmail.com>
+Date: Tue, 24 Apr 2018 17:58:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <s5hlgdcsmdm.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018, Thomas Gleixner wrote:
-> On Mon, 23 Apr 2018, Wan, Kaike wrote:
-> > > Can you apply the following debug patch and enable the hrtimer_start trace
-> > > point and send me the full trace or upload it somewhere?
-> > 
-> > The original trace was about 29GB and I filtered it with
-> > "0000000066dda1ea" (the offending base) to generate a 1.4GB file that I
-> > could open and investigate.  I am not sure how I can send them to you. Do
-> > you have somewhere I can upload to?
-> >
-> > I can try your debug patch and again I am anticipating a big trace file.
-> 
-> Well, you can find the spot where the fail happens and then extract the
-> full thing from 2s before that point to 1s after. That should be reasonably
-> small and good enough. Let me know when you have it and how big it is
-> (compressed) and we'll figure something out how to transport it.
+On 04/24/2018 05:35 PM, Takashi Iwai wrote:
+> On Tue, 24 Apr 2018 16:29:15 +0200,
+> Oleksandr Andrushchenko wrote:
+>> On 04/24/2018 05:20 PM, Takashi Iwai wrote:
+>>> On Mon, 16 Apr 2018 08:24:51 +0200,
+>>> Oleksandr Andrushchenko wrote:
+>>>> +static irqreturn_t evtchnl_interrupt_req(int irq, void *dev_id)
+>>>> +{
+>>>> +	struct xen_snd_front_evtchnl *channel = dev_id;
+>>>> +	struct xen_snd_front_info *front_info = channel->front_info;
+>>>> +	struct xensnd_resp *resp;
+>>>> +	RING_IDX i, rp;
+>>>> +	unsigned long flags;
+>>>> +
+>>>> +	if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
+>>>> +		return IRQ_HANDLED;
+>>>> +
+>>>> +	spin_lock_irqsave(&front_info->io_lock, flags);
+>>>> +
+>>>> +again:
+>>>> +	rp = channel->u.req.ring.sring->rsp_prod;
+>>>> +	/* ensure we see queued responses up to rp */
+>>>> +	rmb();
+>>>> +
+>>>> +	for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
+>>> I'm not familiar with Xen stuff in general, but through a quick
+>>> glance, this kind of code worries me a bit.
+>>>
+>>> If channel->u.req.ring.rsp_cons has a bogus number, this may lead to a
+>>> very long loop, no?  Better to have a sanity check of the ring buffer
+>>> size.
+>> In this loop I have:
+>> resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
+>> and the RING_GET_RESPONSE macro is designed in the way that
+>> it wraps around when *i* in the question gets bigger than
+>> the ring size:
+>>
+>> #define RING_GET_REQUEST(_r, _idx)                    \
+>>      (&((_r)->sring->ring[((_idx) & (RING_SIZE(_r) - 1))].req))
+>>
+>> So, even if the counter has a bogus number it will not last long
+> Hm, this prevents from accessing outside the ring buffer, but does it
+> change the loop behavior?
+no, it doesn't
+> Suppose channel->u.req.ring_rsp_cons = 1, and rp = 0, the loop below
+> would still consume the whole 32bit counts, no?
+>
+> 	for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
+> 		resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
+> 		...
+> 	}
+You are right here and the comment is totally valid.
+I'll put an additional check like here [1] and here [2]
+Will this address your comment?
+>
+> Takashi
+Thank you,
+Oleksandr
 
-Thanks for the more complete data which actually let me decode the wreckage.
-
-So you have NO_HZ enabled and looking at the trace then this is related:
-
-          <idle>-0     [003] dN.. 3598605307236: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=712171000000 softexpires=712171000000mode=ABS|PINNED base=0000000066dda1ea next=00000000708914d7
-          <idle>-0     [003] dN.. 3598605307601: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=0000000004346740
-	  
-          <idle>-0     [002] d.h. 3598605313255: hrtimer_start: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] expires=712172915662 softexpires=712172915662mode=REL base=0000000066dda1ea next=0000000004346740
-          <idle>-0     [002] d.h. 3599538740786: hrtimer_post_add: hrtimer=00000000662d2dd8 function=rvt_rc_rnr_retry [rdmavt] base=0000000066dda1ea next=00000000662d2dd8
-
-          <idle>-0     [003] dn.. 3599538742242: hrtimer_pre_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
-          <idle>-0     [003] dn.. 3599538743084: hrtimer_post_remove: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
-  
-          <idle>-0     [003] dn.. 3599538743830: hrtimer_start: hrtimer=0000000004346740 function=tick_sched_timer expires=716767000000 softexpires=716767000000mode=ABS|PINNED base=0000000066dda1ea next=00000000662d2dd8
-          <idle>-0     [003] dn.. 3599538744560: hrtimer_post_add: hrtimer=0000000004346740 function=tick_sched_timer base=0000000066dda1ea next=00000000662d2dd8
-
-And staring at the NOHZ code I'm pretty sure, I know what happens.
-
-CPU 3						CPU 2
-
-idle
-start tick_sched_timer 712171000000
-						start rdmavt timer 712172915662
-						lock(base)
-tick_nohz_stop_tick()
-tick = 716767000000				timerqueue_add(tmr)
-
-hrtimer_set_expires(&ts->sched_timer, tick); <---- FAIL
-
-						    if (tmr->exp < queue->next->exp)
-hrtimer_start(sched_timer)			        queue->next = tmr;
-lock(base)
-						unlock(base)
-timerqueue_remove()
-timerqueue_add()
-....
-
-So ts->sched_timer is still queued and queue->next is pointing to it, but
-then expires is modified. So the other side sees the new expiry time and
-makes the rdmavt timer the new queue->next. All f*cked from there.
-
-The problem was introduced with:
-
-  d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
-
-The changelog is not really helpful, but I can't see why the expiry time of
-ts->sched_timer should be updated before the timer is [re]started in case
-of HIGHRES + NOHZ. hrtimer_start() sets the expiry time, so that should be
-sufficient. Of course the tick needs to be stored in ts->sched_timer for
-the !HIGHRES + HOHZ case, but that's trivial enough to do. Patch against
-Linus tree below. It's easy to backport in case you want to run it against
-the kernel which made the observation simpler.
-
-I need to come up with integration of hrtimer_set_expires() into debug
-objects to catch this kind of horrors. Groan....
-
-Thanks,
-
-	tglx
-
-8<-----------
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -804,12 +804,12 @@ static void tick_nohz_stop_tick(struct t
- 		return;
- 	}
- 
--	hrtimer_set_expires(&ts->sched_timer, tick);
--
--	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
--		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
--	else
-+	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
-+		hrtimer_start(&ts->sched_timer, tick, HRTIMER_MODE_ABS_PINNED);
-+	} else {
-+		hrtimer_set_expires(&ts->sched_timer, tick);
- 		tick_program_event(tick, 1);
-+	}
- }
- 
- static void tick_nohz_retain_tick(struct tick_sched *ts)
+[1] 
+https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/block/xen-blkback/blkback.c#L1127
+[2] 
+https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/block/xen-blkback/blkback.c#L1135
