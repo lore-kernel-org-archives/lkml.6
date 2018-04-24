@@ -1,66 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755768AbeDXFXC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 01:23:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43503 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751603AbeDXFXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 01:23:00 -0400
-Subject: Re: [Xen-devel] [RFC 0/2] To introduce xenwatch multithreading (xen
- mtwatch)
-To: Dongli Zhang <dongli.zhang@oracle.com>, Wei Liu <wei.liu2@citrix.com>
-Cc: ian.jackson@eu.citrix.com, linux-kernel@vger.kernel.org,
-        srinivas.eeda@oracle.com, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com, Joao Martins <joao.m.martins@oracle.com>
-References: <1523100355-27647-1-git-send-email-dongli.zhang@oracle.com>
- <20180423140911.bihiwfwtlneobgzd@citrix.com>
- <6c379249-886d-76ee-db9c-942967b23d80@oracle.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <db08fec6-5648-4d87-4ace-2f42d1d04479@suse.com>
-Date: Tue, 24 Apr 2018 07:22:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755915AbeDXFYa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 01:24:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57996 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751938AbeDXFY2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 01:24:28 -0400
+Subject: Re: [PATCH] cpufreq: powernv: Fix the hardlockup by synchronus
+ smp_call in timer interrupt
+To: Stewart Smith <stewart@linux.ibm.com>, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org
+References: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+ <87y3hdb36b.fsf@linux.vnet.ibm.com>
+Cc: npiggin@gmail.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, ppaidipe@linux.vnet.ibm.com,
+        svaidy@linux.vnet.ibm.com
+From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Date: Tue, 24 Apr 2018 10:54:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-In-Reply-To: <6c379249-886d-76ee-db9c-942967b23d80@oracle.com>
+In-Reply-To: <87y3hdb36b.fsf@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=windows-1252
-Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18042405-0008-0000-0000-000004EE8003
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042405-0009-0000-0000-00001E82A6E1
+Message-Id: <03d2cbd2-eae7-3eae-dc2a-6b3f3266accc@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804240053
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/04/18 01:55, Dongli Zhang wrote:
-> Hi Wei,
-> 
-> On 04/23/2018 10:09 PM, Wei Liu wrote:
->> On Sat, Apr 07, 2018 at 07:25:53PM +0800, Dongli Zhang wrote:
->>> About per-domU xenwatch thread create/destroy, a new type of xenstore node is
->>> introduced: '/local/domain/0/mtwatch/<domid>'.
->>>
->>> Suppose the new domid id 7. During the domU (domid=7) creation, the xen
->>> toolstack writes '/local/domain/0/mtwatch/7' to xenstore before the insertion
->>> of '/local/domain/7'. When the domid=7 is destroyed, the last xenstore
->>> operation by xen toolstack is to remove '/local/domain/0/mtwatch/7'.
->>>
->>> The dom0 kernel subscribes a watch at node '/local/domain/0/mtwatch'.  Kernel
->>> thread [xen-mtwatch-7] is created when '/local/domain/0/mtwatch/7' is inserted,
->>> while this kernel thread is destroyed when the corresponding xenstore node is
->>> removed.
+Hi,
+
+On 04/24/2018 10:40 AM, Stewart Smith wrote:
+> Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> writes:
+>> gpstate_timer_handler() uses synchronous smp_call to set the pstate
+>> on the requested core. This causes the below hard lockup:
 >>
->> Instead of inventing yet another node, can you not watch /local/domain
->> directly?
+>> [c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
+>> [c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
+>> [c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
+>> [c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
+>> [c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
+>> [c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
+>> [c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
+>> [c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
+>> [c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
+>> [c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
+>> --- interrupt: 901 at doorbell_global_ipi+0x34/0x50
+>> LR = arch_send_call_function_ipi_mask+0x120/0x130
+>> [c000003fe566ba50] [c00000000004876c] arch_send_call_function_ipi_mask+0x4c/0x130 (unreliable)
+>> [c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
+>> [c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
+>> [c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
+>> [c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
+>> [c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
+>> [c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
+>> [c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
+>>
+>> Fix this by using the asynchronus smp_call in the timer interrupt handler.
+>> We don't have to wait in this handler until the pstates are changed on
+>> the core. This change will not have any impact on the global pstate
+>> ramp-down algorithm.
+>>
+>> Reported-by: Nicholas Piggin <npiggin@gmail.com>
+>> Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
+>> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+>> ---
+>>  drivers/cpufreq/powernv-cpufreq.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+>> index 0591874..7e0c752 100644
+>> --- a/drivers/cpufreq/powernv-cpufreq.c
+>> +++ b/drivers/cpufreq/powernv-cpufreq.c
+>> @@ -721,7 +721,7 @@ void gpstate_timer_handler(struct timer_list *t)
+>>  	spin_unlock(&gpstates->gpstate_lock);
+>>
+>>  	/* Timer may get migrated to a different cpu on cpu hot unplug */
+>> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
+>> +	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 0);
+>>  }
 > 
-> Would you like to watch at /local/domain directly? Or is your question "is there
-> any other way to not watch at /local/domain, while no extra xenstore node will
-> be introduced"?
+> Should this have:
+> Fixes: eaa2c3aeef83f
+> and CC stable v4.7+ ?
 > 
-> Actually, the first prototype of this idea was to watch at /local/domain
-> directly to get aware of the domU create/destroy, so that xen toolstack will not
-> get involved. Joao Martins (CCed) had a concern on the performance as watching
-> at /local/domain would lead to large amount of xenwatch events.
 
-That's what the special watches "@introduceDomain" and "@releaseDomain"
-are meant for.
+Yeah this is required.
 
+Fixes: eaa2c3aeef83 (cpufreq: powernv: Ramp-down global pstate slower than
+local-pstate)
 
-Juergen
+Thanks and Regards,
+Shilpa
