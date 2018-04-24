@@ -1,74 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeDXR6I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:58:08 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40324 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbeDXR6F (ORCPT
+        id S1751655AbeDXSAG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 14:00:06 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36185 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751003AbeDXSAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:58:05 -0400
-X-Google-Smtp-Source: AB8JxZrTGALMszxw8m9M4gJEh5fbKxmCWD78DBmRwcZrFd7epyeir92uDAPpZGlliTx1YeNOxZQM5TgEiAvHJ/iuusw=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180424.135651.492329246141701047.davem@davemloft.net>
-References: <20180423133015.5455-1-dh.herrmann@gmail.com> <20180423133015.5455-3-dh.herrmann@gmail.com>
- <CAHC9VhSv6tacFb+nEs1cCUOj52Vu+wXD6ZPZ1r1W4pYXo0VJMQ@mail.gmail.com> <20180424.135651.492329246141701047.davem@davemloft.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 24 Apr 2018 13:58:02 -0400
-Message-ID: <CAHC9VhQ1-QxRiS=wutRH4TCu-ZizxLEYF9HOqMsYWKuKXwNs+w@mail.gmail.com>
-Subject: Re: [PATCH 2/3] net/unix: hook unix_socketpair() into LSM
-To: David Miller <davem@davemloft.net>
-Cc: dh.herrmann@gmail.com, linux-kernel@vger.kernel.org,
-        James Morris <jmorris@namei.org>, teg@jklm.no,
-        Stephen Smalley <sds@tycho.nsa.gov>, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com,
-        netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 24 Apr 2018 14:00:03 -0400
+X-Google-Smtp-Source: AIpwx4/KKYf5zNe3KQdrQ2OE+aL/PfnVetjLy6eb8IKXoZCVoNEF6nrbNoDKHbIw8x5Dciq29sMvOg==
+From: Ahmed Abdelsalam <amsalam20@gmail.com>
+To: davem@davemloft.net, dav.lebrun@gmail.com, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Ahmed Abdelsalam <amsalam20@gmail.com>
+Subject: [net-next v2] ipv6: sr: Compute flowlabel for outer IPv6 header of seg6 encap mode
+Date: Tue, 24 Apr 2018 19:59:55 +0200
+Message-Id: <1524592795-1467-1-git-send-email-amsalam20@gmail.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 1:56 PM, David Miller <davem@davemloft.net> wrote:
-> From: Paul Moore <paul@paul-moore.com>
-> Date: Tue, 24 Apr 2018 13:55:31 -0400
->
->> On Mon, Apr 23, 2018 at 9:30 AM, David Herrmann <dh.herrmann@gmail.com> wrote:
->>> Use the newly created LSM-hook for unix_socketpair(). The default hook
->>> return-value is 0, so behavior stays the same unless LSMs start using
->>> this hook.
->>>
->>> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
->>> ---
->>>  net/unix/af_unix.c | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
->>> index 68bb70a62afe..bc9705ace9b1 100644
->>> --- a/net/unix/af_unix.c
->>> +++ b/net/unix/af_unix.c
->>> @@ -1371,6 +1371,11 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
->>>  static int unix_socketpair(struct socket *socka, struct socket *sockb)
->>>  {
->>>         struct sock *ska = socka->sk, *skb = sockb->sk;
->>> +       int err;
->>> +
->>> +       err = security_unix_stream_socketpair(ska, skb);
->>> +       if (err)
->>> +               return err;
->>
->> I recognize that AF_UNIX is really the only protocol that supports
->> socketpair(2) at the moment, but I like to avoid protocol specific LSM
->> hooks whenever possible.  Unless someone can think of a good
->> objection, I would prefer to see the hook placed in __sys_socketpair()
->> instead (and obviously drop the "unix_stream" portion from the hook
->> name).
->
-> The counterargument is that after 30 years no other protocol has grown
-> usage of this operation. :-)
+ECMP (equal-cost multipath) hashes are typically computed on the packets'
+5-tuple(src IP, dst IP, src port, dst port, L4 proto).
 
-Call me a an optimist ;)
+For encapsulated packets, the L4 data is not readily available and ECMP
+hashing will often revert to (src IP, dst IP). This will lead to traffic
+polarization on a single ECMP path, causing congestion and waste of network
+capacity.
 
+In IPv6, the 20-bit flow label field is also used as part of the ECMP
+hash. In the lack of L4 data, the hashing will be on (src IP, dst IP,
+flow label). Having a non-zero flow label is thus important for proper
+traffic load balancing when L4 data is unavailable (i.e., when packets
+are encapsulated).
+
+Currently, the seg6_do_srh_encap() function extracts the original packet's
+flow label and set it as the outer IPv6 flow label. There are two issues
+with this behaviour:
+
+a) There is no guarantee that the inner flow label is set by the source.
+
+b) If the original packet is not IPv6, the flow label will be set to
+zero (e.g., IPv4 or L2 encap).
+
+This patch adds a function, named seg6_make_flowlabel(), that computes a
+flow label from a given skb. It supports IPv6, IPv4 and L2 payloads, and
+leverages the per namespace 'seg6_flowlabel" sysctl value.
+
+The currently support behaviours are as follows:
+-1 set flowlabel to zero.
+ 0 copy flowlabel from Inner paceket in case of Inner IPv6
+   (Set flowlabel to 0 in case IPv4/L2)
+ 1 Compute the flowlabel using seg6_make_flowlabel()
+
+This patch has been tested for IPv6, IPv4, and L2 traffic.
+
+Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+---
+ include/net/netns/ipv6.h   |  1 +
+ net/ipv6/seg6_iptunnel.c   | 24 ++++++++++++++++++++++--
+ net/ipv6/sysctl_net_ipv6.c |  8 ++++++++
+ 3 files changed, 31 insertions(+), 2 deletions(-)
+
+diff --git a/include/net/netns/ipv6.h b/include/net/netns/ipv6.h
+index 97b3a54..c978a31 100644
+--- a/include/net/netns/ipv6.h
++++ b/include/net/netns/ipv6.h
+@@ -43,6 +43,7 @@ struct netns_sysctl_ipv6 {
+ 	int max_hbh_opts_cnt;
+ 	int max_dst_opts_len;
+ 	int max_hbh_opts_len;
++	int seg6_flowlabel;
+ };
+ 
+ struct netns_ipv6 {
+diff --git a/net/ipv6/seg6_iptunnel.c b/net/ipv6/seg6_iptunnel.c
+index 5fe1394..3d9cd86 100644
+--- a/net/ipv6/seg6_iptunnel.c
++++ b/net/ipv6/seg6_iptunnel.c
+@@ -91,6 +91,24 @@ static void set_tun_src(struct net *net, struct net_device *dev,
+ 	rcu_read_unlock();
+ }
+ 
++/* Compute flowlabel for outer IPv6 header */
++__be32 seg6_make_flowlabel(struct net *net, struct sk_buff *skb,
++			   struct ipv6hdr *inner_hdr)
++{
++	int do_flowlabel = net->ipv6.sysctl.seg6_flowlabel;
++	__be32 flowlabel = 0;
++	u32 hash;
++
++	if (do_flowlabel > 0) {
++		hash = skb_get_hash(skb);
++		rol32(hash, 16);
++		flowlabel = (__force __be32)hash & IPV6_FLOWLABEL_MASK;
++	} else if (!do_flowlabel && skb->protocol == htons(ETH_P_IPV6)) {
++		flowlabel = ip6_flowlabel(inner_hdr);
++	}
++	return flowlabel;
++}
++
+ /* encapsulate an IPv6 packet within an outer IPv6 header with a given SRH */
+ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
+ {
+@@ -99,6 +117,7 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
+ 	struct ipv6hdr *hdr, *inner_hdr;
+ 	struct ipv6_sr_hdr *isrh;
+ 	int hdrlen, tot_len, err;
++	__be32 flowlabel;
+ 
+ 	hdrlen = (osrh->hdrlen + 1) << 3;
+ 	tot_len = hdrlen + sizeof(*hdr);
+@@ -119,12 +138,13 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
+ 	 * decapsulation will overwrite inner hlim with outer hlim
+ 	 */
+ 
++	flowlabel = seg6_make_flowlabel(net, skb, inner_hdr);
+ 	if (skb->protocol == htons(ETH_P_IPV6)) {
+ 		ip6_flow_hdr(hdr, ip6_tclass(ip6_flowinfo(inner_hdr)),
+-			     ip6_flowlabel(inner_hdr));
++			     flowlabel);
+ 		hdr->hop_limit = inner_hdr->hop_limit;
+ 	} else {
+-		ip6_flow_hdr(hdr, 0, 0);
++		ip6_flow_hdr(hdr, 0, flowlabel);
+ 		hdr->hop_limit = ip6_dst_hoplimit(skb_dst(skb));
+ 	}
+ 
+diff --git a/net/ipv6/sysctl_net_ipv6.c b/net/ipv6/sysctl_net_ipv6.c
+index 6fbdef6..e15cd37 100644
+--- a/net/ipv6/sysctl_net_ipv6.c
++++ b/net/ipv6/sysctl_net_ipv6.c
+@@ -152,6 +152,13 @@ static struct ctl_table ipv6_table_template[] = {
+ 		.extra1		= &zero,
+ 		.extra2		= &one,
+ 	},
++	{
++		.procname	= "seg6_flowlabel",
++		.data		= &init_net.ipv6.sysctl.seg6_flowlabel,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec
++	},
+ 	{ }
+ };
+ 
+@@ -217,6 +224,7 @@ static int __net_init ipv6_sysctl_net_init(struct net *net)
+ 	ipv6_table[12].data = &net->ipv6.sysctl.max_dst_opts_len;
+ 	ipv6_table[13].data = &net->ipv6.sysctl.max_hbh_opts_len;
+ 	ipv6_table[14].data = &net->ipv6.sysctl.multipath_hash_policy,
++	ipv6_table[15].data = &net->ipv6.sysctl.seg6_flowlabel;
+ 
+ 	ipv6_route_table = ipv6_route_sysctl_init(net);
+ 	if (!ipv6_route_table)
 -- 
-paul moore
-www.paul-moore.com
+2.1.4
