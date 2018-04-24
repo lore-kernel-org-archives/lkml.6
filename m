@@ -1,55 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751213AbeDXQ2D (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:28:03 -0400
-Received: from mga06.intel.com ([134.134.136.31]:16170 "EHLO mga06.intel.com"
+        id S1751726AbeDXQ3R (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:29:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41093 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751053AbeDXQ17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:27:59 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,323,1520924400";
-   d="scan'208";a="48731752"
-Date: Tue, 24 Apr 2018 19:27:52 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterhuewe@gmx.de, tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
-        patrickc@us.ibm.com
-Subject: Re: [PATCH v2 1/2] tpm: reduce poll sleep time in tpm_transmit()
-Message-ID: <20180424162752.GC5119@linux.intel.com>
-References: <20180417131246.434-1-nayna@linux.vnet.ibm.com>
- <20180417131246.434-2-nayna@linux.vnet.ibm.com>
+        id S1751047AbeDXQ3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:29:13 -0400
+Date: Tue, 24 Apr 2018 10:29:06 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v3] kvmalloc: always use vmalloc if CONFIG_DEBUG_SG
+Message-ID: <20180424162906.GM17484@dhcp22.suse.cz>
+References: <20180420130852.GC16083@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180420210200.GH10788@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180421144757.GC14610@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180423151545.GU17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424125121.GA17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180417131246.434-2-nayna@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 09:12:45AM -0400, Nayna Jain wrote:
-> The TPM polling code in tpm_transmit sleeps in each loop iteration for
-> 5 msecs. However, the TPM might return earlier, and thus waiting for
-> 5 msecs adds an unnecessary delay. This patch reduces the polling sleep
-> time in tpm_transmit() from 5 msecs to 1 msecs.
-
-I'm not sure what TPM returning earlier has to do with this. TPM probably
-never returns exactly in the spec defined timeout/duration. I just don't
-understand reasoning in this paragraph.
-
-> Additionally, this patch renames TPM_POLL_SLEEP and moves it to tpm.h as
-> an enum value.
+On Tue 24-04-18 11:50:30, Mikulas Patocka wrote:
 > 
-> After this change, performance on a TPM 1.2 with an 8 byte burstcount
-> for 1000 extends improved from ~14 sec to ~10.7 sec.
+> 
+> On Tue, 24 Apr 2018, Michal Hocko wrote:
+> 
+> > On Mon 23-04-18 20:06:16, Mikulas Patocka wrote:
+> > [...]
+> > > @@ -404,6 +405,12 @@ void *kvmalloc_node(size_t size, gfp_t f
+> > >  	 */
+> > >  	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+> > >  
+> > > +#ifdef CONFIG_DEBUG_SG
+> > > +	/* Catch bugs when the caller uses DMA API on the result of kvmalloc. */
+> > > +	if (!(prandom_u32_max(2) & 1))
+> > > +		goto do_vmalloc;
+> > > +#endif
+> > 
+> > I really do not think there is anything DEBUG_SG specific here. Why you
+> > simply do not follow should_failslab path or even reuse the function?
+> 
+> CONFIG_DEBUG_SG is enabled by default in RHEL and Fedora debug kernel (if 
+> you don't like CONFIG_DEBUG_SG, pick any other option that is enabled 
+> there).
 
-You cannot give absolute numbers without a context (platform, software).
+Are you telling me that you are shaping a debugging functionality basing
+on what RHEL has enabled? And you call me evil. This is just rediculous.
 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Fail-injection framework is if off by default and it must be explicitly 
+> enabled and configured by the user - and most users won't enable it.
 
-/Jarkko
+It can be enabled easily. And if you care enough for your debugging
+kernel then just make it enabled unconditionally.
+-- 
+Michal Hocko
+SUSE Labs
