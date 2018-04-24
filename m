@@ -1,204 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756761AbeDXK6Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 06:58:24 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:48926 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756013AbeDXK6W (ORCPT
+        id S1756773AbeDXLET (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 07:04:19 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47901 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751436AbeDXLEQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 06:58:22 -0400
-Subject: Re: [RFC 06/10] misc: pci_endpoint_test: Add MSI-X support
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "adouglas@cadence.com" <adouglas@cadence.com>,
-        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
-        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
- <8b88f8c2b766f36c71659deb0fce635154b2b39f.1523379766.git.gustavo.pimentel@synopsys.com>
- <b25dcfb1-e770-e302-d9aa-7c35f6c58fa5@ti.com>
- <c6d1d492-38a0-6a03-7e61-b8b50226734b@synopsys.com>
- <a982ca92-d34c-12ea-30bf-9a9b1661d50d@ti.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <2bd77bf2-1d64-6043-422a-6a96c1a3d3a4@synopsys.com>
-Date: Tue, 24 Apr 2018 11:57:09 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 24 Apr 2018 07:04:16 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180424110414euoutp01580da176995169fa0b098cb058e84317~oWmLRAfW01015110151euoutp01g
+X-AuditID: cbfec7f5-b5fff700000028a9-1c-5adf0f2beae2
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org
+Subject: Re: [PATCH 10/15] ata: pata_pxa: remove the dmaengine compat need
+Date: Tue, 24 Apr 2018 13:04:07 +0200
+Message-ID: <2592887.EUCMT0tEEq@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-Reply-To: <87sh7oxsn8.fsf@belgarion.home>
 MIME-Version: 1.0
-In-Reply-To: <a982ca92-d34c-12ea-30bf-9a9b1661d50d@ti.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmleLIzCtJLcpLzFFi42LZduzneV1t/vtRBiuOaln8nXSM3WLT42us
+        Fsd2PGKyuLxrDpvFrDfCDqwev39NYvToX/eZ1WPzknqPz5vkAliiuGxSUnMyy1KL9O0SuDLu
+        Hf3JXnCDteLypX6WBsYrLF2MHBwSAiYSj8/HdzFycggJrGCUuP/bsYuRC8j+wiix4MpqRgjn
+        M6NEx547rCBVIA1NJ2+xQSSWM0ocautmhXA+MEqsPjWbEaSKTcBKYmL7KkaQFSIC2hI3t/mD
+        1DALNDFKvHu6mwmkRljAS6Lpzzd2EJtFQFXiz+W9bCA2r4CmxMl3y5hBbFGgmi372sHqOQV0
+        JFa+fsYKUSMocXLmExYQm1lAXqLjciPYERIC7ewSe+/uZII41UXi6o8TLBC2sMSr41vYIWwZ
+        idOTe1ggGpoZJb7t2MMMkZjAKLFnvRCEbS1x+PhFVpAPmIEuWr9LHyJsK3Fm6Vc2SNjxSdx4
+        KwhxA5/EpG3TmSHCvBIdbVBD1CQ2LNvABrO1a+dKqBIPif6X0hMYlWYheWYWkmdmIaxdwMi8
+        ilE8tbQ4Nz212DgvtVyvODG3uDQvXS85P3cTIzCJnP53/OsOxn1/kg4xCnAwKvHw/vh9N0qI
+        NbGsuDL3EKMEB7OSCO9euXtRQrwpiZVVqUX58UWlOanFhxilOViUxHnjNOqihATSE0tSs1NT
+        C1KLYLJMHJxSDYybDT/o/tuY0mX8qHeRTI+iYcrceTb3zijNzRTVeOcadPpAa/DErPml7Rsi
+        DU6t9p1yx+OHVNWyX0cOzoqtXP3/3f5Tx4W4M4T+bgl60vX2t0zIVrP7Z3YZ2W3eF/yrYIfu
+        hsfb7y+RdakTDjj+/PtzVVMdpsPLNLfzPki7zfMibGXIi1oHczMzJZbijERDLeai4kQAuf1t
+        QB4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsVy+t/xu7pa/PejDLZuYrf4O+kYu8Wmx9dY
+        LY7teMRkcXnXHDaLWW+EHVg9fv+axOjRv+4zq8fmJfUenzfJBbBE6dkU5ZeWpCpk5BeX2CpF
+        G1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GXcO/qTveAGa8XlS/0sDYxXWLoY
+        OTkkBEwkmk7eYuti5OIQEljKKDHtey9jFyMHUEJG4vj6MogaYYk/17qgat4xSiw9dZwNJMEm
+        YCUxsX0VWL2IgLbEzW3+IGFmgQZGiU8bw0BsYQEviaY/39hBbBYBVYk/l/eCtfIKaEqcfLeM
+        GcQWBarZsq+dCcTmFNCRWPn6GSvErrWMErtfX2OCaBCUODnzCQvEAnmJjsuNrBC2jsSC3Z/Y
+        JjAKzkJSNgtJ2SwkZQsYmVcxiqSWFuem5xYb6RUn5haX5qXrJefnbmIERsi2Yz+37GDsehd8
+        iFGAg1GJh/fH77tRQqyJZcWVuYcYJTiYlUR498rdixLiTUmsrEotyo8vKs1JLT7EaAr03URm
+        KdHkfGD05pXEG5oamltYGpobmxubWSiJ8543qIwSEkhPLEnNTk0tSC2C6WPi4JRqYFTad/l+
+        0YXVB9UNa/dxSH0uOtOwmNltTrPO4Y1P7O0Dnt1/lVK9Ua/YbIPfNyVnxth0tY6U3rviv0Ju
+        /PN84xvs1Kd70db4cbXwn+KZ97jZ/O/92zPhWu0SkdK9/N1as+wKeyPlHTm8mRY8f96XKfKC
+        ffnK/NLMgO/sBRHzc7au+twpPOeHoxJLcUaioRZzUXEiANZgVjmmAgAA
+X-CMS-MailID: 20180424110410eucas1p23be5bb2327efdf30271ba209fb842c64
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180424110410eucas1p23be5bb2327efdf30271ba209fb842c64
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180421193220epcas1p37073b0047d529bcc888233af6200ae35
+X-RootMTR: 20180421193220epcas1p37073b0047d529bcc888233af6200ae35
+References: <20180402142656.26815-1-robert.jarzmik@free.fr>
+        <CGME20180421193220epcas1p37073b0047d529bcc888233af6200ae35@epcas1p3.samsung.com>
+        <87sh7oxsn8.fsf@belgarion.home>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
-
-On 24/04/2018 08:19, Kishon Vijay Abraham I wrote:
-> Hi,
+On Saturday, April 21, 2018 09:32:11 PM Robert Jarzmik wrote:
+> Robert Jarzmik <robert.jarzmik@free.fr> writes:
 > 
-> On Tuesday 17 April 2018 11:08 PM, Gustavo Pimentel wrote:
->> Hi Kishon,
->>
->> On 17/04/2018 11:33, Kishon Vijay Abraham I wrote:
->>> Hi,
->>>
->>> On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
->>>> Adds the MSI-X support and updates driver documentation accordingly.
->>>>
->>>> Changes the driver parameter in order to allow the interruption type
->>>> selection.
->>>>
->>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->>>> ---
->>>>  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
->>>>  drivers/misc/pci_endpoint_test.c                 | 102 +++++++++++++++++------
->>>>  2 files changed, 79 insertions(+), 26 deletions(-)
->>>>
->>>> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
->>>> index 4ebc359..fdfa0f6 100644
->>>> --- a/Documentation/misc-devices/pci-endpoint-test.txt
->>>> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
->>>> @@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
->>>>  	*) verifying addresses programmed in BAR
->>>>  	*) raise legacy IRQ
->>>>  	*) raise MSI IRQ
->>>> +	*) raise MSI-X IRQ
->>>>  	*) read data
->>>>  	*) write data
->>>>  	*) copy data
->>>> @@ -25,6 +26,8 @@ ioctl
->>>>   PCITEST_LEGACY_IRQ: Tests legacy IRQ
->>>>   PCITEST_MSI: Tests message signalled interrupts. The MSI number
->>>>  	      to be tested should be passed as argument.
->>>> + PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
->>>> +	      to be tested should be passed as argument.
->>>>   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
->>>>  		as argument.
->>>>   PCITEST_READ: Perform read tests. The size of the buffer should be passed
->>>> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
->>>> index 37db0fc..a7d9354 100644
->>>> --- a/drivers/misc/pci_endpoint_test.c
->>>> +++ b/drivers/misc/pci_endpoint_test.c
->>>> @@ -42,11 +42,16 @@
->>>>  #define PCI_ENDPOINT_TEST_COMMAND	0x4
->>>>  #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
->>>>  #define COMMAND_RAISE_MSI_IRQ		BIT(1)
->>>> -#define MSI_NUMBER_SHIFT		2
->>>> -/* 6 bits for MSI number */
->>>> -#define COMMAND_READ                    BIT(8)
->>>> -#define COMMAND_WRITE                   BIT(9)
->>>> -#define COMMAND_COPY                    BIT(10)
->>>> +#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
->>>> +#define IRQ_TYPE_SHIFT			3
->>>> +#define IRQ_TYPE_LEGACY			0
->>>> +#define IRQ_TYPE_MSI			1
->>>> +#define IRQ_TYPE_MSIX			2
->>>> +#define MSI_NUMBER_SHIFT		5
->>>
->>> Now that you are anyways fixing this, add a new register entry for MSI numbers.
->>> Let's not keep COMMAND and MSI's together.
->>
->> What you suggest?
+> > As the pxa architecture switched towards the dmaengine slave map, the
+> > old compatibility mechanism to acquire the dma requestor line number and
+> > priority are not needed anymore.
+> >
+> > This patch simplifies the dma resource acquisition, using the more
+> > generic function dma_request_slave_channel().
+> >
+> > Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 > 
-> #define PCI_ENDPOINT_TEST_COMMAND	0x4
-> #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
-> #define COMMAND_RAISE_MSI_IRQ		BIT(1)
-> #define COMMAND_RAISE_MSIX_IRQ		BIT(2)
-> #define COMMAND_READ                    BIT(3)
-> #define COMMAND_WRITE                   BIT(4)
-> #define COMMAND_COPY                    BIT(5)
-> 
-> #define PCI_ENDPOINT_TEST_STATUS	0x8
-> #define STATUS_READ_SUCCESS             BIT(0)
-> #define STATUS_READ_FAIL                BIT(1)
-> #define STATUS_WRITE_SUCCESS            BIT(2)
-> #define STATUS_WRITE_FAIL               BIT(3)
-> #define STATUS_COPY_SUCCESS             BIT(4)
-> #define STATUS_COPY_FAIL                BIT(5)
-> #define STATUS_IRQ_RAISED               BIT(6)
-> #define STATUS_SRC_ADDR_INVALID         BIT(7)
-> #define STATUS_DST_ADDR_INVALID         BIT(8)
-> 
-> #define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0xc
-> #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
-> 
-> #define PCI_ENDPOINT_TEST_LOWER_DST_ADDR	0x14
-> #define PCI_ENDPOINT_TEST_UPPER_DST_ADDR	0x18
-> 
-> #define PCI_ENDPOINT_TEST_SIZE		0x1c
-> #define PCI_ENDPOINT_TEST_CHECKSUM	0x20
-> 
-> #define PCI_ENDPOINT_TEST_MSI_NUMBER	0x24
+> Bartlomiej, could I have your ack please ?
 
-Ok. I will do it.
+Sure.
 
-> 
-> We should try not to modify either the existing register offsets or the bit
-> fields within these registers in the future as EP and RC will be running on
-> different systems and it is possible one of them might not have the updated
-> kernel.
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-I totally agree.
-
->>
->>>> +/* 12 bits for MSI number */
->>>> +#define COMMAND_READ                    BIT(17)
->>>> +#define COMMAND_WRITE                   BIT(18)
->>>> +#define COMMAND_COPY                    BIT(19)
->>>
->>> This change should be done along with the pci-epf-test in a single patch.
->>
->> To be clear, you're saying is this patch should be just be squashed into the
->> patch number 8 [1], because there is a lot of dependencies namely the defines,
->> that is used on the alter functions.
->>
->> [1] -> https://urldefense.proofpoint.com/v2/url?u=https-3A__patchwork.ozlabs.org_patch_896841_&d=DwIC-g&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=8urVwHCybXa1XMxsEbwHZAzzaEI_HJGXqmWgXpXb9TY&s=MRVr2YPY2Bk_WNFOxBfU4FGrFReTKdPhfzNDLiVxDbs&e=
-> 
-> yeah. We have to make sure git bisect doesn't break functionality.
-
-Ok, it'll be squashed.
-
->>
->>>>  
->>>>  #define PCI_ENDPOINT_TEST_STATUS	0x8
->>>>  #define STATUS_READ_SUCCESS             BIT(0)
->>>> @@ -73,9 +78,9 @@ static DEFINE_IDA(pci_endpoint_test_ida);
->>>>  #define to_endpoint_test(priv) container_of((priv), struct pci_endpoint_test, \
->>>>  					    miscdev)
->>>>  
->>>> -static bool no_msi;
->>>> -module_param(no_msi, bool, 0444);
->>>> -MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
->>>
->>> Let's not remove this just to make sure existing users doesn't get affected.
->>
->> Hum, by making an internal conversion? Like this
->> no_msi = false <=> irq_type = 1
->> no_msi = true <=> irq_type = 0
-> 
-Disregard previous comment, it doesn't make sense. I don't know where my head was.
-
-It will be like this on probe:
-
-if (no_msi)
-	irq_type = IRQ_TYPE_LEGACY;
-
-However since we are breaking the compatibility on terms of MSI/MSI-X
-bits/registers (discussion on the top), it makes sense to keep the compatibility
-on this parameter?
-
-> yeah..
-> 
-> Thanks
-> Kishon
-> 
-
-Regards,
-Gustavo
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
