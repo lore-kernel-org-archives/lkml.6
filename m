@@ -1,136 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756911AbeDXJ6P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:58:15 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44047 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756841AbeDXJ6K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:58:10 -0400
-X-Google-Smtp-Source: AIpwx48+ut8Equ6WLV2EaHwtZnSH+NOyAdE/rn08onBZ8HGCO3FgK4cK3eUOu0d1ez5YbY/YykChuXk6ihdr9fSaHGA=
+        id S1756614AbeDXJ71 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:59:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41275 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754189AbeDXJ7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 05:59:25 -0400
+Date: Tue, 24 Apr 2018 11:59:14 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: wens@csie.org, clabbe@baylibre.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM64: dts: allwinner: Add dts file for Libre
+ Computer Board ALL-H3-CC H5 ver.
+Message-ID: <20180424095914.cs362x4zdwxzo6ru@flea>
+References: <1524561576-2201-1-git-send-email-narmstrong@baylibre.com>
+ <1524561576-2201-3-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-References: <20180412101350.210547-1-tweek@google.com> <20180412101350.210547-2-tweek@google.com>
- <20180417030202.GA30624@ziepe.ca> <CA+zpnLdU=t6eOY9GOLAyiXkZBw=NueckiejHSexd8P7MKYuRww@mail.gmail.com>
- <20180417140013.GA2029@ziepe.ca> <CA+zpnLePcFJQURBNZEt=mRSRb9GUYR=1t9EQn82W0+311xKZ7w@mail.gmail.com>
- <20180420145740.GC30433@ziepe.ca> <CA+zpnLcSDTz99Z4fe4CGxH6RzTGvQCoGqQc4p_EMOj9=cuFQgg@mail.gmail.com>
- <20180423100629.effueb6i7q3hmhu3@ltop.local>
-In-Reply-To: <20180423100629.effueb6i7q3hmhu3@ltop.local>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Tue, 24 Apr 2018 09:57:58 +0000
-Message-ID: <CA+zpnLeJ_aKnmiQaOwRERj43uAFSaJQsWnSKJVzsJJB0VW-52w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] tpm: Add explicit endianness cast
-To: luc.vanoostenryck@gmail.com
-Cc: jgg@ziepe.ca, Christopher Li <sparse@chrisli.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
-        josh@joshtriplett.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="huulggejdgptj5ba"
+Content-Disposition: inline
+In-Reply-To: <1524561576-2201-3-git-send-email-narmstrong@baylibre.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 12:06 PM Luc Van Oostenryck <
-luc.vanoostenryck@gmail.com> wrote:
 
-> On Mon, Apr 23, 2018 at 09:22:06AM +0000, Thiebaud Weksteen wrote:
-> > On Fri, Apr 20, 2018 at 4:57 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > > On Thu, Apr 19, 2018 at 01:09:12PM +0000, Thiebaud Weksteen wrote:
-> > > > On Tue, Apr 17, 2018 at 4:00 PM Jason Gunthorpe <jgg@ziepe.ca>
-wrote:
-> > > >
-> > > > > On Tue, Apr 17, 2018 at 08:32:33AM +0000, Thiebaud Weksteen wrote:
-> > > > > > On Tue, Apr 17, 2018 at 5:02 AM Jason Gunthorpe <jgg@ziepe.ca>
-> > wrote:
-> > > > > >
-> > > > > > > On Thu, Apr 12, 2018 at 12:13:47PM +0200, Thiebaud Weksteen
-wrote:
-> > > > > > > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > > > > > > >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
-> > > > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > > > index 96fd5646f866..d74568d58a66 100644
-> > > > > > > > +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> > > > > > > > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
-> > > > > > > >        * but physical tpm needs the conversion.
-> > > > > > > >        */
-> > > > > > > >       if (of_property_match_string(np, "compatible",
-> > "IBM,vtpm") <
-> > > > 0) {
-> > > > > > > > -             size = be32_to_cpup(sizep);
-> > > > > > > > -             base = be64_to_cpup(basep);
-> > > > > > > > +             size = be32_to_cpup((__be32 *)sizep);
-> > > > > > > > +             base = be64_to_cpup((__be64 *)basep);
-> > > > > >
-> > > > > > > Er, no.. change the definitions of sizep and basep to be __be
-> > > > > >
-> > > > > > > Jason
-> > > > > >
-> > > > > > Please read the comment before the condition. sizep and
-> > > > > > basep may contain either little endian or big endian and this
-block
-> > is
-> > > > used
-> > > > > > to adjust that. Let me know if there is a better way for
-handling
-> > this.
-> > > >
-> > > > > Well a cast like that will throw sparse warnings, you need
-__force at
-> > > > > least
-> > > >
-> > > > I don't think so. Since the variable is only defined as u32*, no
-> > specific
-> > > > warning is generated. I've used `make C=2 drivers/char/tpm/` with
-this
-> > > > patch applied and no new warning is being triggered.
+--huulggejdgptj5ba
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Interesting.
+Hi,
 
-> > > I'm surprised to hear you say that..
+On Tue, Apr 24, 2018 at 11:19:36AM +0200, Neil Armstrong wrote:
+> The Libre Computer Board ALL-H3-CC from Libre Technology is a Raspberry
+> Pi B+ form factor single board computer based on the Allwinner H2+, H3, o=
+r H5
+> SoCs with the same PCB.
+> The board has 1GB DDR3 SDRAM, provided by 4 2Gb chips. The mounting holes
+> and connectors are in the exact same position as on the Raspberry Pi B+.
+>=20
+> This patch enables the H5 variant using the H3 board definition moved to
+> a common dtsi in an earlier patch. The dts simply include the common dtsi
+> and declares the correct compatible and model of the H5 variant.
+>=20
+> Suggested-by: Corentin Labbe <clabbe@baylibre.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-> Same for me.
+prefix should be "arm64: dts: allwinner"
 
-> > > Sparse is supposed to require force on all cast that change the
-> > > annotation, and there are many examples in the kernel that have force
-> > > in that case.
+You had this issue with the first patch as well, your commit log
+should be wrapped, checkpatch complains at the moment.
 
+Maxime
 
-> Yes, sparse is supposed to warn in such cases and the __force is there
-> to quiets the warning when it is known that the cast is in fact correct.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--huulggejdgptj5ba
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > +linux-sparse@vger.kernel.org and sparse@chrisli.org for a sanity check.
-> >
-> > If you look at the man page of sparse, under the bitwise option, it
-states:
-> > "Sparse will warn on [...] any conversion of one restricted type into
-> > another, except via a cast that includes __attribute__((force)).". In
-our
-> > case, it is a conversion from unrestricted to restricted which does not
-> > fall in this category.
+-----BEGIN PGP SIGNATURE-----
 
-> The man page is not very clear here. It must be understood in the context
-> where each use of '__bitwise' will create a new *distinct* type.
-> Given this and the normal type checking, sparse should warn
-> "on any conversion of one restricted type into another *or* between a
-> restricted and the corresponding plain/unrestricted type" (or consider
-> that an 'unrestricted type' is 'a restricted type with no restriction',
-> which is, I think, what was meant here).
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlre//EACgkQ0rTAlCFN
+r3T4Ag//YfUqs9TN4iq3czTJJ3xKpE3wQSy/8wIsx+iq2OO8gHb6qREvzkEVqHMF
+CapBYefGdY1AQ/lwd4O2YCeZl7iFxXUdjwq/rDIcYQuB2uQ3NQ4fiLY6AHGkgW0w
+2pp7jRkt6t+EpJyC5pCVkjrjW21YUqylsM6iFv1IH/4eJH6apJnDoQOWxXR+500I
+WFlhc+pGTvUPl11ON2ZAXDD6bi5YIF3Y+AnsMZ68zePV07o3mI/8BXgjNrViMmVW
+3H7mI1PjpExEJ3kSABl/5+lU4x/pD/DAxfqiBdNZdOMRLEZBiMId6UeAm9W7gbBC
+MbfewY61AN19zRMCaZtZhiCeG/pOmqdh6dYo/31KlNXuQsyAVI66CyRl9V8Vvuu8
+z1jF0jxYiNCz8CebQ6PHixfQRDclwtJ2la3MwqJPYLfoNYYB2IbRjiab/yc3iTNx
+VxDZTvshGoh0+cL9FDGARa89FMsGHUf81hvQ5zvfT/lBk3Wo8WFCJHwA6/575C5P
+9TIgEUItUDpW4wfk0BD6rHp/Sb6KkThLzzz0d60Fyp2LBsra0cxkHnPf/ikIEAiL
+zb7xvif8Ee0nvlPx2qsPGPxHtyzESkfF99B1GAzO7l9WwieV/fOecwILs2YJ7m6H
+vAmxYlZMDYpa5HQ0LWBV86Twl2wQHz7E7kl/xK6Zf03eYW+Rp3k=
+=g2UV
+-----END PGP SIGNATURE-----
 
-
-Thanks for the explanation, that make sense. I believe the issue happens
-when dealing with restricted pointer types more than regular types. Also,
-this is not new and has probably been going on for the last 13 years. For
-instance, 81179bb6a54c2c626b4cbcc084ca974bb2d7f2a3 explicitly removed the
-__force attribute. I'll send a validation patch for sparse and update this
-patch.
-
-> The fact that sparse doesn't warn in your case is clearly a bug in
-> sparse's type checking.
-
-> Regards,
-> -- Luc Van Oostenryck
+--huulggejdgptj5ba--
