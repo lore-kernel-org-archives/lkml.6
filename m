@@ -1,72 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933737AbeDXOM3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:12:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44260 "EHLO mail.kernel.org"
+        id S933858AbeDXOMj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:12:39 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:27065 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933459AbeDXOJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:09:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7AD7217D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michael Ellerman <mpe@ellerman.id.au>, Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>
-Subject: [PATCH 05/10] ia64: Switch to generic local_softirq_pending() implementation
-Date: Tue, 24 Apr 2018 16:09:10 +0200
-Message-Id: <1524578955-8903-6-git-send-email-frederic@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524578955-8903-1-git-send-email-frederic@kernel.org>
-References: <1524578955-8903-1-git-send-email-frederic@kernel.org>
+        id S933391AbeDXOMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 10:12:37 -0400
+Subject: Re: [PATCH v3 01/19] powerpc/powermac: Mark variable x as unused
+To: Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20180328192717.656-1-malat@debian.org>
+ <20180404200746.27379-1-malat@debian.org>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <25e2ab60-2f1a-b491-3b3f-824cdaf1bfe3@c-s.fr>
+Date: Tue, 24 Apr 2018 16:12:35 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180404200746.27379-1-malat@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Benefit from the generic softirq mask implementation that rely on per-CPU
-mutators instead of working with raw operators on top of this_cpu_ptr().
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: James E.J. Bottomley <jejb@parisc-linux.org>
-Cc: Helge Deller <deller@gmx.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
----
- arch/ia64/include/asm/hardirq.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/ia64/include/asm/hardirq.h b/arch/ia64/include/asm/hardirq.h
-index 22fae71..ccde7c2 100644
---- a/arch/ia64/include/asm/hardirq.h
-+++ b/arch/ia64/include/asm/hardirq.h
-@@ -13,7 +13,7 @@
- 
- #define __ARCH_IRQ_STAT	1
- 
--#define local_softirq_pending()	(*this_cpu_ptr(&ia64_cpu_info.softirq_pending))
-+#define local_softirq_pending_ref	ia64_cpu_info.softirq_pending
- 
- #include <linux/threads.h>
- #include <linux/irq.h>
--- 
-2.7.4
+Le 04/04/2018 à 22:07, Mathieu Malaterre a écrit :
+> Since the value of x is never intended to be read, declare it with gcc
+> attribute as unused. Fix warning treated as error with W=1:
+> 
+>    arch/powerpc/platforms/powermac/bootx_init.c:471:21: error: variable ‘x’ set but not used [-Werror=unused-but-set-variable]
+> 
+> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+> v3: style: add missing empty line after declaration
+> v2: move x variable within its local scope
+> 
+>   arch/powerpc/platforms/powermac/bootx_init.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/platforms/powermac/bootx_init.c b/arch/powerpc/platforms/powermac/bootx_init.c
+> index c3c9bbb3573a..ba0964c17620 100644
+> --- a/arch/powerpc/platforms/powermac/bootx_init.c
+> +++ b/arch/powerpc/platforms/powermac/bootx_init.c
+> @@ -468,7 +468,7 @@ void __init bootx_init(unsigned long r3, unsigned long r4)
+>   	boot_infos_t *bi = (boot_infos_t *) r4;
+>   	unsigned long hdr;
+>   	unsigned long space;
+> -	unsigned long ptr, x;
+> +	unsigned long ptr;
+>   	char *model;
+>   	unsigned long offset = reloc_offset();
+>   
+> @@ -562,6 +562,8 @@ void __init bootx_init(unsigned long r3, unsigned long r4)
+>   	 * MMU switched OFF, so this should not be useful anymore.
+>   	 */
+>   	if (bi->version < 4) {
+> +		unsigned long x __maybe_unused;
+> +
+
+That's detail, but shouldn't it be marked __always_unused instead ?
+
+Christophe
+
+>   		bootx_printf("Touching pages...\n");
+>   
+>   		/*
+> 
