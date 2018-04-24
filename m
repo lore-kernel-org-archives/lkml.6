@@ -1,125 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756873AbeDXI2o (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:28:44 -0400
-Received: from mga05.intel.com ([192.55.52.43]:31745 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756144AbeDXI2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:28:38 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,321,1520924400";
-   d="scan'208";a="34818586"
-Date: Tue, 24 Apr 2018 11:28:32 +0300
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
+        id S1756838AbeDXI2P (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:28:15 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:45258 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756640AbeDXIYe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 04:24:34 -0400
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: Luca Ceresoli <luca@lucaceresoli.net>,
+        Leon Luo <leonl@leopardimaging.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>
-Subject: Re: [PATCH v2 02/10] media-request: Add a request complete operation
- to allow m2m scheduling
-Message-ID: <20180424082831.zfgzuvnop6md4iyf@paasikivi.fi.intel.com>
-References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
- <20180419154124.17512-3-paul.kocialkowski@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419154124.17512-3-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 06/13] media: imx274: remove non-indexed pointers from mode_table
+Date: Tue, 24 Apr 2018 10:24:11 +0200
+Message-Id: <1524558258-530-7-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524558258-530-1-git-send-email-luca@lucaceresoli.net>
+References: <1524558258-530-1-git-send-email-luca@lucaceresoli.net>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+mode_table[] has 3 members that are accessed based on their index, which
+makes worth using an array.
 
-On Thu, Apr 19, 2018 at 05:41:16PM +0200, Paul Kocialkowski wrote:
-> When using the request API in the context of a m2m driver, the
-> operations that come with a m2m run scheduling call in their
-> (m2m-specific) ioctl handler are delayed until the request is queued
-> (for instance, this includes queuing buffers and streamon).
-> 
-> Thus, the m2m run scheduling calls are not called in due time since the
-> request AP's internal plumbing will (rightfully) use the relevant core
-> functions directly instead of the ioctl handler.
-> 
-> This ends up in a situation where nothing happens if there is no
-> run-scheduling ioctl called after queuing the request.
-> 
-> In order to circumvent the issue, a new media operation is introduced,
-> called at the time of handling the media request queue ioctl. It gives
-> m2m drivers a chance to schedule a m2m device run at that time.
-> 
-> The existing req_queue operation cannot be used for this purpose, since
-> it is called with the request queue mutex held, that is eventually needed
-> in the device_run call to apply relevant controls.
+The other members are always accessed with a constant index. This added
+indirection gives no improvement and only makes code more verbose.
 
-Based on the description I'm not entirely sure what's the intent here.
+Remove these pointers from the array and access them directly.
 
-What would be the purpose for acquiring the request queue mutex during
-the execution of the request? It is only intended for serialising access to
-the request objects while the request is being validated and queued.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 
-If a driver does a significant amount of processing that is not related to
-managing the request as such, then one option could be to add a work queue
-for it.
+---
+Changed v1 -> v2:
+ - add "media: " prefix to commit message
+---
+ drivers/media/i2c/imx274.c | 25 ++++++-------------------
+ 1 file changed, 6 insertions(+), 19 deletions(-)
 
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/media/media-request.c | 3 +++
->  include/media/media-device.h  | 2 ++
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/drivers/media/media-request.c b/drivers/media/media-request.c
-> index 415f7e31019d..28ac5ccfe6a2 100644
-> --- a/drivers/media/media-request.c
-> +++ b/drivers/media/media-request.c
-> @@ -157,6 +157,9 @@ static long media_request_ioctl_queue(struct media_request *req)
->  		media_request_get(req);
->  	}
->  
-> +	if (mdev->ops->req_complete)
-> +		mdev->ops->req_complete(req);
-> +
->  	return ret;
->  }
->  
-> diff --git a/include/media/media-device.h b/include/media/media-device.h
-> index 07e323c57202..c7dcf2079cc9 100644
-> --- a/include/media/media-device.h
-> +++ b/include/media/media-device.h
-> @@ -55,6 +55,7 @@ struct media_entity_notify {
->   * @req_alloc: Allocate a request
->   * @req_free: Free a request
->   * @req_queue: Queue a request
-> + * @req_complete: Complete a request
->   */
->  struct media_device_ops {
->  	int (*link_notify)(struct media_link *link, u32 flags,
-> @@ -62,6 +63,7 @@ struct media_device_ops {
->  	struct media_request *(*req_alloc)(struct media_device *mdev);
->  	void (*req_free)(struct media_request *req);
->  	int (*req_queue)(struct media_request *req);
-> +	void (*req_complete)(struct media_request *req);
->  };
->  
->  /**
-> -- 
-> 2.16.3
-> 
-
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index 62a0d7af0e51..63fb94e7da37 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -144,12 +144,6 @@ enum imx274_mode {
+ 	IMX274_MODE_3840X2160,
+ 	IMX274_MODE_1920X1080,
+ 	IMX274_MODE_1280X720,
+-
+-	IMX274_MODE_START_STREAM_1,
+-	IMX274_MODE_START_STREAM_2,
+-	IMX274_MODE_START_STREAM_3,
+-	IMX274_MODE_START_STREAM_4,
+-	IMX274_MODE_STOP_STREAM
+ };
+ 
+ /*
+@@ -486,12 +480,6 @@ static const struct reg_8 *mode_table[] = {
+ 	[IMX274_MODE_3840X2160]		= imx274_mode1_3840x2160_raw10,
+ 	[IMX274_MODE_1920X1080]		= imx274_mode3_1920x1080_raw10,
+ 	[IMX274_MODE_1280X720]		= imx274_mode5_1280x720_raw10,
+-
+-	[IMX274_MODE_START_STREAM_1]	= imx274_start_1,
+-	[IMX274_MODE_START_STREAM_2]	= imx274_start_2,
+-	[IMX274_MODE_START_STREAM_3]	= imx274_start_3,
+-	[IMX274_MODE_START_STREAM_4]	= imx274_start_4,
+-	[IMX274_MODE_STOP_STREAM]	= imx274_stop,
+ };
+ 
+ /*
+@@ -731,11 +719,11 @@ static int imx274_mode_regs(struct stimx274 *priv, int mode)
+ {
+ 	int err = 0;
+ 
+-	err = imx274_write_table(priv, mode_table[IMX274_MODE_START_STREAM_1]);
++	err = imx274_write_table(priv, imx274_start_1);
+ 	if (err)
+ 		return err;
+ 
+-	err = imx274_write_table(priv, mode_table[IMX274_MODE_START_STREAM_2]);
++	err = imx274_write_table(priv, imx274_start_2);
+ 	if (err)
+ 		return err;
+ 
+@@ -760,7 +748,7 @@ static int imx274_start_stream(struct stimx274 *priv)
+ 	 * give it 1 extra ms for margin
+ 	 */
+ 	msleep_range(11);
+-	err = imx274_write_table(priv, mode_table[IMX274_MODE_START_STREAM_3]);
++	err = imx274_write_table(priv, imx274_start_3);
+ 	if (err)
+ 		return err;
+ 
+@@ -770,7 +758,7 @@ static int imx274_start_stream(struct stimx274 *priv)
+ 	 * give it 1 extra ms for margin
+ 	 */
+ 	msleep_range(8);
+-	err = imx274_write_table(priv, mode_table[IMX274_MODE_START_STREAM_4]);
++	err = imx274_write_table(priv, imx274_start_4);
+ 	if (err)
+ 		return err;
+ 
+@@ -1081,8 +1069,7 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
+ 			goto fail;
+ 	} else {
+ 		/* stop stream */
+-		ret = imx274_write_table(imx274,
+-					 mode_table[IMX274_MODE_STOP_STREAM]);
++		ret = imx274_write_table(imx274, imx274_stop);
+ 		if (ret)
+ 			goto fail;
+ 	}
+@@ -1779,7 +1766,7 @@ static int imx274_remove(struct i2c_client *client)
+ 	struct stimx274 *imx274 = to_imx274(sd);
+ 
+ 	/* stop stream */
+-	imx274_write_table(imx274, mode_table[IMX274_MODE_STOP_STREAM]);
++	imx274_write_table(imx274, imx274_stop);
+ 
+ 	v4l2_async_unregister_subdev(sd);
+ 	v4l2_ctrl_handler_free(&imx274->ctrls.handler);
 -- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+2.7.4
