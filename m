@@ -1,249 +1,404 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751555AbeDXUib (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 16:38:31 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:40112 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeDXUi1 (ORCPT
+        id S1751245AbeDXUmW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 16:42:22 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:43505 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbeDXUmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 16:38:27 -0400
-Date: Tue, 24 Apr 2018 16:38:25 -0400 (EDT)
-Message-Id: <20180424.163825.2169782541915561179.davem@davemloft.net>
-To: torvalds@linux-foundation.org
-CC: akpm@linux-foundation.org, netdev@vger.kernel.org,
+        Tue, 24 Apr 2018 16:42:17 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hans.verkuil@cisco.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        mjpeg-users@lists.sourceforge.net, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
-From: David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] media: zoran: move to dma-mapping interface
+Date: Tue, 24 Apr 2018 22:40:45 +0200
+Message-Id: <20180424204158.2764095-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:kUuxko1/YPQ8Pb7Q4+8/mHyKmP04Io4Uv8jolVYgCmKCLC333Po
+ uH3OOCFAXdxKQMPkBay08v4+f8eBxn4xCSqz+HwYdGnXOAkJhlhtpDgcI+B0JlwgMbdJ+nd
+ G+Hj2aMimArAiIRs/+8sN1YJacQ0isG08RBm1qtrWXursn+XpdU27QfkhMFizX+wifQWyEs
+ aa3S44ecPucEievF8FxVg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:s3vtu+zIFcs=:thY7T5YNfaLFXKgPAoy1eq
+ DnyB06lEOba594c2HiGB/X0T2FjRsMWKymAO8eITpjLn7RSwNfo4feOAthTNJoci8Ui7Q1VCr
+ uNM3X9P9Z4mGqauUYK4r+8A6B1Ci56Q6vh5T1d9QFs/k/JRhIqpj7DTRwX5lsGNIqI2L+UPG/
+ sY3Rj0Ea4N+NWHfbAi4cSUr908NMlNQwiWu/0OrQjSnTgV1g3eGHtiLAKI1nr9ZSBShELT3pA
+ w7rQndUxnc4dmeL5F9ju47ri30U8MTvVkgp1upSjB/jBpBt8Ut7k/hfUTqjGVJkvLs5o2ajok
+ LFygqpzGBfdlwv2Ax/tsf8HFnJC2w6l81CeuD0DHZV3zc8/EzPUCnqFel8DN3x05hqY8tWPJg
+ VIUobJieFw4DunSV22EUq+0sTxPSoSuIoGqIyBS6sRBSlOOTR6s85PnZ++U8CLK4mkBaYO9ok
+ IYDqIE9Pj2ac4NkMEmklbHHb6Z09/fxKuSxg82yB+AxBM8x/BTuEMQhsGiRf88mnfeXOugqRz
+ OL4NDHjKdU+TZXo5BoXHAb/TSG01fGFnruh4OMF3u0qq2C7S5nej+Wgg5ugScpN6y4p/2kogn
+ EYoK8Ci2kJuNWromDHaWDQZi2cPTLL50Qpj3litbyLxaoykwGNc7RtY/aJnsO6G1SzAq8pJCB
+ JYU3Oh13/HjSn6mQNbzOWLhqeOmz/z5LA8Bi3ida6izxTpmMX0mQpxvSKOo/OrQi+fEAwj+RW
+ 35s5PPOpzPTCNZZy1EMIFxJgTvCbhaZCA63qBg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+No drivers should use virt_to_bus() any more. This converts
+one of the few remaining ones to the DMA mapping interface.
 
-1) Fix rtnl deadlock in ipvs, from Julian Anastasov.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/media/pci/zoran/Kconfig        |  2 +-
+ drivers/media/pci/zoran/zoran.h        | 10 +++++--
+ drivers/media/pci/zoran/zoran_card.c   | 10 +++++--
+ drivers/media/pci/zoran/zoran_device.c | 16 +++++-----
+ drivers/media/pci/zoran/zoran_driver.c | 54 +++++++++++++++++++++++++---------
+ 5 files changed, 63 insertions(+), 29 deletions(-)
 
-2) s390 qeth fixes from Julian Wiedmann (control IO completion stalls, bad MAC
-   address update sequence, request side races on command IO timeouts).
-
-3) Handle seq_file overflow properly in l2tp, from Guillaume Nault.
-
-4) Fix VLAN priority mappings in cpsw driver, from Ivan Khoronzhuk.
-
-5) Packet scheduler ife action fixes (malformed TLV lengths, etc.)
-   from Alexander Aring.
-
-6) Fix out of bounds access in tcp md5 option parser, from Jann Horn.
-
-7) Missing netlink attribute policies in rtm_ipv6_policy table, from
-   Eric Dumazet.
-
-8) Missing socket address length checks in l2tp and pppoe connect,
-   from Guillaume Nault.
-
-9) Fix netconsole over team and bonding, from Xin Long.
-
-10) Fix race with AF_PACKET socket state bitfields, from Willem de
-    Bruijn.
-
-Pulled, thanks a lot!
-
-The following changes since commit 83beed7b2b26f232d782127792dd0cd4362fdc41:
-
-  Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal (2018-04-20 10:56:32 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
-
-for you to fetch changes up to d19efb729f10339f91c35003d480dc718cae3b3c:
-
-  Merge branch '1GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/jkirsher/net-queue (2018-04-24 16:17:59 -0400)
-
-----------------------------------------------------------------
-Ahmed Abdelsalam (1):
-      ipv6: sr: fix NULL pointer dereference in seg6_do_srh_encap()- v4 pkts
-
-Alexander Aring (3):
-      net: sched: ife: signal not finding metaid
-      net: sched: ife: handle malformed tlv length
-      net: sched: ife: check on metadata length
-
-Anders Roxell (1):
-      selftests: bpf: update .gitignore with missing generated files
-
-Anirudh Venkataramanan (2):
-      ice: Fix initialization for num_nodes_added
-      ice: Fix incorrect comment for action type
-
-Arnd Bergmann (1):
-      netfilter: fix CONFIG_NF_REJECT_IPV6=m link error
-
-Ben Shelton (1):
-      ice: Do not check INTEVENT bit for OICR interrupts
-
-Colin Ian King (1):
-      ixgbevf: ensure xdp_ring resources are free'd on error exit
-
-Cong Wang (3):
-      netfilter: conntrack: silent a memory leak warning
-      llc: delete timers synchronously in llc_sk_free()
-      llc: fix NULL pointer deref for SOCK_ZAPPED
-
-David S. Miller (6):
-      Merge branch 's390-qeth-fixes'
-      Merge branch 'net-sched-ife-malformed-ife-packet-fixes'
-      Merge git://git.kernel.org/.../bpf/bpf
-      Merge git://git.kernel.org/.../pablo/nf
-      Merge branch 'amd-xgbe-fixes'
-      Merge branch '1GbE' of git://git.kernel.org/.../jkirsher/net-queue
-
-Doron Roberts-Kedes (1):
-      strparser: Do not call mod_delayed_work with a timeout of LONG_MAX
-
-Edward Cree (1):
-      sfc: ARFS filter IDs
-
-Eric Dumazet (1):
-      ipv6: add RTA_TABLE and RTA_PREFSRC to rtm_ipv6_policy
-
-Florian Fainelli (1):
-      net: ethtool: Add missing kernel doc for FEC parameters
-
-Florian Westphal (4):
-      netfilter: nf_conntrack_sip: allow duplicate SDP expectations
-      netfilter: ebtables: don't attempt to allocate 0-sized compat array
-      netfilter: nf_tables: can't fail after linking rule into active rule list
-      netfilter: nf_tables: free set name in error path
-
-Guillaume Nault (3):
-      l2tp: fix {pppol2tp, l2tp_dfs}_seq_stop() in case of seq_file overflow
-      l2tp: check sockaddr length in pppol2tp_connect()
-      pppoe: check sockaddr length in pppoe_connect()
-
-Ivan Khoronzhuk (1):
-      net: ethernet: ti: cpsw: fix tx vlan priority mapping
-
-Jack Ma (1):
-      netfilter: xt_connmark: Add bit mapping for bit-shift operation.
-
-Jann Horn (2):
-      bpf: sockmap remove dead check
-      tcp: don't read out-of-bounds opsize
-
-Jingju Hou (1):
-      net: phy: marvell: clear wol event before setting it
-
-Julian Anastasov (1):
-      ipvs: fix rtnl_lock lockups caused by start_sync_thread
-
-Julian Wiedmann (6):
-      s390/qeth: fix error handling in adapter command callbacks
-      s390/qeth: avoid control IO completion stalls
-      s390/qeth: handle failure on workqueue creation
-      s390/qeth: fix MAC address update sequence
-      s390/qeth: fix request-side race during cmd IO timeout
-      s390/qeth: use Read device to query hypervisor for MAC
-
-Md Fahad Iqbal Polash (1):
-      ice: Fix insufficient memory issue in ice_aq_manage_mac_read
-
-Pablo Neira Ayuso (2):
-      netfilter: nf_tables: NAT chain and extensions require NF_TABLES
-      netfilter: xt_connmark: do not cast xt_connmark_tginfo1 to xt_connmark_tginfo2
-
-Stephen Rothwell (1):
-      netfilter: conntrack: include kmemleak.h for kmemleak_not_leak()
-
-Taehee Yoo (1):
-      netfilter: nf_tables: fix out-of-bounds in nft_chain_commit_update
-
-Thomas Falcon (1):
-      ibmvnic: Clean actual number of RX or TX pools
-
-Tom Lendacky (3):
-      amd-xgbe: Add pre/post auto-negotiation phy hooks
-      amd-xgbe: Improve KR auto-negotiation and training
-      amd-xgbe: Only use the SFP supported transceiver signals
-
-Vinicius Costa Gomes (1):
-      igb: Fix the transmission mode of queue 0 for Qav mode
-
-Willem de Bruijn (1):
-      packet: fix bitfield update race
-
-Xin Long (2):
-      bonding: do not set slave_dev npinfo before slave_enable_netpoll in bond_enslave
-      team: fix netconsole setup over team
-
-Yonghong Song (2):
-      bpf/tracing: fix a deadlock in perf_event_detach_bpf_prog
-      tools/bpf: fix test_sock and test_sock_addr.sh failure
-
- drivers/net/bonding/bond_main.c                   |   3 +-
- drivers/net/ethernet/amd/xgbe/xgbe-common.h       |   8 +++++
- drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c      |  16 +++++++++
- drivers/net/ethernet/amd/xgbe/xgbe-main.c         |   1 +
- drivers/net/ethernet/amd/xgbe/xgbe-mdio.c         |  24 ++++++++++---
- drivers/net/ethernet/amd/xgbe/xgbe-pci.c          |   2 ++
- drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c       | 196 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------
- drivers/net/ethernet/amd/xgbe/xgbe.h              |   9 +++++
- drivers/net/ethernet/ibm/ibmvnic.c                |   4 +--
- drivers/net/ethernet/intel/ice/ice_adminq_cmd.h   |   2 +-
- drivers/net/ethernet/intel/ice/ice_common.c       |  22 +++++++++---
- drivers/net/ethernet/intel/ice/ice_hw_autogen.h   |   2 --
- drivers/net/ethernet/intel/ice/ice_main.c         |   4 ---
- drivers/net/ethernet/intel/ice/ice_sched.c        |   4 +--
- drivers/net/ethernet/intel/igb/igb_main.c         |  17 ++++++++-
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c |   2 +-
- drivers/net/ethernet/sfc/ef10.c                   |  80 +++++++++++++++++++++++------------------
- drivers/net/ethernet/sfc/efx.c                    | 143 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/net/ethernet/sfc/efx.h                    |  21 +++++++++++
- drivers/net/ethernet/sfc/farch.c                  |  41 +++++++++++++++++----
- drivers/net/ethernet/sfc/net_driver.h             |  36 +++++++++++++++++++
- drivers/net/ethernet/sfc/rx.c                     |  62 +++++++++++++++++++++++++++++---
- drivers/net/ethernet/ti/cpsw.c                    |   2 +-
- drivers/net/phy/marvell.c                         |   9 +++++
- drivers/net/ppp/pppoe.c                           |   4 +++
- drivers/net/team/team.c                           |  19 ++++++----
- drivers/s390/net/qeth_core.h                      |   2 --
- drivers/s390/net/qeth_core_main.c                 | 158 ++++++++++++++++++++++++++++++++++++--------------------------------------------
- drivers/s390/net/qeth_core_mpc.h                  |  12 +++++++
- drivers/s390/net/qeth_l2_main.c                   |  59 ++++++++++++++++--------------
- include/linux/bpf.h                               |   4 +--
- include/linux/ethtool.h                           |   2 ++
- include/net/ife.h                                 |   3 +-
- include/net/llc_conn.h                            |   1 +
- kernel/bpf/core.c                                 |  45 ++++++++++++++---------
- kernel/bpf/sockmap.c                              |   3 --
- kernel/trace/bpf_trace.c                          |  25 ++++++++++---
- net/bridge/netfilter/ebtables.c                   |  11 +++---
- net/ife/ife.c                                     |  38 ++++++++++++++++++--
- net/ipv4/tcp_input.c                              |   7 ++--
- net/ipv6/netfilter/Kconfig                        |  55 ++++++++++++++--------------
- net/ipv6/route.c                                  |   2 ++
- net/ipv6/seg6_iptunnel.c                          |   2 +-
- net/l2tp/l2tp_debugfs.c                           |   5 ++-
- net/l2tp/l2tp_ppp.c                               |  12 ++++++-
- net/llc/af_llc.c                                  |  21 ++++++-----
- net/llc/llc_c_ac.c                                |   9 +----
- net/llc/llc_conn.c                                |  22 +++++++++++-
- net/netfilter/Kconfig                             |   1 +
- net/netfilter/ipvs/ip_vs_ctl.c                    |   8 -----
- net/netfilter/ipvs/ip_vs_sync.c                   | 155 ++++++++++++++++++++++++++++++++++++++++--------------------------------------
- net/netfilter/nf_conntrack_expect.c               |   5 ++-
- net/netfilter/nf_conntrack_extend.c               |   2 ++
- net/netfilter/nf_conntrack_sip.c                  |  16 ++++++---
- net/netfilter/nf_tables_api.c                     |  69 +++++++++++++++++++----------------
- net/netfilter/xt_connmark.c                       |  49 ++++++++++++++-----------
- net/packet/af_packet.c                            |  60 ++++++++++++++++++++++---------
- net/packet/internal.h                             |  10 +++---
- net/sched/act_ife.c                               |   9 +++--
- net/strparser/strparser.c                         |   2 +-
- tools/testing/selftests/bpf/.gitignore            |   3 ++
- tools/testing/selftests/bpf/test_sock.c           |   1 +
- tools/testing/selftests/bpf/test_sock_addr.c      |   1 +
- tools/testing/selftests/bpf/test_sock_addr.sh     |   4 +--
- 64 files changed, 1163 insertions(+), 463 deletions(-)
+diff --git a/drivers/media/pci/zoran/Kconfig b/drivers/media/pci/zoran/Kconfig
+index 39ec35bd21a5..26f40e124a32 100644
+--- a/drivers/media/pci/zoran/Kconfig
++++ b/drivers/media/pci/zoran/Kconfig
+@@ -1,6 +1,6 @@
+ config VIDEO_ZORAN
+ 	tristate "Zoran ZR36057/36067 Video For Linux"
+-	depends on PCI && I2C_ALGOBIT && VIDEO_V4L2 && VIRT_TO_BUS
++	depends on PCI && I2C_ALGOBIT && VIDEO_V4L2
+ 	depends on !ALPHA
+ 	help
+ 	  Say Y for support for MJPEG capture cards based on the Zoran
+diff --git a/drivers/media/pci/zoran/zoran.h b/drivers/media/pci/zoran/zoran.h
+index 9bb3c21aa275..9ff3a9acb60a 100644
+--- a/drivers/media/pci/zoran/zoran.h
++++ b/drivers/media/pci/zoran/zoran.h
+@@ -183,13 +183,14 @@ struct zoran_buffer {
+ 	struct zoran_sync bs;		/* DONE: info to return to application */
+ 	union {
+ 		struct {
+-			__le32 *frag_tab;	/* addresses of frag table */
+-			u32 frag_tab_bus;	/* same value cached to save time in ISR */
++			__le32 *frag_tab;	/* DMA addresses of frag table */
++			void **frag_virt_tab;	/* virtual addresses of frag table */
++			dma_addr_t frag_tab_dma;/* same value cached to save time in ISR */
+ 		} jpg;
+ 		struct {
+ 			char *fbuffer;		/* virtual address of frame buffer */
+ 			unsigned long fbuffer_phys;/* physical address of frame buffer */
+-			unsigned long fbuffer_bus;/* bus address of frame buffer */
++			dma_addr_t fbuffer_dma;/* bus address of frame buffer */
+ 		} v4l;
+ 	};
+ };
+@@ -221,6 +222,7 @@ struct zoran_fh {
+ 
+ 	struct zoran_overlay_settings overlay_settings;
+ 	u32 *overlay_mask;			/* overlay mask */
++	dma_addr_t overlay_mask_dma;
+ 	enum zoran_lock_activity overlay_active;/* feature currently in use? */
+ 
+ 	struct zoran_buffer_col buffers;	/* buffers' info */
+@@ -307,6 +309,7 @@ struct zoran {
+ 
+ 	struct zoran_overlay_settings overlay_settings;
+ 	u32 *overlay_mask;	/* overlay mask */
++	dma_addr_t overlay_mask_dma;
+ 	enum zoran_lock_activity overlay_active;	/* feature currently in use? */
+ 
+ 	wait_queue_head_t v4l_capq;
+@@ -346,6 +349,7 @@ struct zoran {
+ 
+ 	/* zr36057's code buffer table */
+ 	__le32 *stat_com;		/* stat_com[i] is indexed by dma_head/tail & BUZ_MASK_STAT_COM */
++	dma_addr_t stat_com_dma;
+ 
+ 	/* (value & BUZ_MASK_FRAME) corresponds to index in pend[] queue */
+ 	int jpg_pend[BUZ_MAX_FRAME];
+diff --git a/drivers/media/pci/zoran/zoran_card.c b/drivers/media/pci/zoran/zoran_card.c
+index a6b9ebd20263..dabd8bf77472 100644
+--- a/drivers/media/pci/zoran/zoran_card.c
++++ b/drivers/media/pci/zoran/zoran_card.c
+@@ -890,6 +890,7 @@ zoran_open_init_params (struct zoran *zr)
+ 	/* User must explicitly set a window */
+ 	zr->overlay_settings.is_set = 0;
+ 	zr->overlay_mask = NULL;
++	zr->overlay_mask_dma = 0;
+ 	zr->overlay_active = ZORAN_FREE;
+ 
+ 	zr->v4l_memgrab_active = 0;
+@@ -1028,7 +1029,8 @@ static int zr36057_init (struct zoran *zr)
+ 
+ 	/* allocate memory *before* doing anything to the hardware
+ 	 * in case allocation fails */
+-	zr->stat_com = kzalloc(BUZ_NUM_STAT_COM * 4, GFP_KERNEL);
++	zr->stat_com = dma_alloc_coherent(&zr->pci_dev->dev,
++				BUZ_NUM_STAT_COM * 4, &zr->stat_com_dma, GFP_KERNEL);
+ 	zr->video_dev = video_device_alloc();
+ 	if (!zr->stat_com || !zr->video_dev) {
+ 		dprintk(1,
+@@ -1072,7 +1074,8 @@ static int zr36057_init (struct zoran *zr)
+ 	return 0;
+ 
+ exit_free:
+-	kfree(zr->stat_com);
++	dma_free_coherent(&zr->pci_dev->dev, BUZ_NUM_STAT_COM * 4,
++			  zr->stat_com, zr->stat_com_dma);
+ 	kfree(zr->video_dev);
+ 	return err;
+ }
+@@ -1107,7 +1110,8 @@ static void zoran_remove(struct pci_dev *pdev)
+ 	btwrite(0, ZR36057_SPGPPCR);
+ 	free_irq(zr->pci_dev->irq, zr);
+ 	/* unmap and free memory */
+-	kfree(zr->stat_com);
++	dma_free_coherent(&zr->pci_dev->dev, BUZ_NUM_STAT_COM * 4,
++			  zr->stat_com, zr->stat_com_dma);
+ 	zoran_proc_cleanup(zr);
+ 	iounmap(zr->zr36057_mem);
+ 	pci_disable_device(zr->pci_dev);
+diff --git a/drivers/media/pci/zoran/zoran_device.c b/drivers/media/pci/zoran/zoran_device.c
+index 40adceebca7e..1ac7810ddd25 100644
+--- a/drivers/media/pci/zoran/zoran_device.c
++++ b/drivers/media/pci/zoran/zoran_device.c
+@@ -430,9 +430,9 @@ zr36057_set_vfe (struct zoran              *zr,
+ 		 * zr->overlay_settings.width instead of video_width */
+ 
+ 		mask_line_size = (BUZ_MAX_WIDTH + 31) / 32;
+-		reg = virt_to_bus(zr->overlay_mask);
++		reg = zr->overlay_mask_dma;
+ 		btwrite(reg, ZR36057_MMTR);
+-		reg = virt_to_bus(zr->overlay_mask + mask_line_size);
++		reg = zr->overlay_mask_dma + mask_line_size;
+ 		btwrite(reg, ZR36057_MMBR);
+ 		reg =
+ 		    mask_line_size - (zr->overlay_settings.width +
+@@ -775,7 +775,7 @@ zr36057_set_jpg (struct zoran          *zr,
+ 	//btor(ZR36057_VFESPFR_VCLKPol, ZR36057_VFESPFR);
+ 
+ 	/* code base address */
+-	reg = virt_to_bus(zr->stat_com);
++	reg = zr->stat_com_dma;
+ 	btwrite(reg, ZR36057_JCBA);
+ 
+ 	/* FIFO threshold (FIFO is 160. double words) */
+@@ -1097,7 +1097,7 @@ zoran_feed_stat_com (struct zoran *zr)
+ 			if (!(zr->stat_com[i] & cpu_to_le32(1)))
+ 				break;
+ 			zr->stat_com[i] =
+-			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_bus);
++			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_dma);
+ 		} else {
+ 			/* fill 2 stat_com entries */
+ 			i = ((zr->jpg_dma_head -
+@@ -1105,9 +1105,9 @@ zoran_feed_stat_com (struct zoran *zr)
+ 			if (!(zr->stat_com[i] & cpu_to_le32(1)))
+ 				break;
+ 			zr->stat_com[i] =
+-			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_bus);
++			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_dma);
+ 			zr->stat_com[i + 1] =
+-			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_bus);
++			    cpu_to_le32(zr->jpg_buffers.buffer[frame].jpg.frag_tab_dma);
+ 		}
+ 		zr->jpg_buffers.buffer[frame].state = BUZ_STATE_DMA;
+ 		zr->jpg_dma_head++;
+@@ -1272,7 +1272,7 @@ error_handler (struct zoran *zr,
+ 		printk(KERN_INFO "stat_com frames:");
+ 		for (j = 0; j < BUZ_NUM_STAT_COM; j++) {
+ 			for (i = 0; i < zr->jpg_buffers.num_buffers; i++) {
+-				if (le32_to_cpu(zr->stat_com[j]) == zr->jpg_buffers.buffer[i].jpg.frag_tab_bus)
++				if (le32_to_cpu(zr->stat_com[j]) == zr->jpg_buffers.buffer[i].jpg.frag_tab_dma)
+ 					printk(KERN_CONT "% d->%d", j, i);
+ 			}
+ 		}
+@@ -1411,7 +1411,7 @@ zoran_irq (int             irq,
+ 
+ 					/* Buffer address */
+ 
+-					reg = zr->v4l_buffers.buffer[frame].v4l.fbuffer_bus;
++					reg = zr->v4l_buffers.buffer[frame].v4l.fbuffer_dma;
+ 					btwrite(reg, ZR36057_VDTR);
+ 					if (zr->v4l_settings.height > BUZ_MAX_HEIGHT / 2)
+ 						reg += zr->v4l_settings.bytesperline;
+diff --git a/drivers/media/pci/zoran/zoran_driver.c b/drivers/media/pci/zoran/zoran_driver.c
+index 4b6466961b41..dad1fb02ced2 100644
+--- a/drivers/media/pci/zoran/zoran_driver.c
++++ b/drivers/media/pci/zoran/zoran_driver.c
+@@ -235,15 +235,20 @@ static int v4l_fbuffer_alloc(struct zoran_fh *fh)
+ 		}
+ 		fh->buffers.buffer[i].v4l.fbuffer = mem;
+ 		fh->buffers.buffer[i].v4l.fbuffer_phys = virt_to_phys(mem);
+-		fh->buffers.buffer[i].v4l.fbuffer_bus = virt_to_bus(mem);
++		fh->buffers.buffer[i].v4l.fbuffer_dma =
++			dma_map_single(&zr->pci_dev->dev, mem,
++				       fh->buffers.buffer_size,
++				       DMA_FROM_DEVICE);
++		if (!fh->buffers.buffer[i].v4l.fbuffer_dma)
++			return -ENXIO;
+ 		for (off = 0; off < fh->buffers.buffer_size;
+ 		     off += PAGE_SIZE)
+ 			SetPageReserved(virt_to_page(mem + off));
+ 		dprintk(4,
+ 			KERN_INFO
+-			"%s: %s - V4L frame %d mem %p (bus: 0x%llx)\n",
++			"%s: %s - V4L frame %d mem %p (bus: %pad)\n",
+ 			ZR_DEVNAME(zr), __func__, i, mem,
+-			(unsigned long long)virt_to_bus(mem));
++			&fh->buffers.buffer[i].v4l.fbuffer_dma);
+ 	}
+ 
+ 	fh->buffers.allocated = 1;
+@@ -308,6 +313,7 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
+ 	struct zoran *zr = fh->zr;
+ 	int i, j, off;
+ 	u8 *mem;
++	void **virt_tab;
+ 
+ 	for (i = 0; i < fh->buffers.num_buffers; i++) {
+ 		if (fh->buffers.buffer[i].jpg.frag_tab)
+@@ -319,16 +325,19 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
+ 		/* Allocate fragment table for this buffer */
+ 
+ 		mem = (void *)get_zeroed_page(GFP_KERNEL);
+-		if (!mem) {
++		virt_tab = (void *)get_zeroed_page(GFP_KERNEL);
++		if (!mem || !virt_tab) {
+ 			dprintk(1,
+ 				KERN_ERR
+ 				"%s: %s - get_zeroed_page (frag_tab) failed for buffer %d\n",
+ 				ZR_DEVNAME(zr), __func__, i);
++			kfree(mem);
++			kfree(virt_tab);
+ 			jpg_fbuffer_free(fh);
+ 			return -ENOBUFS;
+ 		}
+ 		fh->buffers.buffer[i].jpg.frag_tab = (__le32 *)mem;
+-		fh->buffers.buffer[i].jpg.frag_tab_bus = virt_to_bus(mem);
++		fh->buffers.buffer[i].jpg.frag_virt_tab = virt_tab;
+ 
+ 		if (fh->buffers.need_contiguous) {
+ 			mem = kmalloc(fh->buffers.buffer_size, GFP_KERNEL);
+@@ -340,8 +349,9 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
+ 				jpg_fbuffer_free(fh);
+ 				return -ENOBUFS;
+ 			}
++			fh->buffers.buffer[i].jpg.frag_virt_tab[0] = mem;
+ 			fh->buffers.buffer[i].jpg.frag_tab[0] =
+-				cpu_to_le32(virt_to_bus(mem));
++				cpu_to_le32(dma_map_single(&zr->pci_dev->dev, mem, fh->buffers.buffer_size, DMA_FROM_DEVICE));
+ 			fh->buffers.buffer[i].jpg.frag_tab[1] =
+ 				cpu_to_le32((fh->buffers.buffer_size >> 1) | 1);
+ 			for (off = 0; off < fh->buffers.buffer_size; off += PAGE_SIZE)
+@@ -359,8 +369,9 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
+ 					return -ENOBUFS;
+ 				}
+ 
++				fh->buffers.buffer[i].jpg.frag_virt_tab[j] = mem;
+ 				fh->buffers.buffer[i].jpg.frag_tab[2 * j] =
+-					cpu_to_le32(virt_to_bus(mem));
++					cpu_to_le32(dma_map_single(&zr->pci_dev->dev, mem, fh->buffers.buffer_size, DMA_FROM_DEVICE));
+ 				fh->buffers.buffer[i].jpg.frag_tab[2 * j + 1] =
+ 					cpu_to_le32((PAGE_SIZE >> 2) << 1);
+ 				SetPageReserved(virt_to_page(mem));
+@@ -368,6 +379,8 @@ static int jpg_fbuffer_alloc(struct zoran_fh *fh)
+ 
+ 			fh->buffers.buffer[i].jpg.frag_tab[2 * j - 1] |= cpu_to_le32(1);
+ 		}
++
++		fh->buffers.buffer[i].jpg.frag_tab_dma = dma_map_single(&zr->pci_dev->dev, mem, PAGE_SIZE, DMA_TO_DEVICE);
+ 	}
+ 
+ 	dprintk(4,
+@@ -400,9 +413,10 @@ static void jpg_fbuffer_free(struct zoran_fh *fh)
+ 			frag_tab = buffer->jpg.frag_tab[0];
+ 
+ 			if (frag_tab) {
+-				mem = bus_to_virt(le32_to_cpu(frag_tab));
++				mem = buffer->jpg.frag_virt_tab[0];
+ 				for (off = 0; off < fh->buffers.buffer_size; off += PAGE_SIZE)
+ 					ClearPageReserved(virt_to_page(mem + off));
++				dma_unmap_single(&zr->pci_dev->dev, frag_tab, PAGE_SIZE, DMA_FROM_DEVICE);
+ 				kfree(mem);
+ 				buffer->jpg.frag_tab[0] = 0;
+ 				buffer->jpg.frag_tab[1] = 0;
+@@ -413,14 +427,19 @@ static void jpg_fbuffer_free(struct zoran_fh *fh)
+ 
+ 				if (!frag_tab)
+ 					break;
+-				ClearPageReserved(virt_to_page(bus_to_virt(le32_to_cpu(frag_tab))));
+-				free_page((unsigned long)bus_to_virt(le32_to_cpu(frag_tab)));
++				ClearPageReserved(virt_to_page(buffer->jpg.frag_virt_tab[j]));
++				dma_unmap_single(&zr->pci_dev->dev, le32_to_cpu(frag_tab), PAGE_SIZE, DMA_FROM_DEVICE);
++				free_page((unsigned long)buffer->jpg.frag_virt_tab[j]);
++				buffer->jpg.frag_virt_tab[j] = NULL;
+ 				buffer->jpg.frag_tab[2 * j] = 0;
+ 				buffer->jpg.frag_tab[2 * j + 1] = 0;
+ 			}
+ 		}
+ 
++		dma_unmap_single(&zr->pci_dev->dev, buffer->jpg.frag_tab_dma, PAGE_SIZE, DMA_TO_DEVICE);
+ 		free_page((unsigned long)buffer->jpg.frag_tab);
++		free_page((unsigned long)buffer->jpg.frag_virt_tab);
++		buffer->jpg.frag_virt_tab = NULL;
+ 		buffer->jpg.frag_tab = NULL;
+ 	}
+ 
+@@ -873,6 +892,7 @@ static void zoran_close_end_session(struct zoran_fh *fh)
+ 		if (!zr->v4l_memgrab_active)
+ 			zr36057_overlay(zr, 0);
+ 		zr->overlay_mask = NULL;
++		zr->overlay_mask_dma = 0;
+ 	}
+ 
+ 	if (fh->map_mode == ZORAN_MAP_MODE_RAW) {
+@@ -940,8 +960,10 @@ static int zoran_open(struct file *file)
+ 
+ 	/* used to be BUZ_MAX_WIDTH/HEIGHT, but that gives overflows
+ 	 * on norm-change! */
+-	fh->overlay_mask =
+-	    kmalloc(((768 + 31) / 32) * 576 * 4, GFP_KERNEL);
++	fh->overlay_mask = dma_alloc_wc(&zr->pci_dev->dev,
++					((768 + 31) / 32) * 576 * 4,
++					&fh->overlay_mask_dma,
++					GFP_KERNEL);
+ 	if (!fh->overlay_mask) {
+ 		dprintk(1,
+ 			KERN_ERR
+@@ -1016,6 +1038,7 @@ zoran_close(struct file  *file)
+ 		zr->v4l_overlay_active = 0;
+ 		zr36057_overlay(zr, 0);
+ 		zr->overlay_mask = NULL;
++		zr->overlay_mask_dma = 0;
+ 
+ 		/* capture off */
+ 		wake_up_interruptible(&zr->v4l_capq);
+@@ -1033,7 +1056,8 @@ zoran_close(struct file  *file)
+ 
+ 	v4l2_fh_del(&fh->fh);
+ 	v4l2_fh_exit(&fh->fh);
+-	kfree(fh->overlay_mask);
++	dma_free_wc(&zr->pci_dev->dev, ((768 + 31) / 32) * 576 * 4,
++		    fh->overlay_mask, fh->overlay_mask_dma);
+ 	kfree(fh);
+ 
+ 	dprintk(4, KERN_INFO "%s: %s done\n", ZR_DEVNAME(zr), __func__);
+@@ -1284,6 +1308,7 @@ static int setup_overlay(struct zoran_fh *fh, int on)
+ 		if (!zr->v4l_memgrab_active)
+ 			zr36057_overlay(zr, 0);
+ 		zr->overlay_mask = NULL;
++		zr->overlay_mask_dma = 0;
+ 	} else {
+ 		if (!zr->vbuf_base || !fh->overlay_settings.is_set) {
+ 			dprintk(1,
+@@ -1302,6 +1327,7 @@ static int setup_overlay(struct zoran_fh *fh, int on)
+ 		zr->overlay_active = fh->overlay_active = ZORAN_LOCKED;
+ 		zr->v4l_overlay_active = 1;
+ 		zr->overlay_mask = fh->overlay_mask;
++		zr->overlay_mask_dma = fh->overlay_mask_dma;
+ 		zr->overlay_settings = fh->overlay_settings;
+ 		if (!zr->v4l_memgrab_active)
+ 			zr36057_overlay(zr, 1);
+@@ -2763,7 +2789,7 @@ zoran_mmap (struct file           *file,
+ 				    le32_to_cpu(fh->buffers.
+ 				    buffer[i].jpg.frag_tab[2 * j]);
+ 				/* should just be pos on i386 */
+-				page = virt_to_phys(bus_to_virt(pos))
++				page = virt_to_phys(fh->buffers.buffer[i].jpg.frag_virt_tab[j])
+ 								>> PAGE_SHIFT;
+ 				if (remap_pfn_range(vma, start, page,
+ 							todo, PAGE_SHARED)) {
+-- 
+2.9.0
