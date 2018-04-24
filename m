@@ -1,150 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932911AbeDXIbV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:31:21 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:43793 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932837AbeDXIbS (ORCPT
+        id S932934AbeDXIbn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:31:43 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:41192 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932916AbeDXIbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:31:18 -0400
-X-Originating-IP: 2.224.242.101
-Date: Tue, 24 Apr 2018 10:31:11 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
- (CEU)
-Message-ID: <20180424083111.GG17088@w540>
-References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
- <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
- <20180423152143.GH3999@w540>
- <20180424082355.y2cnfkqa7bj4fpy4@verge.net.au>
+        Tue, 24 Apr 2018 04:31:35 -0400
+X-Google-Smtp-Source: AIpwx4/gm/5awqlNqd0mIgadNUQg5c/tjmxpmePQ4Ph/yVJl/v1J2gp958MNHrwz+6fVZkzFTHApt/tHKfdWYYsY74k=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="O8XZ+2Hy8Kj8wLPZ"
-Content-Disposition: inline
-In-Reply-To: <20180424082355.y2cnfkqa7bj4fpy4@verge.net.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [217.140.96.140]
+In-Reply-To: <CAMuHMdXZ0vL7Rxg4+CsP1u_Eb95Nj+qHnrahYPhAewmcrxN9HQ@mail.gmail.com>
+References: <1524484097-8315-1-git-send-email-gilad@benyossef.com>
+ <CAMuHMdXNAkCVpyGyQMKRMRGuXyjOHAGgvHT4QGkuYdZetOr-9Q@mail.gmail.com>
+ <CAOtvUMd41+5DzHRbViyNZkiL92BYh2YaREvhiAH0UPnPYCzB+w@mail.gmail.com> <CAMuHMdXZ0vL7Rxg4+CsP1u_Eb95Nj+qHnrahYPhAewmcrxN9HQ@mail.gmail.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Tue, 24 Apr 2018 11:31:34 +0300
+Message-ID: <CAOtvUMe=iOeWAUwDQ-3yy=Ogg0_=4iEwV32ATEn6SrLPEojNGQ@mail.gmail.com>
+Subject: Re: [PATCH] crypto: ccree: limit build to plausible archs
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 23, 2018 at 8:53 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Gilad,
+>
+> On Mon, Apr 23, 2018 at 3:22 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>> On Mon, Apr 23, 2018 at 3:13 PM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> On Mon, Apr 23, 2018 at 1:48 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>>> Limit option to compile ccree to plausible architectures.
+>>>
+>>> Thanks for your patch!
+>>>
+>>>> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>>>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>>>> ---
+>>>>  drivers/crypto/Kconfig | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+>>>> index d1ea1a0..7302785 100644
+>>>> --- a/drivers/crypto/Kconfig
+>>>> +++ b/drivers/crypto/Kconfig
+>>>> @@ -726,6 +726,7 @@ config CRYPTO_DEV_ARTPEC6
+>>>>  config CRYPTO_DEV_CCREE
+>>>>         tristate "Support for ARM TrustZone CryptoCell family of security processors"
+>>>>         depends on CRYPTO && CRYPTO_HW && OF && HAS_DMA
+>>>> +       depends on (XTENSA || X86 || UNICORE32 || SUPERH || RISCV || PPC32 || OPENRISC || NIOS2 || NDS32 || MIPS || MICROBLAZE || HEXAGON || H8300 || ARM || ARM64 || ARC || COMPILE_TEST)
+>>>
+>>> That list looks a bit excessive to me...
+>>
+>> I'm sorry, but as an Arm employee I'm not in liberty to identify which
+>> customer licensed or might license CryptoCell for which platform, now
+>> or in the future.
+>>
+>> I'm sure you understand.
+>
+> IC, a clever marketing scheme to make everyone think that everybody else
+> is already a licensee ;-)
 
---O8XZ+2Hy8Kj8wLPZ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Simon,
-
-On Tue, Apr 24, 2018 at 10:23:56AM +0200, Simon Horman wrote:
-> On Mon, Apr 23, 2018 at 05:21:43PM +0200, jacopo mondi wrote:
-> > Hi Simon,
-> >
-> > On Wed, Feb 21, 2018 at 07:29:18PM +0100, Simon Horman wrote:
-> > > On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
-> > > > Add Capture Engine Unit (CEU) node to device tree.
-> > > >
-> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> > >
-> > > This patch depends on the binding for "renesas,r7s72100-ceu".
-> > > Please repost or otherwise ping me once that dependency has been accepted.
-> >
-> > Bindings for the CEU interface went in v4.17-rc1.
-> >
-> > Could you please resurect this patch?
->
-> Sure, I took the liberty of "rebasing" it to preserve the new node-order
-> of r7s72100.dtsi. The result is as follows:
-
-That's even better.
-
-Thanks
-   j
+I think you are placing too much importance on Kconfig dependencies
+marketing power, otherwise I would have long ago rented Kconfig space
+to Saatchi & Saatchi - e.g. "This Kconfig entry is brought to you
+by...
+"  :-)
 
 >
-> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Subject: [PATCH] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
->
-> Add Capture Engine Unit (CEU) node to device tree.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> [simon: rebased]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  arch/arm/boot/dts/r7s72100.dtsi | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-> index ecf9516bcda8..4a1aade0e751 100644
-> --- a/arch/arm/boot/dts/r7s72100.dtsi
-> +++ b/arch/arm/boot/dts/r7s72100.dtsi
-> @@ -375,6 +375,15 @@
->  			status = "disabled";
->  		};
->
-> +		ceu: camera@e8210000 {
-> +			reg = <0xe8210000 0x3000>;
-> +			compatible = "renesas,r7s72100-ceu";
-> +			interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&mstp6_clks R7S72100_CLK_CEU>;
-> +			power-domains = <&cpg_clocks>;
-> +			status = "disabled";
-> +		};
-> +
->  		wdt: watchdog@fcfe0000 {
->  			compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
->  			reg = <0xfcfe0000 0x6>;
-> @@ -429,9 +438,9 @@
->  			#clock-cells = <1>;
->  			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
->  			reg = <0xfcfe042c 4>;
-> -			clocks = <&p0_clk>;
-> -			clock-indices = <R7S72100_CLK_RTC>;
-> -			clock-output-names = "rtc";
-> +			clocks = <&b_clk>, <&p0_clk>;
-> +			clock-indices = <R7S72100_CLK_CEU R7S72100_CLK_RTC>;
-> +			clock-output-names = "ceu", "rtc";
->  		};
->
->  		mstp7_clks: mstp7_clks@fcfe0430 {
-> --
-> 2.11.0
->
+> What about using "depends on <list> || COMPILE_TEST", with <list> the
+> platforms for which the DTS (incl. "arm,cryptocell-*") will be submitted
+> for v4.18? The list can easily be extended when needed.
 >
 
---O8XZ+2Hy8Kj8wLPZ
-Content-Type: application/pgp-signature; name="signature.asc"
+Seriously though, I think I was not efficient in communicating my
+point through. Let me try again:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+The CryptoCell 712 doesn't exists as silicon anywhere. It's just been
+released to our design partners not too long ago.
+I am guessing there are a few SoCs which include CryptoCell 710 which
+taped out, but probably no publicly available boards yet.
+By the standard you set above, we shouldn't be enabling the driver
+build on ANY platform...
 
-iQIcBAEBAgAGBQJa3utPAAoJEHI0Bo8WoVY83SwQAMcRemJH4whTol5SgaUhhiwt
-7vPzUri9leP+smhF8kzP/cmWuGEHIyQKHzqSivVBZrtRHyk2JZCGNMdp0M1lloCv
-SCVfyv6R/nnPVKdTqJNZYrTN1yJOcGXle271QLEEZUXkL1aDxy5K5Xb5qpSuwu89
-qH1mKj9K39/B/0lmlrn+ENWlVvzewAaZB+WZfFVU89i+4NncFLhx+6gOMceSF8oy
-I4PyfNOIEXXGmKiv7v8H0uHJf0yUTK0NgFLLnFrIwueogXuQTitV2dIdjDuF99SR
-yOR2XPE+h+Ws1BeqnWX81AdSbAeDj6uC+3VVkjiQ6uwXq6BsCmkyqRvY04xmOgNl
-JDwHUYlW/d3D/xs8zYVJ9GxRywKDW48t5kc6MFWxWEPg2DUYV2LrFiwjBGzkcJIv
-wctnUSf3/rh2nNAzeeESbgGvdqSM2iZuCA7PElFZZpudj+F6wcQtLZWoaLrzkdiN
-3pwLo63R67nRzGIvR2DA3xz3Y9rB58kCFHaOrebBSI//wWRBQgXaaruCm1ebYtXt
-3DkKM3uddKTWAkKcEtH8USq1GReGOwZ1CE9vP8zkgKNjoLjEFYHgdRWYKnn5/Fu1
-gDMKw6mStzZHNK/phxoDl1xUehaqH3eMp34fUN4dW6NTnxVYuWdYVx3TINacajjm
-UT3EmMoeafGOJen5gXDI
-=8F7o
------END PGP SIGNATURE-----
+The boards that came out last year (which I plan to send DT entries
+for)  are using CryptoCell 630p, which we shipped as a design IP a few
+years ago. It takes years for an IP design to ship, be designed into
+SoCs, for these SoCs to ship and be designed into boards and until
+these ship... and when they do, they almost always don't use the
+cutting edge latest kernel.
 
---O8XZ+2Hy8Kj8wLPZ--
+That is to say - I don't know which SoC and using which architecture
+the CryptoCell IP was and will be designed into but I want the driver
+and the kernel to be ready when they do - this IS after all the whole
+point o doing stuff Upstream First(tm)!
+
+This is the same of having random PCI devices depend on PCI and not a
+specific architecture even if no one shipped a system with that device
+yet and again the same with I2C devices depending on I2C and not a
+specific architecture even if we don't have a board out with that I2C
+device designed it. It's a generic none architecture dependent
+component.
+
+This is why I initially did not mark the device driver as depending on
+any specific architecture.
+In light of your request, and what I believe is the underlying idea to
+cut down as much as possible build time for test code, to which I
+agree, I've decided to cut out architecture that there is very little
+chance to even go into a SoC with CryptoCell, such as s390 or um.
+
+So, any pointer to an architecture that will not likely to go into a
+SoC in the coming years with some off the shelf HW IP so I can cut off
+more is very welcome, but using currently shipping boards to indicate
+which architecture to support is not appropriate.
+
+I hope this makes things a bit clearer.
+
+Thanks,
+Gilad
+
+
+
+
+-- 
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
