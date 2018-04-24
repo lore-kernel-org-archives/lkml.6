@@ -1,87 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752325AbeDXQ1V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:27:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40939 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751760AbeDXQ1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:27:20 -0400
-Date: Tue, 24 Apr 2018 10:27:12 -0600
-From: Michal Hocko <mhocko@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: vmalloc with GFP_NOFS
-Message-ID: <20180424162712.GL17484@dhcp22.suse.cz>
+        id S1752549AbeDXQ13 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:27:29 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:43165 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751760AbeDXQ1X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:27:23 -0400
+X-Google-Smtp-Source: AIpwx48+mx1xozJy3EzcWOTeCZmanYZ0DpzwxBR7dADTmJRRCqdLXkmfuia2zfFi3nfqJBsdSx1myw==
+Date: Tue, 24 Apr 2018 11:27:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc: jic23@kernel.org, alexandre.torgue@st.com, mark.rutland@arm.com,
+        mcoquelin.stm32@gmail.com, lars@metafoo.de, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, benjamin.gaignard@linaro.org
+Subject: Re: [PATCH 1/3] dt-bindings: iio: stm32-adc: add support for
+ STM32MP1.
+Message-ID: <20180424162721.qbfsc7j3syzzykeh@rob-hp-laptop>
+References: <1524065874-434-1-git-send-email-fabrice.gasnier@st.com>
+ <1524065874-434-2-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1524065874-434-2-git-send-email-fabrice.gasnier@st.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-it seems that we still have few vmalloc users who perform GFP_NOFS
-allocation:
-drivers/mtd/ubi/io.c
-fs/ext4/xattr.c
-fs/gfs2/dir.c
-fs/gfs2/quota.c
-fs/nfs/blocklayout/extent_tree.c
-fs/ubifs/debug.c
-fs/ubifs/lprops.c
-fs/ubifs/lpt_commit.c
-fs/ubifs/orphan.c
+On Wed, Apr 18, 2018 at 05:37:52PM +0200, Fabrice Gasnier wrote:
+> Document support for STM32MP1 ADC. It's quite similar to STM32H7 ADC.
+> Introduce "st,stm32mp1-adc" compatible to handle variants of this
+> hardware such as vregready flag, interrupts, clock rate.
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>  Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
+> index e8bb824..9994384 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
+> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
+> @@ -24,8 +24,11 @@ Required properties:
+>  - compatible: Should be one of:
+>    "st,stm32f4-adc-core"
+>    "st,stm32h7-adc-core"
+> +  "st,stm32mp1-adc-core"
+>  - reg: Offset and length of the ADC block register set.
+> -- interrupts: Must contain the interrupt for ADC block.
+> +- interrupts: One or more interrupts for ADC block. Some parts like stm32f4
+> +  and stm32h7 share a common ADC interrupt line. stm32mp1 has separate
+> +  lines for each ADC within ADC block.
 
-Unfortunatelly vmalloc doesn't suppoer GFP_NOFS semantinc properly
-because we do have hardocded GFP_KERNEL allocations deep inside the
-vmalloc layers. That means that if GFP_NOFS really protects from
-recursion into the fs deadlocks then the vmalloc call is broken.
+How many interrupt lines is that?
 
-What to do about this? Well, there are two things. Firstly, it would be
-really great to double check whether the GFP_NOFS is really needed. I
-cannot judge that because I am not familiar with the code. It would be
-great if the respective maintainers (hopefully get_maintainer.sh pointed
-me to all relevant ones). If there is not reclaim recursion issue then
-simply use the standard vmalloc (aka GFP_KERNEL request).
-
-If the use is really valid then we have a way to do the vmalloc
-allocation properly. We have memalloc_nofs_{save,restore} scope api. How
-does that work? You simply call memalloc_nofs_save when the reclaim
-recursion critical section starts (e.g. when you take a lock which is
-then used in the reclaim path - e.g. shrinker) and memalloc_nofs_restore
-when the critical section ends. _All_ allocations within that scope
-will get GFP_NOFS semantic automagically. If you are not sure about the
-scope itself then the easiest workaround is to wrap the vmalloc itself
-with a big fat comment that this should be revisited.
-
-Does that sound like something that can be done in a reasonable time?
-I have tried to bring this up in the past but our speed is glacial and
-there are attempts to do hacks like checking for abusers inside the
-vmalloc which is just too ugly to live.
-
-Please do not hesitate to get back to me if something is not clear.
-
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+>  - clocks: Core can use up to two clocks, depending on part used:
+>    - "adc" clock: for the analog circuitry, common to all ADCs.
+>      It's required on stm32f4.
+> @@ -53,6 +56,7 @@ Required properties:
+>  - compatible: Should be one of:
+>    "st,stm32f4-adc"
+>    "st,stm32h7-adc"
+> +  "st,stm32mp1-adc"
+>  - reg: Offset of ADC instance in ADC block (e.g. may be 0x0, 0x100, 0x200).
+>  - clocks: Input clock private to this ADC instance. It's required only on
+>    stm32f4, that has per instance clock input for registers access.
+> -- 
+> 1.9.1
+> 
