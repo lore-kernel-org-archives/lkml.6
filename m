@@ -1,83 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751567AbeDXRUK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:20:10 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:50312 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeDXRUH (ORCPT
+        id S1751932AbeDXRVL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:21:11 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:46506 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeDXRVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:20:07 -0400
-Subject: Re: [RFC 10/10] tools: PCI: Add MSI-X support
-To: Alan Douglas <adouglas@cadence.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
-        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
- <9865822fb89ea84cb55fe93e151295afcd5c96b3.1523379766.git.gustavo.pimentel@synopsys.com>
- <SN6PR07MB45126298F09735193B0F0F00D8880@SN6PR07MB4512.namprd07.prod.outlook.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <b51efe22-f57e-ee1c-ab00-87f34ea6452d@synopsys.com>
-Date: Tue, 24 Apr 2018 18:18:55 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 24 Apr 2018 13:21:08 -0400
+X-Google-Smtp-Source: AIpwx4/QkUWe8zwad0tpx1rCUZBFdaKZA0BuVEDb9sIg5pKdsdeKikppcK2eDghyaYmodpbMB2L1XA==
+Date: Tue, 24 Apr 2018 19:21:04 +0200
+From: Daniel Scheller <d.scheller.oss@gmail.com>
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH] media: stv0910: fix get_algo()'s return type
+Message-ID: <20180424192104.66802821@lt530>
+In-Reply-To: <20180424131938.6270-1-luc.vanoostenryck@gmail.com>
+References: <20180424131938.6270-1-luc.vanoostenryck@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <SN6PR07MB45126298F09735193B0F0F00D8880@SN6PR07MB4512.namprd07.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alan,
+Am Tue, 24 Apr 2018 15:19:38 +0200
+schrieb Luc Van Oostenryck <luc.vanoostenryck@gmail.com>:
 
-On 24/04/2018 10:57, Alan Douglas wrote:
-> Hi Gustavo,
+> The method dvb_frontend_ops::get_frontend_algo() is defined as
+> returning an 'enum dvbfe_algo', but the implementation in this
+> driver returns an 'int'.
 > 
-> On 10 April 2018 18:15, Gustavo Pimentel wrote:
->> Adds MSI-X support to the pcitest tool and modified the pcitest.sh script to
->> accomodate this new type of interruption test.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->>  include/uapi/linux/pcitest.h |  1 +
->>  tools/pci/pcitest.c          | 18 +++++++++++++++++-
->>  tools/pci/pcitest.sh         | 25 +++++++++++++++++++++++++
->>  3 files changed, 43 insertions(+), 1 deletion(-)
-> I found some possible problems when testing with the Cadence EP driver.  The problem
-> is that pcitest uses the BARs for tests, but we also use one for the MSI-X tables
+> Fix this by returning 'enum dvbfe_algo' in this driver too.
 > 
-> In Cadence core the MSI-X table is in BAR0 by default, but this is configured to a size
-> of 0x80 in the test driver, since it is used as the test_reg_bar.  So, I changed the 
-> configuration to use BAR4 instead, which is configured to a size of 131072 
-> in pci-efp-test.c, and this gives me enough space.
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+> ---
+>  drivers/media/dvb-frontends/stv0910.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> However, if I run the BAR tests in pcitest before running the MSI-X tests, the
-> MSI-X tests fail, since the BAR content is overwritten.  It's not a problem with the 
-> scenario in pcitest.sh, but it would be if the module wasn't re-loaded.
-> 
-> So, wondering if we need to come up with some mechanism to specify that a specific
-> BAR will be used for MSI-X, and that its size and content shouldn't be modified by
-> pcitest?
+> diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+> index 52355c14f..50234d311 100644
+> --- a/drivers/media/dvb-frontends/stv0910.c
+> +++ b/drivers/media/dvb-frontends/stv0910.c
+> @@ -1633,7 +1633,7 @@ static int tune(struct dvb_frontend *fe, bool re_tune,
+>  	return 0;
+>  }
+>  
+> -static int get_algo(struct dvb_frontend *fe)
+> +static enum dvbfe_algo get_algo(struct dvb_frontend *fe)
+>  {
+>  	return DVBFE_ALGO_HW;
+>  }
 
-I see your point. I have bypassed the problem by doing the module load/unload
-(to avoid having to fight on multiple fronts).
+Acked-by: Daniel Scheller <d.scheller@gmx.net>
 
-I like your suggestion. Maybe we could have a bool variable for each BARs that
-could be set to false if a resource have intent to use it.
-
-However this change must be accepted by Kishon.
-
-> 
-> Regards,
-> Alan
-> 
-Regards,
-Gustavo
+Best regards,
+Daniel Scheller
+-- 
+https://github.com/herrnst
