@@ -1,71 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933265AbeDXNI4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:08:56 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:50784 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932864AbeDXNIw (ORCPT
+        id S933298AbeDXNLk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:11:40 -0400
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:42858 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1757726AbeDXNLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:08:52 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R891e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0T.nSCVH_1524575317;
-Subject: Re: [RFC v2 PATCH] mm: shmem: make stat.st_blksize return huge page
- size if THP is on
-To: Michal Hocko <mhocko@kernel.org>
-Cc: kirill.shutemov@linux.intel.com, hughd@google.com, hch@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180423004748.GP17484@dhcp22.suse.cz>
- <3c59a1d1-dc66-ae5f-452c-dd0adb047433@linux.alibaba.com>
- <20180423150435.GS17484@dhcp22.suse.cz>
- <aa4b8c48-781a-204c-246a-afa5a54dba99@linux.alibaba.com>
- <20180424124312.GZ17484@dhcp22.suse.cz>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <eefa688b-3d0f-6c9b-628e-8b81394deca6@linux.alibaba.com>
-Date: Tue, 24 Apr 2018 07:08:36 -0600
+        Tue, 24 Apr 2018 09:11:35 -0400
+Subject: Re: [regression, bisected] rockchip rk3399 video output breakage
+To: JeffyChen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
+        Joerg Roedel <jroedel@suse.de>, linux-rockchip@lists.infradead.org
+References: <3beabd18-0c39-be65-cfe7-8498dc7c296b@theobroma-systems.com>
+ <5ADF24F3.6070106@rock-chips.com>
+Cc: klaus.goger@theobroma-systems.com
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Message-ID: <fdd0fe29-2117-c67b-5dba-5d1ab0b19dd1@theobroma-systems.com>
+Date: Tue, 24 Apr 2018 15:11:26 +0200
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
  Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424124312.GZ17484@dhcp22.suse.cz>
+In-Reply-To: <5ADF24F3.6070106@rock-chips.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 24.04.18 14:37, JeffyChen wrote:
+> 
+> right, i think it's a known issue, as the iommu failed to get clks:
+> [    1.525153] rk_iommu ff8f3f00.iommu: Failed to get clk 'iface': -2
+> [    1.525316] rk_iommu: probe of ff8f3f00.iommu failed with error -2
+> [    1.525484] rk_iommu ff903f00.iommu: Failed to get clk 'iface': -2
+> [    1.525643] rk_iommu: probe of ff903f00.iommu failed with error -2
+> 
+> 
+> there's a followed patch to add those clks to the dtsi, and also a fix 
+> patch to make those clks optional(by heiko):
+> 
+> https://www.spinics.net/lists/arm-kernel/msg645696.html
+> 
+> http://lists.infradead.org/pipermail/linux-rockchip/2018-April/020349.html
 
+Thanks, I tested both, and both get the screen to display some kernel 
+output!
 
-On 4/24/18 6:43 AM, Michal Hocko wrote:
-> On Mon 23-04-18 21:41:50, Yang Shi wrote:
->>
->> On 4/23/18 9:04 AM, Michal Hocko wrote:
->>> On Sun 22-04-18 21:28:59, Yang Shi wrote:
->>>> On 4/22/18 6:47 PM, Michal Hocko wrote:
->>> [...]
->>>>> will be used on the first aligned address even when the initial/last
->>>>> portion of the mapping is not THP aligned.
->>>> No, my test shows it is not. And, transhuge_vma_suitable() does check the
->>>> virtual address alignment. If it is not huge page size aligned, it will not
->>>> set PMD for huge page.
->>> It's been quite some time since I've looked at that code but I think you
->>> are wrong. It just doesn't make sense to make the THP decision on the
->>> VMA alignment much. Kirill, can you clarify please?
->> Thanks a lot Michal and Kirill to elaborate how tmpfs THP make pmd map.
->>
->> I did a quick test, THP will be PMD mapped as long as :
->> * hint address is huge page aligned if MAP_FIXED
->> Or
->> * offset is huge page aligned
->> And
->> * The size is big enough (>= huge page size)
->>
->> This test does verify what Kirill said. And, I dig into a little further
->> qemu code and did strace, qemu does try to mmap the file to non huge page
->> aligned address with MAP_FIXED.
-> Does it make sense to contact Qemu developers and probably fix this?
+However, I am getting some nasty error messages and the screen seems to 
+refresh only once every 30 seconds:
 
-Yes, I think so. We can submit a bug report to QEMU.
+> [   15.586502] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CRTC:30:crtc-0] flip_done timed out
+> [   25.826490] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CONNECTOR:37:HDMI-A-1] flip_done timed out
+> [   36.066490] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [PLANE:28:plane-0] flip_done timed out
+> [   36.066504] [drm:drm_calc_timestamping_constants] crtc 30: hwmode: htotal 2200, vtotal 1125, vdisplay 1080
+> [   36.066508] [drm:drm_calc_timestamping_constants] crtc 30: clock 148500 kHz framedur 16666666 linedur 14814
+> [   36.076535] rockchip-vop ff8f0000.vop: [drm:vop_crtc_atomic_flush] *ERROR* VOP vblank IRQ stuck for 10 ms
+> [   36.076577] WARNING: CPU: 1 PID: 83 at drivers/gpu/drm/rockchip/rockchip_drm_vop.c:1004 vop_crtc_atomic_flush+0x1c0/0x1c8
 
->
+Full dmesg with patch "arm64: dts: rockchip: add clocks in iommu nodes":
+https://gist.github.com/jakob-tsd/3fd49894d52dcd8a409eb9e6136b2d39
+
+Full dmesg with patch "iommu/rockchip: make clock handling optional":
+https://gist.github.com/jakob-tsd/da96572a40d11f0f6dff3ee481098138 
+(looks the same)
+
+Thanks,
+Jakob
