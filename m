@@ -1,48 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757610AbeDXMW4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:22:56 -0400
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:43583 "EHLO
-        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756093AbeDXMWx (ORCPT
+        id S1757635AbeDXMXj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:23:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34168 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752890AbeDXMXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:22:53 -0400
-X-Google-Smtp-Source: AB8JxZoGZx/70PJabTzze38cRwsGNKFHCAb15REKgEPCMjo9EGv7D57TtX19EHKcFUEyCQ8Ss9Q4vTM6aYNWoeL4I2Y=
-MIME-Version: 1.0
-In-Reply-To: <AM3PR04MB131566E1C8033D256686F192F5880@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1524455219-6736-1-git-send-email-Anson.Huang@nxp.com>
- <1524455219-6736-4-git-send-email-Anson.Huang@nxp.com> <CAOMZO5CDAQtw7Q6NgSzKP4ogaqRaGSE0A+st1iqZ=cQsK49moQ@mail.gmail.com>
- <AM3PR04MB131566E1C8033D256686F192F5880@AM3PR04MB1315.eurprd04.prod.outlook.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 24 Apr 2018 09:22:52 -0300
-Message-ID: <CAOMZO5Dm=MFRoh=y54Qf2RrncWfQPTUJ2ZNfvYnUD=idp8RPNA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
-To: Anson Huang <anson.huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 24 Apr 2018 08:23:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F144760807
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [v4 0/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Tue, 24 Apr 2018 17:53:17 +0530
+Message-Id: <1524572599-5425-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+ [v4]
+  * Addressed comments from Stephen
 
-On Mon, Apr 23, 2018 at 11:09 PM, Anson Huang <anson.huang@nxp.com> wrote:
+ [v3]
+  * Addressed documentation & code review comments from Bjorn
+  * Addressed bindings comments from Rob
+  * Updated the patch series order for bindings
 
-> Ah, yes, thanks for pointing out this issue, I just removed it and the function is still working,
-> already sent out V2 patch set, thanks.
+ [v2]
+  * Addressed comments from Stephen
+  * Addressed comments from Evan
 
-So now maybe it is working only because the bootloader activated this
-GPIO, which is not good.
+This patch series adds a driver and device tree documentation binding
+for the clock control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
+would send requests for the RPMh managed clock resources.
 
-I don't have access to the mx6sx sabreauto schematics to verify  where
-&max7322 0 connects to, but it would be better to make sure that you
-activate this pin in dts if it is needed for Ethernet, without relying
-on the bootloader.
+The RPMh clock driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.
+
+Thanks,
+Taniya
+
+[1]: https://lkml.org/lkml/2018/3/9/979
+[2]: https://lkml.org/lkml/2018/3/14/787
+
+
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM RPMh clock bindings
+  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+
+ .../devicetree/bindings/clock/qcom,rpmh-clk.txt    |  22 ++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-rpmh.c                        | 364 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h              |  24 ++
+ 5 files changed, 420 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
+ create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
