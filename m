@@ -1,78 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932944AbeDXMYT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:24:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757691AbeDXMYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:24:16 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F12FE21774
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
-Message-ID: <1524572654.5929.3.camel@kernel.org>
-Subject: Re: [PATCH] Always report a writeback error once
-From: Jeff Layton <jlayton@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Andres Freund <andres@anarazel.de>
-Date: Tue, 24 Apr 2018 08:24:14 -0400
-In-Reply-To: <20180423204208.GG13383@bombadil.infradead.org>
-References: <20180423204208.GG13383@bombadil.infradead.org>
+        id S932895AbeDXMZR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:25:17 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40577 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757725AbeDXMZO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 08:25:14 -0400
+X-Google-Smtp-Source: AIpwx49S42YUpTZH1mwmOFEwrq3TeeqKCn1TxjqLcxePi4jwxLxt4LO5m2ofmf6siUB2uFxu8/cINg==
+MIME-Version: 1.0
+In-Reply-To: <20180424121440.qmiubwdgcisn4g4m@flea>
+References: <1524570434-17814-1-git-send-email-narmstrong@baylibre.com>
+ <1524570434-17814-3-git-send-email-narmstrong@baylibre.com> <20180424121440.qmiubwdgcisn4g4m@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 24 Apr 2018 20:24:51 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65-SOfhf0B-cJhY-9bCWnFuw_r-c19TW0p9kcs7043McQ@mail.gmail.com>
+Message-ID: <CAGb2v65-SOfhf0B-cJhY-9bCWnFuw_r-c19TW0p9kcs7043McQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: allwinner: Add dts file for Libre
+ Computer Board ALL-H3-CC H5 ver.
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, clabbe@baylibre.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-23 at 13:42 -0700, Matthew Wilcox wrote:
-> The errseq_t infrastructure assumes that errors which occurred before
-> the file descriptor was opened are of no interest to the application.
-> This turns out to be a regression for some applications, notably Postgres.
-> 
-> Before errseq_t, a writeback error would be reported exactly once (as
-> long as the inode remained in memory), so Postgres could open a file,
-> call fsync() and find out whether there had been a writeback error on
-> that file from another process.
-> 
-> This patch restores that behaviour by reporting errors to file descriptors
-> which are opened after the error occurred, but before it was reported
-> to any file descriptor.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 5660e13d2fd6 ("fs: new infrastructure for writeback error handling and reporting")
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> 
-> diff --git a/lib/errseq.c b/lib/errseq.c
-> index df782418b333..093f1fba4ee0 100644
-> --- a/lib/errseq.c
-> +++ b/lib/errseq.c
-> @@ -119,19 +119,11 @@ EXPORT_SYMBOL(errseq_set);
->  errseq_t errseq_sample(errseq_t *eseq)
->  {
->  	errseq_t old = READ_ONCE(*eseq);
-> -	errseq_t new = old;
->  
-> -	/*
-> -	 * For the common case of no errors ever having been set, we can skip
-> -	 * marking the SEEN bit. Once an error has been set, the value will
-> -	 * never go back to zero.
-> -	 */
-> -	if (old != 0) {
-> -		new |= ERRSEQ_SEEN;
-> -		if (old != new)
-> -			cmpxchg(eseq, old, new);
-> -	}
-> -	return new;
-> +	/* If nobody has seen this error yet, then we can be the first. */
-> +	if (!(old & ERRSEQ_SEEN))
-> +		old = 0;
-> +	return old;
->  }
->  EXPORT_SYMBOL(errseq_sample);
->  
+On Tue, Apr 24, 2018 at 8:14 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Tue, Apr 24, 2018 at 01:47:14PM +0200, Neil Armstrong wrote:
+>> The Libre Computer Board ALL-H3-CC from Libre Technology is a Raspberry
+>> Pi B+ form factor single board computer based on the Allwinner H2+, H3,
+>> or H5 SoCs with the same PCB.
+>> The board has 1GB DDR3 SDRAM, provided by 4 2Gb chips. The mounting holes
 
-Patch looks good to me, modulo the comment fix that Andres pointed out.
+The board has 2GB DDR3 SDRAM, provided by 4 4Gb chips. Copy-paste error?
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>> and connectors are in the exact same position as on the Raspberry Pi B+.
+>>
+>> This patch enables the H5 variant using the H3 board definition moved to
+>> a common dtsi in an earlier patch. The dts sinmply include the common dtsi
+
+                                              ^ Small typo here.
+
+ChenYu
+
+>> and declares the correct compatible and model of the H5 variant.
+>>
+>> Suggested-by: Corentin Labbe <clabbe@baylibre.com>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
