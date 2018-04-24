@@ -1,108 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751301AbeDXW0J convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 18:26:09 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:54171 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbeDXW0H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 18:26:07 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Martin =?utf-8?Q?P=C3=A4rtel?= <martin.partel@gmail.com>
-Cc: Anton Ivanov <anton.ivanov@kot-begemot.co.uk>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>, Jeff Dike <jdike@addtoit.com>,
-        linux-um@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        "user-mode-linux-devel\@lists.sourceforge.net"
-        <user-mode-linux-devel@lists.sourceforge.net>
-References: <87604mhrnb.fsf@xmission.com>
-        <20180420143811.9994-19-ebiederm@xmission.com>
-        <7074fe36-27c5-ee82-9659-da703cfc91fe@kot-begemot.co.uk>
-        <CAFLxGvyM+Kru=ERDvccjVuMjSPbu+FQzjbUbMwSyEbL1rVGkBQ@mail.gmail.com>
-        <7ddd238f-88a8-ed03-fe9e-0f4e5f2a490d@kot-begemot.co.uk>
-        <87zi1sd28d.fsf@xmission.com>
-        <CAMD8JhwgcWCp6c=O4-spNW1VdY5M-eAjr7M5PieeAfeTSe_4yw@mail.gmail.com>
-        <CAMD8JhxHwcuXh68o1=fbZ_t6DH7x_dO_0nEMqL=cHXBfZXub=w@mail.gmail.com>
-Date: Tue, 24 Apr 2018 17:24:24 -0500
-In-Reply-To: <CAMD8JhxHwcuXh68o1=fbZ_t6DH7x_dO_0nEMqL=cHXBfZXub=w@mail.gmail.com>
-        ("Martin \=\?utf-8\?Q\?P\=C3\=A4rtel\=22's\?\= message of "Wed, 25 Apr 2018 01:03:39
- +0300")
-Message-ID: <87lgdc1bvr.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1fB6Nh-0001uW-Nf;;;mid=<87lgdc1bvr.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19uq1K7yJ3MRBvhQaRwx8jUfsVdQspXcvw=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4964]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: =?ISO-8859-1?Q?***;Martin P=c3=a4rtel <martin.partel@gmail.com>?=
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 453 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 3.0 (0.7%), b_tie_ro: 1.97 (0.4%), parse: 1.37 (0.3%),
-        extract_message_metadata: 26 (5.7%), get_uri_detail_list: 2.2 (0.5%),
-        tests_pri_-1000: 9 (2.0%), tests_pri_-950: 2.0 (0.5%), tests_pri_-900: 1.67
-        (0.4%), tests_pri_-400: 32 (7.0%), check_bayes: 30 (6.6%), b_tokenize: 11
-        (2.4%), b_tok_get_all: 10 (2.1%), b_comp_prob: 3.9 (0.9%), b_tok_touch_all:
-        2.2 (0.5%), b_finish: 0.75 (0.2%), tests_pri_0: 365 (80.6%),
-        check_dkim_signature: 0.87 (0.2%), check_dkim_adsp: 4.6 (1.0%),
-        tests_pri_500: 8 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [uml-devel] [REVIEW][PATCH 19/22] signal/um: Use force_sig_fault in relay_signal.
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        id S1751097AbeDXW1e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 18:27:34 -0400
+Received: from mga06.intel.com ([134.134.136.31]:34770 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750779AbeDXW1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 18:27:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,324,1520924400";
+   d="scan'208";a="50521353"
+Message-ID: <1524610338.24461.35.camel@dk-H97M-D3H>
+Subject: Re: [Intel-gfx] [PATCH v7 02/10] drm/i915: Move DP modeset retry
+ work into intel_dp
+From: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+Reply-To: dhinakaran.pandiyan@intel.com
+To: Lyude Paul <lyude@redhat.com>
+Cc: intel-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
+        <ville.syrjala@linux.intel.com>
+Date: Tue, 24 Apr 2018 15:52:18 -0700
+In-Reply-To: <20180411225501.26751-3-lyude@redhat.com>
+References: <20180411225501.26751-1-lyude@redhat.com>
+         <20180411225501.26751-3-lyude@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Pärtel <martin.partel@gmail.com> writes:
 
-> And once more in plain text..
->
-> On 25 April 2018 at 01:00, Martin Pärtel <martin.partel@gmail.com> wrote:
->>
->> Hi all,
->>
->> This was ages ago, but from what I remember...
->>
->>>
->>> Having a second look I really don't understand what relay_signal is
->>> trying to do.
->>>
->>> The function relay_signal does not pass siginfo through unchanged.
->>
->>
->> Just copying the entire struct would do the wrong thing. It was discussed here:
->> https://marc.info/?l=user-mode-linux-devel&m=133910707911999&w=2
 
-So you are regnerating siginfo to ensure you don't copy unintended
-things such as the host pid and host uid.
 
-Then my analysis is correct that you simply missed filtering out the
-si codes that are not signal specific and do not use the fault layout
-in struct siginfo.
+On Wed, 2018-04-11 at 18:54 -0400, Lyude Paul wrote:
+> While having the modeset_retry_work in intel_connector makes sense with
+> SST, this paradigm doesn't make a whole ton of sense when it comes to
+> MST since we have to deal with multiple connectors. In most cases, it's
+> more useful to just use the intel_dp struct since it indicates whether
+> or not we're dealing with an MST device, along with being able to easily
+> trace the intel_dp struct back to it's respective connector (if there is
+> any). So, move the modeset_retry_work function out of the
+> intel_connector struct and into intel_dp.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Manasi Navare <manasi.d.navare@intel.com>
+> Cc: Manasi Navare <manasi.d.navare@intel.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> 
+> V2:
+>  - Remove accidental duplicate modeset_retry_work in intel_connector
+> V3:
+>  - Also check against eDP in intel_hpd_poll_fini() - mdnavare
 
-Is si_addr safe to copy across?  I presume so since the kernel just
-ptraces an ordinary process, but I figure I should ask and double
-check.
+contradicts with 
 
-I am going to respin my patch.  I would say that you really need a
-white-list of si_codes that whose use of struct siginfo that you know.
-Otherwise you could get into the same problem of under or over copying
-data.
+commit c0cfb10d9e1de490e36d3b9d4228c0ea0ca30677
+Author: Manasi Navare <manasi.d.navare@intel.com>
+Date:   Thu Oct 12 12:13:38 2017 -0700
 
-Eric
+    drm/i915/edp: Do not do link training fallback or prune modes on EDP
+
+    In case of eDP because the panel has a fixed mode, the link rate
+    and lane count at which it is trained corresponds to the link BW
+    required to support the native resolution of the panel. In case of
+    panles with lower resolutions where fewer lanes are hooked up
+internally,
+    that number is reflected in the MAX_LANE_COUNT DPCD register of the
+panel.
+    So it is pointless to fallback to lower link rate/lane count in case
+    of link training failure on eDP connector since the lower link BW
+    will not support the native resolution of the panel and we cannot
+    prune the preferred mode on the eDP connector.
+
+
+
+
+> V4:
+>  - Don't bother looping over connectors for canceling modeset rety work,
+>    just encoders.
+> V7:
+>  - Fix CHECKPATCH errors
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+>  drivers/gpu/drm/i915/intel_display.c          | 14 +++++++++++---
+>  drivers/gpu/drm/i915/intel_dp.c               | 10 ++++------
+>  drivers/gpu/drm/i915/intel_dp_link_training.c |  2 +-
+>  drivers/gpu/drm/i915/intel_drv.h              |  6 +++---
+>  4 files changed, 19 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+> index e04050ea3e28..18edb9628a54 100644
+> --- a/drivers/gpu/drm/i915/intel_display.c
+> +++ b/drivers/gpu/drm/i915/intel_display.c
+> @@ -15471,20 +15471,28 @@ void intel_connector_unregister(struct drm_connector *connector)
+>  
+>  static void intel_hpd_poll_fini(struct drm_device *dev)
+>  {
+> -	struct intel_connector *connector;
+>  	struct drm_connector_list_iter conn_iter;
+> +	struct intel_connector *connector;
+> +	struct intel_encoder *encoder;
+> +	struct intel_dp *intel_dp;
+>  
+>  	/* Kill all the work that may have been queued by hpd. */
+>  	drm_connector_list_iter_begin(dev, &conn_iter);
+>  	for_each_intel_connector_iter(connector, &conn_iter) {
+> -		if (connector->modeset_retry_work.func)
+> -			cancel_work_sync(&connector->modeset_retry_work);
+>  		if (connector->hdcp_shim) {
+>  			cancel_delayed_work_sync(&connector->hdcp_check_work);
+>  			cancel_work_sync(&connector->hdcp_prop_work);
+>  		}
+>  	}
+>  	drm_connector_list_iter_end(&conn_iter);
+> +
+> +	for_each_intel_encoder(dev, encoder) {
+> +		if (encoder->type == INTEL_OUTPUT_DP ||
+
+commit 7e732cacb1ae27b2eb6902cabd93e9da086c54f0
+Author: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Date:   Fri Oct 27 22:31:24 2017 +0300
+
+    drm/i915: Stop frobbing with DDI encoder->type
+
+    Currently the DDI encoder->type will change at runtime depending on
+    what kind of hotplugs we've processed. That's quite bad since we
+can't
+    really trust that that current value of encoder->type actually
+matches
+    the type of signal we're trying to drive through it.
+
+    Let's eliminate that problem by declaring that non-eDP DDI port will
+    always have the encoder type as INTEL_OUTPUT_DDI. This means the
+code
+    can no longer try to distinguish DP vs. HDMI based on encoder->type.
+    We'll leave eDP as INTEL_OUTPUT_EDP, since it'll never change and
+    there's a bunch of code that relies on that value to identify eDP
+    encoders.
+
+
+
+> +		    encoder->type == INTEL_OUTPUT_EDP) {
+> +			intel_dp = enc_to_intel_dp(&encoder->base);
+> +			cancel_work_sync(&intel_dp->modeset_retry_work);
+> +		}
+> +	}
+>  }
+>  
+>  void intel_modeset_cleanup(struct drm_device *dev)
+> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+> index 62f82c4298ac..fbb467bc227d 100644
+> --- a/drivers/gpu/drm/i915/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/intel_dp.c
+> @@ -6249,12 +6249,10 @@ static bool intel_edp_init_connector(struct intel_dp *intel_dp,
+>  
+>  static void intel_dp_modeset_retry_work_fn(struct work_struct *work)
+>  {
+> -	struct intel_connector *intel_connector;
+> -	struct drm_connector *connector;
+> +	struct intel_dp *intel_dp = container_of(work, typeof(*intel_dp),
+> +						 modeset_retry_work);
+> +	struct drm_connector *connector = &intel_dp->attached_connector->base;
+>  
+> -	intel_connector = container_of(work, typeof(*intel_connector),
+> -				       modeset_retry_work);
+> -	connector = &intel_connector->base;
+>  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n", connector->base.id,
+>  		      connector->name);
+>  
+> @@ -6283,7 +6281,7 @@ intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
+>  	int type;
+>  
+>  	/* Initialize the work for modeset in case of link train failure */
+> -	INIT_WORK(&intel_connector->modeset_retry_work,
+> +	INIT_WORK(&intel_dp->modeset_retry_work,
+>  		  intel_dp_modeset_retry_work_fn);
+>  
+>  	if (WARN(intel_dig_port->max_lanes < 1,
+> diff --git a/drivers/gpu/drm/i915/intel_dp_link_training.c b/drivers/gpu/drm/i915/intel_dp_link_training.c
+> index f59b59bb0a21..2cfa58ce1f95 100644
+> --- a/drivers/gpu/drm/i915/intel_dp_link_training.c
+> +++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
+> @@ -340,7 +340,7 @@ intel_dp_start_link_train(struct intel_dp *intel_dp)
+>  							     intel_dp->link_rate,
+>  							     intel_dp->lane_count))
+>  			/* Schedule a Hotplug Uevent to userspace to start modeset */
+> -			schedule_work(&intel_connector->modeset_retry_work);
+> +			schedule_work(&intel_dp->modeset_retry_work);
+>  	} else {
+>  		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
+>  			  intel_connector->base.base.id,
+> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+> index 5bd2263407b2..742d53495974 100644
+> --- a/drivers/gpu/drm/i915/intel_drv.h
+> +++ b/drivers/gpu/drm/i915/intel_drv.h
+> @@ -406,9 +406,6 @@ struct intel_connector {
+>  
+>  	struct intel_dp *mst_port;
+>  
+> -	/* Work struct to schedule a uevent on link train failure */
+> -	struct work_struct modeset_retry_work;
+> -
+>  	const struct intel_hdcp_shim *hdcp_shim;
+>  	struct mutex hdcp_mutex;
+>  	uint64_t hdcp_value; /* protected by hdcp_mutex */
+> @@ -1143,6 +1140,9 @@ struct intel_dp {
+>  
+>  	/* Displayport compliance testing */
+>  	struct intel_dp_compliance compliance;
+> +
+> +	/* Work struct to schedule a uevent on link train failure */
+> +	struct work_struct modeset_retry_work;
+>  };
+>  
+>  struct intel_lspcon {
