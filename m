@@ -1,591 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756133AbeDXFqt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 01:46:49 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43901 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755969AbeDXFpt (ORCPT
+        id S1756031AbeDXFvD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 01:51:03 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48066 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751469AbeDXFvC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 01:45:49 -0400
-X-Google-Smtp-Source: AIpwx4/DDrYk8vExr6l7hBgAIX1/qqHDkZGVBZC/stQ4kIvmw6xGVMebKccrvUlF0+DNVVwgJulHRg==
-From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
-To: Matias Bjorling <mb@lightnvm.io>
-Cc: linux-block@vger.kernel.org, Javier Gonzales <javier@cnexlabs.com>,
-        linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH v2 1/3] lightnvm: pblk: rework write error recovery path
-Date: Tue, 24 Apr 2018 08:45:30 +0300
-Message-Id: <1524548732-4326-2-git-send-email-hans.ml.holmberg@owltronix.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524548732-4326-1-git-send-email-hans.ml.holmberg@owltronix.com>
-References: <1524548732-4326-1-git-send-email-hans.ml.holmberg@owltronix.com>
+        Tue, 24 Apr 2018 01:51:02 -0400
+Subject: Re: [Xen-devel] [RFC 0/2] To introduce xenwatch multithreading (xen
+ mtwatch)
+To: Juergen Gross <jgross@suse.com>
+References: <1523100355-27647-1-git-send-email-dongli.zhang@oracle.com>
+ <20180423140911.bihiwfwtlneobgzd@citrix.com>
+ <6c379249-886d-76ee-db9c-942967b23d80@oracle.com>
+ <db08fec6-5648-4d87-4ace-2f42d1d04479@suse.com>
+Cc: Wei Liu <wei.liu2@citrix.com>, ian.jackson@eu.citrix.com,
+        linux-kernel@vger.kernel.org, srinivas.eeda@oracle.com,
+        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
+        Joao Martins <joao.m.martins@oracle.com>
+From: Dongli Zhang <dongli.zhang@oracle.com>
+Message-ID: <9a91b19a-5556-f1ea-92d5-29f2baa0ccd5@oracle.com>
+Date: Tue, 24 Apr 2018 13:52:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <db08fec6-5648-4d87-4ace-2f42d1d04479@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8872 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=870
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804240059
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Hi Juergen,
 
-The write error recovery path is incomplete, so rework
-the write error recovery handling to do resubmits directly
-from the write buffer.
+On 04/24/2018 01:22 PM, Juergen Gross wrote:
+> On 24/04/18 01:55, Dongli Zhang wrote:
+>> Hi Wei,
+>>
+>> On 04/23/2018 10:09 PM, Wei Liu wrote:
+>>> On Sat, Apr 07, 2018 at 07:25:53PM +0800, Dongli Zhang wrote:
+>>>> About per-domU xenwatch thread create/destroy, a new type of xenstore node is
+>>>> introduced: '/local/domain/0/mtwatch/<domid>'.
+>>>>
+>>>> Suppose the new domid id 7. During the domU (domid=7) creation, the xen
+>>>> toolstack writes '/local/domain/0/mtwatch/7' to xenstore before the insertion
+>>>> of '/local/domain/7'. When the domid=7 is destroyed, the last xenstore
+>>>> operation by xen toolstack is to remove '/local/domain/0/mtwatch/7'.
+>>>>
+>>>> The dom0 kernel subscribes a watch at node '/local/domain/0/mtwatch'.  Kernel
+>>>> thread [xen-mtwatch-7] is created when '/local/domain/0/mtwatch/7' is inserted,
+>>>> while this kernel thread is destroyed when the corresponding xenstore node is
+>>>> removed.
+>>>
+>>> Instead of inventing yet another node, can you not watch /local/domain
+>>> directly?
+>>
+>> Would you like to watch at /local/domain directly? Or is your question "is there
+>> any other way to not watch at /local/domain, while no extra xenstore node will
+>> be introduced"?
+>>
+>> Actually, the first prototype of this idea was to watch at /local/domain
+>> directly to get aware of the domU create/destroy, so that xen toolstack will not
+>> get involved. Joao Martins (CCed) had a concern on the performance as watching
+>> at /local/domain would lead to large amount of xenwatch events.
+> 
+> That's what the special watches "@introduceDomain" and "@releaseDomain"
+> are meant for.
 
-When a write error occurs, the remaining sectors in the chunk are
-mapped out and invalidated and the request inserted in a resubmit list.
+I used to consider to watch at "@introduceDomain". However, there is no domain
+information appended with "@introduceDomain" and it is still required for dom0
+kernel to proactively confirm who is created.
 
-The writer thread checks if there are any requests to resubmit,
-scans and invalidates any lbas that have been overwritten by later
-writes and resubmits the failed entries.
-
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
----
- drivers/lightnvm/pblk-init.c     |   2 +
- drivers/lightnvm/pblk-rb.c       |  39 ------
- drivers/lightnvm/pblk-recovery.c |  91 -------------
- drivers/lightnvm/pblk-write.c    | 267 ++++++++++++++++++++++++++-------------
- drivers/lightnvm/pblk.h          |  11 +-
- 5 files changed, 181 insertions(+), 229 deletions(-)
-
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index bfc488d..6f06727 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -426,6 +426,7 @@ static int pblk_core_init(struct pblk *pblk)
- 		goto free_r_end_wq;
- 
- 	INIT_LIST_HEAD(&pblk->compl_list);
-+	INIT_LIST_HEAD(&pblk->resubmit_list);
- 
- 	return 0;
- 
-@@ -1185,6 +1186,7 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 	pblk->state = PBLK_STATE_RUNNING;
- 	pblk->gc.gc_enabled = 0;
- 
-+	spin_lock_init(&pblk->resubmit_lock);
- 	spin_lock_init(&pblk->trans_lock);
- 	spin_lock_init(&pblk->lock);
- 
-diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-index 024a366..00cd1f2 100644
---- a/drivers/lightnvm/pblk-rb.c
-+++ b/drivers/lightnvm/pblk-rb.c
-@@ -503,45 +503,6 @@ int pblk_rb_may_write_gc(struct pblk_rb *rb, unsigned int nr_entries,
- }
- 
- /*
-- * The caller of this function must ensure that the backpointer will not
-- * overwrite the entries passed on the list.
-- */
--unsigned int pblk_rb_read_to_bio_list(struct pblk_rb *rb, struct bio *bio,
--				      struct list_head *list,
--				      unsigned int max)
--{
--	struct pblk_rb_entry *entry, *tentry;
--	struct page *page;
--	unsigned int read = 0;
--	int ret;
--
--	list_for_each_entry_safe(entry, tentry, list, index) {
--		if (read > max) {
--			pr_err("pblk: too many entries on list\n");
--			goto out;
--		}
--
--		page = virt_to_page(entry->data);
--		if (!page) {
--			pr_err("pblk: could not allocate write bio page\n");
--			goto out;
--		}
--
--		ret = bio_add_page(bio, page, rb->seg_size, 0);
--		if (ret != rb->seg_size) {
--			pr_err("pblk: could not add page to write bio\n");
--			goto out;
--		}
--
--		list_del(&entry->index);
--		read++;
--	}
--
--out:
--	return read;
--}
--
--/*
-  * Read available entries on rb and add them to the given bio. To avoid a memory
-  * copy, a page reference to the write buffer is used to be added to the bio.
-  *
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 9cb6d5d..5983428 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -16,97 +16,6 @@
- 
- #include "pblk.h"
- 
--void pblk_submit_rec(struct work_struct *work)
--{
--	struct pblk_rec_ctx *recovery =
--			container_of(work, struct pblk_rec_ctx, ws_rec);
--	struct pblk *pblk = recovery->pblk;
--	struct nvm_rq *rqd = recovery->rqd;
--	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
--	struct bio *bio;
--	unsigned int nr_rec_secs;
--	unsigned int pgs_read;
--	int ret;
--
--	nr_rec_secs = bitmap_weight((unsigned long int *)&rqd->ppa_status,
--								NVM_MAX_VLBA);
--
--	bio = bio_alloc(GFP_KERNEL, nr_rec_secs);
--
--	bio->bi_iter.bi_sector = 0;
--	bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
--	rqd->bio = bio;
--	rqd->nr_ppas = nr_rec_secs;
--
--	pgs_read = pblk_rb_read_to_bio_list(&pblk->rwb, bio, &recovery->failed,
--								nr_rec_secs);
--	if (pgs_read != nr_rec_secs) {
--		pr_err("pblk: could not read recovery entries\n");
--		goto err;
--	}
--
--	if (pblk_setup_w_rec_rq(pblk, rqd, c_ctx)) {
--		pr_err("pblk: could not setup recovery request\n");
--		goto err;
--	}
--
--#ifdef CONFIG_NVM_DEBUG
--	atomic_long_add(nr_rec_secs, &pblk->recov_writes);
--#endif
--
--	ret = pblk_submit_io(pblk, rqd);
--	if (ret) {
--		pr_err("pblk: I/O submission failed: %d\n", ret);
--		goto err;
--	}
--
--	mempool_free(recovery, pblk->rec_pool);
--	return;
--
--err:
--	bio_put(bio);
--	pblk_free_rqd(pblk, rqd, PBLK_WRITE);
--}
--
--int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
--			struct pblk_rec_ctx *recovery, u64 *comp_bits,
--			unsigned int comp)
--{
--	struct nvm_rq *rec_rqd;
--	struct pblk_c_ctx *rec_ctx;
--	int nr_entries = c_ctx->nr_valid + c_ctx->nr_padded;
--
--	rec_rqd = pblk_alloc_rqd(pblk, PBLK_WRITE);
--	rec_ctx = nvm_rq_to_pdu(rec_rqd);
--
--	/* Copy completion bitmap, but exclude the first X completed entries */
--	bitmap_shift_right((unsigned long int *)&rec_rqd->ppa_status,
--				(unsigned long int *)comp_bits,
--				comp, NVM_MAX_VLBA);
--
--	/* Save the context for the entries that need to be re-written and
--	 * update current context with the completed entries.
--	 */
--	rec_ctx->sentry = pblk_rb_wrap_pos(&pblk->rwb, c_ctx->sentry + comp);
--	if (comp >= c_ctx->nr_valid) {
--		rec_ctx->nr_valid = 0;
--		rec_ctx->nr_padded = nr_entries - comp;
--
--		c_ctx->nr_padded = comp - c_ctx->nr_valid;
--	} else {
--		rec_ctx->nr_valid = c_ctx->nr_valid - comp;
--		rec_ctx->nr_padded = c_ctx->nr_padded;
--
--		c_ctx->nr_valid = comp;
--		c_ctx->nr_padded = 0;
--	}
--
--	recovery->rqd = rec_rqd;
--	recovery->pblk = pblk;
--
--	return 0;
--}
--
- int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta_buf)
- {
- 	u32 crc;
-diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
-index 3e6f1eb..f62e432f 100644
---- a/drivers/lightnvm/pblk-write.c
-+++ b/drivers/lightnvm/pblk-write.c
-@@ -103,68 +103,149 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
- 	pblk_rb_sync_end(&pblk->rwb, &flags);
- }
- 
--/* When a write fails, we are not sure whether the block has grown bad or a page
-- * range is more susceptible to write errors. If a high number of pages fail, we
-- * assume that the block is bad and we mark it accordingly. In all cases, we
-- * remap and resubmit the failed entries as fast as possible; if a flush is
-- * waiting on a completion, the whole stack would stall otherwise.
-- */
--static void pblk_end_w_fail(struct pblk *pblk, struct nvm_rq *rqd)
-+/* Map remaining sectors in chunk, starting from ppa */
-+static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
- {
--	void *comp_bits = &rqd->ppa_status;
--	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
--	struct pblk_rec_ctx *recovery;
--	struct ppa_addr *ppa_list = rqd->ppa_list;
--	int nr_ppas = rqd->nr_ppas;
--	unsigned int c_entries;
--	int bit, ret;
-+	struct nvm_tgt_dev *dev = pblk->dev;
-+	struct nvm_geo *geo = &dev->geo;
-+	struct pblk_line *line;
-+	struct ppa_addr map_ppa = *ppa;
-+	u64 paddr;
-+	int done = 0;
- 
--	if (unlikely(nr_ppas == 1))
--		ppa_list = &rqd->ppa_addr;
-+	line = &pblk->lines[pblk_ppa_to_line(*ppa)];
-+	spin_lock(&line->lock);
- 
--	recovery = mempool_alloc(pblk->rec_pool, GFP_ATOMIC);
-+	while (!done)  {
-+		paddr = pblk_dev_ppa_to_line_addr(pblk, map_ppa);
- 
--	INIT_LIST_HEAD(&recovery->failed);
-+		if (!test_and_set_bit(paddr, line->map_bitmap))
-+			line->left_msecs--;
- 
--	bit = -1;
--	while ((bit = find_next_bit(comp_bits, nr_ppas, bit + 1)) < nr_ppas) {
--		struct pblk_rb_entry *entry;
--		struct ppa_addr ppa;
-+		if (!test_and_set_bit(paddr, line->invalid_bitmap))
-+			le32_add_cpu(line->vsc, -1);
- 
--		/* Logic error */
--		if (bit > c_ctx->nr_valid) {
--			WARN_ONCE(1, "pblk: corrupted write request\n");
--			mempool_free(recovery, pblk->rec_pool);
--			goto out;
-+		if (geo->version == NVM_OCSSD_SPEC_12) {
-+			map_ppa.ppa++;
-+			if (map_ppa.g.pg == geo->num_pg)
-+				done = 1;
-+		} else {
-+			map_ppa.m.sec++;
-+			if (map_ppa.m.sec == geo->clba)
-+				done = 1;
- 		}
-+	}
- 
--		ppa = ppa_list[bit];
--		entry = pblk_rb_sync_scan_entry(&pblk->rwb, &ppa);
--		if (!entry) {
--			pr_err("pblk: could not scan entry on write failure\n");
--			mempool_free(recovery, pblk->rec_pool);
--			goto out;
--		}
-+	spin_unlock(&line->lock);
-+}
-+
-+static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
-+				  unsigned int nr_entries)
-+{
-+	struct pblk_rb *rb = &pblk->rwb;
-+	struct pblk_rb_entry *entry;
-+	struct pblk_line *line;
-+	struct pblk_w_ctx *w_ctx;
-+	struct ppa_addr ppa_l2p;
-+	int flags;
-+	unsigned int pos, i;
-+
-+	spin_lock(&pblk->trans_lock);
-+	pos = sentry;
-+	for (i = 0; i < nr_entries; i++) {
-+		entry = &rb->entries[pos];
-+		w_ctx = &entry->w_ctx;
-+
-+		/* Check if the lba has been overwritten */
-+		ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
-+		if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
-+			w_ctx->lba = ADDR_EMPTY;
-+
-+		/* Mark up the entry as submittable again */
-+		flags = READ_ONCE(w_ctx->flags);
-+		flags |= PBLK_WRITTEN_DATA;
-+		/* Release flags on write context. Protect from writes */
-+		smp_store_release(&w_ctx->flags, flags);
- 
--		/* The list is filled first and emptied afterwards. No need for
--		 * protecting it with a lock
-+		/* Decrese the reference count to the line as we will
-+		 * re-map these entries
- 		 */
--		list_add_tail(&entry->index, &recovery->failed);
-+		line = &pblk->lines[pblk_ppa_to_line(w_ctx->ppa)];
-+		kref_put(&line->ref, pblk_line_put);
-+
-+		pos = (pos + 1) & (rb->nr_entries - 1);
- 	}
-+	spin_unlock(&pblk->trans_lock);
-+}
- 
--	c_entries = find_first_bit(comp_bits, nr_ppas);
--	ret = pblk_recov_setup_rq(pblk, c_ctx, recovery, comp_bits, c_entries);
--	if (ret) {
--		pr_err("pblk: could not recover from write failure\n");
--		mempool_free(recovery, pblk->rec_pool);
--		goto out;
-+static void pblk_queue_resubmit(struct pblk *pblk, struct pblk_c_ctx *c_ctx)
-+{
-+	struct pblk_c_ctx *r_ctx;
-+
-+	r_ctx = kzalloc(sizeof(struct pblk_c_ctx), GFP_KERNEL);
-+	if (!r_ctx)
-+		return;
-+
-+	r_ctx->lun_bitmap = NULL;
-+	r_ctx->sentry = c_ctx->sentry;
-+	r_ctx->nr_valid = c_ctx->nr_valid;
-+	r_ctx->nr_padded = c_ctx->nr_padded;
-+
-+	spin_lock(&pblk->resubmit_lock);
-+	list_add_tail(&r_ctx->list, &pblk->resubmit_list);
-+	spin_unlock(&pblk->resubmit_lock);
-+
-+#ifdef CONFIG_NVM_DEBUG
-+	atomic_long_add(c_ctx->nr_valid, &pblk->recov_writes);
-+#endif
-+}
-+
-+static void pblk_submit_rec(struct work_struct *work)
-+{
-+	struct pblk_rec_ctx *recovery =
-+			container_of(work, struct pblk_rec_ctx, ws_rec);
-+	struct pblk *pblk = recovery->pblk;
-+	struct nvm_rq *rqd = recovery->rqd;
-+	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
-+	struct ppa_addr *ppa_list;
-+
-+	pblk_log_write_err(pblk, rqd);
-+
-+	if (rqd->nr_ppas == 1)
-+		ppa_list = &rqd->ppa_addr;
-+	else
-+		ppa_list = rqd->ppa_list;
-+
-+	pblk_map_remaining(pblk, ppa_list);
-+	pblk_queue_resubmit(pblk, c_ctx);
-+
-+	pblk_up_rq(pblk, rqd->ppa_list, rqd->nr_ppas, c_ctx->lun_bitmap);
-+	if (c_ctx->nr_padded)
-+		pblk_bio_free_pages(pblk, rqd->bio, c_ctx->nr_valid,
-+							c_ctx->nr_padded);
-+	bio_put(rqd->bio);
-+	pblk_free_rqd(pblk, rqd, PBLK_WRITE);
-+	mempool_free(recovery, pblk->rec_pool);
-+
-+	atomic_dec(&pblk->inflight_io);
-+}
-+
-+
-+static void pblk_end_w_fail(struct pblk *pblk, struct nvm_rq *rqd)
-+{
-+	struct pblk_rec_ctx *recovery;
-+
-+	recovery = mempool_alloc(pblk->rec_pool, GFP_ATOMIC);
-+	if (!recovery) {
-+		pr_err("pblk: could not allocate recovery work\n");
-+		return;
- 	}
- 
-+	recovery->pblk = pblk;
-+	recovery->rqd = rqd;
-+
- 	INIT_WORK(&recovery->ws_rec, pblk_submit_rec);
- 	queue_work(pblk->close_wq, &recovery->ws_rec);
--
--out:
--	pblk_complete_write(pblk, rqd, c_ctx);
- }
- 
- static void pblk_end_io_write(struct nvm_rq *rqd)
-@@ -173,8 +254,8 @@ static void pblk_end_io_write(struct nvm_rq *rqd)
- 	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
- 
- 	if (rqd->error) {
--		pblk_log_write_err(pblk, rqd);
--		return pblk_end_w_fail(pblk, rqd);
-+		pblk_end_w_fail(pblk, rqd);
-+		return;
- 	}
- #ifdef CONFIG_NVM_DEBUG
- 	else
-@@ -266,31 +347,6 @@ static int pblk_setup_w_rq(struct pblk *pblk, struct nvm_rq *rqd,
- 	return 0;
- }
- 
--int pblk_setup_w_rec_rq(struct pblk *pblk, struct nvm_rq *rqd,
--			struct pblk_c_ctx *c_ctx)
--{
--	struct pblk_line_meta *lm = &pblk->lm;
--	unsigned long *lun_bitmap;
--	int ret;
--
--	lun_bitmap = kzalloc(lm->lun_bitmap_len, GFP_KERNEL);
--	if (!lun_bitmap)
--		return -ENOMEM;
--
--	c_ctx->lun_bitmap = lun_bitmap;
--
--	ret = pblk_alloc_w_rq(pblk, rqd, rqd->nr_ppas, pblk_end_io_write);
--	if (ret)
--		return ret;
--
--	pblk_map_rq(pblk, rqd, c_ctx->sentry, lun_bitmap, c_ctx->nr_valid, 0);
--
--	rqd->ppa_status = (u64)0;
--	rqd->flags = pblk_set_progr_mode(pblk, PBLK_WRITE);
--
--	return ret;
--}
--
- static int pblk_calc_secs_to_sync(struct pblk *pblk, unsigned int secs_avail,
- 				  unsigned int secs_to_flush)
- {
-@@ -339,6 +395,7 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
- 	bio = pblk_bio_map_addr(pblk, data, rq_ppas, rq_len,
- 					l_mg->emeta_alloc_type, GFP_KERNEL);
- 	if (IS_ERR(bio)) {
-+		pr_err("pblk: failed to map emeta io");
- 		ret = PTR_ERR(bio);
- 		goto fail_free_rqd;
- 	}
-@@ -515,26 +572,54 @@ static int pblk_submit_write(struct pblk *pblk)
- 	unsigned int secs_avail, secs_to_sync, secs_to_com;
- 	unsigned int secs_to_flush;
- 	unsigned long pos;
-+	unsigned int resubmit;
- 
--	/* If there are no sectors in the cache, flushes (bios without data)
--	 * will be cleared on the cache threads
--	 */
--	secs_avail = pblk_rb_read_count(&pblk->rwb);
--	if (!secs_avail)
--		return 1;
--
--	secs_to_flush = pblk_rb_flush_point_count(&pblk->rwb);
--	if (!secs_to_flush && secs_avail < pblk->min_write_pgs)
--		return 1;
--
--	secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail, secs_to_flush);
--	if (secs_to_sync > pblk->max_write_pgs) {
--		pr_err("pblk: bad buffer sync calculation\n");
--		return 1;
--	}
-+	spin_lock(&pblk->resubmit_lock);
-+	resubmit = !list_empty(&pblk->resubmit_list);
-+	spin_unlock(&pblk->resubmit_lock);
-+
-+	/* Resubmit failed writes first */
-+	if (resubmit) {
-+		struct pblk_c_ctx *r_ctx;
-+
-+		spin_lock(&pblk->resubmit_lock);
-+		r_ctx = list_first_entry(&pblk->resubmit_list,
-+					struct pblk_c_ctx, list);
-+		list_del(&r_ctx->list);
-+		spin_unlock(&pblk->resubmit_lock);
-+
-+		secs_avail = r_ctx->nr_valid;
-+		pos = r_ctx->sentry;
-+
-+		pblk_prepare_resubmit(pblk, pos, secs_avail);
-+		secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail,
-+				secs_avail);
- 
--	secs_to_com = (secs_to_sync > secs_avail) ? secs_avail : secs_to_sync;
--	pos = pblk_rb_read_commit(&pblk->rwb, secs_to_com);
-+		kfree(r_ctx);
-+	} else {
-+		/* If there are no sectors in the cache,
-+		 * flushes (bios without data) will be cleared on
-+		 * the cache threads
-+		 */
-+		secs_avail = pblk_rb_read_count(&pblk->rwb);
-+		if (!secs_avail)
-+			return 1;
-+
-+		secs_to_flush = pblk_rb_flush_point_count(&pblk->rwb);
-+		if (!secs_to_flush && secs_avail < pblk->min_write_pgs)
-+			return 1;
-+
-+		secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail,
-+					secs_to_flush);
-+		if (secs_to_sync > pblk->max_write_pgs) {
-+			pr_err("pblk: bad buffer sync calculation\n");
-+			return 1;
-+		}
-+
-+		secs_to_com = (secs_to_sync > secs_avail) ?
-+			secs_avail : secs_to_sync;
-+		pos = pblk_rb_read_commit(&pblk->rwb, secs_to_com);
-+	}
- 
- 	bio = bio_alloc(GFP_KERNEL, secs_to_sync);
- 
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 9838d03..f8434a3 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -128,7 +128,6 @@ struct pblk_pad_rq {
- struct pblk_rec_ctx {
- 	struct pblk *pblk;
- 	struct nvm_rq *rqd;
--	struct list_head failed;
- 	struct work_struct ws_rec;
- };
- 
-@@ -664,6 +663,9 @@ struct pblk {
- 
- 	struct list_head compl_list;
- 
-+	spinlock_t resubmit_lock;	 /* Resubmit list lock */
-+	struct list_head resubmit_list; /* Resubmit list for failed writes*/
-+
- 	mempool_t *page_bio_pool;
- 	mempool_t *gen_ws_pool;
- 	mempool_t *rec_pool;
-@@ -713,9 +715,6 @@ void pblk_rb_sync_l2p(struct pblk_rb *rb);
- unsigned int pblk_rb_read_to_bio(struct pblk_rb *rb, struct nvm_rq *rqd,
- 				 unsigned int pos, unsigned int nr_entries,
- 				 unsigned int count);
--unsigned int pblk_rb_read_to_bio_list(struct pblk_rb *rb, struct bio *bio,
--				      struct list_head *list,
--				      unsigned int max);
- int pblk_rb_copy_to_bio(struct pblk_rb *rb, struct bio *bio, sector_t lba,
- 			struct ppa_addr ppa, int bio_iter, bool advanced_bio);
- unsigned int pblk_rb_read_commit(struct pblk_rb *rb, unsigned int entries);
-@@ -849,13 +848,9 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq);
- /*
-  * pblk recovery
-  */
--void pblk_submit_rec(struct work_struct *work);
- struct pblk_line *pblk_recov_l2p(struct pblk *pblk);
- int pblk_recov_pad(struct pblk *pblk);
- int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta);
--int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
--			struct pblk_rec_ctx *recovery, u64 *comp_bits,
--			unsigned int comp);
- 
- /*
-  * pblk gc
--- 
-2.7.4
+Dongli Zhang
