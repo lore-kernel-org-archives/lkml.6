@@ -1,132 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752350AbeDXOnE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:43:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51198 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751822AbeDXOm7 (ORCPT
+        id S1751389AbeDXOqP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:46:15 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:44502 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeDXOqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:42:59 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B1015607E1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
-Subject: Re: [PATCH] kthread/smpboot: Serialize kthread parking against wakeup
-To: tglx@linutronix.de, mpe@ellerman.id.au, dzickus@redhat.com,
-        peterz@infradead.org, mingo@kernel.org, bigeasy@linutronix.de
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>
-References: <1524562105-31026-1-git-send-email-gkohli@codeaurora.org>
-From: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Message-ID: <3e823654-9701-9b01-43fc-1a29feb7a298@codeaurora.org>
-Date: Tue, 24 Apr 2018 20:12:49 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 24 Apr 2018 10:46:12 -0400
+X-Google-Smtp-Source: AB8JxZpTo1LtCg+Mz/VWvV9JMThGND8BWudiTUMHlhOF7QIYvEoQiGtpFEtoSvl6UKuXw1Cxtf2Nc9rrB+bjLmDihn0=
 MIME-Version: 1.0
-In-Reply-To: <1524562105-31026-1-git-send-email-gkohli@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20180424141759.F02AF6C59D@po15720vm.idsi0.si.c-s.fr>
+References: <20180424141759.F02AF6C59D@po15720vm.idsi0.si.c-s.fr>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Tue, 24 Apr 2018 16:45:51 +0200
+X-Google-Sender-Auth: SBkZKlLnyPO6aJXJHEJdkQWKfJ4
+Message-ID: <CA+7wUsz6NNG=sVUYL1n+ntAJUWNvjtpjCHzJmPuQ4Zb7TuFrZA@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/signal32: Use fault_in_pages_readable() to
+ prefault user context
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi ,
-
-We can also fix below race by smpboot code as well:
-
-@@ -109,7 +109,6 @@ static int smpboot_thread_fn(void *data)
-
-         struct smp_hotplug_thread *ht = td->ht;
-
-         while (1) {
-
--               set_current_state(TASK_INTERRUPTIBLE);
-
-                 preempt_disable();
-
-                 if (kthread_should_stop()) {
-
-                         __set_current_state(TASK_RUNNING);
-
-@@ -157,6 +156,7 @@ static int smpboot_thread_fn(void *data)
-
-                 if (!ht->thread_should_run(td->cpu)) {
-
-                         preempt_enable_no_resched();
-
-+                       set_current_state(TASK_INTERRUPTIBLE);
-
-                         schedule();
-
-                 } else {
-
-                         __set_current_state(TASK_RUNNING);
-
-Please suggest if this approach is better.
-
-Regards
-
-Gaurav
-
-On 4/24/2018 2:58 PM, Gaurav Kohli wrote:
-
-> The control cpu thread which initiates hotplug calls kthread_park()
-> for hotplug thread and sets KTHREAD_SHOULD_PARK. After this control
-> thread wakes up the hotplug thread. There is a chance that wakeup
-> code sees the hotplug thread (running on AP core) in INTERRUPTIBLE
-> state, but sets its state to RUNNING after hotplug thread has entered
-> kthread_parkme() and changed its state to TASK_PARKED. This can result
-> in panic later on in kthread_unpark(), as it sees KTHREAD_IS_PARKED
-> flag set but fails to rebind the kthread, due to it being not in
-> TASK_PARKED state. Fix this, by serializing wakeup state change,
-> against state change before parking the kthread.
+On Tue, Apr 24, 2018 at 4:17 PM, Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
+> Use fault_in_pages_readable() to prefault user context
+> instead of open coding
 >
-> Below is the possible race:
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/kernel/signal_32.c | 13 +++++--------
+>  1 file changed, 5 insertions(+), 8 deletions(-)
 >
-> Control thread				      Hotplug Thread
+> diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
+> index 492f03451877..cfacb2726152 100644
+> --- a/arch/powerpc/kernel/signal_32.c
+> +++ b/arch/powerpc/kernel/signal_32.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/elf.h>
+>  #include <linux/ptrace.h>
+> +#include <linux/pagemap.h>
+>  #include <linux/ratelimit.h>
+>  #ifdef CONFIG_PPC64
+>  #include <linux/syscalls.h>
+> @@ -1045,7 +1046,6 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+>                      struct ucontext __user *new_ctx,
+>                      int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
+>  {
+> -       unsigned char tmp __maybe_unused;
+>         int ctx_has_vsx_region = 0;
 >
-> kthread_park()
-> set KTHREAD_SHOULD_PARK
-> 					      smpboot_thread_fn
-> 					      set_current_state(TASK_INTERRUPTIBLE);
-> 					      kthread_parkme
+>  #ifdef CONFIG_PPC64
+> @@ -1109,9 +1109,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+>         }
+>         if (new_ctx == NULL)
+>                 return 0;
+> -       if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
+> -           || __get_user(tmp, (u8 __user *) new_ctx)
+> -           || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
+> +       if (!access_ok(VERIFY_READ, new_ctx, ctx_size) ||
+> +           fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
+>                 return -EFAULT;
 >
-> wake_up_process()
+>         /*
+> @@ -1231,7 +1230,6 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+>  {
+>         struct sig_dbg_op op;
+>         int i;
+> -       unsigned char tmp __maybe_unused;
+>         unsigned long new_msr = regs->msr;
+>  #ifdef CONFIG_PPC_ADV_DEBUG_REGS
+>         unsigned long new_dbcr0 = current->thread.debug.dbcr0;
+> @@ -1287,9 +1285,8 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+>         current->thread.debug.dbcr0 = new_dbcr0;
+>  #endif
 >
-> raw_spin_lock_irqsave(&p->pi_lock, flags);
-> if (!(p->state & state)) -> this will fail
->              goto out;
+> -       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx))
+> -           || __get_user(tmp, (u8 __user *) ctx)
+> -           || __get_user(tmp, (u8 __user *) (ctx + 1) - 1))
+> +       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx)) ||
+> +           fault_in_pages_readable((u8 __user *)ctx, 1))
+
+I believe you meant:
+
+fault_in_pages_readable((u8 __user *)new_ctx, ctx_size)
+
+Since (u8 __user *) (ctx + 1) - 1 really is (u8 __user *) new_ctx + ctx_size - 1
+
+>                 return -EFAULT;
 >
-> 					      __kthread_parkme
-> 					       __set_current_state(TASK_PARKED);
+>         /*
+> --
+> 2.13.3
 >
-> if (p->on_rq && ttwu_remote(p, wake_flags))
->      ttwu_remote()
->          p->state = TASK_RUNNING;
-> 						schedule();
->
-> So to avoid this race, take pi_lock to serial state changes.
->
-> Suggested-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-> Co-developed-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-> Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-> Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
->
-> diff --git a/kernel/smpboot.c b/kernel/smpboot.c
-> index 1650578..514b232 100644
-> --- a/kernel/smpboot.c
-> +++ b/kernel/smpboot.c
-> @@ -121,7 +121,9 @@ static int smpboot_thread_fn(void *data)
->   		}
->   
->   		if (kthread_should_park()) {
-> +			raw_spin_lock(&current->pi_lock);
->   			__set_current_state(TASK_RUNNING);
-> +			raw_spin_unlock(&current->pi_lock);
->   			preempt_enable();
->   			if (ht->park && td->status == HP_THREAD_ACTIVE) {
->   				BUG_ON(td->cpu != smp_processor_id());
->
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
