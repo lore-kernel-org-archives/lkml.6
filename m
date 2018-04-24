@@ -1,98 +1,394 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751384AbeDXQoO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:44:14 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:54018 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbeDXQoN (ORCPT
+        id S1751436AbeDXQqB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:46:01 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:40266 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeDXQp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:44:13 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-Cc: <linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
-        <Alexander.Deucher@amd.com>, <Christian.Koenig@amd.com>,
-        <David.Panariti@amd.com>, <oleg@redhat.com>,
-        <akpm@linux-foundation.org>
-References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
-        <1524583836-12130-2-git-send-email-andrey.grodzovsky@amd.com>
-Date: Tue, 24 Apr 2018 11:42:47 -0500
-In-Reply-To: <1524583836-12130-2-git-send-email-andrey.grodzovsky@amd.com>
-        (Andrey Grodzovsky's message of "Tue, 24 Apr 2018 11:30:34 -0400")
-Message-ID: <87y3hca73s.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 24 Apr 2018 12:45:58 -0400
+X-Google-Smtp-Source: AIpwx4+zWszwKx5OgQ1LET5Re1mj0uneTTxS6RJHrh6jcAk9PBN7lEmKClnfk/W35ITFY5pySb47xA==
+Date: Tue, 24 Apr 2018 22:17:51 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+        ross.zwisler@linux.intel.com, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6] fs: dax: Adding new return type vm_fault_t
+Message-ID: <20180424164751.GA18923@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fB136-0002Ko-9F;;;mid=<87y3hca73s.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19/95cB5SipDUuSwgk9c88wSds4+vAjnfg=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 207 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 6 (2.8%), b_tie_ro: 3.8 (1.8%), parse: 0.70 (0.3%),
-        extract_message_metadata: 9 (4.6%), get_uri_detail_list: 0.96 (0.5%),
-        tests_pri_-1000: 6 (2.7%), tests_pri_-950: 1.14 (0.6%), tests_pri_-900: 0.96
-        (0.5%), tests_pri_-400: 22 (10.6%), check_bayes: 21 (10.1%), b_tokenize: 5
-        (2.5%), b_tok_get_all: 5 (2.5%), b_comp_prob: 1.61 (0.8%), b_tok_touch_all: 7
-        (3.5%), b_finish: 0.59 (0.3%), tests_pri_0: 155 (75.0%),
-        check_dkim_signature: 0.45 (0.2%), check_dkim_adsp: 32 (15.2%),
-        tests_pri_500: 3.7 (1.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/3] signals: Allow generation of SIGKILL to exiting task.
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrey Grodzovsky <andrey.grodzovsky@amd.com> writes:
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
-> Currently calling wait_event_killable as part of exiting process
-> will stall forever since SIGKILL generation is suppresed by PF_EXITING.
->
-> In our partilaur case AMDGPU driver wants to flush all GPU jobs in
-> flight before shutting down. But if some job hangs the pipe we still want to
-> be able to kill it and avoid a process in D state.
+commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-I should clarify.  This absolutely can not be done.
-PF_EXITING is set just before a task starts tearing down it's signal
-handling.
+There was an existing bug inside dax_load_hole()
+if vm_insert_mixed had failed to allocate a page table,
+we'd return VM_FAULT_NOPAGE instead of VM_FAULT_OOM.
+With new vmf_insert_mixed() this issue is addressed.
 
-So delivering any signal, or otherwise depending on signal handling
-after PF_EXITING is set can not be done.  That abstraction is gone.
+vm_insert_mixed_mkwrite has inefficiency when it returns
+an error value, driver has to convert it to vm_fault_t
+type. With new vmf_insert_mixed_mkwrite() this limitation
+will be addressed.
 
-Eric
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+v2: vm_insert_mixed_mkwrite is replaced by new
+    vmf_insert_mixed_mkwrite
 
-> Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-> ---
->  kernel/signal.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index c6e4c83..c49c706 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -886,10 +886,10 @@ static inline int wants_signal(int sig, struct task_struct *p)
->  {
->  	if (sigismember(&p->blocked, sig))
->  		return 0;
-> -	if (p->flags & PF_EXITING)
-> -		return 0;
->  	if (sig == SIGKILL)
->  		return 1;
-> +	if (p->flags & PF_EXITING)
-> +		return 0;
->  	if (task_is_stopped_or_traced(p))
->  		return 0;
->  	return task_curr(p) || !signal_pending(p);
+v3: Addressed Matthew's comment. One patch which
+    changes both at the same time. The history
+    should be bisectable so that it compiles and
+    works at every point.
+
+v4: Updated the change log
+
+v5: Updated the change log
+
+v6: Added comment in source file
+
+ fs/dax.c            | 78 +++++++++++++++++++++++++----------------------------
+ include/linux/dax.h |  4 +--
+ include/linux/mm.h  |  4 +--
+ mm/memory.c         | 21 ++++++++++++---
+ 4 files changed, 58 insertions(+), 49 deletions(-)
+
+diff --git a/fs/dax.c b/fs/dax.c
+index aaec72de..821986c 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -905,12 +905,12 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
+  * If this page is ever written to we will re-fault and change the mapping to
+  * point to real DAX storage instead.
+  */
+-static int dax_load_hole(struct address_space *mapping, void *entry,
++static vm_fault_t dax_load_hole(struct address_space *mapping, void *entry,
+ 			 struct vm_fault *vmf)
+ {
+ 	struct inode *inode = mapping->host;
+ 	unsigned long vaddr = vmf->address;
+-	int ret = VM_FAULT_NOPAGE;
++	vm_fault_t ret = VM_FAULT_NOPAGE;
+ 	struct page *zero_page;
+ 	void *entry2;
+ 	pfn_t pfn;
+@@ -929,7 +929,7 @@ static int dax_load_hole(struct address_space *mapping, void *entry,
+ 		goto out;
+ 	}
+ 
+-	vm_insert_mixed(vmf->vma, vaddr, pfn);
++	ret = vmf_insert_mixed(vmf->vma, vaddr, pfn);
+ out:
+ 	trace_dax_load_hole(inode, vmf, ret);
+ 	return ret;
+@@ -1112,7 +1112,7 @@ int __dax_zero_page_range(struct block_device *bdev,
+ }
+ EXPORT_SYMBOL_GPL(dax_iomap_rw);
+ 
+-static int dax_fault_return(int error)
++static vm_fault_t dax_fault_return(int error)
+ {
+ 	if (error == 0)
+ 		return VM_FAULT_NOPAGE;
+@@ -1132,7 +1132,7 @@ static bool dax_fault_is_synchronous(unsigned long flags,
+ 		&& (iomap->flags & IOMAP_F_DIRTY);
+ }
+ 
+-static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
++static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 			       int *iomap_errp, const struct iomap_ops *ops)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+@@ -1145,18 +1145,18 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	int error, major = 0;
+ 	bool write = vmf->flags & FAULT_FLAG_WRITE;
+ 	bool sync;
+-	int vmf_ret = 0;
++	vm_fault_t ret = 0;
+ 	void *entry;
+ 	pfn_t pfn;
+ 
+-	trace_dax_pte_fault(inode, vmf, vmf_ret);
++	trace_dax_pte_fault(inode, vmf, ret);
+ 	/*
+ 	 * Check whether offset isn't beyond end of file now. Caller is supposed
+ 	 * to hold locks serializing us with truncate / punch hole so this is
+ 	 * a reliable test.
+ 	 */
+ 	if (pos >= i_size_read(inode)) {
+-		vmf_ret = VM_FAULT_SIGBUS;
++		ret = VM_FAULT_SIGBUS;
+ 		goto out;
+ 	}
+ 
+@@ -1165,7 +1165,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 
+ 	entry = grab_mapping_entry(mapping, vmf->pgoff, 0);
+ 	if (IS_ERR(entry)) {
+-		vmf_ret = dax_fault_return(PTR_ERR(entry));
++		ret = dax_fault_return(PTR_ERR(entry));
+ 		goto out;
+ 	}
+ 
+@@ -1176,7 +1176,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	 * retried.
+ 	 */
+ 	if (pmd_trans_huge(*vmf->pmd) || pmd_devmap(*vmf->pmd)) {
+-		vmf_ret = VM_FAULT_NOPAGE;
++		ret = VM_FAULT_NOPAGE;
+ 		goto unlock_entry;
+ 	}
+ 
+@@ -1189,7 +1189,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	if (iomap_errp)
+ 		*iomap_errp = error;
+ 	if (error) {
+-		vmf_ret = dax_fault_return(error);
++		ret = dax_fault_return(error);
+ 		goto unlock_entry;
+ 	}
+ 	if (WARN_ON_ONCE(iomap.offset + iomap.length < pos + PAGE_SIZE)) {
+@@ -1219,9 +1219,9 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 			goto error_finish_iomap;
+ 
+ 		__SetPageUptodate(vmf->cow_page);
+-		vmf_ret = finish_fault(vmf);
+-		if (!vmf_ret)
+-			vmf_ret = VM_FAULT_DONE_COW;
++		ret = finish_fault(vmf);
++		if (!ret)
++			ret = VM_FAULT_DONE_COW;
+ 		goto finish_iomap;
+ 	}
+ 
+@@ -1257,23 +1257,20 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 				goto error_finish_iomap;
+ 			}
+ 			*pfnp = pfn;
+-			vmf_ret = VM_FAULT_NEEDDSYNC | major;
++			ret = VM_FAULT_NEEDDSYNC | major;
+ 			goto finish_iomap;
+ 		}
+ 		trace_dax_insert_mapping(inode, vmf, entry);
+ 		if (write)
+-			error = vm_insert_mixed_mkwrite(vma, vaddr, pfn);
++			ret = vmf_insert_mixed_mkwrite(vma, vaddr, pfn);
+ 		else
+-			error = vm_insert_mixed(vma, vaddr, pfn);
++			ret = vmf_insert_mixed(vma, vaddr, pfn);
+ 
+-		/* -EBUSY is fine, somebody else faulted on the same PTE */
+-		if (error == -EBUSY)
+-			error = 0;
+-		break;
++		goto finish_iomap;
+ 	case IOMAP_UNWRITTEN:
+ 	case IOMAP_HOLE:
+ 		if (!write) {
+-			vmf_ret = dax_load_hole(mapping, entry, vmf);
++			ret = dax_load_hole(mapping, entry, vmf);
+ 			goto finish_iomap;
+ 		}
+ 		/*FALLTHRU*/
+@@ -1284,12 +1281,12 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	}
+ 
+  error_finish_iomap:
+-	vmf_ret = dax_fault_return(error) | major;
++	ret = dax_fault_return(error);
+  finish_iomap:
+ 	if (ops->iomap_end) {
+ 		int copied = PAGE_SIZE;
+ 
+-		if (vmf_ret & VM_FAULT_ERROR)
++		if (ret & VM_FAULT_ERROR)
+ 			copied = 0;
+ 		/*
+ 		 * The fault is done by now and there's no way back (other
+@@ -1302,12 +1299,12 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+  unlock_entry:
+ 	put_locked_mapping_entry(mapping, vmf->pgoff);
+  out:
+-	trace_dax_pte_fault_done(inode, vmf, vmf_ret);
+-	return vmf_ret;
++	trace_dax_pte_fault_done(inode, vmf, ret);
++	return ret | major;
+ }
+ 
+ #ifdef CONFIG_FS_DAX_PMD
+-static int dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
++static vm_fault_t dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
+ 		void *entry)
+ {
+ 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+@@ -1348,7 +1345,7 @@ static int dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
+ 	return VM_FAULT_FALLBACK;
+ }
+ 
+-static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
++static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 			       const struct iomap_ops *ops)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+@@ -1358,7 +1355,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	bool sync;
+ 	unsigned int iomap_flags = (write ? IOMAP_WRITE : 0) | IOMAP_FAULT;
+ 	struct inode *inode = mapping->host;
+-	int result = VM_FAULT_FALLBACK;
++	vm_fault_t result = VM_FAULT_FALLBACK;
+ 	struct iomap iomap = { 0 };
+ 	pgoff_t max_pgoff, pgoff;
+ 	void *entry;
+@@ -1509,7 +1506,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	return result;
+ }
+ #else
+-static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
++static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 			       const struct iomap_ops *ops)
+ {
+ 	return VM_FAULT_FALLBACK;
+@@ -1529,7 +1526,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+  * has done all the necessary locking for page fault to proceed
+  * successfully.
+  */
+-int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
++vm_fault_t dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
+ 		    pfn_t *pfnp, int *iomap_errp, const struct iomap_ops *ops)
+ {
+ 	switch (pe_size) {
+@@ -1553,14 +1550,14 @@ int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
+  * DAX file.  It takes care of marking corresponding radix tree entry as dirty
+  * as well.
+  */
+-static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
++static vm_fault_t dax_insert_pfn_mkwrite(struct vm_fault *vmf,
+ 				  enum page_entry_size pe_size,
+ 				  pfn_t pfn)
+ {
+ 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+ 	void *entry, **slot;
+ 	pgoff_t index = vmf->pgoff;
+-	int vmf_ret, error;
++	vm_fault_t ret;
+ 
+ 	xa_lock_irq(&mapping->i_pages);
+ 	entry = get_unlocked_mapping_entry(mapping, index, &slot);
+@@ -1579,21 +1576,20 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
+ 	xa_unlock_irq(&mapping->i_pages);
+ 	switch (pe_size) {
+ 	case PE_SIZE_PTE:
+-		error = vm_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
+-		vmf_ret = dax_fault_return(error);
++		ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
+ 		break;
+ #ifdef CONFIG_FS_DAX_PMD
+ 	case PE_SIZE_PMD:
+-		vmf_ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
++		ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
+ 			pfn, true);
+ 		break;
+ #endif
+ 	default:
+-		vmf_ret = VM_FAULT_FALLBACK;
++		ret = VM_FAULT_FALLBACK;
+ 	}
+ 	put_locked_mapping_entry(mapping, index);
+-	trace_dax_insert_pfn_mkwrite(mapping->host, vmf, vmf_ret);
+-	return vmf_ret;
++	trace_dax_insert_pfn_mkwrite(mapping->host, vmf, ret);
++	return ret;
+ }
+ 
+ /**
+@@ -1606,8 +1602,8 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
+  * stored persistently on the media and handles inserting of appropriate page
+  * table entry.
+  */
+-int dax_finish_sync_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
+-			  pfn_t pfn)
++vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
++		enum page_entry_size pe_size, pfn_t pfn)
+ {
+ 	int err;
+ 	loff_t start = ((loff_t)vmf->pgoff) << PAGE_SHIFT;
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index f9eb22a..7fddea8 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -124,8 +124,8 @@ ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops);
+ int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
+ 		    pfn_t *pfnp, int *errp, const struct iomap_ops *ops);
+-int dax_finish_sync_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
+-			  pfn_t pfn);
++vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
++		enum page_entry_size pe_size, pfn_t pfn);
+ int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
+ int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
+ 				      pgoff_t index);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1ac1f06..9fe441c 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2423,8 +2423,8 @@ int vm_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
+ 			unsigned long pfn, pgprot_t pgprot);
+ int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
+ 			pfn_t pfn);
+-int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
+-			pfn_t pfn);
++vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
++		unsigned long addr, pfn_t pfn);
+ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long len);
+ 
+ static inline vm_fault_t vmf_insert_page(struct vm_area_struct *vma,
+diff --git a/mm/memory.c b/mm/memory.c
+index 01f5464..6a97893 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1955,12 +1955,25 @@ int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
+ }
+ EXPORT_SYMBOL(vm_insert_mixed);
+ 
+-int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
+-			pfn_t pfn)
++/*
++ *  If the insertion of PTE failed because someone else already added a
++ *  different entry in the mean time, we treat that as success as we assume
++ *  the same entry was actually inserted.
++ */
++
++vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
++		unsigned long addr, pfn_t pfn)
+ {
+-	return __vm_insert_mixed(vma, addr, pfn, true);
++	int err;
++
++	err =  __vm_insert_mixed(vma, addr, pfn, true);
++	if (err == -ENOMEM)
++		return VM_FAULT_OOM;
++	if (err < 0 && err != -EBUSY)
++		return VM_FAULT_SIGBUS;
++	return VM_FAULT_NOPAGE;
+ }
+-EXPORT_SYMBOL(vm_insert_mixed_mkwrite);
++EXPORT_SYMBOL(vmf_insert_mixed_mkwrite);
+ 
+ /*
+  * maps a range of physical memory into the requested pages. the old
+-- 
+1.9.1
