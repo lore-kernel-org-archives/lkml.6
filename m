@@ -1,69 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751420AbeDXVML (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 17:12:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:60082 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750929AbeDXVMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:12:07 -0400
-Date: Tue, 24 Apr 2018 23:12:03 +0200
-From: Christoffer Dall <christoffer.dall@arm.com>
-To: Peter Maydell <peter.maydell@linaro.org>
-Cc: Eric Auger <eric.auger@redhat.com>,
-        Eric Auger <eric.auger.pro@gmail.com>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kvm-devel <kvm@vger.kernel.org>, kvmarm@lists.cs.columbia.edu,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <cdall@kernel.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Andrew Jones <drjones@redhat.com>, Wei Huang <wei@redhat.com>
-Subject: Re: [PATCH v3 02/12] KVM: arm/arm64: Document
- KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Message-ID: <20180424211203.GA10555@C02W217FHV2R.local>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
- <1523607658-9166-3-git-send-email-eric.auger@redhat.com>
- <20180424164649.GA4533@C02W217FHV2R.local>
- <CAFEAcA_EKuW6DWaHCvAftbL6QUSo6WY0cQmHrZhhbP5HoN_NqQ@mail.gmail.com>
+        id S1751460AbeDXVNw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 17:13:52 -0400
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:40339 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbeDXVNu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 17:13:50 -0400
+Date: Tue, 24 Apr 2018 23:13:47 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, mjg59@srcf.ucam.org,
+        dvhart@infradead.org, andy@infradead.org,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        alsa-devel@alsa-project.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v4 3/3] ALSA: hda: Disabled unused audio
+ controller for Dell platforms with Switchable Graphics
+Message-ID: <20180424211347.GA18258@wunner.de>
+References: <20180420094432.13133-1-kai.heng.feng@canonical.com>
+ <20180420094432.13133-3-kai.heng.feng@canonical.com>
+ <s5hbmeew01d.wl-tiwai@suse.de>
+ <E5D0F76C-0A83-4D2C-81F7-BD5768C0A7DC@canonical.com>
+ <20180423080844.yh6ndicpu6mwy336@pali>
+ <FF30493D-012C-41E8-B379-85138E1EDE05@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAFEAcA_EKuW6DWaHCvAftbL6QUSo6WY0cQmHrZhhbP5HoN_NqQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <FF30493D-012C-41E8-B379-85138E1EDE05@canonical.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 05:50:37PM +0100, Peter Maydell wrote:
-> On 24 April 2018 at 17:46, Christoffer Dall <christoffer.dall@arm.com> wrote:
-> > On Fri, Apr 13, 2018 at 10:20:48AM +0200, Eric Auger wrote:
-> >> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> >> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> >> @@ -27,9 +27,32 @@ Groups:
-> >>        VCPU and all of the redistributor pages are contiguous.
-> >>        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-> >>        This address needs to be 64K aligned.
-> >> +
-> >> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
-> >> +      The attr field of kvm_device_attr encodes 3 values:
-> >> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
-> >> +      values:   |     count      |       base      |  flags   | index
-> >> +      - index encodes the unique redistributor region index
+On Mon, Apr 23, 2018 at 04:18:35PM +0800, Kai Heng Feng wrote:
+> >On Apr 23, 2018, at 4:08 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+> >On Monday 23 April 2018 16:04:55 Kai Heng Feng wrote:
+> >>>On Apr 20, 2018, at 8:10 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> >>>On Fri, 20 Apr 2018 11:44:32 +0200, Kai-Heng Feng wrote:
+> >>>>Now it's a typical discrete-only system. HDMI audio comes from AMD audio
+> >>>>controller, others from Intel audio controller.
+> >>>>
+> >>>>When SG is enabled, the unused AMD audio contoller still exposes its
+> >>>>sysfs, so userspace still opens the control file and stream. If
+> >>>>userspace tries to output sound through the stream, it hangs the system.
+> >>>
+> >>>Hm, could you give more information about how it hangs?
+> >>
+> >>Well, I should say "it hangs the userspace process" instead.
+> >>
+> >>$ speaker-test -t wav -c 2 -D hw:CARD=HDMI,DEV=3
+> >>...and it just stopped. Can't Ctrl+C to break it.
 > >
-> > I'm not entirely sure I understand the purpose of the index field.
-> > Isn't a redistributor region identified uniquely by its base address?
+> >So userspace process cannot be killed at all? Then it is different bug
+> >in kernel and disabling pci device is just a workaround. Not a real fix.
+> >
+> >I would propose to find out what happen and why it cannot be killed
+> >(probably it stuck somewhere in kernel) and fix it properly.
 > 
-> You need a way to tell the difference beween:
->  (1) redistributors for CPUs 0..63 at 0x40000000, redistributors
->      for 64..127 at 0x80000000
->  (2) redistributors for CPUs 0..63 at 0x80000000, redistributors
->      for 64..127 at 0x40000000
+> That's because the audio device got runtime suspended by the graphics.
 > 
-> The index field tells you which order the redistributor
-> regions go in.
+> In this case, if we really want to use the the discrete audio, then we also
+> need to wake up the graphics.
+> The discrete audio is totally useless when SG is enabled, so my approach is
+> just to disable it.
 
-ah, right.  This could be implied by the order creating the regions
-though, but ok, in that case it's nicer for userspace to state it
-explicitly.
+I don't quite follow, that should be fixed by commit 07f4f97d7b4b
+("vga_switcheroo: Use device link for HDA controller") which landed
+in v4.17-rc1.
+
+My understanding was that with SG enabled, the external DP/HDMI ports
+are muxed to the Intel GPU, so audio can only be streamed to external
+displays by the Intel HDA, not by the HDA integrated into the discrete
+AMD/Nvidia GPU.  Audio streamed to the latter would essentially end up
+in a blackhole.  And preventing the user from seeing such useless audio
+devices was the sole purpose of this commit.  Am I missing something?
 
 Thanks,
--Christoffer
+
+Lukas
