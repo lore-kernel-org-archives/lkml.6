@@ -1,63 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757973AbeDXNTK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:19:10 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53857 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757945AbeDXNTD (ORCPT
+        id S1757990AbeDXNTP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:19:15 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55928 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757963AbeDXNTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:19:03 -0400
-X-Google-Smtp-Source: AIpwx48l1pnsGZOGTmUySkC2ET0OWX4JkZQ50lTH1VAZOWuyz+Gdj3GrEunyqM2jliWlf52wwSZGEA==
+        Tue, 24 Apr 2018 09:19:10 -0400
+X-Google-Smtp-Source: AIpwx49RAOIz9PiJ1pVlOwGKp8EwhR3dsFIhYby+UUEZME7hp1xU8YlwfO0pNOWza6V3IFLvS8KTaA==
 From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH] ath6kl: fix ath6kl_data_tx()'s return type
-Date: Tue, 24 Apr 2018 15:18:59 +0200
-Message-Id: <20180424131900.5718-1-luc.vanoostenryck@gmail.com>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Brad Love <brad@nextdimension.cc>,
+        Michael Ira Krufky <mkrufky@linuxtv.org>,
+        Hans Verkuil <hansverk@cisco.com>, Thomas Meyer <thomas@m3y3r.de>,
+        linux-media@vger.kernel.org
+Subject: [PATCH] media: lgdt3306a: fix lgdt3306a_search()'s return type
+Date: Tue, 24 Apr 2018 15:19:04 +0200
+Message-Id: <20180424131907.5817-1-luc.vanoostenryck@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, but the implementation in this
+The method dvb_frontend_ops::search() is defined as
+returning an 'enum dvbfe_search', but the implementation in this
 driver returns an 'int'.
 
-Fix this by returning 'netdev_tx_t' in this driver too.
+Fix this by returning 'enum dvbfe_search' in this driver too.
 
 Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- drivers/net/wireless/ath/ath6kl/core.h | 2 +-
- drivers/net/wireless/ath/ath6kl/txrx.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/dvb-frontends/lgdt3306a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath6kl/core.h b/drivers/net/wireless/ath/ath6kl/core.h
-index e23d450ba..0d30e762c 100644
---- a/drivers/net/wireless/ath/ath6kl/core.h
-+++ b/drivers/net/wireless/ath/ath6kl/core.h
-@@ -914,7 +914,7 @@ void ath6kl_tx_data_cleanup(struct ath6kl *ar);
- 
- struct ath6kl_cookie *ath6kl_alloc_cookie(struct ath6kl *ar);
- void ath6kl_free_cookie(struct ath6kl *ar, struct ath6kl_cookie *cookie);
--int ath6kl_data_tx(struct sk_buff *skb, struct net_device *dev);
-+netdev_tx_t ath6kl_data_tx(struct sk_buff *skb, struct net_device *dev);
- 
- struct aggr_info *aggr_init(struct ath6kl_vif *vif);
- void aggr_conn_init(struct ath6kl_vif *vif, struct aggr_info *aggr_info,
-diff --git a/drivers/net/wireless/ath/ath6kl/txrx.c b/drivers/net/wireless/ath/ath6kl/txrx.c
-index 8da9506f8..618d12ed4 100644
---- a/drivers/net/wireless/ath/ath6kl/txrx.c
-+++ b/drivers/net/wireless/ath/ath6kl/txrx.c
-@@ -353,7 +353,7 @@ int ath6kl_control_tx(void *devt, struct sk_buff *skb,
- 	return status;
+diff --git a/drivers/media/dvb-frontends/lgdt3306a.c b/drivers/media/dvb-frontends/lgdt3306a.c
+index 7eb4e1469..32de82447 100644
+--- a/drivers/media/dvb-frontends/lgdt3306a.c
++++ b/drivers/media/dvb-frontends/lgdt3306a.c
+@@ -1784,7 +1784,7 @@ static int lgdt3306a_get_tune_settings(struct dvb_frontend *fe,
+ 	return 0;
  }
  
--int ath6kl_data_tx(struct sk_buff *skb, struct net_device *dev)
-+netdev_tx_t ath6kl_data_tx(struct sk_buff *skb, struct net_device *dev)
+-static int lgdt3306a_search(struct dvb_frontend *fe)
++static enum dvbfe_search lgdt3306a_search(struct dvb_frontend *fe)
  {
- 	struct ath6kl *ar = ath6kl_priv(dev);
- 	struct ath6kl_cookie *cookie = NULL;
+ 	enum fe_status status = 0;
+ 	int ret;
 -- 
 2.17.0
