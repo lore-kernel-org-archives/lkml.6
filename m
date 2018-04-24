@@ -1,195 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756486AbeDXIHg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:07:36 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:38258 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756228AbeDXIHZ (ORCPT
+        id S1756539AbeDXIIo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:08:44 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35031 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756046AbeDXIId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:07:25 -0400
-X-Google-Smtp-Source: AB8JxZqj9vR9oymC9+kZwGVhFVjhqYhuG6Dri/gTSYk1yQj4aQMPCuBJ5jubz6dC7W8KBmwA1gG39w==
-Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
- DRM driver
-To: Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Wei Liu <wei.liu2@citrix.com>
-Cc: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Artem Mygaiev <Artem_Mygaiev@epam.com>,
-        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
-        airlied@linux.ie,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        xen-devel@lists.xenproject.org, daniel.vetter@intel.com
-References: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
- <20180416192905.GA18096@downor-Z87X-UD5H>
- <20180417075928.GT31310@phenom.ffwll.local>
- <20180417205744.GA15930@downor-Z87X-UD5H>
- <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
- <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
- <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
- <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
- <20180420071914.GG31310@phenom.ffwll.local>
- <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
- <20180423115242.ywdwqblj2aseu3fr@citrix.com>
- <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
- <ce2ebb5b-fa13-0475-b0fd-6c330277d151@oracle.com>
- <30ddb005-96c8-f47c-2e23-4e0d354e5842@gmail.com>
- <a25a394c-ecf8-d8cf-15b8-eb8cb71d0a02@suse.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <c4c426eb-5a35-1f8f-59f3-350d6e97d89e@gmail.com>
-Date: Tue, 24 Apr 2018 11:07:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 24 Apr 2018 04:08:33 -0400
+Date: Tue, 24 Apr 2018 01:07:28 -0700
+From: tip-bot for Dave Hansen <tipbot@zytor.com>
+Message-ID: <tip-231df823c4f04176f607afc4576c989895cff40e@git.kernel.org>
+Cc: jgross@suse.com, dave.hansen@linux.intel.com, namit@vmware.com,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        hpa@zytor.com, aaro.koskinen@nokia.com, mingo@kernel.org,
+        jpoimboe@redhat.com, torvalds@linux-foundation.org, mceier@gmail.com,
+        dan.j.williams@intel.com, dwmw2@infradead.org, hughd@google.com,
+        bp@alien8.de, tglx@linutronix.de, aarcange@redhat.com, luto@kernel.org,
+        keescook@google.com, peterz@infradead.org, arjan@linux.intel.com
+Reply-To: mingo@kernel.org, jpoimboe@redhat.com, gregkh@linuxfoundation.org,
+        aaro.koskinen@nokia.com, hpa@zytor.com, torvalds@linux-foundation.org,
+        jgross@suse.com, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, namit@vmware.com, luto@kernel.org,
+        keescook@google.com, aarcange@redhat.com, tglx@linutronix.de,
+        arjan@linux.intel.com, peterz@infradead.org, dan.j.williams@intel.com,
+        mceier@gmail.com, bp@alien8.de, dwmw2@infradead.org, hughd@google.com
+In-Reply-To: <20180420222021.1C7D2B3F@viggo.jf.intel.com>
+References: <20180420222021.1C7D2B3F@viggo.jf.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/pti: Fix boot warning from Global-bit setting
+Git-Commit-ID: 231df823c4f04176f607afc4576c989895cff40e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <a25a394c-ecf8-d8cf-15b8-eb8cb71d0a02@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 10:51 AM, Juergen Gross wrote:
-> On 24/04/18 07:43, Oleksandr Andrushchenko wrote:
->> On 04/24/2018 01:41 AM, Boris Ostrovsky wrote:
->>> On 04/23/2018 08:10 AM, Oleksandr Andrushchenko wrote:
->>>> On 04/23/2018 02:52 PM, Wei Liu wrote:
->>>>> On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko
->>>>> wrote:
->>>>>>>>        the gntdev.
->>>>>>>>
->>>>>>>> I think this is generic enough that it could be implemented by a
->>>>>>>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
->>>>>>>> something similar to this.
->>>>>>> You can't just wrap random userspace memory into a dma-buf. We've
->>>>>>> just had
->>>>>>> this discussion with kvm/qemu folks, who proposed just that, and
->>>>>>> after a
->>>>>>> bit of discussion they'll now try to have a driver which just wraps a
->>>>>>> memfd into a dma-buf.
->>>>>> So, we have to decide either we introduce a new driver
->>>>>> (say, under drivers/xen/xen-dma-buf) or extend the existing
->>>>>> gntdev/balloon to support dma-buf use-cases.
->>>>>>
->>>>>> Can anybody from Xen community express their preference here?
->>>>>>
->>>>> Oleksandr talked to me on IRC about this, he said a few IOCTLs need to
->>>>> be added to either existing drivers or a new driver.
->>>>>
->>>>> I went through this thread twice and skimmed through the relevant
->>>>> documents, but I couldn't see any obvious pros and cons for either
->>>>> approach. So I don't really have an opinion on this.
->>>>>
->>>>> But, assuming if implemented in existing drivers, those IOCTLs need to
->>>>> be added to different drivers, which means userspace program needs to
->>>>> write more code and get more handles, it would be slightly better to
->>>>> implement a new driver from that perspective.
->>>> If gntdev/balloon extension is still considered:
->>>>
->>>> All the IOCTLs will be in gntdev driver (in current xen-zcopy
->>>> terminology):
->>>>    - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
->>>>    - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
->>>>    - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
->>>>
->>>> Balloon driver extension, which is needed for contiguous/DMA
->>>> buffers, will be to provide new *kernel API*, no UAPI is needed.
->>>>
->>> So I am obviously a bit late to this thread, but why do you need to add
->>> new ioctls to gntdev and balloon? Doesn't this driver manage to do what
->>> you want without any extensions?
->> 1. I only (may) need to add IOCTLs to gntdev
->> 2. balloon driver needs to be extended, so it can allocate
->> contiguous (DMA) memory, not IOCTLs/UAPI here, all lives
->> in the kernel.
->> 3. The reason I need to extend gnttab with new IOCTLs is to
->> provide new functionality to create a dma-buf from grant references
->> and to produce grant references for a dma-buf. This is what I have as UAPI
->> description for xen-zcopy driver:
->>
->> 1. DRM_IOCTL_XEN_ZCOPY_DUMB_FROM_REFS
->> This will create a DRM dumb buffer from grant references provided
->> by the frontend. The intended usage is:
->>    - Frontend
->>      - creates a dumb/display buffer and allocates memory
->>      - grants foreign access to the buffer pages
->>      - passes granted references to the backend
->>    - Backend
->>      - issues DRM_XEN_ZCOPY_DUMB_FROM_REFS ioctl to map
->>        granted references and create a dumb buffer
->>      - requests handle to fd conversion via DRM_IOCTL_PRIME_HANDLE_TO_FD
->>      - requests real HW driver/consumer to import the PRIME buffer with
->>        DRM_IOCTL_PRIME_FD_TO_HANDLE
->>      - uses handle returned by the real HW driver
->>    - at the end:
->>      o closes real HW driver's handle with DRM_IOCTL_GEM_CLOSE
->>      o closes zero-copy driver's handle with DRM_IOCTL_GEM_CLOSE
->>      o closes file descriptor of the exported buffer
->>
->> 2. DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
->> This will grant references to a dumb/display buffer's memory provided by
->> the
->> backend. The intended usage is:
->>    - Frontend
->>      - requests backend to allocate dumb/display buffer and grant references
->>        to its pages
->>    - Backend
->>      - requests real HW driver to create a dumb with
->> DRM_IOCTL_MODE_CREATE_DUMB
->>      - requests handle to fd conversion via DRM_IOCTL_PRIME_HANDLE_TO_FD
->>      - requests zero-copy driver to import the PRIME buffer with
->>        DRM_IOCTL_PRIME_FD_TO_HANDLE
->>      - issues DRM_XEN_ZCOPY_DUMB_TO_REFS ioctl to
->>        grant references to the buffer's memory.
->>      - passes grant references to the frontend
->>   - at the end:
->>      - closes zero-copy driver's handle with DRM_IOCTL_GEM_CLOSE
->>      - closes real HW driver's handle with DRM_IOCTL_GEM_CLOSE
->>      - closes file descriptor of the imported buffer
->>
->> 3. DRM_XEN_ZCOPY_DUMB_WAIT_FREE
->> This will block until the dumb buffer with the wait handle provided be
->> freed:
->> this is needed for synchronization between frontend and backend in case
->> frontend provides grant references of the buffer via
->> DRM_XEN_ZCOPY_DUMB_FROM_REFS IOCTL and which must be released before
->> backend replies with XENDISPL_OP_DBUF_DESTROY response.
->> wait_handle must be the same value returned while calling
->> DRM_XEN_ZCOPY_DUMB_FROM_REFS IOCTL.
->>
->> So, as you can see the above functionality is not covered by the
->> existing UAPI
->> of the gntdev driver.
->> Now, if we change dumb -> dma-buf and remove DRM code (which is only a
->> wrapper
->> here on top of dma-buf) we get new driver for dma-buf for Xen.
->>
->> This is why I have 2 options here: either create a dedicated driver for
->> this
->> (e.g. re-work xen-zcopy to be DRM independent and put it under
->> drivers/xen/xen-dma-buf, for example) or extend the existing gntdev driver
->> with the above UAPI + make changes to the balloon driver to provide kernel
->> API for DMA buffer allocations.
-> Which user component would use the new ioctls?
-It is currently used by the display backend [1] and will
-probably be used by the hyper-dmabuf frontend/backend
-(Dongwon from Intel can provide more info on this).
->
-> I'm asking because I'm not very fond of adding more linux specific
-> functions to libgnttab which are not related to a specific Xen version,
-> but to a kernel version.
-Hm, I was not thinking about this UAPI to be added to libgnttab.
-It seems it can be used directly w/o wrappers in user-space
->
-> So doing this in a separate driver seems to be the better option in
-> this regard.
-Well, from maintenance POV it is easier for me to have it all in
-a separate driver as all dma-buf related functionality will
-reside at one place. This also means that no changes to existing
-drivers will be needed (if it is ok to have ballooning in/out
-code for DMA buffers (allocated with dma_alloc_xxx) not in the balloon 
-driver)
->
-> Juergen
-[1] https://github.com/xen-troops/displ_be
+Commit-ID:  231df823c4f04176f607afc4576c989895cff40e
+Gitweb:     https://git.kernel.org/tip/231df823c4f04176f607afc4576c989895cff40e
+Author:     Dave Hansen <dave.hansen@linux.intel.com>
+AuthorDate: Fri, 20 Apr 2018 15:20:21 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 24 Apr 2018 09:50:53 +0200
+
+x86/pti: Fix boot warning from Global-bit setting
+
+The pageattr.c code attempts to process "faults" when it goes looking
+for PTEs to change and finds non-present entries.  It allows these
+faults in the linear map which is "expected to have holes", but
+WARN()s about them elsewhere, like when called on the kernel image.
+
+However, change_page_attr_clear() is now called on the kernel image in the
+process of trying to clear the Global bit.
+
+This trips the warning in __cpa_process_fault() if a non-present PTE is
+encountered in the kernel image.  The "holes" in the kernel image result
+from free_init_pages()'s use of set_memory_np().  These holes are totally
+fine, and result from normal operation, just as they would be in the kernel
+linear map.
+
+Just silence the warning when holes in the kernel image are encountered.
+
+Fixes: 39114b7a7 (x86/pti: Never implicitly clear _PAGE_GLOBAL for kernel image)
+Reported-by: Mariusz Ceier <mceier@gmail.com>
+Reported-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Nadav Amit <namit@vmware.com>
+Cc: Kees Cook <keescook@google.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: linux-mm@kvack.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Link: https://lkml.kernel.org/r/20180420222021.1C7D2B3F@viggo.jf.intel.com
+
+---
+ arch/x86/mm/pageattr.c | 40 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 4fadfd2b7017..3bded76e8d5c 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -93,6 +93,18 @@ void arch_report_meminfo(struct seq_file *m)
+ static inline void split_page_count(int level) { }
+ #endif
+ 
++static inline int
++within(unsigned long addr, unsigned long start, unsigned long end)
++{
++	return addr >= start && addr < end;
++}
++
++static inline int
++within_inclusive(unsigned long addr, unsigned long start, unsigned long end)
++{
++	return addr >= start && addr <= end;
++}
++
+ #ifdef CONFIG_X86_64
+ 
+ static inline unsigned long highmap_start_pfn(void)
+@@ -106,20 +118,25 @@ static inline unsigned long highmap_end_pfn(void)
+ 	return __pa_symbol(roundup(_brk_end, PMD_SIZE) - 1) >> PAGE_SHIFT;
+ }
+ 
+-#endif
+-
+-static inline int
+-within(unsigned long addr, unsigned long start, unsigned long end)
++static bool __cpa_pfn_in_highmap(unsigned long pfn)
+ {
+-	return addr >= start && addr < end;
++	/*
++	 * Kernel text has an alias mapping at a high address, known
++	 * here as "highmap".
++	 */
++	return within_inclusive(pfn, highmap_start_pfn(), highmap_end_pfn());
+ }
+ 
+-static inline int
+-within_inclusive(unsigned long addr, unsigned long start, unsigned long end)
++#else
++
++static bool __cpa_pfn_in_highmap(unsigned long pfn)
+ {
+-	return addr >= start && addr <= end;
++	/* There is no highmap on 32-bit */
++	return false;
+ }
+ 
++#endif
++
+ /*
+  * Flushing functions
+  */
+@@ -1183,6 +1200,10 @@ static int __cpa_process_fault(struct cpa_data *cpa, unsigned long vaddr,
+ 		cpa->numpages = 1;
+ 		cpa->pfn = __pa(vaddr) >> PAGE_SHIFT;
+ 		return 0;
++
++	} else if (__cpa_pfn_in_highmap(cpa->pfn)) {
++		/* Faults in the highmap are OK, so do not warn: */
++		return -EFAULT;
+ 	} else {
+ 		WARN(1, KERN_WARNING "CPA: called for zero pte. "
+ 			"vaddr = %lx cpa->vaddr = %lx\n", vaddr,
+@@ -1335,8 +1356,7 @@ static int cpa_process_alias(struct cpa_data *cpa)
+ 	 * to touch the high mapped kernel as well:
+ 	 */
+ 	if (!within(vaddr, (unsigned long)_text, _brk_end) &&
+-	    within_inclusive(cpa->pfn, highmap_start_pfn(),
+-			     highmap_end_pfn())) {
++	    __cpa_pfn_in_highmap(cpa->pfn)) {
+ 		unsigned long temp_cpa_vaddr = (cpa->pfn << PAGE_SHIFT) +
+ 					       __START_KERNEL_map - phys_base;
+ 		alias_cpa = *cpa;
