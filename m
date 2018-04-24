@@ -1,122 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756233AbeDXHRs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 03:17:48 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58460 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752059AbeDXHRm (ORCPT
+        id S1756192AbeDXHTz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 03:19:55 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:51835 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755224AbeDXHTx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 03:17:42 -0400
-Subject: Re: [PATCH] cpufreq: powernv: Fix the hardlockup by synchronus
- smp_call in timer interrupt
-To: Nicholas Piggin <npiggin@gmail.com>
-References: <1524544906-31512-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
- <20180424160034.6e9d2274@roar.ozlabs.ibm.com>
-Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        ppaidipe@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com
-From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Date: Tue, 24 Apr 2018 12:47:32 +0530
+        Tue, 24 Apr 2018 03:19:53 -0400
+Subject: Re: [RFC 06/10] misc: pci_endpoint_test: Add MSI-X support
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+ <8b88f8c2b766f36c71659deb0fce635154b2b39f.1523379766.git.gustavo.pimentel@synopsys.com>
+ <b25dcfb1-e770-e302-d9aa-7c35f6c58fa5@ti.com>
+ <c6d1d492-38a0-6a03-7e61-b8b50226734b@synopsys.com>
+CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <a982ca92-d34c-12ea-30bf-9a9b1661d50d@ti.com>
+Date: Tue, 24 Apr 2018 12:49:39 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180424160034.6e9d2274@roar.ozlabs.ibm.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <c6d1d492-38a0-6a03-7e61-b8b50226734b@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18042407-0040-0000-0000-00000450C833
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042407-0041-0000-0000-000020F5345D
-Message-Id: <c88d51af-9eb8-6bb3-4201-8909cda0241b@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804240074
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 04/24/2018 11:30 AM, Nicholas Piggin wrote:
-> On Tue, 24 Apr 2018 10:11:46 +0530
-> Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> wrote:
+On Tuesday 17 April 2018 11:08 PM, Gustavo Pimentel wrote:
+> Hi Kishon,
 > 
->> gpstate_timer_handler() uses synchronous smp_call to set the pstate
->> on the requested core. This causes the below hard lockup:
+> On 17/04/2018 11:33, Kishon Vijay Abraham I wrote:
+>> Hi,
 >>
->> [c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
->> [c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
->> [c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
->> [c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
->> [c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
->> [c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
->> [c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
->> [c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
->> [c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
->> [c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
->> --- interrupt: 901 at doorbell_global_ipi+0x34/0x50
->> LR = arch_send_call_function_ipi_mask+0x120/0x130
->> [c000003fe566ba50] [c00000000004876c] arch_send_call_function_ipi_mask+0x4c/0x130 (unreliable)
->> [c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
->> [c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
->> [c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
->> [c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
->> [c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
->> [c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
->> [c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
+>> On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
+>>> Adds the MSI-X support and updates driver documentation accordingly.
+>>>
+>>> Changes the driver parameter in order to allow the interruption type
+>>> selection.
+>>>
+>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>> ---
+>>>  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
+>>>  drivers/misc/pci_endpoint_test.c                 | 102 +++++++++++++++++------
+>>>  2 files changed, 79 insertions(+), 26 deletions(-)
+>>>
+>>> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+>>> index 4ebc359..fdfa0f6 100644
+>>> --- a/Documentation/misc-devices/pci-endpoint-test.txt
+>>> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
+>>> @@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
+>>>  	*) verifying addresses programmed in BAR
+>>>  	*) raise legacy IRQ
+>>>  	*) raise MSI IRQ
+>>> +	*) raise MSI-X IRQ
+>>>  	*) read data
+>>>  	*) write data
+>>>  	*) copy data
+>>> @@ -25,6 +26,8 @@ ioctl
+>>>   PCITEST_LEGACY_IRQ: Tests legacy IRQ
+>>>   PCITEST_MSI: Tests message signalled interrupts. The MSI number
+>>>  	      to be tested should be passed as argument.
+>>> + PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
+>>> +	      to be tested should be passed as argument.
+>>>   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+>>>  		as argument.
+>>>   PCITEST_READ: Perform read tests. The size of the buffer should be passed
+>>> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+>>> index 37db0fc..a7d9354 100644
+>>> --- a/drivers/misc/pci_endpoint_test.c
+>>> +++ b/drivers/misc/pci_endpoint_test.c
+>>> @@ -42,11 +42,16 @@
+>>>  #define PCI_ENDPOINT_TEST_COMMAND	0x4
+>>>  #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+>>>  #define COMMAND_RAISE_MSI_IRQ		BIT(1)
+>>> -#define MSI_NUMBER_SHIFT		2
+>>> -/* 6 bits for MSI number */
+>>> -#define COMMAND_READ                    BIT(8)
+>>> -#define COMMAND_WRITE                   BIT(9)
+>>> -#define COMMAND_COPY                    BIT(10)
+>>> +#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+>>> +#define IRQ_TYPE_SHIFT			3
+>>> +#define IRQ_TYPE_LEGACY			0
+>>> +#define IRQ_TYPE_MSI			1
+>>> +#define IRQ_TYPE_MSIX			2
+>>> +#define MSI_NUMBER_SHIFT		5
 >>
->> Fix this by using the asynchronus smp_call in the timer interrupt handler.
->> We don't have to wait in this handler until the pstates are changed on
->> the core. This change will not have any impact on the global pstate
->> ramp-down algorithm.
+>> Now that you are anyways fixing this, add a new register entry for MSI numbers.
+>> Let's not keep COMMAND and MSI's together.
+> 
+> What you suggest?
+
+#define PCI_ENDPOINT_TEST_COMMAND	0x4
+#define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+#define COMMAND_RAISE_MSI_IRQ		BIT(1)
+#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+#define COMMAND_READ                    BIT(3)
+#define COMMAND_WRITE                   BIT(4)
+#define COMMAND_COPY                    BIT(5)
+
+#define PCI_ENDPOINT_TEST_STATUS	0x8
+#define STATUS_READ_SUCCESS             BIT(0)
+#define STATUS_READ_FAIL                BIT(1)
+#define STATUS_WRITE_SUCCESS            BIT(2)
+#define STATUS_WRITE_FAIL               BIT(3)
+#define STATUS_COPY_SUCCESS             BIT(4)
+#define STATUS_COPY_FAIL                BIT(5)
+#define STATUS_IRQ_RAISED               BIT(6)
+#define STATUS_SRC_ADDR_INVALID         BIT(7)
+#define STATUS_DST_ADDR_INVALID         BIT(8)
+
+#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0xc
+#define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
+
+#define PCI_ENDPOINT_TEST_LOWER_DST_ADDR	0x14
+#define PCI_ENDPOINT_TEST_UPPER_DST_ADDR	0x18
+
+#define PCI_ENDPOINT_TEST_SIZE		0x1c
+#define PCI_ENDPOINT_TEST_CHECKSUM	0x20
+
+#define PCI_ENDPOINT_TEST_MSI_NUMBER	0x24
+
+We should try not to modify either the existing register offsets or the bit
+fields within these registers in the future as EP and RC will be running on
+different systems and it is possible one of them might not have the updated
+kernel.
+> 
+>>> +/* 12 bits for MSI number */
+>>> +#define COMMAND_READ                    BIT(17)
+>>> +#define COMMAND_WRITE                   BIT(18)
+>>> +#define COMMAND_COPY                    BIT(19)
 >>
->> Reported-by: Nicholas Piggin <npiggin@gmail.com>
->> Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
->> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
->> ---
->>  drivers/cpufreq/powernv-cpufreq.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> This change should be done along with the pci-epf-test in a single patch.
+> 
+> To be clear, you're saying is this patch should be just be squashed into the
+> patch number 8 [1], because there is a lot of dependencies namely the defines,
+> that is used on the alter functions.
+> 
+> [1] -> https://patchwork.ozlabs.org/patch/896841/
+
+yeah. We have to make sure git bisect doesn't break functionality.
+> 
+>>>  
+>>>  #define PCI_ENDPOINT_TEST_STATUS	0x8
+>>>  #define STATUS_READ_SUCCESS             BIT(0)
+>>> @@ -73,9 +78,9 @@ static DEFINE_IDA(pci_endpoint_test_ida);
+>>>  #define to_endpoint_test(priv) container_of((priv), struct pci_endpoint_test, \
+>>>  					    miscdev)
+>>>  
+>>> -static bool no_msi;
+>>> -module_param(no_msi, bool, 0444);
+>>> -MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
 >>
->> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
->> index 0591874..7e0c752 100644
->> --- a/drivers/cpufreq/powernv-cpufreq.c
->> +++ b/drivers/cpufreq/powernv-cpufreq.c
->> @@ -721,7 +721,7 @@ void gpstate_timer_handler(struct timer_list *t)
->>  	spin_unlock(&gpstates->gpstate_lock);
->>  
->>  	/* Timer may get migrated to a different cpu on cpu hot unplug */
->> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
->> +	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 0);
->>  }
->>  
->>  /*
+>> Let's not remove this just to make sure existing users doesn't get affected.
 > 
-> This can still deadlock because !wait case still ends up having to wait
-> if another !wait smp_call_function caller had previously used the
-> call single data for this cpu.
-> 
-> If you go this way you would have to use smp_call_function_async, which
-> is more work.
-> 
-> As a rule it would be better to avoid smp_call_function entirely if
-> possible. Can you ensure the timer is running on the right CPU? Use
-> add_timer_on and try again if the timer is on the wrong CPU, perhaps?
-> 
+> Hum, by making an internal conversion? Like this
+> no_msi = false <=> irq_type = 1
+> no_msi = true <=> irq_type = 0
 
-Yeah that is doable we can check for the cpu and re-queue it. We will only
-ramp-down slower in that case which is no harm.
+yeah..
 
-(If the targeted core turns out to be offline then we will not queue the timer
-again as we would have already set the pstate to min in the cpu-down path.)
-
-Thanks and Regards,
-Shilpa
-
-> Thanks,
-> Nick
-> 
+Thanks
+Kishon
