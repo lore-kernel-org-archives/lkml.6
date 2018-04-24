@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933060AbeDXMxj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:53:39 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34112 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757838AbeDXMpS (ORCPT
+        id S933165AbeDXMxq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:53:46 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53409 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757825AbeDXMpS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Apr 2018 08:45:18 -0400
-X-Google-Smtp-Source: AIpwx4+aR/aM3H/BC+ZF8rUqLM6wzSPZ7E4hGyOL9kPOikfaVJvQtmsczUYW7WvZpdFCb84COQynGA==
+X-Google-Smtp-Source: AB8JxZqH+pTLYWWU8/GIuGAo+Lr4ptCyfZ1Ndm2MMpQbO5ydr5OViNcrFYM2e6PIBvORU2a0xz6m3g==
 From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -15,9 +15,9 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 10/28] venus: vdec: call session_continue in insufficient event
-Date: Tue, 24 Apr 2018 15:44:18 +0300
-Message-Id: <20180424124436.26955-11-stanimir.varbanov@linaro.org>
+Subject: [PATCH 09/28] venus: venc,vdec: adds clocks needed for venus 4xx
+Date: Tue, 24 Apr 2018 15:44:17 +0300
+Message-Id: <20180424124436.26955-10-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
 References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
@@ -25,33 +25,186 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call session_continue for Venus 4xx version even when the event
-says that the buffer resources are not sufficient. Leaving a
-comment with more information about the workaround.
+This extends the clocks number to support suspend and resume
+on Venus version 4xx.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/vdec.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/media/platform/qcom/venus/core.h |  4 +--
+ drivers/media/platform/qcom/venus/vdec.c | 42 ++++++++++++++++++++++++++------
+ drivers/media/platform/qcom/venus/venc.c | 42 ++++++++++++++++++++++++++------
+ 3 files changed, 72 insertions(+), 16 deletions(-)
 
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index 8d3e150800c9..b5b9a84e9155 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -92,8 +92,8 @@ struct venus_core {
+ 	void __iomem *base;
+ 	int irq;
+ 	struct clk *clks[VIDC_CLKS_NUM_MAX];
+-	struct clk *core0_clk;
+-	struct clk *core1_clk;
++	struct clk *core0_clk, *core0_bus_clk;
++	struct clk *core1_clk, *core1_bus_clk;
+ 	struct video_device *vdev_dec;
+ 	struct video_device *vdev_enc;
+ 	struct v4l2_device v4l2_dev;
 diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index c45452634e7e..91c7384ff9c8 100644
+index 261a51adeef2..c45452634e7e 100644
 --- a/drivers/media/platform/qcom/venus/vdec.c
 +++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -873,6 +873,14 @@ static void vdec_event_notify(struct venus_inst *inst, u32 event,
+@@ -1081,12 +1081,18 @@ static int vdec_probe(struct platform_device *pdev)
+ 	if (!core)
+ 		return -EPROBE_DEFER;
  
- 			dev_dbg(dev, "event not sufficient resources (%ux%u)\n",
- 				data->width, data->height);
-+			/*
-+			 * Workaround: Even that the firmware send and event for
-+			 * insufficient buffer resources it is safe to call
-+			 * session_continue because actually the event says that
-+			 * the number of capture buffers is lower.
-+			 */
-+			if (IS_V4(core))
-+				hfi_session_continue(inst);
- 			break;
- 		case HFI_EVENT_RELEASE_BUFFER_REFERENCE:
- 			venus_helper_release_buf_ref(inst, data->tag);
+-	if (core->res->hfi_version == HFI_VERSION_3XX) {
++	if (IS_V3(core) || IS_V4(core)) {
+ 		core->core0_clk = devm_clk_get(dev, "core");
+ 		if (IS_ERR(core->core0_clk))
+ 			return PTR_ERR(core->core0_clk);
+ 	}
+ 
++	if (IS_V4(core)) {
++		core->core0_bus_clk = devm_clk_get(dev, "bus");
++		if (IS_ERR(core->core0_bus_clk))
++			return PTR_ERR(core->core0_bus_clk);
++	}
++
+ 	platform_set_drvdata(pdev, core);
+ 
+ 	vdev = video_device_alloc();
+@@ -1132,12 +1138,23 @@ static __maybe_unused int vdec_runtime_suspend(struct device *dev)
+ {
+ 	struct venus_core *core = dev_get_drvdata(dev);
+ 
+-	if (core->res->hfi_version == HFI_VERSION_1XX)
++	if (IS_V1(core))
+ 		return 0;
+ 
+-	writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	if (IS_V3(core))
++		writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(0, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
++
++	if (IS_V4(core))
++		clk_disable_unprepare(core->core0_bus_clk);
++
+ 	clk_disable_unprepare(core->core0_clk);
+-	writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++
++	if (IS_V3(core))
++		writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(1, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+ 
+ 	return 0;
+ }
+@@ -1147,12 +1164,23 @@ static __maybe_unused int vdec_runtime_resume(struct device *dev)
+ 	struct venus_core *core = dev_get_drvdata(dev);
+ 	int ret;
+ 
+-	if (core->res->hfi_version == HFI_VERSION_1XX)
++	if (IS_V1(core))
+ 		return 0;
+ 
+-	writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	if (IS_V3(core))
++		writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(0, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
++
+ 	ret = clk_prepare_enable(core->core0_clk);
+-	writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++
++	if (IS_V4(core))
++		ret |= clk_prepare_enable(core->core0_bus_clk);
++
++	if (IS_V3(core))
++		writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(1, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index 947001170a77..bc8c2e7a8d2c 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -1225,12 +1225,18 @@ static int venc_probe(struct platform_device *pdev)
+ 	if (!core)
+ 		return -EPROBE_DEFER;
+ 
+-	if (core->res->hfi_version == HFI_VERSION_3XX) {
++	if (IS_V3(core) || IS_V4(core)) {
+ 		core->core1_clk = devm_clk_get(dev, "core");
+ 		if (IS_ERR(core->core1_clk))
+ 			return PTR_ERR(core->core1_clk);
+ 	}
+ 
++	if (IS_V4(core)) {
++		core->core1_bus_clk = devm_clk_get(dev, "bus");
++		if (IS_ERR(core->core1_bus_clk))
++			return PTR_ERR(core->core1_bus_clk);
++	}
++
+ 	platform_set_drvdata(pdev, core);
+ 
+ 	vdev = video_device_alloc();
+@@ -1276,12 +1282,23 @@ static __maybe_unused int venc_runtime_suspend(struct device *dev)
+ {
+ 	struct venus_core *core = dev_get_drvdata(dev);
+ 
+-	if (core->res->hfi_version == HFI_VERSION_1XX)
++	if (IS_V1(core))
+ 		return 0;
+ 
+-	writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	if (IS_V3(core))
++		writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(0, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
++
++	if (IS_V4(core))
++		clk_disable_unprepare(core->core1_bus_clk);
++
+ 	clk_disable_unprepare(core->core1_clk);
+-	writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++
++	if (IS_V3(core))
++		writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(1, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
+ 
+ 	return 0;
+ }
+@@ -1291,12 +1308,23 @@ static __maybe_unused int venc_runtime_resume(struct device *dev)
+ 	struct venus_core *core = dev_get_drvdata(dev);
+ 	int ret;
+ 
+-	if (core->res->hfi_version == HFI_VERSION_1XX)
++	if (IS_V1(core))
+ 		return 0;
+ 
+-	writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	if (IS_V3(core))
++		writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(0, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
++
+ 	ret = clk_prepare_enable(core->core1_clk);
+-	writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++
++	if (IS_V4(core))
++		ret |= clk_prepare_enable(core->core1_bus_clk);
++
++	if (IS_V3(core))
++		writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
++	else if (IS_V4(core))
++		writel(1, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
+ 
+ 	return ret;
+ }
 -- 
 2.14.1
