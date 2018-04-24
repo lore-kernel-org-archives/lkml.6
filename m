@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751785AbeDXSUz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 14:20:55 -0400
+        id S1752511AbeDXSVD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 14:21:03 -0400
 Received: from mga02.intel.com ([134.134.136.20]:3113 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750943AbeDXSUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 14:20:54 -0400
+        id S1751095AbeDXSU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 14:20:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,324,1520924400";
-   d="scan'208";a="35837883"
+   d="scan'208";a="35837922"
 From: kan.liang@linux.intel.com
 To: acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
         linux-kernel@vger.kernel.org
@@ -18,103 +18,102 @@ Cc: jolsa@redhat.com, namhyung@kernel.org, ganapatrao.kulkarni@cavium.com,
         zhangshaokun@hisilicon.com, yao.jin@linux.intel.com,
         will.deacon@arm.com, ak@linux.intel.com, agustinv@codeaurora.org,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 1/5] perf pmu: Fix core PMU alias list for X86 platform
-Date: Tue, 24 Apr 2018 11:20:10 -0700
-Message-Id: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH 2/5] perf stat: Print out hint for mixed PMU group error
+Date: Tue, 24 Apr 2018 11:20:11 -0700
+Message-Id: <1524594014-79243-2-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
+References: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-When counting uncore event with alias, core event is mistakenly
-involved, for example:
+Perf doesn't support mixed events from different PMUs (except software
+event) in a group. For this case, only "<not counted>" or "<not
+supported>" are printed out. There is no hint which guides users to fix
+the issue.
 
-  perf stat --no-merge -e "unc_m_cas_count.all" -C0  sleep 1
+Checking the PMU type of events to determine if they are from the same
+PMU. There may be false alarm for the checking. E.g. the core PMU has
+different PMU type. But it should not happen often.
+The false alarm can also be tolerated, because:
+- It only happens on error path.
+- It just provides a possible solution for the issue.
 
-  Performance counter stats for 'CPU(s) 0':
-
-                 0      unc_m_cas_count.all [uncore_imc_4]
-                 0      unc_m_cas_count.all [uncore_imc_2]
-                 0      unc_m_cas_count.all [uncore_imc_0]
-           153,640      unc_m_cas_count.all [cpu]
-                 0      unc_m_cas_count.all [uncore_imc_5]
-            25,026      unc_m_cas_count.all [uncore_imc_3]
-                 0      unc_m_cas_count.all [uncore_imc_1]
-
-       1.001447890 seconds time elapsed
-
-The reason is that current implementation doesn't check PMU name of a
-event when adding its alias into the alias list for core PMU. The
-uncore event aliases are mistakenly added.
-
-This bug was introduced in:
-  commit 14b22ae028de ("perf pmu: Add helper function is_pmu_core to
-  detect PMU CORE devices")
-
-Checking the PMU name for all PMUs on X86 and other architectures except
-ARM.
-There is no behavior change for ARM.
-
-Fixes: 14b22ae028de ("perf pmu: Add helper function is_pmu_core to detect PMU CORE devices")
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- tools/perf/util/pmu.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ tools/perf/builtin-stat.c | 35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 064bdcb..0df2a02 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -539,9 +539,10 @@ static bool pmu_is_uncore(const char *name)
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 147a27e..30e6b37 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -172,6 +172,7 @@ static bool			interval_count;
+ static const char		*output_name;
+ static int			output_fd;
+ static int			print_free_counters_hint;
++static int			print_mixed_hw_group_error;
  
- /*
-  *  PMU CORE devices have different name other than cpu in sysfs on some
-- *  platforms. looking for possible sysfs files to identify as core device.
-+ *  platforms.
-+ *  Looking for possible sysfs files to identify the arm core device.
-  */
--static int is_pmu_core(const char *name)
-+static int is_arm_pmu_core(const char *name)
- {
- 	struct stat st;
- 	char path[PATH_MAX];
-@@ -550,12 +551,6 @@ static int is_pmu_core(const char *name)
- 	if (!sysfs)
- 		return 0;
+ struct perf_stat {
+ 	bool			 record;
+@@ -1126,6 +1127,30 @@ static void abs_printout(int id, int nr, struct perf_evsel *evsel, double avg)
+ 		fprintf(output, "%s%s", csv_sep, evsel->cgrp->name);
+ }
  
--	/* Look for cpu sysfs (x86 and others) */
--	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/cpu", sysfs);
--	if ((stat(path, &st) == 0) &&
--			(strncmp(name, "cpu", strlen("cpu")) == 0))
--		return 1;
--
- 	/* Look for cpu sysfs (specific to arm) */
- 	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/%s/cpus",
- 				sysfs, name);
-@@ -662,6 +657,7 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
- 	struct pmu_events_map *map;
- 	struct pmu_event *pe;
- 	const char *name = pmu->name;
-+	const char *pname;
++static bool is_mixed_hw_group(struct perf_evsel *counter)
++{
++	struct perf_evlist *evlist = counter->evlist;
++	u32 pmu_type = counter->attr.type;
++	struct perf_evsel *pos;
++
++	if (counter->nr_members < 2)
++		return false;
++
++	evlist__for_each_entry(evlist, pos) {
++		/* software events can be part of any hardware group */
++		if (pos->attr.type == PERF_TYPE_SOFTWARE)
++			continue;
++		if (pmu_type == PERF_TYPE_SOFTWARE) {
++			pmu_type = pos->attr.type;
++			continue;
++		}
++		if (pmu_type != pos->attr.type)
++			return true;
++	}
++
++	return false;
++}
++
+ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
+ 		     char *prefix, u64 run, u64 ena, double noise,
+ 		     struct runtime_stat *st)
+@@ -1178,8 +1203,11 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
+ 			counter->supported ? CNTR_NOT_COUNTED : CNTR_NOT_SUPPORTED,
+ 			csv_sep);
  
- 	map = perf_pmu__find_map(pmu);
- 	if (!map)
-@@ -680,11 +676,9 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
- 			break;
- 		}
+-		if (counter->supported)
++		if (counter->supported) {
+ 			print_free_counters_hint = 1;
++			if (is_mixed_hw_group(counter))
++				print_mixed_hw_group_error = 1;
++		}
  
--		if (!is_pmu_core(name)) {
--			/* check for uncore devices */
--			if (pe->pmu == NULL)
--				continue;
--			if (strncmp(pe->pmu, name, strlen(pe->pmu)))
-+		if (!is_arm_pmu_core(name)) {
-+			pname = pe->pmu ? pe->pmu : "cpu";
-+			if (strncmp(pname, name, strlen(pname)))
- 				continue;
- 		}
+ 		fprintf(stat_config.output, "%-*s%s",
+ 			csv_output ? 0 : unit_width,
+@@ -1757,6 +1785,11 @@ static void print_footer(void)
+ "	echo 0 > /proc/sys/kernel/nmi_watchdog\n"
+ "	perf stat ...\n"
+ "	echo 1 > /proc/sys/kernel/nmi_watchdog\n");
++
++	if (print_mixed_hw_group_error)
++		fprintf(output,
++			"The events in group usually have to be from "
++			"the same PMU. Try reorganizing the group.\n");
+ }
  
+ static void print_counters(struct timespec *ts, int argc, const char **argv)
 -- 
 2.7.4
