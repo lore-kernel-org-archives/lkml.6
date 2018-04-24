@@ -1,135 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756838AbeDXI2P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:28:15 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:45258 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756640AbeDXIYe (ORCPT
+        id S932818AbeDXI3y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:29:54 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:44924 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756101AbeDXI3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:24:34 -0400
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: Luca Ceresoli <luca@lucaceresoli.net>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 06/13] media: imx274: remove non-indexed pointers from mode_table
-Date: Tue, 24 Apr 2018 10:24:11 +0200
-Message-Id: <1524558258-530-7-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524558258-530-1-git-send-email-luca@lucaceresoli.net>
-References: <1524558258-530-1-git-send-email-luca@lucaceresoli.net>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Tue, 24 Apr 2018 04:29:51 -0400
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
+ DA850 PSC
+To: David Lechner <david@lechnology.com>, Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
+ <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
+ <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
+ <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
+ <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
+ <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
+ <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
+ <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
+ <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <aa1c2e6f-793c-1d9e-366a-3496f500f946@ti.com>
+Date: Tue, 24 Apr 2018 13:58:33 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mode_table[] has 3 members that are accessed based on their index, which
-makes worth using an array.
+On Monday 23 April 2018 08:29 PM, David Lechner wrote:
+> On 04/06/2018 11:46 AM, Stephen Boyd wrote:
+>> Quoting Sekhar Nori (2018-04-06 02:37:03)
+>>>
+>>> Can you please check that and confirm there is no issue with genpd and
+>>> using CLK_OF_DECLARE() to initialize clocks?
+>>>
+>>> Unless you report an issue back, or Mike and Stephen have ideas about
+>>> how to handle the dependency between PSC/PLL derived timer clock
+>>> initialization and and timer_probe(), I think we need to move back to
+>>> using CLK_OF_DECLARE().
+>>
+>> In such a case, please use the hybrid approach where the clks required
+>> for the clockevent and/or clocksource are registered in the early
+>> CLK_OF_DECLARE path but the rest of the clks get registered with a
+>> proper platform device and driver. There are examples of this approach
+>> on other platforms already.
+>>
+> 
+> I looked at this a bit last week, but I didn't come up with any approach
+> that I was happy with. It seems like it would be nice to just register
+> the absolute minimum clocks needed. On DA8XX, that would just be the PLL0
+> AUXCLK. On most of the other SoCs, it would be the PLL AUXCLK plus one
+> LPSC clock. The AUXCLKs are easy because they are just a simple gate
+> from the oscillator. The LPSC clocks are a bit more tricky because they
+> have a complex sequence for turning on. Furthermore, on DM646X, we need
+> the whole PLL up to SYSCLK3 plus one LPSC clock, so things get a bit
+> messy there.
 
-The other members are always accessed with a constant index. This added
-indirection gives no improvement and only makes code more verbose.
+Things might change in the context of work being done here by Bartosz
+for converting clocks to early platform devices.
 
-Remove these pointers from the array and access them directly.
+But, keeping that development aside for a moment: I think this means the
+PLLs and PSCs need to be CLK_OF_DECLARE(). What we can have as platform
+devices are clocks that are not in the path to get timer clock working
+(like CFGCHIP clocks).
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-
----
-Changed v1 -> v2:
- - add "media: " prefix to commit message
----
- drivers/media/i2c/imx274.c | 25 ++++++-------------------
- 1 file changed, 6 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 62a0d7af0e51..63fb94e7da37 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -144,12 +144,6 @@ enum imx274_mode {
- 	IMX274_MODE_3840X2160,
- 	IMX274_MODE_1920X1080,
- 	IMX274_MODE_1280X720,
--
--	IMX274_MODE_START_STREAM_1,
--	IMX274_MODE_START_STREAM_2,
--	IMX274_MODE_START_STREAM_3,
--	IMX274_MODE_START_STREAM_4,
--	IMX274_MODE_STOP_STREAM
- };
- 
- /*
-@@ -486,12 +480,6 @@ static const struct reg_8 *mode_table[] = {
- 	[IMX274_MODE_3840X2160]		= imx274_mode1_3840x2160_raw10,
- 	[IMX274_MODE_1920X1080]		= imx274_mode3_1920x1080_raw10,
- 	[IMX274_MODE_1280X720]		= imx274_mode5_1280x720_raw10,
--
--	[IMX274_MODE_START_STREAM_1]	= imx274_start_1,
--	[IMX274_MODE_START_STREAM_2]	= imx274_start_2,
--	[IMX274_MODE_START_STREAM_3]	= imx274_start_3,
--	[IMX274_MODE_START_STREAM_4]	= imx274_start_4,
--	[IMX274_MODE_STOP_STREAM]	= imx274_stop,
- };
- 
- /*
-@@ -731,11 +719,11 @@ static int imx274_mode_regs(struct stimx274 *priv, int mode)
- {
- 	int err = 0;
- 
--	err = imx274_write_table(priv, mode_table[IMX274_MODE_START_STREAM_1]);
-+	err = imx274_write_table(priv, imx274_start_1);
- 	if (err)
- 		return err;
- 
--	err = imx274_write_table(priv, mode_table[IMX274_MODE_START_STREAM_2]);
-+	err = imx274_write_table(priv, imx274_start_2);
- 	if (err)
- 		return err;
- 
-@@ -760,7 +748,7 @@ static int imx274_start_stream(struct stimx274 *priv)
- 	 * give it 1 extra ms for margin
- 	 */
- 	msleep_range(11);
--	err = imx274_write_table(priv, mode_table[IMX274_MODE_START_STREAM_3]);
-+	err = imx274_write_table(priv, imx274_start_3);
- 	if (err)
- 		return err;
- 
-@@ -770,7 +758,7 @@ static int imx274_start_stream(struct stimx274 *priv)
- 	 * give it 1 extra ms for margin
- 	 */
- 	msleep_range(8);
--	err = imx274_write_table(priv, mode_table[IMX274_MODE_START_STREAM_4]);
-+	err = imx274_write_table(priv, imx274_start_4);
- 	if (err)
- 		return err;
- 
-@@ -1081,8 +1069,7 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
- 			goto fail;
- 	} else {
- 		/* stop stream */
--		ret = imx274_write_table(imx274,
--					 mode_table[IMX274_MODE_STOP_STREAM]);
-+		ret = imx274_write_table(imx274, imx274_stop);
- 		if (ret)
- 			goto fail;
- 	}
-@@ -1779,7 +1766,7 @@ static int imx274_remove(struct i2c_client *client)
- 	struct stimx274 *imx274 = to_imx274(sd);
- 
- 	/* stop stream */
--	imx274_write_table(imx274, mode_table[IMX274_MODE_STOP_STREAM]);
-+	imx274_write_table(imx274, imx274_stop);
- 
- 	v4l2_async_unregister_subdev(sd);
- 	v4l2_ctrl_handler_free(&imx274->ctrls.handler);
--- 
-2.7.4
+Thanks,
+Sekhar
