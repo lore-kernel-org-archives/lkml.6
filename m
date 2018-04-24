@@ -1,190 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752845AbeDXRqg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:46:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33606 "EHLO mail.kernel.org"
+        id S1753278AbeDXRsM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:48:12 -0400
+Received: from mga14.intel.com ([192.55.52.115]:49633 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752513AbeDXRqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:46:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 327CA204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] ARM: dts: exynos: Remove unnecessary address/size properties in Midas boards
-Date: Tue, 24 Apr 2018 19:45:58 +0200
-Message-Id: <20180424174602.3915-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        id S1752074AbeDXRsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 13:48:08 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,324,1520924400";
+   d="scan'208";a="222985279"
+Date: Tue, 24 Apr 2018 20:48:02 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
+        "'linux-security-module@vger.kernel.org'"
+        <linux-security-module@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Message-ID: <20180424174802.GA24613@linux.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+ <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+ <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+ <20180424160328.GA5119@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424160328.GA5119@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The children of regulators node do not have reg/ranges properties.  Move the
-children up one level, get rid of regulators node and remove
-address-cells and size-cells properties.  This fixes warnings for
-Exynos4412 Midas family boards:
+On Tue, Apr 24, 2018 at 07:03:28PM +0300, Jarkko Sakkinen wrote:
+> On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
+> > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > > > >
+> > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > > > In crb_map_io() function, __crb_request_locality() is called
+> > > > > > > prior to crb_cmd_ready(), but if one of the consecutive function
+> > > > > > > fails the flow bails out instead of trying to relinquish locality.
+> > > > > > > This patch adds goto jump to __crb_relinquish_locality() on the
+> > > > > > > error path.
+> > > > > > >
+> > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only
+> > > > > > > after granting
+> > > > > > > locality)
+> > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > > > > ---
+> > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > > > b/drivers/char/tpm/tpm_crb.c index 7f78482cd157..34fbc6cb097b
+> > > > > > > 100644
+> > > > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device
+> > > > > > > *device, struct crb_priv *priv,
+> > > > > > >
+> > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > > > > > >control_address,
+> > > > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > > > +		goto out_relinquish_locality;
+> > > > > > > +	}
+> > > > > > >
+> > > > > > >  	/*
+> > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7
+> > > > > > > +522,7
+> > > > > >
+> > > > > > @@
+> > > > > > > static int crb_map_io(struct acpi_device *device, struct
+> > > > > > > crb_priv *priv,
+> > > > > > >  	 */
+> > > > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > > > >  	if (ret)
+> > > > > > > -		return ret;
+> > > > > > > +		goto out_relinquish_locality;
+> > > > > > >
+> > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device
+> > > > > > > *device, struct crb_priv *priv,
+> > > > > > >
+> > > > > > >  	crb_go_idle(dev, priv);
+> > > > > > >
+> > > > > > > +out_relinquish_locality:
+> > > > > > > +
+> > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > > > >
+> > > > > > >  	return ret;
+> > > > > >
+> > > > > > Thanks, please just call it before returning in the error path.
+> > > > >
+> > > > > Can you please elaborate why, isn't the centralized exiting of
+> > > > > functions preferred kernel coding style?
+> > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.html#cent
+> > > > > ra
+> > > > > lized-ex
+> > > > > iting-of-functions
+> > > >
+> > > > You exit only from one location (not multiple) and not from a nested
+> > > > context. Here you just add more complexity by doing this.
+> > > 
+> > > Where is the complexity ? I see it as a standard way of undoing on exit.
+> > > Tomas
+> > 
+> > Jarkko, can you please respond.
+> > Thanks
+> > Tomas
+> 
+> I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
+> 
+> My earlier comment was incorrect as there are two locations to exit (not
+> sure how I managed to overlook the patch that way).
+> 
+> Thus, I have only two very  minor requets:
+> 
+> * Remove the extra newline (the last line addition in the patch).
+> * Use just label named out as we have only one exception handler.
+> 
+> I'll move on to testing, and if it it passes, I can do those updates
+> myself.
+> 
+> /Jarkko
 
-    arch/arm/boot/dts/exynos4412-i9300.dtb: Warning (avoid_unnecessary_addr_size):
-        /regulators: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-    arch/arm/boot/dts/exynos4412-i9305.dtb: Warning (avoid_unnecessary_addr_size):
-        /regulators: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-    arch/arm/boot/dts/exynos4412-n710x.dtb: Warning (avoid_unnecessary_addr_size):
-        /regulators: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 32 +++++------
- arch/arm/boot/dts/exynos4412-midas.dtsi     | 86 ++++++++++++++---------------
- 2 files changed, 55 insertions(+), 63 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-index ee8e1f445370..31cd5f6fd83c 100644
---- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-@@ -15,24 +15,22 @@
- 		i2c10 = &i2c_cm36651;
- 	};
- 
--	regulators {
--		lcd_vdd3_reg: voltage-regulator-2 {
--			compatible = "regulator-fixed";
--			regulator-name = "LCD_VDD_2.2V";
--			regulator-min-microvolt = <2200000>;
--			regulator-max-microvolt = <2200000>;
--			gpio = <&gpc0 1 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	lcd_vdd3_reg: voltage-regulator-2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "LCD_VDD_2.2V";
-+		regulator-min-microvolt = <2200000>;
-+		regulator-max-microvolt = <2200000>;
-+		gpio = <&gpc0 1 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- 
--		ps_als_reg: voltage-regulator-5 {
--			compatible = "regulator-fixed";
--			regulator-name = "LED_A_3.0V";
--			regulator-min-microvolt = <3000000>;
--			regulator-max-microvolt = <3000000>;
--			gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	ps_als_reg: voltage-regulator-5 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "LED_A_3.0V";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+		gpio = <&gpj0 5 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
- 	};
- 
- 	i2c_ak8975: i2c-gpio-0 {
-diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index 76f2b30f1731..4b182e26cfc8 100644
---- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -46,56 +46,50 @@
- 		};
- 	};
- 
--	regulators {
--		compatible = "simple-bus";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		cam_io_reg: voltage-regulator-1 {
--			compatible = "regulator-fixed";
--			regulator-name = "CAM_SENSOR_A";
--			regulator-min-microvolt = <2800000>;
--			regulator-max-microvolt = <2800000>;
--			enable-active-high;
--			status = "disabled";
--		};
-+	cam_io_reg: voltage-regulator-1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "CAM_SENSOR_A";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		enable-active-high;
-+		status = "disabled";
-+	};
- 
--		cam_af_reg: voltage-regulator-3 {
--			compatible = "regulator-fixed";
--			regulator-name = "CAM_AF";
--			regulator-min-microvolt = <2800000>;
--			regulator-max-microvolt = <2800000>;
--			enable-active-high;
--			status = "disabled";
--		};
-+	cam_af_reg: voltage-regulator-3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "CAM_AF";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		enable-active-high;
-+		status = "disabled";
-+	};
- 
--		vsil12: voltage-regulator-6 {
--			compatible = "regulator-fixed";
--			regulator-name = "VSIL_1.2V";
--			regulator-min-microvolt = <1200000>;
--			regulator-max-microvolt = <1200000>;
--			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--			vin-supply = <&buck7_reg>;
--		};
-+	vsil12: voltage-regulator-6 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VSIL_1.2V";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&buck7_reg>;
-+	};
- 
--		vcc33mhl: voltage-regulator-7 {
--			compatible = "regulator-fixed";
--			regulator-name = "VCC_3.3_MHL";
--			regulator-min-microvolt = <3300000>;
--			regulator-max-microvolt = <3300000>;
--			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	vcc33mhl: voltage-regulator-7 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_3.3_MHL";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- 
--		vcc18mhl: voltage-regulator-8 {
--			compatible = "regulator-fixed";
--			regulator-name = "VCC_1.8_MHL";
--			regulator-min-microvolt = <1800000>;
--			regulator-max-microvolt = <1800000>;
--			gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	vcc18mhl: voltage-regulator-8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_1.8_MHL";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		gpio = <&gpl0 4 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
- 	};
- 
- 	gpio-keys {
--- 
-2.14.1
+/Jarkko
