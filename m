@@ -1,41 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934369AbeDXNbl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:31:41 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:46758 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933927AbeDXNbi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:31:38 -0400
-X-IronPort-AV: E=Sophos;i="5.49,323,1520899200";
-   d="scan'208";a="52569577"
-Date: Tue, 24 Apr 2018 14:31:36 +0100
-From: Wei Liu <wei.liu2@citrix.com>
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, Juergen Gross <jgross@suse.com>,
-        <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>, <netdev@vger.kernel.org>,
-        Wei Liu <wei.liu2@citrix.com>
-Subject: Re: [Xen-devel] [PATCH] xen-netfront: fix xennet_start_xmit()'s
- return type
-Message-ID: <20180424133135.l5kaeq7dewvytqpy@citrix.com>
-References: <20180424131815.5064-1-luc.vanoostenryck@gmail.com>
+        id S934386AbeDXNb7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:31:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51730 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933927AbeDXNby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:31:54 -0400
+Date: Tue, 24 Apr 2018 07:31:46 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+Message-ID: <20180424133146.GG17484@dhcp22.suse.cz>
+References: <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180420130852.GC16083@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180420210200.GH10788@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180421144757.GC14610@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180423151545.GU17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804232006540.2299@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180424131815.5064-1-luc.vanoostenryck@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <alpine.LRH.2.02.1804232006540.2299@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 03:18:14PM +0200, Luc Van Oostenryck wrote:
-> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-> which is a typedef for an enum type, but the implementation in this
-> driver returns an 'int'.
+On Mon 23-04-18 20:25:15, Mikulas Patocka wrote:
 > 
-> Fix this by returning 'netdev_tx_t' in this driver too.
 > 
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+> On Mon, 23 Apr 2018, Michal Hocko wrote:
+> 
+> > On Mon 23-04-18 10:06:08, Mikulas Patocka wrote:
+> > 
+> > > > > He didn't want to fix vmalloc(GFP_NOIO)
+> > > > 
+> > > > I don't remember that conversation, so I don't know whether I agree with
+> > > > his reasoning or not.  But we are supposed to be moving away from GFP_NOIO
+> > > > towards marking regions with memalloc_noio_save() / restore.  If you do
+> > > > that, you won't need vmalloc(GFP_NOIO).
+> > > 
+> > > He said the same thing a year ago. And there was small progress. 6 out of 
+> > > 27 __vmalloc calls were converted to memalloc_noio_save in a year - 5 in 
+> > > infiniband and 1 in btrfs. (the whole discussion is here 
+> > > http://lkml.iu.edu/hypermail/linux/kernel/1706.3/04681.html )
+> > 
+> > Well this is not that easy. It requires a cooperation from maintainers.
+> > I can only do as much. I've posted patches in the past and actively
+> > bringing up this topic at LSFMM last two years...
+> 
+> You're right - but you have chosen the uneasy path.
 
-Reviewed-by: Wei Liu <wei.liu2@citrix.com>
+Yes.
+
+> Fixing __vmalloc code 
+> is easy and it doesn't require cooperation with maintainers.
+
+But it is a hack against the intention of the scope api. It also alows
+maintainers to not care about their broken code.
+
+> > > He refuses 15-line patch to fix GFP_NOIO bug because he believes that in 4 
+> > > years, the kernel will be refactored and GFP_NOIO will be eliminated. Why 
+> > > does he have veto over this part of the code? I'd much rather argue with 
+> > > people who have constructive comments about fixing bugs than with him.
+> > 
+> > I didn't NACK the patch AFAIR. I've said it is not a good idea longterm.
+> > I would be much more willing to change my mind if you would back your
+> > patch by a real bug report. Hacks are acceptable when we have a real
+> > issue in hands. But if we want to fix potential issue then better make
+> > it properly.
+> 
+> Developers should fix bugs in advance, not to wait until a crash hapens, 
+> is analyzed and reported.
+
+I agree. But are those existing users broken in the first place? I have
+seen so many GFP_NOFS abuses that I would dare to guess that most of
+those vmalloc NOFS abusers can be simply turned into GFP_KERNEL. Maybe
+that is the reason we haven't heard any complains in years.
+
+-- 
+Michal Hocko
+SUSE Labs
