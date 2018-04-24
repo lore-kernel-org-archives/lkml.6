@@ -1,130 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751500AbeDXRGp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:06:45 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:57640 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbeDXRGj (ORCPT
+        id S1751780AbeDXRHn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:07:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34946 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751216AbeDXRHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:06:39 -0400
-Date: Tue, 24 Apr 2018 18:06:25 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Jyri Sarha <jsarha@ti.com>
-Cc: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 7/8] drm/i2c: tda998x: register as a drm bridge
-Message-ID: <20180424170625.GL16141@n2100.armlinux.org.uk>
-References: <20180423072301.11962-1-peda@axentia.se>
- <20180423072301.11962-8-peda@axentia.se>
- <20180423160833.GF16141@n2100.armlinux.org.uk>
- <5d6866d0-75bc-4de8-9b87-4fee5430e9dd@axentia.se>
- <20180424080833.GJ16141@n2100.armlinux.org.uk>
- <8448e90a-4562-b564-c160-1b5c67e0f92f@axentia.se>
- <0cbee3bd-8987-5f2f-519d-f8d1b426f2a3@ti.com>
+        Tue, 24 Apr 2018 13:07:41 -0400
+Date: Tue, 24 Apr 2018 18:07:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@googlegroups.com, Ondrej Jirman <megous@megous.com>
+Subject: Re: [PATCH v3 2/3] regulator: add support for SY8106A regulator
+Message-ID: <20180424170733.GD22073@sirena.org.uk>
+References: <20180423144657.63264-1-icenowy@aosc.io>
+ <20180423144657.63264-3-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="BRE3mIcgqKzpedwo"
 Content-Disposition: inline
-In-Reply-To: <0cbee3bd-8987-5f2f-519d-f8d1b426f2a3@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180423144657.63264-3-icenowy@aosc.io>
+X-Cookie: Take your Senator to lunch this week.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 07:04:16PM +0300, Jyri Sarha wrote:
-> On 24/04/18 13:14, Peter Rosin wrote:
-> > On 2018-04-24 10:08, Russell King - ARM Linux wrote:
-> >> On Tue, Apr 24, 2018 at 08:58:42AM +0200, Peter Rosin wrote:
-> >>> On 2018-04-23 18:08, Russell King - ARM Linux wrote:
-> >>>> On Mon, Apr 23, 2018 at 09:23:00AM +0200, Peter Rosin wrote:
-> >>>>>  static int tda998x_remove(struct i2c_client *client)
-> >>>>>  {
-> >>>>> -	component_del(&client->dev, &tda998x_ops);
-> >>>>> +	struct device *dev = &client->dev;
-> >>>>> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
-> >>>>> +
-> >>>>> +	drm_bridge_remove(&bridge->bridge);
-> >>>>> +	component_del(dev, &tda998x_ops);
-> >>>>> +
-> >>>>
-> >>>> I'd like to ask a rather fundamental question about DRM bridge support,
-> >>>> because I suspect that there's a major fsckup here.
-> >>>>
-> >>>> The above is the function that deals with the TDA998x device being
-> >>>> unbound from the driver.  With the component API, this results in the
-> >>>> DRM device correctly being torn down, because one of the hardware
-> >>>> devices has gone.
-> >>>>
-> >>>> With DRM bridge, the bridge is merely removed from the list of
-> >>>> bridges:
-> >>>>
-> >>>> void drm_bridge_remove(struct drm_bridge *bridge)
-> >>>> {
-> >>>>         mutex_lock(&bridge_lock);
-> >>>>         list_del_init(&bridge->list);
-> >>>>         mutex_unlock(&bridge_lock);
-> >>>> }
-> >>>> EXPORT_SYMBOL(drm_bridge_remove);
-> >>>>
-> >>>> and the memory backing the "struct tda998x_bridge" (which contains
-> >>>> the struct drm_bridge) will be freed by the devm subsystem.
-> >>>>
-> >>>> However, there is no notification into the rest of the DRM subsystem
-> >>>> that the device has gone away.  Worse, the memory that is still in
-> >>>> use by DRM has now been freed, so further use of the DRM device
-> >>>> results in a use-after-free bug.
-> >>>>
-> >>>> This is really not good, and to me looks like a fundamental problem
-> >>>> with the DRM bridge code.  I see nothing in the DRM bridge code that
-> >>>> deals with the lifetime of a "DRM bridge" or indeed the lifetime of
-> >>>> the actual device itself.
-> >>>>
-> >>>> So, from what I can see, there seems to be a fundamental lifetime
-> >>>> issue with the design of the DRM bridge code.  This needs to be
-> >>>> fixed.
-> >>>
-> >>> Oh crap. A gigantic can of worms...
-> >>
-> >> Yes, it's especially annoying for me, having put the effort in to
-> >> the component helper to cover all these cases.
-> >>
-> >>> Would a patch (completely untested btw) along this line of thinking make
-> >>> any difference whatsoever?
-> >>
-> >> It looks interesting - from what I can see of the device links code,
-> >> it would have the effect of unbinding the DRM device just before
-> >> TDA998x is unbound, so that's an improvement.
-> >>
-> >> However, from what I can see, the link vanishes at that point (as
-> >> DL_FLAG_AUTOREMOVE is set), and re-binding the TDA998x device results
-> >> in nothing further happening - the link will be recreated, but there
-> >> appears to be nothing that triggers the "consumer" to rebind at that
-> >> point.  Maybe I've missed something?
-> > 
-> > Right, auto-remove is a no-go. So, improving on the previous...
-> > 
-> > (I think drm_panel might suffer from this issue too?)
-> 
-> Yes it does and I took a shot at trying to fix it at the end of the
-> previous merge window, but gave up as I run out of time. I re-spun the
-> work now after reading this thread. I add you and Russell to cc.
 
-Right, and these exact problems are what the component helper is
-there to sort out, in a subsystem independent way.
+--BRE3mIcgqKzpedwo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-What is the problem with the component helper that people seem to
-be soo loathed to use it, instead preferring to come up with sub-
-standard and broken alternatives?
+On Mon, Apr 23, 2018 at 10:46:56PM +0800, Icenowy Zheng wrote:
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+> --- /dev/null
+> +++ b/drivers/regulator/sy8106a-regulator.c
+> @@ -0,0 +1,176 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * sy8106a-regulator.c - Regulator device driver for SY8106A
+
+Just make the entire thing a C++ comment so it looks consistent and
+joined up.
+
+> +static int sy8106a_set_voltage_sel(struct regulator_dev *rdev, unsigned int sel)
+> +{
+> +	/* We use our set_voltage_sel in order to avoid unnecessary I2C
+> +	 * chatter, because the regulator_get_voltage_sel_regmap using
+> +	 * apply_bit would perform 4 unnecessary transfers instead of one,
+> +	 * increasing the chance of error.
+> +	 */
+> +	return regmap_write(rdev->regmap, rdev->desc->vsel_reg,
+> +			    sel | SY8106A_GO_BIT);
+
+Why would it do these extra transfers?  Is this just the fact that you
+didn't set up a register cache (though the r/m/w cycle should only add
+the read)?  We could put some logic in the core regmap code to detect
+that an _update_bits() call is going to write to the whole register,
+though it'd be even easier to just let this register be cached.
+
+Generally if we can usefully optimize things we should do it at the
+framework level.
+
+> +	if (reg & SY8106A_GO_BIT)
+> +		return reg & rdev->desc->vsel_mask;
+> +	else
+> +		return (chip->fixed_voltage - rdev->desc->min_uV) /
+> +		       rdev->desc->uV_step;
+
+You could use the standard get_voltage_sel() if you provide a mapping
+operation that set everything with _GO_BIT set to return the fixed
+voltage.  Though looking at this it seems that the fixed voltage will
+always be one that could be set via the register anyway so I'm wondering
+if the easiest thing here isn't to just have the driver turn off _GO_BIT
+during probe() and not worry about the special case at runtime.
+
+--BRE3mIcgqKzpedwo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrfZFQACgkQJNaLcl1U
+h9ABoAf+MAY7wh6RxX+JxRaaZqaKm1sBzEsUizDdO0bmeMGUmy2XVE3nmGRUC5g9
+5iEh9QeWock1uMhygZwIWNAudOUbzU2vj519R7fIDMSL/gSMs1pMGBOrQo/EYmpe
+2yXh6dfVu1o3GJixqnwLlIEawT91IOqU7CzHq7LYLIn15FECsF9HqEI2+rEZokI4
+zU5kqZTGwN6SAXCOTIgc/Rp7ZbwrL4vqyO9+lqNnG3sJKGmiwu/UzD1Ip6vU5Cuf
+nr9KJUX80xuINjo32OpZoMfw9CmL5Py6MU+GptiozCDnNDdRo+rBv8phvaUX+dly
+sFkRGlum9ixStWgoHz47moUxcOerxA==
+=Q4GJ
+-----END PGP SIGNATURE-----
+
+--BRE3mIcgqKzpedwo--
