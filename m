@@ -1,257 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751360AbeDXVPM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 17:15:12 -0400
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:39274 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeDXVPK (ORCPT
+        id S1751346AbeDXVR6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 17:17:58 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:17008 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbeDXVRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:15:10 -0400
-X-Google-Smtp-Source: AIpwx4/sl5R0QgtAxilKQsEoYTRW27i2WcwkYNu8EcGbej/2OXuN1npIESG6dq8uW0+hT2xtUoAoyw==
-Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
- unflattened to FDT
-To: Jan Kiszka <jan.kiszka@web.de>, Rob Herring <robh+dt@kernel.org>,
-        Alan Tull <atull@kernel.org>
-Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        devicetree@vger.kernel.org,
+        Tue, 24 Apr 2018 17:17:54 -0400
+X-IronPort-AV: E=Sophos;i="5.49,324,1520870400";
+   d="scan'208";a="173298346"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "pmenzel+linux-block@molgen.mpg.de"
+        <pmenzel+linux-block@molgen.mpg.de>
+CC: "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "regressions@leemhuis.info" <regressions@leemhuis.info>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jailhouse <jailhouse-dev@googlegroups.com>
-References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
- <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
- <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
- <7bbf615b-3cdd-6bb4-6918-33e48de4225d@gmail.com>
- <a21dbee8-6e4e-9ceb-c798-dda43c2eae2d@web.de>
- <d7e94a45-5d46-0491-e5dc-2b098a11c5b1@gmail.com>
- <CAL_Jsq+MmUTMrd+jNqUB2=A-q3cCy7+QWOKG0iF6zM0hjCy3PQ@mail.gmail.com>
- <e508f3de-f21b-2510-2c6a-b810073ba1a7@web.de>
- <e06d1c0f-f60d-fc23-cd74-82f557dbc432@web.de>
- <7bbb9472-9c96-6012-68e6-4ec2773c7732@gmail.com>
- <4422f58a-ca7c-16e6-e0df-63faea50f553@web.de>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <3d7cb4d3-5070-e878-51d3-59f9772f756b@gmail.com>
-Date: Tue, 24 Apr 2018 14:15:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <4422f58a-ca7c-16e6-e0df-63faea50f553@web.de>
-Content-Type: text/plain; charset=utf-8
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: Re: Regression 4.17-rc1: SSD doesn properly resume causing system
+ hang (NULL pointer dereference)
+Thread-Topic: Regression 4.17-rc1: SSD doesn properly resume causing system
+ hang (NULL pointer dereference)
+Thread-Index: AQHT2/Iaokzl6JZ9+0atRxesfkEEnKQQLgAAgAANxACAACwEAIAAA7cA
+Date: Tue, 24 Apr 2018 21:17:50 +0000
+Message-ID: <19e19bc6b2fef11faf428fe75447b06e56af9ffd.camel@wdc.com>
+References: <59ca6556-11a6-4f77-76e7-d51c7175eb32@molgen.mpg.de>
+         <67ffdf0050a04bf3615c3d8a3a90b0c9c2aeb1ad.camel@wdc.com>
+         <2cc5f0fb-4caa-9c28-7daa-68993d5cb41a@molgen.mpg.de>
+         <14ff1ed06e36a372680872c227b5abe389c753da.camel@wdc.com>
+         <a3a7f906-3681-15cc-67af-b96e4ac71b0e@molgen.mpg.de>
+         <134955874b401e6764077393c75ab2d4549b940a.camel@wdc.com>
+         <6a2162a7-5f48-c107-0b1c-5258089522c5@molgen.mpg.de>
+In-Reply-To: <6a2162a7-5f48-c107-0b1c-5258089522c5@molgen.mpg.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [198.233.165.212]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB1103;7:paGjDQn8u2O2fdu5lehdKOkbSZNmozr0X/QwduZTomOnAfDVdBAX028upt9xMSfgmQXoA3NfRmAjQSOm4D9GI0nK339qiFHagI+svag352gc4Ptn2wA9gIhHvi4D3IGQCZW0GTedG0zAOzrqO7Qxo9KhNwGZ14jRn/OopZBtwnt+bBaF2WwOJBLnE5X5kdqfNojwzfiud7d5EUznInls885SxGAghNO8YqIs/mKM9aIDZkrAwQZLTlykmEK+U2md;20:+rav+QLIluhme+nzPDThKAbjY+Q7VXIkwkMcaNzm4hmucQMThMa2xIzJzfxzUjdHCA9Haw/rWUVcjpkJM254Rb2qJO06gG7CEaoMrZkJDA36UuhI7cVLGTuZKTZco147z6piur28BhFAniNy8i63Y8aGZadHWsRqBFkE3nwQCls=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB1103;
+x-ms-traffictypediagnostic: MWHPR04MB1103:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB1103815048B98BEFEE642C2398880@MWHPR04MB1103.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR04MB1103;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB1103;
+x-forefront-prvs: 0652EA5565
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39380400002)(366004)(39860400002)(346002)(189003)(199004)(377424004)(6512007)(2616005)(6506007)(6246003)(8936002)(186003)(486006)(476003)(6436002)(97736004)(76176011)(59450400001)(102836004)(3280700002)(93886005)(54906003)(305945005)(53936002)(25786009)(4326008)(446003)(11346002)(316002)(3660700001)(86362001)(99286004)(2900100001)(81156014)(5660300001)(106356001)(478600001)(66066001)(36756003)(118296001)(6486002)(5250100002)(7736002)(26005)(81166006)(8676002)(105586002)(68736007)(229853002)(3846002)(6116002)(2906002)(14454004)(72206003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB1103;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: dZn9/kdIwTKW1kQKZPmvdD62Vt8Liw23Mdma6krd5jzKlhx4hWT23sNXUUFlKlSuVd8aiknv/8eQ88tBVr/AF5+fU1jl24cudkCWQ2elMGef6V1UzF1+JWPT+7XaZJoaaQtZ8LbF7YxdWLinPuGR+VO6tgMfCz4OE5rkoW1YxnGIu4EsjceSMt0sZ03dmtpm
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D45FB520D4C1E0478444848C53851307@namprd04.prod.outlook.com>
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 7428e385-e47b-47a4-3955-08d5aa28d5bd
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7428e385-e47b-47a4-3955-08d5aa28d5bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2018 21:17:50.2592
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB1103
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3OLI3CE002842
 
-On 04/23/18 22:29, Jan Kiszka wrote:
-> On 2018-04-24 00:38, Frank Rowand wrote:
->> Hi Jan,
->>
->> + Alan Tull for fpga perspective
->>
->> On 04/22/18 03:30, Jan Kiszka wrote:
->>> On 2018-04-11 07:42, Jan Kiszka wrote:
->>>> On 2018-04-05 23:12, Rob Herring wrote:
->>>>> On Thu, Apr 5, 2018 at 2:28 PM, Frank Rowand <frowand.list@gmail.com> wrote:
->>>>>> On 04/05/18 12:13, Jan Kiszka wrote:
->>>>>>> On 2018-04-05 20:59, Frank Rowand wrote:
->>>>>>>> Hi Jan,
->>>>>>>>
->>>>>>>> On 04/04/18 15:35, Jan Kiszka wrote:
->>>>>>>>> Hi Frank,
->>>>>>>>>
->>>>>>>>> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
->>>>>>>>>> From: Frank Rowand <frank.rowand@sony.com>
->>>>>>>>>>
->>>>>>>>>> Move duplicating and unflattening of an overlay flattened devicetree
->>>>>>>>>> (FDT) into the overlay application code.  To accomplish this,
->>>>>>>>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
->>>>>>>>>>
->>>>>>>>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
->>>>>>>>>> code, which is thus responsible for freeing the duplicate FDT.  The
->>>>>>>>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
->>>>>>>>>> original FDT.
->>>>>>>>>>
->>>>>>>>>> The unflattened devicetree now belongs to devicetree code, which is
->>>>>>>>>> thus responsible for freeing the unflattened devicetree.
->>>>>>>>>>
->>>>>>>>>> These ownership changes prevent early freeing of the duplicated FDT
->>>>>>>>>> or the unflattened devicetree, which could result in use after free
->>>>>>>>>> errors.
->>>>>>>>>>
->>>>>>>>>> of_overlay_fdt_apply() is a private function for the anticipated
->>>>>>>>>> overlay loader.
->>>>>>>>>
->>>>>>>>> We are using of_fdt_unflatten_tree + of_overlay_apply in the
->>>>>>>>> (out-of-tree) Jailhouse loader driver in order to register a virtual
->>>>>>>>> device during hypervisor activation with Linux. The DT overlay is
->>>>>>>>> created from a a template but modified prior to application to account
->>>>>>>>> for runtime-specific parameters. See [1] for the current implementation.
->>>>>>>>>
->>>>>>>>> I'm now wondering how to model that scenario best with the new API.
->>>>>>>>> Given that the loader lost ownership of the unflattened tree but the
->>>>>>>>> modification API exist only for the that DT state, I'm not yet seeing a
->>>>>>>>> clear solution. Should we apply the template in disabled form (status =
->>>>>>>>> "disabled"), modify it, and then activate it while it is already applied?
->>>>>>>>
->>>>>>>> Thank you for the pointer to the driver - that makes it much easier to
->>>>>>>> understand the use case and consider solutions.
->>>>>>>>
->>>>>>>> If you can make the changes directly on the FDT instead of on the
->>>>>>>> expanded devicetree, then you could move to the new API.
->>>>>>>
->>>>>>> Are there some examples/references on how to edit FDTs in-place in the
->>>>>>> kernel? I'd like to avoid writing the n-th FDT parser/generator.
->>>>>>
->>>>>> I don't know of any existing in-kernel edits of the FDT (but they might
->>>>>> exist).  The functions to access an FDT are in libfdt, which is in
->>>>>> scripts/dtc/libfdt/.
->>>>>
->>>>> Let's please not go down that route of doing FDT modifications. There
->>>>> is little reason to other than for early boot changes. And it is much
->>>>> easier to work on unflattened trees.
->>>>
->>>> I just briefly looked into libfdt, and it would have meant building it
->>>> into the module as there are no library functions exported by the kernel
->>>> either. Another reason to drop that.
->>>>
->>>> What's apparently working now is the pattern I initially suggested:
->>>> Register template with status = "disabled" as overlay, then prepare and
->>>> apply changeset that contains all needed modifications and sets the
->>>> status to "ok". I might be leaking additional resources, but to find
->>>> that out, I will now finally have to resolve clean unbinding of the
->>>> generic PCI host controller [1] first.
->>>
->>> static void free_overlay_changeset(struct overlay_changeset *ovcs)
->>> {
->>> 	[...]
->>> 	/*
->>> 	 * TODO
->>> 	 *
->>> 	 * would like to: kfree(ovcs->overlay_tree);
->>> 	 * but can not since drivers may have pointers into this data
->>> 	 *
->>> 	 * would like to: kfree(ovcs->fdt);
->>> 	 * but can not since drivers may have pointers into this data
->>> 	 */
->>>
->>> 	kfree(ovcs);
->>> }
->>>
->>> What's this? I have kmemleak now jumping at me over this. Who is suppose
->>> to plug these leaks? The caller of of_overlay_fdt_apply has no pointers
->>> to those objects. I would say that's a regression of the new API.
->>
->> The problem already existed but it was hidden.  We have never been able to
->> kfree() these object because we do not know if there are any pointers into
->> these objects.  The new API makes the problem visible to kmemleak.
-> 
-> My old code didn't have the problem because there was no one steeling
-> pointers to my overlay, and I was able to safely release all the
-> resources that I or the core on my behalf allocated. In fact, I recently
-> even dropped the duplication the fdt prior to unflattening it because I
-> got its lifecycle under control (and both kmemleak as well as kasan
-> confirmed this). I still consider this intentional leak a regression of
-> the new API.
+On Tue, 2018-04-24 at 23:04 +0200, Paul Menzel wrote:
+> I applied your change, and rebuilt the Linux kernel. Unfortunately, it 
+> looks like, it didn’t make a difference.
 
-The API has to work for any user, not just your clean code.
+In that case I don't know what is causing the failure. Can you run a bisect
+to determine which commit introduced this regression?
 
+Thanks,
 
->> The reason that we do not know if there are any pointers into these objects
->> is that devicetree access APIs return pointers into the devicetree internal
->> data structures (that is, into the overlay unflattened devicetree).  If we
->> want to be able to do the kfree()s, we could change the devicetree access
->> APIs.
->>
->> The reason that pointers into the overlay flattened tree (ovcs->fdt) are
->> also exposed is that the overlay unflattened devicetree property values
->> are pointers into the overlay fdt.
->>
->> ** This paragraph becomes academic (and not needed) if the fix in the next
->> paragraph can be implemented. **
->> I _think_ that the fdt issue __for overlays__ can be fixed somewhat easily.
->> (I would want to read through the code again to make sure I'm not missing
->> any issues.)  If the of_fdt_unflatten_tree() called by of_overlay_fdt_apply()
->> was modified so that property values were copied into newly allocated memory
->> and the live tree property pointers were set to the copy instead of to
->> the value in the fdt, then I _think_ the fdt could be freed in
->> of_overlay_fdt_apply() after calling of_overlay_apply().  The code that
-> 
-> I don't see yet how more duplicating of objects would help. Then we
-> would not leak the fdt or the unflattened tree on overlay destruction
-> but that duplicates, no?
-
-Yes, we would leak the duplicates.  That is exactly what the existing
-overlay remove code does.  My long term goal is to remove that leakage.
-But that leakage can not be resolved until we can guarantee that there
-are no pointers held to those duplicates.
-
-I don't like adding this additional copy - I would much prefer to change
-the overlay notify code as proposed below.
-
-
->> frees a devicetree would also have to be aware of this change -- I'm not
->> sure if that leads to ugly complications or if it is easy.  The other
->> question to consider is whether to make the same change to
->> of_fdt_unflatten_tree() when it is called in early boot to unflatten
->> the base devicetree.  Doing so would increase the memory usage of the
->> live tree (we would not be able to free the base fdt after unflattening
->> it because we make the fdt visible in /sys/firmware/fdt -- though
->> _maybe_ that could be conditioned on CONFIG_KEXEC).
->>
->> But all of the complexity of that fix is _only_ because of_overlay_apply()
->> and of_overlay_remove() call overlay_notify(), passing in the overlay
->> unflattened devicetree (which has pointers into the overlay fdt). Pointers
->> into the overlay unflattened devicetree are then passed to the notifiers.
->> (Again, I may be missing some other place that the overlay unflattened
->> devicetree is made visible to other code -- a more thorough reading of
->> the code is needed.) If the notifiers could be modified to accept the
->> changeset list instead of of pointers to the fragments in the overlay
->> unflattened devicetree then there would be no possibility of the notifiers
->> keeping a pointer into the overlay fdt. I do not know if this is a
-> 
-> But then again the convention has to be that those changeset pointers
-> must not be kept - because the changeset is history after of_overlay_remove.
-
-I don't trust convention.  The result is fragile code.
-
-
->> practical change for the notifiers -- there are no callers of
->> of_overlay_notifier_register() in the mainline kernel source. My
->> recollection is that the overlay notifiers were added for the fpga
->> subsystem.
-> 
-> We have drivers/fpga/of-fpga-region.c in-tree, and that does not seem to
-
-Thanks for finding that.  For some reason my 'git grep' did not find
-that.  (I'll blame fat fingers or something...)
-
-
-> store any pointers to objects, rather consumes them in-place. And I
-> would consider it fair to impose such a limitation on the notifier
-> interface.
-
-How do you enforce that limitation?
-
-
->> Why is overlay_notify() the only issue related to unknown users having
->> pointers into the overlay fdt?  The answer is that the overlay code
->> does not directly expose the overlay unflattened devicetree (and thus
->> indirectly the overlay fdt) to the live devicetree -- when the
->> overlay code creates the overlay changeset, it copies from the
->> overlay unflattened devicetree and overlay fdt and only exposes
->> pointers to the copies.
->>
->> And hopefully the issues with the overlay unflattened devicetree can
->> be resolved in the same way as for the overlay fdt.
-> 
-> As noted above, I don't see there is a technical solution to this issue
-> but it's rather a matter of convention: no overlay notifier callback is
-> allowed to keep references to the passed tree content (unless it
-> reference-counts some tree nodes) beyond the execution of the callback.
-> With that in place, we can safely drop the backing memory IMHO.
-> 
-> Jan
-> .
-> 
+Bart.
