@@ -1,85 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753282AbeDXOjQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:39:16 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:41453 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753039AbeDXOjK (ORCPT
+        id S1753551AbeDXOjb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:39:31 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44674 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751440AbeDXOj0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:39:10 -0400
-X-Google-Smtp-Source: AIpwx4/JWSgp+gLI9NzAXUX0EGjNIiFCMQXHz2tl+UMlv7zYQRVzDxlPNe1bpI8OVEzFtWYxwgJqOg==
-Date: Tue, 24 Apr 2018 09:39:07 -0500
-From: Rob Herring <robh@kernel.org>
-To: sean.wang@mediatek.com
-Cc: mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
-        matthias.bgg@gmail.com, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
-Message-ID: <20180424143907.eewrpzdmkhhux3lb@rob-hp-laptop>
-References: <cover.1524044917.git.sean.wang@mediatek.com>
- <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
+        Tue, 24 Apr 2018 10:39:26 -0400
+X-Google-Smtp-Source: AB8JxZpAEvrSNtHQBgxNnGtttzKbtvYJFWotlJALqzWt7OzlHNqYXGglxq/vicwy4zpJvBd5Oqj6ZA==
+From: "Jingoo Han" <jingoohan1@gmail.com>
+To: "'Gustavo Pimentel'" <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <kishon@ti.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+Cc: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com> <6b2c7ec1835cf422af5703aa14c99dbad8c6ffb8.1524577064.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <6b2c7ec1835cf422af5703aa14c99dbad8c6ffb8.1524577064.git.gustavo.pimentel@synopsys.com>
+Subject: Re: [PATCH v7 6/9] PCI: dwc: Define maximum number of vectors
+Date: Tue, 24 Apr 2018 10:39:20 -0400
+Message-ID: <000001d3dbda$0a135930$1e3a0b90$@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKAVhvqwXNQfTVE/z9g9Fe0yaFLCwKG4GH5oqLQjiA=
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 06:24:54PM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On Tuesday, April 24, 2018 9:45 AM, Gustavo Pimentel wrote:
 > 
-> Add bindings to g3dsys providing necessary clock and reset control to
-> Mali-450.
+> Adds a callback that defines the maximum number of vectors that can be use
+> by the Root Complex.
 > 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Since this is a parameter associated to each SoC IP setting, makes sense
+> to
+> be configurable and easily visible to future modifications.
+> 
+> The designware IP supports a maximum of 256 vectors.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Acked-by: Joao Pinto <jpinto@synopsys.com>
+
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
+
+Best regards,
+Jingoo Han
+
+
 > ---
->  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+> Change v1->v2:
+>  - Nothing changed, just to follow the patch set version.
+> Change v2->v3:
+>  - Nothing changed, just to follow the patch set version.
+> Changes v3->v4:
+>  - Nothing changed, just to follow the patch set version.
+> Changes v4->v5:
+>  - Nothing changed, just to follow the patch set version.
+> Changes v5->v6:
+>  - Nothing changed, just to follow the patch set version.
+> Changes v6->v7:
+>  - Nothing changed, just to follow the patch set version.
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> new file mode 100644
-> index 0000000..ff2d70c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> @@ -0,0 +1,30 @@
-> +MediaTek g3dsys controller
-> +============================
+>  drivers/pci/dwc/pcie-designware-plat.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/pci/dwc/pcie-designware-plat.c
+> b/drivers/pci/dwc/pcie-designware-plat.c
+> index efc315c..5937fed 100644
+> --- a/drivers/pci/dwc/pcie-designware-plat.c
+> +++ b/drivers/pci/dwc/pcie-designware-plat.c
+> @@ -48,8 +48,14 @@ static int dw_plat_pcie_host_init(struct pcie_port *pp)
+>  	return 0;
+>  }
+> 
+> +static void dw_plat_set_num_vectors(struct pcie_port *pp)
+> +{
+> +	pp->num_vectors = MAX_MSI_IRQS;
+> +}
 > +
-> +The MediaTek g3dsys controller provides various clocks and reset controller to
-> +the GPU.
-> +
-> +Required Properties:
-> +
-> +- compatible: Should be:
-> +	- "mediatek,mt2701-g3dsys", "syscon":
-> +		for MT2701 SoC
-> +	- "mediatek,mt7623-ethsys", "mediatek,mt2701-g3dsys", "syscon":
-> +		for MT7623 SoC
-
-ethsys?
-
-> +- #clock-cells: Must be 1
-> +- #reset-cells: Must be 1
-> +
-> +The ethsys controller uses the common clk binding from
-> +Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-> +
-> +Example:
-> +
-> +g3dsys: clock-controller@13000000 {
-> +	compatible = "mediatek,mt7623-g3dsys",
-> +		     "mediatek,mt2701-g3dsys",
-> +		     "syscon";
-> +	reg = <0 0x13000000 0 0x200>;
-> +	#clock-cells = <1>;
-> +	#reset-cells = <1>;
-> +};
-> -- 
+>  static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
+>  	.host_init = dw_plat_pcie_host_init,
+> +	.set_num_vectors = dw_plat_set_num_vectors,
+>  };
+> 
+>  static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
+> --
 > 2.7.4
 > 
