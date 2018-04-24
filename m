@@ -1,93 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932834AbeDXDvO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 23:51:14 -0400
-Received: from mga02.intel.com ([134.134.136.20]:6409 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932729AbeDXDvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 23:51:12 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,321,1520924400";
-   d="scan'208";a="53133611"
-Date: Tue, 24 Apr 2018 09:25:49 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-        Radhey Shyam Pandey <radheys@xilinx.com>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
- to netdev dma client
-Message-ID: <20180424035548.GA6014@localhost>
-References: <20180411090854.GY6014@localhost>
- <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
- <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
- <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
- <1fc10bec-5c2c-98f1-1d5b-b768dea844ed@metafoo.de>
- <78828d31-e4cd-5211-f1b6-8918ac38f599@ti.com>
- <e5a6c1ad-e263-7b9d-a5e2-744884c9d6de@metafoo.de>
- <a6ac9ca8-91b4-c7b1-0f0c-c04dd10048e2@ti.com>
- <d7432292-cedd-7d61-f219-8b63eb6c1d50@metafoo.de>
- <8c7a5ac8-0747-9dad-f6e5-74890b64f618@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c7a5ac8-0747-9dad-f6e5-74890b64f618@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S932845AbeDXDzO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 23:55:14 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:26822 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932729AbeDXDzL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 23:55:11 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180424035509epoutp016f7faee70ba690bf8393bdb572690a7d~oQviWn1o33264632646epoutp017
+X-AuditID: b6c32a39-8a5ff70000000fed-28-5adeaa9a86b9
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5ADEAA99.1040903@samsung.com>
+Date: Tue, 24 Apr 2018 12:55:05 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, heiko@sntech.de, linux-pm@vger.kernel.org,
+        dbasehore@chromium.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Lin Huang <hl@rock-chips.com>
+Subject: Re: [PATCH 5/6] devfreq: rk3399_dmc: do not print error when get
+ supply and clk defer.
+In-reply-to: <20180419104019.24406-6-enric.balletbo@collabora.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm29nOzlqr49T6sLB1QEjD5dlanqKF3Q8kYQQVq1gH/VDRbbIz
+        u0JpF6sxw+jKstSKkCVp3lqmFdtSEhW8VohSWWmaQVRmidXZTlG/vvd93uf5eN6Hl8DUxXgU
+        kWl1ILuVy6bwGdJ6f2x8vNszaEoYex7BjNY04kxJoEPGVPT7APPr9ZiMmaxqxZiaDpeMaT/6
+        Qc50NxTjzOfCAGD688tx5kRTQJ6kZK/kdUpZ78BNwFZ7TuPstPuRlD1T6wHsvb5rGPu5OjpF
+        bkIrMxCXhuwaZE21pWVa043Upq3mtWbDsgQ6nl7OJFIaK2dBRmpdckr8hsxswSSl2ctl5wpQ
+        Csfz1JJVK+22XAfSZNh4h5HaSdM6LZ2QqNXphFe/e4XOIFD2oIySGhfIuavcX17ol+WB6won
+        UBCQXAonGhqAE8wg1KQXwMAxPy423wBs9l/G/7LG6/Ik4qAKwKPN+VhwoCLD4OS5QakTEARG
+        LoCBrqwgjJGxsO5BpVzkDwDY8eUsLvLj4Jj3dKiWkjHwk+spCNa4gD8aeR7CZ5MLYe/kUAiP
+        JHfA+yUToY8iyOMAfmyaDrnAgl5fuYbkQVY4ycFjLeMhRwpyDex8VRZSQHIKhy9GujFxh3Vw
+        fLRfItbhcLSlVh60Dcl5sOuJUeSfBPBk0zVMbM4Lvp8N/hHo4bsyp0Rcbhb8+NUlE8UqeKpA
+        LVJYWNs49Ye+GrbduY2J+7cLTrunpUUg2v1fZO5/kbn/i6wUYB4wB+XwlnTE0zkGLc9Z+Fxr
+        ujbVZqkGocuMW+4FzR3JPkASgJqpKv0+YFLLuL38AYsPQAKjIlRN0YMmtSqNO3AQ2W1me242
+        4n3AICR+FouKTLUJd251mGmDTq/XM0vpZQaapuaq3ia3mdRkOudAWQjlIPtfnYRQROUBtvdI
+        48YGRWuJH3RFxbyZKkqqMnQm/NjW/bCyrsd52VqRFN73tnToaf36l4erKS7mfItxfuKKF32w
+        cMsF0mspQou/tN+IUf5Mqk+eDCtghjfzLcp2o89+qMwRt68sc8mvq5dGhrXFwwVPFm3pUb2/
+        Ml9yMfbWD/NEgeZB/vZd3x5TUj6Do+MwO8/9Bthu0n+vAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsVy+t9jQd2Zq+5FGTy+Y2nxavMeNov5R86x
+        Wqy5fYjR4v+j16wWPzacYrbYfK6H1eJs0xt2i8u75rBZfO49wmhxu3EFm0Xr3iPsDtwesxsu
+        snjsuLuE0WPTqk42j7+z9rN49G1Zxeix/do8Zo/Pm+QC2KO4bFJSczLLUov07RK4MuZv7mEs
+        2MhdsaL3MGsD4yLOLkZODgkBE4m3WxuYuhi5OIQE1jFKLL/czgKS4BUQlPgx+R6QzcHBLCAv
+        ceRSNkiYWUBdYtK8RcwQ9fcZJe5uXs4KUa8l8XpHJxuIzSKgKvGx5yQjiM0GFN//4gZYnF9A
+        UeLqj8eMIDNFBSIkuk9UgoRFBFoYJc79cwGZySywg1Hiz97ZYPXCAokSzcffQi07yyjx6NFz
+        sGWcAk4SFx8uZJ/AKDALya2zEG6dheTWBYzMqxglUwuKc9Nzi40KDPNSy/WKE3OLS/PS9ZLz
+        czcxAiNl22Gtvh2M95fEH2IU4GBU4uFd8PNulBBrYllxZe4hRgkOZiUR3r1y96KEeFMSK6tS
+        i/Lji0pzUosPMUpzsCiJ897OOxYpJJCeWJKanZpakFoEk2Xi4JRqYLQLL3pzhPGg1eok2d0P
+        TZS239jz59D7y6x2D8o0s7612s0PWMV2IKvJL/DtS0ur/F71hEbTkAufA4SDDOv3X5/isECh
+        Ujl0scrM340xW4u+xv93U8lYGxJ6X/W5VsCPRZ1vLwmwJ95MvDMl+KWj/E0bNoVPNxXe9vTs
+        zbZLsD8cIGtQdZ57khJLcUaioRZzUXEiALxUZDaQAgAA
+X-CMS-MailID: 20180424035506epcas1p25aa8d806e94532f671171905890cf3e6
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180419104226epcas4p42e5d6a66c909325cedcdc1e24bd9007d
+X-RootMTR: 20180419104226epcas4p42e5d6a66c909325cedcdc1e24bd9007d
+References: <20180419104019.24406-1-enric.balletbo@collabora.com>
+        <CGME20180419104226epcas4p42e5d6a66c909325cedcdc1e24bd9007d@epcas4p4.samsung.com>
+        <20180419104019.24406-6-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 02:40:26PM +0300, Peter Ujfalusi wrote:
+On 2018년 04월 19일 19:40, Enric Balletbo i Serra wrote:
+> From: Lin Huang <hl@rock-chips.com>
 > 
-> On 2018-04-18 16:06, Lars-Peter Clausen wrote:
-> >> Hrm, true, but it is hardly the metadata use case. It is more like
-> >> different DMA transfer type.
-> > 
-> > When I look at this with my astronaut architect view from high high up above
-> > I do not see a difference between metadata and multi-planar data.
+> We just return -EPROBE_DEFER error code to caller and do not
+> print error message when try to get center logic regulator
+> and DMC clock defer.
 > 
-> I tend to disagree.
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+>  drivers/devfreq/rk3399_dmc.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
+> index 44a379657cd5..5bfca028eaaf 100644
+> --- a/drivers/devfreq/rk3399_dmc.c
+> +++ b/drivers/devfreq/rk3399_dmc.c
+> @@ -308,12 +308,18 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+>  
+>  	data->vdd_center = devm_regulator_get(dev, "center");
+>  	if (IS_ERR(data->vdd_center)) {
+> +		if (PTR_ERR(data->vdd_center) == -EPROBE_DEFER)
+> +			return -EPROBE_DEFER;
+> +
+>  		dev_err(dev, "Cannot get the regulator \"center\"\n");
+>  		return PTR_ERR(data->vdd_center);
+>  	}
+>  
+>  	data->dmc_clk = devm_clk_get(dev, "dmc_clk");
+>  	if (IS_ERR(data->dmc_clk)) {
+> +		if (PTR_ERR(data->dmc_clk) == -EPROBE_DEFER)
+> +			return -EPROBE_DEFER;
+> +
+>  		dev_err(dev, "Cannot get the clk dmc_clk\n");
+>  		return PTR_ERR(data->dmc_clk);
+>  	};
+> 
 
-and we will love to hear more :)
-
-> > Both split the data that is sent to the peripheral into multiple
-> > sub-streams, each carrying part of the data. I'm sure there are peripherals
-> > that interleave data and metadata on the same data stream. Similar to how we
-> > have left and right channel interleaved in a audio stream.
-> 
-> Slimbus, S/PDIF?
-> 
-> > What about metadata that is not contiguous and split into multiple segments.
-> > How do you handle passing a sgl to the metadata interface? And then it
-> > suddenly looks quite similar to the normal DMA descriptor interface.
-> 
-> Well, the metadata is for the descriptor. The descriptor describe the
-> data transfer _and_ can convey additional information. Nothing is
-> interleaved, the data and the descriptor are different things. It is
-> more like TCP headers detached from the data (but pointing to it).
-> 
-> > But maybe that's just one abstraction level to high.
-> 
-> I understand your point, but at the end the metadata needs to end up in
-> the descriptor which is describing the data that is going to be moved.
-> 
-> The descriptor is not sent as a separate DMA trasnfer, it is part of the
-> DMA transfer, it is handled internally by the DMA.
-
-That is bit confusing to me. I thought DMA was transparent to meta data and
-would blindly collect and transfer along with the descriptor. So at high
-level we are talking about two transfers (probably co-joined at hip and you
-want to call one transfer) but why can't we visualize this as just a DMA
-transfers. maybe you want to signal/attach to transfer, cant we do that with
-additional flag DMA_METADATA etc..?
+Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
-~Vinod
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
