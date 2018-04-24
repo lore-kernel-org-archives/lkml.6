@@ -1,53 +1,325 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751957AbeDXTWa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 15:22:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60720 "EHLO mail.kernel.org"
+        id S1752198AbeDXTXM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 15:23:12 -0400
+Received: from mga18.intel.com ([134.134.136.126]:41743 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750735AbeDXTWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 15:22:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A0AB217BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 24 Apr 2018 15:22:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>, tglx@linutronix.de,
-        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel.opensrc@gmail.com, joelaf@google.com,
-        mathieu.desnoyers@efficios.com, baohong.liu@intel.com,
-        rajvi.jingar@intel.com, julia@ni.com, fengguang.wu@intel.com,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH 0/2] selftests: tracing: Update inter-event testcases
-Message-ID: <20180424152221.7049b706@gandalf.local.home>
-In-Reply-To: <152292049091.15769.13306554953968999494.stgit@devbox>
-References: <152292049091.15769.13306554953968999494.stgit@devbox>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1750962AbeDXTXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 15:23:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,324,1520924400";
+   d="scan'208";a="53323245"
+Subject: Re: [PATCH 4/5] perf parse-events: Specially handle uncore event
+ alias in small groups
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, namhyung@kernel.org, ganapatrao.kulkarni@cavium.com,
+        zhangshaokun@hisilicon.com, yao.jin@linux.intel.com,
+        will.deacon@arm.com, ak@linux.intel.com, agustinv@codeaurora.org
+References: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
+ <1524594014-79243-4-git-send-email-kan.liang@linux.intel.com>
+ <20180424191721.GB4427@kernel.org>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <9a2070b4-9a27-4e38-f235-2d44ae39dd1f@linux.intel.com>
+Date: Tue, 24 Apr 2018 15:23:06 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180424191721.GB4427@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  5 Apr 2018 18:28:11 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> Hi,
-> 
-> I've fixed a testcase for inter-event extended error
-> and added a testcase for multiple actions on trigger,
-> which is based on what Tom shown in his mail.
-> 
-> This series can be applied on Steven's tracing repo.
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
-> ftrace/core
-> 
-> Tom, could you review it?
 
-Even without Tom's review. I took both patches.
+On 4/24/2018 3:17 PM, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Apr 24, 2018 at 11:20:13AM -0700, kan.liang@linux.intel.com escreveu:
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> Perf stat doesn't count the uncore event aliases from the same uncore
+>> block in a group, for example:
+> 
+> This one is not applying to acme/perf/urgent, all the rest I got merged
+> there, the last one with that change from using strstr() to a new bool
+> in perf_evsel for the uniquifying operation having being performed.
+>
 
-Thanks Masami!
+Sure. Thank you for letting me know.
 
--- Steve
+Thanks,
+Kan
+
+> - Arnaldo
+>   
+>>    perf stat -e '{unc_m_cas_count.all,unc_m_clockticks}' -a -I 1000
+>>    #           time             counts unit events
+>>         1.000447342      <not counted>      unc_m_cas_count.all
+>>         1.000447342      <not counted>      unc_m_clockticks
+>>         2.000740654      <not counted>      unc_m_cas_count.all
+>>         2.000740654      <not counted>      unc_m_clockticks
+>>
+>> The output is very misleading. It gives a wrong impression that the
+>> uncore event doesn't work.
+>>
+>> An uncore block could be composed by several PMUs. An uncore event alias
+>> is a joint name which means the same event runs on all PMUs of a block.
+>> Perf doesn't support mixed events from different PMUs in the same group.
+>> It is wrong to put uncore event aliases in a big group.
+>>
+>> The right way is to split the big group into multiple small groups which
+>> only include the events from the same PMU.
+>> Only uncore event aliases from the same uncore block should be specially
+>> handled here. It doesn't make sense to mix the uncore events with other
+>> uncore events from different blocks or even core events in a group.
+>>
+>> With the patch:
+>>    #           time             counts unit events
+>>       1.001557653            140,833      unc_m_cas_count.all
+>>       1.001557653      1,330,231,332      unc_m_clockticks
+>>       2.002709483             85,007      unc_m_cas_count.all
+>>       2.002709483      1,429,494,563      unc_m_clockticks
+>>
+>> Reported-by: Andi Kleen <ak@linux.intel.com>
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>> ---
+>>   tools/perf/util/evsel.h        |  1 +
+>>   tools/perf/util/parse-events.c | 94 ++++++++++++++++++++++++++++++++++++++++--
+>>   tools/perf/util/parse-events.h |  7 +++-
+>>   tools/perf/util/parse-events.y |  8 ++--
+>>   4 files changed, 101 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+>> index d3ee3af..b8a1055 100644
+>> --- a/tools/perf/util/evsel.h
+>> +++ b/tools/perf/util/evsel.h
+>> @@ -126,6 +126,7 @@ struct perf_evsel {
+>>   	bool			precise_max;
+>>   	bool			ignore_missing_thread;
+>>   	bool			forced_leader;
+>> +	bool			use_uncore_alias;
+>>   	/* parse modifier helper */
+>>   	int			exclude_GH;
+>>   	int			nr_members;
+>> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+>> index 2fb0272..7a836fe 100644
+>> --- a/tools/perf/util/parse-events.c
+>> +++ b/tools/perf/util/parse-events.c
+>> @@ -1219,13 +1219,16 @@ int parse_events_add_numeric(struct parse_events_state *parse_state,
+>>   
+>>   int parse_events_add_pmu(struct parse_events_state *parse_state,
+>>   			 struct list_head *list, char *name,
+>> -			 struct list_head *head_config, bool auto_merge_stats)
+>> +			 struct list_head *head_config,
+>> +			 bool auto_merge_stats,
+>> +			 bool use_alias)
+>>   {
+>>   	struct perf_event_attr attr;
+>>   	struct perf_pmu_info info;
+>>   	struct perf_pmu *pmu;
+>>   	struct perf_evsel *evsel;
+>>   	struct parse_events_error *err = parse_state->error;
+>> +	bool use_uncore_alias;
+>>   	LIST_HEAD(config_terms);
+>>   
+>>   	pmu = perf_pmu__find(name);
+>> @@ -1244,11 +1247,14 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>>   		memset(&attr, 0, sizeof(attr));
+>>   	}
+>>   
+>> +	use_uncore_alias = (pmu->is_uncore && use_alias);
+>> +
+>>   	if (!head_config) {
+>>   		attr.type = pmu->type;
+>>   		evsel = __add_event(list, &parse_state->idx, &attr, NULL, pmu, NULL, auto_merge_stats);
+>>   		if (evsel) {
+>>   			evsel->pmu_name = name;
+>> +			evsel->use_uncore_alias = use_uncore_alias;
+>>   			return 0;
+>>   		} else {
+>>   			return -ENOMEM;
+>> @@ -1282,6 +1288,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>>   		evsel->metric_expr = info.metric_expr;
+>>   		evsel->metric_name = info.metric_name;
+>>   		evsel->pmu_name = name;
+>> +		evsel->use_uncore_alias = use_uncore_alias;
+>>   	}
+>>   
+>>   	return evsel ? 0 : -ENOMEM;
+>> @@ -1317,7 +1324,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+>>   				list_add_tail(&term->list, head);
+>>   
+>>   				if (!parse_events_add_pmu(parse_state, list,
+>> -							  pmu->name, head, true)) {
+>> +							  pmu->name, head, true, true)) {
+>>   					pr_debug("%s -> %s/%s/\n", str,
+>>   						 pmu->name, alias->str);
+>>   					ok++;
+>> @@ -1339,7 +1346,85 @@ int parse_events__modifier_group(struct list_head *list,
+>>   	return parse_events__modifier_event(list, event_mod, true);
+>>   }
+>>   
+>> -void parse_events__set_leader(char *name, struct list_head *list)
+>> +/*
+>> + * Check if the two uncore PMUs are from the same uncore block
+>> + * The format of the uncore PMU name is uncore_#blockname_#pmuidx
+>> + */
+>> +static bool is_same_uncore_block(const char *pmu_name_a, const char *pmu_name_b)
+>> +{
+>> +	char *end_a, *end_b;
+>> +
+>> +	end_a = strrchr(pmu_name_a, '_');
+>> +	end_b = strrchr(pmu_name_b, '_');
+>> +
+>> +	if (!end_a || !end_b)
+>> +		return false;
+>> +
+>> +	if ((end_a - pmu_name_a) != (end_b - pmu_name_b))
+>> +		return false;
+>> +
+>> +	return (0 == strncmp(pmu_name_a, pmu_name_b, end_a - pmu_name_a));
+>> +}
+>> +
+>> +static int
+>> +parse_events__set_leader_for_uncore_aliase(char *name, struct list_head *list,
+>> +					   struct parse_events_state *parse_state)
+>> +{
+>> +	struct perf_evsel *evsel, *leader;
+>> +	uintptr_t *leaders;
+>> +	int i = 0, nr_pmu = 0, total_members, ret = 0;
+>> +
+>> +	leader = list_entry(list->next, struct perf_evsel, node);
+>> +	evsel = list_entry(list->prev, struct perf_evsel, node);
+>> +	total_members = evsel->idx - leader->idx + 1;
+>> +
+>> +	leaders = calloc(total_members, sizeof(uintptr_t));
+>> +	if (!leaders)
+>> +		return ret;
+>> +
+>> +	 __evlist__for_each_entry(list, evsel) {
+>> +
+>> +		/* Only split the uncore group which members use alias */
+>> +		if (!evsel->use_uncore_alias)
+>> +			goto out;
+>> +
+>> +		/* The events must be from the same uncore block */
+>> +		if (!is_same_uncore_block(leader->pmu_name, evsel->pmu_name))
+>> +			goto out;
+>> +
+>> +		if (!strcmp(leader->name, evsel->name))
+>> +			leaders[nr_pmu++] = (uintptr_t) evsel;
+>> +	}
+>> +
+>> +	/* only one event alias */
+>> +	if (nr_pmu == total_members) {
+>> +		parse_state->nr_groups--;
+>> +		goto handled;
+>> +	}
+>> +
+>> +	__evlist__for_each_entry(list, evsel) {
+>> +		if (i >= nr_pmu)
+>> +			i = 0;
+>> +		evsel->leader = (struct perf_evsel *) leaders[i++];
+>> +	}
+>> +
+>> +	for (i = 0; i < nr_pmu; i++) {
+>> +		evsel = (struct perf_evsel *) leaders[i];
+>> +		evsel->nr_members = total_members / nr_pmu;
+>> +		evsel->group_name = name ? strdup(name) : NULL;
+>> +	}
+>> +
+>> +	parse_state->nr_groups += nr_pmu - 1;
+>> +
+>> +handled:
+>> +	ret = 1;
+>> +out:
+>> +	free(leaders);
+>> +	return ret;
+>> +}
+>> +
+>> +void parse_events__set_leader(char *name, struct list_head *list,
+>> +			      struct parse_events_state *parse_state)
+>>   {
+>>   	struct perf_evsel *leader;
+>>   
+>> @@ -1348,6 +1433,9 @@ void parse_events__set_leader(char *name, struct list_head *list)
+>>   		return;
+>>   	}
+>>   
+>> +	if (parse_events__set_leader_for_uncore_aliase(name, list, parse_state))
+>> +		return;
+>> +
+>>   	__perf_evlist__set_leader(list);
+>>   	leader = list_entry(list->next, struct perf_evsel, node);
+>>   	leader->group_name = name ? strdup(name) : NULL;
+>> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+>> index 5015cfd..4473dac 100644
+>> --- a/tools/perf/util/parse-events.h
+>> +++ b/tools/perf/util/parse-events.h
+>> @@ -167,7 +167,9 @@ int parse_events_add_breakpoint(struct list_head *list, int *idx,
+>>   				void *ptr, char *type, u64 len);
+>>   int parse_events_add_pmu(struct parse_events_state *parse_state,
+>>   			 struct list_head *list, char *name,
+>> -			 struct list_head *head_config, bool auto_merge_stats);
+>> +			 struct list_head *head_config,
+>> +			 bool auto_merge_stats,
+>> +			 bool use_alias);
+>>   
+>>   int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+>>   			       char *str,
+>> @@ -178,7 +180,8 @@ int parse_events_copy_term_list(struct list_head *old,
+>>   
+>>   enum perf_pmu_event_symbol_type
+>>   perf_pmu__parse_check(const char *name);
+>> -void parse_events__set_leader(char *name, struct list_head *list);
+>> +void parse_events__set_leader(char *name, struct list_head *list,
+>> +			      struct parse_events_state *parse_state);
+>>   void parse_events_update_lists(struct list_head *list_event,
+>>   			       struct list_head *list_all);
+>>   void parse_events_evlist_error(struct parse_events_state *parse_state,
+>> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+>> index 7afeb80..e37608a 100644
+>> --- a/tools/perf/util/parse-events.y
+>> +++ b/tools/perf/util/parse-events.y
+>> @@ -161,7 +161,7 @@ PE_NAME '{' events '}'
+>>   	struct list_head *list = $3;
+>>   
+>>   	inc_group_count(list, _parse_state);
+>> -	parse_events__set_leader($1, list);
+>> +	parse_events__set_leader($1, list, _parse_state);
+>>   	$$ = list;
+>>   }
+>>   |
+>> @@ -170,7 +170,7 @@ PE_NAME '{' events '}'
+>>   	struct list_head *list = $2;
+>>   
+>>   	inc_group_count(list, _parse_state);
+>> -	parse_events__set_leader(NULL, list);
+>> +	parse_events__set_leader(NULL, list, _parse_state);
+>>   	$$ = list;
+>>   }
+>>   
+>> @@ -232,7 +232,7 @@ PE_NAME opt_event_config
+>>   		YYABORT;
+>>   
+>>   	ALLOC_LIST(list);
+>> -	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
+>> +	if (parse_events_add_pmu(_parse_state, list, $1, $2, false, false)) {
+>>   		struct perf_pmu *pmu = NULL;
+>>   		int ok = 0;
+>>   		char *pattern;
+>> @@ -251,7 +251,7 @@ PE_NAME opt_event_config
+>>   					free(pattern);
+>>   					YYABORT;
+>>   				}
+>> -				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true))
+>> +				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true, false))
+>>   					ok++;
+>>   				parse_events_terms__delete(terms);
+>>   			}
+>> -- 
+>> 2.7.4
