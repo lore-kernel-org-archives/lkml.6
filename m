@@ -1,394 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751436AbeDXQqB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:46:01 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:40266 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbeDXQp6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:45:58 -0400
-X-Google-Smtp-Source: AIpwx4+zWszwKx5OgQ1LET5Re1mj0uneTTxS6RJHrh6jcAk9PBN7lEmKClnfk/W35ITFY5pySb47xA==
-Date: Tue, 24 Apr 2018 22:17:51 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-        ross.zwisler@linux.intel.com, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6] fs: dax: Adding new return type vm_fault_t
-Message-ID: <20180424164751.GA18923@jordon-HP-15-Notebook-PC>
+        id S1751506AbeDXQqz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 12:46:55 -0400
+Received: from foss.arm.com ([217.140.101.70]:56954 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750827AbeDXQqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:46:52 -0400
+Date: Tue, 24 Apr 2018 18:46:49 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Eric Auger <eric.auger@redhat.com>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
+        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: Re: [PATCH v3 02/12] KVM: arm/arm64: Document
+ KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Message-ID: <20180424164649.GA4533@C02W217FHV2R.local>
+References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+ <1523607658-9166-3-git-send-email-eric.auger@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1523607658-9166-3-git-send-email-eric.auger@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On Fri, Apr 13, 2018 at 10:20:48AM +0200, Eric Auger wrote:
+> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
+> KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
+> base address and size of a redistributor region
+> 
+> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
+> to declare several separate redistributor regions.
+> 
+> So the whole redist space does not need to be contiguous anymore.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> ---
+>  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 25 ++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+> index 9293b45..cbc4328 100644
+> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+> @@ -27,9 +27,32 @@ Groups:
+>        VCPU and all of the redistributor pages are contiguous.
+>        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+>        This address needs to be 64K aligned.
+> +
+> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
+> +      The attr field of kvm_device_attr encodes 3 values:
+> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
+> +      values:   |     count      |       base      |  flags   | index
+> +      - index encodes the unique redistributor region index
 
-commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+I'm not entirely sure I understand the purpose of the index field.
+Isn't a redistributor region identified uniquely by its base address?
 
-There was an existing bug inside dax_load_hole()
-if vm_insert_mixed had failed to allocate a page table,
-we'd return VM_FAULT_NOPAGE instead of VM_FAULT_OOM.
-With new vmf_insert_mixed() this issue is addressed.
+Otherwise this looks good.
 
-vm_insert_mixed_mkwrite has inefficiency when it returns
-an error value, driver has to convert it to vm_fault_t
-type. With new vmf_insert_mixed_mkwrite() this limitation
-will be addressed.
+Thanks,
+-Christoffer
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
----
-v2: vm_insert_mixed_mkwrite is replaced by new
-    vmf_insert_mixed_mkwrite
 
-v3: Addressed Matthew's comment. One patch which
-    changes both at the same time. The history
-    should be bisectable so that it compiles and
-    works at every point.
-
-v4: Updated the change log
-
-v5: Updated the change log
-
-v6: Added comment in source file
-
- fs/dax.c            | 78 +++++++++++++++++++++++++----------------------------
- include/linux/dax.h |  4 +--
- include/linux/mm.h  |  4 +--
- mm/memory.c         | 21 ++++++++++++---
- 4 files changed, 58 insertions(+), 49 deletions(-)
-
-diff --git a/fs/dax.c b/fs/dax.c
-index aaec72de..821986c 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -905,12 +905,12 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
-  * If this page is ever written to we will re-fault and change the mapping to
-  * point to real DAX storage instead.
-  */
--static int dax_load_hole(struct address_space *mapping, void *entry,
-+static vm_fault_t dax_load_hole(struct address_space *mapping, void *entry,
- 			 struct vm_fault *vmf)
- {
- 	struct inode *inode = mapping->host;
- 	unsigned long vaddr = vmf->address;
--	int ret = VM_FAULT_NOPAGE;
-+	vm_fault_t ret = VM_FAULT_NOPAGE;
- 	struct page *zero_page;
- 	void *entry2;
- 	pfn_t pfn;
-@@ -929,7 +929,7 @@ static int dax_load_hole(struct address_space *mapping, void *entry,
- 		goto out;
- 	}
- 
--	vm_insert_mixed(vmf->vma, vaddr, pfn);
-+	ret = vmf_insert_mixed(vmf->vma, vaddr, pfn);
- out:
- 	trace_dax_load_hole(inode, vmf, ret);
- 	return ret;
-@@ -1112,7 +1112,7 @@ int __dax_zero_page_range(struct block_device *bdev,
- }
- EXPORT_SYMBOL_GPL(dax_iomap_rw);
- 
--static int dax_fault_return(int error)
-+static vm_fault_t dax_fault_return(int error)
- {
- 	if (error == 0)
- 		return VM_FAULT_NOPAGE;
-@@ -1132,7 +1132,7 @@ static bool dax_fault_is_synchronous(unsigned long flags,
- 		&& (iomap->flags & IOMAP_F_DIRTY);
- }
- 
--static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
-+static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 			       int *iomap_errp, const struct iomap_ops *ops)
- {
- 	struct vm_area_struct *vma = vmf->vma;
-@@ -1145,18 +1145,18 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	int error, major = 0;
- 	bool write = vmf->flags & FAULT_FLAG_WRITE;
- 	bool sync;
--	int vmf_ret = 0;
-+	vm_fault_t ret = 0;
- 	void *entry;
- 	pfn_t pfn;
- 
--	trace_dax_pte_fault(inode, vmf, vmf_ret);
-+	trace_dax_pte_fault(inode, vmf, ret);
- 	/*
- 	 * Check whether offset isn't beyond end of file now. Caller is supposed
- 	 * to hold locks serializing us with truncate / punch hole so this is
- 	 * a reliable test.
- 	 */
- 	if (pos >= i_size_read(inode)) {
--		vmf_ret = VM_FAULT_SIGBUS;
-+		ret = VM_FAULT_SIGBUS;
- 		goto out;
- 	}
- 
-@@ -1165,7 +1165,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 
- 	entry = grab_mapping_entry(mapping, vmf->pgoff, 0);
- 	if (IS_ERR(entry)) {
--		vmf_ret = dax_fault_return(PTR_ERR(entry));
-+		ret = dax_fault_return(PTR_ERR(entry));
- 		goto out;
- 	}
- 
-@@ -1176,7 +1176,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	 * retried.
- 	 */
- 	if (pmd_trans_huge(*vmf->pmd) || pmd_devmap(*vmf->pmd)) {
--		vmf_ret = VM_FAULT_NOPAGE;
-+		ret = VM_FAULT_NOPAGE;
- 		goto unlock_entry;
- 	}
- 
-@@ -1189,7 +1189,7 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	if (iomap_errp)
- 		*iomap_errp = error;
- 	if (error) {
--		vmf_ret = dax_fault_return(error);
-+		ret = dax_fault_return(error);
- 		goto unlock_entry;
- 	}
- 	if (WARN_ON_ONCE(iomap.offset + iomap.length < pos + PAGE_SIZE)) {
-@@ -1219,9 +1219,9 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 			goto error_finish_iomap;
- 
- 		__SetPageUptodate(vmf->cow_page);
--		vmf_ret = finish_fault(vmf);
--		if (!vmf_ret)
--			vmf_ret = VM_FAULT_DONE_COW;
-+		ret = finish_fault(vmf);
-+		if (!ret)
-+			ret = VM_FAULT_DONE_COW;
- 		goto finish_iomap;
- 	}
- 
-@@ -1257,23 +1257,20 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 				goto error_finish_iomap;
- 			}
- 			*pfnp = pfn;
--			vmf_ret = VM_FAULT_NEEDDSYNC | major;
-+			ret = VM_FAULT_NEEDDSYNC | major;
- 			goto finish_iomap;
- 		}
- 		trace_dax_insert_mapping(inode, vmf, entry);
- 		if (write)
--			error = vm_insert_mixed_mkwrite(vma, vaddr, pfn);
-+			ret = vmf_insert_mixed_mkwrite(vma, vaddr, pfn);
- 		else
--			error = vm_insert_mixed(vma, vaddr, pfn);
-+			ret = vmf_insert_mixed(vma, vaddr, pfn);
- 
--		/* -EBUSY is fine, somebody else faulted on the same PTE */
--		if (error == -EBUSY)
--			error = 0;
--		break;
-+		goto finish_iomap;
- 	case IOMAP_UNWRITTEN:
- 	case IOMAP_HOLE:
- 		if (!write) {
--			vmf_ret = dax_load_hole(mapping, entry, vmf);
-+			ret = dax_load_hole(mapping, entry, vmf);
- 			goto finish_iomap;
- 		}
- 		/*FALLTHRU*/
-@@ -1284,12 +1281,12 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	}
- 
-  error_finish_iomap:
--	vmf_ret = dax_fault_return(error) | major;
-+	ret = dax_fault_return(error);
-  finish_iomap:
- 	if (ops->iomap_end) {
- 		int copied = PAGE_SIZE;
- 
--		if (vmf_ret & VM_FAULT_ERROR)
-+		if (ret & VM_FAULT_ERROR)
- 			copied = 0;
- 		/*
- 		 * The fault is done by now and there's no way back (other
-@@ -1302,12 +1299,12 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
-  unlock_entry:
- 	put_locked_mapping_entry(mapping, vmf->pgoff);
-  out:
--	trace_dax_pte_fault_done(inode, vmf, vmf_ret);
--	return vmf_ret;
-+	trace_dax_pte_fault_done(inode, vmf, ret);
-+	return ret | major;
- }
- 
- #ifdef CONFIG_FS_DAX_PMD
--static int dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
-+static vm_fault_t dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
- 		void *entry)
- {
- 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
-@@ -1348,7 +1345,7 @@ static int dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
- 	return VM_FAULT_FALLBACK;
- }
- 
--static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
-+static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 			       const struct iomap_ops *ops)
- {
- 	struct vm_area_struct *vma = vmf->vma;
-@@ -1358,7 +1355,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	bool sync;
- 	unsigned int iomap_flags = (write ? IOMAP_WRITE : 0) | IOMAP_FAULT;
- 	struct inode *inode = mapping->host;
--	int result = VM_FAULT_FALLBACK;
-+	vm_fault_t result = VM_FAULT_FALLBACK;
- 	struct iomap iomap = { 0 };
- 	pgoff_t max_pgoff, pgoff;
- 	void *entry;
-@@ -1509,7 +1506,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	return result;
- }
- #else
--static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
-+static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 			       const struct iomap_ops *ops)
- {
- 	return VM_FAULT_FALLBACK;
-@@ -1529,7 +1526,7 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
-  * has done all the necessary locking for page fault to proceed
-  * successfully.
-  */
--int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
-+vm_fault_t dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
- 		    pfn_t *pfnp, int *iomap_errp, const struct iomap_ops *ops)
- {
- 	switch (pe_size) {
-@@ -1553,14 +1550,14 @@ int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
-  * DAX file.  It takes care of marking corresponding radix tree entry as dirty
-  * as well.
-  */
--static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
-+static vm_fault_t dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 				  enum page_entry_size pe_size,
- 				  pfn_t pfn)
- {
- 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
- 	void *entry, **slot;
- 	pgoff_t index = vmf->pgoff;
--	int vmf_ret, error;
-+	vm_fault_t ret;
- 
- 	xa_lock_irq(&mapping->i_pages);
- 	entry = get_unlocked_mapping_entry(mapping, index, &slot);
-@@ -1579,21 +1576,20 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 	xa_unlock_irq(&mapping->i_pages);
- 	switch (pe_size) {
- 	case PE_SIZE_PTE:
--		error = vm_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
--		vmf_ret = dax_fault_return(error);
-+		ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
- 		break;
- #ifdef CONFIG_FS_DAX_PMD
- 	case PE_SIZE_PMD:
--		vmf_ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
-+		ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
- 			pfn, true);
- 		break;
- #endif
- 	default:
--		vmf_ret = VM_FAULT_FALLBACK;
-+		ret = VM_FAULT_FALLBACK;
- 	}
- 	put_locked_mapping_entry(mapping, index);
--	trace_dax_insert_pfn_mkwrite(mapping->host, vmf, vmf_ret);
--	return vmf_ret;
-+	trace_dax_insert_pfn_mkwrite(mapping->host, vmf, ret);
-+	return ret;
- }
- 
- /**
-@@ -1606,8 +1602,8 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
-  * stored persistently on the media and handles inserting of appropriate page
-  * table entry.
-  */
--int dax_finish_sync_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
--			  pfn_t pfn)
-+vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
-+		enum page_entry_size pe_size, pfn_t pfn)
- {
- 	int err;
- 	loff_t start = ((loff_t)vmf->pgoff) << PAGE_SHIFT;
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index f9eb22a..7fddea8 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -124,8 +124,8 @@ ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		const struct iomap_ops *ops);
- int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
- 		    pfn_t *pfnp, int *errp, const struct iomap_ops *ops);
--int dax_finish_sync_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
--			  pfn_t pfn);
-+vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
-+		enum page_entry_size pe_size, pfn_t pfn);
- int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
- int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
- 				      pgoff_t index);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1ac1f06..9fe441c 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2423,8 +2423,8 @@ int vm_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
- 			unsigned long pfn, pgprot_t pgprot);
- int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
- 			pfn_t pfn);
--int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
--			pfn_t pfn);
-+vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
-+		unsigned long addr, pfn_t pfn);
- int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long len);
- 
- static inline vm_fault_t vmf_insert_page(struct vm_area_struct *vma,
-diff --git a/mm/memory.c b/mm/memory.c
-index 01f5464..6a97893 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1955,12 +1955,25 @@ int vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
- }
- EXPORT_SYMBOL(vm_insert_mixed);
- 
--int vm_insert_mixed_mkwrite(struct vm_area_struct *vma, unsigned long addr,
--			pfn_t pfn)
-+/*
-+ *  If the insertion of PTE failed because someone else already added a
-+ *  different entry in the mean time, we treat that as success as we assume
-+ *  the same entry was actually inserted.
-+ */
-+
-+vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
-+		unsigned long addr, pfn_t pfn)
- {
--	return __vm_insert_mixed(vma, addr, pfn, true);
-+	int err;
-+
-+	err =  __vm_insert_mixed(vma, addr, pfn, true);
-+	if (err == -ENOMEM)
-+		return VM_FAULT_OOM;
-+	if (err < 0 && err != -EBUSY)
-+		return VM_FAULT_SIGBUS;
-+	return VM_FAULT_NOPAGE;
- }
--EXPORT_SYMBOL(vm_insert_mixed_mkwrite);
-+EXPORT_SYMBOL(vmf_insert_mixed_mkwrite);
- 
- /*
-  * maps a range of physical memory into the requested pages. the old
--- 
-1.9.1
+> +      - flags: reserved for future use, currently 0
+> +      - base field encodes bits [51:16] of the guest physical base address
+> +        of the first redistributor in the region.
+> +      - count encodes the number of redistributors in the region. Must be
+> +        greater than 0.
+> +      There are two 64K pages for each redistributor in the region and
+> +      redistributors are laid out contiguously within the region. Regions
+> +      are filled with redistributors in the index order. The sum of all
+> +      region count fields must be greater than or equal to the number of
+> +      VCPUs. Redistributor regions must be registered in the incremental
+> +      index order, starting from index 0.
+> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+> +
+> +  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
+> +  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
+> +
+>    Errors:
+>      -E2BIG:  Address outside of addressable IPA range
+> -    -EINVAL: Incorrectly aligned address
+> +    -EINVAL: Incorrectly aligned address, bad redistributor region
+> +             count/index, mixed redistributor region attribute usage
+>      -EEXIST: Address already configured
+>      -ENXIO:  The group or attribute is unknown/unsupported for this device
+>               or hardware support is missing.
+> -- 
+> 2.5.5
+> 
