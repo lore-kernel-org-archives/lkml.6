@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934640AbeDXNp7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:45:59 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:49539 "EHLO
+        id S1758160AbeDXNq5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:46:57 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:49536 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934550AbeDXNpD (ORCPT
+        with ESMTP id S934530AbeDXNpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:45:03 -0400
+        Tue, 24 Apr 2018 09:45:00 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v7 8/9] PCI: dwc: Small computation improvement
-Date: Tue, 24 Apr 2018 14:44:45 +0100
-Message-Id: <8ec9ee255a82febf84e6c0cfa2a32ee87f3e6053.1524577064.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second entry
+Date: Tue, 24 Apr 2018 14:44:40 +0100
+Message-Id: <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
 References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
@@ -25,59 +25,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaces a simple division by 2 to a right shift rotation of 1 bit.
+Adds a seconds entry on the pci_epf_test_ids structure that disables the
+linkup_notifier parameter on driver for the designware EP.
 
-Probably any recent and decent compiler does this kind of substitution
-in order to improve code performance. Nevertheless it's a coding good
-practice whenever there is a division / multiplication by multiple of 2
-to replace it by the equivalent operation in this case, the shift
-rotation.
+This allows designware EPs that doesn't have linkup notification signal
+to work with pcitest.
+
+Updates the binding documentation accordingly.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
-Acked-by: Joao Pinto <jpinto@synopsys.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
 Change v2->v3:
- - Nothing changed, just to follow the patch set version.
+ - Added second entry in pci_epf_test_ids structure.
+ - Remove test_reg_bar field assignment on second entry.
 Changes v3->v4:
- - Added a small explication to the log description.
+ - Nothing changed, just to follow the patch set version.
 Changes v4->v5:
- - Nothing changed, just to follow the patch set version.
+ - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
 Changes v5->v6:
- - Nothing changed, just to follow the patch set version.
+ - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
 Changes v6->v7:
- - Nothing changed, just to follow the patch set version.
+ - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
 
- drivers/pci/dwc/pcie-designware-host.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
+ drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
-index 5a23f78..fc55fde 100644
---- a/drivers/pci/dwc/pcie-designware-host.c
-+++ b/drivers/pci/dwc/pcie-designware-host.c
-@@ -332,8 +332,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
+diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+index 3b68b95..dc39f47 100644
+--- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
++++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+@@ -1,6 +1,8 @@
+ PCI TEST ENDPOINT FUNCTION
  
- 	cfg_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config");
- 	if (cfg_res) {
--		pp->cfg0_size = resource_size(cfg_res) / 2;
--		pp->cfg1_size = resource_size(cfg_res) / 2;
-+		pp->cfg0_size = resource_size(cfg_res) >> 1;
-+		pp->cfg1_size = resource_size(cfg_res) >> 1;
- 		pp->cfg0_base = cfg_res->start;
- 		pp->cfg1_base = cfg_res->start + pp->cfg0_size;
- 	} else if (!pp->va_cfg0_base) {
-@@ -377,8 +377,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 			break;
- 		case 0:
- 			pp->cfg = win->res;
--			pp->cfg0_size = resource_size(pp->cfg) / 2;
--			pp->cfg1_size = resource_size(pp->cfg) / 2;
-+			pp->cfg0_size = resource_size(pp->cfg) >> 1;
-+			pp->cfg1_size = resource_size(pp->cfg) >> 1;
- 			pp->cfg0_base = pp->cfg->start;
- 			pp->cfg1_base = pp->cfg->start + pp->cfg0_size;
- 			break;
+ name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
++name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
++      with a custom configuration for the designware EP.
+ 
+ Configurable Fields:
+ vendorid	 : should be 0x104c
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 7cef851..4ab463b 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+ 	return 0;
+ }
+ 
++static const struct pci_epf_test_data data_linkup_notifier_disabled = {
++	.linkup_notifier = false
++};
++
+ static const struct pci_epf_device_id pci_epf_test_ids[] = {
+ 	{
+ 		.name = "pci_epf_test",
+ 	},
++	{
++		.name = "pci_epf_test_dw",
++		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
++	},
+ 	{},
+ };
+ 
 -- 
 2.7.4
