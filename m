@@ -1,66 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932687AbeDWXx0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 19:53:26 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51964 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932615AbeDWXxY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 19:53:24 -0400
-Subject: Re: [Xen-devel] [RFC 0/2] To introduce xenwatch multithreading (xen
- mtwatch)
-To: Wei Liu <wei.liu2@citrix.com>
-References: <1523100355-27647-1-git-send-email-dongli.zhang@oracle.com>
- <20180423140911.bihiwfwtlneobgzd@citrix.com>
-Cc: jgross@suse.com, ian.jackson@eu.citrix.com,
-        linux-kernel@vger.kernel.org, srinivas.eeda@oracle.com,
-        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
-        Joao Martins <joao.m.martins@oracle.com>
-From: Dongli Zhang <dongli.zhang@oracle.com>
-Message-ID: <6c379249-886d-76ee-db9c-942967b23d80@oracle.com>
-Date: Tue, 24 Apr 2018 07:55:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S932666AbeDXAGU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 20:06:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33222 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932615AbeDXAGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 20:06:17 -0400
+Date: Mon, 23 Apr 2018 20:06:16 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH v3] kvmalloc: always use vmalloc if CONFIG_DEBUG_SG
+In-Reply-To: <20180423151545.GU17484@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com> <20180418.134651.2225112489265654270.davem@davemloft.net> <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com> <20180420130852.GC16083@dhcp22.suse.cz> <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180420210200.GH10788@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180421144757.GC14610@bombadil.infradead.org> <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com> <20180423151545.GU17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <20180423140911.bihiwfwtlneobgzd@citrix.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8872 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=790
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804230235
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wei,
+The kvmalloc function tries to use kmalloc and falls back to vmalloc if
+kmalloc fails.
 
-On 04/23/2018 10:09 PM, Wei Liu wrote:
-> On Sat, Apr 07, 2018 at 07:25:53PM +0800, Dongli Zhang wrote:
->> About per-domU xenwatch thread create/destroy, a new type of xenstore node is
->> introduced: '/local/domain/0/mtwatch/<domid>'.
->>
->> Suppose the new domid id 7. During the domU (domid=7) creation, the xen
->> toolstack writes '/local/domain/0/mtwatch/7' to xenstore before the insertion
->> of '/local/domain/7'. When the domid=7 is destroyed, the last xenstore
->> operation by xen toolstack is to remove '/local/domain/0/mtwatch/7'.
->>
->> The dom0 kernel subscribes a watch at node '/local/domain/0/mtwatch'.  Kernel
->> thread [xen-mtwatch-7] is created when '/local/domain/0/mtwatch/7' is inserted,
->> while this kernel thread is destroyed when the corresponding xenstore node is
->> removed.
-> 
-> Instead of inventing yet another node, can you not watch /local/domain
-> directly?
+Unfortunatelly, some kernel code has bugs - it uses kvmalloc and then
+uses DMA-API on the returned memory or frees it with kfree. Such bugs were
+found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
+code.
 
-Would you like to watch at /local/domain directly? Or is your question "is there
-any other way to not watch at /local/domain, while no extra xenstore node will
-be introduced"?
+These bugs are hard to reproduce because kvmalloc falls back to vmalloc
+only if memory is fragmented.
 
-Actually, the first prototype of this idea was to watch at /local/domain
-directly to get aware of the domU create/destroy, so that xen toolstack will not
-get involved. Joao Martins (CCed) had a concern on the performance as watching
-at /local/domain would lead to large amount of xenwatch events.
+In order to detect these bugs reliably I submit this patch that changes
+kvmalloc to fall back to vmalloc with 1/2 probability if CONFIG_DEBUG_SG
+is turned on. CONFIG_DEBUG_SG is used, because it makes the DMA API layer
+verify the addresses passed to it, and so the user will get a reliable
+stacktrace.
 
-Dongli Zhang
+Some bugs (such as buffer overflows) are better detected
+with kmalloc code, so we must test the kmalloc path too.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+
+---
+ mm/util.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+Index: linux-2.6/mm/util.c
+===================================================================
+--- linux-2.6.orig/mm/util.c	2018-04-23 00:12:05.000000000 +0200
++++ linux-2.6/mm/util.c	2018-04-23 17:57:02.000000000 +0200
+@@ -14,6 +14,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/vmalloc.h>
+ #include <linux/userfaultfd_k.h>
++#include <linux/random.h>
+ 
+ #include <asm/sections.h>
+ #include <linux/uaccess.h>
+@@ -404,6 +405,12 @@ void *kvmalloc_node(size_t size, gfp_t f
+ 	 */
+ 	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+ 
++#ifdef CONFIG_DEBUG_SG
++	/* Catch bugs when the caller uses DMA API on the result of kvmalloc. */
++	if (!(prandom_u32_max(2) & 1))
++		goto do_vmalloc;
++#endif
++
+ 	/*
+ 	 * We want to attempt a large physically contiguous block first because
+ 	 * it is less likely to fragment multiple larger blocks and therefore
+@@ -427,6 +434,9 @@ void *kvmalloc_node(size_t size, gfp_t f
+ 	if (ret || size <= PAGE_SIZE)
+ 		return ret;
+ 
++#ifdef CONFIG_DEBUG_SG
++do_vmalloc:
++#endif
+ 	return __vmalloc_node_flags_caller(size, node, flags,
+ 			__builtin_return_address(0));
+ }
