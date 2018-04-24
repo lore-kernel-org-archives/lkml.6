@@ -1,314 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933011AbeDXIjU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:39:20 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46116 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756583AbeDXIhy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:37:54 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org, ulf.hansson@linaro.org, heiko@sntech.de,
-        linux-pm@vger.kernel.org, dbasehore@chromium.org,
-        linux-kernel@vger.kernel.org, dianders@google.com, groeck@chromium.org,
-        kernel@collabora.com, hl@rock-chips.com,
-        Nick Milner <nick.milner@collabora.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 1/5] dt-bindings: devfreq: rk3399_dmc: improve binding documentation.
-Date: Tue, 24 Apr 2018 10:37:38 +0200
-Message-Id: <20180424083742.14042-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180424083742.14042-1-enric.balletbo@collabora.com>
-References: <20180424083742.14042-1-enric.balletbo@collabora.com>
+        id S933021AbeDXIki (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:40:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55374 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932850AbeDXIkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 04:40:32 -0400
+Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Wei Liu <wei.liu2@citrix.com>
+Cc: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        xen-devel@lists.xenproject.org, daniel.vetter@intel.com
+References: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
+ <20180416192905.GA18096@downor-Z87X-UD5H>
+ <20180417075928.GT31310@phenom.ffwll.local>
+ <20180417205744.GA15930@downor-Z87X-UD5H>
+ <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
+ <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
+ <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+ <20180420071914.GG31310@phenom.ffwll.local>
+ <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
+ <20180423115242.ywdwqblj2aseu3fr@citrix.com>
+ <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
+ <ce2ebb5b-fa13-0475-b0fd-6c330277d151@oracle.com>
+ <30ddb005-96c8-f47c-2e23-4e0d354e5842@gmail.com>
+ <a25a394c-ecf8-d8cf-15b8-eb8cb71d0a02@suse.com>
+ <c4c426eb-5a35-1f8f-59f3-350d6e97d89e@gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <6089d701-5221-75b4-38eb-b23bc5dc30cd@suse.com>
+Date: Tue, 24 Apr 2018 10:40:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <c4c426eb-5a35-1f8f-59f3-350d6e97d89e@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Milner <nick.milner@collabora.com>
+On 24/04/18 10:07, Oleksandr Andrushchenko wrote:
+> On 04/24/2018 10:51 AM, Juergen Gross wrote:
+>> On 24/04/18 07:43, Oleksandr Andrushchenko wrote:
+>>> On 04/24/2018 01:41 AM, Boris Ostrovsky wrote:
+>>>> On 04/23/2018 08:10 AM, Oleksandr Andrushchenko wrote:
+>>>>> On 04/23/2018 02:52 PM, Wei Liu wrote:
+>>>>>> On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko
+>>>>>> wrote:
+>>>>>>>>>        the gntdev.
+>>>>>>>>>
+>>>>>>>>> I think this is generic enough that it could be implemented by a
+>>>>>>>>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
+>>>>>>>>> something similar to this.
+>>>>>>>> You can't just wrap random userspace memory into a dma-buf. We've
+>>>>>>>> just had
+>>>>>>>> this discussion with kvm/qemu folks, who proposed just that, and
+>>>>>>>> after a
+>>>>>>>> bit of discussion they'll now try to have a driver which just
+>>>>>>>> wraps a
+>>>>>>>> memfd into a dma-buf.
+>>>>>>> So, we have to decide either we introduce a new driver
+>>>>>>> (say, under drivers/xen/xen-dma-buf) or extend the existing
+>>>>>>> gntdev/balloon to support dma-buf use-cases.
+>>>>>>>
+>>>>>>> Can anybody from Xen community express their preference here?
+>>>>>>>
+>>>>>> Oleksandr talked to me on IRC about this, he said a few IOCTLs
+>>>>>> need to
+>>>>>> be added to either existing drivers or a new driver.
+>>>>>>
+>>>>>> I went through this thread twice and skimmed through the relevant
+>>>>>> documents, but I couldn't see any obvious pros and cons for either
+>>>>>> approach. So I don't really have an opinion on this.
+>>>>>>
+>>>>>> But, assuming if implemented in existing drivers, those IOCTLs
+>>>>>> need to
+>>>>>> be added to different drivers, which means userspace program needs to
+>>>>>> write more code and get more handles, it would be slightly better to
+>>>>>> implement a new driver from that perspective.
+>>>>> If gntdev/balloon extension is still considered:
+>>>>>
+>>>>> All the IOCTLs will be in gntdev driver (in current xen-zcopy
+>>>>> terminology):
+>>>>>    - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
+>>>>>    - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
+>>>>>    - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
+>>>>>
+>>>>> Balloon driver extension, which is needed for contiguous/DMA
+>>>>> buffers, will be to provide new *kernel API*, no UAPI is needed.
+>>>>>
+>>>> So I am obviously a bit late to this thread, but why do you need to add
+>>>> new ioctls to gntdev and balloon? Doesn't this driver manage to do what
+>>>> you want without any extensions?
+>>> 1. I only (may) need to add IOCTLs to gntdev
+>>> 2. balloon driver needs to be extended, so it can allocate
+>>> contiguous (DMA) memory, not IOCTLs/UAPI here, all lives
+>>> in the kernel.
+>>> 3. The reason I need to extend gnttab with new IOCTLs is to
+>>> provide new functionality to create a dma-buf from grant references
+>>> and to produce grant references for a dma-buf. This is what I have as
+>>> UAPI
+>>> description for xen-zcopy driver:
+>>>
+>>> 1. DRM_IOCTL_XEN_ZCOPY_DUMB_FROM_REFS
+>>> This will create a DRM dumb buffer from grant references provided
+>>> by the frontend. The intended usage is:
+>>>    - Frontend
+>>>      - creates a dumb/display buffer and allocates memory
+>>>      - grants foreign access to the buffer pages
+>>>      - passes granted references to the backend
+>>>    - Backend
+>>>      - issues DRM_XEN_ZCOPY_DUMB_FROM_REFS ioctl to map
+>>>        granted references and create a dumb buffer
+>>>      - requests handle to fd conversion via DRM_IOCTL_PRIME_HANDLE_TO_FD
+>>>      - requests real HW driver/consumer to import the PRIME buffer with
+>>>        DRM_IOCTL_PRIME_FD_TO_HANDLE
+>>>      - uses handle returned by the real HW driver
+>>>    - at the end:
+>>>      o closes real HW driver's handle with DRM_IOCTL_GEM_CLOSE
+>>>      o closes zero-copy driver's handle with DRM_IOCTL_GEM_CLOSE
+>>>      o closes file descriptor of the exported buffer
+>>>
+>>> 2. DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
+>>> This will grant references to a dumb/display buffer's memory provided by
+>>> the
+>>> backend. The intended usage is:
+>>>    - Frontend
+>>>      - requests backend to allocate dumb/display buffer and grant
+>>> references
+>>>        to its pages
+>>>    - Backend
+>>>      - requests real HW driver to create a dumb with
+>>> DRM_IOCTL_MODE_CREATE_DUMB
+>>>      - requests handle to fd conversion via DRM_IOCTL_PRIME_HANDLE_TO_FD
+>>>      - requests zero-copy driver to import the PRIME buffer with
+>>>        DRM_IOCTL_PRIME_FD_TO_HANDLE
+>>>      - issues DRM_XEN_ZCOPY_DUMB_TO_REFS ioctl to
+>>>        grant references to the buffer's memory.
+>>>      - passes grant references to the frontend
+>>>   - at the end:
+>>>      - closes zero-copy driver's handle with DRM_IOCTL_GEM_CLOSE
+>>>      - closes real HW driver's handle with DRM_IOCTL_GEM_CLOSE
+>>>      - closes file descriptor of the imported buffer
+>>>
+>>> 3. DRM_XEN_ZCOPY_DUMB_WAIT_FREE
+>>> This will block until the dumb buffer with the wait handle provided be
+>>> freed:
+>>> this is needed for synchronization between frontend and backend in case
+>>> frontend provides grant references of the buffer via
+>>> DRM_XEN_ZCOPY_DUMB_FROM_REFS IOCTL and which must be released before
+>>> backend replies with XENDISPL_OP_DBUF_DESTROY response.
+>>> wait_handle must be the same value returned while calling
+>>> DRM_XEN_ZCOPY_DUMB_FROM_REFS IOCTL.
+>>>
+>>> So, as you can see the above functionality is not covered by the
+>>> existing UAPI
+>>> of the gntdev driver.
+>>> Now, if we change dumb -> dma-buf and remove DRM code (which is only a
+>>> wrapper
+>>> here on top of dma-buf) we get new driver for dma-buf for Xen.
+>>>
+>>> This is why I have 2 options here: either create a dedicated driver for
+>>> this
+>>> (e.g. re-work xen-zcopy to be DRM independent and put it under
+>>> drivers/xen/xen-dma-buf, for example) or extend the existing gntdev
+>>> driver
+>>> with the above UAPI + make changes to the balloon driver to provide
+>>> kernel
+>>> API for DMA buffer allocations.
+>> Which user component would use the new ioctls?
+> It is currently used by the display backend [1] and will
+> probably be used by the hyper-dmabuf frontend/backend
+> (Dongwon from Intel can provide more info on this).
+>>
+>> I'm asking because I'm not very fond of adding more linux specific
+>> functions to libgnttab which are not related to a specific Xen version,
+>> but to a kernel version.
+> Hm, I was not thinking about this UAPI to be added to libgnttab.
+> It seems it can be used directly w/o wrappers in user-space
 
-There are several typos, references to non existent files, grammar and
-punctuation mistakes in the rk3399_dmc.txt binding. This patch tries
-to improve the binding documentation and fix these mistakes.
+Would this program use libgnttab in parallel? If yes how would the two
+usage paths be combined (same applies to the separate driver, btw)? The
+gntdev driver manages resources per file descriptor and libgnttab is
+hiding the file descriptor it is using for a connection. Or would the
+user program use only the new driver for communicating with the gntdev
+driver? In this case it might be an option to extend the gntdev driver
+to present a new device (e.g. "gntdmadev") for that purpose.
 
-Signed-off-by: Nick Milner <nick.milner@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
----
+>>
+>> So doing this in a separate driver seems to be the better option in
+>> this regard.
+> Well, from maintenance POV it is easier for me to have it all in
+> a separate driver as all dma-buf related functionality will
+> reside at one place. This also means that no changes to existing
+> drivers will be needed (if it is ok to have ballooning in/out
+> code for DMA buffers (allocated with dma_alloc_xxx) not in the balloon
+> driver)
 
-Changes in v2:
-- [1/6] Add Acked-by MyungJoo Ham.
-- [6/6] Removed this patch from this series.
+I think in the end this really depends on how the complete solution
+will look like. gntdev is a special wrapper for the gnttab driver.
+In case the new dma-buf driver needs to use parts of gntdev I'd rather
+have a new driver above gnttab ("gntuser"?) used by gntdev and dma-buf.
 
- .../bindings/devfreq/rk3399_dmc.txt           | 207 +++++++++---------
- 1 file changed, 105 insertions(+), 102 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-index d6d2833482c9..d83ef821d282 100644
---- a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-+++ b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-@@ -1,155 +1,158 @@
--* Rockchip rk3399 DMC(Dynamic Memory Controller) device
-+* Rockchip rk3399 DMC (Dynamic Memory Controller) device
- 
- Required properties:
- - compatible:		 Must be "rockchip,rk3399-dmc".
- - devfreq-events:	 Node to get DDR loading, Refer to
--			 Documentation/devicetree/bindings/devfreq/
-+			 Documentation/devicetree/bindings/devfreq/event/
- 			 rockchip-dfi.txt
--- interrupts:		 The interrupt number to the CPU. The interrupt
--			 specifier format depends on the interrupt controller.
--			 It should be DCF interrupts, when DDR dvfs finish,
--			 it will happen.
-+- interrupts:		 The CPU interrupt number. The interrupt specifier
-+			 format depends on the interrupt controller.
-+			 It should be a DCF interrupt. When DDR DVFS finishes
-+			 a DCF interrupt is triggered.
- - clocks:		 Phandles for clock specified in "clock-names" property
- - clock-names :		 The name of clock used by the DFI, must be
- 			 "pclk_ddr_mon";
--- operating-points-v2:	 Refer to Documentation/devicetree/bindings/power/opp.txt
-+- operating-points-v2:	 Refer to Documentation/devicetree/bindings/opp/opp.txt
- 			 for details.
- - center-supply:	 DMC supply node.
- - status:		 Marks the node enabled/disabled.
- 
--Following properties are ddr timing:
-+Following properties relate to DDR timing:
- 
- - rockchip,dram_speed_bin :	  Value reference include/dt-bindings/clock/ddr.h,
--				  it select ddr3 cl-trp-trcd type, default value
--				  "DDR3_DEFAULT".it must selected according to
--				  "Speed Bin" in ddr3 datasheet, DO NOT use
--				  smaller "Speed Bin" than ddr3 exactly is.
--
--- rockchip,pd_idle :		  Config the PD_IDLE value, defined the power-down
--				  idle period, memories are places into power-down
--				  mode if bus is idle for PD_IDLE DFI clocks.
--
--- rockchip,sr_idle :		  Configure the SR_IDLE value, defined the
--				  selfrefresh idle period, memories are places
--				  into self-refresh mode if bus is idle for
--				  SR_IDLE*1024 DFI clocks (DFI clocks freq is
--				  half of dram's clocks), defaule value is "0".
--
--- rockchip,sr_mc_gate_idle :	  Defined the self-refresh with memory and
--				  controller clock gating idle period, memories
--				  are places into self-refresh mode and memory
--				  controller clock arg gating if bus is idle for
--				  sr_mc_gate_idle*1024 DFI clocks.
--
--- rockchip,srpd_lite_idle :	  Defined the self-refresh power down idle
--				  period, memories are places into self-refresh
--				  power down mode if bus is idle for
--				  srpd_lite_idle*1024 DFI clocks. This parameter
--				  is for LPDDR4 only.
--
--- rockchip,standby_idle :	  Defined the standby idle period, memories are
--				  places into self-refresh than controller, pi,
--				  phy and dram clock will gating if bus is idle
--				  for standby_idle * DFI clocks.
--
--- rockchip,dram_dll_disb_freq :  It's defined the DDR3 dll bypass frequency in
--				  MHz, when ddr freq less than DRAM_DLL_DISB_FREQ,
--				  ddr3 dll will bypssed note: if dll was bypassed,
--				  the odt also stop working.
--
--- rockchip,phy_dll_disb_freq :	  Defined the PHY dll bypass frequency in
--				  MHz (Mega Hz), when ddr freq less than
--				  DRAM_DLL_DISB_FREQ, phy dll will bypssed.
--				  note: phy dll and phy odt are independent.
--
--- rockchip,ddr3_odt_disb_freq :  When dram type is DDR3, this parameter defined
--				  the odt disable frequency in MHz (Mega Hz),
--				  when ddr frequency less then ddr3_odt_disb_freq,
--				  the odt on dram side and controller side are
-+				  it selects the DDR3 cl-trp-trcd type. It must be
-+				  set according to "Speed Bin" in DDR3 datasheet,
-+				  DO NOT use a smaller "Speed Bin" than specified
-+				  for the DDR3 being used.
-+
-+- rockchip,pd_idle :		  Configure the PD_IDLE value. Defines the
-+				  power-down idle period in which memories are
-+				  placed into power-down mode if bus is idle
-+				  for PD_IDLE DFI clock cycles.
-+
-+- rockchip,sr_idle :		  Configure the SR_IDLE value. Defines the
-+				  self-refresh idle period in which memories are
-+				  placed into self-refresh mode if bus is idle
-+				  for SR_IDLE * 1024 DFI clock cycles (DFI
-+				  clocks freq is half of DRAM clock), default
-+				  value is "0".
-+
-+- rockchip,sr_mc_gate_idle :	  Defines the memory self-refresh and controller
-+				  clock gating idle period. Memories are placed
-+				  into self-refresh mode and memory controller
-+				  clock arg gating started if bus is idle for
-+				  sr_mc_gate_idle*1024 DFI clock cycles.
-+
-+- rockchip,srpd_lite_idle :	  Defines the self-refresh power down idle
-+				  period in which memories are placed into
-+				  self-refresh power down mode if bus is idle
-+				  for srpd_lite_idle * 1024 DFI clock cycles.
-+				  This parameter is for LPDDR4 only.
-+
-+- rockchip,standby_idle :	  Defines the standby idle period in which
-+				  memories are placed into self-refresh mode.
-+				  The controller, pi, PHY and DRAM clock will
-+				  be gated if bus is idle for standby_idle * DFI
-+				  clock cycles.
-+
-+- rockchip,dram_dll_disb_freq :	  Defines the DDR3 DLL bypass frequency in MHz.
-+				  When DDR frequency is less than DRAM_DLL_DISB_FREQ,
-+				  DDR3 DLL will be bypassed. Note: if DLL was bypassed,
-+				  the odt will also stop working.
-+
-+- rockchip,phy_dll_disb_freq :	  Defines the PHY dll bypass frequency in
-+				  MHz (Mega Hz). When DDR frequency is less than
-+				  DRAM_DLL_DISB_FREQ, PHY DLL will be bypassed.
-+				  Note: PHY DLL and PHY ODT are independent.
-+
-+- rockchip,ddr3_odt_disb_freq :	  When the DRAM type is DDR3, this parameter defines
-+				  the ODT disable frequency in MHz (Mega Hz).
-+				  when the DDR frequency is  less then ddr3_odt_disb_freq,
-+				  the ODT on the DRAM side and controller side are
- 				  both disabled.
- 
--- rockchip,ddr3_drv :		  When dram type is DDR3, this parameter define
--				  the dram side driver stength in ohm, default
-+- rockchip,ddr3_drv :		  When the DRAM type is DDR3, this parameter defines
-+				  the DRAM side driver strength in ohms. Default
- 				  value is DDR3_DS_40ohm.
- 
--- rockchip,ddr3_odt :		  When dram type is DDR3, this parameter define
--				  the dram side ODT stength in ohm, default value
-+- rockchip,ddr3_odt :		  When the DRAM type is DDR3, this parameter defines
-+				  the DRAM side ODT strength in ohms. Default value
- 				  is DDR3_ODT_120ohm.
- 
--- rockchip,phy_ddr3_ca_drv :	  When dram type is DDR3, this parameter define
--				  the phy side CA line(incluing command line,
-+- rockchip,phy_ddr3_ca_drv :	  When the DRAM type is DDR3, this parameter defines
-+				  the phy side CA line (incluing command line,
- 				  address line and clock line) driver strength.
- 				  Default value is PHY_DRV_ODT_40.
- 
--- rockchip,phy_ddr3_dq_drv :	  When dram type is DDR3, this parameter define
--				  the phy side DQ line(incluing DQS/DQ/DM line)
--				  driver strength. default value is PHY_DRV_ODT_40.
-+- rockchip,phy_ddr3_dq_drv :	  When the DRAM type is DDR3, this parameter defines
-+				  the PHY side DQ line (including DQS/DQ/DM line)
-+				  driver strength. Default value is PHY_DRV_ODT_40.
- 
--- rockchip,phy_ddr3_odt : 	  When dram type is DDR3, this parameter define the
--				  phy side odt strength, default value is
-+- rockchip,phy_ddr3_odt : 	  When the DRAM type is DDR3, this parameter defines
-+				  the PHY side ODT strength. Default value is
- 				  PHY_DRV_ODT_240.
- 
--- rockchip,lpddr3_odt_disb_freq : When dram type is LPDDR3, this parameter defined
--				  then odt disable frequency in MHz (Mega Hz),
--				  when ddr frequency less then ddr3_odt_disb_freq,
--				  the odt on dram side and controller side are
-+- rockchip,lpddr3_odt_disb_freq : When the DRAM type is LPDDR3, this parameter defines
-+				  then ODT disable frequency in MHz (Mega Hz).
-+				  When DDR frequency is less then ddr3_odt_disb_freq,
-+				  the ODT on the DRAM side and controller side are
- 				  both disabled.
- 
--- rockchip,lpddr3_drv :	  When dram type is LPDDR3, this parameter define
--				  the dram side driver stength in ohm, default
-+- rockchip,lpddr3_drv :		  When the DRAM type is LPDDR3, this parameter defines
-+				  the DRAM side driver strength in ohms. Default
- 				  value is LP3_DS_34ohm.
- 
--- rockchip,lpddr3_odt :	  When dram type is LPDDR3, this parameter define
--				  the dram side ODT stength in ohm, default value
-+- rockchip,lpddr3_odt :		  When the DRAM type is LPDDR3, this parameter defines
-+				  the DRAM side ODT strength in ohms. Default value
- 				  is LP3_ODT_240ohm.
- 
--- rockchip,phy_lpddr3_ca_drv :	  When dram type is LPDDR3, this parameter define
--				  the phy side CA line(incluing command line,
-+- rockchip,phy_lpddr3_ca_drv :	  When the DRAM type is LPDDR3, this parameter defines
-+				  the PHY side CA line (including command line,
- 				  address line and clock line) driver strength.
--				  default value is PHY_DRV_ODT_40.
-+				  Default value is PHY_DRV_ODT_40.
- 
--- rockchip,phy_lpddr3_dq_drv :	  When dram type is LPDDR3, this parameter define
--				  the phy side DQ line(incluing DQS/DQ/DM line)
--				  driver strength. default value is
-+- rockchip,phy_lpddr3_dq_drv :	  When the DRAM type is LPDDR3, this parameter defines
-+				  the PHY side DQ line (including DQS/DQ/DM line)
-+				  driver strength. Default value is
- 				  PHY_DRV_ODT_40.
- 
- - rockchip,phy_lpddr3_odt : 	  When dram type is LPDDR3, this parameter define
- 				  the phy side odt strength, default value is
- 				  PHY_DRV_ODT_240.
- 
--- rockchip,lpddr4_odt_disb_freq : When dram type is LPDDR4, this parameter
--				  defined the odt disable frequency in
--				  MHz (Mega Hz), when ddr frequency less then
--				  ddr3_odt_disb_freq, the odt on dram side and
-+- rockchip,lpddr4_odt_disb_freq : When the DRAM type is LPDDR4, this parameter
-+				  defines the ODT disable frequency in
-+				  MHz (Mega Hz). When the DDR frequency is less then
-+				  ddr3_odt_disb_freq, the ODT on the DRAM side and
- 				  controller side are both disabled.
- 
--- rockchip,lpddr4_drv :	  When dram type is LPDDR4, this parameter define
--				  the dram side driver stength in ohm, default
-+- rockchip,lpddr4_drv :		  When the DRAM type is LPDDR4, this parameter defines
-+				  the DRAM side driver strength in ohms. Default
- 				  value is LP4_PDDS_60ohm.
- 
--- rockchip,lpddr4_dq_odt : 	  When dram type is LPDDR4, this parameter define
--				  the dram side ODT on dqs/dq line stength in ohm,
--				  default value is LP4_DQ_ODT_40ohm.
-+- rockchip,lpddr4_dq_odt : 	  When the DRAM type is LPDDR4, this parameter defines
-+				  the DRAM side ODT on DQS/DQ line strength in ohms.
-+				  Default value is LP4_DQ_ODT_40ohm.
- 
--- rockchip,lpddr4_ca_odt :	  When dram type is LPDDR4, this parameter define
--				  the dram side ODT on ca line stength in ohm,
--				  default value is LP4_CA_ODT_40ohm.
-+- rockchip,lpddr4_ca_odt :	  When the DRAM type is LPDDR4, this parameter defines
-+				  the DRAM side ODT on CA line strength in ohms.
-+				  Default value is LP4_CA_ODT_40ohm.
- 
--- rockchip,phy_lpddr4_ca_drv :	  When dram type is LPDDR4, this parameter define
--				  the phy side  CA line(incluing command address
--				  line) driver strength. default value is
-+- rockchip,phy_lpddr4_ca_drv :	  When the DRAM type is LPDDR4, this parameter defines
-+				  the PHY side CA line (including command address
-+				  line) driver strength. Default value is
- 				  PHY_DRV_ODT_40.
- 
--- rockchip,phy_lpddr4_ck_cs_drv : When dram type is LPDDR4, this parameter define
--				  the phy side clock line and cs line driver
--				  strength. default value is PHY_DRV_ODT_80.
-+- rockchip,phy_lpddr4_ck_cs_drv : When the DRAM type is LPDDR4, this parameter defines
-+				  the PHY side clock line and CS line driver
-+				  strength. Default value is PHY_DRV_ODT_80.
- 
--- rockchip,phy_lpddr4_dq_drv :	  When dram type is LPDDR4, this parameter define
--				  the phy side DQ line(incluing DQS/DQ/DM line)
--				  driver strength. default value is PHY_DRV_ODT_80.
-+- rockchip,phy_lpddr4_dq_drv :	  When the DRAM type is LPDDR4, this parameter defines
-+				  the PHY side DQ line (including DQS/DQ/DM line)
-+				  driver strength. Default value is PHY_DRV_ODT_80.
- 
--- rockchip,phy_lpddr4_odt :	  When dram type is LPDDR4, this parameter define
--				  the phy side odt strength, default value is
-+- rockchip,phy_lpddr4_odt :	  When the DRAM type is LPDDR4, this parameter defines
-+				  the PHY side ODT strength. Default value is
- 				  PHY_DRV_ODT_60.
- 
- Example:
--- 
-2.17.0
+Juergen
