@@ -1,61 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751324AbeDXWDm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 18:03:42 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:38278 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbeDXWDk (ORCPT
+        id S1751300AbeDXWI5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 18:08:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43322 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbeDXWIy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 18:03:40 -0400
-X-Google-Smtp-Source: AIpwx49knyC7Gm5u6QpH9+EhUnVNdqN1TNqWgMzki1osEEHlQ4gaMfFJEiVitSf+rtmznJJ9gIDGEZuOY+CbthYBVN8=
+        Tue, 24 Apr 2018 18:08:54 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMD8JhwgcWCp6c=O4-spNW1VdY5M-eAjr7M5PieeAfeTSe_4yw@mail.gmail.com>
-References: <87604mhrnb.fsf@xmission.com> <20180420143811.9994-19-ebiederm@xmission.com>
- <7074fe36-27c5-ee82-9659-da703cfc91fe@kot-begemot.co.uk> <CAFLxGvyM+Kru=ERDvccjVuMjSPbu+FQzjbUbMwSyEbL1rVGkBQ@mail.gmail.com>
- <7ddd238f-88a8-ed03-fe9e-0f4e5f2a490d@kot-begemot.co.uk> <87zi1sd28d.fsf@xmission.com>
- <CAMD8JhwgcWCp6c=O4-spNW1VdY5M-eAjr7M5PieeAfeTSe_4yw@mail.gmail.com>
-From: =?UTF-8?Q?Martin_P=C3=A4rtel?= <martin.partel@gmail.com>
-Date: Wed, 25 Apr 2018 01:03:39 +0300
-Message-ID: <CAMD8JhxHwcuXh68o1=fbZ_t6DH7x_dO_0nEMqL=cHXBfZXub=w@mail.gmail.com>
-Subject: Re: [uml-devel] [REVIEW][PATCH 19/22] signal/um: Use force_sig_fault
- in relay_signal.
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Anton Ivanov <anton.ivanov@kot-begemot.co.uk>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>, Jeff Dike <jdike@addtoit.com>,
-        linux-um@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        "user-mode-linux-devel@lists.sourceforge.net"
-        <user-mode-linux-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 24 Apr 2018 15:08:52 -0700
+From: Subhash Jadavani <subhashj@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-scsi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        linux-scsi-owner@vger.kernel.org
+Subject: Re: [PATCH 3/3] scsi: ufs: Use freq table with devfreq
+In-Reply-To: <20180424002016.9205-4-bjorn.andersson@linaro.org>
+References: <20180424002016.9205-1-bjorn.andersson@linaro.org>
+ <20180424002016.9205-4-bjorn.andersson@linaro.org>
+Message-ID: <5e59150bf025e2caa1deadfec7293ecd@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3OM3kxm006475
 
-And once more in plain text..
+On 2018-04-23 17:20, Bjorn Andersson wrote:
+> devfreq requires that the client operates on actual frequencies, not
+> only 0 and UMAX_INT and as such UFS brok with the introduction of
+> f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency").
+> 
+> This patch registers the frequencies of the first clock with devfreq 
+> and
+> use these to determine if we're trying to step up or down.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/scsi/ufs/ufshcd.c | 39 ++++++++++++++++++++++++++++++++-------
+>  1 file changed, 32 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 2253f24309ec..07b1f3c7bd2d 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -1168,16 +1168,13 @@ static int ufshcd_devfreq_target(struct device 
+> *dev,
+>  	struct ufs_hba *hba = dev_get_drvdata(dev);
+>  	ktime_t start;
+>  	bool scale_up, sched_clk_scaling_suspend_work = false;
+> +	struct list_head *clk_list = &hba->clk_list_head;
+> +	struct ufs_clk_info *clki;
+>  	unsigned long irq_flags;
+> 
+>  	if (!ufshcd_is_clkscaling_supported(hba))
+>  		return -EINVAL;
+> 
+> -	if ((*freq > 0) && (*freq < UINT_MAX)) {
+> -		dev_err(hba->dev, "%s: invalid freq = %lu\n", __func__, *freq);
+> -		return -EINVAL;
+> -	}
+> -
+>  	spin_lock_irqsave(hba->host->host_lock, irq_flags);
+>  	if (ufshcd_eh_in_progress(hba)) {
+>  		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
+> @@ -1187,7 +1184,13 @@ static int ufshcd_devfreq_target(struct device 
+> *dev,
+>  	if (!hba->clk_scaling.active_reqs)
+>  		sched_clk_scaling_suspend_work = true;
+> 
+> -	scale_up = (*freq == UINT_MAX) ? true : false;
+> +	if (list_empty(clk_list)) {
+> +		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
+> +		goto out;
+> +	}
+> +
+> +	clki = list_first_entry(&hba->clk_list_head, struct ufs_clk_info, 
+> list);
+> +	scale_up = (*freq == clki->max_freq) ? true : false;
+>  	if (!ufshcd_is_devfreq_scaling_required(hba, scale_up)) {
+>  		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
+>  		ret = 0;
+> @@ -1257,11 +1260,33 @@ static struct devfreq_dev_profile
+> ufs_devfreq_profile = {
+> 
+>  static int ufshcd_devfreq_init(struct ufs_hba *hba)
+>  {
+> +	struct devfreq_dev_profile *profile;
+> +	struct list_head *clk_list = &hba->clk_list_head;
+> +	struct ufs_clk_info *clki;
+>  	struct devfreq *devfreq;
+>  	int ret;
+> 
+> +	/* Skip devfreq if we don't have any clocks in the list */
+> +	if (list_empty(clk_list))
+> +		return 0;
+> +
+> +	profile = devm_kmemdup(hba->dev, &ufs_devfreq_profile,
+> +			       sizeof(ufs_devfreq_profile), GFP_KERNEL);
+> +	if (!profile)
+> +		return -ENOMEM;
+> +
+> +	profile->max_state = 2;
+> +	profile->freq_table = devm_kcalloc(hba->dev, profile->max_state,
+> +					   sizeof(unsigned long), GFP_KERNEL);
+> +	if (!profile->freq_table)
+> +		return -ENOMEM;
+> +
+> +	clki = list_first_entry(&hba->clk_list_head, struct ufs_clk_info, 
+> list);
+> +	profile->freq_table[0] = clki->min_freq;
+> +	profile->freq_table[1] = clki->max_freq;
+> +
+>  	devfreq = devm_devfreq_add_device(hba->dev,
+> -			&ufs_devfreq_profile,
+> +			profile,
+>  			"simple_ondemand",
+>  			NULL);
+>  	if (IS_ERR(devfreq)) {
 
-On 25 April 2018 at 01:00, Martin Pärtel <martin.partel@gmail.com> wrote:
->
-> Hi all,
->
-> This was ages ago, but from what I remember...
->
->>
->> Having a second look I really don't understand what relay_signal is
->> trying to do.
->>
->> The function relay_signal does not pass siginfo through unchanged.
->
->
-> Just copying the entire struct would do the wrong thing. It was discussed here:
-> https://marc.info/?l=user-mode-linux-devel&m=133910707911999&w=2
->
->>
->> Am I missing something subtle or have the subtle details of siginfo just
->> always been ignored?
->
->
-> My guess is they have. I was almost certainly oblivious to such subtleties when writing my commit.
->
+Looks good to me.
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
