@@ -1,75 +1,73 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-434357-1524457385-2-6988421271661286068
+X-Cyrus-Session-Id: sloti22d1t05-3124706-1524577114-6-13756315910628874499
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524457384; b=etAfFh1HCgY7FSkChAAywwxC8cvlB6W2UqhYlCSERE5VK8qBUn
-    juWsdD6xW7ftWySvmCcbU7EFOVN1m9X0y46MJE1OJcRcl864n96h+PKorXwlzD18
-    iiIb+B6zW8DT2wkGCAFqmM17yFmvdu4VqTXFNFwFXkqpdQKzdfi4XB/8cATfZG2p
-    Gyz/hPqjwzmUU/5OkmPef7B61uKTJFs2ReiZaGKlMXMFXAexdO5WC9o+oVm68TdP
-    nY7OZ+Dty6M2ySmnrnuGtoK5fAdGvuZmOebqPhLwz1/fR5EsOHGHAMIbrcXWkDkV
-    WQKsyD62I1p6f4YbLfQgeW2bULReqmFqiHaw==
+    1524577113; b=T6hq/s0/yKdqHKyUtExQfqddNV8NpIqipjou0k1M4/xn7zaJgO
+    K3ifpYrW8D2jTVwMSFcJI+MAuLCd7sxG3A15gc9xP/q8nnok9mHQ+4xT65LuAAc3
+    NAUhu8c2KiGP8k+0H/1MJbJ566sgjQe4VpPBn+4v7hLfmkwDqnhmh9W3GpML8o1z
+    7KH+RUPRQciNXt6e0JZ7EjoQfUTvAGN6Gbk1ot5XaD8camKVp26YoDqv0ZUKcI01
+    FPx7rSRfww99uA6HG8oMhwvjeu9OWZikI1mzcvTPTI4xppf5J22NM4IOrTRe6pk8
+    iYL3xjT+Wt/EqFbM4p0lEh04gHbp9xV4oEMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524457384;
-    bh=4dOeM/+mQ4ZG3h9NcQQ1TBaUCtPom401z0GIQUVEWms=; b=FiIRmcH/cC81
-    yZn9GafWs+UY08YeZ4gOZlODDepBX1cF2YcQf+60CZ6LKkdsV5YZsEI0byrbByTV
-    BPWTRJlGCcG0Un02gdCyDz1S/Yr1NRG4BTuPwcj3HAl3XWkqh6ooheDd0ZFVB6mg
-    EC/z62riXUyZ7ur5UcJfS48hiXKB3qgNZcqjzpu2OHoEjet4NSNn2AbNIuxqwZuA
-    32y+zKt7jb+1+GrkNHFjtwjKcxiiYnmSYZ+3z++jABot1ArSyoWuhhe8X0CjS3nq
-    RxFTbs3rQK3KwZZLqeyvmEj2q+fcqf6i0VkliWLfy2XAJkVoS3TBp/a3rCsgviUI
-    ckL+1DriyA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=SqcGtMW0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1524577113; bh=LhXxFheypIY3H9qt2fivM+o4+nbq3q
+    MXAJ1nKf86aeI=; b=m6fYAo9hVNJuTGPb0DGdFymZDkJmAxyR+cC6JOR3u+Xym7
+    ZTLtc5/KrV9N+xtdkLFdIgKBz4f3IEHi4TBxacB/XqfA7YRSVmq2Cp4SY1zp51KT
+    8alJcLKIH5DEWGtl+3Yy63AwWmHzF+9zZOBStju+3h0g7f8q6FL9C5Debt6uWnRJ
+    EMcHBEQF8ssp682QCV6O1NSycuMd9qEKVQJIJyF4C7M/HjPjTfDO/oJbhlZFj9ew
+    wrWBVRo//k3xCfBpK5pQnQogiHx+90HJfxdTQsCfMDZ7hT6FkoAZbsiYmIUv+iDm
+    T52YmncwKBNRPJpoIH5FaQqgX0oCuglcSc1O0+TQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=SqcGtMW0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFZBt5CcZMjZ4kuSAm/b+jgbQtLu31KsxBfIi+FBtvgHlnNrnhJb2I7bu6j4+haMvuoUgjwIxxveUiGGA1LPTOHbjIuHyeVm6Fxxa7G9kMGhbeWs3rs+
-    ZL+3D4OhAJo8uQbWn9ATVEmtFC+yyO1Dc3sa1bRAg8Gt6lG/pNMvmQDrJK8WmU0MvfsEwYvKdAoFmMErKIjwlZOG7mT1xE2R1TiupKn3IT4hT0Xg2ARIC9LD
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=1yosdFRi5IPLsQ_eWUkA:9 a=gHEqIIQQw3TW_eI1:21
-    a=6bG5sX8SVPfFM5Zk:21 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+X-CM-Envelope: MS4wfP9BAnEkpk4W21Sf6SUmibmSn0EnW4m1MNQgqkOER2eKJ+ddEr9ohjvVSaAA7+3pqJ3LJNtHTEgo6btDJNAw3le43KQm0nEK8W8zfv6P22vtpivV52EO
+    CiRUGpChKGLLlauMQkjrZiKnSsFJy6vKxkZh4gdiz+f8aEMsbsYk/tRJ45A31h2aP9DzhUmpLrrDoGv0N85tXFCv3fQkkQqARDpZb5oY2dwdEKuq3vhAcRDi
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=cDQm2WSucXWwO-Ly-boA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750786AbeDWEXC (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 23 Apr 2018 00:23:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:39056 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750756AbeDWEXA (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Mon, 23 Apr 2018 00:23:00 -0400
-Subject: Re: [PATCH 2/3] mm: add find_alloc_contig_pages() interface
-To: Michal Hocko <mhocko@kernel.org>
+        id S934416AbeDXNhu (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 24 Apr 2018 09:37:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52761 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933250AbeDXNhr (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:37:47 -0400
+Date: Tue, 24 Apr 2018 07:37:40 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: Mike Kravetz <mike.kravetz@oracle.com>
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         linux-api@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>,
@@ -82,198 +80,50 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         Dave Hansen <dave.hansen@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 2/3] mm: add find_alloc_contig_pages() interface
+Message-ID: <20180424133740.GH17484@dhcp22.suse.cz>
 References: <20180417020915.11786-1-mike.kravetz@oracle.com>
  <20180417020915.11786-3-mike.kravetz@oracle.com>
  <20180423000943.GO17484@dhcp22.suse.cz>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <fc28bcb7-8f9a-e841-0fdf-8636523ebc2a@oracle.com>
-Date: Sun, 22 Apr 2018 21:22:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ <fc28bcb7-8f9a-e841-0fdf-8636523ebc2a@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180423000943.GO17484@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8871 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804230045
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc28bcb7-8f9a-e841-0fdf-8636523ebc2a@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/22/2018 05:09 PM, Michal Hocko wrote:
-> On Mon 16-04-18 19:09:14, Mike Kravetz wrote:
-> [...]
->> @@ -2010,9 +2011,13 @@ static __always_inline struct page *__rmqueue_cma_fallback(struct zone *zone,
->>  {
->>  	return __rmqueue_smallest(zone, order, MIGRATE_CMA);
->>  }
->> +#define contig_alloc_migratetype_ok(migratetype) \
->> +	((migratetype) == MIGRATE_CMA || (migratetype) == MIGRATE_MOVABLE)
->>  #else
->>  static inline struct page *__rmqueue_cma_fallback(struct zone *zone,
->>  					unsigned int order) { return NULL; }
->> +#define contig_alloc_migratetype_ok(migratetype) \
->> +	((migratetype) == MIGRATE_MOVABLE)
->>  #endif
->>  
->>  /*
->> @@ -7822,6 +7827,9 @@ int alloc_contig_range(unsigned long start, unsigned long end,
->>  	};
->>  	INIT_LIST_HEAD(&cc.migratepages);
->>  
->> +	if (!contig_alloc_migratetype_ok(migratetype))
->> +		return -EINVAL;
->> +
->>
->>  	/*
->>  	 * What we do here is we mark all pageblocks in range as
->>  	 * MIGRATE_ISOLATE.  Because pageblock and max order pages may
->> @@ -7912,8 +7920,9 @@ int alloc_contig_range(unsigned long start, unsigned long end,
->>  
->>  	/* Make sure the range is really isolated. */
->>  	if (test_pages_isolated(outer_start, end, false)) {
->> -		pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
->> -			__func__, outer_start, end);
->> +		if (!(migratetype == MIGRATE_MOVABLE)) /* only print for CMA */
->> +			pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
->> +				__func__, outer_start, end);
->>  		ret = -EBUSY;
->>  		goto done;
->>  	}
+On Sun 22-04-18 21:22:07, Mike Kravetz wrote:
+> On 04/22/2018 05:09 PM, Michal Hocko wrote:
+[...
+> > Also do we want to check other usual suspects? E.g. PageReserved? And
+> > generally migrateable pages if page count > 0. Or do we want to leave
+> > everything to the alloc_contig_range?
 > 
-> This probably belongs to a separate patch. I would be tempted to say
-> that we should get rid of this migratetype thingy altogether. I confess
-> I have forgot everything about why this is required actually but it is
-> ugly as hell. Not your fault of course.
-> 
->> @@ -7949,6 +7958,82 @@ void free_contig_range(unsigned long pfn, unsigned long nr_pages)
->>  	}
->>  	WARN(count != 0, "%ld pages are still in use!\n", count);
->>  }
->> +
->> +static bool contig_pfn_range_valid(struct zone *z, unsigned long start_pfn,
->> +					unsigned long nr_pages)
->> +{
->> +	unsigned long i, end_pfn = start_pfn + nr_pages;
->> +	struct page *page;
->> +
->> +	for (i = start_pfn; i < end_pfn; i++) {
->> +		if (!pfn_valid(i))
->> +			return false;
->> +
->> +		page = pfn_to_page(i);
-> 
-> It believe we want pfn_to_online_page here. The old giga pages code is
-> buggy in that regard but nothing really critical because the
-> alloc_contig_range will notice that.
+> I think you proposed something like the above with limited checking at
+> some time in the past.  In my testing, allocations were more likely to
+> succeed if we did limited testing here and let alloc_contig_range take
+> a shot at migration/allocation.  There really are two ways to approach
+> this, do as much checking up front or let it be handled by alloc_contig_range.
 
-Ok
+OK, it would be great to have a comment mentioning that. The discrepancy
+will just hit eyes 
 
-> Also do we want to check other usual suspects? E.g. PageReserved? And
-> generally migrateable pages if page count > 0. Or do we want to leave
-> everything to the alloc_contig_range?
+[...]
+> Unless I am missing something, calls to alloc_contig range need to have
+> a size that is a multiple of page block.  This is because isolation needs
+> to take place at a page block level.  We can easily 'round up' and release
+> excess pages.
 
-I think you proposed something like the above with limited checking at
-some time in the past.  In my testing, allocations were more likely to
-succeed if we did limited testing here and let alloc_contig_range take
-a shot at migration/allocation.  There really are two ways to approach
-this, do as much checking up front or let it be handled by alloc_contig_range.
+I am not sure but can we simply leave a part of the page block behind? I
+mean it might have a misleading migrate type but that shouldn't matter
+much, no?
 
->> +
->> +		if (page_zone(page) != z)
->> +			return false;
->> +
->> +	}
->> +
->> +	return true;
->> +}
->> +
->> +/**
->> + * find_alloc_contig_pages() -- attempt to find and allocate a contiguous
->> + *				range of pages
->> + * @order:	number of pages
->> + * @gfp:	gfp mask used to limit search as well as during compaction
->> + * @nid:	target node
->> + * @nodemask:	mask of other possible nodes
->> + *
->> + * Pages can be freed with a call to free_contig_pages(), or by manually
->> + * calling __free_page() for each page allocated.
->> + *
->> + * Return: pointer to 'order' pages on success, or NULL if not successful.
->> + */
->> +struct page *find_alloc_contig_pages(unsigned int order, gfp_t gfp,
->> +					int nid, nodemask_t *nodemask)
-> 
-> Vlastimil asked about this but I would even say that we do not want to
-> make this order based. Why would we want to restrict the api to 2^order
-> sizes in the first place? What if somebody wants to allocate 123 pages?
-
-After Vlastimil's question and again here, I realized that this routine
-has a HUGE gap.  For allocation sizes less than MAX_ORDER, it should be
-using the traditional paga allocation routines.  It is only when allocation
-size is greater than MAX_ORDER that we need to call into alloc_contig_range.
-
-Unless I am missing something, calls to alloc_contig range need to have
-a size that is a multiple of page block.  This is because isolation needs
-to take place at a page block level.  We can easily 'round up' and release
-excess pages.
-
-Using number of pages instead of order makes sense.   I will rewrite with
-this in mind as well as taking the other issues into account.
-
-> 
->> +{
->> +	unsigned long pfn, nr_pages, flags;
->> +	struct page *ret_page = NULL;
->> +	struct zonelist *zonelist;
->> +	struct zoneref *z;
->> +	struct zone *zone;
->> +	int rc;
->> +
->> +	nr_pages = 1 << order;
->> +	zonelist = node_zonelist(nid, gfp);
->> +	for_each_zone_zonelist_nodemask(zone, z, zonelist, gfp_zone(gfp),
->> +					nodemask) {
->> +		spin_lock_irqsave(&zone->lock, flags);
->> +		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
->> +		while (zone_spans_pfn(zone, pfn + nr_pages - 1)) {
->> +			if (contig_pfn_range_valid(zone, pfn, nr_pages)) {
->> +				spin_unlock_irqrestore(&zone->lock, flags);
-> 
-> I know that the giga page allocation does use the zone lock but why? I
-> suspect it wants to stabilize zone_start_pfn but zone lock doesn't do
-> that.
-> 
-
-I am not sure.  As you suspected, this was copied from the giga page
-allocation code.  I'll look into it.
-
->> +
->> +				rc = alloc_contig_range(pfn, pfn + nr_pages,
->> +							MIGRATE_MOVABLE, gfp);
->> +				if (!rc) {
->> +					ret_page = pfn_to_page(pfn);
->> +					return ret_page;
->> +				}
->> +				spin_lock_irqsave(&zone->lock, flags);
->> +			}
->> +			pfn += nr_pages;
->> +		}
->> +		spin_unlock_irqrestore(&zone->lock, flags);
->> +	}
-> 
-> Other than that this API looks much saner than alloc_contig_range. We
-> still need to sort out some details (e.g. alignment) but it should be an
-> improvement.
-
-Ok, I will continue to refine.  We now have at least one immediate use
-case for this type of functionality.
-
+Thanks!
 -- 
-Mike Kravetz
+Michal Hocko
+SUSE Labs
