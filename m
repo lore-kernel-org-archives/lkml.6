@@ -1,490 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932872AbeDXLri (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 07:47:38 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53933 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932494AbeDXLrT (ORCPT
+        id S932900AbeDXLsO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 07:48:14 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54721 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752789AbeDXLsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 07:47:19 -0400
-X-Google-Smtp-Source: AIpwx4/7moevcWvYgjAxNeO6v2K9CPkgdi17hYuaTtSmd8wOzCOriUeL7yuinkhVWDjYQoZsG3o8hA==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: maxime.ripard@bootlin.com, wens@csie.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, clabbe@baylibre.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] arm: dts: sun8i: h3: libretech-all-h3-cc: Move board definition to common dtsi
-Date: Tue, 24 Apr 2018 13:47:13 +0200
-Message-Id: <1524570434-17814-2-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524570434-17814-1-git-send-email-narmstrong@baylibre.com>
-References: <1524570434-17814-1-git-send-email-narmstrong@baylibre.com>
+        Tue, 24 Apr 2018 07:48:12 -0400
+X-Google-Smtp-Source: AB8JxZred3sBIXOAYVB/zkBzeUsoSZQV5DqIzH/yVG9bx67l0fHKAy0VUZTRByb2b8BtRgpKdHBowdrpy8J3lolX8Yk=
+MIME-Version: 1.0
+In-Reply-To: <67a158d9-cd33-8c28-39c3-9cead4107205@gmail.com>
+References: <1524405004-10960-1-git-send-email-laoar.shao@gmail.com>
+ <20180423.115821.640630949143585629.davem@davemloft.net> <788ce3f1-6534-5c2e-1870-5ebd8ea4ae7f@gmail.com>
+ <CALOAHbDpgOckQhW7_Ysi-F2HCoZW4RKSdUuvTquELJZsaMj6Lg@mail.gmail.com> <67a158d9-cd33-8c28-39c3-9cead4107205@gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 24 Apr 2018 19:47:31 +0800
+Message-ID: <CALOAHbDajHPN9Z3TTWFBwpd1H16RVRRYYiUMrUELE3JxeZo+qw@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: init sk_cookie for inet socket
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: David Miller <davem@davemloft.net>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the libretech-all-h3-cc can use either the H2+, H3 or H5, move the
-content of the dts file to a common dtsi file to be included by the H3
-variant and in a following patch the H5 variant.
+On Tue, Apr 24, 2018 at 7:41 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+> On 04/23/2018 09:39 PM, Yafang Shao wrote:
+>> On Tue, Apr 24, 2018 at 12:09 AM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>>>
+>>>
+>>> On 04/23/2018 08:58 AM, David Miller wrote:
+>>>> From: Yafang Shao <laoar.shao@gmail.com>
+>>>> Date: Sun, 22 Apr 2018 21:50:04 +0800
+>>>>
+>>>>> With sk_cookie we can identify a socket, that is very helpful for
+>>>>> traceing and statistic, i.e. tcp tracepiont and ebpf.
+>>>>> So we'd better init it by default for inet socket.
+>>>>> When using it, we just need call atomic64_read(&sk->sk_cookie).
+>>>>>
+>>>>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+>>>>
+>>>> Applied, thank you.
+>>>>
+>>>
+>>> This is adding yet another atomic_inc on a global cache line.
+>>>
+>>
+>> That's a trade-off.
+>>
+>>> Most applications do not need the cookie being ever set.
+>>>
+>>> The existing mechanism was fine. Set it on demand.
+>>
+>> There are some drawback in the existing mechanism.
+>> - we have to set the net->cookie_gen and then sk->sk_cookie when we
+>> want to get the sk_cookie, that's a little expensive as well.
+>
+> Same cost.
+>
+>>   After that change, sock_gen_cookie() could be replaced by
+>> atomic64_read(&sk->sk_cookie) in most places.
+>
+> Same cost than the helper.
+>
+>>
+>> - If the application want to get the sk_cookie, it must set it first.
+>>    What if the application don't have the permision to write?
+>>    Furthermore, maybe it is a security concern ?
+>
+>
+> Maybe ? Please elaborate.
+>
+> Your patch destroys SYNFLOOD behavior.
+>
+> I have spent months of work solving the SYNFLOOD behavior, your patch crushes it.
+>
 
-By the way, update the SPDX licence tag position.
+Could you pls. explain the issue to me ?
 
-Suggested-by: Corentin Labbe <clabbe@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 213 +-------------------
- arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi   | 215 +++++++++++++++++++++
- 2 files changed, 217 insertions(+), 211 deletions(-)
- create mode 100644 arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi
+> I am not that happy.
+>
+> Please revert this patch.
+>
 
-diff --git a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
-index 5971b8b..50f2fb3 100644
---- a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
-@@ -1,222 +1,13 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Copyright (C) 2017 Chen-Yu Tsai <wens@csie.org>
-- *
-- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-  */
- 
- /dts-v1/;
- #include "sun8i-h3.dtsi"
--
--#include <dt-bindings/gpio/gpio.h>
--#include <dt-bindings/input/input.h>
-+#include "sunxi-libretech-all-h3-cc.dtsi"
- 
- / {
- 	model = "Libre Computer Board ALL-H3-CC H3";
- 	compatible = "libretech,all-h3-cc-h3", "allwinner,sun8i-h3";
--
--	aliases {
--		ethernet0 = &emac;
--		serial0 = &uart0;
--	};
--
--	chosen {
--		stdout-path = "serial0:115200n8";
--	};
--
--	connector {
--		compatible = "hdmi-connector";
--		type = "a";
--
--		port {
--			hdmi_con_in: endpoint {
--				remote-endpoint = <&hdmi_out_con>;
--			};
--		};
--	};
--
--	leds {
--		compatible = "gpio-leds";
--
--		pwr_led {
--			label = "librecomputer:green:pwr";
--			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>; /* PL10 */
--			default-state = "on";
--		};
--
--		status_led {
--			label = "librecomputer:blue:status";
--			gpios = <&pio 0 7 GPIO_ACTIVE_HIGH>; /* PA7 */
--		};
--	};
--
--	gpio_keys {
--		compatible = "gpio-keys";
--
--		power {
--			label = "power";
--			linux,code = <KEY_POWER>;
--			gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
--		};
--	};
--
--	reg_vcc1v2: vcc1v2 {
--		compatible = "regulator-fixed";
--		regulator-name = "vcc1v2";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		regulator-always-on;
--		regulator-boot-on;
--		vin-supply = <&reg_vcc5v0>;
--		gpio = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
--		enable-active-high;
--	};
--
--	reg_vcc3v3: vcc3v3 {
--		compatible = "regulator-fixed";
--		regulator-name = "vcc3v3";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		vin-supply = <&reg_vcc5v0>;
--	};
--
--	/* This represents the board's 5V input */
--	reg_vcc5v0: vcc5v0 {
--		compatible = "regulator-fixed";
--		regulator-name = "vcc5v0";
--		regulator-min-microvolt = <5000000>;
--		regulator-max-microvolt = <5000000>;
--	};
--
--	reg_vcc_dram: vcc-dram {
--		compatible = "regulator-fixed";
--		regulator-name = "vcc-dram";
--		regulator-min-microvolt = <1500000>;
--		regulator-max-microvolt = <1500000>;
--		regulator-always-on;
--		regulator-boot-on;
--		vin-supply = <&reg_vcc5v0>;
--		gpio = <&r_pio 0 9 GPIO_ACTIVE_HIGH>; /* PL9 */
--		enable-active-high;
--	};
--
--	reg_vcc_io: vcc-io {
--		compatible = "regulator-fixed";
--		regulator-name = "vcc-io";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		regulator-always-on;
--		regulator-boot-on;
--		vin-supply = <&reg_vcc3v3>;
--		gpio = <&r_pio 0 5 GPIO_ACTIVE_LOW>; /* PL5 */
--	};
--
--	reg_vdd_cpux: vdd-cpux {
--		compatible = "regulator-fixed";
--		regulator-name = "vdd-cpux";
--		regulator-min-microvolt = <1200000>;
--		regulator-max-microvolt = <1200000>;
--		regulator-always-on;
--		regulator-boot-on;
--		vin-supply = <&reg_vcc5v0>;
--		gpio = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
--		enable-active-high;
--	};
--};
--
--&codec {
--	allwinner,audio-routing =
--		"Line Out", "LINEOUT",
--		"MIC1", "Mic",
--		"Mic",  "MBIAS";
--	status = "okay";
--};
--
--&cpu0 {
--	cpu-supply = <&reg_vdd_cpux>;
--};
--
--&de {
--	status = "okay";
--};
--
--&ehci0 {
--	status = "okay";
--};
--
--&ehci1 {
--	status = "okay";
--};
--
--&ehci2 {
--	status = "okay";
--};
--
--&ehci3 {
--	status = "okay";
--};
--
--&emac {
--	phy-handle = <&int_mii_phy>;
--	phy-mode = "mii";
--	allwinner,leds-active-low;
--	status = "okay";
--};
--
--&hdmi {
--	status = "okay";
--};
--
--&hdmi_out {
--	hdmi_out_con: endpoint {
--		remote-endpoint = <&hdmi_con_in>;
--	};
--};
--
--&ir {
--	pinctrl-names = "default";
--	pinctrl-0 = <&ir_pins_a>;
--	status = "okay";
--};
--
--&mmc0 {
--	vmmc-supply = <&reg_vcc_io>;
--	bus-width = <4>;
--	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
--	status = "okay";
--};
--
--&ohci0 {
--	status = "okay";
--};
--
--&ohci1 {
--	status = "okay";
--};
--
--&ohci2 {
--	status = "okay";
--};
--
--&ohci3 {
--	status = "okay";
--};
--
--&uart0 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&uart0_pins_a>;
--	status = "okay";
--};
--
--&usb_otg {
--	dr_mode = "host";
--	status = "okay";
--};
--
--&usbphy {
--	/* VBUS on USB ports are always on */
--	usb0_vbus-supply = <&reg_vcc5v0>;
--	usb1_vbus-supply = <&reg_vcc5v0>;
--	usb2_vbus-supply = <&reg_vcc5v0>;
--	usb3_vbus-supply = <&reg_vcc5v0>;
--	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi b/arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi
-new file mode 100644
-index 0000000..d3a190b
---- /dev/null
-+++ b/arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi
-@@ -0,0 +1,215 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2017 Chen-Yu Tsai <wens@csie.org>
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	aliases {
-+		ethernet0 = &emac;
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		pwr_led {
-+			label = "librecomputer:green:pwr";
-+			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>; /* PL10 */
-+			default-state = "on";
-+		};
-+
-+		status_led {
-+			label = "librecomputer:blue:status";
-+			gpios = <&pio 0 7 GPIO_ACTIVE_HIGH>; /* PA7 */
-+		};
-+	};
-+
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+
-+		power {
-+			label = "power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-+		};
-+	};
-+
-+	reg_vcc1v2: vcc1v2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc1v2";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		vin-supply = <&reg_vcc5v0>;
-+		gpio = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
-+		enable-active-high;
-+	};
-+
-+	reg_vcc3v3: vcc3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&reg_vcc5v0>;
-+	};
-+
-+	/* This represents the board's 5V input */
-+	reg_vcc5v0: vcc5v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc5v0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+
-+	reg_vcc_dram: vcc-dram {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-dram";
-+		regulator-min-microvolt = <1500000>;
-+		regulator-max-microvolt = <1500000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		vin-supply = <&reg_vcc5v0>;
-+		gpio = <&r_pio 0 9 GPIO_ACTIVE_HIGH>; /* PL9 */
-+		enable-active-high;
-+	};
-+
-+	reg_vcc_io: vcc-io {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-io";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		vin-supply = <&reg_vcc3v3>;
-+		gpio = <&r_pio 0 5 GPIO_ACTIVE_LOW>; /* PL5 */
-+	};
-+
-+	reg_vdd_cpux: vdd-cpux {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd-cpux";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		vin-supply = <&reg_vcc5v0>;
-+		gpio = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
-+		enable-active-high;
-+	};
-+};
-+
-+&codec {
-+	allwinner,audio-routing =
-+		"Line Out", "LINEOUT",
-+		"MIC1", "Mic",
-+		"Mic",  "MBIAS";
-+	status = "okay";
-+};
-+
-+&cpu0 {
-+	cpu-supply = <&reg_vdd_cpux>;
-+};
-+
-+&de {
-+	status = "okay";
-+};
-+
-+&ehci0 {
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&ehci3 {
-+	status = "okay";
-+};
-+
-+&emac {
-+	phy-handle = <&int_mii_phy>;
-+	phy-mode = "mii";
-+	allwinner,leds-active-low;
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&ir {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ir_pins_a>;
-+	status = "okay";
-+};
-+
-+&mmc0 {
-+	vmmc-supply = <&reg_vcc_io>;
-+	bus-width = <4>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
-+	status = "okay";
-+};
-+
-+&ohci0 {
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
-+&ohci3 {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_a>;
-+	status = "okay";
-+};
-+
-+&usb_otg {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	/* VBUS on USB ports are always on */
-+	usb0_vbus-supply = <&reg_vcc5v0>;
-+	usb1_vbus-supply = <&reg_vcc5v0>;
-+	usb2_vbus-supply = <&reg_vcc5v0>;
-+	usb3_vbus-supply = <&reg_vcc5v0>;
-+	status = "okay";
-+};
--- 
-2.7.4
+OK. I will revert it.
+
+> Thank you.
