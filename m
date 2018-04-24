@@ -1,65 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933174AbeDXNHJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:07:09 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33227 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757207AbeDXNHG (ORCPT
+        id S933206AbeDXNHm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:07:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33120 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1757808AbeDXNHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:07:06 -0400
-X-Google-Smtp-Source: AB8JxZqVjaAvhRLtvdLzAjUynS5MnRYyiPobio2OHY89rmBD7FKGy17yMMnYArTgYUJq9KnSmWmEISatvR+Hm/FeC5k=
+        Tue, 24 Apr 2018 09:07:37 -0400
+Subject: Re: [PATCH 01/10] vfio: ccw: Moving state change out of IRQ context
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+ <1524149293-12658-2-git-send-email-pmorel@linux.vnet.ibm.com>
+ <20180424065442.GV12194@bjsdjshi@linux.vnet.ibm.com>
+ <ac4b7441-2d17-922b-695e-98c01d87cd42@linux.vnet.ibm.com>
+ <20180424115929.5b5e1ff0.cohuck@redhat.com>
+ <f6253047-e364-c240-c4c5-cf186ca75a7d@linux.vnet.ibm.com>
+ <20180424135533.2e9d03dc.cohuck@redhat.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Tue, 24 Apr 2018 15:07:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424075003.48ab0015efc0892832343546@arm.com>
-References: <20180416042240.21528-1-namhyung@kernel.org> <20180416092345.GA23274@krava>
- <20180416135125.GA23802@kernel.org> <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
- <20180416165800.GD3202@kernel.org> <20180416122407.0d90863b69fed80166384850@arm.com>
- <20180416174811.1aca9106364effe435f363c8@arm.com> <20180417022726.GA31947@sejong>
- <20180418193759.b63912fe5e5b8a9023ec80a8@arm.com> <20180419025424.GC13370@sejong>
- <20180419183313.db3e3a105191a7f30b7650b2@arm.com> <CAKv+Gu_sY+Q+kqO1hp6f30WSGNPY1cnW5VJYj9cuVA0hU5YDVw@mail.gmail.com>
- <20180423164317.5a47f3dd9842d533413a1d4b@arm.com> <CAKv+Gu-u1E9gH7=p5sbiA4k_9mQ13y+056nYKnr2D9BPENNyMg@mail.gmail.com>
- <20180424075003.48ab0015efc0892832343546@arm.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 24 Apr 2018 15:07:05 +0200
-Message-ID: <CAKv+Gu-Y8D3Se7yc+8LifMmSAmURj4ZYBwVAbdkL-Krr_=1K3A@mail.gmail.com>
-Subject: Re: [PATCH] perf tools: set kernel end address properly
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Will Deacon <will.deacon@arm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180424135533.2e9d03dc.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18042413-0012-0000-0000-000005CE3520
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042413-0013-0000-0000-0000194AA72A
+Message-Id: <02ca116e-f20c-e59b-e609-70882d5f4afa@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804240126
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24 April 2018 at 14:50, Kim Phillips <kim.phillips@arm.com> wrote:
-> On Tue, 24 Apr 2018 08:13:57 +0200
-> Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+On 24/04/2018 13:55, Cornelia Huck wrote:
+> On Tue, 24 Apr 2018 13:49:14 +0200
+> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
 >
->> On 23 April 2018 at 23:43, Kim Phillips <kim.phillips@arm.com> wrote:
->> > arch__normalize_symbol_name() is a place where architecture code can
->> > clean up symbol names in perf, and I thought module_emit_adrp_veneer()
->> > was a veneer itself, but it seems that's not the case, so the
->> > literal string check for it shouldn't be needed.  The test is still
->> > failing though because it doesn't show up in kallsyms...
+>> On 24/04/2018 11:59, Cornelia Huck wrote:
+>>> On Tue, 24 Apr 2018 10:40:56 +0200
+>>> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+>>>   
+>>>> On 24/04/2018 08:54, Dong Jia Shi wrote:
+>>>>> * Pierre Morel <pmorel@linux.vnet.ibm.com> [2018-04-19 16:48:04 +0200]:
+>>>>>
+>>>>> [...]
+>>>>>      
+>>>>>> @@ -94,9 +83,15 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
+>>>>>>     static void vfio_ccw_sch_irq(struct subchannel *sch)
+>>>>>>     {
+>>>>>>     	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
+>>>>>> +	struct irb *irb = this_cpu_ptr(&cio_irb);
+>>>>>>
+>>>>>>     	inc_irq_stat(IRQIO_CIO);
+>>>>>> -	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_INTERRUPT);
+>>>>>> +	memcpy(&private->irb, irb, sizeof(*irb));
+>>>>>> +
+>>>>>> +	WARN_ON(work_pending(&private->io_work));
+>>>>> Hmm, why do we need this?
+>>>> The current design insure that we have not two concurrent SSCH requests.
+>>>> How ever I want here to track spurious interrupt.
+>>>> If we implement cancel, halt or clear requests, we also may trigger (AFAIU)
+>>>> a second interrupts depending on races between instructions, controller
+>>>> and device.
+>>> You won't get an interrupt for a successful cancel. If you do a
+>>> halt/clear, you will make the subchannel halt/clear pending in addition
+>>> to start pending and you'll only get one interrupt (if the I/O has
+>>> progressed far enough, you won't be able to issue a hsch). The
+>>> interesting case is:
+>>> - guest does a ssch, we do a ssch on the device
+>>> - the guest does a csch before it got the interrupt for the ssch
+>>> - before we do the csch on the device, the subchannel is already status
+>>>     pending with completion of the ssch
+>>> - after we issue the csch, we get a second interrupt (for the csch)
+>> We agree.
 >>
->> This turns out to be an unintended side effect of the fact that we
->> (I?) taught kallsyms to disregard symbols ending in "_veneer"
+>>> I think we should present two interrupts to the guest in that case.
+>>> Races between issuing ssch/hsch/csch and the subchannel becoming status
+>>> pending happen on real hardware as well, we're just more likely to see
+>>> them with the vfio layer in between.
+>> Yes, agreed too.
 >>
->> So we should probably rename the function, and everything will be fine.
+>>> (I'm currently trying to recall what we're doing with unsolicited
+>>> interrupts. These are fun wrt deferred cc 1; I'm not sure if there are
+>>> cases where we want to present a deferred cc to the guest.)
+>> This patch does not change the current functionalities, only
+>> consolidates the FSM.
+>> The current way to handle unsolicited interrupts is to report them to
+>> the guest
+>> along with the deferred code AFAIU.
+> My question was more along the line of "do we actually want to
+> _generate_ a deferred cc1 or unsolicited interrupt, based upon what we
+> do in our state machine". My guess is no, regardless of the changes you
+> do in this series.
 >
-> ok so what should we rename module_emit_adrp_veneer to?:
+>>> Also, doing a second ssch before we got final state for the first one
+>>> is perfectly valid. Linux just does not do it, so I'm not sure if we
+>>> should invest too much time there.
+>> I agree too, it would just make things unnecessary complicated.
+> I'm a big fan of just throwing everything at the hardware and let it
+> sort out any races etc. We just need to be sure we don't mix up
+> interrupts :)
 >
-> module_emit_adrp_veneer_
-> module_emit_adrp_veneer_fn
-> module_emit_adrp_veneer_nokallsyms
->
-> or..?
->
+OK, I understand, I can do somthing in the interrupt handler to make 
+sure we do not loose interrupt IRQs.
 
-How about
+I make a proposition in V2.
 
-module_emit_veneer_for_adrp
+Thanks,
 
-?
+Pierre
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
