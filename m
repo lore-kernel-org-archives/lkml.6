@@ -1,281 +1,91 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+Jo87yjudK2ASS2VZ4uP37a46rXjR7bHGypOF4Pybj7COH0ktORHUo+wvqQAGIsFKBo0Zd
-ARC-Seal: i=1; a=rsa-sha256; t=1524406268; cv=none;
+Return-Path: <christianvanbrauner@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524602651; cv=none;
         d=google.com; s=arc-20160816;
-        b=rOF5gyJmuU7xvIMHqL380uif5LbOsktQu8JnuT1gmq3Uyng/x0ZX5r4R08M5PKUI1s
-         ON9U3pjaqyA9dkx20YPoTqNBgxfUYf10DjuKj3vV9pl0FW0kVnHiE7KKTiIjNkBo9ziq
-         hxpuoC1/yWcDqTyy3y+q/K2f/YzzgzoghC+zRk1Ai89wYBA2har0+Aik31ZeqJ6O6o6j
-         US9OlZlf85okKRClOrDLAfZzOJIArR6ZBopvUTXseuBqOIIaACqK1SDveFmt9IwVOa7D
-         eDiEkNS0cG5q7tEKxslgcUMG4+4LnHtz8MU4wGop7mU1Us7KQ4e3QyGLZN+CeqqC74Db
-         aH8g==
+        b=Ts6zJcmz9pDK7dDyzCvuRd5IKFtci4oECS42BWc4XjoFShyhJoBvVDMEEw2KlUJ2y4
+         eTzbbWe7LDAHQsY8IRKbnnP8KCuXBWpuEhMvh5shP/wBLmuNa367SpHHADDKEO0e/FPJ
+         3/9qsjKBnK7x1cUPh3yMusjIael+nyIlhSlrsxqj0W5X18fReveMtVo0sgnGMi2lxszJ
+         G3jWc04F4s6w7r06ZB5Muo6ECoK3zzWVxH/psLjBlY5OUe3y87DBH7bnuHijpV7Ius73
+         cMefkYNlkRG2+/rXj8TOedoD7jgUwGkvjgcFj0YqRodODbLNot6OWFIZnK7/COfvagQU
+         bjvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=k1zbXhm5pI1CTrIT0eSLXnGuVwwhvUz/ygkFO31GiD8=;
-        b=dV2tqnMCHV3iY8bR2LLmKN3mDid8wX+yJTzj3hj1iedT4R440ljhqQfyc+/mOH0OQG
-         fQNZ9ZKuiZTH2JT63OsUWkmmV3vTofL+Ya6VGLjSrVUNApbQovGpNgKd046RExFRB0lZ
-         01uh+Ttyo/2H9L6CG2UMFwOBlbkPiGSqBu4EijHpsJbTIz4Yr0cBNdHGDJf615XK8oQQ
-         gnDBIlZeYu+eH23wkq3SdhB4IFmTQIwOmwerfEy2f2M1mZLlINGozWdchJ/OqDk8kFHf
-         p9cSrOTzk0+7t1WhqZ9+URv6aIBW1d4ATIEF3S42VfQkawfmU2ah79KCCbEj4eIcXJK4
-         Mkow==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:arc-authentication-results;
+        bh=23wESFnk2QVAiPcIxflCs0zYmppkb4Zrje5nOWIiqGg=;
+        b=XZnoq1JHRql7DlEh1JQs2460fZbfnTEwz4ncj+qmARrpKlXI99C8yB4jwx/8Y1yaHv
+         zU/7WoOy9uZRn8y+3Iog/vTYnXP+x7iZyTqa7b6Nw0KXqiN5xua8MRkfx4qhgtXGdPgP
+         scAOC7vWS7hD4HcPUoawaJ3YZbYpPV33jrASxI7ZEVj/q93DzAQbcqfD6CNIJxNtH+Y6
+         E3JuqLGLMDrIS4tg3Le9UB+rYFYLyyfghlw8oQV4gLY37QVbWpY76guW0XG+2rVLfkQ3
+         eJhy+zC8wKvBVv2/B6WqS8diRoHaYbPNHF7bOjQ6CUv4ZzNtug1atz9FntTWsirRKt4Q
+         s0Gg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>,
-	Alan Cox <alan@llwyncelyn.cymru>
-Subject: [PATCH 4.9 01/95] tty: make n_tty_read() always abort if hangup is in progress
-Date: Sun, 22 Apr 2018 15:52:30 +0200
-Message-Id: <20180422135210.490931172@linuxfoundation.org>
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+X-Google-Smtp-Source: AIpwx48ew3T8TJAcVrDpVKweNjdKa/E3fFNFwN3mcL/TEM9SE7+qrKi/2u1Xw/Uj2BIo9IbD+ZrkuA==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: ebiederm@xmission.com,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: avagin@virtuozzo.com,
+	ktkhai@virtuozzo.com,
+	serge@hallyn.com,
+	gregkh@linuxfoundation.org,
+	Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH net-next 0/2 v2] netns: uevent performance tweaks
+Date: Tue, 24 Apr 2018 22:43:33 +0200
+Message-Id: <20180424204335.12904-1-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180422135210.432103639@linuxfoundation.org>
-References: <20180422135210.432103639@linuxfoundation.org>
-User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598455354228641805?=
-X-GMAIL-MSGID: =?utf-8?q?1598455826866089839?=
+X-GMAIL-THRID: =?utf-8?q?1598661750124917564?=
+X-GMAIL-MSGID: =?utf-8?q?1598661750124917564?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Hey everyone,
 
-------------------
+This is v2 of "netns: uevent performance tweaks" which contains *no
+functional changes* just a minor indendation fix as requested by David.
 
-From: Tejun Heo <tj@kernel.org>
+Like Eric requested, I did extensive testing that prove significant
+performance improvements when using per-netns uevent sequence numbers
+with decoupled locks. The results and test descriptions were added to
+the commit message of
+[PATCH 2/2 v1] netns: isolate seqnums to use per-netns locks.
 
-commit 28b0f8a6962a24ed21737578f3b1b07424635c9e upstream.
+This series deals with a bunch of performance improvements when sending
+out uevents that have been extensively discussed here:
+https://lkml.org/lkml/2018/4/10/592
 
-A tty is hung up by __tty_hangup() setting file->f_op to
-hung_up_tty_fops, which is skipped on ttys whose write operation isn't
-tty_write().  This means that, for example, /dev/console whose write
-op is redirected_tty_write() is never actually marked hung up.
+- Only record uevent sockets from network namespaces owned by the
+  initial user namespace in the global uevent socket list.
+  Eric, this is the exact patch we agreed upon in
+  https://lkml.org/lkml/2018/4/10/592.
+  A very detailed rationale is present in the commit message for
+  [PATCH 1/2] netns: restrict uevents
+- Decouple the locking for network namespaces in the global uevent
+  socket list from the locking for network namespaces not in the global
+  uevent socket list.
+  A very detailed rationale including performance test results is
+  present in the commit message for
+  [PATCH 2/2] netns: isolate seqnums to use per-netns locks
 
-Because n_tty_read() uses the hung up status to decide whether to
-abort the waiting readers, the lack of hung-up marking can lead to the
-following scenario.
+Thanks!
+Christian
 
- 1. A session contains two processes.  The leader and its child.  The
-    child ignores SIGHUP.
+Christian Brauner (2):
+  netns: restrict uevents
+  netns: isolate seqnums to use per-netns locks
 
- 2. The leader exits and starts disassociating from the controlling
-    terminal (/dev/console).
+ include/linux/kobject.h     |   2 +
+ include/net/net_namespace.h |   3 +
+ kernel/ksysfs.c             |  11 +++-
+ lib/kobject_uevent.c        | 122 ++++++++++++++++++++++++++++--------
+ net/core/net_namespace.c    |  14 +++++
+ 5 files changed, 126 insertions(+), 26 deletions(-)
 
- 3. __tty_hangup() skips setting f_op to hung_up_tty_fops.
-
- 4. SIGHUP is delivered and ignored.
-
- 5. tty_ldisc_hangup() is invoked.  It wakes up the waits which should
-    clear the read lockers of tty->ldisc_sem.
-
- 6. The reader wakes up but because tty_hung_up_p() is false, it
-    doesn't abort and goes back to sleep while read-holding
-    tty->ldisc_sem.
-
- 7. The leader progresses to tty_ldisc_lock() in tty_ldisc_hangup()
-    and is now stuck in D sleep indefinitely waiting for
-    tty->ldisc_sem.
-
-The following is Alan's explanation on why some ttys aren't hung up.
-
- http://lkml.kernel.org/r/20171101170908.6ad08580@alans-desktop
-
- 1. It broke the serial consoles because they would hang up and close
-    down the hardware. With tty_port that *should* be fixable properly
-    for any cases remaining.
-
- 2. The console layer was (and still is) completely broken and doens't
-    refcount properly. So if you turn on console hangups it breaks (as
-    indeed does freeing consoles and half a dozen other things).
-
-As neither can be fixed quickly, this patch works around the problem
-by introducing a new flag, TTY_HUPPING, which is used solely to tell
-n_tty_read() that hang-up is in progress for the console and the
-readers should be aborted regardless of the hung-up status of the
-device.
-
-The following is a sample hung task warning caused by this issue.
-
-  INFO: task agetty:2662 blocked for more than 120 seconds.
-        Not tainted 4.11.3-dbg-tty-lockup-02478-gfd6c7ee-dirty #28
-  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-      0  2662      1 0x00000086
-  Call Trace:
-   __schedule+0x267/0x890
-   schedule+0x36/0x80
-   schedule_timeout+0x23c/0x2e0
-   ldsem_down_write+0xce/0x1f6
-   tty_ldisc_lock+0x16/0x30
-   tty_ldisc_hangup+0xb3/0x1b0
-   __tty_hangup+0x300/0x410
-   disassociate_ctty+0x6c/0x290
-   do_exit+0x7ef/0xb00
-   do_group_exit+0x3f/0xa0
-   get_signal+0x1b3/0x5d0
-   do_signal+0x28/0x660
-   exit_to_usermode_loop+0x46/0x86
-   do_syscall_64+0x9c/0xb0
-   entry_SYSCALL64_slow_path+0x25/0x25
-
-The following is the repro.  Run "$PROG /dev/console".  The parent
-process hangs in D state.
-
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <sys/wait.h>
-  #include <sys/ioctl.h>
-  #include <fcntl.h>
-  #include <unistd.h>
-  #include <stdio.h>
-  #include <stdlib.h>
-  #include <errno.h>
-  #include <signal.h>
-  #include <time.h>
-  #include <termios.h>
-
-  int main(int argc, char **argv)
-  {
-	  struct sigaction sact = { .sa_handler = SIG_IGN };
-	  struct timespec ts1s = { .tv_sec = 1 };
-	  pid_t pid;
-	  int fd;
-
-	  if (argc < 2) {
-		  fprintf(stderr, "test-hung-tty /dev/$TTY\n");
-		  return 1;
-	  }
-
-	  /* fork a child to ensure that it isn't already the session leader */
-	  pid = fork();
-	  if (pid < 0) {
-		  perror("fork");
-		  return 1;
-	  }
-
-	  if (pid > 0) {
-		  /* top parent, wait for everyone */
-		  while (waitpid(-1, NULL, 0) >= 0)
-			  ;
-		  if (errno != ECHILD)
-			  perror("waitpid");
-		  return 0;
-	  }
-
-	  /* new session, start a new session and set the controlling tty */
-	  if (setsid() < 0) {
-		  perror("setsid");
-		  return 1;
-	  }
-
-	  fd = open(argv[1], O_RDWR);
-	  if (fd < 0) {
-		  perror("open");
-		  return 1;
-	  }
-
-	  if (ioctl(fd, TIOCSCTTY, 1) < 0) {
-		  perror("ioctl");
-		  return 1;
-	  }
-
-	  /* fork a child, sleep a bit and exit */
-	  pid = fork();
-	  if (pid < 0) {
-		  perror("fork");
-		  return 1;
-	  }
-
-	  if (pid > 0) {
-		  nanosleep(&ts1s, NULL);
-		  printf("Session leader exiting\n");
-		  exit(0);
-	  }
-
-	  /*
-	   * The child ignores SIGHUP and keeps reading from the controlling
-	   * tty.  Because SIGHUP is ignored, the child doesn't get killed on
-	   * parent exit and the bug in n_tty makes the read(2) block the
-	   * parent's control terminal hangup attempt.  The parent ends up in
-	   * D sleep until the child is explicitly killed.
-	   */
-	  sigaction(SIGHUP, &sact, NULL);
-	  printf("Child reading tty\n");
-	  while (1) {
-		  char buf[1024];
-
-		  if (read(fd, buf, sizeof(buf)) < 0) {
-			  perror("read");
-			  return 1;
-		  }
-	  }
-
-	  return 0;
-  }
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Alan Cox <alan@llwyncelyn.cymru>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/tty/n_tty.c  |    6 ++++++
- drivers/tty/tty_io.c |    9 +++++++++
- include/linux/tty.h  |    1 +
- 3 files changed, 16 insertions(+)
-
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -2182,6 +2182,12 @@ static ssize_t n_tty_read(struct tty_str
- 				}
- 				if (tty_hung_up_p(file))
- 					break;
-+				/*
-+				 * Abort readers for ttys which never actually
-+				 * get hung up.  See __tty_hangup().
-+				 */
-+				if (test_bit(TTY_HUPPING, &tty->flags))
-+					break;
- 				if (!timeout)
- 					break;
- 				if (file->f_flags & O_NONBLOCK) {
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -709,6 +709,14 @@ static void __tty_hangup(struct tty_stru
- 		return;
- 	}
- 
-+	/*
-+	 * Some console devices aren't actually hung up for technical and
-+	 * historical reasons, which can lead to indefinite interruptible
-+	 * sleep in n_tty_read().  The following explicitly tells
-+	 * n_tty_read() to abort readers.
-+	 */
-+	set_bit(TTY_HUPPING, &tty->flags);
-+
- 	/* inuse_filps is protected by the single tty lock,
- 	   this really needs to change if we want to flush the
- 	   workqueue with the lock held */
-@@ -763,6 +771,7 @@ static void __tty_hangup(struct tty_stru
- 	 * from the ldisc side, which is now guaranteed.
- 	 */
- 	set_bit(TTY_HUPPED, &tty->flags);
-+	clear_bit(TTY_HUPPING, &tty->flags);
- 	tty_unlock(tty);
- 
- 	if (f)
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -355,6 +355,7 @@ struct tty_file_private {
- #define TTY_PTY_LOCK 		16	/* pty private */
- #define TTY_NO_WRITE_SPLIT 	17	/* Preserve write boundaries to driver */
- #define TTY_HUPPED 		18	/* Post driver->hangup() */
-+#define TTY_HUPPING		19	/* Hangup in progress */
- #define TTY_LDISC_HALTED	22	/* Line discipline is halted */
- 
- /* Values for tty->flow_change */
+-- 
+2.17.0
