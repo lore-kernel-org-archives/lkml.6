@@ -1,76 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751249AbeDXOtP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:49:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49022 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751117AbeDXOtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:49:12 -0400
-Subject: Re: [PATCH] locking/rwsem: Synchronize task state & waiter->task of
- readers
-To: Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>, Eric Sandeen <sandeen@redhat.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-References: <1523380938-19462-1-git-send-email-longman@redhat.com>
- <6c112ecb-d662-b1fc-152a-32060ec46dae@redhat.com>
- <20180423205514.GA5876@andrea>
- <20180424091510.GB4064@hirez.programming.kicks-ass.net>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <801fea56-90f3-4965-b24b-fa88ac8d16ce@redhat.com>
-Date: Tue, 24 Apr 2018 10:49:08 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1751368AbeDXOvJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:51:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750778AbeDXOvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 10:51:07 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF82B20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 24 Apr 2018 10:51:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH] printk: do not call console drivers from
+ printk_safe context
+Message-ID: <20180424105104.792d2d80@gandalf.local.home>
+In-Reply-To: <20180424022802.1330-1-sergey.senozhatsky@gmail.com>
+References: <20180424022802.1330-1-sergey.senozhatsky@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180424091510.GB4064@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 05:15 AM, Peter Zijlstra wrote:
-> On Mon, Apr 23, 2018 at 10:55:14PM +0200, Andrea Parri wrote:
->>>> +	/*
->>>> +	 * To avoid missed wakeup of reader, we need to make sure
->>>> +	 * that task state and waiter->task are properly synchronized.
->>>> +	 *
->>>> +	 *     wakeup		      sleep
->>>> +	 *     ------		      -----
->>>> +	 * __rwsem_mark_wake:	rwsem_down_read_failed*:
->>>> +	 *   [S] waiter->task	  [S] set_current_state(state)
->>>> +	 *	 MB		      MB
->>>> +	 * try_to_wake_up:
->>>> +	 *   [L] state		  [L] waiter->task
->>>> +	 *
->>>> +	 * For the wakeup path, the original lock release-acquire pair
->>>> +	 * does not provide enough guarantee of proper synchronization.
->>>> +	 */
->>>> +	smp_mb();
->>>> +
->>>>  	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
->>>>  	if (list_empty(&sem->wait_list)) {
->>>>  		/* hit end of list above */
->> try_to_wake_up() does:
->>
->> 	raw_spin_lock_irqsave(&p->pi_lock, flags);
->> 	smp_mb__after_spinlock();
->> 	if (!(p->state & state))
->>
->> My understanding is that this smp_mb__after_spinlock() provides us with
->> the guarantee you described above.  The smp_mb__after_spinlock() should
->> represent a 'cheaper way' to provide such a guarantee.
-> Right, I don't see what problem is being fixed here either. The scenario
-> in the comment is already closed by the smp_mb__after_spinlock() you
-> mention.
->
-> And it is fine to rely on that, we do in other places.
+On Tue, 24 Apr 2018 11:28:02 +0900
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
 
-Right, I missed the smp_mb__after_spinlock(). So the upstream code is
-fine after all. Sorry for the noise.
+> Calling console drivers from printk_safe() context does not really
+> make call_console_drivers() any safer, because printk_safe() has
+> nothing to do with console drivers or the underlying code. At the
+> same time printk()-s from console drivers are fine, they don't
+> deadlock the system. We need printk_safe() because of the way
+> vprintk_emit() works -- we protect logbuf lock, console_owner_lock
+> and console_sem spin_lock with printk_safe, -- not because of the
+> console drivers (which don't deal with logbuf, console_owner_lock
+> or console_sem locks). Hence we can call console drivers outside
+> of printk_safe() context.
+> 
+> Another thing to notice is that,
+> printk_safe() introduces unneeded complexity, since any printk()
+> message from console drivers has to be stored in per-CPU printk_safe()
+> buffer first, then be flushed via IRQ work:
+> 	call_console_drivers()
+> 	 printk()
+> 	  printk_safe_log_store()
+> 	   IRQ_work()
+> 	    printk_safe_flush_buffer()
+> 	     printk_deferred()
+> 	      log_store()
+> 	       irq_work_queue()               *
+> 	        wake_up_klogd_work_func()     *
+> 
+> Note that this also costs us extra IRQ work [along with the IRQ work
+> that flushes printk_safe() buffer] - we flush per-CPU printk_safe()
+> buffers via printk_deferred().
+> 
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> ---
+>  kernel/printk/internal.h | 7 ++++++-
+>  kernel/printk/printk.c   | 2 ++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+> index 2a7d04049af4..f3ba1bf08590 100644
+> --- a/kernel/printk/internal.h
+> +++ b/kernel/printk/internal.h
+> @@ -55,8 +55,13 @@ void __printk_safe_exit(void);
+>  	} while (0)
+>  
+>  #else
+> +static void __printk_safe_enter(void) {}
+> +static void __printk_safe_exit(void) {}
+>  
+> -__printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
+> +static __printf(1, 0) int vprintk_func(const char *fmt, va_list args)
+> +{
+> +	return 0;
+> +}
+>  
+>  /*
+>   * In !PRINTK builds we still export logbuf_lock spin_lock, console_sem
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 2f4af216bd6e..9acb25ce6081 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2391,9 +2391,11 @@ void console_unlock(void)
+>  		 */
+>  		console_lock_spinning_enable();
+>  
+> +		__printk_safe_exit();
+>  		stop_critical_timings();	/* don't trace print latency */
+>  		call_console_drivers(ext_text, ext_len, text, len);
+>  		start_critical_timings();
+> +		__printk_safe_enter();
+>  
 
-Cheers,
-Longman
+OK, I'm still confused (It's been that kind of week)
+
+So, if we do this, and the consoles do a printk(), doesn't that fill
+the logbuf? And then the loop this is in will just continue to perform
+that loop? That is, we have:
+
+  for (;;) {
+	if (console_seq == log_next_seq)
+		break;
+	console_seq++;
+	call_console_drives() {
+		printk() {
+			log_next_seq++;
+		}
+	}
+  }
+
+That looks like an infinite loop to me. Whereas the printk_safe keeps
+from adding to the logbuf?
+
+-- Steve
+
+
+>  		if (console_lock_spinning_disable_and_check()) {
+>  			printk_safe_exit_irqrestore(flags);
