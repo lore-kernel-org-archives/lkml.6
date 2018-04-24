@@ -1,62 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756242AbeDXGF2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 02:05:28 -0400
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:42195 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755919AbeDXGFW (ORCPT
+        id S1756253AbeDXGIw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 02:08:52 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50872 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755919AbeDXGIu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 02:05:22 -0400
-X-Google-Smtp-Source: AB8JxZqIunLfgwkzuPUdF/TaeH5csfUeW63kCQcZ2nfb/fsk5S8/v1GRw9G8yujC0juV41GYEiUvWw==
-Subject: Re: [PATCH v2] Input: xen-kbdfront - allow better run-time
- configuration
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lyan@suse.com, boris.ostrovsky@oracle.com, andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180419133934.31306-1-andr2000@gmail.com>
- <998533bb-8042-b07e-cb79-661750e035d9@gmail.com>
- <a2189ec9-ef4d-2c23-28c6-a6ff8525e8e5@suse.com>
- <7b4c1f8a-6317-1f17-5950-64a1b7183dba@gmail.com>
- <20180423185530.GC66646@dtor-ws>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <97f3a94f-f1d3-a162-c081-15f938eb7dd6@gmail.com>
-Date: Tue, 24 Apr 2018 09:05:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 24 Apr 2018 02:08:50 -0400
+Subject: Re: [Xen-devel] [RFC 0/2] To introduce xenwatch multithreading (xen
+ mtwatch)
+To: Juergen Gross <jgross@suse.com>
+References: <1523100355-27647-1-git-send-email-dongli.zhang@oracle.com>
+ <20180423140911.bihiwfwtlneobgzd@citrix.com>
+ <6c379249-886d-76ee-db9c-942967b23d80@oracle.com>
+ <db08fec6-5648-4d87-4ace-2f42d1d04479@suse.com>
+ <9a91b19a-5556-f1ea-92d5-29f2baa0ccd5@oracle.com>
+ <0280ae73-fd29-33a6-e4d5-8c83a8c2a5d7@suse.com>
+Cc: Wei Liu <wei.liu2@citrix.com>, ian.jackson@eu.citrix.com,
+        linux-kernel@vger.kernel.org, srinivas.eeda@oracle.com,
+        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
+        Joao Martins <joao.m.martins@oracle.com>
+From: Dongli Zhang <dongli.zhang@oracle.com>
+Message-ID: <1685df30-d31c-0c1b-40a4-b3282fbcd609@oracle.com>
+Date: Tue, 24 Apr 2018 14:10:40 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <20180423185530.GC66646@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <0280ae73-fd29-33a6-e4d5-8c83a8c2a5d7@suse.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8872 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804240062
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/23/2018 09:55 PM, Dmitry Torokhov wrote:
-> On Mon, Apr 23, 2018 at 11:29:45AM +0300, Oleksandr Andrushchenko wrote:
->> On 04/23/2018 11:23 AM, Juergen Gross wrote:
->>> On 23/04/18 10:02, Oleksandr Andrushchenko wrote:
->>>> Juergen, Jason, Dmitry
->>>> any comment on this?
->>> Oleksandr, please give us some time. I can't speak for others, but I am
->>> not sitting here idling and hoping that some work (e.g. patches to
->>> review) might appear.
+
+
+On 04/24/2018 02:03 PM, Juergen Gross wrote:
+> On 24/04/18 07:52, Dongli Zhang wrote:
+>> Hi Juergen,
+>>
+>> On 04/24/2018 01:22 PM, Juergen Gross wrote:
+>>> On 24/04/18 01:55, Dongli Zhang wrote:
+>>>> Hi Wei,
+>>>>
+>>>> On 04/23/2018 10:09 PM, Wei Liu wrote:
+>>>>> On Sat, Apr 07, 2018 at 07:25:53PM +0800, Dongli Zhang wrote:
+>>>>>> About per-domU xenwatch thread create/destroy, a new type of xenstore node is
+>>>>>> introduced: '/local/domain/0/mtwatch/<domid>'.
+>>>>>>
+>>>>>> Suppose the new domid id 7. During the domU (domid=7) creation, the xen
+>>>>>> toolstack writes '/local/domain/0/mtwatch/7' to xenstore before the insertion
+>>>>>> of '/local/domain/7'. When the domid=7 is destroyed, the last xenstore
+>>>>>> operation by xen toolstack is to remove '/local/domain/0/mtwatch/7'.
+>>>>>>
+>>>>>> The dom0 kernel subscribes a watch at node '/local/domain/0/mtwatch'.  Kernel
+>>>>>> thread [xen-mtwatch-7] is created when '/local/domain/0/mtwatch/7' is inserted,
+>>>>>> while this kernel thread is destroyed when the corresponding xenstore node is
+>>>>>> removed.
+>>>>>
+>>>>> Instead of inventing yet another node, can you not watch /local/domain
+>>>>> directly?
+>>>>
+>>>> Would you like to watch at /local/domain directly? Or is your question "is there
+>>>> any other way to not watch at /local/domain, while no extra xenstore node will
+>>>> be introduced"?
+>>>>
+>>>> Actually, the first prototype of this idea was to watch at /local/domain
+>>>> directly to get aware of the domU create/destroy, so that xen toolstack will not
+>>>> get involved. Joao Martins (CCed) had a concern on the performance as watching
+>>>> at /local/domain would lead to large amount of xenwatch events.
 >>>
->>> I have a lot of other stuff to do and will respond when I find some time
->>> to look at your patches.
->>>
->>> Pinging others on Monday when having sent out the patch only on Thursday
->>> is rather unfriendly.
->> Really sorry about this, my bad.
->> I had an impression that the only change we need to
->> discuss was uint -> bool change which seemed rather trivial
-> I am sorry I did not respond to the previous version until today, but I
-> do not think that we should be extending module parameters for this.
-> Protocol features are already there for absolute pointers and
-> multi-touch, keyboard and relative pointers should use the same
-> mechanism.
-Ok, then I'll start from extending the protocol
-> Thanks.
->
+>>> That's what the special watches "@introduceDomain" and "@releaseDomain"
+>>> are meant for.
+>>
+>> I used to consider to watch at "@introduceDomain". However, there is no domain
+>> information appended with "@introduceDomain" and it is still required for dom0
+>> kernel to proactively confirm who is created.
+> 
+> That isn't too hard, right? You just need to read /local/domain to get
+> the list of its children and look for new domains there.
+
+You are right. I will try to limit the modification within linux kernel, and try
+to not dirty xen toolstack.
+
+Thank you very much for the suggestion.
+
+Dongli Zhang
