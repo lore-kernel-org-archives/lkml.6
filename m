@@ -1,238 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932937AbeDXIGK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:06:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60696 "EHLO mx1.redhat.com"
+        id S932924AbeDXIGD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:06:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60712 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756350AbeDXIEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:04:46 -0400
+        id S1756358AbeDXIEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 04:04:48 -0400
 From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 To: Jiri Kosina <jikos@kernel.org>
 Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Peter Hutterer <peter.hutterer@who-t.net>, Mario.Limonciello@dell.com,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH v2 2/6] HID: generic: create one input report per application type
-Date: Tue, 24 Apr 2018 10:04:33 +0200
-Message-Id: <20180424080437.21367-3-benjamin.tissoires@redhat.com>
+Subject: [PATCH v2 3/6] HID: input: append a suffix matching the application
+Date: Tue, 24 Apr 2018 10:04:34 +0200
+Message-Id: <20180424080437.21367-4-benjamin.tissoires@redhat.com>
 In-Reply-To: <20180424080437.21367-1-benjamin.tissoires@redhat.com>
 References: <20180424080437.21367-1-benjamin.tissoires@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is not a good idea to try to fit all types of applications in the
-same input report. There are a lot of devices that are needing
-the quirk HID_MULTI_INPUT but this quirk doesn't match the actual HID
-description as it is based on the report ID.
-
-Given that most devices with MULTI_INPUT I can think of split nicely
-the devices inputs into application, it is a good thing to split the
-devices by default based on this assumption.
-
-Also make hid-multitouch following this rule, to not have to deal
-with too many input created.
-
-While we are at it, fix some checkpatch complaints about converting
-'unsigned' to 'unsigned int'.
+Given that we create one input node per application, we should name
+the input node accordingly to not lose userspace.
 
 Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 ---
- drivers/hid/hid-core.c       | 19 +++++++++++++------
- drivers/hid/hid-generic.c    | 15 +++++++++++++++
- drivers/hid/hid-gfrm.c       |  2 +-
- drivers/hid/hid-input.c      | 17 +++++++++++++++++
- drivers/hid/hid-magicmouse.c |  6 +++---
- include/linux/hid.h          | 10 +++++++---
- 6 files changed, 56 insertions(+), 13 deletions(-)
+ drivers/hid/hid-input.c | 67 +++++++++++++++++++++++++++++++++++++++++++------
+ include/linux/hid.h     |  1 +
+ 2 files changed, 60 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 5d7cc6bbbac6..68819106f4fc 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -57,7 +57,9 @@ MODULE_PARM_DESC(ignore_special_drivers, "Ignore any special drivers and handle
-  * Register a new report for a device.
-  */
- 
--struct hid_report *hid_register_report(struct hid_device *device, unsigned type, unsigned id)
-+struct hid_report *hid_register_report(struct hid_device *device,
-+				       unsigned int type, unsigned int id,
-+				       unsigned int application)
- {
- 	struct hid_report_enum *report_enum = device->report_enum + type;
- 	struct hid_report *report;
-@@ -78,6 +80,7 @@ struct hid_report *hid_register_report(struct hid_device *device, unsigned type,
- 	report->type = type;
- 	report->size = 0;
- 	report->device = device;
-+	report->application = application;
- 	report_enum->report_id_hash[id] = report;
- 
- 	list_add_tail(&report->list, &report_enum->report_list);
-@@ -221,11 +224,15 @@ static int hid_add_field(struct hid_parser *parser, unsigned report_type, unsign
- {
- 	struct hid_report *report;
- 	struct hid_field *field;
--	unsigned usages;
--	unsigned offset;
--	unsigned i;
-+	unsigned int usages;
-+	unsigned int offset;
-+	unsigned int i;
-+	unsigned int application;
-+
-+	application = hid_lookup_collection(parser, HID_COLLECTION_APPLICATION);
- 
--	report = hid_register_report(parser->device, report_type, parser->global.report_id);
-+	report = hid_register_report(parser->device, report_type,
-+				     parser->global.report_id, application);
- 	if (!report) {
- 		hid_err(parser->device, "hid_register_report failed\n");
- 		return -1;
-@@ -259,7 +266,7 @@ static int hid_add_field(struct hid_parser *parser, unsigned report_type, unsign
- 
- 	field->physical = hid_lookup_collection(parser, HID_COLLECTION_PHYSICAL);
- 	field->logical = hid_lookup_collection(parser, HID_COLLECTION_LOGICAL);
--	field->application = hid_lookup_collection(parser, HID_COLLECTION_APPLICATION);
-+	field->application = application;
- 
- 	for (i = 0; i < usages; i++) {
- 		unsigned j = i;
-diff --git a/drivers/hid/hid-generic.c b/drivers/hid/hid-generic.c
-index c25b4718de44..3b6eccbc2519 100644
---- a/drivers/hid/hid-generic.c
-+++ b/drivers/hid/hid-generic.c
-@@ -56,6 +56,20 @@ static bool hid_generic_match(struct hid_device *hdev,
- 	return true;
- }
- 
-+static int hid_generic_probe(struct hid_device *hdev,
-+			     const struct hid_device_id *id)
-+{
-+	int ret;
-+
-+	hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
-+
-+	ret = hid_parse(hdev);
-+	if (ret)
-+		return ret;
-+
-+	return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
-+}
-+
- static const struct hid_device_id hid_table[] = {
- 	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, HID_ANY_ID, HID_ANY_ID) },
- 	{ }
-@@ -66,6 +80,7 @@ static struct hid_driver hid_generic = {
- 	.name = "hid-generic",
- 	.id_table = hid_table,
- 	.match = hid_generic_match,
-+	.probe = hid_generic_probe,
- };
- module_hid_driver(hid_generic);
- 
-diff --git a/drivers/hid/hid-gfrm.c b/drivers/hid/hid-gfrm.c
-index 075b1c020846..cf477f8c8f4c 100644
---- a/drivers/hid/hid-gfrm.c
-+++ b/drivers/hid/hid-gfrm.c
-@@ -116,7 +116,7 @@ static int gfrm_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 		 * those reports reach gfrm_raw_event() from hid_input_report().
- 		 */
- 		if (!hid_register_report(hdev, HID_INPUT_REPORT,
--					 GFRM100_SEARCH_KEY_REPORT_ID)) {
-+					 GFRM100_SEARCH_KEY_REPORT_ID, 0)) {
- 			ret = -ENOMEM;
- 			goto done;
- 		}
 diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 62e42664955e..361643683c08 100644
+index 361643683c08..ab93dd5927c3 100644
 --- a/drivers/hid/hid-input.c
 +++ b/drivers/hid/hid-input.c
-@@ -1620,6 +1620,20 @@ static struct hid_input *hidinput_match(struct hid_report *report)
- 	return NULL;
+@@ -1510,15 +1510,56 @@ static void report_features(struct hid_device *hid)
+ 		}
  }
  
-+static struct hid_input *hidinput_match_application(struct hid_report *report)
-+{
-+	struct hid_device *hid = report->device;
-+	struct hid_input *hidinput;
+-static struct hid_input *hidinput_allocate(struct hid_device *hid)
++static struct hid_input *hidinput_allocate(struct hid_device *hid,
++					   unsigned int application)
+ {
+ 	struct hid_input *hidinput = kzalloc(sizeof(*hidinput), GFP_KERNEL);
+ 	struct input_dev *input_dev = input_allocate_device();
+-	if (!hidinput || !input_dev) {
+-		kfree(hidinput);
+-		input_free_device(input_dev);
+-		hid_err(hid, "Out of memory during hid input probe\n");
+-		return NULL;
++	const char *suffix = NULL;
 +
-+	list_for_each_entry(hidinput, &hid->inputs, list) {
-+		if (hidinput->report &&
-+		    hidinput->report->application == report->application)
-+			return hidinput;
++	if (!hidinput || !input_dev)
++		goto fail;
++
++	if ((hid->quirks & HID_QUIRK_INPUT_PER_APP) &&
++	    hid->maxapplication > 1) {
++		switch (application) {
++		case HID_GD_KEYBOARD:
++			suffix = "Keyboard";
++			break;
++		case HID_GD_KEYPAD:
++			suffix = "Keypad";
++			break;
++		case HID_GD_MOUSE:
++			suffix = "Mouse";
++			break;
++		case HID_DG_STYLUS:
++			suffix = "Pen";
++			break;
++		case HID_DG_TOUCHSCREEN:
++			suffix = "Touchscreen";
++			break;
++		case HID_DG_TOUCHPAD:
++			suffix = "Touchpad";
++			break;
++		case HID_GD_SYSTEM_CONTROL:
++			suffix = "System Control";
++			break;
++		case HID_CP_CONSUMER_CONTROL:
++			suffix = "Consumer Control";
++			break;
++		case HID_GD_WIRELESS_RADIO_CTLS:
++			suffix = "Wireless Radio Control";
++			break;
++		default:
++			break;
++		}
 +	}
 +
-+	return NULL;
-+}
-+
- static inline void hidinput_configure_usages(struct hid_input *hidinput,
- 					     struct hid_report *report)
- {
-@@ -1680,6 +1694,9 @@ int hidinput_connect(struct hid_device *hid, unsigned int force)
- 			 */
- 			if (hid->quirks & HID_QUIRK_MULTI_INPUT)
- 				hidinput = hidinput_match(report);
-+			else if (hid->maxapplication > 1 &&
-+				 (hid->quirks & HID_QUIRK_INPUT_PER_APP))
-+				hidinput = hidinput_match_application(report);
- 
- 			if (!hidinput) {
- 				hidinput = hidinput_allocate(hid);
-diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
-index 42ed887ba0be..b454c4386157 100644
---- a/drivers/hid/hid-magicmouse.c
-+++ b/drivers/hid/hid-magicmouse.c
-@@ -531,12 +531,12 @@ static int magicmouse_probe(struct hid_device *hdev,
- 
- 	if (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE)
- 		report = hid_register_report(hdev, HID_INPUT_REPORT,
--			MOUSE_REPORT_ID);
-+			MOUSE_REPORT_ID, 0);
- 	else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
- 		report = hid_register_report(hdev, HID_INPUT_REPORT,
--			TRACKPAD_REPORT_ID);
-+			TRACKPAD_REPORT_ID, 0);
- 		report = hid_register_report(hdev, HID_INPUT_REPORT,
--			DOUBLE_REPORT_ID);
-+			DOUBLE_REPORT_ID, 0);
++	if (suffix) {
++		hidinput->name = kasprintf(GFP_KERNEL, "%s %s",
++					   hid->name, suffix);
++		if (!hidinput->name)
++			goto fail;
  	}
  
- 	if (!report) {
+ 	input_set_drvdata(input_dev, hid);
+@@ -1528,7 +1569,7 @@ static struct hid_input *hidinput_allocate(struct hid_device *hid)
+ 	input_dev->setkeycode = hidinput_setkeycode;
+ 	input_dev->getkeycode = hidinput_getkeycode;
+ 
+-	input_dev->name = hid->name;
++	input_dev->name = hidinput->name ? hidinput->name : hid->name;
+ 	input_dev->phys = hid->phys;
+ 	input_dev->uniq = hid->uniq;
+ 	input_dev->id.bustype = hid->bus;
+@@ -1543,6 +1584,12 @@ static struct hid_input *hidinput_allocate(struct hid_device *hid)
+ 	INIT_LIST_HEAD(&hidinput->reports);
+ 
+ 	return hidinput;
++
++fail:
++	kfree(hidinput);
++	input_free_device(input_dev);
++	hid_err(hid, "Out of memory during hid input probe\n");
++	return NULL;
+ }
+ 
+ static bool hidinput_has_been_populated(struct hid_input *hidinput)
+@@ -1588,6 +1635,7 @@ static void hidinput_cleanup_hidinput(struct hid_device *hid,
+ 
+ 	list_del(&hidinput->list);
+ 	input_free_device(hidinput->input);
++	kfree(hidinput->name);
+ 
+ 	for (k = HID_INPUT_REPORT; k <= HID_OUTPUT_REPORT; k++) {
+ 		if (k == HID_OUTPUT_REPORT &&
+@@ -1656,6 +1704,7 @@ int hidinput_connect(struct hid_device *hid, unsigned int force)
+ 	struct hid_driver *drv = hid->driver;
+ 	struct hid_report *report;
+ 	struct hid_input *next, *hidinput = NULL;
++	unsigned int application;
+ 	int i, k;
+ 
+ 	INIT_LIST_HEAD(&hid->inputs);
+@@ -1688,6 +1737,8 @@ int hidinput_connect(struct hid_device *hid, unsigned int force)
+ 			if (!report->maxfield)
+ 				continue;
+ 
++			application = report->application;
++
+ 			/*
+ 			 * Find the previous hidinput report attached
+ 			 * to this report id.
+@@ -1699,7 +1750,7 @@ int hidinput_connect(struct hid_device *hid, unsigned int force)
+ 				hidinput = hidinput_match_application(report);
+ 
+ 			if (!hidinput) {
+-				hidinput = hidinput_allocate(hid);
++				hidinput = hidinput_allocate(hid, application);
+ 				if (!hidinput)
+ 					goto out_unwind;
+ 			}
 diff --git a/include/linux/hid.h b/include/linux/hid.h
-index e1ec7f91f926..d5ebeacc3b57 100644
+index d5ebeacc3b57..d3bd83d9127f 100644
 --- a/include/linux/hid.h
 +++ b/include/linux/hid.h
-@@ -341,6 +341,7 @@ struct hid_item {
- /* BIT(8) reserved for backward compatibility, was HID_QUIRK_NO_EMPTY_INPUT */
- /* BIT(9) reserved for backward compatibility, was NO_INIT_INPUT_REPORTS */
- #define HID_QUIRK_ALWAYS_POLL			BIT(10)
-+#define HID_QUIRK_INPUT_PER_APP			BIT(11)
- #define HID_QUIRK_SKIP_OUTPUT_REPORTS		BIT(16)
- #define HID_QUIRK_SKIP_OUTPUT_REPORT_ID		BIT(17)
- #define HID_QUIRK_NO_OUTPUT_REPORTS_ON_INTR_EP	BIT(18)
-@@ -465,8 +466,9 @@ struct hid_field {
- struct hid_report {
+@@ -512,6 +512,7 @@ struct hid_input {
  	struct list_head list;
- 	struct list_head hidinput_list;
--	unsigned id;					/* id of this report */
--	unsigned type;					/* report type */
-+	unsigned int id;				/* id of this report */
-+	unsigned int type;				/* report type */
-+	unsigned int application;			/* application usage for this report */
- 	struct hid_field *field[HID_MAX_FIELDS];	/* fields of the report */
- 	unsigned maxfield;				/* maximum valid field index */
- 	unsigned size;					/* size of the report (bits) */
-@@ -868,7 +870,9 @@ void hid_output_report(struct hid_report *report, __u8 *data);
- void __hid_request(struct hid_device *hid, struct hid_report *rep, int reqtype);
- u8 *hid_alloc_report_buf(struct hid_report *report, gfp_t flags);
- struct hid_device *hid_allocate_device(void);
--struct hid_report *hid_register_report(struct hid_device *device, unsigned type, unsigned id);
-+struct hid_report *hid_register_report(struct hid_device *device,
-+				       unsigned int type, unsigned int id,
-+				       unsigned int application);
- int hid_parse_report(struct hid_device *hid, __u8 *start, unsigned size);
- struct hid_report *hid_validate_values(struct hid_device *hid,
- 				       unsigned int type, unsigned int id,
+ 	struct hid_report *report;
+ 	struct input_dev *input;
++	const char *name;
+ 	bool registered;
+ 	struct list_head reports;	/* the list of reports */
+ };
 -- 
 2.14.3
