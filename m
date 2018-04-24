@@ -1,148 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933307AbeDXMuD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:50:03 -0400
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:37845 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753182AbeDXMtV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:49:21 -0400
-X-Google-Smtp-Source: AIpwx4/ePm8I+liirp9wyBnQlKtCCJO4rp4EXOs6ravsxRdzS8n4uN/j7B8kOqwMsmbOZz3mqovUtQ==
-Subject: Re: [PATCH v2 2/2] media: Add a driver for the ov7251 camera sensor
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1521778460-8717-1-git-send-email-todor.tomov@linaro.org>
- <1521778460-8717-3-git-send-email-todor.tomov@linaro.org>
- <20180329115147.nai3dgverqpjympu@paasikivi.fi.intel.com>
- <3b45d013-d9e7-04bf-22a3-06b858c2c7bd@linaro.org>
- <20180417201021.q6t4imtoaeh5vtsi@kekkonen.localdomain>
-From: Todor Tomov <todor.tomov@linaro.org>
-Message-ID: <b84b4f78-8085-b536-7113-f0a257d3359e@linaro.org>
-Date: Tue, 24 Apr 2018 15:49:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180417201021.q6t4imtoaeh5vtsi@kekkonen.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S933304AbeDXMuN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:50:13 -0400
+Received: from foss.arm.com ([217.140.101.70]:52714 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932995AbeDXMuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 08:50:06 -0400
+Date: Tue, 24 Apr 2018 07:50:03 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Will Deacon <will.deacon@arm.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
+Subject: Re: [PATCH] perf tools: set kernel end address properly
+Message-Id: <20180424075003.48ab0015efc0892832343546@arm.com>
+In-Reply-To: <CAKv+Gu-u1E9gH7=p5sbiA4k_9mQ13y+056nYKnr2D9BPENNyMg@mail.gmail.com>
+References: <20180416042240.21528-1-namhyung@kernel.org>
+        <20180416092345.GA23274@krava>
+        <20180416135125.GA23802@kernel.org>
+        <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
+        <20180416165800.GD3202@kernel.org>
+        <20180416122407.0d90863b69fed80166384850@arm.com>
+        <20180416174811.1aca9106364effe435f363c8@arm.com>
+        <20180417022726.GA31947@sejong>
+        <20180418193759.b63912fe5e5b8a9023ec80a8@arm.com>
+        <20180419025424.GC13370@sejong>
+        <20180419183313.db3e3a105191a7f30b7650b2@arm.com>
+        <CAKv+Gu_sY+Q+kqO1hp6f30WSGNPY1cnW5VJYj9cuVA0hU5YDVw@mail.gmail.com>
+        <20180423164317.5a47f3dd9842d533413a1d4b@arm.com>
+        <CAKv+Gu-u1E9gH7=p5sbiA4k_9mQ13y+056nYKnr2D9BPENNyMg@mail.gmail.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
+On Tue, 24 Apr 2018 08:13:57 +0200
+Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 
-On 17.04.2018 23:10, Sakari Ailus wrote:
-> Hi Todor,
+> On 23 April 2018 at 23:43, Kim Phillips <kim.phillips@arm.com> wrote:
+> > arch__normalize_symbol_name() is a place where architecture code can
+> > clean up symbol names in perf, and I thought module_emit_adrp_veneer()
+> > was a veneer itself, but it seems that's not the case, so the
+> > literal string check for it shouldn't be needed.  The test is still
+> > failing though because it doesn't show up in kallsyms...
 > 
-> On Tue, Apr 17, 2018 at 06:32:07PM +0300, Todor Tomov wrote:
-> ...
->>>> +static int ov7251_regulators_enable(struct ov7251 *ov7251)
->>>> +{
->>>> +	int ret;
->>>> +
->>>> +	ret = regulator_enable(ov7251->io_regulator);
->>>
->>> How about regulator_bulk_enable() here, and bulk_disable below?
->>
->> I'm not using the bulk API because usually there is a power up
->> sequence and intervals that must be followed. For this sensor
->> the only constraint is that core regulator must be enabled
->> after io regulator. But the bulk API doesn't guarantee the
->> order.
+> This turns out to be an unintended side effect of the fact that we
+> (I?) taught kallsyms to disregard symbols ending in "_veneer"
 > 
-> Could you add a comment explaining this? Otherwise it won't take long until
-> someone "fixes" the code.
+> So we should probably rename the function, and everything will be fine.
 
-Sure :D
-I'm adding a comment.
+ok so what should we rename module_emit_adrp_veneer to?:
 
-> 
-> ...
-> 
->>>> +static int ov7251_read_reg(struct ov7251 *ov7251, u16 reg, u8 *val)
->>>> +{
->>>> +	u8 regbuf[2];
->>>> +	int ret;
->>>> +
->>>> +	regbuf[0] = reg >> 8;
->>>> +	regbuf[1] = reg & 0xff;
->>>> +
->>>> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, 2);
->>>> +	if (ret < 0) {
->>>> +		dev_err(ov7251->dev, "%s: write reg error %d: reg=%x\n",
->>>> +			__func__, ret, reg);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	ret = i2c_master_recv(ov7251->i2c_client, val, 1);
->>>> +	if (ret < 0) {
->>>> +		dev_err(ov7251->dev, "%s: read reg error %d: reg=%x\n",
->>>> +			__func__, ret, reg);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int ov7251_set_exposure(struct ov7251 *ov7251, s32 exposure)
->>>> +{
->>>> +	int ret;
->>>> +
->>>> +	ret = ov7251_write_reg(ov7251, OV7251_AEC_EXPO_0,
->>>> +			       (exposure & 0xf000) >> 12);
->>>> +	if (ret < 0)
->>>> +		return ret;
->>>> +
->>>> +	ret = ov7251_write_reg(ov7251, OV7251_AEC_EXPO_1,
->>>> +			       (exposure & 0x0ff0) >> 4);
->>>> +	if (ret < 0)
->>>> +		return ret;
->>>> +
->>>> +	return ov7251_write_reg(ov7251, OV7251_AEC_EXPO_2,
->>>> +				(exposure & 0x000f) << 4);
->>>
->>> It's not a good idea to access multi-octet registers separately. Depending
->>> on the hardware implementation, the hardware could latch the value in the
->>> middle of an update. This is only an issue during streaming in practice
->>> though.
->>
->> Good point. The sensor has a group write functionality which can be used
->> to solve this but in general is intended
->> to apply a group of exposure and gain settings in the same frame. However
->> it seems to me that is not possible to use this functionality efficiently
->> with the currently available user controls. The group write is configured
->> using an id for a group of commands. So if we configure exposure and gain
->> separately (a group for each):
->> - if the driver uses same group id for exposure and gain, if both controls
->>   are received in one frame the second will overwrite the first (the
->>   first will not be applied);
->> - if the driver uses different group id for exposure and gain, it will not
->>   be possible for the user to change exposure and gain in the same frame
->>   (as some exposure algorithms do) and it will lead again to frames with
->>   "incorrect" brightness.
->>
->> To do this correctly we will have to extend the API to be able to apply
->> exposure and gain "atomically":
->> - a single user control which will set both exposure and gain and it will
->>   guarantee that they will be applied in the same frame;
->> - some kind of: begin, set exposure, set gain, end, launch -API
->>
->> What do you think?
->>
->> Actually, I'm a little bit surprised that I didn't find anything
->> like this already. And there are already a number of sensor drivers
->> which update more than one register to set exposure.
-> 
-> The latter of the two would be preferred as it isn't limited to exposure
-> and gain only. Still, you could address the problem for this driver by
-> simply writing the register in a single transaction.
+module_emit_adrp_veneer_
+module_emit_adrp_veneer_fn
+module_emit_adrp_veneer_nokallsyms
 
-Thanks for suggestion. I've tried the single transaction, I will send the
-next version of the driver shortly.
+or..?
 
--- 
-Best regards,
-Todor Tomov
+Kim
