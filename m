@@ -1,92 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751437AbeDXPkV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:40:21 -0400
-Received: from thoth.sbs.de ([192.35.17.2]:34216 "EHLO thoth.sbs.de"
+        id S1751047AbeDXPmW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:42:22 -0400
+Received: from mga17.intel.com ([192.55.52.151]:58012 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750935AbeDXPkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:40:18 -0400
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/6] PCI: Make pci_get_new_domain_nr static
-Date: Tue, 24 Apr 2018 17:13:37 +0200
-Message-Id: <a21882288c4664cc983a5741e8cbf6d59abacd46.1524582822.git.jan.kiszka@siemens.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1524582822.git.jan.kiszka@siemens.com>
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
+        id S1750729AbeDXPmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 11:42:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,323,1520924400";
+   d="scan'208";a="35796702"
+Date: Tue, 24 Apr 2018 23:41:16 +0800
+From: kbuild test robot <lkp@intel.com>
+To: jeffm@suse.com
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH 5/5] procfs: share fd/fdinfo with thread group leader
+ when files are shared
+Message-ID: <201804242316.TemnBYbI%fengguang.wu@intel.com>
+References: <20180424022106.16952-6-jeffm@suse.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424022106.16952-6-jeffm@suse.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hi Jeff,
 
-The only user of that function is of_pci_bus_find_domain_nr. Pure
-cleanup.
+Thank you for the patch! Perhaps something to improve:
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.17-rc2 next-20180424]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/jeffm-suse-com/procfs-reduce-duplication-by-using-symlinks/20180424-203620
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:285:34: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:331:42: sparse: expression using sizeof(void)
+   fs/proc/base.c:834:32: sparse: expression using sizeof(void)
+   fs/proc/base.c:950:27: sparse: expression using sizeof(void)
+   fs/proc/base.c:951:28: sparse: expression using sizeof(void)
+   fs/proc/base.c:951:28: sparse: expression using sizeof(void)
+   fs/proc/base.c:2085:25: sparse: cast to restricted fmode_t
+   fs/proc/base.c:2140:42: sparse: cast from restricted fmode_t
+   fs/proc/base.c:2243:48: sparse: cast from restricted fmode_t
+>> fs/proc/base.c:3568:32: sparse: symbol 'proc_pid_files_link_dentry_operations' was not declared. Should it be static?
+   fs/proc/base.c:1078:36: sparse: context imbalance in '__set_oom_adj' - unexpected unlock
+   fs/proc/base.c:2271:13: sparse: context imbalance in 'timers_start' - wrong count at exit
+   fs/proc/base.c:2297:36: sparse: context imbalance in 'timers_stop' - unexpected unlock
+
+Please review and possibly fold the followup patch.
+
 ---
- drivers/pci/pci.c   | 6 ++----
- include/linux/pci.h | 3 ---
- 2 files changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index e597655a5643..695c2bb4e853 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5702,15 +5702,14 @@ static void pci_no_domains(void)
- #endif
- }
- 
--#ifdef CONFIG_PCI_DOMAINS
-+#ifdef CONFIG_PCI_DOMAINS_GENERIC
- static atomic_t __domain_nr = ATOMIC_INIT(-1);
- 
--int pci_get_new_domain_nr(void)
-+static int pci_get_new_domain_nr(void)
- {
- 	return atomic_inc_return(&__domain_nr);
- }
- 
--#ifdef CONFIG_PCI_DOMAINS_GENERIC
- static int of_pci_bus_find_domain_nr(struct device *parent)
- {
- 	static int use_dt_domains = -1;
-@@ -5765,7 +5764,6 @@ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
- 			       acpi_pci_bus_find_domain_nr(bus);
- }
- #endif
--#endif
- 
- /**
-  * pci_ext_cfg_avail - can we access extended PCI config space?
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 73178a2fcee0..963232a6cd2e 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1510,12 +1510,10 @@ void pci_cfg_access_unlock(struct pci_dev *dev);
-  */
- #ifdef CONFIG_PCI_DOMAINS
- extern int pci_domains_supported;
--int pci_get_new_domain_nr(void);
- #else
- enum { pci_domains_supported = 0 };
- static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
- static inline int pci_proc_domain(struct pci_bus *bus) { return 0; }
--static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
- #endif /* CONFIG_PCI_DOMAINS */
- 
- /*
-@@ -1670,7 +1668,6 @@ static inline struct pci_dev *pci_get_domain_bus_and_slot(int domain,
- 
- static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
- static inline struct pci_dev *pci_dev_get(struct pci_dev *dev) { return NULL; }
--static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
- 
- #define dev_is_pci(d) (false)
- #define dev_is_pf(d) (false)
--- 
-2.13.6
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
