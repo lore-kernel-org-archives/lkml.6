@@ -1,36 +1,31 @@
-Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524639115; cv=none;
+Return-Path: <pavel@ucw.cz>
+X-Google-Smtp-Source: AIpwx4+mZMbrJwB4KiFM3B6Z7TTs9K5dv2MYEhsdqMvm7nW2/2OAihUfnC+dtjtxvelQiMajnViD
+ARC-Seal: i=1; a=rsa-sha256; t=1524602312; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ny+42O6Q5MAQO50ErxTXyVohNIOc2nUI+enVDAVd0Ok0byP82BCAhpQRBj3M7tLgQn
-         74TIo5sG3n3l27HwG05mKjPw3Efn7CzjEYG0hSzy6xh7FF4ViU4YDAwPYZKXfoknNS4A
-         KfWixlpOilLGEUW2ZJ8QZ1wnZ7EdC6ETwaPKDmYvNlp3V7RSwKfqvLbNcGIYUFv96k8f
-         YcmTwTmszU3yZlOV3QYycTgRqj1rshO1NxA51+tlF7GOwHzrJ6QZbjyWqmRRAsEXC5/c
-         51yH26BSmAbSBELizHA29za56TIyZ+kH0skdkL8CBs+4QRifmXINw0ziS2oB/7wZWlm1
-         gZBw==
+        b=Fra0S+4fSlPYogdTYR7LdtxzDN03wF/wh9QjmQoPD2cmodKQ/Vy8R5Ra2bH80ouxLg
+         xTSr3QWiYR4og5GV4XfKWHi2f6QT5A85b6nnxY2slMZTrbEas7TLskeNmRDbVgDEkzMg
+         THGnJMBcVdreQiYZrDiig1/MtFOJgTF97XubKsbkWoK1QYqRvwbIpE1qgOdyioIpoaug
+         eQ8+VnwdyAA75uJcvDMJNPYlqYeQ+zSvsQEkFTMQxQCtdZy3jp/0KW0WDq0T0T68RMiY
+         aBBk/Ah0kQ0LzRvBspzwPMVnwotzBGfgGev3c3HUzddzSW6FG+kEgxXeQljO694nX51d
+         KX8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=deTgewHoF+xkeUfMySaQ895CDn3NVIxOtBJVr60y4NI=;
-        b=yBSFIBgm52PO/mEKkazIRL0WRK3ng5l1TI25jgbpC5WJZjxsvmflkQqH1tVvJc68Zx
-         leQgi8updtT4u2eQ7vB+zLGVXvxTWFw5B/upZQ0+sXI2opmYVqxwDm2DjJ/AsJDp24k6
-         1aXfUhKIRfMFRdL++6gr6A4MuzwmldDrb7zPyCVmzyUMukOFY8OMeSkAWyMVr54WKVN1
-         1XhyB4uo7+HRZ1CYvKoOgH6cxEzvGJZ/1GzXfo6K5Aeuam6tt8vwUGSXGJLLGoRXnRHB
-         bWT9bILLHzgN/njuuImavIm2qRzA912fW9jVw6DBdjbuhnnsb+4diwFEb1Br8PsV3pwN
-         UlvA==
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=GrH8ntdF9PXS7eB7BY7M17yVFNqk82OejELAkk883KM=;
+        b=CpUlsCmRbwycL5YAYUPXQA15B9Wl8iMfPL3VpeR2aMVS+2gVVkwb2viH0AM2MkSWfS
+         p8j0bBhN0cxzgGPn9m7A2Wdla3nU9Drlv1yKaHTN8duSoWS6/BcXxdD0TNWB68Srk3JT
+         Qewt4DqkwgafZMR/IJ3bGSWMvmnH1pskQjS/E9Ndn9fppOUIueF88x7PJNckP2rYON6n
+         CeVI5llvfoFoIqhtnIannEL3AVMWaKQHmCwuaw587I5Spp8sUrYgkh1rYqD1Y0k4R0zc
+         Z6mYphcmYR3VuVWjtKk7oFySvbbGN93Ey4hcKlcEEKwuc8MZf/MuqkjnELoKUWVD7P2C
+         l0/A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=UkZcBXAu;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=UkZcBXAu;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com
-X-Google-Smtp-Source: AB8JxZrlgZPPcj66Oc8n3rzNCfOrgo91wHgu0SqLXJjQyVK0ytfKQKtpr5eSoXtjay3visd8PDpr5Q==
-Sender: Johan Hovold <jhovold@gmail.com>
-Date: Wed, 25 Apr 2018 08:51:46 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Johan Hovold <johan@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+Date: Tue, 24 Apr 2018 22:38:32 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Andreas Kemnade <andreas@kemnade.info>,
@@ -38,55 +33,52 @@ Cc: Johan Hovold <johan@kernel.org>,
 	"H . Nikolaus Schaller" <hns@goldelico.com>,
 	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Subject: Re: [PATCH 0/7] gnss: add new GNSS subsystem
-Message-ID: <20180425065146.GH4615@localhost>
+Message-ID: <20180424203832.GA22207@amd>
 References: <20180424163458.11947-1-johan@kernel.org>
- <20180425062659.GA5352@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
 Content-Disposition: inline
-In-Reply-To: <20180425062659.GA5352@amd>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180424163458.11947-1-johan@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598647061282688193?=
-X-GMAIL-MSGID: =?utf-8?q?1598699985224888428?=
+X-GMAIL-MSGID: =?utf-8?q?1598661394861003207?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 08:26:59AM +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > This series adds a new subsystem for GNSS receivers (e.g. GPS
-> > receivers).
-> > 
-> > While GNSS receivers are typically accessed using a UART interface they
-> > often also support other I/O interfaces such as I2C, SPI and USB, while
-> > yet other devices use iomem or even some form of remote-processor
-> > messaging (rpmsg).
-> >     
-> > The new GNSS subsystem abstracts the underlying interface and provides a
-> > new "gnss" class type, which exposes a character-device interface (e.g.
-> > /dev/gnss0) to user space. This allows GNSS receivers to have a
-> > representation in the Linux device model, something which is important
-> > not least for power management purposes and which also allows for easy
-> > detection and (eventually) identification of GNSS devices.
-> 
-> Actually... no, what you done is not GNSS subsystem. It is generic
-> subsystem for a link + some controls, typically for power.
-> 
-> Yes, that setup is common for GPS receivers, but it is there also for
-> modems (droid 4: usb + gpios) and bluetooth dongles (n900: serial +
-> gpios).
 
-Those would be handled by other subsystems.
+--huq684BweRXVnRxX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The idea here is that eventually there may be more GNSS specific bits
-added, such as 1PPS support that I already mentioned. If someone is
-crazy enough to put a location service in the kernel with a more
-high-level interface (an in-kernel gpsd) they can try, but I'm more and
-more convinced that needs to remain in user space.
 
-I did also already mentioned however, that some hybrid approach may be
-doable, such as handling port setup over NMEA/UBX/SiRF from within the
-kernel.
+> As proof-of-concept I have implemented drivers for receivers based on
+> two common GNSS chipsets (SiRFstar and u-blox), but due to lack of
+> hardware these have so far only been tested using mockup devices and a
+> USB-serial-based GPS device (using out-of-tree code). [ Let me know if
+> you've got any evalutation kits to spare. ]
 
-Johan
+Do you have easy access to Nokia N900 or Motorola Droid 4? They should
+be reasonably cheap, and each provides unique challenge.
+
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--huq684BweRXVnRxX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrflcgACgkQMOfwapXb+vJ3cgCfbLyAqcH7MZWzSRNjl60B+8Sr
+gs8AoKKk0jBLpBuVDa8RWuZQQbJEj87c
+=qp9z
+-----END PGP SIGNATURE-----
+
+--huq684BweRXVnRxX--
