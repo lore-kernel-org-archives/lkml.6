@@ -1,95 +1,74 @@
-Return-Path: <ruslan.bilovol@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524696805; cv=none;
+Return-Path: <jorge.sanjuan@codethink.co.uk>
+X-Google-Smtp-Source: AIpwx4+mY36S/KCUZEJkHIAonPgmO8lcsOpLivTRCtstOaLPKdYmspO3Uz6el48yhoDZAndTp9vX
+ARC-Seal: i=1; a=rsa-sha256; t=1524590697; cv=none;
         d=google.com; s=arc-20160816;
-        b=S+3FIqwRuf9+G+NmGbSv7DOwd2rmPxb9JyD6dqw69auZlZWG40/jaZw8qbBTKkLV0F
-         g6eiwN9ms/cn7fG1Gl+kvlRvQff/UQXDbxUEHrow9zYc0r+RxsOEmk+Jk4wj84tyrgWp
-         7MRdBrhM8/f40qxsQVoV5u9Be6Yl3zNIWkyG5KPKwny/xd212RYtKDudkmAJiiQA6Jc5
-         Wv8pdBoKJtFggdO8GSAPTSBVZypgjOGHJl2Tfq0YEeubLGq88pFIALieh6v1gxTRTkJ/
-         c1PTker8eNhGoG6ogDPx4sltGJZKPcqBz6qEOePIMaXo80mjbV4Syd/TkFDKvbhJPiC1
-         i8eA==
+        b=KurJYnvZvqwHzo/w8PDBdEhCVd4mijfiYTZ4swchtZ1PBQlT4sK9dUEi2XLqbyILCi
+         Oz91xyk2AuTE82vSwoiohXt4IbnLl6uM+p+Kng+Ua8EBwAzws0KvKVKN3u5C5qhZInis
+         kXQfTIBJax8TpirpmgCYjFsPYPspwsbBDQOQq2nhQz+1A15PDGM31KFDI7J6tBHATArH
+         lsUUupOVANt+EsqBNTA+7930P1mq+SifMKChwtn3wZGvkwaQgmlpNQ0cp0jcKnbCMAeS
+         ZoDvLm+jeUADoGRj9B7kXc0JLUNJRkPJUE1EM6CbbWDeT270OPBneZz2lk0IrAwrq42g
+         0UHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=xAUqOeYgDWHpwHMdnnz9hTyGLwc06JIK6VyDHjwWGD4=;
-        b=im/ssTNXRNvbwamSivYLDoQTSeHpUkn/LXV3YFZBE3XkamNmi37XAejQgcLhAWG9rC
-         XQ/grevP8i6vdu/TjsQl1idoSDeLr/DDdco3tKYsODOJY9hStRIlxVprm+qvOvoqrMi8
-         P0TLvOTyCuqK3RZGje+srv4LEgr+ESU1q5qVNJMC4islzyeDNLRLcRg/vp6etaxZ7+HL
-         6KzCBa2Iej/LDkBLz8wSq9CHcPjfhspEOc91pcwNzDXfjZPkyF9Pj9rHOpb1OH3OTWaY
-         EdrlTa8Ve0+aZBVC7i2N7vfhXxnE13CbtLMctTBdcgTmuFNZFw8+oS9gkolVWzz51kyA
-         3SLw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=CeCZd2qiVNsjiyYGAPXv1LdlRhzGfUySnUWgFWh9ozE=;
+        b=yXVmE5WvfRFPxluSLVvCTzD7eVb9OSLhnlId6V7jFZZ3HaVWMKu71swzeE2Eckfzxy
+         SLndN4U+yHTmOyhnDsPNDjPTTHBBvsz7ojkJhHruh8utFvXS4q1+6sstkKdibPdxZds3
+         YWfHp59A+IbUQek1GqDPKHc6bcwsMYwzXErHy48H/dCTCb/Zfda3kAQeuXobPbq+XNIe
+         ry+QEpwXf2R36oZNIGZ+JB82Isz/sJiklBams/LeQlc8uAHUKhQorOrtKXOx327CjzD8
+         ypyuDiSgDowSP56vxonxFAp1sXJeIxRItQMo7agEArsSFrAt+A3m18EZ+Dfb/5L1HwiV
+         9z9Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ffefzYDv;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of jorge.sanjuan@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=jorge.sanjuan@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ffefzYDv;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4/ZcJm0ClQnaAfpo4vH29vZKMs9J0jQdcIUmSzDBe0MvQeNfnmVhZlzUENZvQZZyAEZn2iqFQGUgkzJ93WFB0Q=
-MIME-Version: 1.0
-In-Reply-To: <20180424172445.31928-4-jorge.sanjuan@codethink.co.uk>
+       spf=pass (google.com: domain of jorge.sanjuan@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=jorge.sanjuan@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+From: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+To: tiwai@suse.com
+Cc: alsa-devel@alsa-project.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	Michael Drake <michael.drake@codethink.co.uk>,
+	Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Subject: [PATCH v2 2/4] ALSA: usb-audio: ADC3: Fix channel mapping conversion for ADC3.
+Date: Tue, 24 Apr 2018 18:24:43 +0100
+Message-Id: <20180424172445.31928-3-jorge.sanjuan@codethink.co.uk>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180424172445.31928-1-jorge.sanjuan@codethink.co.uk>
 References: <20180420170327.31569-1-jorge.sanjuan@codethink.co.uk>
- <20180424172445.31928-1-jorge.sanjuan@codethink.co.uk> <20180424172445.31928-4-jorge.sanjuan@codethink.co.uk>
-From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Date: Thu, 26 Apr 2018 01:53:24 +0300
-Message-ID: <CAB=otbRfM0UWsvUDbx+WBqfh9pEgmq2-SNupZt19iSr+i9vzvw@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v2 3/4] ALSA: usb-audio: Use Class Specific
- EP for UAC3 devices.
-To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-Cc: Takashi Iwai <tiwai@suse.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <20180424172445.31928-1-jorge.sanjuan@codethink.co.uk>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598285489825871167?=
-X-GMAIL-MSGID: =?utf-8?q?1598760477563706693?=
+X-GMAIL-THRID: =?utf-8?q?1598285488536876967?=
+X-GMAIL-MSGID: =?utf-8?q?1598649215097018081?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 8:24 PM, Jorge Sanjuan
-<jorge.sanjuan@codethink.co.uk> wrote:
-> bmAtributes offset doesn't exist in the UAC3 CS_EP descriptor.
-> Hence, checking for pitch control as if it was UAC2 doesn't make
-> any sense. Use the defined UAC3 offsets instead.
->
-> Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+From: Michael Drake <michael.drake@codethink.co.uk>
 
+The channel mapping is defined by bChRelationship, not bChPurpose.
+
+Fixes: 9a2fe9b801f5 ("ALSA: usb: initial USB Audio Device Class 3.0
+support")
 Reviewed-by: Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Signed-off-by: Michael Drake <michael.drake@codethink.co.uk>
+Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+---
+ sound/usb/stream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  sound/usb/stream.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/sound/usb/stream.c b/sound/usb/stream.c
-> index 956be9f7c72a..5ed334575fc7 100644
-> --- a/sound/usb/stream.c
-> +++ b/sound/usb/stream.c
-> @@ -576,7 +576,7 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
->
->         if (protocol == UAC_VERSION_1) {
->                 attributes = csep->bmAttributes;
-> -       } else {
-> +       } else if (protocol == UAC_VERSION_2) {
->                 struct uac2_iso_endpoint_descriptor *csep2 =
->                         (struct uac2_iso_endpoint_descriptor *) csep;
->
-> @@ -585,6 +585,13 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
->                 /* emulate the endpoint attributes of a v1 device */
->                 if (csep2->bmControls & UAC2_CONTROL_PITCH)
->                         attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
-> +       } else { /* UAC_VERSION_3 */
-> +               struct uac3_iso_endpoint_descriptor *csep3 =
-> +                       (struct uac3_iso_endpoint_descriptor *) csep;
-> +
-> +               /* emulate the endpoint attributes of a v1 device */
-> +               if (le32_to_cpu(csep3->bmControls) & UAC2_CONTROL_PITCH)
-> +                       attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
->         }
->
->         return attributes;
-> --
-> 2.11.0
->
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index 6a8f5843334e..956be9f7c72a 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -349,7 +349,7 @@ snd_pcm_chmap_elem *convert_chmap_v3(struct uac3_cluster_header_descriptor
+ 			 * TODO: this conversion is not complete, update it
+ 			 * after adding UAC3 values to asound.h
+ 			 */
+-			switch (is->bChPurpose) {
++			switch (is->bChRelationship) {
+ 			case UAC3_CH_MONO:
+ 				map = SNDRV_CHMAP_MONO;
+ 				break;
+-- 
+2.11.0
