@@ -1,48 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758351AbeDXOAw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 10:00:52 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38990 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757888AbeDXNOR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:14:17 -0400
-X-Google-Smtp-Source: AIpwx4/KHfnrDF4k+muhTuYUXwJrX36jsQAYZBkmRsj5/ygKEydhvnPsywrdmHx9FxcCQvhoKJDJiA==
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org
-Subject: [PATCH] cpufreq: fix speedstep_detect_processor()'s return type
-Date: Tue, 24 Apr 2018 15:14:13 +0200
-Message-Id: <20180424131414.1653-1-luc.vanoostenryck@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752901AbeDXNOB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:14:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1757919AbeDXNN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:13:26 -0400
+Date: Tue, 24 Apr 2018 15:13:17 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc: Harald Freudenberger <FREUDE@de.ibm.com>,
+        Pierre Morel <pmorel@linux.vnet.ibm.com>, alex.williamson@redhat.com,
+        alifm@linux.vnet.ibm.com, berrange@redhat.com,
+        bjsdjshi@linux.vnet.ibm.com, borntrae@linux.ibm.com,
+        fiuczy@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, kvm@vger.kernel.org, kwankhede@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        mjrosato@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com,
+        pasic@linux.vnet.ibm.com, pbonzini@redhat.com,
+        Reinhard Buendgen <BUENDGEN@de.ibm.com>, thuth@redhat.com
+Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
+Message-ID: <20180424151317.60513959.cohuck@redhat.com>
+In-Reply-To: <192888a1-afc8-8502-5c6f-dbb16625bda2@linux.vnet.ibm.com>
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
+        <OFE3FE11B1.8E1BDDEF-ON00258272.002AEDB1-C1258272.002B06EF@notes.na.collabserv.com>
+        <20180417121044.5c8f2182.cohuck@redhat.com>
+        <2ac8b862-e2dc-843e-a0b8-906fa32b42f4@linux.vnet.ibm.com>
+        <20180417172139.0a2b148b.cohuck@redhat.com>
+        <7276785e-2183-3204-ec80-99fba1546364@linux.vnet.ibm.com>
+        <20180418094949.0403dcaf.cohuck@redhat.com>
+        <470d8af7-b9f6-0ab7-9bfa-351fbeaa079c@linux.vnet.ibm.com>
+        <20180423090337.1b8b465a.cohuck@redhat.com>
+        <192888a1-afc8-8502-5c6f-dbb16625bda2@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-speedstep_detect_processor() is declared as returing an
-'enum speedstep_processor' but use an 'int' in its definition.
+On Tue, 24 Apr 2018 09:01:12 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-Fix this by using 'enum speedstep_processor' in its definition too.
+> On 04/23/2018 03:03 AM, Cornelia Huck wrote:
+> > On Sun, 22 Apr 2018 10:52:55 -0400
+> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+> >  
+> >>>>>>> (Not providing a crycb if APXA is not available would be loss of
+> >>>>>>> functionality, I guess? Deciding not to provide vfio-ap if APXA is not
+> >>>>>>> available is a different game, of course.)  
+> >>>>>> This would require a change to enabling the CPU model feature for
+> >>>>>> AP.  
+> >>>>> But would it actually make sense to tie vfio-ap to APXA? This needs to
+> >>>>> be answered by folks with access to the architecture :)  
+> >>>> I don't see any reason to do that from an architectural perspective.
+> >>>> One can access AP devices whether APXA is installed or not, it just limits
+> >>>> the range of devices that can be addressed  
+> >>> So I guess we should not introduce a tie-in then (unless it radically
+> >>> simplifies the code...)  
+> >> I'm not clear about what you mean by introducing a tie-in. Can you
+> >> clarify that?  
+> > Making vfio-ap depend on APXA.  
+> 
+> I don't think vfio-ap should be dependent upon APXA for the reasons I 
+> stated above.
+> 
+> >  
+> 
 
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
----
- drivers/cpufreq/speedstep-lib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/speedstep-lib.c b/drivers/cpufreq/speedstep-lib.c
-index e3a9962ee..cabb6f48e 100644
---- a/drivers/cpufreq/speedstep-lib.c
-+++ b/drivers/cpufreq/speedstep-lib.c
-@@ -252,7 +252,7 @@ EXPORT_SYMBOL_GPL(speedstep_get_frequency);
-  *********************************************************************/
- 
- /* Keep in sync with the x86_cpu_id tables in the different modules */
--unsigned int speedstep_detect_processor(void)
-+enum speedstep_processor speedstep_detect_processor(void)
- {
- 	struct cpuinfo_x86 *c = &cpu_data(0);
- 	u32 ebx, msr_lo, msr_hi;
--- 
-2.17.0
+It seems we are in violent agreement :)
