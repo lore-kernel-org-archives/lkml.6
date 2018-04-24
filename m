@@ -1,29 +1,29 @@
 Return-Path: <brgl@bgdev.pl>
-ARC-Seal: i=1; a=rsa-sha256; t=1524591086; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524591085; cv=none;
         d=google.com; s=arc-20160816;
-        b=Xq8iUjGdUqDFaL3CMYcYNgGeusTjTyf23d2dyqb3BOqc1uoo6U/g1g7U6orJ4BcD4C
-         Rj3WFqYVf1mxqcVvWm+E+4DNZbXXYdi49nzmInjmGZtqIjrqGZ0qXSwotuT1QnqxKQ26
-         Udhi6kpgA2ULkAfU35HDHkdIZhgBHjwQ2ifIkKNMffqpLQN/llv7hjTU8BYFpoAvvZuj
-         xMaL9ss+UngCKkJGWBPOQrIVBPha8Hrk3ASrIoFQA7y2TR5h6PStB+6vNuTUAjmlapKK
-         micVVQcw2E9gUB0vdbyLwQVI9XRZmcKrPtxTCyoDgYCASMagdBh4BdPW4XqA/6iEeNZG
-         cYow==
+        b=FvYlQ4vYdfj2KYtJ8OK/axvGwGdcXRFScbslQu80Q/MbVkgSOUi6U1YxdU5fMfzBNQ
+         EKltXUHdj0/saKa0y8Q4RdROX5fLtii6mlhyUybKbjlQdx6hFDiSDSVcJe8YBuMVd+lz
+         w2/A9JCjHOGNDc9BXAk2RMXKvNlyhqPUclKj6FFsMUoAqFUULTFpWL2Vr00K9ndJvZ7C
+         h206X54lw9uPM/p/qbCuuttnql/Yf7eXW5824joGoce0M63jd1jbbya9QParhjEa03Ly
+         lsix01FnoS/fOHTx+T+NTXz5eidredw6n600mHemEAtUNk98hA70i/Z2ubFltcYgaGKF
+         v20g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=0ZUqEQbTcqpkpDOxGI3/y+orvLxUrN9q0d5bu9mYcL4=;
-        b=M1X3XmLUBg8IFLyGQuYR6lJ8ZYMZB85rKF2PqCHNfYfHs+AhPwDKJLbdPQP5jyI/lH
-         aTiciEPoURcQOmAaRwBfChUG+Gwk14fzxD3fMkyIjBS+9dlkKMk1h8CTC1/17BES4RKm
-         hJxGR+Im1xycyMv62RScELZ73OcgpyN3/7P840txzaK1uOj8x/3nPJfVoWw/Fs+kmIoZ
-         vkFwN3a1OlQDaKCNaVeG7mnEA2osoXkq91uZVqMqeQmPsuTD8Zy88MKPf2Jt2E/iOnc1
-         MEJwJzsCbBw2d/RPZMyTRn4oUFdS4JPc5PM2Ir/lkB2OXUFQ8l5c8L+187Ti9qOOXLxM
-         tleg==
+        bh=DmMLfO0cO1SinSZx8ehL1IYCX0Qj7xFY2F2c0l2FVF0=;
+        b=0KsTcJJC4663GKvjQoXfu+WHb2kN1HXC6rH5SeA02r8RtcwTH+2Jz3vay1G7TofcIt
+         SkKCfvRoRxnsQs8MZJgF87tt2eRIidF6QyxvBegMIn3PpLfTJn3+DZ+02rVZN+2BJlgS
+         G39JG9hLi/a0xXNeAhcYheEwXktTdPDP5WQCwCr2e8QTSfilDnVc2DbPeThKzY/E9wvL
+         btuHwoBsx6ig/HsXf6hrKOfx1Omo0lv753qPn4j+WM8mrXEAdxD7Vh6ZS6D0tzpU4CUo
+         Krc6l6LIc4JavcgJDQ8DnNcDyiNujcluCY2bEnDiWKC2x27h/etBFyvMqjpkyBwYSsq/
+         8zpg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=fYhYcZaw;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=p0QhcDyB;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=fYhYcZaw;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=p0QhcDyB;
        spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-X-Google-Smtp-Source: AIpwx4/mcDdFzS+Ewjz8HbUrkpXxrR1dAfIO4yxzKEFP+d1JOWB/fFzX0usGCl3mgPijwgItMT6rqw==
+X-Google-Smtp-Source: AIpwx482lDV95LtPLfBjNTbn9YUydxmUrbwu3RmPDPDU+YJpb5wKn0iofaoQf7cIClF2QLscdsiBsw==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>,
 	Kevin Hilman <khilman@kernel.org>,
@@ -49,110 +49,71 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 11/11] misc: implement a dummy early platform driver
-Date: Tue, 24 Apr 2018 19:30:51 +0200
-Message-Id: <20180424173051.15099-12-brgl@bgdev.pl>
+Subject: [PATCH 10/11] of: platform: provide of_early_platform_probe()
+Date: Tue, 24 Apr 2018 19:30:50 +0200
+Message-Id: <20180424173051.15099-11-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180424173051.15099-1-brgl@bgdev.pl>
 References: <20180424173051.15099-1-brgl@bgdev.pl>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598649623488054868?=
-X-GMAIL-MSGID: =?utf-8?q?1598649623488054868?=
+X-GMAIL-THRID: =?utf-8?q?1598649621810653436?=
+X-GMAIL-MSGID: =?utf-8?q?1598649621810653436?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Implement a very simple early platform driver. Its purpose is to show
-how such drivers can be registered and to emit a message when probed.
-
-It can be then added to the device tree or machine code to verify that
-the early platform devices work as expected.
+Implement a function that must be called from machine code early in
+the bo process in order to probe all registered early devices.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/misc/Kconfig       |  8 ++++++++
- drivers/misc/Makefile      |  1 +
- drivers/misc/dummy-early.c | 40 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 49 insertions(+)
- create mode 100644 drivers/misc/dummy-early.c
+ drivers/of/platform.c       | 12 ++++++++++++
+ include/linux/of_platform.h |  2 ++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 5d713008749b..bf9b9b355f81 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -91,6 +91,14 @@ config DUMMY_IRQ
- 	  The sole purpose of this module is to help with debugging of systems on
- 	  which spurious IRQs would happen on disabled IRQ vector.
- 
-+config DUMMY_EARLY
-+	bool "Dummy early platform driver"
-+	select EARLY_PLATFORM_DEVICES
-+	default n
-+	help
-+	  This module's only function is to register itself with the early
-+	  platform device framework and be probed early in the boot process.
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index 4b55e568fe77..525a466b03d1 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -541,6 +541,18 @@ int of_early_platform_populate(struct device_node *root,
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(of_early_platform_populate);
 +
- config IBM_ASM
- 	tristate "Device driver for IBM RSA service processor"
- 	depends on X86 && PCI && INPUT
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index 20be70c3f118..84ad0225eb14 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_INTEL_MID_PTI)	+= pti.o
- obj-$(CONFIG_ATMEL_SSC)		+= atmel-ssc.o
- obj-$(CONFIG_ATMEL_TCLIB)	+= atmel_tclib.o
- obj-$(CONFIG_DUMMY_IRQ)		+= dummy-irq.o
-+obj-$(CONFIG_DUMMY_EARLY)	+= dummy-early.o
- obj-$(CONFIG_ICS932S401)	+= ics932s401.o
- obj-$(CONFIG_LKDTM)		+= lkdtm/
- obj-$(CONFIG_TIFM_CORE)       	+= tifm_core.o
-diff --git a/drivers/misc/dummy-early.c b/drivers/misc/dummy-early.c
-new file mode 100644
-index 000000000000..b1d555d72ffb
---- /dev/null
-+++ b/drivers/misc/dummy-early.c
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Texas Instruments
++/**
++ * of_early_platform_probe() - Probe all registered early platform devices.
 + *
-+ * Author:
-+ *   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+ *
-+ * Dummy testing driver whose only purpose is to be registered and probed
-+ * using the early platform device mechanism.
++ * Returns 0 on success, a negative error code on failure.
 + */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+static int dummy_early_probe(struct platform_device *pdev)
++int of_early_platform_probe(void)
 +{
-+	dev_notice(&pdev->dev, "dummy-early driver probed!\n");
-+
-+	return 0;
++	return early_platform_driver_register_probe_all(
++				EARLY_PLATFORM_DEFAULT_CLASS, INT_MAX, 0);
 +}
-+
-+static const struct of_device_id dummy_early_of_match[] = {
-+	{ .compatible = "none,dummy-early", },
-+	{ },
-+};
-+
-+static struct platform_driver dummy_early_driver = {
-+	.probe = dummy_early_probe,
-+	.driver = {
-+		.name = "dummy-early",
-+		.of_match_table = dummy_early_of_match,
-+	},
-+};
-+early_platform_driver(dummy_early_driver);
-+
-+MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
-+MODULE_DESCRIPTION("Dummy early platform device driver");
-+MODULE_LICENSE("GPL v2");
++EXPORT_SYMBOL_GPL(of_early_platform_probe);
+ #endif /* CONFIG_EARLY_PLATFORM_DEVICES */
+ 
+ int of_platform_default_populate(struct device_node *root,
+diff --git a/include/linux/of_platform.h b/include/linux/of_platform.h
+index 2bf1013a3e89..caa08e3bf3b7 100644
+--- a/include/linux/of_platform.h
++++ b/include/linux/of_platform.h
+@@ -81,6 +81,7 @@ extern int of_early_platform_populate(struct device_node *root,
+ 				      const struct of_device_id *matches,
+ 				      const struct of_dev_auxdata *lookup,
+ 				      struct device *parent);
++extern int of_early_platform_probe(void);
+ #else /* CONFIG_EARLY_PLATFORM_DEVICES */
+ static inline int
+ of_early_platform_populate(struct device_node *root,
+@@ -90,6 +91,7 @@ of_early_platform_populate(struct device_node *root,
+ {
+ 	return -ENOSYS;
+ }
++static inline void int of_early_platform_probe(void) {}
+ #endif /* CONFIG_EARLY_PLATFORM_DEVICES */
+ 
+ extern int of_platform_default_populate(struct device_node *root,
 -- 
 2.17.0
