@@ -1,38 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933035AbeDXIkq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:40:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42572 "EHLO
+        id S933057AbeDXIlK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:41:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44584 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932850AbeDXIkk (ORCPT
+        by vger.kernel.org with ESMTP id S932850AbeDXIlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:40:40 -0400
-Date: Tue, 24 Apr 2018 10:40:36 +0200 (CEST)
-From: Sebastian Ott <sebott@linux.ibm.com>
-X-X-Sender: sebott@schleppi
-To: "Theodore Ts'o" <tytso@mit.edu>
-cc: linux-kernel@vger.kernel.org
-Subject: Re: [BUG, PATCH] random: sleep in irq context
-In-Reply-To: <alpine.LFD.2.21.1804231518060.1767@schleppi>
-References: <alpine.LFD.2.21.1804231518060.1767@schleppi>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
- =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
- =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
- =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
- =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
- =?ISO-8859-15?Q?94=22?=
+        Tue, 24 Apr 2018 04:41:03 -0400
+Subject: Re: [PATCH 01/10] vfio: ccw: Moving state change out of IRQ context
+To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Cc: pasic@linux.vnet.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, cohuck@redhat.com
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+ <1524149293-12658-2-git-send-email-pmorel@linux.vnet.ibm.com>
+ <20180424065442.GV12194@bjsdjshi@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Tue, 24 Apr 2018 10:40:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180424065442.GV12194@bjsdjshi@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 18042408-0020-0000-0000-00000415329A
+x-cbid: 18042408-0012-0000-0000-000005CE1CE0
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042408-0021-0000-0000-000042A9941D
-Message-Id: <alpine.LFD.2.21.1804241037590.1601@schleppi>
+x-cbparentid: 18042408-0013-0000-0000-0000194A8B57
+Message-Id: <ac4b7441-2d17-922b-695e-98c01d87cd42@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1804240086
@@ -40,43 +39,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Apr 2018, Sebastian Ott wrote:
-> This happend once during boot and I could not reproduce this since, but I
-> think the following patch should fix the issue:
+On 24/04/2018 08:54, Dong Jia Shi wrote:
+> * Pierre Morel <pmorel@linux.vnet.ibm.com> [2018-04-19 16:48:04 +0200]:
+>
+> [...]
+>
+>> @@ -94,9 +83,15 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
+>>   static void vfio_ccw_sch_irq(struct subchannel *sch)
+>>   {
+>>   	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
+>> +	struct irb *irb = this_cpu_ptr(&cio_irb);
+>>
+>>   	inc_irq_stat(IRQIO_CIO);
+>> -	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_INTERRUPT);
+>> +	memcpy(&private->irb, irb, sizeof(*irb));
+>> +
+>> +	WARN_ON(work_pending(&private->io_work));
+> Hmm, why do we need this?
 
-I can now recreate the issue reliably. The following patch works for me:
+The current design insure that we have not two concurrent SSCH requests.
+How ever I want here to track spurious interrupt.
+If we implement cancel, halt or clear requests, we also may trigger (AFAIU)
+a second interrupts depending on races between instructions, controller 
+and device.
 
------->8
->From 6bbfab86beae8fe8b6efeffd08c9ad43d1c2ba68 Mon Sep 17 00:00:00 2001
-From: Sebastian Ott <sebott@linux.ibm.com>
-Date: Mon, 23 Apr 2018 14:59:20 +0200
-Subject: [PATCH] random: don't sleep during allocations
+We do not need it strongly.
 
-Since numa_crng_init() can be called from irq context let's
-use __GFP_ATOMIC for allocations.
+>
+>> +	queue_work(vfio_ccw_work_q, &private->io_work);
+>> +	if (private->completion)
+>> +		complete(private->completion);
+>>   }
+>>
+>>   static int vfio_ccw_sch_probe(struct subchannel *sch)
+> [...]
+>
 
-Fixes: 8ef35c866f88 ("random: set up the NUMA crng instances...")
-Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
----
- drivers/char/random.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 3cd3aae24d6d..98634b8025d5 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -795,10 +795,10 @@ static void numa_crng_init(void)
- 	struct crng_state *crng;
- 	struct crng_state **pool;
- 
--	pool = kcalloc(nr_node_ids, sizeof(*pool), GFP_KERNEL|__GFP_NOFAIL);
-+	pool = kcalloc(nr_node_ids, sizeof(*pool), __GFP_NOFAIL | GFP_ATOMIC);
- 	for_each_online_node(i) {
- 		crng = kmalloc_node(sizeof(struct crng_state),
--				    GFP_KERNEL | __GFP_NOFAIL, i);
-+				    __GFP_NOFAIL | GFP_ATOMIC, i);
- 		spin_lock_init(&crng->lock);
- 		crng_initialize(crng);
- 		pool[i] = crng;
 -- 
-2.13.4
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
