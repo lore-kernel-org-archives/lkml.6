@@ -1,99 +1,114 @@
 Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524733927; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524588646; cv=none;
         d=google.com; s=arc-20160816;
-        b=KV1IyyXTkIVI2WepPuDhXuxOC2Ip+6XrgWGZxMDT8lpHrKYfSdm2iFoUm5O/4WXQBy
-         LEdK7OZ5+pFWFIKOphX5DJcvjY+ICaxHI6YK3GKn4+BlF0o8MxU0BtYM81u7FEowLu1Y
-         p3Xiu6wXXNZ89osvG0sJTiXyt2LqwqQXfYGqfLTP55q56igbX6dAopfacy15BMih9idf
-         IGAlXJbg60U3f8C4L5oBAhbj4MaS4Qg7s4sdLRg3w89a37obgwv2sObE9j63hhKOYgC4
-         nSnUVmPKod0Oq7lK7FmWqpeEL3bFVkbvXvdiQ+/J7NELZ+07br7SSac1GLoqp3uEWr/d
-         /SBw==
+        b=jz/uE9+EFBRxaKhJ5HEU/ChPe+t7V10KTulD3/QdTlpWil3IoTZMsgzlsjHnvpfVvQ
+         L226qOgUZM/KoekyMdx+TXE8sqL9/UhoYZP+JXUXmKxNT/6QehG1ZLIKhDG/VEAyELvI
+         qm84Fy8wGqEE+EJtjnlv/Z4BKaXmAwA/Fr0cvY2HGP9WuI65KisCiRVQqh6RUXOX7kwS
+         KmxKQUAsW0U1i71czDZRMHVSYX4L0KL2DFSnS3vkaENv8l8DnwNoueumVkYXrC9FNjfH
+         zTJiN12nkvw6CIDmZfD1Rap7a29riL8BnWf39SpTQ73UVmn8HOqB+usgleFtYHr2vFkf
+         yDuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=nx83bkNgMHK/0ICMzlDYX+pUdQeWEwBgMD4XX0Hx6Po=;
-        b=fjeYw0wPrKpgnbgAPwF1nAWBeNFb05dfCOLd5LAVH6rEKkpevGuHerNsgc4fmO423D
-         DE/qnq6dpGRTXXvJqfn7LLUXUeS2llw3gvCzaSAm3VhRM7gvuAeJ+uXylmLpDtDR18BL
-         PfFN1GJwkydZJG7Q1Ewf1feKqwdv9vYW6L9WeGaj3LD4X5sfYfq5FDcI9VfA2r0di4mu
-         mKSY8gPvKC1qaTwxZZ6CtSqBT/dGCaq0sfYwWTExOznuvH94eaHxKryPfFJfSkVfIc5Q
-         sNYYNG0EQFQJRvsQd/wVRqM9wIFjXHCdZl1L7cDo+bHtmpWMXulDN3qZfkFlBCjHfDcU
-         s38Q==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:sender
+         :dkim-signature:arc-authentication-results;
+        bh=SrDwffJ2tXXoAEV7Z6qOPZNJNDpDFoyYg6jyDhM1jjQ=;
+        b=S+exRScgs30st/pBMBSzDGS2xfpfyrsZmtG5s10k9ZdA67HH5kfYVQJLmYG+X1MPPy
+         DVR+/VXXq1HmX8aIa/OGcYGXFznlAJl/O75q467+/5PdGrADTt23w4sctpqB+IYGBp3D
+         BYZog8wkG9ZGSU8r9s1E+dvqVMUxJJgQEN1B/HLLSccK5hJSJEQ2TrbNa+aFIkjXKMW1
+         REf0M7Cj+GI53z03laopBx/tDLDOW/8x7SWjc82PDPEeTu/C5WSuyZlvjG5R5yH77w67
+         ZxGZGm79IOd+9AYa36piCjglabNqI/QJNOPMfFuT1Ukedaxd7DiInMT2D9YXV1aZ7PVQ
+         UXqA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rz/GXKLR;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=se578fJn;
        spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rz/GXKLR;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=se578fJn;
        spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
-X-Google-Smtp-Source: AB8JxZqBn6GhsakRhMR1/WoH/BbwZ3IjlZo03DIiQwpPUgoyZt5/gBTuOO/B6Y/Ig9thRYiCSlQoWg==
+X-Google-Smtp-Source: AIpwx497PA1iYyMRx0vNMwh6VAVGOOKV/s3gRZdyjHr5FfKQgkyNYnDhoiUV+pg42C6j62pXtgCCTw==
 Sender: Johan Hovold <jhovold@gmail.com>
-Date: Thu, 26 Apr 2018 11:12:00 +0200
 From: Johan Hovold <johan@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andreas Kemnade <andreas@kemnade.info>,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Andreas Kemnade <andreas@kemnade.info>,
 	Arnd Bergmann <arnd@arndb.de>,
 	"H . Nikolaus Schaller" <hns@goldelico.com>,
 	Pavel Machek <pavel@ucw.cz>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 6/7] dt-bindings: gnss: add sirfstar binding
-Message-ID: <20180426091200.GV4615@localhost>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4/7] dt-bindings: gnss: add u-blox binding
+Date: Tue, 24 Apr 2018 18:34:55 +0200
+Message-Id: <20180424163458.11947-5-johan@kernel.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180424163458.11947-1-johan@kernel.org>
 References: <20180424163458.11947-1-johan@kernel.org>
- <20180424163458.11947-7-johan@kernel.org>
- <CAL_Jsq+nj9P5z=Ao=UbS-AKy+qeM98EFJiHmYgoniD_4N3Hr4w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+nj9P5z=Ao=UbS-AKy+qeM98EFJiHmYgoniD_4N3Hr4w@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598647065272659964?=
-X-GMAIL-MSGID: =?utf-8?q?1598799402939380912?=
+X-GMAIL-THRID: =?utf-8?q?1598647064088300079?=
+X-GMAIL-MSGID: =?utf-8?q?1598647064088300079?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 01:25:26PM -0500, Rob Herring wrote:
-> On Tue, Apr 24, 2018 at 11:34 AM, Johan Hovold <johan@kernel.org> wrote:
-> > Add binding for SiRFstar-based GNSS receivers.
-> >
-> > Note that while four compatible-strings are initially added representing
-> > devices which differ in which I/O interfaces they support, they
-> > otherwise essentially share the same feature set.
-> >
-> > Pin and supply names (and some recommended timings) vary slightly, but
-> > the binding recommends using a common set of names.
-> >
-> > Note that the wakeup gpio is not intended to be as a wakeup source, but
-> > rather to detect the current power state of the device (active or
-> > hibernate).
-> >
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > ---
-> >  .../devicetree/bindings/gnss/sirfstar.txt     | 38 +++++++++++++++++++
-> >  .../devicetree/bindings/vendor-prefixes.txt   |  3 ++
-> >  2 files changed, 41 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/gnss/sirfstar.txt
-> 
-> One nit below, otherwise:
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Add binding for u-blox GNSS receivers.
 
-> > @@ -390,6 +392,7 @@ vivante     Vivante Corporation
-> >  vocore VoCore Studio
-> >  voipac Voipac Technologies s.r.o.
-> >  vot    Vision Optical Technology Co., Ltd.
-> > +wi2wi  Wi2Wi
-> 
-> Wrong spot.
+Note that the u-blox product names encodes form factor (e.g. "neo"),
+chipset (e.g. "8") and variant (e.g. "q"), but that only formfactor and
+chipset is used for the compatible strings (for now).
 
-Duh. I had first misspelled this w2wi (which happens to be a different
-company), and then forgot to move the entry when I corrected my mistake.
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ .../devicetree/bindings/gnss/u-blox.txt       | 31 +++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.txt   |  1 +
+ 2 files changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gnss/u-blox.txt
 
-> >  wd     Western Digital Corp.
-> >  wetek  WeTek Electronics, limited.
-> >  wexler Wexler
-
-Thanks,
-Johan
+diff --git a/Documentation/devicetree/bindings/gnss/u-blox.txt b/Documentation/devicetree/bindings/gnss/u-blox.txt
+new file mode 100644
+index 000000000000..bb54b83a177f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gnss/u-blox.txt
+@@ -0,0 +1,31 @@
++u-blox GNSS Receiver DT binding
++
++The u-blox GNSS receivers can use UART, DDC (I2C), SPI and USB interfaces.
++
++Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
++properties.
++
++Required Properties:
++
++- compatible 	: Must be one of
++
++			"u-blox,neo-8"
++			"u-blox,neo-m8"
++
++- vcc-supply	: Main voltage regulator (VCC)
++
++Optional Properties:
++
++- timepulse-gpios	: Timepulse (e.g. 1PPS) GPIO (TIMEPULSE)
++
++Example:
++
++serial@1234 {
++	compatible = "ns16550a";
++
++	gnss {
++		compatible = "u-blox,neo-8";
++
++		vcc-supply = <&gnss_reg>;
++	};
++};
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index b5f978a4cac6..2128dfdf73f1 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -374,6 +374,7 @@ tronsmart	Tronsmart
+ truly	Truly Semiconductors Limited
+ tsd	Theobroma Systems Design und Consulting GmbH
+ tyan	Tyan Computer Corporation
++u-blox	u-blox
+ ucrobotics	uCRobotics
+ ubnt	Ubiquiti Networks
+ udoo	Udoo
+-- 
+2.17.0
