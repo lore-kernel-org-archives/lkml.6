@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932796AbeDXMHn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:07:43 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:33059 "EHLO
+        id S1757021AbeDXMHu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:07:50 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43570 "EHLO
         mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932561AbeDXMHe (ORCPT
+        with ESMTP id S1756101AbeDXMHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:07:34 -0400
-X-Google-Smtp-Source: AIpwx492BU96FtgUeJE0qnlJCOSUM+Rw3gKphMcsHGIJr/MWDj0Dby1BzTLSPJPUmsT896fKDzlzIQ==
+        Tue, 24 Apr 2018 08:07:44 -0400
+X-Google-Smtp-Source: AIpwx4+70A3DtTiDb+zW3urbCWKyol9mv7tcI56N9u55n+4jI22gjYSCfE8AGkbG0Uupba5EhhtVlA==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: perex@perex.cz, tiwai@suse.com, arnd@arndb.de
 Cc: baolin.wang@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
@@ -18,9 +18,9 @@ Cc: baolin.wang@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
         gudishax.kranthikumar@intel.com, naveen.m@intel.com,
         hardik.t.shah@intel.com, arvind.yadav.cs@gmail.com, fabf@skynet.be,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] ALSA: Avoid using timespec for struct snd_pcm_status
-Date: Tue, 24 Apr 2018 20:06:11 +0800
-Message-Id: <7809a25514e8f7f72a276d19414346b2e4100945.1524570852.git.baolin.wang@linaro.org>
+Subject: [PATCH 6/8] ALSA: Avoid using timespec for struct snd_timer_tread
+Date: Tue, 24 Apr 2018 20:06:13 +0800
+Message-Id: <af591e420afe0641f1daf1d5b12618f9836350e9.1524570852.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1524570852.git.baolin.wang@linaro.org>
 References: <cover.1524570852.git.baolin.wang@linaro.org>
@@ -30,577 +30,360 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The struct snd_pcm_status will use 'timespec' type variables to record
+The struct snd_timer_tread will use 'timespec' type variables to record
 timestamp, which is not year 2038 safe on 32bits system.
 
-Userspace will use SNDRV_PCM_IOCTL_STATUS and SNDRV_PCM_IOCTL_STATUS_EXT
-as commands to issue ioctl() to fill the 'snd_pcm_status' structure in
-userspace. The command number is always defined through _IOR/_IOW/IORW,
-so when userspace changes the definition of 'struct timespec' to use
-64-bit types, the command number also changes.
+Since the struct snd_timer_tread is passed through read() rather than
+ioctl(), and the read syscall has no command number that lets us pick
+between the 32-bit or 64-bit version of this structure.
 
-Thus in the kernel, we now need to define two versions of each such ioctl
-and corresponding ioctl commands to handle 32bit time_t and 64bit time_t
-in native mode:
-struct snd_pcm_status32 {
-	......
+Thus we introduced one new command SNDRV_TIMER_IOCTL_TREAD64 and new
+struct snd_timer_tread64 replacing timespec with s64 type to handle
+64bit time_t. That means we will set tu->tread = TREAD_FORMAT_64BIT
+when user space has a 64bit time_t, then we will copy to user with
+struct snd_timer_tread64. Otherwise we will use 32bit time_t variables
+when copying to user.
 
-	s32 trigger_tstamp_sec;
-	s32 trigger_tstamp_nsec;
-
-	......
-
-	s32 audio_tstamp_sec;
-	s32 audio_tstamp_nsec;
-
-	......
-};
-
-struct snd_pcm_status64 {
-	......
-
-	s32 trigger_tstamp_sec;
-	s32 trigger_tstamp_nsec;
-
-	......
-
-	s32 audio_tstamp_sec;
-	s32 audio_tstamp_nsec;
-
-	......
-};
-
-Moreover in compat file, we renamed or introduced new structures to handle
-32bit/64bit time_t in compatible mode. The 'struct snd_pcm_status32' and
-snd_pcm_status_user32() are used to handle 32bit time_t in compat mode.
-'struct compat_snd_pcm_status64' and snd_pcm_status_user_compat64() are used
-to handle 64bit time_t.
-
-Finally we can replace SNDRV_PCM_IOCTL_STATUS and SNDRV_PCM_IOCTL_STATUS_EXT
-with new commands and introduce new functions to fill new 'struct snd_pcm_status64'
-instead of using unsafe 'struct snd_pcm_status'. Then in future, the new
-commands can be matched when userspace changes 'timespec' to 64bit type
-to make a size change of 'struct snd_pcm_status'. When glibc changes time_t
-to 64-bit, any recompiled program will issue ioctl commands that the kernel
-does not understand without this patch.
+Moreover this patch replaces timespec type with timespec64 type and
+related y2038 safe APIs.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- include/sound/pcm.h         |   56 +++++++++++++++-
- include/uapi/sound/asound.h |    1 +
- sound/core/pcm.c            |   12 ++--
- sound/core/pcm_compat.c     |  154 +++++++++++++++----------------------------
- sound/core/pcm_native.c     |   96 ++++++++++++++++++++++-----
- 5 files changed, 193 insertions(+), 126 deletions(-)
+ include/uapi/sound/asound.h |   13 +++-
+ sound/core/timer.c          |  144 ++++++++++++++++++++++++++++++++-----------
+ sound/core/timer_compat.c   |    2 +-
+ 3 files changed, 121 insertions(+), 38 deletions(-)
 
-diff --git a/include/sound/pcm.h b/include/sound/pcm.h
-index 973d674..398e81d 100644
---- a/include/sound/pcm.h
-+++ b/include/sound/pcm.h
-@@ -58,6 +58,7 @@ struct snd_pcm_hardware {
- 	size_t fifo_size;		/* fifo size in bytes */
- };
- 
-+struct snd_pcm_status64;
- struct snd_pcm_substream;
- 
- struct snd_pcm_audio_tstamp_config; /* definitions further down */
-@@ -573,8 +574,8 @@ struct snd_pcm_notify {
- int snd_pcm_info(struct snd_pcm_substream *substream, struct snd_pcm_info *info);
- int snd_pcm_info_user(struct snd_pcm_substream *substream,
- 		      struct snd_pcm_info __user *info);
--int snd_pcm_status(struct snd_pcm_substream *substream,
--		   struct snd_pcm_status *status);
-+int snd_pcm_status64(struct snd_pcm_substream *substream,
-+		     struct snd_pcm_status64 *status);
- int snd_pcm_start(struct snd_pcm_substream *substream);
- int snd_pcm_stop(struct snd_pcm_substream *substream, snd_pcm_state_t status);
- int snd_pcm_drain_done(struct snd_pcm_substream *substream);
-@@ -1448,4 +1449,55 @@ static inline u64 pcm_format_to_bits(snd_pcm_format_t pcm_format)
- #define pcm_dbg(pcm, fmt, args...) \
- 	dev_dbg((pcm)->card->dev, fmt, ##args)
- 
-+struct snd_pcm_status64 {
-+	snd_pcm_state_t state;		/* stream state */
-+	u8 rsvd[sizeof(time_t) - sizeof(snd_pcm_state_t)];
-+	s64 trigger_tstamp_sec;		/* time when stream was started/stopped/paused */
-+	s64 trigger_tstamp_nsec;
-+	s64 tstamp_sec;			/* reference timestamp */
-+	s64 tstamp_nsec;
-+	snd_pcm_uframes_t appl_ptr;	/* appl ptr */
-+	snd_pcm_uframes_t hw_ptr;	/* hw ptr */
-+	snd_pcm_sframes_t delay;	/* current delay in frames */
-+	snd_pcm_uframes_t avail;	/* number of frames available */
-+	snd_pcm_uframes_t avail_max;	/* max frames available on hw since last status */
-+	snd_pcm_uframes_t overrange;	/* count of ADC (capture) overrange detections from last status */
-+	snd_pcm_state_t suspended_state; /* suspended stream state */
-+	__u32 audio_tstamp_data;	 /* needed for 64-bit alignment, used for configs/report to/from userspace */
-+	s64 audio_tstamp_sec;		/* sample counter, wall clock, PHC or on-demand sync'ed */
-+	s64 audio_tstamp_nsec;
-+	s64 driver_tstamp_sec;		/* useful in case reference system tstamp is reported with delay */
-+	s64 driver_tstamp_nsec;
-+	__u32 audio_tstamp_accuracy;	/* in ns units, only valid if indicated in audio_tstamp_data */
-+	unsigned char reserved[52-4*sizeof(s64)]; /* must be filled with zero */
-+};
-+
-+#define SNDRV_PCM_IOCTL_STATUS64	_IOR('A', 0x20, struct snd_pcm_status64)
-+#define SNDRV_PCM_IOCTL_STATUS_EXT64	_IOWR('A', 0x24, struct snd_pcm_status64)
-+
-+struct snd_pcm_status32 {
-+	s32 state;		/* stream state */
-+	s32 trigger_tstamp_sec;	/* time when stream was started/stopped/paused */
-+	s32 trigger_tstamp_nsec;
-+	s32 tstamp_sec;		/* reference timestamp */
-+	s32 tstamp_nsec;
-+	u32 appl_ptr;		/* appl ptr */
-+	u32 hw_ptr;		/* hw ptr */
-+	s32 delay;		/* current delay in frames */
-+	u32 avail;		/* number of frames available */
-+	u32 avail_max;		/* max frames available on hw since last status */
-+	u32 overrange;		/* count of ADC (capture) overrange detections from last status */
-+	s32 suspended_state;	/* suspended stream state */
-+	u32 audio_tstamp_data;	/* needed for 64-bit alignment, used for configs/report to/from userspace */
-+	s32 audio_tstamp_sec;	/* sample counter, wall clock, PHC or on-demand sync'ed */
-+	s32 audio_tstamp_nsec;
-+	s32 driver_tstamp_sec;	/* useful in case reference system tstamp is reported with delay */
-+	s32 driver_tstamp_nsec;
-+	u32 audio_tstamp_accuracy;	/* in ns units, only valid if indicated in audio_tstamp_data */
-+	unsigned char reserved[52-4*sizeof(s32)]; /* must be filled with zero */
-+};
-+
-+#define SNDRV_PCM_IOCTL_STATUS32	_IOR('A', 0x20, struct snd_pcm_status32)
-+#define SNDRV_PCM_IOCTL_STATUS_EXT32	_IOWR('A', 0x24, struct snd_pcm_status32)
-+
- #endif /* __SOUND_PCM_H */
 diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
-index 1231f0a..c9afde4 100644
+index fad66ad..f368e80 100644
 --- a/include/uapi/sound/asound.h
 +++ b/include/uapi/sound/asound.h
-@@ -457,6 +457,7 @@ enum {
+@@ -773,7 +773,7 @@ struct snd_timer_status {
  
- struct snd_pcm_status {
- 	snd_pcm_state_t state;		/* stream state */
-+	unsigned char pad1[sizeof(time_t) - sizeof(snd_pcm_state_t)]; /* align to timespec */
- 	struct timespec trigger_tstamp;	/* time when stream was started/stopped/paused */
- 	struct timespec tstamp;		/* reference timestamp */
- 	snd_pcm_uframes_t appl_ptr;	/* appl ptr */
-diff --git a/sound/core/pcm.c b/sound/core/pcm.c
-index 66ac89a..74d2580 100644
---- a/sound/core/pcm.c
-+++ b/sound/core/pcm.c
-@@ -456,7 +456,7 @@ static void snd_pcm_substream_proc_status_read(struct snd_info_entry *entry,
- {
- 	struct snd_pcm_substream *substream = entry->private_data;
- 	struct snd_pcm_runtime *runtime;
--	struct snd_pcm_status status;
-+	struct snd_pcm_status64 status;
- 	int err;
+ #define SNDRV_TIMER_IOCTL_PVERSION	_IOR('T', 0x00, int)
+ #define SNDRV_TIMER_IOCTL_NEXT_DEVICE	_IOWR('T', 0x01, struct snd_timer_id)
+-#define SNDRV_TIMER_IOCTL_TREAD		_IOW('T', 0x02, int)
++#define SNDRV_TIMER_IOCTL_TREAD_OLD	_IOW('T', 0x02, int)
+ #define SNDRV_TIMER_IOCTL_GINFO		_IOWR('T', 0x03, struct snd_timer_ginfo)
+ #define SNDRV_TIMER_IOCTL_GPARAMS	_IOW('T', 0x04, struct snd_timer_gparams)
+ #define SNDRV_TIMER_IOCTL_GSTATUS	_IOWR('T', 0x05, struct snd_timer_gstatus)
+@@ -786,6 +786,15 @@ struct snd_timer_status {
+ #define SNDRV_TIMER_IOCTL_STOP		_IO('T', 0xa1)
+ #define SNDRV_TIMER_IOCTL_CONTINUE	_IO('T', 0xa2)
+ #define SNDRV_TIMER_IOCTL_PAUSE		_IO('T', 0xa3)
++#define SNDRV_TIMER_IOCTL_TREAD64	_IOW('T', 0xa4, int)
++
++#if __BITS_PER_LONG == 64
++#define SNDRV_TIMER_IOCTL_TREAD SNDRV_TIMER_IOCTL_TREAD_OLD
++#else
++#define SNDRV_TIMER_IOCTL_TREAD ((sizeof(__kernel_long_t) >= sizeof(time_t)) ? \
++				 SNDRV_TIMER_IOCTL_TREAD_OLD : \
++				 SNDRV_TIMER_IOCTL_TREAD64)
++#endif
  
- 	mutex_lock(&substream->pcm->open_mutex);
-@@ -466,17 +466,17 @@ static void snd_pcm_substream_proc_status_read(struct snd_info_entry *entry,
- 		goto unlock;
- 	}
- 	memset(&status, 0, sizeof(status));
--	err = snd_pcm_status(substream, &status);
-+	err = snd_pcm_status64(substream, &status);
- 	if (err < 0) {
- 		snd_iprintf(buffer, "error %d\n", err);
- 		goto unlock;
- 	}
- 	snd_iprintf(buffer, "state: %s\n", snd_pcm_state_name(status.state));
- 	snd_iprintf(buffer, "owner_pid   : %d\n", pid_vnr(substream->pid));
--	snd_iprintf(buffer, "trigger_time: %ld.%09ld\n",
--		status.trigger_tstamp.tv_sec, status.trigger_tstamp.tv_nsec);
--	snd_iprintf(buffer, "tstamp      : %ld.%09ld\n",
--		status.tstamp.tv_sec, status.tstamp.tv_nsec);
-+	snd_iprintf(buffer, "trigger_time: %lld.%09lld\n",
-+		status.trigger_tstamp_sec, status.trigger_tstamp_nsec);
-+	snd_iprintf(buffer, "tstamp      : %lld.%09lld\n",
-+		status.tstamp_sec, status.tstamp_nsec);
- 	snd_iprintf(buffer, "delay       : %ld\n", status.delay);
- 	snd_iprintf(buffer, "avail       : %ld\n", status.avail);
- 	snd_iprintf(buffer, "avail_max   : %ld\n", status.avail_max);
-diff --git a/sound/core/pcm_compat.c b/sound/core/pcm_compat.c
-index b719d0b..a4ef13b 100644
---- a/sound/core/pcm_compat.c
-+++ b/sound/core/pcm_compat.c
-@@ -187,73 +187,13 @@ static int snd_pcm_channel_info_user(struct snd_pcm_substream *substream,
- 	snd_pcm_channel_info_user(s, p)
- #endif /* CONFIG_X86_X32 */
+ struct snd_timer_read {
+ 	unsigned int resolution;
+@@ -813,8 +822,10 @@ enum {
  
--struct snd_pcm_status32 {
-+struct compat_snd_pcm_status64 {
- 	s32 state;
--	struct compat_timespec trigger_tstamp;
--	struct compat_timespec tstamp;
--	u32 appl_ptr;
--	u32 hw_ptr;
--	s32 delay;
--	u32 avail;
--	u32 avail_max;
--	u32 overrange;
--	s32 suspended_state;
--	u32 audio_tstamp_data;
--	struct compat_timespec audio_tstamp;
--	struct compat_timespec driver_tstamp;
--	u32 audio_tstamp_accuracy;
--	unsigned char reserved[52-2*sizeof(struct compat_timespec)];
--} __attribute__((packed));
--
--
--static int snd_pcm_status_user_compat(struct snd_pcm_substream *substream,
--				      struct snd_pcm_status32 __user *src,
--				      bool ext)
--{
--	struct snd_pcm_status status;
--	int err;
--
--	memset(&status, 0, sizeof(status));
--	/*
--	 * with extension, parameters are read/write,
--	 * get audio_tstamp_data from user,
--	 * ignore rest of status structure
--	 */
--	if (ext && get_user(status.audio_tstamp_data,
--				(u32 __user *)(&src->audio_tstamp_data)))
--		return -EFAULT;
--	err = snd_pcm_status(substream, &status);
--	if (err < 0)
--		return err;
--
--	if (clear_user(src, sizeof(*src)))
--		return -EFAULT;
--	if (put_user(status.state, &src->state) ||
--	    compat_put_timespec(&status.trigger_tstamp, &src->trigger_tstamp) ||
--	    compat_put_timespec(&status.tstamp, &src->tstamp) ||
--	    put_user(status.appl_ptr, &src->appl_ptr) ||
--	    put_user(status.hw_ptr, &src->hw_ptr) ||
--	    put_user(status.delay, &src->delay) ||
--	    put_user(status.avail, &src->avail) ||
--	    put_user(status.avail_max, &src->avail_max) ||
--	    put_user(status.overrange, &src->overrange) ||
--	    put_user(status.suspended_state, &src->suspended_state) ||
--	    put_user(status.audio_tstamp_data, &src->audio_tstamp_data) ||
--	    compat_put_timespec(&status.audio_tstamp, &src->audio_tstamp) ||
--	    compat_put_timespec(&status.driver_tstamp, &src->driver_tstamp) ||
--	    put_user(status.audio_tstamp_accuracy, &src->audio_tstamp_accuracy))
--		return -EFAULT;
--
--	return err;
--}
--
--#ifdef CONFIG_X86_X32
--/* X32 ABI has 64bit timespec and 64bit alignment */
--struct snd_pcm_status_x32 {
--	s32 state;
--	u32 rsvd; /* alignment */
--	struct timespec trigger_tstamp;
--	struct timespec tstamp;
-+	u8 rsvd[sizeof(time_t) - sizeof(s32)]; /* alignment */
-+	s64 trigger_tstamp_sec;
-+	s64 trigger_tstamp_nsec;
+ struct snd_timer_tread {
+ 	int event;
++	__u8 pad1[sizeof(time_t) - sizeof(int)];
+ 	struct timespec tstamp;
+ 	unsigned int val;
++	__u8 pad2[sizeof(time_t) - sizeof(unsigned int)];
+ };
+ 
+ /****************************************************************************
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index c9d7ddb..729a643 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -58,6 +58,21 @@
+ MODULE_ALIAS_CHARDEV(CONFIG_SND_MAJOR, SNDRV_MINOR_TIMER);
+ MODULE_ALIAS("devname:snd/timer");
+ 
++enum timer_tread_format {
++	TREAD_FORMAT_NONE = 0,
++	TREAD_FORMAT_TIME64,
++	TREAD_FORMAT_TIME32,
++};
++
++struct snd_timer_tread64 {
++	int event;
++	u8 pad1[sizeof(time_t) - sizeof(int)];
 +	s64 tstamp_sec;
 +	s64 tstamp_nsec;
- 	u32 appl_ptr;
- 	u32 hw_ptr;
- 	s32 delay;
-@@ -262,22 +202,26 @@ struct snd_pcm_status_x32 {
- 	u32 overrange;
- 	s32 suspended_state;
- 	u32 audio_tstamp_data;
--	struct timespec audio_tstamp;
--	struct timespec driver_tstamp;
-+	s64 audio_tstamp_sec;
-+	s64 audio_tstamp_nsec;
-+	s64 driver_tstamp_sec;
-+	s64 driver_tstamp_nsec;
- 	u32 audio_tstamp_accuracy;
--	unsigned char reserved[52-2*sizeof(struct timespec)];
-+	unsigned char reserved[52-4*sizeof(s64)];
- } __packed;
- 
- #define put_timespec(src, dst) copy_to_user(dst, src, sizeof(*dst))
- 
--static int snd_pcm_status_user_x32(struct snd_pcm_substream *substream,
--				   struct snd_pcm_status_x32 __user *src,
--				   bool ext)
-+static int snd_pcm_status_user_compat64(struct snd_pcm_substream *substream,
-+					struct compat_snd_pcm_status64 __user *src,
-+					bool ext)
- {
--	struct snd_pcm_status status;
-+	struct snd_pcm_status64 status;
-+	struct compat_snd_pcm_status64 compat_status64;
- 	int err;
- 
- 	memset(&status, 0, sizeof(status));
-+	memset(&compat_status64, 0, sizeof(compat_status64));
- 	/*
- 	 * with extension, parameters are read/write,
- 	 * get audio_tstamp_data from user,
-@@ -286,31 +230,39 @@ static int snd_pcm_status_user_x32(struct snd_pcm_substream *substream,
- 	if (ext && get_user(status.audio_tstamp_data,
- 				(u32 __user *)(&src->audio_tstamp_data)))
- 		return -EFAULT;
--	err = snd_pcm_status(substream, &status);
-+	err = snd_pcm_status64(substream, &status);
- 	if (err < 0)
- 		return err;
- 
- 	if (clear_user(src, sizeof(*src)))
- 		return -EFAULT;
--	if (put_user(status.state, &src->state) ||
--	    put_timespec(&status.trigger_tstamp, &src->trigger_tstamp) ||
--	    put_timespec(&status.tstamp, &src->tstamp) ||
--	    put_user(status.appl_ptr, &src->appl_ptr) ||
--	    put_user(status.hw_ptr, &src->hw_ptr) ||
--	    put_user(status.delay, &src->delay) ||
--	    put_user(status.avail, &src->avail) ||
--	    put_user(status.avail_max, &src->avail_max) ||
--	    put_user(status.overrange, &src->overrange) ||
--	    put_user(status.suspended_state, &src->suspended_state) ||
--	    put_user(status.audio_tstamp_data, &src->audio_tstamp_data) ||
--	    put_timespec(&status.audio_tstamp, &src->audio_tstamp) ||
--	    put_timespec(&status.driver_tstamp, &src->driver_tstamp) ||
--	    put_user(status.audio_tstamp_accuracy, &src->audio_tstamp_accuracy))
++	unsigned int val;
++	u32 pad2;
++};
 +
-+	compat_status64 = (struct compat_snd_pcm_status64) {
-+		.state = status.state,
-+		.trigger_tstamp_sec = status.trigger_tstamp_sec,
-+		.trigger_tstamp_nsec = status.trigger_tstamp_nsec,
-+		.tstamp_sec = status.tstamp_sec,
-+		.tstamp_nsec = status.tstamp_nsec,
-+		.appl_ptr = status.appl_ptr,
-+		.hw_ptr = status.hw_ptr,
-+		.delay = status.delay,
-+		.avail = status.avail,
-+		.avail_max = status.avail_max,
-+		.overrange = status.overrange,
-+		.suspended_state = status.suspended_state,
-+		.audio_tstamp_data = status.audio_tstamp_data,
-+		.audio_tstamp_sec = status.audio_tstamp_sec,
-+		.audio_tstamp_nsec = status.audio_tstamp_nsec,
-+		.driver_tstamp_sec = status.audio_tstamp_sec,
-+		.driver_tstamp_nsec = status.audio_tstamp_nsec,
-+		.audio_tstamp_accuracy = status.audio_tstamp_accuracy,
-+	};
-+
-+	if (copy_to_user(src, &compat_status64, sizeof(compat_status64)))
- 		return -EFAULT;
- 
- 	return err;
- }
--#endif /* CONFIG_X86_X32 */
- 
- /* both for HW_PARAMS and HW_REFINE */
- static int snd_pcm_ioctl_hw_params_compat(struct snd_pcm_substream *substream,
-@@ -633,8 +585,8 @@ enum {
- 	SNDRV_PCM_IOCTL_HW_REFINE32 = _IOWR('A', 0x10, struct snd_pcm_hw_params32),
- 	SNDRV_PCM_IOCTL_HW_PARAMS32 = _IOWR('A', 0x11, struct snd_pcm_hw_params32),
- 	SNDRV_PCM_IOCTL_SW_PARAMS32 = _IOWR('A', 0x13, struct snd_pcm_sw_params32),
--	SNDRV_PCM_IOCTL_STATUS32 = _IOR('A', 0x20, struct snd_pcm_status32),
--	SNDRV_PCM_IOCTL_STATUS_EXT32 = _IOWR('A', 0x24, struct snd_pcm_status32),
-+	SNDRV_PCM_IOCTL_STATUS_COMPAT32 = _IOR('A', 0x20, struct snd_pcm_status32),
-+	SNDRV_PCM_IOCTL_STATUS_EXT_COMPAT32 = _IOWR('A', 0x24, struct snd_pcm_status32),
- 	SNDRV_PCM_IOCTL_DELAY32 = _IOR('A', 0x21, s32),
- 	SNDRV_PCM_IOCTL_CHANNEL_INFO32 = _IOR('A', 0x32, struct snd_pcm_channel_info32),
- 	SNDRV_PCM_IOCTL_REWIND32 = _IOW('A', 0x46, u32),
-@@ -644,10 +596,10 @@ enum {
- 	SNDRV_PCM_IOCTL_WRITEN_FRAMES32 = _IOW('A', 0x52, struct snd_xfern32),
- 	SNDRV_PCM_IOCTL_READN_FRAMES32 = _IOR('A', 0x53, struct snd_xfern32),
- 	SNDRV_PCM_IOCTL_SYNC_PTR32 = _IOWR('A', 0x23, struct snd_pcm_sync_ptr32),
-+	SNDRV_PCM_IOCTL_STATUS_COMPAT64 = _IOR('A', 0x20, struct compat_snd_pcm_status64),
-+	SNDRV_PCM_IOCTL_STATUS_EXT_COMPAT64 = _IOWR('A', 0x24, struct compat_snd_pcm_status64),
- #ifdef CONFIG_X86_X32
- 	SNDRV_PCM_IOCTL_CHANNEL_INFO_X32 = _IOR('A', 0x32, struct snd_pcm_channel_info),
--	SNDRV_PCM_IOCTL_STATUS_X32 = _IOR('A', 0x20, struct snd_pcm_status_x32),
--	SNDRV_PCM_IOCTL_STATUS_EXT_X32 = _IOWR('A', 0x24, struct snd_pcm_status_x32),
- 	SNDRV_PCM_IOCTL_SYNC_PTR_X32 = _IOWR('A', 0x23, struct snd_pcm_sync_ptr_x32),
- #endif /* CONFIG_X86_X32 */
- };
-@@ -697,10 +649,10 @@ static long snd_pcm_ioctl_compat(struct file *file, unsigned int cmd, unsigned l
- 		return snd_pcm_ioctl_hw_params_compat(substream, 0, argp);
- 	case SNDRV_PCM_IOCTL_SW_PARAMS32:
- 		return snd_pcm_ioctl_sw_params_compat(substream, argp);
--	case SNDRV_PCM_IOCTL_STATUS32:
--		return snd_pcm_status_user_compat(substream, argp, false);
--	case SNDRV_PCM_IOCTL_STATUS_EXT32:
--		return snd_pcm_status_user_compat(substream, argp, true);
-+	case SNDRV_PCM_IOCTL_STATUS_COMPAT32:
-+		return snd_pcm_status_user32(substream, argp, false);
-+	case SNDRV_PCM_IOCTL_STATUS_EXT_COMPAT32:
-+		return snd_pcm_status_user32(substream, argp, true);
- 	case SNDRV_PCM_IOCTL_SYNC_PTR32:
- 		return snd_pcm_ioctl_sync_ptr_compat(substream, argp);
- 	case SNDRV_PCM_IOCTL_CHANNEL_INFO32:
-@@ -719,11 +671,11 @@ static long snd_pcm_ioctl_compat(struct file *file, unsigned int cmd, unsigned l
- 		return snd_pcm_ioctl_rewind_compat(substream, argp);
- 	case SNDRV_PCM_IOCTL_FORWARD32:
- 		return snd_pcm_ioctl_forward_compat(substream, argp);
-+	case SNDRV_PCM_IOCTL_STATUS_COMPAT64:
-+		return snd_pcm_status_user_compat64(substream, argp, false);
-+	case SNDRV_PCM_IOCTL_STATUS_EXT_COMPAT64:
-+		return snd_pcm_status_user_compat64(substream, argp, true);
- #ifdef CONFIG_X86_X32
--	case SNDRV_PCM_IOCTL_STATUS_X32:
--		return snd_pcm_status_user_x32(substream, argp, false);
--	case SNDRV_PCM_IOCTL_STATUS_EXT_X32:
--		return snd_pcm_status_user_x32(substream, argp, true);
- 	case SNDRV_PCM_IOCTL_SYNC_PTR_X32:
- 		return snd_pcm_ioctl_sync_ptr_x32(substream, argp);
- 	case SNDRV_PCM_IOCTL_CHANNEL_INFO_X32:
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index c57dd4b..0c2ec6d 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -857,8 +857,8 @@ static int snd_pcm_sw_params_user(struct snd_pcm_substream *substream,
- 	return err;
+ struct snd_timer_user {
+ 	struct snd_timer_instance *timeri;
+ 	int tread;		/* enhanced read with timestamps and events */
+@@ -69,7 +84,7 @@ struct snd_timer_user {
+ 	int queue_size;
+ 	bool disconnected;
+ 	struct snd_timer_read *queue;
+-	struct snd_timer_tread *tqueue;
++	struct snd_timer_tread64 *tqueue;
+ 	spinlock_t qlock;
+ 	unsigned long last_resolution;
+ 	unsigned int filter;
+@@ -1306,7 +1321,7 @@ static void snd_timer_user_interrupt(struct snd_timer_instance *timeri,
  }
  
--int snd_pcm_status(struct snd_pcm_substream *substream,
--		   struct snd_pcm_status *status)
-+int snd_pcm_status64(struct snd_pcm_substream *substream,
-+		     struct snd_pcm_status64 *status)
+ static void snd_timer_user_append_to_tqueue(struct snd_timer_user *tu,
+-					    struct snd_timer_tread *tread)
++					    struct snd_timer_tread64 *tread)
  {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	if (tu->qused >= tu->queue_size) {
+ 		tu->overrun++;
+@@ -1323,7 +1338,7 @@ static void snd_timer_user_ccallback(struct snd_timer_instance *timeri,
+ 				     unsigned long resolution)
+ {
+ 	struct snd_timer_user *tu = timeri->callback_data;
+-	struct snd_timer_tread r1;
++	struct snd_timer_tread64 r1;
+ 	unsigned long flags;
  
-@@ -884,14 +884,22 @@ int snd_pcm_status(struct snd_pcm_substream *substream,
- 	status->suspended_state = runtime->status->suspended_state;
- 	if (status->state == SNDRV_PCM_STATE_OPEN)
- 		goto _end;
--	status->trigger_tstamp = timespec64_to_timespec(runtime->trigger_tstamp);
-+	status->trigger_tstamp_sec = runtime->trigger_tstamp.tv_sec;
-+	status->trigger_tstamp_nsec = runtime->trigger_tstamp.tv_nsec;
- 	if (snd_pcm_running(substream)) {
- 		snd_pcm_update_hw_ptr(substream);
- 		if (runtime->tstamp_mode == SNDRV_PCM_TSTAMP_ENABLE) {
--			status->tstamp = runtime->status->tstamp;
--			status->driver_tstamp = timespec64_to_timespec(runtime->driver_tstamp);
--			status->audio_tstamp =
--				runtime->status->audio_tstamp;
-+			status->tstamp_sec = runtime->status->tstamp.tv_sec;
-+			status->tstamp_nsec =
-+				runtime->status->tstamp.tv_nsec;
-+			status->driver_tstamp_sec =
-+				runtime->driver_tstamp.tv_sec;
-+			status->driver_tstamp_nsec =
-+				runtime->driver_tstamp.tv_nsec;
-+			status->audio_tstamp_sec =
-+				runtime->status->audio_tstamp.tv_sec;
-+			status->audio_tstamp_nsec =
-+				runtime->status->audio_tstamp.tv_nsec;
- 			if (runtime->audio_tstamp_report.valid == 1)
- 				/* backwards compatibility, no report provided in COMPAT mode */
- 				snd_pcm_pack_audio_tstamp_report(&status->audio_tstamp_data,
-@@ -906,7 +914,8 @@ int snd_pcm_status(struct snd_pcm_substream *substream,
- 			struct timespec64 tstamp;
+ 	if (event >= SNDRV_TIMER_EVENT_START &&
+@@ -1333,7 +1348,8 @@ static void snd_timer_user_ccallback(struct snd_timer_instance *timeri,
+ 		return;
+ 	memset(&r1, 0, sizeof(r1));
+ 	r1.event = event;
+-	r1.tstamp = timespec64_to_timespec(*tstamp);
++	r1.tstamp_sec = tstamp->tv_sec;
++	r1.tstamp_nsec = tstamp->tv_nsec;
+ 	r1.val = resolution;
+ 	spin_lock_irqsave(&tu->qlock, flags);
+ 	snd_timer_user_append_to_tqueue(tu, &r1);
+@@ -1355,7 +1371,7 @@ static void snd_timer_user_tinterrupt(struct snd_timer_instance *timeri,
+ 				      unsigned long ticks)
+ {
+ 	struct snd_timer_user *tu = timeri->callback_data;
+-	struct snd_timer_tread *r, r1;
++	struct snd_timer_tread64 *r, r1;
+ 	struct timespec64 tstamp;
+ 	int prev, append = 0;
  
- 			snd_pcm_gettime(runtime, &tstamp);
--			status->tstamp = timespec64_to_timespec(tstamp);
-+			status->tstamp_sec = tstamp.tv_sec;
-+			status->tstamp_nsec = tstamp.tv_nsec;
+@@ -1376,7 +1392,8 @@ static void snd_timer_user_tinterrupt(struct snd_timer_instance *timeri,
+ 	if ((tu->filter & (1 << SNDRV_TIMER_EVENT_RESOLUTION)) &&
+ 	    tu->last_resolution != resolution) {
+ 		r1.event = SNDRV_TIMER_EVENT_RESOLUTION;
+-		r1.tstamp = timespec64_to_timespec(tstamp);
++		r1.tstamp_sec = tstamp.tv_sec;
++		r1.tstamp_nsec = tstamp.tv_nsec;
+ 		r1.val = resolution;
+ 		snd_timer_user_append_to_tqueue(tu, &r1);
+ 		tu->last_resolution = resolution;
+@@ -1390,14 +1407,16 @@ static void snd_timer_user_tinterrupt(struct snd_timer_instance *timeri,
+ 		prev = tu->qtail == 0 ? tu->queue_size - 1 : tu->qtail - 1;
+ 		r = &tu->tqueue[prev];
+ 		if (r->event == SNDRV_TIMER_EVENT_TICK) {
+-			r->tstamp = timespec64_to_timespec(tstamp);
++			r->tstamp_sec = tstamp.tv_sec;
++			r->tstamp_nsec = tstamp.tv_nsec;
+ 			r->val += ticks;
+ 			append++;
+ 			goto __wake;
  		}
  	}
-  _tstamp_end:
-@@ -936,11 +945,11 @@ int snd_pcm_status(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--static int snd_pcm_status_user(struct snd_pcm_substream *substream,
--			       struct snd_pcm_status __user * _status,
--			       bool ext)
-+static int snd_pcm_status_user64(struct snd_pcm_substream *substream,
-+				 struct snd_pcm_status64 __user * _status,
-+				 bool ext)
+ 	r1.event = SNDRV_TIMER_EVENT_TICK;
+-	r1.tstamp = timespec64_to_timespec(tstamp);
++	r1.tstamp_sec = tstamp.tv_sec;
++	r1.tstamp_nsec = tstamp.tv_nsec;
+ 	r1.val = ticks;
+ 	snd_timer_user_append_to_tqueue(tu, &r1);
+ 	append++;
+@@ -1412,7 +1431,7 @@ static void snd_timer_user_tinterrupt(struct snd_timer_instance *timeri,
+ static int realloc_user_queue(struct snd_timer_user *tu, int size)
  {
--	struct snd_pcm_status status;
-+	struct snd_pcm_status64 status;
- 	int res;
+ 	struct snd_timer_read *queue = NULL;
+-	struct snd_timer_tread *tqueue = NULL;
++	struct snd_timer_tread64 *tqueue = NULL;
  
- 	memset(&status, 0, sizeof(status));
-@@ -952,7 +961,7 @@ static int snd_pcm_status_user(struct snd_pcm_substream *substream,
- 	if (ext && get_user(status.audio_tstamp_data,
- 				(u32 __user *)(&_status->audio_tstamp_data)))
- 		return -EFAULT;
--	res = snd_pcm_status(substream, &status);
-+	res = snd_pcm_status64(substream, &status);
- 	if (res < 0)
- 		return res;
- 	if (copy_to_user(_status, &status, sizeof(status)))
-@@ -960,6 +969,55 @@ static int snd_pcm_status_user(struct snd_pcm_substream *substream,
- 	return 0;
+ 	if (tu->tread) {
+ 		tqueue = kcalloc(size, sizeof(*tqueue), GFP_KERNEL);
+@@ -1841,11 +1860,11 @@ static int snd_timer_user_params(struct file *file,
+ 	tu->qhead = tu->qtail = tu->qused = 0;
+ 	if (tu->timeri->flags & SNDRV_TIMER_IFLG_EARLY_EVENT) {
+ 		if (tu->tread) {
+-			struct snd_timer_tread tread;
++			struct snd_timer_tread64 tread;
+ 			memset(&tread, 0, sizeof(tread));
+ 			tread.event = SNDRV_TIMER_EVENT_EARLY;
+-			tread.tstamp.tv_sec = 0;
+-			tread.tstamp.tv_nsec = 0;
++			tread.tstamp_sec = 0;
++			tread.tstamp_nsec = 0;
+ 			tread.val = 0;
+ 			snd_timer_user_append_to_tqueue(tu, &tread);
+ 		} else {
+@@ -1963,6 +1982,36 @@ static int snd_timer_user_pause(struct file *file)
+ 	return (err = snd_timer_pause(tu->timeri)) < 0 ? err : 0;
  }
  
-+static int snd_pcm_status_user32(struct snd_pcm_substream *substream,
-+				 struct snd_pcm_status32 __user * _status,
-+				 bool ext)
++static int snd_timer_user_tread(void __user *argp, struct snd_timer_user *tu,
++				unsigned int cmd, bool compat)
 +{
-+	struct snd_pcm_status64 status64;
-+	struct snd_pcm_status32 status32;
-+	int res;
++	int __user *p = argp;
++	int xarg, old_tread;
 +
-+	memset(&status64, 0, sizeof(status64));
-+	memset(&status32, 0, sizeof(status32));
-+	/*
-+	 * with extension, parameters are read/write,
-+	 * get audio_tstamp_data from user,
-+	 * ignore rest of status structure
-+	 */
-+	if (ext && get_user(status64.audio_tstamp_data,
-+			    (u32 __user *)(&_status->audio_tstamp_data)))
++	if (tu->timeri)	/* too late */
++		return -EBUSY;
++	if (get_user(xarg, p))
 +		return -EFAULT;
-+	res = snd_pcm_status64(substream, &status64);
-+	if (res < 0)
-+		return res;
 +
-+	status32 = (struct snd_pcm_status32) {
-+		.state = status64.state,
-+		.trigger_tstamp_sec = status64.trigger_tstamp_sec,
-+		.trigger_tstamp_nsec = status64.trigger_tstamp_nsec,
-+		.tstamp_sec = status64.tstamp_sec,
-+		.tstamp_nsec = status64.tstamp_nsec,
-+		.appl_ptr = status64.appl_ptr,
-+		.hw_ptr = status64.hw_ptr,
-+		.delay = status64.delay,
-+		.avail = status64.avail,
-+		.avail_max = status64.avail_max,
-+		.overrange = status64.overrange,
-+		.suspended_state = status64.suspended_state,
-+		.audio_tstamp_data = status64.audio_tstamp_data,
-+		.audio_tstamp_sec = status64.audio_tstamp_sec,
-+		.audio_tstamp_nsec = status64.audio_tstamp_nsec,
-+		.driver_tstamp_sec = status64.audio_tstamp_sec,
-+		.driver_tstamp_nsec = status64.audio_tstamp_nsec,
-+		.audio_tstamp_accuracy = status64.audio_tstamp_accuracy,
-+	};
++	old_tread = tu->tread;
 +
-+	if (copy_to_user(_status, &status32, sizeof(status32)))
-+		return -EFAULT;
++	if (!xarg)
++		tu->tread = TREAD_FORMAT_NONE;
++	else if (cmd == SNDRV_TIMER_IOCTL_TREAD64 ||
++		 (IS_ENABLED(CONFIG_64BITS) && !compat))
++		tu->tread = TREAD_FORMAT_TIME64;
++	else
++		tu->tread = TREAD_FORMAT_TIME32;
++
++	if (tu->tread != old_tread &&
++	    realloc_user_queue(tu, tu->queue_size) < 0) {
++		tu->tread = old_tread;
++		return -ENOMEM;
++	}
 +
 +	return 0;
 +}
 +
- static int snd_pcm_channel_info(struct snd_pcm_substream *substream,
- 				struct snd_pcm_channel_info * info)
+ enum {
+ 	SNDRV_TIMER_IOCTL_START_OLD = _IO('T', 0x20),
+ 	SNDRV_TIMER_IOCTL_STOP_OLD = _IO('T', 0x21),
+@@ -1971,7 +2020,7 @@ enum {
+ };
+ 
+ static long __snd_timer_user_ioctl(struct file *file, unsigned int cmd,
+-				 unsigned long arg)
++				 unsigned long arg, bool compat)
  {
-@@ -2896,10 +2954,14 @@ static int snd_pcm_common_ioctl(struct file *file,
- 		return snd_pcm_hw_free(substream);
- 	case SNDRV_PCM_IOCTL_SW_PARAMS:
- 		return snd_pcm_sw_params_user(substream, arg);
--	case SNDRV_PCM_IOCTL_STATUS:
--		return snd_pcm_status_user(substream, arg, false);
--	case SNDRV_PCM_IOCTL_STATUS_EXT:
--		return snd_pcm_status_user(substream, arg, true);
-+	case SNDRV_PCM_IOCTL_STATUS32:
-+		return snd_pcm_status_user32(substream, arg, false);
-+	case SNDRV_PCM_IOCTL_STATUS_EXT32:
-+		return snd_pcm_status_user32(substream, arg, true);
-+	case SNDRV_PCM_IOCTL_STATUS64:
-+		return snd_pcm_status_user64(substream, arg, false);
-+	case SNDRV_PCM_IOCTL_STATUS_EXT64:
-+		return snd_pcm_status_user64(substream, arg, true);
- 	case SNDRV_PCM_IOCTL_CHANNEL_INFO:
- 		return snd_pcm_channel_info_user(substream, arg);
- 	case SNDRV_PCM_IOCTL_PREPARE:
+ 	struct snd_timer_user *tu;
+ 	void __user *argp = (void __user *)arg;
+@@ -1983,23 +2032,9 @@ static long __snd_timer_user_ioctl(struct file *file, unsigned int cmd,
+ 		return put_user(SNDRV_TIMER_VERSION, p) ? -EFAULT : 0;
+ 	case SNDRV_TIMER_IOCTL_NEXT_DEVICE:
+ 		return snd_timer_user_next_device(argp);
+-	case SNDRV_TIMER_IOCTL_TREAD:
+-	{
+-		int xarg, old_tread;
+-
+-		if (tu->timeri)	/* too late */
+-			return -EBUSY;
+-		if (get_user(xarg, p))
+-			return -EFAULT;
+-		old_tread = tu->tread;
+-		tu->tread = xarg ? 1 : 0;
+-		if (tu->tread != old_tread &&
+-		    realloc_user_queue(tu, tu->queue_size) < 0) {
+-			tu->tread = old_tread;
+-			return -ENOMEM;
+-		}
+-		return 0;
+-	}
++	case SNDRV_TIMER_IOCTL_TREAD_OLD:
++	case SNDRV_TIMER_IOCTL_TREAD64:
++		return snd_timer_user_tread(argp, tu, cmd, compat);
+ 	case SNDRV_TIMER_IOCTL_GINFO:
+ 		return snd_timer_user_ginfo(file, argp);
+ 	case SNDRV_TIMER_IOCTL_GPARAMS:
+@@ -2039,7 +2074,7 @@ static long snd_timer_user_ioctl(struct file *file, unsigned int cmd,
+ 	long ret;
+ 
+ 	mutex_lock(&tu->ioctl_lock);
+-	ret = __snd_timer_user_ioctl(file, cmd, arg);
++	ret = __snd_timer_user_ioctl(file, cmd, arg, false);
+ 	mutex_unlock(&tu->ioctl_lock);
+ 	return ret;
+ }
+@@ -2055,13 +2090,28 @@ static int snd_timer_user_fasync(int fd, struct file * file, int on)
+ static ssize_t snd_timer_user_read(struct file *file, char __user *buffer,
+ 				   size_t count, loff_t *offset)
+ {
++	struct snd_timer_tread64 *tread;
++	struct snd_timer_tread tread32;
+ 	struct snd_timer_user *tu;
+ 	long result = 0, unit;
+ 	int qhead;
+ 	int err = 0;
+ 
+ 	tu = file->private_data;
+-	unit = tu->tread ? sizeof(struct snd_timer_tread) : sizeof(struct snd_timer_read);
++	switch (tu->tread) {
++	case TREAD_FORMAT_TIME64:
++		unit = sizeof(struct snd_timer_tread64);
++		break;
++	case TREAD_FORMAT_TIME32:
++		unit = sizeof(struct snd_timer_tread);
++		break;
++	case TREAD_FORMAT_NONE:
++		unit = sizeof(struct snd_timer_read);
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
+ 	mutex_lock(&tu->ioctl_lock);
+ 	spin_lock_irq(&tu->qlock);
+ 	while ((long)count - result >= unit) {
+@@ -2100,14 +2150,36 @@ static ssize_t snd_timer_user_read(struct file *file, char __user *buffer,
+ 		tu->qused--;
+ 		spin_unlock_irq(&tu->qlock);
+ 
+-		if (tu->tread) {
+-			if (copy_to_user(buffer, &tu->tqueue[qhead],
+-					 sizeof(struct snd_timer_tread)))
++		tread = &tu->tqueue[qhead];
++
++		switch (tu->tread) {
++		case TREAD_FORMAT_TIME64:
++			if (copy_to_user(buffer, tread,
++					 sizeof(struct snd_timer_tread64)))
+ 				err = -EFAULT;
+-		} else {
++			break;
++		case TREAD_FORMAT_TIME32:
++			memset(&tread32, 0, sizeof(tread32));
++			tread32 = (struct snd_timer_tread) {
++				.event = tread->event,
++				.tstamp = {
++					.tv_sec = tread->tstamp_sec,
++					.tv_nsec = tread->tstamp_nsec,
++				},
++				.val = tread->val,
++			};
++
++			if (copy_to_user(buffer, &tread32, sizeof(tread32)))
++				err = -EFAULT;
++			break;
++		case TREAD_FORMAT_NONE:
+ 			if (copy_to_user(buffer, &tu->queue[qhead],
+ 					 sizeof(struct snd_timer_read)))
+ 				err = -EFAULT;
++			break;
++		default:
++			err = -ENOTSUPP;
++			break;
+ 		}
+ 
+ 		spin_lock_irq(&tu->qlock);
+diff --git a/sound/core/timer_compat.c b/sound/core/timer_compat.c
+index 0495ede..bef7f87 100644
+--- a/sound/core/timer_compat.c
++++ b/sound/core/timer_compat.c
+@@ -111,7 +111,7 @@ static long __snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd,
+ 	case SNDRV_TIMER_IOCTL_PAUSE:
+ 	case SNDRV_TIMER_IOCTL_PAUSE_OLD:
+ 	case SNDRV_TIMER_IOCTL_NEXT_DEVICE:
+-		return __snd_timer_user_ioctl(file, cmd, (unsigned long)argp);
++		return __snd_timer_user_ioctl(file, cmd, (unsigned long)argp, true);
+ 	case SNDRV_TIMER_IOCTL_GPARAMS32:
+ 		return snd_timer_user_gparams_compat(file, argp);
+ 	case SNDRV_TIMER_IOCTL_INFO32:
 -- 
 1.7.9.5
