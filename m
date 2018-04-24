@@ -1,41 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756217AbeDXGED (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 02:04:03 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:38737 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755919AbeDXGEC (ORCPT
+        id S1756242AbeDXGF2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 02:05:28 -0400
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:42195 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755919AbeDXGFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 02:04:02 -0400
-X-Google-Smtp-Source: AB8JxZpjuqIwyHW7bcR3UvYhPtrZinrFYLyJfXOJw9d4Y0/fl3FnwyimNu9L4yoM3TemvQHmFaAWScZa5JrjALxYiKDvzNxtCEfC
+        Tue, 24 Apr 2018 02:05:22 -0400
+X-Google-Smtp-Source: AB8JxZqIunLfgwkzuPUdF/TaeH5csfUeW63kCQcZ2nfb/fsk5S8/v1GRw9G8yujC0juV41GYEiUvWw==
+Subject: Re: [PATCH v2] Input: xen-kbdfront - allow better run-time
+ configuration
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lyan@suse.com, boris.ostrovsky@oracle.com, andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180419133934.31306-1-andr2000@gmail.com>
+ <998533bb-8042-b07e-cb79-661750e035d9@gmail.com>
+ <a2189ec9-ef4d-2c23-28c6-a6ff8525e8e5@suse.com>
+ <7b4c1f8a-6317-1f17-5950-64a1b7183dba@gmail.com>
+ <20180423185530.GC66646@dtor-ws>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <97f3a94f-f1d3-a162-c081-15f938eb7dd6@gmail.com>
+Date: Tue, 24 Apr 2018 09:05:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Mon, 23 Apr 2018 23:04:01 -0700
-In-Reply-To: <20180424060137.GA57142@jaegeuk-macbookpro.roam.corp.google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bec77e056a91eb55@google.com>
-Subject: Re: kernel BUG at fs/f2fs/node.c:LINE!
-From: syzbot <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com>
-To: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        yuchao0@huawei.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180423185530.GC66646@dtor-ws>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot tried to test the proposed patch but build/boot failed:
-
-patch is already applied
-
-
-Tested on  
-git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/dev-test  
-commit
-65b966f58e8264477da6c8b70703ce362cb1f8f0 (Tue Apr 24 05:02:31 2018 +0000)
-f2fs: give message and set need_fsck given broken node id
-
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-Patch: https://syzkaller.appspot.com/x/patch.diff?id=5525459446005760
+On 04/23/2018 09:55 PM, Dmitry Torokhov wrote:
+> On Mon, Apr 23, 2018 at 11:29:45AM +0300, Oleksandr Andrushchenko wrote:
+>> On 04/23/2018 11:23 AM, Juergen Gross wrote:
+>>> On 23/04/18 10:02, Oleksandr Andrushchenko wrote:
+>>>> Juergen, Jason, Dmitry
+>>>> any comment on this?
+>>> Oleksandr, please give us some time. I can't speak for others, but I am
+>>> not sitting here idling and hoping that some work (e.g. patches to
+>>> review) might appear.
+>>>
+>>> I have a lot of other stuff to do and will respond when I find some time
+>>> to look at your patches.
+>>>
+>>> Pinging others on Monday when having sent out the patch only on Thursday
+>>> is rather unfriendly.
+>> Really sorry about this, my bad.
+>> I had an impression that the only change we need to
+>> discuss was uint -> bool change which seemed rather trivial
+> I am sorry I did not respond to the previous version until today, but I
+> do not think that we should be extending module parameters for this.
+> Protocol features are already there for absolute pointers and
+> multi-touch, keyboard and relative pointers should use the same
+> mechanism.
+Ok, then I'll start from extending the protocol
+> Thanks.
+>
