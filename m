@@ -1,207 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752902AbeDXJCA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:02:00 -0400
-Received: from mga14.intel.com ([192.55.52.115]:23471 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750815AbeDXJB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:01:57 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,322,1520924400";
-   d="scan'208";a="34200680"
-Date: Tue, 24 Apr 2018 12:01:50 +0300
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>
-Subject: Re: [PATCH v2 05/10] media: v4l: Add definitions for MPEG2 frame
- format and header metadata
-Message-ID: <20180424090150.rtbejfjaddd6wysk@paasikivi.fi.intel.com>
-References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
- <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
+        id S1753185AbeDXJDd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:03:33 -0400
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:36083 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753084AbeDXJD2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 05:03:28 -0400
+X-Google-Smtp-Source: AB8JxZpDC6kMYyGwjRbFsUMkBFP8m5Q6GaVgB5A1ZEvboJ4YCBlc2Zn76BB2ZvDkeyyHhu1nCCnOoQ==
+Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+To: Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Wei Liu <wei.liu2@citrix.com>
+Cc: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        xen-devel@lists.xenproject.org, daniel.vetter@intel.com
+References: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
+ <20180416192905.GA18096@downor-Z87X-UD5H>
+ <20180417075928.GT31310@phenom.ffwll.local>
+ <20180417205744.GA15930@downor-Z87X-UD5H>
+ <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
+ <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
+ <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+ <20180420071914.GG31310@phenom.ffwll.local>
+ <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
+ <20180423115242.ywdwqblj2aseu3fr@citrix.com>
+ <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
+ <ce2ebb5b-fa13-0475-b0fd-6c330277d151@oracle.com>
+ <30ddb005-96c8-f47c-2e23-4e0d354e5842@gmail.com>
+ <a25a394c-ecf8-d8cf-15b8-eb8cb71d0a02@suse.com>
+ <c4c426eb-5a35-1f8f-59f3-350d6e97d89e@gmail.com>
+ <6089d701-5221-75b4-38eb-b23bc5dc30cd@suse.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <85fc8f82-6d4d-9343-2737-85b7d7391168@gmail.com>
+Date: Tue, 24 Apr 2018 12:03:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <6089d701-5221-75b4-38eb-b23bc5dc30cd@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-
-On Thu, Apr 19, 2018 at 05:45:31PM +0200, Paul Kocialkowski wrote:
-> Stateless video decoding engines require both the MPEG slices and
-> associated metadata from the video stream in order to decode frames.
-> 
-> This introduces definitions for a new pixel format, describing buffers
-> with MPEG2 slice data, as well as a control structure for passing the
-> frame header (metadata) to drivers.
-
-What's the typical relationship between MPEG2 slice data and the header?
-
-Are the two always used together, do they originate from the same source,
-for instance? I have to admit I'm not very familiar with MPEG...
-
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
-> ---
->  drivers/media/v4l2-core/v4l2-ctrls.c | 10 ++++++++++
->  drivers/media/v4l2-core/v4l2-ioctl.c |  1 +
->  include/uapi/linux/v4l2-controls.h   | 26 ++++++++++++++++++++++++++
->  include/uapi/linux/videodev2.h       |  3 +++
->  4 files changed, 40 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index ba05a8b9a095..fcdc12b9a9e0 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -761,6 +761,7 @@ const char *v4l2_ctrl_get_name(u32 id)
->  	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:		return "Vertical MV Search Range";
->  	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:		return "Repeat Sequence Header";
->  	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		return "Force Key Frame";
-> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:		return "MPEG2 Frame Header";
->  
->  	/* VPX controls */
->  	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:		return "VPX Number of Partitions";
-> @@ -1152,6 +1153,9 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
->  	case V4L2_CID_RDS_TX_ALT_FREQS:
->  		*type = V4L2_CTRL_TYPE_U32;
->  		break;
-> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:
-> +		*type = V4L2_CTRL_TYPE_MPEG2_FRAME_HDR;
-> +		break;
->  	default:
->  		*type = V4L2_CTRL_TYPE_INTEGER;
->  		break;
-> @@ -1472,6 +1476,9 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
->  			return -ERANGE;
->  		return 0;
->  
-> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
-> +		return 0;
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -2046,6 +2053,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
->  	case V4L2_CTRL_TYPE_U32:
->  		elem_size = sizeof(u32);
->  		break;
-> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
-> +		elem_size = sizeof(struct v4l2_ctrl_mpeg2_frame_hdr);
-> +		break;
->  	default:
->  		if (type < V4L2_CTRL_COMPOUND_TYPES)
->  			elem_size = sizeof(s32);
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 468c3c65362d..8070203da5d2 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1273,6 +1273,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
->  		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
->  		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
-> +		case V4L2_PIX_FMT_MPEG2_FRAME:	descr = "MPEG2 Frame"; break;
->  		case V4L2_PIX_FMT_CPIA1:	descr = "GSPCA CPiA YUV"; break;
->  		case V4L2_PIX_FMT_WNVA:		descr = "WNVA"; break;
->  		case V4L2_PIX_FMT_SN9C10X:	descr = "GSPCA SN9C10X"; break;
-> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> index cbbb750d87d1..8431b2a540c7 100644
-> --- a/include/uapi/linux/v4l2-controls.h
-> +++ b/include/uapi/linux/v4l2-controls.h
-> @@ -557,6 +557,8 @@ enum v4l2_mpeg_video_mpeg4_profile {
->  };
->  #define V4L2_CID_MPEG_VIDEO_MPEG4_QPEL		(V4L2_CID_MPEG_BASE+407)
->  
-> +#define V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR     (V4L2_CID_MPEG_BASE+450)
-> +
->  /*  Control IDs for VP8 streams
->   *  Although VP8 is not part of MPEG we add these controls to the MPEG class
->   *  as that class is already handling other video compression standards
-> @@ -985,4 +987,28 @@ enum v4l2_detect_md_mode {
->  #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_CLASS_BASE + 3)
->  #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DETECT_CLASS_BASE + 4)
->  
-> +struct v4l2_ctrl_mpeg2_frame_hdr {
-> +	__u32 slice_len;
-> +	__u32 slice_pos;
-> +	enum { MPEG1, MPEG2 } type;
-> +
-> +	__u16 width;
-> +	__u16 height;
-> +
-> +	enum { PCT_I = 1, PCT_P, PCT_B, PCT_D } picture_coding_type;
-> +	__u8 f_code[2][2];
-> +
-> +	__u8 intra_dc_precision;
-> +	__u8 picture_structure;
-> +	__u8 top_field_first;
-> +	__u8 frame_pred_frame_dct;
-> +	__u8 concealment_motion_vectors;
-> +	__u8 q_scale_type;
-> +	__u8 intra_vlc_format;
-> +	__u8 alternate_scan;
-> +
-> +	__u8 backward_ref_index;
-> +	__u8 forward_ref_index;
-> +};
-
-Besides the comments that have been given, please add
-__attribute__((packed)) to the struct definition.
-
-> +
->  #endif
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 31b5728b56e9..4b8336f7bcf0 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -635,6 +635,7 @@ struct v4l2_pix_format {
->  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /* SMPTE 421M Annex L compliant stream */
->  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
->  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
-> +#define V4L2_PIX_FMT_MPEG2_FRAME v4l2_fourcc('M', 'G', '2', 'F') /* MPEG2 frame */
-
-This format needs documentation.
-
->  
->  /*  Vendor-specific formats   */
->  #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1 YUV */
-> @@ -1586,6 +1587,7 @@ struct v4l2_ext_control {
->  		__u8 __user *p_u8;
->  		__u16 __user *p_u16;
->  		__u32 __user *p_u32;
-> +		struct v4l2_ctrl_mpeg2_frame_hdr __user *p_mpeg2_frame_hdr;
->  		void __user *ptr;
->  	};
->  } __attribute__ ((packed));
-> @@ -1631,6 +1633,7 @@ enum v4l2_ctrl_type {
->  	V4L2_CTRL_TYPE_U8	     = 0x0100,
->  	V4L2_CTRL_TYPE_U16	     = 0x0101,
->  	V4L2_CTRL_TYPE_U32	     = 0x0102,
-> +	V4L2_CTRL_TYPE_MPEG2_FRAME_HDR = 0x0109,
->  };
->  
->  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
-> -- 
-> 2.16.3
-> 
-
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+On 04/24/2018 11:40 AM, Juergen Gross wrote:
+> On 24/04/18 10:07, Oleksandr Andrushchenko wrote:
+>> On 04/24/2018 10:51 AM, Juergen Gross wrote:
+>>> On 24/04/18 07:43, Oleksandr Andrushchenko wrote:
+>>>> On 04/24/2018 01:41 AM, Boris Ostrovsky wrote:
+>>>>> On 04/23/2018 08:10 AM, Oleksandr Andrushchenko wrote:
+>>>>>> On 04/23/2018 02:52 PM, Wei Liu wrote:
+>>>>>>> On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko
+>>>>>>> wrote:
+>>>>>>>>>>         the gntdev.
+>>>>>>>>>>
+>>>>>>>>>> I think this is generic enough that it could be implemented by a
+>>>>>>>>>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
+>>>>>>>>>> something similar to this.
+>>>>>>>>> You can't just wrap random userspace memory into a dma-buf. We've
+>>>>>>>>> just had
+>>>>>>>>> this discussion with kvm/qemu folks, who proposed just that, and
+>>>>>>>>> after a
+>>>>>>>>> bit of discussion they'll now try to have a driver which just
+>>>>>>>>> wraps a
+>>>>>>>>> memfd into a dma-buf.
+>>>>>>>> So, we have to decide either we introduce a new driver
+>>>>>>>> (say, under drivers/xen/xen-dma-buf) or extend the existing
+>>>>>>>> gntdev/balloon to support dma-buf use-cases.
+>>>>>>>>
+>>>>>>>> Can anybody from Xen community express their preference here?
+>>>>>>>>
+>>>>>>> Oleksandr talked to me on IRC about this, he said a few IOCTLs
+>>>>>>> need to
+>>>>>>> be added to either existing drivers or a new driver.
+>>>>>>>
+>>>>>>> I went through this thread twice and skimmed through the relevant
+>>>>>>> documents, but I couldn't see any obvious pros and cons for either
+>>>>>>> approach. So I don't really have an opinion on this.
+>>>>>>>
+>>>>>>> But, assuming if implemented in existing drivers, those IOCTLs
+>>>>>>> need to
+>>>>>>> be added to different drivers, which means userspace program needs to
+>>>>>>> write more code and get more handles, it would be slightly better to
+>>>>>>> implement a new driver from that perspective.
+>>>>>> If gntdev/balloon extension is still considered:
+>>>>>>
+>>>>>> All the IOCTLs will be in gntdev driver (in current xen-zcopy
+>>>>>> terminology):
+>>>>>>     - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
+>>>>>>     - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
+>>>>>>     - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
+>>>>>>
+>>>>>> Balloon driver extension, which is needed for contiguous/DMA
+>>>>>> buffers, will be to provide new *kernel API*, no UAPI is needed.
+>>>>>>
+>>>>> So I am obviously a bit late to this thread, but why do you need to add
+>>>>> new ioctls to gntdev and balloon? Doesn't this driver manage to do what
+>>>>> you want without any extensions?
+>>>> 1. I only (may) need to add IOCTLs to gntdev
+>>>> 2. balloon driver needs to be extended, so it can allocate
+>>>> contiguous (DMA) memory, not IOCTLs/UAPI here, all lives
+>>>> in the kernel.
+>>>> 3. The reason I need to extend gnttab with new IOCTLs is to
+>>>> provide new functionality to create a dma-buf from grant references
+>>>> and to produce grant references for a dma-buf. This is what I have as
+>>>> UAPI
+>>>> description for xen-zcopy driver:
+>>>>
+>>>> 1. DRM_IOCTL_XEN_ZCOPY_DUMB_FROM_REFS
+>>>> This will create a DRM dumb buffer from grant references provided
+>>>> by the frontend. The intended usage is:
+>>>>     - Frontend
+>>>>       - creates a dumb/display buffer and allocates memory
+>>>>       - grants foreign access to the buffer pages
+>>>>       - passes granted references to the backend
+>>>>     - Backend
+>>>>       - issues DRM_XEN_ZCOPY_DUMB_FROM_REFS ioctl to map
+>>>>         granted references and create a dumb buffer
+>>>>       - requests handle to fd conversion via DRM_IOCTL_PRIME_HANDLE_TO_FD
+>>>>       - requests real HW driver/consumer to import the PRIME buffer with
+>>>>         DRM_IOCTL_PRIME_FD_TO_HANDLE
+>>>>       - uses handle returned by the real HW driver
+>>>>     - at the end:
+>>>>       o closes real HW driver's handle with DRM_IOCTL_GEM_CLOSE
+>>>>       o closes zero-copy driver's handle with DRM_IOCTL_GEM_CLOSE
+>>>>       o closes file descriptor of the exported buffer
+>>>>
+>>>> 2. DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
+>>>> This will grant references to a dumb/display buffer's memory provided by
+>>>> the
+>>>> backend. The intended usage is:
+>>>>     - Frontend
+>>>>       - requests backend to allocate dumb/display buffer and grant
+>>>> references
+>>>>         to its pages
+>>>>     - Backend
+>>>>       - requests real HW driver to create a dumb with
+>>>> DRM_IOCTL_MODE_CREATE_DUMB
+>>>>       - requests handle to fd conversion via DRM_IOCTL_PRIME_HANDLE_TO_FD
+>>>>       - requests zero-copy driver to import the PRIME buffer with
+>>>>         DRM_IOCTL_PRIME_FD_TO_HANDLE
+>>>>       - issues DRM_XEN_ZCOPY_DUMB_TO_REFS ioctl to
+>>>>         grant references to the buffer's memory.
+>>>>       - passes grant references to the frontend
+>>>>    - at the end:
+>>>>       - closes zero-copy driver's handle with DRM_IOCTL_GEM_CLOSE
+>>>>       - closes real HW driver's handle with DRM_IOCTL_GEM_CLOSE
+>>>>       - closes file descriptor of the imported buffer
+>>>>
+>>>> 3. DRM_XEN_ZCOPY_DUMB_WAIT_FREE
+>>>> This will block until the dumb buffer with the wait handle provided be
+>>>> freed:
+>>>> this is needed for synchronization between frontend and backend in case
+>>>> frontend provides grant references of the buffer via
+>>>> DRM_XEN_ZCOPY_DUMB_FROM_REFS IOCTL and which must be released before
+>>>> backend replies with XENDISPL_OP_DBUF_DESTROY response.
+>>>> wait_handle must be the same value returned while calling
+>>>> DRM_XEN_ZCOPY_DUMB_FROM_REFS IOCTL.
+>>>>
+>>>> So, as you can see the above functionality is not covered by the
+>>>> existing UAPI
+>>>> of the gntdev driver.
+>>>> Now, if we change dumb -> dma-buf and remove DRM code (which is only a
+>>>> wrapper
+>>>> here on top of dma-buf) we get new driver for dma-buf for Xen.
+>>>>
+>>>> This is why I have 2 options here: either create a dedicated driver for
+>>>> this
+>>>> (e.g. re-work xen-zcopy to be DRM independent and put it under
+>>>> drivers/xen/xen-dma-buf, for example) or extend the existing gntdev
+>>>> driver
+>>>> with the above UAPI + make changes to the balloon driver to provide
+>>>> kernel
+>>>> API for DMA buffer allocations.
+>>> Which user component would use the new ioctls?
+>> It is currently used by the display backend [1] and will
+>> probably be used by the hyper-dmabuf frontend/backend
+>> (Dongwon from Intel can provide more info on this).
+>>> I'm asking because I'm not very fond of adding more linux specific
+>>> functions to libgnttab which are not related to a specific Xen version,
+>>> but to a kernel version.
+>> Hm, I was not thinking about this UAPI to be added to libgnttab.
+>> It seems it can be used directly w/o wrappers in user-space
+> Would this program use libgnttab in parallel?
+In case of the display backend - yes, for shared rings,
+extracting grefs from displif protocol it uses gntdev via
+helper library [1]
+>   If yes how would the two
+> usage paths be combined (same applies to the separate driver, btw)? The
+> gntdev driver manages resources per file descriptor and libgnttab is
+> hiding the file descriptor it is using for a connection.
+Ah, at the moment the UAPI was not used in parallel as there were
+2 drivers for that: gntdev + xen-zcopy with different UAPIs.
+But now, if we extend gntdev with the new API then you are rigth:
+either libgnttab needs to be extended or that new part of the
+gntdev UAPI needs to be open-coded by the backend
+>   Or would the
+> user program use only the new driver for communicating with the gntdev
+> driver? In this case it might be an option to extend the gntdev driver
+> to present a new device (e.g. "gntdmadev") for that purpose.
+No, it seems that libgnttab and this new driver's UAPI will be used
+in parallel
+>>> So doing this in a separate driver seems to be the better option in
+>>> this regard.
+>> Well, from maintenance POV it is easier for me to have it all in
+>> a separate driver as all dma-buf related functionality will
+>> reside at one place. This also means that no changes to existing
+>> drivers will be needed (if it is ok to have ballooning in/out
+>> code for DMA buffers (allocated with dma_alloc_xxx) not in the balloon
+>> driver)
+> I think in the end this really depends on how the complete solution
+> will look like. gntdev is a special wrapper for the gnttab driver.
+> In case the new dma-buf driver needs to use parts of gntdev I'd rather
+> have a new driver above gnttab ("gntuser"?) used by gntdev and dma-buf.
+The new driver doesn't use gntdev's existing API, but extends it,
+e.g. by adding new ways to export/import grefs for a dma-buf and
+manage dma-buf's kernel ops. Thus, gntdev, which already provides
+UAPI, seems to be a good candidate for such an extension
+>
+> Juergen
+[1] https://github.com/xen-troops/libxenbe
