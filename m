@@ -1,77 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756232AbeDXG1l (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 02:27:41 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:49794 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756005AbeDXG1J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 02:27:09 -0400
-From: Vignesh R <vigneshr@ti.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC: Vignesh R <vigneshr@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
-Subject: [PATCH v3 2/3] Input: ti_am335x_tsc - Ack pending IRQs at probe and before suspend
-Date: Tue, 24 Apr 2018 11:57:40 +0530
-Message-ID: <20180424062741.7891-3-vigneshr@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180424062741.7891-1-vigneshr@ti.com>
-References: <20180424062741.7891-1-vigneshr@ti.com>
+        id S1756247AbeDXG3X (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 02:29:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48736 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755871AbeDXG3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 02:29:21 -0400
+Date: Tue, 24 Apr 2018 08:29:19 +0200
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, kwankhede@nvidia.com,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] sample: vfio mdev display - host device
+Message-ID: <20180424062919.bouvw7qxyrvi3vqc@sirius.home.kraxel.org>
+References: <20180409103513.8020-1-kraxel@redhat.com>
+ <20180409103513.8020-2-kraxel@redhat.com>
+ <20180423204139.2d157869@w520.home>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180423204139.2d157869@w520.home>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+  Hi,
 
-It is seen that just enabling the TSC module triggers a HW_PEN IRQ
-without any interaction with touchscreen by user. This results in first
-suspend/resume sequence to fail as system immediately wakes up from
-suspend as soon as HW_PEN IRQ is enabled in suspend handler due to the
-pending IRQ. Therefore clear all IRQs at probe and also in suspend
-callback for sanity.
+> > +/* pci ids */
+> > +#define MDPY_PCI_VENDOR_ID	0x1b36 /* redhat */
+> > +#define MDPY_PCI_DEVICE_ID	0x00f0
+> 
+> I don't see this on pci-ids, so I assume we're just squatting on an
+> ID.  How do we do that without risking that we don't interfere with
+> some future user?  Are we relying on this being a non-default sample
+> device?  Should we just ask for an allocation?
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
+It's grabbed from qemu id range.
+Allocating one is probably a good idea even for a sample device.
 
-v3: Clear IRQs related to TSC module only
+> > +#define MDPY_PCI_SUBVENDOR_ID	PCI_SUBVENDOR_ID_REDHAT_QUMRANET
+> > +#define MDPY_PCI_SUBDEVICE_ID	PCI_SUBDEVICE_ID_QEMU
+> > +
+> > +/* pci cfg space offsets for fb config (dword) */
+> > +#define MDPY_FORMAT_OFFSET	0x40
+> > +#define MDPY_WIDTH_OFFSET	0x44
+> > +#define MDPY_HEIGHT_OFFSET	0x48
+> 
+> As I understand, these are just registers in PCI config space outside
+> of any capabilities.  Wouldn't it be more correct to put these within a
+> vendor defined capability?
 
- drivers/input/touchscreen/ti_am335x_tsc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Can do that.
 
-diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
-index 3908c21862c7..a548b0dbe320 100644
---- a/drivers/input/touchscreen/ti_am335x_tsc.c
-+++ b/drivers/input/touchscreen/ti_am335x_tsc.c
-@@ -35,6 +35,8 @@
- #define SEQ_SETTLE		275
- #define MAX_12BIT		((1 << 12) - 1)
- 
-+#define TSC_IRQENB_MASK		(IRQENB_FIFO0THRES | IRQENB_EOS | IRQENB_HW_PEN)
-+
- static const int config_pins[] = {
- 	STEPCONFIG_XPP,
- 	STEPCONFIG_XNN,
-@@ -437,6 +439,7 @@ static int titsc_probe(struct platform_device *pdev)
- 	if (err)
- 		dev_err(&pdev->dev, "irq wake enable failed.\n");
- 
-+	titsc_writel(ts_dev, REG_IRQSTATUS, TSC_IRQENB_MASK);
- 	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_FIFO0THRES);
- 	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_EOS);
- 	err = titsc_config_wires(ts_dev);
-@@ -502,6 +505,7 @@ static int __maybe_unused titsc_suspend(struct device *dev)
- 
- 	tscadc_dev = ti_tscadc_dev_get(to_platform_device(dev));
- 	if (device_may_wakeup(tscadc_dev->dev)) {
-+		titsc_writel(ts_dev, REG_IRQSTATUS, TSC_IRQENB_MASK);
- 		idle = titsc_readl(ts_dev, REG_IRQENABLE);
- 		titsc_writel(ts_dev, REG_IRQENABLE,
- 				(idle | IRQENB_HW_PEN));
--- 
-2.17.0
+> > +		region_info->size   = mdev_state->memsize;
+> > +		region_info->flags  = (VFIO_REGION_INFO_FLAG_READ  |
+> > +				       VFIO_REGION_INFO_FLAG_WRITE |
+> > +				       VFIO_REGION_INFO_FLAG_MMAP);
+> 
+> This doesn't appear to be true, the read and write functions call the
+> access function which only handles the config space region.  Are these
+> really mmap-only regions?
+
+Yes, they are mmap-only.
+
+> read/write access support is often useful
+> for tracing and debugging, QEMU will break if x-no-mmap=on is used.
+
+Hmm, can look into adding that, should not be that difficuilt after all.
+
+cheers,
+  Gerd
