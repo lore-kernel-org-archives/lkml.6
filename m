@@ -1,46 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751561AbeDXRQz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:16:55 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:37408 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751239AbeDXRQy (ORCPT
+        id S1751940AbeDXRRF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:17:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45874 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbeDXRQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:16:54 -0400
-Date: Tue, 24 Apr 2018 13:16:50 -0400 (EDT)
-Message-Id: <20180424.131650.2276839479783300009.davem@davemloft.net>
-To: amsalam20@gmail.com
-Cc: dav.lebrun@gmail.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next 1/2] ipv6: sr: add a per namespace sysctl to control
- seg6 flowlabel
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1524519420-1612-1-git-send-email-amsalam20@gmail.com>
-References: <1524519420-1612-1-git-send-email-amsalam20@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Apr 2018 13:16:59 -0400
+Date: Tue, 24 Apr 2018 10:16:51 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>, David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Subject: Re: [PATCH v3] kvmalloc: always use vmalloc if CONFIG_DEBUG_SG
+Message-ID: <20180424171651.GC30577@bombadil.infradead.org>
+References: <20180420130852.GC16083@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180420210200.GH10788@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180421144757.GC14610@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180423151545.GU17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424034643.GA26636@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804240818530.28016@file01.intranet.prod.int.rdu2.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1804240818530.28016@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ahmed Abdelsalam <amsalam20@gmail.com>
-Date: Mon, 23 Apr 2018 23:36:59 +0200
-
-> This patch adds a per namespace sysctl, named 'seg6_flowlabel', to be used
-> by seg6_do_srh_encap() to control the behaviour of setting the flowlabel
-> value of outer IPv6.
+On Tue, Apr 24, 2018 at 08:29:14AM -0400, Mikulas Patocka wrote:
 > 
-> The currently support behaviours are as follows:
-> -1 set flowlabel to zero.
->  0 copy flowlabel from Inner paceket in case of Inner IPv6 (0 for IPv4/L2)
->  1 Compute the flowlabel using seg6_make_flowlabel()
 > 
-> Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+> On Mon, 23 Apr 2018, Matthew Wilcox wrote:
+> 
+> > On Mon, Apr 23, 2018 at 08:06:16PM -0400, Mikulas Patocka wrote:
+> > > Some bugs (such as buffer overflows) are better detected
+> > > with kmalloc code, so we must test the kmalloc path too.
+> > 
+> > Well now, this brings up another item for the collective TODO list --
+> > implement redzone checks for vmalloc.  Unless this is something already
+> > taken care of by kasan or similar.
+> 
+> The kmalloc overflow testing is also not ideal - it rounds the size up to 
+> the next slab size and detects buffer overflows only at this boundary.
+> 
+> Some times ago, I made a "kmalloc guard" patch that places a magic number 
+> immediatelly after the requested size - so that it can detect overflows at 
+> byte boundary 
+> ( https://www.redhat.com/archives/dm-devel/2014-September/msg00018.html )
+> 
+> That patch found a bug in crypto code:
+> ( http://lkml.iu.edu/hypermail/linux/kernel/1409.1/02325.html )
 
-There really isn't a reason to make this a separate patch.
-
-Adding a sysctl that nothing refers to doesn't add much value.
-
-So please combine patches #1 and #2.
+Is it still worth doing this, now we have kasan?
