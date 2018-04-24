@@ -1,82 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932332AbeDXJvS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 05:51:18 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:33183 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756905AbeDXJvJ (ORCPT
+        id S1756464AbeDXJw3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 05:52:29 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:43709 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755791AbeDXJw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:51:09 -0400
-X-Google-Smtp-Source: AIpwx4+3L9x5SrIW8bpFsCYvR9kMU5RWHawPSGpMO/5+ZN+Yy4TCvrbn0cXQo9rn4t8cE3DHp2Q7d4pxeUXUXDSJnf4=
+        Tue, 24 Apr 2018 05:52:26 -0400
+X-Google-Smtp-Source: AIpwx4+Tl5e4UEefQuIeZJFK/+HT71V1/iQzttbx22O7x7zgiA23C4DQfdP/AmsqKRimpXoeX6oj4qs+DmOtV3KuZ80=
 MIME-Version: 1.0
-In-Reply-To: <1524230914-10175-8-git-send-email-geert+renesas@glider.be>
-References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be> <1524230914-10175-8-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Apr 2018 11:51:07 +0200
-X-Google-Sender-Auth: H5JyVQq77Pzcx_YD-ZeYnmvFAyY
-Message-ID: <CAMuHMdXyEGY71v6EFDjBhFva_VRtO4p2BdG=HC5zfrwBXLXK0g@mail.gmail.com>
-Subject: Re: [PATCH/RFC 7/8] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig symbol
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+In-Reply-To: <CADYN=9KhMhgCzmwg1P5FHEt0EaTH-EoELeF7mCCc-KtWocEGOQ@mail.gmail.com>
+References: <20180414002933.6h3S5%akpm@linux-foundation.org>
+ <cf7fe470-1b8f-a4a2-d3a1-3360ec1cc578@infradead.org> <CADYN=9KhMhgCzmwg1P5FHEt0EaTH-EoELeF7mCCc-KtWocEGOQ@mail.gmail.com>
+From: Oded Gabbay <oded.gabbay@gmail.com>
+Date: Tue, 24 Apr 2018 12:51:55 +0300
+Message-ID: <CAFCwf10nfNixtZrWkP7kGBfGyctrqZP2kwaFp1-KUDFtTgu-4g@mail.gmail.com>
+Subject: Re: [PATCH] gpu/drm/amd/amdkfd: fix build, select MMU_NOTIFIER
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+        dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Reducing/enhancing CC list)
-
-On Fri, Apr 20, 2018 at 3:28 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> All drivers for Renesas ARM SoCs have gained proper ARCH_RENESAS
-> platform dependencies.  Hence finish the conversion from ARCH_SHMOBILE
-> to ARCH_RENESAS for Renesas 32-bit ARM SoCs, as started by commit
-> 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS").
+On Thu, Apr 19, 2018 at 1:46 PM, Anders Roxell <anders.roxell@linaro.org> wrote:
+> On 14 April 2018 at 04:49, Randy Dunlap <rdunlap@infradead.org> wrote:
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> When CONFIG_MMU_NOTIFIER is not enabled, struct mmu_notifier has an
+>> incomplete type definition, which causes build errors.
+>>
+>> ../drivers/gpu/drm/amd/amdkfd/kfd_priv.h:607:22: error: field 'mmu_notifier' has incomplete type
+>> ../include/linux/kernel.h:979:32: error: dereferencing pointer to incomplete type
+>> ../include/linux/kernel.h:980:18: error: dereferencing pointer to incomplete type
+>> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:434:2: error: implicit declaration of function 'mmu_notifier_unregister_no_release' [-Werror=implicit-function-declaration]
+>> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:435:2: error: implicit declaration of function 'mmu_notifier_call_srcu' [-Werror=implicit-function-declaration]
+>> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:438:21: error: variable 'kfd_process_mmu_notifier_ops' has initializer but incomplete type
+>> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:439:2: error: unknown field 'release' specified in initializer
+>> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:439:2: warning: excess elements in struct initializer [enabled by default]
+>> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:439:2: warning: (near initialization for 'kfd_process_mmu_notifier_ops') [enabled by default]
+>> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:534:2: error: implicit declaration of function 'mmu_notifier_register' [-Werror=implicit-function-declaration]
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> Cc: Oded Gabbay <oded.gabbay@gmail.com>
+>> Cc: dri-devel@lists.freedesktop.org
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This depends on the previous patches in this series, hence the RFC.
+> Tested-by: Anders Roxell <anders.roxell@linaro.org>
 >
-> JFTR, after this, the following symbols for drivers supporting only
-> Renesas SuperH "SH-Mobile" SoCs can no longer be selected:
->   - CONFIG_KEYBOARD_SH_KEYSC,
->   - CONFIG_VIDEO_SH_VOU,
->   - CONFIG_VIDEO_SH_MOBILE_CEU,
->   - CONFIG_DRM_SHMOBILE[*],
->   - CONFIG_FB_SH_MOBILE_MERAM.
-> (changes for a shmobile_defconfig .config)
+>> ---
+>> From linux-next, not mmotm, but found in mmotm builds.
+>>
+>>  drivers/gpu/drm/amd/amdkfd/Kconfig |    1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> --- mmotm-2018-0413-1728.orig/drivers/gpu/drm/amd/amdkfd/Kconfig
+>> +++ mmotm-2018-0413-1728/drivers/gpu/drm/amd/amdkfd/Kconfig
+>> @@ -6,5 +6,6 @@ config HSA_AMD
+>>         tristate "HSA kernel driver for AMD GPU devices"
+>>         depends on DRM_AMDGPU && X86_64
+>>         imply AMD_IOMMU_V2
+>> +       select MMU_NOTIFIER
+>>         help
+>>           Enable this if you want to use HSA features on AMD GPU devices.
+>>
 
-Apparently CONFIG_VIDEO_SH_MOBILE_CEU was set in the old
-armadillo800eva_defconfig, and used by the old board code.
-
-While DT bindings do exist [1], some DT support has been added to the
-driver [2], and this even ended up as the example in [3], this was never
-enabled in the corresponding board DTS.
-
-Nevertheless, I understand that soc_camera-based driver is obsolete, and
-has been replaced by [4], but bindings for r8a7740 are lacking [5].
-
-[1] Documentation/devicetree/bindings/media/sh_mobile_ceu.txt
-[2] drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-[3] Documentation/devicetree/bindings/media/video-interfaces.txt
-[4] drivers/media/platform/renesas-ceu.c
-[5] Documentation/devicetree/bindings/media/renesas,ceu.txt
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, taken to -fixes
+Oded
