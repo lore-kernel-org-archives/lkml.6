@@ -1,94 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934386AbeDXNb7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:31:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51730 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933927AbeDXNby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:31:54 -0400
-Date: Tue, 24 Apr 2018 07:31:46 -0600
-From: Michal Hocko <mhocko@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
-Message-ID: <20180424133146.GG17484@dhcp22.suse.cz>
-References: <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com>
- <20180420130852.GC16083@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
- <20180420210200.GH10788@bombadil.infradead.org>
- <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
- <20180421144757.GC14610@bombadil.infradead.org>
- <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
- <20180423151545.GU17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804232006540.2299@file01.intranet.prod.int.rdu2.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1804232006540.2299@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S934399AbeDXNcf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:32:35 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33464 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933700AbeDXNRl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:17:41 -0400
+X-Google-Smtp-Source: AB8JxZpXlX5yUPQK2zvR4iTzjwHcwq5QqiK3x13C2erazr3PIiHiF4it756k69zRHyGzxk/AMe+HwQ==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        netdev@vger.kernel.org
+Subject: [PATCH] net: w5100: fix w5100_start_tx()'s return type
+Date: Tue, 24 Apr 2018 15:17:35 +0200
+Message-Id: <20180424131738.4559-1-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-04-18 20:25:15, Mikulas Patocka wrote:
-> 
-> 
-> On Mon, 23 Apr 2018, Michal Hocko wrote:
-> 
-> > On Mon 23-04-18 10:06:08, Mikulas Patocka wrote:
-> > 
-> > > > > He didn't want to fix vmalloc(GFP_NOIO)
-> > > > 
-> > > > I don't remember that conversation, so I don't know whether I agree with
-> > > > his reasoning or not.  But we are supposed to be moving away from GFP_NOIO
-> > > > towards marking regions with memalloc_noio_save() / restore.  If you do
-> > > > that, you won't need vmalloc(GFP_NOIO).
-> > > 
-> > > He said the same thing a year ago. And there was small progress. 6 out of 
-> > > 27 __vmalloc calls were converted to memalloc_noio_save in a year - 5 in 
-> > > infiniband and 1 in btrfs. (the whole discussion is here 
-> > > http://lkml.iu.edu/hypermail/linux/kernel/1706.3/04681.html )
-> > 
-> > Well this is not that easy. It requires a cooperation from maintainers.
-> > I can only do as much. I've posted patches in the past and actively
-> > bringing up this topic at LSFMM last two years...
-> 
-> You're right - but you have chosen the uneasy path.
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, but the implementation in this
+driver returns an 'int'.
 
-Yes.
+Fix this by returning 'netdev_tx_t' in this driver too.
 
-> Fixing __vmalloc code 
-> is easy and it doesn't require cooperation with maintainers.
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ drivers/net/ethernet/wiznet/w5100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But it is a hack against the intention of the scope api. It also alows
-maintainers to not care about their broken code.
-
-> > > He refuses 15-line patch to fix GFP_NOIO bug because he believes that in 4 
-> > > years, the kernel will be refactored and GFP_NOIO will be eliminated. Why 
-> > > does he have veto over this part of the code? I'd much rather argue with 
-> > > people who have constructive comments about fixing bugs than with him.
-> > 
-> > I didn't NACK the patch AFAIR. I've said it is not a good idea longterm.
-> > I would be much more willing to change my mind if you would back your
-> > patch by a real bug report. Hacks are acceptable when we have a real
-> > issue in hands. But if we want to fix potential issue then better make
-> > it properly.
-> 
-> Developers should fix bugs in advance, not to wait until a crash hapens, 
-> is analyzed and reported.
-
-I agree. But are those existing users broken in the first place? I have
-seen so many GFP_NOFS abuses that I would dare to guess that most of
-those vmalloc NOFS abusers can be simply turned into GFP_KERNEL. Maybe
-that is the reason we haven't heard any complains in years.
-
+diff --git a/drivers/net/ethernet/wiznet/w5100.c b/drivers/net/ethernet/wiznet/w5100.c
+index 2bdfb3921..d8ba512f1 100644
+--- a/drivers/net/ethernet/wiznet/w5100.c
++++ b/drivers/net/ethernet/wiznet/w5100.c
+@@ -835,7 +835,7 @@ static void w5100_tx_work(struct work_struct *work)
+ 	w5100_tx_skb(priv->ndev, skb);
+ }
+ 
+-static int w5100_start_tx(struct sk_buff *skb, struct net_device *ndev)
++static netdev_tx_t w5100_start_tx(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	struct w5100_priv *priv = netdev_priv(ndev);
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.17.0
