@@ -1,57 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934404AbeDXNpu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:45:50 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47656 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933774AbeDXNpK (ORCPT
+        id S934560AbeDXNpw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:45:52 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:49542 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934571AbeDXNpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:45:10 -0400
-Date: Tue, 24 Apr 2018 09:44:15 -0400
-User-Agent: K-9 Mail for Android
-In-Reply-To: <588983c3-4ceb-071e-260b-869613655951@redhat.com>
-References: <24cd527d-5287-f0be-ffe8-eab341bf1d94@redhat.com> <3866d359-0ef8-6a99-6254-84890be62b93@redhat.com> <20180226122205.GG4377@pd.tnic> <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com> <CANRm+CyyL2jjjn7nZtLJvP+t1pN9ndAGhijmbX4LJh15=O+dvQ@mail.gmail.com> <20180417202417.GA29865@localhost.localdomain> <CANRm+CwA22VmpA5cfQg8mF_Xke_hXtP+_ui5xU+LV8v0JNj=3Q@mail.gmail.com> <20180418090329.GJ29865@localhost.localdomain> <de059c45-d706-ff70-9063-92ac0a807e26@redhat.com> <CANRm+CzxG5cm8ECopzGYpF3E3RTjvFGD3_7o8S=tffFxnvYoiA@mail.gmail.com> <20180424031400.GA22608@char.us.oracle.com> <588983c3-4ceb-071e-260b-869613655951@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
-To: Paolo Bonzini <pbonzini@redhat.com>, Wanpeng Li <kernellwp@gmail.com>
-CC: Eduardo Habkost <ehabkost@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Message-ID: <2944C5CC-A3AF-4B33-B03F-7EC28FC351CB@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8872 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=670
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804240131
+        Tue, 24 Apr 2018 09:45:06 -0400
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
+Subject: [PATCH v7 9/9] PCI: dwc: Replace magic number by defines
+Date: Tue, 24 Apr 2018 14:44:46 +0100
+Message-Id: <2d3d81fa3d96753864bd71326e2e22db764f6282.1524577064.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3ODjsRb004122
 
-On April 24, 2018 1:09:00 AM EDT, Paolo Bonzini <pbonzini@redhat.com> wrote:
->On 24/04/2018 05:14, Konrad Rzeszutek Wilk wrote:
->> You would need to include the microcode version in the migration
->stream.
->> 
->> But this brings another point - what if we want to manifest certain
->> new CPUID bits?
->
->You don't do that across migration.  Generally if you want to do live
->migration and you set up the guest to know everything about the host
->(down to the microcode level), you should make sure your host are
->pretty
->much identical.
+Replace magic numbers by a well known define in order to make the code
+human readable and also facilitate the code reusability.
 
-I understand how it ought to be but sadly the cloud vendors have a mix of hardware.
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
+---
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
+ - Nothing changed, just to follow the patch set version.
+Changes v3->v4:
+ - Nothing changed, just to follow the patch set version.
+Changes v4->v5:
+ - Nothing changed, just to follow the patch set version.
+Changes v5->v6:
+ - Nothing changed, just to follow the patch set version.
+Changes v6->v7:
+ - Nothing changed, just to follow the patch set version.
 
+ drivers/pci/dwc/pcie-designware-host.c | 34 ++++++++++++++++++++--------------
+ drivers/pci/dwc/pcie-designware.h      |  1 +
+ 2 files changed, 21 insertions(+), 14 deletions(-)
 
-With the retpoline/IBRS support (like what RH kernel has) you could migrate from Skylake to Broadwell and switching over from IBRS to retpoline would be good.
-
-Hence asking about this.
-
->
->Paolo
+diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
+index fc55fde..a7657ab 100644
+--- a/drivers/pci/dwc/pcie-designware-host.c
++++ b/drivers/pci/dwc/pcie-designware-host.c
+@@ -83,18 +83,23 @@ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
+ 	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+ 
+ 	for (i = 0; i < num_ctrls; i++) {
+-		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
+-				    &val);
++		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS +
++					(i * MSI_REG_CTRL_BLOCK_SIZE),
++				    4, &val);
+ 		if (!val)
+ 			continue;
+ 
+ 		ret = IRQ_HANDLED;
+ 		pos = 0;
+-		while ((pos = find_next_bit((unsigned long *) &val, 32,
+-					    pos)) != 32) {
+-			irq = irq_find_mapping(pp->irq_domain, i * 32 + pos);
++		while ((pos = find_next_bit((unsigned long *) &val,
++					    MAX_MSI_IRQS_PER_CTRL,
++					    pos)) != MAX_MSI_IRQS_PER_CTRL) {
++			irq = irq_find_mapping(pp->irq_domain,
++					       (i * MAX_MSI_IRQS_PER_CTRL) +
++					       pos);
+ 			generic_handle_irq(irq);
+-			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12,
++			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS +
++						(i * MSI_REG_CTRL_BLOCK_SIZE),
+ 					    4, 1 << pos);
+ 			pos++;
+ 		}
+@@ -157,9 +162,9 @@ static void dw_pci_bottom_mask(struct irq_data *data)
+ 	if (pp->ops->msi_clear_irq) {
+ 		pp->ops->msi_clear_irq(pp, data->hwirq);
+ 	} else {
+-		ctrl = data->hwirq / 32;
+-		res = ctrl * 12;
+-		bit = data->hwirq % 32;
++		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
++		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
++		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
+ 
+ 		pp->irq_status[ctrl] &= ~(1 << bit);
+ 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
+@@ -180,9 +185,9 @@ static void dw_pci_bottom_unmask(struct irq_data *data)
+ 	if (pp->ops->msi_set_irq) {
+ 		pp->ops->msi_set_irq(pp, data->hwirq);
+ 	} else {
+-		ctrl = data->hwirq / 32;
+-		res = ctrl * 12;
+-		bit = data->hwirq % 32;
++		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
++		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
++		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
+ 
+ 		pp->irq_status[ctrl] |= 1 << bit;
+ 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
+@@ -652,8 +657,9 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 
+ 	/* Initialize IRQ Status array */
+ 	for (ctrl = 0; ctrl < num_ctrls; ctrl++)
+-		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE + (ctrl * 12), 4,
+-				    &pp->irq_status[ctrl]);
++		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
++					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
++				    4, &pp->irq_status[ctrl]);
+ 
+ 	/* Setup RC BARs */
+ 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0x00000004);
+diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
+index fe811db..bee4e25 100644
+--- a/drivers/pci/dwc/pcie-designware.h
++++ b/drivers/pci/dwc/pcie-designware.h
+@@ -110,6 +110,7 @@
+ #define MAX_MSI_IRQS			256
+ #define MAX_MSI_IRQS_PER_CTRL		32
+ #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
++#define MSI_REG_CTRL_BLOCK_SIZE		12
+ #define MSI_DEF_NUM_VECTORS		32
+ 
+ /* Maximum number of inbound/outbound iATUs */
+-- 
+2.7.4
