@@ -1,63 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933138AbeDXNFX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:05:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44306 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757822AbeDXNFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:05:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A51B21774
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Tue, 24 Apr 2018 14:05:12 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        Huacai Chen <chenhc@lemote.com>, linux-kernel@vger.kernel.org,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Robert Richter <rric@kernel.org>, oprofile-list@lists.sf.net
-Subject: Re: [RFC PATCH] MIPS: Oprofile: Drop support
-Message-ID: <20180424130511.GB28813@saruman>
-References: <1524574554-7451-1-git-send-email-matt.redfearn@mips.com>
+        id S1757874AbeDXNGg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:06:36 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51876 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751575AbeDXNGf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 09:06:35 -0400
+From: Colin King <colin.king@canonical.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: ispstat: don't dereference user_cfg before a null check
+Date: Tue, 24 Apr 2018 14:06:18 +0100
+Message-Id: <20180424130618.18211-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
-Content-Disposition: inline
-In-Reply-To: <1524574554-7451-1-git-send-email-matt.redfearn@mips.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---ZoaI/ZTpAVc4A5k6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+The pointer user_cfg (a copy of new_conf) is dereference before
+new_conf is null checked, hence we may have a null pointer dereference
+on user_cfg when assigning buf_size from user_cfg->buf_size. Ensure
+this does not occur by moving the assignment of buf_size after the
+null check.
 
-On Tue, Apr 24, 2018 at 01:55:54PM +0100, Matt Redfearn wrote:
-> Since it appears that MIPS oprofile support is currently broken, core
-> oprofile is not getting many updates and not as many architectures
-> implement support for it compared to perf, remove the MIPS support.
+Detected by CoverityScan, CID#1468386 ("Dereference before null check")
 
-That sounds reasonable to me. Any idea how long its been broken?
+Fixes: 68e342b3068c ("[media] omap3isp: Statistics")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/omap3isp/ispstat.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I'll let it sit on the list for a bit in case anybody does object and
-wants to fix it instead.
-
-Thanks
-James
-
---ZoaI/ZTpAVc4A5k6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWt8rhwAKCRA1zuSGKxAj
-8lZfAP9eSR44etV2E3TeKaFlQdlxvJdyf/JV8kY8kvLjADfstQEA8TIZDjOp0bcZ
-CDH4FQuVp/SeqEFuxNED3nw+3UudqQ8=
-=hVzL
------END PGP SIGNATURE-----
-
---ZoaI/ZTpAVc4A5k6--
+diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/platform/omap3isp/ispstat.c
+index 0b31f6c5791f..38cb1b2cc672 100644
+--- a/drivers/media/platform/omap3isp/ispstat.c
++++ b/drivers/media/platform/omap3isp/ispstat.c
+@@ -523,7 +523,7 @@ int omap3isp_stat_config(struct ispstat *stat, void *new_conf)
+ 	int ret;
+ 	unsigned long irqflags;
+ 	struct ispstat_generic_config *user_cfg = new_conf;
+-	u32 buf_size = user_cfg->buf_size;
++	u32 buf_size;
+ 
+ 	if (!new_conf) {
+ 		dev_dbg(stat->isp->dev, "%s: configuration is NULL\n",
+@@ -532,6 +532,7 @@ int omap3isp_stat_config(struct ispstat *stat, void *new_conf)
+ 	}
+ 
+ 	mutex_lock(&stat->ioctl_lock);
++	buf_size = user_cfg->buf_size;
+ 
+ 	dev_dbg(stat->isp->dev,
+ 		"%s: configuring module with buffer size=0x%08lx\n",
+-- 
+2.17.0
