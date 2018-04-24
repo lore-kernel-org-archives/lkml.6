@@ -1,61 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751436AbeDXUE1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 16:04:27 -0400
-Received: from mail-it0-f44.google.com ([209.85.214.44]:40185 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeDXUEY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 16:04:24 -0400
-X-Google-Smtp-Source: AIpwx48SJ6yjA0TdmaWXG8W5jpqbm0s3UH3Hkuvb8kE9/8oxxcXpZlrsHD3XDvPzBJJzPmQ4f1WBh32+fI6AtJrSN1A=
+        id S1751226AbeDXUJf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 16:09:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56152 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750756AbeDXUJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 16:09:31 -0400
+Date: Tue, 24 Apr 2018 14:09:27 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: Steven Whitehouse <swhiteho@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+Message-ID: <20180424200927.GU17484@dhcp22.suse.cz>
+References: <20180424162712.GL17484@dhcp22.suse.cz>
+ <ce42f323-870c-21df-ac27-1bec6aa7e5d1@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180424215429.1de8b1b3@redhat.com>
-References: <20180424215429.1de8b1b3@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 24 Apr 2018 13:04:23 -0700
-X-Google-Sender-Auth: IBsiD_F_gSzQ0GiKAhfhNbGjPU0
-Message-ID: <CA+55aFx-V8L602X-EHgrJPNA49v_ZiBZW=+v=tcSQK5QZOXYJw@mail.gmail.com>
-Subject: Re: Boot failures with net-next after rebase to v4.17.0-rc1
-To: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        David Ahern <dsa@cumulusnetworks.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce42f323-870c-21df-ac27-1bec6aa7e5d1@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 12:54 PM, Jesper Dangaard Brouer
-<brouer@redhat.com> wrote:
-> Hi all,
->
-> I'm experiencing boot failures with net-next git-tree after it got
-> rebased/merged with Linus'es tree at v4.17.0-rc1.
+On Tue 24-04-18 20:26:23, Steven Whitehouse wrote:
+[...]
+> It would be good to fix this, and it has been known as an issue for a long
+> time. We might well be able to make use of the new API though. It might be
+> as simple as adding the calls when we get & release glocks, but I'd have to
+> check the code to be sure,
 
-I suspect it's the global bit stuff that came in very late in the
-merge window, and had been developed and tested for a while before,
-but showed some problems under some configs.
-
-The fix is currently in the x86/pti tree in -tip, see:
-
-   x86/pti: Fix boot problems from Global-bit setting
-
-and I expect it will percolate upstream soon.
-
-In the meantime, it would be good to verify that merging that x86/pti
-branch fixes it for you?
-
-There is another candidate for boot problems - do you happen to have
-CONFIG_DEFERRED_STRUCT_PAGE_INIT enabled? That can under certain
-circumstances get a percpu setup page fault because memory hadn't been
-initialized sufficiently.
-
-The fix there is to move the mm_init() call one step earlier in
-init_main(): start_kernel() (to before trap_init()).
-
-And if it's neither of the above, I think you'll need to help bisect it.
-
-               Linus
+Yeah, starting with annotating those locking contexts and how document
+how their are used in the reclaim is the great first step. This has to
+be done per-fs obviously.
+-- 
+Michal Hocko
+SUSE Labs
