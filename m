@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932804AbeDXCwG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 23 Apr 2018 22:52:06 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7201 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932721AbeDXCwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Apr 2018 22:52:05 -0400
+        id S932824AbeDXCzs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 23 Apr 2018 22:55:48 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35192 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932722AbeDXCzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Apr 2018 22:55:47 -0400
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
 CC: <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
         Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: avoid stucking GC due to atomic write
-Date: Tue, 24 Apr 2018 10:51:36 +0800
-Message-ID: <20180424025136.44247-1-yuchao0@huawei.com>
+Subject: [PATCH] f2fs: rename dio_rwsem to i_gc_rwsem
+Date: Tue, 24 Apr 2018 10:55:28 +0800
+Message-ID: <20180424025528.79273-1-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -23,230 +23,237 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-f2fs doesn't allow abuse on atomic write class interface, so except
-limiting in-mem pages' total memory usage capacity, we need to limit
-atomic-write usage as well when filesystem is seriously fragmented,
-otherwise we may run into infinite loop during foreground GC because
-target blocks in victim segment are belong to atomic opened file for
-long time.
-
-Now, we will detect failure due to atomic write in foreground GC, if
-the count exceeds threshold, we will drop all atomic written data in
-cache, by this, I expect it can keep our system running safely to
-prevent Dos attack.
-
-In addition, his patch adds to show GC skip information in debugfs,
-now it just shows count of skipped caused by atomic write.
+RW semphore dio_rwsem in struct f2fs_inode_info is introduced to avoid
+race between dio and data gc, but now, it is more wildly used to avoid
+foreground operation vs data gc. So rename it to i_gc_rwsem to improve
+its readability.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v2:
-- add to show skip info in debugfs.
- fs/f2fs/debug.c   |  8 ++++++++
- fs/f2fs/f2fs.h    |  2 ++
- fs/f2fs/file.c    |  5 +++++
- fs/f2fs/gc.c      | 29 +++++++++++++++++++++++++----
- fs/f2fs/gc.h      |  3 +++
- fs/f2fs/segment.c |  1 +
- fs/f2fs/segment.h |  2 ++
- 7 files changed, 46 insertions(+), 4 deletions(-)
+ fs/f2fs/data.c  |  6 +++---
+ fs/f2fs/f2fs.h  |  2 +-
+ fs/f2fs/file.c  | 28 ++++++++++++++--------------
+ fs/f2fs/gc.c    | 14 +++++++-------
+ fs/f2fs/super.c |  4 ++--
+ 5 files changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 0fbd674c66fb..607b258a9b61 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -104,6 +104,10 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 	si->avail_nids = NM_I(sbi)->available_nids;
- 	si->alloc_nids = NM_I(sbi)->nid_cnt[PREALLOC_NID];
- 	si->bg_gc = sbi->bg_gc;
-+	si->skipped_atomic_files[BG_GC] =
-+			sbi->gc_thread->skipped_atomic_files[BG_GC];
-+	si->skipped_atomic_files[FG_GC] =
-+			sbi->gc_thread->skipped_atomic_files[FG_GC];
- 	si->util_free = (int)(free_user_blocks(sbi) >> sbi->log_blocks_per_seg)
- 		* 100 / (int)(sbi->user_block_count >> sbi->log_blocks_per_seg)
- 		/ 2;
-@@ -341,6 +345,10 @@ static int stat_show(struct seq_file *s, void *v)
- 				si->bg_data_blks);
- 		seq_printf(s, "  - node blocks : %d (%d)\n", si->node_blks,
- 				si->bg_node_blks);
-+		seq_printf(s, "Skipped : atomic write %llu (%llu)\n",
-+				si->skipped_atomic_files[BG_GC] +
-+				si->skipped_atomic_files[FG_GC],
-+				si->skipped_atomic_files[BG_GC]);
- 		seq_puts(s, "\nExtent Cache:\n");
- 		seq_printf(s, "  - Hit Count: L1-1:%llu L1-2:%llu L2:%llu\n",
- 				si->hit_largest, si->hit_cached,
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5477fc09c3cd..f7365ce45450 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2395,17 +2395,17 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
+ 		iocb->ki_hint = WRITE_LIFE_NOT_SET;
+ 
+-	if (!down_read_trylock(&F2FS_I(inode)->dio_rwsem[rw])) {
++	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
+ 		if (iocb->ki_flags & IOCB_NOWAIT) {
+ 			iocb->ki_hint = hint;
+ 			err = -EAGAIN;
+ 			goto out;
+ 		}
+-		down_read(&F2FS_I(inode)->dio_rwsem[rw]);
++		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
+ 	}
+ 
+ 	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
+-	up_read(&F2FS_I(inode)->dio_rwsem[rw]);
++	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
+ 
+ 	if (rw == WRITE) {
+ 		if (whint_mode == WHINT_MODE_OFF)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 75d3b4875429..c2b92cb377c6 100644
+index c2b92cb377c6..96556ce7f754 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -2254,6 +2254,7 @@ enum {
- 	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
- 	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
- 	FI_PIN_FILE,		/* indicate file should not be gced */
-+	FI_ATOMIC_REVOKE_REQUEST,/* indicate atomic committed data has been dropped */
- };
+@@ -653,7 +653,7 @@ struct f2fs_inode_info {
+ 	struct task_struct *inmem_task;	/* store inmemory task */
+ 	struct mutex inmem_lock;	/* lock for inmemory pages */
+ 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+-	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
++	struct rw_semaphore i_gc_rwsem[2];/* avoid racing between foreground op and gc */
+ 	struct rw_semaphore i_mmap_sem;
+ 	struct rw_semaphore i_xattr_sem; /* avoid racing between reading and changing EAs */
  
- static inline void __mark_inode_dirty_flag(struct inode *inode,
-@@ -3010,6 +3011,7 @@ struct f2fs_stat_info {
- 	int bg_node_segs, bg_data_segs;
- 	int tot_blks, data_blks, node_blks;
- 	int bg_data_blks, bg_node_blks;
-+	unsigned long long skipped_atomic_files[2];
- 	int curseg[NR_CURSEG_TYPE];
- 	int cursec[NR_CURSEG_TYPE];
- 	int curzone[NR_CURSEG_TYPE];
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a352804af244..0cfa65c21d3f 100644
+index 0cfa65c21d3f..e88d94846d50 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -1702,6 +1702,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- skip_flush:
- 	set_inode_flag(inode, FI_HOT_DATA);
- 	set_inode_flag(inode, FI_ATOMIC_FILE);
-+	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
- 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+@@ -1191,7 +1191,7 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 	pg_end = (offset + len) >> PAGE_SHIFT;
  
- 	F2FS_I(inode)->inmem_task = current;
-@@ -1750,6 +1751,10 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
- 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
- 	}
- err_out:
-+	if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST)) {
-+		clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
-+		ret = -EINVAL;
-+	}
- 	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+ 	/* avoid gc operation during block exchange */
+-	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 
+ 	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	/* write out all dirty pages from offset */
+@@ -1217,7 +1217,7 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 		f2fs_i_size_write(inode, new_size);
+ out_unlock:
+ 	up_write(&F2FS_I(inode)->i_mmap_sem);
+-	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	return ret;
+ }
+ 
+@@ -1393,7 +1393,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 	f2fs_balance_fs(sbi, true);
+ 
+ 	/* avoid gc operation during block exchange */
+-	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 
+ 	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	ret = truncate_blocks(inode, i_size_read(inode), true);
+@@ -1434,7 +1434,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 		f2fs_i_size_write(inode, new_size);
+ out:
+ 	up_write(&F2FS_I(inode)->i_mmap_sem);
+-	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	return ret;
+ }
+ 
+@@ -1681,7 +1681,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 
+ 	inode_lock(inode);
+ 
+-	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 
+ 	if (f2fs_is_atomic_file(inode))
+ 		goto out;
+@@ -1709,7 +1709,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 	stat_inc_atomic_write(inode);
+ 	stat_update_max_atomic_write(inode);
+ out:
+-	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
  	inode_unlock(inode);
  	mnt_drop_write_file(filp);
+ 	return ret;
+@@ -1729,7 +1729,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 
+ 	inode_lock(inode);
+ 
+-	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 
+ 	if (f2fs_is_volatile_file(inode)) {
+ 		ret = -EINVAL;
+@@ -1755,7 +1755,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 		clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+ 		ret = -EINVAL;
+ 	}
+-	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	inode_unlock(inode);
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+@@ -2342,12 +2342,12 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+ 	}
+ 
+ 	inode_lock(src);
+-	down_write(&F2FS_I(src)->dio_rwsem[WRITE]);
++	down_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+ 	if (src != dst) {
+ 		ret = -EBUSY;
+ 		if (!inode_trylock(dst))
+ 			goto out;
+-		if (!down_write_trylock(&F2FS_I(dst)->dio_rwsem[WRITE])) {
++		if (!down_write_trylock(&F2FS_I(dst)->i_gc_rwsem[WRITE])) {
+ 			inode_unlock(dst);
+ 			goto out;
+ 		}
+@@ -2409,11 +2409,11 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+ 	f2fs_unlock_op(sbi);
+ out_unlock:
+ 	if (src != dst) {
+-		up_write(&F2FS_I(dst)->dio_rwsem[WRITE]);
++		up_write(&F2FS_I(dst)->i_gc_rwsem[WRITE]);
+ 		inode_unlock(dst);
+ 	}
+ out:
+-	up_write(&F2FS_I(src)->dio_rwsem[WRITE]);
++	up_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
+ 	inode_unlock(src);
+ 	return ret;
+ }
+@@ -2823,9 +2823,9 @@ int f2fs_precache_extents(struct inode *inode)
+ 	while (map.m_lblk < end) {
+ 		map.m_len = end - map.m_lblk;
+ 
+-		down_write(&fi->dio_rwsem[WRITE]);
++		down_write(&fi->i_gc_rwsem[WRITE]);
+ 		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_PRECACHE);
+-		up_write(&fi->dio_rwsem[WRITE]);
++		up_write(&fi->i_gc_rwsem[WRITE]);
+ 		if (err)
+ 			return err;
+ 
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 2febb84b2fd6..ec6cb7b417a1 100644
+index ec6cb7b417a1..a7bda034db06 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -135,6 +135,9 @@ int init_gc_context(struct f2fs_sb_info *sbi)
+@@ -890,7 +890,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 			}
  
- 	init_rwsem(&gc_th->gc_rwsem);
+ 			if (!down_write_trylock(
+-				&F2FS_I(inode)->dio_rwsem[WRITE])) {
++				&F2FS_I(inode)->i_gc_rwsem[WRITE])) {
+ 				iput(inode);
+ 				continue;
+ 			}
+@@ -899,7 +899,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 			data_page = get_read_data_page(inode,
+ 					start_bidx + ofs_in_node, REQ_RAHEAD,
+ 					true);
+-			up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 			if (IS_ERR(data_page)) {
+ 				iput(inode);
+ 				continue;
+@@ -917,11 +917,11 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 			bool locked = false;
  
-+	gc_th->skipped_atomic_files[BG_GC] = 0;
-+	gc_th->skipped_atomic_files[FG_GC] = 0;
-+
- 	sbi->gc_thread = gc_th;
- 
- 	return 0;
-@@ -629,7 +632,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-  * This can be used to move blocks, aka LBAs, directly on disk.
-  */
- static void move_data_block(struct inode *inode, block_t bidx,
--					unsigned int segno, int off)
-+				int gc_type, unsigned int segno, int off)
- {
- 	struct f2fs_io_info fio = {
- 		.sbi = F2FS_I_SB(inode),
-@@ -656,8 +659,10 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
- 		goto out;
- 
--	if (f2fs_is_atomic_file(inode))
-+	if (f2fs_is_atomic_file(inode)) {
-+		GC_I(F2FS_I_SB(inode))->skipped_atomic_files[gc_type]++;
- 		goto out;
-+	}
- 
- 	if (f2fs_is_pinned_file(inode)) {
- 		f2fs_pin_file_control(inode, true);
-@@ -763,8 +768,10 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
- 		goto out;
- 
--	if (f2fs_is_atomic_file(inode))
-+	if (f2fs_is_atomic_file(inode)) {
-+		GC_I(F2FS_I_SB(inode))->skipped_atomic_files[gc_type]++;
- 		goto out;
-+	}
- 	if (f2fs_is_pinned_file(inode)) {
- 		if (gc_type == FG_GC)
- 			f2fs_pin_file_control(inode, true);
-@@ -926,7 +933,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 			start_bidx = start_bidx_of_node(nofs, inode)
- 								+ ofs_in_node;
- 			if (f2fs_post_read_required(inode))
--				move_data_block(inode, start_bidx, segno, off);
-+				move_data_block(inode, start_bidx, gc_type,
-+								segno, off);
- 			else
- 				move_data_page(inode, start_bidx, gc_type,
+ 			if (S_ISREG(inode->i_mode)) {
+-				if (!down_write_trylock(&fi->dio_rwsem[READ]))
++				if (!down_write_trylock(&fi->i_gc_rwsem[READ]))
+ 					continue;
+ 				if (!down_write_trylock(
+-						&fi->dio_rwsem[WRITE])) {
+-					up_write(&fi->dio_rwsem[READ]);
++						&fi->i_gc_rwsem[WRITE])) {
++					up_write(&fi->i_gc_rwsem[READ]);
+ 					continue;
+ 				}
+ 				locked = true;
+@@ -940,8 +940,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
  								segno, off);
-@@ -1043,6 +1051,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 		.ilist = LIST_HEAD_INIT(gc_list.ilist),
- 		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
- 	};
-+	unsigned long long last_skipped =
-+			GC_I(sbi)->skipped_atomic_files[FG_GC];
-+	unsigned int skipped_round = 0, round = 0;
  
- 	trace_f2fs_gc_begin(sbi->sb, sync, background,
- 				get_pages(sbi, F2FS_DIRTY_NODES),
-@@ -1094,11 +1105,21 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 		sec_freed++;
- 	total_freed += seg_freed;
+ 			if (locked) {
+-				up_write(&fi->dio_rwsem[WRITE]);
+-				up_write(&fi->dio_rwsem[READ]);
++				up_write(&fi->i_gc_rwsem[WRITE]);
++				up_write(&fi->i_gc_rwsem[READ]);
+ 			}
  
-+	if (gc_type == FG_GC) {
-+		if (GC_I(sbi)->skipped_atomic_files[FG_GC] > last_skipped)
-+			skipped_round++;
-+		last_skipped = GC_I(sbi)->skipped_atomic_files[FG_GC];
-+		round++;
-+	}
-+
- 	if (gc_type == FG_GC)
- 		sbi->cur_victim_sec = NULL_SEGNO;
+ 			stat_inc_data_blk_count(sbi, 1, gc_type);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 199f29dce86d..7e6fab673073 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -833,8 +833,8 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	INIT_LIST_HEAD(&fi->inmem_ilist);
+ 	INIT_LIST_HEAD(&fi->inmem_pages);
+ 	mutex_init(&fi->inmem_lock);
+-	init_rwsem(&fi->dio_rwsem[READ]);
+-	init_rwsem(&fi->dio_rwsem[WRITE]);
++	init_rwsem(&fi->i_gc_rwsem[READ]);
++	init_rwsem(&fi->i_gc_rwsem[WRITE]);
+ 	init_rwsem(&fi->i_mmap_sem);
+ 	init_rwsem(&fi->i_xattr_sem);
  
- 	if (!sync) {
- 		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
-+			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
-+				skipped_round * 2 >= round)
-+				drop_inmem_pages_all(sbi);
- 			segno = NULL_SEGNO;
- 			goto gc_more;
- 		}
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index 9a5b273328c2..9aa341cc4347 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -40,6 +40,9 @@ struct f2fs_gc_kthread {
- 	unsigned int gc_idle;
- 	unsigned int gc_urgent;
- 	unsigned int gc_wake;
-+
-+	/* for skip statistic */
-+	unsigned long long skipped_atomic_files[2];
- };
- 
- struct gc_inode_list {
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index f787eea1b2f6..ce108a909d66 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -293,6 +293,7 @@ void drop_inmem_pages_all(struct f2fs_sb_info *sbi)
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
- 
- 	if (inode) {
-+		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
- 		drop_inmem_pages(inode);
- 		iput(inode);
- 	}
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 492ad0c86fa9..7702b054689c 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -215,6 +215,8 @@ struct segment_allocation {
- #define IS_DUMMY_WRITTEN_PAGE(page)			\
- 		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
- 
-+#define MAX_SKIP_ATOMIC_COUNT			16
-+
- struct inmem_pages {
- 	struct list_head list;
- 	struct page *page;
 -- 
 2.15.0.55.gc2ece9dc4de6
