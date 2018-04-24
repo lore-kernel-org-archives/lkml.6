@@ -1,68 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933298AbeDXNLk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:11:40 -0400
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:42858 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1757726AbeDXNLf (ORCPT
+        id S1757870AbeDXNNQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:13:16 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54269 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757531AbeDXNNN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:11:35 -0400
-Subject: Re: [regression, bisected] rockchip rk3399 video output breakage
-To: JeffyChen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Joerg Roedel <jroedel@suse.de>, linux-rockchip@lists.infradead.org
-References: <3beabd18-0c39-be65-cfe7-8498dc7c296b@theobroma-systems.com>
- <5ADF24F3.6070106@rock-chips.com>
-Cc: klaus.goger@theobroma-systems.com
-From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Message-ID: <fdd0fe29-2117-c67b-5dba-5d1ab0b19dd1@theobroma-systems.com>
-Date: Tue, 24 Apr 2018 15:11:26 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Tue, 24 Apr 2018 09:13:13 -0400
+X-Google-Smtp-Source: AIpwx4/IbfC3JkB1kw6XiGosu3dhN0EVG/AHo+pdixLqQRn6cmo824qUCTSxwdmpQ6AQP33jIGudgg==
+Date: Tue, 24 Apr 2018 15:13:09 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Eric Anholt <eric@anholt.net>
+Cc: dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] drm: Make the prime vmap/vunmap hooks optional.
+Message-ID: <20180424131309.GE31310@phenom.ffwll.local>
+Mail-Followup-To: Eric Anholt <eric@anholt.net>,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180424004610.4637-1-eric@anholt.net>
+ <20180424004610.4637-2-eric@anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <5ADF24F3.6070106@rock-chips.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424004610.4637-2-eric@anholt.net>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.04.18 14:37, JeffyChen wrote:
+On Mon, Apr 23, 2018 at 05:46:08PM -0700, Eric Anholt wrote:
+> Some drivers leave these unimplemented, so don't make them have
+> unimplemented stubs.
 > 
-> right, i think it's a known issue, as the iommu failed to get clks:
-> [    1.525153] rk_iommu ff8f3f00.iommu: Failed to get clk 'iface': -2
-> [    1.525316] rk_iommu: probe of ff8f3f00.iommu failed with error -2
-> [    1.525484] rk_iommu ff903f00.iommu: Failed to get clk 'iface': -2
-> [    1.525643] rk_iommu: probe of ff903f00.iommu failed with error -2
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+> ---
+>  drivers/gpu/drm/drm_prime.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+> index caf675e3e692..397b46b33739 100644
+> --- a/drivers/gpu/drm/drm_prime.c
+> +++ b/drivers/gpu/drm/drm_prime.c
+> @@ -409,7 +409,10 @@ void *drm_gem_dmabuf_vmap(struct dma_buf *dma_buf)
+>  	struct drm_gem_object *obj = dma_buf->priv;
+>  	struct drm_device *dev = obj->dev;
+>  
+> -	return dev->driver->gem_prime_vmap(obj);
+> +	if (dev->driver->gem_prime_vmap)
+> +		return dev->driver->gem_prime_vmap(obj);
+> +	else
+> +		return NULL;
+>  }
+>  EXPORT_SYMBOL(drm_gem_dmabuf_vmap);
+>  
+> @@ -426,7 +429,8 @@ void drm_gem_dmabuf_vunmap(struct dma_buf *dma_buf, void *vaddr)
+>  	struct drm_gem_object *obj = dma_buf->priv;
+>  	struct drm_device *dev = obj->dev;
+>  
+> -	dev->driver->gem_prime_vunmap(obj, vaddr);
+> +	if (dev->driver->gem_prime_vunmap)
+> +		dev->driver->gem_prime_vunmap(obj, vaddr);
+>  }
+>  EXPORT_SYMBOL(drm_gem_dmabuf_vunmap);
+>  
+> -- 
+> 2.17.0
 > 
-> there's a followed patch to add those clks to the dtsi, and also a fix 
-> patch to make those clks optional(by heiko):
-> 
-> https://www.spinics.net/lists/arm-kernel/msg645696.html
-> 
-> http://lists.infradead.org/pipermail/linux-rockchip/2018-April/020349.html
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Thanks, I tested both, and both get the screen to display some kernel 
-output!
-
-However, I am getting some nasty error messages and the screen seems to 
-refresh only once every 30 seconds:
-
-> [   15.586502] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CRTC:30:crtc-0] flip_done timed out
-> [   25.826490] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CONNECTOR:37:HDMI-A-1] flip_done timed out
-> [   36.066490] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [PLANE:28:plane-0] flip_done timed out
-> [   36.066504] [drm:drm_calc_timestamping_constants] crtc 30: hwmode: htotal 2200, vtotal 1125, vdisplay 1080
-> [   36.066508] [drm:drm_calc_timestamping_constants] crtc 30: clock 148500 kHz framedur 16666666 linedur 14814
-> [   36.076535] rockchip-vop ff8f0000.vop: [drm:vop_crtc_atomic_flush] *ERROR* VOP vblank IRQ stuck for 10 ms
-> [   36.076577] WARNING: CPU: 1 PID: 83 at drivers/gpu/drm/rockchip/rockchip_drm_vop.c:1004 vop_crtc_atomic_flush+0x1c0/0x1c8
-
-Full dmesg with patch "arm64: dts: rockchip: add clocks in iommu nodes":
-https://gist.github.com/jakob-tsd/3fd49894d52dcd8a409eb9e6136b2d39
-
-Full dmesg with patch "iommu/rockchip: make clock handling optional":
-https://gist.github.com/jakob-tsd/da96572a40d11f0f6dff3ee481098138 
-(looks the same)
-
-Thanks,
-Jakob
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
