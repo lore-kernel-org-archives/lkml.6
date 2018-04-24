@@ -1,61 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932634AbeDXKdH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 06:33:07 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:55454 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756653AbeDXKdF (ORCPT
+        id S932684AbeDXKgZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 06:36:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36806 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932545AbeDXKgU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 06:33:05 -0400
-Date: Tue, 24 Apr 2018 13:33:03 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Loic Poulain <loic.poulain@linaro.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        slongerbeam@gmail.com, mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        dragonboard@lists.96boards.org,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [RESEND PATCH] media: i2c: ov5640: Add pixel clock support
-Message-ID: <20180424103303.rrgv2d33stnll2cx@valkosipuli.retiisi.org.uk>
-References: <1522335300-13467-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <1522335300-13467-2-git-send-email-manivannan.sadhasivam@linaro.org>
- <CAMZdPi-VCsct6S4cYCvN_XniFB9=pJqC8hnTdQnvL5H_CU2a8Q@mail.gmail.com>
+        Tue, 24 Apr 2018 06:36:20 -0400
+Date: Tue, 24 Apr 2018 12:36:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
+Message-ID: <20180424103609.GD4064@hirez.programming.kicks-ass.net>
+References: <cover.1524499368.git.gustavo@embeddedor.com>
+ <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
+ <20180423152455.363d285c@vento.lan>
+ <20180424093500.xvpcm3ibcu7adke2@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMZdPi-VCsct6S4cYCvN_XniFB9=pJqC8hnTdQnvL5H_CU2a8Q@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180424093500.xvpcm3ibcu7adke2@mwanda>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 11:01:18AM +0200, Loic Poulain wrote:
-> On 29 March 2018 at 16:55, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> > Some of the camera subsystems like camss in Qualcommm MSM chipsets
-> > require pixel clock support in camera sensor drivers. So, this commit
-> > adds a default pixel clock rate of 96MHz to OV5640 camera sensor driver.
+On Tue, Apr 24, 2018 at 12:35:00PM +0300, Dan Carpenter wrote:
+> On Mon, Apr 23, 2018 at 03:24:55PM -0300, Mauro Carvalho Chehab wrote:
+> > Em Mon, 23 Apr 2018 12:38:03 -0500
+> > "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
+
+> > > @@ -875,6 +876,7 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
+> > >  	if (f->index >= ARRAY_SIZE(format))
+> > >  		return -EINVAL;
+> > >  
+> > > +	f->index = array_index_nospec(f->index, ARRAY_SIZE(format));
 > >
-> > According to the datasheet, 96MHz can be used as a pixel clock rate for
-> > most of the modes.
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Tested-by: Loic Poulain <loic.poulain@linaro.org>
-> 
-> It works for me on Dragonboard 410c + D3 camera mezzanine (ov5640) .
-> 
-> Any comments on this change?
+> > Please enlighten me: how do you think this could be exploited?
 
-<URL:https://patchwork.linuxtv.org/project/linux-media/list/?submitter=Maxime+Ripard&state=*&q=ov5640>
+TL;DR: read the papers [1] & [2]
 
-There's also another set that adds PIXEL_CLOCK (as well as LINK_FREQ)
-support to the driver, that seems more complete than this patch but
-requires a rebase on Maxime's patches:
+I suspect you didn't get the gist of Spectre V1 [1], let me explain:
 
-<URL:https://patchwork.linuxtv.org/project/linux-media/list/?submitter=7218&state=*&q=ov5640>
+Suppose userspace provides f->index > ARRAY_SIZE(format), and we predict
+the branch to -EINVAL to not be taken.
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Then the CPU _WILL_ load (out of bounds) format[f->index] into
+f->pixelformat and continue onwards to use this bogus value, all the way
+until it figures out the branch was mis-predicted.
+
+Once it figures out the mispredict, it will throw away the state and
+start over at the condition site. So far, so basic.
+
+The thing is, is will not (and cannot) throw away all state. Suppose our
+speculation continues into v4l_fill_fmtdesc() and that switch there is
+compiled as another array lookup, it will then feed our f->pixelformat
+(which contains random kernel memory) into that array to find the
+requested descr pointer.
+
+Now, imagine userspace having flushed cache on the descr pointer array,
+having trained the branch predictor to mis-predict the branch (see
+branchscope paper [2]) and doing that out-of-bounds ioctl().
+
+It can then speculative do the out-of-bounds array access, followed by
+the desc array load, then figure out it was wrong and redo.
+
+Then usespace probes which part of the descr[] array is now in cache and
+from that it can infer the initial out-of-bound value.
+
+So while format[] is static and bound, it can read random kernel memory
+up to format+4g, including your crypto keys.
+
+As far as V1 goes, this is actually a fairly solid exploit candidate. No
+false positive about it.
+
+Now kernel policy is to kill any and all speculation on user controlled
+array indexing such that we don't have to go look for subsequent side
+channels (the above cache side channel is the one described in the
+Spectre paper and by far the easiest, but there are other possible side
+channels) and we simply don't want to worry about it.
+
+So even from that pov, the proposed patch is good.
+
+
+[1] https://spectreattack.com/spectre.pdf
+[2] www.cs.ucr.edu/~nael/pubs/asplos18.pdf
