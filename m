@@ -1,68 +1,131 @@
-Return-Path: <dan.carpenter@oracle.com>
-X-Google-Smtp-Source: AIpwx4+Ss7RtyM17JxYmDoK5Ay6faz4BA18ts9kLAkFs7QKVORYVzhDNwJpiH7fHnoIOChiWh5Az
-ARC-Seal: i=1; a=rsa-sha256; t=1524721104; cv=none;
-        d=google.com; s=arc-20160816;
-        b=C4vCYK0eE21IAVMTGcvs+u2ho3LfRcfgCCoxy/OuT6ygkbm+phRAvNr2ePa8oMGZDv
-         K3/71CULBCcDl8C/p63BReDEC50FcIgb1TiYEA0UXEG85VUgeaZXlXG/ovEGxUFVPqOT
-         0r250bdwp79GTBLZImqwevNhk/4f15aE356R8HaF6gP2L7aK7Ngau+z5aO87pB72SrhN
-         JDhX7LA/a/z8o8WM/22WW2wtQNguKmOdiyzWvBL1qhxuR3LbEd/a9o2C+ZzzYOwPmDGF
-         bY0i6zcgEtFksmFD9QGlnTCp+VO+plviPi3E9vg/DBa1mbPansjl6rZmyfu3r4KBIXyw
-         SCmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=KTqh/sFMvehrzBFkgx/b5h5acfQCwKu8MxFu8XjCYiw=;
-        b=PFr/dQ0pQW3qQxdFs2UO9Y5avHUrCz0OFaIN4Z/BzJqQ4ccElyBITx21CRmmmE57u/
-         OQie+Jbq/AwgY7hJlv0FxfkTc8hf1uHr2YD3b7LpMiSvBF3Hey2YR3sKl4yiuiijRAQw
-         +1IxLUxHZxtAIYCGs0Xzv4L+8DsB8B+ifr6A6RdAYCSPwepJmhg3IWMI+3U/2Jh/2r+N
-         mQ5cUDAN6u9oVHDNIG2EvL9xx/NQ5CR8S1j0fz3usLHx7yKAwTR1dWJL9qpd5X9ZsgcL
-         2K1AjVGuZfmfI5BA0clAq6XgXP79t7EW4o+8HpvzagyWzSuxVoghx5EsHnd30aqG2gDJ
-         RHRg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=PD4VuSc1;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=PD4VuSc1;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Date: Thu, 26 Apr 2018 08:38:00 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-        linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] staging: bcm2835-audio: Disconnect and free
- vchi_instance on module_exit()
-Message-ID: <20180426053758.egezzrh7maz2zbhw@mwanda>
-References: <9e4fc4a0-370b-9101-2809-4040de58553c@gmail.com>
- <20180424195729.8433-1-k.marinushkin@gmail.com>
- <20180425061638.GA1450@kroah.com>
- <d2690e90-f3ff-8a3a-38bc-edf0a0c7c754@gmail.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3477952-1524594948-2-13969908501119285496
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524594948; b=G9nu5asIdkUXXNIw2p7d/fcU28Yt0Vu0QgO1DDYFsIy1q914Xf
+    kK47IYQhYv931DfId3+qjN2mgrVgKABQM77JRbAyZNJ3oOoeYLzJ6b8Ncbbn6A/L
+    dbOOY6esxofRwh4PYgV56ZQwmJ/ut+zGNipbGyhrsxAq7fcssnNa2cNctiVO6lrC
+    021FLvzrFrmYAWRw8tBZ6IEPtpe1b0DRHlSgArYshk9iVq5+Ok1aCqVTDWoGTgc3
+    CsXFs1RfD/OVHjs9Ew/ZK4Xb2nteP3Q5yAcyniwYKa5Wv0Qk2HXR1EQxmqmZnDzm
+    9S/s6dox1qVlDXJWIU46ccIUEnvGk2vjg2Hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524594948; bh=NxTYd
+    lwt3PR1E4wATeWoKnvWWnTNGbaoLOt6rt5dciQ=; b=SI/WGzRec+xg0HRWTJvJs
+    oV/Y3BBTWTshnVvybst593rG5nkNBbIVrRtEYuF0JXBmuba2uhQctRARnXPQqiQP
+    T/TnAGlTx8PENSEXapynebi7K+4ssLw/BANQYy4eYEEjVKGhJT5R6DpZ+vHT8E6Q
+    MpctDQ8XASo57wlO6PRV1WtJ0FRZN8ZPsGSUw0Uz35FHrDJtyDcs/HgoQ4QPKvGf
+    FR12am/+Praq55x2av4Mfgb95pZYoyv3Yyc/1/K/N24t2qZJd6ARnoNAz4AsELtV
+    rCVfyKEKS1SBbXDXKa6/5hxoT0lKafi2kfkNBmJlmQvA0bCxn6Q+WIuu1PKcI4SE
+    g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=GYTbgO7Q x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CM0OShrG;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=GYTbgO7Q x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CM0OShrG;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGpCWLUsJB5x4ve0n74pM7RcUynWB1ZRhlbWdCkxjTCKQOZHXApHb2w/gKXgsu137O2wSRJz+BMcxTg2OGO6joQW1Tisfd3+0R5GBx0W5CQZSaTcqjUW
+    lQt5hnKGklfwhIl2CS/XbctZf6kvQPa95/LxYyVh92wvKs19Ssc3iItg/kDgcHcru9DANeK8EDY+8/juAhelgrROUwPkR/Z8mj0DNKQ/FcJda6uCR5i8Ob6i
+    ZuLJqJwmLc5JTRu6ZOf1Ug==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=fbV3Th2LUxsA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=Pupt36HRvj6XKI2kbAsA:9 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AB8JxZpEER6nqeJCiz0+jo7oh2WeQInv4fPe2qctMcUUSWOqU6jvqfmpD2uAI2dg5JDPkO/LhPdCXhlOjVceDnahXPA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2690e90-f3ff-8a3a-38bc-edf0a0c7c754@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8874 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=603
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804260054
+In-Reply-To: <9e4fc4a0-370b-9101-2809-4040de58553c@gmail.com>
+References: <20180424071618.GB17825@kroah.com>
+ <20180424074459.7215-1-k.marinushkin@gmail.com>
+ <9e4fc4a0-370b-9101-2809-4040de58553c@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 24 Apr 2018 21:35:40 +0300
+Message-ID: <CAHp75Vd=_7g4N6b2Mkw1dLOao6gFsQuhzO7-9d=1kjyX0kgMAQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH] staging: bcm2835-audio: Disconnect and free
+ vchi_instance on module_exit()
+To: Kirill Marinushkin <k.marinushkin@gmail.com>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org,
+ Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Eric Anholt <eric@anholt.net>,
+ bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+ linux-rpi-kernel@lists.infradead.org, Ray Jui <rjui@broadcom.com>,
+ Dan Carpenter <dan.carpenter@oracle.com>,
+ linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597968190615569586?=
-X-GMAIL-MSGID: =?utf-8?q?1598785956317171448?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Greg deleted your patch already...
+On Tue, Apr 24, 2018 at 9:27 PM, Kirill Marinushkin
+<k.marinushkin@gmail.com> wrote:
 
-regards,
-dan carpenter
+> @Andy
+>
+>> AFAIR I gave you a tag and you again missed it.
+>> Before sending anything just check twice if all prerequisites are fulfilled.
+>
+> I think you mix it up. This is a new patch, you didn't review it before.
+
+Ah, okay, send new version as a separate thread and if I have time I
+would review it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
