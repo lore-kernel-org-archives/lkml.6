@@ -1,83 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751315AbeDXRQW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:16:22 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:33019 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbeDXRQV (ORCPT
+        id S1751561AbeDXRQz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:16:55 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:37408 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751239AbeDXRQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:16:21 -0400
-X-Google-Smtp-Source: AIpwx48kKFFq8qqnts4WY0mluTPTe/dg7URFgwCC1lSnxg2zXzrC8HRAk8IPWC0xnVM+7XDlRvuBO0/HoKnVcg8s0RM=
-MIME-Version: 1.0
-In-Reply-To: <20180424170239.GP17484@dhcp22.suse.cz>
-References: <1524243513-29118-1-git-send-email-chuhu@redhat.com>
- <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com>
- <20180422125141.GF17484@dhcp22.suse.cz> <CACT4Y+YWUgyzCBadg+Oe8wDkFCaBzmcKDgu3rKjQxim7NXNLpg@mail.gmail.com>
- <CABATaM6eWtssvuj3UW9LHLK3HWo8P9g0z9VzFnuqKPKO5KMJ3A@mail.gmail.com>
- <20180424132057.GE17484@dhcp22.suse.cz> <850575801.19606468.1524588530119.JavaMail.zimbra@redhat.com>
- <20180424170239.GP17484@dhcp22.suse.cz>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 24 Apr 2018 19:16:00 +0200
-Message-ID: <CACT4Y+Y8uoLfrecOMqbW3g9vUNUH_1wmgWT+ZTbmL+b2fijazQ@mail.gmail.com>
-Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Chunyu Hu <chuhu@redhat.com>, Chunyu Hu <chuhu.ncepu@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 24 Apr 2018 13:16:54 -0400
+Date: Tue, 24 Apr 2018 13:16:50 -0400 (EDT)
+Message-Id: <20180424.131650.2276839479783300009.davem@davemloft.net>
+To: amsalam20@gmail.com
+Cc: dav.lebrun@gmail.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next 1/2] ipv6: sr: add a per namespace sysctl to control
+ seg6 flowlabel
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1524519420-1612-1-git-send-email-amsalam20@gmail.com>
+References: <1524519420-1612-1-git-send-email-amsalam20@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 7:02 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Tue 24-04-18 12:48:50, Chunyu Hu wrote:
->>
->>
->> ----- Original Message -----
->> > From: "Michal Hocko" <mhocko@kernel.org>
->> > To: "Chunyu Hu" <chuhu.ncepu@gmail.com>
->> > Cc: "Dmitry Vyukov" <dvyukov@google.com>, "Catalin Marinas" <catalin.marinas@arm.com>, "Chunyu Hu"
->> > <chuhu@redhat.com>, "LKML" <linux-kernel@vger.kernel.org>, "Linux-MM" <linux-mm@kvack.org>
->> > Sent: Tuesday, April 24, 2018 9:20:57 PM
->> > Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
->> >
->> > On Mon 23-04-18 12:17:32, Chunyu Hu wrote:
->> > [...]
->> > > So if there is a new flag, it would be the 25th bits.
->> >
->> > No new flags please. Can you simply store a simple bool into fail_page_alloc
->> > and have save/restore api for that?
->>
->> Hi Michal,
->>
->> I still don't get your point. The original NOFAIL added in kmemleak was
->> for skipping fault injection in page/slab  allocation for kmemleak object,
->> since kmemleak will disable itself until next reboot, whenever it hit an
->> allocation failure, in that case, it will lose effect to check kmemleak
->> in errer path rose by fault injection. But NOFAULT's effect is more than
->> skipping fault injection, it's also for hard allocation. So a dedicated flag
->> for skipping fault injection in specified slab/page allocation was mentioned.
->
-> I am not familiar with the kmemleak all that much, but fiddling with the
-> gfp_mask is a wrong way to achieve kmemleak specific action. I might be
+From: Ahmed Abdelsalam <amsalam20@gmail.com>
+Date: Mon, 23 Apr 2018 23:36:59 +0200
 
-I would say this is more like slab fault injection-specific action. It
-can be used in other debugging facilities. Slab fault injection is a
-part of slab. Slab behavior is generally controlled with gfp_mask.
+> This patch adds a per namespace sysctl, named 'seg6_flowlabel', to be used
+> by seg6_do_srh_encap() to control the behaviour of setting the flowlabel
+> value of outer IPv6.
+> 
+> The currently support behaviours are as follows:
+> -1 set flowlabel to zero.
+>  0 copy flowlabel from Inner paceket in case of Inner IPv6 (0 for IPv4/L2)
+>  1 Compute the flowlabel using seg6_make_flowlabel()
+> 
+> Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
 
-> easilly wrong but I do not see any code that would restore the original
-> gfp_mask down the kmem_cache_alloc path.
->
->> d9570ee3bd1d ("kmemleak: allow to coexist with fault injection")
->>
->> Do you mean something like below, with the save/store api? But looks like
->> to make it possible to skip a specified allocation, not global disabling,
->> a bool is not enough, and a gfp_flag is also needed. Maybe I missed something?
->
-> Yes, this is essentially what I meant. It is still a global thing which
-> is not all that great and if it matters then you can make it per
-> task_struct. That really depends on the code flow here.
+There really isn't a reason to make this a separate patch.
 
-If we go this route, it definitely needs to be per task and also needs
-to work with interrupts: switch on interrupts and not corrupt on
-interrupts. A gfp flag is free of these problems.
+Adding a sysctl that nothing refers to doesn't add much value.
+
+So please combine patches #1 and #2.
