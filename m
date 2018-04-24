@@ -1,77 +1,255 @@
-Return-Path: <prvs=16521a1f51=stefan.potyra@elektrobit.com>
-X-Google-Smtp-Source: AB8JxZpsvuHe3Gl++/heXUypdPRrfOPjiSZua0ZQlBMWOEjBl11LbIQah7RI9J73fq7vxT2i8GSg
-ARC-Seal: i=1; a=rsa-sha256; t=1524585828; cv=none;
-        d=google.com; s=arc-20160816;
-        b=d8yT+P/B3zxgYJrh8vLh+MQ/YWRWY6LtMu3ntaLH7uK5g5zxlu/A9TYHP7nPnomK56
-         QU5PVBRyi07d8xZrNFL3aCn2QhyCylxxJs5meLp4am/XyNKIo9y0B/qiFVk6MqybgfhQ
-         sduKrC7lmV3A27Nlbywq/4SSIdovad++pdh9sws+wWLdy7EX1e1OXIsdzBb8G9xDdD4S
-         6SA8YcQa/7sbgYjBJmK0E4LodLa1/r8JBcw7ubxuhaUt1TNwqSkoMMrS97ikaMA3AOEd
-         cezJVa6LUbsmMdIbWIYtlk3q/WBnz3MW1uA4dHFspmXnyIVP9z5WwmOC0vbTYrBVbNy6
-         t8Sg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=hV4AEbqQBLmBCqgLdp+4jOTzIbIpLF3+PttCQsII8oo=;
-        b=MqX5fj11LqGqr4pkkT4I2D7ygdJZB+FDOv5Qg8MQ2/RjvvWz/DpYCOqaSl2r7eiOaU
-         wU0KCBS3OD1hgYVPHx1pUL2d7PgnHTx6Dp0ZY0jsmOpV5pG4JAqbMoWeWj9iQrI3a8IJ
-         NqkZ72q7SNlRLqrVkidU9OTYv7mEiWWmcQgghzb7F9buZWLeL0kypTRRIV22ZJdVkDN2
-         VHq40A977DgucUOLD4bQXxeuSRLSNabBxUaTA3mQmXObM1Jd+RycatrnHxERiwQ4AAx7
-         wYXCxKiUFRVJZ3Nto2cONwfRaqveFIYlmp7KwkBO7n9xFdwDoWy9flfqGtJSQXBqNJXF
-         IE7Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of prvs=16521a1f51=stefan.potyra@elektrobit.com designates 213.95.163.141 as permitted sender) smtp.mailfrom=prvs=16521a1f51=stefan.potyra@elektrobit.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of prvs=16521a1f51=stefan.potyra@elektrobit.com designates 213.95.163.141 as permitted sender) smtp.mailfrom=prvs=16521a1f51=stefan.potyra@elektrobit.com
-Date: Tue, 24 Apr 2018 18:03:47 +0200
-From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Jiri Slaby <jslaby@suse.com>, <linux-serial@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ldv-project@linuxtesting.org>,
-        <sil2review@lists.osadl.org>
-Subject: [PATCH v2] sc16is7xx: Check for an error when the clock is enabled.
-Message-ID: <20180424160346.GB16979@er01809n.ebgroup.elektrobit.com>
-References: <20180419130228.rdee6hwsjcui5py7@agrajag.zerfleddert.de>
- <20180423075519.GA13262@kroah.com>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3069549-1524576512-2-2514478430954404932
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524576511; b=Dil4aoyGFYOneT38cPctXuyvPqaYzyUpU5P7FmOhJQ3DuoMDu2
+    HKebffSBmP+HmBE/pxxNip5dQiH2yD8O+6K7pmqLvWK3OHo1N9ft3+8+f8Nfi05v
+    AQLvwdKugLJOfleltlat5jxnbxSZ6wzf6P3tMyC8ZlcmCq2goCISzpUgsFoQtSpV
+    YQbk3H8W+YYA+yhnXc2TWm4qZsqPJ12l+jkonHNwXFj05tfgwPNfyoAS6Dzfl60m
+    84pn1c3EvgSvor30pWSd0QJM4YF69Jc/7D0I5zPRDdeyg6O88S9Ff+brG7EQIPy/
+    DcZQPogtySzXQXBncE3N/Qy0k28dU2oR5JsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:reply-to:from:date
+    :message-id:subject:to:cc:content-type:sender:list-id; s=fm2; t=
+    1524576511; bh=QmfvdWVLEv5CGWDHQuYvmlfoK4wT1DYALXJkDluruIc=; b=h
+    luZTydUrOKXEz6eUH4kG1SPHEeihhVWaMdH2HtCm0o0Wn2w46YngMjgcJRNXOS0E
+    yEO0SOpAeJJCzmZcrDdqqENArL2tQzfRHu2FBGIVEXwmqhrp5d/LuIe9IL1Ma7aY
+    wBnq88WOyqE3aOMXLShcvpsgnYu8k32ktXdYJ6g8C0/Jn5vXT7Za+r3CPXg/prcu
+    7Yjv67S+mBErC+C+KNqasqZpTmDwJFnin5NIFHZzMNW05vXhX+LVFJkva1PZWXWR
+    nsyOmPZX5q3agdQyIkKaFDLOkqdjamal0+nCymz8KndR8nUktxjtckbYUh7uoMK3
+    C8RVm9mCpcFXL4npW0SfQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mcAIwVKH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AdZAjKJ0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mcAIwVKH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AdZAjKJ0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFp5coMfEjLlm5FEcN0fOZvGszeMgThP8DVa+ggt5Rpqah57M1Nib1/kABgTTZ2j9qA8s0wNsXQ0VcsUm/3k90mQpAC06mVfHIw/sThOTqHpNxXPoF37
+    GC0i4gBo7is8MYGi26GdsX1AcUxMxKmiIT8C/5iuQm9vHjRoWr9MeRw1SRX9ossA0gjp4CgvF6DHaaUOZoN3nafjxAXIh+rWAnKxWNrhw6k0gPkCSXnDbFTk
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IzEFBFVBfwYA:10 a=IkcTkHD0fZMA:10
+    a=x7bEGLp0ZPQA:10 a=Qtx8U6EcU7sA:10 a=Kd1tUaAdevIA:10 a=Z4Rwk6OoAAAA:8
+    a=pGLkceISAAAA:8 a=Twlkf-z8AAAA:8 a=gu6fZOg2AAAA:8 a=VwQbUJbxAAAA:8
+    a=tRDL-KDxqPv_qntGvOwA:9 a=QEXdDO2ut3YA:10 a=mFt2QXyYVLUA:10 a=x8gzFH9gYPwA:10
+    a=-FEs8UIgK8oA:10 a=NWVoK91CQyQA:10 a=HkZW87K1Qel5hWWM3VKY:22
+    a=-74SuR6ZdpOK_LpdRCUo:22 a=2RSlZUUhi9gRBrsHwhhZ:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=4riroR3Ex10hVRXakXrT:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934053AbeDXN21 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 24 Apr 2018 09:28:27 -0400
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:38800 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934271AbeDXN2X (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 24 Apr 2018 09:28:23 -0400
+X-Google-Smtp-Source: AB8JxZpYCnQVeBItr3pechx6seOFthNxZhQJw8gm2TCBzJ+hjQFWxhsIGYrINyyg7x51IN0+0Brm3GLajLl/O7nlB58=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180423075519.GA13262@kroah.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Originating-IP: [10.0.24.181]
-X-ClientProxiedBy: denue6es008.ebgroup.elektrobit.com (10.5.139.25) To
- denue6es008.ebgroup.elektrobit.com (10.5.139.25)
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Tue, 24 Apr 2018 15:28:21 +0200
+Message-ID: <CA+icZUUvV0wLs4795zZz3AxG1ccHaCNwhU1nYQu-DTpohVEMPQ@mail.gmail.com>
+Subject: Clang and X86-EFlags (was Re: [PATCH] usbhid: Fix lockdep unannotated
+ irqs-off warning)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+        David Laight <David.Laight@aculab.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michael Hordijk <hoffbrinkle@hotmail.com>, chandlerc@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598644109812431305?=
-X-GMAIL-MSGID: =?utf-8?q?1598644109812431305?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When the clock is enabled, check if there is an error. Otherwise
-clk_get_rate() can be called without enabled clock.
+On Mon, Jun 27, 2016 at 10:14 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Jun 27, 2016 at 12:50 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>>
+>> $ objdump -S clang-eflag.o
+>>
+>> clang-eflag.o:     file format elf64-x86-64
+>>
+>>
+>> Disassembly of section .text:
+>>
+>> 0000000000000000 <bar>:
+>>    0:   55                      push   %rbp
+>>    1:   48 89 e5                mov    %rsp,%rbp
+>>    4:   53                      push   %rbx
+>>    5:   50                      push   %rax
+>>    6:   e8 00 00 00 00          callq  b <bar+0xb>
+>>    b:   ff 0d 00 00 00 00       decl   0x0(%rip)        # 11 <bar+0x11>
+>>   11:   9c                      pushfq
+>>   12:   5b                      pop    %rbx
+>>   13:   e8 00 00 00 00          callq  18 <bar+0x18>
+>>   18:   b8 01 00 00 00          mov    $0x1,%eax
+>>   1d:   53                      push   %rbx
+>>   1e:   9d                      popfq
+>>   1f:   75 07                   jne    28 <bar+0x28>
+>
+>
+> Yeah, the above is pure garbage.
+>
+>> So, the issue is still alive.
+>>
+>> What do you mean by "for the kernel we at a minimum need a way to
+>> disable that code generation"?
+>> Can this be fixed in the Linux-kernel?
+>
+> No. This will never be fixed in the kernel. It's a compiler bug.
+>
+> The compiler generates shit code. It's absolutely atrociously bad even
+> if you ignore any kernel issues, because that kind of code just
+> performs badly (the compiler should have used "setcc" or something
+> similar to just set the comparison value, not save and restore eflags.
+>
+> And quite frankly, any compiler writer that thinks it is good code is
+> not somebody I want touching a compiler that the kernel depends on
+> anyway.
+>
+> But it is not just bad code for the kernel, it's actively buggy code,
+> since it corrupts the IF.
+>
+> Until this gets fixed in LLVM, there's no way in hell that we will
+> ever have a kernel compiled with that piece of shit.
+>
+> Really. If the LLVM developers cannot fix their crap code generation,
+> it's not worth touching that shit with a ten-foot pole.
+>
+> I'd love to be able to compile the kernel with LLVM, but the fact that
+> the broken eflags code apparently _still_ hasn't been fixed makes me
+> just go "not worth it".
+>
+> And if the LLVM developers don't see this as an obvious bug, it's even
+> less worth it - because that shows not just that the compiler is
+> broken, but that the developers involved with it are broken too.
+>
+>                   Linus
 
-Found by Linux Driver Verification project (linuxtesting.org).
+[ Changed Subject ]
+[ CC Matthias ]
+[ CC Michael test-case ]
+[ CC Chandler ]
 
-Fixes: 0814e8d5da2b ("sc16is7xx: enable the clock")
-Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
----
- drivers/tty/serial/sc16is7xx.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Hi Linus,
 
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 65792a3539d0..243c96025053 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -1168,7 +1168,10 @@ static int sc16is7xx_probe(struct device *dev,
- 		else
- 			return PTR_ERR(s->clk);
- 	} else {
--		clk_prepare_enable(s->clk);
-+		ret = clk_prepare_enable(s->clk);
-+		if (ret)
-+			return ret;
-+
- 		freq = clk_get_rate(s->clk);
- 	}
- 
--- 
-2.17.0
+Matthias pointed me in [0] to [1] in the LLVM-BTS.
+
+...and I tried again the test-case from Michael from [3] "[LLVMdev]
+optimizer clobber EFLAGS"...
+
+...with clang-7 (version:
+7~svn330207-1~exp1+0~20180417201234.1709~1.gbp6fb10d) from
+<https://apt.llvm.org/>.
+
+[ TEST-CASE ]
+
+[ clang-eflag.c ]
+#include <stdlib.h>
+#include <stdbool.h>
+
+void foo(void);
+int a;
+
+int bar(void)
+{
+         foo();
+
+         bool const zero = a -= 1;
+
+         asm volatile ("" : : : "cc");
+         foo();
+
+         if (zero) {
+                 return EXIT_FAILURE;
+         }
+
+         foo();
+
+         return EXIT_SUCCESS;
+}
+- EOF -
+
+$ clang-7 -O2 -c -o clang-eflag.o clang-eflag.c
+
+[ OBJDUMP ]
+
+$ objdump -S clang-eflag.o
+
+clang-eflag.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <bar>:
+   0:   53                      push   %rbx
+   1:   e8 00 00 00 00          callq  6 <bar+0x6>
+   6:   83 05 00 00 00 00 ff    addl   $0xffffffff,0x0(%rip)        #
+d <bar+0xd>
+   d:   0f 95 c3                setne  %bl
+  10:   e8 00 00 00 00          callq  15 <bar+0x15>
+  15:   b8 01 00 00 00          mov    $0x1,%eax
+  1a:   f6 c3 ff                test   $0xff,%bl
+  1d:   74 02                   je     21 <bar+0x21>
+  1f:   5b                      pop    %rbx
+  20:   c3                      retq
+  21:   e8 00 00 00 00          callq  26 <bar+0x26>
+  26:   31 c0                   xor    %eax,%eax
+  28:   5b                      pop    %rbx
+  29:   c3                      retq
+
+Does this now look good?
+
+Thanks.
+
+Kind regards,
+- Sedat -
+
+[0] https://marc.info/?l=linux-kernel&m=152450535720279&w=2
+[1] https://bugs.llvm.org/show_bug.cgi?id=36028
+[2] http://lists.llvm.org/pipermail/llvm-dev/2015-July/088766.html
+[3] https://marc.info/?l=linux-kernel&m=152457089205170&w=2
