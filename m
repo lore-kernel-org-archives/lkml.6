@@ -1,89 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752444AbeDXVI1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 17:08:27 -0400
-Received: from foss.arm.com ([217.140.101.70]:60010 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752193AbeDXVIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:08:24 -0400
-Date: Tue, 24 Apr 2018 23:08:21 +0200
-From: Christoffer Dall <christoffer.dall@arm.com>
-To: Eric Auger <eric.auger@redhat.com>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
-        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: Re: [PATCH v3 10/12] KVM: arm/arm64: Add
- KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Message-ID: <20180424210821.GK4533@C02W217FHV2R.local>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
- <1523607658-9166-11-git-send-email-eric.auger@redhat.com>
+        id S1752538AbeDXVIx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 17:08:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42970 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752045AbeDXVIK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 17:08:10 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523607658-9166-11-git-send-email-eric.auger@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 24 Apr 2018 14:08:09 -0700
+From: Subhash Jadavani <subhashj@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-scsi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        linux-scsi-owner@vger.kernel.org
+Subject: Re: [PATCH 2/3] scsi: ufs: Extract devfreq registration
+In-Reply-To: <20180424002016.9205-3-bjorn.andersson@linaro.org>
+References: <20180424002016.9205-1-bjorn.andersson@linaro.org>
+ <20180424002016.9205-3-bjorn.andersson@linaro.org>
+Message-ID: <41c6fd36826ee853c86b3fb3e069903c@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 10:20:56AM +0200, Eric Auger wrote:
-> This new attribute allows the userspace to set the base address
-> of a reditributor region, relaxing the constraint of having all
-> consecutive redistibutor frames contiguous.
+On 2018-04-23 17:20, Bjorn Andersson wrote:
+> Failing to register with devfreq leaves hba->devfreq assigned, which
+> causes the error path to dereference the ERR_PTR(). Rather than bolting
+> on more conditionals, move the call of devm_devfreq_add_device() into
+> it's own function and only update hba->devfreq once it's successfully
+> registered.
 > 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> The subsequent patch builds upon this to make UFS actually work again,
+> as it's been broken since f1d981eaecf8 ("PM / devfreq: Use the 
+> available
+> min/max frequency")
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  arch/arm/include/uapi/asm/kvm.h   | 7 ++++---
->  arch/arm64/include/uapi/asm/kvm.h | 7 ++++---
->  2 files changed, 8 insertions(+), 6 deletions(-)
+>  drivers/scsi/ufs/ufshcd.c | 31 ++++++++++++++++++++++---------
+>  1 file changed, 22 insertions(+), 9 deletions(-)
 > 
-> diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
-> index 2ba95d6..11725bb 100644
-> --- a/arch/arm/include/uapi/asm/kvm.h
-> +++ b/arch/arm/include/uapi/asm/kvm.h
-> @@ -88,9 +88,10 @@ struct kvm_regs {
->  #define KVM_VGIC_V2_CPU_SIZE		0x2000
->  
->  /* Supported VGICv3 address types  */
-> -#define KVM_VGIC_V3_ADDR_TYPE_DIST	2
-> -#define KVM_VGIC_V3_ADDR_TYPE_REDIST	3
-> -#define KVM_VGIC_ITS_ADDR_TYPE		4
-> +#define KVM_VGIC_V3_ADDR_TYPE_DIST		2
-> +#define KVM_VGIC_V3_ADDR_TYPE_REDIST		3
-> +#define KVM_VGIC_ITS_ADDR_TYPE			4
-
-I think I'd prefer that we just leave these lines above as it's only and
-indentation thing, and this is an exported header so will propagate into
-userspace updates, but I don't have a strong feeling about it, nor do I
-know if there's a general policy.
-
-> +#define KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION	5
->  
->  #define KVM_VGIC_V3_DIST_SIZE		SZ_64K
->  #define KVM_VGIC_V3_REDIST_SIZE		(2 * SZ_64K)
-> diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
-> index 9abbf30..ef8ad3b 100644
-> --- a/arch/arm64/include/uapi/asm/kvm.h
-> +++ b/arch/arm64/include/uapi/asm/kvm.h
-> @@ -88,9 +88,10 @@ struct kvm_regs {
->  #define KVM_VGIC_V2_CPU_SIZE		0x2000
->  
->  /* Supported VGICv3 address types  */
-> -#define KVM_VGIC_V3_ADDR_TYPE_DIST	2
-> -#define KVM_VGIC_V3_ADDR_TYPE_REDIST	3
-> -#define KVM_VGIC_ITS_ADDR_TYPE		4
-> +#define KVM_VGIC_V3_ADDR_TYPE_DIST		2
-> +#define KVM_VGIC_V3_ADDR_TYPE_REDIST		3
-> +#define KVM_VGIC_ITS_ADDR_TYPE			4
-> +#define KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION	5
->  
->  #define KVM_VGIC_V3_DIST_SIZE		SZ_64K
->  #define KVM_VGIC_V3_REDIST_SIZE		(2 * SZ_64K)
-> -- 
-> 2.5.5
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 8f22a980b1a7..2253f24309ec 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -1255,6 +1255,26 @@ static struct devfreq_dev_profile 
+> ufs_devfreq_profile = {
+>  	.get_dev_status	= ufshcd_devfreq_get_dev_status,
+>  };
 > 
+> +static int ufshcd_devfreq_init(struct ufs_hba *hba)
+> +{
+> +	struct devfreq *devfreq;
+> +	int ret;
+> +
+> +	devfreq = devm_devfreq_add_device(hba->dev,
+> +			&ufs_devfreq_profile,
+> +			"simple_ondemand",
+> +			NULL);
+> +	if (IS_ERR(devfreq)) {
+> +		ret = PTR_ERR(devfreq);
+> +		dev_err(hba->dev, "Unable to register with devfreq %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	hba->devfreq = devfreq;
+> +
+> +	return 0;
+> +}
+> +
+>  static void __ufshcd_suspend_clkscaling(struct ufs_hba *hba)
+>  {
+>  	unsigned long flags;
+> @@ -6399,16 +6419,9 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>  				sizeof(struct ufs_pa_layer_attr));
+>  			hba->clk_scaling.saved_pwr_info.is_valid = true;
+>  			if (!hba->devfreq) {
+> -				hba->devfreq = devm_devfreq_add_device(hba->dev,
+> -							&ufs_devfreq_profile,
+> -							"simple_ondemand",
+> -							NULL);
+> -				if (IS_ERR(hba->devfreq)) {
+> -					ret = PTR_ERR(hba->devfreq);
+> -					dev_err(hba->dev, "Unable to register with devfreq %d\n",
+> -							ret);
+> +				ret = ufshcd_devfreq_init(hba);
+> +				if (ret)
+>  					goto out;
+> -				}
+>  			}
+>  			hba->clk_scaling.is_allowed = true;
+>  		}
 
-Otherwise:
+Looks good to me.
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
 
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
