@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932578AbeDXMpM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:45:12 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35538 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757842AbeDXMpF (ORCPT
+        id S932845AbeDXMpW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:45:22 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50935 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932116AbeDXMpL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:45:05 -0400
-X-Google-Smtp-Source: AIpwx48i75EsV6z7PG18q6w2eibvR+FJ215Oo2aDL0ivixjQuYg/vUlwHaUNIvB3EOkivt0LGlQ4Iw==
+        Tue, 24 Apr 2018 08:45:11 -0400
+X-Google-Smtp-Source: AIpwx48iCq1GNDV053+P5KhCo6eevgap9VLCYE3Zo0zJ8j79uFNCf32B4YlmXBTaUVi08Pfl9G7UmA==
 From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -15,9 +15,9 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 01/28] venus: hfi_msgs: correct pointer increment
-Date: Tue, 24 Apr 2018 15:44:09 +0300
-Message-Id: <20180424124436.26955-2-stanimir.varbanov@linaro.org>
+Subject: [PATCH 04/28] venus: hfi_cmds: add set_properties for 4xx version
+Date: Tue, 24 Apr 2018 15:44:12 +0300
+Message-Id: <20180424124436.26955-5-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
 References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
@@ -25,34 +25,95 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Data pointer should be incremented by size of the structure not
-the size of a pointer, correct the mistake.
+Adds set_properties method to handle newer 4xx properties and
+fall-back to 3xx for the rest.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/hfi_msgs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/qcom/venus/hfi_cmds.c | 64 +++++++++++++++++++++++++++-
+ 1 file changed, 63 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_msgs.c b/drivers/media/platform/qcom/venus/hfi_msgs.c
-index 90c93d9603dc..589e1a6b36a9 100644
---- a/drivers/media/platform/qcom/venus/hfi_msgs.c
-+++ b/drivers/media/platform/qcom/venus/hfi_msgs.c
-@@ -60,14 +60,14 @@ static void event_seq_changed(struct venus_core *core, struct venus_inst *inst,
- 			frame_sz = (struct hfi_framesize *)data_ptr;
- 			event.width = frame_sz->width;
- 			event.height = frame_sz->height;
--			data_ptr += sizeof(frame_sz);
-+			data_ptr += sizeof(*frame_sz);
- 			break;
- 		case HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT:
- 			data_ptr += sizeof(u32);
- 			profile_level = (struct hfi_profile_level *)data_ptr;
- 			event.profile = profile_level->profile;
- 			event.level = profile_level->level;
--			data_ptr += sizeof(profile_level);
-+			data_ptr += sizeof(*profile_level);
- 			break;
- 		default:
- 			break;
+diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.c b/drivers/media/platform/qcom/venus/hfi_cmds.c
+index 1cfeb7743041..6bd287154796 100644
+--- a/drivers/media/platform/qcom/venus/hfi_cmds.c
++++ b/drivers/media/platform/qcom/venus/hfi_cmds.c
+@@ -1166,6 +1166,65 @@ pkt_session_set_property_3xx(struct hfi_session_set_property_pkt *pkt,
+ 	return ret;
+ }
+ 
++static int
++pkt_session_set_property_4xx(struct hfi_session_set_property_pkt *pkt,
++			     void *cookie, u32 ptype, void *pdata)
++{
++	void *prop_data;
++	int ret = 0;
++
++	if (!pkt || !cookie || !pdata)
++		return -EINVAL;
++
++	prop_data = &pkt->data[1];
++
++	pkt->shdr.hdr.size = sizeof(*pkt);
++	pkt->shdr.hdr.pkt_type = HFI_CMD_SESSION_SET_PROPERTY;
++	pkt->shdr.session_id = hash32_ptr(cookie);
++	pkt->num_properties = 1;
++	pkt->data[0] = ptype;
++
++	/*
++	 * Any session set property which is different in 3XX packetization
++	 * should be added as a new case below. All unchanged session set
++	 * properties will be handled in the default case.
++	 */
++	switch (ptype) {
++	case HFI_PROPERTY_PARAM_BUFFER_COUNT_ACTUAL: {
++		struct hfi_buffer_count_actual *in = pdata;
++		struct hfi_buffer_count_actual_4xx *count = prop_data;
++
++		count->count_actual = in->count_actual;
++		count->type = in->type;
++		count->count_min_host = in->count_actual;
++		pkt->shdr.hdr.size += sizeof(u32) + sizeof(*count);
++		break;
++	}
++	case HFI_PROPERTY_PARAM_WORK_MODE: {
++		struct hfi_video_work_mode *in = pdata, *wm = prop_data;
++
++		wm->video_work_mode = in->video_work_mode;
++		pkt->shdr.hdr.size += sizeof(u32) + sizeof(*wm);
++		break;
++	}
++	case HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE: {
++		struct hfi_videocores_usage_type *in = pdata, *cu = prop_data;
++
++		cu->video_core_enable_mask = in->video_core_enable_mask;
++		pkt->shdr.hdr.size += sizeof(u32) + sizeof(*cu);
++		break;
++	}
++	case HFI_PROPERTY_CONFIG_VENC_MAX_BITRATE:
++		/* not implemented on Venus 4xx */
++		break;
++	default:
++		ret = pkt_session_set_property_3xx(pkt, cookie, ptype, pdata);
++		break;
++	}
++
++	return ret;
++}
++
+ int pkt_session_get_property(struct hfi_session_get_property_pkt *pkt,
+ 			     void *cookie, u32 ptype)
+ {
+@@ -1181,7 +1240,10 @@ int pkt_session_set_property(struct hfi_session_set_property_pkt *pkt,
+ 	if (hfi_ver == HFI_VERSION_1XX)
+ 		return pkt_session_set_property_1x(pkt, cookie, ptype, pdata);
+ 
+-	return pkt_session_set_property_3xx(pkt, cookie, ptype, pdata);
++	if (hfi_ver == HFI_VERSION_3XX)
++		return pkt_session_set_property_3xx(pkt, cookie, ptype, pdata);
++
++	return pkt_session_set_property_4xx(pkt, cookie, ptype, pdata);
+ }
+ 
+ void pkt_set_version(enum hfi_version version)
 -- 
 2.14.1
