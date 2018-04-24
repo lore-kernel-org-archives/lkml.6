@@ -1,107 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751231AbeDXQzm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 12:55:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43091 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750757AbeDXQzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:55:38 -0400
-Date: Tue, 24 Apr 2018 10:55:32 -0600
-From: Michal Hocko <mhocko@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
-        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: vmalloc with GFP_NOFS
-Message-ID: <20180424165532.GO17484@dhcp22.suse.cz>
-References: <20180424162712.GL17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804241240120.27049@file01.intranet.prod.int.rdu2.redhat.com>
+        id S1751419AbeDXRAU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:00:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42676 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751047AbeDXRAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 13:00:16 -0400
+Date: Tue, 24 Apr 2018 13:00:11 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v3] kvmalloc: always use vmalloc if CONFIG_DEBUG_SG
+In-Reply-To: <20180424162906.GM17484@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180420130852.GC16083@dhcp22.suse.cz> <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com> <20180420210200.GH10788@bombadil.infradead.org> <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180421144757.GC14610@bombadil.infradead.org> <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com> <20180423151545.GU17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424125121.GA17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com> <20180424162906.GM17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1804241240120.27049@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-04-18 12:46:55, Mikulas Patocka wrote:
-> 
-> 
-> On Tue, 24 Apr 2018, Michal Hocko wrote:
-> 
-> > Hi,
-> > it seems that we still have few vmalloc users who perform GFP_NOFS
-> > allocation:
-> > drivers/mtd/ubi/io.c
-> > fs/ext4/xattr.c
-> > fs/gfs2/dir.c
-> > fs/gfs2/quota.c
-> > fs/nfs/blocklayout/extent_tree.c
-> > fs/ubifs/debug.c
-> > fs/ubifs/lprops.c
-> > fs/ubifs/lpt_commit.c
-> > fs/ubifs/orphan.c
-> > 
-> > Unfortunatelly vmalloc doesn't suppoer GFP_NOFS semantinc properly
-> > because we do have hardocded GFP_KERNEL allocations deep inside the
-> > vmalloc layers. That means that if GFP_NOFS really protects from
-> > recursion into the fs deadlocks then the vmalloc call is broken.
-> > 
-> > What to do about this? Well, there are two things. Firstly, it would be
-> > really great to double check whether the GFP_NOFS is really needed. I
-> > cannot judge that because I am not familiar with the code. It would be
-> > great if the respective maintainers (hopefully get_maintainer.sh pointed
-> > me to all relevant ones). If there is not reclaim recursion issue then
-> > simply use the standard vmalloc (aka GFP_KERNEL request).
-> > 
-> > If the use is really valid then we have a way to do the vmalloc
-> > allocation properly. We have memalloc_nofs_{save,restore} scope api. How
-> > does that work? You simply call memalloc_nofs_save when the reclaim
-> > recursion critical section starts (e.g. when you take a lock which is
-> > then used in the reclaim path - e.g. shrinker) and memalloc_nofs_restore
-> > when the critical section ends. _All_ allocations within that scope
-> > will get GFP_NOFS semantic automagically. If you are not sure about the
-> > scope itself then the easiest workaround is to wrap the vmalloc itself
-> > with a big fat comment that this should be revisited.
-> > 
-> > Does that sound like something that can be done in a reasonable time?
-> > I have tried to bring this up in the past but our speed is glacial and
-> > there are attempts to do hacks like checking for abusers inside the
-> > vmalloc which is just too ugly to live.
-> > 
-> > Please do not hesitate to get back to me if something is not clear.
-> > 
-> > Thanks!
-> > -- 
-> > Michal Hocko
-> > SUSE Labs
-> 
-> I made a patch that adds memalloc_noio/fs_save around these calls a year 
-> ago: http://lkml.iu.edu/hypermail/linux/kernel/1707.0/01376.html
 
-Yeah, and that is the wrong approach. Let's try to fix this properly
-this time. As the above outlines, the worst case we can end up mid-term
-would be to wrap vmalloc calls with the scope api with a TODO. But I am
-pretty sure the respective maintainers can come up with a better
-solution. I am definitely willing to help here.
--- 
-Michal Hocko
-SUSE Labs
+
+On Tue, 24 Apr 2018, Michal Hocko wrote:
+
+> On Tue 24-04-18 11:50:30, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Tue, 24 Apr 2018, Michal Hocko wrote:
+> > 
+> > > On Mon 23-04-18 20:06:16, Mikulas Patocka wrote:
+> > > [...]
+> > > > @@ -404,6 +405,12 @@ void *kvmalloc_node(size_t size, gfp_t f
+> > > >  	 */
+> > > >  	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+> > > >  
+> > > > +#ifdef CONFIG_DEBUG_SG
+> > > > +	/* Catch bugs when the caller uses DMA API on the result of kvmalloc. */
+> > > > +	if (!(prandom_u32_max(2) & 1))
+> > > > +		goto do_vmalloc;
+> > > > +#endif
+> > > 
+> > > I really do not think there is anything DEBUG_SG specific here. Why you
+> > > simply do not follow should_failslab path or even reuse the function?
+> > 
+> > CONFIG_DEBUG_SG is enabled by default in RHEL and Fedora debug kernel (if 
+> > you don't like CONFIG_DEBUG_SG, pick any other option that is enabled 
+> > there).
+> 
+> Are you telling me that you are shaping a debugging functionality basing
+> on what RHEL has enabled? And you call me evil. This is just rediculous.
+> 
+> > Fail-injection framework is if off by default and it must be explicitly 
+> > enabled and configured by the user - and most users won't enable it.
+> 
+> It can be enabled easily. And if you care enough for your debugging
+> kernel then just make it enabled unconditionally.
+
+So, should we add a new option CONFIG_KVMALLOC_FALLBACK_DEFAULT? I'm not 
+quite sure if 3 lines of debugging code need an extra option, but if you 
+don't want to reuse any existing debug option, it may be possible. Adding 
+it to the RHEL debug kernel would be trivial.
+
+Mikulas
