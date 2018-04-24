@@ -1,54 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756491AbeDXHeA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 03:34:00 -0400
-Received: from verein.lst.de ([213.95.11.211]:57575 "EHLO newverein.lst.de"
+        id S1756508AbeDXHox (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 03:44:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51480 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756326AbeDXHd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 03:33:58 -0400
-Date: Tue, 24 Apr 2018 09:35:24 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
-        Vincent Chen <deanbo422@gmail.com>, linux-c6x-dev@linux-c6x.org,
-        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-m68k@vger.kernel.org, openrisc@lists.librecores.org,
-        Greentime Hu <green.hu@gmail.com>, linux-alpha@vger.kernel.org,
-        sparclinux@vger.kernel.org, nios2-dev@lists.rocketboards.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 01/22] dma-debug: move initialization to common code
-Message-ID: <20180424073524.GB18945@lst.de>
-References: <20180420080313.18796-1-hch@lst.de> <20180420080313.18796-2-hch@lst.de> <294a1469-01d6-10fb-5de1-b1d4513a066c@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <294a1469-01d6-10fb-5de1-b1d4513a066c@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1755920AbeDXHor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 03:44:47 -0400
+From: Jiri Slaby <jslaby@suse.cz>
+To: rjw@rjwysocki.net
+Cc: linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        Martin Kelly <martin@martingkelly.com>, Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org,
+        devel@acpica.org
+Subject: [PATCH 1/1] tools: power/acpi, revert to LD = gcc
+Date: Tue, 24 Apr 2018 09:43:44 +0200
+Message-Id: <20180424074344.23029-1-jslaby@suse.cz>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <54661ff7-5c2a-473b-e08c-1cd267353c03@martingkelly.com>
+References: <54661ff7-5c2a-473b-e08c-1cd267353c03@martingkelly.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 11:23:43AM +0100, Robin Murphy wrote:
->> -void dma_debug_init(u32 num_entries)
->> +static int dma_debug_init(void)
->>   {
->> +	u32 num_entries;
->
-> Maybe initialise it to PREALLOC_DMA_DEBUG_ENTRIES?
+Commit 7ed1c1901fe5 (tools: fix cross-compile var clobbering) removed
+setting of LD to $(CROSS_COMPILE)gcc. This broke build of acpica
+(acpidump) in power/acpi:
+ ld: unrecognized option '-D_LINUX'
 
-We initialize it down in an if/else clause which seems a little more clear
-to me, at the cost of two extra lines of code.  But I suspect I should
-just go a little further and merge the global req_entries and the local
-num_entries into a single variable with a better name.
+The tools pass CFLAGS to the linker (incl. -D_LINUX), so revert this
+particular change and let LD be $(CC) again. Note that the old behaviour
+was a bit different, it used $(CROSS_COMPILE)gcc which was eliminated by
+the commit 7ed1c1901fe5. We use $(CC) for that reason.
 
->> +core_initcall(dma_debug_init);
->
-> I think it's worth noting that for most users this now happens much earlier 
-> than before. In general that's probably good (e.g. on arm64 it should 
-> prevent false-positives from the Arm SMMU drivers under ACPI), and I can't 
-> imagine it's high-risk, but it is a behaviour change.
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: Martin Kelly <martin@martingkelly.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Robert Moore <robert.moore@intel.com>
+Cc: Erik Schmauss <erik.schmauss@intel.com>
+Cc: linux-acpi@vger.kernel.org
+Cc: devel@acpica.org
+---
+ tools/power/acpi/Makefile.config | 1 +
+ 1 file changed, 1 insertion(+)
 
-I'll mention this in the changelog, thanks!
+diff --git a/tools/power/acpi/Makefile.config b/tools/power/acpi/Makefile.config
+index 2cccbba64418..f304be71c278 100644
+--- a/tools/power/acpi/Makefile.config
++++ b/tools/power/acpi/Makefile.config
+@@ -56,6 +56,7 @@ INSTALL_SCRIPT = ${INSTALL_PROGRAM}
+ # to compile vs uClibc, that can be done here as well.
+ CROSS = #/usr/i386-linux-uclibc/usr/bin/i386-uclibc-
+ CROSS_COMPILE ?= $(CROSS)
++LD = $(CC)
+ HOSTCC = gcc
+ 
+ # check if compiler option is supported
+-- 
+2.16.3
