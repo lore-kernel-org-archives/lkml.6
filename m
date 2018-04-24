@@ -1,172 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753027AbeDXRqw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 13:46:52 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:50395 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752948AbeDXRqq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 13:46:46 -0400
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To: "amit.karwar@redpinesignals.com" <amit.karwar@redpinesignals.com>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "amitkarwar@gmail.com" <amitkarwar@gmail.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: rsi_91x: Failed to read status register / FIRMWARE Assert issues
-Thread-Topic: rsi_91x: Failed to read status register / FIRMWARE Assert
- issues
-Thread-Index: AQHT2/LucD19KYy3A0uE5NXCS0p3Nw==
-Date: Tue, 24 Apr 2018 17:37:35 +0000
-Message-ID: <1524591454.11868.7.camel@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.59]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1B37DC42A886EC43BC2415AC43DD03FE@internal.synopsys.com>
-MIME-Version: 1.0
+        id S1752914AbeDXRql (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 13:46:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33646 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750908AbeDXRqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 13:46:33 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 621E3217D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/5] ARM: dts: exynos: Remove unnecessary address/size properties in Origen
+Date: Tue, 24 Apr 2018 19:45:59 +0200
+Message-Id: <20180424174602.3915-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180424174602.3915-1-krzk@kernel.org>
+References: <20180424174602.3915-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3OHkuZQ020306
 
-Hi Amitkumar,
+The children of gpio_keys node do not have reg/ranges properties so remove
+address-cells and size-cells properties.  This fixes warnings for
+Exynos4210 Origen:
 
-I'm seeing quite a strange behavior of RedPine RS9113SB module.
-I tried to use it as wifi hotspot, and sometimes I fail to connect to it.
-Moreover after that failure RSI driver starts to flood me with following messages:
-Issue 1:
---------------------->8--------------------
-rsi_91x: rsi_handle_card_ready: card ready indication in invalid state 9.
-rsi_91x: rsi_interrupt_handler: ==> FIRMWARE Assert <==
-rsi_91x: rsi_interrupt_handler: Firmware Status is 0x79
-rsi_91x: rsi_core_xmit: FSM state not open
-rsi_91x: rsi_core_xmit: Failed to queue packet
-rsi_91x: rsi_core_xmit: FSM state not open
-rsi_91x: rsi_core_xmit: Failed to queue packet
---------------------->8--------------------
+    arch/arm/boot/dts/exynos4210-origen.dtb: Warning (avoid_unnecessary_addr_size):
+        /gpio_keys: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 
-Sometimes messages in same situation can be different (Issue 2):
---------------------->8--------------------
-rsi_91x: rsi_read_pkt: pkt from invalid queue: 2
-rsi_91x: Failed to read the packet
-rsi_91x: rsi_sdio_write_register_multiple: Synch Cmd53 write failed -16
-rsi_91x: rsi_sdio_host_intf_write_pkt: Unable to write onto the card: -16
-rsi_91x: rsi_send_data_pkt: Failed to write pkt
-rsi_91x: rsi_sdio_check_buffer_status: Failed to read status register
-rsi_91x: rsi_sdio_check_buffer_status: Failed to read status register
---------------------->8--------------------
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos4210-origen.dts | 2 --
+ 1 file changed, 2 deletions(-)
 
-NOTE:
-I use vanilla Linux kernel v4.17-rc2
-  rsi_91x: FW Version     : 1.6.1
-  rsi_91x: Firmware file  : rsi/rs9113_wlan_bt_dual_mode.rps
-Also these issues reproduce on vanilla v4.16 Linux kernel
-  rsi_91x: FW Version     : 1.5.3
-  rsi_91x: Firmware file  : rsi/rs9113_wlan_qspi.rps
-
-
-Wifi hotspot is started with next commands:
---------------------->8--------------------
-# echo 1 > /proc/sys/net/ipv4/ip_forward
-# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-# iptables -A FORWARD -i eth0 -o wlan0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-# iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
-# hostapd -B /etc/hostapd.conf
-
-# cat /etc/hostapd.conf
-interface=wlan0
-logger_syslog=-1
-logger_syslog_level=2
-logger_stdout=-1
-logger_stdout_level=2
-ctrl_interface=/var/run/hostapd
-ctrl_interface_group=0
-ssid=HSDK_wifi
-hw_mode=g
-channel=1
-beacon_int=100
-dtim_period=2
-max_num_sta=255
-rts_threshold=-1
-fragm_threshold=-1
-macaddr_acl=0
-auth_algs=3
-ignore_broadcast_ssid=0
-wmm_enabled=1
-wmm_ac_bk_cwmin=4
-wmm_ac_bk_cwmax=10
-wmm_ac_bk_aifs=7
-wmm_ac_bk_txop_limit=0
-wmm_ac_bk_acm=0
-wmm_ac_be_aifs=3
-wmm_ac_be_cwmin=4
-wmm_ac_be_cwmax=10
-wmm_ac_be_txop_limit=0
-wmm_ac_be_acm=0
-wmm_ac_vi_aifs=2
-wmm_ac_vi_cwmin=3
-wmm_ac_vi_cwmax=4
-wmm_ac_vi_txop_limit=94
-wmm_ac_vi_acm=0
-wmm_ac_vo_aifs=2
-wmm_ac_vo_cwmin=2
-wmm_ac_vo_cwmax=3
-wmm_ac_vo_txop_limit=47
-wmm_ac_vo_acm=0
-eapol_key_index_workaround=0
-own_ip_addr=127.0.0.1
---------------------->8--------------------
-
-
-I tried to reproduce this issues with extended RSI log enabled, this is log tail
-for "Issue 2":
---------------------->8--------------------
-rsi_91x: Pkt pending interrupt
-rsi_91x: rsi_mgmt_pkt_recv: Msg Len: 0, Msg Type:    8
-rsi_91x: rsi_sdio_host_intf_write_pkt: Successfully written onto card
-rsi_91x: Beacon event
-rsi_91x: rsi_core_qos_processor: Queue number = 4
-rsi_91x: rsi_send_beacon: Added to beacon queue
-rsi_91x: rsi_sdio_host_intf_write_pkt: Successfully written onto card
-rsi_91x: rsi_core_qos_processor: Queue number = 5
-rsi_91x: rsi_interrupt_handler: Intr_status = 8 8 4
-rsi_91x: Pkt pending interrupt
-rsi_91x: rsi_mgmt_pkt_recv: Msg Len: 0, Msg Type:    1
-rsi_91x: rsi_handle_ta_confirm_type: Invalid TA confirm pkt received
-rsi_91x: rsi_sdio_host_intf_write_pkt: Successfully written onto card
-rsi_91x: rsi_core_qos_processor: Queue number = 4
-rsi_91x: rsi_sdio_host_intf_write_pkt: Successfully written onto card
-rsi_91x: rsi_core_qos_processor: Queue number = 4
-rsi_91x: rsi_interrupt_handler: Intr_status = 8 8 4
-rsi_91x: Pkt pending interrupt
-rsi_91x: rsi_read_pkt: pkt from invalid queue: 2
-rsi_91x: rsi_sdio_host_intf_write_pkt: Successfully written onto card
-rsi_91x: Failed to read the packet
-rsi_91x: rsi_core_qos_processor: Queue number = 255
-rsi_91x: rsi_core_qos_processor: No More Pkt
-rsi_91x: rsi_core_qos_processor: Queue number = 255
-rsi_91x: rsi_core_qos_processor: No More Pkt
-rsi_91x: rsi_core_xmit: ===> Scheduling TX thead <===
-rsi_91x: rsi_core_qos_processor: Queue number = 1
-rsi_91x: rsi_sdio_write_register_multiple: Synch Cmd53 write failed -16
-rsi_91x: rsi_sdio_host_intf_write_pkt: Unable to write onto the card: -16
-rsi_91x: rsi_sdio_host_intf_write_pkt: Successfully written onto card
-rsi_91x: rsi_send_data_pkt: Failed to write pkt
-rsi_91x: rsi_core_xmit: ===> Scheduling TX thead <===
-rsi_91x: rsi_core_qos_processor: Queue number = 1
-rsi_91x: rsi_sdio_check_buffer_status: Failed to read status register
-rsi_91x: rsi_core_xmit: ===> Scheduling TX thead <===
-rsi_91x: rsi_core_qos_processor: Queue number = 1
-rsi_91x: rsi_sdio_check_buffer_status: Failed to read status register
---------------------->8--------------------
-
-Any ideas what could be wrong?
-
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index aa7a96cecee1..a81714745820 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -52,8 +52,6 @@
+ 
+ 	gpio_keys {
+ 		compatible = "gpio-keys";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 
+ 		up {
+ 			label = "Up";
 -- 
- Eugeniy Paltsev
+2.14.1
