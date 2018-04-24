@@ -1,91 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932623AbeDXLmK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 07:42:10 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:46302 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750736AbeDXLmG (ORCPT
+        id S932694AbeDXLnY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 07:43:24 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:14401 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbeDXLnU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 07:42:06 -0400
-X-Google-Smtp-Source: AIpwx4/64/tcZ0N4yAr//hpugEHns8YOqyqU0qALVCyD+/+z2zx5Pvx04QENdZ/TvVGnv5wnWMmDMA==
-Subject: Re: [PATCH net-next] net: init sk_cookie for inet socket
-To: Yafang Shao <laoar.shao@gmail.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Cc: David Miller <davem@davemloft.net>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <1524405004-10960-1-git-send-email-laoar.shao@gmail.com>
- <20180423.115821.640630949143585629.davem@davemloft.net>
- <788ce3f1-6534-5c2e-1870-5ebd8ea4ae7f@gmail.com>
- <CALOAHbDpgOckQhW7_Ysi-F2HCoZW4RKSdUuvTquELJZsaMj6Lg@mail.gmail.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <67a158d9-cd33-8c28-39c3-9cead4107205@gmail.com>
-Date: Tue, 24 Apr 2018 04:41:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 24 Apr 2018 07:43:20 -0400
+Subject: Re: [RFC 06/10] misc: pci_endpoint_test: Add MSI-X support
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+ <8b88f8c2b766f36c71659deb0fce635154b2b39f.1523379766.git.gustavo.pimentel@synopsys.com>
+ <b25dcfb1-e770-e302-d9aa-7c35f6c58fa5@ti.com>
+ <c6d1d492-38a0-6a03-7e61-b8b50226734b@synopsys.com>
+ <a982ca92-d34c-12ea-30bf-9a9b1661d50d@ti.com>
+ <2bd77bf2-1d64-6043-422a-6a96c1a3d3a4@synopsys.com>
+CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <aa1c6446-bcf4-1cdb-d900-22e5d6fa4cab@ti.com>
+Date: Tue, 24 Apr 2018 17:13:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <CALOAHbDpgOckQhW7_Ysi-F2HCoZW4RKSdUuvTquELJZsaMj6Lg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <2bd77bf2-1d64-6043-422a-6a96c1a3d3a4@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-On 04/23/2018 09:39 PM, Yafang Shao wrote:
-> On Tue, Apr 24, 2018 at 12:09 AM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+On Tuesday 24 April 2018 04:27 PM, Gustavo Pimentel wrote:
+> Hi Kishon,
+> 
+> On 24/04/2018 08:19, Kishon Vijay Abraham I wrote:
+>> Hi,
 >>
->>
->> On 04/23/2018 08:58 AM, David Miller wrote:
->>> From: Yafang Shao <laoar.shao@gmail.com>
->>> Date: Sun, 22 Apr 2018 21:50:04 +0800
+>> On Tuesday 17 April 2018 11:08 PM, Gustavo Pimentel wrote:
+>>> Hi Kishon,
 >>>
->>>> With sk_cookie we can identify a socket, that is very helpful for
->>>> traceing and statistic, i.e. tcp tracepiont and ebpf.
->>>> So we'd better init it by default for inet socket.
->>>> When using it, we just need call atomic64_read(&sk->sk_cookie).
+>>> On 17/04/2018 11:33, Kishon Vijay Abraham I wrote:
+>>>> Hi,
 >>>>
->>>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+>>>> On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
+>>>>> Adds the MSI-X support and updates driver documentation accordingly.
+>>>>>
+>>>>> Changes the driver parameter in order to allow the interruption type
+>>>>> selection.
+>>>>>
+>>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>>> ---
+>>>>>  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
+>>>>>  drivers/misc/pci_endpoint_test.c                 | 102 +++++++++++++++++------
+>>>>>  2 files changed, 79 insertions(+), 26 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+>>>>> index 4ebc359..fdfa0f6 100644
+>>>>> --- a/Documentation/misc-devices/pci-endpoint-test.txt
+>>>>> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
+>>>>> @@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
+>>>>>  	*) verifying addresses programmed in BAR
+>>>>>  	*) raise legacy IRQ
+>>>>>  	*) raise MSI IRQ
+>>>>> +	*) raise MSI-X IRQ
+>>>>>  	*) read data
+>>>>>  	*) write data
+>>>>>  	*) copy data
+>>>>> @@ -25,6 +26,8 @@ ioctl
+>>>>>   PCITEST_LEGACY_IRQ: Tests legacy IRQ
+>>>>>   PCITEST_MSI: Tests message signalled interrupts. The MSI number
+>>>>>  	      to be tested should be passed as argument.
+>>>>> + PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
+>>>>> +	      to be tested should be passed as argument.
+>>>>>   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+>>>>>  		as argument.
+>>>>>   PCITEST_READ: Perform read tests. The size of the buffer should be passed
+>>>>> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+>>>>> index 37db0fc..a7d9354 100644
+>>>>> --- a/drivers/misc/pci_endpoint_test.c
+>>>>> +++ b/drivers/misc/pci_endpoint_test.c
+>>>>> @@ -42,11 +42,16 @@
+>>>>>  #define PCI_ENDPOINT_TEST_COMMAND	0x4
+>>>>>  #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+>>>>>  #define COMMAND_RAISE_MSI_IRQ		BIT(1)
+>>>>> -#define MSI_NUMBER_SHIFT		2
+>>>>> -/* 6 bits for MSI number */
+>>>>> -#define COMMAND_READ                    BIT(8)
+>>>>> -#define COMMAND_WRITE                   BIT(9)
+>>>>> -#define COMMAND_COPY                    BIT(10)
+>>>>> +#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+>>>>> +#define IRQ_TYPE_SHIFT			3
+>>>>> +#define IRQ_TYPE_LEGACY			0
+>>>>> +#define IRQ_TYPE_MSI			1
+>>>>> +#define IRQ_TYPE_MSIX			2
+>>>>> +#define MSI_NUMBER_SHIFT		5
+>>>>
+>>>> Now that you are anyways fixing this, add a new register entry for MSI numbers.
+>>>> Let's not keep COMMAND and MSI's together.
 >>>
->>> Applied, thank you.
+>>> What you suggest?
+>>
+>> #define PCI_ENDPOINT_TEST_COMMAND	0x4
+>> #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+>> #define COMMAND_RAISE_MSI_IRQ		BIT(1)
+>> #define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+>> #define COMMAND_READ                    BIT(3)
+>> #define COMMAND_WRITE                   BIT(4)
+>> #define COMMAND_COPY                    BIT(5)
+>>
+>> #define PCI_ENDPOINT_TEST_STATUS	0x8
+>> #define STATUS_READ_SUCCESS             BIT(0)
+>> #define STATUS_READ_FAIL                BIT(1)
+>> #define STATUS_WRITE_SUCCESS            BIT(2)
+>> #define STATUS_WRITE_FAIL               BIT(3)
+>> #define STATUS_COPY_SUCCESS             BIT(4)
+>> #define STATUS_COPY_FAIL                BIT(5)
+>> #define STATUS_IRQ_RAISED               BIT(6)
+>> #define STATUS_SRC_ADDR_INVALID         BIT(7)
+>> #define STATUS_DST_ADDR_INVALID         BIT(8)
+>>
+>> #define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0xc
+>> #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
+>>
+>> #define PCI_ENDPOINT_TEST_LOWER_DST_ADDR	0x14
+>> #define PCI_ENDPOINT_TEST_UPPER_DST_ADDR	0x18
+>>
+>> #define PCI_ENDPOINT_TEST_SIZE		0x1c
+>> #define PCI_ENDPOINT_TEST_CHECKSUM	0x20
+>>
+>> #define PCI_ENDPOINT_TEST_MSI_NUMBER	0x24
+> 
+> Ok. I will do it.
+> 
+>>
+>> We should try not to modify either the existing register offsets or the bit
+>> fields within these registers in the future as EP and RC will be running on
+>> different systems and it is possible one of them might not have the updated
+>> kernel.
+> 
+> I totally agree.
+> 
 >>>
+>>>>> +/* 12 bits for MSI number */
+>>>>> +#define COMMAND_READ                    BIT(17)
+>>>>> +#define COMMAND_WRITE                   BIT(18)
+>>>>> +#define COMMAND_COPY                    BIT(19)
+>>>>
+>>>> This change should be done along with the pci-epf-test in a single patch.
+>>>
+>>> To be clear, you're saying is this patch should be just be squashed into the
+>>> patch number 8 [1], because there is a lot of dependencies namely the defines,
+>>> that is used on the alter functions.
+>>>
+>>> [1] -> https://urldefense.proofpoint.com/v2/url?u=https-3A__patchwork.ozlabs.org_patch_896841_&d=DwIC-g&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=8urVwHCybXa1XMxsEbwHZAzzaEI_HJGXqmWgXpXb9TY&s=MRVr2YPY2Bk_WNFOxBfU4FGrFReTKdPhfzNDLiVxDbs&e=
 >>
->> This is adding yet another atomic_inc on a global cache line.
+>> yeah. We have to make sure git bisect doesn't break functionality.
+> 
+> Ok, it'll be squashed.
+> 
+>>>
+>>>>>  
+>>>>>  #define PCI_ENDPOINT_TEST_STATUS	0x8
+>>>>>  #define STATUS_READ_SUCCESS             BIT(0)
+>>>>> @@ -73,9 +78,9 @@ static DEFINE_IDA(pci_endpoint_test_ida);
+>>>>>  #define to_endpoint_test(priv) container_of((priv), struct pci_endpoint_test, \
+>>>>>  					    miscdev)
+>>>>>  
+>>>>> -static bool no_msi;
+>>>>> -module_param(no_msi, bool, 0444);
+>>>>> -MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
+>>>>
+>>>> Let's not remove this just to make sure existing users doesn't get affected.
+>>>
+>>> Hum, by making an internal conversion? Like this
+>>> no_msi = false <=> irq_type = 1
+>>> no_msi = true <=> irq_type = 0
 >>
+> Disregard previous comment, it doesn't make sense. I don't know where my head was.
 > 
-> That's a trade-off.
+> It will be like this on probe:
 > 
->> Most applications do not need the cookie being ever set.
->>
->> The existing mechanism was fine. Set it on demand.
+> if (no_msi)
+> 	irq_type = IRQ_TYPE_LEGACY;
 > 
-> There are some drawback in the existing mechanism.
-> - we have to set the net->cookie_gen and then sk->sk_cookie when we
-> want to get the sk_cookie, that's a little expensive as well.
+> However since we are breaking the compatibility on terms of MSI/MSI-X
+> bits/registers (discussion on the top), it makes sense to keep the compatibility
+> on this parameter?
 
-Same cost.
+This is userspace compatibility, so lets not break it.
+Btw can we have a sysfs entry per device for defining irq_type. Having a sysfs
+entry might be helpful instead of insmod/rmmod with different irq_type values?
+It will also help if a system has enumerated multiple PCI_ENDPOINT_TEST EP devices.
 
->   After that change, sock_gen_cookie() could be replaced by
-> atomic64_read(&sk->sk_cookie) in most places.
-
-Same cost than the helper.
-
-> 
-> - If the application want to get the sk_cookie, it must set it first.
->    What if the application don't have the permision to write?
->    Furthermore, maybe it is a security concern ?
-
-
-Maybe ? Please elaborate.
-
-Your patch destroys SYNFLOOD behavior.
-
-I have spent months of work solving the SYNFLOOD behavior, your patch crushes it.
-
-I am not that happy.
-
-Please revert this patch.
-
-Thank you.
+Thanks
+Kishon
