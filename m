@@ -1,181 +1,622 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1632850-1524705354-2-17065398049695560380
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524705354; b=XvkBRmFXVyiZLqkvvEZAJwtRPTYeD5MchpPAo7V0+eNtzBv2//
-    xbX0V8HNWJQImfO1gSvnN890ZVPusrEplt1uFD2H92oJXbw+tNMkUjgIBOEzPnpB
-    VhjQjhxaFNhSkEt0tSKh5EbI0J6D+HoGv9KKtUYJXxgL503hmivhJcgWvkfJv1CU
-    szy3bUqXt1Ge7o/fRdPxw4Oi+wvNQcuTFKxtvx8w7Yqp1CCX6fYm3PhnJeHNO75G
-    4kyGItnrEPbEKxrWhrgvDn5G0opRZl/4dqN4GLA3HScCPQ/iDAlpw/oK6ubXtuhI
-    wvPHJ0iAimFqaDjv4FPOTXF0TqAzJL+sXXmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:content-transfer-encoding
-    :content-type:message-id:date:from:to:cc:subject:in-reply-to
-    :references:sender:list-id; s=fm2; t=1524705354; bh=a7v8r7rQLdzS
-    ouCZ0kOMvc0Bm5MAvaD+DghNZkC86CA=; b=cYTJLmlVT/ar0OFcQIE0r9uJQwtL
-    FV+BbBYqzJRhRGws61xAGPk4CWKQZmtpLXv4crQqJVldqEfzbQaDiacoFeJuc6O2
-    CNTgECp7BUs3VowRRjEysxsMXuU7t5Sog85pKjONUtwONIGMPiLGIvRtMZ7lTgqz
-    aTUcPMHFMoFpwnquGFLC6Qb4/jPPIyye7u2xFNIXZaTrRbg4/WH0WWZbPhLeV8jj
-    2Tt/hPL6o0KkgAmToNnQx2E02X7t1g2f/oBd8Ues1qXKelsR97inmG4Eamo0vzTs
-    PBeMVE6oIkkLMDUThG+8SxSn1d450PJ0CaghgUtqtA/kWdqx9u6TuzoPCw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=ONZ+GO4r x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=ONZ+GO4r x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfL9Vr0McNVI+V+BXk+HJVXo4gtVlCTBHiZFaS634ORUG8Dlj6swfMFlr5PEfk9YYR4yiwkthju0ZWXLojgGJfsUb+imO5dfPuuvsFJ87vQORtBoFwE6E
-    4MWHkYmSUU57KDX3h4O0gSxWYJPnC//ye8TXzIo4DRD37hYXijom1kE4P1zm7lV0nNRJd8UfqY6d5DOxxZBY/onXA4ffyiFx8GqtzVHLxLfp9tAGlbt3lUco
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=hD80L64hAAAA:8 a=bFUnhJpB9Z3-8uSK8OwA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753671AbeDZBPk (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 21:15:40 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:59661 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751231AbeDZBPb (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 25 Apr 2018 21:15:31 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180426011528epoutp04d8d834fb7b638809247ba4fe75495ce9~o12r7Fiyn2933629336epoutp04f
-X-AuditID: b6c32a48-c31ff70000000fef-8b-5ae1282ac159
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AE12829.4090607@samsung.com>
-Date: Thu, 26 Apr 2018 10:15:21 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+X-Google-Smtp-Source: AB8JxZp8dT36QwLwuoypG3Cq+SOYMYNIVz+q4WufbaxK14y69R0rs8ukEUaKso1lS+joFQftMH8/
+ARC-Seal: i=1; a=rsa-sha256; t=1524602012; cv=none;
+        d=google.com; s=arc-20160816;
+        b=A7cK1J36oSnrk9X+6AdqlVtBRW2Ve1wTjy7hMx29K99cvLdGpqIdu//4u0nDhL9ITf
+         JDzHX0FgDd51dQRhDslE4KEgUKfw8qzq+nk2W+5gP8X8HqsSI4YnmZC27m2fhSlCvVoK
+         c/Qf4rRD2AiPdvaLVcrj9nFqx0rMkQIv2irHXhVKMa4l3f7swYsgXH0Mk20Dte/4zenF
+         azsovYn4ovtpRhIgjKidTp2dEPmUYc2uirwmbFkD0rpI/fqUryzaSq6pD4GtvbToMUzr
+         mVg7JnVXel13p6yyvhS1NxblCoU225vnFF/Sx4JM2boxI6IhubiJ8ZvttnMpeZTpNsM/
+         TduA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:arc-authentication-results;
+        bh=NX2O8gAVVNhoS+vzmi4yfGJ8TVw79HTMVqi6pBKUmVU=;
+        b=hpmZK5AhL9+/2CLUmia/tBpte2cQfwsEzvY+JjIQP5a2pfsRRgLqlQpwxc/IpOaA+x
+         oO4av+jn3rPQLKDT/l+T7eJwdlCyBAOd2WPrR7c1AlYEfNbHY0k/eD6hPjUBHh4+kwag
+         aOaWh2pH3oqAi1ZImQ6st6lU55CAQW9N71BFSko/7blD4FerGonDhp/OXb3jbKbSK5ss
+         INsonwK6qiTF9mjgVJ/t8gqzXS+l1KWhyVp1BGOOxko5loOYKKlN734mxS7zw8Rl5WZw
+         xGBlf4xJw8lCwssVfg77BZO2jU/LkzgF4F40FXOVMsp2A/JmumqwmFeua1hVdtuUAozg
+         YTLg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909C0217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Tejun Heo <tj@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andi Shyti <andi@etezian.org>,
+	Mark Brown <broonie@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-usb@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC 07/10] pinctrl: samsung: Remove support for Exynos5440
-In-reply-to: <20180424203239.21885-8-krzk@kernel.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0xTVxTHc99r3ytmZc+K7oZlE54s0SqMttRejBgXnXmLLJIsSwibYS/w
-        AkTakj4gc8limQM6N5k4iK4MOkadWYdhhW6rAoJQfkwYCBVaxygwGBtKNChqx49lr31u86/7
-        ved87jn3fJMjwxXdZLQsz1DImQxsPk1skPzQvWN3vHL7TEbizK1dqCH4B4bWz/aSyHm+SYqq
-        Z+YIZPMMSZHt5rgUnWxoItBi3zkM+VfKpOjT2Ts4Gh7+jkRVaxcx1DwrIEufBKSoxbYGkGV9
-        GaBe928Y8l75gkAPTnsAOj98FUMlS7dI9NXXpTjqqm4H6JJnkkQXfCMYGrn+Krrue0CgwYFR
-        KSpt95BobqaCQN2L5VL097hTgs6s3iDQysUegBxXhBbOh8z+OKaxrhEw3vERnFldOQuYe/5S
-        kvHZ7+PMZeskyTS0LWBMs+Mjgvl1vI1gOmobSabFfoK52f+BlLl3dYxgXGPlEqZmMgiYCpcD
-        pG3M4Pbmcmw2Z4rhDFnG7DxDTgp9+I3MA5na3YmqeFUy0tExBlbPpdAHU9PiD+XlC2bSMcVs
-        fpEQSmN5nn55316TsaiQi8k18oUp9FsqlTpBlahLUKuFU3N0j1orIO9wuZ6SAbLATLx7YeIu
-        YQYLklMgQgapJPiX1SLoDTIF5Qawzz5PipfHAJrvlPxHzZ+89IRqBXDR1wVCCTm1EQY/CwgJ
-        mQyntkLP6LFQGKd2wO9bm54UmgRwpn6VEHkl/Hb0Y2lIS6iXYO1cT1gTQrzjT3+YeZaKhWPB
-        2XD9zVQ6vGx7FC4URVkioHmtERc71ABY5s4P6U0UAz//0A5Cn4igtLDkdmyIh9S0DD4sfwTE
-        CQ7CheEpXNSb4O0+Fynq5+G8wwnEB+UAlrfX4eKlCsAhXwATKQ2crz+FiZ0joaV7nQx1g5Qc
-        WsoUIsLAzp/6CVG/AtseL+Pi+C0A/jhYg50BL1qfcsz6v2PWpxz7EuAOsIUr4PU5HK8uSErg
-        WT1fZMhJyDLqm0F4gZSMG3QOpXYBSgboZ+Rp9dMZCilbzB/XdwEow+koefppISTPZo+/x5mM
-        maaifI7vAlrB8Eo8enOWUVhHQ2GmSqvWaDRIq0vWJCbTz8nNrw9mKKgctpA7xnEFnOnfd5gs
-        ItoM9HG55NsnjsTX/r7Ve2CAch9Jj4nybylW9C/cPTyte8G/cyKt8ucbbb020/5rSVGpRGSk
-        Yyoybk99oOKb7a5ty/b1qV3eo22u4JxudaJHGdhWhY92tBZc003qqnTFa7906qr3ve9dcr5m
-        MLSXNt5vqFyOPTdLaN909mZV1x1aYnfSEj6XVSlxE8/+A+J3qTFWBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SW0hUURTl3Dv3MdLUdVI8vQiHwpDSkordg+onOv0F9aFTYUNeVHR0mDFN
-        CdTKymdmajmlZmqPyUc6JilmaDc1FV/paJSajmSmZGbB4ItmlKi/tddae6/1sXlaWcys54PD
-        IkR9mCZUxTrJ2paswg7PbSPqnRMpblBoG6dgMaOJg4q75QxkjYyxkC91MJDfa2HgSmE5C1PN
-        dygYmLvGwE3rJA2dnc85yFx4TEGl1W6ZSRliwJy/gODG4i8ETS9HKXhfe5+F2VQJwd3Oegri
-        Zz5w8PBRAg2NWa8QlEqDHBT3d1PQ3XoUWvtnWWhv62Eg4ZXEwdhIGgtvpq4zsGSpkEH6fBcL
-        c4/fIjDV2iMqfpMjW0hJXgki7y3dNJmfy0BkeiCBI/1FP2lSYxzkSGHdBEUqTYks+WSpY8nr
-        3BKOmItiSW/LZYZM1/expKrvuozcG7QhklZlQiec1U4HA8TQ4EhR733onFOQFN/G6eLYi8Uf
-        v7NxaEKWhOQ8FnbjL1dK7diJVwo1CP+WLJxDUAjO2HZ7yC7wPC1sxlJPiIOmBQ+ckfeQXvEP
-        I5xW0Muu+D3xs55kxoFlwlacO/Z2GbN2/vXXgWXPGsEd99msyHHTVfDFyS3RjjsuQoocV0u1
-        rGOghRyEzV2jywtrBYJzrhahlTQzwtLsMOvYlgt7cPw393QkGP/ravzX1fhf1weINqF1os6g
-        DdQafHQ+YWKUl0GjNVwIC/Q6H66tRPbnqX7jefMlshb5NyKBR6pVihMFn9VKRhNpiNY2IszT
-        KheFb6qdUgRoomNEfbi//kKoaGhEG3iZyk2xJrzJTykEaiLEEFHUifq/KsXL18ehqMsnp3xb
-        QmbeBT3RyZfGtqRYtrlP2hIPnPn6ohfX7Vc/PcyEzwy6Zvebs4zpHvu2u6kv6cqmcg4eJyiz
-        MtF7oy0xeM4ntrD59G2tNiaty3xq3Y9jVHL9s/Zbm/KC8kzOfnuPFGS3ljVtPLq6oSb/SezZ
-        nuTxDs0OpXeXMqlvfrxBJTMEaXZ50nqD5g95wAdrOAMAAA==
-X-CMS-MailID: 20180426011522epcas2p1aec8cd55df8a5a4ba37a4ba1acd3eb56
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180424203539epcas2p4e099df5797adb9a49c0d49bbfc829543
-X-RootMTR: 20180424203539epcas2p4e099df5797adb9a49c0d49bbfc829543
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [RFC 03/10] cpufreq: exynos: Remove support for Exynos5440
+Date: Tue, 24 Apr 2018 22:32:32 +0200
+Message-Id: <20180424203239.21885-4-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
 References: <20180424203239.21885-1-krzk@kernel.org>
-        <CGME20180424203539epcas2p4e099df5797adb9a49c0d49bbfc829543@epcas2p4.samsung.com>
-        <20180424203239.21885-8-krzk@kernel.org>
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598661079695051015?=
+X-GMAIL-MSGID: =?utf-8?q?1598661079695051015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+The Exynos5440 is not actively developed, there are no development
+boards available and probably there are no real products with it.
+Remove wide-tree support for Exynos5440.
 
-On 2018년 04월 25일 05:32, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/pinctrl/samsung/Kconfig              |   10 +-
->  drivers/pinctrl/samsung/Makefile             |    1 -
->  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 1005 --------------------------
->  3 files changed, 2 insertions(+), 1014 deletions(-)
->  delete mode 100644 drivers/pinctrl/samsung/pinctrl-exynos5440.c
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ .../bindings/cpufreq/cpufreq-exynos5440.txt        |  28 --
+ drivers/cpufreq/Kconfig.arm                        |  14 -
+ drivers/cpufreq/Makefile                           |   1 -
+ drivers/cpufreq/exynos5440-cpufreq.c               | 452 ---------------------
+ 4 files changed, 495 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
+ delete mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
+diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
+deleted file mode 100644
+index caff1a57436f..000000000000
+--- a/Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
++++ /dev/null
+@@ -1,28 +0,0 @@
+-
+-Exynos5440 cpufreq driver
+--------------------
+-
+-Exynos5440 SoC cpufreq driver for CPU frequency scaling.
+-
+-Required properties:
+-- interrupts: Interrupt to know the completion of cpu frequency change.
+-- operating-points: Table of frequencies and voltage CPU could be transitioned into,
+-	in the decreasing order. Frequency should be in KHz units and voltage
+-	should be in microvolts.
+-
+-Optional properties:
+-- clock-latency: Clock monitor latency in microsecond.
+-
+-All the required listed above must be defined under node cpufreq.
+-
+-Example:
+---------
+-	cpufreq@160000 {
+-		compatible = "samsung,exynos5440-cpufreq";
+-		reg = <0x160000 0x1000>;
+-		interrupts = <0 57 0>;
+-		operating-points = <
+-				1000000 975000
+-				800000  925000>;
+-		clock-latency = <100000>;
+-	};
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 7f56fe5183f2..538a4004a2c5 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -81,20 +81,6 @@ config ARM_BRCMSTB_AVS_CPUFREQ_DEBUG
+ 
+ 	  If in doubt, say N.
+ 
+-config ARM_EXYNOS5440_CPUFREQ
+-	tristate "SAMSUNG EXYNOS5440"
+-	depends on SOC_EXYNOS5440
+-	depends on HAVE_CLK && OF
+-	select PM_OPP
+-	default y
+-	help
+-	  This adds the CPUFreq driver for Samsung EXYNOS5440
+-	  SoC. The nature of exynos5440 clock controller is
+-	  different than previous exynos controllers so not using
+-	  the common exynos framework.
+-
+-	  If in doubt, say N.
+-
+ config ARM_HIGHBANK_CPUFREQ
+ 	tristate "Calxeda Highbank-based"
+ 	depends on ARCH_HIGHBANK && CPUFREQ_DT && REGULATOR
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 8d24ade3bd02..56724f867f78 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -56,7 +56,6 @@ obj-$(CONFIG_ARM_ARMADA_37XX_CPUFREQ)	+= armada-37xx-cpufreq.o
+ obj-$(CONFIG_ARM_BRCMSTB_AVS_CPUFREQ)	+= brcmstb-avs-cpufreq.o
+ obj-$(CONFIG_ACPI_CPPC_CPUFREQ)		+= cppc_cpufreq.o
+ obj-$(CONFIG_ARCH_DAVINCI)		+= davinci-cpufreq.o
+-obj-$(CONFIG_ARM_EXYNOS5440_CPUFREQ)	+= exynos5440-cpufreq.o
+ obj-$(CONFIG_ARM_HIGHBANK_CPUFREQ)	+= highbank-cpufreq.o
+ obj-$(CONFIG_ARM_IMX6Q_CPUFREQ)		+= imx6q-cpufreq.o
+ obj-$(CONFIG_ARM_KIRKWOOD_CPUFREQ)	+= kirkwood-cpufreq.o
+diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
+deleted file mode 100644
+index 932caa386ece..000000000000
+--- a/drivers/cpufreq/exynos5440-cpufreq.c
++++ /dev/null
+@@ -1,452 +0,0 @@
+-/*
+- * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * Amit Daniel Kachhap <amit.daniel@samsung.com>
+- *
+- * EXYNOS5440 - CPU frequency scaling support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/clk.h>
+-#include <linux/cpu.h>
+-#include <linux/cpufreq.h>
+-#include <linux/err.h>
+-#include <linux/interrupt.h>
+-#include <linux/io.h>
+-#include <linux/module.h>
+-#include <linux/of_address.h>
+-#include <linux/of_irq.h>
+-#include <linux/pm_opp.h>
+-#include <linux/platform_device.h>
+-#include <linux/slab.h>
+-
+-/* Register definitions */
+-#define XMU_DVFS_CTRL		0x0060
+-#define XMU_PMU_P0_7		0x0064
+-#define XMU_C0_3_PSTATE		0x0090
+-#define XMU_P_LIMIT		0x00a0
+-#define XMU_P_STATUS		0x00a4
+-#define XMU_PMUEVTEN		0x00d0
+-#define XMU_PMUIRQEN		0x00d4
+-#define XMU_PMUIRQ		0x00d8
+-
+-/* PMU mask and shift definations */
+-#define P_VALUE_MASK		0x7
+-
+-#define XMU_DVFS_CTRL_EN_SHIFT	0
+-
+-#define P0_7_CPUCLKDEV_SHIFT	21
+-#define P0_7_CPUCLKDEV_MASK	0x7
+-#define P0_7_ATBCLKDEV_SHIFT	18
+-#define P0_7_ATBCLKDEV_MASK	0x7
+-#define P0_7_CSCLKDEV_SHIFT	15
+-#define P0_7_CSCLKDEV_MASK	0x7
+-#define P0_7_CPUEMA_SHIFT	28
+-#define P0_7_CPUEMA_MASK	0xf
+-#define P0_7_L2EMA_SHIFT	24
+-#define P0_7_L2EMA_MASK		0xf
+-#define P0_7_VDD_SHIFT		8
+-#define P0_7_VDD_MASK		0x7f
+-#define P0_7_FREQ_SHIFT		0
+-#define P0_7_FREQ_MASK		0xff
+-
+-#define C0_3_PSTATE_VALID_SHIFT	8
+-#define C0_3_PSTATE_CURR_SHIFT	4
+-#define C0_3_PSTATE_NEW_SHIFT	0
+-
+-#define PSTATE_CHANGED_EVTEN_SHIFT	0
+-
+-#define PSTATE_CHANGED_IRQEN_SHIFT	0
+-
+-#define PSTATE_CHANGED_SHIFT		0
+-
+-/* some constant values for clock divider calculation */
+-#define CPU_DIV_FREQ_MAX	500
+-#define CPU_DBG_FREQ_MAX	375
+-#define CPU_ATB_FREQ_MAX	500
+-
+-#define PMIC_LOW_VOLT		0x30
+-#define PMIC_HIGH_VOLT		0x28
+-
+-#define CPUEMA_HIGH		0x2
+-#define CPUEMA_MID		0x4
+-#define CPUEMA_LOW		0x7
+-
+-#define L2EMA_HIGH		0x1
+-#define L2EMA_MID		0x3
+-#define L2EMA_LOW		0x4
+-
+-#define DIV_TAB_MAX	2
+-/* frequency unit is 20MHZ */
+-#define FREQ_UNIT	20
+-#define MAX_VOLTAGE	1550000 /* In microvolt */
+-#define VOLTAGE_STEP	12500	/* In microvolt */
+-
+-#define CPUFREQ_NAME		"exynos5440_dvfs"
+-#define DEF_TRANS_LATENCY	100000
+-
+-enum cpufreq_level_index {
+-	L0, L1, L2, L3, L4,
+-	L5, L6, L7, L8, L9,
+-};
+-#define CPUFREQ_LEVEL_END	(L7 + 1)
+-
+-struct exynos_dvfs_data {
+-	void __iomem *base;
+-	struct resource *mem;
+-	int irq;
+-	struct clk *cpu_clk;
+-	unsigned int latency;
+-	struct cpufreq_frequency_table *freq_table;
+-	unsigned int freq_count;
+-	struct device *dev;
+-	bool dvfs_enabled;
+-	struct work_struct irq_work;
+-};
+-
+-static struct exynos_dvfs_data *dvfs_info;
+-static DEFINE_MUTEX(cpufreq_lock);
+-static struct cpufreq_freqs freqs;
+-
+-static int init_div_table(void)
+-{
+-	struct cpufreq_frequency_table *pos, *freq_tbl = dvfs_info->freq_table;
+-	unsigned int tmp, clk_div, ema_div, freq, volt_id, idx;
+-	struct dev_pm_opp *opp;
+-
+-	cpufreq_for_each_entry_idx(pos, freq_tbl, idx) {
+-		opp = dev_pm_opp_find_freq_exact(dvfs_info->dev,
+-					pos->frequency * 1000, true);
+-		if (IS_ERR(opp)) {
+-			dev_err(dvfs_info->dev,
+-				"failed to find valid OPP for %u KHZ\n",
+-				pos->frequency);
+-			return PTR_ERR(opp);
+-		}
+-
+-		freq = pos->frequency / 1000; /* In MHZ */
+-		clk_div = ((freq / CPU_DIV_FREQ_MAX) & P0_7_CPUCLKDEV_MASK)
+-					<< P0_7_CPUCLKDEV_SHIFT;
+-		clk_div |= ((freq / CPU_ATB_FREQ_MAX) & P0_7_ATBCLKDEV_MASK)
+-					<< P0_7_ATBCLKDEV_SHIFT;
+-		clk_div |= ((freq / CPU_DBG_FREQ_MAX) & P0_7_CSCLKDEV_MASK)
+-					<< P0_7_CSCLKDEV_SHIFT;
+-
+-		/* Calculate EMA */
+-		volt_id = dev_pm_opp_get_voltage(opp);
+-
+-		volt_id = (MAX_VOLTAGE - volt_id) / VOLTAGE_STEP;
+-		if (volt_id < PMIC_HIGH_VOLT) {
+-			ema_div = (CPUEMA_HIGH << P0_7_CPUEMA_SHIFT) |
+-				(L2EMA_HIGH << P0_7_L2EMA_SHIFT);
+-		} else if (volt_id > PMIC_LOW_VOLT) {
+-			ema_div = (CPUEMA_LOW << P0_7_CPUEMA_SHIFT) |
+-				(L2EMA_LOW << P0_7_L2EMA_SHIFT);
+-		} else {
+-			ema_div = (CPUEMA_MID << P0_7_CPUEMA_SHIFT) |
+-				(L2EMA_MID << P0_7_L2EMA_SHIFT);
+-		}
+-
+-		tmp = (clk_div | ema_div | (volt_id << P0_7_VDD_SHIFT)
+-			| ((freq / FREQ_UNIT) << P0_7_FREQ_SHIFT));
+-
+-		__raw_writel(tmp, dvfs_info->base + XMU_PMU_P0_7 + 4 * idx);
+-		dev_pm_opp_put(opp);
+-	}
+-
+-	return 0;
+-}
+-
+-static void exynos_enable_dvfs(unsigned int cur_frequency)
+-{
+-	unsigned int tmp, cpu;
+-	struct cpufreq_frequency_table *freq_table = dvfs_info->freq_table;
+-	struct cpufreq_frequency_table *pos;
+-	/* Disable DVFS */
+-	__raw_writel(0,	dvfs_info->base + XMU_DVFS_CTRL);
+-
+-	/* Enable PSTATE Change Event */
+-	tmp = __raw_readl(dvfs_info->base + XMU_PMUEVTEN);
+-	tmp |= (1 << PSTATE_CHANGED_EVTEN_SHIFT);
+-	__raw_writel(tmp, dvfs_info->base + XMU_PMUEVTEN);
+-
+-	/* Enable PSTATE Change IRQ */
+-	tmp = __raw_readl(dvfs_info->base + XMU_PMUIRQEN);
+-	tmp |= (1 << PSTATE_CHANGED_IRQEN_SHIFT);
+-	__raw_writel(tmp, dvfs_info->base + XMU_PMUIRQEN);
+-
+-	/* Set initial performance index */
+-	cpufreq_for_each_entry(pos, freq_table)
+-		if (pos->frequency == cur_frequency)
+-			break;
+-
+-	if (pos->frequency == CPUFREQ_TABLE_END) {
+-		dev_crit(dvfs_info->dev, "Boot up frequency not supported\n");
+-		/* Assign the highest frequency */
+-		pos = freq_table;
+-		cur_frequency = pos->frequency;
+-	}
+-
+-	dev_info(dvfs_info->dev, "Setting dvfs initial frequency = %uKHZ",
+-						cur_frequency);
+-
+-	for (cpu = 0; cpu < CONFIG_NR_CPUS; cpu++) {
+-		tmp = __raw_readl(dvfs_info->base + XMU_C0_3_PSTATE + cpu * 4);
+-		tmp &= ~(P_VALUE_MASK << C0_3_PSTATE_NEW_SHIFT);
+-		tmp |= ((pos - freq_table) << C0_3_PSTATE_NEW_SHIFT);
+-		__raw_writel(tmp, dvfs_info->base + XMU_C0_3_PSTATE + cpu * 4);
+-	}
+-
+-	/* Enable DVFS */
+-	__raw_writel(1 << XMU_DVFS_CTRL_EN_SHIFT,
+-				dvfs_info->base + XMU_DVFS_CTRL);
+-}
+-
+-static int exynos_target(struct cpufreq_policy *policy, unsigned int index)
+-{
+-	unsigned int tmp;
+-	int i;
+-	struct cpufreq_frequency_table *freq_table = dvfs_info->freq_table;
+-
+-	mutex_lock(&cpufreq_lock);
+-
+-	freqs.old = policy->cur;
+-	freqs.new = freq_table[index].frequency;
+-
+-	cpufreq_freq_transition_begin(policy, &freqs);
+-
+-	/* Set the target frequency in all C0_3_PSTATE register */
+-	for_each_cpu(i, policy->cpus) {
+-		tmp = __raw_readl(dvfs_info->base + XMU_C0_3_PSTATE + i * 4);
+-		tmp &= ~(P_VALUE_MASK << C0_3_PSTATE_NEW_SHIFT);
+-		tmp |= (index << C0_3_PSTATE_NEW_SHIFT);
+-
+-		__raw_writel(tmp, dvfs_info->base + XMU_C0_3_PSTATE + i * 4);
+-	}
+-	mutex_unlock(&cpufreq_lock);
+-	return 0;
+-}
+-
+-static void exynos_cpufreq_work(struct work_struct *work)
+-{
+-	unsigned int cur_pstate, index;
+-	struct cpufreq_policy *policy = cpufreq_cpu_get(0); /* boot CPU */
+-	struct cpufreq_frequency_table *freq_table = dvfs_info->freq_table;
+-
+-	/* Ensure we can access cpufreq structures */
+-	if (unlikely(dvfs_info->dvfs_enabled == false))
+-		goto skip_work;
+-
+-	mutex_lock(&cpufreq_lock);
+-	freqs.old = policy->cur;
+-
+-	cur_pstate = __raw_readl(dvfs_info->base + XMU_P_STATUS);
+-	if (cur_pstate >> C0_3_PSTATE_VALID_SHIFT & 0x1)
+-		index = (cur_pstate >> C0_3_PSTATE_CURR_SHIFT) & P_VALUE_MASK;
+-	else
+-		index = (cur_pstate >> C0_3_PSTATE_NEW_SHIFT) & P_VALUE_MASK;
+-
+-	if (likely(index < dvfs_info->freq_count)) {
+-		freqs.new = freq_table[index].frequency;
+-	} else {
+-		dev_crit(dvfs_info->dev, "New frequency out of range\n");
+-		freqs.new = freqs.old;
+-	}
+-	cpufreq_freq_transition_end(policy, &freqs, 0);
+-
+-	cpufreq_cpu_put(policy);
+-	mutex_unlock(&cpufreq_lock);
+-skip_work:
+-	enable_irq(dvfs_info->irq);
+-}
+-
+-static irqreturn_t exynos_cpufreq_irq(int irq, void *id)
+-{
+-	unsigned int tmp;
+-
+-	tmp = __raw_readl(dvfs_info->base + XMU_PMUIRQ);
+-	if (tmp >> PSTATE_CHANGED_SHIFT & 0x1) {
+-		__raw_writel(tmp, dvfs_info->base + XMU_PMUIRQ);
+-		disable_irq_nosync(irq);
+-		schedule_work(&dvfs_info->irq_work);
+-	}
+-	return IRQ_HANDLED;
+-}
+-
+-static void exynos_sort_descend_freq_table(void)
+-{
+-	struct cpufreq_frequency_table *freq_tbl = dvfs_info->freq_table;
+-	int i = 0, index;
+-	unsigned int tmp_freq;
+-	/*
+-	 * Exynos5440 clock controller state logic expects the cpufreq table to
+-	 * be in descending order. But the OPP library constructs the table in
+-	 * ascending order. So to make the table descending we just need to
+-	 * swap the i element with the N - i element.
+-	 */
+-	for (i = 0; i < dvfs_info->freq_count / 2; i++) {
+-		index = dvfs_info->freq_count - i - 1;
+-		tmp_freq = freq_tbl[i].frequency;
+-		freq_tbl[i].frequency = freq_tbl[index].frequency;
+-		freq_tbl[index].frequency = tmp_freq;
+-	}
+-}
+-
+-static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
+-{
+-	policy->clk = dvfs_info->cpu_clk;
+-	return cpufreq_generic_init(policy, dvfs_info->freq_table,
+-			dvfs_info->latency);
+-}
+-
+-static struct cpufreq_driver exynos_driver = {
+-	.flags		= CPUFREQ_STICKY | CPUFREQ_ASYNC_NOTIFICATION |
+-				CPUFREQ_NEED_INITIAL_FREQ_CHECK,
+-	.verify		= cpufreq_generic_frequency_table_verify,
+-	.target_index	= exynos_target,
+-	.get		= cpufreq_generic_get,
+-	.init		= exynos_cpufreq_cpu_init,
+-	.name		= CPUFREQ_NAME,
+-	.attr		= cpufreq_generic_attr,
+-};
+-
+-static const struct of_device_id exynos_cpufreq_match[] = {
+-	{
+-		.compatible = "samsung,exynos5440-cpufreq",
+-	},
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, exynos_cpufreq_match);
+-
+-static int exynos_cpufreq_probe(struct platform_device *pdev)
+-{
+-	int ret = -EINVAL;
+-	struct device_node *np;
+-	struct resource res;
+-	unsigned int cur_frequency;
+-
+-	np = pdev->dev.of_node;
+-	if (!np)
+-		return -ENODEV;
+-
+-	dvfs_info = devm_kzalloc(&pdev->dev, sizeof(*dvfs_info), GFP_KERNEL);
+-	if (!dvfs_info) {
+-		ret = -ENOMEM;
+-		goto err_put_node;
+-	}
+-
+-	dvfs_info->dev = &pdev->dev;
+-
+-	ret = of_address_to_resource(np, 0, &res);
+-	if (ret)
+-		goto err_put_node;
+-
+-	dvfs_info->base = devm_ioremap_resource(dvfs_info->dev, &res);
+-	if (IS_ERR(dvfs_info->base)) {
+-		ret = PTR_ERR(dvfs_info->base);
+-		goto err_put_node;
+-	}
+-
+-	dvfs_info->irq = irq_of_parse_and_map(np, 0);
+-	if (!dvfs_info->irq) {
+-		dev_err(dvfs_info->dev, "No cpufreq irq found\n");
+-		ret = -ENODEV;
+-		goto err_put_node;
+-	}
+-
+-	ret = dev_pm_opp_of_add_table(dvfs_info->dev);
+-	if (ret) {
+-		dev_err(dvfs_info->dev, "failed to init OPP table: %d\n", ret);
+-		goto err_put_node;
+-	}
+-
+-	ret = dev_pm_opp_init_cpufreq_table(dvfs_info->dev,
+-					    &dvfs_info->freq_table);
+-	if (ret) {
+-		dev_err(dvfs_info->dev,
+-			"failed to init cpufreq table: %d\n", ret);
+-		goto err_free_opp;
+-	}
+-	dvfs_info->freq_count = dev_pm_opp_get_opp_count(dvfs_info->dev);
+-	exynos_sort_descend_freq_table();
+-
+-	if (of_property_read_u32(np, "clock-latency", &dvfs_info->latency))
+-		dvfs_info->latency = DEF_TRANS_LATENCY;
+-
+-	dvfs_info->cpu_clk = devm_clk_get(dvfs_info->dev, "armclk");
+-	if (IS_ERR(dvfs_info->cpu_clk)) {
+-		dev_err(dvfs_info->dev, "Failed to get cpu clock\n");
+-		ret = PTR_ERR(dvfs_info->cpu_clk);
+-		goto err_free_table;
+-	}
+-
+-	cur_frequency = clk_get_rate(dvfs_info->cpu_clk);
+-	if (!cur_frequency) {
+-		dev_err(dvfs_info->dev, "Failed to get clock rate\n");
+-		ret = -EINVAL;
+-		goto err_free_table;
+-	}
+-	cur_frequency /= 1000;
+-
+-	INIT_WORK(&dvfs_info->irq_work, exynos_cpufreq_work);
+-	ret = devm_request_irq(dvfs_info->dev, dvfs_info->irq,
+-				exynos_cpufreq_irq, IRQF_TRIGGER_NONE,
+-				CPUFREQ_NAME, dvfs_info);
+-	if (ret) {
+-		dev_err(dvfs_info->dev, "Failed to register IRQ\n");
+-		goto err_free_table;
+-	}
+-
+-	ret = init_div_table();
+-	if (ret) {
+-		dev_err(dvfs_info->dev, "Failed to initialise div table\n");
+-		goto err_free_table;
+-	}
+-
+-	exynos_enable_dvfs(cur_frequency);
+-	ret = cpufreq_register_driver(&exynos_driver);
+-	if (ret) {
+-		dev_err(dvfs_info->dev,
+-			"%s: failed to register cpufreq driver\n", __func__);
+-		goto err_free_table;
+-	}
+-
+-	of_node_put(np);
+-	dvfs_info->dvfs_enabled = true;
+-	return 0;
+-
+-err_free_table:
+-	dev_pm_opp_free_cpufreq_table(dvfs_info->dev, &dvfs_info->freq_table);
+-err_free_opp:
+-	dev_pm_opp_of_remove_table(dvfs_info->dev);
+-err_put_node:
+-	of_node_put(np);
+-	dev_err(&pdev->dev, "%s: failed initialization\n", __func__);
+-	return ret;
+-}
+-
+-static int exynos_cpufreq_remove(struct platform_device *pdev)
+-{
+-	cpufreq_unregister_driver(&exynos_driver);
+-	dev_pm_opp_free_cpufreq_table(dvfs_info->dev, &dvfs_info->freq_table);
+-	dev_pm_opp_of_remove_table(dvfs_info->dev);
+-	return 0;
+-}
+-
+-static struct platform_driver exynos_cpufreq_platdrv = {
+-	.driver = {
+-		.name	= "exynos5440-cpufreq",
+-		.of_match_table = exynos_cpufreq_match,
+-	},
+-	.probe		= exynos_cpufreq_probe,
+-	.remove		= exynos_cpufreq_remove,
+-};
+-module_platform_driver(exynos_cpufreq_platdrv);
+-
+-MODULE_AUTHOR("Amit Daniel Kachhap <amit.daniel@samsung.com>");
+-MODULE_DESCRIPTION("Exynos5440 cpufreq driver");
+-MODULE_LICENSE("GPL");
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.14.1
