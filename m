@@ -1,50 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934517AbeDXNo5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 09:44:57 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34691 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933613AbeDXNQb (ORCPT
+        id S934582AbeDXNpF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 09:45:05 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:49534 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934522AbeDXNpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 09:16:31 -0400
-X-Google-Smtp-Source: AIpwx49tbtZDflTwFjsY3hddUVEGU678CFSv5GFvWudXQNFxYG5H3BtYrIkQmuXYapdAlHVyjQIUtA==
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexander Kochetkov <al.kochet@gmail.com>,
-        Romain Perier <romain.perier@collabora.com>, netdev@vger.kernel.org
-Subject: [PATCH] net: arc_emac: fix arc_emac_tx()'s return type
-Date: Tue, 24 Apr 2018 15:16:25 +0200
-Message-Id: <20180424131628.3556-1-luc.vanoostenryck@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 24 Apr 2018 09:45:00 -0400
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
+Subject: [PATCH v7 0/9] Designware EP support and code clean up
+Date: Tue, 24 Apr 2018 14:44:37 +0100
+Message-Id: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, but the implementation in this
-driver returns an 'int'.
+The patch set was made against the Lorenzo's master branch.
 
-Fix this by returning 'netdev_tx_t' in this driver too.
+Adds support Designware EP support.
 
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
----
- drivers/net/ethernet/arc/emac_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Increases the maximum number of interrupts allowed for Designware IP
+controller.
 
-diff --git a/drivers/net/ethernet/arc/emac_main.c b/drivers/net/ethernet/arc/emac_main.c
-index bd277b0dc..87f395eea 100644
---- a/drivers/net/ethernet/arc/emac_main.c
-+++ b/drivers/net/ethernet/arc/emac_main.c
-@@ -676,7 +676,7 @@ static struct net_device_stats *arc_emac_stats(struct net_device *ndev)
-  *
-  * This function is invoked from upper layers to initiate transmission.
-  */
--static int arc_emac_tx(struct sk_buff *skb, struct net_device *ndev)
-+static netdev_tx_t arc_emac_tx(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct arc_emac_priv *priv = netdev_priv(ndev);
- 	unsigned int len, *txbd_curr = &priv->txbd_curr;
+Does a code cleanup on Designware driver:
+ - Replaces magic numbers without a easy meaning by a well known define
+   that helps the human compreension.
+ - Replaces a division by 2 by a simple right shift rotation of 1 bit.
+ - Fixes all first letter characters on comments and debug messages to
+   upper case to maintain coherency.
+
+Gustavo Pimentel (9):
+  bindings: PCI: designware: Example update
+  PCI: dwc: Add support for endpoint mode
+  PCI: endpoint: functions/pci-epf-test: Add second entry
+  bindings: PCI: designware: Add support for the EP in Designware driver
+  misc: pci_endpoint_test: Add designware EP entry
+  PCI: dwc: Define maximum number of vectors
+  PCI: dwc: Replace lower into upper case characters
+  PCI: dwc: Small computation improvement
+  PCI: dwc: Replace magic number by defines
+
+ .../PCI/endpoint/function/binding/pci-test.txt     |   2 +
+ .../devicetree/bindings/pci/designware-pcie.txt    |  24 +++-
+ drivers/misc/pci_endpoint_test.c                   |   1 +
+ drivers/pci/dwc/Kconfig                            |  41 ++++--
+ drivers/pci/dwc/pcie-designware-ep.c               |  16 +--
+ drivers/pci/dwc/pcie-designware-host.c             |  77 +++++-----
+ drivers/pci/dwc/pcie-designware-plat.c             | 155 +++++++++++++++++++--
+ drivers/pci/dwc/pcie-designware.c                  |  22 +--
+ drivers/pci/dwc/pcie-designware.h                  |   1 +
+ drivers/pci/endpoint/functions/pci-epf-test.c      |   8 ++
+ 10 files changed, 267 insertions(+), 80 deletions(-)
+
 -- 
-2.17.0
+2.7.4
