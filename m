@@ -1,45 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751906AbeDXPpz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 11:45:55 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:25253 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeDXPpv (ORCPT
+        id S1751957AbeDXPqL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 11:46:11 -0400
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:39090 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbeDXPqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:45:51 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w3OFjQgQ015189
-X-Nifty-SrcIP: [209.85.213.51]
-X-Google-Smtp-Source: AIpwx4+JfzcYGWpKRIQ5EX4gdJgmqKj0lVVXAGozTfAIIMthx7OoqmHpm0bs4Q/0v3083Mr+opSOCpgXMMlC9xXLfi8=
+        Tue, 24 Apr 2018 11:46:09 -0400
+X-Google-Smtp-Source: AIpwx4/1TKGOJt1PK0zRDv9sDcSpGlfXzleBM6/QXAPKc+XkdtKrq6KsJyVaihMjta3KU3Rq2y6/V2nrdv/7qELOcCM=
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAShZOxANg1T=9eGgN1MYRVP3qC1n6i8QO07CChPuge-aA@mail.gmail.com>
-References: <1523500291-24008-1-git-send-email-yamada.masahiro@socionext.com> <CAK7LNAShZOxANg1T=9eGgN1MYRVP3qC1n6i8QO07CChPuge-aA@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 25 Apr 2018 00:44:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARyMHSq-sCiJJem3twr-5YeGq4eyZqYXN+n5G1JUfzUfw@mail.gmail.com>
-Message-ID: <CAK7LNARyMHSq-sCiJJem3twr-5YeGq4eyZqYXN+n5G1JUfzUfw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: uniphier: fix input delay value for legacy
- mode of eMMC
-To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
+In-Reply-To: <20180424123523.GF4064@hirez.programming.kicks-ass.net>
+References: <8a34a16da90b9f83ffe60316a074a5e4d05b59b0.1524479666.git.viresh.kumar@linaro.org>
+ <434fa179-7c8f-8a01-a07a-4527521a04c7@arm.com> <20180424104304.GE4064@hirez.programming.kicks-ass.net>
+ <0985e709-0d71-2c08-20a9-7bfb618fb5f2@arm.com> <20180424123523.GF4064@hirez.programming.kicks-ass.net>
+From: Joel Fernandes <joel.opensrc@gmail.com>
+Date: Tue, 24 Apr 2018 08:46:08 -0700
+Message-ID: <CAEi0qN=qnej22F31jM2CMajee2h+ie0+AptFscwa5L8Arp8q3g@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Rearrange select_task_rq_fair() to optimize it
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Valentin Schneider <valentin.schneider@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        c@hirez.programming.kicks-ass.net, Joel Fernandes <joelaf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-12 13:45 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> 2018-04-12 11:31 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->> The property of the legacy mode for the eMMC PHY turned out to
->> be worng.  Some eMMC devices are unstable due to the set-up/hold
->> timing violation.  Correct the delay value.
+On Tue, Apr 24, 2018 at 5:35 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Apr 24, 2018 at 12:19:07PM +0100, Valentin Schneider wrote:
+>> On 24/04/18 11:43, Peter Zijlstra wrote:
+>> > On Tue, Apr 24, 2018 at 11:02:26AM +0100, Valentin Schneider wrote:
+>> >> I'd argue making things easier to read is a non-negligible part as well.
+>> >
+>> > Right, so I don't object to either of these (I think); but it would be
+>> > good to see this in combination with that proposed EAS change.
+>> >
+>>
+>> True, I would've said the call to find_energy_efficient_cpu() ([1]) could
+>> simply be added to the if (sd) {} case, but...
 >
-> Reminder for myself:
->   Fix a type  worng -> wrong
+> I think the proposal was to put it before the for_each_domain() loop
+> entirely, however...
 >
+>> > I think you (valentin) wanted to side-step the entire domain loop in
+>> > that case or something.
+>> >
+>>
+>> ...this would change more things. Admittedly I've been sort of out of the loop
+>> (no pun intended) lately, but this doesn't ring a bell. That might have been
+>> the other frenchie (Quentin) :)
+>
+> It does indeed appear I confused the two of you, it was Quentin playing
+> with that.
+>
+> In any case, if there not going to be conflicts here, this all looks
+> good.
 
-Applied to linux-uniphier.
+Both Viresh's and Valentin's patch looks lovely to me too. I couldn't
+spot anything wrong with them either. One suggestion I was thinking
+off is can we add better comments to this code (atleast label fast
+path vs slow path) ?
+
+Also, annotate the conditions for the fast/slow path with
+likely/unlikely since fast path is the common case? so like:
+
+if (unlikely(sd)) {
+  /* Fast path, common case */
+  ...
+} else if (...) {
+  /* Slow path */
+}
 
 
--- 
-Best Regards
-Masahiro Yamada
+thanks,
+
+- Joel
