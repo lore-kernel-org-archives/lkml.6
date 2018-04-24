@@ -1,79 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756141AbeDXLXS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 07:23:18 -0400
-Received: from mail-by2nam03on0075.outbound.protection.outlook.com ([104.47.42.75]:26934
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752831AbeDXLXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 07:23:15 -0400
-From: "Kalluru, Sudarsana" <Sudarsana.Kalluru@cavium.com>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        Sebastian Kuzminsky <seb.kuzminsky@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Elior, Ariel" <Ariel.Elior@cavium.com>,
-        Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>
-Subject: RE: fix for bnx2x panic during ethtool reporting
-Thread-Topic: fix for bnx2x panic during ethtool reporting
-Thread-Index: AQHT1qXC/yzXSucE9USWZ8vdP5nfg6QPz5OQ
-Date: Tue, 24 Apr 2018 11:23:12 +0000
-Message-ID: <MW2PR07MB4139D11DC60825A8A6C04E068A880@MW2PR07MB4139.namprd07.prod.outlook.com>
-References: <CAOTh5U2NwGU68cwzX2amhzPyj_=f0pm4CO4biR4m1DX49MJkUw@mail.gmail.com>
- <7747689b-6774-ca84-e0d5-ffd9b0d59e1b@gmail.com>
-In-Reply-To: <7747689b-6774-ca84-e0d5-ffd9b0d59e1b@gmail.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Sudarsana.Kalluru@cavium.com;
-x-originating-ip: [114.143.185.87]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR07MB4121;7:FUqL/vsDoTgvJg2DnYIhEp/GMn+jRhakSaw/7NDgAuD+h5mshd/nO0huLQRldWZ50lYXiTdYnKOC5R0c7MqwuET6OQe4l6nAQ/8duGuFdnl15w30QOFZMQMeuVMio9d79450fa+ViE0P+hAFJGkG+g6XPMtn5eWYFd486/h7ZzeQHdrty7bnzYHgJTyf8GDtTIy3ah2tbIgpFt58O2X/c8OY34+ZKd0L1BL5e5lPWbHXqsElbNOEsSQCJrczwPrt
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MW2PR07MB4121;
-x-ms-traffictypediagnostic: MW2PR07MB4121:
-x-microsoft-antispam-prvs: <MW2PR07MB4121E3A86E6501665D87F0718A880@MW2PR07MB4121.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(211171220733660);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231232)(944501410)(52105095)(3002001)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(6072148)(201708071742011);SRVR:MW2PR07MB4121;BCL:0;PCL:0;RULEID:;SRVR:MW2PR07MB4121;
-x-forefront-prvs: 0652EA5565
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39380400002)(396003)(39850400004)(366004)(189003)(199004)(13464003)(6436002)(9686003)(5250100002)(55016002)(5890100001)(2501003)(6246003)(81156014)(81166006)(53936002)(97736004)(8936002)(7696005)(229853002)(66066001)(74316002)(53546011)(6506007)(39060400002)(8676002)(76176011)(2900100001)(106356001)(305945005)(7736002)(68736007)(6636002)(33656002)(486006)(14454004)(110136005)(102836004)(2201001)(26005)(2906002)(186003)(86362001)(99286004)(316002)(6116002)(478600001)(3846002)(72206003)(476003)(25786009)(105586002)(3280700002)(446003)(11346002)(5660300001)(3660700001);DIR:OUT;SFP:1101;SCL:1;SRVR:MW2PR07MB4121;H:MW2PR07MB4139.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: tFC/ut4+Larn5AdPWBDUpWMfC1rVBOT+ewlWLnn0vaqOhPH+I6L7kLCbQfNyqynU9xIcEbvot02EaapvELxJec1//kltETdT9RGJVf64liFxNlO43E2qWkj0sKRXBByZto1UaB2niYtnAeWVy3cjcujjT/p6eu56z+/FrMpTjK4XlAZArVULoE9jTUD8gezY
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1757095AbeDXLYB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 07:24:01 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:39841 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752831AbeDXLX7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 07:23:59 -0400
+X-Google-Smtp-Source: AIpwx4+xcHOQ+ZSvbsJfK9ru+9Nxqy8UG66YIF2o89jU2IdjyWBWXz44NOcnqMAR0tYMcNJz5q2sRg==
+Date: Tue, 24 Apr 2018 14:23:59 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: kirill.shutemov@linux.intel.com, hughd@google.com, mhocko@kernel.org,
+        hch@infradead.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v4 PATCH] mm: shmem: make stat.st_blksize return huge page
+ size if THP is on
+Message-ID: <20180424112359.svngcdudzodobvmu@kshutemo-mobl1.Home>
+References: <1524542450-92577-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 7ee3b6f1-3f0b-4f94-8ef2-08d5a9d5c424
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ee3b6f1-3f0b-4f94-8ef2-08d5a9d5c424
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2018 11:23:12.1495
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR07MB4121
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524542450-92577-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3OBNNWm027776
 
------Original Message-----
-From: Florian Fainelli [mailto:f.fainelli@gmail.com] 
-Sent: 18 April 2018 05:12
-To: Sebastian Kuzminsky <seb.kuzminsky@gmail.com>; linux-kernel@vger.kernel.org; netdev@vger.kernel.org; Elior, Ariel <Ariel.Elior@cavium.com>; Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>
-Subject: Re: fix for bnx2x panic during ethtool reporting
+On Tue, Apr 24, 2018 at 12:00:50PM +0800, Yang Shi wrote:
+> Since tmpfs THP was supported in 4.8, hugetlbfs is not the only
+> filesystem with huge page support anymore. tmpfs can use huge page via
+> THP when mounting by "huge=" mount option.
+> 
+> When applications use huge page on hugetlbfs, it just need check the
+> filesystem magic number, but it is not enough for tmpfs. Make
+> stat.st_blksize return huge page size if it is mounted by appropriate
+> "huge=" option to give applications a hint to optimize the behavior with
+> THP.
+> 
+> Some applications may not do wisely with THP. For example, QEMU may mmap
+> file on non huge page aligned hint address with MAP_FIXED, which results
+> in no pages are PMD mapped even though THP is used. Some applications
+> may mmap file with non huge page aligned offset. Both behaviors make THP
+> pointless.
+> 
+> statfs.f_bsize still returns 4KB for tmpfs since THP could be split, and it
+> also may fallback to 4KB page silently if there is not enough huge page.
+> Furthermore, different f_bsize makes max_blocks and free_blocks
+> calculation harder but without too much benefit. Returning huge page
+> size via stat.st_blksize sounds good enough.
+> 
+> Since PUD size huge page for THP has not been supported, now it just
+> returns HPAGE_PMD_SIZE.
+> 
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> ---
+> v3 --> v4:
+> * Rework the commit log per the education from Michal and Kirill
+> * Fix build error if CONFIG_TRANSPARENT_HUGEPAGE is disabled
+> v2 --> v3:
+> * Use shmem_sb_info.huge instead of global variable per Michal's comment
+> v2 --> v1:
+> * Adopted the suggestion from hch to return huge page size via st_blksize
+>   instead of creating a new flag.
+> 
+>  mm/shmem.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b859192..19b8055 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -988,6 +988,7 @@ static int shmem_getattr(const struct path *path, struct kstat *stat,
+>  {
+>  	struct inode *inode = path->dentry->d_inode;
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+> +	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+>  
+>  	if (info->alloced - info->swapped != inode->i_mapping->nrpages) {
+>  		spin_lock_irq(&info->lock);
+> @@ -995,6 +996,11 @@ static int shmem_getattr(const struct path *path, struct kstat *stat,
+>  		spin_unlock_irq(&info->lock);
+>  	}
+>  	generic_fillattr(inode, stat);
+> +#ifdef CONFIG_TRANSPARENT_HUGE_PAGECACHE
+> +	if (sbinfo->huge > 0)
 
-+netdev, Ariel,
+No ifdeffery, please.
 
-On 04/17/2018 10:21 AM, Sebastian Kuzminsky wrote:
-> "ethtool -i" on a bnx2x interface causes kernel panic when the 
-> firmware version is longer than expected.  The attached patch fixes 
-> the problem by simplifying the string handling in bnx2x_fill_fw_str().
-> It applies cleanly to 4.14 and 4.17-rc1.
+And we probably want to check if shmem_huge is 'force'.
 
-If you want to have a chance of getting your patch included, your should make sure you copy the driver maintainers and the network mailinglist, doing that.
---
-Florian
+Something like this?
 
-Acked-by: Sudarsana Kalluru <Sudarsana.Kalluru@cavium.com>
+	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE) &&
+		 (shmem_huge == SHMEM_HUGE_FORCE || sbinfo->huge))
+
+> +		stat->blksize = HPAGE_PMD_SIZE;
+> +#endif
+> +	
+>  	return 0;
+>  }
+>  
+> -- 
+> 1.8.3.1
+> 
+
+-- 
+ Kirill A. Shutemov
