@@ -1,128 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeDXOvJ (ORCPT <rfc822;w@1wt.eu>);
+        id S1751445AbeDXOvR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 10:51:17 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35538 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDXOvJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Apr 2018 10:51:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750778AbeDXOvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:51:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF82B20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 24 Apr 2018 10:51:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCH] printk: do not call console drivers from
- printk_safe context
-Message-ID: <20180424105104.792d2d80@gandalf.local.home>
-In-Reply-To: <20180424022802.1330-1-sergey.senozhatsky@gmail.com>
-References: <20180424022802.1330-1-sergey.senozhatsky@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+X-Google-Smtp-Source: AIpwx49jLkRaPfTHJhU1JJU1oLGmqNmyhh+ehb8tXOtHee374HNtE19H8Mvi1MvUV/foHv6Nhqi2jFjq6Y0Gb+yXje8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CA+7wUsz6NNG=sVUYL1n+ntAJUWNvjtpjCHzJmPuQ4Zb7TuFrZA@mail.gmail.com>
+References: <20180424141759.F02AF6C59D@po15720vm.idsi0.si.c-s.fr> <CA+7wUsz6NNG=sVUYL1n+ntAJUWNvjtpjCHzJmPuQ4Zb7TuFrZA@mail.gmail.com>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Tue, 24 Apr 2018 16:50:47 +0200
+X-Google-Sender-Auth: Z1ven8z2rbGe5R3_j7yLt8u9MMQ
+Message-ID: <CA+7wUsxXwRVHDrE_bzog2+m+kdyDsC4MnjB4_BMc2owDUe7d8A@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/signal32: Use fault_in_pages_readable() to
+ prefault user context
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 11:28:02 +0900
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+On Tue, Apr 24, 2018 at 4:45 PM, Mathieu Malaterre <malat@debian.org> wrote:
+> On Tue, Apr 24, 2018 at 4:17 PM, Christophe Leroy
+> <christophe.leroy@c-s.fr> wrote:
+>> Use fault_in_pages_readable() to prefault user context
+>> instead of open coding
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>  arch/powerpc/kernel/signal_32.c | 13 +++++--------
+>>  1 file changed, 5 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
+>> index 492f03451877..cfacb2726152 100644
+>> --- a/arch/powerpc/kernel/signal_32.c
+>> +++ b/arch/powerpc/kernel/signal_32.c
+>> @@ -25,6 +25,7 @@
+>>  #include <linux/errno.h>
+>>  #include <linux/elf.h>
+>>  #include <linux/ptrace.h>
+>> +#include <linux/pagemap.h>
+>>  #include <linux/ratelimit.h>
+>>  #ifdef CONFIG_PPC64
+>>  #include <linux/syscalls.h>
+>> @@ -1045,7 +1046,6 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+>>                      struct ucontext __user *new_ctx,
+>>                      int ctx_size, int r6, int r7, int r8, struct pt_regs *regs)
+>>  {
+>> -       unsigned char tmp __maybe_unused;
+>>         int ctx_has_vsx_region = 0;
+>>
+>>  #ifdef CONFIG_PPC64
+>> @@ -1109,9 +1109,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+>>         }
+>>         if (new_ctx == NULL)
+>>                 return 0;
+>> -       if (!access_ok(VERIFY_READ, new_ctx, ctx_size)
+>> -           || __get_user(tmp, (u8 __user *) new_ctx)
+>> -           || __get_user(tmp, (u8 __user *) new_ctx + ctx_size - 1))
+>> +       if (!access_ok(VERIFY_READ, new_ctx, ctx_size) ||
+>> +           fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
+>>                 return -EFAULT;
+>>
+>>         /*
+>> @@ -1231,7 +1230,6 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+>>  {
+>>         struct sig_dbg_op op;
+>>         int i;
+>> -       unsigned char tmp __maybe_unused;
+>>         unsigned long new_msr = regs->msr;
+>>  #ifdef CONFIG_PPC_ADV_DEBUG_REGS
+>>         unsigned long new_dbcr0 = current->thread.debug.dbcr0;
+>> @@ -1287,9 +1285,8 @@ int sys_debug_setcontext(struct ucontext __user *ctx,
+>>         current->thread.debug.dbcr0 = new_dbcr0;
+>>  #endif
+>>
+>> -       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx))
+>> -           || __get_user(tmp, (u8 __user *) ctx)
+>> -           || __get_user(tmp, (u8 __user *) (ctx + 1) - 1))
+>> +       if (!access_ok(VERIFY_READ, ctx, sizeof(*ctx)) ||
+>> +           fault_in_pages_readable((u8 __user *)ctx, 1))
+>
+> I believe you meant:
+>
+> fault_in_pages_readable((u8 __user *)new_ctx, ctx_size)
+>
+> Since (u8 __user *) (ctx + 1) - 1 really is (u8 __user *) new_ctx + ctx_size - 1
 
-> Calling console drivers from printk_safe() context does not really
-> make call_console_drivers() any safer, because printk_safe() has
-> nothing to do with console drivers or the underlying code. At the
-> same time printk()-s from console drivers are fine, they don't
-> deadlock the system. We need printk_safe() because of the way
-> vprintk_emit() works -- we protect logbuf lock, console_owner_lock
-> and console_sem spin_lock with printk_safe, -- not because of the
-> console drivers (which don't deal with logbuf, console_owner_lock
-> or console_sem locks). Hence we can call console drivers outside
-> of printk_safe() context.
-> 
-> Another thing to notice is that,
-> printk_safe() introduces unneeded complexity, since any printk()
-> message from console drivers has to be stored in per-CPU printk_safe()
-> buffer first, then be flushed via IRQ work:
-> 	call_console_drivers()
-> 	 printk()
-> 	  printk_safe_log_store()
-> 	   IRQ_work()
-> 	    printk_safe_flush_buffer()
-> 	     printk_deferred()
-> 	      log_store()
-> 	       irq_work_queue()               *
-> 	        wake_up_klogd_work_func()     *
-> 
-> Note that this also costs us extra IRQ work [along with the IRQ work
-> that flushes printk_safe() buffer] - we flush per-CPU printk_safe()
-> buffers via printk_deferred().
-> 
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> ---
->  kernel/printk/internal.h | 7 ++++++-
->  kernel/printk/printk.c   | 2 ++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-> index 2a7d04049af4..f3ba1bf08590 100644
-> --- a/kernel/printk/internal.h
-> +++ b/kernel/printk/internal.h
-> @@ -55,8 +55,13 @@ void __printk_safe_exit(void);
->  	} while (0)
->  
->  #else
-> +static void __printk_safe_enter(void) {}
-> +static void __printk_safe_exit(void) {}
->  
-> -__printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
-> +static __printf(1, 0) int vprintk_func(const char *fmt, va_list args)
-> +{
-> +	return 0;
-> +}
->  
->  /*
->   * In !PRINTK builds we still export logbuf_lock spin_lock, console_sem
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 2f4af216bd6e..9acb25ce6081 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2391,9 +2391,11 @@ void console_unlock(void)
->  		 */
->  		console_lock_spinning_enable();
->  
-> +		__printk_safe_exit();
->  		stop_critical_timings();	/* don't trace print latency */
->  		call_console_drivers(ext_text, ext_len, text, len);
->  		start_critical_timings();
-> +		__printk_safe_enter();
->  
+Without the copy/paste errors:
 
-OK, I'm still confused (It's been that kind of week)
+[...]
+fault_in_pages_readable((u8 __user *)ctx, sizeof(*ctx))
 
-So, if we do this, and the consoles do a printk(), doesn't that fill
-the logbuf? And then the loop this is in will just continue to perform
-that loop? That is, we have:
-
-  for (;;) {
-	if (console_seq == log_next_seq)
-		break;
-	console_seq++;
-	call_console_drives() {
-		printk() {
-			log_next_seq++;
-		}
-	}
-  }
-
-That looks like an infinite loop to me. Whereas the printk_safe keeps
-from adding to the logbuf?
-
--- Steve
-
-
->  		if (console_lock_spinning_disable_and_check()) {
->  			printk_safe_exit_irqrestore(flags);
+Since (u8 __user *) (ctx + 1) - 1 really is (u8 __user *) ctx + sizeof(*ctx) - 1
+[...]
+>>                 return -EFAULT;
+>>
+>>         /*
+>> --
+>> 2.13.3
+>>
