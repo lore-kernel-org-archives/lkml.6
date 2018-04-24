@@ -1,179 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755774AbeDXFLy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 01:11:54 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:33981 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755600AbeDXFLw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 01:11:52 -0400
-Message-Id: <201804240511.w3O5BY4o090598@www262.sakura.ne.jp>
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaperunmap
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To: David Rientjes <rientjes@google.com>
-Cc: mhocko@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, guro@fb.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+        id S1755768AbeDXFXC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 01:23:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43503 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751603AbeDXFXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 01:23:00 -0400
+Subject: Re: [Xen-devel] [RFC 0/2] To introduce xenwatch multithreading (xen
+ mtwatch)
+To: Dongli Zhang <dongli.zhang@oracle.com>, Wei Liu <wei.liu2@citrix.com>
+Cc: ian.jackson@eu.citrix.com, linux-kernel@vger.kernel.org,
+        srinivas.eeda@oracle.com, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com, Joao Martins <joao.m.martins@oracle.com>
+References: <1523100355-27647-1-git-send-email-dongli.zhang@oracle.com>
+ <20180423140911.bihiwfwtlneobgzd@citrix.com>
+ <6c379249-886d-76ee-db9c-942967b23d80@oracle.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <db08fec6-5648-4d87-4ace-2f42d1d04479@suse.com>
+Date: Tue, 24 Apr 2018 07:22:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Tue, 24 Apr 2018 14:11:34 +0900
-References: <201804221248.CHE35432.FtOMOLSHOFJFVQ@I-love.SAKURA.ne.jp> <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com>
-In-Reply-To: <alpine.DEB.2.21.1804231706340.18716@chino.kir.corp.google.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
+In-Reply-To: <6c379249-886d-76ee-db9c-942967b23d80@oracle.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Sun, 22 Apr 2018, Tetsuo Handa wrote:
+On 24/04/18 01:55, Dongli Zhang wrote:
+> Hi Wei,
 > 
-> > > I'm wondering why you do not see oom killing of many processes if the 
-> > > victim is a very large process that takes a long time to free memory in 
-> > > exit_mmap() as I do because the oom reaper gives up trying to acquire 
-> > > mm->mmap_sem and just sets MMF_OOM_SKIP itself.
-> > > 
-> > 
-> > We can call __oom_reap_task_mm() from exit_mmap() (or __mmput()) before
-> > exit_mmap() holds mmap_sem for write. Then, at least memory which could
-> > have been reclaimed if exit_mmap() did not hold mmap_sem for write will
-> > be guaranteed to be reclaimed before MMF_OOM_SKIP is set.
-> > 
+> On 04/23/2018 10:09 PM, Wei Liu wrote:
+>> On Sat, Apr 07, 2018 at 07:25:53PM +0800, Dongli Zhang wrote:
+>>> About per-domU xenwatch thread create/destroy, a new type of xenstore node is
+>>> introduced: '/local/domain/0/mtwatch/<domid>'.
+>>>
+>>> Suppose the new domid id 7. During the domU (domid=7) creation, the xen
+>>> toolstack writes '/local/domain/0/mtwatch/7' to xenstore before the insertion
+>>> of '/local/domain/7'. When the domid=7 is destroyed, the last xenstore
+>>> operation by xen toolstack is to remove '/local/domain/0/mtwatch/7'.
+>>>
+>>> The dom0 kernel subscribes a watch at node '/local/domain/0/mtwatch'.  Kernel
+>>> thread [xen-mtwatch-7] is created when '/local/domain/0/mtwatch/7' is inserted,
+>>> while this kernel thread is destroyed when the corresponding xenstore node is
+>>> removed.
+>>
+>> Instead of inventing yet another node, can you not watch /local/domain
+>> directly?
 > 
-> I think that's an exceptionally good idea and will mitigate the concerns 
-> of others.
+> Would you like to watch at /local/domain directly? Or is your question "is there
+> any other way to not watch at /local/domain, while no extra xenstore node will
+> be introduced"?
 > 
-> It can be done without holding mm->mmap_sem in exit_mmap() and uses the 
-> same criteria that the oom reaper uses to set MMF_OOM_SKIP itself, so we 
-> don't get dozens of unnecessary oom kills.
-> 
-> What do you think about this?  It passes preliminary testing on powerpc 
-> and I'm enqueued it for much more intensive testing.  (I'm wishing there 
-> was a better way to acknowledge your contribution to fixing this issue, 
-> especially since you brought up the exact problem this is addressing in 
-> previous emails.)
-> 
+> Actually, the first prototype of this idea was to watch at /local/domain
+> directly to get aware of the domU create/destroy, so that xen toolstack will not
+> get involved. Joao Martins (CCed) had a concern on the performance as watching
+> at /local/domain would lead to large amount of xenwatch events.
 
-I don't think this patch is safe, for exit_mmap() is calling
-mmu_notifier_invalidate_range_{start,end}() which might block with oom_lock
-held when oom_reap_task_mm() is waiting for oom_lock held by exit_mmap().
-exit_mmap() must not block while holding oom_lock in order to guarantee that
-oom_reap_task_mm() can give up.
+That's what the special watches "@introduceDomain" and "@releaseDomain"
+are meant for.
 
-Some suggestion on top of your patch:
 
- mm/mmap.c     | 13 +++++--------
- mm/oom_kill.c | 51 ++++++++++++++++++++++++++-------------------------
- 2 files changed, 31 insertions(+), 33 deletions(-)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 981eed4..7b31357 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3019,21 +3019,18 @@ void exit_mmap(struct mm_struct *mm)
- 		/*
- 		 * Manually reap the mm to free as much memory as possible.
- 		 * Then, as the oom reaper, set MMF_OOM_SKIP to disregard this
--		 * mm from further consideration.  Taking mm->mmap_sem for write
--		 * after setting MMF_OOM_SKIP will guarantee that the oom reaper
--		 * will not run on this mm again after mmap_sem is dropped.
-+		 * mm from further consideration. Setting MMF_OOM_SKIP under
-+		 * oom_lock held will guarantee that the OOM reaper will not
-+		 * run on this mm again.
- 		 *
- 		 * This needs to be done before calling munlock_vma_pages_all(),
- 		 * which clears VM_LOCKED, otherwise the oom reaper cannot
- 		 * reliably test it.
- 		 */
--		mutex_lock(&oom_lock);
- 		__oom_reap_task_mm(mm);
--		mutex_unlock(&oom_lock);
--
-+		mutex_lock(&oom_lock);
- 		set_bit(MMF_OOM_SKIP, &mm->flags);
--		down_write(&mm->mmap_sem);
--		up_write(&mm->mmap_sem);
-+		mutex_unlock(&oom_lock);
- 	}
- 
- 	if (mm->locked_vm) {
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 8ba6cb8..9a29df8 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -523,21 +523,15 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- {
- 	bool ret = true;
- 
-+	mutex_lock(&oom_lock);
-+
- 	/*
--	 * We have to make sure to not race with the victim exit path
--	 * and cause premature new oom victim selection:
--	 * oom_reap_task_mm		exit_mm
--	 *   mmget_not_zero
--	 *				  mmput
--	 *				    atomic_dec_and_test
--	 *				  exit_oom_victim
--	 *				[...]
--	 *				out_of_memory
--	 *				  select_bad_process
--	 *				    # no TIF_MEMDIE task selects new victim
--	 *  unmap_page_range # frees some memory
-+	 * MMF_OOM_SKIP is set by exit_mmap() when the OOM reaper can't
-+	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
-+	 * under oom_lock held.
- 	 */
--	mutex_lock(&oom_lock);
-+	if (test_bit(MMF_OOM_SKIP, &mm->flags))
-+		goto unlock_oom;
- 
- 	if (!down_read_trylock(&mm->mmap_sem)) {
- 		ret = false;
-@@ -557,18 +551,6 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 		goto unlock_oom;
- 	}
- 
--	/*
--	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
--	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
--	 * under mmap_sem for reading because it serializes against the
--	 * down_write();up_write() cycle in exit_mmap().
--	 */
--	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
--		up_read(&mm->mmap_sem);
--		trace_skip_task_reaping(tsk->pid);
--		goto unlock_oom;
--	}
--
- 	trace_start_task_reaping(tsk->pid);
- 
- 	__oom_reap_task_mm(mm);
-@@ -610,8 +592,27 @@ static void oom_reap_task(struct task_struct *tsk)
- 	/*
- 	 * Hide this mm from OOM killer because it has been either reaped or
- 	 * somebody can't call up_write(mmap_sem).
-+	 *
-+	 * We have to make sure to not cause premature new oom victim selection:
-+	 *
-+	 * __alloc_pages_may_oom()     oom_reap_task_mm()/exit_mmap()
-+	 *   mutex_trylock(&oom_lock)
-+	 *   get_page_from_freelist(ALLOC_WMARK_HIGH) # fails
-+	 *                               unmap_page_range() # frees some memory
-+	 *                               set_bit(MMF_OOM_SKIP)
-+	 *   out_of_memory()
-+	 *     select_bad_process()
-+	 *       test_bit(MMF_OOM_SKIP) # selects new oom victim
-+	 *   mutex_unlock(&oom_lock)
-+	 *
-+	 * Setting MMF_OOM_SKIP under oom_lock held will guarantee that the
-+	 * last second alocation attempt is done by __alloc_pages_may_oom()
-+	 * before out_of_memory() selects next OOM victim by finding
-+	 * MMF_OOM_SKIP.
- 	 */
-+	mutex_lock(&oom_lock);
- 	set_bit(MMF_OOM_SKIP, &mm->flags);
-+	mutex_unlock(&oom_lock);
- 
- 	/* Drop a reference taken by wake_oom_reaper */
- 	put_task_struct(tsk);
--- 
-1.8.3.1
+Juergen
