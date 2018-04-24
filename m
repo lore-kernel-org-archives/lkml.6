@@ -1,210 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933165AbeDXMxq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:53:46 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53409 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757825AbeDXMpS (ORCPT
+        id S933247AbeDXMyA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:54:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:32796 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933168AbeDXMxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:45:18 -0400
-X-Google-Smtp-Source: AB8JxZqH+pTLYWWU8/GIuGAo+Lr4ptCyfZ1Ndm2MMpQbO5ydr5OViNcrFYM2e6PIBvORU2a0xz6m3g==
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 09/28] venus: venc,vdec: adds clocks needed for venus 4xx
-Date: Tue, 24 Apr 2018 15:44:17 +0300
-Message-Id: <20180424124436.26955-10-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+        Tue, 24 Apr 2018 08:53:54 -0400
+Date: Tue, 24 Apr 2018 14:53:49 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: subhra mazumdar <subhra.mazumdar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
+Subject: Re: [PATCH 3/3] sched: limit cpu search and rotate search window for
+ scalability
+Message-ID: <20180424125349.GU4082@hirez.programming.kicks-ass.net>
+References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
+ <20180424004116.28151-4-subhra.mazumdar@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424004116.28151-4-subhra.mazumdar@oracle.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This extends the clocks number to support suspend and resume
-on Venus version 4xx.
+On Mon, Apr 23, 2018 at 05:41:16PM -0700, subhra mazumdar wrote:
+> Lower the lower limit of idle cpu search in select_idle_cpu() and also put
+> an upper limit. This helps in scalability of the search by restricting the
+> search window. 
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/core.h |  4 +--
- drivers/media/platform/qcom/venus/vdec.c | 42 ++++++++++++++++++++++++++------
- drivers/media/platform/qcom/venus/venc.c | 42 ++++++++++++++++++++++++++------
- 3 files changed, 72 insertions(+), 16 deletions(-)
+> @@ -6297,15 +6297,24 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+>  
+>  	if (sched_feat(SIS_PROP)) {
+>  		u64 span_avg = sd->span_weight * avg_idle;
+> -		if (span_avg > 4*avg_cost)
+> +		if (span_avg > 2*avg_cost) {
+>  			nr = div_u64(span_avg, avg_cost);
+> -		else
+> -			nr = 4;
+> +			if (nr > 4)
+> +				nr = 4;
+> +		} else {
+> +			nr = 2;
+> +		}
+>  	}
 
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index 8d3e150800c9..b5b9a84e9155 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -92,8 +92,8 @@ struct venus_core {
- 	void __iomem *base;
- 	int irq;
- 	struct clk *clks[VIDC_CLKS_NUM_MAX];
--	struct clk *core0_clk;
--	struct clk *core1_clk;
-+	struct clk *core0_clk, *core0_bus_clk;
-+	struct clk *core1_clk, *core1_bus_clk;
- 	struct video_device *vdev_dec;
- 	struct video_device *vdev_enc;
- 	struct v4l2_device v4l2_dev;
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 261a51adeef2..c45452634e7e 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -1081,12 +1081,18 @@ static int vdec_probe(struct platform_device *pdev)
- 	if (!core)
- 		return -EPROBE_DEFER;
- 
--	if (core->res->hfi_version == HFI_VERSION_3XX) {
-+	if (IS_V3(core) || IS_V4(core)) {
- 		core->core0_clk = devm_clk_get(dev, "core");
- 		if (IS_ERR(core->core0_clk))
- 			return PTR_ERR(core->core0_clk);
- 	}
- 
-+	if (IS_V4(core)) {
-+		core->core0_bus_clk = devm_clk_get(dev, "bus");
-+		if (IS_ERR(core->core0_bus_clk))
-+			return PTR_ERR(core->core0_bus_clk);
-+	}
-+
- 	platform_set_drvdata(pdev, core);
- 
- 	vdev = video_device_alloc();
-@@ -1132,12 +1138,23 @@ static __maybe_unused int vdec_runtime_suspend(struct device *dev)
- {
- 	struct venus_core *core = dev_get_drvdata(dev);
- 
--	if (core->res->hfi_version == HFI_VERSION_1XX)
-+	if (IS_V1(core))
- 		return 0;
- 
--	writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+	if (IS_V3(core))
-+		writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+	else if (IS_V4(core))
-+		writel(0, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
-+
-+	if (IS_V4(core))
-+		clk_disable_unprepare(core->core0_bus_clk);
-+
- 	clk_disable_unprepare(core->core0_clk);
--	writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+
-+	if (IS_V3(core))
-+		writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+	else if (IS_V4(core))
-+		writel(1, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
- 
- 	return 0;
- }
-@@ -1147,12 +1164,23 @@ static __maybe_unused int vdec_runtime_resume(struct device *dev)
- 	struct venus_core *core = dev_get_drvdata(dev);
- 	int ret;
- 
--	if (core->res->hfi_version == HFI_VERSION_1XX)
-+	if (IS_V1(core))
- 		return 0;
- 
--	writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+	if (IS_V3(core))
-+		writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+	else if (IS_V4(core))
-+		writel(0, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
-+
- 	ret = clk_prepare_enable(core->core0_clk);
--	writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+
-+	if (IS_V4(core))
-+		ret |= clk_prepare_enable(core->core0_bus_clk);
-+
-+	if (IS_V3(core))
-+		writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+	else if (IS_V4(core))
-+		writel(1, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
- 
- 	return ret;
- }
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index 947001170a77..bc8c2e7a8d2c 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -1225,12 +1225,18 @@ static int venc_probe(struct platform_device *pdev)
- 	if (!core)
- 		return -EPROBE_DEFER;
- 
--	if (core->res->hfi_version == HFI_VERSION_3XX) {
-+	if (IS_V3(core) || IS_V4(core)) {
- 		core->core1_clk = devm_clk_get(dev, "core");
- 		if (IS_ERR(core->core1_clk))
- 			return PTR_ERR(core->core1_clk);
- 	}
- 
-+	if (IS_V4(core)) {
-+		core->core1_bus_clk = devm_clk_get(dev, "bus");
-+		if (IS_ERR(core->core1_bus_clk))
-+			return PTR_ERR(core->core1_bus_clk);
-+	}
-+
- 	platform_set_drvdata(pdev, core);
- 
- 	vdev = video_device_alloc();
-@@ -1276,12 +1282,23 @@ static __maybe_unused int venc_runtime_suspend(struct device *dev)
- {
- 	struct venus_core *core = dev_get_drvdata(dev);
- 
--	if (core->res->hfi_version == HFI_VERSION_1XX)
-+	if (IS_V1(core))
- 		return 0;
- 
--	writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+	if (IS_V3(core))
-+		writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+	else if (IS_V4(core))
-+		writel(0, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
-+
-+	if (IS_V4(core))
-+		clk_disable_unprepare(core->core1_bus_clk);
-+
- 	clk_disable_unprepare(core->core1_clk);
--	writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+
-+	if (IS_V3(core))
-+		writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+	else if (IS_V4(core))
-+		writel(1, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
- 
- 	return 0;
- }
-@@ -1291,12 +1308,23 @@ static __maybe_unused int venc_runtime_resume(struct device *dev)
- 	struct venus_core *core = dev_get_drvdata(dev);
- 	int ret;
- 
--	if (core->res->hfi_version == HFI_VERSION_1XX)
-+	if (IS_V1(core))
- 		return 0;
- 
--	writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+	if (IS_V3(core))
-+		writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+	else if (IS_V4(core))
-+		writel(0, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
-+
- 	ret = clk_prepare_enable(core->core1_clk);
--	writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+
-+	if (IS_V4(core))
-+		ret |= clk_prepare_enable(core->core1_bus_clk);
-+
-+	if (IS_V3(core))
-+		writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+	else if (IS_V4(core))
-+		writel(1, core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL);
- 
- 	return ret;
- }
--- 
-2.14.1
+Why do you need to put a max on? Why isn't the proportional thing
+working as is? (is the average no good because of big variance or what)
+
+Again, why do you need to lower the min; what's wrong with 4?
+
+The reason I picked 4 is that many laptops have 4 CPUs and desktops
+really want to avoid queueing if at all possible.
