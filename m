@@ -1,90 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932684AbeDXKgZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 06:36:25 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36806 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932545AbeDXKgU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 06:36:20 -0400
-Date: Tue, 24 Apr 2018 12:36:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] media: tm6000: fix potential Spectre variant 1
-Message-ID: <20180424103609.GD4064@hirez.programming.kicks-ass.net>
-References: <cover.1524499368.git.gustavo@embeddedor.com>
- <3d4973141e218fb516422d3d831742d55aaa5c04.1524499368.git.gustavo@embeddedor.com>
- <20180423152455.363d285c@vento.lan>
- <20180424093500.xvpcm3ibcu7adke2@mwanda>
+        id S932739AbeDXKhl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 06:37:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42602 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755273AbeDXKhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 06:37:39 -0400
+Date: Tue, 24 Apr 2018 12:37:37 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Finn Thain <fthain@telegraphics.com.au>, Sam Creasey <sammy@sammy.net>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] m68k: Fix off-by-one calendar month
+Message-ID: <20180424103737.GA19011@piout.net>
+References: <5add30d1.1c69fb81.b868a.84f1SMTPIN_ADDED_MISSING@mx.google.com>
+ <CAMuHMdULPOWQPo1G1s5m52rNLzhmPFzfwxsZH0iR_OwVc8VRKw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180424093500.xvpcm3ibcu7adke2@mwanda>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAMuHMdULPOWQPo1G1s5m52rNLzhmPFzfwxsZH0iR_OwVc8VRKw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 12:35:00PM +0300, Dan Carpenter wrote:
-> On Mon, Apr 23, 2018 at 03:24:55PM -0300, Mauro Carvalho Chehab wrote:
-> > Em Mon, 23 Apr 2018 12:38:03 -0500
-> > "Gustavo A. R. Silva" <gustavo@embeddedor.com> escreveu:
-
-> > > @@ -875,6 +876,7 @@ static int vidioc_enum_fmt_vid_cap(struct file *file, void  *priv,
-> > >  	if (f->index >= ARRAY_SIZE(format))
-> > >  		return -EINVAL;
-> > >  
-> > > +	f->index = array_index_nospec(f->index, ARRAY_SIZE(format));
+On 24/04/2018 12:06:30+0200, Geert Uytterhoeven wrote:
+> Hi Finn,
+> 
+> On Mon, Apr 23, 2018 at 3:02 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+> > This fixes a bug in read_persistent_clock() which causes the system
+> > clock to lag the Real Time Clock by one month. The problem was noticed
+> > on a Mac, but theoretically it must also affect Atari, BVME6000 and Q40.
 > >
-> > Please enlighten me: how do you think this could be exploited?
+> > The tm_mon value in the struct rtc_time passed to mach_hwclk() is
+> > zero-based, and atari_mste_hwclk(), atari_tt_hwclk(), bvme6000_hwclk(),
+> > mac_hwclk() and q40_hwclk() all make this adjustment. Unfortunately,
+> > dn_dummy_hwclk(), mvme147_hwclk(), mvme16x_hwclk(), sun3_hwclk() and
+> > sun3x_hwclk() fail to decrement tm_mon.
+> >
+> > Bring these platforms into line and fix read_persistent_clock() so it
+> > works correctly on all m68k platforms.
+> >
+> > The datasheets for the RTC devices found on the affected platforms
+> > all confirm that the year is stored as a value in the range 0-99 and
+> > the month is stored as a value in the range 1-12. Please refer to the
+> > datasheets for MC146818 (Apollo), DS1643 (MVME), ICM7170 (Sun 3)
+> > and M48T02 (Sun 3x).
+> >
+> > Reported-by: Stan Johnson <userm57@yahoo.com>
+> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> 
+> Thanks, applied and queued for v4.18.
+> 
+> <snip>
+> 
+> > --- a/arch/m68k/kernel/time.c
+> > +++ b/arch/m68k/kernel/time.c
+> > @@ -74,17 +74,17 @@ static irqreturn_t timer_interrupt(int irq, void *dummy)
+> >  void read_persistent_clock(struct timespec *ts)
+> >  {
+> >         struct rtc_time time;
+> > +
+> >         ts->tv_sec = 0;
+> >         ts->tv_nsec = 0;
+> >
+> > -       if (mach_hwclk) {
+> > -               mach_hwclk(0, &time);
+> > +       if (!mach_hwclk)
+> > +               return;
+> > +
+> > +       mach_hwclk(0, &time);
+> >
+> > -               if ((time.tm_year += 1900) < 1970)
+> > -                       time.tm_year += 100;
 
-TL;DR: read the papers [1] & [2]
+Note that this change may break existing users. I'm perfectly fine with
+it as doing this is generally wrong anyway and this is something I'd
+like to see eliminated.
 
-I suspect you didn't get the gist of Spectre V1 [1], let me explain:
+> > -               ts->tv_sec = mktime(time.tm_year, time.tm_mon, time.tm_mday,
+> > -                                     time.tm_hour, time.tm_min, time.tm_sec);
+> > -       }
+> > +       ts->tv_sec = mktime(time.tm_year + 1900, time.tm_mon + 1, time.tm_mday,
+> > +                           time.tm_hour, time.tm_min, time.tm_sec);
+> 
+> That might explain why my Amiga spends so much time on file system checks
+> since I wrote the rp5c01 RTC driver...
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
-Suppose userspace provides f->index > ARRAY_SIZE(format), and we predict
-the branch to -EINVAL to not be taken.
-
-Then the CPU _WILL_ load (out of bounds) format[f->index] into
-f->pixelformat and continue onwards to use this bogus value, all the way
-until it figures out the branch was mis-predicted.
-
-Once it figures out the mispredict, it will throw away the state and
-start over at the condition site. So far, so basic.
-
-The thing is, is will not (and cannot) throw away all state. Suppose our
-speculation continues into v4l_fill_fmtdesc() and that switch there is
-compiled as another array lookup, it will then feed our f->pixelformat
-(which contains random kernel memory) into that array to find the
-requested descr pointer.
-
-Now, imagine userspace having flushed cache on the descr pointer array,
-having trained the branch predictor to mis-predict the branch (see
-branchscope paper [2]) and doing that out-of-bounds ioctl().
-
-It can then speculative do the out-of-bounds array access, followed by
-the desc array load, then figure out it was wrong and redo.
-
-Then usespace probes which part of the descr[] array is now in cache and
-from that it can infer the initial out-of-bound value.
-
-So while format[] is static and bound, it can read random kernel memory
-up to format+4g, including your crypto keys.
-
-As far as V1 goes, this is actually a fairly solid exploit candidate. No
-false positive about it.
-
-Now kernel policy is to kill any and all speculation on user controlled
-array indexing such that we don't have to go look for subsequent side
-channels (the above cache side channel is the one described in the
-Spectre paper and by far the easiest, but there are other possible side
-channels) and we simply don't want to worry about it.
-
-So even from that pov, the proposed patch is good.
-
-
-[1] https://spectreattack.com/spectre.pdf
-[2] www.cs.ucr.edu/~nael/pubs/asplos18.pdf
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
