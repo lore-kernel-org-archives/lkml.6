@@ -1,119 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751726AbeDXVHN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 17:07:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59916 "EHLO
+        id S1752013AbeDXVHx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 17:07:53 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59952 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751582AbeDXVHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 17:07:07 -0400
-Date: Tue, 24 Apr 2018 23:07:04 +0200
+        id S1750862AbeDXVHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 17:07:51 -0400
+Date: Tue, 24 Apr 2018 23:07:48 +0200
 From: Christoffer Dall <christoffer.dall@arm.com>
 To: Eric Auger <eric.auger@redhat.com>
 Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
         marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
         andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: Re: [PATCH v3 04/12] KVM: arm/arm64: Helper to locate free rdist
- index
-Message-ID: <20180424210704.GG4533@C02W217FHV2R.local>
+Subject: Re: [PATCH v3 07/12] KVM: arm/arm64: Adapt vgic_v3_check_base to
+ multiple rdist regions
+Message-ID: <20180424210748.GH4533@C02W217FHV2R.local>
 References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
- <1523607658-9166-5-git-send-email-eric.auger@redhat.com>
+ <1523607658-9166-8-git-send-email-eric.auger@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1523607658-9166-5-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1523607658-9166-8-git-send-email-eric.auger@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 10:20:50AM +0200, Eric Auger wrote:
-> We introduce vgic_v3_rdist_free_slot to help identifying
-> where we can place a new 2x64KB redistributor.
+On Fri, Apr 13, 2018 at 10:20:53AM +0200, Eric Auger wrote:
+> We introduce a new helper to check there is no overlap between
+> dist region (if set) and registered rdist regions. This both
+> handles the case of legacy single rdist region (implicitly sized
+> with the number of online vcpus) and the new case of multiple
+> explicitly sized rdist regions.
+
+I don't understand this change, really.  Is this just a cleanup, or
+changing some functionality (why?).
+
+I think this could have come with the introduction of
+vgic_v3_rdist_overlap() before patch 6, and then patch 6 could have been
+simplified (hopefully) to just call this "check that nothing in the
+world ever collides withi itself" function.
+
 > 
 > Signed-off-by: Eric Auger <eric.auger@redhat.com>
 > ---
->  virt/kvm/arm/vgic/vgic-mmio-v3.c |  3 +--
->  virt/kvm/arm/vgic/vgic-v3.c      | 17 +++++++++++++++++
->  virt/kvm/arm/vgic/vgic.h         | 11 +++++++++++
->  3 files changed, 29 insertions(+), 2 deletions(-)
+>  virt/kvm/arm/vgic/vgic-v3.c | 26 +++++++++-----------------
+>  1 file changed, 9 insertions(+), 17 deletions(-)
 > 
-> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> index d1aab18..49ca176 100644
-> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> @@ -593,8 +593,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
->  	 * function for all VCPUs when the base address is set.  Just return
->  	 * without doing any work for now.
->  	 */
-> -	rdreg = list_first_entry(&vgic->rd_regions,
-> -				 struct vgic_redist_region, list);
-> +	rdreg = vgic_v3_rdist_free_slot(&vgic->rd_regions);
->  	if (!rdreg)
->  		return 0;
->  
 > diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-> index 94de6cd..820012a 100644
+> index dbcba5f..b80f650 100644
 > --- a/virt/kvm/arm/vgic/vgic-v3.c
 > +++ b/virt/kvm/arm/vgic/vgic-v3.c
-> @@ -444,6 +444,23 @@ bool vgic_v3_check_base(struct kvm *kvm)
->  	return false;
->  }
->  
-> +/**
-> + * vgic_v3_rdist_free_slot - Look up registered rdist regions and identify one
-> + * which has free space to put a new rdist regions
-
-Can this structure ever be sparse or do we always find the first empty
-one, as we fill them consecutively ?
-
-I assume there is some mapping between the regions and the VCPUs'
-redistributors, so perhaps the wording in this comment can be more
-precise.
-
-> + *
-> + * If any, return this redist region handle, otherwise returns NULL.
-> + */
-> +struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
-> +{
-> +	struct vgic_redist_region *rdreg;
-> +
-> +	list_for_each_entry(rdreg, rd_regions, list) {
-> +		if (!vgic_v3_redist_region_full(rdreg))
-> +			return rdreg;
-> +	}
-> +	return NULL;
-> +}
-> +
->  int vgic_v3_map_resources(struct kvm *kvm)
+> @@ -432,31 +432,23 @@ bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size)
+>  bool vgic_v3_check_base(struct kvm *kvm)
 >  {
->  	int ret = 0;
-> diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-> index 830e815..fea32cb 100644
-> --- a/virt/kvm/arm/vgic/vgic.h
-> +++ b/virt/kvm/arm/vgic/vgic.h
-> @@ -251,6 +251,17 @@ static inline int vgic_v3_max_apr_idx(struct kvm_vcpu *vcpu)
->  	}
+>  	struct vgic_dist *d = &kvm->arch.vgic;
+> -	gpa_t redist_size = KVM_VGIC_V3_REDIST_SIZE;
+> -	struct vgic_redist_region *rdreg =
+> -		list_first_entry(&d->rd_regions,
+> -				 struct vgic_redist_region, list);
+> -
+> -	redist_size *= atomic_read(&kvm->online_vcpus);
+> +	struct vgic_redist_region *rdreg;
+>  
+>  	if (!IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) &&
+>  	    d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE < d->vgic_dist_base)
+>  		return false;
+>  
+> -	if (rdreg && (rdreg->base + redist_size < rdreg->base))
+> -		return false;
+> +	list_for_each_entry(rdreg, &d->rd_regions, list) {
+> +		if (rdreg->base + vgic_v3_rd_region_size(kvm, rdreg) <
+> +			rdreg->base)
+> +			return false;
+> +	}
+>  
+> -	/* Both base addresses must be set to check if they overlap */
+> -	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) || !rdreg)
+> +	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base))
+>  		return true;
+>  
+> -	if (d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= rdreg->base)
+> -		return true;
+> -
+> -	if (rdreg->base + redist_size <= d->vgic_dist_base)
+> -		return true;
+> -
+> -	return false;
+> +	return !vgic_v3_rdist_overlap(kvm, d->vgic_dist_base,
+> +				      KVM_VGIC_V3_DIST_SIZE);
 >  }
 >  
-> +static inline bool
-> +vgic_v3_redist_region_full(struct vgic_redist_region *region)
-> +{
-> +	if (!region->count)
-> +		return false;
-> +
-> +	return (region->free_index >= region->count);
-> +}
-> +
-> +struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
-> +
->  int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
->  			 u32 devid, u32 eventid, struct vgic_irq **irq);
->  struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
+>  /**
 > -- 
 > 2.5.5
 > 
+Otherwise this patch looks correct to me.
 
-Asides from the above:
-
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Thanks,
+-Christoffer
