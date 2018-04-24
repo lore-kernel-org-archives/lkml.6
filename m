@@ -1,23 +1,23 @@
 Return-Path: <christian.brauner@canonical.com>
-X-Google-Smtp-Source: AB8JxZoa1lIsalcCeGwI4k4RtWEidy3/8uMupE1q4Qdku8pb3Qnn6Ey8jGrY+j7rPAjguFnX1bIl
-ARC-Seal: i=1; a=rsa-sha256; t=1524818520; cv=none;
+X-Google-Smtp-Source: AIpwx49FLhtCwabXyB85WAaxoxzZxu1T0tY7K2Ug8DFiXMDsaH4ZN1/rDAcWyr3p+v331wAO6QSF
+ARC-Seal: i=1; a=rsa-sha256; t=1524610488; cv=none;
         d=google.com; s=arc-20160816;
-        b=imXZKrQCe2cc4gxmmPuNYPnClO5fXqYsjFZxvLiRPN5yGa1ZmN4NsBPvZrdsh9PKSQ
-         HJy2s6agEFiNcM+wT5BX0Afi2fHWZ8QieoyxmkeBYVTibTtFuD8cVlwja7hadAkg77Kb
-         XHJod5W97w8oEdl7/1gWT5vRTS1xB1Je+sXzH6Nl+9BT5u2ThVx168qQU6CamjJcND29
-         y608zYiU6HE855tvVshgs9subqh/czVqunfprygDe0V1cGUVv8CN90JS0HB8peM82232
-         QNepyMd2Y/290erz4ax4uePIKqgJJzP2svt3pjXl/BKQMX2m6zyY6IrKeT+Ac7RHVNy+
-         8W4Q==
+        b=lRiSxUbsg9/Qn4T5U6rmIwcofLfLKVh5lt7rr7tLyI99Ea0vvbhXJRuQGwcM7ccmpS
+         2kIEwkDwgK87wcLw0/fD3TloIvmNzwvmemr16NLNQUx4GU2lxYunjzQgnKhgoIKgSVsf
+         pFKQfyIfoeEn2UmsRaVMikXstZEKxamEJc/FH2VmngyEwyPIZJ618Tj0IBcZjR/31iAo
+         HYqe/Kn0JXgyvMiQ/NVT6YOTnePklqT75A2OQPwPD6Vwlcs4ER6YUVQDsBf5wzQXMvxB
+         DcsrU6q+hgE8kZ8pPFjUSfVXsqrQ620w5pTGaeaObYVDbtITXEJOB2ulWs6DBKRSh2Sx
+         VBzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:date:from:arc-authentication-results;
-        bh=8LZU1A54sAga+wTXhbQgt82pr2V0coLp00uerT/EzYY=;
-        b=vtB9mE+MSeVlrvZyL1eRRdYu0Uo6OVfWRgE+FEAl0sSo1bD3nkTlP+eRZfH2/qynKO
-         2TSQHgtTAIu5zfkk1NS84GOgCegVGXq2LW+nXWt1kTV0gAn2mxvaQ3Bm6hHZP6E3QaIw
-         91ULirDtoBXSyeQZEpRPtXr5r2z3ZSIXtpUmObV8iRFOGzlCbredwGbs0L2qsgqoOsHe
-         tBBeN1HyOYAyXgV4YI3/7xNM9v+B8OD5UbSfSdA7+4oMh6/wD1T4c46DXjukfjQB6TNa
-         bxA7gx5pJ4IkRLD/6TVmrVCNr+Rakcw1ncvEFD8TxFWNTegO0/xPA5qT2Ah5Z51ffQ7N
-         o3cA==
+        bh=PaeKeEY/YiHjCDWqhpl9rDdf/x1i+w/gjdSNHmabwf4=;
+        b=b5rR8qol0ZKIu7YeiKNKte3UUHHuFSTY3nECBHd0YccfROFpONeCllJdcIsyWfxfgw
+         UUVI05Kft1mGo5QG8lx7xYLCdrYiLaF9pgg+xNWbXBflOmeva1WbW+4GGNFQD6HWWQFo
+         XC2jmCVIcfKrT/vKTyWDcoobimSF4TMgoGaVkjB3b0w6h+XN+Xa7yWA+azvfmfGq/7mf
+         ZKHl3zYYQlbKy7+MIf2XGo0AdjvVTYzXRCdWiytwHzofkmASFtRVy7Ps7i6PzVVHYMBY
+         okMDzI4IW5+qJ0g/TuO4Ts0qgKWulE5Ls2biC0cyJHMYWUozoPrWV3y5qhFjU/bEtB68
+         fEjw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of christian.brauner@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=christian.brauner@canonical.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
@@ -26,284 +26,169 @@ Authentication-Results: mx.google.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
 From: Christian Brauner <christian.brauner@canonical.com>
 X-Google-Original-From: Christian Brauner <christian.brauner@ubuntu.com>
-Date: Fri, 27 Apr 2018 10:41:58 +0200
+Date: Wed, 25 Apr 2018 00:54:46 +0200
 To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, avagin@virtuozzo.com,
 	ktkhai@virtuozzo.com, serge@hallyn.com, gregkh@linuxfoundation.org
 Subject: Re: [PATCH net-next 1/2 v2] netns: restrict uevents
-Message-ID: <20180427084157.GA29044@gmail.com>
-References: <20180424204335.12904-2-christian.brauner@ubuntu.com>
+Message-ID: <20180424225445.GA30536@gmail.com>
+References: <20180424204335.12904-1-christian.brauner@ubuntu.com>
+ <20180424204335.12904-2-christian.brauner@ubuntu.com>
  <87po2oz0s8.fsf@xmission.com>
- <CAPP7u0WH9w26Y9ai-EQTTeq7Rz_=7u2-=t4nhHmjwh-UAiyqeQ@mail.gmail.com>
- <87wowww6p8.fsf@xmission.com>
- <20180426161353.GA2014@gmail.com>
- <871sf1q5ig.fsf@xmission.com>
- <20180426170324.GA10061@gmail.com>
- <878t99opvd.fsf@xmission.com>
- <20180426212744.GA30270@gmail.com>
- <87vacdbi58.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87vacdbi58.fsf@xmission.com>
+In-Reply-To: <87po2oz0s8.fsf@xmission.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598661751720131852?=
-X-GMAIL-MSGID: =?utf-8?q?1598888105374685617?=
+X-GMAIL-MSGID: =?utf-8?q?1598669968010496932?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 07:35:47PM -0500, Eric W. Biederman wrote:
-> Christian Brauner <christian.brauner@canonical.com> writes:
+On Tue, Apr 24, 2018 at 05:40:07PM -0500, Eric W. Biederman wrote:
 > 
-> > On Thu, Apr 26, 2018 at 12:10:30PM -0500, Eric W. Biederman wrote:
-> >> Christian Brauner <christian.brauner@canonical.com> writes:
-> >> 
-> >> > On Thu, Apr 26, 2018 at 11:47:19AM -0500, Eric W. Biederman wrote:
-> >> >> Christian Brauner <christian.brauner@canonical.com> writes:
-> >> >> 
-> >> >> > On Tue, Apr 24, 2018 at 06:00:35PM -0500, Eric W. Biederman wrote:
-> >> >> >> Christian Brauner <christian.brauner@canonical.com> writes:
-> >> >> >> 
-> >> >> >> > On Wed, Apr 25, 2018, 00:41 Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >> >> >> >
-> >> >> >> >  Bah. This code is obviously correct and probably wrong.
-> >> >> >> >
-> >> >> >> >  How do we deliver uevents for network devices that are outside of the
-> >> >> >> >  initial user namespace? The kernel still needs to deliver those.
-> >> >> >> >
-> >> >> >> >  The logic to figure out which network namespace a device needs to be
-> >> >> >> >  delivered to is is present in kobj_bcast_filter. That logic will almost
-> >> >> >> >  certainly need to be turned inside out. Sign not as easy as I would
-> >> >> >> >  have hoped.
-> >> >> >> >
-> >> >> >> > My first patch that we discussed put additional filtering logic into kobj_bcast_filter for that very reason. But I can move that logic
-> >> >> >> > out and come up with a new patch.
-> >> >> >> 
-> >> >> >> I may have mis-understood.
-> >> >> >> 
-> >> >> >> I heard and am still hearing additional filtering to reduce the places
-> >> >> >> the packet is delievered.
-> >> >> >> 
-> >> >> >> I am saying something needs to change to increase the number of places
-> >> >> >> the packet is delivered.
-> >> >> >> 
-> >> >> >> For the special class of devices that kobj_bcast_filter would apply to
-> >> >> >> those need to be delivered to netowrk namespaces  that are no longer on
-> >> >> >> uevent_sock_list.
-> >> >> >> 
-> >> >> >> So the code fundamentally needs to split into two paths.  Ordinary
-> >> >> >> devices that use uevent_sock_list.  Network devices that are just
-> >> >> >> delivered in their own network namespace.
-> >> >> >> 
-> >> >> >> netlink_broadcast_filtered gets to go away completely.
-> >> >> >
-> >> >> > The split *might* make sense but I think you're wrong about removing the
-> >> >> > kobj_bcast_filter. The current filter doesn't operate on the uevent
-> >> >> > socket in uevent_sock_list itself it rather operates on the sockets in
-> >> >> > mc_list. And if socket in mc_list can have a different network namespace
-> >> >> > then the uevent_socket itself then your way won't work. That's why my
-> >> >> > original patch added additional filtering in there. The way I see it we
-> >> >> > need something like:
-> >> >> 
-> >> >> We already filter the sockets in the mc_list by network namespace.
-> >> >
-> >> > Oh really? That's good to know. I haven't found where in the code this
-> >> > actually happens. I thought that when netlink_bind() is called anyone
-> >> > could register themselves in mc_list.
-> >> 
-> >> The code in af_netlink.c does:
-> >> > static void do_one_broadcast(struct sock *sk,
-> >> > 				    struct netlink_broadcast_data *p)
-> >> > {
-> >> > 	struct netlink_sock *nlk = nlk_sk(sk);
-> >> > 	int val;
-> >> > 
-> >> > 	if (p->exclude_sk == sk)
-> >> > 		return;
-> >> > 
-> >> > 	if (nlk->portid == p->portid || p->group - 1 >= nlk->ngroups ||
-> >> > 	    !test_bit(p->group - 1, nlk->groups))
-> >> > 		return;
-> >> > 
-> >> > 	if (!net_eq(sock_net(sk), p->net)) {
-> >>             ^^^^^^^^^^^^ Here
-> >> > 		if (!(nlk->flags & NETLINK_F_LISTEN_ALL_NSID))
-> >> > 			return;
-> >>                 ^^^^^^^^^^^ Here
-> >> > 
-> >> > 		if (!peernet_has_id(sock_net(sk), p->net))
-> >> > 			return;
-> >> > 
-> >> > 		if (!file_ns_capable(sk->sk_socket->file, p->net->user_ns,
-> >> > 				     CAP_NET_BROADCAST))
-> >> > 			return;
-> >> > 	}
-> >> 
-> >> Which if you are not a magic NETLINK_F_LISTEN_ALL_NSID socket filters
-> >> you out if you are the wrong network namespace.
-> >> 
-> >> 
-> >> >> When a packet is transmitted with netlink_broadcast it is only
-> >> >> transmitted within a single network namespace.
-> >> >> 
-> >> >> Even in the case of a NETLINK_F_LISTEN_ALL_NSID socket the skb is tagged
-> >> >> with it's source network namespace so no confusion will result, and the
-> >> >> permission checks have been done to make it safe. So you can safely
-> >> >> ignore that case.  Please ignore that case.  It only needs to be
-> >> >> considered if refactoring af_netlink.c
-> >> >> 
-> >> >> When I added netlink_broadcast_filtered I imagined that we would need
-> >> >> code that worked across network namespaces that worked for different
-> >> >> namespaces.   So it looked like we would need the level of granularity
-> >> >> that you can get with netlink_broadcast_filtered.  It turns out we don't
-> >> >> and that it was a case of over design.  As the only split we care about
-> >> >> is per network namespace there is no need for
-> >> >> netlink_broadcast_filtered.
-> >> >> 
-> >> >> > init_user_ns_broadcast_filtered(uevent_sock_list, kobj_bcast_filter);
-> >> >> > user_ns_broadcast_filtered(uevent_sock_list,kobj_bcast_filter);
-> >> >> >
-> >> >> > The question that remains is whether we can rely on the network
-> >> >> > namespace information we can gather from the kobject_ns_type_operations
-> >> >> > to decide where we want to broadcast that event to. So something
-> >> >> > *like*:
-> >> >> 
-> >> >> We can.  We already do.  That is what kobj_bcast_filter implements.
-> >> >> 
-> >> >> > 	ops = kobj_ns_ops(kobj);
-> >> >> > 	if (!ops && kobj->kset) {
-> >> >> > 		struct kobject *ksobj = &kobj->kset->kobj;
-> >> >> > 		if (ksobj->parent != NULL)
-> >> >> > 			ops = kobj_ns_ops(ksobj->parent);
-> >> >> > 	}
-> >> >> >
-> >> >> > 	if (ops && ops->netlink_ns && kobj->ktype->namespace)
-> >> >> > 		if (ops->type == KOBJ_NS_TYPE_NET)
-> >> >> > 			net = kobj->ktype->namespace(kobj);
-> >> >> 
-> >> >> Please note the only entry in the enumeration in the kobj_ns_type
-> >> >> enumeration other than KOBJ_NS_TYPE_NONE is KOBJ_NS_TYPE_NET.  So the
-> >> >> check for ops->type in this case is redundant.
-> >> >
-> >> > Yes, I know the reason for doing it explicitly is to block the case
-> >> > where kobjects get tagged with other namespaces. So we'd need to be
-> >> > vigilant should that ever happen but fine.
-> >> 
-> >> It is fine to keep the check.
-> >> 
-> >> I was intending to point out that it is much more likely that we remove
-> >> the enumeration and remove some of the extra abstraction, than another
-> >> namespace is implemented there.
-> >> 
-> >> >> That is something else that could be simplifed.  At the time it was the
-> >> >> necessary to get the sysfs changes merged.
-> >> >> 
-> >> >> > 	if (!net || net->user_ns == &init_user_ns)
-> >> >> > 		ret = init_user_ns_broadcast(env, action_string, devpath);
-> >> >> > 	else
-> >> >> > 		ret = user_ns_broadcast(net->uevent_sock->sk, env,
-> >> >> > 					action_string, devpath);
-> >> >> 
-> >> >> Almost.
-> >> >> 
-> >> >> 	if (!net)
-> >> >>         	kobject_uevent_net_broadcast(kobj, env, action_string,
-> >> >>         					dev_path);
-> >> >> 	else
-> >> >>         	netlink_broadcast(net->uevent_sock->sk, skb, 0, 1, GFP_KERNEL);
-> >> >> 
-> >> >> 
-> >> >> I am handwaving to get the skb in the netlink_broadcast case but that
-> >> >> should be enough for you to see what I am thinking.
-> >> >
-> >> > I have added a helper alloc_uevent_skb() that can be used in both cases.
-> >> >
-> >> > static struct sk_buff *alloc_uevent_skb(struct kobj_uevent_env *env,
-> >> > 					const char *action_string,
-> >> > 					const char *devpath)
-> >> > {
-> >> > 	struct sk_buff *skb = NULL;
-> >> > 	char *scratch;
-> >> > 	size_t len;
-> >> >
-> >> > 	/* allocate message with maximum possible size */
-> >> > 	len = strlen(action_string) + strlen(devpath) + 2;
-> >> > 	skb = alloc_skb(len + env->buflen, GFP_KERNEL);
-> >> > 	if (!skb)
-> >> > 		return NULL;
-> >> >
-> >> > 	/* add header */
-> >> > 	scratch = skb_put(skb, len);
-> >> > 	sprintf(scratch, "%s@%s", action_string, devpath);
-> >> >
-> >> > 	skb_put_data(skb, env->buf, env->buflen);
-> >> >
-> >> > 	NETLINK_CB(skb).dst_group = 1;
-> >> >
-> >> > 	return skb;
-> >> > }
-> >> >
-> >> >> 
-> >> >> My only concern with the above is that we almost certainly need to fix
-> >> >> the credentials on the skb so that userspace does not drop the packet
-> >
-> > I guess we simply want:
-> > 	if (user_ns != &init_user_ns) {
-> > 		NETLINK_CB(skb).creds.uid = (kuid_t)0;
-> > 		NETLINK_CB(skb).creds.gid = kgid_t)0;
-> > 	}
+> Bah.  This code is obviously correct and probably wrong.
 > 
-> I believe the above is what we already have.
+> How do we deliver uevents for network devices that are outside of the
+> initial user namespace?  The kernel still needs to deliver those.
 > 
-> > instead of the more complicated and - imho wrong:
-> >
-> > 	if (user_ns != &init_user_ns) {
-> > 		/* fix credentials for udev running in user namespace */
-> > 		kuid_t uid = NETLINK_CB(skb).creds.uid;
-> > 		kgid_t gid = NETLINK_CB(skb).creds.gid;
-> > 		NETLINK_CB(skb).creds.uid = from_kuid_munged(user_ns, uid);
-> > 		NETLINK_CB(skb).creds.gid = from_kgid_munged(user_ns, gid);
-> > 	}
-> 
-> The above is most definitely wrong as we store kuids and kgids in
-> "NETLINK_CB(skb).creds".
-> 
-> I am pretty certain what we want is:
-> 	kuid_t root_uid = make_kuid(net->user_ns, 0);
->         kgid_g root_gid = make_kgid(net->user_ns, 0);
+> The logic to figure out which network namespace a device needs to be
+> delivered to is is present in kobj_bcast_filter.  That logic will almost
+> certainly need to be turned inside out.  Sign not as easy as I would
+> have hoped.
 
-Thanks! I looked at user_namespace.c which contained map_id_down() which
-is the function that I wanted and remembered from a prior patchset of
-mine but they weren't exported. I didn't spot make_k{g,u}id() which are
-wrapping those. These are the droids^H^H^H^H^H^Hfunctions I was looking
-for!
+That's why my initial patch [1] added additional filtering logic to
+kobj_bcast_filter(). But since we care about performance improvements as
+well I can come up with a patch that moves this logic out of
+kobj_bcast_filter().
 
->         if (!uid_valid(root_uid))
->         	root_uid = GLOBAL_ROOT_UID;
-> 	if (!gid_valid(root_gid))
->         	root_gid = GLOBAL_ROOT_GID;
-> 	NETLINK_CB(skb).creds.uid = root_uid;
->         NETLINK_CB(skb).creds.gid = root_gid;
-> 
-> Let's be careful and only fix this for the networking uevents please.
-> We want the other onces to just go away.
-
-This is already handled by the
-
-if (!net)
-       handle_untagged_uevents()
-else
-       handle_taggged_uevents()
-
-The else branch will only every contain network devices as to my
-knowledge no other kernel devices are currently tagged.
-
-Thanks!
 Christian
+[1]: https://www.spinics.net/lists/netdev/msg494487.html
 
-> 
-> The networking uevents we have to fix or they will be gone completely.
 > 
 > Eric
+> 
+> Christian Brauner <christian.brauner@ubuntu.com> writes:
+> > commit 07e98962fa77 ("kobject: Send hotplug events in all network namespaces")
+> >
+> > enabled sending hotplug events into all network namespaces back in 2010.
+> > Over time the set of uevents that get sent into all network namespaces has
+> > shrunk a little. We have now reached the point where hotplug events for all
+> > devices that carry a namespace tag are filtered according to that
+> > namespace. Specifically, they are filtered whenever the namespace tag of
+> > the kobject does not match the namespace tag of the netlink socket. One
+> > example are network devices. Uevents for network devices only show up in
+> > the network namespaces these devices are moved to or created in.
+> >
+> > However, any uevent for a kobject that does not have a namespace tag
+> > associated with it will not be filtered and we will broadcast it into all
+> > network namespaces. This behavior stopped making sense when user namespaces
+> > were introduced.
+> >
+> > This patch restricts uevents to the initial user namespace for a couple of
+> > reasons that have been extensively discusses on the mailing list [1].
+> > - Thundering herd:
+> >   Broadcasting uevents into all network namespaces introduces significant
+> >   overhead.
+> >   All processes that listen to uevents running in non-initial user
+> >   namespaces will end up responding to uevents that will be meaningless to
+> >   them. Mainly, because non-initial user namespaces cannot easily manage
+> >   devices unless they have a privileged host-process helping them out. This
+> >   means that there will be a thundering herd of activity when there
+> >   shouldn't be any.
+> > - Uevents from non-root users are already filtered in userspace:
+> >   Uevents are filtered by userspace in a user namespace because the
+> >   received uid != 0. Instead the uid associated with the event will be
+> >   65534 == "nobody" because the global root uid is not mapped.
+> >   This means we can safely and without introducing regressions modify the
+> >   kernel to not send uevents into all network namespaces whose owning user
+> >   namespace is not the initial user namespace because we know that
+> >   userspace will ignore the message because of the uid anyway. I have
+> >   a) verified that is is true for every udev implementation out there b)
+> >   that this behavior has been present in all udev implementations from the
+> >   very beginning.
+> > - Removing needless overhead/Increasing performance:
+> >   Currently, the uevent socket for each network namespace is added to the
+> >   global variable uevent_sock_list. The list itself needs to be protected
+> >   by a mutex. So everytime a uevent is generated the mutex is taken on the
+> >   list. The mutex is held *from the creation of the uevent (memory
+> >   allocation, string creation etc. until all uevent sockets have been
+> >   handled*. This is aggravated by the fact that for each uevent socket that
+> >   has listeners the mc_list must be walked as well which means we're
+> >   talking O(n^2) here. Given that a standard Linux workload usually has
+> >   quite a lot of network namespaces and - in the face of containers - a lot
+> >   of user namespaces this quickly becomes a performance problem (see
+> >   "Thundering herd" above). By just recording uevent sockets of network
+> >   namespaces that are owned by the initial user namespace we significantly
+> >   increase performance in this codepath.
+> > - Injecting uevents:
+> >   There's a valid argument that containers might be interested in receiving
+> >   device events especially if they are delegated to them by a privileged
+> >   userspace process. One prime example are SR-IOV enabled devices that are
+> >   explicitly designed to be handed of to other users such as VMs or
+> >   containers.
+> >   This use-case can now be correctly handled since
+> >   commit 692ec06d7c92 ("netns: send uevent messages"). This commit
+> >   introduced the ability to send uevents from userspace. As such we can let
+> >   a sufficiently privileged (CAP_SYS_ADMIN in the owning user namespace of
+> >   the network namespace of the netlink socket) userspace process make a
+> >   decision what uevents should be sent. This removes the need to blindly
+> >   broadcast uevents into all user namespaces and provides a performant and
+> >   safe solution to this problem.
+> > - Filtering logic:
+> >   This patch filters by *owning user namespace of the network namespace a
+> >   given task resides in* and not by user namespace of the task per se. This
+> >   means if the user namespace of a given task is unshared but the network
+> >   namespace is kept and is owned by the initial user namespace a listener
+> >   that is opening the uevent socket in that network namespace can still
+> >   listen to uevents.
+> >
+> > [1]: https://lkml.org/lkml/2018/4/4/739
+> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > ---
+> > Changelog v1->v2:
+> > * patch unchanged
+> > Changelog v0->v1:
+> > * patch unchanged
+> > ---
+> >  lib/kobject_uevent.c | 18 ++++++++++++------
+> >  1 file changed, 12 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+> > index 15ea216a67ce..f5f5038787ac 100644
+> > --- a/lib/kobject_uevent.c
+> > +++ b/lib/kobject_uevent.c
+> > @@ -703,9 +703,13 @@ static int uevent_net_init(struct net *net)
+> >  
+> >  	net->uevent_sock = ue_sk;
+> >  
+> > -	mutex_lock(&uevent_sock_mutex);
+> > -	list_add_tail(&ue_sk->list, &uevent_sock_list);
+> > -	mutex_unlock(&uevent_sock_mutex);
+> > +	/* Restrict uevents to initial user namespace. */
+> > +	if (sock_net(ue_sk->sk)->user_ns == &init_user_ns) {
+> > +		mutex_lock(&uevent_sock_mutex);
+> > +		list_add_tail(&ue_sk->list, &uevent_sock_list);
+> > +		mutex_unlock(&uevent_sock_mutex);
+> > +	}
+> > +
+> >  	return 0;
+> >  }
+> >  
+> > @@ -713,9 +717,11 @@ static void uevent_net_exit(struct net *net)
+> >  {
+> >  	struct uevent_sock *ue_sk = net->uevent_sock;
+> >  
+> > -	mutex_lock(&uevent_sock_mutex);
+> > -	list_del(&ue_sk->list);
+> > -	mutex_unlock(&uevent_sock_mutex);
+> > +	if (sock_net(ue_sk->sk)->user_ns == &init_user_ns) {
+> > +		mutex_lock(&uevent_sock_mutex);
+> > +		list_del(&ue_sk->list);
+> > +		mutex_unlock(&uevent_sock_mutex);
+> > +	}
+> >  
+> >  	netlink_kernel_release(ue_sk->sk);
+> >  	kfree(ue_sk);
