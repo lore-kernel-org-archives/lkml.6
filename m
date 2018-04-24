@@ -1,129 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933130AbeDXMqt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:46:49 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55579 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757872AbeDXMpd (ORCPT
+        id S933142AbeDXMqw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:46:52 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38320 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750736AbeDXMqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:45:33 -0400
-X-Google-Smtp-Source: AB8JxZppJnljB+tTTEbfQPG0cxdljvzdcc+6pkj2E3EYlAnjtqEpU1YymQ/8gXVUvZMk8TKD45h/eA==
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 23/28] venus: vdec: get required input buffers as well
-Date: Tue, 24 Apr 2018 15:44:31 +0300
-Message-Id: <20180424124436.26955-24-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+        Tue, 24 Apr 2018 08:46:30 -0400
+Date: Tue, 24 Apr 2018 14:46:21 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: subhra mazumdar <subhra.mazumdar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
+Subject: Re: [PATCH 1/3] sched: remove select_idle_core() for scalability
+Message-ID: <20180424124621.GQ4082@hirez.programming.kicks-ass.net>
+References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
+ <20180424004116.28151-2-subhra.mazumdar@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424004116.28151-2-subhra.mazumdar@oracle.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rework and rename vdec_cap_num_buffers() to get the number of
-input buffers too.
+On Mon, Apr 23, 2018 at 05:41:14PM -0700, subhra mazumdar wrote:
+> select_idle_core() can potentially search all cpus to find the fully idle
+> core even if there is one such core. Removing this is necessary to achieve
+> scalability in the fast path.
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/vdec.c | 41 +++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 17 deletions(-)
+So this removes the whole core awareness from the wakeup path; this
+needs far more justification.
 
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 8d188b11b85a..6ed9b7c4bd6e 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -603,19 +603,32 @@ static int vdec_init_session(struct venus_inst *inst)
- 	return ret;
- }
- 
--static int vdec_cap_num_buffers(struct venus_inst *inst, unsigned int *num)
-+static int vdec_num_buffers(struct venus_inst *inst, unsigned int *in_num,
-+			    unsigned int *out_num)
- {
-+	enum hfi_version ver = inst->core->res->hfi_version;
- 	struct hfi_buffer_requirements bufreq;
- 	int ret;
- 
-+	*in_num = *out_num = 0;
-+
- 	ret = vdec_init_session(inst);
- 	if (ret)
- 		return ret;
- 
-+	ret = venus_helper_get_bufreq(inst, HFI_BUFFER_INPUT, &bufreq);
-+	if (ret)
-+		goto deinit;
-+
-+	*in_num = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
-+
- 	ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
-+	if (ret)
-+		goto deinit;
- 
--	*num = bufreq.count_actual;
-+	*out_num = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
- 
-+deinit:
- 	hfi_session_deinit(inst);
- 
- 	return ret;
-@@ -626,7 +639,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 			    unsigned int sizes[], struct device *alloc_devs[])
- {
- 	struct venus_inst *inst = vb2_get_drv_priv(q);
--	unsigned int p, num;
-+	unsigned int p, in_num, out_num;
- 	int ret = 0;
- 
- 	if (*num_planes) {
-@@ -649,35 +662,29 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 		return 0;
- 	}
- 
-+	ret = vdec_num_buffers(inst, &in_num, &out_num);
-+	if (ret)
-+		return ret;
-+
- 	switch (q->type) {
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
- 		*num_planes = inst->fmt_out->num_planes;
- 		sizes[0] = get_framesize_compressed(inst->out_width,
- 						    inst->out_height);
- 		inst->input_buf_size = sizes[0];
-+		*num_buffers = max(*num_buffers, in_num);
- 		inst->num_input_bufs = *num_buffers;
--
--		ret = vdec_cap_num_buffers(inst, &num);
--		if (ret)
--			break;
--
--		inst->num_output_bufs = num;
-+		inst->num_output_bufs = out_num;
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		*num_planes = inst->fmt_cap->num_planes;
- 
--		ret = vdec_cap_num_buffers(inst, &num);
--		if (ret)
--			break;
--
--		*num_buffers = max(*num_buffers, num);
--
- 		for (p = 0; p < *num_planes; p++)
- 			sizes[p] = get_framesize_uncompressed(p, inst->width,
- 							      inst->height);
--
--		inst->num_output_bufs = *num_buffers;
- 		inst->output_buf_size = sizes[0];
-+		*num_buffers = max(*num_buffers, out_num);
-+		inst->num_output_bufs = *num_buffers;
- 		break;
- 	default:
- 		ret = -EINVAL;
--- 
-2.14.1
+In general running on pure cores is much faster than running on threads.
+If you plot performance numbers there's almost always a fairly
+significant drop in slope at the moment when we run out of cores and
+start using threads.
+
+Also, depending on cpu enumeration, your next patch might not even leave
+the core scanning for idle CPUs.
+
+Now, typically on Intel systems, we first enumerate cores and then
+siblings, but I've seen Intel systems that don't do this and enumerate
+all threads together. Also other architectures are known to iterate full
+cores together, both s390 and Power for example do this.
+
+So by only doing a linear scan on CPU number you will actually fill
+cores instead of equally spreading across cores. Worse still, by
+limiting the scan to _4_ you only barely even get onto a next core for
+SMT4 hardware, never mind SMT8.
+
+So while I'm not adverse to limiting the empty core search; I do feel it
+is important to have. Overloading cores when you don't have to is not
+good.
