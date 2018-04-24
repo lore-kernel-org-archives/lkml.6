@@ -1,108 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756238AbeDXII6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 04:08:58 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:50758 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756046AbeDXIIq (ORCPT
+        id S1756575AbeDXIJL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 04:09:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42819 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756046AbeDXIJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:08:46 -0400
-Date: Tue, 24 Apr 2018 09:08:33 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 7/8] drm/i2c: tda998x: register as a drm bridge
-Message-ID: <20180424080833.GJ16141@n2100.armlinux.org.uk>
-References: <20180423072301.11962-1-peda@axentia.se>
- <20180423072301.11962-8-peda@axentia.se>
- <20180423160833.GF16141@n2100.armlinux.org.uk>
- <5d6866d0-75bc-4de8-9b87-4fee5430e9dd@axentia.se>
+        Tue, 24 Apr 2018 04:09:00 -0400
+Date: Tue, 24 Apr 2018 01:08:02 -0700
+From: tip-bot for Dave Hansen <tipbot@zytor.com>
+Message-ID: <tip-abb67605203687c8b7943d760638d0301787f8d9@git.kernel.org>
+Cc: arjan@linux.intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+        hughd@google.com, mingo@kernel.org, aarcange@redhat.com, hpa@zytor.com,
+        dan.j.williams@intel.com, luto@kernel.org, gregkh@linuxfoundation.org,
+        bp@alien8.de, namit@vmware.com, jpoimboe@redhat.com,
+        peterz@infradead.org, jgross@suse.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, keescook@google.com
+Reply-To: bp@alien8.de, namit@vmware.com, jgross@suse.com, dwmw2@infradead.org,
+        keescook@google.com, torvalds@linux-foundation.org,
+        peterz@infradead.org, jpoimboe@redhat.com, dan.j.williams@intel.com,
+        hpa@zytor.com, gregkh@linuxfoundation.org, luto@kernel.org,
+        aarcange@redhat.com, dave.hansen@linux.intel.com, hughd@google.com,
+        mingo@kernel.org, arjan@linux.intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20180420222023.1C8B2B20@viggo.jf.intel.com>
+References: <20180420222023.1C8B2B20@viggo.jf.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86, pti: Reduce amount of kernel text allowed to be
+ Global
+Git-Commit-ID: abb67605203687c8b7943d760638d0301787f8d9
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <5d6866d0-75bc-4de8-9b87-4fee5430e9dd@axentia.se>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 08:58:42AM +0200, Peter Rosin wrote:
-> On 2018-04-23 18:08, Russell King - ARM Linux wrote:
-> > On Mon, Apr 23, 2018 at 09:23:00AM +0200, Peter Rosin wrote:
-> >>  static int tda998x_remove(struct i2c_client *client)
-> >>  {
-> >> -	component_del(&client->dev, &tda998x_ops);
-> >> +	struct device *dev = &client->dev;
-> >> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
-> >> +
-> >> +	drm_bridge_remove(&bridge->bridge);
-> >> +	component_del(dev, &tda998x_ops);
-> >> +
-> > 
-> > I'd like to ask a rather fundamental question about DRM bridge support,
-> > because I suspect that there's a major fsckup here.
-> > 
-> > The above is the function that deals with the TDA998x device being
-> > unbound from the driver.  With the component API, this results in the
-> > DRM device correctly being torn down, because one of the hardware
-> > devices has gone.
-> > 
-> > With DRM bridge, the bridge is merely removed from the list of
-> > bridges:
-> > 
-> > void drm_bridge_remove(struct drm_bridge *bridge)
-> > {
-> >         mutex_lock(&bridge_lock);
-> >         list_del_init(&bridge->list);
-> >         mutex_unlock(&bridge_lock);
-> > }
-> > EXPORT_SYMBOL(drm_bridge_remove);
-> > 
-> > and the memory backing the "struct tda998x_bridge" (which contains
-> > the struct drm_bridge) will be freed by the devm subsystem.
-> > 
-> > However, there is no notification into the rest of the DRM subsystem
-> > that the device has gone away.  Worse, the memory that is still in
-> > use by DRM has now been freed, so further use of the DRM device
-> > results in a use-after-free bug.
-> > 
-> > This is really not good, and to me looks like a fundamental problem
-> > with the DRM bridge code.  I see nothing in the DRM bridge code that
-> > deals with the lifetime of a "DRM bridge" or indeed the lifetime of
-> > the actual device itself.
-> > 
-> > So, from what I can see, there seems to be a fundamental lifetime
-> > issue with the design of the DRM bridge code.  This needs to be
-> > fixed.
-> 
-> Oh crap. A gigantic can of worms...
+Commit-ID:  abb67605203687c8b7943d760638d0301787f8d9
+Gitweb:     https://git.kernel.org/tip/abb67605203687c8b7943d760638d0301787f8d9
+Author:     Dave Hansen <dave.hansen@linux.intel.com>
+AuthorDate: Fri, 20 Apr 2018 15:20:23 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 24 Apr 2018 09:50:54 +0200
 
-Yes, it's especially annoying for me, having put the effort in to
-the component helper to cover all these cases.
+x86, pti: Reduce amount of kernel text allowed to be Global
 
-> Would a patch (completely untested btw) along this line of thinking make
-> any difference whatsoever?
+Kees reported to me that I made too much of the kernel image global.
+It was far more than just text:
 
-It looks interesting - from what I can see of the device links code,
-it would have the effect of unbinding the DRM device just before
-TDA998x is unbound, so that's an improvement.
+	I think this is too much set global: _end is after data,
+	bss, and brk, and all kinds of other stuff that could
+	hold secrets. I think this should match what
+	mark_rodata_ro() is doing.
 
-However, from what I can see, the link vanishes at that point (as
-DL_FLAG_AUTOREMOVE is set), and re-binding the TDA998x device results
-in nothing further happening - the link will be recreated, but there
-appears to be nothing that triggers the "consumer" to rebind at that
-point.  Maybe I've missed something?
+This does exactly that.  We use __end_rodata_hpage_align as our
+marker both because it is huge-page-aligned and it does not contain
+any sections we expect to hold secrets.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Kees's logic was that r/o data is in the kernel image anyway and,
+in the case of traditional distributions, can be freely downloaded
+from the web, so there's no reason to hide it.
+
+Fixes: 8c06c7740 (x86/pti: Leave kernel text global for !PCID)
+Reported-by: Kees Cook <keescook@google.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: linux-mm@kvack.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Nadav Amit <namit@vmware.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Link: https://lkml.kernel.org/r/20180420222023.1C8B2B20@viggo.jf.intel.com
+
+---
+ arch/x86/mm/pti.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index f1fd52f449e0..ae3eb4f5d53b 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -430,12 +430,24 @@ static inline bool pti_kernel_image_global_ok(void)
+  */
+ void pti_clone_kernel_text(void)
+ {
++	/*
++	 * rodata is part of the kernel image and is normally
++	 * readable on the filesystem or on the web.  But, do not
++	 * clone the areas past rodata, they might contain secrets.
++	 */
+ 	unsigned long start = PFN_ALIGN(_text);
+-	unsigned long end = ALIGN((unsigned long)_end, PMD_PAGE_SIZE);
++	unsigned long end = (unsigned long)__end_rodata_hpage_align;
+ 
+ 	if (!pti_kernel_image_global_ok())
+ 		return;
+ 
++	pr_debug("mapping partial kernel image into user address space\n");
++
++	/*
++	 * Note that this will undo _some_ of the work that
++	 * pti_set_kernel_image_nonglobal() did to clear the
++	 * global bit.
++	 */
+ 	pti_clone_pmds(start, end, _PAGE_RW);
+ }
+ 
+@@ -458,8 +470,6 @@ void pti_set_kernel_image_nonglobal(void)
+ 	if (pti_kernel_image_global_ok())
+ 		return;
+ 
+-	pr_debug("set kernel image non-global\n");
+-
+ 	set_memory_nonglobal(start, (end - start) >> PAGE_SHIFT);
+ }
+ 
