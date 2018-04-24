@@ -1,130 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757856AbeDXMzO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 08:55:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51648 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757735AbeDXMzI (ORCPT
+        id S933276AbeDXMyj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 08:54:39 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42929 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757823AbeDXMpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 08:55:08 -0400
-Subject: Re: [PATCH] mlxsw: spectrum_switchdev: remove duplicated check on
- multicast_enable
-To: Ido Schimmel <idosch@idosch.org>
-Cc: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nogahf@mellanox.com
-References: <20180424115139.21134-1-colin.king@canonical.com>
- <20180424125104.GA2461@splinter.mtl.com>
-From: Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <595cc615-0802-d444-a4ad-d6a67d546cc4@canonical.com>
-Date: Tue, 24 Apr 2018 13:55:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180424125104.GA2461@splinter.mtl.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Apr 2018 08:45:17 -0400
+X-Google-Smtp-Source: AIpwx4+tHylpHaYnKLJ8FGubJ5M7axtOA45B62+JpyD2m9EsiCbur4fV8si6a05pMEwl4Eki49+DOQ==
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH 08/28] venus: hfi_venus: add suspend function for 4xx version
+Date: Tue, 24 Apr 2018 15:44:16 +0300
+Message-Id: <20180424124436.26955-9-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/04/18 13:51, Ido Schimmel wrote:
-> On Tue, Apr 24, 2018 at 12:51:39PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The check on bridge_port->bridge_device->multicast_enable is performed
->> twice in two nested if statements. I can't see any reason for this, the
->> second check is redundant and can be removed.
->>
->> Detected by cppcheck:
->> drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c:1722]:
->> (warning) Identical inner 'if' condition is always true.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 9 +++------
->>  1 file changed, 3 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
->> index c11c9a635866..989ed19e25c9 100644
->> --- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
->> +++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
->> @@ -1719,12 +1719,9 @@ __mlxsw_sp_port_mdb_del(struct mlxsw_sp_port *mlxsw_sp_port,
->>  	int err;
->>  
->>  	if (bridge_port->bridge_device->multicast_enabled) {
->> -		if (bridge_port->bridge_device->multicast_enabled) {
-> 
-> This looks like a copy-paste error. I believe the intention was to check
-> '!bridge_port->mrouter' so that if port is an mrouter port packets
-> hitting the MDB entry would still be sent to it even after it was
-> removed from the MDB entry ports list.
+This adds suspend (power collapse) function with slightly
+different order of calls comparing with Venus 3xx.
 
-Ah, that makes a lot more sense.
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+---
+ drivers/media/platform/qcom/venus/hfi_venus.c | 52 +++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-> 
-> I will send a patch later this week after I run it by Nogah who worked
-> on this part.
-
-OK, thanks!
-> 
-> Thanks for the patch.
-> 
->> -			err = mlxsw_sp_port_smid_set(mlxsw_sp_port, mid->mid,
->> -						     false);
->> -			if (err)
->> -				netdev_err(dev, "Unable to remove port from SMID\n");
->> -		}
->> +		err = mlxsw_sp_port_smid_set(mlxsw_sp_port, mid->mid, false);
->> +		if (err)
->> +			netdev_err(dev, "Unable to remove port from SMID\n");
->>  	}
->>  
->>  	err = mlxsw_sp_port_remove_from_mid(mlxsw_sp_port, mid);
->> -- 
->> 2.17.0
->>
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+index 53546174aab8..f61d34bf61b4 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus.c
++++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+@@ -1443,6 +1443,55 @@ static int venus_suspend_1xx(struct venus_core *core)
+ 	return 0;
+ }
+ 
++static int venus_suspend_4xx(struct venus_core *core)
++{
++	struct venus_hfi_device *hdev = to_hfi_priv(core);
++	struct device *dev = core->dev;
++	u32 val;
++	int ret;
++
++	if (!hdev->power_enabled || hdev->suspended)
++		return 0;
++
++	mutex_lock(&hdev->lock);
++	ret = venus_is_valid_state(hdev);
++	mutex_unlock(&hdev->lock);
++
++	if (!ret) {
++		dev_err(dev, "bad state, cannot suspend\n");
++		return -EINVAL;
++	}
++
++	ret = venus_prepare_power_collapse(hdev, false);
++	if (ret) {
++		dev_err(dev, "prepare for power collapse fail (%d)\n", ret);
++		return ret;
++	}
++
++	ret = readl_poll_timeout(core->base + CPU_CS_SCIACMDARG0, val,
++				 val & CPU_CS_SCIACMDARG0_PC_READY,
++				 POLL_INTERVAL_US, 100000);
++	if (ret) {
++		dev_err(dev, "Polling power collapse ready timed out\n");
++		return ret;
++	}
++
++	mutex_lock(&hdev->lock);
++
++	ret = venus_power_off(hdev);
++	if (ret) {
++		dev_err(dev, "venus_power_off (%d)\n", ret);
++		mutex_unlock(&hdev->lock);
++		return ret;
++	}
++
++	hdev->suspended = true;
++
++	mutex_unlock(&hdev->lock);
++
++	return 0;
++}
++
+ static int venus_suspend_3xx(struct venus_core *core)
+ {
+ 	struct venus_hfi_device *hdev = to_hfi_priv(core);
+@@ -1507,6 +1556,9 @@ static int venus_suspend(struct venus_core *core)
+ 	if (core->res->hfi_version == HFI_VERSION_3XX)
+ 		return venus_suspend_3xx(core);
+ 
++	if (core->res->hfi_version == HFI_VERSION_4XX)
++		return venus_suspend_4xx(core);
++
+ 	return venus_suspend_1xx(core);
+ }
+ 
+-- 
+2.14.1
