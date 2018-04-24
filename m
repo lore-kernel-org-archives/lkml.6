@@ -1,78 +1,161 @@
-Return-Path: <SZ.Lin@moxa.com>
-X-Google-Smtp-Source: AB8JxZoU/wAGxwRzZZXmmUhqEfX+BfSs9eWSKMgZjsYBEAyuouHxIAcGXTyHIrTBgnJEpFmsa0e5
-ARC-Seal: i=1; a=rsa-sha256; t=1524795297; cv=none;
+Return-Path: <wvw@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524593298; cv=none;
         d=google.com; s=arc-20160816;
-        b=gYYnxs+imAKT53HWjf3XA4Wvkj/jFg7Zwxp6AhE0VaYbXL3F17/uBhwwx0JGb/RYnX
-         Qcuc61cmxY9QZt93AIoibuwn/Ts7nnT7+hpTYiPPK0BypJIfGNXHu3NO6+fchdVlrjN3
-         z7o4NyvXq708kyKHb2kCnKshZPqfsCN6Y81NusdUfqQMAlw2N+7EjwMEc91i4HIVbpOd
-         pYGnPhmCZcIRxP2e0HmKT8ue2TJ5yH/PHQsoJImw8dBAGfmQpwPr77cz00sh5E+HvJjE
-         00bPf+iTD29mroVfGDdREcZ92rU1b9WLspaJaBZi10FrFBRxsxTnfnlcr/NZKNr1fPtG
-         ER0A==
+        b=cbwuRam05Uh8KGZYjKrzClyj49rWe5TY/aqf9cmeI9HzxNC/uO2keAt6bu1FhIR0p0
+         BACYhadtOm8u78Y6NPHuA+m7MOa/rXOkZaa4lCx0qWHu3Bb4CfGbz2wk9nDrZ7h1Rsf0
+         9U9GSo2opzSVSBUNQQxtVlg+XXTpkJblAmkNvmbusRqaa3hnpmUD4Q3Jdb8A9XXpQ/im
+         cQZsow+o5pm04JOZ8+U/HRzAcXs0BaIa+zkJ2d624pnsTWmshYVQHf/clvjWi3P01nA5
+         Eue0GLozHCVgSHAG93SivTBfhJM3zDdAbOQI/LqdARcLm7pS6vihI4ziwWaiZDhcT0yV
+         efHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=GQ4P/DA0tF/y7kTOD+ftbJQasYHEmTXDiFbbFiWmxxY=;
-        b=KrA4009J0ICrGpRccsef/qbb9u0NFlgf/0Ld+/lfmp+/zq/x6L/2SlXtJBl0C11mb4
-         Dso9c9NGS2JNyCmBHVW0825o8R9JAJiJ1a4HWofX7SediNydhrrE0QApjm0M0yKI0Fhi
-         FA0scsN1HFHp/hOr54BGdf1/TSc1eJGZsIOScawNywjQyZqHhWhhWRCCxA86CS4e8GVw
-         y57RWcp6eubmNmSyl/RhRsyqk7ZC+L/n0VvBACxxBZcXpu2haX9z760s7Tp8VwW7ksPZ
-         x8R0ldbm0FOjmEuJyGJFamFAMDUlvfHx7aInhHbcmZ5vIoACQtvEzMh/BxrazUWraR99
-         lwkw==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=T1UekXwdlgK45FRXnyXI2UUf8CYIZDJO2HVUO0XJo3g=;
+        b=HSOINY3nDjFH9qf2Xdwkt1dAHhne/wvmjPUNhdYFxMeI+F7zIYDNxAgBg70TSzMtf+
+         n6ie6VjcHvJNcxxYyOnUIFii0jaaDnm9/bDV3e3OGzrW8U4k0VYVUtZmJ+ws/NiM3sWV
+         jZt7aGlk+AyEsYTjF6U5GLXP2pqcz+Jo2v++eurNNVQ2tNeXoUVcuDdB+yLFj7OdZxOX
+         pAvCu/kyr2njFn3it9d3rTnzpkhsId4dMBxl9gmG9yY8ZikijJYgAyg8AyLF9yfd0RBN
+         2jNKWjF40LCPojThY/GyEZ40SYFMqTgNtvJqH/jKEpKljlVTxbpQ0oemRm/FVgs9FIvZ
+         /NbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of sz.lin@moxa.com designates 59.124.42.188 as permitted sender) smtp.mailfrom=SZ.Lin@moxa.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=gewlHgyj;
+       spf=pass (google.com: domain of wvw@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wvw@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of sz.lin@moxa.com designates 59.124.42.188 as permitted sender) smtp.mailfrom=SZ.Lin@moxa.com
-From: =?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?= <SZ.Lin@moxa.com>
-To: Dan Williams <dcbw@redhat.com>, Johan Hovold <johan@kernel.org>, "Lars
- Melin" <larsm17@gmail.com>
-CC: =?utf-8?B?QmrDuHJuIE1vcms=?= <bjorn@mork.no>, stable
-	<stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] USB: serial: option: adding support for ublox R410M
-Thread-Topic: [PATCH] USB: serial: option: adding support for ublox R410M
-Thread-Index: AQHT3VBqImFl/xbkMUuPvnRM0u//G6QSZbMAgAAAZACAAEvqAIAAAseAgAAB8ICAAC2YAIAA+j8Q
-Date: Fri, 27 Apr 2018 02:14:55 +0000
-Message-ID: <5942081F7727964D830FC876E62CA856014CC36A3F@MHQMBX02.moxa.com>
-References: <20180426062831.320-1-sz.lin@moxa.com>
-	 <20180426070927.GT4615@localhost>
-	 <72c63853-aa2d-e74c-1112-36d54ef52a85@gmail.com>
-	 <20180426081403.GA335@localhost> <87r2n25i6i.fsf@miraculix.mork.no>
-	 <3895ed90-bbb9-e7ce-34c0-a1654646cf83@gmail.com>
-	 <98b50ae7-b889-6811-476e-9cdc8a62a484@gmail.com>
-	 <20180426161228.GW4615@localhost>
-	 <09866ede-25cf-3ca1-1be6-e720b4b5dd23@gmail.com>
-	 <20180426162921.GB335@localhost>
- <5fb0b88573985caeb5ce2732ae217f60fbcfe965.camel@redhat.com>
-In-Reply-To: <5fb0b88573985caeb5ce2732ae217f60fbcfe965.camel@redhat.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.4.141]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+       dkim=pass header.i=@google.com header.s=20161025 header.b=gewlHgyj;
+       spf=pass (google.com: domain of wvw@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wvw@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx49yS+FfL4t9dE4k1WZEfWt3GgakBEdLzTrF3636jYKTgpEJ0fr3JKnKELyrORR7EObTiuvJ5g==
+From: Wei Wang <wvw@google.com>
+X-Google-Original-From: Wei Wang < wvw@google.com >
+To: 
+Cc: gregkh@linuxfoundation.org,
+	wei.vince.wang@gmail.com,
+	Wei Wang <wvw@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Crt Mori <cmo@melexis.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] do not call trace_printk on non-debug build
+Date: Tue, 24 Apr 2018 11:08:10 -0700
+Message-Id: <20180424180812.215900-1-wvw@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598789137647329265?=
-X-GMAIL-MSGID: =?utf-8?q?1598863753881246699?=
+X-GMAIL-THRID: =?utf-8?q?1598651942651560845?=
+X-GMAIL-MSGID: =?utf-8?q?1598651942651560845?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-PHNuaXA+DQoNCj4gDQo+IE9wdGlvbiBpcyBsaWtlbHkgdGhlIHJpZ2h0IGRyaXZlciBmb3IgdGhp
-cyBkZXZpY2UuDQo+IA0KPiBxY2F1eCB3YXMgbWFpbmx5IGZvciBtb2JpbGUgcGhvbmVzIHRoYXQg
-aGF2ZSBhIFRUWSAob2Z0ZW4gY2RjLWFjbSkgYXMgdGhlIG1vZGVtIHBvcnQNCj4gYW5kIGEgc2Vj
-b25kYXJ5IERJQUcvRE0gcG9ydCBkcml2ZW4gYnkgcWNhdXguICBUaGUgRE0gcG9ydCBkb2Vzbid0
-IGhhdmUgYW4gaW50ZXJydXB0DQo+IGVuZHBvaW50IHRodXMgaXQncyBub3QgYSBub3JtYWwgbW9k
-ZW0gcG9ydCByZXF1aXJpbmcgdGhlIGxhcmdlciBidWZmZXJzIG9mIG9wdGlvbiBhbmQgaXRzDQo+
-IGNvbnRyb2wgc2lnbmFsaW5nLg0KPiANCj4gcWNzZXJpYWwgKGFzIEJqb3JuIG1lbnRpb25lZCkg
-aXMgb25seSBmb3IgYWN0dWFsIEdvYmktdHlwZSBkZXZpY2VzIHdpdGggdGhlIHNwZWNpZmljIGxh
-eW91dHMNCj4gYW5kIHRoZSBmaXJtd2FyZSBsb2FkaW5nIHJlcXVpcmVtZW50IHdoZXJlIHRoZSAx
-SyBhbmQgMksgZGV2aWNlcyBzdGFydCBpbiBhIHNwZWNpYWwNCj4gMS1wb3J0IG1vZGUgd2FpdGlu
-ZyBmb3IgZmlybXdhcmUgYW5kIHRoZW4gYmVjb21lIDQtcG9ydCBkZXZpY2VzIG9uIGZpcm13YXJl
-IHJlYm9vdC4NCj4gDQo+IERhbg0KDQpUaGFuayB5b3UgYWxsLiBJIGJlbGlldmUgdGhhdCBtYW55
-IHBlb3BsZSBhcmUgY29uZnVzZWQgaW4gc2VsZWN0aW5nIHNlcmlhbCBkcml2ZXIgKG9wdGlvbiBh
-bmQgcWNzZXJpYWwpIA0KZm9yIFFVQUxDT01NIGJhc2VkIG1vZHVsZS4gVGhpcyB0aHJlYWQgaGFz
-IHByb3ZpZGVkIGNsZWFybHkgYW5kIHByb3Blcmx5IHByZXNlbnRlZCB0aGUgZGlmZmVyZW50DQpi
-ZXR3ZWVuIHRoZW0uDQoNClNaDQo=
+From: Wei Wang <wvw@google.com>
+
+trace_printk will cause trace_printk_init_buffers executed in kernel
+start, which will increase memory and also show bad warnings in
+production kernel.
+
+Signed-off-by: Wei Wang <wvw@google.com>
+---
+ include/linux/kernel.h       | 17 +++++++++++++++++
+ include/linux/trace_events.h |  4 ++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 6a1eb0b0aad96..f1a003e5986a9 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -677,6 +677,7 @@ do {									\
+  * let gcc optimize the rest.
+  */
+ 
++#if defined(DEBUG)
+ #define trace_printk(fmt, ...)				\
+ do {							\
+ 	char _______STR[] = __stringify((__VA_ARGS__));	\
+@@ -685,7 +686,11 @@ do {							\
+ 	else						\
+ 		trace_puts(fmt);			\
+ } while (0)
++#else
++#define trace_printk(fmt, ...)
++#endif
+ 
++#if defined(DEBUG)
+ #define do_trace_printk(fmt, args...)					\
+ do {									\
+ 	static const char *trace_printk_fmt __used			\
+@@ -699,6 +704,9 @@ do {									\
+ 	else								\
+ 		__trace_printk(_THIS_IP_, fmt, ##args);			\
+ } while (0)
++#else
++#define do_trace_printk(fmt, args...)
++#endif
+ 
+ extern __printf(2, 3)
+ int __trace_bprintk(unsigned long ip, const char *fmt, ...);
+@@ -731,6 +739,7 @@ int __trace_printk(unsigned long ip, const char *fmt, ...);
+  *  (1 when __trace_bputs is used, strlen(str) when __trace_puts is used)
+  */
+ 
++#if defined(DEBUG)
+ #define trace_puts(str) ({						\
+ 	static const char *trace_printk_fmt __used			\
+ 		__attribute__((section("__trace_printk_fmt"))) =	\
+@@ -741,6 +750,10 @@ int __trace_printk(unsigned long ip, const char *fmt, ...);
+ 	else								\
+ 		__trace_puts(_THIS_IP_, str, strlen(str));		\
+ })
++#else
++#define trace_puts(str)
++#endif
++
+ extern int __trace_bputs(unsigned long ip, const char *str);
+ extern int __trace_puts(unsigned long ip, const char *str, int size);
+ 
+@@ -751,6 +764,7 @@ extern void trace_dump_stack(int skip);
+  * if we try to allocate the static variable to fmt if it is not a
+  * constant. Even with the outer if statement.
+  */
++#if defined(DEBUG)
+ #define ftrace_vprintk(fmt, vargs)					\
+ do {									\
+ 	if (__builtin_constant_p(fmt)) {				\
+@@ -762,6 +776,9 @@ do {									\
+ 	} else								\
+ 		__ftrace_vprintk(_THIS_IP_, fmt, vargs);		\
+ } while (0)
++#else
++#define ftrace_vprintk(fmt, vargs)
++#endif
+ 
+ extern __printf(2, 0) int
+ __ftrace_vbprintk(unsigned long ip, const char *fmt, va_list ap);
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 2bde3eff564cd..433208a1c6009 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -533,6 +533,7 @@ int trace_set_clr_event(const char *system, const char *event, int set);
+  * if we try to allocate the static variable to fmt if it is not a
+  * constant. Even with the outer if statement optimizing out.
+  */
++#if defined(DEBUG)
+ #define event_trace_printk(ip, fmt, args...)				\
+ do {									\
+ 	__trace_printk_check_format(fmt, ##args);			\
+@@ -546,6 +547,9 @@ do {									\
+ 	} else								\
+ 		__trace_printk(ip, fmt, ##args);			\
+ } while (0)
++#else
++#define event_trace_printk(ip, fmt, args...)
++#endif
+ 
+ #ifdef CONFIG_PERF_EVENTS
+ struct perf_event;
+-- 
+2.17.0.484.g0c8726318c-goog
