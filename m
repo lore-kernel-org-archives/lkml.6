@@ -1,23 +1,23 @@
 Return-Path: <jeremy.linton@arm.com>
-X-Google-Smtp-Source: AIpwx48CqS2ivVoZkR5LKEBKfJsV+sHqOKGZlzgyGAUY10Q/T706oOtlgu0m/HJeWyPFhvvDUQ26
-ARC-Seal: i=1; a=rsa-sha256; t=1524702381; cv=none;
+X-Google-Smtp-Source: AIpwx49ftbkK/rCeggxdS+EyrAmoXe0j7MCeKmcuqQGCFm4n/KAb0oIgZ7aR6I1eBE3/DDT3Mzy5
+ARC-Seal: i=1; a=rsa-sha256; t=1524702380; cv=none;
         d=google.com; s=arc-20160816;
-        b=tUlKqcvprTl0P2DSf9RRl0yR6m/QYEQYF+fHWGC9shQe6CTHy0v9B32chEN9ozxoYL
-         P+0fTCo9S4jcPJTKLaupvmrkd72XY8S1rJR/DcgsIbKMQmVnItQqeubIc0lzCVZDJMav
-         FfSukxm6+w/RdEIJE+iMjXUr+S0/P45QjnyTrSWERgK86zycSSRSzlBcUujX+mcY6mVL
-         +YJGNdEGmqVPP3iUOXZBD363RD2ohiyLNrkMz9Qe7/XttofQZuCR7mLHSP5tQdqvbSp3
-         kjLFU92oZF36YW73nphaqeJyzxmWM9qTLhiRcnzTylbyJG2+89zCLOapjCT3crFMu2MJ
-         HwvA==
+        b=iwUM5BkhsK6qj2RZawO9X+NSHkd+tL+9GMEL/n5VaMZczfwUUvEosEcfQxeNUuqzFP
+         a6MGfOPa+BzDh//r6pDnT+xojpYDRBtIuJe0KGHUncrLthu0A4JBU3PMEKMIVGRl9EdJ
+         facE7b8Lcumqa5I/u6PB8/q/CIytZ3YI0d/lmXZ7nDsnwZPHJ/UARcyxbnMchkuEl/i6
+         lKzrxv1jOyGT0cjE1TdU00m0ceYLGNHn19MwvJAaqto/FgdRscFEE21H38RHMVGq6G7F
+         l5VvSwIcNmgKNXCCjsO61Rr8AP8uFcJ5x7Y4pcjaCHI4+eqMUiTZ6NLL5DJwtI/JKNww
+         lc5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=6KLKCt+oirq/8z1GYBPkUZ2ZCADEADEsnaq8KoBVY4k=;
-        b=UNJhLcJ19BN08Ydtn2UP7yej7hbbj+3vOCQyMC+19jVFs9APBrpKYHdzB2AlujxZra
-         y/3iUrdpeQPh21GLue8d5EoZs4FaUfi3Wf2FDx2eastbU2jSQpdt8T3GdaqoeY7L+8u/
-         2hmuOEzuSDIPUq6Y677X4P6sA+lmtSi+UFooTJFU6De38Yt9hMouWLIv7CvlzM+HRZNB
-         m49cK1XFzuCpe9SjAr+fy8kzvbLgXELUudA6YO/HlzbTTNFZcfQZW/CoMOt5lOvRdhgx
-         DMLWELLdfBqY+gM/tJ/urUZKTwtIZCg8Y50kd2Z4GUS4q43ThC2LOG1KJSvm/pBqbLf7
-         Y9RQ==
+        bh=pw/1FJVVpEwBqN8kfTu2DwucS6iimCd0vcO/ASj9O94=;
+        b=eXRuNZDtIHGXpd+j5RD2vgk41djvgipMJ1AIe9ZSrGKO4Aw2D+4idtLi/+PwaM0/Zy
+         anJSJJ9Z/YK85KdEmlYjKMYQLyAc88yD9oQgw8A+CWloMvNo/vC15KHgk3+xsBlPrZkW
+         ZFfyRO7wkKlbsyBPH2VUWA7Fiq28CIDk9AB51KkWUtR9V4LzogEVKAaMbYEaQhCDfH0K
+         LFbbVYc4aLSfRHq8j9EGdRNRnJLOdzQPC1P9RatTdMLrQZfKcDDoTAIZLdQuoJdg0QCc
+         ZzeA8ZxlwevJ1QNFPxoZQ1tNgCvFgo5QNU0LiXDhYOhv+ZukEhvyLBgN0iqPdP3xEfH8
+         h2Bg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
 Authentication-Results: mx.google.com;
@@ -49,218 +49,76 @@ Cc: Sudeep.Holla@arm.com,
 	timur@qti.qualcomm.com,
 	ard.biesheuvel@linaro.org,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v8 09/13] ACPI/PPTT: Add topology parsing code
-Date: Wed, 25 Apr 2018 18:31:17 -0500
-Message-Id: <20180425233121.13270-10-jeremy.linton@arm.com>
+Subject: [PATCH v8 08/13] arm64: Add support for ACPI based firmware tables
+Date: Wed, 25 Apr 2018 18:31:16 -0500
+Message-Id: <20180425233121.13270-9-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180425233121.13270-1-jeremy.linton@arm.com>
 References: <20180425233121.13270-1-jeremy.linton@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598766324602043171?=
-X-GMAIL-MSGID: =?utf-8?q?1598766324602043171?=
+X-GMAIL-THRID: =?utf-8?q?1598766323366552984?=
+X-GMAIL-MSGID: =?utf-8?q?1598766323366552984?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The PPTT can be used to determine the groupings of CPU's at
-given levels in the system. Lets add a few routines to the PPTT
-parsing code to return a unique id for each unique level in the
-processor hierarchy. This can then be matched to build
-thread/core/cluster/die/package/etc mappings for each processing
-element in the system.
+The /sys cache entries should support ACPI/PPTT generated cache
+topology information. Lets detect ACPI systems and call
+an arch specific cache_setup_acpi() routine to update the hardware
+probed cache topology.
+
+For arm64, if ACPI is enabled, determine the max number of cache
+levels and populate them using the PPTT table if one is available.
 
 Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/acpi/pptt.c  | 160 +++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/acpi.h |   4 ++
- 2 files changed, 164 insertions(+)
+ arch/arm64/kernel/cacheinfo.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-index cced71ef851a..0fc4b2654665 100644
---- a/drivers/acpi/pptt.c
-+++ b/drivers/acpi/pptt.c
-@@ -453,6 +453,86 @@ static void cache_setup_acpi_cpu(struct acpi_table_header *table,
+diff --git a/arch/arm64/kernel/cacheinfo.c b/arch/arm64/kernel/cacheinfo.c
+index 380f2e2fbed5..0bf0a835122f 100644
+--- a/arch/arm64/kernel/cacheinfo.c
++++ b/arch/arm64/kernel/cacheinfo.c
+@@ -17,6 +17,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <linux/acpi.h>
+ #include <linux/cacheinfo.h>
+ #include <linux/of.h>
+ 
+@@ -46,7 +47,7 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
+ 
+ static int __init_cache_level(unsigned int cpu)
+ {
+-	unsigned int ctype, level, leaves, of_level;
++	unsigned int ctype, level, leaves, fw_level;
+ 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+ 
+ 	for (level = 1, leaves = 0; level <= MAX_CACHE_LEVEL; level++) {
+@@ -59,15 +60,19 @@ static int __init_cache_level(unsigned int cpu)
+ 		leaves += (ctype == CACHE_TYPE_SEPARATE) ? 2 : 1;
  	}
- }
  
-+/* Passing level values greater than this will result in search termination */
-+#define PPTT_ABORT_PACKAGE 0xFF
+-	of_level = of_find_last_cache_level(cpu);
+-	if (level < of_level) {
++	if (acpi_disabled)
++		fw_level = of_find_last_cache_level(cpu);
++	else
++		fw_level = acpi_find_last_cache_level(cpu);
 +
-+/**
-+ * acpi_find_processor_package_id() - Locate the processor structure for a cpu
-+ *
-+ * Given an acpi_pptt_processor node, walk up until we identify the
-+ * package that the node is associated with, or we run out of levels
-+ * to request or the search is terminated with a flag match
-+ * The level parameter also serves to limit possible loops within the tree.
-+ *
-+ * Return: acpi_pptt_processor* describing the passed core or NULL
-+ */
-+static struct acpi_pptt_processor *acpi_find_processor_package_id(struct acpi_table_header *table_hdr,
-+								  struct acpi_pptt_processor *cpu,
-+								  int level, int flag)
-+{
-+	struct acpi_pptt_processor *prev_node;
-+
-+	while (cpu && level) {
-+		if (cpu->flags & flag)
-+			break;
-+		pr_debug("level %d\n", level);
-+		prev_node = fetch_pptt_node(table_hdr, cpu->parent);
-+		if (prev_node == NULL)
-+			break;
-+		cpu = prev_node;
-+		level--;
-+	}
-+	return cpu;
-+}
-+
-+/**
-+ * topology_get_acpi_cpu_tag() - Find a unique topology value for a feature
-+ *
-+ * Get a unique value given a cpu, and a topology level, that can be
-+ * matched to determine which cpus share common topological features
-+ * at that level.
-+ *
-+ * Return: Unique value, or -ENOENT if unable to locate cpu
-+ */
-+static int topology_get_acpi_cpu_tag(struct acpi_table_header *table,
-+				     unsigned int cpu, int level, int flag)
-+{
-+	struct acpi_pptt_processor *cpu_node;
-+	u32 acpi_cpu_id = get_acpi_id_for_cpu(cpu);
-+
-+	cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
-+	if (cpu_node) {
-+		cpu_node = acpi_find_processor_package_id(table, cpu_node,
-+							  level, flag);
-+		/* Only the first level has a guaranteed id */
-+		if (level == 0)
-+			return cpu_node->acpi_processor_id;
-+		return ACPI_PTR_DIFF(cpu_node, table);
-+	}
-+	pr_warn_once("PPTT table found, but unable to locate core %d (%d)\n",
-+		    cpu, acpi_cpu_id);
-+	return -ENOENT;
-+}
-+
-+static int find_acpi_cpu_topology_tag(unsigned int cpu, int level, int flag)
-+{
-+	struct acpi_table_header *table;
-+	acpi_status status;
-+	int retval;
-+
-+	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
-+	if (ACPI_FAILURE(status)) {
-+		pr_warn_once("No PPTT table found, cpu topology may be inaccurate\n");
-+		return -ENOENT;
-+	}
-+	retval = topology_get_acpi_cpu_tag(table, cpu, level, flag);
-+	pr_debug("Topology Setup ACPI cpu %d, level %d ret = %d\n",
-+		 cpu, level, retval);
-+	acpi_put_table(table);
-+
-+	return retval;
-+}
-+
- /**
-  * acpi_find_last_cache_level() - Determines the number of cache levels for a PE
-  * @cpu: Kernel logical cpu number
-@@ -516,3 +596,83 @@ int cache_setup_acpi(unsigned int cpu)
++	if (level < fw_level) {
+ 		/*
+ 		 * some external caches not specified in CLIDR_EL1
+ 		 * the information may be available in the device tree
+ 		 * only unified external caches are considered here
+ 		 */
+-		leaves += (of_level - level);
+-		level = of_level;
++		leaves += (fw_level - level);
++		level = fw_level;
+ 	}
  
- 	return status;
- }
-+
-+/**
-+ * find_acpi_cpu_topology() - Determine a unique topology value for a given cpu
-+ * @cpu: Kernel logical cpu number
-+ * @level: The topological level for which we would like a unique ID
-+ *
-+ * Determine a topology unique ID for each thread/core/cluster/mc_grouping
-+ * /socket/etc. This ID can then be used to group peers, which will have
-+ * matching ids.
-+ *
-+ * The search terminates when either the requested level is found or
-+ * we reach a root node. Levels beyond the termination point will return the
-+ * same unique ID. The unique id for level 0 is the acpi processor id. All
-+ * other levels beyond this use a generated value to uniquely identify
-+ * a topological feature.
-+ *
-+ * Return: -ENOENT if the PPTT doesn't exist, or the cpu cannot be found.
-+ * Otherwise returns a value which represents a unique topological feature.
-+ */
-+int find_acpi_cpu_topology(unsigned int cpu, int level)
-+{
-+	return find_acpi_cpu_topology_tag(cpu, level, 0);
-+}
-+
-+/**
-+ * find_acpi_cpu_cache_topology() - Determine a unique cache topology value
-+ * @cpu: Kernel logical cpu number
-+ * @level: The cache level for which we would like a unique ID
-+ *
-+ * Determine a unique ID for each unified cache in the system
-+ *
-+ * Return: -ENOENT if the PPTT doesn't exist, or the cpu cannot be found.
-+ * Otherwise returns a value which represents a unique topological feature.
-+ */
-+int find_acpi_cpu_cache_topology(unsigned int cpu, int level)
-+{
-+	struct acpi_table_header *table;
-+	struct acpi_pptt_cache *found_cache;
-+	acpi_status status;
-+	u32 acpi_cpu_id = get_acpi_id_for_cpu(cpu);
-+	struct acpi_pptt_processor *cpu_node = NULL;
-+	int ret = -1;
-+
-+	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
-+	if (ACPI_FAILURE(status)) {
-+		pr_warn_once("No PPTT table found, topology may be inaccurate\n");
-+		return -ENOENT;
-+	}
-+
-+	found_cache = acpi_find_cache_node(table, acpi_cpu_id,
-+					   CACHE_TYPE_UNIFIED,
-+					   level,
-+					   &cpu_node);
-+	if (found_cache)
-+		ret = ACPI_PTR_DIFF(cpu_node, table);
-+
-+	acpi_put_table(table);
-+
-+	return ret;
-+}
-+
-+
-+/**
-+ * find_acpi_cpu_topology_package() - Determine a unique cpu package value
-+ * @cpu: Kernel logical cpu number
-+ *
-+ * Determine a topology unique package ID for the given cpu.
-+ * This ID can then be used to group peers, which will have matching ids.
-+ *
-+ * The search terminates when either a level is found with the PHYSICAL_PACKAGE
-+ * flag set or we reach a root node.
-+ *
-+ * Return: -ENOENT if the PPTT doesn't exist, or the cpu cannot be found.
-+ * Otherwise returns a value which represents the package for this cpu.
-+ */
-+int find_acpi_cpu_topology_package(unsigned int cpu)
-+{
-+	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
-+					  ACPI_PPTT_PHYSICAL_PACKAGE);
-+}
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 15bfb15c2fa5..032e12a2fdc2 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -1297,4 +1297,8 @@ static inline int lpit_read_residency_count_address(u64 *address)
- }
- #endif
- 
-+int find_acpi_cpu_topology(unsigned int cpu, int level);
-+int find_acpi_cpu_topology_package(unsigned int cpu);
-+int find_acpi_cpu_cache_topology(unsigned int cpu, int level);
-+
- #endif	/*_LINUX_ACPI_H*/
+ 	this_cpu_ci->num_levels = level;
 -- 
 2.13.6
