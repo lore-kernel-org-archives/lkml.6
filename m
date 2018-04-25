@@ -1,66 +1,66 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-945756-1524671459-2-2716776114934248032
+X-Cyrus-Session-Id: sloti22d1t05-937867-1524671454-2-10697868061181127856
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524671458; b=nF4lfGCmoqBtYeT40UKdi6vVTHwa6s7PWURBXk9Zo8j5MqXY7I
-    ub55IcYUNETlZwX5zG202WKqm2k9FYtIKNpaJGGnJenD1F+/r1p25U1jztpmxa/u
-    NivqMEoOxx3x4EwOuD1rUjT3W6QUjhxg+JjlNOZ1XnFeuGTTD9U+shPARVo8S8zj
-    BCbTC8pIY+KJTgWukahu1QIBbcLFtG4RYXurFFafuQU9BsjYMwA7O5s3kzyRCzrw
-    b9fyFkayk/QE+23GRl+hv9Foqjm1YWIcnzAUBAX4dNtLU94Sliiuy4CwzKJRJEK0
-    KUNgMbASv+si9P2RDSFL3RmBZUvW0Htmtr4Q==
+    1524671453; b=n0WczmzoVIinRuUgAARGhhQKZLgeKxjUscstiBJ9LseN5hJqB+
+    u/JwMvL4zenCZFbTJGL9fUGDYR6282ZnEdpd+evoJGNUFaI1d7N9N5Pjos/v1MgC
+    aR5wI+7lZoWE6eRnTsQBXj6LTjI1Des/0nt1SuaKBHUclCoa0jT0vjmOR9+MlQ5m
+    G8jNuYL25MknBG5LVsrhEafZaHQkoiaX66fJQmDFuc9h6f5W9B1VvWGMLQBMGRll
+    uRFPZoPb2ZoezgPX5gM6cAWStHe7Il4Em1ddoRtvrK3+M3DevdXTELi4C69NQQS+
+    FMwHk3KCk1kWobWOx/7AWQnuZJNTdDJgdl1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524671458; bh=mfkUK
-    bqRHMW2V2malRDw95PkAzrMZwEdsecGQXj5oPk=; b=PIHJ914UTmS+TM9i1UBYW
-    5c8KhVMrBdFEUVrLBlBeZw/JwsuyX76y6UoIZf6bOYSIcNUoleMGpmqJWEh1n99Z
-    sBytO1zjBdcmGB6MWCW5fknw8PkoIS1ODQUzi6eW7z/9Fd6dWGMjNsOzNq5JBLwr
-    hYh70OmaghsWbWR70t8UZn+yOBk406caqa7yaUrF05jZEr5ot+JnTvGXgDbXZnkl
-    49FZVx0E7jBTJ79bThSi0JVIoPphiNXo5bYyRImiZ2jbh6vrfYh4d4JMGt4Sz/lE
-    Y6H3riDm/ZWxjxryFH7MQhVhyAWf2UXGCBNY0QyXhKFMLC7J/BuU/rlaNxzFuD/h
+    :content-transfer-encoding:sender; s=fm2; t=1524671453; bh=dCR8u
+    AYsEIodS96t7XmZdel2muGd4tGZ82tOcmnHA1c=; b=Wz3sKqd5fW1vhp7Yi0Tws
+    jaS9kOF0OlsZFoCibmhGGPXvCKrc1O3R0rwFt8aRb4TCmgM8Rz1oYllyH9JIvJDo
+    PTaMzdu0tteN3F0JYJybwVIKJ1gV8c9tpolmh/CytUZyMdnU3Q5D8q5KkZyBi2pB
+    Aj+ZNzi4dH9dHHEV4FDQX09svJwuorSb9OVl3dNGaX7dGsNJYHWR5ANBEojjCgOr
+    JLRp5bPNEzwWKzmSLBD02HoY6vHPfmLq9h1IXxSQ8UAiahf2SE18+nJ4okND5o/s
+    nh+xcvFVHsspLxlavIUEw5Tfhb1kZRQJtrFkkGhwdd+bp5fg7rr9PVsgO2rTmzoZ
     w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=GT0oREAy x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=JUqEBQmB x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=GT0oREAy x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=JUqEBQmB x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIkFSw/C2PBPBszsITN1eUfmbNlpIJ5xx24HufJ6AXeJJFTV1gA4/L5794DA6Uu4Eqf+T03qjHtTijsa/t2I96UgD9JHGA6zKv2TLmI3g+BpSUBk6MWQ
-    YiZlpl0EyWEyS69d4F0Xygt2xmIKeDqwz+0kQ52fD6KSpAKPHrL4CGJNB1P9fhboVLPzQ1BNkiQ2LVcleHqkToq3LzQJOspHEOHtu4dPXcJcjvw0Hvbsw9h2
-    I2bIulLiexiknjf2L2KeLg==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=-7TVv4NQSJcrZsNfVikA:9
+X-CM-Envelope: MS4wfEPG5xzCErJc75VO8Jo4zyF3Envck6D0CaUPVYXLwxTPGtYotiRYmsECEyuR48lFUaXNqA8XKwQjrK9VhrhSAw66Xdd1b+je5VPnSMznjwKRrCswpKSZ
+    etmycDM7av7nZpJgapF7lT+UqirtaatrDfRVHpo5HgFHhoMGnjdvyvEWxAgdhkMDFV01Sr2t5SPi9rR+xlLvUsHEI0t1lFVoZY2LC9JfM7mwbEaJH7/rhq9T
+    9FBcw/QiMo3wYRwKq7u9lA==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=c5d4c0_zl500DmvltOAA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -68,9 +68,9 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 23/40] jfs: simplify procfs code
-Date: Wed, 25 Apr 2018 17:48:10 +0200
-Message-Id: <20180425154827.32251-24-hch@lst.de>
+Subject: [PATCH 19/40] megaraid: simplify procfs code
+Date: Wed, 25 Apr 2018 17:48:06 +0200
+Message-Id: <20180425154827.32251-20-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425154827.32251-1-hch@lst.de>
 References: <20180425154827.32251-1-hch@lst.de>
@@ -106,260 +106,215 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Use remove_proc_subtree to remove the whole subtree on cleanup, and
 unwind the registration loop into individual calls.  Switch to use
-proc_create_seq where applicable.
+proc_create_single.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/jfs/jfs_debug.c    | 43 ++++++++++++++-----------------------------
- fs/jfs/jfs_debug.h    | 10 +++++-----
- fs/jfs/jfs_logmgr.c   | 14 +-------------
- fs/jfs/jfs_metapage.c | 14 +-------------
- fs/jfs/jfs_txnmgr.c   | 28 ++--------------------------
- fs/jfs/jfs_xtree.c    | 14 +-------------
- 6 files changed, 24 insertions(+), 99 deletions(-)
+ drivers/scsi/megaraid.c | 140 +++++++++++-----------------------------
+ drivers/scsi/megaraid.h |  12 ----
+ 2 files changed, 36 insertions(+), 116 deletions(-)
 
-diff --git a/fs/jfs/jfs_debug.c b/fs/jfs/jfs_debug.c
-index a70907606025..35a5b2a81ae0 100644
---- a/fs/jfs/jfs_debug.c
-+++ b/fs/jfs/jfs_debug.c
-@@ -29,7 +29,6 @@
+diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
+index 7195cff51d4c..91f5e2c68dbc 100644
+--- a/drivers/scsi/megaraid.c
++++ b/drivers/scsi/megaraid.c
+@@ -2731,53 +2731,6 @@ proc_show_rdrv_40(struct seq_file *m, void *v)
+ 	return proc_show_rdrv(m, m->private, 30, 39);
+ }
  
- #ifdef PROC_FS_JFS /* see jfs_debug.h */
- 
--static struct proc_dir_entry *base;
- #ifdef CONFIG_JFS_DEBUG
- static int jfs_loglevel_proc_show(struct seq_file *m, void *v)
- {
-@@ -66,43 +65,29 @@ static const struct file_operations jfs_loglevel_proc_fops = {
- };
- #endif
- 
--static struct {
--	const char	*name;
--	const struct file_operations *proc_fops;
--} Entries[] = {
--#ifdef CONFIG_JFS_STATISTICS
--	{ "lmstats",	&jfs_lmstats_proc_fops, },
--	{ "txstats",	&jfs_txstats_proc_fops, },
--	{ "xtstat",	&jfs_xtstat_proc_fops, },
--	{ "mpstat",	&jfs_mpstat_proc_fops, },
--#endif
--#ifdef CONFIG_JFS_DEBUG
--	{ "TxAnchor",	&jfs_txanchor_proc_fops, },
--	{ "loglevel",	&jfs_loglevel_proc_fops }
--#endif
--};
--#define NPROCENT	ARRAY_SIZE(Entries)
 -
- void jfs_proc_init(void)
+-/*
+- * seq_file wrappers for procfile show routines.
+- */
+-static int mega_proc_open(struct inode *inode, struct file *file)
+-{
+-	adapter_t *adapter = proc_get_parent_data(inode);
+-	int (*show)(struct seq_file *, void *) = PDE_DATA(inode);
+-
+-	return single_open(file, show, adapter);
+-}
+-
+-static const struct file_operations mega_proc_fops = {
+-	.open		= mega_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+-/*
+- * Table of proc files we need to create.
+- */
+-struct mega_proc_file {
+-	const char *name;
+-	unsigned short ptr_offset;
+-	int (*show) (struct seq_file *m, void *v);
+-};
+-
+-static const struct mega_proc_file mega_proc_files[] = {
+-	{ "config",	      offsetof(adapter_t, proc_read), proc_show_config },
+-	{ "stat",	      offsetof(adapter_t, proc_stat), proc_show_stat },
+-	{ "mailbox",	      offsetof(adapter_t, proc_mbox), proc_show_mbox },
+-#if MEGA_HAVE_ENH_PROC
+-	{ "rebuild-rate",     offsetof(adapter_t, proc_rr), proc_show_rebuild_rate },
+-	{ "battery-status",   offsetof(adapter_t, proc_battery), proc_show_battery },
+-	{ "diskdrives-ch0",   offsetof(adapter_t, proc_pdrvstat[0]), proc_show_pdrv_ch0 },
+-	{ "diskdrives-ch1",   offsetof(adapter_t, proc_pdrvstat[1]), proc_show_pdrv_ch1 },
+-	{ "diskdrives-ch2",   offsetof(adapter_t, proc_pdrvstat[2]), proc_show_pdrv_ch2 },
+-	{ "diskdrives-ch3",   offsetof(adapter_t, proc_pdrvstat[3]), proc_show_pdrv_ch3 },
+-	{ "raiddrives-0-9",   offsetof(adapter_t, proc_rdrvstat[0]), proc_show_rdrv_10 },
+-	{ "raiddrives-10-19", offsetof(adapter_t, proc_rdrvstat[1]), proc_show_rdrv_20 },
+-	{ "raiddrives-20-29", offsetof(adapter_t, proc_rdrvstat[2]), proc_show_rdrv_30 },
+-	{ "raiddrives-30-39", offsetof(adapter_t, proc_rdrvstat[3]), proc_show_rdrv_40 },
+-#endif
+-	{ NULL }
+-};
+-
+ /**
+  * mega_create_proc_entry()
+  * @index - index in soft state array
+@@ -2788,31 +2741,45 @@ static const struct mega_proc_file mega_proc_files[] = {
+ static void
+ mega_create_proc_entry(int index, struct proc_dir_entry *parent)
  {
--	int i;
-+	struct proc_dir_entry *base;
+-	const struct mega_proc_file *f;
+-	adapter_t	*adapter = hba_soft_state[index];
+-	struct proc_dir_entry	*dir, *de, **ppde;
+-	u8		string[16];
++	adapter_t *adapter = hba_soft_state[index];
++	struct proc_dir_entry *dir;
++	u8 string[16];
  
--	if (!(base = proc_mkdir("fs/jfs", NULL)))
-+	base = proc_mkdir("fs/jfs", NULL);
-+	if (!base)
+ 	sprintf(string, "hba%d", adapter->host->host_no);
+-
+-	dir = adapter->controller_proc_dir_entry =
+-		proc_mkdir_data(string, 0, parent, adapter);
+-	if(!dir) {
++	dir = proc_mkdir_data(string, 0, parent, adapter);
++	if (!dir) {
+ 		dev_warn(&adapter->dev->dev, "proc_mkdir failed\n");
  		return;
+ 	}
  
--	for (i = 0; i < NPROCENT; i++)
--		proc_create(Entries[i].name, 0, base, Entries[i].proc_fops);
-+#ifdef CONFIG_JFS_STATISTICS
-+	proc_create_single("lmstats", 0, base, jfs_lmstats_proc_show);
-+	proc_create_single("txstats", 0, base, jfs_txstats_proc_show);
-+	proc_create_single("xtstat", 0, base, jfs_xtstat_proc_show);
-+	proc_create_single("mpstat", 0, base, jfs_mpstat_proc_show);
-+#endif
-+#ifdef CONFIG_JFS_DEBUG
-+	proc_create_single("TxAnchor", 0, base, jfs_txanchor_proc_show);
-+	proc_create("loglevel", 0, base, &jfs_loglevel_proc_fops);
-+#endif
- }
- 
- void jfs_proc_clean(void)
- {
--	int i;
+-	for (f = mega_proc_files; f->name; f++) {
+-		de = proc_create_data(f->name, S_IRUSR, dir, &mega_proc_fops,
+-				      f->show);
+-		if (!de) {
+-			dev_warn(&adapter->dev->dev, "proc_create failed\n");
+-			return;
+-		}
 -
--	if (base) {
--		for (i = 0; i < NPROCENT; i++)
--			remove_proc_entry(Entries[i].name, base);
--		remove_proc_entry("fs/jfs", NULL);
+-		ppde = (void *)adapter + f->ptr_offset;
+-		*ppde = de;
 -	}
-+	remove_proc_subtree("fs/jfs", NULL);
++	proc_create_single_data("config", S_IRUSR, dir,
++			proc_show_config, adapter);
++	proc_create_single_data("stat", S_IRUSR, dir,
++			proc_show_stat, adapter);
++	proc_create_single_data("mailbox", S_IRUSR, dir,
++			proc_show_mbox, adapter);
++#if MEGA_HAVE_ENH_PROC
++	proc_create_single_data("rebuild-rate", S_IRUSR, dir,
++			proc_show_rebuild_rate, adapter);
++	proc_create_single_data("battery-status", S_IRUSR, dir,
++			proc_show_battery, adapter);
++	proc_create_single_data("diskdrives-ch0", S_IRUSR, dir,
++			proc_show_pdrv_ch0, adapter);
++	proc_create_single_data("diskdrives-ch1", S_IRUSR, dir,
++			proc_show_pdrv_ch1, adapter);
++	proc_create_single_data("diskdrives-ch2", S_IRUSR, dir,
++			proc_show_pdrv_ch2, adapter);
++	proc_create_single_data("diskdrives-ch3", S_IRUSR, dir,
++			proc_show_pdrv_ch3, adapter);
++	proc_create_single_data("raiddrives-0-9", S_IRUSR, dir,
++			proc_show_rdrv_10, adapter);
++	proc_create_single_data("raiddrives-10-19", S_IRUSR, dir,
++			proc_show_rdrv_20, adapter);
++	proc_create_single_data("raiddrives-20-29", S_IRUSR, dir,
++			proc_show_rdrv_30, adapter);
++	proc_create_single_data("raiddrives-30-39", S_IRUSR, dir,
++			proc_show_rdrv_40, adapter);
++#endif
  }
  
- #endif /* PROC_FS_JFS */
-diff --git a/fs/jfs/jfs_debug.h b/fs/jfs/jfs_debug.h
-index eafd1300a00b..0d9e35da8462 100644
---- a/fs/jfs/jfs_debug.h
-+++ b/fs/jfs/jfs_debug.h
-@@ -62,7 +62,7 @@ extern void jfs_proc_clean(void);
- 
- extern int jfsloglevel;
- 
--extern const struct file_operations jfs_txanchor_proc_fops;
-+int jfs_txanchor_proc_show(struct seq_file *m, void *v);
- 
- /* information message: e.g., configuration, major event */
- #define jfs_info(fmt, arg...) do {			\
-@@ -105,10 +105,10 @@ extern const struct file_operations jfs_txanchor_proc_fops;
-  *	----------
-  */
- #ifdef	CONFIG_JFS_STATISTICS
--extern const struct file_operations jfs_lmstats_proc_fops;
--extern const struct file_operations jfs_txstats_proc_fops;
--extern const struct file_operations jfs_mpstat_proc_fops;
--extern const struct file_operations jfs_xtstat_proc_fops;
-+int jfs_lmstats_proc_show(struct seq_file *m, void *v);
-+int jfs_txstats_proc_show(struct seq_file *m, void *v);
-+int jfs_mpstat_proc_show(struct seq_file *m, void *v);
-+int jfs_xtstat_proc_show(struct seq_file *m, void *v);
- 
- #define	INCREMENT(x)		((x)++)
- #define	DECREMENT(x)		((x)--)
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index 0e5d412c0b01..6b68df395892 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -2493,7 +2493,7 @@ int lmLogFormat(struct jfs_log *log, s64 logAddress, int logSize)
- }
- 
- #ifdef CONFIG_JFS_STATISTICS
--static int jfs_lmstats_proc_show(struct seq_file *m, void *v)
-+int jfs_lmstats_proc_show(struct seq_file *m, void *v)
+ #else
+@@ -4580,6 +4547,7 @@ megaraid_remove_one(struct pci_dev *pdev)
  {
- 	seq_printf(m,
- 		       "JFS Logmgr stats\n"
-@@ -2510,16 +2510,4 @@ static int jfs_lmstats_proc_show(struct seq_file *m, void *v)
- 		       lmStat.partial_page);
- 	return 0;
- }
--
--static int jfs_lmstats_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_lmstats_proc_show, NULL);
--}
--
--const struct file_operations jfs_lmstats_proc_fops = {
--	.open		= jfs_lmstats_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
- #endif /* CONFIG_JFS_STATISTICS */
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 1a3b0cc22ad3..fa2c6824c7f2 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -815,7 +815,7 @@ void __invalidate_metapages(struct inode *ip, s64 addr, int len)
- }
+ 	struct Scsi_Host *host = pci_get_drvdata(pdev);
+ 	adapter_t *adapter = (adapter_t *)host->hostdata;
++	char buf[12] = { 0 };
  
- #ifdef CONFIG_JFS_STATISTICS
--static int jfs_mpstat_proc_show(struct seq_file *m, void *v)
-+int jfs_mpstat_proc_show(struct seq_file *m, void *v)
- {
- 	seq_printf(m,
- 		       "JFS Metapage statistics\n"
-@@ -828,16 +828,4 @@ static int jfs_mpstat_proc_show(struct seq_file *m, void *v)
- 		       mpStat.lockwait);
- 	return 0;
- }
--
--static int jfs_mpstat_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_mpstat_proc_show, NULL);
--}
--
--const struct file_operations jfs_mpstat_proc_fops = {
--	.open		= jfs_mpstat_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
- #endif
-diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
-index 4d973524c887..a5663cb621d8 100644
---- a/fs/jfs/jfs_txnmgr.c
-+++ b/fs/jfs/jfs_txnmgr.c
-@@ -2998,7 +2998,7 @@ int jfs_sync(void *arg)
- }
+ 	scsi_remove_host(host);
  
- #if defined(CONFIG_PROC_FS) && defined(CONFIG_JFS_DEBUG)
--static int jfs_txanchor_proc_show(struct seq_file *m, void *v)
-+int jfs_txanchor_proc_show(struct seq_file *m, void *v)
- {
- 	char *freewait;
- 	char *freelockwait;
-@@ -3032,22 +3032,10 @@ static int jfs_txanchor_proc_show(struct seq_file *m, void *v)
- 		       list_empty(&TxAnchor.unlock_queue) ? "" : "not ");
- 	return 0;
- }
+@@ -4594,44 +4562,8 @@ megaraid_remove_one(struct pci_dev *pdev)
+ 
+ 	mega_free_sgl(adapter);
+ 
+-#ifdef CONFIG_PROC_FS
+-	if (adapter->controller_proc_dir_entry) {
+-		remove_proc_entry("stat", adapter->controller_proc_dir_entry);
+-		remove_proc_entry("config",
+-				adapter->controller_proc_dir_entry);
+-		remove_proc_entry("mailbox",
+-				adapter->controller_proc_dir_entry);
+-#if MEGA_HAVE_ENH_PROC
+-		remove_proc_entry("rebuild-rate",
+-				adapter->controller_proc_dir_entry);
+-		remove_proc_entry("battery-status",
+-				adapter->controller_proc_dir_entry);
 -
--static int jfs_txanchor_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_txanchor_proc_show, NULL);
--}
+-		remove_proc_entry("diskdrives-ch0",
+-				adapter->controller_proc_dir_entry);
+-		remove_proc_entry("diskdrives-ch1",
+-				adapter->controller_proc_dir_entry);
+-		remove_proc_entry("diskdrives-ch2",
+-				adapter->controller_proc_dir_entry);
+-		remove_proc_entry("diskdrives-ch3",
+-				adapter->controller_proc_dir_entry);
 -
--const struct file_operations jfs_txanchor_proc_fops = {
--	.open		= jfs_txanchor_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
+-		remove_proc_entry("raiddrives-0-9",
+-				adapter->controller_proc_dir_entry);
+-		remove_proc_entry("raiddrives-10-19",
+-				adapter->controller_proc_dir_entry);
+-		remove_proc_entry("raiddrives-20-29",
+-				adapter->controller_proc_dir_entry);
+-		remove_proc_entry("raiddrives-30-39",
+-				adapter->controller_proc_dir_entry);
+-#endif
+-		{
+-			char	buf[12] = { 0 };
+-			sprintf(buf, "hba%d", adapter->host->host_no);
+-			remove_proc_entry(buf, mega_proc_dir_entry);
+-		}
+-	}
+-#endif
++	sprintf(buf, "hba%d", adapter->host->host_no);
++	remove_proc_subtree(buf, mega_proc_dir_entry);
+ 
+ 	pci_free_consistent(adapter->dev, MEGA_BUFFER_SIZE,
+ 			adapter->mega_buffer, adapter->buf_dma_handle);
+diff --git a/drivers/scsi/megaraid.h b/drivers/scsi/megaraid.h
+index 21eba2fd465a..18e85d9267ff 100644
+--- a/drivers/scsi/megaraid.h
++++ b/drivers/scsi/megaraid.h
+@@ -814,18 +814,6 @@ typedef struct {
+ 
+ #ifdef CONFIG_PROC_FS
+ 	struct proc_dir_entry	*controller_proc_dir_entry;
+-	struct proc_dir_entry	*proc_read;
+-	struct proc_dir_entry	*proc_stat;
+-	struct proc_dir_entry	*proc_mbox;
+-
+-#if MEGA_HAVE_ENH_PROC
+-	struct proc_dir_entry	*proc_rr;
+-	struct proc_dir_entry	*proc_battery;
+-#define MAX_PROC_CHANNELS	4
+-	struct proc_dir_entry	*proc_pdrvstat[MAX_PROC_CHANNELS];
+-	struct proc_dir_entry	*proc_rdrvstat[MAX_PROC_CHANNELS];
+-#endif
+-
  #endif
  
- #if defined(CONFIG_PROC_FS) && defined(CONFIG_JFS_STATISTICS)
--static int jfs_txstats_proc_show(struct seq_file *m, void *v)
-+int jfs_txstats_proc_show(struct seq_file *m, void *v)
- {
- 	seq_printf(m,
- 		       "JFS TxStats\n"
-@@ -3072,16 +3060,4 @@ static int jfs_txstats_proc_show(struct seq_file *m, void *v)
- 		       TxStat.txLockAlloc_freelock);
- 	return 0;
- }
--
--static int jfs_txstats_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_txstats_proc_show, NULL);
--}
--
--const struct file_operations jfs_txstats_proc_fops = {
--	.open		= jfs_txstats_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
- #endif
-diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
-index 5cde6d2fcfca..2c200b5256a6 100644
---- a/fs/jfs/jfs_xtree.c
-+++ b/fs/jfs/jfs_xtree.c
-@@ -3874,7 +3874,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, s64 committed_size)
- }
- 
- #ifdef CONFIG_JFS_STATISTICS
--static int jfs_xtstat_proc_show(struct seq_file *m, void *v)
-+int jfs_xtstat_proc_show(struct seq_file *m, void *v)
- {
- 	seq_printf(m,
- 		       "JFS Xtree statistics\n"
-@@ -3887,16 +3887,4 @@ static int jfs_xtstat_proc_show(struct seq_file *m, void *v)
- 		       xtStat.split);
- 	return 0;
- }
--
--static int jfs_xtstat_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_xtstat_proc_show, NULL);
--}
--
--const struct file_operations jfs_xtstat_proc_fops = {
--	.open		= jfs_xtstat_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
- #endif
+ 	int	has_64bit_addr;		/* are we using 64-bit addressing */
 -- 
 2.17.0
 
