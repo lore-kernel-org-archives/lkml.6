@@ -1,125 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751242AbeDYBPz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 21:15:55 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:50214 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeDYBPx (ORCPT
+        id S1751195AbeDYBkF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 21:40:05 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:57237 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750791AbeDYBkD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 21:15:53 -0400
-X-IronPort-AV: E=Sophos;i="5.49,325,1520870400";
-   d="scan'208";a="77343105"
-Subject: Re: [PATCH v5 0/2] perf: riscv: Preliminary Perf Event Support on
- RISC-V
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: "alankao@andestech.com" <alankao@andestech.com>,
-        "albert@sifive.com" <albert@sifive.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "alexander.shishkin@linux.intel.com"
-        <alexander.shishkin@linux.intel.com>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "sols@sifive.com" <sols@sifive.com>, "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "greentime@andestech.com" <greentime@andestech.com>,
-        "nickhu@andestech.com" <nickhu@andestech.com>
-References: <mhng-0abe4f84-0dd3-437c-8cf2-b87def246796@palmer-si-x1c4>
-From: Atish Patra <atish.patra@wdc.com>
-Message-ID: <6b211b64-5c17-2884-5b6a-6ff1d3287b16@wdc.com>
-Date: Tue, 24 Apr 2018 18:15:49 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Tue, 24 Apr 2018 21:40:03 -0400
+X-Google-Smtp-Source: AB8JxZoEGgwO/vzvTWW/ZK1n57h9IMWCqTENc1FLJcDJDSbbsaUbzcXxT6o1Akw9DxSsR4MigHuKDRNyqOn+nVrTDUiCWsmuPrau
 MIME-Version: 1.0
-In-Reply-To: <mhng-0abe4f84-0dd3-437c-8cf2-b87def246796@palmer-si-x1c4>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Date: Tue, 24 Apr 2018 18:40:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007e9256056aa2590a@google.com>
+Subject: general protection fault in smc_set_keepalive
+From: syzbot <syzbot+cf9012c597c8379d535c@syzkaller.appspotmail.com>
+To: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/24/18 5:29 PM, Palmer Dabbelt wrote:
-> On Tue, 24 Apr 2018 15:16:16 PDT (-0700), atish.patra@wdc.com wrote:
->> On 4/24/18 12:44 PM, Palmer Dabbelt wrote:
->>> On Tue, 24 Apr 2018 12:27:26 PDT (-0700), atish.patra@wdc.com wrote:
->>>> On 4/24/18 11:07 AM, Atish Patra wrote:
->>>>> On 4/19/18 4:28 PM, Alan Kao wrote:
->>>>> However, I got an rcu-stall for the test "47: Event times".
->>>>> # ./perf test -v 47
->>>> Got it working. The test tries to attach the event to CPU0 which doesn't
->>>> exist in HighFive Unleashed. Changing it to cpu1 works.
->>>>
->>>> diff --git a/tools/perf/tests/event-times.c b/tools/perf/tests/event-times.c
->>>> index 1a2686f..eb11632f 100644
->>>> --- a/tools/perf/tests/event-times.c
->>>> +++ b/tools/perf/tests/event-times.c
->>>> @@ -113,9 +113,9 @@ static int attach__cpu_disabled(struct perf_evlist
->>>> *evlist)
->>>>            struct cpu_map *cpus;
->>>>            int err;
->>>>
->>>> -       pr_debug("attaching to CPU 0 as enabled\n");
->>>> +       pr_debug("attaching to CPU 1 as disabled\n");
->>>>
->>>> -       cpus = cpu_map__new("0");
->>>> +       cpus = cpu_map__new("1");
->>>>            if (cpus == NULL) {
->>>>                    pr_debug("failed to call cpu_map__new\n");
->>>>                    return -1;
->>>> @@ -142,9 +142,9 @@ static int attach__cpu_enabled(struct perf_evlist
->>>> *evlist)
->>>>            struct cpu_map *cpus;
->>>>            int err;
->>>>
->>>> -       pr_debug("attaching to CPU 0 as enabled\n");
->>>> +       pr_debug("attaching to CPU 1 as enabled\n");
->>>>
->>>> -       cpus = cpu_map__new("0");
->>>> +       cpus = cpu_map__new("1");
->>>>            if (cpus == NULL) {
->>>>                    pr_debug("failed to call cpu_map__new\n");
->>>>                    return -1;
->>>>
->>>>
->>>> Palmer,
->>>> Would it be better to officially document it somewhere that CPU0 doesn't
->>>> exist in the HighFive Unleashed board ?
->>>> I fear that there will be other standard tests/code path that may fail
->>>> because of inherent assumption of cpu0 presence.
->>>
->>> I think the best way to fix this is to just have BBL (or whatever the
->>> bootloader is) renumber the CPUs so they're contiguous and begin with 0.
->>
->> Do you mean BBL will update the device tree that kernel eventually parse
->> and set the hart id?
->> Sounds good to me unless it acts as a big hack in future boot loaders.
-> 
-> Right now the machine-mode and supervisor-mode hart IDs are logically separate:
-> the bootloader just provides the hart ID as a register argument when starting
-> the kernel.
+Hello,
 
-Yes.
+syzbot hit the following crash on net-next commit
+9c20b9372fbaf6f7d4c05f5f925806a7928f0c73 (Tue Apr 24 03:08:41 2018 +0000)
+net: fib_rules: fix l3mdev netlink attr processing
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=cf9012c597c8379d535c
 
-   BBL already needs to enumerate the harts by looking through the
-> device tree for various other reasons (at least to mask off the harts that
-> Linux doesn't support), so it's not that much effort to just maintain a mapping
-> from supervisor-mode hart IDs to machine-mode hart IDs.
-> 
+So far this crash happened 2 times on net-next.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4775309383565312
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=4978230683500544
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=4770663504019456
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-2918904850634584293
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-But Linux also parses the device tree to get hart ID in 
-riscv_of_processor_hart(). This is used to setup the possible/present 
-cpu map in setup_smp().
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+cf9012c597c8379d535c@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-Thus, Linux also need to see a device tree with cpu0-3 instead of 
-cpu1-4. Otherwise, present cpu map will be incorrect. Isn't it ?
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4455 Comm: syz-executor060 Not tainted 4.17.0-rc1+ #17
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:smc_set_keepalive+0x4e/0xd0 net/smc/af_smc.c:59
+RSP: 0018:ffff8801ced8fa68 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff85d72bcb
+RDX: 0000000000000004 RSI: ffffffff873f0a94 RDI: 0000000000000020
+RBP: ffff8801ced8fa80 R08: ffff8801b67e44c0 R09: 0000000000000006
+R10: ffff8801b67e44c0 R11: 0000000000000000 R12: ffff8801b6bff7c0
+R13: 0000000000000001 R14: 0000000000000003 R15: ffff8801aee2b540
+FS:  00000000009e4880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000040 CR3: 00000001b6e75000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  sock_setsockopt+0x14e2/0x1fe0 net/core/sock.c:801
+  __sys_setsockopt+0x2df/0x390 net/socket.c:1899
+  __do_sys_setsockopt net/socket.c:1914 [inline]
+  __se_sys_setsockopt net/socket.c:1911 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x43fcf9
+RSP: 002b:00007ffe62977a78 EFLAGS: 00000217 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fcf9
+RDX: 0000000000000009 RSI: 0000000000000001 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000004 R09: 00000000004002c8
+R10: 0000000020000040 R11: 0000000000000217 R12: 0000000000401620
+R13: 00000000004016b0 R14: 0000000000000000 R15: 0000000000000000
+Code: ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 78 48 8b 9b 50 04 00 00 48  
+b8 00 00 00 00 00 fc ff df 48 8d 7b 20 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
+75 6b 48 b8 00 00 00 00 00 fc ff df 48 8b 5b 20 48
+RIP: smc_set_keepalive+0x4e/0xd0 net/smc/af_smc.c:59 RSP: ffff8801ced8fa68
+---[ end trace a76f9ed0fb111068 ]---
 
-> I have some patches floating around that do this, but appear to do it
-> incorrectly enough that nothing boots so maybe I'm missing something that makes
-> this complicated :).
-> 
 
-Just a wild guess: May be the because of the above reason ;)
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
