@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AB8JxZp7ZbuY4xk2eq6f6KU8Spr2H1CHPBy2MSEX02aNRUbDGFUrWroUGpqqSVH+P/mWg44lSYuH
-ARC-Seal: i=1; a=rsa-sha256; t=1524652805; cv=none;
+X-Google-Smtp-Source: AIpwx48s3TJWFBosKURkf/wom8h7c8cXIJtllBruJO41Q51SVlK/M5VIA6jXr0z87OTL8EDMcDB8
+ARC-Seal: i=1; a=rsa-sha256; t=1524652801; cv=none;
         d=google.com; s=arc-20160816;
-        b=DsifStu0rqpvqMd/rPO/Cs2UlBjvMPbikP6RDmkjHG9C48giUMmbJMdUgMCVReysoV
-         EdzXir3FPG/BGWTr2Qjc4UMauFpV3Q3HSbp2FpK5/lbfOlmZAEHcmPv9GYrI770dgP3m
-         QNfvxzcDPc0Fs9vRxr6solzIq80bD2B8ObbTDBG7RFoXDgYMgDce6eBmiInisu3lf7YT
-         o/JMLbtTkRRoT6ZLg3HbTCPEVr3Zgndg9cVL84HMybV9LkXXDV8oVyAtqiXqdwzIUpSP
-         02J5l403csCJuA0kLxVbhmKojePhFvWDFBaBnbdYQsvkn+oQRbuAumFUNdwhF7/g3TQZ
-         pbxw==
+        b=ahL1cA5u/1fdtxL4i4bsiPOpdOpfmRCysul+/x2Pa/grZ7zYk+cknlCnMcbzxn6joN
+         cmOgDav/LwUqQB3gIYJozy8P77OvRe8LbLlVu4tN9XfqMzDxuscTW+vFQYPzwjdSyJ9D
+         q4tVmgheYOjZM4uZNd5qsgCUng+vOBMgYcIl1TZsIOy4uAqxXxvb7+u3fHmNnU519LTM
+         aKHbuzDxjOqqoXf2lJ8sBqDpnqNsqGoyM4iwM4849LoDwOkagNSdPbl5UnEzajNF6CV+
+         yL7ts6s+BKrRSLCo76n/gh6e+3T13Hvex6b+1ShfzmQ0Ss8wtoVG8Aly/RgyAGw3Ati/
+         SF2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=s96vCf6OqJV8EFfBCEgBqoF+Ixl+3ZrlWhcqwRtqS4k=;
-        b=W1QxJ8kCaCvBVK4RhN3vhb3immqlQukK8YLG3nFnhrjRfO9lsBD8n2NCkrmnadNXc8
-         VIE7jze8UVNhDHViDoHOU+Q+UmhSvduxHFsXKoK4+ECMlmfyiAzlajsTdOo28hqcx+3F
-         VsQLYaboqlfxh7gbc3k+3459e0zldNfSVSi/Y6i/uZrCfOc+ANoAtoL0w3GGZLP1QRGh
-         gXwwAALRrtTHAKRckGWMPll958i+QtVMmWnWwuqN86h64DgknWQIGT1hrrq1d8cmsbPZ
-         /HV4Po+4KbvnX28imoeKtP7lVlvweO0e9HO9j4qOqhfipz1hay9BsIivFM2a969kTVoP
-         VZGg==
+        bh=KDmQ+cLF/aOMl6b962Mfb1np45o/kWMCvpmOh2My6tk=;
+        b=SckTyfhxAa4NH/N0Yw8+IicDkRJnKvJ2MXRz8ffq+I9fkUWCsvL3Tc/HWNvJgQi0/M
+         61NoxYA77VleyF1tDYy3KMIqcCHuggKERuY0RoHNEHcVzTexlBG4vHvKAaHYHnTKalSZ
+         deW0StQs1NhO56z2FjNffR7a6W8tX9dpagMIOzqDOEwjKRYbg6V4JA8IolbC8+NhNLwj
+         xqkxHbLx+C0sUSlWjy8DHYgjuIB/SZDfeRWlzPLHFy0oQN2JysFqWNO2D8W8/89CUIpw
+         F2BSnXO4fP4xMicuRurrzBqkJ2snfvauIvr/UTBD8JfSojtHCriU9IMt/VJ5wJxm4Bfj
+         RuDA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	David Vallender <david.vallender@landmark.co.uk>,
+	Liu Bo <bo.li.liu@oracle.com>,
+	Josef Bacik <jbacik@fb.com>,
+	David Sterba <dsterba@suse.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 076/183] block: Set BIO_TRACE_COMPLETION on new bio during split
-Date: Wed, 25 Apr 2018 12:34:56 +0200
-Message-Id: <20180425103245.563519448@linuxfoundation.org>
+Subject: [PATCH 4.14 067/183] Btrfs: fix unexpected EEXIST from btrfs_get_extent
+Date: Wed, 25 Apr 2018 12:34:47 +0200
+Message-Id: <20180425103245.212722093@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714340052963913?=
-X-GMAIL-MSGID: =?utf-8?q?1598714340052963913?=
+X-GMAIL-THRID: =?utf-8?q?1598714336320608425?=
+X-GMAIL-MSGID: =?utf-8?q?1598714336320608425?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,31 +52,148 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+From: Liu Bo <bo.li.liu@oracle.com>
 
 
-[ Upstream commit 20d59023c5ec4426284af492808bcea1f39787ef ]
+[ Upstream commit 18e83ac75bfe67009c4ddcdd581bba8eb16f4030 ]
 
-We inadvertently set it again on the source bio, but we need
-to set it on the new split bio instead.
+This fixes a corner case that is caused by a race of dio write vs dio
+read/write.
 
-Fixes: fbbaf700e7b1 ("block: trace completion of all bios.")
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Here is how the race could happen.
+
+Suppose that no extent map has been loaded into memory yet.
+There is a file extent [0, 32K), two jobs are running concurrently
+against it, t1 is doing dio write to [8K, 32K) and t2 is doing dio
+read from [0, 4K) or [4K, 8K).
+
+t1 goes ahead of t2 and splits em [0, 32K) to em [0K, 8K) and [8K 32K).
+
+------------------------------------------------------
+             t1                                t2
+      btrfs_get_blocks_direct()         btrfs_get_blocks_direct()
+       -> btrfs_get_extent()              -> btrfs_get_extent()
+           -> lookup_extent_mapping()
+           -> add_extent_mapping()            -> lookup_extent_mapping()
+              # load [0, 32K)
+       -> btrfs_new_extent_direct()
+           -> btrfs_drop_extent_cache()
+              # split [0, 32K) and
+	      # drop [8K, 32K)
+           -> add_extent_mapping()
+              # add [8K, 32K)
+                                              -> add_extent_mapping()
+                                                 # handle -EEXIST when adding
+                                                 # [0, 32K)
+------------------------------------------------------
+About how t2(dio read/write) runs into -EEXIST:
+
+a) add_extent_mapping() gets -EEXIST for adding em [0, 32k),
+
+b) search_extent_mapping() then returns [0, 8k) as the existing em,
+   even though start == existing->start, em is [0, 32k) so that
+   extent_map_end(em) > extent_map_end(existing), i.e. 32k > 8k,
+
+c) then it goes thru merge_extent_mapping() which tries to add a [8k, 8k)
+   (with a length 0) and returns -EEXIST as [8k, 32k) is already in tree,
+
+d) so btrfs_get_extent() ends up returning -EEXIST to dio read/write,
+   which is confusing applications.
+
+Here I conclude all the possible situations,
+1) start < existing->start
+
+            +-----------+em+-----------+
++--prev---+ |     +-------------+      |
+|         | |     |             |      |
++---------+ +     +---+existing++      ++
+                +
+                |
+                +
+             start
+
+2) start == existing->start
+
+      +------------em------------+
+      |     +-------------+      |
+      |     |             |      |
+      +     +----existing-+      +
+            |
+            |
+            +
+         start
+
+3) start > existing->start && start < (existing->start + existing->len)
+
+      +------------em------------+
+      |     +-------------+      |
+      |     |             |      |
+      +     +----existing-+      +
+               |
+               |
+               +
+             start
+
+4) start >= (existing->start + existing->len)
+
++-----------+em+-----------+
+|     +-------------+      | +--next---+
+|     |             |      | |         |
++     +---+existing++      + +---------+
+                      +
+                      |
+                      +
+                   start
+
+As we can see, it turns out that if start is within existing em (front
+inclusive), then the existing em should be returned as is, otherwise,
+we try our best to merge candidate em with sibling ems to form a
+larger em (in order to reduce the total number of em).
+
+Reported-by: David Vallender <david.vallender@landmark.co.uk>
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/bio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/inode.c |   17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1893,7 +1893,7 @@ struct bio *bio_split(struct bio *bio, i
- 	bio_advance(bio, split->bi_iter.bi_size);
- 
- 	if (bio_flagged(bio, BIO_TRACE_COMPLETION))
--		bio_set_flag(bio, BIO_TRACE_COMPLETION);
-+		bio_set_flag(split, BIO_TRACE_COMPLETION);
- 
- 	return split;
- }
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -7265,19 +7265,12 @@ insert:
+ 		 * existing will always be non-NULL, since there must be
+ 		 * extent causing the -EEXIST.
+ 		 */
+-		if (existing->start == em->start &&
+-		    extent_map_end(existing) >= extent_map_end(em) &&
+-		    em->block_start == existing->block_start) {
+-			/*
+-			 * The existing extent map already encompasses the
+-			 * entire extent map we tried to add.
+-			 */
++		if (start >= existing->start &&
++		    start < extent_map_end(existing)) {
+ 			free_extent_map(em);
+ 			em = existing;
+ 			err = 0;
+-
+-		} else if (start >= extent_map_end(existing) ||
+-		    start <= existing->start) {
++		} else {
+ 			/*
+ 			 * The existing extent map is the one nearest to
+ 			 * the [start, start + len) range which overlaps
+@@ -7289,10 +7282,6 @@ insert:
+ 				free_extent_map(em);
+ 				em = NULL;
+ 			}
+-		} else {
+-			free_extent_map(em);
+-			em = existing;
+-			err = 0;
+ 		}
+ 	}
+ 	write_unlock(&em_tree->lock);
