@@ -1,70 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeDYHJK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 03:09:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54060 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeDYHJH (ORCPT
+        id S1751510AbeDYHJT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 03:09:19 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:46767 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750941AbeDYHJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 03:09:07 -0400
-Date: Wed, 25 Apr 2018 00:09:05 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180425070905.GA24827@infradead.org>
-References: <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
- <20180420124625.GA31078@infradead.org>
- <20180420152111.GR31310@phenom.ffwll.local>
- <20180424184847.GA3247@infradead.org>
- <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org>
- <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
- <20180425064335.GB28100@infradead.org>
- <CAKMK7uGF7p5ko=i6zL4dn0qR-5TVRKMi6xaCGSao_vyfJU+dWQ@mail.gmail.com>
+        Wed, 25 Apr 2018 03:09:14 -0400
+X-Google-Smtp-Source: AB8JxZprzHe0kJZRd/Kk19eKWZn7ZTHnxuY0nHfyR++ytjH++HNVLmvfKezL0yEAknFBl3iAT+9mxw==
+Date: Wed, 25 Apr 2018 00:09:12 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Souptick Joarder <jrdr.linux@gmail.com>
+cc: akpm@linux-foundation.org, zi.yan@cs.rutgers.edu,
+        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
+        ross.zwisler@linux.intel.com, n-horiguchi@ah.jp.nec.com,
+        mhocko@suse.com, shli@fb.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm: huge_memory: Change return type to vm_fault_t
+In-Reply-To: <20180425044326.GA21504@jordon-HP-15-Notebook-PC>
+Message-ID: <alpine.DEB.2.21.1804250006120.51102@chino.kir.corp.google.com>
+References: <20180425044326.GA21504@jordon-HP-15-Notebook-PC>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uGF7p5ko=i6zL4dn0qR-5TVRKMi6xaCGSao_vyfJU+dWQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 09:02:17AM +0200, Daniel Vetter wrote:
-> Can we please not nack everything right away? Doesn't really motivate
-> me to show you all the various things we're doing in gpu to make the
-> dma layer work for us. That kind of noodling around in lower levels to
-> get them to do what we want is absolutely par-for-course for gpu
-> drivers. If you just nack everything I point you at for illustrative
-> purposes, then I can't show you stuff anymore.
+On Wed, 25 Apr 2018, Souptick Joarder wrote:
 
-No, it's not.  No driver (and that includes the magic GPUs) has
-any business messing with dma ops directly.
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+> 
+> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+> v2: Updated the change log
+> 
+>  include/linux/huge_mm.h | 5 +++--
+>  mm/huge_memory.c        | 4 ++--
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index a8a1262..d3bbf6b 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -3,6 +3,7 @@
+>  #define _LINUX_HUGE_MM_H
+>  
+>  #include <linux/sched/coredump.h>
+> +#include <linux/mm_types.h>
+>  
+>  #include <linux/fs.h> /* only for vma_is_dax() */
+>  
+> @@ -46,9 +47,9 @@ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+>  extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>  			unsigned long addr, pgprot_t newprot,
+>  			int prot_numa);
+> -int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+> +vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  			pmd_t *pmd, pfn_t pfn, bool write);
+> -int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+> +vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>  			pud_t *pud, pfn_t pfn, bool write);
+>  enum transparent_hugepage_flag {
+>  	TRANSPARENT_HUGEPAGE_FLAG,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 87ab9b8..1fe4705 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -755,7 +755,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  	spin_unlock(ptl);
+>  }
+>  
+> -int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+> +vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  			pmd_t *pmd, pfn_t pfn, bool write)
+>  {
+>  	pgprot_t pgprot = vma->vm_page_prot;
+> @@ -815,7 +815,7 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>  	spin_unlock(ptl);
+>  }
+>  
+> -int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+> +vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>  			pud_t *pud, pfn_t pfn, bool write)
+>  {
+>  	pgprot_t pgprot = vma->vm_page_prot;
 
-A GPU driver imght have a very valid reason to disable the IOMMU,
-but the code to do so needs to be at least in the arch code, maybe
-in the dma-mapping/iommu code, not in the driver.
-
-As a first step to get the discussion started we'll simply need
-to move the code Thierry wrote into a helper in arch/arm and that
-alone would be a massive improvement.  I'm not even talking about
-minor details like actually using arm_get_dma_map_ops instead
-of duplicating it.
-
-And doing this basic trivial work really helps to get this whole
-mess under control.
+This isn't very useful unless functions that return the return value of 
+these functions, __dev_dax_{pmd,pud}_fault(), recast it as an int.  
+__dev_dax_pte_fault() would do the same thing, so it should logically also 
+be vm_fault_t, so then you would convert dev_dax_huge_fault() and
+dev_dax_fault() as well in the same patch.
