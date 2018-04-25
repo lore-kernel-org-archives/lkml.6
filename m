@@ -1,104 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751329AbeDYFbx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 01:31:53 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45032 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeDYFbv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 01:31:51 -0400
-X-Google-Smtp-Source: AIpwx48fMAXNtpd9jAxplQyQXi3nhA6sYc7D9v3xqCiemUVJOMawQErcQi2L2WaJ2SuaQ5CVGJijKQ==
-Date: Wed, 25 Apr 2018 14:31:46 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180425053146.GA25288@jagdpanzerIV>
-References: <20180420021511.GB6397@jagdpanzerIV>
- <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
- <20180420080428.622a8e7f@gandalf.local.home>
- <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
- <20180420101751.6c1c70e8@gandalf.local.home>
- <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
- <20180420111307.44008fc7@gandalf.local.home>
- <20180423103232.k23yulv2e7fah42r@pathway.suse.cz>
- <20180423073603.6b3294ba@gandalf.local.home>
- <20180423124502.423fb57thvbf3zet@pathway.suse.cz>
+        id S1751268AbeDYFgG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 01:36:06 -0400
+Received: from mail-db5eur01on0071.outbound.protection.outlook.com ([104.47.2.71]:1189
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750921AbeDYFgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 01:36:04 -0400
+From: Anson Huang <anson.huang@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>
+CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
+Thread-Topic: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
+Thread-Index: AQHT2vNvaoueJMByHUOpWSeGxuLWrqQPLInggACrfgCAAPxtMIAAHqHg
+Date: Wed, 25 Apr 2018 05:36:01 +0000
+Message-ID: <AM3PR04MB1315B04BE46755E3EB82E04CF58F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1524455219-6736-1-git-send-email-Anson.Huang@nxp.com>
+ <1524455219-6736-4-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5CDAQtw7Q6NgSzKP4ogaqRaGSE0A+st1iqZ=cQsK49moQ@mail.gmail.com>
+ <AM3PR04MB131566E1C8033D256686F192F5880@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5Dm=MFRoh=y54Qf2RrncWfQPTUJ2ZNfvYnUD=idp8RPNA@mail.gmail.com>
+ <AM3PR04MB1315ED599A20F67BB9FEFEE1F58F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+In-Reply-To: <AM3PR04MB1315ED599A20F67BB9FEFEE1F58F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com;
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB1459;7:ENlSpLHjd54lHNZvcT/Zz99UmlkdecnWvOClZ6eFYsv4RVt7OeKwsy4ACM56kfiuH8GQh8IV2fPke31uFup2fLkYUVY4euWN1IBH6wS+WGEKwYD/ASZV5F6K4Qc3ffJWbe9dbZVDQ9Amlnslh++yaqY7K5L8npSpsEKtidGAa6ZJQ6mAADaD368xKEed2vXQztYylXmRaKH+oZ0DnC1pfjbuHDlZGkRMBMUzl7JRr7JtWExmdpgFGTS79OQKsNsW
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1459;
+x-ms-traffictypediagnostic: AM3PR04MB1459:
+x-microsoft-antispam-prvs: <AM3PR04MB1459E01710E3B24534B7D228F58F0@AM3PR04MB1459.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:AM3PR04MB1459;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1459;
+x-forefront-prvs: 06530126A4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(39380400002)(39860400002)(346002)(376002)(396003)(366004)(13464003)(189003)(199004)(11346002)(106356001)(6436002)(486006)(476003)(1411001)(446003)(3280700002)(2900100001)(6246003)(3660700001)(8676002)(81166006)(81156014)(93886005)(8936002)(97736004)(39060400002)(26005)(6506007)(316002)(102836004)(54906003)(68736007)(53936002)(86362001)(53546011)(59450400001)(44832011)(4326008)(76176011)(2940100002)(9686003)(7696005)(6916009)(25786009)(3846002)(6116002)(229853002)(74316002)(55016002)(478600001)(99286004)(7736002)(305945005)(14454004)(186003)(2906002)(105586002)(33656002)(5250100002)(5660300001)(66066001)(32563001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1459;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: H4P1dsRfHOy0oE8KgQ2GQRrsb2JsjmIWq+HQs0yNrokSK0RJlj6ajTFXN8vE0qiwvksH9J2kBRVaMkfuL8aJM9p/OfPWzrjCPq0rMcBP1mQ5zJbt4HLpKNb1a+O0x7RnNpb3dbQGFSQGI9iF6iFIonGq3HrnqJPj5vMCQ+p+r86GKokfuzLn60wYXhuWGc3m
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423124502.423fb57thvbf3zet@pathway.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+X-MS-Office365-Filtering-Correlation-Id: e4565902-5547-433a-63eb-08d5aa6e6e23
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4565902-5547-433a-63eb-08d5aa6e6e23
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Apr 2018 05:36:01.2649
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1459
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3P5aBEx031846
 
-On (04/23/18 14:45), Petr Mladek wrote:
-[..]
-> I am not sure how slow are the slowest consoles. If I take that
-> everything should be faster than 1200 bauds. Then 10 minutes
-> should be enough for 1000 lines and 80 characters per-line:
+Hi, Fabio
 
-Well, the problem with the numbers is that they are too... simple...
-let me put it this way.
+Anson Huang
+Best Regards!
 
-What if I don't have a slow serial console? Or what if I have NMI
-watchdog set to 40 seconds? Or what if I don't have NMIs at all?
-Why am I all of a sudden limited by "1200 bauds"?
 
-Another problem is that we limit the *wrong* thing.
+> -----Original Message-----
+> From: Anson Huang
+> Sent: Wednesday, April 25, 2018 11:30 AM
+> To: 'Fabio Estevam' <festevam@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
+> <kernel@pengutronix.de>; Fabio Estevam <fabio.estevam@nxp.com>; Rob
+> Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
+> dl-linux-imx <linux-imx@nxp.com>; moderated list:ARM/FREESCALE IMX / MXC
+> ARM ARCHITECTURE <linux-arm-kernel@lists.infradead.org>; open list:OPEN
+> FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+> <devicetree@vger.kernel.org>; linux-kernel <linux-kernel@vger.kernel.org>
+> Subject: RE: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
+> 
+> Hi, Fabio
+> 
+> Anson Huang
+> Best Regards!
+> 
+> 
+> > -----Original Message-----
+> > From: Fabio Estevam [mailto:festevam@gmail.com]
+> > Sent: Tuesday, April 24, 2018 8:23 PM
+> > To: Anson Huang <anson.huang@nxp.com>
+> > Cc: Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
+> > <kernel@pengutronix.de>; Fabio Estevam <fabio.estevam@nxp.com>; Rob
+> > Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
+> > dl-linux-imx <linux-imx@nxp.com>; moderated list:ARM/FREESCALE IMX /
+> > MXC ARM ARCHITECTURE <linux-arm-kernel@lists.infradead.org>; open
+> > list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+> > <devicetree@vger.kernel.org>; linux-kernel
+> > <linux-kernel@vger.kernel.org>
+> > Subject: Re: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
+> >
+> > Hi Anson,
+> >
+> > On Mon, Apr 23, 2018 at 11:09 PM, Anson Huang <anson.huang@nxp.com>
+> > wrote:
+> >
+> > > Ah, yes, thanks for pointing out this issue, I just removed it and
+> > > the function is still working, already sent out V2 patch set, thanks.
+> >
+> > So now maybe it is working only because the bootloader activated this
+> > GPIO, which is not good.
+> >
+> > I don't have access to the mx6sx sabreauto schematics to verify  where
+> > &max7322 0 connects to, but it would be better to make sure that you
+> > activate this pin in dts if it is needed for Ethernet, without relying on the
+> bootloader.
+> 
+> It is working by default hardware settings, but I agree we should do it in dts, I
+> found it has a lot of dependency if we want to enable the gpio reset for FEC1,
+> many gpio reset patch missed in upstream kernel, need patch work for
+> MAX7322 first, so I plan to remove FEC support in this patch set, and will
+> upstream the MAX7322 reset patch first, then will add FEC support after
+> MAX7322 patch done. Will send out V3 patch to drop fec support for now,
+> thanks.
+> 
+> Anson.
 
-Not only because we can [and probably need to] rate-limit the misbehaving
-code that calls printk()-s, instead of printk(). But because we claim
-that we limit the "number of lines" added recursively. This is wrong.
-We limit the number of times vprintk_func() was called, which is != the
-number of added lines. Because vprintk_func() is also called for pr_cont()
-or printk(KERN_CONT) or printk("missing new line"). Backtraces contain
-tons and tons of pr_cont()-s - registers print out, list of modules
-print out, stack print out, code print out. Even this thing at the
-bottom of a trace:
+Sorry, I made a mistake here, the MAX7320 IO0 is for adjusting FEC1's voltage,
+NOT reset, and when I tested MAX7320 driver, I did NOT notice that the
+CONFIG_GPIO_MAX732X is NOT enabled in imx_v6_v7_defconfig, so I thought
+it is NOT working, after enabling MAX7320 driver, max7320 is working as expected,
+will send out another patch set including fec driver and MAX7320 config, thanks for your patience.
 
-	Code: 01 ca 49 89 d1 48 89 d1 48 c1 ea 23 48 8b 14 d5 80 23 63 82 49 c1 e9 0c 48 c1 e9 1b 48 85 d2 74 0a 0f b6 c9 48 c1 e1 04 48 01 ca <48> 8b 12 49 c1 e1 06 b9 00 00 00 80 89 7d 80 89 75 84 48 8b 3d
+Anson.
 
-is nothing but a bunch of pr_cont()-s, each of which will individually
-end up in vprintk_func(). Error reports in general can contain even more
-pr_cont() calls. E.g. core kernel code can hex dump slab memory, while
-being called from one of console drivers.
-
-Another problem is that nothing tells us that we *actually* have an
-infinite loop. Nothing tells us that every call_console_drivers()
-adds more messages to the logbuf. We see just one thing - the current
-call_console_drivers() is about to add some lines to the logbuf later
-on. OK, why is this a problem? This can be a one time thing. Or
-console_unlock() may be in a schedulable context, getting rescheduled
-after every line it prints [either implicitly after
-printk_safe_exit_irqrestore(), or explicitly by calling into the
-scheduler - cond_resched()].
-
-Most likely, we don't even realize how many things we are about to
-break.
-
-> Alternatively, it seems that we are going to call console drivers
-> outside printk_safe context => the messages will appear in the main
-> log buffer immediately => only small risk of a ping-pong with printk
-> safe buffers. We might reset the counter when all messages are handled
-> in console_unlock(). It will be more complex patch than when using
-> ratelimiting but it still should be sane.
-
-We may have some sort of vprintk_func()-based solution, may be.
-But we first need a real reason. Right now it looks to me like
-we have "a solution" to a problem which we have never witnessed.
-
-That vprintk_func()-based solution, if there will be no other
-options on the table, must be much smarter than anything that
-we have seen so far.
-
-Sorry.
-
-	-ss
+> 
+> 
+> 
+> 
