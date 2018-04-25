@@ -1,126 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754039AbeDYW5j (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 18:57:39 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33930 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753701AbeDYW5e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 18:57:34 -0400
-X-Google-Smtp-Source: AB8JxZpTHpyy4CW0sU4n1ZAdR+W1zaf58wbp4HfcW6Y2QwITc1ojIO4tapEI2Q4Cn7VElq7IWGCXPwze2qrM8pKeuXo=
+        id S1754023AbeDYXAh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 19:00:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45666 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752661AbeDYXAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 19:00:33 -0400
+Date: Wed, 25 Apr 2018 19:00:30 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+cc: David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
+        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        edumazet@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
+ options
+In-Reply-To: <1524694663.4100.21.camel@HansenPartnership.com>
+Message-ID: <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180421144757.GC14610@bombadil.infradead.org>  <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>  <20180423151545.GU17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+  <20180424125121.GA17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>  <20180424162906.GM17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424170349.GQ17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>  <20180424173836.GR17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+ <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>  <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>  <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>  <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524694663.4100.21.camel@HansenPartnership.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <20180424130445.GD31310@phenom.ffwll.local>
-References: <20180420115001.161745-1-lndmrk@chromium.org> <20180420135532.GH73214@art_vandelay>
- <20180424130445.GD31310@phenom.ffwll.local>
-From: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>
-Date: Wed, 25 Apr 2018 15:56:53 -0700
-Message-ID: <CACP_E+Jn4Nxq+u-isieVdrvC_r=CvvpoYKajWA-H1DgbTEaSeA@mail.gmail.com>
-Subject: Re: [PATCH] drm: udl: Destroy framebuffer only if it was initialized
-To: Sean Paul <seanpaul@chromium.org>, Emil Lundmark <lndmrk@chromium.org>,
-        Dave Airlie <airlied@redhat.com>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-1907632136-1524697231=:31135"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3PMvis4005619
 
-On Tue, Apr 24, 2018 at 6:04 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> On Fri, Apr 20, 2018 at 09:55:32AM -0400, Sean Paul wrote:
->> On Fri, Apr 20, 2018 at 01:50:01PM +0200, Emil Lundmark wrote:
->> > This fixes a NULL pointer dereference that can happen if the UDL
->> > driver is unloaded before the framebuffer is initialized. This can
->> > happen e.g. if the USB device is unplugged right after it was plugged
->> > in.
->> >
->>
->> JFYI, in future, if someone makes a suggestion on how to fix a bug, it's good
->> practice to add a Suggested-by tag to give credit.
->>
->> Reviewed-by: Sean Paul <seanpaul@chromium.org>
->
-> I think a bit more detail in the commit message on why this is even
-> possible would be good. I think it can only happen when you only plug in
-> the udl, without anything connected.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hehe, I was just reviewing this code internally, so I can answer that one :)
-
-It happens when fbdev is disabled (which is the case for Chrome OS).
-Even though intialization of the fbdev part is optional (it's done in
-udlfb_create which is the callback for fb_probe()), the teardown isn't
-optional (udl_driver_unload -> udl_fbdev_cleanup ->
-udl_fbdev_destroy).
-
-Note that udl_fbdev_cleanup *tries* to be conditional (you can see it
-does if (!udl->fbdev)) but that doesn't work, because udl->fbdev is
-always set during udl_fbdev_init.
-
-Stéphane
+--185206533-1907632136-1524697231=:31135
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
 
->
-> In that case fbdev setup will be delayed until something shows up (so we
-> don't pin a too small fb for it, a feature requested by soc people). This
-> can easily be tested:
-> First:
-> - plug in udl device
-> - wait a minute or so (to make it clear it's not a race)
-> - unplug
->
-> And then:
-> - plug in an udl device, but with something connected.
-> - unplug right away.
->
-> I expect that in the first case you'll always blow up, but in the 2nd one
-> you'll never blow up (no matter how fast you unplug).
->
-> Cheers, Daniel
->
->
->
->>
->> > Signed-off-by: Emil Lundmark <lndmrk@chromium.org>
->> > ---
->> >  drivers/gpu/drm/udl/udl_fb.c | 8 +++++---
->> >  1 file changed, 5 insertions(+), 3 deletions(-)
->> >
->> > diff --git a/drivers/gpu/drm/udl/udl_fb.c b/drivers/gpu/drm/udl/udl_fb.c
->> > index 2ebdc6d5a76e..5754e37f741b 100644
->> > --- a/drivers/gpu/drm/udl/udl_fb.c
->> > +++ b/drivers/gpu/drm/udl/udl_fb.c
->> > @@ -426,9 +426,11 @@ static void udl_fbdev_destroy(struct drm_device *dev,
->> >  {
->> >     drm_fb_helper_unregister_fbi(&ufbdev->helper);
->> >     drm_fb_helper_fini(&ufbdev->helper);
->> > -   drm_framebuffer_unregister_private(&ufbdev->ufb.base);
->> > -   drm_framebuffer_cleanup(&ufbdev->ufb.base);
->> > -   drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
->> > +   if (ufbdev->ufb.obj) {
->> > +           drm_framebuffer_unregister_private(&ufbdev->ufb.base);
->> > +           drm_framebuffer_cleanup(&ufbdev->ufb.base);
->> > +           drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
->> > +   }
->> >  }
->> >
->> >  int udl_fbdev_init(struct drm_device *dev)
->> > --
->> > 2.17.0.484.g0c8726318c-goog
->> >
->>
->> --
->> Sean Paul, Software Engineer, Google / Chromium OS
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+On Wed, 25 Apr 2018, James Bottomley wrote:
+
+> > > Do we really need the new config option?  This could just be
+> > > manually  tunable via fault injection IIUC.
+> > 
+> > We do, because we want to enable it in RHEL and Fedora debugging
+> > kernels, so that it will be tested by the users.
+> > 
+> > The users won't use some extra magic kernel options or debugfs files.
+> 
+> If it can be enabled via a tunable, then the distro can turn it on
+> without the user having to do anything.  If you want to present the
+> user with a different boot option, you can (just have the tunable set
+> on the command line), but being tunable driven means that you don't
+> have to choose that option, you could automatically enable it under a
+> range of circumstances.  I think most sane distributions would want
+> that flexibility.
+> 
+> Kconfig proliferation, conversely, is a bit of a nightmare from both
+> the user and the tester's point of view, so we're trying to avoid it
+> unless absolutely necessary.
+> 
+> James
+
+BTW. even developers who compile their own kernel should have this enabled 
+by a CONFIG option - because if the developer sees the option when 
+browsing through menuconfig, he may enable it. If he doesn't see the 
+option, he won't even know that such an option exists.
+
+Mikulas
+--185206533-1907632136-1524697231=:31135--
