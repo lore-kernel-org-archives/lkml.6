@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-558212-1524653182-2-2450675153035306047
+X-Cyrus-Session-Id: sloti22d1t05-557887-1524653160-2-9708858448202615573
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653181; b=pnHgFeqr5DxpuOEoAu+usmbJQYxnejqqNifSuwlfCZIF1N9nuW
-    XS7dFDEuuDLbMl5Iw5aG37gg1h19unQ+RFaDy2tjpVKHnnUFqmY/v4kOsLNUW0DM
-    JyThEs1Jzk3R/yp1beram1d2bsQjJaOxdRA9xJ2YDmgJa+9w16WbEX+skGRsEknW
-    AKlcgzXRuy/pvmgylcBN8dHV25tp2h15ZZge/fIUsZ6VdoYVT+QbMslsZ/JTux8K
-    vZGJTK2C4D/XxyX3ZGORFsvWEiAX+kajHXwYc7dNpv0Jux0cMJ+dMOQIR5nXMUtv
-    hMIVOMnenG38RCisgxXqr0O1nHic0xJsgksw==
+    1524653159; b=QXo++aepr8m5BHVBsdOL34X5Jzp0T4AgIUbDwidh4Uici+wApW
+    IuxusByX12SzoUeCYSFLAZDiDMq9T3mUryvMrtjEqChNUWOgGevud4Xd1U6BjQud
+    Thg7HtS/7OL8+pXc9iWGDWjqOHXFCpYXQb9bdxcfplvCT2WkBhyHU5RIXUak6C+a
+    OhnuwDfXFGWBPLi94bF78DNitmnFZWtmfdHOHUEXk0DONTbSmM5uFO/fjxzpzv1C
+    iLUNEc/I7P8lybnKLrK6IlDs8TMEMvevJ0zri2NIEgB8n8VwmKQHK5EnH0N0A5dM
+    lSKB0xNKN/is+dxJARPiI4ay+SC4CMqlx5sA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653181; bh=iqmosItVENiu+6VprPjNMTXTZhD3yh
-    Sg5/pOW+Pb/O4=; b=Z3bvy/M67XxIERKcKqw/WvUrVJshPp7uDy0Ntlsc12/PEX
-    s3mC2lSeaMiGXO1vP0dRc1Zv9+u7k0vVaP9lM3P3jkFdRAOf+RjYt/Zk2OZrhHiU
-    Tv0/jTiXW60umgfQwpjORIE9+AwscCZ72zLPdK5RPf8rZi6qIcObc3zdNGYEMdli
-    9Rc3fq8PWTJ92SEC8RVX16ia4sb1c6Iq8nhy6bZ9vhFB84+qcp6JVHy6ERepgGgT
-    V3+GlaFfwp4ml4FZLkyZ9+hj8nnNhlCtKaOxwqSjDSWRw10cln+eFgyyl46fJV7j
-    r+k7SVR82/ZlrPMUkFLDAEcIi9+4AfEuoSLksUtw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524653159; bh=ICoY/+RjJL3NQgxzCek0F/3ruoQSw6
+    TYV2KCFUzzvaA=; b=j28NgL5PNSHqpss5qg/d4lGDrXZdujvuHpa4bPToaUum/9
+    bvZLa9OTzxPbr6IsakPT5Dr3whj++l6daAPyTH91mih5I+UEXIwodhjY0ZtWG02F
+    2aqBKI3EOya1Art3mCz0P4MSnwSdh+GsB4oTKXJDKDD3RMqisQzVf6XTMVXVdGLP
+    wqehVY1f45ag8+SXOUB40cGnbrdGvWn6krtIwQTwNL6tWW74Eegl8G1ARyqkrA5y
+    efNqtKUD15D9UYyLz8juemHqygGZbLRc74P7zV/KgzUYFCFQwPmsDd/VZyGC/XBQ
+    yungu3An0r1b+7BJLAp6eCckcv+zgN49c9XfVc+Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCcuON1f+/L7oYtUOlc31Ccak5HLw/grE8Ct5yhkYMxZMjZ8h3dLw329snT/MzI82kMCzoh5lK/QDVDulpPEuaVBSD4toXFQnJhqfr8HXC1Z+b5JLIND
-    nTHjV++8PpAfkyUFx0BH4glsalk4GMhcdgHFAdZlglI/eTw9HIpE0/obwlGQd9Sc1CEU1EPpyEDXSlNKJXYF3iKdGYzqS5+DmqIWELCFR2TCGyrlkPHkM+/D
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKiuMJgZaNXtKoULzRJ0V88LGRpAqiWiIsNHODMnXY+I/bUSqiuIyI37+tojoBx7MvMMkpN0RVl+ZXVx4HJLMLPhKOAh7w98dB9BrcOf94hK0GyeisRt
+    dKgmZt6lWUEUgTs1G73Qq8gP7/2LnVAj7l+UGEEk97hW7z0iXdtmGha8u8YinrYEcsxX9MOV4SI2jmsbH8khNHlXdFQH2G7nJ9yOEa4/X8+ACrUG3/O6PP4W
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1RTuLK3dAAAA:8 a=uTJJjIG0AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=blYj7uNOJKGU-zgziaUA:9 a=QEXdDO2ut3YA:10 a=kRpfLKi8w9umh8uBmg1i:22
-    a=Oxz5h5Y_mNNx07kSEfs-:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=hSkVLCK3AAAA:8 a=QyXUC8HyAAAA:8 a=ag1SF4gXAAAA:8 a=AVgoCq2HS35BQGctNCwA:9
+    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754493AbeDYKpK (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:45:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53488 "EHLO
+        id S1754529AbeDYKpY (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:45:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53564 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754034AbeDYKpF (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:45:05 -0400
+        with ESMTP id S1754517AbeDYKpU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:45:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
-        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 149/183] bcache: fix for data collapse after re-attaching an attached device
-Date: Wed, 25 Apr 2018 12:36:09 +0200
-Message-Id: <20180425103248.522789608@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+70ce058e01259de7bb1d@syzkaller.appspotmail.com,
+        Benjamin Beichler <benjamin.beichler@uni-rostock.de>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.14 183/183] mac80211_hwsim: fix use-after-free bug in hwsim_exit_net
+Date: Wed, 25 Apr 2018 12:36:43 +0200
+Message-Id: <20180425103249.853994921@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -93,120 +93,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Benjamin Beichler <benjamin.beichler@uni-rostock.de>
 
+commit 8cfd36a0b53aeb4ec21d81eb79706697b84dfc3d upstream.
 
-[ Upstream commit 73ac105be390c1de42a2f21643c9778a5e002930 ]
+When destroying a net namespace, all hwsim interfaces, which are not
+created in default namespace are deleted. But the async deletion of the
+interfaces could last longer than the actual destruction of the
+namespace, which results to an use after free bug. Therefore use
+synchronous deletion in this case.
 
-back-end device sdm has already attached a cache_set with ID
-f67ebe1f-f8bc-4d73-bfe5-9dc88607f119, then try to attach with
-another cache set, and it returns with an error:
-[root]# cd /sys/block/sdm/bcache
-[root]# echo 5ccd0a63-148e-48b8-afa2-aca9cbd6279f > attach
--bash: echo: write error: Invalid argument
-
-After that, execute a command to modify the label of bcache
-device:
-[root]# echo data_disk1 > label
-
-Then we reboot the system, when the system power on, the back-end
-device can not attach to cache_set, a messages show in the log:
-Feb  5 12:05:52 ceph152 kernel: [922385.508498] bcache:
-bch_cached_dev_attach() couldn't find uuid for sdm in set
-
-In sysfs_attach(), dc->sb.set_uuid was assigned to the value
-which input through sysfs, no matter whether it is success
-or not in bch_cached_dev_attach(). For example, If the back-end
-device has already attached to an cache set, bch_cached_dev_attach()
-would fail, but dc->sb.set_uuid was changed. Then modify the
-label of bcache device, it will call bch_write_bdev_super(),
-which would write the dc->sb.set_uuid to the super block, so we
-record a wrong cache set ID in the super block, after the system
-reboot, the cache set couldn't find the uuid of the back-end
-device, so the bcache device couldn't exist and use any more.
-
-In this patch, we don't assigned cache set ID to dc->sb.set_uuid
-in sysfs_attach() directly, but input it into bch_cached_dev_attach(),
-and assigned dc->sb.set_uuid to the cache set ID after the back-end
-device attached to the cache set successful.
-
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 100cb9ff40e0 ("mac80211_hwsim: Allow managing radios from non-initial namespaces")
+Reported-by: syzbot+70ce058e01259de7bb1d@syzkaller.appspotmail.com
+Signed-off-by: Benjamin Beichler <benjamin.beichler@uni-rostock.de>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/md/bcache/bcache.h |    2 +-
- drivers/md/bcache/super.c  |   10 ++++++----
- drivers/md/bcache/sysfs.c  |    6 ++++--
- 3 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -906,7 +906,7 @@ void bcache_write_super(struct cache_set
+---
+ drivers/net/wireless/mac80211_hwsim.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3427,8 +3427,11 @@ static void __net_exit hwsim_exit_net(st
+ 			continue;
  
- int bch_flash_dev_create(struct cache_set *c, uint64_t size);
- 
--int bch_cached_dev_attach(struct cached_dev *, struct cache_set *);
-+int bch_cached_dev_attach(struct cached_dev *, struct cache_set *, uint8_t *);
- void bch_cached_dev_detach(struct cached_dev *);
- void bch_cached_dev_run(struct cached_dev *);
- void bcache_device_stop(struct bcache_device *);
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -939,7 +939,8 @@ void bch_cached_dev_detach(struct cached
- 	cached_dev_put(dc);
- }
- 
--int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c)
-+int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
-+			  uint8_t *set_uuid)
- {
- 	uint32_t rtime = cpu_to_le32(get_seconds());
- 	struct uuid_entry *u;
-@@ -948,7 +949,8 @@ int bch_cached_dev_attach(struct cached_
- 
- 	bdevname(dc->bdev, buf);
- 
--	if (memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16))
-+	if ((set_uuid && memcmp(set_uuid, c->sb.set_uuid, 16)) ||
-+	    (!set_uuid && memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16)))
- 		return -ENOENT;
- 
- 	if (dc->disk.c) {
-@@ -1190,7 +1192,7 @@ static void register_bdev(struct cache_s
- 
- 	list_add(&dc->list, &uncached_devices);
- 	list_for_each_entry(c, &bch_cache_sets, list)
--		bch_cached_dev_attach(dc, c);
-+		bch_cached_dev_attach(dc, c, NULL);
- 
- 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_NONE ||
- 	    BDEV_STATE(&dc->sb) == BDEV_STATE_STALE)
-@@ -1712,7 +1714,7 @@ static void run_cache_set(struct cache_s
- 	bcache_write_super(c);
- 
- 	list_for_each_entry_safe(dc, t, &uncached_devices, list)
--		bch_cached_dev_attach(dc, c);
-+		bch_cached_dev_attach(dc, c, NULL);
- 
- 	flash_devs_run(c);
- 
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -265,11 +265,13 @@ STORE(__cached_dev)
- 	}
- 
- 	if (attr == &sysfs_attach) {
--		if (bch_parse_uuid(buf, dc->sb.set_uuid) < 16)
-+		uint8_t		set_uuid[16];
+ 		list_del(&data->list);
+-		INIT_WORK(&data->destroy_work, destroy_radio);
+-		schedule_work(&data->destroy_work);
++		spin_unlock_bh(&hwsim_radio_lock);
++		mac80211_hwsim_del_radio(data, wiphy_name(data->hw->wiphy),
++					 NULL);
++		spin_lock_bh(&hwsim_radio_lock);
 +
-+		if (bch_parse_uuid(buf, set_uuid) < 16)
- 			return -EINVAL;
- 
- 		list_for_each_entry(c, &bch_cache_sets, list) {
--			v = bch_cached_dev_attach(dc, c);
-+			v = bch_cached_dev_attach(dc, c, set_uuid);
- 			if (!v)
- 				return size;
- 		}
+ 	}
+ 	spin_unlock_bh(&hwsim_radio_lock);
+ }
