@@ -1,81 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751255AbeDYDLO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 23:11:14 -0400
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:58209
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751150AbeDYDLK (ORCPT
+        id S1751249AbeDYDTr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 23:19:47 -0400
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:37043 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751129AbeDYDTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 23:11:10 -0400
-X-ASG-Debug-ID: 1524625867-093b7e10b3114b70001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-To: <ard.biesheuvel@linaro.org>
-CC: <linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: [PATCH] efi/capsule-loader: Don't output reset log when header flags is not set
-Date: Wed, 25 Apr 2018 11:10:06 +0800
-X-ASG-Orig-Subj: [PATCH] efi/capsule-loader: Don't output reset log when header flags is not set
-Message-ID: <1524625806-23133-1-git-send-email-shunyong.yang@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 24 Apr 2018 23:19:43 -0400
+X-Google-Smtp-Source: AB8JxZqTYqVTXw44uTSKEoQQBZUwnv1zi/Y7cd8ZNChL6LWD5O0EDTr1BgNpG6BdgIHeILEgSM53eg==
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.5.21.109]
-X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
-X-Barracuda-Connect: localhost[10.128.0.14]
-X-Barracuda-Start-Time: 1524625867
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.4863 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.50256
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+In-Reply-To: <20180424193754.jsuucbq57onhxhqe@flea>
+References: <20180424113424.13196-1-wens@csie.org> <20180424113424.13196-3-wens@csie.org>
+ <20180424121353.zxujyehsw3er2xq6@flea> <CAGb2v65iwbmOvQ2YA0e4QyTzQVj=F+5n6cWt2q6K80Y2b_3q3g@mail.gmail.com>
+ <20180424193754.jsuucbq57onhxhqe@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 25 Apr 2018 11:19:20 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64MwS+q87z9_UiKxVtgeAenA_9+QSS=cfF42PGy4PeJwQ@mail.gmail.com>
+Message-ID: <CAGb2v64MwS+q87z9_UiKxVtgeAenA_9+QSS=cfF42PGy4PeJwQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] ARM: dts: sun8i: h3: Split out common board design
+ for ALL-H3-CC
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It means firmware attempts to immediately process or launch the capsule
-when flags in capsule header is not set. Moreover, reset is not needed
-in this case. Current code will output log to indicate reset.
+On Wed, Apr 25, 2018 at 3:37 AM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Tue, Apr 24, 2018 at 08:17:11PM +0800, Chen-Yu Tsai wrote:
+>> On Tue, Apr 24, 2018 at 8:13 PM, Maxime Ripard
+>> <maxime.ripard@bootlin.com> wrote:
+>> > On Tue, Apr 24, 2018 at 07:34:19PM +0800, Chen-Yu Tsai wrote:
+>> >> The Libre Computer Project ALL-H3-CC has three models, all using the
+>> >> same board design, but with different pin compatible SoCs and amount of
+>> >> DRAM.
+>> >>
+>> >> Currently only the H3 1GB DRAM variant is supported. To support the two
+>> >> other variants, first split the original device tree into a common board
+>> >> design part and an SoC specific part.
+>> >>
+>> >> The SoC part only defines which SoC is used and model name, and includes
+>> >> the SoC specific dtsi file and the common design dtsi file.
+>> >>
+>> >> Also fix up the SPDX identifier line to use the correct comment style,
+>> >> and place it on the first line.
+>> >>
+>> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> >> ---
+>> >>  .../boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 213 +-----------------
+>> >>  ....dts => sunxi-hx-libretech-all-h3-cc.dtsi} |  11 +-
+>> >
+>> > I think I prefer the name of Neil's DTSI better, and since pretty much
+>> > the same patches (a couple of hours) before, we'll merge them (while
+>> > merging the rest of your patches, obviously).
+>> >
+>> > Does that work for you?
+>>
+>> I would like for the regulator voltage fix to be merged before the split.
+>> This will make it trivial to back port, instead of having to reverse the
+>> split, and maybe failing.
+>
+> Yes, I was just talking about replacing your two redundant patches,
+> but keeping the order you have.
 
-This patch adds a branch to avoid reset log output when the flags is not
-set.
+That works for me. Might require a little fixing up.
+Let me know if you need help with that.
 
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
----
- drivers/firmware/efi/capsule-loader.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
-index e456f4602df1..a63b8e5bde23 100644
---- a/drivers/firmware/efi/capsule-loader.c
-+++ b/drivers/firmware/efi/capsule-loader.c
-@@ -134,10 +134,15 @@ static ssize_t efi_capsule_submit_update(struct capsule_info *cap_info)
- 
- 	/* Indicate capsule binary uploading is done */
- 	cap_info->index = NO_FURTHER_WRITE_ACTION;
--	pr_info("Successfully upload capsule file with reboot type '%s'\n",
--		!cap_info->reset_type ? "RESET_COLD" :
--		cap_info->reset_type == 1 ? "RESET_WARM" :
--		"RESET_SHUTDOWN");
-+
-+	if (cap_info->header.flags)
-+		pr_info("Successfully upload capsule file with reboot type '%s'\n",
-+			!cap_info->reset_type ? "RESET_COLD" :
-+			cap_info->reset_type == 1 ? "RESET_WARM" :
-+			"RESET_SHUTDOWN");
-+	else
-+		pr_info("Successfully upload, process and launch capsule file\n");
-+
- 	return 0;
- }
- 
--- 
-1.8.3.1
+ChenYu
