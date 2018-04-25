@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-584447-1524656055-2-17872229381375526522
+X-Cyrus-Session-Id: sloti22d1t05-585385-1524656023-2-13608388772238847733
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524656054; b=HALjyB8MG2VKmNFUiWbYsqPmVDjxemQmxesxDebIICx4r5JVeH
-    5O5GvHhS5KjW+iE574Usk65XhoHM0teyMqdigp6ls6PADeZgIPiHay3ZOCSStL78
-    j3merkInFRlGu4E4j4++Gd9W/UsUgarxHHxoGJYYhYaTL/hkvzq7VrVStXIOaEhU
-    4ackq8UNseBuCYO+jwzlEpfnS+ezKqBijT9qvB2SX2ZHdE77mi9/tPOQCP+wDTZW
-    vZcNFM0MLx4859PVvvKHe4FVvoEwEiDALXSa67iOCnNOIFIRwSuhweib3nmwPObv
-    a5L15Lf+LeSyukuOhku7EdyK1Rx6rusXy8VQ==
+    1524656022; b=LOJGl4A/RPr/E94paMxmPlAUZFdY7x5LQd03E7iDjW3wHbK/O0
+    wq0guaHBxcADRjRdw60n/bDe1qqZwUsUD0VL554hUfMnWyPixiYx8q4Fmfy0Ceke
+    aDM9b/g2Vzd5RjIODiDgIT9/tiKqEcD/MLmZfm1pyIwDzrG9LwLrLc39kIZ2AJCb
+    CSNTuizB9Xnl8ymtRkpmMU4LR4tUcE2ZVELIuwnuzmORO6dw0o5EazbNS/QG4Dx7
+    v9+J/IjuO09EZLwhdEalV12xCM2kMIVueW8KTrT90naKZVFvT8izmIK5m9KhH+pd
+    j7WKctBi4MeLsqnUN/d5Z2HlBQBudVfWHWMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524656054; bh=z0fgF3dTU/RJD8kpp58bJtSoCHc9KX
-    uxkUA63EDTs4Q=; b=qvB/pHAWckhluN/EBbNZt+zipgD3iQ4a6uzjtwlOQ9J7TF
-    NJ9SHEFkt+SQOwEaWr1HUhpZ9ZD8/zcZIxRIPE9AybN0vKRgUscDGV4uBOqzM8P1
-    Ig6Oy0D+yoDkfU6zZMDFcge3vtAAhC7CKQfJKznH3WsxQk918ew4JD35pgY64DCG
-    MhMJxj6pQLmmn7wYbiDawv6wDU6yNGS39TjOaQgqPC3vNjc+/lY6+svZIgRfsRHE
-    ShrhAl1CiAX6SH+FxjDMj9UePyO8qrKcnAINp0/YtpcVxSrRNVf7dmm5aQywxrV3
-    1jZr0g+jDMXNqO4+zCH3RAqoAN6sEW15zMHdjukw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524656022; bh=EL1zzEd0mN8xie/5q6uCWpytocL1nc
+    jCrTBnEkImnHU=; b=dbPWY+/UyvdasASLjUywln2W5JWdw2Qgw3AlbdtipB67I6
+    b6BwbasK5Txf9ESVRlw3Rm0Q/MTgVcPSqQyfiG3RlKa48l4CkAjyhVsIYE/BSnE8
+    zliARYH/CHJ8lmfSIAgHpjekPKvS35453sx1/U2ktbhJSYv3LBqzb2jOT+zMY231
+    ZoVOlzFLMfbAF5vraiZi6cjWJ3IvpppU3JgQpvOQy8ClNt+5k2uw0NANALnKO54q
+    Qfwc26aHCr1M0YO8Q2D1/1qYKTrLehnz8gt5oT0D5DHHjl3q7dhSofsgf9JGcf7P
+    fefe57Kgq5Jqn60XByUjD0RzH+I/V7tBrw3tVarQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,41 +51,35 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfElAeKH9zGBcnU3jyHv8LNr6aAcWI7DhTV7TuJQfV84/5Ivybf+Y7Gw4LNIeLvqoVSJBtEQ9Vm03qMR85uEmrTYSUCPjt/hEkovT7LOa5xRSSVZJDZb7
-    OUACE4b3L7Eo9AjPzrFBP2XTJZ5Zxyb2fv04UzezTq0YBstAaeEb9q0Utww8JlxkNlFTEdBkHKzPEbrAj/H8CN87k3vwqU78MM9RRKX/K2bZE7ApjKpLBuib
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIO/R8SH6mLz297aC0uzHa/6H/nfCpF0DhafnDtHqxN4ctmhaAPNo18CNiMRjzmluMsi8q6QrWzNkq//s2Jy10508H6FojECrXOXIteTvUBDm/JbaYgn
+    kZlxvJ59ISjxBHYA/DsZKnHjqkxa26wrgFq5zq4ZrCQ1E+/xEeZFMBP4Mg9tOVUZW0n6xbs1Or+EAVkhqzttx7AYlujzdba3jJgWRPIJkitxjy9gi4eg9mTZ
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=_Wotqz80AAAA:8 a=DfNHnWVPAAAA:8 a=yMhMjlubAAAA:8
-    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=9GihAUzGDAH5BQcAHsIA:9
-    a=hZFYp5xOGIwIXZUw:21 a=3J4n-IJ5SUQ9EAOh:21 a=QEXdDO2ut3YA:10
-    a=buJP51TR1BpY-zbLSsyS:22 a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=_ua-DJzVAAAA:8 a=2KMo9-giAAAA:8 a=sozttTNsAAAA:8 a=ag1SF4gXAAAA:8
+    a=C7x2lP5x8ud22Opvj2UA:9 a=QEXdDO2ut3YA:10 a=Rns7OpQVW6Hshu8udh8j:22
+    a=UeCTMeHK7YUBiLmz_SX7:22 a=aeg5Gbbo78KNqacMgKqU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753016AbeDYKhD (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:37:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51026 "EHLO
+        id S1752982AbeDYLd2 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 07:33:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51064 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752390AbeDYKhB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:37:01 -0400
+        with ESMTP id S1752390AbeDYKhN (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:37:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Eryu Guan <eguan@redhat.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <smfrench@gmail.com>
-Subject: [PATCH 4.14 001/183] cifs: do not allow creating sockets except with SMB1 posix exensions
-Date: Wed, 25 Apr 2018 12:33:41 +0200
-Message-Id: <20180425103242.651841985@linuxfoundation.org>
+        stable@vger.kernel.org, Merlijn Wajer <merlijn@wizzup.org>,
+        Tony Lindgren <tony@atomide.com>, Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.14 013/183] usb: musb: call pm_runtime_{get,put}_sync before reading vbus registers
+Date: Wed, 25 Apr 2018 12:33:53 +0200
+Message-Id: <20180425103243.147303287@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -98,72 +92,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steve French <smfrench@gmail.com>
+From: Merlijn Wajer <merlijn@wizzup.org>
 
-commit 1d0cffa674cfa7d185a302c8c6850fc50b893bed upstream.
+commit df6b074dbe248d8c43a82131e8fd429e401841a5 upstream.
 
-RHBZ: 1453123
+Without pm_runtime_{get,put}_sync calls in place, reading
+vbus status via /sys causes the following error:
 
-Since at least the 3.10 kernel and likely a lot earlier we have
-not been able to create unix domain sockets in a cifs share
-when mounted using the SFU mount option (except when mounted
-with the cifs unix extensions to Samba e.g.)
-Trying to create a socket, for example using the af_unix command from
-xfstests will cause :
-BUG: unable to handle kernel NULL pointer dereference at 00000000
-00000040
+Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa0ab060
+pgd = b333e822
+[fa0ab060] *pgd=48011452(bad)
 
-Since no one uses or depends on being able to create unix domains sockets
-on a cifs share the easiest fix to stop this vulnerability is to simply
-not allow creation of any other special files than char or block devices
-when sfu is used.
+[<c05261b0>] (musb_default_readb) from [<c0525bd0>] (musb_vbus_show+0x58/0xe4)
+[<c0525bd0>] (musb_vbus_show) from [<c04c0148>] (dev_attr_show+0x20/0x44)
+[<c04c0148>] (dev_attr_show) from [<c0259f74>] (sysfs_kf_seq_show+0x80/0xdc)
+[<c0259f74>] (sysfs_kf_seq_show) from [<c0210bac>] (seq_read+0x250/0x448)
+[<c0210bac>] (seq_read) from [<c01edb40>] (__vfs_read+0x1c/0x118)
+[<c01edb40>] (__vfs_read) from [<c01edccc>] (vfs_read+0x90/0x144)
+[<c01edccc>] (vfs_read) from [<c01ee1d0>] (SyS_read+0x3c/0x74)
+[<c01ee1d0>] (SyS_read) from [<c0106fe0>] (ret_fast_syscall+0x0/0x54)
 
-Added update to Ronnie's patch to handle a tcon link leak, and
-to address a buf leak noticed by Gustavo and Colin.
+Solution was suggested by Tony Lindgren <tony@atomide.com>.
 
-Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-CC:  Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reported-by: Eryu Guan <eguan@redhat.com>
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Merlijn Wajer <merlijn@wizzup.org>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Bin Liu <b-liu@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/dir.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/usb/musb/musb_core.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -684,6 +684,9 @@ int cifs_mknod(struct inode *inode, stru
- 		goto mknod_out;
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -1780,6 +1780,7 @@ musb_vbus_show(struct device *dev, struc
+ 	int		vbus;
+ 	u8		devctl;
+ 
++	pm_runtime_get_sync(dev);
+ 	spin_lock_irqsave(&musb->lock, flags);
+ 	val = musb->a_wait_bcon;
+ 	vbus = musb_platform_get_vbus_status(musb);
+@@ -1793,6 +1794,7 @@ musb_vbus_show(struct device *dev, struc
+ 			vbus = 0;
  	}
+ 	spin_unlock_irqrestore(&musb->lock, flags);
++	pm_runtime_put_sync(dev);
  
-+	if (!S_ISCHR(mode) && !S_ISBLK(mode))
-+		goto mknod_out;
-+
- 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
- 		goto mknod_out;
- 
-@@ -692,10 +695,8 @@ int cifs_mknod(struct inode *inode, stru
- 
- 	buf = kmalloc(sizeof(FILE_ALL_INFO), GFP_KERNEL);
- 	if (buf == NULL) {
--		kfree(full_path);
- 		rc = -ENOMEM;
--		free_xid(xid);
--		return rc;
-+		goto mknod_out;
- 	}
- 
- 	if (backup_cred(cifs_sb))
-@@ -742,7 +743,7 @@ int cifs_mknod(struct inode *inode, stru
- 		pdev->minor = cpu_to_le64(MINOR(device_number));
- 		rc = tcon->ses->server->ops->sync_write(xid, &fid, &io_parms,
- 							&bytes_written, iov, 1);
--	} /* else if (S_ISFIFO) */
-+	}
- 	tcon->ses->server->ops->close(xid, tcon, &fid);
- 	d_drop(direntry);
- 
+ 	return sprintf(buf, "Vbus %s, timeout %lu msec\n",
+ 			vbus ? "on" : "off", val);
