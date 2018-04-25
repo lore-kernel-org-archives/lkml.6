@@ -1,241 +1,270 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756315AbeDYUCI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 16:02:08 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:31688 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbeDYUCF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 16:02:05 -0400
-From: Jyri Sarha <jsarha@ti.com>
-Subject: [PATCH v4 7/8] drm/i2c: tda998x: register as a drm bridge
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-CC: Peter Rosin <peda@axentia.se>, <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180423072301.11962-1-peda@axentia.se>
- <20180423072301.11962-8-peda@axentia.se>
- <20180423160833.GF16141@n2100.armlinux.org.uk>
- <5d6866d0-75bc-4de8-9b87-4fee5430e9dd@axentia.se>
- <20180424080833.GJ16141@n2100.armlinux.org.uk>
- <8448e90a-4562-b564-c160-1b5c67e0f92f@axentia.se>
- <0cbee3bd-8987-5f2f-519d-f8d1b426f2a3@ti.com>
- <20180424170625.GL16141@n2100.armlinux.org.uk>
- <b7a7ffb6-b282-cbc5-435e-9ca1cd405e33@ti.com>
- <20180424232523.GN16141@n2100.armlinux.org.uk>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
- xsFNBFbdWt8BEADnCIkQrHIvAmuDcDzp1h2pO9s22nacEffl0ZyzIS//ruiwjMfSnuzhhB33
- fNEWzMjm7eqoUBi1BUAQIReS6won0cXIEXFg9nDYQ3wNTPyh+VRjBvlb/gRJlf4MQnJDTGDP
- S5i63HxYtOfjPMSsUSu8NvhbzayNkN5YKspJDu1cK5toRtyUn1bMzUSKDHfwpdmuCDgXZSj2
- t+z+c6u7yx99/j4m9t0SVlaMt00p1vJJ3HJ2Pkm3IImWvtIfvCmxnOsK8hmwgNQY6PYK1Idk
- puSRjMIGLqjZo071Z6dyDe08zv6DWL1fMoOYbAk/H4elYBaqEsdhUlDCJxZURcheQUnOMYXo
- /kg+7TP6RqjcyXoGgqjfkqlf3hYKmyNMq0FaYmUAfeqCWGOOy3PPxR/IiACezs8mMya1XcIK
- Hk/5JAGuwsqT80bvDFAB2XfnF+fNIie/n5SUHHejJBxngb9lFE90BsSfdcVwzNJ9gVf/TOJc
- qJEHuUx0WPi0taO7hw9+jXV8KTHp6CQPmDSikEIlW7/tJmVDBXQx8n4RMUk4VzjE9Y/m9kHE
- UVJ0bJYzMqECMTAP6KgzgkQCD7n8OzswC18PrK69ByGFpcm664uCAa8YiMuX92MnesKMiYPQ
- z1rvR5riXZdplziIRjFRX+68fvhPverrvjNVmzz0bAFwfVjBsQARAQABzRpKeXJpIFNhcmhh
- IDxqc2FyaGFAdGkuY29tPsLBeAQTAQIAIgUCVt1a3wIbAwYLCQgHAwIGFQgCCQoLBBYCAwEC
- HgECF4AACgkQkDazUNfWGUEVVhAAmFL/21tUhZECrDrP9FWuAUuDvg+1CgrrqBj7ZxKtMaiz
- qTcZwZdggp8bKlFaNrmsyrBsuPlAk99f7ToxufqbV5l/lAT3DdIkjb4nwN4rJkxqSU3PaUnh
- mDMKIAp6bo1N9L+h82LE6CjI89W4ydQp5i+cOeD/kbdxbHHvxgNwrv5x4gg1JvEQLVnUSHva
- R2kx7u2rlnq7OOyh9vU0MUq7U5enNNqdBjjBTeaOwa5xb3S2Cc9dR10mpFiy+jSSkuFOjPpc
- fLfr/s03NGqbZ4aXvZCGjCw4jclpTJkuWPKO+Gb+a/3oJ4qpGN9pJ+48n2Tx9MdSrR4aaXHi
- EYMrbYQz9ICJ5V80P5+yCY5PzCvqpkizP6vtKvRSi8itzsglauMZGu6GwGraMJNBgu5u+HIZ
- nfRtJO1AAiwuupOHxe1nH05c0zBJaEP4xJHyeyDsMDh+ThwbGwQmAkrLJZtOd3rTmqlJXnuj
- sfgQlFyC68t1YoMHukz9LHzg02xxBCaLb0KjslfwuDUTPrWtcDL1a5hccksrkHx7k9crVFA1
- o6XWsOPGKRHOGvYyo3TU3CRygXysO41UnGG40Q3B5R8RMwRHV925LOQIwEGF/6Os8MLgFXCb
- Lv3iJtan+PBdqO1Bv3u2fXUMbYgQ3v7jHctB8nHphwSwnHuGN7FAmto+SxzotE3OwU0EVt1a
- 3wEQAMHwOgNaIidGN8UqhSJJWDEfF/SPSCrsd3WsJklanbDlUCB3WFP2EB4k03JroIRvs7/V
- VMyITLQvPoKgaECbDS5U20r/Po/tmaAOEgC7m1VaWJUUEXhjYQIw7t/tSdWlo5XxZIcO4LwO
- Kf0S4BPrQux6hDLIFL8RkDH/8lKKc44ZnSLoF1gyjc5PUt6iwgGJRRkOD8gGxCv1RcUsu1xU
- U9lHBxdWdPmMwyXiyui1Vx7VJJyD55mqc7+qGrpDHG9yh3pUm2IWp7jVt/qw9+OE9dVwwhP9
- GV2RmBpDmB3oSFpk7lNvLJ11VPixl+9PpmRlozMBO00wA1W017EpDHgOm8XGkq++3wsFNOmx
- 6p631T2WuIthdCSlZ2kY32nGITWn4d8L9plgb4HnDX6smrMTy1VHVYX9vsHXzbqffDszQrHS
- wFo5ygKhbGNXO15Ses1r7Cs/XAZk3PkFsL78eDBHbQd+MveApRB7IyfffIz7pW1R1ZmCrmAg
- Bn36AkDXJTgUwWqGyJMd+5GHEOg1UPjR5Koxa4zFhj1jp1Fybn1t4N11cmEmWh0aGgI/zsty
- g/qtGRnFEywBbzyrDEoV4ZJy2Q5pnZohVhpbhsyETeYKQrRnMk/dIPWg6AJx38Cl4P9PK1JX
- 8VK661BG8GXsXJ3uZbPSu6K0+FiJy09N4IW7CPJNABEBAAHCwV8EGAECAAkFAlbdWt8CGwwA
- CgkQkDazUNfWGUFOfRAA5K/z9DXVEl2kkuMuIWkgtuuLQ7ZwqgxGP3dMA5z3Iv/N+VNRGbaw
- oxf+ZkTbJHEE/dWclj1TDtpET/t6BJNLaldLtJ1PborQH+0jTmGbsquemKPgaHeSU8vYLCdc
- GV/Rz+3FN0/fRdmoq2+bIHght4T6KZJ6jsrnBhm7y6gzjMOiftH6M5GXPjU0/FsU09qsk/af
- jbwLETaea0mlWMrLd9FC2KfVITA/f/YG2gqtUUF9WlizidyctWJqSTZn08MdzaoPItIkRUTv
- 6Bv6rmFn0daWkHt23BLd0ZP7e7pON1rqNVljWjWQ/b/E/SzeETrehgiyDr8pP+CLlC+vSQxi
- XtjhWjt1ItFLXxb4/HLZbb/L4gYX7zbZ3NwkON6Ifn3VU7UwqxGLmKfUwu/mFV+DXif1cKSS
- v6vWkVQ6Go9jPsSMFxMXPA5317sZZk/v18TAkIiwFqda3/SSjwc3e8Y76/DwPvUQd36lEbva
- uBrUXDDhCoiZnjQaNz/J+o9iYjuMTpY1Wp+igjIretYr9+kLvGsoPo/kTPWyiuh/WiFU2d6J
- PMCGFGhodTS5qmQA6IOuazek1qSZIl475u3E2uG98AEX/kRhSzgpsbvADPEUPaz75uvlmOCX
- tv+Sye9QT4Z1QCh3lV/Zh4GlY5lt4MwYnqFCxroK/1LpkLgdyQ4rRVw=
-Message-ID: <7e8cdcf6-c816-1e01-24f1-a526fb0a591f@ti.com>
-Date: Wed, 25 Apr 2018 23:01:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1756524AbeDYUCq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 16:02:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60464 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756502AbeDYUCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 16:02:40 -0400
+Date: Wed, 25 Apr 2018 16:02:35 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH v4] fault-injection: introduce kvmalloc fallback options
+In-Reply-To: <20180424173836.GR17484@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180421144757.GC14610@bombadil.infradead.org> <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com> <20180423151545.GU17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424125121.GA17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com> <20180424162906.GM17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424170349.GQ17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com> <20180424173836.GR17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <20180424232523.GN16141@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/04/18 02:25, Russell King - ARM Linux wrote:
-> On Tue, Apr 24, 2018 at 09:25:44PM +0300, Jyri Sarha wrote:
->> On 24/04/18 20:06, Russell King - ARM Linux wrote:
->>> On Tue, Apr 24, 2018 at 07:04:16PM +0300, Jyri Sarha wrote:
->>>> On 24/04/18 13:14, Peter Rosin wrote:
->>>>> On 2018-04-24 10:08, Russell King - ARM Linux wrote:
->>>>>> On Tue, Apr 24, 2018 at 08:58:42AM +0200, Peter Rosin wrote:
->>>>>>> On 2018-04-23 18:08, Russell King - ARM Linux wrote:
->>>>>>>> On Mon, Apr 23, 2018 at 09:23:00AM +0200, Peter Rosin wrote:
->>>>>>>>>  static int tda998x_remove(struct i2c_client *client)
->>>>>>>>>  {
->>>>>>>>> -	component_del(&client->dev, &tda998x_ops);
->>>>>>>>> +	struct device *dev = &client->dev;
->>>>>>>>> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
->>>>>>>>> +
->>>>>>>>> +	drm_bridge_remove(&bridge->bridge);
->>>>>>>>> +	component_del(dev, &tda998x_ops);
->>>>>>>>> +
->>>>>>>>
->>>>>>>> I'd like to ask a rather fundamental question about DRM bridge support,
->>>>>>>> because I suspect that there's a major fsckup here.
->>>>>>>>
->>>>>>>> The above is the function that deals with the TDA998x device being
->>>>>>>> unbound from the driver.  With the component API, this results in the
->>>>>>>> DRM device correctly being torn down, because one of the hardware
->>>>>>>> devices has gone.
->>>>>>>>
->>>>>>>> With DRM bridge, the bridge is merely removed from the list of
->>>>>>>> bridges:
->>>>>>>>
->>>>>>>> void drm_bridge_remove(struct drm_bridge *bridge)
->>>>>>>> {
->>>>>>>>         mutex_lock(&bridge_lock);
->>>>>>>>         list_del_init(&bridge->list);
->>>>>>>>         mutex_unlock(&bridge_lock);
->>>>>>>> }
->>>>>>>> EXPORT_SYMBOL(drm_bridge_remove);
->>>>>>>>
->>>>>>>> and the memory backing the "struct tda998x_bridge" (which contains
->>>>>>>> the struct drm_bridge) will be freed by the devm subsystem.
->>>>>>>>
->>>>>>>> However, there is no notification into the rest of the DRM subsystem
->>>>>>>> that the device has gone away.  Worse, the memory that is still in
->>>>>>>> use by DRM has now been freed, so further use of the DRM device
->>>>>>>> results in a use-after-free bug.
->>>>>>>>
->>>>>>>> This is really not good, and to me looks like a fundamental problem
->>>>>>>> with the DRM bridge code.  I see nothing in the DRM bridge code that
->>>>>>>> deals with the lifetime of a "DRM bridge" or indeed the lifetime of
->>>>>>>> the actual device itself.
->>>>>>>>
->>>>>>>> So, from what I can see, there seems to be a fundamental lifetime
->>>>>>>> issue with the design of the DRM bridge code.  This needs to be
->>>>>>>> fixed.
->>>>>>>
->>>>>>> Oh crap. A gigantic can of worms...
->>>>>>
->>>>>> Yes, it's especially annoying for me, having put the effort in to
->>>>>> the component helper to cover all these cases.
->>>>>>
->>>>>>> Would a patch (completely untested btw) along this line of thinking make
->>>>>>> any difference whatsoever?
->>>>>>
->>>>>> It looks interesting - from what I can see of the device links code,
->>>>>> it would have the effect of unbinding the DRM device just before
->>>>>> TDA998x is unbound, so that's an improvement.
->>>>>>
->>>>>> However, from what I can see, the link vanishes at that point (as
->>>>>> DL_FLAG_AUTOREMOVE is set), and re-binding the TDA998x device results
->>>>>> in nothing further happening - the link will be recreated, but there
->>>>>> appears to be nothing that triggers the "consumer" to rebind at that
->>>>>> point.  Maybe I've missed something?
->>>>>
->>>>> Right, auto-remove is a no-go. So, improving on the previous...
->>>>>
->>>>> (I think drm_panel might suffer from this issue too?)
->>>>
->>>> Yes it does and I took a shot at trying to fix it at the end of the
->>>> previous merge window, but gave up as I run out of time. I re-spun the
->>>> work now after reading this thread. I add you and Russell to cc.
->>>
->>> Right, and these exact problems are what the component helper is
->>> there to sort out, in a subsystem independent way.
->>>
->>> What is the problem with the component helper that people seem to
->>> be soo loathed to use it, instead preferring to come up with sub-
->>> standard and broken alternatives?
->>>
->>
->> Nothing but time. Embedding component helpers seamlessly into drm
->> framework does not sound like a couple of days job. Right now I simply
->> do not have time to take on a challenge like that. If someone does it I
->> am all for it.
->>
->> However, I would not call device links substandard. They are in the
->> device core after all.
+
+
+On Tue, 24 Apr 2018, Michal Hocko wrote:
+
+> > > Wouldn't it be equally trivial to simply enable the fault injection? You
+> > > would get additional failure paths testing as a bonus.
+> > 
+> > The RHEL and Fedora debugging kernels are compiled with fault injection. 
+> > But the fault-injection framework will do nothing unless it is enabled by 
+> > a kernel parameter or debugfs write.
+> > 
+> > Most users don't know about the fault injection kernel parameters or 
+> > debugfs files and won't enabled it. We need a CONFIG_ option to enable it 
+> > by default in the debugging kernels (and we could add a kernel parameter 
+> > to override the default, fine-tune the fallback probability etc.)
 > 
-> Umm, no, I was not talking about the device links, but the tendency to
-> have subsystem or component specific solutions to this problem.
-> 
+> If it is a real issue to install the debugging kernel with the required
+> kernel parameter then I a config option for the default on makes sense
+> to me.
 
-Oh yes. But in this case the substandard solution is already there and
-it is already widely used, despite it being severely broken. I am merely
-trying to fix the existing substandard solution.
+Yes - the debug kernels use the same default kernel parameters as 
+non-debug kernels and it is expected that all debug features are enabled 
+by default.
 
-I admit that a full integration with component helpers would probably be
-more elegant solution to the problem, but the amount of work is just too
-much. The change would impact the way all the master drm drivers pull
-them selves together. The drivers that already use the component helpers
-for some internal stuff will add their own challenge. Separate component
-matching implementations are needed for device-tree and ACPI (are ther
-more flavors?) etc. I just do not see this happening any time soon (am
-happy to be wrong about this).
+Here I'm sending the patch using the fault-injection framework and the new 
+option CONFIG_FAIL_KVMALLOC_FALLBACK_PROBABILITY.
 
-> We're now heading down the path of trying to retrofit the functionality
-> that one expects and is provided by the component helpers into DRM
-> bridge and DRM panel by using device links, which appears to only
-> partially resolve the problem.
-> 
-> On the point of device links, I've been wondering whether the component
-> helpers could take advantage of the device links, but at the moment
-> that would cause a regression if there's no facility to re-probe the
-> "consumer" when a "supplier" returns.
-> 
+Mikulas
 
-I sent a patch[1] in February that solves the re-probing problem at
-least in my environment.
 
-> As you bring that up, I would say that they _are_ a substandard way to
-> solve this problem _if_, as I suspect, they would cause a regression
-> to the component helper if the component helper were to use them as a
-> means to control the probing of the "master" device.  This is not a
-> matter of which part of the kernel they are "in", but the functionality
-> that they can offer vs what would be expected.
-> 
 
-The component helpers certainly have many features in that are not
-(yet?) in device core's device links, but the amount of work needed to
-fix the most pressing problem of attached drm panels or bridges is
-couple of magnitudes less with device links when compared to full blown
-component helper usage.
+From: Mikulas Patocka <mpatocka@redhat.com>
+Subject: [PATCH v4] fault-injection: introduce kvmalloc fallback options
 
-Best regards,
-Jyri
+This patch introduces a fault-injection option "kvmalloc_fallback". This
+option makes kvmalloc randomly fall back to vmalloc.
 
-[1]
-https://lists.freedesktop.org/archives/dri-devel/2018-February/166907.html
+Unfortunatelly, some kernel code has bugs - it uses kvmalloc and then
+uses DMA-API on the returned memory or frees it with kfree. Such bugs were
+found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
+code. This options helps to test for these bugs.
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+The patch introduces a config option FAIL_KVMALLOC_FALLBACK_PROBABILITY.
+It can be enabled in distribution debug kernels, so that kvmalloc abuse
+can be tested by the users. The default can be overriden with
+"kvmalloc_fallback" parameter or in /sys/kernel/debug/kvmalloc_fallback/.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+
+---
+ Documentation/fault-injection/fault-injection.txt |    7 +++++
+ include/linux/fault-inject.h                      |    9 +++---
+ kernel/futex.c                                    |    2 -
+ lib/Kconfig.debug                                 |   15 +++++++++++
+ mm/failslab.c                                     |    2 -
+ mm/page_alloc.c                                   |    2 -
+ mm/util.c                                         |   30 ++++++++++++++++++++++
+ 7 files changed, 60 insertions(+), 7 deletions(-)
+
+Index: linux-2.6/Documentation/fault-injection/fault-injection.txt
+===================================================================
+--- linux-2.6.orig/Documentation/fault-injection/fault-injection.txt	2018-04-16 21:08:34.000000000 +0200
++++ linux-2.6/Documentation/fault-injection/fault-injection.txt	2018-04-25 21:36:36.000000000 +0200
+@@ -15,6 +15,12 @@ o fail_page_alloc
+ 
+   injects page allocation failures. (alloc_pages(), get_free_pages(), ...)
+ 
++o kvmalloc_faillback
++
++  makes the function kvmalloc randonly fall back to vmalloc. This could be used
++  to detects bugs such as using DMA-API on the result of kvmalloc or freeing
++  the result of kvmalloc with free.
++
+ o fail_futex
+ 
+   injects futex deadlock and uaddr fault errors.
+@@ -167,6 +173,7 @@ use the boot option:
+ 
+ 	failslab=
+ 	fail_page_alloc=
++	kvmalloc_faillback=
+ 	fail_make_request=
+ 	fail_futex=
+ 	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
+Index: linux-2.6/include/linux/fault-inject.h
+===================================================================
+--- linux-2.6.orig/include/linux/fault-inject.h	2018-04-16 21:08:36.000000000 +0200
++++ linux-2.6/include/linux/fault-inject.h	2018-04-25 21:38:22.000000000 +0200
+@@ -31,17 +31,18 @@ struct fault_attr {
+ 	struct dentry *dname;
+ };
+ 
+-#define FAULT_ATTR_INITIALIZER {					\
++#define FAULT_ATTR_INITIALIZER(p) {					\
++		.probability = (p),					\
+ 		.interval = 1,						\
+-		.times = ATOMIC_INIT(1),				\
++		.times = ATOMIC_INIT((p) ? -1 : 1),			\
++		.verbose = (p) ? 0 : 2,					\
+ 		.require_end = ULONG_MAX,				\
+ 		.stacktrace_depth = 32,					\
+ 		.ratelimit_state = RATELIMIT_STATE_INIT_DISABLED,	\
+-		.verbose = 2,						\
+ 		.dname = NULL,						\
+ 	}
+ 
+-#define DECLARE_FAULT_ATTR(name) struct fault_attr name = FAULT_ATTR_INITIALIZER
++#define DECLARE_FAULT_ATTR(name) struct fault_attr name = FAULT_ATTR_INITIALIZER(0)
+ int setup_fault_attr(struct fault_attr *attr, char *str);
+ bool should_fail(struct fault_attr *attr, ssize_t size);
+ 
+Index: linux-2.6/lib/Kconfig.debug
+===================================================================
+--- linux-2.6.orig/lib/Kconfig.debug	2018-04-25 15:56:16.000000000 +0200
++++ linux-2.6/lib/Kconfig.debug	2018-04-25 21:39:45.000000000 +0200
+@@ -1527,6 +1527,21 @@ config FAIL_PAGE_ALLOC
+ 	help
+ 	  Provide fault-injection capability for alloc_pages().
+ 
++config FAIL_KVMALLOC_FALLBACK_PROBABILITY
++	int "Default kvmalloc fallback probability"
++	depends on FAULT_INJECTION
++	range 0 100
++	default "0"
++	help
++	  This option will make kvmalloc randomly fall back to vmalloc.
++	  Normally, kvmalloc falls back to vmalloc only rarely, if memory
++	  is fragmented.
++
++	  This option helps to detect hard-to-reproduce driver bugs, for
++	  example using DMA API on the result of kvmalloc.
++
++	  The default may be overriden with the kvmalloc_faillback parameter.
++
+ config FAIL_MAKE_REQUEST
+ 	bool "Fault-injection capability for disk IO"
+ 	depends on FAULT_INJECTION && BLOCK
+Index: linux-2.6/mm/util.c
+===================================================================
+--- linux-2.6.orig/mm/util.c	2018-04-25 15:48:39.000000000 +0200
++++ linux-2.6/mm/util.c	2018-04-25 21:43:31.000000000 +0200
+@@ -14,6 +14,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/vmalloc.h>
+ #include <linux/userfaultfd_k.h>
++#include <linux/fault-inject.h>
+ 
+ #include <asm/sections.h>
+ #include <linux/uaccess.h>
+@@ -377,6 +378,29 @@ unsigned long vm_mmap(struct file *file,
+ }
+ EXPORT_SYMBOL(vm_mmap);
+ 
++#ifdef CONFIG_FAULT_INJECTION
++
++static struct fault_attr kvmalloc_fallback =
++	FAULT_ATTR_INITIALIZER(CONFIG_FAIL_KVMALLOC_FALLBACK_PROBABILITY);
++
++static int __init setup_kvmalloc_fallback(char *str)
++{
++	return setup_fault_attr(&kvmalloc_fallback, str);
++}
++
++__setup("kvmalloc_fallback=", setup_kvmalloc_fallback);
++
++#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
++static int __init kvmalloc_fallback_debugfs_init(void)
++{
++	fault_create_debugfs_attr("kvmalloc_fallback", NULL, &kvmalloc_fallback);
++	return 0;
++}
++late_initcall(kvmalloc_fallback_debugfs_init);
++#endif
++
++#endif
++
+ /**
+  * kvmalloc_node - attempt to allocate physically contiguous memory, but upon
+  * failure, fall back to non-contiguous (vmalloc) allocation.
+@@ -404,6 +428,11 @@ void *kvmalloc_node(size_t size, gfp_t f
+ 	 */
+ 	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+ 
++#ifdef CONFIG_FAULT_INJECTION
++	if (should_fail(&kvmalloc_fallback, size))
++		goto do_vmalloc;
++#endif
++
+ 	/*
+ 	 * We want to attempt a large physically contiguous block first because
+ 	 * it is less likely to fragment multiple larger blocks and therefore
+@@ -427,6 +456,7 @@ void *kvmalloc_node(size_t size, gfp_t f
+ 	if (ret || size <= PAGE_SIZE)
+ 		return ret;
+ 
++do_vmalloc: __maybe_unused
+ 	return __vmalloc_node_flags_caller(size, node, flags,
+ 			__builtin_return_address(0));
+ }
+Index: linux-2.6/kernel/futex.c
+===================================================================
+--- linux-2.6.orig/kernel/futex.c	2018-02-14 20:24:42.000000000 +0100
++++ linux-2.6/kernel/futex.c	2018-04-25 21:11:33.000000000 +0200
+@@ -288,7 +288,7 @@ static struct {
+ 
+ 	bool ignore_private;
+ } fail_futex = {
+-	.attr = FAULT_ATTR_INITIALIZER,
++	.attr = FAULT_ATTR_INITIALIZER(0),
+ 	.ignore_private = false,
+ };
+ 
+Index: linux-2.6/mm/failslab.c
+===================================================================
+--- linux-2.6.orig/mm/failslab.c	2018-04-16 21:08:36.000000000 +0200
++++ linux-2.6/mm/failslab.c	2018-04-25 21:11:40.000000000 +0200
+@@ -9,7 +9,7 @@ static struct {
+ 	bool ignore_gfp_reclaim;
+ 	bool cache_filter;
+ } failslab = {
+-	.attr = FAULT_ATTR_INITIALIZER,
++	.attr = FAULT_ATTR_INITIALIZER(0),
+ 	.ignore_gfp_reclaim = true,
+ 	.cache_filter = false,
+ };
+Index: linux-2.6/mm/page_alloc.c
+===================================================================
+--- linux-2.6.orig/mm/page_alloc.c	2018-04-16 21:08:36.000000000 +0200
++++ linux-2.6/mm/page_alloc.c	2018-04-25 21:11:47.000000000 +0200
+@@ -3055,7 +3055,7 @@ static struct {
+ 	bool ignore_gfp_reclaim;
+ 	u32 min_order;
+ } fail_page_alloc = {
+-	.attr = FAULT_ATTR_INITIALIZER,
++	.attr = FAULT_ATTR_INITIALIZER(0),
+ 	.ignore_gfp_reclaim = true,
+ 	.ignore_gfp_highmem = true,
+ 	.min_order = 1,
