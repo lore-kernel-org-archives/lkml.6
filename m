@@ -1,53 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751255AbeDYEbc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 00:31:32 -0400
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:35788 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750945AbeDYEb2 (ORCPT
+        id S1751414AbeDYEcT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 00:32:19 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45601 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeDYEcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 00:31:28 -0400
-From: <xswang@marvell.com>
-To: <linux-ide@vger.kernel.org>, <tj@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <oferh@marvell.com>, <dingwei@marvell.com>, <xigu@marvell.com>,
-        <nadavh@marvell.com>, Evan Wang <xswang@marvell.com>
-Subject: [PATCH 0/2] Allow drivers to override stop_engine
-Date: Wed, 25 Apr 2018 12:27:12 +0800
-Message-ID: <1524630434-5914-1-git-send-email-xswang@marvell.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 25 Apr 2018 00:32:18 -0400
+X-Google-Smtp-Source: AIpwx4/djXaANtzYf5cGA5TlSPOexEs/kEiH6ui+bRRw7DQL3foT8WomJMXbFVoZKggHNM2N9XX9FA==
+Date: Wed, 25 Apr 2018 10:04:13 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        manfred@colorfullife.com, dave@stgolabs.net, ebiederm@xmission.com,
+        linux@dominikbrodowski.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ipc: Adding new return type vm_fault_t
+Message-ID: <20180425043413.GA21467@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-25_01:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=528 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1711220000 definitions=main-1804250038
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Evan Wang <xswang@marvell.com>
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
-There are some special operations needed when stop engine
-for Marvell AHCI IP, and it maybe needed by other vendors,
-so it is necessary to allow to override ahci_stop_engine()
-when stop the engine like overriding start_engine.
+Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-Evan Wang (2):
-  libahci: Allow drivers to override stop_engine
-  ata: ahci: mvebu: override ahci_stop_engine for mvebu AHCI
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+v2: Updated the change log
 
- drivers/ata/ahci.c          |  6 ++---
- drivers/ata/ahci.h          |  7 ++++++
- drivers/ata/ahci_mvebu.c    | 56 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/ata/ahci_qoriq.c    |  2 +-
- drivers/ata/ahci_xgene.c    |  4 ++--
- drivers/ata/libahci.c       | 20 +++++++++-------
- drivers/ata/sata_highbank.c |  2 +-
- 7 files changed, 82 insertions(+), 15 deletions(-)
+ ipc/shm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 4643865..2ba0cfc 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -378,7 +378,7 @@ void exit_shm(struct task_struct *task)
+ 	up_write(&shm_ids(ns).rwsem);
+ }
+ 
+-static int shm_fault(struct vm_fault *vmf)
++static vm_fault_t shm_fault(struct vm_fault *vmf)
+ {
+ 	struct file *file = vmf->vma->vm_file;
+ 	struct shm_file_data *sfd = shm_file_data(file);
 -- 
 1.9.1
