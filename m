@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-585385-1524655953-2-918382698046248846
+X-Cyrus-Session-Id: sloti22d1t05-584447-1524655940-2-11165248834183606611
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524655952; b=K1xAkrj80y6FHLxMDqfZgKNwYFu/MfAXQWhi4OdJK0FzApo6x+
-    93r1fXFvRGbo9ELSntBlM0gnIyvmvAvxeS0vl/ltle+zhrRyQv6qSwez/s47UxoT
-    8xO3rtFeikgGloSBtDeXmOvjiFsB4OXROtPk4Xb7nTTXhQzONydZ65hkjnHM4wQf
-    VxB1KZpIAQwaVylhQhV38l2kZnYQQOuO4vP9IkPo3TY1E4ZTI4Adqhz9/JGr2Wvu
-    pCa9nERmGEseGcFF2nPYwh7/kXvNIaRgz0JUbr5jxe++TNzZiO4tqfgcWjUxi9Kh
-    ofD+3yrRG2+9E7Rn/9OBI6wXnjhvPWD+BPhA==
+    1524655939; b=XgcauwyWgjt236x8latG5pISPeNmTbLdGnkvnpRBndkl9cYeaF
+    UEU7sWkjVmjjHk1a6JvqYuP4lPsOpNofGi0bwWHXgEYNd9AThTlXzyfeOBiv9SC8
+    PbHHuF2rxh9VXxAbKgigjeB9fDIM6vEUV/jZZFCfa5fxQ+a4mmKcFuaDD4rmUkjF
+    HYqmiMAIw1D3MyzkMlui1a5UIBYVBAauDZfanD9mGHP9lTFciDrFCQT1HkjUr4vP
+    mQCWPeX0cmn8bWBjb3Q3HuTUCxjFcgPdihBV+Y20IkKltTHcaoFxM1JHxwEmnrFE
+    /pLpowDKwmpL00DxeAnrLgKdhIWMRZiegPFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524655952; bh=GhwqjhESYwTtmY1NV0i62J0Ct7q7Mc
-    tiQD/MTz+hWRY=; b=OBQ7nB0eU9vpFIDZWvHdZn1QdEyl1XmJ5mT2NIzwsy6q8q
-    /jbT/FFX8ZrgAqo31CE1FumBnRcreHLVq9DJ4/yGks7D36SRQTxmuLFatiQWRv6k
-    zeGb5SliMSMRyoc8wYUG1A0lSxRlEnaGsUELCLmy03YPSG0+vosRl9U0YiC1mdeK
-    NwprjSVNXCCYGOMtzfkamtPOmHYW4VS8B9euNPPYyt04iTt46kgxv6Fhm9+sRnh7
-    fQzAPUhxto7d70Bko1ZEUApoOiBEFd+q3Ad8JQfOQYRO0gp3aHEB4Ibc9zWFkEcs
-    rjFZGJxpq3EWxfuaa0fEL/PlP6FQS5Bol1uElWQA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524655939; bh=d4ckc3w1BxxEohKKQttekb/bvOOAhT
+    t0ZDbmE1Eidwk=; b=JaicTcXLk0MFBYmDspmdSbZbvwXlCTDSqTPkA8AFX4fOHz
+    VX0ZXT3al5sO7VJoKsFqTCIeAKXth4wECYExEVFbWDHL7k1UrECo0qrWvNwBYe7C
+    74K5TCPheJu/UWzK445dmbExdYMRvzH7zYF2MGRMY+zupap5SMNFpOBnfQTL5s8r
+    +XRFwzHTqTRdzwVnw2xUJLNvd54SlN0wMhgAgQo7alVAITmgm0PQGcjactzZxKwd
+    cTr2VnRNRh2Do/D4Mr+SKeN+wA+RNvuK8imIP//om+TUlVHdiJuuHTe5xy1+Ln6o
+    fGI/RYRufQ0RVsactTmAGlngUoKN+UIzGYNMfbhA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,31 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPhGjiNOHRkfghuSypvZWco+9tgGdrdqmcbrQAvPk49dmPfHNfMvrx/dApfDc0y9jOKgRRtU4YsncfoypPUh0NcNibq7zzcxpCtKyYnj0/Ern47qRHcr
-    k//t+zc4Ua2KM1J5QO94DGD6aAK+kzgxyyjekRBFFVD95B7n0gzGdvdUd6Tn5tP+L2KN+BPB6E+DiPiagEHlISTdFSlkacYTLD2EfwJbLXG8vRAayOaMHX1t
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJkQRN0dfUOBdwLGLr3O1EIby1Ce8hlP78DtEnU28rLh1PAX5eSpy6AqdDqwC7wFYGrv+JEfSqywiqtCJ5u1XDERchfbDCzzS8kq/bv9aB+t7nnjG5ju
+    vgAccHgnd+XS/+gAZNqinKhiLTl16uiLPFbm9PwhIZjoPl4Zk4QlmBF5xTyTtuJK9ej96XLusdu/7c9HD+bVSw9WHigN+SZiwz12eiBCthQT3aQK2HHVF7Kg
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=np7_iI3iUI9-syIfJJsA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=JfrnYn6hAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=XsaRKbsCnGI0xWDK90sA:9
+    a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752786AbeDYLcR (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 07:32:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51140 "EHLO
+        id S1752873AbeDYKhh (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:37:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51154 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753043AbeDYKh3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:37:29 -0400
+        with ESMTP id S1752788AbeDYKhf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:37:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 019/183] ACPI / LPSS: Do not instiate platform_dev for devs without MMIO resources
-Date: Wed, 25 Apr 2018 12:33:59 +0200
-Message-Id: <20180425103243.381826026@linuxfoundation.org>
+Subject: [PATCH 4.14 020/183] ALSA: hda - Use IS_REACHABLE() for dependency on input
+Date: Wed, 25 Apr 2018 12:34:00 +0200
+Message-Id: <20180425103243.418370294@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -94,50 +93,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
 
-[ Upstream commit e1681599345b8466786b6e54a2db2a00a068a3f3 ]
+[ Upstream commit c469652bb5e8fb715db7d152f46d33b3740c9b87 ]
 
-acpi_lpss_create_device() skips handling LPSS devices which do not have
-a mmio resources in their resource list (typically these devices are
-disabled by the firmware). But since the LPSS code does not bind to the
-device, acpi_bus_attach() ends up still creating a platform device for
-it and the regular platform_driver for the ACPI HID still tries to bind
-to it.
+The commit ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek
+HD-audio codec") introduced the reverse-selection of CONFIG_INPUT for
+Realtek codec in order to avoid the mess with dependency between
+built-in and modules.  Later on, we obtained IS_REACHABLE() macro
+exactly for this kind of problems, and now we can remove th INPUT
+selection in Kconfig and put IS_REACHABLE(INPUT) to the appropriate
+places in the code, so that the driver doesn't need to select other
+subsystem forcibly.
 
-This happens e.g. on some boards which do not use the pwm-controller
-and have an empty or invalid resource-table for it. Currently this causes
-these error messages to get logged:
-
-[    3.281966] pwm-lpss 80862288:00: invalid resource
-[    3.287098] pwm-lpss: probe of 80862288:00 failed with error -22
-
-This commit stops the undesirable creation of a platform_device for
-disabled LPSS devices by setting pnp.type.platform_id to 0. Note that
-acpi_scan_attach_handler() also sets pnp.type.platform_id to 0 when there
-is a matching handler for the device and that handler has no attach
-callback, so we simply behave as a handler without an attach function
-in this case.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek HD-audio codec")
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # and build-tested
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpi_lpss.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/hda/Kconfig         |    1 -
+ sound/pci/hda/patch_realtek.c |    5 +++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -465,6 +465,8 @@ static int acpi_lpss_create_device(struc
- 	acpi_dev_free_resource_list(&resource_list);
+--- a/sound/pci/hda/Kconfig
++++ b/sound/pci/hda/Kconfig
+@@ -88,7 +88,6 @@ config SND_HDA_PATCH_LOADER
+ config SND_HDA_CODEC_REALTEK
+ 	tristate "Build Realtek HD-audio codec support"
+ 	select SND_HDA_GENERIC
+-	select INPUT
+ 	help
+ 	  Say Y or M here to include Realtek HD-audio codec support in
+ 	  snd-hda-intel driver, such as ALC880.
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -3721,6 +3721,7 @@ static void alc280_fixup_hp_gpio4(struct
+ 	}
+ }
  
- 	if (!pdata->mmio_base) {
-+		/* Avoid acpi_bus_attach() instantiating a pdev for this dev. */
-+		adev->pnp.type.platform_id = 0;
- 		/* Skip the device, but continue the namespace scan. */
- 		ret = 0;
- 		goto err_out;
++#if IS_REACHABLE(INPUT)
+ static void gpio2_mic_hotkey_event(struct hda_codec *codec,
+ 				   struct hda_jack_callback *event)
+ {
+@@ -3853,6 +3854,10 @@ static void alc233_fixup_lenovo_line2_mi
+ 		spec->kb_dev = NULL;
+ 	}
+ }
++#else /* INPUT */
++#define alc280_fixup_hp_gpio2_mic_hotkey	NULL
++#define alc233_fixup_lenovo_line2_mic_hotkey	NULL
++#endif /* INPUT */
+ 
+ static void alc269_fixup_hp_line1_mic1_led(struct hda_codec *codec,
+ 				const struct hda_fixup *fix, int action)
