@@ -1,80 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756277AbeDYS2H (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:28:07 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41709 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755954AbeDYSMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:12:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,327,1520924400";
-   d="scan'208";a="35243644"
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V3 08/39] x86/intel_rdt: Introduce new "exclusive" mode
-Date: Wed, 25 Apr 2018 03:09:44 -0700
-Message-Id: <a7c9b55991e7be7559f099e4c7fe34e0f93730d0.1524649902.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1524649902.git.reinette.chatre@intel.com>
-References: <cover.1524649902.git.reinette.chatre@intel.com>
-In-Reply-To: <cover.1524649902.git.reinette.chatre@intel.com>
-References: <cover.1524649902.git.reinette.chatre@intel.com>
+        id S1756425AbeDYS2S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:28:18 -0400
+Received: from mail-qk0-f170.google.com ([209.85.220.170]:36193 "EHLO
+        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756206AbeDYS2M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:28:12 -0400
+X-Google-Smtp-Source: AB8JxZryC/wa+/su4MNI+dB5s/q5Wbs49X7BpbZzEdsLLLqiiU8xzr+UW7TSlYDBVe7D9RyEdkehAQ==
+From: Kamal Dasu <kdasu.kdev@gmail.com>
+To: broonie@kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
+        jon.mason@broadcom.com, yendapally.reddy@broadcom.com,
+        Kamal Dasu <kdasu.kdev@gmail.com>
+Subject: [PATCH v1 0/2] spi: bcm-qspi: Fix spi-nor chip select logic for BSPI
+Date: Wed, 25 Apr 2018 14:28:03 -0400
+Message-Id: <1524680885-4600-1-git-send-email-kdasu.kdev@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the moment all allocations are shareable. There is no way for a user
-to designate that an allocation associated with a resource group cannot be
-shared by another.
+spi-nor master controller driver needs to verify the chip select bit in the
+cs register for any cs change during trasfers. Also CDRAM PCS field not used
+in BSPI mode, set defualt to ~1 indicating active low for zeroth bit.
+Also always enable/disable BSPI_MAST_N_BOOT_CTRL when using BSPI mode.
 
-Introduce the new mode "exclusive". When a resource group is marked as
-such it implies that no overlap is allowed between its allocation and that
-of another resource group.
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- arch/x86/kernel/cpu/intel_rdt.h          | 2 ++
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 1 +
- 2 files changed, 3 insertions(+)
+*** BLURB HERE ***
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index cc6e41ad9522..3fb6645de840 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -82,6 +82,7 @@ enum rdt_group_type {
- /**
-  * enum rdtgrp_mode - Mode of a RDT resource group
-  * @RDT_MODE_SHAREABLE: This resource group allows sharing of its allocations
-+ * @RDT_MODE_EXCLUSIVE: No sharing of this resource group's allocations allowed
-  *
-  * The mode of a resource group enables control over the allowed overlap
-  * between allocations associated with different resource groups (classes
-@@ -90,6 +91,7 @@ enum rdt_group_type {
-  */
- enum rdtgrp_mode {
- 	RDT_MODE_SHAREABLE = 0,
-+	RDT_MODE_EXCLUSIVE,
- 
- 	/* Must be last */
- 	RDT_NUM_MODES,
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index d66283f83ece..9afcb667df3a 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -161,6 +161,7 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
- 
- static const char * const rdt_mode_str[] = {
- 	[RDT_MODE_SHAREABLE]	= "shareable",
-+	[RDT_MODE_EXCLUSIVE]	= "exclusive",
- };
- 
- /**
+Kamal Dasu (2):
+  spi: bcm-qspi: Avoid setting MSPI_CDRAM_PCS for spi-nor master
+  spi: bcm-qspi: Always change BSPI_MAST_N_BOOT_CTRL state
+
+ drivers/spi/spi-bcm-qspi.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
+
 -- 
-2.13.6
+2.7.4
