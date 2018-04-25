@@ -1,85 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755444AbeDYSEg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:04:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38556 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750935AbeDYSEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:04:34 -0400
-Subject: Re: [RFC] [PATCH 0/5] procfs: reduce duplication by using symlinks
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-References: <20180424022106.16952-1-jeffm@suse.com>
- <20180424061700.GA3689@avx2>
-From: Jeff Mahoney <jeffm@suse.com>
-Openpgp: preference=signencrypt
-Message-ID: <43fd713e-1ebf-7250-5ddb-e0326e0c3376@suse.com>
-Date: Wed, 25 Apr 2018 14:04:30 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180424061700.GA3689@avx2>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1755728AbeDYSF5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:05:57 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:21724 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751084AbeDYSFx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:05:53 -0400
+X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiv9N1EzmY
+X-RZG-CLASS-ID: mo00
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [Letux-kernel] [PATCH v3 2/4] gpio: pca953x: add register definitions for pcal6524 and fix address calculation
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <EDF7FA02-C79C-4ADF-A10C-F8C4DBFE5158@goldelico.com>
+Date: Wed, 25 Apr 2018 20:05:36 +0200
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>, kernel@pyra-handheld.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>
+Message-Id: <65085C47-CDA8-4F8C-8307-C145F21F7D19@goldelico.com>
+References: <cover.1523376423.git.hns@goldelico.com> <0e9bea79eae7504e61fabdb4a0311f8fdc2f6b25.1523376423.git.hns@goldelico.com> <CAHp75VfYk1tSJ9PUshDvY2RaYrc+wR+hyrK8Ck1oQSUXPr-0fQ@mail.gmail.com> <EDF7FA02-C79C-4ADF-A10C-F8C4DBFE5158@goldelico.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3PI62C9019184
 
-On 4/24/18 2:17 AM, Alexey Dobriyan wrote:
-> On Mon, Apr 23, 2018 at 10:21:01PM -0400, jeffm@suse.com wrote:
->> Memory pressure isn't really an issue on this machine, so we
->> end up using well over 100GB for proc files.
+Hi Andy,
+
+> Am 11.04.2018 um 07:00 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
 > 
-> Text files at scale!
+> Hi Andy,
 > 
->> With these patches applied, running the same testcase, the proc_inode
->> cache only gets to about 600k objects, which is about 99.7% fewer.  I
->> get that procfs isn't supposed to be scalable, but this is kind of
->> extreme. :)>
-> Easy stuff:
-> * all ->get_link hooks are broken in RCU lookup (use GFP_KERNEL),
-
-It's a pretty common pattern in the kernel, but it's just as easy to set
-inode->i_link during instantiation and keep RCU lookup.  There aren't so
-many of these to make it a real burden on memory.
-
-> * "%.*s" for dentry names is probably unnecessary,
->   they're always NUL terminated
-
-Ack.
-
-> * kasprintf() does printing twice, since we're kind of care about /proc
->   performance, allocate for the worst case.
-
-Ack, integrated with ->get_link fix.
-
-> * "int nlinks = nlink_tgid;"
->   Unsigned police.
-
-Ack.  nlink_t{,g}id are both u8, but it's easy to make it consistent.
-
-> * (inode->i_mode & S_IFLNK)
-> 	this is sketchy, S_ISLNK exists.
+>> Am 10.04.2018 um 20:06 schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
+>> 
+>> On Tue, Apr 10, 2018 at 7:07 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+>>> PCAL chips ("L" seems to stand for "latched") have additional
+>>> registers starting at address 0x40 to control the latches,
+>>> interrupt mask, pull-up and pull down etc.
+>>> 
+>>> The constants are so far defined in a way that they fit for
+>>> the pcal9555a when shifted by the number of banks, i.e. multiplied
+>>> by 2.
+>>> 
+>>> Now the pcal6524 has 3 banks which means the relative offset
+>>> must be multiplied by 4 which gives a wrong result if not done
+>>> carefully, since the base offset is already included in the offset.
+>>> 
+>>> For the basic registers shared with all pca93xx/tca64xx chips
+>>> there is no such offset.
+>>> 
+>>> Therefore, we add code to adjust the register number for exended
+>>> registers to the 24 bit accessor functions.
+>>> 
+>>> And we add additional register offset constants (not yet used by
+>>> the driver code) which are specific to the pcal6524.
+>>> 
+>> 
+>> First of all, as I said, please split this to two patches. Don't mix the things.
 > 
+> Ok. Queued for v4.
+> 
+>> 
+>> 
+>>> +       /* adjust register address for pcal6524 */
+>>> +       if (reg >= PCAL953X_OUT_STRENGTH)
+>>> +               reg -= PCAL953X_OUT_STRENGTH >> 1;
+>>> +
+>> 
+>> Give me some days to think about it.
 
-Ack.
+Any news on this?
 
-Notes of my own:
+I am waiting for your advice before submitting v4 (with pending updates for the other patches).
 
-proc_task_count_links also had the logic backward.  It would add an
-extra link to the count for the symlink rather than the dir.
+> No problem. I'll wait with v4.
+> 
+> The only alternative I would see is to add new accessor function
+> pointers for the extended registers and have 0x00 based offsets,
+> but that is IMHO more ugly.
+> 
+> BR and thanks,
+> Nikolaus
 
-proc_pid_files_revalidate only needs to check if the tasks share files
-since it won't be called if it's not a symlink.
-
-Thanks for the review,
-
--Jeff
-
--- 
-Jeff Mahoney
-SUSE Labs
+BR and thanks,
+Nikolaus
