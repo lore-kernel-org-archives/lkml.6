@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751229AbeDYBJL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 21:09:11 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:47070 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750756AbeDYBJG (ORCPT
+        id S1751285AbeDYBJZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 21:09:25 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:38384 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750756AbeDYBJT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 21:09:06 -0400
-X-Google-Smtp-Source: AB8JxZoL4oNqAyLjF0XJgfDqHxvEbdzl3Z4HOcprwDUt8qvn3Ar/c2FZQ7P2JRiPIp3KtBBJkxg8/w==
+        Tue, 24 Apr 2018 21:09:19 -0400
+X-Google-Smtp-Source: AB8JxZr4z5GhyT6jJ0PCDQeyzGG5vh2KNfdNjosLFq/eER4shii+NWn2Bqi+2vf8KDcu+zb6+mGzGg==
 Subject: Re: [PATCH] net: phy: allow scanning busses with missing phys
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "David S . Miller" <davem@davemloft.net>,
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc: "David S . Miller" <davem@davemloft.net>,
         Allan Nielsen <Allan.Nielsen@microsemi.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20180424160904.32457-1-alexandre.belloni@bootlin.com>
- <2833f30a-cf95-e5c7-e44f-218929e61024@gmail.com>
- <20180424180153.GD2360@lunn.ch>
 From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -53,12 +51,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <587d8151-34a7-d771-2a14-a7259d6c1855@gmail.com>
-Date: Tue, 24 Apr 2018 18:08:57 -0700
+Message-ID: <855e8401-cded-8418-bb07-fa97fe0bb769@gmail.com>
+Date: Tue, 24 Apr 2018 18:09:15 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424180153.GD2360@lunn.ch>
+In-Reply-To: <20180424160904.32457-1-alexandre.belloni@bootlin.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,51 +64,19 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 11:01 AM, Andrew Lunn wrote:
-> On Tue, Apr 24, 2018 at 09:37:09AM -0700, Florian Fainelli wrote:
->>
->>
->> On 04/24/2018 09:09 AM, Alexandre Belloni wrote:
->>> Some MDIO busses will error out when trying to read a phy address with no
->>> phy present at that address. In that case, probing the bus will fail
->>> because __mdiobus_register() is scanning the bus for all possible phys
->>> addresses.
->>>
->>> In case MII_PHYSID1 returns -EIO or -ENODEV, consider there is no phy at
->>> this address and set the phy ID to 0xffffffff which is then properly
->>> handled in get_phy_device().
->>
->> Humm, why not have your MDIO bus implementation do the scanning itself
->> in a reset() callback, which happens before probing the bus, and based
->> on the results, set phy_mask accordingly such that only PHYs present are
->> populated?
+On 04/24/2018 09:09 AM, Alexandre Belloni wrote:
+> Some MDIO busses will error out when trying to read a phy address with no
+> phy present at that address. In that case, probing the bus will fail
+> because __mdiobus_register() is scanning the bus for all possible phys
+> addresses.
 > 
-> Hi Florian
+> In case MII_PHYSID1 returns -EIO or -ENODEV, consider there is no phy at
+> this address and set the phy ID to 0xffffffff which is then properly
+> handled in get_phy_device().
 > 
-> Seems a bit odd have the driver do this, when the core could.
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-I could see arguments for doing it in either location, if this is done
-in the driver, the driver is responsible for knowing what addresses will
-respond, which does not seem to big of a stretch. If done by core, we
-lift the driver from taking care of that. Either way is fine, really.
-
-> 
->> My only concern with your change is that we are having a special
->> treatment for EIO and ENODEV, so we must make sure MDIO bus drivers are
->> all conforming to that.
->  
-> I don't see how it could be a problem. It used to be any error was a
-> real error, and would stop the bus from loading. It now means there is
-> nothing there. The only possible side effect is an mdio bus driver
-> might remain loaded without any devices if all reads return
-> ENODEV/EIO, were as before it would probably never load. 
-
-Right, though that does not seem to be a big problem.
-
-> 
-> 	    Andrew
-> 
-
-
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
 Florian
