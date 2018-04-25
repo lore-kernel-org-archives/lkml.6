@@ -1,101 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754248AbeDYNgx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:36:53 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40067 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753327AbeDYNgu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:36:50 -0400
-X-Google-Smtp-Source: AB8JxZoP0gOD1MnVTQwdNtKejYeQV5HSOuskjnSA8Gx9i1MbfqUi8/noOhLAVbdHcNwvQ/u7jxEk0Q==
-From: Alex Elder <elder@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: rename "crashed" parameter
-Date: Wed, 25 Apr 2018 08:36:26 -0500
-Message-Id: <20180425133626.11781-1-elder@linaro.org>
-X-Mailer: git-send-email 2.14.1
+        id S1753997AbeDYNjf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:39:35 -0400
+Received: from mga06.intel.com ([134.134.136.31]:20119 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752722AbeDYNje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 09:39:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
+   d="scan'208";a="50711687"
+Subject: Re: [PATCH 4/5] perf parse-events: Specially handle uncore event
+ alias in small groups
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, namhyung@kernel.org, ganapatrao.kulkarni@cavium.com,
+        zhangshaokun@hisilicon.com, yao.jin@linux.intel.com,
+        will.deacon@arm.com, ak@linux.intel.com, agustinv@codeaurora.org
+References: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
+ <1524594014-79243-4-git-send-email-kan.liang@linux.intel.com>
+ <20180424191721.GB4427@kernel.org>
+ <9a2070b4-9a27-4e38-f235-2d44ae39dd1f@linux.intel.com>
+ <20180424192928.GE4427@kernel.org>
+ <7c69ed57-94dd-45e1-bdd8-ac0c37bc575a@linux.intel.com>
+ <20180425125907.GA24891@kernel.org>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <1e06ea2a-0098-3dae-7907-dc0d575bca6a@linux.intel.com>
+Date: Wed, 25 Apr 2018 09:39:31 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180425125907.GA24891@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The last commit to "remoteproc_core.c":
-  880f5b388252 remoteproc: Pass type of shutdown to subdev remove
-added a Boolean flag to the subdevice remove method, to distinguish
-between graceful shutdown and a crash.  Unfortunately, the names of
-the parameters were inconsistent, and in fact have opposite meanings.
 
-In most cases, the parameter is named "crashed", but rproc_add_subdev()
-names the parameter "graceful" in the prototype for the remove method.
 
-The remove method is ultimately called (and supplied with the Boolean
-flag value) by rproc_remove_subdevices().  That is only called by
-rproc_stop(), and in the two spots where that is used, "graceful" is
-the right name for the flag:
-  rproc_shutdown() passes true, indicating a graceful shutdown
-  rproc_trigger_recovery() passes false, indicating a crash
+On 4/25/2018 8:59 AM, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Apr 25, 2018 at 08:27:31AM -0400, Liang, Kan escreveu:
+>>
+>>
+>> On 4/24/2018 3:29 PM, Arnaldo Carvalho de Melo wrote:
+>>> Em Tue, Apr 24, 2018 at 03:23:06PM -0400, Liang, Kan escreveu:
+>>>> On 4/24/2018 3:17 PM, Arnaldo Carvalho de Melo wrote:
+>>>>> Em Tue, Apr 24, 2018 at 11:20:13AM -0700, kan.liang@linux.intel.com escreveu:
+>>>>>> From: Kan Liang <kan.liang@linux.intel.com>
+>>>>>>
+>>>>>> Perf stat doesn't count the uncore event aliases from the same uncore
+>>>>>> block in a group, for example:
+>>>>>
+>>>>> This one is not applying to acme/perf/urgent, all the rest I got merged
+>>>>> there, the last one with that change from using strstr() to a new bool
+>>>>> in perf_evsel for the uniquifying operation having being performed.
+>>>>
+>>>> Sure. Thank you for letting me know.
+>>>
+>>> Just pushed what I have there,
+>>>
+>>
+>> Thanks Arnaldo.
+>>
+>> How about this one?
+>> Will it be applied to acme/perf/core? Or should I resend it for wider
+>> review?
+> 
+> On acme/perf/urgent, please check
 
-The fix is to make the parameter name consistent, and making the
-name and sense of the parameter to always be "crashed" produces the
-smallest change.  So that's what this patch does.
+I will re-base the patch and send V2.
 
-To verify this change, rproc_add_subdev() is called in five spots:
-  - qcom_add_glink_subdev() passes glink_subdev_remove()
-  - qcom_add_smd_subdev() passes smd_subdev_remove()
-  - qcom_add_ssr_subdev() passes ssr_notify_stop()
-  - qcom_add_sysmon_subdev() passes sysmon_stop()
-  - rproc_handle_vdev() passes rproc_vdev_do_remove()
+Thanks,
+Kan
 
-Of these, only sysmon_stop() uses its "crashed" parameter.  And it
-clearly assumes that "crashed" is the intended meaning:
-
-        /* Don't request graceful shutdown if we've crashed */
-        if (crashed)
-                return;
-
-So this function (added after the "crashed" parameter was added)
-exhibited buggy behavior, which is now fixed by this patch.
-
-Signed-off-by: Alex Elder <elder@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 4 ++--
- include/linux/remoteproc.h           | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 6d9c5832ce47..a9609d971f7f 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1163,7 +1163,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	if (ret)
- 		return ret;
- 
--	ret = rproc_stop(rproc, false);
-+	ret = rproc_stop(rproc, true);
- 	if (ret)
- 		goto unlock_mutex;
- 
-@@ -1316,7 +1316,7 @@ void rproc_shutdown(struct rproc *rproc)
- 	if (!atomic_dec_and_test(&rproc->power))
- 		goto out;
- 
--	ret = rproc_stop(rproc, true);
-+	ret = rproc_stop(rproc, false);
- 	if (ret) {
- 		atomic_inc(&rproc->power);
- 		goto out;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index d09a9c7af109..dfdaede9139e 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -569,7 +569,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
- void rproc_add_subdev(struct rproc *rproc,
- 		      struct rproc_subdev *subdev,
- 		      int (*probe)(struct rproc_subdev *subdev),
--		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
-+		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
- 
- void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
- 
--- 
-2.14.1
+> 
+> [acme@seventh perf]$ patch -p1 < /wb/1.patch
+> patching file tools/perf/util/evsel.h
+> Hunk #1 succeeded at 127 (offset 1 line).
+> patching file tools/perf/util/parse-events.c
+> patching file tools/perf/util/parse-events.h
+> patching file tools/perf/util/parse-events.y
+> Hunk #3 FAILED at 232.
+> 1 out of 4 hunks FAILED -- saving rejects to file tools/perf/util/parse-events.y.rej
+> [acme@seventh perf]$ cat tools/perf/util/parse-events.y.rej
+> --- tools/perf/util/parse-events.y
+> +++ tools/perf/util/parse-events.y
+> @@ -232,7 +232,7 @@ PE_NAME opt_event_config
+>   		YYABORT;
+>   
+>   	ALLOC_LIST(list);
+> -	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
+> +	if (parse_events_add_pmu(_parse_state, list, $1, $2, false, false)) {
+>   		struct perf_pmu *pmu = NULL;
+>   		int ok = 0;
+>   		char *pattern;
+> [acme@seventh perf]$
+> 
