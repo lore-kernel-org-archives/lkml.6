@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+8kQbmC5yFfTC52AOp3dU2B6SmMmSMg9Y1GWVQ+S/H3XEij2h1XCyYAAJC9LOrwaPr2WhM
-ARC-Seal: i=1; a=rsa-sha256; t=1524652808; cv=none;
+X-Google-Smtp-Source: AB8JxZp7ZbuY4xk2eq6f6KU8Spr2H1CHPBy2MSEX02aNRUbDGFUrWroUGpqqSVH+P/mWg44lSYuH
+ARC-Seal: i=1; a=rsa-sha256; t=1524652805; cv=none;
         d=google.com; s=arc-20160816;
-        b=qkJ3gE0z4R3HEFQPBrMHJv0grKGwxJ7gPa44DqvzgLJA67lSSGBYDtzO2AteptV5Go
-         22Kz+NRIyF+7DdysPNwAar2RiBAuw/oiAtzbcyjzx7IfkG/veMRNJcUqEZ/Q+TD5hY32
-         eaiFRxZqo9xaDoXtfgf8aj4U+qU3szbliioGVtDHbusJozbMsj2DKC+qYkbmoUzWpXvy
-         o2l+9hoZdApxTVasvOFBZ7zWG8KM7+ISWcrcLUWgASVC9CL9m8DLVAkfpQFqZ6geZmyV
-         DKkJV+tgd4nDu1CsSsuU++rF/s3fhSP/H8oVrNLJI0CIu9X17xBKS9CspZLywnzj5av5
-         39Hg==
+        b=DsifStu0rqpvqMd/rPO/Cs2UlBjvMPbikP6RDmkjHG9C48giUMmbJMdUgMCVReysoV
+         EdzXir3FPG/BGWTr2Qjc4UMauFpV3Q3HSbp2FpK5/lbfOlmZAEHcmPv9GYrI770dgP3m
+         QNfvxzcDPc0Fs9vRxr6solzIq80bD2B8ObbTDBG7RFoXDgYMgDce6eBmiInisu3lf7YT
+         o/JMLbtTkRRoT6ZLg3HbTCPEVr3Zgndg9cVL84HMybV9LkXXDV8oVyAtqiXqdwzIUpSP
+         02J5l403csCJuA0kLxVbhmKojePhFvWDFBaBnbdYQsvkn+oQRbuAumFUNdwhF7/g3TQZ
+         pbxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RVgSsAr1uKAQ665ADRBnPJu5QPJWQsHRBHrhV9z5GaI=;
-        b=ph6kT5pdY/Bv0d10cr/1Qq6map68w4KoUmAIRc12o87DhkdF0sSyZfCaL2MGR9g96A
-         NJAR8Y27WMmt5TELfBAuvk2HaJs5ChiwozeUh2sHvMuRVvZLBUxoW00J5+TVL4z6L1IR
-         1U1UpQNu4lalGtIV37G6+vK0S6H84vL1D3ELgH/35CRPQT6qFjnRjMX3DVPq9FpTDpR7
-         y5IvAkO8IW7tbg7RaS+Ae3Qrnm5F7E/c6/oHzKNZr/E0LWQX8nErgo4GdvCC3+BBPBPw
-         SIW72fjJjA9sEUAthCk771Z0xPozro8V6tj4ct3NlFWJjjL0oH3xhMBZms7GBOgnR1qz
-         ImZQ==
+        bh=s96vCf6OqJV8EFfBCEgBqoF+Ixl+3ZrlWhcqwRtqS4k=;
+        b=W1QxJ8kCaCvBVK4RhN3vhb3immqlQukK8YLG3nFnhrjRfO9lsBD8n2NCkrmnadNXc8
+         VIE7jze8UVNhDHViDoHOU+Q+UmhSvduxHFsXKoK4+ECMlmfyiAzlajsTdOo28hqcx+3F
+         VsQLYaboqlfxh7gbc3k+3459e0zldNfSVSi/Y6i/uZrCfOc+ANoAtoL0w3GGZLP1QRGh
+         gXwwAALRrtTHAKRckGWMPll958i+QtVMmWnWwuqN86h64DgknWQIGT1hrrq1d8cmsbPZ
+         /HV4Po+4KbvnX28imoeKtP7lVlvweO0e9HO9j4qOqhfipz1hay9BsIivFM2a969kTVoP
+         VZGg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-	Daniel Borkmann <daniel@iogearbox.net>,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/183] bpf: test_maps: cleanup sockmaps when test ends
-Date: Wed, 25 Apr 2018 12:34:57 +0200
-Message-Id: <20180425103245.604046986@linuxfoundation.org>
+Subject: [PATCH 4.14 076/183] block: Set BIO_TRACE_COMPLETION on new bio during split
+Date: Wed, 25 Apr 2018 12:34:56 +0200
+Message-Id: <20180425103245.563519448@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714343506376450?=
-X-GMAIL-MSGID: =?utf-8?q?1598714343506376450?=
+X-GMAIL-THRID: =?utf-8?q?1598714340052963913?=
+X-GMAIL-MSGID: =?utf-8?q?1598714340052963913?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,66 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
 
-[ Upstream commit 783687810e986a15ffbf86c516a1a48ff37f38f7 ]
+[ Upstream commit 20d59023c5ec4426284af492808bcea1f39787ef ]
 
-Bug: BPF programs and maps related to sockmaps test exist
-in memory even after test_maps ends.
+We inadvertently set it again on the source bio, but we need
+to set it on the new split bio instead.
 
-This patch fixes it as a short term workaround (sockmap
-kernel side needs real fixing) by empyting sockmaps when
-test ends.
-
-Fixes: 6f6d33f3b3d0f ("bpf: selftests add sockmap tests")
-Signed-off-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-[ daniel: Note on workaround. ]
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: fbbaf700e7b1 ("block: trace completion of all bios.")
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/bpf/test_maps.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ block/bio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/bpf/test_maps.c
-+++ b/tools/testing/selftests/bpf/test_maps.c
-@@ -463,7 +463,7 @@ static void test_devmap(int task, void *
- #define SOCKMAP_VERDICT_PROG "./sockmap_verdict_prog.o"
- static void test_sockmap(int tasks, void *data)
- {
--	int one = 1, map_fd_rx, map_fd_tx, map_fd_break, s, sc, rc;
-+	int one = 1, map_fd_rx = 0, map_fd_tx = 0, map_fd_break, s, sc, rc;
- 	struct bpf_map *bpf_map_rx, *bpf_map_tx, *bpf_map_break;
- 	int ports[] = {50200, 50201, 50202, 50204};
- 	int err, i, fd, udp, sfd[6] = {0xdeadbeef};
-@@ -868,9 +868,12 @@ static void test_sockmap(int tasks, void
- 		goto out_sockmap;
- 	}
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1893,7 +1893,7 @@ struct bio *bio_split(struct bio *bio, i
+ 	bio_advance(bio, split->bi_iter.bi_size);
  
--	/* Test map close sockets */
--	for (i = 0; i < 6; i++)
-+	/* Test map close sockets and empty maps */
-+	for (i = 0; i < 6; i++) {
-+		bpf_map_delete_elem(map_fd_tx, &i);
-+		bpf_map_delete_elem(map_fd_rx, &i);
- 		close(sfd[i]);
-+	}
- 	close(fd);
- 	close(map_fd_rx);
- 	bpf_object__close(obj);
-@@ -881,8 +884,13 @@ out:
- 	printf("Failed to create sockmap '%i:%s'!\n", i, strerror(errno));
- 	exit(1);
- out_sockmap:
--	for (i = 0; i < 6; i++)
-+	for (i = 0; i < 6; i++) {
-+		if (map_fd_tx)
-+			bpf_map_delete_elem(map_fd_tx, &i);
-+		if (map_fd_rx)
-+			bpf_map_delete_elem(map_fd_rx, &i);
- 		close(sfd[i]);
-+	}
- 	close(fd);
- 	exit(1);
+ 	if (bio_flagged(bio, BIO_TRACE_COMPLETION))
+-		bio_set_flag(bio, BIO_TRACE_COMPLETION);
++		bio_set_flag(split, BIO_TRACE_COMPLETION);
+ 
+ 	return split;
  }
