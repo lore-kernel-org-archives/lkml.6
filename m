@@ -1,104 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752313AbeDYUTN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 16:19:13 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43064 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750968AbeDYUTL (ORCPT
+        id S1753451AbeDYUUw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 16:20:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38156 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750968AbeDYUUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 16:19:11 -0400
-Date: Wed, 25 Apr 2018 22:19:08 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Mark Salyzyn <salyzyn@android.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>, Peter Anvin <hpa@zytor.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Kevin Easton <kevin@guarana.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:timers/urgent] Revert: Unify CLOCK_MONOTONIC and
- CLOCK_BOOTTIME
-Message-ID: <20180425201908.GA1977@amd>
-References: <tip-757d5a9b3052a4eebd029f207f1e1df59bef7b7d@git.kernel.org>
- <CA+55aFypQ0aMSO7T0hxN2YCvckSLZh6BMTuz185TyJZ69jRUrg@mail.gmail.com>
- <alpine.DEB.2.21.1804252108280.1589@nanos.tec.linutronix.de>
- <CA+55aFz2_cwCjBDAqvzeX89Md26JR=DLhQxTPGuq8OQkWi0ehw@mail.gmail.com>
+        Wed, 25 Apr 2018 16:20:49 -0400
+Subject: Re: [PATCH v4] fault-injection: introduce kvmalloc fallback options
+To: Mikulas Patocka <mpatocka@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+References: <20180421144757.GC14610@bombadil.infradead.org>
+ <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180423151545.GU17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424125121.GA17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424162906.GM17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424170349.GQ17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424173836.GR17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
+Date: Wed, 25 Apr 2018 13:20:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
-Content-Disposition: inline
-In-Reply-To: <CA+55aFz2_cwCjBDAqvzeX89Md26JR=DLhQxTPGuq8OQkWi0ehw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04/25/2018 01:02 PM, Mikulas Patocka wrote:
+> 
+> 
+> From: Mikulas Patocka <mpatocka@redhat.com>
+> Subject: [PATCH v4] fault-injection: introduce kvmalloc fallback options
+> 
+> This patch introduces a fault-injection option "kvmalloc_fallback". This
+> option makes kvmalloc randomly fall back to vmalloc.
+> 
+> Unfortunatelly, some kernel code has bugs - it uses kvmalloc and then
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  Unfortunately,
 
-On Wed 2018-04-25 12:41:23, Linus Torvalds wrote:
-> On Wed, Apr 25, 2018 at 12:09 PM, Thomas Gleixner <tglx@linutronix.de> wr=
-ote:
-> > On Wed, 25 Apr 2018, Linus Torvalds wrote:
-> >>
-> >> I don't see the reported watchdog things, and I run systemd and I ran
-> >> these patches.
-> >
-> > With suspend/resume?
->=20
-> Yes. I run them on my laptop, and while I don't do a _lot_ of
-> suspend/resume, I do some. My laptop right now is running a "just
-> after rc1" kernel, and has been for the last week, and has a couple of
-> suspends in that time. Type "closed my laptop, took it elsewhere,
-> opened it again", so more than a few minutes.
->=20
-> > Fair enough. Do the reporters have more information or do I have to cha=
-se
-> > it down myself?
->=20
-> I think reporters should just say what distro they are running, and
-> systemd versions etc, and how they debugged this. Maybe the pattern is
-> obvious.
->=20
-> For the record, I just run plain F27, obviously with my own kernel
-> (and a tweaked config, but it approaches just being a "make
-> localmodconfig" of the distro config).
+> uses DMA-API on the returned memory or frees it with kfree. Such bugs were
+> found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
+> code. This options helps to test for these bugs.
+> 
+> The patch introduces a config option FAIL_KVMALLOC_FALLBACK_PROBABILITY.
+> It can be enabled in distribution debug kernels, so that kvmalloc abuse
+> can be tested by the users. The default can be overriden with
 
-So... I do have debian 8.10. With 4.17-rc1, I get "networking
-disabled" message from network manager (and broken network), about
-half of the time.
+                                                 overridden
 
-But there's more visible symptom: suspend/resume with 4.16, machine is
-okay after resume. With 4.17-rc1, just after resume, display starts
-dimming and screensaver will kick in. MATE desktop.
+> "kvmalloc_fallback" parameter or in /sys/kernel/debug/kvmalloc_fallback/.
+> 
+> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> 
+> ---
+>  Documentation/fault-injection/fault-injection.txt |    7 +++++
+>  include/linux/fault-inject.h                      |    9 +++---
+>  kernel/futex.c                                    |    2 -
+>  lib/Kconfig.debug                                 |   15 +++++++++++
+>  mm/failslab.c                                     |    2 -
+>  mm/page_alloc.c                                   |    2 -
+>  mm/util.c                                         |   30 ++++++++++++++++++++++
+>  7 files changed, 60 insertions(+), 7 deletions(-)
+> 
+> Index: linux-2.6/Documentation/fault-injection/fault-injection.txt
+> ===================================================================
+> --- linux-2.6.orig/Documentation/fault-injection/fault-injection.txt	2018-04-16 21:08:34.000000000 +0200
+> +++ linux-2.6/Documentation/fault-injection/fault-injection.txt	2018-04-25 21:36:36.000000000 +0200
+> @@ -15,6 +15,12 @@ o fail_page_alloc
+>  
+>    injects page allocation failures. (alloc_pages(), get_free_pages(), ...)
+>  
+> +o kvmalloc_faillback
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+     kvmalloc_fallback
 
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> +
+> +  makes the function kvmalloc randonly fall back to vmalloc. This could be used
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+                                 randomly
 
-iEYEARECAAYFAlrg4rsACgkQMOfwapXb+vLdyQCgvoAs6mtHaSJnXnvnRhNIau3k
-zCEAniyLecrUlerMzSq0XL80GqssrVHk
-=9Vic
------END PGP SIGNATURE-----
+> +  to detects bugs such as using DMA-API on the result of kvmalloc or freeing
+> +  the result of kvmalloc with free.
+> +
+>  o fail_futex
+>  
+>    injects futex deadlock and uaddr fault errors.
+> @@ -167,6 +173,7 @@ use the boot option:
+>  
+>  	failslab=
+>  	fail_page_alloc=
+> +	kvmalloc_faillback=
 
---J2SCkAp4GZ/dPZZf--
+	kvmalloc_fallback=
+
+>  	fail_make_request=
+>  	fail_futex=
+>  	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
+
+> Index: linux-2.6/lib/Kconfig.debug
+> ===================================================================
+> --- linux-2.6.orig/lib/Kconfig.debug	2018-04-25 15:56:16.000000000 +0200
+> +++ linux-2.6/lib/Kconfig.debug	2018-04-25 21:39:45.000000000 +0200
+> @@ -1527,6 +1527,21 @@ config FAIL_PAGE_ALLOC
+>  	help
+>  	  Provide fault-injection capability for alloc_pages().
+>  
+> +config FAIL_KVMALLOC_FALLBACK_PROBABILITY
+> +	int "Default kvmalloc fallback probability"
+> +	depends on FAULT_INJECTION
+> +	range 0 100
+> +	default "0"
+> +	help
+> +	  This option will make kvmalloc randomly fall back to vmalloc.
+> +	  Normally, kvmalloc falls back to vmalloc only rarely, if memory
+> +	  is fragmented.
+> +
+> +	  This option helps to detect hard-to-reproduce driver bugs, for
+> +	  example using DMA API on the result of kvmalloc.
+> +
+> +	  The default may be overriden with the kvmalloc_faillback parameter.
+
+	                     overridden         kvmalloc_fallback
+
+> +
+>  config FAIL_MAKE_REQUEST
+>  	bool "Fault-injection capability for disk IO"
+>  	depends on FAULT_INJECTION && BLOCK
+
+-- 
+~Randy
