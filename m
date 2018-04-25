@@ -1,106 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756009AbeDYQWq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:22:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:42586 "EHLO foss.arm.com"
+        id S1755995AbeDYQWh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:22:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755378AbeDYQWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:22:40 -0400
-Subject: Re: [PATCH v2 13/17] kvm: arm/arm64: Allow tuning the physical
- address size for VM
-To: Julien Grall <julien.grall@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: mark.rutland@arm.com, peter.maydell@linaro.org,
-        ard.biesheuvel@linaro.org, cdall@kernel.org, kvm@vger.kernel.org,
-        rkrcmar@redhat.com, marc.zyngier@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-14-git-send-email-suzuki.poulose@arm.com>
- <81e98b32-8c13-3688-209f-2d51b2237748@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <ff0cf970-fd2e-faf7-42cd-5b097158276b@arm.com>
-Date: Wed, 25 Apr 2018 17:22:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755413AbeDYQWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:22:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CE9021835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AIpwx48dluQX/KfCKnD8gPANNif8Y6z+8bj1BcxPnPBUPiRuK0xEIlDwwrRy9kU1oP0gDIUVwOOuD4AZ22IDpH/klUc=
 MIME-Version: 1.0
-In-Reply-To: <81e98b32-8c13-3688-209f-2d51b2237748@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180425160413.GC8546@bombadil.infradead.org>
+References: <20180425052722.73022-1-edumazet@google.com> <20180425052722.73022-2-edumazet@google.com>
+ <20180425062859.GA23914@infradead.org> <5cd31eba-63b5-9160-0a2e-f441340df0d3@gmail.com>
+ <20180425160413.GC8546@bombadil.infradead.org>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 25 Apr 2018 09:22:01 -0700
+X-Gmail-Original-Message-ID: <CALCETrWaekirEe+rKiPB-Zim6ZHKL-n7nfk9wrsHra_FtrS=DA@mail.gmail.com>
+Message-ID: <CALCETrWaekirEe+rKiPB-Zim6ZHKL-n7nfk9wrsHra_FtrS=DA@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
+ zerocopy receive
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Soheil Hassas Yeganeh <soheil@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/04/18 17:10, Julien Grall wrote:
-> Hi Suzuki,
-> 
-> On 27/03/18 14:15, Suzuki K Poulose wrote:
->> Allow specifying the physical address size for a new VM via
->> the kvm_type argument for KVM_CREATE_VM ioctl. This allows
->> us to finalise the stage2 page table format as early as possible
->> and hence perform the right checks on the memory slots without
->> complication. The size is encoded as Log2(PA_Siz) in the bits[7:0]
-> 
-> s/PA_Siz/PA_Size/.
-> 
-
->> --- a/include/uapi/linux/kvm.h
->> +++ b/include/uapi/linux/kvm.h
->> @@ -740,6 +740,16 @@ struct kvm_ppc_resize_hpt {
->>   #define KVM_S390_SIE_PAGE_OFFSET 1
->>   /*
->> + * On arm/arm64, machine type can be used to request the physical
->> + * address size for the VM. Bits [7-0] have been reserved for the
->> + * PA size shift (i.e, log2(PA-Size)). For backward compatibility,
-> 
-> I would s/PA-Size/PA_Size/ to avoid the impression that it is a substraction.
-> 
-
-Agree.
-
->> + * value 0 implies the default IPA size, which is 40bits.
->> + */
->> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK    0xff
->> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)        \
->> +    ((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
->> +
->> +/*
->>    * ioctls for /dev/kvm fds:
->>    */
->>   #define KVM_GET_API_VERSION       _IO(KVMIO,   0x00)
->> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
->> index 53bb05c..13eb66f 100644
->> --- a/virt/kvm/arm/arm.c
->> +++ b/virt/kvm/arm/arm.c
->> @@ -110,6 +110,25 @@ void kvm_arch_check_processor_compat(void *rtn)
->>   }
->> +static int kvm_arch_config_vm(struct kvm *kvm, unsigned long type)
->> +{
->> +    u32 ipa_shift = (u32)type & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK;
-> 
-> How about using KVM_VM_TYPE_ARM_PHYS_SHIFT(type) directly here?
-
-Thanks for that, I have this already fixed in for v3.
-
->>   /**
->>    * kvm_arch_init_vm - initializes a VM data structure
->>    * @kvm:    pointer to the KVM struct
->> @@ -118,8 +137,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->>   {
->>       int ret, cpu;
->> -    if (type)
->> -        return -EINVAL;
->> +    ret = kvm_arch_config_vm(kvm, type);
->> +    if (ret)
->> +        return ret;
->>       kvm->arch.last_vcpu_ran = alloc_percpu(typeof(*kvm->arch.last_vcpu_ran));
->>       if (!kvm->arch.last_vcpu_ran)
+On Wed, Apr 25, 2018 at 9:04 AM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Wed, Apr 25, 2018 at 06:01:02AM -0700, Eric Dumazet wrote:
+>> On 04/24/2018 11:28 PM, Christoph Hellwig wrote:
+>> > On Tue, Apr 24, 2018 at 10:27:21PM -0700, Eric Dumazet wrote:
+>> >> When adding tcp mmap() implementation, I forgot that socket lock
+>> >> had to be taken before current->mm->mmap_sem. syzbot eventually caught
+>> >> the bug.
+>> >>
+>> >> Since we can not lock the socket in tcp mmap() handler we have to
+>> >> split the operation in two phases.
+>> >>
+>> >> 1) mmap() on a tcp socket simply reserves VMA space, and nothing else.
+>> >>   This operation does not involve any TCP locking.
+>> >>
+>> >> 2) setsockopt(fd, IPPROTO_TCP, TCP_ZEROCOPY_RECEIVE, ...) implements
+>> >>  the transfert of pages from skbs to one VMA.
+>> >>   This operation only uses down_read(&current->mm->mmap_sem) after
+>> >>   holding TCP lock, thus solving the lockdep issue.
+>> >>
+>> >> This new implementation was suggested by Andy Lutomirski with great details.
+>> >
+>> > Thanks, this looks much more sensible to me.
+>> >
 >>
-> 
-> Cheers,
+>> Thanks Christoph
+>>
+>> Note the high cost of zap_page_range(), needed to avoid -EBUSY being returned
+>> from vm_insert_page() the second time TCP_ZEROCOPY_RECEIVE is used on one VMA.
+>>
+>> Ideally a vm_replace_page() would avoid this cost ?
+>
+> If you don't zap the page range, any of the CPUs in the system where
+> any thread in this task have ever run may have a TLB entry pointing to
+> this page ... if the page is being recycled into the page allocator,
+> then that page might end up as a slab page or page table or page cache
+> while the other CPU still have access to it.
 
-Thanks for the review.
+Indeed.  This is one of the reasons that Linus has generally been
+quite vocal that he doesn't like MMU-based zerocopy schemes.
 
-Cheers.
+>
+> You could hang onto the page until you've built up a sufficiently large
+> batch, then bulk-invalidate all of the TLB entries, but we start to get
+> into weirdnesses on different CPU architectures.
+
+The existing mmu_gather code should already handle this at least
+moderately well.  If it's not, then it should be fixed.
+
+On x86, there is no operation to flush a range of addresses.  You can
+flush one address or you can flush all of them.  If you flush one page
+at a time, then you might never recover the performance of a plain old
+memcpy().  If you flush all of them, then you're hurting the
+performance of everything else in the task.
+
+In general, I suspect that the zerocopy receive mechanism will only
+really be a win in single-threaded applications that consume large
+amounts of receive bandwidth on a single TCP socket using lots of
+memory and don't do all that much else.
