@@ -1,133 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754783AbeDYOru (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:47:50 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54015 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754203AbeDYOrs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:47:48 -0400
-X-Google-Smtp-Source: AB8JxZqoWjXxLYfP6SRIjwIbOiV5D06NdAuUkbhDsoeVimgvZakpq7fjL+PteNaw6X67GyXUJq1LVg==
-Subject: Re: [PATCH] remoteproc: rename "crashed" parameter
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, ohad@wizery.com,
-        bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180425133626.11781-1-elder@linaro.org>
- <93951de4-3758-0293-eeb1-bba9dd561c4b@st.com>
-From: Alex Elder <elder@linaro.org>
-Message-ID: <31b8864a-d94e-64cf-40dd-d03d40963513@linaro.org>
-Date: Wed, 25 Apr 2018 09:47:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754799AbeDYOsB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:48:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:3635 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753508AbeDYOr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:47:58 -0400
+Date: Wed, 25 Apr 2018 10:47:56 -0400 (EDT)
+From: Pankaj Gupta <pagupta@redhat.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>, Linux MM <linux-mm@kvack.org>,
+        Jan Kara <jack@suse.cz>, Stefan Hajnoczi <stefanha@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Haozhong Zhang <haozhong.zhang@intel.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>, Kevin Wolf <kwolf@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Ross Zwisler <ross.zwisler@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marcel Apfelbaum <marcel@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, niteshnarayanlal@hotmail.com,
+        Igor Mammedov <imammedo@redhat.com>, lcapitulino@redhat.com
+Message-ID: <458087373.22645020.1524667676533.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CAPcyv4gpZzKfE7jY1peYOVd6sVhNz7jce1s_xNH_2Lt8AjRK-Q@mail.gmail.com>
+References: <20180425112415.12327-1-pagupta@redhat.com> <20180425112415.12327-3-pagupta@redhat.com> <CAPcyv4gpZzKfE7jY1peYOVd6sVhNz7jce1s_xNH_2Lt8AjRK-Q@mail.gmail.com>
+Subject: Re: [RFC v2 2/2] pmem: device flush over VIRTIO
 MIME-Version: 1.0
-In-Reply-To: <93951de4-3758-0293-eeb1-bba9dd561c4b@st.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.111, 10.4.195.23]
+Thread-Topic: pmem: device flush over VIRTIO
+Thread-Index: RGAJX2p9n07JgwlroFp9vISyZdXRBQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/25/2018 08:49 AM, Arnaud Pouliquen wrote:
-> Hello Alex,
+
 > 
-> I have already proposed it few weeks ago.
+> On Wed, Apr 25, 2018 at 4:24 AM, Pankaj Gupta <pagupta@redhat.com> wrote:
+> > This patch adds functionality to perform
+> > flush from guest to hosy over VIRTIO
+> > when 'ND_REGION_VIRTIO'flag is set on
+> > nd_negion. Flag is set by 'virtio-pmem'
+> > driver.
+> >
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> > ---
+> >  drivers/nvdimm/region_devs.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> > index a612be6..6c6454e 100644
+> > --- a/drivers/nvdimm/region_devs.c
+> > +++ b/drivers/nvdimm/region_devs.c
+> > @@ -20,6 +20,7 @@
+> >  #include <linux/nd.h>
+> >  #include "nd-core.h"
+> >  #include "nd.h"
+> > +#include <linux/virtio_pmem.h>
+> >
+> >  /*
+> >   * For readq() and writeq() on 32-bit builds, the hi-lo, lo-hi order is
+> > @@ -1074,6 +1075,12 @@ void nvdimm_flush(struct nd_region *nd_region)
+> >         struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
+> >         int i, idx;
+> >
+> > +       /* call PV device flush */
+> > +       if (test_bit(ND_REGION_VIRTIO, &nd_region->flags)) {
+> > +               virtio_pmem_flush(&nd_region->dev);
+> > +               return;
+> > +       }
+> > +
 > 
-> https://lkml.org/lkml/2018/4/10/192
-> 
-> could you ack it, if you test it on your side?
+> I'd rather introduce a ->flush() operation hanging off of 'struct
+> nd_region' so that this multiplexing can be a static setting.
 
-I am unable to test it.  I found the bug by inspection (perhaps as
-you did).  However I'll give you:
+Sure! will make the change.
 
-Acked-by: Alex Elder <elder@linaro.org>
-
-or 
-
-Reviewed-by: Alex Elder <elder@linaro.org>
-
-					-Alex
-
-> Thanks,
-> Arnaud
-> 
-> On 04/25/2018 03:36 PM, Alex Elder wrote:
->> The last commit to "remoteproc_core.c":
->>   880f5b388252 remoteproc: eAPass type of shutdown to subdev remove
->> added a Boolean flag to the subdevice remove method, to distinguish
->> between graceful shutdown and a crash.  Unfortunately, the names of
->> the parameters were inconsistent, and in fact have opposite meanings.
->>
->> In most cases, the parameter is named "crashed", but rproc_add_subdev()
->> names the parameter "graceful" in the prototype for the remove method.
->>
->> The remove method is ultimately called (and supplied with the Boolean
->> flag value) by rproc_remove_subdevices().  That is only called by
->> rproc_stop(), and in the two spots where that is used, "graceful" is
->> the right name for the flag:
->>   rproc_shutdown() passes true, indicating a graceful shutdown
->>   rproc_trigger_recovery() passes false, indicating a crash
->>
->> The fix is to make the parameter name consistent, and making the
->> name and sense of the parameter to always be "crashed" produces the
->> smallest change.  So that's what this patch does.
->>
->> To verify this change, rproc_add_subdev() is called in five spots:
->>   - qcom_add_glink_subdev() passes glink_subdev_remove()
->>   - qcom_add_smd_subdev() passes smd_subdev_remove()
->>   - qcom_add_ssr_subdev() passes ssr_notify_stop()
->>   - qcom_add_sysmon_subdev() passes sysmon_stop()
->>   - rproc_handle_vdev() passes rproc_vdev_do_remove()
->>
->> Of these, only sysmon_stop() uses its "crashed" parameter.  And it
->> clearly assumes that "crashed" is the intended meaning:
->>
->>         /* Don't request graceful shutdown if we've crashed */
->>         if (crashed)
->>                 return;
->>
->> So this function (added after the "crashed" parameter was added)
->> exhibited buggy behavior, which is now fixed by this patch.
->>
->> Signed-off-by: Alex Elder <elder@linaro.org>
->> ---
->>  drivers/remoteproc/remoteproc_core.c | 4 ++--
->>  include/linux/remoteproc.h           | 2 +-
->>  2 files changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index 6d9c5832ce47..a9609d971f7f 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1163,7 +1163,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
->>  	if (ret)
->>  		return ret;
->>  
->> -	ret = rproc_stop(rproc, false);
->> +	ret = rproc_stop(rproc, true);
->>  	if (ret)
->>  		goto unlock_mutex;
->>  
->> @@ -1316,7 +1316,7 @@ void rproc_shutdown(struct rproc *rproc)
->>  	if (!atomic_dec_and_test(&rproc->power))
->>  		goto out;
->>  
->> -	ret = rproc_stop(rproc, true);
->> +	ret = rproc_stop(rproc, false);
->>  	if (ret) {
->>  		atomic_inc(&rproc->power);
->>  		goto out;
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index d09a9c7af109..dfdaede9139e 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -569,7 +569,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
->>  void rproc_add_subdev(struct rproc *rproc,
->>  		      struct rproc_subdev *subdev,
->>  		      int (*probe)(struct rproc_subdev *subdev),
->> -		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
->> +		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
->>  
->>  void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
->>  
->>
+Thanks,
+Pankaj
