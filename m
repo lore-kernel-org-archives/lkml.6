@@ -1,101 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751195AbeDYBOa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 21:14:30 -0400
-Received: from mga17.intel.com ([192.55.52.151]:34101 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750756AbeDYBO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 21:14:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,325,1520924400";
-   d="scan'208";a="223082490"
-From: "Dey, Megha" <megha.dey@intel.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Subject: RE: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
- support
-Thread-Topic: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
- support
-Thread-Index: AQHTiaT71VA7Q5Or9ESQdIw+yX/ir6N6FLYAgFlFdnuAMogJgIABiP2AgABwaXCAAKKQgIAI0Phw
-Date: Wed, 25 Apr 2018 01:14:26 +0000
-Message-ID: <C440BA31B54DCD4AAC682D2365C8FEE738C270FC@ORSMSX111.amr.corp.intel.com>
-References: <1515542948-24041-1-git-send-email-megha.dey@linux.intel.com>
- <1515542948-24041-2-git-send-email-megha.dey@linux.intel.com>
- <20180118113905.GA19904@gondor.apana.org.au>
- <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
- <20180316145351.GA6231@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
- <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C13DDE@ORSMSX111.amr.corp.intel.com>
- <20180419032525.6csodbz6lrksyudd@gondor.apana.org.au>
-In-Reply-To: <20180419032525.6csodbz6lrksyudd@gondor.apana.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTQyNDQzNTMtNTIwOC00YWM1LWE3ODUtN2EwMWVlYTFjMThjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlFjdTd6N0s0cE5QZE5rbFVKSW1pRXhYTERhVVJQMFY1V0FYTVBGOEU1dVE9In0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1751242AbeDYBPz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 21:15:55 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:50214 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbeDYBPx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 21:15:53 -0400
+X-IronPort-AV: E=Sophos;i="5.49,325,1520870400";
+   d="scan'208";a="77343105"
+Subject: Re: [PATCH v5 0/2] perf: riscv: Preliminary Perf Event Support on
+ RISC-V
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: "alankao@andestech.com" <alankao@andestech.com>,
+        "albert@sifive.com" <albert@sifive.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "alexander.shishkin@linux.intel.com"
+        <alexander.shishkin@linux.intel.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "namhyung@kernel.org" <namhyung@kernel.org>,
+        "sols@sifive.com" <sols@sifive.com>, "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "greentime@andestech.com" <greentime@andestech.com>,
+        "nickhu@andestech.com" <nickhu@andestech.com>
+References: <mhng-0abe4f84-0dd3-437c-8cf2-b87def246796@palmer-si-x1c4>
+From: Atish Patra <atish.patra@wdc.com>
+Message-ID: <6b211b64-5c17-2884-5b6a-6ff1d3287b16@wdc.com>
+Date: Tue, 24 Apr 2018 18:15:49 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <mhng-0abe4f84-0dd3-437c-8cf2-b87def246796@palmer-si-x1c4>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
->-----Original Message-----
->From: Herbert Xu [mailto:herbert@gondor.apana.org.au]
->Sent: Wednesday, April 18, 2018 8:25 PM
->To: Dey, Megha <megha.dey@intel.com>
->Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org;
->davem@davemloft.net
->Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
->support
->
->On Thu, Apr 19, 2018 at 12:54:16AM +0000, Dey, Megha wrote:
+On 4/24/18 5:29 PM, Palmer Dabbelt wrote:
+> On Tue, 24 Apr 2018 15:16:16 PDT (-0700), atish.patra@wdc.com wrote:
+>> On 4/24/18 12:44 PM, Palmer Dabbelt wrote:
+>>> On Tue, 24 Apr 2018 12:27:26 PDT (-0700), atish.patra@wdc.com wrote:
+>>>> On 4/24/18 11:07 AM, Atish Patra wrote:
+>>>>> On 4/19/18 4:28 PM, Alan Kao wrote:
+>>>>> However, I got an rcu-stall for the test "47: Event times".
+>>>>> # ./perf test -v 47
+>>>> Got it working. The test tries to attach the event to CPU0 which doesn't
+>>>> exist in HighFive Unleashed. Changing it to cpu1 works.
+>>>>
+>>>> diff --git a/tools/perf/tests/event-times.c b/tools/perf/tests/event-times.c
+>>>> index 1a2686f..eb11632f 100644
+>>>> --- a/tools/perf/tests/event-times.c
+>>>> +++ b/tools/perf/tests/event-times.c
+>>>> @@ -113,9 +113,9 @@ static int attach__cpu_disabled(struct perf_evlist
+>>>> *evlist)
+>>>>            struct cpu_map *cpus;
+>>>>            int err;
+>>>>
+>>>> -       pr_debug("attaching to CPU 0 as enabled\n");
+>>>> +       pr_debug("attaching to CPU 1 as disabled\n");
+>>>>
+>>>> -       cpus = cpu_map__new("0");
+>>>> +       cpus = cpu_map__new("1");
+>>>>            if (cpus == NULL) {
+>>>>                    pr_debug("failed to call cpu_map__new\n");
+>>>>                    return -1;
+>>>> @@ -142,9 +142,9 @@ static int attach__cpu_enabled(struct perf_evlist
+>>>> *evlist)
+>>>>            struct cpu_map *cpus;
+>>>>            int err;
+>>>>
+>>>> -       pr_debug("attaching to CPU 0 as enabled\n");
+>>>> +       pr_debug("attaching to CPU 1 as enabled\n");
+>>>>
+>>>> -       cpus = cpu_map__new("0");
+>>>> +       cpus = cpu_map__new("1");
+>>>>            if (cpus == NULL) {
+>>>>                    pr_debug("failed to call cpu_map__new\n");
+>>>>                    return -1;
+>>>>
+>>>>
+>>>> Palmer,
+>>>> Would it be better to officially document it somewhere that CPU0 doesn't
+>>>> exist in the HighFive Unleashed board ?
+>>>> I fear that there will be other standard tests/code path that may fail
+>>>> because of inherent assumption of cpu0 presence.
+>>>
+>>> I think the best way to fix this is to just have BBL (or whatever the
+>>> bootloader is) renumber the CPUs so they're contiguous and begin with 0.
 >>
->> Yeah I think I misunderstood. I think what you mean is to remove mcryptd.c
->completely and avoid the extra layer of indirection to call the underlying
->algorithm, instead call it directly, correct?
->>
->> So currently we have 3 algorithms registered for every multibuffer algorithm:
->> name         : __sha1-mb
->> driver       : mcryptd(__intel_sha1-mb)
->>
->> name         : sha1
->> driver       : sha1_mb
->>
->> name         : __sha1-mb
->> driver       : __intel_sha1-mb
->>
->> If we remove mcryptd, then we will have just the 2?
->
->It should be down to just one, i.e., the current inner algorithm.
->It's doing all the scheduling work already so I don't really see why it needs the
->wrappers around it.
+>> Do you mean BBL will update the device tree that kernel eventually parse
+>> and set the hart id?
+>> Sounds good to me unless it acts as a big hack in future boot loaders.
+> 
+> Right now the machine-mode and supervisor-mode hart IDs are logically separate:
+> the bootloader just provides the hart ID as a register argument when starting
+> the kernel.
 
-Hi Herbert,
+Yes.
 
-Is there any existing implementation of async crypto algorithm that uses the above approach? The ones I could find are either sync, have an outer and inner algorithm or use cryptd.
+   BBL already needs to enumerate the harts by looking through the
+> device tree for various other reasons (at least to mask off the harts that
+> Linux doesn't support), so it's not that much effort to just maintain a mapping
+> from supervisor-mode hart IDs to machine-mode hart IDs.
+> 
 
-I tried removing the mcryptd layer and the outer algorithm and some plumbing to pass the correct structures, but see crashes.(obviously some errors in the plumbing)
+But Linux also parses the device tree to get hart ID in 
+riscv_of_processor_hart(). This is used to setup the possible/present 
+cpu map in setup_smp().
 
-I am not sure if we remove mcryptd, how would we queue work, flush partially completed jobs or call completions (currently done by mcryptd) if we simply call the inner algorithm.
+Thus, Linux also need to see a device tree with cpu0-3 instead of 
+cpu1-4. Otherwise, present cpu map will be incorrect. Isn't it ?
 
-Are you suggesting these are not required at all? I am not sure how to move forward.
+> I have some patches floating around that do this, but appear to do it
+> incorrectly enough that nothing boots so maybe I'm missing something that makes
+> this complicated :).
+> 
 
->
->Cheers,
->--
->Email: Herbert Xu <herbert@gondor.apana.org.au> Home Page:
->http://gondor.apana.org.au/~herbert/
->PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Just a wild guess: May be the because of the above reason ;)
