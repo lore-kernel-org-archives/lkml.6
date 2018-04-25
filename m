@@ -1,84 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754398AbeDYNtB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:49:01 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35072 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753509AbeDYNs7 (ORCPT
+        id S1754479AbeDYNta (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:49:30 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:45168 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754043AbeDYNt2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:48:59 -0400
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] rds: ib: Fix missing call to rds_ib_dev_put in
- rds_ib_setup_qp
-From: =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
-In-Reply-To: <1524655321-8379-1-git-send-email-dag.moxnes@oracle.com>
-Date: Wed, 25 Apr 2018 15:48:51 +0200
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Message-Id: <67AE1ED5-55ED-4572-92E9-9FCE18C824A5@oracle.com>
-References: <1524655321-8379-1-git-send-email-dag.moxnes@oracle.com>
-To: Dag Moxnes <dag.moxnes@oracle.com>
-X-Mailer: Apple Mail (2.3445.6.18)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8873 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=15 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=625
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804250132
+        Wed, 25 Apr 2018 09:49:28 -0400
+Subject: Re: [PATCH] remoteproc: rename "crashed" parameter
+To: Alex Elder <elder@linaro.org>, <ohad@wizery.com>,
+        <bjorn.andersson@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20180425133626.11781-1-elder@linaro.org>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <93951de4-3758-0293-eeb1-bba9dd561c4b@st.com>
+Date: Wed, 25 Apr 2018 15:49:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180425133626.11781-1-elder@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-25_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3PDn84T002861
 
+Hello Alex,
 
+I have already proposed it few weeks ago.
 
-> On 25 Apr 2018, at 13:22, Dag Moxnes <dag.moxnes@oracle.com> wrote:
+https://lkml.org/lkml/2018/4/10/192
+
+could you ack it, if you test it on your side?
+
+Thanks,
+Arnaud
+
+On 04/25/2018 03:36 PM, Alex Elder wrote:
+> The last commit to "remoteproc_core.c":
+>   880f5b388252 remoteproc: eAPass type of shutdown to subdev remove
+> added a Boolean flag to the subdevice remove method, to distinguish
+> between graceful shutdown and a crash.  Unfortunately, the names of
+> the parameters were inconsistent, and in fact have opposite meanings.
 > 
-> The function rds_ib_setup_qp is calling rds_ib_get_client_data and
-> should correspondingly call rds_ib_dev_put. This call was lost in
-> the non-error path with the introduction of error handling done in
-> commit 3b12f73a5c29 ("rds: ib: add error handle")
+> In most cases, the parameter is named "crashed", but rproc_add_subdev()
+> names the parameter "graceful" in the prototype for the remove method.
 > 
-> Signed-off-by: Dag Moxnes <dag.moxnes@oracle.com>
-
-Reviewed-by: Håkon Bugge <haakon.bugge@oracle.com>
-
-
-Thxs, Håkon
-
+> The remove method is ultimately called (and supplied with the Boolean
+> flag value) by rproc_remove_subdevices().  That is only called by
+> rproc_stop(), and in the two spots where that is used, "graceful" is
+> the right name for the flag:
+>   rproc_shutdown() passes true, indicating a graceful shutdown
+>   rproc_trigger_recovery() passes false, indicating a crash
+> 
+> The fix is to make the parameter name consistent, and making the
+> name and sense of the parameter to always be "crashed" produces the
+> smallest change.  So that's what this patch does.
+> 
+> To verify this change, rproc_add_subdev() is called in five spots:
+>   - qcom_add_glink_subdev() passes glink_subdev_remove()
+>   - qcom_add_smd_subdev() passes smd_subdev_remove()
+>   - qcom_add_ssr_subdev() passes ssr_notify_stop()
+>   - qcom_add_sysmon_subdev() passes sysmon_stop()
+>   - rproc_handle_vdev() passes rproc_vdev_do_remove()
+> 
+> Of these, only sysmon_stop() uses its "crashed" parameter.  And it
+> clearly assumes that "crashed" is the intended meaning:
+> 
+>         /* Don't request graceful shutdown if we've crashed */
+>         if (crashed)
+>                 return;
+> 
+> So this function (added after the "crashed" parameter was added)
+> exhibited buggy behavior, which is now fixed by this patch.
+> 
+> Signed-off-by: Alex Elder <elder@linaro.org>
 > ---
-> net/rds/ib_cm.c |    3 ++-
-> 1 files changed, 2 insertions(+), 1 deletions(-)
+>  drivers/remoteproc/remoteproc_core.c | 4 ++--
+>  include/linux/remoteproc.h           | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/net/rds/ib_cm.c b/net/rds/ib_cm.c
-> index eea1d86..13b38ad 100644
-> --- a/net/rds/ib_cm.c
-> +++ b/net/rds/ib_cm.c
-> @@ -547,7 +547,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
-> 	rdsdebug("conn %p pd %p cq %p %p\n", conn, ic->i_pd,
-> 		 ic->i_send_cq, ic->i_recv_cq);
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 6d9c5832ce47..a9609d971f7f 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1163,7 +1163,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = rproc_stop(rproc, false);
+> +	ret = rproc_stop(rproc, true);
+>  	if (ret)
+>  		goto unlock_mutex;
+>  
+> @@ -1316,7 +1316,7 @@ void rproc_shutdown(struct rproc *rproc)
+>  	if (!atomic_dec_and_test(&rproc->power))
+>  		goto out;
+>  
+> -	ret = rproc_stop(rproc, true);
+> +	ret = rproc_stop(rproc, false);
+>  	if (ret) {
+>  		atomic_inc(&rproc->power);
+>  		goto out;
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index d09a9c7af109..dfdaede9139e 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -569,7 +569,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+>  void rproc_add_subdev(struct rproc *rproc,
+>  		      struct rproc_subdev *subdev,
+>  		      int (*probe)(struct rproc_subdev *subdev),
+> -		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
+> +		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
+>  
+>  void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+>  
 > 
-> -	return ret;
-> +	goto out;
-> 
-> sends_out:
-> 	vfree(ic->i_sends);
-> @@ -572,6 +572,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
-> 		ic->i_send_cq = NULL;
-> rds_ibdev_out:
-> 	rds_ib_remove_conn(rds_ibdev, conn);
-> +out:
-> 	rds_ib_dev_put(rds_ibdev);
-> 
-> 	return ret;
-> -- 
-> 1.7.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
