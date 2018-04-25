@@ -1,188 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753599AbeDYMOG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 08:14:06 -0400
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:45868 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753253AbeDYMOC (ORCPT
+        id S1753834AbeDYMUm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 08:20:42 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:38557 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753701AbeDYMUj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:14:02 -0400
-X-Google-Smtp-Source: AIpwx48ktmixdDXwE9Qwv/3NxNzGhrKS9xdlTzmrr2ndWnzHt5CIPGEoeOO3G/wbDyJOFV/ZttEZ7g==
-Subject: Re: testing io.low limit for blk-throttle
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: linux-block <linux-block@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fb.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
-References: <A749046B-BEB9-4278-ABEF-3007817D59DD@linaro.org>
- <4c6b86d9-1668-43c3-c159-e6e23ffb04b4@gmail.com>
- <A0424504-2778-41F4-B1C6-BE1B0253E524@linaro.org>
- <18accc1e-c7b3-86a7-091b-1d4b631fcd4a@gmail.com>
- <536A1B1D-575F-4193-ADA6-BA832AEC7179@linaro.org>
-From: Joseph Qi <jiangqi903@gmail.com>
-Message-ID: <871b8d16-a172-af68-1aae-92ae55c0cce7@gmail.com>
-Date: Wed, 25 Apr 2018 20:13:51 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <536A1B1D-575F-4193-ADA6-BA832AEC7179@linaro.org>
-Content-Type: text/plain; charset=utf-8
+        Wed, 25 Apr 2018 08:20:39 -0400
+From: Philippe CORNU <philippe.cornu@st.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings/display/bridge: sii902x: add optional
+ power supplies
+Thread-Topic: [PATCH v2 1/2] dt-bindings/display/bridge: sii902x: add optional
+ power supplies
+Thread-Index: AQHT3GqLiNF0v3z3qEiUkMhGeiWEi6QRDaqAgAA3dAA=
+Date: Wed, 25 Apr 2018 12:20:04 +0000
+Message-ID: <e18d1a3b-a2eb-74f2-ab88-7bf01af0754b@st.com>
+References: <20180425075314.19137-1-philippe.cornu@st.com>
+ <20180425075314.19137-2-philippe.cornu@st.com> <16954794.QiYqgNKfkn@avalon>
+In-Reply-To: <16954794.QiYqgNKfkn@avalon>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C12508B95C0E4A4D9ADA223CB2F824DD@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-25_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3PCKlG4027673
 
-Hi Paolo,
+Hi Laurent & Rob :-)
 
-On 18/4/24 20:12, Paolo Valente wrote:
+On 04/25/2018 11:01 AM, Laurent Pinchart wrote:
+> Hi Philippe,
 > 
+> Thank you for the patch.
 > 
->> Il giorno 23 apr 2018, alle ore 11:01, Joseph Qi <jiangqi903@gmail.com> ha scritto:
+> On Wednesday, 25 April 2018 10:53:13 EEST Philippe Cornu wrote:
+>> Add optional power supplies using the description found in
+>> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
 >>
->>
->>
->> On 18/4/23 15:35, Paolo Valente wrote:
->>>
->>>
->>>> Il giorno 23 apr 2018, alle ore 08:05, Joseph Qi <jiangqi903@gmail.com> ha scritto:
->>>>
->>>> Hi Paolo,
->>>
->>> Hi Joseph,
->>> thanks for chiming in.
->>>
->>>> What's your idle and latency config?
->>>
->>> I didn't set them at all, as the only (explicit) requirement in my
->>> basic test is that one of the group is guaranteed a minimum bps.
->>>
->>>
->>>> IMO, io.low will allow others run more bandwidth if cgroup's average
->>>> idle time is high or latency is low.
->>>
->>> What you say here makes me think that I simply misunderstood the
->>> purpose of io.low.  So, here is my problem/question: "I only need to
->>> guarantee at least a minimum bandwidth, in bps, to a group.  Is the
->>> io.low limit the way to go?"
->>>
->>> I know that I can use just io.max (unless I misunderstood the goal of
->>> io.max too :( ), but my extra purpose would be to not waste bandwidth
->>> when some group is idle.  Yet, as for now, io.low is not working even
->>> for the first, simpler goal, i.e., guaranteeing a minimum bandwidth to
->>> one group when all groups are active.
->>>
->>> Am I getting something wrong?
->>>
->>> Otherwise, if there are some special values for idle and latency
->>> parameters that would make throttle work for my test, I'll be of
->>> course happy to try them.
->>>
->> I think you can try idle time with 1000us for all cgroups, and latency
->> target 100us for cgroup with low limit 100MB/s and 2000us for cgroups
->> with low limit 10MB/s. That means cgroup with low latency target will
->> be preferred.
->> BTW, from my expeierence the parameters are not easy to set because
->> they are strongly correlated to the cgroup IO behavior.
->>
+>> There is a single 1v2 supply voltage named vcc12 from which cvcc12
+>> (digital core) and avcc12 (TMDS analog) are derived because according
+>> to this data sheet:
+>> "cvcc12 and avcc12 can be derived from the same power source"
 > 
-> +Tejun (I guess he might be interested in the results below)
+> Shouldn't the power supplies be mandatory, as explained by Mark in https://
+> lists.freedesktop.org/archives/dri-devel/2018-April/172400.html ?
 > 
-> Hi Joseph,
-> thanks for chiming in. Your suggestion did work!
-> 
-> At first, I thought I had also understood the use of latency from the
-> outcome of your suggestion: "want low limit really guaranteed for a
-> group?  set target latency to a low value for it." But then, as a
-> crosscheck, I repeated the same exact test, but reversing target
-> latencies: I gave 2000 to the interfered (the group with 100MB/s
-> limit) and 100 to the interferers.  And the interfered still got more
-> than 100MB/s!  So I exaggerated: 20000 to the interfered.
-> Same outcome :(
-> 
-> I tried really many other combinations, to try to figure this out, but
-> results seemed more or less random w.r.t. to latency values.  I
-> didn't even start to test different values for idle.
-> 
-> So, the only sound lesson that I seem to have learned is: if I want
-> low limits to be enforced, I have to set target latency and idle
-> explicitly.  The actual values of latencies matter little, or not at
-> all. At least this holds for my simple tests.
-> 
-> At any rate, thanks to your help, Joseph, I could move to the most
-> interesting part for me: how effective is blk-throttle with low
-> limits?  I could well be wrong again, but my results do not seem that
-> good.  With the simplest type of non-toy example I considered, I
-> recorded throughput losses, apparently caused mainly by blk-throttle,
-> and ranging from 64% to 75%.
-> 
-> Here is a worst-case example.  For each step, I'm reporting below the
-> command by which you can reproduce that step with the
-> thr-lat-with-interference benchmark of the S suite [1].  I just split
-> bandwidth equally among five groups, on my SSD.  The device showed a
-> peak rate of ~515MB/s in this test, so I set rpbs to 100MB/s for each
-> group (and tried various values, and combinations of values, for the
-> target latency, without any effect on the results).  To begin, I made
-> every group do sequential reads.  Everything worked perfectly fine.
-> 
-> But then I made one group do random I/O [2], and troubles began.  Even
-> if the group doing random I/O was given a target latency of 100usec
-> (or lower), while the other had a target latency of 2000usec, the poor
-> random-I/O group got only 4.7 MB/s!  (A single process doing 4k sync
-> random I/O reaches 25MB/s on my SSD.)
-> 
-> I guess things broke because low limits did not comply any longer with
-> the lower speed that device reached with the new, mixed workload: the
-> device reached 376MB/s, while the sum of the low limits was 500MB/s.
-> BTW the 'fault' for this loss of throughput was not only of the device
-> and the workload: if I switched throttling off, then the device still
-> reached its peak rate, although granting only 1.3MB/s to the
-> random-I/O group.
-> 
-> So, to comply with the 376MB/s, I lowered the low limits to 74MB/s per
-> group (to avoid a too tight 75MB/s) [3].  A little better: the
-> random-I/O group got 7.2 MB/s.  But the total throughput went down
-> further, to 289MB/s, and became again lower than the sum of the low
-> limits.  Most certainly, this time the throughput went down mainly
-> because blk-throttling was serving the random I/O more than before.
-> 
-> To make a long story short, I arrived to setting just 12MB/s as low
-> limit for each group [4].  The random-I/O group was finally happy,
-> with a revitalizing 12.77MB/s.  But the total throughput dropped down
-> to 127MB/s, i.e., ~25% of the peak rate of the device.  Now the
-> 'fault' for the throughput loss seemed undoubtedly of blk-throttle.
-> The latter was evidently over-throttling some group.
-> 
-> To sum up, for my device, 12MB/s seems to be the highest value for
-> which low limits can be guaranteed.  But setting these limits entails
-> a high cost: if just one group really does random I/O, then 75% of the
-> throughput is lost.
-> 
-> There would be other issues too.  For example, 12MB/s might be too
-> little for the needs of some group in some time period.  This fact would
-> make it extremely difficult, if ever possible, to set low limits that
-> comply with the needs of more dynamic (and probably more
-> realistic) workloads than the above one.
-> 
-Could you run blktrace as well when testing your case? There are several
-throtl traces to help analyze whether it is caused by frequently
-upgrade/downgrade.
-If all cgroups are just running under low, I'am afraid the case you
-tested has something to do with how SSD handle mixed workload IOs.
 
-Thanks,
-Joseph
+Laurent,
+Many thanks Laurent for your comment, I understood the merge of the two 
+1v2 power supplies but missed the "mandatory" part... maybe because this 
+patch (with optional power supplies) already got the reviewed-by from 
+Rob, I thought the discussion thread you pointed out was applicable 
+"only" to totally new driver documentation.
 
-> I think this is all, sorry for the long mail, I tried to shrink it as
-> much as possible.  Looking forward to some feedback.
-> 
-> Thanks,
-> Paolo
-> 
-> [1] https://github.com/Algodev-github/S
-> [2] sudo ./thr-lat-with-interference.sh -b t -n 4 -w 100M -W 100M -t randread -L 2000
-> [3] sudo ./thr-lat-with-interference.sh -b t -n 4 -w 74M -W 74M -t randread -L 2000
-> [4] sudo ./thr-lat-with-interference.sh -b t -n 4 -w 12M -W 12M -t randread -L 2000
+So, on my side, as a "new user" of sii902x IC, no problem to put these 
+power supplies as mandatory instead of optional properties but I would 
+like to be sure this is applicable to both old and new bindings doc : )
+
+Rob,
+could you please confirm these power supply properties should be 
+"mandatory"?
+if yes, should we then modify other optional properties like the 
+reset-gpios too in the future?
+
+Big thanks to both of you,
+Philippe :-)
+
+>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>> ---
+>>   Documentation/devicetree/bindings/display/bridge/sii902x.txt | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+>> b/Documentation/devicetree/bindings/display/bridge/sii902x.txt index
+>> 56a3e68ccb80..9fb41fc9af51 100644
+>> --- a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+>> +++ b/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+>> @@ -8,6 +8,8 @@ Optional properties:
+>>   	- interrupts-extended or interrupt-parent + interrupts: describe
+>>   	  the interrupt line used to inform the host about hotplug events.
+>>   	- reset-gpios: OF device-tree gpio specification for RST_N pin.
+>> +	- iovcc-supply: I/O supply voltage (1.8V or 3.3V, host-dependent).
+>> +	- vcc12-supply: TMDS analog & digital core supply voltage (1.2V).
+>>
+>>   Optional subnodes:
+>>   	- video input: this subnode can contain a video input port node
 > 
