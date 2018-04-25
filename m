@@ -1,88 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753824AbeDYMe6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 08:34:58 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:37203 "EHLO mx1.molgen.mpg.de"
+        id S1752665AbeDYMil (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 08:38:41 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:58995 "EHLO mx1.molgen.mpg.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751870AbeDYMew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:34:52 -0400
-Subject: =?UTF-8?Q?Re:_Regression_4.17-rc1:_SSD_doesn=e2=80=99t_properly_res?=
- =?UTF-8?Q?ume_causing_system_hang_=28NULL_pointer_dereference=29?=
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: jejb@linux.vnet.ibm.com, regressions@leemhuis.info,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        martin.petersen@oracle.com, axboe@kernel.dk,
-        linux-scsi@vger.kernel.org
-References: <59ca6556-11a6-4f77-76e7-d51c7175eb32@molgen.mpg.de>
- <67ffdf0050a04bf3615c3d8a3a90b0c9c2aeb1ad.camel@wdc.com>
- <2cc5f0fb-4caa-9c28-7daa-68993d5cb41a@molgen.mpg.de>
- <14ff1ed06e36a372680872c227b5abe389c753da.camel@wdc.com>
- <a3a7f906-3681-15cc-67af-b96e4ac71b0e@molgen.mpg.de>
- <134955874b401e6764077393c75ab2d4549b940a.camel@wdc.com>
- <6a2162a7-5f48-c107-0b1c-5258089522c5@molgen.mpg.de>
- <19e19bc6b2fef11faf428fe75447b06e56af9ffd.camel@wdc.com>
- <d5e8823e-27bd-dabe-174f-b111a48b440a@molgen.mpg.de>
- <df8a54d242adb7c26ceef57d6a0e7a51232f911c.camel@wdc.com>
-From: Paul Menzel <pmenzel+linux-block@molgen.mpg.de>
-Message-ID: <db0952af-d603-227e-3d58-ac466eb707a9@molgen.mpg.de>
-Date: Wed, 25 Apr 2018 14:34:50 +0200
+        id S1751528AbeDYMii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 08:38:38 -0400
+Subject: Probe HD-audio devices in parallel (was: azx_probe() called twice)
+To: Takashi Iwai <tiwai@suse.de>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <afa8949b-5c78-4eb6-ab04-d1a2091f18c2@molgen.mpg.de>
+ <s5hvacfjy5g.wl-tiwai@suse.de>
+ <96db5a48-418e-3344-ef0d-99e6180cebfe@molgen.mpg.de>
+ <s5hpo2njwgp.wl-tiwai@suse.de>
+From: Paul Menzel <pmenzel+alsa-devel@molgen.mpg.de>
+Message-ID: <7ab0d5ea-0228-6081-1598-db4904cb99c8@molgen.mpg.de>
+Date: Wed, 25 Apr 2018 14:38:36 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <df8a54d242adb7c26ceef57d6a0e7a51232f911c.camel@wdc.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090307000707090808070303"
+In-Reply-To: <s5hpo2njwgp.wl-tiwai@suse.de>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020502070708060903080403"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is a cryptographically signed message in MIME format.
 
---------------ms090307000707090808070303
+--------------ms020502070708060903080403
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Dear Bart,
+Dear Takashi,
 
 
-On 04/25/18 14:26, Bart Van Assche wrote:
-> On Wed, 2018-04-25 at 07:37 +0200, Paul Menzel wrote:
->> Am 24.04.2018 um 23:17 schrieb Bart Van Assche:
->>> On Tue, 2018-04-24 at 23:04 +0200, Paul Menzel wrote:
->>>> I applied your change, and rebuilt the Linux kernel. Unfortunately, =
-it
->>>> looks like, it didn=E2=80=99t make a difference.
+On 04/25/18 14:34, Takashi Iwai wrote:
+> On Wed, 25 Apr 2018 14:29:31 +0200, Paul Menzel wrote:
+
+>> On 04/25/18 13:58, Takashi Iwai wrote:
+>>> On Wed, 25 Apr 2018 13:48:27 +0200, Paul Menzel wrote:
+>>
+>>>> With the attached debug patch, `azx_probe()` seems to have been call=
+ed
+>>>> twice on the ASRock E350M1. Is that expected? It also differs, that
+>>>> it=E2=80=99s only called once during some boots, and twice during ot=
+hers.
 >>>
->>> In that case I don't know what is causing the failure. Can you run a =
-bisect
->>> to determine which commit introduced this regression?
+>>> How many HD-audio devices does it have?
 >>
->> With `scsi_mod.use_blk_mq=3Dn` the system resumes fine, so for to me
->> unknown reasons, that Kconfig option get selected in my Linux kernel
->> configuration. I remember having similar issues when this was enabled =
-by
->> default in Linux 4.13-rc?, so it was just a configuration problem and
->> not a regression. Unfortunately, the Linux configuration files are not=
+>> I=E2=80=99d say one (ALC892), but how do I verify that?
+>=20
+> I meant HD-audio controllers.
+>=20
+>> Please find lspci and Linux logs attached from an older boot with Linu=
+x 4.11.
+> ....
+>> 00:01.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Wrestler =
+HDMI Audio
+> ....
+>> 00:14.2 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] SBx00 Aza=
+lia (Intel HDA) (rev 40)
+>=20
+> So you have two HD-audio controllers (one for HDMI/DP and another for
+> Realtek codec).  It's expected behavior that azx_probe() gets called
+> twice.
 
->> under version control, so I cannot check, but it is probably my fault.=
+True. Too many log files I looked at lately, and I got confused. Sorry=20
+for the noise.
 
->>
->> Sorry for the noise, and please tell me, what I can do to get the opti=
-on
->> working on this old device.
-
-> Did the same system boot fine with a previous kernel with scsi-mq enabl=
-ed?
-
-No, as far as I know it never worked, see thread *[Regression 4.13-rc1]=20
-Resume does not work on Lenovo X60t* [1].
-
-> Anyway, we would like to know what is the root cause such that this NUL=
-L
-> pointer dereference can be fixed. There are namely plans to remove the
-> legacy block layer in the not too distant future.
-
-I=E2=80=99ll be happy to test proposed changes.
+Could the probe theoretically be done in parallel?
 
 
 Kind regards,
@@ -90,14 +77,7 @@ Kind regards,
 Paul
 
 
-PS: Your mailer also changed *doesn=E2=80=99t* to *doesn* in the subject =
-line.
-
-
-[1] https://www.spinics.net/lists/linux-scsi/msg111457.html
-
-
---------------ms090307000707090808070303
+--------------ms020502070708060903080403
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -185,18 +165,18 @@ fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
 EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
 LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
 RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
-SIb3DQEJBTEPFw0xODA0MjUxMjM0NTBaMC8GCSqGSIb3DQEJBDEiBCBjavHDOfHhGV7YBg7T
-LWwXZoIUNIS86bfeM9jAukg+7jBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+SIb3DQEJBTEPFw0xODA0MjUxMjM4MzZaMC8GCSqGSIb3DQEJBDEiBCDwlSrrcI1D8HXC8WPv
+a1nUQAMGHH6X4mv22uRMNtzYujBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
 hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
 BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
 MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
 bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
 gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
 DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
-BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBADim
-QRiHfhZUNzszHL6Y7GTf3tLYWtbKB3KCFSjU7CT+nqZXiEZTc4uGMOU9ENNhuCWgNZR9KiWu
-n6/fcgerx1sVvzLZ7pBhUq6GoKTxAV7ZQkPpjS3g5bbXiAorE2dWXZBmRpUZQwOjjLmGRMnm
-oni+cjwXVZKwyBsjlo6lVPop78oz8ET933cFq6xOeE4H5zPvo3SX8ZrE3NrCXYIHLNpZXE+5
-4xnJjgFEzepbTWG9m5BJvQonqJJB6Q34ADFJgmqvv2n2sJJFEIk1wQGrP8WVBho1DI8b1HtW
-DGWkzLYFqM9aEDVxlFSFtK+zn27P8e5knLmyQGxealkbmQl8TpUAAAAAAAA=
---------------ms090307000707090808070303--
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBACmf
+Iaan5dCQ8V6c58PnEe71x1ypB4vSyxid9AXvtDeuzXfKTmWgSZCRZzA+E5yuoAZfb6sI/iou
+tnob+dYUOW0Bdwzp9SuZsf3c5YxEgN7eXq6S/L7dddW4ZWO3uQh6UDM3RmA1ewVReMgx8xBQ
+Nl4ev1nwjUWaT2kOgHNAUueD4ytuCX5y+LOlGNOxDBfr4KEeyRNe8CG8h+g423BStzn7QASb
+yRYw6KRu9P+MURlrSnaXFLK8U/hIBZFSlPG2d8cO9SXBjz0J0/wThlbO1JFhcUZGzUnz8QTG
+ZitClyiFceNKPSUdy3oJolkqJ8yEb0Ua3J+B5ooC5ouh9qt0QkkAAAAAAAA=
+--------------ms020502070708060903080403--
