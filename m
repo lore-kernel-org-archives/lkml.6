@@ -1,87 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-558212-1524653073-2-4185848786566949348
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES daen, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653072; b=U71QQ2hSSnIAvLRmqLYVMRr4k7tyEl6z9agZEpjA9u/VR7WuTQ
-    VSsdLKY3TyWRuO865vRouBnFKADq4F3xLo+Rz6Q5IF/lQNykKYL/BbD6jJja7EKP
-    nzqIQ4JXqFeC5vLKs05A0S7SJ6wnWDN0teiggUdjhdSKM7FyrfqP6dU6Duvpp+aE
-    ee46sUv8KYs5ydkdNm+fEMB+gdZ6965YJc1MEiNV/e1qOqTrKRUO6NZoO6v2fAaN
-    FofWRXl0MQdhRoKn6I0T6MSMOUTlgHl6vMgquRJIyFvWbQxfjGNmsOqoeIyMBIqb
-    BKbyRw4Du8V02wW8if3DWczHl+Zff1Z2e/HQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653072; bh=drlntcuTymZJXwbcI85YIY14MExcpz
-    R7upshc23f8y0=; b=nrIGjskTSLhIhBcHImWjjvBrI2ZUE9wSyk7EOTE7l5fv68
-    2DjO2yhL+IfxAl+fbt4wclN2TLI2B0qcfzF1x/3EjchZ/sUlvVYv3jQMX1FKhUND
-    a1AMTuyVBLih2cei+/MxwMvWn1+VtLIJRHVU6QPxR/awG8U3/P8ff6nbOqS0K48A
-    ymPXhr1rcoL6ygG/OjWcOUK6uRoRCA2TKDBC4QAJZ3I6gDKabWPv51JvPL1g5CJQ
-    N35l4hEZcuGv/Gpd90cc/QbFykLV3nE3ksIPwi3h9Ok8Tv+H6Gdk1GkUwEZ2WxUB
-    D/TFAQJxeFNu6mudWmyJ1ZXaLkUuZSdaLCb2vncg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJYrGIbYxzoJ05l6EPxNIDBntjgMDC+IL0rr0Fe/eJl277YE8nTuJo/ULV/C/4HvS1A6PbcYu18Q2czR+qcmnq58PG6BREoVHwAiC97+EwoQkBh0qMbd
-    ohzm36o4XZkSeSwh5HzcZrDytR97wVgjADBruJcPZIGjP28HGGe2hYydyaPb0PcD6yilo03prJDv1N/M2ijzeUo62+4sxaktA0D82iqFSdDILJgLcIk6OPoU
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=UqCG9HQmAAAA:8 a=QyXUC8HyAAAA:8 a=Z4Rwk6OoAAAA:8 a=JfrnYn6hAAAA:8
-    a=yMhMjlubAAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
-    a=30ouwem8p7Oa7RGj-EIA:9 a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22
-    a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754375AbeDYKo2 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:44:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53308 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754340AbeDYKoY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:44:24 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/TEmE5ODHS1sD5UfBQ3zwl8TQlELyZyAzt/IkZbbo582GV2NnrbZDhR0DcOrmbkcQVnugq
+ARC-Seal: i=1; a=rsa-sha256; t=1524653072; cv=none;
+        d=google.com; s=arc-20160816;
+        b=l5CijPs3rCWB6AKx8KbSCHu6kU4sEltsYpu32F4yprptlXrOspygHdvtM0kpwLWLw1
+         62cBTyRHd9NkkAfoawPYNgeQc7t4A8sWvqsFL/RTfEbfG3qe5iYXkjfy3eG7CGNUDnre
+         DhWUaj5PNmg21Ze5DRu9yx/L0jZtmSpnF8cPIpOsBfr0LTksffJdNUcZRKU3TGDHDyHq
+         Pr+GXwhsCIg5y5RnV6tXlgCmetDQZmzZBsspRffl8nFBIq7UQ5e6KX+0dfDaE3bIE2tv
+         6mClBuyhT+iO/x4ZPaHQWWKE8rOtNmdW8q+UEOsb8PC+RKyd9AF4LlGCK66molqBhUDJ
+         Vqtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=LYVDZXTWBC0vPAVqkzld5cX1HWMYdYv4k9kPajXJOoE=;
+        b=bgogiQHdrUxFne/z+G7fv1Kq21+tpwqAgXchJhdIc6C9M6Uz/Ama8TqxqNXGkqT1fl
+         8iI+7IOWVWCuuBg7g35X/a2xCX+bZB/YoqBjxpjGEBQGevJ8391FYQxdtGCdM6N93zAI
+         NX0OPC11Fofdr4Mw8ZyxcRAtgUma4+OeiNlvREJ24Ez9Io85US7ZpJBpjgMWnMqcf+CM
+         yRZl65w8dbNeI6BKHfm7Bf2NWjeqbkLAgk1lI1HUSlteIXYlPBPO5fKmPtIFM7WaZQvX
+         xP0sGPxTsxtDQN3EiSSH4chBeqZShR4cXeOTZZtscwTJ9U8dhWT4rXM9z4pWNtF1gzac
+         J0Tw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <fengguang.wu@intel.com>,
-        Michael Kelley <mhkelley@outlook.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, kys@microsoft.com,
-        martin.petersen@oracle.com, mikelley@microsoft.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 170/183] cpumask: Make for_each_cpu_wrap() available on UP as well
-Date: Wed, 25 Apr 2018 12:36:30 +0200
-Message-Id: <20180425103249.347516890@linuxfoundation.org>
+	stable@vger.kernel.org,
+	syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	John Stultz <john.stultz@linaro.org>,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH 4.14 173/183] alarmtimer: Init nanosleep alarm timer on stack
+Date: Wed, 25 Apr 2018 12:36:33 +0200
+Message-Id: <20180425103249.465305078@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -89,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598713968044165236?=
+X-GMAIL-MSGID: =?utf-8?q?1598714620302524197?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -99,41 +51,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Kelley <mhkelley@outlook.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
+commit bd03143007eb9b03a7f2316c677780561b68ba2a upstream.
 
-[ Upstream commit d207af2eab3f8668b95ad02b21930481c42806fd ]
+syszbot reported the following debugobjects splat:
 
-for_each_cpu_wrap() was originally added in the #else half of a
-large "#if NR_CPUS == 1" statement, but was omitted in the #if
-half.  This patch adds the missing #if half to prevent compile
-errors when NR_CPUS is 1.
+ ODEBUG: object is on stack, but not annotated
+ WARNING: CPU: 0 PID: 4185 at lib/debugobjects.c:328
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Michael Kelley <mhkelley@outlook.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kys@microsoft.com
-Cc: martin.petersen@oracle.com
-Cc: mikelley@microsoft.com
-Fixes: c743f0a5c50f ("sched/fair, cpumask: Export for_each_cpu_wrap()")
-Link: http://lkml.kernel.org/r/SN6PR1901MB2045F087F59450507D4FCC17CBF50@SN6PR1901MB2045.namprd19.prod.outlook.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+ RIP: 0010:debug_object_is_on_stack lib/debugobjects.c:327 [inline]
+ debug_object_init+0x17/0x20 lib/debugobjects.c:391
+ debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
+ debug_init kernel/time/hrtimer.c:458 [inline]
+ hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
+ alarm_init kernel/time/alarmtimer.c:339 [inline]
+ alarm_timer_nsleep+0x164/0x4d0 kernel/time/alarmtimer.c:787
+ SYSC_clock_nanosleep kernel/time/posix-timers.c:1226 [inline]
+ SyS_clock_nanosleep+0x235/0x330 kernel/time/posix-timers.c:1204
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+This happens because the hrtimer for the alarm nanosleep is on stack, but
+the code does not use the proper debug objects initialization.
+
+Split out the code for the allocated use cases and invoke
+hrtimer_init_on_stack() for the nanosleep related functions.
+
+Reported-by: syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: syzkaller-bugs@googlegroups.com
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1803261528270.1585@nanos.tec.linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/cpumask.h |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -165,6 +165,8 @@ static inline unsigned int cpumask_local
- 	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
- #define for_each_cpu_not(cpu, mask)		\
- 	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
-+#define for_each_cpu_wrap(cpu, mask, start)	\
-+	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask, (void)(start))
- #define for_each_cpu_and(cpu, mask, and)	\
- 	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask, (void)and)
- #else
+---
+ kernel/time/alarmtimer.c |   34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
+
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -326,6 +326,17 @@ static int alarmtimer_resume(struct devi
+ }
+ #endif
+ 
++static void
++__alarm_init(struct alarm *alarm, enum alarmtimer_type type,
++	     enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
++{
++	timerqueue_init(&alarm->node);
++	alarm->timer.function = alarmtimer_fired;
++	alarm->function = function;
++	alarm->type = type;
++	alarm->state = ALARMTIMER_STATE_INACTIVE;
++}
++
+ /**
+  * alarm_init - Initialize an alarm structure
+  * @alarm: ptr to alarm to be initialized
+@@ -335,13 +346,9 @@ static int alarmtimer_resume(struct devi
+ void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
+ 		enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
+ {
+-	timerqueue_init(&alarm->node);
+ 	hrtimer_init(&alarm->timer, alarm_bases[type].base_clockid,
+-			HRTIMER_MODE_ABS);
+-	alarm->timer.function = alarmtimer_fired;
+-	alarm->function = function;
+-	alarm->type = type;
+-	alarm->state = ALARMTIMER_STATE_INACTIVE;
++		     HRTIMER_MODE_ABS);
++	__alarm_init(alarm, type, function);
+ }
+ EXPORT_SYMBOL_GPL(alarm_init);
+ 
+@@ -719,6 +726,8 @@ static int alarmtimer_do_nsleep(struct a
+ 
+ 	__set_current_state(TASK_RUNNING);
+ 
++	destroy_hrtimer_on_stack(&alarm->timer);
++
+ 	if (!alarm->data)
+ 		return 0;
+ 
+@@ -740,6 +749,15 @@ static int alarmtimer_do_nsleep(struct a
+ 	return -ERESTART_RESTARTBLOCK;
+ }
+ 
++static void
++alarm_init_on_stack(struct alarm *alarm, enum alarmtimer_type type,
++		    enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
++{
++	hrtimer_init_on_stack(&alarm->timer, alarm_bases[type].base_clockid,
++			      HRTIMER_MODE_ABS);
++	__alarm_init(alarm, type, function);
++}
++
+ /**
+  * alarm_timer_nsleep_restart - restartblock alarmtimer nsleep
+  * @restart: ptr to restart block
+@@ -752,7 +770,7 @@ static long __sched alarm_timer_nsleep_r
+ 	ktime_t exp = restart->nanosleep.expires;
+ 	struct alarm alarm;
+ 
+-	alarm_init(&alarm, type, alarmtimer_nsleep_wakeup);
++	alarm_init_on_stack(&alarm, type, alarmtimer_nsleep_wakeup);
+ 
+ 	return alarmtimer_do_nsleep(&alarm, exp, type);
+ }
+@@ -784,7 +802,7 @@ static int alarm_timer_nsleep(const cloc
+ 	if (!capable(CAP_WAKE_ALARM))
+ 		return -EPERM;
+ 
+-	alarm_init(&alarm, type, alarmtimer_nsleep_wakeup);
++	alarm_init_on_stack(&alarm, type, alarmtimer_nsleep_wakeup);
+ 
+ 	exp = timespec64_to_ktime(*tsreq);
+ 	/* Convert (if necessary) to absolute time */
