@@ -1,191 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754430AbeDYNZ5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:25:57 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:47113 "EHLO
+        id S1754188AbeDYNZw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:25:52 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:52213 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753040AbeDYNW7 (ORCPT
+        with ESMTP id S1753405AbeDYNW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Apr 2018 09:22:59 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 04/16] y2038: ia64: Remove unneeded ipc uapi header files
-Date: Wed, 25 Apr 2018 15:22:30 +0200
-Message-Id: <20180425132242.1500539-5-arnd@arndb.de>
+Subject: [PATCH v4 06/16] y2038: arm64: Extend sysvipc compat data structures
+Date: Wed, 25 Apr 2018 15:22:32 +0200
+Message-Id: <20180425132242.1500539-7-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180425132242.1500539-1-arnd@arndb.de>
 References: <20180425132242.1500539-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:mfVJNYq0oJtcLAxIGLSlzLBS734KezI4y2tjRCdSQ7NvFCUvRnG
- UV56CXaVktZT1cVQv62kUJ2LdGsYXzAYx9BlaVApKBVAUGePeBIhlLrDGwx9KAuHWPJak7F
- TS38lpUyPhWaZhwb1iGU8wYk8PilnF+E2/tOVvPCt/QFdJ1hNFQWZHBHITlsae0mj7K0eBC
- jzw1/rTB7X0gjauCvQsHA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:enjv4TuoJZY=:PaCONPSlZz97KmQ6O5LccO
- vWLgQTr5OohbUL/Zpau/zQUHi+ee4ODgUSUfCRz4ZPIgSUJWqlr/9PNF1qS6A/f4YBLFsKrEx
- ytAEdICJlc3uu7aBxk7o001XhqNCyUUWMbkAiVIpm1uvGZJ4uTMoyRlTooZb83E5IvfMZJ3p4
- gslytLqdZ8IGL+DbK7TYggaCsKYHguGXGhbp2f2A3OG1OXY/D4JZXp0AYUvmdffU0tjkE8716
- q6o9/lui2qZa5HRmyu+HZiO06i6sYi+FQYWEhzSNxAIPIoG8gfJHDC0wqROn+BxQuL47QbqJ+
- zzK33g64XFO5Nv6YIvSTGET/Xil4CG9k8eX4UepqOj0jZzcAwHoeBFy5qaBEuUZVrTTx2RYA1
- 6Skqknj2NDDB8kyBdyXTAKlIPE9stwevD6Ev+XY9q4SaSPU158deoA0UFXiLdoQMWnKy0G0gp
- jk1lbRFvznGlPOP3HPWwPYVZ3cqK6AgdctHm3cDQsb/jzyOKpWOjmx61uRWgJfXEuao25mM6A
- SdcRmLDdPfM3EocIXwSyh3jKE9F4kZ0sLe+5ZmuTme0EVvEyRBIWUgCmOoUrJX1LI49ucGQOg
- KIyiMKdMcGkTmiCZTroVOmu1gzD0IUsRaKIBnx0wCBPd6qSkr/B4KgfM5mFDgtr0EFBwNFzbV
- W0nusEv3P4iVQupSUXOgnWL1vqVc6PPIjnPvJqYowOQU56MFrWcDfeBLWD48x8wJ+D4FYYTlp
- 7oJTozdMxj1f/LnMaoRPcomu3HnfL+op4CqkiA==
+X-Provags-ID: V03:K1:wgjVUuMhxC3paqxcKqToMhbRmvhgaUYuIAJ4ev5lWWQTKLC/F2U
+ 1Be2aBVaulk/gJatfg7RuTZOPzS63lH7EJWt7Ocd7Hw0quE/FOZ/Z5Y541v1mEyaavJTyk0
+ 2w2E7RE2TFcAU91TYr7Q/Jx1OPwe/RErBBjlB3q5EZzbyMVY5WIoKMFaGn3NVO565C1aQqm
+ yBLkKRGMTtHWL9uAmddHg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KpeT+df1QwQ=:syNQ0sp9IUeW305c/MWtbQ
+ /CWp9nH56+wR6oF0GVUJcPapl+G81PedvCbQVS7+3eQ5BF4MTKLCs2lpypiWWQ+SilUmtQ3YI
+ 6tvMrf1xTQT0xFGcMjg3MN+ELNW4Spa7fLvvVuyrp3Ks9zv3oc2GSQsksC4vdqR1GKA052ScM
+ 7bLgDWo48C6JakO54tLX2/T1wvUUvAiS6NxrH0L00PKE2EbItZq6t6YWZ1nBV31N5zyqXCG9E
+ rikXXOmAd5Amq99S+91riEPXhDa7wP8RoQARQJVcPLU9bDU7t8XHbiOAQ7H304M23aDSCdN5A
+ yzdz0kuBT1LAsf3mWEeU3bsn+Ih/+2cuCo4NFjw1sVpD3VP/QQGoxMIM6wpVBIRUeX+++xXWP
+ HoZoUR0oj6kCj5gcctwd6RITMeVWQzkwMqh6k/Rs95dRDE7qHOjLtFKH/qKvh5fZjWe0xa568
+ lVY6+Lxa0X0XhgGCSYrTM/rvc7c2ZZHu27mlYId4frBNk2ZschlN4iSpxTfFDE8k6z6Novs3S
+ XprL+i8erYtLNlYvFIQOJK/Govw1o3XtlncaAimXy+o8oLoLyRfqM8TAONRr4kVuaYsPF7EGs
+ ZwFSWAK1Rv5Sz3UJqc/HWrRpYYWULQwnmCMO4yEcMRVPSVxt36h02vqAHJAEJ3IziNMKoXmW/
+ 1LWDPcI/6/MGtk67xTf9yS8bG0HGERDhyREPYyyXG1RsgvDF0tnJsYNht82Wiz3ZHLEh7aJoZ
+ 33sFgoKTdMeIcsni3Ftbi4JBArewbabwovJkmQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ia64 ipcbuf/msgbuf/sembuf/shmbuf header files are all identical
-to the version from asm-generic.
+Both 32-bit amd 64-bit ARM use the asm-generic header files for their
+sysvipc data structures, so no special care is needed to make those
+work beyond y2038, with the one exception of compat mode: Since there
+is no asm-generic definition of the compat mode IPC structures, ARM64
+provides its own copy, and we make those match the changes in the native
+asm-generic header files.
 
-This patch removes the files and replaces them with 'generic-y'
-statements as part of the y2038 changes. While ia64 no longer has
-a compat mode and doesn't need the file any more, it seem nicer
-to clean this up anyway.
+There is sufficient padding in these data structures to extend all
+timestamps to 64 bit, but on big-endian ARM kernels, the padding
+is in the wrong place, so the C library has to ensure it reassembles
+a 64-bit time_t correctly.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/ia64/include/uapi/asm/Kbuild   |  4 ++++
- arch/ia64/include/uapi/asm/ipcbuf.h |  2 --
- arch/ia64/include/uapi/asm/msgbuf.h | 28 --------------------------
- arch/ia64/include/uapi/asm/sembuf.h | 23 ----------------------
- arch/ia64/include/uapi/asm/shmbuf.h | 39 -------------------------------------
- 5 files changed, 4 insertions(+), 92 deletions(-)
- delete mode 100644 arch/ia64/include/uapi/asm/ipcbuf.h
- delete mode 100644 arch/ia64/include/uapi/asm/msgbuf.h
- delete mode 100644 arch/ia64/include/uapi/asm/sembuf.h
- delete mode 100644 arch/ia64/include/uapi/asm/shmbuf.h
+ arch/arm64/include/asm/compat.h | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/arch/ia64/include/uapi/asm/Kbuild b/arch/ia64/include/uapi/asm/Kbuild
-index c0527cfc48f0..3982e673e967 100644
---- a/arch/ia64/include/uapi/asm/Kbuild
-+++ b/arch/ia64/include/uapi/asm/Kbuild
-@@ -2,5 +2,9 @@
- include include/uapi/asm-generic/Kbuild.asm
+diff --git a/arch/arm64/include/asm/compat.h b/arch/arm64/include/asm/compat.h
+index 0030f79808b3..1a037b94eba1 100644
+--- a/arch/arm64/include/asm/compat.h
++++ b/arch/arm64/include/asm/compat.h
+@@ -181,10 +181,10 @@ struct compat_ipc64_perm {
  
- generic-y += bpf_perf_event.h
-+generic-y += ipcbuf.h
- generic-y += kvm_para.h
-+generic-y += msgbuf.h
- generic-y += poll.h
-+generic-y += sembuf.h
-+generic-y += shmbuf.h
-diff --git a/arch/ia64/include/uapi/asm/ipcbuf.h b/arch/ia64/include/uapi/asm/ipcbuf.h
-deleted file mode 100644
-index 90d6445a14df..000000000000
---- a/arch/ia64/include/uapi/asm/ipcbuf.h
-+++ /dev/null
-@@ -1,2 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#include <asm-generic/ipcbuf.h>
-diff --git a/arch/ia64/include/uapi/asm/msgbuf.h b/arch/ia64/include/uapi/asm/msgbuf.h
-deleted file mode 100644
-index aa25df92d9dc..000000000000
---- a/arch/ia64/include/uapi/asm/msgbuf.h
-+++ /dev/null
-@@ -1,28 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _ASM_IA64_MSGBUF_H
--#define _ASM_IA64_MSGBUF_H
--
--/*
-- * The msqid64_ds structure for IA-64 architecture.
-- * Note extra padding because this structure is passed back and forth
-- * between kernel and user space.
-- *
-- * Pad space is left for:
-- * - 2 miscellaneous 64-bit values
-- */
--
--struct msqid64_ds {
--	struct ipc64_perm msg_perm;
--	__kernel_time_t msg_stime;	/* last msgsnd time */
--	__kernel_time_t msg_rtime;	/* last msgrcv time */
--	__kernel_time_t msg_ctime;	/* last change time */
--	unsigned long  msg_cbytes;	/* current number of bytes on queue */
--	unsigned long  msg_qnum;	/* number of messages in queue */
--	unsigned long  msg_qbytes;	/* max number of bytes on queue */
--	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
--	__kernel_pid_t msg_lrpid;	/* last receive pid */
--	unsigned long  __unused1;
--	unsigned long  __unused2;
--};
--
--#endif /* _ASM_IA64_MSGBUF_H */
-diff --git a/arch/ia64/include/uapi/asm/sembuf.h b/arch/ia64/include/uapi/asm/sembuf.h
-deleted file mode 100644
-index 6ed058760afc..000000000000
---- a/arch/ia64/include/uapi/asm/sembuf.h
-+++ /dev/null
-@@ -1,23 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _ASM_IA64_SEMBUF_H
--#define _ASM_IA64_SEMBUF_H
--
--/*
-- * The semid64_ds structure for IA-64 architecture.
-- * Note extra padding because this structure is passed back and forth
-- * between kernel and user space.
-- *
-- * Pad space is left for:
-- * - 2 miscellaneous 64-bit values
-- */
--
--struct semid64_ds {
--	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
--	__kernel_time_t	sem_otime;		/* last semop time */
--	__kernel_time_t	sem_ctime;		/* last change time */
--	unsigned long	sem_nsems;		/* no. of semaphores in array */
--	unsigned long	__unused1;
--	unsigned long	__unused2;
--};
--
--#endif /* _ASM_IA64_SEMBUF_H */
-diff --git a/arch/ia64/include/uapi/asm/shmbuf.h b/arch/ia64/include/uapi/asm/shmbuf.h
-deleted file mode 100644
-index 6ef57cb70dee..000000000000
---- a/arch/ia64/include/uapi/asm/shmbuf.h
-+++ /dev/null
-@@ -1,39 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _ASM_IA64_SHMBUF_H
--#define _ASM_IA64_SHMBUF_H
--
--/*
-- * The shmid64_ds structure for IA-64 architecture.
-- * Note extra padding because this structure is passed back and forth
-- * between kernel and user space.
-- *
-- * Pad space is left for:
-- * - 2 miscellaneous 64-bit values
-- */
--
--struct shmid64_ds {
--	struct ipc64_perm	shm_perm;	/* operation perms */
--	size_t			shm_segsz;	/* size of segment (bytes) */
--	__kernel_time_t		shm_atime;	/* last attach time */
--	__kernel_time_t		shm_dtime;	/* last detach time */
--	__kernel_time_t		shm_ctime;	/* last change time */
--	__kernel_pid_t		shm_cpid;	/* pid of creator */
--	__kernel_pid_t		shm_lpid;	/* pid of last operator */
--	unsigned long		shm_nattch;	/* no. of current attaches */
--	unsigned long		__unused1;
--	unsigned long		__unused2;
--};
--
--struct shminfo64 {
--	unsigned long	shmmax;
--	unsigned long	shmmin;
--	unsigned long	shmmni;
--	unsigned long	shmseg;
--	unsigned long	shmall;
--	unsigned long	__unused1;
--	unsigned long	__unused2;
--	unsigned long	__unused3;
--	unsigned long	__unused4;
--};
--
--#endif /* _ASM_IA64_SHMBUF_H */
+ struct compat_semid64_ds {
+ 	struct compat_ipc64_perm sem_perm;
+-	compat_time_t  sem_otime;
+-	compat_ulong_t __unused1;
+-	compat_time_t  sem_ctime;
+-	compat_ulong_t __unused2;
++	compat_ulong_t sem_otime;
++	compat_ulong_t sem_otime_high;
++	compat_ulong_t sem_ctime;
++	compat_ulong_t sem_ctime_high;
+ 	compat_ulong_t sem_nsems;
+ 	compat_ulong_t __unused3;
+ 	compat_ulong_t __unused4;
+@@ -192,12 +192,12 @@ struct compat_semid64_ds {
+ 
+ struct compat_msqid64_ds {
+ 	struct compat_ipc64_perm msg_perm;
+-	compat_time_t  msg_stime;
+-	compat_ulong_t __unused1;
+-	compat_time_t  msg_rtime;
+-	compat_ulong_t __unused2;
+-	compat_time_t  msg_ctime;
+-	compat_ulong_t __unused3;
++	compat_ulong_t msg_stime;
++	compat_ulong_t msg_stime_high;
++	compat_ulong_t msg_rtime;
++	compat_ulong_t msg_rtime_high;
++	compat_ulong_t msg_ctime;
++	compat_ulong_t msg_ctime_high;
+ 	compat_ulong_t msg_cbytes;
+ 	compat_ulong_t msg_qnum;
+ 	compat_ulong_t msg_qbytes;
+@@ -210,12 +210,12 @@ struct compat_msqid64_ds {
+ struct compat_shmid64_ds {
+ 	struct compat_ipc64_perm shm_perm;
+ 	compat_size_t  shm_segsz;
+-	compat_time_t  shm_atime;
+-	compat_ulong_t __unused1;
+-	compat_time_t  shm_dtime;
+-	compat_ulong_t __unused2;
+-	compat_time_t  shm_ctime;
+-	compat_ulong_t __unused3;
++	compat_ulong_t shm_atime;
++	compat_ulong_t shm_atime_high;
++	compat_ulong_t shm_dtime;
++	compat_ulong_t shm_dtime_high;
++	compat_ulong_t shm_ctime;
++	compat_ulong_t shm_ctime_high;
+ 	compat_pid_t   shm_cpid;
+ 	compat_pid_t   shm_lpid;
+ 	compat_ulong_t shm_nattch;
 -- 
 2.9.0
