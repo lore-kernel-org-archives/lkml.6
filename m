@@ -1,117 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753545AbeDYVf0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 17:35:26 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46527 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753501AbeDYVfV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 17:35:21 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        dmitry.torokhov@gmail.com, jeffy.chen@rock-chips.com,
-        enric.balletbo@collabora.com, josephl@nvidia.com, opendmb@gmail.com
-Subject: Re: Lack of suspend/resume/shutdown ordering between GPIO providers and consumers
-Date: Wed, 25 Apr 2018 23:35:10 +0200
-Message-ID: <3827893.QJdhME6hrl@aspire.rjw.lan>
-In-Reply-To: <aecab723-be30-91ba-3fd5-cb61243e572f@ti.com>
-References: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com> <b562c5e3-7073-1b86-6f1f-1d2a5712b28b@ti.com> <aecab723-be30-91ba-3fd5-cb61243e572f@ti.com>
+        id S1751973AbeDYVhh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 17:37:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750986AbeDYVhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 17:37:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56AD321745
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Wed, 25 Apr 2018 23:37:32 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] reset: Renesas RZ/N1 reboot driver
+Message-ID: <20180425213732.tdmla3kdeuc2jjke@earth.universe>
+References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1523963101-56725-7-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pm7n5n2in6lw4rqw"
+Content-Disposition: inline
+In-Reply-To: <1523963101-56725-7-git-send-email-michel.pollet@bp.renesas.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, April 25, 2018 9:29:59 PM CEST Grygorii Strashko wrote:
-> 
-> On 04/25/2018 02:10 PM, Grygorii Strashko wrote:
-> > 
-> > 
-> > On 04/25/2018 01:57 PM, Florian Fainelli wrote:
-> >> On 04/25/2018 11:47 AM, Grygorii Strashko wrote:
-> >>>
-> >>>
-> >>> On 04/25/2018 01:29 PM, Florian Fainelli wrote:
-> >>>> On 04/25/2018 11:06 AM, Grygorii Strashko wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 04/24/2018 05:58 PM, Florian Fainelli wrote:
-> >>>>>> Hi Linus, Rafael, all
-> >>>>>>
-> >>>>>> Our GPIO controller driver: gpio-brcmstb.c has a shutdown callback
-> >>>>>> which
-> >>>>>> gets invoked when the system is brought into poweroff aka S5. So far so
-> >>>>>> good, except that we also wish to use gpio_keys.c as a possible wake-up
-> >>>>>> source, so we may have a number of GPIO pins declared as gpio-keys that
-> >>>>>> allow the system to wake-up from deep slumber.
-> >>>>>>
-> >>>>>> Recently we noticed that we could easily get into a state where
-> >>>>>> gpio-brcmstb.c::brcmstb_gpio_shutdown() gets called first, and then
-> >>>>>> gpio_keys.c::gpio_keys_suspend() gets called later, which is too
-> >>>>>> late to
-> >>>>>> have the enable_irq_wake() call do anything sensible since we have
-> >>>>>> suspend its parent interrupt controller before. This is completely
-> >>>>>> expected unfortunately because these two drivers are both platform
-> >>>>>> device instances with no connection to one another except via Device
-> >>>>>> Tree and the use of the GPIOLIB APIs.
-> >>>>>
-> >>>>> You can take a look at device_link_add() and Co.
-> >>>>
-> >>>> OK, though that requires a struct device references, so while I could
-> >>>> certainly resolve the device_node -> struct device that corresponds to
-> >>>> the GPIO provider , that poses a number of issues:
-> >>>>
-> >>>> - not all struct device_node have a corresponding struct device
-> >>>> reference (e.g: clock providers, interrupt controllers, and possibly
-> >>>> other custom drivers), though in this case, they most likely do have one
-> >>>>
-> >>>> - resolving a struct device associated with a struct device_node is
-> >>>> often done in a "bus" specific way, e.g: of_find_device_by_node(), so if
-> >>>> the GPIO provider is e.g: i2c_device, pci_device etc. etc. this might
-> >>>> not work that easily
-> >>>>
-> >>>> I think this is what Dmitry just indicated in his email as well.
-> >>>>
-> >>>>>
-> >>>>> But it's little bit unclear what exactly you have issue with:
-> >>>>> - shutdown
-> >>>>> - suspend
-> >>>>>
-> >>>>> above are different (at least as it was before) and gpio-brcmstb.c
-> >>>>>     brcmstb_gpio_shutdown() should not be called as part of suspend !?
-> >>>>> may be you mean brcmstb_gpio_suspend?
-> >>>>
-> >>>> The issue exists with shutdown (through the use of "poweroff"), that is
-> >>>> confirmed, but I cannot see how it does not exist with any suspend state
-> >>>> as well, for the same reason that the ordering is not strictly enforced.
-> >>>
-> >>> Sry, but it still required some clarification :( - poweroff calls
-> >>> device_shutdown() which, in turn, should not call .suspend(), so
-> >>> how have you got both .shutdown() and .suspend() callbacks called during
-> >>> poweroff? Am I missing smth?
-> >>
-> >> You are missing me telling you the whole story, sorry I got confused,
-> >> but you are absolutely right these are separate lists and on
-> >> poweroff/shutdown only ->shutdown() is called. What I had missed in the
-> >> report I was submitted was that there was a .shutdown() callback being
-> >> added to gpio_keys.c, which of course, because it's an Android based
-> >> project is not in the upstream Linux kernel.
-> >>
-> >> The problem does remain valid though AFAICT. Thanks Grygorii!
-> >>
-> > 
-> > Thanks. But that means you should not see this problem :(
-> > There is devices_kset_move_last() call in really_probe() which moves probed dev
-> > at the end of kset, and gpio_keys should never be probed before gpio-brcmstb because
-> > both devm_fwnode_get_gpiod_from_child() and devm_gpio_request_one() expected to return
-> > -EPROBE_DEFER otherwise.
-> > 
-> > Theoretically issue still might happen with suspend.
-> > 
-> 
-> FYI https://lkml.org/lkml/2015/9/10/218
 
-And also https://patchwork.kernel.org/patch/10334661/
+--pm7n5n2in6lw4rqw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Tue, Apr 17, 2018 at 12:04:21PM +0100, Michel Pollet wrote:
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) needs a small driver
+> to reboot the Cortex-A7 cores. This driver is a sub driver of
+> the sysctrl MFD.
+>=20
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> ---
+>  drivers/power/reset/Kconfig       |  7 +++
+>  drivers/power/reset/Makefile      |  1 +
+>  drivers/power/reset/rzn1-reboot.c | 96 +++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 104 insertions(+)
+>  create mode 100644 drivers/power/reset/rzn1-reboot.c
+>=20
+> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> index df58fc8..1416d88 100644
+> --- a/drivers/power/reset/Kconfig
+> +++ b/drivers/power/reset/Kconfig
+> @@ -144,6 +144,13 @@ config POWER_RESET_RESTART
+>  	  Instead they restart, and u-boot holds the SoC until the
+>  	  user presses a key. u-boot then boots into Linux.
+> =20
+> +config POWER_RESET_RZN1
+> +	bool "Renesas RZ/N1 reboot driver"
+> +	depends on ARCH_RZN1
+> +	help
+> +	  This driver allows rebooting the CA7 cores of the
+> +	  Renesas RZ/N1 Family of SoC (Part # R9A06G0xx).
+> +
+>  config POWER_RESET_ST
+>  	bool "ST restart driver"
+>  	depends on ARCH_STI
+> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+> index 7778c74..bad9702 100644
+> --- a/drivers/power/reset/Makefile
+> +++ b/drivers/power/reset/Makefile
+> @@ -16,6 +16,7 @@ obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) +=3D piix4-pow=
+eroff.o
+>  obj-$(CONFIG_POWER_RESET_LTC2952) +=3D ltc2952-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_QNAP) +=3D qnap-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_RESTART) +=3D restart-poweroff.o
+> +obj-$(CONFIG_POWER_RESET_RZN1) +=3D rzn1-reboot.o
+>  obj-$(CONFIG_POWER_RESET_ST) +=3D st-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_VERSATILE) +=3D arm-versatile-reboot.o
+>  obj-$(CONFIG_POWER_RESET_VEXPRESS) +=3D vexpress-poweroff.o
+> diff --git a/drivers/power/reset/rzn1-reboot.c b/drivers/power/reset/rzn1=
+-reboot.c
+> new file mode 100644
+> index 0000000..43876d5
+> --- /dev/null
+> +++ b/drivers/power/reset/rzn1-reboot.c
+> @@ -0,0 +1,96 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RZ/N1 reboot driver
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
+> + * Derived from zx-reboot.c
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/notifier.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reboot.h>
+> +
+> +/* Definitions from the SDK rzn1-sysctrl.h autogenerated file */
+> +#define RZN1_SYSCTRL_REG_RSTEN_MRESET_EN		0
+> +#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN		1
+> +#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN_MASK		0x6
+> +#define RZN1_SYSCTRL_REG_RSTEN_WDM3RST_EN		3
+> +#define RZN1_SYSCTRL_REG_RSTEN_CM3LOCKUPRST_EN		4
+> +#define RZN1_SYSCTRL_REG_RSTEN_CM3SYSRESET_EN		5
+> +#define RZN1_SYSCTRL_REG_RSTEN_SWRST_EN			6
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ		1
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ_MASK	0x6
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDM3RST_REQ		3
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_CM3LOCKUPRST_REQ	4
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_CM3SYSRESET_REQ	5
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ		6
+> +
+> +static void __iomem *reg_rsten, *reg_rstctrl;
+
+Please make this into a proper driver and allocate this dynamically.
+You can get device context from the notifier_block, see for example
+gpio-restart.
+
+> +static int rzn1_reboot_handler(struct notifier_block *this,
+> +			      unsigned long mode, void *cmd)
+> +{
+> +	writel(readl(reg_rsten) |
+> +			BIT(RZN1_SYSCTRL_REG_RSTEN_SWRST_EN) |
+> +			BIT(RZN1_SYSCTRL_REG_RSTEN_MRESET_EN),
+> +		reg_rsten);
+> +	writel(readl(reg_rstctrl) |
+> +			BIT(RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ),
+> +		reg_rstctrl);
+> +
+> +	mdelay(50);
+> +	pr_emerg("Unable to restart system\n");
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block rzn1_reboot_nb =3D {
+> +	.notifier_call =3D rzn1_reboot_handler,
+> +	.priority =3D 128,
+> +};
+> +
+> +static int rzn1_reboot_probe(struct platform_device *ofdev)
+> +{
+> +	int err;
+> +
+> +	reg_rsten =3D of_iomap(ofdev->dev.of_node, 0);
+> +	reg_rstctrl =3D of_iomap(ofdev->dev.of_node, 1);
+
+Please use devm_ioremap().
+
+> +
+> +	if (!reg_rsten || !reg_rstctrl) {
+> +		dev_err(&ofdev->dev, "invalid register mapping\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	err =3D register_restart_handler(&rzn1_reboot_nb);
+> +	if (err) {
+> +		dev_err(&ofdev->dev, "register restart handler failed(err=3D%d)\n",
+> +			err);
+> +	}
+
+Missing unregister_restart_handler() in .remove.
+
+> +
+> +	return err;
+> +}
+> +
+> +static const struct of_device_id rzn1_reboot_of_match[] =3D {
+> +	{ .compatible =3D "renesas,rzn1-reboot" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, rzn1_reboot_of_match);
+> +
+> +static struct platform_driver rzn1_reboot_driver =3D {
+> +	.probe =3D rzn1_reboot_probe,
+> +	.driver =3D {
+> +		.name =3D "rzn1-reboot",
+> +		.of_match_table =3D rzn1_reboot_of_match,
+> +	},
+> +};
+> +module_platform_driver(rzn1_reboot_driver);
+> +
+> +MODULE_DESCRIPTION("RZ/N1 reboot driver");
+> +MODULE_AUTHOR("Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@g=
+mail.com>");
+> +MODULE_LICENSE("GPL v2");
+
+-- Sebastian
+
+--pm7n5n2in6lw4rqw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrg9RkACgkQ2O7X88g7
++pr3Lw//f5XmJJbaxZVTpTWDcSS8e5a75/up/yHkX7UFtrMosx3wF0XxelTr4Q+X
+1EnJouQntKq+f7/DZ8IoATbR26LyAp60dwMtD4gaH63kyG13jYQEOTA2Dl+H/Z+A
++c7xjh6JwQhNQZfvftx7XoJrJF2Ht0SpIVjPqORVn/zo8G9keLL1Cs0E5ZQbinhX
+9zbO6hdcqXmGyhyEKpi5VUz9y2tHtagP2rLGqRH4beIHarKupvt5rZ2bMKlqUKvs
+ehWPUGP1DBb3jJ8+V7WiXcnfBuqG6+kfV8/u9kO560b6kBKMEeMIy6Ct6/VLYvvW
+YmpoNNX9zSsADgPt1m7Qk1seF6JnogDrShTRxD54m/EGC29eLBSGqygm66jRJHC4
+xf83+DC8k23Hx8MaM0zQkfNy7BYEapKYdE4mBdIIJKAMzS9EObIfdxl6pivVElm8
+K6ngd000ZYi7dX8fDQeiI78v9drdFRrR693DmqrlFuzRfMvbLzVzTcDmA+gt8z12
+KfDXDiHDbl+nhR1YG828UfFWGEX/uzHfVYLJxvAj2UjY4ApPTiEPPIpMGp9OsTg7
+3LFWjXP4PVJGdEyE/8ehqWFjsfPBf5k7CPtBobXWpTCXA2iR3WxLgt1Ae/99BxqA
+qkQbWeUeRd6ZIv9AqTyRFtIdD5Rjh0tJ3bcNLLpM1ZbuBEbFU/s=
+=NPtG
+-----END PGP SIGNATURE-----
+
+--pm7n5n2in6lw4rqw--
