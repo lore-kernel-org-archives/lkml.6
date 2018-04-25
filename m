@@ -1,75 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751473AbeDYHJE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 03:09:04 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39089 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeDYHJC (ORCPT
+        id S1751495AbeDYHJK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 03:09:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54060 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750941AbeDYHJH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 03:09:02 -0400
-X-Google-Smtp-Source: AIpwx480yzxmNxtsN7ujNkTh9fpKvew7V2uu6jSQy/XXEJKC8e9DtiLTeYOxbUvyo7PzGUwlbwsL2A==
-Date: Wed, 25 Apr 2018 09:08:58 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Robert Tarasov <tutankhamen@chromium.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Keith Packard <keithp@keithp.com>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/udl: fix mode_valid's return type
-Message-ID: <20180425070858.GL25142@phenom.ffwll.local>
-Mail-Followup-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Robert Tarasov <tutankhamen@chromium.org>,
-        Keith Packard <keithp@keithp.com>, dri-devel@lists.freedesktop.org
-References: <20180424131520.2409-1-luc.vanoostenryck@gmail.com>
+        Wed, 25 Apr 2018 03:09:07 -0400
+Date: Wed, 25 Apr 2018 00:09:05 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
+Message-ID: <20180425070905.GA24827@infradead.org>
+References: <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
+ <20180420124625.GA31078@infradead.org>
+ <20180420152111.GR31310@phenom.ffwll.local>
+ <20180424184847.GA3247@infradead.org>
+ <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
+ <20180425054855.GA17038@infradead.org>
+ <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
+ <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
+ <20180425064335.GB28100@infradead.org>
+ <CAKMK7uGF7p5ko=i6zL4dn0qR-5TVRKMi6xaCGSao_vyfJU+dWQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180424131520.2409-1-luc.vanoostenryck@gmail.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAKMK7uGF7p5ko=i6zL4dn0qR-5TVRKMi6xaCGSao_vyfJU+dWQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 03:15:17PM +0200, Luc Van Oostenryck wrote:
-> The method struct drm_connector_helper_funcs::mode_valid is defined
-> as returning an 'enum drm_mode_status' but the driver implementation
-> for this method uses an 'int' for it.
-> 
-> Fix this by using 'enum drm_mode_status' in the driver too.
-> 
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+On Wed, Apr 25, 2018 at 09:02:17AM +0200, Daniel Vetter wrote:
+> Can we please not nack everything right away? Doesn't really motivate
+> me to show you all the various things we're doing in gpu to make the
+> dma layer work for us. That kind of noodling around in lower levels to
+> get them to do what we want is absolutely par-for-course for gpu
+> drivers. If you just nack everything I point you at for illustrative
+> purposes, then I can't show you stuff anymore.
 
-hisilicon, mgag200 and udl patches also merged to drm-misc-next.
--Daniel
+No, it's not.  No driver (and that includes the magic GPUs) has
+any business messing with dma ops directly.
 
-> ---
->  drivers/gpu/drm/udl/udl_connector.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/udl/udl_connector.c b/drivers/gpu/drm/udl/udl_connector.c
-> index c3dc1fd20..09dc585aa 100644
-> --- a/drivers/gpu/drm/udl/udl_connector.c
-> +++ b/drivers/gpu/drm/udl/udl_connector.c
-> @@ -105,7 +105,7 @@ static int udl_get_modes(struct drm_connector *connector)
->  	return 0;
->  }
->  
-> -static int udl_mode_valid(struct drm_connector *connector,
-> +static enum drm_mode_status udl_mode_valid(struct drm_connector *connector,
->  			  struct drm_display_mode *mode)
->  {
->  	struct udl_device *udl = connector->dev->dev_private;
-> -- 
-> 2.17.0
-> 
+A GPU driver imght have a very valid reason to disable the IOMMU,
+but the code to do so needs to be at least in the arch code, maybe
+in the dma-mapping/iommu code, not in the driver.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+As a first step to get the discussion started we'll simply need
+to move the code Thierry wrote into a helper in arch/arm and that
+alone would be a massive improvement.  I'm not even talking about
+minor details like actually using arm_get_dma_map_ops instead
+of duplicating it.
+
+And doing this basic trivial work really helps to get this whole
+mess under control.
