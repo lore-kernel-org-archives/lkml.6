@@ -1,38 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/da+yOG2pK1zyNThCFZPmHQrg6cjhjJrMh15ga8dWoWs3vAZ1NJfSjywF65mhhxtIJQGMg
-ARC-Seal: i=1; a=rsa-sha256; t=1524652714; cv=none;
-        d=google.com; s=arc-20160816;
-        b=pDHmUOP0K4kxmA3C74XhM6gA+/friK3wMAwUD8DDCCp0bQD8ynpRTJpG5otvfOQPbf
-         k3+U+P7BX0hv21xA9pyfpfO+F2iNrZrVmJEz/F0KcpZGzsNMeVYULd4TxHUhMjE3CiDE
-         dYrFTyGs/RXhhBBYSzeOcv0xaJ0hYqm/KNVrZhZQ/LqVDeDFVKfV3sVGQDB1bcxKXVv7
-         ozpqNeDDgmWPOMVMnizmPj6UVNro8nW3SDvaAn8dSAlQRDbjsxXfWTX6vFkrMbZJR2ZK
-         pAjpFXiwDfKlASMjo8k9WG//6hBvb1QWNt1VvTWRr85tQWqmjx2gpaEcb0dm+rVUbMxB
-         NoEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=ZYzpp95qcYRCoGnQFwu/QVSO6bimwrWdi88lR0nVQLU=;
-        b=kQYLQtwmoZkEJyv5PURL6ZarL7A6kgEdSvntt2hVoot8w0e1hJh+joFhbOnzU4umbX
-         MjIvkZPA5P6Ps1QPcVbwcYbI+w/y/V2iM18AyKUmzSuQcdSBX4yQPuNUV12077HUMiHy
-         ghP2m12i7FSC7+wqhk2mwOUvZy3GrtaNIiTw79mgbb8vmE2xw92vm/GW4x6GJhKmzMhK
-         2mL435rSU8Yl3hS9tfaqnQefSv62mb3I+dnEIXs5/eg4DqmLTtOEOHFeThA8ocYqaMKA
-         cWZ8VLRipv3c14+NAIB3Yo/YBkf7zk/jvuWaHlIbSDcv9+iTvqDp/xluuzLSM9x2M3Qz
-         KmDg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-497764-1524652713-2-10113712004589589845
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524652713; b=OXs1PsKD+tDAyU1fH75JpC7zxB96hEVVdRVtoSV2kSlAghUhfJ
+    Kdoeu9tmb+AtSzqPGMQ0YGKZGho2Lz3dl+rRzdHq/Anx5MOqaOCDlJHalZwv4iPW
+    GwjweCvfmOF7YnF1srfPUhYCYJ4D+mu/uQoqAfQ1B1TWrLDAAPiecfVUTy6kjYe2
+    NeewIYCv7D85rWQzE8PodG0OGn6CcwB4Oi2kOKu3Z68ZnYDS2bUvg8UfynGbIww+
+    Cmczw/rjMS1RwbKcAXuKyaH9N4SVrgufihqxTZKuo9Jx/9/TcflTLTK0Qmm2Qa5Z
+    AEO8Trj+jhTSKdWZZRk/Xaj9QclsjU/AFxPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524652713; bh=7TkSUAjN+138uB22XeC1TLwNAxGTcO
+    YZ+u+7hVrcZN4=; b=YXPz/IfP1n0P1CaZG/RRje1AgO3so4JDnZpQ/oKJAWK6kO
+    Ai2BPGX972g7S92yvs3HMk+qYkQ5HKhFE1ugPcfs46OswjYnJJVN/UCzkO+900vH
+    TV6H/w8MqeN5EbIPU7KFlgPYI552sztcRrRyvpdE1Vr7tzz24QP4t+0Y1/5/0q67
+    kHr4G+/+3tjA2hudq1RJF9AAP3sMJ5ltdnz1H88O9WtJ+7C+c9vSZ/8YnBAOHkGj
+    B47iseKsmivje2lfczZ2KvdycGDKVNvaOgAyLHkwt2reVTXPafi3z/w9fJQzRjkf
+    I4NE7pn928JZt9QceOZw04+zYmH1shCTmtWmDuCg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDMzaoEpM0STxkIdA6MUoCfDAu/FUw3u/b7S8tnn2sXZ3I8pe9zy9xaqbwiNmSWkZ7M23Gapb/ApZpuguupCPAk5EFpJTONL1iqWu6eEAb33RNVMeZjA
+    rUlYs3Rhtf2AfLaQ8Y+A8ECTYrpBqW+7LWWL0GEnfsKKxxE7CYGbhQfKzysZh409UBUDSeVVuSJ58G/qfW5jstNxbDbDpeFNB+BZGLnCpu0BdCe2l7JpUAVF
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=dtcjQaNrXMv9M4JicLcA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752902AbeDYKi3 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:38:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51312 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753407AbeDYKiN (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:38:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Robin Murphy <robin.murphy@arm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 043/183] iommu/exynos: Dont unconditionally steal bus ops
-Date: Wed, 25 Apr 2018 12:34:23 +0200
-Message-Id: <20180425103244.298982923@linuxfoundation.org>
+        stable@vger.kernel.org, Halil Pasic <pasic@linux.vnet.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 027/183] KVM: s390: use created_vcpus in more places
+Date: Wed, 25 Apr 2018 12:34:07 +0200
+Message-Id: <20180425103243.690185380@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -40,10 +84,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714245096584262?=
-X-GMAIL-MSGID: =?utf-8?q?1598714245096584262?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +94,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
 
-[ Upstream commit dc98b8480d8a68c2ce9aa28b9f0d714fd258bc0b ]
+[ Upstream commit 241e3ec0faf5ab1a0d9b1f6c43eefa919fb9c112 ]
 
-Removing the early device registration hook overlooked the fact that
-it only ran conditionally on a compatible device being present in the
-DT. With exynos_iommu_init() now running as an unconditional initcall,
-problems arise on non-Exynos systems when other IOMMU drivers find
-themselves unable to install their ops on the platform bus, or at worst
-the Exynos ops get called with someone else's domain and all hell breaks
-loose.
+commit a03825bbd0c3 ("KVM: s390: use kvm->created_vcpus") introduced
+kvm->created_vcpus to avoid races with the existing kvm->online_vcpus
+scheme. One place was "forgotten" and one new place was "added".
+Let's fix those.
 
-The global ops/cache setup could probably all now be triggered from the
-first IOMMU probe, as with dma_dev assigment, but for the time being the
-simplest fix is to resurrect the logic from commit a7b67cd5d9af
-("iommu/exynos: Play nice in multi-platform builds") to explicitly check
-the DT for the presence of an Exynos IOMMU before trying anything.
-
-Fixes: 928055a01b3f ("iommu/exynos: Remove custom platform device registration code")
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Reported-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Fixes: 4e0b1ab72b8a ("KVM: s390: gs support for kvm guests")
+Fixes: a03825bbd0c3 ("KVM: s390: use kvm->created_vcpus")
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/exynos-iommu.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/s390/kvm/kvm-s390.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1344,8 +1344,15 @@ static const struct iommu_ops exynos_iom
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -601,7 +601,7 @@ static int kvm_vm_ioctl_enable_cap(struc
+ 	case KVM_CAP_S390_GS:
+ 		r = -EINVAL;
+ 		mutex_lock(&kvm->lock);
+-		if (atomic_read(&kvm->online_vcpus)) {
++		if (kvm->created_vcpus) {
+ 			r = -EBUSY;
+ 		} else if (test_facility(133)) {
+ 			set_kvm_facility(kvm->arch.model.fac_mask, 133);
+@@ -1121,7 +1121,7 @@ static int kvm_s390_set_processor_feat(s
+ 		return -EINVAL;
  
- static int __init exynos_iommu_init(void)
- {
-+	struct device_node *np;
- 	int ret;
- 
-+	np = of_find_matching_node(NULL, sysmmu_of_match);
-+	if (!np)
-+		return 0;
-+
-+	of_node_put(np);
-+
- 	lv2table_kmem_cache = kmem_cache_create("exynos-iommu-lv2table",
- 				LV2TABLE_SIZE, LV2TABLE_SIZE, 0, NULL);
- 	if (!lv2table_kmem_cache) {
+ 	mutex_lock(&kvm->lock);
+-	if (!atomic_read(&kvm->online_vcpus)) {
++	if (!kvm->created_vcpus) {
+ 		bitmap_copy(kvm->arch.cpu_feat, (unsigned long *) data.feat,
+ 			    KVM_S390_VM_CPU_FEAT_NR_BITS);
+ 		ret = 0;
