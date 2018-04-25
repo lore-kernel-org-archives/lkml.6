@@ -1,158 +1,124 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2141624-1524729576-2-16717396401892920393
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524729576; b=My1RGNcru1QhYrulnwjOr4lPSkJQSMrwwPp8hjR36ovTKVA0E4
-    EvDQyvYInQx7yXMcrr+n7+BJtma0n/C8c6zDgDTviknfaXPgoWzb7B76Kx26wibG
-    X2AkXDbMYeAmoeJf4my9zjNhvQeytN29Guo8ixuQJfVkjxQ3b5py8ApoBHBlma/K
-    AVHKfnBCiJ/FoQpoPr2ovQq4jaNNiQ2Zo2W0+NMr6+vqp/GPjPx0JIY/CUqM2u09
-    GHG/6IjTHvY5KXedUXUZRUwzsXO8LmtlOFHxUYOmvebUffaiMqFf3By0fdnouBZo
-    6OaW0265355tIVoT4XIiQGLrk4hiqv+aaZQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524729576;
-    bh=hD68ksdYbvGiniCe15j9aLw9xd07a/orNvYV29baOS4=; b=FA/+yJbr3osR
-    uHHHKLj2MZFcXHajtJhySnRodD1kpcqKUD+dYJEwbw/LnBdQKiMHO1M+7Yh0fCGx
-    p7cHhJFZCKrkUzxHV/HnrMWP5GnRddIgzkQv3z3AcBIh8OAVfldUGug4Cvje8Hfu
-    aDzbivQ3nnm/DNzyNcja39Jb5S5j1tQ28GyhwG4D/h/J7xDxzuc3GBTmt44ZIfVE
-    TsGiwB7tq65/FH+FCsl9Jm+088h+T8KtYaXRZMMn2bZuoDuYraWwjYO4dT6plQT8
-    Vt9ZCwm9gf59bYMC6/p7wdpL6FTztzyGzPv7VQpJvApvekl2SPqq46Hx+5TjZ41Q
-    tmgAtezbOQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfC/iUxE6n0dhT5OkblL4oM+5HVlX2j0dkucoi20fLwz+qp5/h56RL96vprAXa6KnHjBL6YGpJVw7GRJduHkj4P6Ny84YcS+7DJJ+dIhsjnZ+oEZ58S0W
-    xHaQHm4TXmuLAkkB+JNtKns6roB5edh6nYRTVOLN1SpLtjGxNN8yyl2E17K8vSEGmtYD38VhvZ17VfYWafjW6xnvJmG77/wZR1RiiwtGaKQneSVZdUzWTWaU
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=xbilytGdl697PjAK-u0A:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754415AbeDZH72 convert rfc822-to-8bit (ORCPT
-        <rfc822;greg@kroah.com>); Thu, 26 Apr 2018 03:59:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33356 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753362AbeDZH7S (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:59:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60EAB2183C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-X-Google-Smtp-Source: AIpwx4+ejdSsBhnjVCseh6D6JxZgcb3XdzBUGA7hB+rqz/nJ/vGUW3BeC+LW8JpX9ckKJF0i9MhWoKVQLb40YqfVqxc=
-MIME-Version: 1.0
-In-Reply-To: <5AE12E4A.90907@samsung.com>
-References: <20180424203239.21885-1-krzk@kernel.org> <CGME20180424203603epcas5p4cdd2039eabe7039e4daf286ed4c1ecc0@epcas5p4.samsung.com>
- <20180424203239.21885-7-krzk@kernel.org> <5AE12E4A.90907@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 26 Apr 2018 09:59:15 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPc4oDAFThxVszOrCr+yEaK85W3AeYTcLFyGm0-6TLyZyw@mail.gmail.com>
-Message-ID: <CAJKOXPc4oDAFThxVszOrCr+yEaK85W3AeYTcLFyGm0-6TLyZyw@mail.gmail.com>
+Return-Path: <b.zolnierkie@samsung.com>
+X-Google-Smtp-Source: AIpwx4/y7L3UZichjs82k4/tgjmpNabwSpl3yO8F29BCTNVAL3+wKdyNPAP9f7eux9SQnj4X0j71
+ARC-Seal: i=1; a=rsa-sha256; t=1524652958; cv=none;
+        d=google.com; s=arc-20160816;
+        b=a9NE6B0bEEO/d3TBj1mzA5iMYYjBUZzI0IORptaq9671C52GO7oudiUI114IZ3cuFJ
+         TaTBP8o0HwwBdWVgxKPcbyA9QubieNqXwF7K+GV5PZ3Xyb1c1XCddks0Kr8iHLQlR8AB
+         ivFn5xCq0Blxh1gQS5MSJM9hO3JQVgzZGodZ5QDVSCA8uToBgt9Ox5Tp4VzU0RMMdqOf
+         DWgWTJIzriJhiRtDMPjTK9msU7eI5/ErDPKurWfkTYmDmMrhaIbuGbYxFrhlA3Drphnm
+         ekaQFjands77tYpG/GPf57HbcIABpk6HAb79E2ZC1jvYsTkj7PdsDYHa6J7l/3+l+lza
+         vifQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:cms-type:content-transfer-encoding:mime-version
+         :in-reply-to:user-agent:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=LrUugWA73u8WdDGLLyppDHocZ7T6xSzQeQRmblPyrAI=;
+        b=Vfsxr35vPDH8k2Qnf0zCvI12bYMcOhsHw9mgk97Sejegd3++QNn0+DVOdou+Nxq2N7
+         j1nGeqE7YebirEt8XKoF0/jhr7MnIGdDRQO2h8+NgKzb92uANusoCkyiiygK94PlncLZ
+         es0i9QA+oGe1MfKlQ9t2raWim+ic0+7aA43XuFu/MRxSJFk32CePFqh/QEeKoEXlq3gN
+         DTBB7rhSidJY+IYnPttn3dJ2TtkBCWUeB4pEkMyEHfmfMmo35ggWfS9EpaavV0XK+dm+
+         cp7JgNKOlddPock54HLGQWXSNJ4zXfQlEiVamHVvmkxZ78fGgX8jlZ/yUHxbv0D1nwub
+         4WKg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=YsJhjhwn;
+       spf=pass (google.com: domain of b.zolnierkie@samsung.com designates 210.118.77.12 as permitted sender) smtp.mailfrom=b.zolnierkie@samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=YsJhjhwn;
+       spf=pass (google.com: domain of b.zolnierkie@samsung.com designates 210.118.77.12 as permitted sender) smtp.mailfrom=b.zolnierkie@samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180425104232euoutp0212dbcd701346013696f407eab390c405~op8hbSfKL2875428754euoutp02X
+X-AuditID: cbfec7f5-b45ff700000028a9-7b-5ae05b97e90d
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
+	Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester
+	Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J.
+ Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang
+	Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell
+	King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus
+	Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark
+	Brown <broonie@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Greg
+	Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org, linux
+	-gpio@vger.kernel.org, linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>
 Subject: Re: [RFC 06/10] thermal: samsung: Remove support for Exynos5440
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Jaehoon Chung <jh80.chung@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Date: Wed, 25 Apr 2018 12:42:28 +0200
+Message-ID: <2298900.1CNNTOno1l@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-Reply-To: <20180424203239.21885-7-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUyTVxTefT/u+7au+rayeAfbjB2asai4uJmb6ZZFx3LZYuKvResH68Y7
+	dINqWnFjP5yOIBUdYMXgwAkRtFqRj1q1xVIjlCK4UAvSsmVFBDajlTjHx1gFXduXZv65ec45
+	z3Oec04uT6v+gIn8Dt1uUa/TZquhnLns+de7rHzzoGbFNZca10zdo/CMycPhY3dHIA6M32Nx
+	lbs78tz2szi/pgHihx3lFO4PH2BxyXCIxl5vI4fLps0Utg5HKI8PD7D4YtU0wMaZcYA99iEK
+	9zafgHjsRzfAx70uCu9//CuHT50poHHrsRaAL7iDHD4d8FHY15WGuwJjEP9ys4fFBS1uDo/c
+	LYa47WEhi5/6mxhc+uQWxGFzO8CW5ohF0wT5IJnUnawDpNfvo8mTsAmQR/0FHAnU/k0TR0WQ
+	IzXO+xSxWg5C8rvfCcm1n+s4crH2e3L7xg8seeTqg8TWV8iQyuAUIMU2C9ig1MjXZIrZO/aI
+	+tT3P5NvP9U3wO2aoL8t65LtA9V0EZDxSHgb1Qf9ESznVcJZgKaN16EUjANUUtzJSMEYQAVD
+	Ni4uqW2OS8wAHW63s1LwF0Ch+k4YZUHhXXSk0AKiOEFIQYGZf2IkWrgvQyFTiIoW5gsE3ejr
+	ZKOYERYjz2RDTKyICNpGe2J2LwkfI5urMMaXCe+g8JUwLXGUqPOnESaKaWEhMvbujxkg4aoM
+	mf1WSpr1QzT45xSU8Hz0oCO+wyvomaOKkgT5AE3anbP3KAXI2aCS8GrU1uGLdOUjDimooTlV
+	Sr+HzOcmQTSNhLmof1QpzTAXmS6X01JagYwHZpssQY1nGmHctchxbtaIoJLferhSoK54bpuK
+	57ap+N+3GtAWsEDMNeRkiYaVOvGb5QZtjiFXl7X8i505VhD5/DefdkzYgWv681Yg8ED9omLF
+	pjsaFavdY8jLaQWIp9UJipbXBjQqRaY27ztRvzNDn5stGlpBEs+oFyi2vbFXoxKytLvFr0Vx
+	l6iPVylelrgPdCctWdTUrmS9dxTnve4EOBkyCqsupcrr60bXJyQHv3r9y8SXy2uS29nK1Z9u
+	WbpuXXpykfBsI+88ZP3k6KuOrRnWhemm9I+WVjP51hZHJbzUqLw+lunJm5MGbFeHk3wXDqIr
+	Lt2tIcvRF1ZOdaX196Q4usvg2iP2jGXOeWu2nB9UM4bt2rfepPUG7X9fFuar+AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hUaRiH+86Zcxlr4jhZfUnXoWhbanI08zWsDSL46q8oCJoId8qjVs5M
+	zJmRXOi2m1lSrV3GaqwcdSqbLE2ldb0tmI230NScSUi7CbJoRlpm44XOZIH/fDzwe3683wsv
+	T6v7mFB+v8kqWkyGJA0bpGiaqOtalbn7tT7MWTYP8kZ6KRi/6OHA/qaHBd+nXgaya5vl57mX
+	gb/yClnor7tCwQv/KQb+ftdHQ0tLEQeXx+5QUPxOVj6e7WagJHsMwenxTwg8ZW8paC+/zsLQ
+	uVoEV1uqKTjxsZOD3NupNNTYqxDcr+3i4JavlYLWxs3Q6Bti4WlTGwOpVbUc9Lw5z8Lj/jQG
+	JrwPFZAx+owF/50nCNzl8oiHn8nGpaTgZgEi7d5Wmoz6LyLy4UUqR3yuQZr86+jiSF7l/xQp
+	dp9hyUtvJUv+u1HAkRLXMfK8/k+GfKjuYElpR5qCZHWNIHK+1I22Beu1MRazzSouTjRL1vWa
+	3ToI1+qiQRu+Jlqri4jasy48UrN6Q0ycmLQ/WbSs3vC7NjG3o5s79Jk+fLlReRw56XSk5LGw
+	BrvKvTIH8WrhFsIlnUVsOuLlYD6uK0yedGbhMW86O+kMINzsqmQCASuswxfS3CjAIcIK7Bv/
+	wgQkWmhQ4pFXd6lAMEsguL6j4XtBISzDnuFCNsAqufD4fRsX4NnCVlxanfbdVwqR2P+P/8eP
+	ChG+3plPTRaCccO1HkWAaWERPt1+gpnkldhZMchmoGDHFM0xRXNM0ZyIdqMQ0SYZE4xSuFYy
+	GCWbKUG7z2wsRvKhPfJ8LS1D6QM7apDAI80MVdiuV3o1Y0iWUow1CPO0JkRVtbBbr1bFGVL+
+	EC3mWIstSZRqUKS83QU6dPY+s3y2JmusLlIXBdG6qIioiLWgmatqCUvRq4UEg1U8KIqHRMvP
+	HsUrQ4+je9u9Ck/OgG97vGtGz7xdmQ+mx6zfuWk8O9ZnL1oeF+RYO3PawaHha0deKnfWn7x/
+	dCt+u6B373DTiv583hlf/nVgbtacikv3yjJf3/XYnfH2A/5Flb2xC0qW/mKzuJa0900YN7tz
+	mPyctqzcLdRgY6ummBquyKj/zeQtGD3T7DTd0CikRIPuV9oiGb4BUDfhsH4DAAA=
+X-CMS-MailID: 20180425104230eucas1p2c498af765175a5040cdb8caec701f3f3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180425104230eucas1p2c498af765175a5040cdb8caec701f3f3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11
+X-RootMTR: 20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11
+References: <20180424203239.21885-1-krzk@kernel.org>
+	<CGME20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11@epcas4p4.samsung.com>
+	<20180424203239.21885-7-krzk@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598661101248192093?=
+X-GMAIL-MSGID: =?utf-8?q?1598714500314428708?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 3:41 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> Hi Krzysztof,
->
-> On 2018년 04월 25일 05:32, Krzysztof Kozlowski wrote:
->> The Exynos5440 is not actively developed, there are no development
->> boards available and probably there are no real products with it.
->> Remove wide-tree support for Exynos5440.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
->>  .../devicetree/bindings/thermal/exynos-thermal.txt |  14 +-
->>  drivers/thermal/samsung/exynos_tmu.c               | 155 +--------------------
->>  drivers/thermal/samsung/exynos_tmu.h               |   1 -
->>  3 files changed, 4 insertions(+), 166 deletions(-)
->
->
-> After applied this patch, I tested the build and found out
-> 'exynos5440' keyword. There is one comment including 'exynos5440' as following:
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index f92f470bce21..cb525228cfe1 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -943,7 +943,7 @@ static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
->          * Exynos3250, Exynos4412, Exynos5250 and Exynos5260 incorrectly
->          * states that INTCLEAR register has a different placing of bits
->          * responsible for FALL IRQs than INTSTAT register.  Exynos5420
-> -        * and Exynos5440 documentation is correct (Exynos4210 doesn't
-> +        * documentation is correct (Exynos4210 doesn't
->          * support FALL IRQs at all).
->          */
->         writel(val_irq, data->base + tmu_intclear);
->
-> After removing it, looks good to me.
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+On Tuesday, April 24, 2018 10:32:35 PM Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
 
-Thanks, I left this comment intentionally as it has some meaning even
-when Exynos5440 is not supported.
+Thanks for doing this.
+
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
 Best regards,
-Krzysztof
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
