@@ -1,52 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751525AbeDYI4I (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 04:56:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33254 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750969AbeDYI4D (ORCPT
+        id S1751659AbeDYJBN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:01:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34949 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751591AbeDYJBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 04:56:03 -0400
-Date: Wed, 25 Apr 2018 01:55:59 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Thierry Reding <treding@nvidia.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180425085559.GB29996@infradead.org>
-References: <20180424184847.GA3247@infradead.org>
- <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org>
- <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
- <20180425064335.GB28100@infradead.org>
- <CAKMK7uGF7p5ko=i6zL4dn0qR-5TVRKMi6xaCGSao_vyfJU+dWQ@mail.gmail.com>
- <20180425070905.GA24827@infradead.org>
- <20180425073039.GO25142@phenom.ffwll.local>
- <20180425075643.GC2271@ulmo>
+        Wed, 25 Apr 2018 05:01:10 -0400
+Date: Wed, 25 Apr 2018 02:00:55 -0700
+From: "tip-bot for jacek.tomaka@poczta.fm" <tipbot@zytor.com>
+Message-ID: <tip-88ba3829dfd83219bb2b1954acb0c206a602ce83@git.kernel.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        hpa@zytor.com, jacek.tomaka@poczta.fm
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        jacek.tomaka@poczta.fm, hpa@zytor.com, mingo@kernel.org
+In-Reply-To: <20180423161425.24366-1-jacekt@dugeo.com>
+References: <20180423161425.24366-1-jacekt@dugeo.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/cpu/intel: Add missing TLB cpuid values
+Git-Commit-ID: 88ba3829dfd83219bb2b1954acb0c206a602ce83
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180425075643.GC2271@ulmo>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 09:56:43AM +0200, Thierry Reding wrote:
-> And to add to the confusion, none of this seems to be an issue on 64-bit
-> ARM where the generic DMA/IOMMU code from drivers/iommu/dma-iommu.c is
-> used.
+Commit-ID:  88ba3829dfd83219bb2b1954acb0c206a602ce83
+Gitweb:     https://git.kernel.org/tip/88ba3829dfd83219bb2b1954acb0c206a602ce83
+Author:     jacek.tomaka@poczta.fm <jacek.tomaka@poczta.fm>
+AuthorDate: Tue, 24 Apr 2018 00:14:25 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 25 Apr 2018 10:56:23 +0200
 
-In the long term I want everyone to use that code.  Help welcome!
+x86/cpu/intel: Add missing TLB cpuid values
+
+Make kernel print the correct number of TLB entries on Intel Xeon Phi 7210
+(and others)
+
+Before:
+[ 0.320005] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+After:
+[ 0.320005] Last level dTLB entries: 4KB 256, 2MB 128, 4MB 128, 1GB 16
+
+The entries do exist in the official Intel SMD but the type column there is
+incorrect (states "Cache" where it should read "TLB"), but the entries for
+the values 0x6B, 0x6C and 0x6D are correctly described as 'Data TLB'.
+
+Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20180423161425.24366-1-jacekt@dugeo.com
+
+---
+ arch/x86/kernel/cpu/intel.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index b9693b80fc21..55b646c43ef6 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -835,6 +835,9 @@ static const struct _tlb_table intel_tlb_table[] = {
+ 	{ 0x5d, TLB_DATA_4K_4M,		256,	" TLB_DATA 4 KByte and 4 MByte pages" },
+ 	{ 0x61, TLB_INST_4K,		48,	" TLB_INST 4 KByte pages, full associative" },
+ 	{ 0x63, TLB_DATA_1G,		4,	" TLB_DATA 1 GByte pages, 4-way set associative" },
++	{ 0x6b, TLB_DATA_4K,		256,	" TLB_DATA 4 KByte pages, 8-way associative" },
++	{ 0x6c, TLB_DATA_2M_4M,		128	" TLB_DATA 2 MByte or 4 MByte pages, 8-way associative" },
++	{ 0x6d, TLB_DATA_1G,		16,	" TLB_DATA 1 GByte pages, fully associative" },
+ 	{ 0x76, TLB_INST_2M_4M,		8,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
+ 	{ 0xb0, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 4-way set associative" },
+ 	{ 0xb1, TLB_INST_2M_4M,		4,	" TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries" },
