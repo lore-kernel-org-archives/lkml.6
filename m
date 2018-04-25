@@ -1,53 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754121AbeDYXI3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 19:08:29 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11077 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754086AbeDYXIY (ORCPT
+        id S1754066AbeDYXIX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 19:08:23 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45342 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753652AbeDYXIV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 19:08:24 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 25 Apr 2018 16:08:24 -0700
-From: Rohit Khanna <rokhanna@nvidia.com>
-To: <catalin.marinas@arm.com>, <will.deacon@arm.com>
-CC: <linux-kernel@vger.kernel.org>, Rohit Khanna <rokhanna@nvidia.com>
-Subject: [PATCH] arm64: skip cpu nodes marked as disabled in DT
-Date: Wed, 25 Apr 2018 16:08:32 -0700
-Message-ID: <1524697712-20208-1-git-send-email-rokhanna@nvidia.com>
-X-Mailer: git-send-email 2.1.4
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 25 Apr 2018 19:08:21 -0400
+Message-ID: <1524697697.4100.23.camel@HansenPartnership.com>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
+ fallback options
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
+        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        edumazet@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Date: Wed, 25 Apr 2018 16:08:17 -0700
+In-Reply-To: <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180421144757.GC14610@bombadil.infradead.org>
+          <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+          <20180423151545.GU17484@dhcp22.suse.cz>
+          <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+         <20180424125121.GA17484@dhcp22.suse.cz>
+          <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>
+          <20180424162906.GM17484@dhcp22.suse.cz>
+          <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
+          <20180424170349.GQ17484@dhcp22.suse.cz>
+          <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
+          <20180424173836.GR17484@dhcp22.suse.cz>
+          <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+          <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
+          <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
+          <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
+          <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+         <1524694663.4100.21.camel@HansenPartnership.com>
+         <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Skip the CPU nodes that are marked as disabled in DT.
+On Wed, 2018-04-25 at 19:00 -0400, Mikulas Patocka wrote:
+> 
+> On Wed, 25 Apr 2018, James Bottomley wrote:
+> 
+> > > > Do we really need the new config option?  This could just be
+> > > > manually  tunable via fault injection IIUC.
+> > > 
+> > > We do, because we want to enable it in RHEL and Fedora debugging
+> > > kernels, so that it will be tested by the users.
+> > > 
+> > > The users won't use some extra magic kernel options or debugfs
+> files.
+> > 
+> > If it can be enabled via a tunable, then the distro can turn it on
+> > without the user having to do anything.  If you want to present the
+> > user with a different boot option, you can (just have the tunable
+> set
+> > on the command line), but being tunable driven means that you don't
+> > have to choose that option, you could automatically enable it under
+> a
+> > range of circumstances.  I think most sane distributions would want
+> > that flexibility.
+> > 
+> > Kconfig proliferation, conversely, is a bit of a nightmare from
+> both
+> > the user and the tester's point of view, so we're trying to avoid
+> it
+> > unless absolutely necessary.
+> > 
+> > James
+> 
+> BTW. even developers who compile their own kernel should have this
+> enabled by a CONFIG option - because if the developer sees the option
+> when browsing through menuconfig, he may enable it. If he doesn't see
+> the option, he won't even know that such an option exists.
 
-Bug 1828570
+I may be an atypical developer but I'd rather have a root canal than
+browse through menuconfig options.  The way to get people to learn
+about new debugging options is to blog about it (or write an lwn.net
+article) which google will find the next time I ask it how I debug XXX.
+ Google (probably as a service to humanity) rarely turns up Kconfig
+options in response to a query.
 
-Signed-off-by: Rohit Khanna <rokhanna@nvidia.com>
-Reviewed-on: http://git-master/r/1245333
-Reviewed-by: Alexander Van Brunt <avanbrunt@nvidia.com>
----
- arch/arm64/kernel/smp.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index f3e2e3aec0b0..2b4371b0948d 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -578,6 +578,10 @@ static void __init of_parse_and_init_cpus(void)
- 	for_each_node_by_type(dn, "cpu") {
- 		u64 hwid = of_get_cpu_mpidr(dn);
- 
-+		/* Check to see if the cpu is disabled */
-+		if (!of_device_is_available(dn))
-+			goto next;
-+
- 		if (hwid == INVALID_HWID)
- 			goto next;
- 
--- 
-2.1.4
+James
