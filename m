@@ -1,125 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeDYGN3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:13:29 -0400
-Received: from mail-io0-f180.google.com ([209.85.223.180]:38112 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751064AbeDYGNZ (ORCPT
+        id S1751181AbeDYGPJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:15:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34418 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751027AbeDYGPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:13:25 -0400
-X-Google-Smtp-Source: AB8JxZriq2dXZ9y8R0mbuMhQBzU+3ZyU6nQDEu6RHzs6jql00KIlWAQ9KXQ+zKqO6o62uXSCSottc1WI7hDyDjT3HM4=
-MIME-Version: 1.0
-X-Originating-IP: [2a02:168:5635:0:39d2:f87e:2033:9f6]
-In-Reply-To: <20180425054855.GA17038@infradead.org>
-References: <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
- <20180419081657.GA16735@infradead.org> <20180420071312.GF31310@phenom.ffwll.local>
- <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com> <20180420101755.GA11400@infradead.org>
- <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com> <20180420124625.GA31078@infradead.org>
- <20180420152111.GR31310@phenom.ffwll.local> <20180424184847.GA3247@infradead.org>
- <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com> <20180425054855.GA17038@infradead.org>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 25 Apr 2018 08:13:24 +0200
-X-Google-Sender-Auth: TiDhQHRVijyDbxaKRETNQazVEBY
-Message-ID: <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
-To: Christoph Hellwig <hch@infradead.org>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Apr 2018 02:15:06 -0400
+From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+To: rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc: benh@kernel.crashing.org, mpe@ellerman.id.au, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        svaidy@linux.vnet.ibm.com,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Subject: [PATCH] cpufreq: powernv: Remove global pstate ramp-down timer in POWER9
+Date: Wed, 25 Apr 2018 11:44:55 +0530
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18042506-0012-0000-0000-000005CE7044
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042506-0013-0000-0000-0000194AE71F
+Message-Id: <1524636895-27185-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-25_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804250055
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3P6DZ9a003105
 
-On Wed, Apr 25, 2018 at 7:48 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Tue, Apr 24, 2018 at 09:32:20PM +0200, Daniel Vetter wrote:
->> Out of curiosity, how much virtual flushing stuff is there still out
->> there? At least in drm we've pretty much ignore this, and seem to be
->> getting away without a huge uproar (at least from driver developers
->> and users, core folks are less amused about that).
->
-> As I've just been wading through the code, the following architectures
-> have non-coherent dma that flushes by virtual address for at least some
-> platforms:
->
->  - arm [1], arm64, hexagon, nds32, nios2, parisc, sh, xtensa, mips,
->    powerpc
->
-> These have non-coherent dma ops that flush by physical address:
->
->  - arc, arm [1], c6x, m68k, microblaze, openrisc, sparc
->
-> And these do not have non-coherent dma ops at all:
->
->  - alpha, h8300, riscv, unicore32, x86
->
-> [1] arm ѕeems to do both virtually and physically based ops, further
-> audit needed.
->
-> Note that using virtual addresses in the cache flushing interface
-> doesn't mean that the cache actually is virtually indexed, but it at
-> least allows for the possibility.
->
->> > I think the most important thing about such a buffer object is that
->> > it can distinguish the underlying mapping types.  While
->> > dma_alloc_coherent, dma_alloc_attrs with DMA_ATTR_NON_CONSISTENT,
->> > dma_map_page/dma_map_single/dma_map_sg and dma_map_resource all give
->> > back a dma_addr_t they are in now way interchangable.  And trying to
->> > stuff them all into a structure like struct scatterlist that has
->> > no indication what kind of mapping you are dealing with is just
->> > asking for trouble.
->>
->> Well the idea was to have 1 interface to allow all drivers to share
->> buffers with anything else, no matter how exactly they're allocated.
->
-> Isn't that interface supposed to be dmabuf?  Currently dma_map leaks
-> a scatterlist through the sg_table in dma_buf_map_attachment /
-> ->map_dma_buf, but looking at a few of the callers it seems like they
-> really do not even want a scatterlist to start with, but check that
-> is contains a physically contiguous range first.  So kicking the
-> scatterlist our there will probably improve the interface in general.
+POWER9 doesnot support global pstate requests for the chip. So remove
+the timer logic which slowly ramps down the global pstate in P9
+platforms.
 
-I think by number most drm drivers require contiguous memory (or an
-iommu that makes it look contiguous). But there's plenty others who
-have another set of pagetables on the gpu itself and can
-scatter-gather. Usually it's the former for display/video blocks, and
-the latter for rendering.
+Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+---
+ drivers/cpufreq/powernv-cpufreq.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
->> dma-buf has all the functions for flushing, so you can have coherent
->> mappings, non-coherent mappings and pretty much anything else. Or well
->> could, because in practice people hack up layering violations until it
->> works for the 2-3 drivers they care about. On top of that there's the
->> small issue that x86 insists that dma is coherent (and that's true for
->> most devices, including v4l drivers you might want to share stuff
->> with), and gpus really, really really do want to make almost
->> everything incoherent.
->
-> How do discrete GPUs manage to be incoherent when attached over PCIe?
-
-It has a non-coherent transaction mode (which the chipset can opt to
-not implement and still flush), to make sure the AGP horror show
-doesn't happen again and GPU folks are happy with PCIe. That's at
-least my understanding from digging around in amd the last time we had
-coherency issues between intel and amd gpus. GPUs have some bits
-somewhere (in the pagetables, or in the buffer object description
-table created by userspace) to control that stuff.
-
-For anything on the SoC it's presented as pci device, but that's
-extremely fake, and we can definitely do non-snooped transactions on
-drm/i915. Again, controlled by a mix of pagetables and
-userspace-provided buffer object description tables.
--Daniel
+diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+index 0591874..71f8682 100644
+--- a/drivers/cpufreq/powernv-cpufreq.c
++++ b/drivers/cpufreq/powernv-cpufreq.c
+@@ -750,8 +750,13 @@ static int powernv_cpufreq_target_index(struct cpufreq_policy *policy,
+ 
+ 	cur_msec = jiffies_to_msecs(get_jiffies_64());
+ 
+-	spin_lock(&gpstates->gpstate_lock);
+ 	freq_data.pstate_id = idx_to_pstate(new_index);
++	if (!gpstates) {
++		freq_data.gpstate_id = freq_data.pstate_id;
++		goto no_gpstate;
++	}
++
++	spin_lock(&gpstates->gpstate_lock);
+ 
+ 	if (!gpstates->last_sampled_time) {
+ 		gpstate_idx = new_index;
+@@ -801,6 +806,7 @@ static int powernv_cpufreq_target_index(struct cpufreq_policy *policy,
+ 
+ 	spin_unlock(&gpstates->gpstate_lock);
+ 
++no_gpstate:
+ 	/*
+ 	 * Use smp_call_function to send IPI and execute the
+ 	 * mtspr on target CPU.  We could do that without IPI
+@@ -835,6 +841,13 @@ static int powernv_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		kernfs_put(kn);
+ 	}
+ 
++	policy->freq_table = powernv_freqs;
++	policy->fast_switch_possible = true;
++
++	if (pvr_version_is(PVR_POWER9))
++		return 0;
++
++	/* Initialise Gpstate ramp-down timer only on POWER8 */
+ 	gpstates =  kzalloc(sizeof(*gpstates), GFP_KERNEL);
+ 	if (!gpstates)
+ 		return -ENOMEM;
+@@ -849,15 +862,14 @@ static int powernv_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 				msecs_to_jiffies(GPSTATE_TIMER_INTERVAL);
+ 	spin_lock_init(&gpstates->gpstate_lock);
+ 
+-	policy->freq_table = powernv_freqs;
+-	policy->fast_switch_possible = true;
+ 	return 0;
+ }
+ 
+ static int powernv_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+ {
+ 	/* timer is deleted in cpufreq_cpu_stop() */
+-	kfree(policy->driver_data);
++	if (policy->driver_data)
++		kfree(policy->driver_data);
+ 
+ 	return 0;
+ }
+@@ -990,7 +1002,8 @@ static void powernv_cpufreq_stop_cpu(struct cpufreq_policy *policy)
+ 	freq_data.pstate_id = idx_to_pstate(powernv_pstate_info.min);
+ 	freq_data.gpstate_id = idx_to_pstate(powernv_pstate_info.min);
+ 	smp_call_function_single(policy->cpu, set_pstate, &freq_data, 1);
+-	del_timer_sync(&gpstates->timer);
++	if (gpstates)
++		del_timer_sync(&gpstates->timer);
+ }
+ 
+ static unsigned int powernv_fast_switch(struct cpufreq_policy *policy,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+1.8.3.1
