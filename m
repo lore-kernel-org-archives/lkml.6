@@ -1,88 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753790AbeDYNFW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:05:22 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38059 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752885AbeDYNFT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:05:19 -0400
-X-Google-Smtp-Source: AIpwx4/nwWJhEaytd4IeC4z4gUu7taSE6mkMdNlbg7UFTcywst7ke+RwQTKnaFCHbsXZnfdMrNm+YQ==
-Message-ID: <1524661512.4026.67.camel@baylibre.com>
-Subject: Re: [PATCH v6 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Wed, 25 Apr 2018 15:05:12 +0200
-In-Reply-To: <20180419135426.155794-1-yixun.lan@amlogic.com>
-References: <20180419135426.155794-1-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1753953AbeDYNFb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:05:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40776 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753508AbeDYNFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 09:05:25 -0400
+Date: Wed, 25 Apr 2018 15:05:22 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Alexander.Deucher@amd.com, Christian.Koenig@amd.com,
+        David.Panariti@amd.com, akpm@linux-foundation.org,
+        ebiederm@xmission.com
+Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
+ signaled process.
+Message-ID: <20180425130522.GA7592@redhat.com>
+References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
+ <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-04-19 at 21:54 +0800, Yixun Lan wrote:
->   This patch try to add AO clock and Reset driver for Amlogic's
-> Meson-AXG SoC.
->   Please note that patch 7 need to wait for the DTS changes[3] merged
-> into mainline first, otherwise it will break the serial console.
-> 
->  patch 2: factor the common code into a dedicated file
->  patch 3-5: add the aoclk driver for AXG SoC
->  patch 6-7: drop unnecessary clock flags
-> 
-> changes since v5 at [6]: 
->  - drop unnecessary header files
->  - add 'axg_aoclk' prefix to clk driver, make them more consistent
->  - add missing end new line..
-> 
-> changes since v4 at [5]: 
->  - fix return err
->  - introduce CONFIG_COMMON_CLK_MESON_AO
->  - format/style minor fix
-> 
-> changes since v3 at [4]: 
->  - add 'const' contraint to the read-only data
->  - switch to devm_of_clk_add_hw_provider API
->  - check return value of devm_reset_controller_register
-> 
-> changes since v2 at [2]: 
->  - rework meson_aoclkc_probe() which leverage the of_match_data
->  - merge patch 5-6 into this series
->  - seperate DTS patch, will send to Kevin Hilman independently
->  
-> changes since v1 at [0]: 
->  - rebase to clk-meson's branch 'next/drivers' [1]
->  - fix license, update to BSD-3-Clause
->  - drop un-used include header file
-> 
-> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
-> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
-> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
-> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
-> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
-> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
-> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
+On 04/24, Andrey Grodzovsky wrote:
+>
+> --- a/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler.c
+> @@ -227,9 +227,10 @@ void drm_sched_entity_do_release(struct drm_gpu_scheduler *sched,
+>  		return;
+>  	/**
+>  	 * The client will not queue more IBs during this fini, consume existing
+> -	 * queued IBs or discard them on SIGKILL
+> +	 * queued IBs or discard them when in death signal state since
+> +	 * wait_event_killable can't receive signals in that state.
+>  	*/
+> -	if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
+> +	if (current->flags & PF_SIGNALED)
 
-Yixun
+please do not use PF_SIGNALED, it must die. Besides you can't rely on this flag
+in multi-threaded case. current->exit_code doesn't look right too.
 
-Please :
- - Fix checkpatch error in patch 5 
- - Collect Philip's Ack on patch 4
- - Remove the extra new lines at EOF in patch 2 (maybe others, I did not check
-them all) - 1 new line at the end of each file, not 2.
+>  		entity->fini_status = -ERESTARTSYS;
+>  	else
+>  		entity->fini_status = wait_event_killable(sched->job_scheduled,
 
-Regards
-Jerome
+So afaics the problem is that fatal_signal_pending() is not necessarily true
+after SIGKILL was already dequeued and thus wait_event_killable(), right?
+
+This was already discussed, but it is not clear what we can/should do. We can
+probably change get_signal() to not dequeue SIGKILL or do something else to keep
+fatal_signal_pending() == T for the exiting killed thread.
+
+But in this case we probably also want to discriminate the "real" SIGKILL's from
+group_exit/exec/coredump.
+
+Oleg.
