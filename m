@@ -1,62 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932117AbeDYQ0p (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:26:45 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38414 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755452AbeDYQ0g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:26:36 -0400
-X-Google-Smtp-Source: AIpwx48OzWBcK67dPyWw2AlpbAHAmp2jROYV7FKGp9dEM/GbK9g5T8vQ0BckS4K7AUs2kCA7Zqx9ew==
-Date: Wed, 25 Apr 2018 09:26:32 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: andy.gross@linaro.org, mark.rutland@arm.com, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        devicetree@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com,
-        will.deacon@arm.com, catalin.marinas@arm.com
-Subject: Re: [PATCH 2/3] mailbox: Add support for Qualcomm SDM845 SoCs
-Message-ID: <20180425162632.GF18510@minitux>
-References: <20180425143803.11260-1-sibis@codeaurora.org>
- <20180425143803.11260-2-sibis@codeaurora.org>
+        id S1755477AbeDYQ14 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:27:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42696 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754196AbeDYQ1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:27:53 -0400
+Date: Wed, 25 Apr 2018 17:27:45 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/6] PCI: Make pci_get_new_domain_nr static
+Message-ID: <20180425162745.GB21628@e107981-ln.cambridge.arm.com>
+References: <cover.1524582822.git.jan.kiszka@siemens.com>
+ <a21882288c4664cc983a5741e8cbf6d59abacd46.1524582822.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180425143803.11260-2-sibis@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <a21882288c4664cc983a5741e8cbf6d59abacd46.1524582822.git.jan.kiszka@siemens.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 25 Apr 07:38 PDT 2018, Sibi Sankar wrote:
-
-> Add the corresponding APSS shared offset for SDM845 SoC
+On Tue, Apr 24, 2018 at 05:13:37PM +0200, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
 > 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> The only user of that function is of_pci_bus_find_domain_nr. Pure
+> cleanup.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+"The only user of pci_get_new_domain_nr() is of_pci_bus_find_domain_nr().
+Since they are defined in the same compilation unit,
+pci_get_new_domain_nr() can be made static, which also simplifies
+preprocessor conditionals.
 
-Regards,
-Bjorn
+No functional change intended."
 
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 > ---
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> index 57bde0dfd12f..75da44d25fac 100644
-> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> @@ -125,6 +125,7 @@ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
->  static const struct of_device_id qcom_apcs_ipc_of_match[] = {
->  	{ .compatible = "qcom,msm8916-apcs-kpss-global", .data = (void *)8 },
->  	{ .compatible = "qcom,msm8996-apcs-hmss-global", .data = (void *)16 },
-> +	{ .compatible = "qcom,sdm845-apss-shared", .data = (void *)12 },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, qcom_apcs_ipc_of_match);
+>  drivers/pci/pci.c   | 6 ++----
+>  include/linux/pci.h | 3 ---
+>  2 files changed, 2 insertions(+), 7 deletions(-)
+
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index e597655a5643..695c2bb4e853 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5702,15 +5702,14 @@ static void pci_no_domains(void)
+>  #endif
+>  }
+>  
+> -#ifdef CONFIG_PCI_DOMAINS
+> +#ifdef CONFIG_PCI_DOMAINS_GENERIC
+>  static atomic_t __domain_nr = ATOMIC_INIT(-1);
+>  
+> -int pci_get_new_domain_nr(void)
+> +static int pci_get_new_domain_nr(void)
+>  {
+>  	return atomic_inc_return(&__domain_nr);
+>  }
+>  
+> -#ifdef CONFIG_PCI_DOMAINS_GENERIC
+>  static int of_pci_bus_find_domain_nr(struct device *parent)
+>  {
+>  	static int use_dt_domains = -1;
+> @@ -5765,7 +5764,6 @@ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
+>  			       acpi_pci_bus_find_domain_nr(bus);
+>  }
+>  #endif
+> -#endif
+>  
+>  /**
+>   * pci_ext_cfg_avail - can we access extended PCI config space?
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 73178a2fcee0..963232a6cd2e 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1510,12 +1510,10 @@ void pci_cfg_access_unlock(struct pci_dev *dev);
+>   */
+>  #ifdef CONFIG_PCI_DOMAINS
+>  extern int pci_domains_supported;
+> -int pci_get_new_domain_nr(void);
+>  #else
+>  enum { pci_domains_supported = 0 };
+>  static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
+>  static inline int pci_proc_domain(struct pci_bus *bus) { return 0; }
+> -static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
+>  #endif /* CONFIG_PCI_DOMAINS */
+>  
+>  /*
+> @@ -1670,7 +1668,6 @@ static inline struct pci_dev *pci_get_domain_bus_and_slot(int domain,
+>  
+>  static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
+>  static inline struct pci_dev *pci_dev_get(struct pci_dev *dev) { return NULL; }
+> -static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
+>  
+>  #define dev_is_pci(d) (false)
+>  #define dev_is_pf(d) (false)
 > -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> 2.13.6
 > 
