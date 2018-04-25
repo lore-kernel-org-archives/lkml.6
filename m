@@ -1,64 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754127AbeDYNgn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:36:43 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:40340 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753327AbeDYNgm (ORCPT
+        id S1754248AbeDYNgx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:36:53 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40067 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753327AbeDYNgu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:36:42 -0400
-X-Google-Smtp-Source: AB8JxZpAeXLikyWip8OK51yShS/qqvw2G6U0hOD/mJZW6MZIgzhnoKvvLLKCEkFJbHirjWBJGVuBiOqVejc2u/akAzM=
-MIME-Version: 1.0
-X-Originating-IP: [2a02:168:5635:0:39d2:f87e:2033:9f6]
-In-Reply-To: <20180425132228.GC7592@redhat.com>
-References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
- <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
- <7313704c-0693-0bb9-8818-99cd2b7c0ca0@daenzer.net> <20180424194418.GE25142@phenom.ffwll.local>
- <aa2d8587-651e-2c24-a673-4682e7035a8f@amd.com> <20180424214027.GG25142@phenom.ffwll.local>
- <20180425132228.GC7592@redhat.com>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 25 Apr 2018 15:36:40 +0200
-X-Google-Sender-Auth: msQsoQ86FzeXydmHxlHbsdE4w-M
-Message-ID: <CAKMK7uF7LumuFWw3Xezw+QYDEhz6pFrJueZqFvSnmmoynYqpgQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
- signaled process.
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
-        =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, David.Panariti@amd.com,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alex Deucher <Alexander.Deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <Christian.Koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Apr 2018 09:36:50 -0400
+X-Google-Smtp-Source: AB8JxZoP0gOD1MnVTQwdNtKejYeQV5HSOuskjnSA8Gx9i1MbfqUi8/noOhLAVbdHcNwvQ/u7jxEk0Q==
+From: Alex Elder <elder@linaro.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: rename "crashed" parameter
+Date: Wed, 25 Apr 2018 08:36:26 -0500
+Message-Id: <20180425133626.11781-1-elder@linaro.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 3:22 PM, Oleg Nesterov <oleg@redhat.com> wrote:
-> On 04/24, Daniel Vetter wrote:
->>
->> wait_event_killabel doesn't check for fatal_signal_pending before calling
->> schedule, so definitely has a nice race there.
->
-> This is fine. See the signal_pending_state() check in __schedule().
->
-> And this doesn't differ from wait_event_interruptible(), it too doesn't
-> check signal_pending(), we rely on schedule() which must not block if the
-> caller is signalled/killed.
->
-> The problem is that it is not clear what should fatal_signal_pending() or
-> even signal_pending() mean after exit_signals().
+The last commit to "remoteproc_core.c":
+  880f5b388252 remoteproc: Pass type of shutdown to subdev remove
+added a Boolean flag to the subdevice remove method, to distinguish
+between graceful shutdown and a crash.  Unfortunately, the names of
+the parameters were inconsistent, and in fact have opposite meanings.
 
-Uh, I was totally thrown off in all the wait_event* macros and somehow
-landed in the _locked variants, which all need to recheck before they
-drop the lock, for efficiency reasons. See do_wait_intr().
+In most cases, the parameter is named "crashed", but rproc_add_subdev()
+names the parameter "graceful" in the prototype for the remove method.
 
-Sorry for the confusion.
--Daniel
+The remove method is ultimately called (and supplied with the Boolean
+flag value) by rproc_remove_subdevices().  That is only called by
+rproc_stop(), and in the two spots where that is used, "graceful" is
+the right name for the flag:
+  rproc_shutdown() passes true, indicating a graceful shutdown
+  rproc_trigger_recovery() passes false, indicating a crash
+
+The fix is to make the parameter name consistent, and making the
+name and sense of the parameter to always be "crashed" produces the
+smallest change.  So that's what this patch does.
+
+To verify this change, rproc_add_subdev() is called in five spots:
+  - qcom_add_glink_subdev() passes glink_subdev_remove()
+  - qcom_add_smd_subdev() passes smd_subdev_remove()
+  - qcom_add_ssr_subdev() passes ssr_notify_stop()
+  - qcom_add_sysmon_subdev() passes sysmon_stop()
+  - rproc_handle_vdev() passes rproc_vdev_do_remove()
+
+Of these, only sysmon_stop() uses its "crashed" parameter.  And it
+clearly assumes that "crashed" is the intended meaning:
+
+        /* Don't request graceful shutdown if we've crashed */
+        if (crashed)
+                return;
+
+So this function (added after the "crashed" parameter was added)
+exhibited buggy behavior, which is now fixed by this patch.
+
+Signed-off-by: Alex Elder <elder@linaro.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 4 ++--
+ include/linux/remoteproc.h           | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 6d9c5832ce47..a9609d971f7f 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1163,7 +1163,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = rproc_stop(rproc, false);
++	ret = rproc_stop(rproc, true);
+ 	if (ret)
+ 		goto unlock_mutex;
+ 
+@@ -1316,7 +1316,7 @@ void rproc_shutdown(struct rproc *rproc)
+ 	if (!atomic_dec_and_test(&rproc->power))
+ 		goto out;
+ 
+-	ret = rproc_stop(rproc, true);
++	ret = rproc_stop(rproc, false);
+ 	if (ret) {
+ 		atomic_inc(&rproc->power);
+ 		goto out;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index d09a9c7af109..dfdaede9139e 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -569,7 +569,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+ void rproc_add_subdev(struct rproc *rproc,
+ 		      struct rproc_subdev *subdev,
+ 		      int (*probe)(struct rproc_subdev *subdev),
+-		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
++		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
+ 
+ void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.14.1
