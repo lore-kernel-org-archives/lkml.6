@@ -1,47 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754470AbeDYNz5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:55:57 -0400
-Received: from muru.com ([72.249.23.125]:38770 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754043AbeDYNzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:55:55 -0400
-Date: Wed, 25 Apr 2018 06:55:52 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Eyal Reizer <eyalreizer@gmail.com>
-Cc: kvalo@codeaurora.org, linux-wireless@vger.kernel.org, robh@kernel.org,
-        sre@kernel.org, linux-kernel@vger.kernel.org,
-        Eyal Reizer <eyalr@ti.com>
-Subject: Re: [PATCH] net: wireless: ti: wlcore: sdio: allow pm to handle sdio
- power
-Message-ID: <20180425135552.GX5671@atomide.com>
-References: <1524663710-31927-1-git-send-email-eyalr@ti.com>
+        id S1754528AbeDYN4D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:56:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32876 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754395AbeDYNzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 09:55:54 -0400
+Date: Wed, 25 Apr 2018 15:55:52 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Alexander.Deucher@amd.com, Christian.Koenig@amd.com,
+        David.Panariti@amd.com, akpm@linux-foundation.org
+Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
+ signaled process.
+Message-ID: <20180425135552.GD7592@redhat.com>
+References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
+ <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+ <87muxsbmkp.fsf@xmission.com>
+ <8840ac96-50c4-f94d-eb7c-f007940163f3@amd.com>
+ <877eowa5qh.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1524663710-31927-1-git-send-email-eyalr@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <877eowa5qh.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Eyal Reizer <eyalreizer@gmail.com> [180425 13:43]:
-> pm_runtime handles sdio power on and power off transitions.
-> An old workaround for trying to control the power explicitly from the
-> driver was in fact causing failures on suspend/resume as the mmc layer
-> already power the module on resume.
-> 
-> In case of resume pm_runtime_get sync returns a positive device's usage
-> count causing the driver to try an re-initialize an already initialized
-> device. This was causing sdio bus failure on resume.
-> 
-> Remove this manual power on/off sequence as it is in-fact not needed.
-> 
-> Signed-off-by: Eyal Reizer <eyalr@ti.com>
-> Cc: stable@vger.kernel.org
+On 04/24, Eric W. Biederman wrote:
+>
+> Let me respectfully suggest that the wait_event_killable on that code
+> path is wrong.
 
-Stable cc dropped, see Documentation/process/stable-kernel-rules.rst.
+I tend to agree even if I don't know this code.
 
-Looks good to me:
+But if it can be called from f_op->release() then any usage of "current" or
+signals looks suspicious. Simply because "current" can be completely irrelevant
+task which does the last fput(), say, cat /proc/pid/fdinfo/... or even a kernel
+thread.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Oleg.
