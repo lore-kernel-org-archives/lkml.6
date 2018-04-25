@@ -1,93 +1,105 @@
-Return-Path: <robherring2@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523305468; cv=none;
+Return-Path: <opendmb@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524699653; cv=none;
         d=google.com; s=arc-20160816;
-        b=eP3O1a121xRlf/9EJ6bnKcnTWU/f0kg6hvUEf2TEEqYM4XalKgEmGLNdvGOqCZ4YTD
-         iofQuu8cQHoWG7maF6bXMr9HmCHqESiltlkD33odnMJyeUBzWMsg+wjV5iFp7Qbd+53e
-         DR8Qr8zLQ0hGUy9+8na4/v+UeY+bo8wO7mbt/vrdCG1PDzVvNoKP6NE+z0cY1pPa5zKk
-         DSLFDIoy1kb8doYF75Kiei4311WQPLRgOVJ0QlnydRVUXWlHSXnPLe/DiASA/xgCsfKT
-         4kFPRdpZgX6wEWVm0p2KDSn1VTZ0lK27GNR3vBV0oPrpb0NyaLu+LDbuPPVEAwIM3bNs
-         diyg==
+        b=yF0EA35gXQ/eNpWKDOzBGhKqCd4aA4DzwSK1f/3ghnIMyU5/z1OKcp3qJQIYsnKMpv
+         yzQzBvtJaM3xbh0VV38ONPjnToxbf+glZawxJdVig4zZ6RTCsidolUyoL58EHIyCwsYQ
+         pF/WBzYOHnPn4tHmMnhY++wDxzz0Px0CUOPgM/qwrczu3euDo9ZZTnhdmULu0jgvCXBn
+         v7X5uIJIYP2q38bcGw7+oiXe7valFd/CjfxsgcI++NrrZqeOa0G7Sg3iIukXgtY7AXry
+         0ug7kposusv393TRehHNBpjaGbI2KH5DKsI4FM4y69Y/Kt/Fw3s0mMCW02hQW319AIW6
+         Rj2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=nD9lyAXOzwIy9aA8xzn/IhttWXwLhCwGD1MqNbmEHpA=;
-        b=0by+NGI8V4f1TDPKH2hMPrQAaJdiC5cij2Rj0NTr4NeaGcRhbev4sq4RuA1yJqBVaW
-         QX/kj89QAEjmEh0eSATv603U1hgV0tc+XlwSNtUXi9pyUXklXHghRMWIv1TsHi52osiD
-         kZooYTerA8838rvVbPexA2ff8savIfOdrk3NltSatvCAldruzKErr2gRirqJSM5Yh0Qc
-         UfTzP0p/pfayubhYJ1xa4w6XWnn19WWLtYrCJ6ipOHzq2YlMbq9LI6gixQBIwITX5+g/
-         0Ei74kwCwUG221r5LFMe1o8OANGjXavNmn6SjRq1xaHwuN9mTIjq4uTunBvsusMWzg+S
-         7cLw==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=57ZcBhPMO/Mv73uLpTyizcSpI54Kkqk+NugqTChZEEA=;
+        b=yb1j7DH8yIA6MoO46Q4/cXI0oBYm19mtt99Duy8SC4DzkUVwvnxD1sz3xmSAkHJoeZ
+         jItkD9PvZIzm7mrrMURcmRPIu6Sc1c7lwPk5mEAuty7ChYbXNBKv9c6Vgh0c3FJ4T9w5
+         8g8Y6rsrGV/9a8kZ3uh+cxWy/kVwg7jUnIfA8aIoZTOlHxoFgdYyMt7AriC3TWaO2pAx
+         lywH7nm7xTz5tKtdCGeFrK+4zLmSyythzoG5MvWXN9ycpgSxyPTYaITHxI9M5rBXnR/F
+         c4BD/mfN/xMWxVZusaAoCOp38NJMu/XNcU16pLT+pMWec/sq3d78x9Rk9urW5o88MJ2J
+         /VVw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WJLKtBoX;
+       spf=pass (google.com: domain of opendmb@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opendmb@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
-X-Google-Smtp-Source: AIpwx4+oueKdVErriKAf4VRM8xWNmbFB8VBhqanPb5QW9xnQJ2yJidSyz/S4sx0yiQLuMa4wQ37p4Q==
-Date: Mon, 9 Apr 2018 15:24:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WJLKtBoX;
+       spf=pass (google.com: domain of opendmb@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opendmb@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx4+uhe7sTOtNGZs4wWhLlvSwx01wVmmC804pKa8Mddg8pzoH/KyTd9Q1pzTXEtAaGQCFw85TXg==
+From: Doug Berger <opendmb@gmail.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Pavel Machek <pavel@ucw.cz>,
+	Len Brown <len.brown@intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Przemyslaw Sroka <psroka@cadence.com>,
-	Arkadiusz Golec <agolec@cadence.com>,
-	Alan Douglas <adouglas@cadence.com>,
-	Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>,
-	Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-	Cyprian Wronka <cwronka@cadence.com>,
-	Suresh Punnoose <sureshp@cadence.com>,
-	Rafal Ciepiela <rafalc@cadence.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Vitor Soares <Vitor.Soares@synopsys.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 04/10] dt-bindings: i3c: Document core bindings
-Message-ID: <20180409202426.grl62ydysfse27ly@rob-hp-laptop>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
- <20180330074751.25987-5-boris.brezillon@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180330074751.25987-5-boris.brezillon@bootlin.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+	Doug Berger <opendmb@gmail.com>
+Subject: [PATCH] PM / Sleep: only update last time for active wakeup sources
+Date: Wed, 25 Apr 2018 16:40:30 -0700
+Message-Id: <1524699630-30573-1-git-send-email-opendmb@gmail.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596347989623961595?=
-X-GMAIL-MSGID: =?utf-8?q?1597301554741817965?=
+X-GMAIL-THRID: =?utf-8?q?1598763463471847580?=
+X-GMAIL-MSGID: =?utf-8?q?1598763463471847580?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 09:47:45AM +0200, Boris Brezillon wrote:
-> A new I3C subsystem has been added and a generic description has been
-> created to represent the I3C bus and the devices connected on it.
-> 
-> Document this generic representation.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
-> Changes in v4:
-> - Clarify the fact that static address == I3C address and dynamic
->   address == I3C address
-> - Use i2c-scl-hz in the example
-> 
-> Changes in v3:
-> - Rename {i2c,i3c}-scl-frequency DT prop into {i2c,i3c}-scl-hz
-> - Rework the way we expose the provisional ID and LVR information
-> - Rename dynamic-address into assigned-address
-> - Enforce the I3C master node name
-> 
-> Changes in v2:
-> - Define how to describe I3C devices in the DT and when it should be
->   used. Note that the parsing of I3C devices is not yet implemented in
->   the framework. Will be added when someone really needs it.
-> ---
->  Documentation/devicetree/bindings/i3c/i3c.txt | 140 ++++++++++++++++++++++++++
->  1 file changed, 140 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
+When wakelock support was added, the wakeup_source_add() function
+was updated to set the last_time value of the wakeup source. This
+has the unintended side effect of producing confusing output from
+pm_print_active_wakeup_sources() when a wakeup source is added
+prior to a sleep that is blocked by a different wakeup source.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The function pm_print_active_wakeup_sources() will search for the
+most recently active wakeup source when no active source is found.
+If a wakeup source is added after a different wakeup source blocks
+the system from going to sleep it may have a later last_time value
+than the blocking source and be output as the last active wakeup
+source even if it has never actually been active.
+
+It looks to me like the change to wakeup_source_add() was made to
+prevent the wakelock garbage collection from accidentally dropping
+a wakelock during the narrow window between adding the wakelock to
+the wakelock list in wakelock_lookup_add() and the activation of
+the wakeup source in pm_wake_lock().
+
+This commit changes the behavior so that only the last_time of the
+wakeup source used by a wakelock is initialized prior to adding it
+to the wakeup source list. This preserves the meaning of the
+last_time value as the last time the wakeup source was active and
+allows a wakeup source that has never been active to have a
+last_time value of 0.
+
+Fixes: b86ff982 ("PM / Sleep: Add user space interface for manipulating wakeup sources, v3")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+---
+ drivers/base/power/wakeup.c | 1 -
+ kernel/power/wakelock.c     | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index ea01621..230160e 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -183,7 +183,6 @@ void wakeup_source_add(struct wakeup_source *ws)
+ 	spin_lock_init(&ws->lock);
+ 	timer_setup(&ws->timer, pm_wakeup_timer_fn, 0);
+ 	ws->active = false;
+-	ws->last_time = ktime_get();
+ 
+ 	spin_lock_irqsave(&events_lock, flags);
+ 	list_add_rcu(&ws->entry, &wakeup_sources);
+diff --git a/kernel/power/wakelock.c b/kernel/power/wakelock.c
+index dfba59b..4210152 100644
+--- a/kernel/power/wakelock.c
++++ b/kernel/power/wakelock.c
+@@ -188,6 +188,7 @@ static struct wakelock *wakelock_lookup_add(const char *name, size_t len,
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 	wl->ws.name = wl->name;
++	wl->ws.last_time = ktime_get();
+ 	wakeup_source_add(&wl->ws);
+ 	rb_link_node(&wl->node, parent, node);
+ 	rb_insert_color(&wl->node, &wakelocks_tree);
+-- 
+2.7.4
