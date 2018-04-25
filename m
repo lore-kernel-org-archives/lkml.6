@@ -1,66 +1,66 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-945756-1524671518-2-8174364473446255945
+X-Cyrus-Session-Id: sloti22d1t05-945756-1524671513-2-11972694954819679210
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roenfr,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524671518; b=tolri/g+T+4r/05iRsfgiMyrLj7kr7Kx9CRcQnWfg/8VXB2frP
-    kkeUwQpIXIgwh6CX5wR+L75yDbRkOTlRBVKuYFp9HU7PcwS3bZp6VP5BHDTFAhJx
-    iULMMWaExykGJq5NVXWTqoZLiPLQ4W5VyB3SpbGCWyh0qKPBAyX4Y/gh5iTFDXIf
-    A3YD0+Ysla6XpJXt0kdfkXkn0Q4AziH3V512bX9NTVhR3nQdhw518AdrPbS+meHV
-    R/SO5d3k+M0g1P/wSqgCFsDkpOS4LP1zxlcg+e1ga5iDH/S0llKMGFGcF8wi7KYV
-    WWn5PpzmrlvYbUMaIcSPfwiPlfjuvylX0aMA==
+    1524671513; b=Pvn2ZD/g4rMThhcENeKc28S3k3r7LdfekLk9avcDlba6caAg6A
+    nocnTw8sKPkHW9QwWMvLSMv+koAJbTxP6tmWMFBV1O3cOpNLroFxtrcD9s0rbKJi
+    pel6d6CrKf9mqPrPHtGxdiBPZBW2OtPgaKPxQq889uI0bHJGUelSd0ftxsCzA1cC
+    kl0kR2Nuh3wWit5675To1fzxDt+TLNHqKOYRZPW9geYFNiqR9i6ILEskacNrkm+w
+    dSxxnFJ41p39TpatZdZIFBmpzRc3bJYkqW3QEmFWZEc0AJZj9FI0pYsDITCh3TDd
+    MQPSJFYcqVYpIImu5rmOoRPrhyANCYpUBY7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524671518; bh=8OQn9
-    bRGYaqICM3b8BlVo2NIyNo9Fu698OsDXsHjMiU=; b=b0yrmxkuoen7lYIp3EAUi
-    x5glEL7cPV/BgYHcsmVWLPdIcu0LeOQLse0hKQwTL59Grg7gzx7m0vBmCxxjVZaj
-    yeWzmGIEnWV8euIqjZtmwh+6libvbnh+EbwvKpvgx2fr1mnhb4LeetZV8e4P+tHX
-    RTxB4uxQRgDxiuqnAaixfDPStHQXzOlM4VRBY2dgP27UBhnYNgezxKjR3mH+4gnP
-    uqvomwj6zy9IZhR/D+cieQHI3GCXxus12+qD76uadG61GU0lI6GBihystEpM6/E9
-    uSNtWZeIN/t7jf/UMza321B1PJxAqRrToPc0vgtOANxP0zrIZ9mtqBAtqg2l1iyk
-    A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=rWwi1TJ4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :content-transfer-encoding:sender; s=fm2; t=1524671513; bh=Ng7ub
+    pvnVR+zVNIiUrgMBE5jdm5Rs3goFW8doUtsBPo=; b=dCXSwKmjsSj5N1EO4Z1ZO
+    DynEGRj3p0tI//FFii2xsmDgEdmngKh8bVCJkYE/Byg/pjHevijDe5IvHX7IwEtY
+    aGRkc1b0c7Cff9EmbBPtT6CvQDWotFOTvWxNuzKFo1S8R8P63RJBo0ybdY3kuOQ4
+    kqaSbWHAag1krfuChjFkdRIBHbDmRB/cev6WiWsq5XDp22GLgI96oLL+O2qkREhc
+    w7BB20S/uz9BSYBwsiKMy+1jipSO41vU5LLN+NoVGxjdLEwrd0iueSmYGym6Tpnw
+    ubi5SSV1UAq6iZsZwkPTvXj1z5qTAjCRGGQGaCA++m7j2zauN/zhx0NFbb0b7z/8
+    g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=duns6UiD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=rWwi1TJ4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=duns6UiD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJKSZuS5aC/ED/VT5QTBfKdfY2NOZeTR37K/z8BJrYlp/amaHgc0Ju7OibhDO9+Wt5nmzEmgS2NwnYOnXjCHyWlU1PG5mk7U+wGR7CMhoRCM/OiZ6brQ
-    CggZbww9ReN+tCe0GlublUQf2LbiUP9wMcBCIzgOg6+ugll6P6rD2nHDl/6XvD8vnX0FUgzW0c1BT8q5rTAgc81CbpD8Cuq/EEhtsotMvNbVLbhlc3ooe+zp
-    HXyjb4KjsESgaFb/xMHk/Q==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=9zO1jEDizw8zC72M9E0A:9
+X-CM-Envelope: MS4wfMzJkVq5OsRQI76NJDBb+bK1Y7HZUpsZKoNjBf+nfDc7HndRgn7+QdKsAK8jOg7JzY6mCt/1ESf2LV505dqo+gW2dCc6bWvW+J03jp6nFnxu/yHQoSZp
+    wbQMo7lp94xEVxA5p43TSTTA4Kw/wzd6TlaML4HhcDGg/uAXfSXZoR6nSKpDtzZ55pOF64e5q0weXFwi8sHk2h+6hPftR8NU3XPCNlHWYaG8bb9+e1pzLxnf
+    1ylEXw70TggICCUKwHppPw==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=Wpy0-uDpMQgr-WdNMiwA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -68,9 +68,9 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 37/40] proc: don't detour through seq->private to get the inode
-Date: Wed, 25 Apr 2018 17:48:24 +0200
-Message-Id: <20180425154827.32251-38-hch@lst.de>
+Subject: [PATCH 34/40] atm: simplify procfs code
+Date: Wed, 25 Apr 2018 17:48:21 +0200
+Message-Id: <20180425154827.32251-35-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425154827.32251-1-hch@lst.de>
 References: <20180425154827.32251-1-hch@lst.de>
@@ -104,60 +104,104 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Use remove_proc_subtree to remove the whole subtree on cleanup, and
+unwind the registration loop into individual calls.  Switch to use
+proc_create_seq where applicable.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/proc/array.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ net/atm/proc.c | 65 ++++++--------------------------------------------
+ 1 file changed, 7 insertions(+), 58 deletions(-)
 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index ae2c807fd719..b34796b562ef 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -677,7 +677,7 @@ get_children_pid(struct inode *inode, struct pid *pid_prev, loff_t pos)
+diff --git a/net/atm/proc.c b/net/atm/proc.c
+index 55410c00c7e2..f272b0f59d82 100644
+--- a/net/atm/proc.c
++++ b/net/atm/proc.c
+@@ -257,18 +257,6 @@ static const struct seq_operations atm_dev_seq_ops = {
+ 	.show	= atm_dev_seq_show,
+ };
  
- static int children_seq_show(struct seq_file *seq, void *v)
+-static int atm_dev_seq_open(struct inode *inode, struct file *file)
+-{
+-	return seq_open(file, &atm_dev_seq_ops);
+-}
+-
+-static const struct file_operations devices_seq_fops = {
+-	.open		= atm_dev_seq_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= seq_release,
+-};
+-
+ static int pvc_seq_show(struct seq_file *seq, void *v)
  {
--	struct inode *inode = seq->private;
-+	struct inode *inode = file_inode(seq->file);
- 	pid_t pid;
- 
- 	pid = pid_nr_ns(v, inode->i_sb->s_fs_info);
-@@ -688,14 +688,14 @@ static int children_seq_show(struct seq_file *seq, void *v)
- 
- static void *children_seq_start(struct seq_file *seq, loff_t *pos)
- {
--	return get_children_pid(seq->private, NULL, *pos);
-+	return get_children_pid(file_inode(seq->file), NULL, *pos);
+ 	static char atm_pvc_banner[] =
+@@ -440,58 +428,19 @@ void atm_proc_dev_deregister(struct atm_dev *dev)
+ 	kfree(dev->proc_name);
  }
  
- static void *children_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+-static struct atm_proc_entry {
+-	char *name;
+-	const struct file_operations *proc_fops;
+-	struct proc_dir_entry *dirent;
+-} atm_proc_ents[] = {
+-	{ .name = "devices",	.proc_fops = &devices_seq_fops },
+-	{ .name = "pvc",	.proc_fops = &pvc_seq_fops },
+-	{ .name = "svc",	.proc_fops = &svc_seq_fops },
+-	{ .name = "vc",		.proc_fops = &vcc_seq_fops },
+-	{ .name = NULL,		.proc_fops = NULL }
+-};
+-
+-static void atm_proc_dirs_remove(void)
+-{
+-	static struct atm_proc_entry *e;
+-
+-	for (e = atm_proc_ents; e->name; e++) {
+-		if (e->dirent)
+-			remove_proc_entry(e->name, atm_proc_root);
+-	}
+-	remove_proc_entry("atm", init_net.proc_net);
+-}
+-
+ int __init atm_proc_init(void)
  {
- 	struct pid *pid;
- 
--	pid = get_children_pid(seq->private, v, *pos + 1);
-+	pid = get_children_pid(file_inode(seq->file), v, *pos + 1);
- 	put_pid(v);
- 
- 	++*pos;
-@@ -716,17 +716,7 @@ static const struct seq_operations children_seq_ops = {
- 
- static int children_seq_open(struct inode *inode, struct file *file)
- {
--	struct seq_file *m;
+-	static struct atm_proc_entry *e;
 -	int ret;
 -
--	ret = seq_open(file, &children_seq_ops);
--	if (ret)
--		return ret;
+ 	atm_proc_root = proc_net_mkdir(&init_net, "atm", init_net.proc_net);
+ 	if (!atm_proc_root)
+-		goto err_out;
+-	for (e = atm_proc_ents; e->name; e++) {
+-		struct proc_dir_entry *dirent;
 -
--	m = file->private_data;
--	m->private = inode;
--
+-		dirent = proc_create(e->name, 0444,
+-				     atm_proc_root, e->proc_fops);
+-		if (!dirent)
+-			goto err_out_remove;
+-		e->dirent = dirent;
+-	}
+-	ret = 0;
+-out:
 -	return ret;
-+	return seq_open(file, &children_seq_ops);
+-
+-err_out_remove:
+-	atm_proc_dirs_remove();
+-err_out:
+-	ret = -ENOMEM;
+-	goto out;
++		return -ENOMEM;
++	proc_create_seq("devices", 0444, atm_proc_root, &atm_dev_seq_ops);
++	proc_create("pvc", 0444, atm_proc_root, &pvc_seq_fops);
++	proc_create("svc", 0444, atm_proc_root, &svc_seq_fops);
++	proc_create("vc", 0444, atm_proc_root, &vcc_seq_fops);
++	return 0;
  }
  
- const struct file_operations proc_tid_children_operations = {
+ void atm_proc_exit(void)
+ {
+-	atm_proc_dirs_remove();
++	remove_proc_subtree("atm", init_net.proc_net);
+ }
 -- 
 2.17.0
 
