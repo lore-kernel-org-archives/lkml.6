@@ -1,92 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751415AbeDYGlh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:41:37 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43541 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeDYGlg (ORCPT
+        id S1751234AbeDYGni (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:43:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51198 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeDYGnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:41:36 -0400
-Date: Wed, 25 Apr 2018 08:41:33 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Javier Arteaga <javier@emutex.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        "Dan O'Donovan" <dan@emutex.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-Message-ID: <20180425064133.GC5352@amd>
-References: <20180421085009.28773-1-javier@emutex.com>
- <20180421085009.28773-3-javier@emutex.com>
+        Wed, 25 Apr 2018 02:43:37 -0400
+Date: Tue, 24 Apr 2018 23:43:35 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
+Message-ID: <20180425064335.GB28100@infradead.org>
+References: <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
+ <20180420101755.GA11400@infradead.org>
+ <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
+ <20180420124625.GA31078@infradead.org>
+ <20180420152111.GR31310@phenom.ffwll.local>
+ <20180424184847.GA3247@infradead.org>
+ <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
+ <20180425054855.GA17038@infradead.org>
+ <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
+ <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="yVhtmJPUSI46BTXb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180421085009.28773-3-javier@emutex.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 25, 2018 at 08:23:15AM +0200, Daniel Vetter wrote:
+> For more fun:
+> 
+> https://www.spinics.net/lists/dri-devel/msg173630.html
+> 
+> Yeah, sometimes we want to disable the iommu because the on-gpu
+> pagetables are faster ...
 
---yVhtmJPUSI46BTXb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am not on this list, but remote NAK from here.  This needs an
+API from the iommu/dma-mapping code.  Drivers have no business poking
+into these details.
 
-On Sat 2018-04-21 09:50:08, Javier Arteaga wrote:
-> Allow userspace to use the on-board LEDs as "upboard:<color>:".
->=20
-> Signed-off-by: Javier Arteaga <javier@emutex.com>
-
-> +static enum led_brightness upboard_led_brightness_get(struct led_classde=
-v *cdev)
-> +{
-> +	struct upboard_led *led =3D container_of(cdev, struct upboard_led, cdev=
-);
-> +	int brightness =3D 0;
-> +
-> +	regmap_field_read(led->field, &brightness);
-> +
-> +	return brightness;
-> +};
-
-I'm slightly confused here. Is each led controlled by single bit?
-
-> +static void upboard_led_brightness_set(struct led_classdev *cdev,
-> +				       enum led_brightness brightness)
-> +{
-> +	struct upboard_led *led =3D container_of(cdev, struct upboard_led, cdev=
-);
-> +
-> +	regmap_field_write(led->field, brightness !=3D LED_OFF);
-> +};
-
-What is going on with ";" at end of function? We don't do that.
-
-If it is single bit, max_brightness should be one, and !=3D LED_OFF test
-should not be needed.
-
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---yVhtmJPUSI46BTXb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrgIx0ACgkQMOfwapXb+vLP/wCeObvNSVSgW6bpxoY4s1PqXv3B
-N8YAn3vU/1h/+9wsoQPYbjsRBWnpWLnG
-=8EzT
------END PGP SIGNATURE-----
-
---yVhtmJPUSI46BTXb--
+Thierry, please resend this with at least the iommu list and
+linux-arm-kernel in Cc to have a proper discussion on the right API.
