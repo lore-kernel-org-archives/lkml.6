@@ -1,394 +1,171 @@
-Return-Path: <krzk@kernel.org>
-X-Google-Smtp-Source: AIpwx49VvaZGkcewKpLvOmQ6bsv3ZmShQJfdLrN7Wm9q1hp80aQjp/FaZphWBup92wk0/EOEAWjE
-ARC-Seal: i=1; a=rsa-sha256; t=1524602032; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ilB6vEkhOtT7/haEb++4aZueGWpSb50rb5lX2c5OdKHwc5vVnXC4jVS4FQA13g0bPm
-         Hd/HCzXCrlIukRCnmLF0MmoEzpW7DO+Jf+PCMUJNu0AWKGJUtk1bMhiwvwTd380aqO98
-         OpGsL7N9n7HSsFiglMr0DrZfIKjzoVQJViAyOLCfTKmUCmrYbR6eK/NVGm7Ca1bSPNoj
-         5rrb/QmxvIvVPzi5BITsJL0vO0k7qzTzUYrK+RlfOqYBqNPcILR47+qjvOrmsrIptKg4
-         ijLnOuLNIU02ZLVBCu0/E5tQCLQRL2Bu3uuJDML/v3MdqpBCFSHKBxmWuZGGD5EX78Es
-         ES2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:arc-authentication-results;
-        bh=Wz5sX5t48jUKusRXoDm7m3CtfS1cq+hhMQJpgsY5V3g=;
-        b=ZBBFW2uqh6cdn7xoPUur1BThepXyVF/r2vXgxfGB2FqPCnFGpQJpLndu4YDVsR9t+o
-         8C5nLDzb0VlCmGU7J5wo0K4DoPvDgB0v674aFaUtlPc7MVztcbmI94N/scIOmO/yG0pP
-         IPaMrCfXnjzhvSmcOZbORkaxcjB4+5jPWL7jm2wAdLqRMG6dprmL6fVjwwb/aRCyjJix
-         GhshBQUybmVhFY9Y06ou/q99EJRBT2PyrRKgfcHuINjqeXKErNcY9yFM24gKrznutvCk
-         I7GQR960BNu6B8ASFmX9hIyH0TSYBTa5ufIWjcir0N+rrTdDRkyvqD3GVrg93mnlqv1V
-         6rXg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BC48217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>,
-	Mark Brown <broonie@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [RFC 06/10] thermal: samsung: Remove support for Exynos5440
-Date: Tue, 24 Apr 2018 22:32:35 +0200
-Message-Id: <20180424203239.21885-7-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-721450-1524662354-2-15345564233780005525
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524662354; b=eUfGp5YikeeRURfBnXFnKUa3fgV0PuCoXRVrvII7C3AazcG3x+
+    AUyAGe7xMPUGsFmPJBU8V+Wr8xyWssGEmmqpEpcctIME8rmqNnStvdjHvb2kBaSk
+    kxY2LLdzFbs2973G/EQ3QkGfkXnMWsrh6qmtxaR8D4+Nry54JTpLM+Ww8iPOuuKr
+    YK/8sO5FMFVjmTnQF5QJ6ClzY4RK5h/+q8u5ZMVlpxoHANJ00xiQh4AnHL7VD92C
+    A7TEWfFUxTOMaO/BIicf/Y1Zfmwkx9EtOcqr4RpeUKypRmUc6VRPp/y64YDDJWpR
+    kXF18x95YcBNo9fWpZvN5SKeg27BySMj96WA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:mime-version:content-transfer-encoding:content-type
+    :references:sender:list-id; s=fm2; t=1524662354; bh=HdychpixaT6p
+    Swq2oZkMoqL6msbkd7lj7uWiroA8Urg=; b=srVJGaFKHcJLfcNFA2Vll9dgygxW
+    4Z6XFckcdXmhl3OXEDifnqosyvEKrpVaVslZm3MHxDVDIiPuUys/m8qhYsjqOZZj
+    OISI/Kr2rqN3XnIZL792O5Zf4osmafRdrec/DYnBQeD6YD4ZRCiOEpHnBUlcqSlj
+    akTS8r4ctcxrtt1t9ceLrZuemRumujXBZSJqaP1B00TfZv/Grnw5GfVXIva+mc61
+    6wHlePVXN9oIR5muD9qG9GybH5PQuDqwQZ2w5eHBNLueuLJSbOy6obkJ4dD6NgLc
+    LXfUtyi7nh/5LvDwvvoFEsGl1LP6H8G0hffG9U6FfqNenY7m0okY5jtEGQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=Pbv6mtm/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=Pbv6mtm/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfAursqmvPVti5nlgsGbF0RGVXVyCl/qyKZ/rq5nNfJAarvTnE4qejpWPoaEX1AKGDxjzPdFM20eDGBzoo0BWeQzzf5Rlo4bLKmX7P0zET6FTTZmkoBQX
+    wRDXGP+7RXAgr3zkYKBU9cDNkUteemff/1SC2Xhw8iz5yl7nZ0Z2ul+JtBpldKKJ3zMmIi1eK7k3CdpaAWy3Aneon1dNoYw3AU1FxNvtvRd8n/rTC1JXmL5H
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xQMrlssy50Kn4cZdMiUU9ANOUCQ=:19
+    a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=hD80L64hAAAA:8
+    a=bFUnhJpB9Z3-8uSK8OwA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754036AbeDYNTI (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 09:19:08 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34119 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753099AbeDYNS7 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 25 Apr 2018 09:18:59 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180425131854euoutp010bfe438c9edf60f6064154ab4eb5fb3c~osFDMTTMq2424624246euoutp01z
+X-AuditID: cbfec7f4-6f9ff700000043e4-e9-5ae0803ca67f
+Sun-Java-System-SMTP-Warning: Lines longer than SMTP allows found and
+        wrapped.
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC 06/10] thermal: samsung: Remove support for Exynos5440
+Date: Wed, 25 Apr 2018 15:18:51 +0200
+Message-id: <1951102.VLysaozMLK@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180424203239.21885-7-krzk@kernel.org>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUyTVxTHc5/3Ero8VpQ7XSBpcOoykRmNJ0rm5jS5zCzBD/tgNWqZj/gC
+        lbTC1CUb0yHOTWBUgmNTVLRKgzJaooAUTC1U0Qm10IIREDVREcOwIBUorPSpCV9u/vec3znn
+        f26uQKtauXnCbt1+Sa/Tpqm5COZa87v7SxKzH2sSps6thjL/cwoChc08FPU948A7/JyFUsf9
+        4NHuYeFIWSUHA85iCjrHjrKQ//QVDa2t//BwcuISBZanQWTo9x4WrKUTCI4FhhE01zyhwF33
+        Nwe+Ew4Ep1obKPh5qIuH86YcGuxFNgRXHN08XPS6KHC1rIcWr4+De3cfsJBjc/DwrC+Pg1sD
+        uSxMeqoYKBhv42DsUhMCc11wRNUI+SKOVJypQMTtcdFkfKwQkcHOHJ54L7yhSW1JN0/K6l9S
+        xGL+lSOPPPUcaTxdwRPrhZ9I++3DLBls6OBIdUcuQ/7q9iOSV21GybM0EYk7pLTdWZJ+6efb
+        I3ZVTY1QGT76wMkWRTY6Sx9HCgGLy7HL0hLUEYJKvIywu6mLlS8+hJsmrOg9dbVjmJMTJoTv
+        5bvDJeMI9xY7uGlqtpiMC9tMoQpOXIX/yDWHdJS4GHsDo+y0psV+BfY4F8k8wbc77oTijLgA
+        +15WhrQyyL/Oz6Om9Rzxa1zdkBvSCnEFNgY6aZmZhf3GHkbuGYsbGovC/T/F/zZfRdPmsNgm
+        4O6aKU5eYR3uLb0RXmc27ndW87L+CLuNvzFywRGE39bUh1+mAOH6SpWsV+NbTld4wge48Fpx
+        kBGCcSU+djSMEJz/8EG455e4ztgffi4rwpYXA1QBiimZYbxkhvGSGcbPItqMoqVMQ3qqZFim
+        k76PN2jTDZm61Pjv9qVbUPCb3510DteguokUOxIFpI5UJmzq1ahYbZbhYLodYYFWRyltMT0a
+        lXKH9uAhSb9vmz4zTTLY0XyBUUcrty76UaMSU7X7pb2SlCHp32cpQTEvG51z9O1k2+mor86P
+        pux8vcr6TZxojUbHr//izrxZsXmENbtsfzYllZsm4/+zr4yMaTwwZOzanvRiz2mjce27lLRk
+        k/9D5tu1D+PLl8+l1llujJgOuxJstf495VGvSmPnOH+Iq/1Ym5yVOBq7IWlBxpPAwjXmLbqN
+        46PeuTC4eFtkIEfNGHZpP/uE1hu0/wNujPu04gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHe+7dvXeTFrdl9GBUMCxKyCyKjmFRUPTkhwqKqEXUqIuTnMVu
+        mvYhzbKVmDNfKNaLK+2F4es2I8uXsqWlkS2dU0qzMqZkSU3RptPmLPDL4cf5/w7/L0dKK0xM
+        iDQ2/pSgi1fHKdkgSfNEY+vKqNQeVcSEl4bCUTcFvpwGDvI/97LgGnIzUGB/6x9t7QycLyxj
+        YaDxGgUd3osMGL5+p6GlpZyDvPEHFFi++pVfmd0MWAvGEVzyDSFoePyFgtYnN1nwXLEjuN5S
+        S8G5X50c3L2fTkN9fg2CEnsXB/dcDgocTdugyeVh4U3zewbSa+wc9H7OYuHFgJ6BifYKCWSP
+        vWPB++AlAvMTf0XFMNkcSopvFyPS2u6gyZg3B5HBjnSOuIp+06TK2MWRwup+iljMl1nysb2a
+        JXW3ijliLUohba/SGDJY62SJzamXkBtdo4hk2cxo91xVUNQxIS42UdCt2nQkSFMxOUyd9NBJ
+        eU2yVGSiM5BMivm1uNQ5xE6xgi9CuK0jOQMF+dmHsLXEEgjm8Ttx2s2cwAHLb8BX9WY0xcH8
+        CuzyjTBTTPMDMlxXMm/aJ/iV83VgL+GXYk9/WYDlfv+HIYua4vl8NLbV6gMs49fhXF8HPV1s
+        Rbja65BMH8zFo7ndkumCJbi2Lv9fWRguq2qkshFvnKEZZ2jGGZoJ0WYULCSI2hituCZcVGvF
+        hPiY8KMntBbk/5tHDX9sj1HGzz31iJci5Wx5xIFPKgWjThSTtfUIS2llsLxmcbdKIT+mTj4j
+        6E4c1iXECWI9WiiVKBfIWyKSVQo+Rn1KOC4IJwXd/5SSykJSUeXeiMpnpSmbNmZGvWvQRBrK
+        RvctN8y5NLm/i8kUqtb/GRfjd5RvTfiQfTpJsJnWahaE3VE0TbQ93RV61mOfdeib+3mPafBt
+        f2KoVQyf7WiMds8ajusreP282zZmiH3Yd//9oOZimJPbvmzLzpCRtJRF60f2d5ouMAc9br2x
+        uTzSopSIGvXqMFonqv8C39lbATMDAAA=
+X-CMS-MailID: 20180425131852eucas1p26edf49ec360f7afe2e0fd96b055f79dd
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11
+X-RootMTR: 20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11
 References: <20180424203239.21885-1-krzk@kernel.org>
+        <CGME20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11@epcas4p4.samsung.com>
+        <20180424203239.21885-7-krzk@kernel.org>
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598661101248192093?=
-X-GMAIL-MSGID: =?utf-8?q?1598661101248192093?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The Exynos5440 is not actively developed, there are no development
-boards available and probably there are no real products with it.
-Remove wide-tree support for Exynos5440.
+On Tuesday, April 24, 2018 10:32:35 PM Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../devicetree/bindings/thermal/exynos-thermal.txt |  14 +-
- drivers/thermal/samsung/exynos_tmu.c               | 155 +--------------------
- drivers/thermal/samsung/exynos_tmu.h               |   1 -
- 3 files changed, 4 insertions(+), 166 deletions(-)
+Thanks for doing this.
 
-diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-index b957acff57aa..ad648d93d961 100644
---- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-@@ -12,7 +12,6 @@
- 	       "samsung,exynos5420-tmu-ext-triminfo" for TMU channels 2, 3 and 4
- 			Exynos5420 (Must pass triminfo base and triminfo clock)
-                "samsung,exynos5433-tmu"
--	       "samsung,exynos5440-tmu"
- 	       "samsung,exynos7-tmu"
- - interrupt-parent : The phandle for the interrupt controller
- - reg : Address range of the thermal registers. For soc's which has multiple
-@@ -68,18 +67,7 @@ Example 1):
- 		#thermal-sensor-cells = <0>;
- 	};
- 
--Example 2):
--
--	tmuctrl_0: tmuctrl@160118 {
--		compatible = "samsung,exynos5440-tmu";
--		reg = <0x160118 0x230>, <0x160368 0x10>;
--		interrupts = <0 58 0>;
--		clocks = <&clock 21>;
--		clock-names = "tmu_apbif";
--		#thermal-sensor-cells = <0>;
--	};
--
--Example 3): (In case of Exynos5420 "with misplaced TRIMINFO register")
-+Example 2): (In case of Exynos5420 "with misplaced TRIMINFO register")
- 	tmu_cpu2: tmu@10068000 {
- 		compatible = "samsung,exynos5420-tmu-ext-triminfo";
- 		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index ed805c7c5ace..f92f470bce21 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -123,28 +123,6 @@
- 
- #define EXYNOS5433_PD_DET_EN			1
- 
--/*exynos5440 specific registers*/
--#define EXYNOS5440_TMU_S0_7_TRIM		0x000
--#define EXYNOS5440_TMU_S0_7_CTRL		0x020
--#define EXYNOS5440_TMU_S0_7_DEBUG		0x040
--#define EXYNOS5440_TMU_S0_7_TEMP		0x0f0
--#define EXYNOS5440_TMU_S0_7_TH0			0x110
--#define EXYNOS5440_TMU_S0_7_TH1			0x130
--#define EXYNOS5440_TMU_S0_7_TH2			0x150
--#define EXYNOS5440_TMU_S0_7_IRQEN		0x210
--#define EXYNOS5440_TMU_S0_7_IRQ			0x230
--/* exynos5440 common registers */
--#define EXYNOS5440_TMU_IRQ_STATUS		0x000
--#define EXYNOS5440_TMU_PMIN			0x004
--
--#define EXYNOS5440_TMU_INTEN_RISE0_SHIFT	0
--#define EXYNOS5440_TMU_INTEN_RISE1_SHIFT	1
--#define EXYNOS5440_TMU_INTEN_RISE2_SHIFT	2
--#define EXYNOS5440_TMU_INTEN_RISE3_SHIFT	3
--#define EXYNOS5440_TMU_INTEN_FALL0_SHIFT	4
--#define EXYNOS5440_TMU_TH_RISE4_SHIFT		24
--#define EXYNOS5440_EFUSE_SWAP_OFFSET		8
--
- /* Exynos7 specific registers */
- #define EXYNOS7_THD_TEMP_RISE7_6		0x50
- #define EXYNOS7_THD_TEMP_FALL7_6		0x60
-@@ -614,57 +592,6 @@ static int exynos5433_tmu_initialize(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int exynos5440_tmu_initialize(struct platform_device *pdev)
--{
--	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
--	unsigned int trim_info = 0, con, rising_threshold;
--	int threshold_code;
--	int crit_temp = 0;
--
--	/*
--	 * For exynos5440 soc triminfo value is swapped between TMU0 and
--	 * TMU2, so the below logic is needed.
--	 */
--	switch (data->id) {
--	case 0:
--		trim_info = readl(data->base + EXYNOS5440_EFUSE_SWAP_OFFSET +
--				 EXYNOS5440_TMU_S0_7_TRIM);
--		break;
--	case 1:
--		trim_info = readl(data->base + EXYNOS5440_TMU_S0_7_TRIM);
--		break;
--	case 2:
--		trim_info = readl(data->base - EXYNOS5440_EFUSE_SWAP_OFFSET +
--				  EXYNOS5440_TMU_S0_7_TRIM);
--	}
--	sanitize_temp_error(data, trim_info);
--
--	/* Write temperature code for rising and falling threshold */
--	rising_threshold = readl(data->base + EXYNOS5440_TMU_S0_7_TH0);
--	rising_threshold = get_th_reg(data, rising_threshold, false);
--	writel(rising_threshold, data->base + EXYNOS5440_TMU_S0_7_TH0);
--	writel(0, data->base + EXYNOS5440_TMU_S0_7_TH1);
--
--	data->tmu_clear_irqs(data);
--
--	/* if last threshold limit is also present */
--	if (!data->tzd->ops->get_crit_temp(data->tzd, &crit_temp)) {
--		threshold_code = temp_to_code(data, crit_temp / MCELSIUS);
--		/* 5th level to be assigned in th2 reg */
--		rising_threshold =
--			threshold_code << EXYNOS5440_TMU_TH_RISE4_SHIFT;
--		writel(rising_threshold, data->base + EXYNOS5440_TMU_S0_7_TH2);
--		con = readl(data->base + EXYNOS5440_TMU_S0_7_CTRL);
--		con |= (1 << EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
--		writel(con, data->base + EXYNOS5440_TMU_S0_7_CTRL);
--	}
--	/* Clear the PMIN in the common TMU register */
--	if (!data->id)
--		writel(0, data->base_second + EXYNOS5440_TMU_PMIN);
--
--	return 0;
--}
--
- static int exynos7_tmu_initialize(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-@@ -816,35 +743,6 @@ static void exynos5433_tmu_control(struct platform_device *pdev, bool on)
- 	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
- }
- 
--static void exynos5440_tmu_control(struct platform_device *pdev, bool on)
--{
--	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
--	struct thermal_zone_device *tz = data->tzd;
--	unsigned int con, interrupt_en;
--
--	con = get_con_reg(data, readl(data->base + EXYNOS5440_TMU_S0_7_CTRL));
--
--	if (on) {
--		con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
--		interrupt_en =
--			(of_thermal_is_trip_valid(tz, 3)
--			 << EXYNOS5440_TMU_INTEN_RISE3_SHIFT) |
--			(of_thermal_is_trip_valid(tz, 2)
--			 << EXYNOS5440_TMU_INTEN_RISE2_SHIFT) |
--			(of_thermal_is_trip_valid(tz, 1)
--			 << EXYNOS5440_TMU_INTEN_RISE1_SHIFT) |
--			(of_thermal_is_trip_valid(tz, 0)
--			 << EXYNOS5440_TMU_INTEN_RISE0_SHIFT);
--		interrupt_en |=
--			interrupt_en << EXYNOS5440_TMU_INTEN_FALL0_SHIFT;
--	} else {
--		con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
--		interrupt_en = 0; /* Disable all interrupts */
--	}
--	writel(interrupt_en, data->base + EXYNOS5440_TMU_S0_7_IRQEN);
--	writel(con, data->base + EXYNOS5440_TMU_S0_7_CTRL);
--}
--
- static void exynos7_tmu_control(struct platform_device *pdev, bool on)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-@@ -911,10 +809,8 @@ static u32 get_emul_con_reg(struct exynos_tmu_data *data, unsigned int val,
- 	if (temp) {
- 		temp /= MCELSIUS;
- 
--		if (data->soc != SOC_ARCH_EXYNOS5440) {
--			val &= ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIFT);
--			val |= (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
--		}
-+		val &= ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIFT);
-+		val |= (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
- 		if (data->soc == SOC_ARCH_EXYNOS7) {
- 			val &= ~(EXYNOS7_EMUL_DATA_MASK <<
- 				EXYNOS7_EMUL_DATA_SHIFT);
-@@ -955,16 +851,6 @@ static void exynos4412_tmu_set_emulation(struct exynos_tmu_data *data,
- 	writel(val, data->base + emul_con);
- }
- 
--static void exynos5440_tmu_set_emulation(struct exynos_tmu_data *data,
--					 int temp)
--{
--	unsigned int val;
--
--	val = readl(data->base + EXYNOS5440_TMU_S0_7_DEBUG);
--	val = get_emul_con_reg(data, val, temp);
--	writel(val, data->base + EXYNOS5440_TMU_S0_7_DEBUG);
--}
--
- static int exynos_tmu_set_emulation(void *drv_data, int temp)
- {
- 	struct exynos_tmu_data *data = drv_data;
-@@ -987,7 +873,6 @@ static int exynos_tmu_set_emulation(void *drv_data, int temp)
- }
- #else
- #define exynos4412_tmu_set_emulation NULL
--#define exynos5440_tmu_set_emulation NULL
- static int exynos_tmu_set_emulation(void *drv_data, int temp)
- 	{ return -EINVAL; }
- #endif /* CONFIG_THERMAL_EMULATION */
-@@ -1005,11 +890,6 @@ static int exynos4412_tmu_read(struct exynos_tmu_data *data)
- 	return readb(data->base + EXYNOS_TMU_REG_CURRENT_TEMP);
- }
- 
--static int exynos5440_tmu_read(struct exynos_tmu_data *data)
--{
--	return readb(data->base + EXYNOS5440_TMU_S0_7_TEMP);
--}
--
- static int exynos7_tmu_read(struct exynos_tmu_data *data)
- {
- 	return readw(data->base + EXYNOS_TMU_REG_CURRENT_TEMP) &
-@@ -1020,16 +900,9 @@ static void exynos_tmu_work(struct work_struct *work)
- {
- 	struct exynos_tmu_data *data = container_of(work,
- 			struct exynos_tmu_data, irq_work);
--	unsigned int val_type;
- 
- 	if (!IS_ERR(data->clk_sec))
- 		clk_enable(data->clk_sec);
--	/* Find which sensor generated this interrupt */
--	if (data->soc == SOC_ARCH_EXYNOS5440) {
--		val_type = readl(data->base_second + EXYNOS5440_TMU_IRQ_STATUS);
--		if (!((val_type >> data->id) & 0x1))
--			goto out;
--	}
- 	if (!IS_ERR(data->clk_sec))
- 		clk_disable(data->clk_sec);
- 
-@@ -1042,7 +915,6 @@ static void exynos_tmu_work(struct work_struct *work)
- 
- 	clk_disable(data->clk);
- 	mutex_unlock(&data->lock);
--out:
- 	enable_irq(data->irq);
- }
- 
-@@ -1077,15 +949,6 @@ static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
- 	writel(val_irq, data->base + tmu_intclear);
- }
- 
--static void exynos5440_tmu_clear_irqs(struct exynos_tmu_data *data)
--{
--	unsigned int val_irq;
--
--	val_irq = readl(data->base + EXYNOS5440_TMU_S0_7_IRQ);
--	/* clear the interrupts */
--	writel(val_irq, data->base + EXYNOS5440_TMU_S0_7_IRQ);
--}
--
- static irqreturn_t exynos_tmu_irq(int irq, void *id)
- {
- 	struct exynos_tmu_data *data = id;
-@@ -1105,7 +968,6 @@ static const struct of_device_id exynos_tmu_match[] = {
- 	{ .compatible = "samsung,exynos5420-tmu", },
- 	{ .compatible = "samsung,exynos5420-tmu-ext-triminfo", },
- 	{ .compatible = "samsung,exynos5433-tmu", },
--	{ .compatible = "samsung,exynos5440-tmu", },
- 	{ .compatible = "samsung,exynos7-tmu", },
- 	{ /* sentinel */ },
- };
-@@ -1130,8 +992,6 @@ static int exynos_of_get_soc_type(struct device_node *np)
- 		return SOC_ARCH_EXYNOS5420_TRIMINFO;
- 	else if (of_device_is_compatible(np, "samsung,exynos5433-tmu"))
- 		return SOC_ARCH_EXYNOS5433;
--	else if (of_device_is_compatible(np, "samsung,exynos5440-tmu"))
--		return SOC_ARCH_EXYNOS5440;
- 	else if (of_device_is_compatible(np, "samsung,exynos7-tmu"))
- 		return SOC_ARCH_EXYNOS7;
- 
-@@ -1242,14 +1102,6 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
- 		data->ntrip = 8;
- 		break;
--	case SOC_ARCH_EXYNOS5440:
--		data->tmu_initialize = exynos5440_tmu_initialize;
--		data->tmu_control = exynos5440_tmu_control;
--		data->tmu_read = exynos5440_tmu_read;
--		data->tmu_set_emulation = exynos5440_tmu_set_emulation;
--		data->tmu_clear_irqs = exynos5440_tmu_clear_irqs;
--		data->ntrip = 4;
--		break;
- 	case SOC_ARCH_EXYNOS7:
- 		data->tmu_initialize = exynos7_tmu_initialize;
- 		data->tmu_control = exynos7_tmu_control;
-@@ -1267,8 +1119,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 	 * Check if the TMU shares some registers and then try to map the
- 	 * memory of common registers.
- 	 */
--	if (data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO &&
--	    data->soc != SOC_ARCH_EXYNOS5440)
-+	if (data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
- 		return 0;
- 
- 	if (of_address_to_resource(pdev->dev.of_node, 1, &res)) {
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index 5149c2a3030c..f3f830edd79a 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -34,7 +34,6 @@ enum soc_type {
- 	SOC_ARCH_EXYNOS5420,
- 	SOC_ARCH_EXYNOS5420_TRIMINFO,
- 	SOC_ARCH_EXYNOS5433,
--	SOC_ARCH_EXYNOS5440,
- 	SOC_ARCH_EXYNOS7,
- };
- 
--- 
-2.14.1
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
