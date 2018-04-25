@@ -1,245 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751412AbeDYKko (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 06:40:44 -0400
-Received: from david.siemens.de ([192.35.17.14]:49437 "EHLO david.siemens.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753263AbeDYKk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 06:40:29 -0400
-Subject: Re: [PATCH 3/6] PCI: Introduce devm_of_pci_get_host_bridge_resources
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
- <e387d04ea235c9a4879a897bb730adc383a96635.1524582822.git.jan.kiszka@siemens.com>
-Openpgp: preference=signencrypt
-Message-ID: <3920f35d-e667-4ff2-83e0-8f35ea078b23@siemens.com>
-Date: Wed, 25 Apr 2018 12:40:09 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        id S1754032AbeDYLNZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 07:13:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50260 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753882AbeDYLNV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 07:13:21 -0400
+Date: Wed, 25 Apr 2018 12:13:13 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Ondrej Jirman <megous@megous.com>, devicetree@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-sunxi@googlegroups.com, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 2/3] regulator: add support for SY8106A regulator
+Message-ID: <20180425111313.GD24769@sirena.org.uk>
+References: <20180423144657.63264-1-icenowy@aosc.io>
+ <20180423144657.63264-3-icenowy@aosc.io>
+ <20180424170733.GD22073@sirena.org.uk>
+ <C0C1F042-221A-420F-A8C1-5FADCFC687F1@aosc.io>
+ <20180425105309.GC24769@sirena.org.uk>
+ <15C93A9B-6EEB-49EB-A942-35F761E86569@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <e387d04ea235c9a4879a897bb730adc383a96635.1524582822.git.jan.kiszka@siemens.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="RYJh/3oyKhIjGcML"
+Content-Disposition: inline
+In-Reply-To: <15C93A9B-6EEB-49EB-A942-35F761E86569@aosc.io>
+X-Cookie: MS-DOS must die!
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-24 17:13, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> of_pci_get_host_bridge_resources allocates the resource structures it
-> fills dynamically, but none of its callers care to release them so far.
-> Rather than requiring everyone to do this explicitly, introduce a
-> managed version of that service. This differs API-wise only in taking a
-> reference to the associated device, rather than to the device tree node.
-> 
-> As of_pci_get_host_bridge_resources is an exported interface, we cannot
-> simply drop it at this point. After converting all in-tree users to the
-> new API, we could phase out the unmanaged one over some grace period.
-> 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  drivers/pci/of.c       | 89 ++++++++++++++++++++++++++++++++------------------
->  include/linux/of_pci.h | 14 ++++++--
->  2 files changed, 70 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index a28355c273ae..6eab0bde2ab3 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -243,26 +243,8 @@ void of_pci_check_probe_only(void)
->  EXPORT_SYMBOL_GPL(of_pci_check_probe_only);
->  
->  #if defined(CONFIG_OF_ADDRESS)
-> -/**
-> - * of_pci_get_host_bridge_resources - Parse PCI host bridge resources from DT
-> - * @dev: device node of the host bridge having the range property
-> - * @busno: bus number associated with the bridge root bus
-> - * @bus_max: maximum number of buses for this bridge
-> - * @resources: list where the range of resources will be added after DT parsing
-> - * @io_base: pointer to a variable that will contain on return the physical
-> - * address for the start of the I/O range. Can be NULL if the caller doesn't
-> - * expect I/O ranges to be present in the device tree.
-> - *
-> - * It is the caller's job to free the @resources list.
-> - *
-> - * This function will parse the "ranges" property of a PCI host bridge device
-> - * node and setup the resource mapping based on its content. It is expected
-> - * that the property conforms with the Power ePAPR document.
-> - *
-> - * It returns zero if the range parsing has been successful or a standard error
-> - * value if it failed.
-> - */
-> -int of_pci_get_host_bridge_resources(struct device_node *dev,
-> +static int __of_pci_get_host_bridge_resources(struct device *dev,
-> +			struct device_node *dev_node,
->  			unsigned char busno, unsigned char bus_max,
->  			struct list_head *resources, resource_size_t *io_base)
->  {
-> @@ -277,19 +259,22 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
->  	if (io_base)
->  		*io_base = (resource_size_t)OF_BAD_ADDR;
->  
-> -	bus_range = kzalloc(sizeof(*bus_range), GFP_KERNEL);
-> +	if (dev)
-> +		bus_range = devm_kzalloc(dev,sizeof(*bus_range), GFP_KERNEL);
-> +	else
-> +		bus_range = kzalloc(sizeof(*bus_range), GFP_KERNEL);
->  	if (!bus_range)
->  		return -ENOMEM;
->  
-> -	pr_info("host bridge %pOF ranges:\n", dev);
-> +	pr_info("host bridge %pOF ranges:\n", dev_node);
->  
-> -	err = of_pci_parse_bus_range(dev, bus_range);
-> +	err = of_pci_parse_bus_range(dev_node, bus_range);
->  	if (err) {
->  		bus_range->start = busno;
->  		bus_range->end = bus_max;
->  		bus_range->flags = IORESOURCE_BUS;
->  		pr_info("  No bus range found for %pOF, using %pR\n",
-> -			dev, bus_range);
-> +			dev_node, bus_range);
->  	} else {
->  		if (bus_range->end > bus_range->start + bus_max)
->  			bus_range->end = bus_range->start + bus_max;
-> @@ -297,7 +282,7 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
->  	pci_add_resource(resources, bus_range);
->  
->  	/* Check for ranges property */
-> -	err = of_pci_range_parser_init(&parser, dev);
-> +	err = of_pci_range_parser_init(&parser, dev_node);
->  	if (err)
->  		goto parse_failed;
->  
-> @@ -321,13 +306,17 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
->  		if (range.cpu_addr == OF_BAD_ADDR || range.size == 0)
->  			continue;
->  
-> -		res = kzalloc(sizeof(struct resource), GFP_KERNEL);
-> +		if (dev)
-> +			res = devm_kzalloc(dev, sizeof(struct resource),
-> +					   GFP_KERNEL);
-> +		else
-> +			res = kzalloc(sizeof(struct resource), GFP_KERNEL);
->  		if (!res) {
->  			err = -ENOMEM;
->  			goto parse_failed;
->  		}
->  
-> -		err = of_pci_range_to_resource(&range, dev, res);
-> +		err = of_pci_range_to_resource(&range, dev_node, res);
->  		if (err) {
->  			kfree(res);
->  			continue;
-> @@ -336,13 +325,13 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
->  		if (resource_type(res) == IORESOURCE_IO) {
->  			if (!io_base) {
->  				pr_err("I/O range found for %pOF. Please provide an io_base pointer to save CPU base address\n",
-> -					dev);
-> +					dev_node);
->  				err = -EINVAL;
->  				goto conversion_failed;
->  			}
->  			if (*io_base != (resource_size_t)OF_BAD_ADDR)
->  				pr_warn("More than one I/O resource converted for %pOF. CPU base address for old range lost!\n",
-> -					dev);
-> +					dev_node);
->  			*io_base = range.cpu_addr;
->  		}
->  
-> @@ -354,12 +343,50 @@ int of_pci_get_host_bridge_resources(struct device_node *dev,
->  conversion_failed:
->  	kfree(res);
->  parse_failed:
-> -	resource_list_for_each_entry(window, resources)
-> -		kfree(window->res);
-> +	if (!dev);
-> +		resource_list_for_each_entry(window, resources)
-> +			kfree(window->res);
->  	pci_free_resource_list(resources);
->  	return err;
->  }
-> +
-> +/**
-> + * of_pci_get_host_bridge_resources - Parse PCI host bridge resources from DT
-> + * @dev: device node of the host bridge having the range property
-> + * @busno: bus number associated with the bridge root bus
-> + * @bus_max: maximum number of buses for this bridge
-> + * @resources: list where the range of resources will be added after DT parsing
-> + * @io_base: pointer to a variable that will contain on return the physical
-> + * address for the start of the I/O range. Can be NULL if the caller doesn't
-> + * expect I/O ranges to be present in the device tree.
-> + *
-> + * It is the caller's job to free the @resources list.
-> + *
-> + * This function will parse the "ranges" property of a PCI host bridge device
-> + * node and setup the resource mapping based on its content. It is expected
-> + * that the property conforms with the Power ePAPR document.
-> + *
-> + * It returns zero if the range parsing has been successful or a standard error
-> + * value if it failed.
-> + */
-> +int of_pci_get_host_bridge_resources(struct device_node *dev_node,
-> +			unsigned char busno, unsigned char bus_max,
-> +			struct list_head *resources, resource_size_t *io_base)
-> +{
-> +	return __of_pci_get_host_bridge_resources(NULL, dev_node, busno,
-> +						  bus_max, resources, io_base);
-> +}
->  EXPORT_SYMBOL_GPL(of_pci_get_host_bridge_resources);
-> +
-> +int devm_of_pci_get_host_bridge_resources(struct device *dev,
-> +			unsigned char busno, unsigned char bus_max,
-> +			struct list_head *resources, resource_size_t *io_base)
-> +{
-> +	return __of_pci_get_host_bridge_resources(dev, dev->of_node, busno,
-> +						  bus_max, resources, io_base);
-> +}
-> +EXPORT_SYMBOL_GPL(devm_of_pci_get_host_bridge_resources);
-> +
->  #endif /* CONFIG_OF_ADDRESS */
->  
->  /**
-> diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
-> index 091033a6b836..08b8f02426a5 100644
-> --- a/include/linux/of_pci.h
-> +++ b/include/linux/of_pci.h
-> @@ -71,11 +71,21 @@ of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
->  #endif
->  
->  #if defined(CONFIG_OF_ADDRESS)
-> -int of_pci_get_host_bridge_resources(struct device_node *dev,
-> +int of_pci_get_host_bridge_resources(struct device_node *dev_node,
-> +			unsigned char busno, unsigned char bus_max,
-> +			struct list_head *resources, resource_size_t *io_base);
-> +int devm_of_pci_get_host_bridge_resources(struct device *dev,
->  			unsigned char busno, unsigned char bus_max,
->  			struct list_head *resources, resource_size_t *io_base);
->  #else
-> -static inline int of_pci_get_host_bridge_resources(struct device_node *dev,
-> +static inline int of_pci_get_host_bridge_resources(struct device_node *dev_node,
-> +			unsigned char busno, unsigned char bus_max,
-> +			struct list_head *resources, resource_size_t *io_base)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +static inline int devm_of_pci_get_host_bridge_resources(struct device *dev,
->  			unsigned char busno, unsigned char bus_max,
->  			struct list_head *resources, resource_size_t *io_base)
->  {
-> 
 
-I left a small reviewer exercise in this patch behind, just noticed
-during a backport. Will resolved it via some v2, just waiting in case
-there will be further comments.
+--RYJh/3oyKhIjGcML
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Jan
+On Wed, Apr 25, 2018 at 06:55:10PM +0800, Icenowy Zheng wrote:
+> =E4=BA=8E 2018=E5=B9=B44=E6=9C=8825=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
+6:53:09, Mark Brown <broonie@kernel.org> =E5=86=99=E5=88=B0:
 
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+> >> SPDX identifier is special -- it should be in a seperated
+> >> comment block.
+
+> >No, it just needs to be a C++ comment on the first line to ease machine
+> >parsing.  The rest of the file doesn't matter for that.
+
+> Okay. Thus I will use a seperate /* */ block for it in the
+> next revision, to follow the rule.
+
+Just make the whole copyright block a C++ comment.  It's much easier and
+even with a blank line between the SPDX line and the rest of it it'll
+still look messy and odd.
+
+--RYJh/3oyKhIjGcML
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrgYsgACgkQJNaLcl1U
+h9Ak3wf9GZtm/4mnEWPn9EQiK6adnyQX1tR7KYDwhWjs1mrQl1WZO7/1fF9GIu4v
+8w54QoveWz8Mj5ivVT1Z12qY4A+HM3R2Swi4HIHhvlixemolTuZ+74LUk+tdqW6B
+hmCSC/WGV7G8WhBJDSQDB3jNJ47rxCsxkbwhU8pjeu6RJDf3WuE9ebaFh6Q3oQkT
+PucMnQyogGuSFU+sTyIy1iVl98gXTuAyuEgNF2KTjdWPQTBssw0Pb2Uuz6JHeZr0
+QvwVVpdx5L1ga9yakqew1Ld/JfoU7rRGyYUy86ijK+JkFqWpIcfVeweNL1liMsmm
+iTX8Jlq6AuiaFhznDPuQLOIf4wmM1Q==
+=sftl
+-----END PGP SIGNATURE-----
+
+--RYJh/3oyKhIjGcML--
