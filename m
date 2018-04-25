@@ -1,144 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751244AbeDYGHN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:07:13 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36854 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeDYGHL (ORCPT
+        id S1751304AbeDYGIv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:08:51 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:54788 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750968AbeDYGIt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:07:11 -0400
-X-Google-Smtp-Source: AIpwx49V2YL8Rg6WOqKhsgEaTkHrD/JwZVbnrl/zLEtSjVkEVHFwrO/siVLiH4rCpcN7me1069jy7A==
-Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
- DRM driver
-To: Dongwon Kim <dongwon.kim@intel.com>
-Cc: Wei Liu <wei.liu2@citrix.com>, jgross@suse.com,
-        Artem Mygaiev <Artem_Mygaiev@epam.com>, konrad.wilk@oracle.com,
-        airlied@linux.ie, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        daniel.vetter@intel.com, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
-References: <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
- <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
- <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
- <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
- <20180420071914.GG31310@phenom.ffwll.local>
- <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
- <20180423115242.ywdwqblj2aseu3fr@citrix.com>
- <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
- <20180424115437.GT31310@phenom.ffwll.local>
- <18ab5f76-00b0-42a0-fcb8-e0cbf4cdd527@gmail.com>
- <20180424203514.GA26787@downor-Z87X-UD5H>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <43bc755f-3e31-6841-0962-542c42515f88@gmail.com>
-Date: Wed, 25 Apr 2018 09:07:07 +0300
+        Wed, 25 Apr 2018 02:08:49 -0400
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
+ DA850 PSC
+To: David Lechner <david@lechnology.com>, Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
+ <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
+ <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
+ <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
+ <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
+ <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
+ <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
+ <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
+ <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
+ <aa1c2e6f-793c-1d9e-366a-3496f500f946@ti.com>
+ <d32a4cd5-4344-6e20-fdca-1ed830a52466@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <acce5103-6b72-ed67-7ac1-ffbbed268e9a@ti.com>
+Date: Wed, 25 Apr 2018 11:37:36 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424203514.GA26787@downor-Z87X-UD5H>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <d32a4cd5-4344-6e20-fdca-1ed830a52466@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 11:35 PM, Dongwon Kim wrote:
-> Had a meeting with Daniel and talked about bringing out generic
-> part of hyper-dmabuf to the userspace, which means we most likely
-> reuse IOCTLs defined in xen-zcopy for our use-case if we follow
-> his suggestion.
-I will still have kernel side API, so backends/frontends implemented
-in the kernel can access that functionality as well.
->
-> So assuming we use these IOCTLs as they are,
-> Several things I would like you to double-check..
->
-> 1. returning gref as is to the user space is still unsafe because
-> it is a constant, easy to guess and any process that hijacks it can easily
-> exploit the buffer. So I am wondering if it's possible to keep dmabuf-to
-> -gref or gref-to-dmabuf in kernel space and add other layers on top
-> of those in actual IOCTLs to add some safety.. We introduced flink like
-> hyper_dmabuf_id including random number but many says even that is still
-> not safe.
-Yes, it is generally unsafe. But even if we have implemented
-the approach you have in hyper-dmabuf or similar, what stops
-malicious software from doing the same with the existing gntdev UAPI?
-No need to brute force new UAPI if there is a simpler one.
-That being said, I'll put security aside at the first stage,
-but of course we can start investigating ways to improve
-(I assume you already have use-cases where security issues must
-be considered, so, probably you can tell more on what was investigated
-so far).
->
-> 2. maybe we could take hypervisor-independent process (e.g. SGT<->page)
-> out of xen-zcopy and put those in a new helper library.
-I believe this can be done, but at the first stage I would go without
-that helper library, so it is clearly seen what can be moved to it later
-(I know that you want to run ACRN as well, but can I run it on ARM? ;)
-
-> 3. please consider the case where original DMA-BUF's first offset
-> and last length are not 0 and PAGE_SIZE respectively. I assume current
-> xen-zcopy only supports page-aligned buffer with PAGE_SIZE x n big.
-Hm, what is the use-case for that?
-> thanks,
-> DW
-Thank you,
-Oleksandr
-> On Tue, Apr 24, 2018 at 02:59:39PM +0300, Oleksandr Andrushchenko wrote:
->> On 04/24/2018 02:54 PM, Daniel Vetter wrote:
->>> On Mon, Apr 23, 2018 at 03:10:35PM +0300, Oleksandr Andrushchenko wrote:
->>>> On 04/23/2018 02:52 PM, Wei Liu wrote:
->>>>> On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko wrote:
->>>>>>>>       the gntdev.
->>>>>>>>
->>>>>>>> I think this is generic enough that it could be implemented by a
->>>>>>>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
->>>>>>>> something similar to this.
->>>>>>> You can't just wrap random userspace memory into a dma-buf. We've just had
->>>>>>> this discussion with kvm/qemu folks, who proposed just that, and after a
->>>>>>> bit of discussion they'll now try to have a driver which just wraps a
->>>>>>> memfd into a dma-buf.
->>>>>> So, we have to decide either we introduce a new driver
->>>>>> (say, under drivers/xen/xen-dma-buf) or extend the existing
->>>>>> gntdev/balloon to support dma-buf use-cases.
->>>>>>
->>>>>> Can anybody from Xen community express their preference here?
->>>>>>
->>>>> Oleksandr talked to me on IRC about this, he said a few IOCTLs need to
->>>>> be added to either existing drivers or a new driver.
+On Tuesday 24 April 2018 09:41 PM, David Lechner wrote:
+> On 04/24/2018 03:28 AM, Sekhar Nori wrote:
+>> On Monday 23 April 2018 08:29 PM, David Lechner wrote:
+>>> On 04/06/2018 11:46 AM, Stephen Boyd wrote:
+>>>> Quoting Sekhar Nori (2018-04-06 02:37:03)
 >>>>>
->>>>> I went through this thread twice and skimmed through the relevant
->>>>> documents, but I couldn't see any obvious pros and cons for either
->>>>> approach. So I don't really have an opinion on this.
+>>>>> Can you please check that and confirm there is no issue with genpd and
+>>>>> using CLK_OF_DECLARE() to initialize clocks?
 >>>>>
->>>>> But, assuming if implemented in existing drivers, those IOCTLs need to
->>>>> be added to different drivers, which means userspace program needs to
->>>>> write more code and get more handles, it would be slightly better to
->>>>> implement a new driver from that perspective.
->>>> If gntdev/balloon extension is still considered:
+>>>>> Unless you report an issue back, or Mike and Stephen have ideas about
+>>>>> how to handle the dependency between PSC/PLL derived timer clock
+>>>>> initialization and and timer_probe(), I think we need to move back to
+>>>>> using CLK_OF_DECLARE().
 >>>>
->>>> All the IOCTLs will be in gntdev driver (in current xen-zcopy terminology):
->> I was lazy to change dumb to dma-buf, so put this notice ;)
->>>>   - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
->>>>   - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
->>>>   - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
->>> s/DUMB/DMA_BUF/ please. This is generic dma-buf, it has nothing to do with
->>> the dumb scanout buffer support in the drm/gfx subsystem. This here can be
->>> used for any zcopy sharing among guests (as long as your endpoints
->>> understands dma-buf, which most relevant drivers do).
->> Of course, please see above
->>> -Daniel
+>>>> In such a case, please use the hybrid approach where the clks required
+>>>> for the clockevent and/or clocksource are registered in the early
+>>>> CLK_OF_DECLARE path but the rest of the clks get registered with a
+>>>> proper platform device and driver. There are examples of this approach
+>>>> on other platforms already.
+>>>>
 >>>
->>>> Balloon driver extension, which is needed for contiguous/DMA
->>>> buffers, will be to provide new *kernel API*, no UAPI is needed.
->>>>
->>>>> Wei.
->>>> Thank you,
->>>> Oleksandr
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel@lists.freedesktop.org
->>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>> I looked at this a bit last week, but I didn't come up with any approach
+>>> that I was happy with. It seems like it would be nice to just register
+>>> the absolute minimum clocks needed. On DA8XX, that would just be the
+>>> PLL0
+>>> AUXCLK. On most of the other SoCs, it would be the PLL AUXCLK plus one
+>>> LPSC clock. The AUXCLKs are easy because they are just a simple gate
+>>> from the oscillator. The LPSC clocks are a bit more tricky because they
+>>> have a complex sequence for turning on. Furthermore, on DM646X, we need
+>>> the whole PLL up to SYSCLK3 plus one LPSC clock, so things get a bit
+>>> messy there.
+>>
+>> Things might change in the context of work being done here by Bartosz
+>> for converting clocks to early platform devices.
+>>
+>> But, keeping that development aside for a moment: I think this means the
+>> PLLs and PSCs need to be CLK_OF_DECLARE(). What we can have as platform
+>> devices are clocks that are not in the path to get timer clock working
+>> (like CFGCHIP clocks).
+> 
+> CLK_OF_DECLARE() only matters on DA850. None of the other SoCs use device
+
+Thats true today, but lets not make the assumption that none of the
+other DaVinci SoCs will gain DT support ever. We don't want churn in CCF
+support once someone tries to add DT support for other platforms.
+
+I already have people using DM365 in mainline, for example.
+
+> tree. And on DA850, the timer0 clock is just the PLL0 AUXCLK, so PSCs can> still be platform devices there. And in fact, one of the PSC clocks on
+> DA850 depends on async3, which is a CFGCHIP clock, so if we made the PSCs
+> CLK_OF_DECLARE(), then we also have to make at least the async3 CFGCHIP
+> clock CLK_OF_DECLARE(). But, like I said, I think that can be avoided by
+> leaving the PSC clocks as a platform device on DA850 (and DA830).
+
+Okay, I did not realize that there is a dependency between CFGCHIP clk
+and PSC too.
+
+> For everything else, we need the legacy board file equivalent of
+> CLK_OF_DECLARE(), which is basically what I had here in v5 of the
+> series.
+
+Yeah. I did not realize the dependency with timer when platform devices
+were suggested. Sorry.
+
+> 
+> So, if we want this to keep moving before the if/when of Bartosz's
+> early platform device stuff, I'm thinking that I will make the PLL
+
+After looking at feedback to Bartosz's series, and the fact that
+previous attempts at doing the same thing were rejected, I think there
+is benefit in keeping CCF support moving independent Bartosz's work.
+Otherwise, we have no chance of getting anything merged for v4.18.
+
+Early initialization of clocks and dependency with timer is a pretty
+common theme across SoCs. As and when a better way to support is found,
+I am sure DaVinci can be converted over along with rest of the devices.
+
+> and PSC drivers loadable with or without a platform device and let
+> each SoC pick which one it should use.
+
+This sounds flexible. We have to see how the patches look. But I would
+caution against adding a lot of dead code. If there is no way some of
+the clocks will be useful as platform device, I see no point of
+supporting them as such just in anticipation.
+
+Thanks,
+Sekhar
