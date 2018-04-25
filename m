@@ -1,56 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752425AbeDYLhM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 07:37:12 -0400
-Received: from mail-it0-f46.google.com ([209.85.214.46]:55069 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752938AbeDYLhF (ORCPT
+        id S1753505AbeDYLhg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 07:37:36 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33629 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752589AbeDYLh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 07:37:05 -0400
-X-Google-Smtp-Source: AIpwx48PtfH54lQGIq5+q56HMbgalu6WoUFSyHK0uDjAzlgtnDeQSmMRTsnn7fgoB4ym6lGhn5mHhA==
-Subject: Re: [PATCH 0/6] soc: qcom: smem: bug fixes
-To: Andy Gross <andy.gross@linaro.org>
-Cc: clew@codeaurora.org, aneela@codeaurora.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180410222542.29474-1-elder@linaro.org>
- <e4cc56de-71d9-4904-ab09-92fa079c956a@linaro.org>
- <20180425040728.GA12778@hector.attlocal.net>
-From: Alex Elder <elder@linaro.org>
-Message-ID: <fa630ea3-ec6e-76ee-a677-198c26b7fb49@linaro.org>
-Date: Wed, 25 Apr 2018 06:37:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180425040728.GA12778@hector.attlocal.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 25 Apr 2018 07:37:29 -0400
+X-Google-Smtp-Source: AIpwx4/FSNTMfsITij8iTT3bDcKlqBNjBXPRH7cFwDI5nLZcl5QN04pFvVVy+RFa+mlKywDM9wolUA==
+Message-ID: <1524656245.4026.61.camel@baylibre.com>
+Subject: Re: [PATCH v2 1/2] clk: meson: gxbb: expose VDEC_1 and VDEC_HEVC
+ clocks
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Wed, 25 Apr 2018 13:37:25 +0200
+In-Reply-To: <20180424184838.3406-2-maxi.jourdan@wanadoo.fr>
+References: <20180424184838.3406-1-maxi.jourdan@wanadoo.fr>
+         <20180424184838.3406-2-maxi.jourdan@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 11:07 PM, Andy Gross wrote:
-> On Fri, Apr 20, 2018 at 07:11:41AM -0500, Alex Elder wrote:
->> On 04/10/2018 05:25 PM, Alex Elder wrote:
->>> This series contains mostly bug fixes to the Qualcomm shared memory
->>> ("smem") code.  Although the bugs are real, they have most likely
->>> never been observed.
->>>
->>> 					-Alex
->>
->> Ping?	-Alex
+On Tue, 2018-04-24 at 20:48 +0200, Maxime Jourdan wrote:
+> Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+
+Even if the change is trivial, please add commit description.
+I'll do it for you this time.
+
+Applied to next/headers
+Thx
+
+> ---
+>  include/dt-bindings/clock/gxbb-clkc.h | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> It's only been a couple of weeks =P  That said, I looked over all of these and
-> they look reasonable.  I'd like Bjorn to take a look as well.
-
-Thanks a lot.  I have another set of patches based on these and I've been
-sitting on them.  I don't want to inundate the list.
-
-I see Bjorn has given his OK on all of them (thanks Bjorn!), so I'll send
-out my new ones today.
-
-					-Alex
-
-> Andy
-> 
+> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+> index 8ba99a5e3fd3..7a892be90549 100644
+> --- a/include/dt-bindings/clock/gxbb-clkc.h
+> +++ b/include/dt-bindings/clock/gxbb-clkc.h
+> @@ -125,5 +125,7 @@
+>  #define CLKID_VAPB_1		138
+>  #define CLKID_VAPB_SEL		139
+>  #define CLKID_VAPB		140
+> +#define CLKID_VDEC_1		153
+> +#define CLKID_VDEC_HEVC		156
+>  
+>  #endif /* __GXBB_CLKC_H */
