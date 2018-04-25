@@ -1,93 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751399AbeDYHWv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 03:22:51 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46393 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750941AbeDYHWq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 03:22:46 -0400
-Subject: Re: [PATCH 1/3] dt-bindings: iio: stm32-adc: add support for
- STM32MP1.
-To: Rob Herring <robh@kernel.org>
-CC: <jic23@kernel.org>, <alexandre.torgue@st.com>, <mark.rutland@arm.com>,
-        <mcoquelin.stm32@gmail.com>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@linaro.org>
-References: <1524065874-434-1-git-send-email-fabrice.gasnier@st.com>
- <1524065874-434-2-git-send-email-fabrice.gasnier@st.com>
- <20180424162721.qbfsc7j3syzzykeh@rob-hp-laptop>
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <ee92eb8d-9675-3c94-1c0d-f6e8f091d878@st.com>
-Date: Wed, 25 Apr 2018 09:22:02 +0200
+        id S1751322AbeDYHYW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 03:24:22 -0400
+Received: from mail1.perex.cz ([77.48.224.245]:39882 "EHLO mail1.perex.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750929AbeDYHYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 03:24:21 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 470DCA003F
+Subject: Re: [PATCH 0/8] Fix year 2038 issue for sound subsystem
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Baolin Wang <baolin.wang@linaro.org>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Ingo Molnar <mingo@kernel.org>,
+        SF Markus Elfring <elfring@users.sourceforge.net>,
+        Dan Carpenter <dan.carpenter@oracle.com>, jeeja.kp@intel.com,
+        Vinod Koul <vinod.koul@intel.com>,
+        Guneshwor Singh <guneshwor.o.singh@intel.com>,
+        subhransu.s.prusty@intel.com, Bhumika Goyal <bhumirks@gmail.com>,
+        gudishax.kranthikumar@intel.com, Naveen M <naveen.m@intel.com>,
+        hardik.t.shah@intel.com, Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Fabian Frederick <fabf@skynet.be>, alsa-devel@alsa-project.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1524570852.git.baolin.wang@linaro.org>
+ <66b26dc6-9139-80cc-0b49-28ff68169b5c@perex.cz>
+ <CAK8P3a0SKAAJMUDOJBjHKCnvprqOTjTnX9Ju3W_q1avzdU7EnA@mail.gmail.com>
+From: Jaroslav Kysela <perex@perex.cz>
+Message-ID: <1b6a0710-7bc1-08d1-49a5-f1bed7bf3f84@perex.cz>
+Date: Wed, 25 Apr 2018 09:23:58 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180424162721.qbfsc7j3syzzykeh@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAK8P3a0SKAAJMUDOJBjHKCnvprqOTjTnX9Ju3W_q1avzdU7EnA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-25_02:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 06:27 PM, Rob Herring wrote:
-> On Wed, Apr 18, 2018 at 05:37:52PM +0200, Fabrice Gasnier wrote:
->> Document support for STM32MP1 ADC. It's quite similar to STM32H7 ADC.
->> Introduce "st,stm32mp1-adc" compatible to handle variants of this
->> hardware such as vregready flag, interrupts, clock rate.
+Dne 24.4.2018 v 15:37 Arnd Bergmann napsal(a):
+> On Tue, Apr 24, 2018 at 3:29 PM, Jaroslav Kysela <perex@perex.cz> wrote:
+>> Dne 24.4.2018 v 14:06 Baolin Wang napsal(a):
+>>> Since many structures will use timespec type variables to record time stamp
+>>> in uapi/asound.h, which are not year 2038 safe on 32bit system. This patchset
+>>> tries to introduce new structures removing timespec type to compatible native
+>>> mode and compat mode.
+>>>
+>>> Moreover this patchset also converts the internal structrures to use timespec64
+>>> type and related APIs.
 >>
->> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->> ---
->>  Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt | 6 +++++-
->>  1 file changed, 5 insertions(+), 1 deletion(-)
+>> Thanks for your patchset. A few comments:
 >>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
->> index e8bb824..9994384 100644
->> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
->> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
->> @@ -24,8 +24,11 @@ Required properties:
->>  - compatible: Should be one of:
->>    "st,stm32f4-adc-core"
->>    "st,stm32h7-adc-core"
->> +  "st,stm32mp1-adc-core"
->>  - reg: Offset and length of the ADC block register set.
->> -- interrupts: Must contain the interrupt for ADC block.
->> +- interrupts: One or more interrupts for ADC block. Some parts like stm32f4
->> +  and stm32h7 share a common ADC interrupt line. stm32mp1 has separate
->> +  lines for each ADC within ADC block.
+>> It might be more nice to reuse the existing structures and put
+>> timespec64 to the reserved field and duplicate information (with the
+>> 32-bit wrapping for the old fields). It means that we do not need new
+>> ioctls and old libraries will be fine.
 > 
-> How many interrupt lines is that?
-
-Hi Rob, Jonathan,
-
-I should have mentioned this: stm32mp1 has two separate interrupt lines
-for each ADC within ADC block.
-
-Do you wish I send a V2 for this ? Or a patch to fix this ?
-
-Please let me know,
-BR,
-Fabrice
-
+> The current approach is intended to make any user space work
+> without source-level changes, i.e. you can still build an old alsa-lib
+> package against a new glibc as long as you have the latest kernel
+> headers (which the glibc requires for using 64-bit time_t).
 > 
->>  - clocks: Core can use up to two clocks, depending on part used:
->>    - "adc" clock: for the analog circuitry, common to all ADCs.
->>      It's required on stm32f4.
->> @@ -53,6 +56,7 @@ Required properties:
->>  - compatible: Should be one of:
->>    "st,stm32f4-adc"
->>    "st,stm32h7-adc"
->> +  "st,stm32mp1-adc"
->>  - reg: Offset of ADC instance in ADC block (e.g. may be 0x0, 0x100, 0x200).
->>  - clocks: Input clock private to this ADC instance. It's required only on
->>    stm32f4, that has per instance clock input for registers access.
->> -- 
->> 1.9.1
->>
+> If we try to extend the structures in a different way, that requires
+> user space changes, and existing source code would silently
+> break on a future glibc.
+> IMHO changing the source-level interface should only be done
+> as a last resort for y2038.
+
+We have almost everything hidden in the alsa-lib code for the
+applications and there is the protocol versioning, so we can detect the
+changes easily and handle the new fields in the library. As you noted,
+the current code will be fine until 2038 even with my proposed change
+(which is more easy to be implemented in the kernel - less bloat) and
+there are 20 years to update alsa-lib remaining for the 32-bit systems.
+
+Only the binary compatibility for the older binaries should be taken
+into account.
+
+Also, you expect that tv_nsec will be changed to the 's64' type. Do you
+have that confirmed from the glibc developers? From the current
+specification, the tv_nsec type is 'long'. It may cause some binary
+compatibility issues, too.
+
+				Thanks,
+					Jaroslav
+
+-- 
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
