@@ -1,15 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751296AbeDYGXS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:23:18 -0400
-Received: from mail-it0-f48.google.com ([209.85.214.48]:34841 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751022AbeDYGXQ (ORCPT
+        id S1751330AbeDYGYo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:24:44 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:40366 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750929AbeDYGYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:23:16 -0400
-X-Google-Smtp-Source: AIpwx4+c/PtfCrINlgcHVRumureLKYi/zjNuwoKZ6JeJIyFydE1fJDVwRc1kJ2vq9TK9ttd3VBXcJLZ/x27O/E1Sx/E=
+        Wed, 25 Apr 2018 02:24:38 -0400
+X-Google-Smtp-Source: AIpwx4/5euK55kozCfr+KQ/2I4K7ZJsrXk8BiPtsKICha/VvfdNvlM8Xnb4ICJf66V1AXG+boPo82dkKIrCY+gT2VkE=
 MIME-Version: 1.0
-X-Originating-IP: [2a02:168:5635:0:39d2:f87e:2033:9f6]
 In-Reply-To: <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
 References: <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
  <20180419081657.GA16735@infradead.org> <20180420071312.GF31310@phenom.ffwll.local>
@@ -18,21 +17,21 @@ References: <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
  <20180420152111.GR31310@phenom.ffwll.local> <20180424184847.GA3247@infradead.org>
  <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
  <20180425054855.GA17038@infradead.org> <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 25 Apr 2018 08:23:15 +0200
-X-Google-Sender-Auth: tm5mnx6783NFxPx6KwcQTzE4nCU
-Message-ID: <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 25 Apr 2018 02:24:36 -0400
+Message-ID: <CADnq5_P3bT0TStSXpKh11ydifv=KwKtRj-7tDS=GQXey+8tBPw@mail.gmail.com>
 Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
-To: Christoph Hellwig <hch@infradead.org>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
         "moderated list:DMA BUFFER SHARING FRAMEWORK"
         <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
         Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
         Dan Williams <dan.j.williams@intel.com>,
         Logan Gunthorpe <logang@deltatee.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
         "open list:DMA BUFFER SHARING FRAMEWORK"
         <linux-media@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -40,9 +39,9 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3P6NQrW003172
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3P6OoQB003176
 
-On Wed, Apr 25, 2018 at 8:13 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
+On Wed, Apr 25, 2018 at 2:13 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
 > On Wed, Apr 25, 2018 at 7:48 AM, Christoph Hellwig <hch@infradead.org> wrote:
 >> On Tue, Apr 24, 2018 at 09:32:20PM +0200, Daniel Vetter wrote:
 >>> Out of curiosity, how much virtual flushing stuff is there still out
@@ -96,15 +95,7 @@ On Wed, Apr 25, 2018 at 8:13 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
 > have another set of pagetables on the gpu itself and can
 > scatter-gather. Usually it's the former for display/video blocks, and
 > the latter for rendering.
-
-For more fun:
-
-https://www.spinics.net/lists/dri-devel/msg173630.html
-
-Yeah, sometimes we want to disable the iommu because the on-gpu
-pagetables are faster ...
--Daniel
-
+>
 >>> dma-buf has all the functions for flushing, so you can have coherent
 >>> mappings, non-coherent mappings and pretty much anything else. Or well
 >>> could, because in practice people hack up layering violations until it
@@ -123,6 +114,12 @@ pagetables are faster ...
 > coherency issues between intel and amd gpus. GPUs have some bits
 > somewhere (in the pagetables, or in the buffer object description
 > table created by userspace) to control that stuff.
+
+Right.  We have a bit in the GPU page table entries that determines
+whether we snoop the CPU's cache or not.
+
+Alex
+
 >
 > For anything on the SoC it's presented as pci device, but that's
 > extremely fake, and we can definitely do non-snooped transactions on
@@ -133,10 +130,7 @@ pagetables are faster ...
 > Daniel Vetter
 > Software Engineer, Intel Corporation
 > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
