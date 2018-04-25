@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AB8JxZrRSXCae9nYzYO5F4WnS9diyx8Ud1sGaVlsuftB13oRW4zzB0EwNktDf5CWdBOoi2sdWlXN
-ARC-Seal: i=1; a=rsa-sha256; t=1524653030; cv=none;
+X-Google-Smtp-Source: AIpwx4+T1ldnUkeApAr+CS9ndC8oPG8P56aUNF12oNVpanW9c+AKYC5J6CA24Sjpj7jeegtBORei
+ARC-Seal: i=1; a=rsa-sha256; t=1524653028; cv=none;
         d=google.com; s=arc-20160816;
-        b=nEdPVrGONE3l3JcFDwTbl13SSYON1/BiILUDbOHduohWd1KJ+Aw6VnxEdQhRjtTwVg
-         qReFbshhvpNbo8HwB1Yn9QM6NMezL3IfEp2c0asklTUAXieOr9hy3T0sJqWKgzK/SbHr
-         ND5itN1SmAu90NeC3Zaxy87i3Degzvu4YCOt9V1OYA2eLQchMFM8uNdoHrgTiuWlB23x
-         ZkdrhRHEnDXr5M2U0mEIoFsAdolsb09/1Qvgeaq+9Z89IcArLhQEj0kWWLiPuAaXjqLQ
-         yOr2D1LztXfdmX8a6DV9170mzwZbI+C9omnIzaYNulSk/JD5p0ZDYB+fLmh//SPtBaf0
-         w0bQ==
+        b=rqoCQkjIv1XDziccyfGTOVxeel3M501TpiRR4pBUjrw7CzRp+bfxCbZbzbRz96d83o
+         Pbt/xbm8LusmxsvRJIuO5iA/X2sZtdQRxgWx24qNlIqRSMJLT5kZsvaGLDiv2w7wjr5o
+         lnh0SW4IkJBDQWEbR2b/OGuVm0g+enOQWaQM7QjM07xxfaM6wYZjTJgyZ27OLg0HK7md
+         YSFd379qe/76qRU7ZoZfvlNzDJ3aOFnmNCYnV3iTwERi8+WowGTx9v7yJXIkjYTLnXfy
+         gfo0hXDgRpRX0J/5BTG/0CSR74XPChwN8oPSOuheP7z3TldK3ye+2dMUiPmcYnQKRn3x
+         eRTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iiHLzrSOFW8N3rz+uvEO2/yy2QwmxXnDvk/mKafpwVc=;
-        b=Jl8jZVwOW4yseP6ln/UIYEq2eI4pGU3yk5VrOX1uAVotmcG7bM+OztkM8mQ7JUotYo
-         PxOCUOjIsn+cONE9W/3uoCzaxOzFrxU1JYs0QFCwhTPtTpKct8LGQKWxo7ZsXKFwVwtO
-         VCrdkZE++/eFO+jlAoxFI89mayuzwjbsEKrZ2xtxo69LJud+3c6qiJcdIrIQ7K8cuewj
-         pYYp0cqHmjiTtlmU1NS744LNw9CagmXV1LXHPcRNwH9n83Cz/vP1TKUaPgLGJw2675KN
-         1Guqnr4pa08qbjYZwgWiYjxx6dJhUJJoyCdGzMr54unfdnHZ4tor6q24bOve2iRmscKR
-         cAEg==
+        bh=LgbuWPxBLDn5273THEJ25SVXJyBU/lCOLgoxelGPK7E=;
+        b=u750+tD0580vj9UxdAl9XyCMINc1plAv5EY2+pDG6Wx/MSG1Nn3/5n2pm89eh5aZTS
+         RztjP/x3ZMheDJ4KIl2R7EDjRfnOf9VapXgvb4sOldB2xros3b/+afiirZxVwKlPdZSI
+         DfbuVIgzunjYgcXQnhvr+JyKHAxtKyzsMHON/0SqoBw5OzX1xD2s01oHpXih7r8o6OZ8
+         PFE5oaoFXH0LCm+I4C+GkvDhhpJKFibxx1Kzc7j0gyX+RRyBm2OiPQ1pqtsx4ZyIAZCv
+         JvoBLZsZD5e7OsJYt7UlySZBHkp1adAgPNCkBBbZVurfi3BMsfOAGdMgAdbSqE237J+g
+         fBTw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Niklas Cassel <niklas.cassel@axis.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	kernel test robot <fengguang.wu@intel.com>,
+	Trond Myklebust <trond.myklebust@primarydata.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 159/183] net: stmmac: discard disabled flags in interrupt status register
-Date: Wed, 25 Apr 2018 12:36:19 +0200
-Message-Id: <20180425103248.926651440@linuxfoundation.org>
+Subject: [PATCH 4.14 158/183] SUNRPC: Dont call __UDPX_INC_STATS() from a preemptible context
+Date: Wed, 25 Apr 2018 12:36:18 +0200
+Message-Id: <20180425103248.887978060@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714576410849299?=
-X-GMAIL-MSGID: =?utf-8?q?1598714576410849299?=
+X-GMAIL-THRID: =?utf-8?q?1598714573477079972?=
+X-GMAIL-MSGID: =?utf-8?q?1598714573477079972?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,45 +50,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@axis.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
 
-[ Upstream commit 1b84ca187510f60f00f4e15255043ce19bb30410 ]
+[ Upstream commit 0afa6b4412988019db14c6bfb8c6cbdf120ca9ad ]
 
-The interrupt status register in both dwmac1000 and dwmac4 ignores
-interrupt enable (for dwmac4) / interrupt mask (for dwmac1000).
-Therefore, if we want to check only the bits that can actually trigger
-an irq, we have to filter the interrupt status register manually.
+Calling __UDPX_INC_STATS() from a preemptible context leads to a
+warning of the form:
 
-Commit 0a764db10337 ("stmmac: Discard masked flags in interrupt status
-register") fixed this for dwmac1000. Fix the same issue for dwmac4.
+ BUG: using __this_cpu_add() in preemptible [00000000] code: kworker/u5:0/31
+ caller is xs_udp_data_receive_workfn+0x194/0x270
+ CPU: 1 PID: 31 Comm: kworker/u5:0 Not tainted 4.15.0-rc8-00076-g90ea9f1 #2
+ Workqueue: xprtiod xs_udp_data_receive_workfn
+ Call Trace:
+  dump_stack+0x85/0xc1
+  check_preemption_disabled+0xce/0xe0
+  xs_udp_data_receive_workfn+0x194/0x270
+  process_one_work+0x318/0x620
+  worker_thread+0x20a/0x390
+  ? process_one_work+0x620/0x620
+  kthread+0x120/0x130
+  ? __kthread_bind_mask+0x60/0x60
+  ret_from_fork+0x24/0x30
 
-Just like commit 0a764db10337 ("stmmac: Discard masked flags in
-interrupt status register"), this makes sure that we do not get
-spurious link up/link down prints.
+Since we're taking a spinlock in those functions anyway, let's fix the
+issue by moving the call so that it occurs under the spinlock.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: kernel test robot <fengguang.wu@intel.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/sunrpc/xprtsock.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-@@ -562,10 +562,12 @@ static int dwmac4_irq_status(struct mac_
- 			     struct stmmac_extra_stats *x)
- {
- 	void __iomem *ioaddr = hw->pcsr;
--	u32 intr_status;
-+	u32 intr_status = readl(ioaddr + GMAC_INT_STATUS);
-+	u32 intr_enable = readl(ioaddr + GMAC_INT_EN);
- 	int ret = 0;
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -1069,18 +1069,18 @@ static void xs_udp_data_read_skb(struct
  
--	intr_status = readl(ioaddr + GMAC_INT_STATUS);
-+	/* Discard disabled bits */
-+	intr_status &= intr_enable;
+ 	/* Suck it into the iovec, verify checksum if not done by hw. */
+ 	if (csum_partial_copy_to_xdr(&rovr->rq_private_buf, skb)) {
+-		__UDPX_INC_STATS(sk, UDP_MIB_INERRORS);
+ 		spin_lock(&xprt->recv_lock);
++		__UDPX_INC_STATS(sk, UDP_MIB_INERRORS);
+ 		goto out_unpin;
+ 	}
  
- 	/* Not used events (e.g. MMC interrupts) are not handled. */
- 	if ((intr_status & mmc_tx_irq))
+-	__UDPX_INC_STATS(sk, UDP_MIB_INDATAGRAMS);
+ 
+ 	spin_lock_bh(&xprt->transport_lock);
+ 	xprt_adjust_cwnd(xprt, task, copied);
+ 	spin_unlock_bh(&xprt->transport_lock);
+ 	spin_lock(&xprt->recv_lock);
+ 	xprt_complete_rqst(task, copied);
++	__UDPX_INC_STATS(sk, UDP_MIB_INDATAGRAMS);
+ out_unpin:
+ 	xprt_unpin_rqst(rovr);
+  out_unlock:
