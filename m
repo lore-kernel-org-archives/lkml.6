@@ -1,51 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751616AbeDYJ0w (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:26:52 -0400
-Received: from mail-io0-f180.google.com ([209.85.223.180]:46911 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751361AbeDYJ0s (ORCPT
+        id S1751560AbeDYJdA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:33:00 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:37055 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750995AbeDYJcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:26:48 -0400
-X-Google-Smtp-Source: AB8JxZqRsXZCUDEmNkQbj4WZ19CDJhLnyhR8+J0Qucmho/zFVnMwc9ruY2slhMhRPejixzjgdo+2lUpKrZ1wh/my98Q=
+        Wed, 25 Apr 2018 05:32:54 -0400
+X-UUID: e7847e8f3a6f49da97861bf8913c5097-20180425
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
+        <lee.jones@linaro.org>, <a.zummo@towertech.it>,
+        <alexandre.belloni@free-electrons.com>, <matthias.bgg@gmail.com>,
+        <eddie.huang@mediatek.com>
+CC: <devicetree@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 01/17] dt-bindings: power: reset: mt6323: add bindings for MT6323 power controller
+Date: Wed, 25 Apr 2018 17:32:27 +0800
+Message-ID: <0b3123e42c8a47e3fa8b21aa2e139e6d3dc69f41.1524646231.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1524646231.git.sean.wang@mediatek.com>
+References: <cover.1524646231.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <7055b7b9-2a55-73e7-0d82-6d291556accd@ti.com>
-References: <20180417102917.7794-1-brgl@bgdev.pl> <20180417102917.7794-5-brgl@bgdev.pl>
- <7055b7b9-2a55-73e7-0d82-6d291556accd@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 25 Apr 2018 11:26:46 +0200
-Message-ID: <CAMRc=Mes-JfzRw2ukdQ21S86HA_iH4fu8cjq0OmJOsO5DPirYg@mail.gmail.com>
-Subject: Re: [RESEND PATCH v2 4/4] ARM: davinci: use aemif platform driver in
- legacy mode for da850-evm
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-17 16:12 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
-> On Tuesday 17 April 2018 03:59 PM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> We now support board files in aemif. Use the platform driver instead
->> of the handcrafted API in da850-evm.
->>
->> Note: the id of davinci_nand is changed to 0 in order to make it work
->> with the new common-clock framework based psc driver.
->
-> Is this now needed after applying my patch dropping clock acquisition
-> from DaVinci NAND driver?
->
+From: Sean Wang <sean.wang@mediatek.com>
 
-Now that I realized that pdev->id matters for the driver as well, I'm
-thinking this may have broken the support. Unfortunately we don't have
-the nand extension for da850-evm to test it. I'll revert it to the
-previous value.
+Adding device-tree binding for the power controller which is a tiny
+circuit block present as a part of MT6323 PMIC and is responsible for
+externally powering off or on a remote SoC the PMIC is connected to.
 
-Bart
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ .../bindings/power/reset/mt6323-poweroff.txt         | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
+
+diff --git a/Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt b/Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
+new file mode 100644
+index 0000000..6f7c590
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
+@@ -0,0 +1,20 @@
++Device Tree Bindings for Power Controller on MediaTek PMIC
++
++The power controller which could be found on PMIC is responsible for externally
++powering off or on the remote MediaTek SoC through the circuit BBPU.
++
++Required properties:
++- compatible: Should be one of follows
++	"mediatek,mt6323-pwrc": for MT6323 PMIC
++
++Example:
++
++	pmic {
++		compatible = "mediatek,mt6323";
++
++		...
++
++		power-controller {
++			compatible = "mediatek,mt6323-pwrc";
++		};
++	}
+-- 
+2.7.4
