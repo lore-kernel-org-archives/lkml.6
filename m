@@ -1,71 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755606AbeDYQPi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:15:38 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34277 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755066AbeDYQPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:15:33 -0400
-X-Google-Smtp-Source: AIpwx4802EqFiuoJBnfnqEio/3aEzG1UbJln66w59hohARrQQCMQhi4CsM1g/fjbiuBEH0QXuaSCmw==
-Date: Wed, 25 Apr 2018 10:15:29 -0600
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Subject: Re: [PATCH 0/3] bpf: Store/dump license string for loaded program
-Message-ID: <20180425161527.w7xgpg75npdx2zmb@ast-mbp>
-References: <20180423065927.23127-1-jolsa@kernel.org>
- <20180423201134.r56ts7usec4jjnbh@ast-mbp>
- <20180425101713.GB3396@krava>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425101713.GB3396@krava>
-User-Agent: NeoMutt/20180223
+        id S1755816AbeDYQPy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:15:54 -0400
+Received: from mga05.intel.com ([192.55.52.43]:56944 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755684AbeDYQPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:15:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
+   d="scan'208";a="36103378"
+Message-ID: <1524672945.21176.594.camel@linux.intel.com>
+Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Javier Arteaga <javier@emutex.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc: "Dan O'Donovan" <dan@emutex.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 25 Apr 2018 19:15:45 +0300
+In-Reply-To: <20180421085009.28773-3-javier@emutex.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+         <20180421085009.28773-3-javier@emutex.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 12:17:13PM +0200, Jiri Olsa wrote:
-> On Mon, Apr 23, 2018 at 02:11:36PM -0600, Alexei Starovoitov wrote:
-> > On Mon, Apr 23, 2018 at 08:59:24AM +0200, Jiri Olsa wrote:
-> > > hi,
-> > > sending the change to store and dump the license
-> > > info for loaded BPF programs. It's important for
-> > > us get the license info, when investigating on
-> > > screwed up machine.
-> > 
-> > hmm. boolean flag whether bpf prog is gpl or not
-> > is already exposed via bpf_prog_info.
-> 
-> hum, I can't see that (on bpf-next/master)
-> would the attached change be ok with you?
-> 
-> jirka
-> 
-> 
-> ---
-> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> index e6679393b687..2ce9c9d41c2b 100644
-> --- a/include/uapi/linux/bpf.h
-> +++ b/include/uapi/linux/bpf.h
-> @@ -1062,6 +1062,7 @@ struct bpf_prog_info {
->  	__u32 ifindex;
->  	__u64 netns_dev;
->  	__u64 netns_ino;
-> +	__u16 gpl_compatible:1;
->  } __attribute__((aligned(8)));
+On Sat, 2018-04-21 at 09:50 +0100, Javier Arteaga wrote:
+> Allow userspace to use the on-board LEDs as "upboard:<color>:".
 
-ahh. I swear there were patches to add it and I thought we accepted them.
-Also just noticed that commit 675fc275a3a2d added 4-byte hole in there.
-So I'm thinking we can fill the hole with 
- 	__u32 ifindex;
-+	__u32 gpl_compatible:1;
- 	__u64 netns_dev;
- 	__u64 netns_ino;
+> +	struct upboard_led *led = container_of(cdev, struct
+> upboard_led, cdev);
 
-and keep adding bit fields in there without breaking user space.
-Such patch would need to go to bpf tree.
+#define to_upboard_led(cdev) container_of(cdev, struct upboard_led,
+cdev)
+
+... led = to_upboard_led(cdev);
+
+> +	struct upboard_led *led = container_of(cdev, struct
+> upboard_led, cdev);
+
+Ditto.
+
+> +static int __init upboard_led_probe(struct platform_device *pdev)
+
+Are you sure about __init here?
+
+> +	struct upboard_led_data * const pdata = pdev-
+> >dev.platform_data;
+
+Don't use direct dereference to platform_data.
+
+> +	if (!pdev->dev.parent)
+> +		return -EINVAL;
+> +
+> +	upboard = dev_get_drvdata(pdev->dev.parent);
+> +	if (!upboard || !pdata)
+> +		return -EINVAL;
+
+Wouldn't be better to supply regmap as part of platform data?
+It will allow be flexible of parent device.
+
+> +MODULE_LICENSE("GPL");
+
+License mismatch.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
