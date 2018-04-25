@@ -1,66 +1,66 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-937867-1524671500-2-390368889782089342
+X-Cyrus-Session-Id: sloti22d1t05-937867-1524671489-2-17618170924934444878
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524671499; b=LVypTB3KumdO1WZASQqstn+WyAqcpS1mHZn70adqB5en1oHSd+
-    jNPfEAD4+QUbKBBH5rTvcI75uZCn6eLapm6ikYDltMvQAke6serGR5pLnGuU3VPr
-    FC9EAJlcQjN5tvC1j88uCF3K95CxR9iTQ6omk2QWS5L4BS4mF5ZuOW9h743sPRD9
-    uebwilAMLLKomFXjlj2srlKFZERfTE3RkpR1BR3FQqSngAYSSNtoJ9opW9Y5aE9V
-    Qg7lGfk9RkvAsGgLXgq5ArAxCz9iLgbLbNZb98fF+2fFK4mgDwxryLtS+hm/yVxL
-    xGR3gcmPDw9LooaIlWtboftQXO5aXzEh4CIw==
+    1524671488; b=DD6fXE0NFzGFOpAjWLASn4uYxeFmEI6uzRq9yf0iVYrgj78AEn
+    XpZVjVpitdrHiC638ItATkNADyrvDDkPfISGExj2aMbPGC+xCyCejoCWHtU02K0a
+    ar+xl6aKWt1H0OryY3qxZmJbrPNwwzSLKggs2c/+TpQBKsaJMu3URxq9TkZtl4lp
+    heXCstyKb7y1CLtOR1dzhUKOnz3Cc+P+uRJncdm/sROwintBOGQGszegGV/sscjh
+    BHZvTwxuldbCnBzLpq+AzlS8jVbJ8fBGw86DV/OBYFpR05KoSPQydO/RpH7+c0yV
+    Jn5mgy5xwOmnNcXhI6c3GdyfEPnJr39l16LQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524671499; bh=LIUo7
-    U2MrJxv8S1qeDZX0bTP0S20yCgTilfkeaerTUo=; b=vANuoPNu6OJhn5HjeaUps
-    LZMVCA5ZGTR+ZreAglD0R0bDs11IpymAk9nVPGbNT/Db/qhy92yTUSN4D8PC2yAC
-    GZ0XM5rvB8rdvFFlh/FmVVRkCkZPVVyI03nqMQWL0wcmB1Vk3oUwedY05zppdurP
-    NEUevv0tQ4GeSAMwSW/FvamxgF1x7fP8tyrsH9S7jV2dTQ/f4x+Xra2owRiAyTPu
-    puobPOS6FHEAQ5qz+fU8zl9a+nHKM8sOoXBuMzKxJbHDJAni+ojK4J8EI9cCCa1i
-    I41ALAaRhhxnELp4vdNAVZ+xc9W2qaG7oidRSpimQrv5IzFRipqH6mWOSBX2+T5C
+    :content-transfer-encoding:sender; s=fm2; t=1524671488; bh=EyfX8
+    bWv2HVLPA2eYnJNC9dk1oKYEvPVQeAxgLePSpo=; b=Ddw7FKY5Q7PayjssoFl4Y
+    l/1HenxJK7MZ9ZvvwZy8UeCyM0VviU0GkdGk0MH9shK+PtmIa+H9X0d5xn8mUkT8
+    TE95y5lBMmkC6foXe/2OwxIqQLNj2gPM35vElsuCHi7xOrU0WRNiC+3gRzxwmXgq
+    D2TZVV5lbliRNB9igZHsvpLYIV5ShxNvnlJqQx9+5fF8hXTtwtrkzSdZqTLFpXq4
+    rLPpId1tLbOeOZ4bedTOxRm+8h+zBut8rGAPW4WfKJfMxYcmuh/oJeR2g/rA42+y
+    s2jOi/z/gWInunB6r2YkeOhstJAsVTvO+z6ix71MXbnjtvx5irXHo32+EZBpOEWE
     A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=dF1AbVZm x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=B+hkCEN3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=dF1AbVZm x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=B+hkCEN3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN+t3EatLc0A0fRickmnxLvDS3imYZfc9r9DaOeZI7bTxcWB4+auRYkYjM3wF8nhoEA15McripKz+bsF12HvAhaTP1oX7CY14xmi07X/MoGbGkICQWGL
-    6DIq4M1s71V66GBTu1Pux+j/LkfsARy7rJRuuzwTAE13UKdFOrCpUYVifhFyKKzMsb4px9IQAXCmaLvNF6etz7AT3bmInCaCPsDKjFpZwa5MXo3JGWGLTER2
-    mRceo+e3aceohQQBk7OX/g==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=l8C3SgQkY9CvROynupgA:9
+X-CM-Envelope: MS4wfBApv9kMtMQx0odtwDQdiUxFHwobiKqjDJKOzxLJYizxFhtcdufx2bA6Y9FvZh1uCmWzm5IE8Sy9qit+lorsal1XOcggMJl1i1Y9qXX9eNIa9clGSogl
+    WSE9dXL9qkRpb5bzgZDC0ehabH9zwHJXYpCm/HgSnBUqmeqQjCaSZA+q7ie1CO6M36NBSLV4+RGdy6xjmqwkIXL/cibwGPyFk+/lX8QDxdUfJ/32g3V5a4fn
+    G1gHrtN9hTRxxFtqfcvnVQ==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=zMiHMkJPCD3nLd7roHIA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -68,9 +68,10 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 35/40] atm: switch to proc_create_seq_private
-Date: Wed, 25 Apr 2018 17:48:22 +0200
-Message-Id: <20180425154827.32251-36-hch@lst.de>
+Subject: [PATCH 31/40] netfilter/xt_hashlimit: switch to proc_create_{seq,
+ single}_data
+Date: Wed, 25 Apr 2018 17:48:18 +0200
+Message-Id: <20180425154827.32251-32-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425154827.32251-1-hch@lst.de>
 References: <20180425154827.32251-1-hch@lst.de>
@@ -104,147 +105,209 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-And remove proc boilerplate code.
+And use proc private data directly instead of doing a detour
+through seq->private.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/atm/proc.c | 72 +++++++++-----------------------------------------
- 1 file changed, 13 insertions(+), 59 deletions(-)
+ net/netfilter/xt_hashlimit.c | 92 +++++++-----------------------------
+ 1 file changed, 18 insertions(+), 74 deletions(-)
 
-diff --git a/net/atm/proc.c b/net/atm/proc.c
-index f272b0f59d82..0b0495a41bbe 100644
---- a/net/atm/proc.c
-+++ b/net/atm/proc.c
-@@ -68,7 +68,6 @@ static void atm_dev_info(struct seq_file *seq, const struct atm_dev *dev)
- struct vcc_state {
- 	int bucket;
- 	struct sock *sk;
--	int family;
+diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
+index 0cd73567e7ff..9b16402f29af 100644
+--- a/net/netfilter/xt_hashlimit.c
++++ b/net/netfilter/xt_hashlimit.c
+@@ -57,9 +57,9 @@ static inline struct hashlimit_net *hashlimit_pernet(struct net *net)
+ }
+ 
+ /* need to declare this at the top */
+-static const struct file_operations dl_file_ops_v2;
+-static const struct file_operations dl_file_ops_v1;
+-static const struct file_operations dl_file_ops;
++static const struct seq_operations dl_seq_ops_v2;
++static const struct seq_operations dl_seq_ops_v1;
++static const struct seq_operations dl_seq_ops;
+ 
+ /* hash table crap */
+ struct dsthash_dst {
+@@ -272,7 +272,7 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
+ {
+ 	struct hashlimit_net *hashlimit_net = hashlimit_pernet(net);
+ 	struct xt_hashlimit_htable *hinfo;
+-	const struct file_operations *fops;
++	const struct seq_operations *ops;
+ 	unsigned int size, i;
+ 	int ret;
+ 
+@@ -321,19 +321,19 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
+ 
+ 	switch (revision) {
+ 	case 1:
+-		fops = &dl_file_ops_v1;
++		ops = &dl_seq_ops_v1;
+ 		break;
+ 	case 2:
+-		fops = &dl_file_ops_v2;
++		ops = &dl_seq_ops_v2;
+ 		break;
+ 	default:
+-		fops = &dl_file_ops;
++		ops = &dl_seq_ops;
+ 	}
+ 
+-	hinfo->pde = proc_create_data(name, 0,
++	hinfo->pde = proc_create_seq_data(name, 0,
+ 		(family == NFPROTO_IPV4) ?
+ 		hashlimit_net->ipt_hashlimit : hashlimit_net->ip6t_hashlimit,
+-		fops, hinfo);
++		ops, hinfo);
+ 	if (hinfo->pde == NULL) {
+ 		kfree(hinfo->name);
+ 		vfree(hinfo);
+@@ -1057,7 +1057,7 @@ static struct xt_match hashlimit_mt_reg[] __read_mostly = {
+ static void *dl_seq_start(struct seq_file *s, loff_t *pos)
+ 	__acquires(htable->lock)
+ {
+-	struct xt_hashlimit_htable *htable = s->private;
++	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
+ 	unsigned int *bucket;
+ 
+ 	spin_lock_bh(&htable->lock);
+@@ -1074,7 +1074,7 @@ static void *dl_seq_start(struct seq_file *s, loff_t *pos)
+ 
+ static void *dl_seq_next(struct seq_file *s, void *v, loff_t *pos)
+ {
+-	struct xt_hashlimit_htable *htable = s->private;
++	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
+ 	unsigned int *bucket = v;
+ 
+ 	*pos = ++(*bucket);
+@@ -1088,7 +1088,7 @@ static void *dl_seq_next(struct seq_file *s, void *v, loff_t *pos)
+ static void dl_seq_stop(struct seq_file *s, void *v)
+ 	__releases(htable->lock)
+ {
+-	struct xt_hashlimit_htable *htable = s->private;
++	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
+ 	unsigned int *bucket = v;
+ 
+ 	if (!IS_ERR(bucket))
+@@ -1130,7 +1130,7 @@ static void dl_seq_print(struct dsthash_ent *ent, u_int8_t family,
+ static int dl_seq_real_show_v2(struct dsthash_ent *ent, u_int8_t family,
+ 			       struct seq_file *s)
+ {
+-	const struct xt_hashlimit_htable *ht = s->private;
++	struct xt_hashlimit_htable *ht = PDE_DATA(file_inode(s->private));
+ 
+ 	spin_lock(&ent->lock);
+ 	/* recalculate to show accurate numbers */
+@@ -1145,7 +1145,7 @@ static int dl_seq_real_show_v2(struct dsthash_ent *ent, u_int8_t family,
+ static int dl_seq_real_show_v1(struct dsthash_ent *ent, u_int8_t family,
+ 			       struct seq_file *s)
+ {
+-	const struct xt_hashlimit_htable *ht = s->private;
++	struct xt_hashlimit_htable *ht = PDE_DATA(file_inode(s->private));
+ 
+ 	spin_lock(&ent->lock);
+ 	/* recalculate to show accurate numbers */
+@@ -1160,7 +1160,7 @@ static int dl_seq_real_show_v1(struct dsthash_ent *ent, u_int8_t family,
+ static int dl_seq_real_show(struct dsthash_ent *ent, u_int8_t family,
+ 			    struct seq_file *s)
+ {
+-	const struct xt_hashlimit_htable *ht = s->private;
++	struct xt_hashlimit_htable *ht = PDE_DATA(file_inode(s->private));
+ 
+ 	spin_lock(&ent->lock);
+ 	/* recalculate to show accurate numbers */
+@@ -1174,7 +1174,7 @@ static int dl_seq_real_show(struct dsthash_ent *ent, u_int8_t family,
+ 
+ static int dl_seq_show_v2(struct seq_file *s, void *v)
+ {
+-	struct xt_hashlimit_htable *htable = s->private;
++	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
+ 	unsigned int *bucket = (unsigned int *)v;
+ 	struct dsthash_ent *ent;
+ 
+@@ -1188,7 +1188,7 @@ static int dl_seq_show_v2(struct seq_file *s, void *v)
+ 
+ static int dl_seq_show_v1(struct seq_file *s, void *v)
+ {
+-	struct xt_hashlimit_htable *htable = s->private;
++	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
+ 	unsigned int *bucket = v;
+ 	struct dsthash_ent *ent;
+ 
+@@ -1202,7 +1202,7 @@ static int dl_seq_show_v1(struct seq_file *s, void *v)
+ 
+ static int dl_seq_show(struct seq_file *s, void *v)
+ {
+-	struct xt_hashlimit_htable *htable = s->private;
++	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
+ 	unsigned int *bucket = v;
+ 	struct dsthash_ent *ent;
+ 
+@@ -1235,62 +1235,6 @@ static const struct seq_operations dl_seq_ops = {
+ 	.show  = dl_seq_show
  };
  
- static inline int compare_family(struct sock *sk, int family)
-@@ -106,23 +105,13 @@ static int __vcc_walk(struct sock **sock, int family, int *bucket, loff_t l)
- 	return (l < 0);
- }
- 
--static inline void *vcc_walk(struct vcc_state *state, loff_t l)
-+static inline void *vcc_walk(struct seq_file *seq, loff_t l)
- {
--	return __vcc_walk(&state->sk, state->family, &state->bucket, l) ?
--	       state : NULL;
+-static int dl_proc_open_v2(struct inode *inode, struct file *file)
+-{
+-	int ret = seq_open(file, &dl_seq_ops_v2);
+-
+-	if (!ret) {
+-		struct seq_file *sf = file->private_data;
+-
+-		sf->private = PDE_DATA(inode);
+-	}
+-	return ret;
 -}
 -
--static int __vcc_seq_open(struct inode *inode, struct file *file,
--	int family, const struct seq_operations *ops)
+-static int dl_proc_open_v1(struct inode *inode, struct file *file)
 -{
--	struct vcc_state *state;
+-	int ret = seq_open(file, &dl_seq_ops_v1);
 -
--	state = __seq_open_private(file, ops, sizeof(*state));
--	if (state == NULL)
--		return -ENOMEM;
-+	struct vcc_state *state = seq->private;
-+	int family = (uintptr_t)(PDE_DATA(file_inode(seq->file)));
- 
--	state->family = family;
--	return 0;
-+	return __vcc_walk(&state->sk, family, &state->bucket, l) ?
-+	       state : NULL;
- }
- 
- static void *vcc_seq_start(struct seq_file *seq, loff_t *pos)
-@@ -133,7 +122,7 @@ static void *vcc_seq_start(struct seq_file *seq, loff_t *pos)
- 
- 	read_lock(&vcc_sklist_lock);
- 	state->sk = SEQ_START_TOKEN;
--	return left ? vcc_walk(state, left) : SEQ_START_TOKEN;
-+	return left ? vcc_walk(seq, left) : SEQ_START_TOKEN;
- }
- 
- static void vcc_seq_stop(struct seq_file *seq, void *v)
-@@ -144,9 +133,7 @@ static void vcc_seq_stop(struct seq_file *seq, void *v)
- 
- static void *vcc_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- {
--	struct vcc_state *state = seq->private;
--
--	v = vcc_walk(state, 1);
-+	v = vcc_walk(seq, 1);
- 	*pos += !!PTR_ERR(v);
- 	return v;
- }
-@@ -280,18 +267,6 @@ static const struct seq_operations pvc_seq_ops = {
- 	.show	= pvc_seq_show,
- };
- 
--static int pvc_seq_open(struct inode *inode, struct file *file)
--{
--	return __vcc_seq_open(inode, file, PF_ATMPVC, &pvc_seq_ops);
+-	if (!ret) {
+-		struct seq_file *sf = file->private_data;
+-		sf->private = PDE_DATA(inode);
+-	}
+-	return ret;
 -}
 -
--static const struct file_operations pvc_seq_fops = {
--	.open		= pvc_seq_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= seq_release_private,
+-static int dl_proc_open(struct inode *inode, struct file *file)
+-{
+-	int ret = seq_open(file, &dl_seq_ops);
+-
+-	if (!ret) {
+-		struct seq_file *sf = file->private_data;
+-
+-		sf->private = PDE_DATA(inode);
+-	}
+-	return ret;
+-}
+-
+-static const struct file_operations dl_file_ops_v2 = {
+-	.open    = dl_proc_open_v2,
+-	.read    = seq_read,
+-	.llseek  = seq_lseek,
+-	.release = seq_release
 -};
 -
- static int vcc_seq_show(struct seq_file *seq, void *v)
- {
- 	if (v == SEQ_START_TOKEN) {
-@@ -314,18 +289,6 @@ static const struct seq_operations vcc_seq_ops = {
- 	.show	= vcc_seq_show,
- };
- 
--static int vcc_seq_open(struct inode *inode, struct file *file)
--{
--	return __vcc_seq_open(inode, file, 0, &vcc_seq_ops);
--}
--
--static const struct file_operations vcc_seq_fops = {
--	.open		= vcc_seq_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= seq_release_private,
+-static const struct file_operations dl_file_ops_v1 = {
+-	.open    = dl_proc_open_v1,
+-	.read    = seq_read,
+-	.llseek  = seq_lseek,
+-	.release = seq_release
 -};
 -
- static int svc_seq_show(struct seq_file *seq, void *v)
- {
- 	static const char atm_svc_banner[] =
-@@ -349,18 +312,6 @@ static const struct seq_operations svc_seq_ops = {
- 	.show	= svc_seq_show,
- };
- 
--static int svc_seq_open(struct inode *inode, struct file *file)
--{
--	return __vcc_seq_open(inode, file, PF_ATMSVC, &svc_seq_ops);
--}
--
--static const struct file_operations svc_seq_fops = {
--	.open		= svc_seq_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= seq_release_private,
+-static const struct file_operations dl_file_ops = {
+-	.open    = dl_proc_open,
+-	.read    = seq_read,
+-	.llseek  = seq_lseek,
+-	.release = seq_release
 -};
 -
- static ssize_t proc_dev_atm_read(struct file *file, char __user *buf,
- 				 size_t count, loff_t *pos)
+ static int __net_init hashlimit_proc_net_init(struct net *net)
  {
-@@ -434,9 +385,12 @@ int __init atm_proc_init(void)
- 	if (!atm_proc_root)
- 		return -ENOMEM;
- 	proc_create_seq("devices", 0444, atm_proc_root, &atm_dev_seq_ops);
--	proc_create("pvc", 0444, atm_proc_root, &pvc_seq_fops);
--	proc_create("svc", 0444, atm_proc_root, &svc_seq_fops);
--	proc_create("vc", 0444, atm_proc_root, &vcc_seq_fops);
-+	proc_create_seq_private("pvc", 0444, atm_proc_root, &pvc_seq_ops,
-+			sizeof(struct vcc_state), (void *)(uintptr_t)PF_ATMPVC);
-+	proc_create_seq_private("svc", 0444, atm_proc_root, &svc_seq_ops,
-+			sizeof(struct vcc_state), (void *)(uintptr_t)PF_ATMSVC);
-+	proc_create_seq_private("vc", 0444, atm_proc_root, &vcc_seq_ops,
-+			sizeof(struct vcc_state), NULL);
- 	return 0;
- }
- 
+ 	struct hashlimit_net *hashlimit_net = hashlimit_pernet(net);
 -- 
 2.17.0
 
