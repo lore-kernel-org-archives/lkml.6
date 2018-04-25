@@ -1,80 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-497764-1524652796-2-2336629552382181592
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524652795; b=Un7k54PsE/6zs/MD2fDx/p8yuMpfWuGC5awS1BM+ELtGxz8qQw
-    FZ1GNwLjjztISf0DxXgzFl61cOmPje/5y5i8aeJuiL7kl50oV1CUnrI5gs1K/oKV
-    3pD7+YZYSrqV3MBXq72fkZt+0v2fvJXxAg37AuQfxUjdiq3PHvNa6IGOjZvjEfkz
-    muFpuL4OBVsNKw9B9mYCaTWTrCvMmaW810XhOp8j0enDtnF2vD9oz8V+N+eZEDkR
-    4Q3TKv7jfjdDWrGUPcyGLd9pK7qoImR6cr7xb74k9MpK7cbfFWp42MnIB3iR55DK
-    cZBttPAd+iHPayfTg+AHIDFLza9R8aiMUNVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524652795; bh=+yNKivOylB1rTU2y3P6cyKwrAij68d
-    4d4ZmZz6NPBpo=; b=XNfH8fAPr4cD51wANlSXjE+xjNPEWy9LVz7t/kx/1Kfq9G
-    F3pKYZekpvfIUlmQqWVnz0aqCEHytX6J8fwe/Fa38R+eLCSKbJAuNo58QGd4dRmz
-    toE3j9Sua3mMa8tHokO7xz0KFznHYTprQMgE9GuDTp1jeTQM2mrx7riECVLSPU+j
-    4X4BIEh3h24yfoXAIsJ2G0oB6bBj+/p61bVJylYdJn0JAmuUA2xwyHUQ3ChSUBE8
-    y7Aw8NYbdIKsMHWub1GTRyLS46+j9IokzAobp5tCO9NtKwEVj/PI69Hc0aqoxhnz
-    pRxLDDTrSenz+mIoo/Vhg0geYl1OHvVc3+eQYsBw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNOFJGhrJml5Lnfw8kuz1ANWHOFAo8gnkaouYyKHcd/QX6fd/82qFkPMWUqJaVwtpxzSjW2lkYJqLFDBtLQnH7vr+MnhhBbG0VeE2gvCVPxbq2UuKKKo
-    sAYCTnWLiQCmW8VKIfUf2CsZjIPvvG2vdvXyXk4iF66UUYlkmuoFlF0f/21NYGTSH/x5TOIjW4OU3/oPxIpF9l18QDMUiEEWnPDdLtPpzE16x3wSmnBs9YyC
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=YzrewU7drcVc681tjT8A:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753702AbeDYKjw (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:39:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51952 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752953AbeDYKjs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:39:48 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/JzoJ/HLascvj03IS3N6pqEA/rihYFLfEBTcR2SkS/Y1vXfev96Rr/2ZePz7SDA4yVyE41
+ARC-Seal: i=1; a=rsa-sha256; t=1524652796; cv=none;
+        d=google.com; s=arc-20160816;
+        b=w4E8sqJsKkxA7rEeD9Zb/he6y2WnK2pTRS3q9MbzzzVCPY933DFB2UwbldAyA6NbXI
+         0WntY5nNAHUxzKJoUE4ZkrZhYQAfAlu7tlXhsJiyaVmb4+Qeb2o+/7aeIAnYXOeKFIkn
+         UYwidIF0eH87fxiN/MVBwTSHdrRqFLrYKBFsmAqP/iFfKwz83jwoDsiMI28RdntSciMC
+         22lF8phyiW9IXjTMZb6ksPyK2KBjkZzh8wNRvrvAWsb5qhFIJ2r7rY7+r0WNiSPgSpf1
+         9FI/f5moqisjE28hdBHAP+xq7a5HkqzUWNgN7l01zWLJ8y1cyVTtQYVnkR1PGHz59zYB
+         FVtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=6CGANYDVVNShh7Bm9VVObGWiT7qYF2N+QLHWGEZG4Po=;
+        b=vVdUGSXuwiYglUz0XBQSkr+yT+ObjLYqbBrF74OEbCSPfoPH0yuJrSZj7/saRrDCym
+         V/a9Etoj4+hCAr1jot3hOgmx33GHdqdN3idWDa7stBZrqYoEm+3h0gWG2I3KELpHuTmL
+         JctGquVEiPN1Glnd14tgdUxvl76vR066nm1UGLl8AZysmwj9zMmwMF4Xva3wxIjOzrcu
+         wXf9/onwyL2AgTnYKfcdo5qGg0aN9M1DZbEZP9etOAgtsLVxEv7ktc+enjvTIimROn7g
+         HVVlDUXBeQGXITAfWStb82nTqvj4kZihWHrWW2PlkdyJMojAJy7duG5xU/cevnh3DHZQ
+         hQJQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 032/183] Input: psmouse - fix Synaptics detection when protocol is disabled
-Date: Wed, 25 Apr 2018 12:34:12 +0200
-Message-Id: <20180425103243.875543069@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Mustafa Ismail <mustafa.ismail@intel.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>,
+	Jason Gunthorpe <jgg@mellanox.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 035/183] i40iw: Free IEQ resources
+Date: Wed, 25 Apr 2018 12:34:15 +0200
+Message-Id: <20180425103243.991423685@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -82,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598714330371988024?=
+X-GMAIL-MSGID: =?utf-8?q?1598714330371988024?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,87 +51,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Mustafa Ismail <mustafa.ismail@intel.com>
 
 
-[ Upstream commit 2bc4298f59d2f15175bb568e2d356b5912d0cdd9 ]
+[ Upstream commit f20d429511affab6a2a9129f46042f43e6ffe396 ]
 
-When Synaptics protocol is disabled, we still need to try and detect the
-hardware, so we can switch to SMBus device if SMbus is detected, or we know
-that it is Synaptics device and reset it properly for the bare PS/2
-protocol.
+The iWARP Exception Queue (IEQ) resources are not freed when a QP is
+destroyed. Fix this by freeing IEQ resources when freeing QP resources.
 
-Fixes: c378b5119eb0 ("Input: psmouse - factor out common protocol probing code")
-Reported-by: Matteo Croce <mcroce@redhat.com>
-Tested-by: Matteo Croce <mcroce@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: d37498417947 ("i40iw: add files for iwarp interface")
+Signed-off-by: Mustafa Ismail <mustafa.ismail@intel.com>
+Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/mouse/psmouse-base.c |   34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ drivers/infiniband/hw/i40iw/i40iw_puda.c  |    3 +--
+ drivers/infiniband/hw/i40iw/i40iw_puda.h  |    1 +
+ drivers/infiniband/hw/i40iw/i40iw_verbs.c |    1 +
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/input/mouse/psmouse-base.c
-+++ b/drivers/input/mouse/psmouse-base.c
-@@ -975,6 +975,21 @@ static void psmouse_apply_defaults(struc
- 	psmouse->pt_deactivate = NULL;
- }
+--- a/drivers/infiniband/hw/i40iw/i40iw_puda.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_puda.c
+@@ -48,7 +48,6 @@ static void i40iw_ieq_tx_compl(struct i4
+ static void i40iw_ilq_putback_rcvbuf(struct i40iw_sc_qp *qp, u32 wqe_idx);
+ static enum i40iw_status_code i40iw_puda_replenish_rq(struct i40iw_puda_rsrc
+ 						      *rsrc, bool initial);
+-static void i40iw_ieq_cleanup_qp(struct i40iw_puda_rsrc *ieq, struct i40iw_sc_qp *qp);
+ /**
+  * i40iw_puda_get_listbuf - get buffer from puda list
+  * @list: list to use for buffers (ILQ or IEQ)
+@@ -1480,7 +1479,7 @@ static void i40iw_ieq_tx_compl(struct i4
+  * @ieq: ieq resource
+  * @qp: all pending fpdu buffers
+  */
+-static void i40iw_ieq_cleanup_qp(struct i40iw_puda_rsrc *ieq, struct i40iw_sc_qp *qp)
++void i40iw_ieq_cleanup_qp(struct i40iw_puda_rsrc *ieq, struct i40iw_sc_qp *qp)
+ {
+ 	struct i40iw_puda_buf *buf;
+ 	struct i40iw_pfpdu *pfpdu = &qp->pfpdu;
+--- a/drivers/infiniband/hw/i40iw/i40iw_puda.h
++++ b/drivers/infiniband/hw/i40iw/i40iw_puda.h
+@@ -186,4 +186,5 @@ enum i40iw_status_code i40iw_cqp_qp_crea
+ enum i40iw_status_code i40iw_cqp_cq_create_cmd(struct i40iw_sc_dev *dev, struct i40iw_sc_cq *cq);
+ void i40iw_cqp_qp_destroy_cmd(struct i40iw_sc_dev *dev, struct i40iw_sc_qp *qp);
+ void i40iw_cqp_cq_destroy_cmd(struct i40iw_sc_dev *dev, struct i40iw_sc_cq *cq);
++void i40iw_ieq_cleanup_qp(struct i40iw_puda_rsrc *ieq, struct i40iw_sc_qp *qp);
+ #endif
+--- a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
+@@ -428,6 +428,7 @@ void i40iw_free_qp_resources(struct i40i
+ {
+ 	struct i40iw_pbl *iwpbl = &iwqp->iwpbl;
  
-+static bool psmouse_do_detect(int (*detect)(struct psmouse *, bool),
-+			      struct psmouse *psmouse, bool allow_passthrough,
-+			      bool set_properties)
-+{
-+	if (psmouse->ps2dev.serio->id.type == SERIO_PS_PSTHRU &&
-+	    !allow_passthrough) {
-+		return false;
-+	}
-+
-+	if (set_properties)
-+		psmouse_apply_defaults(psmouse);
-+
-+	return detect(psmouse, set_properties) == 0;
-+}
-+
- static bool psmouse_try_protocol(struct psmouse *psmouse,
- 				 enum psmouse_type type,
- 				 unsigned int *max_proto,
-@@ -986,15 +1001,8 @@ static bool psmouse_try_protocol(struct
- 	if (!proto)
- 		return false;
- 
--	if (psmouse->ps2dev.serio->id.type == SERIO_PS_PSTHRU &&
--	    !proto->try_passthru) {
--		return false;
--	}
--
--	if (set_properties)
--		psmouse_apply_defaults(psmouse);
--
--	if (proto->detect(psmouse, set_properties) != 0)
-+	if (!psmouse_do_detect(proto->detect, psmouse, proto->try_passthru,
-+			       set_properties))
- 		return false;
- 
- 	if (set_properties && proto->init && init_allowed) {
-@@ -1027,8 +1035,8 @@ static int psmouse_extensions(struct psm
- 	 * Always check for focaltech, this is safe as it uses pnp-id
- 	 * matching.
- 	 */
--	if (psmouse_try_protocol(psmouse, PSMOUSE_FOCALTECH,
--				 &max_proto, set_properties, false)) {
-+	if (psmouse_do_detect(focaltech_detect,
-+			      psmouse, false, set_properties)) {
- 		if (max_proto > PSMOUSE_IMEX &&
- 		    IS_ENABLED(CONFIG_MOUSE_PS2_FOCALTECH) &&
- 		    (!set_properties || focaltech_init(psmouse) == 0)) {
-@@ -1074,8 +1082,8 @@ static int psmouse_extensions(struct psm
- 	 * probing for IntelliMouse.
- 	 */
- 	if (max_proto > PSMOUSE_PS2 &&
--	    psmouse_try_protocol(psmouse, PSMOUSE_SYNAPTICS, &max_proto,
--				 set_properties, false)) {
-+	    psmouse_do_detect(synaptics_detect,
-+			      psmouse, false, set_properties)) {
- 		synaptics_hardware = true;
- 
- 		if (max_proto > PSMOUSE_IMEX) {
++	i40iw_ieq_cleanup_qp(iwdev->vsi.ieq, &iwqp->sc_qp);
+ 	i40iw_dealloc_push_page(iwdev, &iwqp->sc_qp);
+ 	if (qp_num)
+ 		i40iw_free_resource(iwdev, iwdev->allocated_qps, qp_num);
