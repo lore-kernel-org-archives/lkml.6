@@ -1,82 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754518AbeDYOXn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:23:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34460 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753283AbeDYOXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:23:41 -0400
-Date: Wed, 25 Apr 2018 16:23:37 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: kan.liang@linux.intel.com
-Cc: acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        ganapatrao.kulkarni@cavium.com, zhangshaokun@hisilicon.com,
-        yao.jin@linux.intel.com, will.deacon@arm.com, ak@linux.intel.com,
-        agustinv@codeaurora.org
-Subject: Re: [V2 PATCH] perf parse-events: Specially handle uncore event
- alias in small groups
-Message-ID: <20180425142337.GE3396@krava>
-References: <1524664218-134407-1-git-send-email-kan.liang@linux.intel.com>
+        id S1754625AbeDYOX4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:23:56 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36300 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754131AbeDYOXy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:23:54 -0400
+X-Google-Smtp-Source: AIpwx4/8r2+Woy1jM6HMqxDhgCIiCi05pPGpFEM0CzMWZXqtGdL/q8Cl5EfTiG2vq6Hn0HBgCc1vwOsBT1wRSn41lxY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524664218-134407-1-git-send-email-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180425112415.12327-3-pagupta@redhat.com>
+References: <20180425112415.12327-1-pagupta@redhat.com> <20180425112415.12327-3-pagupta@redhat.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Wed, 25 Apr 2018 07:23:53 -0700
+Message-ID: <CAPcyv4gpZzKfE7jY1peYOVd6sVhNz7jce1s_xNH_2Lt8AjRK-Q@mail.gmail.com>
+Subject: Re: [RFC v2 2/2] pmem: device flush over VIRTIO
+To: Pankaj Gupta <pagupta@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>, Linux MM <linux-mm@kvack.org>,
+        Jan Kara <jack@suse.cz>, Stefan Hajnoczi <stefanha@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Haozhong Zhang <haozhong.zhang@intel.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>, Kevin Wolf <kwolf@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Zwisler, Ross" <ross.zwisler@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marcel Apfelbaum <marcel@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, niteshnarayanlal@hotmail.com,
+        Igor Mammedov <imammedo@redhat.com>, lcapitulino@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 06:50:18AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> Perf stat doesn't count the uncore event aliases from the same uncore
-> block in a group, for example:
-> 
->   perf stat -e '{unc_m_cas_count.all,unc_m_clockticks}' -a -I 1000
->   #           time             counts unit events
->        1.000447342      <not counted>      unc_m_cas_count.all
->        1.000447342      <not counted>      unc_m_clockticks
->        2.000740654      <not counted>      unc_m_cas_count.all
->        2.000740654      <not counted>      unc_m_clockticks
-> 
-> The output is very misleading. It gives a wrong impression that the
-> uncore event doesn't work.
-> 
-> An uncore block could be composed by several PMUs. An uncore event alias
-> is a joint name which means the same event runs on all PMUs of a block.
-> Perf doesn't support mixed events from different PMUs in the same group.
-> It is wrong to put uncore event aliases in a big group.
-> 
-> The right way is to split the big group into multiple small groups which
-> only include the events from the same PMU.
-> Only uncore event aliases from the same uncore block should be specially
-> handled here. It doesn't make sense to mix the uncore events with other
-> uncore events from different blocks or even core events in a group.
-> 
-> With the patch:
->   #           time             counts unit events
->      1.001557653            140,833      unc_m_cas_count.all
->      1.001557653      1,330,231,332      unc_m_clockticks
->      2.002709483             85,007      unc_m_cas_count.all
->      2.002709483      1,429,494,563      unc_m_clockticks
+On Wed, Apr 25, 2018 at 4:24 AM, Pankaj Gupta <pagupta@redhat.com> wrote:
+> This patch adds functionality to perform
+> flush from guest to hosy over VIRTIO
+> when 'ND_REGION_VIRTIO'flag is set on
+> nd_negion. Flag is set by 'virtio-pmem'
+> driver.
+>
+> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> ---
+>  drivers/nvdimm/region_devs.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index a612be6..6c6454e 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/nd.h>
+>  #include "nd-core.h"
+>  #include "nd.h"
+> +#include <linux/virtio_pmem.h>
+>
+>  /*
+>   * For readq() and writeq() on 32-bit builds, the hi-lo, lo-hi order is
+> @@ -1074,6 +1075,12 @@ void nvdimm_flush(struct nd_region *nd_region)
+>         struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
+>         int i, idx;
+>
+> +       /* call PV device flush */
+> +       if (test_bit(ND_REGION_VIRTIO, &nd_region->flags)) {
+> +               virtio_pmem_flush(&nd_region->dev);
+> +               return;
+> +       }
+> +
 
-hum, I still can see the original behaviour even with the patch:
-
-[jolsa@krava perf]$ sudo ./perf stat -e '{data_reads,clockticks}' -a -I 1000
-#           time             counts unit events
-     1.000184929      <not counted> MiB  data_reads                                                  
-     1.000184929    <not supported>      clockticks                                                  
-     2.000552765      <not counted> MiB  data_reads                                                  
-     2.000552765    <not supported>      clockticks                                                  
-     3.000846298      <not counted> MiB  data_reads                                                  
-     3.000846298    <not supported>      clockticks                                                  
-     4.001044852      <not counted> MiB  data_reads                                                  
-     4.001044852    <not supported>      clockticks                                                  
-     5.001247131      <not counted> MiB  data_reads                                                  
-     5.001247131    <not supported>      clockticks                                                  
-^C     5.546917060      <not counted> MiB  data_reads                                                  
-     5.546917060    <not supported>      clockticks                                                  
-
-
-jirka
+I'd rather introduce a ->flush() operation hanging off of 'struct
+nd_region' so that this multiplexing can be a static setting.
