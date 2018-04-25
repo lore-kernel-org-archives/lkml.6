@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754357AbeDYLP7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 07:15:59 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:37617 "EHLO
+        id S1754382AbeDYLQ0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 07:16:26 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:47685 "EHLO
         relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754043AbeDYLPi (ORCPT
+        with ESMTP id S1753943AbeDYLPg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 07:15:38 -0400
+        Wed, 25 Apr 2018 07:15:36 -0400
 X-Originating-IP: 2.224.242.101
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
@@ -14,9 +14,9 @@ To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: r8a7740: Enable CEU0
-Date: Wed, 25 Apr 2018 13:15:20 +0200
-Message-Id: <1524654920-18749-3-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 1/2] dt-bindings: media: renesas-ceu: Add R-Mobile R8A7740
+Date: Wed, 25 Apr 2018 13:15:19 +0200
+Message-Id: <1524654920-18749-2-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -24,33 +24,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CEU0 peripheral for Renesas R-Mobile A1 R8A7740.
+Add R-Mobile A1 R8A7740 SoC to the list of compatible values for the CEU
+unit.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/devicetree/bindings/media/renesas,ceu.txt | 7 ++++---
+ drivers/media/platform/renesas-ceu.c                    | 1 +
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index afd3bc5..05ec41e 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -67,6 +67,16 @@
- 		power-domains = <&pd_d4>;
- 	};
+diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+index 3fc66df..8a7a616 100644
+--- a/Documentation/devicetree/bindings/media/renesas,ceu.txt
++++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+@@ -2,14 +2,15 @@ Renesas Capture Engine Unit (CEU)
+ ----------------------------------------------
  
-+	ceu0: ceu@fe910000 {
-+		reg = <0xfe910000 0x100>;
-+		compatible = "renesas,r8a7740-ceu";
-+		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
-+		clock-names = "ceu20";
-+		power-domains = <&pd_a4mp>;
-+		status = "disabled";
-+	};
-+
- 	cmt1: timer@e6138000 {
- 		compatible = "renesas,cmt-48-r8a7740", "renesas,cmt-48";
- 		reg = <0xe6138000 0x170>;
+ The Capture Engine Unit is the image capture interface found in the Renesas
+-SH Mobile and RZ SoCs.
++SH Mobile, R-Mobile and RZ SoCs.
+ 
+ The interface supports a single parallel input with data bus width of 8 or 16
+ bits.
+ 
+ Required properties:
+-- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
+-  and RZ/A1M SoCs.
++- compatible: Shall be one of the following values:
++	"renesas,r7s72100-ceu" for CEU units found in RZ/A1H and RZ/A1M SoCs
++	"renesas,r8a7740-ceu" for CEU units found in R-Mobile A1 R8A7740 SoCs
+ - reg: Registers address base and size.
+ - interrupts: The interrupt specifier.
+ 
+diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
+index 6599dba..c964a56 100644
+--- a/drivers/media/platform/renesas-ceu.c
++++ b/drivers/media/platform/renesas-ceu.c
+@@ -1545,6 +1545,7 @@ static const struct ceu_data ceu_data_sh4 = {
+ #if IS_ENABLED(CONFIG_OF)
+ static const struct of_device_id ceu_of_match[] = {
+ 	{ .compatible = "renesas,r7s72100-ceu", .data = &ceu_data_rz },
++	{ .compatible = "renesas,r8a7740-ceu", .data = &ceu_data_rz },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ceu_of_match);
 -- 
 2.7.4
