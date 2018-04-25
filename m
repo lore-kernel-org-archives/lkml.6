@@ -1,51 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751241AbeDYCvU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 22:51:20 -0400
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:44890 "EHLO
-        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeDYCvQ (ORCPT
+        id S1751255AbeDYDLO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 23:11:14 -0400
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:58209
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751150AbeDYDLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 22:51:16 -0400
-X-Google-Smtp-Source: AIpwx4+rawsxuHcHKABd0IaTyySXlzFvXjPO/87MnlHkcTjxzK8h54YUslhc7WJEoc6llaaHvJn38Q==
-Date: Wed, 25 Apr 2018 08:21:11 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rohit Jain <rohit.k.jain@oracle.com>
-Cc: Joel Fernandes <joel.opensrc@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Joel Fernandes <joelaf@google.com>
-Subject: Re: [PATCH] sched/fair: Rearrange select_task_rq_fair() to optimize
- it
-Message-ID: <20180425025111.zn6fwkr4o4d3y52c@vireshk-i7>
-References: <8a34a16da90b9f83ffe60316a074a5e4d05b59b0.1524479666.git.viresh.kumar@linaro.org>
- <434fa179-7c8f-8a01-a07a-4527521a04c7@arm.com>
- <20180424104304.GE4064@hirez.programming.kicks-ass.net>
- <0985e709-0d71-2c08-20a9-7bfb618fb5f2@arm.com>
- <20180424123523.GF4064@hirez.programming.kicks-ass.net>
- <CAEi0qN=qnej22F31jM2CMajee2h+ie0+AptFscwa5L8Arp8q3g@mail.gmail.com>
- <CAEi0qNmkkMEvbT+dJJqMwvRkQAw9xqKX65GKDZqtTAXUUxfs7Q@mail.gmail.com>
- <ea7b6d61-4af2-db82-16b8-ee6f25ccc69c@oracle.com>
+        Tue, 24 Apr 2018 23:11:10 -0400
+X-ASG-Debug-ID: 1524625867-093b7e10b3114b70001-xx1T2L
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+To: <ard.biesheuvel@linaro.org>
+CC: <linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: [PATCH] efi/capsule-loader: Don't output reset log when header flags is not set
+Date: Wed, 25 Apr 2018 11:10:06 +0800
+X-ASG-Orig-Subj: [PATCH] efi/capsule-loader: Don't output reset log when header flags is not set
+Message-ID: <1524625806-23133-1-git-send-email-shunyong.yang@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea7b6d61-4af2-db82-16b8-ee6f25ccc69c@oracle.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain
+X-Originating-IP: [10.5.21.109]
+X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
+X-Barracuda-Connect: localhost[10.128.0.14]
+X-Barracuda-Start-Time: 1524625867
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4863 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.50256
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24-04-18, 15:34, Rohit Jain wrote:
-> Including the "unlikely" suggestion and the original patch, as expected
-> with a quick hackbench test on a 44 core 2 socket x86 machine causes no
-> change in performance.
+It means firmware attempts to immediately process or launch the capsule
+when flags in capsule header is not set. Moreover, reset is not needed
+in this case. Current code will output log to indicate reset.
 
-Want me to include your Tested-by in next version ?
+This patch adds a branch to avoid reset log output when the flags is not
+set.
 
+Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+---
+ drivers/firmware/efi/capsule-loader.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
+index e456f4602df1..a63b8e5bde23 100644
+--- a/drivers/firmware/efi/capsule-loader.c
++++ b/drivers/firmware/efi/capsule-loader.c
+@@ -134,10 +134,15 @@ static ssize_t efi_capsule_submit_update(struct capsule_info *cap_info)
+ 
+ 	/* Indicate capsule binary uploading is done */
+ 	cap_info->index = NO_FURTHER_WRITE_ACTION;
+-	pr_info("Successfully upload capsule file with reboot type '%s'\n",
+-		!cap_info->reset_type ? "RESET_COLD" :
+-		cap_info->reset_type == 1 ? "RESET_WARM" :
+-		"RESET_SHUTDOWN");
++
++	if (cap_info->header.flags)
++		pr_info("Successfully upload capsule file with reboot type '%s'\n",
++			!cap_info->reset_type ? "RESET_COLD" :
++			cap_info->reset_type == 1 ? "RESET_WARM" :
++			"RESET_SHUTDOWN");
++	else
++		pr_info("Successfully upload, process and launch capsule file\n");
++
+ 	return 0;
+ }
+ 
 -- 
-viresh
+1.8.3.1
