@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49YNACeG5Y9neQoiNoiFPUsjhhHg/r30owyv8BY/XvUu+9D/1arg05P/aCRTNOK8Sj3QWoy
-ARC-Seal: i=1; a=rsa-sha256; t=1524652736; cv=none;
+X-Google-Smtp-Source: AB8JxZpIhf3Cv/fHrAhX9CdWlTW1xs28Snme7j1f7F23OI06/N8XdmDOvKMI8RFhldXswErCSIVu
+ARC-Seal: i=1; a=rsa-sha256; t=1524652733; cv=none;
         d=google.com; s=arc-20160816;
-        b=NQjA7R/gKR0REbqsCI5z2n6CYOWFmLYUwOIg4Doiyvr+hjlGyoSZ8dV6uYDM+ZEmkO
-         JV4CEZWKvgMMvTY4DN/ttQcK1pkEetfNL6WoJqICmBarHro1Wk3tFx7Zsf6sBWuesBHa
-         SrseMhiCgl8buVeZ/ezwk3DU5TyB/Cf2bcTJlkHic+Uh2P8XQ4riNRb/k6xFmAoMOpnd
-         nT8+lFcLvv4N/zyHo2XDJ2iLP+FUJMKft4rP2Q4qFE8Cl6bcX3QhWOCws8LClnfJp6cj
-         hUHb5lB7dn6FSuUipUjPI82NIELsavvR2GP9i/A5Jw19aCZg2A8m1BRPtiTYav+X9iRm
-         gXNQ==
+        b=MZo91XXZja10fzP2aGFDw789VMd+9vzUz6jN6DBTJamFOPqp/AJxkhlAlhePraVFj8
+         CMh/Kd0yqdlbJdus4g8I+jmwWf56snhjMGV4okaZ7aBiEIMYN6fHJISJtPgP8DG8Ysga
+         /Sc0Dzs2q4egvAJYqL64nSWXFGtxqmJg+3GIJdMIgtBIwWFvvp7jitS3lFxGkHjMYQMx
+         noimQzoyrT0cQCcL2NVFhb+yGxA8xMge6qN5x7cgeT+ec22NKS54BY+tHUuTK8CpM38s
+         HShliKtyBC+HUOU2YfveGaJ31nLsXEDGhi1Zcun0LKhPPrFt43kkb2ddyi1WSqRvHz60
+         SFcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sm+WvDhuzgyNNIG8zTH596eCDRNFVDxq/4dh21F//tI=;
-        b=nk7l6Q24CPinOqQn8MZzbFv3kB/qNb4YEKmL8WIykNYkD/J6L+ufeRe2l47mcnBT1a
-         tmP8zIK9IKhysKLtSAlNlSeL1suBthh3GmAXx5FbZYZbya5XcsJEfP1bdsSrfUp/5Ljp
-         wthMPK06T+OTn330pef4TQcxAg/8LpPp4vquOogfMf4HgojeNL9cWT+chk2esEf/wKpm
-         okdH2ksysQOtYloCXQFQkvdDKPJe64z5I2XdijGwLjyxRmQDI9AIYmT5SbZevFRvf9SO
-         xUdmb9yzZ8ZmuiOh+g1lNuJIJAY3sOklsJpzUMHI7mJoGudBaKrrfkTN3SOACpJi8jYX
-         m7Xg==
+        bh=aBgoYylHLffuEKY85Qq3WJgeeJgDsLn6+nWrDNxcx4M=;
+        b=RBJtKpl5ZffpaGo48bp7sEPWOC1YV2gU4QSo+HiwmltjRTDlZ7NPg2+ukDjTFwAnH0
+         +/o5+W4PUBTr3iaBGEM39cVFbaBy5QKTO7mLfz0yI9YplQ7KNbu96XPmcT/CNCyV1w7o
+         NCT6D/TK+7+RPthyhCPH3yVwgBxbBXd72w60HTKJSFV94hPHMv7pyvnglNOv6vOVWPu7
+         6kBeTabJsLS8zKCruKmDRHc9uD1ONP7dxPQ+X5x+/YYym4ifvq/5LnhoY8iZXRTRTT9c
+         DbLK8MASP0S4vBVG52syXEA95IqXO8f7YKs1FezW/fDXvHY2Qi14v5TmjjnKxLP0jnmR
+         gefg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Emiliano Ingrassia <ingrassia@epigenesys.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Hyunchul Lee <hyc.lee@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Richard Weinberger <richard@nod.at>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 050/183] net: stmmac: dwmac-meson8b: fix setting the RGMII TX clock on Meson8b
-Date: Wed, 25 Apr 2018 12:34:30 +0200
-Message-Id: <20180425103244.567375102@linuxfoundation.org>
+Subject: [PATCH 4.14 049/183] ubifs: Fix uninitialized variable in search_dh_cookie()
+Date: Wed, 25 Apr 2018 12:34:29 +0200
+Message-Id: <20180425103244.527151465@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714267906161500?=
-X-GMAIL-MSGID: =?utf-8?q?1598714267906161500?=
+X-GMAIL-THRID: =?utf-8?q?1598714265069543698?=
+X-GMAIL-MSGID: =?utf-8?q?1598714265069543698?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,60 +51,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
 
-[ Upstream commit 433c6cab9d298687c097f6ee82e49157044dc7c6 ]
+[ Upstream commit c877154d307f4a91e0b5b85b75535713dab945ae ]
 
-Meson8b only supports MPLL2 as clock input. The rate of the MPLL2 clock
-set by Odroid-C1's u-boot is close to (but not exactly) 500MHz. The
-exact rate is 500002394Hz, which is calculated in
-drivers/clk/meson/clk-mpll.c using the following formula:
-DIV_ROUND_UP_ULL((u64)parent_rate * SDM_DEN, (SDM_DEN * n2) + sdm)
-Odroid-C1's u-boot configures MPLL2 with the following values:
-- SDM_DEN = 16384
-- SDM = 1638
-- N2 = 5
+fs/ubifs/tnc.c: In function ‘search_dh_cookie’:
+fs/ubifs/tnc.c:1893: warning: ‘err’ is used uninitialized in this function
 
-The 250MHz clock (m250_div) inside dwmac-meson8b driver is derived from
-the MPLL2 clock. Due to MPLL2 running slightly faster than 500MHz the
-common clock framework chooses a divider which is too big to generate
-the 250MHz clock (a divider of 2 would be needed, but this is rounded up
-to a divider of 3). This breaks the RTL8211F RGMII PHY on Odroid-C1
-because it requires a (close to) 125MHz RGMII TX clock (on Gbit speeds,
-the IP block internally divides that down to 25MHz on 100Mbit/s
-connections and 2.5MHz on 10Mbit/s connections - we don't need any
-special configuration for that).
+Indeed, err is always used uninitialized.
 
-Round the divider to the closest value to prevent this issue on Meson8b.
-This means we'll now end up with a clock rate for the RGMII TX clock of
-125001197Hz (= 125MHz plus 1197Hz), which is close-enough to 125MHz.
-This has no effect on the Meson GX SoCs since there fclk_div2 is used as
-input clock, which has a rate of 1000MHz (and thus is divisible cleanly
-to 250MHz and 125MHz).
+According to an original review comment from Hyunchul, acknowledged by
+Richard, err should be initialized to -ENOENT to avoid the first call to
+tnc_next().  But we can achieve the same by reordering the code.
 
-Fixes: 566e8251625304 ("net: stmmac: add a glue driver for the Amlogic Meson 8b / GXBB DWMAC")
-Reported-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 781f675e2d7e ("ubifs: Fix unlink code wrt. double hash lookups")
+Reported-by: Hyunchul Lee <hyc.lee@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/ubifs/tnc.c |   21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-@@ -144,7 +144,9 @@ static int meson8b_init_clk(struct meson
- 	dwmac->m250_div.shift = PRG_ETH0_CLK_M250_DIV_SHIFT;
- 	dwmac->m250_div.width = PRG_ETH0_CLK_M250_DIV_WIDTH;
- 	dwmac->m250_div.hw.init = &init;
--	dwmac->m250_div.flags = CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO;
-+	dwmac->m250_div.flags = CLK_DIVIDER_ONE_BASED |
-+				CLK_DIVIDER_ALLOW_ZERO |
-+				CLK_DIVIDER_ROUND_CLOSEST;
+--- a/fs/ubifs/tnc.c
++++ b/fs/ubifs/tnc.c
+@@ -1890,35 +1890,28 @@ static int search_dh_cookie(struct ubifs
+ 	union ubifs_key *dkey;
  
- 	dwmac->m250_div_clk = devm_clk_register(dev, &dwmac->m250_div.hw);
- 	if (WARN_ON(IS_ERR(dwmac->m250_div_clk)))
+ 	for (;;) {
+-		if (!err) {
+-			err = tnc_next(c, &znode, n);
+-			if (err)
+-				goto out;
+-		}
+-
+ 		zbr = &znode->zbranch[*n];
+ 		dkey = &zbr->key;
+ 
+ 		if (key_inum(c, dkey) != key_inum(c, key) ||
+ 		    key_type(c, dkey) != key_type(c, key)) {
+-			err = -ENOENT;
+-			goto out;
++			return -ENOENT;
+ 		}
+ 
+ 		err = tnc_read_hashed_node(c, zbr, dent);
+ 		if (err)
+-			goto out;
++			return err;
+ 
+ 		if (key_hash(c, key) == key_hash(c, dkey) &&
+ 		    le32_to_cpu(dent->cookie) == cookie) {
+ 			*zn = znode;
+-			goto out;
++			return 0;
+ 		}
+-	}
+ 
+-out:
+-
+-	return err;
++		err = tnc_next(c, &znode, n);
++		if (err)
++			return err;
++	}
+ }
+ 
+ static int do_lookup_dh(struct ubifs_info *c, const union ubifs_key *key,
