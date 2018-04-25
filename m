@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-584447-1524656113-2-3521895233497892894
+X-Cyrus-Session-Id: sloti22d1t05-584447-1524656104-2-2526758428895308889
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524656112; b=V61LToEfqEhHqFssm8t0eq3gPprB2W2Mx5AMH1OYV4XBJsh0Rq
-    yphAD0HtfDcV1HCXrQIIiSaCy3Qp+er0U2dStSkjElUhB0EkR7P/daubO+Viu6N4
-    +Dczuy681dQKDbs/rxuHyyTk6+voGTkCj09QIBa2UtzIJEt75Jz2wPdehpVKgaOX
-    401MPBT6u2INt/yVWtssmVZ0skMuAIwU6/jzV+96vH/MjRsxcj+UuoG5ESyxLyXp
-    hhjVTgeXMko3N6lUquwl3E+hCjv6FQJIYSIqQYhTv8ciWw2dKJXPr+DSC7tTFAHC
-    rdO7y6IL6DsF1EdvT13c+ICgSJhiVKJOmOCQ==
+    1524656103; b=HXAwXOIzwaAvzQzMAsJ+/IOo7OQU6woRXov8bUy5FbspyrE2eo
+    IAFa/yucZdEfANWf42SI0u54Ip77/tj0KoaQpokbbVmRIvIYE++b5IAbxBTGwS+e
+    Yxcx0lXSjrgcRTRrNC1lSQqR+XbeDRwfc1WYrl6s5Rb4I7ggLDAV+YNDi+vwUno/
+    geZo2l9fP6TXvMKa02nhIxHdwWwa9qbs+xuLkaFVjq3Y10cnAPK1PE+37g8h6URh
+    55SQi0RhdfuSel7o5k6ow8kv5gEg5j5pow48e/CkbjFgjNrI3RhC/uvoD4sAogwA
+    jbffbOTKNKJ801rR3HAL+iY08ZqWI3JpNoEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524656112; bh=RwEeyDBFRjvarR9Z3Z6kwLaTwjPkbk
-    U4bByK72YNzew=; b=BZ5YiZJIGZtcrqKojxMcTBR2nw92wYYRfU8tHhEqD8GgD1
-    aWKxMrs3O17km7FFbv674MqBXqsygvIGsTCKNwwmVzgt0cePH/v4/eGRAufC+l3y
-    ZxdstFYrj0zK+xOpaAc9sbnwZjed/UjZS8QNGry5eqpCuw7ywFdFfs6QUxorrBvE
-    U0h1Vrfjo1sF2SjHo/pG2Hv5XLXQVncqHZuyXgMV9hWAPB7impMlrS23wrhOe1sA
-    BUXDHYVcH8s5ChKKMckwRTgmJ6+aIdJnGfmZcsgzpTfkuLYAli0CwhKPIJ40u9Kt
-    vpEzDRV6GtmjCR+XCc6/B0scC+11lJViEvtYgx0A==
+    :list-id; s=fm2; t=1524656103; bh=EDNfTCeqxVgQod08+yQj7zpUP5TBJs
+    kokbJozq2srdw=; b=FVhvvrbLQEDt71Rg/lALF7YMG0ZihdkfEtHCyZghYLhdDo
+    CXmzrqnivYnVaWVYO79ZPtfnj+Uq3wIEQHQ0/VloKXB8xyFgVT0o8RqA8XQ43etD
+    1xlugQUHRko5dwDYeb8NfGezmPTrY1LEvje631cbCECR/TEQY2/oMUEIpP1ewKRE
+    cQ1uzFwREh5qidU905bJwigIV2Gt8IvvRMNKZrLEPZDNBsj27h8xGX51kGZUGX5Q
+    HxbP26y0T93eJCuLPMXDwC/mUwyc7vehHobA0mCmgCgG8ZA0fWUy1MfAjWGMwD4V
+    Hp8eeqz+rH2ZQ3BIN4oG4f4Q86IAZ4RNwPtufpgw==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,29 +51,37 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAVDdsL3PqQoZA/P9cYsOtrlVsT0B6uGV1FdOndbCgpG6UW0OE6fFsjX0XR1oYvPFlexXVAcJbzssvZ9OyrX9E5599uS36K2F/bcE5HrmUqS0v9iVBiT
-    bnofI5kybNxQa9F6NUVoL3j9Uy6BRwh8mfygdqHz++xO28fhp7dfomTYVRXgoeDRoxS4nuVI8h2swBJ1+RybEc7CDw0GXO1g58udsebaIhHIeEnqjZ2MohYM
+X-CM-Envelope: MS4wfPVE1p5JHDlgPUHkWNy4z4iL4K5zcdBbYrpvSXWG4LhMmY1YmyqSYB6Zq6j2Fp9vKpxqumfXx8UNQTl2K7D9ii9EpCGLHJoStrlHjvPolEr+qlthDBis
+    miAqAKL5ZXbmDS/69pNlARlgSMByZbwQRGm7kKJAx21iQkPnzTnZE1uQozMQCnZOcJsR+5fL71cqM2QLANJgVqwR4SV2568TolDquO4/uh/E0hKv9UdXp96E
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=3HDBlxybAAAA:8 a=ag1SF4gXAAAA:8 a=ZqW6OwneuF5TVGLeTZkA:9 a=QEXdDO2ut3YA:10
-    a=laEoCiVfU_Unz3mSdgXN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=_Wotqz80AAAA:8 a=DfNHnWVPAAAA:8 a=yMhMjlubAAAA:8
+    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=9GihAUzGDAH5BQcAHsIA:9
+    a=szqVDpHI7lD-b4zP:21 a=3J4n-IJ5SUQ9EAOh:21 a=QEXdDO2ut3YA:10
+    a=buJP51TR1BpY-zbLSsyS:22 a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751561AbeDYLfJ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 07:35:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50780 "EHLO
+        id S1752900AbeDYLer (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 07:34:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50826 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752495AbeDYKeQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:34:16 -0400
+        with ESMTP id S1752623AbeDYKeV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:34:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.16 18/26] netfilter: x_tables: cap allocations at 512 mbyte
-Date: Wed, 25 Apr 2018 12:33:27 +0200
-Message-Id: <20180425103315.583243065@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Eryu Guan <eguan@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <smfrench@gmail.com>
+Subject: [PATCH 4.16 02/26] cifs: do not allow creating sockets except with SMB1 posix exensions
+Date: Wed, 25 Apr 2018 12:33:11 +0200
+Message-Id: <20180425103314.939162098@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103314.842517924@linuxfoundation.org>
 References: <20180425103314.842517924@linuxfoundation.org>
@@ -91,38 +99,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Steve French <smfrench@gmail.com>
 
-commit 19926968ea86a286aa6fbea16ee3f2e7442f10f0 upstream.
+commit 1d0cffa674cfa7d185a302c8c6850fc50b893bed upstream.
 
-Arbitrary limit, however, this still allows huge rulesets
-(> 1 million rules).  This helps with automated fuzzer as it prevents
-oom-killer invocation.
+RHBZ: 1453123
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Since at least the 3.10 kernel and likely a lot earlier we have
+not been able to create unix domain sockets in a cifs share
+when mounted using the SFU mount option (except when mounted
+with the cifs unix extensions to Samba e.g.)
+Trying to create a socket, for example using the af_unix command from
+xfstests will cause :
+BUG: unable to handle kernel NULL pointer dereference at 00000000
+00000040
+
+Since no one uses or depends on being able to create unix domains sockets
+on a cifs share the easiest fix to stop this vulnerability is to simply
+not allow creation of any other special files than char or block devices
+when sfu is used.
+
+Added update to Ronnie's patch to handle a tcon link leak, and
+to address a buf leak noticed by Gustavo and Colin.
+
+Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+CC:  Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reported-by: Eryu Guan <eguan@redhat.com>
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/x_tables.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/cifs/dir.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -40,6 +40,7 @@ MODULE_AUTHOR("Harald Welte <laforge@net
- MODULE_DESCRIPTION("{ip,ip6,arp,eb}_tables backend module");
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -684,6 +684,9 @@ int cifs_mknod(struct inode *inode, stru
+ 		goto mknod_out;
+ 	}
  
- #define XT_PCPU_BLOCK_SIZE 4096
-+#define XT_MAX_TABLE_SIZE	(512 * 1024 * 1024)
++	if (!S_ISCHR(mode) && !S_ISBLK(mode))
++		goto mknod_out;
++
+ 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
+ 		goto mknod_out;
  
- struct compat_delta {
- 	unsigned int offset; /* offset in kernel */
-@@ -1029,7 +1030,7 @@ struct xt_table_info *xt_alloc_table_inf
- 	struct xt_table_info *info = NULL;
- 	size_t sz = sizeof(*info) + size;
+@@ -692,10 +695,8 @@ int cifs_mknod(struct inode *inode, stru
  
--	if (sz < sizeof(*info))
-+	if (sz < sizeof(*info) || sz >= XT_MAX_TABLE_SIZE)
- 		return NULL;
+ 	buf = kmalloc(sizeof(FILE_ALL_INFO), GFP_KERNEL);
+ 	if (buf == NULL) {
+-		kfree(full_path);
+ 		rc = -ENOMEM;
+-		free_xid(xid);
+-		return rc;
++		goto mknod_out;
+ 	}
  
- 	/* __GFP_NORETRY is not fully supported by kvmalloc but it should
+ 	if (backup_cred(cifs_sb))
+@@ -742,7 +743,7 @@ int cifs_mknod(struct inode *inode, stru
+ 		pdev->minor = cpu_to_le64(MINOR(device_number));
+ 		rc = tcon->ses->server->ops->sync_write(xid, &fid, &io_parms,
+ 							&bytes_written, iov, 1);
+-	} /* else if (S_ISFIFO) */
++	}
+ 	tcon->ses->server->ops->close(xid, tcon, &fid);
+ 	d_drop(direntry);
+ 
