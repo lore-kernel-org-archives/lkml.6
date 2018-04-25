@@ -1,64 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751047AbeDYBMs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 21:12:48 -0400
-Received: from tartarus.angband.pl ([89.206.35.136]:42872 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750756AbeDYBMp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 21:12:45 -0400
-From: Adam Borowski <kilobyte@angband.pl>
-To: Michal Marek <michal.lkml@markovi.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org,
-        Paul Menzel <pmenzel+linux-kernel@molgen.mpg.de>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Ingo Molnar <mingo@kernel.org>
-Date: Wed, 25 Apr 2018 03:12:31 +0200
-Message-Id: <20180425011231.24143-1-kilobyte@angband.pl>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <bb5bf465-bf71-4ddb-2a7e-866bb0f76606@molgen.mpg.de>
-References: <bb5bf465-bf71-4ddb-2a7e-866bb0f76606@molgen.mpg.de>
-X-SA-Exim-Connect-IP: 89.71.158.145
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-Subject: On Tue, Apr 24, 2018 at 11:08:34AM +0200, Paul Menzel wrote:
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
+        id S1751195AbeDYBOa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 21:14:30 -0400
+Received: from mga17.intel.com ([192.55.52.151]:34101 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750756AbeDYBO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 21:14:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,325,1520924400";
+   d="scan'208";a="223082490"
+From: "Dey, Megha" <megha.dey@intel.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Subject: RE: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+ support
+Thread-Topic: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+ support
+Thread-Index: AQHTiaT71VA7Q5Or9ESQdIw+yX/ir6N6FLYAgFlFdnuAMogJgIABiP2AgABwaXCAAKKQgIAI0Phw
+Date: Wed, 25 Apr 2018 01:14:26 +0000
+Message-ID: <C440BA31B54DCD4AAC682D2365C8FEE738C270FC@ORSMSX111.amr.corp.intel.com>
+References: <1515542948-24041-1-git-send-email-megha.dey@linux.intel.com>
+ <1515542948-24041-2-git-send-email-megha.dey@linux.intel.com>
+ <20180118113905.GA19904@gondor.apana.org.au>
+ <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
+ <20180316145351.GA6231@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
+ <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13DDE@ORSMSX111.amr.corp.intel.com>
+ <20180419032525.6csodbz6lrksyudd@gondor.apana.org.au>
+In-Reply-To: <20180419032525.6csodbz6lrksyudd@gondor.apana.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTQyNDQzNTMtNTIwOC00YWM1LWE3ODUtN2EwMWVlYTFjMThjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlFjdTd6N0s0cE5QZE5rbFVKSW1pRXhYTERhVVJQMFY1V0FYTVBGOEU1dVE9In0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'ere you go.  KERNEL_ZSTD is not in mainline yet but knowing its magic
-can't hurt -- especially that scripts may be out of sync with an installed
-kernel.  LZ4 is in since 3.11.
 
---8<----8<----8<----8<----8<----8<----8<----8<----8<----8<----8<----8<--
->From 30886e965e7aeae8d3729c4bacf614a19e103cea Mon Sep 17 00:00:00 2001
-From: Adam Borowski <kilobyte@angband.pl>
-Date: Wed, 25 Apr 2018 02:29:18 +0200
-Subject: [PATCH] scripts: teach extract-vmlinux about LZ4 and ZSTD
 
-Note that the LZ4 signature is different than that of modern LZ4 as we
-use the "legacy" format which suffers from some downsides like inability
-to disable compression.
+>-----Original Message-----
+>From: Herbert Xu [mailto:herbert@gondor.apana.org.au]
+>Sent: Wednesday, April 18, 2018 8:25 PM
+>To: Dey, Megha <megha.dey@intel.com>
+>Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org;
+>davem@davemloft.net
+>Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+>support
+>
+>On Thu, Apr 19, 2018 at 12:54:16AM +0000, Dey, Megha wrote:
+>>
+>> Yeah I think I misunderstood. I think what you mean is to remove mcryptd.c
+>completely and avoid the extra layer of indirection to call the underlying
+>algorithm, instead call it directly, correct?
+>>
+>> So currently we have 3 algorithms registered for every multibuffer algorithm:
+>> name         : __sha1-mb
+>> driver       : mcryptd(__intel_sha1-mb)
+>>
+>> name         : sha1
+>> driver       : sha1_mb
+>>
+>> name         : __sha1-mb
+>> driver       : __intel_sha1-mb
+>>
+>> If we remove mcryptd, then we will have just the 2?
+>
+>It should be down to just one, i.e., the current inner algorithm.
+>It's doing all the scheduling work already so I don't really see why it needs the
+>wrappers around it.
 
-Signed-off-by: Adam Borowski <kilobyte@angband.pl>
----
- scripts/extract-vmlinux | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Herbert,
 
-diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
-index 5061abcc2540..e6239f39abad 100755
---- a/scripts/extract-vmlinux
-+++ b/scripts/extract-vmlinux
-@@ -57,6 +57,8 @@ try_decompress '\3757zXZ\000' abcde unxz
- try_decompress 'BZh'          xy    bunzip2
- try_decompress '\135\0\0\0'   xxx   unlzma
- try_decompress '\211\114\132' xy    'lzop -d'
-+try_decompress '\002!L\030'   xxx   'lz4 -d'
-+try_decompress '(\265/\375'   xxx   unzstd
- 
- # Bail out:
- echo "$me: Cannot find vmlinux." >&2
--- 
-2.17.0
+Is there any existing implementation of async crypto algorithm that uses the above approach? The ones I could find are either sync, have an outer and inner algorithm or use cryptd.
+
+I tried removing the mcryptd layer and the outer algorithm and some plumbing to pass the correct structures, but see crashes.(obviously some errors in the plumbing)
+
+I am not sure if we remove mcryptd, how would we queue work, flush partially completed jobs or call completions (currently done by mcryptd) if we simply call the inner algorithm.
+
+Are you suggesting these are not required at all? I am not sure how to move forward.
+
+>
+>Cheers,
+>--
+>Email: Herbert Xu <herbert@gondor.apana.org.au> Home Page:
+>http://gondor.apana.org.au/~herbert/
+>PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
