@@ -1,81 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751808AbeDYKBY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 06:01:24 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36543 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751683AbeDYKBU (ORCPT
+        id S1751989AbeDYKEj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 06:04:39 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:38764 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751725AbeDYKEe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 06:01:20 -0400
-X-Google-Smtp-Source: AIpwx490aYTEIGtVBfzlC7NmtJZz3oziHLKQq7XFSJ1ae7YFEPaUppTlu58X3JEOwG+SSsep5zQIVQ==
-Date: Wed, 25 Apr 2018 18:01:13 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 1/5] samples/bpf: Fix typo in comment
-Message-ID: <20180425100113.GA28567@leoy-ThinkPad-X240s>
-References: <1524101646-6544-1-git-send-email-leo.yan@linaro.org>
- <1524101646-6544-2-git-send-email-leo.yan@linaro.org>
- <20180420141004.259d7d6f@redhat.com>
- <20180420132116.uswpqniteogfu4zz@holly.lan>
- <20180420155213.2867fcf5@redhat.com>
+        Wed, 25 Apr 2018 06:04:34 -0400
+X-Google-Smtp-Source: AIpwx4/bHMn9PKaioKbcwuxem8bU8MEfv8+/l4ONu2dF/1RFZHeA+4wMBHm7dtZUovYTdrBgi3v1bQ==
+Date: Wed, 25 Apr 2018 12:04:29 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Thierry Reding <treding@nvidia.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: noveau vs arm dma ops
+Message-ID: <20180425100429.GR25142@phenom.ffwll.local>
+Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180420124625.GA31078@infradead.org>
+ <20180420152111.GR31310@phenom.ffwll.local>
+ <20180424184847.GA3247@infradead.org>
+ <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
+ <20180425054855.GA17038@infradead.org>
+ <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
+ <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
+ <20180425064335.GB28100@infradead.org>
+ <20180425074151.GA2271@ulmo>
+ <20180425085439.GA29996@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180420155213.2867fcf5@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180425085439.GA29996@infradead.org>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 03:52:13PM +0200, Jesper Dangaard Brouer wrote:
-> On Fri, 20 Apr 2018 14:21:16 +0100
-> Daniel Thompson <daniel.thompson@linaro.org> wrote:
+On Wed, Apr 25, 2018 at 01:54:39AM -0700, Christoph Hellwig wrote:
+> [discussion about this patch, which should have been cced to the iommu
+>  and linux-arm-kernel lists, but wasn't:
+>  https://www.spinics.net/lists/dri-devel/msg173630.html]
 > 
-> > On Fri, Apr 20, 2018 at 02:10:04PM +0200, Jesper Dangaard Brouer wrote:
-> > > 
-> > > On Thu, 19 Apr 2018 09:34:02 +0800 Leo Yan <leo.yan@linaro.org> wrote:
-> > >   
-> > > > Fix typo by replacing 'iif' with 'if'.
-> > > > 
-> > > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > > > ---
-> > > >  samples/bpf/bpf_load.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/samples/bpf/bpf_load.c b/samples/bpf/bpf_load.c
-> > > > index bebe418..28e4678 100644
-> > > > --- a/samples/bpf/bpf_load.c
-> > > > +++ b/samples/bpf/bpf_load.c
-> > > > @@ -393,7 +393,7 @@ static int load_elf_maps_section(struct bpf_map_data *maps, int maps_shndx,
-> > > >  			continue;
-> > > >  		if (sym[nr_maps].st_shndx != maps_shndx)
-> > > >  			continue;
-> > > > -		/* Only increment iif maps section */
-> > > > +		/* Only increment if maps section */
-> > > >  		nr_maps++;
-> > > >  	}  
-> > > 
-> > > This was actually not a typo from my side.
-> > > 
-> > > With 'iif' I mean 'if and only if' ... but it doesn't matter much.  
+> On Wed, Apr 25, 2018 at 09:41:51AM +0200, Thierry Reding wrote:
+> > > API from the iommu/dma-mapping code.  Drivers have no business poking
+> > > into these details.
 > > 
-> > I think 'if and only if' is more commonly abbreviated 'iff' isn't it?
+> > The interfaces that the above patch uses are all EXPORT_SYMBOL_GPL,
+> > which is rather misleading if they are not meant to be used by drivers
+> > directly.
 > 
-> Ah, yes![1]  -- then it *is* actually a typo! - LOL
+> The only reason the DMA ops are exported is because get_arch_dma_ops
+> references (or in case of the coherent ones used to reference).  We
+> don't let drivers assign random dma ops.
 > 
-> I'm fine with changing this to "if" :-)
+> > 
+> > > Thierry, please resend this with at least the iommu list and
+> > > linux-arm-kernel in Cc to have a proper discussion on the right API.
+> > 
+> > I'm certainly open to help with finding a correct solution, but the
+> > patch above was purposefully terse because this is something that I
+> > hope we can get backported to v4.16 to unbreak Nouveau. Coordinating
+> > such a backport between ARM and DRM trees does not sound like something
+> > that would help getting this fixed in v4.16.
+> 
+> Coordinating the backport of a trivial helper in the arm tree is not
+> the end of the world.  Really, this cowboy attitude is a good reason
+> why graphics folks have such a bad rep.  You keep poking into random
+> kernel internals, don't talk to anoyone and then complain if people
+> are upset.  This shouldn't be surprising.
 
-Thanks for the reviewing, Daniel & Jesper.
-I also learn it from the discussion :)
+Not really agreeing on the cowboy thing. The fundamental problem is that
+the dma api provides abstraction that seriously gets in the way of writing
+a gpu driver. Some examples:
 
-> [1] https://en.wikipedia.org/wiki/If_and_only_if
+- We never want bounce buffers, ever. dma_map_sg gives us that, so there's
+  hacks to fall back to a cache of pages allocated using
+  dma_alloc_coherent if you build a kernel with bounce buffers.
+
+- dma api hides the cache flushing requirements from us. GPUs love
+  non-snooped access, and worse give userspace control over that. We want
+  a strict separation between mapping stuff and flushing stuff. With the
+  IOMMU api we mostly have the former, but for the later arch maintainers
+  regularly tells they won't allow that. So we have drm_clflush.c.
+
+- dma api hides how/where memory is allocated. Kinda similar problem,
+  except now for CMA or address limits. So either we roll our own
+  allocators and then dma_map_sg (and pray it doesn't bounce buffer), or
+  we use dma_alloc_coherent and then grab the sgt to get at the CMA
+  allocations because that's the only way. Which sucks, because we can't
+  directly tell CMA how to back off if there's some way to make CMA memory
+  available through other means (gpus love to hog all of memory, so we
+  have shrinkers and everything).
+
+For display drivers the dma api mostly works, until you start sharing
+buffers with other devices.
+
+So from our perspective it looks fairly often that core folks just don't
+want to support gpu use-cases, so we play a bit more cowboy and get things
+done some other way. Since this has been going on for years now we often
+don't even bother to start a discussion first, since it tended to go
+nowhere useful.
+-Daniel
+
+> > Granted, this issue could've been caught with a little more testing, but
+> > in retrospect I think it would've been a lot better if ARM_DMA_USE_IOMMU
+> > was just enabled unconditionally if it has side-effects that platforms
+> > don't opt in to but have to explicitly opt out of.
 > 
-> -- 
-> Best regards,
->   Jesper Dangaard Brouer
->   MSc.CS, Principal Kernel Engineer at Red Hat
->   LinkedIn: http://www.linkedin.com/in/brouer
+> Agreed on that count.  Please send a patch.
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
