@@ -1,124 +1,80 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524671051; cv=none;
+Return-Path: <linux@roeck-us.net>
+X-Google-Smtp-Source: AB8JxZrG5cstlSVvj49LPGB/q2VxVrDbelYYYdGHcjMHFT0Wuz1AVv3ckC1j8U6LoOVPec9GHszS
+ARC-Seal: i=1; a=rsa-sha256; t=1524670486; cv=none;
         d=google.com; s=arc-20160816;
-        b=UZkTtE8KRlZDhOliP6aDLVw2QCUE8UG4Pd6cBr8bWR3VqaPMoXOG7OfA42KYQFbihs
-         yBbcqwgmDRA4/y60ZIrFRvb/+iQgDxMqQght74Y35k9O0U3lEcjseGieTbKDMytWmDQX
-         vTcytXQxigFlqAm+nbFHEYpYy/+mkJ22N/rAs5YWg+Xua2j9xVMrCeveSWrwhhaKhSqn
-         2FHey56LdY88aW2zW1d6oXQopbBwKRR6R/f7Z7nu+gmHxZ2Kmhyd+vIJeZrkflw90PZ1
-         0Nbc9MYXupo4jTFV5DqREhrTPuU8lw/n8mr165vCvOmd3GBSiII8nKvZ5EMxaqqB3EP8
-         8QyA==
+        b=id4HO2o2nIpfIr1W2AYN3XKkPFMjJxOdd2wyJ5yVikvp1CPttuMKY4Bf+B6kMDb09Z
+         0417FBE26MhIll/6PoPAtzop3UzVMbn8O9y2UejCv4/KrZOgFVbYPE74ZpVaixNsNviF
+         0LOEQZpkqJdCY5WWYd1NG4Q+xsOhxH3JIe++K8VVQ8JDSDcIlQ/3apbXXMuD52TSPBLq
+         fp+jlHusvH65iyfOGeRGe1wzB392YewUtZBaymBSQMy5FwPEdWnNB0SO9WM0UfbNk6H6
+         RP+2pOcVGsXx0G43B+o8S/TGLDhwllU6Bk8+Ff7B0mFVsAY4+nvaHwlOQdrpymMmgCC8
+         eDsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=p/lgcnWi9b+NPkOvtY95LWURG3uDKYTXwUzmnsUb3Zc=;
-        b=VEhO+ZOjRVG5J04ulDFale0eeaaOHyuQYBbyU56yGq9pzal1V9GJgR3hfdAI74QTgN
-         NCr0Uvi3B48pi4f2oe1xdP4jxDt4VGznDE0ZEZLG1Z5UezFZo66GHm4DKDAHEPmTDqW5
-         xozV6E0/wR52rSK9656teLHlJ+oMfyIn0S6Di6SjDmxDgt3z4qRMC2SooQJE6OvYgUAi
-         FaEoR0fAfBHNvRdbDTUhEJE0yu21dqYRMdGdBEWNDzg5AhKCkO+jujIBGcheeX8dbu3E
-         Wa7pIe2L1Y5jal4pWStqI7+1hI26JG84PO4Zndnk/u2UV1/kHQfuDuUQlQZYupmPlG06
-         2GVw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=0vWO9mxj55oWy2BkeWW8OjZAi2HiaulnDHuNqBXkV0I=;
+        b=CCLGTlPsC4KDbiu8Ei4tvD2MuI5Amh/+t373UvmVIhvAmqHoxx6OEJyVGe8pGnpGvU
+         Ee7Wwr7uD2UeKNU7QanS8v1rGlr1/bR/wTuwKwsEW+dcX9NRfGf5/I+4qcrUAszf/YFG
+         SQowXKpYUAvF0BiteK488yGIUcVB9SuEoUX1p9Kj6XA/T3VNaY/PRCpHdELoT1qDKvJ7
+         qQz7lmGF+/4XOpwB/nDYPq6bnxKYq4FjaXT7/Nw9iLnzOOs2Hct57GMBqMfhE5cYF9AB
+         WDL7sjgwg6c2g2UM7D078kvcI/3AqVSOy6tYwKHoDVgszjsnae3b6CANQ16I3BAyyd30
+         MaTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       dkim=pass header.i=@roeck-us.net header.s=default header.b=a9m+L0ye;
+       spf=pass (google.com: domain of linux@roeck-us.net designates 208.91.199.152 as permitted sender) smtp.mailfrom=linux@roeck-us.net
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AIpwx4/2h42dDOT+FCqTHsJO++guaIa26axKaFIvna7efff5UUoWaeAl8blt7J99fEgpB8ZPa0buwg==
-Message-ID: <5ae0a24a.494a1c0a.6cfdc.e0f5@mx.google.com>
-Date: Wed, 25 Apr 2018 08:44:10 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.16.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.16.4-27-g9a7eb4ea64f3
-In-Reply-To: <20180425103314.842517924@linuxfoundation.org>
-References: <20180425103314.842517924@linuxfoundation.org>
+       dkim=pass header.i=@roeck-us.net header.s=default header.b=a9m+L0ye;
+       spf=pass (google.com: domain of linux@roeck-us.net designates 208.91.199.152 as permitted sender) smtp.mailfrom=linux@roeck-us.net
+Date: Wed, 25 Apr 2018 08:34:43 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+	ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
 Subject: Re: [PATCH 4.16 00/26] 4.16.5-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Message-ID: <20180425153443.GA8850@roeck-us.net>
+References: <20180425103314.842517924@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180425103314.842517924@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - linuxfoundation.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598713939951113780?=
-X-GMAIL-MSGID: =?utf-8?q?1598733472384067374?=
+X-GMAIL-MSGID: =?utf-8?q?1598732879172162560?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.16.y boot: 152 boots: 4 failed, 131 passed with 16 offlin=
-e, 1 untried/unknown (v4.16.4-27-g9a7eb4ea64f3)
+On Wed, Apr 25, 2018 at 12:33:09PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.16.5 release.
+> There are 26 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri Apr 27 10:33:04 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.16.y/kernel/v4.16.4-27-g9a7eb4ea64f3/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.16.=
-y/kernel/v4.16.4-27-g9a7eb4ea64f3/
+For v4.16.4-28-gb04d14a:
 
-Tree: stable-rc
-Branch: linux-4.16.y
-Git Describe: v4.16.4-27-g9a7eb4ea64f3
-Git Commit: 9a7eb4ea64f3850a0fabfdf2d95f4c8cbffcb324
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 79 unique boards, 24 SoC families, 17 builds out of 186
+Build results:
+	total: 143 pass: 143 fail: 0
+Qemu test results:
+	total: 139 pass: 139 fail: 0
 
-Boot Regressions Detected:
+Details are available at http://kerneltests.org/builders/.
 
-arm:
-
-    multi_v7_defconfig:
-        am335x-boneblack:
-            lab-baylibre-seattle: new failure (last pass: v4.16.3-197-g405d=
-1f8b04d1)
-        sun5i-gr8-chip-pro:
-            lab-free-electrons: new failure (last pass: v4.16.4)
-
-Boot Failures Detected:
-
-arm:
-
-    omap2plus_defconfig
-        dra7-evm: 1 failed lab
-
-    multi_v7_defconfig
-        am335x-boneblack: 1 failed lab
-        dra7-evm: 1 failed lab
-        sun5i-gr8-chip-pro: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    tegra_defconfig:
-        tegra20-iris-512: 1 offline lab
-
-    multi_v7_defconfig:
-        meson8b-odroidc1: 1 offline lab
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        vf610-colibri-eval-v3: 1 offline lab
-
-    davinci_all_defconfig:
-        da850-lcdk: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-        meson-gxbb-odroidc2: 1 offline lab
-        meson-gxl-s905d-p230: 1 offline lab
-        meson-gxl-s905x-nexbox-a95x: 1 offline lab
-        meson-gxl-s905x-p212: 1 offline lab
-        rk3399-firefly: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+Guenter
