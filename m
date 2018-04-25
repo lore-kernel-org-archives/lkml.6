@@ -1,70 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751567AbeDYJyC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:54:02 -0400
-Received: from mga01.intel.com ([192.55.52.88]:53049 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751353AbeDYJyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:54:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,325,1520924400";
-   d="scan'208";a="36900655"
-Date: Wed, 25 Apr 2018 12:53:55 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Javier Arteaga <javier@emutex.com>
-Cc: linux-kernel@vger.kernel.org, "Dan O'Donovan" <dan@emutex.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [RFC PATCH RESEND 0/3] UP Squared board drivers
-Message-ID: <20180425095355.GM2173@lahna.fi.intel.com>
-References: <20180421085009.28773-1-javier@emutex.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180421085009.28773-1-javier@emutex.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751559AbeDYKAC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 06:00:02 -0400
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:37651 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751412AbeDYJ77 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 05:59:59 -0400
+X-Google-Smtp-Source: AB8JxZr7YrmUZEqflGX2NN1z36gWv0uTcQJ6mgUzr8/DwaVO4GdTrVUKdKqSHorHxiHOjKDsxcOI3g==
+Message-ID: <1524650396.4026.55.camel@baylibre.com>
+Subject: Re: [PATCH 1/2] clk: honor CLK_MUX_ROUND_CLOSEST in generic clk mux
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
+Date: Wed, 25 Apr 2018 11:59:56 +0200
+In-Reply-To: <CAAEAJfDgGYu9WR5+qA-trQUTkb--bam=LLbhH+1N2OdrtBGLzA@mail.gmail.com>
+References: <20180409135921.5617-1-jbrunet@baylibre.com>
+         <20180409135921.5617-2-jbrunet@baylibre.com>
+         <CAAEAJfDgGYu9WR5+qA-trQUTkb--bam=LLbhH+1N2OdrtBGLzA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 21, 2018 at 09:50:06AM +0100, Javier Arteaga wrote:
-> [linux-kernel correctly Cc'd on the series now. Sorry for the noise.]
+On Tue, 2018-04-24 at 11:04 -0300, Ezequiel Garcia wrote:
+> >   }
+> > +EXPORT_SYMBOL_GPL(clk_mux_determine_rate_flags);
+> > 
 > 
-> Hi all,
-> 
-> This series adds platform support for AAEON's UP Squared, a x86 SBC
-> based on Apollo Lake [1]. Specifically, it enables control for the board
-> pin headers and for the LEDs, as both of these features are only
-> available behind a FPGA-based platform controller.
-> 
-> This is structured around a MFD driver that provides a regmap interface
-> to that platform controller to each MFD cell.
-> 
-> The series is carved out from an out-of-tree support patchset, initially
-> written by Dan O'Donovan for the original UP Board [2] and then extended
-> through the past year to support new entries in the lineup (UP Board, UP
-> Squared and UP Core) [3].
-> 
-> Here we only submit support for UP Squared to simplify review. Still,
-> the driver is designed so that it can easily gain support for the other
-> boards.
-> 
-> Questions:
-> 
-> * Is MFD the right fit for the platform controller?
->   The intention here is to encapsulate the custom GPIO-bitbanged control
->   protocol by sharing the regmap between the drivers.
-> 
-> * Is our use of two chained pinctrls (in patch 3/3) valid?
+> Why do we need to export this?
 
-There are few minor comments but other than that, to me this looks like
-a reasonable approach.
+Because any driver implementing some type of mux may use this function, and the
+driver could be a module. I have one in the pipe right now.
+
+It is the same as __clk_determine_rate(), __clk_mux_determine_rate_closest()
