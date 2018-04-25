@@ -1,66 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755655AbeDYQYO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:24:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48973 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755015AbeDYQYK (ORCPT
+        id S1755670AbeDYQ1F (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:27:05 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:45838 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755952AbeDYQ0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:24:10 -0400
-From: Colin King <colin.king@canonical.com>
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/iwpm: fix memory leak on map_info
-Date: Wed, 25 Apr 2018 17:24:04 +0100
-Message-Id: <20180425162404.28625-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 25 Apr 2018 12:26:53 -0400
+X-Google-Smtp-Source: AIpwx4+FHL8ZCN2HnHyPVU3Yek8a6Fd0tYWIg4TyvJnnHyTU53pz4hAEu5ILc1xJib7D0+PgzkiEPw==
+Date: Wed, 25 Apr 2018 09:26:50 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: andy.gross@linaro.org, mark.rutland@arm.com, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        devicetree@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com,
+        will.deacon@arm.com, catalin.marinas@arm.com
+Subject: Re: [PATCH 1/3] dt-bindings: mailbox: Add APSS shared binding for
+ SDM845 SoCs
+Message-ID: <20180425162650.GG18510@minitux>
+References: <20180425143803.11260-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180425143803.11260-1-sibis@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed 25 Apr 07:38 PDT 2018, Sibi Sankar wrote:
 
-In the cases where iwpm_hash_bucket is NULL and where function
-get_mapinfo_hash_bucket returns NULL then the map_info is never added
-to hash_bucket_head and hence there is a leak of map_info. Fix this
-by nullifying hash_bucket_head and if that is null we know that
-that map_info was not added to hash_bucket_head and hence map_info
-should be free'd.
+> Include SDM845 APSS shared to the list of possible bindings
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
-Detected by CoverityScan, CID#1222481 ("Resource Leak")
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Fixes: 30dc5e63d6a5 ("RDMA/core: Add support for iWARP Port Mapper user space service")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/core/iwpm_util.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Regards,
+Bjorn
 
-diff --git a/drivers/infiniband/core/iwpm_util.c b/drivers/infiniband/core/iwpm_util.c
-index 9821ae900f6d..da12da1c36f6 100644
---- a/drivers/infiniband/core/iwpm_util.c
-+++ b/drivers/infiniband/core/iwpm_util.c
-@@ -114,7 +114,7 @@ int iwpm_create_mapinfo(struct sockaddr_storage *local_sockaddr,
- 			struct sockaddr_storage *mapped_sockaddr,
- 			u8 nl_client)
- {
--	struct hlist_head *hash_bucket_head;
-+	struct hlist_head *hash_bucket_head = NULL;
- 	struct iwpm_mapping_info *map_info;
- 	unsigned long flags;
- 	int ret = -EINVAL;
-@@ -142,6 +142,9 @@ int iwpm_create_mapinfo(struct sockaddr_storage *local_sockaddr,
- 		}
- 	}
- 	spin_unlock_irqrestore(&iwpm_mapinfo_lock, flags);
-+
-+	if (!hash_bucket_head)
-+		kfree(map_info);
- 	return ret;
- }
- 
--- 
-2.17.0
+> ---
+>  .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt        | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+> index 16964f0c1773..8ea0f12b8d0b 100644
+> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+> @@ -10,6 +10,7 @@ platforms.
+>  	Definition: must be one of:
+>  		    "qcom,msm8916-apcs-kpss-global",
+>  		    "qcom,msm8996-apcs-hmss-global"
+> +		    "qcom,sdm845-apss-shared"
+>  
+>  - reg:
+>  	Usage: required
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
