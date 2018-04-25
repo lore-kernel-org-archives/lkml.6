@@ -1,36 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751501AbeDYJIn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:08:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34707 "EHLO
+        id S1751558AbeDYJI6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:08:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55347 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeDYJIk (ORCPT
+        with ESMTP id S1750969AbeDYJI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:08:40 -0400
-Date: Wed, 25 Apr 2018 02:07:29 -0700
+        Wed, 25 Apr 2018 05:08:56 -0400
+Date: Wed, 25 Apr 2018 02:08:02 -0700
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-58e65b51e6f9b9dd94a25ff2b2772222e0358099@git.kernel.org>
-Cc: tglx@linutronix.de, jgross@suse.com, dwmw2@infradead.org,
-        arjan@linux.intel.com, jpoimboe@redhat.com, dan.j.williams@intel.com,
-        namit@vmware.com, hughd@google.com, gregkh@linuxfoundation.org,
-        hpa@zytor.com, aaro.koskinen@nokia.com, bp@alien8.de,
-        peterz@infradead.org, aarcange@redhat.com, mingo@kernel.org,
-        keescook@google.com, dave.hansen@linux.intel.com,
-        linux-kernel@vger.kernel.org, mceier@gmail.com, luto@kernel.org,
-        torvalds@linux-foundation.org
-Reply-To: dwmw2@infradead.org, tglx@linutronix.de, jgross@suse.com,
-        arjan@linux.intel.com, jpoimboe@redhat.com, dan.j.williams@intel.com,
-        namit@vmware.com, hughd@google.com, gregkh@linuxfoundation.org,
-        hpa@zytor.com, aaro.koskinen@nokia.com, bp@alien8.de,
-        peterz@infradead.org, aarcange@redhat.com, mingo@kernel.org,
-        keescook@google.com, dave.hansen@linux.intel.com,
-        linux-kernel@vger.kernel.org, mceier@gmail.com, luto@kernel.org,
-        torvalds@linux-foundation.org
-In-Reply-To: <20180420222021.1C7D2B3F@viggo.jf.intel.com>
-References: <20180420222021.1C7D2B3F@viggo.jf.intel.com>
+Message-ID: <tip-a44ca8f5a30c008b54d07b00eed4eae7f169fcd0@git.kernel.org>
+Cc: jpoimboe@redhat.com, gregkh@linuxfoundation.org,
+        torvalds@linux-foundation.org, hughd@google.com, bp@alien8.de,
+        arjan@linux.intel.com, luto@kernel.org, aarcange@redhat.com,
+        tglx@linutronix.de, jgross@suse.com, keescook@google.com,
+        dave.hansen@linux.intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, dwmw2@infradead.org, namit@vmware.com,
+        peterz@infradead.org, dan.j.williams@intel.com, mingo@kernel.org
+Reply-To: aarcange@redhat.com, luto@kernel.org, arjan@linux.intel.com,
+        bp@alien8.de, hughd@google.com, torvalds@linux-foundation.org,
+        gregkh@linuxfoundation.org, jpoimboe@redhat.com, mingo@kernel.org,
+        peterz@infradead.org, dan.j.williams@intel.com, dwmw2@infradead.org,
+        namit@vmware.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        keescook@google.com, dave.hansen@linux.intel.com, jgross@suse.com,
+        tglx@linutronix.de
+In-Reply-To: <20180420222023.1C8B2B20@viggo.jf.intel.com>
+References: <20180420222023.1C8B2B20@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/pti: Fix boot warning from Global-bit setting
-Git-Commit-ID: 58e65b51e6f9b9dd94a25ff2b2772222e0358099
+Subject: [tip:x86/pti] x86/pti: Reduce amount of kernel text allowed to be
+ Global
+Git-Commit-ID: a44ca8f5a30c008b54d07b00eed4eae7f169fcd0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -43,137 +42,95 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  58e65b51e6f9b9dd94a25ff2b2772222e0358099
-Gitweb:     https://git.kernel.org/tip/58e65b51e6f9b9dd94a25ff2b2772222e0358099
+Commit-ID:  a44ca8f5a30c008b54d07b00eed4eae7f169fcd0
+Gitweb:     https://git.kernel.org/tip/a44ca8f5a30c008b54d07b00eed4eae7f169fcd0
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Fri, 20 Apr 2018 15:20:21 -0700
+AuthorDate: Fri, 20 Apr 2018 15:20:23 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Wed, 25 Apr 2018 11:02:50 +0200
 
-x86/pti: Fix boot warning from Global-bit setting
+x86/pti: Reduce amount of kernel text allowed to be Global
 
-commit 231df823c4f04176f607afc4576c989895cff40e
+commit abb67605203687c8b7943d760638d0301787f8d9
 
-The pageattr.c code attempts to process "faults" when it goes looking
-for PTEs to change and finds non-present entries.  It allows these
-faults in the linear map which is "expected to have holes", but
-WARN()s about them elsewhere, like when called on the kernel image.
+Kees reported to me that I made too much of the kernel image global.
+It was far more than just text:
 
-However, change_page_attr_clear() is now called on the kernel image in the
-process of trying to clear the Global bit.
+	I think this is too much set global: _end is after data,
+	bss, and brk, and all kinds of other stuff that could
+	hold secrets. I think this should match what
+	mark_rodata_ro() is doing.
 
-This trips the warning in __cpa_process_fault() if a non-present PTE is
-encountered in the kernel image.  The "holes" in the kernel image result
-from free_init_pages()'s use of set_memory_np().  These holes are totally
-fine, and result from normal operation, just as they would be in the kernel
-linear map.
+This does exactly that.  We use __end_rodata_hpage_align as our
+marker both because it is huge-page-aligned and it does not contain
+any sections we expect to hold secrets.
 
-Just silence the warning when holes in the kernel image are encountered.
+Kees's logic was that r/o data is in the kernel image anyway and,
+in the case of traditional distributions, can be freely downloaded
+from the web, so there's no reason to hide it.
 
-Fixes: 39114b7a7 (x86/pti: Never implicitly clear _PAGE_GLOBAL for kernel image)
-Reported-by: Mariusz Ceier <mceier@gmail.com>
-Reported-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+Fixes: 8c06c7740 (x86/pti: Leave kernel text global for !PCID)
+Reported-by: Kees Cook <keescook@google.com>
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Aaro Koskinen <aaro.koskinen@nokia.com>
 Acked-by: Ingo Molnar <mingo@kernel.org>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Juergen Gross <jgross@suse.com>
-Cc: Nadav Amit <namit@vmware.com>
-Cc: Kees Cook <keescook@google.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Hugh Dickins <hughd@google.com>
 Cc: linux-mm@kvack.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Nadav Amit <namit@vmware.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
-Link: https://lkml.kernel.org/r/20180420222021.1C7D2B3F@viggo.jf.intel.com
+Link: https://lkml.kernel.org/r/20180420222023.1C8B2B20@viggo.jf.intel.com
 
 
 ---
- arch/x86/mm/pageattr.c | 40 ++++++++++++++++++++++++++++++----------
- 1 file changed, 30 insertions(+), 10 deletions(-)
+ arch/x86/mm/pti.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 4fadfd2b7017..3bded76e8d5c 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -93,6 +93,18 @@ void arch_report_meminfo(struct seq_file *m)
- static inline void split_page_count(int level) { }
- #endif
- 
-+static inline int
-+within(unsigned long addr, unsigned long start, unsigned long end)
-+{
-+	return addr >= start && addr < end;
-+}
-+
-+static inline int
-+within_inclusive(unsigned long addr, unsigned long start, unsigned long end)
-+{
-+	return addr >= start && addr <= end;
-+}
-+
- #ifdef CONFIG_X86_64
- 
- static inline unsigned long highmap_start_pfn(void)
-@@ -106,20 +118,25 @@ static inline unsigned long highmap_end_pfn(void)
- 	return __pa_symbol(roundup(_brk_end, PMD_SIZE) - 1) >> PAGE_SHIFT;
- }
- 
--#endif
--
--static inline int
--within(unsigned long addr, unsigned long start, unsigned long end)
-+static bool __cpa_pfn_in_highmap(unsigned long pfn)
- {
--	return addr >= start && addr < end;
-+	/*
-+	 * Kernel text has an alias mapping at a high address, known
-+	 * here as "highmap".
-+	 */
-+	return within_inclusive(pfn, highmap_start_pfn(), highmap_end_pfn());
- }
- 
--static inline int
--within_inclusive(unsigned long addr, unsigned long start, unsigned long end)
-+#else
-+
-+static bool __cpa_pfn_in_highmap(unsigned long pfn)
- {
--	return addr >= start && addr <= end;
-+	/* There is no highmap on 32-bit */
-+	return false;
- }
- 
-+#endif
-+
- /*
-  * Flushing functions
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index f1fd52f449e0..ae3eb4f5d53b 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -430,12 +430,24 @@ static inline bool pti_kernel_image_global_ok(void)
   */
-@@ -1183,6 +1200,10 @@ static int __cpa_process_fault(struct cpa_data *cpa, unsigned long vaddr,
- 		cpa->numpages = 1;
- 		cpa->pfn = __pa(vaddr) >> PAGE_SHIFT;
- 		return 0;
+ void pti_clone_kernel_text(void)
+ {
++	/*
++	 * rodata is part of the kernel image and is normally
++	 * readable on the filesystem or on the web.  But, do not
++	 * clone the areas past rodata, they might contain secrets.
++	 */
+ 	unsigned long start = PFN_ALIGN(_text);
+-	unsigned long end = ALIGN((unsigned long)_end, PMD_PAGE_SIZE);
++	unsigned long end = (unsigned long)__end_rodata_hpage_align;
+ 
+ 	if (!pti_kernel_image_global_ok())
+ 		return;
+ 
++	pr_debug("mapping partial kernel image into user address space\n");
 +
-+	} else if (__cpa_pfn_in_highmap(cpa->pfn)) {
-+		/* Faults in the highmap are OK, so do not warn: */
-+		return -EFAULT;
- 	} else {
- 		WARN(1, KERN_WARNING "CPA: called for zero pte. "
- 			"vaddr = %lx cpa->vaddr = %lx\n", vaddr,
-@@ -1335,8 +1356,7 @@ static int cpa_process_alias(struct cpa_data *cpa)
- 	 * to touch the high mapped kernel as well:
- 	 */
- 	if (!within(vaddr, (unsigned long)_text, _brk_end) &&
--	    within_inclusive(cpa->pfn, highmap_start_pfn(),
--			     highmap_end_pfn())) {
-+	    __cpa_pfn_in_highmap(cpa->pfn)) {
- 		unsigned long temp_cpa_vaddr = (cpa->pfn << PAGE_SHIFT) +
- 					       __START_KERNEL_map - phys_base;
- 		alias_cpa = *cpa;
++	/*
++	 * Note that this will undo _some_ of the work that
++	 * pti_set_kernel_image_nonglobal() did to clear the
++	 * global bit.
++	 */
+ 	pti_clone_pmds(start, end, _PAGE_RW);
+ }
+ 
+@@ -458,8 +470,6 @@ void pti_set_kernel_image_nonglobal(void)
+ 	if (pti_kernel_image_global_ok())
+ 		return;
+ 
+-	pr_debug("set kernel image non-global\n");
+-
+ 	set_memory_nonglobal(start, (end - start) >> PAGE_SHIFT);
+ }
+ 
