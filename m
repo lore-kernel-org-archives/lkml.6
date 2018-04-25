@@ -1,73 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752890AbeDYLia (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 07:38:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55948 "EHLO mail.kernel.org"
+        id S1752391AbeDYLl5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 07:41:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59646 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752413AbeDYLi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 07:38:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F139B21789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix potential overflow
-Date: Wed, 25 Apr 2018 19:38:17 +0800
-Message-Id: <20180425113817.18189-1-chao@kernel.org>
-X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
+        id S1751523AbeDYLlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 07:41:53 -0400
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net 3/3] ARM64: dts: marvell: armada-cp110: Add clocks for the xmdio node
+References: <20180425110731.20153-1-maxime.chevallier@bootlin.com>
+        <20180425110731.20153-4-maxime.chevallier@bootlin.com>
+Date: Wed, 25 Apr 2018 13:41:40 +0200
+In-Reply-To: <20180425110731.20153-4-maxime.chevallier@bootlin.com> (Maxime
+        Chevallier's message of "Wed, 25 Apr 2018 13:07:31 +0200")
+Message-ID: <87muxrecnf.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
-
-In build_sit_entries(), if valid_blocks in SIT block is smaller than
-valid_blocks in journal, for below calculation:
-
-sbi->discard_blks += old_valid_blocks - se->valid_blocks;
-
-There will be two times potential overflow:
-- old_valid_blocks - se->valid_blocks will overflow, and be a very
-large number.
-- sbi->discard_blks += result will overflow again, comes out a correct
-result accidently.
-
-Anyway, it should be fixed.
-
-Fixes: d600af236da5 ("f2fs: avoid unneeded loop in build_sit_entries")
-Fixes: 1f43e2ad7bff ("f2fs: introduce CP_TRIMMED_FLAG to avoid unneeded discard")
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/segment.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a55647f61232..49fce2b56017 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3692,14 +3692,17 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 			} else {
- 				memcpy(se->discard_map, se->cur_valid_map,
- 							SIT_VBLOCK_MAP_SIZE);
--				sbi->discard_blks += old_valid_blocks -
--							se->valid_blocks;
-+				sbi->discard_blks += old_valid_blocks;
-+				sbi->discard_blks -= se->valid_blocks;
- 			}
- 		}
+Hi Maxime,
  
--		if (sbi->segs_per_sec > 1)
-+		if (sbi->segs_per_sec > 1) {
- 			get_sec_entry(sbi, start)->valid_blocks +=
--				se->valid_blocks - old_valid_blocks;
-+							se->valid_blocks;
-+			get_sec_entry(sbi, start)->valid_blocks -=
-+							old_valid_blocks;
-+		}
- 	}
- 	up_read(&curseg->journal_rwsem);
- 
+ On mer., avril 25 2018, Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+
+> The Marvell XSMI controller needs 3 clocks to operate correctly :
+>  - The MG clock (clk 5)
+>  - The MG Core clock (clk 6)
+>  - The GOP clock (clk 18)
+>
+>  This commit adds them, to avoid system hangs when using these
+>  interfaces.
+>
+> Fixes: c7e92def1ef4 ("clk: mvebu: cp110: Fix clock tree representation")
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+This patch should not have been sent with the net prefix and should not
+be merge through the net subsystem.
+
+I will take care of it to avoid conflict in the devei tree file during
+the merge windows.
+
+Thanks,
+
+Gregory
+
+> ---
+>  arch/arm64/boot/dts/marvell/armada-cp110.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
+> index 6c137ac656e9..ed2f1237ea1e 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
+> @@ -142,6 +142,8 @@
+>  			#size-cells = <0>;
+>  			compatible = "marvell,xmdio";
+>  			reg = <0x12a600 0x10>;
+> +			clocks = <&CP110_LABEL(clk) 1 5>,
+> +				 <&CP110_LABEL(clk) 1 6>, <&CP110_LABEL(clk) 1 18>;
+>  			status = "disabled";
+>  		};
+>  
+> -- 
+> 2.11.0
+>
+
 -- 
-2.16.2.17.g38e79b1fd
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
