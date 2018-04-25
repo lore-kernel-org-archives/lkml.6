@@ -1,36 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AB8JxZrl42CNEv5Em/UcrlWM+RfjJCFAJ48sq7/T8hbFc3hUXYYg9W2DCYl8huRXz4uut5y+P4iC
-ARC-Seal: i=1; a=rsa-sha256; t=1524652652; cv=none;
-        d=google.com; s=arc-20160816;
-        b=iCpBhWcOtaep5C0Rn7xeqqFLA5Yqi0se5tild6xDIKMBV+e2WTlNnxqyoBzETTqbLw
-         1Rka4OmApgSEma3f057e8XCP6lHfkS28UHFEkF4ust8jXlskBXKAsKEWakMjfkZ+/euC
-         f6+DZA5XJYSVDKtwRuEeFCQe4lK+yzDvYKhfpbkYRm9amJaauV1zXwISIN5QsgT0/kJ1
-         KdAMr1ml+Az+ivku3A/oHUFVta/3qpxy6r6QdcxdiWB9/55Wf3l351ikZMvlLhujG1OZ
-         jcPajtvaSC/UY8bhz9TlrRn3qnImpKzJfJ+HyAJvAUFMb/UK/3GgmpcbIIbgKidR8CP8
-         C8Og==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=J6F9yC81d9rvlNl/8i2ULVtFFLwtninHb1u4JFtzeWU=;
-        b=mZq7r6YdiBIBsV1KFpx48sMIId/ZnYuabGLFUPhRCu1L909pfyrsCfOqlcs8F/pUWN
-         R9zQTJ38lCdBZrc82q7QKokNSt1+kRWtGSxCW2Y7EkmmPR2BaNxBkun/OZ4uInymTA9A
-         7xcet/2KKHc4FWuZPimRSNQ4xHb9JTjuRxv+uxlLhhrzKPUlHTIkFVtn5ifB8x6BmMBF
-         Tb+ls9NSoBHsxVIa3TUJSVSSORVfIcAA5dWyjmBeLMPLATQX/39ms7NKHB2160Bdira6
-         HMP8EsQILxq/DYB/PhGzCbZKytP0q80F43Ptuc8QMIsuM9Go7iN0yBNVhKIJP8Ks4vr6
-         0eIA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-497764-1524652648-2-1811852695990474652
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524652648; b=Xr9dnyimajyoP12yVATtQMlKT+5xlLpAnAmZv4esHuxa2dJouW
+    0uNRg5NajXR3EXlgBuxyreURTFD2QG6BPxq4Of8XjFHmF+Saksm8grr8Jk/JMT8+
+    VQGl6gQ7unWzD8gdLdZKslfF1LO46lCByG+9rsAdeyQhDIITJdzIqcEyQAsVt/fD
+    pVKuxkhaP/KtbKWaWp/yAEXHiVKEoRT6POWtkWCca7VVpHLl4z4XDRHT+gUAeZ1F
+    MsIFByZqt7a0vesRArH2CJ4d5mKDVffuPHYPTjfxV8wg4tNr7aVJPKC+ZhooFtD+
+    U21ND2Dw952ElHB0mPnbhHW7KMiVy7McBWBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524652648; bh=GpY0hjbIf4QCszEal3K+9p7wjMEmqC
+    nJmagoqZnxr/I=; b=g/L7i5DFzkBQmiN3y/hSduwf5CkHCTcxMpuBXhd1Fs7nOa
+    e/rX8aFj6o07VNaONYs/yFLyyLol3b3nK8PXJA+s0hd8Z8mqr4QxdrY1yZtmdv8w
+    dVBiE3Y1qc0LcOjkbrjyFRcLMjWMiEH7lIA3l10zOF3thJOkGJJryd4NNgUOPtX7
+    xuc0Q9xkx5hBn7ReZuLbTQpJ1Q561ZOmo4H9tnEWmChB31+PWq6TvNpjt/Ze2WY/
+    j2IbNLddbVDkyFd3DWDl8dtL2PLFIBOVi71fs6J5IWeOZMTucFQO3TjAEkTFSWvx
+    YSlm8yy+GiRJOjJQma6jkZsjdJfyYmnAzxMHIrYg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfIK3jLwUsHwYsnIXcEY5jJOUauPkX3CvoumtEDnHvmkna29KTB0L+kk8RdvFds7K1SKhyzkpcr2lUVaGT1r8HtgGNMT+qQSeqERpHe8F8iFiW52OF4js
+    iMT2XGMJ7ox3Op3LVWGdVkX2rILlEfPweYUkLbD0XMHLfLeRsmg/ucN2Feq/eNgVvXvxcdbJwQepcUGqY4Dx+kd9F86A2Djd3z/z6hh0Ox0A/sFQU0kbTVwN
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=BcN0S9LAIc19CvRaRVkA:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753228AbeDYKh0 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:37:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51098 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753257AbeDYKhV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:37:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Liu Bo <bo.liu@linux.alibaba.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 002/183] btrfs: fix unaligned access in readdir
-Date: Wed, 25 Apr 2018 12:33:42 +0200
-Message-Id: <20180425103242.696627331@linuxfoundation.org>
+        stable@vger.kernel.org, Hector Martin <marcan@marcan.st>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 016/183] firewire-ohci: work around oversized DMA reads on JMicron controllers
+Date: Wed, 25 Apr 2018 12:33:56 +0200
+Message-Id: <20180425103243.263203532@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -38,10 +83,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714003012608660?=
-X-GMAIL-MSGID: =?utf-8?q?1598714179778432819?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,74 +93,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Sterba <dsterba@suse.com>
+From: Hector Martin <marcan@marcan.st>
 
-commit 92d32170847bfff2dd08af2c016085779f2fd2a1 upstream.
 
-The last update to readdir introduced a temporary buffer to store the
-emitted readdir data, but as there are file names of variable length,
-there's a lot of unaligned access.
+[ Upstream commit 188775181bc05f29372b305ef96485840e351fde ]
 
-This was observed on a sparc64 machine:
+At least some JMicron controllers issue buggy oversized DMA reads when
+fetching context descriptors, always fetching 0x20 bytes at once for
+descriptors which are only 0x10 bytes long. This is often harmless, but
+can cause page faults on modern systems with IOMMUs:
 
-  Kernel unaligned access at TPC[102f3080] btrfs_real_readdir+0x51c/0x718 [btrfs]
+DMAR: [DMA Read] Request device [05:00.0] fault addr fff56000 [fault reason 06] PTE Read access is not set
+firewire_ohci 0000:05:00.0: DMA context IT0 has stopped, error code: evt_descriptor_read
 
-Fixes: 23b5ec74943 ("btrfs: fix readdir deadlock with pagefault")
-CC: stable@vger.kernel.org # 4.14+
-Reported-and-tested-by: René Rebe <rene@exactcode.com>
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+This works around the problem by always leaving 0x10 padding bytes at
+the end of descriptor buffer pages, which should be harmless to do
+unconditionally for controllers in case others have the same behavior.
+
+Signed-off-by: Hector Martin <marcan@marcan.st>
+Reviewed-by: Clemens Ladisch <clemens@ladisch.de>
+Signed-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/btrfs/inode.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/firewire/ohci.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -42,6 +42,7 @@
- #include <linux/blkdev.h>
- #include <linux/posix_acl_xattr.h>
- #include <linux/uio.h>
-+#include <asm/unaligned.h>
- #include "ctree.h"
- #include "disk-io.h"
- #include "transaction.h"
-@@ -5980,11 +5981,13 @@ static int btrfs_filldir(void *addr, int
- 		struct dir_entry *entry = addr;
- 		char *name = (char *)(entry + 1);
+--- a/drivers/firewire/ohci.c
++++ b/drivers/firewire/ohci.c
+@@ -1130,7 +1130,13 @@ static int context_add_buffer(struct con
+ 		return -ENOMEM;
  
--		ctx->pos = entry->offset;
--		if (!dir_emit(ctx, name, entry->name_len, entry->ino,
--			      entry->type))
-+		ctx->pos = get_unaligned(&entry->offset);
-+		if (!dir_emit(ctx, name, get_unaligned(&entry->name_len),
-+					 get_unaligned(&entry->ino),
-+					 get_unaligned(&entry->type)))
- 			return 1;
--		addr += sizeof(struct dir_entry) + entry->name_len;
-+		addr += sizeof(struct dir_entry) +
-+			get_unaligned(&entry->name_len);
- 		ctx->pos++;
- 	}
- 	return 0;
-@@ -6078,14 +6081,15 @@ again:
- 		}
+ 	offset = (void *)&desc->buffer - (void *)desc;
+-	desc->buffer_size = PAGE_SIZE - offset;
++	/*
++	 * Some controllers, like JMicron ones, always issue 0x20-byte DMA reads
++	 * for descriptors, even 0x10-byte ones. This can cause page faults when
++	 * an IOMMU is in use and the oversized read crosses a page boundary.
++	 * Work around this by always leaving at least 0x10 bytes of padding.
++	 */
++	desc->buffer_size = PAGE_SIZE - offset - 0x10;
+ 	desc->buffer_bus = bus_addr + offset;
+ 	desc->used = 0;
  
- 		entry = addr;
--		entry->name_len = name_len;
-+		put_unaligned(name_len, &entry->name_len);
- 		name_ptr = (char *)(entry + 1);
- 		read_extent_buffer(leaf, name_ptr, (unsigned long)(di + 1),
- 				   name_len);
--		entry->type = btrfs_filetype_table[btrfs_dir_type(leaf, di)];
-+		put_unaligned(btrfs_filetype_table[btrfs_dir_type(leaf, di)],
-+				&entry->type);
- 		btrfs_dir_item_key_to_cpu(leaf, di, &location);
--		entry->ino = location.objectid;
--		entry->offset = found_key.offset;
-+		put_unaligned(location.objectid, &entry->ino);
-+		put_unaligned(found_key.offset, &entry->offset);
- 		entries++;
- 		addr += sizeof(struct dir_entry) + name_len;
- 		total_len += sizeof(struct dir_entry) + name_len;
