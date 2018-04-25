@@ -1,116 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756061AbeDYRpz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 13:45:55 -0400
-Received: from david.siemens.de ([192.35.17.14]:43227 "EHLO david.siemens.de"
+        id S1755979AbeDYRrM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 13:47:12 -0400
+Received: from tatiana.utanet.at ([213.90.36.46]:51298 "EHLO tatiana.utanet.at"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755223AbeDYRpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 13:45:50 -0400
-Subject: Re: [PATCH 1/6] PCI: Make pci_get_new_domain_nr static
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
- <a21882288c4664cc983a5741e8cbf6d59abacd46.1524582822.git.jan.kiszka@siemens.com>
- <20180425162745.GB21628@e107981-ln.cambridge.arm.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Openpgp: preference=signencrypt
-Message-ID: <db40716e-85ac-a91d-98a9-81accb2b6756@siemens.com>
-Date: Wed, 25 Apr 2018 19:21:12 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        id S1755283AbeDYRrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 13:47:05 -0400
+Subject: Re: [Mjpeg-users] [PATCH] media: zoran: move to dma-mapping interface
+To: MJPEG-tools user list <mjpeg-users@lists.sourceforge.net>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+References: <20180424204158.2764095-1-arnd@arndb.de>
+ <20180425061537.GA23383@infradead.org>
+ <CAK8P3a06ragAPWpHGm-bGoZ8t6QyAttWJfD0jU_wcGy7FqLb5w@mail.gmail.com>
+ <20180425072138.GA16375@infradead.org>
+From: Bernhard Praschinger <shadowlord@utanet.at>
+Message-ID: <9841d9a0-fd2e-96a6-3092-d12efa92ea6c@utanet.at>
+Date: Wed, 25 Apr 2018 19:27:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:49.0) Gecko/20100101
+ Firefox/49.0 SeaMonkey/2.46
 MIME-Version: 1.0
-In-Reply-To: <20180425162745.GB21628@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180425072138.GA16375@infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TELE2-Authenticated-As: 2492d812503ae882f041a3ed11d939a345349e8a
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-25 18:27, Lorenzo Pieralisi wrote:
-> On Tue, Apr 24, 2018 at 05:13:37PM +0200, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
+Hallo
+
+Christoph Hellwig wrote:
+> On Wed, Apr 25, 2018 at 09:08:13AM +0200, Arnd Bergmann wrote:
+>>> That probably also means it can use dma_mmap_coherent instead of the
+>>> handcrafted remap_pfn_range loop and the PageReserved abuse.
 >>
->> The only user of that function is of_pci_bus_find_domain_nr. Pure
->> cleanup.
-> 
-> "The only user of pci_get_new_domain_nr() is of_pci_bus_find_domain_nr().
-> Since they are defined in the same compilation unit,
-> pci_get_new_domain_nr() can be made static, which also simplifies
-> preprocessor conditionals.
-> 
-> No functional change intended."
-> 
+>> I'd rather not touch that code. How about adding a comment about
+>> the fact that it should use dma_mmap_coherent()?
+>
+> Maybe the real question is if there is anyone that actually cares
+> for this driver, or if we are better off just removing it?
+>
+> Same is true for various other virt_to_bus using drivers, e.g. the
+> grotty atm drivers.
 
-Thanks, wording adopted for v2.
+I would appreciate if somebody would removes the driver from the linux 
+kernel. I suggested that some years ago 2014-06-23 (just scroll down):
+https://sourceforge.net/p/mjpeg/mailman/mjpeg-users/?viewmonth=201406
 
-Jan
+You should also find that thread in the kernel-janitors@vger.kernel.org 
+and linux-media@vger.kernel.org Mailinglist archive.
 
->> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->> ---
->>  drivers/pci/pci.c   | 6 ++----
->>  include/linux/pci.h | 3 ---
->>  2 files changed, 2 insertions(+), 7 deletions(-)
-> 
-> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> 
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index e597655a5643..695c2bb4e853 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -5702,15 +5702,14 @@ static void pci_no_domains(void)
->>  #endif
->>  }
->>  
->> -#ifdef CONFIG_PCI_DOMAINS
->> +#ifdef CONFIG_PCI_DOMAINS_GENERIC
->>  static atomic_t __domain_nr = ATOMIC_INIT(-1);
->>  
->> -int pci_get_new_domain_nr(void)
->> +static int pci_get_new_domain_nr(void)
->>  {
->>  	return atomic_inc_return(&__domain_nr);
->>  }
->>  
->> -#ifdef CONFIG_PCI_DOMAINS_GENERIC
->>  static int of_pci_bus_find_domain_nr(struct device *parent)
->>  {
->>  	static int use_dt_domains = -1;
->> @@ -5765,7 +5764,6 @@ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
->>  			       acpi_pci_bus_find_domain_nr(bus);
->>  }
->>  #endif
->> -#endif
->>  
->>  /**
->>   * pci_ext_cfg_avail - can we access extended PCI config space?
->> diff --git a/include/linux/pci.h b/include/linux/pci.h
->> index 73178a2fcee0..963232a6cd2e 100644
->> --- a/include/linux/pci.h
->> +++ b/include/linux/pci.h
->> @@ -1510,12 +1510,10 @@ void pci_cfg_access_unlock(struct pci_dev *dev);
->>   */
->>  #ifdef CONFIG_PCI_DOMAINS
->>  extern int pci_domains_supported;
->> -int pci_get_new_domain_nr(void);
->>  #else
->>  enum { pci_domains_supported = 0 };
->>  static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
->>  static inline int pci_proc_domain(struct pci_bus *bus) { return 0; }
->> -static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
->>  #endif /* CONFIG_PCI_DOMAINS */
->>  
->>  /*
->> @@ -1670,7 +1668,6 @@ static inline struct pci_dev *pci_get_domain_bus_and_slot(int domain,
->>  
->>  static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
->>  static inline struct pci_dev *pci_dev_get(struct pci_dev *dev) { return NULL; }
->> -static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
->>  
->>  #define dev_is_pci(d) (false)
->>  #define dev_is_pf(d) (false)
->> -- 
->> 2.13.6
->>
+I know of one person that is still using this old type of card's but he 
+uses a 2.6.x Kernel on a old machine, using old software releases.
+https://sourceforge.net/p/mjpeg/mailman/mjpeg-users/?viewmonth=201709
+
+That type of card were introduced about ~20 years ago. I think it is a 
+good moment to say goodbye to that type of cards.
+
+auf hoffentlich bald,
+
+Berni the Chaos of Woodquarter
+
+Email: shadowlord@utanet.at
+www: http://www.lysator.liu.se/~gz/bernhard
