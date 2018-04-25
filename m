@@ -1,10 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-937867-1524671489-2-17618170924934444878
+X-Cyrus-Session-Id: sloti22d1t05-945756-1524671487-2-11590712018809357197
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
@@ -13,26 +13,26 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524671488; b=DD6fXE0NFzGFOpAjWLASn4uYxeFmEI6uzRq9yf0iVYrgj78AEn
-    XpZVjVpitdrHiC638ItATkNADyrvDDkPfISGExj2aMbPGC+xCyCejoCWHtU02K0a
-    ar+xl6aKWt1H0OryY3qxZmJbrPNwwzSLKggs2c/+TpQBKsaJMu3URxq9TkZtl4lp
-    heXCstyKb7y1CLtOR1dzhUKOnz3Cc+P+uRJncdm/sROwintBOGQGszegGV/sscjh
-    BHZvTwxuldbCnBzLpq+AzlS8jVbJ8fBGw86DV/OBYFpR05KoSPQydO/RpH7+c0yV
-    Jn5mgy5xwOmnNcXhI6c3GdyfEPnJr39l16LQ==
+    1524671486; b=LNgiFH1A67pAiadquBooRK5/WNIDqCXbH/kFD4N2gJSbnQeypW
+    +g0LpN5zPCq1V6SfBs7kSUYMiRg6Y31P0J9vHX9wEWVDLkRx2C19OU+i+doVSsdY
+    4tzxK9KcKCYSsyVbEzm/x0aXPQB0P+rMqI+UiOqSF1WRRixXnaDM434uXGtXsIRQ
+    sZR4uOOaV4ozgY8ciCmBk/AUhCcWnS5svpT3acaiq8z1g7km2ypvpCq5zpQr9lRj
+    hDWC86+m9vSfpqlghfsLA3RjiSSq1RzV0meFk9l3s2waTgyu2dbmxV5FwD3cq8Lh
+    1VXTkclTzCvH77PlPaXJkfwP72GcICRXZpmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524671488; bh=EyfX8
-    bWv2HVLPA2eYnJNC9dk1oKYEvPVQeAxgLePSpo=; b=Ddw7FKY5Q7PayjssoFl4Y
-    l/1HenxJK7MZ9ZvvwZy8UeCyM0VviU0GkdGk0MH9shK+PtmIa+H9X0d5xn8mUkT8
-    TE95y5lBMmkC6foXe/2OwxIqQLNj2gPM35vElsuCHi7xOrU0WRNiC+3gRzxwmXgq
-    D2TZVV5lbliRNB9igZHsvpLYIV5ShxNvnlJqQx9+5fF8hXTtwtrkzSdZqTLFpXq4
-    rLPpId1tLbOeOZ4bedTOxRm+8h+zBut8rGAPW4WfKJfMxYcmuh/oJeR2g/rA42+y
-    s2jOi/z/gWInunB6r2YkeOhstJAsVTvO+z6ix71MXbnjtvx5irXHo32+EZBpOEWE
-    A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=B+hkCEN3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :content-transfer-encoding:sender; s=fm2; t=1524671486; bh=EnKEP
+    BOJrxyQ5Q/HZwvbSMaxcL/Z51KIgsSpN2c7xpI=; b=D1eFj+iaI165SyZE+Rkql
+    Q9mZZSnKB7PyQGf4L0SaczhVh1i4HnJtC0UM3QzE2rdA0ISFrBhC0PnQpM6qyo8c
+    4G21gYzTR28UwD5Kvs1lVDV9ccDBrWx+rhqZkzisgg0P4kWsNQtM0Wl9669mujZr
+    Z5yK9A8H/1OXtYAfWlsadJuTeE8ipaLj6NZEGC2XBcNJ/kX560n8tfG4taL2cZE6
+    2q0GNpg+R4WsRujuqLizvi1yVYcPD0s7FlWVvwUWTrZrtyCPr8A0UHpIyLoG8lhX
+    xsTnYp98noRhFd1ovml5/6ddoEeLSe+aUCmRkG09x9gwjwGWFMfrlDtN4wHF3vx5
+    g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=UCPJnZTA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
@@ -42,9 +42,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=B+hkCEN3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=UCPJnZTA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
@@ -55,12 +55,12 @@ Authentication-Results: mx5.messagingengine.com;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBApv9kMtMQx0odtwDQdiUxFHwobiKqjDJKOzxLJYizxFhtcdufx2bA6Y9FvZh1uCmWzm5IE8Sy9qit+lorsal1XOcggMJl1i1Y9qXX9eNIa9clGSogl
-    WSE9dXL9qkRpb5bzgZDC0ehabH9zwHJXYpCm/HgSnBUqmeqQjCaSZA+q7ie1CO6M36NBSLV4+RGdy6xjmqwkIXL/cibwGPyFk+/lX8QDxdUfJ/32g3V5a4fn
-    G1gHrtN9hTRxxFtqfcvnVQ==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+X-CM-Envelope: MS4wfKA9JbGFyxT1DgJpOGGygf7stoEA+57A2lAc6sLlf8f/72TIZ1EccizIYEFAWETrLdJ7oxsGTi6M1bOY+wQbdku0IJIPfZuxebs7JmWQ30FQMDhBgUiL
+    O5USLocsYUMntz/Tjgr0NGS0lysLVoE6mwhgLnZ86L1+hGR/84ZywUJCa5Pf9vozvJ93v9jFLA1lqB2ogXmmP9wWkgNsGRuPnNMzBiswJ82qDJKYyDC2a5Uh
+    zGpEuREXbKG7mHJK/ylgeA==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
     a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=zMiHMkJPCD3nLd7roHIA:9
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=TCsHB-DreQICuqE0vTcA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -68,10 +68,9 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 31/40] netfilter/xt_hashlimit: switch to proc_create_{seq,
- single}_data
-Date: Wed, 25 Apr 2018 17:48:18 +0200
-Message-Id: <20180425154827.32251-32-hch@lst.de>
+Subject: [PATCH 32/40] netfilter/x_tables: switch to proc_create_seq_private
+Date: Wed, 25 Apr 2018 17:48:19 +0200
+Message-Id: <20180425154827.32251-33-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425154827.32251-1-hch@lst.de>
 References: <20180425154827.32251-1-hch@lst.de>
@@ -105,209 +104,87 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-And use proc private data directly instead of doing a detour
-through seq->private.
+And remove proc boilerplate code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/netfilter/xt_hashlimit.c | 92 +++++++-----------------------------
- 1 file changed, 18 insertions(+), 74 deletions(-)
+ net/netfilter/x_tables.c | 42 ++++++----------------------------------
+ 1 file changed, 6 insertions(+), 36 deletions(-)
 
-diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
-index 0cd73567e7ff..9b16402f29af 100644
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -57,9 +57,9 @@ static inline struct hashlimit_net *hashlimit_pernet(struct net *net)
- }
- 
- /* need to declare this at the top */
--static const struct file_operations dl_file_ops_v2;
--static const struct file_operations dl_file_ops_v1;
--static const struct file_operations dl_file_ops;
-+static const struct seq_operations dl_seq_ops_v2;
-+static const struct seq_operations dl_seq_ops_v1;
-+static const struct seq_operations dl_seq_ops;
- 
- /* hash table crap */
- struct dsthash_dst {
-@@ -272,7 +272,7 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
- {
- 	struct hashlimit_net *hashlimit_net = hashlimit_pernet(net);
- 	struct xt_hashlimit_htable *hinfo;
--	const struct file_operations *fops;
-+	const struct seq_operations *ops;
- 	unsigned int size, i;
- 	int ret;
- 
-@@ -321,19 +321,19 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
- 
- 	switch (revision) {
- 	case 1:
--		fops = &dl_file_ops_v1;
-+		ops = &dl_seq_ops_v1;
- 		break;
- 	case 2:
--		fops = &dl_file_ops_v2;
-+		ops = &dl_seq_ops_v2;
- 		break;
- 	default:
--		fops = &dl_file_ops;
-+		ops = &dl_seq_ops;
- 	}
- 
--	hinfo->pde = proc_create_data(name, 0,
-+	hinfo->pde = proc_create_seq_data(name, 0,
- 		(family == NFPROTO_IPV4) ?
- 		hashlimit_net->ipt_hashlimit : hashlimit_net->ip6t_hashlimit,
--		fops, hinfo);
-+		ops, hinfo);
- 	if (hinfo->pde == NULL) {
- 		kfree(hinfo->name);
- 		vfree(hinfo);
-@@ -1057,7 +1057,7 @@ static struct xt_match hashlimit_mt_reg[] __read_mostly = {
- static void *dl_seq_start(struct seq_file *s, loff_t *pos)
- 	__acquires(htable->lock)
- {
--	struct xt_hashlimit_htable *htable = s->private;
-+	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
- 	unsigned int *bucket;
- 
- 	spin_lock_bh(&htable->lock);
-@@ -1074,7 +1074,7 @@ static void *dl_seq_start(struct seq_file *s, loff_t *pos)
- 
- static void *dl_seq_next(struct seq_file *s, void *v, loff_t *pos)
- {
--	struct xt_hashlimit_htable *htable = s->private;
-+	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
- 	unsigned int *bucket = v;
- 
- 	*pos = ++(*bucket);
-@@ -1088,7 +1088,7 @@ static void *dl_seq_next(struct seq_file *s, void *v, loff_t *pos)
- static void dl_seq_stop(struct seq_file *s, void *v)
- 	__releases(htable->lock)
- {
--	struct xt_hashlimit_htable *htable = s->private;
-+	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
- 	unsigned int *bucket = v;
- 
- 	if (!IS_ERR(bucket))
-@@ -1130,7 +1130,7 @@ static void dl_seq_print(struct dsthash_ent *ent, u_int8_t family,
- static int dl_seq_real_show_v2(struct dsthash_ent *ent, u_int8_t family,
- 			       struct seq_file *s)
- {
--	const struct xt_hashlimit_htable *ht = s->private;
-+	struct xt_hashlimit_htable *ht = PDE_DATA(file_inode(s->private));
- 
- 	spin_lock(&ent->lock);
- 	/* recalculate to show accurate numbers */
-@@ -1145,7 +1145,7 @@ static int dl_seq_real_show_v2(struct dsthash_ent *ent, u_int8_t family,
- static int dl_seq_real_show_v1(struct dsthash_ent *ent, u_int8_t family,
- 			       struct seq_file *s)
- {
--	const struct xt_hashlimit_htable *ht = s->private;
-+	struct xt_hashlimit_htable *ht = PDE_DATA(file_inode(s->private));
- 
- 	spin_lock(&ent->lock);
- 	/* recalculate to show accurate numbers */
-@@ -1160,7 +1160,7 @@ static int dl_seq_real_show_v1(struct dsthash_ent *ent, u_int8_t family,
- static int dl_seq_real_show(struct dsthash_ent *ent, u_int8_t family,
- 			    struct seq_file *s)
- {
--	const struct xt_hashlimit_htable *ht = s->private;
-+	struct xt_hashlimit_htable *ht = PDE_DATA(file_inode(s->private));
- 
- 	spin_lock(&ent->lock);
- 	/* recalculate to show accurate numbers */
-@@ -1174,7 +1174,7 @@ static int dl_seq_real_show(struct dsthash_ent *ent, u_int8_t family,
- 
- static int dl_seq_show_v2(struct seq_file *s, void *v)
- {
--	struct xt_hashlimit_htable *htable = s->private;
-+	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
- 	unsigned int *bucket = (unsigned int *)v;
- 	struct dsthash_ent *ent;
- 
-@@ -1188,7 +1188,7 @@ static int dl_seq_show_v2(struct seq_file *s, void *v)
- 
- static int dl_seq_show_v1(struct seq_file *s, void *v)
- {
--	struct xt_hashlimit_htable *htable = s->private;
-+	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
- 	unsigned int *bucket = v;
- 	struct dsthash_ent *ent;
- 
-@@ -1202,7 +1202,7 @@ static int dl_seq_show_v1(struct seq_file *s, void *v)
- 
- static int dl_seq_show(struct seq_file *s, void *v)
- {
--	struct xt_hashlimit_htable *htable = s->private;
-+	struct xt_hashlimit_htable *htable = PDE_DATA(file_inode(s->private));
- 	unsigned int *bucket = v;
- 	struct dsthash_ent *ent;
- 
-@@ -1235,62 +1235,6 @@ static const struct seq_operations dl_seq_ops = {
- 	.show  = dl_seq_show
+diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
+index 344dd01a5027..0e314f95a4a3 100644
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -1648,22 +1648,6 @@ static const struct seq_operations xt_match_seq_ops = {
+ 	.show	= xt_match_seq_show,
  };
  
--static int dl_proc_open_v2(struct inode *inode, struct file *file)
+-static int xt_match_open(struct inode *inode, struct file *file)
 -{
--	int ret = seq_open(file, &dl_seq_ops_v2);
--
--	if (!ret) {
--		struct seq_file *sf = file->private_data;
--
--		sf->private = PDE_DATA(inode);
--	}
--	return ret;
+-	struct nf_mttg_trav *trav;
+-	trav = __seq_open_private(file, &xt_match_seq_ops, sizeof(*trav));
+-	if (!trav)
+-		return -ENOMEM;
+-	return 0;
 -}
 -
--static int dl_proc_open_v1(struct inode *inode, struct file *file)
--{
--	int ret = seq_open(file, &dl_seq_ops_v1);
--
--	if (!ret) {
--		struct seq_file *sf = file->private_data;
--		sf->private = PDE_DATA(inode);
--	}
--	return ret;
--}
--
--static int dl_proc_open(struct inode *inode, struct file *file)
--{
--	int ret = seq_open(file, &dl_seq_ops);
--
--	if (!ret) {
--		struct seq_file *sf = file->private_data;
--
--		sf->private = PDE_DATA(inode);
--	}
--	return ret;
--}
--
--static const struct file_operations dl_file_ops_v2 = {
--	.open    = dl_proc_open_v2,
--	.read    = seq_read,
--	.llseek  = seq_lseek,
--	.release = seq_release
+-static const struct file_operations xt_match_ops = {
+-	.open	 = xt_match_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = seq_release_private,
 -};
 -
--static const struct file_operations dl_file_ops_v1 = {
--	.open    = dl_proc_open_v1,
--	.read    = seq_read,
--	.llseek  = seq_lseek,
--	.release = seq_release
--};
--
--static const struct file_operations dl_file_ops = {
--	.open    = dl_proc_open,
--	.read    = seq_read,
--	.llseek  = seq_lseek,
--	.release = seq_release
--};
--
- static int __net_init hashlimit_proc_net_init(struct net *net)
+ static void *xt_target_seq_start(struct seq_file *seq, loff_t *pos)
  {
- 	struct hashlimit_net *hashlimit_net = hashlimit_pernet(net);
+ 	return xt_mttg_seq_start(seq, pos, true);
+@@ -1698,22 +1682,6 @@ static const struct seq_operations xt_target_seq_ops = {
+ 	.show	= xt_target_seq_show,
+ };
+ 
+-static int xt_target_open(struct inode *inode, struct file *file)
+-{
+-	struct nf_mttg_trav *trav;
+-	trav = __seq_open_private(file, &xt_target_seq_ops, sizeof(*trav));
+-	if (!trav)
+-		return -ENOMEM;
+-	return 0;
+-}
+-
+-static const struct file_operations xt_target_ops = {
+-	.open	 = xt_target_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = seq_release_private,
+-};
+-
+ #define FORMAT_TABLES	"_tables_names"
+ #define	FORMAT_MATCHES	"_tables_matches"
+ #define FORMAT_TARGETS 	"_tables_targets"
+@@ -1787,8 +1755,9 @@ int xt_proto_init(struct net *net, u_int8_t af)
+ 
+ 	strlcpy(buf, xt_prefix[af], sizeof(buf));
+ 	strlcat(buf, FORMAT_MATCHES, sizeof(buf));
+-	proc = proc_create_data(buf, 0440, net->proc_net, &xt_match_ops,
+-				(void *)(unsigned long)af);
++	proc = proc_create_seq_private(buf, 0440, net->proc_net,
++			&xt_match_seq_ops, sizeof(struct nf_mttg_trav),
++			(void *)(unsigned long)af);
+ 	if (!proc)
+ 		goto out_remove_tables;
+ 	if (uid_valid(root_uid) && gid_valid(root_gid))
+@@ -1796,8 +1765,9 @@ int xt_proto_init(struct net *net, u_int8_t af)
+ 
+ 	strlcpy(buf, xt_prefix[af], sizeof(buf));
+ 	strlcat(buf, FORMAT_TARGETS, sizeof(buf));
+-	proc = proc_create_data(buf, 0440, net->proc_net, &xt_target_ops,
+-				(void *)(unsigned long)af);
++	proc = proc_create_seq_private(buf, 0440, net->proc_net,
++			 &xt_target_seq_ops, sizeof(struct nf_mttg_trav),
++			 (void *)(unsigned long)af);
+ 	if (!proc)
+ 		goto out_remove_matches;
+ 	if (uid_valid(root_uid) && gid_valid(root_gid))
 -- 
 2.17.0
 
