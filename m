@@ -1,109 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751153AbeDYE51 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 00:57:27 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:40145 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750807AbeDYE50 (ORCPT
+        id S1751093AbeDYFPP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 01:15:15 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:39222 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750807AbeDYFPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 00:57:26 -0400
-X-Google-Smtp-Source: AIpwx4+qjUcm6Ti8C3AbzXPDo6HwHZd78DnDvyDaNk+9cr1dPH+6KC5vJu0iZXcqoNyJ8tgPmlDqMQ==
-Date: Wed, 25 Apr 2018 10:29:22 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: airlied@redhat.com, christian.koenig@amd.com, cakturk@gmail.com,
-        seanpaul@chromium.org, daniel.vetter@ffwll.ch, mhocko@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org
-Subject: [PATCH v2] gpu: drm: udl: Adding new typedef vm_fault_t
-Message-ID: <20180425045922.GA21590@jordon-HP-15-Notebook-PC>
+        Wed, 25 Apr 2018 01:15:13 -0400
+X-Google-Smtp-Source: AIpwx4+fB3YbQ2nfuxTkIPgd7XQ/L253ECcqk+cFZz/Uawppo62ez6G89Fo1vLyq0Yy7Izhh/6xWJQ==
+Date: Wed, 25 Apr 2018 10:45:09 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Valentin Schneider <valentin.schneider@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, Quentin Perret <quentin.perret@arm.com>,
+        c@hirez.programming.kicks-ass.net
+Subject: Re: [PATCH] sched/fair: Rearrange select_task_rq_fair() to optimize
+ it
+Message-ID: <20180425051509.aohopadqw7q5urbd@vireshk-i7>
+References: <8a34a16da90b9f83ffe60316a074a5e4d05b59b0.1524479666.git.viresh.kumar@linaro.org>
+ <434fa179-7c8f-8a01-a07a-4527521a04c7@arm.com>
+ <20180424104304.GE4064@hirez.programming.kicks-ass.net>
+ <0985e709-0d71-2c08-20a9-7bfb618fb5f2@arm.com>
+ <20180424123523.GF4064@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180424123523.GF4064@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault and huge_fault
-handler. For now, this is just documenting that the
-function returns a VM_FAULT value rather than an errno.
-Once all instances are converted, vm_fault_t will become
-a distinct type.
+On 24-04-18, 14:35, Peter Zijlstra wrote:
+> In any case, if there not going to be conflicts here, this all looks
+> good.
 
-Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+Thanks Peter.
 
-Previously vm_insert_page() returns err which driver
-mapped into VM_FAULT_* type. The new function vmf_
-insert_page() will replace this inefficiency by
-returning VM_FAULT_* type.
+I also had another patch and wasn't sure if that would be the right
+thing to do. The main purpose of this is to avoid calling
+sync_entity_load_avg() unnecessarily.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
----
-v2: Updated the change log
-
- drivers/gpu/drm/udl/udl_drv.h |  3 ++-
- drivers/gpu/drm/udl/udl_gem.c | 15 ++-------------
- 2 files changed, 4 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
-index 2a75ab8..11151c4 100644
---- a/drivers/gpu/drm/udl/udl_drv.h
-+++ b/drivers/gpu/drm/udl/udl_drv.h
-@@ -16,6 +16,7 @@
-
- #include <linux/usb.h>
- #include <drm/drm_gem.h>
-+#include <linux/mm_types.h>
-
- #define DRIVER_NAME		"udl"
- #define DRIVER_DESC		"DisplayLink"
-@@ -134,7 +135,7 @@ struct drm_gem_object *udl_gem_prime_import(struct drm_device *dev,
- int udl_gem_vmap(struct udl_gem_object *obj);
- void udl_gem_vunmap(struct udl_gem_object *obj);
- int udl_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
--int udl_gem_fault(struct vm_fault *vmf);
-+vm_fault_t udl_gem_fault(struct vm_fault *vmf);
-
- int udl_handle_damage(struct udl_framebuffer *fb, int x, int y,
- 		      int width, int height);
-diff --git a/drivers/gpu/drm/udl/udl_gem.c b/drivers/gpu/drm/udl/udl_gem.c
-index dee6bd9..cf5fe35 100644
---- a/drivers/gpu/drm/udl/udl_gem.c
-+++ b/drivers/gpu/drm/udl/udl_gem.c
-@@ -100,13 +100,12 @@ int udl_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
- 	return ret;
- }
-
--int udl_gem_fault(struct vm_fault *vmf)
-+vm_fault_t udl_gem_fault(struct vm_fault *vmf)
++++ b/kernel/sched/fair.c
+@@ -6196,9 +6196,6 @@ static inline int find_idlest_cpu(struct sched_domain *sd, struct task_struct *p
  {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct udl_gem_object *obj = to_udl_bo(vma->vm_private_data);
- 	struct page *page;
- 	unsigned int page_offset;
--	int ret = 0;
+        int new_cpu = cpu;
+ 
+-       if (!cpumask_intersects(sched_domain_span(sd), &p->cpus_allowed))
+-               return prev_cpu;
+-
+        while (sd) {
+                struct sched_group *group;
+                struct sched_domain *tmp;
+@@ -6652,15 +6649,19 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+        if (unlikely(sd)) {
+                /* Slow path */
+ 
+-               /*
+-                * We're going to need the task's util for capacity_spare_wake
+-                * in find_idlest_group. Sync it up to prev_cpu's
+-                * last_update_time.
+-                */
+-               if (!(sd_flag & SD_BALANCE_FORK))
+-                       sync_entity_load_avg(&p->se);
++               if (!cpumask_intersects(sched_domain_span(sd), &p->cpus_allowed)) {
++                       new_cpu = prev_cpu;
++               } else {
++                       /*
++                        * We're going to need the task's util for
++                        * capacity_spare_wake in find_idlest_group. Sync it up
++                        * to prev_cpu's last_update_time.
++                        */
++                       if (!(sd_flag & SD_BALANCE_FORK))
++                               sync_entity_load_avg(&p->se);
+ 
+-               new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
++                       new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
++               }
+        } else if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
+                /* Fast path */
 
- 	page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
-
-@@ -114,17 +113,7 @@ int udl_gem_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
-
- 	page = obj->pages[page_offset];
--	ret = vm_insert_page(vma, vmf->address, page);
--	switch (ret) {
--	case -EAGAIN:
--	case 0:
--	case -ERESTARTSYS:
--		return VM_FAULT_NOPAGE;
--	case -ENOMEM:
--		return VM_FAULT_OOM;
--	default:
--		return VM_FAULT_SIGBUS;
--	}
-+	return vmf_insert_page(vma, vmf->address, page);
- }
-
- int udl_gem_get_pages(struct udl_gem_object *obj)
---
-1.9.1
+-- 
+viresh
