@@ -1,83 +1,41 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-557887-1524652916-2-7614060605989633380
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524652915; b=rv45VeKZr/xHch2mUhgLo8/o6rpv1crBDmwmscAOAUEBCtVNJ+
-    N2+JLt+Jf0XO+AXVenUXrr7tPCj3E6c3oBunE2eXiCmzC9xfmJkbe3GGjSKuBiYR
-    zrKSYoJufkR015rxQg8nOhhWaEXK8McP/HiXP8LNh8R174NcgSodu/l+ue6WjAQ4
-    zcd49fARxLHR3ouMNY9WFJskXlWvkjwdHI9yteZuwZ/GE/l+DV4jmNjpUgO0svf1
-    I+/Cr1v3AYOXeGGMzplSVVDqqQQ2ZzKO575UQdZe4v5L4VFFzh+ICi1fNXmkCMoL
-    fHPToVAyeYmCHVxswgK1PEjAw3XihIagnzbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524652915; bh=//z04BHgx0U3HCR9PbECnShP1cc77r
-    GzdC0YFJcCyuY=; b=l9sO4wJnc/xiIuEFC2WyJguRAwm3L6mQ25g8kk3e46hcQs
-    WsOi2elsAWtyi4XEl4Hcv3dSJG5RiemfQY0w9CxxgFFhiaH9egDfa5JUo+FNY0Wu
-    gu2/jgcaRTrDfIdDQjxkzM/OVhBMMTGtE0nBZFCo1OnYDoxemwJe4Vewv9DY4o4I
-    c4U0a5R5uKDTyIoXftibqSsoYr6SJ/R49BwHkxn89X2SF8dOK8tMsjCr+GFgdFNb
-    bP5byeulChnmgTjIMhbR5KD8OEZ3n7pz/ObaXPt17jEafHZ1RSLDWvcqhucwMHBp
-    S4lw0LqI+Y9pzPZafP9F+1MOfQPoATJwDj4zZO/w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFyWMMXp74TVqIa4ZDq1a5RTeu6CvgRjeSYGBUl+BREL92sr+JyukhAgOKuFMR+kMw3Rp8+pcnYS6IXjhFZ8XOooBJ79VAtEajO0L0YX5vNdEybRA9LK
-    LNQjGJRuLRyWbR92vd9snQiJVqxONLkqmFEp/d/AZ/FFf9oRu3tmFFxELapiV1HpzaCXbsD8w/SIOZvTTmrQK64KTY6EktLH7IPL/wYIEL0bJbSumF+nqIDu
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=i0EeH86SAAAA:8 a=LD2kUS3hAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=RSO0-gUth4KjHVd8v3gA:9 a=d9vXQEyfJzuvz1X5:21
-    a=P5wNHPVNR7O_MSP-:21 a=QEXdDO2ut3YA:10 a=FTB9xuwByZgvWSGbqjUc:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754002AbeDYKlt (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:41:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52442 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752292AbeDYKlm (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:41:42 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49KbuZbZOR5V8cHaHj+Gyj1zbAk7s50Xb1k6WCIpJ8ZHenOlNl3dOd4xP5oHSb6TkGKWH6y
+ARC-Seal: i=1; a=rsa-sha256; t=1524652915; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Ih/tG3Wxi4gz7CVnngwqKpqnLBQoe8++7nWHDqH837sdirjPUPZ45xDfCYkwSwMw2K
+         yIA9dSxrVdGj8wogB7FpUDprWT0pBHlKVsVJTO1sZvCUWd2b82jy2xYZnsunLx1NIZzQ
+         re3r8ocBDIy0ZkNQwt3JUPd2P20hyvD5XFkpHjonPWhvpG1sXA0SvJQ8JghXssby1QJP
+         Bs5jdtfCRUi+qDnVBeJp7gz4tDV8fl9Xr04h2zrAqM0H5y7JYL/2OdR5BlT8jJXxR0zJ
+         ybvDjbQJypTRjGPr/NHt1lTYFbGlVrzcZHnqlLE/xjqPyFKSgQtuFzAlrMhV3Ncldczk
+         s6oA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=7tbjc7KgStZWLQvgm/50Cw2DKr3tn3llHwx+WmsYKdE=;
+        b=b7osrn0HSv+mqkVlEtZoOtFvPKevlKioDWaXcrIRxniatb+ygDXm83s+ddsjw88XYc
+         gDn9Ko3Ny+Cl2oSmlCk5c3o/yK6gG7dcs4jHqmvBQ90YfYPQwsR5hR3nQkHd8o31YFiz
+         L5VvKj2k2SWragYev4o4/Bih+OPiqPeisTN5YBk0oPsskQOLzD+gRVw+gLKTt4HByIeg
+         1u9HMjjC67kOqZ4DyStDP7TjFE4HdsaNXC6rufe9hb2NC+7yOjTOe+g2w71PtHI72WdZ
+         CCparbGhUp43l3mMkSdNRRiW3sE5PpD0DeaZ9YvrYHfy9dkIlkRBwa8qaJYBiJHMUVyz
+         0uVQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 075/183] nfp: fix error return code in nfp_pci_probe()
-Date: Wed, 25 Apr 2018 12:34:55 +0200
-Message-Id: <20180425103245.526116779@linuxfoundation.org>
+	stable@vger.kernel.org,
+	"shidao.ytt" <shidao.ytt@alibaba-inc.com>,
+	Caspar Zhang <jinli.zjl@alibaba-inc.com>,
+	Oliver Yang <zhiche.yy@alibaba-inc.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 117/183] mm/fadvise: discard partial page if endbyte is also EOF
+Date: Wed, 25 Apr 2018 12:35:37 +0200
+Message-Id: <20180425103247.138730118@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -85,9 +43,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598714456119978046?=
+X-GMAIL-MSGID: =?utf-8?q?1598714456119978046?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -95,31 +54,216 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: "shidao.ytt" <shidao.ytt@alibaba-inc.com>
 
 
-[ Upstream commit e58decc9c51eb61697aba35ba8eda33f4b80552d ]
+[ Upstream commit a7ab400d6fe73d0119fdc234e9982a6f80faea9f ]
 
-Fix to return error code -EINVAL instead of 0 when num_vfs above
-limit_vfs, as done elsewhere in this function.
+During our recent testing with fadvise(FADV_DONTNEED), we find that if
+given offset/length is not page-aligned, the last page will not be
+discarded.  The tool we use is vmtouch (https://hoytech.com/vmtouch/),
+we map a 10KB-sized file into memory and then try to run this tool to
+evict the whole file mapping, but the last single page always remains
+staying in the memory:
 
-Fixes: 0dc786219186 ("nfp: handle SR-IOV already enabled when driver is probing")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+$./vmtouch -e test_10K
+           Files: 1
+     Directories: 0
+   Evicted Pages: 3 (12K)
+         Elapsed: 2.1e-05 seconds
+
+$./vmtouch test_10K
+           Files: 1
+     Directories: 0
+  Resident Pages: 1/3  4K/12K  33.3%
+         Elapsed: 5.5e-05 seconds
+
+However when we test with an older kernel, say 3.10, this problem is
+gone.  So we wonder if this is a regression:
+
+$./vmtouch -e test_10K
+           Files: 1
+     Directories: 0
+   Evicted Pages: 3 (12K)
+         Elapsed: 8.2e-05 seconds
+
+$./vmtouch test_10K
+           Files: 1
+     Directories: 0
+  Resident Pages: 0/3  0/12K  0%  <-- partial page also discarded
+         Elapsed: 5e-05 seconds
+
+After digging a little bit into this problem, we find it seems not a
+regression.  Not discarding partial page is likely to be on purpose
+according to commit 441c228f817f ("mm: fadvise: document the
+fadvise(FADV_DONTNEED) behaviour for partial pages") written by Mel
+Gorman.  He explained why partial pages should be preserved instead of
+being discarded when using fadvise(FADV_DONTNEED).
+
+However, the interesting part is that the actual code did NOT work as
+the same as it was described, the partial page was still discarded
+anyway, due to a calculation mistake of `end_index' passed to
+invalidate_mapping_pages().  This mistake has not been fixed until
+recently, that's why we fail to reproduce our problem in old kernels.
+The fix is done in commit 18aba41cbf ("mm/fadvise.c: do not discard
+partial pages with POSIX_FADV_DONTNEED") by Oleg Drokin.
+
+Back to the original testing, our problem becomes that there is a
+special case that, if the page-unaligned `endbyte' is also the end of
+file, it is not necessary at all to preserve the last partial page, as
+we all know no one else will use the rest of it.  It should be safe
+enough if we just discard the whole page.  So we add an EOF check in
+this patch.
+
+We also find a poosbile real world issue in mainline kernel.  Assume
+such scenario: A userspace backup application want to backup a huge
+amount of small files (<4k) at once, the developer might (I guess) want
+to use fadvise(FADV_DONTNEED) to save memory.  However, FADV_DONTNEED
+won't really happen since the only page mapped is a partial page, and
+kernel will preserve it.  Our patch also fixes this problem, since we
+know the endbyte is EOF, so we discard it.
+
+Here is a simple reproducer to reproduce and verify each scenario we
+described above:
+
+  test_fadvise.c
+  ==============================
+  #include <sys/mman.h>
+  #include <sys/stat.h>
+  #include <fcntl.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <stdio.h>
+  #include <unistd.h>
+
+  int main(int argc, char **argv)
+  {
+  	int i, fd, ret, len;
+  	struct stat buf;
+  	void *addr;
+  	unsigned char *vec;
+  	char *strbuf;
+  	ssize_t pagesize = getpagesize();
+  	ssize_t filesize;
+
+  	fd = open(argv[1], O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+  	if (fd < 0)
+  		return -1;
+  	filesize = strtoul(argv[2], NULL, 10);
+
+  	strbuf = malloc(filesize);
+  	memset(strbuf, 42, filesize);
+  	write(fd, strbuf, filesize);
+  	free(strbuf);
+  	fsync(fd);
+
+  	len = (filesize + pagesize - 1) / pagesize;
+  	printf("length of pages: %d\n", len);
+
+  	addr = mmap(NULL, filesize, PROT_READ, MAP_SHARED, fd, 0);
+  	if (addr == MAP_FAILED)
+  		return -1;
+
+  	ret = posix_fadvise(fd, 0, filesize, POSIX_FADV_DONTNEED);
+  	if (ret < 0)
+  		return -1;
+
+  	vec = malloc(len);
+  	ret = mincore(addr, filesize, (void *)vec);
+  	if (ret < 0)
+  		return -1;
+
+  	for (i = 0; i < len; i++)
+  		printf("pages[%d]: %x\n", i, vec[i] & 0x1);
+
+  	free(vec);
+  	close(fd);
+
+  	return 0;
+  }
+  ==============================
+
+Test 1: running on kernel with commit 18aba41cbf reverted:
+
+  [root@caspar ~]# uname -r
+  4.15.0-rc6.revert+
+  [root@caspar ~]# ./test_fadvise file1 1024
+  length of pages: 1
+  pages[0]: 0    # <-- partial page discarded
+  [root@caspar ~]# ./test_fadvise file2 8192
+  length of pages: 2
+  pages[0]: 0
+  pages[1]: 0
+  [root@caspar ~]# ./test_fadvise file3 10240
+  length of pages: 3
+  pages[0]: 0
+  pages[1]: 0
+  pages[2]: 0    # <-- partial page discarded
+
+Test 2: running on mainline kernel:
+
+  [root@caspar ~]# uname -r
+  4.15.0-rc6+
+  [root@caspar ~]# ./test_fadvise test1 1024
+  length of pages: 1
+  pages[0]: 1    # <-- partial and the only page not discarded
+  [root@caspar ~]# ./test_fadvise test2 8192
+  length of pages: 2
+  pages[0]: 0
+  pages[1]: 0
+  [root@caspar ~]# ./test_fadvise test3 10240
+  length of pages: 3
+  pages[0]: 0
+  pages[1]: 0
+  pages[2]: 1    # <-- partial page not discarded
+
+Test 3: running on kernel with this patch:
+
+  [root@caspar ~]# uname -r
+  4.15.0-rc6.patched+
+  [root@caspar ~]# ./test_fadvise test1 1024
+  length of pages: 1
+  pages[0]: 0    # <-- partial page and EOF, discarded
+  [root@caspar ~]# ./test_fadvise test2 8192
+  length of pages: 2
+  pages[0]: 0
+  pages[1]: 0
+  [root@caspar ~]# ./test_fadvise test3 10240
+  length of pages: 3
+  pages[0]: 0
+  pages[1]: 0
+  pages[2]: 0    # <-- partial page and EOF, discarded
+
+[akpm@linux-foundation.org: tweak code comment]
+Link: http://lkml.kernel.org/r/5222da9ee20e1695eaabb69f631f200d6e6b8876.1515132470.git.jinli.zjl@alibaba-inc.com
+Signed-off-by: shidao.ytt <shidao.ytt@alibaba-inc.com>
+Signed-off-by: Caspar Zhang <jinli.zjl@alibaba-inc.com>
+Reviewed-by: Oliver Yang <zhiche.yy@alibaba-inc.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/nfp_main.c |    1 +
- 1 file changed, 1 insertion(+)
+ mm/fadvise.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/netronome/nfp/nfp_main.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_main.c
-@@ -492,6 +492,7 @@ static int nfp_pci_probe(struct pci_dev
- 		dev_err(&pdev->dev,
- 			"Error: %d VFs already enabled, but loaded FW can only support %d\n",
- 			pf->num_vfs, pf->limit_vfs);
-+		err = -EINVAL;
- 		goto err_fw_unload;
- 	}
- 
+--- a/mm/fadvise.c
++++ b/mm/fadvise.c
+@@ -127,7 +127,15 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, l
+ 		 */
+ 		start_index = (offset+(PAGE_SIZE-1)) >> PAGE_SHIFT;
+ 		end_index = (endbyte >> PAGE_SHIFT);
+-		if ((endbyte & ~PAGE_MASK) != ~PAGE_MASK) {
++		/*
++		 * The page at end_index will be inclusively discarded according
++		 * by invalidate_mapping_pages(), so subtracting 1 from
++		 * end_index means we will skip the last page.  But if endbyte
++		 * is page aligned or is at the end of file, we should not skip
++		 * that page - discarding the last page is safe enough.
++		 */
++		if ((endbyte & ~PAGE_MASK) != ~PAGE_MASK &&
++				endbyte != inode->i_size - 1) {
+ 			/* First page is tricky as 0 - 1 = -1, but pgoff_t
+ 			 * is unsigned, so the end_index >= start_index
+ 			 * check below would be true and we'll discard the whole
