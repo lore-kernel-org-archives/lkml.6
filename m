@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/9kakYjX275HgXaw+U4/bobsg+k5pKed278ObbjF6+Du86WgrrOCtdhycli3QDXYrXVLH1
-ARC-Seal: i=1; a=rsa-sha256; t=1524652864; cv=none;
+X-Google-Smtp-Source: AIpwx48noFK1TmJxv04EUDRC7VFoBxU76Cb7utJ+P3U1kc/sPGf4/8gj2C6f3yrXVr+WTWMWxLFy
+ARC-Seal: i=1; a=rsa-sha256; t=1524652861; cv=none;
         d=google.com; s=arc-20160816;
-        b=Mua38L7Ev6A1Gmzio6REF+P9wv7SWlfZxqEwvdC7Ucs5UDxISqP5wZ6/cNKMSdQwuF
-         LoLSjguiApS3tVXKy4dbVSiq2l63ileXruh6wqozhmo3/o97IYIJVOMCC01sJuf1SdMR
-         dVLfi1AOijGTylIj38aopS7HAmOJvPZw36ai73wZB9QcVcOjm0Qo9eYHfKOZFOACc9ax
-         KK8ocnd/A2DQ55qH5m2yXBH3fApjdt5wjJFa7tivtAcEtA9OGBiLGmx9Nn1qnHc1f/Jp
-         L6Q1/1/eRoGQU3UI2iSOas95BzT/w+004pi70EDmaHEi4FRTTBABt8J8lWEPSRVGLV0M
-         9MMA==
+        b=UTouf31iqSqbXWYsYBdW2Nm5LeDqSNEWzRInQo0Lq8AoLuj92K8eYuS+4p2cRXOq3l
+         uTX8ZIobkughD0HadlUdT+n0n8e2yCzydJw1nLweaToiMJ+Yz9OpcKv6kGebnCsjv9ez
+         dPYDT0Oo3LpU1LKDuciUuI99QI8SeQCL+omu5FGdLJfpPLROV4vYhgFBuB1gp0oSZmKH
+         cETinDE0hEU3rBSUJtmZJkCepOtYphXU5o3edj8Tp2SwgFSrbnSGoJZJNTARPML/QDO0
+         OVmqnDz30h/1nuOMTFZj+ySBcAHRaFjp8REzhe1UeOcqViNKq5gpvG0n6u790HPKRhQp
+         KvKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=lJmydBfOWMjos57AYQ0W1ZOVQ4nQMVz9nRcCVtaoWh8=;
-        b=nnuDOfQCwBBGIOp2cZE6l0mytaeXR27BzgJaun4hicib1jSzWyCWy+8H0nrHY8EQ1e
-         udssusphOlWYROFmP1OPsJKIAIlEIzbXuxHavcEa/WUBmn4jz9Eo9x8AsmTcq+DUJTXg
-         tNuxSQY+T8KcHwO6M6DELWClCv2dBR0vg9FePF9g7sAnKbEHdVFZ9+vPOWhC0zIbiv/B
-         eolZ8NmY+DOuCjLX6fwdyu1MsJdq7+df7zsomCZvG6CjGc6/D4RUqOovrh1UeDfkfO4g
-         z0NDhzRsvRI49BxHSuh2mgioPDYuuTqBset4N8AwBA9QNmL5XVQSlnrEKfMSfIEiKMXI
-         VrYw==
+        bh=DTSj1fZoAbGZu/zoqYGSmW5f6u0fJLt8WvclgQHkd7E=;
+        b=0zcxq8vSh+jfQ4h4/p7+gVTsmNQjgaKv77UYmDOf15tZ7GumEPxFNwdFV4isLUzbmx
+         Xfdy1kftzdu8XldEY7Mri7Ew0JeLfarpiWiyVfkyFzzaS1ZlRc+vzv8dnHK3msh+8ZyI
+         zx88fNBTGS6yiQ14u+GPRwDQw5gEGhZpOUK4/bLRUxB6ICr2P8o9C42WDAPmWtJ0KQ/7
+         Q93s2Wlsrh0eW6VMJWDeHiB1SgJKwyPzPIVwln2nWMw+AeN8+CgEcv/dijCvHZAA1t5U
+         5BAYPE484Gyrl4+2sWIe9UrL/kr02CFgzVF42+hSu0XFYoGukgZ12a1EF8cXXRrJiU6Z
+         15+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
+	Parav Pandit <parav@mellanox.com>,
+	Mark Bloch <markb@mellanox.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 096/183] samples/bpf: Partially fixes the bpf.o build
-Date: Wed, 25 Apr 2018 12:35:16 +0200
-Message-Id: <20180425103246.329733530@linuxfoundation.org>
+Subject: [PATCH 4.14 069/183] RDMA/cma: Check existence of netdevice during port validation
+Date: Wed, 25 Apr 2018 12:34:49 +0200
+Message-Id: <20180425103245.294226572@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714402257298586?=
-X-GMAIL-MSGID: =?utf-8?q?1598714402257298586?=
+X-GMAIL-THRID: =?utf-8?q?1598714399029598605?=
+X-GMAIL-MSGID: =?utf-8?q?1598714399029598605?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,45 +52,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Mickaël Salaün" <mic@digikod.net>
+From: Parav Pandit <parav@mellanox.com>
 
 
-[ Upstream commit c25ef6a5e62fa212d298ce24995ce239f29b5f96 ]
+[ Upstream commit 00db63c128dd3daf38f481371976c24d32678142 ]
 
-Do not build lib/bpf/bpf.o with this Makefile but use the one from the
-library directory.  This avoid making a buggy bpf.o file (e.g. missing
-symbols).
+If valid netdevice is not found for RoCE, GID table should not be
+searched with NULL netdevice.
 
-This patch is useful if some code (e.g. Landlock tests) needs both the
-bpf.o (from tools/lib/bpf) and the bpf_load.o (from samples/bpf).
+Doing so causes the search routines to ignore the netdev argument and may
+match the wrong GID table entry if the netdev is deleted.
 
-Signed-off-by: MickaÃ«l SalaÃ¼n <mic@digikod.net>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: abae1b71dd37 ("IB/cma: cma_validate_port should verify the port and netdevice")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Mark Bloch <markb@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- samples/bpf/Makefile |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/cma.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -179,13 +179,16 @@ LLC ?= llc
- CLANG ?= clang
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -624,11 +624,13 @@ static inline int cma_validate_port(stru
+ 	if ((dev_type != ARPHRD_INFINIBAND) && rdma_protocol_ib(device, port))
+ 		return ret;
  
- # Trick to allow make to be run from this directory
--all:
-+all: $(LIBBPF)
- 	$(MAKE) -C ../../ $(CURDIR)/
+-	if (dev_type == ARPHRD_ETHER && rdma_protocol_roce(device, port))
++	if (dev_type == ARPHRD_ETHER && rdma_protocol_roce(device, port)) {
+ 		ndev = dev_get_by_index(&init_net, bound_if_index);
+-	else
++		if (!ndev)
++			return ret;
++	} else {
+ 		gid_type = IB_GID_TYPE_IB;
+-
++	}
  
- clean:
- 	$(MAKE) -C ../../ M=$(CURDIR) clean
- 	@rm -f *~
- 
-+$(LIBBPF): FORCE
-+	$(MAKE) -C $(dir $@) $(notdir $@)
-+
- $(obj)/syscall_nrs.s:	$(src)/syscall_nrs.c
- 	$(call if_changed_dep,cc_s_c)
- 
+ 	ret = ib_find_cached_gid_by_port(device, gid, gid_type, port,
+ 					 ndev, NULL);
