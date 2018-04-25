@@ -1,127 +1,43 @@
-Return-Path: <andresx7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524673547; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Hq9ktxLhKWSMgqcCp1nmVvClJHlW/kXOIw4dvDeuKE6dAqmY505LoiuzDc76vZzbTT
-         htCg3YFplRLCuwYfc0rHz+HIoVovHFA204feRyjMf8kZdTHdi8ADfdmWo2D7nC6s+YFp
-         ojdZfX2EIdbGdJSsKbpA/ESalDKZR1FafflIlLOuwwP5pRiSedDrjB8pgSJEuIFGe+L3
-         qRyYWOXM3namo+5TlmuzkGO+FbkE17eTqzDLbPU2LKhPrknGYaYdqR5+VN3W5m2CVI+7
-         ETkd0rDzGWSOaGH6euaokq5ren5Xqhp4bisi0P65j/xlK6HWwi5VbV7ccKPNhfT85Dne
-         D9CQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=6lJ+zBCVRFW3h8uLh6HvigmV7SM1YD3wMghcWKOBrjk=;
-        b=NTuC8vFbRTDs3P74dy+4uUhOSnCygG8ok1I5fatTIE2wkd3TezFAqO6cfrIDUGWge6
-         DU4/ScgQWBvk13NmX1nyJvXU0wIXKbxPh3Xkab3NVKB/d+avWUZoAS5G/QqYjv5+MNz/
-         8CRHOdDnTQD2o/egccD3gtKjfcvAROcrsbyLjK2AMTVpj5V/yVyes25U8SonhlVtCrJn
-         J4wr0vsit6xWbenCmRt6tVpb/6gfzliv71g4b+VHpRGCDgADl85du3XnmBJ2h7QwIOlA
-         Yzd4zCR85RKolGYO6Cw5cNydnWQ0o+sdPDr+D91SU0R/DzLHEp9HR3RMDlGeWBuL7TZD
-         tKlA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DGnnb0Qi;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DGnnb0Qi;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZo9AvLBxp+nyLkbQuLIRsqKl3NK79Pp2qep4KOpK/Xf4v3z3cnzX9+Tjsy6PHGuIU7apSFCeg==
-From: Andres Rodriguez <andresx7@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: andresx7@gmail.com,
-	gregkh@linuxfoundation.org,
-	mcgrof@kernel.org,
-	alexdeucher@gmail.com,
-	christian.koenig@amd.com,
-	kvalo@codeaurora.org,
-	arend.vanspriel@broadcom.com,
-	linux-wireless@vger.kernel.org,
-	ath10k@lists.infradead.org,
-	hdegoede@redhat.com
-Subject: [PATCH 1/2] firmware: some documentation fixes
-Date: Wed, 25 Apr 2018 12:25:39 -0400
-Message-Id: <20180425162540.11574-1-andresx7@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180425152617.GA5058@kroah.com>
+Date: Wed, 25 Apr 2018 18:36:31 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Andres Rodriguez <andresx7@gmail.com>
+Cc: linux-kernel@vger.kernel.org, mcgrof@kernel.org, alexdeucher@gmail.com,
+	christian.koenig@amd.com, kvalo@codeaurora.org,
+	arend.vanspriel@broadcom.com, linux-wireless@vger.kernel.org,
+	ath10k@lists.infradead.org, hdegoede@redhat.com
+Subject: Re: [PATCH 1/2] firmware: some documentation fixes
+Message-ID: <20180425163631.GB30492@kroah.com>
 References: <20180425152617.GA5058@kroah.com>
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598736090136694815?=
-X-GMAIL-MSGID: =?utf-8?q?1598736090136694815?=
+ <20180425162540.11574-1-andresx7@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180425162540.11574-1-andresx7@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Including:
- - Fixup outdated kernel-doc paths
- - Slightly too short title underline
- - Some typos
+On Wed, Apr 25, 2018 at 12:25:39PM -0400, Andres Rodriguez wrote:
+> Including:
+>  - Fixup outdated kernel-doc paths
+>  - Slightly too short title underline
+>  - Some typos
+> 
+> Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
+> ---
+> 
+> Hey Greg,
+> 
+> Here is the patch rebased on gregkh/driver-core-linus as requested.
+> 
+> Note that there is a patch by Hans de Goede <hdegoede@redhat.com> that contains
+> some of the path fixes as well.
+> 
+> I also included an extra patch to fix the htmldocs build. I think we are in time
+> to squash the fix into the offending commit.
 
-Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
----
+We can't "squash" commits as our trees are not rebasable :)
 
-Hey Greg,
+thanks,
 
-Here is the patch rebased on gregkh/driver-core-linus as requested.
-
-Note that there is a patch by Hans de Goede <hdegoede@redhat.com> that contains
-some of the path fixes as well.
-
-I also included an extra patch to fix the htmldocs build. I think we are in time
-to squash the fix into the offending commit.
-
-Regards,
-Andres
-
- Documentation/driver-api/firmware/request_firmware.rst | 6 +++---
- drivers/base/firmware_loader/fallback.c                | 4 ++--
- drivers/base/firmware_loader/fallback.h                | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
-index 20f21ed427a5..d5ec95a7195b 100644
---- a/Documentation/driver-api/firmware/request_firmware.rst
-+++ b/Documentation/driver-api/firmware/request_firmware.rst
-@@ -50,11 +50,11 @@ Special optimizations on reboot
- Some devices have an optimization in place to enable the firmware to be
- retained during system reboot. When such optimizations are used the driver
- author must ensure the firmware is still available on resume from suspend,
--this can be done with firmware_request_cache() insted of requesting for the
--firmare to be loaded.
-+this can be done with firmware_request_cache() instead of requesting for the
-+firmware to be loaded.
- 
- firmware_request_cache()
-------------------------
-+------------------------
- .. kernel-doc:: drivers/base/firmware_loader/main.c
-    :functions: firmware_request_cache
- 
-diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index 31b5015b59fe..358354148dec 100644
---- a/drivers/base/firmware_loader/fallback.c
-+++ b/drivers/base/firmware_loader/fallback.c
-@@ -537,8 +537,8 @@ fw_create_instance(struct firmware *firmware, const char *fw_name,
- }
- 
- /**
-- * fw_load_sysfs_fallback - load a firmware via the syfs fallback mechanism
-- * @fw_sysfs: firmware syfs information for the firmware to load
-+ * fw_load_sysfs_fallback - load a firmware via the sysfs fallback mechanism
-+ * @fw_sysfs: firmware sysfs information for the firmware to load
-  * @opt_flags: flags of options, FW_OPT_*
-  * @timeout: timeout to wait for the load
-  *
-diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
-index dfebc644ed35..f8255670a663 100644
---- a/drivers/base/firmware_loader/fallback.h
-+++ b/drivers/base/firmware_loader/fallback.h
-@@ -6,7 +6,7 @@
- #include <linux/device.h>
- 
- /**
-- * struct firmware_fallback_config - firmware fallback configuratioon settings
-+ * struct firmware_fallback_config - firmware fallback configuration settings
-  *
-  * Helps describe and fine tune the fallback mechanism.
-  *
--- 
-2.14.1
+greg k-h
