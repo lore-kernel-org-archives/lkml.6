@@ -1,106 +1,359 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753392AbeDYM0f (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 08:26:35 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:63327 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752924AbeDYM0b (ORCPT
+        id S1753795AbeDYM0v (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 08:26:51 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:44610 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752924AbeDYM0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:26:31 -0400
-X-IronPort-AV: E=Sophos;i="5.49,326,1520870400";
-   d="scan'208";a="77603872"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "pmenzel+linux-block@molgen.mpg.de"
-        <pmenzel+linux-block@molgen.mpg.de>
-CC: "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "regressions@leemhuis.info" <regressions@leemhuis.info>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: Re: Regression 4.17-rc1: SSD doesn properly resume causing system
- hang (NULL pointer dereference)
-Thread-Topic: Regression 4.17-rc1: SSD doesn properly resume causing system
- hang (NULL pointer dereference)
-Thread-Index: AQHT2/Iaokzl6JZ9+0atRxesfkEEnKQQLgAAgAANxACAACwEAIAAA7cAgACLu4CAAHIhAA==
-Date: Wed, 25 Apr 2018 12:26:25 +0000
-Message-ID: <df8a54d242adb7c26ceef57d6a0e7a51232f911c.camel@wdc.com>
-References: <59ca6556-11a6-4f77-76e7-d51c7175eb32@molgen.mpg.de>
-         <67ffdf0050a04bf3615c3d8a3a90b0c9c2aeb1ad.camel@wdc.com>
-         <2cc5f0fb-4caa-9c28-7daa-68993d5cb41a@molgen.mpg.de>
-         <14ff1ed06e36a372680872c227b5abe389c753da.camel@wdc.com>
-         <a3a7f906-3681-15cc-67af-b96e4ac71b0e@molgen.mpg.de>
-         <134955874b401e6764077393c75ab2d4549b940a.camel@wdc.com>
-         <6a2162a7-5f48-c107-0b1c-5258089522c5@molgen.mpg.de>
-         <19e19bc6b2fef11faf428fe75447b06e56af9ffd.camel@wdc.com>
-         <d5e8823e-27bd-dabe-174f-b111a48b440a@molgen.mpg.de>
-In-Reply-To: <d5e8823e-27bd-dabe-174f-b111a48b440a@molgen.mpg.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [174.23.138.65]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0289;7:DnGLm4vYz26Xqkixe/zAiPkvi2b3FVUjXD7IH5wrpx0Wp4xqbRyqMr0xdyzMZOV/x04U8mDbFtbMmlD0MM1PhpB45FF2VO/Lbcc0LSPMEYdNd/IzdzeOHXvUFYuK8YMKco4MPqXyxsshUvBuKJDo6cW9gB0uEetoDQcD6lXc4aYF9du8kYfC2atzW77v2eFg/Akk+jSvlNHW2L/379v6b3ujAy2PYWEJDKnUaVo9WO3u6B85pc80RdChyYn8CWK2;20:o1exIHPLz+8kl8H1QLaMyNU6DMJ/KA0EeXyFx7ORyKGZnZoguh+Kdtozx5NH52c/eC4L5x9/GNCRwF89LxLUjlCTKXzpHblsL1NUFCECLZ62ynkowjw7866OdhFpsEFWagETe1JQOhM0FGJbENUj9B8srcAOE8Dr4YZRNrQpXD4=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0289;
-x-ms-traffictypediagnostic: MWHPR04MB0289:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0289A6CD4F79FFD2EE931B33988F0@MWHPR04MB0289.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231232)(944501410)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR04MB0289;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0289;
-x-forefront-prvs: 06530126A4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(39380400002)(376002)(396003)(377424004)(52314003)(199004)(189003)(105586002)(6116002)(66066001)(106356001)(3846002)(97736004)(3280700002)(229853002)(6436002)(6486002)(118296001)(2906002)(8936002)(8676002)(81166006)(81156014)(7736002)(5250100002)(316002)(3660700001)(59450400001)(2900100001)(53936002)(6512007)(93886005)(99286004)(6246003)(86362001)(476003)(11346002)(2616005)(478600001)(486006)(446003)(186003)(102836004)(26005)(54906003)(68736007)(72206003)(14454004)(305945005)(25786009)(5660300001)(36756003)(4326008)(6506007)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0289;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: cLZtMihDUaaqXnwhnJmKhOYcQPsYodmJ3tU7sDewgTv2pmanyhNmThNjCDYEj6G+bezU9amQC7tiMzMh+Vm9yU3OtiLT08k+SvRQGEWbmXd/AyI+PnfD8Hsj9vbsrYoXvv6nyLevFxmVM39FY08ofd8xWHsBRDMyWLPBs5S2Zju/h3ujardlTe7lJsF+4BAd
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FE91950BECF7584C87337527A29C55C6@namprd04.prod.outlook.com>
+        Wed, 25 Apr 2018 08:26:38 -0400
+X-Google-Smtp-Source: AB8JxZqWsDIdsNmy/3tU3ds+zHACztvOj/ZgwTSQFqEkaJiJnmEkj+aj+WMvtpkFOSCbrz9ZQnbmQPrpnkGG0Epi+jc=
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: ec1880c6-cb26-4540-cc66-08d5aaa7c36c
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec1880c6-cb26-4540-cc66-08d5aaa7c36c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Apr 2018 12:26:25.6803
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0289
+In-Reply-To: <20180425064055.GA11460@lst.de>
+References: <20180420080313.18796-1-hch@lst.de> <20180420080313.18796-14-hch@lst.de>
+ <CAEbi=3fkakVD2vxGu6SgJM77JnNM8Y79xS8_o6m9d_85BJpMFQ@mail.gmail.com>
+ <20180424191640.GA32495@lst.de> <CAEbi=3f7yzE+KAM2GOh6QahC_E6BAUfB3ys3U-WdBSUf3DPZqg@mail.gmail.com>
+ <20180425064055.GA11460@lst.de>
+From: Greentime Hu <green.hu@gmail.com>
+Date: Wed, 25 Apr 2018 20:25:55 +0800
+Message-ID: <CAEbi=3fcd8E=xi_hbef45LnPsBZhZv37yPO-xfZmU1gMaWnDvg@mail.gmail.com>
+Subject: Re: [PATCH 13/22] nds32: use generic dma_noncoherent_ops
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>, linux-xtensa@linux-xtensa.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3PCQgLP027748
 
-On Wed, 2018-04-25 at 07:37 +0200, Paul Menzel wrote:
-> Am 24.04.2018 um 23:17 schrieb Bart Van Assche:
-> > On Tue, 2018-04-24 at 23:04 +0200, Paul Menzel wrote:
-> > > I applied your change, and rebuilt the Linux kernel. Unfortunately, it
-> > > looks like, it didn’t make a difference.
-> > 
-> > In that case I don't know what is causing the failure. Can you run a bisect
-> > to determine which commit introduced this regression?
-> 
-> With `scsi_mod.use_blk_mq=n` the system resumes fine, so for to me 
-> unknown reasons, that Kconfig option get selected in my Linux kernel 
-> configuration. I remember having similar issues when this was enabled by 
-> default in Linux 4.13-rc?, so it was just a configuration problem and 
-> not a regression. Unfortunately, the Linux configuration files are not 
-> under version control, so I cannot check, but it is probably my fault.
-> 
-> Sorry for the noise, and please tell me, what I can do to get the option 
-> working on this old device.
+2018-04-25 14:40 GMT+08:00 Christoph Hellwig <hch@lst.de>:
+> On Wed, Apr 25, 2018 at 09:43:43AM +0800, Greentime Hu wrote:
+>> Hi Crhistoph,
+>>
+>> The ftmac100 works if I revert this commit.
+>
+> Thanks.  ftmac100 only use dma_map_page, which in the old nds32 code
+> is just doing a plain page_address and never kmaps.  Can you apply
+> the patch below on the tree with the origin "nds32: use generic
+> dma_noncoherent_ops" reverted?  This always just uses page_address,
+> although that, just like the original code is broken if you actually
+> have highmem that needs to be mapped:
+>
 
-Hello Paul,
+Hi, Christoph,
 
-Did the same system boot fine with a previous kernel with scsi-mq enabled?
-Anyway, we would like to know what is the root cause such that this NULL
-pointer dereference can be fixed. There are namely plans to remove the
-legacy block layer in the not too distant future.
+It still failed.
 
-Thanks,
-
-Bart.
+> ---
+> From 1dc5d1cae4cd7b9ce03d0e2943364ed4cca938d7 Mon Sep 17 00:00:00 2001
+> From: Christoph Hellwig <hch@lst.de>
+> Date: Mon, 16 Apr 2018 19:20:30 +0200
+> Subject: nds32: use generic dma_noncoherent_ops
+>
+> Switch to the generic noncoherent direct mapping implementation.
+>
+> This makes sure the cache_sync routines is called in the unmap_sg
+> case, to match the unmap_single and sync_{single,sg}_to_cpu cases.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/nds32/Kconfig                   |   3 +
+>  arch/nds32/include/asm/Kbuild        |   1 +
+>  arch/nds32/include/asm/dma-mapping.h |  14 ---
+>  arch/nds32/kernel/dma.c              | 182 +++++----------------------
+>  4 files changed, 37 insertions(+), 163 deletions(-)
+>  delete mode 100644 arch/nds32/include/asm/dma-mapping.h
+>
+> diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
+> index 249f38d3388f..67d0ac0a989c 100644
+> --- a/arch/nds32/Kconfig
+> +++ b/arch/nds32/Kconfig
+> @@ -5,10 +5,13 @@
+>
+>  config NDS32
+>          def_bool y
+> +       select ARCH_HAS_SYNC_DMA_FOR_CPU
+> +       select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+>         select ARCH_WANT_FRAME_POINTERS if FTRACE
+>         select CLKSRC_MMIO
+>         select CLONE_BACKWARDS
+>         select COMMON_CLK
+> +       select DMA_NONCOHERENT_OPS
+>         select GENERIC_ATOMIC64
+>         select GENERIC_CPU_DEVICES
+>         select GENERIC_CLOCKEVENTS
+> diff --git a/arch/nds32/include/asm/Kbuild b/arch/nds32/include/asm/Kbuild
+> index 06bdf8167f5a..b3e951f805f8 100644
+> --- a/arch/nds32/include/asm/Kbuild
+> +++ b/arch/nds32/include/asm/Kbuild
+> @@ -13,6 +13,7 @@ generic-y += cputime.h
+>  generic-y += device.h
+>  generic-y += div64.h
+>  generic-y += dma.h
+> +generic-y += dma-mapping.h
+>  generic-y += emergency-restart.h
+>  generic-y += errno.h
+>  generic-y += exec.h
+> diff --git a/arch/nds32/include/asm/dma-mapping.h b/arch/nds32/include/asm/dma-mapping.h
+> deleted file mode 100644
+> index 2dd47d245c25..000000000000
+> --- a/arch/nds32/include/asm/dma-mapping.h
+> +++ /dev/null
+> @@ -1,14 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -// Copyright (C) 2005-2017 Andes Technology Corporation
+> -
+> -#ifndef ASMNDS32_DMA_MAPPING_H
+> -#define ASMNDS32_DMA_MAPPING_H
+> -
+> -extern struct dma_map_ops nds32_dma_ops;
+> -
+> -static inline struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+> -{
+> -       return &nds32_dma_ops;
+> -}
+> -
+> -#endif
+> diff --git a/arch/nds32/kernel/dma.c b/arch/nds32/kernel/dma.c
+> index d291800fc621..78311a1e6fd1 100644
+> --- a/arch/nds32/kernel/dma.c
+> +++ b/arch/nds32/kernel/dma.c
+> @@ -3,17 +3,14 @@
+>
+>  #include <linux/types.h>
+>  #include <linux/mm.h>
+> -#include <linux/export.h>
+>  #include <linux/string.h>
+> -#include <linux/scatterlist.h>
+> -#include <linux/dma-mapping.h>
+> +#include <linux/dma-noncoherent.h>
+>  #include <linux/io.h>
+>  #include <linux/cache.h>
+>  #include <linux/highmem.h>
+>  #include <linux/slab.h>
+>  #include <asm/cacheflush.h>
+>  #include <asm/tlbflush.h>
+> -#include <asm/dma-mapping.h>
+>  #include <asm/proc-fns.h>
+>
+>  /*
+> @@ -22,11 +19,6 @@
+>  static pte_t *consistent_pte;
+>  static DEFINE_RAW_SPINLOCK(consistent_lock);
+>
+> -enum master_type {
+> -       FOR_CPU = 0,
+> -       FOR_DEVICE = 1,
+> -};
+> -
+>  /*
+>   * VM region handling support.
+>   *
+> @@ -124,10 +116,8 @@ static struct arch_vm_region *vm_region_find(struct arch_vm_region *head,
+>         return c;
+>  }
+>
+> -/* FIXME: attrs is not used. */
+> -static void *nds32_dma_alloc_coherent(struct device *dev, size_t size,
+> -                                     dma_addr_t * handle, gfp_t gfp,
+> -                                     unsigned long attrs)
+> +void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+> +               gfp_t gfp, unsigned long attrs)
+>  {
+>         struct page *page;
+>         struct arch_vm_region *c;
+> @@ -232,8 +222,8 @@ static void *nds32_dma_alloc_coherent(struct device *dev, size_t size,
+>         return NULL;
+>  }
+>
+> -static void nds32_dma_free(struct device *dev, size_t size, void *cpu_addr,
+> -                          dma_addr_t handle, unsigned long attrs)
+> +void arch_dma_free(struct device *dev, size_t size, void *cpu_addr,
+> +               dma_addr_t handle, unsigned long attrs)
+>  {
+>         struct arch_vm_region *c;
+>         unsigned long flags, addr;
+> @@ -333,145 +323,39 @@ static int __init consistent_init(void)
+>  }
+>
+>  core_initcall(consistent_init);
+> -static void consistent_sync(void *vaddr, size_t size, int direction, int master_type);
+> -static dma_addr_t nds32_dma_map_page(struct device *dev, struct page *page,
+> -                                    unsigned long offset, size_t size,
+> -                                    enum dma_data_direction dir,
+> -                                    unsigned long attrs)
+> -{
+> -       if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+> -               consistent_sync((void *)(page_address(page) + offset), size, dir, FOR_DEVICE);
+> -       return page_to_phys(page) + offset;
+> -}
+>
+> -static void nds32_dma_unmap_page(struct device *dev, dma_addr_t handle,
+> -                                size_t size, enum dma_data_direction dir,
+> -                                unsigned long attrs)
+> +void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
+> +               size_t size, enum dma_data_direction dir)
+>  {
+> -       if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+> -               consistent_sync(phys_to_virt(handle), size, dir, FOR_CPU);
+> -}
+> -
+> -/*
+> - * Make an area consistent for devices.
+> - */
+> -static void consistent_sync(void *vaddr, size_t size, int direction, int master_type)
+> -{
+> -       unsigned long start = (unsigned long)vaddr;
+> -       unsigned long end = start + size;
+> -
+> -       if (master_type == FOR_CPU) {
+> -               switch (direction) {
+> -               case DMA_TO_DEVICE:
+> -                       break;
+> -               case DMA_FROM_DEVICE:
+> -               case DMA_BIDIRECTIONAL:
+> -                       cpu_dma_inval_range(start, end);
+> -                       break;
+> -               default:
+> -                       BUG();
+> -               }
+> -       } else {
+> -               /* FOR_DEVICE */
+> -               switch (direction) {
+> -               case DMA_FROM_DEVICE:
+> -                       break;
+> -               case DMA_TO_DEVICE:
+> -               case DMA_BIDIRECTIONAL:
+> -                       cpu_dma_wb_range(start, end);
+> -                       break;
+> -               default:
+> -                       BUG();
+> -               }
+> +       void *addr = phys_to_virt(paddr);
+> +       unsigned long start = (unsigned long)addr;
+> +
+> +       switch (dir) {
+> +       case DMA_FROM_DEVICE:
+> +               break;
+> +       case DMA_TO_DEVICE:
+> +       case DMA_BIDIRECTIONAL:
+> +               cpu_dma_wb_range(start, start + size);
+> +               break;
+> +       default:
+> +               BUG();
+>         }
+>  }
+>
+> -static int nds32_dma_map_sg(struct device *dev, struct scatterlist *sg,
+> -                           int nents, enum dma_data_direction dir,
+> -                           unsigned long attrs)
+> +void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
+> +               size_t size, enum dma_data_direction dir)
+>  {
+> -       int i;
+> -
+> -       for (i = 0; i < nents; i++, sg++) {
+> -               void *virt;
+> -               unsigned long pfn;
+> -               struct page *page = sg_page(sg);
+> -
+> -               sg->dma_address = sg_phys(sg);
+> -               pfn = page_to_pfn(page) + sg->offset / PAGE_SIZE;
+> -               page = pfn_to_page(pfn);
+> -               if (PageHighMem(page)) {
+> -                       virt = kmap_atomic(page);
+> -                       consistent_sync(virt, sg->length, dir, FOR_CPU);
+> -                       kunmap_atomic(virt);
+> -               } else {
+> -                       if (sg->offset > PAGE_SIZE)
+> -                               panic("sg->offset:%08x > PAGE_SIZE\n",
+> -                                     sg->offset);
+> -                       virt = page_address(page) + sg->offset;
+> -                       consistent_sync(virt, sg->length, dir, FOR_CPU);
+> -               }
+> +       void *addr = phys_to_virt(paddr);
+> +       unsigned long start = (unsigned long)addr;
+> +
+> +       switch (dir) {
+> +       case DMA_TO_DEVICE:
+> +               break;
+> +       case DMA_FROM_DEVICE:
+> +       case DMA_BIDIRECTIONAL:
+> +               cpu_dma_inval_range(start, start + size);
+> +               break;
+> +       default:
+> +               BUG();
+>         }
+> -       return nents;
+>  }
+> -
+> -static void nds32_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+> -                              int nhwentries, enum dma_data_direction dir,
+> -                              unsigned long attrs)
+> -{
+> -}
+> -
+> -static void
+> -nds32_dma_sync_single_for_cpu(struct device *dev, dma_addr_t handle,
+> -                             size_t size, enum dma_data_direction dir)
+> -{
+> -       consistent_sync((void *)phys_to_virt(handle), size, dir, FOR_CPU);
+> -}
+> -
+> -static void
+> -nds32_dma_sync_single_for_device(struct device *dev, dma_addr_t handle,
+> -                                size_t size, enum dma_data_direction dir)
+> -{
+> -       consistent_sync((void *)phys_to_virt(handle), size, dir, FOR_DEVICE);
+> -}
+> -
+> -static void
+> -nds32_dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg, int nents,
+> -                         enum dma_data_direction dir)
+> -{
+> -       int i;
+> -
+> -       for (i = 0; i < nents; i++, sg++) {
+> -               char *virt =
+> -                   page_address((struct page *)sg->page_link) + sg->offset;
+> -               consistent_sync(virt, sg->length, dir, FOR_CPU);
+> -       }
+> -}
+> -
+> -static void
+> -nds32_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+> -                            int nents, enum dma_data_direction dir)
+> -{
+> -       int i;
+> -
+> -       for (i = 0; i < nents; i++, sg++) {
+> -               char *virt =
+> -                   page_address((struct page *)sg->page_link) + sg->offset;
+> -               consistent_sync(virt, sg->length, dir, FOR_DEVICE);
+> -       }
+> -}
+> -
+> -struct dma_map_ops nds32_dma_ops = {
+> -       .alloc = nds32_dma_alloc_coherent,
+> -       .free = nds32_dma_free,
+> -       .map_page = nds32_dma_map_page,
+> -       .unmap_page = nds32_dma_unmap_page,
+> -       .map_sg = nds32_dma_map_sg,
+> -       .unmap_sg = nds32_dma_unmap_sg,
+> -       .sync_single_for_device = nds32_dma_sync_single_for_device,
+> -       .sync_single_for_cpu = nds32_dma_sync_single_for_cpu,
+> -       .sync_sg_for_cpu = nds32_dma_sync_sg_for_cpu,
+> -       .sync_sg_for_device = nds32_dma_sync_sg_for_device,
+> -};
+> -
+> -EXPORT_SYMBOL(nds32_dma_ops);
+> --
+> 2.17.0
+>
