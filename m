@@ -1,82 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754439AbeDYOBk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:01:40 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:56092 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753405AbeDYOBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:01:38 -0400
-Date: Wed, 25 Apr 2018 16:01:08 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Alex G." <mr.nuke.me@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
-        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
-        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
-        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
-        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com,
-        Yazen Ghannam <yazen.ghannam@amd.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [RFC PATCH v2 3/4] acpi: apei: Do not panic() when correctable
- errors are marked as fatal.
-Message-ID: <20180425140108.GA2597@pd.tnic>
-References: <20180418175415.GJ4795@pd.tnic>
- <bdc1d19b-3cc1-3f90-d276-414aaacdbd3a@gmail.com>
- <20180419154006.GE3600@pd.tnic>
- <977608e6-9f5d-c523-a78a-993ac5bfd55f@gmail.com>
- <20180419164528.GD5635@pd.tnic>
- <ffe6b459-c80a-d3c0-451d-0d21ae63da54@gmail.com>
- <20180419190323.GF5635@pd.tnic>
- <dba07329-2f85-2bde-85ea-5bdf26fb8df2@gmail.com>
- <20180422104849.GA32754@pd.tnic>
- <70c43399-e8e5-5061-b5a5-451deb5f02fa@gmail.com>
+        id S1754544AbeDYODQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:03:16 -0400
+Received: from smtpgwcipde.automotive.elektrobit.com ([213.95.163.141]:53749
+        "EHLO smtpgwcipde.elektrobit.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753571AbeDYODO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:03:14 -0400
+Date: Wed, 25 Apr 2018 15:47:30 +0200
+From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Florian Fainelli <florian.fainelli@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>, <ldv-project@linuxtesting.org>,
+        <sil2review@lists.osadl.org>
+Subject: [PATCH v3] spi/bcm63xx-hspi: Enable the clock before calling
+Message-ID: <20180425134728.GA20897@er01809n.ebgroup.elektrobit.com>
+References: <20180419130358.r7dva6owy2izyfus@agrajag.zerfleddert.de>
+ <dfb9c72c-6289-a2ea-c3d4-c59f5e3c799c@broadcom.com>
+ <20180424161605.GA17825@er01809n.ebgroup.elektrobit.com>
+ <20180424173253.GF22073@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Kj7319i9nmIyA2yE"
 Content-Disposition: inline
-In-Reply-To: <70c43399-e8e5-5061-b5a5-451deb5f02fa@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180424173253.GF22073@sirena.org.uk>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Originating-IP: [10.0.24.181]
+X-ClientProxiedBy: denue6es008.ebgroup.elektrobit.com (10.5.139.25) To
+ denue6es008.ebgroup.elektrobit.com (10.5.139.25)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 11:19:25PM -0500, Alex G. wrote:
-> That tells you what FFS said about the error.
+--Kj7319i9nmIyA2yE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I betcha those status and command values have a human-readable counterparts.
+Enable the clock prior to calling clk_get_rate(), because clk_get_rate()
+should only be called if the clock is enabled.
 
-Btw, what do you abbreviate with "FFS"?
+Found by Linux Driver Verification project (linuxtesting.org).
 
-> It's immediately obvious if there's a glaring FFS bug and if we get bogus
-> data. If you distrust firmware as much as I do, then you will find great
-> value in having such info in the logs. It's probably not too useful to a
-> casual user, but then neither is a majority of the system log.
+Fixes: 142168eba9dc ("spi: bcm63xx-hsspi: add bcm63xx HSSPI driver")
+Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+---
+ drivers/spi/spi-bcm63xx-hsspi.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-No no, you're missing the point - I *want* all data in the error log
-which helps debug a hardware issue. I just want it humanly readable so
-that I don't have to jot down the values and go scour the manuals to map
-what it actually means.
+diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hssp=
+i.c
+index cbcba614b253..8475703543e5 100644
+--- a/drivers/spi/spi-bcm63xx-hsspi.c
++++ b/drivers/spi/spi-bcm63xx-hsspi.c
+@@ -352,22 +352,27 @@ static int bcm63xx_hsspi_probe(struct platform_device=
+ *pdev)
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+=20
++	ret =3D clk_prepare_enable(clk);
++	if (ret)
++		return ret;
++
+ 	rate =3D clk_get_rate(clk);
+ 	if (!rate) {
+ 		struct clk *pll_clk =3D devm_clk_get(dev, "pll");
+=20
+-		if (IS_ERR(pll_clk))
+-			return PTR_ERR(pll_clk);
++		if (IS_ERR(pll_clk)) {
++			ret =3D PTR_ERR(pll_clk);
++			goto out_disable_clk;
++		}
++
+=20
+ 		rate =3D clk_get_rate(pll_clk);
+-		if (!rate)
+-			return -EINVAL;
++		if (!rate) {
++			ret =3D -EINVAL;
++			goto out_disable_clk;
++		}
+ 	}
+=20
+-	ret =3D clk_prepare_enable(clk);
+-	if (ret)
+-		return ret;
+-
+ 	master =3D spi_alloc_master(&pdev->dev, sizeof(*bs));
+ 	if (!master) {
+ 		ret =3D -ENOMEM;
+--=20
+2.17.0
 
-> You're missing the timing and assuming you will get the hotplug interrupt.
-> In this example, you have 22ms between the link down and presence detect
-> state change. This is a fairly fast removal.
-> 
-> Hotplug dependencies aside (you can have the kernel run without PCIe hotplug
-> support), I don't think you want to just linger in NMI for dozens of
-> milliseconds waiting for presence detect confirmation.
 
-No, I don't mean that. I mean something like deferred processing: you
-get an error, you notice it is a device which supports physical removal
-so you exit the NMI handler and process the error in normal, process
-context which allows you to query the device and say, "Hey device, are
-you still there?"
+--Kj7319i9nmIyA2yE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If it is not, you drop all the hw I/O errors reported for it.
+-----BEGIN PGP SIGNATURE-----
 
-Hmmm?
+iQIzBAABCAAdFiEEATY+KFcrMtHMM+b3X8uyjJIzOwAFAlrghugACgkQX8uyjJIz
+OwAP0w/6Aw6QHIS37j2GJwPo22PVw14H7EdiBnG5i+Z1erP3PhP/bw3+NfwchKX1
+GDF4cwQ0YPHkhBoDGaa/gM/39HxOU4O/cefP2j+yzXvhCHtQlxMOlz+0juwiA5tj
+SfVmFAvju5FlhRCZijkaxD5V3rDQ0Zh0PDQUADpSUoboVtkQHrUuTbl6RgMj4Joq
+gcIfeaKAvTp+eWxXKAUNAaZEvBMLGCtSsvKKakw98NTT0CX4fAzRzIQKiO1CUMJR
+NB3Sq/wJ7ETYxm8kIM2l7f5pqapaRMBV37bBkkw38o5+BLtoC+uo37f+uWr3WAi4
+RvNq5I65hTCc+leKiW7Y62klkYkFDd9VZjSvDyKcEXtXUNbtg1LLGdNPvERiCotQ
+bzBjeQadiG/qxvqF9U7cD1jfspyj0Q4bHf/iO2SKShOJfOijmA/xeqjsyZuZlzBi
+gCPxjFPae/b+i8SN/jcug0DwD305U2OsWR+IUisp0kQqhffe/+fFy70OGUCmQPoG
+13CcpuuIebgdO7FDkRhG7K/aYr37v22mAveNMrEuvxemadVgA9R2/feRFUEZmoGN
+NdYLNkqlnKum2Og+WbYYkCiw7XnOLayF2P1EyYai6oDgq53WuY7pR4aBXky0kbtk
+dQTxr378eFxS1RDOQRhphb56tGYmsPx/GefUKRoeFpjQSuV5N5E=
+=FsCe
+-----END PGP SIGNATURE-----
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+--Kj7319i9nmIyA2yE--
