@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751298AbeDYHyE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 03:54:04 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:40353 "EHLO
+        id S1751369AbeDYHyN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 03:54:13 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:62751 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751069AbeDYHyC (ORCPT
+        by vger.kernel.org with ESMTP id S1751069AbeDYHyH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 03:54:02 -0400
+        Wed, 25 Apr 2018 03:54:07 -0400
 From: Philippe Cornu <philippe.cornu@st.com>
 To: Archit Taneja <architt@codeaurora.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
@@ -19,10 +19,12 @@ CC: Yannick Fertre <yannick.fertre@st.com>,
         Philippe Cornu <philippe.cornu@st.com>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
         Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH v2 0/2] drm/bridge: sii902x: add optional power supplies
-Date: Wed, 25 Apr 2018 09:53:12 +0200
-Message-ID: <20180425075314.19137-1-philippe.cornu@st.com>
+Subject: [PATCH v2 1/2] dt-bindings/display/bridge: sii902x: add optional power supplies
+Date: Wed, 25 Apr 2018 09:53:13 +0200
+Message-ID: <20180425075314.19137-2-philippe.cornu@st.com>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180425075314.19137-1-philippe.cornu@st.com>
+References: <20180425075314.19137-1-philippe.cornu@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.129.5.66]
@@ -32,32 +34,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds optional power supplies to the sii902x
-drm bridge driver.
+Add optional power supplies using the description found in
+"SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
 
-Version 2:
-- merge avcc12 & cvcc12 to a single vcc12 supply as suggested by
-  Laurent Pinchart (see discussion details in
-  https://patchwork.freedesktop.org/patch/216058/)
-- improve error messages following Laurent Pinchart comments.
-- note about power consumption: as sii902x input IOs are not "io safe",
-  it is important to enable/disable voltage regulators during
-  probe/remove phases to avoid damages. Then, the only way to improve
-  the power consumption is to add the sii902x standy mode. My actual
-  platform is not an handheld device so power consumption is not
-  critical. But in the future, it could be nice to add the standby
-  mode, paying attention to wake-up events (hdmi cable plug)...
+There is a single 1v2 supply voltage named vcc12 from which cvcc12
+(digital core) and avcc12 (TMDS analog) are derived because according
+to this data sheet:
+"cvcc12 and avcc12 can be derived from the same power source"
 
-Version 1:
-- Initial commit
+Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+---
+ Documentation/devicetree/bindings/display/bridge/sii902x.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Philippe Cornu (2):
-  dt-bindings/display/bridge: sii902x: add optional power supplies
-  drm/bridge: sii902x: add optional power supplies
-
- .../devicetree/bindings/display/bridge/sii902x.txt |  2 ++
- drivers/gpu/drm/bridge/sii902x.c                   | 38 +++++++++++++++++++---
- 2 files changed, 36 insertions(+), 4 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/display/bridge/sii902x.txt b/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+index 56a3e68ccb80..9fb41fc9af51 100644
+--- a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
++++ b/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+@@ -8,6 +8,8 @@ Optional properties:
+ 	- interrupts-extended or interrupt-parent + interrupts: describe
+ 	  the interrupt line used to inform the host about hotplug events.
+ 	- reset-gpios: OF device-tree gpio specification for RST_N pin.
++	- iovcc-supply: I/O supply voltage (1.8V or 3.3V, host-dependent).
++	- vcc12-supply: TMDS analog & digital core supply voltage (1.2V).
+ 
+ Optional subnodes:
+ 	- video input: this subnode can contain a video input port node
 -- 
 2.15.1
