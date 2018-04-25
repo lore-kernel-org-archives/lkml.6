@@ -1,113 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754812AbeDYO6r (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:58:47 -0400
-Received: from mga04.intel.com ([192.55.52.120]:54104 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754400AbeDYO6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:58:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
-   d="scan'208";a="36967668"
-Message-ID: <1524668321.21176.560.camel@linux.intel.com>
-Subject: Re: [PATCH v5 03/11] vsprintf: Consistent %pK handling for
- kptr_restrict == 0
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Date: Wed, 25 Apr 2018 17:58:41 +0300
-In-Reply-To: <20180425111251.13246-4-pmladek@suse.com>
-References: <20180425111251.13246-1-pmladek@suse.com>
-         <20180425111251.13246-4-pmladek@suse.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1754794AbeDYO7Z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:59:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45286 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754196AbeDYO7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:59:23 -0400
+Date: Wed, 25 Apr 2018 16:59:20 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ganapatrao.kulkarni@cavium.com, zhangshaokun@hisilicon.com,
+        yao.jin@linux.intel.com, will.deacon@arm.com, ak@linux.intel.com,
+        agustinv@codeaurora.org
+Subject: Re: [V2 PATCH] perf parse-events: Specially handle uncore event
+ alias in small groups
+Message-ID: <20180425145920.GF3396@krava>
+References: <1524664218-134407-1-git-send-email-kan.liang@linux.intel.com>
+ <20180425142337.GE3396@krava>
+ <dbc6f99c-3728-3f23-9c38-a91865dbdefe@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbc6f99c-3728-3f23-9c38-a91865dbdefe@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-04-25 at 13:12 +0200, Petr Mladek wrote:
-> restricted_pointer() pretends that it prints the address when
-> kptr_restrict
-> is set to zero. But it is never called in this situation. Instead,
-> pointer() falls back to ptr_to_id() and hashes the pointer.
+On Wed, Apr 25, 2018 at 10:42:27AM -0400, Liang, Kan wrote:
 > 
-> This patch removes the potential confusion. klp_restrict is checked
-> only
-> in restricted_pointer().
 > 
-> It actually fixes a small race when the address might get printed
-> unhashed:
+> On 4/25/2018 10:23 AM, Jiri Olsa wrote:
+> > On Wed, Apr 25, 2018 at 06:50:18AM -0700, kan.liang@linux.intel.com wrote:
+> > > From: Kan Liang <kan.liang@linux.intel.com>
+> > > 
+> > > Perf stat doesn't count the uncore event aliases from the same uncore
+> > > block in a group, for example:
+> > > 
+> > >    perf stat -e '{unc_m_cas_count.all,unc_m_clockticks}' -a -I 1000
+> > >    #           time             counts unit events
+> > >         1.000447342      <not counted>      unc_m_cas_count.all
+> > >         1.000447342      <not counted>      unc_m_clockticks
+> > >         2.000740654      <not counted>      unc_m_cas_count.all
+> > >         2.000740654      <not counted>      unc_m_clockticks
+> > > 
+> > > The output is very misleading. It gives a wrong impression that the
+> > > uncore event doesn't work.
+> > > 
+> > > An uncore block could be composed by several PMUs. An uncore event alias
+> > > is a joint name which means the same event runs on all PMUs of a block.
+> > > Perf doesn't support mixed events from different PMUs in the same group.
+> > > It is wrong to put uncore event aliases in a big group.
+> > > 
+> > > The right way is to split the big group into multiple small groups which
+> > > only include the events from the same PMU.
+> > > Only uncore event aliases from the same uncore block should be specially
+> > > handled here. It doesn't make sense to mix the uncore events with other
+> > > uncore events from different blocks or even core events in a group.
+> > > 
+> > > With the patch:
+> > >    #           time             counts unit events
+> > >       1.001557653            140,833      unc_m_cas_count.all
+> > >       1.001557653      1,330,231,332      unc_m_clockticks
+> > >       2.002709483             85,007      unc_m_cas_count.all
+> > >       2.002709483      1,429,494,563      unc_m_clockticks
+> > 
+> > hum, I still can see the original behaviour even with the patch:
+> > 
 > 
-> CPU0                            CPU1
+> That's because the data_reads and clockticks are from different uncore
+> blocks. The data_reads is a IMC event. The clockticks is a CBOX event.
 > 
-> pointer()
->   if (!kptr_restrict)
->      /* for example set to 2 */
->   restricted_pointer()
-> 				/* echo 0
-> >/proc/sys/kernel/kptr_restrict */
-> 				proc_dointvec_minmax_sysadmin()
-> 				  klpr_restrict = 0;
->     switch(kptr_restrict)
->       case 0:
-> 	break:
-> 
->     number()
-> 
+> The patch only supports the events from the same uncore blocks in group.
 
-FWIW, 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+I see, found another example from same uncore blocks and it seems to work:
+  #  perf stat -e '{cas_count_read,cas_count_write}' -a -I 1000
 
-> Fixes: commit ef0010a30935de4e0211 ("vsprintf: don't use
-> 'restricted_pointer()' when not restricting")
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Tobin Harding <me@tobin.cc>
-> Cc: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
->  lib/vsprintf.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index eef9f725e9ff..2678dfe61d73 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -694,8 +694,8 @@ char *restricted_pointer(char *buf, char *end,
-> const void *ptr,
->  {
->  	switch (kptr_restrict) {
->  	case 0:
-> -		/* Always print %pK values */
-> -		break;
-> +		/* Handle as %p, hash and do _not_ leak addresses. */
-> +		return ptr_to_id(buf, end, ptr, spec);
->  	case 1: {
->  		const struct cred *cred;
->  
-> @@ -1915,8 +1915,6 @@ char *pointer(const char *fmt, char *buf, char
-> *end, void *ptr,
->  			return buf;
->  		}
->  	case 'K':
-> -		if (!kptr_restrict)
-> -			break;
->  		return restricted_pointer(buf, end, ptr, spec);
->  	case 'N':
->  		return netdev_bits(buf, end, ptr, fmt);
+but I have it aborted on:
+  # ./perf stat -e '{cas_count_read,cas_count_write,cas_count_read}' -a -I 1000
+  perf: util/evsel.c:1483: get_group_fd: Assertion `!(!leader->fd)' failed.
+  Aborted (core dumped)
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+jirka
