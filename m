@@ -1,67 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752550AbeDYKbZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 06:31:25 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41565 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752431AbeDYKbU (ORCPT
+        id S1752634AbeDYKbg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 06:31:36 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50951 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751463AbeDYKbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 06:31:20 -0400
-From: Colin King <colin.king@canonical.com>
-To: "David S . Miller" <davem@davemloft.net>,
-        Allen Pais <allen.lkml@gmail.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: amd8111e: remove redundant duplicated if statement
-Date: Wed, 25 Apr 2018 11:31:13 +0100
-Message-Id: <20180425103113.8013-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 25 Apr 2018 06:31:32 -0400
+X-Google-Smtp-Source: AB8JxZq/oCSglJfFv3muFgeYFigqkO3QEQ6qk0EnC6UV7nY41xqr5jza+xbu6gGEBx+zdHtsc+av1Q==
+Date: Wed, 25 Apr 2018 11:31:28 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Kyle Spiers <ksspiers@google.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rave-sp: Remove VLA
+Message-ID: <20180425103128.tp4wcvyp7rcm4jge@dell>
+References: <20180423200255.154645-1-ksspiers@google.com>
+ <20180424054315.2yjpnht5pu62i54q@dell>
+ <CAGXu5jL5j6ZknsKN8ve+4qgSQLKsssUTto_UXORABgfHop=-7w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXu5jL5j6ZknsKN8ve+4qgSQLKsssUTto_UXORABgfHop=-7w@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 24 Apr 2018, Kees Cook wrote:
 
-There are two identical nested if statements, the second is redundant
-and can be removed. Also clean up white space formatting.
+> On Mon, Apr 23, 2018 at 10:43 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> > On Mon, 23 Apr 2018, Kyle Spiers wrote:
+> >
+> >> As part of the effort to remove VLAs from the kernel[1], this creates
+> >> constants for the checksum lengths of CCITT and 8B2C and changes
+> >> crc_calculated to be the maximum size of a checksum.
+> >>
+> >> https://lkml.org/lkml/2018/3/7/621
+> >>
+> >> Signed-off-by: Kyle Spiers <ksspiers@google.com>
+> >> ---
+> >>  drivers/mfd/rave-sp.c | 11 +++++++++--
+> >>  1 file changed, 9 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+> >> index 5c858e784a89..99fa482419f9 100644
+> >> --- a/drivers/mfd/rave-sp.c
+> >> +++ b/drivers/mfd/rave-sp.c
+> >> @@ -45,7 +45,9 @@
+> >>  #define RAVE_SP_DLE                  0x10
+> >>
+> >>  #define RAVE_SP_MAX_DATA_SIZE                64
+> >> -#define RAVE_SP_CHECKSUM_SIZE                2  /* Worst case scenario on RDU2 */
+> >> +#define RAVE_SP_CHECKSUM_8B2C                1
+> >> +#define RAVE_SP_CHECKSUM_CCITT               2
+> >> +#define RAVE_SP_CHECKSUM_SIZE                RAVE_SP_CHECKSUM_CCITT
+> >>  /*
+> >>   * We don't store STX, ETX and unescaped bytes, so Rx is only
+> >>   * DATA + CSUM
+> >> @@ -415,7 +417,12 @@ static void rave_sp_receive_frame(struct rave_sp *sp,
+> >>       const size_t payload_length  = length - checksum_length;
+> >>       const u8 *crc_reported       = &data[payload_length];
+> >>       struct device *dev           = &sp->serdev->dev;
+> >> -     u8 crc_calculated[checksum_length];
+> >> +     u8 crc_calculated[RAVE_SP_CHECKSUM_SIZE];
+> >> +
+> >> +     if (unlikely(length > sizeof(crc_calculated))) {
+> >
+> > Forgive me if I have this wrong (it's still very early here), but this
+> > doesn't leave any room for the payload?
+> >
+> >     <--       length         -->
+> >     <ck len><- payload length ->
+> >     [CK][CK][D][A][T][A] .. [64]
+> >
+> > It is my hope that length would always be larger than the size of the
+> > checksum, or else there would never be any data?
+> >
+> > Should this not be:
+> >
+> >     if (unlikely(length > RAVE_SP_MAX_DATA_SIZE))
+> 
+> Oh, whoops, no, this should be:
+> 
+> +     if (unlikely(checksum_lengh > sizeof(crc_calculated))) {
+> 
+> (To validate the VLA max size.)
 
-Cleans up cppcheck warning:
-drivers/net/ethernet/amd/amd8111e.c:1080: (warning) Identical inner 'if'
-condition is always true.
+That doesn't match the OP's error message though:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/amd/amd8111e.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+  dev_warn(dev, "Dropping oversized frame\n");
 
-diff --git a/drivers/net/ethernet/amd/amd8111e.c b/drivers/net/ethernet/amd/amd8111e.c
-index c99e3e845ac0..a90080f12e67 100644
---- a/drivers/net/ethernet/amd/amd8111e.c
-+++ b/drivers/net/ethernet/amd/amd8111e.c
-@@ -1074,16 +1074,12 @@ static int amd8111e_calc_coalesce(struct net_device *dev)
- 				amd8111e_set_coalesce(dev,TX_INTR_COAL);
- 				coal_conf->tx_coal_type = MEDIUM_COALESCE;
- 			}
--
--		}
--		else if(tx_pkt_size >= 1024){
--			if (tx_pkt_size >= 1024){
--				if(coal_conf->tx_coal_type !=  HIGH_COALESCE){
--					coal_conf->tx_timeout = 4;
--					coal_conf->tx_event_count = 8;
--					amd8111e_set_coalesce(dev,TX_INTR_COAL);
--					coal_conf->tx_coal_type = HIGH_COALESCE;
--				}
-+		} else if (tx_pkt_size >= 1024) {
-+			if (coal_conf->tx_coal_type != HIGH_COALESCE) {
-+				coal_conf->tx_timeout = 4;
-+				coal_conf->tx_event_count = 8;
-+				amd8111e_set_coalesce(dev, TX_INTR_COAL);
-+				coal_conf->tx_coal_type = HIGH_COALESCE;
- 			}
- 		}
- 	}
+Which I assume is designed to complement the existing warning:
+
+  if (unlikely(length <= checksum_length))
+          dev_warn(dev, "Dropping short frame\n");
+
 -- 
-2.17.0
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
