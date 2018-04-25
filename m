@@ -1,52 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751281AbeDYDXW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 23:23:22 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39645 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751155AbeDYDXS (ORCPT
+        id S1751262AbeDYDaU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 23:30:20 -0400
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:42138 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751110AbeDYDaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 23:23:18 -0400
-X-Google-Smtp-Source: AIpwx4/XpGYDd5KWYKt1eu5V2IbSmPhe/Hd/wvvxf9Uqyt7lOVn/xx027YvbhN7/y+Xsla5R2K5DRg==
-To: linux-kernel@vger.kernel.org
-Cc: Marc Zyngier <marc.zyngier@arm.com>, tglx@linutronix.de,
-        jason@lakedaemon.net, Catalin Marinas <catalin.marinas@arm.com>
-From: valmiki <valmikibow@gmail.com>
-Subject: Affinity for GIC irq line
-Message-ID: <2880aee6-704c-a5aa-e193-75bba1bce43d@gmail.com>
-Date: Wed, 25 Apr 2018 08:53:09 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 24 Apr 2018 23:30:17 -0400
+X-Google-Smtp-Source: AIpwx4/0H8qFsJmpo/Cj4zUngN9mr6NTK/KqWG2vsSjxMKUbgay1QFXvV8sKBxkLQ3hQpbVK6o9pmg==
+Date: Tue, 24 Apr 2018 20:30:13 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Holger Schurig <holgerschurig@gmail.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] igb: reconnecting of cable not always detected
+Message-ID: <20180425033013.wsguf6w36zeua3mw@localhost>
+References: <87h8o0ocul.fsf@gmail.com>
+ <CAKgT0Udj+d7yzPN4Jph8uk7Z6fz0oyWrO+6W6CfygSYTkGJ0Xw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0Udj+d7yzPN4Jph8uk7Z6fz0oyWrO+6W6CfygSYTkGJ0Xw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Tue, Apr 24, 2018 at 11:09:02AM -0700, Alexander Duyck wrote:
+> On Tue, Apr 24, 2018 at 8:14 AM, Holger Schurig <holgerschurig@gmail.com> wrote:
+> > Sometimes, plugging the cable back in is detected ...
+> >
+> > [   43.736922] igb 0000:02:00.0 eth0: igb: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX/TX
+> >
+> > ... but sometimes this is *NOT* detected. I can put the cable in and
+> > even after two minutes nothing has been detected.
+> >
+> > But when I run "rmmod igb" followed by "modpobe igb", the link is
+> > detected again:
 
-When an IRQ line is set affinity using irq_set_affinity, which calls 
-irq_do_set_affinity, this API copies affinity mask to affinity variable 
-in irq_common_data of this irq descriptor.
+FWIW, I have noticed over the past months (or even years?) that my
+i210 cards (or the igb driver) also fail to detect link changes after
+a few physical link interruptions.  I never bothered to try and debug
+this, but it is super annoying.
 
-But as per ARM GICv2 document in order to drive a interrupt to a 
-specific CPU we need to program GICD_ITARGETSRn register.
-
-But irq_set_affinity isn't writing to this register.Please correct me if 
-I'm wrong i did not find code for this register being updated in 
-irq_set_affinity flow.
-So how affinity is being set for an IRQ line ?
-
-If affinity was set successfully on what CPU does asm_do_IRQ run ?
-For every interrupt this runs on CPU0 and then FIQ/IRQ handling is 
-scheduled on different CPU as per affinity ?
-How the respective irq line handler is handled on specific CPU core ?
-
-Regards,
-Valmiki
-
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+Thanks,
+Richard
