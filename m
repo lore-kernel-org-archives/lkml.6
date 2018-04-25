@@ -1,79 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755346AbeDYQhx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:37:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42846 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754649AbeDYQhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:37:50 -0400
-Subject: Re: [PATCH v2 09/17] kvm: arm64: Make stage2 page table layout
- dynamic
-To: Julien Grall <julien.grall@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-10-git-send-email-suzuki.poulose@arm.com>
- <2359e848-8068-ea25-e44e-e8cfcbc9b467@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <47e8d106-524b-67d3-9220-69569d5e7195@arm.com>
-Date: Wed, 25 Apr 2018 17:37:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <2359e848-8068-ea25-e44e-e8cfcbc9b467@arm.com>
+        id S1755545AbeDYQjL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:39:11 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:38348 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754654AbeDYQjG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:39:06 -0400
+X-Google-Smtp-Source: AB8JxZpUzaBCJEC015IR879quu/Bg5iRJiu4w6fxhPmONmiGpQ+vJlRet7x83ghpK6pdZNvgSI5D8A==
+Date: Wed, 25 Apr 2018 09:39:04 -0700 (PDT)
+X-Google-Original-Date: Wed, 25 Apr 2018 09:34:44 PDT (-0700)
+Subject: Re: [PATCH v5 0/2] perf: riscv: Preliminary Perf Event Support on RISC-V
+In-Reply-To: <20180425031936.GA7303@andestech.com>
+CC: atish.patra@wdc.com, sols@sifive.com, nickhu@andestech.com,
+        corbet@lwn.net, peterz@infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, mingo@redhat.com,
+        albert@sifive.com, namhyung@kernel.org,
+        linux-riscv@lists.infradead.org, jolsa@redhat.com,
+        greentime@andestech.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: alankao@andestech.com
+Message-ID: <mhng-aec39091-7a3b-4def-99f3-577e023c6919@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/04/18 17:35, Julien Grall wrote:
-> Hi Suzuki,
-> 
-> On 27/03/18 14:15, Suzuki K Poulose wrote:
->> So far we had a static stage2 page table handling code, based on a
->> fixed IPA of 40bits. As we prepare for a configurable IPA size per
->> VM, make the our stage2 page table code dynamic to do the right thing
->> for a given VM.
+On Tue, 24 Apr 2018 20:19:36 PDT (-0700), alankao@andestech.com wrote:
+> Hi Atish, Palmer,
+>
+> On Tue, Apr 24, 2018 at 06:15:49PM -0700, Atish Patra wrote:
+>> On 4/24/18 5:29 PM, Palmer Dabbelt wrote:
+>> >On Tue, 24 Apr 2018 15:16:16 PDT (-0700), atish.patra@wdc.com wrote:
+>> >>On 4/24/18 12:44 PM, Palmer Dabbelt wrote:
+>> >>>On Tue, 24 Apr 2018 12:27:26 PDT (-0700), atish.patra@wdc.com wrote:
+>> >>>>On 4/24/18 11:07 AM, Atish Patra wrote:
+>> >>>>>On 4/19/18 4:28 PM, Alan Kao wrote:
+>> >>>>>However, I got an rcu-stall for the test "47: Event times".
+>> >>>>># ./perf test -v 47
+>> >>>>Got it working. The test tries to attach the event to CPU0 which doesn't
+>> >>>>exist in HighFive Unleashed. Changing it to cpu1 works.
+>> >>>>
+>> >>>>diff --git a/tools/perf/tests/event-times.c b/tools/perf/tests/event-times.c
+>> >>>>index 1a2686f..eb11632f 100644
+>> >>>>--- a/tools/perf/tests/event-times.c
+>> >>>>+++ b/tools/perf/tests/event-times.c
+>> >>>>@@ -113,9 +113,9 @@ static int attach__cpu_disabled(struct perf_evlist
+>> >>>>*evlist)
+>> >>>>           struct cpu_map *cpus;
+>> >>>>           int err;
+>> >>>>
+>> >>>>-       pr_debug("attaching to CPU 0 as enabled\n");
+>> >>>>+       pr_debug("attaching to CPU 1 as disabled\n");
+>> >>>>
+>> >>>>-       cpus = cpu_map__new("0");
+>> >>>>+       cpus = cpu_map__new("1");
+>> >>>>           if (cpus == NULL) {
+>> >>>>                   pr_debug("failed to call cpu_map__new\n");
+>> >>>>                   return -1;
+>> >>>>@@ -142,9 +142,9 @@ static int attach__cpu_enabled(struct perf_evlist
+>> >>>>*evlist)
+>> >>>>           struct cpu_map *cpus;
+>> >>>>           int err;
+>> >>>>
+>> >>>>-       pr_debug("attaching to CPU 0 as enabled\n");
+>> >>>>+       pr_debug("attaching to CPU 1 as enabled\n");
+>> >>>>
+>> >>>>-       cpus = cpu_map__new("0");
+>> >>>>+       cpus = cpu_map__new("1");
+>> >>>>           if (cpus == NULL) {
+>> >>>>                   pr_debug("failed to call cpu_map__new\n");
+>> >>>>                   return -1;
+>> >>>>
+>> >>>>
+>> >>>>Palmer,
+>> >>>>Would it be better to officially document it somewhere that CPU0 doesn't
+>> >>>>exist in the HighFive Unleashed board ?
+>> >>>>I fear that there will be other standard tests/code path that may fail
+>> >>>>because of inherent assumption of cpu0 presence.
+>> >>>
+>> >>>I think the best way to fix this is to just have BBL (or whatever the
+>> >>>bootloader is) renumber the CPUs so they're contiguous and begin with 0.
+>> >>
+>> >>Do you mean BBL will update the device tree that kernel eventually parse
+>> >>and set the hart id?
+>> >>Sounds good to me unless it acts as a big hack in future boot loaders.
+>> >
+>> >Right now the machine-mode and supervisor-mode hart IDs are logically separate:
+>> >the bootloader just provides the hart ID as a register argument when starting
+>> >the kernel.
 >>
->> Support for the IPA size configuration needs other changes in the way
->> we configure the EL2 registers (VTTBR and VTCR). So, the IPA is still
->> fixed to 40bits. The patch also moves the kvm_page_empty() in asm/kvm_mmu.h
->> to the top, before including the asm/stage2_pgtable.h to avoid a forward
->> declaration.
+>> Yes.
 >>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <cdall@kernel.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/include/asm/kvm_mmu.h              |  16 +-
->>   arch/arm64/include/asm/stage2_pgtable-nopmd.h |  42 ------
->>   arch/arm64/include/asm/stage2_pgtable-nopud.h |  39 -----
->>   arch/arm64/include/asm/stage2_pgtable.h       | 203 +++++++++++++++++---------
->>   4 files changed, 145 insertions(+), 155 deletions(-)
->>   delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopmd.h
->>   delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopud.h
+>>   BBL already needs to enumerate the harts by looking through the
+>> >device tree for various other reasons (at least to mask off the harts that
+>> >Linux doesn't support), so it's not that much effort to just maintain a mapping
+>> >from supervisor-mode hart IDs to machine-mode hart IDs.
+>> >
 >>
->> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
->> index 594c4e6..bc133ce 100644
->> --- a/arch/arm64/include/asm/kvm_mmu.h
->> +++ b/arch/arm64/include/asm/kvm_mmu.h
->> @@ -18,9 +18,10 @@
->>   #ifndef __ARM64_KVM_MMU_H__
->>   #define __ARM64_KVM_MMU_H__
->> +#include <asm/cpufeature.h>
->>   #include <asm/page.h>
->>   #include <asm/memory.h>
->> -#include <asm/cpufeature.h>
-> 
-> OOI, why was the include of cpufeature.h moved earlier?
+>> But Linux also parses the device tree to get hart ID in
+>> riscv_of_processor_hart(). This is used to setup the possible/present cpu
+>> map in setup_smp().
+>>
+>> Thus, Linux also need to see a device tree with cpu0-3 instead of cpu1-4.
+>> Otherwise, present cpu map will be incorrect. Isn't it ?
+>>
+>> >I have some patches floating around that do this, but appear to do it
+>> >incorrectly enough that nothing boots so maybe I'm missing something that makes
+>> >this complicated :).
+>> >
+>>
+>> Just a wild guess: May be the because of the above reason ;)
+>>
+>
+> Thanks for the test and discussion.  It looks like am implementation issue from
+> Unleash, so ... is there anything I should fix and provide a further patch?
 
-I think it was a minor cleanup to keep the includes in order. I will either
-mention it or drop it from the hunk altogether.
-
-Cheers
-Suzuki
+You're welcome to fix BBL if you want, but that's unrelated to this patch set.  
+I'm going to look over the code again as soon as I get a chance to, thanks for 
+submitting the patches!
