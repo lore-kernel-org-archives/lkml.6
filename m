@@ -1,131 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751476AbeDYI0o (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 04:26:44 -0400
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:43729 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeDYI0i (ORCPT
+        id S1751255AbeDYIdj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 04:33:39 -0400
+Received: from alexa-out-tai-01.qualcomm.com ([103.229.16.226]:37206 "EHLO
+        alexa-out-tai-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750882AbeDYIdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 04:26:38 -0400
-X-Google-Smtp-Source: AB8JxZp/+g/OhaSFDWRJN4+n4dK5j4880a9pwUajANhz2e3olmpbV/I+i7SyfS2STMtX4Kb9khC8pg==
-Subject: Re: [PATCH v2 3/5] ALSA: xen-front: Implement Xen event channel
- handling
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
- <20180416062453.24743-4-andr2000@gmail.com> <s5ho9i8sn25.wl-tiwai@suse.de>
- <af277f77-5b22-58e3-4ea6-cde34e3181d3@gmail.com>
- <s5hlgdcsmdm.wl-tiwai@suse.de>
- <f37a8eb9-8733-eae9-4c3e-312d864592fc@gmail.com>
- <s5h604gsl44.wl-tiwai@suse.de>
- <a8d3c2d2-25ec-0dc1-c26c-20eb6fbb4e3e@gmail.com>
-Message-ID: <04e313e5-4fdb-9f7b-43e3-f1551f582db2@gmail.com>
-Date: Wed, 25 Apr 2018 11:26:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <a8d3c2d2-25ec-0dc1-c26c-20eb6fbb4e3e@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Wed, 25 Apr 2018 04:33:36 -0400
+X-IronPort-AV: E=Sophos;i="5.49,325,1520870400";
+   d="scan'208";a="387776"
+X-IronPort-AV: E=McAfee;i="5900,7806,8873"; a="6704111"
+From: Gaurav Kohli <gkohli@codeaurora.org>
+To: peterz@infradead.org, tglx@linutronix.de, mpe@ellerman.id.au,
+        mingo@kernel.org, bigeasy@linutronix.de
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Gaurav Kohli <gkohli@codeaurora.org>,
+        Neeraj Upadhyay <neeraju@codeaurora.org>
+Subject: [PATCH v1] kthread/smpboot: Serialize kthread parking against wakeup
+Date: Wed, 25 Apr 2018 14:03:19 +0530
+Message-Id: <1524645199-5596-1-git-send-email-gkohli@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 07:23 PM, Oleksandr Andrushchenko wrote:
-> On 04/24/2018 06:02 PM, Takashi Iwai wrote:
->> On Tue, 24 Apr 2018 16:58:43 +0200,
->> Oleksandr Andrushchenko wrote:
->>> On 04/24/2018 05:35 PM, Takashi Iwai wrote:
->>>> On Tue, 24 Apr 2018 16:29:15 +0200,
->>>> Oleksandr Andrushchenko wrote:
->>>>> On 04/24/2018 05:20 PM, Takashi Iwai wrote:
->>>>>> On Mon, 16 Apr 2018 08:24:51 +0200,
->>>>>> Oleksandr Andrushchenko wrote:
->>>>>>> +static irqreturn_t evtchnl_interrupt_req(int irq, void *dev_id)
->>>>>>> +{
->>>>>>> +    struct xen_snd_front_evtchnl *channel = dev_id;
->>>>>>> +    struct xen_snd_front_info *front_info = channel->front_info;
->>>>>>> +    struct xensnd_resp *resp;
->>>>>>> +    RING_IDX i, rp;
->>>>>>> +    unsigned long flags;
->>>>>>> +
->>>>>>> +    if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
->>>>>>> +        return IRQ_HANDLED;
->>>>>>> +
->>>>>>> +    spin_lock_irqsave(&front_info->io_lock, flags);
->>>>>>> +
->>>>>>> +again:
->>>>>>> +    rp = channel->u.req.ring.sring->rsp_prod;
->>>>>>> +    /* ensure we see queued responses up to rp */
->>>>>>> +    rmb();
->>>>>>> +
->>>>>>> +    for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
->>>>>> I'm not familiar with Xen stuff in general, but through a quick
->>>>>> glance, this kind of code worries me a bit.
->>>>>>
->>>>>> If channel->u.req.ring.rsp_cons has a bogus number, this may lead 
->>>>>> to a
->>>>>> very long loop, no?  Better to have a sanity check of the ring 
->>>>>> buffer
->>>>>> size.
->>>>> In this loop I have:
->>>>> resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
->>>>> and the RING_GET_RESPONSE macro is designed in the way that
->>>>> it wraps around when *i* in the question gets bigger than
->>>>> the ring size:
->>>>>
->>>>> #define RING_GET_REQUEST(_r, _idx)                    \
->>>>>       (&((_r)->sring->ring[((_idx) & (RING_SIZE(_r) - 1))].req))
->>>>>
->>>>> So, even if the counter has a bogus number it will not last long
->>>> Hm, this prevents from accessing outside the ring buffer, but does it
->>>> change the loop behavior?
->>> no, it doesn't
->>>> Suppose channel->u.req.ring_rsp_cons = 1, and rp = 0, the loop below
->>>> would still consume the whole 32bit counts, no?
->>>>
->>>>     for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
->>>>         resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
->>>>         ...
->>>>     }
->>> You are right here and the comment is totally valid.
->>> I'll put an additional check like here [1] and here [2]
->>> Will this address your comment?
->> Yep, this kind of sanity checks should work.
->>
-> Great, will implement the checks this way then
-Well, after thinking a bit more on that and chatting on #xendevel IRC
-with Juergen (he is on CC list), it seems that the way the code is now
-it is all fine without the checks: the assumption here is that
-the backend is trusted to always write sane values to the ring counters,
-thus no overflow checks on frontend side are required.
-Even if I implement the checks then I have no means to recover, but just 
-print
-an error message and bail out not handling any responses.
-This is probably why the checks [1] and [2] are only implemented for the
-backend side and there are no such macros for the frontend side.
+The control cpu thread which initiates hotplug calls kthread_park()
+for hotplug thread and sets KTHREAD_SHOULD_PARK. After this control
+thread wakes up the hotplug thread. There is a chance that wakeup
+code sees the hotplug thread (running on AP core) in INTERRUPTIBLE
+state, but sets its state to RUNNING after hotplug thread has entered
+kthread_parkme() and changed its state to TASK_PARKED. This can result
+in panic later on in kthread_unpark(), as it sees KTHREAD_IS_PARKED
+flag set but fails to rebind the kthread, due to it being not in
+TASK_PARKED state. Fix this, by serializing wakeup state change,
+against state change before parking the kthread.
 
-Takashi, please let me know if the above sounds reasonable and
-addresses your comments.
->> thanks,
->>
->> Takashi
-> Thank you,
-> Oleksandr
->>>> Takashi
->>> Thank you,
->>> Oleksandr
->>>
->>> [1]
->>> https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/block/xen-blkback/blkback.c#L1127 
->>>
->>> [2]
->>> https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/block/xen-blkback/blkback.c#L1135 
->>>
->>>
->
+Below is the possible race:
+
+Control thread				      Hotplug Thread
+
+kthread_park()
+set KTHREAD_SHOULD_PARK
+					      smpboot_thread_fn
+					      set_current_state(TASK_INTERRUPTIBLE);
+					      kthread_parkme
+
+wake_up_process()
+
+raw_spin_lock_irqsave(&p->pi_lock, flags);
+if (!(p->state & state)) -> this will fail
+            goto out;
+
+					      __kthread_parkme
+					       __set_current_state(TASK_PARKED);
+
+if (p->on_rq && ttwu_remote(p, wake_flags))
+    ttwu_remote()
+        p->state = TASK_RUNNING;
+						schedule();
+
+So to avoid this race, take pi_lock to serial state changes.
+
+Suggested-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
+Co-developed-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
+---
+
+Changes since V1:
+- Add comment to explain need of pi_lock.
+
+diff --git a/kernel/smpboot.c b/kernel/smpboot.c
+index 5043e74..c5c5184 100644
+--- a/kernel/smpboot.c
++++ b/kernel/smpboot.c
+@@ -122,7 +122,45 @@ static int smpboot_thread_fn(void *data)
+ 		}
+ 
+ 		if (kthread_should_park()) {
++			/*
++			 * Serialize against wakeup. If we take the lock first,
++			 * wakeup is skipped. If we run later, we observe,
++			 * TASK_RUNNING update from wakeup path, before moving
++			 * forward. This helps avoid the race, where wakeup
++			 * observes TASK_INTERRUPTIBLE, and also observes
++			 * the TASK_PARKED in kthread_parkme() before updating
++			 * task state to TASK_RUNNING. In this case, kthread
++			 * gets parked in TASK_RUNNING state. This results
++			 * in panic later on in kthread_unpark(), as it sees
++			 * KTHREAD_IS_PARKED flag set but fails to rebind the
++			 * kthread, due to it being not in TASK_PARKED state.
++			 *
++			 * Control thread                      Hotplug Thread
++			 *
++			 * kthread_park()
++			 *   set KTHREAD_SHOULD_PARK
++			 *                                smpboot_thread_fn()
++			 *                                set_current_state(
++			 *                                TASK_INTERRUPTIBLE);
++			 *                                kthread_parkme()
++			 *
++			 *   wake_up_process()
++			 *
++			 * raw_spin_lock_irqsave(&p->pi_lock, flags);
++			 * if (!(p->state & state))       __set_current_state(
++			 *            goto out;           TASK_RUNNING);
++			 *
++			 *                                __set_current_state(
++			 *                                TASK_PARKED);
++			 *
++			 * if (p->on_rq && ttwu_remote(p, wake_flags))
++			 *   ttwu_remote()
++			 *     p->state = TASK_RUNNING;
++			 *                                   schedule();
++			 */
++			raw_spin_lock(&current->pi_lock);
+ 			__set_current_state(TASK_RUNNING);
++			raw_spin_unlock(&current->pi_lock);
+ 			preempt_enable();
+ 			if (ht->park && td->status == HP_THREAD_ACTIVE) {
+ 				BUG_ON(td->cpu != smp_processor_id());
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
