@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/btSDh99UFv0ndP0tj+JxVSDDrdHbG+695/K/2tIOSra2xqsqf419ttvquVC0LwIPXHjtz
-ARC-Seal: i=1; a=rsa-sha256; t=1524653035; cv=none;
+X-Google-Smtp-Source: AIpwx4/WFsk9GJi609iCakkc5VNt5WXRx8sIHHz21c8VQXmkU4QcxPH9hD9ymNFHMlNlzFFnDZAO
+ARC-Seal: i=1; a=rsa-sha256; t=1524653033; cv=none;
         d=google.com; s=arc-20160816;
-        b=1GpXLtyN06wg/x83uZuBaXwcrXNjQZUwk3Xug5AzeGxJR4CGzMkGggGehLfE4cKDqn
-         HY3+jC4eZwToYqs8hb9CeWNEU0P2FFIXyIdmAmv4TpWbLk40itHG4Lc/Kggb0Y6AxjVr
-         oM0tBKLxRLSj4aLNPcaDu7MZxDwuJEGrAD9mTAwv/pDi5f9JkzqxgyYWbWOIdN1lt3Y2
-         WolBlsjU4lN7mHyfxtnN8nEVO4QO4Hg7dRyPQbl2ApuP05A3HIGbVu7+9qBAxQnuBNxo
-         p6uNbwRPc16qdUlgNc8BJnMEszM37yZElrPuaUVezSA8GTcPRvX1uy+mf6/5M6+npCYK
-         cV8w==
+        b=P93ezC6crI3ILky0K+3zY2rXLSMiDIn9SoYMwjoEtZ83YN439IP85cXNGtW17GHHO7
+         0WAms16cs+vEdlvMmEl3OdxnvVY2tzTjNjdbVlXwoog2DwQdCY5eXI0TEeTH8WyavgdV
+         eU2OykhAQi2fJ//uFI8IIb+PGoAOCI4drmW2qq9dDHR1cskiwEGq0Ebj4/Z4cfpDideP
+         pi/J3cEu1yKNKNexSSgCmJXKkAuQ15tNMrZMuN/dCh0GpheA7J51gdMk3KYHoTfCdw+1
+         zXX/Eq+b0r6TQocPXouFkRge2GLTngUf18i+kEYTJvQn6Itgb4A8MnR2tTUpE/GR20c6
+         NlXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7cRwGtzfBvdl0WGQ4EVcjKMw8zg+p3YvsZRq4Wbt+W0=;
-        b=HihbbklJLHDczKvh/9DknYHvIegleDBcesc2CgHnw0h5nPIhF3JQQzQJ2GZRVtCVNN
-         ThyQqpfptGbYtuu4LFtkMckxh+Wff2EQsi78hQ1uPrtAIdwk3xeduDR8aQyJ7VjE9bdp
-         r8a3eOQulHo1vlI6M1mwo56zXyP15gQaJBWpOndKi0iJVW+y/sG8Bhka3quA5H8EfjHR
-         TupQZyMXE2OGfy+gmHj49pUPgs2hP6wIoOQcUHUKvoHX4bIrReBFJISxX44ti5515tKk
-         ymlyYJtK1FSYBHIls8kfL/acSdw9780wkcZ00bkOHaTCtDZGCe/Vy6MR/QstGeP8bRFP
-         UVzw==
+        bh=zAI7xYbKXpiZyDdGERLn6tl5ol9+JbghutCCVWvWUQo=;
+        b=vNbkBZRwazytoTyD9Jgik3EW8KJ0yNtsKrvt5VvpdTD/+JF/p4GNyfjCtO8TYzZnVL
+         RTe5BQa0v/oNS5Ncb5Ul0xJreXxvKSwCQcq1UsgpdpoCzybaW6EcRujGJ76K5wWIrKQq
+         jzVU6gOlD5iM0LouVn7f29UgqYY8A93TE3/HsEOxjotgN6lYYgwsHwpZxiOV6RF9b6cO
+         W014cXiXw0EDPSMKjKKpIKpYfgoO6sBw+hnCiBoyamGSzZSo2VNcXHMmrOTsTJctoib1
+         COKeX3dxB4/EF3rEUtXXtwG+pODe5kUwMfb7fPVGkpSpdJKiEPHzOG20VdXNWTeHYY2K
+         prOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Markus Demleitner <m@tfiu.de>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 161/183] ACPI / EC: Restore polling during noirq suspend/resume phases
-Date: Wed, 25 Apr 2018 12:36:21 +0200
-Message-Id: <20180425103248.999623634@linuxfoundation.org>
+Subject: [PATCH 4.14 160/183] bpf: fix rlimit in reuseport net selftest
+Date: Wed, 25 Apr 2018 12:36:20 +0200
+Message-Id: <20180425103248.962678024@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714581889896941?=
-X-GMAIL-MSGID: =?utf-8?q?1598714581889896941?=
+X-GMAIL-THRID: =?utf-8?q?1598714578698222826?=
+X-GMAIL-MSGID: =?utf-8?q?1598714578698222826?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,51 +51,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
 
-[ Upstream commit 3cd091a773936c54344a519f7ee1379ccb620bee ]
+[ Upstream commit 941ff6f11c020913f5cddf543a9ec63475d7c082 ]
 
-Commit 662591461c4b (ACPI / EC: Drop EC noirq hooks to fix a
-regression) modified the ACPI EC driver so that it doesn't switch
-over to busy polling mode during noirq stages of system suspend and
-resume in an attempt to fix an issue resulting from that behavior.
+Fix two issues in the reuseport_bpf selftests that were
+reported by Linaro CI:
 
-However, that modification introduced a system resume regression on
-Thinkpad X240, so make the EC driver switch over to the polling mode
-during noirq stages of system suspend and resume again, which
-effectively reverts the problematic commit.
+  [...]
+  + ./reuseport_bpf
+  ---- IPv4 UDP ----
+  Testing EBPF mod 10...
+  Reprograming, testing mod 5...
+  ./reuseport_bpf: ebpf error. log:
+  0: (bf) r6 = r1
+  1: (20) r0 = *(u32 *)skb[0]
+  2: (97) r0 %= 10
+  3: (95) exit
+  processed 4 insns
+  : Operation not permitted
+  + echo FAIL
+  [...]
+  ---- IPv4 TCP ----
+  Testing EBPF mod 10...
+  ./reuseport_bpf: failed to bind send socket: Address already in use
+  + echo FAIL
+  [...]
 
-Fixes: 662591461c4b (ACPI / EC: Drop EC noirq hooks to fix a regression)
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=197863
-Reported-by: Markus Demleitner <m@tfiu.de>
-Tested-by: Markus Demleitner <m@tfiu.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+For the former adjust rlimit since this was the cause of
+failure for loading the BPF prog, and for the latter add
+SO_REUSEADDR.
+
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Link: https://bugs.linaro.org/show_bug.cgi?id=3502
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/ec.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/testing/selftests/net/reuseport_bpf.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/ec.c
-+++ b/drivers/acpi/ec.c
-@@ -1927,6 +1927,9 @@ static int acpi_ec_suspend_noirq(struct
- 	    ec->reference_count >= 1)
- 		acpi_set_gpe(NULL, ec->gpe, ACPI_GPE_DISABLE);
+--- a/tools/testing/selftests/net/reuseport_bpf.c
++++ b/tools/testing/selftests/net/reuseport_bpf.c
+@@ -21,6 +21,7 @@
+ #include <sys/epoll.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
++#include <sys/resource.h>
+ #include <unistd.h>
  
-+	if (acpi_sleep_no_ec_events())
-+		acpi_ec_enter_noirq(ec);
+ #ifndef ARRAY_SIZE
+@@ -190,11 +191,14 @@ static void send_from(struct test_params
+ 	struct sockaddr * const saddr = new_any_sockaddr(p.send_family, sport);
+ 	struct sockaddr * const daddr =
+ 		new_loopback_sockaddr(p.send_family, p.recv_port);
+-	const int fd = socket(p.send_family, p.protocol, 0);
++	const int fd = socket(p.send_family, p.protocol, 0), one = 1;
+ 
+ 	if (fd < 0)
+ 		error(1, errno, "failed to create send socket");
+ 
++	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)))
++		error(1, errno, "failed to set reuseaddr");
 +
- 	return 0;
+ 	if (bind(fd, saddr, sockaddr_size()))
+ 		error(1, errno, "failed to bind send socket");
+ 
+@@ -433,6 +437,21 @@ void enable_fastopen(void)
+ 	}
  }
  
-@@ -1934,6 +1937,9 @@ static int acpi_ec_resume_noirq(struct d
- {
- 	struct acpi_ec *ec = acpi_driver_data(to_acpi_device(dev));
- 
-+	if (acpi_sleep_no_ec_events())
-+		acpi_ec_leave_noirq(ec);
++static struct rlimit rlim_old, rlim_new;
 +
- 	if (ec_no_wakeup && test_bit(EC_FLAGS_STARTED, &ec->flags) &&
- 	    ec->reference_count >= 1)
- 		acpi_set_gpe(NULL, ec->gpe, ACPI_GPE_ENABLE);
++static  __attribute__((constructor)) void main_ctor(void)
++{
++	getrlimit(RLIMIT_MEMLOCK, &rlim_old);
++	rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
++	rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
++	setrlimit(RLIMIT_MEMLOCK, &rlim_new);
++}
++
++static __attribute__((destructor)) void main_dtor(void)
++{
++	setrlimit(RLIMIT_MEMLOCK, &rlim_old);
++}
++
+ int main(void)
+ {
+ 	fprintf(stderr, "---- IPv4 UDP ----\n");
