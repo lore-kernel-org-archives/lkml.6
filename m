@@ -1,104 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754680AbeDYOm5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:42:57 -0400
-Received: from mga18.intel.com ([134.134.136.126]:64597 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754395AbeDYOmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:42:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
-   d="scan'208";a="194306776"
-Subject: Re: [V2 PATCH] perf parse-events: Specially handle uncore event alias
- in small groups
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        ganapatrao.kulkarni@cavium.com, zhangshaokun@hisilicon.com,
-        yao.jin@linux.intel.com, will.deacon@arm.com, ak@linux.intel.com,
-        agustinv@codeaurora.org
-References: <1524664218-134407-1-git-send-email-kan.liang@linux.intel.com>
- <20180425142337.GE3396@krava>
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <dbc6f99c-3728-3f23-9c38-a91865dbdefe@linux.intel.com>
-Date: Wed, 25 Apr 2018 10:42:27 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754720AbeDYOnz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:43:55 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35249 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754517AbeDYOnx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:43:53 -0400
+X-Google-Smtp-Source: AIpwx48EicRrs5+MX5UNq0vUmHEQ7t6UcB7R5Xyu5CEO3O2S6IRe+3U75RCmhCbY0MKg/p6GkB9BhpYVoc96msWhsd0=
 MIME-Version: 1.0
-In-Reply-To: <20180425142337.GE3396@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAPcyv4hvrB08XPTbVK0xT2_1Xmaid=-v3OMxJVDTNwQucsOHLA@mail.gmail.com>
+References: <20180425112415.12327-1-pagupta@redhat.com> <20180425112415.12327-2-pagupta@redhat.com>
+ <CAPcyv4hvrB08XPTbVK0xT2_1Xmaid=-v3OMxJVDTNwQucsOHLA@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Wed, 25 Apr 2018 07:43:52 -0700
+Message-ID: <CAPcyv4hiowWozV527sQA_e4fdgCYbD6xfG==vepAqu0hxQEQcw@mail.gmail.com>
+Subject: Re: [RFC v2 1/2] virtio: add pmem driver
+To: Pankaj Gupta <pagupta@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>, Linux MM <linux-mm@kvack.org>,
+        Jan Kara <jack@suse.cz>, Stefan Hajnoczi <stefanha@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Haozhong Zhang <haozhong.zhang@intel.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>, Kevin Wolf <kwolf@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Zwisler, Ross" <ross.zwisler@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marcel Apfelbaum <marcel@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, niteshnarayanlal@hotmail.com,
+        Igor Mammedov <imammedo@redhat.com>, lcapitulino@redhat.com,
+        jmoyer <jmoyer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[ adding Jeff directly since he has also been looking at
+infrastructure to track when MAP_SYNC should be disabled ]
 
-
-On 4/25/2018 10:23 AM, Jiri Olsa wrote:
-> On Wed, Apr 25, 2018 at 06:50:18AM -0700, kan.liang@linux.intel.com wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> Perf stat doesn't count the uncore event aliases from the same uncore
->> block in a group, for example:
->>
->>    perf stat -e '{unc_m_cas_count.all,unc_m_clockticks}' -a -I 1000
->>    #           time             counts unit events
->>         1.000447342      <not counted>      unc_m_cas_count.all
->>         1.000447342      <not counted>      unc_m_clockticks
->>         2.000740654      <not counted>      unc_m_cas_count.all
->>         2.000740654      <not counted>      unc_m_clockticks
->>
->> The output is very misleading. It gives a wrong impression that the
->> uncore event doesn't work.
->>
->> An uncore block could be composed by several PMUs. An uncore event alias
->> is a joint name which means the same event runs on all PMUs of a block.
->> Perf doesn't support mixed events from different PMUs in the same group.
->> It is wrong to put uncore event aliases in a big group.
->>
->> The right way is to split the big group into multiple small groups which
->> only include the events from the same PMU.
->> Only uncore event aliases from the same uncore block should be specially
->> handled here. It doesn't make sense to mix the uncore events with other
->> uncore events from different blocks or even core events in a group.
->>
->> With the patch:
->>    #           time             counts unit events
->>       1.001557653            140,833      unc_m_cas_count.all
->>       1.001557653      1,330,231,332      unc_m_clockticks
->>       2.002709483             85,007      unc_m_cas_count.all
->>       2.002709483      1,429,494,563      unc_m_clockticks
-> 
-> hum, I still can see the original behaviour even with the patch:
+On Wed, Apr 25, 2018 at 7:21 AM, Dan Williams <dan.j.williams@intel.com> wrote:
+> On Wed, Apr 25, 2018 at 4:24 AM, Pankaj Gupta <pagupta@redhat.com> wrote:
+>> This patch adds virtio-pmem driver for KVM
+>> guest.
 >
-
-That's because the data_reads and clockticks are from different uncore 
-blocks. The data_reads is a IMC event. The clockticks is a CBOX event.
-
-The patch only supports the events from the same uncore blocks in group.
-
-Thanks,
-Kan
-
-
-> [jolsa@krava perf]$ sudo ./perf stat -e '{data_reads,clockticks}' -a -I 1000
-> #           time             counts unit events
->       1.000184929      <not counted> MiB  data_reads
->       1.000184929    <not supported>      clockticks
->       2.000552765      <not counted> MiB  data_reads
->       2.000552765    <not supported>      clockticks
->       3.000846298      <not counted> MiB  data_reads
->       3.000846298    <not supported>      clockticks
->       4.001044852      <not counted> MiB  data_reads
->       4.001044852    <not supported>      clockticks
->       5.001247131      <not counted> MiB  data_reads
->       5.001247131    <not supported>      clockticks
-> ^C     5.546917060      <not counted> MiB  data_reads
->       5.546917060    <not supported>      clockticks
-> 
-> 
-> jirka
-> 
+> Minor nit, please expand your changelog line wrapping to 72 columns.
+>
+>>
+>> Guest reads the persistent memory range
+>> information from Qemu over VIRTIO and registers
+>> it on nvdimm_bus. It also creates a nd_region
+>> object with the persistent memory range
+>> information so that existing 'nvdimm/pmem'
+>> driver can reserve this into system memory map.
+>> This way 'virtio-pmem' driver uses existing
+>> functionality of pmem driver to register persistent
+>> memory compatible for DAX capable filesystems.
+>
+> We need some additional enabling to disable MAP_SYNC for this
+> configuration. In other words, if fsync() is required then we must
+> disable the MAP_SYNC optimization. I think this should be a struct
+> dax_device property looked up at mmap time in each MAP_SYNC capable
+> ->mmap() file operation implementation.
