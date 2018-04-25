@@ -1,101 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754583AbeDYOcO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:32:14 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:41818 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753939AbeDYOcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:32:12 -0400
-Subject: Re: [PATCH v6 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-References: <20180419135426.155794-1-yixun.lan@amlogic.com>
- <1524661512.4026.67.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <2a307212-ea12-e7a1-cf6a-9fd7d9e9bb40@amlogic.com>
-Date: Wed, 25 Apr 2018 22:32:08 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        id S1754599AbeDYOdv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:33:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37460 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753508AbeDYOdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:33:49 -0400
+Date: Wed, 25 Apr 2018 10:33:49 -0400 (EDT)
+From: Chunyu Hu <chuhu@redhat.com>
+Reply-To: Chunyu Hu <chuhu@redhat.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Michal Hocko <mhocko@kernel.org>, Chunyu Hu <chuhu.ncepu@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
+Message-ID: <978702110.19841228.1524666829157.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180425125154.GA29722@MBP.local>
+References: <1524243513-29118-1-git-send-email-chuhu@redhat.com> <20180422125141.GF17484@dhcp22.suse.cz> <CACT4Y+YWUgyzCBadg+Oe8wDkFCaBzmcKDgu3rKjQxim7NXNLpg@mail.gmail.com> <CABATaM6eWtssvuj3UW9LHLK3HWo8P9g0z9VzFnuqKPKO5KMJ3A@mail.gmail.com> <20180424132057.GE17484@dhcp22.suse.cz> <20180424134148.qkvqqa4c37l6irvg@armageddon.cambridge.arm.com> <482146467.19754107.1524649841393.JavaMail.zimbra@redhat.com> <20180425125154.GA29722@MBP.local>
+Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in
+ gfp_kmemleak_mask
 MIME-Version: 1.0
-In-Reply-To: <1524661512.4026.67.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [61.173.0.49]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+X-Originating-IP: [10.68.5.41, 10.4.195.8]
+Thread-Topic: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
+Thread-Index: pBQ/tV+qtZ7HPT+DqawRyrojOrxvAA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome:
 
-On 04/25/2018 09:05 PM, Jerome Brunet wrote:
-> On Thu, 2018-04-19 at 21:54 +0800, Yixun Lan wrote:
->>   This patch try to add AO clock and Reset driver for Amlogic's
->> Meson-AXG SoC.
->>   Please note that patch 7 need to wait for the DTS changes[3] merged
->> into mainline first, otherwise it will break the serial console.
->>
->>  patch 2: factor the common code into a dedicated file
->>  patch 3-5: add the aoclk driver for AXG SoC
->>  patch 6-7: drop unnecessary clock flags
->>
->> changes since v5 at [6]: 
->>  - drop unnecessary header files
->>  - add 'axg_aoclk' prefix to clk driver, make them more consistent
->>  - add missing end new line..
->>
->> changes since v4 at [5]: 
->>  - fix return err
->>  - introduce CONFIG_COMMON_CLK_MESON_AO
->>  - format/style minor fix
->>
->> changes since v3 at [4]: 
->>  - add 'const' contraint to the read-only data
->>  - switch to devm_of_clk_add_hw_provider API
->>  - check return value of devm_reset_controller_register
->>
->> changes since v2 at [2]: 
->>  - rework meson_aoclkc_probe() which leverage the of_match_data
->>  - merge patch 5-6 into this series
->>  - seperate DTS patch, will send to Kevin Hilman independently
->>  
->> changes since v1 at [0]: 
->>  - rebase to clk-meson's branch 'next/drivers' [1]
->>  - fix license, update to BSD-3-Clause
->>  - drop un-used include header file
->>
->> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
->> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
->> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
->> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
->> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
->> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
->> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
+
+----- Original Message -----
+> From: "Catalin Marinas" <catalin.marinas@arm.com>
+> To: "Chunyu Hu" <chuhu@redhat.com>
+> Cc: "Michal Hocko" <mhocko@kernel.org>, "Chunyu Hu" <chuhu.ncepu@gmail.com>, "Dmitry Vyukov" <dvyukov@google.com>,
+> "LKML" <linux-kernel@vger.kernel.org>, "Linux-MM" <linux-mm@kvack.org>
+> Sent: Wednesday, April 25, 2018 8:51:55 PM
+> Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
 > 
-> Yixun
+> On Wed, Apr 25, 2018 at 05:50:41AM -0400, Chunyu Hu wrote:
+> > ----- Original Message -----
+> > > From: "Catalin Marinas" <catalin.marinas@arm.com>
+> > > On Tue, Apr 24, 2018 at 07:20:57AM -0600, Michal Hocko wrote:
+> > > > On Mon 23-04-18 12:17:32, Chunyu Hu wrote:
+> > > > [...]
+> > > > > So if there is a new flag, it would be the 25th bits.
+> > > > 
+> > > > No new flags please. Can you simply store a simple bool into
+> > > > fail_page_alloc
+> > > > and have save/restore api for that?
+> > > 
+> > > For kmemleak, we probably first hit failslab. Something like below may
+> > > do the trick:
+> > > 
+> > > diff --git a/mm/failslab.c b/mm/failslab.c
+> > > index 1f2f248e3601..63f13da5cb47 100644
+> > > --- a/mm/failslab.c
+> > > +++ b/mm/failslab.c
+> > > @@ -29,6 +29,9 @@ bool __should_failslab(struct kmem_cache *s, gfp_t
+> > > gfpflags)
+> > >  	if (failslab.cache_filter && !(s->flags & SLAB_FAILSLAB))
+> > >  		return false;
+> > >  
+> > > +	if (s->flags & SLAB_NOLEAKTRACE)
+> > > +		return false;
+> > > +
+> > >  	return should_fail(&failslab.attr, s->object_size);
+> > >  }
+> > 
+> > This maybe is the easy enough way for skipping fault injection for
+> > kmemleak slab object.
 > 
-> Please :
->  - Fix checkpatch error in patch 5 
->  - Collect Philip's Ack on patch 4
-I've fixed above two
+> This was added to avoid kmemleak tracing itself, so could be used for
+> other kmemleak-related cases.
+> 
+> > > Can we get a second should_fail() via should_fail_alloc_page() if a new
+> > > slab page is allocated?
+> > 
+> > looking at code path below, what do you mean by getting a second
+> > should_fail() via fail_alloc_page?
+> 
+> Kmemleak calls kmem_cache_alloc() on a cache with SLAB_LEAKNOTRACE, so the
+> first point of failure injection is __should_failslab() which we can
+> handle with the slab flag. The slab allocator itself ends up calling
+> alloc_pages() to allocate a slab page (and __GFP_NOFAIL is explicitly
+> cleared). Here we have the second potential failure injection via
 
->  - Remove the extra new lines at EOF in patch 2 (maybe others, I did not check
-> them all) - 1 new line at the end of each file, not 2.
+Indeed.
+
+> fail_alloc_page(). That's unless the order < fail_page_alloc.min_order
+> which I think is the default case (min_order = 1 while the slab page
+> allocation for kmemleak would need an order of 0. It's not ideal but we
+> may get away with it.
+
+In my workstation, I checked the value shown is order=2
+
+[mm]# cat /sys/kernel/slab/kmemleak_object/order 
+2
+[mm]# uname -r
+4.17.0-rc1.syzcaller+
+
+
+If order is 2, then not into the branch, no false is returned, so not skipped..
+static bool should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
+{
+    if (order < fail_page_alloc.min_order)
+        return false;
+
+
+> 
+> > Seems we need to insert the flag between alloc_slab_page and
+> > alloc_pages()? Without GFP flag, it's difficult to pass info to
+> > should_fail_alloc_page and keep simple at same time.
+> 
+> Indeed.
+> 
+> > Or as Michal suggested, completely disabling page alloc fail injection
+> > when kmemleak enabled. And enable it again when kmemleak off.
+> 
+> Dmitry's point was that kmemleak is still useful to detect leaks on the
+> error path where errors are actually introduced by the fault injection.
+> Kmemleak cannot cope with allocation failures as it needs a pretty
+> precise tracking of the allocated objects.
+
+understand.
+
+> 
+> An alternative could be to not free the early_log buffer in kmemleak and
+> use that memory in an emergency when allocation fails (though I don't
+> particularly like this).
+> 
+> Yet another option is to use NOFAIL and remove NORETRY in kmemleak when
+> fault injection is enabled.
+
+I'm going to have a try this way to see if any warning can be seen when running.
+This should be the best if it works fine. 
+
+> 
+> --
+> Catalin
 > 
 
-but, I just go back and check the patch, couldn't find any file which
-end with 2 new lines at EOF, could you point me out?
-
-
-Yixun
+-- 
+Regards,
+Chunyu Hu
