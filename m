@@ -1,71 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756448AbeDYTnS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 15:43:18 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:45846 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751255AbeDYTnO (ORCPT
+        id S1756381AbeDYToj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 15:44:39 -0400
+Received: from mail-ot0-f169.google.com ([74.125.82.169]:45697 "EHLO
+        mail-ot0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeDYToh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 15:43:14 -0400
-X-Google-Smtp-Source: AIpwx496QXyiN/AL9dp7u6FNB0mwHmc62krlZRsih3XEw6EoM+0GdPrE4jZLWvUEZqogY9EYlnKFUQ==
-From: "Jingoo Han" <jingoohan1@gmail.com>
-To: "'Daniel Vetter'" <daniel.vetter@ffwll.ch>,
-        "'DRI Development'" <dri-devel@lists.freedesktop.org>,
-        "'LKML'" <linux-kernel@vger.kernel.org>
-Cc: "'Lee Jones'" <lee.jones@linaro.org>,
-        "'Daniel Thompson'" <daniel.thompson@linaro.org>,
-        "'Daniel Vetter'" <daniel.vetter@intel.com>
-References: <20180425174253.4616-1-daniel.vetter@ffwll.ch> <20180425174253.4616-6-daniel.vetter@ffwll.ch>
-In-Reply-To: <20180425174253.4616-6-daniel.vetter@ffwll.ch>
-Subject: Re: [PATCH 6/6] MAINTAINERS: add dri-devel for backlight subsystem patches
-Date: Wed, 25 Apr 2018 15:43:12 -0400
-Message-ID: <000101d3dccd$a5a47020$f0ed5060$@gmail.com>
+        Wed, 25 Apr 2018 15:44:37 -0400
+X-Google-Smtp-Source: AB8JxZrYdOOb1JPhBji6izuXRaUNUJxgwI91CJHW7Fp6E2stvzlwVhdrAaeNYSgbt6IZwCleLv6MMVwKdoN+JvsirEU=
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-language: en-us
-Thread-Index: AQKYOvWw68i4qsBoV9wH2Dzil6RYcgHwz46EonmerFA=
+In-Reply-To: <5342.1524667789@jrobl>
+References: <20180412150826.20988-1-mszeredi@redhat.com> <5342.1524667789@jrobl>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Wed, 25 Apr 2018 21:44:36 +0200
+Message-ID: <CAOssrKfeopc43SbHKOL9TL82U57_9Z2TaLwH5kqh7-3PuE3MBQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/35] overlayfs: stack file operations
+To: "J. R. Okajima" <hooanon05g@gmail.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, April 25, 2018 1:43 PM, Daniel Vetter wrote:
-> 
-> For the same reasons we've added dri-devel for all fbdev patches: Most
-> of the actively developed drivers using this infrastructure are in
-> drivers/gpu/. It just makes sense to cross-post patches and keep
-> aligned. And total activity in the backlight subsystem is miniscule
-> compared to drm overall.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Acked-by: Jingoo Han <jingoohan1@gmail.com>
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+On Wed, Apr 25, 2018 at 4:49 PM, J. R. Okajima <hooanon05g@gmail.com> wrote:
+> Miklos Szeredi:
+>> This patch series reverts the VFS hacks (with the exception of d_path) and
+>
+> I totally agree with removing d_real things.
+> It must be good to the world.
+>
+> If I understand correctly, this series affects file_inode() too.
+> So there may exist more commits to revert such as
+>         fea6d2a6 2017-02-14 vfs: Use upper filesystem inode in bprm_fill_uid()
 
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-Best regards,
-Jingoo Han
+Yep.
 
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fa72c117bcd5..0f902399a348 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2589,6 +2589,7 @@ BACKLIGHT CLASS/SUBSYSTEM
->  M:	Lee Jones <lee.jones@linaro.org>
->  M:	Daniel Thompson <daniel.thompson@linaro.org>
->  M:	Jingoo Han <jingoohan1@gmail.com>
-> +L:	dri-devel@lists.freedesktop.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git
->  S:	Maintained
->  F:	drivers/video/backlight/
-> --
-> 2.17.0
+>
+> Here is another question.
+> Does overlayfs support atomic_open?
+
+No.  Overlayfs doesn't support network filesystems as modifiable
+(upper) layer, and that's where atomic_open makes sense.  I think
+actually no filesystem that defines atomic_open() can be used as upper
+layer.   So that's currently not a worry.  If it turns out to be a
+requirement to use such filesystem as upper, then I'll worry about
+atomic_open().
+
+Thanks,
+Miklos
