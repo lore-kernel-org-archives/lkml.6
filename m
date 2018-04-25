@@ -1,71 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753452AbeDYNFD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:05:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753202AbeDYNFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:05:00 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE65B204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-Subject: Re: [f2fs-dev] [PATCH 5/5] f2fs: enforce fsync_mode=strict for
- renamed directory
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180425054613.2700-1-jaegeuk@kernel.org>
- <20180425054613.2700-5-jaegeuk@kernel.org>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <42858ef4-c1b8-c83e-4b47-39e28e161e16@kernel.org>
-Date: Wed, 25 Apr 2018 21:04:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180425054613.2700-5-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1753790AbeDYNFW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:05:22 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38059 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752885AbeDYNFT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 09:05:19 -0400
+X-Google-Smtp-Source: AIpwx4/nwWJhEaytd4IeC4z4gUu7taSE6mkMdNlbg7UFTcywst7ke+RwQTKnaFCHbsXZnfdMrNm+YQ==
+Message-ID: <1524661512.4026.67.camel@baylibre.com>
+Subject: Re: [PATCH v6 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date: Wed, 25 Apr 2018 15:05:12 +0200
+In-Reply-To: <20180419135426.155794-1-yixun.lan@amlogic.com>
+References: <20180419135426.155794-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/25 13:46, Jaegeuk Kim wrote:
-> This is to give a option for user to be able to recover B/foo in the below
-> case.
+On Thu, 2018-04-19 at 21:54 +0800, Yixun Lan wrote:
+>   This patch try to add AO clock and Reset driver for Amlogic's
+> Meson-AXG SoC.
+>   Please note that patch 7 need to wait for the DTS changes[3] merged
+> into mainline first, otherwise it will break the serial console.
 > 
-> mkdir A
-> sync()
-> rename(A, B)
-> creat (B/foo)
-> fsync (B/foo)
-> ---crash---
-
-That makes sense, IMO, it will be better to cover cross rename case as well?
-
-Thanks,
-
+>  patch 2: factor the common code into a dedicated file
+>  patch 3-5: add the aoclk driver for AXG SoC
+>  patch 6-7: drop unnecessary clock flags
 > 
-> Sugessted-by: Velayudhan Pillai <vijay@cs.utexas.edu>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/namei.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> changes since v5 at [6]: 
+>  - drop unnecessary header files
+>  - add 'axg_aoclk' prefix to clk driver, make them more consistent
+>  - add missing end new line..
 > 
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index b5f404674cad..fef6e3ab2135 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -973,8 +973,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  			f2fs_put_page(old_dir_page, 0);
->  		f2fs_i_links_write(old_dir, false);
->  	}
-> -	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
-> +	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT) {
->  		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-> +		if (S_ISDIR(old_inode->i_mode))
-> +			add_ino_entry(sbi, old_inode->i_ino, TRANS_DIR_INO);
-> +	}
+> changes since v4 at [5]: 
+>  - fix return err
+>  - introduce CONFIG_COMMON_CLK_MESON_AO
+>  - format/style minor fix
+> 
+> changes since v3 at [4]: 
+>  - add 'const' contraint to the read-only data
+>  - switch to devm_of_clk_add_hw_provider API
+>  - check return value of devm_reset_controller_register
+> 
+> changes since v2 at [2]: 
+>  - rework meson_aoclkc_probe() which leverage the of_match_data
+>  - merge patch 5-6 into this series
+>  - seperate DTS patch, will send to Kevin Hilman independently
 >  
->  	f2fs_unlock_op(sbi);
->  
+> changes since v1 at [0]: 
+>  - rebase to clk-meson's branch 'next/drivers' [1]
+>  - fix license, update to BSD-3-Clause
+>  - drop un-used include header file
 > 
+> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
+> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
+> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
+> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
+
+Yixun
+
+Please :
+ - Fix checkpatch error in patch 5 
+ - Collect Philip's Ack on patch 4
+ - Remove the extra new lines at EOF in patch 2 (maybe others, I did not check
+them all) - 1 new line at the end of each file, not 2.
+
+Regards
+Jerome
