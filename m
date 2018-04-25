@@ -1,63 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753672AbeDYNcP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:32:15 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39628 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752949AbeDYNcL (ORCPT
+        id S1754073AbeDYNcw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:32:52 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:16836 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753910AbeDYNcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:32:11 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Vaishali Thakkar <vthakkar1994@gmail.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: rcar-du: Use drm_dev_put
-Date: Wed, 25 Apr 2018 16:32:25 +0300
-Message-ID: <5811471.PjpYk9OX8O@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180425121036.28965-1-vthakkar1994@gmail.com>
-References: <20180425121036.28965-1-vthakkar1994@gmail.com>
+        Wed, 25 Apr 2018 09:32:48 -0400
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: =?UTF-8?q?Beno=C3=AEt=20Cousson=20?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>
+CC: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, <linux-doc@vger.kernel.org>,
+        <kishon@ti.com>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+Subject: [PATCH v4 15/15] Documentation: ARM: Add new MMC requirements for DRA7/K2G
+Date: Wed, 25 Apr 2018 19:02:03 +0530
+Message-ID: <20180425133203.14133-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180425125449.19755-16-kishon@ti.com>
+References: <20180425125449.19755-16-kishon@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vaishali,
+>From 4.18 kernel, all the MMC controller instances in DRA7
+are programmed using sdhci based driver (sdhci-omap.c). Document
+this new requirement here. Both omap2plus_defconfig and
+multi_v7_defconfig has CONFIG_MMC_SDHCI_OMAP enabled.
 
-Thank you for the patch.
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+Changes from v3:
+Add K2G also in the dependencies description
 
-On Wednesday, 25 April 2018 15:10:36 EEST Vaishali Thakkar wrote:
-> As specified in drm_drv.c, drm_dev_unref is a compatibility alias
-> for drm_dev_put and shouldn't be used in new code. So, use
-> drm_dev_put instead.
+ Documentation/arm/OMAP/README | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-This looks good to me. However, how about taking it one step further and mass-
-patching all drivers to use drm_dev_put() ? We could then remove 
-drm_dev_unref() completely.
-
-> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 05745e86d73e..418a80e6b2f4
-> 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -378,7 +378,7 @@ static int rcar_du_remove(struct platform_device *pdev)
->  	drm_kms_helper_poll_fini(ddev);
->  	drm_mode_config_cleanup(ddev);
-> 
-> -	drm_dev_unref(ddev);
-> +	drm_dev_put(ddev);
-> 
->  	return 0;
->  }
-
+diff --git a/Documentation/arm/OMAP/README b/Documentation/arm/OMAP/README
+index 75645c45d14a..5bf5ac3b3ed4 100644
+--- a/Documentation/arm/OMAP/README
++++ b/Documentation/arm/OMAP/README
+@@ -5,3 +5,7 @@ KERNEL		NEW DEPENDENCIES
+ v4.3+		Update is needed for custom .config files to make sure
+ 		CONFIG_REGULATOR_PBIAS is enabled for MMC1 to work
+ 		properly.
++
++v4.18+		Update is needed for custom .config files to make sure
++		CONFIG_MMC_SDHCI_OMAP is enabled for all MMC instances
++		to work in DRA7 and K2G based boards.
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.0
