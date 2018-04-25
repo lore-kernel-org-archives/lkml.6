@@ -1,62 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755982AbeDYQW0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:22:26 -0400
-Received: from mout.gmx.net ([212.227.17.22]:54885 "EHLO mout.gmx.net"
+        id S1756009AbeDYQWq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:22:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:42586 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932102AbeDYQVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:21:18 -0400
-Message-ID: <1524673273.8257.2.camel@gmx.de>
-Subject: Re: DOS by unprivileged user
-From: Mike Galbraith <efault@gmx.de>
-To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc: Ferry Toth <ftoth@telfort.nl>, linux-kernel@vger.kernel.org
-Date: Wed, 25 Apr 2018 18:21:13 +0200
-In-Reply-To: <20180425155459.5a4e40e0@alans-desktop>
-References: <9023506.UBh6vynRGa@delfion> <4285098.DEWjdbWF2X@delfion>
-         <1524325275.8078.2.camel@gmx.de> <6057755.ozdVOybsI6@delfion>
-         <1524470676.5451.1.camel@gmx.de> <20180425155459.5a4e40e0@alans-desktop>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Nf309raBT0H+CfDYDVbQRnARZ3ogqBhVKIWNun0pHoiH5SVOAyL
- Qwix9+M+kAQaWocI7Y36Dj2vje0tjtq/xaCNw5UjFd/Lb+RGIdlSGP3BX5Whg2BnIZj3ffu
- 2d1CTmOAevouifHDMnU71vqg8Gv3UeP/5xchEAJ1FYkwFBeVSESWhcCSfkHdjR1/G5Dh02m
- NNW/dGZXuSx8cKGpGnGYQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:GH0zhk/Y+Js=:QU5qZIiorF2eIEXev+p0bb
- 5RLuG0dQrHd+1sYz9sX2VUH4+jb/i3iF2A72iW38k0fn0gu07Nm7IyPNJKTy9d1Xp6eQWEr4u
- +aiUg6y8wRAoC3K5YfYZiDQE+z3ywCMXZm3BdkbWFssgsx5OSBgAtYxuEloKInCimDbMHpdvF
- O6ghi2Mn2GpG3TySuErmhc5LcM0QSKKFMqL4ZRRnzAvaEscCdhYFwMyKikCIJsiyJOFns2DUF
- 4c+al9uAyMUBz3yvoG7s/h8EWg10hOr+xZePBUobIWBLH/XS9W2SWcEex7FaNlzkc+ZqXcBVk
- 0iJOPnwSJEwqQ7K6cqgOINmxNTtcZV4+kXK7HGZ0A++XwE6+4DqnmyKb5RhtBHLzV4mYXZIfA
- iQyALvxpoGtx0tqu6U3hX8hYrRTNEyQncmN0zCYPJYj3rUdRAnJsouzmoTWohQk88ZY36F1Ni
- /76Ym8p3Kx5mYLKIB4vrQh0+KenvcgfPiGU1+CGzDVv1ArnwTfjSQE6zKjJIbkLvBd85/GUFn
- 8+DU7b6DnxZ9OqyZCvJp+iQmym/bVDUCeZ4dWVuBaY87mFuRhgvbI78rtHIqPARUPnFkn7qRH
- Ktq6V/EkqTEGcaG/Ueaa48K/c3i474VfyQ+Imi4Az39y3HUHNRSc3FfWAtUcQDSl1NzucIlsM
- UXOMQSfa88RI+27R5PcufJcxF/mmmJ7h0WkvL6WMQuT4OxZxkSJ8CdapJ+loqtSCDiEvQbhJJ
- 8YlNzfbGJv6930nDmJ95llyie76ovwALSvt43Lf8R4K97ma4DjCRNoOar7x2OtQh2Ehh8KwG3
- BZ3WMRdN36c6/yd57NtrX8LAihScWPAk9nYfhaiB2jS3t9yFqw=
+        id S1755378AbeDYQWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:22:40 -0400
+Subject: Re: [PATCH v2 13/17] kvm: arm/arm64: Allow tuning the physical
+ address size for VM
+To: Julien Grall <julien.grall@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: mark.rutland@arm.com, peter.maydell@linaro.org,
+        ard.biesheuvel@linaro.org, cdall@kernel.org, kvm@vger.kernel.org,
+        rkrcmar@redhat.com, marc.zyngier@arm.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+ <1522156531-28348-14-git-send-email-suzuki.poulose@arm.com>
+ <81e98b32-8c13-3688-209f-2d51b2237748@arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <ff0cf970-fd2e-faf7-42cd-5b097158276b@arm.com>
+Date: Wed, 25 Apr 2018 17:22:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <81e98b32-8c13-3688-209f-2d51b2237748@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-04-25 at 15:54 +0100, Alan Cox wrote:
-> > > I think memory allocation and io waits can't be decoupled from
-> > > scheduling as they are now.  
-> > 
-> > The scheduler is not decoupled from either, it is intimately involved
-> > in both.  However, none of the decision making smarts for either reside
-> > in the scheduler, nor should they.
+On 25/04/18 17:10, Julien Grall wrote:
+> Hi Suzuki,
 > 
-> It belongs in both.
+> On 27/03/18 14:15, Suzuki K Poulose wrote:
+>> Allow specifying the physical address size for a new VM via
+>> the kvm_type argument for KVM_CREATE_VM ioctl. This allows
+>> us to finalise the stage2 page table format as early as possible
+>> and hence perform the right checks on the memory slots without
+>> complication. The size is encoded as Log2(PA_Siz) in the bits[7:0]
+> 
+> s/PA_Siz/PA_Size/.
+> 
 
-If mm decision making belongs within the process scheduler, it follows
-that IO requests, dirty page writeback etc. do as well.  Nope, I don't
-think we want to create a squid-uler, with tentacles extending all over
-the dang kernel.
+>> --- a/include/uapi/linux/kvm.h
+>> +++ b/include/uapi/linux/kvm.h
+>> @@ -740,6 +740,16 @@ struct kvm_ppc_resize_hpt {
+>>   #define KVM_S390_SIE_PAGE_OFFSET 1
+>>   /*
+>> + * On arm/arm64, machine type can be used to request the physical
+>> + * address size for the VM. Bits [7-0] have been reserved for the
+>> + * PA size shift (i.e, log2(PA-Size)). For backward compatibility,
+> 
+> I would s/PA-Size/PA_Size/ to avoid the impression that it is a substraction.
+> 
 
-The thrashing problem could use some attention, but we'll have to agree
-to disagree about the scheduler growing mm, io (etc) smarts.
+Agree.
 
-	-Mike
+>> + * value 0 implies the default IPA size, which is 40bits.
+>> + */
+>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK    0xff
+>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)        \
+>> +    ((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
+>> +
+>> +/*
+>>    * ioctls for /dev/kvm fds:
+>>    */
+>>   #define KVM_GET_API_VERSION       _IO(KVMIO,   0x00)
+>> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+>> index 53bb05c..13eb66f 100644
+>> --- a/virt/kvm/arm/arm.c
+>> +++ b/virt/kvm/arm/arm.c
+>> @@ -110,6 +110,25 @@ void kvm_arch_check_processor_compat(void *rtn)
+>>   }
+>> +static int kvm_arch_config_vm(struct kvm *kvm, unsigned long type)
+>> +{
+>> +    u32 ipa_shift = (u32)type & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK;
+> 
+> How about using KVM_VM_TYPE_ARM_PHYS_SHIFT(type) directly here?
+
+Thanks for that, I have this already fixed in for v3.
+
+>>   /**
+>>    * kvm_arch_init_vm - initializes a VM data structure
+>>    * @kvm:    pointer to the KVM struct
+>> @@ -118,8 +137,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+>>   {
+>>       int ret, cpu;
+>> -    if (type)
+>> -        return -EINVAL;
+>> +    ret = kvm_arch_config_vm(kvm, type);
+>> +    if (ret)
+>> +        return ret;
+>>       kvm->arch.last_vcpu_ran = alloc_percpu(typeof(*kvm->arch.last_vcpu_ran));
+>>       if (!kvm->arch.last_vcpu_ran)
+>>
+> 
+> Cheers,
+
+Thanks for the review.
+
+Cheers.
