@@ -1,102 +1,78 @@
-Return-Path: <kernel-hardening-return-13140-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AB8JxZpRrGteqkpHVOd6sgOqjCrqNb9rRuV3cgkf9MiM1qyjmNttyabGk2dKUP9LGy6VyijTfk1k
-ARC-Seal: i=1; a=rsa-sha256; t=1524667620; cv=none;
+Return-Path: <kernel-hardening-return-13141-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AB8JxZp5NygyTE5RJVzbGlk9W+RBms3deBgsVbnP2UQ3ZBCpa2evROTSy0CnrS3Ivz0PQUPr9GE1
+ARC-Seal: i=1; a=rsa-sha256; t=1524668359; cv=none;
         d=google.com; s=arc-20160816;
-        b=W80iVaIrZoEUx0uZBSMLWAOLvGQW9G8nYsuQJBPXd33FWkXa1pi8R6kLdjowAX1H9n
-         vFv77KBBwmXZHPtKtnJLVyk1mm2WdMsVGf7vYYGidrDYnGf9Rf3KOupvZvo/PUs+FCSU
-         F05O40no9mnZC3G7puDghvOZoGNgB5XPar7JLWaY88faVnEW/btevmMuL1aXd6YlHAqu
-         PUox3gRQAvwbJkeA8ET7TqmkZis+ju6QPJIJLnTsFKySR/XyQkxp5ySsO1Od+DRC6HV3
-         PDmbnWu7RUP3MreqUHWT4yQvH/aVRBnFqxN/Kt/vScjfuBYK07iyujLnW3kHOGTmKn9T
-         +sYw==
+        b=BSzftr3KJREu5SuSIBQ13jKr/5AI5JBT/IsRcGqWvFHvORawbGaGSxGWnCCS78tnhx
+         RYzxXBqWOUXz4uZqOGQqC4L3Z9d2vHoklAbA3cv+oWwGil/R9IKad0hk2G7GXhBKQzFb
+         RW2Ap9QHt/s91WJXqN27YqhHSUmwoOEzVb/4vRI+S5Va4blcHiDP8KccBv+GRCHsYzN1
+         6CA0wgsYdptAS/PtFn3CmpvBvmDKEQP6q1Vg7e4FKRygO3k8OFCnNR71kdBOA86vmbM9
+         mbYg76l6obGYIUkjYFYH1wtrtNSbmrtEEioNl9Ba1wZDsbZROOZx2pBC8dF4X3eBm2n5
+         wa7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=2tQsBi2Tvy9BONFoyp+Kg7ZktJ0b81Z5QNCojos7+ZM=;
-        b=zT55o0GHvusIeOzaADrsuThxP+AuV6WGJYOz2dlOrm9VjPv0Ajw23d/Zub6j0BLM5r
-         eT1fPXXWugmZ2sTFoKJ0i6ozFRGxJyoc6JsBmNCBj/ipxqDjeWA+7JwdwHphLaVCe3Se
-         zyOkiuJGQFI4UP5Kgt5b1KsLvB4sONOzCLO5gx+ppCZVCOz0TCXZQOeBM7MApzBOPAae
-         ZvLSDYDQ+lTUDZveDWHsSqDX7F2ZWpA7ibQcFQEDJTlCF0aKKHt0TlW/6tuzEeUvcwAi
-         yAqd6PjxFS7qUcYjDLVhpVCDEa1P7+TnuQ2UjKMdfG1M6Rve3RlMKkj0DKb3XknNtHTE
-         NP+w==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=I4RDPjqxe/eoIegxRKduRul/QwAHixAHc8TPyMtAhGc=;
+        b=Aph5dpKkxttH5mRAMPBAOK/TZeriJZ0YMAEt/jrsrMdN3z4ew/6Gb4z4GjEnAMnbh8
+         R2sbda/qLnFdVQXawcYue/6T8MA++J2sF8U8h15HvD/CvrTEHzhDlyvd0Evcf3d7I+C1
+         9F5YWRu6GGzMPZZYFh4rZ3Vuhn6io3jYYSYF2/z2gJEh0Y8GSaOBZjV7cWigiZyT/hZ6
+         iB20tOkBkJ11KJmI2unl+ZvKyKQo9FnmLK9DN1tjHUWbextJMd0hJF40fO27ttk43kh4
+         wkseknhPy4d/dWw/8HgfD6fpdlsjXyPZ+eHgC/Mc2cN5tYyL58vPHPfJh3WM27gvoaQN
+         5fIw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=Iv0LWIpJ;
-       spf=pass (google.com: domain of kernel-hardening-return-13140-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13140-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-13141-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13141-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=Iv0LWIpJ;
-       spf=pass (google.com: domain of kernel-hardening-return-13140-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13140-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-13141-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13141-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Wed, 25 Apr 2018 07:46:39 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Stefano Brivio <sbrivio@redhat.com>
+Date: Wed, 25 Apr 2018 16:58:52 +0200
+From: Stefano Brivio <sbrivio@redhat.com>
+To: Kees Cook <keescook@chromium.org>
 Cc: Andreas Christoforou <andreaschristofo@gmail.com>,
-	kernel-hardening@lists.openwall.com,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 ipsec-next] xfrm: remove VLA usage in __xfrm6_sort()
-Message-ID: <20180425144639.GA38350@beast>
+ kernel-hardening@lists.openwall.com, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov
+ <kuznet@ms2.inr.ac.ru>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 ipsec-next] xfrm: remove VLA usage in __xfrm6_sort()
+Message-ID: <20180425165852.6c7460c2@epycfail>
+In-Reply-To: <20180425144639.GA38350@beast>
+References: <20180425144639.GA38350@beast>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598729875203857448?=
-X-GMAIL-MSGID: =?utf-8?q?1598729875203857448?=
+X-GMAIL-MSGID: =?utf-8?q?1598730649130787603?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In the quest to remove all stack VLA usage removed from the kernel[1],
-just use XFRM_MAX_DEPTH as already done for the "class" array. In one
-case, it'll do this loop up to 5, the other caller up to 6.
+On Wed, 25 Apr 2018 07:46:39 -0700
+Kees Cook <keescook@chromium.org> wrote:
 
-[1] https://lkml.org/lkml/2018/3/7/621
+> In the quest to remove all stack VLA usage removed from the kernel[1],
+> just use XFRM_MAX_DEPTH as already done for the "class" array. In one
+> case, it'll do this loop up to 5, the other caller up to 6.
+> 
+> [1] https://lkml.org/lkml/2018/3/7/621
+> 
+> Co-developed-by: Andreas Christoforou <andreaschristofo@gmail.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> v4:
+> - actually remove memset(). :)
+> v3:
+> - adjust Subject and commit log (Steffen)
+> - use "= { }" instead of memset() (Stefano)
+> v2:
+> - use XFRM_MAX_DEPTH for "count" array (Steffen and Mathias).
+> ---
 
-Co-developed-by: Andreas Christoforou <andreaschristofo@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v4:
-- actually remove memset(). :)
-v3:
-- adjust Subject and commit log (Steffen)
-- use "= { }" instead of memset() (Stefano)
-v2:
-- use XFRM_MAX_DEPTH for "count" array (Steffen and Mathias).
----
- net/ipv6/xfrm6_state.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/net/ipv6/xfrm6_state.c b/net/ipv6/xfrm6_state.c
-index 16f434791763..5bdca3d5d6b7 100644
---- a/net/ipv6/xfrm6_state.c
-+++ b/net/ipv6/xfrm6_state.c
-@@ -60,11 +60,9 @@ xfrm6_init_temprop(struct xfrm_state *x, const struct xfrm_tmpl *tmpl,
- static int
- __xfrm6_sort(void **dst, void **src, int n, int (*cmp)(void *p), int maxclass)
- {
--	int i;
-+	int count[XFRM_MAX_DEPTH] = { };
- 	int class[XFRM_MAX_DEPTH];
--	int count[maxclass];
--
--	memset(count, 0, sizeof(count));
-+	int i;
- 
- 	for (i = 0; i < n; i++) {
- 		int c;
--- 
-2.7.4
-
-
--- 
-Kees Cook
-Pixel Security
+Acked-by: Stefano Brivio <sbrivio@redhat.com>
