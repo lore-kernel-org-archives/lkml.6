@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932290AbeDYSNF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:13:05 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41713 "EHLO mga02.intel.com"
+        id S932303AbeDYSNL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:13:11 -0400
+Received: from mga02.intel.com ([134.134.136.20]:41720 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932160AbeDYSMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:12:42 -0400
+        id S932183AbeDYSMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:12:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,327,1520924400";
-   d="scan'208";a="35243691"
+   d="scan'208";a="35243703"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V3 18/39] x86/intel_rdt: Add utility to test if tasks assigned to resource group
-Date: Wed, 25 Apr 2018 03:09:54 -0700
-Message-Id: <fdb111c9dfffb508cc6a9bcecffe325f374532ad.1524649902.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 20/39] x86/intel_rdt: Protect against resource group changes during locking
+Date: Wed, 25 Apr 2018 03:09:56 -0700
+Message-Id: <4c6f684afb75373ea212881edb11a071d3ca7a99.1524649902.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1524649902.git.reinette.chatre@intel.com>
 References: <cover.1524649902.git.reinette.chatre@intel.com>
@@ -30,66 +30,103 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In considering changes to a resource group it becomes necessary to know
-whether tasks have been assigned to the resource group in question.
+We intend to modify file permissions to make the "tasks", "cpus", and
+"cpus_list" not accessible to the user when cache pseudo-locking in
+progress. Even so, it is still possible for the user to force the file
+permissions (using chmod) to make them writeable. Similarly, directory
+permissions will be modified to prevent future monitor group creation
+but the user can override these restrictions also.
 
-Introduce a new utility that can be used to check if any tasks have been
-assigned to a particular resource group.
+Add additional checks to the files we intend to restrict to ensure that
+no modifications from user space are attempted while setting up a
+pseudo-locking or after a pseudo-locked region is set up.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.h          |  1 +
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 26 ++++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 10 +++++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 32 +++++++++++++++++++++++++----
+ 2 files changed, 38 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index fa2aa7e8ad73..e33b1215f394 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -465,6 +465,7 @@ int rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
- unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
- 				  u32 cbm);
- enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
-+int rdtgroup_tasks_assigned(struct rdtgroup *r);
- struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
- int update_domains(struct rdt_resource *r, int closid);
- void closid_free(int closid);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 15291ca02daf..f6740218a751 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -273,6 +273,16 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 	}
+ 	rdt_last_cmd_clear();
+ 
++	/*
++	 * No changes to pseudo-locked region allowed. It has to be removed
++	 * and re-created instead.
++	 */
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("resource group is pseudo-locked\n");
++		goto out;
++	}
++
+ 	for_each_alloc_enabled_rdt_resource(r) {
+ 		list_for_each_entry(dom, &r->domains, list)
+ 			dom->have_new_ctrl = false;
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 541103a2dea0..f2da6a2827c8 100644
+index 4d63934e6f68..01ffa4641bf8 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -564,6 +564,32 @@ static int __rdtgroup_move_task(struct task_struct *tsk,
- 	return ret;
- }
+@@ -449,6 +449,13 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
+ 		goto unlock;
+ 	}
  
-+/**
-+ * rdtgroup_tasks_assigned - Test if tasks have been assigned to resource group
-+ * @r: Resource group
-+ *
-+ * Return: 1 if tasks have been assigned to @r, 0 otherwise
-+ */
-+int rdtgroup_tasks_assigned(struct rdtgroup *r)
-+{
-+	struct task_struct *p, *t;
-+	int ret = 0;
-+
-+	lockdep_assert_held(&rdtgroup_mutex);
-+
-+	rcu_read_lock();
-+	for_each_process_thread(p, t) {
-+		if ((r->type == RDTCTRL_GROUP && t->closid == r->closid) ||
-+		    (r->type == RDTMON_GROUP && t->rmid == r->mon.rmid)) {
-+			ret = 1;
-+			break;
-+		}
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
++	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		goto unlock;
 +	}
-+	rcu_read_unlock();
 +
-+	return ret;
-+}
+ 	if (is_cpu_list(of))
+ 		ret = cpulist_parse(buf, newmask);
+ 	else
+@@ -651,13 +658,22 @@ static ssize_t rdtgroup_tasks_write(struct kernfs_open_file *of,
+ 	if (kstrtoint(strstrip(buf), 0, &pid) || pid < 0)
+ 		return -EINVAL;
+ 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
++	if (!rdtgrp) {
++		rdtgroup_kn_unlock(of->kn);
++		return -ENOENT;
++	}
+ 	rdt_last_cmd_clear();
+ 
+-	if (rdtgrp)
+-		ret = rdtgroup_move_task(pid, rdtgrp, of);
+-	else
+-		ret = -ENOENT;
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
++	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		goto unlock;
++	}
 +
- static int rdtgroup_task_write_permission(struct task_struct *task,
- 					  struct kernfs_open_file *of)
- {
++	ret = rdtgroup_move_task(pid, rdtgrp, of);
+ 
++unlock:
+ 	rdtgroup_kn_unlock(of->kn);
+ 
+ 	return ret ?: nbytes;
+@@ -2228,6 +2244,14 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 		goto out_unlock;
+ 	}
+ 
++	if (rtype == RDTMON_GROUP &&
++	    (prdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
++	     prdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		goto out_unlock;
++	}
++
+ 	/* allocate the rdtgroup. */
+ 	rdtgrp = kzalloc(sizeof(*rdtgrp), GFP_KERNEL);
+ 	if (!rdtgrp) {
 -- 
 2.13.6
