@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-558212-1524653875-2-17148094790811902761
+X-Cyrus-Session-Id: sloti22d1t05-557887-1524653848-2-1790893974575848810
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653874; b=YnVHmlEAPud7K40CKcBAEigWqDdXfXcy61r41s1qLYMjATiqMM
-    QgffpDxgL1RzfRQNy3tmyQl0fkFPFVP7EcefaYrXVMrpQGxqcBhxcexzdvtwx0HM
-    5IRTzkaE0n3yCbFFYG83x+uAU8VEm/1VB89MnTzYwIPHxuCNjA2JNU4mZ5mVCfuU
-    SLCu2XEGbptCquIRlvLbiandV9XlZMP3NDvXquYC9cDUTiybuYKg0mCzIYyvopWV
-    BfX2YBBuxfiPIUB56/CBXr9k+9fgqT2ukJZWuKfwBmjhrxJevmPGALfnzLho6Tpd
-    QN3jRxrfsGUxqY9wXr1DOCnJV4ecMoGw43qw==
+    1524653847; b=WkbqYF52M4Wwvv/LWCDrnUHi6Ho8E31c1YKBK0FdRej8W3UJ14
+    cgvuk3EDutdlk1RZHFHMRLcmq34KXHiQd/B0JbE3u7d0BfPhPjU355KgIMTEaT3U
+    bP/GSHjGwgKXMexz5kTBILZ787QRsfh3YdaXfvCoL5A0e9h3zEf78tY9/X9wDBQi
+    M1tN+mRVekx9vppKngycB5ve2URV+ZJFQ7Ky9Jd24yE9yBpzQhzf1NiTXLAtvioS
+    1UClB5xUDHM30uI67VlzqlZ4aJKXfgHwX0+QXn5yp4YhCeQy6ngV3C/gMidI9Ue6
+    ptutBxmDOwZt3fSobQUHJgtcGjYGnypSdLyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653874; bh=tyTqlYbChRG51IK8KnlabYLefUNASl
-    XdJq8mbeK8Yrg=; b=VWFakUZXR9Mlsrj1DCkSPGPk0RuRERvCoE3rE6lgkXSM+s
-    wPiEkAKQ+cbo9mOASzevR5LRCoZ7kQvnyu2zHeqA/SuM+FDW35zmZZ76lR07Q3xF
-    W3H/y/BuWgD+26RzuZuorMGfqoBZcLJdHtf9f8yJP/sZejl48/2OhFYnxvwqKseH
-    mLSfwrtEKlOB/MEYwVS9D3jST3nZjZpcDA+7aEt5sIX+enDT7Ft7E2KVDA7R7zlM
-    whnDYnaVzs/9QYF6FWo3GGKwRu6z6cBNJmkID7653jbfXAnZ5ZmmGkTYW+FlTBYy
-    3dyBO3ZRTQdoUwObB0KaA/zdz/UuxZYcZuwsD4bQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524653847; bh=Y21n68hYk7lAsvbOYeXgxri4g1Asy3
+    LTwMgnlU/xwzo=; b=QAz0QJXLpKIHKtUi8XRJtXVgdB5kRqIeWPm6JdED9TINXW
+    wD+IpoKK6h3NlWiyt3itP/CeYCTF0X9Ca9FKhhTUaHB/QN6swwZk2CERk/+mL9h0
+    l8nC625OuP+AKd1BVK4FoM7IoGuXzqbf3C2E0vk/namLxLSbtj2eLEjlz8DcPrvk
+    NKftKGkDM5GP5ubXiPBUlejc/z01n2krzZKwMc67XsosD5ArBX5bqKzy8YyusNa/
+    TceleucRZj5Pcx7DRa2o8TOoTurzlcOjaqZMEf4darRnUsiIfbdisuMoVHXxJtQd
+    s4GCsBPr+s7/uIVsVekbNutvIMWNm/+WGt7XWZsA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,30 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMygbWcrzCVXX0kLzjegcmS9+76fskZfSuEPZTTPwEdRE1sMldElLX2jIysWjSoSrtrvwOMTLJRI6eec8zhS0DDRCV8AEVkkXbPrWQr9B3lyy+8TbnWx
-    umbD0fbtN/JCAuAn1CABw3Y09pAVzi32SYMd97leI6etGzbAMNe49LJuGfMYCNyt3tAGToFVCY+4LEnk93gdEP7clymmGttQE3ActTaPe2y4JiOx4sD125k3
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfLdU+ULKKNsTKI/rdC7KrJ9t81swImNLs6Lj9RqlLuoiHJEzUOQxDT4yFnoGio29PvJspDCGuk+Q/kYn0bJLGzP8xfeGbMyE8de7XCmezboVeTC8Rjz1
+    7EVI4SP07cMOn4JS9d/ep6iYpoLbu697txwIgbt2fjIWClMmmrUIOrkH+SzJBXAElF/m+sbO3yevepvH6ljXrGaH7SE20+AE86KLz3a34svCzGheURLmZaNF
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=tHz9FfFoAAAA:8 a=yPCof4ZbAAAA:8 a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=43XURk6w0g5GeypUxR4A:9 a=QEXdDO2ut3YA:10
-    a=Z52K5TbU17EcDgFyT5Ki:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=7CQSdrXTAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=KE6AYRTJDb_r4OeTZP8A:9
+    a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753846AbeDYK5e (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:57:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52844 "EHLO
+        id S1753592AbeDYK4j (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:56:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52882 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754170AbeDYKnD (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:03 -0400
+        with ESMTP id S1752444AbeDYKnL (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 140/183] xen/grant-table: Use put_page instead of free_page
-Date: Wed, 25 Apr 2018 12:36:00 +0200
-Message-Id: <20180425103248.173790853@linuxfoundation.org>
+Subject: [PATCH 4.14 143/183] arm64: spinlock: Fix theoretical trylock() A-B-A with LSE atomics
+Date: Wed, 25 Apr 2018 12:36:03 +0200
+Message-Id: <20180425103248.294024456@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -94,49 +92,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Will Deacon <will.deacon@arm.com>
 
 
-[ Upstream commit 3ac7292a25db1c607a50752055a18aba32ac2176 ]
+[ Upstream commit 202fb4ef81e3ec765c23bd1e6746a5c25b797d0e ]
 
-The page given to gnttab_end_foreign_access() to free could be a
-compound page so use put_page() instead of free_page() since it can
-handle both compound and single pages correctly.
+If the spinlock "next" ticket wraps around between the initial LDR
+and the cmpxchg in the LSE version of spin_trylock, then we can erroneously
+think that we have successfuly acquired the lock because we only check
+whether the next ticket return by the cmpxchg is equal to the owner ticket
+in our updated lock word.
 
-This bug was discovered when migrating a Xen VM with several VIFs and
-CONFIG_DEBUG_VM enabled. It hits a BUG usually after fewer than 10
-iterations. All netfront devices disconnect from the backend during a
-suspend/resume and this will call gnttab_end_foreign_access() if a
-netfront queue has an outstanding skb. The mismatch between calling
-get_page() and free_page() on a compound page causes a reference
-counting error which is detected when DEBUG_VM is enabled.
+This patch fixes the issue by performing a full 32-bit check of the lock
+word when trying to determine whether or not the CASA instruction updated
+memory.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Reported-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/grant-table.c |    4 ++--
+ arch/arm64/include/asm/spinlock.h |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -328,7 +328,7 @@ static void gnttab_handle_deferred(unsig
- 			if (entry->page) {
- 				pr_debug("freeing g.e. %#x (pfn %#lx)\n",
- 					 entry->ref, page_to_pfn(entry->page));
--				__free_page(entry->page);
-+				put_page(entry->page);
- 			} else
- 				pr_info("freeing g.e. %#x\n", entry->ref);
- 			kfree(entry);
-@@ -384,7 +384,7 @@ void gnttab_end_foreign_access(grant_ref
- 	if (gnttab_end_foreign_access_ref(ref, readonly)) {
- 		put_free_entry(ref);
- 		if (page != 0)
--			free_page(page);
-+			put_page(virt_to_page(page));
- 	} else
- 		gnttab_add_deferred(ref, readonly,
- 				    page ? virt_to_page(page) : NULL);
+--- a/arch/arm64/include/asm/spinlock.h
++++ b/arch/arm64/include/asm/spinlock.h
+@@ -89,8 +89,8 @@ static inline int arch_spin_trylock(arch
+ 	"	cbnz	%w1, 1f\n"
+ 	"	add	%w1, %w0, %3\n"
+ 	"	casa	%w0, %w1, %2\n"
+-	"	and	%w1, %w1, #0xffff\n"
+-	"	eor	%w1, %w1, %w0, lsr #16\n"
++	"	sub	%w1, %w1, %3\n"
++	"	eor	%w1, %w1, %w0\n"
+ 	"1:")
+ 	: "=&r" (lockval), "=&r" (tmp), "+Q" (*lock)
+ 	: "I" (1 << TICKET_SHIFT)
