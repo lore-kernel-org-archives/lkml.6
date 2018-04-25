@@ -1,107 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754128AbeDYXOb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 19:14:31 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37144 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754033AbeDYXO1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 19:14:27 -0400
-X-Google-Smtp-Source: AIpwx482W1F9IG6Wlcv8jWm6PIQw6sgYSAPdMyPbjlW1EVAtt9Pfz7ucTT4WKxWdzUfK4N8kVihjKw==
-Date: Wed, 25 Apr 2018 16:14:24 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Alex Elder <elder@linaro.org>
-Cc: andy.gross@linaro.org, clew@codeaurora.org, aneela@codeaurora.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: smem: introduce qcom_smem_virt_to_phys()
-Message-ID: <20180425231424.GJ18510@minitux>
-References: <20180425151820.25595-1-elder@linaro.org>
+        id S1754010AbeDYXVZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 19:21:25 -0400
+Received: from ozlabs.org ([203.11.71.1]:57855 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752661AbeDYXVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 19:21:22 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 26 Apr 2018 09:19:40 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: linux-next: build failure after merge of the clk-samsung tree
+Message-ID: <20180426091940.16bb1faf@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425151820.25595-1-elder@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/J0ZNszMI7N.YaOrpxfJhozp"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 25 Apr 08:18 PDT 2018, Alex Elder wrote:
+--Sig_/J0ZNszMI7N.YaOrpxfJhozp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Create function qcom_smem_virt_to_phys(), which returns the physical
-> address corresponding to a given SMEM item's virtual address.  This
-> feature is required for a driver that will soon be out for review.
-> 
+Hi Sylwester,
 
-It might be wise to turn the aux_base in smem_region into a phys_addr_t
-and then mask that with AUX_BASE_MASK before comparing with the entry's
-aux_base in qcom_smem_get_global(). But this will work fine until the
-day someone places smem above 4GB.
+After merging the clk-samsung tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+In file included from arch/arm/boot/dts/exynos5440-sd5v1.dts:10:0:
+arch/arm/boot/dts/exynos5440.dtsi:9:10: fatal error: dt-bindings/clock/exyn=
+os5440.h: No such file or directory
+ #include <dt-bindings/clock/exynos5440.h>
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+scripts/Makefile.lib:291: recipe for target 'arch/arm/boot/dts/exynos5440-s=
+d5v1.dtb' failed
+In file included from arch/arm/boot/dts/exynos5440-ssdk5440.dts:10:0:
+arch/arm/boot/dts/exynos5440.dtsi:9:10: fatal error: dt-bindings/clock/exyn=
+os5440.h: No such file or directory
+ #include <dt-bindings/clock/exynos5440.h>
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Regards,
-Bjorn
+Caused by commit
 
-> Signed-off-by: Alex Elder <elder@linaro.org>
-> ---
->  drivers/soc/qcom/smem.c       | 27 +++++++++++++++++++++++++++
->  include/linux/soc/qcom/smem.h |  2 ++
->  2 files changed, 29 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-> index 7d9a43da5084..70b2ee80d6bd 100644
-> --- a/drivers/soc/qcom/smem.c
-> +++ b/drivers/soc/qcom/smem.c
-> @@ -655,6 +655,33 @@ int qcom_smem_get_free_space(unsigned host)
->  }
->  EXPORT_SYMBOL(qcom_smem_get_free_space);
->  
-> +/**
-> + * qcom_smem_virt_to_phys() - return the physical address associated
-> + * with an smem item pointer (previously returned by qcom_smem_get()
-> + * @p:	the virtual address to convert
-> + *
-> + * Returns 0 if the pointer provided is not within any smem region.
-> + */
-> +phys_addr_t qcom_smem_virt_to_phys(void *p)
-> +{
-> +	unsigned i;
-> +
-> +	for (i = 0; i < __smem->num_regions; i++) {
-> +		struct smem_region *region = &__smem->regions[i];
-> +
-> +		if (p < region->virt_base)
-> +			continue;
-> +		if (p < region->virt_base + region->size) {
-> +			u64 offset = p - region->virt_base;
-> +
-> +			return (phys_addr_t)region->aux_base + offset;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(qcom_smem_virt_to_phys);
-> +
->  static int qcom_smem_get_sbl_version(struct qcom_smem *smem)
->  {
->  	struct smem_header *header;
-> diff --git a/include/linux/soc/qcom/smem.h b/include/linux/soc/qcom/smem.h
-> index c1657ed27b30..86e1b358688a 100644
-> --- a/include/linux/soc/qcom/smem.h
-> +++ b/include/linux/soc/qcom/smem.h
-> @@ -9,4 +9,6 @@ void *qcom_smem_get(unsigned host, unsigned item, size_t *size);
->  
->  int qcom_smem_get_free_space(unsigned host);
->  
-> +phys_addr_t qcom_smem_virt_to_phys(void *p);
-> +
->  #endif
-> -- 
-> 2.14.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+  f986c0e40ff5 ("clk: samsung: Remove support for Exynos5440")
+
+I used the version of the clk-samsung tree from next-20180424 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/J0ZNszMI7N.YaOrpxfJhozp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrhDQwACgkQAVBC80lX
+0GxZQQgAkqjrKFNur6fra1Yx8tCOMGaDzoNA7Bnp+LWfZF4BqRA4smKQ4zabKmDp
+ivSpRnKf6YQJB7rPULVB5KUn75Pk2D4NkNmyL1Ac3g7JoQC6A4/t30a+d3ioeT8z
+wSBg6R5HFEgQ4bgmXY96wb7Wqe9YZqGQGRPKkpnFQvrT6xaX4sP31UB9DUJS/4LB
+OHYl/2RwCsYdhUP5EQr42GlOudQNoASQ39RQjfN+4cte3tuj6+2PzQnjkt3d5S8z
+ntMeUuxnnESBEid3D4R7DsRTjafTMFBjlwK5wOVCq/mPTok9fZOhicgJevcwqvlU
+GXjIfi5Y+GxBZpz4dKRzdnc3OzHkqQ==
+=TXdZ
+-----END PGP SIGNATURE-----
+
+--Sig_/J0ZNszMI7N.YaOrpxfJhozp--
