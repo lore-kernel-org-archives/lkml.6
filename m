@@ -1,76 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755182AbeDYPfo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 11:35:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755107AbeDYPfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 11:35:41 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A5D021717
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=leon@kernel.org
-Date: Wed, 25 Apr 2018 18:35:32 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Alex Vesker <valex@mellanox.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        Erez Shitrit <erezsh@mellanox.com>,
-        Dasaratharaman Chandramouli
-        <dasaratharaman.chandramouli@intel.com>,
-        Feras Daoud <ferasda@mellanox.com>, linux-rdma@vger.kernel.org
-Subject: Re: [PATCH] IB/ipoib: fix ipoib_start_xmit()'s return type
-Message-ID: <20180425153532.GM24820@mtr-leonro.local>
-References: <20180424131549.2859-1-luc.vanoostenryck@gmail.com>
+        id S1754562AbeDYPgR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 11:36:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34400 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754395AbeDYPgP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 11:36:15 -0400
+Date: Wed, 25 Apr 2018 17:36:00 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
+Subject: Re: [PATCH 3/3] sched: limit cpu search and rotate search window for
+ scalability
+Message-ID: <20180425153600.GA4043@hirez.programming.kicks-ass.net>
+References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
+ <20180424004116.28151-4-subhra.mazumdar@oracle.com>
+ <20180424125349.GU4082@hirez.programming.kicks-ass.net>
+ <d7efc4d3-7c50-752e-a1ae-a164d991dbcc@oracle.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mFHiwr52TKrxpkjc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180424131549.2859-1-luc.vanoostenryck@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <d7efc4d3-7c50-752e-a1ae-a164d991dbcc@oracle.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 24, 2018 at 05:10:34PM -0700, Subhra Mazumdar wrote:
+> On 04/24/2018 05:53 AM, Peter Zijlstra wrote:
 
---mFHiwr52TKrxpkjc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > Why do you need to put a max on? Why isn't the proportional thing
+> > working as is? (is the average no good because of big variance or what)
 
-On Tue, Apr 24, 2018 at 03:15:47PM +0200, Luc Van Oostenryck wrote:
-> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-> which is a typedef for an enum type, but the implementation in this
-> driver returns an 'int'.
->
-> Fix this by returning 'netdev_tx_t' in this driver too.
->
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> ---
->  drivers/infiniband/ulp/ipoib/ipoib_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+> Firstly the choosing of 512 seems arbitrary.
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+It is; it is a crud attempt to deal with big variance. The comment says
+as much.
 
---mFHiwr52TKrxpkjc
-Content-Type: application/pgp-signature; name="signature.asc"
+> Secondly the logic here is that the enqueuing cpu should search up to
+> time it can get work itself.  Why is that the optimal amount to
+> search?
 
------BEGIN PGP SIGNATURE-----
+1/512-th of the time in fact, per the above random number, but yes.
+Because searching for longer than we're expecting to be idle for is
+clearly bad, at that point we're inhibiting doing useful work.
 
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlrgoEQACgkQ5GN7iDZy
-WKfggg/8DGJIl7K00Hfuds0eJ/eySzKl4A/0UJYwtFnLB+DugSnjk2grpmgpZXQi
-HJO/j/OARdVe1FfLQqxXqel1ALn8lnT1f5h5jzSySiDlJmtxMvCwKCkZuKnQEf8e
-8xJ+xF6IaeWPUo54AB2nNgj9TedVgqfwoXUIj8hGER+YSaty7IyUswJpqdURIMON
-q9Pv+FY82Ila2hQDb8/ZVwlHGr7PRvofcCLbP9q+R5XzPZx/WxPPaxhtuifjLTeO
-a2x5NpVp80wOf3FxMC0BimL+pWJU9NPJPubU1Lk1peFsOSHMnwGGXYzm3/uqBobQ
-fv0Dh93W0twseGA+tpi/xVQXHoejtp/4pcRmOaIA9MWcrmTMnOcXbiYAzEc97b2k
-++lJW/qRixhCfink3+PTjmCQLPFJzDYYJ/BgknEHf1irNy0gmZgzmnvDA43cMWhc
-CWjCsuwgitTSV6++9V3rL9APGL3JINVf24ZSrM8eMLLKWJzuHqUfdYDf4ifxTaus
-PqTa45iGv4IuaTXJy2HSSKZHpa4GAg5TctauOzIAZONIkba08xdv0Hkui6wsyblz
-cP6GsMyZnyCf9iMrR9dzBbQXAocYoN1wUEuaKoIUiD+kPIHoh7t5bIxWUqj/O/yk
-LjaiC6aDVKQKqqhHqsKvjCG7MUnTDLMxlyv+u0F+TgNU73simIA=
-=f+da
------END PGP SIGNATURE-----
+But while thinking about all this, I think I've spotted a few more
+issues, aside from the variance:
 
---mFHiwr52TKrxpkjc--
+Firstly, while avg_idle estimates the average duration for _when_ we go
+idle, it doesn't give a good measure when we do not in fact go idle. So
+when we get wakeups while fully busy, avg_idle is a poor measure.
+
+Secondly, the number of wakeups performed is also important. If we have
+a lot of wakeups, we need to look at aggregate wakeup time over a
+period. Not just single wakeup time.
+
+And thirdly, we're sharing the idle duration with newidle balance.
+
+And I think the 512 is a result of me not having recognised these
+additional issues when looking at the traces, I saw variance and left it
+there.
+
+
+This leaves me thinking we need a better estimator for wakeups. Because
+if there really is significant idle time, not looking for idle CPUs to
+run on is bad. Placing that upper limit, especially such a low one, is
+just an indication of failure.
+
+
+I'll see if I can come up with something.
