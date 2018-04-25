@@ -1,136 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751304AbeDYGIv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:08:51 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:54788 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750968AbeDYGIt (ORCPT
+        id S1751329AbeDYGLD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:11:03 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38120 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeDYGLC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:08:49 -0400
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: David Lechner <david@lechnology.com>, Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com>
- <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
- <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
- <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
- <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
- <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
- <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
- <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
- <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
- <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
- <aa1c2e6f-793c-1d9e-366a-3496f500f946@ti.com>
- <d32a4cd5-4344-6e20-fdca-1ed830a52466@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <acce5103-6b72-ed67-7ac1-ffbbed268e9a@ti.com>
-Date: Wed, 25 Apr 2018 11:37:36 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 25 Apr 2018 02:11:02 -0400
+X-Google-Smtp-Source: AIpwx4/1zSlxRsP2DG5GZjT8Tt8xcM6GsFvZgxNLfTZTNP16jpxq9oMTba6xeqDldQ1gsIO4h2pBxE4FPWngwSo6emM=
 MIME-Version: 1.0
-In-Reply-To: <d32a4cd5-4344-6e20-fdca-1ed830a52466@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180425054855.GA17038@infradead.org>
+References: <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
+ <20180419081657.GA16735@infradead.org> <20180420071312.GF31310@phenom.ffwll.local>
+ <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com> <20180420101755.GA11400@infradead.org>
+ <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com> <20180420124625.GA31078@infradead.org>
+ <20180420152111.GR31310@phenom.ffwll.local> <20180424184847.GA3247@infradead.org>
+ <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com> <20180425054855.GA17038@infradead.org>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 25 Apr 2018 02:10:59 -0400
+Message-ID: <CADnq5_PQk4FQAjCWZtH9V3JpVStKMyPynvQgTFAUAf8Dv+TeNA@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Daniel Vetter <daniel@ffwll.ch>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3P6B8TQ003093
 
-On Tuesday 24 April 2018 09:41 PM, David Lechner wrote:
-> On 04/24/2018 03:28 AM, Sekhar Nori wrote:
->> On Monday 23 April 2018 08:29 PM, David Lechner wrote:
->>> On 04/06/2018 11:46 AM, Stephen Boyd wrote:
->>>> Quoting Sekhar Nori (2018-04-06 02:37:03)
->>>>>
->>>>> Can you please check that and confirm there is no issue with genpd and
->>>>> using CLK_OF_DECLARE() to initialize clocks?
->>>>>
->>>>> Unless you report an issue back, or Mike and Stephen have ideas about
->>>>> how to handle the dependency between PSC/PLL derived timer clock
->>>>> initialization and and timer_probe(), I think we need to move back to
->>>>> using CLK_OF_DECLARE().
->>>>
->>>> In such a case, please use the hybrid approach where the clks required
->>>> for the clockevent and/or clocksource are registered in the early
->>>> CLK_OF_DECLARE path but the rest of the clks get registered with a
->>>> proper platform device and driver. There are examples of this approach
->>>> on other platforms already.
->>>>
->>>
->>> I looked at this a bit last week, but I didn't come up with any approach
->>> that I was happy with. It seems like it would be nice to just register
->>> the absolute minimum clocks needed. On DA8XX, that would just be the
->>> PLL0
->>> AUXCLK. On most of the other SoCs, it would be the PLL AUXCLK plus one
->>> LPSC clock. The AUXCLKs are easy because they are just a simple gate
->>> from the oscillator. The LPSC clocks are a bit more tricky because they
->>> have a complex sequence for turning on. Furthermore, on DM646X, we need
->>> the whole PLL up to SYSCLK3 plus one LPSC clock, so things get a bit
->>> messy there.
+On Wed, Apr 25, 2018 at 1:48 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Tue, Apr 24, 2018 at 09:32:20PM +0200, Daniel Vetter wrote:
+>> Out of curiosity, how much virtual flushing stuff is there still out
+>> there? At least in drm we've pretty much ignore this, and seem to be
+>> getting away without a huge uproar (at least from driver developers
+>> and users, core folks are less amused about that).
+>
+> As I've just been wading through the code, the following architectures
+> have non-coherent dma that flushes by virtual address for at least some
+> platforms:
+>
+>  - arm [1], arm64, hexagon, nds32, nios2, parisc, sh, xtensa, mips,
+>    powerpc
+>
+> These have non-coherent dma ops that flush by physical address:
+>
+>  - arc, arm [1], c6x, m68k, microblaze, openrisc, sparc
+>
+> And these do not have non-coherent dma ops at all:
+>
+>  - alpha, h8300, riscv, unicore32, x86
+>
+> [1] arm ѕeems to do both virtually and physically based ops, further
+> audit needed.
+>
+> Note that using virtual addresses in the cache flushing interface
+> doesn't mean that the cache actually is virtually indexed, but it at
+> least allows for the possibility.
+>
+>> > I think the most important thing about such a buffer object is that
+>> > it can distinguish the underlying mapping types.  While
+>> > dma_alloc_coherent, dma_alloc_attrs with DMA_ATTR_NON_CONSISTENT,
+>> > dma_map_page/dma_map_single/dma_map_sg and dma_map_resource all give
+>> > back a dma_addr_t they are in now way interchangable.  And trying to
+>> > stuff them all into a structure like struct scatterlist that has
+>> > no indication what kind of mapping you are dealing with is just
+>> > asking for trouble.
 >>
->> Things might change in the context of work being done here by Bartosz
->> for converting clocks to early platform devices.
->>
->> But, keeping that development aside for a moment: I think this means the
->> PLLs and PSCs need to be CLK_OF_DECLARE(). What we can have as platform
->> devices are clocks that are not in the path to get timer clock working
->> (like CFGCHIP clocks).
-> 
-> CLK_OF_DECLARE() only matters on DA850. None of the other SoCs use device
+>> Well the idea was to have 1 interface to allow all drivers to share
+>> buffers with anything else, no matter how exactly they're allocated.
+>
+> Isn't that interface supposed to be dmabuf?  Currently dma_map leaks
+> a scatterlist through the sg_table in dma_buf_map_attachment /
+> ->map_dma_buf, but looking at a few of the callers it seems like they
+> really do not even want a scatterlist to start with, but check that
+> is contains a physically contiguous range first.  So kicking the
+> scatterlist our there will probably improve the interface in general.
+>
+>> dma-buf has all the functions for flushing, so you can have coherent
+>> mappings, non-coherent mappings and pretty much anything else. Or well
+>> could, because in practice people hack up layering violations until it
+>> works for the 2-3 drivers they care about. On top of that there's the
+>> small issue that x86 insists that dma is coherent (and that's true for
+>> most devices, including v4l drivers you might want to share stuff
+>> with), and gpus really, really really do want to make almost
+>> everything incoherent.
+>
+> How do discrete GPUs manage to be incoherent when attached over PCIe?
 
-Thats true today, but lets not make the assumption that none of the
-other DaVinci SoCs will gain DT support ever. We don't want churn in CCF
-support once someone tries to add DT support for other platforms.
+They can do CPU cache snooped (coherent) or non-snooped (incoherent)
+DMA.  Also for things like APUs, they show up as a PCIe device, but
+that actual GPU core is part of the same die as the CPU and they have
+their own special paths to memory, etc.  The fact that they show up as
+PCIe devices is mostly for enumeration purposes.
 
-I already have people using DM365 in mainline, for example.
+Alex
 
-> tree. And on DA850, the timer0 clock is just the PLL0 AUXCLK, so PSCs can> still be platform devices there. And in fact, one of the PSC clocks on
-> DA850 depends on async3, which is a CFGCHIP clock, so if we made the PSCs
-> CLK_OF_DECLARE(), then we also have to make at least the async3 CFGCHIP
-> clock CLK_OF_DECLARE(). But, like I said, I think that can be avoided by
-> leaving the PSC clocks as a platform device on DA850 (and DA830).
-
-Okay, I did not realize that there is a dependency between CFGCHIP clk
-and PSC too.
-
-> For everything else, we need the legacy board file equivalent of
-> CLK_OF_DECLARE(), which is basically what I had here in v5 of the
-> series.
-
-Yeah. I did not realize the dependency with timer when platform devices
-were suggested. Sorry.
-
-> 
-> So, if we want this to keep moving before the if/when of Bartosz's
-> early platform device stuff, I'm thinking that I will make the PLL
-
-After looking at feedback to Bartosz's series, and the fact that
-previous attempts at doing the same thing were rejected, I think there
-is benefit in keeping CCF support moving independent Bartosz's work.
-Otherwise, we have no chance of getting anything merged for v4.18.
-
-Early initialization of clocks and dependency with timer is a pretty
-common theme across SoCs. As and when a better way to support is found,
-I am sure DaVinci can be converted over along with rest of the devices.
-
-> and PSC drivers loadable with or without a platform device and let
-> each SoC pick which one it should use.
-
-This sounds flexible. We have to see how the patches look. But I would
-caution against adding a lot of dead code. If there is no way some of
-the clocks will be useful as platform device, I see no point of
-supporting them as such just in anticipation.
-
-Thanks,
-Sekhar
+> _______________________________________________
+> Linaro-mm-sig mailing list
+> Linaro-mm-sig@lists.linaro.org
+> https://lists.linaro.org/mailman/listinfo/linaro-mm-sig
