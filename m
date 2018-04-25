@@ -1,43 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756000AbeDYRmM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 13:42:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43952 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756035AbeDYRlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 13:41:12 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc: lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Subject: [PATCH 2/3] tools bpf: Sync bpf.h uapi header
-Date: Wed, 25 Apr 2018 19:41:07 +0200
-Message-Id: <20180425174108.6586-3-jolsa@kernel.org>
-In-Reply-To: <20180425174108.6586-1-jolsa@kernel.org>
-References: <20180425174108.6586-1-jolsa@kernel.org>
+        id S932120AbeDYRnL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 13:43:11 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38849 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755853AbeDYRnF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 13:43:05 -0400
+X-Google-Smtp-Source: AIpwx48ytjVa3BSdc79KZdURk2OS0sUkzImTqkPp1F6NwevopOQ9MzCdiGpppFhIBJjBDHnavdsZDQ==
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: [PATCH 2/6] backlight/generic-bl: remove DRIVER1 state
+Date: Wed, 25 Apr 2018 19:42:49 +0200
+Message-Id: <20180425174253.4616-2-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180425174253.4616-1-daniel.vetter@ffwll.ch>
+References: <20180425174253.4616-1-daniel.vetter@ffwll.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Syncing the bpf.h uapi header with tools.
+Nothing in the entire tree ever sets this, which means this is dead
+code. Remove it.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 ---
- tools/include/uapi/linux/bpf.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/video/backlight/generic_bl.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index e6679393b687..da8801860c7d 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -1060,6 +1060,7 @@ struct bpf_prog_info {
- 	__aligned_u64 map_ids;
- 	char name[BPF_OBJ_NAME_LEN];
- 	__u32 ifindex;
-+	__u32 gpl_compatible:1;
- 	__u64 netns_dev;
- 	__u64 netns_ino;
- } __attribute__((aligned(8)));
+diff --git a/drivers/video/backlight/generic_bl.c b/drivers/video/backlight/generic_bl.c
+index 67dfb939a514..4dea91acea13 100644
+--- a/drivers/video/backlight/generic_bl.c
++++ b/drivers/video/backlight/generic_bl.c
+@@ -21,9 +21,6 @@ static int genericbl_intensity;
+ static struct backlight_device *generic_backlight_device;
+ static struct generic_bl_info *bl_machinfo;
+ 
+-/* Flag to signal when the battery is low */
+-#define GENERICBL_BATTLOW       BL_CORE_DRIVER1
+-
+ static int genericbl_send_intensity(struct backlight_device *bd)
+ {
+ 	int intensity = bd->props.brightness;
+@@ -34,8 +31,6 @@ static int genericbl_send_intensity(struct backlight_device *bd)
+ 		intensity = 0;
+ 	if (bd->props.state & BL_CORE_SUSPENDED)
+ 		intensity = 0;
+-	if (bd->props.state & GENERICBL_BATTLOW)
+-		intensity &= bl_machinfo->limit_mask;
+ 
+ 	bl_machinfo->set_bl_intensity(intensity);
+ 
 -- 
-2.13.6
+2.17.0
