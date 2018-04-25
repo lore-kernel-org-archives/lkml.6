@@ -1,54 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751365AbeDYIP2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 04:15:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48102 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeDYIPY (ORCPT
+        id S1751336AbeDYITq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 04:19:46 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33267 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750943AbeDYITm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 04:15:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 35B4960556
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [1/2] net: wireless: zydas: Replace mdelay with msleep in
- zd1201_probe
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1523367004-31935-1-git-send-email-baijiaju1990@gmail.com>
-References: <1523367004-31935-1-git-send-email-baijiaju1990@gmail.com>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: davem@davemloft.net, stephen@networkplumber.org,
-        arvind.yadav.cs@gmail.com, johannes.berg@intel.com,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180425081523.98D9D60556@smtp.codeaurora.org>
-Date: Wed, 25 Apr 2018 08:15:23 +0000 (UTC)
+        Wed, 25 Apr 2018 04:19:42 -0400
+X-Google-Smtp-Source: AIpwx48yZOwBpGKlwsJ4OfCQ/pU2+9cfLKiE4UYpSe4lnes0ECyuH6GlWoefQjomLdcSEEqBBZ/mAg==
+From: Leo Yan <leo.yan@linaro.org>
+To: "David S. Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH bpf-next] bpf: Allow bpf_jit_enable = 2 with BPF_JIT_ALWAYS_ON config
+Date: Wed, 25 Apr 2018 16:18:42 +0800
+Message-Id: <1524644322-9263-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+After enabled BPF_JIT_ALWAYS_ON config, bpf_jit_enable always equals to
+1; it is impossible to set 'bpf_jit_enable = 2' and the kernel has no
+chance to call bpf_jit_dump().
 
-> zd1201_probe() is never called in atomic context.
-> 
-> zd1201_probe() is only set as ".probe" in struct usb_driver.
-> 
-> Despite never getting called from atomic context, zd1201_probe()
-> calls mdelay() to busily wait.
-> This is not necessary and can be replaced with msleep() to
-> avoid busy waiting.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> And I also manually check it.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+This patch relaxes bpf_jit_enable range to [1..2] when kernel config
+BPF_JIT_ALWAYS_ON is enabled so can invoke jit dump.
 
-I need a review from someone else before I'm willing to take this.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ net/core/sysctl_net_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
+index b1a2c5e..6a39b22 100644
+--- a/net/core/sysctl_net_core.c
++++ b/net/core/sysctl_net_core.c
+@@ -371,7 +371,7 @@ static int proc_dointvec_minmax_bpf_enable(struct ctl_table *table, int write,
+ 		.proc_handler	= proc_dointvec_minmax_bpf_enable,
+ # ifdef CONFIG_BPF_JIT_ALWAYS_ON
+ 		.extra1		= &one,
+-		.extra2		= &one,
++		.extra2		= &two,
+ # else
+ 		.extra1		= &zero,
+ 		.extra2		= &two,
 -- 
-https://patchwork.kernel.org/patch/10333189/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+1.9.1
