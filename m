@@ -1,52 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeDYG3H (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:29:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50710 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeDYG3D (ORCPT
+        id S1751659AbeDYG3g (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:29:36 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36905 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751320AbeDYG04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:29:03 -0400
-Date: Tue, 24 Apr 2018 23:28:59 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Eric Dumazet <edumazet@google.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: [PATCH net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
- zerocopy receive
-Message-ID: <20180425062859.GA23914@infradead.org>
-References: <20180425052722.73022-1-edumazet@google.com>
- <20180425052722.73022-2-edumazet@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425052722.73022-2-edumazet@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 25 Apr 2018 02:26:56 -0400
+X-Google-Smtp-Source: AB8JxZqnJeFY4zhhPhr/l1Z50x0Eaj9A31Q/vCk+MNJ2W3QVPo0HCcj3qNHEGoDAjdl59Pmd50NarA==
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de
+Cc: ard.biesheuvel@linaro.org, james.morse@arm.com, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v9 02/11] kexec_file: make kexec_image_post_load_cleanup_default() global
+Date: Wed, 25 Apr 2018 15:26:20 +0900
+Message-Id: <20180425062629.29404-3-takahiro.akashi@linaro.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 10:27:21PM -0700, Eric Dumazet wrote:
-> When adding tcp mmap() implementation, I forgot that socket lock
-> had to be taken before current->mm->mmap_sem. syzbot eventually caught
-> the bug.
-> 
-> Since we can not lock the socket in tcp mmap() handler we have to
-> split the operation in two phases.
-> 
-> 1) mmap() on a tcp socket simply reserves VMA space, and nothing else.
->   This operation does not involve any TCP locking.
-> 
-> 2) setsockopt(fd, IPPROTO_TCP, TCP_ZEROCOPY_RECEIVE, ...) implements
->  the transfert of pages from skbs to one VMA.
->   This operation only uses down_read(&current->mm->mmap_sem) after
->   holding TCP lock, thus solving the lockdep issue.
-> 
-> This new implementation was suggested by Andy Lutomirski with great details.
+Change this function from static to global so that arm64 can implement
+its own arch_kimage_file_post_load_cleanup() later using
+kexec_image_post_load_cleanup_default().
 
-Thanks, this looks much more sensible to me.
+Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Baoquan He <bhe@redhat.com>
+---
+ include/linux/kexec.h | 1 +
+ kernel/kexec_file.c   | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 9e4e638fb505..49ab758f4d91 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -143,6 +143,7 @@ extern const struct kexec_file_ops * const kexec_file_loaders[];
+ 
+ int kexec_image_probe_default(struct kimage *image, void *buf,
+ 			      unsigned long buf_len);
++int kexec_image_post_load_cleanup_default(struct kimage *image);
+ 
+ /**
+  * struct kexec_buf - parameters for finding a place for a buffer in memory
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 75d8e7cf040e..eef89d9b1f03 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -78,7 +78,7 @@ void * __weak arch_kexec_kernel_image_load(struct kimage *image)
+ 	return kexec_image_load_default(image);
+ }
+ 
+-static int kexec_image_post_load_cleanup_default(struct kimage *image)
++int kexec_image_post_load_cleanup_default(struct kimage *image)
+ {
+ 	if (!image->fops || !image->fops->cleanup)
+ 		return 0;
+-- 
+2.17.0
