@@ -1,327 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756394AbeDYTrv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 15:47:51 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:47101 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeDYTrr (ORCPT
+        id S1756431AbeDYTtZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 15:49:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36934 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751365AbeDYTtX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 15:47:47 -0400
-X-Google-Smtp-Source: AB8JxZqRG/PEGZbHWN56wWli7CqFB/tIvZXXgLdnpzvPPs7mW9uSflEjHn5rp24E0eybLtdDf0BWrg==
-From: "Jingoo Han" <jingoohan1@gmail.com>
-To: "'Jan Kiszka'" <jan.kiszka@siemens.com>,
-        "'Bjorn Helgaas'" <bhelgaas@google.com>,
-        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Cc: "'Joao Pinto'" <Joao.Pinto@synopsys.com>,
-        "'Lorenzo Pieralisi'" <lorenzo.pieralisi@arm.com>
-References: <cover.1524582822.git.jan.kiszka@siemens.com> <d76c32d535bb555076b3f7c010a6856ac97bbdae.1524582822.git.jan.kiszka@siemens.com>
-In-Reply-To: <d76c32d535bb555076b3f7c010a6856ac97bbdae.1524582822.git.jan.kiszka@siemens.com>
-Subject: Re: [PATCH 4/6] PCI: Convert of_pci_get_host_bridge_resources users to devm variant
-Date: Wed, 25 Apr 2018 15:47:44 -0400
-Message-ID: <000001d3dcce$48284a10$d878de30$@gmail.com>
+        Wed, 25 Apr 2018 15:49:23 -0400
+Date: Wed, 25 Apr 2018 21:49:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Juri Lelli <juri.lelli@gmail.com>, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sched/rt: Rework for_each_process_thread() iterations
+ in tg_has_rt_tasks()
+Message-ID: <20180425194915.GH4064@hirez.programming.kicks-ass.net>
+References: <152415882713.2054.8734093066910722403.stgit@localhost.localdomain>
+ <20180420092540.GG24599@localhost.localdomain>
+ <0d7fbdab-b972-7f86-4090-b49f9315c868@virtuozzo.com>
+ <854a5fb1-a9c1-023f-55ec-17fa14ad07d5@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-language: en-us
-Thread-Index: AQLCyUGf+pkn6FeD4OB2aWVwvljqdgF68uJHoigyL0A=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <854a5fb1-a9c1-023f-55ec-17fa14ad07d5@virtuozzo.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Apr 20, 2018 at 01:06:31PM +0300, Kirill Tkhai wrote:
+> @@ -2406,12 +2407,15 @@ static inline int tg_has_rt_tasks(struct task_group *tg)
+>  	if (task_group_is_autogroup(tg))
+>  		return 0;
+>  
+> -	for_each_process_thread(g, p) {
+> -		if (rt_task(p) && task_group(p) == tg)
+> -			return 1;
+> -	}
+> +	css_task_iter_start(&tg->css, 0, &it);
+> +	while ((task = css_task_iter_next(&it)))
+> +		if (rt_task(task)) {
+> +			ret = 1;
+> +			break;
+> +		}
+
+Aside from the missing {} there, the patch looks OK I suppose.
+
+The races found seems somewhat dodgy, but like you argue, they're not in
+fact new :/
 
 
-> -----Original Message-----
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> Sent: Tuesday, April 24, 2018 11:14 AM
-> To: Bjorn Helgaas <bhelgaas@google.com>; Linux Kernel Mailing List <linux-
-> kernel@vger.kernel.org>; linux-pci@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org
-> Cc: Jingoo Han <jingoohan1@gmail.com>; Joao Pinto
-> <Joao.Pinto@synopsys.com>; Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Subject: [PATCH 4/6] PCI: Convert of_pci_get_host_bridge_resources users
-> to devm variant
-> 
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> Straightforward for all of them, no more leaks afterwards.
-> 
-> CC: Jingoo Han <jingoohan1@gmail.com>
-
-For drivers/pci/dwc/pcie-designware-host.c,
-
-Acked-by: Jingoo Han <jingoo1han@gmail.com>
-
-Best regards,
-Jingoo Han
-
-> CC: Joao Pinto <Joao.Pinto@synopsys.com>
-> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  drivers/pci/dwc/pcie-designware-host.c | 2 +-
->  drivers/pci/host/pci-aardvark.c        | 5 ++---
->  drivers/pci/host/pci-ftpci100.c        | 4 ++--
->  drivers/pci/host/pci-v3-semi.c         | 3 ++-
->  drivers/pci/host/pci-versatile.c       | 3 +--
->  drivers/pci/host/pci-xgene.c           | 3 ++-
->  drivers/pci/host/pcie-altera.c         | 5 ++---
->  drivers/pci/host/pcie-iproc-platform.c | 4 ++--
->  drivers/pci/host/pcie-rcar.c           | 5 ++---
->  drivers/pci/host/pcie-rockchip.c       | 4 ++--
->  drivers/pci/host/pcie-xilinx-nwl.c     | 4 ++--
->  drivers/pci/host/pcie-xilinx.c         | 4 ++--
->  drivers/pci/of.c                       | 4 ++--
->  13 files changed, 24 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/pci/dwc/pcie-designware-host.c
-> b/drivers/pci/dwc/pcie-designware-host.c
-> index 6c409079d514..a8f6ab54b4c0 100644
-> --- a/drivers/pci/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/dwc/pcie-designware-host.c
-> @@ -342,7 +342,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  	if (!bridge)
->  		return -ENOMEM;
-> 
-> -	ret = of_pci_get_host_bridge_resources(np, 0, 0xff,
-> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
->  					&bridge->windows, &pp->io_base);
->  	if (ret)
->  		return ret;
-> diff --git a/drivers/pci/host/pci-aardvark.c b/drivers/pci/host/pci-
-> aardvark.c
-> index b04d37b3c5de..709f0d69e35b 100644
-> --- a/drivers/pci/host/pci-aardvark.c
-> +++ b/drivers/pci/host/pci-aardvark.c
-> @@ -815,14 +815,13 @@ static int
-> advk_pcie_parse_request_of_pci_ranges(struct advk_pcie *pcie)
->  {
->  	int err, res_valid = 0;
->  	struct device *dev = &pcie->pdev->dev;
-> -	struct device_node *np = dev->of_node;
->  	struct resource_entry *win, *tmp;
->  	resource_size_t iobase;
-> 
->  	INIT_LIST_HEAD(&pcie->resources);
-> 
-> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie-
-> >resources,
-> -					       &iobase);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-> +						    &pcie->resources,
-&iobase);
->  	if (err)
->  		return err;
-> 
-> diff --git a/drivers/pci/host/pci-ftpci100.c b/drivers/pci/host/pci-
-> ftpci100.c
-> index 5008fd87956a..87748eaeaaed 100644
-> --- a/drivers/pci/host/pci-ftpci100.c
-> +++ b/drivers/pci/host/pci-ftpci100.c
-> @@ -476,8 +476,8 @@ static int faraday_pci_probe(struct platform_device
-> *pdev)
->  	if (IS_ERR(p->base))
->  		return PTR_ERR(p->base);
-> 
-> -	ret = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff,
-> -					       &res, &io_base);
-> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-> +						    &res, &io_base);
->  	if (ret)
->  		return ret;
-> 
-> diff --git a/drivers/pci/host/pci-v3-semi.c b/drivers/pci/host/pci-v3-
-> semi.c
-> index 0a4dea796663..167bf6f6b378 100644
-> --- a/drivers/pci/host/pci-v3-semi.c
-> +++ b/drivers/pci/host/pci-v3-semi.c
-> @@ -791,7 +791,8 @@ static int v3_pci_probe(struct platform_device *pdev)
->  	if (IS_ERR(v3->config_base))
->  		return PTR_ERR(v3->config_base);
-> 
-> -	ret = of_pci_get_host_bridge_resources(np, 0, 0xff, &res, &io_base);
-> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-> +						    &io_base);
->  	if (ret)
->  		return ret;
-> 
-> diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-
-> versatile.c
-> index 5b3876f5312b..ff2cd12b3978 100644
-> --- a/drivers/pci/host/pci-versatile.c
-> +++ b/drivers/pci/host/pci-versatile.c
-> @@ -64,11 +64,10 @@ static int
-> versatile_pci_parse_request_of_pci_ranges(struct device *dev,
->  						     struct list_head *res)
->  {
->  	int err, mem = 1, res_valid = 0;
-> -	struct device_node *np = dev->of_node;
->  	resource_size_t iobase;
->  	struct resource_entry *win, *tmp;
-> 
-> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, res, &iobase);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, res,
-> &iobase);
->  	if (err)
->  		return err;
-> 
-> diff --git a/drivers/pci/host/pci-xgene.c b/drivers/pci/host/pci-xgene.c
-> index 0a0d7ee6d3c9..7b3ed6e34b6c 100644
-> --- a/drivers/pci/host/pci-xgene.c
-> +++ b/drivers/pci/host/pci-xgene.c
-> @@ -632,7 +632,8 @@ static int xgene_pcie_probe(struct platform_device
-> *pdev)
->  	if (ret)
->  		return ret;
-> 
-> -	ret = of_pci_get_host_bridge_resources(dn, 0, 0xff, &res, &iobase);
-> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-> +						    &iobase);
->  	if (ret)
->  		return ret;
-> 
-> diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-
-> altera.c
-> index a6af62e0256d..49410c7ba0cc 100644
-> --- a/drivers/pci/host/pcie-altera.c
-> +++ b/drivers/pci/host/pcie-altera.c
-> @@ -488,11 +488,10 @@ static int
-> altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
->  {
->  	int err, res_valid = 0;
->  	struct device *dev = &pcie->pdev->dev;
-> -	struct device_node *np = dev->of_node;
->  	struct resource_entry *win;
-> 
-> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie-
-> >resources,
-> -					       NULL);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff
-> +						    &pcie->resources, NULL);
->  	if (err)
->  		return err;
-> 
-> diff --git a/drivers/pci/host/pcie-iproc-platform.c
-> b/drivers/pci/host/pcie-iproc-platform.c
-> index e764a2a2693c..99c2022813e4 100644
-> --- a/drivers/pci/host/pcie-iproc-platform.c
-> +++ b/drivers/pci/host/pcie-iproc-platform.c
-> @@ -99,8 +99,8 @@ static int iproc_pcie_pltfm_probe(struct platform_device
-> *pdev)
->  		pcie->phy = NULL;
->  	}
-> 
-> -	ret = of_pci_get_host_bridge_resources(np, 0, 0xff, &resources,
-> -					       &iobase);
-> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-> &resources,
-> +						    &iobase);
->  	if (ret) {
->  		dev_err(dev, "unable to get PCI host bridge resources\n");
->  		return ret;
-> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-> index 6ab28f29ac6a..6eb36c924983 100644
-> --- a/drivers/pci/host/pcie-rcar.c
-> +++ b/drivers/pci/host/pcie-rcar.c
-> @@ -1067,12 +1067,11 @@ static int
-> rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
->  {
->  	int err;
->  	struct device *dev = pci->dev;
-> -	struct device_node *np = dev->of_node;
->  	resource_size_t iobase;
->  	struct resource_entry *win, *tmp;
-> 
-> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources,
-> -					       &iobase);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-> +						    &pci->resources,
-&iobase);
->  	if (err)
->  		return err;
-> 
-> diff --git a/drivers/pci/host/pcie-rockchip.c b/drivers/pci/host/pcie-
-> rockchip.c
-> index f1e8f97ea1fb..27b97fcddf15 100644
-> --- a/drivers/pci/host/pcie-rockchip.c
-> +++ b/drivers/pci/host/pcie-rockchip.c
-> @@ -1560,8 +1560,8 @@ static int rockchip_pcie_probe(struct
-> platform_device *pdev)
->  	if (err < 0)
->  		goto err_deinit_port;
-> 
-> -	err = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff,
-> -					       &res, &io_base);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-> +						    &res, &io_base);
->  	if (err)
->  		goto err_remove_irq_domain;
-> 
-> diff --git a/drivers/pci/host/pcie-xilinx-nwl.c b/drivers/pci/host/pcie-
-> xilinx-nwl.c
-> index 4839ae578711..64df768c795c 100644
-> --- a/drivers/pci/host/pcie-xilinx-nwl.c
-> +++ b/drivers/pci/host/pcie-xilinx-nwl.c
-> @@ -825,7 +825,6 @@ static const struct of_device_id nwl_pcie_of_match[] =
-> {
->  static int nwl_pcie_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *node = dev->of_node;
->  	struct nwl_pcie *pcie;
->  	struct pci_bus *bus;
->  	struct pci_bus *child;
-> @@ -855,7 +854,8 @@ static int nwl_pcie_probe(struct platform_device
-*pdev)
->  		return err;
->  	}
-> 
-> -	err = of_pci_get_host_bridge_resources(node, 0, 0xff, &res,
-> &iobase);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-> +						    &iobase);
->  	if (err) {
->  		dev_err(dev, "Getting bridge resources failed\n");
->  		return err;
-> diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-
-> xilinx.c
-> index 0ad188effc09..88c96e5669e0 100644
-> --- a/drivers/pci/host/pcie-xilinx.c
-> +++ b/drivers/pci/host/pcie-xilinx.c
-> @@ -643,8 +643,8 @@ static int xilinx_pcie_probe(struct platform_device
-> *pdev)
->  		return err;
->  	}
-> 
-> -	err = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff, &res,
-> -					       &iobase);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-> +						    &iobase);
->  	if (err) {
->  		dev_err(dev, "Getting bridge resources failed\n");
->  		return err;
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index 6eab0bde2ab3..4f816c93e562 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -626,12 +626,12 @@ int pci_parse_request_of_pci_ranges(struct device
-> *dev,
->  				    struct resource **bus_range)
->  {
->  	int err, res_valid = 0;
-> -	struct device_node *np = dev->of_node;
->  	resource_size_t iobase;
->  	struct resource_entry *win, *tmp;
-> 
->  	INIT_LIST_HEAD(resources);
-> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, resources,
-> &iobase);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, resources,
-> +						    &iobase);
->  	if (err)
->  		return err;
-> 
-> --
-> 2.13.6
+> +	css_task_iter_end(&it);
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  
