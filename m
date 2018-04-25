@@ -1,52 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752013AbeDYJjZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:39:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:36678 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751982AbeDYJjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:39:12 -0400
-Date: Wed, 25 Apr 2018 10:39:09 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/fair: Rearrange select_task_rq_fair() to optimize
- it
-Message-ID: <20180425093909.GI14391@e108498-lin.cambridge.arm.com>
-References: <8a34a16da90b9f83ffe60316a074a5e4d05b59b0.1524479666.git.viresh.kumar@linaro.org>
- <434fa179-7c8f-8a01-a07a-4527521a04c7@arm.com>
- <20180424104304.GE4064@hirez.programming.kicks-ass.net>
- <0985e709-0d71-2c08-20a9-7bfb618fb5f2@arm.com>
- <20180424123523.GF4064@hirez.programming.kicks-ass.net>
- <20180425051509.aohopadqw7q5urbd@vireshk-i7>
- <20180425081334.GF14391@e108498-lin.cambridge.arm.com>
- <20180425090327.7mwm2pdheeptz6sd@vireshk-i7>
+        id S1751941AbeDYJjL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:39:11 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7629 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751452AbeDYJjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 05:39:00 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/3] f2fs: introduce release_discard_addr() for cleanup
+Date: Wed, 25 Apr 2018 17:38:29 +0800
+Message-ID: <20180425093831.124591-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425090327.7mwm2pdheeptz6sd@vireshk-i7>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 25 Apr 2018 at 14:33:27 (+0530), Viresh Kumar wrote:
-> On 25-04-18, 09:13, Quentin Perret wrote:
-> > While you're at it, you could probably remove the one in wake_cap() ? I
-> > think having just one in select_task_rq_fair() should be enough.
-> 
-> Just make it clear, you are asking me to remove sync_entity_load_avg()
-> in wake_cap() ? But aren't we required to do that, as in the very next
-> line we call task_util(p) ?
+Introduce release_discard_addr() to include common codes for cleanup.
 
-Right, we do need to call sync_entity_load_avg() at some point before
-calling task_util(), but we don't need to re-call it in strf()
-after in this case. So my point was just that if you want to re-work
-the wake-up path and make sure we don't call sync_entity_load_avg()
-if not needed then this might need fixing as well ... Or maybe we don't
-care since re-calling sync_entity_load_avg() should be really cheap ...
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/segment.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9e0c6babacec..d5627195aa8e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1609,16 +1609,20 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+ 	return false;
+ }
+ 
++void release_discard_addr(struct discard_entry *entry)
++{
++	list_del(&entry->list);
++	kmem_cache_free(discard_entry_slab, entry);
++}
++
+ void release_discard_addrs(struct f2fs_sb_info *sbi)
+ {
+ 	struct list_head *head = &(SM_I(sbi)->dcc_info->entry_list);
+ 	struct discard_entry *entry, *this;
+ 
+ 	/* drop caches */
+-	list_for_each_entry_safe(entry, this, head, list) {
+-		list_del(&entry->list);
+-		kmem_cache_free(discard_entry_slab, entry);
+-	}
++	list_for_each_entry_safe(entry, this, head, list)
++		release_discard_addr(entry);
+ }
+ 
+ /*
+@@ -1718,9 +1722,8 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		if (cur_pos < sbi->blocks_per_seg)
+ 			goto find_next;
+ 
+-		list_del(&entry->list);
++		release_discard_addr(entry);
+ 		dcc->nr_discards -= total_len;
+-		kmem_cache_free(discard_entry_slab, entry);
+ 	}
+ 
+ 	wake_up_discard_thread(sbi, false);
+-- 
+2.15.0.55.gc2ece9dc4de6
