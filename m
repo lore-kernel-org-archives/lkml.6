@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755664AbeDYQDh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:03:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46916 "EHLO mail.kernel.org"
+        id S932096AbeDYQD7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:03:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755563AbeDYQA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:00:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B86F217D9
+        id S1755445AbeDYQAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:00:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821E121789
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -16,11 +16,10 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Thomas Richter <tmricht@linux.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Martin Vuille <jpmv27@aim.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 03/12] perf test: Adapt test case record+probe_libc_inet_pton.sh for s390
-Date: Wed, 25 Apr 2018 12:59:59 -0300
-Message-Id: <20180425160008.3407-4-acme@kernel.org>
+Subject: [PATCH 02/12] perf list: Remove s390 specific strcmp_cpuid_cmp function
+Date: Wed, 25 Apr 2018 12:59:58 -0300
+Message-Id: <20180425160008.3407-3-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180425160008.3407-1-acme@kernel.org>
 References: <20180425160008.3407-1-acme@kernel.org>
@@ -30,98 +29,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Richter <tmricht@linux.ibm.com>
 
-perf test case 58 (record+probe_libc_inet_pton.sh) executed on s390x
-using kernel 4.16.0rc3 displays this result:
+Make the type field in pmu-events/arch/s390/mapfile.cvs more generic to
+match the created cpuid string for s390.
 
- # perf trace --no-syscalls -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-     probe_libc:inet_pton: (3ffa0240448)
-	      __GI___inet_pton (/usr/lib64/libc-2.26.so)
-	      gaih_inet (inlined)
-	      __GI_getaddrinfo (inlined)
-	      main (/usr/bin/ping)
-	      __libc_start_main (/usr/lib64/libc-2.26.so)
-	     _start (/usr/bin/ping)
+The pattern also checks for the counter first version number and counter
+second version number ([13]\.[1-5]) and the authorization field which
+follows.
 
-After I installed kernel 4.16.0 the same tests uses commands:
+These numbers do not exist in the cpuid identification string when perf
+commands are executed on a z/VM environment (which does not support CPU
+counter measurement facility).
 
- # perf record -e probe_libc:inet_pton/call-graph=dwarf/
-      -o /tmp/perf.data.abc ping -6 -c 1 ::1
- # perf script -i /tmp/perf.data.abc
+CPUID string for LPAR:
+   cpuid : IBM,3906,704,M03,3.5,002f
+CPUID string for z/VM:
+   cpuid : IBM,2964,702,N96
 
-and displays:
-
- ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
-	       140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-	       fbde1 gaih_inet (inlined)
-	       fe2b9 __GI_getaddrinfo (inlined)
-	        398d main (/usr/bin/ping)
-
-Nothing else changed including glibc elfutils and other libraries picked
-up by the build.
-
-The entries for __libc_start_main and _start are missing.
-
-I bisected missing __libc_start_main and _start to commit
-
-Fixes: 3d20c6246690 ("perf unwind: Unwind with libdw doesn't take symfs into account")
-
-When I undo this commit I get this call stack on s390:
- [root@s35lp76 perf]# ./perf script  -i /tmp/perf.data.abc
- ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
-	140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-	 fbde1 gaih_inet (inlined)
-	 fe2b9 __GI_getaddrinfo (inlined)
-	  398d main (/usr/bin/ping)
-	 22fbd __libc_start_main (/usr/lib64/libc-2.26.so)
-	  457b _start (/usr/bin/ping)
-
-Looks like dwarf functions dwfl_xxx create different call back stack
-trace when using file /usr/lib/debug/usr/bin/ping-20161105-7.fc27.s390x.debug
-instead of file /usr/bin/ping.
-
-Fix this test case on s390 and do not expect any call back stack entry
-after the main() function. Also be more robust and accept a leading
-__GI_ prefix in front of getaddrinfo.
-
-On x86 this test case shows the same call stack using both kernel
-versions 4.16.0rc3 and 4.16.0 and also stops at main:
-
-  [root@f27 perf]# ./perf script -i /tmp/perf.data.tmr
-  ping  4446 [000]   172.027088: probe_libc:inet_pton: (7fdfa08c93c0)
-	             1393c0 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-	              fe60d getaddrinfo (/usr/lib64/libc-2.26.so)
-	               2f40 main (/usr/bin/ping)
-  [root@f27 perf]#
+This allows the removal of s390 specific cpuid compare code and uses the
+common compare function with its regular expression matching algorithm.
 
 Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
 Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
 Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Martin Vuille <jpmv27@aim.com>
-Link: http://lkml.kernel.org/r/20180423082428.7930-1-tmricht@linux.ibm.com
+Link: http://lkml.kernel.org/r/20180423081745.3672-1-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ tools/perf/arch/s390/util/header.c          | 18 ------------------
+ tools/perf/pmu-events/arch/s390/mapfile.csv | 10 +++++-----
+ tools/perf/util/pmu.c                       |  2 +-
+ 3 files changed, 6 insertions(+), 24 deletions(-)
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 1ecc1f0ff84a..016882dbbc16 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -19,12 +19,10 @@ trace_libc_inet_pton_backtrace() {
- 	expected[1]=".*inet_pton[[:space:]]\($libc\)$"
- 	case "$(uname -m)" in
- 	s390x)
--		eventattr='call-graph=dwarf'
-+		eventattr='call-graph=dwarf,max-stack=4'
- 		expected[2]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
--		expected[3]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
-+		expected[3]="(__GI_)?getaddrinfo[[:space:]]\($libc|inlined\)$"
- 		expected[4]="main[[:space:]]\(.*/bin/ping.*\)$"
--		expected[5]="__libc_start_main[[:space:]]\($libc\)$"
--		expected[6]="_start[[:space:]]\(.*/bin/ping.*\)$"
- 		;;
- 	*)
- 		eventattr='max-stack=3'
+diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
+index a4c30f1c70be..163b92f33998 100644
+--- a/tools/perf/arch/s390/util/header.c
++++ b/tools/perf/arch/s390/util/header.c
+@@ -146,21 +146,3 @@ char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+ 		zfree(&buf);
+ 	return buf;
+ }
+-
+-/*
+- * Compare the cpuid string returned by get_cpuid() function
+- * with the name generated by the jevents file read from
+- * pmu-events/arch/s390/mapfile.csv.
+- *
+- * Parameter mapcpuid is the cpuid as stored in the
+- * pmu-events/arch/s390/mapfile.csv. This is just the type number.
+- * Parameter cpuid is the cpuid returned by function get_cpuid().
+- */
+-int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+-{
+-	char *cp = strchr(cpuid, ',');
+-
+-	if (cp == NULL)
+-		return -1;
+-	return strncmp(cp + 1, mapcpuid, strlen(mapcpuid));
+-}
+diff --git a/tools/perf/pmu-events/arch/s390/mapfile.csv b/tools/perf/pmu-events/arch/s390/mapfile.csv
+index ca7682748a4b..78bcf7f8e206 100644
+--- a/tools/perf/pmu-events/arch/s390/mapfile.csv
++++ b/tools/perf/pmu-events/arch/s390/mapfile.csv
+@@ -1,6 +1,6 @@
+ Family-model,Version,Filename,EventType
+-209[78],1,cf_z10,core
+-281[78],1,cf_z196,core
+-282[78],1,cf_zec12,core
+-296[45],1,cf_z13,core
+-3906,3,cf_z14,core
++^IBM.209[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z10,core
++^IBM.281[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z196,core
++^IBM.282[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_zec12,core
++^IBM.296[45].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z13,core
++^IBM.390[67].*[13]\.[1-5].[[:xdigit:]]+$,3,cf_z14,core
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 61a5e5027338..af4bedf4cf98 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -586,7 +586,7 @@ char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+  * cpuid string generated on this platform.
+  * Otherwise return non-zero.
+  */
+-int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
++int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+ {
+ 	regex_t re;
+ 	regmatch_t pmatch[1];
 -- 
 2.14.3
