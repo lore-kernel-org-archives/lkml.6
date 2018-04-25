@@ -1,106 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755477AbeDYQ14 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:27:56 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42696 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754196AbeDYQ1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:27:53 -0400
-Date: Wed, 25 Apr 2018 17:27:45 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/6] PCI: Make pci_get_new_domain_nr static
-Message-ID: <20180425162745.GB21628@e107981-ln.cambridge.arm.com>
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
- <a21882288c4664cc983a5741e8cbf6d59abacd46.1524582822.git.jan.kiszka@siemens.com>
+        id S1755250AbeDYQaV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:30:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47592 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754963AbeDYQaQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:30:16 -0400
+Date: Wed, 25 Apr 2018 09:30:14 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Soheil Hassas Yeganeh <soheil@google.com>
+Subject: Re: [PATCH net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
+ zerocopy receive
+Message-ID: <20180425163014.GD8546@bombadil.infradead.org>
+References: <20180425052722.73022-1-edumazet@google.com>
+ <20180425052722.73022-2-edumazet@google.com>
+ <20180425062859.GA23914@infradead.org>
+ <5cd31eba-63b5-9160-0a2e-f441340df0d3@gmail.com>
+ <20180425160413.GC8546@bombadil.infradead.org>
+ <8ce78bd6-8142-2937-11fd-2e4a2b22d90c@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a21882288c4664cc983a5741e8cbf6d59abacd46.1524582822.git.jan.kiszka@siemens.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <8ce78bd6-8142-2937-11fd-2e4a2b22d90c@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 05:13:37PM +0200, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
+On Wed, Apr 25, 2018 at 09:20:55AM -0700, Eric Dumazet wrote:
+> On 04/25/2018 09:04 AM, Matthew Wilcox wrote:
+> > If you don't zap the page range, any of the CPUs in the system where
+> > any thread in this task have ever run may have a TLB entry pointing to
+> > this page ... if the page is being recycled into the page allocator,
+> > then that page might end up as a slab page or page table or page cache
+> > while the other CPU still have access to it.
 > 
-> The only user of that function is of_pci_bus_find_domain_nr. Pure
-> cleanup.
-
-"The only user of pci_get_new_domain_nr() is of_pci_bus_find_domain_nr().
-Since they are defined in the same compilation unit,
-pci_get_new_domain_nr() can be made static, which also simplifies
-preprocessor conditionals.
-
-No functional change intended."
-
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  drivers/pci/pci.c   | 6 ++----
->  include/linux/pci.h | 3 ---
->  2 files changed, 2 insertions(+), 7 deletions(-)
-
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index e597655a5643..695c2bb4e853 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5702,15 +5702,14 @@ static void pci_no_domains(void)
->  #endif
->  }
->  
-> -#ifdef CONFIG_PCI_DOMAINS
-> +#ifdef CONFIG_PCI_DOMAINS_GENERIC
->  static atomic_t __domain_nr = ATOMIC_INIT(-1);
->  
-> -int pci_get_new_domain_nr(void)
-> +static int pci_get_new_domain_nr(void)
->  {
->  	return atomic_inc_return(&__domain_nr);
->  }
->  
-> -#ifdef CONFIG_PCI_DOMAINS_GENERIC
->  static int of_pci_bus_find_domain_nr(struct device *parent)
->  {
->  	static int use_dt_domains = -1;
-> @@ -5765,7 +5764,6 @@ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
->  			       acpi_pci_bus_find_domain_nr(bus);
->  }
->  #endif
-> -#endif
->  
->  /**
->   * pci_ext_cfg_avail - can we access extended PCI config space?
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 73178a2fcee0..963232a6cd2e 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1510,12 +1510,10 @@ void pci_cfg_access_unlock(struct pci_dev *dev);
->   */
->  #ifdef CONFIG_PCI_DOMAINS
->  extern int pci_domains_supported;
-> -int pci_get_new_domain_nr(void);
->  #else
->  enum { pci_domains_supported = 0 };
->  static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
->  static inline int pci_proc_domain(struct pci_bus *bus) { return 0; }
-> -static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
->  #endif /* CONFIG_PCI_DOMAINS */
->  
->  /*
-> @@ -1670,7 +1668,6 @@ static inline struct pci_dev *pci_get_domain_bus_and_slot(int domain,
->  
->  static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
->  static inline struct pci_dev *pci_dev_get(struct pci_dev *dev) { return NULL; }
-> -static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
->  
->  #define dev_is_pci(d) (false)
->  #define dev_is_pf(d) (false)
-> -- 
-> 2.13.6
+> Yes, this makes sense.
 > 
+> > 
+> > You could hang onto the page until you've built up a sufficiently large
+> > batch, then bulk-invalidate all of the TLB entries, but we start to get
+> > into weirdnesses on different CPU architectures.
+> > 
+> 
+> zap_page_range() is already doing a bulk-invalidate,
+> so maybe vm_replace_page() wont bring serious improvement if we end-up doing same dance.
+
+Sorry, I was unclear.  zap_page_range() bulk-invalidates all pages that
+were torn down as part of this call.  What I was trying to say was that
+we could have a whole new API which put page after page into the same
+address, and bumped the refcount on them to prevent them from actually
+being freed.  Once we get to a batch limit, we invalidate all of the
+pages which were mapped at those addresses and can then free the pages
+back to the allocator.
+
+I don't think you can implement this scheme on s390 because it requires
+the userspace address to still be mapped to that page on shootdown
+(?) but I think we could implement it on x86.
+
+Another possibility is if we had some way to insert the TLB entry into
+the local CPU's page tables only, we wouldn't need to broadcast-invalidate
+the TLB entry; we could just do it locally which is relatively quick.
