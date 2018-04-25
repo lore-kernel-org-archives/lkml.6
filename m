@@ -1,124 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755545AbeDYQjL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:39:11 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38348 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754654AbeDYQjG (ORCPT
+        id S1755492AbeDYQik (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:38:40 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:45874 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755076AbeDYQig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:39:06 -0400
-X-Google-Smtp-Source: AB8JxZpUzaBCJEC015IR879quu/Bg5iRJiu4w6fxhPmONmiGpQ+vJlRet7x83ghpK6pdZNvgSI5D8A==
-Date: Wed, 25 Apr 2018 09:39:04 -0700 (PDT)
-X-Google-Original-Date: Wed, 25 Apr 2018 09:34:44 PDT (-0700)
-Subject: Re: [PATCH v5 0/2] perf: riscv: Preliminary Perf Event Support on RISC-V
-In-Reply-To: <20180425031936.GA7303@andestech.com>
-CC: atish.patra@wdc.com, sols@sifive.com, nickhu@andestech.com,
-        corbet@lwn.net, peterz@infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, mingo@redhat.com,
-        albert@sifive.com, namhyung@kernel.org,
-        linux-riscv@lists.infradead.org, jolsa@redhat.com,
-        greentime@andestech.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: alankao@andestech.com
-Message-ID: <mhng-aec39091-7a3b-4def-99f3-577e023c6919@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Wed, 25 Apr 2018 12:38:36 -0400
+X-Google-Smtp-Source: AIpwx4/XVK8bsWNRPowxRxGmj53Z1G2fXuzAD4FT+icPC8z2O7xmy3NjU40oR1qorvri2L3orO/kJhorovmCe3rRGak=
+MIME-Version: 1.0
+In-Reply-To: <5AE0A5FD.3060009@gmail.com>
+References: <a3722bda2eadf1ff229f73da6f0316f954956ae1.1524668025.git.arvind.yadav.cs@gmail.com>
+ <d16d5b54-90c9-3137-bc74-2b0d7135a928@oracle.com> <5AE0A5FD.3060009@gmail.com>
+From: Shannon Nelson <shannon.lee.nelson@gmail.com>
+Date: Wed, 25 Apr 2018 09:38:35 -0700
+Message-ID: <CAP-MU4PPuxvtgfM5J5Arb5+sdAWxYPRDtQdm+cbHZO2WioJdfA@mail.gmail.com>
+Subject: Re: [PATCH] sparc: vio: use put_device() instead of kfree()
+To: arvindY <arvind.yadav.cs@gmail.com>
+Cc: Shannon Nelson <shannon.nelson@oracle.com>,
+        David Miller <davem@davemloft.net>, jag.raman@oracle.com,
+        liam.merwick@oracle.com, linux-kernel <linux-kernel@vger.kernel.org>,
+        Sparc kernel list <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 20:19:36 PDT (-0700), alankao@andestech.com wrote:
-> Hi Atish, Palmer,
->
-> On Tue, Apr 24, 2018 at 06:15:49PM -0700, Atish Patra wrote:
->> On 4/24/18 5:29 PM, Palmer Dabbelt wrote:
->> >On Tue, 24 Apr 2018 15:16:16 PDT (-0700), atish.patra@wdc.com wrote:
->> >>On 4/24/18 12:44 PM, Palmer Dabbelt wrote:
->> >>>On Tue, 24 Apr 2018 12:27:26 PDT (-0700), atish.patra@wdc.com wrote:
->> >>>>On 4/24/18 11:07 AM, Atish Patra wrote:
->> >>>>>On 4/19/18 4:28 PM, Alan Kao wrote:
->> >>>>>However, I got an rcu-stall for the test "47: Event times".
->> >>>>># ./perf test -v 47
->> >>>>Got it working. The test tries to attach the event to CPU0 which doesn't
->> >>>>exist in HighFive Unleashed. Changing it to cpu1 works.
->> >>>>
->> >>>>diff --git a/tools/perf/tests/event-times.c b/tools/perf/tests/event-times.c
->> >>>>index 1a2686f..eb11632f 100644
->> >>>>--- a/tools/perf/tests/event-times.c
->> >>>>+++ b/tools/perf/tests/event-times.c
->> >>>>@@ -113,9 +113,9 @@ static int attach__cpu_disabled(struct perf_evlist
->> >>>>*evlist)
->> >>>>           struct cpu_map *cpus;
->> >>>>           int err;
->> >>>>
->> >>>>-       pr_debug("attaching to CPU 0 as enabled\n");
->> >>>>+       pr_debug("attaching to CPU 1 as disabled\n");
->> >>>>
->> >>>>-       cpus = cpu_map__new("0");
->> >>>>+       cpus = cpu_map__new("1");
->> >>>>           if (cpus == NULL) {
->> >>>>                   pr_debug("failed to call cpu_map__new\n");
->> >>>>                   return -1;
->> >>>>@@ -142,9 +142,9 @@ static int attach__cpu_enabled(struct perf_evlist
->> >>>>*evlist)
->> >>>>           struct cpu_map *cpus;
->> >>>>           int err;
->> >>>>
->> >>>>-       pr_debug("attaching to CPU 0 as enabled\n");
->> >>>>+       pr_debug("attaching to CPU 1 as enabled\n");
->> >>>>
->> >>>>-       cpus = cpu_map__new("0");
->> >>>>+       cpus = cpu_map__new("1");
->> >>>>           if (cpus == NULL) {
->> >>>>                   pr_debug("failed to call cpu_map__new\n");
->> >>>>                   return -1;
->> >>>>
->> >>>>
->> >>>>Palmer,
->> >>>>Would it be better to officially document it somewhere that CPU0 doesn't
->> >>>>exist in the HighFive Unleashed board ?
->> >>>>I fear that there will be other standard tests/code path that may fail
->> >>>>because of inherent assumption of cpu0 presence.
->> >>>
->> >>>I think the best way to fix this is to just have BBL (or whatever the
->> >>>bootloader is) renumber the CPUs so they're contiguous and begin with 0.
->> >>
->> >>Do you mean BBL will update the device tree that kernel eventually parse
->> >>and set the hart id?
->> >>Sounds good to me unless it acts as a big hack in future boot loaders.
->> >
->> >Right now the machine-mode and supervisor-mode hart IDs are logically separate:
->> >the bootloader just provides the hart ID as a register argument when starting
->> >the kernel.
->>
->> Yes.
->>
->>   BBL already needs to enumerate the harts by looking through the
->> >device tree for various other reasons (at least to mask off the harts that
->> >Linux doesn't support), so it's not that much effort to just maintain a mapping
->> >from supervisor-mode hart IDs to machine-mode hart IDs.
->> >
->>
->> But Linux also parses the device tree to get hart ID in
->> riscv_of_processor_hart(). This is used to setup the possible/present cpu
->> map in setup_smp().
->>
->> Thus, Linux also need to see a device tree with cpu0-3 instead of cpu1-4.
->> Otherwise, present cpu map will be incorrect. Isn't it ?
->>
->> >I have some patches floating around that do this, but appear to do it
->> >incorrectly enough that nothing boots so maybe I'm missing something that makes
->> >this complicated :).
->> >
->>
->> Just a wild guess: May be the because of the above reason ;)
->>
->
-> Thanks for the test and discussion.  It looks like am implementation issue from
-> Unleash, so ... is there anything I should fix and provide a further patch?
+Oh, yes, there it is, and the pointer to vio_dev_release() was already
+set up a little earlier in this function.
 
-You're welcome to fix BBL if you want, but that's unrelated to this patch set.  
-I'm going to look over the code again as soon as I get a chance to, thanks for 
-submitting the patches!
+Sorry for the noise.
+sln
+
+On Wed, Apr 25, 2018 at 8:59 AM, arvindY <arvind.yadav.cs@gmail.com> wrote:
+>
+>
+> On Wednesday 25 April 2018 09:14 PM, Shannon Nelson wrote:
+>>
+>> On 4/25/2018 7:56 AM, Arvind Yadav wrote:
+>>>
+>>> Never directly free @dev after calling device_register(), even
+>>> if it returned an error. Always use put_device() to give up the
+>>> reference initialized.
+>>>
+>>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+>>> ---
+>>>   arch/sparc/kernel/vio.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/sparc/kernel/vio.c b/arch/sparc/kernel/vio.c
+>>> index 1a0fa10..32bae68 100644
+>>> --- a/arch/sparc/kernel/vio.c
+>>> +++ b/arch/sparc/kernel/vio.c
+>>> @@ -403,7 +403,7 @@ static struct vio_dev *vio_create_one(struct
+>>> mdesc_handle *hp, u64 mp,
+>>>       if (err) {
+>>>           printk(KERN_ERR "VIO: Could not register device %s, err=%d\n",
+>>>                  dev_name(&vdev->dev), err);
+>>> -        kfree(vdev);
+>>> +        put_device(&vdev->dev);
+>>
+>>
+>> Hmmm... I can see why the put_device() might be a good idea, but I think
+>> we still need the kfree() so as to not leak the memory that was kzalloc'd
+>> above for vdev.
+>>
+>
+> There is no need to call kfree() here. Because put_device()
+> will decrement the last reference and then free the memory
+> by calling dev->release(It'll call vio_dev_release()).
+> Internally put_device() -> kobject_put() -> kobject_cleanup()
+> which is responsible to call 'dev -> release' and also free
+> other kobject resources.
+> If we will call kfree() here, Then It'll be a redundant call.
+>
+> ~arvind
+>
+>
+>> sln
+>>
+>>>           return NULL;
+>>>       }
+>>>       if (vdev->dp)
+>>>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe sparclinux" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+==============================================
+Mr. Shannon Nelson         Parents can't afford to be squeamish.
