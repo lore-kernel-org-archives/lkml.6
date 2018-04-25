@@ -1,83 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755706AbeDYRWm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 13:22:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35278 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754847AbeDYRWj (ORCPT
+        id S1755861AbeDYR2H (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 13:28:07 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:34419 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754847AbeDYR2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 13:22:39 -0400
-Date: Wed, 25 Apr 2018 14:22:29 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        mjpeg-users@lists.sourceforge.net,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Trent Piepho <tpiepho@impinj.com>
-Subject: Re: [PATCH] media: zoran: move to dma-mapping interface
-Message-ID: <20180425142229.25d756ed@vento.lan>
-In-Reply-To: <CAK8P3a0CHSC7yP3x8xDJgcg5xMzD1-sC-rmBJECtYvGFmyG4vQ@mail.gmail.com>
-References: <20180424204158.2764095-1-arnd@arndb.de>
-        <20180425061537.GA23383@infradead.org>
-        <CAK8P3a06ragAPWpHGm-bGoZ8t6QyAttWJfD0jU_wcGy7FqLb5w@mail.gmail.com>
-        <20180425072138.GA16375@infradead.org>
-        <CAK8P3a1cs_SPesadAQhV3QU97WjNE8bLPSQCfaMQRU7zr_oh3w@mail.gmail.com>
-        <20180425152636.GC27076@infradead.org>
-        <CAK8P3a0CHSC7yP3x8xDJgcg5xMzD1-sC-rmBJECtYvGFmyG4vQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 25 Apr 2018 13:28:03 -0400
+X-Google-Smtp-Source: AB8JxZoJ23cQgDMIpXGPObLrZzLNmy3y2MqSr4qYfTZ0CDtb01vkcUnOKsMhj4E0cRoXD0i34keq7Q==
+Subject: Re: [RFC PATCH v2 3/4] acpi: apei: Do not panic() when correctable
+ errors are marked as fatal.
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
+        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
+        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
+        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com,
+        Yazen Ghannam <yazen.ghannam@amd.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <20180419154006.GE3600@pd.tnic>
+ <977608e6-9f5d-c523-a78a-993ac5bfd55f@gmail.com>
+ <20180419164528.GD5635@pd.tnic>
+ <ffe6b459-c80a-d3c0-451d-0d21ae63da54@gmail.com>
+ <20180419190323.GF5635@pd.tnic>
+ <dba07329-2f85-2bde-85ea-5bdf26fb8df2@gmail.com>
+ <20180422104849.GA32754@pd.tnic>
+ <70c43399-e8e5-5061-b5a5-451deb5f02fa@gmail.com>
+ <20180425140108.GA2597@pd.tnic>
+ <48944beb-4e29-05cc-857b-7698e3dbe89b@gmail.com>
+ <20180425171557.GC2597@pd.tnic>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <96b6f27f-5e82-53f0-627f-85c2f31a095b@gmail.com>
+Date: Wed, 25 Apr 2018 12:27:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180425171557.GC2597@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 25 Apr 2018 17:58:25 +0200
-Arnd Bergmann <arnd@arndb.de> escreveu:
 
-> On Wed, Apr 25, 2018 at 5:26 PM, Christoph Hellwig <hch@infradead.org> wrote:
-> > On Wed, Apr 25, 2018 at 01:15:18PM +0200, Arnd Bergmann wrote:  
-> >> That thought had occurred to me as well. I removed the oldest ISDN
-> >> drivers already some years ago, and the OSS sound drivers
-> >> got removed as well, and comedi got converted to the dma-mapping
-> >> interfaces, so there isn't much left at all now. This is what we
-> >> have as of v4.17-rc1:  
-> >
-> > Yes, I've been looking at various grotty old bits to purge.  Usually
-> > I've been looking for some non-tree wide patches and CCed the last
-> > active people to see if they care.  In a few cases people do, but
-> > most often no one does.  
+
+On 04/25/2018 12:15 PM, Borislav Petkov wrote:
+> On Wed, Apr 25, 2018 at 10:00:53AM -0500, Alex G. wrote:
+>> Firmware-first.
 > 
-> Let's start with this one (zoran) then, as Mauro is keen on having
-> all media drivers compile-testable on x86-64 and arm.
+> Ok, my guess was right.
 > 
-> Trent Piepho and Hans Verkuil both worked on this driver in the
-> 2008/2009 timeframe and those were the last commits from anyone
-> who appears to have tested their patches on actual hardware.
-
-Zoran is a driver for old hardware. I don't doubt that are people
-out there still using it, but who knows?
-
-I have a few those boards packed somewhere. I haven't work with PCI
-hardware for a while. If needed, I can try to seek for them and
-do some tests. I need first to unpack a machine with PCI slots...
-the NUCs I generally use for development don't have any :-)
-
-Anyway, except for virt_to_bus() and related stuff, I think that this
-driver is in good shape, as Hans did a lot of work in the past to
-make it to use the current media framework.
-
+>> We could probably use more of the native AER print functions, but that's
+>> beyond the scope of this patch.
 > 
-> Trent, Hans: do you have reason to believe that there might still
-> be users out there?
+> No no, this does not belong in this patchset.
 > 
->        Arnd
+>> Like the exact thing that this patch series implements? :)
+> 
+> Exact thing? I don't think so.
+> 
+> No, your patchset is grafting some funky and questionable side-handler
+> which gets to see the PCIe errors first, out-of-line and then it
+> practically downgrades their severity outside of the error processing
+> flow.
 
+SURPRISE!!! This is a what vs how issue. I am keeping the what, and
+working on the how that you suggested.
 
+> What I've been telling you 
 
-Thanks,
-Mauro
+It's coming (eventually). I'm trying to avoid pushing more than one
+series per week.
+
+(snip useful email context)
+
+Hmmm.
+
+Alex
