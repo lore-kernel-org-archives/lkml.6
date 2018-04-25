@@ -1,69 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751453AbeDYIwd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 04:52:33 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:65346 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751361AbeDYIwa (ORCPT
+        id S1751483AbeDYIxu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 04:53:50 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33634 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeDYIxn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 04:52:30 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>
-Cc: Genki Sky <sky@genki.is>, David Herrmann <dh.herrmann@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Pavel Machek <pavel@ucw.cz>,
-        linux-pm@vger.kernel.org
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock BOOTTIME
-Date: Wed, 25 Apr 2018 10:52:18 +0200
-Message-ID: <1996930.B4PaKZ6i1F@aspire.rjw.lan>
-In-Reply-To: <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de>
-References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com> <CALAqxLWmcmiOgbH1Ri+Ki-OGFvgzRzRDzX3FZdUhcqu1OoCWiA@mail.gmail.com> <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de>
+        Wed, 25 Apr 2018 04:53:43 -0400
+X-Google-Smtp-Source: AIpwx48AQVTV5B5n8IMj9mrYK2zFVYwb+BRubEafKhqHm9lJkkPt6I6W2aYq3Y+j4VxAMI84a4X+JiXP+3ZUvnwPSK0=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180330143051.26423-1-nsekhar@ti.com>
+References: <20180330143051.26423-1-nsekhar@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 25 Apr 2018 10:53:42 +0200
+Message-ID: <CAMRc=Mdsqc-ZJy9WMkdh_S=ehh1CfyFtgyF6mWwFT=xnNGhieg@mail.gmail.com>
+Subject: Re: [PATCH] mtd: nand: davinci: don't acquire and enable clock
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        David Lechner <david@lechnology.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, April 24, 2018 10:09:28 AM CEST Thomas Gleixner wrote:
-> On Mon, 23 Apr 2018, John Stultz wrote:
-> 
-> > On Mon, Apr 23, 2018 at 7:45 PM, Genki Sky <sky@genki.is> wrote:
-> > > Quoting Genki Sky (2018/04/23 20:40:36 -0400)
-> > >> I came across this thread for same reason as [0]: Daemons getting
-> > >> killed by systemd on resume (after >WatchdogSec seconds of
-> > >> suspending). I'm using master branch of systemd and the kernel. As
-> > >> mentioned, systemd uses CLOCK_MONOTONIC, originally expecting it to
-> > >> not include suspend time.
-> > >>
-> > >> Correct me if I'm mistaken, but I don't see the ambiguity of whether
-> > >> this patch series breaks systemd. If it's implemented correctly, you'd
-> > >> hope it *would* break it!
-> > >
-> > > This sounded a little weak on re-reading, sorry. So, I just confirmed
-> > > that after booting a "git revert -m 1 680014d6d1da", the issue no
-> > > longer appears. (I.e., a suspend for >WatchDog sec doesn't result in
-> > > any daemon getting killed).
-> > >
-> > > Let me know if I can help in any way.
-> > 
-> > Yea, this is the sort of thing I was worried about.
-> > 
-> > Thomas: I think reverting this change is needed.
-> 
-> Sigh. I hoped that something like this would be catched before I sent the
-> pull request by those who were actually interested in this change...
+2018-03-30 16:30 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+> NAND itself is an asynchronous interface, it does not have any
+> clock input. DaVinci NAND driver acquires clock for AEMIF
+> (asynchronous external memory interface) which is an on-chip
+> IP to which NAND is connected.
+>
+> The same clock is also enabled in AEMIF driver (either present
+> drivers/memory or from machine code for some older platforms).
+> AEMIF timing must be initialized before NAND can be accessed.
+> This ensures that AEMIF clock is enabled too.
+>
+> Remove the superfluous clock acquisition and enable in DaVinci
+> NAND driver.
+>
+> Tested on K2L, K2HK, K2E, DA850 EVM, DA850 LCDK in device-tree
+> boot and DM644x EVM in legacy boot.
+>
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+> Hi Boris,
+>
+> If/when this patch gets accepted, it will nice to put this on
+> an immutable branch others can merge. There is potential cleanup
+> in drivers/clock and in DaVinci machine code that will depend
+> on this.
+>
+> Thanks,
+> Sekhar
+>
+>  drivers/mtd/nand/raw/davinci_nand.c | 25 +------------------------
+>  1 file changed, 1 insertion(+), 24 deletions(-)
+>
+> diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
+> index 0f09518d980f..7255a0d94374 100644
+> --- a/drivers/mtd/nand/raw/davinci_nand.c
+> +++ b/drivers/mtd/nand/raw/davinci_nand.c
+> @@ -27,7 +27,6 @@
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/err.h>
+> -#include <linux/clk.h>
+>  #include <linux/io.h>
+>  #include <linux/mtd/rawnand.h>
+>  #include <linux/mtd/partitions.h>
+> @@ -55,7 +54,6 @@ struct davinci_nand_info {
+>         struct nand_chip        chip;
+>
+>         struct device           *dev;
+> -       struct clk              *clk;
+>
+>         bool                    is_readmode;
+>
+> @@ -703,22 +701,6 @@ static int nand_davinci_probe(struct platform_device *pdev)
+>         /* Use board-specific ECC config */
+>         info->chip.ecc.mode     = pdata->ecc_mode;
+>
+> -       ret = -EINVAL;
+> -
+> -       info->clk = devm_clk_get(&pdev->dev, "aemif");
+> -       if (IS_ERR(info->clk)) {
+> -               ret = PTR_ERR(info->clk);
+> -               dev_dbg(&pdev->dev, "unable to get AEMIF clock, err %d\n", ret);
+> -               return ret;
+> -       }
+> -
+> -       ret = clk_prepare_enable(info->clk);
+> -       if (ret < 0) {
+> -               dev_dbg(&pdev->dev, "unable to enable AEMIF clock, err %d\n",
+> -                       ret);
+> -               goto err_clk_enable;
+> -       }
+> -
+>         spin_lock_irq(&davinci_nand_lock);
+>
+>         /* put CSxNAND into NAND mode */
+> @@ -732,7 +714,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
+>         ret = nand_scan_ident(mtd, pdata->mask_chipsel ? 2 : 1, NULL);
+>         if (ret < 0) {
+>                 dev_dbg(&pdev->dev, "no NAND chip(s) found\n");
+> -               goto err;
+> +               return ret;
+>         }
+>
+>         switch (info->chip.ecc.mode) {
+> @@ -838,9 +820,6 @@ static int nand_davinci_probe(struct platform_device *pdev)
+>         nand_cleanup(&info->chip);
+>
+>  err:
+> -       clk_disable_unprepare(info->clk);
+> -
+> -err_clk_enable:
+>         spin_lock_irq(&davinci_nand_lock);
+>         if (info->chip.ecc.mode == NAND_ECC_HW_SYNDROME)
+>                 ecc4_busy = false;
+> @@ -859,8 +838,6 @@ static int nand_davinci_remove(struct platform_device *pdev)
+>
+>         nand_release(nand_to_mtd(&info->chip));
+>
+> -       clk_disable_unprepare(info->clk);
+> -
+>         return 0;
+>  }
+>
+> --
+> 2.16.2
+>
 
-The "git revert -m 1 680014d6d1da" makes resume issues on my Aspire S5
-go away (cf. https://marc.info/?l=linux-kernel&m=152460804018920&w=2).
-
-I'll try with just the "monotonic" vs "boottime" clock changes reverted.
-
-> I'll try to distangle it.
-
-Cool.
-
-Please let me know if you need any help.
+Tested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
