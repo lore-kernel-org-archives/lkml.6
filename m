@@ -1,98 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751655AbeDYJur (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:50:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40256 "EHLO mx1.redhat.com"
+        id S1751994AbeDYJvs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:51:48 -0400
+Received: from mga04.intel.com ([192.55.52.120]:41032 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751353AbeDYJum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:50:42 -0400
-Date: Wed, 25 Apr 2018 05:50:41 -0400 (EDT)
-From: Chunyu Hu <chuhu@redhat.com>
-Reply-To: Chunyu Hu <chuhu@redhat.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Michal Hocko <mhocko@kernel.org>, Chunyu Hu <chuhu.ncepu@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
-Message-ID: <482146467.19754107.1524649841393.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180424134148.qkvqqa4c37l6irvg@armageddon.cambridge.arm.com>
-References: <1524243513-29118-1-git-send-email-chuhu@redhat.com> <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com> <20180422125141.GF17484@dhcp22.suse.cz> <CACT4Y+YWUgyzCBadg+Oe8wDkFCaBzmcKDgu3rKjQxim7NXNLpg@mail.gmail.com> <CABATaM6eWtssvuj3UW9LHLK3HWo8P9g0z9VzFnuqKPKO5KMJ3A@mail.gmail.com> <20180424132057.GE17484@dhcp22.suse.cz> <20180424134148.qkvqqa4c37l6irvg@armageddon.cambridge.arm.com>
-Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in
- gfp_kmemleak_mask
+        id S1751482AbeDYJvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 05:51:46 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,325,1520924400";
+   d="scan'208";a="49786020"
+Date: Wed, 25 Apr 2018 12:51:41 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Javier Arteaga <javier@emutex.com>
+Cc: Lee Jones <lee.jones@linaro.org>, "Dan O'Donovan" <dan@emutex.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND 1/3] mfd: upboard: Add UP2 platform controller
+ driver
+Message-ID: <20180425095141.GL2173@lahna.fi.intel.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <20180421085009.28773-2-javier@emutex.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.68.5.41, 10.4.195.2]
-Thread-Topic: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
-Thread-Index: uXmCgClxRLoW8QmHLoEoZBP1sasVfA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180421085009.28773-2-javier@emutex.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Apr 21, 2018 at 09:50:07AM +0100, Javier Arteaga wrote:
+> +static const struct acpi_device_id upboard_acpi_match[] = {
+> +	{ "AANT0F01", (kernel_ulong_t) &upboard_up2_data },
+
+No space after cast so write it like,
+
+	{ "AANT0F01", (kernel_ulong_t)&upboard_up2_data },
 
 
------ Original Message -----
-> From: "Catalin Marinas" <catalin.marinas@arm.com>
-> To: "Michal Hocko" <mhocko@kernel.org>
-> Cc: "Chunyu Hu" <chuhu.ncepu@gmail.com>, "Dmitry Vyukov" <dvyukov@google.com>, "Chunyu Hu" <chuhu@redhat.com>, "LKML"
-> <linux-kernel@vger.kernel.org>, "Linux-MM" <linux-mm@kvack.org>
-> Sent: Tuesday, April 24, 2018 9:41:48 PM
-> Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
-> 
-> On Tue, Apr 24, 2018 at 07:20:57AM -0600, Michal Hocko wrote:
-> > On Mon 23-04-18 12:17:32, Chunyu Hu wrote:
-> > [...]
-> > > So if there is a new flag, it would be the 25th bits.
-> > 
-> > No new flags please. Can you simply store a simple bool into
-> > fail_page_alloc
-> > and have save/restore api for that?
-> 
-> For kmemleak, we probably first hit failslab. Something like below may
-> do the trick:
-> 
-> diff --git a/mm/failslab.c b/mm/failslab.c
-> index 1f2f248e3601..63f13da5cb47 100644
-> --- a/mm/failslab.c
-> +++ b/mm/failslab.c
-> @@ -29,6 +29,9 @@ bool __should_failslab(struct kmem_cache *s, gfp_t
-> gfpflags)
->  	if (failslab.cache_filter && !(s->flags & SLAB_FAILSLAB))
->  		return false;
->  
-> +	if (s->flags & SLAB_NOLEAKTRACE)
-> +		return false;
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, upboard_acpi_match);
 > +
->  	return should_fail(&failslab.attr, s->object_size);
->  }
+> +static int upboard_probe(struct platform_device *pdev)
+> +{
+> +	struct upboard *upboard;
+> +	const struct acpi_device_id *id;
+> +	const struct upboard_data *upboard_data;
+> +	int ret;
+> +
+> +	id = acpi_match_device(upboard_acpi_match, &pdev->dev);
+> +	if (!id)
+> +		return -ENODEV;
+> +
+> +	upboard_data = (const struct upboard_data *) id->driver_data;
 
-This maybe is the easy enough way for skipping fault injection for kmemleak slab object. 
- 
->  
-> 
-> Can we get a second should_fail() via should_fail_alloc_page() if a new
-> slab page is allocated?
+Ditto and to other places.
 
-looking at code path blow, what do you mean by getting a second should_fail() via
-fail_alloc_page?  Seems we need to insert the flag between alloc_slab_page and 
-alloc_pages()? Without GFP flag, it's difficult to pass info to should_fail_alloc_page
-and keep simple at same time. 
-
-Or as Michal suggested, completely disabling page alloc fail injection when kmemleak
-enabled. And enable it again when kmemleak off. 
-
- alloc_slab_page   
-          <========= flag to change the behavior of should_fail_alloc_page
-     alloc_pages
-         alloc_pages_current
-             __alloc_pages_nodemask
-                 prepare_alloc_pages
-                     should_fail_alloc_page
-
-> 
-> --
-> Catalin
-> 
-
--- 
-Regards,
-Chunyu Hu
+Otherwise looks good to me.
