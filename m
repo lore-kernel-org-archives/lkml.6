@@ -1,205 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751535AbeDYJhR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:37:17 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:62845 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751064AbeDYJcy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:32:54 -0400
-X-UUID: e61d2da81a3a4c4da80291b263650eba-20180425
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
-        <lee.jones@linaro.org>, <a.zummo@towertech.it>,
-        <alexandre.belloni@free-electrons.com>, <matthias.bgg@gmail.com>,
-        <eddie.huang@mediatek.com>
-CC: <devicetree@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 15/17] power: reset: mt6323: add a driver for MT6323 power controller
-Date: Wed, 25 Apr 2018 17:32:41 +0800
-Message-ID: <51d4fbe0d6a22986ddd2df66c9db39aa1eaab74a.1524646231.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1524646231.git.sean.wang@mediatek.com>
-References: <cover.1524646231.git.sean.wang@mediatek.com>
+        id S1751730AbeDYJiS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:38:18 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36642 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751346AbeDYJiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 05:38:16 -0400
+Date: Wed, 25 Apr 2018 10:38:08 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 5/5] PCI: tegra: use seq_open_data
+Message-ID: <20180425093808.GA15875@e107981-ln.cambridge.arm.com>
+References: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
+ <20180301233724.20440-5-linux@rasmusvillemoes.dk>
+ <20180302104207.GB27178@ulmo>
+ <20180307124105.GE15139@e107981-ln.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180307124105.GE15139@e107981-ln.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Wed, Mar 07, 2018 at 12:41:05PM +0000, Lorenzo Pieralisi wrote:
+> On Fri, Mar 02, 2018 at 11:42:07AM +0100, Thierry Reding wrote:
+> > On Fri, Mar 02, 2018 at 12:37:24AM +0100, Rasmus Villemoes wrote:
+> > > Simplify the code slightly by having seq_open_data do the ->private
+> > > assignment.
+> > > 
+> > > Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > > ---
+> > >  drivers/pci/host/pci-tegra.c | 11 +----------
+> > >  1 file changed, 1 insertion(+), 10 deletions(-)
+> > 
+> > I had to go hunt for patch 1/5 to be able to tell if this is indeed
+> > equivalent. It is, so:
+> > 
+> > Reviewed-by: Thierry Reding <treding@nvidia.com>
+> > Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+> I can't apply this patch standalone so I assume this will go via
+> some other tree; I will drop it from the PCI patch queue, if I
+> should not please do let me know.
 
-The power device is responsible for externally down or up the power
-of the remote MediaTek SoC through the tiny circuit BBPU inside PMIC RTC.
+I would kindly ask you some feedback - where are we with this patch
+series ? Please let me know if should consider it for the pci tree
+as per my request above.
 
-Though it's a part of RTC device, it would be better to be a standalone
-driver than to be a part of existent RTC driver so as to let us make
-concentration on works about power-controlling topic and to obtain
-improvements while the subsystem power/reset constantly growing.
-
-Currently, the most basic functionality supported is to just power off
-the system by writing to a special bit field in BBPU register after the
-system has reached pm_poweroff.
-
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/power/reset/Kconfig           | 10 ++++
- drivers/power/reset/Makefile          |  1 +
- drivers/power/reset/mt6323-poweroff.c | 97 +++++++++++++++++++++++++++++++++++
- include/linux/mfd/mt6397/rtc.h        |  1 +
- 4 files changed, 109 insertions(+)
- create mode 100644 drivers/power/reset/mt6323-poweroff.c
-
-diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-index df58fc8..7b49d71 100644
---- a/drivers/power/reset/Kconfig
-+++ b/drivers/power/reset/Kconfig
-@@ -128,6 +128,16 @@ config POWER_RESET_LTC2952
- 	  This driver supports an external powerdown trigger and board power
- 	  down via the LTC2952. Bindings are made in the device tree.
- 
-+config POWER_RESET_MT6323
-+	bool "MediaTek MT6323 power-off driver"
-+	depends on MFD_MT6397
-+	help
-+	  The power-off driver is responsible for externally shutdown down
-+	  the power of a remote MediaTek SoC MT6323 is connected to through
-+	  controlling a tiny circuit BBPU inside MT6323 RTC.
-+
-+	  Say Y if you have a board where MT6323 could be found.
-+
- config POWER_RESET_QNAP
- 	bool "QNAP power-off driver"
- 	depends on OF_GPIO && PLAT_ORION
-diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-index 7778c74..8836172 100644
---- a/drivers/power/reset/Makefile
-+++ b/drivers/power/reset/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_POWER_RESET_GPIO) += gpio-poweroff.o
- obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
- obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
- obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
-+obj-$(CONFIG_POWER_RESET_MT6323) += mt6323-poweroff.o
- obj-$(CONFIG_POWER_RESET_OCELOT_RESET) += ocelot-reset.o
- obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) += piix4-poweroff.o
- obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
-diff --git a/drivers/power/reset/mt6323-poweroff.c b/drivers/power/reset/mt6323-poweroff.c
-new file mode 100644
-index 0000000..c195766
---- /dev/null
-+++ b/drivers/power/reset/mt6323-poweroff.c
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Power off through MediaTek PMIC
-+ *
-+ * Copyright (C) 2018 MediaTek Inc.
-+ *
-+ * Author: Sean Wang <sean.wang@mediatek.com>
-+ *
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/mfd/mt6397/core.h>
-+#include <linux/mfd/mt6397/rtc.h>
-+
-+struct mt6323_pwrc {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	u32 base;
-+};
-+
-+static struct mt6323_pwrc *mt_pwrc;
-+
-+static void mt6323_do_pwroff(void)
-+{
-+	struct mt6323_pwrc *pwrc = mt_pwrc;
-+	unsigned int val;
-+	int ret;
-+
-+	regmap_write(pwrc->regmap, pwrc->base + RTC_BBPU, RTC_BBPU_KEY);
-+	regmap_write(pwrc->regmap, pwrc->base + RTC_WRTGR, 1);
-+
-+	ret = regmap_read_poll_timeout(pwrc->regmap,
-+				       pwrc->base + RTC_BBPU, val,
-+				       !(val & RTC_BBPU_CBUSY),
-+				       MTK_RTC_POLL_DELAY_US,
-+				       MTK_RTC_POLL_TIMEOUT);
-+	if (ret)
-+		dev_err(pwrc->dev, "failed to write BBPU: %d\n", ret);
-+
-+	/* Wait some time until system down, otherwise, notice with a warn */
-+	mdelay(1000);
-+
-+	WARN_ONCE(1, "Unable to power off system\n");
-+}
-+
-+static int mt6323_pwrc_probe(struct platform_device *pdev)
-+{
-+	struct mt6397_chip *mt6397_chip = dev_get_drvdata(pdev->dev.parent);
-+	struct mt6323_pwrc *pwrc;
-+	struct resource *res;
-+
-+	pwrc = devm_kzalloc(&pdev->dev, sizeof(*pwrc), GFP_KERNEL);
-+	if (!pwrc)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	pwrc->base = res->start;
-+	pwrc->regmap = mt6397_chip->regmap;
-+	pwrc->dev = &pdev->dev;
-+	mt_pwrc = pwrc;
-+
-+	pm_power_off = &mt6323_do_pwroff;
-+
-+	return 0;
-+}
-+
-+static int mt6323_pwrc_remove(struct platform_device *pdev)
-+{
-+	if (pm_power_off == &mt6323_do_pwroff)
-+		pm_power_off = NULL;
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id mt6323_pwrc_dt_match[] = {
-+	{ .compatible = "mediatek,mt6323-pwrc" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, mt6323_pwrc_dt_match);
-+
-+static struct platform_driver mt6323_pwrc_driver = {
-+	.probe		= mt6323_pwrc_probe,
-+	.remove		= mt6323_pwrc_remove,
-+	.driver		= {
-+		.name	= "mt6323-pwrc",
-+		.of_match_table = mt6323_pwrc_dt_match,
-+	},
-+};
-+
-+module_platform_driver(mt6323_pwrc_driver);
-+
-+MODULE_DESCRIPTION("Poweroff driver for MT6323 PMIC");
-+MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/mfd/mt6397/rtc.h b/include/linux/mfd/mt6397/rtc.h
-index 480977c..ac932c9 100644
---- a/include/linux/mfd/mt6397/rtc.h
-+++ b/include/linux/mfd/mt6397/rtc.h
-@@ -16,6 +16,7 @@
- 
- #define RTC_BBPU		0x0000
- #define RTC_BBPU_CBUSY		BIT(6)
-+#define RTC_BBPU_KEY            (0x43 << 8)
- 
- #define RTC_WRTGR		0x003c
- 
--- 
-2.7.4
+Thanks,
+Lorenzo
