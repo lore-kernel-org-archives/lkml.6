@@ -1,262 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754451AbeDYN0A (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:26:00 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:34925 "EHLO
+        id S1754593AbeDYN0D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:26:03 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:39133 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753336AbeDYNW7 (ORCPT
+        with ESMTP id S1752985AbeDYNW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Apr 2018 09:22:59 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 05/16] y2038: s390: Remove unneeded ipc uapi header files
-Date: Wed, 25 Apr 2018 15:22:31 +0200
-Message-Id: <20180425132242.1500539-6-arnd@arndb.de>
+Subject: [PATCH v4 03/16] y2038: alpha: Remove unneeded ipc uapi header files
+Date: Wed, 25 Apr 2018 15:22:29 +0200
+Message-Id: <20180425132242.1500539-4-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180425132242.1500539-1-arnd@arndb.de>
 References: <20180425132242.1500539-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:zePQTeRdeE7zFeZ1Qfq8ao1FJNUDtbxjwtwaGAWUJUyZIPhsmeM
- LJjBwNwZiTsPDArZBKppSE9EdjjAD7v6VfYEROr1lrIk8fKNtMyLC0ikW3YSZp+sp1oChk7
- h5dxGDtLZO1LGUPUQXGTVM2Jh2lQmmMLAOw6X1R7RVTWAZhhNfgUQaP5WEfEe8c6zDtRNCA
- gQ5lXfqvDmoevGfVxV8bA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Xd5aQGE5T2E=:Iu+hWtV7l18hpZKk6Dsz1u
- vkwng5wJjsfOf3zAPM4Mz/ZQDshVUnbAVeMc7Lmnte0+zdS8mLFJuYop9NqN1YaGV2qNqAXNQ
- 0WgsYKL82NJ23yYWQtXYMdXgjx+j1J5Xr2QervEyPa71GC2rv1WMrDszYLQ4efzVYFHRwR6GY
- WNA0P+Aj5cjJym/rmUPaKDFuH1uB2wFou7nOeAk6jwV8WpRo6DxRUnSf+7vpFla4iKDJX3caG
- s8nI4mYCVvkNZ+mDzxzenHVduf7msvDniUT5pC8Jy1/NpEPOV3Igr0ertOFyLD+8lp1IMECwI
- G3Kf3xQab21L88cZ5LwXZ0zRJNN3wMrPyIrbCLQm+Esgi8s27bZPtxyoRNLKgjciiHpjYQJaJ
- kuqC7RuHbeZZb43L4xdmm1Atje0lqTUxbsLdNrOrQVes6WBRhtm0C+cAwz1RyGNK5Yb1js3Qd
- CXJ3Y9pFES4JSRxmTu++GtowLcgpZsKVO5C+cBpwVn9FHjtL/hoOXs60a0Sh6nmwqlJvt97br
- FvVXHPtHSd2Om/haqNKYkl1UYaSXybvGc1ZKk5dGNSY0QS8p0pXOBOcPcQRERseUSInpeFOdX
- VLMpJ7AJjyke+S+nxgO/mzGsspDi6GEjgTASBLxETzDUgIEv8EY07EyorbrLfDw1DXfc5j2ap
- nD0z1/NhqhlH+UAOzyIgcwLVm6iwAHUpSjvPqDqAGLhOVFPn3woRes1UWtkvM9GJuh/3i1N/C
- TUUgfC3gT3Z8cPJE3qPfGNinZv38AewmRiuV1w==
+X-Provags-ID: V03:K1:nNxmCVph91iMEuhvNV8ggAHicLgiXCPVDs/Lox21+qZXVcnvyQC
+ xfAOqtKdsr3zO5dt15bcLUHKJMgsBVHTXFoW6F7Kc8zYMFEpx/El5lk3RfVM21s7E3Etms4
+ v6JrfKuKWXZWyDmmSKIkWdAJZlHV/NdYWhZIDMRWtFrMIim9+CoZM9Z8uY+REkx/qgupHCf
+ NOK7wj6p/yCk/pSMisLLw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:XoRTgtyhi5M=:41IBRo/KyEVKOBaBbCo1Rn
+ TaS+23yR7djdU0FIhhuBC0cefx8Zjx5CrCNz30iH/MhwbLHOlVgZr0tygQXLp0Pq8VZLHlf1N
+ SICBeE6NeHm5S/WshP11/y8sh4+ECg5qZ1wpHGTJaTGEyu7uPnl1m9gnWNS907SvCEuOsEuv0
+ j2uGn13+UsYmJVjQ2t10Id/cXII9npNNHuucwerKWMB91c9cWffibDhr4doU6fy5++Bm+aeMT
+ lZBHwAWMgE842rhVKFh8ah9ksWod6f7J7dv4ALCZwx6ZhZxXrfWjiAJ5GRYUKuj5B1mCQGCb0
+ rpJ+P8YOTcpB1adB/OQ+M9umFatY2XBnp52B282bHlEmjC2Np8zsjT4jo6AjtH+klwFoUep00
+ Vaody6kXRcbO58gBg5jWTn477D/i9DxNMHIR5twt+kjuqUKXiD6610H16zNujvzTeMD08qo6J
+ R+npynexCo+1mAJB0yBv2Wtsk47jtIx/Yztqee0fb/wbyP4NIZj70PY6d32etekEtSn9pMFrz
+ yHUoz14WmH9MuNRGIPnaQ6E9J5j9+WdeStYEy4/uC3A/YgLwoWrEuibgmBD1WbWn6Mo7sUSNF
+ h2+ymEe9mUAn07T8QKmjLE6qi0Iv43KKU8XfjLL9mIgJs25hnfcjMDdjJfjo+0c9DYRzhDaU4
+ DjYtJBvFvppkHKfjc8DhaCOpE0FxABMKJPONNQ9MLNkXwFtVs/TGljrB/EF3XywjyFMZfmx9q
+ G7SH+GueR724+lZzsliTm4AhoNq0LHCWeeASYw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The s390 msgbuf/sembuf/shmbuf header files are all identical to the
-version from asm-generic.
+The alpha ipcbuf/msgbuf/sembuf/shmbuf header files are all identical
+to the version from asm-generic.
 
 This patch removes the files and replaces them with 'generic-y'
-statements, to avoid having to modify each copy when we extend sysvipc
-to deal with 64-bit time_t in 32-bit user space.
+statements as part of the y2038 series. Since there is no 32-bit
+syscall support for alpha, we don't need the other changes, but
+it's good to have clean this up anyway.
 
-Note that unlike alpha and ia64, the ipcbuf.h header file is slightly
-different here, so I'm leaving the private copy.
-
-To deal with 32-bit compat tasks, we also have to adapt the definitions
-of compat_{shm,sem,msg}id_ds to match the changes to the respective
-asm-generic files.
-
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/s390/include/asm/compat.h      | 32 ++++++++++++------------
- arch/s390/include/uapi/asm/Kbuild   |  3 +++
- arch/s390/include/uapi/asm/msgbuf.h | 38 ----------------------------
- arch/s390/include/uapi/asm/sembuf.h | 30 -----------------------
- arch/s390/include/uapi/asm/shmbuf.h | 49 -------------------------------------
- 5 files changed, 19 insertions(+), 133 deletions(-)
- delete mode 100644 arch/s390/include/uapi/asm/msgbuf.h
- delete mode 100644 arch/s390/include/uapi/asm/sembuf.h
- delete mode 100644 arch/s390/include/uapi/asm/shmbuf.h
+ arch/alpha/include/uapi/asm/Kbuild   |  4 ++++
+ arch/alpha/include/uapi/asm/ipcbuf.h |  2 --
+ arch/alpha/include/uapi/asm/msgbuf.h | 28 --------------------------
+ arch/alpha/include/uapi/asm/sembuf.h | 23 ---------------------
+ arch/alpha/include/uapi/asm/shmbuf.h | 39 ------------------------------------
+ 5 files changed, 4 insertions(+), 92 deletions(-)
+ delete mode 100644 arch/alpha/include/uapi/asm/ipcbuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/msgbuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/sembuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/shmbuf.h
 
-diff --git a/arch/s390/include/asm/compat.h b/arch/s390/include/asm/compat.h
-index 501aaff85304..97db2fba546a 100644
---- a/arch/s390/include/asm/compat.h
-+++ b/arch/s390/include/asm/compat.h
-@@ -232,10 +232,10 @@ struct compat_ipc64_perm {
+diff --git a/arch/alpha/include/uapi/asm/Kbuild b/arch/alpha/include/uapi/asm/Kbuild
+index 9afaba5e5503..1a5b75310cf4 100644
+--- a/arch/alpha/include/uapi/asm/Kbuild
++++ b/arch/alpha/include/uapi/asm/Kbuild
+@@ -2,4 +2,8 @@
+ include include/uapi/asm-generic/Kbuild.asm
  
- struct compat_semid64_ds {
- 	struct compat_ipc64_perm sem_perm;
--	compat_time_t  sem_otime;
--	compat_ulong_t __pad1;
--	compat_time_t  sem_ctime;
--	compat_ulong_t __pad2;
-+	compat_ulong_t sem_otime;
-+	compat_ulong_t sem_otime_high;
-+	compat_ulong_t sem_ctime;
-+	compat_ulong_t sem_ctime_high;
- 	compat_ulong_t sem_nsems;
- 	compat_ulong_t __unused1;
- 	compat_ulong_t __unused2;
-@@ -243,12 +243,12 @@ struct compat_semid64_ds {
- 
- struct compat_msqid64_ds {
- 	struct compat_ipc64_perm msg_perm;
--	compat_time_t   msg_stime;
--	compat_ulong_t __pad1;
--	compat_time_t   msg_rtime;
--	compat_ulong_t __pad2;
--	compat_time_t   msg_ctime;
--	compat_ulong_t __pad3;
-+	compat_ulong_t msg_stime;
-+	compat_ulong_t msg_stime_high;
-+	compat_ulong_t msg_rtime;
-+	compat_ulong_t msg_rtime_high;
-+	compat_ulong_t msg_ctime;
-+	compat_ulong_t msg_ctime_high;
- 	compat_ulong_t msg_cbytes;
- 	compat_ulong_t msg_qnum;
- 	compat_ulong_t msg_qbytes;
-@@ -261,12 +261,12 @@ struct compat_msqid64_ds {
- struct compat_shmid64_ds {
- 	struct compat_ipc64_perm shm_perm;
- 	compat_size_t  shm_segsz;
--	compat_time_t  shm_atime;
--	compat_ulong_t __pad1;
--	compat_time_t  shm_dtime;
--	compat_ulong_t __pad2;
--	compat_time_t  shm_ctime;
--	compat_ulong_t __pad3;
-+	compat_ulong_t shm_atime;
-+	compat_ulong_t shm_atime_high;
-+	compat_ulong_t shm_dtime;
-+	compat_ulong_t shm_dtime_high;
-+	compat_ulong_t shm_ctime;
-+	compat_ulong_t shm_ctime_high;
- 	compat_pid_t   shm_cpid;
- 	compat_pid_t   shm_lpid;
- 	compat_ulong_t shm_nattch;
-diff --git a/arch/s390/include/uapi/asm/Kbuild b/arch/s390/include/uapi/asm/Kbuild
-index faef3f7e8353..e364873e0d10 100644
---- a/arch/s390/include/uapi/asm/Kbuild
-+++ b/arch/s390/include/uapi/asm/Kbuild
-@@ -9,9 +9,12 @@ generic-y += errno.h
- generic-y += fcntl.h
- generic-y += ioctl.h
- generic-y += mman.h
+ generic-y += bpf_perf_event.h
++generic-y += ipcbuf.h
 +generic-y += msgbuf.h
- generic-y += param.h
  generic-y += poll.h
- generic-y += resource.h
 +generic-y += sembuf.h
 +generic-y += shmbuf.h
- generic-y += sockios.h
- generic-y += swab.h
- generic-y += termbits.h
-diff --git a/arch/s390/include/uapi/asm/msgbuf.h b/arch/s390/include/uapi/asm/msgbuf.h
+diff --git a/arch/alpha/include/uapi/asm/ipcbuf.h b/arch/alpha/include/uapi/asm/ipcbuf.h
 deleted file mode 100644
-index 604f847cd68c..000000000000
---- a/arch/s390/include/uapi/asm/msgbuf.h
+index 90d6445a14df..000000000000
+--- a/arch/alpha/include/uapi/asm/ipcbuf.h
 +++ /dev/null
-@@ -1,38 +0,0 @@
+@@ -1,2 +0,0 @@
 -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _S390_MSGBUF_H
--#define _S390_MSGBUF_H
+-#include <asm-generic/ipcbuf.h>
+diff --git a/arch/alpha/include/uapi/asm/msgbuf.h b/arch/alpha/include/uapi/asm/msgbuf.h
+deleted file mode 100644
+index 8c5d4d8c1b16..000000000000
+--- a/arch/alpha/include/uapi/asm/msgbuf.h
++++ /dev/null
+@@ -1,28 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _ALPHA_MSGBUF_H
+-#define _ALPHA_MSGBUF_H
 -
 -/* 
-- * The msqid64_ds structure for S/390 architecture.
+- * The msqid64_ds structure for alpha architecture.
 - * Note extra padding because this structure is passed back and forth
 - * between kernel and user space.
 - *
 - * Pad space is left for:
-- * - 64-bit time_t to solve y2038 problem
-- * - 2 miscellaneous 32-bit values
+- * - 2 miscellaneous 64-bit values
 - */
 -
 -struct msqid64_ds {
 -	struct ipc64_perm msg_perm;
 -	__kernel_time_t msg_stime;	/* last msgsnd time */
--#ifndef __s390x__
--	unsigned long	__unused1;
--#endif /* ! __s390x__ */
 -	__kernel_time_t msg_rtime;	/* last msgrcv time */
--#ifndef __s390x__
--	unsigned long	__unused2;
--#endif /* ! __s390x__ */
 -	__kernel_time_t msg_ctime;	/* last change time */
--#ifndef __s390x__
--	unsigned long	__unused3;
--#endif /* ! __s390x__ */
 -	unsigned long  msg_cbytes;	/* current number of bytes on queue */
 -	unsigned long  msg_qnum;	/* number of messages in queue */
 -	unsigned long  msg_qbytes;	/* max number of bytes on queue */
 -	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
 -	__kernel_pid_t msg_lrpid;	/* last receive pid */
--	unsigned long  __unused4;
--	unsigned long  __unused5;
+-	unsigned long  __unused1;
+-	unsigned long  __unused2;
 -};
 -
--#endif /* _S390_MSGBUF_H */
-diff --git a/arch/s390/include/uapi/asm/sembuf.h b/arch/s390/include/uapi/asm/sembuf.h
+-#endif /* _ALPHA_MSGBUF_H */
+diff --git a/arch/alpha/include/uapi/asm/sembuf.h b/arch/alpha/include/uapi/asm/sembuf.h
 deleted file mode 100644
-index 3e917697b668..000000000000
---- a/arch/s390/include/uapi/asm/sembuf.h
+index f28ffa668b2f..000000000000
+--- a/arch/alpha/include/uapi/asm/sembuf.h
 +++ /dev/null
-@@ -1,30 +0,0 @@
+@@ -1,23 +0,0 @@
 -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _S390_SEMBUF_H
--#define _S390_SEMBUF_H
+-#ifndef _ALPHA_SEMBUF_H
+-#define _ALPHA_SEMBUF_H
 -
 -/* 
-- * The semid64_ds structure for S/390 architecture.
+- * The semid64_ds structure for alpha architecture.
 - * Note extra padding because this structure is passed back and forth
 - * between kernel and user space.
 - *
 - * Pad space is left for:
-- * - 64-bit time_t to solve y2038 problem (for !__s390x__)
-- * - 2 miscellaneous 32-bit values
+- * - 2 miscellaneous 64-bit values
 - */
 -
 -struct semid64_ds {
 -	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
 -	__kernel_time_t	sem_otime;		/* last semop time */
--#ifndef __s390x__
--	unsigned long	__unused1;
--#endif /* ! __s390x__ */
 -	__kernel_time_t	sem_ctime;		/* last change time */
--#ifndef __s390x__
--	unsigned long	__unused2;
--#endif /* ! __s390x__ */
 -	unsigned long	sem_nsems;		/* no. of semaphores in array */
--	unsigned long	__unused3;
--	unsigned long	__unused4;
+-	unsigned long	__unused1;
+-	unsigned long	__unused2;
 -};
 -
--#endif /* _S390_SEMBUF_H */
-diff --git a/arch/s390/include/uapi/asm/shmbuf.h b/arch/s390/include/uapi/asm/shmbuf.h
+-#endif /* _ALPHA_SEMBUF_H */
+diff --git a/arch/alpha/include/uapi/asm/shmbuf.h b/arch/alpha/include/uapi/asm/shmbuf.h
 deleted file mode 100644
-index 9cdce8d7ce60..000000000000
---- a/arch/s390/include/uapi/asm/shmbuf.h
+index 7e041ca2eb40..000000000000
+--- a/arch/alpha/include/uapi/asm/shmbuf.h
 +++ /dev/null
-@@ -1,49 +0,0 @@
+@@ -1,39 +0,0 @@
 -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _S390_SHMBUF_H
--#define _S390_SHMBUF_H
+-#ifndef _ALPHA_SHMBUF_H
+-#define _ALPHA_SHMBUF_H
 -
 -/* 
-- * The shmid64_ds structure for S/390 architecture.
+- * The shmid64_ds structure for alpha architecture.
 - * Note extra padding because this structure is passed back and forth
 - * between kernel and user space.
 - *
 - * Pad space is left for:
-- * - 64-bit time_t to solve y2038 problem (for !__s390x__)
-- * - 2 miscellaneous 32-bit values
+- * - 2 miscellaneous 64-bit values
 - */
 -
 -struct shmid64_ds {
 -	struct ipc64_perm	shm_perm;	/* operation perms */
 -	size_t			shm_segsz;	/* size of segment (bytes) */
 -	__kernel_time_t		shm_atime;	/* last attach time */
--#ifndef __s390x__
--	unsigned long		__unused1;
--#endif /* ! __s390x__ */
 -	__kernel_time_t		shm_dtime;	/* last detach time */
--#ifndef __s390x__
--	unsigned long		__unused2;
--#endif /* ! __s390x__ */
 -	__kernel_time_t		shm_ctime;	/* last change time */
--#ifndef __s390x__
--	unsigned long		__unused3;
--#endif /* ! __s390x__ */
 -	__kernel_pid_t		shm_cpid;	/* pid of creator */
 -	__kernel_pid_t		shm_lpid;	/* pid of last operator */
 -	unsigned long		shm_nattch;	/* no. of current attaches */
--	unsigned long		__unused4;
--	unsigned long		__unused5;
+-	unsigned long		__unused1;
+-	unsigned long		__unused2;
 -};
 -
 -struct shminfo64 {
@@ -271,6 +185,6 @@ index 9cdce8d7ce60..000000000000
 -	unsigned long	__unused4;
 -};
 -
--#endif /* _S390_SHMBUF_H */
+-#endif /* _ALPHA_SHMBUF_H */
 -- 
 2.9.0
