@@ -1,60 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753763AbeDYWlt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 18:41:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39458 "EHLO mail.kernel.org"
+        id S1753840AbeDYWmO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 18:42:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:42859 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753466AbeDYWlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 18:41:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48FA521748
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 25 Apr 2018 18:41:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Salyzyn <salyzyn@android.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>, Peter Anvin <hpa@zytor.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Kevin Easton <kevin@guarana.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
+        id S1753808AbeDYWmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 18:42:11 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 26 Apr 2018 08:40:40 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andy Gross <agross@codeaurora.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:timers/urgent] Revert: Unify CLOCK_MONOTONIC and
- CLOCK_BOOTTIME
-Message-ID: <20180425184140.6b6e524d@vmware.local.home>
-In-Reply-To: <5695751.Ycq0WTIcbj@aspire.rjw.lan>
-References: <tip-757d5a9b3052a4eebd029f207f1e1df59bef7b7d@git.kernel.org>
-        <alpine.DEB.2.21.1804252108280.1589@nanos.tec.linutronix.de>
-        <CA+55aFz2_cwCjBDAqvzeX89Md26JR=DLhQxTPGuq8OQkWi0ehw@mail.gmail.com>
-        <5695751.Ycq0WTIcbj@aspire.rjw.lan>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>
+Subject: linux-next: build failure after merge of the qcom tree
+Message-ID: <20180426084041.5cf81918@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bMFW/RqPBvphZ+mxtjv19IA"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Apr 2018 22:57:12 +0200
-"Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+--Sig_/bMFW/RqPBvphZ+mxtjv19IA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> FWIW, I run (64-bit) OpenSUSE 42.3 on the failing machine (Acer Aspire S5) with
-> my own kernel (custom config based on the distro one).
-> 
-> The problem here is that the machine doesn't resume from S2R.  It appears to
-> just hang somewhere around where we return to user space.  However, to trigger
-> the issue it needs to stay in suspend for several minutes (not sure how many
-> exactly).  If it is just back-to-back suspend/resume, it will resume correctly.
+Hi Andy,
 
-I guess the question that needs to be asked is, have you tried a kernel
-with this commit reverted and it works? I'd play a bit going back and
-forth between two kernels, one with the commit and one without and no
-other differences, to make sure that is indeed the problem commit.
+After merging the qcom tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
--- Steve
+ERROR: "geni_se_select_mode" [drivers/tty/serial/qcom_geni_serial.ko] undef=
+ined!
+ERROR: "geni_se_init" [drivers/tty/serial/qcom_geni_serial.ko] undefined!
+ERROR: "geni_se_config_packing" [drivers/tty/serial/qcom_geni_serial.ko] un=
+defined!
+ERROR: "geni_se_resources_off" [drivers/tty/serial/qcom_geni_serial.ko] und=
+efined!
+ERROR: "geni_se_resources_on" [drivers/tty/serial/qcom_geni_serial.ko] unde=
+fined!
+
+Probably caused by commit
+
+  eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
+
+I have used the qcom tree from next-20180424 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/bMFW/RqPBvphZ+mxtjv19IA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrhA+kACgkQAVBC80lX
+0GwMBAf9HwEPcZeJqpEqQ+LbsNl9X1ZzLlrog43+FrMaXXp7VlOSdgecXgCcFQRn
+vVE9Xm4Kslb3COrH6qYXt/XIUYNelFLj7ZlMo5dDniKCBJ1+TEtV+H8RDGcnrwbk
+LlEic7CR5NODqcJdw9lg1Qaai/j8PyE54l1DjoZEkDSMMyHa6Kq7xcrT1D8s/EAe
+xjc0Y47PGfwsLwMrvjCcTMhK0ndgzSkcPoucWrzal0oKpCyIBWeosh2KtT3s/I46
+4YXrIk6RELF3mysYFg3zwpyThxiDKj0/cEUKinkT7hu8Qs8cUZkqAzV/Mm72Cvah
+EFZ4qyop80Vjd/PGoJdJJWIQN3MjpA==
+=Oa+f
+-----END PGP SIGNATURE-----
+
+--Sig_/bMFW/RqPBvphZ+mxtjv19IA--
