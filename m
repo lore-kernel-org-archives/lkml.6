@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-900250-1524669154-2-3453640333392789139
+X-Cyrus-Session-Id: sloti22d1t05-889516-1524669133-5-148425827668222451
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES endaro, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524669153; b=XGuj3yc14KlmPPSjvkBykq/eBYuilPO4hxVuOqYCEt5zsafzS0
-    rmaGASs9Rlx1Z5CP+qthtyah6oVdAbYB0aqxXmYGkONnohNXpXueBh77/nN6sbRW
-    zopEg8Hy+/8TVORPc/Gs/g00nTpAGurzDoLltzJA9ch0KjrLUP6hDEeR6647TOzW
-    bF4hm0/nKJ8Vpu7MkrDv+O+/SzFiZUBWHOVzQRx0FlRZD1gBoUNagtRltJU3VbE0
-    rIom+yaeb/+RwR++mj41G5CyD3bsWTucRbPWk+NYuWtlt4IuOmQkkMrc27mN8fLr
-    u3PMXiH7mNdGJZhHK2SyuLQxH8r4DequXtTw==
+    1524669132; b=dvpC+HNpQACtJVP2by21aq3XJZmwVW/LoLYXyT62P0jDEeOAeq
+    c3F6IVgBe3VlY6RHPI/gS+K43eUK6Qi+8x7I4223mgrB8kAumnl0cKfTTjUJWN7e
+    BBdYBpNZCO/x+3pal72e08BkQEQtQ04HhJfpXHoWfZXrDYdAAyeHeSiTMbMtqKJu
+    Mn+hNswqidZVz2KiZ4t0DcjKtubl/Heqhyxp19PKMrPEnGEewjCH+6IpoKE18rAR
+    m26hGZFjiWiQlTkKNMA3I63pRrMRx8UExUEBDOjFSe/lsCNZ9iSkGjAUojsX+oqt
+    tXw2GP1PRCHvZM7LGJUT8DDyLY1H6aCbNvPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524669153; bh=
-    8FrWpl65o1YKDI0KzF2MRkCrrHIZtvoZrbfhhwJrdKM=; b=DNxwbF6rQj/2wIFW
-    spa4bIbIB3OxqWGEkknguMFX13oFd2hlzqbmX2mVqZbYldRm7LC4RR1h7dd9LhCC
-    02St0dwm9fAVFBed0i8hYFS60V40618mt9rSVJ47HSFl3jJO8AfFTcKvlHqa0ABp
-    N8RgWzsB+KI+OlsgHJwQz+gUu0fdBBGd6/5Q95EWFmwaUx1AXAemE3Ugb2bVLKBH
-    OqVGIkMMnlKS/QBDdbUCJbrfYdZcyG6cKjRWsuXHH0AB1u3zq2RPsQlFclpn11Az
-    /L3pLLIsBZiFRDxdtp70lVJbFqnejRzXRtt7PL3vmv1vi+d6pVws5F+guhR9EJyp
-    8+Yurg==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524669132; bh=
+    LsvS7DcQxJZUIppftglfQwvXwMzRU28QlAmbrIgqmyQ=; b=RCgW+Iua+z9bScMT
+    sl55Nu99tWZFfoTKIAvD2B6bA+lz+BhtgKY1wrB/geJrwZFvrS/KUbHNF3fBaD5o
+    znjAwk4nyqg0THHy/FuA786kF/kDH2J+4njlxod4oOWKkJ/VvkRmYz8RvJ0FPRWb
+    cv4ulCDyh5K+ukiepyv46BWVPw9Ka2OYmSNe5pJOxm2CCK/AzFfbrg+LcUqs9DlM
+    5nvvahBfb1mexmdWE9IFQaq6xyXX3s2LPvGEPtsaSBFm59Ymwal0MRaRzID7nrsf
+    2AdktS4ttKeA1RKeJTtJ5WQ88D4Z44A9QSyILWlknL21NNbffZj3bGLbIFzzrWq7
+    5XmcRg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
@@ -51,20 +51,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMtjlnwojgSq7cBmf3z8UJGpqmxkDwqcnmdhZ2vlLTN3pTtBCZugIv5RKuuA5eES9rgDeZ9s29OrQjqLJF6saW/FWN8UVpmgZdjlY5BaxkhplXH2E7vZ
-    TxwHXjNM+h6Ebz3m4krhdNuHeO1SRhUTSraEPLNmbdmmB/UjLb+hqW4PqhJHcEQ2uWh+Qs9fS8D6p8gLxQNp8QFGZF7USTfpPU0UWiI9hDVPQ8olbNYLP+Xn
+X-CM-Envelope: MS4wfOz7btMn2trtZIGaONBkqFd5tTwwgIm1zvgXdPYSqgMCI3obcsdmGNMTmxcUz/RydAXQ6fsGseft/qreuPtxmKH8Zlc65l+5PYvwPGclOQkajQImJE3H
+    RrhyQnRyzvlwRGAZ4cX3q1rbmcHt2v5kfSXgh6s8NCUT09KDMk2u7rjdGEx8PWdzFg088U+5pRtcsegb0FT5bUXMog9dyKeFGuqZFokRg0uTa/luwcdRLv/e
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=JWfEK_nTYSbs3IZf51wA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=5QZOrnP-N_GQhJ_ZMqEA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754969AbeDYPJO (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 11:09:14 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:33989 "EHLO
+        id S1755073AbeDYPLy (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 11:11:54 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:42959 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754866AbeDYPHU (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 11:07:20 -0400
+        with ESMTP id S1753632AbeDYPLq (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 11:11:46 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
@@ -76,103 +76,108 @@ Cc: linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-mips@linux-mips.org, jhogan@kernel.org, ralf@linux-mips.org,
         linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
         zackw@panix.com, noloader@gmail.com, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 12/16] y2038: ipc: Use ktime_get_real_seconds consistently
-Date: Wed, 25 Apr 2018 17:06:02 +0200
-Message-Id: <20180425150606.954771-12-arnd@arndb.de>
+Subject: [PATCH v4 06/16] y2038: arm64: Extend sysvipc compat data structures
+Date: Wed, 25 Apr 2018 17:05:56 +0200
+Message-Id: <20180425150606.954771-6-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180425132242.1500539-1-arnd@arndb.de>
 References: <20180425132242.1500539-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:lcpnyjY3zpI5QLP1cubIh+OF+WTg75stSO6F+EFOKuEIoD4DpDw
- OyyeHq0oFXtR/uhFffhgf/VPAV0uKXnLPQXilyLSYcxnLpjOXdDGBzylvhdUEx6KmSRqe+2
- h2Ymqn5cA+QNQBICFqubng5TdXc9HCdRbvMx+EdUmakwvg3nGRPHn8IT0f1c/Cg/CY7ZSVQ
- Te0lvdTzdF1ZZo7rh+ZUg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:0GSuoYBPUu8=:6g+iRgz4GwUCeThNrGE2z3
- e5yCaRxYlrxkQzxmVsoSjSFE42YUQ8t0EWyPkirJ/KVZL311TBsZ1DV5hlPGAiqW1wn6AF2b/
- 5pZhWVcEHnwZc3LoOAiv8jOVPGWKqn9vtzFDVh1MILW5P/aI+hgkkAkdUbb/gtZKRJl+T0Sdz
- IKKUt4m8K6iTVf2PNyuURPbRXpmEKKgDY+Xvg7nD/AInU1yWBl50P6ZHn27pFxabilKMAAMv1
- CrTTanhr5fbqdHBWO5pYjuLKu1wImmriVlgOXGb3QeyblAoF1s/bRIkhtUbWcHasOwNYaTDro
- 74W9zY+f9AkA6NTFOVBoc8GMsQIZjRBcCohGQYZOQEAEMTkBFXXkBQGPD8kn2FVGW0iQP7Nl2
- R4HufrR6SgAHOR5wKSqU0gV1Lm9Wn4liVRusifOP/44KOYpT9HnA7vXc/ZoCNZxP1zQUe0qr3
- fMiOxINmEDPJpnJscmfHvyK5Nz1Vona6HvPjRCsssd3yFWv8fuymJ5YHrJOe4lGow+QnjrjTw
- C0jLvEA84OGpeigtHVObbvRvVWXXOrI6iBR2TUVjUMQIdouVlkMAvKW8oG+rkm9KQERRIpzPP
- hf9JfXuIOqzo6yHu+ism732mxmt3W/Pt/28DpyOLJn9nm2yjJURGqLl2kZSy8YmCl/jW5vtuG
- vyJj82jleHLbv1ZxYlyLpsgdQxwSHt9mo7QD+zI8Oe3Yu4b0Wl5xfRI6JIuSQma4mLSLKIfzR
- CRIiPvDtxAIfucxJSDnZi23h4PEwCn0Uz74Riw==
+X-Provags-ID: V03:K1:fcRe0DNUcAVypwYlTp3IXYFjuFjQDfKycU59jL2OVL1JElO2Czw
+ OE3O+8kugMP8MM8qSe0gl4B84vNx8+8fz8CM0FUk0juPvtVA5NIs2vXpuvE13AsmxMmxuWQ
+ zAmwTXQC3OJAye3+ai4/1PSx820rUFtAlA13zxP95WAEKTVRPfspaYCR+JGE7Vc2mrI+6D6
+ Q4DTVOwUDgW9NCviLvM4A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5DF63PkmOZo=:aHh74NeT3u2ZSVdacBqemX
+ +OgQnTWtvULVk3AyDRneAvKH3R/CC+2OEBKWWmZ47pfFbEuM7+OG44vQjTSD7aWscavqKlJE3
+ D4dvgoDnYxHfRuzb7JWJJeVoHrFu089TjO05RGKg82S7i7DnMXiLihFnTUlTJ1qui+G8fMm0U
+ KMnJgWaav9p7FrHCESq/tTzvtzhB0puPNTicKTVBIInsTFSsyXjBiJ2ynuCrTkslg7BIifFOf
+ HI+gZ6lXmDQ+CysBvE6KiOmmrm4oOvJD6QMrK1/uODQqVhx69CYjPQytrNE4Whywbv8X/xSju
+ olrd0EiPfTLFFrzpQ8tgOlJ2/aLpaJ2QNRuZj1pn7+YRw42r6GExgIA5kcpZvUwxAZEuH7lLE
+ dlL+/gM+iKNsOxmqdeKhW2aULrnnObBT/M9zt1wadrhd6Rd43hsSM/g+WJj4P5lU+sXKmkAzM
+ bU3BuyJ4urHe8HiTSSNvywsnvbjJJURyn6who2U5OZ3ltGomYF8D0qRgVCeP/MpOV4HC/9yK7
+ DyN+VXaX3i31zpCCEQOZ0Ea5O8zTFYclkC11FOvloYIaxbW6uUx8N+kpwpuweAuTRKT2JHo0z
+ 5MENXYM4aJYUNNjDadPDn6hEYuHfq8jztoaSg+7lppghIwO6kei8lNZT5Xg39+GWSC4Esgv5u
+ EB6WLUAuNpamsY10tyHcbHLB/zNmLu24NU7S0qMzWC/K8U9RfjAp+BIDFDFht9ElcSzutk8Uu
+ l/9MKfuchOqX1rk7+wInQ0poBINe2fvOnxe+lw==
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In some places, we still used get_seconds() instead of
-ktime_get_real_seconds(), and I'm changing the remaining ones now to
-all use ktime_get_real_seconds() so we use the full available range for
-timestamps instead of overflowing the 'unsigned long' return value in
-year 2106 on 32-bit kernels.
+Both 32-bit amd 64-bit ARM use the asm-generic header files for their
+sysvipc data structures, so no special care is needed to make those
+work beyond y2038, with the one exception of compat mode: Since there
+is no asm-generic definition of the compat mode IPC structures, ARM64
+provides its own copy, and we make those match the changes in the native
+asm-generic header files.
+
+There is sufficient padding in these data structures to extend all
+timestamps to 64 bit, but on big-endian ARM kernels, the padding
+is in the wrong place, so the C library has to ensure it reassembles
+a 64-bit time_t correctly.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- ipc/msg.c | 6 +++---
- ipc/sem.c | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/include/asm/compat.h | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/ipc/msg.c b/ipc/msg.c
-index 56fd1c73eedc..574f76c9a2ff 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -758,7 +758,7 @@ static inline int pipelined_send(struct msg_queue *msq, struct msg_msg *msg,
- 				WRITE_ONCE(msr->r_msg, ERR_PTR(-E2BIG));
- 			} else {
- 				ipc_update_pid(&msq->q_lrpid, task_pid(msr->r_tsk));
--				msq->q_rtime = get_seconds();
-+				msq->q_rtime = ktime_get_real_seconds();
+diff --git a/arch/arm64/include/asm/compat.h b/arch/arm64/include/asm/compat.h
+index 0030f79808b3..1a037b94eba1 100644
+--- a/arch/arm64/include/asm/compat.h
++++ b/arch/arm64/include/asm/compat.h
+@@ -181,10 +181,10 @@ struct compat_ipc64_perm {
  
- 				wake_q_add(wake_q, msr->r_tsk);
- 				WRITE_ONCE(msr->r_msg, msg);
-@@ -859,7 +859,7 @@ static long do_msgsnd(int msqid, long mtype, void __user *mtext,
- 	}
+ struct compat_semid64_ds {
+ 	struct compat_ipc64_perm sem_perm;
+-	compat_time_t  sem_otime;
+-	compat_ulong_t __unused1;
+-	compat_time_t  sem_ctime;
+-	compat_ulong_t __unused2;
++	compat_ulong_t sem_otime;
++	compat_ulong_t sem_otime_high;
++	compat_ulong_t sem_ctime;
++	compat_ulong_t sem_ctime_high;
+ 	compat_ulong_t sem_nsems;
+ 	compat_ulong_t __unused3;
+ 	compat_ulong_t __unused4;
+@@ -192,12 +192,12 @@ struct compat_semid64_ds {
  
- 	ipc_update_pid(&msq->q_lspid, task_tgid(current));
--	msq->q_stime = get_seconds();
-+	msq->q_stime = ktime_get_real_seconds();
- 
- 	if (!pipelined_send(msq, msg, &wake_q)) {
- 		/* no one is waiting for this message, enqueue it */
-@@ -1087,7 +1087,7 @@ static long do_msgrcv(int msqid, void __user *buf, size_t bufsz, long msgtyp, in
- 
- 			list_del(&msg->m_list);
- 			msq->q_qnum--;
--			msq->q_rtime = get_seconds();
-+			msq->q_rtime = ktime_get_real_seconds();
- 			ipc_update_pid(&msq->q_lrpid, task_tgid(current));
- 			msq->q_cbytes -= msg->m_ts;
- 			atomic_sub(msg->m_ts, &ns->msg_bytes);
-diff --git a/ipc/sem.c b/ipc/sem.c
-index 06be75d9217a..c6a8a971769d 100644
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -104,7 +104,7 @@ struct sem {
- 					/* that alter the semaphore */
- 	struct list_head pending_const; /* pending single-sop operations */
- 					/* that do not alter the semaphore*/
--	time_t	sem_otime;	/* candidate for sem_otime */
-+	time64_t	 sem_otime;	/* candidate for sem_otime */
- } ____cacheline_aligned_in_smp;
- 
- /* One sem_array data structure for each set of semaphores in the system. */
-@@ -984,10 +984,10 @@ static int update_queue(struct sem_array *sma, int semnum, struct wake_q_head *w
- static void set_semotime(struct sem_array *sma, struct sembuf *sops)
- {
- 	if (sops == NULL) {
--		sma->sems[0].sem_otime = get_seconds();
-+		sma->sems[0].sem_otime = ktime_get_real_seconds();
- 	} else {
- 		sma->sems[sops[0].sem_num].sem_otime =
--							get_seconds();
-+						ktime_get_real_seconds();
- 	}
- }
- 
+ struct compat_msqid64_ds {
+ 	struct compat_ipc64_perm msg_perm;
+-	compat_time_t  msg_stime;
+-	compat_ulong_t __unused1;
+-	compat_time_t  msg_rtime;
+-	compat_ulong_t __unused2;
+-	compat_time_t  msg_ctime;
+-	compat_ulong_t __unused3;
++	compat_ulong_t msg_stime;
++	compat_ulong_t msg_stime_high;
++	compat_ulong_t msg_rtime;
++	compat_ulong_t msg_rtime_high;
++	compat_ulong_t msg_ctime;
++	compat_ulong_t msg_ctime_high;
+ 	compat_ulong_t msg_cbytes;
+ 	compat_ulong_t msg_qnum;
+ 	compat_ulong_t msg_qbytes;
+@@ -210,12 +210,12 @@ struct compat_msqid64_ds {
+ struct compat_shmid64_ds {
+ 	struct compat_ipc64_perm shm_perm;
+ 	compat_size_t  shm_segsz;
+-	compat_time_t  shm_atime;
+-	compat_ulong_t __unused1;
+-	compat_time_t  shm_dtime;
+-	compat_ulong_t __unused2;
+-	compat_time_t  shm_ctime;
+-	compat_ulong_t __unused3;
++	compat_ulong_t shm_atime;
++	compat_ulong_t shm_atime_high;
++	compat_ulong_t shm_dtime;
++	compat_ulong_t shm_dtime_high;
++	compat_ulong_t shm_ctime;
++	compat_ulong_t shm_ctime_high;
+ 	compat_pid_t   shm_cpid;
+ 	compat_pid_t   shm_lpid;
+ 	compat_ulong_t shm_nattch;
 -- 
 2.9.0
 
