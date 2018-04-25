@@ -1,72 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756092AbeDYSiG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:38:06 -0400
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:44916 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751084AbeDYSiE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:38:04 -0400
-X-Google-Smtp-Source: AIpwx4/FyglKkdNLAw75HsZ1Dwnqfmt9B/FDH1EnyjCrdXaHZLcHh7tellQAC8kimhMwbYfsZYCCPKdeX3+GKvwemzI=
+        id S1756086AbeDYSkc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:40:32 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47215 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755867AbeDYSk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:40:28 -0400
+Date: Wed, 25 Apr 2018 20:40:16 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 7/7] ARM: dts: sun7i: Add dts file for the A20-linova1-7
+ HMI
+Message-ID: <20180425184016.xktppxw7egddr7li@flea>
+References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <1521662593-25468-7-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180322180508.my64gobhh5rc2x2m@flea>
+ <8ef3b259-03b4-6987-286e-36ff627a8b76@micronovasrl.com>
+ <20180424084137.7xfwji2gcibxavvt@flea>
+ <03a02abb-e95c-b4ec-748f-907c0af67969@micronovasrl.com>
 MIME-Version: 1.0
-In-Reply-To: <CADnq5_O5t8aSJE6SFzyjw-6Pmba7B2aYMztVMOOQCF3drBHR5Q@mail.gmail.com>
-References: <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
- <20180420101755.GA11400@infradead.org> <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
- <20180420124625.GA31078@infradead.org> <20180420152111.GR31310@phenom.ffwll.local>
- <20180424184847.GA3247@infradead.org> <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org> <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CADnq5_P3bT0TStSXpKh11ydifv=KwKtRj-7tDS=GQXey+8tBPw@mail.gmail.com>
- <20180425064118.GA28100@infradead.org> <CADnq5_O5t8aSJE6SFzyjw-6Pmba7B2aYMztVMOOQCF3drBHR5Q@mail.gmail.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 25 Apr 2018 11:38:03 -0700
-Message-ID: <CAPcyv4gvz8hWLiz3wSitoh3546WV7d=LRYzu5nd9MpKKH7C=mg@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <03a02abb-e95c-b4ec-748f-907c0af67969@micronovasrl.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 10:44 AM, Alex Deucher <alexdeucher@gmail.com> wrote:
-> On Wed, Apr 25, 2018 at 2:41 AM, Christoph Hellwig <hch@infradead.org> wrote:
->> On Wed, Apr 25, 2018 at 02:24:36AM -0400, Alex Deucher wrote:
->>> > It has a non-coherent transaction mode (which the chipset can opt to
->>> > not implement and still flush), to make sure the AGP horror show
->>> > doesn't happen again and GPU folks are happy with PCIe. That's at
->>> > least my understanding from digging around in amd the last time we had
->>> > coherency issues between intel and amd gpus. GPUs have some bits
->>> > somewhere (in the pagetables, or in the buffer object description
->>> > table created by userspace) to control that stuff.
->>>
->>> Right.  We have a bit in the GPU page table entries that determines
->>> whether we snoop the CPU's cache or not.
->>
->> I can see how that works with the GPU on the same SOC or SOC set as the
->> CPU.  But how is that going to work for a GPU that is a plain old PCIe
->> card?  The cache snooping in that case is happening in the PCIe root
->> complex.
->
-> I'm not a pci expert, but as far as I know, the device sends either a
-> snooped or non-snooped transaction on the bus.  I think the
-> transaction descriptor supports a no snoop attribute.  Our GPUs have
-> supported this feature for probably 20 years if not more, going back
-> to PCI.  Using non-snooped transactions have lower latency and faster
-> throughput compared to snooped transactions.
+Hi Giulio,
 
-Right, 'no snoop' and 'relaxed ordering' have been part of the PCI
-spec since forever. With a plain old PCI-E card the root complex
-indeed arranges for caches to be snooped. Although it's not always
-faster depending on the platform. 'No snoop' traffic may be relegated
-to less bus resources relative to the much more common snooped
-traffic.
+On Tue, Apr 24, 2018 at 08:31:44PM +0200, Giulio Benetti wrote:
+> LiNova1 is not a board with various headers to connect other peripherals
+> such display, pcap etc.
+> It's an HMI that I would consider the same as a Tablet, because it has a
+> plastic enclosure also.
+> 
+> So I would like to understand how to manage it in the best way.
+> Try to consider LiNova1 as a Tablet series, with following list:
+> LiNova1 4.3" ctp
+> LiNova1 7" ctp
+> LiNova1 10.1" ctp
+> LiNova1 4.3" rtp
+> LiNova1 7" rtp
+> LiNova1 10.1" rtp
+> 
+> Every of those has a slightly different BOM, so they are 6 different
+> boards with a common base(uP, ram). And same pcb.
+
+So the LiNova1 is exactly the same in all these setups, the only
+difference is that it has a connector that you connect a different
+display / touchscreen to?
+
+If so, that's definitely a case for device tree overlays.
+
+> So I don't know if submit only the common base and provide
+> separately on our github DT-overlays, or provide as many dts patches
+> as the HMI number with a base dtsi.
+
+That's really up to you, but the overlays will make this much simpler
+to handle precisely because it will reduce the amount of combinations
+you have.
+
+You can even reduce it in your case to 5 of them, 3 for each panel and
+2 for each touchscreen.
+
+> Basically Micronova provides entire system without the capability to hack
+> hardware adding shields of various type.
+> 
+> There are also other 2 LiNova:
+> LiNova2 and LiNova3
+
+Which SoCs are these boards based on?
+
+> So I understand that this could lead to 18 different dts files and 3
+> dtsi files.
+
+Yeah, I'd really like to keep this under control :)
+
+> But with Tablet it should be the same way.  For sure people would be
+> more interested on famous tablets instead of our HMI.
+> 
+> In the case I need to use dt-overlays, you mean .dto files with
+> fragments inside loaded by u-boot or runtime, right?
+
+You don't have to handcode the fragments anymore with the new syntax,
+and U-Boot makes it really trivial to use if you use the FIT image
+format to have multiple overlays bundled in the same image. You can
+choose to apply them dynamically, for example based on an EEPROM or
+some other metric to see which combination you have.
+
+> > > > > +&usb_otg {
+> > > > > +	dr_mode = "otg";
+> > > > 
+> > > > You're saying that this is a USB-A connector? Then it's not OTG since
+> > > > it doesn't have an ID pin, this is an host.
+> > > 
+> > > Right, with a special overlay I will activate Usb Device for RNDIS,
+> > > so modified as host
+> > 
+> > That doesn't really make much sense. The USB OTG is wired only using a
+> > daughter board?
+> 
+> My fault, I've meant "peripheral" in one case and "host" in another case.
+> Usually "host".
+> Are there problem with this?
+> There is no daughter board.
+
+If you have an ID pin and the ability to control VBUS, then you don't
+need to change the device tree, it's done automatically at runtime by
+Linux.
+
+Maxime
+
+-- 
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
