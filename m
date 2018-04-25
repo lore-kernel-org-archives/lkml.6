@@ -1,73 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753840AbeDYWmO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 18:42:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:42859 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753808AbeDYWmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 18:42:11 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 26 Apr 2018 08:40:40 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andy Gross <agross@codeaurora.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>
-Subject: linux-next: build failure after merge of the qcom tree
-Message-ID: <20180426084041.5cf81918@canb.auug.org.au>
+        id S1753916AbeDYWnC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 18:43:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59022 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753850AbeDYWm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 18:42:59 -0400
+Date: Wed, 25 Apr 2018 18:42:57 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+cc: David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
+        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        edumazet@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
+ options
+In-Reply-To: <1524694663.4100.21.camel@HansenPartnership.com>
+Message-ID: <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180421144757.GC14610@bombadil.infradead.org>  <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>  <20180423151545.GU17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+  <20180424125121.GA17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>  <20180424162906.GM17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424170349.GQ17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>  <20180424173836.GR17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+ <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>  <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>  <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>  <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524694663.4100.21.camel@HansenPartnership.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bMFW/RqPBvphZ+mxtjv19IA"; protocol="application/pgp-signature"
+Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-1203068836-1524696178=:25124"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/bMFW/RqPBvphZ+mxtjv19IA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hi Andy,
+--185206533-1203068836-1524696178=:25124
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-After merging the qcom tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
 
-ERROR: "geni_se_select_mode" [drivers/tty/serial/qcom_geni_serial.ko] undef=
-ined!
-ERROR: "geni_se_init" [drivers/tty/serial/qcom_geni_serial.ko] undefined!
-ERROR: "geni_se_config_packing" [drivers/tty/serial/qcom_geni_serial.ko] un=
-defined!
-ERROR: "geni_se_resources_off" [drivers/tty/serial/qcom_geni_serial.ko] und=
-efined!
-ERROR: "geni_se_resources_on" [drivers/tty/serial/qcom_geni_serial.ko] unde=
-fined!
 
-Probably caused by commit
+On Wed, 25 Apr 2018, James Bottomley wrote:
 
-  eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
+> On Wed, 2018-04-25 at 17:22 -0400, Mikulas Patocka wrote:
+> > 
+> > On Wed, 25 Apr 2018, David Rientjes wrote:
+> > > 
+> > > Do we really need the new config option?  This could just be
+> > > manually  tunable via fault injection IIUC.
+> > 
+> > We do, because we want to enable it in RHEL and Fedora debugging
+> > kernels, so that it will be tested by the users.
+> > 
+> > The users won't use some extra magic kernel options or debugfs files.
+> 
+> If it can be enabled via a tunable, then the distro can turn it on
+> without the user having to do anything.
 
-I have used the qcom tree from next-20180424 for today.
+You need to enable it on boot. Enabling it when the kernel starts to 
+execute userspace code is already too late (because you would miss 
+kvmalloc calls in the kernel boot path).
 
---=20
-Cheers,
-Stephen Rothwell
+These are files in the kernel-debug rpm package. Where would you put the 
+extra kernel parameter to enable this feature? None of these files contain 
+kernel parameters.
 
---Sig_/bMFW/RqPBvphZ+mxtjv19IA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+kernel-debug              /boot/.vmlinuz-3.10.0-693.21.1.el7.x86_64.debug.hmac
+kernel-debug              /boot/System.map-3.10.0-693.21.1.el7.x86_64.debug
+kernel-debug              /boot/config-3.10.0-693.21.1.el7.x86_64.debug
+kernel-debug              /boot/initramfs-3.10.0-693.21.1.el7.x86_64.debug.img
+kernel-debug              /boot/symvers-3.10.0-693.21.1.el7.x86_64.debug.gz
+kernel-debug              /boot/vmlinuz-3.10.0-693.21.1.el7.x86_64.debug
+kernel-debug              /etc/ld.so.conf.d/kernel-3.10.0-693.21.1.el7.x86_64.debug.conf
+kernel-debug              /lib/modules/3.10.0-693.21.1.el7.x86_64.debug
 
------BEGIN PGP SIGNATURE-----
+> If you want to present the user with a different boot option, you can 
+> (just have the tunable set on the command line), but being tunable 
+> driven means that you don't have to choose that option, you could 
+> automatically enable it under a range of circumstances.  I think most 
+> sane distributions would want that flexibility.
+> 
+> Kconfig proliferation, conversely, is a bit of a nightmare from both
+> the user and the tester's point of view, so we're trying to avoid it
+> unless absolutely necessary.
+> 
+> James
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrhA+kACgkQAVBC80lX
-0GwMBAf9HwEPcZeJqpEqQ+LbsNl9X1ZzLlrog43+FrMaXXp7VlOSdgecXgCcFQRn
-vVE9Xm4Kslb3COrH6qYXt/XIUYNelFLj7ZlMo5dDniKCBJ1+TEtV+H8RDGcnrwbk
-LlEic7CR5NODqcJdw9lg1Qaai/j8PyE54l1DjoZEkDSMMyHa6Kq7xcrT1D8s/EAe
-xjc0Y47PGfwsLwMrvjCcTMhK0ndgzSkcPoucWrzal0oKpCyIBWeosh2KtT3s/I46
-4YXrIk6RELF3mysYFg3zwpyThxiDKj0/cEUKinkT7hu8Qs8cUZkqAzV/Mm72Cvah
-EFZ4qyop80Vjd/PGoJdJJWIQN3MjpA==
-=Oa+f
------END PGP SIGNATURE-----
+I already offered that we don't need to introduce a new kernel option and 
+we can bind this feature to any other kernel option, that is enabled in 
+the debug kernel, for example CONFIG_DEBUG_SG. Michal said no and he said 
+that he wants a new kernel option instead.
 
---Sig_/bMFW/RqPBvphZ+mxtjv19IA--
+Mikulas
+--185206533-1203068836-1524696178=:25124--
