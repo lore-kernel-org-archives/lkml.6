@@ -1,133 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751328AbeDYHlz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 03:41:55 -0400
-Received: from imap.thunk.org ([74.207.234.97]:54880 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750962AbeDYHlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 03:41:49 -0400
-Date: Wed, 25 Apr 2018 03:41:44 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Paul Menzel <pmenzel+linux-random-number@molgen.mpg.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-Message-ID: <20180425074144.GA18803@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Paul Menzel <pmenzel+linux-random-number@molgen.mpg.de>,
-        linux-kernel@vger.kernel.org
-References: <42c1b84b-ab1f-5577-6304-e0985a637cf9@molgen.mpg.de>
- <20180424135621.GD4189@thunk.org>
- <20180424154904.GC30619@thunk.org>
- <d251173a-d7c0-3f55-7c22-a100f6093176@molgen.mpg.de>
+        id S1751363AbeDYHmE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 03:42:04 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7604 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750962AbeDYHl6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 03:41:58 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 25 Apr 2018 00:41:57 -0700
+Date: Wed, 25 Apr 2018 09:41:51 +0200
+From: Thierry Reding <treding@nvidia.com>
+To: Christoph Hellwig <hch@infradead.org>
+CC: Daniel Vetter <daniel@ffwll.ch>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>
+Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
+Message-ID: <20180425074151.GA2271@ulmo>
+References: <20180420101755.GA11400@infradead.org>
+ <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
+ <20180420124625.GA31078@infradead.org>
+ <20180420152111.GR31310@phenom.ffwll.local>
+ <20180424184847.GA3247@infradead.org>
+ <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
+ <20180425054855.GA17038@infradead.org>
+ <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
+ <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
+ <20180425064335.GB28100@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d251173a-d7c0-3f55-7c22-a100f6093176@molgen.mpg.de>
+In-Reply-To: <20180425064335.GB28100@infradead.org>
+X-NVConfidentiality: public
 User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+X-Originating-IP: [10.21.62.231]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
+ (10.26.138.13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Does this help on your system?
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-						- Ted
+On Tue, Apr 24, 2018 at 11:43:35PM -0700, Christoph Hellwig wrote:
+> On Wed, Apr 25, 2018 at 08:23:15AM +0200, Daniel Vetter wrote:
+> > For more fun:
+> >=20
+> > https://www.spinics.net/lists/dri-devel/msg173630.html
+> >=20
+> > Yeah, sometimes we want to disable the iommu because the on-gpu
+> > pagetables are faster ...
+>=20
+> I am not on this list, but remote NAK from here.  This needs an
+> API from the iommu/dma-mapping code.  Drivers have no business poking
+> into these details.
 
-commit 4e00b339e264802851aff8e73cde7d24b57b18ce
-Author: Theodore Ts'o <tytso@mit.edu>
-Date:   Wed Apr 25 01:12:32 2018 -0400
+The interfaces that the above patch uses are all EXPORT_SYMBOL_GPL,
+which is rather misleading if they are not meant to be used by drivers
+directly.
 
-    random: rate limit unseeded randomness warnings
-    
-    On systems without sufficient boot randomness, no point spamming dmesg.
-    
-    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-    Cc: stable@vger.kernel.org
+> Thierry, please resend this with at least the iommu list and
+> linux-arm-kernel in Cc to have a proper discussion on the right API.
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 721dca8db9cf..cd888d4ee605 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -261,6 +261,7 @@
- #include <linux/ptrace.h>
- #include <linux/workqueue.h>
- #include <linux/irq.h>
-+#include <linux/ratelimit.h>
- #include <linux/syscalls.h>
- #include <linux/completion.h>
- #include <linux/uuid.h>
-@@ -438,6 +439,16 @@ static void _crng_backtrack_protect(struct crng_state *crng,
- static void process_random_ready_list(void);
- static void _get_random_bytes(void *buf, int nbytes);
- 
-+static struct ratelimit_state unseeded_warning =
-+	RATELIMIT_STATE_INIT("warn_unseeded_randomness", HZ, 3);
-+static struct ratelimit_state urandom_warning =
-+	RATELIMIT_STATE_INIT("warn_urandom_randomness", HZ, 3);
-+
-+static int ratelimit_disable __read_mostly;
-+
-+module_param_named(ratelimit_disable, ratelimit_disable, int, 0644);
-+MODULE_PARM_DESC(ratelimit_disable, "Disable random ratelimit suppression");
-+
- /**********************************************************************
-  *
-  * OS independent entropy store.   Here are the functions which handle
-@@ -932,6 +943,18 @@ static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
- 		process_random_ready_list();
- 		wake_up_interruptible(&crng_init_wait);
- 		pr_notice("random: crng init done\n");
-+		if (unseeded_warning.missed) {
-+			pr_notice("random: %d get_random_xx warning(s) missed "
-+				  "due to ratelimiting\n",
-+				  unseeded_warning.missed);
-+			unseeded_warning.missed = 0;
-+		}
-+		if (urandom_warning.missed) {
-+			pr_notice("random: %d urandom warning(s) missed "
-+				  "due to ratelimiting\n",
-+				  urandom_warning.missed);
-+			urandom_warning.missed = 0;
-+		}
- 	}
- }
- 
-@@ -1572,8 +1595,9 @@ static void _warn_unseeded_randomness(const char *func_name, void *caller,
- #ifndef CONFIG_WARN_ALL_UNSEEDED_RANDOM
- 	print_once = true;
- #endif
--	pr_notice("random: %s called from %pS with crng_init=%d\n",
--		  func_name, caller, crng_init);
-+	if (__ratelimit(&unseeded_warning))
-+		pr_notice("random: %s called from %pS with crng_init=%d\n",
-+			  func_name, caller, crng_init);
- }
- 
- /*
-@@ -1767,6 +1791,10 @@ static int rand_initialize(void)
- 	init_std_data(&blocking_pool);
- 	crng_initialize(&primary_crng);
- 	crng_global_init_time = jiffies;
-+	if (ratelimit_disable) {
-+		urandom_warning.interval = 0;
-+		unseeded_warning.interval = 0;
-+	}
- 	return 0;
- }
- early_initcall(rand_initialize);
-@@ -1834,9 +1862,10 @@ urandom_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
- 
- 	if (!crng_ready() && maxwarn > 0) {
- 		maxwarn--;
--		printk(KERN_NOTICE "random: %s: uninitialized urandom read "
--		       "(%zd bytes read)\n",
--		       current->comm, nbytes);
-+		if (__ratelimit(&urandom_warning))
-+			printk(KERN_NOTICE "random: %s: uninitialized "
-+			       "urandom read (%zd bytes read)\n",
-+			       current->comm, nbytes);
- 		spin_lock_irqsave(&primary_crng.lock, flags);
- 		crng_init_cnt = 0;
- 		spin_unlock_irqrestore(&primary_crng.lock, flags);
+I'm certainly open to help with finding a correct solution, but the
+patch above was purposefully terse because this is something that I
+hope we can get backported to v4.16 to unbreak Nouveau. Coordinating
+such a backport between ARM and DRM trees does not sound like something
+that would help getting this fixed in v4.16.
+
+The fundamental issue here is that the DMA/IOMMU integration is
+something that has caused a number of surprising regressions in the past
+because it tends to sneak in unexpectedly. For example the current
+regression shows up only if CONFIG_ARM_DMA_USE_IOMMU=3Dy because the DMA
+API will then transparently create a second mapping and mess things up.
+Everything works fine if that option is disabled. This is ultimately why
+we didn't notice, since we don't enable that option by default. I do
+have a patch that I plan to apply to the Tegra tree that will always
+enable CONFIG_ARM_DMA_USE_IOMMU=3Dy on Tegra to avoid any such surprises
+in the future, but I can obviously only apply that once the above patch
+is applied to Nouveau, otherwise we'll break Nouveau unconditionally.
+
+Granted, this issue could've been caught with a little more testing, but
+in retrospect I think it would've been a lot better if ARM_DMA_USE_IOMMU
+was just enabled unconditionally if it has side-effects that platforms
+don't opt in to but have to explicitly opt out of.
+
+Thierry
+
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrgMTwACgkQ3SOs138+
+s6FhzxAAhAWFPLKYY1teMqCaHfPUBIUiOMRZJU7ufMMjY28rJFHHZGQoa0Tj3WzZ
+2msD0RZKxdnYuRAs90G3XHtYYULICSYi3XJ31V9pLHHmptLNHmeAbzQ39lLue19L
+Cc+1LozOpc99zmDTW94SdXzzoIqHzaPA0Pm+020+np6ASBxfn5jnkVTbB48Wm4WF
+ug5gt+6n7jCX3jXOomaHJVeZKSCj57SIKb9YxJ7kconRU6J3zgVSaprku2yxKpeV
+/ii6IdAMlb1vpFi126ssD81aJ72e2yWBwegLkn2m+exnz7BzkL2qs82ERiTYJZ8x
+IeKoC8tNQcA1Ev6v8MpeUjpaGJuiTQjXXUvrBj3xh5hG+5yt8gFcRE1h4/hFHz2O
+/GJwPNfWZsESd82c/uOAEGhuYiRkh85mP3JqRZOXt3xryf9tdpqGf6YI0dpE6Yle
+Xc1hNRdDOKPswQxdSKoI75yRWD42fWEr2g3nY2KQO/FMZqPMq8Sp/vGzoBI1ZALH
+W3f6ACLxBzrmUtLcBWWX20FoQ+wwrQefezXXljVIU8i/ZPh1Pcn9u9PCAW3FgGV6
+lSdzTjsupvbC5rFvH/JL0vKcBf1UAZdctbV5preQOGBOv0qyy/mSPDUJCRhZc3M5
+A5Y0hGYKZPw4EyGyA/YzsqcOFj5EmdXS5DQVoeYk/8ENbm+WEHI=
+=wFUj
+-----END PGP SIGNATURE-----
+
+--3MwIy2ne0vdjdPXF--
