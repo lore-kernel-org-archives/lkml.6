@@ -1,85 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753712AbeDYWLb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 18:11:31 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46378 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751887AbeDYWLY (ORCPT
+        id S1753641AbeDYWRt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 18:17:49 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44656 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752958AbeDYWRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 18:11:24 -0400
-X-Google-Smtp-Source: AIpwx48twdQ7q1LMpmmnRA+B6Y2No23xmkMZ8sxUOl3nlk0g5XvPxjTDlrCHshuxXd1LTr+4IOn+xg==
-Date: Wed, 25 Apr 2018 15:11:23 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org
-Subject: Re: [PATCH v6 06/10] drivers: qcom: rpmh-rsc: allow invalidation of
- sleep/wake TCS
-Message-ID: <20180425221123.GD243180@google.com>
-References: <20180419221635.17849-1-ilina@codeaurora.org>
- <20180419221635.17849-7-ilina@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180419221635.17849-7-ilina@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 25 Apr 2018 18:17:47 -0400
+Message-ID: <1524694663.4100.21.camel@HansenPartnership.com>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
+ fallback options
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Mikulas Patocka <mpatocka@redhat.com>,
+        David Rientjes <rientjes@google.com>
+Cc: dm-devel@redhat.com, eric.dumazet@gmail.com, mst@redhat.com,
+        netdev@vger.kernel.org, jasowang@redhat.com,
+        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@kernel.org>,
+        linux-mm@kvack.org, edumazet@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Date: Wed, 25 Apr 2018 15:17:43 -0700
+In-Reply-To: <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180421144757.GC14610@bombadil.infradead.org>
+         <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+         <20180423151545.GU17484@dhcp22.suse.cz>
+         <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+         <20180424125121.GA17484@dhcp22.suse.cz>
+         <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>
+         <20180424162906.GM17484@dhcp22.suse.cz>
+         <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
+         <20180424170349.GQ17484@dhcp22.suse.cz>
+         <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
+         <20180424173836.GR17484@dhcp22.suse.cz>
+         <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+         <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
+         <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
+         <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
+         <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 04:16:31PM -0600, Lina Iyer wrote:
-> Allow sleep and wake commands to be cleared from the respective TCSes,
-> so that they can be re-populated.
+On Wed, 2018-04-25 at 17:22 -0400, Mikulas Patocka wrote:
 > 
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
+> On Wed, 25 Apr 2018, David Rientjes wrote:
 > 
-> Changes in v6:
-> 	- remove unnecessary locks around __tcs_invalidate
-> 	- rename function to tcs_invaldiate
+> > On Wed, 25 Apr 2018, Mikulas Patocka wrote:
+> > 
+> > > From: Mikulas Patocka <mpatocka@redhat.com>
+> > > Subject: [PATCH] fault-injection: introduce kvmalloc fallback
+> > > options
+> > > 
+> > > This patch introduces a fault-injection option
+> > > "kvmalloc_fallback". This option makes kvmalloc randomly fall
+> > > back to vmalloc.
+> > > 
+> > > Unfortunately, some kernel code has bugs - it uses kvmalloc and
+> > > then uses DMA-API on the returned memory or frees it with kfree.
+> > > Such bugs were found in the virtio-net driver, dm-integrity or
+> > > RHEL7 powerpc-specific code. This options helps to test for these
+> > > bugs.
+> > > 
+> > > The patch introduces a config option
+> > > FAIL_KVMALLOC_FALLBACK_PROBABILITY.
+> > > It can be enabled in distribution debug kernels, so that kvmalloc
+> > > abuse can be tested by the users. The default can be overridden
+> > > with "kvmalloc_fallback" parameter or in
+> > > /sys/kernel/debug/kvmalloc_fallback/.
+> > > 
+> > 
+> > Do we really need the new config option?  This could just be
+> > manually  tunable via fault injection IIUC.
 > 
-> Changes in v4:
-> 	- refactored the rphm_rsc_invalidate()
-> ---
->  drivers/soc/qcom/rpmh-rsc.c | 45 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
+> We do, because we want to enable it in RHEL and Fedora debugging
+> kernels, so that it will be tested by the users.
 > 
-> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-> index d169f7da5422..170d4a10275d 100644
-> --- a/drivers/soc/qcom/rpmh-rsc.c
-> +++ b/drivers/soc/qcom/rpmh-rsc.c
-> @@ -101,6 +101,51 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
->  	return &drv->tcs[type];
->  }
->  
-> +static int tcs_invalidate(struct rsc_drv *drv, int type)
-> +{
-> +	int m;
-> +	struct tcs_group *tcs;
-> +
-> +	tcs = get_tcs_of_type(drv, type);
-> +	if (IS_ERR(tcs))
-> +		return PTR_ERR(tcs);
-> +
-> +	spin_lock(&tcs->lock);
-> +	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
-> +		spin_unlock(&tcs->lock);
-> +		return 0;
-> +	}
-> +
-> +	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
-> +		if (!tcs_is_free(drv, m)) {
-> +			spin_unlock(&tcs->lock);
-> +			return -EAGAIN;
-> +		}
-> +		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0);
-> +		bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
+> The users won't use some extra magic kernel options or debugfs files.
 
-Shouldn't this only clear the slots corresponding to 'm'?
+If it can be enabled via a tunable, then the distro can turn it on
+without the user having to do anything.  If you want to present the
+user with a different boot option, you can (just have the tunable set
+on the command line), but being tunable driven means that you don't
+have to choose that option, you could automatically enable it under a
+range of circumstances.  I think most sane distributions would want
+that flexibility.
 
-If resetting the entire bitmap is really intended it could be done
-once after the loop, though the bitmap might be left in an
-inconsistent state if a TCS is still in use.
+Kconfig proliferation, conversely, is a bit of a nightmare from both
+the user and the tester's point of view, so we're trying to avoid it
+unless absolutely necessary.
+
+James
