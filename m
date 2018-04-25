@@ -1,106 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753377AbeDYWE5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 18:04:57 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48900 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751887AbeDYWEy (ORCPT
+        id S1753646AbeDYWFW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 18:05:22 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36340 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753542AbeDYWFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 18:04:54 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Philippe CORNU <philippe.cornu@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings/display/bridge: sii902x: add optional power supplies
-Date: Thu, 26 Apr 2018 01:05:06 +0300
-Message-ID: <3518575.OAoTTXDygq@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180425171123.xhyoay3nu463btoq@rob-hp-laptop>
-References: <20180425075314.19137-1-philippe.cornu@st.com> <1559016.ZjzeSVB84W@avalon> <20180425171123.xhyoay3nu463btoq@rob-hp-laptop>
+        Wed, 25 Apr 2018 18:05:17 -0400
+X-Google-Smtp-Source: AIpwx4/dUd5C1dTK41Zq2vxIJsYK8ayXmo5VZlK0Soo9KiSt4VMe9nV+a+ZvYN5PoW/Cr+t31+h+VQ==
+Date: Wed, 25 Apr 2018 15:06:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: Add SDM845 SMEM nodes
+Message-ID: <20180425220626.GM2052@tuxbook-pro>
+References: <20180425144631.19731-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180425144631.19731-1-sibis@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Wed 25 Apr 07:46 PDT 2018, Sibi Sankar wrote:
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index 9be763da0664..bea985045759 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -21,6 +21,27 @@
+>  		reg = <0 0x80000000 0 0>;
+>  	};
+>  
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		memory@85fc0000 {
+> +			reg = <0 0x85fc0000 0 0x40000>;
 
-On Wednesday, 25 April 2018 20:11:23 EEST Rob Herring wrote:
-> On Wed, Apr 25, 2018 at 04:17:25PM +0300, Laurent Pinchart wrote:
-> > On Wednesday, 25 April 2018 15:20:04 EEST Philippe CORNU wrote:
-> >> On 04/25/2018 11:01 AM, Laurent Pinchart wrote:
-> >>> On Wednesday, 25 April 2018 10:53:13 EEST Philippe Cornu wrote:
-> >>>> Add optional power supplies using the description found in
-> >>>> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
-> >>>> 
-> >>>> There is a single 1v2 supply voltage named vcc12 from which cvcc12
-> >>>> (digital core) and avcc12 (TMDS analog) are derived because according
-> >>>> to this data sheet:
-> >>>> "cvcc12 and avcc12 can be derived from the same power source"
-> >>> 
-> >>> Shouldn't the power supplies be mandatory, as explained by Mark in
-> >>> https://lists.freedesktop.org/archives/dri-devel/2018-April/172400.html
-> >>> ?
-> >> 
-> >> Laurent,
-> >> Many thanks Laurent for your comment, I understood the merge of the two
-> >> 1v2 power supplies but missed the "mandatory" part... maybe because this
-> >> patch (with optional power supplies) already got the reviewed-by from
-> >> Rob, I thought the discussion thread you pointed out was applicable
-> >> "only" to totally new driver documentation.
-> >> 
-> >> So, on my side, as a "new user" of sii902x IC, no problem to put these
-> >> power supplies as mandatory instead of optional properties but I would
-> >> like to be sure this is applicable to both old and new bindings doc : )
-> > 
-> > We obviously need to retain backward compatibility, so on the driver side
-> > you need to treat those power supplies as optional. From a DT bindings
-> > point of view, however, I think they should be mandatory for new DT.
-> 
-> We don't really have a way to describe these 3 conditions (required for
-> all, optional for all, and required for new). So generally we make
-> additions optional. The exception sometimes is if we update all the dts
-> files.
+The region 0x85fe0000 + 0x20000 seems to be command db, which should be
+described on its own. So please reduce the size to 0x20000.
 
-Can't we just make it mandatory in the bindings, as long as we treat it as 
-optional in drivers ?
+> +			no-map;
+> +		};
+> +
+> +		smem_mem: smem-mem@86000000 {
 
-> >> Rob,
-> >> could you please confirm these power supply properties should be
-> >> "mandatory"? if yes, should we then modify other optional properties like
-> >> the reset-gpios too in the future?
-> > 
-> > The GPIOs properties are different in my opinion, as there's no
-> > requirement to connect for instance the reset pin to a GPIO controllable
-> > by the SoC. The pin could be hardwired to VCC, or connected to a system
-> > reset that is automatically managed without SoC intervention. The power
-> > supplies, however, are mandatory, in the sense that the chip will not work
-> > if you leave the power supplies unconnected.
-> 
-> DT only needs to describe what matters to s/w. If a regulator is
-> fixed and you don't need to know its voltage (or other read-only
-> parameters), then there's not much point in putting it in DT.
-> 
-> I'd probably base this more at a platform level and you either use
-> regulator binding or you don't. It's perfectly valid that you want to do
-> things like regulator setup, pin ctrl and muxing setup, etc. all in
-> firmware and the OS doesn't touch any of that.
-> 
-> That's all a big can of worms which we shouldn't solve on this 2 line
-> change. I think this change is fine as-is, so:
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+smem_mem: memory@86000000 ?
 
--- 
+> +			reg = <0x0 0x86000000 0x0 0x200000>;
+> +			no-map;
+> +		};
+> +
+> +		memory@86000000 {
+
+memory@86200000
+
+> +			reg = <0 0x86200000 0 0x2d00000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+
+The rest looks good.
+
 Regards,
-
-Laurent Pinchart
+Bjorn
