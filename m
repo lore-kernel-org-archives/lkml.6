@@ -1,114 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751181AbeDYGPJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:15:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751027AbeDYGPG (ORCPT
+        id S1751412AbeDYGPp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:15:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40558 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751027AbeDYGPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:15:06 -0400
-From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-To: rjw@rjwysocki.net, viresh.kumar@linaro.org
-Cc: benh@kernel.crashing.org, mpe@ellerman.id.au, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        svaidy@linux.vnet.ibm.com,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH] cpufreq: powernv: Remove global pstate ramp-down timer in POWER9
-Date: Wed, 25 Apr 2018 11:44:55 +0530
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 18042506-0012-0000-0000-000005CE7044
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042506-0013-0000-0000-0000194AE71F
-Message-Id: <1524636895-27185-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-25_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804250055
+        Wed, 25 Apr 2018 02:15:40 -0400
+Date: Tue, 24 Apr 2018 23:15:37 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        mjpeg-users@lists.sourceforge.net, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: zoran: move to dma-mapping interface
+Message-ID: <20180425061537.GA23383@infradead.org>
+References: <20180424204158.2764095-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424204158.2764095-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-POWER9 doesnot support global pstate requests for the chip. So remove
-the timer logic which slowly ramps down the global pstate in P9
-platforms.
+On Tue, Apr 24, 2018 at 10:40:45PM +0200, Arnd Bergmann wrote:
+> No drivers should use virt_to_bus() any more. This converts
+> one of the few remaining ones to the DMA mapping interface.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/media/pci/zoran/Kconfig        |  2 +-
+>  drivers/media/pci/zoran/zoran.h        | 10 +++++--
+>  drivers/media/pci/zoran/zoran_card.c   | 10 +++++--
+>  drivers/media/pci/zoran/zoran_device.c | 16 +++++-----
+>  drivers/media/pci/zoran/zoran_driver.c | 54 +++++++++++++++++++++++++---------
+>  5 files changed, 63 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/media/pci/zoran/Kconfig b/drivers/media/pci/zoran/Kconfig
+> index 39ec35bd21a5..26f40e124a32 100644
+> --- a/drivers/media/pci/zoran/Kconfig
+> +++ b/drivers/media/pci/zoran/Kconfig
+> @@ -1,6 +1,6 @@
+>  config VIDEO_ZORAN
+>  	tristate "Zoran ZR36057/36067 Video For Linux"
+> -	depends on PCI && I2C_ALGOBIT && VIDEO_V4L2 && VIRT_TO_BUS
+> +	depends on PCI && I2C_ALGOBIT && VIDEO_V4L2
+>  	depends on !ALPHA
+>  	help
+>  	  Say Y for support for MJPEG capture cards based on the Zoran
+> diff --git a/drivers/media/pci/zoran/zoran.h b/drivers/media/pci/zoran/zoran.h
+> index 9bb3c21aa275..9ff3a9acb60a 100644
+> --- a/drivers/media/pci/zoran/zoran.h
+> +++ b/drivers/media/pci/zoran/zoran.h
+> @@ -183,13 +183,14 @@ struct zoran_buffer {
+>  	struct zoran_sync bs;		/* DONE: info to return to application */
+>  	union {
+>  		struct {
+> -			__le32 *frag_tab;	/* addresses of frag table */
+> -			u32 frag_tab_bus;	/* same value cached to save time in ISR */
+> +			__le32 *frag_tab;	/* DMA addresses of frag table */
+> +			void **frag_virt_tab;	/* virtual addresses of frag table */
+> +			dma_addr_t frag_tab_dma;/* same value cached to save time in ISR */
+>  		} jpg;
+>  		struct {
+>  			char *fbuffer;		/* virtual address of frame buffer */
+>  			unsigned long fbuffer_phys;/* physical address of frame buffer */
+> -			unsigned long fbuffer_bus;/* bus address of frame buffer */
+> +			dma_addr_t fbuffer_dma;/* bus address of frame buffer */
+>  		} v4l;
+>  	};
+>  };
+> @@ -221,6 +222,7 @@ struct zoran_fh {
+>  
+>  	struct zoran_overlay_settings overlay_settings;
+>  	u32 *overlay_mask;			/* overlay mask */
+> +	dma_addr_t overlay_mask_dma;
+>  	enum zoran_lock_activity overlay_active;/* feature currently in use? */
+>  
+>  	struct zoran_buffer_col buffers;	/* buffers' info */
+> @@ -307,6 +309,7 @@ struct zoran {
+>  
+>  	struct zoran_overlay_settings overlay_settings;
+>  	u32 *overlay_mask;	/* overlay mask */
+> +	dma_addr_t overlay_mask_dma;
+>  	enum zoran_lock_activity overlay_active;	/* feature currently in use? */
+>  
+>  	wait_queue_head_t v4l_capq;
+> @@ -346,6 +349,7 @@ struct zoran {
+>  
+>  	/* zr36057's code buffer table */
+>  	__le32 *stat_com;		/* stat_com[i] is indexed by dma_head/tail & BUZ_MASK_STAT_COM */
+> +	dma_addr_t stat_com_dma;
+>  
+>  	/* (value & BUZ_MASK_FRAME) corresponds to index in pend[] queue */
+>  	int jpg_pend[BUZ_MAX_FRAME];
+> diff --git a/drivers/media/pci/zoran/zoran_card.c b/drivers/media/pci/zoran/zoran_card.c
+> index a6b9ebd20263..dabd8bf77472 100644
+> --- a/drivers/media/pci/zoran/zoran_card.c
+> +++ b/drivers/media/pci/zoran/zoran_card.c
+> @@ -890,6 +890,7 @@ zoran_open_init_params (struct zoran *zr)
+>  	/* User must explicitly set a window */
+>  	zr->overlay_settings.is_set = 0;
+>  	zr->overlay_mask = NULL;
+> +	zr->overlay_mask_dma = 0;
 
-Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
----
- drivers/cpufreq/powernv-cpufreq.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+I don't think this zeroing is required, and given that 0 is a valid
+dma address on some platforms is also is rather confusing.:w
 
-diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
-index 0591874..71f8682 100644
---- a/drivers/cpufreq/powernv-cpufreq.c
-+++ b/drivers/cpufreq/powernv-cpufreq.c
-@@ -750,8 +750,13 @@ static int powernv_cpufreq_target_index(struct cpufreq_policy *policy,
- 
- 	cur_msec = jiffies_to_msecs(get_jiffies_64());
- 
--	spin_lock(&gpstates->gpstate_lock);
- 	freq_data.pstate_id = idx_to_pstate(new_index);
-+	if (!gpstates) {
-+		freq_data.gpstate_id = freq_data.pstate_id;
-+		goto no_gpstate;
-+	}
-+
-+	spin_lock(&gpstates->gpstate_lock);
- 
- 	if (!gpstates->last_sampled_time) {
- 		gpstate_idx = new_index;
-@@ -801,6 +806,7 @@ static int powernv_cpufreq_target_index(struct cpufreq_policy *policy,
- 
- 	spin_unlock(&gpstates->gpstate_lock);
- 
-+no_gpstate:
- 	/*
- 	 * Use smp_call_function to send IPI and execute the
- 	 * mtspr on target CPU.  We could do that without IPI
-@@ -835,6 +841,13 @@ static int powernv_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 		kernfs_put(kn);
- 	}
- 
-+	policy->freq_table = powernv_freqs;
-+	policy->fast_switch_possible = true;
-+
-+	if (pvr_version_is(PVR_POWER9))
-+		return 0;
-+
-+	/* Initialise Gpstate ramp-down timer only on POWER8 */
- 	gpstates =  kzalloc(sizeof(*gpstates), GFP_KERNEL);
- 	if (!gpstates)
- 		return -ENOMEM;
-@@ -849,15 +862,14 @@ static int powernv_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 				msecs_to_jiffies(GPSTATE_TIMER_INTERVAL);
- 	spin_lock_init(&gpstates->gpstate_lock);
- 
--	policy->freq_table = powernv_freqs;
--	policy->fast_switch_possible = true;
- 	return 0;
- }
- 
- static int powernv_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	/* timer is deleted in cpufreq_cpu_stop() */
--	kfree(policy->driver_data);
-+	if (policy->driver_data)
-+		kfree(policy->driver_data);
- 
- 	return 0;
- }
-@@ -990,7 +1002,8 @@ static void powernv_cpufreq_stop_cpu(struct cpufreq_policy *policy)
- 	freq_data.pstate_id = idx_to_pstate(powernv_pstate_info.min);
- 	freq_data.gpstate_id = idx_to_pstate(powernv_pstate_info.min);
- 	smp_call_function_single(policy->cpu, set_pstate, &freq_data, 1);
--	del_timer_sync(&gpstates->timer);
-+	if (gpstates)
-+		del_timer_sync(&gpstates->timer);
- }
- 
- static unsigned int powernv_fast_switch(struct cpufreq_policy *policy,
--- 
-1.8.3.1
+>  
+>  		mask_line_size = (BUZ_MAX_WIDTH + 31) / 32;
+> -		reg = virt_to_bus(zr->overlay_mask);
+> +		reg = zr->overlay_mask_dma;
+>  		btwrite(reg, ZR36057_MMTR);
+> -		reg = virt_to_bus(zr->overlay_mask + mask_line_size);
+> +		reg = zr->overlay_mask_dma + mask_line_size;
+
+I think this would be easier to read if the reg assignments got
+removed, e.g.
+
+	btwrite(zr->overlay_mask_dma, ZR36057_MMTR);
+	btwrite(zr->overlay_mask_dma + mask_line_size, ZR36057_MMBR);
+
+Same in a few other places.
+
+> +		virt_tab = (void *)get_zeroed_page(GFP_KERNEL);
+> +		if (!mem || !virt_tab) {
+>  			dprintk(1,
+>  				KERN_ERR
+>  				"%s: %s - get_zeroed_page (frag_tab) failed for buffer %d\n",
+>  				ZR_DEVNAME(zr), __func__, i);
+> +			kfree(mem);
+> +			kfree(virt_tab);
+>  			jpg_fbuffer_free(fh);
+>  			return -ENOBUFS;
+>  		}
+>  		fh->buffers.buffer[i].jpg.frag_tab = (__le32 *)mem;
+> -		fh->buffers.buffer[i].jpg.frag_tab_bus = virt_to_bus(mem);
+> +		fh->buffers.buffer[i].jpg.frag_virt_tab = virt_tab;
+
+>From a quick look it seems like frag_tab should be a dma_alloc_coherent
+allocation, or you would need a lot of cache sync operations.
+
+That probably also means it can use dma_mmap_coherent instead of the
+handcrafted remap_pfn_range loop and the PageReserved abuse.
