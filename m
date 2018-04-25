@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751569AbeDYG12 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:27:28 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:40749 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751323AbeDYG1Y (ORCPT
+        id S1751612AbeDYG1e (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:27:34 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:47079 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751538AbeDYG12 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:27:24 -0400
-X-Google-Smtp-Source: AIpwx4+gjcNHcAtf9K4zNDP15bdpIpFrhrYcuaCzpqIWy2mezDsDFqFysISPGniLyPbMdTKzkyRJOg==
+        Wed, 25 Apr 2018 02:27:28 -0400
+X-Google-Smtp-Source: AIpwx49Q+qoRLl0tUMou8cVS6biMF8VTEGZfo65h7dMP4WT12wFjIF9akPnMChQVRyRNbjCWnaI5UA==
 From: AKASHI Takahiro <takahiro.akashi@linaro.org>
 To: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
         vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
@@ -16,9 +16,9 @@ Cc: ard.biesheuvel@linaro.org, james.morse@arm.com, bhsharma@redhat.com,
         kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v9 08/11] arm64: enable KEXEC_FILE config
-Date: Wed, 25 Apr 2018 15:26:26 +0900
-Message-Id: <20180425062629.29404-9-takahiro.akashi@linaro.org>
+Subject: [PATCH v9 09/11] include: pe.h: remove message[] from mz header definition
+Date: Wed, 25 Apr 2018 15:26:27 +0900
+Message-Id: <20180425062629.29404-10-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425062629.29404-1-takahiro.akashi@linaro.org>
 References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
@@ -26,35 +26,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify arm64/Kconfig to enable kexec_file_load support.
+message[] field won't be part of the definition of mz header.
+
+This change is crucial for enabling kexec_file_load on arm64 because
+arm64's "Image" binary, as in PE format, doesn't have any data for it and
+accordingly the following check in pefile_parse_binary() will fail:
+
+	chkaddr(cursor, mz->peaddr, sizeof(*pe));
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: David S. Miller <davem@davemloft.net>
 ---
- arch/arm64/Kconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ include/linux/pe.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index eb2cf4938f6d..d8f0dcdb8b96 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -847,6 +847,16 @@ config KEXEC
- 	  but it is independent of the system firmware.   And like a reboot
- 	  you can start any kernel with it, not just Linux.
+diff --git a/include/linux/pe.h b/include/linux/pe.h
+index 143ce75be5f0..3482b18a48b5 100644
+--- a/include/linux/pe.h
++++ b/include/linux/pe.h
+@@ -166,7 +166,7 @@ struct mz_hdr {
+ 	uint16_t oem_info;	/* oem specific */
+ 	uint16_t reserved1[10];	/* reserved */
+ 	uint32_t peaddr;	/* address of pe header */
+-	char     message[64];	/* message to print */
++	char     message[];	/* message to print */
+ };
  
-+config KEXEC_FILE
-+	bool "kexec file based system call"
-+	select KEXEC_CORE
-+	select BUILD_BIN2C
-+	help
-+	  This is new version of kexec system call. This system call is
-+	  file based and takes file descriptors as system call argument
-+	  for kernel and initramfs as opposed to list of segments as
-+	  accepted by previous system call.
-+
- config CRASH_DUMP
- 	bool "Build kdump crash kernel"
- 	help
+ struct mz_reloc {
 -- 
 2.17.0
