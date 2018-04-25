@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeDYGRL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:17:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54327 "EHLO mx2.suse.de"
+        id S1751460AbeDYGRW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:17:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54345 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750949AbeDYGRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:17:08 -0400
-Date: Wed, 25 Apr 2018 08:17:06 +0200
-Message-ID: <s5hh8nzx125.wl-tiwai@suse.de>
+        id S1750949AbeDYGRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 02:17:19 -0400
+Date: Wed, 25 Apr 2018 08:17:17 +0200
+Message-ID: <s5hfu3jx11u.wl-tiwai@suse.de>
 From: Takashi Iwai <tiwai@suse.de>
 To: "Souptick Joarder" <jrdr.linux@gmail.com>
-Cc: <johan@kernel.org>, <perex@perex.cz>, <viro@zeniv.linux.org.uk>,
+Cc: <perex@perex.cz>, <o-takashi@sakamocchi.jp>,
         <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sound: usb: usx2y: Change return type to vm_fault_t
-In-Reply-To: <20180425041445.GA21283@jordon-HP-15-Notebook-PC>
-References: <20180425041445.GA21283@jordon-HP-15-Notebook-PC>
+Subject: Re: [PATCH] sound: core: Change return type to vm_fault_t
+In-Reply-To: <20180425042029.GA21407@jordon-HP-15-Notebook-PC>
+References: <20180425042029.GA21407@jordon-HP-15-Notebook-PC>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -24,7 +24,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Apr 2018 06:14:45 +0200,
+On Wed, 25 Apr 2018 06:20:29 +0200,
 Souptick Joarder wrote:
 > 
 > Use new return type vm_fault_t for fault handler. For
