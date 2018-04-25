@@ -1,92 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754058AbeDYNWM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:22:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54860 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753033AbeDYNWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:22:10 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2193D21745
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Wed, 25 Apr 2018 15:22:06 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Wan, Kaike" <kaike.wan@intel.com>,
-        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        "Fleck, John" <john.fleck@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] tick/sched: Do not mess with an enqueued hrtimer
-Message-ID: <20180425132205.GA12534@lerouge>
-References: <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
+        id S1754094AbeDYNWc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:22:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55314 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752722AbeDYNWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 09:22:31 -0400
+Date: Wed, 25 Apr 2018 15:22:28 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
+        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, David.Panariti@amd.com,
+        ebiederm@xmission.com, Alexander.Deucher@amd.com,
+        akpm@linux-foundation.org, Christian.Koenig@amd.com
+Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
+ signaled process.
+Message-ID: <20180425132228.GC7592@redhat.com>
+References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
+ <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+ <7313704c-0693-0bb9-8818-99cd2b7c0ca0@daenzer.net>
+ <20180424194418.GE25142@phenom.ffwll.local>
+ <aa2d8587-651e-2c24-a673-4682e7035a8f@amd.com>
+ <20180424214027.GG25142@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
+In-Reply-To: <20180424214027.GG25142@phenom.ffwll.local>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 09:22:18PM +0200, Thomas Gleixner wrote:
-> Kaike reported that in tests rdma hrtimers occasionaly stopped working. He
-> did great debugging, which provided enough context to decode the problem.
-> 
-> CPU 3			     	      	     CPU 2
-> 
-> idle
-> start sched_timer expires = 712171000000
->  queue->next = sched_timer
-> 					    start rdmavt timer. expires = 712172915662
-> 					    lock(baseof(CPU3))
-> tick_nohz_stop_tick()
-> tick = 716767000000			    timerqueue_add(tmr)
-> 
-> hrtimer_set_expires(sched_timer, tick);
->   sched_timer->expires = 716767000000  <---- FAIL
-> 					     if (tmr->expires < queue->next->expires)
-> hrtimer_start(sched_timer)		          queue->next = tmr;
-> lock(baseof(CPU3))
-> 					     unlock(baseof(CPU3))
-> timerqueue_remove()
-> timerqueue_add()
-> 
-> ts->sched_timer is queued and queue->next is pointing to it, but then
-> ts->sched_timer.expires is modified.
-> 
-> This not only corrupts the ordering of the timerqueue RB tree, it also
-> makes CPU2 see the new expiry time of timerqueue->next->expires when
-> checking whether timerqueue->next needs to be updated. So CPU2 sees that
-> the rdma timer is earlier than timerqueue->next and sets the rdma timer as
-> new next.
-> 
-> Depending on whether it had also seen the new time at RB tree enqueue, it
-> might have queued the rdma timer at the wrong place and then after removing
-> the sched_timer the RB tree is completely hosed.
-> 
-> The problem was introduced with a commit which tried to solve inconsistency
-> between the hrtimer in the tick_sched data and the underlying hardware
-> clockevent. It split out hrtimer_set_expires() to store the new tick time
-> in both the NOHZ and the NOHZ + HIGHRES case, but missed the fact that in
-> the NOHZ + HIGHRES case the hrtimer might still be queued.
-> 
-> Use hrtimer_start(timer, tick...) for the NOHZ + HIGHRES case which sets
-> timer->expires after canceling the timer and move the hrtimer_set_expires()
-> invocation into the NOHZ only code path which is not affected as it merily
-> uses the hrtimer as next event storage so code pathes can be shared with
-> the NOHZ + HIGHRES case.
-> 
-> Fixes: d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
-> Reported-by: "Wan Kaike" <kaike.wan@intel.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+On 04/24, Daniel Vetter wrote:
+>
+> wait_event_killabel doesn't check for fatal_signal_pending before calling
+> schedule, so definitely has a nice race there.
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+This is fine. See the signal_pending_state() check in __schedule().
 
-Thanks!
+And this doesn't differ from wait_event_interruptible(), it too doesn't
+check signal_pending(), we rely on schedule() which must not block if the
+caller is signalled/killed.
+
+The problem is that it is not clear what should fatal_signal_pending() or
+even signal_pending() mean after exit_signals().
+
+Oleg.
