@@ -1,57 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751277AbeDYCGK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 22:06:10 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:16837 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750882AbeDYCGH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 22:06:07 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="39285205"
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-To: <x86@kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: [PATCH] x86/vector: Remove the macro VECTOR_OFFSET_START
-Date: Wed, 25 Apr 2018 10:05:53 +0800
-Message-ID: <20180425020553.17210-1-douly.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.14.3
+        id S1751249AbeDYCpY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 22:45:24 -0400
+Received: from mx.socionext.com ([202.248.49.38]:40310 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750841AbeDYCpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 22:45:22 -0400
+Date: Wed, 25 Apr 2018 10:46:24 +0900
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: Re: [PATCH] net: ethernet: ave: fix ave_start_xmit()'s return type
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Jassi Brar <jaswinder.singh@linaro.org>, Andrew Lunn <andrew@lunn.ch>,
+        netdev@vger.kernel.org
+In-Reply-To: <20180424131731.4458-1-luc.vanoostenryck@gmail.com>
+References: <20180424131731.4458-1-luc.vanoostenryck@gmail.com>
+Message-Id: <20180425104624.4594.4A936039@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 00E034B31495.AF39A
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now, Linux uses matrix allocator for vector assignment, the original
-assignment code which used VECTOR_OFFSET_START has been removed.
+Hi,
 
-So remove the stale macro as well
+On Tue, 24 Apr 2018 15:17:25 +0200
+Luc Van Oostenryck <luc.vanoostenryck@gmail.com> wrote:
 
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+> which is a typedef for an enum type, but the implementation in this
+> driver returns an 'int'.
+> 
+> Fix this by returning 'netdev_tx_t' in this driver too.
+> 
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+
+Thanks for fixing.
+I think it's preferable to add 'Fixes'.
+
+Fixes: 4c270b55a5af ("net: ethernet: socionext: add AVE ethernet driver")
+Acked-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+
+Thank you,
+
+> ---
+>  drivers/net/ethernet/socionext/sni_ave.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/socionext/sni_ave.c b/drivers/net/ethernet/socionext/sni_ave.c
+> index 0b3b7a460..95625bca1 100644
+> --- a/drivers/net/ethernet/socionext/sni_ave.c
+> +++ b/drivers/net/ethernet/socionext/sni_ave.c
+> @@ -1360,7 +1360,7 @@ static int ave_stop(struct net_device *ndev)
+>  	return 0;
+>  }
+>  
+> -static int ave_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+> +static netdev_tx_t ave_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+>  {
+>  	struct ave_private *priv = netdev_priv(ndev);
+>  	u32 proc_idx, done_idx, ndesc, cmdsts;
+> -- 
+> 2.17.0
+
 ---
- arch/x86/include/asm/irq_vectors.h | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_vectors.h
-index 404c5fdff859..57003074bd7a 100644
---- a/arch/x86/include/asm/irq_vectors.h
-+++ b/arch/x86/include/asm/irq_vectors.h
-@@ -34,11 +34,6 @@
-  * (0x80 is the syscall vector, 0x30-0x3f are for ISA)
-  */
- #define FIRST_EXTERNAL_VECTOR		0x20
--/*
-- * We start allocating at 0x21 to spread out vectors evenly between
-- * priority levels. (0x80 is the syscall vector)
-- */
--#define VECTOR_OFFSET_START		1
- 
- /*
-  * Reserve the lowest usable vector (and hence lowest priority)  0x20 for
--- 
-2.14.3
+Best Regards,
+Kunihiko Hayashi
