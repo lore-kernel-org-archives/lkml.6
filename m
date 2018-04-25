@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-584447-1524655940-2-11165248834183606611
+X-Cyrus-Session-Id: sloti22d1t05-557887-1524653967-2-5627578315060793239
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524655939; b=XgcauwyWgjt236x8latG5pISPeNmTbLdGnkvnpRBndkl9cYeaF
-    UEU7sWkjVmjjHk1a6JvqYuP4lPsOpNofGi0bwWHXgEYNd9AThTlXzyfeOBiv9SC8
-    PbHHuF2rxh9VXxAbKgigjeB9fDIM6vEUV/jZZFCfa5fxQ+a4mmKcFuaDD4rmUkjF
-    HYqmiMAIw1D3MyzkMlui1a5UIBYVBAauDZfanD9mGHP9lTFciDrFCQT1HkjUr4vP
-    mQCWPeX0cmn8bWBjb3Q3HuTUCxjFcgPdihBV+Y20IkKltTHcaoFxM1JHxwEmnrFE
-    /pLpowDKwmpL00DxeAnrLgKdhIWMRZiegPFw==
+    1524653966; b=YQ2Kfo2tITYLAWoNuLXfmAC9HE3FPxcZ0unehznRKOHm6Vz76a
+    nKFvh1uQZ0jPuHdrhj8xQDyYeMLJJbnaIaQpqNDffEVG4ZmRZRQ+9iRDFtt0RRsb
+    eIMHWV3PLbAGtyh65C7OI0eb9s2uMZuQHndo5KgZErI98JUTfZxwkDYSilrrQeU8
+    OP4jSZPIfMhOv1gvdGSthqPcKvma1DrmRh7+cy2dmOM8+ftfPrKEnNM6NzErr2FA
+    aLUjF1q227lrNx8oeVUs7MCdunQnWNze9WZzyy1GhK2edW4W4vsio+9FcFGxttyi
+    wktQZ3CW+AiVdiIoOpTzvEdtoY46m8WlsN3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524655939; bh=d4ckc3w1BxxEohKKQttekb/bvOOAhT
-    t0ZDbmE1Eidwk=; b=JaicTcXLk0MFBYmDspmdSbZbvwXlCTDSqTPkA8AFX4fOHz
-    VX0ZXT3al5sO7VJoKsFqTCIeAKXth4wECYExEVFbWDHL7k1UrECo0qrWvNwBYe7C
-    74K5TCPheJu/UWzK445dmbExdYMRvzH7zYF2MGRMY+zupap5SMNFpOBnfQTL5s8r
-    +XRFwzHTqTRdzwVnw2xUJLNvd54SlN0wMhgAgQo7alVAITmgm0PQGcjactzZxKwd
-    cTr2VnRNRh2Do/D4Mr+SKeN+wA+RNvuK8imIP//om+TUlVHdiJuuHTe5xy1+Ln6o
-    fGI/RYRufQ0RVsactTmAGlngUoKN+UIzGYNMfbhA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524653966; bh=/XJBMDIIxHp2nofHi7OKx2ijEKeYmO
+    kroszFVssz8qA=; b=hGRITZfZG9UOtjlAO64s7uX3XWlyGqoecfYtnc86ok9W4M
+    PLNJiBQrlEZRYaKiY3SR9cocn2jwxR0NKLPiJ3UGhSs6wPOYI6dBH4pwIaPuwlZu
+    ZGH96YCqAF2VrdAvHLHcKu7T5EdaNjyg+zo5Hj5P60ft2+IzOyql5kHWJZgTDWFi
+    QSUkQqHjcdEReTWYkf202LkEzVgs2hP2ExKMltkcv+Dc94pLQ8Th9eigFwaSa20M
+    l7WPrsgLG+hjCn/diEe4dvOUOIFYOfJZkjCEHJyFWS4K9obfk+Ne8PqB+HKqH/ES
+    3BS9ryDQUSCRnzXaWeQw08mNEfHBx3ProU3cVT8g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,33 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJkQRN0dfUOBdwLGLr3O1EIby1Ce8hlP78DtEnU28rLh1PAX5eSpy6AqdDqwC7wFYGrv+JEfSqywiqtCJ5u1XDERchfbDCzzS8kq/bv9aB+t7nnjG5ju
-    vgAccHgnd+XS/+gAZNqinKhiLTl16uiLPFbm9PwhIZjoPl4Zk4QlmBF5xTyTtuJK9ej96XLusdu/7c9HD+bVSw9WHigN+SZiwz12eiBCthQT3aQK2HHVF7Kg
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFcWWVrQAAodiJB65066dJQL5fGncI7aFn9ZfcgXueR/oZj9gLW9kfdIHVxS26rUHPaIOCb+1Pi7wicg6ZNeafSmIq3lEavm91B8UWr9nWKKvFOLUUck
+    XR8UYKFeFwSlZSz0aANa4XsHc7IPLyc1xXa6x7JCFJqlKjX2O0kPrmjA4rLqtP2UUoTibqrlbqmSYMrMKNIWMTDef01LZaea5JOA49VevjIwWatRVdAe9KG0
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=JfrnYn6hAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=XsaRKbsCnGI0xWDK90sA:9
-    a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+    a=gPJu0pBYAAAA:8 a=VwQbUJbxAAAA:8 a=WPyIoOwQAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=K82gfHmz9ML5UqyqUwAA:9 a=QEXdDO2ut3YA:10
+    a=AlIIF0cMT2hfDT4axODj:22 a=AjGcO6oz07-iQ99wixmX:22 a=S-HzPIwwDS8t1QcwSuWs:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752873AbeDYKhh (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:37:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51154 "EHLO
+        id S1754002AbeDYK6v (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:58:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52768 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752788AbeDYKhf (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:37:35 -0400
+        with ESMTP id S1754130AbeDYKmu (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:42:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Matt Redfearn <matt.redfearn@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 020/183] ALSA: hda - Use IS_REACHABLE() for dependency on input
-Date: Wed, 25 Apr 2018 12:34:00 +0200
-Message-Id: <20180425103243.418370294@linuxfoundation.org>
+Subject: [PATCH 4.14 135/183] MIPS: TXx9: use IS_BUILTIN() for CONFIG_LEDS_CLASS
+Date: Wed, 25 Apr 2018 12:35:55 +0200
+Message-Id: <20180425103247.845731114@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -93,59 +95,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Matt Redfearn <matt.redfearn@mips.com>
 
 
-[ Upstream commit c469652bb5e8fb715db7d152f46d33b3740c9b87 ]
+[ Upstream commit 0cde5b44a30f1daaef1c34e08191239dc63271c4 ]
 
-The commit ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek
-HD-audio codec") introduced the reverse-selection of CONFIG_INPUT for
-Realtek codec in order to avoid the mess with dependency between
-built-in and modules.  Later on, we obtained IS_REACHABLE() macro
-exactly for this kind of problems, and now we can remove th INPUT
-selection in Kconfig and put IS_REACHABLE(INPUT) to the appropriate
-places in the code, so that the driver doesn't need to select other
-subsystem forcibly.
+When commit b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
+added board support for the RBTX4939, it added a call to
+led_classdev_register even if the LED class is built as a module.
+Built-in arch code cannot call module code directly like this. Commit
+b33b44073734 ("MIPS: TXX9: use IS_ENABLED() macro") subsequently
+changed the inclusion of this code to a single check that
+CONFIG_LEDS_CLASS is either builtin or a module, but the same issue
+remains.
 
-Fixes: ffcd28d88e4f ("ALSA: hda - Select INPUT for Realtek HD-audio codec")
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # and build-tested
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This leads to MIPS allmodconfig builds failing when CONFIG_MACH_TX49XX=y
+is set:
+
+arch/mips/txx9/rbtx4939/setup.o: In function `rbtx4939_led_probe':
+setup.c:(.init.text+0xc0): undefined reference to `of_led_classdev_register'
+make: *** [Makefile:999: vmlinux] Error 1
+
+Fix this by using the IS_BUILTIN() macro instead.
+
+Fixes: b27311e1cace ("MIPS: TXx9: Add RBTX4939 board support")
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Reviewed-by: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/18544/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/pci/hda/Kconfig         |    1 -
- sound/pci/hda/patch_realtek.c |    5 +++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ arch/mips/txx9/rbtx4939/setup.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/Kconfig
-+++ b/sound/pci/hda/Kconfig
-@@ -88,7 +88,6 @@ config SND_HDA_PATCH_LOADER
- config SND_HDA_CODEC_REALTEK
- 	tristate "Build Realtek HD-audio codec support"
- 	select SND_HDA_GENERIC
--	select INPUT
- 	help
- 	  Say Y or M here to include Realtek HD-audio codec support in
- 	  snd-hda-intel driver, such as ALC880.
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -3721,6 +3721,7 @@ static void alc280_fixup_hp_gpio4(struct
- 	}
- }
+--- a/arch/mips/txx9/rbtx4939/setup.c
++++ b/arch/mips/txx9/rbtx4939/setup.c
+@@ -186,7 +186,7 @@ static void __init rbtx4939_update_ioc_p
  
-+#if IS_REACHABLE(INPUT)
- static void gpio2_mic_hotkey_event(struct hda_codec *codec,
- 				   struct hda_jack_callback *event)
+ #define RBTX4939_MAX_7SEGLEDS	8
+ 
+-#if IS_ENABLED(CONFIG_LEDS_CLASS)
++#if IS_BUILTIN(CONFIG_LEDS_CLASS)
+ static u8 led_val[RBTX4939_MAX_7SEGLEDS];
+ struct rbtx4939_led_data {
+ 	struct led_classdev cdev;
+@@ -261,7 +261,7 @@ static inline void rbtx4939_led_setup(vo
+ 
+ static void __rbtx4939_7segled_putc(unsigned int pos, unsigned char val)
  {
-@@ -3853,6 +3854,10 @@ static void alc233_fixup_lenovo_line2_mi
- 		spec->kb_dev = NULL;
- 	}
- }
-+#else /* INPUT */
-+#define alc280_fixup_hp_gpio2_mic_hotkey	NULL
-+#define alc233_fixup_lenovo_line2_mic_hotkey	NULL
-+#endif /* INPUT */
- 
- static void alc269_fixup_hp_line1_mic1_led(struct hda_codec *codec,
- 				const struct hda_fixup *fix, int action)
+-#if IS_ENABLED(CONFIG_LEDS_CLASS)
++#if IS_BUILTIN(CONFIG_LEDS_CLASS)
+ 	unsigned long flags;
+ 	local_irq_save(flags);
+ 	/* bit7: reserved for LED class */
