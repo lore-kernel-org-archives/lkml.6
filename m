@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48JfTQksEeLFxrokih4WZlWw60L/NDHkmI+gwVvWwLJaZBYmQUB4Rce2uKIpLisGMBOFFlS
-ARC-Seal: i=1; a=rsa-sha256; t=1524652671; cv=none;
+X-Google-Smtp-Source: AIpwx4+uA/RB8t3taZtNip2aOdYlFSYLwpsO9J+sJjRIIcNSXbh7StB/nITHyrlM5Ulgnl26Bd2/
+ARC-Seal: i=1; a=rsa-sha256; t=1524652668; cv=none;
         d=google.com; s=arc-20160816;
-        b=CNQaXI/OCz1XRixE21x4bJDr+DD8ULnsfujGSVLKOSYTVBTUPZW/88H2si4J4DRdMH
-         g+l7pcT8bHR+iYvUH92KOdutxrcVWHEvYfb7dvMnaKlAnOv4t5cyb23Aa6brxDaqzspH
-         pl3NqOvYLkzJiFvn0B8Z1BPusgYCHAuGWHESKHBYNAOcqkPTfWqbTBsL2GUQVVoA3LpM
-         ssf5PkGg6v3j3tJl7ghmYclOnEihGE1iuN72Up5NF1xn1VCstAQA1xwTEQTkSMsfWagi
-         cfigwQjDD4V9Rp3J1jb2P+m8tnTi/GJ+GGj//nlhVN+8N8220QFwAvTk+dOp8VCr8xqS
-         9jlg==
+        b=aRGlzv4NtKpz6xI1/rCewUDfaqqzU2a/UbLruSJRGFuTofN8G39CBktyicaDCrqkpD
+         NgZaZ8Q+uUXcgzXfJddzgoup43K2GtpDlmOOO71kbFd4e6J3QRdRbwI4xoCbTqFRgNbP
+         dpFaZRRroJDPhmulIUrvju4Fay9BdVXtzSyaRLrcc8P/i03rj28Op9LYHJE5Xt4PQLrg
+         doHTUyMTcVBBrpVtRakTzWlUxRqV7rgEPeI0OTvRlUzhefa2bP8DB9BCmnkYHnIjseyu
+         5B0bpFn0NVmTuaCMJDdxlaMMbmWXlBzWyjwJzb5nn4ttmLHri8UoFHIxpFI3jarzsFMn
+         SXTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ul6KLmrf3faB/fF9WL7MJnBPvOJ3qBh16y05s/vJy0Q=;
-        b=GyPqxsd1rDG7+YEYEx/qTvBNRR6H9BYSK4Gq1fOS30ZiIQ3gVjetU5sFi/91+3CQ7w
-         okRU9TVlKYBeF3E7h3YtGinsAOESs9fRyu4PMUm4lxu+DCUMBwYfZSn7AiVhlzGwv3R3
-         J/wM5aj3X3stK+l2uCjfOvpo29/AN3bB3gkGExIz32jPPpEY954EAMPuk2mZ0Lr0Rq7R
-         cCvjeMnq597xLl3YNd8w6V7odGQI2RjE1b7rtAmsQ5TRPiBe6aatsI7t9PrGUHHgXJDC
-         0hmJODB2+aZcuJJFNQFQcVvi5ergQb4sJ3tlpyme57OQ2iP99afSyWdLWJRxh0WrZUvX
-         Mh4w==
+        bh=ZXOnOkuPAbAsbNAj5f9XueNVQhDdzeQ6GSzIW5HZH1Y=;
+        b=0LAUPyIUrjQWRFKvv/MOluWbwhZB7hr2AYyCXTkAITTfXsEHa474LlASoCqDE3yITP
+         gGuJoLKeMZsDdDSkv00mng6E6nxnttrmi6Xgxu8PPkT5JTmWkn97aUeI9BO43izr1A5Z
+         u9yOrAFrRptPQcrwtpKtPhWjQ88Uc/b/1fUWDhCmrQmdJmjeI+w0rGNWROaDPBzViO2i
+         rD1ECtagXnZ3q/Mnbr02BjIUI46Pp6TfYr89CiPB84w41asH6rHISyCptaFuIejQU5Qn
+         w7FZ7OVx0qL6wWT9DJ0K4o3ObzJ0wGGxefDKTXgafSX2ZLCrrnasvozPCGvcxfvnX2lX
+         ak0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Li RongQing <lirongqing@baidu.com>,
-	Dou Liyang <douly.fnst@cn.fujitsu.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	len.brown@intel.com,
-	rjw@rjwysocki.net,
-	hpa@zytor.com
-Subject: [PATCH 4.14 003/183] x86/acpi: Prevent X2APIC id 0xffffffff from being accounted
-Date: Wed, 25 Apr 2018 12:33:43 +0200
-Message-Id: <20180425103242.737319561@linuxfoundation.org>
+	Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 025/183] netfilter: ipv6: nf_defrag: Pass on packets to stack per RFC2460
+Date: Wed, 25 Apr 2018 12:34:05 +0200
+Message-Id: <20180425103243.611683060@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714008873364541?=
-X-GMAIL-MSGID: =?utf-8?q?1598714200133446857?=
+X-GMAIL-THRID: =?utf-8?q?1598714196519182699?=
+X-GMAIL-MSGID: =?utf-8?q?1598714196519182699?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,43 +50,101 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
 
-commit 10daf10ab154e31237a8c07242be3063fb6a9bf4 upstream.
 
-RongQing reported that there are some X2APIC id 0xffffffff in his machine's
-ACPI MADT table, which makes the number of possible CPU inaccurate.
+[ Upstream commit 83f1999caeb14e15df205e80d210699951733287 ]
 
-The reason is that the ACPI X2APIC parser has no sanity check for APIC ID
-0xffffffff, which is an invalid id in all APIC types. See "Intel® 64
-Architecture x2APIC Specification", Chapter 2.4.1.
+ipv6_defrag pulls network headers before fragment header. In case of
+an error, the netfilter layer is currently dropping these packets.
+This results in failure of some IPv6 standards tests which passed on
+older kernels due to the netfilter framework using cloning.
 
-Add a sanity check to acpi_parse_x2apic() which ignores the invalid id.
+The test case run here is a check for ICMPv6 error message replies
+when some invalid IPv6 fragments are sent. This specific test case is
+listed in https://www.ipv6ready.org/docs/Core_Conformance_Latest.pdf
+in the Extension Header Processing Order section.
 
-Reported-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Cc: len.brown@intel.com
-Cc: rjw@rjwysocki.net
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/20180412014052.25186-1-douly.fnst@cn.fujitsu.com
+A packet with unrecognized option Type 11 is sent and the test expects
+an ICMP error in line with RFC2460 section 4.2 -
+
+11 - discard the packet and, only if the packet's Destination
+     Address was not a multicast address, send an ICMP Parameter
+     Problem, Code 2, message to the packet's Source Address,
+     pointing to the unrecognized Option Type.
+
+Since netfilter layer now drops all invalid IPv6 frag packets, we no
+longer see the ICMP error message and fail the test case.
+
+To fix this, save the transport header. If defrag is unable to process
+the packet due to RFC2460, restore the transport header and allow packet
+to be processed by stack. There is no change for other packet
+processing paths.
+
+Tested by confirming that stack sends an ICMP error when it receives
+these packets. Also tested that fragmented ICMP pings succeed.
+
+v1->v2: Instead of cloning always, save the transport_header and
+restore it in case of this specific error. Update the title and
+commit message accordingly.
+
+Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/acpi/boot.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/ipv6/netfilter/nf_conntrack_reasm.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -215,6 +215,10 @@ acpi_parse_x2apic(struct acpi_subtable_h
- 	apic_id = processor->local_apic_id;
- 	enabled = processor->lapic_flags & ACPI_MADT_ENABLED;
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -230,7 +230,7 @@ static int nf_ct_frag6_queue(struct frag
  
-+	/* Ignore invalid ID */
-+	if (apic_id == 0xffffffff)
-+		return 0;
-+
- 	/*
- 	 * We need to register disabled CPU as well to permit
- 	 * counting disabled CPUs. This allows us to size
+ 	if ((unsigned int)end > IPV6_MAXPLEN) {
+ 		pr_debug("offset is too large.\n");
+-		return -1;
++		return -EINVAL;
+ 	}
+ 
+ 	ecn = ip6_frag_ecn(ipv6_hdr(skb));
+@@ -263,7 +263,7 @@ static int nf_ct_frag6_queue(struct frag
+ 			 * this case. -DaveM
+ 			 */
+ 			pr_debug("end of fragment not rounded to 8 bytes.\n");
+-			return -1;
++			return -EPROTO;
+ 		}
+ 		if (end > fq->q.len) {
+ 			/* Some bits beyond end -> corruption. */
+@@ -357,7 +357,7 @@ found:
+ discard_fq:
+ 	inet_frag_kill(&fq->q, &nf_frags);
+ err:
+-	return -1;
++	return -EINVAL;
+ }
+ 
+ /*
+@@ -566,6 +566,7 @@ find_prev_fhdr(struct sk_buff *skb, u8 *
+ 
+ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
+ {
++	u16 savethdr = skb->transport_header;
+ 	struct net_device *dev = skb->dev;
+ 	int fhoff, nhoff, ret;
+ 	struct frag_hdr *fhdr;
+@@ -599,8 +600,12 @@ int nf_ct_frag6_gather(struct net *net,
+ 
+ 	spin_lock_bh(&fq->q.lock);
+ 
+-	if (nf_ct_frag6_queue(fq, skb, fhdr, nhoff) < 0) {
+-		ret = -EINVAL;
++	ret = nf_ct_frag6_queue(fq, skb, fhdr, nhoff);
++	if (ret < 0) {
++		if (ret == -EPROTO) {
++			skb->transport_header = savethdr;
++			ret = 0;
++		}
+ 		goto out_unlock;
+ 	}
+ 
