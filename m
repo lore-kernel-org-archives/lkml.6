@@ -1,113 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752634AbeDYVE6 (ORCPT <rfc822;w@1wt.eu>);
+        id S1752809AbeDYVFH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 17:05:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41982 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751558AbeDYVE6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Apr 2018 17:04:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44610 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751558AbeDYVEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 17:04:55 -0400
-Date: Wed, 25 Apr 2018 17:04:49 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Christopher Lameter <cl@linux.com>
-cc: Mike Snitzer <snitzer@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] slab: introduce the flag SLAB_MINIMIZE_WASTE
-In-Reply-To: <alpine.DEB.2.20.1804180952580.1334@nuc-kabylake>
-Message-ID: <alpine.LRH.2.02.1804251702250.9428@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211024220.2175@nuc-kabylake> <alpine.LRH.2.02.1803211153320.16017@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211226350.3174@nuc-kabylake>
- <alpine.LRH.2.02.1803211425330.26409@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
- <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com> <alpine.LRH.2.02.1804161530360.19492@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804170940340.17557@nuc-kabylake>
- <alpine.LRH.2.02.1804171454020.26973@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804180952580.1334@nuc-kabylake>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96646601CF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH v2 2/2] regulator: add QCOM RPMh regulator driver
+To: Mark Brown <broonie@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>, Matthias Kaehlcke <mka@chromium.org>
+References: <cover.1523673467.git.collinsd@codeaurora.org>
+ <4b45f41996ea3344340e44fab2dc9e487572e209.1523673467.git.collinsd@codeaurora.org>
+ <CAD=FV=XKYCDtF93RtYi+dokR2BcT-z6Ex3UjgJ0ia_kF=847eA@mail.gmail.com>
+ <4e3353fe-ebb5-46bb-aa58-49ad04c4d9db@codeaurora.org>
+ <CAD=FV=W28_exRv+H0MJvPnHWGEeUG=SMKr=UqEKpBzkH44Fzmg@mail.gmail.com>
+ <132ab845-52d6-6192-4d8c-5a9c95410688@codeaurora.org>
+ <20180424174507.GI22073@sirena.org.uk>
+ <20a8f736-2687-f14f-eaa1-2b2c06eed629@codeaurora.org>
+ <20180425103136.GB24769@sirena.org.uk>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <f98416ac-230c-0362-ed50-a7f92ff283d7@codeaurora.org>
+Date: Wed, 25 Apr 2018 14:04:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180425103136.GB24769@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+>>> I think that's probably only OK if we have a specific error code for the
+>>> regulator being limited in this way otherwise our error handling for I/O
+>>> problems involves us trying to reconfigure supplies which seems like it
+>>> would be risky.  
 
+>> Would you be ok with -EAGAIN being used for this purpose?
 
-On Wed, 18 Apr 2018, Christopher Lameter wrote:
+> Using -EAGAIN for "I can't ever read the configuration from this
+> regulator" doesn't seem right - it's not like any number of retries
+> will ever manage to read the value back.
 
-> On Tue, 17 Apr 2018, Mikulas Patocka wrote:
-> 
-> > I can make a slub-only patch with no extra flag (on a freshly booted
-> > system it increases only the order of caches "TCPv6" and "sighand_cache"
-> > by one - so it should not have unexpected effects):
-> >
-> > Doing a generic solution for slab would be more comlpicated because slab
-> > assumes that all slabs have the same order, so it can't fall-back to
-> > lower-order allocations.
-> 
-> Well again SLAB uses compound pages and thus would be able to detect the
-> size of the page. It may be some work but it could be done.
-> 
-> >
-> > Index: linux-2.6/mm/slub.c
-> > ===================================================================
-> > --- linux-2.6.orig/mm/slub.c	2018-04-17 19:59:49.000000000 +0200
-> > +++ linux-2.6/mm/slub.c	2018-04-17 20:58:23.000000000 +0200
-> > @@ -3252,6 +3252,7 @@ static inline unsigned int slab_order(un
-> >  static inline int calculate_order(unsigned int size, unsigned int reserved)
-> >  {
-> >  	unsigned int order;
-> > +	unsigned int test_order;
-> >  	unsigned int min_objects;
-> >  	unsigned int max_objects;
-> >
-> > @@ -3277,7 +3278,7 @@ static inline int calculate_order(unsign
-> >  			order = slab_order(size, min_objects,
-> >  					slub_max_order, fraction, reserved);
-> >  			if (order <= slub_max_order)
-> > -				return order;
-> > +				goto ret_order;
-> >  			fraction /= 2;
-> >  		}
-> >  		min_objects--;
-> > @@ -3289,15 +3290,25 @@ static inline int calculate_order(unsign
-> >  	 */
-> >  	order = slab_order(size, 1, slub_max_order, 1, reserved);
-> 
-> The slab order is determined in slab_order()
-> 
-> >  	if (order <= slub_max_order)
-> > -		return order;
-> > +		goto ret_order;
-> >
-> >  	/*
-> >  	 * Doh this slab cannot be placed using slub_max_order.
-> >  	 */
-> >  	order = slab_order(size, 1, MAX_ORDER, 1, reserved);
-> > -	if (order < MAX_ORDER)
-> > -		return order;
-> > -	return -ENOSYS;
-> > +	if (order >= MAX_ORDER)
-> > +		return -ENOSYS;
-> > +
-> > +ret_order:
-> > +	for (test_order = order + 1; test_order < MAX_ORDER; test_order++) {
-> > +		unsigned long order_objects = ((PAGE_SIZE << order) - reserved) / size;
-> > +		unsigned long test_order_objects = ((PAGE_SIZE << test_order) - reserved) / size;
-> > +		if (test_order_objects > min(32, MAX_OBJS_PER_PAGE))
-> > +			break;
-> > +		if (test_order_objects > order_objects << (test_order - order))
-> > +			order = test_order;
-> > +	}
-> > +	return order;
-> 
-> Could yo move that logic into slab_order()? It does something awfully
-> similar.
+In this case, the _regulator_get_voltage() call can succeed, but only
+after a voltage is explicitly requested from the framework side.  The
+intention here would then be to call _regulator_do_set_voltage() with the
+constraint min_uV to max_uV range.  After that, subsequent
+_regulator_get_voltage() calls will be successful.
 
-But slab_order (and its caller) limits the order to "max_order" and we 
-want more.
+Here is the general idea:
 
-Perhaps slab_order should be dropped and calculate_order totally 
-rewritten?
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 65f9b7c..e61983d 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -910,6 +910,19 @@ static int machine_constraints_voltage(struct
+regulator_dev *rdev,
+ 	    rdev->constraints->min_uV && rdev->constraints->max_uV) {
+ 		int target_min, target_max;
+ 		int current_uV = _regulator_get_voltage(rdev);
++		if (current_uV == -EAGAIN) {
++			/*
++			 * Regulator voltage cannot be read until after
++			 * configuration; try setting constraint range.
++			 */
++			rdev_info(rdev, "Setting %d-%duV\n",
++				  rdev->constraints->min_uV,
++				  rdev->constraints->max_uV);
++			_regulator_do_set_voltage(rdev,
++						  rdev->constraints->min_uV,
++						  rdev->constraints->max_uV);
++			current_uV = _regulator_get_voltage(rdev);
++		}
+ 		if (current_uV < 0) {
+ 			rdev_err(rdev,
+ 				 "failed to get the current voltage(%d)\n",
 
-Mikulas
+Do you still have reservations about using -EAGAIN for this purpose?  If
+so, which error code would you suggest using?
+
+Thanks,
+David
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
