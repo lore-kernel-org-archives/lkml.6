@@ -1,160 +1,158 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-778319-1524664855-2-8001102455539298769
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-778319-1524663736-2-17781200953488298848
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524664854; b=htm7Z9hRF+7F/g+q7IoohJA9HyZo3BTOiFC+uvBmJSJUuroWCK
-    DTtZqWxtG3kmyqe6vsfhXltJzIxUjDjgGihU6jWs79k7LBB7RES09f5zR0gZ69Q6
-    UVdKXzN3euU+AVrh8EAxqwqXyWeSq7V6hjczqfDKTkywD43Aa22dP/sJHq0u7XsY
-    DLysxPs+aUAssre58YMZ/CwhK5UNj2s4H36uzJMkaUALmvY7WUTE7FfLDe3yFiex
-    gJ0y4/by69CYk0pVZHoRx7Hg8o9hZO9QSqxXOX2xSu21qPXzhJxL5wSvnW4EYsnY
-    CgRB4dutotwfNuhkeCjkGljCkGmq9fwAFTFA==
+    1524663736; b=k5sNI8BAUNTZnOs1LD7aCDAL9NrvB+ImDDklmLAiRfKMMVkNhi
+    mIX2qA9W26g3sAIZaogL2kFyhEgsV2Da1e74jv5aw9sGeTk5Zf3uRbrFA0aHhZyq
+    2rexM0BKvew8syUMVmPBv685Aag/XLFFLqzr4tL0v/WZ9O+tsT9gfk3b1KyO+FfO
+    RjFAY9RTLKRi6BmK++L8O4qO6fQYjIiV0sbVsTGEFeU9FYfD7i+mam8xp6ZQkjqV
+    wi63JNg35kLPSlsStWuVFqxLuxGrieV6hxiaY+FGOgo7tK3MqVEynrv6fCUcy55b
+    O7KA3yl9HndhBHq/X78YQfyLWfiSPTnXX2Qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:from:date:message-id:subject
-    :to:cc:content-type:sender:list-id; s=fm2; t=1524664854; bh=P8yx
-    Tf0tDalyaM0gZWxSZmqsVAqBkVq4ZD62mgG0lWs=; b=pMCkscSagS5qXaOnWjzy
-    GiSPDLkjtWbYWnLf27hxa21R1uFFd/g7p2etNV4OWmPIJ39WMq1ulgdCRdd0lhF4
-    wkXP50To9SH/Fmf81mZozyepGsITBf03HgKnkL9orfBi7z9K0JB7yNpEVzrfdfae
-    Dta7SlPvzshK29SprsFAS391c9lezl8RaxjD2kqTKnsHzhfWJ0+lnsvS1V6YDB3a
-    6FuSNBrpfJQv8YSVQ5VNjFfWuQtlEqBQhMjN746HiaS/55HVIEHyXuFqTtmRhaXz
-    CG+fv3Be7FbT1hO99Jk5frJjGJnh5/nMWEW/1xerSTJI80AhCLhKmz/mb65zB2T1
-    BA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=lrJHAdZb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1524663736; bh=QWkZxfQk3Z+rFMX35j1d3RBeUuwEZ7
+    6zuKfgeMk9RPE=; b=YymSyv+3LUgGGuIxEi586Lqy+CqXR1DA/qCBXadmaAhN3/
+    d7mNIcTw5FU08ziMVjX9QlWdyPQT6rbSQWCmIzAylppBq3MbhUSLQIl9jDeR4FOE
+    qQFQmxBQvBULIh8a73uSXWbLBj0PC7j9RB3uN+jQXZuOtCL0MedgwO9X9EcuVJPj
+    AGCQa8YcSNNBpTiORr+8PCceDHsiXn2C62TAwomOi1yMYe5NRgvQjV95QEN/nz+j
+    7TRKSoq3ZM8BQY/gMldoIzarDCNri7dDBWi7K/nDtcQMphpqECtHnrwgqWtCuZl4
+    s9A4uWe5yzWPDHvEWfCQ6pxEAdt+hFcx6y0legCQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=RsmIvddH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=VQC2daXI;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=svz+jL9I;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=lrJHAdZb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=RsmIvddH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=VQC2daXI;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=svz+jL9I;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfA+07WRH9+2uqV7tVBm8EQubrQ023K+FIyFYdzn7Wd07xpeFkhYiPelA2dOX7hqSJv6zNAvv6e7+7s3O466dQMEQ9ww3i0DGW67vI6oJS1v5SytbPXKG
-    wfqEpcgMlInoLoryYV2ZwThuV9TbEsH3gka3553aMR9XvDNxQuhsKdnSVOa7qHgo+xs2qy8kESWkRXQByFMjQnnW3FV/ppUGSa0sl8VnR8zoPZEZOOCH8oox
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=B6KMzFptAAAA:20 a=bVfw19_g2iHN1v91vbUA:9
-    a=gBK3r5GUaqX-lCqB:21 a=Ovn3aacyWmVi7UaH:21 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfIpI8SvIjkAqJSXJCHxvivRvHnfzA+FIGWc6ZI42MPcQMX4bMqit4cnNIFOmKtT6RJTWncBP4R+PFrjePnWSmxuFmAhAMZh0dy0jSfHiB+ndEWJPcQTZ
+    pvNNEIhfadWTTrH5fWQI/LJxZk025zRD+UM4NmY5X5CUja2RzZSQhfsk5F4eVa+SBa7ubw8uhDHwZgIMwxR2WdiUXRD3nNPSnPQ/LLcyQYDTbJWtuJZiQBCy
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=IqxT9t_lmoMA:10
+    a=Kd1tUaAdevIA:10 a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=NaznbBQ52PCbIpHfrikA:9
+    a=aeg5Gbbo78KNqacMgKqU:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754545AbeDYOAj (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 10:00:39 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:46129 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754566AbeDYOAe (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 10:00:34 -0400
-X-Google-Smtp-Source: AB8JxZqmdxZrNIQJ2GekMgG/ABA0lZiPscluzU7KdFu+beIVDvDB2sECo+3q4a1JgGhYVfOkrBgokGBBGZF5HeIxWoA=
-MIME-Version: 1.0
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 25 Apr 2018 16:00:33 +0200
-X-Google-Sender-Auth: 8RgVwowOQHblJ0WU1lNRShoFK6w
-Message-ID: <CAK8P3a2fJODEHVJ1jfTsX9DGQAPh=FipUDHTqJhRRARXv5JDvQ@mail.gmail.com>
-Subject: y2038 kernel status update
-To: y2038 Mailman List <y2038@lists.linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Albert ARIBAUD <albert.aribaud@3adev.fr>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        RISC-V SW Dev <sw-dev@groups.riscv.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Private Kernel Alias <private-kwg@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1754100AbeDYNmO (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 09:42:14 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:46496 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752851AbeDYNmL (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 09:42:11 -0400
+X-Google-Smtp-Source: AIpwx4/vMeupYJaP3aq6HAX6KDtnbwxkkS4us7jg+qYvo6SMxKv93SQ9RLqaG+RxgVCdrzk3nZd62A==
+From: Eyal Reizer <eyalreizer@gmail.com>
+X-Google-Original-From: Eyal Reizer <eyalr@ti.com>
+To: kvalo@codeaurora.org, linux-wireless@vger.kernel.org,
+        robh@kernel.org, sre@kernel.org, tony@atomide.com,
+        linux-kernel@vger.kernel.org
+Cc: Eyal Reizer <eyalr@ti.com>, stable@vger.kernel.org
+Subject: [PATCH] net: wireless: ti: wlcore: sdio: allow pm to handle sdio power
+Date: Wed, 25 Apr 2018 16:41:50 +0300
+Message-Id: <1524663710-31927-1-git-send-email-eyalr@ti.com>
+X-Mailer: git-send-email 2.7.4
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi everyone,
+pm_runtime handles sdio power on and power off transitions.
+An old workaround for trying to control the power explicitly from the
+driver was in fact causing failures on suspend/resume as the mmc layer
+already power the module on resume.
 
-A lot of things have happened in the move to make the kernel y2038
-ready in recent times. I've sent out new patches recently but will be
-on vacation for the next few weeks, so here's a quick update on where
-we are today with recent changes and work in progress:
+In case of resume pm_runtime_get sync returns a positive device's usage
+count causing the driver to try an re-initialize an already initialized
+device. This was causing sdio bus failure on resume.
 
-- A large number of small driver fixes got merged into linux-4.16.
-  Many of these were old patches I had done a while ago but that had
-  not made it in yet. There are a few dozen more of these coming, but
-  those have some dependency.
+Remove this manual power on/off sequence as it is in-fact not needed.
 
-- Deepa Dinamani has done a lot of the groundwork for the system
-  call conversion. Her latest patch series that got merged now finally
-  adds new system call entry points for timekeeping related syscalls. They
-  are not wired up yet, but now we have a template for the remaining ones,
-  and we have sorted out the header file dependencies.
+Signed-off-by: Eyal Reizer <eyalr@ti.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/net/wireless/ti/wlcore/sdio.c | 27 ++++++---------------------
+ 1 file changed, 6 insertions(+), 21 deletions(-)
 
-- I just sent a pull request for a second chunk of system calls:
-  The sysvipc semtimedop, semctl/shmctl/msgctl and
-  mq_timedsend/mq_timedreceive calls. I have more patches for most of
-  the remaining calls, and they should be simpler (this one was rather
-  tricky). A full list can be found in a spreadsheet I made[2].
-
-- Baolin Wang has worked on RTC related issues and most recently
-  posted a series to convert the user space ABI for ALSA. This is
-  currently under discussion.
-
-- The most complicated remaining part is the conversion of
-  the VFS layer. Deepa is getting a new series for this ready after
-  having done some groundwork over the past years.  The current idea is
-  to have a flag-day patch using coccinelle to change the inode, iattr
-  and kstat structures over at the same time. Many file systems will
-  require further changes after that, but those can be done individually
-  through their respective maintainers.
-
-- Firoz Khan has started looking at the system call entry
-  points in the architectures. We want to add the new system calls to
-  all 32-bit architectures at once, in order to have a baseline release
-  that C libraries can rely on for implementing 64-bit time_t on all
-  architectures.  Even after the architecture removal series, we still
-  have over a dozen different syscall tables and each one is laid out
-  slightly differently, which makes it hard to change.  To improve this,
-  Firoz is preparing a series that changes
-  all architectures to use a common table format as used by x86, arm
-  and s390 today.
-
-- I have collected all those patches in a git tree [1] for testing.
-  This currently has updated system call entry points for 32-bit ARM
-  and x86, but no others so far.  The system call numbers *will* change
-  before it gets merged, so be careful when building user space based
-  on this, but it should be a starting point for testing. I definitely
-  expect this to contain bugs still, especially to the end of the series,
-  but the start of it should be fairly solid. Some patches are marked
-  as work-in-progress or don't contain a proper changelog text. Those
-  will still get reworked before a first version is posted to the
-  mainling lists.
-
-- There are two notable areas not included in that tree today:
-  v4l and socket timestamps. I've had patches for both in the past but
-  they need to be reworked.
-
-        Arnd
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=y2038-next
-[2] https://docs.google.com/spreadsheets/d/1HCYwHXxs48TsTb6IGUduNjQnmfRvMPzCN6T_0YiQwis/
+diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
+index 1f727ba..6dbe61d 100644
+--- a/drivers/net/wireless/ti/wlcore/sdio.c
++++ b/drivers/net/wireless/ti/wlcore/sdio.c
+@@ -155,17 +155,11 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_glue *glue)
+ 	struct mmc_card *card = func->card;
+ 
+ 	ret = pm_runtime_get_sync(&card->dev);
+-	if (ret) {
+-		/*
+-		 * Runtime PM might be temporarily disabled, or the device
+-		 * might have a positive reference counter. Make sure it is
+-		 * really powered on.
+-		 */
+-		ret = mmc_power_restore_host(card->host);
+-		if (ret < 0) {
+-			pm_runtime_put_sync(&card->dev);
+-			goto out;
+-		}
++	if (ret < 0) {
++		pm_runtime_put_noidle(&card->dev);
++		dev_err(glue->dev, "%s: failed to get_sync(%d)\n",
++			__func__, ret);
++		goto out;
+ 	}
+ 
+ 	sdio_claim_host(func);
+@@ -178,7 +172,6 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_glue *glue)
+ 
+ static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
+ {
+-	int ret;
+ 	struct sdio_func *func = dev_to_sdio_func(glue->dev);
+ 	struct mmc_card *card = func->card;
+ 
+@@ -186,16 +179,8 @@ static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
+ 	sdio_disable_func(func);
+ 	sdio_release_host(func);
+ 
+-	/* Power off the card manually in case it wasn't powered off above */
+-	ret = mmc_power_save_host(card->host);
+-	if (ret < 0)
+-		goto out;
+-
+ 	/* Let runtime PM know the card is powered off */
+-	pm_runtime_put_sync(&card->dev);
+-
+-out:
+-	return ret;
++	return pm_runtime_put_sync(&card->dev);
+ }
+ 
+ static int wl12xx_sdio_set_power(struct device *child, bool enable)
+-- 
+2.7.4
