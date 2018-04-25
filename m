@@ -1,205 +1,147 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AB8JxZr4ZpB009v/83QgbDWO8c6qtQWaZ49rGV965nBe0s2ZNSLcKDdZtkstgc5tRcNr11+65vts
-ARC-Seal: i=1; a=rsa-sha256; t=1524865321; cv=none;
-        d=google.com; s=arc-20160816;
-        b=SVUJX6ADeXlY4KsLrMplGgIEYbKf7PSd0zR1AFK2pKurNBbOnr+ETPJpBXXz9ckRhe
-         G3w7ynDgBHdFoLqpJuf1mzvHtV/4txhs6RylmE8h2ghE6B8CiUItNSY48UJU8UQzfPbJ
-         AAjqwgOHp9PMVqksWXfNoLDlz2TxadY/MDNV6IbVVv6ZxYAvogBUDwmVSgMFp63wTUnG
-         LJwWVqd4gIwyXFFADIpMBEiphYKW4cDaz7mb9JfIk1QMmQ+DRtvqd5IpCkqnH1qtfAEe
-         X8nAoOokaIPf+L0OX+qRUQT0dZUHUd1InaapUdT3NBZ1vx1S4ntM7VcxMg2iJuHnXh93
-         94rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:arc-authentication-results;
-        bh=NFwtGe+LQw52djeOChMp7TlHXsZUPW3VpAQoqjXdXTk=;
-        b=vGXQIAvjPBGWjtqxok0svzmi0sdZAbP7G2TfRRuMcSJlbckwIfSlR4Dv/pukuPbRpa
-         ljA5Fx0NrHCZznOtogTpMotFeHKqKMPQRnMGjVaqrHPTH6ITN/roj7taqatxNlxvOhhX
-         +3vIyZATs2w9n4ePjbWDIeTJzacfpjMjK8qn6/sbuFYjOkQK5pMiyKz6m5/TAyTfu3mA
-         2iQdFLq80RVvmz+wCrrki17cvhAnGTGOOK3WV7KMibA2yauPtPeI2owjP9rMrg63Ljr/
-         ETOyYmTGW/s2Yx87pACkKI0Y5BnJNh1ZZrRGI8za9CYeYcN5eVLUm1eyW0022y7DCvRV
-         RA9A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759307AbeD0VmA (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 27 Apr 2018 17:42:00 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:57233 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759235AbeD0Vl7 (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 27 Apr 2018 17:41:59 -0400
-Subject: Re: [PATCH 1/1] selftests: Fix lib.mk run_tests target shell script
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Shuah Khan <shuahkh@osg.samsung.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-References: <20171028134639.16811-1-mathieu.desnoyers@efficios.com>
- <44e3d6b0-6e0d-4482-fa7e-d8dac8619d4e@osg.samsung.com>
- <1490563551.1701.1509574972486.JavaMail.zimbra@efficios.com>
- <1717349402.1702.1509575073204.JavaMail.zimbra@efficios.com>
- <c1575990-8bb7-9997-0c0a-8a5b78b347c6@osg.samsung.com>
- <740429490.6175.1524860259330.JavaMail.zimbra@efficios.com>
- <670cba49-7419-5506-de06-05267f0493e9@kernel.org>
- <3fa8c84a-6587-dfca-2e93-5cfe15f42c81@kernel.org>
- <769479298.6230.1524864798331.JavaMail.zimbra@efficios.com>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <834c528c-9ff2-0a62-6124-84697798dfdc@kernel.org>
-Date: Fri, 27 Apr 2018 15:41:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4146373-1524627875-5-11091258550898897754
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524627875; b=womZnW0NoEMZXUT3ZiVof7hcveJtRHWuUVmM209n6TQBRk+6h3
+    VLRx2e+CD9MD6+hnCgiw7sDTKrbKa9asT6b30GlplOI19rNZ5cJBr0DuGIjw9ql6
+    jjEgBoY87QnID52+se01GnkJQqiL2jPnTA7ddbtNdln7Lv6JPNEMYEigrmrpAcFL
+    Osq3wq6Igyv5J+R7G1GluoDQp90AGXImAyMKjgPFrBukLWrZPwJ6bjyisr2LxOjp
+    Q3Wbx2iq3KUL3eO4A/BC2xFj8ObaCcAX5NyLEhGFfE2rKPH4ssU1uU6tZjxQpqH2
+    hJXSZ74zEQvXVQpgTUR9Afe8wPrgpjHV3KOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524627875; bh=wneIV
+    dAH4tnJ5clzlQU5ksK767RTTS5/HDbQhIoogDA=; b=J1oXOMI/VC6l7FJR5MtZ0
+    tA4Yk3kzpeoTKd9ZfJaDF7+hH0R9s6wwYGhxW4IdUKMoOp0W4AJuX3z/Bp1o5L/Y
+    ffPMbLeT93r0afIpOPM/HPeNM1naDFK+6J7pWDrtxRVv/iPWCOdG63OGUbrnDyZ3
+    eMqVQBnkZXMZeR3aEQQd7qVQQyBY3HnHGpwviyNmTYaT4O/dltR1JcZxHrGnTyTj
+    ngIjPgA+SBH87EVuVNQf7o+wT++aXTbZMzA/v2XzxpYhKpTFRa0YOYe6CDK+tGU/
+    KPoIga55yQkDdvD4Aye2ZNiu1t0S+SUJkv38IVgXxU9SeMuFtHNEyVOwSvVqHedT
+    w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=O8XCtg53 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=O8XCtg53 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=O8XCtg53 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=O8XCtg53 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMKp35l6jVPGFN1H8JVaplk7rriWhHMvXL1YpjFA88otb1h/b7q/tp5dKSZVjWwtSOoGSVGRd93OE+5fPzxfVdsrLAgm8xliQ35FTOTJiJ6lO+VfyVQK
+    hHb1UaJ1QrOIIGT72GzkpQXjncM1C+lafEy43Ru2uZzWocU/7szw52doffBUyybslEs2kdB402wY4kNIIg2wv6KORFwJIVFYsW2VxfYI+U8s+81xWzfMKeEP
+    aNHDVeF3L9ccnrUiSXrNfg==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=LpQP-O61AAAA:8 a=DDOyTI_5AAAA:8
+    a=nlBReJhuOfJfO7ktIx8A:9 a=CjuIK1q_8ugA:10 a=pioyyrs4ZptJ924tMmac:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B92F6071A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org;
+ dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org;
+ spf=none smtp.mailfrom=vjitta@codeaurora.org
+From: vjitta@codeaurora.org
+To: labbott@redhat.com,
+	sumit.semwal@linaro.org
+Subject: [PATCH] ion: Consider ion pool pages as indirectly reclaimable
+Date: Wed, 25 Apr 2018 09:13:50 +0530
+Message-Id: <1524627830-17187-1-git-send-email-vjitta@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, tkjos@android.com, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, arve@android.com,
+ Vijayanand Jitta <vjitta@codeaurora.org>, maco@android.com
 MIME-Version: 1.0
-In-Reply-To: <769479298.6230.1524864798331.JavaMail.zimbra@efficios.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1582509238172680386?=
-X-GMAIL-MSGID: =?utf-8?q?1598937179132931649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/27/2018 03:33 PM, Mathieu Desnoyers wrote:
-> ----- On Apr 27, 2018, at 5:05 PM, shuah shuah@kernel.org wrote:
-> 
->> On 04/27/2018 02:42 PM, Shuah Khan wrote:
->>> On 04/27/2018 02:17 PM, Mathieu Desnoyers wrote:
->>>> ----- On Nov 1, 2017, at 6:28 PM, Shuah Khan shuahkh@osg.samsung.com wrote:
->>>>
->>>>> On 11/01/2017 04:24 PM, Mathieu Desnoyers wrote:
->>>>>> ----- On Nov 1, 2017, at 6:22 PM, Mathieu Desnoyers
->>>>>> mathieu.desnoyers@efficios.com wrote:
->>>>>>
->>>>>>> ----- On Nov 1, 2017, at 5:33 PM, Shuah Khan shuahkh@osg.samsung.com wrote:
->>>>>>>
->>>>>>>> On 10/28/2017 07:46 AM, Mathieu Desnoyers wrote:
->>>>>>>>> Within run_tests target, the whole script needs to be executed within
->>>>>>>>> the same shell and not as separate subshells, so the initial test_num
->>>>>>>>> variable set to 0 is still present when executing "test_num=`echo
->>>>>>>>> $$test_num+1 | bc`;".
->>>>>>>>>
->>>>>>>>> Demonstration of the issue (make run_tests):
->>>>>>>>>
->>>>>>>>> TAP version 13
->>>>>>>>> (standard_in) 1: syntax error
->>>>>>>>> selftests: basic_test
->>>>>>>>> ========================================
->>>>>>>>> ok 1.. selftests: basic_test [PASS]
->>>>>>>>> (standard_in) 1: syntax error
->>>>>>>>> selftests: basic_percpu_ops_test
->>>>>>>>> ========================================
->>>>>>>>> ok 1.. selftests: basic_percpu_ops_test [PASS]
->>>>>>>>> (standard_in) 1: syntax error
->>>>>>>>> selftests: param_test
->>>>>>>>> ========================================
->>>>>>>>> ok 1.. selftests: param_test [PASS]
->>>>>>>>
->>>>>>>> Hi Mathieu,
->>>>>>>>
->>>>>>>> Odd. I don't see the error. I am curious if this specific to
->>>>>>>> env. Can you reproduce this with one of the existing tests,
->>>>>>>> kcmp or breakpoints
->>>>>>>
->>>>>>> Yes, it reproduces:
->>>>>>>
->>>>>>> cd tools/testing/selftests/kcmp
->>>>>>> make run_tests
->>>>>>> gcc -I../../../../usr/include/    kcmp_test.c  -o
->>>>>>> /home/efficios/git/linux-rseq/tools/testing/selftests/kcmp/kcmp_test
->>>>>>> TAP version 13
->>>>>>> (standard_in) 1: syntax error
->>>>>>> selftests: kcmp_test
->>>>>>> ========================================
->>>>>>> ok 1.. selftests: kcmp_test [PASS]
->>>>>>>
->>>>>>> cd tools/testing/selftests/breakpoints
->>>>>>> make run_tests
->>>>>>> gcc     step_after_suspend_test.c  -o
->>>>>>> /home/efficios/git/linux-rseq/tools/testing/selftests/breakpoints/step_after_suspend_test
->>>>>>> gcc     breakpoint_test.c  -o
->>>>>>> /home/efficios/git/linux-rseq/tools/testing/selftests/breakpoints/breakpoint_test
->>>>>>> TAP version 13
->>>>>>> (standard_in) 1: syntax error
->>>>>>> selftests: step_after_suspend_test
->>>>>>> ========================================
->>>>>>> not ok 1.. selftests:  step_after_suspend_test [FAIL]
->>>>>>> (standard_in) 1: syntax error
->>>>>>> selftests: breakpoint_test
->>>>>>> ========================================
->>>>>>> ok 1.. selftests: breakpoint_test [PASS]
->>>>>>>
->>>>>>
->>>>>> The version of "make" on that machine is:
->>>>>>
->>>>>> make --version
->>>>>> GNU Make 3.81
->>>>>> Copyright (C) 2006  Free Software Foundation, Inc.
->>>>>> This is free software; see the source for copying conditions.
->>>>>> There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
->>>>>> PARTICULAR PURPOSE.
->>>>>>
->>>>>> This program built for x86_64-pc-linux-gnu
->>>>>>
->>>>>> (if it helps reproducing)
->>>>>>
->>>>>
->>>>> Yup that's it. I have
->>>>>
->>>>> GNU Make 4.1
->>>>> Built for x86_64-pc-linux-gnu
->>>>> Copyright (C) 1988-2014 Free Software Foundation, Inc.
->>>>> License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
->>>>> This is free software: you are free to change and redistribute it.
->>>>> There is NO WARRANTY, to the extent permitted by law.
->>>>>
->>>>> I will test with your patch and see what happens in my env.
->>>>
->>>> Hi,
->>>>
->>>> I still see the problem with v4.17-rc2. Did you have time to
->>>> consider merging my fix ?
->>>>
->>>> Thanks,
->>>>
->>>> Mathieu
->>>
->>> Sorry for the delay. It slipped through. I will queue this for the next rc.
->>> Thanks for
->>> the ping. Hope it applies :)
->>>
->>> thanks,
->>> -- Shuah
->>>
->>>
->>
->> Now I remember why I didn't pull this in. With your patch, I see the same
->> failures you are seeing in my env. with
->>
->> GNU Make 4.1
->> Built for x86_64-pc-linux-gnu
->> Copyright (C) 1988-2014 Free Software Foundation, Inc.
->> License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
->> This is free software: you are free to change and redistribute it.
->> There is NO WARRANTY, to the extent permitted by law.
->>
->> I will have to figure out a different way to fix the problem.
-> 
-> It works fine here on my other machine that has GNU make 4.1 both with
-> and without the patch. The patch fixes the behavior on GNU make 3.81.
-> 
-> I noticed I had to manually apply the patch to 4.17-rc2. Here is the updated diff.
-> Please ensure that you both remove the appropriate "@" from beginning
-> of lines, and add "\" characters at end of lines if you integrate the patch
-> manually.
-> 
+From: Vijayanand Jitta <vjitta@codeaurora.org>
 
-Please rebase and resend the patch to avoid manual integration.
+An issue is observed where mallocs are failing due to overcommit failure.
+The failure happens when there is high ION page pool since ION page
+pool is not considered reclaimable by the overcommit calculation code.
+This change considers ion pool pages as indirectly reclaimable and thus
+accounted as available memory in the overcommit calculation.
 
-thanks,
--- Shuah
+Signed-off-by: Vijayanand Jitta <vjitta@codeaurora.org>
+---
+ drivers/staging/android/ion/ion_page_pool.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/drivers/staging/android/ion/ion_page_pool.c b/drivers/staging/android/ion/ion_page_pool.c
+index db8f614..9bc56eb 100644
+--- a/drivers/staging/android/ion/ion_page_pool.c
++++ b/drivers/staging/android/ion/ion_page_pool.c
+@@ -32,6 +32,9 @@ static void ion_page_pool_add(struct ion_page_pool *pool, struct page *page)
+ 		list_add_tail(&page->lru, &pool->low_items);
+ 		pool->low_count++;
+ 	}
++
++	mod_node_page_state(page_pgdat(page), NR_INDIRECTLY_RECLAIMABLE_BYTES,
++			    (1 << (PAGE_SHIFT + pool->order)));
+ 	mutex_unlock(&pool->mutex);
+ }
+ 
+@@ -50,6 +53,8 @@ static struct page *ion_page_pool_remove(struct ion_page_pool *pool, bool high)
+ 	}
+ 
+ 	list_del(&page->lru);
++	mod_node_page_state(page_pgdat(page), NR_INDIRECTLY_RECLAIMABLE_BYTES,
++			    -(1 << (PAGE_SHIFT + pool->order)));
+ 	return page;
+ }
+ 
+-- 
+1.9.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
