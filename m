@@ -1,226 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751973AbeDYVhh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 17:37:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
+        id S1752673AbeDYVkW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 17:40:22 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52067 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750986AbeDYVhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 17:37:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56AD321745
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Wed, 25 Apr 2018 23:37:32 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] reset: Renesas RZ/N1 reboot driver
-Message-ID: <20180425213732.tdmla3kdeuc2jjke@earth.universe>
-References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
- <1523963101-56725-7-git-send-email-michel.pollet@bp.renesas.com>
+        id S1751887AbeDYVkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 17:40:14 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,328,1520924400";
+   d="gz'50?scan'50,208,50";a="53663910"
+Date: Thu, 26 Apr 2018 05:39:41 +0800
+From: kbuild test robot <lkp@intel.com>
+To: yannick fertre <yannick.fertre@st.com>
+Cc: kbuild-all@01.org, Philippe Cornu <philippe.cornu@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Kamel Kholti <kamel.kholti@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH v1 1/3] ARM: dts: stm32: add cec support on stm32mp157c
+Message-ID: <201804260421.hKtRtOnz%fengguang.wu@intel.com>
+References: <1524556449-5262-2-git-send-email-yannick.fertre@st.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pm7n5n2in6lw4rqw"
+Content-Type: multipart/mixed; boundary="azLHFNyN32YCQGCU"
 Content-Disposition: inline
-In-Reply-To: <1523963101-56725-7-git-send-email-michel.pollet@bp.renesas.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <1524556449-5262-2-git-send-email-yannick.fertre@st.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---pm7n5n2in6lw4rqw
+--azLHFNyN32YCQGCU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi yannick,
 
-On Tue, Apr 17, 2018 at 12:04:21PM +0100, Michel Pollet wrote:
-> The Renesas RZ/N1 Family (Part #R9A06G0xx) needs a small driver
-> to reboot the Cortex-A7 cores. This driver is a sub driver of
-> the sysctrl MFD.
->=20
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> ---
->  drivers/power/reset/Kconfig       |  7 +++
->  drivers/power/reset/Makefile      |  1 +
->  drivers/power/reset/rzn1-reboot.c | 96 +++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 104 insertions(+)
->  create mode 100644 drivers/power/reset/rzn1-reboot.c
->=20
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index df58fc8..1416d88 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -144,6 +144,13 @@ config POWER_RESET_RESTART
->  	  Instead they restart, and u-boot holds the SoC until the
->  	  user presses a key. u-boot then boots into Linux.
-> =20
-> +config POWER_RESET_RZN1
-> +	bool "Renesas RZ/N1 reboot driver"
-> +	depends on ARCH_RZN1
-> +	help
-> +	  This driver allows rebooting the CA7 cores of the
-> +	  Renesas RZ/N1 Family of SoC (Part # R9A06G0xx).
-> +
->  config POWER_RESET_ST
->  	bool "ST restart driver"
->  	depends on ARCH_STI
-> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-> index 7778c74..bad9702 100644
-> --- a/drivers/power/reset/Makefile
-> +++ b/drivers/power/reset/Makefile
-> @@ -16,6 +16,7 @@ obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) +=3D piix4-pow=
-eroff.o
->  obj-$(CONFIG_POWER_RESET_LTC2952) +=3D ltc2952-poweroff.o
->  obj-$(CONFIG_POWER_RESET_QNAP) +=3D qnap-poweroff.o
->  obj-$(CONFIG_POWER_RESET_RESTART) +=3D restart-poweroff.o
-> +obj-$(CONFIG_POWER_RESET_RZN1) +=3D rzn1-reboot.o
->  obj-$(CONFIG_POWER_RESET_ST) +=3D st-poweroff.o
->  obj-$(CONFIG_POWER_RESET_VERSATILE) +=3D arm-versatile-reboot.o
->  obj-$(CONFIG_POWER_RESET_VEXPRESS) +=3D vexpress-poweroff.o
-> diff --git a/drivers/power/reset/rzn1-reboot.c b/drivers/power/reset/rzn1=
--reboot.c
-> new file mode 100644
-> index 0000000..43876d5
-> --- /dev/null
-> +++ b/drivers/power/reset/rzn1-reboot.c
-> @@ -0,0 +1,96 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * RZ/N1 reboot driver
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-> + * Derived from zx-reboot.c
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/notifier.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reboot.h>
-> +
-> +/* Definitions from the SDK rzn1-sysctrl.h autogenerated file */
-> +#define RZN1_SYSCTRL_REG_RSTEN_MRESET_EN		0
-> +#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN		1
-> +#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN_MASK		0x6
-> +#define RZN1_SYSCTRL_REG_RSTEN_WDM3RST_EN		3
-> +#define RZN1_SYSCTRL_REG_RSTEN_CM3LOCKUPRST_EN		4
-> +#define RZN1_SYSCTRL_REG_RSTEN_CM3SYSRESET_EN		5
-> +#define RZN1_SYSCTRL_REG_RSTEN_SWRST_EN			6
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ		1
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ_MASK	0x6
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDM3RST_REQ		3
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_CM3LOCKUPRST_REQ	4
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_CM3SYSRESET_REQ	5
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ		6
-> +
-> +static void __iomem *reg_rsten, *reg_rstctrl;
+Thank you for the patch! Yet something to improve:
 
-Please make this into a proper driver and allocate this dynamically.
-You can get device context from the notifier_block, see for example
-gpio-restart.
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on v4.17-rc2 next-20180424]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> +static int rzn1_reboot_handler(struct notifier_block *this,
-> +			      unsigned long mode, void *cmd)
-> +{
-> +	writel(readl(reg_rsten) |
-> +			BIT(RZN1_SYSCTRL_REG_RSTEN_SWRST_EN) |
-> +			BIT(RZN1_SYSCTRL_REG_RSTEN_MRESET_EN),
-> +		reg_rsten);
-> +	writel(readl(reg_rstctrl) |
-> +			BIT(RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ),
-> +		reg_rstctrl);
-> +
-> +	mdelay(50);
-> +	pr_emerg("Unable to restart system\n");
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static struct notifier_block rzn1_reboot_nb =3D {
-> +	.notifier_call =3D rzn1_reboot_handler,
-> +	.priority =3D 128,
-> +};
-> +
-> +static int rzn1_reboot_probe(struct platform_device *ofdev)
-> +{
-> +	int err;
-> +
-> +	reg_rsten =3D of_iomap(ofdev->dev.of_node, 0);
-> +	reg_rstctrl =3D of_iomap(ofdev->dev.of_node, 1);
+url:    https://github.com/0day-ci/linux/commits/yannick-fertre/Enable-CEC-on-stm32mp157c-ev1-board/20180424-195256
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: arm-cns3420vb_defconfig (attached as .config)
+compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=arm 
 
-Please use devm_ioremap().
+All errors (new ones prefixed by >>):
 
-> +
-> +	if (!reg_rsten || !reg_rstctrl) {
-> +		dev_err(&ofdev->dev, "invalid register mapping\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	err =3D register_restart_handler(&rzn1_reboot_nb);
-> +	if (err) {
-> +		dev_err(&ofdev->dev, "register restart handler failed(err=3D%d)\n",
-> +			err);
-> +	}
+   Error: arch/arm/boot/dts/stm32mp157c.dtsi:166.19-20 syntax error
+>> FATAL ERROR: Unable to parse input tree
 
-Missing unregister_restart_handler() in .remove.
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-> +
-> +	return err;
-> +}
-> +
-> +static const struct of_device_id rzn1_reboot_of_match[] =3D {
-> +	{ .compatible =3D "renesas,rzn1-reboot" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, rzn1_reboot_of_match);
-> +
-> +static struct platform_driver rzn1_reboot_driver =3D {
-> +	.probe =3D rzn1_reboot_probe,
-> +	.driver =3D {
-> +		.name =3D "rzn1-reboot",
-> +		.of_match_table =3D rzn1_reboot_of_match,
-> +	},
-> +};
-> +module_platform_driver(rzn1_reboot_driver);
-> +
-> +MODULE_DESCRIPTION("RZ/N1 reboot driver");
-> +MODULE_AUTHOR("Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@g=
-mail.com>");
-> +MODULE_LICENSE("GPL v2");
+--azLHFNyN32YCQGCU
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
--- Sebastian
+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
+CHT+PzVMlD+HhwAA
 
---pm7n5n2in6lw4rqw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrg9RkACgkQ2O7X88g7
-+pr3Lw//f5XmJJbaxZVTpTWDcSS8e5a75/up/yHkX7UFtrMosx3wF0XxelTr4Q+X
-1EnJouQntKq+f7/DZ8IoATbR26LyAp60dwMtD4gaH63kyG13jYQEOTA2Dl+H/Z+A
-+c7xjh6JwQhNQZfvftx7XoJrJF2Ht0SpIVjPqORVn/zo8G9keLL1Cs0E5ZQbinhX
-9zbO6hdcqXmGyhyEKpi5VUz9y2tHtagP2rLGqRH4beIHarKupvt5rZ2bMKlqUKvs
-ehWPUGP1DBb3jJ8+V7WiXcnfBuqG6+kfV8/u9kO560b6kBKMEeMIy6Ct6/VLYvvW
-YmpoNNX9zSsADgPt1m7Qk1seF6JnogDrShTRxD54m/EGC29eLBSGqygm66jRJHC4
-xf83+DC8k23Hx8MaM0zQkfNy7BYEapKYdE4mBdIIJKAMzS9EObIfdxl6pivVElm8
-K6ngd000ZYi7dX8fDQeiI78v9drdFRrR693DmqrlFuzRfMvbLzVzTcDmA+gt8z12
-KfDXDiHDbl+nhR1YG828UfFWGEX/uzHfVYLJxvAj2UjY4ApPTiEPPIpMGp9OsTg7
-3LFWjXP4PVJGdEyE/8ehqWFjsfPBf5k7CPtBobXWpTCXA2iR3WxLgt1Ae/99BxqA
-qkQbWeUeRd6ZIv9AqTyRFtIdD5Rjh0tJ3bcNLLpM1ZbuBEbFU/s=
-=NPtG
------END PGP SIGNATURE-----
-
---pm7n5n2in6lw4rqw--
+--azLHFNyN32YCQGCU--
