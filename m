@@ -1,103 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752634AbeDYKbg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 06:31:36 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50951 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751463AbeDYKbc (ORCPT
+        id S1752762AbeDYKbv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 06:31:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36850 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752661AbeDYKbn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 06:31:32 -0400
-X-Google-Smtp-Source: AB8JxZq/oCSglJfFv3muFgeYFigqkO3QEQ6qk0EnC6UV7nY41xqr5jza+xbu6gGEBx+zdHtsc+av1Q==
-Date: Wed, 25 Apr 2018 11:31:28 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Kyle Spiers <ksspiers@google.com>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rave-sp: Remove VLA
-Message-ID: <20180425103128.tp4wcvyp7rcm4jge@dell>
-References: <20180423200255.154645-1-ksspiers@google.com>
- <20180424054315.2yjpnht5pu62i54q@dell>
- <CAGXu5jL5j6ZknsKN8ve+4qgSQLKsssUTto_UXORABgfHop=-7w@mail.gmail.com>
+        Wed, 25 Apr 2018 06:31:43 -0400
+Date: Wed, 25 Apr 2018 11:31:36 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Collins <collinsd@codeaurora.org>
+Cc: Doug Anderson <dianders@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>, Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v2 2/2] regulator: add QCOM RPMh regulator driver
+Message-ID: <20180425103136.GB24769@sirena.org.uk>
+References: <cover.1523673467.git.collinsd@codeaurora.org>
+ <4b45f41996ea3344340e44fab2dc9e487572e209.1523673467.git.collinsd@codeaurora.org>
+ <CAD=FV=XKYCDtF93RtYi+dokR2BcT-z6Ex3UjgJ0ia_kF=847eA@mail.gmail.com>
+ <4e3353fe-ebb5-46bb-aa58-49ad04c4d9db@codeaurora.org>
+ <CAD=FV=W28_exRv+H0MJvPnHWGEeUG=SMKr=UqEKpBzkH44Fzmg@mail.gmail.com>
+ <132ab845-52d6-6192-4d8c-5a9c95410688@codeaurora.org>
+ <20180424174507.GI22073@sirena.org.uk>
+ <20a8f736-2687-f14f-eaa1-2b2c06eed629@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXu5jL5j6ZknsKN8ve+4qgSQLKsssUTto_UXORABgfHop=-7w@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20a8f736-2687-f14f-eaa1-2b2c06eed629@codeaurora.org>
+X-Cookie: MS-DOS must die!
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018, Kees Cook wrote:
 
-> On Mon, Apr 23, 2018 at 10:43 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> > On Mon, 23 Apr 2018, Kyle Spiers wrote:
-> >
-> >> As part of the effort to remove VLAs from the kernel[1], this creates
-> >> constants for the checksum lengths of CCITT and 8B2C and changes
-> >> crc_calculated to be the maximum size of a checksum.
-> >>
-> >> https://lkml.org/lkml/2018/3/7/621
-> >>
-> >> Signed-off-by: Kyle Spiers <ksspiers@google.com>
-> >> ---
-> >>  drivers/mfd/rave-sp.c | 11 +++++++++--
-> >>  1 file changed, 9 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
-> >> index 5c858e784a89..99fa482419f9 100644
-> >> --- a/drivers/mfd/rave-sp.c
-> >> +++ b/drivers/mfd/rave-sp.c
-> >> @@ -45,7 +45,9 @@
-> >>  #define RAVE_SP_DLE                  0x10
-> >>
-> >>  #define RAVE_SP_MAX_DATA_SIZE                64
-> >> -#define RAVE_SP_CHECKSUM_SIZE                2  /* Worst case scenario on RDU2 */
-> >> +#define RAVE_SP_CHECKSUM_8B2C                1
-> >> +#define RAVE_SP_CHECKSUM_CCITT               2
-> >> +#define RAVE_SP_CHECKSUM_SIZE                RAVE_SP_CHECKSUM_CCITT
-> >>  /*
-> >>   * We don't store STX, ETX and unescaped bytes, so Rx is only
-> >>   * DATA + CSUM
-> >> @@ -415,7 +417,12 @@ static void rave_sp_receive_frame(struct rave_sp *sp,
-> >>       const size_t payload_length  = length - checksum_length;
-> >>       const u8 *crc_reported       = &data[payload_length];
-> >>       struct device *dev           = &sp->serdev->dev;
-> >> -     u8 crc_calculated[checksum_length];
-> >> +     u8 crc_calculated[RAVE_SP_CHECKSUM_SIZE];
-> >> +
-> >> +     if (unlikely(length > sizeof(crc_calculated))) {
-> >
-> > Forgive me if I have this wrong (it's still very early here), but this
-> > doesn't leave any room for the payload?
-> >
-> >     <--       length         -->
-> >     <ck len><- payload length ->
-> >     [CK][CK][D][A][T][A] .. [64]
-> >
-> > It is my hope that length would always be larger than the size of the
-> > checksum, or else there would never be any data?
-> >
-> > Should this not be:
-> >
-> >     if (unlikely(length > RAVE_SP_MAX_DATA_SIZE))
-> 
-> Oh, whoops, no, this should be:
-> 
-> +     if (unlikely(checksum_lengh > sizeof(crc_calculated))) {
-> 
-> (To validate the VLA max size.)
+--61jdw2sOBCFtR2d/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That doesn't match the OP's error message though:
+On Tue, Apr 24, 2018 at 02:09:47PM -0700, David Collins wrote:
+> On 04/24/2018 10:45 AM, Mark Brown wrote:
 
-  dev_warn(dev, "Dropping oversized frame\n");
+> > I think that's probably only OK if we have a specific error code for the
+> > regulator being limited in this way otherwise our error handling for I/O
+> > problems involves us trying to reconfigure supplies which seems like it
+> > would be risky. =20
 
-Which I assume is designed to complement the existing warning:
+> Would you be ok with -EAGAIN being used for this purpose?
 
-  if (unlikely(length <= checksum_length))
-          dev_warn(dev, "Dropping short frame\n");
+Using -EAGAIN for "I can't ever read the configuration from this
+regulator" doesn't seem right - it's not like any number of retries
+will ever manage to read the value back.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+--61jdw2sOBCFtR2d/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrgWQgACgkQJNaLcl1U
+h9CaXgf/Q/MwyAoaIjFMN2PKQ2kvD4bf+TtknHQxwyTJe8DhZ1KG6bDPRPYu4zSD
+wsjpmoC5UcAnCZ9Zq1GIN1A4ZAUfhqC9UOl5S9Tgru9uH3uyblVYeL55mSaWJQqx
+Bcx8CYxJvbPMlCSGWtMIPotPEjf1skQE9xk8J7MknVhtD1eTYXSbtbZmGxhkBWwV
+OIzTqm5GMHzu2gYM+On/PghyGZA+4HyM7zoToa3OUr3pVwJfg2PYuFo80dctWreQ
+LGfubHGSrzrlmNTAmXfVBESqlwuVCizvqiLMiQQTX3jn1Qx3uyNt7L86qPyCn7sT
+bTPkBAnji/iVVJ/a+Gfsn/W8ibLXsQ==
+=E/2W
+-----END PGP SIGNATURE-----
+
+--61jdw2sOBCFtR2d/--
