@@ -1,57 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754101AbeDYK6v (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 06:58:51 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42094 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbeDYK6r (ORCPT
+        id S1754232AbeDYLAb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 07:00:31 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:48849 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752807AbeDYLAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 06:58:47 -0400
-From: Colin King <colin.king@canonical.com>
-To: Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: isci: remove redundant check on in_connection_align_insertion_frequency
-Date: Wed, 25 Apr 2018 11:58:43 +0100
-Message-Id: <20180425105843.8607-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 25 Apr 2018 07:00:24 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: hans.verkuil@cisco.com, mchehab@kernel.org, robh+dt@kernel.org
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] media: i2c: mt9t112: Add OF tree support
+Date: Wed, 25 Apr 2018 13:00:12 +0200
+Message-Id: <1524654014-17852-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello,
 
-The sanity check on u->in_connection_align_insertion_frequency is being
-performed twice and hence the first check can be removed since it is
-redundant. Cleans up cppcheck warning:
+    this small series add device tree support for the MT9T112 image
+sensor.
 
-drivers/scsi/ibmvscsi/ibmvscsi.c:1711: (warning) Identical inner 'if'
-condition is always true.
+As in the device tree bindings I used 'semi-standard' name for the
+'powerdown' GPIO, I have changed that for all other users of the mt9t112
+driver (SH Ecovec only).
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/isci/init.c | 3 ---
- 1 file changed, 3 deletions(-)
+A note on clock: as the mt9t112 driver expects to receive the PPL parameter
+configuration from platform data (I know...), new OF users are only supported
+with an external clock frequency of 24MHz.
 
-diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
-index 922e3e56c90d..05cf4daf8788 100644
---- a/drivers/scsi/isci/init.c
-+++ b/drivers/scsi/isci/init.c
-@@ -433,9 +433,6 @@ static enum sci_status sci_user_parameters_set(struct isci_host *ihost,
- 		      (u->max_speed_generation > SCIC_SDS_PARM_NO_SPEED)))
- 			return SCI_FAILURE_INVALID_PARAMETER_VALUE;
- 
--		if (u->in_connection_align_insertion_frequency < 3)
--			return SCI_FAILURE_INVALID_PARAMETER_VALUE;
--
- 		if ((u->in_connection_align_insertion_frequency < 3) ||
- 		    (u->align_insertion_frequency == 0) ||
- 		    (u->notify_enable_spin_up_insertion_frequency == 0))
--- 
-2.17.0
+Thanks
+   j
+
+Jacopo Mondi (2):
+  dt-bindings: media: i2c: Add mt9t111 image sensor
+  media: i2c: mt9t112: Add device tree support
+
+ Documentation/devicetree/bindings/mt9t112.txt | 41 +++++++++++++
+ arch/sh/boards/mach-ecovec24/setup.c          |  4 +-
+ drivers/media/i2c/mt9t112.c                   | 87 +++++++++++++++++++++++----
+ 3 files changed, 118 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mt9t112.txt
+
+--
+2.7.4
