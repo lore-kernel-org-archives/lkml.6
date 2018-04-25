@@ -1,94 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754066AbeDYXIX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 19:08:23 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45342 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753652AbeDYXIV (ORCPT
+        id S1754140AbeDYXJt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 19:09:49 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:39936 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753883AbeDYXJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 19:08:21 -0400
-Message-ID: <1524697697.4100.23.camel@HansenPartnership.com>
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
- fallback options
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
-        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        edumazet@google.com, Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 25 Apr 2018 16:08:17 -0700
-In-Reply-To: <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180421144757.GC14610@bombadil.infradead.org>
-          <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
-          <20180423151545.GU17484@dhcp22.suse.cz>
-          <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
-         <20180424125121.GA17484@dhcp22.suse.cz>
-          <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>
-          <20180424162906.GM17484@dhcp22.suse.cz>
-          <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
-          <20180424170349.GQ17484@dhcp22.suse.cz>
-          <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
-          <20180424173836.GR17484@dhcp22.suse.cz>
-          <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
-          <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
-          <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
-          <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
-          <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
-         <1524694663.4100.21.camel@HansenPartnership.com>
-         <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 25 Apr 2018 19:09:48 -0400
+X-Google-Smtp-Source: AB8JxZoIouNeutfVRUVYmN9y1+/RoWl1YKIabHyIk3klIsTRYhy0dTFxwVH0oqQh1yXUbyxdAxGArA==
+Date: Thu, 26 Apr 2018 02:09:43 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: linux-kernel@vger.kernel.org
+Subject: #pragma once
+Message-ID: <20180425230943.GA10728@avx2>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-04-25 at 19:00 -0400, Mikulas Patocka wrote:
-> 
-> On Wed, 25 Apr 2018, James Bottomley wrote:
-> 
-> > > > Do we really need the new config option?  This could just be
-> > > > manually  tunable via fault injection IIUC.
-> > > 
-> > > We do, because we want to enable it in RHEL and Fedora debugging
-> > > kernels, so that it will be tested by the users.
-> > > 
-> > > The users won't use some extra magic kernel options or debugfs
-> files.
-> > 
-> > If it can be enabled via a tunable, then the distro can turn it on
-> > without the user having to do anything.  If you want to present the
-> > user with a different boot option, you can (just have the tunable
-> set
-> > on the command line), but being tunable driven means that you don't
-> > have to choose that option, you could automatically enable it under
-> a
-> > range of circumstances.  I think most sane distributions would want
-> > that flexibility.
-> > 
-> > Kconfig proliferation, conversely, is a bit of a nightmare from
-> both
-> > the user and the tester's point of view, so we're trying to avoid
-> it
-> > unless absolutely necessary.
-> > 
-> > James
-> 
-> BTW. even developers who compile their own kernel should have this
-> enabled by a CONFIG option - because if the developer sees the option
-> when browsing through menuconfig, he may enable it. If he doesn't see
-> the option, he won't even know that such an option exists.
+Following up with negative LOC trend...
 
-I may be an atypical developer but I'd rather have a root canal than
-browse through menuconfig options.  The way to get people to learn
-about new debugging options is to blog about it (or write an lwn.net
-article) which google will find the next time I ask it how I debug XXX.
- Google (probably as a service to humanity) rarely turns up Kconfig
-options in response to a query.
+	16171 files changed, 16197 insertions(+), 87671 deletions(-)
 
-James
+Not all files can be blindly converted as some headers check for master
+header include guard (spinlock.h et al).
+
+include/uapi/ can be skipped probably out of fear of finding a C compiler
+without "#pragma once" support.
+
+Script modifies files in place and gives up if something goes wrong even
+slightly.
+
+Use "#pragma once" in you code today!
+
+
+#!/usr/bin/python2
+# Change include guard to "#pragma once" directive in place.
+import os
+import re
+import sys
+
+re_ifndef = re.compile('#ifndef ([A-Za-z_][A-Za-z0-9_]*)\n')
+re_define = re.compile('#define ([A-Za-z_][A-Za-z0-9_]*)\n')
+re_endif  = re.compile('#endif([ \t]*/\*[^/]*\*/[ \t]*)?\n')
+
+def read_file(filename):
+    with open(filename) as f:
+        buf = f.read()
+    return buf
+
+def write_file(filename, buf, chop_list):
+    # [start, end)
+    s1, e1 = chop_list[0]
+    s2, e2 = chop_list[1]
+
+    tmp = '%s.pragma-once' % filename
+    with open(tmp, 'w') as f:
+        f.write(buf[0:s1])
+        if s1 > 0 and buf[s1 - 1] != '\n':
+            f.write('\n')
+        f.write('#pragma once\n')
+        f.write(buf[e1:s2])
+        if buf[s2 - 1] != '\n':
+            f.write('\n')
+
+    os.rename(tmp, filename)
+
+def ws(c):
+    return c == '\n' or c == ' ' or c == '\t'
+
+def pragma_once(filename):
+    c = read_file(filename)
+
+    chop_list = []
+
+    i = 0
+    j = len(c)
+    while i < j:
+        if ws(c[i]):
+            i = i + 1
+        elif c[i] == '/' and c[i + 1] == '/':
+            i = c.index('\n', i + 2) + 1
+        elif c[i] == '/' and c[i + 1] == '*':
+            i = c.index('*/', i + 2) + 2
+        else:
+            break
+
+    ii = i;
+    #ifndef
+    match = re_ifndef.match(c, ii)
+    if match is None:
+        return
+    guard = match.group(1)
+    ii = match.end()
+
+    #define
+    match = re_define.match(c, ii)
+    if match is None:
+        return
+    if guard != match.group(1):
+        return
+    ii = match.end()
+
+    while i > 0 and ws(c[i - 1]):
+        i = i - 1
+    while ws(c[ii]):
+        ii = ii + 1
+
+    chop_list.append((i, ii))
+
+    #endif
+    ii = c.rindex("\n#endif", i) + 1
+    match = re_endif.match(c, ii)
+    if match is None:
+        return
+    jj = match.end()
+    if jj != len(c):
+        return
+
+    while ws(c[ii - 1]):
+        ii = ii - 1
+
+    chop_list.append((ii, len(c)))
+
+    write_file(filename, c, chop_list)
+
+for filename in sys.argv[1:]:
+    try:
+        pragma_once(filename)
+    except:
+        pass
