@@ -1,63 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751573AbeDYKNS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 06:13:18 -0400
-Received: from mail-pg0-f50.google.com ([74.125.83.50]:43936 "EHLO
-        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751412AbeDYKNQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 06:13:16 -0400
-X-Google-Smtp-Source: AIpwx49zygm5sPM+KpDHDDlC1bGChn5cz1V1XPE8AFCxTafcEdhoseVqym5szmOMy2xw29rPcnS4MQ==
-Date: Wed, 25 Apr 2018 15:43:13 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Quentin Perret <quentin.perret@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/fair: Rearrange select_task_rq_fair() to optimize
- it
-Message-ID: <20180425101313.zwxg7gz2ybnvlvtn@vireshk-i7>
-References: <8a34a16da90b9f83ffe60316a074a5e4d05b59b0.1524479666.git.viresh.kumar@linaro.org>
- <434fa179-7c8f-8a01-a07a-4527521a04c7@arm.com>
- <20180424104304.GE4064@hirez.programming.kicks-ass.net>
- <0985e709-0d71-2c08-20a9-7bfb618fb5f2@arm.com>
- <20180424123523.GF4064@hirez.programming.kicks-ass.net>
- <20180425051509.aohopadqw7q5urbd@vireshk-i7>
- <20180425081334.GF14391@e108498-lin.cambridge.arm.com>
- <20180425090327.7mwm2pdheeptz6sd@vireshk-i7>
- <20180425093909.GI14391@e108498-lin.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425093909.GI14391@e108498-lin.cambridge.arm.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        id S1751995AbeDYKO6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 06:14:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56370 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751487AbeDYKOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 06:14:55 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] clocksource/drivers/timer-atmel-pit: properly handle error cases
+Date: Wed, 25 Apr 2018 12:14:39 +0200
+Message-Id: <20180425101439.28908-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-04-18, 10:39, Quentin Perret wrote:
-> On Wednesday 25 Apr 2018 at 14:33:27 (+0530), Viresh Kumar wrote:
-> > On 25-04-18, 09:13, Quentin Perret wrote:
-> > > While you're at it, you could probably remove the one in wake_cap() ? I
-> > > think having just one in select_task_rq_fair() should be enough.
-> > 
-> > Just make it clear, you are asking me to remove sync_entity_load_avg()
-> > in wake_cap() ? But aren't we required to do that, as in the very next
-> > line we call task_util(p) ?
-> 
-> Right, we do need to call sync_entity_load_avg() at some point before
-> calling task_util(), but we don't need to re-call it in strf()
-> after in this case. So my point was just that if you want to re-work
-> the wake-up path and make sure we don't call sync_entity_load_avg()
-> if not needed then this might need fixing as well ... Or maybe we don't
-> care since re-calling sync_entity_load_avg() should be really cheap ...
+smatch now reports a possible leak:
 
-These are in two very different paths and I am not sure of a clean way
-to avoid calling sync_entity_load_avg() again. Maybe will leave it as
-is for now.
+smatch warnings:
+drivers/clocksource/timer-atmel-pit.c:183 at91sam926x_pit_dt_init() warn: possible memory leak of 'data'
 
+Ensure data is freed before exiting with an error.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/clocksource/timer-atmel-pit.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clocksource/timer-atmel-pit.c b/drivers/clocksource/timer-atmel-pit.c
+index ec8a4376f74f..2fab18fae4fc 100644
+--- a/drivers/clocksource/timer-atmel-pit.c
++++ b/drivers/clocksource/timer-atmel-pit.c
+@@ -180,26 +180,29 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
+ 	data->base = of_iomap(node, 0);
+ 	if (!data->base) {
+ 		pr_err("Could not map PIT address\n");
+-		return -ENXIO;
++		ret = -ENXIO;
++		goto exit;
+ 	}
+ 
+ 	data->mck = of_clk_get(node, 0);
+ 	if (IS_ERR(data->mck)) {
+ 		pr_err("Unable to get mck clk\n");
+-		return PTR_ERR(data->mck);
++		ret = PTR_ERR(data->mck);
++		goto exit;
+ 	}
+ 
+ 	ret = clk_prepare_enable(data->mck);
+ 	if (ret) {
+ 		pr_err("Unable to enable mck\n");
+-		return ret;
++		goto exit;
+ 	}
+ 
+ 	/* Get the interrupts property */
+ 	data->irq = irq_of_parse_and_map(node, 0);
+ 	if (!data->irq) {
+ 		pr_err("Unable to get IRQ from DT\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto exit;
+ 	}
+ 
+ 	/*
+@@ -227,7 +230,7 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
+ 	ret = clocksource_register_hz(&data->clksrc, pit_rate);
+ 	if (ret) {
+ 		pr_err("Failed to register clocksource\n");
+-		return ret;
++		goto exit;
+ 	}
+ 
+ 	/* Set up irq handler */
+@@ -236,7 +239,8 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
+ 			  "at91_tick", data);
+ 	if (ret) {
+ 		pr_err("Unable to setup IRQ\n");
+-		return ret;
++		clocksource_unregister(&data->clksrc);
++		goto exit;
+ 	}
+ 
+ 	/* Set up and register clockevents */
+@@ -254,6 +258,10 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
+ 	clockevents_register_device(&data->clkevt);
+ 
+ 	return 0;
++
++exit:
++	kfree(data);
++	return ret;
+ }
+ TIMER_OF_DECLARE(at91sam926x_pit, "atmel,at91sam9260-pit",
+ 		       at91sam926x_pit_dt_init);
 -- 
-viresh
+2.17.0
