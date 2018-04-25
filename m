@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/TEmE5ODHS1sD5UfBQ3zwl8TQlELyZyAzt/IkZbbo582GV2NnrbZDhR0DcOrmbkcQVnugq
-ARC-Seal: i=1; a=rsa-sha256; t=1524653072; cv=none;
+X-Google-Smtp-Source: AIpwx49Vn2w8/eBXz3XGz4AL6UW5L93QDwWtFDQDyBn8ruK3bTFYVYtgc85/Lc7EylsmLTaqOjjA
+ARC-Seal: i=1; a=rsa-sha256; t=1524653069; cv=none;
         d=google.com; s=arc-20160816;
-        b=l5CijPs3rCWB6AKx8KbSCHu6kU4sEltsYpu32F4yprptlXrOspygHdvtM0kpwLWLw1
-         62cBTyRHd9NkkAfoawPYNgeQc7t4A8sWvqsFL/RTfEbfG3qe5iYXkjfy3eG7CGNUDnre
-         DhWUaj5PNmg21Ze5DRu9yx/L0jZtmSpnF8cPIpOsBfr0LTksffJdNUcZRKU3TGDHDyHq
-         Pr+GXwhsCIg5y5RnV6tXlgCmetDQZmzZBsspRffl8nFBIq7UQ5e6KX+0dfDaE3bIE2tv
-         6mClBuyhT+iO/x4ZPaHQWWKE8rOtNmdW8q+UEOsb8PC+RKyd9AF4LlGCK66molqBhUDJ
-         Vqtw==
+        b=OyvFgDGJq+knrqUGPs1L+p9YteIqq5e89/W5Os+dJFV88vCB2MxG7j0mIktbgYy9uG
+         TGEc4NQoJ1M9mb5/yMMvq+A/Uda0TdHpgcNpzN4gcgQxXcFEn1TcHU6gTUNWaQB4PUnf
+         83oTVPf1kuqzkzf3iWwKjIQ0B87F1+5zkwcaUCDd272s+DLJQCKnp03zJWp0CG2UKu7y
+         CGcnUXlXie0g2buNnplY8/8Q/rw5Ti9wBPdrMxu2ibmFxKUSUNt0bpThI8LgrC9pK5cl
+         5658nq/hMz/R6669cftoHpJpg8pmsG5czGNvk5jhPbCgB/084ETv85QEf1aK5bxj6APG
+         +Ldw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LYVDZXTWBC0vPAVqkzld5cX1HWMYdYv4k9kPajXJOoE=;
-        b=bgogiQHdrUxFne/z+G7fv1Kq21+tpwqAgXchJhdIc6C9M6Uz/Ama8TqxqNXGkqT1fl
-         8iI+7IOWVWCuuBg7g35X/a2xCX+bZB/YoqBjxpjGEBQGevJ8391FYQxdtGCdM6N93zAI
-         NX0OPC11Fofdr4Mw8ZyxcRAtgUma4+OeiNlvREJ24Ez9Io85US7ZpJBpjgMWnMqcf+CM
-         yRZl65w8dbNeI6BKHfm7Bf2NWjeqbkLAgk1lI1HUSlteIXYlPBPO5fKmPtIFM7WaZQvX
-         xP0sGPxTsxtDQN3EiSSH4chBeqZShR4cXeOTZZtscwTJ9U8dhWT4rXM9z4pWNtF1gzac
-         J0Tw==
+        bh=XLtu/uANDQJPLKfajFSIqlXEloH3CfLSDdQhxV44gT0=;
+        b=fuKcbF5ex1re4lxZb/mr7jv37e95NdmGoPtKbz5ldnPg6mLXvSww7Vjoz7fXtbdMZQ
+         A17VHgfKYNtX9vIAaKc1wYzlX2jCFvairAAz+WKfzvQkVEeitF54RCVXTe/YleTWVj7y
+         bvrg8PS2DDSe/PdBL3RdcEfFGIgpcpm0tEvi2VFG7Oyzj7ngqZBuvFE/epry6QYzm2dD
+         sX3K5o2rXYU/oTdOFX7s+wzIXUerdKVYKRimw/P3d1kvJSAYSbHXyZo2r7wtTHKf/6nz
+         bXZ6AdcIUuRcAHsHiI9JBSdIdf4j7eX0GOktJW0izLsnKlT4hKWv4XwGZZX2Q4Ssg1Ip
+         GpyQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	John Stultz <john.stultz@linaro.org>,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH 4.14 173/183] alarmtimer: Init nanosleep alarm timer on stack
-Date: Wed, 25 Apr 2018 12:36:33 +0200
-Message-Id: <20180425103249.465305078@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Sergey Gorenko <sergeygo@mellanox.com>,
+	Max Gurtovoy <maxg@mellanox.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	Jason Gunthorpe <jgg@mellanox.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 172/183] RDMA/core: Reduce poll batch for direct cq polling
+Date: Wed, 25 Apr 2018 12:36:32 +0200
+Message-Id: <20180425103249.422929682@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -42,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598713968044165236?=
-X-GMAIL-MSGID: =?utf-8?q?1598714620302524197?=
+X-GMAIL-THRID: =?utf-8?q?1598714617798201516?=
+X-GMAIL-MSGID: =?utf-8?q?1598714617798201516?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,120 +54,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Max Gurtovoy <maxg@mellanox.com>
 
-commit bd03143007eb9b03a7f2316c677780561b68ba2a upstream.
 
-syszbot reported the following debugobjects splat:
+[ Upstream commit d3b9e8ad425cfd5b9116732e057f1b48e4d3bcb8 ]
 
- ODEBUG: object is on stack, but not annotated
- WARNING: CPU: 0 PID: 4185 at lib/debugobjects.c:328
+Fix warning limit for kernel stack consumption:
 
- RIP: 0010:debug_object_is_on_stack lib/debugobjects.c:327 [inline]
- debug_object_init+0x17/0x20 lib/debugobjects.c:391
- debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
- debug_init kernel/time/hrtimer.c:458 [inline]
- hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
- alarm_init kernel/time/alarmtimer.c:339 [inline]
- alarm_timer_nsleep+0x164/0x4d0 kernel/time/alarmtimer.c:787
- SYSC_clock_nanosleep kernel/time/posix-timers.c:1226 [inline]
- SyS_clock_nanosleep+0x235/0x330 kernel/time/posix-timers.c:1204
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
+drivers/infiniband/core/cq.c: In function 'ib_process_cq_direct':
+drivers/infiniband/core/cq.c:78:1: error: the frame size of 1032 bytes
+is larger than 1024 bytes [-Werror=frame-larger-than=]
 
-This happens because the hrtimer for the alarm nanosleep is on stack, but
-the code does not use the proper debug objects initialization.
+Using smaller ib_wc array on the stack brings us comfortably below that
+limit again.
 
-Split out the code for the allocated use cases and invoke
-hrtimer_init_on_stack() for the nanosleep related functions.
-
-Reported-by: syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: syzkaller-bugs@googlegroups.com
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1803261528270.1585@nanos.tec.linutronix.de
+Fixes: 246d8b184c10 ("IB/cq: Don't force IB_POLL_DIRECT poll context for ib_process_cq_direct")
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Sergey Gorenko <sergeygo@mellanox.com>
+Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/time/alarmtimer.c |   34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ drivers/infiniband/core/cq.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -326,6 +326,17 @@ static int alarmtimer_resume(struct devi
- }
- #endif
+--- a/drivers/infiniband/core/cq.c
++++ b/drivers/infiniband/core/cq.c
+@@ -17,6 +17,7 @@
  
-+static void
-+__alarm_init(struct alarm *alarm, enum alarmtimer_type type,
-+	     enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+{
-+	timerqueue_init(&alarm->node);
-+	alarm->timer.function = alarmtimer_fired;
-+	alarm->function = function;
-+	alarm->type = type;
-+	alarm->state = ALARMTIMER_STATE_INACTIVE;
-+}
-+
- /**
-  * alarm_init - Initialize an alarm structure
-  * @alarm: ptr to alarm to be initialized
-@@ -335,13 +346,9 @@ static int alarmtimer_resume(struct devi
- void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
- 		enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
+ /* # of WCs to poll for with a single call to ib_poll_cq */
+ #define IB_POLL_BATCH			16
++#define IB_POLL_BATCH_DIRECT		8
+ 
+ /* # of WCs to iterate over before yielding */
+ #define IB_POLL_BUDGET_IRQ		256
+@@ -25,18 +26,18 @@
+ #define IB_POLL_FLAGS \
+ 	(IB_CQ_NEXT_COMP | IB_CQ_REPORT_MISSED_EVENTS)
+ 
+-static int __ib_process_cq(struct ib_cq *cq, int budget, struct ib_wc *poll_wc)
++static int __ib_process_cq(struct ib_cq *cq, int budget, struct ib_wc *wcs,
++			   int batch)
  {
--	timerqueue_init(&alarm->node);
- 	hrtimer_init(&alarm->timer, alarm_bases[type].base_clockid,
--			HRTIMER_MODE_ABS);
--	alarm->timer.function = alarmtimer_fired;
--	alarm->function = function;
--	alarm->type = type;
--	alarm->state = ALARMTIMER_STATE_INACTIVE;
-+		     HRTIMER_MODE_ABS);
-+	__alarm_init(alarm, type, function);
+ 	int i, n, completed = 0;
+-	struct ib_wc *wcs = poll_wc ? : cq->wc;
+ 
+ 	/*
+ 	 * budget might be (-1) if the caller does not
+ 	 * want to bound this call, thus we need unsigned
+ 	 * minimum here.
+ 	 */
+-	while ((n = ib_poll_cq(cq, min_t(u32, IB_POLL_BATCH,
+-			budget - completed), wcs)) > 0) {
++	while ((n = ib_poll_cq(cq, min_t(u32, batch,
++					 budget - completed), wcs)) > 0) {
+ 		for (i = 0; i < n; i++) {
+ 			struct ib_wc *wc = &wcs[i];
+ 
+@@ -48,8 +49,7 @@ static int __ib_process_cq(struct ib_cq
+ 
+ 		completed += n;
+ 
+-		if (n != IB_POLL_BATCH ||
+-		    (budget != -1 && completed >= budget))
++		if (n != batch || (budget != -1 && completed >= budget))
+ 			break;
+ 	}
+ 
+@@ -72,9 +72,9 @@ static int __ib_process_cq(struct ib_cq
+  */
+ int ib_process_cq_direct(struct ib_cq *cq, int budget)
+ {
+-	struct ib_wc wcs[IB_POLL_BATCH];
++	struct ib_wc wcs[IB_POLL_BATCH_DIRECT];
+ 
+-	return __ib_process_cq(cq, budget, wcs);
++	return __ib_process_cq(cq, budget, wcs, IB_POLL_BATCH_DIRECT);
  }
- EXPORT_SYMBOL_GPL(alarm_init);
+ EXPORT_SYMBOL(ib_process_cq_direct);
  
-@@ -719,6 +726,8 @@ static int alarmtimer_do_nsleep(struct a
+@@ -88,7 +88,7 @@ static int ib_poll_handler(struct irq_po
+ 	struct ib_cq *cq = container_of(iop, struct ib_cq, iop);
+ 	int completed;
  
- 	__set_current_state(TASK_RUNNING);
+-	completed = __ib_process_cq(cq, budget, NULL);
++	completed = __ib_process_cq(cq, budget, cq->wc, IB_POLL_BATCH);
+ 	if (completed < budget) {
+ 		irq_poll_complete(&cq->iop);
+ 		if (ib_req_notify_cq(cq, IB_POLL_FLAGS) > 0)
+@@ -108,7 +108,8 @@ static void ib_cq_poll_work(struct work_
+ 	struct ib_cq *cq = container_of(work, struct ib_cq, work);
+ 	int completed;
  
-+	destroy_hrtimer_on_stack(&alarm->timer);
-+
- 	if (!alarm->data)
- 		return 0;
- 
-@@ -740,6 +749,15 @@ static int alarmtimer_do_nsleep(struct a
- 	return -ERESTART_RESTARTBLOCK;
- }
- 
-+static void
-+alarm_init_on_stack(struct alarm *alarm, enum alarmtimer_type type,
-+		    enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+{
-+	hrtimer_init_on_stack(&alarm->timer, alarm_bases[type].base_clockid,
-+			      HRTIMER_MODE_ABS);
-+	__alarm_init(alarm, type, function);
-+}
-+
- /**
-  * alarm_timer_nsleep_restart - restartblock alarmtimer nsleep
-  * @restart: ptr to restart block
-@@ -752,7 +770,7 @@ static long __sched alarm_timer_nsleep_r
- 	ktime_t exp = restart->nanosleep.expires;
- 	struct alarm alarm;
- 
--	alarm_init(&alarm, type, alarmtimer_nsleep_wakeup);
-+	alarm_init_on_stack(&alarm, type, alarmtimer_nsleep_wakeup);
- 
- 	return alarmtimer_do_nsleep(&alarm, exp, type);
- }
-@@ -784,7 +802,7 @@ static int alarm_timer_nsleep(const cloc
- 	if (!capable(CAP_WAKE_ALARM))
- 		return -EPERM;
- 
--	alarm_init(&alarm, type, alarmtimer_nsleep_wakeup);
-+	alarm_init_on_stack(&alarm, type, alarmtimer_nsleep_wakeup);
- 
- 	exp = timespec64_to_ktime(*tsreq);
- 	/* Convert (if necessary) to absolute time */
+-	completed = __ib_process_cq(cq, IB_POLL_BUDGET_WORKQUEUE, NULL);
++	completed = __ib_process_cq(cq, IB_POLL_BUDGET_WORKQUEUE, cq->wc,
++				    IB_POLL_BATCH);
+ 	if (completed >= IB_POLL_BUDGET_WORKQUEUE ||
+ 	    ib_req_notify_cq(cq, IB_POLL_FLAGS) > 0)
+ 		queue_work(ib_comp_wq, &cq->work);
