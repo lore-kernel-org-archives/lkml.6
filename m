@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49KbuZbZOR5V8cHaHj+Gyj1zbAk7s50Xb1k6WCIpJ8ZHenOlNl3dOd4xP5oHSb6TkGKWH6y
-ARC-Seal: i=1; a=rsa-sha256; t=1524652915; cv=none;
+X-Google-Smtp-Source: AB8JxZq68dOThVtdiUjsHn8ei5XVVwuvBIR0bCSQPnkhamTGvEM/aXDv45yvOEhp+JUSsKJg/KLH
+ARC-Seal: i=1; a=rsa-sha256; t=1524652910; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ih/tG3Wxi4gz7CVnngwqKpqnLBQoe8++7nWHDqH837sdirjPUPZ45xDfCYkwSwMw2K
-         yIA9dSxrVdGj8wogB7FpUDprWT0pBHlKVsVJTO1sZvCUWd2b82jy2xYZnsunLx1NIZzQ
-         re3r8ocBDIy0ZkNQwt3JUPd2P20hyvD5XFkpHjonPWhvpG1sXA0SvJQ8JghXssby1QJP
-         Bs5jdtfCRUi+qDnVBeJp7gz4tDV8fl9Xr04h2zrAqM0H5y7JYL/2OdR5BlT8jJXxR0zJ
-         ybvDjbQJypTRjGPr/NHt1lTYFbGlVrzcZHnqlLE/xjqPyFKSgQtuFzAlrMhV3Ncldczk
-         s6oA==
+        b=gLk8D3VJHo/Izb4IcLMA9WivnXMgH8SBkh3eNlpmRiQ49y3UP/xJ8dQnqbEg8KNcKQ
+         WbVsKo1lxExUmPwVpuEpClTPND0x/fXCrV/7wR/Qk7UDcF86DT7VLpIRVtK/cY+wwPLA
+         rtI4PUpVgEcDFVneCiIrlimNlFuPhpURZ1i8N9yO39RwDkaK7fweywr0mg+ucwXlv5x9
+         WCUDNNX6NswsSIsmzAu5DNDIIv+7dUC1dx2+uKK6W6YaTne8OJ/nC3qXrGXBcJUnKcQC
+         gFD4+cU7kbMCQEjDExFBngWOQ6B0it1LrK6MYj5mHOavTK4yyyKvHQPJyjYvQW+4nd0F
+         5iPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7tbjc7KgStZWLQvgm/50Cw2DKr3tn3llHwx+WmsYKdE=;
-        b=b7osrn0HSv+mqkVlEtZoOtFvPKevlKioDWaXcrIRxniatb+ygDXm83s+ddsjw88XYc
-         gDn9Ko3Ny+Cl2oSmlCk5c3o/yK6gG7dcs4jHqmvBQ90YfYPQwsR5hR3nQkHd8o31YFiz
-         L5VvKj2k2SWragYev4o4/Bih+OPiqPeisTN5YBk0oPsskQOLzD+gRVw+gLKTt4HByIeg
-         1u9HMjjC67kOqZ4DyStDP7TjFE4HdsaNXC6rufe9hb2NC+7yOjTOe+g2w71PtHI72WdZ
-         CCparbGhUp43l3mMkSdNRRiW3sE5PpD0DeaZ9YvrYHfy9dkIlkRBwa8qaJYBiJHMUVyz
-         0uVQ==
+        bh=STe/mNj8upDQQnsTet50UD+jXOoBKRy6E4fqRZqR0FU=;
+        b=jxA4DRoXvJWKnmADy8pDvdee97YrV1+JUq/Q2CMsw63Fhf1xmWXVTkolBS9Lm8ryup
+         P5yZXSkOpWcJsJfoeaivP908+oxnKpxRCGE+wRG+c/7B6K7GFoUj0Zg3s3Q5y3dbbLVM
+         UncMb5zpLDuOsEeFrh5ubQ+GfhougoZs4tuwdCu6qAbtU3aBpVuTV50jd2bW0XXvJIfp
+         yqUl+5098QwK5GV4lhmiw4KHEnO5CA661LXfmAuAg7oGJtyjvrGZdgRB11Q2RjJVlW18
+         Yj/2qCGPfanrAv50mCtN0B9E633v7H/bFdajXD3y1hc5eGcHgfjZfp3+OcOSV9HuM9ri
+         3oDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"shidao.ytt" <shidao.ytt@alibaba-inc.com>,
-	Caspar Zhang <jinli.zjl@alibaba-inc.com>,
-	Oliver Yang <zhiche.yy@alibaba-inc.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
+	Yang Shi <yang.s@alibaba-inc.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Arnd Bergmann <arnd@arndb.de>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 117/183] mm/fadvise: discard partial page if endbyte is also EOF
-Date: Wed, 25 Apr 2018 12:35:37 +0200
-Message-Id: <20180425103247.138730118@linuxfoundation.org>
+Subject: [PATCH 4.14 115/183] mm: thp: use down_read_trylock() in khugepaged to avoid long block
+Date: Wed, 25 Apr 2018 12:35:35 +0200
+Message-Id: <20180425103247.063788351@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -45,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714456119978046?=
-X-GMAIL-MSGID: =?utf-8?q?1598714456119978046?=
+X-GMAIL-THRID: =?utf-8?q?1598714450190565247?=
+X-GMAIL-MSGID: =?utf-8?q?1598714450190565247?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,216 +56,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "shidao.ytt" <shidao.ytt@alibaba-inc.com>
+From: Yang Shi <yang.s@alibaba-inc.com>
 
 
-[ Upstream commit a7ab400d6fe73d0119fdc234e9982a6f80faea9f ]
+[ Upstream commit 3b454ad35043dfbd3b5d2bb92b0991d6342afb44 ]
 
-During our recent testing with fadvise(FADV_DONTNEED), we find that if
-given offset/length is not page-aligned, the last page will not be
-discarded.  The tool we use is vmtouch (https://hoytech.com/vmtouch/),
-we map a 10KB-sized file into memory and then try to run this tool to
-evict the whole file mapping, but the last single page always remains
-staying in the memory:
+In the current design, khugepaged needs to acquire mmap_sem before
+scanning an mm.  But in some corner cases, khugepaged may scan a process
+which is modifying its memory mapping, so khugepaged blocks in
+uninterruptible state.  But the process might hold the mmap_sem for a
+long time when modifying a huge memory space and it may trigger the
+below khugepaged hung issue:
 
-$./vmtouch -e test_10K
-           Files: 1
-     Directories: 0
-   Evicted Pages: 3 (12K)
-         Elapsed: 2.1e-05 seconds
+  INFO: task khugepaged:270 blocked for more than 120 seconds.
+  Tainted: G E 4.9.65-006.ali3000.alios7.x86_64 #1
+  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+  khugepaged D 0 270 2 0x00000000 
+  ffff883f3deae4c0 0000000000000000 ffff883f610596c0 ffff883f7d359440
+  ffff883f63818000 ffffc90019adfc78 ffffffff817079a5 d67e5aa8c1860a64
+  0000000000000246 ffff883f7d359440 ffffc90019adfc88 ffff883f610596c0
+  Call Trace:
+    schedule+0x36/0x80
+    rwsem_down_read_failed+0xf0/0x150
+    call_rwsem_down_read_failed+0x18/0x30
+    down_read+0x20/0x40
+    khugepaged+0x476/0x11d0
+    kthread+0xe6/0x100
+    ret_from_fork+0x25/0x30
 
-$./vmtouch test_10K
-           Files: 1
-     Directories: 0
-  Resident Pages: 1/3  4K/12K  33.3%
-         Elapsed: 5.5e-05 seconds
+So it sounds pointless to just block khugepaged waiting for the
+semaphore so replace down_read() with down_read_trylock() to move to
+scan the next mm quickly instead of just blocking on the semaphore so
+that other processes can get more chances to install THP.  Then
+khugepaged can come back to scan the skipped mm when it has finished the
+current round full_scan.
 
-However when we test with an older kernel, say 3.10, this problem is
-gone.  So we wonder if this is a regression:
+And it appears that the change can improve khugepaged efficiency a
+little bit.
 
-$./vmtouch -e test_10K
-           Files: 1
-     Directories: 0
-   Evicted Pages: 3 (12K)
-         Elapsed: 8.2e-05 seconds
+Below is the test result when running LTP on a 24 cores 4GB memory 2
+nodes NUMA VM:
 
-$./vmtouch test_10K
-           Files: 1
-     Directories: 0
-  Resident Pages: 0/3  0/12K  0%  <-- partial page also discarded
-         Elapsed: 5e-05 seconds
+                                    pristine          w/ trylock
+  full_scan                         197               187
+  pages_collapsed                   21                26
+  thp_fault_alloc                   40818             44466
+  thp_fault_fallback                18413             16679
+  thp_collapse_alloc                21                150
+  thp_collapse_alloc_failed         14                16
+  thp_file_alloc                    369               369
 
-After digging a little bit into this problem, we find it seems not a
-regression.  Not discarding partial page is likely to be on purpose
-according to commit 441c228f817f ("mm: fadvise: document the
-fadvise(FADV_DONTNEED) behaviour for partial pages") written by Mel
-Gorman.  He explained why partial pages should be preserved instead of
-being discarded when using fadvise(FADV_DONTNEED).
-
-However, the interesting part is that the actual code did NOT work as
-the same as it was described, the partial page was still discarded
-anyway, due to a calculation mistake of `end_index' passed to
-invalidate_mapping_pages().  This mistake has not been fixed until
-recently, that's why we fail to reproduce our problem in old kernels.
-The fix is done in commit 18aba41cbf ("mm/fadvise.c: do not discard
-partial pages with POSIX_FADV_DONTNEED") by Oleg Drokin.
-
-Back to the original testing, our problem becomes that there is a
-special case that, if the page-unaligned `endbyte' is also the end of
-file, it is not necessary at all to preserve the last partial page, as
-we all know no one else will use the rest of it.  It should be safe
-enough if we just discard the whole page.  So we add an EOF check in
-this patch.
-
-We also find a poosbile real world issue in mainline kernel.  Assume
-such scenario: A userspace backup application want to backup a huge
-amount of small files (<4k) at once, the developer might (I guess) want
-to use fadvise(FADV_DONTNEED) to save memory.  However, FADV_DONTNEED
-won't really happen since the only page mapped is a partial page, and
-kernel will preserve it.  Our patch also fixes this problem, since we
-know the endbyte is EOF, so we discard it.
-
-Here is a simple reproducer to reproduce and verify each scenario we
-described above:
-
-  test_fadvise.c
-  ==============================
-  #include <sys/mman.h>
-  #include <sys/stat.h>
-  #include <fcntl.h>
-  #include <stdlib.h>
-  #include <string.h>
-  #include <stdio.h>
-  #include <unistd.h>
-
-  int main(int argc, char **argv)
-  {
-  	int i, fd, ret, len;
-  	struct stat buf;
-  	void *addr;
-  	unsigned char *vec;
-  	char *strbuf;
-  	ssize_t pagesize = getpagesize();
-  	ssize_t filesize;
-
-  	fd = open(argv[1], O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
-  	if (fd < 0)
-  		return -1;
-  	filesize = strtoul(argv[2], NULL, 10);
-
-  	strbuf = malloc(filesize);
-  	memset(strbuf, 42, filesize);
-  	write(fd, strbuf, filesize);
-  	free(strbuf);
-  	fsync(fd);
-
-  	len = (filesize + pagesize - 1) / pagesize;
-  	printf("length of pages: %d\n", len);
-
-  	addr = mmap(NULL, filesize, PROT_READ, MAP_SHARED, fd, 0);
-  	if (addr == MAP_FAILED)
-  		return -1;
-
-  	ret = posix_fadvise(fd, 0, filesize, POSIX_FADV_DONTNEED);
-  	if (ret < 0)
-  		return -1;
-
-  	vec = malloc(len);
-  	ret = mincore(addr, filesize, (void *)vec);
-  	if (ret < 0)
-  		return -1;
-
-  	for (i = 0; i < len; i++)
-  		printf("pages[%d]: %x\n", i, vec[i] & 0x1);
-
-  	free(vec);
-  	close(fd);
-
-  	return 0;
-  }
-  ==============================
-
-Test 1: running on kernel with commit 18aba41cbf reverted:
-
-  [root@caspar ~]# uname -r
-  4.15.0-rc6.revert+
-  [root@caspar ~]# ./test_fadvise file1 1024
-  length of pages: 1
-  pages[0]: 0    # <-- partial page discarded
-  [root@caspar ~]# ./test_fadvise file2 8192
-  length of pages: 2
-  pages[0]: 0
-  pages[1]: 0
-  [root@caspar ~]# ./test_fadvise file3 10240
-  length of pages: 3
-  pages[0]: 0
-  pages[1]: 0
-  pages[2]: 0    # <-- partial page discarded
-
-Test 2: running on mainline kernel:
-
-  [root@caspar ~]# uname -r
-  4.15.0-rc6+
-  [root@caspar ~]# ./test_fadvise test1 1024
-  length of pages: 1
-  pages[0]: 1    # <-- partial and the only page not discarded
-  [root@caspar ~]# ./test_fadvise test2 8192
-  length of pages: 2
-  pages[0]: 0
-  pages[1]: 0
-  [root@caspar ~]# ./test_fadvise test3 10240
-  length of pages: 3
-  pages[0]: 0
-  pages[1]: 0
-  pages[2]: 1    # <-- partial page not discarded
-
-Test 3: running on kernel with this patch:
-
-  [root@caspar ~]# uname -r
-  4.15.0-rc6.patched+
-  [root@caspar ~]# ./test_fadvise test1 1024
-  length of pages: 1
-  pages[0]: 0    # <-- partial page and EOF, discarded
-  [root@caspar ~]# ./test_fadvise test2 8192
-  length of pages: 2
-  pages[0]: 0
-  pages[1]: 0
-  [root@caspar ~]# ./test_fadvise test3 10240
-  length of pages: 3
-  pages[0]: 0
-  pages[1]: 0
-  pages[2]: 0    # <-- partial page and EOF, discarded
-
-[akpm@linux-foundation.org: tweak code comment]
-Link: http://lkml.kernel.org/r/5222da9ee20e1695eaabb69f631f200d6e6b8876.1515132470.git.jinli.zjl@alibaba-inc.com
-Signed-off-by: shidao.ytt <shidao.ytt@alibaba-inc.com>
-Signed-off-by: Caspar Zhang <jinli.zjl@alibaba-inc.com>
-Reviewed-by: Oliver Yang <zhiche.yy@alibaba-inc.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
+[akpm@linux-foundation.org: coding-style fixes]
+[akpm@linux-foundation.org: tweak comment]
+[arnd@arndb.de: avoid uninitialized variable use]
+  Link: http://lkml.kernel.org/r/20171215125129.2948634-1-arnd@arndb.de
+Link: http://lkml.kernel.org/r/1513281203-54878-1-git-send-email-yang.s@alibaba-inc.com
+Signed-off-by: Yang Shi <yang.s@alibaba-inc.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/fadvise.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ mm/khugepaged.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/mm/fadvise.c
-+++ b/mm/fadvise.c
-@@ -127,7 +127,15 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, l
- 		 */
- 		start_index = (offset+(PAGE_SIZE-1)) >> PAGE_SHIFT;
- 		end_index = (endbyte >> PAGE_SHIFT);
--		if ((endbyte & ~PAGE_MASK) != ~PAGE_MASK) {
-+		/*
-+		 * The page at end_index will be inclusively discarded according
-+		 * by invalidate_mapping_pages(), so subtracting 1 from
-+		 * end_index means we will skip the last page.  But if endbyte
-+		 * is page aligned or is at the end of file, we should not skip
-+		 * that page - discarding the last page is safe enough.
-+		 */
-+		if ((endbyte & ~PAGE_MASK) != ~PAGE_MASK &&
-+				endbyte != inode->i_size - 1) {
- 			/* First page is tricky as 0 - 1 = -1, but pgoff_t
- 			 * is unsigned, so the end_index >= start_index
- 			 * check below would be true and we'll discard the whole
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1679,10 +1679,14 @@ static unsigned int khugepaged_scan_mm_s
+ 	spin_unlock(&khugepaged_mm_lock);
+ 
+ 	mm = mm_slot->mm;
+-	down_read(&mm->mmap_sem);
+-	if (unlikely(khugepaged_test_exit(mm)))
+-		vma = NULL;
+-	else
++	/*
++	 * Don't wait for semaphore (to avoid long wait times).  Just move to
++	 * the next mm on the list.
++	 */
++	vma = NULL;
++	if (unlikely(!down_read_trylock(&mm->mmap_sem)))
++		goto breakouterloop_mmap_sem;
++	if (likely(!khugepaged_test_exit(mm)))
+ 		vma = find_vma(mm, khugepaged_scan.address);
+ 
+ 	progress++;
