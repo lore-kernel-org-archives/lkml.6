@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-558212-1524653188-2-16940540082325998154
+X-Cyrus-Session-Id: sloti22d1t05-558212-1524653182-2-2450675153035306047
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653187; b=h4PRfudEGL6qQmAyWWmPNeMvr31wAN0+7uX7J5Y3Dws7hyxM89
-    lYDkwK5vUtahkWJFDgL5Iywrdt7ZgYiDaZUYFwb9V7UPxkew/zOzv745HxM0iiQb
-    wL6aXeci5KE7nhkRXCp316yQbfNbDvrU1NzA5pyzepNefwJguA8BNindx8kqmnU6
-    aCv0NaTRbqatQ4Va+Z3S8cThd2S1/p9TwWLOLGYMRJqqLftk2oBMgsXEfruIJDw2
-    PgScFZKDfs3wMJbBq8Ge4JmVD8ZKjmbC0dnjOXITrcOo6HecT8rE9ika/vQG3I7C
-    EgHqHn6Mn6RzrO1CgaXzdHLxVh0BE5B3QdUA==
+    1524653181; b=pnHgFeqr5DxpuOEoAu+usmbJQYxnejqqNifSuwlfCZIF1N9nuW
+    XS7dFDEuuDLbMl5Iw5aG37gg1h19unQ+RFaDy2tjpVKHnnUFqmY/v4kOsLNUW0DM
+    JyThEs1Jzk3R/yp1beram1d2bsQjJaOxdRA9xJ2YDmgJa+9w16WbEX+skGRsEknW
+    AKlcgzXRuy/pvmgylcBN8dHV25tp2h15ZZge/fIUsZ6VdoYVT+QbMslsZ/JTux8K
+    vZGJTK2C4D/XxyX3ZGORFsvWEiAX+kajHXwYc7dNpv0Jux0cMJ+dMOQIR5nXMUtv
+    hMIVOMnenG38RCisgxXqr0O1nHic0xJsgksw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653187; bh=bU8908BmJEbgcTu0SIKlxrn1BECAkW
-    qUu9kmXSOdFBQ=; b=jgUlp/pP5jmKDS4vV45PrZxQ/0RclkRbNQZnCpRpovO9lv
-    Y62PkwqwjrQwpv5TrpGukXrCAXYxSrn54VZYJ8/TtlH6LfrBOolWgd41NQz1vg0R
-    4DruC9SQVraP+pD2b09EX1JODhGPmjmEBoCbrev7C+lLZixkQ9r7R047AQoYchgF
-    AtIxhLt2Tdd+0xyDSIocGyYJVrZ3+RRgqEC0VjdwTuWp8hF1FPAOEG3hLpPnmxXw
-    HDDjqsj3+v0IWo8n9C7qDe5aGl8oDc5/zCXCcehv1cVMxAM+Wqbhjc7t9c/q5yg5
-    aq8iD76G8yCNFXbevI+WLD/xll2I8cE98KlW5pcA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524653181; bh=iqmosItVENiu+6VprPjNMTXTZhD3yh
+    Sg5/pOW+Pb/O4=; b=Z3bvy/M67XxIERKcKqw/WvUrVJshPp7uDy0Ntlsc12/PEX
+    s3mC2lSeaMiGXO1vP0dRc1Zv9+u7k0vVaP9lM3P3jkFdRAOf+RjYt/Zk2OZrhHiU
+    Tv0/jTiXW60umgfQwpjORIE9+AwscCZ72zLPdK5RPf8rZi6qIcObc3zdNGYEMdli
+    9Rc3fq8PWTJ92SEC8RVX16ia4sb1c6Iq8nhy6bZ9vhFB84+qcp6JVHy6ERepgGgT
+    V3+GlaFfwp4ml4FZLkyZ9+hj8nnNhlCtKaOxwqSjDSWRw10cln+eFgyyl46fJV7j
+    r+k7SVR82/ZlrPMUkFLDAEcIi9+4AfEuoSLksUtw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,31 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIVLJABTFdlPTgtpSgXzXh39m1t3sNT4XTzMDq4I+EPlK9KtafrxmAT/3zvIEiSg9sVgE/ADnJ2YvPWl6fR86uZxVG9VB4qPj1+0t7334rwYZx+OSljv
-    lfnRQH6lzHHCw12B0sgjClEFtOD7PAtJEmHG+5lQUP/ytosZW4aS1ncn6+e9BOFKX81dvZBv6zesDxOIVYDDPp7PCSy3DR3DSBox1lr3yle95NcjF7YsqSqN
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCcuON1f+/L7oYtUOlc31Ccak5HLw/grE8Ct5yhkYMxZMjZ8h3dLw329snT/MzI82kMCzoh5lK/QDVDulpPEuaVBSD4toXFQnJhqfr8HXC1Z+b5JLIND
+    nTHjV++8PpAfkyUFx0BH4glsalk4GMhcdgHFAdZlglI/eTw9HIpE0/obwlGQd9Sc1CEU1EPpyEDXSlNKJXYF3iKdGYzqS5+DmqIWELCFR2TCGyrlkPHkM+/D
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=aatUQebYAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=pXeBbtYkOXvbKU-YMDkA:9 a=QEXdDO2ut3YA:10 a=7715FyvI7WU-l6oqrZBK:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1RTuLK3dAAAA:8 a=uTJJjIG0AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=blYj7uNOJKGU-zgziaUA:9 a=QEXdDO2ut3YA:10 a=kRpfLKi8w9umh8uBmg1i:22
+    a=Oxz5h5Y_mNNx07kSEfs-:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752782AbeDYKqZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:46:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53518 "EHLO
+        id S1754493AbeDYKpK (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:45:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53488 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754499AbeDYKpK (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:45:10 -0400
+        with ESMTP id S1754034AbeDYKpF (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:45:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Smythies <dsmythies@telus.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Yu Chen <yu.c.chen@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 151/183] cpufreq: intel_pstate: Enable HWP during system resume on CPU0
-Date: Wed, 25 Apr 2018 12:36:11 +0200
-Message-Id: <20180425103248.606860969@linuxfoundation.org>
+Subject: [PATCH 4.14 149/183] bcache: fix for data collapse after re-attaching an attached device
+Date: Wed, 25 Apr 2018 12:36:09 +0200
+Message-Id: <20180425103248.522789608@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -95,47 +93,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chen Yu <yu.c.chen@intel.com>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
 
-[ Upstream commit 70f6bf2a3b7e40c3f802b0ea837762a8bc6c1430 ]
+[ Upstream commit 73ac105be390c1de42a2f21643c9778a5e002930 ]
 
-When maxcpus=1 is in the kernel command line, the BP is responsible
-for re-enabling the HWP - because currently only the APs invoke
-intel_pstate_hwp_enable() during their online process - which might
-put the system into unstable state after resume.
+back-end device sdm has already attached a cache_set with ID
+f67ebe1f-f8bc-4d73-bfe5-9dc88607f119, then try to attach with
+another cache set, and it returns with an error:
+[root]# cd /sys/block/sdm/bcache
+[root]# echo 5ccd0a63-148e-48b8-afa2-aca9cbd6279f > attach
+-bash: echo: write error: Invalid argument
 
-Fix this by enabling the HWP explicitly on BP during resume.
+After that, execute a command to modify the label of bcache
+device:
+[root]# echo data_disk1 > label
 
-Reported-by: Doug Smythies <dsmythies@telus.net>
-Suggested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Yu Chen <yu.c.chen@intel.com>
-[ rjw: Subject/changelog, minor modifications ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Then we reboot the system, when the system power on, the back-end
+device can not attach to cache_set, a messages show in the log:
+Feb  5 12:05:52 ceph152 kernel: [922385.508498] bcache:
+bch_cached_dev_attach() couldn't find uuid for sdm in set
+
+In sysfs_attach(), dc->sb.set_uuid was assigned to the value
+which input through sysfs, no matter whether it is success
+or not in bch_cached_dev_attach(). For example, If the back-end
+device has already attached to an cache set, bch_cached_dev_attach()
+would fail, but dc->sb.set_uuid was changed. Then modify the
+label of bcache device, it will call bch_write_bdev_super(),
+which would write the dc->sb.set_uuid to the super block, so we
+record a wrong cache set ID in the super block, after the system
+reboot, the cache set couldn't find the uuid of the back-end
+device, so the bcache device couldn't exist and use any more.
+
+In this patch, we don't assigned cache set ID to dc->sb.set_uuid
+in sysfs_attach() directly, but input it into bch_cached_dev_attach(),
+and assigned dc->sb.set_uuid to the cache set ID after the back-end
+device attached to the cache set successful.
+
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpufreq/intel_pstate.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/md/bcache/bcache.h |    2 +-
+ drivers/md/bcache/super.c  |   10 ++++++----
+ drivers/md/bcache/sysfs.c  |    6 ++++--
+ 3 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -779,6 +779,8 @@ static int intel_pstate_hwp_save_state(s
- 	return 0;
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -906,7 +906,7 @@ void bcache_write_super(struct cache_set
+ 
+ int bch_flash_dev_create(struct cache_set *c, uint64_t size);
+ 
+-int bch_cached_dev_attach(struct cached_dev *, struct cache_set *);
++int bch_cached_dev_attach(struct cached_dev *, struct cache_set *, uint8_t *);
+ void bch_cached_dev_detach(struct cached_dev *);
+ void bch_cached_dev_run(struct cached_dev *);
+ void bcache_device_stop(struct bcache_device *);
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -939,7 +939,8 @@ void bch_cached_dev_detach(struct cached
+ 	cached_dev_put(dc);
  }
  
-+static void intel_pstate_hwp_enable(struct cpudata *cpudata);
-+
- static int intel_pstate_resume(struct cpufreq_policy *policy)
+-int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c)
++int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
++			  uint8_t *set_uuid)
  {
- 	if (!hwp_active)
-@@ -786,6 +788,9 @@ static int intel_pstate_resume(struct cp
+ 	uint32_t rtime = cpu_to_le32(get_seconds());
+ 	struct uuid_entry *u;
+@@ -948,7 +949,8 @@ int bch_cached_dev_attach(struct cached_
  
- 	mutex_lock(&intel_pstate_limits_lock);
+ 	bdevname(dc->bdev, buf);
  
-+	if (policy->cpu == 0)
-+		intel_pstate_hwp_enable(all_cpu_data[policy->cpu]);
+-	if (memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16))
++	if ((set_uuid && memcmp(set_uuid, c->sb.set_uuid, 16)) ||
++	    (!set_uuid && memcmp(dc->sb.set_uuid, c->sb.set_uuid, 16)))
+ 		return -ENOENT;
+ 
+ 	if (dc->disk.c) {
+@@ -1190,7 +1192,7 @@ static void register_bdev(struct cache_s
+ 
+ 	list_add(&dc->list, &uncached_devices);
+ 	list_for_each_entry(c, &bch_cache_sets, list)
+-		bch_cached_dev_attach(dc, c);
++		bch_cached_dev_attach(dc, c, NULL);
+ 
+ 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_NONE ||
+ 	    BDEV_STATE(&dc->sb) == BDEV_STATE_STALE)
+@@ -1712,7 +1714,7 @@ static void run_cache_set(struct cache_s
+ 	bcache_write_super(c);
+ 
+ 	list_for_each_entry_safe(dc, t, &uncached_devices, list)
+-		bch_cached_dev_attach(dc, c);
++		bch_cached_dev_attach(dc, c, NULL);
+ 
+ 	flash_devs_run(c);
+ 
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -265,11 +265,13 @@ STORE(__cached_dev)
+ 	}
+ 
+ 	if (attr == &sysfs_attach) {
+-		if (bch_parse_uuid(buf, dc->sb.set_uuid) < 16)
++		uint8_t		set_uuid[16];
 +
- 	all_cpu_data[policy->cpu]->epp_policy = 0;
- 	intel_pstate_hwp_set(policy->cpu);
++		if (bch_parse_uuid(buf, set_uuid) < 16)
+ 			return -EINVAL;
  
+ 		list_for_each_entry(c, &bch_cache_sets, list) {
+-			v = bch_cached_dev_attach(dc, c);
++			v = bch_cached_dev_attach(dc, c, set_uuid);
+ 			if (!v)
+ 				return size;
+ 		}
