@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeDYHQP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 03:16:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43500 "EHLO
+        id S1751443AbeDYHQa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 03:16:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43652 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750949AbeDYHQN (ORCPT
+        with ESMTP id S1750949AbeDYHQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 03:16:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3993360117
+        Wed, 25 Apr 2018 03:16:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A033060863
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH v4 2/5] dt-bindings: adv7511: Extend bindings to allow
- specifying slave map addresses
+Subject: Re: [PATCH v4 5/5] drm: adv7511: Add support for
+ i2c_new_secondary_device
 To: Kieran Bingham <kbingham@kernel.org>, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org
@@ -21,17 +21,17 @@ Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
- <1518544137-2742-3-git-send-email-kbingham@kernel.org>
+ <1518544137-2742-6-git-send-email-kbingham@kernel.org>
 From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <aeef36f9-cd59-2b83-829e-8b0c3127b838@codeaurora.org>
-Date: Wed, 25 Apr 2018 12:46:04 +0530
+Message-ID: <9d9acfa8-aa5d-c60f-3858-4847b80f1690@codeaurora.org>
+Date: Wed, 25 Apr 2018 12:46:17 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1518544137-2742-3-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518544137-2742-6-git-send-email-kbingham@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -45,76 +45,152 @@ On Tuesday 13 February 2018 11:18 PM, Kieran Bingham wrote:
 > ports. Each map has it own I2C address and acts as a standard slave
 > device on the I2C bus.
 > 
-> Extend the device tree node bindings to be able to override the default
-> addresses so that address conflicts with other devices on the same bus
-> may be resolved at the board description level.
-> 
+> Allow a device tree node to override the default addresses so that
+> address conflicts with other devices on the same bus may be resolved at
+> the board description level.
 
 Queued to drm-misc-next
 
+> 
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > ---
 > v2:
->   - Fixed up reg: property description to account for multiple optional
->     addresses.
->   - Minor reword to commit message to account for DT only change
->   - Collected Robs RB tag
+>   - Update missing edid-i2c address setting
+>   - Split out DT bindings
+>   - Rename and move the I2C default addresses to their own section
 > 
 > v3:
->   - Split map register addresses into individual declarations.
+>   - No change
 > 
 > v4:
->   - Update commit title
+>   - Change registration order of packet/cec to fix error path and
+>     simplify code change.
 >   - Collect Laurent's RB tag
->   - Fix nitpickings
->   - Normalise I2C usage (I²C is harder to grep for)
 > 
->   .../devicetree/bindings/display/bridge/adi,adv7511.txt | 18 ++++++++++++++++--
->   1 file changed, 16 insertions(+), 2 deletions(-)
+>   drivers/gpu/drm/bridge/adv7511/adv7511.h     |  6 ++++
+>   drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 42 ++++++++++++++++++----------
+>   2 files changed, 33 insertions(+), 15 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-> index 0047b1394c70..2c887536258c 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-> @@ -14,7 +14,13 @@ Required properties:
->   		"adi,adv7513"
->   		"adi,adv7533"
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> index d034b2cb5eee..73d8ccb97742 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> @@ -93,6 +93,11 @@
+>   #define ADV7511_REG_CHIP_ID_HIGH		0xf5
+>   #define ADV7511_REG_CHIP_ID_LOW			0xf6
 >   
-> -- reg: I2C slave address
-> +- reg: I2C slave addresses
-> +  The ADV7511 internal registers are split into four pages exposed through
-> +  different I2C addresses, creating four register maps. Each map has it own
-> +  I2C address and acts as a standard slave device on the I2C bus. The main
-> +  address is mandatory, others are optional and revert to defaults if not
-> +  specified.
+> +/* Hardware defined default addresses for I2C register maps */
+> +#define ADV7511_CEC_I2C_ADDR_DEFAULT		0x3c
+> +#define ADV7511_EDID_I2C_ADDR_DEFAULT		0x3f
+> +#define ADV7511_PACKET_I2C_ADDR_DEFAULT		0x38
 > +
+>   #define ADV7511_CSC_ENABLE			BIT(7)
+>   #define ADV7511_CSC_UPDATE_MODE			BIT(5)
 >   
->   The ADV7511 supports a large number of input data formats that differ by their
->   color depth, color format, clock mode, bit justification and random
-> @@ -70,6 +76,9 @@ Optional properties:
->     rather than generate its own timings for HDMI output.
->   - clocks: from common clock binding: reference to the CEC clock.
->   - clock-names: from common clock binding: must be "cec".
-> +- reg-names : Names of maps with programmable addresses.
-> +	It can contain any map needing a non-default address.
-> +	Possible maps names are : "main", "edid", "cec", "packet"
+> @@ -321,6 +326,7 @@ enum adv7511_type {
+>   struct adv7511 {
+>   	struct i2c_client *i2c_main;
+>   	struct i2c_client *i2c_edid;
+> +	struct i2c_client *i2c_packet;
+>   	struct i2c_client *i2c_cec;
 >   
->   Required nodes:
+>   	struct regmap *regmap;
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> index efa29db5fc2b..802bc433f54a 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> @@ -586,7 +586,7 @@ static int adv7511_get_modes(struct adv7511 *adv7511,
+>   	/* Reading the EDID only works if the device is powered */
+>   	if (!adv7511->powered) {
+>   		unsigned int edid_i2c_addr =
+> -					(adv7511->i2c_main->addr << 1) + 4;
+> +					(adv7511->i2c_edid->addr << 1);
 >   
-> @@ -88,7 +97,12 @@ Example
+>   		__adv7511_power_on(adv7511);
 >   
->   	adv7511w: hdmi@39 {
->   		compatible = "adi,adv7511w";
-> -		reg = <39>;
-> +		/*
-> +		 * The EDID page will be accessible on address 0x66 on the I2C
-> +		 * bus. All other maps continue to use their default addresses.
-> +		 */
-> +		reg = <0x39>, <0x66>;
-> +		reg-names = "main", "edid";
->   		interrupt-parent = <&gpio3>;
->   		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
->   		clocks = <&cec_clock>;
+> @@ -969,10 +969,10 @@ static int adv7511_init_cec_regmap(struct adv7511 *adv)
+>   {
+>   	int ret;
+>   
+> -	adv->i2c_cec = i2c_new_dummy(adv->i2c_main->adapter,
+> -				     adv->i2c_main->addr - 1);
+> +	adv->i2c_cec = i2c_new_secondary_device(adv->i2c_main, "cec",
+> +					ADV7511_CEC_I2C_ADDR_DEFAULT);
+>   	if (!adv->i2c_cec)
+> -		return -ENOMEM;
+> +		return -EINVAL;
+>   	i2c_set_clientdata(adv->i2c_cec, adv);
+>   
+>   	adv->regmap_cec = devm_regmap_init_i2c(adv->i2c_cec,
+> @@ -1082,8 +1082,6 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+>   	struct adv7511_link_config link_config;
+>   	struct adv7511 *adv7511;
+>   	struct device *dev = &i2c->dev;
+> -	unsigned int main_i2c_addr = i2c->addr << 1;
+> -	unsigned int edid_i2c_addr = main_i2c_addr + 4;
+>   	unsigned int val;
+>   	int ret;
+>   
+> @@ -1153,23 +1151,34 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+>   	if (ret)
+>   		goto uninit_regulators;
+>   
+> -	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR, edid_i2c_addr);
+> -	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
+> -		     main_i2c_addr - 0xa);
+> -	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
+> -		     main_i2c_addr - 2);
+> -
+>   	adv7511_packet_disable(adv7511, 0xffff);
+>   
+> -	adv7511->i2c_edid = i2c_new_dummy(i2c->adapter, edid_i2c_addr >> 1);
+> +	adv7511->i2c_edid = i2c_new_secondary_device(i2c, "edid",
+> +					ADV7511_EDID_I2C_ADDR_DEFAULT);
+>   	if (!adv7511->i2c_edid) {
+> -		ret = -ENOMEM;
+> +		ret = -EINVAL;
+>   		goto uninit_regulators;
+>   	}
+>   
+> +	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR,
+> +		     adv7511->i2c_edid->addr << 1);
+> +
+> +	adv7511->i2c_packet = i2c_new_secondary_device(i2c, "packet",
+> +					ADV7511_PACKET_I2C_ADDR_DEFAULT);
+> +	if (!adv7511->i2c_packet) {
+> +		ret = -EINVAL;
+> +		goto err_i2c_unregister_edid;
+> +	}
+> +
+> +	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
+> +		     adv7511->i2c_packet->addr << 1);
+> +
+>   	ret = adv7511_init_cec_regmap(adv7511);
+>   	if (ret)
+> -		goto err_i2c_unregister_edid;
+> +		goto err_i2c_unregister_packet;
+> +
+> +	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
+> +		     adv7511->i2c_cec->addr << 1);
+>   
+>   	INIT_WORK(&adv7511->hpd_work, adv7511_hpd_work);
+>   
+> @@ -1207,6 +1216,8 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+>   	i2c_unregister_device(adv7511->i2c_cec);
+>   	if (adv7511->cec_clk)
+>   		clk_disable_unprepare(adv7511->cec_clk);
+> +err_i2c_unregister_packet:
+> +	i2c_unregister_device(adv7511->i2c_packet);
+>   err_i2c_unregister_edid:
+>   	i2c_unregister_device(adv7511->i2c_edid);
+>   uninit_regulators:
+> @@ -1233,6 +1244,7 @@ static int adv7511_remove(struct i2c_client *i2c)
+>   
+>   	cec_unregister_adapter(adv7511->cec_adap);
+>   
+> +	i2c_unregister_device(adv7511->i2c_packet);
+>   	i2c_unregister_device(adv7511->i2c_edid);
+>   
+>   	return 0;
 > 
