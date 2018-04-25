@@ -1,140 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754648AbeDYOWL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:22:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56255 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753508AbeDYOWH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:22:07 -0400
-Date: Wed, 25 Apr 2018 07:21:45 -0700
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-51fc4be41c7ea7a00f6a17ad15ac9ea684d07921@git.kernel.org>
-Cc: fweisbec@gmail.com, linux-kernel@vger.kernel.org, ira.weiny@intel.com,
-        peterz@infradead.org, john.fleck@intel.com, mike.marciniszyn@intel.com,
-        tglx@linutronix.de, frederic@kernel.org, hpa@zytor.com,
-        anna-maria@linutronix.de, mingo@kernel.org,
-        dennis.dalessandro@intel.com, kaike.wan@intel.com
-Reply-To: dennis.dalessandro@intel.com, kaike.wan@intel.com, hpa@zytor.com,
-        anna-maria@linutronix.de, mingo@kernel.org, frederic@kernel.org,
-        ira.weiny@intel.com, fweisbec@gmail.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mike.marciniszyn@intel.com, john.fleck@intel.com,
-        tglx@linutronix.de
-In-Reply-To: <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de>
-        <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] tick/sched: Do not mess with an enqueued
- hrtimer
-Git-Commit-ID: 51fc4be41c7ea7a00f6a17ad15ac9ea684d07921
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1754518AbeDYOXn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:23:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34460 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753283AbeDYOXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:23:41 -0400
+Date: Wed, 25 Apr 2018 16:23:37 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: kan.liang@linux.intel.com
+Cc: acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ganapatrao.kulkarni@cavium.com, zhangshaokun@hisilicon.com,
+        yao.jin@linux.intel.com, will.deacon@arm.com, ak@linux.intel.com,
+        agustinv@codeaurora.org
+Subject: Re: [V2 PATCH] perf parse-events: Specially handle uncore event
+ alias in small groups
+Message-ID: <20180425142337.GE3396@krava>
+References: <1524664218-134407-1-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1524664218-134407-1-git-send-email-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  51fc4be41c7ea7a00f6a17ad15ac9ea684d07921
-Gitweb:     https://git.kernel.org/tip/51fc4be41c7ea7a00f6a17ad15ac9ea684d07921
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Tue, 24 Apr 2018 21:22:18 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 25 Apr 2018 16:11:58 +0200
+On Wed, Apr 25, 2018 at 06:50:18AM -0700, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> Perf stat doesn't count the uncore event aliases from the same uncore
+> block in a group, for example:
+> 
+>   perf stat -e '{unc_m_cas_count.all,unc_m_clockticks}' -a -I 1000
+>   #           time             counts unit events
+>        1.000447342      <not counted>      unc_m_cas_count.all
+>        1.000447342      <not counted>      unc_m_clockticks
+>        2.000740654      <not counted>      unc_m_cas_count.all
+>        2.000740654      <not counted>      unc_m_clockticks
+> 
+> The output is very misleading. It gives a wrong impression that the
+> uncore event doesn't work.
+> 
+> An uncore block could be composed by several PMUs. An uncore event alias
+> is a joint name which means the same event runs on all PMUs of a block.
+> Perf doesn't support mixed events from different PMUs in the same group.
+> It is wrong to put uncore event aliases in a big group.
+> 
+> The right way is to split the big group into multiple small groups which
+> only include the events from the same PMU.
+> Only uncore event aliases from the same uncore block should be specially
+> handled here. It doesn't make sense to mix the uncore events with other
+> uncore events from different blocks or even core events in a group.
+> 
+> With the patch:
+>   #           time             counts unit events
+>      1.001557653            140,833      unc_m_cas_count.all
+>      1.001557653      1,330,231,332      unc_m_clockticks
+>      2.002709483             85,007      unc_m_cas_count.all
+>      2.002709483      1,429,494,563      unc_m_clockticks
 
-tick/sched: Do not mess with an enqueued hrtimer
+hum, I still can see the original behaviour even with the patch:
 
-Kaike reported that in tests rdma hrtimers occasionaly stopped working. He
-did great debugging, which provided enough context to decode the problem.
+[jolsa@krava perf]$ sudo ./perf stat -e '{data_reads,clockticks}' -a -I 1000
+#           time             counts unit events
+     1.000184929      <not counted> MiB  data_reads                                                  
+     1.000184929    <not supported>      clockticks                                                  
+     2.000552765      <not counted> MiB  data_reads                                                  
+     2.000552765    <not supported>      clockticks                                                  
+     3.000846298      <not counted> MiB  data_reads                                                  
+     3.000846298    <not supported>      clockticks                                                  
+     4.001044852      <not counted> MiB  data_reads                                                  
+     4.001044852    <not supported>      clockticks                                                  
+     5.001247131      <not counted> MiB  data_reads                                                  
+     5.001247131    <not supported>      clockticks                                                  
+^C     5.546917060      <not counted> MiB  data_reads                                                  
+     5.546917060    <not supported>      clockticks                                                  
 
-CPU 3			     	      	     CPU 2
 
-idle
-start sched_timer expires = 712171000000
- queue->next = sched_timer
-					    start rdmavt timer. expires = 712172915662
-					    lock(baseof(CPU3))
-tick_nohz_stop_tick()
-tick = 716767000000			    timerqueue_add(tmr)
-
-hrtimer_set_expires(sched_timer, tick);
-  sched_timer->expires = 716767000000  <---- FAIL
-					     if (tmr->expires < queue->next->expires)
-hrtimer_start(sched_timer)		          queue->next = tmr;
-lock(baseof(CPU3))
-					     unlock(baseof(CPU3))
-timerqueue_remove()
-timerqueue_add()
-
-ts->sched_timer is queued and queue->next is pointing to it, but then
-ts->sched_timer.expires is modified.
-
-This not only corrupts the ordering of the timerqueue RB tree, it also
-makes CPU2 see the new expiry time of timerqueue->next->expires when
-checking whether timerqueue->next needs to be updated. So CPU2 sees that
-the rdma timer is earlier than timerqueue->next and sets the rdma timer as
-new next.
-
-Depending on whether it had also seen the new time at RB tree enqueue, it
-might have queued the rdma timer at the wrong place and then after removing
-the sched_timer the RB tree is completely hosed.
-
-The problem was introduced with a commit which tried to solve inconsistency
-between the hrtimer in the tick_sched data and the underlying hardware
-clockevent. It split out hrtimer_set_expires() to store the new tick time
-in both the NOHZ and the NOHZ + HIGHRES case, but missed the fact that in
-the NOHZ + HIGHRES case the hrtimer might still be queued.
-
-Use hrtimer_start(timer, tick...) for the NOHZ + HIGHRES case which sets
-timer->expires after canceling the timer and move the hrtimer_set_expires()
-invocation into the NOHZ only code path which is not affected as it merily
-uses the hrtimer as next event storage so code pathes can be shared with
-the NOHZ + HIGHRES case.
-
-Fixes: d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
-Reported-by: "Wan Kaike" <kaike.wan@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: "Marciniszyn Mike" <mike.marciniszyn@intel.com>
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: linux-rdma@vger.kernel.org
-Cc: "Dalessandro Dennis" <dennis.dalessandro@intel.com>
-Cc: "Fleck John" <john.fleck@intel.com>
-Cc: stable@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: "Weiny Ira" <ira.weiny@intel.com>
-Cc: "linux-rdma@vger.kernel.org"
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de
-
----
- kernel/time/tick-sched.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index e35a6fced00c..da9455a6b42b 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -795,12 +795,12 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
- 		return;
- 	}
- 
--	hrtimer_set_expires(&ts->sched_timer, tick);
--
--	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
--		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
--	else
-+	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
-+		hrtimer_start(&ts->sched_timer, tick, HRTIMER_MODE_ABS_PINNED);
-+	} else {
-+		hrtimer_set_expires(&ts->sched_timer, tick);
- 		tick_program_event(tick, 1);
-+	}
- }
- 
- static void tick_nohz_retain_tick(struct tick_sched *ts)
+jirka
