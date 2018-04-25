@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48bI0keBrSQvKO8KZhzCO9eT9DpXQJcs4OMeYu/DHOLzTQwQqj4UrkS01yXhN0vg43JVa+9
-ARC-Seal: i=1; a=rsa-sha256; t=1524652758; cv=none;
+X-Google-Smtp-Source: AB8JxZqg7uNnI12ccfyH2zUKU4hk94qEKWRF3m58BXeGX0VZiT+TceIS7WMBFEVExHzD6SzIfkzH
+ARC-Seal: i=1; a=rsa-sha256; t=1524652752; cv=none;
         d=google.com; s=arc-20160816;
-        b=Nma4dOUxYcZok4x7boAx/NycvI+ll9RproKinmaiCqAdNdVsqQuTgPpwQ9zu69psnQ
-         4cv8nKJELPfgo1YRfec+BiqiCccoIbq2evLj3CCQxNRA9CX8JGzfxriK+tJ4zj9dews0
-         2KK7Iiclzp2luPOddZoaz8JjKFicc87mronIRrG6iMiv+B5eEIqpBAHoWWJeUcwWE3Ja
-         3yc5gulXSfHvGcA8sbbpX7W8ba1VtfiOu3McR/Ym/PLcRpfQWzNaJhbilovQw2zt3Ywl
-         zNFHxLiNGXpCqMtC1BgO1H5ru9HKhdFwNdaX93+dz22nRnNlOq5W0CroaAuovrtJyRx4
-         iLpw==
+        b=HfRDKDXnnPpMZ9sPCIHrncFmWKMZOO39w6dV29utBP4bG6epn4f1o4vYkRtd3kByrZ
+         u9Y3JL3aOvO5svUCNGoziArcBf063jH4JYneYf4t5vLJOZ5iy/w63MluOnXu0zeGihX/
+         3ngOmdWGNrNffwVLCX7gBcyp8Jegyk2iCfrUgGHN5fJFuAhNf6eOs2fheMdVJUEB8mpf
+         Mtu5dcnC9z3ol53Axwx+Ab5P0YUTrA2nFUmLc3KfT536Ash4EWNHz+Sxhko/RInR2Ib5
+         01thcnuIG93O4SE3HRZa51yeredRh68byAnsjiuRfXGFmnO02RGgsyNKvxf3Yr7p+VeC
+         CTnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ncGsVRDUlQ+HjnAg9Y9ieH5qnHPgXrDo5L6F4boFedc=;
-        b=J6SX1PyaFoWMmSu591rhfhOdoVCEAkPWvS5L8DExXgGNQUmJ/oTwazk7Oy/uEBZjUC
-         jz9c0R5hFFqWSsSlVWwpBs8pdLPPguphKYMCYgKy4jXrEXgtlzGoCNubk6b8iox96ahf
-         vCPD2INHOVFQfGqXqevSI7lNTubXGlbRXaU2Ux+6iSisPLpxdVlRRMjEWXu6ah3VVFIH
-         vxmLkpRUI9ZVw01JHMUtibbavzuEDloG0oYeQaTiLXd/mcjAaAulREdEGB9LZ7bmeKz5
-         B1i1o+2wjDdP6F1CveQgLEfAGPh9l2oXpuDGVba01Pe7rGBlLHHfwOJp6aNiKDmek4Mv
-         P8xQ==
+        bh=EhAYnrV1dcVN7HuVcT18xe1MgTvQntI9Gi3+XArsMYs=;
+        b=mSPNxrokuqFJKOlrJcHpfxXATJS7AvLqhcMiP+YL1uhuxAJvPn6g/WfBBV9naZYBIS
+         /NxHdhYXtt1BJCHdqXkoMT6fLwjlAPdVFwMEpR2Ve5YVJEP57ePoh9qb7czQdWU9gNYJ
+         pEe0hAJiC1N1hyEHE8UWAvGToD35x1PwXk0CLsocucmfY/+OlokwGsHVZ/QKK1er2Akw
+         ZqVWe0lQkxqpuVEeN2vBbu3ze0Bti35icnkCH2MCl8vDw+h+U1cUX7G2xqQN22E2thOq
+         zblMIoQ7ZIkJ7Q4EqEa1B6U4oVnsZ10LtvUNVGWA1xHsFnrLIZFiLRSZte9mLXmml7yk
+         lt4A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Zolt=C3=A1n=20B=C3=B6sz=C3=B6rm=C3=A9nyi?= <zboszor@pr.hu>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@iguana.be>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Anna Schumaker <Anna.Schumaker@Netapp.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 057/183] watchdog: sp5100_tco: Fix watchdog disable bit
-Date: Wed, 25 Apr 2018 12:34:37 +0200
-Message-Id: <20180425103244.832986633@linuxfoundation.org>
+Subject: [PATCH 4.14 029/183] xprtrdma: Fix backchannel allocation of extra rpcrdma_reps
+Date: Wed, 25 Apr 2018 12:34:09 +0200
+Message-Id: <20180425103243.761742489@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714290197733313?=
-X-GMAIL-MSGID: =?utf-8?q?1598714290197733313?=
+X-GMAIL-THRID: =?utf-8?q?1598714284740713566?=
+X-GMAIL-MSGID: =?utf-8?q?1598714284740713566?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,34 +50,140 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Chuck Lever <chuck.lever@oracle.com>
 
 
-[ Upstream commit f541c09ebfc61697b586b38c9ebaf4b70defb278 ]
+[ Upstream commit d698c4a02ee02053bbebe051322ff427a2dad56a ]
 
-According to all published information, the watchdog disable bit for SB800
-compatible controllers is bit 1 of PM register 0x48, not bit 2. For the
-most part that doesn't matter in practice, since the bit has to be cleared
-to enable watchdog address decoding, which is the default setting, but it
-still needs to be fixed.
+The backchannel code uses rpcrdma_recv_buffer_put to add new reps
+to the free rep list. This also decrements rb_recv_count, which
+spoofs the receive overrun logic in rpcrdma_buffer_get_rep.
 
-Cc: Zoltán Böszörményi <zboszor@pr.hu>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Commit 9b06688bc3b9 ("xprtrdma: Fix additional uses of
+spin_lock_irqsave(rb_lock)") replaced the original open-coded
+list_add with a call to rpcrdma_recv_buffer_put(), but then a year
+later, commit 05c974669ece ("xprtrdma: Fix receive buffer
+accounting") added rep accounting to rpcrdma_recv_buffer_put.
+It was an oversight to let the backchannel continue to use this
+function.
+
+The fix this, let's combine the "add to free list" logic with
+rpcrdma_create_rep.
+
+Also, do not allocate RPCRDMA_MAX_BC_REQUESTS rpcrdma_reps in
+rpcrdma_buffer_create and then allocate additional rpcrdma_reps in
+rpcrdma_bc_setup_reps. Allocating the extra reps during backchannel
+set-up is sufficient.
+
+Fixes: 05c974669ece ("xprtrdma: Fix receive buffer accounting")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/sp5100_tco.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sunrpc/xprtrdma/backchannel.c |   12 ++----------
+ net/sunrpc/xprtrdma/verbs.c       |   32 +++++++++++++++++++-------------
+ net/sunrpc/xprtrdma/xprt_rdma.h   |    2 +-
+ 3 files changed, 22 insertions(+), 24 deletions(-)
 
---- a/drivers/watchdog/sp5100_tco.h
-+++ b/drivers/watchdog/sp5100_tco.h
-@@ -55,7 +55,7 @@
- #define SB800_PM_WATCHDOG_CONFIG	0x4C
+--- a/net/sunrpc/xprtrdma/backchannel.c
++++ b/net/sunrpc/xprtrdma/backchannel.c
+@@ -74,21 +74,13 @@ out_fail:
+ static int rpcrdma_bc_setup_reps(struct rpcrdma_xprt *r_xprt,
+ 				 unsigned int count)
+ {
+-	struct rpcrdma_rep *rep;
+ 	int rc = 0;
  
- #define SB800_PCI_WATCHDOG_DECODE_EN	(1 << 0)
--#define SB800_PM_WATCHDOG_DISABLE	(1 << 2)
-+#define SB800_PM_WATCHDOG_DISABLE	(1 << 1)
- #define SB800_PM_WATCHDOG_SECOND_RES	(3 << 0)
- #define SB800_ACPI_MMIO_DECODE_EN	(1 << 0)
- #define SB800_ACPI_MMIO_SEL		(1 << 1)
+ 	while (count--) {
+-		rep = rpcrdma_create_rep(r_xprt);
+-		if (IS_ERR(rep)) {
+-			pr_err("RPC:       %s: reply buffer alloc failed\n",
+-			       __func__);
+-			rc = PTR_ERR(rep);
++		rc = rpcrdma_create_rep(r_xprt);
++		if (rc)
+ 			break;
+-		}
+-
+-		rpcrdma_recv_buffer_put(rep);
+ 	}
+-
+ 	return rc;
+ }
+ 
+--- a/net/sunrpc/xprtrdma/verbs.c
++++ b/net/sunrpc/xprtrdma/verbs.c
+@@ -951,10 +951,17 @@ rpcrdma_create_req(struct rpcrdma_xprt *
+ 	return req;
+ }
+ 
+-struct rpcrdma_rep *
++/**
++ * rpcrdma_create_rep - Allocate an rpcrdma_rep object
++ * @r_xprt: controlling transport
++ *
++ * Returns 0 on success or a negative errno on failure.
++ */
++int
+ rpcrdma_create_rep(struct rpcrdma_xprt *r_xprt)
+ {
+ 	struct rpcrdma_create_data_internal *cdata = &r_xprt->rx_data;
++	struct rpcrdma_buffer *buf = &r_xprt->rx_buf;
+ 	struct rpcrdma_rep *rep;
+ 	int rc;
+ 
+@@ -979,12 +986,18 @@ rpcrdma_create_rep(struct rpcrdma_xprt *
+ 	rep->rr_recv_wr.wr_cqe = &rep->rr_cqe;
+ 	rep->rr_recv_wr.sg_list = &rep->rr_rdmabuf->rg_iov;
+ 	rep->rr_recv_wr.num_sge = 1;
+-	return rep;
++
++	spin_lock(&buf->rb_lock);
++	list_add(&rep->rr_list, &buf->rb_recv_bufs);
++	spin_unlock(&buf->rb_lock);
++	return 0;
+ 
+ out_free:
+ 	kfree(rep);
+ out:
+-	return ERR_PTR(rc);
++	dprintk("RPC:       %s: reply buffer %d alloc failed\n",
++		__func__, rc);
++	return rc;
+ }
+ 
+ int
+@@ -1027,17 +1040,10 @@ rpcrdma_buffer_create(struct rpcrdma_xpr
+ 	}
+ 
+ 	INIT_LIST_HEAD(&buf->rb_recv_bufs);
+-	for (i = 0; i < buf->rb_max_requests + RPCRDMA_MAX_BC_REQUESTS; i++) {
+-		struct rpcrdma_rep *rep;
+-
+-		rep = rpcrdma_create_rep(r_xprt);
+-		if (IS_ERR(rep)) {
+-			dprintk("RPC:       %s: reply buffer %d alloc failed\n",
+-				__func__, i);
+-			rc = PTR_ERR(rep);
++	for (i = 0; i <= buf->rb_max_requests; i++) {
++		rc = rpcrdma_create_rep(r_xprt);
++		if (rc)
+ 			goto out;
+-		}
+-		list_add(&rep->rr_list, &buf->rb_recv_bufs);
+ 	}
+ 
+ 	return 0;
+--- a/net/sunrpc/xprtrdma/xprt_rdma.h
++++ b/net/sunrpc/xprtrdma/xprt_rdma.h
+@@ -550,8 +550,8 @@ int rpcrdma_ep_post_recv(struct rpcrdma_
+  * Buffer calls - xprtrdma/verbs.c
+  */
+ struct rpcrdma_req *rpcrdma_create_req(struct rpcrdma_xprt *);
+-struct rpcrdma_rep *rpcrdma_create_rep(struct rpcrdma_xprt *);
+ void rpcrdma_destroy_req(struct rpcrdma_req *);
++int rpcrdma_create_rep(struct rpcrdma_xprt *r_xprt);
+ int rpcrdma_buffer_create(struct rpcrdma_xprt *);
+ void rpcrdma_buffer_destroy(struct rpcrdma_buffer *);
+ 
