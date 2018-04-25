@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-557887-1524653793-2-16609468202141456623
+X-Cyrus-Session-Id: sloti22d1t05-557887-1524653759-2-17065817050945389962
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653792; b=S/CuBNChbU4D0BR99nfQ4O2N1Lbj8wHLcC9h3OseG3a/9I3SSW
-    zxpuWYmgKL6biz3N8DjaZn4X1MsMzGsQaE02rqRcwSpNNV45HHJx3tfj/0u+lxTh
-    SuWDyFWuukLaZpeO+C6vgQNQGMZrW1BMQWrNEIpYyQrqW+dejCl516gMXqVnwFB4
-    Ha8iVXSY+fgmAoRMNUuZuSWQYGZNdoB8DTqQ0tcdWTvWE3IpQWDe8cCVQy409KZR
-    BZY0zvyzSzE3KK41qvgS6tMQ3ShoKXc5/qCG+fy2yWx/xaSEOAaCj2AlVjIhMEnj
-    xB5iatPYJg57KSaCb63auhAPYlL+T3HeHzBg==
+    1524653759; b=hyUyxcbx/D0e6yN+wXhFgnUVfltpS0/rwaLp2awtYw/3i5ExPL
+    xqleD68Fof2ocC7OD59x0qQFyrnA6T2q5XJw4B7CZBmk0AEyEx97X4PVKB1o8D+k
+    V61MTqQ2nHdWrj9WViWt+7emn3ebynFi4EpTsFnHGm2RUn9PBPvKr07tjgYIM9Nw
+    rjVJH2D3JrRQYYB+x9T54ICB5eDbzPT7ysLCaHXD83TbipzH8Cpa0vpm1fuRtZjF
+    ZwbpUB0lVKtvRlwyBHa0X6rd7P2SRyZ+9XhMPV5F64ts+MF5S260f0vmTzfV+spl
+    nV/ZtvHrchpVrNU2IO64/193GAiGuOFFWoUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653792; bh=njlWwEyAZWhiuZLrT1BUx8T4BhPrHP
-    z/L4xgUOMUGQ4=; b=elLntkyXhhdpUxeXPraoSe1sMMPgUyC1maDGxY+xXJFpSV
-    SGSgay5OL82QU8FWlL1QV3GRyO1PMaxhtEsIrsd12Xu27jqU5wKWfYqZ6N0fNXMs
-    VF47w2/xeS2AMcjUGi8MpPttxB4bbhid8pkbFmO9qtdzouMlMTM8N4skSGlfDMmZ
-    jfXlvqTfDkXGygn04jGvenzj+e22Bp8d5YlL9R3/g2VbKSSxLDhmUytd2/zpzJTu
-    bDcQIc9xsXv3fLhIGb9cEmhXyPnAE2q26VKT73eO3jpCxe5mtbThFpU7N+McCnXr
-    Ta3w9DiAjeUWXwBny9uPO1/IeBXdTFsOdecwQzMA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524653759; bh=uNaqFertqxW0m1cW5TsLLju5wySsju
+    wPIT0Z1HvymTo=; b=gEWUVS6hP/ZxEEPd4CEsHeAVpvr+HRGFdv7d/tWDFByQE5
+    fYGvIssE01wSiP4zVG/gnMHF8ru7/mhMa5yjSRsGeK9wKbc1buux4OSYdyVF8CJl
+    o7HX/OIRl1gF1JEsaU1TxrZ+pg4SUhRxCyTDSpMEk79CfibsxqVn12oeS2o65buh
+    DpWQ7fj1UXVe+3BYPAFQV5mJebaM6XHzeoJgPdtWfV6hnv37g5lYQTOZ9lQZlLRg
+    WkNVIZfhc5D6TURm9AYgb7pkjFjHzZbM+KTCXW6d/gfsZyo3dhoDc6K4N/OX1cnR
+    4cReZzHWFNTXQ81c/nfO8pffsTWdCXwMM0XN6oHQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,43 +51,40 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOxlFkn8Gvw8iYFXJNEqGz/qzytgC6hWpiBKtems5d73eTpK6No3EPwNMzlYSrE/JISyqCYkCIufrmX1f0VBU7rLqAXRRtFgs2rmi+o7UItwvXyCFP/X
-    att8DF+saNi728a/KJcm3aVOLTJdnNuxHhcCbbucAa865Xrg0x3+jXxSu1zwAhE+xrpzOPLGqWvlUBtmtlghJ/0fgRH7paTfFLAW7pq5T5iC7CrtKV/sEs1e
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJprLhBraQ7ZFVhRo+oUIV4UAbeuuEAJF2zPjnVQ3jQd4xxvjBV0SqWyEzcHJjhs0IzH0Wm7h35C1WiUWzyx4z1m8pUiLWB+tz/NY/A1Cvk2gtwXxEsp
+    PqgT7jnRml5GGFl+3qE+7JdSQDYsZVt64Kja268GXAVCiGVZjgQRVXIV0TtZoozJllPTii4yQdVbUDw/PoSKZnkMfOKJEqWrwtckojlD870Qvtf1MIHMiCE3
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=i0EeH86SAAAA:8 a=GcyzOjIWAAAA:8 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
-    a=NufY4J3AAAAA:8 a=1XWaLZrsAAAA:8 a=nrACCIEEAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=uHNeC5YgsMNH8n1iQxQA:9 a=QEXdDO2ut3YA:10
-    a=K5Pz1n7aZbAA:10 a=DaFyWFqZkG0A:10 a=5QuTyhz7_sIA:10
-    a=hQL3dl6oAZ8NdCsdz28n:22 a=AjGcO6oz07-iQ99wixmX:22 a=TPcZfFuj8SYsoCJAFAiX:22
-    a=LP-oT3CeHzb3Kpa8nOvR:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=UtV5FjuMAAAA:8 a=o8Bf2xIQAAAA:8
+    a=IXr_WNlcAAAA:8 a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=FreliyUT6uAS0AdjSgsA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=ehT88nhQmDs7a44Z_RBH:22 a=kLeBEu5l8tkQtVp4YdQK:22
+    a=K24ECnMRWNUKRqF_MnsZ:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752805AbeDYKzg (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:55:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52950 "EHLO
+        id S1754088AbeDYKzi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:55:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52920 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754195AbeDYKnT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:19 -0400
+        with ESMTP id S1753858AbeDYKnQ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andi Kleen <ak@linux.intel.com>,
-        Chris Salls <salls@cs.ucsb.edu>,
-        Christopher Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Mark Fasheh <mfasheh@versity.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 111/183] mm/mempolicy: fix the check of nodemask from user
-Date: Wed, 25 Apr 2018 12:35:31 +0200
-Message-Id: <20180425103246.911628954@linuxfoundation.org>
+Subject: [PATCH 4.14 110/183] ocfs2: return error when we attempt to access a dirty bh in jbd2
+Date: Wed, 25 Apr 2018 12:35:30 +0200
+Message-Id: <20180425103246.874406810@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -105,109 +102,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yisheng Xie <xieyisheng1@huawei.com>
+From: piaojun <piaojun@huawei.com>
 
 
-[ Upstream commit 56521e7a02b7b84a5e72691a1fb15570e6055545 ]
+[ Upstream commit d984187e3a1ad7d12447a7ab2c43ce3717a2b5b3 ]
 
-As Xiaojun reported the ltp of migrate_pages01 will fail on arm64 system
-which has 4 nodes[0...3], all have memory and CONFIG_NODES_SHIFT=2:
+We should not reuse the dirty bh in jbd2 directly due to the following
+situation:
 
-  migrate_pages01    0  TINFO  :  test_invalid_nodes
-  migrate_pages01   14  TFAIL  :  migrate_pages_common.c:45: unexpected failure - returned value = 0, expected: -1
-  migrate_pages01   15  TFAIL  :  migrate_pages_common.c:55: call succeeded unexpectedly
+1. When removing extent rec, we will dirty the bhs of extent rec and
+   truncate log at the same time, and hand them over to jbd2.
 
-In this case the test_invalid_nodes of migrate_pages01 will call:
-SYSC_migrate_pages as:
+2. The bhs are submitted to jbd2 area successfully.
 
-  migrate_pages(0, , {0x0000000000000001}, 64, , {0x0000000000000010}, 64) = 0
+3. The write-back thread of device help flush the bhs to disk but
+   encounter write error due to abnormal storage link.
 
-The new nodes specifies one or more node IDs that are greater than the
-maximum supported node ID, however, the errno is not set to EINVAL as
-expected.
+4. After a while the storage link become normal. Truncate log flush
+   worker triggered by the next space reclaiming found the dirty bh of
+   truncate log and clear its 'BH_Write_EIO' and then set it uptodate in
+   __ocfs2_journal_access():
 
-As man pages of set_mempolicy[1], mbind[2], and migrate_pages[3]
-mentioned, when nodemask specifies one or more node IDs that are greater
-than the maximum supported node ID, the errno should set to EINVAL.
-However, get_nodes only check whether the part of bits
-[BITS_PER_LONG*BITS_TO_LONGS(MAX_NUMNODES), maxnode) is zero or not, and
-remain [MAX_NUMNODES, BITS_PER_LONG*BITS_TO_LONGS(MAX_NUMNODES)
-unchecked.
+   ocfs2_truncate_log_worker
+     ocfs2_flush_truncate_log
+       __ocfs2_flush_truncate_log
+         ocfs2_replay_truncate_records
+           ocfs2_journal_access_di
+             __ocfs2_journal_access // here we clear io_error and set 'tl_bh' uptodata.
 
-This patch is to check the bits of [MAX_NUMNODES, maxnode) in get_nodes
-to let migrate_pages set the errno to EINVAL when nodemask specifies one
-or more node IDs that are greater than the maximum supported node ID,
-which follows the manpage's guide.
+5. Then jbd2 will flush the bh of truncate log to disk, but the bh of
+   extent rec is still in error state, and unfortunately nobody will
+   take care of it.
 
-[1] http://man7.org/linux/man-pages/man2/set_mempolicy.2.html
-[2] http://man7.org/linux/man-pages/man2/mbind.2.html
-[3] http://man7.org/linux/man-pages/man2/migrate_pages.2.html
+6. At last the space of extent rec was not reduced, but truncate log
+   flush worker have given it back to globalalloc. That will cause
+   duplicate cluster problem which could be identified by fsck.ocfs2.
 
-Link: http://lkml.kernel.org/r/1510882624-44342-3-git-send-email-xieyisheng1@huawei.com
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-Reported-by: Tan Xiaojun <tanxiaojun@huawei.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Chris Salls <salls@cs.ucsb.edu>
-Cc: Christopher Lameter <cl@linux.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Sadly we can hardly revert this but set fs read-only in case of ruining
+atomicity and consistency of space reclaim.
+
+Link: http://lkml.kernel.org/r/5A6E8092.8090701@huawei.com
+Fixes: acf8fdbe6afb ("ocfs2: do not BUG if buffer not uptodate in __ocfs2_journal_access")
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/mempolicy.c |   23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ fs/ocfs2/journal.c |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -1262,6 +1262,7 @@ static int get_nodes(nodemask_t *nodes,
- 		     unsigned long maxnode)
- {
- 	unsigned long k;
-+	unsigned long t;
- 	unsigned long nlongs;
- 	unsigned long endmask;
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -666,23 +666,24 @@ static int __ocfs2_journal_access(handle
+ 	/* we can safely remove this assertion after testing. */
+ 	if (!buffer_uptodate(bh)) {
+ 		mlog(ML_ERROR, "giving me a buffer that's not uptodate!\n");
+-		mlog(ML_ERROR, "b_blocknr=%llu\n",
+-		     (unsigned long long)bh->b_blocknr);
++		mlog(ML_ERROR, "b_blocknr=%llu, b_state=0x%lx\n",
++		     (unsigned long long)bh->b_blocknr, bh->b_state);
  
-@@ -1278,13 +1279,19 @@ static int get_nodes(nodemask_t *nodes,
- 	else
- 		endmask = (1UL << (maxnode % BITS_PER_LONG)) - 1;
- 
--	/* When the user specified more nodes than supported just check
--	   if the non supported part is all zero. */
-+	/*
-+	 * When the user specified more nodes than supported just check
-+	 * if the non supported part is all zero.
-+	 *
-+	 * If maxnode have more longs than MAX_NUMNODES, check
-+	 * the bits in that area first. And then go through to
-+	 * check the rest bits which equal or bigger than MAX_NUMNODES.
-+	 * Otherwise, just check bits [MAX_NUMNODES, maxnode).
-+	 */
- 	if (nlongs > BITS_TO_LONGS(MAX_NUMNODES)) {
- 		if (nlongs > PAGE_SIZE/sizeof(long))
- 			return -EINVAL;
- 		for (k = BITS_TO_LONGS(MAX_NUMNODES); k < nlongs; k++) {
--			unsigned long t;
- 			if (get_user(t, nmask + k))
- 				return -EFAULT;
- 			if (k == nlongs - 1) {
-@@ -1297,6 +1304,16 @@ static int get_nodes(nodemask_t *nodes,
- 		endmask = ~0UL;
+ 		lock_buffer(bh);
+ 		/*
+-		 * A previous attempt to write this buffer head failed.
+-		 * Nothing we can do but to retry the write and hope for
+-		 * the best.
++		 * A previous transaction with a couple of buffer heads fail
++		 * to checkpoint, so all the bhs are marked as BH_Write_EIO.
++		 * For current transaction, the bh is just among those error
++		 * bhs which previous transaction handle. We can't just clear
++		 * its BH_Write_EIO and reuse directly, since other bhs are
++		 * not written to disk yet and that will cause metadata
++		 * inconsistency. So we should set fs read-only to avoid
++		 * further damage.
+ 		 */
+ 		if (buffer_write_io_error(bh) && !buffer_uptodate(bh)) {
+-			clear_buffer_write_io_error(bh);
+-			set_buffer_uptodate(bh);
+-		}
+-
+-		if (!buffer_uptodate(bh)) {
+ 			unlock_buffer(bh);
+-			return -EIO;
++			return ocfs2_error(osb->sb, "A previous attempt to "
++					"write this buffer head failed\n");
+ 		}
+ 		unlock_buffer(bh);
  	}
- 
-+	if (maxnode > MAX_NUMNODES && MAX_NUMNODES % BITS_PER_LONG != 0) {
-+		unsigned long valid_mask = endmask;
-+
-+		valid_mask &= ~((1UL << (MAX_NUMNODES % BITS_PER_LONG)) - 1);
-+		if (get_user(t, nmask + nlongs - 1))
-+			return -EFAULT;
-+		if (t & valid_mask)
-+			return -EINVAL;
-+	}
-+
- 	if (copy_from_user(nodes_addr(*nodes), nmask, nlongs*sizeof(unsigned long)))
- 		return -EFAULT;
- 	nodes_addr(*nodes)[nlongs-1] &= endmask;
