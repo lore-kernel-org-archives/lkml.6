@@ -1,96 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755492AbeDYQik (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:38:40 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:45874 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755076AbeDYQig (ORCPT
+        id S1755189AbeDYQoQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:44:16 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41438 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754196AbeDYQoN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:38:36 -0400
-X-Google-Smtp-Source: AIpwx4/XVK8bsWNRPowxRxGmj53Z1G2fXuzAD4FT+icPC8z2O7xmy3NjU40oR1qorvri2L3orO/kJhorovmCe3rRGak=
+        Wed, 25 Apr 2018 12:44:13 -0400
+X-Google-Smtp-Source: AIpwx49w1DtIuBxZW0dZURonVlao3QNQZgf0JuduwK0xMr9hs7eIUayb0QULIi2D6tqox35bQV4DJA==
+Subject: Re: [PATCH net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
+ zerocopy receive
+To: Andy Lutomirski <luto@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Soheil Hassas Yeganeh <soheil@google.com>
+References: <20180425052722.73022-1-edumazet@google.com>
+ <20180425052722.73022-2-edumazet@google.com>
+ <20180425062859.GA23914@infradead.org>
+ <5cd31eba-63b5-9160-0a2e-f441340df0d3@gmail.com>
+ <20180425160413.GC8546@bombadil.infradead.org>
+ <CALCETrWaekirEe+rKiPB-Zim6ZHKL-n7nfk9wrsHra_FtrS=DA@mail.gmail.com>
+ <155a86d5-a910-c366-f521-216a0582bad8@gmail.com>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <38aa7986-b367-882d-2669-d8525a520310@gmail.com>
+Date: Wed, 25 Apr 2018 09:44:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <5AE0A5FD.3060009@gmail.com>
-References: <a3722bda2eadf1ff229f73da6f0316f954956ae1.1524668025.git.arvind.yadav.cs@gmail.com>
- <d16d5b54-90c9-3137-bc74-2b0d7135a928@oracle.com> <5AE0A5FD.3060009@gmail.com>
-From: Shannon Nelson <shannon.lee.nelson@gmail.com>
-Date: Wed, 25 Apr 2018 09:38:35 -0700
-Message-ID: <CAP-MU4PPuxvtgfM5J5Arb5+sdAWxYPRDtQdm+cbHZO2WioJdfA@mail.gmail.com>
-Subject: Re: [PATCH] sparc: vio: use put_device() instead of kfree()
-To: arvindY <arvind.yadav.cs@gmail.com>
-Cc: Shannon Nelson <shannon.nelson@oracle.com>,
-        David Miller <davem@davemloft.net>, jag.raman@oracle.com,
-        liam.merwick@oracle.com, linux-kernel <linux-kernel@vger.kernel.org>,
-        Sparc kernel list <sparclinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <155a86d5-a910-c366-f521-216a0582bad8@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oh, yes, there it is, and the pointer to vio_dev_release() was already
-set up a little earlier in this function.
-
-Sorry for the noise.
-sln
-
-On Wed, Apr 25, 2018 at 8:59 AM, arvindY <arvind.yadav.cs@gmail.com> wrote:
->
->
-> On Wednesday 25 April 2018 09:14 PM, Shannon Nelson wrote:
->>
->> On 4/25/2018 7:56 AM, Arvind Yadav wrote:
->>>
->>> Never directly free @dev after calling device_register(), even
->>> if it returned an error. Always use put_device() to give up the
->>> reference initialized.
->>>
->>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
->>> ---
->>>   arch/sparc/kernel/vio.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/sparc/kernel/vio.c b/arch/sparc/kernel/vio.c
->>> index 1a0fa10..32bae68 100644
->>> --- a/arch/sparc/kernel/vio.c
->>> +++ b/arch/sparc/kernel/vio.c
->>> @@ -403,7 +403,7 @@ static struct vio_dev *vio_create_one(struct
->>> mdesc_handle *hp, u64 mp,
->>>       if (err) {
->>>           printk(KERN_ERR "VIO: Could not register device %s, err=%d\n",
->>>                  dev_name(&vdev->dev), err);
->>> -        kfree(vdev);
->>> +        put_device(&vdev->dev);
->>
->>
->> Hmmm... I can see why the put_device() might be a good idea, but I think
->> we still need the kfree() so as to not leak the memory that was kzalloc'd
->> above for vdev.
->>
->
-> There is no need to call kfree() here. Because put_device()
-> will decrement the last reference and then free the memory
-> by calling dev->release(It'll call vio_dev_release()).
-> Internally put_device() -> kobject_put() -> kobject_cleanup()
-> which is responsible to call 'dev -> release' and also free
-> other kobject resources.
-> If we will call kfree() here, Then It'll be a redundant call.
->
-> ~arvind
->
->
->> sln
->>
->>>           return NULL;
->>>       }
->>>       if (vdev->dp)
->>>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe sparclinux" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
+On 04/25/2018 09:35 AM, Eric Dumazet wrote:
+> 
+> 
+> On 04/25/2018 09:22 AM, Andy Lutomirski wrote:
+> 
+>> In general, I suspect that the zerocopy receive mechanism will only
+>> really be a win in single-threaded applications that consume large
+>> amounts of receive bandwidth on a single TCP socket using lots of
+>> memory and don't do all that much else.
+> 
+> This was dully noted in the original patch submission.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/commit/?id=309c446cb45f6663932c8e6d0754f4ac81d1b5cd
+> 
+> Our intent at Google is to use it for some specific 1MB+ receives, not as a generic and universal mechanism.
+> 
+> The major benefit is really the 4KB+ MTU, allowing to pack exactly 4096 bytes of payload per page.
+> 
 
--- 
-==============================================
-Mr. Shannon Nelson         Parents can't afford to be squeamish.
+Some perf numbers with 10 concurrent threads in tcp_mmap with zero copy enabled :
+(tcp_mmap uses 512 KB chunks, not 1MB ones)
+
+received 32768 MB (100 % mmap'ed) in 28.3054 s, 9.71116 Gbit
+  cpu usage user:0.039 sys:1.946, 60.5774 usec per MB, 65536 c-switches
+received 32768 MB (100 % mmap'ed) in 28.2504 s, 9.73004 Gbit
+  cpu usage user:0.052 sys:1.941, 60.8215 usec per MB, 65536 c-switches
+received 32768 MB (99.9998 % mmap'ed) in 28.2508 s, 9.72993 Gbit
+  cpu usage user:0.056 sys:1.915, 60.1501 usec per MB, 65539 c-switches
+received 32768 MB (100 % mmap'ed) in 28.2544 s, 9.72866 Gbit
+  cpu usage user:0.053 sys:1.966, 61.615 usec per MB, 65536 c-switches
+received 32768 MB (100 % mmap'ed) in 115.985 s, 2.36995 Gbit
+  cpu usage user:0.057 sys:2.492, 77.7893 usec per MB, 65536 c-switches
+received 32768 MB (100 % mmap'ed) in 62.633 s, 4.38871 Gbit
+  cpu usage user:0.048 sys:2.076, 64.8193 usec per MB, 65536 c-switches
+received 32768 MB (100 % mmap'ed) in 59.4608 s, 4.62285 Gbit
+  cpu usage user:0.047 sys:1.965, 61.4014 usec per MB, 65536 c-switches
+received 32768 MB (100 % mmap'ed) in 119.364 s, 2.30285 Gbit
+  cpu usage user:0.057 sys:2.757, 85.8765 usec per MB, 65536 c-switches
+received 32768 MB (100 % mmap'ed) in 121.37 s, 2.2648 Gbit
+  cpu usage user:0.05 sys:2.224, 69.397 usec per MB, 65536 c-switches
+received 32768 MB (100 % mmap'ed) in 121.382 s, 2.26457 Gbit
+  cpu usage user:0.049 sys:2.163, 67.5049 usec per MB, 65538 c-switches
+received 32768 MB (100 % mmap'ed) in 39.7636 s, 6.91281 Gbit
+  cpu usage user:0.055 sys:2.053, 64.3311 usec per MB, 65536 c-switches
+received 32768 MB (100 % mmap'ed) in 21.2803 s, 12.917 Gbit
+  cpu usage user:0.043 sys:2.057, 64.0869 usec per MB, 65537 c-switches
+
+When zero copy is not enabled :
+
+received 32768 MB (0 % mmap'ed) in 49.4301 s, 5.56094 Gbit
+  cpu usage user:0.036 sys:6.747, 207.001 usec per MB, 65546 c-switches
+received 32768 MB (0 % mmap'ed) in 49.431 s, 5.56084 Gbit
+  cpu usage user:0.042 sys:5.262, 161.865 usec per MB, 65540 c-switches
+received 32768 MB (0 % mmap'ed) in 84.7254 s, 3.24434 Gbit
+  cpu usage user:0.045 sys:5.154, 158.661 usec per MB, 65548 c-switches
+received 32768 MB (0 % mmap'ed) in 84.7274 s, 3.24426 Gbit
+  cpu usage user:0.043 sys:6.528, 200.531 usec per MB, 65542 c-switches
+received 32768 MB (0 % mmap'ed) in 35.3133 s, 7.78398 Gbit
+  cpu usage user:0.032 sys:5.066, 155.579 usec per MB, 65540 c-switches
+received 32768 MB (0 % mmap'ed) in 35.3137 s, 7.78389 Gbit
+  cpu usage user:0.034 sys:6.358, 195.068 usec per MB, 65536 c-switches
+received 32768 MB (0 % mmap'ed) in 98.8568 s, 2.78057 Gbit
+  cpu usage user:0.042 sys:6.519, 200.226 usec per MB, 65550 c-switches
+received 32768 MB (0 % mmap'ed) in 98.8638 s, 2.78037 Gbit
+  cpu usage user:0.042 sys:5.243, 161.285 usec per MB, 65545 c-switches
+received 32768 MB (0 % mmap'ed) in 108.282 s, 2.53853 Gbit
+  cpu usage user:0.059 sys:5.938, 183.014 usec per MB, 65538 c-switches
+received 32768 MB (0 % mmap'ed) in 108.314 s, 2.53778 Gbit
+  cpu usage user:0.04 sys:6.096, 187.256 usec per MB, 65548 c-switches
+received 32768 MB (0 % mmap'ed) in 29.4351 s, 9.33845 Gbit
+  cpu usage user:0.041 sys:6.03, 185.272 usec per MB, 65536 c-switches
+received 32768 MB (0 % mmap'ed) in 44.3993 s, 6.19104 Gbit
+  cpu usage user:0.034 sys:5.115, 157.135 usec per MB, 65535 c-switches
+received 32768 MB (0 % mmap'ed) in 79.7203 s, 3.44803 Gbit
+  cpu usage user:0.046 sys:5.214, 160.522 usec per MB, 65540 c-switches
