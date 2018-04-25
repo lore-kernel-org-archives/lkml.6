@@ -1,61 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755963AbeDYQVQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:21:16 -0400
-Received: from mail-pg0-f44.google.com ([74.125.83.44]:44401 "EHLO
-        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754839AbeDYQU6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:20:58 -0400
-X-Google-Smtp-Source: AIpwx48zn+5eeyjVyDWbxRx5fw5IzDmV4W0RLpLWPEzBLPHWcjXTtQlcQCgkYjC4w1PhZEsT8GXJbA==
-Subject: Re: [PATCH net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
- zerocopy receive
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Soheil Hassas Yeganeh <soheil@google.com>
-References: <20180425052722.73022-1-edumazet@google.com>
- <20180425052722.73022-2-edumazet@google.com>
- <20180425062859.GA23914@infradead.org>
- <5cd31eba-63b5-9160-0a2e-f441340df0d3@gmail.com>
- <20180425160413.GC8546@bombadil.infradead.org>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <8ce78bd6-8142-2937-11fd-2e4a2b22d90c@gmail.com>
-Date: Wed, 25 Apr 2018 09:20:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180425160413.GC8546@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S932219AbeDYQVV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:21:21 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:53208 "EHLO extserv.mm-sol.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755348AbeDYQVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:21:09 -0400
+From: Todor Tomov <todor.tomov@linaro.org>
+To: mchehab@kernel.org, hverkuil@xs4all.nl, sakari.ailus@iki.fi,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Todor Tomov <todor.tomov@linaro.org>
+Subject: [PATCH v4 0/2] Add support for ov7251 camera sensor
+Date: Wed, 25 Apr 2018 19:20:44 +0300
+Message-Id: <1524673246-14175-1-git-send-email-todor.tomov@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The ov7251 sensor is a 1/7.5-Inch B&W VGA (640x480) CMOS Digital Image
+Sensor from Omnivision.
 
+--------------------------------------------------------------------------
 
-On 04/25/2018 09:04 AM, Matthew Wilcox wrote:
+Version 4:
+- remove OF dependency;
+- use only stack memory in ov7251_write_seq_regs();
+- use DIV_ROUND_UP to round up sleep interval after gpio config;
+- minor style changes.
 
-> If you don't zap the page range, any of the CPUs in the system where
-> any thread in this task have ever run may have a TLB entry pointing to
-> this page ... if the page is being recycled into the page allocator,
-> then that page might end up as a slab page or page table or page cache
-> while the other CPU still have access to it.
+--------------------------------------------------------------------------
 
-Yes, this makes sense.
+Version 3:
+- DT binding: added that there shall be a single endpoint node in the port node;
+- added a comment for regulator enable order;
+- set exposure and gain with a single i2c transaction;
+- caclulate sleep after gpio config from external clock frequency;
+- use MEDIA_BUS_FMT_Y10_1X10 format code;
+- lock for power state, controls, mode and start streaming;
+- remove regulator_set_voltage();
+- use probe_new();
+- remove i2c_device_id table;
+- change of_property_read_u32 to fwnode_property_read_u32;
+- few corrections from checkpatch --strict.
 
-> 
-> You could hang onto the page until you've built up a sufficiently large
-> batch, then bulk-invalidate all of the TLB entries, but we start to get
-> into weirdnesses on different CPU architectures.
-> 
+--------------------------------------------------------------------------
 
-zap_page_range() is already doing a bulk-invalidate,
-so maybe vm_replace_page() wont bring serious improvement if we end-up doing same dance.
+Version 2:
+- changed ov7251 node's name in DT binding example;
+- SPDX licence identifier;
+- better names for register value defines;
+- remove power reference counting and leave a power state only;
+- use v4l2_find_nearest_size() to find sensor mode by requested size;
+- set ycbcr_enc, quantization and xfer_func in set_fmt;
+- use struct fwnode_handle instead of struct device_node;
+- add comment in driver about external clock value.
 
-Thanks.
+--------------------------------------------------------------------------
+
+Todor Tomov (2):
+  dt-bindings: media: Binding document for OV7251 camera sensor
+  media: Add a driver for the ov7251 camera sensor
+
+ .../devicetree/bindings/media/i2c/ov7251.txt       |   52 +
+ drivers/media/i2c/Kconfig                          |   12 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/ov7251.c                         | 1503 ++++++++++++++++++++
+ 4 files changed, 1568 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/ov7251.txt
+ create mode 100644 drivers/media/i2c/ov7251.c
+
+-- 
+2.7.4
