@@ -1,84 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754472AbeDYO31 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:29:27 -0400
-Received: from muru.com ([72.249.23.125]:38810 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753327AbeDYO30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:29:26 -0400
-From: Tony Lindgren <tony@atomide.com>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Roger Quadros <rogerq@ti.com>
-Subject: [PATCH] mfd: omap-usb-host: Fix dts probe of children
-Date: Wed, 25 Apr 2018 07:29:22 -0700
-Message-Id: <20180425142922.128233-1-tony@atomide.com>
-X-Mailer: git-send-email 2.17.0
+        id S1754583AbeDYOcO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:32:14 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:41818 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753939AbeDYOcM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:32:12 -0400
+Subject: Re: [PATCH v6 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+References: <20180419135426.155794-1-yixun.lan@amlogic.com>
+ <1524661512.4026.67.camel@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <2a307212-ea12-e7a1-cf6a-9fd7d9e9bb40@amlogic.com>
+Date: Wed, 25 Apr 2018 22:32:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
+MIME-Version: 1.0
+In-Reply-To: <1524661512.4026.67.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [61.173.0.49]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It currently only works if the parent bus uses "simple-bus". We
-currently try to probe children with non-existing compatible values.
-And we're missing .probe.
+Hi Jerome:
 
-I noticed this while testing devices configured to probe using ti-sysc
-interconnect target module driver. For that we also may want to rebind
-the driver, so let's remove __init and __exit.
+On 04/25/2018 09:05 PM, Jerome Brunet wrote:
+> On Thu, 2018-04-19 at 21:54 +0800, Yixun Lan wrote:
+>>   This patch try to add AO clock and Reset driver for Amlogic's
+>> Meson-AXG SoC.
+>>   Please note that patch 7 need to wait for the DTS changes[3] merged
+>> into mainline first, otherwise it will break the serial console.
+>>
+>>  patch 2: factor the common code into a dedicated file
+>>  patch 3-5: add the aoclk driver for AXG SoC
+>>  patch 6-7: drop unnecessary clock flags
+>>
+>> changes since v5 at [6]: 
+>>  - drop unnecessary header files
+>>  - add 'axg_aoclk' prefix to clk driver, make them more consistent
+>>  - add missing end new line..
+>>
+>> changes since v4 at [5]: 
+>>  - fix return err
+>>  - introduce CONFIG_COMMON_CLK_MESON_AO
+>>  - format/style minor fix
+>>
+>> changes since v3 at [4]: 
+>>  - add 'const' contraint to the read-only data
+>>  - switch to devm_of_clk_add_hw_provider API
+>>  - check return value of devm_reset_controller_register
+>>
+>> changes since v2 at [2]: 
+>>  - rework meson_aoclkc_probe() which leverage the of_match_data
+>>  - merge patch 5-6 into this series
+>>  - seperate DTS patch, will send to Kevin Hilman independently
+>>  
+>> changes since v1 at [0]: 
+>>  - rebase to clk-meson's branch 'next/drivers' [1]
+>>  - fix license, update to BSD-3-Clause
+>>  - drop un-used include header file
+>>
+>> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+>> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
+>> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+>> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+>> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
+>> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
+>> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
+> 
+> Yixun
+> 
+> Please :
+>  - Fix checkpatch error in patch 5 
+>  - Collect Philip's Ack on patch 4
+I've fixed above two
 
-Cc: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
+>  - Remove the extra new lines at EOF in patch 2 (maybe others, I did not check
+> them all) - 1 new line at the end of each file, not 2.
+> 
 
-This is OK to wait for v4.18 merge window as the related dts node has
-not yet been updated to probe via ti-sysc interconnect target driver.
+but, I just go back and check the patch, couldn't find any file which
+end with 2 new lines at EOF, could you point me out?
 
----
- drivers/mfd/omap-usb-host.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mfd/omap-usb-host.c b/drivers/mfd/omap-usb-host.c
---- a/drivers/mfd/omap-usb-host.c
-+++ b/drivers/mfd/omap-usb-host.c
-@@ -548,8 +548,8 @@ static int usbhs_omap_get_dt_pdata(struct device *dev,
- }
- 
- static const struct of_device_id usbhs_child_match_table[] = {
--	{ .compatible = "ti,omap-ehci", },
--	{ .compatible = "ti,omap-ohci", },
-+	{ .compatible = "ti,ehci-omap", },
-+	{ .compatible = "ti,ohci-omap3", },
- 	{ }
- };
- 
-@@ -875,6 +875,7 @@ static struct platform_driver usbhs_omap_driver = {
- 		.pm		= &usbhsomap_dev_pm_ops,
- 		.of_match_table = usbhs_omap_dt_ids,
- 	},
-+	.probe		= usbhs_omap_probe,
- 	.remove		= usbhs_omap_remove,
- };
- 
-@@ -884,9 +885,9 @@ MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("usb host common core driver for omap EHCI and OHCI");
- 
--static int __init omap_usbhs_drvinit(void)
-+static int omap_usbhs_drvinit(void)
- {
--	return platform_driver_probe(&usbhs_omap_driver, usbhs_omap_probe);
-+	return platform_driver_register(&usbhs_omap_driver);
- }
- 
- /*
-@@ -898,7 +899,7 @@ static int __init omap_usbhs_drvinit(void)
-  */
- fs_initcall_sync(omap_usbhs_drvinit);
- 
--static void __exit omap_usbhs_drvexit(void)
-+static void omap_usbhs_drvexit(void)
- {
- 	platform_driver_unregister(&usbhs_omap_driver);
- }
--- 
-2.17.0
+Yixun
