@@ -1,131 +1,160 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1494096-1523023787-2-16890123368313563708
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-778319-1524664855-2-8001102455539298769
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523023786; b=BUroHCkdRHxpF0HBDw67VIFOrZVN+SKm6SVMohH1C5ebd80sGP
-    VLCAJ3AycdDUelzKV99qkhJCZQU6j4Eltbui5T5OPIUYoHJ9JdQHgn9ZDF0yNhlz
-    Iek5D9h2/NP2wMUb3AWOw0GYxQVWrxifgGu40QMFNCxp3b2IzGjO5FeFnn8EO52/
-    ofoztR5RBUaLQrGKyFOTRQdGlfaBS6tJ5Zq20t0fBHUaubTcDteLTrALiH1MdJog
-    +tWpEtHnoXwrucP54I0x0v0McnDp/Sre58wHDj3PSwnGYWBUnBCLpt56SNqeNvwu
-    BsO2CE7WDWXRBsSEKVgtJWnX4YxjylWgViGQ==
+    1524664854; b=htm7Z9hRF+7F/g+q7IoohJA9HyZo3BTOiFC+uvBmJSJUuroWCK
+    DTtZqWxtG3kmyqe6vsfhXltJzIxUjDjgGihU6jWs79k7LBB7RES09f5zR0gZ69Q6
+    UVdKXzN3euU+AVrh8EAxqwqXyWeSq7V6hjczqfDKTkywD43Aa22dP/sJHq0u7XsY
+    DLysxPs+aUAssre58YMZ/CwhK5UNj2s4H36uzJMkaUALmvY7WUTE7FfLDe3yFiex
+    gJ0y4/by69CYk0pVZHoRx7Hg8o9hZO9QSqxXOX2xSu21qPXzhJxL5wSvnW4EYsnY
+    CgRB4dutotwfNuhkeCjkGljCkGmq9fwAFTFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:in-reply-to:references
-    :date:message-id:mime-version:content-type:sender:list-id; s=
-    fm2; t=1523023786; bh=daC8dXVggNbvw4E8sgZp/qfxs/h9tOW03f9Pfe6qv2
-    A=; b=A8dt/o80qGjhSjZRtj2oVldCdskEi9jqwP3N1b/yOwVnYxMmeesD9IjFkx
-    NOZw98L6tgeazYg/DPWMCNknsbK+CiE1kiJwT8uh0zSUyY4wusbRaPtLfRSCUrhL
-    8DMZUD8EfD8Xk5IVgE3I4k5/9Q7/MJNX3px6kBwcFfqg3v57s0ZxrWmmG/XkPoxI
-    W5nyp0woOzMmJnt1JOjqy34B1B2S9VPX7vh+AWgQ99T6c74KcJiE0DkigLOStQID
-    EsKI41JKk7gvdjMoipODxhVyt6bRMshlMCQjpryW3+HNXr+MYN7o9oB8uRlKN0Aj
-    jUdoJITPaFBDjOYEfYRv2dDyo1lw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    messagingengine.com; h=mime-version:from:date:message-id:subject
+    :to:cc:content-type:sender:list-id; s=fm2; t=1524664854; bh=P8yx
+    Tf0tDalyaM0gZWxSZmqsVAqBkVq4ZD62mgG0lWs=; b=pMCkscSagS5qXaOnWjzy
+    GiSPDLkjtWbYWnLf27hxa21R1uFFd/g7p2etNV4OWmPIJ39WMq1ulgdCRdd0lhF4
+    wkXP50To9SH/Fmf81mZozyepGsITBf03HgKnkL9orfBi7z9K0JB7yNpEVzrfdfae
+    Dta7SlPvzshK29SprsFAS391c9lezl8RaxjD2kqTKnsHzhfWJ0+lnsvS1V6YDB3a
+    6FuSNBrpfJQv8YSVQ5VNjFfWuQtlEqBQhMjN746HiaS/55HVIEHyXuFqTtmRhaXz
+    CG+fv3Be7FbT1hO99Jk5frJjGJnh5/nMWEW/1xerSTJI80AhCLhKmz/mb65zB2T1
+    BA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=lrJHAdZb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=VQC2daXI;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=lrJHAdZb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=VQC2daXI;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCxTQIA1DjbaqQXgqBYEJAyoSbPSLhfvKXY2V+74ddxyWJuMu1mbhKCdtk+XvE3CqJoZ79vug2GINa5ybclPmM5d5iFgFqJvxeUFK84pCFmygAz30Lyq
-    vkCPwekP+zKwUWb74bBQIL2BumkCIuH0Ktfn6X4JUNsJ6Hphg6PcXgFSwHyaeGVcB6oXvYBP9NvCi+cA5ZHLK7LQTTJbRdouDfomLlZUbwnVsO6bS8h6cHMw
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=QyXUC8HyAAAA:8
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=VTfK0ONw1eQ3Z2f5tWAA:9 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfA+07WRH9+2uqV7tVBm8EQubrQ023K+FIyFYdzn7Wd07xpeFkhYiPelA2dOX7hqSJv6zNAvv6e7+7s3O466dQMEQ9ww3i0DGW67vI6oJS1v5SytbPXKG
+    wfqEpcgMlInoLoryYV2ZwThuV9TbEsH3gka3553aMR9XvDNxQuhsKdnSVOa7qHgo+xs2qy8kESWkRXQByFMjQnnW3FV/ppUGSa0sl8VnR8zoPZEZOOCH8oox
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=B6KMzFptAAAA:20 a=bVfw19_g2iHN1v91vbUA:9
+    a=gBK3r5GUaqX-lCqB:21 a=Ovn3aacyWmVi7UaH:21 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756381AbeDFOJb (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 6 Apr 2018 10:09:31 -0400
-Received: from mga03.intel.com ([134.134.136.65]:63037 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754933AbeDFOJa (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:09:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,415,1517904000";
-   d="scan'208";a="44651620"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: Masanari Iida <standby24x7@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Markus Heiser <markus.heiser@darmarit.de>,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH v2] Documentation: typec.rst: Use literal-block element with ascii art
-In-Reply-To: <20180406124122.70676-1-heikki.krogerus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180406124122.70676-1-heikki.krogerus@linux.intel.com>
-Date: Fri, 06 Apr 2018 17:10:16 +0300
-Message-ID: <876054l92v.fsf@intel.com>
+        id S1754545AbeDYOAj (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 10:00:39 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:46129 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754566AbeDYOAe (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 10:00:34 -0400
+X-Google-Smtp-Source: AB8JxZqmdxZrNIQJ2GekMgG/ABA0lZiPscluzU7KdFu+beIVDvDB2sECo+3q4a1JgGhYVfOkrBgokGBBGZF5HeIxWoA=
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 25 Apr 2018 16:00:33 +0200
+X-Google-Sender-Auth: 8RgVwowOQHblJ0WU1lNRShoFK6w
+Message-ID: <CAK8P3a2fJODEHVJ1jfTsX9DGQAPh=FipUDHTqJhRRARXv5JDvQ@mail.gmail.com>
+Subject: y2038 kernel status update
+To: y2038 Mailman List <y2038@lists.linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Albert ARIBAUD <albert.aribaud@3adev.fr>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        RISC-V SW Dev <sw-dev@groups.riscv.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Private Kernel Alias <private-kwg@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 06 Apr 2018, Heikki Krogerus <heikki.krogerus@linux.intel.com> wrote:
-> Using reStructuredText literal-block element with ascii-art.
-> That prevents the ascii art from being processed as
-> reStructuredText.
->
-> Reported-by: Masanari Iida <standby24x7@gmail.com>
-> Fixes: bdecb33af34f ("usb: typec: API for controlling USB Type-C Multiplexers")
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Hi everyone,
 
-Reviewed-and-tested-by: Jani Nikula <jani.nikula@intel.com>
+A lot of things have happened in the move to make the kernel y2038
+ready in recent times. I've sent out new patches recently but will be
+on vacation for the next few weeks, so here's a quick update on where
+we are today with recent changes and work in progress:
 
+- A large number of small driver fixes got merged into linux-4.16.
+  Many of these were old patches I had done a while ago but that had
+  not made it in yet. There are a few dozen more of these coming, but
+  those have some dependency.
 
-> ---
-> Changed since v1:
-> - Using literal-block element instead of comment
-> - Subject in v1 was "Documentation: typec.rst: Mark ascii art as a comment"
-> ---
->  Documentation/driver-api/usb/typec.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/driver-api/usb/typec.rst b/Documentation/driver-api/usb/typec.rst
-> index feb31946490b..48ff58095f11 100644
-> --- a/Documentation/driver-api/usb/typec.rst
-> +++ b/Documentation/driver-api/usb/typec.rst
-> @@ -210,7 +210,7 @@ If the connector is dual-role capable, there may also be a switch for the data
->  role. USB Type-C Connector Class does not supply separate API for them. The
->  port drivers can use USB Role Class API with those.
->  
-> -Illustration of the muxes behind a connector that supports an alternate mode:
-> +Illustration of the muxes behind a connector that supports an alternate mode::
->  
->                       ------------------------
->                       |       Connector      |
+- Deepa Dinamani has done a lot of the groundwork for the system
+  call conversion. Her latest patch series that got merged now finally
+  adds new system call entry points for timekeeping related syscalls. They
+  are not wired up yet, but now we have a template for the remaining ones,
+  and we have sorted out the header file dependencies.
 
--- 
-Jani Nikula, Intel Open Source Technology Center
+- I just sent a pull request for a second chunk of system calls:
+  The sysvipc semtimedop, semctl/shmctl/msgctl and
+  mq_timedsend/mq_timedreceive calls. I have more patches for most of
+  the remaining calls, and they should be simpler (this one was rather
+  tricky). A full list can be found in a spreadsheet I made[2].
+
+- Baolin Wang has worked on RTC related issues and most recently
+  posted a series to convert the user space ABI for ALSA. This is
+  currently under discussion.
+
+- The most complicated remaining part is the conversion of
+  the VFS layer. Deepa is getting a new series for this ready after
+  having done some groundwork over the past years.  The current idea is
+  to have a flag-day patch using coccinelle to change the inode, iattr
+  and kstat structures over at the same time. Many file systems will
+  require further changes after that, but those can be done individually
+  through their respective maintainers.
+
+- Firoz Khan has started looking at the system call entry
+  points in the architectures. We want to add the new system calls to
+  all 32-bit architectures at once, in order to have a baseline release
+  that C libraries can rely on for implementing 64-bit time_t on all
+  architectures.  Even after the architecture removal series, we still
+  have over a dozen different syscall tables and each one is laid out
+  slightly differently, which makes it hard to change.  To improve this,
+  Firoz is preparing a series that changes
+  all architectures to use a common table format as used by x86, arm
+  and s390 today.
+
+- I have collected all those patches in a git tree [1] for testing.
+  This currently has updated system call entry points for 32-bit ARM
+  and x86, but no others so far.  The system call numbers *will* change
+  before it gets merged, so be careful when building user space based
+  on this, but it should be a starting point for testing. I definitely
+  expect this to contain bugs still, especially to the end of the series,
+  but the start of it should be fairly solid. Some patches are marked
+  as work-in-progress or don't contain a proper changelog text. Those
+  will still get reworked before a first version is posted to the
+  mainling lists.
+
+- There are two notable areas not included in that tree today:
+  v4l and socket timestamps. I've had patches for both in the past but
+  they need to be reworked.
+
+        Arnd
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=y2038-next
+[2] https://docs.google.com/spreadsheets/d/1HCYwHXxs48TsTb6IGUduNjQnmfRvMPzCN6T_0YiQwis/
