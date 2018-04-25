@@ -1,133 +1,87 @@
-Return-Path: <kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx490sdmaDG9mIWz/oIOPJOLHO5Z7b2C3JrINixyLiyLEXgSzT3RqMSglOMmUL413AJRNnZy4
-ARC-Seal: i=1; a=rsa-sha256; t=1524624362; cv=none;
+Return-Path: <kernel-hardening-return-13132-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AB8JxZraP45C01y6HIE2de58G3FjTPm7GK3BtnesxelyNSyf11teJtIjMMq2GHNCdJ++q/xRHjMg
+ARC-Seal: i=1; a=rsa-sha256; t=1524646819; cv=none;
         d=google.com; s=arc-20160816;
-        b=g0lBiOsmthmBx7jR6OJE4RUDai7Tm/unW+hmny4pzjN1UkS+vCBVRIf1y6DWQT0Lnv
-         qaqQDrb44N0ameuCdXxLrxxduS+FUN2CJj5RXqvi27tg1IsU00Bs3zL79sayj81slCJ2
-         09203tze26q2tApE4UPSL4knzx6okNm6eI4frC3iIccELWlF8nkVXjn8FfrsY+PC2uiY
-         r0LkvtcjdopkLQ5mKr+T3rokDXXabqoPY8Zt3s3VRfwwrGdQsq4CAUN3G30/512Ufhiw
-         pJsE+P2Nj90XVi6Dsk/XLA8hqoTp88+tz5vdjlCmgBfKRCPqDcUNeFIZQ/s7OGSdoI2p
-         1Fuw==
+        b=onnC8YXYmGq8fl24SEXH860Wzfs08JuSBfD21delkkMakAQ5SeoCL8z37QNWbYW8Ir
+         rVg9kimR/66W86awWPUJ1DeV0BUnmUct2y+SnFXBIH5DCVohsbd6no6wqNfnwOXM8GOe
+         cDhrkvzGLgqz5drveyw56N5+yIzQAFLVp8n9bl5qjVOWdlbPGwLwk9fRYD5QyTwMu+T/
+         GhTEtXTslh2SINOMOiViSylfL0eTO7NUKGb0m3uJ/J2x4LvrJ4l1msmpKpcSCoDs+CK+
+         OBIWbkgUKFlNHljUrkg3tZ4/7V4C0U8S0KaFgPI2+62V7DKCEF2htDG4SXLgOjcQWwzH
+         DQXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=tpkNcth3pA6lmT+BCyhw5+31EWlt41Fsp5rcNtzmOd8=;
-        b=cuN5HhlUQ41+I2464Rux8ePgyt0dqODzrbMcTAh7/aHnX0mVx+TCMg1yuHWtIhYmcs
-         KjGvZ6kF0GhhXptUNg9VrJghyEiBcJTz8vMas+M9qGVK8JVmpx6aPYaqdr9XeVgwDXGm
-         ZtAtTkzzFOnWBjpvHGUndaurvses3l7VkD++QG3uXYbYLL6XQDwoq1gLsyR1s0EhDLrn
-         Pg7AHb4JzxqOiOBT7vNnYayBLRY8PF+QNBHRLlH4gtBoUZ9CWcIfgW0godrKODskKk+c
-         UpACBpJB8VA+k8gvwi2GGxD09BJ+PWMMvzbtGm7zMaXi5c98/cBH3u43jG9k0KaElbZV
-         BPBQ==
+        h=mime-version:user-agent:references:message-id:in-reply-to:subject
+         :cc:to:from:date:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=STqOVT3v23VV5NcEnYRI/NEMdyv1otkGba11TIVVtKI=;
+        b=FpJRRjM5JiF0FPp+azkC/e1r/qekwel9W1d5cMeBnJhf2q3BEA9rpcxXX9X0mN8F3i
+         o4fsn8LUJpl6AQkTfFcuFvoDiQcJM3y0rbht8m3CnSzCvaUnQdrKr/A22jXbSx0VnXt/
+         I8dVMOSdzuNI3teyf+IEs/fdoa2LGifEPmq4zPenUSOHMMshYIZ2HJnb6pom02JFjZrp
+         R4XmrPXVmSeUng3msbU+I/rRTZ9CM69396hz/7hQWXzbw3Ss4NFlQG6vOd/tZskM9SG2
+         fLMCdVIrWJiwgiRlefNU0aN2aTI4CJiDGp1tX4WGVeGIudWiTHlRU7+q1Y5Tf+AKKAV2
+         ZwUA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=DaGqTiOr;
-       dkim=pass header.i=@chromium.org header.s=google header.b=McCjQ0hE;
-       spf=pass (google.com: domain of kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-13132-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13132-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=DaGqTiOr;
-       dkim=pass header.i=@chromium.org header.s=google header.b=McCjQ0hE;
-       spf=pass (google.com: domain of kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-13132-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13132-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <20180425111617.2f4dc127@canb.auug.org.au>
-References: <20180422162345.004292133@linutronix.de> <20180422162512.363154748@linutronix.de>
- <20180425111617.2f4dc127@canb.auug.org.au>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 24 Apr 2018 19:45:42 -0700
-X-Google-Sender-Auth: ez9WLqjOHok6nIQ2o8MZX1Vgxbk
-Message-ID: <CAGXu5jLUgNGW-SXY3L2fJrBV3PpmAH9uXFV87xmPe14BrYnWMw@mail.gmail.com>
+Date: Wed, 25 Apr 2018 10:59:48 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Kees Cook <keescook@chromium.org>
+cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+    LKML <linux-kernel@vger.kernel.org>,
+    Segher Boessenkool <segher@kernel.crashing.org>,
+    Kernel Hardening <kernel-hardening@lists.openwall.com>,
+    Andrew Morton <akpm@linuxfoundation.org>,
+    Boris Brezillon <boris.brezillon@free-electrons.com>,
+    Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
+    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+    Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
+    Tony Luck <tony.luck@intel.com>, Neil Brown <neilb@suse.com>
 Subject: Re: [patch V3 01/10] rslib: Add GFP aware init function
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>,
-	Segher Boessenkool <segher@kernel.crashing.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	Andrew Morton <akpm@linuxfoundation.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-	Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>,
-	Neil Brown <neilb@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAGXu5jLUgNGW-SXY3L2fJrBV3PpmAH9uXFV87xmPe14BrYnWMw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1804251059100.2082@nanos.tec.linutronix.de>
+References: <20180422162345.004292133@linutronix.de> <20180422162512.363154748@linutronix.de> <20180425111617.2f4dc127@canb.auug.org.au> <CAGXu5jLUgNGW-SXY3L2fJrBV3PpmAH9uXFV87xmPe14BrYnWMw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598464733406749436?=
-X-GMAIL-MSGID: =?utf-8?q?1598684515634289324?=
+X-GMAIL-MSGID: =?utf-8?q?1598708063651400916?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 6:16 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Thomas,
->
-> On Sun, 22 Apr 2018 18:23:46 +0200 Thomas Gleixner <tglx@linutronix.de> wrote:
->>
->> The rslib usage in dm/verity_fec is broken because init_rs() can nest in
->> GFP_NOIO mempool allocations as init_rs() is invoked from the mempool alloc
->> callback.
->>
->> Provide a variant which takes gfp_t flags as argument.
->>
->> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Mike Snitzer <snitzer@redhat.com>
->> Cc: Alasdair Kergon <agk@redhat.com>
->> Cc: Neil Brown <neilb@suse.com>
->> ---
->>  include/linux/rslib.h           |   26 +++++++++++++++++++++++---
->>  lib/reed_solomon/reed_solomon.c |   36 ++++++++++++++++++++----------------
->>  2 files changed, 43 insertions(+), 19 deletions(-)
->>
->> --- a/include/linux/rslib.h
->> +++ b/include/linux/rslib.h
->> @@ -77,10 +77,30 @@ int decode_rs16(struct rs_control *rs, u
->>  #endif
->>
->>  /* Create or get a matching rs control structure */
->> -struct rs_control *init_rs(int symsize, int gfpoly, int fcr, int prim,
->> -                        int nroots);
->> +struct rs_control *init_rs_gfp(int symsize, int gfpoly, int fcr, int prim,
->> +                            int nroots, gfp_t gfp);
->> +
->> +/**
->> + * init_rs - Create a RS control struct and initialize it
->> + *  @symsize:        the symbol size (number of bits)
->> + *  @gfpoly: the extended Galois field generator polynomial coefficients,
->> + *           with the 0th coefficient in the low order bit. The polynomial
->> + *           must be primitive;
->> + *  @fcr:    the first consecutive root of the rs code generator polynomial
->> + *           in index form
->> + *  @prim:   primitive element to generate polynomial roots
->> + *  @nroots: RS code generator polynomial degree (number of roots)
->> + *
->> + * Allocations use GFP_KERNEL.
->> + */
->> +static inline struct rs_control *init_rs(int symsize, int gfpoly, int fcr,
->> +                                      int prim, int nroots)
->> +{
->> +     return init_rs_gfp(symsize, gfpoly, fcr, prim, nroots, GFP_KERNEL);
->> +}
->> +
->
-> The version of this patch that Kees has committed to his kspp tree in linux-next has
->
-> #include <linux/slab.h>
->
-> why not just
->
-> #include <linux/types.h>        /* for gpf_t */
-> #include <linux/gpf.h>          /* for GFP_KERNEL */
->
-> ?
+On Tue, 24 Apr 2018, Kees Cook wrote:
+> On Tue, Apr 24, 2018 at 6:16 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > On Sun, 22 Apr 2018 18:23:46 +0200 Thomas Gleixner <tglx@linutronix.de> wrote:
+> >> +static inline struct rs_control *init_rs(int symsize, int gfpoly, int fcr,
+> >> +                                      int prim, int nroots)
+> >> +{
+> >> +     return init_rs_gfp(symsize, gfpoly, fcr, prim, nroots, GFP_KERNEL);
+> >> +}
+> >> +
+> >
+> > The version of this patch that Kees has committed to his kspp tree in linux-next has
+> >
+> > #include <linux/slab.h>
+> >
+> > why not just
+> >
+> > #include <linux/types.h>        /* for gpf_t */
+> > #include <linux/gpf.h>          /* for GFP_KERNEL */
+> >
+> > ?
 
-We could certainly switch to that. (Why doesn't gfp.h include types.h?)
+Sure
 
--Kees
+> We could certainly switch to that. (Why doesn't gfp.h include types.h?)
 
+Excellent question.
 
--- 
-Kees Cook
-Pixel Security
+Thanks,
+
+	tglx
