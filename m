@@ -1,43 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+GMtGv8fzuwr+cQprNMz+23rmTzoGu5XpxywU7GXtk1bJOrd/zyczMrnXqAGmPMzd2AEDD
-ARC-Seal: i=1; a=rsa-sha256; t=1524652798; cv=none;
-        d=google.com; s=arc-20160816;
-        b=m81B8I4HCH50y/skVQQEdoCnT0Zdc9udz9JI8eVpusThnDmRjhz6qKYJJMWwLLHs2Z
-         yj+C7cqMURc1pNmn1a1Mtzd6x8lrtWeLVeC51KbudbV+OE2PE6n3V7gtmvkCQyvHvxY+
-         8bhGlWUlfcYXSRHH54RtpC1IBivb6oo/RUdB7bK6alIemXMmL5oJ02eb/V03YGsli+3k
-         0UYe2BPfl2aNHcQD9q8fN8CpMLyFZxn0bh3G0XT3Lpg2x3zFqtgroQAuHxMdztk2fcEa
-         AxQ/Yuyq8X5tysr2wWm78fMY5Vw8lLNgYmgecS+8iHyHGE1QL6Yo1k2iPBd2zzQm5Ack
-         bOzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=KomG6AnnwelZY/GG9fvyi6Fc7ItI6vMUL1SFt0760t8=;
-        b=iEqC3ttRwsqxd2U8aOFAVzrwCWQX3a4EtKprhFcy0IM6sBR2Y0izku9emuSXVfdBPj
-         jkMEUfTzjR7WlXKFsF3Q932k5StJP1/MmJ3IzD3B5nD2tgHTZHnlGVAEhg5HXMSfO1I2
-         KvNYd3tRqZbcNsV2XShpITMY3rgUiTLpXto8r4XsecaDp1NKc1KSdzIru4xVqMStU749
-         OFx9xOnE2cKEA59IGCbnQXmZax4SKIlMjr8Yxp+rCJpNph3EKeSHA6zovra18MpsuuDu
-         e94jtTm/8g2hYKb9EjV3iZOMVYSvg4Fx8XYGtnXLuU+6frXz6ScB0IBb2knEatOw/WRW
-         Socg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-497764-1524652796-2-2336629552382181592
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524652795; b=Un7k54PsE/6zs/MD2fDx/p8yuMpfWuGC5awS1BM+ELtGxz8qQw
+    FZ1GNwLjjztISf0DxXgzFl61cOmPje/5y5i8aeJuiL7kl50oV1CUnrI5gs1K/oKV
+    3pD7+YZYSrqV3MBXq72fkZt+0v2fvJXxAg37AuQfxUjdiq3PHvNa6IGOjZvjEfkz
+    muFpuL4OBVsNKw9B9mYCaTWTrCvMmaW810XhOp8j0enDtnF2vD9oz8V+N+eZEDkR
+    4Q3TKv7jfjdDWrGUPcyGLd9pK7qoImR6cr7xb74k9MpK7cbfFWp42MnIB3iR55DK
+    cZBttPAd+iHPayfTg+AHIDFLza9R8aiMUNVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524652795; bh=+yNKivOylB1rTU2y3P6cyKwrAij68d
+    4d4ZmZz6NPBpo=; b=XNfH8fAPr4cD51wANlSXjE+xjNPEWy9LVz7t/kx/1Kfq9G
+    F3pKYZekpvfIUlmQqWVnz0aqCEHytX6J8fwe/Fa38R+eLCSKbJAuNo58QGd4dRmz
+    toE3j9Sua3mMa8tHokO7xz0KFznHYTprQMgE9GuDTp1jeTQM2mrx7riECVLSPU+j
+    4X4BIEh3h24yfoXAIsJ2G0oB6bBj+/p61bVJylYdJn0JAmuUA2xwyHUQ3ChSUBE8
+    y7Aw8NYbdIKsMHWub1GTRyLS46+j9IokzAobp5tCO9NtKwEVj/PI69Hc0aqoxhnz
+    pRxLDDTrSenz+mIoo/Vhg0geYl1OHvVc3+eQYsBw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNOFJGhrJml5Lnfw8kuz1ANWHOFAo8gnkaouYyKHcd/QX6fd/82qFkPMWUqJaVwtpxzSjW2lkYJqLFDBtLQnH7vr+MnhhBbG0VeE2gvCVPxbq2UuKKKo
+    sAYCTnWLiQCmW8VKIfUf2CsZjIPvvG2vdvXyXk4iF66UUYlkmuoFlF0f/21NYGTSH/x5TOIjW4OU3/oPxIpF9l18QDMUiEEWnPDdLtPpzE16x3wSmnBs9YyC
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=YzrewU7drcVc681tjT8A:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753702AbeDYKjw (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:39:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51952 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752953AbeDYKjs (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:39:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Anna-Maria Gleixner <anna-maria@linutronix.de>,
-	Christoph Hellwig <hch@lst.de>,
-	John Stultz <john.stultz@linaro.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	keescook@chromium.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 026/183] tracing/hrtimer: Fix tracing bugs by taking all clock bases and modes into account
-Date: Wed, 25 Apr 2018 12:34:06 +0200
-Message-Id: <20180425103243.656527951@linuxfoundation.org>
+        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 032/183] Input: psmouse - fix Synaptics detection when protocol is disabled
+Date: Wed, 25 Apr 2018 12:34:12 +0200
+Message-Id: <20180425103243.875543069@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -45,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714333232345554?=
-X-GMAIL-MSGID: =?utf-8?q?1598714333232345554?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,67 +92,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
 
-[ Upstream commit 91633eed73a3ac37aaece5c8c1f93a18bae616a9 ]
+[ Upstream commit 2bc4298f59d2f15175bb568e2d356b5912d0cdd9 ]
 
-So far only CLOCK_MONOTONIC and CLOCK_REALTIME were taken into account as
-well as HRTIMER_MODE_ABS/REL in the hrtimer_init tracepoint. The query for
-detecting the ABS or REL timer modes is not valid anymore, it got broken
-by the introduction of HRTIMER_MODE_PINNED.
+When Synaptics protocol is disabled, we still need to try and detect the
+hardware, so we can switch to SMBus device if SMbus is detected, or we know
+that it is Synaptics device and reset it properly for the bare PS/2
+protocol.
 
-HRTIMER_MODE_PINNED is not evaluated in the hrtimer_init() call, but for the
-sake of completeness print all given modes.
-
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: keescook@chromium.org
-Link: http://lkml.kernel.org/r/20171221104205.7269-9-anna-maria@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: c378b5119eb0 ("Input: psmouse - factor out common protocol probing code")
+Reported-by: Matteo Croce <mcroce@redhat.com>
+Tested-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/trace/events/timer.h |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/input/mouse/psmouse-base.c |   34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
 
---- a/include/trace/events/timer.h
-+++ b/include/trace/events/timer.h
-@@ -136,6 +136,20 @@ DEFINE_EVENT(timer_class, timer_cancel,
- 	TP_ARGS(timer)
- );
+--- a/drivers/input/mouse/psmouse-base.c
++++ b/drivers/input/mouse/psmouse-base.c
+@@ -975,6 +975,21 @@ static void psmouse_apply_defaults(struc
+ 	psmouse->pt_deactivate = NULL;
+ }
  
-+#define decode_clockid(type)						\
-+	__print_symbolic(type,						\
-+		{ CLOCK_REALTIME,	"CLOCK_REALTIME"	},	\
-+		{ CLOCK_MONOTONIC,	"CLOCK_MONOTONIC"	},	\
-+		{ CLOCK_BOOTTIME,	"CLOCK_BOOTTIME"	},	\
-+		{ CLOCK_TAI,		"CLOCK_TAI"		})
++static bool psmouse_do_detect(int (*detect)(struct psmouse *, bool),
++			      struct psmouse *psmouse, bool allow_passthrough,
++			      bool set_properties)
++{
++	if (psmouse->ps2dev.serio->id.type == SERIO_PS_PSTHRU &&
++	    !allow_passthrough) {
++		return false;
++	}
 +
-+#define decode_hrtimer_mode(mode)					\
-+	__print_symbolic(mode,						\
-+		{ HRTIMER_MODE_ABS,		"ABS"		},	\
-+		{ HRTIMER_MODE_REL,		"REL"		},	\
-+		{ HRTIMER_MODE_ABS_PINNED,	"ABS|PINNED"	},	\
-+		{ HRTIMER_MODE_REL_PINNED,	"REL|PINNED"	})
++	if (set_properties)
++		psmouse_apply_defaults(psmouse);
 +
- /**
-  * hrtimer_init - called when the hrtimer is initialized
-  * @hrtimer:	pointer to struct hrtimer
-@@ -162,10 +176,8 @@ TRACE_EVENT(hrtimer_init,
- 	),
++	return detect(psmouse, set_properties) == 0;
++}
++
+ static bool psmouse_try_protocol(struct psmouse *psmouse,
+ 				 enum psmouse_type type,
+ 				 unsigned int *max_proto,
+@@ -986,15 +1001,8 @@ static bool psmouse_try_protocol(struct
+ 	if (!proto)
+ 		return false;
  
- 	TP_printk("hrtimer=%p clockid=%s mode=%s", __entry->hrtimer,
--		  __entry->clockid == CLOCK_REALTIME ?
--			"CLOCK_REALTIME" : "CLOCK_MONOTONIC",
--		  __entry->mode == HRTIMER_MODE_ABS ?
--			"HRTIMER_MODE_ABS" : "HRTIMER_MODE_REL")
-+		  decode_clockid(__entry->clockid),
-+		  decode_hrtimer_mode(__entry->mode))
- );
+-	if (psmouse->ps2dev.serio->id.type == SERIO_PS_PSTHRU &&
+-	    !proto->try_passthru) {
+-		return false;
+-	}
+-
+-	if (set_properties)
+-		psmouse_apply_defaults(psmouse);
+-
+-	if (proto->detect(psmouse, set_properties) != 0)
++	if (!psmouse_do_detect(proto->detect, psmouse, proto->try_passthru,
++			       set_properties))
+ 		return false;
  
- /**
+ 	if (set_properties && proto->init && init_allowed) {
+@@ -1027,8 +1035,8 @@ static int psmouse_extensions(struct psm
+ 	 * Always check for focaltech, this is safe as it uses pnp-id
+ 	 * matching.
+ 	 */
+-	if (psmouse_try_protocol(psmouse, PSMOUSE_FOCALTECH,
+-				 &max_proto, set_properties, false)) {
++	if (psmouse_do_detect(focaltech_detect,
++			      psmouse, false, set_properties)) {
+ 		if (max_proto > PSMOUSE_IMEX &&
+ 		    IS_ENABLED(CONFIG_MOUSE_PS2_FOCALTECH) &&
+ 		    (!set_properties || focaltech_init(psmouse) == 0)) {
+@@ -1074,8 +1082,8 @@ static int psmouse_extensions(struct psm
+ 	 * probing for IntelliMouse.
+ 	 */
+ 	if (max_proto > PSMOUSE_PS2 &&
+-	    psmouse_try_protocol(psmouse, PSMOUSE_SYNAPTICS, &max_proto,
+-				 set_properties, false)) {
++	    psmouse_do_detect(synaptics_detect,
++			      psmouse, false, set_properties)) {
+ 		synaptics_hardware = true;
+ 
+ 		if (max_proto > PSMOUSE_IMEX) {
