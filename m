@@ -1,36 +1,36 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4+stXAHdbXhm0yizJ7jNoBOrBGtAKvtvrWLsuH7Ej1gKCGlevD39xs+7ju0bKTF9lAXWnxe
-ARC-Seal: i=1; a=rsa-sha256; t=1524658767; cv=none;
+X-Google-Smtp-Source: AIpwx49KD9KQxRUkvO6y0LGodlNLZcnnsfo8LlMsLmN5VnW640vKNvnWnDkd59PuweCpR1qm2TO+
+ARC-Seal: i=1; a=rsa-sha256; t=1524658738; cv=none;
         d=google.com; s=arc-20160816;
-        b=Qmp+1GalbZc3okFWXWs/HAqxSTqTZPOGRHyTEKi6byUTcKxyhcWGIb4Odv0UhPOfeH
-         wRQNDdX2hSdfQGhQPrggGXYGwL50mf9c4mtNSqnUJNd6d/lPW2MnD52boBvozlkpQP5d
-         qTaHyygIyWazx1+waIxqMPyFV7f9posJDK3OLheFa1D4Azs6HBtQPa5efSVSGmVao0SF
-         l+UVQVkIVZigTF9Ogdrl8W1NAfVQvwDBV61lXAuzDSSHvT9q0ivL4Q3KXlrqlFjXawbG
-         M02GoOEezOND2Kggx1tdCEpNuj8o3gAlN7DZp0yTIFXEgj3N8TQguhuOpEels5hdxoNe
-         yVFg==
+        b=nuk/Q8bRh/QM5ubaUAAYFE9AicXcpkm/XSWh/sxKvl970anZJIkBecDzM4JQdjBpbj
+         goJib9L7dvujaVfbGFoZWFfeoYpErOtN2L/9eBJkfcwf7AZeuHJdRHhXHPB54D7c8nDj
+         ZyFdPHo7Q7dvvLQsqJcJ8eZ4wEtRGlLj6oVK+XlpQE9ufSF9kXCCHTEhv0RMH4+RGs6A
+         wNs/1yiWdpn1X2Ychels4Tcj+hw6b3k+2JnMUzx7mJj7JcwuaejgbI3s5B3vg9bS1xpA
+         pbHayaKlR4b4L0SxIK4aAsT8ZGeO5NEnXnnNIWLCGQe7pkhcrpggN0rk1vVjIWFA5LpO
+         SssQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding:mime-version
          :user-agent:references:in-reply-to:message-id:date:subject:cc:to
          :from:dmarc-filter:arc-authentication-results;
-        bh=cpybpzcryGszGXfb1ParoOBGjgHfZLVDpQafH2IxUWo=;
-        b=fK/+B4mqIZTBnjGSOOqtxfTjR1zw/4Y9PlXaKhQe5Gy4wl8ojGrOEFvp5k99rsVJKn
-         az95FJE9qwflcoCCCJL+wlcNgfxGDS2MVIPaQ2kHhXiI5056IGCILKvuA254WPtfkL2l
-         kGN7gdRcpA+tnKNlz6cO0YB6jjvvJ2Cp9YCuMNm3DSD2Hhz7xQsYSBYUknfX0oyLvSNR
-         vUtGK173ZcuF3mX2Yzx1TsDbJTcK/rvppU80JHJIM9v/PuTxvCEm35HYUglGZL9fRANC
-         lV9pjh9139ZU7DsnZLeWqYu9W1YIMCaXityU8QlJMD7dlYB4laFNXDfJqVHYq8TsUQDL
-         KC+w==
+        bh=bDu8lSoJbs+RhpWZmdg6ECGpjb/CWnD3EZjT6kpL37w=;
+        b=asB/vPvWhAQIxCIrdgJ6Dogwi7wiGhDiCpKJKamZ3U6hTRyMoJgo2Y2t4SidUDTRko
+         X3xOKrGQKVsty/cd/MisOTTWnX106SgSDQODDEGui7muSCzb8caZddeDM+5URb6cj2Lx
+         dPaaoHWWLKs/fmH6wVL2FPoP2lle0ff0kn0KJG3cBnyJd8wjMfxxTYyqJfDoFDc2Kjks
+         9Ie/UyVuvAxBPtKx5WK5FbvRhwyygqszBtwqDogfQvRTJK6JWkCsJp6qvhIIvdsLoo/w
+         LK5ggkPpeoGR8QhBSspLcAdWHMNcWHBaXu9KCq8DTVaYzz8QsCUGEXmrzHM09plr0SWl
+         90iA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752848AbeDYMT0 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 25 Apr 2018 08:19:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37984 "EHLO mail.kernel.org"
+        id S1753050AbeDYMS5 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 25 Apr 2018 08:18:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752700AbeDYMTZ (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:19:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F6B21748
+        id S1752548AbeDYMS4 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Wed, 25 Apr 2018 08:18:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C30B021748
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -41,9 +41,9 @@ Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
         shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH v7 06/16] tracing: probeevent: Return consumed bytes of dynamic area
-Date: Wed, 25 Apr 2018 21:19:01 +0900
-Message-Id: <152465874163.26224.12125143907501289031.stgit@devbox>
+Subject: [PATCH v7 05/16] tracing: probeevent: Unify fetch type tables
+Date: Wed, 25 Apr 2018 21:18:32 +0900
+Message-Id: <152465871274.26224.13999436317830479698.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152465856498.26224.16969986455942749517.stgit@devbox>
 References: <152465856498.26224.16969986455942749517.stgit@devbox>
@@ -54,433 +54,253 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598720591939360666?=
-X-GMAIL-MSGID: =?utf-8?q?1598720591939360666?=
+X-GMAIL-THRID: =?utf-8?q?1598720560970894281?=
+X-GMAIL-MSGID: =?utf-8?q?1598720560970894281?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Cleanup string fetching routine so that returns the consumed
-bytes of dynamic area and store the string information as
-data_loc format instead of data_rloc.
-This simplifies the fetcharg loop.
+Unify {k,u}probe_fetch_type_table to probe_fetch_type_table
+because the main difference of those type tables (fetcharg
+methods) are gone. Now we can consolidate it.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- Changes in v7:
-  - Fix to return an error if failed to fetch string and
-    fill zero-length data_loc in error case.
----
- kernel/trace/trace_kprobe.c     |   57 +++++++++++++++++-------------------
- kernel/trace/trace_probe.h      |   26 ++++-------------
- kernel/trace/trace_probe_tmpl.h |   54 ++++++++++++++++-------------------
- kernel/trace/trace_uprobe.c     |   61 +++++++++++++++++++--------------------
- 4 files changed, 88 insertions(+), 110 deletions(-)
+ kernel/trace/trace_kprobe.c |   27 +---------------------
+ kernel/trace/trace_probe.c  |   54 +++++++++++++++++++++++++++++--------------
+ kernel/trace/trace_probe.h  |    6 +----
+ kernel/trace/trace_uprobe.c |   27 +---------------------
+ 4 files changed, 39 insertions(+), 75 deletions(-)
 
 diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 0b73b1ee82c8..fab796d55d70 100644
+index 1d1e37058f8a..0b73b1ee82c8 100644
 --- a/kernel/trace/trace_kprobe.c
 +++ b/kernel/trace/trace_kprobe.c
-@@ -807,8 +807,8 @@ static const struct file_operations kprobe_profile_ops = {
- /* Kprobe specific fetch functions */
+@@ -122,30 +122,6 @@ static int kprobe_dispatcher(struct kprobe *kp, struct pt_regs *regs);
+ static int kretprobe_dispatcher(struct kretprobe_instance *ri,
+ 				struct pt_regs *regs);
  
- /* Return the length of string -- including null terminal byte */
--static nokprobe_inline void
--fetch_store_strlen(unsigned long addr, void *dest)
-+static nokprobe_inline int
-+fetch_store_strlen(unsigned long addr)
- {
- 	mm_segment_t old_fs;
- 	int ret, len = 0;
-@@ -826,47 +826,40 @@ fetch_store_strlen(unsigned long addr, void *dest)
- 	pagefault_enable();
- 	set_fs(old_fs);
- 
--	if (ret < 0)	/* Failed to check the length */
--		*(u32 *)dest = 0;
--	else
--		*(u32 *)dest = len;
-+	return (ret < 0) ? ret : len;
- }
- 
+-/* Fetch type information table */
+-static const struct fetch_type kprobes_fetch_type_table[] = {
+-	/* Special types */
+-	[FETCH_TYPE_STRING] = __ASSIGN_FETCH_TYPE("string", string, string,
+-					sizeof(u32), 1, "__data_loc char[]"),
+-	[FETCH_TYPE_STRSIZE] = __ASSIGN_FETCH_TYPE("string_size", u32,
+-					string_size, sizeof(u32), 0, "u32"),
+-	/* Basic types */
+-	ASSIGN_FETCH_TYPE(u8,  u8,  0),
+-	ASSIGN_FETCH_TYPE(u16, u16, 0),
+-	ASSIGN_FETCH_TYPE(u32, u32, 0),
+-	ASSIGN_FETCH_TYPE(u64, u64, 0),
+-	ASSIGN_FETCH_TYPE(s8,  u8,  1),
+-	ASSIGN_FETCH_TYPE(s16, u16, 1),
+-	ASSIGN_FETCH_TYPE(s32, u32, 1),
+-	ASSIGN_FETCH_TYPE(s64, u64, 1),
+-	ASSIGN_FETCH_TYPE_ALIAS(x8,  u8,  u8,  0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x16, u16, u16, 0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x32, u32, u32, 0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x64, u64, u64, 0),
+-
+-	ASSIGN_FETCH_TYPE_END
+-};
+-
  /*
-  * Fetch a null-terminated string. Caller MUST set *(u32 *)buf with max
-  * length and relative data location.
+  * Allocate new trace_probe and initialize it (including kprobes).
   */
--static nokprobe_inline void
--fetch_store_string(unsigned long addr, void *dest)
-+static nokprobe_inline int
-+fetch_store_string(unsigned long addr, void *dest, void *base)
- {
--	int maxlen = get_rloc_len(*(u32 *)dest);
--	u8 *dst = get_rloc_data(dest);
-+	int maxlen = get_loc_len(*(u32 *)dest);
-+	u8 *dst = get_loc_data(dest, base);
- 	long ret;
+@@ -674,8 +650,7 @@ static int create_trace_kprobe(int argc, char **argv)
  
--	if (!maxlen)
--		return;
--
-+	if (unlikely(!maxlen))
-+		return -ENOMEM;
- 	/*
- 	 * Try to get string again, since the string can be changed while
- 	 * probing.
- 	 */
- 	ret = strncpy_from_unsafe(dst, (void *)addr, maxlen);
+ 		/* Parse fetch argument */
+ 		ret = traceprobe_parse_probe_arg(arg, &tk->tp.size, parg,
+-						 is_return, true,
+-						 kprobes_fetch_type_table);
++						 is_return, true);
+ 		if (ret) {
+ 			pr_info("Parse error at argument[%d]. (%d)\n", i, ret);
+ 			goto error;
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 758968ac165d..ed3766fb290d 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -73,8 +73,29 @@ int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, void *data, void *ent)
  
--	if (ret < 0) {	/* Failed to fetch string */
--		dst[0] = '\0';
--		*(u32 *)dest = make_data_rloc(0, get_rloc_offs(*(u32 *)dest));
--	} else {
--		*(u32 *)dest = make_data_rloc(ret, get_rloc_offs(*(u32 *)dest));
--	}
-+	if (ret >= 0)
-+		*(u32 *)dest = make_data_loc(ret, (void *)dst - base);
-+	return ret;
- }
+ const char PRINT_TYPE_FMT_NAME(string)[] = "\\\"%s\\\"";
  
- /* Note that we don't verify it, since the code does not come from user space */
- static int
- process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
--		   bool pre)
-+		   void *base)
- {
- 	unsigned long val;
--	int ret;
-+	int ret = 0;
- 
- 	/* 1st stage: get value from context */
- 	switch (code->op) {
-@@ -903,6 +896,13 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
- 	}
- 
- 	/* 3rd stage: store value to buffer */
-+	if (unlikely(!dest)) {
-+		if (code->op == FETCH_OP_ST_STRING)
-+			return fetch_store_strlen(val + code->offset);
-+		else
-+			return -EILSEQ;
-+	}
+-static const struct fetch_type *find_fetch_type(const char *type,
+-						const struct fetch_type *ftbl)
++/* Fetch type information table */
++static const struct fetch_type probe_fetch_types[] = {
++	/* Special types */
++	__ASSIGN_FETCH_TYPE("string", string, string, sizeof(u32), 1,
++			    "__data_loc char[]"),
++	/* Basic types */
++	ASSIGN_FETCH_TYPE(u8,  u8,  0),
++	ASSIGN_FETCH_TYPE(u16, u16, 0),
++	ASSIGN_FETCH_TYPE(u32, u32, 0),
++	ASSIGN_FETCH_TYPE(u64, u64, 0),
++	ASSIGN_FETCH_TYPE(s8,  u8,  1),
++	ASSIGN_FETCH_TYPE(s16, u16, 1),
++	ASSIGN_FETCH_TYPE(s32, u32, 1),
++	ASSIGN_FETCH_TYPE(s64, u64, 1),
++	ASSIGN_FETCH_TYPE_ALIAS(x8,  u8,  u8,  0),
++	ASSIGN_FETCH_TYPE_ALIAS(x16, u16, u16, 0),
++	ASSIGN_FETCH_TYPE_ALIAS(x32, u32, u32, 0),
++	ASSIGN_FETCH_TYPE_ALIAS(x64, u64, u64, 0),
 +
- 	switch (code->op) {
- 	case FETCH_OP_ST_RAW:
- 		fetch_store_raw(val, code, dest);
-@@ -911,10 +911,7 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
- 		probe_kernel_read(dest, (void *)val + code->offset, code->size);
- 		break;
- 	case FETCH_OP_ST_STRING:
--		if (pre)
--			fetch_store_strlen(val + code->offset, dest);
--		else
--			fetch_store_string(val + code->offset, dest);
-+		ret = fetch_store_string(val + code->offset, dest, base);
- 		break;
- 	default:
- 		return -EILSEQ;
-@@ -927,7 +924,7 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
- 		code++;
- 	}
- 
--	return code->op == FETCH_OP_END ? 0 : -EILSEQ;
-+	return code->op == FETCH_OP_END ? ret : -EILSEQ;
- }
- NOKPROBE_SYMBOL(process_fetch_insn)
- 
-@@ -962,7 +959,7 @@ __kprobe_trace_func(struct trace_kprobe *tk, struct pt_regs *regs,
- 
- 	entry = ring_buffer_event_data(event);
- 	entry->ip = (unsigned long)tk->rp.kp.addr;
--	store_trace_args(sizeof(*entry), &tk->tp, regs, (u8 *)&entry[1], dsize);
-+	store_trace_args(&entry[1], &tk->tp, regs, sizeof(*entry), dsize);
- 
- 	event_trigger_unlock_commit_regs(trace_file, buffer, event,
- 					 entry, irq_flags, pc, regs);
-@@ -1011,7 +1008,7 @@ __kretprobe_trace_func(struct trace_kprobe *tk, struct kretprobe_instance *ri,
- 	entry = ring_buffer_event_data(event);
- 	entry->func = (unsigned long)tk->rp.kp.addr;
- 	entry->ret_ip = (unsigned long)ri->ret_addr;
--	store_trace_args(sizeof(*entry), &tk->tp, regs, (u8 *)&entry[1], dsize);
-+	store_trace_args(&entry[1], &tk->tp, regs, sizeof(*entry), dsize);
- 
- 	event_trigger_unlock_commit_regs(trace_file, buffer, event,
- 					 entry, irq_flags, pc, regs);
-@@ -1162,7 +1159,7 @@ kprobe_perf_func(struct trace_kprobe *tk, struct pt_regs *regs)
- 
- 	entry->ip = (unsigned long)tk->rp.kp.addr;
- 	memset(&entry[1], 0, dsize);
--	store_trace_args(sizeof(*entry), &tk->tp, regs, (u8 *)&entry[1], dsize);
-+	store_trace_args(&entry[1], &tk->tp, regs, sizeof(*entry), dsize);
- 	perf_trace_buf_submit(entry, size, rctx, call->event.type, 1, regs,
- 			      head, NULL);
- 	return 0;
-@@ -1198,7 +1195,7 @@ kretprobe_perf_func(struct trace_kprobe *tk, struct kretprobe_instance *ri,
- 
- 	entry->func = (unsigned long)tk->rp.kp.addr;
- 	entry->ret_ip = (unsigned long)ri->ret_addr;
--	store_trace_args(sizeof(*entry), &tk->tp, regs, (u8 *)&entry[1], dsize);
-+	store_trace_args(&entry[1], &tk->tp, regs, sizeof(*entry), dsize);
- 	perf_trace_buf_submit(entry, size, rctx, call->event.type, 1, regs,
- 			      head, NULL);
- }
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 89d853ef5174..d1b8bd74bf56 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -66,29 +66,15 @@
- #define TP_FLAG_PROFILE		2
- #define TP_FLAG_REGISTERED	4
- 
-+/* data_loc: data location, compatible with u32 */
-+#define make_data_loc(len, offs)	\
-+	(((u32)(len) << 16) | ((u32)(offs) & 0xffff))
-+#define get_loc_len(dl)		((u32)(dl) >> 16)
-+#define get_loc_offs(dl)	((u32)(dl) & 0xffff)
- 
--/* data_rloc: data relative location, compatible with u32 */
--#define make_data_rloc(len, roffs)	\
--	(((u32)(len) << 16) | ((u32)(roffs) & 0xffff))
--#define get_rloc_len(dl)		((u32)(dl) >> 16)
--#define get_rloc_offs(dl)		((u32)(dl) & 0xffff)
--
--/*
-- * Convert data_rloc to data_loc:
-- *  data_rloc stores the offset from data_rloc itself, but data_loc
-- *  stores the offset from event entry.
-- */
--#define convert_rloc_to_loc(dl, offs)	((u32)(dl) + (offs))
--
--static nokprobe_inline void *get_rloc_data(u32 *dl)
--{
--	return (u8 *)dl + get_rloc_offs(*dl);
--}
--
--/* For data_loc conversion */
- static nokprobe_inline void *get_loc_data(u32 *dl, void *ent)
++	ASSIGN_FETCH_TYPE_END
++};
++
++static const struct fetch_type *find_fetch_type(const char *type)
  {
--	return (u8 *)ent + get_rloc_offs(*dl);
-+	return (u8 *)ent + get_loc_offs(*dl);
- }
+ 	int i;
  
- /* Printing function type */
-diff --git a/kernel/trace/trace_probe_tmpl.h b/kernel/trace/trace_probe_tmpl.h
-index c8a5272abf01..3b4aba6f84cc 100644
---- a/kernel/trace/trace_probe_tmpl.h
-+++ b/kernel/trace/trace_probe_tmpl.h
-@@ -48,24 +48,28 @@ fetch_apply_bitfield(struct fetch_insn *code, void *buf)
- 	}
- }
+@@ -95,21 +116,21 @@ static const struct fetch_type *find_fetch_type(const char *type,
  
--/* Define this for each callsite */
-+/*
-+ * This must be defined for each callsite.
-+ * Return consumed dynamic data size (>= 0), or error (< 0).
-+ * If dest is NULL, don't store result and return required dynamic data size.
-+ */
- static int
- process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs,
--		   void *dest, bool pre);
-+		   void *dest, void *base);
- 
- /* Sum up total data length for dynamic arraies (strings) */
- static nokprobe_inline int
- __get_data_size(struct trace_probe *tp, struct pt_regs *regs)
- {
- 	struct probe_arg *arg;
--	int i, ret = 0;
--	u32 len;
-+	int i, len, ret = 0;
- 
- 	for (i = 0; i < tp->nr_args; i++) {
- 		arg = tp->args + i;
- 		if (unlikely(arg->dynamic)) {
--			process_fetch_insn(arg->code, regs, &len, true);
--			ret += len;
-+			len = process_fetch_insn(arg->code, regs, NULL, NULL);
-+			if (len > 0)
-+				ret += len;
+ 		switch (bs) {
+ 		case 8:
+-			return find_fetch_type("u8", ftbl);
++			return find_fetch_type("u8");
+ 		case 16:
+-			return find_fetch_type("u16", ftbl);
++			return find_fetch_type("u16");
+ 		case 32:
+-			return find_fetch_type("u32", ftbl);
++			return find_fetch_type("u32");
+ 		case 64:
+-			return find_fetch_type("u64", ftbl);
++			return find_fetch_type("u64");
+ 		default:
+ 			goto fail;
  		}
  	}
  
-@@ -74,34 +78,26 @@ __get_data_size(struct trace_probe *tp, struct pt_regs *regs)
- 
- /* Store the value of each argument */
- static nokprobe_inline void
--store_trace_args(int ent_size, struct trace_probe *tp, struct pt_regs *regs,
--		 u8 *data, int maxlen)
-+store_trace_args(void *data, struct trace_probe *tp, struct pt_regs *regs,
-+		 int header_size, int maxlen)
- {
- 	struct probe_arg *arg;
--	u32 end = tp->size;
--	u32 *dl;	/* Data (relative) location */
--	int i;
-+	void *base = data - header_size;
-+	void *dyndata = data + tp->size;
-+	u32 *dl;	/* Data location */
-+	int ret, i;
- 
- 	for (i = 0; i < tp->nr_args; i++) {
- 		arg = tp->args + i;
--		if (unlikely(arg->dynamic)) {
--			/*
--			 * First, we set the relative location and
--			 * maximum data length to *dl
--			 */
--			dl = (u32 *)(data + arg->offset);
--			*dl = make_data_rloc(maxlen, end - arg->offset);
--			/* Then try to fetch string or dynamic array data */
--			process_fetch_insn(arg->code, regs, dl, false);
--			/* Reduce maximum length */
--			end += get_rloc_len(*dl);
--			maxlen -= get_rloc_len(*dl);
--			/* Trick here, convert data_rloc to data_loc */
--			*dl = convert_rloc_to_loc(*dl, ent_size + arg->offset);
--		} else
--			/* Just fetching data normally */
--			process_fetch_insn(arg->code, regs, data + arg->offset,
--					   false);
-+		dl = data + arg->offset;
-+		/* Point the dynamic data area if needed */
-+		if (unlikely(arg->dynamic))
-+			*dl = make_data_loc(maxlen, dyndata - base);
-+		ret = process_fetch_insn(arg->code, regs, dl, base);
-+		if (unlikely(ret < 0 && arg->dynamic))
-+			*dl = make_data_loc(0, dyndata - base);
-+		else
-+			dyndata += ret;
+-	for (i = 0; ftbl[i].name; i++) {
+-		if (strcmp(type, ftbl[i].name) == 0)
+-			return &ftbl[i];
++	for (i = 0; probe_fetch_types[i].name; i++) {
++		if (strcmp(type, probe_fetch_types[i].name) == 0)
++			return &probe_fetch_types[i];
  	}
+ 
+ fail:
+@@ -176,8 +197,7 @@ static int parse_probe_vars(char *arg, const struct fetch_type *t,
+ static int
+ parse_probe_arg(char *arg, const struct fetch_type *type,
+ 		struct fetch_insn **pcode, struct fetch_insn *end,
+-		bool is_return, bool is_kprobe,
+-		const struct fetch_type *ftbl)
++		bool is_return, bool is_kprobe)
+ {
+ 	struct fetch_insn *code = *pcode;
+ 	unsigned long param;
+@@ -259,12 +279,11 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
+ 		tmp = strrchr(arg, ')');
+ 
+ 		if (tmp) {
+-			const struct fetch_type *t2;
++			const struct fetch_type *t2 = find_fetch_type(NULL);
+ 
+-			t2 = find_fetch_type(NULL, ftbl);
+ 			*tmp = '\0';
+ 			ret = parse_probe_arg(arg, t2, &code, end, is_return,
+-					      is_kprobe, ftbl);
++					      is_kprobe);
+ 			if (ret)
+ 				break;
+ 			if (code->op == FETCH_OP_COMM)
+@@ -324,8 +343,7 @@ static int __parse_bitfield_probe_arg(const char *bf,
+ 
+ /* String length checking wrapper */
+ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+-		struct probe_arg *parg, bool is_return, bool is_kprobe,
+-		const struct fetch_type *ftbl)
++		struct probe_arg *parg, bool is_return, bool is_kprobe)
+ {
+ 	struct fetch_insn *code, *tmp = NULL;
+ 	const char *t;
+@@ -351,7 +369,7 @@ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+ 	 */
+ 	if (!t && strcmp(arg, "$comm") == 0)
+ 		t = "string";
+-	parg->type = find_fetch_type(t, ftbl);
++	parg->type = find_fetch_type(t);
+ 	if (!parg->type) {
+ 		pr_info("Unsupported type: %s\n", t);
+ 		return -EINVAL;
+@@ -365,7 +383,7 @@ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+ 	code[FETCH_INSN_MAX - 1].op = FETCH_OP_END;
+ 
+ 	ret = parse_probe_arg(arg, parg->type, &code, &code[FETCH_INSN_MAX - 1],
+-			      is_return, is_kprobe, ftbl);
++			      is_return, is_kprobe);
+ 	if (ret)
+ 		goto fail;
+ 
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 9d9de7535d06..89d853ef5174 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -196,9 +196,6 @@ DECLARE_BASIC_PRINT_TYPE_FUNC(string);
+ 
+ #define ASSIGN_FETCH_TYPE_END {}
+ 
+-#define FETCH_TYPE_STRING      0
+-#define FETCH_TYPE_STRSIZE     1
+-
+ #ifdef CONFIG_KPROBE_EVENTS
+ bool trace_kprobe_on_func_entry(struct trace_event_call *call);
+ bool trace_kprobe_error_injectable(struct trace_event_call *call);
+@@ -273,8 +270,7 @@ find_event_file_link(struct trace_probe *tp, struct trace_event_file *file)
  }
  
+ extern int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+-		   struct probe_arg *parg, bool is_return, bool is_kprobe,
+-		   const struct fetch_type *ftbl);
++		   struct probe_arg *parg, bool is_return, bool is_kprobe);
+ 
+ extern int traceprobe_conflict_field_name(const char *name,
+ 			       struct probe_arg *args, int narg);
 diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index e56925e77781..9961bee490fd 100644
+index ff408edd3a68..e56925e77781 100644
 --- a/kernel/trace/trace_uprobe.c
 +++ b/kernel/trace/trace_uprobe.c
-@@ -121,43 +121,38 @@ probe_user_read(void *dest, void *src, size_t size)
-  * Fetch a null-terminated string. Caller MUST set *(u32 *)dest with max
-  * length and relative data location.
-  */
--static nokprobe_inline void
--fetch_store_string(unsigned long addr, void *dest)
-+static nokprobe_inline int
-+fetch_store_string(unsigned long addr, void *dest, void *base)
- {
- 	long ret;
--	u32 rloc = *(u32 *)dest;
--	int maxlen  = get_rloc_len(rloc);
--	u8 *dst = get_rloc_data(dest);
-+	u32 loc = *(u32 *)dest;
-+	int maxlen  = get_loc_len(loc);
-+	u8 *dst = get_loc_data(dest, base);
- 	void __user *src = (void __force __user *) addr;
+@@ -171,30 +171,6 @@ static unsigned long translate_user_vaddr(unsigned long file_offset)
+ 	return base_addr + file_offset;
+ }
  
--	if (!maxlen)
--		return;
-+	if (unlikely(!maxlen))
-+		return -ENOMEM;
- 
- 	ret = strncpy_from_user(dst, src, maxlen);
--	if (ret == maxlen)
--		dst[--ret] = '\0';
+-/* Fetch type information table */
+-static const struct fetch_type uprobes_fetch_type_table[] = {
+-	/* Special types */
+-	[FETCH_TYPE_STRING] = __ASSIGN_FETCH_TYPE("string", string, string,
+-					sizeof(u32), 1, "__data_loc char[]"),
+-	[FETCH_TYPE_STRSIZE] = __ASSIGN_FETCH_TYPE("string_size", u32,
+-					string_size, sizeof(u32), 0, "u32"),
+-	/* Basic types */
+-	ASSIGN_FETCH_TYPE(u8,  u8,  0),
+-	ASSIGN_FETCH_TYPE(u16, u16, 0),
+-	ASSIGN_FETCH_TYPE(u32, u32, 0),
+-	ASSIGN_FETCH_TYPE(u64, u64, 0),
+-	ASSIGN_FETCH_TYPE(s8,  u8,  1),
+-	ASSIGN_FETCH_TYPE(s16, u16, 1),
+-	ASSIGN_FETCH_TYPE(s32, u32, 1),
+-	ASSIGN_FETCH_TYPE(s64, u64, 1),
+-	ASSIGN_FETCH_TYPE_ALIAS(x8,  u8,  u8,  0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x16, u16, u16, 0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x32, u32, u32, 0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x64, u64, u64, 0),
 -
--	if (ret < 0) {	/* Failed to fetch string */
--		((u8 *)get_rloc_data(dest))[0] = '\0';
--		*(u32 *)dest = make_data_rloc(0, get_rloc_offs(rloc));
--	} else {
--		*(u32 *)dest = make_data_rloc(ret, get_rloc_offs(rloc));
-+	if (ret >= 0) {
-+		if (ret == maxlen)
-+			dst[ret - 1] = '\0';
-+		*(u32 *)dest = make_data_loc(ret, (void *)dst - base);
- 	}
-+
-+	return ret;
- }
- 
- /* Return the length of string -- including null terminal byte */
--static nokprobe_inline void
--fetch_store_strlen(unsigned long addr, void *dest)
-+static nokprobe_inline int
-+fetch_store_strlen(unsigned long addr)
- {
- 	int len;
- 	void __user *vaddr = (void __force __user *) addr;
- 
- 	len = strnlen_user(vaddr, MAX_STRING_SIZE);
- 
--	if (len == 0 || len > MAX_STRING_SIZE)  /* Failed to check length */
--		*(u32 *)dest = 0;
--	else
--		*(u32 *)dest = len;
-+	return (len > MAX_STRING_SIZE) ? 0 : len;
- }
- 
- static unsigned long translate_user_vaddr(unsigned long file_offset)
-@@ -174,10 +169,10 @@ static unsigned long translate_user_vaddr(unsigned long file_offset)
+-	ASSIGN_FETCH_TYPE_END
+-};
+-
  /* Note that we don't verify it, since the code does not come from user space */
  static int
  process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
--		   bool pre)
-+		   void *base)
- {
- 	unsigned long val;
--	int ret;
-+	int ret = 0;
+@@ -583,8 +559,7 @@ static int create_trace_uprobe(int argc, char **argv)
  
- 	/* 1st stage: get value from context */
- 	switch (code->op) {
-@@ -214,18 +209,22 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
- 	}
- 
- 	/* 3rd stage: store value to buffer */
-+	if (unlikely(!dest)) {
-+		if (code->op == FETCH_OP_ST_STRING)
-+			return fetch_store_strlen(val + code->offset);
-+		else
-+			return -EILSEQ;
-+	}
-+
- 	switch (code->op) {
- 	case FETCH_OP_ST_RAW:
- 		fetch_store_raw(val, code, dest);
- 		break;
- 	case FETCH_OP_ST_MEM:
--		probe_user_read(dest, (void *)val + code->offset, code->size);
-+		probe_kernel_read(dest, (void *)val + code->offset, code->size);
- 		break;
- 	case FETCH_OP_ST_STRING:
--		if (pre)
--			fetch_store_strlen(val + code->offset, dest);
--		else
--			fetch_store_string(val + code->offset, dest);
-+		ret = fetch_store_string(val + code->offset, dest, base);
- 		break;
- 	default:
- 		return -EILSEQ;
-@@ -238,7 +237,7 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
- 		code++;
- 	}
- 
--	return code->op == FETCH_OP_END ? 0 : -EILSEQ;
-+	return code->op == FETCH_OP_END ? ret : -EILSEQ;
- }
- NOKPROBE_SYMBOL(process_fetch_insn)
- 
-@@ -1229,7 +1228,7 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
- 	esize = SIZEOF_TRACE_ENTRY(is_ret_probe(tu));
- 
- 	ucb = uprobe_buffer_get();
--	store_trace_args(esize, &tu->tp, regs, ucb->buf, dsize);
-+	store_trace_args(ucb->buf, &tu->tp, regs, esize, dsize);
- 
- 	if (tu->tp.flags & TP_FLAG_TRACE)
- 		ret |= uprobe_trace_func(tu, regs, ucb, dsize);
-@@ -1264,7 +1263,7 @@ static int uretprobe_dispatcher(struct uprobe_consumer *con,
- 	esize = SIZEOF_TRACE_ENTRY(is_ret_probe(tu));
- 
- 	ucb = uprobe_buffer_get();
--	store_trace_args(esize, &tu->tp, regs, ucb->buf, dsize);
-+	store_trace_args(ucb->buf, &tu->tp, regs, esize, dsize);
- 
- 	if (tu->tp.flags & TP_FLAG_TRACE)
- 		uretprobe_trace_func(tu, func, regs, ucb, dsize);
+ 		/* Parse fetch argument */
+ 		ret = traceprobe_parse_probe_arg(arg, &tu->tp.size, parg,
+-						 is_return, false,
+-						 uprobes_fetch_type_table);
++						 is_return, false);
+ 		if (ret) {
+ 			pr_info("Parse error at argument[%d]. (%d)\n", i, ret);
+ 			goto error;
 
