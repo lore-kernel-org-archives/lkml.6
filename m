@@ -1,162 +1,169 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524669851; cv=none;
-        d=google.com; s=arc-20160816;
-        b=z+S902ONgsBAwqn0iWWxbsh4XiLweaqwkZexkVyRxpb47pK6ZYGRfS9OYPunFN/SQW
-         dinv/84sFyxgTr+7xcc1reCXtB0XDjbl4CDWZWTNw2S3ha7dgGvcC/ZA2LZTFhy+w+cy
-         Sa7HWLD7rc26mzJI2cVvNtEuywvkKdueeeF74eBUJLMK6Uf2Y2yuB3xi/BawYsycLLoL
-         EvKeIANPKv49Zarh6lGdUzlnFQTI753mNLiCHWAA55hkNJz6gNXiD8VUxmTzPEUdWruU
-         as4mAXzt4rFODzDAlHWb3hv077VnW5KCMwF2BBzM42V+o1HZu4RGDr+vRysukpJ7jcf9
-         +b1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=RVsn7WNuZJLKrPUcYfUW5Plyn3DaedFbHdqzQLVxgr0=;
-        b=nhcVqHP/CqSlGYeR1KKtu/lBnk4QabTAYzIoUkGH046bs83wj+SXka2gNZdA60lC8B
-         Wsp1WKAHbR72OrLLDlORxBleO33tkoZn6El8T3cBDGc9AuaSCb8GYsAGfqGfoSvst0/y
-         INJIgkHd266ZEsnLPUJJo4XhKmKiyUwxx9lp8CFZcMFCD4cDi7GWllAyuD9lsL9xVlXl
-         dB3yeeCqRm+GFEcN4EGnUUiYwYgWiVAYo0qmRa1YBMTSl5m2a2+bbNHx8VqmN0LdCCIX
-         fp0GpJCVzPT5x6V2Zd5zDpFkfqXspgAf30+VrnLZmIQMfXOBWoEtAb2ZFIkuvZvrKBYg
-         GjIg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZrtEPBW2AofLNcMcnjAbUn4bHfIQx+WLOXrZ383N3uPh1bvS7OgtOsJyzifQxJ4KY2zBbHZQQ==
-Message-ID: <5ae09d9a.1c69fb81.4e7d.142c@mx.google.com>
-Date: Wed, 25 Apr 2018 08:24:10 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.14.36-184-g3cd53e436ee2
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-584447-1524656055-2-17872229381375526522
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524656054; b=HALjyB8MG2VKmNFUiWbYsqPmVDjxemQmxesxDebIICx4r5JVeH
+    5O5GvHhS5KjW+iE574Usk65XhoHM0teyMqdigp6ls6PADeZgIPiHay3ZOCSStL78
+    j3merkInFRlGu4E4j4++Gd9W/UsUgarxHHxoGJYYhYaTL/hkvzq7VrVStXIOaEhU
+    4ackq8UNseBuCYO+jwzlEpfnS+ezKqBijT9qvB2SX2ZHdE77mi9/tPOQCP+wDTZW
+    vZcNFM0MLx4859PVvvKHe4FVvoEwEiDALXSa67iOCnNOIFIRwSuhweib3nmwPObv
+    a5L15Lf+LeSyukuOhku7EdyK1Rx6rusXy8VQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524656054; bh=z0fgF3dTU/RJD8kpp58bJtSoCHc9KX
+    uxkUA63EDTs4Q=; b=qvB/pHAWckhluN/EBbNZt+zipgD3iQ4a6uzjtwlOQ9J7TF
+    NJ9SHEFkt+SQOwEaWr1HUhpZ9ZD8/zcZIxRIPE9AybN0vKRgUscDGV4uBOqzM8P1
+    Ig6Oy0D+yoDkfU6zZMDFcge3vtAAhC7CKQfJKznH3WsxQk918ew4JD35pgY64DCG
+    MhMJxj6pQLmmn7wYbiDawv6wDU6yNGS39TjOaQgqPC3vNjc+/lY6+svZIgRfsRHE
+    ShrhAl1CiAX6SH+FxjDMj9UePyO8qrKcnAINp0/YtpcVxSrRNVf7dmm5aQywxrV3
+    1jZr0g+jDMXNqO4+zCH3RAqoAN6sEW15zMHdjukw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfElAeKH9zGBcnU3jyHv8LNr6aAcWI7DhTV7TuJQfV84/5Ivybf+Y7Gw4LNIeLvqoVSJBtEQ9Vm03qMR85uEmrTYSUCPjt/hEkovT7LOa5xRSSVZJDZb7
+    OUACE4b3L7Eo9AjPzrFBP2XTJZ5Zxyb2fv04UzezTq0YBstAaeEb9q0Utww8JlxkNlFTEdBkHKzPEbrAj/H8CN87k3vwqU78MM9RRKX/K2bZE7ApjKpLBuib
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=pGLkceISAAAA:8 a=_Wotqz80AAAA:8 a=DfNHnWVPAAAA:8 a=yMhMjlubAAAA:8
+    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=9GihAUzGDAH5BQcAHsIA:9
+    a=hZFYp5xOGIwIXZUw:21 a=3J4n-IJ5SUQ9EAOh:21 a=QEXdDO2ut3YA:10
+    a=buJP51TR1BpY-zbLSsyS:22 a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753016AbeDYKhD (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:37:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51026 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752390AbeDYKhB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:37:01 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Eryu Guan <eguan@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <smfrench@gmail.com>
+Subject: [PATCH 4.14 001/183] cifs: do not allow creating sockets except with SMB1 posix exensions
+Date: Wed, 25 Apr 2018 12:33:41 +0200
+Message-Id: <20180425103242.651841985@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 000/183] 4.14.37-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598714220036977205?=
-X-GMAIL-MSGID: =?utf-8?q?1598732214872147206?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.14.y boot: 155 boots: 4 failed, 133 passed with 16 offlin=
-e, 2 conflicts (v4.14.36-184-g3cd53e436ee2)
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.36-184-g3cd53e436ee2/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.36-184-g3cd53e436ee2/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.36-184-g3cd53e436ee2
-Git Commit: 3cd53e436ee26a473b4055caa62e594ff14b7511
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 79 unique boards, 24 SoC families, 17 builds out of 185
+From: Steve French <smfrench@gmail.com>
 
-Boot Regressions Detected:
+commit 1d0cffa674cfa7d185a302c8c6850fc50b893bed upstream.
 
-arm:
+RHBZ: 1453123
 
-    multi_v7_defconfig:
-        dra7-evm:
-            lab-baylibre: new failure (last pass: v4.14.36)
-        sun8i-a33-sinlinx-sina33:
-            lab-free-electrons: new failure (last pass: v4.14.36)
+Since at least the 3.10 kernel and likely a lot earlier we have
+not been able to create unix domain sockets in a cifs share
+when mounted using the SFU mount option (except when mounted
+with the cifs unix extensions to Samba e.g.)
+Trying to create a socket, for example using the af_unix command from
+xfstests will cause :
+BUG: unable to handle kernel NULL pointer dereference at 00000000
+00000040
 
-    omap2plus_defconfig:
-        dra7-evm:
-            lab-baylibre: failing since 1 day (last pass: v4.14.26 - first =
-fail: v4.14.36)
+Since no one uses or depends on being able to create unix domains sockets
+on a cifs share the easiest fix to stop this vulnerability is to simply
+not allow creation of any other special files than char or block devices
+when sfu is used.
 
-    sama5_defconfig:
-        at91-sama5d4_xplained:
-            lab-free-electrons: new failure (last pass: v4.14.36)
+Added update to Ronnie's patch to handle a tcon link leak, and
+to address a buf leak noticed by Gustavo and Colin.
 
-    sunxi_defconfig:
-        sun8i-a83t-allwinner-h8homlet-v2:
-            lab-free-electrons: new failure (last pass: v4.14.36)
-
-arm64:
-
-    defconfig:
-        meson-gxl-s905x-khadas-vim:
-            lab-baylibre: new failure (last pass: v4.14.26-140-g2a1700a4929=
-f)
-
-Boot Failures Detected:
-
-arm:
-
-    omap2plus_defconfig
-        dra7-evm: 1 failed lab
-
-    multi_v7_defconfig
-        dra7-evm: 1 failed lab
-        sun8i-a33-sinlinx-sina33: 1 failed lab
-
-    sunxi_defconfig
-        sun8i-a83t-allwinner-h8homlet-v2: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    tegra_defconfig:
-        tegra20-iris-512: 1 offline lab
-
-    multi_v7_defconfig:
-        meson8b-odroidc1: 1 offline lab
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        vf610-colibri-eval-v3: 1 offline lab
-
-    davinci_all_defconfig:
-        da850-lcdk: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-        meson-gxbb-odroidc2: 1 offline lab
-        meson-gxl-s905d-p230: 1 offline lab
-        meson-gxl-s905x-nexbox-a95x: 1 offline lab
-        meson-gxl-s905x-p212: 1 offline lab
-        rk3399-firefly: 1 offline lab
-
-Conflicting Boot Failures Detected: (These likely are not failures as other=
- labs are reporting PASS. Needs review.)
-
-arm:
-
-    sama5_defconfig:
-        at91-sama5d4_xplained:
-            lab-free-electrons: FAIL
-            lab-baylibre-seattle: PASS
-
-arm64:
-
-    defconfig:
-        meson-gxl-s905x-khadas-vim:
-            lab-baylibre-seattle: PASS
-            lab-baylibre: FAIL
+Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+CC:  Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reported-by: Eryu Guan <eguan@redhat.com>
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ fs/cifs/dir.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -684,6 +684,9 @@ int cifs_mknod(struct inode *inode, stru
+ 		goto mknod_out;
+ 	}
+ 
++	if (!S_ISCHR(mode) && !S_ISBLK(mode))
++		goto mknod_out;
++
+ 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
+ 		goto mknod_out;
+ 
+@@ -692,10 +695,8 @@ int cifs_mknod(struct inode *inode, stru
+ 
+ 	buf = kmalloc(sizeof(FILE_ALL_INFO), GFP_KERNEL);
+ 	if (buf == NULL) {
+-		kfree(full_path);
+ 		rc = -ENOMEM;
+-		free_xid(xid);
+-		return rc;
++		goto mknod_out;
+ 	}
+ 
+ 	if (backup_cred(cifs_sb))
+@@ -742,7 +743,7 @@ int cifs_mknod(struct inode *inode, stru
+ 		pdev->minor = cpu_to_le64(MINOR(device_number));
+ 		rc = tcon->ses->server->ops->sync_write(xid, &fid, &io_parms,
+ 							&bytes_written, iov, 1);
+-	} /* else if (S_ISFIFO) */
++	}
+ 	tcon->ses->server->ops->close(xid, tcon, &fid);
+ 	d_drop(direntry);
+ 
