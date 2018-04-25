@@ -1,96 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755968AbeDYQVc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:21:32 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:53211 "EHLO extserv.mm-sol.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755728AbeDYQVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:21:09 -0400
-From: Todor Tomov <todor.tomov@linaro.org>
-To: mchehab@kernel.org, hverkuil@xs4all.nl, sakari.ailus@iki.fi,
-        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Todor Tomov <todor.tomov@linaro.org>, Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v4 1/2] dt-bindings: media: Binding document for OV7251 camera sensor
-Date: Wed, 25 Apr 2018 19:20:45 +0300
-Message-Id: <1524673246-14175-2-git-send-email-todor.tomov@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524673246-14175-1-git-send-email-todor.tomov@linaro.org>
-References: <1524673246-14175-1-git-send-email-todor.tomov@linaro.org>
+        id S1755963AbeDYQVQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:21:16 -0400
+Received: from mail-pg0-f44.google.com ([74.125.83.44]:44401 "EHLO
+        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754839AbeDYQU6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:20:58 -0400
+X-Google-Smtp-Source: AIpwx48zn+5eeyjVyDWbxRx5fw5IzDmV4W0RLpLWPEzBLPHWcjXTtQlcQCgkYjC4w1PhZEsT8GXJbA==
+Subject: Re: [PATCH net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
+ zerocopy receive
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Soheil Hassas Yeganeh <soheil@google.com>
+References: <20180425052722.73022-1-edumazet@google.com>
+ <20180425052722.73022-2-edumazet@google.com>
+ <20180425062859.GA23914@infradead.org>
+ <5cd31eba-63b5-9160-0a2e-f441340df0d3@gmail.com>
+ <20180425160413.GC8546@bombadil.infradead.org>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <8ce78bd6-8142-2937-11fd-2e4a2b22d90c@gmail.com>
+Date: Wed, 25 Apr 2018 09:20:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180425160413.GC8546@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the document for ov7251 device tree binding.
 
-CC: Rob Herring <robh@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>
-CC: devicetree@vger.kernel.org
-Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/media/i2c/ov7251.txt       | 52 ++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/ov7251.txt
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ov7251.txt b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
-new file mode 100644
-index 0000000..8281151
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
-@@ -0,0 +1,52 @@
-+* Omnivision 1/7.5-Inch B&W VGA CMOS Digital Image Sensor
-+
-+The Omnivision OV7251 is a 1/7.5-Inch CMOS active pixel digital image sensor
-+with an active array size of 640H x 480V. It is programmable through a serial
-+I2C interface.
-+
-+Required Properties:
-+- compatible: Value should be "ovti,ov7251".
-+- clocks: Reference to the xclk clock.
-+- clock-names: Should be "xclk".
-+- clock-frequency: Frequency of the xclk clock.
-+- enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
-+  to the hardware pin XSHUTDOWN which is physically active low.
-+- vdddo-supply: Chip digital IO regulator.
-+- vdda-supply: Chip analog regulator.
-+- vddd-supply: Chip digital core regulator.
-+
-+The device node shall contain one 'port' child node with a single 'endpoint'
-+subnode for its digital output video port, in accordance with the video
-+interface bindings defined in
-+Documentation/devicetree/bindings/media/video-interfaces.txt.
-+
-+Example:
-+
-+	&i2c1 {
-+		...
-+
-+		ov7251: camera-sensor@60 {
-+			compatible = "ovti,ov7251";
-+			reg = <0x60>;
-+
-+			enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&camera_bw_default>;
-+
-+			clocks = <&clks 200>;
-+			clock-names = "xclk";
-+			clock-frequency = <24000000>;
-+
-+			vdddo-supply = <&camera_dovdd_1v8>;
-+			vdda-supply = <&camera_avdd_2v8>;
-+			vddd-supply = <&camera_dvdd_1v2>;
-+
-+			port {
-+				ov7251_ep: endpoint {
-+					clock-lanes = <1>;
-+					data-lanes = <0>;
-+					remote-endpoint = <&csi0_ep>;
-+				};
-+			};
-+		};
-+	};
--- 
-2.7.4
+On 04/25/2018 09:04 AM, Matthew Wilcox wrote:
+
+> If you don't zap the page range, any of the CPUs in the system where
+> any thread in this task have ever run may have a TLB entry pointing to
+> this page ... if the page is being recycled into the page allocator,
+> then that page might end up as a slab page or page table or page cache
+> while the other CPU still have access to it.
+
+Yes, this makes sense.
+
+> 
+> You could hang onto the page until you've built up a sufficiently large
+> batch, then bulk-invalidate all of the TLB entries, but we start to get
+> into weirdnesses on different CPU architectures.
+> 
+
+zap_page_range() is already doing a bulk-invalidate,
+so maybe vm_replace_page() wont bring serious improvement if we end-up doing same dance.
+
+Thanks.
