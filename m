@@ -1,96 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755728AbeDYSF5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:05:57 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:21724 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751084AbeDYSFx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:05:53 -0400
-X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiv9N1EzmY
-X-RZG-CLASS-ID: mo00
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [Letux-kernel] [PATCH v3 2/4] gpio: pca953x: add register definitions for pcal6524 and fix address calculation
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <EDF7FA02-C79C-4ADF-A10C-F8C4DBFE5158@goldelico.com>
-Date: Wed, 25 Apr 2018 20:05:36 +0200
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>, kernel@pyra-handheld.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        id S1755810AbeDYSGx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:06:53 -0400
+Received: from mailoutvs4.siol.net ([213.250.19.137]:43730 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750814AbeDYSGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:06:52 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Jagan Teki <jagan@amarulasolutions.com>, Chen-Yu Tsai <wens@csie.org>,
+        Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         devicetree <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>
-Message-Id: <65085C47-CDA8-4F8C-8307-C145F21F7D19@goldelico.com>
-References: <cover.1523376423.git.hns@goldelico.com> <0e9bea79eae7504e61fabdb4a0311f8fdc2f6b25.1523376423.git.hns@goldelico.com> <CAHp75VfYk1tSJ9PUshDvY2RaYrc+wR+hyrK8Ck1oQSUXPr-0fQ@mail.gmail.com> <EDF7FA02-C79C-4ADF-A10C-F8C4DBFE5158@goldelico.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-X-Mailer: Apple Mail (2.3124)
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [RFC 00/13] arm64: allwinner: Add A64 DE2 pipeline support
+Date: Wed, 25 Apr 2018 20:06:35 +0200
+Message-ID: <5215730.1Lvo56aXNX@jernej-laptop>
+In-Reply-To: <20180425135548.ayeqo7t2dtbwq3of@flea>
+References: <20180424133425.24291-1-jagan@amarulasolutions.com> <CAMty3ZCLOkdmCoh4uBhYKXgDEiAnw+b_z=d0Om2bjH7HLCa7Tg@mail.gmail.com> <20180425135548.ayeqo7t2dtbwq3of@flea>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3PI62C9019184
 
-Hi Andy,
+Hi,
 
-> Am 11.04.2018 um 07:00 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
+Dne sreda, 25. april 2018 ob 15:55:48 CEST je Maxime Ripard napisal(a):
+> On Wed, Apr 25, 2018 at 06:29:05PM +0530, Jagan Teki wrote:
+> > On Tue, Apr 24, 2018 at 7:38 PM, Maxime Ripard
+> > 
+> > <maxime.ripard@bootlin.com> wrote:
+> > > On Tue, Apr 24, 2018 at 07:04:12PM +0530, Jagan Teki wrote:
+> > >> Allwinner A64 has display engine pipeline like other Allwinner SOC's
+> > >> A83T/H3/H5.
+> > >> 
+> > >> A64 DE2 behaviour similar to Allwinner A83T where mixer0, connected to
+> > >> tcon0 with RGB, LVDS MIPI-DSI and mixer1, connected to tcon1 with
+> > >> HDMI.
+> > >> This series merely concentrated on HDMI pipeline and rest will add
+> > >> eventually.
+> > >> 
+> > >> patch 1: dt-bindings for a64 DE2 CCU
+> > >> 
+> > >> patch 2: a64 DE2 CCU node addition
+> > >> 
+> > >> patch 3: dt-bindings for a64 DE2 pipeline
+> > >> 
+> > >> patch 4 - 5: dt-bindings for a64 mixer0 and tcon-lcd
+> > >> 
+> > >> patch 6: a64 DE2 pipeline node addition
+> > >> 
+> > >> patch 7 - 8: dt-bindings for a64 HDMI and HDMI PHY
+> > >> 
+> > >> patch 9: a64 HDMI nodes addition
+> > >> 
+> > >> patch 10 - 11: dt-bindings for a64 mixer1 and tcon-tv
+> > >> 
+> > >> patch 12: a64 HDMI pipeline
+> > >> 
+> > >> patch 13: enable HDMI out on bananpi-m64
+> > >> 
+> > >> Tested HDMI on bananapi-m64 (along with DE2 SRAM C changes from [1]
+> > >> thread), able to detect the HDMI but, no penguins on screen.
+> > >> 
+> > >> Request for any suggestions.
+> > >> 
+> > >> Test log on Bananpi-m64:
+> > >> [    0.247631] sun4i-drm display-engine: bound 1100000.mixer (ops
+> > >> sun8i_mixer_ops) [    0.256717] sun4i-drm display-engine: bound
+> > >> 1200000.mixer (ops sun8i_mixer_ops) [    0.256783] sun4i-tcon
+> > >> 1c0c000.lcd-controller: Missing LVDS properties, Please upgrade your
+> > >> DT [    0.256792] sun4i-tcon 1c0c000.lcd-controller: LVDS output
+> > >> disabled> > 
+> > > That doesn't seem to work so well for LVDS.
+> > > 
+> > >> [    0.257081] sun4i-drm display-engine: No panel or bridge found...
+> > >> RGB output disabled [    0.257099] sun4i-drm display-engine: bound
+> > >> 1c0c000.lcd-controller (ops sun4i_tcon_ops) [    0.257273] sun4i-drm
+> > >> display-engine: No panel or bridge found... RGB output disabled [   
+> > >> 0.257288] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops
+> > >> sun4i_tcon_ops) [    0.258176] sun8i-dw-hdmi 1ee0000.hdmi: Detected
+> > >> HDMI TX controller v1.32a with HDCP (sun8i_dw_hdmi_p) [    0.258596]
+> > >> sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C bus driver
+> > >> [    0.259188] sun4i-drm display-engine: bound 1ee0000.hdmi (ops
+> > >> sun8i_dw_hdmi_ops) [    0.259199] [drm] Supports vblank timestamp
+> > >> caching Rev 2 (21.10.2013). [    0.259205] [drm] No driver support for
+> > >> vblank timestamp query. [    0.259308] [drm] Cannot find any crtc or
+> > >> sizes
+> > > 
+> > > A good guess would be that you can't get the EDIDs for some
+> > > reason. Have you tried forcing a mode to see if the display part
+> > > already works?
+> > 
+> > Yes I've forced and used custom EDID with 1024x786 bin and observed
+> > that the bin is able to load.
+> > 
+> > [    0.262973] [drm] No driver support for vblank timestamp query.
+> > [    0.263842] [drm] Got built-in EDID base block and 0 extensions
+> > from "edid/1024x768.bin" for connector
 > 
-> Hi Andy,
+> It's not really clear, is it displaying something?
 > 
->> Am 10.04.2018 um 20:06 schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
->> 
->> On Tue, Apr 10, 2018 at 7:07 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
->>> PCAL chips ("L" seems to stand for "latched") have additional
->>> registers starting at address 0x40 to control the latches,
->>> interrupt mask, pull-up and pull down etc.
->>> 
->>> The constants are so far defined in a way that they fit for
->>> the pcal9555a when shifted by the number of banks, i.e. multiplied
->>> by 2.
->>> 
->>> Now the pcal6524 has 3 banks which means the relative offset
->>> must be multiplied by 4 which gives a wrong result if not done
->>> carefully, since the base offset is already included in the offset.
->>> 
->>> For the basic registers shared with all pca93xx/tca64xx chips
->>> there is no such offset.
->>> 
->>> Therefore, we add code to adjust the register number for exended
->>> registers to the 24 bit accessor functions.
->>> 
->>> And we add additional register offset constants (not yet used by
->>> the driver code) which are specific to the pcal6524.
->>> 
->> 
->> First of all, as I said, please split this to two patches. Don't mix the things.
-> 
-> Ok. Queued for v4.
-> 
->> 
->> 
->>> +       /* adjust register address for pcal6524 */
->>> +       if (reg >= PCAL953X_OUT_STRENGTH)
->>> +               reg -= PCAL953X_OUT_STRENGTH >> 1;
->>> +
->> 
->> Give me some days to think about it.
 
-Any news on this?
+This smells like HDMI voltage regulator not being enabled. You have to include 
+patch like this: 
+https://github.com/Icenowy/linux/commit/
+27d12cd2fe89f64c5f4d5224984d4cbfcb7ee137
 
-I am waiting for your advice before submitting v4 (with pending updates for the other patches).
+I guess it won't apply as-is, since it's based on my old, out-of-tree hdmi 
+driver.
 
-> No problem. I'll wait with v4.
-> 
-> The only alternative I would see is to add new accessor function
-> pointers for the extended registers and have 0x00 based offsets,
-> but that is IMHO more ugly.
-> 
-> BR and thanks,
-> Nikolaus
-
-BR and thanks,
-Nikolaus
+Best regards,
+Jernej
