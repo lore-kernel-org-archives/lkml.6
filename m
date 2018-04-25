@@ -1,67 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751852AbeDYJt3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:49:29 -0400
-Received: from mail.netline.ch ([148.251.143.178]:57516 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751725AbeDYJt0 (ORCPT
+        id S1751956AbeDYJuE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:50:04 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:60065 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751525AbeDYJuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:49:26 -0400
-Subject: Re: [PATCH] drm/radeon: Change the default to PCI on PowerPC
-To: Mathieu Malaterre <malat@debian.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>
-References: <20180424195512.491-1-malat@debian.org>
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <0d3b4b95-044d-ab4f-950e-85098b81cb5d@daenzer.net>
-Date: Wed, 25 Apr 2018 11:49:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 25 Apr 2018 05:50:02 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>
+Cc: Genki Sky <sky@genki.is>, David Herrmann <dh.herrmann@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org
+Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock BOOTTIME
+Date: Wed, 25 Apr 2018 11:49:51 +0200
+Message-ID: <1858767.c2KKoU8fl2@aspire.rjw.lan>
+In-Reply-To: <1996930.B4PaKZ6i1F@aspire.rjw.lan>
+References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com> <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de> <1996930.B4PaKZ6i1F@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20180424195512.491-1-malat@debian.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-24 09:55 PM, Mathieu Malaterre wrote:
-> AGP mode is unstable on PowerPC. Symptoms are generally of the form:
+On Wednesday, April 25, 2018 10:52:18 AM CEST Rafael J. Wysocki wrote:
+> On Tuesday, April 24, 2018 10:09:28 AM CEST Thomas Gleixner wrote:
+> > On Mon, 23 Apr 2018, John Stultz wrote:
+> > 
+> > > On Mon, Apr 23, 2018 at 7:45 PM, Genki Sky <sky@genki.is> wrote:
+> > > > Quoting Genki Sky (2018/04/23 20:40:36 -0400)
+> > > >> I came across this thread for same reason as [0]: Daemons getting
+> > > >> killed by systemd on resume (after >WatchdogSec seconds of
+> > > >> suspending). I'm using master branch of systemd and the kernel. As
+> > > >> mentioned, systemd uses CLOCK_MONOTONIC, originally expecting it to
+> > > >> not include suspend time.
+> > > >>
+> > > >> Correct me if I'm mistaken, but I don't see the ambiguity of whether
+> > > >> this patch series breaks systemd. If it's implemented correctly, you'd
+> > > >> hope it *would* break it!
+> > > >
+> > > > This sounded a little weak on re-reading, sorry. So, I just confirmed
+> > > > that after booting a "git revert -m 1 680014d6d1da", the issue no
+> > > > longer appears. (I.e., a suspend for >WatchDog sec doesn't result in
+> > > > any daemon getting killed).
+> > > >
+> > > > Let me know if I can help in any way.
+> > > 
+> > > Yea, this is the sort of thing I was worried about.
+> > > 
+> > > Thomas: I think reverting this change is needed.
+> > 
+> > Sigh. I hoped that something like this would be catched before I sent the
+> > pull request by those who were actually interested in this change...
 > 
-> [ 1228.795711] radeon 0000:00:10.0: ring 0 stalled for more than 10240msec
+> The "git revert -m 1 680014d6d1da" makes resume issues on my Aspire S5
+> go away (cf. https://marc.info/?l=linux-kernel&m=152460804018920&w=2).
 > 
-> Reviewed-by: Christian König <christian.koenig@amd.com>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  drivers/gpu/drm/radeon/radeon_drv.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-> index b28288a781ef..2a7977a23b31 100644
-> --- a/drivers/gpu/drm/radeon/radeon_drv.c
-> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
-> @@ -168,7 +168,12 @@ int radeon_no_wb;
->  int radeon_modeset = -1;
->  int radeon_dynclks = -1;
->  int radeon_r4xx_atom = 0;
-> +#ifdef __powerpc__
-> +/* Default to PCI on PowerPC (fdo #95017) */
-> +int radeon_agpmode = -1;
-> +#else
->  int radeon_agpmode = 0;
-> +#endif
->  int radeon_vram_limit = 0;
->  int radeon_gart_size = -1; /* auto */
->  int radeon_benchmarking = 0;
-> 
+> I'll try with just the "monotonic" vs "boottime" clock changes reverted.
 
-Pushed to amd-staging-drm-next, thanks!
-
-
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+FWICS (so far) system resume still works here with the commits between
+d6ed449afdb3 (timekeeping: Make the MONOTONIC clock behave like the BOOTTIME
+clock) and 127bfa5f4342 (hrtimer: Unify MONOTONIC and BOOTTIME clock behavior)
+inclusive reverted on top of 4.17-rc2.  [I probably should revert commit
+92af4dcb4e1c (tracing: Unify the "boot" and "mono" tracing clocks) too, but
+it doesn't revert cleanly and it doesn't apprear to affect things here too.]
