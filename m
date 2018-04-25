@@ -1,125 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751887AbeDYKiN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 06:38:13 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:50205 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751451AbeDYKiH (ORCPT
+        id S1754231AbeDYKx2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 06:53:28 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44898 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753819AbeDYKxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 06:38:07 -0400
-Subject: Re: [PATCH] p9caps: add Plan9 capability devices
-To: Richard Weinberger <richard.weinberger@gmail.com>,
-        "Enrico Weigelt, metux IT consult" <metux@gmx.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <40d4c871-a16a-7b8f-2d4a-422a5a490693@infradead.org>
- <20180211215028.16210-1-metux@gmx.de> <20180211215028.16210-2-metux@gmx.de>
- <CAFLxGvwHebXuQYwOdG_vnYfjwtdMfCHg5srzjsj1fEaCFm2QGw@mail.gmail.com>
-From: Enrico Weigelt <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <3ffb5399-46b8-7279-fda2-2ca5b40c04d3@metux.net>
-Date: Wed, 25 Apr 2018 12:38:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Wed, 25 Apr 2018 06:53:18 -0400
+Date: Wed, 25 Apr 2018 11:53:09 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Ondrej Jirman <megous@megous.com>, devicetree@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-sunxi@googlegroups.com, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 2/3] regulator: add support for SY8106A regulator
+Message-ID: <20180425105309.GC24769@sirena.org.uk>
+References: <20180423144657.63264-1-icenowy@aosc.io>
+ <20180423144657.63264-3-icenowy@aosc.io>
+ <20180424170733.GD22073@sirena.org.uk>
+ <C0C1F042-221A-420F-A8C1-5FADCFC687F1@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <CAFLxGvwHebXuQYwOdG_vnYfjwtdMfCHg5srzjsj1fEaCFm2QGw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:YJApcYarjUecWghVs6AzDz/lfOLHLEAIma5jn73ju50QxgKsCZF
- hT36GfO8W1qncJSzPqnqYRZzj22brOIu5WdxtnK1NwG2UuPrZCp/xzOYBCyYjsIUgFS80yh
- qMRkLQ+S4TKxNd5AZAjULRsse+0jDYwJjYNs5jmzCN2mYhjeH/oIMKof4IoUgut/5hra136
- krNmoRn2cUoT21kZZxSKw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:o8ZhzSKPCiM=:ELdtN1Z0JXDY/zlYbSV8Lh
- llx4n16qQ3UqMXWFxZdlcrzcFP+Sy2eZa4SjSVbwZ1zO5ku4LhOXHazkxXia263pX685OVvta
- 1UirY92j+glmNYx6j+zKpJ6ucxTaPnh78eZ9ShATYLWAnnRKQ1r5sdEwEF9KVitDXSHbn5FoG
- 5R4d3hy5CEdukRVayrGC/aGtvwy79T7r/d1wnwXiPvHflM4T5mkRzfw/HdCPHKbb70l5GTYj4
- 0wVov4VYNi7xfs/j/FX0aoHxiQ3IERRBlK7OFsJL2Dz8VNpoSH39PhmhUo42RS+fD5cQKYef7
- 1fvvBbE0q9+8OGPZM2r3pcxDNcDt6VsfNDbqVzjgTqDNb7Q0AZ+W66PYNNaij4ypC4WqIKIZ6
- m4DuoMQBxzEU62XyLELGS3WdLHE5EfIB+mwv0JOV78e00Va0zVEQ1xDDThLazuarklYltiC6h
- aUBsrcMIpEXGMOPLl8gpe/iPHyoaACEawHRjy5biVEasphHdQrjokPaRRsDTrBtiO0dfTBmNA
- nZkTZeTbON1s/WgOM71XpV+L87B5dDFYZVz4dLwwz7WzeeOLm3RJZi8guyD/vgaIu0z9zoA74
- 8zr6bSoXj1Rn4k6wfjgPuBDFRnUXEs9fMlYax8pzHBI0lnlHZ4XbxFat84bpEUZ0wkjHuEOwP
- uOwjyfFym0RbxriyPVbK/Udh01uNR7dIHn53xQfdo5JLdHuGxiUPLg0Az4OxGi2zDbbJ0ZAGo
- o/vFC8MDe8sJ5x6xXZ6SzcoKt+TxCYdLE8P7AruYOV4I6CKq2FWU50nh4bQ=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="S1BNGpv0yoYahz37"
+Content-Disposition: inline
+In-Reply-To: <C0C1F042-221A-420F-A8C1-5FADCFC687F1@aosc.io>
+X-Cookie: MS-DOS must die!
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.02.2018 23:11, Richard Weinberger wrote:
 
-Hi,
+--S1BNGpv0yoYahz37
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> +static LIST_HEAD(caphash_writers); >> +>> +static DEFINE_MUTEX(lock);>> +>> +struct crypto_ahash *hmac_tfm 
-= NULL;>> +>> +static int caphash_open(struct inode *inode, struct file 
-*filp)>> +{>> +       struct caphash_writer *tmp = NULL;>> + 
-struct user_namespace *user_ns = current_user_ns();>> +       int retval 
-= 0;>> +       struct list_head *pos, *q;>> +>> +       /* make sure 
-only one instance per namespace can be opened */>> + 
-mutex_lock(&lock);>> +>> +       list_for_each_safe(pos, q, 
-&(caphash_writers)) {>> +               tmp = list_entry(pos, struct 
-caphash_writer, list);>> +               if (tmp->user_ns == user_ns) 
-{>> +                       pr_err("already locked in this namespace\n");>
-> So, evil guy opens the device but does not close it, therefore the
-> whole service is blocked in a namespace?
+On Wed, Apr 25, 2018 at 07:41:35AM +0800, Icenowy Zheng wrote:
+> =E4=BA=8E 2018=E5=B9=B44=E6=9C=8825=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=88=
+1:07:33, Mark Brown <broonie@kernel.org> =E5=86=99=E5=88=B0:
+> >On Mon, Apr 23, 2018 at 10:46:56PM +0800, Icenowy Zheng wrote:
 
-Yes, exactly as specified. There may be only one host factotum running,
-which can create caps. It's an important security feature.
+> >> --- /dev/null
+> >> +++ b/drivers/regulator/sy8106a-regulator.c
+> >> @@ -0,0 +1,176 @@
+> >> +// SPDX-License-Identifier: GPL-2.0+
+> >> +/*
+> >> + * sy8106a-regulator.c - Regulator device driver for SY8106A
 
-> In general, I think we should open that device in
-> kernel_init_freeable() and hand over the fd to init/systemd.
+> >Just make the entire thing a C++ comment so it looks consistent and
+> >joined up.
 
-That would require an customized init and factotum, and wouldn't be
-Plan9 compatible.
+> SPDX identifier is special -- it should be in a seperated
+> comment block.
 
->> +static int caphash_release(struct inode *inode, struct file *filp)
->> +{
->> +       int retval = 0;
->> +       struct user_namespace *user_ns = current_user_ns();
-> 
-> Why not obtaining the user namespace from the open file?
-> That way one can close a caphash file hande she never opened.
-> Think of open, followed by nsenter, ...
+No, it just needs to be a C++ comment on the first line to ease machine
+parsing.  The rest of the file doesn't matter for that.
 
-hmm, good point.
+> >> +	if (reg & SY8106A_GO_BIT)
+> >> +		return reg & rdev->desc->vsel_mask;
+> >> +	else
+> >> +		return (chip->fixed_voltage - rdev->desc->min_uV) /
+> >> +		       rdev->desc->uV_step;
 
->> +       list_for_each_safe(pos, q, &(caphash_writers)) {
->> +               tmp = list_entry(pos, struct caphash_entry, list);
-> 
-> list_for_each_entry.
+> >You could use the standard get_voltage_sel() if you provide a mapping
+> >operation that set everything with _GO_BIT set to return the fixed
+> >voltage.  Though looking at this it seems that the fixed voltage will
+> >always be one that could be set via the register anyway so I'm
+> >wondering
+> >if the easiest thing here isn't to just have the driver turn off
+> >_GO_BIT
 
-what's the exact difference ?
+> Do you mean "turn on" here?
 
->> +static ssize_t capuse_write(struct file *filp, const char __user *buf,
->> +                                 size_t count, loff_t *f_pos)
->> +{
->> +       ssize_t retval = count;
->> +       char  *rand_str, *src_uname, *dst_uname;
->> +       u8 hashval[SHA1_DIGEST_SIZE] = { 0 };
->> +       char *cmdbuf;
->> +
->> +       if (!(cmdbuf = kzalloc(count, GFP_KERNEL)))
-> 
-> count is unbound, please apply a limit check.
+Yes.
 
-ok.
+--S1BNGpv0yoYahz37
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> +       {
->> +               char *walk = cmdbuf;
-> 
-> cmdbuf is toxic, make sure it is at least nul-terminated.
+-----BEGIN PGP SIGNATURE-----
 
-ok.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrgXhUACgkQJNaLcl1U
+h9Dz8Af/ShUsBEhUOo12gD3i5rTHC+B7d/vXUVvbpwkxTOs9H+bKL3erRtuIA/mO
+IbSgSqYjR7PqsVp6IIABDUItbRN2eFVjx/WlxfsHf2WqoXDK0CMq1b8h2I7Z9rd2
+3Pg/ETgOEOcG3UG6mal2JuqEPqldetHJoaOAd/k71A4Z4fGmye2fQsHHl80sG5yw
+Oafndtd2xNyVBaxff0NDNPCpMYPm/SFfCik0tH5VCTAENFqnS7FKkEKJW4Iv0+6+
+bObcFF1mDrCzi9rfQPoTh4s+oXyqjwTdlj6jvz9zhmRv9yn5B9CWN/EI/bIvJYkg
+CwWqSVKCyEZahQL5p4yYkQyR2M+Ufg==
+=oG+g
+-----END PGP SIGNATURE-----
 
->> +       if (hmac_tfm)
-> 
-> IS_ERR()? Otherwise you free a error value, if crypto_alloc_ahash() fails.
-
-ok
-
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+--S1BNGpv0yoYahz37--
