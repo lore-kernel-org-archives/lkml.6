@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751429AbeDYEUU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 00:20:20 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:16746 "EHLO
+        id S1751447AbeDYEUi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 00:20:38 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16193 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751377AbeDYEUQ (ORCPT
+        with ESMTP id S1751249AbeDYEUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 00:20:16 -0400
-X-UUID: bf0919708a2d42bda7661fa5113521bb-20180425
+        Wed, 25 Apr 2018 00:20:17 -0400
+X-UUID: d5d54df19d6147708b489d46bf9031f5-20180425
 From: Ryder Lee <ryder.lee@mediatek.com>
 To: Mark Brown <broonie@kernel.org>
 CC: Garlic Tseng <garlic.tseng@mediatek.com>,
@@ -15,9 +15,9 @@ CC: Garlic Tseng <garlic.tseng@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 2/6] ASoC: mediatek: simplify the control logic of MT2701 I2S
-Date: Wed, 25 Apr 2018 12:19:55 +0800
-Message-ID: <95304d5edf6f6673dabbcd2da1d05c3c751a7e26.1524628914.git.ryder.lee@mediatek.com>
+Subject: [PATCH 6/6] ASoC: mediatek: switch to SPDX license tag
+Date: Wed, 25 Apr 2018 12:19:59 +0800
+Message-ID: <4df7061e4eb1d7bc13b969e81eca4ac1face3366.1524628914.git.ryder.lee@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <07e845c2e7eb06c5f284d1bae3acbccba42e48fa.1524628914.git.ryder.lee@mediatek.com>
 References: <07e845c2e7eb06c5f284d1bae3acbccba42e48fa.1524628914.git.ryder.lee@mediatek.com>
@@ -28,344 +28,510 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adjusts the mt2701_afe_i2s_ops to simplify the control
-logic of the I2S path.
+Add SPDX identifiers to all remaining files in sound/soc/mediatek/
 
 Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-Reviewed-by: Garlic Tseng <garlic.tseng@mediatek.com>
 ---
- sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c |  39 ++++----
- sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.h |  13 ++-
- sound/soc/mediatek/mt2701/mt2701-afe-pcm.c        | 114 +++++++---------------
- 3 files changed, 66 insertions(+), 100 deletions(-)
+ sound/soc/mediatek/Makefile                         |  1 +
+ sound/soc/mediatek/common/Makefile                  | 14 +-------------
+ sound/soc/mediatek/common/mtk-afe-fe-dai.c          | 10 +---------
+ sound/soc/mediatek/common/mtk-afe-fe-dai.h          | 10 +---------
+ sound/soc/mediatek/common/mtk-afe-platform-driver.c | 10 +---------
+ sound/soc/mediatek/common/mtk-afe-platform-driver.h | 10 +---------
+ sound/soc/mediatek/common/mtk-base-afe.h            | 10 +---------
+ sound/soc/mediatek/mt2701/Makefile                  | 14 +-------------
+ sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c   | 10 +---------
+ sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.h   | 10 +---------
+ sound/soc/mediatek/mt2701/mt2701-afe-common.h       | 10 +---------
+ sound/soc/mediatek/mt2701/mt2701-afe-pcm.c          | 10 +---------
+ sound/soc/mediatek/mt2701/mt2701-cs42448.c          | 13 ++-----------
+ sound/soc/mediatek/mt2701/mt2701-reg.h              | 10 +---------
+ sound/soc/mediatek/mt2701/mt2701-wm8960.c           | 10 +---------
+ sound/soc/mediatek/mt8173/mt8173-afe-common.h       | 10 +---------
+ sound/soc/mediatek/mt8173/mt8173-afe-pcm.c          | 10 +---------
+ sound/soc/mediatek/mt8173/mt8173-max98090.c         | 10 +---------
+ sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c    | 10 +---------
+ sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c    | 10 +---------
+ sound/soc/mediatek/mt8173/mt8173-rt5650.c           | 10 +---------
+ 21 files changed, 22 insertions(+), 190 deletions(-)
 
+diff --git a/sound/soc/mediatek/Makefile b/sound/soc/mediatek/Makefile
+index 6bcab35..2867958 100644
+--- a/sound/soc/mediatek/Makefile
++++ b/sound/soc/mediatek/Makefile
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_SND_SOC_MEDIATEK) += common/
+ obj-$(CONFIG_SND_SOC_MT2701) += mt2701/
+ obj-$(CONFIG_SND_SOC_MT8173) += mt8173/
+diff --git a/sound/soc/mediatek/common/Makefile b/sound/soc/mediatek/common/Makefile
+index a55d33b..cdadabc 100644
+--- a/sound/soc/mediatek/common/Makefile
++++ b/sound/soc/mediatek/common/Makefile
+@@ -1,16 +1,4 @@
+-#
+-# Copyright (C) 2015 MediaTek Inc.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License version 2 as
+-# published by the Free Software Foundation.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+-# GNU General Public License for more details.
+-#
+-
++# SPDX-License-Identifier: GPL-2.0
+ # platform driver
+ snd-soc-mtk-common-objs := mtk-afe-platform-driver.o mtk-afe-fe-dai.o
+ obj-$(CONFIG_SND_SOC_MEDIATEK) += snd-soc-mtk-common.o
+diff --git a/sound/soc/mediatek/common/mtk-afe-fe-dai.c b/sound/soc/mediatek/common/mtk-afe-fe-dai.c
+index ac61ff3c..cf4978b 100644
+--- a/sound/soc/mediatek/common/mtk-afe-fe-dai.c
++++ b/sound/soc/mediatek/common/mtk-afe-fe-dai.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * mtk-afe-fe-dais.c  --  Mediatek afe fe dai operator
+  *
+  * Copyright (c) 2016 MediaTek Inc.
+  * Author: Garlic Tseng <garlic.tseng@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/module.h>
+diff --git a/sound/soc/mediatek/common/mtk-afe-fe-dai.h b/sound/soc/mediatek/common/mtk-afe-fe-dai.h
+index 28cb178..55074fb 100644
+--- a/sound/soc/mediatek/common/mtk-afe-fe-dai.h
++++ b/sound/soc/mediatek/common/mtk-afe-fe-dai.h
+@@ -1,17 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * mtk-afe-fe-dais.h  --  Mediatek afe fe dai operator definition
+  *
+  * Copyright (c) 2016 MediaTek Inc.
+  * Author: Garlic Tseng <garlic.tseng@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef _MTK_AFE_FE_DAI_H_
+diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.c b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+index 53215b5..404fbe1 100644
+--- a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
++++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * mtk-afe-platform-driver.c  --  Mediatek afe platform driver
+  *
+  * Copyright (c) 2016 MediaTek Inc.
+  * Author: Garlic Tseng <garlic.tseng@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/module.h>
+diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.h b/sound/soc/mediatek/common/mtk-afe-platform-driver.h
+index 8dcdbed..1c81d91 100644
+--- a/sound/soc/mediatek/common/mtk-afe-platform-driver.h
++++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.h
+@@ -1,17 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * mtk-afe-platform-driver.h  --  Mediatek afe platform driver definition
+  *
+  * Copyright (c) 2016 MediaTek Inc.
+  * Author: Garlic Tseng <garlic.tseng@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef _MTK_AFE_PLATFORM_DRIVER_H_
+diff --git a/sound/soc/mediatek/common/mtk-base-afe.h b/sound/soc/mediatek/common/mtk-base-afe.h
+index e50adc9..c2c5a6c 100644
+--- a/sound/soc/mediatek/common/mtk-base-afe.h
++++ b/sound/soc/mediatek/common/mtk-base-afe.h
+@@ -1,17 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * mtk-base-afe.h  --  Mediatek base afe structure
+  *
+  * Copyright (c) 2016 MediaTek Inc.
+  * Author: Garlic Tseng <garlic.tseng@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef _MTK_BASE_AFE_H_
+diff --git a/sound/soc/mediatek/mt2701/Makefile b/sound/soc/mediatek/mt2701/Makefile
+index c91deb6..21d5e69 100644
+--- a/sound/soc/mediatek/mt2701/Makefile
++++ b/sound/soc/mediatek/mt2701/Makefile
+@@ -1,16 +1,4 @@
+-#
+-# Copyright (C) 2015 MediaTek Inc.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License version 2 as
+-# published by the Free Software Foundation.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+-# GNU General Public License for more details.
+-#
+-
++# SPDX-License-Identifier: GPL-2.0
+ # platform driver
+ snd-soc-mt2701-afe-objs := mt2701-afe-pcm.o mt2701-afe-clock-ctrl.o
+ obj-$(CONFIG_SND_SOC_MT2701) += snd-soc-mt2701-afe.o
 diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
-index 949fc3a..565005f 100644
+index 1793c8d..ae62089 100644
 --- a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
 +++ b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
-@@ -3,6 +3,7 @@
+@@ -1,18 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * mt2701-afe-clock-ctrl.c  --  Mediatek 2701 afe clock ctrl
   *
   * Copyright (c) 2016 MediaTek Inc.
   * Author: Garlic Tseng <garlic.tseng@mediatek.com>
-+ *	   Ryder Lee <ryder.lee@mediatek.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -102,10 +103,10 @@ int mt2701_init_clock(struct mtk_base_afe *afe)
- 	return 0;
- }
+  *	   Ryder Lee <ryder.lee@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
--int mt2701_afe_enable_i2s(struct mtk_base_afe *afe, int id, int dir)
-+int mt2701_afe_enable_i2s(struct mtk_base_afe *afe,
-+			  struct mt2701_i2s_path *i2s_path,
-+			  int dir)
- {
--	struct mt2701_afe_private *afe_priv = afe->platform_priv;
--	struct mt2701_i2s_path *i2s_path = &afe_priv->i2s_path[id];
- 	int ret;
- 
- 	ret = clk_prepare_enable(i2s_path->asrco_ck);
-@@ -128,11 +129,10 @@ int mt2701_afe_enable_i2s(struct mtk_base_afe *afe, int id, int dir)
- 	return ret;
- }
- 
--void mt2701_afe_disable_i2s(struct mtk_base_afe *afe, int id, int dir)
-+void mt2701_afe_disable_i2s(struct mtk_base_afe *afe,
-+			    struct mt2701_i2s_path *i2s_path,
-+			    int dir)
- {
--	struct mt2701_afe_private *afe_priv = afe->platform_priv;
--	struct mt2701_i2s_path *i2s_path = &afe_priv->i2s_path[id];
--
- 	clk_disable_unprepare(i2s_path->hop_ck[dir]);
- 	clk_disable_unprepare(i2s_path->asrco_ck);
- }
-@@ -272,27 +272,32 @@ int mt2701_afe_disable_clock(struct mtk_base_afe *afe)
- 	return 0;
- }
- 
--void mt2701_mclk_configuration(struct mtk_base_afe *afe, int id, int domain,
--			       int mclk)
-+int mt2701_mclk_configuration(struct mtk_base_afe *afe, int id)
-+
- {
- 	struct mt2701_afe_private *priv = afe->platform_priv;
- 	struct mt2701_i2s_path *i2s_path = &priv->i2s_path[id];
--	int ret;
-+	int ret = -EINVAL;
- 
- 	/* Set mclk source */
--	if (domain == 0)
-+	if (!(MT2701_PLL_DOMAIN_0_RATE % i2s_path->mclk_rate))
- 		ret = clk_set_parent(i2s_path->sel_ck,
- 				     priv->base_ck[MT2701_TOP_AUD_MCLK_SRC0]);
--	else
-+	else if (!(MT2701_PLL_DOMAIN_1_RATE % i2s_path->mclk_rate))
- 		ret = clk_set_parent(i2s_path->sel_ck,
- 				     priv->base_ck[MT2701_TOP_AUD_MCLK_SRC1]);
- 
--	if (ret)
--		dev_err(afe->dev, "failed to set domain%d mclk source %d\n",
--			domain, ret);
-+	if (ret) {
-+		dev_err(afe->dev, "failed to set mclk source\n");
-+		return ret;
-+	}
- 
- 	/* Set mclk divider */
--	ret = clk_set_rate(i2s_path->div_ck, mclk);
--	if (ret)
-+	ret = clk_set_rate(i2s_path->div_ck, i2s_path->mclk_rate);
-+	if (ret) {
- 		dev_err(afe->dev, "failed to set mclk divider %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
- }
+ #include "mt2701-afe-common.h"
 diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.h b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.h
-index 15417d9..1957219 100644
+index 1957219..580fead 100644
 --- a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.h
 +++ b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.h
-@@ -3,6 +3,7 @@
+@@ -1,18 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * mt2701-afe-clock-ctrl.h  --  Mediatek 2701 afe clock ctrl definition
   *
   * Copyright (c) 2016 MediaTek Inc.
   * Author: Garlic Tseng <garlic.tseng@mediatek.com>
-+ *	   Ryder Lee <ryder.lee@mediatek.com>
+  *	   Ryder Lee <ryder.lee@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef _MT2701_AFE_CLOCK_CTRL_H_
+diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-common.h b/sound/soc/mediatek/mt2701/mt2701-afe-common.h
+index 1ebac4b..d44faba 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-afe-common.h
++++ b/sound/soc/mediatek/mt2701/mt2701-afe-common.h
+@@ -1,17 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * mt2701-afe-common.h  --  Mediatek 2701 audio driver definitions
   *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -18,20 +19,24 @@
- #define _MT2701_AFE_CLOCK_CTRL_H_
+  * Copyright (c) 2016 MediaTek Inc.
+  * Author: Garlic Tseng <garlic.tseng@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
- struct mtk_base_afe;
-+struct mt2701_i2s_path;
- 
- int mt2701_init_clock(struct mtk_base_afe *afe);
- int mt2701_afe_enable_clock(struct mtk_base_afe *afe);
- int mt2701_afe_disable_clock(struct mtk_base_afe *afe);
- 
--int mt2701_afe_enable_i2s(struct mtk_base_afe *afe, int id, int dir);
--void mt2701_afe_disable_i2s(struct mtk_base_afe *afe, int id, int dir);
-+int mt2701_afe_enable_i2s(struct mtk_base_afe *afe,
-+			  struct mt2701_i2s_path *path,
-+			  int dir);
-+void mt2701_afe_disable_i2s(struct mtk_base_afe *afe,
-+			    struct mt2701_i2s_path *path,
-+			    int dir);
- int mt2701_afe_enable_mclk(struct mtk_base_afe *afe, int id);
- void mt2701_afe_disable_mclk(struct mtk_base_afe *afe, int id);
- 
- int mt2701_enable_btmrg_clk(struct mtk_base_afe *afe);
- void mt2701_disable_btmrg_clk(struct mtk_base_afe *afe);
- 
--void mt2701_mclk_configuration(struct mtk_base_afe *afe, int id, int domain,
--			       int mclk);
-+int mt2701_mclk_configuration(struct mtk_base_afe *afe, int id);
- 
- #endif
+ #ifndef _MT_2701_AFE_COMMON_H_
 diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-index 8219f55..2a161f4 100644
+index 3bc13b3..236f313 100644
 --- a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
 +++ b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-@@ -3,7 +3,8 @@
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Mediatek ALSA SoC AFE platform driver for 2701
+  *
+@@ -5,15 +6,6 @@
+  * Author: Garlic Tseng <garlic.tseng@mediatek.com>
+  *	   Ir Lian <ir.lian@mediatek.com>
+  *	   Ryder Lee <ryder.lee@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/delay.h>
+diff --git a/sound/soc/mediatek/mt2701/mt2701-cs42448.c b/sound/soc/mediatek/mt2701/mt2701-cs42448.c
+index 70f61d5..666282b 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-cs42448.c
++++ b/sound/soc/mediatek/mt2701/mt2701-cs42448.c
+@@ -1,19 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * mt2701-cs42448.c  --  MT2701 CS42448 ALSA SoC machine driver
+  *
+  * Copyright (c) 2016 MediaTek Inc.
+  * Author: Ir Lian <ir.lian@mediatek.com>
+- *              Garlic Tseng <garlic.tseng@mediatek.com>
+- *
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
++ *	   Garlic Tseng <garlic.tseng@mediatek.com>
+  */
+ 
+ #include <linux/module.h>
+diff --git a/sound/soc/mediatek/mt2701/mt2701-reg.h b/sound/soc/mediatek/mt2701/mt2701-reg.h
+index dbe7d60..c84d14c 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-reg.h
++++ b/sound/soc/mediatek/mt2701/mt2701-reg.h
+@@ -1,17 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * mt2701-reg.h  --  Mediatek 2701 audio driver reg definition
   *
   * Copyright (c) 2016 MediaTek Inc.
   * Author: Garlic Tseng <garlic.tseng@mediatek.com>
-- *             Ir Lian <ir.lian@mediatek.com>
-+ *	   Ir Lian <ir.lian@mediatek.com>
-+ *	   Ryder Lee <ryder.lee@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef _MT2701_REG_H_
+diff --git a/sound/soc/mediatek/mt2701/mt2701-wm8960.c b/sound/soc/mediatek/mt2701/mt2701-wm8960.c
+index a08ce23..89f34ef 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-wm8960.c
++++ b/sound/soc/mediatek/mt2701/mt2701-wm8960.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * mt2701-wm8960.c  --  MT2701 WM8960 ALSA SoC machine driver
   *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -101,31 +102,15 @@ static int mt2701_afe_i2s_startup(struct snd_pcm_substream *substream,
- 	return mt2701_afe_enable_mclk(afe, i2s_num);
- }
+  * Copyright (c) 2017 MediaTek Inc.
+  * Author: Ryder Lee <ryder.lee@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
--static int mt2701_afe_i2s_path_shutdown(struct snd_pcm_substream *substream,
--					struct snd_soc_dai *dai,
--					int i2s_num,
--					int dir_invert)
-+static int mt2701_afe_i2s_path_disable(struct mtk_base_afe *afe,
-+				       struct mt2701_i2s_path *i2s_path,
-+				       int stream_dir)
- {
--	struct mtk_base_afe *afe = snd_soc_dai_get_drvdata(dai);
--	struct mt2701_afe_private *afe_priv = afe->platform_priv;
--	struct mt2701_i2s_path *i2s_path = &afe_priv->i2s_path[i2s_num];
--	const struct mt2701_i2s_data *i2s_data;
--	int stream_dir = substream->stream;
--
--	if (dir_invert)	{
--		if (stream_dir == SNDRV_PCM_STREAM_PLAYBACK)
--			stream_dir = SNDRV_PCM_STREAM_CAPTURE;
--		else
--			stream_dir = SNDRV_PCM_STREAM_PLAYBACK;
--	}
--	i2s_data = i2s_path->i2s_data[stream_dir];
-+	const struct mt2701_i2s_data *i2s_data = i2s_path->i2s_data[stream_dir];
+ #include <linux/module.h>
+diff --git a/sound/soc/mediatek/mt8173/mt8173-afe-common.h b/sound/soc/mediatek/mt8173/mt8173-afe-common.h
+index 9a4837c..396fe23 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-afe-common.h
++++ b/sound/soc/mediatek/mt8173/mt8173-afe-common.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * mt8173_afe_common.h  --  Mediatek 8173 audio driver common definitions
+  *
+@@ -6,15 +7,6 @@
+  *             Sascha Hauer <s.hauer@pengutronix.de>
+  *             Hidalgo Huang <hidalgo.huang@mediatek.com>
+  *             Ir Lian <ir.lian@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
--	i2s_path->on[stream_dir]--;
--	if (i2s_path->on[stream_dir] < 0) {
--		dev_warn(afe->dev, "i2s_path->on: %d, dir: %d\n",
--			 i2s_path->on[stream_dir], stream_dir);
-+	if (--i2s_path->on[stream_dir] < 0)
- 		i2s_path->on[stream_dir] = 0;
--	}
-+
- 	if (i2s_path->on[stream_dir])
- 		return 0;
+ #ifndef _MT8173_AFE_COMMON_H_
+diff --git a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+index 22881a9..c0b6697 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
++++ b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Mediatek 8173 ALSA SoC AFE platform driver
+  *
+@@ -6,15 +7,6 @@
+  *             Sascha Hauer <s.hauer@pengutronix.de>
+  *             Hidalgo Huang <hidalgo.huang@mediatek.com>
+  *             Ir Lian <ir.lian@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
-@@ -133,7 +118,7 @@ static int mt2701_afe_i2s_path_shutdown(struct snd_pcm_substream *substream,
- 	regmap_update_bits(afe->regmap, i2s_data->i2s_ctrl_reg,
- 			   ASYS_I2S_CON_I2S_EN, 0);
+ #include <linux/delay.h>
+diff --git a/sound/soc/mediatek/mt8173/mt8173-max98090.c b/sound/soc/mediatek/mt8173/mt8173-max98090.c
+index b49b527..902d111 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-max98090.c
++++ b/sound/soc/mediatek/mt8173/mt8173-max98090.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * mt8173-max98090.c  --  MT8173 MAX98090 ALSA SoC machine driver
+  *
+  * Copyright (c) 2015 MediaTek Inc.
+  * Author: Koro Chen <koro.chen@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
--	mt2701_afe_disable_i2s(afe, i2s_num, stream_dir);
-+	mt2701_afe_disable_i2s(afe, i2s_path, stream_dir);
+ #include <linux/module.h>
+diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c
+index 904f3ee..582174d 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c
++++ b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * mt8173-rt5650-rt5514.c  --  MT8173 machine driver with RT5650/5514 codecs
+  *
+  * Copyright (c) 2016 MediaTek Inc.
+  * Author: Koro Chen <koro.chen@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
- 	return 0;
- }
-@@ -154,48 +139,32 @@ static void mt2701_afe_i2s_shutdown(struct snd_pcm_substream *substream,
- 	if (i2s_path->occupied[substream->stream])
- 		i2s_path->occupied[substream->stream] = 0;
- 	else
--		goto I2S_UNSTART;
-+		goto exit;
+ #include <linux/module.h>
+diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
+index 9c61b8c..b3670c8 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
++++ b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * mt8173-rt5650-rt5676.c  --  MT8173 machine driver with RT5650/5676 codecs
+  *
+  * Copyright (c) 2015 MediaTek Inc.
+  * Author: Koro Chen <koro.chen@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
--	mt2701_afe_i2s_path_shutdown(substream, dai, i2s_num, 0);
-+	mt2701_afe_i2s_path_disable(afe, i2s_path, substream->stream);
+ #include <linux/module.h>
+diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650.c b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
+index 84aa09d..7a89b4a 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-rt5650.c
++++ b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * mt8173-rt5650.c  --  MT8173 machine driver with RT5650 codecs
+  *
+  * Copyright (c) 2016 MediaTek Inc.
+  * Author: Koro Chen <koro.chen@mediatek.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
  
- 	/* need to disable i2s-out path when disable i2s-in */
- 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
--		mt2701_afe_i2s_path_shutdown(substream, dai, i2s_num, 1);
-+		mt2701_afe_i2s_path_disable(afe, i2s_path, !substream->stream);
- 
--I2S_UNSTART:
-+exit:
- 	/* disable mclk */
- 	mt2701_afe_disable_mclk(afe, i2s_num);
- }
- 
--static int mt2701_i2s_path_prepare_enable(struct snd_pcm_substream *substream,
--					  struct snd_soc_dai *dai,
--					  int i2s_num,
--					  int dir_invert)
-+static int mt2701_i2s_path_enable(struct mtk_base_afe *afe,
-+				  struct mt2701_i2s_path *i2s_path,
-+				  int stream_dir, int rate)
- {
--	struct mtk_base_afe *afe = snd_soc_dai_get_drvdata(dai);
--	struct mt2701_afe_private *afe_priv = afe->platform_priv;
--	struct mt2701_i2s_path *i2s_path = &afe_priv->i2s_path[i2s_num];
--	const struct mt2701_i2s_data *i2s_data;
--	struct snd_pcm_runtime * const runtime = substream->runtime;
-+	const struct mt2701_i2s_data *i2s_data = i2s_path->i2s_data[stream_dir];
- 	int reg, fs, w_len = 1; /* now we support bck 64bits only */
--	int stream_dir = substream->stream;
- 	unsigned int mask, val;
- 
--	if (dir_invert) {
--		if (stream_dir == SNDRV_PCM_STREAM_PLAYBACK)
--			stream_dir = SNDRV_PCM_STREAM_CAPTURE;
--		else
--			stream_dir = SNDRV_PCM_STREAM_PLAYBACK;
--	}
--	i2s_data = i2s_path->i2s_data[stream_dir];
--
- 	/* no need to enable if already done */
--	i2s_path->on[stream_dir]++;
--
--	if (i2s_path->on[stream_dir] != 1)
-+	if (++i2s_path->on[stream_dir] != 1)
- 		return 0;
- 
--	fs = mt2701_afe_i2s_fs(runtime->rate);
-+	fs = mt2701_afe_i2s_fs(rate);
- 
- 	mask = ASYS_I2S_CON_FS |
- 	       ASYS_I2S_CON_I2S_COUPLE_MODE | /* 0 */
-@@ -209,22 +178,20 @@ static int mt2701_i2s_path_prepare_enable(struct snd_pcm_substream *substream,
- 	if (stream_dir == SNDRV_PCM_STREAM_CAPTURE) {
- 		mask |= ASYS_I2S_IN_PHASE_FIX;
- 		val |= ASYS_I2S_IN_PHASE_FIX;
-+		reg = ASMI_TIMING_CON1;
-+	} else {
-+		reg = ASMO_TIMING_CON1;
- 	}
- 
- 	regmap_update_bits(afe->regmap, i2s_data->i2s_ctrl_reg, mask, val);
- 
--	if (stream_dir == SNDRV_PCM_STREAM_PLAYBACK)
--		reg = ASMO_TIMING_CON1;
--	else
--		reg = ASMI_TIMING_CON1;
--
- 	regmap_update_bits(afe->regmap, reg,
- 			   i2s_data->i2s_asrc_fs_mask
- 			   << i2s_data->i2s_asrc_fs_shift,
- 			   fs << i2s_data->i2s_asrc_fs_shift);
- 
- 	/* enable i2s */
--	mt2701_afe_enable_i2s(afe, i2s_num, stream_dir);
-+	mt2701_afe_enable_i2s(afe, i2s_path, stream_dir);
- 
- 	/* reset i2s hw status before enable */
- 	regmap_update_bits(afe->regmap, i2s_data->i2s_ctrl_reg,
-@@ -241,43 +208,32 @@ static int mt2701_i2s_path_prepare_enable(struct snd_pcm_substream *substream,
- static int mt2701_afe_i2s_prepare(struct snd_pcm_substream *substream,
- 				  struct snd_soc_dai *dai)
- {
--	int clk_domain;
- 	struct mtk_base_afe *afe = snd_soc_dai_get_drvdata(dai);
- 	struct mt2701_afe_private *afe_priv = afe->platform_priv;
--	int i2s_num = mt2701_dai_num_to_i2s(afe, dai->id);
-+	int ret, i2s_num = mt2701_dai_num_to_i2s(afe, dai->id);
- 	struct mt2701_i2s_path *i2s_path;
--	int mclk_rate;
- 
- 	if (i2s_num < 0)
- 		return i2s_num;
- 
- 	i2s_path = &afe_priv->i2s_path[i2s_num];
--	mclk_rate = i2s_path->mclk_rate;
- 
- 	if (i2s_path->occupied[substream->stream])
- 		return -EBUSY;
-+
-+	ret = mt2701_mclk_configuration(afe, i2s_num);
-+	if (ret)
-+		return ret;
-+
- 	i2s_path->occupied[substream->stream] = 1;
- 
--	if (MT2701_PLL_DOMAIN_0_RATE % mclk_rate == 0) {
--		clk_domain = 0;
--	} else if (MT2701_PLL_DOMAIN_1_RATE % mclk_rate == 0) {
--		clk_domain = 1;
--	} else {
--		dev_err(dai->dev, "%s() bad mclk rate %d\n",
--			__func__, mclk_rate);
--		return -EINVAL;
--	}
--	mt2701_mclk_configuration(afe, i2s_num, clk_domain, mclk_rate);
-+	/* need to enable i2s-out path when enable i2s-in */
-+	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
-+		mt2701_i2s_path_enable(afe, i2s_path, !substream->stream,
-+				       substream->runtime->rate);
- 
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		mt2701_i2s_path_prepare_enable(substream, dai, i2s_num, 0);
--	} else {
--		/* need to enable i2s-out path when enable i2s-in */
--		/* prepare for another direction "out" */
--		mt2701_i2s_path_prepare_enable(substream, dai, i2s_num, 1);
--		/* prepare for "in" */
--		mt2701_i2s_path_prepare_enable(substream, dai, i2s_num, 0);
--	}
-+	mt2701_i2s_path_enable(afe, i2s_path, substream->stream,
-+			       substream->runtime->rate);
- 
- 	return 0;
- }
+ #include <linux/module.h>
 -- 
 1.9.1
