@@ -1,76 +1,77 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-937867-1524671454-2-10697868061181127856
+X-Cyrus-Session-Id: sloti22d1t05-937867-1524671453-2-14804572688899343258
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524671453; b=n0WczmzoVIinRuUgAARGhhQKZLgeKxjUscstiBJ9LseN5hJqB+
-    u/JwMvL4zenCZFbTJGL9fUGDYR6282ZnEdpd+evoJGNUFaI1d7N9N5Pjos/v1MgC
-    aR5wI+7lZoWE6eRnTsQBXj6LTjI1Des/0nt1SuaKBHUclCoa0jT0vjmOR9+MlQ5m
-    G8jNuYL25MknBG5LVsrhEafZaHQkoiaX66fJQmDFuc9h6f5W9B1VvWGMLQBMGRll
-    uRFPZoPb2ZoezgPX5gM6cAWStHe7Il4Em1ddoRtvrK3+M3DevdXTELi4C69NQQS+
-    FMwHk3KCk1kWobWOx/7AWQnuZJNTdDJgdl1g==
+    1524671449; b=Gg1juWHt+D6ke5/b4Be9IdR1gGyXO6dZ0kLvtUDevBJoKww5c9
+    8CeBl0pSReoSXOIJbiGHHz4itgppxjrGX+HoUtXUse4QDcq45AgRItjZjhzafEnc
+    xaWlfuxttS8KiKrQ9FVurGj02GpZySNiDVfuJmE+JfFxXy+EJex/K6TYEtPPqTJ4
+    1gm56QwE6q5jjwiFgC5BpcKVyVs0x06xf5pcSylI4n4CGtCt6U33NbvYCabz3pvS
+    0s0huB+1iZJ1EOkVgwHeZVU2X+Qzer/g23fZKE0gh6mZFUcFL7sM+VsDBgtSeiZ6
+    uVz2DIbWSO9j0clis0WGYjbanmRVM82rx/VA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524671453; bh=dCR8u
-    AYsEIodS96t7XmZdel2muGd4tGZ82tOcmnHA1c=; b=Wz3sKqd5fW1vhp7Yi0Tws
-    jaS9kOF0OlsZFoCibmhGGPXvCKrc1O3R0rwFt8aRb4TCmgM8Rz1oYllyH9JIvJDo
-    PTaMzdu0tteN3F0JYJybwVIKJ1gV8c9tpolmh/CytUZyMdnU3Q5D8q5KkZyBi2pB
-    Aj+ZNzi4dH9dHHEV4FDQX09svJwuorSb9OVl3dNGaX7dGsNJYHWR5ANBEojjCgOr
-    JLRp5bPNEzwWKzmSLBD02HoY6vHPfmLq9h1IXxSQ8UAiahf2SE18+nJ4okND5o/s
-    nh+xcvFVHsspLxlavIUEw5Tfhb1kZRQJtrFkkGhwdd+bp5fg7rr9PVsgO2rTmzoZ
-    w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=JUqEBQmB x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :content-transfer-encoding:sender; s=fm2; t=1524671449; bh=D+zCh
+    sbiH5Q+ZX03LTlZ3rdhOJUf3Aq+J4b7QIjW+7o=; b=OcmBo8ez+gzRq4fDae3hp
+    oB/5BXLBeCKSm3vZyNhleqKGWyX24YHgIPN2y6RijAwn7eSckInffI5wp68ANcEh
+    iG0D8SoB0vosEOw9lihyFOu2ZOrELxaq8s4CGQIn0izfRfqeh/aAK8LRhFQMGP9C
+    NwzBcNa4aAaShSKAPbcgzOVA30Xq/pqWfIyYB2l64PHGOy6srVu44R4UUd7mUJ15
+    Jwk4L43R05deNI1S2PzHYUt/QxNoAcMIT1ZBr8ay2Hc9JfUrBgMOxWNtW19kH//z
+    Qmq7erkva2f+233/3easucWKpb+Ej3OcauFSTh1/870MG9kElDzI7kSWTje6BN3W
+    g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=sa65O8lj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=JUqEBQmB x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=sa65O8lj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEPG5xzCErJc75VO8Jo4zyF3Envck6D0CaUPVYXLwxTPGtYotiRYmsECEyuR48lFUaXNqA8XKwQjrK9VhrhSAw66Xdd1b+je5VPnSMznjwKRrCswpKSZ
-    etmycDM7av7nZpJgapF7lT+UqirtaatrDfRVHpo5HgFHhoMGnjdvyvEWxAgdhkMDFV01Sr2t5SPi9rR+xlLvUsHEI0t1lFVoZY2LC9JfM7mwbEaJH7/rhq9T
-    9FBcw/QiMo3wYRwKq7u9lA==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=c5d4c0_zl500DmvltOAA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfI8P9yB3FFtTSIaYt8aS/kerwGTAh3F3Tef+NDq8EJVwm9JKLP9/xzpvivrccMWMnQmljxBXswfL+jTs/sbNqReG6xYqw4JidKm88Pq0vrYSQz2eMHDC
+    sd7IAMaI9LWyAdd5TA3sDyGFSTAyUZAAgAFhpitQfrmsQDXDDian9KPyEMspOmUjM1zvlgBfAYUxIeBu1Ce06D5AiCcNRu9H02pVeNTa06T0Ye4NuI8Y6tyo
+    LqGx9i9baAAdUe2qspjnDQ==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=n95adBl39jsrF2XtAlkA:9
+    a=DQ_ANRRiwn6fLg3K:21 a=wn8N68SITIPpHq9Q:21 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 19/40] megaraid: simplify procfs code
-Date: Wed, 25 Apr 2018 17:48:06 +0200
-Message-Id: <20180425154827.32251-20-hch@lst.de>
+Subject: [PATCH 20/40] sg: simplify procfs code
+Date: Wed, 25 Apr 2018 17:48:07 +0200
+Message-Id: <20180425154827.32251-21-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425154827.32251-1-hch@lst.de>
 References: <20180425154827.32251-1-hch@lst.de>
@@ -106,215 +107,235 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Use remove_proc_subtree to remove the whole subtree on cleanup, and
 unwind the registration loop into individual calls.  Switch to use
-proc_create_single.
+proc_create_seq where applicable.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/scsi/megaraid.c | 140 +++++++++++-----------------------------
- drivers/scsi/megaraid.h |  12 ----
- 2 files changed, 36 insertions(+), 116 deletions(-)
+ drivers/scsi/sg.c | 124 +++++-----------------------------------------
+ 1 file changed, 12 insertions(+), 112 deletions(-)
 
-diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
-index 7195cff51d4c..91f5e2c68dbc 100644
---- a/drivers/scsi/megaraid.c
-+++ b/drivers/scsi/megaraid.c
-@@ -2731,53 +2731,6 @@ proc_show_rdrv_40(struct seq_file *m, void *v)
- 	return proc_show_rdrv(m, m->private, 30, 39);
- }
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index c198b96368dd..8ff687158704 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -66,7 +66,6 @@ static int sg_version_num = 30536;	/* 2 digits for each component */
+ static char *sg_version_date = "20140603";
  
--
--/*
-- * seq_file wrappers for procfile show routines.
-- */
--static int mega_proc_open(struct inode *inode, struct file *file)
--{
--	adapter_t *adapter = proc_get_parent_data(inode);
--	int (*show)(struct seq_file *, void *) = PDE_DATA(inode);
--
--	return single_open(file, show, adapter);
--}
--
--static const struct file_operations mega_proc_fops = {
--	.open		= mega_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--/*
-- * Table of proc files we need to create.
-- */
--struct mega_proc_file {
--	const char *name;
--	unsigned short ptr_offset;
--	int (*show) (struct seq_file *m, void *v);
--};
--
--static const struct mega_proc_file mega_proc_files[] = {
--	{ "config",	      offsetof(adapter_t, proc_read), proc_show_config },
--	{ "stat",	      offsetof(adapter_t, proc_stat), proc_show_stat },
--	{ "mailbox",	      offsetof(adapter_t, proc_mbox), proc_show_mbox },
--#if MEGA_HAVE_ENH_PROC
--	{ "rebuild-rate",     offsetof(adapter_t, proc_rr), proc_show_rebuild_rate },
--	{ "battery-status",   offsetof(adapter_t, proc_battery), proc_show_battery },
--	{ "diskdrives-ch0",   offsetof(adapter_t, proc_pdrvstat[0]), proc_show_pdrv_ch0 },
--	{ "diskdrives-ch1",   offsetof(adapter_t, proc_pdrvstat[1]), proc_show_pdrv_ch1 },
--	{ "diskdrives-ch2",   offsetof(adapter_t, proc_pdrvstat[2]), proc_show_pdrv_ch2 },
--	{ "diskdrives-ch3",   offsetof(adapter_t, proc_pdrvstat[3]), proc_show_pdrv_ch3 },
--	{ "raiddrives-0-9",   offsetof(adapter_t, proc_rdrvstat[0]), proc_show_rdrv_10 },
--	{ "raiddrives-10-19", offsetof(adapter_t, proc_rdrvstat[1]), proc_show_rdrv_20 },
--	{ "raiddrives-20-29", offsetof(adapter_t, proc_rdrvstat[2]), proc_show_rdrv_30 },
--	{ "raiddrives-30-39", offsetof(adapter_t, proc_rdrvstat[3]), proc_show_rdrv_40 },
--#endif
--	{ NULL }
--};
--
- /**
-  * mega_create_proc_entry()
-  * @index - index in soft state array
-@@ -2788,31 +2741,45 @@ static const struct mega_proc_file mega_proc_files[] = {
- static void
- mega_create_proc_entry(int index, struct proc_dir_entry *parent)
- {
--	const struct mega_proc_file *f;
--	adapter_t	*adapter = hba_soft_state[index];
--	struct proc_dir_entry	*dir, *de, **ppde;
--	u8		string[16];
-+	adapter_t *adapter = hba_soft_state[index];
-+	struct proc_dir_entry *dir;
-+	u8 string[16];
- 
- 	sprintf(string, "hba%d", adapter->host->host_no);
--
--	dir = adapter->controller_proc_dir_entry =
--		proc_mkdir_data(string, 0, parent, adapter);
--	if(!dir) {
-+	dir = proc_mkdir_data(string, 0, parent, adapter);
-+	if (!dir) {
- 		dev_warn(&adapter->dev->dev, "proc_mkdir failed\n");
- 		return;
- 	}
- 
--	for (f = mega_proc_files; f->name; f++) {
--		de = proc_create_data(f->name, S_IRUSR, dir, &mega_proc_fops,
--				      f->show);
--		if (!de) {
--			dev_warn(&adapter->dev->dev, "proc_create failed\n");
--			return;
--		}
--
--		ppde = (void *)adapter + f->ptr_offset;
--		*ppde = de;
--	}
-+	proc_create_single_data("config", S_IRUSR, dir,
-+			proc_show_config, adapter);
-+	proc_create_single_data("stat", S_IRUSR, dir,
-+			proc_show_stat, adapter);
-+	proc_create_single_data("mailbox", S_IRUSR, dir,
-+			proc_show_mbox, adapter);
-+#if MEGA_HAVE_ENH_PROC
-+	proc_create_single_data("rebuild-rate", S_IRUSR, dir,
-+			proc_show_rebuild_rate, adapter);
-+	proc_create_single_data("battery-status", S_IRUSR, dir,
-+			proc_show_battery, adapter);
-+	proc_create_single_data("diskdrives-ch0", S_IRUSR, dir,
-+			proc_show_pdrv_ch0, adapter);
-+	proc_create_single_data("diskdrives-ch1", S_IRUSR, dir,
-+			proc_show_pdrv_ch1, adapter);
-+	proc_create_single_data("diskdrives-ch2", S_IRUSR, dir,
-+			proc_show_pdrv_ch2, adapter);
-+	proc_create_single_data("diskdrives-ch3", S_IRUSR, dir,
-+			proc_show_pdrv_ch3, adapter);
-+	proc_create_single_data("raiddrives-0-9", S_IRUSR, dir,
-+			proc_show_rdrv_10, adapter);
-+	proc_create_single_data("raiddrives-10-19", S_IRUSR, dir,
-+			proc_show_rdrv_20, adapter);
-+	proc_create_single_data("raiddrives-20-29", S_IRUSR, dir,
-+			proc_show_rdrv_30, adapter);
-+	proc_create_single_data("raiddrives-30-39", S_IRUSR, dir,
-+			proc_show_rdrv_40, adapter);
-+#endif
- }
- 
- #else
-@@ -4580,6 +4547,7 @@ megaraid_remove_one(struct pci_dev *pdev)
- {
- 	struct Scsi_Host *host = pci_get_drvdata(pdev);
- 	adapter_t *adapter = (adapter_t *)host->hostdata;
-+	char buf[12] = { 0 };
- 
- 	scsi_remove_host(host);
- 
-@@ -4594,44 +4562,8 @@ megaraid_remove_one(struct pci_dev *pdev)
- 
- 	mega_free_sgl(adapter);
- 
--#ifdef CONFIG_PROC_FS
--	if (adapter->controller_proc_dir_entry) {
--		remove_proc_entry("stat", adapter->controller_proc_dir_entry);
--		remove_proc_entry("config",
--				adapter->controller_proc_dir_entry);
--		remove_proc_entry("mailbox",
--				adapter->controller_proc_dir_entry);
--#if MEGA_HAVE_ENH_PROC
--		remove_proc_entry("rebuild-rate",
--				adapter->controller_proc_dir_entry);
--		remove_proc_entry("battery-status",
--				adapter->controller_proc_dir_entry);
--
--		remove_proc_entry("diskdrives-ch0",
--				adapter->controller_proc_dir_entry);
--		remove_proc_entry("diskdrives-ch1",
--				adapter->controller_proc_dir_entry);
--		remove_proc_entry("diskdrives-ch2",
--				adapter->controller_proc_dir_entry);
--		remove_proc_entry("diskdrives-ch3",
--				adapter->controller_proc_dir_entry);
--
--		remove_proc_entry("raiddrives-0-9",
--				adapter->controller_proc_dir_entry);
--		remove_proc_entry("raiddrives-10-19",
--				adapter->controller_proc_dir_entry);
--		remove_proc_entry("raiddrives-20-29",
--				adapter->controller_proc_dir_entry);
--		remove_proc_entry("raiddrives-30-39",
--				adapter->controller_proc_dir_entry);
--#endif
--		{
--			char	buf[12] = { 0 };
--			sprintf(buf, "hba%d", adapter->host->host_no);
--			remove_proc_entry(buf, mega_proc_dir_entry);
--		}
--	}
--#endif
-+	sprintf(buf, "hba%d", adapter->host->host_no);
-+	remove_proc_subtree(buf, mega_proc_dir_entry);
- 
- 	pci_free_consistent(adapter->dev, MEGA_BUFFER_SIZE,
- 			adapter->mega_buffer, adapter->buf_dma_handle);
-diff --git a/drivers/scsi/megaraid.h b/drivers/scsi/megaraid.h
-index 21eba2fd465a..18e85d9267ff 100644
---- a/drivers/scsi/megaraid.h
-+++ b/drivers/scsi/megaraid.h
-@@ -814,18 +814,6 @@ typedef struct {
- 
- #ifdef CONFIG_PROC_FS
- 	struct proc_dir_entry	*controller_proc_dir_entry;
--	struct proc_dir_entry	*proc_read;
--	struct proc_dir_entry	*proc_stat;
--	struct proc_dir_entry	*proc_mbox;
--
--#if MEGA_HAVE_ENH_PROC
--	struct proc_dir_entry	*proc_rr;
--	struct proc_dir_entry	*proc_battery;
--#define MAX_PROC_CHANNELS	4
--	struct proc_dir_entry	*proc_pdrvstat[MAX_PROC_CHANNELS];
--	struct proc_dir_entry	*proc_rdrvstat[MAX_PROC_CHANNELS];
--#endif
--
+ static int sg_proc_init(void);
+-static void sg_proc_cleanup(void);
  #endif
  
- 	int	has_64bit_addr;		/* are we using 64-bit addressing */
+ #define SG_ALLOW_DIO_DEF 0
+@@ -1661,7 +1660,7 @@ static void __exit
+ exit_sg(void)
+ {
+ #ifdef CONFIG_SCSI_PROC_FS
+-	sg_proc_cleanup();
++	remove_proc_subtree("scsi/sg", NULL);
+ #endif				/* CONFIG_SCSI_PROC_FS */
+ 	scsi_unregister_interface(&sg_interface);
+ 	class_destroy(sg_sysfs_class);
+@@ -2274,11 +2273,6 @@ sg_get_dev(int dev)
+ }
+ 
+ #ifdef CONFIG_SCSI_PROC_FS
+-
+-static struct proc_dir_entry *sg_proc_sgp = NULL;
+-
+-static char sg_proc_sg_dirname[] = "scsi/sg";
+-
+ static int sg_proc_seq_show_int(struct seq_file *s, void *v);
+ 
+ static int sg_proc_single_open_adio(struct inode *inode, struct file *file);
+@@ -2306,37 +2300,11 @@ static const struct file_operations dressz_fops = {
+ };
+ 
+ static int sg_proc_seq_show_version(struct seq_file *s, void *v);
+-static int sg_proc_single_open_version(struct inode *inode, struct file *file);
+-static const struct file_operations version_fops = {
+-	.owner = THIS_MODULE,
+-	.open = sg_proc_single_open_version,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
+-
+ static int sg_proc_seq_show_devhdr(struct seq_file *s, void *v);
+-static int sg_proc_single_open_devhdr(struct inode *inode, struct file *file);
+-static const struct file_operations devhdr_fops = {
+-	.owner = THIS_MODULE,
+-	.open = sg_proc_single_open_devhdr,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
+-
+ static int sg_proc_seq_show_dev(struct seq_file *s, void *v);
+-static int sg_proc_open_dev(struct inode *inode, struct file *file);
+ static void * dev_seq_start(struct seq_file *s, loff_t *pos);
+ static void * dev_seq_next(struct seq_file *s, void *v, loff_t *pos);
+ static void dev_seq_stop(struct seq_file *s, void *v);
+-static const struct file_operations dev_fops = {
+-	.owner = THIS_MODULE,
+-	.open = sg_proc_open_dev,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = seq_release,
+-};
+ static const struct seq_operations dev_seq_ops = {
+ 	.start = dev_seq_start,
+ 	.next  = dev_seq_next,
+@@ -2345,14 +2313,6 @@ static const struct seq_operations dev_seq_ops = {
+ };
+ 
+ static int sg_proc_seq_show_devstrs(struct seq_file *s, void *v);
+-static int sg_proc_open_devstrs(struct inode *inode, struct file *file);
+-static const struct file_operations devstrs_fops = {
+-	.owner = THIS_MODULE,
+-	.open = sg_proc_open_devstrs,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = seq_release,
+-};
+ static const struct seq_operations devstrs_seq_ops = {
+ 	.start = dev_seq_start,
+ 	.next  = dev_seq_next,
+@@ -2361,14 +2321,6 @@ static const struct seq_operations devstrs_seq_ops = {
+ };
+ 
+ static int sg_proc_seq_show_debug(struct seq_file *s, void *v);
+-static int sg_proc_open_debug(struct inode *inode, struct file *file);
+-static const struct file_operations debug_fops = {
+-	.owner = THIS_MODULE,
+-	.open = sg_proc_open_debug,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = seq_release,
+-};
+ static const struct seq_operations debug_seq_ops = {
+ 	.start = dev_seq_start,
+ 	.next  = dev_seq_next,
+@@ -2376,50 +2328,23 @@ static const struct seq_operations debug_seq_ops = {
+ 	.show  = sg_proc_seq_show_debug,
+ };
+ 
+-
+-struct sg_proc_leaf {
+-	const char * name;
+-	const struct file_operations * fops;
+-};
+-
+-static const struct sg_proc_leaf sg_proc_leaf_arr[] = {
+-	{"allow_dio", &adio_fops},
+-	{"debug", &debug_fops},
+-	{"def_reserved_size", &dressz_fops},
+-	{"device_hdr", &devhdr_fops},
+-	{"devices", &dev_fops},
+-	{"device_strs", &devstrs_fops},
+-	{"version", &version_fops}
+-};
+-
+ static int
+ sg_proc_init(void)
+ {
+-	int num_leaves = ARRAY_SIZE(sg_proc_leaf_arr);
+-	int k;
++	struct proc_dir_entry *p;
+ 
+-	sg_proc_sgp = proc_mkdir(sg_proc_sg_dirname, NULL);
+-	if (!sg_proc_sgp)
++	p = proc_mkdir("scsi/sg", NULL);
++	if (!p)
+ 		return 1;
+-	for (k = 0; k < num_leaves; ++k) {
+-		const struct sg_proc_leaf *leaf = &sg_proc_leaf_arr[k];
+-		umode_t mask = leaf->fops->write ? S_IRUGO | S_IWUSR : S_IRUGO;
+-		proc_create(leaf->name, mask, sg_proc_sgp, leaf->fops);
+-	}
+-	return 0;
+-}
+ 
+-static void
+-sg_proc_cleanup(void)
+-{
+-	int k;
+-	int num_leaves = ARRAY_SIZE(sg_proc_leaf_arr);
+-
+-	if (!sg_proc_sgp)
+-		return;
+-	for (k = 0; k < num_leaves; ++k)
+-		remove_proc_entry(sg_proc_leaf_arr[k].name, sg_proc_sgp);
+-	remove_proc_entry(sg_proc_sg_dirname, NULL);
++	proc_create("allow_dio", S_IRUGO | S_IWUSR, p, &adio_fops);
++	proc_create_seq("debug", S_IRUGO, p, &debug_seq_ops);
++	proc_create("def_reserved_size", S_IRUGO | S_IWUSR, p, &dressz_fops);
++	proc_create_single("device_hdr", S_IRUGO, p, sg_proc_seq_show_devhdr);
++	proc_create_seq("devices", S_IRUGO, p, &dev_seq_ops);
++	proc_create_seq("device_strs", S_IRUGO, p, &devstrs_seq_ops);
++	proc_create_single("version", S_IRUGO, p, sg_proc_seq_show_version);
++	return 0;
+ }
+ 
+ 
+@@ -2482,22 +2407,12 @@ static int sg_proc_seq_show_version(struct seq_file *s, void *v)
+ 	return 0;
+ }
+ 
+-static int sg_proc_single_open_version(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, sg_proc_seq_show_version, NULL);
+-}
+-
+ static int sg_proc_seq_show_devhdr(struct seq_file *s, void *v)
+ {
+ 	seq_puts(s, "host\tchan\tid\tlun\ttype\topens\tqdepth\tbusy\tonline\n");
+ 	return 0;
+ }
+ 
+-static int sg_proc_single_open_devhdr(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, sg_proc_seq_show_devhdr, NULL);
+-}
+-
+ struct sg_proc_deviter {
+ 	loff_t	index;
+ 	size_t	max;
+@@ -2531,11 +2446,6 @@ static void dev_seq_stop(struct seq_file *s, void *v)
+ 	kfree(s->private);
+ }
+ 
+-static int sg_proc_open_dev(struct inode *inode, struct file *file)
+-{
+-        return seq_open(file, &dev_seq_ops);
+-}
+-
+ static int sg_proc_seq_show_dev(struct seq_file *s, void *v)
+ {
+ 	struct sg_proc_deviter * it = (struct sg_proc_deviter *) v;
+@@ -2562,11 +2472,6 @@ static int sg_proc_seq_show_dev(struct seq_file *s, void *v)
+ 	return 0;
+ }
+ 
+-static int sg_proc_open_devstrs(struct inode *inode, struct file *file)
+-{
+-        return seq_open(file, &devstrs_seq_ops);
+-}
+-
+ static int sg_proc_seq_show_devstrs(struct seq_file *s, void *v)
+ {
+ 	struct sg_proc_deviter * it = (struct sg_proc_deviter *) v;
+@@ -2650,11 +2555,6 @@ static void sg_proc_debug_helper(struct seq_file *s, Sg_device * sdp)
+ 	}
+ }
+ 
+-static int sg_proc_open_debug(struct inode *inode, struct file *file)
+-{
+-        return seq_open(file, &debug_seq_ops);
+-}
+-
+ static int sg_proc_seq_show_debug(struct seq_file *s, void *v)
+ {
+ 	struct sg_proc_deviter * it = (struct sg_proc_deviter *) v;
 -- 
 2.17.0
 
