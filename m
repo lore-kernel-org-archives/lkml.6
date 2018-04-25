@@ -1,81 +1,168 @@
-Return-Path: <tglx@linutronix.de>
-X-Google-Smtp-Source: AB8JxZrK92U/Od1ZwjluTuMZcZU6sUpTX3Gwc+i3/mUpWfKQp1534Hp5zl9G3TElQ7GNjuYvKvd2
-ARC-Seal: i=1; a=rsa-sha256; t=1524783303; cv=none;
+Return-Path: <kys@linuxonhyperv2.linuxonhyperv.com>
+X-Google-Smtp-Source: AB8JxZoTp3qaEqqYN89FpCu2iXROWI3QUy/Ogi4iOr2kIZjSinQeyOUXw3cF9+U5G9Utxc9YkxOU
+ARC-Seal: i=1; a=rsa-sha256; t=1524680034; cv=none;
         d=google.com; s=arc-20160816;
-        b=yJWuE9J2uzi+dz0xwRnBOEVpBOVZgsFFMEnB8CF4U60KRIMUnTK/jVgOX3bn3S0TEl
-         wVlq+QRMyiIocsjEv2trXlqeo+G2E0xY9iFoduCuivc0bE16eQXdH0ZIwcxzo3JjcDly
-         G/HLiUOu4as5cjNCTyAcdKPCtD6+/3RmAxC6PFfm6EYg/FnXP1by0IXXMC9JrPONaX3Z
-         rFauTEWqSiGA+Rqh/iehHOP0En0ItIXOBUTpbcO1M2TPwCzmcyHgI6S9ndkveBSqTVDx
-         t0uAqZ6xNr3Kv1jFFnMzzdsfajlK+UOB4ntwyK19jybGzxmMMSqHQpEwEj6q/z9hSihh
-         j+YA==
+        b=hXETQqipB1JOfDRbZ75iIWZnLsqgCqql5vCQsyAb+mM8rfZLeFDpvnbMw7vPlXQuWG
+         Sb1vKwYY38Sdxc/hKXlnU7o5VUr1jHcEC2clWXeV/bqBsmC4lrY6NDUwn8BNcE5HEwNg
+         tu4X2sMuUrc6kGrYBrAAyvIPh+nfYNYEmCcHfeyd9ZTRpZmiH97lSfcMhtO3tiYSD0n0
+         NO67eaQJftGuqexwxB0fJtN2R3koBQ59HMqOZgVntizCVpNUs92widzRC0sw/JaHynZJ
+         MRcJv3zOOek/5+CGDsR9H1NnjIq9WhudOU90J9ZxUUbSz3aOWjVzO5Mwm6HF1EZFJ0gK
+         6uVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=lzMN//5qwHk6lYt/LtBSJ4XYxaamE/CSSGDWhCgg6jw=;
-        b=jPddmUvErOojbWppgYrJ3E2X5l/Kxx4QnVeEZ93VEVt42IosL7u5/TGfDpvax5JJxt
-         jpHN8kE6en75u0GaNMt78KbFAmc9+cKfR+NWGc2wfcF0kRjQT4bwDp8Zafk0UND3nmM1
-         u/hv6cimgSBi8Pks21ZBCWuDF+T2MvFZhxoTZZbWHBBCFTHXu8ZRgQTm7Hjrn8MxbjZm
-         o7SeHjCg3epJ2hbLJ59vugcYXubkAH6B3rAg7s3KHAKMLTH1ddp+WDfs5Ml6GevI/6ZH
-         zZI8pzD8CJwlq12T+VZRzLN4w5plMvczYO6BjNKTdcT8d7DmtOU8VMAr5Z1/0Cq+U4yC
-         lpDQ==
+        h=reply-to:references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=GgsQYcGLYQvssyiFNNV2ixinoyvBCwcwIqtBZA6BFFA=;
+        b=tZ4A61I985BV8RXJVoGyZ+pbKYm5zk61iVX/YVlA2E7BoDRglCOzO3LRqLP1HV2le+
+         zDneMWXoaBXuF5+5gVZsb5M8xThPPVC7SW/CUvSu05vYR64ih74Q+AP3Shgkdh19OW+S
+         uEkycI/awoT4LBt36ZBGvw0+ZPfwOkL+g7f1DuJN1d0aTkrvHZx2HZ5nt+Enh6yWnxa/
+         pkER8EVlzkZn+OgUbJgJMu/3RHeLPip52NUXPOZCoXX2V0DBFxesgwumECnRhvXTF/TL
+         Vb6Zlg02aKTswDnyQqT2Xo34iPyns+S0R7BZu25jbnmJ3L04bnA1X+BO5Ih9JkzACxVA
+         9THw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+       spf=neutral (google.com: 198.71.225.49 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
-Date: Fri, 27 Apr 2018 00:55:00 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-cc: KY Srinivasan <kys@microsoft.com>, "x86@kernel.org" <x86@kernel.org>,
-    "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-    "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-    "olaf@aepfle.de" <olaf@aepfle.de>, "apw@canonical.com" <apw@canonical.com>,
-    "jasowang@redhat.com" <jasowang@redhat.com>,
-    "hpa@zytor.com" <hpa@zytor.com>,
-    Stephen Hemminger <sthemmin@microsoft.com>,
-    "vkuznets@redhat.com" <vkuznets@redhat.com>
-Subject: RE: [PATCH 1/5] X86: Hyper-V: Enlighten APIC access
-In-Reply-To: <DM5PR2101MB1030CCA0F5568CDED2695C58DC8E0@DM5PR2101MB1030.namprd21.prod.outlook.com>
-Message-ID: <alpine.DEB.2.21.1804270052400.1596@nanos.tec.linutronix.de>
-References: <20180425181110.8683-1-kys@linuxonhyperv.com> <20180425181250.8740-1-kys@linuxonhyperv.com> <DM5PR2101MB1030CCA0F5568CDED2695C58DC8E0@DM5PR2101MB1030.namprd21.prod.outlook.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+       spf=neutral (google.com: 198.71.225.49 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com
+x-originating-ip: 107.180.71.197
+From: kys@linuxonhyperv.com
+To: x86@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	devel@linuxdriverproject.org,
+	olaf@aepfle.de,
+	apw@canonical.com,
+	jasowang@redhat.com,
+	tglx@linutronix.de,
+	hpa@zytor.com,
+	sthemmin@microsoft.com,
+	Michael.H.Kelley@microsoft.com,
+	vkuznets@redhat.com
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 4/5] X86: Hyper-V: Consolidate code for converting cpumask to vpset
+Date: Wed, 25 Apr 2018 11:12:49 -0700
+Message-Id: <20180425181250.8740-4-kys@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180425181250.8740-1-kys@linuxonhyperv.com>
+References: <20180425181110.8683-1-kys@linuxonhyperv.com>
+ <20180425181250.8740-1-kys@linuxonhyperv.com>
+Reply-To: kys@microsoft.com
+X-CMAE-Envelope: MS4wfI1DU+7SxRvHjDdvlxPmKjsOKU26kPFEo2L9KMzpWv6MA9tS9nQqvEdyPiYaLduP0tWDIT2Oq8iy466kSRjOiBWec5LPVE/sD9Jz3Mhu8VT+cHweO2r1
+ NXMERw9Kf2qhqPyxhPFiSVGxtsLH3TgGBjSH7wwIqYFlLZfw0r5+akIWXKqPYF/V28iwbqpxWJ/bwVlfACdHrLcCmoKRGRTcLEI8Go4lynEyBQ1kaHfcIU2h
+ 3I2H2OELF3J9Qk6u0fwmi+5kot3gK79Dolk139I1H3MQpmCCXlW0ylaniz2Ye2PAtcuC/NjfrZvgYJkMBYyuiD4HNpePKrQ/ApDT6Vl+2EpuFBm8Imo5hVRp
+ 9ftH0aOkXo0eb4JrPsjQriC1OfoJ4fLinrYiuxVWULeRxYGzsDZN/TgpUOIMesyFPPfCb0s2VonhADssSS0hkwprjY2f0G82/7mERuIYl3G7Bpdjya8SvMw1
+ /R+qn4Wc1lSBXeRExUGCJ/3XB9VbbIevlun96k34xGcjog4aQCQB/gxNltsJjeYudDOHc6KwkS19SvyBcA9/NfoB6v07vjC5W1CB/FgUjATbF5TPpoqQHf7O
+ qvOw/Sdvh2gwpNPKUSSy26yx
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598742890625252345?=
-X-GMAIL-MSGID: =?utf-8?q?1598851176972709026?=
+X-GMAIL-THRID: =?utf-8?q?1598742891180804464?=
+X-GMAIL-MSGID: =?utf-8?q?1598742891180804464?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Michael,
+From: "K. Y. Srinivasan" <kys@microsoft.com>
 
-On Thu, 26 Apr 2018, Michael Kelley (EOSG) wrote:
+Consolidate code for converting cpumask to vpset.
 
-> > -----Original Message-----
-> > From: kys@linuxonhyperv.com <kys@linuxonhyperv.com>
-> > Sent: Wednesday, April 25, 2018 11:13 AM
-> > To: x86@kernel.org; gregkh@linuxfoundation.org; linux-kernel@vger.kernel.org;
-> > devel@linuxdriverproject.org; olaf@aepfle.de; apw@canonical.com; jasowang@redhat.com;
-> > tglx@linutronix.de; hpa@zytor.com; Stephen Hemminger <sthemmin@microsoft.com>;
-> > Michael Kelley (EOSG) <Michael.H.Kelley@microsoft.com>; vkuznets@redhat.com
-> > Cc: KY Srinivasan <kys@microsoft.com>
-> > Subject: [PATCH 1/5] X86: Hyper-V: Enlighten APIC access
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+---
+ arch/x86/hyperv/hv_apic.c          |  2 +-
+ arch/x86/hyperv/mmu.c              | 45 +++-----------------------------------
+ arch/x86/include/asm/hyperv-tlfs.h |  2 +-
+ 3 files changed, 5 insertions(+), 44 deletions(-)
 
-Please fix your MUA not to pointlessly copy the whole mail header.
-
-> > +void __init hv_apic_init(void)
-> > +{
-> > +	if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
-> > +		pr_info("Hyper-V: Using MSR ased APIC access\n");
-> 
-> Typo here.  "ased" should be "based".
-
-And please trim the reply to the relevant point. It's annoying to find that
-single line of review comment in the useless pile of quoted patch.
-
-Thanks,
-
-	tglx
+diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+index fbb408b91e25..508889c8499e 100644
+--- a/arch/x86/hyperv/hv_apic.c
++++ b/arch/x86/hyperv/hv_apic.c
+@@ -123,7 +123,7 @@ static int __send_ipi_mask_ex(const struct cpumask *mask, int vector)
+ 	ipi_arg->vp_set.valid_bank_mask = 0;
+ 
+ 	if (!cpumask_equal(mask, cpu_present_mask)) {
+-		ipi_arg->vp_set.format = HV_GENERIC_SET_SPARCE_4K;
++		ipi_arg->vp_set.format = HV_GENERIC_SET_SPARSE_4K;
+ 		nr_bank = cpumask_to_vpset(&(ipi_arg->vp_set), mask);
+ 	}
+ 	if (!nr_bank)
+diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
+index 56c9ebac946f..c9cd28f0bae4 100644
+--- a/arch/x86/hyperv/mmu.c
++++ b/arch/x86/hyperv/mmu.c
+@@ -25,11 +25,7 @@ struct hv_flush_pcpu {
+ struct hv_flush_pcpu_ex {
+ 	u64 address_space;
+ 	u64 flags;
+-	struct {
+-		u64 format;
+-		u64 valid_bank_mask;
+-		u64 bank_contents[];
+-	} hv_vp_set;
++	struct hv_vpset hv_vp_set;
+ 	u64 gva_list[];
+ };
+ 
+@@ -70,41 +66,6 @@ static inline int fill_gva_list(u64 gva_list[], int offset,
+ 	return gva_n - offset;
+ }
+ 
+-/* Return the number of banks in the resulting vp_set */
+-static inline int cpumask_to_vp_set(struct hv_flush_pcpu_ex *flush,
+-				    const struct cpumask *cpus)
+-{
+-	int cpu, vcpu, vcpu_bank, vcpu_offset, nr_bank = 1;
+-
+-	/* valid_bank_mask can represent up to 64 banks */
+-	if (hv_max_vp_index / 64 >= 64)
+-		return 0;
+-
+-	/*
+-	 * Clear all banks up to the maximum possible bank as hv_flush_pcpu_ex
+-	 * structs are not cleared between calls, we risk flushing unneeded
+-	 * vCPUs otherwise.
+-	 */
+-	for (vcpu_bank = 0; vcpu_bank <= hv_max_vp_index / 64; vcpu_bank++)
+-		flush->hv_vp_set.bank_contents[vcpu_bank] = 0;
+-
+-	/*
+-	 * Some banks may end up being empty but this is acceptable.
+-	 */
+-	for_each_cpu(cpu, cpus) {
+-		vcpu = hv_cpu_number_to_vp_number(cpu);
+-		vcpu_bank = vcpu / 64;
+-		vcpu_offset = vcpu % 64;
+-		__set_bit(vcpu_offset, (unsigned long *)
+-			  &flush->hv_vp_set.bank_contents[vcpu_bank]);
+-		if (vcpu_bank >= nr_bank)
+-			nr_bank = vcpu_bank + 1;
+-	}
+-	flush->hv_vp_set.valid_bank_mask = GENMASK_ULL(nr_bank - 1, 0);
+-
+-	return nr_bank;
+-}
+-
+ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
+ 				    const struct flush_tlb_info *info)
+ {
+@@ -239,8 +200,8 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
+ 	flush->hv_vp_set.valid_bank_mask = 0;
+ 
+ 	if (!cpumask_equal(cpus, cpu_present_mask)) {
+-		flush->hv_vp_set.format = HV_GENERIC_SET_SPARCE_4K;
+-		nr_bank = cpumask_to_vp_set(flush, cpus);
++		flush->hv_vp_set.format = HV_GENERIC_SET_SPARSE_4K;
++		nr_bank = cpumask_to_vpset(&(flush->hv_vp_set), cpus);
+ 	}
+ 
+ 	if (!nr_bank) {
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 53ea30d768d9..b32b87945538 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -370,7 +370,7 @@ struct hv_tsc_emulation_status {
+ #define HV_FLUSH_USE_EXTENDED_RANGE_FORMAT	BIT(3)
+ 
+ enum HV_GENERIC_SET_FORMAT {
+-	HV_GENERIC_SET_SPARCE_4K,
++	HV_GENERIC_SET_SPARSE_4K,
+ 	HV_GENERIC_SET_ALL,
+ };
+ 
+-- 
+2.15.1
