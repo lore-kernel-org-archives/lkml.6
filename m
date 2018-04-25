@@ -1,119 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756356AbeDYSaW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:30:22 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41709 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755794AbeDYSMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:12:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,327,1520924400";
-   d="scan'208";a="35243614"
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V3 03/39] x86/intel_rdt: Associate mode with each RDT resource group
-Date: Wed, 25 Apr 2018 03:09:39 -0700
-Message-Id: <84237a413da43a601da0dfab061bcf11fb62d0b3.1524649902.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1524649902.git.reinette.chatre@intel.com>
-References: <cover.1524649902.git.reinette.chatre@intel.com>
-In-Reply-To: <cover.1524649902.git.reinette.chatre@intel.com>
-References: <cover.1524649902.git.reinette.chatre@intel.com>
+        id S1756085AbeDYSba (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:31:30 -0400
+Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:46822
+        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752902AbeDYSb1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:31:27 -0400
+x-originating-ip: 107.180.71.197
+From: Long Li <longli@linuxonhyperv.com>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH rebased] cifs: smbd: Enable signing with smbdirect
+Date: Wed, 25 Apr 2018 11:30:05 -0700
+Message-Id: <20180425183005.9347-2-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180425183005.9347-1-longli@linuxonhyperv.com>
+References: <20180425183005.9347-1-longli@linuxonhyperv.com>
+Reply-To: longli@microsoft.com
+X-CMAE-Envelope: MS4wfNg/tOEB4jYckg5T6oRTexEvnwYHZJlFHXSnUVgYWUNhtpiJYrmG8N0YWmwTYm1HGPrBvdOly3N1GAg/qX/q383RlgdCCXbIsa4t9WNOUCtMWAM+cTVX
+ 5o6BJ9MmFGq/C3d0OxHtUy8NqHjm8XZziQAOilSZOpDhV1ZdZCcqDGb2+K8XgGjdVF2CFDEYmiJtvUs72M9L65DRC49PUxBIhJavwKq5j2LakQfa/NLLz+VM
+ 65pC8JsGwTOCNOp3Vi7nd3jowclr0HEMeLKmMZXHpKVI263+mx1df7whltiaF4YeHCHTvOs+3FLrJiTj7XrHBEJ01aEdG4TeKlOMSi1QEZtGAQcnyMSOZgO3
+ sTTaRqyb8YA9hweC2Y9vhlCAbF12/ohZuqKCiPH7eioCPI8zdfe8oy+zlUrqDJqWSaaQz3s3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each RDT resource group is associated with a mode that will reflect
-the level of sharing of its allocations. The default, shareable, will be
-associated with each resource group on creation since it is zero and
-resource groups are created with kzalloc. The managing of the mode of a
-resource group will follow. The default resource group always remain
-though so ensure that it is reset to the default mode when the resctrl
-filesystem is unmounted.
+From: Long Li <longli@microsoft.com>
 
-Also introduce a utility that can be used to determine the mode of a
-resource group when it is searched for based on its class of service.
+Now signing is supported with RDMA transport.
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Remove the code that disabled it.
+
+Signed-off-by: Long Li <longli@microsoft.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.h          |  3 +++
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 22 ++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ fs/cifs/connect.c | 8 --------
+ fs/cifs/smb2pdu.c | 5 -----
+ 2 files changed, 13 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index ecc32eb6a91e..e7f8561479d2 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -121,6 +121,7 @@ struct mongroup {
-  * @type:			indicates type of this rdtgroup - either
-  *				monitor only or ctrl_mon group
-  * @mon:			mongroup related data
-+ * @mode:			mode of resource group
-  */
- struct rdtgroup {
- 	struct kernfs_node	*kn;
-@@ -131,6 +132,7 @@ struct rdtgroup {
- 	atomic_t		waitcount;
- 	enum rdt_group_type	type;
- 	struct mongroup		mon;
-+	enum rdtgrp_mode	mode;
- };
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index e8830f0..deef270 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -1977,14 +1977,6 @@ cifs_parse_mount_options(const char *mountdata, const char *devname,
+ 		goto cifs_parse_mount_err;
+ 	}
  
- /* rdtgroup.flags */
-@@ -446,6 +448,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 				char *buf, size_t nbytes, loff_t off);
- int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 			   struct seq_file *s, void *v);
-+enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
- struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
- int alloc_rmid(void);
- void free_rmid(u32 rmid);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index bdab7d2f51af..4683fe2b2118 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -126,6 +126,27 @@ static void closid_free(int closid)
- 	closid_free_map |= 1 << closid;
- }
+-#ifdef CONFIG_CIFS_SMB_DIRECT
+-	if (vol->rdma && vol->sign) {
+-		cifs_dbg(VFS, "Currently SMB direct doesn't support signing."
+-			" This is being fixed\n");
+-		goto cifs_parse_mount_err;
+-	}
+-#endif
+-
+ #ifndef CONFIG_KEYS
+ 	/* Muliuser mounts require CONFIG_KEYS support */
+ 	if (vol->multiuser) {
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 8472f32..b16f953 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -737,11 +737,6 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
  
-+/**
-+ * rdtgroup_mode_by_closid - Return mode of resource group with closid
-+ * @closid: closid if the resource group
-+ *
-+ * Each resource group is associated with a @closid. Here the mode
-+ * of a resource group can be queried by searching for it using its closid.
-+ *
-+ * Return: mode as &enum rdtgrp_mode of resource group with closid @closid
-+ */
-+enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
-+{
-+	struct rdtgroup *rdtgrp;
-+
-+	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
-+		if (rdtgrp->closid == closid)
-+			return rdtgrp->mode;
-+	}
-+
-+	return RDT_NUM_MODES;
-+}
-+
- /* set uid and gid of rdtgroup dirs and files to that of the creator */
- static int rdtgroup_kn_set_ugid(struct kernfs_node *kn)
- {
-@@ -1450,6 +1471,7 @@ static void rdt_kill_sb(struct super_block *sb)
- 		reset_all_ctrls(r);
- 	cdp_disable_all();
- 	rmdir_all_sub();
-+	rdtgroup_default.mode = RDT_MODE_SHAREABLE;
- 	static_branch_disable_cpuslocked(&rdt_alloc_enable_key);
- 	static_branch_disable_cpuslocked(&rdt_mon_enable_key);
- 	static_branch_disable_cpuslocked(&rdt_enable_key);
+ 	cifs_dbg(FYI, "validate negotiate\n");
+ 
+-#ifdef CONFIG_CIFS_SMB_DIRECT
+-	if (tcon->ses->server->rdma)
+-		return 0;
+-#endif
+-
+ 	/* In SMB3.11 preauth integrity supersedes validate negotiate */
+ 	if (tcon->ses->server->dialect == SMB311_PROT_ID)
+ 		return 0;
 -- 
-2.13.6
+2.7.4
