@@ -1,116 +1,255 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751426AbeDYDfm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 23:35:42 -0400
-Received: from mail-eopbgr20083.outbound.protection.outlook.com ([40.107.2.83]:8368
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        id S1751259AbeDYDhR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 23:37:17 -0400
+Received: from mail-co1nam03on0088.outbound.protection.outlook.com ([104.47.40.88]:33248
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751336AbeDYDfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 23:35:21 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com;
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3 4/4] ARM: dts: imx6sx-sabreauto: add wdog external reset support
-Date: Wed, 25 Apr 2018 11:30:33 +0800
-Message-Id: <1524627033-535-4-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524627033-535-1-git-send-email-Anson.Huang@nxp.com>
-References: <1524627033-535-1-git-send-email-Anson.Huang@nxp.com>
+        id S1750882AbeDYDhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Apr 2018 23:37:15 -0400
+Subject: Re: [PATCH 2/3] ASoC: AMD: Move clk enable from hw_params/free to
+ startup/shutdown
+To: Daniel Kurtz <djkurtz@chromium.org>, Vijendar.Mukunda@amd.com
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        perex@perex.cz, tiwai@suse.com, alexander.deucher@amd.com,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <1524539088-9043-1-git-send-email-Vijendar.Mukunda@amd.com>
+ <1524539088-9043-2-git-send-email-Vijendar.Mukunda@amd.com>
+ <CAGS+omDr8Jiwx0faMWZpASPrTUCcj97xSvG01JQX5Cj16vEeQw@mail.gmail.com>
+From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
+Message-ID: <4c8cfac4-e67a-4457-0e27-2beb34b3d0cc@amd.com>
+Date: Wed, 25 Apr 2018 09:06:46 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.66]
-X-ClientProxiedBy: TYAPR01CA0073.jpnprd01.prod.outlook.com
- (2603:1096:404:2c::13) To DB5PR04MB1317.eurprd04.prod.outlook.com
- (2a01:111:e400:51cb::11)
+In-Reply-To: <CAGS+omDr8Jiwx0faMWZpASPrTUCcj97xSvG01JQX5Cj16vEeQw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [202.56.249.162]
+X-ClientProxiedBy: BM1PR0101CA0038.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:1a::24) To MW2PR12MB2362.namprd12.prod.outlook.com
+ (2603:10b6:907:7::33)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB1317;
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1317;3:seSW9Zz4yHGVLhl48t7ctSlnJ7OFt568xof4Dp20ejX082KaBvHvTg/gasUtdscm5psBDqeQ95xENd9rE4bY/+w7Cx04p8an0q6SGctht8JImLHfgSGf7SGeGB+00alnhYJZLv9ZuxemhwWJ7ySMW00osCv8dbCsoQ0ImJN38zaGIhLOzos31cruQpVF0aOQ6WE/C5kxfn2nznPo+zUYK4h+pwjRinpBVeShDxQaeTZ/szaTe6Brb99Kp129OTMW;25:GhxZ+6xaDF0op3Se5F1pWu2+iyKfD4NsmhuQ3jXgwnWTlO3YupnR7TD5GakT9n9VpjnZRGeCCAVcQuWP0eTYGBOsBKYoxsAaVUHo6fPzZeJ+orByO6Bi1W4Ha7OrSZaxnIFK7uKzK+xmmLq6AlLKhuSmUJVcbnfd8/ZJJtG4ePg9Q59JgQJz9P/8p8d8n4pSaApWzQMgNvGjhECObNQsOVL7yN9v121UshMmoZqH376EUvQNS6YwgO56VVY9gCIg/WkKnNytUzQJHpDq6Yerr/jY9wQOELHNO+vBfChqSwRY4kep+WZao8RokOshEFpHoc4ObTvr/YuwMZ0obW0xxA==;31:XEZG3ySc6vP7gft+3qEV7KsJZF6PJCXvlvB+nIAZo7UENRA4eHexFFSkTwUFOANJ96TSHQRIpN0fivnMjMUHwj8SrRQL4M3+z6Sqt0JIDgBbZY7ZTaHEqSVhJkd2KttEIMJfoBqjl36SfN5wNqwe9p672K69zZ1DM67oW7Kd4iIbqdwyr8heMOkjIJd1jIIaB91//6ZNMDV1AdmTFBAFNmTX+yJ1eh235ZpxyQjHcEU=
-X-MS-TrafficTypeDiagnostic: DB5PR04MB1317:
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1317;20:4xcgtEDr3UIzdpKlcf3SaFQ3ErTTYw3Bt1abvZjcVF/6Z/NXY/co+EVfrrCENsI5uroAJ+4scmRxR2j5aiT7KcYKMvK6NpfzJZ6KQLrRLnGb7Q4xL35q2qK4AwGMD3G5qyrw7C8hW28JSnk2pG0H14LVvcf6aUOj4VY8yLA/11v6aYbtlyGPhX32XJEL34Y04oaFapTD+Pmf4WB6LPTbxtKrGokkyKRpl0BRhwQ3jOW4vF0AB8FhobTwHpqCVmy1FhfaVw1ikEjgRisghYczdWf6tZt1YREiMxmz+pZyOvl6BgtV85/WBbSXjb/Y0HSdX3G3xqqZmw7hE3hVJg8LeXmvKrbbyH6j4DDk8OiBK1K1Eulur9iP2kt4v0GivwEhzq61lm7B7hdPvb6eFQyapN5i63pGO4+5MNRliJJmTJTVSBR3Ez+WMCE0u0KpGhMrXz14tjxZgSLRZQH5WfnDdBNDXoSm81vZhPzstqIT/zY4+s09k4LMq6XUOrrI/3Wd;4:U1zbtHZYhKmZ+sGZZ6t9OaP35JYHx+HIdAwxoVIYjAOzKxqtgLU497Tr59CHCMDC1Zru3mgJpWhiBTeEspSD8+pfcoC8rTeBg+H2MF8RVluv7eBpJam9jBoz2CAWN+NHKzxIagNBoSbJwM5IjiUD1Gc3cRItEke5BS94xAZvatYMoe044eln/v2Hy7/voWUQw+3tCQNE8PfTdwODfhFeZs8rlXfaJLNYG/NiC1dGKglR8o+brFHS/jQjSou1WCm1EGrM3rxw7CfCdj/ZngTYZz8AasjeO54jRPovvpd2IBkvk6lZZFFK/BRNFh6GFJPy
-X-Microsoft-Antispam-PRVS: <DB5PR04MB1317C55AF35E4E35608E0E81F58F0@DB5PR04MB1317.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231232)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DB5PR04MB1317;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB1317;
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MW2PR12MB2362;
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2362;3:1rb7uCDOyKRX3ikcUyA9zIMZkKQnM07uov/nhzS2WzRNYdeL+ha3y/w4ZOl5RrhAS/nTJWqLDomvMpEuTErhVKJn2ePVdqxHMSCloH8gHuwnXbouZ2DsH5Y8izHwDE0ZH3T9qTkvmsnOVtN9QTM9LZ9YHlJiPqDM7sL7wEa4/wRZhEQEsc2PRGSMVpERqnJs1XFtwOkcaz0oz/w0NwzrD4Xv1VcSbiNAqHYCwvV0NAzrW7ozZdeZAVhzrnb4olp1;25:SRLRY7oIXroR47nIMKfhbcCGSPoVhaP8sJiqSda+Je0OjpCSpwxmcQdfvLaExJyYbZY4B2HMeGcXO2LfwoucUKVsKWPMXITEEk9b18Q5YlrqUdGC+fRnFOaa6dZ5UGh22U+Ll+H7SR9WwN7cN+wcxqvKX42b8k4n0w7UlkE8Fl4l55UxqpTQmTv8jYR4VzdnNKlpiUNp8CFP0ecnEJYDuNlV6QBugyIJCmwrY1OBgRWSlz4OmCzFwHBvkV6im+/nk7HmKMm5yVMJYXMTOgLp7Cgl6ukM+fQZ5H7jyUahTT/kDUjPJOMdU+uFCfvb/7NVbTM9B3b79f3giA5ryxCfAA==;31:8qCYEQS3BOgTKiaW1AkQRayK21u+PVKbRSk2gh1p4TU8yRpDetvZTXkTmLkGMvwIzEwh/tCotBiGt9zj9f3mU4aMG2ZHSJpbTMXeL06lPkR4IUpWMClKovOz4lHQfZYj3VxIpGaCm0YaozougXkVibKXIoLsRp/W7hoMvNX3ubAzaICx6JqbPigvm1XO/BVKgRb35vydnUD0Kx71+unS1kwpjC3/IZ2GXVWOYthmPN4=
+X-MS-TrafficTypeDiagnostic: MW2PR12MB2362:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Akshu.Agrawal@amd.com;
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2362;20:QeRM5/7/+3fkBxCgYewXwSBi9+LFd6WGPNPWs6zbRXBlnfD9/xZILP+JVTY+lviVdQqXorq16ksXwZn31N2zP82gZZJ6sCNXVh85Pj4gMt2nq5jyB59fXeKALrJzHTDk0pCwfytN3rwIavTJDAkugUIIuICNzEsdHF3bTWqvh+rgasaK9CjwQtclpLQZ6Hgq4Q4A13ZRtvcK+6Si3wb7hXzTRGoIaXeusbL87Q9UROecLDtBjtJ/6GNvjRIz5eZX/5giQEfL5IwxcUJbky2Id2Y3g2uQhT0C6T0sDQCHWVx+PvbQOMRfNq5SwuDtCC24sTQsvdoQcsypoZD8weCrO27tdoVKYG2784EGGl+osac0JIzoI5xbssND4ygGaWmXadyWN4950qtIsznDpZQVkAISUOriXQoQAH4mY/bCzLEK35viSsmlfYW5VG8hKnFnJ5T6cVCXtUecSiTDPZelH1bYtPmTznNkgII2JKgObwEMsDUOB1wLtJih0wMNpWNW;4:SDM3bQlUg9vl+PQHXt55YJJZT4gEcCbubQhQ7c/Lk01tJHJG/qEbqCXgMWxRxXaW/oAgu7ywzm87zcZ269F8wqoai66PJljHXojv20gPnJG4cd0y9ZTyxBO8BBrM2vJ6Ael6QTh/LEs9dLYyuTa3wIYcePaHWTuK6C7y2uyMiNWY2wHRMY1/kIl3fdE9fFGehnhGHSFwqeYVW1RnJpBGcWMHU6QgKKbNuguBZk+w9gQh3/OWrHT4grq5gmmlv4sU1fhxEs89QVOa4PUXc4+JEatd1BZbSx1oFIUme9R6ej6RxGlv8o51yXEcWX9pnVaa
+X-Microsoft-Antispam-PRVS: <MW2PR12MB2362DE8EB5B2AB64599F688CF88F0@MW2PR12MB2362.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231232)(944501410)(52105095)(6055026)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR12MB2362;BCL:0;PCL:0;RULEID:;SRVR:MW2PR12MB2362;
 X-Forefront-PRVS: 06530126A4
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39860400002)(346002)(39380400002)(396003)(199004)(189003)(36756003)(478600001)(97736004)(6506007)(386003)(4326008)(25786009)(6666003)(53936002)(6486002)(6512007)(86362001)(8936002)(105586002)(66066001)(106356001)(47776003)(68736007)(48376002)(81156014)(81166006)(6116002)(50466002)(5660300001)(2906002)(8676002)(11346002)(2616005)(446003)(50226002)(3846002)(305945005)(7736002)(476003)(956004)(16526019)(51416003)(76176011)(52116002)(316002)(486006)(16586007)(26005)(186003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1317;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB1317;23:6y560mkhw+QaWWT9Khq+KFbjTsIf4mNsIEesFE33h?=
- =?us-ascii?Q?FNigbKPVqL4YAfRvksDZdR+c9A8X1d9v6AfmREDZ+SQlsAOUBL+/ZCfGiOoM?=
- =?us-ascii?Q?fmooOeKyMrRK0VW70wiC6wtcJJNKmEzPoIvhElLAro819cG7uatcpybr9dhc?=
- =?us-ascii?Q?OoVp7wkF+ggeeAHqSh0FWAVfwH+CC8ZfIcFcJb3+hH1eU6XrHoXc3SBWqzqH?=
- =?us-ascii?Q?qeXgoM1Tp9w6OjwSaEw1l1tnu42IDOXnVOtat2DoybMD6nPEPc8ver5V+TX2?=
- =?us-ascii?Q?2EPxS5F1YlruZBaNtc4IqVhLFXIzjPF8totkSom0Tr/leQiVGBZn5FYXgAbf?=
- =?us-ascii?Q?mZ9OEvS1599tBrM2oP8N7ZLNXRFTp66FeTw36COvIjeNVJ8Z41QsuCiZgJLy?=
- =?us-ascii?Q?Ax/nL2SSvLqSERyNLAL4FXxAtcnJDDM+CPJDuj0MWTi/MPtl9RmJS6CKC8kN?=
- =?us-ascii?Q?r9rk7y1LdZtGp1myP/hthMhiKq2GZhMK1Wcn+QoGJewMRuALu/RglYFhH4Z7?=
- =?us-ascii?Q?7+k3nJRGyg/Jz52n4CUtoIL/6wCyaPZtPk+PgXTUB4mbTh/dvnmTJ1dCj1po?=
- =?us-ascii?Q?P7mWkcV7sETLn40kDj5R3L9eSB/XIp/7FVAggN1uZvyJKrEy5rJ+lFAbo6df?=
- =?us-ascii?Q?bxNj4KYrsn4H1H9addxuJMnuVuGuD0+JdhaspjurxgSer6O4wFGvI3ZTdzDI?=
- =?us-ascii?Q?r138GtjNo4UBK80pf7t3KmiKfIwauy5mrCVAWUvWGH0KOLWdZqKClbF52/Pm?=
- =?us-ascii?Q?sOgszMzN3m8PML2r8+C4pgNGJnXciEYhaMNgcgV/SuGEsBuAOuXhIfNmhqyN?=
- =?us-ascii?Q?iG5SMtuhdx6FJqx7pfBnfggXTqq/R+anFF14xzOuPUEH77VPn7EahrJ0R5Wv?=
- =?us-ascii?Q?Si+mj3vl6XEgGPfWnAxuKepepvJCIYsWgxul0gwKnLKc4Ot80BZa8cXHzMGa?=
- =?us-ascii?Q?u2OaDn+QOp1R6TBhqokOnXMsw+sFffCqSHRIuxyCwrG6yVWQwSMb0egrGK+k?=
- =?us-ascii?Q?B3NQy8g15wgYH3LRhkHMZEuIJIhX8vWZUQ/hvrDg0/IgjG5y7yR+0MuhVGaI?=
- =?us-ascii?Q?k1LK2wI6FfMZMzn5V5RsPFAdAHGZHmKeEyZ96lNDNJ0bXww+h3khnJuu1d3Z?=
- =?us-ascii?Q?whRMvu23drOOPNZQ0+9gagmyVMBRmlpZMVFQVPx8zlXicVt51wtsveLYMI4g?=
- =?us-ascii?Q?8+cxCqj/lt4UT8=3D?=
-X-Microsoft-Antispam-Message-Info: zmYQ0NXiUhFoAVSLJ8ryOZ2GHhYthGq9fkAiEjnrQvX04FcIcaXQHb4qNZLFTMEklSVdh62Zv+DC2I5oXnVxexobm6hhGz+C24zcfllXACy67VyFdmwm2PLZuI3c47W3JOakUpCIYk/iYVXV+nIIP0dHfM3+Fts39y7nzO6zKwUi45cnMVCB152Omg02G76S
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1317;6:7I1ia1WhVKwsBJdIJ3yivl5LWWASuXJvM5b7BKgZeeZQLWb7G1wp/8HieXCH4g96i7mKYergYuP83zxKrEV2NMRsEQpdG84PCGxFdLMzlM7xfFCR8Fm/4cJW/ZMz2D7jNVJbRjKCrXECyV+er/W1cqjqooGCnpy0esKqZq54IqeLdg6o6+slEug3xIc70O8uepkXMEphrnrhkh4Ui0qJd6AGyAKFppoMPYBTIi7TQKEXeWSPhx+/G/AfmkW3i04rqbT8LmTGo6h8gunJ5hZDU9OYLPQ0fYKYfHN9fXfQE3XzKWV2E6TVIWqBKAFwxdeq7Mq1O04E5cK9c0dJ3FU+masY1qxwCT5a2HqkVA+O0Ci429R04uu4/F69vU8xQH5j2nl/BBFhAixMaBVBx5ZM5Rn86Uk8PSKt2tJq7hgyqGxnAhe6nInPtxKX0FpKbkzD5SrqV1Co8uO01JBPIF6MVA==;5:/mHh85gsyWa750ehy25jjwrW+VPnHl/E+XDBBQApDQAgrok02xi+e69oyjydtkK8h/uHOp3675LPVFdj/00c7R/MioT4O3zLinU7q7cJDUab0WQ8P0zIQ2/2i537NHPPb3u0KQDhxQiZEBu+iPHlo81EewZbexPD69B25hPZ+Z4=;24:GR5ELtQ+nJLThhBga3pGnHW1gj5PMJ9R5CgxhXMv+T4OGXqx/i6YwvGceH1gfOC5eox4FOQNO/Q4tGY5xXMsE8IOytnIEjIFzGFWzQiev6o=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39380400002)(396003)(39860400002)(366004)(346002)(376002)(189003)(199004)(39060400002)(956004)(6246003)(67846002)(65806001)(47776003)(68736007)(16576012)(316002)(36756003)(66066001)(386003)(58126008)(72206003)(65956001)(52116002)(478600001)(64126003)(76176011)(2906002)(53936002)(4326008)(97736004)(25786009)(3260700006)(31686004)(53546011)(8936002)(8676002)(54906003)(6486002)(5660300001)(16526019)(305945005)(6116002)(7736002)(81166006)(105586002)(106356001)(3846002)(86362001)(81156014)(446003)(26005)(486006)(11346002)(2486003)(6666003)(2616005)(476003)(230700001)(186003)(31696002)(229853002)(6636002)(50466002)(23676004)(77096007)(52146003)(65826007);DIR:OUT;SFP:1101;SCL:1;SRVR:MW2PR12MB2362;H:[10.136.128.133];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtNVzJQUjEyTUIyMzYyOzIzOmIwNXduNjU5ekJvUnJoM3VLZkhwc0ZnWWo5?=
+ =?utf-8?B?MklJU1h6L0dnWEFHem4rRG4xdzR1U2ovUFhHRHdLcmY3ZjlWdFdPTHhXaDRZ?=
+ =?utf-8?B?ZjMzendoRElnYXNCb3FIM2Z3VEVWN2ZCZktITXoxeXJHVnpqWWdrcVdLZnU1?=
+ =?utf-8?B?Z1Z4QzI4NDhEOGEyM3UyNllseG1PMlpzcDRxNGxLcExERStWVjM0Z2tHV2RK?=
+ =?utf-8?B?MkpQR05hWXA4anVMVDUwWDVMYWhGOUo2M0NvcUo5M0RmUFBMd0xiVDgyb1Bx?=
+ =?utf-8?B?WWdwVGNvdmJ3NWJvUityOU11NFcyN0dQczE4M3ZUK2t2ZlpvZWNvRlpDNXpD?=
+ =?utf-8?B?RmFPZnc4SE1OTkNsTTExdDZMblBhYjE4OTd6VHAvQlI5NzhFZHRPQ2Y4RGhR?=
+ =?utf-8?B?MWhxd1QyeTNyUjIwQnAzdy8yWDI3bUEreUdDbzZNZ0xsb0hRak5FbG0wRktD?=
+ =?utf-8?B?eDAzOXNjS1pQUEFoL1VlWnU1RDdYbzU3dDdWdVNUODhtekhkbUVvVGE5NUI0?=
+ =?utf-8?B?OEcvREdtcUU0WEJtZEN0NlYxQ1VCQW5FS200Y09zVS9BNUVpbmc3NXZqamxy?=
+ =?utf-8?B?Q3hmeEs4VkF4TnAzTmhoNGxsTnhTZEp3R0xPQnFCQTFGeit4Wk13UFNJbUpy?=
+ =?utf-8?B?Wk9DRlk0NERPVDB3d25Za3Q3cjRCWDN2TjdCYUdZMzlVbmFxRjhGd0ZGSVhN?=
+ =?utf-8?B?K0hoRmRaVVI2STFNL1pINEk5WE0vN29aN3NDcTRKOHlLRFR0TDhOYjRhNzFR?=
+ =?utf-8?B?V3kxTmw5WGZvMUdPOUVWTnUrYlMvU1JtUVZ4RDk5Q2d5S1UzbldCUzRnSG5v?=
+ =?utf-8?B?cnZsNHFGN0c3YkZKMUptVWVXckY1S3JTeFlQQ3hkT0wxL2k5Tkxla05MSVFr?=
+ =?utf-8?B?Rm5JM0xwN1BVcnBzY0NCc3ZFZCttcit6cTJTY1c5RlU2Mk1jTjZqVWlNV3ZX?=
+ =?utf-8?B?bWsxTDVFbm1qZjZjU2Q0Mk9Od08wVGorNmNldVZzUE41aGoxTGpQY0xMWFVZ?=
+ =?utf-8?B?TnVwMFRueWZmeEF4M2hURHh1aTZLbzlFT0tTRkpQTURCK3o2S0dlL25wOEhO?=
+ =?utf-8?B?U1hjdmswZW94c1dNUGR0cmxSWlgzelZ6TmVSN245c0lSZjZtNEhLc3g5UU5Q?=
+ =?utf-8?B?NnNrOThJK2F3VVp4NzZSR2JOMlB2emt4YXVQRWNkYS9RWTFGK211OFZVa3dC?=
+ =?utf-8?B?TFhId2dyb3I4bCtCZ1dWM0ZXU3J0aEoyY0F4azNjYlBSYlQ2Wm9zaHN3N0wz?=
+ =?utf-8?B?M0VwUWNnRUlDbWkxYzVNaWxBWXdWMzVBOVVtYkcvUFhUeHYzWWFWQUx0dG1D?=
+ =?utf-8?B?NjdJZDlUT3N0MTJPK0JwNG44QWJsVUpxeU5uUDJKT3dvSCs2UVZnelBxVkNa?=
+ =?utf-8?B?bFFtVW1KbnhzMU1vVyt3azhvMUtBR0x2MnRHZmlYYjNJbkR2eWc1U0NKOTdJ?=
+ =?utf-8?B?elBvWmVudjJsamhDa1FLQThEcnMyUU1OOHpOYXpaY1BMWVdsMDFENHBGU09r?=
+ =?utf-8?B?czBQdmIvQTZoREpqd0hoSW9VS2NqMmxNa3EwYWt0VVZxZTVQTm1xYzJnbXhN?=
+ =?utf-8?B?dEJzNEtCbWxsQ0xKbUE0ajJYSm1Kak44aVJDdlQ2WG1lU2hGcTk4T0RHRkk2?=
+ =?utf-8?B?bjF3MUd2ZnhncGQvMnFuT2I5QXFMRjVaOTBJWFhyM3UvQkQ1QlMzZStPTXNW?=
+ =?utf-8?B?b3Vzd2grcm5oaVdiSXRxLzVMRFlaSjg4ZFpOQUZWc2VqQm0wYnNpZ25DaU9s?=
+ =?utf-8?B?bXdiMTQwVjdFOTRpamRuUVZQZE5TdGhzNjdtMDZIK2RmQlY2VlJRWHQrcmx5?=
+ =?utf-8?B?aVYyb3NPSk9LT1BqanlqUFJsYlJyc0V4VW9OeGRoK3dsSk1wQTd2RlNtSWxv?=
+ =?utf-8?B?OUJYYWhhK2Q3OXhBSW0vbXBDdmdReTdEMTgzWWpnV3Z5eW1rb3lyeThYcVpq?=
+ =?utf-8?B?Y0drN0gyaEVZMUNHM3ZmQTJvbEdSNGxsOTJIOHlEa2lqQzlieDBMM1AzT1Yr?=
+ =?utf-8?B?T0pWOERzWW53bDVYRzNOcGFueGJaYVU4cEpBM2NjMWZzYWx5eFY1MThTbVd6?=
+ =?utf-8?Q?IGLOaIrIYJkgNciqhXzO1zdUS?=
+X-Microsoft-Antispam-Message-Info: ++Aw37HD81yCFGMXl8cQhSptlOc90bYiKLpGcQi4I6vt05bgOTsznxHuxvLNjwqd7HuUlF3X1DfobzUye48pK1QcSTWgiy+enD8z6Cy3Ufm3v2b2oYNplT9bt6QTOr91+kOMsJ6FIXb3vNJW45tzu2Yt4mcz1lJm3igbEbbCFoeBHaLELN+guSvPESI8BP51
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2362;6:2oTMMjRHrnex5k9wReJjdvQVnAqwy1vb3QwJ2o2lFYbAiPnAxd1xtg/XNTxkLVtXHUQo3+t1NhdwDQO0eR3o90RyDoIc8x90ynzGDr4Jv8zuMHZj5VTIkPRsYzCaNZcGuIlqgig/Dc5t9fC03I4QSha+qdT+yR/HLBNAjZksbe+7Q18XTzEEnWBdd3I1ka3SF6KMKtbz2Qt3bZxLk7J/kkLhV2+dtDuLPoGLSb//IyL3/aggxr9NeplnIavKQS/1AJv43W6yPlylo9u0aPzyPFMftY0H9kn8sGrXpAIdJ6K7XN5+xkRdirMRiHDHSym8wxZEIbRR31tD4EUaL6a94rfukrkzN8JU2cdupMaM1SFJicXz92Ius4H+jR5bgtL82JkQD7s6YLLoMY54yLQ5xpMdXvDhXQ3Nh6WZ4h5VmiloJkrLEMXNuIWsR31LMAJxlQgY+o89PFjyMFynibvF+A==;5:tOP/JNiSxVc2nHS0WQGmxPmTc3Ha8cShnSpEwivjPo/QOB4eag7kYa3ErcxvsiHwoMe+ZfD6Ev3zZV9wQcklDTnRT1uDYNZ5yE/6lrGVoce06oHjhxKL3XCOuD3LTBKlmq/OwK41Y514C90HKLFLKuVH/wIp9mlsWOWSLrK1ax4=;24:yBzRtncEmkl+95s2mHmdJ7wpHmO4zoOpFMkCrIAJNLfmmIZ4CSRGp2r8Rs+GDMGRxcXurnA5uJKpBg7LtnhPb6oQNLsIk3jF2FS/BVdR8r0=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1317;7:ClHmF52E4Q1Nzdl5JSwJ7Tw81eAEor/aNp6/9KVT1HzZK8WtqlvG7rbUpSowN4baCMOW21q6PS38gBORi+/mK6A/4zSh8MCKEV2Xo2VvAdMkn3+F3MsDmIblHctMioBYyDns3yR56wlcYmWxH3qgoapVQft1eWYBulj1W9eEnFwhB/FA143DWYijE/tSr54PwYlvKl/cgwC4IXiY4r0e5Pge8EdCKtKetrMmyDeQO8rd+mt3cGnjSdNWwe9raeag
-X-MS-Office365-Filtering-Correlation-Id: fd101337-22a2-4e54-5e91-08d5aa5d9093
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2018 03:35:13.1267
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd101337-22a2-4e54-5e91-08d5aa5d9093
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2362;7:qKrMwIhp0N0KZ16J+UcdptWpr1u/WuVEpPtDJ2DqVr5dU3w0WSKsTZARWAehBnq1rX5eUd25Z7H7wL4UtP1qxggI5fuva3AnxvOlCL94M5AaQL88Ya5B2xSjXIyhyB3DRQjc8iaiS/QXxVtZNOzap0XTdQSlynJQYAINqiMbz5jZTRGD4vESoSn/B1eiokDYlatmjmU8g2+nf1329i1TBH80Z+z7Ib+T2BzRbopKXfysCufeZN8on/8dLqmH42TQ;20:li/oJquN+nmiv/6WKp5DVW0gWkefK03fOXvguceCv5VYhqrU4Dw3ehWLHTnK/ND7U6aN7+o4aggJXDNKu0D6GJQsRc5qjYm7O8ELUR96nmaYNjbkkzAziJ1ZA1XjEJqOCXgA9gBXlFf2R25hUIjFbeiGZfu3prMLZh5/RFvjKsE1oVLW8ToAcqHivmF25guvB33a/5c2+Nnt7fGX+qDCexDo5D7RsGIBpXabe/c8zaRTf+QhklJM3Y+vPK6c0fde
+X-MS-Office365-Filtering-Correlation-Id: 2eea56e0-e8a8-40a6-f747-08d5aa5dd4cf
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2018 03:37:08.8591 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2eea56e0-e8a8-40a6-f747-08d5aa5dd4cf
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB1317
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR12MB2362
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX6SX Sabre Auto board has GPIO1_IO13 pin can be
-MUXed as WDOG output to reset PMIC, add this function
-support.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-no changes since V2.
- arch/arm/boot/dts/imx6sx-sabreauto.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-index 812f40b..abe9054 100644
---- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-+++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-@@ -161,6 +161,12 @@
- 				MX6SX_PAD_KEY_COL1__GPIO2_IO_11		0x17059
- 			>;
- 		};
-+
-+		pinctrl_wdog: wdoggrp {
-+			fsl,pins = <
-+				MX6SX_PAD_GPIO1_IO13__WDOG1_WDOG_ANY 0x30b0
-+			>;
-+		};
- 	};
- };
- 
-@@ -300,3 +306,9 @@
- 		#gpio-cells = <2>;
- 	};
- };
-+
-+&wdog1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wdog>;
-+	fsl,ext-reset-output;
-+};
--- 
-2.7.4
+On 4/24/2018 10:06 PM, Daniel Kurtz wrote:
+> On Mon, Apr 23, 2018 at 9:03 PM Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+> wrote:
+> 
+>> From: Akshu Agrawal <akshu.agrawal@amd.com>
+> 
+>> hw_param can be called multiple times and thus we can have
+>> more clk enable. The clk may not get diabled due to refcounting.
+>> startup/shutdown ensures single clk enable/disable call.
+> 
+>> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+>> Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+>> ---
+>>    sound/soc/amd/acp-da7219-max98357a.c | 54
+> ++++++++++++++++++++++++------------
+>>    1 file changed, 37 insertions(+), 17 deletions(-)
+> 
+>> diff --git a/sound/soc/amd/acp-da7219-max98357a.c
+> b/sound/soc/amd/acp-da7219-max98357a.c
+>> index b205c78..0f16f6d 100644
+>> --- a/sound/soc/amd/acp-da7219-max98357a.c
+>> +++ b/sound/soc/amd/acp-da7219-max98357a.c
+>> @@ -38,8 +38,7 @@
+>>    #include "../codecs/da7219.h"
+>>    #include "../codecs/da7219-aad.h"
+> 
+>> -#define CZ_PLAT_CLK 24000000
+>> -#define MCLK_RATE 24576000
+>> +#define CZ_PLAT_CLK 25000000
+>>    #define DUAL_CHANNEL           2
+> 
+>>    static struct snd_soc_jack cz_jack;
+>> @@ -62,7 +61,7 @@ static int cz_da7219_init(struct snd_soc_pcm_runtime
+> *rtd)
+>>           }
+> 
+>>           ret = snd_soc_dai_set_pll(codec_dai, 0, DA7219_SYSCLK_PLL,
+>> -                                 CZ_PLAT_CLK, MCLK_RATE);
+>> +                                 CZ_PLAT_CLK, DA7219_PLL_FREQ_OUT_98304);
+> 
+> These are unrelated fixes that should be in their own patch.
+> 
+Accepted. Will split it.
+
+>>           if (ret < 0) {
+>>                   dev_err(rtd->dev, "can't set codec pll: %d\n", ret);
+>>                   return ret;
+>> @@ -85,8 +84,7 @@ static int cz_da7219_init(struct snd_soc_pcm_runtime
+> *rtd)
+>>           return 0;
+>>    }
+> 
+>> -static int cz_da7219_hw_params(struct snd_pcm_substream *substream,
+>> -                            struct snd_pcm_hw_params *params)
+>> +static int da7219_clk_enable(struct snd_pcm_substream *substream)
+>>    {
+>>           int ret = 0;
+>>           struct snd_soc_pcm_runtime *rtd = substream->private_data;
+>> @@ -100,11 +98,9 @@ static int cz_da7219_hw_params(struct
+> snd_pcm_substream *substream,
+>>           return ret;
+>>    }
+> 
+>> -static int cz_da7219_hw_free(struct snd_pcm_substream *substream)
+>> +static void da7219_clk_disable(void)
+>>    {
+>>           clk_disable_unprepare(da7219_dai_clk);
+>> -
+>> -       return 0;
+>>    }
+> 
+>>    static const unsigned int channels[] = {
+>> @@ -127,7 +123,7 @@ static const struct snd_pcm_hw_constraint_list
+> constraints_channels = {
+>>           .mask = 0,
+>>    };
+> 
+>> -static int cz_fe_startup(struct snd_pcm_substream *substream)
+>> +static int cz_da7219_startup(struct snd_pcm_substream *substream)
+>>    {
+>>           struct snd_pcm_runtime *runtime = substream->runtime;
+> 
+>> @@ -141,23 +137,47 @@ static int cz_fe_startup(struct snd_pcm_substream
+> *substream)
+>>           snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
+>>                                      &constraints_rates);
+> 
+>> -       return 0;
+>> +       return da7219_clk_enable(substream);
+>> +}
+>> +
+>> +static void cz_da7219_shutdown(struct snd_pcm_substream *substream)
+>> +{
+>> +       da7219_clk_disable();
+>> +}
+>> +
+>> +static int cz_max_startup(struct snd_pcm_substream *substream)
+>> +{
+>> +       return da7219_clk_enable(substream);
+>> +}
+>> +
+>> +static void cz_max_shutdown(struct snd_pcm_substream *substream)
+>> +{
+>> +       da7219_clk_disable();
+>> +}
+>> +
+>> +static int cz_dmic_startup(struct snd_pcm_substream *substream)
+>> +{
+>> +       return da7219_clk_enable(substream);
+>> +}
+>> +
+>> +static void cz_dmic_shutdown(struct snd_pcm_substream *substream)
+>> +{
+>> +       da7219_clk_disable();
+>>    }
+> 
+> This is ok, or you could combine the common cz_max_* & cz_dmic_*.
+> 
+> 
+Need to be separate as they have different cpu dai.
+
+>>    static struct snd_soc_ops cz_da7219_cap_ops = {
+> 
+> I think these should all be "static const struct snd_soc_ops"  (please fix
+> in a separate patch).
+> 
+
+Accepted. Will post another patch for same.
+
+>> -       .hw_params = cz_da7219_hw_params,
+>> -       .hw_free = cz_da7219_hw_free,
+>> -       .startup = cz_fe_startup,
+>> +       .startup = cz_da7219_startup,
+>> +       .shutdown = cz_da7219_shutdown,
+>>    };
+> 
+>>    static struct snd_soc_ops cz_max_play_ops = {
+>> -       .hw_params = cz_da7219_hw_params,
+>> -       .hw_free = cz_da7219_hw_free,
+>> +       .startup = cz_max_startup,
+>> +       .shutdown = cz_max_shutdown,
+>>    };
+> 
+>>    static struct snd_soc_ops cz_dmic_cap_ops = {
+>> -       .hw_params = cz_da7219_hw_params,
+>> -       .hw_free = cz_da7219_hw_free,
+>> +       .startup = cz_dmic_startup,
+>> +       .shutdown = cz_dmic_shutdown,
+>>    };
+> 
+>>    static struct snd_soc_dai_link cz_dai_7219_98357[] = {
+>> --
+>> 2.7.4
+
+Thanks,
+Akshu
