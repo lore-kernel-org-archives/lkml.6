@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-937867-1524672519-2-878700472878336375
+X-Cyrus-Session-Id: sloti22d1t05-937867-1524672499-2-18435170236240086168
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524672518; b=krSj9nDSQi9aWu/95a5UlzMoHYggQ0DHqYk0Qu501wtw4C9b6t
-    3jDXz4G8Dl1903/OgYdu0rKrbSztuBgrbfDfcLDQvwghj50d4oe7iubKU2g+lmKn
-    xfTat0n0EmbcwjJx8jsxxNxZCLOQY0KUZU2nm5NHx9dP6PD/p76fciIuh/QrW6Yy
-    +EHs8ZXqaCsVY6SmG07fwDDLefdU/unhZ9owpyzJ8DAXoaKOuvOV/zhNpGyB196o
-    9F+NetR2a/xN79gjIzStGnTXPq96k3OSPg4QlJRFwZ8G+/Wo1udXJ8ECywQdm3K2
-    9gAztBZf6EXWgIMeGGJcCe2QKcupscFaGOtA==
+    1524672498; b=ucPJr8B1Y9NFe9gwO9wLyqHA+8T+wiZjA34x+LswmiHIyaIAen
+    EMLAH90xBokkLgFKC6WkVT7QKDIETUh07pqaTmGTDlLG+Zfq8NBvSKuRSF2CdWjz
+    /Otj1pDnoGf/QcRD2bn2uF56T7Y+HEWNTn2f6Bk3VAVfX+e8rSMmsHfMD60hmCpW
+    xR7/PBgIj1BGqA2utJujMRtFAaCCFl+T4P/rmQvjp85oxDjX7jJhOfCdS6V7Yu/y
+    zawRxYHAbboGTiDTagaqv7U/E5nyYPV06HtpyDbpEmu7ODzKvhVDeNY8o2NvLPvb
+    Aap3JQHbnS/xcx2punZ9QDv1gSjYQOhHI+pQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524672518; bh=
-    Yffd2AWWeCkHJTC+CY8ISDMePUtRqtIpsFiDThRk8lA=; b=IWDcCBHxefB5D9A/
-    nrqeWWWNM0SCR/ASomqEeGwMw4fUYYq2J779TMksUct/PXgzUbWfePIMMwN7JSAh
-    BMvETGjZTnwspbfZPADbrdHLRDrf+jad9H8V4PotyC6RuOgKYKXV9lYO7wBVhem/
-    HWbWM7J24quoq+aVJ7NNbF44WGU1L+VK+fE5DtbKakmjofcQlK8jbrLcGCjlgoFM
-    bS0KNtOcQSi0M5/WeT5WwC9/wJMn1Qp1dHc473MYk6ElX1krTW+T4McKprMoPfkt
-    tOaXyEdGIRmU5d4iGObftN6vtRzgPqEVlzlKYJiNZbZgaNJZdnnb9UOW7d7iGzZB
-    1vKxaw==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524672498; bh=
+    Ry9u5gt7jUuMcuK5C0RaJUdibaiQPihlFni9W9Qffk0=; b=EmnwPRIuHY3UOkgd
+    YZP609LPIY5WK04X9BLE0YHtJj6jqoJJELd8vGuginZ6xQlyDTwITPVtN0N+/PFO
+    4h03Uw2h6OU3+nqwTVu+Fts1mq2fp3WA6Lp5lNV60WL7jYWkH++ofOFgjDqEe951
+    /+umS00HAtUI4MFJT4kZn1sRUmMTHjwDMTLIFwVUw3nYT4Xy0HOB7JBXFHQD4AbP
+    GAON34pWjgIXTHSyTHpbPIu9PK65C4ipz6NtEKtXPaeEgPCtoOr8l0wX/4RL9UY8
+    /PMSVFKQYu8y6sPCViRLW5/VaGoChF7BUh8kfj3g0do9BxWRoENnm0lW1fQWRMJT
+    BtCeAg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
@@ -51,20 +51,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCze991oA2vuApd3cG9DABG31Iz6tUStqAA1ldSh6NsNK/6bJTiu3ttQt2X89TVEX2F8bSzsSYtj2E8A4+6chXUa4I5o0FWKalTATc11PZtsOYVTUqVs
-    Q9r3DW5EZL8uf3SSwZ0nQvDsalHgPRp6aOA7IKDVFZO7rMkQmg+/7I4gfoGW4tOol54T/dI9q2OuMTEBOewINED6dfBpVuWMLZ63NFNIn7jxmRo0bSpdWLdd
+X-CM-Envelope: MS4wfGaIaydLMSb+B7eWxSrCC0y6Szdq5SwqxJ2NKhxDdRw3ve9kIcY3ctpc/zBfnMBQbpwbK3EyMz6GLpB2U7xvoQYhuQ0Jsr12CXWTe5+0Xx2ESXTKL9K7
+    XwI3QTjao5o8fwWLOlOIypPyY39+4FxPuwOCiLoDTrJakspMgdfsaNQhsTUzztY1btVjgxfXV+wGWTOVdO/WCVb0dm/P+xKZnZwwWXVxeUS53kKpKz5uLUMq
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=xwIlUUQzSFprVyE_1oEA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=go4SHiR5EDEQzzRrmHkA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755157AbeDYQIP (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 12:08:15 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:50725 "EHLO
+        id S1755845AbeDYQFB (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 12:05:01 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:50117 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755744AbeDYQFB (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 12:05:01 -0400
+        with ESMTP id S1754578AbeDYQEz (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 12:04:55 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
@@ -75,211 +75,243 @@ Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
         Darren Hart <dvhart@infradead.org>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: [PATCH 07/17] y2038: Compile utimes()/futimesat() conditionally
-Date: Wed, 25 Apr 2018 18:03:01 +0200
-Message-Id: <20180425160311.2718314-8-arnd@arndb.de>
+Subject: [PATCH 14/17] y2038: socket: Add compat_sys_recvmmsg_time64
+Date: Wed, 25 Apr 2018 18:03:08 +0200
+Message-Id: <20180425160311.2718314-15-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180425160311.2718314-1-arnd@arndb.de>
 References: <20180425160311.2718314-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:V39P8f+WwvNAD98Mz5Mg9sSGJjP734efJE3URNQLGhlVEWVfXsW
- hLZOIMlUAhBjrtwy7sWO961yK+ZvgRXBTkOQzAVyx6hXw0oB9D3ZXggmoq/4jOj/pbmcWG1
- 3uWNu7Eo/GHOhHncc55IYu1IjG7WCyI0ackYOfNWPXC26tgQLlGiKfL47TMwpAb3FM6Nb4w
- IocWSRB9VVHxRRSC0ev/Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:EqAKw0UipvY=:bh0EjLUZlrGjZePSwrEraC
- pXuI3LV4tJc7TDgS1LCwPm9w035dG07j/RWR+JJK4g/o1Dp0R5QwpqTJqsJeOIX0kM270AXXB
- r9lgJkrpSs+GRXDIYMmsVNeiyQOf5c5x4W18WL8hN8Uoc+K6U2b+xy9+MO+BpJDvBgca3gtTU
- gdLlRdhRBdn6ndbJBUbWlNrm99l80M5gLC4Yan22jRX04aRUJDH94qb314G6SypV9vg7qXOs3
- MgLdqU5qPmZvxKthTyEQRA3jxFHYsDI7aClKdoL4nK0FeIO4Zj/4fJ2tcPJyAsI/CPGNv+tln
- r4zNprUfNoJmjnlV0evn+PNr/xN+8AyDg0ZCE3v0oSkSvKSj3bZZx0sl78wJT7/+X4lGpUtfs
- cExJEgezuiJPsn6IH/GFgmFlMNB9qJNpz9WgyYiuV6Df2SifCDPwU6qYZNotU2svFxnfEJL+k
- w8MZxjeQvUlLDGjW41uRBYi+cXy7/rX5kuNQ8UmyKQ7k1mK5TBaUK2jTvSfG70Rpo+TB/GRKQ
- 5P15OGVy6I6nPBGCPU06WAmwANTTOuf1VVQTNwSMW8fUqOr/YiiFYxeU3aq37J+3fjAneQ0DB
- MWBDhgDrLT1cRJY4Wsh94qVDXYjmheIy8mE2LMjMOYqa8Dfy55KtTJZ+iJwpBnRLsGIHBEKph
- RBNJFOdRTXAHpc5SX0I1SZBWvGcMTYTUc0N56dCGilp0MX5WSOehJm+vvunrXXQalWt0=
+X-Provags-ID: V03:K1:dHIHUzO9bnjqbCTrlKSvM8snJn28+p7M2xabbLAaIIVkidEkDYO
+ EkF5gzVX36Iqjt1OjfQiFAQN2VkWvKpp/ajQvbpqzdBXVD5ZFi2ghGvEM0VUnmn1/P7vlnR
+ V0vF57lvMqrEkgYFfCkF2Y+thR/8FmJvWVHziAgzQdoLfbtmW5GFC1QXLH101pyY1iqdoa2
+ AoQaAceRPI88evL8RaSUw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:hsOUounq7to=:uBmn6NOvgVy5KCUbgV6WyK
+ 2CQPwZgE6lIv32HwyOMHt4pNl5RTjNwCjIPNIpBkChqAEwFVXybyE67DFtyE42rXAn41tLxSi
+ M37s4LR3JPdaibYA60OIgH6HXD4P8yvZEt5ryLycKAPgSOBuWI9+sNIv7eF9Frnf2tGETSn57
+ SXUnRne4yRq1ZEk7PD3KcYvrD72aHgc0jLqACxkc0gHOUeWi9aaLlq4cd6uW8hE8rzIIas5BP
+ wi6EZXawItA5UYe5+QxyaZnbJRQ2eRyauqWc57bN7elZZG72NNDzUuS89Nujc/vIZIJmmUGsH
+ mmKi5jdVpLIIphAYGprZMt72j+4wpXwN2AEQ/l4OflA1CAm9P3ZvsTLdUU8snFx8cCydWl0xe
+ cCCu28tHMFMm2k+d88iAo8cYhhvSEznWdHqDgF+N6pX+0C5w9bW1b+AimgHHa4r5IqHIqevZd
+ J42gJgQL5QbCskMEWCEVezOexhJxgB2vKg9P2rnP32FWz6WJiub093eAk2BoFMQRESR3uo24/
+ Cwejs/CKOlVjQqgrVoUQJ/VEsN2NyuydKL36VKubnMa2YvWyQTEEHFEpidpF+3iVekJM5Akau
+ LZ4PMwGlj1EuoWuSy3Z7EiZjWiot3RllhttLuo9efPhx65rc3tE/5f0H2jJcsTAL4IDn45Okf
+ I/Cq24X4YTYf0WxsQiZvdG3cTrliFJVxTzIKiqbm38gswfvB7OZfqm+41mYVMryNtVW8=
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There are four generations of utimes() syscalls: utime(), utimes(),
-futimesat() and utimensat(), each one being a superset of the previous
-one. For y2038 support, we have to add another one, which is the same
-as the existing utimensat() but always passes 64-bit times_t based
-timespec values.
+recvmmsg() takes two arguments to pointers of structures that differ
+between 32-bit and 64-bit architectures: mmsghdr and timespec.
 
-There are currently 10 architectures that only use utimensat(), two
-that use utimes(), futimesat() and utimensat() but not utime(), and 11
-architectures that have all four, and those define __ARCH_WANT_SYS_UTIME
-in order to get a sys_utime implementation. Since all the new
-architectures only want utimensat(), moving all the legacy entry points
-into a common __ARCH_WANT_SYS_UTIME guard simplifies the logic. Only alpha
-and ia64 grow a tiny bit as they now also get an unused sys_utime(),
-but it didn't seem worth the extra complexity of adding yet another
-ifdef for those.
+For y2038 compatbility, we are changing the native system call from
+timespec to __kernel_timespec with a 64-bit time_t (in another patch),
+and use the existing compat system call on both 32-bit and 64-bit
+architectures for compatibility with traditional 32-bit user space.
+
+As we now have two variants of recvmmsg() for 32-bit tasks that are both
+different from the variant that we use on 64-bit tasks, this means we
+also require two compat system calls!
+
+The solution I picked is to flip things around: The existing
+compat_sys_recvmmsg() call gets moved from net/compat.c into net/socket.c
+and now handles the case for old user space on all architectures that
+have set CONFIG_COMPAT_32BIT_TIME.  A new compat_sys_recvmmsg_time64()
+call gets added in the old place for 64-bit architectures only, this
+one handles the case of a compat mmsghdr structure combined with
+__kernel_timespec.
+
+In the indirect sys_socketcall(), we now need to call either
+do_sys_recvmmsg() or __compat_sys_recvmmsg(), depending on what kind of
+architecture we are on. For compat_sys_socketcall(), no such change is
+needed, we always call __compat_sys_recvmmsg().
+
+I decided to not add a new SYS_RECVMMSG_TIME64 socketcall: Any libc
+implementation for 64-bit time_t will need significant changes including
+an updated asm/unistd.h, and it seems better to consistently use the
+separate syscalls that configuration, leaving the socketcall only for
+backward compatibility with 32-bit time_t based libc.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/alpha/include/asm/unistd.h |  1 +
- arch/arm/include/asm/unistd.h   |  2 +-
- arch/ia64/include/asm/unistd.h  |  1 +
- fs/utimes.c                     | 51 ++++++++++++++++++-----------------------
- include/linux/syscalls.h        | 10 ++++----
- 5 files changed, 31 insertions(+), 34 deletions(-)
+ include/linux/compat.h |  5 ++++-
+ include/linux/socket.h | 15 ++++++++++++++-
+ kernel/sys_ni.c        |  1 +
+ net/compat.c           | 14 +++++++-------
+ net/socket.c           | 39 +++++++++++++++++++++++++++++++++++++--
+ 5 files changed, 63 insertions(+), 11 deletions(-)
 
-diff --git a/arch/alpha/include/asm/unistd.h b/arch/alpha/include/asm/unistd.h
-index edc090470023..9ff37aa1165f 100644
---- a/arch/alpha/include/asm/unistd.h
-+++ b/arch/alpha/include/asm/unistd.h
-@@ -14,6 +14,7 @@
- #define __ARCH_WANT_SYS_GETPGRP
- #define __ARCH_WANT_SYS_OLDUMOUNT
- #define __ARCH_WANT_SYS_SIGPENDING
-+#define __ARCH_WANT_SYS_UTIME
- #define __ARCH_WANT_SYS_FORK
- #define __ARCH_WANT_SYS_VFORK
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm/include/asm/unistd.h b/arch/arm/include/asm/unistd.h
-index 8f1159c26f20..88ef2ce1f69a 100644
---- a/arch/arm/include/asm/unistd.h
-+++ b/arch/arm/include/asm/unistd.h
-@@ -26,13 +26,13 @@
- #define __ARCH_WANT_SYS_SIGPROCMASK
- #define __ARCH_WANT_SYS_OLD_MMAP
- #define __ARCH_WANT_SYS_OLD_SELECT
-+#define __ARCH_WANT_SYS_UTIME
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index 7887b0a54c1e..f9423bbf7e7c 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -863,7 +863,10 @@ asmlinkage long compat_sys_move_pages(pid_t pid, compat_ulong_t nr_pages,
+ asmlinkage long compat_sys_rt_tgsigqueueinfo(compat_pid_t tgid,
+ 					compat_pid_t pid, int sig,
+ 					struct compat_siginfo __user *uinfo);
+-asmlinkage long compat_sys_recvmmsg(int fd, struct compat_mmsghdr __user *mmsg,
++asmlinkage long compat_sys_recvmmsg_time64(int fd, struct compat_mmsghdr __user *mmsg,
++				    unsigned vlen, unsigned int flags,
++				    struct __kernel_timespec __user *timeout);
++asmlinkage long compat_sys_recvmmsg(int fd, struct mmsghdr __user *mmsg,
+ 				    unsigned vlen, unsigned int flags,
+ 				    struct compat_timespec __user *timeout);
+ asmlinkage long compat_sys_wait4(compat_pid_t pid,
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index d36a6c1bdbaf..22358e0e1288 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -2,8 +2,8 @@
+ #ifndef _LINUX_SOCKET_H
+ #define _LINUX_SOCKET_H
  
- #if !defined(CONFIG_AEABI) || defined(CONFIG_OABI_COMPAT)
- #define __ARCH_WANT_SYS_TIME
- #define __ARCH_WANT_SYS_IPC
- #define __ARCH_WANT_SYS_OLDUMOUNT
- #define __ARCH_WANT_SYS_ALARM
--#define __ARCH_WANT_SYS_UTIME
- #define __ARCH_WANT_SYS_OLD_GETRLIMIT
- #define __ARCH_WANT_OLD_READDIR
- #define __ARCH_WANT_SYS_SOCKETCALL
-diff --git a/arch/ia64/include/asm/unistd.h b/arch/ia64/include/asm/unistd.h
-index c5b2620c4a4c..49e34db2529c 100644
---- a/arch/ia64/include/asm/unistd.h
-+++ b/arch/ia64/include/asm/unistd.h
-@@ -29,6 +29,7 @@
- #define __IGNORE_umount2	/* umount() */
- 
- #define __ARCH_WANT_NEW_STAT
-+#define __ARCH_WANT_SYS_UTIME
- 
- #if !defined(__ASSEMBLY__) && !defined(ASSEMBLER)
- 
-diff --git a/fs/utimes.c b/fs/utimes.c
-index ca2c02a7985c..ebc7fb713d91 100644
---- a/fs/utimes.c
-+++ b/fs/utimes.c
-@@ -8,35 +8,6 @@
- #include <linux/compat.h>
- #include <asm/unistd.h>
- 
--#ifdef __ARCH_WANT_SYS_UTIME
 -
--/*
-- * sys_utime() can be implemented in user-level using sys_utimes().
-- * Is this for backwards compatibility?  If so, why not move it
-- * into the appropriate arch directory (for those architectures that
-- * need it).
-- */
--
--/* If times==NULL, set access and modification to current time,
-- * must be owner or have write permission.
-- * Else, update from *times, must be owner or super user.
-- */
--SYSCALL_DEFINE2(utime, char __user *, filename, struct utimbuf __user *, times)
--{
--	struct timespec64 tv[2];
--
--	if (times) {
--		if (get_user(tv[0].tv_sec, &times->actime) ||
--		    get_user(tv[1].tv_sec, &times->modtime))
--			return -EFAULT;
--		tv[0].tv_nsec = 0;
--		tv[1].tv_nsec = 0;
--	}
--	return do_utimes(AT_FDCWD, filename, times ? tv : NULL, 0);
--}
--
--#endif
--
- static bool nsec_valid(long nsec)
- {
- 	if (nsec == UTIME_OMIT || nsec == UTIME_NOW)
-@@ -184,6 +155,13 @@ SYSCALL_DEFINE4(utimensat, int, dfd, const char __user *, filename,
- 	return do_utimes(dfd, filename, utimes ? tstimes : NULL, flags);
- }
+ #include <asm/socket.h>			/* arch-dependent defines	*/
++#include <linux/errno.h>
+ #include <linux/sockios.h>		/* the SIOCxxx I/O controls	*/
+ #include <linux/uio.h>			/* iovec support		*/
+ #include <linux/types.h>		/* pid_t			*/
+@@ -346,6 +346,7 @@ extern int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr_sto
+ extern int put_cmsg(struct msghdr*, int level, int type, int len, void *data);
  
-+#ifdef __ARCH_WANT_SYS_UTIME
-+/*
-+ * futimesat(), utimes() and utime() are older versions of utimensat()
-+ * that are provided for compatibility with traditional C libraries.
-+ * On modern architectures, we always use libc wrappers around
-+ * utimensat() instead.
-+ */
- static long do_futimesat(int dfd, const char __user *filename,
- 			 struct timeval __user *utimes)
- {
-@@ -225,6 +203,21 @@ SYSCALL_DEFINE2(utimes, char __user *, filename,
- 	return do_futimesat(AT_FDCWD, filename, utimes);
- }
+ struct timespec64;
++struct compat_timespec;
  
-+SYSCALL_DEFINE2(utime, char __user *, filename, struct utimbuf __user *, times)
+ /* The __sys_...msg variants allow MSG_CMSG_COMPAT iff
+  * forbid_cmsg_compat==false
+@@ -356,6 +357,18 @@ extern long __sys_sendmsg(int fd, struct user_msghdr __user *msg,
+ 			  unsigned int flags, bool forbid_cmsg_compat);
+ extern int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
+ 			  unsigned int flags, struct timespec64 *timeout);
++#ifdef CONFIG_COMPAT_32BIT_TIME
++extern int __compat_sys_recvmmsg(int fd, struct mmsghdr __user *mmsg,
++				 unsigned int vlen, unsigned int flags,
++				 struct compat_timespec __user *timeout);
++#else
++static inline int __compat_sys_recvmmsg(int fd, struct mmsghdr __user *mmsg,
++					unsigned int vlen, unsigned int flags,
++					struct compat_timespec __user *timeout)
 +{
-+	struct timespec64 tv[2];
++	return -EINVAL;
++}
++#endif
+ extern int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg,
+ 			  unsigned int vlen, unsigned int flags,
+ 			  bool forbid_cmsg_compat);
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index 9791364925dc..61fc9babe6ce 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -283,6 +283,7 @@ COND_SYSCALL(perf_event_open);
+ COND_SYSCALL(accept4);
+ COND_SYSCALL(recvmmsg);
+ COND_SYSCALL_COMPAT(recvmmsg);
++COND_SYSCALL_COMPAT(recvmmsg_time64);
+ 
+ /*
+  * Architecture specific syscalls: see further below
+diff --git a/net/compat.c b/net/compat.c
+index 93b80a3d967c..7521a0afe18d 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -810,9 +810,9 @@ COMPAT_SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, buf, compat_size_t, len
+ 	return __compat_sys_recvfrom(fd, buf, len, flags, addr, addrlen);
+ }
+ 
+-static int __compat_sys_recvmmsg(int fd, struct compat_mmsghdr __user *mmsg,
++static int __compat_sys_recvmmsg_time64(int fd, struct compat_mmsghdr __user *mmsg,
+ 				 unsigned int vlen, unsigned int flags,
+-				 struct compat_timespec __user *timeout)
++				 struct __kernel_timespec __user *timeout)
+ {
+ 	int datagrams;
+ 	struct timespec64 ktspec;
+@@ -821,22 +821,22 @@ static int __compat_sys_recvmmsg(int fd, struct compat_mmsghdr __user *mmsg,
+ 		return __sys_recvmmsg(fd, (struct mmsghdr __user *)mmsg, vlen,
+ 				      flags | MSG_CMSG_COMPAT, NULL);
+ 
+-	if (compat_get_timespec64(&ktspec, timeout))
++	if (get_timespec64(&ktspec, timeout))
+ 		return -EFAULT;
+ 
+ 	datagrams = __sys_recvmmsg(fd, (struct mmsghdr __user *)mmsg, vlen,
+ 				   flags | MSG_CMSG_COMPAT, &ktspec);
+-	if (datagrams > 0 && compat_put_timespec64(&ktspec, timeout))
++	if (datagrams > 0 && put_timespec64(&ktspec, timeout))
+ 		datagrams = -EFAULT;
+ 
+ 	return datagrams;
+ }
+ 
+-COMPAT_SYSCALL_DEFINE5(recvmmsg, int, fd, struct compat_mmsghdr __user *, mmsg,
++COMPAT_SYSCALL_DEFINE5(recvmmsg_time64, int, fd, struct compat_mmsghdr __user *, mmsg,
+ 		       unsigned int, vlen, unsigned int, flags,
+-		       struct compat_timespec __user *, timeout)
++		       struct __kernel_timespec __user *, timeout)
+ {
+-	return __compat_sys_recvmmsg(fd, mmsg, vlen, flags, timeout);
++	return __compat_sys_recvmmsg_time64(fd, mmsg, vlen, flags, timeout);
+ }
+ 
+ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+diff --git a/net/socket.c b/net/socket.c
+index 4510e6269764..5e97b645bfee 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2483,6 +2483,37 @@ SYSCALL_DEFINE5(recvmmsg, int, fd, struct mmsghdr __user *, mmsg,
+ 	return do_sys_recvmmsg(fd, mmsg, vlen, flags, timeout);
+ }
+ 
++#ifdef CONFIG_COMPAT_32BIT_TIME
++int __compat_sys_recvmmsg(int fd, struct mmsghdr __user *mmsg,
++			  unsigned int vlen, unsigned int flags,
++			  struct compat_timespec __user *timeout)
++{
++	int datagrams;
++	struct timespec64 ktspec;
 +
-+	if (times) {
-+		if (get_user(tv[0].tv_sec, &times->actime) ||
-+		    get_user(tv[1].tv_sec, &times->modtime))
-+			return -EFAULT;
-+		tv[0].tv_nsec = 0;
-+		tv[1].tv_nsec = 0;
-+	}
-+	return do_utimes(AT_FDCWD, filename, times ? tv : NULL, 0);
++	if (timeout == NULL)
++		return __sys_recvmmsg(fd, (struct mmsghdr __user *)mmsg, vlen,
++				      flags | MSG_CMSG_COMPAT, NULL);
++
++	if (compat_get_timespec64(&ktspec, timeout))
++		return -EFAULT;
++
++	datagrams = __sys_recvmmsg(fd, (struct mmsghdr __user *)mmsg, vlen,
++				   flags | MSG_CMSG_COMPAT, &ktspec);
++	if (datagrams > 0 && compat_put_timespec64(&ktspec, timeout))
++		datagrams = -EFAULT;
++
++	return datagrams;
++}
++
++COMPAT_SYSCALL_DEFINE5(recvmmsg, int, fd, struct mmsghdr __user *, mmsg,
++		       unsigned int, vlen, unsigned int, flags,
++		       struct compat_timespec __user *, timeout)
++{
++	return __compat_sys_recvmmsg(fd, mmsg, vlen, flags, timeout);
 +}
 +#endif
 +
- #ifdef CONFIG_COMPAT
- /*
-  * Not all architectures have sys_utime, so implement this in terms
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 3d7dd665cdeb..d2b19e814218 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -941,8 +941,6 @@ asmlinkage long sys_access(const char __user *filename, int mode);
- asmlinkage long sys_rename(const char __user *oldname,
- 				const char __user *newname);
- asmlinkage long sys_symlink(const char __user *old, const char __user *new);
--asmlinkage long sys_utimes(char __user *filename,
--				struct timeval __user *utimes);
- #if defined(__ARCH_WANT_STAT64) || defined(__ARCH_WANT_COMPAT_STAT64)
- asmlinkage long sys_stat64(const char __user *filename,
- 				struct stat64 __user *statbuf);
-@@ -972,14 +970,18 @@ asmlinkage long sys_alarm(unsigned int seconds);
- asmlinkage long sys_getpgrp(void);
- asmlinkage long sys_pause(void);
- asmlinkage long sys_time(time_t __user *tloc);
-+#ifdef __ARCH_WANT_SYS_UTIME
- asmlinkage long sys_utime(char __user *filename,
- 				struct utimbuf __user *times);
-+asmlinkage long sys_utimes(char __user *filename,
-+				struct timeval __user *utimes);
-+asmlinkage long sys_futimesat(int dfd, const char __user *filename,
-+			      struct timeval __user *utimes);
-+#endif
- asmlinkage long sys_creat(const char __user *pathname, umode_t mode);
- asmlinkage long sys_getdents(unsigned int fd,
- 				struct linux_dirent __user *dirent,
- 				unsigned int count);
--asmlinkage long sys_futimesat(int dfd, const char __user *filename,
--			      struct timeval __user *utimes);
- asmlinkage long sys_select(int n, fd_set __user *inp, fd_set __user *outp,
- 			fd_set __user *exp, struct timeval __user *tvp);
- asmlinkage long sys_poll(struct pollfd __user *ufds, unsigned int nfds,
+ #ifdef __ARCH_WANT_SYS_SOCKETCALL
+ /* Argument list sizes for sys_socketcall */
+ #define AL(x) ((x) * sizeof(unsigned long))
+@@ -2600,8 +2631,12 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 				    a[2], true);
+ 		break;
+ 	case SYS_RECVMMSG:
+-		err = do_sys_recvmmsg(a0, (struct mmsghdr __user *)a1, a[2],
+-				      a[3], (struct __kernel_timespec __user *)a[4]);
++		if (IS_ENABLED(CONFIG_64BIT) || !IS_ENABLED(CONFIG_64BIT_TIME))
++			err = do_sys_recvmmsg(a0, (struct mmsghdr __user *)a1, a[2],
++					      a[3], (struct __kernel_timespec __user *)a[4]);
++		else
++			err = __compat_sys_recvmmsg(a0, (struct mmsghdr __user *)a1, a[2],
++					      a[3], (struct compat_timespec __user *)a[4]);
+ 		break;
+ 	case SYS_ACCEPT4:
+ 		err = __sys_accept4(a0, (struct sockaddr __user *)a1,
 -- 
 2.9.0
 
