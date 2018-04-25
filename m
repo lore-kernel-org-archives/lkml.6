@@ -1,101 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753056AbeDYM4L (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 08:56:11 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:65300 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751525AbeDYMzw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:55:52 -0400
-From: Kishon Vijay Abraham I <kishon@ti.com>
-To: =?UTF-8?q?Beno=C3=AEt=20Cousson=20?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>
-CC: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, <linux-doc@vger.kernel.org>,
-        <kishon@ti.com>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-Subject: [PATCH v3 10/15] ARM: dts: dra7-evm: Model EVM_3V6 regulator
-Date: Wed, 25 Apr 2018 18:24:44 +0530
-Message-ID: <20180425125449.19755-11-kishon@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180425125449.19755-1-kishon@ti.com>
-References: <20180425125449.19755-1-kishon@ti.com>
+        id S1754487AbeDYM52 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 08:57:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754472AbeDYM5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 08:57:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB5221789
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+Subject: Re: [f2fs-dev] [PATCH 1/5] f2fs: give message and set need_fsck given
+ broken node id
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20180425054613.2700-1-jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <0c69d7f2-1606-593d-a2c0-323eda0bc1e9@kernel.org>
+Date: Wed, 25 Apr 2018 20:57:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180425054613.2700-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On TI's DRA74x EVM, EVM_3V6 is connected is connected to the VBAT line
-of the wilink card. Model it here so that it can be used while adding
-wilink8 WLAN support.
+On 2018/4/25 13:46, Jaegeuk Kim wrote:
+> syzbot hit the following crash on upstream commit
+> 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
+> Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+> syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=d154ec99402c6f628887
+> 
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5414336294027264
+> syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5471683234234368
+> Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5436660795834368
+> Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for details.
+> If you forward the report, please keep this part and the footer.
+> 
+> F2FS-fs (loop0): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+> F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
+> F2FS-fs (loop0): invalid crc value
+> ------------[ cut here ]------------
+> kernel BUG at fs/f2fs/node.c:1185!
+> invalid opcode: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 1 PID: 4549 Comm: syzkaller704305 Not tainted 4.17.0-rc1+ #10
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:__get_node_page+0xb68/0x16e0 fs/f2fs/node.c:1185
+> RSP: 0018:ffff8801d960e820 EFLAGS: 00010293
+> RAX: ffff8801d88205c0 RBX: 0000000000000003 RCX: ffffffff82f6cc06
+> RDX: 0000000000000000 RSI: ffffffff82f6d5e8 RDI: 0000000000000004
+> RBP: ffff8801d960ec30 R08: ffff8801d88205c0 R09: ffffed003b5e46c2
+> R10: 0000000000000003 R11: 0000000000000003 R12: ffff8801a86e00c0
+> R13: 0000000000000001 R14: ffff8801a86e0530 R15: ffff8801d9745240
+> FS:  000000000072c880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f3d403209b8 CR3: 00000001d8f3f000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  get_node_page fs/f2fs/node.c:1237 [inline]
+>  truncate_xattr_node+0x152/0x2e0 fs/f2fs/node.c:1014
+>  remove_inode_page+0x200/0xaf0 fs/f2fs/node.c:1039
+>  f2fs_evict_inode+0xe86/0x1710 fs/f2fs/inode.c:547
+>  evict+0x4a6/0x960 fs/inode.c:557
+>  iput_final fs/inode.c:1519 [inline]
+>  iput+0x62d/0xa80 fs/inode.c:1545
+>  f2fs_fill_super+0x5f4e/0x7bf0 fs/f2fs/super.c:2849
+>  mount_bdev+0x30c/0x3e0 fs/super.c:1164
+>  f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
+>  mount_fs+0xae/0x328 fs/super.c:1267
+>  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+>  vfs_kern_mount fs/namespace.c:1027 [inline]
+>  do_new_mount fs/namespace.c:2518 [inline]
+>  do_mount+0x564/0x3070 fs/namespace.c:2848
+>  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+>  __do_sys_mount fs/namespace.c:3078 [inline]
+>  __se_sys_mount fs/namespace.c:3075 [inline]
+>  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x443dea
+> RSP: 002b:00007ffcc7882368 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000020000c00 RCX: 0000000000443dea
+> RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffcc7882370
+> RBP: 0000000000000003 R08: 0000000020016a00 R09: 000000000000000a
+> R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000004
+> R13: 0000000000402ce0 R14: 0000000000000000 R15: 0000000000000000
+> RIP: __get_node_page+0xb68/0x16e0 fs/f2fs/node.c:1185 RSP: ffff8801d960e820
+> ---[ end trace 4edbeb71f002bb76 ]---
+> 
+> Reported-and-tested-by: syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/f2fs.h  | 13 +------------
+>  fs/f2fs/inode.c | 13 ++++++-------
+>  fs/f2fs/node.c  | 23 +++++++++++++++++++++--
+>  3 files changed, 28 insertions(+), 21 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 8f3ad9662d13..d26aae5bf00d 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1583,18 +1583,6 @@ static inline bool __exist_node_summaries(struct f2fs_sb_info *sbi)
+>  			is_set_ckpt_flags(sbi, CP_FASTBOOT_FLAG));
+>  }
+>  
+> -/*
+> - * Check whether the given nid is within node id range.
+> - */
+> -static inline int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
+> -{
+> -	if (unlikely(nid < F2FS_ROOT_INO(sbi)))
+> -		return -EINVAL;
+> -	if (unlikely(nid >= NM_I(sbi)->max_nid))
+> -		return -EINVAL;
+> -	return 0;
+> -}
+> -
+>  /*
+>   * Check whether the inode has blocks or not
+>   */
+> @@ -2768,6 +2756,7 @@ f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
+>  struct dnode_of_data;
+>  struct node_info;
+>  
+> +int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
+>  bool available_free_memory(struct f2fs_sb_info *sbi, int type);
+>  int need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid);
+>  bool is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid);
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 176f8e84bb6e..414b1ede642b 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -194,12 +194,8 @@ static int do_read_inode(struct inode *inode)
+>  	projid_t i_projid;
+>  
+>  	/* Check if ino is within scope */
+> -	if (check_nid_range(sbi, inode->i_ino)) {
+> -		f2fs_msg(inode->i_sb, KERN_ERR, "bad inode number: %lu",
+> -			 (unsigned long) inode->i_ino);
+> -		WARN_ON(1);
+> +	if (check_nid_range(sbi, inode->i_ino))
+>  		return -EINVAL;
+> -	}
+>  
+>  	node_page = get_node_page(sbi, inode->i_ino);
+>  	if (IS_ERR(node_page))
+> @@ -588,8 +584,11 @@ void f2fs_evict_inode(struct inode *inode)
+>  		alloc_nid_failed(sbi, inode->i_ino);
+>  		clear_inode_flag(inode, FI_FREE_NID);
+>  	} else {
+> -		f2fs_bug_on(sbi, err &&
+> -			!exist_written_data(sbi, inode->i_ino, ORPHAN_INO));
+> +		/*
+> +		 * If xattr nid is corrupted, we can reach out error condition,
+> +		 * err & !exist_written_data(sbi, inode->i_ino, ORPHAN_INO)).
+> +		 * In that case, check_nid_range() is enough to give a clue.
+> +		 */
+>  	}
+>  out_clear:
+>  	fscrypt_put_encryption_info(inode);
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 3a3d38b3e9ec..2dd34cd980b1 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -29,6 +29,21 @@ static struct kmem_cache *nat_entry_slab;
+>  static struct kmem_cache *free_nid_slab;
+>  static struct kmem_cache *nat_entry_set_slab;
+>  
+> +/*
+> + * Check whether the given nid is within node id range.
+> + */
+> +int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
+> +{
+> +	if (unlikely(nid < F2FS_ROOT_INO(sbi) || nid >= NM_I(sbi)->max_nid)) {
+> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+> +		f2fs_msg(sbi->sb, KERN_WARNING,
+> +				"%s: out-of-range nid=%x, run fsck to fix.",
+> +				__func__, nid);
+> +		return -EINVAL;
+> +	}
+> +	return 0;
+> +}
+> +
+>  bool available_free_memory(struct f2fs_sb_info *sbi, int type)
+>  {
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> @@ -1010,6 +1025,8 @@ int truncate_xattr_node(struct inode *inode)
+>  
+>  	if (!nid)
+>  		return 0;
+> +	if (check_nid_range(sbi, nid))
+> +		return -EINVAL;
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- arch/arm/boot/dts/dra7-evm.dts | 42 ++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Below get_node_page() will call check_nid_range(), so above check is redundant.
 
-diff --git a/arch/arm/boot/dts/dra7-evm.dts b/arch/arm/boot/dts/dra7-evm.dts
-index f1425b0f3a54..181289a28ca1 100644
---- a/arch/arm/boot/dts/dra7-evm.dts
-+++ b/arch/arm/boot/dts/dra7-evm.dts
-@@ -20,6 +20,16 @@
- 		reg = <0x0 0x80000000 0x0 0x60000000>; /* 1536 MB */
- 	};
- 
-+	evm_12v0: fixedregulator-evm_12v0 {
-+		/* main supply */
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_12v0";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	evm_1v8_sw: fixedregulator-evm_1v8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "evm_1v8";
-@@ -54,6 +64,38 @@
- 		regulator-max-microvolt = <1800000>;
- 	};
- 
-+	evm_3v3: fixedregulator-evm3v3 {
-+		/* Output of Cntlr A of TPS43351-Q1 on dra7-evm */
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&evm_12v0>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	evm_5v0: fixedregulator-evm_5v0 {
-+		/* Output of Cntlr B of TPS43351-Q1 on dra7-evm */
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_5v0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&evm_12v0>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	evm_3v6: fixedregulator-evm_3v6 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_3v6";
-+		regulator-min-microvolt = <3600000>;
-+		regulator-max-microvolt = <3600000>;
-+		vin-supply = <&evm_5v0>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	extcon_usb2: extcon_usb2 {
- 		compatible = "linux,extcon-usb-gpio";
- 		id-gpio = <&pcf_gpio_21 2 GPIO_ACTIVE_HIGH>;
--- 
-2.17.0
+Thanks,
+
+>  
+>  	npage = get_node_page(sbi, nid);
+>  	if (IS_ERR(npage))
+> @@ -1158,7 +1175,8 @@ void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
+>  
+>  	if (!nid)
+>  		return;
+> -	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
+> +	if (check_nid_range(sbi, nid))
+> +		return;
+>  
+>  	rcu_read_lock();
+>  	apage = radix_tree_lookup(&NODE_MAPPING(sbi)->i_pages, nid);
+> @@ -1182,7 +1200,8 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
+>  
+>  	if (!nid)
+>  		return ERR_PTR(-ENOENT);
+> -	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
+> +	if (check_nid_range(sbi, nid))
+> +		return ERR_PTR(-EINVAL);
+>  repeat:
+>  	page = f2fs_grab_cache_page(NODE_MAPPING(sbi), nid, false);
+>  	if (!page)
+> 
