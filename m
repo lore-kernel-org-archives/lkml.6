@@ -1,58 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755035AbeDYPrg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 11:47:36 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:12734 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754847AbeDYPrb (ORCPT
+        id S932072AbeDYP4K (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 11:56:10 -0400
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:38222 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755645AbeDYP4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 11:47:31 -0400
-X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
-   d="scan'208";a="13279912"
-Subject: Re: [PATCH v2 1/2] crypto: ccree: enable support for hardware keys
-To: Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-CC: Ofir Drang <ofir.drang@arm.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1524468316-6606-1-git-send-email-gilad@benyossef.com>
- <1524468316-6606-2-git-send-email-gilad@benyossef.com>
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
-Message-ID: <0caa0d1d-eb05-c5a1-9958-2285bb11db8c@microchip.com>
-Date: Wed, 25 Apr 2018 18:47:27 +0300
+        Wed, 25 Apr 2018 11:56:05 -0400
+X-Google-Smtp-Source: AIpwx489Aw0OCooY8bkG5wHHMl/NKlzTpwisLUSf54JaGFIuD/BftUtjXa9G0pJlnDMhCQv2zODVIA==
+Subject: Re: [PATCH v3 2/2] media: Add a driver for the ov7251 camera sensor
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1524582067-28585-1-git-send-email-todor.tomov@linaro.org>
+ <1524582067-28585-3-git-send-email-todor.tomov@linaro.org>
+ <20180425105447.z35h44ep3rqjmfaz@valkosipuli.retiisi.org.uk>
+From: Todor Tomov <todor.tomov@linaro.org>
+Message-ID: <8db2834c-5f8e-97d6-441d-3e99a0d66506@linaro.org>
+Date: Wed, 25 Apr 2018 18:56:00 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1524468316-6606-2-git-send-email-gilad@benyossef.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20180425105447.z35h44ep3rqjmfaz@valkosipuli.retiisi.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Gilad,
+Hi,
 
-On 04/23/2018 10:25 AM, Gilad Ben-Yossef wrote:
-> Enable CryptoCell support for hardware keys.
+On 25.04.2018 13:54, Sakari Ailus wrote:
+> Hi Todor,
 > 
-> Hardware keys are regular AES keys loaded into CryptoCell internal memory
-> via firmware, often from secure boot ROM or hardware fuses at boot time.
-> 
-> As such, they can be used for enc/dec purposes like any other key but
-> cannot (read: extremely hard to) be extracted since since they are not
-> available anywhere in RAM during runtime.
-> 
-> The mechanism has some similarities to s390 secure keys although the keys
-> are not wrapped or sealed, but simply loaded offline. The interface was
-> therefore modeled based on the s390 secure keys support.
+> Thanks for the update. Just a few minor comments below.
 
-I'm interested in hardware keys, ecc508 supports them too. In your
-proposal you expect that the user will provide a specific key token that
-is meaningful only for the ccree driver. If another driver that supports
-"cbc(paes)" shows up, you will force the user to select a specific
-driver implementation and to know what kind of key token to provide.
-Shouldn't we have a common API that can address other drivers too?
+Thanks for the review again, Sakari.
+I'm preparing the next version.
 
-Best,
-ta
+Best regards,
+Todor
