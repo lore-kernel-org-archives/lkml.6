@@ -1,137 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753503AbeDYMur (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 08:50:47 -0400
-Received: from mga02.intel.com ([134.134.136.20]:14629 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753880AbeDYMum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:50:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
-   d="scan'208";a="223229219"
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v2]: perf/x86: expose user space frame-pointer value on a
- sample
-Organization: Intel Corp.
-Message-ID: <fe1861c8-fa47-1011-0210-eb6e33d24bba@linux.intel.com>
-Date: Wed, 25 Apr 2018 15:50:34 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753325AbeDYMvk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 08:51:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39320 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751525AbeDYMvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 08:51:37 -0400
+Date: Wed, 25 Apr 2018 13:51:55 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Chunyu Hu <chuhu@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>, Chunyu Hu <chuhu.ncepu@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
+Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in
+ gfp_kmemleak_mask
+Message-ID: <20180425125154.GA29722@MBP.local>
+References: <1524243513-29118-1-git-send-email-chuhu@redhat.com>
+ <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com>
+ <20180422125141.GF17484@dhcp22.suse.cz>
+ <CACT4Y+YWUgyzCBadg+Oe8wDkFCaBzmcKDgu3rKjQxim7NXNLpg@mail.gmail.com>
+ <CABATaM6eWtssvuj3UW9LHLK3HWo8P9g0z9VzFnuqKPKO5KMJ3A@mail.gmail.com>
+ <20180424132057.GE17484@dhcp22.suse.cz>
+ <20180424134148.qkvqqa4c37l6irvg@armageddon.cambridge.arm.com>
+ <482146467.19754107.1524649841393.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <482146467.19754107.1524649841393.JavaMail.zimbra@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 25, 2018 at 05:50:41AM -0400, Chunyu Hu wrote:
+> ----- Original Message -----
+> > From: "Catalin Marinas" <catalin.marinas@arm.com>
+> > On Tue, Apr 24, 2018 at 07:20:57AM -0600, Michal Hocko wrote:
+> > > On Mon 23-04-18 12:17:32, Chunyu Hu wrote:
+> > > [...]
+> > > > So if there is a new flag, it would be the 25th bits.
+> > > 
+> > > No new flags please. Can you simply store a simple bool into
+> > > fail_page_alloc
+> > > and have save/restore api for that?
+> > 
+> > For kmemleak, we probably first hit failslab. Something like below may
+> > do the trick:
+> > 
+> > diff --git a/mm/failslab.c b/mm/failslab.c
+> > index 1f2f248e3601..63f13da5cb47 100644
+> > --- a/mm/failslab.c
+> > +++ b/mm/failslab.c
+> > @@ -29,6 +29,9 @@ bool __should_failslab(struct kmem_cache *s, gfp_t
+> > gfpflags)
+> >  	if (failslab.cache_filter && !(s->flags & SLAB_FAILSLAB))
+> >  		return false;
+> >  
+> > +	if (s->flags & SLAB_NOLEAKTRACE)
+> > +		return false;
+> > +
+> >  	return should_fail(&failslab.attr, s->object_size);
+> >  }
+> 
+> This maybe is the easy enough way for skipping fault injection for
+> kmemleak slab object. 
 
-Store user space frame-pointer value (BP register) into Perf trace 
-on a sample for a process so the value becomes available when 
-unwinding call stacks for functions gaining event samples.
+This was added to avoid kmemleak tracing itself, so could be used for
+other kmemleak-related cases.
 
-Test executable for the example below was compiled with frame pointer 
-support enabled:
+> > Can we get a second should_fail() via should_fail_alloc_page() if a new
+> > slab page is allocated?
+> 
+> looking at code path below, what do you mean by getting a second
+> should_fail() via fail_alloc_page?
 
-g++ -o futex-fp -fpermissive --no-omit-frame-pointer futex.c
+Kmemleak calls kmem_cache_alloc() on a cache with SLAB_LEAKNOTRACE, so the
+first point of failure injection is __should_failslab() which we can
+handle with the slab flag. The slab allocator itself ends up calling
+alloc_pages() to allocate a slab page (and __GFP_NOFAIL is explicitly
+cleared). Here we have the second potential failure injection via
+fail_alloc_page(). That's unless the order < fail_page_alloc.min_order
+which I think is the default case (min_order = 1 while the slab page
+allocation for kmemleak would need an order of 0. It's not ideal but we
+may get away with it.
 
-and profiled using:
+> Seems we need to insert the flag between alloc_slab_page and
+> alloc_pages()? Without GFP flag, it's difficult to pass info to
+> should_fail_alloc_page and keep simple at same time. 
 
-tools/perf/perf record --user-regs=IP,SP,BP \
-	-g --call-graph=dwarf,1024 -e cycles -- ./futex-fp
+Indeed.
 
-Output of
+> Or as Michal suggested, completely disabling page alloc fail injection
+> when kmemleak enabled. And enable it again when kmemleak off. 
 
-tools/perf/perf report -i perf.data --stdio 
+Dmitry's point was that kmemleak is still useful to detect leaks on the
+error path where errors are actually introduced by the fault injection.
+Kmemleak cannot cope with allocation failures as it needs a pretty
+precise tracking of the allocated objects.
 
-demonstrates the effect of the patch change so before saving BP 
-value on a sample we have several frames missing above main 
-function frame:
+An alternative could be to not free the early_log buffer in kmemleak and
+use that memory in an emergency when allocation fails (though I don't
+particularly like this).
 
-# Samples: 138K of event 'cpu-cycles'
-# Event count (approx.): 92713835335
-#
-# Children      Self  Command   Shared Object     Symbol                                        
-# ........  ........  ........  ................  ..........................
-#
-    96.15%     0.72%  futex-fp  futex-fp          [.] main
-            |          
-            |--95.43%--main
-            |          |          
-            |          |--71.56%--syscall
-            |          |          |          
-            |          |          |--57.28%--entry_SYSCALL_64_after_hwframe
-            |          |          |          |          
-            |          |          |           --56.95%--do_syscall_64
-            |          |          |                     |          
-            |          |          |                      --55.77%--sys_futex
+Yet another option is to use NOFAIL and remove NORETRY in kmemleak when
+fault injection is enabled.
 
-and after saving BP value on a sample we have expected 
-
-	_start
-	__libc_start_main 
-
-frames unwound:
-
-# Samples: 128K of event 'cpu-cycles'
-# Event count (approx.): 85349981034
-#
-# Children      Self  Command   Shared Object     Symbol                                        
-# ........  ........  ........  ................  ..................
-#
-    95.83%     0.00%  futex-fp  futex-fp          [.] _start
-            |
-==>         ---_start
-==>            __libc_start_main
-               main
-               |          
-               |--71.28%--syscall
-               |          |          
-               |          |--55.67%--entry_SYSCALL_64
-               |          |          |          
-               |          |           --55.40%--do_syscall_64
-               |          |                     |          
-               |          |                      --54.21%--sys_futex
-
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v2:
-- lifted restriction on frame pointer architecture so it's value is provided
-  as for i386 as for x86_64 processes
-
-MAINTAINERS file lacks references to appropriate folks for reviewing 
-  changes at arch/x86/kernel/perf_regs.c so probably it makes sense to 
-  update the file as well in this respect. 
----
- arch/x86/kernel/perf_regs.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-index e47b2dbbdef3..8d68658eff7f 100644
---- a/arch/x86/kernel/perf_regs.c
-+++ b/arch/x86/kernel/perf_regs.c
-@@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
- 	 * Most system calls don't save these registers, don't report them.
- 	 */
- 	regs_user_copy->bx = -1;
--	regs_user_copy->bp = -1;
-+	/*
-+	 * Store user space frame-pointer value on sample
-+	 * to facilitate stack unwinding for cases when
-+	 * user space executable code has such support
-+	 * enabled at compile time;
-+	 */
-+	regs_user_copy->bp = user_regs->bp;
- 	regs_user_copy->r12 = -1;
- 	regs_user_copy->r13 = -1;
- 	regs_user_copy->r14 = -1;
+-- 
+Catalin
