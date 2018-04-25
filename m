@@ -1,108 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753587AbeDYNRO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:17:14 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39568 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752831AbeDYNRM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:17:12 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Philippe CORNU <philippe.cornu@st.com>
-Cc: Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings/display/bridge: sii902x: add optional power supplies
-Date: Wed, 25 Apr 2018 16:17:25 +0300
-Message-ID: <1559016.ZjzeSVB84W@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <e18d1a3b-a2eb-74f2-ab88-7bf01af0754b@st.com>
-References: <20180425075314.19137-1-philippe.cornu@st.com> <16954794.QiYqgNKfkn@avalon> <e18d1a3b-a2eb-74f2-ab88-7bf01af0754b@st.com>
+        id S1753900AbeDYNSi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:18:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42064 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752829AbeDYNSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 09:18:36 -0400
+Date: Wed, 25 Apr 2018 14:18:33 +0100
+From: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: kvm@vger.kernel.org, qemu-devel@nongnu.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [Qemu-devel] ridiculously slow VM memory performance on Ryzen CPU
+Message-ID: <20180425131833.GK30024@redhat.com>
+Reply-To: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>
+References: <c0eaa5d5-7b1a-74f9-1d34-d8ac7cff3546@gmx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c0eaa5d5-7b1a-74f9-1d34-d8ac7cff3546@gmx.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
-
-On Wednesday, 25 April 2018 15:20:04 EEST Philippe CORNU wrote:
-> On 04/25/2018 11:01 AM, Laurent Pinchart wrote:
-> > On Wednesday, 25 April 2018 10:53:13 EEST Philippe Cornu wrote:
-> >> Add optional power supplies using the description found in
-> >> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
-> >>
-> >> There is a single 1v2 supply voltage named vcc12 from which cvcc12
-> >> (digital core) and avcc12 (TMDS analog) are derived because according
-> >> to this data sheet:
-> >> "cvcc12 and avcc12 can be derived from the same power source"
-> > 
-> > Shouldn't the power supplies be mandatory, as explained by Mark in
-> > https://lists.freedesktop.org/archives/dri-devel/2018-April/172400.html
-> > ? 
+On Wed, Apr 25, 2018 at 05:48:42PM +0800, Qu Wenruo wrote:
+> Hi,
 > 
-> Laurent,
-> Many thanks Laurent for your comment, I understood the merge of the two 
-> 1v2 power supplies but missed the "mandatory" part... maybe because this 
-> patch (with optional power supplies) already got the reviewed-by from 
-> Rob, I thought the discussion thread you pointed out was applicable 
-> "only" to totally new driver documentation.
+> When testing IO heavy work on my VM backed by Ryzen 1700 CPU, I turned
+> to brd modules, but surprisingly, the speed is even slower than some HDD:
 > 
-> So, on my side, as a "new user" of sii902x IC, no problem to put these 
-> power supplies as mandatory instead of optional properties but I would 
-> like to be sure this is applicable to both old and new bindings doc : )
+> ---
+> $ sudo modprobe brd rd_nr=1 rd_size=1048576
+> $ dd if=/dev/zero of=/dev/ram0 bs=1M count=1024
+> 1024+0 records in
+> 1024+0 records out
+> 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 9.9928 s, 107 MB/s
+> ---
+> 107MB is pretty lame...
+> Even some HDD could be faster than this.
 
-We obviously need to retain backward compatibility, so on the driver side you 
-need to treat those power supplies as optional. From a DT bindings point of 
-view, however, I think they should be mandatory for new DT.
+You are sure that QEMU is actually using KVM, and not TCG emulation
+mode, as that could account for such terrible numbers. The QEMU
+argv would confirm this or can query it live with
 
-> Rob,
-> could you please confirm these power supply properties should be 
-> "mandatory"?
-> if yes, should we then modify other optional properties like the 
-> reset-gpios too in the future?
+   virsh qemu-monitor-command --hmp $GUESTNAME "info kvm"
 
-The GPIOs properties are different in my opinion, as there's no requirement to 
-connect for instance the reset pin to a GPIO controllable by the SoC. The pin 
-could be hardwired to VCC, or connected to a system reset that is 
-automatically managed without SoC intervention. The power supplies, however, 
-are mandatory, in the sense that the chip will not work if you leave the power 
-supplies unconnected.
+> On host, it's much better:
+> ---
+> $ if=/dev/zero of=/dev/ram0 bs=1M count=1024
+> 1024+0 records in
+> 1024+0 records out
+> 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.754641 s, 1.4 GB/s
+> ---
+> 
+> For host hardware:
+> CPU: Ryzen 1700 All cores @ 3.8G
+> Mem: DDR4 2400 dual channel (8G x 2)
+> 
+> For host software:
+> Kernel:       4.16.3-1-ARCH
+> Qemu:         2.11.1-2
+> Distribution: Archlinux
+> 
+> VM setup is mostly default setup done by libvirt.
 
-> Big thanks to both of you,
+Ideally please share the guest XML description from 'virsh dumpxml $GUESTNAME'
+and the corresponding QEMU argv from /var/log/libvirt/qemu/$GUESTNAME.log
 
-You're welcome !
-
-> >> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-> >> ---
-> >> 
-> >>   Documentation/devicetree/bindings/display/bridge/sii902x.txt | 2 ++
-> >>   1 file changed, 2 insertions(+)
-> >>
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
-> >> b/Documentation/devicetree/bindings/display/bridge/sii902x.txt index
-> >> 56a3e68ccb80..9fb41fc9af51 100644
-> >> --- a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
-> >> +++ b/Documentation/devicetree/bindings/display/bridge/sii902x.txt
-> >> @@ -8,6 +8,8 @@ Optional properties:
-> >>   	- interrupts-extended or interrupt-parent + interrupts: describe
-> >>   	  the interrupt line used to inform the host about hotplug events.
-> >>   	- reset-gpios: OF device-tree gpio specification for RST_N pin.
-> >> +	- iovcc-supply: I/O supply voltage (1.8V or 3.3V, host-dependent).
-> >> +	- vcc12-supply: TMDS analog & digital core supply voltage (1.2V).
-> >>
-> >>   Optional subnodes:
-> >>   	- video input: this subnode can contain a video input port node
-
--- 
 Regards,
-
-Laurent Pinchart
+Daniel
+-- 
+|: https://berrange.com      -o-    https://www.flickr.com/photos/dberrange :|
+|: https://libvirt.org         -o-            https://fstop138.berrange.com :|
+|: https://entangle-photo.org    -o-    https://www.instagram.com/dberrange :|
