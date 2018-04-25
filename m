@@ -1,67 +1,73 @@
-Return-Path: <SRS0=KIOc=HN=goodmis.org=rostedt@kernel.org>
-X-Google-Smtp-Source: AB8JxZqbnDXhgASTUCfDRZDE/vLyJxE2sefidOKGajQ7EzoODVaXKAvIebLXDHh2TLeuD6d5ygCA
-ARC-Seal: i=1; a=rsa-sha256; t=1524602709; cv=none;
+Return-Path: <rdunlap@infradead.org>
+X-Google-Smtp-Source: AIpwx499kTh0OiGnSptftv0lkiibcn2VquGyKVQuR4FdHMnaF2b4piFD+2kjjXZW6ExncfdYzTFo
+ARC-Seal: i=1; a=rsa-sha256; t=1524617356; cv=none;
         d=google.com; s=arc-20160816;
-        b=D4q0AVjuJrg2gAy4WXV4him5QqJrV6qv5OlHParnIWCAzKkP83uDJQCEXRFnOBmcD2
-         uI7Kx4/GGJCpua1xz6MwkwHIk/7ALoy3sKe1MqXKXtR6PXK9Qu9ofoJ3kr98IsGHjF0E
-         OlGU7vHqx+DbJv6u1BL33tV15AvnpZcbeyKAd6eOVQWZu5PvORBWZkkUnLF48Z91qN1N
-         f+6dyUAqbSVkNyTSjRIsWqB2E+DyejuBRBLzRB6y6Ku0tVllvj1g6mPkowueGRx+favN
-         9C1CTjSndWWfSaWhGioK6FJ+Qn34wiWnbtx6gdHoB57v5EDWtmO73/2SR4mCBReR1CNo
-         QTdw==
+        b=kKygDZMYVQhrRgAnZHskKYYFT7AaBHS1GeMHmTNM8TzhfB2Tnwkff+7qaQ/GT8xrIw
+         DQth1onkoNQ2qLyer9EljxMQc+T/M0yAm9K6yQjcMWUj+YGWTaD4v31CkTUvLlx+LjXb
+         WoAPLVGKDVsKxr71YqqC92zKlj6zHL+V/8ivJ5UrPRnVqnKyFehWxUT6wlSiOd/1QPem
+         VfyKDDirJNawy0XT096VfZr2c3oWkoCVHTb2RV4+fXSVyptrQ2ahbWa5apiuwKzMK1l1
+         GQvIFtpIIbKnail8BKn6r2/Smv21z2DqMkpyC2i7qzwobwA99DaS44VnIrJoYUeZ0dGr
+         fcsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=opPDknKr6w6k5euqdYSaQkE6el0Gg6ZbV+r3fN9dO10=;
-        b=B87NDEIcVu+//aEbQpqMcb2k+v52pPUy6AiTOV/Ys/BBfWATJ4/T1WSzV1sBpRSRAP
-         Phq/DNvBl6lGFXeL0QPcvaqgGhOzT0HCyaaS+ZDTWQbmqvNjtbDUu9hpDbU+jeFfxNLc
-         NX4z39AWvcl/okpX9oWHTubJsmKqV5x7iiSMCipObr76qghho2u3HMmd546UeoZWprLK
-         1qejsPlMnSFRmmD+WVWfimZHUGgHZKoRZxmXCtz2LQqU8Ew2iw3VTAjEwD7hbmFKih0g
-         jKjpT4yRJ0aCm2u8ZPP6MvTlPkj5yeS24TXgFatCmLTT80xIvtQ+bJXJKUImnaV/2jBW
-         a4Hw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=3gjZPyOzS3DG+lsRb8bzypDgkQxIDcCo2pB+TeF/S9s=;
+        b=B4DpcMjg5KLPDX0xg1cX8tPTVNg4dz9MNjmtDYBZWE+M1l5FifzmnBAZeVdRntbICj
+         Vpb4k6fqcDcmr+qqtcrq2dl+5V7SPwj5XxYWuphJXABABc8cwEQnyJs8a1N5a8SQGpaq
+         6kbJTQJg94hlVK8f/teU4uGZ5/d8qpNu3aFWs06KWcgEfDHb+Qe/NEBJVH1ibmKesjxi
+         d/HMzF+Pgsm3XJ7cwW0HXNCiNJydajLNmSxZaesT0pUzRXrdzKRQXjFutWC+z8w+LFJk
+         4unAbGUr98s6+W4gfHm8FVwVMwiSXy91QTJ/PKJnNlzpke4zZeKEk8WbOOStu+o9vGpo
+         ibgA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=kioc=hn=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=KIOc=HN=goodmis.org=rostedt@kernel.org
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=b3exuqCh;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=kioc=hn=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=KIOc=HN=goodmis.org=rostedt@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D13217BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 24 Apr 2018 16:45:05 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Wei Wang <wvw@google.com>
-Cc: gregkh@linuxfoundation.org, Wei Wang <wei.vince.wang@gmail.com>, Ingo
- Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Kees
- Cook <keescook@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Crt Mori <cmo@melexis.com>, Alexei
- Starovoitov <ast@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=b3exuqCh;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
 Subject: Re: [PATCH] do not call trace_printk on non-debug build
-Message-ID: <20180424164505.0a4d15f7@gandalf.local.home>
-In-Reply-To: <CAGXk5yre3aDtVbtEz4=DdBnLrT3U=LPA69jOp9zmkfeYiZ7w=Q@mail.gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Wei Wang <wvw@google.com>
+Cc: gregkh@linuxfoundation.org, Wei Wang <wei.vince.wang@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Kees Cook <keescook@chromium.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Crt Mori <cmo@melexis.com>,
+ Alexei Starovoitov <ast@kernel.org>, linux-kernel@vger.kernel.org,
+ Joe Perches <joe@perches.com>
 References: <20180424180812.215900-1-wvw@google.com>
-	<20180424145056.7c29ea18@gandalf.local.home>
-	<CAGXk5yo44kAku+ZYx=8HzOgkEVC7ARNSER4MvWTCz-i51up=ew@mail.gmail.com>
-	<20180424151416.397fbbde@gandalf.local.home>
-	<CAGXk5yriz2CtCN-vkL0q7gdpV+f8+9GJH-FT+v3KBLb-fWoCZA@mail.gmail.com>
-	<20180424152607.71fbee34@gandalf.local.home>
-	<CAGXk5yre3aDtVbtEz4=DdBnLrT3U=LPA69jOp9zmkfeYiZ7w=Q@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ <20180424145056.7c29ea18@gandalf.local.home>
+ <CAGXk5yo44kAku+ZYx=8HzOgkEVC7ARNSER4MvWTCz-i51up=ew@mail.gmail.com>
+ <20180424151416.397fbbde@gandalf.local.home>
+ <CAGXk5yriz2CtCN-vkL0q7gdpV+f8+9GJH-FT+v3KBLb-fWoCZA@mail.gmail.com>
+ <20180424152607.71fbee34@gandalf.local.home>
+ <CAGXk5yre3aDtVbtEz4=DdBnLrT3U=LPA69jOp9zmkfeYiZ7w=Q@mail.gmail.com>
+ <20180424164505.0a4d15f7@gandalf.local.home>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e9195edc-8661-f4d7-eb0b-ac839eea1974@infradead.org>
+Date: Tue, 24 Apr 2018 17:49:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180424164505.0a4d15f7@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598651942651560845?=
-X-GMAIL-MSGID: =?utf-8?q?1598661810246334516?=
+X-GMAIL-MSGID: =?utf-8?q?1598677168737782717?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 24 Apr 2018 20:39:27 +0000
-Wei Wang <wvw@google.com> wrote:
+On 04/24/2018 01:45 PM, Steven Rostedt wrote:
+> On Tue, 24 Apr 2018 20:39:27 +0000
+> Wei Wang <wvw@google.com> wrote:
+> 
+>> The config is not something new and it is controlling pr_debug and
+>> pr_devel, so might not be too annoying, IMHO. But I agree this is not a
+>> problem from us but from abusers.
+> 
+> And is the reason I never use pr_debug() and pr_devel().
 
-> The config is not something new and it is controlling pr_debug and
-> pr_devel, so might not be too annoying, IMHO. But I agree this is not a
-> problem from us but from abusers.
+pr_debug() is good along with dynamic debug.
 
-And is the reason I never use pr_debug() and pr_devel().
-
--- Steve
+-- 
+~Randy
