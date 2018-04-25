@@ -1,64 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753670AbeDYWKq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 18:10:46 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:40474 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752866AbeDYWKo (ORCPT
+        id S1753712AbeDYWLb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 18:11:31 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46378 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751887AbeDYWLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 18:10:44 -0400
-X-Google-Smtp-Source: AIpwx4+kw369VQBcCa23huQ8t+JNy4v4X4lxaybVnmVSN9JfyabNIWWyDvt4uqgk3P5EF5RjIoZG1oFJD9e5R1j8QL0=
+        Wed, 25 Apr 2018 18:11:24 -0400
+X-Google-Smtp-Source: AIpwx48twdQ7q1LMpmmnRA+B6Y2No23xmkMZ8sxUOl3nlk0g5XvPxjTDlrCHshuxXd1LTr+4IOn+xg==
+Date: Wed, 25 Apr 2018 15:11:23 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org
+Subject: Re: [PATCH v6 06/10] drivers: qcom: rpmh-rsc: allow invalidation of
+ sleep/wake TCS
+Message-ID: <20180425221123.GD243180@google.com>
+References: <20180419221635.17849-1-ilina@codeaurora.org>
+ <20180419221635.17849-7-ilina@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180326172727.025EBF16@viggo.jf.intel.com>
-References: <20180326172721.D5B2CBB4@viggo.jf.intel.com> <20180326172727.025EBF16@viggo.jf.intel.com>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Wed, 25 Apr 2018 22:10:42 +0000
-Message-ID: <CALvZod5NTauM6MHW7D=h0mTDNYFd-1QyWrOxnhiixCgtHP=Taw@mail.gmail.com>
-Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from PROT_EXEC
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        stable@kernel.org, linuxram@us.ibm.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, mpe@ellerman.id.au,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180419221635.17849-7-ilina@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 5:27 PM, Dave Hansen
-<dave.hansen@linux.intel.com> wrote:
->
-> From: Dave Hansen <dave.hansen@linux.intel.com>
->
-> I got a bug report that the following code (roughly) was
-> causing a SIGSEGV:
->
->         mprotect(ptr, size, PROT_EXEC);
->         mprotect(ptr, size, PROT_NONE);
->         mprotect(ptr, size, PROT_READ);
->         *ptr = 100;
->
-> The problem is hit when the mprotect(PROT_EXEC)
-> is implicitly assigned a protection key to the VMA, and made
-> that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
-> failed to remove the protection key, and the PROT_NONE->
-> PROT_READ left the PTE usable, but the pkey still in place
-> and left the memory inaccessible.
->
-> To fix this, we ensure that we always "override" the pkee
-> at mprotect() if the VMA does not have execute-only
-> permissions, but the VMA has the execute-only pkey.
->
-> We had a check for PROT_READ/WRITE, but it did not work
-> for PROT_NONE.  This entirely removes the PROT_* checks,
-> which ensures that PROT_NONE now works.
->
-> Reported-by: Shakeel Butt <shakeelb@google.com>
->
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Fixes: 62b5f7d013f ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
+On Thu, Apr 19, 2018 at 04:16:31PM -0600, Lina Iyer wrote:
+> Allow sleep and wake commands to be cleared from the respective TCSes,
+> so that they can be re-populated.
+> 
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> ---
+> 
+> Changes in v6:
+> 	- remove unnecessary locks around __tcs_invalidate
+> 	- rename function to tcs_invaldiate
+> 
+> Changes in v4:
+> 	- refactored the rphm_rsc_invalidate()
+> ---
+>  drivers/soc/qcom/rpmh-rsc.c | 45 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+> 
+> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+> index d169f7da5422..170d4a10275d 100644
+> --- a/drivers/soc/qcom/rpmh-rsc.c
+> +++ b/drivers/soc/qcom/rpmh-rsc.c
+> @@ -101,6 +101,51 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
+>  	return &drv->tcs[type];
+>  }
+>  
+> +static int tcs_invalidate(struct rsc_drv *drv, int type)
+> +{
+> +	int m;
+> +	struct tcs_group *tcs;
+> +
+> +	tcs = get_tcs_of_type(drv, type);
+> +	if (IS_ERR(tcs))
+> +		return PTR_ERR(tcs);
+> +
+> +	spin_lock(&tcs->lock);
+> +	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
+> +		spin_unlock(&tcs->lock);
+> +		return 0;
+> +	}
+> +
+> +	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
+> +		if (!tcs_is_free(drv, m)) {
+> +			spin_unlock(&tcs->lock);
+> +			return -EAGAIN;
+> +		}
+> +		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0);
+> +		bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
 
-Hi Dave, are you planning to send the next version of this patch or
-going with this one?
+Shouldn't this only clear the slots corresponding to 'm'?
+
+If resetting the entire bitmap is really intended it could be done
+once after the loop, though the bitmap might be left in an
+inconsistent state if a TCS is still in use.
