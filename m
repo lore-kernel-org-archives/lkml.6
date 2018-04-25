@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeDYJgr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:36:47 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:13791 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751271AbeDYJcz (ORCPT
+        id S1752273AbeDYJhW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:37:22 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:42507 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751186AbeDYJcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:32:55 -0400
-X-UUID: f92e10b6a9384d149de1f18f6b749e8c-20180425
+        Wed, 25 Apr 2018 05:32:54 -0400
+X-UUID: 62ca81b4d68e4dd796048724af39c5c4-20180425
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
         <lee.jones@linaro.org>, <a.zummo@towertech.it>,
@@ -17,9 +17,9 @@ CC: <devicetree@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 04/17] dt-bindings: mfd: mt6397: add a description for MT6323 power controller
-Date: Wed, 25 Apr 2018 17:32:30 +0800
-Message-ID: <317723e775d8de4aca70e17bf365db0c6b453666.1524646231.git.sean.wang@mediatek.com>
+Subject: [PATCH v2 05/17] mfd: mt6397: add MT6323 RTC support into MT6397 driver
+Date: Wed, 25 Apr 2018 17:32:31 +0800
+Message-ID: <44d4fa8ed71e3d806e26ff1fb71aecf05f18f49c.1524646231.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1524646231.git.sean.wang@mediatek.com>
 References: <cover.1524646231.git.sean.wang@mediatek.com>
@@ -32,38 +32,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Add a description for MT6323 power controller on MT6323 and link it to the
-detailed binding documentation.
+Add compatible string as "mt6323-rtc" that will make the OF core spawn
+child devices for the RTC subnode of that MT6323 MFD device.
 
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- Documentation/devicetree/bindings/mfd/mt6397.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mfd/mt6397-core.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/mt6397.txt b/Documentation/devicetree/bindings/mfd/mt6397.txt
-index 11a748d..61115ea 100644
---- a/Documentation/devicetree/bindings/mfd/mt6397.txt
-+++ b/Documentation/devicetree/bindings/mfd/mt6397.txt
-@@ -8,6 +8,7 @@ MT6397/MT6323 is a multifunction device with the following sub modules:
- - Clock
- - LED
- - Keys
-+- Power controller
+diff --git a/drivers/mfd/mt6397-core.c b/drivers/mfd/mt6397-core.c
+index 77b64bd..c70d5b2 100644
+--- a/drivers/mfd/mt6397-core.c
++++ b/drivers/mfd/mt6397-core.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2014 MediaTek Inc.
++ * Copyright (c) 2014-2018 MediaTek Inc.
+  * Author: Flora Fu, MediaTek
+  *
+  * This program is free software; you can redistribute it and/or modify
+@@ -13,6 +13,7 @@
+  */
  
- It is interfaced to host controller using SPI interface by a proprietary hardware
- called PMIC wrapper or pwrap. MT6397/MT6323 MFD is a child device of pwrap.
-@@ -48,6 +49,11 @@ Optional subnodes:
- 		- compatible: "mediatek,mt6397-keys" or "mediatek,mt6323-keys"
- 	see Documentation/devicetree/bindings/input/mtk-pmic-keys.txt
+ #include <linux/interrupt.h>
++#include <linux/ioport.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/of_irq.h>
+@@ -23,6 +24,9 @@
+ #include <linux/mfd/mt6397/registers.h>
+ #include <linux/mfd/mt6323/registers.h>
  
-+- power-controller
-+	Required properties:
-+		- compatible: "mediatek,mt6323-pwrc"
-+	For details, see Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
++#define MT6323_RTC_BASE		0x8000
++#define MT6323_RTC_SIZE		0x40
 +
- Example:
- 	pwrap: pwrap@1000f000 {
- 		compatible = "mediatek,mt8135-pwrap";
+ #define MT6397_RTC_BASE		0xe000
+ #define MT6397_RTC_SIZE		0x3e
+ 
+@@ -30,6 +34,11 @@
+ #define MT6391_CID_CODE		0x91
+ #define MT6397_CID_CODE		0x97
+ 
++static const struct resource mt6323_rtc_resources[] = {
++	DEFINE_RES_MEM(MT6323_RTC_BASE, MT6323_RTC_SIZE),
++	DEFINE_RES_IRQ(MT6323_IRQ_STATUS_RTC),
++};
++
+ static const struct resource mt6397_rtc_resources[] = {
+ 	{
+ 		.start = MT6397_RTC_BASE,
+@@ -55,6 +64,11 @@ static const struct resource mt6397_keys_resources[] = {
+ 
+ static const struct mfd_cell mt6323_devs[] = {
+ 	{
++		.name = "mt6323-rtc",
++		.num_resources = ARRAY_SIZE(mt6323_rtc_resources),
++		.resources = mt6323_rtc_resources,
++		.of_compatible = "mediatek,mt6323-rtc",
++	}, {
+ 		.name = "mt6323-regulator",
+ 		.of_compatible = "mediatek,mt6323-regulator"
+ 	}, {
 -- 
 2.7.4
