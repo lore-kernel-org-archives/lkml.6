@@ -1,23 +1,23 @@
 Return-Path: <jeremy.linton@arm.com>
-X-Google-Smtp-Source: AB8JxZooR4jxy1R6s1o2v9X1mdBt/lds3Y2WsIPBbHwmYcflj7qmsK6Hb+s4rJVhoj8eqYAE2g/h
-ARC-Seal: i=1; a=rsa-sha256; t=1524702376; cv=none;
+X-Google-Smtp-Source: AIpwx4/J+MtouYwXEN84jl1nPs9lm3faSrIZgLqL0cPJSuBJwAZUEkXMkRLok8sekUklRISc3mkB
+ARC-Seal: i=1; a=rsa-sha256; t=1524702372; cv=none;
         d=google.com; s=arc-20160816;
-        b=atvaFUA8lPTlBik6o8KlM/HmmkC6WQwpCcFx5ZayweIG0mlihiutxiyrPFvdq4ieLt
-         RZErDgP9FoHaM4ydfCxhdrdBJLEtmj3kz2Toa1ud333IrKYSq/SmAOFf6kLV0nPsA98H
-         qowdfxdhesTl/xIMmPOSEW6YWwYd1FZkAgh4pQwic+V3wwDvtzJ+rnKE54DtAq2kLgsu
-         fW88PynNsDB6Q/kqRplTGg+LZOMQLmEdmvkH3XA+INu5I7G4QUL61cxY4J0WWcnnKLu3
-         5k3T3bjRky9UI0HEbJV8XPnxwmOK7MNPWJXlfCGCYBD6a2Xdkgm1IoP7+dRHbHnQUNXr
-         uLUg==
+        b=Cj/jlnCXEkkLaOkFgFXal+mqWsxr1/wRNZ54mDhMJ0dECV4mUpWRqjiarYOhUeeu53
+         ndWg0ODIz34AUlhC8vNSFsibLBhsYv94NVXuQbsIgg7rRYDT7Ph8OqojPh4gWLEjz6hM
+         s03fgTnmOnTKC1Bt3oiWckHIWox4SJHKj4Wndvq4lW0f4yg7UQmSPD/Yx8YwuvU6WzKn
+         wh7qfIgbMweYM1mhfzs69JV9JlVLxI8h67vIZaNxCcIPzPYEJim9TvL0eGjbMuvNyOBo
+         sumg+UqTV/57wdVBXQ9bMYWtdTO3JxzI0zMQncAj3AtlIdSQPzYDpTlzwponCopJjVc5
+         1Isw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=iPZKjSeNcnhcG2wFRWM3tqfYzqKCEuP7rtJqHUpKyCs=;
-        b=ist88FgR+TWCfs7Zw0tSvNRzd69giccA2QePoEB/izcmBvG/U4/KMJPlTb2mOUpcmP
-         miHS8vRn5gysSu/3ehoFICUxSkxUsYoIdVZmZ0OPf7rFQEfU2juVGh4gs+fgDxTr46xP
-         mKlVsumKlcYVWiK/sf1g3xc2eHcVdHRh+8ta85QgBEI7pFVXy8FhBbvrykKk2gdg+eCr
-         rNOeTKBc6qNW03hGzGdPNBZ91PhUiqTlYB6CJcPfscgRiU6q5CNOJTQ2NqYQeZ/dMG/U
-         IteryohW730lT+P56xFe3VkThLdzSTsjYkDFlVhk/YPNERJKbc86TSRzKL+z1t76SQCP
-         6GRA==
+        bh=Ffyu3dxJi3Ofe4pvMrIAV+UdTchCL3z0BsrO55t1wsk=;
+        b=ywOWl8TGPCHIUO/KB4gS3CXRVb3yMTdRgr2PWSAp0Q4GpludfsZHUZOG2PMfrmLt3C
+         Otp2LrsNZfk+fY5YVYZkVZs13AJOFnW05SyHALerl9VfIpr8JUDHMMm2qjqAaTpR+LBR
+         hHcuu5RAfaF0rFftfSzhjrGI+H4rUiiNdO0xUVGa+JmN2XdlgoMMbT7gSlWdBFHsYWwj
+         zkSj1/cRm015bzXqe3HyYQnWUNePXayagrPofcc9r34jZSgFXUJTsJ/iyX3nbSBBzgu5
+         c6neY283U+vK6dOFNcbQLO/MFQ416zOGXRw6v8jpa0A9c+Mvct4RthcFp7P7Xitxldy4
+         dgSw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
 Authentication-Results: mx.google.com;
@@ -49,66 +49,112 @@ Cc: Sudeep.Holla@arm.com,
 	timur@qti.qualcomm.com,
 	ard.biesheuvel@linaro.org,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v8 06/13] ACPI: Enable PPTT support on ARM64
-Date: Wed, 25 Apr 2018 18:31:14 -0500
-Message-Id: <20180425233121.13270-7-jeremy.linton@arm.com>
+Subject: [PATCH v8 03/13] cacheinfo: rename of_node to fw_token
+Date: Wed, 25 Apr 2018 18:31:11 -0500
+Message-Id: <20180425233121.13270-4-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180425233121.13270-1-jeremy.linton@arm.com>
 References: <20180425233121.13270-1-jeremy.linton@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598766319386198121?=
-X-GMAIL-MSGID: =?utf-8?q?1598766319386198121?=
+X-GMAIL-THRID: =?utf-8?q?1598766314314032259?=
+X-GMAIL-MSGID: =?utf-8?q?1598766314314032259?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Now that we have a PPTT parser, in preparation for its use
-on arm64, lets build it.
+Rename and change the type of of_node to indicate
+it is a generic pointer which is generally only used
+for comparison purposes. In a later patch we will put
+an ACPI/PPTT token pointer in fw_token so that
+the code which builds the shared cpu masks can be reused.
 
 Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- arch/arm64/Kconfig    | 1 +
- drivers/acpi/Kconfig  | 3 +++
- drivers/acpi/Makefile | 1 +
- 3 files changed, 5 insertions(+)
+ drivers/base/cacheinfo.c  | 16 +++++++++-------
+ include/linux/cacheinfo.h |  8 +++-----
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index eb2cf4938f6d..cff33d9eff0c 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -7,6 +7,7 @@ config ARM64
- 	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
- 	select ACPI_MCFG if ACPI
- 	select ACPI_SPCR_TABLE if ACPI
-+	select ACPI_PPTT if ACPI
- 	select ARCH_CLOCKSOURCE_DATA
- 	select ARCH_HAS_DEBUG_VIRTUAL
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
-diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-index 516d7b36d6fb..b533eeb6139d 100644
---- a/drivers/acpi/Kconfig
-+++ b/drivers/acpi/Kconfig
-@@ -547,6 +547,9 @@ config ACPI_CONFIGFS
+diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+index a872523e8951..597aacb233fc 100644
+--- a/drivers/base/cacheinfo.c
++++ b/drivers/base/cacheinfo.c
+@@ -35,7 +35,7 @@ struct cpu_cacheinfo *get_cpu_cacheinfo(unsigned int cpu)
+ static inline bool cache_leaves_are_shared(struct cacheinfo *this_leaf,
+ 					   struct cacheinfo *sib_leaf)
+ {
+-	return sib_leaf->of_node == this_leaf->of_node;
++	return sib_leaf->fw_token == this_leaf->fw_token;
+ }
  
- if ARM64
- source "drivers/acpi/arm64/Kconfig"
-+
-+config ACPI_PPTT
-+	bool
- endif
+ /* OF properties to query for a given cache type */
+@@ -167,9 +167,10 @@ static int cache_setup_of_node(unsigned int cpu)
+ 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+ 	unsigned int index = 0;
  
- config TPS68470_PMIC_OPREGION
-diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-index 48e202752754..6d59aa109a91 100644
---- a/drivers/acpi/Makefile
-+++ b/drivers/acpi/Makefile
-@@ -88,6 +88,7 @@ obj-$(CONFIG_ACPI_BGRT)		+= bgrt.o
- obj-$(CONFIG_ACPI_CPPC_LIB)	+= cppc_acpi.o
- obj-$(CONFIG_ACPI_SPCR_TABLE)	+= spcr.o
- obj-$(CONFIG_ACPI_DEBUGGER_USER) += acpi_dbg.o
-+obj-$(CONFIG_ACPI_PPTT) 	+= pptt.o
+-	/* skip if of_node is already populated */
+-	if (this_cpu_ci->info_list->of_node)
++	/* skip if fw_token is already populated */
++	if (this_cpu_ci->info_list->fw_token) {
+ 		return 0;
++	}
  
- # processor has its own "processor." module_param namespace
- processor-y			:= processor_driver.o
+ 	if (!cpu_dev) {
+ 		pr_err("No cpu device for CPU %d\n", cpu);
+@@ -190,7 +191,7 @@ static int cache_setup_of_node(unsigned int cpu)
+ 		if (!np)
+ 			break;
+ 		cache_of_set_props(this_leaf, np);
+-		this_leaf->of_node = np;
++		this_leaf->fw_token = np;
+ 		index++;
+ 	}
+ 
+@@ -278,7 +279,7 @@ static void cache_shared_cpu_map_remove(unsigned int cpu)
+ 			cpumask_clear_cpu(cpu, &sib_leaf->shared_cpu_map);
+ 			cpumask_clear_cpu(sibling, &this_leaf->shared_cpu_map);
+ 		}
+-		of_node_put(this_leaf->of_node);
++		of_node_put(this_leaf->fw_token);
+ 	}
+ }
+ 
+@@ -323,8 +324,9 @@ static int detect_cache_attributes(unsigned int cpu)
+ 	if (ret)
+ 		goto free_ci;
+ 	/*
+-	 * For systems using DT for cache hierarchy, of_node and shared_cpu_map
+-	 * will be set up here only if they are not populated already
++	 * For systems using DT for cache hierarchy, fw_token
++	 * and shared_cpu_map will be set up here only if they are
++	 * not populated already
+ 	 */
+ 	ret = cache_shared_cpu_map_setup(cpu);
+ 	if (ret) {
+diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
+index 3d9805297cda..0c6f658054d2 100644
+--- a/include/linux/cacheinfo.h
++++ b/include/linux/cacheinfo.h
+@@ -34,9 +34,8 @@ enum cache_type {
+  * @shared_cpu_map: logical cpumask representing all the cpus sharing
+  *	this cache node
+  * @attributes: bitfield representing various cache attributes
+- * @of_node: if devicetree is used, this represents either the cpu node in
+- *	case there's no explicit cache node or the cache node itself in the
+- *	device tree
++ * @fw_token: Unique value used to determine if different cacheinfo
++ *	structures represent a single hardware cache instance.
+  * @disable_sysfs: indicates whether this node is visible to the user via
+  *	sysfs or not
+  * @priv: pointer to any private data structure specific to particular
+@@ -65,8 +64,7 @@ struct cacheinfo {
+ #define CACHE_ALLOCATE_POLICY_MASK	\
+ 	(CACHE_READ_ALLOCATE | CACHE_WRITE_ALLOCATE)
+ #define CACHE_ID		BIT(4)
+-
+-	struct device_node *of_node;
++	void *fw_token;
+ 	bool disable_sysfs;
+ 	void *priv;
+ };
 -- 
 2.13.6
