@@ -1,187 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751414AbeDYGcd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:32:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38088 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeDYGcb (ORCPT
+        id S1751436AbeDYGfC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:35:02 -0400
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:54597 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750929AbeDYGfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:32:31 -0400
+        Wed, 25 Apr 2018 02:35:00 -0400
+X-Google-Smtp-Source: AIpwx4/OU8mctMyOX7CaQkZZiwMd1A2YHOAa/zp6fCnXMUYFk7B4Vfbb2dpBi9X253TrR4ENRyBOOw==
+Date: Wed, 25 Apr 2018 08:34:55 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: Dongwon Kim <dongwon.kim@intel.com>, jgross@suse.com,
+        Artem Mygaiev <Artem_Mygaiev@epam.com>, Wei Liu <wei.liu2@citrix.com>,
+        konrad.wilk@oracle.com, airlied@linux.ie,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
+        boris.ostrovsky@oracle.com,
+        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
+Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+Message-ID: <20180425063455.GH25142@phenom.ffwll.local>
+Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        Dongwon Kim <dongwon.kim@intel.com>, jgross@suse.com,
+        Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        Wei Liu <wei.liu2@citrix.com>, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
+        boris.ostrovsky@oracle.com,
+        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
+References: <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+ <20180420071914.GG31310@phenom.ffwll.local>
+ <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
+ <20180423115242.ywdwqblj2aseu3fr@citrix.com>
+ <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
+ <20180424115437.GT31310@phenom.ffwll.local>
+ <18ab5f76-00b0-42a0-fcb8-e0cbf4cdd527@gmail.com>
+ <20180424203514.GA26787@downor-Z87X-UD5H>
+ <43bc755f-3e31-6841-0962-542c42515f88@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 25 Apr 2018 12:02:29 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 8/9] mtd: nand: qcom: helper function for raw read
-In-Reply-To: <20180423085817.74e56091@xps13>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
- <1522845745-6624-9-git-send-email-absahu@codeaurora.org>
- <20180410114428.68d59c8d@xps13>
- <c3e32eb24408a973d0c89984a466d9da@codeaurora.org>
- <20180422181929.65d42ca8@xps13>
- <484485e160af41cf062549938c53d078@codeaurora.org>
- <20180423085817.74e56091@xps13>
-Message-ID: <892130678772dca7116bd8dcdcb3cc44@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <43bc755f-3e31-6841-0962-542c42515f88@gmail.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-23 12:28, Miquel Raynal wrote:
-> Hi Abhishek,
+On Wed, Apr 25, 2018 at 09:07:07AM +0300, Oleksandr Andrushchenko wrote:
+> On 04/24/2018 11:35 PM, Dongwon Kim wrote:
+> > Had a meeting with Daniel and talked about bringing out generic
+> > part of hyper-dmabuf to the userspace, which means we most likely
+> > reuse IOCTLs defined in xen-zcopy for our use-case if we follow
+> > his suggestion.
+> I will still have kernel side API, so backends/frontends implemented
+> in the kernel can access that functionality as well.
+> > 
+> > So assuming we use these IOCTLs as they are,
+> > Several things I would like you to double-check..
+> > 
+> > 1. returning gref as is to the user space is still unsafe because
+> > it is a constant, easy to guess and any process that hijacks it can easily
+> > exploit the buffer. So I am wondering if it's possible to keep dmabuf-to
+> > -gref or gref-to-dmabuf in kernel space and add other layers on top
+> > of those in actual IOCTLs to add some safety.. We introduced flink like
+> > hyper_dmabuf_id including random number but many says even that is still
+> > not safe.
+> Yes, it is generally unsafe. But even if we have implemented
+> the approach you have in hyper-dmabuf or similar, what stops
+> malicious software from doing the same with the existing gntdev UAPI?
+> No need to brute force new UAPI if there is a simpler one.
+> That being said, I'll put security aside at the first stage,
+> but of course we can start investigating ways to improve
+> (I assume you already have use-cases where security issues must
+> be considered, so, probably you can tell more on what was investigated
+> so far).
+
+Maybe a bit more context here:
+
+So in graphics we have this old flink approach for buffer sharing with
+processes, and it's unsafe because way too easy to guess the buffer
+handles. And anyone with access to the graphics driver can then import
+that buffer object. We switched to file descriptor passing to make sure
+only the intended recipient can import a buffer.
+
+So at the vm->vm level it sounds like grefs are safe, because they're only
+for a specific other guest (or sets of guests, not sure about). That means
+security is only within the OS. For that you need to make sure that
+unpriviledge userspace simply can't ever access a gref. If that doesn't
+work out, then I guess we should improve the xen gref stuff to have a more
+secure cookie.
+
+> > 2. maybe we could take hypervisor-independent process (e.g. SGT<->page)
+> > out of xen-zcopy and put those in a new helper library.
+> I believe this can be done, but at the first stage I would go without
+> that helper library, so it is clearly seen what can be moved to it later
+> (I know that you want to run ACRN as well, but can I run it on ARM? ;)
+
+There's already helpers for walking sgtables and adding pages/enumerating
+pages. I don't think we need more.
+
+> > 3. please consider the case where original DMA-BUF's first offset
+> > and last length are not 0 and PAGE_SIZE respectively. I assume current
+> > xen-zcopy only supports page-aligned buffer with PAGE_SIZE x n big.
+> Hm, what is the use-case for that?
+
+dma-buf is always page-aligned. That's a hard constraint of the linux
+dma-buf interface spec.
+-Daniel
+
+> > thanks,
+> > DW
+> Thank you,
+> Oleksandr
+> > On Tue, Apr 24, 2018 at 02:59:39PM +0300, Oleksandr Andrushchenko wrote:
+> > > On 04/24/2018 02:54 PM, Daniel Vetter wrote:
+> > > > On Mon, Apr 23, 2018 at 03:10:35PM +0300, Oleksandr Andrushchenko wrote:
+> > > > > On 04/23/2018 02:52 PM, Wei Liu wrote:
+> > > > > > On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko wrote:
+> > > > > > > > >       the gntdev.
+> > > > > > > > > 
+> > > > > > > > > I think this is generic enough that it could be implemented by a
+> > > > > > > > > device not tied to Xen. AFAICT the hyper_dma guys also wanted
+> > > > > > > > > something similar to this.
+> > > > > > > > You can't just wrap random userspace memory into a dma-buf. We've just had
+> > > > > > > > this discussion with kvm/qemu folks, who proposed just that, and after a
+> > > > > > > > bit of discussion they'll now try to have a driver which just wraps a
+> > > > > > > > memfd into a dma-buf.
+> > > > > > > So, we have to decide either we introduce a new driver
+> > > > > > > (say, under drivers/xen/xen-dma-buf) or extend the existing
+> > > > > > > gntdev/balloon to support dma-buf use-cases.
+> > > > > > > 
+> > > > > > > Can anybody from Xen community express their preference here?
+> > > > > > > 
+> > > > > > Oleksandr talked to me on IRC about this, he said a few IOCTLs need to
+> > > > > > be added to either existing drivers or a new driver.
+> > > > > > 
+> > > > > > I went through this thread twice and skimmed through the relevant
+> > > > > > documents, but I couldn't see any obvious pros and cons for either
+> > > > > > approach. So I don't really have an opinion on this.
+> > > > > > 
+> > > > > > But, assuming if implemented in existing drivers, those IOCTLs need to
+> > > > > > be added to different drivers, which means userspace program needs to
+> > > > > > write more code and get more handles, it would be slightly better to
+> > > > > > implement a new driver from that perspective.
+> > > > > If gntdev/balloon extension is still considered:
+> > > > > 
+> > > > > All the IOCTLs will be in gntdev driver (in current xen-zcopy terminology):
+> > > I was lazy to change dumb to dma-buf, so put this notice ;)
+> > > > >   - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
+> > > > >   - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
+> > > > >   - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
+> > > > s/DUMB/DMA_BUF/ please. This is generic dma-buf, it has nothing to do with
+> > > > the dumb scanout buffer support in the drm/gfx subsystem. This here can be
+> > > > used for any zcopy sharing among guests (as long as your endpoints
+> > > > understands dma-buf, which most relevant drivers do).
+> > > Of course, please see above
+> > > > -Daniel
+> > > > 
+> > > > > Balloon driver extension, which is needed for contiguous/DMA
+> > > > > buffers, will be to provide new *kernel API*, no UAPI is needed.
+> > > > > 
+> > > > > > Wei.
+> > > > > Thank you,
+> > > > > Oleksandr
+> > > > > _______________________________________________
+> > > > > dri-devel mailing list
+> > > > > dri-devel@lists.freedesktop.org
+> > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
 > 
-> On Mon, 23 Apr 2018 11:58:42 +0530, Abhishek Sahu
-> <absahu@codeaurora.org> wrote:
-> 
->> On 2018-04-22 21:49, Miquel Raynal wrote:
->> > Hi Abhishek,
->> > > On Thu, 12 Apr 2018 12:36:42 +0530, Abhishek Sahu
->> > <absahu@codeaurora.org> wrote:
->> > >> On 2018-04-10 15:14, Miquel Raynal wrote:
->> >> > Hi Abhishek,
->> >> > > On Wed,  4 Apr 2018 18:12:24 +0530, Abhishek Sahu
->> >> > <absahu@codeaurora.org> wrote:
->> >> > >> This patch does minor code reorganization for raw reads.
->> >> >> Currently the raw read is required for complete page but for
->> >> >> subsequent patches related with erased codeword bit flips
->> >> >> detection, only few CW should be read. So, this patch adds
->> >> >> helper function and introduces the read CW bitmask which
->> >> >> specifies which CW reads are required in complete page.
->> >> > > I am not sure this is the right approach for subpage reads. If the
->> >> > controller supports it, you should just enable it in chip->options.
->> >> >
->> >>   Thanks Miquel.
->> >> >>   It is internal to this file only. This patch makes one static helper
->> >>   function which provides the support to read subpages.
->> > > Drivers should expose raw helpers, why keeping this helper static then?
->> > >> >> >> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> >> >> ---
->> >> >>  drivers/mtd/nand/qcom_nandc.c | 186 >> +++++++++++++++++++++++++-----------------
->> >> >>  1 file changed, 110 insertions(+), 76 deletions(-)
->> >> >> >> diff --git a/drivers/mtd/nand/qcom_nandc.c >> b/drivers/mtd/nand/qcom_nandc.c
->> >> >> index 40c790e..f5d1fa4 100644
->> >> >> --- a/drivers/mtd/nand/qcom_nandc.c
->> >> >> +++ b/drivers/mtd/nand/qcom_nandc.c
->> >> >> @@ -1590,6 +1590,114 @@ static int check_flash_errors(struct >> qcom_nand_host *host, int cw_cnt)
->> >> >>  }
->> >> >> >>  /*
->> >> >> + * Helper to perform the page raw read operation. The read_cw_mask >> will be
->> >> >> + * used to specify the codewords for which the data should be read. >> The
->> >> >> + * single page contains multiple CW. Sometime, only few CW data is >> required
->> >> >> + * in complete page. Also, start address will be determined with
->> >> >> + * this CW mask to skip unnecessary data copy from NAND flash device. >> Then,
->> >> >> + * actual data copy from NAND controller to data buffer will be done >> only
->> >> >> + * for the CWs which have the mask set.
->> >> >> + */
->> >> >> +static int
->> >> >> +nandc_read_page_raw(struct mtd_info *mtd, struct nand_chip *chip,
->> >> >> +		    u8 *data_buf, u8 *oob_buf,
->> >> >> +		    int page, unsigned long read_cw_mask)
->> >> >> +{
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-  <snip>
-
->> >> >> -	free_descs(nandc);
->> >> >> -
->> >> >> -	if (!ret)
->> >> >> -		ret = check_flash_errors(host, ecc->steps);
->> >> >> -
->> >> >> -	return 0;
->> >> >> +	return nandc_read_page_raw(mtd, chip, buf, chip->oob_poi, page,
->> >> >> +				   BIT(chip->ecc.steps) - 1);
->> >> > > I don't understand this. chip->ecc.steps is constant, right? So you
->> >> > always ask for the same subpage?
->> >> >>   We need to do raw read for subpages in which we got uncorrectable
->> >>   error in next patch for erased page bitflip detection. This patch >> does
->> >>   reorganization of raw read and moves common code in helper function
->> >>   nandc_read_page_raw.
->> >> >>   For nomral raw read, all the subpages will be read so
->> >>   BIT(chip->ecc.steps) - 1 is used for qcom_nandc_read_page_raw.
->> >> >>   While for erased page raw read, only those sub pages will be
->> >>   read for which the controller gives the uncorrectable error.
->> > > Still not okay: the driver should expose a way to do raw reads no
->> > matter the length and the start and you should use that in a generic
->> > way.
->> >
->>   Thanks Miquel.
->>   I will explore regarding that.
->>   Looks like, we can some helper like read_subpage.
-> 
-> Of course, when you implement raw accessors you can have static helpers
-> to clarify the code.
-> 
-
-  Hi Miquel,
-
-  I checked regarding generic function.
-
-  Normally the other NAND controller stores the data in main area
-  and ecc bytes in oob area. So if page size is 2048+64 then 2048
-  data bytes will go in main area followed by ECC bytes
-
-  Main                 |        OOB
-  ------------------------------------
-  D1 D2...........D2048|E1..........E64
-
-  The QCOM nand contoller follows different layout in which this
-  2048+64 is internally divided in 528 bytes codeword so it will
-  come to 4 codewords. Each codeword contains 516 bytes followed
-  by ECC parity bytes. Also in at 0x1f0 offset in each CW, the bad
-  block marker is stored. so each CW contains badblock marker also.
-  The avilable OOB bytes are 16 which is also protected by ECC.
-
-  516 * 4 = 2048 data bytes + 16 available oob bytes.
-
-  So for QCOM layout, it will be something lile
-
-
-  0       D1.........D495 B1 D496....D516 E1...E7  U1..U4
-  0x210   D517......D1012 B2 D1016..D1032 E8...E14 U5..U8
-  0x420   D1033.....D1528 B3 D1529..D1548 E15..E21 U9..U12
-  0x630   D1549.....D2044 B4 D2045..D2048 O1...O16 E22 E28 U13..U16
-
-  Where D - Data bytes
-        B - BBM bytes
-        E - ECC parity bytes
-        U - Unused bytes
-        O - Avilable OOB bytes
-
-  Now, the raw read expect data to be returned in buffer in the
-  form of
-
-  D1.....D2048 B1 E1...E7 U1..U4 B2 E8...E14 U5..U8 B3 E15..E21
-  U9..U12 B4 O1...O16 E22 E28 U13..U16
-
-  Now, the puporose of that helper function is read selected
-  codewords. This codeword is QCOM specific and other controller
-  normally doesn't follow this kind of layout.
-
-  Now If we make generic fuction for subpgage raw read with any
-  start and length then that function we can't use for erased page
-  bitflip detection.
-
-  If we give the start as 0 with length 528 then our requirement is
-  to get 516 data bytes in data buffer and 12 bytes in OOB buffer
-  but according to standard operations, it will be interpreted as
-  all data bytes from D1..D528
-
-  so that helper function is to read selected Codewords from
-  QCOM NAND controller. This Codeword is different from subpages
-
-  Regarding more info for layout, you can refer comment in
-  
-https://elixir.bootlin.com/linux/latest/source/drivers/mtd/nand/qcom_nandc.c#L2191
-
-  Thanks,
-  Abhishek
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
