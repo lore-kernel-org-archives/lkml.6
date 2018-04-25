@@ -1,254 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752673AbeDYVkW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 17:40:22 -0400
-Received: from mga09.intel.com ([134.134.136.24]:52067 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751887AbeDYVkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 17:40:14 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,328,1520924400";
-   d="gz'50?scan'50,208,50";a="53663910"
-Date: Thu, 26 Apr 2018 05:39:41 +0800
-From: kbuild test robot <lkp@intel.com>
-To: yannick fertre <yannick.fertre@st.com>
-Cc: kbuild-all@01.org, Philippe Cornu <philippe.cornu@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Kamel Kholti <kamel.kholti@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v1 1/3] ARM: dts: stm32: add cec support on stm32mp157c
-Message-ID: <201804260421.hKtRtOnz%fengguang.wu@intel.com>
-References: <1524556449-5262-2-git-send-email-yannick.fertre@st.com>
+        id S1753057AbeDYVlA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 17:41:00 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42402 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750868AbeDYVk6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 17:40:58 -0400
+Date: Wed, 25 Apr 2018 17:40:56 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Joel Fernandes <joelaf@google.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        rostedt <rostedt@goodmis.org>, Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@lge.com>
+Message-ID: <1267842641.1791.1524692456344.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CAJWu+orWC=W0Jn2Jo7f+u5mbHMi+D1yuCmhD-xSgjWZ6Ynw32Q@mail.gmail.com>
+References: <20180423172244.694dbc9d@gandalf.local.home> <20180424182623.GA1357@linux.vnet.ibm.com> <CAJWu+opC9pLxoiXq7QDRUDe6ouC4ij398bHCfnUwp+h7Y_ssDg@mail.gmail.com> <849066633.939.1524612064698.JavaMail.zimbra@efficios.com> <68e4c123-a223-5e26-e57a-da2515041bf3@google.com> <20180425001049.GX26088@linux.vnet.ibm.com> <20180425042056.GA21412@linux.vnet.ibm.com> <CAJWu+orWC=W0Jn2Jo7f+u5mbHMi+D1yuCmhD-xSgjWZ6Ynw32Q@mail.gmail.com>
+Subject: Re: [RFC v4 3/4] irqflags: Avoid unnecessary calls to trace_ if you
+ can
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="azLHFNyN32YCQGCU"
-Content-Disposition: inline
-In-Reply-To: <1524556449-5262-2-git-send-email-yannick.fertre@st.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2009 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2009)
+Thread-Topic: irqflags: Avoid unnecessary calls to trace_ if you can
+Thread-Index: VjvA7WgrmQxZIVKtN4OK9jWKYBBJow==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+----- On Apr 25, 2018, at 5:27 PM, Joel Fernandes joelaf@google.com wrote:
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Tue, Apr 24, 2018 at 9:20 PM, Paul E. McKenney
+> <paulmck@linux.vnet.ibm.com> wrote:
+> [..]
+>>> >
+>>> > Sounds good, thanks.
+>>> >
+>>> > Also I found the reason for my boot issue. It was because the
+>>> > init_srcu_struct in the prototype was being done in an initcall.
+>>> > Instead if I do it in start_kernel before the tracepoint is used, it
+>>> > fixes it (although I don't know if this is dangerous to do like this
+>>> > but I can get it to boot atleast.. Let me know if this isn't the
+>>> > right way to do it, or if something else could go wrong)
+>>> >
+>>> > diff --git a/init/main.c b/init/main.c
+>>> > index 34823072ef9e..ecc88319c6da 100644
+>>> > --- a/init/main.c
+>>> > +++ b/init/main.c
+>>> > @@ -631,6 +631,7 @@ asmlinkage __visible void __init start_kernel(void)
+>>> >         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+>>> >         early_boot_irqs_disabled = false;
+>>> >
+>>> > +       init_srcu_struct(&tracepoint_srcu);
+>>> >         lockdep_init_early();
+>>> >
+>>> >         local_irq_enable();
+>>> > --
+>>> >
+>>> > I benchmarked it and the performance also looks quite good compared
+>>> > to the rcu tracepoint version.
+>>> >
+>>> > If you, Paul and other think doing the init_srcu_struct like this
+>>> > should be Ok, then I can try to work more on your srcu prototype and
+>>> > roll into my series and post them in the next RFC series (or let me
+>>> > know if you wanted to work your srcu stuff in a separate series..).
+>>>
+>>> That is definitely not what I was expecting, but let's see if it works
+>>> anyway...  ;-)
+>>>
+>>> But first, I was instead expecting something like this:
+>>>
+>>> DEFINE_SRCU(tracepoint_srcu);
+>>>
+>>> With this approach, some of the initialization happens at compile time
+>>> and the rest happens at the first call_srcu().
+>>>
+>>> This will work -only- if the first call_srcu() doesn't happen until after
+>>> workqueue_init_early() has been invoked.  Which I believe must have been
+>>> the case in your testing, because otherwise it looks like __call_srcu()
+>>> would have complained bitterly.
+>>>
+>>> On the other hand, if you need to invoke call_srcu() before the call
+>>> to workqueue_init_early(), then you need the patch that I am beating
+>>> into shape.  Plus you would need to use DEFINE_SRCU() and to avoid
+>>> invoking init_srcu_struct().
+>>
+>> And here is the patch.  I do not intend to send it upstream unless it
+>> actually proves necessary, and it appears that current SRCU does what
+>> you need.
+>>
+>> You would only need this patch if you wanted to invoke call_srcu()
+>> before workqueue_init_early() was called, which does not seem likely.
+> 
+> Cool. So I was chatting with Paul and just to update everyone as well,
+> I tried the DEFINE_SRCU instead of the late init_srcu_struct call and
+> can make it past boot too (thanks Paul!). Also I don't see a reason we
+> need the RCU callback to execute early and its fine if it runs later.
+> 
+> Also, I was thinking of introducing a separate trace_*event*_srcu API
+> as a replacement to the _rcuidle API. Then I can make use of it for my
+> tracepoints, and then later can use it for the other tracepoints
+> needing _rcuidle. After that we can finally get rid of the _rcuidle
+> API if there are no other users of it. This is just a rough plan, but
+> let me know if there's any issue with this plan that you can think
+> off.
+> IMO, I believe its simpler if the caller worries about whether it can
+> tolerate if tracepoint probes can block or not, than making it a
+> property of the tracepoint. That would also simplify the patch to
+> introduce srcu and keep the tracepoint creation API simple and less
+> confusing, but let me know if I'm missing something about this.
 
-Hi yannick,
+One problem with your approach is that you can have multiple callers
+for the same tracepoint name, where some could be non-preemptible and
+others blocking. Also, there is then no clear way for the callback
+registration API to enforce whether the callback expects the tracepoint
+to be blocking or non-preemptible. This can introduce hard to diagnose
+issues in a kernel without debug options enabled.
 
-Thank you for the patch! Yet something to improve:
+Regarding the name, I'm OK with having something along the lines of
+trace_*event*_blocking or such. Please don't use "srcu" or other naming
+that is explicitly tied to the underlying mechanism used internally
+however: what we want to convey is that this specific tracepoint probe
+can be preempted and block. The underlying implementation could move to
+a different RCU flavor brand in the future, and it should not impact
+users of the tracepoint APIs.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on v4.17-rc2 next-20180424]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+In order to ensure that probes that may block only register themselves
+to tracepoints that allow blocking, we should introduce new tracepoint
+declaration/definition *and* registration APIs also contain the
+"BLOCKING/blocking" keywords (or such), so we can ensure that a
+tracepoint probe being registered to a "blocking" tracepoint is indeed
+allowed to block.
 
-url:    https://github.com/0day-ci/linux/commits/yannick-fertre/Enable-CEC-on-stm32mp157c-ev1-board/20180424-195256
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-config: arm-cns3420vb_defconfig (attached as .config)
-compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=arm 
+Thanks,
 
-All errors (new ones prefixed by >>):
+Mathieu
 
-   Error: arch/arm/boot/dts/stm32mp157c.dtsi:166.19-20 syntax error
->> FATAL ERROR: Unable to parse input tree
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+> Thanks,
+> 
+>  - Joel
 
---azLHFNyN32YCQGCU
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-CHT+PzVMlD+HhwAA
-
---azLHFNyN32YCQGCU--
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
