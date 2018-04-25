@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752135AbeDYJel (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:34:41 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:13791 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751591AbeDYJdK (ORCPT
+        id S1752353AbeDYJfK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:35:10 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56217 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751573AbeDYJdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:33:10 -0400
-X-UUID: 8de0c26095b04ee1b357dec5444e1e84-20180425
+        Wed, 25 Apr 2018 05:33:04 -0400
+X-UUID: 71d33eacd3c04aa183b88cd6320d69dc-20180425
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
         <lee.jones@linaro.org>, <a.zummo@towertech.it>,
@@ -16,11 +16,13 @@ To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
 CC: <devicetree@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Sean Wang" <sean.wang@mediatek.com>
-Subject: [PATCH v2 00/17] Add support to MT6323 RTC and its power device
-Date: Wed, 25 Apr 2018 17:32:26 +0800
-Message-ID: <cover.1524646231.git.sean.wang@mediatek.com>
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 10/17] rtc: mt6397: remove unnecessary irq_dispose_mapping
+Date: Wed, 25 Apr 2018 17:32:36 +0800
+Message-ID: <6354082fb42b560b4f0a7d8ed32e7ae274d624a9.1524646231.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1524646231.git.sean.wang@mediatek.com>
+References: <cover.1524646231.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK: N
@@ -30,93 +32,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-v2:
+With the patch [1], the job irq_create_mapping had been moved from the
+rtc driver to mfd core, so it should be unnecessary to keep
+irq_dispose_mapping in all paths of the leaf driver.
 
-- The changes must be relative to the below tree since one critial patch
-  for the rtc-mt6397.c the series depends on was being applied into
-  the tree. Otherwise, for example, if the series are applied on the top
-  of [1], a build error must happen due to an implicit declaration of
-  function 'irq_create_mapping' as kbuild test robot was reporting in [2].
-  
-  tree    : https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
-  branch  : mfd/ib-mfd-input-rtc-4.18
+[1] http://lists.infradead.org/pipermail/linux-mediatek/2017-September/010455.html
 
-- changes since v1:
-  * Define the power controller as a function of MT6323 MFD.
-  * Refine the whole series commit message and title.
-  * Add tag Reviewed-by and Acked-by got from v1 result.
-  * Reuse use the DEFINE_RES_* helpers in mfd driver.
-  * Remove an overdone patch rtc: mediatek: remove unnecessary parentheses.
-  * Use devm_rtc_allocate_device() and rtc_register_device instead of
-    devm_rtc_device_register.
-  * Have an improvement according to the license rule the SPDX notation
-    for C header file.
-  * Move a file from include/linux/rtc/mt6397.h to include/linux/mfd/mt6397/rtc.h
-  * Refine include/linux/mfd/mt6397/rtc.h
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/rtc/rtc-mt6397.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git
-[2] http://lists.infradead.org/pipermail/linux-mediatek/2018-March/012548.html
-
-v1:
-
-Hi,
-
-The series keeps to extend the capability of BPI-R2 board with MT7623 and
-the result can as well bring benefits into the other MediaTek PMICs such
-as MT6397 or SoCs.
-
-The series sent across mfd, rtc, pm, dt-binding sub-system is for hoping
-to let people have a simple cross-reference to know the exact dependency
-and why those patches are being split in that way between each one.
-
-Patch 1-3: Add dt-binding to the related devices newly or already
-	   supported.
-Patch 4-5: Extend driver with the functionality of MT6323 RTC device.
-Patch 6-9 and 12-13: Add a few of trivial fixups, cleanups and
-	  improvements.
-Patch 10-11: It's a preparation for Patch 14 adding a new driver.
-Patch 14: Add a new driver for a power-off driver.
-Patch 15-16: Update MAINTAINERS with these new files being added.
-
-	Sean
-
-Sean Wang (17):
-  dt-bindings: power: reset: mt6323: add bindings for MT6323 power
-    controller
-  dt-bindings: rtc: mt6397: add bindings for MediaTek PMIC based RTC
-  dt-bindings: mfd: mt6397: add a description for MT6323 RTC
-  dt-bindings: mfd: mt6397: add a description for MT6323 power
-    controller
-  mfd: mt6397: add MT6323 RTC support into MT6397 driver
-  mfd: mt6397: add support for MT6323 power controller into MT6397
-    driver
-  mfd: mt6397: reuse DEFINE_RES_* helpers
-  rtc: mt6397: add MT6323 support to RTC driver
-  rtc: mt6397: replace a poll with regmap_read_poll_timeout
-  rtc: mt6397: remove unnecessary irq_dispose_mapping
-  rtc: mt6397: convert to use device managed functions
-  rtc: mt6397: move the declaration into a globally visible header file
-  rtc: mt6397: cleanup header files to include
-  rtc: mt6397: update license converting to using SPDX identifiers
-  power: reset: mt6323: add a driver for MT6323 power controller
-  MAINTAINERS: update entry for ARM/Mediatek RTC DRIVER
-  MAINTAINERS: add an entry for MediaTek board level shutdown driver
-
- Documentation/devicetree/bindings/mfd/mt6397.txt   |  10 +-
- .../bindings/power/reset/mt6323-poweroff.txt       |  20 +++
- .../devicetree/bindings/rtc/rtc-mt6397.txt         |  29 ++++
- MAINTAINERS                                        |   9 ++
- drivers/mfd/mt6397-core.c                          |  40 ++++--
- drivers/power/reset/Kconfig                        |  10 ++
- drivers/power/reset/Makefile                       |   1 +
- drivers/power/reset/mt6323-poweroff.c              |  97 ++++++++++++++
- drivers/rtc/rtc-mt6397.c                           | 146 +++++----------------
- include/linux/mfd/mt6397/rtc.h                     |  71 ++++++++++
- 10 files changed, 308 insertions(+), 125 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
- create mode 100644 Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
- create mode 100644 drivers/power/reset/mt6323-poweroff.c
- create mode 100644 include/linux/mfd/mt6397/rtc.h
-
+diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+index efb9370..398bae5 100644
+--- a/drivers/rtc/rtc-mt6397.c
++++ b/drivers/rtc/rtc-mt6397.c
+@@ -17,7 +17,6 @@
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+ #include <linux/rtc.h>
+-#include <linux/irqdomain.h>
+ #include <linux/jiffies.h>
+ #include <linux/platform_device.h>
+ #include <linux/of_address.h>
+@@ -336,7 +335,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
+ 			rtc->irq, ret);
+-		goto out_dispose_irq;
++		return ret;
+ 	}
+ 
+ 	device_init_wakeup(&pdev->dev, 1);
+@@ -353,8 +352,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+ 
+ out_free_irq:
+ 	free_irq(rtc->irq, rtc->rtc_dev);
+-out_dispose_irq:
+-	irq_dispose_mapping(rtc->irq);
++
+ 	return ret;
+ }
+ 
+@@ -364,7 +362,6 @@ static int mtk_rtc_remove(struct platform_device *pdev)
+ 
+ 	rtc_device_unregister(rtc->rtc_dev);
+ 	free_irq(rtc->irq, rtc->rtc_dev);
+-	irq_dispose_mapping(rtc->irq);
+ 
+ 	return 0;
+ }
 -- 
 2.7.4
