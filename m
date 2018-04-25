@@ -1,46 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754828AbeDYO4j (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:56:39 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38838 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754534AbeDYO4X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:56:23 -0400
-X-Google-Smtp-Source: AIpwx4/VWOQX050JgxBKOJYt9F/fJJbchfo4gt0RBfCXUy+l4PZ/+ZZ7JhRYHMKJNUYynirwgAFh5g==
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: davem@davemloft.net, shannon.nelson@oracle.com, jag.raman@oracle.com,
-        liam.merwick@oracle.com
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: [PATCH] sparc: vio: use put_device() instead of kfree()
-Date: Wed, 25 Apr 2018 20:26:14 +0530
-Message-Id: <a3722bda2eadf1ff229f73da6f0316f954956ae1.1524668025.git.arvind.yadav.cs@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S1754840AbeDYO44 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:56:56 -0400
+Received: from mga11.intel.com ([192.55.52.93]:52461 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753632AbeDYO4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:56:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
+   d="scan'208";a="223261437"
+Message-ID: <1524668194.21176.557.camel@linux.intel.com>
+Subject: Re: [PATCH v5 07/11] vsprintf: Factor out %pV handler as va_format()
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Date: Wed, 25 Apr 2018 17:56:34 +0300
+In-Reply-To: <20180425111251.13246-8-pmladek@suse.com>
+References: <20180425111251.13246-1-pmladek@suse.com>
+         <20180425111251.13246-8-pmladek@suse.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Never directly free @dev after calling device_register(), even
-if it returned an error. Always use put_device() to give up the
-reference initialized.
+On Wed, 2018-04-25 at 13:12 +0200, Petr Mladek wrote:
+> Move the code from the long pointer() function. We are going to add a
+> check
+> for the access to the address that will make it even more complicated.
+> 
+> This patch does not change the existing behavior.
+ 
+> +static char *va_format(char *buf, char *end, struct va_format
+> *va_fmt)
+> +{
+> +	va_list va;
+> +
+> +	va_copy(va, *va_fmt->va);
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- arch/sparc/kernel/vio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +	buf += vsnprintf(buf, end > buf ? end - buf : 0,
+> +			 va_fmt->fmt, va);
 
-diff --git a/arch/sparc/kernel/vio.c b/arch/sparc/kernel/vio.c
-index 1a0fa10..32bae68 100644
---- a/arch/sparc/kernel/vio.c
-+++ b/arch/sparc/kernel/vio.c
-@@ -403,7 +403,7 @@ static struct vio_dev *vio_create_one(struct mdesc_handle *hp, u64 mp,
- 	if (err) {
- 		printk(KERN_ERR "VIO: Could not register device %s, err=%d\n",
- 		       dev_name(&vdev->dev), err);
--		kfree(vdev);
-+		put_device(&vdev->dev);
- 		return NULL;
- 	}
- 	if (vdev->dp)
+One line?
+
+> +	va_end(va);
+> +
+> +	return buf;
+> +}
+
 -- 
-2.7.4
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
