@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-558212-1524653800-2-11581236009199337070
+X-Cyrus-Session-Id: sloti22d1t05-557887-1524653793-2-16609468202141456623
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enroda, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653799; b=tGiMZxQOZhQWLBTX3ZGTsWCpyPrcpVEwZlLNBJSHxYROmzY8r8
-    rMluJhZWr0jcYiHJE7DpNjPpItJkm8QmLiBYYF14hKUF6CL71nQ3NqUmllWjbnEH
-    dAI3EAG88pW4Pgcwg4//tBqHhIqpF4JrKd1S5RBBCuk6Ux316KAM6fZ5L5CI2Ndv
-    js2Z+7wIfRyaJQuP3jq299hbz2KSyGpj0ylvafURmILRKU1nj+KpVXx+qrp1R3LH
-    2+QLuRsXR7VHI/wMHfqQHVuLlHuXJC9Ep4W4ljlPohL/DeWd24X6+YH5BJ3CnPZa
-    EE2QwKHVofLVX0AGuBKK2XrinOK0gSxf0myg==
+    1524653792; b=S/CuBNChbU4D0BR99nfQ4O2N1Lbj8wHLcC9h3OseG3a/9I3SSW
+    zxpuWYmgKL6biz3N8DjaZn4X1MsMzGsQaE02rqRcwSpNNV45HHJx3tfj/0u+lxTh
+    SuWDyFWuukLaZpeO+C6vgQNQGMZrW1BMQWrNEIpYyQrqW+dejCl516gMXqVnwFB4
+    Ha8iVXSY+fgmAoRMNUuZuSWQYGZNdoB8DTqQ0tcdWTvWE3IpQWDe8cCVQy409KZR
+    BZY0zvyzSzE3KK41qvgS6tMQ3ShoKXc5/qCG+fy2yWx/xaSEOAaCj2AlVjIhMEnj
+    xB5iatPYJg57KSaCb63auhAPYlL+T3HeHzBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653799; bh=ThT/87tuWdmG9X0OvXBzGGtb+A1TqC
-    iJz777DjkUg24=; b=CpHvvx6WYkPzLo04azfxfCbhQLLkC31FAZMTSmFN3LVCzy
-    sR0yQQgr+Bsziq1Nv4CkLqJswiGP0T7rV24cYMT4RUuqm3M3Uciyer6fy+XJsyYV
-    mYB5Fuy+3vSmz4xyt4vEbv1n61zFDq7kvy8OqximJmdNQlCZ22glywNpzni41sHY
-    JSxQ0l5HJHQ23L41Mg5R/vb+C0fyWnUw8Qf41b0gT3AVSN4+jVsfm6dmL6Qhw6ET
-    4j+qdi2l1njYBcDK06Zr91XbwtZrmumv285mNnU2+ADTRCVq6dAbhi1zIdsTZNRq
-    Z46jSvCcQTT6dE0mPMVsd8U7LbrQ9ur5D6eR9MIA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524653792; bh=njlWwEyAZWhiuZLrT1BUx8T4BhPrHP
+    z/L4xgUOMUGQ4=; b=elLntkyXhhdpUxeXPraoSe1sMMPgUyC1maDGxY+xXJFpSV
+    SGSgay5OL82QU8FWlL1QV3GRyO1PMaxhtEsIrsd12Xu27jqU5wKWfYqZ6N0fNXMs
+    VF47w2/xeS2AMcjUGi8MpPttxB4bbhid8pkbFmO9qtdzouMlMTM8N4skSGlfDMmZ
+    jfXlvqTfDkXGygn04jGvenzj+e22Bp8d5YlL9R3/g2VbKSSxLDhmUytd2/zpzJTu
+    bDcQIc9xsXv3fLhIGb9cEmhXyPnAE2q26VKT73eO3jpCxe5mtbThFpU7N+McCnXr
+    Ta3w9DiAjeUWXwBny9uPO1/IeBXdTFsOdecwQzMA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,38 +51,43 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNtLemeJVbJQFm/WEyv128ZmqSiQrxhMojt8OTIChzg8j8cOaB3z7rXxQxCtSggRBHv8/q7YNY/6ETmpURgOcxoi6EB+GEmDcLMQIudq4av9a7ITzdCe
-    3WENUCxKGByugrOAl60SPmbihWnuTpyRMklbufkxxnW7pwKnI1TtQkHnbLSn/zsNUCBsAqxHGBzs+DD3gmolhwP9lVhemEUIoI4R1aBYM0Sqe2a3ue1JEv0F
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOxlFkn8Gvw8iYFXJNEqGz/qzytgC6hWpiBKtems5d73eTpK6No3EPwNMzlYSrE/JISyqCYkCIufrmX1f0VBU7rLqAXRRtFgs2rmi+o7UItwvXyCFP/X
+    att8DF+saNi728a/KJcm3aVOLTJdnNuxHhcCbbucAa865Xrg0x3+jXxSu1zwAhE+xrpzOPLGqWvlUBtmtlghJ/0fgRH7paTfFLAW7pq5T5iC7CrtKV/sEs1e
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yPCof4ZbAAAA:8 a=CbDCq_QkAAAA:8 a=20KFwNOVAAAA:8 a=J1Y8HTJGAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=EePCTitOv4r-aG-WyjYA:9
-    a=DDakg8MTcSrILi8y:21 a=qNgExSQH1o6pFfiA:21 a=QEXdDO2ut3YA:10
-    a=1qrBK16LubpBFNPVNq2M:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=i0EeH86SAAAA:8 a=GcyzOjIWAAAA:8 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
+    a=NufY4J3AAAAA:8 a=1XWaLZrsAAAA:8 a=nrACCIEEAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=uHNeC5YgsMNH8n1iQxQA:9 a=QEXdDO2ut3YA:10
+    a=K5Pz1n7aZbAA:10 a=DaFyWFqZkG0A:10 a=5QuTyhz7_sIA:10
+    a=hQL3dl6oAZ8NdCsdz28n:22 a=AjGcO6oz07-iQ99wixmX:22 a=TPcZfFuj8SYsoCJAFAiX:22
+    a=LP-oT3CeHzb3Kpa8nOvR:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754041AbeDYKnM (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:43:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52844 "EHLO
+        id S1752805AbeDYKzg (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:55:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52950 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754178AbeDYKnI (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:08 -0400
+        with ESMTP id S1754195AbeDYKnT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guanglei Li <guanglei.li@oracle.com>,
-        Honglei Wang <honglei.wang@oracle.com>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Yanjun Zhu <yanjun.zhu@oracle.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andi Kleen <ak@linux.intel.com>,
+        Chris Salls <salls@cs.ucsb.edu>,
+        Christopher Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 142/183] RDS: IB: Fix null pointer issue
-Date: Wed, 25 Apr 2018 12:36:02 +0200
-Message-Id: <20180425103248.257601277@linuxfoundation.org>
+Subject: [PATCH 4.14 111/183] mm/mempolicy: fix the check of nodemask from user
+Date: Wed, 25 Apr 2018 12:35:31 +0200
+Message-Id: <20180425103246.911628954@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -100,83 +105,109 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guanglei Li <guanglei.li@oracle.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
 
 
-[ Upstream commit 2c0aa08631b86a4678dbc93b9caa5248014b4458 ]
+[ Upstream commit 56521e7a02b7b84a5e72691a1fb15570e6055545 ]
 
-Scenario:
-1. Port down and do fail over
-2. Ap do rds_bind syscall
+As Xiaojun reported the ltp of migrate_pages01 will fail on arm64 system
+which has 4 nodes[0...3], all have memory and CONFIG_NODES_SHIFT=2:
 
-PID: 47039  TASK: ffff89887e2fe640  CPU: 47  COMMAND: "kworker/u:6"
- #0 [ffff898e35f159f0] machine_kexec at ffffffff8103abf9
- #1 [ffff898e35f15a60] crash_kexec at ffffffff810b96e3
- #2 [ffff898e35f15b30] oops_end at ffffffff8150f518
- #3 [ffff898e35f15b60] no_context at ffffffff8104854c
- #4 [ffff898e35f15ba0] __bad_area_nosemaphore at ffffffff81048675
- #5 [ffff898e35f15bf0] bad_area_nosemaphore at ffffffff810487d3
- #6 [ffff898e35f15c00] do_page_fault at ffffffff815120b8
- #7 [ffff898e35f15d10] page_fault at ffffffff8150ea95
-    [exception RIP: unknown or invalid address]
-    RIP: 0000000000000000  RSP: ffff898e35f15dc8  RFLAGS: 00010282
-    RAX: 00000000fffffffe  RBX: ffff889b77f6fc00  RCX:ffffffff81c99d88
-    RDX: 0000000000000000  RSI: ffff896019ee08e8  RDI:ffff889b77f6fc00
-    RBP: ffff898e35f15df0   R8: ffff896019ee08c8  R9:0000000000000000
-    R10: 0000000000000400  R11: 0000000000000000  R12:ffff896019ee08c0
-    R13: ffff889b77f6fe68  R14: ffffffff81c99d80  R15: ffffffffa022a1e0
-    ORIG_RAX: ffffffffffffffff  CS: 0010 SS: 0018
- #8 [ffff898e35f15dc8] cma_ndev_work_handler at ffffffffa022a228 [rdma_cm]
- #9 [ffff898e35f15df8] process_one_work at ffffffff8108a7c6
- #10 [ffff898e35f15e58] worker_thread at ffffffff8108bda0
- #11 [ffff898e35f15ee8] kthread at ffffffff81090fe6
+  migrate_pages01    0  TINFO  :  test_invalid_nodes
+  migrate_pages01   14  TFAIL  :  migrate_pages_common.c:45: unexpected failure - returned value = 0, expected: -1
+  migrate_pages01   15  TFAIL  :  migrate_pages_common.c:55: call succeeded unexpectedly
 
-PID: 45659  TASK: ffff880d313d2500  CPU: 31  COMMAND: "oracle_45659_ap"
- #0 [ffff881024ccfc98] __schedule at ffffffff8150bac4
- #1 [ffff881024ccfd40] schedule at ffffffff8150c2cf
- #2 [ffff881024ccfd50] __mutex_lock_slowpath at ffffffff8150cee7
- #3 [ffff881024ccfdc0] mutex_lock at ffffffff8150cdeb
- #4 [ffff881024ccfde0] rdma_destroy_id at ffffffffa022a027 [rdma_cm]
- #5 [ffff881024ccfe10] rds_ib_laddr_check at ffffffffa0357857 [rds_rdma]
- #6 [ffff881024ccfe50] rds_trans_get_preferred at ffffffffa0324c2a [rds]
- #7 [ffff881024ccfe80] rds_bind at ffffffffa031d690 [rds]
- #8 [ffff881024ccfeb0] sys_bind at ffffffff8142a670
+In this case the test_invalid_nodes of migrate_pages01 will call:
+SYSC_migrate_pages as:
 
-PID: 45659                          PID: 47039
-rds_ib_laddr_check
-  /* create id_priv with a null event_handler */
-  rdma_create_id
-  rdma_bind_addr
-    cma_acquire_dev
-      /* add id_priv to cma_dev->id_list */
-      cma_attach_to_dev
-                                    cma_ndev_work_handler
-                                      /* event_hanlder is null */
-                                      id_priv->id.event_handler
+  migrate_pages(0, , {0x0000000000000001}, 64, , {0x0000000000000010}, 64) = 0
 
-Signed-off-by: Guanglei Li <guanglei.li@oracle.com>
-Signed-off-by: Honglei Wang <honglei.wang@oracle.com>
-Reviewed-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Yanjun Zhu <yanjun.zhu@oracle.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Acked-by: Doug Ledford <dledford@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The new nodes specifies one or more node IDs that are greater than the
+maximum supported node ID, however, the errno is not set to EINVAL as
+expected.
+
+As man pages of set_mempolicy[1], mbind[2], and migrate_pages[3]
+mentioned, when nodemask specifies one or more node IDs that are greater
+than the maximum supported node ID, the errno should set to EINVAL.
+However, get_nodes only check whether the part of bits
+[BITS_PER_LONG*BITS_TO_LONGS(MAX_NUMNODES), maxnode) is zero or not, and
+remain [MAX_NUMNODES, BITS_PER_LONG*BITS_TO_LONGS(MAX_NUMNODES)
+unchecked.
+
+This patch is to check the bits of [MAX_NUMNODES, maxnode) in get_nodes
+to let migrate_pages set the errno to EINVAL when nodemask specifies one
+or more node IDs that are greater than the maximum supported node ID,
+which follows the manpage's guide.
+
+[1] http://man7.org/linux/man-pages/man2/set_mempolicy.2.html
+[2] http://man7.org/linux/man-pages/man2/mbind.2.html
+[3] http://man7.org/linux/man-pages/man2/migrate_pages.2.html
+
+Link: http://lkml.kernel.org/r/1510882624-44342-3-git-send-email-xieyisheng1@huawei.com
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Reported-by: Tan Xiaojun <tanxiaojun@huawei.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Chris Salls <salls@cs.ucsb.edu>
+Cc: Christopher Lameter <cl@linux.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rds/ib.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/mempolicy.c |   23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
---- a/net/rds/ib.c
-+++ b/net/rds/ib.c
-@@ -346,7 +346,8 @@ static int rds_ib_laddr_check(struct net
- 	/* Create a CMA ID and try to bind it. This catches both
- 	 * IB and iWARP capable NICs.
- 	 */
--	cm_id = rdma_create_id(&init_net, NULL, NULL, RDMA_PS_TCP, IB_QPT_RC);
-+	cm_id = rdma_create_id(&init_net, rds_rdma_cm_event_handler,
-+			       NULL, RDMA_PS_TCP, IB_QPT_RC);
- 	if (IS_ERR(cm_id))
- 		return PTR_ERR(cm_id);
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1262,6 +1262,7 @@ static int get_nodes(nodemask_t *nodes,
+ 		     unsigned long maxnode)
+ {
+ 	unsigned long k;
++	unsigned long t;
+ 	unsigned long nlongs;
+ 	unsigned long endmask;
  
+@@ -1278,13 +1279,19 @@ static int get_nodes(nodemask_t *nodes,
+ 	else
+ 		endmask = (1UL << (maxnode % BITS_PER_LONG)) - 1;
+ 
+-	/* When the user specified more nodes than supported just check
+-	   if the non supported part is all zero. */
++	/*
++	 * When the user specified more nodes than supported just check
++	 * if the non supported part is all zero.
++	 *
++	 * If maxnode have more longs than MAX_NUMNODES, check
++	 * the bits in that area first. And then go through to
++	 * check the rest bits which equal or bigger than MAX_NUMNODES.
++	 * Otherwise, just check bits [MAX_NUMNODES, maxnode).
++	 */
+ 	if (nlongs > BITS_TO_LONGS(MAX_NUMNODES)) {
+ 		if (nlongs > PAGE_SIZE/sizeof(long))
+ 			return -EINVAL;
+ 		for (k = BITS_TO_LONGS(MAX_NUMNODES); k < nlongs; k++) {
+-			unsigned long t;
+ 			if (get_user(t, nmask + k))
+ 				return -EFAULT;
+ 			if (k == nlongs - 1) {
+@@ -1297,6 +1304,16 @@ static int get_nodes(nodemask_t *nodes,
+ 		endmask = ~0UL;
+ 	}
+ 
++	if (maxnode > MAX_NUMNODES && MAX_NUMNODES % BITS_PER_LONG != 0) {
++		unsigned long valid_mask = endmask;
++
++		valid_mask &= ~((1UL << (MAX_NUMNODES % BITS_PER_LONG)) - 1);
++		if (get_user(t, nmask + nlongs - 1))
++			return -EFAULT;
++		if (t & valid_mask)
++			return -EINVAL;
++	}
++
+ 	if (copy_from_user(nodes_addr(*nodes), nmask, nlongs*sizeof(unsigned long)))
+ 		return -EFAULT;
+ 	nodes_addr(*nodes)[nlongs-1] &= endmask;
