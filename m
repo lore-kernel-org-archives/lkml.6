@@ -1,37 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48MnU+f8paRcOKLR5+qJCTJKuNiAU25ujqp7Ay9VzbQtfyoYPKEpBSdL6ugyc5ohbeFpxUe
-ARC-Seal: i=1; a=rsa-sha256; t=1524652840; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ZMX/EroqDYV2tncsH8lytlNrE1LrAjoc6VG5Erw1WB4SLCyydGN2ccvk8QprdCJKlL
-         yCCAJEfoWwqHqKEAOx0A0ty93NuQuaRRrHSOgeytXL4aMl3T5I0QoXE9OCxKhdcp6Ya6
-         zI1rs1YaWbgj5y0yLnPG+f8f/bodnHt+OaF4XENAPUGYlq5sXYuqLPGNH6X5IqV8uHv5
-         Kyr/ukW9P6dXnmVEaC2aT4H4ny9wK8ZLRVbDJ9/00woyGbIVnaB+v4lEu6GnTPD1hfZU
-         iytA7h+8xUvU3z7iNF7f3vXho+8VsW/+X1Xqg5qHUOJQ+sYvNYQTDHgA4zPsrJ1NR/7/
-         FtXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=cveIaINDqN6nv0DmOt63kZKawg06Z/Ew4yJnYMrr0CQ=;
-        b=uGuXdg/WR2Vto0SerfFoUwfEW7cr2gE0rj5aAOtWp/Py+GMcw8QQmCtycbSKcmaTWN
-         rGuPxDXkx+FC+BbQfKyRnh1h6s0WsuUN5f9vsemibcpoynPbSyXZfG3g4TfwTgJF4PPj
-         Q4eK7JqJLAiytbczme6Mjow2OHNdoexVpsEKLvQhDS6GDFpcZjPzkYHr2ZPngQ217U04
-         sinlFOM0VlVLn6MdxjofV50U/zYmPuBsMd5/451C3HX1/LFdQqeb5Cw1G+2OXzX0ie0y
-         wT6TzU6Ks4dleqoPgolT8dGP6brnzbkVLkmoXAFvnrXmfo6GfUAkI6pQv51IN7JLvi9V
-         SIMA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-557887-1524652839-2-7849035321554551069
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524652838; b=lL/x49qg+Zt41HzdXvl7EekQGs2mU3BGcynAko86nLVrYREhRo
+    KHjG8JDJR2ODMhd5BEE/uhDS3BDodOmGxcLRe95fG/0Ra9CpW19+yfAIAJVBAqre
+    mwQ0aKK7L4RfNfaBZZsrn09jafa/kTFRUX0O8B0bf4NznpfnR/ElbNdT02lgWjA/
+    I8oFAX3/qyhxbpEqQHeOw5rJK1vlOHT7WUVBV0OLqjl6vidyt0EPP5jEHngP92ig
+    kfoAhrzno1yD7NXDTehGWNPzPNnBAbCgXbGfFiT9bS+qOaKFcKm+OFl9K3LHrmLY
+    emIb25xPTQ1Fbfb5InbkalnaDYk/aaER3ILQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524652838; bh=4U2ka1yawhmjZS9dQgYJKdlGzQnnd9
+    fJzFVM0vcAUM4=; b=O6Y1suICEI9F0DK/MxgndG+dI6NFA5KboMR6rLPySXcSqn
+    2E6HAKbIFaG3KG+jY9KvsG6BHke1jO1H4Py28rXMY1yzibwmy48fTphDp15gUNSi
+    ZNigknKQ3mdyEt0C4E02LV1yRM0B2/7z8wovOcnYU8FlsIcwllAwcHSTsF+BlThv
+    5XPzreKoRxd8pp5L7zTssLeUJXlDehOMd3Ho8mdxYhnwR0VSYH/DSO1jwd4Br4sA
+    0c28Jn3Oa16JKPeDFEW1e9auSLsBV+qAp3ezeq9pnvLwXynVfOVvLBZr5B52rYqX
+    zzkNGbfDdTrXVE5VuY8CJzo975qwb4ugW+j3DahQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMBxqL05+6uIICaaK3+Eh+zvO/TBRpueA55cdQI4faBzG8KfMdzRH+3MSR+Geu771xMW+lJgrEJcBEX9nLVfOacajXYlzDvhmNJJ6dTDwcCdMLYAavNd
+    gZABHy1MTCz6EkFdl6UcnApLRjFQbHVryJBbRF1rBu+MHwPBIGQNIrjCIdyOmuLH5EjWfJia/zKEHaH7XhKF3Xzu3jux76mIRGWUzrwuKIov7MJ7aNzGHlzt
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=gVGD3344AAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=Hb0Uqtfb04O3FyaSReIA:9 a=QEXdDO2ut3YA:10 a=xQEvYfgLW3QvObN0DhJi:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753255AbeDYKkf (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:40:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52134 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753433AbeDYKk3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:40:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Matt Schulte <matts@commtech-fastcom.com>,
-	Aaron Sierra <asierra@xes-inc.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 088/183] tty: serial: exar: Relocate sleep wake-up handling
-Date: Wed, 25 Apr 2018 12:35:08 +0200
-Message-Id: <20180425103246.029612025@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Hua <daniel.hua@ni.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 085/183] igb: Clear TXSTMP when ptp_tx_work() is timeout
+Date: Wed, 25 Apr 2018 12:35:05 +0200
+Message-Id: <20180425103245.913696020@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -39,10 +84,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714376689786689?=
-X-GMAIL-MSGID: =?utf-8?q?1598714376689786689?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,161 +94,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aaron Sierra <asierra@xes-inc.com>
+From: Daniel Hua <daniel.hua@ni.com>
 
 
-[ Upstream commit c7e1b4059075c9e8eed101d7cc5da43e95eb5e18 ]
+[ Upstream commit 3a53285228165225a7f76c7d5ff1ddc0213ce0e4 ]
 
-Exar sleep wake-up handling has been done on a per-channel basis by
-virtue of INT0 being accessible from each channel's address space. I
-believe this was initially done out of necessity, but now that Exar
-devices have their own driver, we can do things more efficiently by
-registering a dedicated INT0 handler at the PCI device level.
+Problem description:
+After ethernet cable connect and disconnect for several iterations on a
+device with i210, tx timestamp will stop being put into the socket.
 
-I see this change providing the following benefits:
+Steps to reproduce:
+1. Setup a device with i210 and wire it to a 802.1AS capable switch (
+Extreme Networks Summit x440 is used in our case)
+2. Have the gptp daemon running on the device and make sure it is synced
+with the switch
+3. Have the switch disable and enable the port, wait for the device gets
+resynced with the switch
+4. Iterates step 3 until the device is not albe to get resynced
+5. Review the log in dmesg and you will see warning message "igb : clearing
+Tx timestamp hang"
 
-    1. If more than one port is active, eliminates the redundant bus
-       cycles for reading INT0 on every interrupt.
-    2. This note associated with hooking in the per-channel handler in
-       8250_port.c is resolved:
-        /* Fixme: probably not the best place for this */
+Root cause:
+If ptp_tx_work() gets scheduled just before the port gets disabled, a LINK
+DOWN event will be processed before ptp_tx_work(), which may cause timeout
+in ptp_tx_work(). In the timeout logic, the TSYNCTXCTL's TXTT bit (Transmit
+timestamp valid bit) is not cleared, causing no new timestamp loaded to
+TXSTMP register. Consequently therefore, no new interrupt is triggerred by
+TSICR.TXTS bit and no more Tx timestamp send to the socket.
 
-Cc: Matt Schulte <matts@commtech-fastcom.com>
-Signed-off-by: Aaron Sierra <asierra@xes-inc.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Daniel Hua <daniel.hua@ni.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/8250/8250_exar.c |   34 ++++++++++++++++++++++++++++++----
- drivers/tty/serial/8250/8250_port.c |   26 --------------------------
- 2 files changed, 30 insertions(+), 30 deletions(-)
+ drivers/net/ethernet/intel/igb/igb_ptp.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -37,6 +37,7 @@
- #define PCI_DEVICE_ID_EXAR_XR17V4358		0x4358
- #define PCI_DEVICE_ID_EXAR_XR17V8358		0x8358
- 
-+#define UART_EXAR_INT0		0x80
- #define UART_EXAR_8XMODE	0x88	/* 8X sampling rate select */
- 
- #define UART_EXAR_FCTR		0x08	/* Feature Control Register */
-@@ -124,6 +125,7 @@ struct exar8250_board {
- struct exar8250 {
- 	unsigned int		nr;
- 	struct exar8250_board	*board;
-+	void __iomem		*virt;
- 	int			line[0];
- };
- 
-@@ -134,12 +136,9 @@ static int default_setup(struct exar8250
- 	const struct exar8250_board *board = priv->board;
- 	unsigned int bar = 0;
- 
--	if (!pcim_iomap_table(pcidev)[bar] && !pcim_iomap(pcidev, bar, 0))
--		return -ENOMEM;
--
- 	port->port.iotype = UPIO_MEM;
- 	port->port.mapbase = pci_resource_start(pcidev, bar) + offset;
--	port->port.membase = pcim_iomap_table(pcidev)[bar] + offset;
-+	port->port.membase = priv->virt + offset;
- 	port->port.regshift = board->reg_shift;
- 
- 	return 0;
-@@ -423,6 +422,25 @@ static void pci_xr17v35x_exit(struct pci
- 	port->port.private_data = NULL;
- }
- 
-+/*
-+ * These Exar UARTs have an extra interrupt indicator that could fire for a
-+ * few interrupts that are not presented/cleared through IIR.  One of which is
-+ * a wakeup interrupt when coming out of sleep.  These interrupts are only
-+ * cleared by reading global INT0 or INT1 registers as interrupts are
-+ * associated with channel 0. The INT[3:0] registers _are_ accessible from each
-+ * channel's address space, but for the sake of bus efficiency we register a
-+ * dedicated handler at the PCI device level to handle them.
-+ */
-+static irqreturn_t exar_misc_handler(int irq, void *data)
-+{
-+	struct exar8250 *priv = data;
-+
-+	/* Clear all PCI interrupts by reading INT0. No effect on IIR */
-+	ioread8(priv->virt + UART_EXAR_INT0);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int
- exar_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *ent)
+--- a/drivers/net/ethernet/intel/igb/igb_ptp.c
++++ b/drivers/net/ethernet/intel/igb/igb_ptp.c
+@@ -643,6 +643,10 @@ static void igb_ptp_tx_work(struct work_
+ 		adapter->ptp_tx_skb = NULL;
+ 		clear_bit_unlock(__IGB_PTP_TX_IN_PROGRESS, &adapter->state);
+ 		adapter->tx_hwtstamp_timeouts++;
++		/* Clear the tx valid bit in TSYNCTXCTL register to enable
++		 * interrupt
++		 */
++		rd32(E1000_TXSTMPH);
+ 		dev_warn(&adapter->pdev->dev, "clearing Tx timestamp hang\n");
+ 		return;
+ 	}
+@@ -717,6 +721,7 @@ void igb_ptp_rx_hang(struct igb_adapter
+  */
+ void igb_ptp_tx_hang(struct igb_adapter *adapter)
  {
-@@ -451,6 +469,9 @@ exar_pci_probe(struct pci_dev *pcidev, c
- 		return -ENOMEM;
++	struct e1000_hw *hw = &adapter->hw;
+ 	bool timeout = time_is_before_jiffies(adapter->ptp_tx_start +
+ 					      IGB_PTP_TX_TIMEOUT);
  
- 	priv->board = board;
-+	priv->virt = pcim_iomap(pcidev, bar, 0);
-+	if (!priv->virt)
-+		return -ENOMEM;
- 
- 	pci_set_master(pcidev);
- 
-@@ -464,6 +485,11 @@ exar_pci_probe(struct pci_dev *pcidev, c
- 	uart.port.irq = pci_irq_vector(pcidev, 0);
- 	uart.port.dev = &pcidev->dev;
- 
-+	rc = devm_request_irq(&pcidev->dev, uart.port.irq, exar_misc_handler,
-+			 IRQF_SHARED, "exar_uart", priv);
-+	if (rc)
-+		return rc;
-+
- 	for (i = 0; i < nr_ports && i < maxnr; i++) {
- 		rc = board->setup(priv, pcidev, &uart, i);
- 		if (rc) {
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -458,7 +458,6 @@ static void io_serial_out(struct uart_po
- }
- 
- static int serial8250_default_handle_irq(struct uart_port *port);
--static int exar_handle_irq(struct uart_port *port);
- 
- static void set_io_from_upio(struct uart_port *p)
- {
-@@ -1904,26 +1903,6 @@ static int serial8250_default_handle_irq
- }
- 
- /*
-- * These Exar UARTs have an extra interrupt indicator that could
-- * fire for a few unimplemented interrupts.  One of which is a
-- * wakeup event when coming out of sleep.  Put this here just
-- * to be on the safe side that these interrupts don't go unhandled.
-- */
--static int exar_handle_irq(struct uart_port *port)
--{
--	unsigned int iir = serial_port_in(port, UART_IIR);
--	int ret = 0;
--
--	if (((port->type == PORT_XR17V35X) || (port->type == PORT_XR17D15X)) &&
--	    serial_port_in(port, UART_EXAR_INT0) != 0)
--		ret = 1;
--
--	ret |= serial8250_handle_irq(port, iir);
--
--	return ret;
--}
--
--/*
-  * Newer 16550 compatible parts such as the SC16C650 & Altera 16550 Soft IP
-  * have a programmable TX threshold that triggers the THRE interrupt in
-  * the IIR register. In this case, the THRE interrupt indicates the FIFO
-@@ -3107,11 +3086,6 @@ static void serial8250_config_port(struc
- 	if (port->type == PORT_UNKNOWN)
- 		serial8250_release_std_resource(up);
- 
--	/* Fixme: probably not the best place for this */
--	if ((port->type == PORT_XR17V35X) ||
--	   (port->type == PORT_XR17D15X))
--		port->handle_irq = exar_handle_irq;
--
- 	register_dev_spec_attr_grp(up);
- 	up->fcr = uart_config[up->port.type].fcr;
+@@ -736,6 +741,10 @@ void igb_ptp_tx_hang(struct igb_adapter
+ 		adapter->ptp_tx_skb = NULL;
+ 		clear_bit_unlock(__IGB_PTP_TX_IN_PROGRESS, &adapter->state);
+ 		adapter->tx_hwtstamp_timeouts++;
++		/* Clear the tx valid bit in TSYNCTXCTL register to enable
++		 * interrupt
++		 */
++		rd32(E1000_TXSTMPH);
+ 		dev_warn(&adapter->pdev->dev, "clearing Tx timestamp hang\n");
+ 	}
  }
