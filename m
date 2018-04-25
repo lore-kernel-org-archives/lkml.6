@@ -1,106 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751995AbeDYKO6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 06:14:58 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56370 "EHLO mail.bootlin.com"
+        id S1752129AbeDYKPP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 06:15:15 -0400
+Received: from mga09.intel.com ([134.134.136.24]:16966 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751487AbeDYKOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 06:14:55 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] clocksource/drivers/timer-atmel-pit: properly handle error cases
-Date: Wed, 25 Apr 2018 12:14:39 +0200
-Message-Id: <20180425101439.28908-1-alexandre.belloni@bootlin.com>
+        id S1752021AbeDYKPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 06:15:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,325,1520924400";
+   d="scan'208";a="49791207"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        x86@kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2] x86/PCI: Make pci=earlydump output neat
+Date: Wed, 25 Apr 2018 13:15:07 +0300
+Message-Id: <20180425101507.51531-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-smatch now reports a possible leak:
+Currently the early dump of PCI configuration space looks quite unhelpful, e.g.
 
-smatch warnings:
-drivers/clocksource/timer-atmel-pit.c:183 at91sam926x_pit_dt_init() warn: possible memory leak of 'data'
+[    0.000000]   60:
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]  00
+[    0.000000]
 
-Ensure data is freed before exiting with an error.
+which makes really hard to get anything out of this. Convert the function to
+use print_hex_dump() to make output neat.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+In the result we will have
+
+[    0.000000] 00000060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+which is much, much better.
+
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/clocksource/timer-atmel-pit.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+- add Mika's tag
+- address style issue
+ arch/x86/pci/early.c | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clocksource/timer-atmel-pit.c b/drivers/clocksource/timer-atmel-pit.c
-index ec8a4376f74f..2fab18fae4fc 100644
---- a/drivers/clocksource/timer-atmel-pit.c
-+++ b/drivers/clocksource/timer-atmel-pit.c
-@@ -180,26 +180,29 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
- 	data->base = of_iomap(node, 0);
- 	if (!data->base) {
- 		pr_err("Could not map PIT address\n");
--		return -ENXIO;
-+		ret = -ENXIO;
-+		goto exit;
- 	}
+diff --git a/arch/x86/pci/early.c b/arch/x86/pci/early.c
+index f0114007e915..e5f753cbb1c3 100644
+--- a/arch/x86/pci/early.c
++++ b/arch/x86/pci/early.c
+@@ -59,24 +59,15 @@ int early_pci_allowed(void)
  
- 	data->mck = of_clk_get(node, 0);
- 	if (IS_ERR(data->mck)) {
- 		pr_err("Unable to get mck clk\n");
--		return PTR_ERR(data->mck);
-+		ret = PTR_ERR(data->mck);
-+		goto exit;
- 	}
+ void early_dump_pci_device(u8 bus, u8 slot, u8 func)
+ {
++	u32 value[256 / 4];
+ 	int i;
+-	int j;
+-	u32 val;
  
- 	ret = clk_prepare_enable(data->mck);
- 	if (ret) {
- 		pr_err("Unable to enable mck\n");
--		return ret;
-+		goto exit;
- 	}
+-	printk(KERN_INFO "pci 0000:%02x:%02x.%d config space:",
+-	       bus, slot, func);
++	pr_info("pci 0000:%02x:%02x.%d config space:\n", bus, slot, func);
  
- 	/* Get the interrupts property */
- 	data->irq = irq_of_parse_and_map(node, 0);
- 	if (!data->irq) {
- 		pr_err("Unable to get IRQ from DT\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto exit;
- 	}
+-	for (i = 0; i < 256; i += 4) {
+-		if (!(i & 0x0f))
+-			printk("\n  %02x:",i);
++	for (i = 0; i < 256; i += 4)
++		value[i / 4] = read_pci_config(bus, slot, func, i);
  
- 	/*
-@@ -227,7 +230,7 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
- 	ret = clocksource_register_hz(&data->clksrc, pit_rate);
- 	if (ret) {
- 		pr_err("Failed to register clocksource\n");
--		return ret;
-+		goto exit;
- 	}
- 
- 	/* Set up irq handler */
-@@ -236,7 +239,8 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
- 			  "at91_tick", data);
- 	if (ret) {
- 		pr_err("Unable to setup IRQ\n");
--		return ret;
-+		clocksource_unregister(&data->clksrc);
-+		goto exit;
- 	}
- 
- 	/* Set up and register clockevents */
-@@ -254,6 +258,10 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
- 	clockevents_register_device(&data->clkevt);
- 
- 	return 0;
-+
-+exit:
-+	kfree(data);
-+	return ret;
+-		val = read_pci_config(bus, slot, func, i);
+-		for (j = 0; j < 4; j++) {
+-			printk(" %02x", val & 0xff);
+-			val >>= 8;
+-		}
+-	}
+-	printk("\n");
++	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, value, 256, false);
  }
- TIMER_OF_DECLARE(at91sam926x_pit, "atmel,at91sam9260-pit",
- 		       at91sam926x_pit_dt_init);
+ 
+ void early_dump_pci_devices(void)
 -- 
 2.17.0
