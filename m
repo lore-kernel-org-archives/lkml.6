@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-557887-1524653759-2-17065817050945389962
+X-Cyrus-Session-Id: sloti22d1t05-558212-1524653738-2-9546813140960597502
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653759; b=hyUyxcbx/D0e6yN+wXhFgnUVfltpS0/rwaLp2awtYw/3i5ExPL
-    xqleD68Fof2ocC7OD59x0qQFyrnA6T2q5XJw4B7CZBmk0AEyEx97X4PVKB1o8D+k
-    V61MTqQ2nHdWrj9WViWt+7emn3ebynFi4EpTsFnHGm2RUn9PBPvKr07tjgYIM9Nw
-    rjVJH2D3JrRQYYB+x9T54ICB5eDbzPT7ysLCaHXD83TbipzH8Cpa0vpm1fuRtZjF
-    ZwbpUB0lVKtvRlwyBHa0X6rd7P2SRyZ+9XhMPV5F64ts+MF5S260f0vmTzfV+spl
-    nV/ZtvHrchpVrNU2IO64/193GAiGuOFFWoUg==
+    1524653737; b=S7YGabVMCnyrP9EmRLytA3OMTN6xzk/mPL56z5CRbG2rXM2UXx
+    zGwZqrUAaT2XGz2NlxTLJ+zfoh86rtDQYDv7iBOYrTtBUYM/EWIvCFM/JtXRrIbn
+    s6VwSWzI9R8pGsC2oA/umRt4WZQB1NBKnP43BAOFeRLlo3TGS+FWb8/Saw2OwWQy
+    yaSNW8ITA85opdDtDO/CWfHkhbZZUj7gBO4iL14f0xpl5fKFgY6y/gWXHm5KkdI+
+    cMvTQfr36r7LZTDELl8I1S5Gb+ZwUFU9N1VeLPe/w9hkseTe0zshjhoorlSmSLT7
+    6PbH5O03XP55lvi5XshTxeLVA65Tk1ZWeRbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653759; bh=uNaqFertqxW0m1cW5TsLLju5wySsju
-    wPIT0Z1HvymTo=; b=gEWUVS6hP/ZxEEPd4CEsHeAVpvr+HRGFdv7d/tWDFByQE5
-    fYGvIssE01wSiP4zVG/gnMHF8ru7/mhMa5yjSRsGeK9wKbc1buux4OSYdyVF8CJl
-    o7HX/OIRl1gF1JEsaU1TxrZ+pg4SUhRxCyTDSpMEk79CfibsxqVn12oeS2o65buh
-    DpWQ7fj1UXVe+3BYPAFQV5mJebaM6XHzeoJgPdtWfV6hnv37g5lYQTOZ9lQZlLRg
-    WkNVIZfhc5D6TURm9AYgb7pkjFjHzZbM+KTCXW6d/gfsZyo3dhoDc6K4N/OX1cnR
-    4cReZzHWFNTXQ81c/nfO8pffsTWdCXwMM0XN6oHQ==
+    :list-id; s=fm2; t=1524653737; bh=aOnVQLtdLIdPlCmin3UPiitvWj7x67
+    wGFqFm6dg+g24=; b=lvQjsNEk8uF/Gz8oiPBKAcaUdTxJKYQjfLKP4ZChnLwCuy
+    Xu8+3rdzyNZDj+dxKkoIcwT4XJOpL88NDLJ5xRJHau6MWUVon0I3MMP6+09brZfZ
+    1oIp59g4TcEB5hF6yNGuRwngN0brc/7hqB4HZWb47jbXzpwM3chC35hDyl25juE8
+    Sity1IEQVrxMBBPI5DpqaJzu2opF3SNgysoobXTFOpLPdUPmqUqUtx79edKScgew
+    9DKcakubKt8aw1hPEdXozrai97447R25QULkG6qipD5tC84ZvsZJvP0iV2BwZfgs
+    4/APNKbjQ84SMfm8gnucykHdjIoc/gLpZpZ8An6Q==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,40 +51,40 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJprLhBraQ7ZFVhRo+oUIV4UAbeuuEAJF2zPjnVQ3jQd4xxvjBV0SqWyEzcHJjhs0IzH0Wm7h35C1WiUWzyx4z1m8pUiLWB+tz/NY/A1Cvk2gtwXxEsp
-    PqgT7jnRml5GGFl+3qE+7JdSQDYsZVt64Kja268GXAVCiGVZjgQRVXIV0TtZoozJllPTii4yQdVbUDw/PoSKZnkMfOKJEqWrwtckojlD870Qvtf1MIHMiCE3
+X-CM-Envelope: MS4wfNcm2VTg/JE9Y92yN+xi4kMzYODxNNQ6YWaxgyiNFwkAPYl8Do//IVGyMbDcWfdZV58jvTUAZ32HahpZvkJtZuXGh5nTvqlkZh2R84kyFtTtl2C2bwq+
+    R8unike9tqK8zggyldDhStbQNqo8HUIC7yRrcL8R31Y3L8O3hE/92mRTgbQkc9DHyun642fRCB+i3Ln3MFjf/d6T5qTcDYvQzMgiefSmRSirBqe9T81C9r+8
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=UtV5FjuMAAAA:8 a=o8Bf2xIQAAAA:8
-    a=IXr_WNlcAAAA:8 a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=FreliyUT6uAS0AdjSgsA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=ehT88nhQmDs7a44Z_RBH:22 a=kLeBEu5l8tkQtVp4YdQK:22
-    a=K24ECnMRWNUKRqF_MnsZ:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=o8Bf2xIQAAAA:8 a=IXr_WNlcAAAA:8
+    a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8 a=UtV5FjuMAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=9QFRiMXo_QA8-fxtALUA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=kLeBEu5l8tkQtVp4YdQK:22 a=K24ECnMRWNUKRqF_MnsZ:22
+    a=ehT88nhQmDs7a44Z_RBH:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754088AbeDYKzi (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:55:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52920 "EHLO
+        id S1754194AbeDYKnS (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:43:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52900 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753858AbeDYKnQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:16 -0400
+        with ESMTP id S1753730AbeDYKnO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
-        Yiwen Jiang <jiangyiwen@huawei.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
+        Alex Chen <alex.chen@huawei.com>,
         Mark Fasheh <mfasheh@versity.com>,
         Joel Becker <jlbec@evilplan.org>,
         Junxiao Bi <junxiao.bi@oracle.com>,
         Joseph Qi <jiangqi903@gmail.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 110/183] ocfs2: return error when we attempt to access a dirty bh in jbd2
-Date: Wed, 25 Apr 2018 12:35:30 +0200
-Message-Id: <20180425103246.874406810@linuxfoundation.org>
+Subject: [PATCH 4.14 109/183] ocfs2/acl: use ip_xattr_sem to protect getting extended attribute
+Date: Wed, 25 Apr 2018 12:35:29 +0200
+Message-Id: <20180425103246.832974235@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -105,94 +105,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: piaojun <piaojun@huawei.com>
 
 
-[ Upstream commit d984187e3a1ad7d12447a7ab2c43ce3717a2b5b3 ]
+[ Upstream commit 16c8d569f5704a84164f30ff01b29879f3438065 ]
 
-We should not reuse the dirty bh in jbd2 directly due to the following
-situation:
+The race between *set_acl and *get_acl will cause getting incomplete
+xattr data as below:
 
-1. When removing extent rec, we will dirty the bhs of extent rec and
-   truncate log at the same time, and hand them over to jbd2.
+  processA                                    processB
 
-2. The bhs are submitted to jbd2 area successfully.
+  ocfs2_set_acl
+    ocfs2_xattr_set
+      __ocfs2_xattr_set_handle
 
-3. The write-back thread of device help flush the bhs to disk but
-   encounter write error due to abnormal storage link.
+                                              ocfs2_get_acl_nolock
+                                                ocfs2_xattr_get_nolock:
 
-4. After a while the storage link become normal. Truncate log flush
-   worker triggered by the next space reclaiming found the dirty bh of
-   truncate log and clear its 'BH_Write_EIO' and then set it uptodate in
-   __ocfs2_journal_access():
+processB may get incomplete xattr data if processA hasn't set_acl done.
 
-   ocfs2_truncate_log_worker
-     ocfs2_flush_truncate_log
-       __ocfs2_flush_truncate_log
-         ocfs2_replay_truncate_records
-           ocfs2_journal_access_di
-             __ocfs2_journal_access // here we clear io_error and set 'tl_bh' uptodata.
+So we should use 'ip_xattr_sem' to protect getting extended attribute in
+ocfs2_get_acl_nolock(), as other processes could be changing it
+concurrently.
 
-5. Then jbd2 will flush the bh of truncate log to disk, but the bh of
-   extent rec is still in error state, and unfortunately nobody will
-   take care of it.
-
-6. At last the space of extent rec was not reduced, but truncate log
-   flush worker have given it back to globalalloc. That will cause
-   duplicate cluster problem which could be identified by fsck.ocfs2.
-
-Sadly we can hardly revert this but set fs read-only in case of ruining
-atomicity and consistency of space reclaim.
-
-Link: http://lkml.kernel.org/r/5A6E8092.8090701@huawei.com
-Fixes: acf8fdbe6afb ("ocfs2: do not BUG if buffer not uptodate in __ocfs2_journal_access")
+Link: http://lkml.kernel.org/r/5A5DDCFF.7030001@huawei.com
 Signed-off-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Reviewed-by: Alex Chen <alex.chen@huawei.com>
 Cc: Mark Fasheh <mfasheh@versity.com>
 Cc: Joel Becker <jlbec@evilplan.org>
 Cc: Junxiao Bi <junxiao.bi@oracle.com>
 Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ocfs2/journal.c |   23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ fs/ocfs2/acl.c   |    6 ++++++
+ fs/ocfs2/xattr.c |    2 ++
+ 2 files changed, 8 insertions(+)
 
---- a/fs/ocfs2/journal.c
-+++ b/fs/ocfs2/journal.c
-@@ -666,23 +666,24 @@ static int __ocfs2_journal_access(handle
- 	/* we can safely remove this assertion after testing. */
- 	if (!buffer_uptodate(bh)) {
- 		mlog(ML_ERROR, "giving me a buffer that's not uptodate!\n");
--		mlog(ML_ERROR, "b_blocknr=%llu\n",
--		     (unsigned long long)bh->b_blocknr);
-+		mlog(ML_ERROR, "b_blocknr=%llu, b_state=0x%lx\n",
-+		     (unsigned long long)bh->b_blocknr, bh->b_state);
+--- a/fs/ocfs2/acl.c
++++ b/fs/ocfs2/acl.c
+@@ -311,7 +311,9 @@ struct posix_acl *ocfs2_iop_get_acl(stru
+ 	if (had_lock < 0)
+ 		return ERR_PTR(had_lock);
  
- 		lock_buffer(bh);
- 		/*
--		 * A previous attempt to write this buffer head failed.
--		 * Nothing we can do but to retry the write and hope for
--		 * the best.
-+		 * A previous transaction with a couple of buffer heads fail
-+		 * to checkpoint, so all the bhs are marked as BH_Write_EIO.
-+		 * For current transaction, the bh is just among those error
-+		 * bhs which previous transaction handle. We can't just clear
-+		 * its BH_Write_EIO and reuse directly, since other bhs are
-+		 * not written to disk yet and that will cause metadata
-+		 * inconsistency. So we should set fs read-only to avoid
-+		 * further damage.
- 		 */
- 		if (buffer_write_io_error(bh) && !buffer_uptodate(bh)) {
--			clear_buffer_write_io_error(bh);
--			set_buffer_uptodate(bh);
--		}
--
--		if (!buffer_uptodate(bh)) {
- 			unlock_buffer(bh);
--			return -EIO;
-+			return ocfs2_error(osb->sb, "A previous attempt to "
-+					"write this buffer head failed\n");
++	down_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	acl = ocfs2_get_acl_nolock(inode, type, di_bh);
++	up_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 
+ 	ocfs2_inode_unlock_tracker(inode, 0, &oh, had_lock);
+ 	brelse(di_bh);
+@@ -330,7 +332,9 @@ int ocfs2_acl_chmod(struct inode *inode,
+ 	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
+ 		return 0;
+ 
++	down_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	acl = ocfs2_get_acl_nolock(inode, ACL_TYPE_ACCESS, bh);
++	up_read(&OCFS2_I(inode)->ip_xattr_sem);
+ 	if (IS_ERR(acl) || !acl)
+ 		return PTR_ERR(acl);
+ 	ret = __posix_acl_chmod(&acl, GFP_KERNEL, inode->i_mode);
+@@ -361,8 +365,10 @@ int ocfs2_init_acl(handle_t *handle,
+ 
+ 	if (!S_ISLNK(inode->i_mode)) {
+ 		if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
++			down_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 			acl = ocfs2_get_acl_nolock(dir, ACL_TYPE_DEFAULT,
+ 						   dir_bh);
++			up_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 			if (IS_ERR(acl))
+ 				return PTR_ERR(acl);
  		}
- 		unlock_buffer(bh);
- 	}
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -638,9 +638,11 @@ int ocfs2_calc_xattr_init(struct inode *
+ 						     si->value_len);
+ 
+ 	if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
++		down_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 		acl_len = ocfs2_xattr_get_nolock(dir, dir_bh,
+ 					OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT,
+ 					"", NULL, 0);
++		up_read(&OCFS2_I(dir)->ip_xattr_sem);
+ 		if (acl_len > 0) {
+ 			a_size = ocfs2_xattr_entry_real_size(0, acl_len);
+ 			if (S_ISDIR(mode))
