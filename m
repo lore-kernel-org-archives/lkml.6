@@ -1,61 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754859AbeDYO5o (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:57:44 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:50392 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754484AbeDYO5k (ORCPT
+        id S1754870AbeDYO6D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:58:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52256 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754575AbeDYO5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:57:40 -0400
-Date: Wed, 25 Apr 2018 10:57:24 -0400 (EDT)
-Message-Id: <20180425.105724.2133798148286273941.davem@davemloft.net>
-To: netdev@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-Subject: [README] Reiteration of statement regarding NetDev conference and
- NetDev Society
-From: David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Wed, 25 Apr 2018 10:57:53 -0400
+Date: Wed, 25 Apr 2018 16:57:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: tglx@linutronix.de, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        acme@redhat.com, eranian@google.com, ak@linux.intel.com
+Subject: Re: [PATCH] perf/x86/intel: Don't enable freeze-on-smi for PerfMon V1
+Message-ID: <20180425145746.GX4082@hirez.programming.kicks-ass.net>
+References: <1524599783-62181-1-git-send-email-kan.liang@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524599783-62181-1-git-send-email-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 24, 2018 at 03:56:23PM -0400, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> The SMM freeze feature was introduced since PerfMon V2. But the current
+> code unconditionally enables the feature for all platforms. It can
+> generate #GP exception, if the related FREEZE_WHILE_SMM bit is set for
+> the machine with PerfMon V1.
+> 
+> Checking the PerfMon version. Only enable the feature for PerfMon V2 and
+> later.
 
-As the Linux networking maintainer, I feel the need to reiterate my
-statement of a month ago, and to provide some supporting facts on my
-end so that there is no confusion in the community on these issues.
+That's fine..
 
-I am no longer associated with either the Netdev Society or their
-event, the NetDev conference.
+> 
+> Fixes: 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>  arch/x86/events/intel/core.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 4f2a5c7..08be8ed 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -3346,7 +3346,8 @@ static void intel_pmu_cpu_starting(int cpu)
+>  
+>  	cpuc->lbr_sel = NULL;
+>  
+> -	flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
+> +	if (x86_pmu.version > 1)
+> +		flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
+>  
+>  	if (!cpuc->shared_regs)
+>  		return;
 
-Neither is endorsed nor supported by me.
+And the above chunk does as advertised.
 
-I am writing to provide clarity on this situation to the subscribers
-of the 'netdev' mailing list and the community at large.
+> @@ -3509,6 +3510,8 @@ static __initconst const struct x86_pmu core_pmu = {
+>  	.cpu_dying		= intel_pmu_cpu_dying,
+>  };
+>  
+> +static struct attribute *intel_pmu_attrs[];
+> +
+>  static __initconst const struct x86_pmu intel_pmu = {
+>  	.name			= "Intel",
+>  	.handle_irq		= intel_pmu_handle_irq,
+> @@ -3540,6 +3543,8 @@ static __initconst const struct x86_pmu intel_pmu = {
+>  	.format_attrs		= intel_arch3_formats_attr,
+>  	.events_sysfs_show	= intel_event_sysfs_show,
+>  
+> +	.attrs			= intel_pmu_attrs,
+> +
+>  	.cpu_prepare		= intel_pmu_cpu_prepare,
+>  	.cpu_starting		= intel_pmu_cpu_starting,
+>  	.cpu_dying		= intel_pmu_cpu_dying,
+> @@ -3918,8 +3923,6 @@ __init int intel_pmu_init(void)
+>  
+>  	x86_pmu.max_pebs_events		= min_t(unsigned, MAX_PEBS_EVENTS, x86_pmu.num_counters);
+>  
+> -
+> -	x86_pmu.attrs			= intel_pmu_attrs;
+>  	/*
+>  	 * Quirk: v2 perfmon does not report fixed-purpose events, so
+>  	 * assume at least 3 events, when not running in a hypervisor:
 
-Specifically, I am writing to make sure there isn't any confusion
-through the use of the name "NetDev" that I either continue to plan,
-support or participate in this event.  I do not.
-
-I have in the past participated in the NetDev events as a member of
-technical committee and as the committee's chair.  I took on this role
-because I felt that I could improve the technical content.
-
-I spent many hours helping to plan and make preparations for Netdev
-2.2 in Seoul.  In connection with this work, the Executive Director at
-the time (Soyoung Park) and I were reimbursed for our airfare
-($7321.44 USD) and lodging ($717.55 USD) as we prepared for the
-conference during the weeks leading up to the event.
-
-I was also a member of the NetDev Society's board but have formally
-left the board and the technical committee, am no longer associated
-with planning the NetDev conference and do not intend to participate
-in future NetDev conference events.
-
-Having said all of this, I look forward to continued great work on the
-netdev project and sharing cool advances in networking at the
-networking track of Linux Plumbers Conference.
-
-Thank you.
+But what is all this about? The Changelog doesn't mention anything about
+this. Looks like an unrelated cleanup that really should've been a
+separate patch or something.
