@@ -1,57 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754948AbeDYPqE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 11:46:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35714 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754578AbeDYPqD (ORCPT
+        id S1755035AbeDYPrg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 11:47:36 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:12734 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754847AbeDYPrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 11:46:03 -0400
-Date: Wed, 25 Apr 2018 08:46:02 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Moving unmaintained filesystems to staging
-Message-ID: <20180425154602.GA8546@bombadil.infradead.org>
+        Wed, 25 Apr 2018 11:47:31 -0400
+X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
+   d="scan'208";a="13279912"
+Subject: Re: [PATCH v2 1/2] crypto: ccree: enable support for hardware keys
+To: Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+CC: Ofir Drang <ofir.drang@arm.com>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1524468316-6606-1-git-send-email-gilad@benyossef.com>
+ <1524468316-6606-2-git-send-email-gilad@benyossef.com>
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
+Message-ID: <0caa0d1d-eb05-c5a1-9958-2285bb11db8c@microchip.com>
+Date: Wed, 25 Apr 2018 18:47:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1524468316-6606-2-git-send-email-gilad@benyossef.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently ncpfs got moved to staging.  Also recently, we had some fuzzer
-developers report bugs in hfs, which they deem a security hole because
-Ubuntu attempts to automount an inserted USB device as hfs.
+Hi, Gilad,
 
-We have no maintainer for hfs, and no likely prospect of anyone stepping
-up soon to become hfs maintainer.  I think it's irresponsible of us
-to present unmaintained code on an equal basis with filesystems under
-active maintenance like ext2.
+On 04/23/2018 10:25 AM, Gilad Ben-Yossef wrote:
+> Enable CryptoCell support for hardware keys.
+> 
+> Hardware keys are regular AES keys loaded into CryptoCell internal memory
+> via firmware, often from secure boot ROM or hardware fuses at boot time.
+> 
+> As such, they can be used for enc/dec purposes like any other key but
+> cannot (read: extremely hard to) be extracted since since they are not
+> available anywhere in RAM during runtime.
+> 
+> The mechanism has some similarities to s390 secure keys although the keys
+> are not wrapped or sealed, but simply loaded offline. The interface was
+> therefore modeled based on the s390 secure keys support.
 
-I therefore propose we move the following filesystems which are explicitly
-listed as Orphaned to staging:
+I'm interested in hardware keys, ecc508 supports them too. In your
+proposal you expect that the user will provide a specific key token that
+is meaningful only for the ccree driver. If another driver that supports
+"cbc(paes)" shows up, you will force the user to select a specific
+driver implementation and to know what kind of key token to provide.
+Shouldn't we have a common API that can address other drivers too?
 
-affs - Amiga filesystem.
-efs - old SGI filesystem predating XFS, used on CDs for a while.
-hfs - Mac filesystem.
-hfsplus - Mac filesystem.
-
-I further propose we move the following filesystems which have no entry
-in MAINTAINERS to staging:
-
-adfs - Acorn filesystem from the 1990s.
-minix
-qnx6
-
-We have no listed maintainer for isofs.  This is clearly not a candidate
-for staging.  Jan Kara appears to be acting as default maintainer,
-so I'd like to propose he gets the appropriate credit with an entry
-in MAINTAINERS.
-
-romfs also has no listed maintainer.  I'm not sure who to suggest,
-but it seems to have users.
-
-tracefs isn't listed, and probably needs to become part of the
-TRACING entry.
+Best,
+ta
