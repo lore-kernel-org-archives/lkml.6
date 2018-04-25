@@ -1,60 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeDYLWb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 07:22:31 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:34122 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751577AbeDYLWZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 07:22:25 -0400
-From: Dag Moxnes <dag.moxnes@oracle.com>
-To: Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] rds: ib: Fix missing call to rds_ib_dev_put in rds_ib_setup_qp
-Date: Wed, 25 Apr 2018 13:22:01 +0200
-Message-Id: <1524655321-8379-1-git-send-email-dag.moxnes@oracle.com>
-X-Mailer: git-send-email 1.7.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8873 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=698
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804250108
+        id S1753737AbeDYLXp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 07:23:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:38272 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753033AbeDYLXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 07:23:37 -0400
+Date: Wed, 25 Apr 2018 12:23:32 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+        drjones@redhat.com, cdall@kernel.org, arnd@arndb.de,
+        suzuki.poulose@arm.com, marc.zyngier@arm.com, awallis@codeaurora.org,
+        kernel-hardening@lists.openwall.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, ramana.radhakrishnan@arm.com,
+        kvmarm@lists.cs.columbia.edu
+Subject: Re: [PATCHv3 07/11] arm64: add basic pointer authentication support
+Message-ID: <20180425112331.hke7afxnslyrwf3h@armageddon.cambridge.arm.com>
+References: <20180417183735.56985-1-mark.rutland@arm.com>
+ <20180417183735.56985-8-mark.rutland@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417183735.56985-8-mark.rutland@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function rds_ib_setup_qp is calling rds_ib_get_client_data and
-should correspondingly call rds_ib_dev_put. This call was lost in
-the non-error path with the introduction of error handling done in
-commit 3b12f73a5c29 ("rds: ib: add error handle")
+Hi Mark,
 
-Signed-off-by: Dag Moxnes <dag.moxnes@oracle.com>
----
- net/rds/ib_cm.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+On Tue, Apr 17, 2018 at 07:37:31PM +0100, Mark Rutland wrote:
+> diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
+> index 39ec0b8a689e..caf0d3010112 100644
+> --- a/arch/arm64/include/asm/mmu_context.h
+> +++ b/arch/arm64/include/asm/mmu_context.h
+> @@ -29,7 +29,6 @@
+>  #include <asm/cacheflush.h>
+>  #include <asm/cpufeature.h>
+>  #include <asm/proc-fns.h>
+> -#include <asm-generic/mm_hooks.h>
+>  #include <asm/cputype.h>
+>  #include <asm/pgtable.h>
+>  #include <asm/sysreg.h>
+> @@ -168,7 +167,14 @@ static inline void cpu_replace_ttbr1(pgd_t *pgdp)
+>  #define destroy_context(mm)		do { } while(0)
+>  void check_and_switch_context(struct mm_struct *mm, unsigned int cpu);
+>  
+> -#define init_new_context(tsk,mm)	({ atomic64_set(&(mm)->context.id, 0); 0; })
+> +static inline int init_new_context(struct task_struct *tsk,
+> +			struct mm_struct *mm)
+> +{
+> +	atomic64_set(&mm->context.id, 0);
+> +	mm_ctx_ptrauth_init(&mm->context);
+> +
+> +	return 0;
+> +}
+>  
+>  #ifdef CONFIG_ARM64_SW_TTBR0_PAN
+>  static inline void update_saved_ttbr0(struct task_struct *tsk,
+> @@ -216,6 +222,8 @@ static inline void __switch_mm(struct mm_struct *next)
+>  		return;
+>  	}
+>  
+> +	mm_ctx_ptrauth_switch(&next->context);
+> +
+>  	check_and_switch_context(next, cpu);
+>  }
+>  
+> @@ -241,6 +249,19 @@ switch_mm(struct mm_struct *prev, struct mm_struct *next,
+>  void verify_cpu_asid_bits(void);
+>  void post_ttbr_update_workaround(void);
+>  
+> +static inline void arch_dup_mmap(struct mm_struct *oldmm,
+> +				 struct mm_struct *mm)
+> +{
+> +	mm_ctx_ptrauth_dup(&oldmm->context, &mm->context);
+> +}
+> +#define arch_dup_mmap arch_dup_mmap
 
-diff --git a/net/rds/ib_cm.c b/net/rds/ib_cm.c
-index eea1d86..13b38ad 100644
---- a/net/rds/ib_cm.c
-+++ b/net/rds/ib_cm.c
-@@ -547,7 +547,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
- 	rdsdebug("conn %p pd %p cq %p %p\n", conn, ic->i_pd,
- 		 ic->i_send_cq, ic->i_recv_cq);
- 
--	return ret;
-+	goto out;
- 
- sends_out:
- 	vfree(ic->i_sends);
-@@ -572,6 +572,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
- 		ic->i_send_cq = NULL;
- rds_ibdev_out:
- 	rds_ib_remove_conn(rds_ibdev, conn);
-+out:
- 	rds_ib_dev_put(rds_ibdev);
- 
- 	return ret;
+IIUC, we could skip the arch_dup_mmap() and init_new_context() here for
+the fork() case since the ptrauth_keys would be copied as part of the
+dup_mm(). There is another situation where init_new_context() is called
+bprm_mm_init() -> mm_alloc() -> mm_init() -> init_new_context().
+However, in this case the core code also calls arch_bprm_mm_init(). So I
+think we only need to update the latter to get a new random key.
+
+> diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
+> new file mode 100644
+> index 000000000000..a2e8fb91fdee
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/pointer_auth.h
+> @@ -0,0 +1,89 @@
+> +/*
+> + * Copyright (C) 2016 ARM Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+
+Nitpick: 2018. You could also use the SPDX header, save some lines.
+
 -- 
-1.7.1
+Catalin
