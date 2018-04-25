@@ -1,100 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751488AbeDYIvq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 04:51:46 -0400
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:45423 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750969AbeDYIvg (ORCPT
+        id S1751453AbeDYIwd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 04:52:33 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:65346 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751361AbeDYIwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 04:51:36 -0400
-X-Google-Smtp-Source: AIpwx48bjIh+GvlET6CdRVjCXA4oslQ8ucdwce7uFzahRpB9rSQSDskMjGFJUdG7H1XYynHQFqYwUYeKsNVEotEZ+Sg=
+        Wed, 25 Apr 2018 04:52:30 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>
+Cc: Genki Sky <sky@genki.is>, David Herrmann <dh.herrmann@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org
+Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock BOOTTIME
+Date: Wed, 25 Apr 2018 10:52:18 +0200
+Message-ID: <1996930.B4PaKZ6i1F@aspire.rjw.lan>
+In-Reply-To: <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de>
+References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com> <CALAqxLWmcmiOgbH1Ri+Ki-OGFvgzRzRDzX3FZdUhcqu1OoCWiA@mail.gmail.com> <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180311100313.znonhesgh462rz65@osboxes>
-References: <20180310171244.70299-1-npcomplete13@gmail.com>
- <CACna6rz1TeRbPq-60HkHz9A0TDn+iXtmXniE6FCiANpUmV-qrw@mail.gmail.com> <20180311100313.znonhesgh462rz65@osboxes>
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Wed, 25 Apr 2018 10:51:33 +0200
-Message-ID: <CACna6rxW0QvQWO1Oq77YFH3ry7+ycwPD1yWrJEhMHMPj_Z_zNA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: BCM5301X: Fix NAND ECC parameters for Linksys Panamera
-To: Vivek Unune <npcomplete13@gmail.com>
-Cc: florian.fainelli@broadcom.com, Hauke Mehrtens <hauke@hauke-m.de>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3P8pnIP014185
 
-On 11 March 2018 at 11:03, Vivek Unune <npcomplete13@gmail.com> wrote:
-> Hi Rafał,
->
-> On Sat, Mar 10, 2018 at 10:41:04PM +0100, Rafał Miłecki wrote:
->> On 10 March 2018 at 18:12, Vivek Unune <npcomplete13@gmail.com> wrote:
->> > Using BCH8 gives ecc errors and makes the router unsuable.
->> > Switching to BCH1 fixes these errors.
->>
->> Can you provide CFE's log messages starting with
->> "Decompressing...done" and up to the "Press Ctrl+C to stop in CFE"
->> please? I'd like to see what NAND info CFE prints there.
->
-> See below. It does say BCH-8, however I can't get it to work.
->
-> CFE log:
->
-> Decompressing...done
-> Found a Toshiba NAND flash:
-> Total size:  128MB
-> Block size:  128KB
-> Page Size:   2048B
-> OOB Size:    64B
-> Sector size: 512B
-> Spare size:  16B
-> ECC level:   8 (8-bit)
-> Device ID: 0x98 0xf1 0x80 0x15 0xf2 0x16
-> find_devinfo: devinfo block found at 0x00180000!
->
-> Press Ctrl+C to stop in CFE
+On Tuesday, April 24, 2018 10:09:28 AM CEST Thomas Gleixner wrote:
+> On Mon, 23 Apr 2018, John Stultz wrote:
+> 
+> > On Mon, Apr 23, 2018 at 7:45 PM, Genki Sky <sky@genki.is> wrote:
+> > > Quoting Genki Sky (2018/04/23 20:40:36 -0400)
+> > >> I came across this thread for same reason as [0]: Daemons getting
+> > >> killed by systemd on resume (after >WatchdogSec seconds of
+> > >> suspending). I'm using master branch of systemd and the kernel. As
+> > >> mentioned, systemd uses CLOCK_MONOTONIC, originally expecting it to
+> > >> not include suspend time.
+> > >>
+> > >> Correct me if I'm mistaken, but I don't see the ambiguity of whether
+> > >> this patch series breaks systemd. If it's implemented correctly, you'd
+> > >> hope it *would* break it!
+> > >
+> > > This sounded a little weak on re-reading, sorry. So, I just confirmed
+> > > that after booting a "git revert -m 1 680014d6d1da", the issue no
+> > > longer appears. (I.e., a suspend for >WatchDog sec doesn't result in
+> > > any daemon getting killed).
+> > >
+> > > Let me know if I can help in any way.
+> > 
+> > Yea, this is the sort of thing I was worried about.
+> > 
+> > Thomas: I think reverting this change is needed.
+> 
+> Sigh. I hoped that something like this would be catched before I sent the
+> pull request by those who were actually interested in this change...
 
-This means that:
-1) Default mode for your NAND controller is BCH8 (setup at hw level)
-2) CFE uses BCH8 when programming flash with provided firmware
+The "git revert -m 1 680014d6d1da" makes resume issues on my Aspire S5
+go away (cf. https://marc.info/?l=linux-kernel&m=152460804018920&w=2).
 
-For maximum compatibility DTS should describe ECC as using BCH8 and
-Linux should use BCH8.
+I'll try with just the "monotonic" vs "boottime" clock changes reverted.
 
-I spent whole day yesterday experimenting with BCM47094 and NAND
-controller to understand your case better.
+> I'll try to distangle it.
 
-As crazy as it sounds, my NAND controller working in BCH4 mode is
-reading flash data programmed using BCH8 perfectly fine! I was testing
-& verifying that behavior multiple times for hours. It really works.
+Cool.
 
-I noticed that on my BCM47094 board with CFE working in BCH8:
-1) Flashing firmware with CFE results in using BCH8 (expected)
-2) Linux with NAND controller in BCH4 can read flash data (unexpected!)
-3) Writing flash data results in using BCH4
-
-Above write test proves that NAND controller is really setup into BCH4
-mode correctly. How is it possible it reads flash data programmed
-using BCH8 is out of my imagination.
-
-
-Long story short I believe your patch is wrong. DTS should describe
-hardware and by default this board uses BCH8 (and so the bootloader).
-Current DTS is correct.
-
-
-As it happens your patch doesn't break anything directly because of
-unexpected NAND controller behavior. It's just a matter of "luck"
-though due to some weird hardware behavior.
-
--- 
-Rafał
+Please let me know if you need any help.
