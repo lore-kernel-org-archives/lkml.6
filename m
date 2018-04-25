@@ -1,263 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752915AbeDYVWc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 17:22:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54750 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751973AbeDYVW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 17:22:29 -0400
-Date: Wed, 25 Apr 2018 17:22:27 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: David Rientjes <rientjes@google.com>
-cc: Randy Dunlap <rdunlap@infradead.org>, Michal Hocko <mhocko@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v5] fault-injection: introduce kvmalloc fallback
- options
-In-Reply-To: <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
-Message-ID: <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180421144757.GC14610@bombadil.infradead.org> <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com> <20180423151545.GU17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424125121.GA17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com> <20180424162906.GM17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424170349.GQ17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com> <20180424173836.GR17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
- <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org> <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1751651AbeDYV1M (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 17:27:12 -0400
+Received: from mail-it0-f51.google.com ([209.85.214.51]:51228 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750868AbeDYV1K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 17:27:10 -0400
+X-Google-Smtp-Source: AB8JxZpkiogDvadAGDI47tD6A0gEpL82zkRUNY0Bfktiibl0Cn8nAmRqXmkTKRZFeACuE+xlohIy+c3Tgy+bUDPoeZ0=
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180425042056.GA21412@linux.vnet.ibm.com>
+References: <20180423172244.694dbc9d@gandalf.local.home> <20180424155655.GA820@linux.vnet.ibm.com>
+ <CAJWu+or_-emRLeBbfOtQYyn9W8v-KHH8XecV_k-p5FX_3BLHAQ@mail.gmail.com>
+ <20180424172658.GT26088@linux.vnet.ibm.com> <20180424182302.GA404@linux.vnet.ibm.com>
+ <20180424182623.GA1357@linux.vnet.ibm.com> <CAJWu+opC9pLxoiXq7QDRUDe6ouC4ij398bHCfnUwp+h7Y_ssDg@mail.gmail.com>
+ <849066633.939.1524612064698.JavaMail.zimbra@efficios.com>
+ <68e4c123-a223-5e26-e57a-da2515041bf3@google.com> <20180425001049.GX26088@linux.vnet.ibm.com>
+ <20180425042056.GA21412@linux.vnet.ibm.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Wed, 25 Apr 2018 14:27:08 -0700
+Message-ID: <CAJWu+orWC=W0Jn2Jo7f+u5mbHMi+D1yuCmhD-xSgjWZ6Ynw32Q@mail.gmail.com>
+Subject: Re: [RFC v4 3/4] irqflags: Avoid unnecessary calls to trace_ if you can
+To: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rostedt <rostedt@goodmis.org>, Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@lge.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 24, 2018 at 9:20 PM, Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+[..]
+>> >
+>> > Sounds good, thanks.
+>> >
+>> > Also I found the reason for my boot issue. It was because the
+>> > init_srcu_struct in the prototype was being done in an initcall.
+>> > Instead if I do it in start_kernel before the tracepoint is used, it
+>> > fixes it (although I don't know if this is dangerous to do like this
+>> > but I can get it to boot atleast.. Let me know if this isn't the
+>> > right way to do it, or if something else could go wrong)
+>> >
+>> > diff --git a/init/main.c b/init/main.c
+>> > index 34823072ef9e..ecc88319c6da 100644
+>> > --- a/init/main.c
+>> > +++ b/init/main.c
+>> > @@ -631,6 +631,7 @@ asmlinkage __visible void __init start_kernel(void)
+>> >         WARN(!irqs_disabled(), "Interrupts were enabled early\n");
+>> >         early_boot_irqs_disabled = false;
+>> >
+>> > +       init_srcu_struct(&tracepoint_srcu);
+>> >         lockdep_init_early();
+>> >
+>> >         local_irq_enable();
+>> > --
+>> >
+>> > I benchmarked it and the performance also looks quite good compared
+>> > to the rcu tracepoint version.
+>> >
+>> > If you, Paul and other think doing the init_srcu_struct like this
+>> > should be Ok, then I can try to work more on your srcu prototype and
+>> > roll into my series and post them in the next RFC series (or let me
+>> > know if you wanted to work your srcu stuff in a separate series..).
+>>
+>> That is definitely not what I was expecting, but let's see if it works
+>> anyway...  ;-)
+>>
+>> But first, I was instead expecting something like this:
+>>
+>> DEFINE_SRCU(tracepoint_srcu);
+>>
+>> With this approach, some of the initialization happens at compile time
+>> and the rest happens at the first call_srcu().
+>>
+>> This will work -only- if the first call_srcu() doesn't happen until after
+>> workqueue_init_early() has been invoked.  Which I believe must have been
+>> the case in your testing, because otherwise it looks like __call_srcu()
+>> would have complained bitterly.
+>>
+>> On the other hand, if you need to invoke call_srcu() before the call
+>> to workqueue_init_early(), then you need the patch that I am beating
+>> into shape.  Plus you would need to use DEFINE_SRCU() and to avoid
+>> invoking init_srcu_struct().
+>
+> And here is the patch.  I do not intend to send it upstream unless it
+> actually proves necessary, and it appears that current SRCU does what
+> you need.
+>
+> You would only need this patch if you wanted to invoke call_srcu()
+> before workqueue_init_early() was called, which does not seem likely.
 
+Cool. So I was chatting with Paul and just to update everyone as well,
+I tried the DEFINE_SRCU instead of the late init_srcu_struct call and
+can make it past boot too (thanks Paul!). Also I don't see a reason we
+need the RCU callback to execute early and its fine if it runs later.
 
-On Wed, 25 Apr 2018, David Rientjes wrote:
+Also, I was thinking of introducing a separate trace_*event*_srcu API
+as a replacement to the _rcuidle API. Then I can make use of it for my
+tracepoints, and then later can use it for the other tracepoints
+needing _rcuidle. After that we can finally get rid of the _rcuidle
+API if there are no other users of it. This is just a rough plan, but
+let me know if there's any issue with this plan that you can think
+off.
+IMO, I believe its simpler if the caller worries about whether it can
+tolerate if tracepoint probes can block or not, than making it a
+property of the tracepoint. That would also simplify the patch to
+introduce srcu and keep the tracepoint creation API simple and less
+confusing, but let me know if I'm missing something about this.
 
-> On Wed, 25 Apr 2018, Mikulas Patocka wrote:
-> 
-> > From: Mikulas Patocka <mpatocka@redhat.com>
-> > Subject: [PATCH] fault-injection: introduce kvmalloc fallback options
-> > 
-> > This patch introduces a fault-injection option "kvmalloc_fallback". This
-> > option makes kvmalloc randomly fall back to vmalloc.
-> > 
-> > Unfortunately, some kernel code has bugs - it uses kvmalloc and then
-> > uses DMA-API on the returned memory or frees it with kfree. Such bugs were
-> > found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
-> > code. This options helps to test for these bugs.
-> > 
-> > The patch introduces a config option FAIL_KVMALLOC_FALLBACK_PROBABILITY.
-> > It can be enabled in distribution debug kernels, so that kvmalloc abuse
-> > can be tested by the users. The default can be overridden with
-> > "kvmalloc_fallback" parameter or in /sys/kernel/debug/kvmalloc_fallback/.
-> > 
-> 
-> Do we really need the new config option?  This could just be manually 
-> tunable via fault injection IIUC.
+Thanks,
 
-We do, because we want to enable it in RHEL and Fedora debugging kernels, 
-so that it will be tested by the users.
-
-The users won't use some extra magic kernel options or debugfs files.
-
-Mikulas
-
-
-> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> > 
-> > ---
-> >  Documentation/fault-injection/fault-injection.txt |    7 +++++
-> >  include/linux/fault-inject.h                      |    9 +++---
-> >  kernel/futex.c                                    |    2 -
-> >  lib/Kconfig.debug                                 |   15 +++++++++++
-> >  mm/failslab.c                                     |    2 -
-> >  mm/page_alloc.c                                   |    2 -
-> >  mm/util.c                                         |   30 ++++++++++++++++++++++
-> >  7 files changed, 60 insertions(+), 7 deletions(-)
-> > 
-> > Index: linux-2.6/Documentation/fault-injection/fault-injection.txt
-> > ===================================================================
-> > --- linux-2.6.orig/Documentation/fault-injection/fault-injection.txt	2018-04-16 21:08:34.000000000 +0200
-> > +++ linux-2.6/Documentation/fault-injection/fault-injection.txt	2018-04-25 21:36:36.000000000 +0200
-> > @@ -15,6 +15,12 @@ o fail_page_alloc
-> >  
-> >    injects page allocation failures. (alloc_pages(), get_free_pages(), ...)
-> >  
-> > +o kvmalloc_fallback
-> > +
-> > +  makes the function kvmalloc randomly fall back to vmalloc. This could be used
-> > +  to detects bugs such as using DMA-API on the result of kvmalloc or freeing
-> > +  the result of kvmalloc with free.
-> > +
-> >  o fail_futex
-> >  
-> >    injects futex deadlock and uaddr fault errors.
-> > @@ -167,6 +173,7 @@ use the boot option:
-> >  
-> >  	failslab=
-> >  	fail_page_alloc=
-> > +	kvmalloc_fallback=
-> >  	fail_make_request=
-> >  	fail_futex=
-> >  	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
-> > Index: linux-2.6/include/linux/fault-inject.h
-> > ===================================================================
-> > --- linux-2.6.orig/include/linux/fault-inject.h	2018-04-16 21:08:36.000000000 +0200
-> > +++ linux-2.6/include/linux/fault-inject.h	2018-04-25 21:38:22.000000000 +0200
-> > @@ -31,17 +31,18 @@ struct fault_attr {
-> >  	struct dentry *dname;
-> >  };
-> >  
-> > -#define FAULT_ATTR_INITIALIZER {					\
-> > +#define FAULT_ATTR_INITIALIZER(p) {					\
-> > +		.probability = (p),					\
-> >  		.interval = 1,						\
-> > -		.times = ATOMIC_INIT(1),				\
-> > +		.times = ATOMIC_INIT((p) ? -1 : 1),			\
-> > +		.verbose = (p) ? 0 : 2,					\
-> >  		.require_end = ULONG_MAX,				\
-> >  		.stacktrace_depth = 32,					\
-> >  		.ratelimit_state = RATELIMIT_STATE_INIT_DISABLED,	\
-> > -		.verbose = 2,						\
-> >  		.dname = NULL,						\
-> >  	}
-> >  
-> > -#define DECLARE_FAULT_ATTR(name) struct fault_attr name = FAULT_ATTR_INITIALIZER
-> > +#define DECLARE_FAULT_ATTR(name) struct fault_attr name = FAULT_ATTR_INITIALIZER(0)
-> >  int setup_fault_attr(struct fault_attr *attr, char *str);
-> >  bool should_fail(struct fault_attr *attr, ssize_t size);
-> >  
-> > Index: linux-2.6/lib/Kconfig.debug
-> > ===================================================================
-> > --- linux-2.6.orig/lib/Kconfig.debug	2018-04-25 15:56:16.000000000 +0200
-> > +++ linux-2.6/lib/Kconfig.debug	2018-04-25 21:39:45.000000000 +0200
-> > @@ -1527,6 +1527,21 @@ config FAIL_PAGE_ALLOC
-> >  	help
-> >  	  Provide fault-injection capability for alloc_pages().
-> >  
-> > +config FAIL_KVMALLOC_FALLBACK_PROBABILITY
-> > +	int "Default kvmalloc fallback probability"
-> > +	depends on FAULT_INJECTION
-> > +	range 0 100
-> > +	default "0"
-> > +	help
-> > +	  This option will make kvmalloc randomly fall back to vmalloc.
-> > +	  Normally, kvmalloc falls back to vmalloc only rarely, if memory
-> > +	  is fragmented.
-> > +
-> > +	  This option helps to detect hard-to-reproduce driver bugs, for
-> > +	  example using DMA API on the result of kvmalloc.
-> > +
-> > +	  The default may be overridden with the kvmalloc_fallback parameter.
-> > +
-> >  config FAIL_MAKE_REQUEST
-> >  	bool "Fault-injection capability for disk IO"
-> >  	depends on FAULT_INJECTION && BLOCK
-> > Index: linux-2.6/mm/util.c
-> > ===================================================================
-> > --- linux-2.6.orig/mm/util.c	2018-04-25 15:48:39.000000000 +0200
-> > +++ linux-2.6/mm/util.c	2018-04-25 21:43:31.000000000 +0200
-> > @@ -14,6 +14,7 @@
-> >  #include <linux/hugetlb.h>
-> >  #include <linux/vmalloc.h>
-> >  #include <linux/userfaultfd_k.h>
-> > +#include <linux/fault-inject.h>
-> >  
-> >  #include <asm/sections.h>
-> >  #include <linux/uaccess.h>
-> > @@ -377,6 +378,29 @@ unsigned long vm_mmap(struct file *file,
-> >  }
-> >  EXPORT_SYMBOL(vm_mmap);
-> >  
-> > +#ifdef CONFIG_FAULT_INJECTION
-> > +
-> > +static struct fault_attr kvmalloc_fallback =
-> > +	FAULT_ATTR_INITIALIZER(CONFIG_FAIL_KVMALLOC_FALLBACK_PROBABILITY);
-> > +
-> > +static int __init setup_kvmalloc_fallback(char *str)
-> > +{
-> > +	return setup_fault_attr(&kvmalloc_fallback, str);
-> > +}
-> > +
-> > +__setup("kvmalloc_fallback=", setup_kvmalloc_fallback);
-> > +
-> > +#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
-> > +static int __init kvmalloc_fallback_debugfs_init(void)
-> > +{
-> > +	fault_create_debugfs_attr("kvmalloc_fallback", NULL, &kvmalloc_fallback);
-> > +	return 0;
-> > +}
-> > +late_initcall(kvmalloc_fallback_debugfs_init);
-> > +#endif
-> > +
-> > +#endif
-> > +
-> >  /**
-> >   * kvmalloc_node - attempt to allocate physically contiguous memory, but upon
-> >   * failure, fall back to non-contiguous (vmalloc) allocation.
-> > @@ -404,6 +428,11 @@ void *kvmalloc_node(size_t size, gfp_t f
-> >  	 */
-> >  	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-> >  
-> > +#ifdef CONFIG_FAULT_INJECTION
-> > +	if (should_fail(&kvmalloc_fallback, size))
-> > +		goto do_vmalloc;
-> > +#endif
-> > +
-> >  	/*
-> >  	 * We want to attempt a large physically contiguous block first because
-> >  	 * it is less likely to fragment multiple larger blocks and therefore
-> > @@ -427,6 +456,7 @@ void *kvmalloc_node(size_t size, gfp_t f
-> >  	if (ret || size <= PAGE_SIZE)
-> >  		return ret;
-> >  
-> > +do_vmalloc: __maybe_unused
-> >  	return __vmalloc_node_flags_caller(size, node, flags,
-> >  			__builtin_return_address(0));
-> >  }
-> > Index: linux-2.6/kernel/futex.c
-> > ===================================================================
-> > --- linux-2.6.orig/kernel/futex.c	2018-02-14 20:24:42.000000000 +0100
-> > +++ linux-2.6/kernel/futex.c	2018-04-25 21:11:33.000000000 +0200
-> > @@ -288,7 +288,7 @@ static struct {
-> >  
-> >  	bool ignore_private;
-> >  } fail_futex = {
-> > -	.attr = FAULT_ATTR_INITIALIZER,
-> > +	.attr = FAULT_ATTR_INITIALIZER(0),
-> >  	.ignore_private = false,
-> >  };
-> >  
-> > Index: linux-2.6/mm/failslab.c
-> > ===================================================================
-> > --- linux-2.6.orig/mm/failslab.c	2018-04-16 21:08:36.000000000 +0200
-> > +++ linux-2.6/mm/failslab.c	2018-04-25 21:11:40.000000000 +0200
-> > @@ -9,7 +9,7 @@ static struct {
-> >  	bool ignore_gfp_reclaim;
-> >  	bool cache_filter;
-> >  } failslab = {
-> > -	.attr = FAULT_ATTR_INITIALIZER,
-> > +	.attr = FAULT_ATTR_INITIALIZER(0),
-> >  	.ignore_gfp_reclaim = true,
-> >  	.cache_filter = false,
-> >  };
-> > Index: linux-2.6/mm/page_alloc.c
-> > ===================================================================
-> > --- linux-2.6.orig/mm/page_alloc.c	2018-04-16 21:08:36.000000000 +0200
-> > +++ linux-2.6/mm/page_alloc.c	2018-04-25 21:11:47.000000000 +0200
-> > @@ -3055,7 +3055,7 @@ static struct {
-> >  	bool ignore_gfp_reclaim;
-> >  	u32 min_order;
-> >  } fail_page_alloc = {
-> > -	.attr = FAULT_ATTR_INITIALIZER,
-> > +	.attr = FAULT_ATTR_INITIALIZER(0),
-> >  	.ignore_gfp_reclaim = true,
-> >  	.ignore_gfp_highmem = true,
-> >  	.min_order = 1,
-> > 
-> > 
-> 
+ - Joel
