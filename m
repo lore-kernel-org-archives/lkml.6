@@ -1,186 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755205AbeDYQtU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:49:20 -0400
-Received: from mga06.intel.com ([134.134.136.31]:30153 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754552AbeDYQtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:49:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,327,1520924400";
-   d="scan'208";a="53597121"
-Message-ID: <1524674952.21176.610.camel@linux.intel.com>
-Subject: Re: [RFC PATCH RESEND 3/3] pinctrl: upboard: Add UP2 pinctrl and
- gpio driver
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Javier Arteaga <javier@emutex.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: "Dan O'Donovan" <dan@emutex.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 25 Apr 2018 19:49:12 +0300
-In-Reply-To: <20180421085009.28773-4-javier@emutex.com>
-References: <20180421085009.28773-1-javier@emutex.com>
-         <20180421085009.28773-4-javier@emutex.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1755588AbeDYQtw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:49:52 -0400
+Received: from smtpgwcipde.automotive.elektrobit.com ([213.95.163.141]:58477
+        "EHLO smtpgwcipde.elektrobit.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754585AbeDYQtq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:49:46 -0400
+Date: Wed, 25 Apr 2018 18:49:06 +0200
+From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Florian Fainelli <florian.fainelli@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Jonas Gorski <jonas.gorski@gmail.com>, <ldv-project@linuxtesting.org>,
+        <sil2review@lists.osadl.org>
+Subject: [PATCH v4] spi/bcm63xx-hspi: Enable the clock before calling
+ clk_get_rate().
+Message-ID: <20180425164904.GA30349@er01809n.ebgroup.elektrobit.com>
+References: <20180419130358.r7dva6owy2izyfus@agrajag.zerfleddert.de>
+ <dfb9c72c-6289-a2ea-c3d4-c59f5e3c799c@broadcom.com>
+ <20180424161605.GA17825@er01809n.ebgroup.elektrobit.com>
+ <20180424173253.GF22073@sirena.org.uk>
+ <20180425134728.GA20897@er01809n.ebgroup.elektrobit.com>
+ <20180425155028.GF24769@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Content-Disposition: inline
+In-Reply-To: <20180425155028.GF24769@sirena.org.uk>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Originating-IP: [10.0.24.181]
+X-ClientProxiedBy: denue6es008.ebgroup.elektrobit.com (10.5.139.25) To
+ denue6es008.ebgroup.elektrobit.com (10.5.139.25)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-04-21 at 09:50 +0100, Javier Arteaga wrote:
-> The UP2 board features a Raspberry Pi compatible pin header (HAT) and
-> a
-> board-specific expansion connector (EXHAT). Both expose assorted
-> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or
-> other
-> on-board devices (ADC, FPGA IP blocks...).
-> 
-> These lines are routed through an on-board FPGA. The platform
-> controller
-> in its stock firmware provides register fields to change:
-> 
-> - Line enable (FPGA pins enabled / high impedance)
-> - Line direction (SoC driven / FPGA driven)
-> 
-> To enable using SoC GPIOs on the pin header, this arrangement requires
-> both configuring the platform controller, and updating the SoC pad
-> registers in sync.
-> 
-> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
-> lines for the header pins. When these are requested, the driver
-> propagates this request to the backend SoC pinctrl/GPIO driver by
-> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
-> mapping for this is retrieved via ACPI properties.
-> 
-> 
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> For reference, here's the relevant ASL from the UP2 platform
-> controller.
+Enable the clock prior to calling clk_get_rate(), because clk_get_rate()
+should only be called if the clock is enabled.
 
-It should be in Documentation file or in commit message.
+Additionally, prepare/enable the pll_clk before calling clk_get_rate()
+for the same reason.
 
+Found by Linux Driver Verification project (linuxtesting.org).
 
->  static const struct mfd_cell upboard_up2_mfd_cells[] = {
-> +	{ .name = "upboard-pinctrl" },
+Fixes: 142168eba9dc ("spi: bcm63xx-hsspi: add bcm63xx HSSPI driver")
+Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+---
+ drivers/spi/spi-bcm63xx-hsspi.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-I guess it should be 3 lines.
-
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
-
-...and honestly I would not use this macro and put 4 cells explicitly
-here.
-
-> +static int upboard_gpio_request_enable(struct pinctrl_dev *pctldev,
-> +				       struct pinctrl_gpio_range
-> *range,
-> +				       unsigned int pin)
-> +{
-> +	const struct pin_desc * const pd = pin_desc_get(pctldev,
-> pin);
-> +	const struct upboard_pin *p;
-> +	int ret;
-> +
-
-> +	if (!pd)
-> +		return -EINVAL;
-
-When it's possible?
-
-> +	p = pd->drv_data;
-
-> +	return 0;
-> +};
-
-> +	if (!pd)
-> +		return -EINVAL;
-
-Ditto.
-
-> +	struct upboard_pinctrl *pctrl =
-> +		container_of(gc, struct upboard_pinctrl, chip);
-
-Do define and use to_upboard_pinctrl().
-
-> +	if (offset + 1 > pctrl->nsoc_gpios || !pctrl-
-> >soc_gpios[offset])
-> +		return ERR_PTR(-ENODEV);
-
-When this is a case?
-
-> +static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned
-> int offset)
-> +{
-> +	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc,
-> offset);
-> +
-
-Split above to definition and assignment pieces. Put assignment
-immediately before condition.
-
-> +	if (IS_ERR(desc))
-> +		return PTR_ERR(desc);
+diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hssp=
+i.c
+index cbcba614b253..8475703543e5 100644
+--- a/drivers/spi/spi-bcm63xx-hsspi.c
++++ b/drivers/spi/spi-bcm63xx-hsspi.c
+@@ -352,22 +352,27 @@ static int bcm63xx_hsspi_probe(struct platform_device=
+ *pdev)
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+=20
++	ret =3D clk_prepare_enable(clk);
++	if (ret)
++		return ret;
++
+ 	rate =3D clk_get_rate(clk);
+ 	if (!rate) {
+ 		struct clk *pll_clk =3D devm_clk_get(dev, "pll");
+=20
+-		if (IS_ERR(pll_clk))
+-			return PTR_ERR(pll_clk);
++		if (IS_ERR(pll_clk)) {
++			ret =3D PTR_ERR(pll_clk);
++			goto out_disable_clk;
++		}
++
+=20
+ 		rate =3D clk_get_rate(pll_clk);
+-		if (!rate)
+-			return -EINVAL;
++		if (!rate) {
++			ret =3D -EINVAL;
++			goto out_disable_clk;
++		}
+ 	}
+=20
+-	ret =3D clk_prepare_enable(clk);
+-	if (ret)
+-		return ret;
+-
+ 	master =3D spi_alloc_master(&pdev->dev, sizeof(*bs));
+ 	if (!master) {
+ 		ret =3D -ENOMEM;
+--=20
+2.17.0
 
 
-> +
-> +	return gpiod_get_direction(desc);
-> +}
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +static struct regmap_field * __init upboard_field_alloc(struct device
-> *dev,
-> +							struct regmap
-> *regmap,
-> +							unsigned int
-> base,
-> +							unsigned int
-> number)
+-----BEGIN PGP SIGNATURE-----
 
-You should really understand what __init means and when it's appropriate
-to use it.
+iQIzBAABCAAdFiEEATY+KFcrMtHMM+b3X8uyjJIzOwAFAlrgsXwACgkQX8uyjJIz
+OwBerg/9EqnUtTafdrKsu9IEkV8E+jzZCtp4JWQI4lmteNcdmufocEPwXQX9cZqZ
+f0GVexGMFQVhA7lK3Zzm8DgvaAT2hSFKLkZgQ1eutz1HyrMUWrMZQ7YeH6IwHu/8
+/WevR7BieZKI+WWKJfZQz6I4/ofb5lSEK1fZ10AFVAdjAgNbV/6jOLWrTRrH++Dn
+0I4e5HBTOzzKek7Rg9+oHG06GEVEdVu0mJweVmzXhVRH3ij5EHV0qftJ/Y5nI5It
+m26qXLL9ZAj6TOP5jMriJQ94Zw2Li+E23xiPoC1KTGYKcyk0THKBeWhsUldTCJzv
+ENkI+dG12TpXlRWtSPTea8LDo2cPxbbYs50DgGX1GwB2Dtz2NIngVL+OqfXmU4G4
+rl6AgthYPKli6zOxVzLN69GHfOfp8V3Dw00oL6n4yfCVBCFtrmsEuJytHsghKoMl
+6zpYZaxjtS2y9IM76NA5fiNtnY9Jtsr6jf+gcEQgZX45Rt8O9Rz6Jz4/JFSDh5dY
+eQEhvRGc8/dtXauPR5KNzqRdp6WZNoVl6ircLGXYlSVUQvMN06qyVlrybHbxxL76
+R2l1H/GwNxyXAE1POw4JAED8g+vgRRmb5gZIiCcS8YR726i4KQwzdsAo8OLhRA7d
+HQMpU5NQ0ruZmICtVq8uAMgs9fD2Knsk49XWLx4ZqbYCNqnrqnY=
+=Z9YA
+-----END PGP SIGNATURE-----
 
-> +static int __init upboard_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	struct acpi_device * const adev = ACPI_COMPANION(&pdev->dev);
-
-Huh, const in that place? Why?
-
-> +	if (!pdev->dev.parent)
-> +		return -EINVAL;
-> +
-> +	upboard = dev_get_drvdata(pdev->dev.parent);
-> +	if (!upboard)
-> +		return -EINVAL;
-
-Same comment as per LED driver.
-
-> +	if (strcmp(acpi_device_hid(adev), "AANT0F01"))
-> +		return -ENODEV;
-
-Huh?
-
-> +		((struct pinctrl_pin_desc *)pd)->drv_data = pin;
-
-What is that?! I mean ugly casting.
-
-> +	}
-
-> +}
-
-> +MODULE_LICENSE("GPL");
-
-License mismatch.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+--mP3DRpeJDSE+ciuQ--
