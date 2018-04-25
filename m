@@ -1,47 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755231AbeDYQx1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:53:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51238 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753508AbeDYQxZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:53:25 -0400
-Subject: Re: [PATCH] rds: ib: Fix missing call to rds_ib_dev_put in
- rds_ib_setup_qp
-To: Dag Moxnes <dag.moxnes@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-        linux-kernel@vger.kernel.org
-References: <1524655321-8379-1-git-send-email-dag.moxnes@oracle.com>
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <4ea2c988-fd68-3bc0-2f6b-f12648f6d4e9@oracle.com>
-Date: Wed, 25 Apr 2018 09:53:17 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755285AbeDYQ5F (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:57:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56835 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754552AbeDYQ5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:57:02 -0400
+Date: Wed, 25 Apr 2018 10:56:55 -0600
+From: Michal Hocko <mhocko@kernel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Richard Weinberger <richard@nod.at>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+Message-ID: <20180425165655.GK17484@dhcp22.suse.cz>
+References: <20180424162712.GL17484@dhcp22.suse.cz>
+ <3732370.1623zxSvNg@blindfold>
+ <20180424192803.GT17484@dhcp22.suse.cz>
+ <3894056.cxOY6eVYVp@blindfold>
+ <20180424230943.GY17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804241911040.19786@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424232517.GC17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804250841230.16455@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180425144557.GD17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804251114120.11848@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1524655321-8379-1-git-send-email-dag.moxnes@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8874 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=855
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804250156
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1804251114120.11848@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/25/2018 4:22 AM, Dag Moxnes wrote:
-> The function rds_ib_setup_qp is calling rds_ib_get_client_data and
-> should correspondingly call rds_ib_dev_put. This call was lost in
-> the non-error path with the introduction of error handling done in
-> commit 3b12f73a5c29 ("rds: ib: add error handle")
+On Wed 25-04-18 11:25:09, Mikulas Patocka wrote:
 > 
-> Signed-off-by: Dag Moxnes <dag.moxnes@oracle.com>
-> ---
-Thanks Dag for following it up.
+> 
+> On Wed, 25 Apr 2018, Michal Hocko wrote:
+> 
+> > On Wed 25-04-18 08:43:32, Mikulas Patocka wrote:
+> > > 
+> > > 
+> > > On Tue, 24 Apr 2018, Michal Hocko wrote:
+> > > 
+> > > > On Tue 24-04-18 19:17:12, Mikulas Patocka wrote:
+> > > > > 
+> > > > > 
+> > > > > On Tue, 24 Apr 2018, Michal Hocko wrote:
+> > > > > 
+> > > > > > > So in a perfect world a filesystem calls memalloc_nofs_save/restore and
+> > > > > > > always uses GFP_KERNEL for kmalloc/vmalloc?
+> > > > > > 
+> > > > > > Exactly! And in a dream world those memalloc_nofs_save act as a
+> > > > > > documentation of the reclaim recursion documentation ;)
+> > > > > > -- 
+> > > > > > Michal Hocko
+> > > > > > SUSE Labs
+> > > > > 
+> > > > > BTW. should memalloc_nofs_save and memalloc_noio_save be merged into just 
+> > > > > one that prevents both I/O and FS recursion?
+> > > > 
+> > > > Why should FS usage stop IO altogether?
+> > > 
+> > > Because the IO may reach loop and loop may redirect it to the same 
+> > > filesystem that is running under memalloc_nofs_save and deadlock.
+> > 
+> > So what is the difference with the current GFP_NOFS?
+> 
+> My point is that filesystems should use GFP_NOIO too. If 
+> alloc_pages(GFP_NOFS) issues some random I/O to some block device, the I/O 
+> may be end up being redirected (via block loop device) to the filesystem 
+> that is calling alloc_pages(GFP_NOFS).
 
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Talk to FS people, but I believe there is a good reason to distinguish
+the two.
+
+-- 
+Michal Hocko
+SUSE Labs
