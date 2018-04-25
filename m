@@ -1,134 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753993AbeDYX1H (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 19:27:07 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:50230 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751563AbeDYX1F (ORCPT
+        id S1754102AbeDYX3d (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 19:29:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45922 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751563AbeDYX32 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 19:27:05 -0400
-Date: Thu, 26 Apr 2018 00:26:46 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>, iommu@lists.linux-foundation.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Subject: Re: noveau vs arm dma ops
-Message-ID: <20180425232646.GR16141@n2100.armlinux.org.uk>
-References: <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org>
- <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
- <20180425064335.GB28100@infradead.org>
- <20180425074151.GA2271@ulmo>
- <20180425085439.GA29996@infradead.org>
- <20180425100429.GR25142@phenom.ffwll.local>
- <20180425153312.GD27076@infradead.org>
- <CAKMK7uH14qupTYDa1pr8UC434Vs+97eUXj+fYi=+2uijCLayMA@mail.gmail.com>
+        Wed, 25 Apr 2018 19:29:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 068AF60227
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=clew@codeaurora.org
+Subject: Re: [PATCH] soc: qcom: smem: introduce qcom_smem_virt_to_phys()
+To: Alex Elder <elder@linaro.org>, andy.gross@linaro.org
+Cc: aneela@codeaurora.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180425151820.25595-1-elder@linaro.org>
+From: Chris Lew <clew@codeaurora.org>
+Message-ID: <4a127dda-576c-4eae-80d3-a928e578a1b9@codeaurora.org>
+Date: Wed, 25 Apr 2018 16:29:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uH14qupTYDa1pr8UC434Vs+97eUXj+fYi=+2uijCLayMA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180425151820.25595-1-elder@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 11:35:13PM +0200, Daniel Vetter wrote:
-> On arm that doesn't work. The iommu api seems like a good fit, except
-> the dma-api tends to get in the way a bit (drm/msm apparently has
-> similar problems like tegra), and if you need contiguous memory
-> dma_alloc_coherent is the only way to get at contiguous memory. There
-> was a huge discussion years ago about that, and direct cma access was
-> shot down because it would have exposed too much of the caching
-> attribute mangling required (most arm platforms need wc-pages to not
-> be in the kernel's linear map apparently).
+Hi Alex,
 
-I think you completely misunderstand ARM from what you've written above,
-and this worries me greatly about giving DRM the level of control that
-is being asked for.
+Minor comment.
 
-Modern ARMs have a PIPT cache or a non-aliasing VIPT cache, and cache
-attributes are stored in the page tables.  These caches are inherently
-non-aliasing when there are multiple mappings (which is a great step
-forward compared to the previous aliasing caches.)
+On 4/25/2018 8:18 AM, Alex Elder wrote:
+> Create function qcom_smem_virt_to_phys(), which returns the physical
+> address corresponding to a given SMEM item's virtual address.  This
+> feature is required for a driver that will soon be out for review.
+> 
+> Signed-off-by: Alex Elder <elder@linaro.org>
+> ---
+>   drivers/soc/qcom/smem.c       | 27 +++++++++++++++++++++++++++
+>   include/linux/soc/qcom/smem.h |  2 ++
+>   2 files changed, 29 insertions(+)
+> 
+> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+> index 7d9a43da5084..70b2ee80d6bd 100644
+> --- a/drivers/soc/qcom/smem.c
+> +++ b/drivers/soc/qcom/smem.c
+> @@ -655,6 +655,33 @@ int qcom_smem_get_free_space(unsigned host)
+>   }
+>   EXPORT_SYMBOL(qcom_smem_get_free_space);
+>   
+> +/**
+> + * qcom_smem_virt_to_phys() - return the physical address associated
+> + * with an smem item pointer (previously returned by qcom_smem_get()
+> + * @p:	the virtual address to convert
+> + *
+> + * Returns 0 if the pointer provided is not within any smem region.
+> + */
+> +phys_addr_t qcom_smem_virt_to_phys(void *p)
+> +{
+> +	unsigned i;
+> +
 
-As the cache attributes are stored in the page tables, this in theory
-allows different virtual mappings of the same physical memory to have
-different cache attributes.  However, there's a problem, and that's
-called speculative prefetching.
+We have a null pointer check for __smem here since it is called by 
+external clients. This case should probably never happen though.
 
-Let's say you have one mapping which is cacheable, and another that is
-marked as write combining.  If a cache line is speculatively prefetched
-through the cacheable mapping of this memory, and then you read the
-same physical location through the write combining mapping, it is
-possible that you could read cached data.
+> +	for (i = 0; i < __smem->num_regions; i++) {
+> +		struct smem_region *region = &__smem->regions[i];
+> +
+> +		if (p < region->virt_base)
+> +			continue;
+> +		if (p < region->virt_base + region->size) {
+> +			u64 offset = p - region->virt_base;
+> +
+> +			return (phys_addr_t)region->aux_base + offset;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(qcom_smem_virt_to_phys);
 
-So, it is generally accepted that all mappings of any particular
-physical bit of memory should have the same cache attributes to avoid
-unpredictable behaviour.
-
-This presents a problem with what is generally called "lowmem" where
-the memory is mapped in kernel virtual space with cacheable
-attributes.  It can also happen with highmem if the memory is
-kmapped.
-
-This is why, on ARM, you can't use something like get_free_pages() to
-grab some pages from the system, pass it to the GPU, map it into
-userspace as write-combining, etc.  It _might_ work for some CPUs,
-but ARM CPUs vary in how much prefetching they do, and what may work
-for one particular CPU is in no way guaranteed to work for another
-ARM CPU.
-
-The official line from architecture folk is to assume that the caches
-infinitely speculate, are of infinite size, and can writeback *dirty*
-data at any moment.
-
-The way to stop things like speculative prefetches to particular
-physical memory is to, quite "simply", not have any cacheable
-mappings of that physical memory anywhere in the system.
-
-Now, cache flushes on ARM tend to be fairly expensive for GPU buffers.
-If you have, say, an 8MB buffer (for a 1080p frame) and you need to
-do a cache operation on that buffer, you'll be iterating over it
-32 or maybe 64 bytes at a time "just in case" there's a cache line
-present.  Referring to my previous email, where I detailed the
-potential need for _two_ flushes, one before the GPU operation and
-one after, and this becomes _really_ expensive.  At that point, you're
-probably way better off using write-combine memory where you don't
-need to spend CPU cycles performing cache flushing - potentially
-across all CPUs in the system if cache operations aren't broadcasted.
-
-This isn't a simple matter of "just provide some APIs for cache
-operations" - there's much more that needs to be understood by
-all parties here, especially when we have GPU drivers that can be
-used with quite different CPUs.
-
-It may well be that for some combinations of CPUs and workloads, it's
-better to use write-combine memory without cache flushing, but for
-other CPUs that tradeoff (for the same workload) could well be
-different.
-
-Older ARMs get more interesting, because they have aliasing caches.
-That means the CPU cache aliases across different virtual space
-mappings in some way, which complicates (a) the mapping of memory
-and (b) handling the cache operations on it.
-
-It's too late for me to go into that tonight, and I probably won't
-be reading mail for the next week and a half, sorry.
+Thanks,
+Chris
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
