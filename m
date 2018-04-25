@@ -1,174 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754455AbeDYOZn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:25:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48146 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753283AbeDYOZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:25:41 -0400
-Subject: Re: [Qemu-devel] [RFC v2] qemu: Add virtio pmem device
-To: Pankaj Gupta <pagupta@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
-        linux-mm@kvack.org
-References: <20180425112415.12327-1-pagupta@redhat.com>
- <20180425112415.12327-4-pagupta@redhat.com>
-Cc: kwolf@redhat.com, haozhong.zhang@intel.com, jack@suse.cz,
-        xiaoguangrong.eric@gmail.com, riel@surriel.com,
-        niteshnarayanlal@hotmail.com, david@redhat.com, ross.zwisler@intel.com,
-        lcapitulino@redhat.com, hch@infradead.org, mst@redhat.com,
-        stefanha@redhat.com, imammedo@redhat.com, marcel@redhat.com,
-        pbonzini@redhat.com, dan.j.williams@intel.com, nilal@redhat.com
-From: Eric Blake <eblake@redhat.com>
-Openpgp: url=http://people.redhat.com/eblake/eblake.gpg
-Organization: Red Hat, Inc.
-Message-ID: <25f3e433-cfa6-4a62-ba7f-47aef1119dfc@redhat.com>
-Date: Wed, 25 Apr 2018 09:25:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180425112415.12327-4-pagupta@redhat.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="CFJqPHc1lVbGj70GneZIm5syNGVZjNCpA"
+        id S1754472AbeDYO31 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:29:27 -0400
+Received: from muru.com ([72.249.23.125]:38810 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753327AbeDYO30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:29:26 -0400
+From: Tony Lindgren <tony@atomide.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        Roger Quadros <rogerq@ti.com>
+Subject: [PATCH] mfd: omap-usb-host: Fix dts probe of children
+Date: Wed, 25 Apr 2018 07:29:22 -0700
+Message-Id: <20180425142922.128233-1-tony@atomide.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---CFJqPHc1lVbGj70GneZIm5syNGVZjNCpA
-Content-Type: multipart/mixed; boundary="1IGSjTW0uM1A8ilmt1jp7ZPWiEf26VDfr";
- protected-headers="v1"
-From: Eric Blake <eblake@redhat.com>
-To: Pankaj Gupta <pagupta@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
- linux-mm@kvack.org
-Cc: kwolf@redhat.com, haozhong.zhang@intel.com, jack@suse.cz,
- xiaoguangrong.eric@gmail.com, riel@surriel.com,
- niteshnarayanlal@hotmail.com, david@redhat.com, ross.zwisler@intel.com,
- lcapitulino@redhat.com, hch@infradead.org, mst@redhat.com,
- stefanha@redhat.com, imammedo@redhat.com, marcel@redhat.com,
- pbonzini@redhat.com, dan.j.williams@intel.com, nilal@redhat.com
-Message-ID: <25f3e433-cfa6-4a62-ba7f-47aef1119dfc@redhat.com>
-Subject: Re: [Qemu-devel] [RFC v2] qemu: Add virtio pmem device
-References: <20180425112415.12327-1-pagupta@redhat.com>
- <20180425112415.12327-4-pagupta@redhat.com>
-In-Reply-To: <20180425112415.12327-4-pagupta@redhat.com>
+It currently only works if the parent bus uses "simple-bus". We
+currently try to probe children with non-existing compatible values.
+And we're missing .probe.
 
---1IGSjTW0uM1A8ilmt1jp7ZPWiEf26VDfr
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+I noticed this while testing devices configured to probe using ti-sysc
+interconnect target module driver. For that we also may want to rebind
+the driver, so let's remove __init and __exit.
 
-On 04/25/2018 06:24 AM, Pankaj Gupta wrote:
-> This patch adds virtio-pmem Qemu device.
->=20
-> This device presents memory address range=20
-> information to guest which is backed by file=20
-> backend type. It acts like persistent memory=20
-> device for KVM guest. Guest can perform read=20
-> and persistent write operations on this memory=20
-> range with the help of DAX capable filesystem.
->=20
-> Persistent guest writes are assured with the=20
-> help of virtio based flushing interface. When=20
-> guest userspace space performs fsync on file=20
-> fd on pmem device, a flush command is send to=20
-> Qemu over VIRTIO and host side flush/sync is=20
-> done on backing image file.
->=20
-> This PV device code is dependent and tested=20
-> with 'David Hildenbrand's ' patchset[1] to=20
-> map non-PCDIMM devices to guest address space.
+Cc: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
 
-This sentence doesn't belong in git history.  It is better to put
-information like this...
+This is OK to wait for v4.18 merge window as the related dts node has
+not yet been updated to probe via ti-sysc interconnect target driver.
 
-> There is still upstream discussion on using=20
-> among PCI bar vs memory device, will update=20
-> as per concensus.
+---
+ drivers/mfd/omap-usb-host.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-s/concensus/consensus/
-
->=20
-> [1] https://marc.info/?l=3Dqemu-devel&m=3D152450249319168&w=3D2
->=20
-> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> ---
-
-=2E..here, where it is part of the email, but not picked up by 'git am'.
-
-
-> +++ b/qapi/misc.json
-> @@ -2871,6 +2871,29 @@
->            }
->  }
-> =20
-> +##
-> +# @VirtioPMemDeviceInfo:
-> +#
-> +# VirtioPMem state information
-> +#
-> +# @id: device's ID
-> +#
-> +# @start: physical address, where device is mapped
-> +#
-> +# @size: size of memory that the device provides
-> +#
-> +# @memdev: memory backend linked with device
-> +#
-> +# Since: 2.13
-> +##
-> +{ 'struct': 'VirtioPMemDeviceInfo',
-> +    'data': { '*id': 'str',
-> +	      'start': 'size',
-> +	      'size': 'size',
-
-TAB damage.
-
-> +              'memdev': 'str'
-> +	    }
-> +}
-> +
->  ##
->  # @MemoryDeviceInfo:
->  #
-> @@ -2880,7 +2903,8 @@
->  ##
->  { 'union': 'MemoryDeviceInfo',
->    'data': { 'dimm': 'PCDIMMDeviceInfo',
-> -            'nvdimm': 'PCDIMMDeviceInfo'
-> +            'nvdimm': 'PCDIMMDeviceInfo',
-> +	    'virtio-pmem': 'VirtioPMemDeviceInfo'
->            }
->  }
-> =20
->=20
-
---=20
-Eric Blake, Principal Software Engineer
-Red Hat, Inc.           +1-919-301-3266
-Virtualization:  qemu.org | libvirt.org
-
-
---1IGSjTW0uM1A8ilmt1jp7ZPWiEf26VDfr--
-
---CFJqPHc1lVbGj70GneZIm5syNGVZjNCpA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Comment: Public key at http://people.redhat.com/eblake/eblake.gpg
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQEzBAEBCAAdFiEEccLMIrHEYCkn0vOqp6FrSiUnQ2oFAlrgj+EACgkQp6FrSiUn
-Q2oftQgAkgISPCCNGA8QYSXkQfHKQ2qPa3CR6cJ1vSVXjJWEsPypyfrQ4P/caxJC
-OaTfjufz0Tgn/kn1MOzeDYgQGnOjYZJC+1YYcMhR8arrUb6Whv4ejHpnXGNC1lxJ
-hLcRxPhD7fg7CW55xgi/pXF1OLUxMMQdtyd57SCW5rCt5NPi8TZRsDOiM34KEbDW
-EewLjBrjnueBaLVywp5I0KFODWua4/qSmkzB3E/EnHw66uHKrWH0PAHnH2s3OnwL
-0o4eBB2YnSrf2eKCuLY5XvJwD9HyRQm9h6sKnuP7+PqzaLlycHphA1jfOL+hNK2w
-txr4zrD38INfFRWQy0QHUt84HMGbPg==
-=ylBq
------END PGP SIGNATURE-----
-
---CFJqPHc1lVbGj70GneZIm5syNGVZjNCpA--
+diff --git a/drivers/mfd/omap-usb-host.c b/drivers/mfd/omap-usb-host.c
+--- a/drivers/mfd/omap-usb-host.c
++++ b/drivers/mfd/omap-usb-host.c
+@@ -548,8 +548,8 @@ static int usbhs_omap_get_dt_pdata(struct device *dev,
+ }
+ 
+ static const struct of_device_id usbhs_child_match_table[] = {
+-	{ .compatible = "ti,omap-ehci", },
+-	{ .compatible = "ti,omap-ohci", },
++	{ .compatible = "ti,ehci-omap", },
++	{ .compatible = "ti,ohci-omap3", },
+ 	{ }
+ };
+ 
+@@ -875,6 +875,7 @@ static struct platform_driver usbhs_omap_driver = {
+ 		.pm		= &usbhsomap_dev_pm_ops,
+ 		.of_match_table = usbhs_omap_dt_ids,
+ 	},
++	.probe		= usbhs_omap_probe,
+ 	.remove		= usbhs_omap_remove,
+ };
+ 
+@@ -884,9 +885,9 @@ MODULE_ALIAS("platform:" USBHS_DRIVER_NAME);
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("usb host common core driver for omap EHCI and OHCI");
+ 
+-static int __init omap_usbhs_drvinit(void)
++static int omap_usbhs_drvinit(void)
+ {
+-	return platform_driver_probe(&usbhs_omap_driver, usbhs_omap_probe);
++	return platform_driver_register(&usbhs_omap_driver);
+ }
+ 
+ /*
+@@ -898,7 +899,7 @@ static int __init omap_usbhs_drvinit(void)
+  */
+ fs_initcall_sync(omap_usbhs_drvinit);
+ 
+-static void __exit omap_usbhs_drvexit(void)
++static void omap_usbhs_drvexit(void)
+ {
+ 	platform_driver_unregister(&usbhs_omap_driver);
+ }
+-- 
+2.17.0
