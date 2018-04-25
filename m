@@ -1,345 +1,232 @@
-Return-Path: <BATV+8b59ddf2a3dd4691ec7e+5358+infradead.org+hch@bombadil.srs.infradead.org>
-X-Google-Smtp-Source: AIpwx49xPK+eZK8zICHRKeawmE1s2Pi8Js5yZtQyhV60gnbpDoLOXlFcHiuJ2QqKNwoGVVY8BSFn
-ARC-Seal: i=1; a=rsa-sha256; t=1524671361; cv=none;
-        d=google.com; s=arc-20160816;
-        b=vsKiSKptJRipJMv+ZuOcPNFZToO8W+gFlHS+Db5Jw1tvNdo5cDdmJC0cR31b4EiCIp
-         q2/DsCOFxIBjzVlm2NT8Aeqn0iktqVUmqT8IN38mE22hiCioGsAlKNYFqbX4J+ikn3FX
-         /0WP64UofHlF9a2t5eU9DojJewFlTM92PiKQLWobjaN/KXWPJ6Zx7mFeJFA7jauImB9L
-         spSQNp4DJkRgqRhdjXFBrLwFpHJHENt4lUrYC6WBR/V5E4IoQmybueWgHnnfsiCS9NJq
-         MNTGSMcbqlei8vvdtFeqQWCjtzS8rk1f4jkbtnbGUmTLe9gkWRqkeWCUVl1wecjvJUmt
-         43fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=TMuCfKKQjyWim4anhqnZA2laNKWSZisLMOm6l0WLu9Q=;
-        b=QVfpnKfHwnd58ABWOPXsb6OYUDiUlqIBLIJDapehDtHp1bzQuT8gTWGnnQkayfTOGJ
-         S3GpPH2uuJ/fFvB34lEYMj4o09egia74UQNQVKUViQx6VHPDBKhXqggmZ2jWpHCPyUeP
-         JabGn/qyxaNXYmy3kl1xy59I8v1BBywlCQclY2Y6uBo6soY76A5kvtsJOhEpF9U1WMJ2
-         Z2IB/M9PPhqJWmwEjfFSLCcixNZhgV3X7THfE/OUEi4Bt/tPp2JEUWoZ8i2jw2v2SXIb
-         c1k7NM4c7g1zTodcsBtomq6KvFT5Q/USKuvoCi6h8u86Wu3XPt9zDTZJOncUd0E/ueMt
-         iMsw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=oJ8dgexB;
-       spf=pass (google.com: best guess record for domain of batv+8b59ddf2a3dd4691ec7e+5358+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+8b59ddf2a3dd4691ec7e+5358+infradead.org+hch@bombadil.srs.infradead.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=oJ8dgexB;
-       spf=pass (google.com: best guess record for domain of batv+8b59ddf2a3dd4691ec7e+5358+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+8b59ddf2a3dd4691ec7e+5358+infradead.org+hch@bombadil.srs.infradead.org
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-945756-1524671353-2-13651051665963365701
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='de', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524671352; b=U6bun2231G1bJKuZsYHvGfIsAEd8hqqk87Z5MvTKHLtnuOOXBP
+    Qy6CmKk3cUY3hxhjnPS4xj8HPKfO0etp/HVJt1k2PIaQlqFaxKWg8VF+Kae1T0gH
+    MY5w8dd1WggDgwZxl+pUPOVC93EHUgbd+fg7oN+y0CdK5+sSrPVe8JMN+4lpc7yE
+    NVr7dtsj9klk46c7x4obe8ggPLqiKlkWwlMCqHzl3GoNoE5PMxwIZURbwFmnS5/0
+    0RAhPSJTeffIaS1oIwueyVR9jsOH4f7q33AJ1xrORDnbkoA5uVuvV6TJwagLymMv
+    Dr7CuBSXBCEBEwbQ4KjGQ6eCnzD0OB4XewEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524671352; bh=BvMPL
+    mR0W2vQ6MY0qXHLC0iXYlpSm2EApPj51q1EnJ8=; b=jOSV2EC+pyd0ovVdzqZV/
+    BoclvNR2POEwmKxfgz5H30+KTQJw/ITpBhdRdPeqjtOfKDayZm9f0msMgCN1b488
+    cEahfRS28MgPDIISP1Rxbnn4n4vJOKX5smgRGGrug3yl8ZIYPIWmKT9zGogId9ri
+    REizcRWDl5H9mOWktzMZjdcH+gJxoqBvp+dsEFOX6UXB6NRqE9c8MwyOkRuhSWM4
+    6B3KNC4nYAFXf9YoyVvwroKXBiBZIsxFnXKsxYhYMDMxzxa/rgkYSa/4DlV+G3F8
+    vZl6Zi7Cfj8JUwa7uOxUwinjoOFeEz5DD5MluOfGQornr1edJhuKyRAk2i+BfIr8
+    A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=CAl4awwZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=CAl4awwZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPbSgnxNZn0dxjNuC7ZOjpq2ww+nVkU2vfesx6B9ZMziTiKTXbIM1hyOjF0Ox5BI+c9kWj4bVrdTDczzu59xC70x8xusUNrhCEI8OpMaSKyqK2StyB0h
+    KkEagkExxHWp6bLjETzuEB6sMV93NRpVG5VNJfK6sFiJfB6xCf4VmzqFKfRToVp+I9pmWRzEUY3Fp9sbaMycwNNPf0buH+TJrEf7vk53vSCYc+dAaL6FaJII
+    XRLa9snQg2pMQp6OT89Svw==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=X-rrlB1Z6MHfIvBpCwAA:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-acpi@vger.kernel.org,
-	drbd-dev@lists.linbit.com,
-	linux-ide@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	devel@driverdev.osuosl.org,
-	linux-afs@lists.infradead.org,
-	linux-ext4@vger.kernel.org,
-	jfs-discussion@lists.sourceforge.net,
-	netfilter-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 08/40] ipv{4,6}/tcp: simplify procfs registration
-Date: Wed, 25 Apr 2018 17:47:55 +0200
-Message-Id: <20180425154827.32251-9-hch@lst.de>
+ Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 02/40] proc: simplify proc_register calling conventions
+Date: Wed, 25 Apr 2018 17:47:49 +0200
+Message-Id: <20180425154827.32251-3-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425154827.32251-1-hch@lst.de>
 References: <20180425154827.32251-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, devel@driverdev.osuosl.org,
+ linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-ide@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ jfs-discussion@lists.sourceforge.net, linux-afs@lists.infradead.org,
+ linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+ linux-ext4@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+ megaraidlinux.pdl@broadcom.com, drbd-dev@lists.linbit.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598733797585234714?=
-X-GMAIL-MSGID: =?utf-8?q?1598733797585234714?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Avoid most of the afinfo indirections and just call the proc helpers
-directly.
+Return registered entry on success, return NULL on failure and free the
+passed in entry.  Also expose it in internal.h as we'll start using it
+in proc_net.c soon.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/net/tcp.h   | 11 ++----
- net/ipv4/tcp_ipv4.c | 85 +++++++++++++++++----------------------------
- net/ipv6/tcp_ipv6.c | 27 +++++++++-----
- 3 files changed, 53 insertions(+), 70 deletions(-)
+ fs/proc/generic.c  | 44 ++++++++++++++++++--------------------------
+ fs/proc/internal.h |  2 ++
+ 2 files changed, 20 insertions(+), 26 deletions(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 9c9b3768b350..51dc7a26a2fa 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1747,27 +1747,22 @@ enum tcp_seq_states {
- 	TCP_SEQ_STATE_ESTABLISHED,
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 2078e70e1595..bd8480ff0d35 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -346,13 +346,12 @@ static const struct inode_operations proc_dir_inode_operations = {
+ 	.setattr	= proc_notify_change,
  };
  
--int tcp_seq_open(struct inode *inode, struct file *file);
-+void *tcp_seq_start(struct seq_file *seq, loff_t *pos);
-+void *tcp_seq_next(struct seq_file *seq, void *v, loff_t *pos);
-+void tcp_seq_stop(struct seq_file *seq, void *v);
- 
- struct tcp_seq_afinfo {
--	char				*name;
- 	sa_family_t			family;
--	const struct file_operations	*seq_fops;
--	struct seq_operations		seq_ops;
- };
- 
- struct tcp_iter_state {
- 	struct seq_net_private	p;
--	sa_family_t		family;
- 	enum tcp_seq_states	state;
- 	struct sock		*syn_wait_sk;
- 	int			bucket, offset, sbucket, num;
- 	loff_t			last_pos;
- };
- 
--int tcp_proc_register(struct net *net, struct tcp_seq_afinfo *afinfo);
--void tcp_proc_unregister(struct net *net, struct tcp_seq_afinfo *afinfo);
--
- extern struct request_sock_ops tcp_request_sock_ops;
- extern struct request_sock_ops tcp6_request_sock_ops;
- 
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index f70586b50838..645f259d0972 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -1961,6 +1961,7 @@ EXPORT_SYMBOL(tcp_v4_destroy_sock);
-  */
- static void *listening_get_next(struct seq_file *seq, void *cur)
+-static int proc_register(struct proc_dir_entry * dir, struct proc_dir_entry * dp)
++/* returns the registered entry, or frees dp and returns NULL on failure */
++struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
++		struct proc_dir_entry *dp)
  {
-+	struct tcp_seq_afinfo *afinfo = PDE_DATA(file_inode(seq->file));
- 	struct tcp_iter_state *st = seq->private;
- 	struct net *net = seq_file_net(seq);
- 	struct inet_listen_hashbucket *ilb;
-@@ -1983,7 +1984,7 @@ static void *listening_get_next(struct seq_file *seq, void *cur)
- 	sk_for_each_from(sk) {
- 		if (!net_eq(sock_net(sk), net))
- 			continue;
--		if (sk->sk_family == st->family)
-+		if (sk->sk_family == afinfo->family)
- 			return sk;
+-	int ret;
+-
+-	ret = proc_alloc_inum(&dp->low_ino);
+-	if (ret)
+-		return ret;
++	if (proc_alloc_inum(&dp->low_ino))
++		goto out_free_entry;
+ 
+ 	write_lock(&proc_subdir_lock);
+ 	dp->parent = dir;
+@@ -360,12 +359,16 @@ static int proc_register(struct proc_dir_entry * dir, struct proc_dir_entry * dp
+ 		WARN(1, "proc_dir_entry '%s/%s' already registered\n",
+ 		     dir->name, dp->name);
+ 		write_unlock(&proc_subdir_lock);
+-		proc_free_inum(dp->low_ino);
+-		return -EEXIST;
++		goto out_free_inum;
  	}
- 	spin_unlock(&ilb->lock);
-@@ -2020,6 +2021,7 @@ static inline bool empty_bucket(const struct tcp_iter_state *st)
-  */
- static void *established_get_first(struct seq_file *seq)
- {
-+	struct tcp_seq_afinfo *afinfo = PDE_DATA(file_inode(seq->file));
- 	struct tcp_iter_state *st = seq->private;
- 	struct net *net = seq_file_net(seq);
- 	void *rc = NULL;
-@@ -2036,7 +2038,7 @@ static void *established_get_first(struct seq_file *seq)
+ 	write_unlock(&proc_subdir_lock);
  
- 		spin_lock_bh(lock);
- 		sk_nulls_for_each(sk, node, &tcp_hashinfo.ehash[st->bucket].chain) {
--			if (sk->sk_family != st->family ||
-+			if (sk->sk_family != afinfo->family ||
- 			    !net_eq(sock_net(sk), net)) {
- 				continue;
- 			}
-@@ -2051,6 +2053,7 @@ static void *established_get_first(struct seq_file *seq)
- 
- static void *established_get_next(struct seq_file *seq, void *cur)
- {
-+	struct tcp_seq_afinfo *afinfo = PDE_DATA(file_inode(seq->file));
- 	struct sock *sk = cur;
- 	struct hlist_nulls_node *node;
- 	struct tcp_iter_state *st = seq->private;
-@@ -2062,7 +2065,8 @@ static void *established_get_next(struct seq_file *seq, void *cur)
- 	sk = sk_nulls_next(sk);
- 
- 	sk_nulls_for_each_from(sk, node) {
--		if (sk->sk_family == st->family && net_eq(sock_net(sk), net))
-+		if (sk->sk_family == afinfo->family &&
-+		    net_eq(sock_net(sk), net))
- 			return sk;
- 	}
- 
-@@ -2135,7 +2139,7 @@ static void *tcp_seek_last_pos(struct seq_file *seq)
- 	return rc;
- }
- 
--static void *tcp_seq_start(struct seq_file *seq, loff_t *pos)
-+void *tcp_seq_start(struct seq_file *seq, loff_t *pos)
- {
- 	struct tcp_iter_state *st = seq->private;
- 	void *rc;
-@@ -2156,8 +2160,9 @@ static void *tcp_seq_start(struct seq_file *seq, loff_t *pos)
- 	st->last_pos = *pos;
- 	return rc;
- }
-+EXPORT_SYMBOL(tcp_seq_start);
- 
--static void *tcp_seq_next(struct seq_file *seq, void *v, loff_t *pos)
-+void *tcp_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- {
- 	struct tcp_iter_state *st = seq->private;
- 	void *rc = NULL;
-@@ -2186,8 +2191,9 @@ static void *tcp_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- 	st->last_pos = *pos;
- 	return rc;
- }
-+EXPORT_SYMBOL(tcp_seq_next);
- 
--static void tcp_seq_stop(struct seq_file *seq, void *v)
-+void tcp_seq_stop(struct seq_file *seq, void *v)
- {
- 	struct tcp_iter_state *st = seq->private;
- 
-@@ -2202,47 +2208,7 @@ static void tcp_seq_stop(struct seq_file *seq, void *v)
- 		break;
- 	}
- }
--
--int tcp_seq_open(struct inode *inode, struct file *file)
--{
--	struct tcp_seq_afinfo *afinfo = PDE_DATA(inode);
--	struct tcp_iter_state *s;
--	int err;
--
--	err = seq_open_net(inode, file, &afinfo->seq_ops,
--			  sizeof(struct tcp_iter_state));
--	if (err < 0)
--		return err;
--
--	s = ((struct seq_file *)file->private_data)->private;
--	s->family		= afinfo->family;
--	s->last_pos		= 0;
 -	return 0;
--}
--EXPORT_SYMBOL(tcp_seq_open);
--
--int tcp_proc_register(struct net *net, struct tcp_seq_afinfo *afinfo)
--{
--	int rc = 0;
--	struct proc_dir_entry *p;
--
--	afinfo->seq_ops.start		= tcp_seq_start;
--	afinfo->seq_ops.next		= tcp_seq_next;
--	afinfo->seq_ops.stop		= tcp_seq_stop;
--
--	p = proc_create_data(afinfo->name, 0444, net->proc_net,
--			     afinfo->seq_fops, afinfo);
--	if (!p)
--		rc = -ENOMEM;
--	return rc;
--}
--EXPORT_SYMBOL(tcp_proc_register);
--
--void tcp_proc_unregister(struct net *net, struct tcp_seq_afinfo *afinfo)
--{
--	remove_proc_entry(afinfo->name, net->proc_net);
--}
--EXPORT_SYMBOL(tcp_proc_unregister);
-+EXPORT_SYMBOL(tcp_seq_stop);
- 
- static void get_openreq4(const struct request_sock *req,
- 			 struct seq_file *f, int i)
-@@ -2377,6 +2343,19 @@ static int tcp4_seq_show(struct seq_file *seq, void *v)
- 	return 0;
++	return dp;
++out_free_inum:
++	proc_free_inum(dp->low_ino);
++out_free_entry:
++	pde_free(dp);
++	return NULL;
  }
  
-+static const struct seq_operations tcp4_seq_ops = {
-+	.show		= tcp4_seq_show,
-+	.start		= tcp_seq_start,
-+	.next		= tcp_seq_next,
-+	.stop		= tcp_seq_stop,
-+};
-+
-+static int tcp_seq_open(struct inode *inode, struct file *file)
-+{
-+	return seq_open_net(inode, file, &tcp4_seq_ops,
-+			  sizeof(struct tcp_iter_state));
-+}
-+
- static const struct file_operations tcp_afinfo_seq_fops = {
- 	.open    = tcp_seq_open,
- 	.read    = seq_read,
-@@ -2385,22 +2364,20 @@ static const struct file_operations tcp_afinfo_seq_fops = {
- };
- 
- static struct tcp_seq_afinfo tcp4_seq_afinfo = {
--	.name		= "tcp",
- 	.family		= AF_INET,
--	.seq_fops	= &tcp_afinfo_seq_fops,
--	.seq_ops	= {
--		.show		= tcp4_seq_show,
--	},
- };
- 
- static int __net_init tcp4_proc_init_net(struct net *net)
- {
--	return tcp_proc_register(net, &tcp4_seq_afinfo);
-+	if (!proc_create_data("tcp", 0444, net->proc_net,
-+			&tcp_afinfo_seq_fops, &tcp4_seq_afinfo))
-+		return -ENOMEM;
-+	return 0;
+ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+@@ -443,10 +446,7 @@ struct proc_dir_entry *proc_symlink(const char *name,
+ 		if (ent->data) {
+ 			strcpy((char*)ent->data,dest);
+ 			ent->proc_iops = &proc_link_inode_operations;
+-			if (proc_register(parent, ent) < 0) {
+-				pde_free(ent);
+-				ent = NULL;
+-			}
++			ent = proc_register(parent, ent);
+ 		} else {
+ 			pde_free(ent);
+ 			ent = NULL;
+@@ -470,11 +470,9 @@ struct proc_dir_entry *proc_mkdir_data(const char *name, umode_t mode,
+ 		ent->proc_fops = &proc_dir_operations;
+ 		ent->proc_iops = &proc_dir_inode_operations;
+ 		parent->nlink++;
+-		if (proc_register(parent, ent) < 0) {
+-			pde_free(ent);
++		ent = proc_register(parent, ent);
++		if (!ent)
+ 			parent->nlink--;
+-			ent = NULL;
+-		}
+ 	}
+ 	return ent;
  }
- 
- static void __net_exit tcp4_proc_exit_net(struct net *net)
- {
--	tcp_proc_unregister(net, &tcp4_seq_afinfo);
-+	remove_proc_entry("tcp", net->proc_net);
+@@ -505,11 +503,9 @@ struct proc_dir_entry *proc_create_mount_point(const char *name)
+ 		ent->proc_fops = NULL;
+ 		ent->proc_iops = NULL;
+ 		parent->nlink++;
+-		if (proc_register(parent, ent) < 0) {
+-			pde_free(ent);
++		ent = proc_register(parent, ent);
++		if (!ent)
+ 			parent->nlink--;
+-			ent = NULL;
+-		}
+ 	}
+ 	return ent;
  }
- 
- static struct pernet_operations tcp4_net_ops = {
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 6d664d83cd16..c0329bb1692f 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1909,30 +1909,41 @@ static int tcp6_seq_show(struct seq_file *seq, void *v)
- 	return 0;
+@@ -539,11 +535,7 @@ struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
+ 	pde->proc_fops = proc_fops;
+ 	pde->data = data;
+ 	pde->proc_iops = &proc_file_inode_operations;
+-	if (proc_register(parent, pde) < 0)
+-		goto out_free;
+-	return pde;
+-out_free:
+-	pde_free(pde);
++	return proc_register(parent, pde);
+ out:
+ 	return NULL;
  }
- 
-+static const struct seq_operations tcp6_seq_ops = {
-+	.show		= tcp6_seq_show,
-+	.start		= tcp_seq_start,
-+	.next		= tcp_seq_next,
-+	.stop		= tcp_seq_stop,
-+};
-+
-+static int tcp6_seq_open(struct inode *inode, struct file *file)
-+{
-+	return seq_open_net(inode, file, &tcp6_seq_ops,
-+			  sizeof(struct tcp_iter_state));
-+}
-+
- static const struct file_operations tcp6_afinfo_seq_fops = {
--	.open    = tcp_seq_open,
-+	.open    = tcp6_seq_open,
- 	.read    = seq_read,
- 	.llseek  = seq_lseek,
- 	.release = seq_release_net
- };
- 
- static struct tcp_seq_afinfo tcp6_seq_afinfo = {
--	.name		= "tcp6",
- 	.family		= AF_INET6,
--	.seq_fops	= &tcp6_afinfo_seq_fops,
--	.seq_ops	= {
--		.show		= tcp6_seq_show,
--	},
- };
- 
- int __net_init tcp6_proc_init(struct net *net)
- {
--	return tcp_proc_register(net, &tcp6_seq_afinfo);
-+	if (!proc_create_data("tcp6", 0444, net->proc_net,
-+			&tcp6_afinfo_seq_fops, &tcp6_seq_afinfo))
-+		return -ENOMEM;
-+	return 0;
- }
- 
- void tcp6_proc_exit(struct net *net)
- {
--	tcp_proc_unregister(net, &tcp6_seq_afinfo);
-+	remove_proc_entry("tcp6", net->proc_net);
- }
- #endif
- 
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 0f1692e63cb6..488e67490312 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -162,6 +162,8 @@ extern bool proc_fill_cache(struct file *, struct dir_context *, const char *, i
+ /*
+  * generic.c
+  */
++struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
++		struct proc_dir_entry *dp);
+ extern struct dentry *proc_lookup(struct inode *, struct dentry *, unsigned int);
+ struct dentry *proc_lookup_de(struct inode *, struct dentry *, struct proc_dir_entry *);
+ extern int proc_readdir(struct file *, struct dir_context *);
 -- 
 2.17.0
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
