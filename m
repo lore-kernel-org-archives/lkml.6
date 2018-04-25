@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/IuuyYocU4GqhkJ7PxgKANJ+5orB7p6hnRIibZqxA9dBPB99STyWYVwNbLmYUQxTfgD1Lq
-ARC-Seal: i=1; a=rsa-sha256; t=1524652961; cv=none;
+X-Google-Smtp-Source: AIpwx4/8c1CJUcRi4DV+1A4gKhVWXW8bYaeLYRCDuYxLJeoLUSTmDUcgDrtdwOXdLn/VnfRHcN8k
+ARC-Seal: i=1; a=rsa-sha256; t=1524652958; cv=none;
         d=google.com; s=arc-20160816;
-        b=CeJ4f7tbhEa2uMI0DCxpmP7wMHSQ5slXAT/DOJH60al6qasfCkMg73QU7LGH1kJCb4
-         0/Xc/d72B6EpgSHp6FtMdTCavRWd72iaW69Hklsz+WHhtFKDES4xwkVCa7PhKrZiDDGk
-         WfOPyuPb+svuVOBUncorLCmIXwNJNcQV8dywF0e2z3243Z2iXYN47rgBkGDEdS+rxXR0
-         QdWk8+iPkcAW/V3mXNcwoEYIUc2hiC/sEdEcyAZjWGwm6tgcnjgituvOBmF+sL+Amp86
-         Zc7adLU3N+U7rwUwQru4agPV0e9VQJbz+PdA8sOcXXL50AXDP5pBih9useqEv0jSHmGL
-         tnxQ==
+        b=rxLs6UcOvLVD95UXOhdjEcXJMoWE4GBSXpPecjo8g5Y1HMOhzrCC0wcB3mzPDKnVdD
+         UTviKG76q5N5T9Cqc1/xZyzhclxdcE/zA+JoRtpRQMRLax2kfLWcJT8K5tl76QE+9nba
+         8Wzuh1xif0kpIYyrk0Zop91RTiFcBS+8hMObJtaqmjcIsntmejIMk86Urr53dcihDbjQ
+         3ctscbNSBLQ8N2hzQ7l3nkhKjvmmmsfPPsV2tB3n7Tq51xuMExSdnxCepz4BARhccT45
+         TxWQa4AHR7F4xVG8WGJeI0qWFm0Tsp8T3y+KFWoYDLDsKf64LRsDHStD8Wz9virSUqbl
+         yk/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ibzB5wfMMwBxitw5ummJ3nYjLLEP7ITZJ+isp6nmmbI=;
-        b=R4rBW4VobPBATZbP/sS51ACZ5BWgEVHTgkYucGhUbOnUwmSqOkd7UNulYJmxb0DJFS
-         mJ9zaQHeI65EkEX9+Dn7Ie7HsnSTyZGFpK7f88WV/7cCpBBV8EMyqxSpZHddvIxfeoer
-         FoDf659hT5XpEIydvapGS3orIVbdOT3c8uvcpy/rL8i+ATHoIGsNlbfFvT/ItnOcZLJF
-         AoDEs/QIqqcep2kO6j8jr6I+TUYTPQAelywldfsg4L/h9vnvY6P3pbsMABilCf7QUB1m
-         1ZzXM7MR1fabNmNbMW+8jxKWbJ1o2XOdAdoFJ3kk8pV6xf0dRojGq7NIpvdzjYDW87Jm
-         EHfQ==
+        bh=lNNU0M25LbPQAq4hTwm8hvlnE8CeUfPuy4eEVWuV10U=;
+        b=JF3BwWRum3369hAUkRtoVmM2UwarjNqS+zlbHBPaEAGTTtpn7hi+Ef5mNOEn7jtkIT
+         VutNMhp8MdFDgQiR2bztfZm9CDNdstJ6IAsce1byxcV/ZBBT6U5Ssu4cWBu4ZY350ELP
+         5JX8PqofJofyPNxQCsyjMpO8E6515IUS4MRHJNu2fAvOeOtJWqAALT7F7nkKuBAlBzPn
+         MwK1E5+yEXaQs+VlzEp1HeMk9idLcIVaUU0XPKMnTH9h+khRPhgjU0WMOcw7Xl7nHgOI
+         cAF8qHEz1A2W0ySDdSxNp6q7lD2V8x9Z4dbpIs35rXsVexP2oL99sLHQOIU59jNmjXQH
+         oftQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yonghong Song <yhs@fb.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
+	Hans de Goede <hdegoede@redhat.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 133/183] bpf: fix selftests/bpf test_kmod.sh failure when CONFIG_BPF_JIT_ALWAYS_ON=y
-Date: Wed, 25 Apr 2018 12:35:53 +0200
-Message-Id: <20180425103247.768018244@linuxfoundation.org>
+Subject: [PATCH 4.14 132/183] ACPI / scan: Use acpi_bus_get_status() to initialize ACPI_TYPE_DEVICE devs
+Date: Wed, 25 Apr 2018 12:35:52 +0200
+Message-Id: <20180425103247.726638638@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714503890614997?=
-X-GMAIL-MSGID: =?utf-8?q?1598714503890614997?=
+X-GMAIL-THRID: =?utf-8?q?1598714501370744239?=
+X-GMAIL-MSGID: =?utf-8?q?1598714501370744239?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,171 +50,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yonghong Song <yhs@fb.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit 09584b406742413ac4c8d7e030374d4daa045b69 ]
+[ Upstream commit 63347db0affadcbccd5613116ea8431c70139b3e ]
 
-With CONFIG_BPF_JIT_ALWAYS_ON is defined in the config file,
-tools/testing/selftests/bpf/test_kmod.sh failed like below:
-  [root@localhost bpf]# ./test_kmod.sh
-  sysctl: setting key "net.core.bpf_jit_enable": Invalid argument
-  [ JIT enabled:0 hardened:0 ]
-  [  132.175681] test_bpf: #297 BPF_MAXINSNS: Jump, gap, jump, ... FAIL to prog_create err=-524 len=4096
-  [  132.458834] test_bpf: Summary: 348 PASSED, 1 FAILED, [340/340 JIT'ed]
-  [ JIT enabled:1 hardened:0 ]
-  [  133.456025] test_bpf: #297 BPF_MAXINSNS: Jump, gap, jump, ... FAIL to prog_create err=-524 len=4096
-  [  133.730935] test_bpf: Summary: 348 PASSED, 1 FAILED, [340/340 JIT'ed]
-  [ JIT enabled:1 hardened:1 ]
-  [  134.769730] test_bpf: #297 BPF_MAXINSNS: Jump, gap, jump, ... FAIL to prog_create err=-524 len=4096
-  [  135.050864] test_bpf: Summary: 348 PASSED, 1 FAILED, [340/340 JIT'ed]
-  [ JIT enabled:1 hardened:2 ]
-  [  136.442882] test_bpf: #297 BPF_MAXINSNS: Jump, gap, jump, ... FAIL to prog_create err=-524 len=4096
-  [  136.821810] test_bpf: Summary: 348 PASSED, 1 FAILED, [340/340 JIT'ed]
-  [root@localhost bpf]#
+The acpi_get_bus_status wrapper for acpi_bus_get_status_handle has some
+code to handle certain device quirks, in some cases we also need this
+quirk handling for the initial _STA call.
 
-The test_kmod.sh load/remove test_bpf.ko multiple times with different
-settings for sysctl net.core.bpf_jit_{enable,harden}. The failed test #297
-of test_bpf.ko is designed such that JIT always fails.
+Specifically on some devices calling _STA before all _DEP dependencies
+are met results in errors like these:
 
-Commit 290af86629b2 (bpf: introduce BPF_JIT_ALWAYS_ON config)
-introduced the following tightening logic:
-    ...
-        if (!bpf_prog_is_dev_bound(fp->aux)) {
-                fp = bpf_int_jit_compile(fp);
-    #ifdef CONFIG_BPF_JIT_ALWAYS_ON
-                if (!fp->jited) {
-                        *err = -ENOTSUPP;
-                        return fp;
-                }
-    #endif
-    ...
-With this logic, Test #297 always gets return value -ENOTSUPP
-when CONFIG_BPF_JIT_ALWAYS_ON is defined, causing the test failure.
+[    0.123579] ACPI Error: No handler for Region [ECRM] (00000000ba9edc4c)
+               [GenericSerialBus] (20170831/evregion-166)
+[    0.123601] ACPI Error: Region GenericSerialBus (ID=9) has no handler
+               (20170831/exfldio-299)
+[    0.123618] ACPI Error: Method parse/execution failed
+               \_SB.I2C1.BAT1._STA, AE_NOT_EXIST (20170831/psparse-550)
 
-This patch fixed the failure by marking Test #297 as expected failure
-when CONFIG_BPF_JIT_ALWAYS_ON is defined.
+acpi_get_bus_status already has code to avoid this, so by using it we
+also silence these errors from the initial _STA call.
 
-Fixes: 290af86629b2 (bpf: introduce BPF_JIT_ALWAYS_ON config)
-Signed-off-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Note that in order for the acpi_get_bus_status handling for this to work,
+we initialize dep_unmet to 1 until acpi_device_dep_initialize gets called,
+this means that battery devices will be instantiated with an initial
+status of 0. This is not a problem, acpi_bus_attach will get called soon
+after the instantiation anyways and it will update the status as first
+point of order.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- lib/test_bpf.c |   31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+ drivers/acpi/scan.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/lib/test_bpf.c
-+++ b/lib/test_bpf.c
-@@ -83,6 +83,7 @@ struct bpf_test {
- 		__u32 result;
- 	} test[MAX_SUBTESTS];
- 	int (*fill_helper)(struct bpf_test *self);
-+	int expected_errcode; /* used when FLAG_EXPECTED_FAIL is set in the aux */
- 	__u8 frag_data[MAX_DATA];
- 	int stack_depth; /* for eBPF only, since tests don't call verifier */
- };
-@@ -1987,7 +1988,9 @@ static struct bpf_test tests[] = {
- 		},
- 		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
- 		{ },
--		{ }
-+		{ },
-+		.fill_helper = NULL,
-+		.expected_errcode = -EINVAL,
- 	},
- 	{
- 		"check: div_k_0",
-@@ -1997,7 +2000,9 @@ static struct bpf_test tests[] = {
- 		},
- 		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
- 		{ },
--		{ }
-+		{ },
-+		.fill_helper = NULL,
-+		.expected_errcode = -EINVAL,
- 	},
- 	{
- 		"check: unknown insn",
-@@ -2008,7 +2013,9 @@ static struct bpf_test tests[] = {
- 		},
- 		CLASSIC | FLAG_EXPECTED_FAIL,
- 		{ },
--		{ }
-+		{ },
-+		.fill_helper = NULL,
-+		.expected_errcode = -EINVAL,
- 	},
- 	{
- 		"check: out of range spill/fill",
-@@ -2018,7 +2025,9 @@ static struct bpf_test tests[] = {
- 		},
- 		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
- 		{ },
--		{ }
-+		{ },
-+		.fill_helper = NULL,
-+		.expected_errcode = -EINVAL,
- 	},
- 	{
- 		"JUMPS + HOLES",
-@@ -2110,6 +2119,8 @@ static struct bpf_test tests[] = {
- 		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
- 		{ },
- 		{ },
-+		.fill_helper = NULL,
-+		.expected_errcode = -EINVAL,
- 	},
- 	{
- 		"check: LDX + RET X",
-@@ -2120,6 +2131,8 @@ static struct bpf_test tests[] = {
- 		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
- 		{ },
- 		{ },
-+		.fill_helper = NULL,
-+		.expected_errcode = -EINVAL,
- 	},
- 	{	/* Mainly checking JIT here. */
- 		"M[]: alt STX + LDX",
-@@ -2294,6 +2307,8 @@ static struct bpf_test tests[] = {
- 		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
- 		{ },
- 		{ },
-+		.fill_helper = NULL,
-+		.expected_errcode = -EINVAL,
- 	},
- 	{	/* Passes checker but fails during runtime. */
- 		"LD [SKF_AD_OFF-1]",
-@@ -5356,6 +5371,7 @@ static struct bpf_test tests[] = {
- 		{ },
- 		{ },
- 		.fill_helper = bpf_fill_maxinsns4,
-+		.expected_errcode = -EINVAL,
- 	},
- 	{	/* Mainly checking JIT here. */
- 		"BPF_MAXINSNS: Very long jump",
-@@ -5411,10 +5427,15 @@ static struct bpf_test tests[] = {
- 	{
- 		"BPF_MAXINSNS: Jump, gap, jump, ...",
- 		{ },
-+#ifdef CONFIG_BPF_JIT_ALWAYS_ON
-+		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
-+#else
- 		CLASSIC | FLAG_NO_DATA,
-+#endif
- 		{ },
- 		{ { 0, 0xababcbac } },
- 		.fill_helper = bpf_fill_maxinsns11,
-+		.expected_errcode = -ENOTSUPP,
- 	},
- 	{
- 		"BPF_MAXINSNS: ld_abs+get_processor_id",
-@@ -6193,7 +6214,7 @@ static struct bpf_prog *generate_filter(
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1568,6 +1568,8 @@ void acpi_init_device_object(struct acpi
+ 	device_initialize(&device->dev);
+ 	dev_set_uevent_suppress(&device->dev, true);
+ 	acpi_init_coherency(device);
++	/* Assume there are unmet deps until acpi_device_dep_initialize() runs */
++	device->dep_unmet = 1;
+ }
  
- 		*err = bpf_prog_create(&fp, &fprog);
- 		if (tests[which].aux & FLAG_EXPECTED_FAIL) {
--			if (*err == -EINVAL) {
-+			if (*err == tests[which].expected_errcode) {
- 				pr_cont("PASS\n");
- 				/* Verifier rejected filter as expected. */
- 				*err = 0;
+ void acpi_device_add_finalize(struct acpi_device *device)
+@@ -1591,6 +1593,14 @@ static int acpi_add_single_object(struct
+ 	}
+ 
+ 	acpi_init_device_object(device, handle, type, sta);
++	/*
++	 * For ACPI_BUS_TYPE_DEVICE getting the status is delayed till here so
++	 * that we can call acpi_bus_get_status() and use its quirk handling.
++	 * Note this must be done before the get power-/wakeup_dev-flags calls.
++	 */
++	if (type == ACPI_BUS_TYPE_DEVICE)
++		acpi_bus_get_status(device);
++
+ 	acpi_bus_get_power_flags(device);
+ 	acpi_bus_get_wakeup_device_flags(device);
+ 
+@@ -1663,9 +1673,11 @@ static int acpi_bus_type_and_status(acpi
+ 			return -ENODEV;
+ 
+ 		*type = ACPI_BUS_TYPE_DEVICE;
+-		status = acpi_bus_get_status_handle(handle, sta);
+-		if (ACPI_FAILURE(status))
+-			*sta = 0;
++		/*
++		 * acpi_add_single_object updates this once we've an acpi_device
++		 * so that acpi_bus_get_status' quirk handling can be used.
++		 */
++		*sta = 0;
+ 		break;
+ 	case ACPI_TYPE_PROCESSOR:
+ 		*type = ACPI_BUS_TYPE_PROCESSOR;
+@@ -1763,6 +1775,8 @@ static void acpi_device_dep_initialize(s
+ 	acpi_status status;
+ 	int i;
+ 
++	adev->dep_unmet = 0;
++
+ 	if (!acpi_has_method(adev->handle, "_DEP"))
+ 		return;
+ 
