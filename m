@@ -1,141 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756190AbeDYS6L (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:58:11 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:35309 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755145AbeDYS6G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:58:06 -0400
-X-Google-Smtp-Source: AIpwx4/lM61dhyeAO13M0WrdFWDE0Qro7mVKh3bYEbNTjbdQbGtv4+azI50TOvRLMkVdZdIX6Zs3Hg==
-Subject: Re: Lack of suspend/resume/shutdown ordering between GPIO providers
- and consumers
-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, dmitry.torokhov@gmail.com,
-        jeffy.chen@rock-chips.com, enric.balletbo@collabora.com,
-        josephl@nvidia.com, opendmb@gmail.com, rjw@rjwysocki.net
-References: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com>
- <03711276-d854-7f87-f2e2-c64716b09dbe@ti.com>
- <206bea0c-dbba-1bc3-d13b-dbc41d12c08b@gmail.com>
- <bdbe6a56-6580-97b2-891f-ccb6c362d387@ti.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <7602f017-4abe-52ae-a112-7165076e2d89@gmail.com>
-Date: Wed, 25 Apr 2018 11:57:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <bdbe6a56-6580-97b2-891f-ccb6c362d387@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1756259AbeDYS6l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:58:41 -0400
+Received: from mga09.intel.com ([134.134.136.24]:44023 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756173AbeDYS6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:58:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,327,1520924400";
+   d="scan'208";a="34629611"
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc: acme@redhat.com, eranian@google.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [V2 PATCH] perf/x86/intel: Don't enable freeze-on-smi for PerfMon V1
+Date: Wed, 25 Apr 2018 14:57:17 -0400
+Message-Id: <1524682637-63219-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/25/2018 11:47 AM, Grygorii Strashko wrote:
-> 
-> 
-> On 04/25/2018 01:29 PM, Florian Fainelli wrote:
->> On 04/25/2018 11:06 AM, Grygorii Strashko wrote:
->>>
->>>
->>> On 04/24/2018 05:58 PM, Florian Fainelli wrote:
->>>> Hi Linus, Rafael, all
->>>>
->>>> Our GPIO controller driver: gpio-brcmstb.c has a shutdown callback
->>>> which
->>>> gets invoked when the system is brought into poweroff aka S5. So far so
->>>> good, except that we also wish to use gpio_keys.c as a possible wake-up
->>>> source, so we may have a number of GPIO pins declared as gpio-keys that
->>>> allow the system to wake-up from deep slumber.
->>>>
->>>> Recently we noticed that we could easily get into a state where
->>>> gpio-brcmstb.c::brcmstb_gpio_shutdown() gets called first, and then
->>>> gpio_keys.c::gpio_keys_suspend() gets called later, which is too
->>>> late to
->>>> have the enable_irq_wake() call do anything sensible since we have
->>>> suspend its parent interrupt controller before. This is completely
->>>> expected unfortunately because these two drivers are both platform
->>>> device instances with no connection to one another except via Device
->>>> Tree and the use of the GPIOLIB APIs.
->>>
->>> You can take a look at device_link_add() and Co.
->>
->> OK, though that requires a struct device references, so while I could
->> certainly resolve the device_node -> struct device that corresponds to
->> the GPIO provider , that poses a number of issues:
->>
->> - not all struct device_node have a corresponding struct device
->> reference (e.g: clock providers, interrupt controllers, and possibly
->> other custom drivers), though in this case, they most likely do have one
->>
->> - resolving a struct device associated with a struct device_node is
->> often done in a "bus" specific way, e.g: of_find_device_by_node(), so if
->> the GPIO provider is e.g: i2c_device, pci_device etc. etc. this might
->> not work that easily
->>
->> I think this is what Dmitry just indicated in his email as well.
->>
->>>
->>> But it's little bit unclear what exactly you have issue with:
->>> - shutdown
->>> - suspend
->>>
->>> above are different (at least as it was before) and gpio-brcmstb.c
->>>   brcmstb_gpio_shutdown() should not be called as part of suspend !?
->>> may be you mean brcmstb_gpio_suspend?
->>
->> The issue exists with shutdown (through the use of "poweroff"), that is
->> confirmed, but I cannot see how it does not exist with any suspend state
->> as well, for the same reason that the ordering is not strictly enforced.
-> 
-> Sry, but it still required some clarification :( - poweroff calls
-> device_shutdown() which, in turn, should not call .suspend(), so
-> how have you got both .shutdown() and .suspend() callbacks called during
-> poweroff? Am I missing smth?
+From: Kan Liang <kan.liang@linux.intel.com>
 
-You are missing me telling you the whole story, sorry I got confused,
-but you are absolutely right these are separate lists and on
-poweroff/shutdown only ->shutdown() is called. What I had missed in the
-report I was submitted was that there was a .shutdown() callback being
-added to gpio_keys.c, which of course, because it's an Android based
-project is not in the upstream Linux kernel.
+The SMM freeze feature was introduced since PerfMon V2. But the current
+code unconditionally enables the feature for all platforms. It can
+generate #GP exception, if the related FREEZE_WHILE_SMM bit is set for
+the machine with PerfMon V1.
 
-The problem does remain valid though AFAICT. Thanks Grygorii!
+To disable the feature for PerfMon V1, perf needs to
+- Remove the freeze_on_smi sysfs entry by moving intel_pmu_attrs to
+  intel_pmu, which is only applied to PerfMon V2 and later.
+- Check the PerfMon version before flipping the SMM bit when starting CPU
+
+Fixes: 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+
+Change since V1
+- Modified the changelog.
+
+ arch/x86/events/intel/core.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 4f2a5c7..08be8ed 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3346,7 +3346,8 @@ static void intel_pmu_cpu_starting(int cpu)
+ 
+ 	cpuc->lbr_sel = NULL;
+ 
+-	flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
++	if (x86_pmu.version > 1)
++		flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
+ 
+ 	if (!cpuc->shared_regs)
+ 		return;
+@@ -3509,6 +3510,8 @@ static __initconst const struct x86_pmu core_pmu = {
+ 	.cpu_dying		= intel_pmu_cpu_dying,
+ };
+ 
++static struct attribute *intel_pmu_attrs[];
++
+ static __initconst const struct x86_pmu intel_pmu = {
+ 	.name			= "Intel",
+ 	.handle_irq		= intel_pmu_handle_irq,
+@@ -3540,6 +3543,8 @@ static __initconst const struct x86_pmu intel_pmu = {
+ 	.format_attrs		= intel_arch3_formats_attr,
+ 	.events_sysfs_show	= intel_event_sysfs_show,
+ 
++	.attrs			= intel_pmu_attrs,
++
+ 	.cpu_prepare		= intel_pmu_cpu_prepare,
+ 	.cpu_starting		= intel_pmu_cpu_starting,
+ 	.cpu_dying		= intel_pmu_cpu_dying,
+@@ -3918,8 +3923,6 @@ __init int intel_pmu_init(void)
+ 
+ 	x86_pmu.max_pebs_events		= min_t(unsigned, MAX_PEBS_EVENTS, x86_pmu.num_counters);
+ 
+-
+-	x86_pmu.attrs			= intel_pmu_attrs;
+ 	/*
+ 	 * Quirk: v2 perfmon does not report fixed-purpose events, so
+ 	 * assume at least 3 events, when not running in a hypervisor:
 -- 
-Florian
+2.4.11
