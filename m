@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AB8JxZpIhf3Cv/fHrAhX9CdWlTW1xs28Snme7j1f7F23OI06/N8XdmDOvKMI8RFhldXswErCSIVu
-ARC-Seal: i=1; a=rsa-sha256; t=1524652733; cv=none;
+X-Google-Smtp-Source: AIpwx4/PUzYzcx0PCTzgX101o5ArRQv3NzYX67eLFYtw3fw2Tk0O5Q21z0id5oSswucoT5il5PZG
+ARC-Seal: i=1; a=rsa-sha256; t=1524652730; cv=none;
         d=google.com; s=arc-20160816;
-        b=MZo91XXZja10fzP2aGFDw789VMd+9vzUz6jN6DBTJamFOPqp/AJxkhlAlhePraVFj8
-         CMh/Kd0yqdlbJdus4g8I+jmwWf56snhjMGV4okaZ7aBiEIMYN6fHJISJtPgP8DG8Ysga
-         /Sc0Dzs2q4egvAJYqL64nSWXFGtxqmJg+3GIJdMIgtBIwWFvvp7jitS3lFxGkHjMYQMx
-         noimQzoyrT0cQCcL2NVFhb+yGxA8xMge6qN5x7cgeT+ec22NKS54BY+tHUuTK8CpM38s
-         HShliKtyBC+HUOU2YfveGaJ31nLsXEDGhi1Zcun0LKhPPrFt43kkb2ddyi1WSqRvHz60
-         SFcA==
+        b=g2a9zWnKUDaZXCqd4Tu3mA4cAq2jllMBz4wHsRwYg6y2Iso/pdo28Hk264fzM1xZej
+         hzhzM4R1SpeBXvTtbdKAFVTADdh4/wXq2ly/J095eXAS5+AaHIPr1eCrEZ7bmLxa0n2A
+         mUNZWv/sHzj2Ip0+p+F/ZurNS7N1Yzc48SpkqQydDbahq2BUAQx+w4mxF8Uizsqqx2YX
+         sZS2KLj3hx6C8qdmVIbzOJx6mRR7aAvrJWHy3KGvkKvUQB35GvY1iDIgawWYVI9E3d8R
+         Tg4QxBPwGfuCGp6rtbMYcwxLH40kPrRdGwsuG4t+CWRuT1tJQOdxbsX743jwncNwCUIJ
+         aMXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aBgoYylHLffuEKY85Qq3WJgeeJgDsLn6+nWrDNxcx4M=;
-        b=RBJtKpl5ZffpaGo48bp7sEPWOC1YV2gU4QSo+HiwmltjRTDlZ7NPg2+ukDjTFwAnH0
-         +/o5+W4PUBTr3iaBGEM39cVFbaBy5QKTO7mLfz0yI9YplQ7KNbu96XPmcT/CNCyV1w7o
-         NCT6D/TK+7+RPthyhCPH3yVwgBxbBXd72w60HTKJSFV94hPHMv7pyvnglNOv6vOVWPu7
-         6kBeTabJsLS8zKCruKmDRHc9uD1ONP7dxPQ+X5x+/YYym4ifvq/5LnhoY8iZXRTRTT9c
-         DbLK8MASP0S4vBVG52syXEA95IqXO8f7YKs1FezW/fDXvHY2Qi14v5TmjjnKxLP0jnmR
-         gefg==
+        bh=fkDgSCACzuACG/zLUYfvBMCHlaITGc68KMd5cC7zq4s=;
+        b=StndUpfVysoZVZ9S4Yhbkh47wNZ61r4tmByPuR/gGsfP7AFuVWYAxKZILZZjY/hS/A
+         ugTTxShsx/xe5BcX+PB6lmjQQcVgpKWW1b5AYa77uJDQaRev4uRONThhca2moRmyWsGV
+         9tSiSUM1aBOI+/rqDbv6qYOj/P9yeUD45HjLcb6pb8Cd+CuUCgi5QtfI8WPshKUbMJ7V
+         C1sgduP/zlcJ91cyBA9yXuzC/J6fgi19MJJqoyx5LQ9KGSPshZ3jGlQrRU62McYi50qY
+         9/i/p4hNUlDnF6K+B28aV4+z44efVd944e1O0WiLbXYLrgz515mVmGtdFkGa+Wt9Tc+h
+         kOqw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hyunchul Lee <hyc.lee@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Richard Weinberger <richard@nod.at>,
+	Christian Borntraeger <borntraeger@de.ibm.com>,
+	Stefan Haberland <sth@linux.vnet.ibm.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"jianchao.wang" <jianchao.w.wang@oracle.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 049/183] ubifs: Fix uninitialized variable in search_dh_cookie()
-Date: Wed, 25 Apr 2018 12:34:29 +0200
-Message-Id: <20180425103244.527151465@linuxfoundation.org>
+Subject: [PATCH 4.14 048/183] blk-mq: turn WARN_ON in __blk_mq_run_hw_queue into printk
+Date: Wed, 25 Apr 2018 12:34:28 +0200
+Message-Id: <20180425103244.490454373@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -42,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714265069543698?=
-X-GMAIL-MSGID: =?utf-8?q?1598714265069543698?=
+X-GMAIL-THRID: =?utf-8?q?1598714261869187543?=
+X-GMAIL-MSGID: =?utf-8?q?1598714261869187543?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,72 +55,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Ming Lei <ming.lei@redhat.com>
 
 
-[ Upstream commit c877154d307f4a91e0b5b85b75535713dab945ae ]
+[ Upstream commit 7df938fbc4ee641e70e05002ac67c24b19e86e74 ]
 
-fs/ubifs/tnc.c: In function ‘search_dh_cookie’:
-fs/ubifs/tnc.c:1893: warning: ‘err’ is used uninitialized in this function
+We know this WARN_ON is harmless and in reality it may be trigged,
+so convert it to printk() and dump_stack() to avoid to confusing
+people.
 
-Indeed, err is always used uninitialized.
+Also add comment about two releated races here.
 
-According to an original review comment from Hyunchul, acknowledged by
-Richard, err should be initialized to -ENOENT to avoid the first call to
-tnc_next().  But we can achieve the same by reordering the code.
-
-Fixes: 781f675e2d7e ("ubifs: Fix unlink code wrt. double hash lookups")
-Reported-by: Hyunchul Lee <hyc.lee@gmail.com>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Stefan Haberland <sth@linux.vnet.ibm.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ubifs/tnc.c |   21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ block/blk-mq.c |   22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
---- a/fs/ubifs/tnc.c
-+++ b/fs/ubifs/tnc.c
-@@ -1890,35 +1890,28 @@ static int search_dh_cookie(struct ubifs
- 	union ubifs_key *dkey;
- 
- 	for (;;) {
--		if (!err) {
--			err = tnc_next(c, &znode, n);
--			if (err)
--				goto out;
--		}
--
- 		zbr = &znode->zbranch[*n];
- 		dkey = &zbr->key;
- 
- 		if (key_inum(c, dkey) != key_inum(c, key) ||
- 		    key_type(c, dkey) != key_type(c, key)) {
--			err = -ENOENT;
--			goto out;
-+			return -ENOENT;
- 		}
- 
- 		err = tnc_read_hashed_node(c, zbr, dent);
- 		if (err)
--			goto out;
-+			return err;
- 
- 		if (key_hash(c, key) == key_hash(c, dkey) &&
- 		    le32_to_cpu(dent->cookie) == cookie) {
- 			*zn = znode;
--			goto out;
-+			return 0;
- 		}
--	}
- 
--out:
--
--	return err;
-+		err = tnc_next(c, &znode, n);
-+		if (err)
-+			return err;
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1143,9 +1143,27 @@ static void __blk_mq_run_hw_queue(struct
+ 	/*
+ 	 * We should be running this queue from one of the CPUs that
+ 	 * are mapped to it.
++	 *
++	 * There are at least two related races now between setting
++	 * hctx->next_cpu from blk_mq_hctx_next_cpu() and running
++	 * __blk_mq_run_hw_queue():
++	 *
++	 * - hctx->next_cpu is found offline in blk_mq_hctx_next_cpu(),
++	 *   but later it becomes online, then this warning is harmless
++	 *   at all
++	 *
++	 * - hctx->next_cpu is found online in blk_mq_hctx_next_cpu(),
++	 *   but later it becomes offline, then the warning can't be
++	 *   triggered, and we depend on blk-mq timeout handler to
++	 *   handle dispatched requests to this hctx
+ 	 */
+-	WARN_ON(!cpumask_test_cpu(raw_smp_processor_id(), hctx->cpumask) &&
+-		cpu_online(hctx->next_cpu));
++	if (!cpumask_test_cpu(raw_smp_processor_id(), hctx->cpumask) &&
++		cpu_online(hctx->next_cpu)) {
++		printk(KERN_WARNING "run queue from wrong CPU %d, hctx %s\n",
++			raw_smp_processor_id(),
++			cpumask_empty(hctx->cpumask) ? "inactive": "active");
++		dump_stack();
 +	}
- }
  
- static int do_lookup_dh(struct ubifs_info *c, const union ubifs_key *key,
+ 	/*
+ 	 * We can't run the queue inline with ints disabled. Ensure that
