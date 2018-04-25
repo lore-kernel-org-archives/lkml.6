@@ -1,112 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932111AbeDYQEB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:04:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755307AbeDYQAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:00:22 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C390E21759
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        kernel-team@lge.com, Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 01/12] perf machine: Set main kernel end address properly
-Date: Wed, 25 Apr 2018 12:59:57 -0300
-Message-Id: <20180425160008.3407-2-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180425160008.3407-1-acme@kernel.org>
-References: <20180425160008.3407-1-acme@kernel.org>
+        id S1755739AbeDYQEZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:04:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48418 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754954AbeDYQER (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:04:17 -0400
+Date: Wed, 25 Apr 2018 09:04:13 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Soheil Hassas Yeganeh <soheil@google.com>
+Subject: Re: [PATCH net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
+ zerocopy receive
+Message-ID: <20180425160413.GC8546@bombadil.infradead.org>
+References: <20180425052722.73022-1-edumazet@google.com>
+ <20180425052722.73022-2-edumazet@google.com>
+ <20180425062859.GA23914@infradead.org>
+ <5cd31eba-63b5-9160-0a2e-f441340df0d3@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5cd31eba-63b5-9160-0a2e-f441340df0d3@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Namhyung Kim <namhyung@kernel.org>
+On Wed, Apr 25, 2018 at 06:01:02AM -0700, Eric Dumazet wrote:
+> On 04/24/2018 11:28 PM, Christoph Hellwig wrote:
+> > On Tue, Apr 24, 2018 at 10:27:21PM -0700, Eric Dumazet wrote:
+> >> When adding tcp mmap() implementation, I forgot that socket lock
+> >> had to be taken before current->mm->mmap_sem. syzbot eventually caught
+> >> the bug.
+> >>
+> >> Since we can not lock the socket in tcp mmap() handler we have to
+> >> split the operation in two phases.
+> >>
+> >> 1) mmap() on a tcp socket simply reserves VMA space, and nothing else.
+> >>   This operation does not involve any TCP locking.
+> >>
+> >> 2) setsockopt(fd, IPPROTO_TCP, TCP_ZEROCOPY_RECEIVE, ...) implements
+> >>  the transfert of pages from skbs to one VMA.
+> >>   This operation only uses down_read(&current->mm->mmap_sem) after
+> >>   holding TCP lock, thus solving the lockdep issue.
+> >>
+> >> This new implementation was suggested by Andy Lutomirski with great details.
+> > 
+> > Thanks, this looks much more sensible to me.
+> > 
+> 
+> Thanks Christoph
+> 
+> Note the high cost of zap_page_range(), needed to avoid -EBUSY being returned
+> from vm_insert_page() the second time TCP_ZEROCOPY_RECEIVE is used on one VMA.
+> 
+> Ideally a vm_replace_page() would avoid this cost ?
 
-map_groups__fixup_end() was called to set the end addresses of kernel
-and module maps.  But now since machine__create_modules() sets the end
-address of modules properly, the only remaining piece is the kernel map.
+If you don't zap the page range, any of the CPUs in the system where
+any thread in this task have ever run may have a TLB entry pointing to
+this page ... if the page is being recycled into the page allocator,
+then that page might end up as a slab page or page table or page cache
+while the other CPU still have access to it.
 
-We can set it with adjacent module's address directly instead of calling
-map_groups__fixup_end().  If there's no module after the kernel map, the
-end address will be ~0ULL.
-
-Since it also changes the start address of the kernel map, it needs to
-re-insert the map to the kmaps in order to keep a correct ordering.  Kim
-reported that it caused problems on ARM64.
-
-Reported-by: Kim Phillips <kim.phillips@arm.com>
-Tested-by: Kim Phillips <kim.phillips@arm.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-team@lge.com
-Link: http://lkml.kernel.org/r/20180419235915.GA19067@sejong
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/machine.c | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
-
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 2eca8478e24f..32d50492505d 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1019,13 +1019,6 @@ int machine__load_vmlinux_path(struct machine *machine, enum map_type type)
- 	return ret;
- }
- 
--static void map_groups__fixup_end(struct map_groups *mg)
--{
--	int i;
--	for (i = 0; i < MAP__NR_TYPES; ++i)
--		__map_groups__fixup_end(mg, i);
--}
--
- static char *get_kernel_version(const char *root_dir)
- {
- 	char version[PATH_MAX];
-@@ -1233,6 +1226,7 @@ int machine__create_kernel_maps(struct machine *machine)
- {
- 	struct dso *kernel = machine__get_kernel(machine);
- 	const char *name = NULL;
-+	struct map *map;
- 	u64 addr = 0;
- 	int ret;
- 
-@@ -1259,13 +1253,25 @@ int machine__create_kernel_maps(struct machine *machine)
- 			machine__destroy_kernel_maps(machine);
- 			return -1;
- 		}
--		machine__set_kernel_mmap(machine, addr, 0);
-+
-+		/* we have a real start address now, so re-order the kmaps */
-+		map = machine__kernel_map(machine);
-+
-+		map__get(map);
-+		map_groups__remove(&machine->kmaps, map);
-+
-+		/* assume it's the last in the kmaps */
-+		machine__set_kernel_mmap(machine, addr, ~0ULL);
-+
-+		map_groups__insert(&machine->kmaps, map);
-+		map__put(map);
- 	}
- 
--	/*
--	 * Now that we have all the maps created, just set the ->end of them:
--	 */
--	map_groups__fixup_end(&machine->kmaps);
-+	/* update end address of the kernel map using adjacent module address */
-+	map = map__next(machine__kernel_map(machine));
-+	if (map)
-+		machine__set_kernel_mmap(machine, addr, map->start);
-+
- 	return 0;
- }
- 
--- 
-2.14.3
+You could hang onto the page until you've built up a sufficiently large
+batch, then bulk-invalidate all of the TLB entries, but we start to get
+into weirdnesses on different CPU architectures.
