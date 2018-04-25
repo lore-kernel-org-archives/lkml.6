@@ -1,81 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-497764-1524652648-2-1811852695990474652
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524652648; b=Xr9dnyimajyoP12yVATtQMlKT+5xlLpAnAmZv4esHuxa2dJouW
-    0uNRg5NajXR3EXlgBuxyreURTFD2QG6BPxq4Of8XjFHmF+Saksm8grr8Jk/JMT8+
-    VQGl6gQ7unWzD8gdLdZKslfF1LO46lCByG+9rsAdeyQhDIITJdzIqcEyQAsVt/fD
-    pVKuxkhaP/KtbKWaWp/yAEXHiVKEoRT6POWtkWCca7VVpHLl4z4XDRHT+gUAeZ1F
-    MsIFByZqt7a0vesRArH2CJ4d5mKDVffuPHYPTjfxV8wg4tNr7aVJPKC+ZhooFtD+
-    U21ND2Dw952ElHB0mPnbhHW7KMiVy7McBWBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524652648; bh=GpY0hjbIf4QCszEal3K+9p7wjMEmqC
-    nJmagoqZnxr/I=; b=g/L7i5DFzkBQmiN3y/hSduwf5CkHCTcxMpuBXhd1Fs7nOa
-    e/rX8aFj6o07VNaONYs/yFLyyLol3b3nK8PXJA+s0hd8Z8mqr4QxdrY1yZtmdv8w
-    dVBiE3Y1qc0LcOjkbrjyFRcLMjWMiEH7lIA3l10zOF3thJOkGJJryd4NNgUOPtX7
-    xuc0Q9xkx5hBn7ReZuLbTQpJ1Q561ZOmo4H9tnEWmChB31+PWq6TvNpjt/Ze2WY/
-    j2IbNLddbVDkyFd3DWDl8dtL2PLFIBOVi71fs6J5IWeOZMTucFQO3TjAEkTFSWvx
-    YSlm8yy+GiRJOjJQma6jkZsjdJfyYmnAzxMHIrYg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIK3jLwUsHwYsnIXcEY5jJOUauPkX3CvoumtEDnHvmkna29KTB0L+kk8RdvFds7K1SKhyzkpcr2lUVaGT1r8HtgGNMT+qQSeqERpHe8F8iFiW52OF4js
-    iMT2XGMJ7ox3Op3LVWGdVkX2rILlEfPweYUkLbD0XMHLfLeRsmg/ucN2Feq/eNgVvXvxcdbJwQepcUGqY4Dx+kd9F86A2Djd3z/z6hh0Ox0A/sFQU0kbTVwN
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=BcN0S9LAIc19CvRaRVkA:9 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753228AbeDYKh0 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:37:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51098 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753257AbeDYKhV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:37:21 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/gvK6F7hmlFlByu9N4fAk/DmLIJgRUoK6pva+Au7U+ZrfNPCKlOYI1M8zCtv+kqrRMrA9r
+ARC-Seal: i=1; a=rsa-sha256; t=1524652628; cv=none;
+        d=google.com; s=arc-20160816;
+        b=y0KbBIBPj9svd4Gbcrb7EK+8nN4PJgbWyopw7SqpjHL3vRwuAySOxM/JuUqoJVwZYB
+         3YR++mayifBlTXrll9sEXhOhzi0JwmwgIBvpmic2Q4GtArKGUtU0Ruuzd3Yfps61jA+v
+         yYwWE/hLNy2ynPuFqA7Z6iXc7VMhQ18/zV336BenYqkyTsWYV9i0/QpAggQ68e50hcSh
+         QepK5AGmb7OKW+r1m2BCBgtF92rFOSCWhavV9fYWE/IobMILG9nHFnc0q6nYpWDKD2W5
+         gRKDR+/06ritNTPAB16OXFzuV43QPQ71FxOU6U5xdrIhXcpTB2yJ7dvUzjjTxgt68AFu
+         K57g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=7b3jqnffnNjnZ933BFpfZlLIHjuIXSYS6NypEu07OLw=;
+        b=Iw5lLJWm1lGkfqTRXY4DVUnfbrmPJT0N32dG6rOYMI6yj+BYsBOPqMBlq8e51g9f3U
+         Mr8MTLA2Z5DFggMe+MLqBvIvWVKKk1ozyUvWCKdXxMM/45xuP969VFzkUR422Lvkd+h6
+         MfY07rMthGbA/iIVNIXZzHOJO/TwHTzpGY87AXYFQL7xd4OyddEoyOhxpztTe9XpYxlp
+         h4Beh30dLxyeKLNoGynYCa+TjQebM4mo1HQazOaf+auCXl06/O5DU7WPVGPbkiPHbs7s
+         hOWVyPj8JZ4mkEN8CyM9MpxPQP/Ccvklm6WblQq5wI02IrSnkMjmHeyTM4YbjgR8XS6s
+         HS9w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hector Martin <marcan@marcan.st>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 016/183] firewire-ohci: work around oversized DMA reads on JMicron controllers
-Date: Wed, 25 Apr 2018 12:33:56 +0200
-Message-Id: <20180425103243.263203532@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Imre Deak <imre.deak@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 4.14 011/183] drm/i915/bxt, glk: Increase PCODE timeouts during CDCLK freq changing
+Date: Wed, 25 Apr 2018 12:33:51 +0200
+Message-Id: <20180425103243.069772056@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -83,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598714154514105089?=
+X-GMAIL-MSGID: =?utf-8?q?1598714154514105089?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -93,46 +51,124 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hector Martin <marcan@marcan.st>
+From: Imre Deak <imre.deak@intel.com>
 
+commit 5e1df40f40ee45a97bb1066c3d71f0ae920a9672 upstream.
 
-[ Upstream commit 188775181bc05f29372b305ef96485840e351fde ]
+Currently we see sporadic timeouts during CDCLK changing both on BXT and
+GLK as reported by the Bugzilla: ticket. It's easy to reproduce this by
+changing the frequency in a tight loop after blanking the display. The
+upper bound for the completion time is 800us based on my tests, so
+increase it from the current 500us to 2ms; with that I couldn't trigger
+the problem either on BXT or GLK.
 
-At least some JMicron controllers issue buggy oversized DMA reads when
-fetching context descriptors, always fetching 0x20 bytes at once for
-descriptors which are only 0x10 bytes long. This is often harmless, but
-can cause page faults on modern systems with IOMMUs:
+Note that timeouts happened during both the change notification and the
+voltage level setting PCODE request. (For the latter one BSpec doesn't
+require us to wait for completion before further HW programming.)
 
-DMAR: [DMA Read] Request device [05:00.0] fault addr fff56000 [fault reason 06] PTE Read access is not set
-firewire_ohci 0000:05:00.0: DMA context IT0 has stopped, error code: evt_descriptor_read
+This issue is similar to
+commit 2c7d0602c815 ("drm/i915/gen9: Fix PCODE polling during CDCLK
+change notification")
+but there the PCODE request does complete (as shown by the mbox
+busy flag), only the reply we get from PCODE indicates a failure.
+So there we keep resending the request until a success reply, here we
+just have to increase the timeout for the one PCODE request we send.
 
-This works around the problem by always leaving 0x10 padding bytes at
-the end of descriptor buffer pages, which should be harmless to do
-unconditionally for controllers in case others have the same behavior.
+v2:
+- s/snb_pcode_request/sandybridge_pcode_write_timeout/ (Ville)
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Reviewed-by: Clemens Ladisch <clemens@ladisch.de>
-Signed-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: <stable@vger.kernel.org> # v4.4+
+Acked-by: Chris Wilson <chris@chris-wilson.co.uk> (v1)
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=103326
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Imre Deak <imre.deak@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180130142939.17983-1-imre.deak@intel.com
+(cherry picked from commit e76019a81921e87a4d9e7b3d86102bc708a6c227)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+(Rebased for v4.14 stable tree due to upstream cdclk_state and pcu_lock change)
+Signed-off-by: Imre Deak <imre.deak@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firewire/ohci.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/i915_drv.h    |    6 +++++-
+ drivers/gpu/drm/i915/intel_cdclk.c |   22 +++++++++++++++++-----
+ drivers/gpu/drm/i915/intel_pm.c    |    6 +++---
+ 3 files changed, 25 insertions(+), 9 deletions(-)
 
---- a/drivers/firewire/ohci.c
-+++ b/drivers/firewire/ohci.c
-@@ -1130,7 +1130,13 @@ static int context_add_buffer(struct con
- 		return -ENOMEM;
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -3995,7 +3995,11 @@ extern void intel_display_print_error_st
+ 					    struct intel_display_error_state *error);
  
- 	offset = (void *)&desc->buffer - (void *)desc;
--	desc->buffer_size = PAGE_SIZE - offset;
+ int sandybridge_pcode_read(struct drm_i915_private *dev_priv, u32 mbox, u32 *val);
+-int sandybridge_pcode_write(struct drm_i915_private *dev_priv, u32 mbox, u32 val);
++int sandybridge_pcode_write_timeout(struct drm_i915_private *dev_priv, u32 mbox,
++				    u32 val, int timeout_us);
++#define sandybridge_pcode_write(dev_priv, mbox, val)	\
++	sandybridge_pcode_write_timeout(dev_priv, mbox, val, 500)
++
+ int skl_pcode_request(struct drm_i915_private *dev_priv, u32 mbox, u32 request,
+ 		      u32 reply_mask, u32 reply, int timeout_base_ms);
+ 
+--- a/drivers/gpu/drm/i915/intel_cdclk.c
++++ b/drivers/gpu/drm/i915/intel_cdclk.c
+@@ -1289,10 +1289,15 @@ static void bxt_set_cdclk(struct drm_i91
+ 		break;
+ 	}
+ 
+-	/* Inform power controller of upcoming frequency change */
+ 	mutex_lock(&dev_priv->rps.hw_lock);
+-	ret = sandybridge_pcode_write(dev_priv, HSW_PCODE_DE_WRITE_FREQ_REQ,
+-				      0x80000000);
 +	/*
-+	 * Some controllers, like JMicron ones, always issue 0x20-byte DMA reads
-+	 * for descriptors, even 0x10-byte ones. This can cause page faults when
-+	 * an IOMMU is in use and the oversized read crosses a page boundary.
-+	 * Work around this by always leaving at least 0x10 bytes of padding.
++	 * Inform power controller of upcoming frequency change. BSpec
++	 * requires us to wait up to 150usec, but that leads to timeouts;
++	 * the 2ms used here is based on experiment.
 +	 */
-+	desc->buffer_size = PAGE_SIZE - offset - 0x10;
- 	desc->buffer_bus = bus_addr + offset;
- 	desc->used = 0;
++	ret = sandybridge_pcode_write_timeout(dev_priv,
++					      HSW_PCODE_DE_WRITE_FREQ_REQ,
++					      0x80000000, 2000);
+ 	mutex_unlock(&dev_priv->rps.hw_lock);
  
+ 	if (ret) {
+@@ -1323,8 +1328,15 @@ static void bxt_set_cdclk(struct drm_i91
+ 	I915_WRITE(CDCLK_CTL, val);
+ 
+ 	mutex_lock(&dev_priv->rps.hw_lock);
+-	ret = sandybridge_pcode_write(dev_priv, HSW_PCODE_DE_WRITE_FREQ_REQ,
+-				      DIV_ROUND_UP(cdclk, 25000));
++	/*
++	 * The timeout isn't specified, the 2ms used here is based on
++	 * experiment.
++	 * FIXME: Waiting for the request completion could be delayed until
++	 * the next PCODE request based on BSpec.
++	 */
++	ret = sandybridge_pcode_write_timeout(dev_priv,
++					      HSW_PCODE_DE_WRITE_FREQ_REQ,
++					      DIV_ROUND_UP(cdclk, 25000), 2000);
+ 	mutex_unlock(&dev_priv->rps.hw_lock);
+ 
+ 	if (ret) {
+--- a/drivers/gpu/drm/i915/intel_pm.c
++++ b/drivers/gpu/drm/i915/intel_pm.c
+@@ -8941,8 +8941,8 @@ int sandybridge_pcode_read(struct drm_i9
+ 	return 0;
+ }
+ 
+-int sandybridge_pcode_write(struct drm_i915_private *dev_priv,
+-			    u32 mbox, u32 val)
++int sandybridge_pcode_write_timeout(struct drm_i915_private *dev_priv,
++				    u32 mbox, u32 val, int timeout_us)
+ {
+ 	int status;
+ 
+@@ -8965,7 +8965,7 @@ int sandybridge_pcode_write(struct drm_i
+ 
+ 	if (__intel_wait_for_register_fw(dev_priv,
+ 					 GEN6_PCODE_MAILBOX, GEN6_PCODE_READY, 0,
+-					 500, 0, NULL)) {
++					 timeout_us, 0, NULL)) {
+ 		DRM_ERROR("timeout waiting for pcode write of 0x%08x to mbox %x to finish for %ps\n",
+ 			  val, mbox, __builtin_return_address(0));
+ 		return -ETIMEDOUT;
