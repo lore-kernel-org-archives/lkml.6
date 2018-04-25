@@ -1,55 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754908AbeDYP0l (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 11:26:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56008 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754612AbeDYP0j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 11:26:39 -0400
-Date: Wed, 25 Apr 2018 08:26:36 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        mjpeg-users@lists.sourceforge.net,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: zoran: move to dma-mapping interface
-Message-ID: <20180425152636.GC27076@infradead.org>
-References: <20180424204158.2764095-1-arnd@arndb.de>
- <20180425061537.GA23383@infradead.org>
- <CAK8P3a06ragAPWpHGm-bGoZ8t6QyAttWJfD0jU_wcGy7FqLb5w@mail.gmail.com>
- <20180425072138.GA16375@infradead.org>
- <CAK8P3a1cs_SPesadAQhV3QU97WjNE8bLPSQCfaMQRU7zr_oh3w@mail.gmail.com>
+        id S1754829AbeDYP20 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 11:28:26 -0400
+Received: from mga11.intel.com ([192.55.52.93]:54675 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754395AbeDYP2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 11:28:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
+   d="scan'208";a="44551199"
+Subject: Re: [V2 PATCH] perf parse-events: Specially handle uncore event alias
+ in small groups
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ganapatrao.kulkarni@cavium.com, zhangshaokun@hisilicon.com,
+        yao.jin@linux.intel.com, will.deacon@arm.com, ak@linux.intel.com,
+        agustinv@codeaurora.org
+References: <1524664218-134407-1-git-send-email-kan.liang@linux.intel.com>
+ <20180425142337.GE3396@krava>
+ <dbc6f99c-3728-3f23-9c38-a91865dbdefe@linux.intel.com>
+ <20180425145920.GF3396@krava>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <6699e9dc-35df-1da5-7271-d5d3e2ab1459@linux.intel.com>
+Date: Wed, 25 Apr 2018 11:28:22 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1cs_SPesadAQhV3QU97WjNE8bLPSQCfaMQRU7zr_oh3w@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180425145920.GF3396@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 01:15:18PM +0200, Arnd Bergmann wrote:
-> That thought had occurred to me as well. I removed the oldest ISDN
-> drivers already some years ago, and the OSS sound drivers
-> got removed as well, and comedi got converted to the dma-mapping
-> interfaces, so there isn't much left at all now. This is what we
-> have as of v4.17-rc1:
 
-Yes, I've been looking at various grotty old bits to purge.  Usually
-I've been looking for some non-tree wide patches and CCed the last
-active people to see if they care.  In a few cases people do, but
-most often no one does.
 
-> My feeling is that we want to keep most of the arch specific
-> ones, in particular removing the m68k drivers would break
-> a whole class of machines.
+On 4/25/2018 10:59 AM, Jiri Olsa wrote:
+> On Wed, Apr 25, 2018 at 10:42:27AM -0400, Liang, Kan wrote:
+>>
+>>
+>> On 4/25/2018 10:23 AM, Jiri Olsa wrote:
+>>> On Wed, Apr 25, 2018 at 06:50:18AM -0700, kan.liang@linux.intel.com wrote:
+>>>> From: Kan Liang <kan.liang@linux.intel.com>
+>>>>
+>>>> Perf stat doesn't count the uncore event aliases from the same uncore
+>>>> block in a group, for example:
+>>>>
+>>>>     perf stat -e '{unc_m_cas_count.all,unc_m_clockticks}' -a -I 1000
+>>>>     #           time             counts unit events
+>>>>          1.000447342      <not counted>      unc_m_cas_count.all
+>>>>          1.000447342      <not counted>      unc_m_clockticks
+>>>>          2.000740654      <not counted>      unc_m_cas_count.all
+>>>>          2.000740654      <not counted>      unc_m_clockticks
+>>>>
+>>>> The output is very misleading. It gives a wrong impression that the
+>>>> uncore event doesn't work.
+>>>>
+>>>> An uncore block could be composed by several PMUs. An uncore event alias
+>>>> is a joint name which means the same event runs on all PMUs of a block.
+>>>> Perf doesn't support mixed events from different PMUs in the same group.
+>>>> It is wrong to put uncore event aliases in a big group.
+>>>>
+>>>> The right way is to split the big group into multiple small groups which
+>>>> only include the events from the same PMU.
+>>>> Only uncore event aliases from the same uncore block should be specially
+>>>> handled here. It doesn't make sense to mix the uncore events with other
+>>>> uncore events from different blocks or even core events in a group.
+>>>>
+>>>> With the patch:
+>>>>     #           time             counts unit events
+>>>>        1.001557653            140,833      unc_m_cas_count.all
+>>>>        1.001557653      1,330,231,332      unc_m_clockticks
+>>>>        2.002709483             85,007      unc_m_cas_count.all
+>>>>        2.002709483      1,429,494,563      unc_m_clockticks
+>>>
+>>> hum, I still can see the original behaviour even with the patch:
+>>>
+>>
+>> That's because the data_reads and clockticks are from different uncore
+>> blocks. The data_reads is a IMC event. The clockticks is a CBOX event.
+>>
+>> The patch only supports the events from the same uncore blocks in group.
+> 
+> I see, found another example from same uncore blocks and it seems to work:
+>    #  perf stat -e '{cas_count_read,cas_count_write}' -a -I 1000
+> 
+> but I have it aborted on:
+>    # ./perf stat -e '{cas_count_read,cas_count_write,cas_count_read}' -a -I 1000
+>    perf: util/evsel.c:1483: get_group_fd: Assertion `!(!leader->fd)' failed.
+>    Aborted (core dumped)
+> 
 
-For the arch specific ones it would good to just ping the relevant
-maintainers.  Especially m68k and parisc folks seems to be very
-responsive.
+Yes, there is a bug if leader and member have the same event name.
+I will fix it in V3. Thanks for the test.
+
+Thanks,
+Kan
