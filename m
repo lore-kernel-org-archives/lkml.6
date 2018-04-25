@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756006AbeDYQeJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:34:09 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37352 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755620AbeDYQdU (ORCPT
+        id S1755885AbeDYQfE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:35:04 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54832 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755138AbeDYQdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:33:20 -0400
-X-Google-Smtp-Source: AIpwx481Y9mhGKrpqtNkNa0F6090SvPc+30cfCkzFaP+nj0x5WmSH2VD6CXv5xLi16cMKwqyt4HdBw==
+        Wed, 25 Apr 2018 12:33:11 -0400
+X-Google-Smtp-Source: AB8JxZq1ODAnc2p7be5q3h9TTp3v9vwA5twiAYSo1E78vRV0q0fa7OUuf3N0gCb8YHNdhIwKJKepAw==
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
@@ -16,9 +16,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] clk: meson: axg: export audio clock controller id bindings
-Date: Wed, 25 Apr 2018 18:33:02 +0200
-Message-Id: <20180425163304.10852-6-jbrunet@baylibre.com>
+Subject: [PATCH 1/7] clk: meson: clean-up meson clock configuration
+Date: Wed, 25 Apr 2018 18:32:58 +0200
+Message-Id: <20180425163304.10852-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180425163304.10852-1-jbrunet@baylibre.com>
 References: <20180425163304.10852-1-jbrunet@baylibre.com>
@@ -26,114 +26,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-export the clock ids dt-bindings usable by the consumers of the axg
-audio clock controller
+Clean the dependencies in meson clock Kconfig.
+CLK_AMLOGIC should actually select CLK_REGMAP_MESON which it uses. Also,
+each platform should select CLK_AMLOGIC, so everything is properly turned
+on when the platform Kconfig enable each configuration flag
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- include/dt-bindings/clock/axg-audio-clkc.h | 94 ++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
- create mode 100644 include/dt-bindings/clock/axg-audio-clkc.h
+ drivers/clk/meson/Kconfig | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
-new file mode 100644
-index 000000000000..4426ae655858
---- /dev/null
-+++ b/include/dt-bindings/clock/axg-audio-clkc.h
-@@ -0,0 +1,94 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2018 Baylibre SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+#ifndef __AXG_AUDIO_CLKC_BINDINGS_H
-+#define __AXG_AUDIO_CLKC_BINDINGS_H
-+
-+#define AUD_CLKID_SLV_SCLK0		9
-+#define AUD_CLKID_SLV_SCLK1		10
-+#define AUD_CLKID_SLV_SCLK2		11
-+#define AUD_CLKID_SLV_SCLK3		12
-+#define AUD_CLKID_SLV_SCLK4		13
-+#define AUD_CLKID_SLV_SCLK5		14
-+#define AUD_CLKID_SLV_SCLK6		15
-+#define AUD_CLKID_SLV_SCLK7		16
-+#define AUD_CLKID_SLV_SCLK8		17
-+#define AUD_CLKID_SLV_SCLK9		18
-+#define AUD_CLKID_SLV_LRCLK0		19
-+#define AUD_CLKID_SLV_LRCLK1		20
-+#define AUD_CLKID_SLV_LRCLK2		21
-+#define AUD_CLKID_SLV_LRCLK3		22
-+#define AUD_CLKID_SLV_LRCLK4		23
-+#define AUD_CLKID_SLV_LRCLK5		24
-+#define AUD_CLKID_SLV_LRCLK6		25
-+#define AUD_CLKID_SLV_LRCLK7		26
-+#define AUD_CLKID_SLV_LRCLK8		27
-+#define AUD_CLKID_SLV_LRCLK9		28
-+#define AUD_CLKID_DDR_ARB		29
-+#define AUD_CLKID_PDM			30
-+#define AUD_CLKID_TDMIN_A		31
-+#define AUD_CLKID_TDMIN_B		32
-+#define AUD_CLKID_TDMIN_C		33
-+#define AUD_CLKID_TDMIN_LB		34
-+#define AUD_CLKID_TDMOUT_A		35
-+#define AUD_CLKID_TDMOUT_B		36
-+#define AUD_CLKID_TDMOUT_C		37
-+#define AUD_CLKID_FRDDR_A		38
-+#define AUD_CLKID_FRDDR_B		39
-+#define AUD_CLKID_FRDDR_C		40
-+#define AUD_CLKID_TODDR_A		41
-+#define AUD_CLKID_TODDR_B		42
-+#define AUD_CLKID_TODDR_C		43
-+#define AUD_CLKID_LOOPBACK		44
-+#define AUD_CLKID_SPDIFIN		45
-+#define AUD_CLKID_SPDIFOUT		46
-+#define AUD_CLKID_RESAMPLE		47
-+#define AUD_CLKID_POWER_DETECT		48
-+#define AUD_CLKID_MST_A_MCLK		49
-+#define AUD_CLKID_MST_B_MCLK		50
-+#define AUD_CLKID_MST_C_MCLK		51
-+#define AUD_CLKID_MST_D_MCLK		52
-+#define AUD_CLKID_MST_E_MCLK		53
-+#define AUD_CLKID_MST_F_MCLK		54
-+#define AUD_CLKID_SPDIFOUT_CLK		55
-+#define AUD_CLKID_SPDIFIN_CLK		56
-+#define AUD_CLKID_PDM_DCLK		57
-+#define AUD_CLKID_PDM_SYSCLK		58
-+#define AUD_CLKID_MST_A_SCLK		79
-+#define AUD_CLKID_MST_B_SCLK		80
-+#define AUD_CLKID_MST_C_SCLK		81
-+#define AUD_CLKID_MST_D_SCLK		82
-+#define AUD_CLKID_MST_E_SCLK		83
-+#define AUD_CLKID_MST_F_SCLK		84
-+#define AUD_CLKID_MST_A_LRCLK		86
-+#define AUD_CLKID_MST_B_LRCLK		87
-+#define AUD_CLKID_MST_C_LRCLK		88
-+#define AUD_CLKID_MST_D_LRCLK		89
-+#define AUD_CLKID_MST_E_LRCLK		90
-+#define AUD_CLKID_MST_F_LRCLK		91
-+#define AUD_CLKID_TDMIN_A_SCLK_SEL	116
-+#define AUD_CLKID_TDMIN_B_SCLK_SEL	117
-+#define AUD_CLKID_TDMIN_C_SCLK_SEL	118
-+#define AUD_CLKID_TDMIN_LB_SCLK_SEL	119
-+#define AUD_CLKID_TDMOUT_A_SCLK_SEL	120
-+#define AUD_CLKID_TDMOUT_B_SCLK_SEL	121
-+#define AUD_CLKID_TDMOUT_C_SCLK_SEL	122
-+#define AUD_CLKID_TDMIN_A_SCLK		123
-+#define AUD_CLKID_TDMIN_B_SCLK		124
-+#define AUD_CLKID_TDMIN_C_SCLK		125
-+#define AUD_CLKID_TDMIN_LB_SCLK		126
-+#define AUD_CLKID_TDMOUT_A_SCLK		127
-+#define AUD_CLKID_TDMOUT_B_SCLK		128
-+#define AUD_CLKID_TDMOUT_C_SCLK		129
-+#define AUD_CLKID_TDMIN_A_LRCLK		130
-+#define AUD_CLKID_TDMIN_B_LRCLK		131
-+#define AUD_CLKID_TDMIN_C_LRCLK		132
-+#define AUD_CLKID_TDMIN_LB_LRCLK	133
-+#define AUD_CLKID_TDMOUT_A_LRCLK	134
-+#define AUD_CLKID_TDMOUT_B_LRCLK	135
-+#define AUD_CLKID_TDMOUT_C_LRCLK	136
-+
-+#endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index d5cbec522aec..87d69573e172 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -1,7 +1,7 @@
+ config COMMON_CLK_AMLOGIC
+ 	bool
+-	depends on OF
+ 	depends on ARCH_MESON || COMPILE_TEST
++	select COMMON_CLK_REGMAP_MESON
+ 
+ config COMMON_CLK_REGMAP_MESON
+ 	bool
+@@ -9,9 +9,8 @@ config COMMON_CLK_REGMAP_MESON
+ 
+ config COMMON_CLK_MESON8B
+ 	bool
+-	depends on COMMON_CLK_AMLOGIC
++	select COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
+-	select COMMON_CLK_REGMAP_MESON
+ 	help
+ 	  Support for the clock controller on AmLogic S802 (Meson8),
+ 	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
+@@ -19,9 +18,8 @@ config COMMON_CLK_MESON8B
+ 
+ config COMMON_CLK_GXBB
+ 	bool
+-	depends on COMMON_CLK_AMLOGIC
++	select COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
+-	select COMMON_CLK_REGMAP_MESON
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+@@ -29,9 +27,8 @@ config COMMON_CLK_GXBB
+ 
+ config COMMON_CLK_AXG
+ 	bool
+-	depends on COMMON_CLK_AMLOGIC
++	select COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
+-	select COMMON_CLK_REGMAP_MESON
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on AmLogic A113D devices, aka axg.
 -- 
 2.14.3
