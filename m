@@ -1,66 +1,66 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-945756-1524671350-2-15345722133305693795
+X-Cyrus-Session-Id: sloti22d1t05-937867-1524671346-2-12381600819394012959
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524671349; b=VU299ZKmTCLaoIAuwOUIa9Y/IoOF5HeHQt1kKbpBP5pUDBbSgJ
-    hYdKYIRxLmYrWExO7iA4d7qIqJ/A4kSGfYhvzRFlhi2t9d1QwSmtZ8GLCmK5L8Xt
-    58aKs94P7c+ItycgngaGLqx3Y/VBYt9/0ZbPGftHD1lqyNfwpyHz/lmzLoO8LDZa
-    D2yzYQhSphrkhdLKmF9etPKLQ7kZd9bf5OxMhjowK0sZQAzR6/WjS0MQ6jAVmoHJ
-    sdglRcFGt2m8ZmJZS7JX0nxc9MeaRAH461JfWTETqwekTmmrax5FrRmy+8FVxOso
-    nYklVavWn/wzaviCT1DnxP90aeESwX+aVogw==
+    1524671345; b=PtY7njQ3CbOb9Xex61iXANXtED25myEemc6Tp901QuKe/ecx/b
+    J9DHbNjB8TY3MTagrKHC8Cav2el7o2uW/IYqVeg4ct/vbalQ+92begAnnfWkdTxu
+    Ly2AKmTE02hn05GRI3IianrSF+S7QcSFexQ3a/agmq5PlaXSTEsVZ8zv6wRpXBZB
+    wcXQxvpOuTCYGCW9C6PYrxmVMHwVSE/iWEBwJ56qslZyrRbon2ljhyi0YV1yVm0J
+    +HOEUHKMOZZhGhQvs8IjM5SSwW2vYjcUMFo/vQJE+FFkQqPEUbHly+M/UxVkhmK2
+    eJx7XzCTflCzbGb5VFh2VMMEZsZlANy4JZJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524671349; bh=p38vM
-    nmumZTcsuL65BOGTVIFWcORC4DGp3lgE6owKNY=; b=GgLNqwPsYAMKrLQ9oGtn9
-    OewSUwCPw7fIldBEUUXwDv8rqGgb6yieCz1/Ppmlsp1VWSXj9DdB66iXySkMNhLQ
-    wTVyHSvOuaLdnOLjDvuJtJ0Zits415+HROB081AARsWbmUEf1oK8Pvws+dbzBul2
-    cEULEyLBSUz0YRM29tad6DG32dnJiOypc1kOvudN7cdb8DmMopLhLhsNIAA7Yaol
-    KFNP8WilLaN8Qe376ua1s/SOLHVuUhH/XMbwwChJ2N1R2Rsn5WV7EyZOIboQ+mD9
-    NEwpAVZe+hTbAwihYxnIsS5x7p6lZYpWo1ggDLjddroefAtjFgdDORFQ7hjiiDvG
-    Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=iiMBy100 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :content-transfer-encoding:sender; s=fm2; t=1524671345; bh=v7fq1
+    OwdYKQIa3NjlNITYkg1N3bHxcaWEdTGS+N8rTo=; b=uozAcftFps+NDu0SSMLNu
+    U96jyzIt1bAfvis6RodBKZzJxMSvHZbuCyW01hNSFcNMrY3D8P49qeN8xdKCcI9r
+    XhZiIdQWU5pYiFNm+hxFCksVY9yxds/0ayyThqsThiYBn0njab8NIbMNPcP/DC5w
+    ojtCa9jiDbKiKWDNMebOl+U4E1R8owmhG1l1f2msoBCgpTVEHvD4831NEMo8CC+d
+    ylZ3wqm1XgTDQwTh9G5vty5D9aA2DB2Q2e5gDVqNSVlt4OPPTJNqJc9sigFHfKuI
+    n/GVD2MC0FmVwLkPLhCHBdCFii1c+V/HFRdTC9bunlGBwe9ytiZQFFDUbH7nEM2k
+    w==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=B3GQrbha x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=iiMBy100 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=B3GQrbha x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEjBhgVpedtIX4C7BAot8Rxp4Vyzb21+nXEJDuKsWedmMPG7jMEF+zp/vv4b7wIe6E5+a29/uc3ia8z6HSt9tM0HixlS1qFTVhIHx7H58IiRtjhP6FdB
-    Sx8Y9sPFIUENIoLQyElJ1K7K8rgzwGvA3HB6veMq7OxoGXoNIxvbjI6JlLaf3Ax+ZqY05x3lp5xY37HxubzpR7J5Fln6aemqyU23E9xkTBmr3JjpsZSK3zdY
-    1ru3GFAcOm4X8Ab/lo8Sgw==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=8DPXs7LdIecfLW14igUA:9
+X-CM-Envelope: MS4wfLNIbCNmiPypbFDjgHxsumcQpG2kKmee/8HFVN89vWY8lf88hfZ4FrkeVrnJ4Ysxg8FkYdMqf/6zMRw53gwlUvPKf9dEhMj4mBrj4jykHX7b1/a/JhCM
+    CMDP0rwLcTq9I2M4ePj7M0dPJJtDRiicFeuzO3sf+s+tUg4GLL6E3pZy8N2kIZCuLbvoycoYANJel3KTbs6WTYpQFVcbkmkDp6bgXOC0eXKRuBqB/+7TSq5h
+    C75jFyD+qaYyvOZcdqFgsg==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=ylCQlRw3xye7oqRy6kcA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -68,9 +68,10 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 03/40] proc: add a proc_create_reg helper
-Date: Wed, 25 Apr 2018 17:47:50 +0200
-Message-Id: <20180425154827.32251-4-hch@lst.de>
+Subject: [PATCH 01/40] net/can: single_open_net needs to be paired with
+ single_release_net
+Date: Wed, 25 Apr 2018 17:47:48 +0200
+Message-Id: <20180425154827.32251-2-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425154827.32251-1-hch@lst.de>
 References: <20180425154827.32251-1-hch@lst.de>
@@ -104,91 +105,58 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Common code for creating a regular file.  Factor out of proc_create_data, to
-be reused by other functions soon.
+Otherwise we will leak a reference to the network namespace.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/proc/generic.c  | 44 +++++++++++++++++++++++++-------------------
- fs/proc/internal.h |  2 ++
- 2 files changed, 27 insertions(+), 19 deletions(-)
+ net/can/bcm.c  | 2 +-
+ net/can/proc.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index bd8480ff0d35..ab6a321076b8 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -511,33 +511,39 @@ struct proc_dir_entry *proc_create_mount_point(const char *name)
- }
- EXPORT_SYMBOL(proc_create_mount_point);
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index ac5e5e34fee3..8073fa14e143 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -249,7 +249,7 @@ static const struct file_operations bcm_proc_fops = {
+ 	.open		= bcm_proc_open,
+ 	.read		= seq_read,
+ 	.llseek		= seq_lseek,
+-	.release	= single_release,
++	.release	= single_release_net,
+ };
+ #endif /* CONFIG_PROC_FS */
  
--struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
--					struct proc_dir_entry *parent,
--					const struct file_operations *proc_fops,
--					void *data)
-+struct proc_dir_entry *proc_create_reg(const char *name, umode_t mode,
-+		struct proc_dir_entry **parent, void *data)
- {
--	struct proc_dir_entry *pde;
-+	struct proc_dir_entry *p;
-+
- 	if ((mode & S_IFMT) == 0)
- 		mode |= S_IFREG;
--
--	if (!S_ISREG(mode)) {
--		WARN_ON(1);	/* use proc_mkdir() */
-+	if ((mode & S_IALLUGO) == 0)
-+		mode |= S_IRUGO;
-+	if (WARN_ON_ONCE(!S_ISREG(mode)))
- 		return NULL;
-+
-+	p = __proc_create(parent, name, mode, 1);
-+	if (p) {
-+		p->proc_iops = &proc_file_inode_operations;
-+		p->data = data;
- 	}
-+	return p;
-+}
-+
-+struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
-+		struct proc_dir_entry *parent,
-+		const struct file_operations *proc_fops, void *data)
-+{
-+	struct proc_dir_entry *p;
+diff --git a/net/can/proc.c b/net/can/proc.c
+index fdf704e9bb8c..fde2fd55b826 100644
+--- a/net/can/proc.c
++++ b/net/can/proc.c
+@@ -279,7 +279,7 @@ static const struct file_operations can_stats_proc_fops = {
+ 	.open		= can_stats_proc_open,
+ 	.read		= seq_read,
+ 	.llseek		= seq_lseek,
+-	.release	= single_release,
++	.release	= single_release_net,
+ };
  
- 	BUG_ON(proc_fops == NULL);
+ static int can_reset_stats_proc_show(struct seq_file *m, void *v)
+@@ -449,7 +449,7 @@ static const struct file_operations can_rcvlist_sff_proc_fops = {
+ 	.open		= can_rcvlist_sff_proc_open,
+ 	.read		= seq_read,
+ 	.llseek		= seq_lseek,
+-	.release	= single_release,
++	.release	= single_release_net,
+ };
  
--	if ((mode & S_IALLUGO) == 0)
--		mode |= S_IRUGO;
--	pde = __proc_create(&parent, name, mode, 1);
--	if (!pde)
--		goto out;
--	pde->proc_fops = proc_fops;
--	pde->data = data;
--	pde->proc_iops = &proc_file_inode_operations;
--	return proc_register(parent, pde);
--out:
--	return NULL;
-+	p = proc_create_reg(name, mode, &parent, data);
-+	if (!p)
-+		return NULL;
-+	p->proc_fops = proc_fops;
-+	return proc_register(parent, p);
- }
- EXPORT_SYMBOL(proc_create_data);
-  
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 488e67490312..dd1e11400b97 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -162,6 +162,8 @@ extern bool proc_fill_cache(struct file *, struct dir_context *, const char *, i
+ 
+@@ -492,7 +492,7 @@ static const struct file_operations can_rcvlist_eff_proc_fops = {
+ 	.open		= can_rcvlist_eff_proc_open,
+ 	.read		= seq_read,
+ 	.llseek		= seq_lseek,
+-	.release	= single_release,
++	.release	= single_release_net,
+ };
+ 
  /*
-  * generic.c
-  */
-+struct proc_dir_entry *proc_create_reg(const char *name, umode_t mode,
-+		struct proc_dir_entry **parent, void *data);
- struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
- 		struct proc_dir_entry *dp);
- extern struct dentry *proc_lookup(struct inode *, struct dentry *, unsigned int);
 -- 
 2.17.0
 
