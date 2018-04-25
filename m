@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/hMaTRfRR1YGu1ryq+EbXHxv9VIn3MGv/4LqANgUGSlwWdjKdYaf5DaLOaa33z8ln3TgFa
-ARC-Seal: i=1; a=rsa-sha256; t=1524652931; cv=none;
+X-Google-Smtp-Source: AIpwx49q89aU44dP/ZQqIN1QDocZvBJCg0fd5Z5YfuCatnvySe20zdmBR952HggthAjyyi4lEOgc
+ARC-Seal: i=1; a=rsa-sha256; t=1524652929; cv=none;
         d=google.com; s=arc-20160816;
-        b=eUZAAD7yy8IVzQ0zPhKiKwW1ghmL9iEk6F+12AcQ6UMbOrpegnGt7KMta+BfGJIi4q
-         bw/Ap+MZkwBgtfLjJdIKOH9qp4pMD7ZByydXsyuEo7VtsDZFgEiodrz6dc+vF0jnJ57t
-         ALjrO2Kmp//P5jDAcK38xYpTxw7DVd7oCb7VHSW61KiwnsFT6KBl6sqVf+xfLvBEM2ri
-         rRfn9dP9WZaeFVDRweJiKJUk57f4gxap/vyjNveEQ58fWI/lU9sd/NkkmL8cIfK45Q9s
-         zv5fK0B3ynnd5malwKdVVHRk20at4vzf6o1SbN1Gt0uqsAyCrjRdOX/Rk0x7CBrPEjWu
-         n9jg==
+        b=NjMIoGjxKeqLhwJIw44IcebPX1+ADu4weASl0/D2kMAheWClsw0GtTY1v/G9/LLC1Q
+         HFnx+ibl0LMJlxkXamsm3HVRYRpYwWPWa7WSvIGIpkGe+MVQs3BeLiuCgohw8utVytHt
+         Z0YIkylED5ufbhQxq14WjtOCsTHZBFb6xPzMHYK3SGxFgqgVelzEGZJ285D1oAMfpGWc
+         r80Jv9yxH4+a5v20dTZ35NiEL4kp1+/o4ibET635qp/ZDuzFnBnhRCUB1Q1z9m2u6Zv8
+         L7nAKtxHcQWenvIytz8UdjPBDp6zuGPbOXzAwINPLYob3pIibj4mjQNfaRQU/M4KLjkf
+         1pQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9E7FSr4XBdRtkpi6//J5ZVQb2Hdd04S6xoUTabgDRWI=;
-        b=z8XI9ziquLNPpDYrG+JBkNy1s8BuJD8+Gc/jvxkyhP91EXDIxDUYs9W/WaCKIE7Qq0
-         eLVE2c9GB6JdZKE11KXaaidvsfcmEliIMfdKc/NRHqorKlI/jzs9xwojQeN28eXaG2ia
-         Ndgdbu9H3pxN2IB/d5YKqp2zFGG9AQcsKjr+bfGZiygF0tDCdfgmbI18UtF+Eo0ts0U/
-         wHYRIWCELes1dHaPKuHnqqJQKM8+tjTEi6GtKt0Y+la4fY+P0tcFLcW78+TLwDyi7q5q
-         GC/5rJ7LLE02jdHHVzEcftw98k6+cq1/XdGz35sUWJorkAEtCGIU0K4mmyz9069aCnqP
-         NqKQ==
+        bh=00wPiMhpP52CDYQa9NPW/bYWZfL4n5fnl73yioSg1as=;
+        b=XOCsUJKxcl+NvHYGsoGeMa9TDT0/JIbT0Vhfr0Tu4XN+aipj3RPBCa6/MkIzVUp//E
+         hRyySgHM3EpDCtCP8NDQnV67T4O4nYqVXc3D8u4ODrzH4hGnCcxB9k9LJ/Rwi/Gxv8R1
+         IVEFin7170xkjRoI9DzDCWL48tSsndjKTrRmPObvHjqiul2FwvvH5mNWm7rORK09hJzM
+         WRXswwhP2oqy7RkAPiVCSGpGockmeGP/J9Mee8UqGqXH4BAZS/HjlHpMqyihBfElL0WD
+         1TFw4repXM5E+qxyff2Gz+CVFqSNFgueBwpQrHGjCMA0+YCyfhS4HJhnxm/sx0SLSa3Y
+         VOCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Parav Pandit <parav@mellanox.com>,
-	Sean Hefty <sean.hefty@intel.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
 	Ira Weiny <ira.weiny@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Don Hiatt <don.hiatt@intel.com>,
+	Alex Estrin <alex.estrin@intel.com>,
 	Dennis Dalessandro <dennis.dalessandro@intel.com>,
 	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 123/183] IB/core: Map iWarp AH type to undefined in rdma_ah_find_type
-Date: Wed, 25 Apr 2018 12:35:43 +0200
-Message-Id: <20180425103247.376479953@linuxfoundation.org>
+Subject: [PATCH 4.14 122/183] IB/ipoib: Fix for potential no-carrier state
+Date: Wed, 25 Apr 2018 12:35:42 +0200
+Message-Id: <20180425103247.334573052@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714472718319057?=
-X-GMAIL-MSGID: =?utf-8?q?1598714472718319057?=
+X-GMAIL-THRID: =?utf-8?q?1598714469834197851?=
+X-GMAIL-MSGID: =?utf-8?q?1598714469834197851?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,69 +53,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Don Hiatt <don.hiatt@intel.com>
+From: Alex Estrin <alex.estrin@intel.com>
 
 
-[ Upstream commit 87daac68f77a3e21a1113f816e6a7be0b38bdde8 ]
+[ Upstream commit 1029361084d18cc270f64dfd39529fafa10cfe01 ]
 
-iWarp devices do not support the creation of address handles
-so return AH_ATTR_TYPE_UNDEFINED for all iWarp devices.
+On reboot SM can program port pkey table before ipoib registered its
+event handler, which could result in missing pkey event and leave root
+interface with initial pkey value from index 0.
 
-While we are here reduce the size of port_num to u8 and add
-a comment.
+Since OPA port starts with invalid pkey in index 0, root interface will
+fail to initialize and stay down with no-carrier flag.
 
-Fixes: 44c58487d51a ("IB/core: Define 'ib' and 'roce' rdma_ah_attr types")
-Reported-by: Parav Pandit <parav@mellanox.com>
-CC: Sean Hefty <sean.hefty@intel.com>
+For IB ipoib interface may end up with pkey different from value
+opensm put in pkey table idx 0, resulting in connectivity issues
+(different mcast groups, for example).
+
+Close the window by calling event handler after registration
+to make sure ipoib pkey is in sync with port pkey table.
+
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
 Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Reviewed-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Signed-off-by: Don Hiatt <don.hiatt@intel.com>
+Signed-off-by: Alex Estrin <alex.estrin@intel.com>
 Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/rdma/ib_verbs.h |   20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -866,6 +866,7 @@ struct ib_mr_status {
- __attribute_const__ enum ib_rate mult_to_ib_rate(int mult);
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -2273,6 +2273,9 @@ static struct net_device *ipoib_add_port
+ 			      priv->ca, ipoib_event);
+ 	ib_register_event_handler(&priv->event_handler);
  
- enum rdma_ah_attr_type {
-+	RDMA_AH_ATTR_TYPE_UNDEFINED,
- 	RDMA_AH_ATTR_TYPE_IB,
- 	RDMA_AH_ATTR_TYPE_ROCE,
- 	RDMA_AH_ATTR_TYPE_OPA,
-@@ -3762,17 +3763,24 @@ static inline void rdma_ah_set_grh(struc
- 	grh->traffic_class = traffic_class;
- }
- 
--/*Get AH type */
-+/**
-+ * rdma_ah_find_type - Return address handle type.
-+ *
-+ * @dev: Device to be checked
-+ * @port_num: Port number
-+ */
- static inline enum rdma_ah_attr_type rdma_ah_find_type(struct ib_device *dev,
--						       u32 port_num)
-+						       u8 port_num)
- {
- 	if (rdma_protocol_roce(dev, port_num))
- 		return RDMA_AH_ATTR_TYPE_ROCE;
--	else if ((rdma_protocol_ib(dev, port_num)) &&
--		 (rdma_cap_opa_ah(dev, port_num)))
--		return RDMA_AH_ATTR_TYPE_OPA;
--	else
-+	if (rdma_protocol_ib(dev, port_num)) {
-+		if (rdma_cap_opa_ah(dev, port_num))
-+			return RDMA_AH_ATTR_TYPE_OPA;
- 		return RDMA_AH_ATTR_TYPE_IB;
-+	}
++	/* call event handler to ensure pkey in sync */
++	queue_work(ipoib_workqueue, &priv->flush_heavy);
 +
-+	return RDMA_AH_ATTR_TYPE_UNDEFINED;
- }
- 
- /**
+ 	result = register_netdev(priv->dev);
+ 	if (result) {
+ 		printk(KERN_WARNING "%s: couldn't register ipoib port %d; error %d\n",
