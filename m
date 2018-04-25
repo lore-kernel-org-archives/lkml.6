@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/DHXSCAtys1can8gnBmVBDCCTRHW9BEtuxl1t5OFUXAGuhitML13Z7pYSiSSwZMF3HgPum
-ARC-Seal: i=1; a=rsa-sha256; t=1524653041; cv=none;
+X-Google-Smtp-Source: AIpwx4+4o8OTfmC5e0i2kMHRdpFGiRMiXW2UxbmTZCalVO8mX2hL91juv3g9DrZD0b9LWACVUwky
+ARC-Seal: i=1; a=rsa-sha256; t=1524653038; cv=none;
         d=google.com; s=arc-20160816;
-        b=sjyZcvaetdKf5WD4ckGhVifTN7cz91FIF75270XOqUqF3u1RPrgFNFf7PGZO9r3wcu
-         gV4dEE9HqtxkbSckVtvrx4EBGROUZ9YDZHfWsGJyHlKmf6zLxj3QFbnrfpi0iWG2gR8M
-         8Vhln6hK36tKfMa40QqXCYNnqVumIl+qoePf9bv0pQOTQJ5i8SS5zxeuwsTgGDSYqMkS
-         NBCSU+NRnrh631Ru1s/XnjKKtA7m1aTb+bI4835gi0+nsTZOZuLsNO/DLz/45u0LTWuF
-         MiTB21WVtescOCJB+r3ZG5cLY1RRi77L4tGZwngw3yt8JM7XppITnNrGbWbQViDSLLyn
-         Ui0w==
+        b=b8B0ie74G/ItV1IeCy6LJbWq1el/PiAdxEcK3raHtVSj4DgPwxTp1cn1DvaLSTiADJ
+         YbDoEYQnSBwB1cvJVpli/nDg+5AHee94QmQsVE2nooAx6gx/9hQIwomV+hrUOmVEWwQh
+         95y8wjt3WxDfbuYtxN1IhEHedJnB7l2WiOS2daUpDYPFWroQPMFUfMXViW6a7A6MFiiJ
+         WiLJaFtF64/0MF5ObUb6sccxtU93wL/7jUWjznsINOkB1ywE0VwJKZUwFn/oQfpPh/PK
+         h5w72BmviihxmNZTPcPS3nkxW2Cmu5E+lOlkGhhj5n8gr8PuxS696XtiKTkViSj49VVG
+         BSPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aE3Ds4fkmW5dYH4oQL8TNFjRhqJZCXdfEO33/o+GFPU=;
-        b=eqDbr8+EW2AIblTFd8/FoKIZsNYc6xCrqg9z2W5EUcpBWnP79YOQdNMlwW3llBua4w
-         Dmofvxw+P3I/H7/sgNhSa6tadvlgMmIdBb3Dqno14mSBCoMW+blHho0/nfGN/s04WEiT
-         150hS/MZvVoAwW7YDQFT1mBLVzrIAVK4kz42ne2s+TJlpsleKkz9oKqaPSRiLl7im8Pl
-         m1E0LJuLASkrbaH8PyourhDwi4iKEYg45UYqgqSj00/whS4ixLaxsLxyDYZrq223LTUr
-         70zjlfMZrAKnT1XhyMZsIfKOgu2eJ1tokIxgVU/xWpjfkDANsfZc7B8dLij6UXQKFXd8
-         E3jQ==
+        bh=sd5j+4fuCe8W4xyCZKCbS4KUQWX//uCXGpzOjgNJ4xE=;
+        b=OeutoPcE3CVD0xLKo1+jZ2uDFCq0mH8d47tbkIcKewNyD39b9vUTzuSATDiCObnoPv
+         0+uuuxqnFNaXkbHlYplm34OaPIYNqlCJAHs2VXhvpI20XGVBH/JJi2jXtIs6VxI9/Yek
+         OLuE+giFLm+VB6zxlUuvij/dQ7yc0WGoAYLefQvvg66WUl+7Nlwbwr4NJfphYPildT0X
+         K3PcgtM2T4uHWGwfIYCcs88VYWc+HCNRHmq0ckf44Xoa1CAKHodMKt5LQllK+W+sZjEF
+         RGtuMEn+1tHxSXcmK1t168acNCu7o7X7MLwpB7M9BAhvbkSKoc1GTVwPsljS9LRp/S6t
+         OxiQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jia Zhang <zhang.jia@linux.alibaba.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	jolsa@redhat.com,
-	Ingo Molnar <mingo@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 163/183] vfs/proc/kcore, x86/mm/kcore: Fix SMAP fault when dumping vsyscall user page
-Date: Wed, 25 Apr 2018 12:36:23 +0200
-Message-Id: <20180425103249.076681278@linuxfoundation.org>
+Subject: [PATCH 4.14 162/183] PM / wakeirq: Fix unbalanced IRQ enable for wakeirq
+Date: Wed, 25 Apr 2018 12:36:22 +0200
+Message-Id: <20180425103249.039715416@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -47,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714587379024076?=
-X-GMAIL-MSGID: =?utf-8?q?1598714587379024076?=
+X-GMAIL-THRID: =?utf-8?q?1598714584976064007?=
+X-GMAIL-MSGID: =?utf-8?q?1598714584976064007?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,72 +50,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jia Zhang <zhang.jia@linux.alibaba.com>
+From: Tony Lindgren <tony@atomide.com>
 
 
-[ Upstream commit 595dd46ebfc10be041a365d0a3fa99df50b6ba73 ]
+[ Upstream commit 69728051f5bf15efaf6edfbcfe1b5a49a2437918 ]
 
-Commit:
+If a device is runtime PM suspended when we enter suspend and has
+a dedicated wake IRQ, we can get the following warning:
 
-  df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext data")
+WARNING: CPU: 0 PID: 108 at kernel/irq/manage.c:526 enable_irq+0x40/0x94
+[  102.087860] Unbalanced enable for IRQ 147
+...
+(enable_irq) from [<c06117a8>] (dev_pm_arm_wake_irq+0x4c/0x60)
+(dev_pm_arm_wake_irq) from [<c0618360>]
+ (device_wakeup_arm_wake_irqs+0x58/0x9c)
+(device_wakeup_arm_wake_irqs) from [<c0615948>]
+(dpm_suspend_noirq+0x10/0x48)
+(dpm_suspend_noirq) from [<c01ac7ac>]
+(suspend_devices_and_enter+0x30c/0xf14)
+(suspend_devices_and_enter) from [<c01adf20>]
+(enter_state+0xad4/0xbd8)
+(enter_state) from [<c01ad3ec>] (pm_suspend+0x38/0x98)
+(pm_suspend) from [<c01ab3e8>] (state_store+0x68/0xc8)
 
-... introduced a bounce buffer to work around CONFIG_HARDENED_USERCOPY=y.
-However, accessing the vsyscall user page will cause an SMAP fault.
+This is because the dedicated wake IRQ for the device may have been
+already enabled earlier by dev_pm_enable_wake_irq_check().  Fix the
+issue by checking for runtime PM suspended status.
 
-Replace memcpy() with copy_from_user() to fix this bug works, but adding
-a common way to handle this sort of user page may be useful for future.
+This issue can be easily reproduced by setting serial console log level
+to zero, letting the serial console idle, and suspend the system from
+an ssh terminal.  On resume, dmesg will have the warning above.
 
-Currently, only vsyscall page requires KCORE_USER.
+The reason why I have not run into this issue earlier has been that I
+typically run my PM test cases from on a serial console instead over ssh.
 
-Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: jolsa@redhat.com
-Link: http://lkml.kernel.org/r/1518446694-21124-2-git-send-email-zhang.jia@linux.alibaba.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: c84345597558 (PM / wakeirq: Enable dedicated wakeirq for suspend)
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/init_64.c |    3 +--
- fs/proc/kcore.c       |    4 ++++
- include/linux/kcore.h |    1 +
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/base/power/wakeirq.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1180,8 +1180,7 @@ void __init mem_init(void)
- 	after_bootmem = 1;
+--- a/drivers/base/power/wakeirq.c
++++ b/drivers/base/power/wakeirq.c
+@@ -323,7 +323,8 @@ void dev_pm_arm_wake_irq(struct wake_irq
+ 		return;
  
- 	/* Register memory areas for /proc/kcore */
--	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
--			 PAGE_SIZE, KCORE_OTHER);
-+	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR, PAGE_SIZE, KCORE_USER);
+ 	if (device_may_wakeup(wirq->dev)) {
+-		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED)
++		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED &&
++		    !pm_runtime_status_suspended(wirq->dev))
+ 			enable_irq(wirq->irq);
  
- 	mem_init_print_info(NULL);
+ 		enable_irq_wake(wirq->irq);
+@@ -345,7 +346,8 @@ void dev_pm_disarm_wake_irq(struct wake_
+ 	if (device_may_wakeup(wirq->dev)) {
+ 		disable_irq_wake(wirq->irq);
+ 
+-		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED)
++		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED &&
++		    !pm_runtime_status_suspended(wirq->dev))
+ 			disable_irq_nosync(wirq->irq);
+ 	}
  }
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -510,6 +510,10 @@ read_kcore(struct file *file, char __use
- 			/* we have to zero-fill user buffer even if no read */
- 			if (copy_to_user(buffer, buf, tsz))
- 				return -EFAULT;
-+		} else if (m->type == KCORE_USER) {
-+			/* User page is handled prior to normal kernel page: */
-+			if (copy_to_user(buffer, (char *)start, tsz))
-+				return -EFAULT;
- 		} else {
- 			if (kern_addr_valid(start)) {
- 				/*
---- a/include/linux/kcore.h
-+++ b/include/linux/kcore.h
-@@ -10,6 +10,7 @@ enum kcore_type {
- 	KCORE_VMALLOC,
- 	KCORE_RAM,
- 	KCORE_VMEMMAP,
-+	KCORE_USER,
- 	KCORE_OTHER,
- };
- 
