@@ -1,145 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754402AbeDYNX1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:23:27 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:42569 "EHLO
+        id S1753937AbeDYNXg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:23:36 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:50055 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751705AbeDYNXB (ORCPT
+        with ESMTP id S1754124AbeDYNXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Apr 2018 09:23:01 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 14/16] y2038: ipc: Use __kernel_timespec
-Date: Wed, 25 Apr 2018 15:22:40 +0200
-Message-Id: <20180425132242.1500539-15-arnd@arndb.de>
+Subject: [PATCH v4 12/16] y2038: ipc: Use ktime_get_real_seconds consistently
+Date: Wed, 25 Apr 2018 15:22:38 +0200
+Message-Id: <20180425132242.1500539-13-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180425132242.1500539-1-arnd@arndb.de>
 References: <20180425132242.1500539-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:enaJExFVg/MzNLYA7AWtk9RjzL4WzvqzKq4cEtAIu0Ccsj7xotK
- HeyevMNJvfcrk9J+agR9b7vpXHOPXL6I8YYKaP2pqfv4YXRuSqy702FT3TZf7l7AyVC/FaH
- 6qDMBIqNsgE8NWznOu0Vp61vKnOdLbdK9bj+cuUSAfuRwiTsbK1FzTWc0FjVtAGn4Uyw7ni
- OK1KW/N7YoxO5YrrDhANQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:9Ueq7wwQ2Dk=:3fDU2DKLngTJ65jRR39wrO
- KGrs/8l5PE/C+SF8802VToWyIAWfDdfbJ1468mlXU3/ZacNtq4k5yP7fuSe1v8gTbKfZh7kfa
- zpAhhvgqkAHw9iJ1O2IyKQPArAJ026jI8vGoW4UlXdvmo4ZoxEiDHjpjp/mrJIBhogB/WgNZP
- Qwo1O9pDbTqrd2CJ+DvojD6P2HE1q19aUOT1HhZ9vM/V8sKw7NFgWZYZbjzirQLxu2kZbSf/K
- 0OBwNLloJ0cLGVtNwHl44n3vjMewfCKqEHzTBZs/kLIe07UPLrh+n4S/VQwLMNONaPPYHDqJN
- OsY9uJi9iFoSRc62DHmZ1aibP/IPEiJPKBDhBscmz4LidqGvzixcB9z8MIQT+yUoPTlbFUJJB
- weebpG8EIdYGM7aq0zm3aqFOmHgR1Y81W77RnvTz7mgZq6YLlKlRUtzi079LGpuwZhSyBCKua
- zOFNiOfyLr/p/wv4dSYWre2Ov4hAp2dL3ZlqSm1KMWxEf7cuFjLDZocKThte9O+lh2XXNsY6n
- RwftC44bCV6wSoaDtZqGIRAuTPn4exTfLYxqASW0xBq9tPLz2o/hR8JAEsophJDVneIeT8V5k
- /wlPiqKUueLBaLmTP71+flT6FfYw/CHxpY2+LUi858gvu4sk1YXQcZSAHB8WBIPWecM529txb
- sjgVXs4FnoihXhRhpgRkNgn1UKjNIQkdZ9QMvnuAgF6KH7zPrayml++I2LlQYS1N0Tp4AUN4m
- OEhvdcfrTl36+EVJxtP0E/qRPd28KoQ1je+Lsg==
+X-Provags-ID: V03:K1:/Bwr/CGb098G92uX49eDHx3CelA/h9Pb2XwxvK9kBIIrrZmG49+
+ PIkdxhfYaz1w7kdwHoVOj7gPOq+skdOpgv+CW0X85IfnuzDlGL4uO7ev/OfM4bIi3kKlRqh
+ SH9tnGOVzL3JrfjJ1VOOjL7v5oAAgb1LKYyOyTrwheeRgBptaCbDHAtNMb+6NW74LH4j2Cl
+ sb9jOHVRG/XmL605aWejg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:VXtblfxm3es=:jzDRwkeRVeBVK99Q596Anu
+ /fKwzTIPe4E1K4IRxtEYc8m4pkNkHuYr6whWR+/hffFSHzv/mYBr6szhz5SbTa83YM0Lh0qcZ
+ cJ6Z+6VzKBfsTfav0RH3uwksFFXysKQUGs/7M6xYZyI6703D4xNcTrHmG7XIvDvZGIVpTNtzu
+ MBuw21YGOGhQTu+ycP7EayT2WCe4wjegMEh9bXbEZv1SrpXxK+EsLRNRdX97N1UVLM+XaTpYY
+ 7xV9Ru+4vCB4z1TF5zyYdw6LT3RmHlUTjfQkvipF20LpHprESnDaM+ANNSWemCHsbZwvOYdxA
+ hkeqOs809bC1t9yH46jICUTCipwNF1ucZqWw4jzviOaXWpTvIt5G53pc8DmLnhZa6UA1tv1aJ
+ R6+cK5HTDzMfvBRyhj6v7z/U8IPEOxRnwq889GevgTueQcOiNBdBpS2xq/03UOwkduxjSxM5M
+ nEFk9tweOFv21yZMqIoKM6pWSJ5VU0OwFjuYkTcxl+AxQWBVzmdhObcJh1ZqkMO4DqrTYoC/4
+ nBAP6Y+Y7RjYI3wxyEFJ/a7aWuvi3U2cwQkvGKqBCWpmVqvhAbhoV4qAupf/IMm4reuAH761K
+ JUu/je1qXZDCOLo3VB0lQUIVDCLY6s3ddCkStxn+Z/ddXcqwKKewjPIiZA10yNmNy4Sw6ngNm
+ SKAzL3jaasMiQNRBjaVNRym2bWGx16zE1TfHgflw+gftk4MT/qgJd2ghUMsQRazyYuZPQd5Hv
+ Xi9lO/A8f/QZFyHAexVVC+93UoI/iSxpiEpW3A==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a preparatation for changing over __kernel_timespec to 64-bit
-times, which involves assigning new system call numbers for mq_timedsend(),
-mq_timedreceive() and semtimedop() for compatibility with future y2038
-proof user space.
-
-The existing ABIs will remain available through compat code.
+In some places, we still used get_seconds() instead of
+ktime_get_real_seconds(), and I'm changing the remaining ones now to
+all use ktime_get_real_seconds() so we use the full available range for
+timestamps instead of overflowing the 'unsigned long' return value in
+year 2106 on 32-bit kernels.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/syscalls.h | 6 +++---
- ipc/mqueue.c             | 6 +++---
- ipc/sem.c                | 4 ++--
- ipc/util.h               | 2 +-
- 4 files changed, 9 insertions(+), 9 deletions(-)
+ ipc/msg.c | 6 +++---
+ ipc/sem.c | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index c9a2a2601852..b92cb79d38c3 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -680,8 +680,8 @@ asmlinkage long sys_sysinfo(struct sysinfo __user *info);
- /* ipc/mqueue.c */
- asmlinkage long sys_mq_open(const char __user *name, int oflag, umode_t mode, struct mq_attr __user *attr);
- asmlinkage long sys_mq_unlink(const char __user *name);
--asmlinkage long sys_mq_timedsend(mqd_t mqdes, const char __user *msg_ptr, size_t msg_len, unsigned int msg_prio, const struct timespec __user *abs_timeout);
--asmlinkage long sys_mq_timedreceive(mqd_t mqdes, char __user *msg_ptr, size_t msg_len, unsigned int __user *msg_prio, const struct timespec __user *abs_timeout);
-+asmlinkage long sys_mq_timedsend(mqd_t mqdes, const char __user *msg_ptr, size_t msg_len, unsigned int msg_prio, const struct __kernel_timespec __user *abs_timeout);
-+asmlinkage long sys_mq_timedreceive(mqd_t mqdes, char __user *msg_ptr, size_t msg_len, unsigned int __user *msg_prio, const struct __kernel_timespec __user *abs_timeout);
- asmlinkage long sys_mq_notify(mqd_t mqdes, const struct sigevent __user *notification);
- asmlinkage long sys_mq_getsetattr(mqd_t mqdes, const struct mq_attr __user *mqstat, struct mq_attr __user *omqstat);
+diff --git a/ipc/msg.c b/ipc/msg.c
+index 56fd1c73eedc..574f76c9a2ff 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -758,7 +758,7 @@ static inline int pipelined_send(struct msg_queue *msq, struct msg_msg *msg,
+ 				WRITE_ONCE(msr->r_msg, ERR_PTR(-E2BIG));
+ 			} else {
+ 				ipc_update_pid(&msq->q_lrpid, task_pid(msr->r_tsk));
+-				msq->q_rtime = get_seconds();
++				msq->q_rtime = ktime_get_real_seconds();
  
-@@ -698,7 +698,7 @@ asmlinkage long sys_semget(key_t key, int nsems, int semflg);
- asmlinkage long sys_semctl(int semid, int semnum, int cmd, unsigned long arg);
- asmlinkage long sys_semtimedop(int semid, struct sembuf __user *sops,
- 				unsigned nsops,
--				const struct timespec __user *timeout);
-+				const struct __kernel_timespec __user *timeout);
- asmlinkage long sys_semop(int semid, struct sembuf __user *sops,
- 				unsigned nsops);
+ 				wake_q_add(wake_q, msr->r_tsk);
+ 				WRITE_ONCE(msr->r_msg, msg);
+@@ -859,7 +859,7 @@ static long do_msgsnd(int msqid, long mtype, void __user *mtext,
+ 	}
  
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index a808f29d4c5a..9610afcfa2e5 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -691,7 +691,7 @@ static void __do_notify(struct mqueue_inode_info *info)
- 	wake_up(&info->wait_q);
- }
+ 	ipc_update_pid(&msq->q_lspid, task_tgid(current));
+-	msq->q_stime = get_seconds();
++	msq->q_stime = ktime_get_real_seconds();
  
--static int prepare_timeout(const struct timespec __user *u_abs_timeout,
-+static int prepare_timeout(const struct __kernel_timespec __user *u_abs_timeout,
- 			   struct timespec64 *ts)
- {
- 	if (get_timespec64(ts, u_abs_timeout))
-@@ -1128,7 +1128,7 @@ static int do_mq_timedreceive(mqd_t mqdes, char __user *u_msg_ptr,
+ 	if (!pipelined_send(msq, msg, &wake_q)) {
+ 		/* no one is waiting for this message, enqueue it */
+@@ -1087,7 +1087,7 @@ static long do_msgrcv(int msqid, void __user *buf, size_t bufsz, long msgtyp, in
  
- SYSCALL_DEFINE5(mq_timedsend, mqd_t, mqdes, const char __user *, u_msg_ptr,
- 		size_t, msg_len, unsigned int, msg_prio,
--		const struct timespec __user *, u_abs_timeout)
-+		const struct __kernel_timespec __user *, u_abs_timeout)
- {
- 	struct timespec64 ts, *p = NULL;
- 	if (u_abs_timeout) {
-@@ -1142,7 +1142,7 @@ SYSCALL_DEFINE5(mq_timedsend, mqd_t, mqdes, const char __user *, u_msg_ptr,
- 
- SYSCALL_DEFINE5(mq_timedreceive, mqd_t, mqdes, char __user *, u_msg_ptr,
- 		size_t, msg_len, unsigned int __user *, u_msg_prio,
--		const struct timespec __user *, u_abs_timeout)
-+		const struct __kernel_timespec __user *, u_abs_timeout)
- {
- 	struct timespec64 ts, *p = NULL;
- 	if (u_abs_timeout) {
+ 			list_del(&msg->m_list);
+ 			msq->q_qnum--;
+-			msq->q_rtime = get_seconds();
++			msq->q_rtime = ktime_get_real_seconds();
+ 			ipc_update_pid(&msq->q_lrpid, task_tgid(current));
+ 			msq->q_cbytes -= msg->m_ts;
+ 			atomic_sub(msg->m_ts, &ns->msg_bytes);
 diff --git a/ipc/sem.c b/ipc/sem.c
-index 8935cd8cf166..b951e25ba2db 100644
+index 06be75d9217a..c6a8a971769d 100644
 --- a/ipc/sem.c
 +++ b/ipc/sem.c
-@@ -2176,7 +2176,7 @@ static long do_semtimedop(int semid, struct sembuf __user *tsops,
+@@ -104,7 +104,7 @@ struct sem {
+ 					/* that alter the semaphore */
+ 	struct list_head pending_const; /* pending single-sop operations */
+ 					/* that do not alter the semaphore*/
+-	time_t	sem_otime;	/* candidate for sem_otime */
++	time64_t	 sem_otime;	/* candidate for sem_otime */
+ } ____cacheline_aligned_in_smp;
+ 
+ /* One sem_array data structure for each set of semaphores in the system. */
+@@ -984,10 +984,10 @@ static int update_queue(struct sem_array *sma, int semnum, struct wake_q_head *w
+ static void set_semotime(struct sem_array *sma, struct sembuf *sops)
+ {
+ 	if (sops == NULL) {
+-		sma->sems[0].sem_otime = get_seconds();
++		sma->sems[0].sem_otime = ktime_get_real_seconds();
+ 	} else {
+ 		sma->sems[sops[0].sem_num].sem_otime =
+-							get_seconds();
++						ktime_get_real_seconds();
+ 	}
  }
  
- long ksys_semtimedop(int semid, struct sembuf __user *tsops,
--		     unsigned int nsops, const struct timespec __user *timeout)
-+		     unsigned int nsops, const struct __kernel_timespec __user *timeout)
- {
- 	if (timeout) {
- 		struct timespec64 ts;
-@@ -2188,7 +2188,7 @@ long ksys_semtimedop(int semid, struct sembuf __user *tsops,
- }
- 
- SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsops,
--		unsigned int, nsops, const struct timespec __user *, timeout)
-+		unsigned int, nsops, const struct __kernel_timespec __user *, timeout)
- {
- 	return ksys_semtimedop(semid, tsops, nsops, timeout);
- }
-diff --git a/ipc/util.h b/ipc/util.h
-index acc5159e96d0..975c6de2df9d 100644
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -251,7 +251,7 @@ static inline int compat_ipc_parse_version(int *cmd)
- /* for __ARCH_WANT_SYS_IPC */
- long ksys_semtimedop(int semid, struct sembuf __user *tsops,
- 		     unsigned int nsops,
--		     const struct timespec __user *timeout);
-+		     const struct __kernel_timespec __user *timeout);
- long ksys_semget(key_t key, int nsems, int semflg);
- long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg);
- long ksys_msgget(key_t key, int msgflg);
 -- 
 2.9.0
