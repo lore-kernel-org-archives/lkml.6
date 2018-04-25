@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-945756-1524672599-2-5830742072360926755
+X-Cyrus-Session-Id: sloti22d1t05-945756-1524672575-2-17620510137370220533
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524672598; b=a+BvEOmlOdxGQl3WZLl9P0RFRGPf4jncRFcdwjnKAxynZPOAm5
-    Vw9/WKS+3jw+pCno8jkdhMR3Pj5jdmByWyQ0yeQCHiBjSxWpRRkSko/94w9ZtewS
-    B7D3NnhbJ5w5cLiQSoYZkwUSf+Mc2Xl2eiAnYORki4Uopc2nid7fqK+4G8LnHxwG
-    WR0+wXLm4frK4an8PoVFleHBc4GigDHRYOcXTBpnQo9j/WfbU+m2RCZ315ak8OTi
-    kHi4h8j88XWHfsKtGecvQhjGTe79UgzYOU6PR75f8KYZ6KRmUnU+QUs0sAI13d87
-    j30xQC5sgYWzULj+qG3e1uyE7IxH6VCVwyHg==
+    1524672575; b=Y9pVMjI4ILNdvZRqJf3QXztD5cRlH4uk8EZ+NpL7CFZHRuzhuC
+    8PskzUwwiYwbgM8CuPPvwx2a2Jd2Ce6Hrt8uD0LZnLhtMsFTULLmArNDHhlz8+vf
+    l1ixxp0O3dtvJq7G1vqQX8iq/+C7m9TwIADAdKKdHsXe14sSvYOT+Lk6JqsRbnl4
+    EWQeonVKE0dR3R0/22VXUOE7ivE3T+oRpegqrfcHNxMg1REz/DDqseAAZDIpTVjD
+    qA5fVDIZRX3G+Wz3Nxn0/mkaL6plmchEmDJZ5SrSzf+lRWIne3LPpOZon+EkjLLE
+    +0XCV5P6L6212zPYIXF2SjN16W/bTALxlGCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524672598; bh=
-    L1Pl4PCYFDW1i6szpST3YDkp+2Kq61YsOb85kbPgieU=; b=DCDFLNOMpGbgYpQ3
-    6+eFSlaERkjptNazaoVnFlbfLHNQrQ5i/WsKJidSagmhrO6yGWmGj6xZJYA6Kd+4
-    ImP97n89Rh2jGG6vkzCm8xViFi3soldNtUU5vNHXgBhtANeVrsn42qbOAxUJNNc1
-    PZO5ekJSELWaVgNzZX9sE2tOMypU5bz7Dv3Y+2+JwWFbxY7jZ6d+8eNzaR9AYQHI
-    s1B24Qe59JUgINv0e2nwdk+s9S8o5wrJEwzy5J+GL7Y2JtJZk0b28sN60XbJEq5X
-    SQzhqNMIRb8WC8vpX4Sp8DzNe32BT8/T13ZfAKVm3x9QBGG2Z5rIn6ejfDyQmCXH
-    /HBDng==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524672575; bh=
+    HyM6a9PjJf3gq41NDEhVX1AWeLhOqyPGOGx+uPMJ1fA=; b=F/MDcNdiY6+Wf9un
+    7OYbZ2acObgy/Y2LBZ8HokhyyYaf1U/kOi+ftj6w6rmQCEMdST3N8DfdmMOqI6Ft
+    yMSV427BUz6HT2FtWFHUnKXwVUyljrCSsGh3C8LuOX8Q4WhZfPhNZAVyaqq8Etpl
+    hpL0FmR97wueDdgn3XHe3jIAe+VxWnwaNBZLi34+2N+zvGvMLHgRQ9GtCrP3abGS
+    7vr5VSNKuj4CM9fXNk6nLcM5IY6hsrod3pG7bHTpQnV0mq/Vye18ulXqErbcuprt
+    X9TzJmTr+81NSRdk2G4J0kjQvpHZI5h3AQ4naMwdpv9mWw7wwBpQdmmCbKFg64Qx
+    U3Gqqg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
@@ -51,20 +51,19 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMenWxrvF+r8zavIVWkV5N6IvtfI5BKD5zwD+FVht/J8PP4aku0gLRYm5m9n/XfB2jZYg+upju7I8GqFLeRn7AZsekyne7Znm7QHCLRfllPYFpwixxPX
-    NvasNmX3M5RAbah4IShTU5dblIhpw48bWtnA74KnA784+NXqKQS1rP/mC989IgS95s8OipgWCp9qrGP2kerBXeutKHbakh3F7S7Dcoe9cJckgGwgGzy899pG
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFTYa8rSum3XJL3L10DaFa37v6s81MVP4nhb6dIY9lSCuzm2bk5f6fTkdNroH1bu4CI6coF2hsM/H0w9d6I2wbbtRd85yiz8l3OvFpoDslxrk+0UKpCJ
+    hptB8n6uww/TjHVuTkuM3A3SnfPbfzypm9TWsPuSyhrKiC+jBHeGm8CTGdqRAMEpPNRDwRDM/asWtiH/nTxBdIfzi7IGDWtWcwpIMR+XR98kVXNxSi7Vg/qf
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=vI9DNMBNjRLdc3p7jbwA:9 a=58sF-UeEibTFovSW:21 a=cnCd836_CDpkl5cW:21
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=DnCerq8oMvzEHMY4u2gA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755435AbeDYQJf (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 12:09:35 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:40103 "EHLO
+        id S1755478AbeDYQJd (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 12:09:33 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:33349 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755814AbeDYQEj (ORCPT
+        with ESMTP id S1755805AbeDYQEj (ORCPT
         <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 12:04:39 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
@@ -76,533 +75,80 @@ Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
         Darren Hart <dvhart@infradead.org>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: [PATCH 09/17] y2038: futex: Move compat implementation into futex.c
-Date: Wed, 25 Apr 2018 18:03:03 +0200
-Message-Id: <20180425160311.2718314-10-arnd@arndb.de>
+Subject: [PATCH 06/17] y2038: Change sys_utimensat() to use __kernel_timespec
+Date: Wed, 25 Apr 2018 18:03:00 +0200
+Message-Id: <20180425160311.2718314-7-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180425160311.2718314-1-arnd@arndb.de>
 References: <20180425160311.2718314-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:wZ+zXlcyCjZP1K2dp4wqrnGdWGCZy4+tPZuKazDHDgR22bt562Z
- OysOsmdbAN5/AYkwhHaizLferE+EznIGegvfg0HYnboXGjg6A8ECxiq0YT5eXKZ6nR0gDsx
- EjWOahyiR7b7Elvu0KcL1Qb+0/k/WQ/Si2Cs1WrpMYoKpFmMwmEL0urf4Fdhvdd/H6PdjEI
- md6WE1kYH258dUoRiwdEQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:2Dx9tbvNdcU=:DLKJ34fO+EkEFrcIMVIGDQ
- bhXFlMCmb4f/q5mgw0a0CDSh4kpRejCxRO33JxaV42xJBSIz7qfEZK5TTc0uW3TMuU4A9sifQ
- ZnVU2L2q3eMu2o8L5Hfx+1c3KaIpVpAGWU3biqkyOuWgSzoaDVHw79qFWz4nDgf9xSefdhxpo
- pem2We4WsloY/hE5dEYmYEsaq53Om9y59eqArQEE1XoXGfuPndfvFIX4zqQIZXxKPBg7TrBgY
- AcE1SbeLBg8pO7BJ+CpI6fv9V7WoKKGxUBF11q1vh1TpQZCCkAuORJYMRoBRaJkDHB4KQyhfQ
- 131F1Bz268UI0hIgPGBstaRWlv6w2naTYJ+w2y3PYQ2G9bTenLppQyjW5isGY4tTbjj1MCqYy
- w21SQPmay3gRpk3caSKdF3kBKjA8cdVKWkNk10eOsKhlZxx7eST5fos4Y/4YFWnvEG/zu9Cw2
- RkuWQuV9cafbxoePkVXSxUBZs7nTeFP7ruQZTjps+zz95svIrvezOq9ywdgKyopxbfzuk19YH
- gaafOWTd4FqHgzcIORUUMgfN+Et9dPm7VRxtzKXTeuyOXTtN8DKLwLOeVbA/4FpScelDGvVbB
- om1BfUhzbipz6WYFzJ0bT4z/SnR14hirIcnIoxQ5m4OoqnZen/I0yiR9uyqEktK1OezX4v7qu
- wF+8C7IdbLzxuVKn2aS/pXkP3/Fwf2rYi+XbTPF77NI7hwPDIQVaXOKEk8jwY45DCRyI=
+X-Provags-ID: V03:K1:/YWcR8sQ57mqZzuX98OrLE+xHYwk29mULcqk+Lq/VNq3HRQQ6Qk
+ g+df3ZyYln/eEoRJbKXJORdqoAeAjX0JGnz1O9XnbE1HohpcLQP5X+1b/1GuS+nBIJB/9J8
+ jpY+/nZDAFLxN6kAjiZSlihcsgtQuKBS9rK7cQi2sUekTMi1y5qO0s0YrZHjGwErUW/3s8x
+ wRGRYH+slRMLlKg0EmvpQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WRcSPk41H4s=:aRIUhRdxQKZsyYruZo61Qz
+ yha/TdFPz0PVepEvJd5TQhRAevY+c1N01Ji2yOk0+yUssbPv+G2rebscubmHDcpAKdo7LRR3x
+ uH6JQMzocysQcTFw2atL4Gd4ocljp6MZg592pUf26ByCH+bllIef8M9hoSS6SamXwVnob9TSJ
+ Vay/2cVtNXwNRzXDlneBzcKep9yGP0b42dBL6cXs7NT4TqiLHaHfuOdjnt2t5TqdmviK/78P2
+ Pm2cJMVu5bHS04h75RXWUBR6uOVLXK8fO1oyX0kN39l4V9yEz4cASHxoJS7fiPVlJANjUf9hd
+ L/H1fIHgBeJMhzGSf9v2NvfAH7lF8h9/u8zNY84Kbsr4K6K1qBlfrVWPANmGEH5EM/QApjxMx
+ RMamj4XL7ycsgZ9iUr0hz9eQKgzhuLBbWFqX+9wobIEqJab0r6GvP97dKHqsJE+UpDJBK5mA3
+ O3oH2g76bWmezZOIpUUTsgGY85bb1NBceok9TNHBKwrCa/pWggR8RY1DCOMb7qNHTv8nYaNhS
+ MSPGZxUnyJeKhQ2StHBSZlrdORy4F748954B9MwpLsa/1bYzyA2bt5+Ydr3DMMG8v60vh5BTn
+ go9gZdX8C9f1VIx4eSZV59CffAkpz/QtMtHeROvw52w7yqP6jiyGRJuoSyM1NgaYr4XnxlfUd
+ vnBBxA4zxIsLQmB4O5yPFKVkmFZsWU+pgN4PH/cpvUa+/w9/E1anufQirX3rlQnL38Ls=
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We are going to share the compat_sys_futex() handler between 64-bit
-architectures and 32-bit architectures that need to deal with both 32-bit
-and 64-bit time_t, and this is easier if both entry points are in the
-same file.
+When 32-bit architectures get changed to support 64-bit time_t,
+utimensat() needs to use the new __kernel_timespec structure as its
+argument.
 
-In fact, most other system call handlers do the same thing these days, so
-let's follow the trend here and merge all of futex_compat.c into futex.c.
+The older utime(), utimes() and futimesat() system calls don't need a
+corresponding change as they are no longer used on C libraries that have
+64-bit time support.
 
-In the process, a few minor changes have to be done to make sure everything
-still makes sense: handle_futex_death() and futex_cmpxchg_enabled() become
-local symbol, and the compat version of the fetch_robust_entry() function
-gets renamed to compat_fetch_robust_entry() to avoid a symbol clash.
-
-This is intended as a purely cosmetic patch, no behavior should
-change.
+As we do for the other syscalls that have timespec arguments, we reuse
+the 'compat' syscall entry points to implement the traditional four
+interfaces, and only leave the new utimensat() as a native handler,
+so that the same code gets used on both 32-bit and 64-bit kernels
+on each syscall.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/futex.h |   8 --
- kernel/Makefile       |   3 -
- kernel/futex.c        | 195 +++++++++++++++++++++++++++++++++++++++++++++++-
- kernel/futex_compat.c | 202 --------------------------------------------------
- 4 files changed, 192 insertions(+), 216 deletions(-)
- delete mode 100644 kernel/futex_compat.c
+ fs/utimes.c              | 2 +-
+ include/linux/syscalls.h | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/futex.h b/include/linux/futex.h
-index 821ae502d3d8..ccaef0097785 100644
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -9,9 +9,6 @@ struct inode;
- struct mm_struct;
- struct task_struct;
- 
--extern int
--handle_futex_death(u32 __user *uaddr, struct task_struct *curr, int pi);
--
- /*
-  * Futexes are matched on equal values of this key.
-  * The key type depends on whether it's a shared or private mapping.
-@@ -55,11 +52,6 @@ extern void exit_robust_list(struct task_struct *curr);
- 
- long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
- 	      u32 __user *uaddr2, u32 val2, u32 val3);
--#ifdef CONFIG_HAVE_FUTEX_CMPXCHG
--#define futex_cmpxchg_enabled 1
--#else
--extern int futex_cmpxchg_enabled;
--#endif
- #else
- static inline void exit_robust_list(struct task_struct *curr)
- {
-diff --git a/kernel/Makefile b/kernel/Makefile
-index f85ae5dfa474..fbebd38cef8f 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -48,9 +48,6 @@ obj-$(CONFIG_PROFILING) += profile.o
- obj-$(CONFIG_STACKTRACE) += stacktrace.o
- obj-y += time/
- obj-$(CONFIG_FUTEX) += futex.o
--ifeq ($(CONFIG_COMPAT),y)
--obj-$(CONFIG_FUTEX) += futex_compat.o
--endif
- obj-$(CONFIG_GENERIC_ISA_DMA) += dma.o
- obj-$(CONFIG_SMP) += smp.o
- ifneq ($(CONFIG_SMP),y)
-diff --git a/kernel/futex.c b/kernel/futex.c
-index 1f450e092c74..e9013d1e65a1 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -44,6 +44,7 @@
-  *  along with this program; if not, write to the Free Software
-  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
-+#include <linux/compat.h>
- #include <linux/slab.h>
- #include <linux/poll.h>
- #include <linux/fs.h>
-@@ -173,8 +174,10 @@
-  * double_lock_hb() and double_unlock_hb(), respectively.
-  */
- 
--#ifndef CONFIG_HAVE_FUTEX_CMPXCHG
--int __read_mostly futex_cmpxchg_enabled;
-+#ifdef CONFIG_HAVE_FUTEX_CMPXCHG
-+#define futex_cmpxchg_enabled 1
-+#else
-+static int  __read_mostly futex_cmpxchg_enabled;
- #endif
- 
- /*
-@@ -3360,7 +3363,7 @@ SYSCALL_DEFINE3(get_robust_list, int, pid,
-  * Process a futex-list entry, check whether it's owned by the
-  * dying task, and do notification if so:
-  */
--int handle_futex_death(u32 __user *uaddr, struct task_struct *curr, int pi)
-+static int handle_futex_death(u32 __user *uaddr, struct task_struct *curr, int pi)
- {
- 	u32 uval, uninitialized_var(nval), mval;
- 
-@@ -3587,6 +3590,192 @@ SYSCALL_DEFINE6(futex, u32 __user *, uaddr, int, op, u32, val,
- 	return do_futex(uaddr, op, val, tp, uaddr2, val2, val3);
+diff --git a/fs/utimes.c b/fs/utimes.c
+index 69d4b6ba1bfb..ca2c02a7985c 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -166,7 +166,7 @@ long do_utimes(int dfd, const char __user *filename, struct timespec64 *times,
  }
  
-+#ifdef CONFIG_COMPAT
-+/*
-+ * Fetch a robust-list pointer. Bit 0 signals PI futexes:
-+ */
-+static inline int
-+compat_fetch_robust_entry(compat_uptr_t *uentry, struct robust_list __user **entry,
-+		   compat_uptr_t __user *head, unsigned int *pi)
-+{
-+	if (get_user(*uentry, head))
-+		return -EFAULT;
-+
-+	*entry = compat_ptr((*uentry) & ~1);
-+	*pi = (unsigned int)(*uentry) & 1;
-+
-+	return 0;
-+}
-+
-+static void __user *futex_uaddr(struct robust_list __user *entry,
-+				compat_long_t futex_offset)
-+{
-+	compat_uptr_t base = ptr_to_compat(entry);
-+	void __user *uaddr = compat_ptr(base + futex_offset);
-+
-+	return uaddr;
-+}
-+
-+/*
-+ * Walk curr->robust_list (very carefully, it's a userspace list!)
-+ * and mark any locks found there dead, and notify any waiters.
-+ *
-+ * We silently return on any sign of list-walking problem.
-+ */
-+void compat_exit_robust_list(struct task_struct *curr)
-+{
-+	struct compat_robust_list_head __user *head = curr->compat_robust_list;
-+	struct robust_list __user *entry, *next_entry, *pending;
-+	unsigned int limit = ROBUST_LIST_LIMIT, pi, pip;
-+	unsigned int uninitialized_var(next_pi);
-+	compat_uptr_t uentry, next_uentry, upending;
-+	compat_long_t futex_offset;
-+	int rc;
-+
-+	if (!futex_cmpxchg_enabled)
-+		return;
-+
-+	/*
-+	 * Fetch the list head (which was registered earlier, via
-+	 * sys_set_robust_list()):
-+	 */
-+	if (compat_fetch_robust_entry(&uentry, &entry, &head->list.next, &pi))
-+		return;
-+	/*
-+	 * Fetch the relative futex offset:
-+	 */
-+	if (get_user(futex_offset, &head->futex_offset))
-+		return;
-+	/*
-+	 * Fetch any possibly pending lock-add first, and handle it
-+	 * if it exists:
-+	 */
-+	if (compat_fetch_robust_entry(&upending, &pending,
-+			       &head->list_op_pending, &pip))
-+		return;
-+
-+	next_entry = NULL;	/* avoid warning with gcc */
-+	while (entry != (struct robust_list __user *) &head->list) {
-+		/*
-+		 * Fetch the next entry in the list before calling
-+		 * handle_futex_death:
-+		 */
-+		rc = compat_fetch_robust_entry(&next_uentry, &next_entry,
-+			(compat_uptr_t __user *)&entry->next, &next_pi);
-+		/*
-+		 * A pending lock might already be on the list, so
-+		 * dont process it twice:
-+		 */
-+		if (entry != pending) {
-+			void __user *uaddr = futex_uaddr(entry, futex_offset);
-+
-+			if (handle_futex_death(uaddr, curr, pi))
-+				return;
-+		}
-+		if (rc)
-+			return;
-+		uentry = next_uentry;
-+		entry = next_entry;
-+		pi = next_pi;
-+		/*
-+		 * Avoid excessively long or circular lists:
-+		 */
-+		if (!--limit)
-+			break;
-+
-+		cond_resched();
-+	}
-+	if (pending) {
-+		void __user *uaddr = futex_uaddr(pending, futex_offset);
-+
-+		handle_futex_death(uaddr, curr, pip);
-+	}
-+}
-+
-+COMPAT_SYSCALL_DEFINE2(set_robust_list,
-+		struct compat_robust_list_head __user *, head,
-+		compat_size_t, len)
-+{
-+	if (!futex_cmpxchg_enabled)
-+		return -ENOSYS;
-+
-+	if (unlikely(len != sizeof(*head)))
-+		return -EINVAL;
-+
-+	current->compat_robust_list = head;
-+
-+	return 0;
-+}
-+
-+COMPAT_SYSCALL_DEFINE3(get_robust_list, int, pid,
-+			compat_uptr_t __user *, head_ptr,
-+			compat_size_t __user *, len_ptr)
-+{
-+	struct compat_robust_list_head __user *head;
-+	unsigned long ret;
-+	struct task_struct *p;
-+
-+	if (!futex_cmpxchg_enabled)
-+		return -ENOSYS;
-+
-+	rcu_read_lock();
-+
-+	ret = -ESRCH;
-+	if (!pid)
-+		p = current;
-+	else {
-+		p = find_task_by_vpid(pid);
-+		if (!p)
-+			goto err_unlock;
-+	}
-+
-+	ret = -EPERM;
-+	if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
-+		goto err_unlock;
-+
-+	head = p->compat_robust_list;
-+	rcu_read_unlock();
-+
-+	if (put_user(sizeof(*head), len_ptr))
-+		return -EFAULT;
-+	return put_user(ptr_to_compat(head), head_ptr);
-+
-+err_unlock:
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+
-+COMPAT_SYSCALL_DEFINE6(futex, u32 __user *, uaddr, int, op, u32, val,
-+		struct compat_timespec __user *, utime, u32 __user *, uaddr2,
-+		u32, val3)
-+{
-+	struct timespec ts;
-+	ktime_t t, *tp = NULL;
-+	int val2 = 0;
-+	int cmd = op & FUTEX_CMD_MASK;
-+
-+	if (utime && (cmd == FUTEX_WAIT || cmd == FUTEX_LOCK_PI ||
-+		      cmd == FUTEX_WAIT_BITSET ||
-+		      cmd == FUTEX_WAIT_REQUEUE_PI)) {
-+		if (compat_get_timespec(&ts, utime))
-+			return -EFAULT;
-+		if (!timespec_valid(&ts))
-+			return -EINVAL;
-+
-+		t = timespec_to_ktime(ts);
-+		if (cmd == FUTEX_WAIT)
-+			t = ktime_add_safe(ktime_get(), t);
-+		tp = &t;
-+	}
-+	if (cmd == FUTEX_REQUEUE || cmd == FUTEX_CMP_REQUEUE ||
-+	    cmd == FUTEX_CMP_REQUEUE_PI || cmd == FUTEX_WAKE_OP)
-+		val2 = (int) (unsigned long) utime;
-+
-+	return do_futex(uaddr, op, val, tp, uaddr2, val2, val3);
-+}
-+#endif /* CONFIG_COMPAT */
-+
- static void __init futex_detect_cmpxchg(void)
+ SYSCALL_DEFINE4(utimensat, int, dfd, const char __user *, filename,
+-		struct timespec __user *, utimes, int, flags)
++		struct __kernel_timespec __user *, utimes, int, flags)
  {
- #ifndef CONFIG_HAVE_FUTEX_CMPXCHG
-diff --git a/kernel/futex_compat.c b/kernel/futex_compat.c
-deleted file mode 100644
-index 83f830acbb5f..000000000000
---- a/kernel/futex_compat.c
-+++ /dev/null
-@@ -1,202 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * linux/kernel/futex_compat.c
-- *
-- * Futex compatibililty routines.
-- *
-- * Copyright 2006, Red Hat, Inc., Ingo Molnar
-- */
--
--#include <linux/linkage.h>
--#include <linux/compat.h>
--#include <linux/nsproxy.h>
--#include <linux/futex.h>
--#include <linux/ptrace.h>
--#include <linux/syscalls.h>
--
--#include <linux/uaccess.h>
--
--
--/*
-- * Fetch a robust-list pointer. Bit 0 signals PI futexes:
-- */
--static inline int
--fetch_robust_entry(compat_uptr_t *uentry, struct robust_list __user **entry,
--		   compat_uptr_t __user *head, unsigned int *pi)
--{
--	if (get_user(*uentry, head))
--		return -EFAULT;
--
--	*entry = compat_ptr((*uentry) & ~1);
--	*pi = (unsigned int)(*uentry) & 1;
--
--	return 0;
--}
--
--static void __user *futex_uaddr(struct robust_list __user *entry,
--				compat_long_t futex_offset)
--{
--	compat_uptr_t base = ptr_to_compat(entry);
--	void __user *uaddr = compat_ptr(base + futex_offset);
--
--	return uaddr;
--}
--
--/*
-- * Walk curr->robust_list (very carefully, it's a userspace list!)
-- * and mark any locks found there dead, and notify any waiters.
-- *
-- * We silently return on any sign of list-walking problem.
-- */
--void compat_exit_robust_list(struct task_struct *curr)
--{
--	struct compat_robust_list_head __user *head = curr->compat_robust_list;
--	struct robust_list __user *entry, *next_entry, *pending;
--	unsigned int limit = ROBUST_LIST_LIMIT, pi, pip;
--	unsigned int uninitialized_var(next_pi);
--	compat_uptr_t uentry, next_uentry, upending;
--	compat_long_t futex_offset;
--	int rc;
--
--	if (!futex_cmpxchg_enabled)
--		return;
--
--	/*
--	 * Fetch the list head (which was registered earlier, via
--	 * sys_set_robust_list()):
--	 */
--	if (fetch_robust_entry(&uentry, &entry, &head->list.next, &pi))
--		return;
--	/*
--	 * Fetch the relative futex offset:
--	 */
--	if (get_user(futex_offset, &head->futex_offset))
--		return;
--	/*
--	 * Fetch any possibly pending lock-add first, and handle it
--	 * if it exists:
--	 */
--	if (fetch_robust_entry(&upending, &pending,
--			       &head->list_op_pending, &pip))
--		return;
--
--	next_entry = NULL;	/* avoid warning with gcc */
--	while (entry != (struct robust_list __user *) &head->list) {
--		/*
--		 * Fetch the next entry in the list before calling
--		 * handle_futex_death:
--		 */
--		rc = fetch_robust_entry(&next_uentry, &next_entry,
--			(compat_uptr_t __user *)&entry->next, &next_pi);
--		/*
--		 * A pending lock might already be on the list, so
--		 * dont process it twice:
--		 */
--		if (entry != pending) {
--			void __user *uaddr = futex_uaddr(entry, futex_offset);
--
--			if (handle_futex_death(uaddr, curr, pi))
--				return;
--		}
--		if (rc)
--			return;
--		uentry = next_uentry;
--		entry = next_entry;
--		pi = next_pi;
--		/*
--		 * Avoid excessively long or circular lists:
--		 */
--		if (!--limit)
--			break;
--
--		cond_resched();
--	}
--	if (pending) {
--		void __user *uaddr = futex_uaddr(pending, futex_offset);
--
--		handle_futex_death(uaddr, curr, pip);
--	}
--}
--
--COMPAT_SYSCALL_DEFINE2(set_robust_list,
--		struct compat_robust_list_head __user *, head,
--		compat_size_t, len)
--{
--	if (!futex_cmpxchg_enabled)
--		return -ENOSYS;
--
--	if (unlikely(len != sizeof(*head)))
--		return -EINVAL;
--
--	current->compat_robust_list = head;
--
--	return 0;
--}
--
--COMPAT_SYSCALL_DEFINE3(get_robust_list, int, pid,
--			compat_uptr_t __user *, head_ptr,
--			compat_size_t __user *, len_ptr)
--{
--	struct compat_robust_list_head __user *head;
--	unsigned long ret;
--	struct task_struct *p;
--
--	if (!futex_cmpxchg_enabled)
--		return -ENOSYS;
--
--	rcu_read_lock();
--
--	ret = -ESRCH;
--	if (!pid)
--		p = current;
--	else {
--		p = find_task_by_vpid(pid);
--		if (!p)
--			goto err_unlock;
--	}
--
--	ret = -EPERM;
--	if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
--		goto err_unlock;
--
--	head = p->compat_robust_list;
--	rcu_read_unlock();
--
--	if (put_user(sizeof(*head), len_ptr))
--		return -EFAULT;
--	return put_user(ptr_to_compat(head), head_ptr);
--
--err_unlock:
--	rcu_read_unlock();
--
--	return ret;
--}
--
--COMPAT_SYSCALL_DEFINE6(futex, u32 __user *, uaddr, int, op, u32, val,
--		struct compat_timespec __user *, utime, u32 __user *, uaddr2,
--		u32, val3)
--{
--	struct timespec ts;
--	ktime_t t, *tp = NULL;
--	int val2 = 0;
--	int cmd = op & FUTEX_CMD_MASK;
--
--	if (utime && (cmd == FUTEX_WAIT || cmd == FUTEX_LOCK_PI ||
--		      cmd == FUTEX_WAIT_BITSET ||
--		      cmd == FUTEX_WAIT_REQUEUE_PI)) {
--		if (compat_get_timespec(&ts, utime))
--			return -EFAULT;
--		if (!timespec_valid(&ts))
--			return -EINVAL;
--
--		t = timespec_to_ktime(ts);
--		if (cmd == FUTEX_WAIT)
--			t = ktime_add_safe(ktime_get(), t);
--		tp = &t;
--	}
--	if (cmd == FUTEX_REQUEUE || cmd == FUTEX_CMP_REQUEUE ||
--	    cmd == FUTEX_CMP_REQUEUE_PI || cmd == FUTEX_WAKE_OP)
--		val2 = (int) (unsigned long) utime;
--
--	return do_futex(uaddr, op, val, tp, uaddr2, val2, val3);
--}
+ 	struct timespec64 tstimes[2];
+ 
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index b92cb79d38c3..3d7dd665cdeb 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -500,7 +500,8 @@ asmlinkage long sys_timerfd_gettime(int ufd, struct itimerspec __user *otmr);
+ 
+ /* fs/utimes.c */
+ asmlinkage long sys_utimensat(int dfd, const char __user *filename,
+-				struct timespec __user *utimes, int flags);
++				struct __kernel_timespec __user *utimes,
++				int flags);
+ 
+ /* kernel/acct.c */
+ asmlinkage long sys_acct(const char __user *name);
 -- 
 2.9.0
 
