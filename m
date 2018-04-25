@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-558212-1524653221-2-16984233454987029260
+X-Cyrus-Session-Id: sloti22d1t05-557887-1524653214-2-7900688162957738332
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653221; b=goRgZKN8vVKTuFS8PGExr3HDSWAJ5Uq7iX6kS8c/bNG34T611p
-    miAWVxfZF0UjnDJD6OI9nOYGNgju9FoXPt+oicEYbYaeoxRJJbTQ19KlpJMtH3dZ
-    tgPLdeAsjugJIdwqkmWYjV9n9v0u+rAb8zPB1xyDp81b1/vj0GgpuBhvHqSwUMgZ
-    K91E98wOjDvx0KBGYnRT9L6y3KAjRttz1tUlf3Agcomi9Oq5u2+OuQQJN2Ve54Bs
-    o/0YakhK134DhPj/zLctUTswYLygURQv+uOazZjIKD5zwqQ+cmpGPWm+cPUnAqlF
-    WcnSOImF2MyEv89Ib5/6A7Halou7l7Ll06zw==
+    1524653205; b=uFJxConyeAcO0VD/8bHVNy6j6dq1VoU3RNtKRLKiRZOvGm/Qs9
+    oceyjcnrfYs1ElUc47X1S1uLzC2bBxN8IWPu6f050b+TMFmLEolguqLabRMLhP7u
+    iQ7WoA5AV2jELiQHl8S0Q3YSkX0dJVIFcAmsgTGVPZBPJemuTcOslM4Gk7A5H+9f
+    LQXCq5znQ8J+/CjAw9+9sKYTG2itmtCa+XHAADKM/UTifHhXSsSN0+dwIMtCFpQc
+    bPyNKeXvb14hKZ0DmEwWlySaHBunAyO5tWjewQJbZZ3LqHBjiJ1iN8b+FyuJOOop
+    IOXVIHlL6EbU3L33dOyIzz1/8GO279t+bjmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653221; bh=tK5pCmL5d9Y3D3GBkLCmvdFtm48QLM
-    ksrXawUdFLaMc=; b=CLxFI4x/SVFglSYzuGUTPcBlxgKoEaRsciB6UsA+D/zsi+
-    W3hJnMaBMk0AsNC8Lk4qgJMz+EljPxK13HZ0Fwbx7nT7D6N/+TgjJfMkXWPlyaOp
-    PjnhjDzcsIfZ0f7T+AcORZk3uV1l4CQPG5jRQDJM4MilBjnqPHrOs16Z8mGds0AS
-    MsCQ5tBJyRJ4ho0Xk3jrmlG3yLCbm0a5EQ5RB5yQu6qxTugHe7oCA/gX7dm0Bium
-    zCgiCgk9S5P6+jBSKBV0mtvQA4aMdf+q2Vj9/HNW7s7dHBzzAzSmDG9BHYEFibDE
-    ABu13j8JHit2qC0WCRbiiRMGJN5lpCW302JElSOQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524653205; bh=uQfCiy4+rpZXeMbuazbeh/dmAHzwDh
+    OkqUvDDqW6a/M=; b=tMSjr8JokUDw/7odeEDEE8oVt592Z5LtwPOURgcuMgFQAQ
+    SgR/+sJ5G7vAyzqmmluXf4vPElabmpBrHEKokDgo61meywa4OtppxR9JCfE6SP9K
+    2uZPjMDDioUHIeVXwds0RFStn8ZSHkZY5Y1iMAcyumuh0N3CuDdwS3rtmY/JoI2p
+    4dZNh83VMLz48/rh0pRzM2aI4/YiydTJWQV8WEBmASdSskoUuSHgbRk696PXgLoA
+    EsGWZZGE35K3D9B78wT4v4Ep9ycHdSBFcWXecfF9kH/ITuqkUat5I76cdm1xtosV
+    j8JbynWRJ8eUG9R+Y11zf2QShsUM56bnxAJ+Q1ew==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFCKmzKhgX07zvLIEdTNl4HRORM7yBN3KKfc562NjEBJ8hDr0/XKrTvizzlXRQvgr+PeBKbcysnHZQwCJgA30iSdIxLLSiFW4JOPQeMzdIiOq+UIFmNB
-    9DlfD1O8r2h6ttG7SNd28bJ36rgxgXGERc74XKNz6Q1JhuFZaqurtvoUvhUcVJbKLIDrzOkrRVULDGzKo0nhP+mMy3ygauazXcbX8amOFsoYDn4Dv8p1tRKC
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGGIZ/WqJshuD02G8V9sbIyNEwjzzLjopTrDTvgG14Sb85b81xUOf8T/f/q8wct1aBz1gU4Rj7x0xTl+quDkt3nvotEMh7TYuzGMYZxjWQ1QucDvudig
+    FgD/EADjJTOUCiESNtukRvmwwMhR/9+QeYhGiP9RX6ZczqjEo6sPcWFEjRagqGnTX9fy8RikblZnMvopc9zFvPbFUnql6Gf/PeLaKRj/yATdNzxt2Rmckcl6
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=ag1SF4gXAAAA:8
-    a=4TtXiYhEuDbnHRW8oSIA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1RTuLK3dAAAA:8 a=uTJJjIG0AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=iXd9lturcMgjcm6p4moA:9 a=QEXdDO2ut3YA:10 a=kRpfLKi8w9umh8uBmg1i:22
+    a=Oxz5h5Y_mNNx07kSEfs-:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754277AbeDYKqq (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:46:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53462 "EHLO
+        id S1754230AbeDYKpI (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:45:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53502 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754478AbeDYKo7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:44:59 -0400
+        with ESMTP id S1754451AbeDYKpH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:45:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 182/183] Revert "KVM: X86: Fix SMRAM accessing even if VM is shutdown"
-Date: Wed, 25 Apr 2018 12:36:42 +0200
-Message-Id: <20180425103249.812470292@linuxfoundation.org>
+        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 150/183] bcache: return attach error when no cache set exist
+Date: Wed, 25 Apr 2018 12:36:10 +0200
+Message-Id: <20180425103248.568921100@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -93,70 +93,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
-commit 2c151b25441ae5c2da66472abd165af785c9ecd2 upstream.
 
-The bug that led to commit 95e057e25892eaa48cad1e2d637b80d0f1a4fac5
-was a benign warning (no adverse affects other than the warning
-itself) that was detected by syzkaller.  Further inspection shows
-that the WARN_ON in question, in handle_ept_misconfig(), is
-unnecessary and flawed (this was also briefly discussed in the
-original patch: https://patchwork.kernel.org/patch/10204649).
+[ Upstream commit 7f4fc93d4713394ee8f1cd44c238e046e11b4f15 ]
 
-  * The WARN_ON is unnecessary as kvm_mmu_page_fault() will WARN
-    if reserved bits are set in the SPTEs, i.e. it covers the case
-    where an EPT misconfig occurred because of a KVM bug.
+I attach a back-end device to a cache set, and the cache set is not
+registered yet, this back-end device did not attach successfully, and no
+error returned:
+[root]# echo 87859280-fec6-4bcc-20df7ca8f86b > /sys/block/sde/bcache/attach
+[root]#
 
-  * The WARN_ON is flawed because it will fire on any system error
-    code that is hit while handling the fault, e.g. -ENOMEM can be
-    returned by mmu_topup_memory_caches() while handling a legitmate
-    MMIO EPT misconfig.
+In sysfs_attach(), the return value "v" is initialized to "size" in
+the beginning, and if no cache set exist in bch_cache_sets, the "v" value
+would not change any more, and return to sysfs, sysfs regard it as success
+since the "size" is a positive number.
 
-The original behavior of returning -EFAULT when userspace munmaps
-an HVA without first removing the memslot is correct and desirable,
-i.e. KVM is letting userspace know it has generated a bad address.
-Returning RET_PF_EMULATE masks the WARN_ON in the EPT misconfig path,
-but does not fix the underlying bug, i.e. the WARN_ON is bogus.
+This patch fixes this issue by assigning "v" with "-ENOENT" in the
+initialization.
 
-Furthermore, returning RET_PF_EMULATE has the unwanted side effect of
-causing KVM to attempt to emulate an instruction on any page fault
-with an invalid HVA translation, e.g. a not-present EPT violation
-on a VM_PFNMAP VMA whose fault handler failed to insert a PFN.
-
-  * There is no guarantee that the fault is directly related to the
-    instruction, i.e. the fault could have been triggered by a side
-    effect memory access in the guest, e.g. while vectoring a #DB or
-    writing a tracing record.  This could cause KVM to effectively
-    mask the fault if KVM doesn't model the behavior leading to the
-    fault, i.e. emulation could succeed and resume the guest.
-
-  * If emulation does fail, KVM will return EMULATION_FAILED instead
-    of -EFAULT, which is a red herring as the user will either debug
-    a bogus emulation attempt or scratch their head wondering why we
-    were attempting emulation in the first place.
-
-TL;DR: revert to returning -EFAULT and remove the bogus WARN_ON in
-handle_ept_misconfig in a future patch.
-
-This reverts commit 95e057e25892eaa48cad1e2d637b80d0f1a4fac5.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kvm/mmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/sysfs.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -3019,7 +3019,7 @@ static int kvm_handle_bad_page(struct kv
- 		return RET_PF_RETRY;
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -193,7 +193,7 @@ STORE(__cached_dev)
+ {
+ 	struct cached_dev *dc = container_of(kobj, struct cached_dev,
+ 					     disk.kobj);
+-	ssize_t v = size;
++	ssize_t v;
+ 	struct cache_set *c;
+ 	struct kobj_uevent_env *env;
+ 
+@@ -270,6 +270,7 @@ STORE(__cached_dev)
+ 		if (bch_parse_uuid(buf, set_uuid) < 16)
+ 			return -EINVAL;
+ 
++		v = -ENOENT;
+ 		list_for_each_entry(c, &bch_cache_sets, list) {
+ 			v = bch_cached_dev_attach(dc, c, set_uuid);
+ 			if (!v)
+@@ -277,7 +278,7 @@ STORE(__cached_dev)
+ 		}
+ 
+ 		pr_err("Can't attach %s: cache set not found", buf);
+-		size = v;
++		return v;
  	}
  
--	return RET_PF_EMULATE;
-+	return -EFAULT;
- }
- 
- static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+ 	if (attr == &sysfs_detach && dc->disk.c)
