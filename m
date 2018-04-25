@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-976924-1524674680-2-1879405718980434881
+X-Cyrus-Session-Id: sloti22d1t05-987394-1524674416-2-12689853339459782478
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -7,7 +7,7 @@ X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001
   HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='utf-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
@@ -15,69 +15,69 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524674679; b=hCI1KuCyCNaNbYmyyyBlLt94q8lWBw9krDxtcWZ4y75PVYhrsZ
-    /jfvqQkb4AWOR8ynGeil6a+tzx1muxJxYHCs1oH/SsJZHsn02KpDipCM8DmMpDBw
-    mAtK4CrX4zTdtY0cAC0Fm8fKWf4wM8AcGreS6JymGGd3BUT5zT7SQ8jGLRsbf26I
-    laHVYtnYPPe3cgkbzr2w1xs/gbxZ28hMNw1tK7j8PXmzmYrtPB8II5zSKgTvuLqa
-    9TL+LSl9KsJTieNKRCJcVwmNtHE/LzrMkhjQBtFLaY0MrTROwcJCJtWgUZPjSaeJ
-    m5lazCL7a3L9zfvUDoQp4XIlSMNAKfgbJmUg==
+    1524674415; b=UbSVtaUfRyainEf8Qo4L8fmqNkwNj8TOaoVm/6+FfEl060MTz3
+    9DlAOV/Zi0M9shXBNEstKAYtN7SemiGw0FRO4K6RuVEXyVlCkD1SHdt3oJoWmhOn
+    kZUNqINZHnRhkp5upsaxghXKOp2FbVZeiAidkXOQPHY9jsuPzyGS0ZWPG00Ps8S+
+    9u89gAFp91iz/oKrrjN677zpjjncZVebEfSOLSQfcFIjXu3ar5WoQKKyt/XQgOwF
+    WykOWZNQQhMtfliu4gO7UCny8fx33IcMRzOsr4hnTOAY8f4BsU5el0LNg3hgdGaJ
+    BHr1N4WTnGlEcVEKOSZ9XXE3odk2pdQlXwFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:subject:to:references:message-id
+    messagingengine.com; h=subject:to:references:from:message-id
     :date:mime-version:in-reply-to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc
     :content-transfer-encoding:content-type:sender; s=fm2; t=
-    1524674679; bh=NjNobt1y87cVYB/IM2DtuLnQ0zONbjIPZXz5158a0xU=; b=p
-    tmaESB1LZy/iyFxzD5HOVwNB0PWH+8IG9Gluajk4w6HJ0pXaKBXJ4QwUF4holNYM
-    y+jnrqQeTatWGVjKcVvyiMp8yL8UVfd8XJ8+L32hVkjb+jpgy78Dpe7T17jS8p1V
-    z/JNlDjjSNNz7IQ5x6eQn8enYnJfO7El2jtIOD7Nzh4AndWyIfh+vgDvUg7BBb1w
-    a7DOOAkqzlAqAHTE/JHm8waQEfjySjGgKd+uUyCwm/L/Gs/95bqdE1b1Y8s7eH/E
-    nvm6RFG1F2eC5jtxLx/GOpQXvRGQOHFHKOW2BmBU0D2q71Mc+WelIfqIwzH5UZ1K
-    gNVfI8xNghCUcrQvGbH/A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LCnTzE7M x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    1524674415; bh=NjNobt1y87cVYB/IM2DtuLnQ0zONbjIPZXz5158a0xU=; b=G
+    WYllPyIKAdtx1CRruNbzFuNlC0rOGec5oYhnUTa+qbcwFQlJwFm1unz/J0KUBKog
+    atM0mQ+TISn8KLbkKyex2GzjhYpwCYq6ruJvuj5qpMoA4OUOESY+FM210UqRcpIU
+    91UgULisRb6jcopHq0yqJt+wk09ol8eSPBDe43E9IcwyLC3udjxSftzWfJxkG3sm
+    OETn1u1mPka3XJHB/53WNpkFO5QB9k4bD4LqAi/shN/yxomWA27TbRhPhdT2lw7f
+    wOVk827bs7wJ/bGJJYTNrWU0yJSBOATJwXrx5RfpocM+TD+fbo+IPVBjEGdKzVoy
+    wxTtkaAOKqw0BUtUud4cA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Tmn/w34I x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gTxaG/vq;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HuA3Fn1f;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LCnTzE7M x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Tmn/w34I x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=gTxaG/vq;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HuA3Fn1f;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBaGRYL/ZBYyJIM3BomvNt3yed4ymDT1dXvQQt0FYo0Bt0HdOD1RIFYY64bVHzNT1AFzVQHF1obMjJBszAKYvypWiSXF9G6ROWaeEaVmYKfHKwna7rUO
-    Wk7WrDBCNVpFTzrUppa5JCJ+sjZ0SE2BNrd3HkqLpylKeudbCYZK2q/eoLoMn55QpBZcH/n2q9DE0LJEe4IZilNVBPuPjxCVxm4ehr7jrAexJ/y+EePywzK5
-    hy/aYnUS41n1874hMdhIsw==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+X-CM-Envelope: MS4wfI/NAT9oMq4fe1BMt2rUChqjndB5NSbMK1OH7MEtMGj1CvIug5jyUwnGyZaRxoBJXxjIiWCvINjD6z36Hp5AJNCXlK/1bHO10yLKDGnoOTtZ6IZBd7Lx
+    2wU25PbrBmPXbey2WmRxdEIJURRYtKGGXGKaA2lpzJDBmB+77z8yHo3RYqwioZy90Pmaciyz2T54BwBYpiyggxdn1wZV394z+2/9896DIMosxULtDr4JBnU9
+    fobw2siEX5TQymOQKjnssg==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
     a=Ati9N12YA0wA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
     a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=jhcWdLLKQc5ZSgbHUSYA:9 a=QEXdDO2ut3YA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AIpwx48SukLyTkOAXn9MEo0yS8fKRAu0krN5qFtIz7k9NMDAKmvLnNLgWlxFuMo6OkkaSGK0MU3djw==
-From: Janusz Lisiecki <janusz.lisiecki@gmail.com>
+X-Google-Smtp-Source: AB8JxZqyooqzNzz00zuUl0KSfh3/0aBvEV2OFfJMfpfBEyIb6aXgljixfZySt+DoIIAg7wySJ2Cwjg==
 Subject: Re: [PATCH] staging: ks7010: fix ks_wlan_start_xmit()'s return type
 To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
  linux-kernel@vger.kernel.org
 References: <20180424131824.5164-1-luc.vanoostenryck@gmail.com>
-Message-ID: <2203ebe4-63c2-3728-50fa-a30b195d1508@gmail.com>
-Date: Wed, 25 Apr 2018 18:44:38 +0200
+From: Janusz Lisiecki <janusz.lisiecki@gmail.com>
+Message-ID: <1435ae13-d0d0-61c6-c96d-18c8e68d086e@gmail.com>
+Date: Wed, 25 Apr 2018 18:40:14 +0200
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
