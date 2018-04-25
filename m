@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49IG9WRxgWIQ/7lPFd4lqkL+7fBSJsJlGKJ9AT/eEUQYkNuuuv+oL8cpjzEYTy2aSIN6uqt
-ARC-Seal: i=1; a=rsa-sha256; t=1524652676; cv=none;
+X-Google-Smtp-Source: AIpwx491/lkOPTVSaq48/40dq5swcZ6n7ae+mxg1rUBH6Nq43PALFTKSLm7HNl+/9Ks3pLS9+QC3
+ARC-Seal: i=1; a=rsa-sha256; t=1524652674; cv=none;
         d=google.com; s=arc-20160816;
-        b=xSVnSnytSTLJFY44DTQyoURbqIsbgJLiF0zrrUKkcpp4+5CFlUS4vJGCAZxVda75p0
-         o5lKSPb+LQR1MnYQ29U/BiLxxUTpjUIeWb76lDkfkT5jIc+3J+66WzvdvZdkLqGtQic7
-         U0uEb1RR6F1SmdQSSRLBsXq8uSK7sXXVhnHAWlfLgoXOu7LrOMYuLG5P96EFFhVSfzbt
-         t+nmaA+Z8fXdMKBNNpQi2k/qqgROBpce3mugtdY+R5IVNrInyYIVKQk5OmnwvVFkYYDW
-         BdaY8vqpatPWsVAlisoKCD4bPCqQRmIf8wS23H/kIiX519dgBK7lBBVKXxWsR7oN9eTW
-         etfg==
+        b=D+P4egpscK9GWe1L5uvKuvAfX23AAIQ2ymoSizLRhhF9bKl9NaKFKvITsjZ8j2+2uf
+         w3EwwKd4XNYI5YXmryvS4PjGlgVYtZdH5R/zLOgNMLqzSXHKKFyD185RqWYR9cr+80ss
+         yy6HNagEsBZGpbZjYgks5qcbjBR0GoHMTIYenKGC6cUZzxRRtvnozoW3iHZ8KnC+K1VO
+         2odF0byoVX3A5SQ+O4F3n3C9pxrCba/1bc/Qkv+yhDBI84RlazDNt0gWN6Iz8AMtbAG2
+         CY2CmzBZdW+lRYY7sMJsR/wBX69auYtGgUjbj8c8hZuhg8fEXAXzwl4MJ3+FnRwR7sKK
+         yg+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NPnhIHT4yXgqCOr4H2/zUqleeYAINfJ6H9ryAnk0+L4=;
-        b=Krdwh2DcMm9DggHRY0/I0wW+iUmAE6fFtlo/QX9lQRJDFMliK+YjRas9gOHVi3uDS3
-         oO5RJ2VUpPcNx39DF2v3X4vvSiJKdd2b62GDNwco80fDDSziSgrB4dzPtGGsxWYezDkL
-         sdvqtmzayLOKEQqgz98o5rXeMwUegQYBP/gdRc5bq3e+7qE3O3MPbfuh7L3YZma98JTr
-         44K+wC1RkecSma0PQpvFHCC7n3Xdk8YYklK6cW6lWJwfQcytXxjGmuuHSHvr1KDtoLyB
-         JqEMHl+T8kiZ+iz3Sd31LmccrZVZgFoZOt/cpxM2kkL6pwtjHN8hX1NpzuSNYnVFgXE7
-         /FOg==
+        bh=QP6JOS8b+KAJj9cpuajv9ngrqLOUYllyEpRkpWebD/w=;
+        b=tLOuaXkdXqR0q4SuC4wYVijj+VhF3MQt0nrLvdQYy9QtBrz13RQ2FxyOj9ZFIRY4Ja
+         S27mQvoK+PE4+nEzCHr7gNcS6//A9By1UJmWyHreh8s8//JWRRlQZy4clbkygDvhUS8X
+         GVZLj7XYjntOMJUB4RVn67h++0DUbnUgoScPjoEW7/BK0kZ3CzH5sBozer1KeXLg4xCw
+         SQxsKymEJClgKb38jRJO2gYT8wYiVPXeNfJmiHXuab9H+TunPKGZlsYPsZ+nJOeLyGWj
+         aGfmX8gZ8MxVa268On65526UCBykmKJeOGroeZbvf38zNqAQLc99vDZwkSBKdEhW2tap
+         NZ8g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xiaoming Gao <newtongao@tencent.com>,
+	Anson Huang <Anson.Huang@nxp.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	peterz@infradead.org,
-	hpa@zytor.com
-Subject: [PATCH 4.14 005/183] x86/tsc: Prevent 32bit truncation in calc_hpet_ref()
-Date: Wed, 25 Apr 2018 12:33:45 +0200
-Message-Id: <20180425103242.822858601@linuxfoundation.org>
+	Dong Aisheng <Aisheng.dong@nxp.com>,
+	daniel.lezcano@linaro.org,
+	Linux-imx@nxp.com
+Subject: [PATCH 4.14 004/183] clocksource/imx-tpm: Correct -ETIME return condition check
+Date: Wed, 25 Apr 2018 12:33:44 +0200
+Message-Id: <20180425103242.784677410@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714017581239687?=
-X-GMAIL-MSGID: =?utf-8?q?1598714205078002778?=
+X-GMAIL-THRID: =?utf-8?q?1598714011461585054?=
+X-GMAIL-MSGID: =?utf-8?q?1598714202488646140?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,52 +52,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xiaoming Gao <gxm.linux.kernel@gmail.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-commit d3878e164dcd3925a237a20e879432400e369172 upstream.
+commit 7407188489c62a7b5694bc75a6db2b82af94c9a5 upstream.
 
-The TSC calibration code uses HPET as reference. The conversion normalizes
-the delta of two HPET timestamps:
+The additional brakects added to tpm_set_next_event's return value
+computation causes (int) forced type conversion NOT taking effect, and the
+incorrect value return will cause various system timer issue, like RCU
+stall etc..
 
-    hpetref = ((tshpet1 - tshpet2) * HPET_PERIOD) / 1e6
+Remove the additional brackets to make sure tpm_set_next_event always
+returns correct value.
 
-and then divides the normalized delta of the corresponding TSC timestamps
-by the result to calulate the TSC frequency.
-
-    tscfreq = ((tstsc1 - tstsc2 ) * 1e6) / hpetref
-
-This uses do_div() which takes an u32 as the divisor, which worked so far
-because the HPET frequency was low enough that 'hpetref' never exceeded
-32bit.
-
-On Skylake machines the HPET frequency increased so 'hpetref' can exceed
-32bit. do_div() truncates the divisor, which causes the calibration to
-fail.
-
-Use div64_u64() to avoid the problem.
-
-[ tglx: Fixes whitespace mangled patch and rewrote changelog ]
-
-Signed-off-by: Xiaoming Gao <newtongao@tencent.com>
+Fixes: 059ab7b82eec ("clocksource/drivers/imx-tpm: Add imx tpm timer support")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
 Cc: stable@vger.kernel.org
-Cc: peterz@infradead.org
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/38894564-4fc9-b8ec-353f-de702839e44e@gmail.com
+Cc: daniel.lezcano@linaro.org
+Cc: Linux-imx@nxp.com
+Link: https://lkml.kernel.org/r/1524117883-2484-1-git-send-email-Anson.Huang@nxp.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/tsc.c |    2 +-
+ drivers/clocksource/timer-imx-tpm.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -316,7 +316,7 @@ static unsigned long calc_hpet_ref(u64 d
- 	hpet2 -= hpet1;
- 	tmp = ((u64)hpet2 * hpet_readl(HPET_PERIOD));
- 	do_div(tmp, 1000000);
--	do_div(deltatsc, tmp);
-+	deltatsc = div64_u64(deltatsc, tmp);
- 
- 	return (unsigned long) deltatsc;
+--- a/drivers/clocksource/timer-imx-tpm.c
++++ b/drivers/clocksource/timer-imx-tpm.c
+@@ -105,7 +105,7 @@ static int tpm_set_next_event(unsigned l
+ 	 * of writing CNT registers which may cause the min_delta event got
+ 	 * missed, so we need add a ETIME check here in case it happened.
+ 	 */
+-	return (int)((next - now) <= 0) ? -ETIME : 0;
++	return (int)(next - now) <= 0 ? -ETIME : 0;
  }
+ 
+ static int tpm_set_state_oneshot(struct clock_event_device *evt)
