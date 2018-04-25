@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AB8JxZq68dOThVtdiUjsHn8ei5XVVwuvBIR0bCSQPnkhamTGvEM/aXDv45yvOEhp+JUSsKJg/KLH
-ARC-Seal: i=1; a=rsa-sha256; t=1524652910; cv=none;
+X-Google-Smtp-Source: AIpwx491HXQgjOByPQfu4yU42Dz49OSONaI+bgUuNEaA/KVJfYe+vY6Q2XVc9x36BBmYsOyjBmOJ
+ARC-Seal: i=1; a=rsa-sha256; t=1524652907; cv=none;
         d=google.com; s=arc-20160816;
-        b=gLk8D3VJHo/Izb4IcLMA9WivnXMgH8SBkh3eNlpmRiQ49y3UP/xJ8dQnqbEg8KNcKQ
-         WbVsKo1lxExUmPwVpuEpClTPND0x/fXCrV/7wR/Qk7UDcF86DT7VLpIRVtK/cY+wwPLA
-         rtI4PUpVgEcDFVneCiIrlimNlFuPhpURZ1i8N9yO39RwDkaK7fweywr0mg+ucwXlv5x9
-         WCUDNNX6NswsSIsmzAu5DNDIIv+7dUC1dx2+uKK6W6YaTne8OJ/nC3qXrGXBcJUnKcQC
-         gFD4+cU7kbMCQEjDExFBngWOQ6B0it1LrK6MYj5mHOavTK4yyyKvHQPJyjYvQW+4nd0F
-         5iPg==
+        b=CtsGaP1hN4BO61pFpScr1tGX0g9Fm0rD8zP4+K270qrCSfg/aVKVtkIXhwRfMMcSKr
+         61uQrLGHPATBX9EmKcjM3Y2InWnhPHw04iC86oegrUUvAh8esNe1RkNd5y6npghKKuUz
+         5INl2m1HxzvyYOdI6rTw5VpdIIlQq7A3jPSn1lxKHDeZuAVGL+x11ctd9DnWtPuN1C8y
+         kEaOiwXfByRNoUsNpYzQDnGmRKpDxkGzRwr3InZ2G6lSCS2r+o3qMjt2rY1oFqZ8rGlx
+         np//pQ7kOApVWwqlhnJQA7YGhU6kOMYX3b2OWd2ksyyyWbJavD/btBNtS6yfMk45xAMU
+         1yNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=STe/mNj8upDQQnsTet50UD+jXOoBKRy6E4fqRZqR0FU=;
-        b=jxA4DRoXvJWKnmADy8pDvdee97YrV1+JUq/Q2CMsw63Fhf1xmWXVTkolBS9Lm8ryup
-         P5yZXSkOpWcJsJfoeaivP908+oxnKpxRCGE+wRG+c/7B6K7GFoUj0Zg3s3Q5y3dbbLVM
-         UncMb5zpLDuOsEeFrh5ubQ+GfhougoZs4tuwdCu6qAbtU3aBpVuTV50jd2bW0XXvJIfp
-         yqUl+5098QwK5GV4lhmiw4KHEnO5CA661LXfmAuAg7oGJtyjvrGZdgRB11Q2RjJVlW18
-         Yj/2qCGPfanrAv50mCtN0B9E633v7H/bFdajXD3y1hc5eGcHgfjZfp3+OcOSV9HuM9ri
-         3oDQ==
+        bh=VbKSzK/YN16HNOzoW6NHLlYLrbUGGdMfuMPmVUo+Opc=;
+        b=BO+44OHXPP5dzGJjvbz4vW1tZcONbz9RjkDsWrv6J/toCXsgIZsOLHIJ5W7zcDSaIj
+         XTVVQfPiyHoSJd+NBqaKQWEs+LlQqgxyk11EmsXV5Vs5bbPJIEtjn0Jk2lWBr9bPMfjY
+         Zm2d/TJSoTCWxQWKIgi/Y4fUZd5EY9iNmBYiPS244qoAP1MckmpB7b3fLL81xl2e+W07
+         4sbqbii0fn9wQEZ90O4fm+n6ZgGJnNJmedPj9Uyi8iOAcWywA3u+GFG6nnoyiRWAn4NK
+         /SVTyETjiv3A+4/8ra7SEpeGj0hJiKz5VO3KuiVJQ2Zues8k8FvsLMOcDiAY2QscWQNf
+         irRw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yang Shi <yang.s@alibaba-inc.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 115/183] mm: thp: use down_read_trylock() in khugepaged to avoid long block
-Date: Wed, 25 Apr 2018 12:35:35 +0200
-Message-Id: <20180425103247.063788351@linuxfoundation.org>
+Subject: [PATCH 4.14 106/183] x86/kvm/vmx: do not use vm-exit instruction length for fast MMIO when running nested
+Date: Wed, 25 Apr 2018 12:35:26 +0200
+Message-Id: <20180425103246.712311937@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -47,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714450190565247?=
-X-GMAIL-MSGID: =?utf-8?q?1598714450190565247?=
+X-GMAIL-THRID: =?utf-8?q?1598714446628467090?=
+X-GMAIL-MSGID: =?utf-8?q?1598714446628467090?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,93 +52,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yang Shi <yang.s@alibaba-inc.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
 
-[ Upstream commit 3b454ad35043dfbd3b5d2bb92b0991d6342afb44 ]
+[ Upstream commit d391f1207067268261add0485f0f34503539c5b0 ]
 
-In the current design, khugepaged needs to acquire mmap_sem before
-scanning an mm.  But in some corner cases, khugepaged may scan a process
-which is modifying its memory mapping, so khugepaged blocks in
-uninterruptible state.  But the process might hold the mmap_sem for a
-long time when modifying a huge memory space and it may trigger the
-below khugepaged hung issue:
+I was investigating an issue with seabios >= 1.10 which stopped working
+for nested KVM on Hyper-V. The problem appears to be in
+handle_ept_violation() function: when we do fast mmio we need to skip
+the instruction so we do kvm_skip_emulated_instruction(). This, however,
+depends on VM_EXIT_INSTRUCTION_LEN field being set correctly in VMCS.
+However, this is not the case.
 
-  INFO: task khugepaged:270 blocked for more than 120 seconds.
-  Tainted: G E 4.9.65-006.ali3000.alios7.x86_64 #1
-  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-  khugepaged D 0 270 2 0x00000000 
-  ffff883f3deae4c0 0000000000000000 ffff883f610596c0 ffff883f7d359440
-  ffff883f63818000 ffffc90019adfc78 ffffffff817079a5 d67e5aa8c1860a64
-  0000000000000246 ffff883f7d359440 ffffc90019adfc88 ffff883f610596c0
-  Call Trace:
-    schedule+0x36/0x80
-    rwsem_down_read_failed+0xf0/0x150
-    call_rwsem_down_read_failed+0x18/0x30
-    down_read+0x20/0x40
-    khugepaged+0x476/0x11d0
-    kthread+0xe6/0x100
-    ret_from_fork+0x25/0x30
+Intel's manual doesn't mandate VM_EXIT_INSTRUCTION_LEN to be set when
+EPT MISCONFIG occurs. While on real hardware it was observed to be set,
+some hypervisors follow the spec and don't set it; we end up advancing
+IP with some random value.
 
-So it sounds pointless to just block khugepaged waiting for the
-semaphore so replace down_read() with down_read_trylock() to move to
-scan the next mm quickly instead of just blocking on the semaphore so
-that other processes can get more chances to install THP.  Then
-khugepaged can come back to scan the skipped mm when it has finished the
-current round full_scan.
+I checked with Microsoft and they confirmed they don't fill
+VM_EXIT_INSTRUCTION_LEN on EPT MISCONFIG.
 
-And it appears that the change can improve khugepaged efficiency a
-little bit.
+Fix the issue by doing instruction skip through emulator when running
+nested.
 
-Below is the test result when running LTP on a 24 cores 4GB memory 2
-nodes NUMA VM:
-
-                                    pristine          w/ trylock
-  full_scan                         197               187
-  pages_collapsed                   21                26
-  thp_fault_alloc                   40818             44466
-  thp_fault_fallback                18413             16679
-  thp_collapse_alloc                21                150
-  thp_collapse_alloc_failed         14                16
-  thp_file_alloc                    369               369
-
-[akpm@linux-foundation.org: coding-style fixes]
-[akpm@linux-foundation.org: tweak comment]
-[arnd@arndb.de: avoid uninitialized variable use]
-  Link: http://lkml.kernel.org/r/20171215125129.2948634-1-arnd@arndb.de
-Link: http://lkml.kernel.org/r/1513281203-54878-1-git-send-email-yang.s@alibaba-inc.com
-Signed-off-by: Yang Shi <yang.s@alibaba-inc.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 68c3b4d1676d870f0453c31d5a52e7e65c7448ae
+Suggested-by: Radim Krčmář <rkrcmar@redhat.com>
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/khugepaged.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx.c |   16 +++++++++++++++-
+ arch/x86/kvm/x86.c |    3 ++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1679,10 +1679,14 @@ static unsigned int khugepaged_scan_mm_s
- 	spin_unlock(&khugepaged_mm_lock);
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6765,7 +6765,21 @@ static int handle_ept_misconfig(struct k
+ 	if (!is_guest_mode(vcpu) &&
+ 	    !kvm_io_bus_write(vcpu, KVM_FAST_MMIO_BUS, gpa, 0, NULL)) {
+ 		trace_kvm_fast_mmio(gpa);
+-		return kvm_skip_emulated_instruction(vcpu);
++		/*
++		 * Doing kvm_skip_emulated_instruction() depends on undefined
++		 * behavior: Intel's manual doesn't mandate
++		 * VM_EXIT_INSTRUCTION_LEN to be set in VMCS when EPT MISCONFIG
++		 * occurs and while on real hardware it was observed to be set,
++		 * other hypervisors (namely Hyper-V) don't set it, we end up
++		 * advancing IP with some random value. Disable fast mmio when
++		 * running nested and keep it for real hardware in hope that
++		 * VM_EXIT_INSTRUCTION_LEN will always be set correctly.
++		 */
++		if (!static_cpu_has(X86_FEATURE_HYPERVISOR))
++			return kvm_skip_emulated_instruction(vcpu);
++		else
++			return x86_emulate_instruction(vcpu, gpa, EMULTYPE_SKIP,
++						       NULL, 0) == EMULATE_DONE;
+ 	}
  
- 	mm = mm_slot->mm;
--	down_read(&mm->mmap_sem);
--	if (unlikely(khugepaged_test_exit(mm)))
--		vma = NULL;
--	else
-+	/*
-+	 * Don't wait for semaphore (to avoid long wait times).  Just move to
-+	 * the next mm on the list.
-+	 */
-+	vma = NULL;
-+	if (unlikely(!down_read_trylock(&mm->mmap_sem)))
-+		goto breakouterloop_mmap_sem;
-+	if (likely(!khugepaged_test_exit(mm)))
- 		vma = find_vma(mm, khugepaged_scan.address);
+ 	ret = kvm_mmu_page_fault(vcpu, gpa, PFERR_RSVD_MASK, NULL, 0);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5699,7 +5699,8 @@ int x86_emulate_instruction(struct kvm_v
+ 		 * handle watchpoints yet, those would be handled in
+ 		 * the emulate_ops.
+ 		 */
+-		if (kvm_vcpu_check_breakpoint(vcpu, &r))
++		if (!(emulation_type & EMULTYPE_SKIP) &&
++		    kvm_vcpu_check_breakpoint(vcpu, &r))
+ 			return r;
  
- 	progress++;
+ 		ctxt->interruptibility = 0;
