@@ -1,147 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753499AbeDYVfU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 17:35:20 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55408 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751852AbeDYVfP (ORCPT
+        id S1753545AbeDYVf0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 17:35:26 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46527 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753501AbeDYVfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 17:35:15 -0400
-X-Google-Smtp-Source: AB8JxZq2z+IHLA1iLdRdIvdCPmos1ZhoRp4QRdmNMrmvJgpJX41E7ZGZPjn3ZHP7EmTtz1fqkLGQnoHVGNgeLJSt4P8=
+        Wed, 25 Apr 2018 17:35:21 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        dmitry.torokhov@gmail.com, jeffy.chen@rock-chips.com,
+        enric.balletbo@collabora.com, josephl@nvidia.com, opendmb@gmail.com
+Subject: Re: Lack of suspend/resume/shutdown ordering between GPIO providers and consumers
+Date: Wed, 25 Apr 2018 23:35:10 +0200
+Message-ID: <3827893.QJdhME6hrl@aspire.rjw.lan>
+In-Reply-To: <aecab723-be30-91ba-3fd5-cb61243e572f@ti.com>
+References: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com> <b562c5e3-7073-1b86-6f1f-1d2a5712b28b@ti.com> <aecab723-be30-91ba-3fd5-cb61243e572f@ti.com>
 MIME-Version: 1.0
-X-Originating-IP: [2a02:168:5635:0:39d2:f87e:2033:9f6]
-In-Reply-To: <20180425153312.GD27076@infradead.org>
-References: <20180420152111.GR31310@phenom.ffwll.local> <20180424184847.GA3247@infradead.org>
- <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org> <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
- <20180425064335.GB28100@infradead.org> <20180425074151.GA2271@ulmo>
- <20180425085439.GA29996@infradead.org> <20180425100429.GR25142@phenom.ffwll.local>
- <20180425153312.GD27076@infradead.org>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 25 Apr 2018 23:35:13 +0200
-X-Google-Sender-Auth: clLW9LOvJLz6ewemqlwmJZjZzyU
-Message-ID: <CAKMK7uH14qupTYDa1pr8UC434Vs+97eUXj+fYi=+2uijCLayMA@mail.gmail.com>
-Subject: Re: noveau vs arm dma ops
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 5:33 PM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Wed, Apr 25, 2018 at 12:04:29PM +0200, Daniel Vetter wrote:
->> > Coordinating the backport of a trivial helper in the arm tree is not
->> > the end of the world.  Really, this cowboy attitude is a good reason
->> > why graphics folks have such a bad rep.  You keep poking into random
->> > kernel internals, don't talk to anoyone and then complain if people
->> > are upset.  This shouldn't be surprising.
->>
->> Not really agreeing on the cowboy thing. The fundamental problem is that
->> the dma api provides abstraction that seriously gets in the way of writing
->> a gpu driver. Some examples:
->
-> So talk to other people.  Maybe people share your frustation.  Or maybe
-> other people have a way to help.
->
->> - We never want bounce buffers, ever. dma_map_sg gives us that, so there's
->>   hacks to fall back to a cache of pages allocated using
->>   dma_alloc_coherent if you build a kernel with bounce buffers.
->
-> get_required_mask() is supposed to tell you if you are safe.  However
-> we are missing lots of implementations of it for iommus so you might get
-> some false negatives, improvements welcome.  It's been on my list of
-> things to fix in the DMA API, but it is nowhere near the top.
+On Wednesday, April 25, 2018 9:29:59 PM CEST Grygorii Strashko wrote:
+> 
+> On 04/25/2018 02:10 PM, Grygorii Strashko wrote:
+> > 
+> > 
+> > On 04/25/2018 01:57 PM, Florian Fainelli wrote:
+> >> On 04/25/2018 11:47 AM, Grygorii Strashko wrote:
+> >>>
+> >>>
+> >>> On 04/25/2018 01:29 PM, Florian Fainelli wrote:
+> >>>> On 04/25/2018 11:06 AM, Grygorii Strashko wrote:
+> >>>>>
+> >>>>>
+> >>>>> On 04/24/2018 05:58 PM, Florian Fainelli wrote:
+> >>>>>> Hi Linus, Rafael, all
+> >>>>>>
+> >>>>>> Our GPIO controller driver: gpio-brcmstb.c has a shutdown callback
+> >>>>>> which
+> >>>>>> gets invoked when the system is brought into poweroff aka S5. So far so
+> >>>>>> good, except that we also wish to use gpio_keys.c as a possible wake-up
+> >>>>>> source, so we may have a number of GPIO pins declared as gpio-keys that
+> >>>>>> allow the system to wake-up from deep slumber.
+> >>>>>>
+> >>>>>> Recently we noticed that we could easily get into a state where
+> >>>>>> gpio-brcmstb.c::brcmstb_gpio_shutdown() gets called first, and then
+> >>>>>> gpio_keys.c::gpio_keys_suspend() gets called later, which is too
+> >>>>>> late to
+> >>>>>> have the enable_irq_wake() call do anything sensible since we have
+> >>>>>> suspend its parent interrupt controller before. This is completely
+> >>>>>> expected unfortunately because these two drivers are both platform
+> >>>>>> device instances with no connection to one another except via Device
+> >>>>>> Tree and the use of the GPIOLIB APIs.
+> >>>>>
+> >>>>> You can take a look at device_link_add() and Co.
+> >>>>
+> >>>> OK, though that requires a struct device references, so while I could
+> >>>> certainly resolve the device_node -> struct device that corresponds to
+> >>>> the GPIO provider , that poses a number of issues:
+> >>>>
+> >>>> - not all struct device_node have a corresponding struct device
+> >>>> reference (e.g: clock providers, interrupt controllers, and possibly
+> >>>> other custom drivers), though in this case, they most likely do have one
+> >>>>
+> >>>> - resolving a struct device associated with a struct device_node is
+> >>>> often done in a "bus" specific way, e.g: of_find_device_by_node(), so if
+> >>>> the GPIO provider is e.g: i2c_device, pci_device etc. etc. this might
+> >>>> not work that easily
+> >>>>
+> >>>> I think this is what Dmitry just indicated in his email as well.
+> >>>>
+> >>>>>
+> >>>>> But it's little bit unclear what exactly you have issue with:
+> >>>>> - shutdown
+> >>>>> - suspend
+> >>>>>
+> >>>>> above are different (at least as it was before) and gpio-brcmstb.c
+> >>>>>     brcmstb_gpio_shutdown() should not be called as part of suspend !?
+> >>>>> may be you mean brcmstb_gpio_suspend?
+> >>>>
+> >>>> The issue exists with shutdown (through the use of "poweroff"), that is
+> >>>> confirmed, but I cannot see how it does not exist with any suspend state
+> >>>> as well, for the same reason that the ordering is not strictly enforced.
+> >>>
+> >>> Sry, but it still required some clarification :( - poweroff calls
+> >>> device_shutdown() which, in turn, should not call .suspend(), so
+> >>> how have you got both .shutdown() and .suspend() callbacks called during
+> >>> poweroff? Am I missing smth?
+> >>
+> >> You are missing me telling you the whole story, sorry I got confused,
+> >> but you are absolutely right these are separate lists and on
+> >> poweroff/shutdown only ->shutdown() is called. What I had missed in the
+> >> report I was submitted was that there was a .shutdown() callback being
+> >> added to gpio_keys.c, which of course, because it's an Android based
+> >> project is not in the upstream Linux kernel.
+> >>
+> >> The problem does remain valid though AFAICT. Thanks Grygorii!
+> >>
+> > 
+> > Thanks. But that means you should not see this problem :(
+> > There is devices_kset_move_last() call in really_probe() which moves probed dev
+> > at the end of kset, and gpio_keys should never be probed before gpio-brcmstb because
+> > both devm_fwnode_get_gpiod_from_child() and devm_gpio_request_one() expected to return
+> > -EPROBE_DEFER otherwise.
+> > 
+> > Theoretically issue still might happen with suspend.
+> > 
+> 
+> FYI https://lkml.org/lkml/2015/9/10/218
 
-I hasn't come up in a while in some fireworks, so I honestly don't
-remember exactly what the issues have been. But
-
-commit d766ef53006c2c38a7fe2bef0904105a793383f2
-Author: Chris Wilson <chris@chris-wilson.co.uk>
-Date:   Mon Dec 19 12:43:45 2016 +0000
-
-    drm/i915: Fallback to single PAGE_SIZE segments for DMA remapping
-
-and the various bits of code that a
-
-$ git grep SWIOTLB -- drivers/gpu
-
-turns up is what we're doing to hack around that stuff. And in general
-(there's some exceptions) gpus should be able to address everything,
-so I never fully understood where that's even coming from.
-
->> - dma api hides the cache flushing requirements from us. GPUs love
->>   non-snooped access, and worse give userspace control over that. We want
->>   a strict separation between mapping stuff and flushing stuff. With the
->>   IOMMU api we mostly have the former, but for the later arch maintainers
->>   regularly tells they won't allow that. So we have drm_clflush.c.
->
-> The problem is that a cache flushing API entirely separate is hard. That
-> being said if you look at my generic dma-noncoherent API series it tries
-> to move that way.  So far it is in early stages and apparently rather
-> buggy unfortunately.
-
-I'm assuming this stuff here?
-
-https://lkml.org/lkml/2018/4/20/146
-
-Anyway got lost in all that work a bit, looks really nice.
-
->> - dma api hides how/where memory is allocated. Kinda similar problem,
->>   except now for CMA or address limits. So either we roll our own
->>   allocators and then dma_map_sg (and pray it doesn't bounce buffer), or
->>   we use dma_alloc_coherent and then grab the sgt to get at the CMA
->>   allocations because that's the only way. Which sucks, because we can't
->>   directly tell CMA how to back off if there's some way to make CMA memory
->>   available through other means (gpus love to hog all of memory, so we
->>   have shrinkers and everything).
->
-> If you really care about doing explicitly cache flushing anyway (see
-> above) allocating your own memory and mapping it where needed is by
-> far the superior solution.  On cache coherent architectures
-> dma_alloc_coherent is nothing but allocate memory + dma_map_single.
-> On non coherent allocations the memory might come through a special
-> pool or must be used through a special virtual address mapping that
-> is set up either statically or dynamically.  For that case splitting
-> allocation and mapping is a good idea in many ways, and I plan to move
-> towards that once the number of dma mapping implementations is down
-> to a reasonable number so that it can actually be done.
-
-Yeah the above is pretty much what we do on x86. dma-api believes
-everything is coherent, so dma_map_sg does the mapping we want and
-nothing else (minus swiotlb fun). Cache flushing, allocations, all
-done by the driver.
-
-On arm that doesn't work. The iommu api seems like a good fit, except
-the dma-api tends to get in the way a bit (drm/msm apparently has
-similar problems like tegra), and if you need contiguous memory
-dma_alloc_coherent is the only way to get at contiguous memory. There
-was a huge discussion years ago about that, and direct cma access was
-shot down because it would have exposed too much of the caching
-attribute mangling required (most arm platforms need wc-pages to not
-be in the kernel's linear map apparently).
-
-Anything that separate these 3 things more (allocation pools, mapping
-through IOMMUs and flushing cpu caches) sounds like the right
-direction to me. Even if that throws some portability across platforms
-away - drivers who want to control things in this much detail aren't
-really portable (without some serious work) anyway.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+And also https://patchwork.kernel.org/patch/10334661/
