@@ -1,104 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754461AbeDYM7M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 08:59:12 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46376 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754421AbeDYM7G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:59:06 -0400
-X-Google-Smtp-Source: AB8JxZqrSYBD9LFB7G2Q71sFEbyNLB4eR5smRsWvsKpcgHNUO25YaAQRXbMoLTGP6vNKFE/j8LrnBcS8zFa4dSla1AI=
+        id S1754482AbeDYM7X (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 08:59:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754426AbeDYM7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 08:59:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CED21789
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 25 Apr 2018 09:59:07 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, namhyung@kernel.org, ganapatrao.kulkarni@cavium.com,
+        zhangshaokun@hisilicon.com, yao.jin@linux.intel.com,
+        will.deacon@arm.com, ak@linux.intel.com, agustinv@codeaurora.org
+Subject: Re: [PATCH 4/5] perf parse-events: Specially handle uncore event
+ alias in small groups
+Message-ID: <20180425125907.GA24891@kernel.org>
+References: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
+ <1524594014-79243-4-git-send-email-kan.liang@linux.intel.com>
+ <20180424191721.GB4427@kernel.org>
+ <9a2070b4-9a27-4e38-f235-2d44ae39dd1f@linux.intel.com>
+ <20180424192928.GE4427@kernel.org>
+ <7c69ed57-94dd-45e1-bdd8-ac0c37bc575a@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180424140850.ptxpmtusour7u6nb@flea>
-References: <20180424133425.24291-1-jagan@amarulasolutions.com> <20180424140850.ptxpmtusour7u6nb@flea>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Wed, 25 Apr 2018 18:29:05 +0530
-Message-ID: <CAMty3ZCLOkdmCoh4uBhYKXgDEiAnw+b_z=d0Om2bjH7HLCa7Tg@mail.gmail.com>
-Subject: Re: [RFC 00/13] arm64: allwinner: Add A64 DE2 pipeline support
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c69ed57-94dd-45e1-bdd8-ac0c37bc575a@linux.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 7:38 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Tue, Apr 24, 2018 at 07:04:12PM +0530, Jagan Teki wrote:
->> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
->>
->> A64 DE2 behaviour similar to Allwinner A83T where mixer0, connected to tcon0 with
->> RGB, LVDS MIPI-DSI and mixer1, connected to tcon1 with HDMI.
->> This series merely concentrated on HDMI pipeline and rest will add eventually.
->>
->> patch 1: dt-bindings for a64 DE2 CCU
->>
->> patch 2: a64 DE2 CCU node addition
->>
->> patch 3: dt-bindings for a64 DE2 pipeline
->>
->> patch 4 - 5: dt-bindings for a64 mixer0 and tcon-lcd
->>
->> patch 6: a64 DE2 pipeline node addition
->>
->> patch 7 - 8: dt-bindings for a64 HDMI and HDMI PHY
->>
->> patch 9: a64 HDMI nodes addition
->>
->> patch 10 - 11: dt-bindings for a64 mixer1 and tcon-tv
->>
->> patch 12: a64 HDMI pipeline
->>
->> patch 13: enable HDMI out on bananpi-m64
->>
->> Tested HDMI on bananapi-m64 (along with DE2 SRAM C changes from [1]
->> thread), able to detect the HDMI but, no penguins on screen.
->>
->> Request for any suggestions.
->>
->> Test log on Bananpi-m64:
->> [    0.247631] sun4i-drm display-engine: bound 1100000.mixer (ops sun8i_mixer_ops)
->> [    0.256717] sun4i-drm display-engine: bound 1200000.mixer (ops sun8i_mixer_ops)
->> [    0.256783] sun4i-tcon 1c0c000.lcd-controller: Missing LVDS properties, Please upgrade your DT
->> [    0.256792] sun4i-tcon 1c0c000.lcd-controller: LVDS output disabled
->
-> That doesn't seem to work so well for LVDS.
->
->> [    0.257081] sun4i-drm display-engine: No panel or bridge found... RGB output disabled
->> [    0.257099] sun4i-drm display-engine: bound 1c0c000.lcd-controller (ops sun4i_tcon_ops)
->> [    0.257273] sun4i-drm display-engine: No panel or bridge found... RGB output disabled
->> [    0.257288] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops sun4i_tcon_ops)
->> [    0.258176] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller v1.32a with HDCP (sun8i_dw_hdmi_p)
->> [    0.258596] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C bus driver
->> [    0.259188] sun4i-drm display-engine: bound 1ee0000.hdmi (ops sun8i_dw_hdmi_ops)
->> [    0.259199] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
->> [    0.259205] [drm] No driver support for vblank timestamp query.
->> [    0.259308] [drm] Cannot find any crtc or sizes
->
-> A good guess would be that you can't get the EDIDs for some
-> reason. Have you tried forcing a mode to see if the display part
-> already works?
+Em Wed, Apr 25, 2018 at 08:27:31AM -0400, Liang, Kan escreveu:
+> 
+> 
+> On 4/24/2018 3:29 PM, Arnaldo Carvalho de Melo wrote:
+> > Em Tue, Apr 24, 2018 at 03:23:06PM -0400, Liang, Kan escreveu:
+> > > On 4/24/2018 3:17 PM, Arnaldo Carvalho de Melo wrote:
+> > > > Em Tue, Apr 24, 2018 at 11:20:13AM -0700, kan.liang@linux.intel.com escreveu:
+> > > > > From: Kan Liang <kan.liang@linux.intel.com>
+> > > > > 
+> > > > > Perf stat doesn't count the uncore event aliases from the same uncore
+> > > > > block in a group, for example:
+> > > > 
+> > > > This one is not applying to acme/perf/urgent, all the rest I got merged
+> > > > there, the last one with that change from using strstr() to a new bool
+> > > > in perf_evsel for the uniquifying operation having being performed.
+> > > 
+> > > Sure. Thank you for letting me know.
+> > 
+> > Just pushed what I have there,
+> > 
+> 
+> Thanks Arnaldo.
+> 
+> How about this one?
+> Will it be applied to acme/perf/core? Or should I resend it for wider
+> review?
 
-Yes I've forced and used custom EDID with 1024x786 bin and observed
-that the bin is able to load.
+On acme/perf/urgent, please check
 
-[    0.262973] [drm] No driver support for vblank timestamp query.
-[    0.263842] [drm] Got built-in EDID base block and 0 extensions
-from "edid/1024x768.bin" for connector
-
-Jagan.
-
--- 
-Jagan Teki
-Senior Linux Kernel Engineer | Amarula Solutions
-U-Boot, Linux | Upstream Maintainer
-Hyderabad, India.
+[acme@seventh perf]$ patch -p1 < /wb/1.patch 
+patching file tools/perf/util/evsel.h
+Hunk #1 succeeded at 127 (offset 1 line).
+patching file tools/perf/util/parse-events.c
+patching file tools/perf/util/parse-events.h
+patching file tools/perf/util/parse-events.y
+Hunk #3 FAILED at 232.
+1 out of 4 hunks FAILED -- saving rejects to file tools/perf/util/parse-events.y.rej
+[acme@seventh perf]$ cat tools/perf/util/parse-events.y.rej
+--- tools/perf/util/parse-events.y
++++ tools/perf/util/parse-events.y
+@@ -232,7 +232,7 @@ PE_NAME opt_event_config
+ 		YYABORT;
+ 
+ 	ALLOC_LIST(list);
+-	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
++	if (parse_events_add_pmu(_parse_state, list, $1, $2, false, false)) {
+ 		struct perf_pmu *pmu = NULL;
+ 		int ok = 0;
+ 		char *pattern;
+[acme@seventh perf]$
