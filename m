@@ -1,80 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754836AbeDYPA4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 11:00:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753571AbeDYPAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 11:00:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED4621835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AIpwx49Idq8XrVvWgqwM4M3lJoLmunTazcMEMq/wER/TU1zLdGKV0qgfLMw7ztC6MGrkac1cUdByiFg1SaOHAVwlTzA=
+        id S1754868AbeDYPBG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 11:01:06 -0400
+Received: from mail-ot0-f177.google.com ([74.125.82.177]:45812 "EHLO
+        mail-ot0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753571AbeDYPA6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 11:00:58 -0400
+X-Google-Smtp-Source: AB8JxZoBxbnRaQ0gEm8VCyiJOQy0+1FsxpAL6MbOGr0Otnwenuit/ZgDEIq6VaGX2dIOM4wXpaT/Mg==
+Subject: Re: [RFC PATCH v2 3/4] acpi: apei: Do not panic() when correctable
+ errors are marked as fatal.
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
+        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
+        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
+        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com,
+        Yazen Ghannam <yazen.ghannam@amd.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <20180418175415.GJ4795@pd.tnic>
+ <bdc1d19b-3cc1-3f90-d276-414aaacdbd3a@gmail.com>
+ <20180419154006.GE3600@pd.tnic>
+ <977608e6-9f5d-c523-a78a-993ac5bfd55f@gmail.com>
+ <20180419164528.GD5635@pd.tnic>
+ <ffe6b459-c80a-d3c0-451d-0d21ae63da54@gmail.com>
+ <20180419190323.GF5635@pd.tnic>
+ <dba07329-2f85-2bde-85ea-5bdf26fb8df2@gmail.com>
+ <20180422104849.GA32754@pd.tnic>
+ <70c43399-e8e5-5061-b5a5-451deb5f02fa@gmail.com>
+ <20180425140108.GA2597@pd.tnic>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <48944beb-4e29-05cc-857b-7698e3dbe89b@gmail.com>
+Date: Wed, 25 Apr 2018 10:00:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com>
-References: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 25 Apr 2018 10:00:31 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ6Avm+zPRd40aUq=BWFE45xQpaOWG-8d5d8+dqJZCZaQ@mail.gmail.com>
-Message-ID: <CAL_JsqJ6Avm+zPRd40aUq=BWFE45xQpaOWG-8d5d8+dqJZCZaQ@mail.gmail.com>
-Subject: Re: Lack of suspend/resume/shutdown ordering between GPIO providers
- and consumers
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Joseph Lo <josephl@nvidia.com>, Doug Berger <opendmb@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180425140108.GA2597@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 5:58 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> Hi Linus, Rafael, all
->
-> Our GPIO controller driver: gpio-brcmstb.c has a shutdown callback which
-> gets invoked when the system is brought into poweroff aka S5. So far so
-> good, except that we also wish to use gpio_keys.c as a possible wake-up
-> source, so we may have a number of GPIO pins declared as gpio-keys that
-> allow the system to wake-up from deep slumber.
->
-> Recently we noticed that we could easily get into a state where
-> gpio-brcmstb.c::brcmstb_gpio_shutdown() gets called first, and then
-> gpio_keys.c::gpio_keys_suspend() gets called later, which is too late to
-> have the enable_irq_wake() call do anything sensible since we have
-> suspend its parent interrupt controller before. This is completely
-> expected unfortunately because these two drivers are both platform
-> device instances with no connection to one another except via Device
-> Tree and the use of the GPIOLIB APIs.
->
-> First solution is to make sure that gpio-keys nodes are declared in
-> Device Tree *before* the GPIO controller. This works because Device Tree
-> nodes are probed in the order in which they are declared in Device Tree
-> and that directly influences the order in which platform devices are
-> created. Problem with that is that this is easy to miss and it may not
-> work with overlays, kexec reconstructing DT etc. etc.
 
-I'm going to make of_platform_populate randomize the order it creates devices...
 
-> Another possible solution would be have the GPIO controller nodes have
-> the GPIO consumers nodes such as gpio-keys, gpio-leds etc., and that
-> would allow the Linux device driver model to create an appropriate
-> child/parent relationship. This would unfortunately require Device Tree
-> changes everywhere to make that consistent, and it would be a special
-> case, because not all GPIO consumers are eligible as child nodes of
-> their parent GPIO controller, there are plenty of other consumers that
-> are not suitable for being moved under a parent GPIO controller node.
-> This would also mean that we need to "probe" GPIO controller nodes to
-> populate their child nodes (e.g: of_platform_bus_populate).
->
-> I am thinking a more generic solution might involve some more complex
-> tracking of the provider <-> consumer, but there is room for breakage.
+On 04/25/2018 09:01 AM, Borislav Petkov wrote:
+> On Mon, Apr 23, 2018 at 11:19:25PM -0500, Alex G. wrote:
+>> That tells you what FFS said about the error.
+> 
+> I betcha those status and command values have a human-readable counterparts.
+> 
+> Btw, what do you abbreviate with "FFS"?
 
-That's what device connections are for. It probably just needs the
-GPIO core to create the links. (but I've not looked into it at all).
+Firmware-first.
 
-Rob
+>> It's immediately obvious if there's a glaring FFS bug and if we get bogus
+>> data. If you distrust firmware as much as I do, then you will find great
+>> value in having such info in the logs. It's probably not too useful to a
+>> casual user, but then neither is a majority of the system log.
+> 
+> No no, you're missing the point - I *want* all data in the error log
+> which helps debug a hardware issue. I just want it humanly readable so
+> that I don't have to jot down the values and go scour the manuals to map
+> what it actually means.
+
+We could probably use more of the native AER print functions, but that's
+beyond the scope of this patch. I tried something like this [1], but
+have given up following the PCI maintainer's radio silence. I don't care
+_that_ much about the log format.
+
+[1] http://www.spinics.net/lists/linux-pci/msg71422.html
+
+>> You're missing the timing and assuming you will get the hotplug interrupt.
+>> In this example, you have 22ms between the link down and presence detect
+>> state change. This is a fairly fast removal.
+>>
+>> Hotplug dependencies aside (you can have the kernel run without PCIe hotplug
+>> support), I don't think you want to just linger in NMI for dozens of
+>> milliseconds waiting for presence detect confirmation.
+> 
+> No, I don't mean that. I mean something like deferred processing:
+
+Like the exact thing that this patch series implements? :)
+
+> you
+> get an error, you notice it is a device which supports physical removal
+> so you exit the NMI handler and process the error in normal, process
+> context which allows you to query the device and say, "Hey device, are
+> you still there?"
+
+Like the exact way the AER handler works?
+
+> If it is not, you drop all the hw I/O errors reported for it.
+
+Like the PCI error recovery mechanisms that AER invokes?
+
+> Hmmm?
+Hmmm
