@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756539AbeDYS2Z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:28:25 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:45593 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756448AbeDYS2T (ORCPT
+        id S1756549AbeDYS2n (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:28:43 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:40817 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756307AbeDYS2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:28:19 -0400
-X-Google-Smtp-Source: AB8JxZoCQsMEEh403+wrdFC1gjfuGJaJrLjc2IiKAifYyEUQS+ui219PoEryTERwHGJFJGyVc4UtWA==
+        Wed, 25 Apr 2018 14:28:16 -0400
+X-Google-Smtp-Source: AIpwx4+EWz5bryOF1a7y+QS3J2AWgVlyQ3re5QHUv9utzSsx9/p9ckNYOXCRPn3lFKK+Er8HBsvl5g==
 From: Kamal Dasu <kdasu.kdev@gmail.com>
 To: broonie@kernel.org, linux-spi@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc: f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
         jon.mason@broadcom.com, yendapally.reddy@broadcom.com,
         Kamal Dasu <kdasu.kdev@gmail.com>
-Subject: [PATCH v1 2/2] spi: bcm-qspi: Always change BSPI_MAST_N_BOOT_CTRL state
-Date: Wed, 25 Apr 2018 14:28:05 -0400
-Message-Id: <1524680885-4600-3-git-send-email-kdasu.kdev@gmail.com>
+Subject: [PATCH v1 1/2] spi: bcm-qspi: Avoid setting MSPI_CDRAM_PCS for spi-nor master
+Date: Wed, 25 Apr 2018 14:28:04 -0400
+Message-Id: <1524680885-4600-2-git-send-email-kdasu.kdev@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524680885-4600-1-git-send-email-kdasu.kdev@gmail.com>
 References: <1524680885-4600-1-git-send-email-kdasu.kdev@gmail.com>
@@ -24,35 +24,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Always confirm the BSPI_MAST_N_BOOT_CTRL bit when enabling
-or disabling BSPI transfers.
+Added fix for probing of spi-nor device non-zero chip selects. Set
+MSPI_CDRAM_PCS (peripheral chip select) with spi master for MSPI
+controller and not for MSPI/BSPI spi-nor master controller. Ensure
+setting of cs bit in chip select register on chip select change.
 
 Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
 ---
- drivers/spi/spi-bcm-qspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-bcm-qspi.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
-index 2946989..6573152 100644
+index 1596d35..2946989 100644
 --- a/drivers/spi/spi-bcm-qspi.c
 +++ b/drivers/spi/spi-bcm-qspi.c
-@@ -490,7 +490,7 @@ static int bcm_qspi_bspi_set_mode(struct bcm_qspi *qspi,
+@@ -519,16 +519,19 @@ static void bcm_qspi_disable_bspi(struct bcm_qspi *qspi)
  
- static void bcm_qspi_enable_bspi(struct bcm_qspi *qspi)
+ static void bcm_qspi_chip_select(struct bcm_qspi *qspi, int cs)
  {
--	if (!has_bspi(qspi) || (qspi->bspi_enabled))
-+	if (!has_bspi(qspi))
- 		return;
+-	u32 data = 0;
++	u32 rd = 0;
++	u32 wr = 0;
  
- 	qspi->bspi_enabled = 1;
-@@ -505,7 +505,7 @@ static void bcm_qspi_enable_bspi(struct bcm_qspi *qspi)
+-	if (qspi->curr_cs == cs)
+-		return;
+ 	if (qspi->base[CHIP_SELECT]) {
+-		data = bcm_qspi_read(qspi, CHIP_SELECT, 0);
+-		data = (data & ~0xff) | (1 << cs);
+-		bcm_qspi_write(qspi, CHIP_SELECT, 0, data);
++		rd = bcm_qspi_read(qspi, CHIP_SELECT, 0);
++		wr = (rd & ~0xff) | (1 << cs);
++		if (rd == wr)
++			return;
++		bcm_qspi_write(qspi, CHIP_SELECT, 0, wr);
+ 		usleep_range(10, 20);
+ 	}
++
++	dev_dbg(&qspi->pdev->dev, "using cs:%d\n", cs);
+ 	qspi->curr_cs = cs;
+ }
  
- static void bcm_qspi_disable_bspi(struct bcm_qspi *qspi)
- {
--	if (!has_bspi(qspi) || (!qspi->bspi_enabled))
-+	if (!has_bspi(qspi))
- 		return;
+@@ -755,8 +758,13 @@ static int write_to_hw(struct bcm_qspi *qspi, struct spi_device *spi)
+ 			dev_dbg(&qspi->pdev->dev, "WR %04x\n", val);
+ 		}
+ 		mspi_cdram = MSPI_CDRAM_CONT_BIT;
+-		mspi_cdram |= (~(1 << spi->chip_select) &
+-			       MSPI_CDRAM_PCS);
++
++		if (has_bspi(qspi))
++			mspi_cdram &= ~1;
++		else
++			mspi_cdram |= (~(1 << spi->chip_select) &
++				       MSPI_CDRAM_PCS);
++
+ 		mspi_cdram |= ((tp.trans->bits_per_word <= 8) ? 0 :
+ 				MSPI_CDRAM_BITSE_BIT);
  
- 	qspi->bspi_enabled = 0;
 -- 
 2.7.4
