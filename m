@@ -1,107 +1,327 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756319AbeDYTqP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 15:46:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59865 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751084AbeDYTqO (ORCPT
+        id S1756394AbeDYTrv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 15:47:51 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:47101 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeDYTrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 15:46:14 -0400
-Date: Wed, 25 Apr 2018 12:45:49 -0700
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-4e949e9b9d1e3edcdab3b54656c5851bd9e49c67@git.kernel.org>
-Cc: mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, kan.liang@linux.intel.com, hpa@zytor.com
-Reply-To: hpa@zytor.com, kan.liang@linux.intel.com, tglx@linutronix.de,
-        peterz@infradead.org, linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <1524682637-63219-1-git-send-email-kan.liang@linux.intel.com>
-References: <1524682637-63219-1-git-send-email-kan.liang@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/x86/intel: Don't enable freeze-on-smi for
- PerfMon V1
-Git-Commit-ID: 4e949e9b9d1e3edcdab3b54656c5851bd9e49c67
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 25 Apr 2018 15:47:47 -0400
+X-Google-Smtp-Source: AB8JxZqRG/PEGZbHWN56wWli7CqFB/tIvZXXgLdnpzvPPs7mW9uSflEjHn5rp24E0eybLtdDf0BWrg==
+From: "Jingoo Han" <jingoohan1@gmail.com>
+To: "'Jan Kiszka'" <jan.kiszka@siemens.com>,
+        "'Bjorn Helgaas'" <bhelgaas@google.com>,
+        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Cc: "'Joao Pinto'" <Joao.Pinto@synopsys.com>,
+        "'Lorenzo Pieralisi'" <lorenzo.pieralisi@arm.com>
+References: <cover.1524582822.git.jan.kiszka@siemens.com> <d76c32d535bb555076b3f7c010a6856ac97bbdae.1524582822.git.jan.kiszka@siemens.com>
+In-Reply-To: <d76c32d535bb555076b3f7c010a6856ac97bbdae.1524582822.git.jan.kiszka@siemens.com>
+Subject: Re: [PATCH 4/6] PCI: Convert of_pci_get_host_bridge_resources users to devm variant
+Date: Wed, 25 Apr 2018 15:47:44 -0400
+Message-ID: <000001d3dcce$48284a10$d878de30$@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-language: en-us
+Thread-Index: AQLCyUGf+pkn6FeD4OB2aWVwvljqdgF68uJHoigyL0A=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4e949e9b9d1e3edcdab3b54656c5851bd9e49c67
-Gitweb:     https://git.kernel.org/tip/4e949e9b9d1e3edcdab3b54656c5851bd9e49c67
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Wed, 25 Apr 2018 14:57:17 -0400
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 25 Apr 2018 21:41:22 +0200
 
-perf/x86/intel: Don't enable freeze-on-smi for PerfMon V1
 
-The SMM freeze feature was introduced since PerfMon V2. But the current
-code unconditionally enables the feature for all platforms. It can
-generate #GP exception, if the related FREEZE_WHILE_SMM bit is set for
-the machine with PerfMon V1.
+> -----Original Message-----
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> Sent: Tuesday, April 24, 2018 11:14 AM
+> To: Bjorn Helgaas <bhelgaas@google.com>; Linux Kernel Mailing List <linux-
+> kernel@vger.kernel.org>; linux-pci@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Cc: Jingoo Han <jingoohan1@gmail.com>; Joao Pinto
+> <Joao.Pinto@synopsys.com>; Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Subject: [PATCH 4/6] PCI: Convert of_pci_get_host_bridge_resources users
+> to devm variant
+> 
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> Straightforward for all of them, no more leaks afterwards.
+> 
+> CC: Jingoo Han <jingoohan1@gmail.com>
 
-To disable the feature for PerfMon V1, perf needs to
-- Remove the freeze_on_smi sysfs entry by moving intel_pmu_attrs to
-  intel_pmu, which is only applied to PerfMon V2 and later.
-- Check the PerfMon version before flipping the SMM bit when starting CPU
+For drivers/pci/dwc/pcie-designware-host.c,
 
-Fixes: 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: ak@linux.intel.com
-Cc: eranian@google.com
-Cc: acme@redhat.com
-Link: https://lkml.kernel.org/r/1524682637-63219-1-git-send-email-kan.liang@linux.intel.com
+Acked-by: Jingoo Han <jingoo1han@gmail.com>
 
----
- arch/x86/events/intel/core.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Best regards,
+Jingoo Han
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 607bf565a90c..707b2a96e516 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3339,7 +3339,8 @@ static void intel_pmu_cpu_starting(int cpu)
- 
- 	cpuc->lbr_sel = NULL;
- 
--	flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
-+	if (x86_pmu.version > 1)
-+		flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
- 
- 	if (!cpuc->shared_regs)
- 		return;
-@@ -3502,6 +3503,8 @@ static __initconst const struct x86_pmu core_pmu = {
- 	.cpu_dying		= intel_pmu_cpu_dying,
- };
- 
-+static struct attribute *intel_pmu_attrs[];
-+
- static __initconst const struct x86_pmu intel_pmu = {
- 	.name			= "Intel",
- 	.handle_irq		= intel_pmu_handle_irq,
-@@ -3533,6 +3536,8 @@ static __initconst const struct x86_pmu intel_pmu = {
- 	.format_attrs		= intel_arch3_formats_attr,
- 	.events_sysfs_show	= intel_event_sysfs_show,
- 
-+	.attrs			= intel_pmu_attrs,
-+
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-@@ -3911,8 +3916,6 @@ __init int intel_pmu_init(void)
- 
- 	x86_pmu.max_pebs_events		= min_t(unsigned, MAX_PEBS_EVENTS, x86_pmu.num_counters);
- 
--
--	x86_pmu.attrs			= intel_pmu_attrs;
- 	/*
- 	 * Quirk: v2 perfmon does not report fixed-purpose events, so
- 	 * assume at least 3 events, when not running in a hypervisor:
+> CC: Joao Pinto <Joao.Pinto@synopsys.com>
+> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  drivers/pci/dwc/pcie-designware-host.c | 2 +-
+>  drivers/pci/host/pci-aardvark.c        | 5 ++---
+>  drivers/pci/host/pci-ftpci100.c        | 4 ++--
+>  drivers/pci/host/pci-v3-semi.c         | 3 ++-
+>  drivers/pci/host/pci-versatile.c       | 3 +--
+>  drivers/pci/host/pci-xgene.c           | 3 ++-
+>  drivers/pci/host/pcie-altera.c         | 5 ++---
+>  drivers/pci/host/pcie-iproc-platform.c | 4 ++--
+>  drivers/pci/host/pcie-rcar.c           | 5 ++---
+>  drivers/pci/host/pcie-rockchip.c       | 4 ++--
+>  drivers/pci/host/pcie-xilinx-nwl.c     | 4 ++--
+>  drivers/pci/host/pcie-xilinx.c         | 4 ++--
+>  drivers/pci/of.c                       | 4 ++--
+>  13 files changed, 24 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/pci/dwc/pcie-designware-host.c
+> b/drivers/pci/dwc/pcie-designware-host.c
+> index 6c409079d514..a8f6ab54b4c0 100644
+> --- a/drivers/pci/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/dwc/pcie-designware-host.c
+> @@ -342,7 +342,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
+>  	if (!bridge)
+>  		return -ENOMEM;
+> 
+> -	ret = of_pci_get_host_bridge_resources(np, 0, 0xff,
+> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+>  					&bridge->windows, &pp->io_base);
+>  	if (ret)
+>  		return ret;
+> diff --git a/drivers/pci/host/pci-aardvark.c b/drivers/pci/host/pci-
+> aardvark.c
+> index b04d37b3c5de..709f0d69e35b 100644
+> --- a/drivers/pci/host/pci-aardvark.c
+> +++ b/drivers/pci/host/pci-aardvark.c
+> @@ -815,14 +815,13 @@ static int
+> advk_pcie_parse_request_of_pci_ranges(struct advk_pcie *pcie)
+>  {
+>  	int err, res_valid = 0;
+>  	struct device *dev = &pcie->pdev->dev;
+> -	struct device_node *np = dev->of_node;
+>  	struct resource_entry *win, *tmp;
+>  	resource_size_t iobase;
+> 
+>  	INIT_LIST_HEAD(&pcie->resources);
+> 
+> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie-
+> >resources,
+> -					       &iobase);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+> +						    &pcie->resources,
+&iobase);
+>  	if (err)
+>  		return err;
+> 
+> diff --git a/drivers/pci/host/pci-ftpci100.c b/drivers/pci/host/pci-
+> ftpci100.c
+> index 5008fd87956a..87748eaeaaed 100644
+> --- a/drivers/pci/host/pci-ftpci100.c
+> +++ b/drivers/pci/host/pci-ftpci100.c
+> @@ -476,8 +476,8 @@ static int faraday_pci_probe(struct platform_device
+> *pdev)
+>  	if (IS_ERR(p->base))
+>  		return PTR_ERR(p->base);
+> 
+> -	ret = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff,
+> -					       &res, &io_base);
+> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+> +						    &res, &io_base);
+>  	if (ret)
+>  		return ret;
+> 
+> diff --git a/drivers/pci/host/pci-v3-semi.c b/drivers/pci/host/pci-v3-
+> semi.c
+> index 0a4dea796663..167bf6f6b378 100644
+> --- a/drivers/pci/host/pci-v3-semi.c
+> +++ b/drivers/pci/host/pci-v3-semi.c
+> @@ -791,7 +791,8 @@ static int v3_pci_probe(struct platform_device *pdev)
+>  	if (IS_ERR(v3->config_base))
+>  		return PTR_ERR(v3->config_base);
+> 
+> -	ret = of_pci_get_host_bridge_resources(np, 0, 0xff, &res, &io_base);
+> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
+> +						    &io_base);
+>  	if (ret)
+>  		return ret;
+> 
+> diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-
+> versatile.c
+> index 5b3876f5312b..ff2cd12b3978 100644
+> --- a/drivers/pci/host/pci-versatile.c
+> +++ b/drivers/pci/host/pci-versatile.c
+> @@ -64,11 +64,10 @@ static int
+> versatile_pci_parse_request_of_pci_ranges(struct device *dev,
+>  						     struct list_head *res)
+>  {
+>  	int err, mem = 1, res_valid = 0;
+> -	struct device_node *np = dev->of_node;
+>  	resource_size_t iobase;
+>  	struct resource_entry *win, *tmp;
+> 
+> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, res, &iobase);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, res,
+> &iobase);
+>  	if (err)
+>  		return err;
+> 
+> diff --git a/drivers/pci/host/pci-xgene.c b/drivers/pci/host/pci-xgene.c
+> index 0a0d7ee6d3c9..7b3ed6e34b6c 100644
+> --- a/drivers/pci/host/pci-xgene.c
+> +++ b/drivers/pci/host/pci-xgene.c
+> @@ -632,7 +632,8 @@ static int xgene_pcie_probe(struct platform_device
+> *pdev)
+>  	if (ret)
+>  		return ret;
+> 
+> -	ret = of_pci_get_host_bridge_resources(dn, 0, 0xff, &res, &iobase);
+> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
+> +						    &iobase);
+>  	if (ret)
+>  		return ret;
+> 
+> diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-
+> altera.c
+> index a6af62e0256d..49410c7ba0cc 100644
+> --- a/drivers/pci/host/pcie-altera.c
+> +++ b/drivers/pci/host/pcie-altera.c
+> @@ -488,11 +488,10 @@ static int
+> altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
+>  {
+>  	int err, res_valid = 0;
+>  	struct device *dev = &pcie->pdev->dev;
+> -	struct device_node *np = dev->of_node;
+>  	struct resource_entry *win;
+> 
+> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie-
+> >resources,
+> -					       NULL);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff
+> +						    &pcie->resources, NULL);
+>  	if (err)
+>  		return err;
+> 
+> diff --git a/drivers/pci/host/pcie-iproc-platform.c
+> b/drivers/pci/host/pcie-iproc-platform.c
+> index e764a2a2693c..99c2022813e4 100644
+> --- a/drivers/pci/host/pcie-iproc-platform.c
+> +++ b/drivers/pci/host/pcie-iproc-platform.c
+> @@ -99,8 +99,8 @@ static int iproc_pcie_pltfm_probe(struct platform_device
+> *pdev)
+>  		pcie->phy = NULL;
+>  	}
+> 
+> -	ret = of_pci_get_host_bridge_resources(np, 0, 0xff, &resources,
+> -					       &iobase);
+> +	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+> &resources,
+> +						    &iobase);
+>  	if (ret) {
+>  		dev_err(dev, "unable to get PCI host bridge resources\n");
+>  		return ret;
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index 6ab28f29ac6a..6eb36c924983 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -1067,12 +1067,11 @@ static int
+> rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
+>  {
+>  	int err;
+>  	struct device *dev = pci->dev;
+> -	struct device_node *np = dev->of_node;
+>  	resource_size_t iobase;
+>  	struct resource_entry *win, *tmp;
+> 
+> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources,
+> -					       &iobase);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+> +						    &pci->resources,
+&iobase);
+>  	if (err)
+>  		return err;
+> 
+> diff --git a/drivers/pci/host/pcie-rockchip.c b/drivers/pci/host/pcie-
+> rockchip.c
+> index f1e8f97ea1fb..27b97fcddf15 100644
+> --- a/drivers/pci/host/pcie-rockchip.c
+> +++ b/drivers/pci/host/pcie-rockchip.c
+> @@ -1560,8 +1560,8 @@ static int rockchip_pcie_probe(struct
+> platform_device *pdev)
+>  	if (err < 0)
+>  		goto err_deinit_port;
+> 
+> -	err = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff,
+> -					       &res, &io_base);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+> +						    &res, &io_base);
+>  	if (err)
+>  		goto err_remove_irq_domain;
+> 
+> diff --git a/drivers/pci/host/pcie-xilinx-nwl.c b/drivers/pci/host/pcie-
+> xilinx-nwl.c
+> index 4839ae578711..64df768c795c 100644
+> --- a/drivers/pci/host/pcie-xilinx-nwl.c
+> +++ b/drivers/pci/host/pcie-xilinx-nwl.c
+> @@ -825,7 +825,6 @@ static const struct of_device_id nwl_pcie_of_match[] =
+> {
+>  static int nwl_pcie_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct device_node *node = dev->of_node;
+>  	struct nwl_pcie *pcie;
+>  	struct pci_bus *bus;
+>  	struct pci_bus *child;
+> @@ -855,7 +854,8 @@ static int nwl_pcie_probe(struct platform_device
+*pdev)
+>  		return err;
+>  	}
+> 
+> -	err = of_pci_get_host_bridge_resources(node, 0, 0xff, &res,
+> &iobase);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
+> +						    &iobase);
+>  	if (err) {
+>  		dev_err(dev, "Getting bridge resources failed\n");
+>  		return err;
+> diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-
+> xilinx.c
+> index 0ad188effc09..88c96e5669e0 100644
+> --- a/drivers/pci/host/pcie-xilinx.c
+> +++ b/drivers/pci/host/pcie-xilinx.c
+> @@ -643,8 +643,8 @@ static int xilinx_pcie_probe(struct platform_device
+> *pdev)
+>  		return err;
+>  	}
+> 
+> -	err = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff, &res,
+> -					       &iobase);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
+> +						    &iobase);
+>  	if (err) {
+>  		dev_err(dev, "Getting bridge resources failed\n");
+>  		return err;
+> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> index 6eab0bde2ab3..4f816c93e562 100644
+> --- a/drivers/pci/of.c
+> +++ b/drivers/pci/of.c
+> @@ -626,12 +626,12 @@ int pci_parse_request_of_pci_ranges(struct device
+> *dev,
+>  				    struct resource **bus_range)
+>  {
+>  	int err, res_valid = 0;
+> -	struct device_node *np = dev->of_node;
+>  	resource_size_t iobase;
+>  	struct resource_entry *win, *tmp;
+> 
+>  	INIT_LIST_HEAD(resources);
+> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, resources,
+> &iobase);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, resources,
+> +						    &iobase);
+>  	if (err)
+>  		return err;
+> 
+> --
+> 2.13.6
