@@ -1,75 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754730AbeDYPE1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 11:04:27 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47378 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753632AbeDYPEZ (ORCPT
+        id S1754740AbeDYPGr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 11:06:47 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:4958 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754567AbeDYPGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 11:04:25 -0400
-From: Colin King <colin.king@canonical.com>
-To: Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: smiapp: fix timeout checking in smiapp_read_nvm
-Date: Wed, 25 Apr 2018 16:04:21 +0100
-Message-Id: <20180425150421.30184-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 25 Apr 2018 11:06:46 -0400
+Date: Wed, 25 Apr 2018 20:36:36 +0530
+From: Ganesh Goudar <ganeshgr@chelsio.com>
+To: linux-firmware@kernel.org
+Cc: linux-kernel@vger.kernel.org, nirranjan@chelsio.com,
+        indranil@chelsio.com, arjun@chelsio.com, venkatesh@chelsio.com
+Subject: pull request: linux-firmware: update cxgb4 firmware
+Message-ID: <20180425150635.GA4753@chelsio.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi,
 
-The current code decrements the timeout counter i and the end of
-each loop i is incremented, so the check for timeout will always
-be false and hence the timeout mechanism is just a dead code path.
-Potentially, if the RD_READY bit is not set, we could end up in
-an infinite loop.
+Kindly pull the new firmware from the following URL.
+git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
 
-Fix this so the timeout starts from 1000 and decrements to zero,
-if at the end of the loop i is zero we have a timeout condition.
+Thanks
+Ganesh
 
-Detected by CoverityScan, CID#1324008 ("Logically dead code")
+The following changes since commit 0caed67f661bfa9552b636d1e4af379eda75ed67:
 
-Fixes: ccfc97bdb5ae ("[media] smiapp: Add driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/i2c/smiapp/smiapp-core.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+  cxgb4: update firmware to revision 1.19.1.0 (2018-04-25 07:48:21 -0700)
 
-diff --git a/drivers/media/i2c/smiapp/smiapp-core.c b/drivers/media/i2c/smiapp/smiapp-core.c
-index 3b7ace395ee6..e1f8208581aa 100644
---- a/drivers/media/i2c/smiapp/smiapp-core.c
-+++ b/drivers/media/i2c/smiapp/smiapp-core.c
-@@ -1001,7 +1001,7 @@ static int smiapp_read_nvm(struct smiapp_sensor *sensor,
- 		if (rval)
- 			goto out;
- 
--		for (i = 0; i < 1000; i++) {
-+		for (i = 1000; i > 0; i--) {
- 			rval = smiapp_read(
- 				sensor,
- 				SMIAPP_REG_U8_DATA_TRANSFER_IF_1_STATUS, &s);
-@@ -1012,11 +1012,10 @@ static int smiapp_read_nvm(struct smiapp_sensor *sensor,
- 			if (s & SMIAPP_DATA_TRANSFER_IF_1_STATUS_RD_READY)
- 				break;
- 
--			if (--i == 0) {
--				rval = -ETIMEDOUT;
--				goto out;
--			}
--
-+		}
-+		if (!i) {
-+			rval = -ETIMEDOUT;
-+			goto out;
- 		}
- 
- 		for (i = 0; i < SMIAPP_NVM_PAGE_SIZE; i++) {
--- 
-2.17.0
+are available in the git repository at:
+
+  git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
+
+for you to fetch changes up to 0caed67f661bfa9552b636d1e4af379eda75ed67:
+
+  cxgb4: update firmware to revision 1.19.1.0 (2018-04-25 07:48:21 -0700)
+
+----------------------------------------------------------------
