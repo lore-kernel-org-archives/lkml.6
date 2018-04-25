@@ -1,188 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751436AbeDYGfC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 02:35:02 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:54597 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeDYGfA (ORCPT
+        id S1751469AbeDYGfe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:35:34 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:38341 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751064AbeDYGfb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 02:35:00 -0400
-X-Google-Smtp-Source: AIpwx4/OU8mctMyOX7CaQkZZiwMd1A2YHOAa/zp6fCnXMUYFk7B4Vfbb2dpBi9X253TrR4ENRyBOOw==
-Date: Wed, 25 Apr 2018 08:34:55 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: Dongwon Kim <dongwon.kim@intel.com>, jgross@suse.com,
-        Artem Mygaiev <Artem_Mygaiev@epam.com>, Wei Liu <wei.liu2@citrix.com>,
-        konrad.wilk@oracle.com, airlied@linux.ie,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
-        boris.ostrovsky@oracle.com,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
- DRM driver
-Message-ID: <20180425063455.GH25142@phenom.ffwll.local>
-Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        Dongwon Kim <dongwon.kim@intel.com>, jgross@suse.com,
-        Artem Mygaiev <Artem_Mygaiev@epam.com>,
-        Wei Liu <wei.liu2@citrix.com>, konrad.wilk@oracle.com,
-        airlied@linux.ie,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
-        boris.ostrovsky@oracle.com,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-References: <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
- <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
- <20180420071914.GG31310@phenom.ffwll.local>
- <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
- <20180423115242.ywdwqblj2aseu3fr@citrix.com>
- <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
- <20180424115437.GT31310@phenom.ffwll.local>
- <18ab5f76-00b0-42a0-fcb8-e0cbf4cdd527@gmail.com>
- <20180424203514.GA26787@downor-Z87X-UD5H>
- <43bc755f-3e31-6841-0962-542c42515f88@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <43bc755f-3e31-6841-0962-542c42515f88@gmail.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 25 Apr 2018 02:35:31 -0400
+X-Google-Smtp-Source: AIpwx49burZFE0dxtYMxjtzjiuKtXuZyJOVErcBUXC++R95Oy/GTGjPuMgK/KBcfvLoTCloGq+ILNg==
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: catalin.marinas@arm.com, will.deacon@arm.com,
+        ard.biesheuvel@linaro.org
+Cc: bhsharma@redhat.com, dyoung@redhat.com, james.morse@arm.com,
+        al.stone@linaro.org, graeme.gregory@linaro.org, hanjun.guo@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [RESEND PATCH] arm64: acpi,efi: fix alignment fault in accessing ACPI tables at kdump
+Date: Wed, 25 Apr 2018 15:35:27 +0900
+Message-Id: <20180425063527.29763-1-takahiro.akashi@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 09:07:07AM +0300, Oleksandr Andrushchenko wrote:
-> On 04/24/2018 11:35 PM, Dongwon Kim wrote:
-> > Had a meeting with Daniel and talked about bringing out generic
-> > part of hyper-dmabuf to the userspace, which means we most likely
-> > reuse IOCTLs defined in xen-zcopy for our use-case if we follow
-> > his suggestion.
-> I will still have kernel side API, so backends/frontends implemented
-> in the kernel can access that functionality as well.
-> > 
-> > So assuming we use these IOCTLs as they are,
-> > Several things I would like you to double-check..
-> > 
-> > 1. returning gref as is to the user space is still unsafe because
-> > it is a constant, easy to guess and any process that hijacks it can easily
-> > exploit the buffer. So I am wondering if it's possible to keep dmabuf-to
-> > -gref or gref-to-dmabuf in kernel space and add other layers on top
-> > of those in actual IOCTLs to add some safety.. We introduced flink like
-> > hyper_dmabuf_id including random number but many says even that is still
-> > not safe.
-> Yes, it is generally unsafe. But even if we have implemented
-> the approach you have in hyper-dmabuf or similar, what stops
-> malicious software from doing the same with the existing gntdev UAPI?
-> No need to brute force new UAPI if there is a simpler one.
-> That being said, I'll put security aside at the first stage,
-> but of course we can start investigating ways to improve
-> (I assume you already have use-cases where security issues must
-> be considered, so, probably you can tell more on what was investigated
-> so far).
+This is a fix against the issue that crash dump kernel may hang up
+during booting, which can happen on any ACPI-based system with "ACPI
+Reclaim Memory."
 
-Maybe a bit more context here:
+(kernel messages after panic kicked off kdump)
+	   (snip...)
+	Bye!
+	   (snip...)
+	ACPI: Core revision 20170728
+	pud=000000002e7d0003, *pmd=000000002e7c0003, *pte=00e8000039710707
+	Internal error: Oops: 96000021 [#1] SMP
+	Modules linked in:
+	CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.14.0-rc6 #1
+	task: ffff000008d05180 task.stack: ffff000008cc0000
+	PC is at acpi_ns_lookup+0x25c/0x3c0
+	LR is at acpi_ds_load1_begin_op+0xa4/0x294
+	   (snip...)
+	Process swapper/0 (pid: 0, stack limit = 0xffff000008cc0000)
+	Call trace:
+	   (snip...)
+	[<ffff0000084a6764>] acpi_ns_lookup+0x25c/0x3c0
+	[<ffff00000849b4f8>] acpi_ds_load1_begin_op+0xa4/0x294
+	[<ffff0000084ad4ac>] acpi_ps_build_named_op+0xc4/0x198
+	[<ffff0000084ad6cc>] acpi_ps_create_op+0x14c/0x270
+	[<ffff0000084acfa8>] acpi_ps_parse_loop+0x188/0x5c8
+	[<ffff0000084ae048>] acpi_ps_parse_aml+0xb0/0x2b8
+	[<ffff0000084a8e10>] acpi_ns_one_complete_parse+0x144/0x184
+	[<ffff0000084a8e98>] acpi_ns_parse_table+0x48/0x68
+	[<ffff0000084a82cc>] acpi_ns_load_table+0x4c/0xdc
+	[<ffff0000084b32f8>] acpi_tb_load_namespace+0xe4/0x264
+	[<ffff000008baf9b4>] acpi_load_tables+0x48/0xc0
+	[<ffff000008badc20>] acpi_early_init+0x9c/0xd0
+	[<ffff000008b70d50>] start_kernel+0x3b4/0x43c
+	Code: b9008fb9 2a000318 36380054 32190318 (b94002c0)
+	---[ end trace c46ed37f9651c58e ]---
+	Kernel panic - not syncing: Fatal exception
+	Rebooting in 10 seconds..
 
-So in graphics we have this old flink approach for buffer sharing with
-processes, and it's unsafe because way too easy to guess the buffer
-handles. And anyone with access to the graphics driver can then import
-that buffer object. We switched to file descriptor passing to make sure
-only the intended recipient can import a buffer.
+(diagnosis)
+* This fault is a data abort, alignment fault (ESR=0x96000021)
+  during reading out ACPI table.
+* Initial ACPI tables are normally stored in system ram and marked as
+  "ACPI Reclaim memory" by the firmware.
+* After the commit f56ab9a5b73c ("efi/arm: Don't mark ACPI reclaim
+  memory as MEMBLOCK_NOMAP"), those regions are differently handled
+  as they are "memblock-reserved", without NOMAP bit.
+* So they are now excluded from device tree's "usable-memory-range"
+  which kexec-tools determines based on a current view of /proc/iomem.
+* When crash dump kernel boots up, it tries to accesses ACPI tables by
+  mapping them with ioremap(), not ioremap_cache(), in acpi_os_ioremap()
+  since they are no longer part of mapped system ram.
+* Given that ACPI accessor/helper functions are compiled in without
+  unaligned access support (ACPI_MISALIGNMENT_NOT_SUPPORTED),
+  any unaligned access to ACPI tables can cause a fatal panic.
 
-So at the vm->vm level it sounds like grefs are safe, because they're only
-for a specific other guest (or sets of guests, not sure about). That means
-security is only within the OS. For that you need to make sure that
-unpriviledge userspace simply can't ever access a gref. If that doesn't
-work out, then I guess we should improve the xen gref stuff to have a more
-secure cookie.
+With this patch, acpi_os_ioremap() always honors a memory attribute
+provided by the firmware (efi). Hence retaining cacheability in said cases
+allows the kernel safe access to ACPI tables.
 
-> > 2. maybe we could take hypervisor-independent process (e.g. SGT<->page)
-> > out of xen-zcopy and put those in a new helper library.
-> I believe this can be done, but at the first stage I would go without
-> that helper library, so it is clearly seen what can be moved to it later
-> (I know that you want to run ACRN as well, but can I run it on ARM? ;)
+Please note that arm_enable_runtime_services(), which is renamed to
+efi_enter_virtual_mode() due to the similarity to x86's, is now called
+earlier before acpi_early_init() since efi_mem_attributes() relies on
+efi.memmap being mapped.
 
-There's already helpers for walking sgtables and adding pages/enumerating
-pages. I don't think we need more.
+Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Suggested-by: James Morse <james.morse@arm.com>
+Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reported-by and Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
+---
+ arch/arm64/include/asm/acpi.h      | 23 ++++++++++++++++-------
+ arch/arm64/kernel/acpi.c           | 11 +++--------
+ drivers/firmware/efi/arm-runtime.c | 15 ++++++---------
+ init/main.c                        |  3 +++
+ 4 files changed, 28 insertions(+), 24 deletions(-)
 
-> > 3. please consider the case where original DMA-BUF's first offset
-> > and last length are not 0 and PAGE_SIZE respectively. I assume current
-> > xen-zcopy only supports page-aligned buffer with PAGE_SIZE x n big.
-> Hm, what is the use-case for that?
-
-dma-buf is always page-aligned. That's a hard constraint of the linux
-dma-buf interface spec.
--Daniel
-
-> > thanks,
-> > DW
-> Thank you,
-> Oleksandr
-> > On Tue, Apr 24, 2018 at 02:59:39PM +0300, Oleksandr Andrushchenko wrote:
-> > > On 04/24/2018 02:54 PM, Daniel Vetter wrote:
-> > > > On Mon, Apr 23, 2018 at 03:10:35PM +0300, Oleksandr Andrushchenko wrote:
-> > > > > On 04/23/2018 02:52 PM, Wei Liu wrote:
-> > > > > > On Fri, Apr 20, 2018 at 02:25:20PM +0300, Oleksandr Andrushchenko wrote:
-> > > > > > > > >       the gntdev.
-> > > > > > > > > 
-> > > > > > > > > I think this is generic enough that it could be implemented by a
-> > > > > > > > > device not tied to Xen. AFAICT the hyper_dma guys also wanted
-> > > > > > > > > something similar to this.
-> > > > > > > > You can't just wrap random userspace memory into a dma-buf. We've just had
-> > > > > > > > this discussion with kvm/qemu folks, who proposed just that, and after a
-> > > > > > > > bit of discussion they'll now try to have a driver which just wraps a
-> > > > > > > > memfd into a dma-buf.
-> > > > > > > So, we have to decide either we introduce a new driver
-> > > > > > > (say, under drivers/xen/xen-dma-buf) or extend the existing
-> > > > > > > gntdev/balloon to support dma-buf use-cases.
-> > > > > > > 
-> > > > > > > Can anybody from Xen community express their preference here?
-> > > > > > > 
-> > > > > > Oleksandr talked to me on IRC about this, he said a few IOCTLs need to
-> > > > > > be added to either existing drivers or a new driver.
-> > > > > > 
-> > > > > > I went through this thread twice and skimmed through the relevant
-> > > > > > documents, but I couldn't see any obvious pros and cons for either
-> > > > > > approach. So I don't really have an opinion on this.
-> > > > > > 
-> > > > > > But, assuming if implemented in existing drivers, those IOCTLs need to
-> > > > > > be added to different drivers, which means userspace program needs to
-> > > > > > write more code and get more handles, it would be slightly better to
-> > > > > > implement a new driver from that perspective.
-> > > > > If gntdev/balloon extension is still considered:
-> > > > > 
-> > > > > All the IOCTLs will be in gntdev driver (in current xen-zcopy terminology):
-> > > I was lazy to change dumb to dma-buf, so put this notice ;)
-> > > > >   - DRM_ICOTL_XEN_ZCOPY_DUMB_FROM_REFS
-> > > > >   - DRM_IOCTL_XEN_ZCOPY_DUMB_TO_REFS
-> > > > >   - DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE
-> > > > s/DUMB/DMA_BUF/ please. This is generic dma-buf, it has nothing to do with
-> > > > the dumb scanout buffer support in the drm/gfx subsystem. This here can be
-> > > > used for any zcopy sharing among guests (as long as your endpoints
-> > > > understands dma-buf, which most relevant drivers do).
-> > > Of course, please see above
-> > > > -Daniel
-> > > > 
-> > > > > Balloon driver extension, which is needed for contiguous/DMA
-> > > > > buffers, will be to provide new *kernel API*, no UAPI is needed.
-> > > > > 
-> > > > > > Wei.
-> > > > > Thank you,
-> > > > > Oleksandr
-> > > > > _______________________________________________
-> > > > > dri-devel mailing list
-> > > > > dri-devel@lists.freedesktop.org
-> > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
+diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
+index 32f465a80e4e..d53c95f4e1a9 100644
+--- a/arch/arm64/include/asm/acpi.h
++++ b/arch/arm64/include/asm/acpi.h
+@@ -12,10 +12,12 @@
+ #ifndef _ASM_ACPI_H
+ #define _ASM_ACPI_H
+ 
++#include <linux/efi.h>
+ #include <linux/memblock.h>
+ #include <linux/psci.h>
+ 
+ #include <asm/cputype.h>
++#include <asm/io.h>
+ #include <asm/smp_plat.h>
+ #include <asm/tlbflush.h>
+ 
+@@ -29,18 +31,22 @@
+ 
+ /* Basic configuration for ACPI */
+ #ifdef	CONFIG_ACPI
++pgprot_t __acpi_get_mem_attribute(phys_addr_t addr);
++
+ /* ACPI table mapping after acpi_permanent_mmap is set */
+ static inline void __iomem *acpi_os_ioremap(acpi_physical_address phys,
+ 					    acpi_size size)
+ {
++	/* For normal memory we already have a cacheable mapping. */
++	if (memblock_is_map_memory(phys))
++		return (void __iomem *)__phys_to_virt(phys);
++
+ 	/*
+-	 * EFI's reserve_regions() call adds memory with the WB attribute
+-	 * to memblock via early_init_dt_add_memory_arch().
++	 * We should still honor the memory's attribute here because
++	 * crash dump kernel possibly excludes some ACPI (reclaim)
++	 * regions from memblock list.
+ 	 */
+-	if (!memblock_is_memory(phys))
+-		return ioremap(phys, size);
+-
+-	return ioremap_cache(phys, size);
++	return __ioremap(phys, size, __acpi_get_mem_attribute(phys));
+ }
+ #define acpi_os_ioremap acpi_os_ioremap
+ 
+@@ -125,7 +131,10 @@ static inline const char *acpi_get_enable_method(int cpu)
+  * for compatibility.
+  */
+ #define acpi_disable_cmcff 1
+-pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr);
++static inline pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
++{
++	return __acpi_get_mem_attribute(addr);
++}
+ #endif /* CONFIG_ACPI_APEI */
+ 
+ #ifdef CONFIG_ACPI_NUMA
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index 7b09487ff8fb..7880076c1cf0 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -18,6 +18,7 @@
+ #include <linux/acpi.h>
+ #include <linux/bootmem.h>
+ #include <linux/cpumask.h>
++# include <linux/efi.h>
+ #include <linux/efi-bgrt.h>
+ #include <linux/init.h>
+ #include <linux/irq.h>
+@@ -29,12 +30,8 @@
+ 
+ #include <asm/cputype.h>
+ #include <asm/cpu_ops.h>
+-#include <asm/smp_plat.h>
+-
+-#ifdef CONFIG_ACPI_APEI
+-# include <linux/efi.h>
+ # include <asm/pgtable.h>
+-#endif
++#include <asm/smp_plat.h>
+ 
+ int acpi_noirq = 1;		/* skip ACPI IRQ initialization */
+ int acpi_disabled = 1;
+@@ -239,8 +236,7 @@ void __init acpi_boot_table_init(void)
+ 	}
+ }
+ 
+-#ifdef CONFIG_ACPI_APEI
+-pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
++pgprot_t __acpi_get_mem_attribute(phys_addr_t addr)
+ {
+ 	/*
+ 	 * According to "Table 8 Map: EFI memory types to AArch64 memory
+@@ -261,4 +257,3 @@ pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
+ 		return __pgprot(PROT_NORMAL_NC);
+ 	return __pgprot(PROT_DEVICE_nGnRnE);
+ }
+-#endif
+diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+index 5889cbea60b8..1148ea5a0faa 100644
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -106,23 +106,23 @@ static bool __init efi_virtmap_init(void)
+  * non-early mapping of the UEFI system table and virtual mappings for all
+  * EFI_MEMORY_RUNTIME regions.
+  */
+-static int __init arm_enable_runtime_services(void)
++void __init efi_enter_virtual_mode(void)
+ {
+ 	u64 mapsize;
+ 
+ 	if (!efi_enabled(EFI_BOOT)) {
+ 		pr_info("EFI services will not be available.\n");
+-		return 0;
++		return;
+ 	}
+ 
+ 	if (efi_runtime_disabled()) {
+ 		pr_info("EFI runtime services will be disabled.\n");
+-		return 0;
++		return;
+ 	}
+ 
+ 	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
+ 		pr_info("EFI runtime services access via paravirt.\n");
+-		return 0;
++		return;
+ 	}
+ 
+ 	pr_info("Remapping and enabling EFI services.\n");
+@@ -131,21 +131,18 @@ static int __init arm_enable_runtime_services(void)
+ 
+ 	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
+ 		pr_err("Failed to remap EFI memory map\n");
+-		return -ENOMEM;
++		return;
+ 	}
+ 
+ 	if (!efi_virtmap_init()) {
+ 		pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
+-		return -ENOMEM;
++		return;
+ 	}
+ 
+ 	/* Set up runtime services function pointers */
+ 	efi_native_runtime_setup();
+ 	set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
+-
+-	return 0;
+ }
+-early_initcall(arm_enable_runtime_services);
+ 
+ void efi_virtmap_load(void)
+ {
+diff --git a/init/main.c b/init/main.c
+index b795aa341a3a..40d05b63960f 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -693,6 +693,9 @@ asmlinkage __visible void __init start_kernel(void)
+ 	debug_objects_mem_init();
+ 	setup_per_cpu_pageset();
+ 	numa_policy_init();
++	if (IS_ENABLED(CONFIG_EFI) &&
++	    (IS_ENABLED(CONFIG_ARM64) || IS_ENABLED(CONFIG_ARM)))
++		efi_enter_virtual_mode();
+ 	acpi_early_init();
+ 	if (late_time_init)
+ 		late_time_init();
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.17.0
