@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-558212-1524653738-2-9546813140960597502
+X-Cyrus-Session-Id: sloti22d1t05-557887-1524653737-2-14845385540352045258
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653737; b=S7YGabVMCnyrP9EmRLytA3OMTN6xzk/mPL56z5CRbG2rXM2UXx
-    zGwZqrUAaT2XGz2NlxTLJ+zfoh86rtDQYDv7iBOYrTtBUYM/EWIvCFM/JtXRrIbn
-    s6VwSWzI9R8pGsC2oA/umRt4WZQB1NBKnP43BAOFeRLlo3TGS+FWb8/Saw2OwWQy
-    yaSNW8ITA85opdDtDO/CWfHkhbZZUj7gBO4iL14f0xpl5fKFgY6y/gWXHm5KkdI+
-    cMvTQfr36r7LZTDELl8I1S5Gb+ZwUFU9N1VeLPe/w9hkseTe0zshjhoorlSmSLT7
-    6PbH5O03XP55lvi5XshTxeLVA65Tk1ZWeRbg==
+    1524653736; b=BCSc+14VPtTnIUmaKZqtc2ykeCpbE8bysQNm92+UjhYMI+22cM
+    PmJ6uOvkAPuTglW19ce8LrCHq+IwAhyR+kTKb1bkqeItniIicnZINgXiR1imNL4x
+    QbPmK19d/kZKNb4MPGZv5ZH7n6jhbFboLl960Y3EWsM0OGgvqIoZIUxtMoRrO+2L
+    l1E6kIgnOSLoZi4A7PQn9Z/56SKHQkd0iT2xPbqV0Oa6fv8XuOwhrieHhOJacNHS
+    unlQlI1+fo3UdDrMXGM4oTLgc3wZezGEkTcxI/YgKaQM1unWh2WQYtcxFBRGMTW1
+    b7apk6trYnOiH6U9ZlhFBYxcYuUOh3282ejA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653737; bh=aOnVQLtdLIdPlCmin3UPiitvWj7x67
-    wGFqFm6dg+g24=; b=lvQjsNEk8uF/Gz8oiPBKAcaUdTxJKYQjfLKP4ZChnLwCuy
-    Xu8+3rdzyNZDj+dxKkoIcwT4XJOpL88NDLJ5xRJHau6MWUVon0I3MMP6+09brZfZ
-    1oIp59g4TcEB5hF6yNGuRwngN0brc/7hqB4HZWb47jbXzpwM3chC35hDyl25juE8
-    Sity1IEQVrxMBBPI5DpqaJzu2opF3SNgysoobXTFOpLPdUPmqUqUtx79edKScgew
-    9DKcakubKt8aw1hPEdXozrai97447R25QULkG6qipD5tC84ZvsZJvP0iV2BwZfgs
-    4/APNKbjQ84SMfm8gnucykHdjIoc/gLpZpZ8An6Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524653736; bh=9CLkNfYCcivcpZG4jgC6se2BJA4QJC
+    qPYhAzyzZw3Os=; b=GB2oLWRW68snxuYswRATV9HNm2fxjRgbamPe16pMyhbfpN
+    eAX5lMcJcVyDNk95R3Yst3JFNqch9asku23+tzb/MCRw1Wze0U74kSAKbs230L6L
+    Thwkr38EHUziXhhrea1b2QDdvtZ9gvesxYFgvMLAnD3YGBWvl69w+0hDJ56J0Zm7
+    ruMwIQw9kfImII5lUVD+Yz0eDymsf3BVKKvAs6hODIVL1+XcMKH/6ZImDptOYegF
+    xhiazHZskDVpQPf54gIFSoypeusdpQpKTa6A+nFLB4uayHIgPkIdcreg6amrPV+K
+    f01bkkteAkx25TtrUaisojeIhzafEKCNdNZ6oYUA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,40 +51,42 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNcm2VTg/JE9Y92yN+xi4kMzYODxNNQ6YWaxgyiNFwkAPYl8Do//IVGyMbDcWfdZV58jvTUAZ32HahpZvkJtZuXGh5nTvqlkZh2R84kyFtTtl2C2bwq+
-    R8unike9tqK8zggyldDhStbQNqo8HUIC7yRrcL8R31Y3L8O3hE/92mRTgbQkc9DHyun642fRCB+i3Ln3MFjf/d6T5qTcDYvQzMgiefSmRSirBqe9T81C9r+8
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDwGaGZ/gb4ADTRcFy04XWK4NErujF0AxtM694uijlFuSS8YThHot8gx1VW697Q3whx/GF2caqes1wbgqCuor4xBQ4fyQI7mANUaRL3p0y0Xrf0I89RX
+    C8aiiSLpMFouK60F4BDGV7zpzwdFH5ZLpMsaZIlb9F7ZbJdVXLvEfaXg+YisSrhY8rEpHIpsPkDYyqqF8XGtKiiWo3QOVcjorhNbqe+9Q7xrVG3i0/QIGmqJ
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=o8Bf2xIQAAAA:8 a=IXr_WNlcAAAA:8
-    a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8 a=UtV5FjuMAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=9QFRiMXo_QA8-fxtALUA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=kLeBEu5l8tkQtVp4YdQK:22 a=K24ECnMRWNUKRqF_MnsZ:22
-    a=ehT88nhQmDs7a44Z_RBH:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=NufY4J3AAAAA:8
+    a=1XWaLZrsAAAA:8 a=nrACCIEEAAAA:8 a=Z4Rwk6OoAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=yuw3B8Qeb1bco88wqkMA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=LP-oT3CeHzb3Kpa8nOvR:22
+    a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754194AbeDYKnS (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:43:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52900 "EHLO
+        id S1752710AbeDYKzV (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:55:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52978 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753730AbeDYKnO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:14 -0400
+        with ESMTP id S1754202AbeDYKnW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
-        Alex Chen <alex.chen@huawei.com>,
-        Mark Fasheh <mfasheh@versity.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
+        stable@vger.kernel.org, Yisheng Xie <xieyisheng1@huawei.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andi Kleen <ak@linux.intel.com>,
+        Chris Salls <salls@cs.ucsb.edu>,
+        Christopher Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 109/183] ocfs2/acl: use ip_xattr_sem to protect getting extended attribute
-Date: Wed, 25 Apr 2018 12:35:29 +0200
-Message-Id: <20180425103246.832974235@linuxfoundation.org>
+Subject: [PATCH 4.14 112/183] mm/mempolicy: add nodes_empty check in SYSC_migrate_pages
+Date: Wed, 25 Apr 2018 12:35:32 +0200
+Message-Id: <20180425103246.947698207@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -102,90 +104,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: piaojun <piaojun@huawei.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
 
 
-[ Upstream commit 16c8d569f5704a84164f30ff01b29879f3438065 ]
+[ Upstream commit 0486a38bcc4749808edbc848f1bcf232042770fc ]
 
-The race between *set_acl and *get_acl will cause getting incomplete
-xattr data as below:
+As in manpage of migrate_pages, the errno should be set to EINVAL when
+none of the node IDs specified by new_nodes are on-line and allowed by
+the process's current cpuset context, or none of the specified nodes
+contain memory.  However, when test by following case:
 
-  processA                                    processB
+	new_nodes = 0;
+	old_nodes = 0xf;
+	ret = migrate_pages(pid, old_nodes, new_nodes, MAX);
 
-  ocfs2_set_acl
-    ocfs2_xattr_set
-      __ocfs2_xattr_set_handle
+The ret will be 0 and no errno is set.  As the new_nodes is empty, we
+should expect EINVAL as documented.
 
-                                              ocfs2_get_acl_nolock
-                                                ocfs2_xattr_get_nolock:
+To fix the case like above, this patch check whether target nodes AND
+current task_nodes is empty, and then check whether AND
+node_states[N_MEMORY] is empty.
 
-processB may get incomplete xattr data if processA hasn't set_acl done.
-
-So we should use 'ip_xattr_sem' to protect getting extended attribute in
-ocfs2_get_acl_nolock(), as other processes could be changing it
-concurrently.
-
-Link: http://lkml.kernel.org/r/5A5DDCFF.7030001@huawei.com
-Signed-off-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Alex Chen <alex.chen@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
+Link: http://lkml.kernel.org/r/1510882624-44342-4-git-send-email-xieyisheng1@huawei.com
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Chris Salls <salls@cs.ucsb.edu>
+Cc: Christopher Lameter <cl@linux.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Tan Xiaojun <tanxiaojun@huawei.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ocfs2/acl.c   |    6 ++++++
- fs/ocfs2/xattr.c |    2 ++
- 2 files changed, 8 insertions(+)
+ mm/mempolicy.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/fs/ocfs2/acl.c
-+++ b/fs/ocfs2/acl.c
-@@ -311,7 +311,9 @@ struct posix_acl *ocfs2_iop_get_acl(stru
- 	if (had_lock < 0)
- 		return ERR_PTR(had_lock);
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1440,10 +1440,14 @@ SYSCALL_DEFINE4(migrate_pages, pid_t, pi
+ 		goto out_put;
+ 	}
  
-+	down_read(&OCFS2_I(inode)->ip_xattr_sem);
- 	acl = ocfs2_get_acl_nolock(inode, type, di_bh);
-+	up_read(&OCFS2_I(inode)->ip_xattr_sem);
+-	if (!nodes_subset(*new, node_states[N_MEMORY])) {
+-		err = -EINVAL;
++	task_nodes = cpuset_mems_allowed(current);
++	nodes_and(*new, *new, task_nodes);
++	if (nodes_empty(*new))
++		goto out_put;
++
++	nodes_and(*new, *new, node_states[N_MEMORY]);
++	if (nodes_empty(*new))
+ 		goto out_put;
+-	}
  
- 	ocfs2_inode_unlock_tracker(inode, 0, &oh, had_lock);
- 	brelse(di_bh);
-@@ -330,7 +332,9 @@ int ocfs2_acl_chmod(struct inode *inode,
- 	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
- 		return 0;
- 
-+	down_read(&OCFS2_I(inode)->ip_xattr_sem);
- 	acl = ocfs2_get_acl_nolock(inode, ACL_TYPE_ACCESS, bh);
-+	up_read(&OCFS2_I(inode)->ip_xattr_sem);
- 	if (IS_ERR(acl) || !acl)
- 		return PTR_ERR(acl);
- 	ret = __posix_acl_chmod(&acl, GFP_KERNEL, inode->i_mode);
-@@ -361,8 +365,10 @@ int ocfs2_init_acl(handle_t *handle,
- 
- 	if (!S_ISLNK(inode->i_mode)) {
- 		if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
-+			down_read(&OCFS2_I(dir)->ip_xattr_sem);
- 			acl = ocfs2_get_acl_nolock(dir, ACL_TYPE_DEFAULT,
- 						   dir_bh);
-+			up_read(&OCFS2_I(dir)->ip_xattr_sem);
- 			if (IS_ERR(acl))
- 				return PTR_ERR(acl);
- 		}
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -638,9 +638,11 @@ int ocfs2_calc_xattr_init(struct inode *
- 						     si->value_len);
- 
- 	if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
-+		down_read(&OCFS2_I(dir)->ip_xattr_sem);
- 		acl_len = ocfs2_xattr_get_nolock(dir, dir_bh,
- 					OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT,
- 					"", NULL, 0);
-+		up_read(&OCFS2_I(dir)->ip_xattr_sem);
- 		if (acl_len > 0) {
- 			a_size = ocfs2_xattr_entry_real_size(0, acl_len);
- 			if (S_ISDIR(mode))
+ 	err = security_task_movememory(task);
+ 	if (err)
