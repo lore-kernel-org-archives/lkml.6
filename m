@@ -1,125 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751255AbeDYIdj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 04:33:39 -0400
-Received: from alexa-out-tai-01.qualcomm.com ([103.229.16.226]:37206 "EHLO
-        alexa-out-tai-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750882AbeDYIdg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 04:33:36 -0400
-X-IronPort-AV: E=Sophos;i="5.49,325,1520870400";
-   d="scan'208";a="387776"
-X-IronPort-AV: E=McAfee;i="5900,7806,8873"; a="6704111"
-From: Gaurav Kohli <gkohli@codeaurora.org>
-To: peterz@infradead.org, tglx@linutronix.de, mpe@ellerman.id.au,
-        mingo@kernel.org, bigeasy@linutronix.de
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Gaurav Kohli <gkohli@codeaurora.org>,
-        Neeraj Upadhyay <neeraju@codeaurora.org>
-Subject: [PATCH v1] kthread/smpboot: Serialize kthread parking against wakeup
-Date: Wed, 25 Apr 2018 14:03:19 +0530
-Message-Id: <1524645199-5596-1-git-send-email-gkohli@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1751350AbeDYIfY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 04:35:24 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57081 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750882AbeDYIfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 04:35:21 -0400
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <acme@kernel.org>
+CC: <jolsa@redhat.com>, <mingo@redhat.com>, <peterz@infradead.org>,
+        <linux-kernel@vger.kernel.org>, Yisheng Xie <xieyisheng1@huawei.com>
+Subject: [PATCH] perf bench numa: Fixes typo in options
+Date: Wed, 25 Apr 2018 16:25:07 +0800
+Message-ID: <1524644707-11030-1-git-send-email-xieyisheng1@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The control cpu thread which initiates hotplug calls kthread_park()
-for hotplug thread and sets KTHREAD_SHOULD_PARK. After this control
-thread wakes up the hotplug thread. There is a chance that wakeup
-code sees the hotplug thread (running on AP core) in INTERRUPTIBLE
-state, but sets its state to RUNNING after hotplug thread has entered
-kthread_parkme() and changed its state to TASK_PARKED. This can result
-in panic later on in kthread_unpark(), as it sees KTHREAD_IS_PARKED
-flag set but fails to rebind the kthread, due to it being not in
-TASK_PARKED state. Fix this, by serializing wakeup state change,
-against state change before parking the kthread.
+'R' means access the data via reads instead of writes, fix this typo.
 
-Below is the possible race:
-
-Control thread				      Hotplug Thread
-
-kthread_park()
-set KTHREAD_SHOULD_PARK
-					      smpboot_thread_fn
-					      set_current_state(TASK_INTERRUPTIBLE);
-					      kthread_parkme
-
-wake_up_process()
-
-raw_spin_lock_irqsave(&p->pi_lock, flags);
-if (!(p->state & state)) -> this will fail
-            goto out;
-
-					      __kthread_parkme
-					       __set_current_state(TASK_PARKED);
-
-if (p->on_rq && ttwu_remote(p, wake_flags))
-    ttwu_remote()
-        p->state = TASK_RUNNING;
-						schedule();
-
-So to avoid this race, take pi_lock to serial state changes.
-
-Suggested-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Co-developed-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
+ tools/perf/bench/numa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since V1:
-- Add comment to explain need of pi_lock.
-
-diff --git a/kernel/smpboot.c b/kernel/smpboot.c
-index 5043e74..c5c5184 100644
---- a/kernel/smpboot.c
-+++ b/kernel/smpboot.c
-@@ -122,7 +122,45 @@ static int smpboot_thread_fn(void *data)
- 		}
+diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
+index 944070e..63eb4908 100644
+--- a/tools/perf/bench/numa.c
++++ b/tools/perf/bench/numa.c
+@@ -175,7 +175,7 @@ struct global_info {
+ 	OPT_UINTEGER('s', "nr_secs"	, &p0.nr_secs,		"max number of seconds to run (default: 5 secs)"),
+ 	OPT_UINTEGER('u', "usleep"	, &p0.sleep_usecs,	"usecs to sleep per loop iteration"),
  
- 		if (kthread_should_park()) {
-+			/*
-+			 * Serialize against wakeup. If we take the lock first,
-+			 * wakeup is skipped. If we run later, we observe,
-+			 * TASK_RUNNING update from wakeup path, before moving
-+			 * forward. This helps avoid the race, where wakeup
-+			 * observes TASK_INTERRUPTIBLE, and also observes
-+			 * the TASK_PARKED in kthread_parkme() before updating
-+			 * task state to TASK_RUNNING. In this case, kthread
-+			 * gets parked in TASK_RUNNING state. This results
-+			 * in panic later on in kthread_unpark(), as it sees
-+			 * KTHREAD_IS_PARKED flag set but fails to rebind the
-+			 * kthread, due to it being not in TASK_PARKED state.
-+			 *
-+			 * Control thread                      Hotplug Thread
-+			 *
-+			 * kthread_park()
-+			 *   set KTHREAD_SHOULD_PARK
-+			 *                                smpboot_thread_fn()
-+			 *                                set_current_state(
-+			 *                                TASK_INTERRUPTIBLE);
-+			 *                                kthread_parkme()
-+			 *
-+			 *   wake_up_process()
-+			 *
-+			 * raw_spin_lock_irqsave(&p->pi_lock, flags);
-+			 * if (!(p->state & state))       __set_current_state(
-+			 *            goto out;           TASK_RUNNING);
-+			 *
-+			 *                                __set_current_state(
-+			 *                                TASK_PARKED);
-+			 *
-+			 * if (p->on_rq && ttwu_remote(p, wake_flags))
-+			 *   ttwu_remote()
-+			 *     p->state = TASK_RUNNING;
-+			 *                                   schedule();
-+			 */
-+			raw_spin_lock(&current->pi_lock);
- 			__set_current_state(TASK_RUNNING);
-+			raw_spin_unlock(&current->pi_lock);
- 			preempt_enable();
- 			if (ht->park && td->status == HP_THREAD_ACTIVE) {
- 				BUG_ON(td->cpu != smp_processor_id());
+-	OPT_BOOLEAN('R', "data_reads"	, &p0.data_reads,	"access the data via writes (can be mixed with -W)"),
++	OPT_BOOLEAN('R', "data_reads"	, &p0.data_reads,	"access the data via reads (can be mixed with -W)"),
+ 	OPT_BOOLEAN('W', "data_writes"	, &p0.data_writes,	"access the data via writes (can be mixed with -R)"),
+ 	OPT_BOOLEAN('B', "data_backwards", &p0.data_backwards,	"access the data backwards as well"),
+ 	OPT_BOOLEAN('Z', "data_zero_memset", &p0.data_zero_memset,"access the data via glibc bzero only"),
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+1.7.12.4
