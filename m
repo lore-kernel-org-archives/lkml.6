@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-488755-1524652553-2-123443471492569628
+X-Cyrus-Session-Id: sloti22d1t05-488755-1524652537-2-10484526940883860637
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524652552; b=TMka200J2uIvv4pfNbT7c7KTwrlebWsUVNWG1j0wD94imRTeXP
-    1x8pTEJmxS3JEiuYNDUI4HQ0ssNPgNmPh5+9UPRlYF7r/eMUcZMHAdJf1j4eQgYR
-    uhHm8YqCqxq0Id2+ujTgae4Uh/aWCVZxSbH9pDtV+EFy9X41s4xRRU7H82e5VhOI
-    p2403EKzuhukfhBwo/acdzYu8+Y+lY3xIn9S+zlXmyZihYcH1eatUeEkVrxQ87zF
-    JiNU6ppNIJTJ40xl6Ap4r8ux3vrRm8iabOIHV29z1C+7n8AdyQf03KJiwAW/rV7c
-    xs1b5Rt5Sw6XlumKWazmSZihjoaXGl34O8hg==
+    1524652537; b=QhMZuYK0YtEtAK8oBIFuIqPG7a0tNyPLex25aj4ywg7xn01U9j
+    Bk2rWVbMAWiWvT1wwGzyDDvW0vR2daPeA1CDmwfmH8qCdq13TQYuxI5/3o+niKEL
+    VmpugxqqapSACnN7nnXf/LVfc2kpWnduQAviX4qGf0C9Ax24K3mPdJXY5cXXiPhr
+    EePyxrblfoF8luSM0QzMVwyWPCS9Ry0bvJquM4V/QZuIkIlnwFvEEaiRLJxfri3v
+    J2Ybc60c+Oxk5rYKmouuducZO7NYrvLML/sFKSBaqPy5bqDA4sySvWwfbdj39PBx
+    cQ9QZdXu+1zGxVfIgmMLDusC3sWmfAiF0pug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524652552; bh=PWNOQUuyOfK7mRSjXe/UBqmu2XYWe7
-    awAF0rvnn61TQ=; b=tCD82Ph/DoJubjheRl0UMrLIpNMoEIl6JBgoDChZpVXggI
-    Kh/DfuWVlhaB12+cBpD1Z0zKmIQp7XFLJ2Ji4B9CkH3ARkjyAFO7WFcVlfrNzVg8
-    WjPdkKoMpjeh6BOxZVhseSwEQoK15gh30B57q1Wq4f4SnKm2UlKieRuP7gxtM+qc
-    9afAfOMvqSAE4psB8XhqeGNuMv7joZQ53Ot6z79eqA/mN6J0cyF1kEVexuA/AlHH
-    8HSWbelx7LebwzJGZU5xcdIGYWue0fSnM0Nc27dSO1dVJlE+K4i9q8lVxLufQQ0+
-    Pt1lVwL+lbweh1Hp66WS5tZnZJXLCKgabh5AOztg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524652537; bh=bl4gRxZaqYpTzTDZYjo1LPSTI5LI88
+    ttKK8EaJNO9EI=; b=PKdff/PXFGLswMUVQopci5tO7UScl56KnR47egPOtTkjbO
+    81qeVmuPW6G7lBm6fUJheEt67wvA5DY2AErg+wczVDkXtc5ad7pPqJPDah2vjv7d
+    WGhheirgsnKLcm6U3rfCGZ25cYYHzXYhMCSbLNXO2ADU3DDsB2IS1YJh85KFI8iq
+    /Q3ue8EowigH2KqXsRG5v/gW7ItwBwP18zHFGMKu4+ekjLAAxcuufrPe+dLwhrDz
+    Xs0rPbSCdXSdtTgdpK1UBqXW/dWXUmAFDK1Sc792tCwUYG/uv4+31jpy3ShLqua+
+    0msbdN1kXXvPPVGNaxIBecTkueoVbtgfuguftE3w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,32 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFBCZ0HpN6jYvk86R553AbIdAexTehXPTPi9zQvnMs28dp8ofGVw2Bj3rMHBJ63hpdQSqZzkJdXiVMERuZ9Hrb8MJ8IXySrQzP0Ax+XWOpwQ3HOkpMNS
-    P1319VmWKd57i3697fi3SQcNyujhP8Bb1FxWfG0+cuud1eQiPGZMrc3g2j/1I6oE0vPkz+sBrpUhYCt/K7DM3FCs6/9kaggIaoYZ5XEGoeQXmU9i1XoxjCVn
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfH838jIWr0nLvnl6JlRq28sK7SrG1s6ooMbcd+hh3HSY7R816Slsh4ungFkUDr6s/ZK+Qq7NrlHV2jrW3Mv3gnDZsabdyUzcou7WhHtsuUJaMM759USN
+    wfSavfCCdQWU2UqlJZ6Etz5RwSOEK9Mj141ovXLtv2txgd5s9Mmuww0xHCkgABfhXibl0KPA2UPyq+nAtr//QfeslVAoC2UxuOj5VxXCryEW7yXHcv9cqV2T
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=ag1SF4gXAAAA:8
-    a=sVFe0RnccWI9uLUoR-gA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=ag1SF4gXAAAA:8
+    a=rePIPyD2CXqVu-yP4rIA:9 a=QEXdDO2ut3YA:10 a=ST-jHhOKWsTCqRlWije3:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753033AbeDYKfi (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:35:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50976 "EHLO
+        id S1752898AbeDYKe4 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:34:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50966 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752895AbeDYKez (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:34:55 -0400
+        with ESMTP id S1752700AbeDYKew (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:34:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Max R . P . Grossmann" <m@max.pm>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH 4.16 07/26] posix-cpu-timers: Ensure set_process_cpu_timer is always evaluated
-Date: Wed, 25 Apr 2018 12:33:16 +0200
-Message-Id: <20180425103315.145805470@linuxfoundation.org>
+        Dong Aisheng <Aisheng.dong@nxp.com>, daniel.lezcano@linaro.org,
+        Linux-imx@nxp.com
+Subject: [PATCH 4.16 06/26] clocksource/imx-tpm: Correct -ETIME return condition check
+Date: Wed, 25 Apr 2018 12:33:15 +0200
+Message-Id: <20180425103315.108418382@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103314.842517924@linuxfoundation.org>
 References: <20180425103314.842517924@linuxfoundation.org>
@@ -94,57 +94,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Laura Abbott <labbott@redhat.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-commit c3bca5d450b620dd3d36e14b5e1f43639fd47d6b upstream.
+commit 7407188489c62a7b5694bc75a6db2b82af94c9a5 upstream.
 
-Commit a9445e47d897 ("posix-cpu-timers: Make set_process_cpu_timer()
-more robust") moved the check into the 'if' statement. Unfortunately,
-it did so on the right side of an && which means that it may get short
-circuited and never evaluated. This is easily reproduced with:
+The additional brakects added to tpm_set_next_event's return value
+computation causes (int) forced type conversion NOT taking effect, and the
+incorrect value return will cause various system timer issue, like RCU
+stall etc..
 
-$ cat loop.c
-void main() {
-  struct rlimit res;
-  /* set the CPU time limit */
-  getrlimit(RLIMIT_CPU,&res);
-  res.rlim_cur = 2;
-  res.rlim_max = 2;
-  setrlimit(RLIMIT_CPU,&res);
+Remove the additional brackets to make sure tpm_set_next_event always
+returns correct value.
 
-  while (1);
-}
-
-Which will hang forever instead of being killed. Fix this by pulling the
-evaluation out of the if statement but checking the return value instead.
-
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1568337
-Fixes: a9445e47d897 ("posix-cpu-timers: Make set_process_cpu_timer() more robust")
-Signed-off-by: Laura Abbott <labbott@redhat.com>
+Fixes: 059ab7b82eec ("clocksource/drivers/imx-tpm: Add imx tpm timer support")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
 Cc: stable@vger.kernel.org
-Cc: "Max R . P . Grossmann" <m@max.pm>
-Cc: John Stultz <john.stultz@linaro.org>
-Link: https://lkml.kernel.org/r/20180417215742.2521-1-labbott@redhat.com
+Cc: daniel.lezcano@linaro.org
+Cc: Linux-imx@nxp.com
+Link: https://lkml.kernel.org/r/1524117883-2484-1-git-send-email-Anson.Huang@nxp.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/posix-cpu-timers.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clocksource/timer-imx-tpm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -1205,10 +1205,12 @@ void set_process_cpu_timer(struct task_s
- 			   u64 *newval, u64 *oldval)
- {
- 	u64 now;
-+	int ret;
+--- a/drivers/clocksource/timer-imx-tpm.c
++++ b/drivers/clocksource/timer-imx-tpm.c
+@@ -105,7 +105,7 @@ static int tpm_set_next_event(unsigned l
+ 	 * of writing CNT registers which may cause the min_delta event got
+ 	 * missed, so we need add a ETIME check here in case it happened.
+ 	 */
+-	return (int)((next - now) <= 0) ? -ETIME : 0;
++	return (int)(next - now) <= 0 ? -ETIME : 0;
+ }
  
- 	WARN_ON_ONCE(clock_idx == CPUCLOCK_SCHED);
-+	ret = cpu_timer_sample_group(clock_idx, tsk, &now);
- 
--	if (oldval && cpu_timer_sample_group(clock_idx, tsk, &now) != -EINVAL) {
-+	if (oldval && ret != -EINVAL) {
- 		/*
- 		 * We are setting itimer. The *oldval is absolute and we update
- 		 * it to be relative, *newval argument is relative and we update
+ static int tpm_set_state_oneshot(struct clock_event_device *evt)
