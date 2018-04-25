@@ -1,118 +1,153 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1367245-1524691213-2-10069037766067448867
+X-Cyrus-Session-Id: sloti22d1t05-1251131-1524685123-3-4908578587791813059
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
+  MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524691212; b=pFtn6eY68g2i4S/kUlYsx1T6tEJFpGSrAM9260tEiSqFgXKbco
-    2Ydefu9lJv2gMyVys6qEzMewQOE4ztRJAxArZ1qQhu8WEKZdxf9LrjpxNOnIPURv
-    TxcIR8oyZduESOydN9t/u4KaIsrAAW1iZd7V0TLKYfZLm7gO3kfEA0V/pyQ9B9hN
-    kw4HZ0Rf3sh/+eFggHhCvYGtCUp3D6bhv0EZM79bBMKXCswMVu7O/sbRN2MHcQa9
-    jQ3wvJL2/qADs8+j+RjKPdWPj9U1+Ga9OI4qkAL5RUqf97uYYXtJa/TrR4z8xy8m
-    85u6VTBrbZnMxpkjRw/UBbfKV8EFDtJQuZ7A==
+    1524685122; b=lAYnsKhsP0qbP+HNBIEJylbwsMBAfUrte7xLxVjywxi1jhKDce
+    RRh0unuiYiqpHrPqkmkmLk75jQv+B1Pk5Vfc4t+fzt2IT/IrTyYq7bFdKZXKv9lB
+    IWC/FGXE7qleHoyXmgfyS+keMaYrW7kcqayBgfIlWALKkDgdZaYzYzq+3Oi6hMiB
+    ErjiV1zJmclCGenbk0edwk2ECO45KgJoJz1GbuCfbKwN4EM3uVkkcvqUCLafnT0s
+    5GliVgaA+vW1ZZplLF8xo1Os5ylKViW0g7T9VL8qT+4QZprOsrbqeq1o234hMsry
+    kOVY1kBifNuAQxUZ8ZkvC1NsUlg25UX/zpDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
-    :message-id:references:mime-version:content-type:sender:list-id;
-    s=fm2; t=1524691212; bh=WrYS5/KV7AtHr7veNsj7yAVs/wJ1slqv8EkWJyc
-    OmDc=; b=kuaDHnON5Yp+8CJIo8SZtQ7twluFtpRCkG5CSrfXxYFYDXj2sAsd4yp
-    05Olnbtz7utEn0PB8GzZFcOmAb89uPOpDo/sSbatUTrDdwc4YILq3ItDe1XcDvWR
-    PxgFLi4s6HVIYsjtn1drNoIKBC+o3OCJOleGYObNkLTQaY5JoPPP8b54MlANZG2G
-    KwsEg9UfuJowuU1Yy390uFzQ39afFthe/YtdhNvs2NIt1CtK1I9jPXJsX2Nqp2aG
-    HHtlNbURGY+6UH72k7mL9FIXP9KatN7+xO8WLllgXu4Gy/nnVBDaht7kXSEBagAr
-    JC04mOwTYKSKKAfthY2gZRnU5OJtw0A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=n3FML7dG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524685122;
+    bh=vR7qqRn3N0KAJ/zJr23KV58aWRq+W8+E1ltySRhxx/Q=; b=cSmGJxE+YjDX
+    Zg60PoYXp0i+0fyLk0xUyE5qepxKxFbSQBSixlLjC9vottTHV5zFrmtMbc1GriHp
+    mVTAHHi7mY1zBY32ntC3PGKyB9Ok6ObSVqo3H0a/0WopoNqnzAapTHHLDgUMWt8g
+    1Yw+yMGW+rkjgTjqzc5cOuNTZ3s0Thd/BH6LmAcduu65l2NR6xRQHZpiSbKJEj5k
+    64le59lnChaOIGKk6gwupSu3IGguMfVXGqIMpdro3CGdnM84tPGBsfTJJctlzrwJ
+    /1k+t8PSbtc2yPXzjfbMIr+67dVqNiHZ5XVQt6gke391RQvuKWJSkoavQmu4couf
+    37co2SiDnw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SpgSc/67;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=n3FML7dG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SpgSc/67;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEuxrbMesLBuAEN+Ki9g+kceqzKTDz6PtIIcbU2oNGJsEde2uhtRlH2cha8uxy6T7kJ0pnz9H6/6fK32529u+GSsj0HVheBaSHJ4tA5OHFrizzz/Hxe1
-    UDYptzOOWEUQ/gNYFue09GliFXtxXNJj1jecAjgY7jCH6TJFmHFvHeBgiWZPGJa9hVjR2bIvijAik9z6TU66HAe+Ro5fqaJAXTpkJ6U1NcbNqD3bvMq+t/q2
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
-    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=ILOYNr3988GFYAbVIXUA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfLNT+katkuuFaiKg+jqGNGHyo42/Ksmmeh0Yk/9JYGXYK0S15RT0USdHsfwkcmMhTYkUigmoUnUY2rG0bM1pQDeSohD+Sluy5AMrEA5gf9J/O08Tex98
+    NT0HcdpDSD3SbiioFy+7FKskjKdEp7bySQx+6v4F2twQ1Yp+1pgKEI4c7DHCAKpYXI5ukOazvxa7CUDbP7d3Kw2pjKQORtKQOoYVPw3XjgkVnyss8Y0nXEBV
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=FOH2dFAWAAAA:8 a=JfrnYn6hAAAA:8 a=Z4Rwk6OoAAAA:8 a=drOt6m5kAAAA:8
+    a=iox4zFpeAAAA:8 a=ufHFDILaAAAA:8 a=VwQbUJbxAAAA:8 a=HlR1BP9YCU_Ax4rQYlQA:9
+    a=GN6wUxVyeTAE2H7Z:21 a=XwIDdrwu_f9-grkl:21 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=1CNFftbPRP8L7MoqJWF3:22
+    a=HkZW87K1Qel5hWWM3VKY:22 a=RMMjzBEyIzXRtoq5n5K6:22 a=WzC6qhA0u3u7Ye7llzcV:22
+    a=ZmIg1sZ3JBWsdXgziEIF:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeDYVUJ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 17:20:09 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40277 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751356AbeDYVUJ (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 17:20:09 -0400
-X-Google-Smtp-Source: AIpwx49V7WUzlson2idGZCQyroBX3SAYSsEnkutRfbsI5PhFCJ9G7Qzb3TD1l+/ZNHtzIBiF/NsuMg==
-Date: Wed, 25 Apr 2018 14:20:07 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Roman Gushchin <guro@fb.com>
-cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, kernel-team@fb.com,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1751255AbeDYTik (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 15:38:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44683 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751084AbeDYTij (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 25 Apr 2018 15:38:39 -0400
+Subject: Re: [PATCH] mm: don't show nr_indirectly_reclaimable in /proc/vmstat
+To: Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel-team@fb.com, Matthew Wilcox <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Michal Hocko <mhocko@suse.com>,
         Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] mm: don't show nr_indirectly_reclaimable in
- /proc/vmstat
-In-Reply-To: <20180425210143.GA10277@castle>
-Message-ID: <alpine.DEB.2.21.1804251419040.166306@chino.kir.corp.google.com>
-References: <20180425191422.9159-1-guro@fb.com> <alpine.DEB.2.21.1804251235330.151692@chino.kir.corp.google.com> <20180425210143.GA10277@castle>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+References: <20180425191422.9159-1-guro@fb.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <a2206b6a-1492-39dc-101f-118060083206@suse.cz>
+Date: Wed, 25 Apr 2018 21:36:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180425191422.9159-1-guro@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 25 Apr 2018, Roman Gushchin wrote:
+On 04/25/2018 09:14 PM, Roman Gushchin wrote:
+> Don't show nr_indirectly_reclaimable in /proc/vmstat,
+> because there is no need in exporting this vm counter
+> to the userspace, and some changes are expected
+> in reclaimable object accounting, which can alter
+> this counter.
 
-> > > Don't show nr_indirectly_reclaimable in /proc/vmstat,
-> > > because there is no need in exporting this vm counter
-> > > to the userspace, and some changes are expected
-> > > in reclaimable object accounting, which can alter
-> > > this counter.
-> > > 
-> > 
-> > I don't think it should be a per-node vmstat, in this case.  It appears 
-> > only to be used for the global context.  Shouldn't this be handled like 
-> > totalram_pages, total_swap_pages, totalreserve_pages, etc?
+Oh, you beat me to it, thanks.
+
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+Andrew, can you send this to Linus before the current rc period ends,
+please?
+
+Thanks,
+Vlastimil
+
+> ---
+>  mm/vmstat.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> Hi, David!
-> 
-> I don't see any reasons why re-using existing infrastructure for
-> fast vm counters is bad, and why should we re-invent it for this case.
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 536332e988b8..a2b9518980ce 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1161,7 +1161,7 @@ const char * const vmstat_text[] = {
+>  	"nr_vmscan_immediate_reclaim",
+>  	"nr_dirtied",
+>  	"nr_written",
+> -	"nr_indirectly_reclaimable",
+> +	"", /* nr_indirectly_reclaimable */
+>  
+>  	/* enum writeback_stat_item counters */
+>  	"nr_dirty_threshold",
+> @@ -1740,6 +1740,10 @@ static int vmstat_show(struct seq_file *m, void *arg)
+>  	unsigned long *l = arg;
+>  	unsigned long off = l - (unsigned long *)m->private;
+>  
+> +	/* Skip hidden vmstat items. */
+> +	if (*vmstat_text[off] == '\0')
+> +		return 0;
+> +
+>  	seq_puts(m, vmstat_text[off]);
+>  	seq_put_decimal_ull(m, " ", *l);
+>  	seq_putc(m, '\n');
 > 
 
-Because now you have to modify the existing infrastructure for something 
-that shouldn't be a vmstat in the first place?
