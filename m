@@ -1,76 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751659AbeDYJBN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:01:13 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34949 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbeDYJBK (ORCPT
+        id S1751749AbeDYJB0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:01:26 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37420 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751705AbeDYJBW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:01:10 -0400
-Date: Wed, 25 Apr 2018 02:00:55 -0700
-From: "tip-bot for jacek.tomaka@poczta.fm" <tipbot@zytor.com>
-Message-ID: <tip-88ba3829dfd83219bb2b1954acb0c206a602ce83@git.kernel.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        hpa@zytor.com, jacek.tomaka@poczta.fm
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        jacek.tomaka@poczta.fm, hpa@zytor.com, mingo@kernel.org
-In-Reply-To: <20180423161425.24366-1-jacekt@dugeo.com>
-References: <20180423161425.24366-1-jacekt@dugeo.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/cpu/intel: Add missing TLB cpuid values
-Git-Commit-ID: 88ba3829dfd83219bb2b1954acb0c206a602ce83
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 25 Apr 2018 05:01:22 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Philippe Cornu <philippe.cornu@st.com>
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yannick Fertre <yannick.fertre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings/display/bridge: sii902x: add optional power supplies
+Date: Wed, 25 Apr 2018 12:01:35 +0300
+Message-ID: <16954794.QiYqgNKfkn@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180425075314.19137-2-philippe.cornu@st.com>
+References: <20180425075314.19137-1-philippe.cornu@st.com> <20180425075314.19137-2-philippe.cornu@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  88ba3829dfd83219bb2b1954acb0c206a602ce83
-Gitweb:     https://git.kernel.org/tip/88ba3829dfd83219bb2b1954acb0c206a602ce83
-Author:     jacek.tomaka@poczta.fm <jacek.tomaka@poczta.fm>
-AuthorDate: Tue, 24 Apr 2018 00:14:25 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 25 Apr 2018 10:56:23 +0200
+Hi Philippe,
 
-x86/cpu/intel: Add missing TLB cpuid values
+Thank you for the patch.
 
-Make kernel print the correct number of TLB entries on Intel Xeon Phi 7210
-(and others)
+On Wednesday, 25 April 2018 10:53:13 EEST Philippe Cornu wrote:
+> Add optional power supplies using the description found in
+> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
+> 
+> There is a single 1v2 supply voltage named vcc12 from which cvcc12
+> (digital core) and avcc12 (TMDS analog) are derived because according
+> to this data sheet:
+> "cvcc12 and avcc12 can be derived from the same power source"
 
-Before:
-[ 0.320005] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
-After:
-[ 0.320005] Last level dTLB entries: 4KB 256, 2MB 128, 4MB 128, 1GB 16
+Shouldn't the power supplies be mandatory, as explained by Mark in https://
+lists.freedesktop.org/archives/dri-devel/2018-April/172400.html ?
 
-The entries do exist in the official Intel SMD but the type column there is
-incorrect (states "Cache" where it should read "TLB"), but the entries for
-the values 0x6B, 0x6C and 0x6D are correctly described as 'Data TLB'.
+> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> ---
+>  Documentation/devicetree/bindings/display/bridge/sii902x.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+> b/Documentation/devicetree/bindings/display/bridge/sii902x.txt index
+> 56a3e68ccb80..9fb41fc9af51 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+> @@ -8,6 +8,8 @@ Optional properties:
+>  	- interrupts-extended or interrupt-parent + interrupts: describe
+>  	  the interrupt line used to inform the host about hotplug events.
+>  	- reset-gpios: OF device-tree gpio specification for RST_N pin.
+> +	- iovcc-supply: I/O supply voltage (1.8V or 3.3V, host-dependent).
+> +	- vcc12-supply: TMDS analog & digital core supply voltage (1.2V).
+> 
+>  Optional subnodes:
+>  	- video input: this subnode can contain a video input port node
 
-Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20180423161425.24366-1-jacekt@dugeo.com
+-- 
+Regards,
 
----
- arch/x86/kernel/cpu/intel.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index b9693b80fc21..55b646c43ef6 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -835,6 +835,9 @@ static const struct _tlb_table intel_tlb_table[] = {
- 	{ 0x5d, TLB_DATA_4K_4M,		256,	" TLB_DATA 4 KByte and 4 MByte pages" },
- 	{ 0x61, TLB_INST_4K,		48,	" TLB_INST 4 KByte pages, full associative" },
- 	{ 0x63, TLB_DATA_1G,		4,	" TLB_DATA 1 GByte pages, 4-way set associative" },
-+	{ 0x6b, TLB_DATA_4K,		256,	" TLB_DATA 4 KByte pages, 8-way associative" },
-+	{ 0x6c, TLB_DATA_2M_4M,		128	" TLB_DATA 2 MByte or 4 MByte pages, 8-way associative" },
-+	{ 0x6d, TLB_DATA_1G,		16,	" TLB_DATA 1 GByte pages, fully associative" },
- 	{ 0x76, TLB_INST_2M_4M,		8,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
- 	{ 0xb0, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 4-way set associative" },
- 	{ 0xb1, TLB_INST_2M_4M,		4,	" TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries" },
+Laurent Pinchart
