@@ -1,74 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752473AbeDYVOh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 17:14:37 -0400
-Received: from www62.your-server.de ([213.133.104.62]:51322 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751410AbeDYVOd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 17:14:33 -0400
-Subject: Re: [PATCH 3/3] tools bpftool: Display license GPL compatible in prog
- show/list
-To: Jakub Kicinski <kubakici@wp.pl>, Jiri Olsa <jolsa@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>
-References: <20180425174108.6586-1-jolsa@kernel.org>
- <20180425174108.6586-4-jolsa@kernel.org>
- <20180425140346.3e0f3ba7@cakuba.netronome.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <0e84fe67-59c9-a419-5ff7-05be2aa1991e@iogearbox.net>
-Date: Wed, 25 Apr 2018 23:14:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1752898AbeDYVPb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 17:15:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752757AbeDYVP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 17:15:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF9E21748
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Wed, 25 Apr 2018 23:15:23 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: bq27xxx: Add support for BQ27426
+Message-ID: <20180425211523.4lyca24whor4txjg@earth.universe>
+References: <20180421231249.9517-1-afd@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180425140346.3e0f3ba7@cakuba.netronome.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="55uyg4qhihze6uzj"
+Content-Disposition: inline
+In-Reply-To: <20180421231249.9517-1-afd@ti.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/25/2018 11:03 PM, Jakub Kicinski wrote:
-> On Wed, 25 Apr 2018 19:41:08 +0200, Jiri Olsa wrote:
->> @@ -295,6 +297,7 @@ static void print_prog_plain(struct bpf_prog_info *info, int fd)
->>  	printf("tag ");
->>  	fprint_hex(stdout, info->tag, BPF_TAG_SIZE, "");
->>  	print_dev_plain(info->ifindex, info->netns_dev, info->netns_ino);
->> +	printf(" license GPL %scompatible", info->gpl_compatible ? "" : "NON ");
-> 
-> 3 nit picks:
-> 
-> Other "fields" are separated by two spaces between each other:
-> 
->   4: kprobe  name func_begin  tag 57cd311f2e27366b license GPL compatible
->            ^^               ^^                    X
->           loaded_at Apr 25/11:20  uid 0
->                                 ^^
->           xlated 16B  not jited  memlock 4096B
->                     ^^         ^^
-> 
-> Could you also update the example outputs in the man page:
-> 
-> tools/bpf/bpftool/Documentation/bpftool-prog.rst
-> 
-> Sorry about the bike shedding but I would also vote for:
-> 
-> "[not] GPL compatible"
-> 
-> rather than
-> 
-> "license GPL [NON] compatible"
-> 
-> for brevity..
 
-While we're at it, can we also squeeze this whole thing a bit? Feels like
-huge string wasted for very little information compared to the rest of the
-dump. Just append the string "gpl" at the end of the line if info->gpl_compatible
-is set, otherwise just add nothing. This also allows to naturally grep
-for it e.g. `bpftool p | grep gpl` if you need a quick summary.
+--55uyg4qhihze6uzj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Daniel
+Hi,
+
+On Sat, Apr 21, 2018 at 06:12:49PM -0500, Andrew F. Davis wrote:
+> This device is software similar to the BQ27426 except it has
+> different data memory offsets. Add support here.
+>=20
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> ---
+
+Thanks, queued.
+
+-- Sebastian
+
+>  .../devicetree/bindings/power/supply/bq27xxx.txt         | 1 +
+>  drivers/power/supply/bq27xxx_battery.c                   | 9 +++++++++
+>  drivers/power/supply/bq27xxx_battery_i2c.c               | 2 ++
+>  include/linux/power/bq27xxx_battery.h                    | 3 ++-
+>  4 files changed, 14 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/power/supply/bq27xxx.txt b=
+/Documentation/devicetree/bindings/power/supply/bq27xxx.txt
+> index 615c1cb6889f..37994fdb18ca 100644
+> --- a/Documentation/devicetree/bindings/power/supply/bq27xxx.txt
+> +++ b/Documentation/devicetree/bindings/power/supply/bq27xxx.txt
+> @@ -25,6 +25,7 @@ Required properties:
+>   * "ti,bq27545" - BQ27545
+>   * "ti,bq27421" - BQ27421
+>   * "ti,bq27425" - BQ27425
+> + * "ti,bq27426" - BQ27426
+>   * "ti,bq27441" - BQ27441
+>   * "ti,bq27621" - BQ27621
+>  - reg: integer, I2C address of the fuel gauge.
+> diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/suppl=
+y/bq27xxx_battery.c
+> index 7ce60519b1bc..d44ed8e17c47 100644
+> --- a/drivers/power/supply/bq27xxx_battery.c
+> +++ b/drivers/power/supply/bq27xxx_battery.c
+> @@ -432,6 +432,7 @@ static u8
+>  		BQ27XXX_DM_REG_ROWS,
+>  	};
+>  #define bq27425_regs bq27421_regs
+> +#define bq27426_regs bq27421_regs
+>  #define bq27441_regs bq27421_regs
+>  #define bq27621_regs bq27421_regs
+> =20
+> @@ -664,6 +665,7 @@ static enum power_supply_property bq27421_props[] =3D=
+ {
+>  	POWER_SUPPLY_PROP_MANUFACTURER,
+>  };
+>  #define bq27425_props bq27421_props
+> +#define bq27426_props bq27421_props
+>  #define bq27441_props bq27421_props
+>  #define bq27621_props bq27421_props
+> =20
+> @@ -734,6 +736,12 @@ static struct bq27xxx_dm_reg bq27425_dm_regs[] =3D {
+>  	[BQ27XXX_DM_TERMINATE_VOLTAGE] =3D { 82, 18, 2, 2800,  3700 },
+>  };
+> =20
+> +static struct bq27xxx_dm_reg bq27426_dm_regs[] =3D {
+> +	[BQ27XXX_DM_DESIGN_CAPACITY]   =3D { 82,  6, 2,    0,  8000 },
+> +	[BQ27XXX_DM_DESIGN_ENERGY]     =3D { 82,  8, 2,    0, 32767 },
+> +	[BQ27XXX_DM_TERMINATE_VOLTAGE] =3D { 82, 10, 2, 2500,  3700 },
+> +};
+> +
+>  #if 0 /* not yet tested */
+>  #define bq27441_dm_regs bq27421_dm_regs
+>  #else
+> @@ -795,6 +803,7 @@ static struct {
+>  	[BQ27545]   =3D BQ27XXX_DATA(bq27545,   0x04143672, BQ27XXX_O_OTDC),
+>  	[BQ27421]   =3D BQ27XXX_DATA(bq27421,   0x80008000, BQ27XXX_O_UTOT | BQ=
+27XXX_O_CFGUP | BQ27XXX_O_RAM),
+>  	[BQ27425]   =3D BQ27XXX_DATA(bq27425,   0x04143672, BQ27XXX_O_UTOT | BQ=
+27XXX_O_CFGUP),
+> +	[BQ27426]   =3D BQ27XXX_DATA(bq27426,   0x80008000, BQ27XXX_O_UTOT | BQ=
+27XXX_O_CFGUP | BQ27XXX_O_RAM),
+>  	[BQ27441]   =3D BQ27XXX_DATA(bq27441,   0x80008000, BQ27XXX_O_UTOT | BQ=
+27XXX_O_CFGUP | BQ27XXX_O_RAM),
+>  	[BQ27621]   =3D BQ27XXX_DATA(bq27621,   0x80008000, BQ27XXX_O_UTOT | BQ=
+27XXX_O_CFGUP | BQ27XXX_O_RAM),
+>  };
+> diff --git a/drivers/power/supply/bq27xxx_battery_i2c.c b/drivers/power/s=
+upply/bq27xxx_battery_i2c.c
+> index 6b25e5f2337e..40069128ad44 100644
+> --- a/drivers/power/supply/bq27xxx_battery_i2c.c
+> +++ b/drivers/power/supply/bq27xxx_battery_i2c.c
+> @@ -249,6 +249,7 @@ static const struct i2c_device_id bq27xxx_i2c_id_tabl=
+e[] =3D {
+>  	{ "bq27545", BQ27545 },
+>  	{ "bq27421", BQ27421 },
+>  	{ "bq27425", BQ27425 },
+> +	{ "bq27426", BQ27426 },
+>  	{ "bq27441", BQ27441 },
+>  	{ "bq27621", BQ27621 },
+>  	{},
+> @@ -280,6 +281,7 @@ static const struct of_device_id bq27xxx_battery_i2c_=
+of_match_table[] =3D {
+>  	{ .compatible =3D "ti,bq27545" },
+>  	{ .compatible =3D "ti,bq27421" },
+>  	{ .compatible =3D "ti,bq27425" },
+> +	{ .compatible =3D "ti,bq27426" },
+>  	{ .compatible =3D "ti,bq27441" },
+>  	{ .compatible =3D "ti,bq27621" },
+>  	{},
+> diff --git a/include/linux/power/bq27xxx_battery.h b/include/linux/power/=
+bq27xxx_battery.h
+> index 01fbf1b16258..d6355f49fbae 100644
+> --- a/include/linux/power/bq27xxx_battery.h
+> +++ b/include/linux/power/bq27xxx_battery.h
+> @@ -24,8 +24,9 @@ enum bq27xxx_chip {
+>  	BQ27546,
+>  	BQ27742,
+>  	BQ27545, /* bq27545 */
+> -	BQ27421, /* bq27421, bq27425, bq27441, bq27621 */
+> +	BQ27421, /* bq27421, bq27441, bq27621 */
+>  	BQ27425,
+> +	BQ27426,
+>  	BQ27441,
+>  	BQ27621,
+>  };
+> --=20
+> 2.17.0
+>=20
+
+--55uyg4qhihze6uzj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrg7+sACgkQ2O7X88g7
++poHuw/+NrMhPDwydsYAuoWk035kaSweGuPQUzHQq8a0ihAnh6W5OaS5UTwPuDfz
+60leErza4s/RSpXf6NzcSCvtKMrArFt3IvR5Swpp+n0eyH5l2u2x8tBGTApsd8BQ
+K0D+YzD+DPOiLQTAp+COZgFzO88wMdqelzue6GkbGTi1b10PHH1uhsTDryEYmepj
+pIZCEe5kqf29sMl3nAVGg59S023UZ5qDIlJWnTDLm8Y3FzqndDSdPb2ZAa6a46WR
+LrXJronoQOElFfg3oLNFrlGoABvtGPCBR8KnhOzvfMsay/JfaLcyWqMVrKt7IiUf
+amnD+OiKTl2hpRtCSX5AQa1gI3i0kRERfPnU7x05GmSPNphKfAJwIa4SBx3Hi2yi
+nQsiLu+PZhj+DSUr0dgbPU6r/GpNQUG5ptpIcGFbo033K2Ef3ARZFBFmhhXJPosO
+wKJhJbqvGTM3zAZ/w2tT4K4q8Mpr/0FnT5xKhmWuz0QStpk6e/ZJDjaOnN/02AAU
+GF195Rh2/Jp14zSZqEb96u4Aw1QOORHRDRqGVnQXsIGVIednL6zCgDLWK0GZ10Av
+bomsT2ndkvHmU2yc2cow2L2SyTd550WKjXVG1jm1qIZukKMH0MwX33lzWC+xVQ8+
+RgtqlgvCw+8qzOr5AaLvp6NKIVL/xVphtCh3DYDizOCh4O8GGSk=
+=Ziyi
+-----END PGP SIGNATURE-----
+
+--55uyg4qhihze6uzj--
