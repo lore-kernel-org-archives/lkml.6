@@ -1,112 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751195AbeDYBkF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 24 Apr 2018 21:40:05 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:57237 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbeDYBkD (ORCPT
+        id S1751262AbeDYBob (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 24 Apr 2018 21:44:31 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:45696 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750862AbeDYBoZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Apr 2018 21:40:03 -0400
-X-Google-Smtp-Source: AB8JxZoEGgwO/vzvTWW/ZK1n57h9IMWCqTENc1FLJcDJDSbbsaUbzcXxT6o1Akw9DxSsR4MigHuKDRNyqOn+nVrTDUiCWsmuPrau
+        Tue, 24 Apr 2018 21:44:25 -0400
+X-Google-Smtp-Source: AB8JxZqfPG2e57TH7R4mZ2iUV+TwoJoLWOBEjXzMCzWmN9yWUBVBiSx8Okq0Y3BVPL/SHNmtYYW5E/GaJVG5Zdoya4w=
 MIME-Version: 1.0
-Date: Tue, 24 Apr 2018 18:40:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007e9256056aa2590a@google.com>
-Subject: general protection fault in smc_set_keepalive
-From: syzbot <syzbot+cf9012c597c8379d535c@syzkaller.appspotmail.com>
-To: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180424191640.GA32495@lst.de>
+References: <20180420080313.18796-1-hch@lst.de> <20180420080313.18796-14-hch@lst.de>
+ <CAEbi=3fkakVD2vxGu6SgJM77JnNM8Y79xS8_o6m9d_85BJpMFQ@mail.gmail.com> <20180424191640.GA32495@lst.de>
+From: Greentime Hu <green.hu@gmail.com>
+Date: Wed, 25 Apr 2018 09:43:43 +0800
+Message-ID: <CAEbi=3f7yzE+KAM2GOh6QahC_E6BAUfB3ys3U-WdBSUf3DPZqg@mail.gmail.com>
+Subject: Re: [PATCH 13/22] nds32: use generic dma_noncoherent_ops
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>, linux-xtensa@linux-xtensa.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+2018-04-25 3:16 GMT+08:00 Christoph Hellwig <hch@lst.de>:
+> Hi Greentime,
+>
+> thanks for testing the patch!
+>
+> It looks like nds32 doesn't have a buildbot yet, so this code didn't
+> even get syntax checkin, sorry.
+>
+> Below is the incremental fixes based on this thread.
+>
+> Can you check if my tree works if you just revert the
+> "nds32: use generic dma_noncoherent_ops" commit?
+>
+> diff --git a/arch/nds32/kernel/dma.c b/arch/nds32/kernel/dma.c
+> index 688f1a03dee6..48018275e7f4 100644
+> --- a/arch/nds32/kernel/dma.c
+> +++ b/arch/nds32/kernel/dma.c
+> @@ -330,7 +330,7 @@ void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
+>         void *addr = kmap_atomic_pfn(PHYS_PFN(paddr));
+>         unsigned long start = (unsigned long)addr;
+>
+> -       switch (direction) {
+> +       switch (dir) {
+>         case DMA_FROM_DEVICE:
+>                 break;
+>         case DMA_TO_DEVICE:
+> @@ -350,12 +350,12 @@ void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
+>         void *addr = kmap_atomic_pfn(PHYS_PFN(paddr));
+>         unsigned long start = (unsigned long)addr;
+>
+> -       switch (direction) {
+> +       switch (dir) {
+>         case DMA_TO_DEVICE:
+>                 break;
+>         case DMA_FROM_DEVICE:
+>         case DMA_BIDIRECTIONAL:
+> -               cpu_dma_inval_range(start, end);
+> +               cpu_dma_inval_range(start, start + size);
+>                 break;
+>         default:
+>                 BUG();
 
-syzbot hit the following crash on net-next commit
-9c20b9372fbaf6f7d4c05f5f925806a7928f0c73 (Tue Apr 24 03:08:41 2018 +0000)
-net: fib_rules: fix l3mdev netlink attr processing
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=cf9012c597c8379d535c
+Hi Crhistoph,
 
-So far this crash happened 2 times on net-next.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4775309383565312
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4978230683500544
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4770663504019456
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-2918904850634584293
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+The ftmac100 works if I revert this commit.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+cf9012c597c8379d535c@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+commit de46b9ba5298aafc47284735a4f21baa8e4ed4b7
+Author: Greentime Hu <greentime@andestech.com>
+Date:   Wed Apr 25 09:33:51 2018 +0800
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 4455 Comm: syz-executor060 Not tainted 4.17.0-rc1+ #17
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:smc_set_keepalive+0x4e/0xd0 net/smc/af_smc.c:59
-RSP: 0018:ffff8801ced8fa68 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff85d72bcb
-RDX: 0000000000000004 RSI: ffffffff873f0a94 RDI: 0000000000000020
-RBP: ffff8801ced8fa80 R08: ffff8801b67e44c0 R09: 0000000000000006
-R10: ffff8801b67e44c0 R11: 0000000000000000 R12: ffff8801b6bff7c0
-R13: 0000000000000001 R14: 0000000000000003 R15: ffff8801aee2b540
-FS:  00000000009e4880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000040 CR3: 00000001b6e75000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  sock_setsockopt+0x14e2/0x1fe0 net/core/sock.c:801
-  __sys_setsockopt+0x2df/0x390 net/socket.c:1899
-  __do_sys_setsockopt net/socket.c:1914 [inline]
-  __se_sys_setsockopt net/socket.c:1911 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43fcf9
-RSP: 002b:00007ffe62977a78 EFLAGS: 00000217 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fcf9
-RDX: 0000000000000009 RSI: 0000000000000001 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000004 R09: 00000000004002c8
-R10: 0000000020000040 R11: 0000000000000217 R12: 0000000000401620
-R13: 00000000004016b0 R14: 0000000000000000 R15: 0000000000000000
-Code: ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 78 48 8b 9b 50 04 00 00 48  
-b8 00 00 00 00 00 fc ff df 48 8d 7b 20 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
-75 6b 48 b8 00 00 00 00 00 fc ff df 48 8b 5b 20 48
-RIP: smc_set_keepalive+0x4e/0xd0 net/smc/af_smc.c:59 RSP: ffff8801ced8fa68
----[ end trace a76f9ed0fb111068 ]---
+    Revert "nds32: use generic dma_noncoherent_ops"
 
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+    This reverts commit 0489ce952072e7542456e0d962437062916ce0df.
