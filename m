@@ -1,999 +1,485 @@
-Return-Path: <Adam.Thomson.Opensource@diasemi.com>
-X-Google-Smtp-Source: AIpwx4/ueFtr6Kl5P4jjNVH16noyR0+lqNVdU9+xJJ6dWfcwsQuHv+CawKUna52l385E6QCJZVi6
-ARC-Seal: i=1; a=rsa-sha256; t=1524492658; cv=none;
-        d=google.com; s=arc-20160816;
-        b=UxX9EikI9RgxgV+lPpixfmQXt6J4CDlO+6XlMGBQE3bmbaZV1CB+2BRQ91NFFgPHSL
-         O8+AE49TfzvFnrnA8jhKR4E2De4dXuda1yUiS7LigQuU49NhTiOXacojzNHCDuiEPaL+
-         SmYrqHHETAM0z6ss/GY67qqmKDPx3BoMT2Gzwa6QVz+yeZvynEvicwoCDQ6KiEj108OU
-         t1bDp31m/awE0pkGKT0jDi86v1pUZXVPnpxc7O+rKHYVMy9venfHthef2jW2XhU5+s6T
-         WrO5EA6GTKAJqUGa0jYKwbgFA5Rv/glKRxgZ4AMfhmTM9VL3X52N6lrczlZm6sKT2q5p
-         zx3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:cc:to:subject:date:from:references:in-reply-to
-         :message-id:arc-authentication-results;
-        bh=rjgPhIazokcaMS6pEuPlauvFIQSxR0/cgrEJVjOZUS4=;
-        b=txTn55nMyv4YOgsgkmFRougYJ+lf5IrmUgnjcy28tYOxj9mIEAvsqcgS88LYYHAZ1k
-         xuGsM8vhUzwSPUudMoxVpSO4DDRZbL8WfalsLIHjiqY2dZEdeNhBDE5FZOioEa6oeIVw
-         0o+IrAtEUl9c/X5Nhc9C0aHDWPYxuXe8fn95JAZGBkPcBCfhUS+CKdijk0p1RqgxZe+i
-         g8fej7iUNR6mTXoBG9POgdXO43fXWIHqt9gwfGsN4ChKVFQFO8fhxbA5hpsm4s3rXOas
-         Y4dJtV5gLU88ZvwRtIE4X11nznpL1486JKVoBgKsBjGpvoPV+y3461FZ8oaqyAQzITD4
-         b3jQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 195.245.231.139 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=diasemi.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 195.245.231.139 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=diasemi.com
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplleJIrShJLcpLzFFi42KJ27nUWLfw5d0
-  og58H5S2aF69ns3hzfDqTRdfqnSwW1471Mllc3jWHzeJz7xFGi0XLWpktniw8w2RxeneJA6fH
-  plWdbB7zTgZ67J+7ht1j47sdTB7v911l89j5vYHd4/MmuQD2KNbMvKT8igTWjL3PYgqmXGWs+
-  HPxNXsD4691jF2MXBxCAusZJWZNbQRyOIGcColTt9Yzgdi8ApkSj//NZgexOQXcJbonfWSDqH
-  GTuNz2BqyeTcBCYvKJB0BxDg4WAVWJq1ecQcLCQOUti+ezg8wXEXjPKPHp8QcWkASzQJ1E7++
-  3LBDzBSVOznwCFZeQOPjiBTPEfAOJ0wsaweISAvYS099fZQaZLyGgL9F4LBYibCjxfdY3qBJz
-  ifuHu9gmMArOQjJ1FpKpCxiZVjFqFKcWlaUW6Rob6CUVZaZnlOQmZuboGhqY6uWmFhcnpqfmJ
-  CYV6yXn525iBEZJPQMD4w7GCav8DjFKcjApifJanr8bJcSXlJ9SmZFYnBFfVJqTWnyIUYaDQ0
-  mCt+IFUE6wKDU9tSItMwcYrzBpCQ4eJRHeOJA0b3FBYm5xZjpE6hSjLse/m/t7mYVY8vLzUqX
-  EeV1BigRAijJK8+BGwFLHJUZZKWFeRgYGBiGegtSi3MwSVPlXjOIcjErCvJtBpvBk5pXAbXoF
-  dAQT0BEdkndAjihJREhJNTCaqWm11FVObnx+3v+CjY+7gOAR2W87P6TtjvPgjLt6NGP55/mb6
-  5Suq8xx3f1Ib+02djlPXtk4Ye73EbIdahcaJG/38f37U+vKq7Ytbxbz4+iZmR45S26s/nlo1p
-  40Hs6Npn5SYf0iBbus92eKeWZJvDsf26M6T1VQf/v6nzMumOi9yNrcxajEUpyRaKjFXFScCAA
-  uLX6hGAMAAA==
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-16.tower-180.messagelabs.com!1524492656!99333180!1
-X-Originating-IP: [94.185.165.51]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-Message-ID: <34c58a40afac0b97375fc76a343d5fd41057fafa.1524490253.git.Adam.Thomson.Opensource@diasemi.com>
-In-Reply-To: <cover.1524490253.git.Adam.Thomson.Opensource@diasemi.com>
-References: <cover.1524490253.git.Adam.Thomson.Opensource@diasemi.com>
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Mon, 23 Apr 2018 15:10:56 +0100
-Subject: [PATCH v8 1/6] typec: tcpm: Add core support for sink side PPS
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck
-	<linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Reichel <sre@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Jun
- Li <jun.li@nxp.com>
-CC: <linux-usb@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <support.opensource@diasemi.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-431479-1524647943-2-8795303742111327804
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAD_ENC_HEADER 0.001, BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25,
+  MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001,
+  LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524647942; b=htV6ZQO3a9doGFQFbnWTsNT/9PROPa+4ekrww5FXCOixI1c/N4
+    psI+QZeJgL+yU5HHdMC9+I6orK9eldBgebQcwxnQCUDbvGFvDHacUre8fMMLa0Fv
+    8PBo9VMfiEkBOu3kY13HPML45xyk/VbDVaYCKVMBaGcWZYMu5xa918LTPY2K5jRL
+    Y0pW2yIO5v9KmIPRjXEZubMs/OvOVJhZbm8f6axWIUZcp17e0P0hHDdOHlApXk9J
+    mC+MtY4BqG05sJ91zjrXOb+l2hNLK1AYdROVBZVUJnwi5yZfapPc44Ylp+FrPSyf
+    epbdOEwWibHFFSmDqyIYj8wRKeB3jlUvM+hQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524647942; bh=6eiw9
+    l/GEiy18hlCBcss/H+HDxVtFWzspfKORAWV0XE=; b=FdxAwpKPFv9IBP/L31dpX
+    LbluHRFebIL/p1Bgt/jp4WXBU0nQseXPvkgAFuxWbD7MgbUHc8+AyCJSHUINqcWn
+    D6mZ9vyFKKH8EgDyXhbZMNmsU1cbNtZzysnYj4n4JqqZ42uFevUrZIZwc/z6xYF7
+    kBHmFQeVSV0aGZaBDuAAuYGQwqUnglAp1wwRxpvr4La8D2Qo02Z7FM+VHZCp1JKN
+    Q/KM/jHrKPIfNs7yUzvmuHcWH73jTgRvqnZf7oHuSPnVt8UeVH4OLJwqQYCYYtFb
+    ssPERBwA3N+6109r5AV//DJpW9lXqU7AW7tcK7EsqB8PkbbSLXmbU2cQ/Dz+4fFo
+    Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=freescale.onmicrosoft.com header.i=@freescale.onmicrosoft.com header.b=HYWd6+DN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1-freescale-onmicrosoft-com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=freescale.onmicrosoft.com header.i=@freescale.onmicrosoft.com header.b=HYWd6+DN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1-freescale-onmicrosoft-com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfP4WSwofM/CfXgdtadatbMlAaND1lPSyCM0fxT+ywSLQV5sWkX/x0sBZmimBenGd3zwBOjKgFCGsJqRG4YzOCvXFjgU3Yb4HWzZDCXB+kMKAKrafM0Ff
+    3gb1UvOIuG+PXbxOiSOBZ9/6VqUE6qY2u0njARrKW15cAgb1ihwW7FQ4JPlcORoiH2Ij6VrBVX5pnNKvyFuwHZ9PBjQUDKE2LDv4Q+DnWlQptyntdnVidAxr
+    W6PdrxoB9MDvGiT/lNISVg==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=uwV2Oh5bJUoA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=8AirrxEcAAAA:8
+    a=DDOyTI_5AAAA:8 a=k626kwcCBttF7g_-ne0A:9 a=CjuIK1q_8ugA:10
+    a=ST-jHhOKWsTCqRlWije3:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Authentication-Results: spf=fail (sender IP is 64.157.242.222)
+ smtp.mailfrom=nxp.com; driverdev.osuosl.org; dkim=none (message not signed)
+ header.d=none;driverdev.osuosl.org; dmarc=fail action=none
+ header.from=nxp.com;
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Richard Cochran
+ <richardcochran@gmail.com>, <dan.carpenter@oracle.com>, Ioana Radulescu
+ <ruxandra.radulescu@nxp.com>
+Subject: [PATCH] staging: fsl-dpaa2/eth: Add support for hardware timestamping
+Date: Wed, 25 Apr 2018 17:17:49 +0800
+Message-ID: <20180425091749.46841-1-yangbo.lu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:64.157.242.222; IPV:NLI; CTRY:US; EFV:NLI;
+ SFV:NSPM;
+ SFS:(10019020)(39380400002)(376002)(346002)(39860400002)(396003)(2980300002)(1110001)(1109001)(339900001)(189003)(199004)(316002)(106466001)(59450400001)(50226002)(47776003)(2616005)(26005)(305945005)(126002)(105606002)(8676002)(110136005)(81166006)(81156014)(16586007)(6636002)(5660300001)(44832011)(486006)(77096007)(476003)(86362001)(39060400002)(4326008)(48376002)(8656006)(2906002)(356003)(50466002)(97736004)(1076002)(498600001)(53936002)(51416003)(8936002)(36756003)(85426001)(1857600001)(336012);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:BL2PR03MB388; H:tx30smr01.am.freescale.net;
+ FPR:; SPF:Fail; LANG:en; PTR:ErrorRetry; MX:1; A:1;
+X-Microsoft-Exchange-Diagnostics: 1; BL2FFO11OLC007;
+ 1:sjA8oSiOfzUroWb4Tbag23s025MmqeMHS6N9SRC63/ktyj8HP1JWvpd50G1I2+0zvceU4kgAxaxA/S8WYDgs6n4MObgE0PrSHnN8L/N4Oc+mFLcORkkOTIlrjH0e1apa
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 23/04/2018 11:44:00
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
+ RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(8559017)(2017052603328);
+ SRVR:BL2PR03MB388;
+X-Microsoft-Exchange-Diagnostics: 1; BL2PR03MB388;
+ 3:84YnVDInWFypXyHseWfl06F9w8B0lHly6DBJ8wfme+voaWX3M+cVDJx0lN2jiGoxZ2q0/WgQvJu9DBszd7UY2FPT1/IwsXBjgjtn6/Z4AEJ0qTftaQSjkISzw2+e9DCj9S52ZXaPPBlBBkLyCjhIBH8InaqVPhBGdPMR4PpewRhmd9NDmXcFjfUNi7POCCS3hQlS7NPFlxFDBp+tFRWiB9JX4lfDk65HlAZoga7gUGugeg9cKknziloy+hjBqxyqQ08hWmK8mvRr3KWPjenVNgjq39S52BSFv2p931Q5ArxAIqk2KQumwkTtLIo2RSMyyhgJz4xtzICLliy2JJsGMJzkkSXYusfgZL24KHPMzWQ=;
+ 25:yg+3nV0OEtTgBOVeFOYGhdyBA7s+ST3R+eebGVaB4XtuBze5F6z3nn4M6SdlZnXleWOZnasNFEKvZIMSUpfHgyXTfvntTV0QTCTP+hLK8XyLIQ5jrI2z32c/zIgBeI4rMl599V4aZbNbfK+JlFNYzqxyCYlgGZzHQOsL50crraRwM+/a3fBcnk1RVV5cM1aLGqTUfdKEsFfox2XLXIGg3E1Ou3H1p2afZX9p6HJZuIbmdbCm4wAd2WgXiqDtZ9wbAcuapYFbfjTWk5oBQzuEHJ1EU0GtgMVtlz6Y/jy/wtxJTU+NTktFDhl323BUqtxuruNXZRpeK24IP8JW3r4UBQ==
+X-MS-TrafficTypeDiagnostic: BL2PR03MB388:
+X-Microsoft-Exchange-Diagnostics: 1; BL2PR03MB388;
+ 31:XwfWj5JDAlklWqMk4gLnjz+V/cpCMu8DHNP9+b9JqXUa0L827Q0rFpZaor8wuc4ZqCFPtucfc/NXA9NnC0DnA6rhBjmitdSyvDyq3sSP1JD9MSZKHB12NYuQFhj6dpIiWTcTxQAPzQD59ZyyARTKLg/iC35/ZkrdxPbTUFx05QkmaKGGr3xiOn6Wmt35NDSNQC1yJ2U5Vo09NGPKJXe2b9qwsfChTdBXHYD5c+wBMOw=;
+ 20:3mQo4V6bjBOiR6jopDbp/oEJMjsHEWTWR3rCAdwolZw1vguWnfnvp3RvNrL8kx7WqIvjxKgdpK3n8IoJc4N+wQi4CYNRQzOQ2s0a7Wp4Pq9G6kJcH6i8YsgAYQnM2zYQumbsPznwivmFNfe7LtrD5pC/yK1BwUPppOl9o42iY4l1kZqqX8mszngeLyk/I0ECtPpuwcjzZYP2FHQWLAaq9J3ktiaWW0SnRurz+JGc6mCsE6vQ74MSUks6nI9iDZ5j5JOmt6HSLpek9ZZUv6cY/B9HRFU0uySFurf+FKsUjiWQK2m5T6I/3/h/pu5whIJuMTcXZKYHx9lMoSPmfWA0j28E1orcHqc/EoYNEdjYQ9ZFlV0z0tb0tURYS6N/8tZGtmslCQopbKGAjU1WZrhkwFvlRFWOWOdKGObzJWqAnLnT1p4AOJZTQ0hiPIteLLRiuZDAFlepLZPLR9zaaMHjumbOXZbHIuKOX5zcP87AaAjFpWDS4hXkA1HM/MAea8WC67L3IzSI2WW7E5th6ZDtnux/NSjB86JNDp62dn8a2qKkxfvPyZooxGTMZL5NyOGbRImhquNcGfVZc78WOzU1fIe7HUtjnjtHtoWQSIa6J8I=
+X-Microsoft-Antispam-PRVS: <BL2PR03MB3880E8F028E9CEF6B2F0777F88F0@BL2PR03MB388.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
+ RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231232)(944501410)(52105095)(93006095)(93003095)(6055026)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061750153)(6072148)(201708071742011);
+ SRVR:BL2PR03MB388; BCL:0; PCL:0; RULEID:; SRVR:BL2PR03MB388;
+X-Microsoft-Exchange-Diagnostics: 1; BL2PR03MB388;
+ 4:ITcpwdYMVFrr/qLATkj13nlfLGDy8gwVDv5kovele2Jrw7Ie//c1WOP123UWiWpP54zeFyFcF4JTM9Gwlk5QsqPVnZ3f2Mivd0zL1ZvVWFczNNbhZZJPoLpqCEy02ZkjtR5khQq3N+CNLO9PyVeO1AejapnMYNX5sBtW8nJg7MouNs9G/LzfM+87yNE3KEx90tK1HHtOGYgfoNc1jl1s6aBOYx+/ATR157oNBfe4MD5j+IPcrFXbr1D2c/KEzknrjI/fGP+Td1BqTNjr7Sm01etkQhwoJp+oW3srl5h73uVpzCIdsiGidam8GOSoWcxq
+X-Forefront-PRVS: 06530126A4
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1; BL2PR03MB388;
+ 23:YBPOteug/UElGzOliNRfNQl44c996r7Olv2aG88iew?=
+ =?us-ascii?Q?ZBBEGzRVCvcxdRIEisILyZM5Wj8rxNYYs/3IqBAoA7NlbYYin0mLJNswFP+8?=
+ =?us-ascii?Q?4yzUxsKP+xbMJqQ2XPFarjvEwnkljf6sBedm52zTjEIzYToLJQic5PdNhmV4?=
+ =?us-ascii?Q?ChQ6FysTSrGU549xMaqZfDTf5U0O7Gf8TkIo1u6OGEbPTr4Cx4wDEoqsjaKi?=
+ =?us-ascii?Q?U0eon53hnHxoUq6zrCOnG01jQ6ZKiRon+GGZOHnryJ0osgyWy6mgBPAis7iv?=
+ =?us-ascii?Q?ldEbYwX2tocro9ML/fsl8yC/lG6jCkEhO1BB0QGrdMaU+faym1pud/DPG9Ly?=
+ =?us-ascii?Q?bTdj7BAPjMhMAF0ikkwA8LLRmQOmEN3eeq/9USMQEpi1SaLFQ6qKurix07EH?=
+ =?us-ascii?Q?Phq6PJAYbSn5MqJVBKYgienpU4fwdRq94dRPnwi1CAWmjlscE9edGjSQmTty?=
+ =?us-ascii?Q?hF7dOV9u2ENWVINReoJCQ1JfO3IrhJvRSEokLS9PfE3WpizTknDtR23IlhW3?=
+ =?us-ascii?Q?BghCdM+ShU4ylVE8e48Wg5cXSX9iADuBcgdnZx6CD+m1ClehMqteZ/cuSPbq?=
+ =?us-ascii?Q?gscvtNfBm/hBNuo/mlPFjRp+se+UA5/JH022InlnEN7M1cywcHvphbHZmJQ2?=
+ =?us-ascii?Q?cgv4cJSWCSvHfOUKc52ohzW/3D5OtuFNdkey8lFMG7bw/T82RgjrvDCg4GIW?=
+ =?us-ascii?Q?zrnxlQAItchsOw7H0l6RdPwqPji0EfKBQ0OccyCZ47uGfwvD4NVSVF7/cCzy?=
+ =?us-ascii?Q?UzqFckBblwlDLxxiT0UvNwcWZjGvk/LTTWX+R2xml9yLsyr+yF817PcPuVPl?=
+ =?us-ascii?Q?UuWKtplBAlQis9c3oigCUpyfpL2uD3H++rO1FY1y5RJVr34VJ6j5DgS7PXyD?=
+ =?us-ascii?Q?58XH+iAwoR2W3MfLlLYHSKsdcLut1j/dxXZsZXM72VFS+FPXylNves9VGYAC?=
+ =?us-ascii?Q?ZllhxW+a4Dn0f4fl4U37jiO/yx+aGOOjbPIF2OPiD1Nn6TnPTvwu3p9J2Elp?=
+ =?us-ascii?Q?6IDiUTZZ8qa4J7enUntA+LwwOCpNcFvkeJA1t+8/Xr0IrLMhUM1SRJuudq0R?=
+ =?us-ascii?Q?3X5BI9Os+05J0AY7MBEB9m916EWc37c8HMkBf0wGfAfu2Sy/wXqfCypfCENa?=
+ =?us-ascii?Q?klJSb6q7nvgIwiXYpuWjkvmR8iK52hUYUqsaqAO9FCpo2jGWJTWQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: HeuFtosgMo4Or/OZJasGHu6cnFUB+voWG9LXFjSAMRLOvQ8F5cXq05DAdUaIBgOOu+k4mTK6zv30r1xbUC/GxR1BeGIgKYAyqH8Adll/i9neqfUdxqUBAORzQZ2Lhb2M/mfs60DgmJ3JOTqtxGzAr31bqeKWjDZC1m/L8P6FmHdFkKU9tA11gtnaHTfx/amr
+X-Microsoft-Exchange-Diagnostics: 1; BL2PR03MB388;
+ 6:AyuY47IK85QW0q6PrmYLWdxpmLq37Q4OKXhtpgIMFYYvo8atcdKS6E037NVu7hwi/i/dca+lkgUIRDy4Xi5ZnrPeqnnoVR6H9O2Q0Pr6LaBWxyN7LkQ1mUkNdhWHcYJY6GCawdzvd2Bu8mOUrt2o9hBf8230VmKIDnQxUvxLz9Xsdn5MHT18RpgG8jZuF6ik5jQJxgx1hdzle5uKDfDwxsfkWNTHNltdePD6ws6sVUFI+UgIX4uN2UciE/cKpndrbk1oQEdkhrtog/1ZcbtNE8D+XMD6W/knSVOODQJqG6dzd6fpjKvxSnhUXfAn/GyweEbUtrzaMbGd8/Gx/oQJASHZDvIyZzLFu7jzND+OR4x7gYarEiqNtnz3834v/0sVI2PhfLjAM1kpnsqQwPWzSOhP+ct+4EfjJunDz2w0uL2srnBzw232lP9imddCZJy8leyKcZOLNSYPetESn3Lijg==;
+ 5:B0gipBQyKxR1gkQl6DkYRTrm5wElz9M7eH9rYdIB3pzQlXlad7FyXV3jEvIwG2sz8g9eDg5+uFnMqBb05szk1Td8x5WOxrXJ0zXt1L6p1/m867ohhbkwGKHyySlXrFbPUmHzpXD9ocEQwXrebdENFjtDg3VKy0JMb0zFb8Ko9J0=;
+ 24:nIerbjmPSKVCTe70cZZUoESoEnUV5MS0giLcFOl4ikbHob2EFmMp6kfGdYOVUsLA/+KZKxMYPNF4gtj/k6XKLJU/kr+Spc03RpslxgSrmcs=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1; BL2PR03MB388;
+ 7:CA2XcUDbcq9p9C8kXog1RHtrIG3mUJGqqWLA6AdkErJhAx3ymu7M5KFb/4PpEGAAAf9Mxc3egXvKFM8KFyhrwheliN62z5HamRuKwksdQ+JZonAElqNzm8t1tMcO7mzQw2DFRtaBT5c22kmZUQIKYnmDH1bPiy7j1DafCXQZ0IWGDE6MILG5f99EfT3naHS8PN3a3E9hOGp6RkoMB3W7HLNkRWoWaKxl61itFoYCGeT7SN2Zz9ZpXZUNje+NwzaZ
+X-MS-Office365-Filtering-Correlation-Id: c75e5a58-6979-4413-a868-08d5aa8d8c79
+X-OriginatorOrg: freescale.onmicrosoft.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2018 09:18:46.5127 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c75e5a58-6979-4413-a868-08d5aa8d8c79
+X-MS-Exchange-CrossTenant-Id: 710a03f5-10f6-4d38-9ff4-a80b81da590d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=710a03f5-10f6-4d38-9ff4-a80b81da590d; Ip=[64.157.242.222];
+ Helo=[tx30smr01.am.freescale.net]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR03MB388
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Yangbo Lu <yangbo.lu@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595722898650865988?=
-X-GMAIL-MSGID: =?utf-8?q?1598546413541538846?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit adds code to handle requesting of PPS APDOs. Switching
-between standard PDOs and APDOs, and re-requesting an APDO to
-modify operating voltage/current will be triggered by an
-external call into TCPM.
+From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
 
-Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Hardware timestamping is supported both on Rx and Tx paths.
+On Rx, timestamping is enabled for all frames. On Tx, we
+only instruct the hardware to timestamp the frames marked
+accordingly by the stack.
+
+Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 ---
- drivers/usb/typec/tcpm.c | 569 +++++++++++++++++++++++++++++++++++++++++++++--
- include/linux/usb/pd.h   |   4 +-
- include/linux/usb/tcpm.h |   1 +
- 3 files changed, 558 insertions(+), 16 deletions(-)
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c |  109 +++++++++++++++++++++++-
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h |   48 ++++++++++-
+ 2 files changed, 151 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-index 27192083..b160da3 100644
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -48,6 +48,7 @@
- 	S(SNK_DISCOVERY_DEBOUNCE_DONE),		\
- 	S(SNK_WAIT_CAPABILITIES),		\
- 	S(SNK_NEGOTIATE_CAPABILITIES),		\
-+	S(SNK_NEGOTIATE_PPS_CAPABILITIES),	\
- 	S(SNK_TRANSITION_SINK),			\
- 	S(SNK_TRANSITION_SINK_VBUS),		\
- 	S(SNK_READY),				\
-@@ -167,6 +168,16 @@ struct pd_mode_data {
- 	struct typec_altmode_desc altmode_desc[SVID_DISCOVERY_MAX];
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
+index 553678d..d9febba 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
+@@ -38,8 +38,11 @@
+ #include <linux/msi.h>
+ #include <linux/kthread.h>
+ #include <linux/iommu.h>
+-
++#include <linux/net_tstamp.h>
+ #include <linux/fsl/mc.h>
++
++#include <net/sock.h>
++
+ #include "dpaa2-eth.h"
+ 
+ /* CREATE_TRACE_POINTS only needs to be defined once. Other dpa files
+@@ -275,6 +278,16 @@ static void dpaa2_eth_rx(struct dpaa2_eth_priv *priv,
+ 
+ 	prefetch(skb->data);
+ 
++	/* Get the timestamp value */
++	if (priv->ts_rx_en) {
++		struct skb_shared_hwtstamps *shhwtstamps = skb_hwtstamps(skb);
++		u64 *ns = dpaa2_get_ts(vaddr, false);
++
++		*ns = DPAA2_PTP_NOMINAL_FREQ_PERIOD_NS * le64_to_cpup(ns);
++		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
++		shhwtstamps->hwtstamp = ns_to_ktime(*ns);
++	}
++
+ 	/* Check if we need to validate the L4 csum */
+ 	if (likely(dpaa2_fd_get_frc(fd) & DPAA2_FD_FRC_FASV)) {
+ 		status = le32_to_cpu(fas->status);
+@@ -334,6 +347,28 @@ static int consume_frames(struct dpaa2_eth_channel *ch)
+ 	return cleaned;
+ }
+ 
++/* Configure the egress frame annotation for timestamp update */
++static void enable_tx_tstamp(struct dpaa2_fd *fd, void *buf_start)
++{
++	struct dpaa2_faead *faead;
++	u32 ctrl, frc;
++
++	/* Mark the egress frame annotation area as valid */
++	frc = dpaa2_fd_get_frc(fd);
++	dpaa2_fd_set_frc(fd, frc | DPAA2_FD_FRC_FAEADV);
++
++	/* Set hardware annotation size */
++	ctrl = dpaa2_fd_get_ctrl(fd);
++	dpaa2_fd_set_ctrl(fd, ctrl | DPAA2_FD_CTRL_ASAL);
++
++	/* enable UPD (update prepanded data) bit in FAEAD field of
++	 * hardware frame annotation area
++	 */
++	ctrl = DPAA2_FAEAD_A2V | DPAA2_FAEAD_UPDV | DPAA2_FAEAD_UPD;
++	faead = dpaa2_get_faead(buf_start, true);
++	faead->ctrl = cpu_to_le32(ctrl);
++}
++
+ /* Create a frame descriptor based on a fragmented skb */
+ static int build_sg_fd(struct dpaa2_eth_priv *priv,
+ 		       struct sk_buff *skb,
+@@ -420,6 +455,9 @@ static int build_sg_fd(struct dpaa2_eth_priv *priv,
+ 	dpaa2_fd_set_len(fd, skb->len);
+ 	dpaa2_fd_set_ctrl(fd, DPAA2_FD_CTRL_PTA | DPAA2_FD_CTRL_PTV1);
+ 
++	if (priv->ts_tx_en && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP)
++		enable_tx_tstamp(fd, sgt_buf);
++
+ 	return 0;
+ 
+ dma_map_single_failed:
+@@ -470,6 +508,9 @@ static int build_single_fd(struct dpaa2_eth_priv *priv,
+ 	dpaa2_fd_set_format(fd, dpaa2_fd_single);
+ 	dpaa2_fd_set_ctrl(fd, DPAA2_FD_CTRL_PTA | DPAA2_FD_CTRL_PTV1);
+ 
++	if (priv->ts_tx_en && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP)
++		enable_tx_tstamp(fd, buffer_start);
++
+ 	return 0;
+ }
+ 
+@@ -520,6 +561,19 @@ static void free_tx_fd(const struct dpaa2_eth_priv *priv,
+ 		return;
+ 	}
+ 
++	/* Get the timestamp value */
++	if (priv->ts_tx_en && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
++		struct skb_shared_hwtstamps shhwtstamps;
++		u64 *ns;
++
++		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
++
++		ns = dpaa2_get_ts(skbh, true);
++		*ns = DPAA2_PTP_NOMINAL_FREQ_PERIOD_NS * le64_to_cpup(ns);
++		shhwtstamps.hwtstamp = ns_to_ktime(*ns);
++		skb_tstamp_tx(skb, &shhwtstamps);
++	}
++
+ 	/* Free SGT buffer allocated on tx */
+ 	if (fd_format != dpaa2_fd_single)
+ 		skb_free_frag(skbh);
+@@ -552,6 +606,10 @@ static netdev_tx_t dpaa2_eth_tx(struct sk_buff *skb, struct net_device *net_dev)
+ 			goto err_alloc_headroom;
+ 		}
+ 		percpu_extras->tx_reallocs++;
++
++		if (skb->sk)
++			skb_set_owner_w(ns, skb->sk);
++
+ 		dev_kfree_skb(skb);
+ 		skb = ns;
+ 	}
+@@ -1365,6 +1423,45 @@ static int dpaa2_eth_set_features(struct net_device *net_dev,
+ 	return 0;
+ }
+ 
++static int dpaa2_eth_ts_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
++{
++	struct dpaa2_eth_priv *priv = netdev_priv(dev);
++	struct hwtstamp_config config;
++
++	if (copy_from_user(&config, rq->ifr_data, sizeof(config)))
++		return -EFAULT;
++
++	switch (config.tx_type) {
++	case HWTSTAMP_TX_OFF:
++		priv->ts_tx_en = false;
++		break;
++	case HWTSTAMP_TX_ON:
++		priv->ts_tx_en = true;
++		break;
++	default:
++		return -ERANGE;
++	}
++
++	if (config.rx_filter == HWTSTAMP_FILTER_NONE) {
++		priv->ts_rx_en = false;
++	} else {
++		priv->ts_rx_en = true;
++		/* TS is set for all frame types, not only those requested */
++		config.rx_filter = HWTSTAMP_FILTER_ALL;
++	}
++
++	return copy_to_user(rq->ifr_data, &config, sizeof(config)) ?
++			-EFAULT : 0;
++}
++
++static int dpaa2_eth_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
++{
++	if (cmd == SIOCSHWTSTAMP)
++		return dpaa2_eth_ts_ioctl(dev, rq, cmd);
++
++	return -EINVAL;
++}
++
+ static const struct net_device_ops dpaa2_eth_ops = {
+ 	.ndo_open = dpaa2_eth_open,
+ 	.ndo_start_xmit = dpaa2_eth_tx,
+@@ -1375,6 +1472,7 @@ static int dpaa2_eth_set_features(struct net_device *net_dev,
+ 	.ndo_change_mtu = dpaa2_eth_change_mtu,
+ 	.ndo_set_rx_mode = dpaa2_eth_set_rx_mode,
+ 	.ndo_set_features = dpaa2_eth_set_features,
++	.ndo_do_ioctl = dpaa2_eth_ioctl,
  };
  
-+struct pd_pps_data {
-+	u32 min_volt;
-+	u32 max_volt;
-+	u32 max_curr;
-+	u32 out_volt;
-+	u32 op_curr;
-+	bool supported;
-+	bool active;
+ static void cdan_cb(struct dpaa2_io_notification_ctx *ctx)
+@@ -1770,7 +1868,9 @@ static int set_buffer_layout(struct dpaa2_eth_priv *priv)
+ 
+ 	/* tx buffer */
+ 	buf_layout.private_data_size = DPAA2_ETH_SWA_SIZE;
+-	buf_layout.options = DPNI_BUF_LAYOUT_OPT_PRIVATE_DATA_SIZE;
++	buf_layout.pass_timestamp = true;
++	buf_layout.options = DPNI_BUF_LAYOUT_OPT_PRIVATE_DATA_SIZE |
++			     DPNI_BUF_LAYOUT_OPT_TIMESTAMP;
+ 	err = dpni_set_buffer_layout(priv->mc_io, 0, priv->mc_token,
+ 				     DPNI_QUEUE_TX, &buf_layout);
+ 	if (err) {
+@@ -1779,7 +1879,7 @@ static int set_buffer_layout(struct dpaa2_eth_priv *priv)
+ 	}
+ 
+ 	/* tx-confirm buffer */
+-	buf_layout.options = 0;
++	buf_layout.options = DPNI_BUF_LAYOUT_OPT_TIMESTAMP;
+ 	err = dpni_set_buffer_layout(priv->mc_io, 0, priv->mc_token,
+ 				     DPNI_QUEUE_TX_CONFIRM, &buf_layout);
+ 	if (err) {
+@@ -1810,7 +1910,8 @@ static int set_buffer_layout(struct dpaa2_eth_priv *priv)
+ 	buf_layout.options = DPNI_BUF_LAYOUT_OPT_PARSER_RESULT |
+ 			     DPNI_BUF_LAYOUT_OPT_FRAME_STATUS |
+ 			     DPNI_BUF_LAYOUT_OPT_DATA_ALIGN |
+-			     DPNI_BUF_LAYOUT_OPT_DATA_HEAD_ROOM;
++			     DPNI_BUF_LAYOUT_OPT_DATA_HEAD_ROOM |
++			     DPNI_BUF_LAYOUT_OPT_TIMESTAMP;
+ 	err = dpni_set_buffer_layout(priv->mc_io, 0, priv->mc_token,
+ 				     DPNI_QUEUE_RX, &buf_layout);
+ 	if (err) {
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
+index 54cea2f..1300f28 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
+@@ -88,8 +88,12 @@
+ #define DPAA2_ETH_SKB_SIZE \
+ 	(DPAA2_ETH_RX_BUF_SIZE + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)))
+ 
+-/* Hardware annotation area in RX  buffers */
++/* Hardware annotation area in RX/TX buffers */
+ #define DPAA2_ETH_RX_HWA_SIZE		64
++#define DPAA2_ETH_TX_HWA_SIZE		128
++
++/* PTP nominal frequency 1GHz */
++#define DPAA2_PTP_NOMINAL_FREQ_PERIOD_NS 1
+ 
+ /* Due to a limitation in WRIOP 1.0.0, the RX buffer data must be aligned
+  * to 256B. For newer revisions, the requirement is only for 64B alignment
+@@ -135,6 +139,7 @@ struct dpaa2_eth_swa {
+ /* Annotation bits in FD CTRL */
+ #define DPAA2_FD_CTRL_PTA		0x00800000
+ #define DPAA2_FD_CTRL_PTV1		0x00400000
++#define DPAA2_FD_CTRL_ASAL		0x00020000	/* ASAL = 128B */
+ 
+ /* Frame annotation status */
+ struct dpaa2_fas {
+@@ -150,6 +155,23 @@ struct dpaa2_fas {
+ #define DPAA2_FAS_OFFSET		0
+ #define DPAA2_FAS_SIZE			(sizeof(struct dpaa2_fas))
+ 
++/* Timestamp is located in the next 8 bytes of the buffer's
++ * hardware annotation area
++ */
++#define DPAA2_TS_OFFSET			0x8
++
++/* Frame annotation egress action descriptor */
++#define DPAA2_FAEAD_OFFSET		0x58
++
++struct dpaa2_faead {
++	__le32 conf_fqid;
++	__le32 ctrl;
 +};
 +
- struct tcpm_port {
- 	struct device *dev;
- 
-@@ -235,6 +246,7 @@ struct tcpm_port {
- 	struct completion swap_complete;
- 	int swap_status;
- 
-+	unsigned int negotiated_rev;
- 	unsigned int message_id;
- 	unsigned int caps_count;
- 	unsigned int hard_reset_count;
-@@ -258,6 +270,7 @@ struct tcpm_port {
- 	unsigned int nr_snk_vdo;
- 
- 	unsigned int operating_snk_mw;
-+	bool update_sink_caps;
- 
- 	/* Requested current / voltage */
- 	u32 current_limit;
-@@ -274,8 +287,13 @@ struct tcpm_port {
- 	/* VDO to retry if UFP responder replied busy */
- 	u32 vdo_retry;
- 
--	/* Alternate mode data */
-+	/* PPS */
-+	struct pd_pps_data pps_data;
-+	struct completion pps_complete;
-+	bool pps_pending;
-+	int pps_status;
- 
-+	/* Alternate mode data */
- 	struct pd_mode_data mode_data;
- 	struct typec_altmode *partner_altmode[SVID_DISCOVERY_MAX];
- 	struct typec_altmode *port_altmode[SVID_DISCOVERY_MAX];
-@@ -493,6 +511,16 @@ static void tcpm_log_source_caps(struct tcpm_port *port)
- 				  pdo_max_voltage(pdo),
- 				  pdo_max_power(pdo));
- 			break;
-+		case PDO_TYPE_APDO:
-+			if (pdo_apdo_type(pdo) == APDO_TYPE_PPS)
-+				scnprintf(msg, sizeof(msg),
-+					  "%u-%u mV, %u mA",
-+					  pdo_pps_apdo_min_voltage(pdo),
-+					  pdo_pps_apdo_max_voltage(pdo),
-+					  pdo_pps_apdo_max_current(pdo));
-+			else
-+				strcpy(msg, "undefined APDO");
-+			break;
- 		default:
- 			strcpy(msg, "undefined");
- 			break;
-@@ -790,11 +818,13 @@ static int tcpm_pd_send_source_caps(struct tcpm_port *port)
- 		msg.header = PD_HEADER_LE(PD_CTRL_REJECT,
- 					  port->pwr_role,
- 					  port->data_role,
-+					  port->negotiated_rev,
- 					  port->message_id, 0);
- 	} else {
- 		msg.header = PD_HEADER_LE(PD_DATA_SOURCE_CAP,
- 					  port->pwr_role,
- 					  port->data_role,
-+					  port->negotiated_rev,
- 					  port->message_id,
- 					  port->nr_src_pdo);
- 	}
-@@ -815,11 +845,13 @@ static int tcpm_pd_send_sink_caps(struct tcpm_port *port)
- 		msg.header = PD_HEADER_LE(PD_CTRL_REJECT,
- 					  port->pwr_role,
- 					  port->data_role,
-+					  port->negotiated_rev,
- 					  port->message_id, 0);
- 	} else {
- 		msg.header = PD_HEADER_LE(PD_DATA_SINK_CAP,
- 					  port->pwr_role,
- 					  port->data_role,
-+					  port->negotiated_rev,
- 					  port->message_id,
- 					  port->nr_snk_pdo);
- 	}
-@@ -1186,6 +1218,7 @@ static void vdm_run_state_machine(struct tcpm_port *port)
- 		msg.header = PD_HEADER_LE(PD_DATA_VENDOR_DEF,
- 					  port->pwr_role,
- 					  port->data_role,
-+					  port->negotiated_rev,
- 					  port->message_id, port->vdo_count);
- 		for (i = 0; i < port->vdo_count; i++)
- 			msg.payload[i] = cpu_to_le32(port->vdo_data[i]);
-@@ -1257,6 +1290,8 @@ enum pdo_err {
- 	PDO_ERR_FIXED_NOT_SORTED,
- 	PDO_ERR_VARIABLE_BATT_NOT_SORTED,
- 	PDO_ERR_DUPE_PDO,
-+	PDO_ERR_PPS_APDO_NOT_SORTED,
-+	PDO_ERR_DUPE_PPS_APDO,
- };
- 
- static const char * const pdo_err_msg[] = {
-@@ -1272,6 +1307,10 @@ enum pdo_err {
- 	" err: Variable/Battery supply pdos should be in increasing order of their minimum voltage",
- 	[PDO_ERR_DUPE_PDO] =
- 	" err: Variable/Batt supply pdos cannot have same min/max voltage",
-+	[PDO_ERR_PPS_APDO_NOT_SORTED] =
-+	" err: Programmable power supply apdos should be in increasing order of their maximum voltage",
-+	[PDO_ERR_DUPE_PPS_APDO] =
-+	" err: Programmable power supply apdos cannot have same min/max voltage and max current",
- };
- 
- static enum pdo_err tcpm_caps_err(struct tcpm_port *port, const u32 *pdo,
-@@ -1321,6 +1360,26 @@ static enum pdo_err tcpm_caps_err(struct tcpm_port *port, const u32 *pdo,
- 					  pdo_min_voltage(pdo[i - 1])))
- 					return PDO_ERR_DUPE_PDO;
- 				break;
-+			/*
-+			 * The Programmable Power Supply APDOs, if present,
-+			 * shall be sent in Maximum Voltage order;
-+			 * lowest to highest.
-+			 */
-+			case PDO_TYPE_APDO:
-+				if (pdo_apdo_type(pdo[i]) != APDO_TYPE_PPS)
-+					break;
++#define DPAA2_FAEAD_A2V			0x20000000
++#define DPAA2_FAEAD_UPDV		0x00001000
++#define DPAA2_FAEAD_UPD			0x00000010
 +
-+				if (pdo_pps_apdo_max_current(pdo[i]) <
-+				    pdo_pps_apdo_max_current(pdo[i - 1]))
-+					return PDO_ERR_PPS_APDO_NOT_SORTED;
-+				else if (pdo_pps_apdo_min_voltage(pdo[i]) ==
-+					  pdo_pps_apdo_min_voltage(pdo[i - 1]) &&
-+					 pdo_pps_apdo_max_voltage(pdo[i]) ==
-+					  pdo_pps_apdo_max_voltage(pdo[i - 1]) &&
-+					 pdo_pps_apdo_max_current(pdo[i]) ==
-+					  pdo_pps_apdo_max_current(pdo[i - 1]))
-+					return PDO_ERR_DUPE_PPS_APDO;
-+				break;
- 			default:
- 				tcpm_log_force(port, " Unknown pdo type");
- 			}
-@@ -1346,11 +1405,16 @@ static int tcpm_validate_caps(struct tcpm_port *port, const u32 *pdo,
- /*
-  * PD (data, control) command handling functions
-  */
-+
-+static int tcpm_pd_send_control(struct tcpm_port *port,
-+				enum pd_ctrl_msg_type type);
-+
- static void tcpm_pd_data_request(struct tcpm_port *port,
- 				 const struct pd_message *msg)
+ /* Accessors for the hardware annotation fields that we use */
+ static inline void *dpaa2_get_hwa(void *buf_addr, bool swa)
  {
- 	enum pd_data_msg_type type = pd_header_type_le(msg->header);
- 	unsigned int cnt = pd_header_cnt_le(msg->header);
-+	unsigned int rev = pd_header_rev_le(msg->header);
- 	unsigned int i;
- 
- 	switch (type) {
-@@ -1369,6 +1433,17 @@ static void tcpm_pd_data_request(struct tcpm_port *port,
- 				   port->nr_source_caps);
- 
- 		/*
-+		 * Adjust revision in subsequent message headers, as required,
-+		 * to comply with 6.2.1.1.5 of the USB PD 3.0 spec. We don't
-+		 * support Rev 1.0 so just do nothing in that scenario.
-+		 */
-+		if (rev == PD_REV10)
-+			break;
-+
-+		if (rev < PD_MAX_REV)
-+			port->negotiated_rev = rev;
-+
-+		/*
- 		 * This message may be received even if VBUS is not
- 		 * present. This is quite unexpected; see USB PD
- 		 * specification, sections 8.3.3.6.3.1 and 8.3.3.6.3.2.
-@@ -1389,6 +1464,20 @@ static void tcpm_pd_data_request(struct tcpm_port *port,
- 			tcpm_queue_message(port, PD_MSG_CTRL_REJECT);
- 			break;
- 		}
-+
-+		/*
-+		 * Adjust revision in subsequent message headers, as required,
-+		 * to comply with 6.2.1.1.5 of the USB PD 3.0 spec. We don't
-+		 * support Rev 1.0 so just reject in that scenario.
-+		 */
-+		if (rev == PD_REV10) {
-+			tcpm_queue_message(port, PD_MSG_CTRL_REJECT);
-+			break;
-+		}
-+
-+		if (rev < PD_MAX_REV)
-+			port->negotiated_rev = rev;
-+
- 		port->sink_request = le32_to_cpu(msg->payload[0]);
- 		tcpm_set_state(port, SRC_NEGOTIATE_CAPABILITIES, 0);
- 		break;
-@@ -1413,6 +1502,15 @@ static void tcpm_pd_data_request(struct tcpm_port *port,
- 	}
+@@ -161,6 +183,16 @@ struct dpaa2_fas {
+ 	return dpaa2_get_hwa(buf_addr, swa) + DPAA2_FAS_OFFSET;
  }
  
-+static void tcpm_pps_complete(struct tcpm_port *port, int result)
++static inline u64 *dpaa2_get_ts(void *buf_addr, bool swa)
 +{
-+	if (port->pps_pending) {
-+		port->pps_status = result;
-+		port->pps_pending = false;
-+		complete(&port->pps_complete);
-+	}
++	return dpaa2_get_hwa(buf_addr, swa) + DPAA2_TS_OFFSET;
 +}
 +
- static void tcpm_pd_ctrl_request(struct tcpm_port *port,
- 				 const struct pd_message *msg)
- {
-@@ -1489,6 +1587,14 @@ static void tcpm_pd_ctrl_request(struct tcpm_port *port,
- 				next_state = SNK_WAIT_CAPABILITIES;
- 			tcpm_set_state(port, next_state, 0);
- 			break;
-+		case SNK_NEGOTIATE_PPS_CAPABILITIES:
-+			/* Revert data back from any requested PPS updates */
-+			port->pps_data.out_volt = port->supply_voltage;
-+			port->pps_data.op_curr = port->current_limit;
-+			port->pps_status = (type == PD_CTRL_WAIT ?
-+					    -EAGAIN : -EOPNOTSUPP);
-+			tcpm_set_state(port, SNK_READY, 0);
-+			break;
- 		case DR_SWAP_SEND:
- 			port->swap_status = (type == PD_CTRL_WAIT ?
- 					     -EAGAIN : -EOPNOTSUPP);
-@@ -1511,6 +1617,13 @@ static void tcpm_pd_ctrl_request(struct tcpm_port *port,
- 	case PD_CTRL_ACCEPT:
- 		switch (port->state) {
- 		case SNK_NEGOTIATE_CAPABILITIES:
-+			port->pps_data.active = false;
-+			tcpm_set_state(port, SNK_TRANSITION_SINK, 0);
-+			break;
-+		case SNK_NEGOTIATE_PPS_CAPABILITIES:
-+			port->pps_data.active = true;
-+			port->supply_voltage = port->pps_data.out_volt;
-+			port->current_limit = port->pps_data.op_curr;
- 			tcpm_set_state(port, SNK_TRANSITION_SINK, 0);
- 			break;
- 		case SOFT_RESET_SEND:
-@@ -1665,6 +1778,7 @@ static int tcpm_pd_send_control(struct tcpm_port *port,
- 	memset(&msg, 0, sizeof(msg));
- 	msg.header = PD_HEADER_LE(type, port->pwr_role,
- 				  port->data_role,
-+				  port->negotiated_rev,
- 				  port->message_id, 0);
- 
- 	return tcpm_pd_transmit(port, TCPC_TX_SOP, &msg);
-@@ -1780,6 +1894,8 @@ static int tcpm_pd_select_pdo(struct tcpm_port *port, int *sink_pdo,
- 		     min_snk_mv = 0;
- 	int ret = -EINVAL;
- 
-+	port->pps_data.supported = false;
-+
- 	/*
- 	 * Select the source PDO providing the most power which has a
- 	 * matchig sink cap.
-@@ -1788,30 +1904,59 @@ static int tcpm_pd_select_pdo(struct tcpm_port *port, int *sink_pdo,
- 		u32 pdo = port->source_caps[i];
- 		enum pd_pdo_type type = pdo_type(pdo);
- 
--		if (type == PDO_TYPE_FIXED) {
-+		switch (type) {
-+		case PDO_TYPE_FIXED:
- 			max_src_mv = pdo_fixed_voltage(pdo);
- 			min_src_mv = max_src_mv;
--		} else {
-+			break;
-+		case PDO_TYPE_BATT:
-+		case PDO_TYPE_VAR:
- 			max_src_mv = pdo_max_voltage(pdo);
- 			min_src_mv = pdo_min_voltage(pdo);
-+			break;
-+		case PDO_TYPE_APDO:
-+			if (pdo_apdo_type(pdo) == APDO_TYPE_PPS)
-+				port->pps_data.supported = true;
-+			continue;
-+		default:
-+			tcpm_log(port, "Invalid source PDO type, ignoring");
-+			continue;
- 		}
- 
--		if (type == PDO_TYPE_BATT) {
--			src_mw = pdo_max_power(pdo);
--		} else {
-+		switch (type) {
-+		case PDO_TYPE_FIXED:
-+		case PDO_TYPE_VAR:
- 			src_ma = pdo_max_current(pdo);
- 			src_mw = src_ma * min_src_mv / 1000;
-+			break;
-+		case PDO_TYPE_BATT:
-+			src_mw = pdo_max_power(pdo);
-+			break;
-+		case PDO_TYPE_APDO:
-+			continue;
-+		default:
-+			tcpm_log(port, "Invalid source PDO type, ignoring");
-+			continue;
- 		}
- 
- 		for (j = 0; j < port->nr_snk_pdo; j++) {
- 			pdo = port->snk_pdo[j];
- 
--			if (pdo_type(pdo) == PDO_TYPE_FIXED) {
--				min_snk_mv = pdo_fixed_voltage(pdo);
-+			switch (pdo_type(pdo)) {
-+			case PDO_TYPE_FIXED:
- 				max_snk_mv = pdo_fixed_voltage(pdo);
--			} else {
--				min_snk_mv = pdo_min_voltage(pdo);
-+				min_snk_mv = max_snk_mv;
-+				break;
-+			case PDO_TYPE_BATT:
-+			case PDO_TYPE_VAR:
- 				max_snk_mv = pdo_max_voltage(pdo);
-+				min_snk_mv = pdo_min_voltage(pdo);
-+				break;
-+			case PDO_TYPE_APDO:
-+				continue;
-+			default:
-+				tcpm_log(port, "Invalid sink PDO type, ignoring");
-+				continue;
- 			}
- 
- 			if (max_src_mv <= max_snk_mv &&
-@@ -1832,6 +1977,103 @@ static int tcpm_pd_select_pdo(struct tcpm_port *port, int *sink_pdo,
- 	return ret;
- }
- 
-+#define min_pps_apdo_current(x, y)	\
-+	min(pdo_pps_apdo_max_current(x), pdo_pps_apdo_max_current(y))
-+
-+static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
++static inline struct dpaa2_faead *dpaa2_get_faead(void *buf_addr, bool swa)
 +{
-+	unsigned int i, j, max_mw = 0, max_mv = 0;
-+	unsigned int min_src_mv, max_src_mv, src_ma, src_mw;
-+	unsigned int min_snk_mv, max_snk_mv, snk_ma;
-+	u32 pdo;
-+	unsigned int src_pdo = 0, snk_pdo = 0;
++	return dpaa2_get_hwa(buf_addr, swa) + DPAA2_FAEAD_OFFSET;
++}
 +
-+	/*
-+	 * Select the source PPS APDO providing the most power while staying
-+	 * within the board's limits. We skip the first PDO as this is always
-+	 * 5V 3A.
+ /* Error and status bits in the frame annotation status word */
+ /* Debug frame, otherwise supposed to be discarded */
+ #define DPAA2_FAS_DISC			0x80000000
+@@ -319,6 +351,9 @@ struct dpaa2_eth_priv {
+ 	u16 bpid;
+ 	struct iommu_domain *iommu_domain;
+ 
++	bool ts_tx_en; /* Tx timestamping enabled */
++	bool ts_rx_en; /* Rx timestamping enabled */
++
+ 	u16 tx_qdid;
+ 	u16 rx_buf_align;
+ 	struct fsl_mc_io *mc_io;
+@@ -377,10 +412,19 @@ static inline unsigned int dpaa2_eth_buf_raw_size(struct dpaa2_eth_priv *priv)
+ unsigned int dpaa2_eth_needed_headroom(struct dpaa2_eth_priv *priv,
+ 				       struct sk_buff *skb)
+ {
++	unsigned int headroom = DPAA2_ETH_SWA_SIZE;
++
++	/* For non-linear skbs we have no headroom requirement, as we build a
++	 * SG frame with a newly allocated SGT buffer
 +	 */
-+	for (i = 1; i < port->nr_source_caps; ++i) {
-+		pdo = port->source_caps[i];
-+
-+		switch (pdo_type(pdo)) {
-+		case PDO_TYPE_APDO:
-+			if (pdo_apdo_type(pdo) != APDO_TYPE_PPS) {
-+				tcpm_log(port, "Not PPS APDO (source), ignoring");
-+				continue;
-+			}
-+
-+			min_src_mv = pdo_pps_apdo_min_voltage(pdo);
-+			max_src_mv = pdo_pps_apdo_max_voltage(pdo);
-+			src_ma = pdo_pps_apdo_max_current(pdo);
-+			src_mw = (src_ma * max_src_mv) / 1000;
-+
-+			/*
-+			 * Now search through the sink PDOs to find a matching
-+			 * PPS APDO. Again skip the first sink PDO as this will
-+			 * always be 5V 3A.
-+			 */
-+			for (j = i; j < port->nr_snk_pdo; j++) {
-+				pdo = port->snk_pdo[j];
-+
-+				switch (pdo_type(pdo)) {
-+				case PDO_TYPE_APDO:
-+					if (pdo_apdo_type(pdo) != APDO_TYPE_PPS) {
-+						tcpm_log(port,
-+							 "Not PPS APDO (sink), ignoring");
-+						continue;
-+					}
-+
-+					min_snk_mv =
-+						pdo_pps_apdo_min_voltage(pdo);
-+					max_snk_mv =
-+						pdo_pps_apdo_max_voltage(pdo);
-+					snk_ma =
-+						pdo_pps_apdo_max_current(pdo);
-+					break;
-+				default:
-+					tcpm_log(port,
-+						 "Not APDO type (sink), ignoring");
-+					continue;
-+				}
-+
-+				if (max_src_mv <= max_snk_mv &&
-+				    min_src_mv >= min_snk_mv) {
-+					/* Prefer higher voltages if available */
-+					if ((src_mw == max_mw &&
-+					     min_src_mv > max_mv) ||
-+					    src_mw > max_mw) {
-+						src_pdo = i;
-+						snk_pdo = j;
-+						max_mw = src_mw;
-+						max_mv = max_src_mv;
-+					}
-+				}
-+			}
-+
-+			break;
-+		default:
-+			tcpm_log(port, "Not APDO type (source), ignoring");
-+			continue;
-+		}
-+	}
-+
-+	if (src_pdo) {
-+		pdo = port->source_caps[src_pdo];
-+
-+		port->pps_data.min_volt = pdo_pps_apdo_min_voltage(pdo);
-+		port->pps_data.max_volt = pdo_pps_apdo_max_voltage(pdo);
-+		port->pps_data.max_curr =
-+			min_pps_apdo_current(pdo, port->snk_pdo[snk_pdo]);
-+		port->pps_data.out_volt =
-+			min(pdo_pps_apdo_max_voltage(pdo), port->pps_data.out_volt);
-+		port->pps_data.op_curr =
-+			min(port->pps_data.max_curr, port->pps_data.op_curr);
-+	}
-+
-+	return src_pdo;
-+}
-+
- static int tcpm_pd_build_request(struct tcpm_port *port, u32 *rdo)
- {
- 	unsigned int mv, ma, mw, flags;
-@@ -1849,10 +2091,18 @@ static int tcpm_pd_build_request(struct tcpm_port *port, u32 *rdo)
- 	matching_snk_pdo = port->snk_pdo[snk_pdo_index];
- 	type = pdo_type(pdo);
+ 	if (skb_is_nonlinear(skb))
+ 		return 0;
  
--	if (type == PDO_TYPE_FIXED)
-+	switch (type) {
-+	case PDO_TYPE_FIXED:
- 		mv = pdo_fixed_voltage(pdo);
--	else
-+		break;
-+	case PDO_TYPE_BATT:
-+	case PDO_TYPE_VAR:
- 		mv = pdo_min_voltage(pdo);
-+		break;
-+	default:
-+		tcpm_log(port, "Invalid PDO selected!");
-+		return -EINVAL;
-+	}
- 
- 	/* Select maximum available current within the sink pdo's limit */
- 	if (type == PDO_TYPE_BATT) {
-@@ -1917,6 +2167,105 @@ static int tcpm_pd_send_request(struct tcpm_port *port)
- 	msg.header = PD_HEADER_LE(PD_DATA_REQUEST,
- 				  port->pwr_role,
- 				  port->data_role,
-+				  port->negotiated_rev,
-+				  port->message_id, 1);
-+	msg.payload[0] = cpu_to_le32(rdo);
+-	return DPAA2_ETH_SWA_SIZE;
++	/* If we have Tx timestamping, need 128B hardware annotation */
++	if (priv->ts_tx_en && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP)
++		headroom += DPAA2_ETH_TX_HWA_SIZE;
 +
-+	return tcpm_pd_transmit(port, TCPC_TX_SOP, &msg);
-+}
-+
-+static int tcpm_pd_build_pps_request(struct tcpm_port *port, u32 *rdo)
-+{
-+	unsigned int out_mv, op_ma, op_mw, min_mv, max_mv, max_ma, flags;
-+	enum pd_pdo_type type;
-+	unsigned int src_pdo_index;
-+	u32 pdo;
-+
-+	src_pdo_index = tcpm_pd_select_pps_apdo(port);
-+	if (!src_pdo_index)
-+		return -EOPNOTSUPP;
-+
-+	pdo = port->source_caps[src_pdo_index];
-+	type = pdo_type(pdo);
-+
-+	switch (type) {
-+	case PDO_TYPE_APDO:
-+		if (pdo_apdo_type(pdo) != APDO_TYPE_PPS) {
-+			tcpm_log(port, "Invalid APDO selected!");
-+			return -EINVAL;
-+		}
-+		min_mv = port->pps_data.min_volt;
-+		max_mv = port->pps_data.max_volt;
-+		max_ma = port->pps_data.max_curr;
-+		out_mv = port->pps_data.out_volt;
-+		op_ma = port->pps_data.op_curr;
-+		break;
-+	default:
-+		tcpm_log(port, "Invalid PDO selected!");
-+		return -EINVAL;
-+	}
-+
-+	flags = RDO_USB_COMM | RDO_NO_SUSPEND;
-+
-+	op_mw = (op_ma * out_mv) / 1000;
-+	if (op_mw < port->operating_snk_mw) {
-+		/*
-+		 * Try raising current to meet power needs. If that's not enough
-+		 * then try upping the voltage. If that's still not enough
-+		 * then we've obviously chosen a PPS APDO which really isn't
-+		 * suitable so abandon ship.
-+		 */
-+		op_ma = (port->operating_snk_mw * 1000) / out_mv;
-+		if ((port->operating_snk_mw * 1000) % out_mv)
-+			++op_ma;
-+		op_ma += RDO_PROG_CURR_MA_STEP - (op_ma % RDO_PROG_CURR_MA_STEP);
-+
-+		if (op_ma > max_ma) {
-+			op_ma = max_ma;
-+			out_mv = (port->operating_snk_mw * 1000) / op_ma;
-+			if ((port->operating_snk_mw * 1000) % op_ma)
-+				++out_mv;
-+			out_mv += RDO_PROG_VOLT_MV_STEP -
-+				  (out_mv % RDO_PROG_VOLT_MV_STEP);
-+
-+			if (out_mv > max_mv) {
-+				tcpm_log(port, "Invalid PPS APDO selected!");
-+				return -EINVAL;
-+			}
-+		}
-+	}
-+
-+	tcpm_log(port, "cc=%d cc1=%d cc2=%d vbus=%d vconn=%s polarity=%d",
-+		 port->cc_req, port->cc1, port->cc2, port->vbus_source,
-+		 port->vconn_role == TYPEC_SOURCE ? "source" : "sink",
-+		 port->polarity);
-+
-+	*rdo = RDO_PROG(src_pdo_index + 1, out_mv, op_ma, flags);
-+
-+	tcpm_log(port, "Requesting APDO %d: %u mV, %u mA",
-+		 src_pdo_index, out_mv, op_ma);
-+
-+	port->pps_data.op_curr = op_ma;
-+	port->pps_data.out_volt = out_mv;
-+
-+	return 0;
-+}
-+
-+static int tcpm_pd_send_pps_request(struct tcpm_port *port)
-+{
-+	struct pd_message msg;
-+	int ret;
-+	u32 rdo;
-+
-+	ret = tcpm_pd_build_pps_request(port, &rdo);
-+	if (ret < 0)
-+		return ret;
-+
-+	memset(&msg, 0, sizeof(msg));
-+	msg.header = PD_HEADER_LE(PD_DATA_REQUEST,
-+				  port->pwr_role,
-+				  port->data_role,
-+				  port->negotiated_rev,
- 				  port->message_id, 1);
- 	msg.payload[0] = cpu_to_le32(rdo);
- 
-@@ -2103,6 +2452,7 @@ static void tcpm_reset_port(struct tcpm_port *port)
- 	tcpm_typec_disconnect(port);
- 	port->attached = false;
- 	port->pd_capable = false;
-+	port->pps_data.supported = false;
- 
- 	/*
- 	 * First Rx ID should be 0; set this to a sentinel of -1 so that
-@@ -2120,6 +2470,8 @@ static void tcpm_reset_port(struct tcpm_port *port)
- 	tcpm_set_attached_state(port, false);
- 	port->try_src_count = 0;
- 	port->try_snk_count = 0;
-+	port->supply_voltage = 0;
-+	port->current_limit = 0;
++	return headroom;
  }
  
- static void tcpm_detach(struct tcpm_port *port)
-@@ -2364,6 +2716,7 @@ static void run_state_machine(struct tcpm_port *port)
- 		typec_set_pwr_opmode(port->typec_port, opmode);
- 		port->pwr_opmode = TYPEC_PWR_MODE_USB;
- 		port->caps_count = 0;
-+		port->negotiated_rev = PD_MAX_REV;
- 		port->message_id = 0;
- 		port->rx_msgid = -1;
- 		port->explicit_contract = false;
-@@ -2424,6 +2777,7 @@ static void run_state_machine(struct tcpm_port *port)
- 
- 		tcpm_swap_complete(port, 0);
- 		tcpm_typec_connect(port);
-+
- 		tcpm_check_send_discover(port);
- 		/*
- 		 * 6.3.5
-@@ -2447,6 +2801,7 @@ static void run_state_machine(struct tcpm_port *port)
- 	case SNK_UNATTACHED:
- 		if (!port->non_pd_role_swap)
- 			tcpm_swap_complete(port, -ENOTCONN);
-+		tcpm_pps_complete(port, -ENOTCONN);
- 		tcpm_snk_detach(port);
- 		if (tcpm_start_drp_toggling(port)) {
- 			tcpm_set_state(port, DRP_TOGGLING, 0);
-@@ -2536,6 +2891,7 @@ static void run_state_machine(struct tcpm_port *port)
- 					      port->cc2 : port->cc1);
- 		typec_set_pwr_opmode(port->typec_port, opmode);
- 		port->pwr_opmode = TYPEC_PWR_MODE_USB;
-+		port->negotiated_rev = PD_MAX_REV;
- 		port->message_id = 0;
- 		port->rx_msgid = -1;
- 		port->explicit_contract = false;
-@@ -2606,6 +2962,24 @@ static void run_state_machine(struct tcpm_port *port)
- 					    PD_T_SENDER_RESPONSE);
- 		}
- 		break;
-+	case SNK_NEGOTIATE_PPS_CAPABILITIES:
-+		ret = tcpm_pd_send_pps_request(port);
-+		if (ret < 0) {
-+			port->pps_status = ret;
-+			/*
-+			 * If this was called due to updates to sink
-+			 * capabilities, and pps is no longer valid, we should
-+			 * safely fall back to a standard PDO.
-+			 */
-+			if (port->update_sink_caps)
-+				tcpm_set_state(port, SNK_NEGOTIATE_CAPABILITIES, 0);
-+			else
-+				tcpm_set_state(port, SNK_READY, 0);
-+		} else {
-+			tcpm_set_state_cond(port, hard_reset_state(port),
-+					    PD_T_SENDER_RESPONSE);
-+		}
-+		break;
- 	case SNK_TRANSITION_SINK:
- 	case SNK_TRANSITION_SINK_VBUS:
- 		tcpm_set_state(port, hard_reset_state(port),
-@@ -2613,6 +2987,7 @@ static void run_state_machine(struct tcpm_port *port)
- 		break;
- 	case SNK_READY:
- 		port->try_snk_count = 0;
-+		port->update_sink_caps = false;
- 		if (port->explicit_contract) {
- 			typec_set_pwr_opmode(port->typec_port,
- 					     TYPEC_PWR_MODE_PD);
-@@ -2622,6 +2997,8 @@ static void run_state_machine(struct tcpm_port *port)
- 		tcpm_swap_complete(port, 0);
- 		tcpm_typec_connect(port);
- 		tcpm_check_send_discover(port);
-+		tcpm_pps_complete(port, port->pps_status);
-+
- 		break;
- 
- 	/* Accessory states */
-@@ -2668,6 +3045,7 @@ static void run_state_machine(struct tcpm_port *port)
- 		tcpm_set_state(port, SRC_UNATTACHED, PD_T_PS_SOURCE_ON);
- 		break;
- 	case SNK_HARD_RESET_SINK_OFF:
-+		memset(&port->pps_data, 0, sizeof(port->pps_data));
- 		tcpm_set_vconn(port, false);
- 		tcpm_set_charge(port, false);
- 		tcpm_set_roles(port, false, TYPEC_SINK, TYPEC_DEVICE);
-@@ -2888,6 +3266,7 @@ static void run_state_machine(struct tcpm_port *port)
- 		break;
- 	case ERROR_RECOVERY:
- 		tcpm_swap_complete(port, -EPROTO);
-+		tcpm_pps_complete(port, -EPROTO);
- 		tcpm_set_state(port, PORT_RESET, 0);
- 		break;
- 	case PORT_RESET:
-@@ -3470,6 +3849,162 @@ static int tcpm_try_role(const struct typec_capability *cap, int role)
- 	return ret;
- }
- 
-+static int __maybe_unused tcpm_pps_set_op_curr(struct tcpm_port *port, u16 op_curr)
-+{
-+	unsigned int target_mw;
-+	int ret;
-+
-+	mutex_lock(&port->swap_lock);
-+	mutex_lock(&port->lock);
-+
-+	if (!port->pps_data.active) {
-+		ret = -EOPNOTSUPP;
-+		goto port_unlock;
-+	}
-+
-+	if (port->state != SNK_READY) {
-+		ret = -EAGAIN;
-+		goto port_unlock;
-+	}
-+
-+	if (op_curr > port->pps_data.max_curr) {
-+		ret = -EINVAL;
-+		goto port_unlock;
-+	}
-+
-+	target_mw = (op_curr * port->pps_data.out_volt) / 1000;
-+	if (target_mw < port->operating_snk_mw) {
-+		ret = -EINVAL;
-+		goto port_unlock;
-+	}
-+
-+	reinit_completion(&port->pps_complete);
-+	port->pps_data.op_curr = op_curr;
-+	port->pps_status = 0;
-+	port->pps_pending = true;
-+	tcpm_set_state(port, SNK_NEGOTIATE_PPS_CAPABILITIES, 0);
-+	mutex_unlock(&port->lock);
-+
-+	if (!wait_for_completion_timeout(&port->pps_complete,
-+				msecs_to_jiffies(PD_PPS_CTRL_TIMEOUT)))
-+		ret = -ETIMEDOUT;
-+	else
-+		ret = port->pps_status;
-+
-+	goto swap_unlock;
-+
-+port_unlock:
-+	mutex_unlock(&port->lock);
-+swap_unlock:
-+	mutex_unlock(&port->swap_lock);
-+
-+	return ret;
-+}
-+
-+static int __maybe_unused tcpm_pps_set_out_volt(struct tcpm_port *port, u16 out_volt)
-+{
-+	unsigned int target_mw;
-+	int ret;
-+
-+	mutex_lock(&port->swap_lock);
-+	mutex_lock(&port->lock);
-+
-+	if (!port->pps_data.active) {
-+		ret = -EOPNOTSUPP;
-+		goto port_unlock;
-+	}
-+
-+	if (port->state != SNK_READY) {
-+		ret = -EAGAIN;
-+		goto port_unlock;
-+	}
-+
-+	if (out_volt < port->pps_data.min_volt ||
-+	    out_volt > port->pps_data.max_volt) {
-+		ret = -EINVAL;
-+		goto port_unlock;
-+	}
-+
-+	target_mw = (port->pps_data.op_curr * out_volt) / 1000;
-+	if (target_mw < port->operating_snk_mw) {
-+		ret = -EINVAL;
-+		goto port_unlock;
-+	}
-+
-+	reinit_completion(&port->pps_complete);
-+	port->pps_data.out_volt = out_volt;
-+	port->pps_status = 0;
-+	port->pps_pending = true;
-+	tcpm_set_state(port, SNK_NEGOTIATE_PPS_CAPABILITIES, 0);
-+	mutex_unlock(&port->lock);
-+
-+	if (!wait_for_completion_timeout(&port->pps_complete,
-+				msecs_to_jiffies(PD_PPS_CTRL_TIMEOUT)))
-+		ret = -ETIMEDOUT;
-+	else
-+		ret = port->pps_status;
-+
-+	goto swap_unlock;
-+
-+port_unlock:
-+	mutex_unlock(&port->lock);
-+swap_unlock:
-+	mutex_unlock(&port->swap_lock);
-+
-+	return ret;
-+}
-+
-+static int __maybe_unused tcpm_pps_activate(struct tcpm_port *port, bool activate)
-+{
-+	int ret = 0;
-+
-+	mutex_lock(&port->swap_lock);
-+	mutex_lock(&port->lock);
-+
-+	if (!port->pps_data.supported) {
-+		ret = -EOPNOTSUPP;
-+		goto port_unlock;
-+	}
-+
-+	/* Trying to deactivate PPS when already deactivated so just bail */
-+	if (!port->pps_data.active && !activate)
-+		goto port_unlock;
-+
-+	if (port->state != SNK_READY) {
-+		ret = -EAGAIN;
-+		goto port_unlock;
-+	}
-+
-+	reinit_completion(&port->pps_complete);
-+	port->pps_status = 0;
-+	port->pps_pending = true;
-+
-+	/* Trigger PPS request or move back to standard PDO contract */
-+	if (activate) {
-+		port->pps_data.out_volt = port->supply_voltage;
-+		port->pps_data.op_curr = port->current_limit;
-+		tcpm_set_state(port, SNK_NEGOTIATE_PPS_CAPABILITIES, 0);
-+	} else {
-+		tcpm_set_state(port, SNK_NEGOTIATE_CAPABILITIES, 0);
-+	}
-+	mutex_unlock(&port->lock);
-+
-+	if (!wait_for_completion_timeout(&port->pps_complete,
-+				msecs_to_jiffies(PD_PPS_CTRL_TIMEOUT)))
-+		ret = -ETIMEDOUT;
-+	else
-+		ret = port->pps_status;
-+
-+	goto swap_unlock;
-+
-+port_unlock:
-+	mutex_unlock(&port->lock);
-+swap_unlock:
-+	mutex_unlock(&port->swap_lock);
-+
-+	return ret;
-+}
-+
- static void tcpm_init(struct tcpm_port *port)
- {
- 	enum typec_cc_status cc1, cc2;
-@@ -3603,13 +4138,18 @@ int tcpm_update_sink_capabilities(struct tcpm_port *port, const u32 *pdo,
- 	mutex_lock(&port->lock);
- 	port->nr_snk_pdo = tcpm_copy_pdos(port->snk_pdo, pdo, nr_pdo);
- 	port->operating_snk_mw = operating_snk_mw;
-+	port->update_sink_caps = true;
- 
- 	switch (port->state) {
- 	case SNK_NEGOTIATE_CAPABILITIES:
-+	case SNK_NEGOTIATE_PPS_CAPABILITIES:
- 	case SNK_READY:
- 	case SNK_TRANSITION_SINK:
- 	case SNK_TRANSITION_SINK_VBUS:
--		tcpm_set_state(port, SNK_NEGOTIATE_CAPABILITIES, 0);
-+		if (port->pps_data.active)
-+			tcpm_set_state(port, SNK_NEGOTIATE_PPS_CAPABILITIES, 0);
-+		else
-+			tcpm_set_state(port, SNK_NEGOTIATE_CAPABILITIES, 0);
- 		break;
- 	default:
- 		break;
-@@ -3651,6 +4191,7 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 
- 	init_completion(&port->tx_complete);
- 	init_completion(&port->swap_complete);
-+	init_completion(&port->pps_complete);
- 	tcpm_debugfs_init(port);
- 
- 	if (tcpm_validate_caps(port, tcpc->config->src_pdo,
-@@ -3677,7 +4218,7 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 	port->typec_caps.type = tcpc->config->type;
- 	port->typec_caps.data = tcpc->config->data;
- 	port->typec_caps.revision = 0x0120;	/* Type-C spec release 1.2 */
--	port->typec_caps.pd_revision = 0x0200;	/* USB-PD spec release 2.0 */
-+	port->typec_caps.pd_revision = 0x0300;	/* USB-PD spec release 3.0 */
- 	port->typec_caps.dr_set = tcpm_dr_set;
- 	port->typec_caps.pr_set = tcpm_pr_set;
- 	port->typec_caps.vconn_set = tcpm_vconn_set;
-diff --git a/include/linux/usb/pd.h b/include/linux/usb/pd.h
-index ff359bdf..09b570f 100644
---- a/include/linux/usb/pd.h
-+++ b/include/linux/usb/pd.h
-@@ -103,8 +103,8 @@ enum pd_ext_msg_type {
- 	 (((cnt) & PD_HEADER_CNT_MASK) << PD_HEADER_CNT_SHIFT) |	\
- 	 ((ext_hdr) ? PD_HEADER_EXT_HDR : 0))
- 
--#define PD_HEADER_LE(type, pwr, data, id, cnt) \
--	cpu_to_le16(PD_HEADER((type), (pwr), (data), PD_REV20, (id), (cnt), (0)))
-+#define PD_HEADER_LE(type, pwr, data, rev, id, cnt) \
-+	cpu_to_le16(PD_HEADER((type), (pwr), (data), (rev), (id), (cnt), (0)))
- 
- static inline unsigned int pd_header_cnt(u16 header)
- {
-diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
-index f5bda9a..b231b93 100644
---- a/include/linux/usb/tcpm.h
-+++ b/include/linux/usb/tcpm.h
-@@ -36,6 +36,7 @@ enum typec_cc_polarity {
- /* Time to wait for TCPC to complete transmit */
- #define PD_T_TCPC_TX_TIMEOUT	100		/* in ms	*/
- #define PD_ROLE_SWAP_TIMEOUT	(MSEC_PER_SEC * 10)
-+#define PD_PPS_CTRL_TIMEOUT	(MSEC_PER_SEC * 10)
- 
- enum tcpm_transmit_status {
- 	TCPC_TX_SUCCESS = 0,
+ /* Extra headroom space requested to hardware, in order to make sure there's
 -- 
-1.9.1
+1.7.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
