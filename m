@@ -1,74 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753542AbeDYWIk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 18:08:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752313AbeDYWIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 18:08:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6AF21745
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 25 Apr 2018 23:08:34 +0100
-From: James Hogan <jhogan@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: c-r4k: fix data corruption related to cache
- coherence.
-Message-ID: <20180425220834.GC25917@saruman>
-References: <87sh7klyhc.fsf@notabene.neil.brown.name>
- <20180425214650.GA25917@saruman>
- <87h8nzlzf1.fsf@notabene.neil.brown.name>
+        id S1753670AbeDYWKq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 18:10:46 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:40474 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752866AbeDYWKo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 18:10:44 -0400
+X-Google-Smtp-Source: AIpwx4+kw369VQBcCa23huQ8t+JNy4v4X4lxaybVnmVSN9JfyabNIWWyDvt4uqgk3P5EF5RjIoZG1oFJD9e5R1j8QL0=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0lnxQi9hkpPO77W3"
-Content-Disposition: inline
-In-Reply-To: <87h8nzlzf1.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180326172727.025EBF16@viggo.jf.intel.com>
+References: <20180326172721.D5B2CBB4@viggo.jf.intel.com> <20180326172727.025EBF16@viggo.jf.intel.com>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Wed, 25 Apr 2018 22:10:42 +0000
+Message-ID: <CALvZod5NTauM6MHW7D=h0mTDNYFd-1QyWrOxnhiixCgtHP=Taw@mail.gmail.com>
+Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from PROT_EXEC
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        stable@kernel.org, linuxram@us.ibm.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>, mpe@ellerman.id.au,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 26, 2018 at 5:27 PM, Dave Hansen
+<dave.hansen@linux.intel.com> wrote:
+>
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+>
+> I got a bug report that the following code (roughly) was
+> causing a SIGSEGV:
+>
+>         mprotect(ptr, size, PROT_EXEC);
+>         mprotect(ptr, size, PROT_NONE);
+>         mprotect(ptr, size, PROT_READ);
+>         *ptr = 100;
+>
+> The problem is hit when the mprotect(PROT_EXEC)
+> is implicitly assigned a protection key to the VMA, and made
+> that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
+> failed to remove the protection key, and the PROT_NONE->
+> PROT_READ left the PTE usable, but the pkey still in place
+> and left the memory inaccessible.
+>
+> To fix this, we ensure that we always "override" the pkee
+> at mprotect() if the VMA does not have execute-only
+> permissions, but the VMA has the execute-only pkey.
+>
+> We had a check for PROT_READ/WRITE, but it did not work
+> for PROT_NONE.  This entirely removes the PROT_* checks,
+> which ensures that PROT_NONE now works.
+>
+> Reported-by: Shakeel Butt <shakeelb@google.com>
+>
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Fixes: 62b5f7d013f ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
 
---0lnxQi9hkpPO77W3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Apr 26, 2018 at 08:00:18AM +1000, NeilBrown wrote:
-> On Wed, Apr 25 2018, James Hogan wrote:
-> > So I'm thinking "!mips_cm_present()" should probably be replaced with
-> > "!r4k_op_needs_ipi(R4K_INDEX)" (and the comment updated to mention that
-> > IPI calls aren't implemented here).
->=20
-> That makes sense.  I tried ipi calls at one stage.  Synchronous ones
-> cannot be used because this code is called with interrupts disabled, and
-> async ones cannot provide the required guarantees.
-
-Okay. I thought something like that might be the case.
-
->=20
-> I'll update the patch, test that it still works, and resend, in the next
-> day or so.
-
-Thanks. It wouldn't hurt to also mention why IPIs can't be used in the
-code comments, if its fresh in your mind, just for the benefit of next
-person to attempt it.
-
-Cheers
-James
-
---0lnxQi9hkpPO77W3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWuD8YQAKCRA1zuSGKxAj
-8qhiAQDy4PgqTJQrBqDyhppFRJRq1oCRGDz9EGtqFs51hCP9TgEArA/K9cg3Wszh
-ckssoKrrkL4uvnpylKDNzb9aP+4GAQM=
-=9Wdc
------END PGP SIGNATURE-----
-
---0lnxQi9hkpPO77W3--
+Hi Dave, are you planning to send the next version of this patch or
+going with this one?
