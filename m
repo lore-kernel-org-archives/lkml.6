@@ -1,58 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756050AbeDYQfQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:35:16 -0400
-Received: from mail-pg0-f42.google.com ([74.125.83.42]:46863 "EHLO
-        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755296AbeDYQfN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:35:13 -0400
-X-Google-Smtp-Source: AIpwx49LveF4uqy34mDRFPGVn7ncHBgAn6e7tB+vkDwVOU1tXBrq4Ib29HdgLrzCbgRgTYiHVy51kg==
-Subject: Re: [PATCH net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
- zerocopy receive
-To: Andy Lutomirski <luto@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Soheil Hassas Yeganeh <soheil@google.com>
-References: <20180425052722.73022-1-edumazet@google.com>
- <20180425052722.73022-2-edumazet@google.com>
- <20180425062859.GA23914@infradead.org>
- <5cd31eba-63b5-9160-0a2e-f441340df0d3@gmail.com>
- <20180425160413.GC8546@bombadil.infradead.org>
- <CALCETrWaekirEe+rKiPB-Zim6ZHKL-n7nfk9wrsHra_FtrS=DA@mail.gmail.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <155a86d5-a910-c366-f521-216a0582bad8@gmail.com>
-Date: Wed, 25 Apr 2018 09:35:10 -0700
+        id S1755451AbeDYQfz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:35:55 -0400
+Received: from foss.arm.com ([217.140.101.70]:42788 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754649AbeDYQfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:35:51 -0400
+Subject: Re: [PATCH v2 09/17] kvm: arm64: Make stage2 page table layout
+ dynamic
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+ <1522156531-28348-10-git-send-email-suzuki.poulose@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <2359e848-8068-ea25-e44e-e8cfcbc9b467@arm.com>
+Date: Wed, 25 Apr 2018 17:35:48 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CALCETrWaekirEe+rKiPB-Zim6ZHKL-n7nfk9wrsHra_FtrS=DA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1522156531-28348-10-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Suzuki,
 
+On 27/03/18 14:15, Suzuki K Poulose wrote:
+> So far we had a static stage2 page table handling code, based on a
+> fixed IPA of 40bits. As we prepare for a configurable IPA size per
+> VM, make the our stage2 page table code dynamic to do the right thing
+> for a given VM.
+> 
+> Support for the IPA size configuration needs other changes in the way
+> we configure the EL2 registers (VTTBR and VTCR). So, the IPA is still
+> fixed to 40bits. The patch also moves the kvm_page_empty() in asm/kvm_mmu.h
+> to the top, before including the asm/stage2_pgtable.h to avoid a forward
+> declaration.
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>   arch/arm64/include/asm/kvm_mmu.h              |  16 +-
+>   arch/arm64/include/asm/stage2_pgtable-nopmd.h |  42 ------
+>   arch/arm64/include/asm/stage2_pgtable-nopud.h |  39 -----
+>   arch/arm64/include/asm/stage2_pgtable.h       | 203 +++++++++++++++++---------
+>   4 files changed, 145 insertions(+), 155 deletions(-)
+>   delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopmd.h
+>   delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopud.h
+> 
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 594c4e6..bc133ce 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -18,9 +18,10 @@
+>   #ifndef __ARM64_KVM_MMU_H__
+>   #define __ARM64_KVM_MMU_H__
+>   
+> +#include <asm/cpufeature.h>
+>   #include <asm/page.h>
+>   #include <asm/memory.h>
+> -#include <asm/cpufeature.h>
 
-On 04/25/2018 09:22 AM, Andy Lutomirski wrote:
+OOI, why was the include of cpufeature.h moved earlier?
 
-> In general, I suspect that the zerocopy receive mechanism will only
-> really be a win in single-threaded applications that consume large
-> amounts of receive bandwidth on a single TCP socket using lots of
-> memory and don't do all that much else.
+Cheers,
 
-This was dully noted in the original patch submission.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/commit/?id=309c446cb45f6663932c8e6d0754f4ac81d1b5cd
-
-Our intent at Google is to use it for some specific 1MB+ receives, not as a generic and universal mechanism.
-
-The major benefit is really the 4KB+ MTU, allowing to pack exactly 4096 bytes of payload per page.
+-- 
+Julien Grall
