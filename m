@@ -1,138 +1,175 @@
-Return-Path: <wagi@monom.org>
-X-Google-Smtp-Source: AB8JxZoktmookwzR9+E6AfGb4yH1ZNinV4zMzl8xKYEwtKWKIs6THJmHBQt4HXbJWM65dGm7tqYB
-ARC-Seal: i=1; a=rsa-sha256; t=1525075763; cv=none;
+Return-Path: <jeremy.linton@arm.com>
+X-Google-Smtp-Source: AIpwx497i7Cid9+iORk43VF20/1ZyNZnKRZdwqho1ksMiC8/Tik24g/gL9K+h60SDiofsYcTnhp4
+ARC-Seal: i=1; a=rsa-sha256; t=1524702368; cv=none;
         d=google.com; s=arc-20160816;
-        b=thiaH41+3ba724ay/55A4OOX4hFccl0eo8HD48+QJu/5RQWyEMkazYaMQ0rjYGpRM9
-         12QrWnYoJHzprTuzxR6sBAdoF/if5jVAiJTnMjuMAH187ZFzmoje3qDsn+9PZOM7eYS0
-         F7HZXdaG23iSshaObOHqM6I8s54yNiGyzkPIzqVMr7tgPWwzUs8jfZHuRV2Xad3T33Fi
-         hpVL9d+/o19n9BiKMSnZqpBEO35cpT1IJT/8i2Exz3d3OVvXiNMHpKnJQ05VdhNDfdKt
-         NJXEObAvb6Y7ZHhf6lMqirrM6A5t6sBG2qnb4EOcAw1v9HgqoOJrah8asho6oJxob5H5
-         J0/g==
+        b=b7jx9MoeJ+O/2GOa8doWTCPrjgExXn1ONRgu6bjDktHn0N6aUZ7ZftEvdnN3sxjEHI
+         QfoBKOQj8ii12rAaP7/N9+IdVL00b82hlt6g/D01iSisniFdv34+vrts4uyoL2KWGvOO
+         KD+1TB5Z1P8RroHxsvQyK4A/wegdQKUisz8GhTsaQptVg1Q8ChOPldS9FN1PtpHoAlWs
+         dVGwXBTRWqhqiaPe4vAGRpX869k9MeB3rENzilwPjKh/cObLWiR/Yc3BbjQAZO+sDZml
+         kToo67Jj00kosyLR7W1miesfzDgVbmOjnxJGu4c5iiLk/Atc9V1vaGtoSqaNElJP8SiK
+         vlvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=LssdaY6mEzioW8JiMUvjue4g8S0Ndyyz1FwiglxTfJI=;
-        b=q6Uw+LQ/+oG/UtH7BVk4xWMTbvIg3nRZRa3FzbX1zQCAEN/9npIHvDYlGllZh+OTSa
-         Qt9kT27JV3kDB6M1/r/rg3IsQTPaThqOcFU3FXjehijYpv0ZBh0WxcQ9a2jEz2pVgLh5
-         jX05B9EdEEWezxkwa10OvE5Ga2P04Q+H06r2tKJyp38wcfWVVCVWFcjJLDZ3o01FeSh4
-         99txHQ0fNX0bloUCxYQlQBWYkY5n4sYsBE8zeu5gkxwATybZWbKy4J1nrPGA16QHDXBz
-         YKm9DN5PgDwLBggEVytLWXLng31SBU1xiPwrPr29jV8MiJp3jnXUy4FeE3izPJQ4BoqO
-         rATQ==
+        bh=G/mW7CYEWNz73346+j1EU4qnXYjx7XGuHuC7R6yC6gE=;
+        b=n82bReA/uwZsC5gRE2BXQMqr+niBAMRMRCvgDK7h8/R1UBB0UTfpVUlvDWLqUEHetu
+         kJT7N35PsAJ2FA8I72dkph2JA/0soP53LMDFZPJoQuBE1r94fv2vAb8UNfl0zTnLBysf
+         QpGRg8QzwUqXQU9eO3VR7Ei6W5cDtDvdtcwyCywfGrUyZtc5EBTwTJLCPu/1l99ks0qJ
+         uC5z49kOfkOkDnrMdqRivn6CVh9vt+Yzd+QJfv74lzQFNozBa8yv5JSD8ZXk6UaQibEY
+         kp+1Kmlo0v40hwHcAXKb3lbCoap0sMFGU8OsfE/d2kCsLG0OqJ8sLjYspb09u5fPDV9g
+         Gx0g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of wagi@monom.org designates 188.138.9.77 as permitted sender) smtp.mailfrom=wagi@monom.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=monom.org
+       spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of wagi@monom.org designates 188.138.9.77 as permitted sender) smtp.mailfrom=wagi@monom.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=monom.org
-From: Daniel Wagner <wagi@monom.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-rt-users@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-sh@vger.kernel.org,
-	Daniel Wagner <daniel.wagner@siemens.com>,
-	Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
-Subject: [PATCH] serial: sh-sci: Use spin_{try}lock_irqsave instead of open coding version
-Date: Mon, 30 Apr 2018 10:09:18 +0200
-Message-Id: <20180430080918.16763-1-wagi@monom.org>
-X-Mailer: git-send-email 2.14.3
+       spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: linux-acpi@vger.kernel.org
+Cc: Sudeep.Holla@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	Lorenzo.Pieralisi@arm.com,
+	hanjun.guo@linaro.org,
+	rjw@rjwysocki.net,
+	Will.Deacon@arm.com,
+	Catalin.Marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	Mark.Rutland@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	wangxiongfeng2@huawei.com,
+	vkilari@codeaurora.org,
+	ahs3@redhat.com,
+	Dietmar.Eggemann@arm.com,
+	Morten.Rasmussen@arm.com,
+	palmer@sifive.com,
+	lenb@kernel.org,
+	john.garry@huawei.com,
+	austinwc@codeaurora.org,
+	tnowicki@caviumnetworks.com,
+	jhugo@qti.qualcomm.com,
+	timur@qti.qualcomm.com,
+	ard.biesheuvel@linaro.org,
+	Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v8 00/13] Support PPTT for ARM64
+Date: Wed, 25 Apr 2018 18:31:08 -0500
+Message-Id: <20180425233121.13270-1-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.13.6
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599157843339362856?=
-X-GMAIL-MSGID: =?utf-8?q?1599157843339362856?=
+X-GMAIL-THRID: =?utf-8?q?1598766310843839266?=
+X-GMAIL-MSGID: =?utf-8?q?1598766310843839266?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Daniel Wagner <daniel.wagner@siemens.com>
+ACPI 6.2 adds the Processor Properties Topology Table (PPTT), which is
+used to describe the processor and cache topology. Ideally it is
+used to extend/override information provided by the hardware, but
+right now ARM64 is entirely dependent on firmware provided tables.
 
-Commit 40f70c03e33a ("serial: sh-sci: add locking to console write
-function to avoid SMP lockup") copied the strategy to avoid locking
-problems in conjuncture with the console from the UART8250
-driver. Instead using directly spin_{try}lock_irqsave(),
-local_irq_save() followed by spin_{try}lock() was used. While this is
-correct on mainline, for -rt it is a problem. spin_{try}lock() will
-check if it is running in a valid context. Since the local_irq_save()
-has already been executed, the context has changed and
-spin_{try}lock() will complain. The reason why spin_{try}lock()
-complains is that on -rt the spin locks are turned into mutexes and
-therefore can sleep. Sleeping with interrupts disabled is not valid.
+This patch parses the table for the cache topology and CPU topology.
+When we enable ACPI/PPTT for arm64 we map the package_id to the
+PPTT node flagged as the physical package by the firmware.
+This results in topologies that match what the remainder of the
+system expects. Finally, we update the scheduler MC domain so that
+it generally reflects the LLC unless the LLC is too large for the
+NUMA domain (or package).
 
-BUG: sleeping function called from invalid context at /home/wagi/work/rt/v4.4-cip-rt/kernel/locking/rtmutex.c:995
-in_atomic(): 0, irqs_disabled(): 128, pid: 778, name: irq/76-eth0
-CPU: 0 PID: 778 Comm: irq/76-eth0 Not tainted 4.4.126-test-cip22-rt14-00403-gcd03665c8318 #12
-Hardware name: Generic RZ/G1 (Flattened Device Tree)
-Backtrace:
-[<c00140a0>] (dump_backtrace) from [<c001424c>] (show_stack+0x18/0x1c)
- r7:c06b01f0 r6:60010193 r5:00000000 r4:c06b01f0
-[<c0014234>] (show_stack) from [<c01d3c94>] (dump_stack+0x78/0x94)
-[<c01d3c1c>] (dump_stack) from [<c004c134>] (___might_sleep+0x134/0x194)
- r7:60010113 r6:c06d3559 r5:00000000 r4:ffffe000
-[<c004c000>] (___might_sleep) from [<c04ded60>] (rt_spin_lock+0x20/0x74)
- r5:c06f4d60 r4:c06f4d60
-[<c04ded40>] (rt_spin_lock) from [<c02577e4>] (serial_console_write+0x100/0x118)
- r5:c06f4d60 r4:c06f4d60
-[<c02576e4>] (serial_console_write) from [<c0061060>] (call_console_drivers.constprop.15+0x10c/0x124)
- r10:c06d2894 r9:c04e18b0 r8:00000028 r7:00000000 r6:c06d3559 r5:c06d2798
- r4:c06b9914 r3:c02576e4
-[<c0060f54>] (call_console_drivers.constprop.15) from [<c0062984>] (console_unlock+0x32c/0x430)
- r10:c06d30d8 r9:00000028 r8:c06dd518 r7:00000005 r6:00000000 r5:c06d2798
- r4:c06d2798 r3:00000028
-[<c0062658>] (console_unlock) from [<c0062e1c>] (vprintk_emit+0x394/0x4f0)
- r10:c06d2798 r9:c06d30ee r8:00000006 r7:00000005 r6:c06a78fc r5:00000027
- r4:00000003
-[<c0062a88>] (vprintk_emit) from [<c0062fa0>] (vprintk+0x28/0x30)
- r10:c060bd46 r9:00001000 r8:c06b9a90 r7:c06b9a90 r6:c06b994c r5:c06b9a3c
- r4:c0062fa8
-[<c0062f78>] (vprintk) from [<c0062fb8>] (vprintk_default+0x10/0x14)
-[<c0062fa8>] (vprintk_default) from [<c009cd30>] (printk+0x78/0x84)
-[<c009ccbc>] (printk) from [<c025afdc>] (credit_entropy_bits+0x17c/0x2cc)
- r3:00000001 r2:decade60 r1:c061a5ee r0:c061a523
- r4:00000006
-[<c025ae60>] (credit_entropy_bits) from [<c025bf74>] (add_interrupt_randomness+0x160/0x178)
- r10:466e7196 r9:1f536000 r8:fffeef74 r7:00000000 r6:c06b9a60 r5:c06b9a3c
- r4:dfbcf680
-[<c025be14>] (add_interrupt_randomness) from [<c006536c>] (irq_thread+0x1e8/0x248)
- r10:c006537c r9:c06cdf21 r8:c0064fcc r7:df791c24 r6:df791c00 r5:ffffe000
- r4:df525180
-[<c0065184>] (irq_thread) from [<c003fba4>] (kthread+0x108/0x11c)
- r10:00000000 r9:00000000 r8:c0065184 r7:df791c00 r6:00000000 r5:df791d00
- r4:decac000
-[<c003fa9c>] (kthread) from [<c00101b8>] (ret_from_fork+0x14/0x3c)
- r8:00000000 r7:00000000 r6:00000000 r5:c003fa9c r4:df791d00
+For example on juno:
+[root@mammon-juno-rh topology]# lstopo-no-graphics
+  Package L#0
+    L2 L#0 (1024KB)
+      L1d L#0 (32KB) + L1i L#0 (32KB) + Core L#0 + PU L#0 (P#0)
+      L1d L#1 (32KB) + L1i L#1 (32KB) + Core L#1 + PU L#1 (P#1)
+      L1d L#2 (32KB) + L1i L#2 (32KB) + Core L#2 + PU L#2 (P#2)
+      L1d L#3 (32KB) + L1i L#3 (32KB) + Core L#3 + PU L#3 (P#3)
+    L2 L#1 (2048KB)
+      L1d L#4 (32KB) + L1i L#4 (48KB) + Core L#4 + PU L#4 (P#4)
+      L1d L#5 (32KB) + L1i L#5 (48KB) + Core L#5 + PU L#5 (P#5)
+  HostBridge L#0
+    PCIBridge
+      PCIBridge
+        PCIBridge
+          PCI 1095:3132
+            Block(Disk) L#0 "sda"
+        PCIBridge
+          PCI 1002:68f9
+            GPU L#1 "renderD128"
+            GPU L#2 "card0"
+            GPU L#3 "controlD64"
+        PCIBridge
+          PCI 11ab:4380
+            Net L#4 "enp8s0"
 
-Cc: Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
-Signed-off-by: Daniel Wagner <daniel.wagner@siemens.com>
----
- drivers/tty/serial/sh-sci.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Git tree at:
+http://linux-arm.org/git?p=linux-jlinton.git
+branch: pptt_v8
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index cf8d0955657d..3900711b60fc 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2516,13 +2516,12 @@ static void serial_console_write(struct console *co, const char *s,
- 	unsigned long flags;
- 	int locked = 1;
- 
--	local_irq_save(flags);
- 	if (port->sysrq)
- 		locked = 0;
- 	else if (oops_in_progress)
--		locked = spin_trylock(&port->lock);
-+		locked = spin_trylock_irqsave(&port->lock, flags);
- 	else
--		spin_lock(&port->lock);
-+		spin_lock_irqsave(&port->lock, flags);
- 
- 	/* first save the SCSCR then disable the interrupts */
- 	ctrl = serial_port_in(port, SCSCR);
-@@ -2539,8 +2538,7 @@ static void serial_console_write(struct console *co, const char *s,
- 	serial_port_out(port, SCSCR, ctrl);
- 
- 	if (locked)
--		spin_unlock(&port->lock);
--	local_irq_restore(flags);
-+		spin_unlock_irqrestore(&port->lock, flags);
- }
- 
- static int serial_console_setup(struct console *co, char *options)
+v7->v8:
+Modify the logic used to select the MC domain (the change
+  shouldn't modify the sched domains on any existing machines
+  compared to v7, only how they are built)
+Reduce the severity of some parsing messages.
+Fix s390 link problem.
+Further checks to deal with broken PPTT tables.
+Various style tweaks, SPDX license addition, etc.
+
+v6->v7:
+Add additional patch to use the last cache level within the NUMA
+  or socket as the MC domain. This assures the MC domain is
+  equal or smaller than the DIE.
+  
+Various formatting/etc review comments.
+
+Rebase to 4.16rc2
+
+v5->v6:
+Add additional patches which re-factor how the initial DT code sets
+  up the cacheinfo structure so that its not as dependent on the
+  of_node stored in that tree. Once that is done we rename it
+  for use with the ACPI code.
+
+Additionally there were a fair number of minor name/location/etc
+  tweaks scattered about made in response to review comments.
+
+v4->v5:
+Update the cache type from NOCACHE to UNIFIED when all the cache
+  attributes we update are valid. This fixes a problem where caches
+  which are entirely created by the PPTT don't show up in lstopo.
+
+Give the PPTT its own firmware_node in the cache structure instead of
+  sharing it with the of_node.
+
+Move some pieces around between patches.
+
+(see previous cover letters for futher changes)
+
+Jeremy Linton (13):
+  drivers: base: cacheinfo: move cache_setup_of_node()
+  drivers: base: cacheinfo: setup DT cache properties early
+  cacheinfo: rename of_node to fw_token
+  arm64/acpi: Create arch specific cpu to acpi id helper
+  ACPI/PPTT: Add Processor Properties Topology Table parsing
+  ACPI: Enable PPTT support on ARM64
+  drivers: base cacheinfo: Add support for ACPI based firmware tables
+  arm64: Add support for ACPI based firmware tables
+  ACPI/PPTT: Add topology parsing code
+  arm64: topology: rename cluster_id
+  arm64: topology: enable ACPI/PPTT based CPU topology
+  ACPI: Add PPTT to injectable table list
+  arm64: topology: divorce MC scheduling domain from core_siblings
+
+ arch/arm64/Kconfig                |   1 +
+ arch/arm64/include/asm/acpi.h     |   4 +
+ arch/arm64/include/asm/topology.h |   6 +-
+ arch/arm64/kernel/cacheinfo.c     |  15 +-
+ arch/arm64/kernel/topology.c      | 103 +++++-
+ arch/riscv/kernel/cacheinfo.c     |   1 -
+ drivers/acpi/Kconfig              |   3 +
+ drivers/acpi/Makefile             |   1 +
+ drivers/acpi/pptt.c               | 678 ++++++++++++++++++++++++++++++++++++++
+ drivers/acpi/tables.c             |   2 +-
+ drivers/base/cacheinfo.c          | 157 ++++-----
+ include/linux/acpi.h              |   4 +
+ include/linux/cacheinfo.h         |  18 +-
+ 13 files changed, 886 insertions(+), 107 deletions(-)
+ create mode 100644 drivers/acpi/pptt.c
+
 -- 
-2.14.3
+2.13.6
